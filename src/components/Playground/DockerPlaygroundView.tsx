@@ -38,6 +38,26 @@ export const DockerPlaygroundView = () => {
   const [copiedRun, setCopiedRun] = useState(false)
   const fileInputRef = React.useRef<HTMLInputElement>(null)
   const [isUploading, setIsUploading] = useState(false)
+  
+  const [engineTelemetry, setEngineTelemetry] = useState<Record<string, string> | null>(null)
+  const [telemetryLoading, setTelemetryLoading] = useState(false)
+
+  const handleFetchTelemetry = async () => {
+    setTelemetryLoading(true)
+    try {
+      const res = await fetch(`http://localhost:8080/api/status`)
+      const data = await res.json()
+      if (data.status === 200 && data.telemetry) {
+        setEngineTelemetry(data.telemetry)
+      } else {
+        throw new Error("Invalid telemetry return")
+      }
+    } catch(err) {
+      setErrorMsg("Failed to perform Engine Handshake over port 8080.")
+    } finally {
+      setTelemetryLoading(false)
+    }
+  }
 
   const handleCopy = async (text: string, type: 'login' | 'run') => {
     await navigator.clipboard.writeText(text)
@@ -134,6 +154,30 @@ export const DockerPlaygroundView = () => {
           These test scenarios execute entirely inside the powerful <strong>pqctoday-playground</strong> C++ Docker monolith via local API mappings (localhost:8080).
           Click any target below to spawn an isolated cryptographic workflow securely evaluating the specific protocol. The resulting hardware telemetry will be seamlessly ported directly into your frontend here!
         </p>
+        
+        <div className="mt-4 border-t border-primary/20 pt-4">
+           {!engineTelemetry ? (
+             <Button onClick={handleFetchTelemetry} variant="secondary" size="sm" disabled={telemetryLoading} className="gap-2 shrink-0">
+               {telemetryLoading ? <span className="animate-spin w-3 h-3 border-2 border-current border-t-transparent rounded-full" /> : <Server size={14} />} 
+               Perform Engine Telemetry Handshake
+             </Button>
+           ) : (
+             <div className="space-y-2">
+                 <div className="flex items-center justify-between mb-2">
+                     <p className="text-xs font-semibold text-status-success uppercase flex items-center gap-1.5"><Check size={12}/> Handshake Successful</p>
+                     <Button variant="ghost" size="sm" className="h-5 text-[10px]" onClick={handleFetchTelemetry}>Refresh Sync</Button>
+                 </div>
+                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                   {Object.entries(engineTelemetry).map(([key, val]) => (
+                      <div key={key} className="bg-black/20 p-2.5 rounded-lg border border-primary/20">
+                         <p className="text-[10px] text-primary uppercase font-bold tracking-wider">{key}</p>
+                         <p className="text-xs font-mono text-foreground/85 mt-1 break-words">{val}</p>
+                      </div>
+                   ))}
+                 </div>
+             </div>
+           )}
+        </div>
       </div>
 
       {/* Target Array */}

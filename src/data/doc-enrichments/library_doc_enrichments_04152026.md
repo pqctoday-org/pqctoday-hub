@@ -12736,3 +12736,433 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
+## ETSI-TR-103-570
+
+- **Reference ID**: ETSI-TR-103-570
+- **Title**: Quantum-Safe Key Exchanges
+- **Authors**: ETSI TC CYBER WG QSC
+- **Publication Date**: 2017-10-01
+- **Last Updated**: 2017-10-01
+- **Document Status**: Published
+- **Main Topic**: This technical report compares quantum-safe key exchange proposals including LWE, Ring-LWE, and SIDH-based schemes to evaluate performance and security tradeoffs for standardization.
+- **PQC Algorithms Covered**: LWE, Ring-LWE, SIDH, Niederreiter
+- **Quantum Threats Addressed**: Post-Quantum
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Bodies: ETSI
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: pqcrypto, Signal, OpenVPN
+- **Protocols Covered**: TLS, IKEv2, OpenVPN
+- **Infrastructure Layers**: Key Management
+- **Standardization Bodies**: ETSI
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The report evaluates LWE, Ring-LWE, and SIDH as candidate primitives for quantum-safe key exchanges; Implementation considerations include active security, invalid key attacks, and side-channel protection; Performance impacts are analyzed across 64-bit processors, 32-bit embedded processors, and microcontrollers; Parameter selection and security estimates are provided for each proposed scheme.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: Performance on a 64-bit processor; Performance on a 32-bit embedded processor; Performance on 32-bit microcontrollers; Performance on a 64-bit desktop processor; Performance on a 64-bit embedded processor
+- **Target Audience**: Researcher, Security Architect, Developer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Algorithms, iot-ot-pqc, pqc-risk-management
+- **Implementation Attack Surface**: side-channel vulnerabilities, side-channel mitigations, invalid key attacks, active security
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Internet of Things, performance on 32-bit embedded processor, performance on 32-bit microcontrollers
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: ETSI-TR-103-570.pdf (443,522 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T15:03:42
+
+---
+
+## ETSI-TR-103-949
+
+- **Reference ID**: ETSI-TR-103-949
+- **Title**: Quantum-Safe Cryptography Migration; Quantum-Safe ITS/C-ITS Considerations
+- **Authors**: ETSI TC CYBER WG QSC
+- **Publication Date**: 2023-05-01
+- **Last Updated**: 2023-05-01
+- **Document Status**: Published
+- **Main Topic**: Review of cryptographic security mechanisms in Intelligent Transport Systems (ITS) and Cooperative ITS regarding quantum computing vulnerability and migration recommendations.
+- **PQC Algorithms Covered**: Falcon, SPHINCS+
+- **Quantum Threats Addressed**: Attack by a quantum computer; susceptibility to attack by a quantum computer
+- **Migration Timeline Info**: Years mentioned: 2022, 2023; Keywords: mandate
+- **Applicable Regions / Bodies**: Bodies: ETSI, IEEE, ITU-T, ISO, CEN
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: IEEE 1609.2; X.509; CAM; DENM
+- **Infrastructure Layers**: Trust and Privacy Management; Public-key certificate frameworks; Security Services and Architecture
+- **Standardization Bodies**: ETSI, IEEE, ITU-T, ISO, CEN
+- **Compliance Frameworks Referenced**: FIPS 186-4; FIPS 197; ANSI X9.62
+- **Classical Algorithms Referenced**: ECDSA; AES; Digital Signature Standard (DSS)
+- **Key Takeaways**: Organizations should review the state of deployment of cryptographic security mechanisms in ITS and C-ITS; Assess susceptibility of V2X communications to quantum computer attacks; Adopt Quantum Safe Cryptography to minimize exposure; Follow a three-stage migration process including inventory compilation, preparation, and execution; Manage trust and isolation approaches during the migration phase
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Migration plan preparation; Trust management during migration; Isolation approaches during migration
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, Policy Maker, Researcher, Compliance Officer
+- **Implementation Prerequisites**: Inventory compilation of cryptographic assets; Preparation of a migration plan; Algorithm selection and protocol definition; Execution of migration with trust management
+- **Relevant PQC Today Features**: Assess, Migrate, Threats, Algorithms, iot-ot-pqc, pki-workshop
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: Stage 1 - Inventory compilation
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Supply chain stakeholders
+- **Deployment & Migration Complexity**: Stage 1 - Inventory compilation; Stage 2 - Preparation of the migration plan; Stage 3 - Migration execution; Trust management during migration; Isolation approaches during migration
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: ETSI-TR-103-949.pdf (692,690 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T15:04:59
+
+---
+
+## ETSI-TR-103-965
+
+- **Reference ID**: ETSI-TR-103-965
+- **Title**: Impact of Quantum Computing on Cryptographic Security Proofs
+- **Authors**: ETSI TC CYBER WG QSC
+- **Publication Date**: 2024-10-01
+- **Last Updated**: 2024-10-01
+- **Document Status**: Published
+- **Main Topic**: Examines how quantum computing affects the validity of existing cryptographic security proofs and analyzes whether classical reduction-based proofs remain meaningful in a post-quantum setting.
+- **PQC Algorithms Covered**: Crystals-Kyber
+- **Quantum Threats Addressed**: Quantum adversaries; quantum attackers
+- **Migration Timeline Info**: Years mentioned: 2020, 2021, 2022, 2023, 2024
+- **Applicable Regions / Bodies**: France; ETSI
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: Sigma Protocols
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: ETSI
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Replacing computational-hardness assumptions with quantum-hard assumptions is insufficient to make a cryptosystem quantum-safe; security proofs for certain cryptographic classes must be adapted for the post-quantum setting; practical implications of adapting security proofs include changes to transformations like Fujisaki-Okamoto and Fiat-Shamir; classical reduction-based proofs may not remain meaningful against quantum adversaries.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Cryptographic experts; Researcher
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Algorithms, Threats, Assess, pqc-101
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: ETSI-TR-103-965.pdf (254,888 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T15:06:18
+
+---
+
+## ETSI-TR-103-966
+
+- **Reference ID**: ETSI-TR-103-966
+- **Title**: Deployment Considerations for Hybrid Schemes
+- **Authors**: ETSI TC CYBER WG QSC
+- **Publication Date**: 2024-10-01
+- **Last Updated**: 2024-10-01
+- **Document Status**: Published
+- **Main Topic**: The document provides practical guidance on deploying hybrid classical-plus-PQC schemes, addressing implementation considerations, key combiner design, protocol integration, and performance tradeoffs.
+- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, Falcon, SPHINCS+, CRYSTALS-Kyber, CRYSTALS-Dilithium, Classic McEliece, XMSS, LMS, FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA)
+- **Quantum Threats Addressed**: CRQC (Cryptographically Relevant Quantum Computer), Cryptographically Relevant Quantum, Quantum Computer, Post-Quantum
+- **Migration Timeline Info**: Years mentioned: 2020, 2021, 2022, 2023, 2024; Keywords: deprecat
+- **Applicable Regions / Bodies**: France
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: pqcrypto
+- **Protocols Covered**: TLS 1.3, TLS, SSH, IKEv2, S/MIME, X.509, CMS
+- **Infrastructure Layers**: Key Management
+- **Standardization Bodies**: ETSI
+- **Compliance Frameworks Referenced**: FIPS 140-3, FIPS 186 (DSS)
+- **Classical Algorithms Referenced**: RSA, DH
+- **Key Takeaways**: Hybrid schemes combine traditional and post-quantum algorithms for key establishment and digital signatures; Design considerations include security, efficiency, bandwidth, computation, latency, energy, complexity, protocol, and implementation; Deployment requires careful algorithm selection, component choice, and key management strategies; Migration and forward compatibility are critical factors in hybrid scheme adoption; Key combiner designs vary from simple concatenation to full KDF integration.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid security; Hybrid interoperability; Concatenation only; Concatenation with simple KDF; Concatenation with full KDF; Strong non-separability; Component key reuse; Component key compromise; Migration and forwards compatibility
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, Developer, Researcher
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: hybrid-crypto, crypto-agility, migration-program, pki-workshop, algorithms
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Protocol constraints and validation; interoperability testing
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Migration and forwards compatibility; phased rollout considerations via hybrid schemes; backward compatibility approaches
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: ETSI-TR-103-966.pdf (232,750 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T15:07:41
+
+---
+
+## ETSI-TR-103-967
+
+- **Reference ID**: ETSI-TR-103-967
+- **Title**: Impact of Quantum Computing on Symmetric Cryptography
+- **Authors**: ETSI TC CYBER WG QSC
+- **Publication Date**: 2025-01-01
+- **Last Updated**: 2025-01-01
+- **Document Status**: Published
+- **Main Topic**: Updated analysis of the impact of quantum computing on symmetric cryptography including block ciphers, stream ciphers, hash functions, and MACs.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Grover's algorithm; Quantum collision finding; BHT algorithm; CNS algorithm; Simon's algorithm
+- **Migration Timeline Info**: Years mentioned: 2020, 2021, 2022, 2023, 2024, 2025
+- **Applicable Regions / Bodies**: Regions: United States, France, International, Bodies: NIST
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: Signal
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: 5G
+- **Standardization Bodies**: ETSI
+- **Compliance Frameworks Referenced**: FIPS 186 (DSS), NIST IR 8413 (FIPS 203/204/205 Background)
+- **Classical Algorithms Referenced**: AES; SHA-2; SHA-3
+- **Key Takeaways**: Grover's algorithm impacts symmetric algorithms by reducing effective security strength; Logical and physical costs for AES key recovery are analyzed using surface code assumptions; Quantum collision finding algorithms like BHT and CNS pose threats to hash functions; Simon's algorithm is discussed as another quantum threat vector; The document provides an overview of quantum error correction requirements for these attacks.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, Researcher, Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Threats, Algorithms, Assess
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: ETSI-TR-103-967.pdf (349,646 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T15:09:15
+
+---
+
+## ETSI-TR-104-016
+
+- **Reference ID**: ETSI-TR-104-016
+- **Title**: A Repeatable Framework for Quantum-Safe Migrations
+- **Authors**: ETSI TC CYBER WG QSC
+- **Publication Date**: 2024-10-01
+- **Last Updated**: 2024-10-01
+- **Document Status**: Published
+- **Main Topic**: A structured, repeatable framework for organizations to plan and execute quantum-safe cryptographic migrations through discovery, assessment, planning, execution, and validation phases.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Quantum computer capable of breaking RSA-2048 within 24 hours
+- **Migration Timeline Info**: Migration can take a decade or longer to complete; likelihood of quantum threat emergence is high within the next ten years
+- **Applicable Regions / Bodies**: Regions: United States, France, International, Bodies: NIST, NCSC
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS, X.509
+- **Infrastructure Layers**: Information security systems and infrastructures; enterprise architecture
+- **Standardization Bodies**: ETSI
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA-2048
+- **Key Takeaways**: Enterprises should begin quantum-safe migration planning immediately due to high likelihood of threat emergence within ten years; Migration requires a whole-of-enterprise commitment and can take a decade or longer; Organizations must follow an 11-step framework covering identification, inventory, dependency analysis, and risk assessment; Cross-department analysis is critical for resolving migration conflicts and dependencies
+- **Security Levels & Parameters**: RSA-2048
+- **Hybrid & Transition Approaches**: Backwards compatible migration; Parallel system installed over three migration intervals
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, CISO, Compliance Officer, Researcher
+- **Implementation Prerequisites**: Whole-of-enterprise commitment; allocation of budgets and internal resources; identification of enterprise architecture; generation of asset inventories
+- **Relevant PQC Today Features**: migration-program, pqc-risk-management, Assess, Migrate, Threats
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: Generate asset inventories; Identify enterprise architecture
+- **Testing & Validation Methods**: validation phases; Prepare for next iteration
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Dependency analysis; Cross-department analysis
+- **Deployment & Migration Complexity**: discovery, assessment, planning, execution, and validation phases; Step 1: Identify enterprise architecture; Step 2: Generate asset inventories; Step 3: Dependency analysis; Step 4: Vulnerability analysis; Step 5: Cross-department analysis; Step 6: Migration requirements analysis; Step 7: Department migration risk analysis; Step 8: Initial priority analysis; Step 9: Department migration planning; Step 10: Execute migration plans; Step 11: Prepare for next iteration; Example backwards compatible migration
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: whole-of-enterprise commitment; quantum-safe migration planning; Program, plan, and process alignment
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: ETSI-TR-104-016.pdf (506,463 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T15:10:47
+
+---
+
+## ETSI-EG-203-310
+
+- **Reference ID**: ETSI-EG-203-310
+- **Title**: Quantum Computing Impact on Security of ICT Systems; Recommendations on Business Continuity and Algorithm Selection
+- **Authors**: ETSI TC CYBER
+- **Publication Date**: 2016-06-01
+- **Last Updated**: 2016-06-01
+- **Document Status**: Published
+- **Main Topic**: Recommendations on business continuity planning and algorithm selection to address the impact of quantum computing on ICT security.
+- **PQC Algorithms Covered**: SPHINCS+, XMSS
+- **Quantum Threats Addressed**: Shor's Algorithm; Grover's Algorithm; invalidation of RSA and ECC asymmetric cryptography; halving of symmetric cryptographic strength
+- **Migration Timeline Info**: Speculation that viable quantum computers may be built within the next 10 to 20 years
+- **Applicable Regions / Bodies**: European Union; ETSI Technical Committee Cyber Security (CYBER)
+- **Leaders Contributions Mentioned**: Johannes Buchmann; Jintai Ding; Seth Lloyd; Michele Mosca
+- **PQC Products Mentioned**: pqcrypto, Redis
+- **Protocols Covered**: Diffie-Helman-Merkle key agreement protocol; TLS Register of cipher suites
+- **Infrastructure Layers**: PKI; Certificate Authority (CA); Key Management
+- **Standardization Bodies**: ETSI; ISO; IANA
+- **Compliance Frameworks Referenced**: ISO 22301; Regulation (EU) N 910/2014; ISO 27000 series
+- **Classical Algorithms Referenced**: RSA; ECC; AES; Diffie-Helman-Merkle
+- **Key Takeaways**: Symmetric key strength is halved by quantum computing requiring larger keys for equivalent security; RSA and Elliptic Curve Cryptography offer no security against viable quantum computers; Business continuity planning must address the redistribution of asymmetric public keys and certificates; Organizations should prepare for a future where current cryptographic assumptions are invalidated within 10 to 20 years
+- **Security Levels & Parameters**: AES with 128 bit keys reduced to 64 bit strength; 256 bit keys required to retain 128 bit security
+- **Hybrid & Transition Approaches**: Re-assertion of CAs in a PKI; redistribution of new algorithms and keys
+- **Performance & Size Considerations**: AES with 128 bit keys giving 128 bit strength reduced to 64 bit strength; implementation of 256 bit keys required to retain 128 bit security
+- **Target Audience**: Security Architect; Compliance Officer; Policy Maker; Researcher
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Threats, Algorithms, Leaders, Migrate, Assess
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: transition to the post-quantum era, re-assert CAs in a PKI, distribution of new algorithms, distribution of new keys, redistribution of symmetric keys, redistribution of asymmetric public keys and certificates
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: business continuity planning, ISO 22301, Regulation (EU) N 910/2014
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: ETSI-EG-203-310.pdf (80,697 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T15:12:41
+
+---
+
+## ETSI-GR-QKD-007
+
+- **Reference ID**: ETSI-GR-QKD-007
+- **Title**: Quantum Key Distribution Vocabulary
+- **Authors**: ETSI ISG QKD
+- **Publication Date**: 2018-12-01
+- **Last Updated**: 2026-03-25
+- **Document Status**: Published
+- **Main Topic**: Establishes vocabulary and terminology for Quantum Key Distribution (QKD) standards to ensure consistency across ETSI QKD specifications.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: Years mentioned: 2023, 2024, 2025, 2026
+- **Applicable Regions / Bodies**: Regions: France; Bodies: ETSI, Quantum Key Distribution (QKD) ETSI Industry Specification Group (ISG)
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: Signal, Avalanche
+- **Protocols Covered**: "plug-and-play" protocols
+- **Infrastructure Layers**: Firmware, 5G
+- **Standardization Bodies**: ETSI, Quantum Key Distribution (QKD) ETSI Industry Specification Group (ISG)
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Defines over 100 terms related to quantum key distribution systems; Ensures consistency across all ETSI QKD specifications; Distinguishes between key agreement, establishment, and distribution; Clarifies concepts of unconditional security and information theoretically secure systems; Identifies entities within a QKD system and communication channels in a QKD link
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, Researcher, Compliance Officer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: qkd
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: ETSI QKD series, "plug-and-play" protocols, trusted nodes (implied by entities within a QKD system context but not explicitly defined as a protocol feature in the provided text), quantum key distribution systems
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: ETSI-GR-QKD-007.pdf (173,698 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T15:14:24
+
+---
+
+## ETSI-GS-QKD-016-V2
+
+- **Reference ID**: ETSI-GS-QKD-016-V2
+- **Title**: Common Criteria Protection Profile for QKD Modules V2.1.1
+- **Authors**: ETSI ISG QKD
+- **Publication Date**: 2024-01-01
+- **Last Updated**: 2024-01-01
+- **Document Status**: Published
+- **Main Topic**: Updated Common Criteria Protection Profile for Prepare-and-Measure QKD modules aligned with CC:2022 Revision 1.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Eavesdropping on QKD link data; Manipulation of QKD link data
+- **Migration Timeline Info**: Years mentioned: 2022, 2024
+- **Applicable Regions / Bodies**: Regions: United States, Germany, France, NATO, International, Bodies: NIST, BSI
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: Signal
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Firmware
+- **Standardization Bodies**: NIST, ISO/IEC, ISO, IEC, ETSI, 3GPP, BSI
+- **Compliance Frameworks Referenced**: Common Criteria
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Defines security objectives for Prepare-and-Measure QKD modules including user identification and access control; Specifies threats such as session hijacking, eavesdropping, and manipulation of QKD link data; Establishes requirements for secure End of Life states and audit capabilities for cryptographic TSF; Mandates operation in a secure area and diligent maintenance as assumptions for the operational environment
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, Compliance Officer, Researcher
+- **Implementation Prerequisites**: Operation in a secure area; Diligent maintenance; Trustworthy users
+- **Relevant PQC Today Features**: qkd, compliance, threats, assess
+- **Implementation Attack Surface**: T.ServAcc Unauthorized access to data and functions in TOE; T.Session Session hijacking or piggybacking; T.QKDEave Eavesdropping on QKD link data; T.QKDMani Manipulation of QKD link data; T.ExplMal Exploitation of TOE malfunction; T.Observe Observation of TSF characteristics
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: CC conformance claims; Package claim; PP claim; Conformance rationale; Conformance statement; O.TST Self-test
+- **QKD Protocols & Quantum Networking**: Prepare-and-Measure Quantum Key Distribution Modules; ETSI GS QKD 016 V2.1.1; quantum cryptography; quantum key distribution; TOE type: Pair of Prepare and Measure Quantum Key Distribution Modules; QKD state; Calibration state; Failure state; End of Life state
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Life-cycle: Overview, Calibration state, QKD state, Failure state, End of Life state; Non-TOE hardware/software/firmware available to the TOE
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: OSP.QKDService Key distribution services of the TOE; OSP.Audit Audit for security operations; OSP.SecEoL Secure End of Life state; A.Maint Diligent maintenance; A.SecureOp Operation in a secure area; OE.Trust Trustworthy users; OE.Audit Review and availability of audit records; OE.SecureOp Secure Operational environment
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: ETSI-GS-QKD-016-V2.pdf (891,377 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T15:15:50
+
+---
+
+## ENISA-Crypto-Market-Analysis-2024
+
+- **Reference ID**: ENISA-Crypto-Market-Analysis-2024
+- **Title**: Cryptographic Products and Services Market Analysis
+- **Authors**: ENISA
+- **Publication Date**: 2024-10-04
+- **Last Updated**: 2024-11-01
+- **Document Status**: Published
+- **Main Topic**: Analysis of the EU cryptographic products and services market highlighting PQC readiness gaps and Cryptography-as-a-Service trends under the Cybersecurity Act.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: Years mentioned: 2022, 2023, 2024, 2025, 2026, 2030
+- **Applicable Regions / Bodies**: Regions: EU; Bodies: ENISA, European Commission
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: IoT, Cloud, Email
+- **Standardization Bodies**: ENISA
+- **Compliance Frameworks Referenced**: Cybersecurity Act
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: ENISA identifies PQC readiness gaps across European stakeholders; The report analyzes the Cryptography-as-a-Service market trends; Market analysis is conducted under the EU Cybersecurity Act framework; Stakeholders need to address cybersecurity market evolution for informed business decisions.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Private Sector, Policy Maker, Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pqc-business-case, migration-program, vendor-risk, compliance-strategy, pqc-governance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: ENISA-Crypto-Market-Analysis-2024.html (53,082 bytes, 5,229 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T15:17:55
+
+---
+
