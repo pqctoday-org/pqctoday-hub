@@ -510,7 +510,7 @@ const ATTACK_PROFILES: AlgorithmAttackProfile[] = [
         referenceId: 'NIST-SP-800-208',
         title: 'NIST SP 800-208: Recommendation for Stateful HBS Schemes (LMS, XMSS)',
         url: 'https://csrc.nist.gov/pubs/sp/800/208/final',
-        localFile: 'public/library/NIST-SP-800-208-HBS.html',
+        localFile: 'public/library/NIST_SP_800-208.pdf',
       },
     ],
   },
@@ -864,7 +864,7 @@ export const ImplementationAttacksView: React.FC = () => {
               {profile.references.map((ref) => (
                 <a
                   key={ref.referenceId}
-                  href={ref.localFile ? `/${ref.localFile}` : ref.url}
+                  href={ref.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-start gap-1.5 text-xs text-accent hover:text-primary transition-colors group"
