@@ -38,8 +38,8 @@ emconfigure ./configure \
 echo "Running emmake..."
 emmake make -j4 LDFLAGS="-s ALLOW_MEMORY_GROWTH=1 -s ALLOW_TABLE_GROWTH=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0"
 echo "Copying WASM to public directory..."
-mkdir -p /Users/ericamador/antigravity/pqc-timeline-app/public/wasm
-cp src/charon/charon /Users/ericamador/antigravity/pqc-timeline-app/public/wasm/strongswan.js
-cp src/charon/charon.wasm /Users/ericamador/antigravity/pqc-timeline-app/public/wasm/strongswan.wasm
+mkdir -p /Users/ericamador/antigravity/pqctoday-hub/public/wasm
+cp src/charon/charon /Users/ericamador/antigravity/pqctoday-hub/public/wasm/strongswan.js
+cp src/charon/charon.wasm /Users/ericamador/antigravity/pqctoday-hub/public/wasm/strongswan.wasm
 
 echo "Successfully built strongSwan WASM."
