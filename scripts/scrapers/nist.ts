@@ -9,10 +9,32 @@ import {
   NIST_RETRY_CONFIG,
 } from './utils.js'
 
+// Extract the "Overall Level" (1-3) from a NIST CMVP cert detail page.
+// The page contains: <span>Overall Level</span> followed by a sibling col with the digit.
+const extractSecurityLevel = (detailDom: JSDOM): number | null => {
+  const doc = detailDom.window.document
+  const spans = Array.from(doc.querySelectorAll('span'))
+  for (const span of spans) {
+    if (span.textContent?.trim() === 'Overall Level') {
+      // The level value is in the adjacent col-md-9 sibling within the same row div
+      const rowDiv = span.closest('.row')
+      if (rowDiv) {
+        const valueCol = rowDiv.querySelector('.col-md-9')
+        const raw = valueCol?.textContent?.trim()
+        const parsed = parseInt(raw ?? '', 10)
+        if (!isNaN(parsed) && parsed >= 1 && parsed <= 3) return parsed
+      }
+    }
+  }
+  return null
+}
+
 export const scrapeNIST = async (): Promise<ComplianceRecord[]> => {
+  // Query all active FIPS 140-3 certs regardless of security level.
+  // The actual level is read from each cert's detail page.
+  const url =
+    'https://csrc.nist.gov/projects/cryptographic-module-validation-program/validated-modules/search/all?searchMode=Advanced&Standard=FIPS+140-3&ValidationStatus=Active'
   try {
-    const url =
-      'https://csrc.nist.gov/projects/cryptographic-module-validation-program/validated-modules/search/all?searchMode=Advanced&Standard=FIPS+140-3&ValidationStatus=Active&SecurityLevel=3'
     const html = await fetchWithRetry(url, NIST_RETRY_CONFIG)
     const dom = new JSDOM(html)
     const doc = dom.window.document
@@ -20,7 +42,9 @@ export const scrapeNIST = async (): Promise<ComplianceRecord[]> => {
     // NIST Search Table ID: searchResultsTable
     const rows = Array.from(doc.querySelectorAll('#searchResultsTable tr')).slice(1) // Skip header
 
-    console.log(`[NIST] Found ${rows.length} FIPS 140-3 L3 candidates. Processing details...`)
+    console.log(
+      `[NIST] Found ${rows.length} active FIPS 140-3 candidates (all levels). Processing details...`
+    )
 
     const records: ComplianceRecord[] = []
     const BATCH_SIZE = 10
@@ -59,11 +83,12 @@ export const scrapeNIST = async (): Promise<ComplianceRecord[]> => {
 
         let pqcCoverage: boolean | string = 'No PQC Mechanisms Detected'
         let classicalAlgorithms = ''
+        let certificationLevel = 'FIPS 140-3 L1' // conservative default — L1 is the base level
         const fullLink = relativeLink.startsWith('http')
           ? relativeLink
           : `https://csrc.nist.gov${relativeLink}`
 
-        // detail fetch for PQC & Classical
+        // detail fetch for PQC, Classical, and actual security level
         if (relativeLink) {
           try {
             const detailUrl = relativeLink.startsWith('http')
@@ -72,6 +97,12 @@ export const scrapeNIST = async (): Promise<ComplianceRecord[]> => {
             const detailHtml = await fetchWithRetry(detailUrl, NIST_RETRY_CONFIG)
             const detailDom = new JSDOM(detailHtml)
             const detailText = detailDom.window.document.body.textContent || ''
+
+            // Extract actual security level from the detail page
+            const actualLevel = extractSecurityLevel(detailDom)
+            if (actualLevel !== null) {
+              certificationLevel = `FIPS 140-3 L${actualLevel}`
+            }
 
             // Extract PQC
             const pqcStr = extractAlgorithms(detailText, PQC_PATTERNS)
@@ -102,7 +133,7 @@ export const scrapeNIST = async (): Promise<ComplianceRecord[]> => {
           productName: moduleName,
           productCategory: 'Cryptographic Module',
           vendor,
-          certificationLevel: 'FIPS 140-3 L3',
+          certificationLevel,
         }
       })
 

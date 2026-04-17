@@ -8,6 +8,39 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **NIST CMVP scraper — all security levels** (`scripts/scrapers/nist.ts`): now fetches all
+  active FIPS 140-3 certificates (previously filtered to L3 only). Actual security level
+  (L1/L2/L3) is extracted from each cert's detail page via `extractSecurityLevel()` parsing
+  the "Overall Level" field. Compliance data updated: 2,386 records (NIST 1,269, CC 913,
+  ANSSI 179, ENISA 25).
+- **Library CSV v04152026** — 450 records (+21 new entries)
+- **Product catalog CSV v04162026** — 731 records (+2 new entries including Cosmian KMS and SOPS)
+- **Vendors CSV v04162026** — 302 records (+1 new vendor)
+- **Catalog enrichments** — two full enrichment runs: `catalog_doc_enrichments_04152026.md`
+  (361 entries) and `catalog_doc_enrichments_04162026.md` (661 entries); 11 products skipped
+  due to bad source docs (DigiCert x5, Thales x2, CATO, Hitachi, SK Telecom, NZISM)
+- **Library enrichments** — `library_doc_enrichments_04152026.md` updated (+414 entries full
+  re-run); `library_doc_enrichments_04162026.md` (2 new entries)
+- **Timeline enrichments** — `timeline_doc_enrichments_04152026.md` updated (+205 entries
+  full re-run); 1 skipped entry (Europol QSFF — 33 chars, corrupt source)
+- **Catalog entry script** (`scripts/add-catalog-entries-04162026.mjs`): one-off script for
+  adding Cosmian KMS and SOPS to the product catalog
+
+### Fixed
+
+- **Bouncy Castle cert #4943 security level** (`migrate_certification_xref_04012026_r1.csv`):
+  corrected FIPS 140-3 L3 → L1 across 4 rows (bouncy-castle-c-net, bouncy-castle-c-java,
+  bouncy-castle-java, bouncy-castle-java-lts) — level was incorrectly inherited from the
+  old L3-only NIST scraper filter
+
+### Changed
+
+- **Compliance data re-scraped** (`public/data/compliance-data.json`): 2,386 total records
+  (was 2,391 — 5 expired certs removed); NIST records now include correct per-cert security
+  levels (L1/L2/L3) instead of hardcoded L3
+
+---
+
 - **Implementation Attacks sub-tab** in Detailed Comparison — 12 algorithm attack profiles
   covering ML-KEM, ML-DSA, FN-DSA/Falcon, HQC, Classic McEliece, FrodoKEM, NTRU+, SLH-DSA,
   LMS/XMSS, Hybrid KEM, Composite Signatures, and cross-cutting RNG/API risks. Each profile
