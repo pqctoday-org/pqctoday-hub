@@ -285,3 +285,4 @@ pki/issued/
 # Allow PKI cert PEMs (overrides *.pem above) — bundled by Vite as trust anchors
 !pki/ca/*.pem
 !pki/vendors/*.pem
+src/.!*!.DS_Store
