@@ -194,7 +194,7 @@ export default defineConfig({
       'Cross-Origin-Embedder-Policy': 'require-corp',
       'Cross-Origin-Opener-Policy': 'same-origin',
       'Content-Security-Policy':
-        "default-src 'self'; frame-ancestors *; script-src 'self' 'wasm-unsafe-eval' 'unsafe-inline' https://accounts.google.com; style-src 'self' 'unsafe-inline'; connect-src 'self' https://csrc.nist.gov https://cyber.gouv.fr https://www.bsi.bund.de https://www.commoncriteriaportal.org https://*.google-analytics.com https://*.analytics.google.com https://www.googleapis.com https://accounts.google.com https://oauth2.googleapis.com https://generativelanguage.googleapis.com https://*.huggingface.co https://huggingface.co https://*.hf.co https://raw.githubusercontent.com; img-src 'self' data: blob: https://flagcdn.com; font-src 'self'; worker-src 'self' blob:; child-src 'self' blob:; frame-src 'self' https://accounts.google.com",
+        "default-src 'self'; frame-ancestors *; script-src 'self' 'wasm-unsafe-eval' 'unsafe-inline' https://accounts.google.com; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:4000 http://localhost:8080 https://csrc.nist.gov https://cyber.gouv.fr https://www.bsi.bund.de https://www.commoncriteriaportal.org https://*.google-analytics.com https://*.analytics.google.com https://www.googleapis.com https://accounts.google.com https://oauth2.googleapis.com https://generativelanguage.googleapis.com https://*.huggingface.co https://huggingface.co https://*.hf.co https://raw.githubusercontent.com; img-src 'self' data: blob: https://flagcdn.com; font-src 'self'; worker-src 'self' blob:; child-src 'self' blob:; frame-src 'self' https://accounts.google.com http://localhost:4000",
     },
   },
   preview: {
@@ -202,7 +202,7 @@ export default defineConfig({
       'Cross-Origin-Embedder-Policy': 'require-corp',
       'Cross-Origin-Opener-Policy': 'same-origin',
       'Content-Security-Policy':
-        "default-src 'self'; frame-ancestors *; script-src 'self' 'wasm-unsafe-eval' 'unsafe-inline' https://accounts.google.com; style-src 'self' 'unsafe-inline'; connect-src 'self' https://csrc.nist.gov https://cyber.gouv.fr https://www.bsi.bund.de https://www.commoncriteriaportal.org https://*.google-analytics.com https://*.analytics.google.com https://www.googleapis.com https://accounts.google.com https://oauth2.googleapis.com https://generativelanguage.googleapis.com https://*.huggingface.co https://huggingface.co https://*.hf.co https://raw.githubusercontent.com; img-src 'self' data: blob: https://flagcdn.com; font-src 'self'; worker-src 'self' blob:; child-src 'self' blob:; frame-src 'self' https://accounts.google.com",
+        "default-src 'self'; frame-ancestors *; script-src 'self' 'wasm-unsafe-eval' 'unsafe-inline' https://accounts.google.com; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:4000 http://localhost:8080 https://csrc.nist.gov https://cyber.gouv.fr https://www.bsi.bund.de https://www.commoncriteriaportal.org https://*.google-analytics.com https://*.analytics.google.com https://www.googleapis.com https://accounts.google.com https://oauth2.googleapis.com https://generativelanguage.googleapis.com https://*.huggingface.co https://huggingface.co https://*.hf.co https://raw.githubusercontent.com; img-src 'self' data: blob: https://flagcdn.com; font-src 'self'; worker-src 'self' blob:; child-src 'self' blob:; frame-src 'self' https://accounts.google.com http://localhost:4000",
     },
   },
   test: {

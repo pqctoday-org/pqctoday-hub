@@ -15,9 +15,13 @@ import {
   Workflow,
   Terminal,
   Shield,
+  Container,
+  Network,
+  Globe,
 } from 'lucide-react'
 import { lazyWithRetry } from '@/utils/lazyWithRetry'
 import type { PersonaId } from '@/data/learningPersonas'
+import { SANDBOX_SCENARIOS, type SandboxTrackId } from '@/data/sandboxScenarios'
 
 // ---------------------------------------------------------------------------
 // Tool registry — each entry describes a crypto-executing workshop component
@@ -530,7 +534,39 @@ export const CATEGORIES = [
   'Digital Identity',
   'Blockchain & Digital Assets',
   'Protocol Simulations',
+  'Sandbox',
 ]
+
+/** Prefix applied to sandbox scenario ids to avoid collisions with native tools
+ *  (e.g. sandbox 'tls' vs existing tool 'tls'). The wrapper strips the prefix
+ *  before loading the scenario iframe. */
+export const SANDBOX_TOOL_PREFIX = 'sbx-'
+
+const SANDBOX_ICONS: Record<SandboxTrackId, React.ElementType> = {
+  infrastructure: Container,
+  web: Globe,
+  applications: Network,
+  quantum: Radio,
+}
+
+const SANDBOX_TOOLS: WorkshopTool[] = SANDBOX_SCENARIOS.map((s, idx) => ({
+  id: `${SANDBOX_TOOL_PREFIX}${s.id}`,
+  pt_id: `PT-SBX-${String(idx + 1).padStart(3, '0')}`,
+  version: '1.0.0',
+  name: s.title,
+  description: s.useCase.length > 120 ? `${s.useCase.slice(0, 117)}...` : s.useCase,
+  category: 'Sandbox',
+  algorithms: s.algorithms,
+  icon: SANDBOX_ICONS[s.trackId],
+  moduleLink: '',
+  keywords: Array.from(
+    new Set([s.id, s.tool.name, s.trackId, ...s.algorithms].map((k) => k.toLowerCase()))
+  ),
+  difficulty: s.difficulty,
+  recommendedPersonas: ['developer', 'architect', 'ops'],
+}))
+
+WORKSHOP_TOOLS.push(...SANDBOX_TOOLS)
 
 /** Reverse lookup: tool id → PT-ID (e.g. 'slh-dsa' → 'PT-001') */
 export const PT_ID_MAP: Record<string, string> = Object.fromEntries(
@@ -548,8 +584,17 @@ const LazySuciFlow = lazyWithRetry(() =>
   import('@/components/Playground/SuciFlowRoute').then((m) => ({ default: m.SuciFlowRoute }))
 )
 
+const LazySandboxEmbed = lazyWithRetry(() =>
+  import('@/components/Playground/SandboxScenarioEmbed').then((m) => ({
+    default: m.SandboxScenarioEmbed,
+  }))
+)
+
 export const TOOL_COMPONENTS: Record<string, LazyComp> = {
   'suci-flow': LazySuciFlow,
+  ...Object.fromEntries(
+    SANDBOX_SCENARIOS.map((s) => [`${SANDBOX_TOOL_PREFIX}${s.id}`, LazySandboxEmbed])
+  ),
   'slh-dsa': lazyWithRetry(() =>
     import('@/components/PKILearning/modules/StatefulSignatures/workshop/SLHDSALiveDemo').then(
       (m) => ({ default: m.SLHDSALiveDemo })

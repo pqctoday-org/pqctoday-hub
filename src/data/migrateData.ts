@@ -75,6 +75,43 @@ function deriveCisaCategory(categoryName: string, layer: string): string {
   return 'Enterprise Security'
 }
 
+/**
+ * Derive verification_status from proof fields at load time.
+ * Rules:
+ * - Verified: proof_url present + validation confirms PQC (VALIDATED, FIPS_VERIFIED, CORRECTED)
+ * - Partially Verified: proof_url present but validation incomplete or evidence indirect
+ * - Pending Verification: no proof_url or validation negative
+ * - Preserves manually set "Verified" if proof_url exists (manual override)
+ */
+function deriveVerificationStatus(
+  csvStatus: string,
+  proofUrl?: string,
+  validationResult?: string,
+  evidenceFlags?: string,
+  proofRelevantInfo?: string
+): string {
+  const hasProofUrl = !!(proofUrl || '').trim()
+  const vr = (validationResult || '').toUpperCase()
+  const ef = (evidenceFlags || '').toLowerCase()
+  const hasProofContent = !!(proofRelevantInfo || '').trim()
+
+  // If CSV already says Verified and proof_url exists, trust it
+  if (csvStatus === 'Verified' && hasProofUrl) return 'Verified'
+
+  // Derive from evidence
+  if (hasProofUrl) {
+    if (vr === 'VALIDATED' || vr === 'FIPS_VERIFIED' || vr === 'CORRECTED') return 'Verified'
+    if (vr === 'PARTIALLY_VALIDATED' || vr === 'NEEDS_REVIEW') return 'Partially Verified'
+    if (hasProofContent && !ef.includes('needs-extraction')) return 'Partially Verified'
+    return 'Pending Verification'
+  }
+
+  // No proof_url
+  if (ef.includes('doc-extraction') || ef.includes('iec')) return 'Pending Verification'
+  if (csvStatus && csvStatus !== 'Needs Verification') return csvStatus
+  return 'Needs Verification'
+}
+
 const {
   data: currentItems,
   previousData: previousItems,
@@ -104,7 +141,13 @@ const {
     repositoryUrl: row.repository_url,
     productBrief: row.product_brief,
     sourceType: row.source_type,
-    verificationStatus: row.verification_status,
+    verificationStatus: deriveVerificationStatus(
+      row.verification_status,
+      row.proof_url,
+      row.validation_result,
+      row.evidence_flags,
+      row.proof_relevant_info
+    ),
     lastVerifiedDate: row.last_verified_date,
     migrationPhases: row.migration_phases || '',
     learningModules: row.learning_modules || '',
