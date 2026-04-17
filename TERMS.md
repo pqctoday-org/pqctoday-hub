@@ -5,7 +5,7 @@
 
 ## 1. Acceptance of Terms
 
-By accessing or using PQC Today (the "Platform"), available at [https://pqctoday.github.io/pqc-timeline-app/](https://pqctoday.github.io/pqc-timeline-app/) and its associated GitHub repositories, you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, do not access or use the Platform.
+By accessing or using PQC Today (the "Platform"), available at [https://pqctoday.github.io/pqctoday-hub/](https://pqctoday.github.io/pqctoday-hub/) and its associated GitHub repositories, you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, do not access or use the Platform.
 
 ## 2. License
 
@@ -105,7 +105,7 @@ These Terms are governed by and construed in accordance with the laws of the Sta
 
 ## 13. Contact
 
-For questions about these Terms, please open a discussion on [GitHub Discussions](https://github.com/pqctoday/pqc-timeline-app/discussions) or contact the maintainers through the repository.
+For questions about these Terms, please open a discussion on [GitHub Discussions](https://github.com/pqctoday/pqctoday-hub/discussions) or contact the maintainers through the repository.
 
 ---
 

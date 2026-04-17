@@ -430,7 +430,7 @@ export const PKILearningView: React.FC = () => {
               Learning module content can be inaccurate. Please double-check its information. Report
               inaccuracies in{' '}
               <a
-                href="https://github.com/pqctoday/pqc-timeline-app/discussions"
+                href="https://github.com/pqctoday/pqctoday-hub/discussions"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline hover:text-foreground transition-colors"

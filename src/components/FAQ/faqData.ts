@@ -617,7 +617,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'Is PQC Today open source?',
         answer:
-          'Yes, PQC Today is fully open source under the GPL-3.0 license, with source code available on GitHub at pqctoday/pqc-timeline-app. Community contributions are welcome for new modules, data updates, and platform improvements. The codebase is a React SPA built with TypeScript, Vite, and Tailwind CSS.',
+          'Yes, PQC Today is fully open source under the GPL-3.0 license, with source code available on GitHub at pqctoday/pqctoday-hub. Community contributions are welcome for new modules, data updates, and platform improvements. The codebase is a React SPA built with TypeScript, Vite, and Tailwind CSS.',
         deepLink: '/about',
       },
       {

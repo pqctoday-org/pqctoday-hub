@@ -63,7 +63,7 @@ const LEADER_TEMPLATE = `**Name:** [Your full name]
 **LinkedIn or Profile URL:** [Your public profile link]`
 
 const DISCUSSION_NEW_URL = (() => {
-  const base = 'https://github.com/pqctoday/pqc-timeline-app/discussions/new'
+  const base = 'https://github.com/pqctoday/pqctoday-hub/discussions/new'
   const params = new URLSearchParams({
     category: 'i-consent-to-be-added-as-a-pqc-leader',
     title: 'I consent to be added as a PQC Leader',

@@ -22,7 +22,7 @@ PQC Today is maintained by a single maintainer who reviews and merges all change
 
 If you spot a missing record, outdated entry, or incorrect information in any dataset (Library, Timeline, Migrate catalog, Threats, Leaders):
 
-1. [Open a Data Suggestion issue](https://github.com/pqctoday/pqc-timeline-app/issues/new?template=data_suggestion.yml)
+1. [Open a Data Suggestion issue](https://github.com/pqctoday/pqctoday-hub/issues/new?template=data_suggestion.yml)
 2. Fill in the suggestion type, dataset, source URL, and description
 3. The maintainer validates the source and implements the change
 4. You'll be credited in the release notes when it ships
@@ -35,7 +35,7 @@ If you spot a missing record, outdated entry, or incorrect information in any da
 
 ### Joining Discussions
 
-[GitHub Discussions](https://github.com/pqctoday/pqc-timeline-app/discussions) is the place to:
+[GitHub Discussions](https://github.com/pqctoday/pqctoday-hub/discussions) is the place to:
 
 - **Share case studies** — real-world PQC migration experiences (anonymized or public)
 - **Post implementation guides** — how you configured TLS 1.3 with ML-KEM, migrated HSMs, etc.
@@ -45,13 +45,13 @@ If you spot a missing record, outdated entry, or incorrect information in any da
 
 ### Reporting Bugs
 
-1. Check [Issues](https://github.com/pqctoday/pqc-timeline-app/issues) to see if it's already reported
-2. Open a [Bug Report](https://github.com/pqctoday/pqc-timeline-app/issues/new?template=bug_report.yml)
+1. Check [Issues](https://github.com/pqctoday/pqctoday-hub/issues) to see if it's already reported
+2. Open a [Bug Report](https://github.com/pqctoday/pqctoday-hub/issues/new?template=bug_report.yml)
 3. Include steps to reproduce, expected behavior, and screenshots if applicable
 
 ### Suggesting Features
 
-Open a [Feature Request](https://github.com/pqctoday/pqc-timeline-app/issues/new?template=feature_request.yml) describing the problem you'd like solved and why it would be useful.
+Open a [Feature Request](https://github.com/pqctoday/pqctoday-hub/issues/new?template=feature_request.yml) describing the problem you'd like solved and why it would be useful.
 
 ---
 

@@ -682,7 +682,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/pqctoday/pqc-timeline-app.git
+   git clone https://github.com/pqctoday/pqctoday-hub.git
    cd pqc-timeline-app
    ```
 

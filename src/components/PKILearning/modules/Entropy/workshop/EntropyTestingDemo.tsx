@@ -467,7 +467,7 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
           . No standalone entropy-source products are currently cataloged; contributions welcome via
           the{' '}
           <a
-            href="https://github.com/pqctoday/pqc-timeline-app/issues"
+            href="https://github.com/pqctoday/pqctoday-hub/issues"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary hover:underline"

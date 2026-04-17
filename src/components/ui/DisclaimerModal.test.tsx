@@ -57,7 +57,7 @@ describe('DisclaimerModal', () => {
     const githubLink = screen.getByRole('link', { name: /GitHub Discussions/ })
     expect(githubLink).toHaveAttribute(
       'href',
-      'https://github.com/pqctoday/pqc-timeline-app/discussions/108'
+      'https://github.com/pqctoday/pqctoday-hub/discussions/108'
     )
     expect(githubLink).toHaveAttribute('target', '_blank')
     expect(githubLink).toHaveAttribute('rel', 'noopener noreferrer')

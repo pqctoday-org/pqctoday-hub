@@ -13,7 +13,7 @@ const REMOVAL_TEMPLATE = `**Name:** [Your full name or the name listed on the pa
 **Reason:** [Optional — no questions asked]`
 
 const DISCUSSION_NEW_URL = (() => {
-  const base = 'https://github.com/pqctoday/pqc-timeline-app/discussions/new'
+  const base = 'https://github.com/pqctoday/pqctoday-hub/discussions/new'
   const params = new URLSearchParams({
     category: 'i-consent-to-be-added-as-a-pqc-leader',
     title: 'Request removal as a PQC Leader',

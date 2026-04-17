@@ -14,13 +14,13 @@
   ],
   "author": "PQC Today",
   "license": "BSD-2-Clause",
-  "homepage": "https://github.com/pqctoday/softhsmv3",
+  "homepage": "https://github.com/pqctoday/pqctoday-hsm",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pqctoday/softhsmv3.git"
+    "url": "git+https://github.com/pqctoday/pqctoday-hsm.git"
   },
   "bugs": {
-    "url": "https://github.com/pqctoday/softhsmv3/issues"
+    "url": "https://github.com/pqctoday/pqctoday-hsm/issues"
   },
   "files": [
     "wasm/softhsm.js",

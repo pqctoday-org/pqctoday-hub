@@ -44,12 +44,12 @@ export function TermsView() {
           <p>
             By accessing or using PQC Today (the &ldquo;Platform&rdquo;), available at{' '}
             <a
-              href="https://pqctoday.github.io/pqc-timeline-app/"
+              href="https://pqctoday.github.io/pqctoday-hub/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-accent hover:underline"
             >
-              pqctoday.github.io/pqc-timeline-app
+              pqctoday.github.io/pqctoday-hub
             </a>{' '}
             and its associated GitHub repositories, you agree to be bound by these Terms of Service
             (&ldquo;Terms&rdquo;). If you do not agree to these Terms, do not access or use the
@@ -63,7 +63,7 @@ export function TermsView() {
             <strong>GNU General Public License v3.0 (GPL-3.0-only)</strong>. The full license text
             is available in the{' '}
             <a
-              href="https://github.com/pqctoday/pqc-timeline-app/blob/main/LICENSE"
+              href="https://github.com/pqctoday/pqctoday-hub/blob/main/LICENSE"
               target="_blank"
               rel="noopener noreferrer"
               className="text-accent hover:underline inline-flex items-center gap-1"
@@ -327,7 +327,7 @@ export function TermsView() {
           <p>
             For questions about these Terms, please open a discussion on{' '}
             <a
-              href="https://github.com/pqctoday/pqc-timeline-app/discussions"
+              href="https://github.com/pqctoday/pqctoday-hub/discussions"
               target="_blank"
               rel="noopener noreferrer"
               className="text-accent hover:underline inline-flex items-center gap-1"

@@ -10,7 +10,7 @@ describe('FlagButton', () => {
   })
 
   const baseProps = {
-    flagUrl: 'https://github.com/pqctoday/pqc-timeline-app/discussions/new?category=test',
+    flagUrl: 'https://github.com/pqctoday/pqctoday-hub/discussions/new?category=test',
     resourceLabel: 'FIPS-203',
     resourceType: 'Library',
   }

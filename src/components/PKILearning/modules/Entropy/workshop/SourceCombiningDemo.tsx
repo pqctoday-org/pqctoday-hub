@@ -246,7 +246,7 @@ export const SourceCombiningDemo: React.FC = () => {
             SP 800-90 series source assembly and conditioning. Default flow follows NIST standards
             (90C §3.1 concatenation + 90A §10.3.1 Hash_df). Powered by{' '}
             <a
-              href="https://github.com/pqctoday/softhsmv3"
+              href="https://github.com/pqctoday/pqctoday-hsm"
               target="_blank"
               rel="noopener noreferrer"
               className="text-primary hover:underline inline-flex items-center gap-1"

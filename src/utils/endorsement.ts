@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { logEvent } from './analytics'
 
-const DISCUSSIONS_NEW_BASE = 'https://github.com/pqctoday/pqc-timeline-app/discussions/new'
-const DISCUSSIONS_SEARCH_BASE = 'https://github.com/pqctoday/pqc-timeline-app/discussions'
+const DISCUSSIONS_NEW_BASE = 'https://github.com/pqctoday/pqctoday-hub/discussions/new'
+const DISCUSSIONS_SEARCH_BASE = 'https://github.com/pqctoday/pqctoday-hub/discussions'
 
 /**
  * Build a GitHub Discussions search URL for a resource label.

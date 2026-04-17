@@ -27,7 +27,7 @@ export function LicenseSection() {
         </p>
         <div className="mt-4 flex flex-col gap-2">
           <a
-            href="https://github.com/pqctoday/pqc-timeline-app/blob/main/LICENSE"
+            href="https://github.com/pqctoday/pqctoday-hub/blob/main/LICENSE"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-primary hover:underline hover:text-primary/80 transition-colors"
@@ -36,7 +36,7 @@ export function LicenseSection() {
             View Full License
           </a>
           <a
-            href="https://github.com/pqctoday/pqc-timeline-app"
+            href="https://github.com/pqctoday/pqctoday-hub"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-primary hover:underline hover:text-primary/80 transition-colors"

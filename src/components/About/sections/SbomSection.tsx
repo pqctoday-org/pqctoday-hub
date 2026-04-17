@@ -274,7 +274,7 @@ export function SbomSection() {
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <a
-                      href="https://github.com/pqctoday/softhsmv3/releases/tag/v0.4.23"
+                      href="https://github.com/pqctoday/pqctoday-hsm/releases/tag/v0.4.23"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary hover:underline flex items-center gap-1"

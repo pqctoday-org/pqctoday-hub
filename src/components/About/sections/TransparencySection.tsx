@@ -77,7 +77,7 @@ export function TransparencySection() {
         </p>
         <div className="flex flex-wrap gap-3 mt-3">
           <a
-            href="https://github.com/pqctoday/pqc-timeline-app/discussions/108"
+            href="https://github.com/pqctoday/pqctoday-hub/discussions/108"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-sm text-primary hover:underline"

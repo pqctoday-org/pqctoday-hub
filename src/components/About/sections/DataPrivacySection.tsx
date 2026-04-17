@@ -78,7 +78,7 @@ export function DataPrivacySection() {
                   <strong className="text-foreground">Full transparency</strong> &mdash; the entire
                   source code is{' '}
                   <a
-                    href="https://github.com/pqctoday/pqc-timeline-app"
+                    href="https://github.com/pqctoday/pqctoday-hub"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-primary hover:underline"

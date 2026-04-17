@@ -429,7 +429,7 @@ export const MainLayout = () => {
             Content may be inaccurate. Please verify information independently. Report inaccuracies
             in{' '}
             <a
-              href="https://github.com/pqctoday/pqc-timeline-app/discussions"
+              href="https://github.com/pqctoday/pqctoday-hub/discussions"
               target="_blank"
               rel="noopener noreferrer"
               className="underline hover:text-foreground transition-colors"

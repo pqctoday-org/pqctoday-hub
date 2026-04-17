@@ -73,7 +73,7 @@ export const HistoryModal = ({
       setError(null)
       try {
         const response = await fetch(
-          `https://api.github.com/repos/pqctoday/pqc-timeline-app/issues?labels=${encodeURIComponent(ghLabel)}&state=all&per_page=30`
+          `https://api.github.com/repos/pqctoday/pqctoday-hub/issues?labels=${encodeURIComponent(ghLabel)}&state=all&per_page=30`
         )
         if (!response.ok) throw new Error(`GitHub API error: ${response.status}`)
         const data = await response.json()
