@@ -5,7 +5,7 @@ import { Pkcs11LogPanel } from '../shared/Pkcs11LogPanel'
 import { Card } from '../ui/card'
 import { Button } from '../ui/button'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Play, Upload, UploadCloud, TerminalSquare, Copy, Check } from 'lucide-react'
+import { X, Play, UploadCloud, TerminalSquare, Copy, Check } from 'lucide-react'
 import type { Pkcs11LogEntry } from '../../wasm/softhsm'
 
 type TestScenario = 'tls' | 'ssh' | 'vpn' | 'pki' | 'sequoia' | 'web3'
@@ -20,12 +20,84 @@ interface TileBlueprint {
 }
 
 const TILES: TileBlueprint[] = [
-  { id: 'tls', title: 'OpenSSL 3.6 TLS 1.3', description: 'Evaluate ML-KEM Key Encapsulation within a TLS tunnel.', icon: Globe, steps: ['1. Initialize OpenSSL s_server bound to SoftHSMv3', '2. Connect s_client using ML-KEM OID', '3. Capture Ephemeral KEM establishment', '4. Complete TLS handshake over loopback'], expected: 'CKR_OK returning derived shared secret confirming ML-KEM parity.' },
-  { id: 'ssh', title: 'OpenSSH Connectivity', description: 'Extract hardware-bound identities dynamically via ssh-agent.', icon: Server, steps: ['1. Launch ssh-agent mapping pkcs11-provider', '2. Inject ML-DSA-87 public key via ssh-add', '3. Initialize SSH connection over loopback', '4. Intercept PKCS#11 C_Sign during auth'], expected: 'CKR_OK producing a valid 4627-byte ML-DSA signature.' },
-  { id: 'vpn', title: 'strongSwan IPsec', description: 'Simulate IKEv2 negotiations securely over the loopback protocol.', icon: Link2, steps: ['1. Start strongSwan charon daemon', '2. Load SoftHSMv3 PKCS#11 plugin natively', '3. Initiate IKEv2 PQC tunnel establishment', '4. Sign IKE_AUTH hash using ML-DSA'], expected: 'Tunnel established and C_Sign returning CKR_OK for IKE authentication.' },
-  { id: 'pki', title: 'Easy-RSA PKI', description: 'Generate Enterprise ML-DSA Certificate Authorities recursively.', icon: FileSignature, steps: ['1. Build Easy-RSA skeleton environment', '2. Issue Root CA using ML-DSA-44', '3. Provision Server constraints', '4. Verify Cert chain cryptographic validity'], expected: 'C_SignInit and C_Sign returning valid X.509 Certificate structures.' },
-  { id: 'sequoia', title: 'Sequoia PGP', description: 'Assert software code signing dynamically over internal pipelines.', icon: Box, steps: ['1. Initialize Sequoia sq backend', '2. Generate OpenPGP ML-DSA bind', '3. Sign mock software binary artifact', '4. Validate detached signature integrity'], expected: 'Software artifact securely signed and validated returning CKR_OK.' },
-  { id: 'web3', title: 'Web3 & Identity', description: 'Ethereum JSON-RPC and IOTA Identity execution boundaries.', icon: Lock, steps: ['1. Instantiate Ethereum Key manager payload', '2. Sign EIP-1559 transaction natively', '3. Validate DID (Distributed ID) core', '4. Verify smart contract execution signature'], expected: 'Transaction hash derived securely over PKCS#11 provider.' }
+  {
+    id: 'tls',
+    title: 'OpenSSL 3.6 TLS 1.3',
+    description: 'Evaluate ML-KEM Key Encapsulation within a TLS tunnel.',
+    icon: Globe,
+    steps: [
+      '1. Initialize OpenSSL s_server bound to SoftHSMv3',
+      '2. Connect s_client using ML-KEM OID',
+      '3. Capture Ephemeral KEM establishment',
+      '4. Complete TLS handshake over loopback',
+    ],
+    expected: 'CKR_OK returning derived shared secret confirming ML-KEM parity.',
+  },
+  {
+    id: 'ssh',
+    title: 'OpenSSH Connectivity',
+    description: 'Extract hardware-bound identities dynamically via ssh-agent.',
+    icon: Server,
+    steps: [
+      '1. Launch ssh-agent mapping pkcs11-provider',
+      '2. Inject ML-DSA-87 public key via ssh-add',
+      '3. Initialize SSH connection over loopback',
+      '4. Intercept PKCS#11 C_Sign during auth',
+    ],
+    expected: 'CKR_OK producing a valid 4627-byte ML-DSA signature.',
+  },
+  {
+    id: 'vpn',
+    title: 'strongSwan IPsec',
+    description: 'Simulate IKEv2 negotiations securely over the loopback protocol.',
+    icon: Link2,
+    steps: [
+      '1. Start strongSwan charon daemon',
+      '2. Load SoftHSMv3 PKCS#11 plugin natively',
+      '3. Initiate IKEv2 PQC tunnel establishment',
+      '4. Sign IKE_AUTH hash using ML-DSA',
+    ],
+    expected: 'Tunnel established and C_Sign returning CKR_OK for IKE authentication.',
+  },
+  {
+    id: 'pki',
+    title: 'Easy-RSA PKI',
+    description: 'Generate Enterprise ML-DSA Certificate Authorities recursively.',
+    icon: FileSignature,
+    steps: [
+      '1. Build Easy-RSA skeleton environment',
+      '2. Issue Root CA using ML-DSA-44',
+      '3. Provision Server constraints',
+      '4. Verify Cert chain cryptographic validity',
+    ],
+    expected: 'C_SignInit and C_Sign returning valid X.509 Certificate structures.',
+  },
+  {
+    id: 'sequoia',
+    title: 'Sequoia PGP',
+    description: 'Assert software code signing dynamically over internal pipelines.',
+    icon: Box,
+    steps: [
+      '1. Initialize Sequoia sq backend',
+      '2. Generate OpenPGP ML-DSA bind',
+      '3. Sign mock software binary artifact',
+      '4. Validate detached signature integrity',
+    ],
+    expected: 'Software artifact securely signed and validated returning CKR_OK.',
+  },
+  {
+    id: 'web3',
+    title: 'Web3 & Identity',
+    description: 'Ethereum JSON-RPC and IOTA Identity execution boundaries.',
+    icon: Lock,
+    steps: [
+      '1. Instantiate Ethereum Key manager payload',
+      '2. Sign EIP-1559 transaction natively',
+      '3. Validate DID (Distributed ID) core',
+      '4. Verify smart contract execution signature',
+    ],
+    expected: 'Transaction hash derived securely over PKCS#11 provider.',
+  },
 ]
 
 export const DockerPlaygroundView = () => {
@@ -38,7 +110,7 @@ export const DockerPlaygroundView = () => {
   const [copiedRun, setCopiedRun] = useState(false)
   const fileInputRef = React.useRef<HTMLInputElement>(null)
   const [isUploading, setIsUploading] = useState(false)
-  
+
   const [engineTelemetry, setEngineTelemetry] = useState<Record<string, string> | null>(null)
   const [telemetryLoading, setTelemetryLoading] = useState(false)
   const [resetLoading, setResetLoading] = useState(false)
@@ -51,10 +123,10 @@ export const DockerPlaygroundView = () => {
       if (data.status === 200 && data.telemetry) {
         setEngineTelemetry(data.telemetry)
       } else {
-        throw new Error("Invalid telemetry return")
+        throw new Error('Invalid telemetry return')
       }
-    } catch(err) {
-      setErrorMsg("Failed to perform Engine Handshake over port 8080.")
+    } catch {
+      setErrorMsg('Failed to perform Engine Handshake over port 8080.')
     } finally {
       setTelemetryLoading(false)
     }
@@ -64,11 +136,11 @@ export const DockerPlaygroundView = () => {
     setResetLoading(true)
     try {
       const res = await fetch(`http://localhost:8080/api/cleanup`, { method: 'POST' })
-      if (!res.ok) throw new Error("Reset target failed.")
+      if (!res.ok) throw new Error('Reset target failed.')
       // Re-trigger telemetry handshake to validate daemons were killed
       await handleFetchTelemetry()
-    } catch(err) {
-      setErrorMsg("Failed to cleanly reset Background Sandbox services.")
+    } catch {
+      setErrorMsg('Failed to cleanly reset Background Sandbox services.')
     } finally {
       setResetLoading(false)
     }
@@ -90,22 +162,24 @@ export const DockerPlaygroundView = () => {
     setErrorMsg(null)
     try {
       const res = await fetch(`http://localhost:8080/api/run/${scenario}`, {
-        method: 'POST'
+        method: 'POST',
       })
-      
+
       if (!res.ok) {
-        throw new Error("HTTP Docker Bridge failed to connect!")
+        throw new Error('HTTP Docker Bridge failed to connect!')
       }
-      
+
       const data = await res.json()
       if (data.status === 200 && data.log) {
         // Shift exact chronological array up dynamically mapped from spy traces
         setHsmLog(data.log)
       } else {
-        throw new Error("Playground API returned malformed data.")
+        throw new Error('Playground API returned malformed data.')
       }
-    } catch (err: any) {
-      setErrorMsg(`Connection error to Docker API on port 8080: ${err.message}`)
+    } catch (err: unknown) {
+      setErrorMsg(
+        `Connection error to Docker API on port 8080: ${err instanceof Error ? err.message : String(err)}`
+      )
       setHsmLog([])
     } finally {
       setLoading(null)
@@ -121,33 +195,33 @@ export const DockerPlaygroundView = () => {
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    
+
     setIsUploading(true)
     setErrorMsg(null)
-    
+
     const formData = new FormData()
     formData.append('file', file)
-    
+
     try {
       const res = await fetch(`http://localhost:8080/api/upload`, {
         method: 'POST',
-        body: formData
+        body: formData,
       })
       if (!res.ok) {
-        throw new Error("Failed to parse trace log on backend.")
+        throw new Error('Failed to parse trace log on backend.')
       }
       const data = await res.json()
       if (data.status === 200 && data.log) {
         setHsmLog(data.log)
       } else {
-        throw new Error(data.error || "Malformed trace log")
+        throw new Error(data.error || 'Malformed trace log')
       }
-    } catch (err: any) {
-      setErrorMsg(`Upload parsing error: ${err.message}`)
+    } catch (err: unknown) {
+      setErrorMsg(`Upload parsing error: ${err instanceof Error ? err.message : String(err)}`)
     } finally {
       setIsUploading(false)
       // Reset input so the same file can be uploaded again if needed
-      if (fileInputRef.current) fileInputRef.current.value = ""
+      if (fileInputRef.current) fileInputRef.current.value = ''
     }
   }
 
@@ -166,39 +240,68 @@ export const DockerPlaygroundView = () => {
 
       <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 mb-6">
         <p className="text-sm text-foreground/80">
-          These test scenarios execute entirely inside the powerful <strong>pqctoday-playground</strong> C++ Docker monolith via local API mappings (localhost:8080).
-          Click any target below to spawn an isolated cryptographic workflow securely evaluating the specific protocol. The resulting hardware telemetry will be seamlessly ported directly into your frontend here!
+          These test scenarios execute entirely inside the powerful{' '}
+          <strong>pqctoday-playground</strong> C++ Docker monolith via local API mappings
+          (localhost:8080). Click any target below to spawn an isolated cryptographic workflow
+          securely evaluating the specific protocol. The resulting hardware telemetry will be
+          seamlessly ported directly into your frontend here!
         </p>
-        
+
         <div className="mt-4 border-t border-primary/20 pt-4">
-           {!engineTelemetry ? (
-             <Button onClick={handleFetchTelemetry} variant="secondary" size="sm" disabled={telemetryLoading} className="gap-2 shrink-0">
-               {telemetryLoading ? <span className="animate-spin w-3 h-3 border-2 border-current border-t-transparent rounded-full" /> : <Server size={14} />} 
-               Perform Engine Telemetry Handshake
-             </Button>
-           ) : (
-             <div className="space-y-2">
-                 <div className="flex items-center justify-between mb-2">
-                     <p className="text-xs font-semibold text-status-success uppercase flex items-center gap-1.5"><Check size={12}/> Handshake Successful</p>
-                     <div className="flex gap-2">
-                       <Button variant="ghost" size="sm" className="h-6 text-[10px]" onClick={handleFetchTelemetry} disabled={telemetryLoading}>
-                         Refresh Sync
-                       </Button>
-                       <Button variant="destructive" size="sm" className="h-6 text-[10px]" onClick={handleResetSandbox} disabled={resetLoading}>
-                         {resetLoading ? 'Resetting...' : 'Force Reset Services'}
-                       </Button>
-                     </div>
-                 </div>
-                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                   {Object.entries(engineTelemetry).map(([key, val]) => (
-                      <div key={key} className="bg-black/20 p-2.5 rounded-lg border border-primary/20">
-                         <p className="text-[10px] text-primary uppercase font-bold tracking-wider">{key}</p>
-                         <p className="text-xs font-mono text-foreground/85 mt-1 break-words">{val}</p>
-                      </div>
-                   ))}
-                 </div>
-             </div>
-           )}
+          {!engineTelemetry ? (
+            <Button
+              onClick={handleFetchTelemetry}
+              variant="secondary"
+              size="sm"
+              disabled={telemetryLoading}
+              className="gap-2 shrink-0"
+            >
+              {telemetryLoading ? (
+                <span className="animate-spin w-3 h-3 border-2 border-current border-t-transparent rounded-full" />
+              ) : (
+                <Server size={14} />
+              )}
+              Perform Engine Telemetry Handshake
+            </Button>
+          ) : (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs font-semibold text-status-success uppercase flex items-center gap-1.5">
+                  <Check size={12} /> Handshake Successful
+                </p>
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 text-[10px]"
+                    onClick={handleFetchTelemetry}
+                    disabled={telemetryLoading}
+                  >
+                    Refresh Sync
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    className="h-6 text-[10px]"
+                    onClick={handleResetSandbox}
+                    disabled={resetLoading}
+                  >
+                    {resetLoading ? 'Resetting...' : 'Force Reset Services'}
+                  </Button>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {Object.entries(engineTelemetry).map(([key, val]) => (
+                  <div key={key} className="bg-black/20 p-2.5 rounded-lg border border-primary/20">
+                    <p className="text-[10px] text-primary uppercase font-bold tracking-wider">
+                      {key}
+                    </p>
+                    <p className="text-xs font-mono text-foreground/85 mt-1 break-words">{val}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -211,12 +314,11 @@ export const DockerPlaygroundView = () => {
             <div className="shrink-0 w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
               <TerminalSquare className="w-5 h-5 text-primary" aria-hidden="true" />
             </div>
-            <h4 className="font-semibold text-foreground flex-1">
-              Initialize Local Engine
-            </h4>
+            <h4 className="font-semibold text-foreground flex-1">Initialize Local Engine</h4>
           </div>
           <p className="text-sm text-muted-foreground flex-1">
-            Install and run the complete hardware simulation environment via GHCR in less than 30 seconds.
+            Install and run the complete hardware simulation environment via GHCR in less than 30
+            seconds.
           </p>
           <Button
             onClick={() => setShowInstallGuide(true)}
@@ -231,27 +333,23 @@ export const DockerPlaygroundView = () => {
           const Icon = tile.icon
           const isActing = loading === tile.id
           const disabled = loading !== null
-          
+
           return (
             <div key={tile.id} className="glass-panel p-5 flex flex-col items-start gap-4">
               <div className="flex items-center gap-3 w-full">
                 <div className="shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                   <Icon className="w-5 h-5 text-primary" aria-hidden="true" />
                 </div>
-                <h4 className="font-semibold text-foreground flex-1">
-                  {tile.title}
-                </h4>
+                <h4 className="font-semibold text-foreground flex-1">{tile.title}</h4>
               </div>
-              
-              <p className="text-sm text-muted-foreground flex-1">
-                {tile.description}
-              </p>
+
+              <p className="text-sm text-muted-foreground flex-1">{tile.description}</p>
 
               <Button
                 onClick={() => setActiveModal(tile)}
                 disabled={disabled}
                 className="w-full mt-2"
-                variant={isActing ? "secondary" : "outline"}
+                variant={isActing ? 'secondary' : 'outline'}
               >
                 {isActing ? (
                   <span className="flex items-center gap-2">
@@ -259,7 +357,7 @@ export const DockerPlaygroundView = () => {
                     Simulating...
                   </span>
                 ) : (
-                  "View Overview"
+                  'View Overview'
                 )}
               </Button>
             </div>
@@ -277,42 +375,52 @@ export const DockerPlaygroundView = () => {
 
       {/* Interactive Spy Parser Log Terminal */}
       <div className="mt-auto">
-         <div className="flex justify-between items-center bg-card-header p-3 border border-border rounded-t-xl mt-4">
-            <h4 className="flex items-center gap-2 font-medium text-sm">
-                <FileSignature size={14} className="text-primary"/> 
-                PKCS#11 Trace Pipeline
-            </h4>
-            <div className="flex items-center gap-2">
-                <input 
-                  type="file" 
-                  ref={fileInputRef} 
-                  onChange={handleFileUpload} 
-                  accept=".log,.txt,text/*" 
-                  className="hidden" 
-                />
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => fileInputRef.current?.click()} 
-                  disabled={isUploading} 
-                  className="h-6 gap-1 text-xs px-2"
-                >
-                    {isUploading ? <span className="animate-spin w-3 h-3 border-2 border-current border-t-transparent rounded-full" /> : <UploadCloud size={12} />} 
-                    Upload Trace
-                </Button>
-                <Button variant="ghost" size="sm" onClick={clearLog} disabled={hsmLog.length === 0} className="h-6 gap-1 text-xs px-2">
-                    <Trash2 size={12} /> Clear Stream
-                </Button>
-            </div>
-         </div>
-         <div className="border border-t-0 border-border rounded-b-xl overflow-hidden shadow-inner">
-             <Pkcs11LogPanel 
-                log={hsmLog} 
-                onClear={clearLog} 
-                defaultOpen={true} 
-                className="border-none shadow-none bg-transparent" 
-             />
-         </div>
+        <div className="flex justify-between items-center bg-card-header p-3 border border-border rounded-t-xl mt-4">
+          <h4 className="flex items-center gap-2 font-medium text-sm">
+            <FileSignature size={14} className="text-primary" />
+            PKCS#11 Trace Pipeline
+          </h4>
+          <div className="flex items-center gap-2">
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileUpload}
+              accept=".log,.txt,text/*"
+              className="hidden"
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploading}
+              className="h-6 gap-1 text-xs px-2"
+            >
+              {isUploading ? (
+                <span className="animate-spin w-3 h-3 border-2 border-current border-t-transparent rounded-full" />
+              ) : (
+                <UploadCloud size={12} />
+              )}
+              Upload Trace
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearLog}
+              disabled={hsmLog.length === 0}
+              className="h-6 gap-1 text-xs px-2"
+            >
+              <Trash2 size={12} /> Clear Stream
+            </Button>
+          </div>
+        </div>
+        <div className="border border-t-0 border-border rounded-b-xl overflow-hidden shadow-inner">
+          <Pkcs11LogPanel
+            log={hsmLog}
+            onClear={clearLog}
+            defaultOpen={true}
+            className="border-none shadow-none bg-transparent"
+          />
+        </div>
       </div>
 
       <AnimatePresence>
@@ -347,17 +455,23 @@ export const DockerPlaygroundView = () => {
                     <p className="text-xs text-muted-foreground mt-0.5">Execution Overview</p>
                   </div>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => setActiveModal(null)} aria-label="Close modal" className="shrink-0">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setActiveModal(null)}
+                  aria-label="Close modal"
+                  className="shrink-0"
+                >
                   <X size={20} />
                 </Button>
               </div>
 
-              <p className="text-sm text-foreground/80 my-4">
-                {activeModal.description}
-              </p>
+              <p className="text-sm text-foreground/80 my-4">{activeModal.description}</p>
 
               <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 mb-4">
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">Execution Steps</h4>
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">
+                  Execution Steps
+                </h4>
                 <ul className="space-y-1.5 pl-1">
                   {activeModal.steps.map((step, idx) => (
                     <li key={idx} className="text-xs text-muted-foreground">
@@ -368,17 +482,17 @@ export const DockerPlaygroundView = () => {
               </div>
 
               <div className="bg-status-success/5 border border-status-success/20 rounded-lg p-3 mb-6">
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-status-success mb-1">Expected Telemetry</h4>
-                <p className="text-xs text-muted-foreground">
-                  {activeModal.expected}
-                </p>
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-status-success mb-1">
+                  Expected Telemetry
+                </h4>
+                <p className="text-xs text-muted-foreground">{activeModal.expected}</p>
               </div>
 
               <Button
                 className="w-full gap-2 font-bold"
                 onClick={() => handleExecute(activeModal.id)}
               >
-                <Play className="w-4 h-4 fill-current"/>
+                <Play className="w-4 h-4 fill-current" />
                 Confirm & Execute Simulation
               </Button>
             </motion.div>
@@ -416,67 +530,100 @@ export const DockerPlaygroundView = () => {
                     <h2 id="install-modal-title" className="text-xl font-bold leading-tight">
                       Deploy Engine via GHCR
                     </h2>
-                    <p className="text-xs text-muted-foreground mt-0.5">Automated Execution Environment</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Automated Execution Environment
+                    </p>
                   </div>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => setShowInstallGuide(false)} aria-label="Close modal">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowInstallGuide(false)}
+                  aria-label="Close modal"
+                >
                   <X size={20} />
                 </Button>
               </div>
 
               <div className="space-y-4">
                 <p className="text-sm text-foreground/90">
-                  Because this platform natively integrates OpenSSH, strongSwan, and TLS 1.3 compiling across massively heavy cryptography payloads, the execution relies on our automated headless container.
+                  Because this platform natively integrates OpenSSH, strongSwan, and TLS 1.3
+                  compiling across massively heavy cryptography payloads, the execution relies on
+                  our automated headless container.
                 </p>
                 <div className="bg-muted border border-border rounded-lg p-4">
-                  <p className="text-xs font-semibold uppercase text-muted-foreground mb-2">Step 1: Authenticate (Private Access)</p>
+                  <p className="text-xs font-semibold uppercase text-muted-foreground mb-2">
+                    Step 1: Authenticate (Private Access)
+                  </p>
                   <p className="text-xs text-foreground/70 mb-3">
-                    If this package is configured securely for private distribution, authenticate via your GitHub Personal Access Token (PAT):
+                    If this package is configured securely for private distribution, authenticate
+                    via your GitHub Personal Access Token (PAT):
                   </p>
                   <div className="relative group mb-4">
                     <pre className="bg-black text-blue-400 p-3 rounded-md text-xs font-mono overflow-x-auto">
                       docker login ghcr.io -u &lt;username&gt; -p &lt;token&gt;
                     </pre>
-                    <Button 
-                      onClick={() => handleCopy("docker login ghcr.io -u <username> -p <token>", 'login')} 
-                      size="icon" 
-                      variant="outline" 
+                    <Button
+                      onClick={() =>
+                        handleCopy('docker login ghcr.io -u <username> -p <token>', 'login')
+                      }
+                      size="icon"
+                      variant="outline"
                       className="absolute top-1 right-1 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity bg-black border-zinc-700 hover:bg-zinc-800 focus:opacity-100"
                     >
-                      {copiedLogin ? <Check size={12} className="text-status-success"/> : <Copy size={12} className="text-white"/>}
+                      {copiedLogin ? (
+                        <Check size={12} className="text-status-success" />
+                      ) : (
+                        <Copy size={12} className="text-white" />
+                      )}
                     </Button>
                   </div>
 
-                  <p className="text-xs font-semibold uppercase text-muted-foreground mb-2 mt-4">Step 2: Execute Container</p>
+                  <p className="text-xs font-semibold uppercase text-muted-foreground mb-2 mt-4">
+                    Step 2: Execute Container
+                  </p>
                   <p className="text-xs text-foreground/70 mb-3">
-                    Ensure Docker Desktop or OrbStack is running, then paste this into your terminal. It will instantly pull and run the environment in the background.
+                    Ensure Docker Desktop or OrbStack is running, then paste this into your
+                    terminal. It will instantly pull and run the environment in the background.
                   </p>
                   <div className="relative group">
                     <pre className="bg-black text-green-400 p-3 rounded-md text-xs font-mono overflow-x-auto">
                       docker run -d -p 8080:8080 ghcr.io/pqctoday/pqctoday-playground:latest
                     </pre>
-                    <Button 
-                      onClick={() => handleCopy("docker run -d -p 8080:8080 ghcr.io/pqctoday/pqctoday-playground:latest", 'run')} 
-                      size="icon" 
-                      variant="outline" 
+                    <Button
+                      onClick={() =>
+                        handleCopy(
+                          'docker run -d -p 8080:8080 ghcr.io/pqctoday/pqctoday-playground:latest',
+                          'run'
+                        )
+                      }
+                      size="icon"
+                      variant="outline"
                       className="absolute top-1 right-1 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity bg-black border-zinc-700 hover:bg-zinc-800 focus:opacity-100"
                     >
-                      {copiedRun ? <Check size={12} className="text-status-success"/> : <Copy size={12} className="text-white"/>}
+                      {copiedRun ? (
+                        <Check size={12} className="text-status-success" />
+                      ) : (
+                        <Copy size={12} className="text-white" />
+                      )}
                     </Button>
                   </div>
                 </div>
                 <div className="bg-status-success/10 border border-status-success/20 rounded-lg p-4">
-                   <p className="text-xs font-semibold uppercase text-status-success mb-1">Step 3: Simulation Activated</p>
-                   <p className="text-xs text-muted-foreground">
-                      That’s it! The container is now flawlessly hooked into your application instance over port 8080. You can now close this interface and select any simulation to natively intercept traces!
-                   </p>
+                  <p className="text-xs font-semibold uppercase text-status-success mb-1">
+                    Step 3: Simulation Activated
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    That’s it! The container is now flawlessly hooked into your application instance
+                    over port 8080. You can now close this interface and select any simulation to
+                    natively intercept traces!
+                  </p>
                 </div>
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
-
     </Card>
   )
 }
