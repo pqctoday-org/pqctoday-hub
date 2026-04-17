@@ -12,9 +12,9 @@
 import fs from 'fs'
 import path from 'path'
 import type { CheckResult, Finding } from './types.js'
-import { loadCSV, ROOT } from './data-loader.js'
+import { loadCSV, getDataDir } from './data-loader.js'
 
-const ENRICH_DIR = path.join(ROOT, 'src', 'data', 'doc-enrichments')
+const enrichDir = () => path.join(getDataDir(), 'doc-enrichments')
 
 // ── Valid enum values (prefix-match: allows parenthetical suffixes) ───────────
 
@@ -144,10 +144,10 @@ function parseEnrichmentFile(filePath: string, filename: string): EnrichmentReco
 }
 
 function loadAllEnrichments(collection: string): EnrichmentRecord[] {
-  if (!fs.existsSync(ENRICH_DIR)) return []
+  if (!fs.existsSync(enrichDir())) return []
   const prefix = `${collection}_doc_enrichments_`
   const files = fs
-    .readdirSync(ENRICH_DIR)
+    .readdirSync(enrichDir())
     .filter((f) => f.startsWith(prefix) && f.endsWith('.md'))
     .sort()
     .reverse()
@@ -155,7 +155,7 @@ function loadAllEnrichments(collection: string): EnrichmentRecord[] {
 
   const records: EnrichmentRecord[] = []
   for (const f of files) {
-    records.push(...parseEnrichmentFile(path.join(ENRICH_DIR, f), f))
+    records.push(...parseEnrichmentFile(path.join(enrichDir(), f), f))
   }
   return records
 }

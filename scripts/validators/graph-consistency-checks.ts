@@ -13,10 +13,7 @@
 import fs from 'fs'
 import path from 'path'
 import type { CheckResult, Finding, Severity } from './types.js'
-import { loadCSV, readCSV, splitSemicolon } from './data-loader.js'
-
-const ROOT = path.resolve(process.cwd())
-const DATA_DIR = path.join(ROOT, 'src', 'data')
+import { loadCSV, readCSV, splitSemicolon, getDataDir } from './data-loader.js'
 
 // ── Reference constants ─────────────────────────────────────────────────────
 
@@ -169,7 +166,7 @@ function makeCheck(
 }
 
 function loadModuleQaCombined(): { rows: Record<string, string>[]; file: string } {
-  const qaDir = path.join(DATA_DIR, 'module-qa')
+  const qaDir = path.join(getDataDir(), 'module-qa')
   if (!fs.existsSync(qaDir)) return { rows: [], file: '' }
 
   const files = fs
@@ -430,7 +427,7 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
 
       // glossary relatedModule (regex scan)
       // Simplified: check glossaryData.ts for the module id
-      const glossaryPath = path.join(DATA_DIR, 'glossaryData.ts')
+      const glossaryPath = path.join(getDataDir(), 'glossaryData.ts')
       if (fs.existsSync(glossaryPath)) {
         const glossaryContent = fs.readFileSync(glossaryPath, 'utf-8')
         if (glossaryContent.includes(`'/learn/${modId}'`)) types.push('glossary-teaches')

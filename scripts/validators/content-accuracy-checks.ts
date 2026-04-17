@@ -19,10 +19,11 @@ import fs from 'fs'
 import path from 'path'
 import type { CheckResult, Finding, Severity } from './types.js'
 
-const ROOT = path.resolve(process.cwd())
-const QA_DIR = path.join(ROOT, 'src', 'data', 'module-qa')
+import { getDataDir, ROOT } from './data-loader.js'
+
+const qaDir = () => path.join(getDataDir(), 'module-qa')
 const ALLOWLISTS_PATH = path.join(ROOT, 'scripts', 'fact_allowlists.json')
-const ENRICHMENT_DIR = path.join(ROOT, 'src', 'data', 'doc-enrichments')
+const enrichmentDir = () => path.join(getDataDir(), 'doc-enrichments')
 
 // ── Types ─────────────────────────────────────────────────────────────────
 
@@ -101,15 +102,15 @@ function parseCSVLine(line: string): string[] {
 }
 
 function loadQARows(): { rows: QARow[]; file: string } | null {
-  if (!fs.existsSync(QA_DIR)) return null
+  if (!fs.existsSync(qaDir())) return null
   const files = fs
-    .readdirSync(QA_DIR)
+    .readdirSync(qaDir())
     .filter((f) => f.startsWith('module_qa_combined_') && f.endsWith('.csv'))
     .sort()
     .reverse()
   if (files.length === 0) return null
 
-  const csvPath = path.join(QA_DIR, files[0])
+  const csvPath = path.join(qaDir(), files[0])
   const content = fs.readFileSync(csvPath, 'utf-8')
   const lines = content.split('\n')
   if (lines.length < 2) return { rows: [], file: files[0] }
@@ -401,7 +402,7 @@ function checkSizeAccuracy(qaRows: QARow[], qaFile: string, al: Allowlists): Che
 
 function checkEnrichmentHealth(): CheckResult {
   const findings: Finding[] = []
-  if (!fs.existsSync(ENRICHMENT_DIR)) {
+  if (!fs.existsSync(enrichmentDir())) {
     return makeCheck('QA-F5', 'Enrichment dimension health', 'WARNING', [])
   }
 
@@ -442,7 +443,7 @@ function checkEnrichmentHealth(): CheckResult {
   // dimension field names, causing false positives. Threats/timeline have legitimately
   // high "None detected" ratios for PQC-specific dimensions.
   const allLibraryFiles = fs
-    .readdirSync(ENRICHMENT_DIR)
+    .readdirSync(enrichmentDir())
     .filter((f) => f.endsWith('.md') && f.startsWith('library_doc_enrichments_'))
     .sort()
   const enrichFiles =
@@ -450,7 +451,7 @@ function checkEnrichmentHealth(): CheckResult {
 
   for (const file of enrichFiles) {
     const threshold = getThreshold(file)
-    const content = fs.readFileSync(path.join(ENRICHMENT_DIR, file), 'utf-8')
+    const content = fs.readFileSync(path.join(enrichmentDir(), file), 'utf-8')
     const sections = content.split('\n## ').filter((s) => s.trim())
 
     for (const section of sections) {

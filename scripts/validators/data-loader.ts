@@ -9,8 +9,23 @@ import Papa from 'papaparse'
 import type { CsvDataset, CsvRow } from './types.js'
 
 const ROOT = path.resolve(process.cwd())
-const DATA_DIR = path.join(ROOT, 'src', 'data')
+let _dataDir = path.join(ROOT, 'src', 'data')
 const PUBLIC_DIR = path.join(ROOT, 'public')
+
+/** Override the data directory (e.g., for cowork validation via --data-dir). */
+export function setDataDir(dir: string) {
+  _dataDir = path.resolve(dir)
+}
+
+/** Current data directory. Defaults to src/data unless overridden by setDataDir(). */
+export function getDataDir() {
+  return _dataDir
+}
+
+/** Whether a non-default data directory is active (i.e., --data-dir was set). */
+export function isCustomDataDir() {
+  return _dataDir !== path.join(ROOT, 'src', 'data')
+}
 
 // ── CSV discovery ─────────────────────────────────────────────────────────────
 
@@ -41,7 +56,7 @@ function parseFilename(f: string): ParsedFile | null {
  */
 export function findLatestCSV(
   prefix: string,
-  dir = DATA_DIR
+  dir = _dataDir
 ): { path: string; date: string } | null {
   const files = fs.readdirSync(dir).filter((f) => f.startsWith(prefix) && f.endsWith('.csv'))
   if (files.length === 0) return null
@@ -61,7 +76,7 @@ export function findLatestCSV(
 /**
  * Find a non-versioned CSV (no date in filename).
  */
-export function findStaticCSV(filename: string, dir = DATA_DIR): string | null {
+export function findStaticCSV(filename: string, dir = _dataDir): string | null {
   const p = path.join(dir, filename)
   return fs.existsSync(p) ? p : null
 }
@@ -128,7 +143,7 @@ export function loadEnrichments(collection: string): {
   files: EnrichmentFileInfo[]
   allIds: Set<string>
 } {
-  const enrichDir = path.join(DATA_DIR, 'doc-enrichments')
+  const enrichDir = path.join(_dataDir, 'doc-enrichments')
   if (!fs.existsSync(enrichDir)) return { files: [], allIds: new Set() }
 
   const prefix = `${collection}_doc_enrichments_`
@@ -202,7 +217,7 @@ export interface GlossaryEntry {
  * Avoids importing from src/ (no Vite dependency).
  */
 export function loadGlossary(): GlossaryEntry[] {
-  const p = path.join(DATA_DIR, 'glossaryData.ts')
+  const p = path.join(_dataDir, 'glossaryData.ts')
   if (!fs.existsSync(p)) return []
   const content = fs.readFileSync(p, 'utf-8')
 
@@ -247,7 +262,7 @@ export function loadGlossary(): GlossaryEntry[] {
  * Ported from generate-rag-corpus.ts:loadEnrichmentFields().
  */
 export function loadEnrichmentFields(collection: string): Map<string, Record<string, string>> {
-  const enrichDir = path.join(DATA_DIR, 'doc-enrichments')
+  const enrichDir = path.join(_dataDir, 'doc-enrichments')
   if (!fs.existsSync(enrichDir)) return new Map()
 
   const prefix = `${collection}_doc_enrichments_`
@@ -294,7 +309,7 @@ export function loadEnrichmentFields(collection: string): Map<string, Record<str
  * Returns Map<cscId, products[]> where cscId is e.g. "csc_001".
  */
 export function loadProductExtractions(): Map<string, Array<Record<string, string>>> {
-  const extractDir = path.join(DATA_DIR, 'product-extractions')
+  const extractDir = path.join(_dataDir, 'product-extractions')
   if (!fs.existsSync(extractDir)) return new Map()
 
   const jsonFiles = fs.readdirSync(extractDir).filter((f) => f.endsWith('.json'))
@@ -551,4 +566,4 @@ export function fileMtime(relativePath: string): string | null {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
-export { DATA_DIR, PUBLIC_DIR, ROOT }
+export { PUBLIC_DIR, ROOT }

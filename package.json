@@ -56,6 +56,7 @@
     "validate:data": "tsx scripts/validate-data-integrity.ts",
     "validate:data:json": "tsx scripts/validate-data-integrity.ts --json",
     "validate:data:verbose": "tsx scripts/validate-data-integrity.ts --verbose",
+    "validate:cowork": "tsx scripts/validate-data-integrity.ts --data-dir ../pqc-timeline-app-priv/cowork/ --verbose",
     "check:urls": "tsx scripts/check-url-liveness.ts",
     "check:urls:verbose": "tsx scripts/check-url-liveness.ts --verbose",
     "check:urls:json": "tsx scripts/check-url-liveness.ts --json",

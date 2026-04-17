@@ -6,7 +6,7 @@
 import fs from 'fs'
 import path from 'path'
 import type { CheckResult, Finding, LocalResourceEntry } from './types.js'
-import { loadCSV, listFiles, readCSV, findLatestCSV, ROOT } from './data-loader.js'
+import { loadCSV, listFiles, readCSV, findLatestCSV, ROOT, isCustomDataDir } from './data-loader.js'
 
 export function runLocalResourceChecks(): {
   results: CheckResult[]
@@ -14,6 +14,21 @@ export function runLocalResourceChecks(): {
 } {
   const results: CheckResult[] = []
   const resources: LocalResourceEntry[] = []
+
+  // Skip when running against an alternate data dir (e.g., cowork) — public/ is production-only
+  if (isCustomDataDir()) {
+    results.push({
+      id: 'N18-local-resources',
+      category: 'local-resource',
+      description: 'Local resource checks (skipped — --data-dir mode, public/ not available)',
+      sourceA: 'public/',
+      sourceB: null,
+      severity: 'INFO',
+      status: 'SKIP',
+      findings: [],
+    })
+    return { results, resources }
+  }
 
   // ── library.local_file → public/library/ ────────────────────────────────
   {

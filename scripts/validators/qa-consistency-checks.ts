@@ -10,10 +10,9 @@
 import fs from 'fs'
 import path from 'path'
 import type { CheckResult, Finding, Severity } from './types.js'
-import { loadCSV, splitSemicolon } from './data-loader.js'
+import { loadCSV, splitSemicolon, getDataDir, ROOT } from './data-loader.js'
 
-const ROOT = path.resolve(process.cwd())
-const QA_DIR = path.join(ROOT, 'src', 'data', 'module-qa')
+const qaDir = () => path.join(getDataDir(), 'module-qa')
 
 // ── Reference constants ─────────────────────────────────────────────────────
 
@@ -158,16 +157,16 @@ interface QARow {
 // ── Find latest combined QA CSV ─────────────────────────────────────────────
 
 function findLatestQACSV(): { path: string; file: string } | null {
-  if (!fs.existsSync(QA_DIR)) return null
+  if (!fs.existsSync(qaDir())) return null
 
   const files = fs
-    .readdirSync(QA_DIR)
+    .readdirSync(qaDir())
     .filter((f) => f.startsWith('module_qa_combined_') && f.endsWith('.csv'))
     .sort()
     .reverse()
 
   if (files.length === 0) return null
-  return { path: path.join(QA_DIR, files[0]), file: files[0] }
+  return { path: path.join(qaDir(), files[0]), file: files[0] }
 }
 
 function loadQACSV(csvPath: string): QARow[] {

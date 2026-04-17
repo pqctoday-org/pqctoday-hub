@@ -12,6 +12,7 @@
  *   npx tsx scripts/validate-data-integrity.ts --verbose       # show all findings
  *   npx tsx scripts/validate-data-integrity.ts --staleness 60  # custom staleness threshold (days)
  *   npx tsx scripts/validate-data-integrity.ts --report-only   # always exit 0 (CI dry run)
+ *   npx tsx scripts/validate-data-integrity.ts --data-dir PATH # validate alternate data dir (e.g., cowork)
  *
  * Exit codes:
  *   0 — all checks pass (or --report-only mode)
@@ -19,6 +20,7 @@
  *   2 — script failure
  */
 
+import { setDataDir } from './validators/data-loader.js'
 import { runCrossRefChecks } from './validators/cross-ref-checks.js'
 import { runQAConsistencyChecks } from './validators/qa-consistency-checks.js'
 import { runContentAccuracyChecks } from './validators/content-accuracy-checks.js'
@@ -44,6 +46,11 @@ const reportOnly = args.includes('--report-only')
 
 const stalenessIdx = args.indexOf('--staleness')
 const staleThreshold = stalenessIdx >= 0 ? parseInt(args[stalenessIdx + 1], 10) || 90 : 90
+
+const dataDirIdx = args.indexOf('--data-dir')
+if (dataDirIdx >= 0 && args[dataDirIdx + 1]) {
+  setDataDir(args[dataDirIdx + 1])
+}
 
 // ── Run all checks ──────────────────────────────────────────────────────────
 

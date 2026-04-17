@@ -16,7 +16,7 @@
 import fs from 'fs'
 import path from 'path'
 import type { CheckResult, Finding } from './types.js'
-import { loadCSV, ROOT } from './data-loader.js'
+import { loadCSV, ROOT, isCustomDataDir } from './data-loader.js'
 
 // ── Sentinel strings (case-insensitive, matched in first 500 chars of extracted text)
 const SENTINEL_STRINGS = [
@@ -269,6 +269,21 @@ function checkDirectoryQuality(dirName: 'timeline' | 'threats'): CheckResult {
 }
 
 export function runSourceDocumentQualityChecks(): CheckResult[] {
+  // Skip when running against an alternate data dir (e.g., cowork) — public/ is production-only
+  if (isCustomDataDir()) {
+    return [
+      {
+        id: 'N22-source-document-quality',
+        category: 'enrichment' as const,
+        description: 'Source document quality (skipped — --data-dir mode, public/ not available)',
+        sourceA: 'public/',
+        sourceB: null,
+        severity: 'INFO' as const,
+        status: 'SKIP' as const,
+        findings: [],
+      },
+    ]
+  }
   return [
     checkLibraryQuality(),
     checkDirectoryQuality('timeline'),

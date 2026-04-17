@@ -14,7 +14,7 @@ import {
   splitSemicolon,
   buildModuleEnrichmentMap,
   loadEnrichmentFields,
-  DATA_DIR,
+  getDataDir,
   ROOT,
   type ModuleEnrichmentSet,
 } from './data-loader.js'
@@ -92,7 +92,7 @@ function runN20Checks(
   const results: CheckResult[] = []
 
   // Load Q&A combined CSV
-  const qaDir = path.join(DATA_DIR, 'module-qa')
+  const qaDir = path.join(getDataDir(), 'module-qa')
   if (!fs.existsSync(qaDir)) return results
 
   const qaFiles = fs
