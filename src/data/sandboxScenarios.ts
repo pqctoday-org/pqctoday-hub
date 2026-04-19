@@ -246,7 +246,7 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     trackId: 'infrastructure',
     tool: {
       name: 'SoftHSMv3',
-      url: 'https://github.com/pqctoday/pqctoday-hsm',
+      url: 'https://github.com/pqctoday/softhsmv3',
     },
   },
   {
@@ -473,6 +473,62 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
       url: 'https://www.vaultproject.io/',
     },
   },
+  {
+    id: 'confidential-computing',
+    title: 'TEE Attestation — Quantum-Safe Enclave Proofs',
+    emoji: '🛡️',
+    useCase:
+      'Simulate quantum-safe Trusted Execution Environment (TEE) attestation following the Confidential Computing Consortium Certifier Framework pattern. Generate enclave measurements, sign attestation reports with ML-DSA-65, verify against policy keys, and issue admission certificates. Demonstrates how FIPS 204 protects the TEE trust chain from harvest-now-decrypt-later attacks against SGX / TDX / SEV-SNP quotes.',
+    algorithms: ['ML-DSA-65', 'RFC 9334 RATS'],
+    difficulty: 'advanced',
+    trackId: 'applications',
+    tool: {
+      name: 'Certifier Framework for Confidential Computing',
+      url: 'https://github.com/ccc-certifier-framework/certifier-framework-for-confidential-computing',
+    },
+  },
+  {
+    id: 'supply-chain-signing',
+    title: 'Supply Chain Signing — Quantum-Safe Container Provenance',
+    emoji: '📦',
+    useCase:
+      'Demonstrate post-quantum container image signing using Sigstore cosign with ML-DSA-65 signing keys. Generate a keypair, sign an OCI manifest, verify the signature, attach an SBOM attestation, and log the event to Rekor transparency log. Protects software supply-chain integrity against quantum signature forgery per EO 14028 and SLSA Level 3.',
+    algorithms: ['ML-DSA-65', 'Sigstore / cosign'],
+    difficulty: 'advanced',
+    trackId: 'applications',
+    tool: {
+      name: 'Sigstore cosign',
+      url: 'https://github.com/sigstore/cosign',
+    },
+  },
+  {
+    id: 'cbom-compliance',
+    title: 'CBOM Compliance Audit — PQC Readiness Scoring',
+    emoji: '✅',
+    useCase:
+      'Scan cryptographic assets (certificates, keys, TLS configs, Java security settings) and generate a Cryptographic Bill of Materials (CBOM) in CycloneDX 1.6 format. Evaluate compliance against CNSA 2.0 and NIST IR 8547 policies using OPA / Rego. Compare a pre-migration classical system (≈37% compliant) against a post-migration PQC system (100% compliant) to quantify migration progress.',
+    algorithms: ['CBOM CycloneDX 1.6', 'NIST IR 8547'],
+    difficulty: 'advanced',
+    trackId: 'infrastructure',
+    tool: {
+      name: 'CBOMkit (PQCA) + OPA',
+      url: 'https://github.com/cbomkit/cbomkit-theia',
+    },
+  },
+  {
+    id: 'tpm-pqc-migration',
+    title: 'TPM 2.0 → PQC Migration',
+    emoji: '🔐',
+    useCase:
+      'Walk the TCG TPM 2.0 V1.85 key hierarchy and see the concrete cost of migrating each key role (EK / SRK / AIK / IDevID) to post-quantum algorithms. Every key is produced twice — once by the real pqctoday-tpm libtpms engine (TPM2_CreatePrimary wire protocol) and once by pqctoday-hsm (softhsmv3 via PKCS#11 v3.2) — then cross-verified so users see both trust roots agree on ML-DSA-65 (1952 B pk, 3309 B sig) and ML-KEM-768 (1184 B pk, 32 B shared secret).',
+    algorithms: ['TPM 2.0 V1.85', 'softhsmv3'],
+    difficulty: 'advanced',
+    trackId: 'web',
+    tool: {
+      name: 'pqctoday-tpm + pqctoday-hsm',
+      url: 'https://github.com/pqctoday/pqctoday-tpm',
+    },
+  },
 ]
 
 export const SANDBOX_TRACKS: SandboxTrack[] = [
@@ -499,5 +555,25 @@ export const SANDBOX_TRACKS: SandboxTrack[] = [
     label: 'Quantum & Discovery',
     subtitle: 'QKD simulation, quantum networks, and cryptographic inventory',
     difficulty: 'Advanced',
+  },
+  {
+    id: 'supply-chain',
+    label: 'Supply Chain & Compliance',
+    subtitle:
+      'PGP code signing, container provenance, TEE attestation, CBOM compliance, and TPM 2.0 PQC migration',
+    difficulty: 'Advanced',
+  },
+  {
+    id: 'digital-assets',
+    label: 'Digital Assets',
+    subtitle:
+      'Public and permissioned blockchain quantum risk: Ethereum wallets, Hyperledger Besu, Algorand state proofs',
+    difficulty: 'Intermediate → Advanced',
+  },
+  {
+    id: 'secrets-kms',
+    label: 'Secrets & Key Management',
+    subtitle: 'GitOps secrets with SOPS, Cosmian KMIP KMS, and the PQC key-wrap chain',
+    difficulty: 'Intermediate',
   },
 ]

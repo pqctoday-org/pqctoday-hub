@@ -127,10 +127,11 @@ const Step3Crypto = () => {
     cryptoUnknown,
     setCryptoUnknown,
   } = useAssessmentStore()
+  const industry = useAssessmentStore((s) => s.industry)
 
   const persona = usePersonaStore((s) => s.selectedPersona)
   const experienceLevel = usePersonaStore((s) => s.experienceLevel)
-  const stepContent = getPersonaStepContent(persona, 'crypto', experienceLevel)
+  const stepContent = getPersonaStepContent(persona, 'crypto', experienceLevel, industry)
 
   const [algosByCategory, setAlgosByCategory] = useState<Record<string, TransitionChip[]>>({})
 
@@ -169,7 +170,6 @@ const Step3Crypto = () => {
     }
   }
 
-  const industry = useAssessmentStore((s) => s.industry)
   const isDisabled = false // smart defaults keep options interactive
 
   return (

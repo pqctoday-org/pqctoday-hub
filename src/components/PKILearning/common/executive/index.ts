@@ -14,3 +14,5 @@ export { TimelinePlanner } from './TimelinePlanner'
 export type { Milestone, ExternalDeadline } from './TimelinePlanner'
 
 export { BreachCostModel } from './BreachCostModel'
+
+export { KpiPersonaSelector } from './KpiPersonaSelector'

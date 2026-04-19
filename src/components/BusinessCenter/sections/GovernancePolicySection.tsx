@@ -4,11 +4,7 @@ import { Scale, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ArtifactCard, ArtifactPlaceholder } from '../ArtifactCard'
-import {
-  PILLAR_ARTIFACT_TYPES,
-  PILLAR_SOURCE_MODULES,
-  type BusinessMetrics,
-} from '../hooks/useBusinessMetrics'
+import { PILLAR_ARTIFACT_TYPES, type BusinessMetrics } from '../hooks/useBusinessMetrics'
 import type { SectionArtifactCallbacks } from './RiskManagementSection'
 
 function PostureIndicator({ label, value }: { label: string; value: string }) {
@@ -26,6 +22,7 @@ export function GovernancePolicySection({
   onEditArtifact,
   onDeleteArtifact,
   onRenameArtifact,
+  onCreateArtifact,
   typeFilter,
 }: { metrics: BusinessMetrics } & SectionArtifactCallbacks) {
   const navigate = useNavigate()
@@ -35,7 +32,6 @@ export function GovernancePolicySection({
       ? allArtifacts.filter((d) => d.type === typeFilter)
       : allArtifacts
   const pillarTypes = PILLAR_ARTIFACT_TYPES.governance
-  const sourceModules = PILLAR_SOURCE_MODULES.governance
   const existingTypes = new Set(artifacts.map((a) => a.type))
   const hasPosture = metrics.cryptoAgility !== 'Not assessed'
   const hasArtifacts = artifacts.length > 0
@@ -95,9 +91,8 @@ export function GovernancePolicySection({
                   <ArtifactPlaceholder
                     key={type}
                     type={type}
-                    moduleId={sourceModules[type] ?? 'pqc-governance'} // eslint-disable-line security/detect-object-injection
                     pillar="governance"
-                    onNavigate={navigate}
+                    onCreate={onCreateArtifact}
                   />
                 ))}
             </div>

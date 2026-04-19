@@ -71,6 +71,13 @@ export interface RecommendedAction {
   category: 'immediate' | 'short-term' | 'long-term'
   relatedModule: string
   effort?: 'low' | 'medium' | 'high'
+  /**
+   * Assess-wizard answers that triggered this action, encoded as `field:value`
+   * pairs (e.g. `['dataRetention:25-plus', 'currentCrypto:RSA-2048']`). The
+   * Report turns each into a plain-language label via `driverLabels.ts` and
+   * surfaces them as a "Based on your answers:" tooltip.
+   */
+  drivers?: string[]
 }
 
 export interface CategoryScores {
@@ -106,7 +113,11 @@ export interface HNFLRiskWindow {
 
 export interface MigrationEffortItem {
   algorithm: string
-  complexity: 'low' | 'medium' | 'high' | 'critical'
+  /** `critical` was in this enum but never emitted by the scoring engine nor
+   *  handled by the Report UI (effortConfig/complexityConfig only cover the
+   *  three levels). Dropped to make the type honest — add it back when
+   *  scoring actually produces it AND the UI renders it. */
+  complexity: 'low' | 'medium' | 'high'
   estimatedScope: 'quick-win' | 'moderate' | 'major-project' | 'multi-year'
   rationale: string
 }
@@ -124,6 +135,10 @@ export interface AssessmentProfile {
   industry: string
   country?: string
   algorithmsSelected: string[]
+  /** Coarse-grained crypto families the user selected (Key Exchange, Signatures, …).
+   *  Useful when specific algos aren't known; feeds quantum-exposure scoring
+   *  via a fallback branch in `computeQuantumExposure`. */
+  algorithmCategories?: string[]
   algorithmUnknown: boolean
   sensitivityLevels: string[]
   sensitivityUnknown: boolean
@@ -152,6 +167,15 @@ export interface AssessmentProfile {
   timelineUnknown: boolean
 }
 
+/** A situational boost condition that raised the composite score above the
+ *  pure category-weighted base. Mirrors `SituationalBoost` in scoring.ts. */
+export interface ScoreBoost {
+  id: 'hndl-urgency' | 'hnfl-urgency' | 'cnsa-regulatory' | 'migration-inertia'
+  label: string
+  /** Multiplicative delta this boost contributed (e.g. 0.08 = +8%). */
+  delta: number
+}
+
 export interface AssessmentResult {
   riskScore: number
   riskLevel: 'low' | 'medium' | 'high' | 'critical'
@@ -172,4 +196,9 @@ export interface AssessmentResult {
   assessmentProfile?: AssessmentProfile
   /** 3-5 key findings summarizing the most critical insights. */
   keyFindings?: string[]
+  /** Composite score before situational boosts were applied. Surfaced so the
+   *  user can see how much of the score came from base weighting vs boosts. */
+  preBoostScore?: number
+  /** Situational boosts that fired during scoring, if any. */
+  boosts?: ScoreBoost[]
 }

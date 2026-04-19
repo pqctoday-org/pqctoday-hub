@@ -358,7 +358,7 @@ export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
   {
     id: 'business-first',
     title: 'Business Minded',
-    description: 'Opened your first Business Center tool',
+    description: 'Opened your first Command Center tool',
     category: 'business',
     rarity: 'common',
     icon: 'Briefcase',
@@ -367,7 +367,7 @@ export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
   {
     id: 'business-strategist',
     title: 'Strategist',
-    description: 'Used 5+ different Business Center tools',
+    description: 'Used 5+ different Command Center tools',
     category: 'business',
     rarity: 'uncommon',
     icon: 'BarChart3',
@@ -376,7 +376,7 @@ export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
   {
     id: 'business-complete',
     title: 'Full Toolkit',
-    description: 'Used all 14 Business Center tools',
+    description: 'Used all 14 Command Center tools',
     category: 'business',
     rarity: 'rare',
     icon: 'Building2',

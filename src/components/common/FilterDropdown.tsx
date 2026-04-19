@@ -138,6 +138,45 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
     }
   }, [isOpen, searchable])
 
+  /**
+   * Move focus to the n-th focusable option `<Button>` inside the menu.
+   * ARIA listbox guidance calls for ArrowUp/Down/Home/End to navigate options —
+   * implemented here by finding all `[role=option]` buttons in the portal menu
+   * and calling `.focus()` on the target index.
+   */
+  const focusOption = (index: number) => {
+    const menu = menuPortalRef.current
+    if (!menu) return
+    const options = menu.querySelectorAll<HTMLElement>('[role="option"]')
+    if (options.length === 0) return
+    const clamped = Math.max(0, Math.min(options.length - 1, index))
+    options[clamped]?.focus()
+  }
+
+  /** Handle ArrowUp/Down/Home/End when focus is already inside the menu. */
+  const handleMenuKeyDown = (e: React.KeyboardEvent) => {
+    const menu = menuPortalRef.current
+    if (!menu) return
+    const options = Array.from(menu.querySelectorAll<HTMLElement>('[role="option"]'))
+    const currentIndex = options.indexOf(document.activeElement as HTMLElement)
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      focusOption(currentIndex < 0 ? 0 : (currentIndex + 1) % options.length)
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      focusOption(currentIndex <= 0 ? options.length - 1 : currentIndex - 1)
+    } else if (e.key === 'Home') {
+      e.preventDefault()
+      focusOption(0)
+    } else if (e.key === 'End') {
+      e.preventDefault()
+      focusOption(options.length - 1)
+    } else if (e.key === 'Escape') {
+      setIsOpen(false)
+      buttonRef.current?.focus()
+    }
+  }
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
       setIsOpen(false)
@@ -151,6 +190,19 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
         }
       }
       setIsOpen((prev) => !prev)
+    } else if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && !isOpen) {
+      // Open the menu on arrow key and move focus into the first option
+      // after the portal renders (so screen readers read the list immediately).
+      e.preventDefault()
+      const rect = buttonRef.current?.getBoundingClientRect()
+      if (rect) {
+        setMenuPos({ top: rect.bottom, left: rect.left, minWidth: rect.width })
+      }
+      setIsOpen(true)
+      setTimeout(() => focusOption(e.key === 'ArrowDown' ? 0 : -1), 0)
+    } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault()
+      setTimeout(() => focusOption(e.key === 'ArrowDown' ? 0 : -1), 0)
     }
   }
 
@@ -164,6 +216,8 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
         setIsOpen(false)
         buttonRef.current?.focus()
       }
+    } else {
+      handleMenuKeyDown(e)
     }
   }
 

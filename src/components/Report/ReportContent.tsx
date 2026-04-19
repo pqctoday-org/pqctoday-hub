@@ -49,6 +49,8 @@ import { ROICalculatorSection } from '../shared/ROICalculatorSection'
 import type { ROISummary } from '../shared/ROICalculatorSection'
 import { KPITrendingSection } from './KPITrendingSection'
 import { BoardBriefSection } from './BoardBriefSection'
+import { formatDriver } from '../../data/driverLabels'
+import { RiskGauge, riskConfig } from '../shared/widgets/RiskGauge'
 import { Button } from '../ui/button'
 import { CollapsibleSection as BaseCollapsibleSection } from '../ui/CollapsibleSection'
 import { HNDLHNFLSection as SharedHNDLHNFLSection } from '../shared/HNDLHNFLSection'
@@ -137,37 +139,6 @@ export function CollapsibleSection({
   )
 }
 
-const riskConfig = {
-  low: {
-    color: 'text-success',
-    bg: 'bg-success/10',
-    border: 'border-success',
-    label: 'Low Risk',
-    emoji: '🟢',
-  },
-  medium: {
-    color: 'text-warning',
-    bg: 'bg-warning/10',
-    border: 'border-warning',
-    label: 'Medium Risk',
-    emoji: '🟡',
-  },
-  high: {
-    color: 'text-destructive',
-    bg: 'bg-destructive/10',
-    border: 'border-destructive',
-    label: 'High Risk',
-    emoji: '🔴',
-  },
-  critical: {
-    color: 'text-destructive',
-    bg: 'bg-destructive/20',
-    border: 'border-destructive',
-    label: 'Critical Risk',
-    emoji: '⚫',
-  },
-}
-
 const effortConfig = {
   low: { color: 'text-success', bg: 'bg-success/10', label: 'Low' },
   medium: { color: 'text-primary', bg: 'bg-primary/10', label: 'Medium' },
@@ -188,71 +159,6 @@ const scopeConfig = {
   'multi-year': { color: 'text-destructive', bg: 'bg-destructive/10', label: 'Multi-Year' },
 }
 
-const RiskGauge = ({ score, level }: { score: number; level: AssessmentResult['riskLevel'] }) => {
-  // eslint-disable-next-line security/detect-object-injection
-  const config = riskConfig[level]
-  const angle = (score / 100) * 180 - 90 // -90 to 90 degrees
-
-  return (
-    <div className="flex flex-col items-center">
-      <svg
-        viewBox="0 0 200 120"
-        className="w-32 h-20 md:w-48 md:h-28"
-        role="img"
-        aria-label={`Risk score: ${score} out of 100, rated ${config.label}`}
-      >
-        <title>{`Risk gauge showing score of ${score}/100`}</title>
-        {/* Background arc */}
-        <path
-          d="M 20 100 A 80 80 0 0 1 180 100"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="12"
-          className="text-border"
-          strokeLinecap="round"
-        />
-        {/* Colored arc */}
-        <path
-          d="M 20 100 A 80 80 0 0 1 180 100"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="12"
-          className={config.color}
-          strokeLinecap="round"
-          strokeDasharray={`${(score / 100) * 251.2} 251.2`}
-        />
-        {/* Needle */}
-        <line
-          x1="100"
-          y1="100"
-          x2={100 + 60 * Math.cos((angle * Math.PI) / 180)}
-          y2={100 - 60 * Math.sin((angle * Math.PI) / 180)}
-          stroke="currentColor"
-          strokeWidth="3"
-          className="text-foreground"
-          strokeLinecap="round"
-        />
-        <circle cx="100" cy="100" r="5" fill="currentColor" className="text-foreground" />
-        {/* Score text */}
-        <text
-          x="100"
-          y="90"
-          textAnchor="middle"
-          className={config.color}
-          fill="currentColor"
-          fontSize="28"
-          fontWeight="bold"
-        >
-          {score}
-        </text>
-      </svg>
-      <div className={clsx('text-lg font-bold mt-1', config.color)}>
-        {config.emoji} {config.label}
-      </div>
-    </div>
-  )
-}
-
 const CategoryBreakdown = ({
   scores,
   drivers,
@@ -271,16 +177,21 @@ const CategoryBreakdown = ({
     { label: 'Organizational Readiness', key: 'organizationalReadiness' as const },
   ]
 
+  // Canonical risk-level thresholds (match orchestrator.ts riskLevel mapping
+  // and SECTION_INFO copy). Previously this component used 30/60 boundaries
+  // which contradicted the gauge — same score rendered yellow here, red there.
   const getBarColor = (score: number) => {
-    if (score <= 30) return 'bg-success'
-    if (score <= 60) return 'bg-warning'
-    return 'bg-destructive'
+    if (score <= 25) return 'bg-success'
+    if (score <= 55) return 'bg-warning'
+    if (score <= 75) return 'bg-destructive'
+    return 'bg-critical'
   }
 
   const getScoreColor = (score: number) => {
-    if (score <= 30) return 'text-success'
-    if (score <= 60) return 'text-warning'
-    return 'text-destructive'
+    if (score <= 25) return 'text-success'
+    if (score <= 55) return 'text-warning'
+    if (score <= 75) return 'text-destructive'
+    return 'text-critical'
   }
 
   return (
@@ -734,7 +645,10 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
   const assessUrl = `${window.location.origin}/assess`
 
   return (
-    <div className={clsx('assess-report print:max-w-none', showBoardBrief && 'exec-brief-mode')}>
+    <div
+      className={clsx('assess-report print:max-w-none', showBoardBrief && 'exec-brief-mode')}
+      data-testid="report-content-ready"
+    >
       {/* Print-only repeating header (position:fixed in CSS repeats on every page) */}
       <div className="hidden print-header" aria-hidden="true">
         <span style={{ fontWeight: 600 }}>PQC Today — v{APP_VERSION}</span>
@@ -892,6 +806,29 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                     <p className="text-sm text-muted-foreground text-center mt-4 leading-relaxed print:text-muted-foreground">
                       {result.personaNarrative ?? result.narrative}
                     </p>
+                    {result.boosts &&
+                      result.boosts.length > 0 &&
+                      result.preBoostScore !== undefined && (
+                        <div className="mt-4 p-3 rounded-lg border border-border bg-muted/20 print:bg-transparent">
+                          <p className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground mb-2">
+                            Situational boosts raised this score from {result.preBoostScore} to{' '}
+                            {result.riskScore}
+                          </p>
+                          <ul className="space-y-1">
+                            {result.boosts.map((b) => (
+                              <li
+                                key={b.id}
+                                className="flex items-start gap-2 text-xs text-foreground"
+                              >
+                                <span className="text-destructive shrink-0 font-mono">
+                                  +{(b.delta * 100).toFixed(0)}%
+                                </span>
+                                <span>{b.label}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                   </CollapsibleSection>
 
                   {/* Key Findings */}
@@ -1396,6 +1333,17 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                                       ))}
                                     </div>
                                   )}
+                                {action.drivers && action.drivers.length > 0 && (
+                                  <div
+                                    className="mt-1.5 text-[10px] text-muted-foreground leading-relaxed"
+                                    title={`Based on your answers: ${action.drivers
+                                      .map(formatDriver)
+                                      .join('; ')}`}
+                                  >
+                                    <span className="font-semibold">Based on your answers: </span>
+                                    {action.drivers.map(formatDriver).join('; ')}
+                                  </div>
+                                )}
                               </div>
                             </div>
                           ))}
@@ -1502,6 +1450,9 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                             <Link
                               key={cta.label}
                               to={cta.path}
+                              data-action={
+                                cta.path === '/business' ? 'visit-business-center' : undefined
+                              }
                               className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
                             >
                               <Icon size={16} className="shrink-0" />

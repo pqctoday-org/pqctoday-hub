@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useRef, useEffect } from 'react'
-import { FileText, Eye, Pencil, Trash2 } from 'lucide-react'
+import { FileText, Eye, Pencil, Trash2, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
+import { TOOL_LABELS_BY_ARTIFACT_TYPE } from './businessToolsRegistry'
 
 export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'roi-model': 'ROI Model',
@@ -10,7 +11,6 @@ export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'raci-matrix': 'RACI Matrix',
   'vendor-scorecard': 'Vendor Scorecard',
   'policy-draft': 'Policy Draft',
-  roadmap: 'Roadmap',
   'compliance-checklist': 'Compliance Checklist',
   'audit-checklist': 'Audit Checklist',
   'compliance-timeline': 'Compliance Timeline',
@@ -23,6 +23,7 @@ export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'risk-treatment-plan': 'Risk Treatment Plan',
   'crqc-scenario': 'CRQC Scenario',
   'supply-chain-matrix': 'Supply Chain Matrix',
+  'deployment-playbook': 'Deployment Playbook',
 }
 
 const PILLAR_COLORS: Record<string, string> = {
@@ -135,30 +136,33 @@ export function ArtifactCard({
   )
 }
 
-/** Placeholder card shown when no artifacts exist for a document type */
+/** Placeholder card shown when no artifacts exist for a document type.
+ *  Clicking the card opens the shared ArtifactDrawer in `create` mode with the
+ *  matching builder — no navigation away from the Command Center. */
 export function ArtifactPlaceholder({
   type,
-  moduleId,
   pillar,
-  onNavigate,
+  onCreate,
 }: {
   type: ExecutiveDocumentType
-  moduleId: string
   pillar?: 'risk' | 'compliance' | 'governance' | 'vendor'
-  onNavigate: (path: string) => void
+  onCreate: (type: ExecutiveDocumentType) => void
 }) {
   const typeLabel = TYPE_LABELS[type] ?? type
   const badgeColor = pillar
     ? (PILLAR_COLORS[pillar] ?? 'bg-muted text-muted-foreground')
     : 'bg-muted text-muted-foreground'
+  const description =
+    TOOL_LABELS_BY_ARTIFACT_TYPE[type]?.description ?? 'Click to open the builder.'
 
   return (
     <Button
       variant="ghost"
-      onClick={() => onNavigate(`/learn/${moduleId}`)}
-      className="flex items-center gap-3 p-3 rounded-lg border border-dashed border-border hover:border-primary/30 hover:bg-muted/30 transition-colors w-full text-left"
+      onClick={() => onCreate(type)}
+      className="group flex items-center gap-3 p-3 rounded-lg border border-dashed border-border hover:border-primary/30 hover:bg-muted/30 transition-colors w-full text-left"
     >
-      <FileText size={16} className="text-muted-foreground/40 shrink-0" />
+      <FileText size={16} className="text-muted-foreground/40 shrink-0 group-hover:hidden" />
+      <Plus size={16} className="text-primary shrink-0 hidden group-hover:block" />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">{typeLabel}</span>
@@ -166,9 +170,7 @@ export function ArtifactPlaceholder({
             Not created
           </span>
         </div>
-        <span className="text-xs text-muted-foreground/60">
-          Build in the {moduleId.replace(/-/g, ' ')} module
-        </span>
+        <span className="text-xs text-muted-foreground/60 line-clamp-1">{description}</span>
       </div>
     </Button>
   )

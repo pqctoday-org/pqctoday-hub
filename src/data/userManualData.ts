@@ -348,7 +348,7 @@ export const pageManuals: Record<PageId, PageManual> = {
   },
 
   'business-center': {
-    title: 'Business Center',
+    title: 'Command Center',
     summary:
       'Your PQC readiness command center for managing risk artifacts, compliance documents, governance plans, vendor evaluations, and action items.',
     sections: [

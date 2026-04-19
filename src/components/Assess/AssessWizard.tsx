@@ -6,7 +6,6 @@ import { ChevronRight, ChevronLeft, RotateCcw, Info } from 'lucide-react'
 import { Button } from '../ui/button'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
-import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
 
 import type { AssessmentMode } from '../../store/useAssessmentStore'
 
@@ -180,19 +179,7 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
     }
   }, [searchParams, setStep, mode])
 
-  // Pre-fill industry and country from persona store when fields are blank
-  const personaIndustry = usePersonaStore((s) => s.selectedIndustry)
-  const personaRegion = usePersonaStore((s) => s.selectedRegion)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  useEffect(() => {
-    const { industry, country, setIndustry, setCountry } = useAssessmentStore.getState()
-    if (!industry && personaIndustry) setIndustry(personaIndustry)
-    if (!country && personaRegion && personaRegion !== 'global') {
-      const regionCountries = REGION_COUNTRIES_MAP[personaRegion]
-      if (regionCountries?.[0]) setCountry(regionCountries[0])
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const steps = useMemo(
     () => (mode === 'quick' ? ALL_STEPS.filter((s) => QUICK_STEP_KEYS.has(s.key)) : [...ALL_STEPS]),

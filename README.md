@@ -81,7 +81,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
     `C_UnwrapKeyAuthenticated`, `C_SeedRandom`, and all session / keygen / KEM / encrypt /
     derive / digest / wrap functions; step-separator headers group multi-step workflows; all
     panels in the HSM Playground (KEM, Sign, Symmetric, Hashing, Key Agreement, KDF, HMAC,
-    AES, VPN simulation) show the full inspectable log inline
+    AES, VPN simulation) show the full inspectable log inline; **Beginner Mode** toggle
+    (`BookOpenText` icon) adds a plain-English column translating each PKCS#11 call (e.g.
+    "generate ML-KEM keypair (PQC)", "derive shared secret via ECDH") powered by
+    `pkcs11PlainEnglish.ts`
   - **SoftHSM tab**: modular demo components — Token Setup, ML-KEM encapsulate/decapsulate,
     ML-DSA sign/verify (+ pre-hash), SLH-DSA (all 12 param sets); HSM symmetric panel split into
     AES-CBC/GCM, AES-CMAC, AES-CTR, HMAC, Key Wrap, and RNG panels
@@ -109,6 +112,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Accessibility**: full `role="tablist/tab"` keyboard navigation (ArrowLeft/Right/Home/End),
     `aria-selected`, `aria-controls`, and `aria-hidden` on all decorative icons
   - **TLS 1.3 Simulator** (Playground workshop tool): interactive client/server TLS 1.3 handshake simulator — configure cipher suites, key exchange groups (X25519, ML-KEM-768, X25519MLKEM768), mTLS, and PQC/hybrid certificate options; step-through handshake visualization with PKCS#11 log
+  - **Enterprise Docker Simulation** (`/playground` → Docker tab): embeds the pqctoday-sandbox
+    app via `<iframe>` with a postMessage handshake (`pqc:ready` → `pqc:config`); dynamic
+    auto-height via `pqc:resize`; requires local sandbox server on `VITE_SANDBOX_BASE_URL`
+    (default `http://localhost:4000`)
   - **Playground Workshop**: tools under active development show a WIP badge (Wrench icon); WIP tools are hidden by default with a toggle to reveal or show only WIP tools; includes DRBG Architecture demo
 - **OpenSSL Studio**: Browser-based OpenSSL v3.6.2 workbench powered by WebAssembly
   - **13 Operation Types**: Key Generation, CSR, Certificate, Sign/Verify, Random, Version, Encryption, Hashing, KEM, PKCS#12, LMS/HSS
@@ -132,7 +139,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Exercises**: Guided scenarios for each blockchain with pre-configured flows
   - **5G Security Education** (Learn | Simulate | Exercises): Interactive 5G authentication and privacy flows
     - **Learn**: 6 sections — What is 5G Security (3GPP TS 33.501), Three Pillars, SUCI Protection Schemes (Profile A/B/C), 5G-AKA Authentication (MILENAGE f1-f5, key hierarchy), SIM Provisioning, Post-Quantum Threat
-    - **SUCI Deconcealment**: Profile A (Curve25519), Profile B (secp256r1), Profile C (ML-KEM-768, FIPS 203) with hybrid and pure modes; full spec-correct implementation — ANSI X9.63-KDF (SHA-256 for A/B, SHA3-256 for C), AES-128/256-CTR with zero IV, HMAC-SHA-256/SHA3-256, BCD MSIN encoding per TS 23.003, authenticate-then-decrypt at SIDF with full SUPI recovery; Profile C hybrid combines Z_ecdh ‖ Z_kem via SHA-256 per TR 33.841 §5.2.5.2; official 3GPP TS 33.501 Annex C.4 reference vectors accessible via "Reference Vectors" button
+    - **SUCI Deconcealment**: Profile A (Curve25519), Profile B (secp256r1), Profile C (ML-KEM-768, FIPS 203) with hybrid and pure modes; full spec-correct implementation — ANSI X9.63-KDF (SHA-256 for A/B, SHA3-256 for C), AES-128/256-CTR with zero IV, HMAC-SHA-256/SHA3-256, BCD MSIN encoding per TS 23.003, authenticate-then-decrypt at SIDF with full SUPI recovery; Profile C hybrid combines Z_ecdh ‖ Z_kem via SHA-256 per TR 33.841 §5.2.5.2; official 3GPP TS 33.501 Annex C.4 reference vectors accessible via "Reference Vectors" button; **enhanced UX** — `ConfigureCard` collapses settings on first visit with a "Start with defaults" CTA; `ScenarioIntroStrip` switches between operator and IMSI-catcher (attacker) perspectives; `AttackerSidecar` shows per-step eavesdropper observations in red; phase-progress bar (`PhaseProgress`) groups steps into Setup → UE·SUCI → Inspect → Network·SIDF; plain-English mode (on by default, `localStorage`-persisted) adds a prose explanation beside each step via `PlainEnglishRail`
     - **5G-AKA Authentication**: MILENAGE algorithm set (f1-f5 functions) with HSM integration
     - **Exercises**: 5 scenarios (Profile A Classical, Profile B NIST, Profile C Hybrid, Profile C Pure PQC, 5G-AKA Authentication)
   - **EU Digital Identity Wallet**: EUDI Wallet ecosystem with pluggable crypto provider architecture
@@ -196,6 +203,12 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Key Management & HSM**:
     - Explores the 7 stages of the key lifecycle and PQC impact
     - Simulates PKCS#11 HSM operations and key rotation planning for enterprises
+    - **HSM Capacity Calculator** (HSM-PQC module Step 5; also `/playground` workshop tool
+      `PT-026`): fleet-sizing tool covering the top 10 enterprise HSM workflows (TLS, code
+      signing, payment HSM, TDE/database, KMS root keys, VPN/IPsec, SSH host, DNSSEC, etc.)
+      with side-by-side classical (RSA-3072 / ECDSA P-256) vs PQC (ML-DSA-44/65/87) sizing —
+      outputs storage MB, TLS cert bandwidth, aggregate network MB/s, and CPU-core
+      utilisation per workflow plus a totals row
   - **Entropy & Randomness** (SP 800-90 A/B/C):
     - DRBG mechanism comparison: CTR_DRBG, Hash_DRBG, HMAC_DRBG, and XOF_DRBG (SHAKE-based, SP 800-90A Rev 2)
     - **HMAC_DRBG Architecture Demo**: interactive SP 800-90A HMAC_DRBG lifecycle visualization —
@@ -224,6 +237,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Secure Boot PQC** (5-step workshop):
     - Secure Boot Chain Analyzer: UEFI PK/KEK/db key hierarchy quantum vulnerability
     - **Firmware Signing Migrator**: multi-algorithm wizard (RSA-2048/3072, ECDSA P-256/P-384, ML-DSA-44/65/87, SLH-DSA-SHA2-128S) with 4-step flow — key gen, sign, verify, KAT validation; per-key PKCS#11 attribute inspector; refactored to reusable `StepWizard` component with per-step output/error reporting
+    - **TPM Key Hierarchy Explorer**: TPM 2.0 key hierarchy PQC migration planning (EK → SRK → AIK → IDevID); **sandbox deep-link CTA** launches the live pqctoday-tpm + pqctoday-hsm scenario (`sbx-tpm-pqc-migration`) showing real TPM2_CreatePrimary outputs for ML-KEM-768 and ML-DSA-65 via softhsmv3
   - **API Security & JWT** (5-step workshop):
     - JWT Inspector: decode and flag quantum-vulnerable algorithms (RS256/HS256)
     - PQC JWT Signing with ML-DSA-87 vs RS256 signature byte size comparison

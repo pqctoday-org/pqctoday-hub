@@ -6,7 +6,6 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { ArtifactCard, ArtifactPlaceholder } from '../ArtifactCard'
 import {
   PILLAR_ARTIFACT_TYPES,
-  PILLAR_SOURCE_MODULES,
   type BusinessMetrics,
   type TrackedFramework,
 } from '../hooks/useBusinessMetrics'
@@ -52,6 +51,7 @@ export function ComplianceRegulatorySection({
   onEditArtifact,
   onDeleteArtifact,
   onRenameArtifact,
+  onCreateArtifact,
   typeFilter,
 }: { metrics: BusinessMetrics } & SectionArtifactCallbacks) {
   const navigate = useNavigate()
@@ -61,7 +61,6 @@ export function ComplianceRegulatorySection({
       ? allArtifacts.filter((d) => d.type === typeFilter)
       : allArtifacts
   const pillarTypes = PILLAR_ARTIFACT_TYPES.compliance
-  const sourceModules = PILLAR_SOURCE_MODULES.compliance
   const existingTypes = new Set(artifacts.map((a) => a.type))
 
   return (
@@ -132,9 +131,8 @@ export function ComplianceRegulatorySection({
                   <ArtifactPlaceholder
                     key={type}
                     type={type}
-                    moduleId={sourceModules[type] ?? 'compliance-strategy'} // eslint-disable-line security/detect-object-injection
                     pillar="compliance"
-                    onNavigate={navigate}
+                    onCreate={onCreateArtifact}
                   />
                 ))}
             </div>

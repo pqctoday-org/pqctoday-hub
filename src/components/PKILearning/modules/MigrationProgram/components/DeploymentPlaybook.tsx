@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React from 'react'
+import React, { useCallback } from 'react'
 import { OpsChecklist, type ChecklistSection } from '@/components/PKILearning/common/OpsChecklist'
+import { useModuleStore } from '@/store/useModuleStore'
 
 const sections: ChecklistSection[] = [
   {
@@ -166,11 +167,29 @@ const sections: ChecklistSection[] = [
 ]
 
 export const DeploymentPlaybook: React.FC = () => {
+  const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
+
+  const handleSave = useCallback(
+    ({ markdown, checkedItems }: { markdown: string; checkedItems: string[] }) => {
+      addExecutiveDocument({
+        id: `deployment-playbook-${Date.now()}`,
+        moduleId: 'migration-program',
+        type: 'deployment-playbook',
+        title: `PQC Deployment Playbook — ${new Date().toLocaleDateString()}`,
+        data: markdown,
+        inputs: { checkedItems },
+        createdAt: Date.now(),
+      })
+    },
+    [addExecutiveDocument]
+  )
+
   return (
     <OpsChecklist
       title="PQC Deployment Playbook"
       description="Operational procedures for deploying PQC across production infrastructure — covering hybrid mode, canary testing, progressive rollout, validation, and rollback."
       sections={sections}
+      onSave={handleSave}
     />
   )
 }

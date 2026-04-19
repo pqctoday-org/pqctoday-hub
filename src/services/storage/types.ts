@@ -40,7 +40,6 @@ export type ExecutiveDocumentType =
   | 'raci-matrix'
   | 'vendor-scorecard'
   | 'policy-draft'
-  | 'roadmap'
   | 'compliance-checklist'
   | 'audit-checklist'
   | 'compliance-timeline'
@@ -53,6 +52,7 @@ export type ExecutiveDocumentType =
   | 'risk-treatment-plan'
   | 'crqc-scenario'
   | 'supply-chain-matrix'
+  | 'deployment-playbook'
 
 export interface ExecutiveDocument {
   id: string
@@ -61,6 +61,9 @@ export interface ExecutiveDocument {
   title: string
   data: string
   createdAt: number
+  // Serialized builder form state so Edit can restore prior inputs.
+  // Shape is builder-specific and opaque to the store.
+  inputs?: unknown
 }
 
 export interface LearningProgress {
@@ -122,5 +125,10 @@ export interface LearningProgress {
   // Cumulative quiz mastery — union of correctly-answered question IDs across all sessions
   quizMastery?: {
     correctQuestionIds: string[]
+  }
+
+  // Risk score history for Command Center KPI trending (cap 30 snapshots)
+  kpiHistory?: {
+    riskScore: { ts: number; score: number }[]
   }
 }

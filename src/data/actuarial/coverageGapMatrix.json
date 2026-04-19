@@ -1,0 +1,71 @@
+{
+  "_meta": {
+    "description": "Indicative coverage status for quantum-related scenarios under typical cyber insurance policies. Based on review of public quantum exclusion language.",
+    "sources": [
+      "Lloyd's Market Bulletin Y5258 — Quantum Computer Exclusion Clause (2023) (https://assets.lloyds.com/assets/pdf-market-bulletin-y5258/1/pdf-market-bulletin-y5258.pdf)",
+      "Munich Re — Cyber Insurance & Quantum Risk (https://www.munichre.com/en/solutions/reinsurance-property-casualty/cyber-reinsurance.html)",
+      "Marsh — Quantum Risk & Insurance Gap Analysis 2023"
+    ],
+    "coverageValues": {
+      "covered": "Typically covered under standard cyber policy language",
+      "excluded": "Explicitly excluded by quantum/nation-state clauses or war exclusions",
+      "ambiguous": "Coverage unclear — policy wording does not specifically address quantum-origin attacks; subject to dispute at claims time"
+    },
+    "note": "Educational model — actual coverage depends on specific policy wording. Consult a licensed insurance professional."
+  },
+  "scenarios": [
+    {
+      "id": "hndl",
+      "label": "Harvest Now, Decrypt Later",
+      "description": "Retroactive exposure of data harvested today, decrypted once CRQCs are available."
+    },
+    {
+      "id": "key-forgery",
+      "label": "Digital Signature Forgery",
+      "description": "Forged certificates or code-signing via broken RSA/ECDSA."
+    },
+    {
+      "id": "auth-bypass",
+      "label": "Authentication Bypass",
+      "description": "Broken public-key authentication enables unauthorized access."
+    },
+    {
+      "id": "supply-chain",
+      "label": "Supply Chain Key Compromise",
+      "description": "Compromised software signing keys enable malicious package distribution."
+    }
+  ],
+  "industries": ["financial", "healthcare", "technology", "government", "energy"],
+  "matrix": {
+    "financial": {
+      "hndl": "ambiguous",
+      "key-forgery": "excluded",
+      "auth-bypass": "ambiguous",
+      "supply-chain": "excluded"
+    },
+    "healthcare": {
+      "hndl": "ambiguous",
+      "key-forgery": "excluded",
+      "auth-bypass": "ambiguous",
+      "supply-chain": "excluded"
+    },
+    "technology": {
+      "hndl": "ambiguous",
+      "key-forgery": "ambiguous",
+      "auth-bypass": "covered",
+      "supply-chain": "ambiguous"
+    },
+    "government": {
+      "hndl": "excluded",
+      "key-forgery": "excluded",
+      "auth-bypass": "excluded",
+      "supply-chain": "excluded"
+    },
+    "energy": {
+      "hndl": "ambiguous",
+      "key-forgery": "excluded",
+      "auth-bypass": "ambiguous",
+      "supply-chain": "excluded"
+    }
+  }
+}

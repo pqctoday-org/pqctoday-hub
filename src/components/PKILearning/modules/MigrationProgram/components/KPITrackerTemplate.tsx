@@ -1,213 +1,172 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useMemo, useCallback } from 'react'
+import React, { useMemo, useCallback, useState, useEffect, useRef } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
-import { DataDrivenScorecard, ExportableArtifact } from '../../../common/executive'
-import type { ScorecardDimension } from '../../../common/executive'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import {
+  DataDrivenScorecard,
+  ExportableArtifact,
+  KpiPersonaSelector,
+} from '@/components/PKILearning/common/executive'
+import type { KpiPersonaId } from '@/data/kpiCatalog'
+import { KPI_PERSONAS, buildDimensions } from '@/data/kpiCatalog'
 
 const MODULE_ID = 'migration-program'
+const SURFACE = 'migration' as const
+// Stable reference — using `?? []` inside the zustand selector would return
+// a new empty array on every call, failing Object.is equality and causing
+// an infinite re-render loop.
+const EMPTY_HISTORY: { ts: number; score: number }[] = []
+
+function coercePersona(p: string | null | undefined): KpiPersonaId {
+  if (p && (KPI_PERSONAS as readonly string[]).includes(p)) return p as KpiPersonaId
+  return 'executive'
+}
+
+function trendSummary(history: { ts: number; score: number }[]): string {
+  if (history.length < 2) return 'insufficient history'
+  const first = history[0].score
+  const last = history[history.length - 1].score
+  const delta = last - first
+  const arrow = delta > 2 ? '↑' : delta < -2 ? '↓' : '→'
+  return `${arrow} ${delta > 0 ? '+' : ''}${delta.toFixed(0)} over ${history.length} snapshots`
+}
 
 export const KPITrackerTemplate: React.FC = () => {
-  const { pqcReadyCount, totalProducts, riskScore } = useExecutiveModuleData()
-  const { addExecutiveDocument } = useModuleStore()
+  const execData = useExecutiveModuleData()
+  const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
+  const pushRiskScoreSnapshot = useModuleStore((s) => s.pushRiskScoreSnapshot)
+  const riskHistory = useModuleStore((s) => s.kpiHistory?.riskScore) ?? EMPTY_HISTORY
+  const globalPersona = usePersonaStore((s) => s.selectedPersona)
 
-  // Auto-score vendor readiness from real product data
-  const vendorReadinessScore = useMemo(() => {
-    if (totalProducts === 0) return 0
-    return Math.round((pqcReadyCount / totalProducts) * 100)
-  }, [pqcReadyCount, totalProducts])
+  const [personaOverride, setPersonaOverride] = useState<KpiPersonaId | null>(null)
+  const activePersona: KpiPersonaId = personaOverride ?? coercePersona(globalPersona)
 
-  // Auto-score risk trend from assessment risk score (inverted: lower risk = higher KPI score)
-  const riskTrendScore = useMemo(() => {
-    if (riskScore === null) return 50 // Default to 50% if no assessment completed
-    // Risk score is 0-100 where higher = worse; invert for KPI (higher = better)
-    return Math.max(0, Math.min(100, 100 - riskScore))
-  }, [riskScore])
+  // Record a risk-score snapshot whenever the assessment yields a new value
+  useEffect(() => {
+    if (execData.riskScore !== null && typeof execData.riskScore === 'number') {
+      pushRiskScoreSnapshot(execData.riskScore)
+    }
+  }, [execData.riskScore, pushRiskScoreSnapshot])
 
-  const dimensions: ScorecardDimension[] = useMemo(
-    () => [
-      {
-        id: 'systems-inventoried',
-        label: 'Systems Inventoried',
-        description: 'Percentage of systems with completed crypto inventory',
-        weight: 0.15,
-        autoScore: 0,
-        userOverride: true,
-      },
-      {
-        id: 'algorithms-migrated',
-        label: 'Algorithms Migrated',
-        description: 'Percentage of vulnerable algorithms replaced with PQC',
-        weight: 0.25,
-        autoScore: 0,
-        userOverride: true,
-      },
-      {
-        id: 'vendors-assessed',
-        label: 'Vendors Assessed',
-        description: 'Percentage of vendors evaluated for PQC readiness',
-        weight: 0.15,
-        autoScore: vendorReadinessScore,
-        userOverride: true,
-      },
-      {
-        id: 'compliance-gaps',
-        label: 'Compliance Gaps Closed',
-        description: 'Framework requirements addressed',
-        weight: 0.2,
-        autoScore: 0,
-        userOverride: true,
-      },
-      {
-        id: 'budget-utilization',
-        label: 'Budget vs Allocated',
-        description: 'Percentage of budget utilized',
-        weight: 0.15,
-        autoScore: 0,
-        userOverride: true,
-      },
-      {
-        id: 'risk-trend',
-        label: 'Risk Trend',
-        description: 'Risk reduction over time',
-        weight: 0.1,
-        autoScore: riskTrendScore,
-        userOverride: true,
-      },
-    ],
-    [vendorReadinessScore, riskTrendScore]
+  const dimensions = useMemo(
+    () => buildDimensions(activePersona, SURFACE, execData, execData.country),
+    [activePersona, execData]
   )
 
-  const [currentScores, setCurrentScores] = React.useState<Record<string, number>>(() => {
-    const initial: Record<string, number> = {}
-    for (const d of dimensions) {
-      initial[d.id] = d.autoScore ?? 0
-    }
-    return initial
-  })
-
-  // Track which dimensions the user has manually adjusted
-  const manuallySetRef = React.useRef<Set<string>>(new Set())
-
-  // Wrap setCurrentScores to track manual overrides
-  const handleScoreUpdate = React.useCallback((scores: Record<string, number>) => {
-    // Mark all changed dimensions as manually set
-    setCurrentScores((prev) => {
-      for (const key of Object.keys(scores)) {
-        if (scores[key] !== prev[key]) {
-          manuallySetRef.current.add(key)
-        }
-      }
-      return scores
-    })
+  // The scorecard manages its own internal scores. We mirror them into local
+  // state ONLY when they actually differ — blindly forwarding every sync feeds
+  // back into the scorecard's auto-sync effect and causes an update storm.
+  const [userScores, setUserScores] = useState<Record<string, number>>({})
+  const lastSyncedRef = useRef<string>('')
+  const handleScoreSnapshot = useCallback((scores: Record<string, number>) => {
+    const signature = JSON.stringify(scores)
+    if (signature === lastSyncedRef.current) return
+    lastSyncedRef.current = signature
+    setUserScores(scores)
   }, [])
 
-  // Sync auto-scored dimensions when underlying data changes (unless user overrode)
-  React.useEffect(() => {
-    setCurrentScores((prev) => {
-      const next = { ...prev }
-      let changed = false
-      for (const d of dimensions) {
-        if (d.autoScore !== undefined && d.autoScore > 0 && !manuallySetRef.current.has(d.id)) {
-          if (next[d.id] !== d.autoScore) {
-            next[d.id] = d.autoScore
-            changed = true
-          }
-        }
-      }
-      return changed ? next : prev
-    })
-  }, [dimensions])
-
   const exportMarkdown = useMemo(() => {
-    let md = '# PQC Migration KPI Tracker\n\n'
+    const scores = userScores
+    let md = `# PQC Migration KPI Tracker — ${activePersona}\n\n`
     md += `Generated: ${new Date().toLocaleDateString()}\n\n`
 
-    // Calculate weighted total
     let totalWeight = 0
     let weightedSum = 0
     for (const d of dimensions) {
-      const score = currentScores[d.id] ?? 0
+      if (d.disabled) continue
+      const score = scores[d.id] ?? d.autoScore ?? 0
       weightedSum += score * d.weight
       totalWeight += d.weight
     }
     const overall = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0
 
+    md += `**Persona Lens:** ${activePersona}\n`
     md += `**Overall Migration Progress: ${overall}/100**\n\n`
     md += '## KPI Dimensions\n\n'
-    md += '| KPI | Score | Weight | Description |\n'
-    md += '|-----|-------|--------|-------------|\n'
+    md += '| KPI | Score | Weight | Target | Description |\n'
+    md += '|-----|-------|--------|--------|-------------|\n'
     for (const d of dimensions) {
-      md += `| ${d.label} | ${currentScores[d.id] ?? 0}/100 | ${Math.round(d.weight * 100)}% | ${d.description} |\n`
+      if (d.disabled) {
+        md += `| ${d.label} | _locked — ${d.disabledReason ?? 'no data'}_ | ${Math.round(d.weight * 100)}% | ${d.target ?? '—'} | ${d.description} |\n`
+        continue
+      }
+      const score = scores[d.id] ?? d.autoScore ?? 0
+      md += `| ${d.label} | ${score}/100 | ${Math.round(d.weight * 100)}% | ${d.target ?? '—'} | ${d.description} |\n`
     }
-    md += '\n'
-
-    md += '## Data Sources\n\n'
-    md += `- Vendors Assessed: Auto-scored from Migrate catalog (${pqcReadyCount}/${totalProducts} PQC-ready)\n`
-    md += `- Risk Trend: ${riskScore !== null ? `Auto-scored from assessment (risk score: ${riskScore})` : 'No assessment completed — using default 50%'}\n`
-    md += '- All other dimensions: Manual input (adjust with sliders)\n'
+    md += '\n## Data Sources\n\n'
+    md += `- Vendor / FIPS / threat / compliance KPIs auto-scored from your catalog, threats data, and assessment selections.\n`
+    md += `- Risk Posture trend: ${trendSummary(riskHistory)}\n`
+    md += `- All other dimensions accept manual input.\n`
 
     return md
-  }, [dimensions, currentScores, pqcReadyCount, totalProducts, riskScore])
+  }, [dimensions, activePersona, riskHistory, userScores])
 
   const handleExport = useCallback(() => {
     addExecutiveDocument({
-      id: `kpi-tracker-${Date.now()}`,
+      id: `kpi-tracker-${activePersona}-${Date.now()}`,
       moduleId: MODULE_ID,
       type: 'kpi-tracker',
-      title: 'PQC Migration KPI Tracker',
+      title: `PQC Migration KPI Tracker — ${activePersona}`,
       data: exportMarkdown,
       createdAt: Date.now(),
     })
-  }, [addExecutiveDocument, exportMarkdown])
+  }, [addExecutiveDocument, exportMarkdown, activePersona])
 
   return (
     <div className="space-y-6">
       <div className="glass-panel p-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div>
+          <div className="flex-1">
             <p className="text-sm font-medium text-foreground">Live Data Integration</p>
             <p className="text-xs text-muted-foreground">
-              Vendors Assessed and Risk Trend are auto-scored from your Migrate catalog and
-              assessment data. Adjust all dimensions with the sliders.
+              KPIs with data dependencies are auto-scored from your Migrate catalog, threats data,
+              assessment, and compliance selections. Locked rows require assessment or compliance
+              data to unlock.
             </p>
           </div>
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <span>
-              PQC-Ready Vendors:{' '}
-              <span className="font-mono text-primary">
-                {pqcReadyCount}/{totalProducts}
-              </span>
+          <KpiPersonaSelector value={activePersona} onChange={setPersonaOverride} />
+        </div>
+        <div className="mt-3 flex items-center gap-4 text-xs text-muted-foreground">
+          <span>
+            PQC-Ready Vendors:{' '}
+            <span className="font-mono text-primary">
+              {execData.pqcReadyCount}/{execData.totalProducts}
             </span>
-            <span>
-              Risk Score:{' '}
-              <span className="font-mono text-primary">
-                {riskScore !== null ? riskScore : 'N/A'}
-              </span>
+          </span>
+          <span>
+            Risk Score:{' '}
+            <span className="font-mono text-primary">
+              {execData.riskScore !== null ? execData.riskScore : 'N/A'}
             </span>
-          </div>
+          </span>
+          <span>
+            Trend: <span className="font-mono text-primary">{trendSummary(riskHistory)}</span>
+          </span>
         </div>
       </div>
 
       <DataDrivenScorecard
         title="PQC Migration KPI Tracker"
-        description="Track progress across six key dimensions of your PQC migration program."
+        description={`Migration progress — ${activePersona} lens.`}
         dimensions={dimensions}
         colorScale="readiness"
-        onScoreChange={handleScoreUpdate}
+        onScoreChange={handleScoreSnapshot}
+        allowWeightEditing={true}
         showExport={false}
-        exportFilename="pqc-kpi-tracker"
+        exportFilename={`pqc-kpi-tracker-${activePersona}`}
       />
 
       <ExportableArtifact
         title="KPI Tracker Export"
         exportData={exportMarkdown}
-        filename="pqc-kpi-tracker"
-        formats={['markdown']}
+        filename={`pqc-kpi-tracker-${activePersona}`}
+        formats={['markdown', 'csv', 'pdf']}
         onExport={handleExport}
       >
         <p className="text-sm text-muted-foreground">
-          Export your KPI tracker with current scores and data sources.
+          Export the KPI tracker (markdown, CSV, or PDF) with the current persona lens, scores, and
+          data sources.
         </p>
       </ExportableArtifact>
     </div>

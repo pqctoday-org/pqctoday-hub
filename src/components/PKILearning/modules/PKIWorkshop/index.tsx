@@ -1,7 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useCallback, useRef } from 'react'
-import { Trash2, FilePlus, Shield, FileCheck, FileSearch, XCircle, GitBranch } from 'lucide-react'
+import {
+  Trash2,
+  FilePlus,
+  Shield,
+  FileCheck,
+  FileSearch,
+  XCircle,
+  GitBranch,
+  Globe,
+  BarChart2,
+} from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
@@ -18,6 +28,8 @@ import { CertSigner } from './CertSigner'
 import { CertParser } from './CertParser'
 import { CRLGenerator } from './CRLGenerator'
 import { MTCComparison } from './MTCComparison'
+import { AcmePqcWalkthrough } from './AcmePqcWalkthrough'
+import { CertCapacityCalculator } from './CertCapacityCalculator'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 import { Button } from '@/components/ui/button'
 
@@ -59,6 +71,19 @@ const ALL_PARTS = [
     title: 'Step 6: MTC Comparison',
     description: 'Compare traditional certificate chains with Merkle Tree Certificates.',
     icon: GitBranch,
+  },
+  {
+    id: 'acme',
+    title: 'Step 7: ACME + PQC',
+    description:
+      'Walk through the RFC 8555 certificate issuance flow with a real ML-DSA-65 keypair.',
+    icon: Globe,
+  },
+  {
+    id: 'capacity',
+    title: 'Step 8: Cert Capacity',
+    description: 'Model storage, bandwidth, and CPU impact of migrating your PKI to ML-DSA.',
+    icon: BarChart2,
   },
 ]
 
@@ -222,6 +247,8 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({ playgroundMode = false
         {currentStep === 5 && (
           <MTCComparison onComplete={() => markStepComplete(MODULE_ID, 'mtc', 5)} />
         )}
+        {currentStep === 6 && <AcmePqcWalkthrough />}
+        {currentStep === 7 && <CertCapacityCalculator />}
       </div>
 
       {/* Part Navigation */}

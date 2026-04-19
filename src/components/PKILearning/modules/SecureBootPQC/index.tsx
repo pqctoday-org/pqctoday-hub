@@ -9,6 +9,8 @@ import { FirmwareSigningMigrator } from './workshop/FirmwareSigningMigrator'
 import { TPMKeyHierarchyExplorer } from './workshop/TPMKeyHierarchyExplorer'
 import { FirmwareVendorMatrix } from './workshop/FirmwareVendorMatrix'
 import { AttestationFlowDesigner } from './workshop/AttestationFlowDesigner'
+import { Link } from 'react-router-dom'
+import { ExternalLink } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -220,7 +222,30 @@ export const SecureBootPQCModule: React.FC = () => {
               />
               {currentPart === 0 && <SecureBootChainAnalyzer key={`chain-${configKey}`} />}
               {currentPart === 1 && <FirmwareSigningMigrator key={`signing-${configKey}`} />}
-              {currentPart === 2 && <TPMKeyHierarchyExplorer key={`tpm-${configKey}`} />}
+              {currentPart === 2 && (
+                <>
+                  <div className="mb-4 p-4 rounded-lg border border-primary/30 bg-primary/5 flex flex-col sm:flex-row sm:items-center gap-3">
+                    <div className="flex-1">
+                      <div className="text-sm font-bold text-foreground mb-1">
+                        Try it live — real TPM 2.0 V1.85 keygen in the sandbox
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Run the <strong>pqctoday-tpm</strong> fork (Stefan Berger's libtpms + swtpm)
+                        against the <strong>pqctoday-hsm</strong> softhsmv3 backend. See real
+                        TPM2_CreatePrimary outputs for EK / SRK / AIK / IDevID across classical and
+                        PQC (ML-KEM-768, ML-DSA-65) with cross-verification.
+                      </p>
+                    </div>
+                    <Link
+                      to="/playground/sbx-tpm-pqc-migration"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors shrink-0"
+                    >
+                      Open scenario <ExternalLink size={14} />
+                    </Link>
+                  </div>
+                  <TPMKeyHierarchyExplorer key={`tpm-${configKey}`} />
+                </>
+              )}
               {currentPart === 3 && <FirmwareVendorMatrix key={`vendors-${configKey}`} />}
               {currentPart === 4 && <AttestationFlowDesigner key={`attestation-${configKey}`} />}
             </div>

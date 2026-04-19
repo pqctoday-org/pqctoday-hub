@@ -40,7 +40,7 @@ test.describe('Playground — Sandbox category', () => {
 
   test('Sandbox category pill filters the grid to sandbox tiles', async ({ page }) => {
     await page.goto('/playground')
-    const sandboxPill = page.getByRole('button', { name: 'Sandbox', exact: true }).first()
+    const sandboxPill = page.getByRole('button', { name: /^Sandbox/i }).first()
     await expect(sandboxPill).toBeVisible()
     await sandboxPill.click()
 
@@ -50,7 +50,7 @@ test.describe('Playground — Sandbox category', () => {
 
   test('clicking a sandbox tile renders the iframe for its scenario', async ({ page }) => {
     await page.goto('/playground')
-    const sandboxPill = page.getByRole('button', { name: 'Sandbox', exact: true }).first()
+    const sandboxPill = page.getByRole('button', { name: /^Sandbox/i }).first()
     await sandboxPill.click()
 
     const firstTile = page.locator('a[href^="/playground/sbx-"]').first()

@@ -102,6 +102,7 @@ export default defineConfig({
   },
   server: {
     port: 5175,
+    host: true,
     strictPort: false,
     fs: {
       // Allow importing test fixtures from pqc-tools sibling repo (dev only)

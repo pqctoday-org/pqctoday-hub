@@ -1,10 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useEffect, useRef } from 'react'
-import { ChevronRight, ChevronLeft, Play, CheckCircle, AlertCircle } from 'lucide-react'
+import React, { useEffect, useRef, useState } from 'react'
+import {
+  ChevronRight,
+  ChevronLeft,
+  Play,
+  CheckCircle,
+  AlertCircle,
+  Info,
+  Sparkles,
+} from 'lucide-react'
 import { OutputFormatter } from './OutputFormatter'
 import { CopyButton } from '@/components/ui/CopyButton'
 import { Button } from '@/components/ui/button'
 import { CodeBlock } from '@/components/ui/code-block'
+import { PhaseProgress } from './PhaseProgress'
+import { PlainEnglishRail } from './PlainEnglishRail'
 
 export interface Step {
   id: string
@@ -20,6 +30,12 @@ export interface Step {
   }[]
   diagram?: React.ReactNode
   customControls?: React.ReactNode
+  /** Optional UX-layer fields (5G SUCI uses these; other modules leave unset) */
+  phase?: string
+  plainEnglish?: string[]
+  attackerSidecar?: React.ReactNode
+  isClimax?: boolean
+  climaxBanner?: React.ReactNode
 }
 
 interface StepWizardProps {
@@ -35,6 +51,14 @@ interface StepWizardProps {
   error: string | null
   isStepComplete: boolean
   renderOutput?: (output: string | Record<string, string>) => React.ReactNode
+  /** When true and step has plainEnglish, render the rail beside the terminal. */
+  plainEnglishEnabled?: boolean
+  /** Optional phase-label overrides passed through to PhaseProgress. */
+  phaseLabels?: Partial<Record<string, string>>
+  /** Names that should render a "canonical" badge on their tab header. */
+  canonicalTabNames?: string[]
+  /** Short explainer shown in a popover next to the dual-engine tabs. */
+  tabExplainer?: string
 }
 
 export const StepWizard: React.FC<StepWizardProps> = ({
@@ -50,11 +74,16 @@ export const StepWizard: React.FC<StepWizardProps> = ({
   error,
   isStepComplete,
   renderOutput,
+  plainEnglishEnabled = false,
+  phaseLabels,
+  canonicalTabNames,
+  tabExplainer,
 }) => {
   /* eslint-disable-next-line security/detect-object-injection */
   const step = steps[currentStepIndex]
   const outputRef = useRef<HTMLDivElement>(null)
   const [activeTabOverride, setActiveTabOverride] = React.useState<string | null>(null)
+  const [explainerOpen, setExplainerOpen] = useState(false)
 
   // Reset override tracking if step changes
   useEffect(() => {
@@ -80,29 +109,56 @@ export const StepWizard: React.FC<StepWizardProps> = ({
 
   if (!step) return null
 
+  const hasPhases = steps.some((s) => s.phase)
+
   return (
     <div className="w-full h-full flex flex-col">
       {/* Main Step Content - Full Width */}
       <div className="glass-panel border border-border rounded-xl p-4 sm:p-5 mb-4 flex flex-col">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
-          <span className="text-xs font-mono text-primary">
-            STEP {currentStepIndex + 1} OF {steps.length}
-          </span>
-          <div className="flex gap-1">
-            {steps.map((_, idx) => (
-              <div
-                key={idx}
-                className={`h-1.5 w-6 rounded-full transition-colors ${
-                  idx <= currentStepIndex ? 'bg-primary' : 'bg-muted'
-                }`}
-                {...(idx === currentStepIndex ? { 'aria-current': 'step' as const } : {})}
-              />
-            ))}
+        {hasPhases ? (
+          <div className="mb-4">
+            <PhaseProgress
+              steps={steps}
+              currentStepIndex={currentStepIndex}
+              phaseLabels={phaseLabels}
+            />
           </div>
-        </div>
+        ) : (
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+            <span className="text-xs font-mono text-primary">
+              STEP {currentStepIndex + 1} OF {steps.length}
+            </span>
+            <div className="flex gap-1">
+              {steps.map((_, idx) => (
+                <div
+                  key={idx}
+                  className={`h-1.5 w-6 rounded-full transition-colors ${
+                    idx <= currentStepIndex ? 'bg-primary' : 'bg-muted'
+                  }`}
+                  {...(idx === currentStepIndex ? { 'aria-current': 'step' as const } : {})}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {step.isClimax && (
+          <div
+            className="mb-3 rounded-lg border border-primary/30 bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 px-3 py-2 flex items-center gap-2"
+            role="note"
+          >
+            <Sparkles size={14} className="text-primary shrink-0" />
+            <span className="text-xs sm:text-sm text-foreground/90">
+              {step.climaxBanner ??
+                'Decryption point — the network recovers the original identity.'}
+            </span>
+          </div>
+        )}
 
         <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2">{step.title}</h2>
         <p className="text-sm sm:text-base text-muted-foreground mb-4">{step.description}</p>
+
+        {step.attackerSidecar && <div className="mb-4">{step.attackerSidecar}</div>}
 
         {/* Optional diagram */}
         {step.diagram && <div className="mb-4">{step.diagram}</div>}
@@ -211,74 +267,111 @@ export const StepWizard: React.FC<StepWizardProps> = ({
         </div>
       </div>
 
-      {/* Terminal Output - Full Width Below */}
-      <div className="bg-muted/30 border border-border rounded-xl overflow-hidden max-h-[350px] flex flex-col">
-        <div className="bg-muted/20 border-b border-border">
-          <div className="p-3 flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">TERMINAL OUTPUT</span>
-            <div className="flex items-center gap-2">
-              {isStepComplete && <CheckCircle size={14} className="text-success" />}
-              {output && (
-                <CopyButton
-                  text={typeof output === 'object' ? (activeTab ? output[activeTab] : '') : output}
-                  label=""
-                />
-              )}
+      {/* Terminal Output + optional Plain-English Rail (stacks <lg, side-by-side ≥lg) */}
+      <div className="flex flex-col lg:flex-row gap-4">
+        <div className="bg-muted/30 border border-border rounded-xl overflow-hidden max-h-[350px] flex flex-col flex-1 min-w-0">
+          <div className="bg-muted/20 border-b border-border">
+            <div className="p-3 flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">TERMINAL OUTPUT</span>
+              <div className="flex items-center gap-2">
+                {isStepComplete && <CheckCircle size={14} className="text-success" />}
+                {output && (
+                  <CopyButton
+                    text={
+                      typeof output === 'object' ? (activeTab ? output[activeTab] : '') : output
+                    }
+                    label=""
+                  />
+                )}
+              </div>
             </div>
+
+            {/* Tabs for dual-engine output */}
+            {output && typeof output === 'object' && (
+              <div className="flex items-center px-2 gap-1 border-t border-border bg-background/50">
+                {Object.keys(output).map((tab) => {
+                  const isCanonical = canonicalTabNames?.some((n) => n === tab || tab.startsWith(n))
+                  return (
+                    <Button
+                      key={tab}
+                      variant="ghost"
+                      onClick={() => setActiveTabOverride(tab)}
+                      className={`px-3 py-1.5 h-auto text-xs font-medium rounded-t-lg border-b-2 transition-colors ${
+                        activeTab === tab
+                          ? 'border-primary text-primary bg-muted/40'
+                          : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/20'
+                      }`}
+                    >
+                      {tab}
+                      {isCanonical && (
+                        <span className="ml-1.5 text-[9px] font-mono uppercase tracking-wider text-primary border border-primary/40 rounded px-1 py-[1px]">
+                          canonical
+                        </span>
+                      )}
+                    </Button>
+                  )
+                })}
+                {tabExplainer && (
+                  <div className="relative ml-auto pr-2">
+                    <Button
+                      variant="ghost"
+                      onClick={() => setExplainerOpen((v) => !v)}
+                      onBlur={() => setTimeout(() => setExplainerOpen(false), 150)}
+                      aria-expanded={explainerOpen}
+                      aria-label="Explain the engine tabs"
+                      title={tabExplainer}
+                      className="h-6 w-6 p-0 text-muted-foreground hover:text-primary"
+                    >
+                      <Info size={14} />
+                    </Button>
+                    {explainerOpen && (
+                      <div
+                        role="tooltip"
+                        className="absolute right-0 top-full mt-1 z-20 w-64 p-2 rounded-md border border-border bg-background shadow-lg text-[11px] leading-relaxed text-foreground/90"
+                      >
+                        {tabExplainer}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
-          {/* Tabs for dual-engine output */}
-          {output && typeof output === 'object' && (
-            <div className="flex px-2 gap-1 border-t border-border bg-background/50">
-              {Object.keys(output).map((tab) => (
-                <Button
-                  key={tab}
-                  variant="ghost"
-                  onClick={() => setActiveTabOverride(tab)}
-                  className={`px-3 py-1.5 h-auto text-xs font-medium rounded-t-lg border-b-2 transition-colors ${
-                    activeTab === tab
-                      ? 'border-primary text-primary bg-muted/40'
-                      : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/20'
-                  }`}
-                >
-                  {tab}
-                </Button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div
-          className="p-4 overflow-x-auto overflow-y-auto flex-1 min-h-[150px] max-h-[250px] font-mono text-sm"
-          ref={outputRef}
-          aria-live="polite"
-          aria-label="Command output"
-        >
-          {output ? (
-            renderOutput ? (
-              renderOutput(typeof output === 'object' && activeTab ? output[activeTab] : output)
+          <div
+            className="p-4 overflow-x-auto overflow-y-auto flex-1 min-h-[150px] max-h-[250px] font-mono text-sm"
+            ref={outputRef}
+            aria-live="polite"
+            aria-label="Command output"
+          >
+            {output ? (
+              renderOutput ? (
+                renderOutput(typeof output === 'object' && activeTab ? output[activeTab] : output)
+              ) : (
+                <OutputFormatter
+                  output={
+                    typeof output === 'object' && activeTab ? output[activeTab] : (output as string)
+                  }
+                />
+              )
             ) : (
-              <OutputFormatter
-                output={
-                  typeof output === 'object' && activeTab ? output[activeTab] : (output as string)
-                }
-              />
-            )
-          ) : (
-            <div className="h-full flex items-center justify-center text-foreground/20 text-sm">
-              Waiting for execution...
-            </div>
-          )}
+              <div className="h-full flex items-center justify-center text-foreground/20 text-sm">
+                Waiting for execution...
+              </div>
+            )}
 
-          {error && (
-            <div className="mt-4 p-3 bg-destructive/10 border border-destructive/20 rounded text-destructive flex items-start gap-2">
-              <AlertCircle size={16} className="mt-0.5 shrink-0" />
-              <pre className="whitespace-pre-wrap break-all break-words max-w-full text-xs sm:text-sm">
-                {error}
-              </pre>
-            </div>
-          )}
+            {error && (
+              <div className="mt-4 p-3 bg-destructive/10 border border-destructive/20 rounded text-destructive flex items-start gap-2">
+                <AlertCircle size={16} className="mt-0.5 shrink-0" />
+                <pre className="whitespace-pre-wrap break-all break-words max-w-full text-xs sm:text-sm">
+                  {error}
+                </pre>
+              </div>
+            )}
+          </div>
         </div>
+
+        <PlainEnglishRail bullets={step.plainEnglish} enabled={plainEnglishEnabled} />
       </div>
     </div>
   )

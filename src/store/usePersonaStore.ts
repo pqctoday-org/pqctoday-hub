@@ -13,6 +13,7 @@ interface PersonaState {
   selectedIndustries: string[]
   suppressSuggestion: boolean
   experienceLevel: ExperienceLevel | null
+  advancedViewsUnlocked: boolean
   setPersona: (persona: PersonaId | null) => void
   clearPersona: () => void
   markPickerSeen: () => void
@@ -20,6 +21,7 @@ interface PersonaState {
   setIndustry: (industry: string | null) => void
   setIndustries: (industries: string[]) => void
   setExperienceLevel: (level: ExperienceLevel | null) => void
+  setAdvancedViewsUnlocked: (unlocked: boolean) => void
   clearPreferences: () => void
 }
 
@@ -33,12 +35,15 @@ export const usePersonaStore = create<PersonaState>()(
       selectedIndustries: [],
       suppressSuggestion: false,
       experienceLevel: null,
+      advancedViewsUnlocked: true,
 
       setPersona: (persona) =>
         set({
           selectedPersona: persona,
           hasSeenPersonaPicker: persona !== null,
           suppressSuggestion: true,
+          // Curious persona starts with advanced views locked; all others default to unlocked
+          advancedViewsUnlocked: persona !== 'curious',
         }),
 
       clearPersona: () => set({ selectedPersona: null, hasSeenPersonaPicker: false }),
@@ -54,6 +59,8 @@ export const usePersonaStore = create<PersonaState>()(
 
       setExperienceLevel: (level) => set({ experienceLevel: level }),
 
+      setAdvancedViewsUnlocked: (unlocked) => set({ advancedViewsUnlocked: unlocked }),
+
       clearPreferences: () =>
         set({
           selectedPersona: null,
@@ -62,12 +69,13 @@ export const usePersonaStore = create<PersonaState>()(
           selectedIndustries: [],
           suppressSuggestion: true,
           experienceLevel: null,
+          advancedViewsUnlocked: true,
         }),
     }),
     {
       name: 'pqc-learning-persona',
       storage: createJSONStorage(() => localStorage),
-      version: 2,
+      version: 3,
       migrate: (persisted: unknown, fromVersion: number) => {
         const s = (persisted ?? {}) as Record<string, unknown>
         if (fromVersion < 1) {
@@ -76,6 +84,10 @@ export const usePersonaStore = create<PersonaState>()(
         if (fromVersion < 2) {
           // Rename 'new' → 'curious'
           if (s.experienceLevel === 'new') s.experienceLevel = 'curious'
+        }
+        if (fromVersion < 3) {
+          // Default existing users to unlocked so they don't lose access
+          s.advancedViewsUnlocked = s.advancedViewsUnlocked ?? true
         }
         return s
       },

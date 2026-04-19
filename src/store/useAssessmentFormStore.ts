@@ -179,11 +179,35 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
       setStep: (step) => set({ currentStep: step, lastWizardUpdate: new Date().toISOString() }),
 
       setAssessmentMode: (mode) => {
-        set({
+        const state = get()
+        const updates: Partial<AssessmentFormState> = {
           assessmentMode: mode,
           assessmentStatus: 'in-progress' as const,
           lastWizardUpdate: new Date().toISOString(),
-        })
+        }
+        // When switching comprehensive → quick, clear fields the quick-mode
+        // wizard never asks about so they don't silently influence scoring.
+        if (state.assessmentMode === 'comprehensive' && mode === 'quick') {
+          updates.cryptoUseCases = []
+          updates.useCasesUnknown = false
+          updates.dataRetention = []
+          updates.retentionUnknown = false
+          updates.credentialLifetime = []
+          updates.credentialLifetimeUnknown = false
+          updates.systemCount = ''
+          updates.teamSize = ''
+          updates.scaleUnknown = false
+          updates.cryptoAgility = ''
+          updates.agilityUnknown = false
+          updates.infrastructure = []
+          updates.infrastructureSubCategories = {}
+          updates.infrastructureUnknown = false
+          updates.vendorDependency = ''
+          updates.vendorUnknown = false
+          updates.timelinePressure = ''
+          updates.timelineUnknown = false
+        }
+        set(updates)
         try {
           useHistoryStore.getState().addEvent({
             type: 'assessment_started',
@@ -198,7 +222,7 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
 
       setIndustry: (industry) => {
         const state = get()
-        const persona = usePersonaStore.getState().selectedPersona
+        const { selectedPersona: persona, experienceLevel } = usePersonaStore.getState()
         const updates: Record<string, unknown> = {
           industry,
           complianceRequirements: [],
@@ -206,7 +230,13 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
           lastWizardUpdate: new Date().toISOString(),
         }
         if (hasAnyUnknown(state)) {
-          const defaults = computeSmartDefaults(industry, state.country, persona)
+          const defaults = computeSmartDefaults(
+            industry,
+            state.country,
+            persona,
+            experienceLevel,
+            true
+          )
           applyDefaultsToUnknownSteps(state, defaults, updates)
         }
         set(updates)
@@ -214,7 +244,7 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
 
       setCountry: (country) => {
         const state = get()
-        const persona = usePersonaStore.getState().selectedPersona
+        const { selectedPersona: persona, experienceLevel } = usePersonaStore.getState()
         const updates: Record<string, unknown> = {
           country,
           complianceRequirements: [],
@@ -222,7 +252,13 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
           lastWizardUpdate: new Date().toISOString(),
         }
         if (hasAnyUnknown(state)) {
-          const defaults = computeSmartDefaults(state.industry, country, persona)
+          const defaults = computeSmartDefaults(
+            state.industry,
+            country,
+            persona,
+            experienceLevel,
+            true
+          )
           applyDefaultsToUnknownSteps(state, defaults, updates)
         }
         set(updates)
@@ -249,8 +285,8 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
       setCryptoUnknown: (val) => {
         if (val) {
           const { industry, country } = get()
-          const persona = usePersonaStore.getState().selectedPersona
-          const defaults = computeSmartDefaults(industry, country, persona)
+          const { selectedPersona: persona, experienceLevel } = usePersonaStore.getState()
+          const defaults = computeSmartDefaults(industry, country, persona, experienceLevel, true)
           set({
             cryptoUnknown: true,
             currentCrypto: defaults.currentCrypto,
@@ -279,8 +315,8 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
       setSensitivityUnknown: (val) => {
         if (val) {
           const { industry, country } = get()
-          const persona = usePersonaStore.getState().selectedPersona
-          const defaults = computeSmartDefaults(industry, country, persona)
+          const { selectedPersona: persona, experienceLevel } = usePersonaStore.getState()
+          const defaults = computeSmartDefaults(industry, country, persona, experienceLevel)
           set({
             sensitivityUnknown: true,
             dataSensitivity: defaults.dataSensitivity,
@@ -314,8 +350,8 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
       setComplianceUnknown: (val) => {
         if (val) {
           const { industry, country } = get()
-          const persona = usePersonaStore.getState().selectedPersona
-          const defaults = computeSmartDefaults(industry, country, persona)
+          const { selectedPersona: persona, experienceLevel } = usePersonaStore.getState()
+          const defaults = computeSmartDefaults(industry, country, persona, experienceLevel)
           set({
             complianceUnknown: true,
             complianceRequirements: defaults.complianceRequirements,
@@ -340,8 +376,8 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
       setMigrationUnknown: (val) => {
         if (val) {
           const { industry, country } = get()
-          const persona = usePersonaStore.getState().selectedPersona
-          const defaults = computeSmartDefaults(industry, country, persona)
+          const { selectedPersona: persona, experienceLevel } = usePersonaStore.getState()
+          const defaults = computeSmartDefaults(industry, country, persona, experienceLevel)
           set({
             migrationUnknown: true,
             migrationStatus: defaults.migrationStatus,
@@ -368,8 +404,8 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
       setUseCasesUnknown: (val) => {
         if (val) {
           const { industry, country } = get()
-          const persona = usePersonaStore.getState().selectedPersona
-          const defaults = computeSmartDefaults(industry, country, persona)
+          const { selectedPersona: persona, experienceLevel } = usePersonaStore.getState()
+          const defaults = computeSmartDefaults(industry, country, persona, experienceLevel, true)
           set({
             useCasesUnknown: true,
             cryptoUseCases: defaults.cryptoUseCases,
@@ -396,8 +432,8 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
       setRetentionUnknown: (val) => {
         if (val) {
           const { industry, country } = get()
-          const persona = usePersonaStore.getState().selectedPersona
-          const defaults = computeSmartDefaults(industry, country, persona)
+          const { selectedPersona: persona, experienceLevel } = usePersonaStore.getState()
+          const defaults = computeSmartDefaults(industry, country, persona, experienceLevel)
           set({
             retentionUnknown: true,
             dataRetention: defaults.dataRetention,
@@ -424,8 +460,8 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
       setCredentialLifetimeUnknown: (val) => {
         if (val) {
           const { industry, country } = get()
-          const persona = usePersonaStore.getState().selectedPersona
-          const defaults = computeSmartDefaults(industry, country, persona)
+          const { selectedPersona: persona, experienceLevel } = usePersonaStore.getState()
+          const defaults = computeSmartDefaults(industry, country, persona, experienceLevel)
           set({
             credentialLifetimeUnknown: true,
             credentialLifetime: defaults.credentialLifetime,
@@ -453,8 +489,8 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
       setScaleUnknown: (val) => {
         if (val) {
           const { industry, country } = get()
-          const persona = usePersonaStore.getState().selectedPersona
-          const defaults = computeSmartDefaults(industry, country, persona)
+          const { selectedPersona: persona, experienceLevel } = usePersonaStore.getState()
+          const defaults = computeSmartDefaults(industry, country, persona, experienceLevel)
           set({
             scaleUnknown: true,
             systemCount: defaults.systemCount,
@@ -481,8 +517,8 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
       setAgilityUnknown: (val) => {
         if (val) {
           const { industry, country } = get()
-          const persona = usePersonaStore.getState().selectedPersona
-          const defaults = computeSmartDefaults(industry, country, persona)
+          const { selectedPersona: persona, experienceLevel } = usePersonaStore.getState()
+          const defaults = computeSmartDefaults(industry, country, persona, experienceLevel)
           set({
             agilityUnknown: true,
             cryptoAgility: defaults.cryptoAgility,
@@ -516,8 +552,8 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
       setInfrastructureUnknown: (val) => {
         if (val) {
           const { industry, country } = get()
-          const persona = usePersonaStore.getState().selectedPersona
-          const defaults = computeSmartDefaults(industry, country, persona)
+          const { selectedPersona: persona, experienceLevel } = usePersonaStore.getState()
+          const defaults = computeSmartDefaults(industry, country, persona, experienceLevel, true)
           set({
             infrastructureUnknown: true,
             infrastructure: defaults.infrastructure,
@@ -550,8 +586,8 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
       setVendorUnknown: (val) => {
         if (val) {
           const { industry, country } = get()
-          const persona = usePersonaStore.getState().selectedPersona
-          const defaults = computeSmartDefaults(industry, country, persona)
+          const { selectedPersona: persona, experienceLevel } = usePersonaStore.getState()
+          const defaults = computeSmartDefaults(industry, country, persona, experienceLevel)
           set({
             vendorUnknown: true,
             vendorDependency: defaults.vendorDependency,
@@ -576,8 +612,8 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
       setTimelineUnknown: (val) => {
         if (val) {
           const { industry, country } = get()
-          const persona = usePersonaStore.getState().selectedPersona
-          const defaults = computeSmartDefaults(industry, country, persona)
+          const { selectedPersona: persona, experienceLevel } = usePersonaStore.getState()
+          const defaults = computeSmartDefaults(industry, country, persona, experienceLevel)
           set({
             timelineUnknown: true,
             timelinePressure: defaults.timelinePressure,

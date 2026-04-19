@@ -100,7 +100,7 @@ export function VisionSection() {
                 the deadlines.
               </p>
               <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-                Our Business Center provides 14 interactive planning tools for executives and
+                Our Command Center provides 14 interactive planning tools for executives and
                 compliance teams &mdash; ROI calculators, RACI builders, vendor scorecards, policy
                 generators, deployment playbooks, and audit checklists &mdash; all adapting to your
                 industry, geography, and regulatory context.

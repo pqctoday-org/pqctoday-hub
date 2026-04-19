@@ -11,9 +11,13 @@ import {
 import { useNavigate } from 'react-router-dom'
 import JSZip from 'jszip'
 import { PageHeader } from '@/components/common/PageHeader'
+import { WorkflowBreadcrumb } from '@/components/shared/WorkflowBreadcrumb'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { useModuleStore } from '@/store/useModuleStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { getBusinessCenterPillarOrder, type BCPillarId } from '@/data/personaConfig'
+import { useSeedFrameworksFromCountry } from '@/hooks/assessment/useSeedFrameworksFromCountry'
 import { useBusinessMetrics } from './hooks/useBusinessMetrics'
 import { TYPE_LABELS } from './ArtifactCard'
 import { RiskManagementSection } from './sections/RiskManagementSection'
@@ -21,6 +25,7 @@ import { ComplianceRegulatorySection } from './sections/ComplianceRegulatorySect
 import { GovernancePolicySection } from './sections/GovernancePolicySection'
 import { VendorSupplyChainSection } from './sections/VendorSupplyChainSection'
 import { ActionItemsSection } from './sections/ActionItemsSection'
+import { CyberInsuranceLensSection } from './sections/CyberInsuranceLensSection'
 import { CompactLearningBar } from './CompactLearningBar'
 import { ArtifactDrawer, type DrawerMode } from './ArtifactDrawer'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
@@ -31,7 +36,7 @@ function WelcomeState() {
     <div className="glass-panel p-8 text-center">
       <LayoutDashboard size={48} className="mx-auto mb-4 text-muted-foreground" />
       <h2 className="text-xl font-semibold text-foreground mb-2">
-        Welcome to your PQC Business Center
+        Welcome to your PQC Command Center
       </h2>
       <p className="text-sm text-muted-foreground mb-6 max-w-lg mx-auto">
         This is your command center for PQC readiness. Get started by running a risk assessment,
@@ -93,15 +98,24 @@ const TYPE_FILTER_ITEMS = [
 ]
 
 export function BusinessCenterView() {
+  useSeedFrameworksFromCountry()
   const metrics = useBusinessMetrics()
   const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
   const updateExecutiveDocument = useModuleStore((s) => s.updateExecutiveDocument)
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const pillarOrder: readonly BCPillarId[] = useMemo(
+    () => getBusinessCenterPillarOrder(selectedPersona),
+    [selectedPersona]
+  )
 
   // Filter state
   const [typeFilter, setTypeFilter] = useState('all')
 
-  // Drawer state
+  // Drawer state. Create mode uses `drawerCreateType` with a null document; view/edit
+  // use `drawerDoc` with createType cleared. The drawer itself handles the transition
+  // from create → view once a new document of the given type is persisted.
   const [drawerDoc, setDrawerDoc] = useState<ExecutiveDocument | null>(null)
+  const [drawerCreateType, setDrawerCreateType] = useState<ExecutiveDocumentType | null>(null)
   const [drawerMode, setDrawerMode] = useState<DrawerMode>('view')
 
   // All artifacts flat list (for ZIP export + filter count)
@@ -116,12 +130,20 @@ export function BusinessCenterView() {
 
   const handleViewArtifact = useCallback((doc: ExecutiveDocument) => {
     setDrawerDoc(doc)
+    setDrawerCreateType(null)
     setDrawerMode('view')
   }, [])
 
   const handleEditArtifact = useCallback((doc: ExecutiveDocument) => {
     setDrawerDoc(doc)
+    setDrawerCreateType(null)
     setDrawerMode('edit')
+  }, [])
+
+  const handleCreateArtifact = useCallback((type: ExecutiveDocumentType) => {
+    setDrawerDoc(null)
+    setDrawerCreateType(type)
+    setDrawerMode('create')
   }, [])
 
   const handleDeleteArtifact = useCallback(
@@ -133,6 +155,15 @@ export function BusinessCenterView() {
 
   const handleCloseDrawer = useCallback(() => {
     setDrawerDoc(null)
+    setDrawerCreateType(null)
+  }, [])
+
+  // Drawer signals that a new artifact was persisted while in create mode —
+  // transition to view the freshly-saved document.
+  const handleArtifactCreated = useCallback((doc: ExecutiveDocument) => {
+    setDrawerDoc(doc)
+    setDrawerCreateType(null)
+    setDrawerMode('view')
   }, [])
 
   const handleRenameArtifact = useCallback(
@@ -163,17 +194,19 @@ export function BusinessCenterView() {
     onEditArtifact: handleEditArtifact,
     onDeleteArtifact: handleDeleteArtifact,
     onRenameArtifact: handleRenameArtifact,
+    onCreateArtifact: handleCreateArtifact,
     typeFilter: typeFilter as ExecutiveDocumentType | 'all',
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6" data-testid="bc-dashboard-ready">
+      <WorkflowBreadcrumb current="business" />
       <PageHeader
         icon={LayoutDashboard}
         pageId="business-center"
-        title="Business Center"
+        title="Command Center"
         description="Your PQC readiness command center — risk, compliance, governance, and next steps."
-        shareTitle="PQC Business Center — Quantum Readiness Command Center"
+        shareTitle="PQC Command Center — Quantum Readiness Workspace"
         shareText="Your PQC readiness command center — risk, compliance, governance, and actionable next steps."
       />
 
@@ -215,33 +248,56 @@ export function BusinessCenterView() {
         <WelcomeState />
       ) : (
         <div className="space-y-6">
-          {/* Pillar 1: Risk Management — full width */}
-          <RiskManagementSection metrics={metrics} {...artifactCallbacks} />
-
-          {/* Pillars 2-3: Compliance & Governance — 2 col */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <ComplianceRegulatorySection metrics={metrics} {...artifactCallbacks} />
-            <GovernancePolicySection metrics={metrics} {...artifactCallbacks} />
-          </div>
-
-          {/* Pillar 4: Vendor & Migration — full width */}
-          <VendorSupplyChainSection metrics={metrics} {...artifactCallbacks} />
-
-          {/* Compact Executive Learning — full width */}
-          <CompactLearningBar modules={metrics.execModuleProgress} />
-
-          {/* Action Items — full width */}
-          <ActionItemsSection metrics={metrics} />
+          {pillarOrder.map((pillar) => {
+            switch (pillar) {
+              case 'risk':
+                return <RiskManagementSection key="risk" metrics={metrics} {...artifactCallbacks} />
+              case 'compliance':
+                return (
+                  <ComplianceRegulatorySection
+                    key="compliance"
+                    metrics={metrics}
+                    {...artifactCallbacks}
+                  />
+                )
+              case 'governance':
+                return (
+                  <GovernancePolicySection
+                    key="governance"
+                    metrics={metrics}
+                    {...artifactCallbacks}
+                  />
+                )
+              case 'vendor':
+                return (
+                  <VendorSupplyChainSection key="vendor" metrics={metrics} {...artifactCallbacks} />
+                )
+              case 'learning':
+                return <CompactLearningBar key="learning" modules={metrics.execModuleProgress} />
+              case 'actions':
+                return <ActionItemsSection key="actions" metrics={metrics} />
+              case 'insurance':
+                return <CyberInsuranceLensSection key="insurance" />
+              default:
+                return null
+            }
+          })}
         </div>
       )}
 
-      {/* Artifact Drawer */}
-      <ArtifactDrawer
-        document={drawerDoc}
-        mode={drawerMode}
-        onClose={handleCloseDrawer}
-        onModeChange={setDrawerMode}
-      />
+      {/* Artifact Drawer — handles view, edit, and create modes for every artifact
+          type. Builder components are sourced from the shared businessToolsRegistry
+          so the /business/tools/:id route and this drawer stay in lockstep. */}
+      {(drawerDoc || drawerCreateType) && (
+        <ArtifactDrawer
+          document={drawerDoc}
+          createType={drawerCreateType}
+          mode={drawerMode}
+          onClose={handleCloseDrawer}
+          onModeChange={setDrawerMode}
+          onCreated={handleArtifactCreated}
+        />
+      )}
     </div>
   )
 }

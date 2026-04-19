@@ -12,6 +12,7 @@ import {
   hsm_decapsulate,
   hsm_extractKeyValue,
 } from '../../../wasm/softhsm'
+import { useEffect } from 'react'
 
 export const HsmKemPanel = () => {
   const { moduleRef, hSessionRef, addHsmKey, engineMode } = useHsmContext()
@@ -94,7 +95,42 @@ export const HsmKemPanel = () => {
     encapSecret &&
     decapSecret &&
     encapSecret.length === decapSecret.length &&
+    // eslint-disable-next-line security/detect-object-injection
     encapSecret.every((val, i) => val === decapSecret[i])
+
+  // E2E UI-decoupled Boundaries
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const ce = e as CustomEvent
+      if (ce.detail?.alg) {
+        const v =
+          ce.detail.alg === 'ML-KEM-1024' ? 1024 : ce.detail.alg === 'ML-KEM-512' ? 512 : 768
+        setVariant(v)
+        setPubHandle(null)
+        setPrivHandle(null)
+        // We use setTimeout to ensure React flushes the state above before trying to run doGenKey,
+        // otherwise doGenKey will use the stale `variant` closure if this effect fires eagerly.
+        // Wait, actually doGenKey relies on `variant` from state which is a closure!
+        // We probably need to re-implement doGenKey in the handler.
+        withLoading('gen', () => {
+          const M = moduleRef.current!
+          const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(M, hSessionRef.current, v)
+          setPubHandle(pubHandle)
+          setPrivHandle(privHandle)
+          setCiphertext(null)
+          setEncapSecret(null)
+          setDecapSecret(null)
+
+          const pubKeyBytes = hsm_extractKeyValue(M, hSessionRef.current, pubHandle)
+          window.dispatchEvent(
+            new CustomEvent('e2e:wasm_crypto_result', { detail: { pubKeyBytes } })
+          )
+        })
+      }
+    }
+    window.addEventListener('e2e:trigger_wasm_keygen', handler)
+    return () => window.removeEventListener('e2e:trigger_wasm_keygen', handler)
+  }, [moduleRef, hSessionRef])
 
   return (
     <div className="space-y-4">

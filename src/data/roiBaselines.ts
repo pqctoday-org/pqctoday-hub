@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Industry breach cost baselines — IBM Cost of a Data Breach Report 2024
+// TODO(F11): refresh to IBM 2025 edition (published July 2025) before Q3 exec
+// reviews — numbers have shifted materially for Healthcare, Finance, and Tech.
+export const INDUSTRY_BREACH_BASELINES_AS_OF = '2024-07'
 export const INDUSTRY_BREACH_BASELINES: Record<string, number> = {
   'Finance & Banking': 6_080_000,
   Healthcare: 9_770_000,
@@ -18,9 +21,28 @@ export const INDUSTRY_BREACH_BASELINES: Record<string, number> = {
 // Keys MUST match the `label` column from compliance_*.csv exactly.
 // Frameworks not listed here fall back to DEFAULT_FRAMEWORK_PENALTY.
 
+/**
+ * Category of "penalty" — drives interpretation downstream. Statutory fines are
+ * recurring annual exposure; contract-loss and cert-loss figures are one-time
+ * revenue impacts and should not be treated as annual. The ROI math currently
+ * uses a uniform annual-probability model; tag each record so a future refinement
+ * can treat them differently.
+ */
+export type PenaltyType =
+  /** Statutory fine imposed by a regulator. */
+  | 'fine'
+  /** Lost federal / enterprise contracts due to non-compliance. */
+  | 'contract-loss'
+  /** Revoked certification (FIPS, CC, ISO, etc.) blocking procurement. */
+  | 'certification-loss'
+
 export interface FrameworkPenalty {
   annualPenalty: number
   source: string
+  /** Optional — when present, the date the penalty figure was last verified (YYYY-MM). */
+  asOf?: string
+  /** Optional — defaults to 'fine' when omitted. */
+  penaltyType?: PenaltyType
 }
 
 export const FRAMEWORK_PENALTY_BASELINES: Record<string, FrameworkPenalty> = {

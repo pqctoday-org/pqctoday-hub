@@ -249,6 +249,7 @@ export const INDUSTRY_THREAT: Record<string, number> = {
   Aerospace: 25, // 40+ year asset lifetime; extreme HNDL/HNFL exposure
   'Retail & E-Commerce': 10, // PCI DSS; shorter data retention, faster migration cycles
   Education: 12, // FERPA student records, research IP; moderate HNDL from long-lived transcripts
+  Manufacturing: 18, // IEC 62443 OT/ICS, ISO/SAE 21434 automotive supply, TISAX, TSN; long-lived embedded controllers + supply-chain trust roots
   Other: 10, // Baseline default
 }
 export const ALGORITHM_WEIGHTS: Record<string, number> = {
@@ -445,6 +446,15 @@ export const COUNTRY_PLANNING_HORIZON: Record<string, number> = {
   Finland: 2030, // NIS2 critical infrastructure
   Austria: 2030, // NIS2 critical infrastructure
   Taiwan: 2035, // NICS study ongoing, no hard deadline yet
+  // NIS2 + EU critical-systems 2030 cohort — added so "I don't know" doesn't
+  // fall through to 'no-deadline' for users in these jurisdictions.
+  Italy: 2030, // NIS2 transposition (Legislative Decree 138/2024), EU 2030 critical systems
+  Spain: 2030, // NIS2 transposition, ENS high-level compliance
+  Netherlands: 2030, // NIS2 (Cyberbeveiligingswet), AIVD quantum advisory alignment
+  Belgium: 2030, // NIS2 transposition
+  Sweden: 2030, // NIS2 transposition
+  Denmark: 2030, // NIS2 transposition
+  Poland: 2030, // NIS2 transposition
 }
 /** Industry-specific composite score weights (must sum to 1.0). */
 export const INDUSTRY_COMPOSITE_WEIGHTS: Record<
@@ -461,6 +471,7 @@ export const INDUSTRY_COMPOSITE_WEIGHTS: Record<
   Aerospace: { qe: 0.3, mc: 0.25, rp: 0.25, or: 0.2 },
   'Retail & E-Commerce': { qe: 0.35, mc: 0.2, rp: 0.2, or: 0.25 },
   Education: { qe: 0.3, mc: 0.2, rp: 0.25, or: 0.25 },
+  Manufacturing: { qe: 0.3, mc: 0.25, rp: 0.2, or: 0.25 },
   Other: { qe: 0.35, mc: 0.2, rp: 0.2, or: 0.25 },
 }
 export const DEFAULT_COMPOSITE_WEIGHTS = { qe: 0.35, mc: 0.2, rp: 0.2, or: 0.25 }

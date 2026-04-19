@@ -6,7 +6,6 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { ArtifactCard, ArtifactPlaceholder } from '../ArtifactCard'
 import {
   PILLAR_ARTIFACT_TYPES,
-  PILLAR_SOURCE_MODULES,
   type BusinessMetrics,
   type InfraLayerCoverage,
 } from '../hooks/useBusinessMetrics'
@@ -58,6 +57,7 @@ export function VendorSupplyChainSection({
   onEditArtifact,
   onDeleteArtifact,
   onRenameArtifact,
+  onCreateArtifact,
   typeFilter,
 }: { metrics: BusinessMetrics } & SectionArtifactCallbacks) {
   const navigate = useNavigate()
@@ -73,7 +73,6 @@ export function VendorSupplyChainSection({
       ? allArtifacts.filter((d) => d.type === typeFilter)
       : allArtifacts
   const pillarTypes = PILLAR_ARTIFACT_TYPES.vendor
-  const sourceModules = PILLAR_SOURCE_MODULES.vendor
   const existingTypes = new Set(artifacts.map((a) => a.type))
 
   const hasAnyContent =
@@ -227,9 +226,8 @@ export function VendorSupplyChainSection({
                 <ArtifactPlaceholder
                   key={type}
                   type={type}
-                  moduleId={sourceModules[type] ?? 'vendor-risk'} // eslint-disable-line security/detect-object-injection
                   pillar="vendor"
-                  onNavigate={navigate}
+                  onCreate={onCreateArtifact}
                 />
               ))}
           </div>

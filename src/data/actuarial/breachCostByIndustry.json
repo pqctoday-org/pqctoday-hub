@@ -1,0 +1,92 @@
+{
+  "_meta": {
+    "sources": [
+      "IBM Cost of a Data Breach Report 2024 (https://www.ibm.com/reports/data-breach)",
+      "Verizon DBIR 2024 (https://www.verizon.com/business/resources/reports/dbir/)",
+      "NetDiligence Cyber Claims Study 2024 (https://netdiligence.com/wp-content/uploads/2024/10/2024-NetDiligence-Cyber-Claims-Study.pdf)"
+    ],
+    "note": "Educational model — values represent published industry averages and are not a substitute for actuarial certification."
+  },
+  "industries": [
+    {
+      "id": "financial",
+      "label": "Financial Services",
+      "meanCostPerRecord": 185,
+      "meanBreachRecords": 30000,
+      "regulatoryMultipliers": { "GDPR": 1.45, "CCPA": 1.12, "HIPAA": 1.0, "PCI": 1.18 },
+      "source": "IBM CODB 2024 §Financial, NetDiligence 2024 Table 3"
+    },
+    {
+      "id": "healthcare",
+      "label": "Healthcare",
+      "meanCostPerRecord": 499,
+      "meanBreachRecords": 22000,
+      "regulatoryMultipliers": { "GDPR": 1.4, "CCPA": 1.08, "HIPAA": 1.35, "PCI": 1.05 },
+      "source": "IBM CODB 2024 §Healthcare (highest sector for 13th consecutive year)"
+    },
+    {
+      "id": "technology",
+      "label": "Technology",
+      "meanCostPerRecord": 175,
+      "meanBreachRecords": 42000,
+      "regulatoryMultipliers": { "GDPR": 1.5, "CCPA": 1.15, "HIPAA": 1.0, "PCI": 1.1 },
+      "source": "IBM CODB 2024 §Technology, Verizon DBIR 2024"
+    },
+    {
+      "id": "government",
+      "label": "Government / Public Sector",
+      "meanCostPerRecord": 95,
+      "meanBreachRecords": 80000,
+      "regulatoryMultipliers": { "GDPR": 1.3, "CCPA": 1.05, "HIPAA": 1.1, "PCI": 1.0 },
+      "source": "IBM CODB 2024 §Public Sector, NetDiligence 2024"
+    },
+    {
+      "id": "energy",
+      "label": "Energy / Utilities",
+      "meanCostPerRecord": 161,
+      "meanBreachRecords": 25000,
+      "regulatoryMultipliers": { "GDPR": 1.4, "CCPA": 1.05, "HIPAA": 1.0, "PCI": 1.08 },
+      "source": "IBM CODB 2024 §Energy ($5.29M avg total cost)"
+    },
+    {
+      "id": "retail",
+      "label": "Retail / Consumer",
+      "meanCostPerRecord": 105,
+      "meanBreachRecords": 52000,
+      "regulatoryMultipliers": { "GDPR": 1.4, "CCPA": 1.2, "HIPAA": 1.0, "PCI": 1.22 },
+      "source": "IBM CODB 2024 §Retail, NetDiligence 2024 Table 5"
+    },
+    {
+      "id": "manufacturing",
+      "label": "Manufacturing / Industrial",
+      "meanCostPerRecord": 138,
+      "meanBreachRecords": 35000,
+      "regulatoryMultipliers": { "GDPR": 1.38, "CCPA": 1.08, "HIPAA": 1.0, "PCI": 1.1 },
+      "source": "IBM CODB 2024 §Industrial ($4.73M avg total cost)"
+    },
+    {
+      "id": "education",
+      "label": "Education",
+      "meanCostPerRecord": 105,
+      "meanBreachRecords": 65000,
+      "regulatoryMultipliers": { "GDPR": 1.3, "CCPA": 1.1, "HIPAA": 1.08, "PCI": 1.0 },
+      "source": "IBM CODB 2024 §Education, Verizon DBIR 2024"
+    },
+    {
+      "id": "transportation",
+      "label": "Transportation / Logistics",
+      "meanCostPerRecord": 120,
+      "meanBreachRecords": 30000,
+      "regulatoryMultipliers": { "GDPR": 1.35, "CCPA": 1.08, "HIPAA": 1.0, "PCI": 1.1 },
+      "source": "IBM CODB 2024 §Transportation"
+    },
+    {
+      "id": "telecom",
+      "label": "Telecommunications",
+      "meanCostPerRecord": 149,
+      "meanBreachRecords": 48000,
+      "regulatoryMultipliers": { "GDPR": 1.45, "CCPA": 1.12, "HIPAA": 1.0, "PCI": 1.08 },
+      "source": "IBM CODB 2024 §Telecommunications"
+    }
+  ]
+}

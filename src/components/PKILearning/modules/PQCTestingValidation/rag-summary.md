@@ -89,16 +89,16 @@ TLS session resumption (PSK reuse) allows returning clients to skip the expensiv
 
 ### Production-Scale KPIs (VIAVI TeraVM on Dell R6625)
 
-| KPI                  | Classical (X25519) | Hybrid (X25519+ML-KEM-768) | Delta        |
-| -------------------- | ------------------ | -------------------------- | ------------ |
-| Connection Rate      | 51,520 CPS         | 32,320 CPS                 | 37% drop     |
-| Client Throughput    | 7,312 Mbps         | 4,968 Mbps                 | 32% drop     |
-| Client Gets/s        | 51,520              | 32,960                     | 36% drop     |
-| Client Get Time      | 2.72ms              | 98.55ms                    | 3,523% increase |
-| Time to First Byte   | 2.04ms              | 85.045ms                   | 4,069% increase |
-| Time to Last Byte    | 2.72ms              | 98.553ms                   | 3,523% increase |
-| VPN Tunnel Rate      | 17,768 tunnels/s    | 4,471 tunnels/s            | 75% drop     |
-| VPN Setup Time       | 3.422ms             | 4.28ms                     | 20% increase |
+| KPI                | Classical (X25519) | Hybrid (X25519+ML-KEM-768) | Delta           |
+| ------------------ | ------------------ | -------------------------- | --------------- |
+| Connection Rate    | 51,520 CPS         | 32,320 CPS                 | 37% drop        |
+| Client Throughput  | 7,312 Mbps         | 4,968 Mbps                 | 32% drop        |
+| Client Gets/s      | 51,520             | 32,960                     | 36% drop        |
+| Client Get Time    | 2.72ms             | 98.55ms                    | 3,523% increase |
+| Time to First Byte | 2.04ms             | 85.045ms                   | 4,069% increase |
+| Time to Last Byte  | 2.72ms             | 98.553ms                   | 3,523% increase |
+| VPN Tunnel Rate    | 17,768 tunnels/s   | 4,471 tunnels/s            | 75% drop        |
+| VPN Setup Time     | 3.422ms            | 4.28ms                     | 20% increase    |
 
 These numbers represent **clean-path** overhead. Enterprise middlebox chains (NGFW, SGW, DLP proxy) multiply them by 2–3×. Bursty traffic patterns (login storms, microservice chatter) compound the impact further.
 

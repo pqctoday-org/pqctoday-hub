@@ -7,15 +7,32 @@
  * Default: collapsible, starts collapsed.
  */
 import { useState } from 'react'
-import { ChevronDown, ChevronRight, Trash2, Copy, CheckCircle, Eye } from 'lucide-react'
+import {
+  ChevronDown,
+  ChevronRight,
+  Trash2,
+  Copy,
+  CheckCircle,
+  Eye,
+  BookOpenText,
+} from 'lucide-react'
 import { Button } from '../ui/button'
 import type { Pkcs11LogEntry } from '../../wasm/softhsm'
 import { lookupCkr } from '../../wasm/pkcs11Inspect'
 import { InspectPanel } from './Pkcs11InspectPanel'
+import { pkcs11PlainEnglish } from '../../wasm/pkcs11PlainEnglish'
 
 // ── Entry row ────────────────────────────────────────────────────────────────
 
-const LogEntryRow = ({ entry, inspectMode }: { entry: Pkcs11LogEntry; inspectMode: boolean }) => {
+const LogEntryRow = ({
+  entry,
+  inspectMode,
+  beginnerMode,
+}: {
+  entry: Pkcs11LogEntry
+  inspectMode: boolean
+  beginnerMode: boolean
+}) => {
   const [expanded, setExpanded] = useState(false)
 
   if (entry.isStepHeader) {
@@ -34,13 +51,19 @@ const LogEntryRow = ({ entry, inspectMode }: { entry: Pkcs11LogEntry; inspectMod
       ? 'text-status-warning'
       : 'text-status-error'
 
+  const english = beginnerMode ? pkcs11PlainEnglish(entry.fn, entry.args || '') : ''
+
   return (
     <div>
       <div
         role={hasInspect ? 'button' : undefined}
         tabIndex={hasInspect ? 0 : undefined}
         aria-expanded={hasInspect ? expanded : undefined}
-        className={`grid grid-cols-[1rem_7rem_12rem_1fr_6rem_4rem] gap-x-2 text-xs font-mono py-0.5 border-b border-border/10 last:border-0 px-1 rounded items-start
+        className={`grid ${
+          beginnerMode
+            ? 'grid-cols-[1rem_7rem_12rem_1fr_6rem_4rem_12rem]'
+            : 'grid-cols-[1rem_7rem_12rem_1fr_6rem_4rem]'
+        } gap-x-2 text-xs font-mono py-0.5 border-b border-border/10 last:border-0 px-1 rounded items-start
           ${hasInspect ? 'cursor-pointer hover:bg-muted/30' : ''}`}
         onClick={hasInspect ? () => setExpanded((v) => !v) : undefined}
         onKeyDown={
@@ -70,6 +93,14 @@ const LogEntryRow = ({ entry, inspectMode }: { entry: Pkcs11LogEntry; inspectMod
         </span>
         <span className={`${rvColor} shrink-0`}>{entry.rvName}</span>
         <span className="text-muted-foreground shrink-0 text-right">{entry.ms}ms</span>
+        {beginnerMode && (
+          <span
+            className="text-muted-foreground italic truncate font-sans"
+            title={english || undefined}
+          >
+            {english || ''}
+          </span>
+        )}
       </div>
 
       {/* Inspect drawer — reuses the same InspectPanel as the HSM Playground */}
@@ -106,6 +137,12 @@ interface Pkcs11LogPanelProps {
    * (e.g. ['C_GenerateKeyPair', 'C_Sign']) — hides the identical init sequence.
    */
   filterFns?: string[]
+  /**
+   * When true, reveal the Beginner-mode toggle that adds a trailing column
+   * with a short plain-English phrase per call. Raw fn/args/rv fields are
+   * never edited — Beginner mode is purely additive.
+   */
+  showBeginnerMode?: boolean
 }
 
 export const Pkcs11LogPanel = ({
@@ -116,10 +153,12 @@ export const Pkcs11LogPanel = ({
   className = '',
   emptyMessage = 'No PKCS#11 calls yet — run a live operation to see activity.',
   filterFns,
+  showBeginnerMode = false,
 }: Pkcs11LogPanelProps) => {
   const [open, setOpen] = useState(defaultOpen)
   const [copied, setCopied] = useState(false)
   const [inspectMode, setInspectMode] = useState(false)
+  const [beginnerMode, setBeginnerMode] = useState(false)
 
   const CRYPTO_OPS = [
     'C_GenerateKeyPair',
@@ -228,6 +267,22 @@ export const Pkcs11LogPanel = ({
           onClick={(e) => e.stopPropagation()}
           onKeyDown={(e) => e.stopPropagation()}
         >
+          {showBeginnerMode && (
+            <Button
+              variant={beginnerMode ? 'secondary' : 'ghost'}
+              size="sm"
+              className="h-6 px-1.5 text-xs mr-1"
+              onClick={() => setBeginnerMode(!beginnerMode)}
+              title={
+                beginnerMode
+                  ? 'Hide plain-English translations'
+                  : 'Show a short plain-English phrase per call'
+              }
+            >
+              <BookOpenText size={11} className="mr-1" />
+              Beginner
+            </Button>
+          )}
           <Button
             variant={inspectMode ? 'secondary' : 'ghost'}
             size="sm"
@@ -281,16 +336,28 @@ export const Pkcs11LogPanel = ({
                 </p>
               )}
               <div className="space-y-0 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar relative">
-                <div className="grid grid-cols-[1rem_7rem_12rem_1fr_6rem_4rem] gap-x-2 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider py-1 mb-1 border-b border-border/30 px-1 sticky top-0 bg-background/95 backdrop-blur z-10">
+                <div
+                  className={`grid ${
+                    beginnerMode
+                      ? 'grid-cols-[1rem_7rem_12rem_1fr_6rem_4rem_12rem]'
+                      : 'grid-cols-[1rem_7rem_12rem_1fr_6rem_4rem]'
+                  } gap-x-2 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider py-1 mb-1 border-b border-border/30 px-1 sticky top-0 bg-background/95 backdrop-blur z-10`}
+                >
                   <span className="w-2.5" />
                   <span>Time</span>
                   <span>Function</span>
                   <span>Arguments</span>
                   <span>Return Value</span>
                   <span className="text-right">Duration</span>
+                  {beginnerMode && <span>Plain English</span>}
                 </div>
                 {orderedLog.map((e) => (
-                  <LogEntryRow key={e.id} entry={e} inspectMode={inspectMode} />
+                  <LogEntryRow
+                    key={e.id}
+                    entry={e}
+                    inspectMode={inspectMode}
+                    beginnerMode={beginnerMode}
+                  />
                 ))}
               </div>
             </>

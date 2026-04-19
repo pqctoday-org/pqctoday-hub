@@ -18,6 +18,8 @@ import {
   Container,
   Network,
   Globe,
+  BarChart2,
+  Gauge,
 } from 'lucide-react'
 import { lazyWithRetry } from '@/utils/lazyWithRetry'
 import type { PersonaId } from '@/data/learningPersonas'
@@ -47,6 +49,8 @@ export interface WorkshopTool {
   recommendedPersonas: PersonaId[]
   /** Tool is under active development — show WIP badge on card */
   wip?: boolean
+  /** Open-source project powering this tool */
+  opensourceTool?: { name: string; url: string }
 }
 
 export const WORKSHOP_TOOLS: WorkshopTool[] = [
@@ -203,6 +207,36 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'advanced',
     recommendedPersonas: ['developer', 'architect', 'ops', 'researcher'],
+  },
+  {
+    id: 'pqc-ssh-sim',
+    pt_id: 'PT-SSH-PQC',
+    version: '0.1.0',
+    name: 'PQC SSH Simulator',
+    description:
+      'Full OpenSSH 10.x handshake in WASM: mlkem768x25519-sha256 KEX + ssh-mldsa-65 host auth + publickey userauth backed by softhsmv3 PKCS#11. Compare classical vs PQC byte sizes and latency.',
+    category: 'HSM / PKCS#11',
+    algorithms: ['ML-KEM-768', 'X25519', 'ML-DSA-65', 'ssh-mldsa-65', 'PKCS#11'],
+    icon: Terminal,
+    moduleLink: '/learn/network-security-pqc',
+    keywords: [
+      'ssh',
+      'openssh',
+      'ml-kem',
+      'ml-dsa',
+      'hybrid',
+      'kex',
+      'pkcs11',
+      'softhsm',
+      'wasm',
+      'pqc',
+      'x25519',
+      'mldsa65',
+      'userauth',
+    ],
+    difficulty: 'advanced',
+    recommendedPersonas: ['developer', 'architect', 'researcher'],
+    wip: true,
   },
 
   // ── Entropy & Random ──────────────────────────────────────────────────────
@@ -366,6 +400,69 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'researcher', 'curious'],
+  },
+
+  {
+    id: 'cert-capacity',
+    pt_id: 'PT-025',
+    version: '1.0.0',
+    name: 'Cert Capacity Calculator',
+    description:
+      'Model storage, bandwidth, and CPU impact of migrating your PKI to ML-DSA — adjust cert counts and renewal cadence.',
+    category: 'Certificates & Proofs',
+    algorithms: ['RSA-2048', 'ECDSA P-256', 'ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87'],
+    icon: BarChart2,
+    moduleLink: '/learn/pki-workshop',
+    keywords: [
+      'certificate',
+      'capacity',
+      'storage',
+      'bandwidth',
+      'cpu',
+      'ml-dsa',
+      'pki',
+      'migration',
+      'sizing',
+    ],
+    difficulty: 'beginner',
+    recommendedPersonas: ['architect', 'ops', 'executive'],
+  },
+  {
+    id: 'hsm-capacity',
+    pt_id: 'PT-026',
+    version: '1.0.0',
+    name: 'HSM Capacity Calculator',
+    description:
+      'Size your HSM fleet for the top 10 enterprise use cases. Compare classical vs next-gen PQC HSM, tune per-algorithm TPS, and see whether your fleet is sufficient.',
+    category: 'HSM / PKCS#11',
+    algorithms: ['RSA-2048', 'ECDSA P-256', 'ECDH P-256', 'ML-DSA-65', 'AES-128', 'AES-256'],
+    icon: Gauge,
+    moduleLink: '/learn/pki-workshop',
+    keywords: [
+      'hsm',
+      'capacity',
+      'sizing',
+      'tps',
+      'throughput',
+      'fleet',
+      'pqc',
+      'ml-dsa',
+      'rsa',
+      'ecdsa',
+      'ecdh',
+      'aes',
+      'use case',
+      'tls',
+      'code signing',
+      'payment',
+      'tde',
+      'kms',
+      'vpn',
+      'ssh',
+      'dnssec',
+    ],
+    difficulty: 'intermediate',
+    recommendedPersonas: ['architect', 'ops', 'executive'],
   },
 
   // ── Protocol Simulations ──────────────────────────────────────────────────
@@ -564,6 +661,8 @@ const SANDBOX_TOOLS: WorkshopTool[] = SANDBOX_SCENARIOS.map((s, idx) => ({
   ),
   difficulty: s.difficulty,
   recommendedPersonas: ['developer', 'architect', 'ops'],
+  wip: true,
+  opensourceTool: { name: s.tool.name, url: s.tool.url },
 }))
 
 WORKSHOP_TOOLS.push(...SANDBOX_TOOLS)
@@ -640,6 +739,11 @@ export const TOOL_COMPONENTS: Record<string, LazyComp> = {
       default: m.VpnSimulationPanel,
     }))
   ),
+  'pqc-ssh-sim': lazyWithRetry(() =>
+    import('@/components/Playground/hsm/SshSimulationPanel').then((m) => ({
+      default: m.SshSimulationPanel,
+    }))
+  ),
   'rng-demo': lazyWithRetry(() =>
     import('@/components/PKILearning/modules/Entropy/workshop/RandomGenerationDemo').then((m) => ({
       default: m.RandomGenerationDemo,
@@ -674,6 +778,16 @@ export const TOOL_COMPONENTS: Record<string, LazyComp> = {
     import('@/components/PKILearning/modules/MerkleTreeCerts/workshop/MerkleWorkshopSteps').then(
       (m) => ({ default: m.MerkleWorkshopSteps })
     )
+  ),
+  'cert-capacity': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/PKIWorkshop/CertCapacityCalculator').then((m) => ({
+      default: m.CertCapacityCalculator,
+    }))
+  ),
+  'hsm-capacity': lazyWithRetry(() =>
+    import('@/components/Playground/hsm/HsmCapacityCalculator').then((m) => ({
+      default: m.HsmCapacityCalculator,
+    }))
   ),
   'pki-workshop': lazyWithRetry(() =>
     import('@/components/PKILearning/modules/PKIWorkshop').then((m) => {

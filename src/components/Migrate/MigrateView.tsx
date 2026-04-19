@@ -22,7 +22,9 @@ import {
   Wrench,
   Scale,
   BookmarkCheck,
+  ShieldCheck,
 } from 'lucide-react'
+
 import debounce from 'lodash/debounce'
 import { logMigrateAction } from '../../utils/analytics'
 import { MIGRATION_STEPS } from '../../data/migrationWorkflowData'
@@ -40,6 +42,8 @@ import { ErrorAlert } from '../ui/error-alert'
 import { EmptyState } from '../ui/empty-state'
 import { ComparisonPanel } from './ComparisonPanel'
 import { StickyCompareBar } from './StickyCompareBar'
+import { AcmePqcWalkthrough } from '@/components/PKILearning/modules/PKIWorkshop/AcmePqcWalkthrough'
+import { CertCapacityCalculator } from '@/components/PKILearning/modules/PKIWorkshop/CertCapacityCalculator'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 
 const LICENSE_FILTER_ITEMS = [
@@ -61,6 +65,50 @@ function isPersonaRelevant(item: SoftwareItem, preferredLayers: string[]): boole
   if (preferredLayers.length === 0) return false
   const itemLayers = item.infrastructureLayer.split(',').map((l) => l.trim())
   return itemLayers.some((l) => preferredLayers.includes(l))
+}
+
+type CertTool = 'acme' | 'capacity' | null
+
+function CertLifecycleSection() {
+  const [activeTool, setActiveTool] = React.useState<CertTool>(null)
+  return (
+    <div className="mt-8 px-4 sm:px-6">
+      <div className="flex items-center gap-2 mb-4">
+        <ShieldCheck size={16} className="text-primary" aria-hidden="true" />
+        <h2 className="text-base font-semibold text-foreground">Certificate Lifecycle</h2>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <Button
+          variant="ghost"
+          onClick={() => setActiveTool(activeTool === 'acme' ? null : 'acme')}
+          className={`glass-panel h-auto p-5 flex-col items-start whitespace-normal hover:bg-transparent group ${activeTool === 'acme' ? 'border-primary/40' : ''}`}
+        >
+          <span className="text-sm font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
+            ACME + PQC Walkthrough
+          </span>
+          <span className="text-xs text-muted-foreground leading-relaxed">
+            Interactive walk through the ACME (RFC 8555) certificate issuance flow using a real
+            ML-DSA-65 keypair generated in-browser.
+          </span>
+        </Button>
+        <Button
+          variant="ghost"
+          onClick={() => setActiveTool(activeTool === 'capacity' ? null : 'capacity')}
+          className={`glass-panel h-auto p-5 flex-col items-start whitespace-normal hover:bg-transparent group ${activeTool === 'capacity' ? 'border-primary/40' : ''}`}
+        >
+          <span className="text-sm font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
+            Cert Capacity Calculator
+          </span>
+          <span className="text-xs text-muted-foreground leading-relaxed">
+            Model storage, bandwidth, and CPU impact of migrating your PKI to ML-DSA — adjust cert
+            counts and renewal cadence.
+          </span>
+        </Button>
+      </div>
+      {activeTool === 'acme' && <AcmePqcWalkthrough />}
+      {activeTool === 'capacity' && <CertCapacityCalculator />}
+    </div>
+  )
 }
 
 export const MigrateView: React.FC = () => {
@@ -220,6 +268,23 @@ export const MigrateView: React.FC = () => {
 
   // Sync URL params on same-route navigations (e.g. chatbot deep links)
   useEffect(() => {
+    if (searchParams.get('from_search') === '1') {
+      setActiveLayer('All')
+      setFlatCategoryFilter('All')
+      setVendorFilter('All')
+      setVerificationFilter('All')
+      setLicenseFilter('All')
+      setShowOnlyMyProducts(false)
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          next.delete('from_search')
+          return next
+        },
+        { replace: true }
+      )
+      return
+    }
     const layerParam = searchParams.get('layer')
     if (layerParam) {
       const resolved = LEGACY_LAYER_MAP[layerParam] ?? layerParam
@@ -994,6 +1059,7 @@ export const MigrateView: React.FC = () => {
               />
               <input
                 type="text"
+                aria-label="Search software"
                 placeholder="Search software..."
                 value={inputValue}
                 onChange={handleSearchChange}
@@ -1038,9 +1104,9 @@ export const MigrateView: React.FC = () => {
                 filterContent={
                   <div className="space-y-6">
                     <div className="space-y-3">
-                      <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">
+                      <p className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">
                         Migration Phase
-                      </h3>
+                      </p>
                       <FilterDropdown
                         items={MIGRATION_STEPS.map((s) => ({
                           id: s.id,
@@ -1060,9 +1126,9 @@ export const MigrateView: React.FC = () => {
                       />
                     </div>
                     <div className="space-y-3">
-                      <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">
+                      <p className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">
                         Architecture
-                      </h3>
+                      </p>
                       <FilterDropdown
                         items={layerFilterItems}
                         selectedId={effectiveLayer === 'All' ? 'All' : effectiveLayer}
@@ -1089,9 +1155,9 @@ export const MigrateView: React.FC = () => {
                     </div>
 
                     <div className="space-y-3">
-                      <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">
+                      <p className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">
                         Properties
-                      </h3>
+                      </p>
                       {vendorFilterItems.length > 0 && (
                         <FilterDropdown
                           items={vendorFilterItems}
@@ -1154,9 +1220,9 @@ export const MigrateView: React.FC = () => {
                     </div>
 
                     <div className="space-y-3">
-                      <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">
+                      <p className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">
                         Sorting
-                      </h3>
+                      </p>
                       <MigrateSortControl
                         value={sortBy}
                         onChange={(s) => {
@@ -1319,6 +1385,7 @@ export const MigrateView: React.FC = () => {
               <input
                 type="text"
                 id="software-search-desktop"
+                aria-label="Search software"
                 placeholder="Search..."
                 value={inputValue}
                 onChange={handleSearchChange}
@@ -1601,6 +1668,8 @@ export const MigrateView: React.FC = () => {
           </div>
         )}
       </div>
+
+      <CertLifecycleSection />
 
       {/* Sticky compare bar — fixed bottom, visible whenever ≥1 product is queued */}
       <StickyCompareBar

@@ -19,6 +19,8 @@ vi.mock('recharts', () => ({
   Bar: () => null,
   XAxis: () => null,
   YAxis: () => null,
+  CartesianGrid: () => null,
+  Legend: () => null,
   Cell: () => null,
   ResponsiveContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   Tooltip: () => null,
@@ -92,7 +94,16 @@ vi.mock('../../store/useModuleStore', () => ({
 
 vi.mock('../../store/useComplianceSelectionStore', () => ({
   useComplianceSelectionStore: (selector?: (s: Record<string, unknown>) => unknown) => {
-    const state = { myFrameworks: [], showOnlyMine: false }
+    const state = {
+      myFrameworks: [],
+      showOnlyMine: false,
+      hasSeededFromCountry: false,
+      addFrameworks: vi.fn(),
+      markSeededFromCountry: vi.fn(),
+      toggleMyFramework: vi.fn(),
+      clearMyFrameworks: vi.fn(),
+      setShowOnlyMine: vi.fn(),
+    }
     return selector ? selector(state) : state
   },
 }))
@@ -211,13 +222,14 @@ describe('BusinessCenterView', () => {
 
   it('renders page header with title and description', () => {
     renderView()
-    expect(screen.getByText('Business Center')).toBeInTheDocument()
+    // Note: 'Command Center' also appears in the WorkflowBreadcrumb; use heading role to disambiguate.
+    expect(screen.getByRole('heading', { name: 'Command Center' })).toBeInTheDocument()
     expect(screen.getAllByText(/Your PQC readiness command center/)[0]).toBeInTheDocument()
   })
 
   it('shows welcome state when fully empty', () => {
     renderView()
-    expect(screen.getByText('Welcome to your PQC Business Center')).toBeInTheDocument()
+    expect(screen.getByText('Welcome to your PQC Command Center')).toBeInTheDocument()
     expect(screen.getByText('Run Risk Assessment')).toBeInTheDocument()
     expect(screen.getByText('Explore Compliance')).toBeInTheDocument()
     expect(screen.getByText('Start Executive Learning')).toBeInTheDocument()
@@ -230,10 +242,10 @@ describe('BusinessCenterView', () => {
     renderView()
 
     // Should NOT show welcome state
-    expect(screen.queryByText('Welcome to your PQC Business Center')).not.toBeInTheDocument()
+    expect(screen.queryByText('Welcome to your PQC Command Center')).not.toBeInTheDocument()
 
     // Should show 4 pillar headings
-    expect(screen.getByText('Risk Management')).toBeInTheDocument()
+    expect(screen.getByText('Risk Overview')).toBeInTheDocument()
     expect(screen.getByText('Compliance & Regulatory')).toBeInTheDocument()
     expect(screen.getByText('Governance & Policy')).toBeInTheDocument()
     expect(screen.getByText('Vendor & Migration')).toBeInTheDocument()
@@ -260,7 +272,7 @@ describe('BusinessCenterView', () => {
 
     renderView()
 
-    expect(screen.getByText('Risk Management')).toBeInTheDocument()
+    expect(screen.getByText('Risk Overview')).toBeInTheDocument()
   })
 
   it('shows empty state for compliance when no frameworks selected', () => {
@@ -332,6 +344,6 @@ describe('BusinessCenterView', () => {
     renderView()
 
     // When fully empty, welcome state shows (not individual section empty states)
-    expect(screen.getByText('Welcome to your PQC Business Center')).toBeInTheDocument()
+    expect(screen.getByText('Welcome to your PQC Command Center')).toBeInTheDocument()
   })
 })

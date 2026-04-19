@@ -1,0 +1,19 @@
+{
+  "_meta": {
+    "description": "Annual probability of 'Harvest Now, Decrypt Later' (HNDL) risk materialization, 2026–2035.",
+    "sources": [
+      "NIST IR 8547 (https://nvlpubs.nist.gov/nistpubs/ir/2024/NIST.IR.8547.ipd.pdf) — migration timeline assumptions",
+      "ENISA Post-Quantum Cryptography Migration Report 2024 (https://www.enisa.europa.eu/publications/post-quantum-cryptography-migration-report)",
+      "NIST SP 800-131A Rev 3 transition guidance",
+      "Global Risk Institute — Quantum Threat Timeline Report 2023 (https://globalriskinstitute.org/publication/2023-quantum-threat-timeline-report/)"
+    ],
+    "scenarios": {
+      "optimistic": "Cryptographically Relevant Quantum Computer (CRQC) no earlier than 2032 (GRI 2023 median estimate). Low near-term materialization probability.",
+      "pessimistic": "CRQC as early as 2028 (GRI 2023 5th-percentile estimate / ENISA worst-case). Aggressive HNDL harvesting begins 2024–2026 materializes earlier."
+    },
+    "note": "Educational model — probabilities represent expert consensus estimates, not certified actuarial outputs."
+  },
+  "years": [2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035],
+  "optimistic": [0.01, 0.02, 0.04, 0.07, 0.11, 0.18, 0.38, 0.65, 0.82, 0.93],
+  "pessimistic": [0.03, 0.07, 0.18, 0.4, 0.62, 0.76, 0.86, 0.92, 0.96, 0.98]
+}

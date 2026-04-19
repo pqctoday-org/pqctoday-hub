@@ -391,23 +391,41 @@ const QUERY_EXPANSIONS: Record<string, string[]> = {
   italian: ['Italy', 'Italian PQC', 'ACN'],
   swedish: ['Sweden', 'Swedish PQC'],
 
-  // Business center / GRC tools
-  business: ['business center', 'GRC', 'governance', 'ROI', 'business case'],
-  'business center': ['GRC', 'ROI calculator', 'board pitch', 'RACI', 'policy template'],
-  roi: ['ROI calculator', 'business case', 'cost analysis', 'business center'],
-  grc: ['governance', 'risk', 'compliance', 'business center', 'audit'],
-  governance: ['RACI', 'policy', 'KPI', 'governance', 'business center'],
-  'board pitch': ['board pitch', 'executive briefing', 'business case', 'business center'],
-  'vendor scorecard': ['vendor scorecard', 'vendor risk', 'supply chain', 'business center'],
-  raci: ['RACI', 'roles', 'responsibility', 'governance', 'business center'],
-  'policy template': ['policy template', 'cryptographic policy', 'governance', 'business center'],
-  'contract clause': ['contract clause', 'vendor risk', 'supply chain', 'business center'],
-  kpi: ['KPI', 'dashboard', 'metrics', 'business center'],
-  'roadmap builder': ['roadmap builder', 'migration roadmap', 'business center'],
-  'deployment playbook': ['deployment playbook', 'migration', 'rollout', 'business center'],
-  playbook: ['deployment playbook', 'migration', 'rollout', 'business center'],
-  stakeholder: ['stakeholder communication', 'board pitch', 'business center'],
-  'audit readiness': ['audit readiness', 'compliance', 'checklist', 'business center'],
+  // Command Center (formerly "Business Center") / GRC tools.
+  // We accept both phrases as queries so existing bookmarks and search history
+  // keep working; entries use "command center" as the canonical synonym.
+  business: ['command center', 'GRC', 'governance', 'ROI', 'business case'],
+  'business center': [
+    'command center',
+    'GRC',
+    'ROI calculator',
+    'board pitch',
+    'RACI',
+    'policy template',
+  ],
+  'command center': [
+    'GRC',
+    'ROI calculator',
+    'board pitch',
+    'RACI',
+    'policy template',
+    'executive dashboard',
+  ],
+  command: ['command center', 'GRC', 'governance', 'ROI'],
+  roi: ['ROI calculator', 'business case', 'cost analysis', 'command center'],
+  grc: ['governance', 'risk', 'compliance', 'command center', 'audit'],
+  governance: ['RACI', 'policy', 'KPI', 'governance', 'command center'],
+  'board pitch': ['board pitch', 'executive briefing', 'business case', 'command center'],
+  'vendor scorecard': ['vendor scorecard', 'vendor risk', 'supply chain', 'command center'],
+  raci: ['RACI', 'roles', 'responsibility', 'governance', 'command center'],
+  'policy template': ['policy template', 'cryptographic policy', 'governance', 'command center'],
+  'contract clause': ['contract clause', 'vendor risk', 'supply chain', 'command center'],
+  kpi: ['KPI', 'dashboard', 'metrics', 'command center'],
+  'roadmap builder': ['roadmap builder', 'migration roadmap', 'command center'],
+  'deployment playbook': ['deployment playbook', 'migration', 'rollout', 'command center'],
+  playbook: ['deployment playbook', 'migration', 'rollout', 'command center'],
+  stakeholder: ['stakeholder communication', 'board pitch', 'command center'],
+  'audit readiness': ['audit readiness', 'compliance', 'checklist', 'command center'],
 
   // Site authorship / identity queries
   author: ['Eric Amador', 'pqctoday', 'creator', 'maintainer'],
@@ -559,13 +577,15 @@ class RetrievalService {
   }
 
   private buildIndex(): void {
-    // Build fast lookup by ID
+    // Build fast lookup by ID (deduplicates — last entry wins)
     this.corpusById.clear()
     this.entityIndex.clear()
 
     for (const chunk of this.corpus) {
       this.corpusById.set(chunk.id, chunk)
     }
+    // Deduplicate corpus against the map so MiniSearch never sees duplicate IDs
+    this.corpus = Array.from(this.corpusById.values())
 
     // Build entity index for direct title matching
     for (const chunk of this.corpus) {

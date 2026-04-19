@@ -133,7 +133,7 @@ describe('useModuleStore', () => {
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
     const v0State = { timestamp: 123 }
     const migrated = migrate(v0State, 0)
-    expect(migrated.version).toBe('10.0.0')
+    expect(migrated.version).toBe('12.0.0')
     expect(migrated.artifacts).toBeDefined()
     expect(migrated.artifacts.executiveDocuments).toEqual([])
     expect(migrated.sessionTracking).toBeDefined()
@@ -151,7 +151,7 @@ describe('useModuleStore', () => {
       artifacts: { keys: [], certificates: [], csrs: [] },
     }
     const migrated = migrate(v1State, 1)
-    expect(migrated.version).toBe('10.0.0')
+    expect(migrated.version).toBe('12.0.0')
     expect(migrated.modules['mod-1'].timeSpent).toBe(2)
     expect(migrated.sessionTracking).toBeDefined()
     expect(migrated.quizMastery).toBeDefined()
@@ -163,7 +163,7 @@ describe('useModuleStore', () => {
     const migrate = (useModuleStore.persist.getOptions() as any).migrate
     const v3State = { version: '3.0.0', artifacts: { keys: [], certificates: [], csrs: [] } }
     const migrated = migrate(v3State, 3)
-    expect(migrated.version).toBe('10.0.0')
+    expect(migrated.version).toBe('12.0.0')
     expect(migrated.quizMastery).toEqual({ correctQuestionIds: [] })
     expect(migrated.artifacts.executiveDocuments).toEqual([])
   })
@@ -177,7 +177,7 @@ describe('useModuleStore', () => {
       quizMastery: { correctQuestionIds: ['q1'] },
     }
     const migrated = migrate(v4State, 4)
-    expect(migrated.version).toBe('10.0.0')
+    expect(migrated.version).toBe('12.0.0')
     expect(migrated.artifacts.executiveDocuments).toEqual([])
     expect(migrated.quizMastery.correctQuestionIds).toEqual(['q1'])
   })
@@ -201,7 +201,7 @@ describe('useModuleStore', () => {
       quizMastery: { correctQuestionIds: ['q1'] },
     }
     const migrated = migrate(v5State, 5)
-    expect(migrated.version).toBe('10.0.0')
+    expect(migrated.version).toBe('12.0.0')
     // key-management should be removed
     expect(migrated.modules['key-management']).toBeUndefined()
     // kms-pqc should inherit status, timeSpent, quizScores but reset completedSteps
@@ -216,6 +216,35 @@ describe('useModuleStore', () => {
     expect(migrated.modules['hsm-pqc'].completedSteps).toEqual([])
     // Other modules should be untouched
     expect(migrated.modules['pqc-101'].status).toBe('completed')
+  })
+
+  it('migrates from version 11 to 12, dropping retired roadmap docs and leaving inputs optional', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accessing internal persist options
+    const migrate = (useModuleStore.persist.getOptions() as any).migrate
+    const v11State = {
+      version: '11.0.0',
+      artifacts: {
+        keys: [],
+        certificates: [],
+        csrs: [],
+        executiveDocuments: [
+          { id: 'a', type: 'risk-register', title: 'Keep', data: '', createdAt: 1 },
+          { id: 'b', type: 'roadmap', title: 'Drop', data: '', createdAt: 2 },
+          { id: 'c', type: 'board-deck', title: 'Keep', data: '', createdAt: 3, inputs: { x: 1 } },
+        ],
+      },
+      quizMastery: { correctQuestionIds: [] },
+      kpiHistory: { riskScore: [] },
+    }
+    const migrated = migrate(v11State, 11)
+    expect(migrated.version).toBe('12.0.0')
+    const ids = migrated.artifacts.executiveDocuments.map((d: { id: string }) => d.id)
+    expect(ids).toEqual(['a', 'c'])
+    // Records without prior `inputs` stay undefined; records with `inputs` retain them.
+    const aDoc = migrated.artifacts.executiveDocuments.find((d: { id: string }) => d.id === 'a')
+    const cDoc = migrated.artifacts.executiveDocuments.find((d: { id: string }) => d.id === 'c')
+    expect(aDoc.inputs).toBeUndefined()
+    expect(cDoc.inputs).toEqual({ x: 1 })
   })
 
   it('adds an executive document artifact', () => {

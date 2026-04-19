@@ -7,7 +7,18 @@ import { timelineData, type CountryData } from '@/data/timelineData'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import type { SoftwareItem } from '@/types/MigrateTypes'
-import type { AssessmentResult } from './assessmentTypes'
+import { pqcReadinessTier } from '@/data/kpiCatalog'
+import type {
+  AssessmentResult,
+  HNDLRiskWindow,
+  HNFLRiskWindow,
+  MigrationEffortItem,
+  AlgorithmMigration,
+  CategoryScores,
+  CategoryDrivers,
+  AssessmentProfile,
+  ScoreBoost,
+} from './assessmentTypes'
 
 export interface ExecutiveModuleData {
   // Threats
@@ -20,6 +31,11 @@ export interface ExecutiveModuleData {
   vendorsByLayer: Map<string, SoftwareItem[]>
   fipsValidatedCount: number
   pqcReadyCount: number
+  /** Tiered readiness as a fraction in [0,1]: sum of per-product readiness ÷ totalProducts. */
+  vendorReadinessWeighted: number
+  /** Per-layer tiered readiness (0–1), keyed by infrastructure layer. Drives the
+   *  architect-facing per-layer vendor readiness view (D9). */
+  vendorReadinessByLayer: Map<string, { weighted: number; count: number }>
   totalProducts: number
 
   // Compliance
@@ -36,6 +52,18 @@ export interface ExecutiveModuleData {
   industry: string
   country: string
   complianceSelections: string[]
+
+  // Rich assessment fields (flattened from lastResult for pitch builders)
+  preBoostScore: number | null
+  boosts: ScoreBoost[]
+  hndlRiskWindow: HNDLRiskWindow | null
+  hnflRiskWindow: HNFLRiskWindow | null
+  categoryScores: CategoryScores | null
+  categoryDrivers: CategoryDrivers | null
+  migrationEffort: MigrationEffortItem[]
+  algorithmMigrations: AlgorithmMigration[]
+  keyFindings: string[]
+  assessmentProfile: AssessmentProfile | null
 
   // Derived
   isAssessmentComplete: boolean
@@ -75,17 +103,30 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
       : []
 
     // ── Software / Vendors ────────────────────────────────────────────────
+    // Precedence:
+    //   1. explicit `selectedProductKeys` always wins (caller controls scope)
+    //   2. else, narrow to products that either list the active industry in
+    //      `targetIndustries` or leave the field blank (universal products)
+    //   3. else, full catalog
+    const industryLc = effectiveIndustry.toLowerCase()
     const filteredSoftware =
       selectedProductKeys && selectedProductKeys.length > 0
         ? (() => {
             const keySet = new Set(selectedProductKeys)
             return softwareData.filter((s) => keySet.has(s.productId))
           })()
-        : softwareData
+        : industryLc
+          ? softwareData.filter((s) => {
+              const ti = (s.targetIndustries || '').toLowerCase().trim()
+              if (!ti || ti === 'all' || ti === 'any') return true
+              return ti.includes(industryLc)
+            })
+          : softwareData
 
     const vendorsByLayer = new Map<string, SoftwareItem[]>()
     let fipsValidatedCount = 0
     let pqcReadyCount = 0
+    let readinessWeightSum = 0
 
     for (const s of filteredSoftware) {
       // Split comma-separated layers so products appear in each layer
@@ -110,6 +151,23 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
       if (s.pqcSupport && s.pqcSupport !== 'None' && s.pqcSupport !== 'No') {
         pqcReadyCount++
       }
+      readinessWeightSum += pqcReadinessTier(s.pqcSupport)
+    }
+
+    const vendorReadinessWeighted =
+      filteredSoftware.length > 0 ? readinessWeightSum / filteredSoftware.length : 0
+
+    // Per-layer tiered readiness for the architect view. A product that spans
+    // multiple comma-separated layers contributes to each. Readiness weight
+    // uses the same tier map as the global roll-up.
+    const vendorReadinessByLayer = new Map<string, { weighted: number; count: number }>()
+    for (const [layer, products] of vendorsByLayer.entries()) {
+      let sum = 0
+      for (const p of products) sum += pqcReadinessTier(p.pqcSupport)
+      vendorReadinessByLayer.set(layer, {
+        weighted: products.length > 0 ? sum / products.length : 0,
+        count: products.length,
+      })
     }
 
     // ── Compliance ────────────────────────────────────────────────────────
@@ -148,6 +206,8 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
       vendorsByLayer,
       fipsValidatedCount,
       pqcReadyCount,
+      vendorReadinessWeighted,
+      vendorReadinessByLayer,
       totalProducts: filteredSoftware.length,
       frameworks: complianceFrameworks,
       frameworksByIndustry,
@@ -158,6 +218,16 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
       industry: effectiveIndustry,
       country,
       complianceSelections,
+      preBoostScore: lastResult?.preBoostScore ?? null,
+      boosts: lastResult?.boosts ?? [],
+      hndlRiskWindow: lastResult?.hndlRiskWindow ?? null,
+      hnflRiskWindow: lastResult?.hnflRiskWindow ?? null,
+      categoryScores: lastResult?.categoryScores ?? null,
+      categoryDrivers: lastResult?.categoryDrivers ?? null,
+      migrationEffort: lastResult?.migrationEffort ?? [],
+      algorithmMigrations: lastResult?.algorithmMigrations ?? [],
+      keyFindings: lastResult?.keyFindings ?? [],
+      assessmentProfile: lastResult?.assessmentProfile ?? null,
       isAssessmentComplete: assessmentStatus === 'complete',
       migrationDeadlineYear,
     }

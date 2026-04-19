@@ -1,0 +1,392 @@
+[
+  {
+    "term": "Diffie-Hellman",
+    "acronym": "DH",
+    "definition": "The original public-key key exchange protocol, allowing two parties to establish a shared secret over an insecure channel. Quantum-vulnerable.",
+    "technicalNote": "Broken by quantum computers via Shor's algorithm. Being replaced by Key Encapsulation Mechanisms (KEMs) such as ML-KEM.",
+    "relatedModule": "/algorithms",
+    "complexity": "beginner",
+    "category": "algorithm"
+  },
+  {
+    "term": "RSA",
+    "definition": "A widely used classical public-key algorithm based on the difficulty of factoring large numbers. Vulnerable to quantum attacks via Shor's algorithm.",
+    "technicalNote": "Common key sizes: 2048, 3072, 4096 bits. Being replaced by ML-DSA for signatures and ML-KEM for key exchange.",
+    "relatedModule": "/algorithms",
+    "complexity": "beginner",
+    "category": "algorithm"
+  },
+  {
+    "term": "DSA",
+    "acronym": "DSA",
+    "definition": "Digital Signature Algorithm, a classical FIPS 186 signature scheme based on discrete logarithms. Deprecated by NIST IR 8547 alongside RSA and ECDSA due to quantum vulnerability.",
+    "technicalNote": "Broken by Shor's algorithm. Common key sizes: 1024–3072 bits. No longer approved for new systems after 2030 per NIST IR 8547.",
+    "relatedModule": "/algorithms",
+    "complexity": "beginner",
+    "category": "algorithm"
+  },
+  {
+    "term": "Elliptic Curve Cryptography",
+    "acronym": "ECC",
+    "definition": "A classical public-key algorithm using the mathematics of elliptic curves. More efficient than RSA but equally vulnerable to quantum attacks.",
+    "technicalNote": "Common curves: P-256, P-384, P-521, secp256k1 (Bitcoin), Curve25519.",
+    "relatedModule": "/algorithms",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "ML-KEM",
+    "definition": "Module-Lattice-Based Key Encapsulation Mechanism, the NIST-standardized PQC algorithm for key exchange (formerly Kyber). Defined in FIPS 203.",
+    "technicalNote": "Variants: ML-KEM-512 (128-bit security), ML-KEM-768 (192-bit), ML-KEM-1024 (256-bit).",
+    "relatedModule": "/playground",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "ML-DSA",
+    "definition": "Module-Lattice-Based Digital Signature Algorithm, the NIST-standardized PQC algorithm for digital signatures (formerly Dilithium). Defined in FIPS 204.",
+    "technicalNote": "Variants: ML-DSA-44, ML-DSA-65, ML-DSA-87 corresponding to security levels 2, 3, 5.",
+    "relatedModule": "/playground",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "SLH-DSA",
+    "definition": "Stateless Hash-Based Digital Signature Algorithm, a conservative NIST-standardized hash-based PQC signature scheme (formerly SPHINCS+). Defined in FIPS 205.",
+    "technicalNote": "12 variants: combinations of SHA-256/SHAKE, 128/192/256-bit security, and fast/small trade-offs.",
+    "relatedModule": "/algorithms",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "FN-DSA",
+    "definition": "FFT over NTRU-Lattice-Based Digital Signature Algorithm (formerly Falcon), a compact PQC signature scheme. Defined in FIPS 206, published October 2024.",
+    "technicalNote": "Variants: FN-DSA-512 (Level 1) and FN-DSA-1024 (Level 5). Known for very small signatures but requires careful floating-point implementation.",
+    "relatedModule": "/algorithms",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "FrodoKEM",
+    "definition": "A conservative lattice-based KEM algorithm based on the \"plain\" Learning With Errors problem, offering strong security guarantees at the cost of larger key sizes.",
+    "relatedModule": "/algorithms",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "HQC",
+    "definition": "Hamming Quasi-Cyclic, a code-based KEM selected by NIST as an additional standard. Uses error-correcting codes for security.",
+    "relatedModule": "/learn/pqc-101",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "Classic McEliece",
+    "definition": "A code-based KEM with very large public keys but extremely conservative security assumptions. One of the oldest post-quantum proposals.",
+    "relatedModule": "/learn/pqc-101",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "XMSS",
+    "acronym": "XMSS",
+    "definition": "eXtended Merkle Signature Scheme, a stateful hash-based digital signature algorithm standardized in RFC 8391 and NIST SP 800-208.",
+    "technicalNote": "Like LMS, XMSS is stateful and each key can only sign a limited number of messages. Required by CNSA 2.0 for firmware and software signing.",
+    "relatedModule": "/learn/stateful-signatures",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "LMS/HSS",
+    "acronym": "LMS",
+    "definition": "Leighton-Micali Signature / Hierarchical Signature System. A stateful hash-based signature scheme for firmware and software signing.",
+    "technicalNote": "Standardized in RFC 8554. \"Stateful\" means each key can only sign a limited number of messages.",
+    "relatedModule": "/openssl",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "AES",
+    "acronym": "AES",
+    "definition": "Advanced Encryption Standard, a symmetric encryption algorithm. Relatively safe from quantum attacks (just double the key size: AES-256).",
+    "technicalNote": "Quantum attacks via Grover's algorithm halve the effective security level, so AES-128 becomes ~64-bit. AES-256 remains secure.",
+    "relatedModule": "/learn/pqc-101",
+    "complexity": "beginner",
+    "category": "algorithm"
+  },
+  {
+    "term": "Shor's Algorithm",
+    "definition": "A quantum algorithm that can efficiently factor large numbers and compute discrete logarithms, breaking RSA and ECC.",
+    "relatedModule": "/learn/quantum-threats",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "Grover's Algorithm",
+    "definition": "A quantum algorithm that speeds up brute-force searches, effectively halving the security level of symmetric ciphers and hash functions.",
+    "relatedModule": "/learn/quantum-threats",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "ECDSA",
+    "acronym": "ECDSA",
+    "definition": "Elliptic Curve Digital Signature Algorithm, a classical signature scheme used in TLS, Bitcoin, and many other systems. Quantum-vulnerable.",
+    "relatedModule": "/learn/digital-assets",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "ECDH",
+    "acronym": "ECDH",
+    "definition": "Elliptic Curve Diffie-Hellman, a classical key agreement protocol. Quantum-vulnerable and being replaced by ML-KEM.",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "X25519",
+    "definition": "An elliptic curve Diffie-Hellman key exchange function using Curve25519. Widely used in TLS 1.3 and the basis for hybrid PQC key exchange.",
+    "technicalNote": "Combined with ML-KEM-768 to form the X25519MLKEM768 hybrid key exchange, now deployed by major browsers and cloud providers.",
+    "relatedModule": "/algorithms",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "X448",
+    "definition": "An elliptic curve Diffie-Hellman key exchange function using Curve448, providing higher security than X25519. Quantum-vulnerable.",
+    "relatedModule": "/algorithms",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "Ed25519",
+    "definition": "A high-performance digital signature algorithm using the Edwards curve Curve25519. Used in SSH, TLS, and Solana.",
+    "relatedModule": "/learn/digital-assets",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "Ed448",
+    "definition": "An EdDSA signature algorithm using the Edwards curve Curve448, providing 224-bit security. Quantum-vulnerable.",
+    "relatedModule": "/algorithms",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "SHA-256",
+    "definition": "Secure Hash Algorithm producing a 256-bit digest. Used extensively in Bitcoin and TLS. Quantum-safe at current key sizes.",
+    "relatedModule": "/learn/digital-assets",
+    "complexity": "beginner",
+    "category": "algorithm"
+  },
+  {
+    "term": "HKDF",
+    "acronym": "HKDF",
+    "definition": "HMAC-based Key Derivation Function, used to derive cryptographic keys from a shared secret. Essential in TLS 1.3.",
+    "relatedModule": "/learn/tls-basics",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "Keccak-256",
+    "definition": "The hash function used by Ethereum, based on the SHA-3 algorithm family. Produces 256-bit digests.",
+    "relatedModule": "/learn/digital-assets",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "secp256k1",
+    "definition": "The elliptic curve used by Bitcoin for digital signatures. Quantum-vulnerable and a key concern for cryptocurrency PQC migration.",
+    "relatedModule": "/learn/digital-assets",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "Kyber",
+    "definition": "The original name (CRYSTALS-Kyber) for the lattice-based KEM standardized by NIST as ML-KEM in FIPS 203. Often still referenced in older documents and libraries.",
+    "technicalNote": "Kyber was selected from the NIST PQC competition Round 3. It was renamed to ML-KEM for the final standard.",
+    "relatedModule": "/algorithms",
+    "complexity": "beginner",
+    "category": "algorithm"
+  },
+  {
+    "term": "Dilithium",
+    "definition": "The original name (CRYSTALS-Dilithium) for the lattice-based signature scheme standardized by NIST as ML-DSA in FIPS 204.",
+    "technicalNote": "Dilithium was selected from the NIST PQC competition Round 3. It was renamed to ML-DSA for the final standard.",
+    "relatedModule": "/algorithms",
+    "complexity": "beginner",
+    "category": "algorithm"
+  },
+  {
+    "term": "Falcon",
+    "definition": "The original name for the NTRU-lattice-based signature scheme standardized by NIST as FN-DSA in the draft FIPS 206. Known for compact signatures.",
+    "technicalNote": "Falcon uses fast Fourier transforms over NTRU lattices. Renamed to FN-DSA for the final standard.",
+    "relatedModule": "/algorithms",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "SPHINCS+",
+    "definition": "The original name for the stateless hash-based signature scheme standardized by NIST as SLH-DSA in FIPS 205. Very conservative security assumptions.",
+    "technicalNote": "SPHINCS+ relies only on the security of its underlying hash function, making it a strong fallback if lattice assumptions are broken.",
+    "relatedModule": "/algorithms",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "BIKE",
+    "acronym": "BIKE",
+    "definition": "Bit Flipping Key Encapsulation, a code-based KEM that was a NIST PQC Round 4 candidate. Uses quasi-cyclic moderate-density parity-check codes.",
+    "relatedModule": "/algorithms",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "SHA-3",
+    "definition": "The third generation Secure Hash Algorithm standard (FIPS 202), based on the Keccak sponge construction. Includes SHA3-256, SHA3-512, and SHAKE variants.",
+    "technicalNote": "SHA-3 provides an independent alternative to SHA-2 with different mathematical foundations. Used in SLH-DSA parameter sets.",
+    "relatedModule": "/algorithms",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "SHAKE",
+    "definition": "Extendable-Output Functions from the SHA-3 family (SHAKE128, SHAKE256). Unlike fixed-length hashes, SHAKE can produce output of any desired length.",
+    "technicalNote": "Used in SLH-DSA-SHAKE parameter sets and as a key derivation mechanism in several PQC algorithms.",
+    "relatedModule": "/algorithms",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "EdDSA",
+    "definition": "Edwards-curve Digital Signature Algorithm, the family of signature schemes including Ed25519 and Ed448. Offers high performance and resistance to side-channel attacks.",
+    "technicalNote": "EdDSA is deterministic (no random nonce), reducing implementation risks. Quantum-vulnerable via Shor's algorithm.",
+    "relatedModule": "/algorithms",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "ChaCha20-Poly1305",
+    "definition": "A modern authenticated encryption with associated data (AEAD) cipher combining the ChaCha20 stream cipher with the Poly1305 authenticator. Quantum-safe at current key sizes.",
+    "technicalNote": "Widely used in TLS 1.3, WireGuard, and SSH as an alternative to AES-GCM. Efficient in software without hardware AES acceleration.",
+    "relatedModule": "/learn/tls-basics",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "Triple-DES",
+    "acronym": "3DES",
+    "definition": "A legacy symmetric cipher that applies DES three times to each block. Being phased out in favor of AES due to its small 64-bit block size.",
+    "technicalNote": "Still found in legacy payment systems (DUKPT) and some government systems. NIST deprecated 3DES after December 31, 2023.",
+    "relatedModule": "/learn/pqc-101",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "P-256",
+    "definition": "A NIST standard elliptic curve (also called secp256r1 or prime256v1) widely used in TLS, FIDO2, and government systems. Quantum-vulnerable.",
+    "technicalNote": "Part of the Suite B / CNSA 1.0 algorithms. Combined with ML-KEM-768 in the SecP256r1MLKEM768 hybrid key exchange.",
+    "relatedModule": "/algorithms",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "P-384",
+    "definition": "A NIST standard elliptic curve (secp384r1) offering 192-bit security. Used in high-security TLS configurations and government systems. Quantum-vulnerable.",
+    "technicalNote": "Combined with ML-KEM-1024 in the SecP384r1MLKEM1024 hybrid key exchange for NIST Level 5 security.",
+    "relatedModule": "/algorithms",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "Ascon",
+    "definition": "A lightweight authenticated encryption cipher selected by NIST as the standard for constrained environments (IoT, embedded devices). Very low resource requirements.",
+    "relatedModule": "/learn/iot-ot-pqc",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "RIPEMD-160",
+    "definition": "A 160-bit cryptographic hash function used in Bitcoin address generation (combined with SHA-256). Quantum-safe at current output sizes.",
+    "relatedModule": "/learn/digital-assets",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "SM2",
+    "definition": "China's national standard elliptic curve public-key algorithm for digital signatures and key exchange, managed by OSCCA. Quantum-vulnerable.",
+    "technicalNote": "Combined with ML-KEM-768 in the curveSM2MLKEM768 hybrid key exchange for Chinese PQC migration.",
+    "relatedModule": "/library?ref=China OSCCA GM/T 0108-2021",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "PBKDF2",
+    "definition": "Password-Based Key Derivation Function 2, used to derive cryptographic keys from passwords. Applies a pseudorandom function (typically HMAC-SHA) iteratively.",
+    "technicalNote": "Used in BIP39 to derive seed bytes from mnemonic phrases (2048 iterations of HMAC-SHA512).",
+    "relatedModule": "/learn/digital-assets",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "X25519MLKEM768",
+    "definition": "A hybrid key exchange algorithm combining X25519 (classical ECDH) with ML-KEM-768 (post-quantum KEM). Both shared secrets are combined via HKDF so the result is secure if either algorithm holds.",
+    "technicalNote": "Deployed in Chrome, Firefox, and Cloudflare TLS 1.3. Uses concatenated shared secrets fed through HKDF-SHA256 for the final key.",
+    "relatedModule": "/learn/hybrid-crypto",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "sntrup761",
+    "definition": "A lattice-based key encapsulation mechanism used in OpenSSH hybrid key exchange. Combined with X25519 to provide post-quantum protection for SSH connections.",
+    "technicalNote": "Available in OpenSSH since version 9.0 as sntrup761x25519-sha512. Being superseded by mlkem768x25519-sha256 in newer OpenSSH versions.",
+    "relatedModule": "/learn/vpn-ssh-pqc",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "Winternitz One-Time Signature",
+    "acronym": "WOTS+",
+    "definition": "A hash-based one-time signature scheme used as the building block for LMS and XMSS. Each key pair can only sign one message safely.",
+    "technicalNote": "The Winternitz parameter (w) controls the trade-off between signature size and computation time. Larger w = smaller signatures but more hash operations.",
+    "relatedModule": "/learn/stateful-signatures",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "ECIES",
+    "acronym": "ECIES",
+    "definition": "Elliptic Curve Integrated Encryption Scheme, used in 5G networks to conceal subscriber identity (SUCI). Combines ECDH key agreement with symmetric encryption.",
+    "technicalNote": "5G defines three SUCI protection profiles: Profile A (ECIES with Curve25519), Profile B (ECIES with P-256), and Profile C (ML-KEM for post-quantum protection).",
+    "relatedModule": "/learn/5g-security",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "DRBG",
+    "acronym": "DRBG",
+    "definition": "Deterministic Random Bit Generator. An algorithm that produces a sequence of pseudorandom bits from a secret seed value. NIST SP 800-90A defines three approved mechanisms: CTR_DRBG, Hash_DRBG, and HMAC_DRBG.",
+    "technicalNote": "CTR_DRBG (AES-based) is the most widely deployed, used by OpenSSL and the Linux kernel. All three mechanisms use symmetric primitives and are quantum-safe.",
+    "relatedModule": "/learn/entropy-randomness",
+    "complexity": "advanced",
+    "category": "algorithm"
+  },
+  {
+    "term": "ECC",
+    "acronym": "ECC",
+    "definition": "Elliptic Curve Cryptography — a public-key cryptosystem based on the algebraic structure of elliptic curves over finite fields. Offers smaller key sizes than RSA for equivalent classical security, but like RSA it is fully broken by Shor's algorithm on a CRQC.",
+    "technicalNote": "Common curves: P-256, P-384, P-521 (NIST), Curve25519 (X25519/Ed25519). ECC is used extensively in TLS, SSH, code signing, and PKI. NIST SP 800-186 and CNSA 2.0 mandate migration away from ECC to ML-KEM and ML-DSA before 2030.",
+    "relatedModule": "/learn/crypto-agility",
+    "complexity": "intermediate",
+    "category": "algorithm"
+  },
+  {
+    "term": "LMS",
+    "acronym": "LMS",
+    "definition": "Leighton-Micali Signature — a stateful hash-based signature scheme standardised in NIST SP 800-208 and RFC 8554. Based on one-time Lamport signatures aggregated via a Merkle tree. Approved by CNSA 2.0 for firmware and software signing.",
+    "technicalNote": "LMS is stateful: each leaf in the Merkle tree can only be used once. An HSM must persist the current leaf index in NVRAM and never reuse it — failure leads to catastrophic key compromise. LMS key sizes: ~1,616 bytes (pub) to 64 bytes (priv). PKCS#11 v3.2 mechanism: CKM_LMS.",
+    "relatedModule": "/learn/hsm-pqc",
+    "complexity": "advanced",
+    "category": "algorithm"
+  }
+]

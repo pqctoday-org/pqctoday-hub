@@ -343,8 +343,7 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
         <div className="space-y-3">
           <h3 className="text-sm font-semibold text-foreground">
             HTTP + TLS KPIs — {ENVIRONMENT_SCENARIOS[envScenario].label}
-            {trafficPattern !== 'steady-state' &&
-              ` × ${TRAFFIC_PATTERNS[trafficPattern].label}`}
+            {trafficPattern !== 'steady-state' && ` × ${TRAFFIC_PATTERNS[trafficPattern].label}`}
           </h3>
           <div className="space-y-2">
             {PRODUCTION_TLS_KPIS.map((kpi) => {
@@ -356,9 +355,7 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
               const adjustedClassical = isLatency
                 ? kpi.classical * envMul
                 : kpi.classical / envMul / trafMul
-              const adjustedHybrid = isLatency
-                ? kpi.hybrid * envMul
-                : kpi.hybrid / envMul / trafMul
+              const adjustedHybrid = isLatency ? kpi.hybrid * envMul : kpi.hybrid / envMul / trafMul
 
               const maxBar = isLatency
                 ? Math.max(adjustedHybrid, 1)
@@ -422,9 +419,7 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
             {PRODUCTION_VPN_KPIS.map((kpi) => {
               const envMul = ENVIRONMENT_SCENARIOS[envScenario].overheadMultiplier
               const isLatency = kpi.unit === 'ms'
-              const adjustedClassical = isLatency
-                ? kpi.classical * envMul
-                : kpi.classical / envMul
+              const adjustedClassical = isLatency ? kpi.classical * envMul : kpi.classical / envMul
               const adjustedHybrid = isLatency ? kpi.hybrid * envMul : kpi.hybrid / envMul
               const maxBar = isLatency
                 ? Math.max(adjustedHybrid, 1)

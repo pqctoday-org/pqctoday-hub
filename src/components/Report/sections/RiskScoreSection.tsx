@@ -2,103 +2,10 @@ import clsx from 'clsx'
 import { ShieldAlert } from 'lucide-react'
 import type { AssessmentResult } from '../../../hooks/assessmentTypes'
 import { CollapsibleSection } from '../ReportContent'
+import { RiskGauge, riskConfig } from '../../shared/widgets/RiskGauge'
 
-export const riskConfig = {
-  low: {
-    color: 'text-success',
-    bg: 'bg-success/10',
-    border: 'border-success',
-    label: 'Low Risk',
-    emoji: '🟢',
-  },
-  medium: {
-    color: 'text-warning',
-    bg: 'bg-warning/10',
-    border: 'border-warning',
-    label: 'Medium Risk',
-    emoji: '🟡',
-  },
-  high: {
-    color: 'text-destructive',
-    bg: 'bg-destructive/10',
-    border: 'border-destructive',
-    label: 'High Risk',
-    emoji: '🔴',
-  },
-  critical: {
-    color: 'text-destructive',
-    bg: 'bg-destructive/20',
-    border: 'border-destructive',
-    label: 'Critical Risk',
-    emoji: '⚫',
-  },
-}
-
-export const RiskGauge = ({
-  score,
-  level,
-}: {
-  score: number
-  level: AssessmentResult['riskLevel']
-}) => {
-  const config = riskConfig[level]
-  const angle = (score / 100) * 180 - 90
-
-  return (
-    <div className="flex flex-col items-center">
-      <svg
-        viewBox="0 0 200 120"
-        className="w-32 h-20 md:w-48 md:h-28"
-        role="img"
-        aria-label={`Risk score: ${score} out of 100, rated ${config.label}`}
-      >
-        <title>{`Risk gauge showing score of ${score}/100`}</title>
-        <path
-          d="M 20 100 A 80 80 0 0 1 180 100"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="12"
-          className="text-border"
-          strokeLinecap="round"
-        />
-        <path
-          d="M 20 100 A 80 80 0 0 1 180 100"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="12"
-          className={config.color}
-          strokeLinecap="round"
-          strokeDasharray={`${(score / 100) * 251.2} 251.2`}
-        />
-        <line
-          x1="100"
-          y1="100"
-          x2={100 + 60 * Math.cos((angle * Math.PI) / 180)}
-          y2={100 - 60 * Math.sin((angle * Math.PI) / 180)}
-          stroke="currentColor"
-          strokeWidth="3"
-          className="text-foreground"
-          strokeLinecap="round"
-        />
-        <circle cx="100" cy="100" r="5" fill="currentColor" className="text-foreground" />
-        <text
-          x="100"
-          y="90"
-          textAnchor="middle"
-          className={config.color}
-          fill="currentColor"
-          fontSize="28"
-          fontWeight="bold"
-        >
-          {score}
-        </text>
-      </svg>
-      <div className={clsx('text-lg font-bold mt-1', config.color)}>
-        {config.emoji} {config.label}
-      </div>
-    </div>
-  )
-}
+// Re-exports for backwards compatibility — anything importing from here still works.
+export { RiskGauge, riskConfig }
 
 export const RiskScoreSection = ({
   result,

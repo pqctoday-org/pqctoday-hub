@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import FocusLock from 'react-focus-lock'
 import {
   X,
   Users,
@@ -141,151 +142,153 @@ export function StepPersonaInfoModal({ stepKey, open, onClose }: StepPersonaInfo
           />
 
           <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="glass-panel p-6 max-w-lg w-full max-h-[85dvh] overflow-y-auto"
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="persona-info-modal-title"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Header */}
-              <div className="flex items-center justify-between mb-5">
-                <div className="flex items-center gap-2">
-                  <Users size={18} className="text-primary" />
-                  <h2 id="persona-info-modal-title" className="text-lg font-bold text-foreground">
-                    How This Step Is Personalized
-                  </h2>
+            <FocusLock returnFocus>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                className="glass-panel p-6 max-w-lg w-full max-h-[85dvh] overflow-y-auto"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="persona-info-modal-title"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Header */}
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-2">
+                    <Users size={18} className="text-primary" />
+                    <h2 id="persona-info-modal-title" className="text-lg font-bold text-foreground">
+                      How This Step Is Personalized
+                    </h2>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    onClick={onClose}
+                    className="p-2 h-auto w-auto rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground"
+                    aria-label="Close"
+                  >
+                    <X size={18} />
+                  </Button>
                 </div>
-                <Button
-                  variant="ghost"
-                  onClick={onClose}
-                  className="p-2 h-auto w-auto rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground"
-                  aria-label="Close"
-                >
-                  <X size={18} />
-                </Button>
-              </div>
 
-              {/* Explanation */}
-              <p className="text-xs text-muted-foreground leading-relaxed mb-4">
-                Your experience is shaped by your persona (role), selected industry and country, and
-                proficiency level. The underlying questions and scoring remain the same &mdash; only
-                the presentation and defaults change.
-              </p>
+                {/* Explanation */}
+                <p className="text-xs text-muted-foreground leading-relaxed mb-4">
+                  Your experience is shaped by your persona (role), selected industry and country,
+                  and proficiency level. The underlying questions and scoring remain the same
+                  &mdash; only the presentation and defaults change.
+                </p>
 
-              {/* Persona hints section */}
-              {!hasAnyHints ? (
-                <div className="rounded-lg border border-border bg-muted/10 px-4 py-3">
-                  <p className="text-xs text-muted-foreground text-center">
-                    This step has no persona-specific customizations. All personas see the same
-                    question and options.
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {personaHints.map((p) => {
-                    const PersonaIcon = p.icon
-                    const isActive = selectedPersona === p.id
+                {/* Persona hints section */}
+                {!hasAnyHints ? (
+                  <div className="rounded-lg border border-border bg-muted/10 px-4 py-3">
+                    <p className="text-xs text-muted-foreground text-center">
+                      This step has no persona-specific customizations. All personas see the same
+                      question and options.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {personaHints.map((p) => {
+                      const PersonaIcon = p.icon
+                      const isActive = selectedPersona === p.id
 
-                    return (
-                      <div
-                        key={p.id}
-                        className={
-                          isActive
-                            ? 'glass-panel p-3 border-l-4 border-l-primary'
-                            : 'rounded-lg border border-border p-3'
-                        }
-                      >
-                        <div className="flex items-center gap-2 mb-2">
-                          <PersonaIcon
-                            size={14}
-                            className={isActive ? 'text-primary' : 'text-muted-foreground'}
-                          />
-                          <span
-                            className={
-                              isActive
-                                ? 'text-sm font-semibold text-primary'
-                                : 'text-sm font-medium text-foreground'
-                            }
-                          >
-                            {p.label}
-                          </span>
-                          {isActive && (
-                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary/15 text-primary">
-                              Active
+                      return (
+                        <div
+                          key={p.id}
+                          className={
+                            isActive
+                              ? 'glass-panel p-3 border-l-4 border-l-primary'
+                              : 'rounded-lg border border-border p-3'
+                          }
+                        >
+                          <div className="flex items-center gap-2 mb-2">
+                            <PersonaIcon
+                              size={14}
+                              className={isActive ? 'text-primary' : 'text-muted-foreground'}
+                            />
+                            <span
+                              className={
+                                isActive
+                                  ? 'text-sm font-semibold text-primary'
+                                  : 'text-sm font-medium text-foreground'
+                              }
+                            >
+                              {p.label}
                             </span>
+                            {isActive && (
+                              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary/15 text-primary">
+                                Active
+                              </span>
+                            )}
+                          </div>
+                          {p.hint ? (
+                            <HintDetail hint={p.hint} label={p.label} />
+                          ) : (
+                            <p className="text-xs text-muted-foreground italic">
+                              No customizations for this step.
+                            </p>
                           )}
                         </div>
-                        {p.hint ? (
-                          <HintDetail hint={p.hint} label={p.label} />
-                        ) : (
-                          <p className="text-xs text-muted-foreground italic">
-                            No customizations for this step.
+                      )
+                    })}
+                  </div>
+                )}
+
+                {/* Context effects section — industry, country, proficiency */}
+                {hasContextInfo && (
+                  <div className="mt-5 pt-4 border-t border-border">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Sparkles size={16} className="text-primary" />
+                      <h3 className="text-sm font-semibold text-foreground">
+                        How Your Preferences Affect This Step
+                      </h3>
+                    </div>
+                    <div className="space-y-2.5">
+                      {contextInfo.industryEffect && (
+                        <div className="flex items-start gap-2">
+                          <Building2 size={12} className="text-muted-foreground shrink-0 mt-0.5" />
+                          <p className="text-xs text-muted-foreground">
+                            <span className="font-medium text-foreground">Industry: </span>
+                            {contextInfo.industryEffect}
                           </p>
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-
-              {/* Context effects section — industry, country, proficiency */}
-              {hasContextInfo && (
-                <div className="mt-5 pt-4 border-t border-border">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Sparkles size={16} className="text-primary" />
-                    <h3 className="text-sm font-semibold text-foreground">
-                      How Your Preferences Affect This Step
-                    </h3>
+                        </div>
+                      )}
+                      {contextInfo.countryEffect && (
+                        <div className="flex items-start gap-2">
+                          <Globe size={12} className="text-muted-foreground shrink-0 mt-0.5" />
+                          <p className="text-xs text-muted-foreground">
+                            <span className="font-medium text-foreground">Country: </span>
+                            {contextInfo.countryEffect}
+                          </p>
+                        </div>
+                      )}
+                      {contextInfo.proficiencyEffect && (
+                        <div className="flex items-start gap-2">
+                          <GraduationCap
+                            size={12}
+                            className="text-muted-foreground shrink-0 mt-0.5"
+                          />
+                          <p className="text-xs text-muted-foreground">
+                            <span className="font-medium text-foreground">Proficiency: </span>
+                            {contextInfo.proficiencyEffect}
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div className="space-y-2.5">
-                    {contextInfo.industryEffect && (
-                      <div className="flex items-start gap-2">
-                        <Building2 size={12} className="text-muted-foreground shrink-0 mt-0.5" />
-                        <p className="text-xs text-muted-foreground">
-                          <span className="font-medium text-foreground">Industry: </span>
-                          {contextInfo.industryEffect}
-                        </p>
-                      </div>
-                    )}
-                    {contextInfo.countryEffect && (
-                      <div className="flex items-start gap-2">
-                        <Globe size={12} className="text-muted-foreground shrink-0 mt-0.5" />
-                        <p className="text-xs text-muted-foreground">
-                          <span className="font-medium text-foreground">Country: </span>
-                          {contextInfo.countryEffect}
-                        </p>
-                      </div>
-                    )}
-                    {contextInfo.proficiencyEffect && (
-                      <div className="flex items-start gap-2">
-                        <GraduationCap
-                          size={12}
-                          className="text-muted-foreground shrink-0 mt-0.5"
-                        />
-                        <p className="text-xs text-muted-foreground">
-                          <span className="font-medium text-foreground">Proficiency: </span>
-                          {contextInfo.proficiencyEffect}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
+                )}
 
-              {/* Footer */}
-              {!selectedPersona && (
-                <div className="rounded-lg border border-border bg-muted/10 px-4 py-3 mt-4">
-                  <p className="text-xs text-muted-foreground text-center leading-relaxed">
-                    No persona selected. Choose a persona from the Landing page to tailor questions
-                    to your role.
-                  </p>
-                </div>
-              )}
-            </motion.div>
+                {/* Footer */}
+                {!selectedPersona && (
+                  <div className="rounded-lg border border-border bg-muted/10 px-4 py-3 mt-4">
+                    <p className="text-xs text-muted-foreground text-center leading-relaxed">
+                      No persona selected. Choose a persona from the Landing page to tailor
+                      questions to your role.
+                    </p>
+                  </div>
+                )}
+              </motion.div>
+            </FocusLock>
           </div>
         </>
       )}

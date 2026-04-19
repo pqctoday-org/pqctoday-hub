@@ -1,6 +1,6 @@
 {
   "version": "3.3.8",
-  "generatedAt": "2026-04-17T15:06:58.112Z",
+  "generatedAt": "2026-04-19T17:13:43.450Z",
   "resources": {
     "routePresets": [
       {
@@ -420,6 +420,12 @@
         "difficulty": "intermediate"
       },
       {
+        "id": "pqc-ssh-sim",
+        "name": "PQC SSH Simulator",
+        "category": "",
+        "difficulty": "intermediate"
+      },
+      {
         "id": "rng-demo",
         "name": "Random Generation",
         "category": "Entropy & Random",
@@ -464,6 +470,18 @@
       {
         "id": "merkle-proof",
         "name": "Merkle Tree Workshop",
+        "category": "",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "cert-capacity",
+        "name": "Cert Capacity Calculator",
+        "category": "Certificates & Proofs",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "hsm-capacity",
+        "name": "HSM Capacity Calculator",
         "category": "",
         "difficulty": "intermediate"
       },
@@ -527,8 +545,23 @@
         "category": "Risk & Strategy"
       },
       {
+        "id": "risk-register",
+        "name": "Risk Register Builder",
+        "category": "Risk & Strategy"
+      },
+      {
+        "id": "risk-treatment-plan",
+        "name": "Risk Heatmap & Treatment Plan",
+        "category": "Risk & Strategy"
+      },
+      {
         "id": "audit-checklist",
         "name": "Audit Readiness Checklist",
+        "category": "Compliance & Audit"
+      },
+      {
+        "id": "compliance-timeline",
+        "name": "Compliance Timeline Builder",
         "category": "Compliance & Audit"
       },
       {

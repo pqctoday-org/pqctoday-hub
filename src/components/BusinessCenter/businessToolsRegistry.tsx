@@ -15,8 +15,12 @@ import {
   MessageSquare,
   Activity,
   Rocket,
+  ListChecks,
+  Flame,
+  Calendar,
 } from 'lucide-react'
 import { lazyWithRetry } from '@/utils/lazyWithRetry'
+import type { ExecutiveDocumentType } from '@/services/storage/types'
 
 // ---------------------------------------------------------------------------
 // Business tool registry — non-cryptographic planning & governance tools
@@ -59,6 +63,22 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     icon: AlertTriangle,
     keywords: ['crqc', 'quantum', 'threat', 'scenario', 'risk', 'planning'],
   },
+  {
+    id: 'risk-register',
+    name: 'Risk Register Builder',
+    description: 'Build a PQC risk register with impact, likelihood, owners, and mitigations',
+    category: 'Risk & Strategy',
+    icon: ListChecks,
+    keywords: ['risk', 'register', 'inventory', 'mitigation', 'likelihood', 'impact'],
+  },
+  {
+    id: 'risk-treatment-plan',
+    name: 'Risk Heatmap & Treatment Plan',
+    description: 'Visualise residual risk and draft treatment strategies per risk category',
+    category: 'Risk & Strategy',
+    icon: Flame,
+    keywords: ['heatmap', 'treatment', 'residual', 'risk', 'mitigation', 'strategy'],
+  },
 
   // ── Compliance & Audit ─────────────────────────────────────────────────────
   {
@@ -69,6 +89,14 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     category: 'Compliance & Audit',
     icon: ClipboardCheck,
     keywords: ['audit', 'checklist', 'readiness', 'compliance', 'inventory', 'controls'],
+  },
+  {
+    id: 'compliance-timeline',
+    name: 'Compliance Timeline Builder',
+    description: 'Plot framework milestones, deadlines, and dependencies on a single timeline',
+    category: 'Compliance & Audit',
+    icon: Calendar,
+    keywords: ['compliance', 'timeline', 'deadline', 'framework', 'milestone', 'regulatory'],
   },
 
   // ── Governance & Policy ────────────────────────────────────────────────────
@@ -189,10 +217,25 @@ export const BUSINESS_TOOL_COMPONENTS: Record<string, LazyComp> = {
       (m) => ({ default: m.CRQCScenarioPlanner })
     )
   ),
+  'risk-register': lazyWithRetry(() =>
+    import('./adapters/RiskRegisterBuilderStandalone').then((m) => ({
+      default: m.RiskRegisterBuilderStandalone,
+    }))
+  ),
+  'risk-treatment-plan': lazyWithRetry(() =>
+    import('./adapters/RiskHeatmapGeneratorStandalone').then((m) => ({
+      default: m.RiskHeatmapGeneratorStandalone,
+    }))
+  ),
   'audit-checklist': lazyWithRetry(() =>
     import('@/components/PKILearning/modules/ComplianceStrategy/components/AuditReadinessChecklist').then(
       (m) => ({ default: m.AuditReadinessChecklist })
     )
+  ),
+  'compliance-timeline': lazyWithRetry(() =>
+    import('./adapters/ComplianceTimelineBuilderStandalone').then((m) => ({
+      default: m.ComplianceTimelineBuilderStandalone,
+    }))
   ),
   'raci-builder': lazyWithRetry(() =>
     import('@/components/PKILearning/modules/PQCGovernance/components/RACIBuilder').then((m) => ({
@@ -245,3 +288,50 @@ export const BUSINESS_TOOL_COMPONENTS: Record<string, LazyComp> = {
     )
   ),
 }
+
+// ---------------------------------------------------------------------------
+// Artifact-type ↔ tool-id mapping — single source of truth for the drawer and
+// the /business/tools/:id route. Artifact placeholders in the Command Center
+// resolve to a builder component through this table; no parallel registry.
+// ---------------------------------------------------------------------------
+
+export const ARTIFACT_TYPE_TO_TOOL_ID: Partial<Record<ExecutiveDocumentType, string>> = {
+  'roi-model': 'roi-calculator',
+  'board-deck': 'board-pitch',
+  'crqc-scenario': 'crqc-scenario',
+  'risk-register': 'risk-register',
+  'risk-treatment-plan': 'risk-treatment-plan',
+  'audit-checklist': 'audit-checklist',
+  'compliance-timeline': 'compliance-timeline',
+  'raci-matrix': 'raci-builder',
+  'policy-draft': 'policy-generator',
+  'kpi-dashboard': 'kpi-dashboard',
+  'stakeholder-comms': 'stakeholder-comms',
+  'vendor-scorecard': 'vendor-scorecard',
+  'contract-clause': 'contract-clause',
+  'migration-roadmap': 'roadmap-builder',
+  'kpi-tracker': 'kpi-tracker',
+  'supply-chain-matrix': 'supply-chain-matrix',
+  'deployment-playbook': 'deployment-playbook',
+}
+
+/** Look up the lazy-loaded builder component for a given artifact type. */
+export function getBuilderForArtifactType(type: ExecutiveDocumentType): LazyComp | undefined {
+  const toolId = ARTIFACT_TYPE_TO_TOOL_ID[type]
+  // eslint-disable-next-line security/detect-object-injection
+  return toolId ? BUSINESS_TOOL_COMPONENTS[toolId] : undefined
+}
+
+/** Human-readable tool name + description, keyed by artifact type.
+ *  Drawer uses this for headers, hero copy, and empty-state messages so it
+ *  stays in sync with the /business/tools/:id page without re-authoring. */
+export const TOOL_LABELS_BY_ARTIFACT_TYPE: Partial<
+  Record<ExecutiveDocumentType, { name: string; description: string }>
+> = Object.fromEntries(
+  (Object.entries(ARTIFACT_TYPE_TO_TOOL_ID) as [ExecutiveDocumentType, string][])
+    .map(([type, toolId]) => {
+      const tool = BUSINESS_TOOLS.find((t) => t.id === toolId)
+      return tool ? [type, { name: tool.name, description: tool.description }] : null
+    })
+    .filter((e): e is [ExecutiveDocumentType, { name: string; description: string }] => e !== null)
+)

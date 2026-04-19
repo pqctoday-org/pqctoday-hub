@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import type { CategoryScores, AssessmentResult } from '../hooks/assessmentTypes'
+import type { CategoryScores, AssessmentResult, ScoreBoost } from '../hooks/assessmentTypes'
 import { useHistoryStore } from './useHistoryStore'
 import { pullLegacyAssessmentState, runLegacyAssessmentMigrations } from './assessmentMigration'
 
@@ -11,6 +11,12 @@ export interface AssessmentSnapshot {
   categoryScores: CategoryScores
   riskLevel: 'low' | 'medium' | 'high' | 'critical'
   industry: string
+  /** Composite score before situational boosts — retained so KPI trending can
+   *  show "your raw category-weighted score dropped even though composite
+   *  stayed flat because of boosts." Optional: older snapshots pre-date this. */
+  preBoostScore?: number
+  /** Situational boosts that fired at time of snapshot. */
+  boosts?: ScoreBoost[]
 }
 
 export interface AssessmentResultState {

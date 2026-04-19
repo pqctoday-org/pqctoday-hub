@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
@@ -15,9 +15,12 @@ import { useAssessmentStore } from '../../store/useAssessmentStore'
 import type { AssessmentMode } from '../../store/useAssessmentStore'
 import { metadata } from '../../data/industryAssessConfig'
 import { usePersonaStore } from '../../store/usePersonaStore'
-import { REGION_COUNTRIES_MAP, PERSONA_RECOMMENDED_MODE } from '../../data/personaConfig'
+import { PERSONA_NAV_PATHS, PERSONA_RECOMMENDED_MODE } from '../../data/personaConfig'
+import { useSeedAssessFromPersona } from '../../hooks/assessment/useSeedAssessFromPersona'
 import { Button } from '../ui/button'
 import { PageHeader } from '../common/PageHeader'
+import { WorkflowBreadcrumb } from '../shared/WorkflowBreadcrumb'
+import { LayoutDashboard } from 'lucide-react'
 
 const STEP_LABELS = [
   'Industry',
@@ -50,7 +53,7 @@ const ModeSelector: React.FC<{
           <div className="p-2 rounded-full bg-warning/10 group-hover:bg-warning/20 transition-colors">
             <Zap className="text-warning" size={20} />
           </div>
-          <h3 className="text-lg font-bold text-foreground">Quick</h3>
+          <span className="text-lg font-bold text-foreground">Quick</span>
           {recommendedMode === 'quick' && (
             <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary/15 text-primary">
               Recommended for you
@@ -72,7 +75,7 @@ const ModeSelector: React.FC<{
           <div className="p-2 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
             <ClipboardList className="text-primary" size={20} />
           </div>
-          <h3 className="text-lg font-bold text-foreground">Comprehensive</h3>
+          <span className="text-lg font-bold text-foreground">Comprehensive</span>
           {recommendedMode === 'comprehensive' && (
             <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary/15 text-primary">
               Recommended for you
@@ -102,8 +105,14 @@ export const AssessView: React.FC = () => {
   } = useAssessmentStore()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const recommendedMode = selectedPersona ? PERSONA_RECOMMENDED_MODE[selectedPersona] : null
-  const seededRef = useRef(false)
   const [showResumeBanner, setShowResumeBanner] = useState(false)
+
+  // Command Center is only shown to executive / architect / ops personas.
+  const personaSeesBusinessCenter = selectedPersona
+    ? (PERSONA_NAV_PATHS[selectedPersona]?.includes('/business') ?? false)
+    : false
+
+  useSeedAssessFromPersona()
 
   const handleModeSelect = (mode: AssessmentMode) => {
     setAssessmentMode(mode)
@@ -132,24 +141,9 @@ export const AssessView: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Seed industry and country from persona store when starting fresh
-  useEffect(() => {
-    if (seededRef.current || assessmentStatus === 'complete') return
-    const store = useAssessmentStore.getState()
-    if (store.industry) return
-    seededRef.current = true
-
-    const { selectedIndustry, selectedRegion } = usePersonaStore.getState()
-    if (selectedIndustry) store.setIndustry(selectedIndustry)
-    if (selectedRegion && selectedRegion !== 'global') {
-      const country = REGION_COUNTRIES_MAP[selectedRegion]?.[0]
-      if (country) store.setCountry(country)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   return (
     <div className="animate-fade-in">
+      <WorkflowBreadcrumb current="assess" />
       <PageHeader
         icon={ClipboardCheck}
         pageId="assess"
@@ -172,20 +166,33 @@ export const AssessView: React.FC = () => {
           className="mb-6"
         >
           <div className="glass-panel p-4 border-l-4 border-l-success">
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <p className="text-sm text-foreground">
-                Your assessment is complete. View your personalized report or update your answers
-                below.
+                Your assessment is complete. View your personalized report or open the Business
+                Center to plan next steps.
               </p>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/report')}
-                className="gap-1.5 text-xs font-semibold shrink-0"
-              >
-                <FileBarChart size={12} />
-                View Report
-              </Button>
+              <div className="flex items-center gap-2 shrink-0">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate('/report')}
+                  className="gap-1.5 text-xs font-semibold"
+                >
+                  <FileBarChart size={12} />
+                  View Report
+                </Button>
+                {personaSeesBusinessCenter && (
+                  <Button
+                    variant="gradient"
+                    size="sm"
+                    onClick={() => navigate('/business')}
+                    className="gap-1.5 text-xs font-semibold"
+                  >
+                    <LayoutDashboard size={12} />
+                    Command Center
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </motion.div>

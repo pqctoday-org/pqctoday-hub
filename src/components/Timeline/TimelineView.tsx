@@ -276,6 +276,7 @@ export const TimelineView = () => {
             />
             <input
               type="text"
+              aria-label="Search countries or organizations"
               placeholder="Search countries or organizations"
               value={searchText}
               onChange={(e) => handleSearchChange(e.target.value)}

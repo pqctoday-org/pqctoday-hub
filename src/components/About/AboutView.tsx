@@ -8,7 +8,7 @@ import { DataFoundationSection } from './sections/DataFoundationSection'
 import { SbomSection } from './sections/SbomSection'
 import { SecurityAuditSection } from './sections/SecurityAuditSection'
 import { DataPrivacySection } from './sections/DataPrivacySection'
-import { EmbeddingModeSection } from './sections/EmbeddingModeSection'
+import { EnterpriseSection } from './sections/EnterpriseSection'
 import { LicenseSection } from './sections/LicenseSection'
 import { RagAiSection } from './sections/RagAiSection'
 import { CryptoBuffSection } from './sections/CryptoBuffSection'
@@ -30,7 +30,7 @@ export function AboutView() {
       <SbomSection />
       <SecurityAuditSection />
       <DataPrivacySection />
-      {!isEmbedded && <EmbeddingModeSection />}
+      {!isEmbedded && <EnterpriseSection />}
       <LicenseSection />
       <RagAiSection />
       {!isEmbedded && <CryptoBuffSection />}

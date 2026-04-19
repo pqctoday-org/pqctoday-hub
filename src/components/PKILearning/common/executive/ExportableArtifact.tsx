@@ -1,14 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useCallback } from 'react'
-import { Download, Copy, Printer, Check } from 'lucide-react'
+import { Download, Copy, Printer, Check, Presentation, FileText, FileType2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { markdownToPptx } from '@/services/export/pptxExport'
+import { markdownToDocx } from '@/services/export/docxExport'
+import { markdownToPdf } from '@/services/export/pdfExport'
+
+type ExportFormat = 'markdown' | 'json' | 'csv' | 'pptx' | 'docx' | 'pdf'
 
 interface ExportableArtifactProps {
   title: string
   children: React.ReactNode
   exportData: string
   filename?: string
-  formats?: ('markdown' | 'json' | 'csv')[]
+  formats?: ExportFormat[]
   onExport?: () => void
 }
 
@@ -47,13 +52,29 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
   }, [exportData, triggerSave])
 
   const handleDownload = useCallback(
-    (format: string) => {
+    async (format: ExportFormat) => {
+      if (format === 'pptx') {
+        await markdownToPptx(exportData, filename)
+        triggerSave()
+        return
+      }
+      if (format === 'docx') {
+        await markdownToDocx(exportData, filename, title)
+        triggerSave()
+        return
+      }
+      if (format === 'pdf') {
+        await markdownToPdf(exportData, filename, title)
+        triggerSave()
+        return
+      }
       const ext = format === 'markdown' ? 'md' : format
       const mimeMap: Record<string, string> = {
         markdown: 'text/markdown',
         json: 'application/json',
         csv: 'text/csv',
       }
+      // eslint-disable-next-line security/detect-object-injection
       const blob = new Blob([exportData], { type: mimeMap[format] || 'text/plain' })
       const url = URL.createObjectURL(blob)
       const link = document.createElement('a')
@@ -63,7 +84,7 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
       URL.revokeObjectURL(url)
       triggerSave()
     },
-    [exportData, filename, triggerSave]
+    [exportData, filename, title, triggerSave]
   )
 
   const handlePrint = useCallback(() => {
@@ -80,12 +101,29 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
             {copied ? <Check size={14} /> : <Copy size={14} />}
             <span className="ml-1.5">{copied ? 'Copied' : 'Copy'}</span>
           </Button>
-          {formats.map((format) => (
-            <Button key={format} variant="outline" size="sm" onClick={() => handleDownload(format)}>
-              <Download size={14} />
-              <span className="ml-1.5">.{format === 'markdown' ? 'md' : format}</span>
-            </Button>
-          ))}
+          {formats.map((format) => {
+            const icon =
+              format === 'pptx' ? (
+                <Presentation size={14} />
+              ) : format === 'docx' ? (
+                <FileText size={14} />
+              ) : format === 'pdf' ? (
+                <FileType2 size={14} />
+              ) : (
+                <Download size={14} />
+              )
+            return (
+              <Button
+                key={format}
+                variant="outline"
+                size="sm"
+                onClick={() => handleDownload(format)}
+              >
+                {icon}
+                <span className="ml-1.5">.{format === 'markdown' ? 'md' : format}</span>
+              </Button>
+            )
+          })}
           <Button variant="ghost" size="sm" onClick={handlePrint} className="print:hidden">
             <Printer size={14} />
             <span className="ml-1.5">Print</span>

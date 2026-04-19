@@ -11,7 +11,8 @@ import {
 } from '../utils/analytics'
 import { LEARN_SECTIONS } from '../components/PKILearning/moduleData'
 
-const MODULE_STORE_VERSION = 10
+const MODULE_STORE_VERSION = 12
+const KPI_HISTORY_CAP = 30
 
 // Ephemeral session tracker — NOT in Zustand state, intentionally non-persisted.
 // Set when a module mounts, cleared when it unmounts or the page unloads.
@@ -38,6 +39,7 @@ interface ModuleState extends LearningProgress {
   updateExecutiveDocument: (id: string, updates: Partial<Omit<ExecutiveDocument, 'id'>>) => void
   deleteExecutiveDocument: (id: string) => void
   mergeCorrectQuestionIds: (ids: string[]) => void
+  pushRiskScoreSnapshot: (score: number) => void
   trackDailyVisit: () => void
 }
 
@@ -291,6 +293,21 @@ export const useModuleStore = create<ModuleState>()(
         }))
       },
 
+      pushRiskScoreSnapshot: (score) =>
+        set((state) => {
+          const prev = state.kpiHistory?.riskScore ?? []
+          const last = prev[prev.length - 1]
+          // Deduplicate: don't push an identical reading taken within 10 minutes
+          if (last && last.score === score && Date.now() - last.ts < 10 * 60_000) {
+            return state
+          }
+          const next = [...prev, { ts: Date.now(), score }].slice(-KPI_HISTORY_CAP)
+          return {
+            kpiHistory: { riskScore: next },
+            timestamp: Date.now(),
+          }
+        }),
+
       mergeCorrectQuestionIds: (ids) =>
         set((state) => {
           const existing = new Set(state.quizMastery?.correctQuestionIds ?? [])
@@ -361,6 +378,8 @@ export const useModuleStore = create<ModuleState>()(
           trackDailyVisit: _trackDailyVisit,
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           toggleLearnSection: _toggleLearnSection,
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          pushRiskScoreSnapshot: _pushRiskScoreSnapshot,
           ...data
         } = get()
         return data
@@ -552,6 +571,34 @@ export const useModuleStore = create<ModuleState>()(
         // Version 9 → Version 10: Add platform-eng-pqc module (auto-initialises via defaults)
         if (version <= 9) {
           state.version = '10.0.0'
+          state.timestamp = Date.now()
+        }
+
+        // Version 10 → Version 11: Initialise kpiHistory for Command Center trending
+        if (version <= 10) {
+          if (!state.kpiHistory || !Array.isArray(state.kpiHistory.riskScore)) {
+            state.kpiHistory = { riskScore: [] }
+          }
+          state.version = '11.0.0'
+          state.timestamp = Date.now()
+        }
+
+        // Version 11 → Version 12:
+        // - Add optional `inputs` field to executiveDocuments (Edit restores prior form state)
+        // - Drop any records with the retired `roadmap` type (replaced by `migration-roadmap`
+        //   in the Vendor & Migration section; no builder ever produced `roadmap` records,
+        //   but filter defensively so a stray import can't reach the UI as an orphan)
+        if (version <= 11) {
+          if (Array.isArray(state.artifacts?.executiveDocuments)) {
+            state.artifacts.executiveDocuments = state.artifacts.executiveDocuments
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              .filter((d: any) => d && d.type !== 'roadmap')
+              .map(
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (d: any) => (Object.prototype.hasOwnProperty.call(d, 'inputs') ? d : { ...d })
+              )
+          }
+          state.version = '12.0.0'
           state.timestamp = Date.now()
         }
 

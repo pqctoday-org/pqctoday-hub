@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { FileJson, Play, CheckCircle, XCircle } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '../ui/button'
@@ -105,6 +105,10 @@ export const ACVPTesting = ({ keyStore, setKeyStore }: ACVPTestingProps) => {
     }
   }
 
+  // runTests is declared later in this component; the latestRun ref + useEffect
+  // wiring that references it was moved below (after the declaration) to
+  // satisfy TS2448/TS2454 "used before declaration".
+
   const runTests = async () => {
     setLoading(true)
     setResults([])
@@ -204,6 +208,27 @@ export const ACVPTesting = ({ keyStore, setKeyStore }: ACVPTestingProps) => {
       addLog('Validation Suite Completed.')
     }
   }
+
+  // E2E boundary for ACVP programmatic execution. The ref pattern defers
+  // reading importKeys / runTests until the event fires, but the ref must
+  // be initialized AFTER both functions are declared (TS strict mode).
+  const latestRun = React.useRef({ importKeys, runTests })
+  React.useEffect(() => {
+    latestRun.current = { importKeys, runTests }
+  })
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const handleTrigger = () => {
+        latestRun.current.importKeys()
+        setTimeout(() => {
+          latestRun.current.runTests().catch(console.error)
+        }, 100) // allow state to settle
+      }
+      window.addEventListener('e2e:trigger_acvp', handleTrigger)
+      return () => window.removeEventListener('e2e:trigger_acvp', handleTrigger)
+    }
+  }, [])
 
   return (
     <div className="glass-panel p-3 md:p-6 min-h-[60vh] md:h-[85vh] flex flex-col">

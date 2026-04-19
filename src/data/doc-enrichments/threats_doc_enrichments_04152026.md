@@ -3766,4 +3766,3 @@ enrichment_method: ollama-qwen3.5:27b
 - **Extraction Timestamp**: 2026-04-15T08:45:05
 
 ---
-

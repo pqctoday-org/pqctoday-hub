@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["term", "definition", "complexity", "category"],
+    "properties": {
+      "term": { "type": "string", "minLength": 1 },
+      "acronym": { "type": "string" },
+      "definition": { "type": "string", "minLength": 10 },
+      "technicalNote": { "type": "string" },
+      "relatedModule": { "type": "string" },
+      "complexity": { "enum": ["beginner", "intermediate", "advanced"] },
+      "category": { "enum": ["algorithm", "protocol", "standard", "concept", "organization"] }
+    },
+    "additionalProperties": false
+  }
+}

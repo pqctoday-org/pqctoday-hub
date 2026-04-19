@@ -386,7 +386,8 @@ const MODULE_DIR_TO_ID: Record<string, string> = {
 
 async function processGlossary(): Promise<RAGChunk[]> {
   // Dynamic import via tsx — avoids fragile regex parsing of multi-line TS values
-  const { glossaryTerms } = await import('../src/data/glossaryData')
+  const { loadGlossary } = await import('../src/data/glossary')
+  const glossaryTerms = await loadGlossary()
 
   return glossaryTerms.map(
     (
@@ -2626,6 +2627,7 @@ function processDocumentEnrichments(): RAGChunk[] {
 
   const chunks: RAGChunk[] = []
   const collections = ['library', 'timeline', 'threats', 'catalog'] as const
+  const seenIds = new Set<string>()
 
   for (const collection of collections) {
     const enrichLookup = loadEnrichmentFields(collection)
@@ -2693,8 +2695,12 @@ function processDocumentEnrichments(): RAGChunk[] {
             )
           : undefined
 
+      const baseId = `doc-enrichment-${sanitize(refId)}`
+      const chunkId = seenIds.has(baseId) ? `${baseId}-${collection}` : baseId
+      seenIds.add(chunkId)
+
       chunks.push({
-        id: `doc-enrichment-${sanitize(refId)}`,
+        id: chunkId,
         source: 'document-enrichment',
         title: `${title} — Document Analysis`,
         content: contentParts.join('\n'),

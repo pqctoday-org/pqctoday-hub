@@ -1,0 +1,82 @@
+[
+  {
+    "term": "CKR_OK",
+    "definition": "PKCS#11 return value meaning the call succeeded (0x00000000)."
+  },
+  {
+    "term": "CKM_ECDH1_DERIVE",
+    "definition": "PKCS#11 mechanism for Diffie-Hellman key agreement; used for both P-256 and X25519."
+  },
+  {
+    "term": "CKM_ML_KEM",
+    "definition": "PKCS#11 mechanism for ML-KEM post-quantum key encapsulation (FIPS 203)."
+  },
+  {
+    "term": "CKM_SHA256",
+    "definition": "SHA-256 hash mechanism — 256-bit classical digest."
+  },
+  {
+    "term": "CKM_SHA3_256",
+    "definition": "SHA3-256 hash mechanism — 256-bit digest, post-quantum robust KDF primitive."
+  },
+  {
+    "term": "CKM_SHA3_256_HMAC",
+    "definition": "HMAC using SHA3-256 — post-quantum robust MAC construction."
+  },
+  {
+    "term": "X9.63-KDF",
+    "definition": "Key derivation function from ANSI X9.63; iterates a hash over Z‖counter‖SharedInfo."
+  },
+  {
+    "term": "AES-128-CTR",
+    "definition": "AES encryption in Counter mode with a 128-bit key; length-preserving ciphertext."
+  },
+  {
+    "term": "AES-256-CTR",
+    "definition": "AES encryption in Counter mode with a 256-bit key; length-preserving ciphertext."
+  },
+  {
+    "term": "SHA-256",
+    "definition": "NIST 256-bit classical hash function (SHA-2 family)."
+  },
+  {
+    "term": "SHA3-256",
+    "definition": "NIST 256-bit SHA-3 hash function; Keccak-based, distinct from SHA-2."
+  },
+  {
+    "term": "HMAC-SHA-256",
+    "definition": "Hash-based MAC using SHA-256; provides integrity + authenticity of a message."
+  },
+  {
+    "term": "HMAC-SHA3-256",
+    "definition": "HMAC using SHA3-256; PQ-robust MAC used in Profile C."
+  },
+  {
+    "term": "ML-KEM-768",
+    "definition": "Post-quantum key encapsulation mechanism standardized in FIPS 203."
+  },
+  {
+    "term": "X25519",
+    "definition": "Montgomery-curve Diffie-Hellman over Curve25519; 32-byte raw keys."
+  },
+  {
+    "term": "P-256",
+    "definition": "NIST prime256v1 (secp256r1) elliptic curve; 65-byte uncompressed points."
+  },
+  {
+    "term": "SUCI",
+    "definition": "5G Subscription Concealed Identifier — the encrypted form of the SUPI transmitted on air."
+  },
+  {
+    "term": "SUPI",
+    "definition": "5G Subscription Permanent Identifier (e.g. your IMSI) — the plaintext identity."
+  },
+  {
+    "term": "SIDF",
+    "definition": "5G Subscription Identifier De-concealing Function at the home network — recovers SUPI from SUCI."
+  },
+  {
+    "term": "MSIN",
+    "definition": "Mobile Subscriber Identification Number — the portion of the IMSI that is concealed."
+  }
+]

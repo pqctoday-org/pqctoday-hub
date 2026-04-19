@@ -37,14 +37,34 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
       'A composite score from 0 to 100 that quantifies your organization\u2019s quantum risk. Higher scores mean more urgent action is needed.',
     wizardInputs: [
       {
-        label: 'All wizard inputs',
-        detail:
-          'The score is a weighted composite of four category scores (Quantum Exposure, Migration Complexity, Regulatory Pressure, Organizational Readiness), each of which draws from multiple wizard steps.',
-      },
-      {
         label: 'Industry (Step 1)',
         detail:
           'Determines category weights. For example, government and finance weight regulatory pressure higher, while telecom and energy weight migration complexity higher.',
+      },
+      {
+        label: 'Quantum Exposure inputs',
+        detail:
+          'Algorithms (Step 3), Crypto Use Cases (Step 7), Data Retention (Step 8), Data Sensitivity (Step 4).',
+      },
+      {
+        label: 'Migration Complexity inputs',
+        detail:
+          'Crypto Agility (Step 11), Infrastructure (Step 12), System Scale + Team Size (Step 10), Vendor Dependency (Step 13).',
+      },
+      {
+        label: 'Regulatory Pressure inputs',
+        detail:
+          'Compliance Frameworks (Step 5), Industry (Step 1), Country (Step 2), Timeline Pressure (Step 13).',
+      },
+      {
+        label: 'Organizational Readiness inputs',
+        detail:
+          'Migration Status (Step 6), Team Size (Step 10), Crypto Agility (Step 11), Vendor Dependency (Step 13).',
+      },
+      {
+        label: 'See Risk Breakdown section',
+        detail:
+          'Full per-category weights and situational boosts are documented under the Risk Breakdown info panel.',
       },
     ],
     scoringPrinciples: [

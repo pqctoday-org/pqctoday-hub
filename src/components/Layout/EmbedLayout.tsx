@@ -233,12 +233,12 @@ export const EmbedLayout = () => {
                   ? isNarrowSidebar
                     ? isActive
                       ? navActiveBg
-                        ? 'w-full flex-col justify-center items-center text-foreground h-auto py-2 px-1 rounded-md gap-0.5'
+                        ? 'w-full flex-col justify-center items-center text-white h-auto py-2 px-1 rounded-md gap-0.5'
                         : 'w-full flex-col justify-center items-center bg-primary/10 text-foreground border border-primary/20 h-auto py-2 px-1 gap-0.5'
                       : 'w-full flex-col justify-center items-center text-muted-foreground hover:text-foreground h-auto py-2 px-1 gap-0.5'
                     : isActive
                       ? navActiveBg
-                        ? 'w-full justify-start text-foreground h-auto py-2 px-3 rounded-md'
+                        ? 'w-full justify-start text-white h-auto py-2 px-3 rounded-md'
                         : 'w-full justify-start bg-primary/10 text-foreground border border-primary/20 h-auto py-2 px-3'
                       : 'w-full justify-start text-muted-foreground hover:text-foreground h-auto py-2 px-3'
                   : isActive
@@ -385,7 +385,11 @@ export const EmbedLayout = () => {
   // ── Sidebar layout ──────────────────────────────────────────────────────────
   if (isSidebarLayout) {
     return (
-      <div className="relative flex h-dvh bg-background text-foreground print:min-h-0 embed-root overflow-hidden">
+      <div
+        className={`relative flex h-dvh bg-background text-foreground print:min-h-0 embed-root overflow-hidden transition-[padding] duration-300 ${
+          isPanelOpen ? 'sm:pr-[40vw]' : ''
+        }`}
+      >
         {/* Left sidebar — fixed height, never scrolls with content */}
         <aside
           className="flex-shrink-0 h-full overflow-y-auto overflow-x-hidden z-50 border-r border-border flex flex-col"
@@ -459,7 +463,11 @@ export const EmbedLayout = () => {
 
   // ── Top nav layout (default) ────────────────────────────────────────────────
   return (
-    <div className="relative min-h-screen flex flex-col bg-background text-foreground print:min-h-0 embed-root">
+    <div
+      className={`relative min-h-screen flex flex-col bg-background text-foreground print:min-h-0 embed-root transition-[padding] duration-300 ${
+        isPanelOpen ? 'sm:pr-[40vw]' : ''
+      }`}
+    >
       {/* Conditionally render header based on policy.features.hideNav */}
       {!embedConfig.policy.features.hideNav && (
         <header

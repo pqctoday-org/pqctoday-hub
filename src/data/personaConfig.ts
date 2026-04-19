@@ -41,7 +41,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/playground',
     '/openssl',
   ],
-  curious: ['/compliance', '/assess', '/report', '/library', '/leaders'],
+  curious: ['/explore', '/compliance', '/assess', '/report', '/library', '/leaders'],
 }
 
 /**
@@ -348,7 +348,7 @@ export const PERSONA_REPORT_CONFIG: Record<
   Partial<Record<ReportSectionId, ReportSectionConfig>>
 > = {
   executive: {
-    hndlHnfl: { state: 'hidden' },
+    hndlHnfl: { state: 'collapsed' },
     algorithmMigration: { state: 'hidden' },
     migrationRoadmap: { state: 'collapsed' },
     migrationToolkit: { state: 'collapsed' },
@@ -400,6 +400,55 @@ export function getReportSectionConfig(
 }
 
 /* ──────────────────────────────────────────────────────────────────────────────
+ * Command Center — per-persona pillar ordering
+ *
+ * Controls the order in which the BC pillars render. Personas emphasize
+ * different parts of the dashboard based on the job they actually do.
+ * ────────────────────────────────────────────────────────────────────────────── */
+
+export type BCPillarId =
+  | 'risk'
+  | 'compliance'
+  | 'governance'
+  | 'vendor'
+  | 'learning'
+  | 'actions'
+  | 'insurance'
+
+export const BC_PILLAR_DEFAULT_ORDER: readonly BCPillarId[] = [
+  'risk',
+  'compliance',
+  'governance',
+  'vendor',
+  'learning',
+  'actions',
+] as const
+
+/**
+ * Per-persona BC pillar ordering. Only executive/architect/ops see BC at all
+ * (per PERSONA_NAV_PATHS). Other keys use the default order in case visibility
+ * changes later.
+ */
+export const BC_PILLAR_ORDER_BY_PERSONA: Record<PersonaId, readonly BCPillarId[]> = {
+  // Executive: risk + financial framing first; insurance lens second for board/CFO context.
+  executive: ['risk', 'insurance', 'actions', 'compliance', 'learning', 'governance', 'vendor'],
+  // Architect: governance + vendor front-and-center (RACI, policy, vendor scorecards).
+  architect: ['governance', 'vendor', 'compliance', 'risk', 'actions', 'learning'],
+  // Ops: migration/vendor tooling first (roadmap lives in vendor pillar), then compliance deadlines.
+  ops: ['vendor', 'compliance', 'risk', 'actions', 'governance', 'learning'],
+  // BC not normally shown to these personas — fall back to default order.
+  developer: BC_PILLAR_DEFAULT_ORDER,
+  researcher: BC_PILLAR_DEFAULT_ORDER,
+  curious: BC_PILLAR_DEFAULT_ORDER,
+}
+
+export function getBusinessCenterPillarOrder(personaId: PersonaId | null): readonly BCPillarId[] {
+  if (!personaId) return BC_PILLAR_DEFAULT_ORDER
+  // eslint-disable-next-line security/detect-object-injection
+  return BC_PILLAR_ORDER_BY_PERSONA[personaId] ?? BC_PILLAR_DEFAULT_ORDER
+}
+
+/* ──────────────────────────────────────────────────────────────────────────────
  * Report CTAs — persona-specific next-step actions shown at the bottom of report
  * ────────────────────────────────────────────────────────────────────────────── */
 
@@ -422,7 +471,7 @@ export interface ReportCTA {
 
 export const PERSONA_REPORT_CTAS: Record<PersonaId, ReportCTA[]> = {
   executive: [
-    { label: 'Open Business Center', path: '/business', icon: 'BarChart3' },
+    { label: 'Open Command Center', path: '/business', icon: 'BarChart3' },
     { label: 'Share with your board', path: '', icon: 'Share2', isShareAction: true },
     { label: 'View compliance deadlines', path: '/compliance', icon: 'Calendar' },
   ],

@@ -184,7 +184,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
               Quick Pick (5 min)
             </Button>
             <div className="flex-grow" />
-            <Button variant="gradient" onClick={handleStartTimed}>
+            <Button variant="gradient" onClick={handleStartTimed} data-action="start-quiz-timed">
               Start Quiz
             </Button>
           </div>
@@ -249,7 +249,11 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
             <span className="text-sm text-muted-foreground">
               {selectedCategories.length} topic{selectedCategories.length > 1 ? 's' : ''} selected
             </span>
-            <Button variant="gradient" onClick={handleStartCategory}>
+            <Button
+              variant="gradient"
+              onClick={handleStartCategory}
+              data-action="start-quiz-category"
+            >
               <Brain size={16} className="mr-2" />
               Start Quiz
             </Button>

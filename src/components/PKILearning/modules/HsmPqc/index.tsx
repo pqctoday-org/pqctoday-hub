@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, Server, BarChart3, Route, Shield } from 'lucide-react'
+import { Trash2, Server, BarChart3, Route, Shield, Gauge } from 'lucide-react'
 import { HsmPqcIntroduction } from './components/HsmPqcIntroduction'
 import { HsmPqcExercises, type WorkshopConfig } from './components/HsmPqcExercises'
 import { Pkcs11Simulator } from './workshop/Pkcs11Simulator'
 import { VendorComparison } from './workshop/VendorComparison'
 import { HsmMigrationPlanner } from './workshop/HsmMigrationPlanner'
 import { FipsValidationTracker } from './workshop/FipsValidationTracker'
+import { HsmCapacityCalculator } from '@/components/Playground/hsm/HsmCapacityCalculator'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -44,6 +45,13 @@ const PARTS = [
     title: 'Step 4: FIPS Tracker',
     description: 'Track CMVP/CAVP PQC validation status across HSM vendors.',
     icon: Shield,
+  },
+  {
+    id: 'capacity-calculator',
+    title: 'Step 5: Capacity Calculator',
+    description:
+      'Size your HSM fleet for the top 10 enterprise use cases and see the quantum-crypto impact on classical vs next-gen HSMs.',
+    icon: Gauge,
   },
 ]
 
@@ -209,6 +217,7 @@ export const HsmPqcModule: React.FC = () => {
               {currentPart === 1 && <VendorComparison key={`vendor-cmp-${configKey}`} />}
               {currentPart === 2 && <HsmMigrationPlanner key={`migration-${configKey}`} />}
               {currentPart === 3 && <FipsValidationTracker key={`fips-tracker-${configKey}`} />}
+              {currentPart === 4 && <HsmCapacityCalculator key={`capacity-calc-${configKey}`} />}
             </div>
 
             {/* Part Navigation */}

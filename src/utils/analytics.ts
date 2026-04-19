@@ -196,7 +196,7 @@ export const logAccuracyFeedback = (vote: 'accurate' | 'inaccurate', pagePath: s
   logEvent('Accuracy', vote, pagePath)
 }
 
-// --- Business Center tracking ---
+// --- Command Center tracking ---
 
 export const logBusinessToolOpen = (toolId: string, toolName: string) => {
   logEvent('Business', 'Tool Open', `${toolId}:${toolName}`)

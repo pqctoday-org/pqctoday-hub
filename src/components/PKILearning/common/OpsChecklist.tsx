@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useCallback, useMemo } from 'react'
-import { Wrench, ChevronDown, ChevronRight, Copy, Check } from 'lucide-react'
+import { Wrench, ChevronDown, ChevronRight, Copy, Check, Save } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { cn } from '@/lib/utils'
@@ -21,9 +21,18 @@ interface OpsChecklistProps {
   title: string
   description: string
   sections: ChecklistSection[]
+  /** When provided, renders a "Save to Command Center" button that hands back the
+   *  rendered markdown + the set of checked item ids so the caller can persist
+   *  an executive artifact. Omit to hide the button (back-compat default). */
+  onSave?: (payload: { markdown: string; checkedItems: string[] }) => void
 }
 
-export const OpsChecklist: React.FC<OpsChecklistProps> = ({ title, description, sections }) => {
+export const OpsChecklist: React.FC<OpsChecklistProps> = ({
+  title,
+  description,
+  sections,
+  onSave,
+}) => {
   const { selectedPersona } = usePersonaStore()
   const isOps = selectedPersona === 'ops'
 
@@ -32,6 +41,7 @@ export const OpsChecklist: React.FC<OpsChecklistProps> = ({ title, description, 
     new Set(sections.map((s) => s.title))
   )
   const [copied, setCopied] = useState(false)
+  const [saved, setSaved] = useState(false)
 
   const totalItems = useMemo(() => sections.reduce((sum, s) => sum + s.items.length, 0), [sections])
   const checkedCount = checkedItems.size
@@ -55,7 +65,7 @@ export const OpsChecklist: React.FC<OpsChecklistProps> = ({ title, description, 
     })
   }, [])
 
-  const handleCopyMarkdown = useCallback(async () => {
+  const buildMarkdown = useCallback(() => {
     const lines = [`# ${title}`, '', description, '']
     for (const section of sections) {
       lines.push(`## ${section.title}`, '')
@@ -66,10 +76,21 @@ export const OpsChecklist: React.FC<OpsChecklistProps> = ({ title, description, 
       }
       lines.push('')
     }
-    await navigator.clipboard.writeText(lines.join('\n'))
+    return lines.join('\n')
+  }, [title, description, sections, checkedItems])
+
+  const handleCopyMarkdown = useCallback(async () => {
+    await navigator.clipboard.writeText(buildMarkdown())
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
-  }, [title, description, sections, checkedItems])
+  }, [buildMarkdown])
+
+  const handleSave = useCallback(() => {
+    if (!onSave) return
+    onSave({ markdown: buildMarkdown(), checkedItems: Array.from(checkedItems) })
+    setSaved(true)
+    setTimeout(() => setSaved(false), 2000)
+  }, [onSave, buildMarkdown, checkedItems])
 
   return (
     <div
@@ -101,6 +122,12 @@ export const OpsChecklist: React.FC<OpsChecklistProps> = ({ title, description, 
             {copied ? <Check size={14} /> : <Copy size={14} />}
             <span className="ml-1.5">{copied ? 'Copied' : 'Copy'}</span>
           </Button>
+          {onSave && (
+            <Button variant="outline" size="sm" onClick={handleSave}>
+              {saved ? <Check size={14} /> : <Save size={14} />}
+              <span className="ml-1.5">{saved ? 'Saved' : 'Save'}</span>
+            </Button>
+          )}
         </div>
       </div>
 

@@ -18,14 +18,21 @@ import {
   BookmarkCheck,
   Bookmark,
 } from 'lucide-react'
-import { AVAILABLE_INDUSTRIES } from '@/hooks/assessmentData'
-import { complianceFrameworks, type ComplianceFramework } from '@/data/complianceData'
+import {
+  complianceFrameworks,
+  type ComplianceFramework,
+  type RegionBloc,
+  type DeadlinePhase,
+  regionForCountry,
+  REGION_BLOC_ORDER,
+} from '@/data/complianceData'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { CountryFlag } from '@/components/common/CountryFlag'
 import { ViewToggle, type ViewMode } from '@/components/Library/ViewToggle'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
+import { resolveTimelineRef } from '@/utils/timelineResolver'
 
 // ── Deadline helpers ────────────────────────────────────────────────────
 
@@ -110,6 +117,7 @@ function industryChip(industry: string): string {
     Automotive: 'Auto',
     Aerospace: 'Aero',
     'Retail & E-Commerce': 'Retail',
+    Manufacturing: 'Mfg',
   }
   // eslint-disable-next-line security/detect-object-injection
   return map[industry] ?? industry
@@ -122,6 +130,17 @@ export type FrameworkSortOption = 'name' | 'deadline'
 const FRAMEWORK_SORT_OPTIONS: { id: FrameworkSortOption; label: string }[] = [
   { id: 'deadline', label: 'Deadline ↑' },
   { id: 'name', label: 'Name A-Z' },
+]
+
+// Deadline facet values — keep in sync with DeadlinePhase in complianceData.ts
+const DEADLINE_FILTER_OPTIONS: { id: 'All' | DeadlinePhase; label: string }[] = [
+  { id: 'All', label: 'Any deadline' },
+  { id: 'active', label: 'Active / in force' },
+  { id: 'imminent', label: 'Imminent (≤1y)' },
+  { id: 'near', label: 'Near-term (2-3y)' },
+  { id: 'mid', label: 'Mid-term (4-6y)' },
+  { id: 'long', label: 'Long-term (>6y)' },
+  { id: 'ongoing', label: 'Ongoing / no year' },
 ]
 
 function sortFrameworks(items: ComplianceFramework[], sort: FrameworkSortOption) {
@@ -140,70 +159,94 @@ function sortFrameworks(items: ComplianceFramework[], sort: FrameworkSortOption)
 
 const TIMELINE_START = 2024
 const TIMELINE_END = 2036
+const TIMELINE_SPAN = TIMELINE_END - TIMELINE_START
+const TODAY_YEAR = new Date().getFullYear()
+const STACK_COLUMNS = 3
 
-function DeadlineTimeline({ frameworks }: { frameworks: ComplianceFramework[] }) {
+function yearLeftPercent(year: number): number {
+  const clamped = Math.max(TIMELINE_START, Math.min(TIMELINE_END, year))
+  return ((clamped - TIMELINE_START) / TIMELINE_SPAN) * 100
+}
+
+export function DeadlineTimeline({ frameworks }: { frameworks: ComplianceFramework[] }) {
   const withDeadlines = frameworks.filter((f) => extractYear(f.deadline) !== null)
-  const years = Array.from(
-    { length: TIMELINE_END - TIMELINE_START + 1 },
-    (_, i) => TIMELINE_START + i
-  )
+  const years = Array.from({ length: TIMELINE_SPAN + 1 }, (_, i) => TIMELINE_START + i)
 
   const byYear = new Map<number, ComplianceFramework[]>()
   for (const fw of withDeadlines) {
     const year = extractYear(fw.deadline)!
-    if (!byYear.has(year)) byYear.set(year, [])
-    byYear.get(year)!.push(fw)
+    const bucket = Math.max(TIMELINE_START, Math.min(TIMELINE_END, year))
+    if (!byYear.has(bucket)) byYear.set(bucket, [])
+    byYear.get(bucket)!.push(fw)
   }
+
+  const maxStackHeight = Math.max(
+    0,
+    ...Array.from(byYear.values()).map((fws) => Math.ceil(fws.length / STACK_COLUMNS))
+  )
+  const stackPx = maxStackHeight * 14 + 8 // 10px dot + 4px gap per row, plus breathing room
+  const stackHeight = Math.max(72, Math.min(240, stackPx))
 
   return (
     <div className="glass-panel p-4 space-y-3">
       <h3 className="text-sm font-semibold text-foreground">PQC Compliance Deadlines</h3>
       <div className="relative overflow-x-auto">
-        <div className="min-w-[400px]">
-          <div className="flex justify-between text-xs text-muted-foreground mb-1 px-1">
+        {/* px-3 keeps edge dots (2024 / 2036) fully visible inside the overflow container. */}
+        <div className="min-w-[480px] px-3">
+          {/* Year labels: absolute-positioned so they line up exactly with dot columns. */}
+          <div className="relative h-4 text-xs text-muted-foreground mb-1">
             {years
               .filter((y) => y % 2 === 0 || y === TIMELINE_END)
               .map((y) => (
-                <span key={y} className="w-8 text-center">
+                <span
+                  key={y}
+                  className="absolute top-0 text-center whitespace-nowrap"
+                  style={{ left: `${yearLeftPercent(y)}%`, transform: 'translateX(-50%)' }}
+                >
                   {y}
                 </span>
               ))}
           </div>
-          <div className="relative h-2 bg-muted rounded-full mx-1">
+          <div className="relative h-2 bg-muted rounded-full">
             <div
               className="absolute top-0 h-2 w-0.5 bg-foreground/40"
               style={{
-                left: `${((2026 - TIMELINE_START) / (TIMELINE_END - TIMELINE_START)) * 100}%`,
+                left: `${yearLeftPercent(TODAY_YEAR)}%`,
               }}
-              title="Today (2026)"
+              title={`Today (${TODAY_YEAR})`}
             />
           </div>
-          <div className="relative h-24 mx-1 mt-1">
+          <div className="relative mt-2" style={{ height: `${stackHeight}px` }}>
             {Array.from(byYear.entries()).map(([year, fws]) => {
-              const left = ((year - TIMELINE_START) / (TIMELINE_END - TIMELINE_START)) * 100
+              const left = yearLeftPercent(year)
               return (
                 <div
                   key={year}
-                  className="absolute flex flex-col items-center"
+                  className="absolute top-0"
                   style={{ left: `${left}%`, transform: 'translateX(-50%)' }}
                 >
-                  {fws.map((fw) => {
-                    const urgency = deadlineUrgency(fw.deadline)
-                    return (
-                      <div key={fw.id} className="group relative mb-0.5">
-                        <div
-                          className={`w-2.5 h-2.5 rounded-full ${urgencyBgColor(urgency)} cursor-default`}
-                          title={`${fw.label}: ${fw.deadline}`}
-                        />
-                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-20 whitespace-nowrap">
-                          <div className="bg-popover border border-border text-xs text-foreground px-2 py-1 rounded shadow-lg">
-                            <span className="font-semibold">{fw.label}</span>
-                            <span className={`ml-1 ${urgencyColor(urgency)}`}>{fw.deadline}</span>
+                  <div
+                    className="grid gap-1 justify-items-center"
+                    style={{ gridTemplateColumns: `repeat(${STACK_COLUMNS}, 10px)` }}
+                  >
+                    {fws.map((fw) => {
+                      const urgency = deadlineUrgency(fw.deadline)
+                      return (
+                        <div key={fw.id} className="group relative">
+                          <div
+                            className={`w-2.5 h-2.5 rounded-full ${urgencyBgColor(urgency)} cursor-default`}
+                            title={`${fw.label}: ${fw.deadline}`}
+                          />
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-20 whitespace-nowrap">
+                            <div className="bg-popover border border-border text-xs text-foreground px-2 py-1 rounded shadow-lg">
+                              <span className="font-semibold">{fw.label}</span>
+                              <span className={`ml-1 ${urgencyColor(urgency)}`}>{fw.deadline}</span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )
-                  })}
+                      )
+                    })}
+                  </div>
                 </div>
               )
             })}
@@ -252,6 +295,14 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
           <h4 className="font-semibold text-foreground text-sm leading-tight">{fw.label}</h4>
           <div className="flex items-center gap-2 flex-wrap">
             <TrustScoreBadge resourceType="compliance" resourceId={fw.id} size="sm" />
+            {fw.bodyType === 'industry_alliance' && (
+              <span
+                className="text-[10px] px-1.5 py-0.5 rounded bg-secondary/10 text-secondary font-semibold"
+                title="Industry alliance / consortium — not a regulator; produces reference implementations, policy guidance, and migration tooling"
+              >
+                Alliance
+              </span>
+            )}
             {fw.requiresPQC ? (
               <span className="text-xs text-status-success font-medium">Requires PQC</span>
             ) : (
@@ -298,10 +349,12 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
           {fw.countries.map((c) => (
             <span
               key={c}
+              title={c}
               className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-medium"
             >
               <MapPin size={8} />
-              {countryChip(c)}
+              {/* Hide the label on narrow screens to save space; icon + tooltip still convey the country. */}
+              <span className="hidden sm:inline">{countryChip(c)}</span>
             </span>
           ))}
         </div>
@@ -312,10 +365,11 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
           {fw.industries.map((ind) => (
             <span
               key={ind}
+              title={ind}
               className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium"
             >
               <Factory size={8} />
-              {industryChip(ind)}
+              <span className="hidden sm:inline">{industryChip(ind)}</span>
             </span>
           ))}
         </div>
@@ -345,16 +399,28 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
               {fw.libraryRefs.length} ref{fw.libraryRefs.length > 1 ? 's' : ''}
             </Link>
           )}
-          {fw.timelineRefs.length > 0 && (
-            <Link
-              to="/timeline"
-              className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent font-medium hover:bg-accent/20 transition-colors"
-              title={`Timeline: ${fw.timelineRefs.join(', ')}`}
-            >
-              <CalendarClock size={8} />
-              Timeline
-            </Link>
-          )}
+          {fw.timelineRefs.length > 0 &&
+            (() => {
+              const first = resolveTimelineRef(fw.timelineRefs[0])
+              const country = first.country
+              const href = country
+                ? `/timeline?country=${encodeURIComponent(country)}`
+                : '/timeline'
+              const label =
+                first.events.length > 0
+                  ? `${first.country} — ${first.org}: ${first.events.length} event${first.events.length > 1 ? 's' : ''} (${first.earliestYear}-${first.latestYear})`
+                  : `Timeline: ${fw.timelineRefs.join(', ')}`
+              return (
+                <Link
+                  to={href}
+                  className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent font-medium hover:bg-accent/20 transition-colors"
+                  title={label}
+                >
+                  <CalendarClock size={8} />
+                  Timeline
+                </Link>
+              )
+            })()}
           {fw.notes && (
             <Button
               variant="ghost"
@@ -393,16 +459,57 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
             <div className="pt-1 border-t border-border/50">
               <span className="font-medium text-foreground">Timeline entries:</span>
               <ul className="mt-0.5 space-y-0.5">
-                {fw.timelineRefs.map((ref) => (
-                  <li key={ref}>
-                    <Link
-                      to="/timeline"
-                      className="text-accent hover:text-accent/80 underline underline-offset-2"
-                    >
-                      {ref.replace(':', ' — ')}
-                    </Link>
-                  </li>
-                ))}
+                {fw.timelineRefs.map((ref) => {
+                  const resolved = resolveTimelineRef(ref)
+                  const href = resolved.country
+                    ? `/timeline?country=${encodeURIComponent(resolved.country)}`
+                    : '/timeline'
+                  const topEvents = resolved.events.slice(0, 3)
+                  return (
+                    <li key={ref} className="space-y-0.5">
+                      <Link
+                        to={href}
+                        className="text-accent hover:text-accent/80 underline underline-offset-2"
+                      >
+                        {resolved.country
+                          ? `${resolved.country} — ${resolved.org}`
+                          : ref.replace(':', ' — ')}
+                      </Link>
+                      {resolved.events.length === 0 ? (
+                        <span className="ml-2 text-[10px] text-status-warning">
+                          no events in timeline
+                        </span>
+                      ) : (
+                        <span className="ml-2 text-[10px] text-muted-foreground">
+                          {resolved.events.length} event
+                          {resolved.events.length > 1 ? 's' : ''} · {resolved.earliestYear}–
+                          {resolved.latestYear}
+                        </span>
+                      )}
+                      {topEvents.length > 0 && (
+                        <ul className="ml-4 space-y-0 list-[circle] list-inside">
+                          {topEvents.map((e) => (
+                            <li
+                              key={`${e.title}-${e.startYear}`}
+                              className="text-[10px] text-muted-foreground"
+                            >
+                              <span className="font-medium text-foreground/80">{e.title}</span>
+                              <span className="ml-1">
+                                ({e.startYear}
+                                {e.endYear !== e.startYear ? `–${e.endYear}` : ''})
+                              </span>
+                            </li>
+                          ))}
+                          {resolved.events.length > topEvents.length && (
+                            <li className="text-[10px] text-muted-foreground italic">
+                              +{resolved.events.length - topEvents.length} more on the timeline
+                            </li>
+                          )}
+                        </ul>
+                      )}
+                    </li>
+                  )
+                })}
               </ul>
             </div>
           )}
@@ -503,14 +610,26 @@ function FrameworkTableRow({ fw }: { fw: ComplianceFramework }) {
               {fw.libraryRefs.length}
             </Link>
           )}
-          {fw.timelineRefs.length > 0 && (
-            <Link
-              to="/timeline"
-              className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent font-medium hover:bg-accent/20 transition-colors"
-            >
-              <CalendarClock size={8} />
-            </Link>
-          )}
+          {fw.timelineRefs.length > 0 &&
+            (() => {
+              const first = resolveTimelineRef(fw.timelineRefs[0])
+              const href = first.country
+                ? `/timeline?country=${encodeURIComponent(first.country)}`
+                : '/timeline'
+              const title =
+                first.events.length > 0
+                  ? `${first.country} — ${first.org}: ${first.events.length} event${first.events.length > 1 ? 's' : ''} (${first.earliestYear}-${first.latestYear})`
+                  : fw.timelineRefs.join(', ')
+              return (
+                <Link
+                  to={href}
+                  className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent font-medium hover:bg-accent/20 transition-colors"
+                  title={title}
+                >
+                  <CalendarClock size={8} />
+                </Link>
+              )
+            })()}
         </div>
       </td>
     </tr>
@@ -568,12 +687,16 @@ interface ComplianceLandscapeProps {
   /** Controlled filter state (lifted to ComplianceView for URL sync) */
   orgFilter?: string
   industryFilter?: string
+  regionFilter?: RegionBloc | 'All'
+  deadlineFilter?: 'All' | DeadlinePhase
   searchText?: string
   searchInputValue?: string
   sortBy?: FrameworkSortOption
   viewMode?: ViewMode
   onOrgFilterChange?: (org: string) => void
   onIndustryFilterChange?: (ind: string) => void
+  onRegionFilterChange?: (region: RegionBloc | 'All') => void
+  onDeadlineFilterChange?: (phase: 'All' | DeadlinePhase) => void
   onSearchTextChange?: (text: string) => void
   onSortByChange?: (sort: FrameworkSortOption) => void
   onViewModeChange?: (mode: ViewMode) => void
@@ -584,12 +707,16 @@ export function ComplianceLandscape({
   showDeadlineTimeline = true,
   orgFilter: orgFilterProp,
   industryFilter: industryFilterProp,
+  regionFilter: regionFilterProp,
+  deadlineFilter: deadlineFilterProp,
   searchText: searchTextProp,
   searchInputValue: searchInputValueProp,
   sortBy: sortByProp,
   viewMode: viewModeProp,
   onOrgFilterChange,
   onIndustryFilterChange,
+  onRegionFilterChange,
+  onDeadlineFilterChange,
   onSearchTextChange,
   onSortByChange,
   onViewModeChange,
@@ -605,12 +732,16 @@ export function ComplianceLandscape({
   const [localIndustry, setLocalIndustry] = useState<string>(
     selectedIndustries.length === 1 ? selectedIndustries[0] : 'All'
   )
+  const [localRegion, setLocalRegion] = useState<RegionBloc | 'All'>('All')
+  const [localDeadline, setLocalDeadline] = useState<'All' | DeadlinePhase>('All')
   const [localSearch, setLocalSearch] = useState<string>('')
   const [localSort, setLocalSort] = useState<FrameworkSortOption>('deadline')
   const [localView, setLocalView] = useState<ViewMode>('cards')
 
   const orgFilter = orgFilterProp ?? localOrg
   const industryFilter = industryFilterProp ?? localIndustry
+  const regionFilter = regionFilterProp ?? localRegion
+  const deadlineFilter = deadlineFilterProp ?? localDeadline
   const searchInputVal = searchInputValueProp ?? localSearch
   const searchFilterText = searchTextProp ?? localSearch
   const sortBy = sortByProp ?? localSort
@@ -618,30 +749,67 @@ export function ComplianceLandscape({
 
   const setOrgFilter = onOrgFilterChange ?? setLocalOrg
   const setIndustryFilter = onIndustryFilterChange ?? setLocalIndustry
+  const setRegionFilter = onRegionFilterChange ?? setLocalRegion
+  const setDeadlineFilter = onDeadlineFilterChange ?? setLocalDeadline
   const setSearchText = onSearchTextChange ?? setLocalSearch
   const setSortBy = onSortByChange ?? setLocalSort
   const setViewMode = onViewModeChange ?? setLocalView
 
-  // Organization options — derived from enforcementBody field
+  // Organization options — derived from full dataset so non-empty facets are
+  // never hidden by the active body-type tab.
   const orgItems = useMemo(() => {
     const orgs = new Set<string>()
-    for (const fw of sourceFrameworks) {
+    for (const fw of complianceFrameworks) {
       if (fw.enforcementBody) orgs.add(fw.enforcementBody)
     }
     return [
       { id: 'All', label: 'All Organizations' },
       ...[...orgs].sort().map((o) => ({ id: o, label: o })),
     ]
-  }, [sourceFrameworks])
+  }, [])
 
-  // Industry options
-  const industryItems = [
-    { id: 'All', label: 'All Industries' },
-    ...AVAILABLE_INDUSTRIES.filter((i) => i !== 'Other').map((i) => ({ id: i, label: i })),
-  ]
+  // Industry options — derived from full dataset (union of fw.industries)
+  // rather than a hardcoded list, so new industries in the CSV appear
+  // automatically and are filterable on every tab.
+  const industryItems = useMemo(() => {
+    const inds = new Set<string>()
+    for (const fw of complianceFrameworks) {
+      for (const i of fw.industries) inds.add(i)
+    }
+    return [
+      { id: 'All', label: 'All Industries' },
+      ...[...inds].sort().map((i) => ({ id: i, label: i })),
+    ]
+  }, [])
+
+  // Region options — derived from full dataset with per-region counts so the
+  // facet always lists every populated region (e.g. Africa) regardless of the
+  // active body-type tab. The "All" label still reflects the in-tab count for
+  // the user's current view.
+  const regionItems = useMemo(() => {
+    const counts = new Map<RegionBloc, number>()
+    for (const fw of complianceFrameworks) {
+      const seen = new Set<RegionBloc>()
+      for (const c of fw.countries) {
+        const r = regionForCountry(c)
+        if (!seen.has(r)) {
+          counts.set(r, (counts.get(r) ?? 0) + 1)
+          seen.add(r)
+        }
+      }
+    }
+    const ordered = REGION_BLOC_ORDER.filter((r) => counts.has(r))
+    return [
+      { id: 'All', label: `All Regions (${sourceFrameworks.length})` },
+      ...ordered.map((r) => ({ id: r, label: `${r} (${counts.get(r) ?? 0})` })),
+    ]
+  }, [sourceFrameworks.length])
 
   // Sort options as FilterDropdown items
   const sortItems = FRAMEWORK_SORT_OPTIONS.map((o) => ({ id: o.id, label: o.label }))
+
+  // Deadline phase options
+  const deadlineItems = DEADLINE_FILTER_OPTIONS.map((o) => ({ id: o.id, label: o.label }))
 
   // Apply filters + sort
   const displayedFrameworks = useMemo(() => {
@@ -652,6 +820,12 @@ export function ComplianceLandscape({
     }
     if (industryFilter !== 'All') {
       result = result.filter((fw) => fw.industries.includes(industryFilter))
+    }
+    if (regionFilter !== 'All') {
+      result = result.filter((fw) => fw.countries.some((c) => regionForCountry(c) === regionFilter))
+    }
+    if (deadlineFilter !== 'All') {
+      result = result.filter((fw) => fw.deadlinePhase === deadlineFilter)
     }
     if (searchFilterText.trim()) {
       const q = searchFilterText.toLowerCase()
@@ -671,6 +845,8 @@ export function ComplianceLandscape({
     sourceFrameworks,
     orgFilter,
     industryFilter,
+    regionFilter,
+    deadlineFilter,
     searchFilterText,
     sortBy,
     showOnlyMine,
@@ -741,6 +917,56 @@ export function ComplianceLandscape({
               onClick={() => setIndustryFilter('All')}
               className="h-auto py-1 px-2 text-xs bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20"
               aria-label="Clear industry filter"
+            >
+              All
+            </Button>
+          )}
+        </div>
+
+        {/* Region dropdown + clear */}
+        <div className="flex items-center gap-1">
+          <div className="min-w-[150px]">
+            <FilterDropdown
+              items={regionItems}
+              selectedId={regionFilter}
+              onSelect={(id) => setRegionFilter(id as RegionBloc | 'All')}
+              defaultLabel="Region"
+              noContainer
+              opaque
+            />
+          </div>
+          {regionFilter !== 'All' && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setRegionFilter('All')}
+              className="h-auto py-1 px-2 text-xs bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20"
+              aria-label="Clear region filter"
+            >
+              All
+            </Button>
+          )}
+        </div>
+
+        {/* Deadline dropdown + clear */}
+        <div className="flex items-center gap-1">
+          <div className="min-w-[150px]">
+            <FilterDropdown
+              items={deadlineItems}
+              selectedId={deadlineFilter}
+              onSelect={(id) => setDeadlineFilter(id as 'All' | DeadlinePhase)}
+              defaultLabel="Deadline"
+              noContainer
+              opaque
+            />
+          </div>
+          {deadlineFilter !== 'All' && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setDeadlineFilter('All')}
+              className="h-auto py-1 px-2 text-xs bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20"
+              aria-label="Clear deadline filter"
             >
               All
             </Button>

@@ -18,6 +18,7 @@ import {
 } from '../../hooks/assessmentData'
 import type { AssessmentInput } from '../../hooks/assessmentTypes'
 import { PageHeader } from '../common/PageHeader'
+import { WorkflowBreadcrumb } from '../shared/WorkflowBreadcrumb'
 
 const VALID_SENSITIVITIES = new Set(['low', 'medium', 'high', 'critical'])
 const VALID_MIGRATIONS = new Set(['started', 'planning', 'not-started', 'unknown'])
@@ -194,6 +195,8 @@ export const ReportView: React.FC = () => {
           categoryScores: result.categoryScores,
           riskLevel: result.riskLevel,
           industry: store.industry,
+          preBoostScore: result.preBoostScore,
+          boosts: result.boosts,
         })
       }
     }
@@ -235,6 +238,7 @@ export const ReportView: React.FC = () => {
 
   return (
     <div className="animate-fade-in">
+      <WorkflowBreadcrumb current="report" />
       <PageHeader
         icon={FileBarChart}
         pageId="report"

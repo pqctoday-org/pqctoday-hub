@@ -25,8 +25,8 @@ const Step10CryptoAgility = () => {
   const recommendedOptions = persona
     ? PERSONA_STEP_HINTS[persona]?.agility?.recommendedOptions // eslint-disable-line security/detect-object-injection
     : undefined
-  const stepContent = getPersonaStepContent(persona, 'agility', experienceLevel)
-  const optionDescs = getPersonaOptionDescriptions(persona, 'agility')
+  const stepContent = getPersonaStepContent(persona, 'agility', experienceLevel, industry)
+  const optionDescs = getPersonaOptionDescriptions(persona, 'agility', industry)
 
   const options = [
     {

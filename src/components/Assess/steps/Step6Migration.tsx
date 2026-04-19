@@ -21,8 +21,8 @@ const Step6Migration = () => {
     useAssessmentStore()
   const persona = usePersonaStore((s) => s.selectedPersona)
   const experienceLevel = usePersonaStore((s) => s.experienceLevel)
-  const stepContent = getPersonaStepContent(persona, 'migration', experienceLevel)
-  const optionDescs = getPersonaOptionDescriptions(persona, 'migration')
+  const stepContent = getPersonaStepContent(persona, 'migration', experienceLevel, industry)
+  const optionDescs = getPersonaOptionDescriptions(persona, 'migration', industry)
 
   const statuses = [
     {

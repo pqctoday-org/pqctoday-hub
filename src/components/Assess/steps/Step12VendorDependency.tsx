@@ -27,8 +27,8 @@ const Step12VendorDependency = () => {
 
   const persona = usePersonaStore((s) => s.selectedPersona)
   const experienceLevel = usePersonaStore((s) => s.experienceLevel)
-  const stepContent = getPersonaStepContent(persona, 'vendors', experienceLevel)
-  const optionDescs = getPersonaOptionDescriptions(persona, 'vendors')
+  const stepContent = getPersonaStepContent(persona, 'vendors', experienceLevel, industry)
+  const optionDescs = getPersonaOptionDescriptions(persona, 'vendors', industry)
 
   const myProducts = useMigrateSelectionStore((s) => s.myProducts)
   const toggleMyProduct = useMigrateSelectionStore((s) => s.toggleMyProduct)

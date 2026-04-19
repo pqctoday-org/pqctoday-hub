@@ -8,7 +8,7 @@ import { AlgorithmFilters } from './AlgorithmFilters'
 import { AlgorithmCompareBar } from './AlgorithmCompareBar'
 import { AlgorithmComparisonPanel } from './AlgorithmComparisonPanel'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
-import { ArrowRight, BarChart3, Shield } from 'lucide-react'
+import { ArrowRight, BarChart3, Shield, Monitor } from 'lucide-react'
 import {
   loadPQCAlgorithmsData,
   loadedFileMetadata,
@@ -82,9 +82,28 @@ export function AlgorithmsView() {
   useEffect(() => {
     const tab = searchParams.get('tab')
     if (tab === 'transition' || tab === 'detailed') {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setActiveTab((prev) => (prev !== tab ? tab : prev))
     }
+  }, [searchParams])
+
+  // Reset all filters when arriving from command palette search so the highlighted
+  // algorithm is always visible regardless of previously active filter state
+  useEffect(() => {
+    if (searchParams.get('from_search') !== '1') return
+    setFilterCryptoFamily('All')
+    setFilterFunction('All')
+    setFilterSecurityLevel('All')
+    setFilterRegion('All')
+    setFilterStatus('All')
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete('from_search')
+        return next
+      },
+      { replace: true }
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
 
   // --- Data loading ---
@@ -416,6 +435,14 @@ export function AlgorithmsView() {
         shareText="Compare 42 post-quantum cryptographic algorithms side-by-side — security levels, key sizes, and performance."
         onExport={handleExportCsv}
       />
+
+      {/* Desktop recommended notice — shown on small screens only */}
+      <div className="lg:hidden glass-panel p-3 mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+        <Monitor size={16} className="shrink-0 text-primary" aria-hidden="true" />
+        <span>
+          Best experienced on desktop — the Detailed Comparison tab works best on larger screens.
+        </span>
+      </div>
 
       {/* Loading skeleton */}
       {isLoading && (

@@ -3,7 +3,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BookOpenText, Search, X, ExternalLink } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { glossaryTerms, type GlossaryTerm } from '../../data/glossaryData'
+import { loadGlossary, type GlossaryTerm } from '../../data/glossary'
 import clsx from 'clsx'
 import { CategoryBadge } from '../ui/category-badge'
 import { Button } from '@/components/ui/button'
@@ -59,6 +59,13 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   const [activeCategory, setActiveCategory] = useState<string>('all')
   const [activeLetter, setActiveLetter] = useState<string | null>(null)
   const searchRef = useRef<HTMLInputElement>(null)
+  const [glossaryTerms, setGlossaryTerms] = useState<GlossaryTerm[]>([])
+
+  useEffect(() => {
+    if (isOpen) {
+      loadGlossary().then(setGlossaryTerms)
+    }
+  }, [isOpen])
 
   // Focus search on open
   useEffect(() => {
@@ -92,12 +99,12 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
         )
       })
       .sort((a, b) => a.term.localeCompare(b.term))
-  }, [search, activeCategory, activeLetter])
+  }, [glossaryTerms, search, activeCategory, activeLetter])
 
   const availableLetters = useMemo(() => {
     const letters = new Set(glossaryTerms.map((t) => t.term[0].toUpperCase()))
     return Array.from(letters).sort()
-  }, [])
+  }, [glossaryTerms])
 
   return (
     <>

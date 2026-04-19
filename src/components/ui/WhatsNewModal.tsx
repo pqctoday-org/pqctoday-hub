@@ -263,8 +263,8 @@ export const WhatsNewModal = () => {
   const handleViewChangelog = useCallback(() => {
     markAllSeen()
     setIsVisible(false)
-    navigate('/changelog')
-  }, [markAllSeen, navigate])
+    navigate(version ? `/changelog#v${version}` : '/changelog')
+  }, [markAllSeen, navigate, version])
 
   const toggleSection = useCallback((key: string) => {
     setExpandedSections((prev) => ({ ...prev, [key]: !prev[key] })) // eslint-disable-line security/detect-object-injection

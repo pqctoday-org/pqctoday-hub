@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Play, CheckCircle, XCircle, ExternalLink, Copy, Check } from 'lucide-react'
 import clsx from 'clsx'
 import mlkemTestVectors from '../../../data/acvp/mlkem_test.json'
@@ -157,6 +157,24 @@ export const HsmAcvpTesting = () => {
     Array.from(bytes.slice(0, maxBytes))
       .map((b) => b.toString(16).padStart(2, '0'))
       .join('') + (bytes.length > maxBytes ? '…' : '')
+
+  const runTestsRef = useRef({ runTests: () => Promise.resolve() })
+  runTestsRef.current = {
+    runTests: () => (runTests as () => Promise<void>)(),
+  }
+
+  // Attach e2e event securely
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const handleTrigger = () => {
+        setTimeout(() => {
+          runTestsRef.current.runTests().catch(console.error)
+        }, 300) // allow state to settle
+      }
+      window.addEventListener('e2e:trigger_acvp', handleTrigger)
+      return () => window.removeEventListener('e2e:trigger_acvp', handleTrigger)
+    }
+  }, [])
 
   const runTests = async () => {
     if (!moduleRef.current || phase !== 'session_open') {

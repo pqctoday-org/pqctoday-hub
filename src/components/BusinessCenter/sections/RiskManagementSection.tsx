@@ -8,27 +8,10 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { HNDLHNFLSection } from '@/components/shared/HNDLHNFLSection'
 import { ROICalculatorSection } from '@/components/shared/ROICalculatorSection'
 import type { ROISummary } from '@/components/shared/ROICalculatorSection'
+import { RiskGauge } from '@/components/shared/widgets/RiskGauge'
 import { ArtifactCard, ArtifactPlaceholder } from '../ArtifactCard'
-import {
-  PILLAR_ARTIFACT_TYPES,
-  PILLAR_SOURCE_MODULES,
-  type BusinessMetrics,
-} from '../hooks/useBusinessMetrics'
-import type { ExecutiveDocument } from '@/services/storage/types'
-
-const RISK_COLORS: Record<string, string> = {
-  low: 'text-status-success',
-  medium: 'text-status-warning',
-  high: 'text-status-error',
-  critical: 'text-status-error',
-}
-
-const RISK_BG: Record<string, string> = {
-  low: 'bg-status-success/15',
-  medium: 'bg-status-warning/15',
-  high: 'bg-status-error/15',
-  critical: 'bg-status-error/15',
-}
+import { PILLAR_ARTIFACT_TYPES, type BusinessMetrics } from '../hooks/useBusinessMetrics'
+import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 
 const CATEGORY_LABELS: Record<string, string> = {
   quantumExposure: 'Quantum Exposure',
@@ -37,35 +20,19 @@ const CATEGORY_LABELS: Record<string, string> = {
   organizationalReadiness: 'Org Readiness',
 }
 
-function RiskGauge({ score, level }: { score: number; level: string }) {
-  const colorClass = RISK_COLORS[level] ?? 'text-muted-foreground' // eslint-disable-line security/detect-object-injection
-  const bgClass = RISK_BG[level] ?? 'bg-muted' // eslint-disable-line security/detect-object-injection
-
-  return (
-    <div className="flex flex-col items-center gap-2">
-      <div
-        className={`w-24 h-24 rounded-full flex items-center justify-center border-4 ${bgClass} border-current ${colorClass}`}
-      >
-        <span className={`text-3xl font-bold ${colorClass}`}>{score}</span>
-      </div>
-      <span className={`text-xs font-medium uppercase tracking-wide ${colorClass}`}>{level}</span>
-    </div>
-  )
-}
-
 function DeltaIndicator({ current, previous }: { current: number; previous: number | null }) {
   if (previous === null) return null
   const delta = current - previous
   if (delta === 0) return <Minus size={14} className="text-muted-foreground" />
   if (delta < 0)
     return (
-      <span className="flex items-center gap-1 text-xs text-status-success">
+      <span className="flex items-center gap-1 text-xs text-success">
         <TrendingDown size={14} />
         {Math.abs(delta)} pts
       </span>
     )
   return (
-    <span className="flex items-center gap-1 text-xs text-status-error">
+    <span className="flex items-center gap-1 text-xs text-destructive">
       <TrendingUp size={14} />+{delta} pts
     </span>
   )
@@ -129,6 +96,7 @@ export interface SectionArtifactCallbacks {
   onEditArtifact: (doc: ExecutiveDocument) => void
   onDeleteArtifact: (doc: ExecutiveDocument) => void
   onRenameArtifact?: (id: string, newTitle: string) => void
+  onCreateArtifact: (type: ExecutiveDocumentType) => void
   typeFilter?: string
 }
 
@@ -138,6 +106,7 @@ export function RiskManagementSection({
   onEditArtifact,
   onDeleteArtifact,
   onRenameArtifact,
+  onCreateArtifact,
   typeFilter,
 }: { metrics: BusinessMetrics } & SectionArtifactCallbacks) {
   const navigate = useNavigate()
@@ -148,7 +117,7 @@ export function RiskManagementSection({
       <div className="glass-panel p-6">
         <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground mb-4">
           <ShieldAlert size={20} className="text-primary" />
-          Risk Management
+          Risk Overview
         </h2>
         <EmptyState
           icon={<ShieldAlert size={32} />}
@@ -166,7 +135,6 @@ export function RiskManagementSection({
       ? allArtifacts.filter((d) => d.type === typeFilter)
       : allArtifacts
   const pillarTypes = PILLAR_ARTIFACT_TYPES.risk
-  const sourceModules = PILLAR_SOURCE_MODULES.risk
   const existingTypes = new Set(artifacts.map((a) => a.type))
 
   return (
@@ -176,7 +144,7 @@ export function RiskManagementSection({
         <div className="flex items-center justify-between mb-4">
           <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
             <ShieldAlert size={20} className="text-primary" />
-            Risk Management
+            Risk Overview
           </h2>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" onClick={() => navigate('/assess')}>
@@ -268,9 +236,8 @@ export function RiskManagementSection({
                 <ArtifactPlaceholder
                   key={type}
                   type={type}
-                  moduleId={sourceModules[type] ?? 'pqc-risk-management'} // eslint-disable-line security/detect-object-injection
                   pillar="risk"
-                  onNavigate={navigate}
+                  onCreate={onCreateArtifact}
                 />
               ))}
           </div>

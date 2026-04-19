@@ -20,12 +20,12 @@ export function useGraphData(): UseGraphDataResult {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    // Defer to next tick so the panel renders first, then build synchronously.
+    // Defer to next tick so the panel renders first, then build asynchronously.
     // No initialized guard — React Strict Mode mounts twice; the cleanup cancels
     // the first timer and the second invocation fires correctly.
-    const timer = setTimeout(() => {
+    const timer = setTimeout(async () => {
       try {
-        const g = buildKnowledgeGraph()
+        const g = await buildKnowledgeGraph()
         const idx = buildSearchIndex(g.nodes)
         setGraph(g)
         setSearchIndex(idx)

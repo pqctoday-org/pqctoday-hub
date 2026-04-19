@@ -12,7 +12,9 @@ import {
   BookmarkCheck,
   Bookmark,
   Wrench,
-  Server,
+  ExternalLink,
+  Mail,
+  Container,
 } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
 import { Button } from '../ui/button'
@@ -174,6 +176,33 @@ const CuriousStartHere = () => {
 }
 
 // ---------------------------------------------------------------------------
+// Sandbox access request banner
+// ---------------------------------------------------------------------------
+
+const SandboxAccessBanner = () => (
+  <div className="glass-panel p-4 border-primary/20 space-y-3 mb-4">
+    <div className="flex items-start gap-3">
+      <Container className="w-5 h-5 text-primary shrink-0 mt-0.5" aria-hidden="true" />
+      <div className="min-w-0">
+        <p className="font-semibold text-foreground">Container Access Required</p>
+        <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+          Each Sandbox scenario runs inside an isolated Docker container hosted by PQC Today. To
+          enable these scenarios, request access and we will provision your environment — containers
+          are spun up on demand and destroyed after the session.
+        </p>
+      </div>
+    </div>
+    <a
+      href="mailto:pqctoday@gmail.com?subject=Sandbox%20Access%20Request"
+      className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-foreground text-sm font-medium rounded-lg transition-colors border border-primary/20"
+    >
+      <Mail className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+      pqctoday@gmail.com — Request access
+    </a>
+  </div>
+)
+
+// ---------------------------------------------------------------------------
 // Persona recommended tools banner
 // ---------------------------------------------------------------------------
 
@@ -267,8 +296,8 @@ export const PlaygroundWorkshop = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const [showPersonaFilter, setShowPersonaFilter] = useState(true)
-  // In embed mode WIP tools are always hidden — vendors require accurate, stable content only
-  const [wipFilter, setWipFilter] = useState<'all' | 'only' | 'hide'>(isEmbedded ? 'hide' : 'hide')
+  // WIP tools hidden by default; embed mode keeps them hidden (vendors require stable content)
+  const [wipFilter, setWipFilter] = useState<'all' | 'only' | 'hide'>('hide')
 
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const myPlaygroundTools = useBookmarkStore((s) => s.myPlaygroundTools)
@@ -489,13 +518,6 @@ export const PlaygroundWorkshop = () => {
               title="PKCS#11 HSM Playground"
               description="Real PKCS#11 v3.2 operations with SoftHSM WASM — dual C++/Rust engine cross-validation and ACVP."
             />
-            <HeroCard
-              to="/playground/docker"
-              icon={Server}
-              title="Enterprise Docker Simulation"
-              description="Connect to the local monolithic PQCToday container API routing complex TLS, VPN, and OpenSSH simulations."
-              badge="Hardware Isolation"
-            />
           </div>
         </div>
 
@@ -515,6 +537,7 @@ export const PlaygroundWorkshop = () => {
               <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
                 {category}
               </h4>
+              {category === 'Sandbox' && <SandboxAccessBanner />}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {tools.map((tool) => {
                   const Icon = tool.icon
@@ -548,6 +571,12 @@ export const PlaygroundWorkshop = () => {
                                 </span>
                               ))}
                             </div>
+                            {tool.opensourceTool && (
+                              <div className="mt-2 flex items-center gap-1 text-xs text-muted-foreground">
+                                <ExternalLink className="w-3 h-3 shrink-0" aria-hidden="true" />
+                                <span className="truncate">{tool.opensourceTool.name}</span>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </Link>

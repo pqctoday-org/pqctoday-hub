@@ -86,14 +86,12 @@ export function computeMigrationEffort(input: AssessmentInput): MigrationEffortI
       const complexityScore =
         agilityFactor * 40 + (hasHSM ? 20 : 0) + (hasLegacy ? 15 : 0) + sysScale * 5
 
+      // Complexity emits only 'low' | 'medium' | 'high' — matches the
+      // effortConfig rendering in ReportContent. A very high complexityScore
+      // collapses to 'high' here; the "multi-year" estimatedScope below
+      // already surfaces the extreme case to the user.
       const complexity: MigrationEffortItem['complexity'] =
-        complexityScore <= 25
-          ? 'low'
-          : complexityScore <= 45
-            ? 'medium'
-            : complexityScore <= 65
-              ? 'high'
-              : 'critical'
+        complexityScore <= 25 ? 'low' : complexityScore <= 45 ? 'medium' : 'high'
 
       const estimatedScope: MigrationEffortItem['estimatedScope'] =
         complexityScore <= 25

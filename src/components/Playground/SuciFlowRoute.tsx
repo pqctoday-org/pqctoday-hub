@@ -54,6 +54,10 @@ export function SuciFlowRoute() {
     [setSearchParams]
   )
 
+  // First-visit detection: no URL params at all means the user arrived via
+  // the Playground catalog, not a deep link. Drives the collapsed Configure card.
+  const isFirstVisit = !searchParams.get('profile') && !searchParams.get('pqcMode')
+
   return (
     <SuciFlow
       key={`${profile}-${pqcMode}`}
@@ -62,6 +66,7 @@ export function SuciFlowRoute() {
       initialPqcMode={pqcMode}
       onProfileChange={handleProfileChange}
       onPqcModeChange={handlePqcModeChange}
+      isFirstVisit={isFirstVisit}
     />
   )
 }

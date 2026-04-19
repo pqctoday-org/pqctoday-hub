@@ -28,7 +28,7 @@ const Step4Sensitivity = () => {
 
   const persona = usePersonaStore((s) => s.selectedPersona)
   const experienceLevel = usePersonaStore((s) => s.experienceLevel)
-  const stepContent = getPersonaStepContent(persona, 'sensitivity', experienceLevel)
+  const stepContent = getPersonaStepContent(persona, 'sensitivity', experienceLevel, industry)
 
   const industrySensitivities = useMemo(
     () => getIndustryConfigs(industrySensitivityConfigs, industry),

@@ -135,6 +135,11 @@ const TermsView = lazyWithRetry(() =>
     default: module.TermsView,
   }))
 )
+const ExploreView = lazyWithRetry(() =>
+  import('./components/Explore/ExploreView').then((module) => ({
+    default: module.ExploreView,
+  }))
+)
 
 // Helper component to log page views on route change
 function AnalyticsTracker() {
@@ -321,6 +326,14 @@ function App() {
         element={
           <ErrorBoundary>
             <TermsView />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="explore"
+        element={
+          <ErrorBoundary>
+            <ExploreView />
           </ErrorBoundary>
         }
       />

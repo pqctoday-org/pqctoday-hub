@@ -83,10 +83,10 @@ export const PageHeader = ({
 
   return (
     <div className="text-center mb-2 md:mb-12" data-testid={testId}>
-      <h2 className="text-xl md:text-4xl font-bold mb-1 md:mb-4 text-gradient flex items-center justify-center gap-2 md:gap-3">
+      <h1 className="text-xl md:text-4xl font-bold mb-1 md:mb-4 text-gradient flex items-center justify-center gap-2 md:gap-3">
         <Icon className="w-5 h-5 md:w-9 md:h-9 text-primary shrink-0" aria-hidden="true" />
         {title}
-      </h2>
+      </h1>
       {/* Mobile: compact single-line description */}
       <p className="md:hidden text-xs text-muted-foreground max-w-xl mx-auto mb-2 line-clamp-2 px-4">
         {description}

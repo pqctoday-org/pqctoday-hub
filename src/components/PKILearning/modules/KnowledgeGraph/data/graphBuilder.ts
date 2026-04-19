@@ -7,7 +7,7 @@ import { threatsData } from '@/data/threatsData'
 import { softwareData } from '@/data/migrateData'
 import { certificationXrefs } from '@/data/certificationXrefData'
 import { leadersData } from '@/data/leadersData'
-import { glossaryTerms } from '@/data/glossaryData'
+import { loadGlossary } from '@/data/glossary'
 import { quizQuestions } from '@/data/quizDataLoader'
 import { authoritativeSources } from '@/data/authoritativeSourcesData'
 import { MODULE_CATALOG, MODULE_TRACKS, MODULE_TO_TRACK } from '@/components/PKILearning/moduleData'
@@ -134,7 +134,8 @@ const QUIZ_CATEGORY_TO_MODULE: Record<string, string> = {
   'key-management': 'kms-pqc',
 }
 
-export function buildKnowledgeGraph(): KnowledgeGraph {
+export async function buildKnowledgeGraph(): Promise<KnowledgeGraph> {
+  const glossaryTerms = await loadGlossary()
   const nodes = new Map<string, GraphNode>()
   const edges: GraphEdge[] = []
   const edgeSet = new Set<string>()
@@ -196,6 +197,8 @@ export function buildKnowledgeGraph(): KnowledgeGraph {
   // Timeline events — derive stable IDs from country+org+title
   const timelineEventIds = new Map<string, string>()
   const allTimelineEvents: { countryName: string; orgName: string; title: string }[] = []
+  /** Index keyed by lowercase `"country:org"` → list of timeline event node IDs. */
+  const timelineOrgIndex = new Map<string, string[]>()
 
   for (const country of timelineData) {
     // Country nodes
@@ -237,6 +240,12 @@ export function buildKnowledgeGraph(): KnowledgeGraph {
           orgName: body.name,
           title: event.title,
         })
+
+        // Primary index for compliance.timeline_refs — refs are `country:org`
+        // tuples, not event titles, so we match on this key not the title.
+        const orgKey = `${country.countryName.trim().toLowerCase()}:${body.name.trim().toLowerCase()}`
+        if (!timelineOrgIndex.has(orgKey)) timelineOrgIndex.set(orgKey, [])
+        timelineOrgIndex.get(orgKey)!.push(eventId)
 
         // timeline → country edge
         addEdge(edges, edgeSet, nodes, 'timeline-country', eventId, countryId)
@@ -577,19 +586,23 @@ export function buildKnowledgeGraph(): KnowledgeGraph {
     }
   }
 
-  // compliance → timeline (timelineRefs — fuzzy match on title)
+  // compliance → timeline (timelineRefs are `country:org` tuples — resolve each
+  // ref to every timeline event for that regulatory body and create an edge to
+  // each one. Previous implementation fuzzy-matched on event *title*, which
+  // always missed because refs are org labels, leaving this a dead edge).
   for (const fw of complianceFrameworks) {
     for (const ref of fw.timelineRefs) {
       if (!ref) continue
-      const matchedId = timelineEventIds.get(ref.toLowerCase())
-      if (matchedId) {
+      const eventIds = timelineOrgIndex.get(ref.trim().toLowerCase())
+      if (!eventIds) continue
+      for (const eventId of eventIds) {
         addEdge(
           edges,
           edgeSet,
           nodes,
           'compliance-timeline',
           makeNodeId('compliance', fw.id),
-          matchedId,
+          eventId,
           'cites'
         )
       }

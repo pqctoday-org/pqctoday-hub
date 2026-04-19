@@ -499,7 +499,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'email-signing': 3,
   'vpn-ssh-pqc': 3,
   'kms-pqc': 5,
-  'hsm-pqc': 4,
+  'hsm-pqc': 5,
   'entropy-randomness': 5,
   'merkle-tree-certs': 5,
   qkd: 5,
@@ -1091,6 +1091,7 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'vendor-comparison', label: 'Vendor Comparison' },
     { id: 'migration-planner', label: 'Migration Planner' },
     { id: 'fips-tracker', label: 'FIPS Tracker' },
+    { id: 'capacity-calculator', label: 'Capacity Calculator' },
   ],
   'slh-dsa': [
     { id: 'keygen', label: 'Key Generation & Parameter Explorer' },

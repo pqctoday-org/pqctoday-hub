@@ -44,7 +44,7 @@ export const BusinessCenterShell = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6">
         <div
           role="tablist"
-          aria-label="Business Center navigation"
+          aria-label="Command Center navigation"
           className="flex gap-2 border-b border-border pb-0"
         >
           {TABS.map(({ label, path, icon: Icon }, index) => {

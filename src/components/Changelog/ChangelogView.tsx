@@ -400,7 +400,7 @@ export const ChangelogView = () => {
         <div className="absolute left-[10px] sm:left-[14px] top-2 bottom-2 w-px bg-border/40" />
 
         {filteredVersions.map((v, idx) => (
-          <div key={v.version} className="relative">
+          <div key={v.version} id={`v${v.version}`} className="relative">
             {/* Version milestone dot */}
             <div
               className={clsx(

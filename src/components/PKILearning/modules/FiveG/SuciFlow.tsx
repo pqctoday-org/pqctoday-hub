@@ -1,11 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import type { Step } from '../DigitalAssets/components/StepWizard'
 import { StepWizard } from '../DigitalAssets/components/StepWizard'
 import { useStepWizard } from '../DigitalAssets/hooks/useStepWizard'
 import { FIVE_G_CONSTANTS } from './constants'
 import { FiveGDiagram } from './components/FiveGDiagram'
 import { GsmaTestDataModal } from './components/GsmaTestDataModal'
+import { ConfigureCard } from './components/ConfigureCard'
+import { ScenarioIntroStrip } from './components/ScenarioIntroStrip'
+import type { ScenarioView } from './components/ScenarioIntroStrip'
+import { AttackerSidecar } from './components/AttackerSidecar'
+import { getSuciStepMeta, SUCI_PHASE_LABELS } from './suciUxMeta'
 import { fiveGService } from './services/FiveGService'
 import { Shield, Radio, Info } from 'lucide-react'
 import clsx from 'clsx'
@@ -15,6 +20,9 @@ import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import gsmaVectors from '@/data/kat/gsma_suci_ts33501_annex_c.json'
+
+const PLAIN_ENGLISH_LS_KEY = 'suci.plainEnglish'
+const SCENARIO_VIEW_SS_KEY = 'suci.scenarioView'
 
 import type { KatTestSpec } from '@/utils/katRunner'
 import { Button } from '@/components/ui/button'
@@ -104,6 +112,8 @@ interface SuciFlowProps {
   initialPqcMode?: 'hybrid' | 'pure'
   onProfileChange?: (profile: 'A' | 'B' | 'C') => void
   onPqcModeChange?: (mode: 'hybrid' | 'pure') => void
+  /** True when the user arrived without URL params — drives the Configure card default. */
+  isFirstVisit?: boolean
 }
 
 type Profile = 'A' | 'B' | 'C'
@@ -145,9 +155,44 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({
   initialPqcMode,
   onProfileChange,
   onPqcModeChange,
+  isFirstVisit = false,
 }) => {
   const [profile, setProfile] = useState<Profile>(initialProfile ?? 'A')
   const [pqcMode, setPqcMode] = useState<'hybrid' | 'pure'>(initialPqcMode ?? 'hybrid')
+
+  // Plain-English rail: ON by default, persisted per-user in localStorage
+  const [plainEnglish, setPlainEnglish] = useState<boolean>(() => {
+    try {
+      const stored = localStorage.getItem(PLAIN_ENGLISH_LS_KEY)
+      return stored === null ? true : stored === '1'
+    } catch {
+      return true
+    }
+  })
+  useEffect(() => {
+    try {
+      localStorage.setItem(PLAIN_ENGLISH_LS_KEY, plainEnglish ? '1' : '0')
+    } catch {
+      /* ignore */
+    }
+  }, [plainEnglish])
+
+  // Scenario perspective (operator vs IMSI-catcher): session-scoped
+  const [scenarioView, setScenarioView] = useState<ScenarioView>(() => {
+    try {
+      const stored = sessionStorage.getItem(SCENARIO_VIEW_SS_KEY)
+      return stored === 'attacker' ? 'attacker' : 'operator'
+    } catch {
+      return 'operator'
+    }
+  })
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(SCENARIO_VIEW_SS_KEY, scenarioView)
+    } catch {
+      /* ignore */
+    }
+  }, [scenarioView])
 
   // Keep internal pqcMode in sync with the prop (driven by URL in Playground).
   // This fires when the same SuciFlow instance is reused across profile switches
@@ -235,24 +280,38 @@ const zKemBytes = hsm_extractKeyValue(M, hSession, secretHandle)
 const Z = zKemBytes`,
   }
 
-  // Map to Step interface
-  const steps: Step[] = rawSteps.map((step, index) => ({
-    id: step.id,
-    title:
-      profile === 'C' && pqcMode === 'pure' && PURE_PQC_TITLES[step.id]
-        ? PURE_PQC_TITLES[step.id]
-        : step.title,
-    description: step.description,
-    code:
-      profile === 'C' && pqcMode === 'pure' && PURE_PQC_CODE[step.id]
-        ? PURE_PQC_CODE[step.id]
-        : step.code,
-    language: 'bash',
-    actionLabel: 'Execute Step',
-    explanationTable: step.explanationTable,
-    // Pass custom diagram that knows about current step and profile
-    diagram: <FiveGDiagram step={index} profile={profile} />,
-  }))
+  // Map to Step interface (merges UX metadata: phase, plainEnglish, attacker sidecar, climax)
+  const steps: Step[] = rawSteps.map((step, index) => {
+    const meta = getSuciStepMeta(profile, step.id)
+    const isClimax = meta?.isClimax ?? false
+    const isDecryptClimax = isClimax
+    return {
+      id: step.id,
+      title:
+        profile === 'C' && pqcMode === 'pure' && PURE_PQC_TITLES[step.id]
+          ? PURE_PQC_TITLES[step.id]
+          : step.title,
+      description: step.description,
+      code:
+        profile === 'C' && pqcMode === 'pure' && PURE_PQC_CODE[step.id]
+          ? PURE_PQC_CODE[step.id]
+          : step.code,
+      language: 'bash',
+      actionLabel: isDecryptClimax ? 'Decrypt SUCI at SIDF' : 'Execute Step',
+      explanationTable: step.explanationTable,
+      diagram: <FiveGDiagram step={index} profile={profile} />,
+      phase: meta?.phase,
+      plainEnglish: meta?.plainEnglish,
+      isClimax,
+      climaxBanner: isDecryptClimax
+        ? 'Decryption point — the home network SIDF recovers the original SUPI from the SUCI.'
+        : undefined,
+      attackerSidecar:
+        scenarioView === 'attacker' && meta?.attackerObserves ? (
+          <AttackerSidecar observes={meta.attackerObserves} />
+        ) : undefined,
+    }
+  })
 
   // State to hold generated artifacts (simulated persistence)
   const [artifacts, setArtifacts] = useState<{
@@ -1331,177 +1390,209 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
     steps,
     onBack,
   })
+  // One-line summary shown on the collapsed Configure card
+  const configureSummary = (
+    <span>
+      <span className="font-mono text-foreground">
+        Profile {profile}
+        {profile === 'C' ? ` · ${pqcMode === 'pure' ? 'Pure PQC' : 'Hybrid'}` : ''}
+      </span>
+      <span className="text-muted-foreground">
+        {' '}
+        ·{' '}
+        {profile === 'A'
+          ? 'Curve25519 + AES-128'
+          : profile === 'B'
+            ? 'NIST P-256 + AES-128'
+            : pqcMode === 'pure'
+              ? 'ML-KEM-768 + AES-256'
+              : 'X25519 + ML-KEM-768 + AES-256'}
+      </span>
+      <span className="text-muted-foreground"> · Live HSM {hsm.isReady ? 'on' : 'off'}</span>
+      <span className="text-muted-foreground"> · SUPI {customSupi}</span>
+    </span>
+  )
+
   return (
-    <div className="space-y-6">
-      <div className="bg-muted/50 p-4 rounded-lg border border-border">
-        <label className="flex flex-col gap-2">
-          <span className="text-sm font-bold text-foreground">
-            Subscriber Permanent Identifier (SUPI)
-          </span>
-          <span className="text-xs text-muted-foreground">
-            Adjust the 15-digit IMSI below to verify dynamic cryptography execution.
-          </span>
-          <input
-            type="text"
-            value={customSupi}
-            onChange={(e) => {
-              setCustomSupi(e.target.value.replace(/\D/g, '').slice(0, 15))
-            }}
-            className="bg-background border border-border rounded p-2 text-sm font-mono mt-1 focus:outline-none focus:border-primary max-w-sm"
-            placeholder="310260123456789"
-          />
-        </label>
-      </div>
+    <div className="space-y-4">
+      <ScenarioIntroStrip
+        view={scenarioView}
+        onViewChange={setScenarioView}
+        plainEnglish={plainEnglish}
+        onPlainEnglishChange={setPlainEnglish}
+      />
 
       <GsmaTestDataModal open={gsmaModalOpen} onClose={() => setGsmaModalOpen(false)} />
 
-      {/* Profile Selector */}
-      <div className="bg-muted/50 p-4 rounded-lg border border-border">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground uppercase tracking-wider font-bold">
-            <Shield size={14} />
-            Select Protection Scheme
-          </div>
-          <Button
-            variant="ghost"
-            onClick={() => setGsmaModalOpen(true)}
-            className="text-xs text-muted-foreground hover:text-primary border border-border hover:border-primary/40 rounded px-2 py-1 transition-colors"
-            title="View official 3GPP TS 33.501 Annex C.4 reference test vectors"
-          >
-            Reference Vectors
-          </Button>
+      <ConfigureCard isFirstVisit={isFirstVisit} summary={configureSummary}>
+        <div className="bg-muted/50 p-4 rounded-lg border border-border">
+          <label className="flex flex-col gap-2">
+            <span className="text-sm font-bold text-foreground">
+              Subscriber Permanent Identifier (SUPI)
+            </span>
+            <span className="text-xs text-muted-foreground">
+              Adjust the 15-digit IMSI below to verify dynamic cryptography execution.
+            </span>
+            <input
+              type="text"
+              value={customSupi}
+              onChange={(e) => {
+                setCustomSupi(e.target.value.replace(/\D/g, '').slice(0, 15))
+              }}
+              className="bg-background border border-border rounded p-2 text-sm font-mono mt-1 focus:outline-none focus:border-primary max-w-sm"
+              placeholder="310260123456789"
+            />
+          </label>
         </div>
-        <div className="flex flex-col md:flex-row gap-4">
-          <Button
-            variant="ghost"
-            data-testid="profile-a-btn"
-            onClick={() => {
-              wizard.reset()
-              changeProfile('A')
-            }}
-            className={clsx(
-              'flex-1 p-3 rounded border text-left transition-all hover:bg-muted',
-              profile === 'A'
-                ? 'border-primary bg-primary/10 text-primary'
-                : 'border-border text-muted-foreground'
-            )}
-          >
-            <div className="font-bold flex items-center gap-2">
-              <Radio size={16} className={profile === 'A' ? 'fill-primary' : ''} />
-              Profile A
-            </div>
-            <div className="text-xs opacity-70 mt-1">Curve25519 (X25519) + AES-128</div>
-            <div className="text-xs text-muted-foreground mt-1">
-              Faster Montgomery-curve ECDH, 32-byte keys
-            </div>
-          </Button>
 
-          <Button
-            variant="ghost"
-            data-testid="profile-b-btn"
-            onClick={() => {
-              wizard.reset()
-              changeProfile('B')
-            }}
-            className={clsx(
-              'flex-1 p-3 rounded border text-left transition-all hover:bg-muted',
-              profile === 'B'
-                ? 'border-secondary bg-secondary/10 text-secondary'
-                : 'border-border text-muted-foreground'
-            )}
-          >
-            <div className="font-bold flex items-center gap-2">
-              <Radio size={16} className={profile === 'B' ? 'fill-secondary' : ''} />
-              Profile B
+        {/* Profile Selector */}
+        <div className="bg-muted/50 p-4 rounded-lg border border-border">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground uppercase tracking-wider font-bold">
+              <Shield size={14} />
+              Select Protection Scheme
             </div>
-            <div className="text-xs opacity-70 mt-1">NIST P-256 + AES-128</div>
-            <div className="text-xs text-muted-foreground mt-1">
-              Wider HSM &amp; national standard support (NIST P-256)
-            </div>
-          </Button>
-
-          <Button
-            variant="ghost"
-            data-testid="profile-c-btn"
-            onClick={() => {
-              wizard.reset()
-              changeProfile('C')
-            }}
-            className={clsx(
-              'flex-1 p-3 rounded border text-left transition-all hover:bg-muted',
-              profile === 'C'
-                ? 'border-tertiary bg-tertiary/10 text-tertiary'
-                : 'border-border text-muted-foreground'
-            )}
-          >
-            <div className="font-bold flex items-center gap-2">
-              <Radio size={16} className={profile === 'C' ? 'fill-tertiary' : ''} />
-              Profile C (PQC)
-            </div>
-            <div className="text-xs opacity-70 mt-1">ML-KEM (FIPS 203) + AES-256</div>
-            <div className="text-xs italic text-muted-foreground mt-1">
-              3GPP SA3 study (TR 33.841) · Rel-19 standardization in progress
-            </div>
-          </Button>
-        </div>
-      </div>
-
-      {/* Profile C Mode Selector */}
-      {profile === 'C' && (
-        <div className="bg-tertiary/5 p-4 rounded-lg border border-tertiary/20 animate-in fade-in slide-in-from-top-2">
-          <div className="flex items-center gap-2 mb-1 text-sm text-tertiary uppercase tracking-wider font-bold">
-            <Shield size={14} />
-            PQC Mode Configuration
-          </div>
-          <p className="text-xs italic text-muted-foreground mb-3">
-            Educational preview of proposed Profile C
-          </p>
-          <div className="flex gap-4">
             <Button
               variant="ghost"
-              onClick={() => {
-                wizard.reset()
-                changePqcMode('hybrid')
-              }}
-              className={clsx(
-                'flex-1 p-3 rounded border text-left transition-all',
-                pqcMode === 'hybrid'
-                  ? 'border-tertiary bg-tertiary/20 text-tertiary-foreground'
-                  : 'border-border text-muted-foreground hover:bg-muted'
-              )}
+              onClick={() => setGsmaModalOpen(true)}
+              className="text-xs text-muted-foreground hover:text-primary border border-border hover:border-primary/40 rounded px-2 py-1 transition-colors"
+              title="View official 3GPP TS 33.501 Annex C.4 reference test vectors"
             >
-              <div className="font-bold">Hybrid (Transition)</div>
-              <div className="text-xs opacity-70">X25519 + ML-KEM-768</div>
+              Reference Vectors
             </Button>
+          </div>
+          <div className="flex flex-col md:flex-row gap-4">
             <Button
               variant="ghost"
+              data-testid="profile-a-btn"
               onClick={() => {
                 wizard.reset()
-                changePqcMode('pure')
+                changeProfile('A')
               }}
               className={clsx(
-                'flex-1 p-3 rounded border text-left transition-all',
-                pqcMode === 'pure'
-                  ? 'border-tertiary bg-tertiary/20 text-tertiary-foreground'
-                  : 'border-border text-muted-foreground hover:bg-muted'
+                'flex-1 p-3 rounded border text-left transition-all hover:bg-muted',
+                profile === 'A'
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-border text-muted-foreground'
               )}
             >
-              <div className="font-bold">Pure PQC (Target)</div>
-              <div className="text-xs opacity-70">ML-KEM-768 Only</div>
+              <div className="font-bold flex items-center gap-2">
+                <Radio size={16} className={profile === 'A' ? 'fill-primary' : ''} />
+                Profile A
+              </div>
+              <div className="text-xs opacity-70 mt-1">Curve25519 (X25519) + AES-128</div>
+              <div className="text-xs text-muted-foreground mt-1">
+                Faster Montgomery-curve ECDH, 32-byte keys
+              </div>
+            </Button>
+
+            <Button
+              variant="ghost"
+              data-testid="profile-b-btn"
+              onClick={() => {
+                wizard.reset()
+                changeProfile('B')
+              }}
+              className={clsx(
+                'flex-1 p-3 rounded border text-left transition-all hover:bg-muted',
+                profile === 'B'
+                  ? 'border-secondary bg-secondary/10 text-secondary'
+                  : 'border-border text-muted-foreground'
+              )}
+            >
+              <div className="font-bold flex items-center gap-2">
+                <Radio size={16} className={profile === 'B' ? 'fill-secondary' : ''} />
+                Profile B
+              </div>
+              <div className="text-xs opacity-70 mt-1">NIST P-256 + AES-128</div>
+              <div className="text-xs text-muted-foreground mt-1">
+                Wider HSM &amp; national standard support (NIST P-256)
+              </div>
+            </Button>
+
+            <Button
+              variant="ghost"
+              data-testid="profile-c-btn"
+              onClick={() => {
+                wizard.reset()
+                changeProfile('C')
+              }}
+              className={clsx(
+                'flex-1 p-3 rounded border text-left transition-all hover:bg-muted',
+                profile === 'C'
+                  ? 'border-tertiary bg-tertiary/10 text-tertiary'
+                  : 'border-border text-muted-foreground'
+              )}
+            >
+              <div className="font-bold flex items-center gap-2">
+                <Radio size={16} className={profile === 'C' ? 'fill-tertiary' : ''} />
+                Profile C (PQC)
+              </div>
+              <div className="text-xs opacity-70 mt-1">ML-KEM (FIPS 203) + AES-256</div>
+              <div className="text-xs italic text-muted-foreground mt-1">
+                3GPP SA3 study (TR 33.841) · Rel-19 standardization in progress
+              </div>
             </Button>
           </div>
         </div>
-      )}
 
-      <LiveHSMToggle hsm={hsm} operations={SUCI_LIVE_OPERATIONS} />
+        {/* Profile C Mode Selector */}
+        {profile === 'C' && (
+          <div className="bg-tertiary/5 p-4 rounded-lg border border-tertiary/20 animate-in fade-in slide-in-from-top-2">
+            <div className="flex items-center gap-2 mb-1 text-sm text-tertiary uppercase tracking-wider font-bold">
+              <Shield size={14} />
+              PQC Mode Configuration
+            </div>
+            <p className="text-xs italic text-muted-foreground mb-3">
+              Educational preview of proposed Profile C
+            </p>
+            <div className="flex gap-4">
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  wizard.reset()
+                  changePqcMode('hybrid')
+                }}
+                className={clsx(
+                  'flex-1 p-3 rounded border text-left transition-all',
+                  pqcMode === 'hybrid'
+                    ? 'border-tertiary bg-tertiary/20 text-tertiary-foreground'
+                    : 'border-border text-muted-foreground hover:bg-muted'
+                )}
+              >
+                <div className="font-bold">Hybrid (Transition)</div>
+                <div className="text-xs opacity-70">X25519 + ML-KEM-768</div>
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  wizard.reset()
+                  changePqcMode('pure')
+                }}
+                className={clsx(
+                  'flex-1 p-3 rounded border text-left transition-all',
+                  pqcMode === 'pure'
+                    ? 'border-tertiary bg-tertiary/20 text-tertiary-foreground'
+                    : 'border-border text-muted-foreground hover:bg-muted'
+                )}
+              >
+                <div className="font-bold">Pure PQC (Target)</div>
+                <div className="text-xs opacity-70">ML-KEM-768 Only</div>
+              </Button>
+            </div>
+          </div>
+        )}
 
-      <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted/40 text-xs text-muted-foreground">
-        <Info size={13} className="shrink-0" />
-        <span>
-          All keys and identifiers generated here are for <strong>educational use only</strong> —
-          not for production systems.
-        </span>
-      </div>
+        <LiveHSMToggle hsm={hsm} operations={SUCI_LIVE_OPERATIONS} />
+
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted/40 text-xs text-muted-foreground">
+          <Info size={13} className="shrink-0" />
+          <span>
+            All keys and identifiers generated here are for <strong>educational use only</strong> —
+            not for production systems.
+          </span>
+        </div>
+      </ConfigureCard>
 
       <StepWizard
         key={`${profile}-${pqcMode}`} // Force re-mount on profile or mode change
@@ -1514,6 +1605,10 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
         isStepComplete={wizard.isStepComplete}
         onNext={wizard.handleNext}
         onBack={wizard.handleBack}
+        plainEnglishEnabled={plainEnglish}
+        phaseLabels={SUCI_PHASE_LABELS}
+        canonicalTabNames={['SoftHSM3', 'SoftHSMv3']}
+        tabExplainer="SoftHSM3 runs inside your browser via WASM — it's the canonical output for this module. The OpenSSL Engine tab shows the equivalent command-line computation for cross-reference."
         onComplete={() => {
           if (profile === 'A') {
             wizard.reset()
@@ -1547,6 +1642,8 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             title="PKCS#11 Call Log — SUCI Construction"
             emptyMessage="Execute a step to see live PKCS#11 operations."
             filterFns={SUCI_LIVE_OPERATIONS}
+            defaultOpen
+            showBeginnerMode
           />
           {hsm.keys.length > 0 && (
             <HsmKeyInspector

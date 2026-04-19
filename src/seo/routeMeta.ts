@@ -261,7 +261,7 @@ export const ROUTE_META: Record<string, RouteMeta> = {
   },
 
   '/business': {
-    title: 'Business Center — PQC Readiness Dashboard | PQC Today',
+    title: 'Command Center — PQC Readiness Dashboard | PQC Today',
     description:
       'Your executive PQC command center. Live risk scores, compliance tracking, migration pipeline, vendor posture, and actionable next steps — all in one dashboard.',
     canonical: `${BASE_URL}/business`,

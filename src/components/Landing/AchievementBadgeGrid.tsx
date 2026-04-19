@@ -24,7 +24,7 @@ const CATEGORY_INFO: Record<AchievementCategory, string> = {
   'cross-feature':
     'Use the Playground, chat with the PQC Assistant, complete an assessment, explore compliance frameworks, plan migrations, and visit 5+ sections.',
   business:
-    'Use Business Center tools including ROI calculators, policy generators, audit checklists, and governance builders.',
+    'Use Command Center tools including ROI calculators, policy generators, audit checklists, and governance builders.',
 }
 
 const CATEGORY_ORDER: AchievementCategory[] = [

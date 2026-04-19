@@ -20,6 +20,7 @@ export const buttonVariants = cva(
         sm: 'h-10 rounded-md px-3',
         lg: 'h-11 rounded-md px-8',
         icon: 'h-11 w-11',
+        tile: 'h-auto min-h-[88px] w-full px-4 py-3 flex-col items-start justify-start text-left whitespace-normal gap-1 rounded-lg',
       },
     },
     defaultVariants: {

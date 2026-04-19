@@ -42,6 +42,21 @@ export const QuizWizard: React.FC<QuizWizardProps> = ({ questions, onComplete, o
     }
   }, [questions, startQuiz])
 
+  // E2E Test Hooks: Bypass UI scraping completely and inject directly into state machine
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // @ts-expect-error - Used only by Playwright
+      window.__e2e_quiz_dispatch = {
+        state,
+        selectAnswer,
+        submitAnswer,
+        nextQuestion,
+        forceComplete: () => onComplete(buildCompletionData()),
+        injectComplete: (mockData: QuizCompletionData) => onComplete(mockData),
+      }
+    }
+  }, [state, selectAnswer, submitAnswer, nextQuestion, onComplete])
+
   const buildCompletionData = (): QuizCompletionData => ({
     summary: getScoreSummary(),
     answers: { ...state.answers },

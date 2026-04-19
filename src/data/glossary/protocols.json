@@ -1,0 +1,643 @@
+[
+  {
+    "term": "TLS",
+    "acronym": "TLS",
+    "definition": "Transport Layer Security, the protocol that secures HTTPS web traffic. TLS 1.3 is the current version.",
+    "technicalNote": "PQC integration uses hybrid key exchange (e.g., X25519 + ML-KEM-768) to maintain backward compatibility.",
+    "relatedModule": "/learn/tls-basics",
+    "complexity": "beginner",
+    "category": "protocol"
+  },
+  {
+    "term": "X.509",
+    "definition": "The standard format for public key certificates used in TLS, email signing, and code signing.",
+    "relatedModule": "/learn/pki-workshop",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "Public Key Infrastructure",
+    "acronym": "PKI",
+    "definition": "The system of Certificate Authorities, digital certificates, and registration authorities that manages public keys and enables secure communication.",
+    "relatedModule": "/learn/pki-workshop",
+    "complexity": "beginner",
+    "category": "protocol"
+  },
+  {
+    "term": "Certificate Signing Request",
+    "acronym": "CSR",
+    "definition": "A message sent to a Certificate Authority to request a digital certificate. Contains the public key and identity information.",
+    "relatedModule": "/learn/pki-workshop",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "Certificate Authority",
+    "acronym": "CA",
+    "definition": "A trusted organization that issues digital certificates, verifying the identity of certificate holders.",
+    "relatedModule": "/learn/pki-workshop",
+    "complexity": "beginner",
+    "category": "protocol"
+  },
+  {
+    "term": "Key Encapsulation Mechanism",
+    "acronym": "KEM",
+    "definition": "A method to securely establish a shared secret key between two parties. The PQC replacement for traditional key exchange.",
+    "technicalNote": "Unlike Diffie-Hellman, KEMs work via encapsulation (encrypt a random secret with a public key) and decapsulation (decrypt with the private key).",
+    "relatedModule": "/playground",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "5G-AKA",
+    "definition": "5G Authentication and Key Agreement protocol, the primary authentication mechanism in 5G networks.",
+    "relatedModule": "/learn/5g-security",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "SUCI",
+    "acronym": "SUCI",
+    "definition": "Subscription Concealed Identifier, a privacy-protecting identifier used in 5G that encrypts the subscriber's permanent identity.",
+    "relatedModule": "/learn/5g-security",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "OpenID4VCI",
+    "definition": "OpenID for Verifiable Credential Issuance, a protocol for issuing digital credentials to wallets.",
+    "relatedModule": "/learn/digital-id",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "OpenID4VP",
+    "definition": "OpenID for Verifiable Presentations, a protocol for presenting digital credentials from a wallet to a verifier.",
+    "relatedModule": "/learn/digital-id",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "SSH",
+    "acronym": "SSH",
+    "definition": "Secure Shell, a protocol for encrypted remote login and command execution. PQC integration adds ML-KEM hybrid key exchange.",
+    "relatedModule": "/migrate",
+    "complexity": "beginner",
+    "category": "protocol"
+  },
+  {
+    "term": "IPsec",
+    "acronym": "IPsec",
+    "definition": "Internet Protocol Security, a protocol suite for encrypting and authenticating IP traffic. Used in VPNs and site-to-site connections.",
+    "technicalNote": "PQC integration via IKEv2 multiple key exchange (RFC 9370) adds ML-KEM alongside classical DH.",
+    "relatedModule": "/migrate",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "IKEv2",
+    "acronym": "IKEv2",
+    "definition": "Internet Key Exchange version 2, the protocol used to establish security associations in IPsec VPNs. PQC migration adds ML-KEM key exchange.",
+    "relatedModule": "/library?ref=IETF RFC 9370",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "EMV",
+    "acronym": "EMV",
+    "definition": "Europay/Mastercard/Visa, the global standard for chip-based payment card authentication. Uses RSA and ECC signatures that are quantum-vulnerable.",
+    "technicalNote": "Over 14 billion EMV cards are in circulation globally. Offline authentication relies on RSA/ECC signatures vulnerable to quantum forgery.",
+    "relatedModule": "/learn/emv-payment-pqc",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "S/MIME",
+    "acronym": "S/MIME",
+    "definition": "Secure/Multipurpose Internet Mail Extensions, a standard for email encryption and digital signing. PQC integration via ML-KEM and ML-DSA.",
+    "relatedModule": "/library?ref=RFC 9882",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "CMS",
+    "acronym": "CMS",
+    "definition": "Cryptographic Message Syntax, a standard for digitally signed, encrypted, or authenticated data. Foundation for S/MIME and code signing.",
+    "technicalNote": "Multiple IETF RFCs define PQC integration: RFC 9629 (KEM in CMS), RFC 9882 (ML-DSA in CMS), RFC 9814 (SLH-DSA in CMS).",
+    "relatedModule": "/library?ref=RFC 9629",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "OpenPGP",
+    "definition": "An open standard for email encryption and signing based on PGP. PQC integration adds composite ML-KEM+ECC encryption and ML-DSA+ECC signatures.",
+    "relatedModule": "/library?ref=RFC 9580",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "Signal Protocol",
+    "definition": "The encryption protocol used by Signal, WhatsApp, and other messengers. Updated with PQXDH to add ML-KEM-1024 for post-quantum security.",
+    "relatedModule": "/migrate",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "PQXDH",
+    "acronym": "PQXDH",
+    "definition": "Post-Quantum Extended Diffie-Hellman, the post-quantum key agreement protocol used by Signal (and optionally WhatsApp). Combines X25519 with ML-KEM-1024 to establish session keys.",
+    "technicalNote": "Deployed by Signal in September 2023. The shared secret is derived from both the classical X25519 exchange and an ML-KEM-1024 encapsulation, ensuring security if either algorithm is broken.",
+    "relatedModule": "/migrate",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "FIDO2 / WebAuthn",
+    "definition": "Web authentication standards enabling passwordless login using public-key cryptography. Currently relies on quantum-vulnerable ECDSA/EdDSA.",
+    "relatedModule": "/migrate",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "Credential Activation",
+    "definition": "A TPM 2.0 protocol (TPM2_MakeCredential / TPM2_ActivateCredential) for securely delivering a credential to a specific TPM, proven by the TPM demonstrating possession of the corresponding EK private key. PQC migration uses ML-KEM-768 encapsulation against the EK per TCG V1.85.",
+    "technicalNote": "The Privacy CA encapsulates a secret against the EK public key; only a TPM holding the matching EK private key can decapsulate and release the credential.",
+    "relatedModule": "/learn/secure-boot-pqc",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "BB84",
+    "definition": "The first quantum key distribution protocol, proposed by Bennett and Brassard in 1984. Uses four quantum states in two conjugate bases to establish a shared secret key.",
+    "technicalNote": "Alice encodes random bits in rectilinear (+) or diagonal (x) bases. Bob measures in a randomly chosen basis. After basis reconciliation over a classical channel, only matching-basis bits form the sifted key.",
+    "relatedModule": "/learn/qkd",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "QUIC",
+    "definition": "A modern transport protocol built on UDP, providing encrypted connections with lower latency than TCP+TLS. The foundation of HTTP/3.",
+    "technicalNote": "QUIC integrates TLS 1.3 directly, so PQC migration via hybrid key exchange (X25519MLKEM768) applies to QUIC connections as well.",
+    "relatedModule": "/library",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "WireGuard",
+    "definition": "A modern, high-performance VPN protocol using state-of-the-art cryptography (ChaCha20, Curve25519). PQC integration is being developed.",
+    "technicalNote": "PQC migration involves adding ML-KEM hybrid key exchange to the Noise protocol framework used by WireGuard.",
+    "relatedModule": "/migrate",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "DTLS",
+    "acronym": "DTLS",
+    "definition": "Datagram Transport Layer Security, the UDP equivalent of TLS. Used in IoT (CoAP), WebRTC, and VPN protocols. DTLS 1.3 adds PQC support.",
+    "relatedModule": "/learn/iot-ot-pqc",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "mTLS",
+    "definition": "Mutual TLS, a TLS mode where both client and server present certificates for authentication. Common in microservices, zero-trust architectures, and API security.",
+    "technicalNote": "PQC migration for mTLS requires updating both client and server certificates to PQC or hybrid algorithms.",
+    "relatedModule": "/learn/tls-basics",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "OCSP",
+    "acronym": "OCSP",
+    "definition": "Online Certificate Status Protocol, used to check whether an X.509 certificate has been revoked. An alternative to Certificate Revocation Lists (CRLs).",
+    "relatedModule": "/learn/pki-workshop",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "DNSSEC",
+    "acronym": "DNSSEC",
+    "definition": "DNS Security Extensions, a suite of protocols that add cryptographic authentication to DNS responses. Uses digital signatures to prevent DNS spoofing.",
+    "technicalNote": "PQC migration is challenging due to DNS packet size limits. Larger PQC signatures may require protocol changes or new transport mechanisms.",
+    "relatedModule": "/migrate",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "ACME",
+    "acronym": "ACME",
+    "definition": "Automatic Certificate Management Environment, the protocol used by Let's Encrypt and other CAs to automate certificate issuance and renewal.",
+    "technicalNote": "ACME will need updates to support PQC certificate types as the Web PKI transitions to quantum-safe algorithms.",
+    "relatedModule": "/library",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "PQ3",
+    "definition": "Apple's post-quantum secure messaging protocol for iMessage, providing Level 3 security with ML-KEM key exchange and periodic re-keying.",
+    "technicalNote": "PQ3 uses a ratcheting design that regularly re-establishes quantum-safe shared secrets, protecting past and future messages.",
+    "relatedModule": "/migrate",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "MACsec",
+    "acronym": "MACsec",
+    "definition": "IEEE 802.1AE Media Access Control Security, providing Layer 2 encryption for Ethernet frames. Used to secure LAN traffic between switches and endpoints.",
+    "technicalNote": "MACsec relies on AES-GCM (quantum-safe) for encryption but uses ECDH/ECDSA for key agreement, requiring PQC migration for the key exchange.",
+    "relatedModule": "/migrate",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "KMIP",
+    "acronym": "KMIP",
+    "definition": "Key Management Interoperability Protocol, an OASIS standard for communication between key management systems and cryptographic clients.",
+    "technicalNote": "KMIP 2.1+ includes support for post-quantum key types and algorithms.",
+    "relatedModule": "/migrate",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "CMP",
+    "acronym": "CMP",
+    "definition": "Certificate Management Protocol (RFC 4210), used for managing X.509 certificates including enrollment, updates, and revocation. PQC support via RFC 9810.",
+    "relatedModule": "/library?ref=RFC 9810",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "JWT",
+    "acronym": "JWT",
+    "definition": "JSON Web Token, a compact token format for securely transmitting claims between parties. Widely used in API authentication and OAuth 2.0.",
+    "technicalNote": "JWTs typically use RSA or ECDSA signatures which are quantum-vulnerable. PQC JWT support (ML-DSA) is being standardized via JOSE working group.",
+    "relatedModule": "/learn/api-security-jwt",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "JSON Web Signature",
+    "acronym": "JWS",
+    "definition": "A standard (RFC 7515) for digitally signing JSON payloads. JWS is the mechanism that makes JWTs tamper-proof — the signature covers the JOSE header and payload.",
+    "technicalNote": "PQC migration requires new JWS algorithm identifiers (e.g., ML-DSA-44, ML-DSA-65) registered via the IETF JOSE PQC draft. Signature sizes grow from 64 bytes (ES256) to ~2,420 bytes (ML-DSA-44).",
+    "relatedModule": "/learn/api-security-jwt",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "JSON Web Encryption",
+    "acronym": "JWE",
+    "definition": "A standard (RFC 7516) for encrypting JSON payloads. JWE provides confidentiality for JWT claims using a two-layer encryption model: a Key Encryption Key (KEK) wraps a Content Encryption Key (CEK).",
+    "technicalNote": "PQC migration replaces ECDH-ES key agreement with ML-KEM encapsulation. The KEM ciphertext replaces the encrypted key in JWE compact serialization.",
+    "relatedModule": "/learn/api-security-jwt",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "JOSE",
+    "definition": "JSON Object Signing and Encryption, the IETF framework encompassing JWS, JWE, JWK, and JWA specifications. JOSE defines how to sign, encrypt, and represent cryptographic keys in JSON format.",
+    "technicalNote": "The IETF JOSE working group is standardizing PQC algorithm identifiers (ML-DSA, ML-KEM, SLH-DSA) for use in JOSE headers. The framework was designed for algorithm agility — only the \"alg\" header value changes.",
+    "relatedModule": "/learn/api-security-jwt",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "OpenID Connect",
+    "acronym": "OIDC",
+    "definition": "An identity layer built on OAuth 2.0 that provides authentication via ID tokens (JWTs). Widely used for single sign-on across web and mobile applications.",
+    "technicalNote": "OIDC ID tokens are signed JWTs. PQC migration requires authorization servers to sign ID tokens with ML-DSA and clients to verify PQC signatures. JWKS endpoints must serve PQC public keys.",
+    "relatedModule": "/learn/api-security-jwt",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "Demonstrating Proof-of-Possession",
+    "acronym": "DPoP",
+    "definition": "An OAuth 2.0 extension (RFC 9449) that binds access tokens to a specific client by requiring a proof-of-possession JWT with each API request, preventing token theft and replay attacks.",
+    "technicalNote": "Each DPoP proof is a JWS signed with the client's key. With PQC, every API request includes a ~4 KB ML-DSA signature in addition to the access token, potentially exceeding HTTP header size limits.",
+    "relatedModule": "/learn/api-security-jwt",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "JSON Web Key Set",
+    "acronym": "JWKS",
+    "definition": "A JSON document (RFC 7517) containing a set of public keys used to verify JWTs. Authorization servers publish JWKS endpoints so resource servers can fetch signing keys.",
+    "technicalNote": "ML-DSA public keys are ~2 KB each (vs 32 bytes for EC). JWKS payloads grow significantly during PQC migration, especially with key rotation maintaining multiple active keys.",
+    "relatedModule": "/learn/api-security-jwt",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "Rosenpass",
+    "definition": "A post-quantum key exchange protocol designed as a companion to WireGuard VPN. Performs a separate ML-KEM key exchange and feeds the resulting key into WireGuard.",
+    "technicalNote": "Rosenpass runs alongside WireGuard rather than modifying it, adding PQC protection without changing the WireGuard protocol itself.",
+    "relatedModule": "/learn/vpn-ssh-pqc",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "SignedData",
+    "definition": "A CMS (Cryptographic Message Syntax) structure defined in RFC 5652 that carries digitally signed content. The foundation of S/MIME email signatures.",
+    "technicalNote": "Contains the original content, signer certificates, and one or more SignerInfo structures with the actual signatures. PQC migration requires updating the signature algorithms.",
+    "relatedModule": "/learn/email-signing",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "EnvelopedData",
+    "definition": "A CMS structure for encrypted content using key transport (RSA) or key agreement (ECDH). Being superseded by AuthEnvelopedData with KEM-based encryption for PQC.",
+    "technicalNote": "Traditional EnvelopedData uses RSA key transport, which is vulnerable to quantum attacks. RFC 9629 defines KEMRecipientInfo as the PQC replacement.",
+    "relatedModule": "/learn/email-signing",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "KEMRecipientInfo",
+    "definition": "A CMS recipient info type defined in RFC 9629 that uses Key Encapsulation Mechanisms (KEMs) instead of RSA key transport for encrypting content-encryption keys.",
+    "technicalNote": "Enables ML-KEM-based encryption in S/MIME and CMS. The sender encapsulates a shared secret to the recipient's KEM public key, then derives the content-encryption key.",
+    "relatedModule": "/learn/email-signing",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "Certificate Revocation List",
+    "acronym": "CRL",
+    "definition": "A signed list published by a Certificate Authority containing the serial numbers of certificates that have been revoked before their expiration date.",
+    "technicalNote": "CRLs are periodically published and can become large. OCSP provides real-time revocation checking as an alternative. PQC migration requires CRLs to be signed with quantum-safe algorithms.",
+    "relatedModule": "/learn/pki-workshop",
+    "complexity": "beginner",
+    "category": "protocol"
+  },
+  {
+    "term": "Certificate Transparency",
+    "acronym": "CT",
+    "definition": "An open framework (RFC 9162) that requires all publicly-trusted TLS certificates to be logged in publicly auditable logs, enabling detection of misissued certificates.",
+    "technicalNote": "CT logs are Merkle trees of certificate records. The Merkle Tree Certificate (MTC) design builds directly on CT infrastructure, replacing individual certificate signatures with batch Merkle inclusion proofs.",
+    "relatedModule": "/learn/merkle-tree-certs",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "Hybrid Public Key Encryption",
+    "acronym": "HPKE",
+    "definition": "A standardized framework (RFC 9180) for hybrid public-key encryption that combines a KEM, a key derivation function, and an AEAD cipher into a composable primitive.",
+    "technicalNote": "HPKE is used in TLS ECH (Encrypted Client Hello), MLS messaging, and several IETF PQC drafts. It can be instantiated with ML-KEM for post-quantum security by substituting the KEM component.",
+    "relatedModule": "/library",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "MQTT",
+    "acronym": "MQTT",
+    "definition": "Message Queuing Telemetry Transport, a lightweight publish/subscribe messaging protocol for IoT. MQTT 5.0 supports TLS 1.3 transport security.",
+    "relatedModule": "/learn/iot-ot-pqc",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "LoRaWAN",
+    "definition": "Long Range Wide Area Network, a low-power WAN protocol for IoT. Uses AES-128 pre-shared keys. Maximum payload of 222 bytes makes PQC KEM infeasible inline.",
+    "relatedModule": "/learn/iot-ot-pqc",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "Matter",
+    "definition": "Smart home interoperability standard (formerly Project CHIP). Uses the CASE protocol with ECDSA P-256 for device attestation. PQC migration requires protocol specification update.",
+    "relatedModule": "/learn/iot-ot-pqc",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "CoAP",
+    "acronym": "CoAP",
+    "definition": "Constrained Application Protocol, a lightweight RESTful protocol designed for IoT devices. Runs over UDP with DTLS for security. Maximum payload of ~1,024 bytes makes PQC key exchange challenging.",
+    "relatedModule": "/learn/iot-ot-pqc",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "NB-IoT",
+    "acronym": "NB-IoT",
+    "definition": "Narrowband IoT, a cellular connectivity standard for low-power wide-area (LPWA) devices. Offers 62.5 kbps uplink bandwidth, making PQC handshake overhead a significant concern.",
+    "relatedModule": "/learn/iot-ot-pqc",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "Connection Coalescing",
+    "definition": "An HTTP/2 and HTTP/3 optimization where a single TLS connection is reused for requests to multiple hostnames sharing the same IP address and TLS certificate, amortizing PQC handshake overhead across domains.",
+    "technicalNote": "With PQC hybrid handshakes adding 10-20KB overhead, connection coalescing becomes a critical mitigation — reducing the number of handshakes proportionally reduces total bandwidth impact.",
+    "relatedModule": "/learn/web-gateway-pqc",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "GOOSE",
+    "acronym": "GOOSE",
+    "definition": "Generic Object Oriented Substation Event. A high-speed multicast protocol in IEC 61850 for protection relay tripping with 4ms delivery requirements.",
+    "technicalNote": "GOOSE uses HMAC-SHA256 for per-message authentication (quantum-safe). The quantum vulnerability lies in the RSA-based key distribution channel that seeds the HMAC keys.",
+    "relatedModule": "/learn/energy-utilities-pqc",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "DNP3-SA",
+    "acronym": "DNP3-SA",
+    "definition": "DNP3 Secure Authentication (IEEE 1815.1). Challenge-response authentication for SCADA using HMAC-SHA256 with pre-shared Update Keys.",
+    "technicalNote": "Session authentication uses HMAC (quantum-safe). PQC impacts the RSA-based Update Key distribution. ML-KEM-768 ciphertext (1088 bytes) fits within DNP3 2048-byte fragment limit — a clean single-fragment migration.",
+    "relatedModule": "/learn/energy-utilities-pqc",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "DLMS/COSEM",
+    "acronym": "DLMS/COSEM",
+    "definition": "Device Language Message Specification / Companion Specification for Energy Metering. Used globally for smart meter communication with security suites based on AES and ECDSA/ECDH.",
+    "technicalNote": "Security Suite 1 uses AES-GCM-128 + ECDSA P-256 + ECDH P-256. PQC key exchange (ML-KEM-768 at 1088 bytes vs ECDH at 33 bytes) creates a 33x bandwidth increase that is significant at scale for millions of meters.",
+    "relatedModule": "/learn/energy-utilities-pqc",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "ICCP/TASE.2",
+    "acronym": "ICCP",
+    "definition": "Inter-Control Center Communications Protocol. Used for real-time data exchange between utility control centers, secured via TLS.",
+    "technicalNote": "ICCP links are internet-facing and carry real-time grid state data — the highest-priority PQC migration target under NERC CIP-012.",
+    "relatedModule": "/learn/energy-utilities-pqc",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "DICOM",
+    "acronym": "DICOM",
+    "definition": "Digital Imaging and Communications in Medicine. The standard protocol for transmitting, storing, and sharing medical images (X-ray, CT, MRI). DICOM supports TLS for transport security; PQC migration requires updating both the transport layer and any encrypted archives of imaging data.",
+    "relatedModule": "/learn/healthcare-pqc",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "SDA",
+    "acronym": "SDA",
+    "definition": "Static Data Authentication. The simplest EMV card authentication method where the issuer pre-signs static card data with RSA. Vulnerable to card cloning since the signature never changes.",
+    "technicalNote": "SDA uses a single RSA signature over static data. A terminal verifies this signature against the issuer CA certificate chain. Being deprecated in favor of DDA/CDA.",
+    "relatedModule": "/learn/emv-payment-pqc",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "DDA",
+    "acronym": "DDA",
+    "definition": "Dynamic Data Authentication. An EMV card authentication method where the card generates a unique RSA signature per transaction, preventing cloning attacks.",
+    "technicalNote": "DDA requires the card chip to perform RSA signing using its private key. The terminal verifies via the EMVCo CA certificate chain (Root → Network CA → Issuer CA → ICC).",
+    "relatedModule": "/learn/emv-payment-pqc",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "CDA",
+    "acronym": "CDA",
+    "definition": "Combined Data Authentication. The strongest EMV offline authentication method, combining dynamic RSA signature with the application cryptogram in a single operation.",
+    "technicalNote": "CDA binds the authentication and transaction authorization into one cryptographic operation, preventing man-in-the-middle attacks between card and terminal. Most modern EMV cards use CDA.",
+    "relatedModule": "/learn/emv-payment-pqc",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "ARQC",
+    "acronym": "ARQC",
+    "definition": "Authorization Request Cryptogram. A symmetric MAC generated by the EMV card chip using a shared secret with the issuer, proving the card is genuine during online authorization.",
+    "technicalNote": "ARQC uses 3DES or AES-based MAC computation with issuer-derived session keys. Being a symmetric operation, ARQC generation is inherently quantum-safe.",
+    "relatedModule": "/learn/emv-payment-pqc",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "ARPC",
+    "acronym": "ARPC",
+    "definition": "Authorization Response Cryptogram. A symmetric MAC generated by the issuer in response to an ARQC, proving the issuer authorized the transaction.",
+    "technicalNote": "ARPC is the issuer-to-card counterpart of ARQC. Together they form a mutual authentication mechanism. Both use symmetric crypto and are quantum-safe.",
+    "relatedModule": "/learn/emv-payment-pqc",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "3-D Secure",
+    "acronym": "3DS",
+    "definition": "A payment authentication protocol for card-not-present (e-commerce) transactions. Version 2.0 uses ECDSA challenge signing and risk-based authentication.",
+    "technicalNote": "3DS 2.0 challenge signatures use ECDSA P-256, which is quantum-vulnerable. The frictionless flow relies on device fingerprinting and behavioral analysis (quantum-safe). PQC migration targets the challenge signing component.",
+    "relatedModule": "/learn/emv-payment-pqc",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "ACARS",
+    "acronym": "ACARS",
+    "definition": "Aircraft Communications Addressing and Reporting System. A digital data link for transmitting short messages between aircraft and ground stations via VHF radio or SATCOM.",
+    "technicalNote": "ACARS messages are limited to 220-byte blocks. ML-DSA-65 signatures (3,309 bytes) require 15+ blocks, making in-band PQC authentication infeasible without protocol redesign or gateway-mediated signing.",
+    "relatedModule": "/learn/aerospace-pqc",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "CPDLC",
+    "acronym": "CPDLC",
+    "definition": "Controller-Pilot Data Link Communications. A text-based ATC communication system replacing voice with structured data messages between pilots and air traffic controllers.",
+    "technicalNote": "CPDLC operates over SATCOM with 600ms RTT and supports up to 1,024-byte messages. PQC signature authentication is feasible (ML-DSA-44 fits in 3 blocks) but adds latency to safety-critical ATC clearances.",
+    "relatedModule": "/learn/aerospace-pqc",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "ADS-B",
+    "acronym": "ADS-B",
+    "definition": "Automatic Dependent Surveillance-Broadcast. A surveillance system where aircraft broadcast their GPS-derived position, altitude, and velocity on 1090 MHz, receivable by ground stations and other aircraft.",
+    "technicalNote": "ADS-B transmits unauthenticated 112-bit messages (14 bytes payload) with no encryption or signing. The message size is far too small for any PQC signature. Authentication requires out-of-band verification or protocol redesign.",
+    "relatedModule": "/learn/aerospace-pqc",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "Agent-to-Agent Authentication",
+    "acronym": "A2A",
+    "definition": "Mutual authentication between autonomous AI agents using cryptographic credentials, enabling secure communication, task delegation, and transaction execution without human intermediation.",
+    "technicalNote": "A2A authentication typically uses mTLS with PQC certificates (ML-DSA for signing, ML-KEM for key exchange). Per-message signing adds bandwidth overhead — at 10K messages/second, ML-DSA-65 signatures add significant bandwidth compared to ECDSA, requiring careful protocol design.",
+    "relatedModule": "/learn/ai-security-pqc",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "Secure Multi-Party Computation",
+    "acronym": "MPC",
+    "definition": "A cryptographic technique allowing multiple parties to jointly compute a function over their combined inputs while keeping each party's input private from the others.",
+    "technicalNote": "MPC enables collaborative AI model training across organizations without revealing proprietary data. Quantum impact varies by protocol: garbled circuits rely on symmetric crypto (Grover-resistant with larger keys), while secret-sharing schemes may need PQC for the communication channels.",
+    "relatedModule": "/learn/ai-security-pqc",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "CCC Digital Key",
+    "definition": "A specification by the Car Connectivity Consortium (CCC) enabling smartphones to function as vehicle keys via NFC, BLE, or UWB. CCC Digital Key 3.0 uses ECDH P-256 key agreement and ECDSA P-256 certificates, both quantum-vulnerable.",
+    "technicalNote": "NFC transport limits APDUs to 256 bytes, making ML-KEM-768 ciphertext (1,088 bytes) require 5 APDUs per key exchange. BLE (512-byte L2CAP frames) and UWB (symmetric ranging, quantum-safe) handle PQC migration more gracefully. Owner-to-friend key sharing adds another quantum-vulnerable certificate chain.",
+    "relatedModule": "/learn/automotive-pqc",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "CAN Bus",
+    "acronym": "CAN",
+    "definition": "Controller Area Network, the dominant in-vehicle serial bus protocol with an 8-byte (CAN 2.0) or 64-byte (CAN FD) payload per frame. CAN buses connect ECUs for powertrain, chassis, and body functions.",
+    "technicalNote": "CAN 2.0 payload (8 bytes) cannot carry any PQC signature in a single frame — even the smallest ML-DSA-44 signature (2,420 bytes) requires 303 CAN frames. CAN FD (64 bytes) is slightly better but still impractical for per-message PQC signing. Automotive Ethernet (1,500-byte MTU) is the PQC-feasible bus for ADAS and infotainment zones.",
+    "relatedModule": "/learn/automotive-pqc",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "RFC 9794",
+    "definition": "IETF standard (2025) defining design rules for hybrid cryptographic schemes combining classical and post-quantum algorithms. Core rule: both the classical and PQC components of a hybrid scheme must complete successfully — no silent fallback is permitted if either component fails.",
+    "technicalNote": "RFC 9794 supersedes earlier hybrid design patterns and formalizes the \"security-conservative\" hybrid approach. Key rules: (1) shared secret = KDF(classical_secret || pqc_secret), (2) both KEMs must run to completion, (3) at least one algorithm from the set must be shared between peers, (4) ciphertext fragmentation from oversized ClientHellos (>1,400B) must not cause silent failure. Chrome 130+ and Cloudflare implement RFC 9794-compliant X25519+ML-KEM-768.",
+    "relatedModule": "/learn/pqc-testing-validation",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "IKE_SA_INIT",
+    "definition": "The initial phase of the IKEv2 protocol. It negotiates cryptographic algorithms, exchanges nonces, and performs a Diffie-Hellman exchange.",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "IKE_INTERMEDIATE",
+    "definition": "An optional phase introduced in IKEv2 to transmit large amounts of data, such as post-quantum key shares, before authentication completes.",
+    "complexity": "advanced",
+    "category": "protocol"
+  },
+  {
+    "term": "IKE_AUTH",
+    "definition": "The completion phase of the IKEv2 handshake. It authenticates the previous messages and establishes the first IPsec Security Association (CHILD_SA).",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "Header",
+    "acronym": "HDR",
+    "definition": "The encrypted exchange header found at the start of an IKEv2 packet. Contains the SPIs, version, exchange type, and flags.",
+    "complexity": "beginner",
+    "category": "protocol"
+  },
+  {
+    "term": "Key Exchange",
+    "acronym": "KE",
+    "definition": "The public key material or key share transmitted between parties to derive a shared secret. In Hybrid PQC, this includes both classical elliptic curves and post-quantum lattices.",
+    "complexity": "intermediate",
+    "category": "protocol"
+  },
+  {
+    "term": "Encrypted Payload",
+    "acronym": "SK",
+    "definition": "The secure container wrapping IKEv2 payloads like Identifiers (IDi/IDr), Certificates (CERT), and Authentication (AUTH) data.",
+    "complexity": "intermediate",
+    "category": "protocol"
+  }
+]

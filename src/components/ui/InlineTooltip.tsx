@@ -1,19 +1,28 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
-import { glossaryTerms } from '../../data/glossaryData'
+import { loadGlossary, type GlossaryTerm } from '../../data/glossary'
 import { Link } from 'react-router-dom'
 import { ExternalLink } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 
-const termLookup = new Map(
-  glossaryTerms.flatMap((t) => {
-    const entries: [string, (typeof glossaryTerms)[number]][] = [[t.term.toLowerCase(), t]]
-    if (t.acronym) entries.push([t.acronym.toLowerCase(), t])
-    return entries
-  })
-)
+// Lazily-populated term lookup — filled by the first InlineTooltip mount
+let termLookup = new Map<string, GlossaryTerm>()
+let _lookupLoaded = false
+
+const ensureLookup = async () => {
+  if (_lookupLoaded) return
+  _lookupLoaded = true
+  const terms = await loadGlossary()
+  termLookup = new Map<string, GlossaryTerm>(
+    terms.flatMap((t) => {
+      const entries: [string, GlossaryTerm][] = [[t.term.toLowerCase(), t]]
+      if (t.acronym) entries.push([t.acronym.toLowerCase(), t])
+      return entries
+    })
+  )
+}
 
 interface InlineTooltipProps {
   /** The glossary term or acronym to look up (case-insensitive) */
@@ -30,8 +39,16 @@ export const InlineTooltip: React.FC<InlineTooltipProps> & { displayName?: strin
 }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [tooltipStyle, setTooltipStyle] = useState<TooltipStyle | null>(null)
+  // Force re-render when lookup is loaded
+  const [, setLookupReady] = useState(_lookupLoaded)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const popoverRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!_lookupLoaded) {
+      ensureLookup().then(() => setLookupReady(true))
+    }
+  }, [])
 
   const entry = termLookup.get(term.toLowerCase())
 

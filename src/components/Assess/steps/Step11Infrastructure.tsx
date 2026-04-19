@@ -50,11 +50,12 @@ const Step11Infrastructure = () => {
     setVendorUnknown,
     importProductSelection,
     setImportProductSelection,
+    industry,
   } = useAssessmentStore()
 
   const persona = usePersonaStore((s) => s.selectedPersona)
   const experienceLevel = usePersonaStore((s) => s.experienceLevel)
-  const stepContent = getPersonaStepContent(persona, 'infra', experienceLevel)
+  const stepContent = getPersonaStepContent(persona, 'infra', experienceLevel, industry)
 
   const myProducts = useMigrateSelectionStore((s) => s.myProducts)
 
@@ -192,7 +193,6 @@ const Step11Infrastructure = () => {
   }, [])
 
   const selectedLayers = infrastructure
-  const industry = useAssessmentStore((s) => s.industry)
   const isDisabled = false // smart defaults keep options interactive
 
   return (

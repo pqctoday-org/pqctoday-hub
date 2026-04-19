@@ -29,7 +29,7 @@ import {
   computeQuantumExposure,
   computeMigrationComplexity,
   computeRegulatoryPressure,
-  computeCompositeScore,
+  computeCompositeScoreWithBoosts,
   computeOrganizationalReadiness,
   getMaxSensitivity,
 } from './scoring'
@@ -133,6 +133,8 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
   let migrationEffort: MigrationEffortItem[] | undefined
   let recommendedActions: RecommendedAction[]
   let executiveSummary: string | undefined
+  let preBoostScore: number | undefined
+  let boosts: AssessmentResult['boosts'] | undefined
   if (hasExtendedInput) {
     // ── Compound scoring path ──
     const qe = computeQuantumExposure(input, vulnerableCount)
@@ -147,7 +149,10 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
       organizationalReadiness: or_,
     }
 
-    riskScore = computeCompositeScore(categoryScores, input)
+    const compositeResult = computeCompositeScoreWithBoosts(categoryScores, input)
+    riskScore = compositeResult.score
+    preBoostScore = compositeResult.preBoostScore
+    boosts = compositeResult.boosts
     hndlRiskWindow = computeHNDLRiskWindow(input)
     hnflRiskWindow = computeHNFLRiskWindow(input)
     migrationEffort = computeMigrationEffort(input)
@@ -355,6 +360,8 @@ export function computeAssessment(input: AssessmentInput): AssessmentResult {
     personaNarrative,
     assessmentProfile,
     keyFindings,
+    preBoostScore,
+    boosts,
   }
 }
 
@@ -366,6 +373,7 @@ export function buildAssessmentProfile(
     industry: input.industry,
     country: input.country,
     algorithmsSelected: input.currentCrypto,
+    algorithmCategories: input.currentCryptoCategories,
     algorithmUnknown: !!input.currentCryptoUnknown,
     sensitivityLevels: input.dataSensitivity,
     sensitivityUnknown: !!input.sensitivityUnknown,

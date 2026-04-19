@@ -127,15 +127,16 @@ const Step5Compliance = () => {
     [importComplianceSelection, toggleMyFramework, toggleCompliance]
   )
 
-  // Determine if a framework is selected
+  // Determine if a framework is selected.
+  // When "I'm not sure" is active, smart-defaults land in complianceRequirements —
+  // honor that regardless of import-mode so the pre-selected items highlight.
   const isSelected = useCallback(
     (fw: ComplianceFramework) => {
-      if (importComplianceSelection) {
-        return myFrameworks.includes(fw.id)
-      }
+      if (complianceUnknown) return complianceRequirements.includes(fw.label)
+      if (importComplianceSelection) return myFrameworks.includes(fw.id)
       return complianceRequirements.includes(fw.label)
     },
-    [importComplianceSelection, myFrameworks, complianceRequirements]
+    [complianceUnknown, importComplianceSelection, myFrameworks, complianceRequirements]
   )
 
   return (

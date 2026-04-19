@@ -22,6 +22,8 @@ import {
   Plane,
   Clock,
   Network,
+  Compass,
+  Search,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { WhatsNewModal } from '../ui/WhatsNewModal'
@@ -38,6 +40,8 @@ import { WorkflowBanner } from '../common/WorkflowBanner'
 import { AirplaneModeBanner } from '../ui/AirplaneModeBanner'
 import { AirplaneModeToast } from '../ui/AirplaneModeToast'
 import { useAirplaneModeStore } from '../../store/useAirplaneModeStore'
+import { CommandPalette } from '../Search/CommandPalette'
+import { useCommandPaletteStore } from '../../store/useCommandPaletteStore'
 
 const RightPanel = React.lazy(() =>
   import('../RightPanel/RightPanel').then((m) => ({ default: m.RightPanel }))
@@ -49,13 +53,35 @@ export const MainLayout = () => {
   const location = useLocation()
   const { selectedPersona } = usePersonaStore()
   const { isOpen: isPanelOpen, toggle: openPanel } = useRightPanelStore()
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // @ts-expect-error - Used only by Playwright
+      window.__e2e_toggle_panel = openPanel
+    }
+  }, [openPanel])
   const { isEnabled: airplaneMode, setEnabled: setAirplaneMode } = useAirplaneModeStore()
+  const { isOpen: paletteOpen, open: openPalette, close: closePalette } = useCommandPaletteStore()
+
+  // Global ⌘K / Ctrl+K shortcut
+  React.useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault()
+        openPalette()
+      }
+    }
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
+  }, [openPalette])
 
   // Build timestamp - set at compile time
   const buildTime = __BUILD_TIMESTAMP__
 
   const navItems = [
     { path: '/', label: 'Home', icon: Home, end: true },
+    // — Explore entry point (curious persona only) —
+    { path: '/explore', label: 'Explore', icon: Compass, section: 'start', curiousOnly: true },
     // — Start the Journey —
     { path: '/learn', label: 'Learn', icon: GraduationCap, section: 'start' },
     { path: '/timeline', label: 'Timeline', icon: Globe, section: 'start' },
@@ -89,7 +115,7 @@ export const MainLayout = () => {
     },
     {
       path: '/business',
-      label: 'Business Center',
+      label: 'Command Center',
       icon: LayoutDashboard,
       section: 'assess',
       // Visible on mobile for executive/architect; hidden for others
@@ -119,7 +145,7 @@ export const MainLayout = () => {
   ]
 
   // Abbreviated labels for mobile bottom nav (only override labels that are too long)
-  const SHORT_LABELS: Record<string, string> = { Timeline: 'Time', 'Business Center': 'Biz' }
+  const SHORT_LABELS: Record<string, string> = { Timeline: 'Time', 'Command Center': 'Biz' }
 
   const [moreMenuOpen, setMoreMenuOpen] = React.useState(false)
 
@@ -129,11 +155,13 @@ export const MainLayout = () => {
   }, [location.pathname])
 
   const personaAllowed = selectedPersona ? PERSONA_NAV_PATHS[selectedPersona] : null
-  const visibleNavItems = personaAllowed
-    ? navItems.filter(
-        (item) => ALWAYS_VISIBLE_PATHS.includes(item.path) || personaAllowed.includes(item.path)
-      )
-    : navItems
+  const visibleNavItems = navItems
+    .filter((item) => !item.curiousOnly || selectedPersona === 'curious')
+    .filter((item) =>
+      personaAllowed
+        ? ALWAYS_VISIBLE_PATHS.includes(item.path) || personaAllowed.includes(item.path)
+        : true
+    )
 
   // Items that appear in the mobile "More" bottom sheet
   const moreNavItems = visibleNavItems.filter((item) => item.mobileMore)
@@ -142,7 +170,11 @@ export const MainLayout = () => {
   )
 
   return (
-    <div className="h-dvh flex flex-col bg-background text-foreground print:min-h-0 print:h-auto overflow-hidden">
+    <div
+      className={`h-dvh flex flex-col bg-background text-foreground print:min-h-0 print:h-auto overflow-hidden transition-[padding] duration-300 ${
+        isPanelOpen ? 'sm:pr-[40vw]' : ''
+      }`}
+    >
       {/* Skip-to-main link — visible only on keyboard focus */}
       <a
         href="#main-content"
@@ -197,6 +229,20 @@ export const MainLayout = () => {
               </span>
             </Button>
           </div>
+
+          {/* Search chip — desktop only */}
+          <Button
+            variant="outline"
+            onClick={openPalette}
+            className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg border-border bg-muted/30 hover:border-primary/30 hover:bg-muted/50 text-sm text-muted-foreground min-w-[180px] h-auto"
+            aria-label="Search (⌘K)"
+          >
+            <Search size={14} aria-hidden="true" />
+            <span className="flex-1 text-left">Search…</span>
+            <kbd className="hidden lg:inline text-[10px] font-mono px-1.5 py-0.5 rounded border border-border bg-muted/50">
+              ⌘K
+            </kbd>
+          </Button>
 
           {/* Universal Navigation: Row of Icons on Mobile, Full Nav on Desktop */}
           <nav
@@ -468,6 +514,9 @@ export const MainLayout = () => {
       {/* Assistant bottom drawer — pinned below scrollable content */}
       <RightPanelFAB />
       <React.Suspense fallback={null}>{isPanelOpen && <RightPanel />}</React.Suspense>
+
+      {/* Command palette — ⌘K search */}
+      <CommandPalette isOpen={paletteOpen} onClose={closePalette} />
     </div>
   )
 }

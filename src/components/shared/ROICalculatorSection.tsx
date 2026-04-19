@@ -1,17 +1,31 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo, useEffect } from 'react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
-import { DollarSign, TrendingUp, Clock, AlertCircle, ChevronDown, Calculator } from 'lucide-react'
-import { CollapsibleSection } from '../ui/CollapsibleSection'
 import {
-  INDUSTRY_BREACH_BASELINES,
-  FRAMEWORK_PENALTY_BASELINES,
-  DEFAULT_FRAMEWORK_PENALTY,
-  INFRA_LAYER_COST,
-  DEFAULT_INFRA_LAYER_COST,
-} from '@/data/roiBaselines'
+  DollarSign,
+  TrendingUp,
+  TrendingDown,
+  Clock,
+  AlertCircle,
+  ChevronDown,
+  Calculator,
+  Percent,
+} from 'lucide-react'
+import { CollapsibleSection } from '../ui/CollapsibleSection'
+import { FRAMEWORK_PENALTY_BASELINES } from '@/data/roiBaselines'
 import type { AssessmentResult } from '@/hooks/assessmentTypes'
 import { Button } from '@/components/ui/button'
+import {
+  DEFAULT_COMPLIANCE_INCIDENT_RATE,
+  breachProbabilityFromRiskScore,
+  computeAnnualBreachSavings,
+  computeAnnualComplianceSavings,
+  computeMigrationCostFromProfile,
+  computeROI,
+  resolveIndustryBreachBaseline,
+  selectCompliancePenalty,
+  type MigrationCostDetails,
+} from '@/utils/roiMath'
 
 export interface ROISummary {
   migrationCost: number
@@ -19,6 +33,12 @@ export interface ROISummary {
   complianceSavings: number
   netRoiPercent: number
   paybackMonths: number
+  /** Added in Phase 2. Lifetime cost = migrationCost + annualOpex × horizon. */
+  totalCost?: number
+  /** Added in Phase 2. horizonYears × (annual breach savings + annual compliance savings). */
+  costOfInaction?: number
+  /** Added in Phase 2. Present when a discount rate is in effect. */
+  npv?: number
 }
 
 interface ROICalculatorSectionProps {
@@ -69,21 +89,7 @@ const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
 
 // ── Computation Breakdown (collapsible) ──────────────────────────────────
 
-interface ComputationDetails {
-  algoCount: number
-  sysScale: number
-  algoBase: number
-  infraLayers: string[]
-  infraBase: number
-  vendorLabel: string
-  vendorMul: number
-  migrationStatus: string
-  migrationDiscount: number
-  agilityLabel: string
-  agilityMul: number
-  teamLabel: string
-  teamMul: number
-  baseCost: number
+type ComputationDetails = MigrationCostDetails & {
   riskScore: number
   mandatedCount: number
   mandatedFrameworks: string[]
@@ -147,7 +153,7 @@ function ComputationBreakdown({
   compliancePenalty: number
 }) {
   const [open, setOpen] = useState(false)
-  const breachBaseline = INDUSTRY_BREACH_BASELINES[industry] ?? INDUSTRY_BREACH_BASELINES['Other']
+  const breachBaseline = resolveIndustryBreachBaseline(industry)
 
   const statusLabels: Record<string, string> = {
     started: 'Already started',
@@ -237,18 +243,7 @@ function ComputationBreakdown({
             <div className="mt-2 pt-2 border-t border-border flex items-center justify-between">
               <span className="text-xs font-medium text-foreground">Final migration cost</span>
               <span className="text-xs font-mono font-bold text-foreground">
-                {formatUSD(
-                  Math.max(
-                    50_000,
-                    Math.round(
-                      details.baseCost *
-                        details.vendorMul *
-                        details.migrationDiscount *
-                        details.agilityMul *
-                        details.teamMul
-                    )
-                  )
-                )}
+                {formatUSD(details.migrationCost)}
               </span>
             </div>
           </div>
@@ -315,136 +310,28 @@ export const ROICalculatorSection: React.FC<ROICalculatorSectionProps> = ({
   infoTip,
 }) => {
   const defaults = useMemo(() => {
-    const profile = result.assessmentProfile
-    const vulnAlgos = result.algorithmMigrations?.filter((a) => a.quantumVulnerable) ?? []
-    const algoCount = vulnAlgos.length || 1
+    const { migrationCost, details: costDetails } = computeMigrationCostFromProfile(result)
 
-    // System scale — applied to algorithm base only (infra cost is per-layer, not per-system)
-    const sysScaleMap: Record<string, number> = {
-      '1-10': 1.0,
-      '11-50': 1.3,
-      '51-200': 1.8,
-      '200-plus': 3.0,
+    const breachProbability = breachProbabilityFromRiskScore(result.riskScore)
+
+    const mandatedFrameworks =
+      result.complianceImpacts?.filter((c) => c.requiresPQC === true).map((c) => c.framework) ?? []
+    const { penalty: compliancePenalty, driverFramework: maxPenaltyFramework } =
+      selectCompliancePenalty(mandatedFrameworks)
+
+    const details: ComputationDetails = {
+      ...costDetails,
+      riskScore: result.riskScore,
+      mandatedCount: mandatedFrameworks.length,
+      mandatedFrameworks,
+      maxPenaltyFramework,
     }
-    const sysScale = sysScaleMap[profile?.systemScale ?? ''] ?? 1.0
-    const algoBase = Math.max(50_000, algoCount * 30_000 * sysScale)
-
-    // Infrastructure layer costs
-    const infraLayers = profile?.infrastructure ?? []
-    const infraBaseRaw =
-      infraLayers.length > 0
-        ? infraLayers.reduce(
-            (sum, id) => sum + (INFRA_LAYER_COST[id] ?? DEFAULT_INFRA_LAYER_COST),
-            0
-          )
-        : profile?.infrastructureUnknown
-          ? DEFAULT_INFRA_LAYER_COST * 3
-          : 0
-    // Sub-category density multiplier: more sub-categories = more migration surfaces
-    const subCats = profile?.infrastructureSubCategories ?? {}
-    const totalSubCats = Object.values(subCats).reduce((sum, cats) => sum + cats.length, 0)
-    const subCatMultiplier = Math.min(2.0, 1.0 + totalSubCats * 0.15)
-    const infraBase = Math.round(infraBaseRaw * subCatMultiplier)
-
-    // Vendor dependency multiplier
-    const vendorMap: Record<string, number> = {
-      'open-source': 0.8,
-      'in-house': 0.7,
-      mixed: 1.0,
-      'heavy-vendor': 1.4,
-    }
-    const vendorMul = profile?.vendorUnknown
-      ? 1.2
-      : (vendorMap[profile?.vendorDependency ?? ''] ?? 1.0)
-
-    // Migration status discount (already in progress = lower remaining cost)
-    const migrationMap: Record<string, number> = {
-      started: 0.4,
-      planning: 0.7,
-      'not-started': 1.0,
-      unknown: 1.0,
-    }
-    const migrationDiscount = migrationMap[profile?.migrationStatus ?? 'not-started'] ?? 1.0
-
-    // Crypto agility (hardcoded = major refactoring needed)
-    const agilityMap: Record<string, number> = {
-      'fully-abstracted': 0.6,
-      'partially-abstracted': 0.85,
-      hardcoded: 1.5,
-      unknown: 1.2,
-    }
-    const agilityMul = agilityMap[profile?.cryptoAgility ?? ''] ?? 1.0
-
-    // Team size (smaller teams = longer timelines = higher cost)
-    const teamMap: Record<string, number> = {
-      '200-plus': 0.85,
-      '51-200': 0.95,
-      '11-50': 1.0,
-      '1-10': 1.3,
-    }
-    const teamMul = teamMap[profile?.teamSize ?? ''] ?? 1.0
-
-    const baseCost = algoBase + infraBase
-    const migrationCost = Math.max(
-      50_000,
-      Math.round(baseCost * vendorMul * migrationDiscount * agilityMul * teamMul)
-    )
-
-    // Breach probability (unchanged — riskScore already incorporates all factors)
-    const breachProbability = Math.min(50, Math.round(result.riskScore / 2))
-
-    // Compliance penalty — max framework-specific penalty across mandated frameworks
-    const mandated = result.complianceImpacts?.filter((c) => c.requiresPQC === true) ?? []
-    const compliancePenalty =
-      mandated.length > 0
-        ? Math.max(
-            ...mandated.map(
-              (ci) =>
-                FRAMEWORK_PENALTY_BASELINES[ci.framework]?.annualPenalty ??
-                DEFAULT_FRAMEWORK_PENALTY
-            )
-          )
-        : 2_000_000
-
-    // Identify which framework drove the max penalty
-    const maxPenaltyFramework =
-      mandated.length > 0
-        ? mandated.reduce(
-            (best, ci) => {
-              const penalty =
-                FRAMEWORK_PENALTY_BASELINES[ci.framework]?.annualPenalty ??
-                DEFAULT_FRAMEWORK_PENALTY
-              return penalty > best.penalty ? { name: ci.framework, penalty } : best
-            },
-            { name: '', penalty: 0 }
-          )
-        : null
 
     return {
       migrationCost,
       breachProbability,
       compliancePenalty,
-      // Intermediate values for computation breakdown
-      details: {
-        algoCount,
-        sysScale,
-        algoBase,
-        infraLayers,
-        infraBase,
-        vendorLabel: profile?.vendorUnknown ? 'Unknown' : (profile?.vendorDependency ?? 'Not set'),
-        vendorMul,
-        migrationStatus: profile?.migrationStatus ?? 'not-started',
-        migrationDiscount,
-        agilityLabel: profile?.cryptoAgility ?? 'Not set',
-        agilityMul,
-        teamLabel: profile?.teamSize ?? 'Not set',
-        teamMul,
-        baseCost,
-        riskScore: result.riskScore,
-        mandatedCount: mandated.length,
-        mandatedFrameworks: mandated.map((c) => c.framework),
-        maxPenaltyFramework,
-      },
+      details,
     }
   }, [result])
 
@@ -452,18 +339,52 @@ export const ROICalculatorSection: React.FC<ROICalculatorSectionProps> = ({
   const [breachProbabilityPct, setBreachProbabilityPct] = useState(defaults.breachProbability)
   const [compliancePenalty, setCompliancePenalty] = useState(defaults.compliancePenalty)
   const [horizon, setHorizon] = useState(3)
+  const [annualOpex, setAnnualOpex] = useState(Math.round(defaults.migrationCost * 0.15))
+  const [discountRatePct, setDiscountRatePct] = useState(10)
 
   const computed = useMemo<ROISummary>(() => {
-    const breachBaseline = INDUSTRY_BREACH_BASELINES[industry] ?? INDUSTRY_BREACH_BASELINES['Other']
-    const mandatedFrameworks = result.complianceImpacts?.filter((c) => c.requiresPQC === true) ?? []
-    const avoidedBreachCost = (breachProbabilityPct / 100) * breachBaseline * horizon
-    const complianceSavings = compliancePenalty * mandatedFrameworks.length
-    const totalBenefit = avoidedBreachCost + complianceSavings
-    const netRoiPercent =
-      migrationCost > 0 ? ((totalBenefit - migrationCost) / migrationCost) * 100 : 0
-    const paybackMonths = totalBenefit > 0 ? migrationCost / (totalBenefit / 12) : Infinity
-    return { migrationCost, avoidedBreachCost, complianceSavings, netRoiPercent, paybackMonths }
-  }, [migrationCost, breachProbabilityPct, compliancePenalty, horizon, industry, result])
+    const breachBaseline = resolveIndustryBreachBaseline(industry)
+    const mandatedFrameworkCount =
+      result.complianceImpacts?.filter((c) => c.requiresPQC === true).length ?? 0
+
+    const annualBreachSavings = computeAnnualBreachSavings({
+      breachBaseline,
+      breachProbabilityPct,
+    })
+    const annualComplianceSavings = computeAnnualComplianceSavings({
+      frameworkCount: mandatedFrameworkCount,
+      penaltyPerIncident: compliancePenalty,
+      incidentRate: DEFAULT_COMPLIANCE_INCIDENT_RATE,
+    })
+
+    const { roiPercent, paybackMonths, totalBenefit, totalCost, npv } = computeROI({
+      migrationCost,
+      annualOpex,
+      annualBenefit: annualBreachSavings + annualComplianceSavings,
+      horizonYears: horizon,
+      discountRate: discountRatePct / 100,
+    })
+
+    return {
+      migrationCost,
+      avoidedBreachCost: annualBreachSavings * horizon,
+      complianceSavings: annualComplianceSavings * horizon,
+      netRoiPercent: roiPercent,
+      paybackMonths,
+      totalCost,
+      costOfInaction: totalBenefit,
+      npv,
+    }
+  }, [
+    migrationCost,
+    annualOpex,
+    breachProbabilityPct,
+    compliancePenalty,
+    horizon,
+    discountRatePct,
+    industry,
+    result,
+  ])
 
   useEffect(() => {
     onSummaryChange(computed)
@@ -497,8 +418,16 @@ export const ROICalculatorSection: React.FC<ROICalculatorSectionProps> = ({
         <table className="w-full text-left border-collapse">
           <tbody>
             <tr>
-              <td className="py-1 pr-4 font-medium">Migration Budget</td>
+              <td className="py-1 pr-4 font-medium">Capital Expenditure</td>
               <td>{formatUSD(computed.migrationCost)}</td>
+            </tr>
+            <tr>
+              <td className="py-1 pr-4 font-medium">Annual Opex</td>
+              <td>{formatUSD(annualOpex)}</td>
+            </tr>
+            <tr>
+              <td className="py-1 pr-4 font-medium">Total Cost ({horizon}yr)</td>
+              <td>{formatUSD(computed.totalCost ?? computed.migrationCost)}</td>
             </tr>
             <tr>
               <td className="py-1 pr-4 font-medium">Avoided Breach Cost</td>
@@ -507,6 +436,14 @@ export const ROICalculatorSection: React.FC<ROICalculatorSectionProps> = ({
             <tr>
               <td className="py-1 pr-4 font-medium">Compliance Savings</td>
               <td>{formatUSD(computed.complianceSavings)}</td>
+            </tr>
+            <tr>
+              <td className="py-1 pr-4 font-medium">Cost of Inaction ({horizon}yr)</td>
+              <td>{formatUSD(computed.costOfInaction ?? 0)}</td>
+            </tr>
+            <tr>
+              <td className="py-1 pr-4 font-medium">NPV @ {discountRatePct}%</td>
+              <td>{formatUSD(computed.npv ?? 0)}</td>
             </tr>
             <tr>
               <td className="py-1 pr-4 font-medium">Net ROI</td>
@@ -608,26 +545,85 @@ export const ROICalculatorSection: React.FC<ROICalculatorSectionProps> = ({
             className="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
           />
         </div>
+        <div>
+          <label
+            htmlFor="roi-annual-opex"
+            className="block text-xs font-medium text-muted-foreground mb-1"
+          >
+            Annual opex (USD)
+          </label>
+          <input
+            id="roi-annual-opex"
+            type="number"
+            min={0}
+            step={10_000}
+            value={annualOpex}
+            onChange={(e) => setAnnualOpex(Math.max(0, parseInt(e.target.value, 10) || 0))}
+            className="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="roi-discount-rate"
+            className="block text-xs font-medium text-muted-foreground mb-1 flex items-center gap-1"
+          >
+            <Percent size={11} />
+            Discount rate (WACC, %)
+          </label>
+          <input
+            id="roi-discount-rate"
+            type="number"
+            min={0}
+            max={30}
+            step={1}
+            value={discountRatePct}
+            onChange={(e) =>
+              setDiscountRatePct(Math.min(30, Math.max(0, parseInt(e.target.value, 10) || 0)))
+            }
+            className="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+          />
+        </div>
       </div>
 
       {/* KPI summary row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
         <div className="rounded-lg border border-border bg-muted/30 p-4 text-center">
           <DollarSign size={16} className="text-muted-foreground mx-auto mb-1" />
-          <p className="text-xs text-muted-foreground">Migration Cost</p>
-          <p className="text-xl font-bold text-foreground">{formatUSD(computed.migrationCost)}</p>
+          <p className="text-xs text-muted-foreground">Total Cost ({horizon}yr)</p>
+          <p className="text-lg font-bold text-foreground">
+            {formatUSD(computed.totalCost ?? computed.migrationCost)}
+          </p>
+        </div>
+        <div className="rounded-lg border border-border bg-muted/30 p-4 text-center">
+          <TrendingDown size={16} className="text-status-warning mx-auto mb-1" />
+          <p className="text-xs text-muted-foreground">Cost of Inaction</p>
+          <p className="text-lg font-bold text-status-warning">
+            {formatUSD(computed.costOfInaction ?? 0)}
+          </p>
+        </div>
+        <div className="rounded-lg border border-border bg-muted/30 p-4 text-center">
+          <TrendingUp size={16} className="mx-auto mb-1" style={{ color: roiColor }} />
+          <p className="text-xs text-muted-foreground">NPV @ {discountRatePct}%</p>
+          <p
+            className="text-lg font-bold"
+            style={{
+              color: (computed.npv ?? 0) >= 0 ? successColor : destructiveColor,
+            }}
+          >
+            {formatUSD(computed.npv ?? 0)}
+          </p>
         </div>
         <div className="rounded-lg border border-border bg-muted/30 p-4 text-center">
           <TrendingUp size={16} className="mx-auto mb-1" style={{ color: roiColor }} />
           <p className="text-xs text-muted-foreground">Net ROI ({horizon}yr)</p>
-          <p className="text-xl font-bold" style={{ color: roiColor }}>
+          <p className="text-lg font-bold" style={{ color: roiColor }}>
             {formatPercent(computed.netRoiPercent)}
           </p>
         </div>
         <div className="rounded-lg border border-border bg-muted/30 p-4 text-center">
           <Clock size={16} className="text-muted-foreground mx-auto mb-1" />
-          <p className="text-xs text-muted-foreground">Payback Period</p>
-          <p className="text-xl font-bold text-foreground">
+          <p className="text-xs text-muted-foreground">Payback</p>
+          <p className="text-lg font-bold text-foreground">
             {isFinite(computed.paybackMonths) ? `${Math.ceil(computed.paybackMonths)}mo` : 'N/A'}
           </p>
         </div>

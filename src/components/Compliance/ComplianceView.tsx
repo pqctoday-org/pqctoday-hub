@@ -4,7 +4,12 @@ import { Button } from '@/components/ui/button'
 import { useSearchParams, Link } from 'react-router-dom'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { ComplianceTable, type SortColumn, type SortDirection } from './ComplianceTable'
-import { ComplianceLandscape, type FrameworkSortOption } from './ComplianceLandscape'
+import {
+  ComplianceLandscape,
+  DeadlineTimeline,
+  type FrameworkSortOption,
+} from './ComplianceLandscape'
+import { CrossTabSearchHint, type LandscapeTab } from './CrossTabSearchHint'
 import { useComplianceRefresh } from './services'
 import {
   ShieldCheck,
@@ -22,7 +27,12 @@ import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { COMPLIANCE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
-import { complianceFrameworks, complianceMetadata } from '@/data/complianceData'
+import {
+  complianceFrameworks,
+  complianceMetadata,
+  type RegionBloc,
+  type DeadlinePhase,
+} from '@/data/complianceData'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { useHistoryStore } from '@/store/useHistoryStore'
 import { type ViewMode } from '@/components/Library/ViewToggle'
@@ -110,26 +120,106 @@ interface SectionHeaderProps {
   description: string
   learnLabel: string
   learnTo: string
+  /**
+   * Optional glossary of acronyms/schemes shown inside the header as an expandable
+   * row. Used on the Certification Schemes tab to distinguish FIPS 140-3 from ACVP,
+   * Common Criteria, EUCC, CNSA 2.0, etc.
+   */
+  glossary?: { term: string; definition: string }[]
 }
 
-function SectionHeader({ icon, title, description, learnLabel, learnTo }: SectionHeaderProps) {
+function SectionHeader({
+  icon,
+  title,
+  description,
+  learnLabel,
+  learnTo,
+  glossary,
+}: SectionHeaderProps) {
+  const [glossaryOpen, setGlossaryOpen] = useState(false)
+  const hasGlossary = !!glossary && glossary.length > 0
+
   return (
-    <div className="flex flex-col sm:flex-row sm:items-start gap-3 mb-4 p-4 rounded-lg border border-border bg-muted/20">
-      <div className="flex items-center gap-2 shrink-0">{icon}</div>
-      <div className="flex-1 min-w-0">
-        <h2 className="text-base font-semibold text-foreground">{title}</h2>
-        <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
+    <div className="flex flex-col gap-3 mb-4 p-4 rounded-lg border border-border bg-muted/20">
+      <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+        <div className="flex items-center gap-2 shrink-0">{icon}</div>
+        <div className="flex-1 min-w-0">
+          <h2 className="text-base font-semibold text-foreground">{title}</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          {hasGlossary && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setGlossaryOpen((v) => !v)}
+              className="h-auto text-xs px-3 py-1.5 border border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30 font-medium"
+              aria-expanded={glossaryOpen}
+              aria-controls="section-header-glossary"
+            >
+              <Info size={12} />
+              {glossaryOpen ? 'Hide glossary' : 'Glossary'}
+            </Button>
+          )}
+          <Link
+            to={learnTo}
+            className="print:hidden inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded border border-primary/30 text-primary hover:bg-primary/5 transition-colors font-medium"
+          >
+            <ExternalLink size={12} />
+            {learnLabel}
+          </Link>
+        </div>
       </div>
-      <Link
-        to={learnTo}
-        className="print:hidden inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded border border-primary/30 text-primary hover:bg-primary/5 transition-colors font-medium shrink-0"
-      >
-        <ExternalLink size={12} />
-        {learnLabel}
-      </Link>
+      {hasGlossary && glossaryOpen && (
+        <dl
+          id="section-header-glossary"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-xs bg-card rounded-md border border-border p-3"
+        >
+          {glossary!.map((g) => (
+            <div key={g.term} className="flex flex-col">
+              <dt className="font-semibold text-foreground">{g.term}</dt>
+              <dd className="text-muted-foreground mt-0.5">{g.definition}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
     </div>
   )
 }
+
+const CERTIFICATION_GLOSSARY = [
+  {
+    term: 'FIPS 140-3',
+    definition:
+      'NIST Cryptographic Module Validation Program (CMVP). Validates crypto modules against FIPS 140-3 security levels 1-4; mandatory for U.S. federal procurement. FIPS 140-2 certificates move to Historical list on 2026-09-21.',
+  },
+  {
+    term: 'ACVP',
+    definition:
+      'NIST Automated Cryptographic Validation Program. Tests individual algorithm implementations (e.g., ML-KEM, ML-DSA) for correctness. Prerequisite for CMVP module validation.',
+  },
+  {
+    term: 'Common Criteria (CC)',
+    definition:
+      'ISO/IEC 15408 international security evaluation framework. Products are certified against Protection Profiles at Evaluation Assurance Levels (EAL1-EAL7). Recognized across 31 CCRA countries.',
+  },
+  {
+    term: 'EUCC',
+    definition:
+      'EU Cybersecurity Certification scheme on Common Criteria (Regulation 2024/482). Managed by ENISA + ECCG; mandatory replacement for national CC schemes in the EU. PQC Protection Profiles emerging in 2026.',
+  },
+  {
+    term: 'CNSA 2.0',
+    definition:
+      'NSA Commercial National Security Algorithm suite v2.0. Phased mandate for U.S. national security systems: ML-KEM-1024 + ML-DSA-87, AES-256, SHA-384/512. Deadlines 2025-2033 by product category.',
+  },
+  {
+    term: 'CSPN / ANSSI Qualification',
+    definition:
+      'France ANSSI first-party certification scheme. Three qualification tiers (Elementary, Standard, Reinforced). Mandatory PQC qualification effective 2027; first PQC certs issued Sept-Oct 2025.',
+  },
+]
 
 // ── Mobile toggle ──────────────────────────────────────────────────────
 
@@ -146,12 +236,16 @@ function MobileViewToggle({
   landscapeProps: {
     orgFilter: string
     industryFilter: string
+    regionFilter: RegionBloc | 'All'
+    deadlineFilter: 'All' | DeadlinePhase
     searchText: string
     searchInputValue: string
     sortBy: FrameworkSortOption
     viewMode: ViewMode
     onOrgFilterChange: (org: string) => void
     onIndustryFilterChange: (ind: string) => void
+    onRegionFilterChange: (region: RegionBloc | 'All') => void
+    onDeadlineFilterChange: (phase: 'All' | DeadlinePhase) => void
     onSearchTextChange: (text: string) => void
     onSortByChange: (sort: FrameworkSortOption) => void
     onViewModeChange: (mode: ViewMode) => void
@@ -161,8 +255,14 @@ function MobileViewToggle({
   const section = activeSection
   const setSection = onSectionChange
 
+  // Industry alliances (PQC-COALITION, PQCA, QED-C) are surfaced alongside
+  // standardization bodies — they're standardization-adjacent organisations that
+  // produce reference implementations, policy guidance, and migration tooling.
   const standardsFrameworks = useMemo(
-    () => complianceFrameworks.filter((f) => f.bodyType === 'standardization_body'),
+    () =>
+      complianceFrameworks.filter(
+        (f) => f.bodyType === 'standardization_body' || f.bodyType === 'industry_alliance'
+      ),
     []
   )
   const technicalStandards = useMemo(
@@ -176,6 +276,21 @@ function MobileViewToggle({
   const complianceOnlyFrameworks = useMemo(
     () => complianceFrameworks.filter((f) => f.bodyType === 'compliance_framework'),
     []
+  )
+
+  const landscapeTabFrameworks = useMemo(
+    () => ({
+      standards: standardsFrameworks,
+      technical: technicalStandards,
+      certification: certificationFrameworks,
+      compliance: complianceOnlyFrameworks,
+    }),
+    [standardsFrameworks, technicalStandards, certificationFrameworks, complianceOnlyFrameworks]
+  )
+
+  const switchLandscapeTab = useCallback(
+    (tab: LandscapeTab) => setSection(tab as MobileSection),
+    [setSection]
   )
 
   const btnClass = (active: boolean) =>
@@ -222,6 +337,14 @@ function MobileViewToggle({
           Records
         </Button>
       </div>
+      {section !== 'records' && (
+        <CrossTabSearchHint
+          searchText={landscapeProps.searchText}
+          currentTab={section as LandscapeTab}
+          tabFrameworks={landscapeTabFrameworks}
+          onSwitchTab={switchLandscapeTab}
+        />
+      )}
       {section === 'standards' && (
         <ComplianceLandscape
           frameworks={standardsFrameworks}
@@ -246,7 +369,7 @@ function MobileViewToggle({
       {section === 'compliance' && (
         <ComplianceLandscape
           frameworks={complianceOnlyFrameworks}
-          showDeadlineTimeline={true}
+          showDeadlineTimeline={false}
           {...landscapeProps}
         />
       )}
@@ -302,8 +425,14 @@ export const ComplianceView = () => {
       : null
 
   // Pre-filtered framework sets for each tab
+  // Industry alliances (PQC-COALITION, PQCA, QED-C) are surfaced alongside
+  // standardization bodies — they're standardization-adjacent organisations that
+  // produce reference implementations, policy guidance, and migration tooling.
   const standardsFrameworks = useMemo(
-    () => complianceFrameworks.filter((f) => f.bodyType === 'standardization_body'),
+    () =>
+      complianceFrameworks.filter(
+        (f) => f.bodyType === 'standardization_body' || f.bodyType === 'industry_alliance'
+      ),
     []
   )
   const technicalStandards = useMemo(
@@ -319,9 +448,28 @@ export const ComplianceView = () => {
     []
   )
 
+  const landscapeTabFrameworksDesktop = useMemo(
+    () => ({
+      standards: standardsFrameworks,
+      technical: technicalStandards,
+      certification: certificationFrameworks,
+      compliance: complianceOnlyFrameworks,
+    }),
+    [standardsFrameworks, technicalStandards, certificationFrameworks, complianceOnlyFrameworks]
+  )
+
+  const [exportError, setExportError] = useState<string | null>(null)
+
   const handleExportCsv = useCallback(() => {
-    const csv = generateCsv(data, COMPLIANCE_CSV_COLUMNS)
-    downloadCsv(csv, csvFilename('pqc-compliance'))
+    try {
+      const csv = generateCsv(data, COMPLIANCE_CSV_COLUMNS)
+      downloadCsv(csv, csvFilename('pqc-compliance'))
+      setExportError(null)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Unknown error generating CSV export.'
+      console.error('Compliance CSV export failed:', err)
+      setExportError(message)
+    }
   }, [data])
 
   // ── URL-synced filter state ──────────────────────────────────────────
@@ -329,10 +477,32 @@ export const ComplianceView = () => {
   const isLandscapeTab = (tab: MobileSection) =>
     tab === 'standards' || tab === 'technical' || tab === 'certification' || tab === 'compliance'
 
+  /**
+   * Fragment-anchor support: `/compliance#records` (or `#standards` / `#technical` /
+   * `#certification` / `#compliance`) selects the corresponding sub-tab. Query
+   * param `?tab=` still wins when present so existing deep-link behaviour is
+   * preserved; the hash is only consulted as a fallback.
+   */
+  const parseTabFromHash = (hash: string): MobileSection | null => {
+    const clean = hash.replace(/^#/, '').trim() as MobileSection
+    if (
+      clean === 'standards' ||
+      clean === 'technical' ||
+      clean === 'certification' ||
+      clean === 'compliance' ||
+      clean === 'records'
+    ) {
+      return clean
+    }
+    return null
+  }
+
   // Active tab
   const [activeTab, setActiveTab] = useState<MobileSection>(() => {
     const tab = searchParams.get('tab') as MobileSection | null
     if (tab) return tab
+    const hashTab = typeof window !== 'undefined' ? parseTabFromHash(window.location.hash) : null
+    if (hashTab) return hashTab
     return (certParam ? 'records' : (complianceHint?.section ?? 'standards')) as MobileSection
   })
 
@@ -343,6 +513,12 @@ export const ComplianceView = () => {
     // Multiple industries (including "all allowed") → default to 'All' so nothing is filtered out.
     () =>
       searchParams.get('ind') ?? (selectedIndustries.length === 1 ? selectedIndustries[0] : 'All')
+  )
+  const [lsRegion, setLsRegion] = useState<RegionBloc | 'All'>(
+    () => (searchParams.get('region') as RegionBloc | null) ?? 'All'
+  )
+  const [lsDeadline, setLsDeadline] = useState<'All' | DeadlinePhase>(
+    () => (searchParams.get('phase') as DeadlinePhase | null) ?? 'All'
   )
   const [lsSearch, setLsSearch] = useState(() => searchParams.get('q') ?? '')
   const [lsSearchInput, setLsSearchInput] = useState(() => searchParams.get('q') ?? '')
@@ -396,6 +572,8 @@ export const ComplianceView = () => {
       tab?: MobileSection
       org?: string
       ind?: string
+      region?: RegionBloc | 'All'
+      phase?: 'All' | DeadlinePhase
       q?: string
       sort?: string
       view?: ViewMode
@@ -424,6 +602,8 @@ export const ComplianceView = () => {
           for (const key of [
             'org',
             'ind',
+            'region',
+            'phase',
             'q',
             'sort',
             'view',
@@ -443,12 +623,16 @@ export const ComplianceView = () => {
           if (isLandscapeTab(tab)) {
             const org = overrides.org ?? lsOrg
             const ind = overrides.ind ?? lsIndustry
+            const region = overrides.region ?? lsRegion
+            const phase = overrides.phase ?? lsDeadline
             const q = overrides.q ?? lsSearch
             const sort = overrides.sort ?? lsSort
             const view = overrides.view ?? lsView
 
             if (org !== 'All') next.set('org', org)
             if (ind !== 'All') next.set('ind', ind)
+            if (region !== 'All') next.set('region', region)
+            if (phase !== 'All') next.set('phase', phase)
             if (q) next.set('q', q)
             if (sort !== 'deadline') next.set('sort', sort)
             if (view !== 'cards') next.set('view', view)
@@ -487,6 +671,8 @@ export const ComplianceView = () => {
       activeTab,
       lsOrg,
       lsIndustry,
+      lsRegion,
+      lsDeadline,
       lsSearch,
       lsSort,
       lsView,
@@ -515,12 +701,16 @@ export const ComplianceView = () => {
       const nextOrg = searchParams.get('org') ?? 'All'
       const nextInd =
         searchParams.get('ind') ?? (selectedIndustries.length === 1 ? selectedIndustries[0] : 'All')
+      const nextRegion = (searchParams.get('region') as RegionBloc | null) ?? 'All'
+      const nextPhase = (searchParams.get('phase') as DeadlinePhase | null) ?? 'All'
       const nextQ = searchParams.get('q') ?? ''
       const nextSort = (searchParams.get('sort') as FrameworkSortOption) ?? 'deadline'
       const nextView = (searchParams.get('view') as ViewMode) ?? 'cards'
 
       setLsOrg((prev) => (prev !== nextOrg ? nextOrg : prev))
       setLsIndustry((prev) => (prev !== nextInd ? nextInd : prev))
+      setLsRegion((prev) => (prev !== nextRegion ? nextRegion : prev))
+      setLsDeadline((prev) => (prev !== nextPhase ? nextPhase : prev))
       setLsSearch((prev) => (prev !== nextQ ? nextQ : prev))
       setLsSearchInput((prev) => (prev !== nextQ ? nextQ : prev))
       setLsSort((prev) => (prev !== nextSort ? nextSort : prev))
@@ -590,6 +780,22 @@ export const ComplianceView = () => {
     (ind: string) => {
       setLsIndustry(ind)
       syncFiltersToUrl({ ind })
+    },
+    [syncFiltersToUrl]
+  )
+
+  const handleLsRegionChange = useCallback(
+    (region: RegionBloc | 'All') => {
+      setLsRegion(region)
+      syncFiltersToUrl({ region })
+    },
+    [syncFiltersToUrl]
+  )
+
+  const handleLsDeadlineChange = useCallback(
+    (phase: 'All' | DeadlinePhase) => {
+      setLsDeadline(phase)
+      syncFiltersToUrl({ phase })
     },
     [syncFiltersToUrl]
   )
@@ -734,6 +940,29 @@ export const ComplianceView = () => {
         onExport={handleExportCsv}
       />
 
+      {exportError && (
+        <div
+          role="alert"
+          className="flex items-start gap-3 p-3 rounded-lg border border-status-error/40 bg-status-error/5 text-sm"
+        >
+          <Info size={16} className="text-status-error mt-0.5 shrink-0" />
+          <div className="flex-1">
+            <p className="font-medium text-status-error">CSV export failed</p>
+            <p className="text-muted-foreground text-xs mt-0.5">{exportError}</p>
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setExportError(null)}
+            className="h-auto text-xs px-2 py-1 text-muted-foreground hover:text-foreground"
+            aria-label="Dismiss export error"
+          >
+            Dismiss
+          </Button>
+        </div>
+      )}
+
       {/* Curious user intro context */}
       {(selectedPersona === 'curious' || experienceLevel === 'curious') && (
         <div className="flex items-start gap-3 p-3 rounded-lg border border-secondary/20 bg-secondary/5 text-sm">
@@ -767,6 +996,13 @@ export const ComplianceView = () => {
         </div>
       )}
 
+      {/* Global PQC deadline timeline — always visible on /compliance (desktop).
+          Renders across ALL frameworks with parseable deadlines so the big
+          picture is immediately legible regardless of which sub-tab is active. */}
+      <div className="hidden md:block">
+        <DeadlineTimeline frameworks={complianceFrameworks} />
+      </div>
+
       {/* Mobile: 3-section toggle */}
       <div className="md:hidden">
         <MobileViewToggle
@@ -775,12 +1011,16 @@ export const ComplianceView = () => {
           landscapeProps={{
             orgFilter: lsOrg,
             industryFilter: lsIndustry,
+            regionFilter: lsRegion,
+            deadlineFilter: lsDeadline,
             searchText: lsSearch,
             searchInputValue: lsSearchInput,
             sortBy: lsSort,
             viewMode: lsView,
             onOrgFilterChange: handleLsOrgChange,
             onIndustryFilterChange: handleLsIndustryChange,
+            onRegionFilterChange: handleLsRegionChange,
+            onDeadlineFilterChange: handleLsDeadlineChange,
             onSearchTextChange: handleLsSearchChange,
             onSortByChange: handleLsSortChange,
             onViewModeChange: handleLsViewChange,
@@ -817,7 +1057,7 @@ export const ComplianceView = () => {
       </div>
 
       {/* Desktop: 3-tab layout */}
-      <div className="hidden md:block">
+      <div id="compliance-tabs" className="hidden md:block">
         <Tabs
           value={activeTab}
           className="w-full"
@@ -851,21 +1091,31 @@ export const ComplianceView = () => {
             <SectionHeader
               icon={<BookOpen size={20} className="text-secondary" />}
               title="Standardization Bodies"
-              description={`${standardsFrameworks.length} organizations that define PQC algorithms, protocols, and security requirements — the bodies whose publications the world implements.`}
+              description={`${standardsFrameworks.length} organizations that define PQC algorithms, protocols, and security requirements — the bodies whose publications the world implements, plus industry alliances (marked with an "Alliance" badge) that produce reference implementations and migration tooling.`}
               learnLabel="Explore in Learn module"
               learnTo="/learn/standards-bodies?step=2"
+            />
+            <CrossTabSearchHint
+              searchText={lsSearch}
+              currentTab="standards"
+              tabFrameworks={landscapeTabFrameworksDesktop}
+              onSwitchTab={(t) => handleTabChange(t)}
             />
             <ComplianceLandscape
               frameworks={standardsFrameworks}
               showDeadlineTimeline={false}
               orgFilter={lsOrg}
               industryFilter={lsIndustry}
+              regionFilter={lsRegion}
+              deadlineFilter={lsDeadline}
               searchText={lsSearch}
               searchInputValue={lsSearchInput}
               sortBy={lsSort}
               viewMode={lsView}
               onOrgFilterChange={handleLsOrgChange}
               onIndustryFilterChange={handleLsIndustryChange}
+              onRegionFilterChange={handleLsRegionChange}
+              onDeadlineFilterChange={handleLsDeadlineChange}
               onSearchTextChange={handleLsSearchChange}
               onSortByChange={handleLsSortChange}
               onViewModeChange={handleLsViewChange}
@@ -881,17 +1131,27 @@ export const ComplianceView = () => {
               learnLabel="Explore in Learn module"
               learnTo="/learn/standards-bodies?step=2"
             />
+            <CrossTabSearchHint
+              searchText={lsSearch}
+              currentTab="technical"
+              tabFrameworks={landscapeTabFrameworksDesktop}
+              onSwitchTab={(t) => handleTabChange(t)}
+            />
             <ComplianceLandscape
               frameworks={technicalStandards}
               showDeadlineTimeline={false}
               orgFilter={lsOrg}
               industryFilter={lsIndustry}
+              regionFilter={lsRegion}
+              deadlineFilter={lsDeadline}
               searchText={lsSearch}
               searchInputValue={lsSearchInput}
               sortBy={lsSort}
               viewMode={lsView}
               onOrgFilterChange={handleLsOrgChange}
               onIndustryFilterChange={handleLsIndustryChange}
+              onRegionFilterChange={handleLsRegionChange}
+              onDeadlineFilterChange={handleLsDeadlineChange}
               onSearchTextChange={handleLsSearchChange}
               onSortByChange={handleLsSortChange}
               onViewModeChange={handleLsViewChange}
@@ -906,18 +1166,29 @@ export const ComplianceView = () => {
               description={`${certificationFrameworks.length} validation programs and schemes that certify cryptographic products and algorithm implementations against published standards.`}
               learnLabel="Understand the cert chain"
               learnTo="/learn/standards-bodies?step=2"
+              glossary={CERTIFICATION_GLOSSARY}
+            />
+            <CrossTabSearchHint
+              searchText={lsSearch}
+              currentTab="certification"
+              tabFrameworks={landscapeTabFrameworksDesktop}
+              onSwitchTab={(t) => handleTabChange(t)}
             />
             <ComplianceLandscape
               frameworks={certificationFrameworks}
               showDeadlineTimeline={false}
               orgFilter={lsOrg}
               industryFilter={lsIndustry}
+              regionFilter={lsRegion}
+              deadlineFilter={lsDeadline}
               searchText={lsSearch}
               searchInputValue={lsSearchInput}
               sortBy={lsSort}
               viewMode={lsView}
               onOrgFilterChange={handleLsOrgChange}
               onIndustryFilterChange={handleLsIndustryChange}
+              onRegionFilterChange={handleLsRegionChange}
+              onDeadlineFilterChange={handleLsDeadlineChange}
               onSearchTextChange={handleLsSearchChange}
               onSortByChange={handleLsSortChange}
               onViewModeChange={handleLsViewChange}
@@ -933,17 +1204,27 @@ export const ComplianceView = () => {
               learnLabel="Build your strategy"
               learnTo="/learn/compliance-strategy"
             />
+            <CrossTabSearchHint
+              searchText={lsSearch}
+              currentTab="compliance"
+              tabFrameworks={landscapeTabFrameworksDesktop}
+              onSwitchTab={(t) => handleTabChange(t)}
+            />
             <ComplianceLandscape
               frameworks={complianceOnlyFrameworks}
-              showDeadlineTimeline={true}
+              showDeadlineTimeline={false}
               orgFilter={lsOrg}
               industryFilter={lsIndustry}
+              regionFilter={lsRegion}
+              deadlineFilter={lsDeadline}
               searchText={lsSearch}
               searchInputValue={lsSearchInput}
               sortBy={lsSort}
               viewMode={lsView}
               onOrgFilterChange={handleLsOrgChange}
               onIndustryFilterChange={handleLsIndustryChange}
+              onRegionFilterChange={handleLsRegionChange}
+              onDeadlineFilterChange={handleLsDeadlineChange}
               onSearchTextChange={handleLsSearchChange}
               onSortByChange={handleLsSortChange}
               onViewModeChange={handleLsViewChange}

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useEmbed } from './EmbedProvider'
 import { isIframeEmbed } from './platform'
 
-const HOST_CHECK_TIMEOUT_MS = 2000
+const HOST_CHECK_TIMEOUT_MS = 8000
 
 /**
  * Enforces that the embedding parent page is an authorised host.
@@ -38,20 +38,33 @@ export function useHostCheck(): boolean | null {
       return
     }
 
-    // targetOrigin restricts delivery: only a parent at an allowed origin
-    // will receive pqc:ready, and therefore be able to send pqc:challenge.
-    const targetOrigin = allowedOrigins[0] ?? '*'
+    // localhost and 127.0.0.1 are the same host; normalise so certs that list
+    // http://localhost:N also accept challenges from http://127.0.0.1:N and vice versa.
+    const normalize = (o: string) => o.replace('127.0.0.1', 'localhost')
+    const isAllowed = (origin: string) =>
+      allowedOrigins.includes(origin) || allowedOrigins.includes(normalize(origin))
 
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type !== 'pqc:challenge') return
-      if (allowedOrigins.includes(event.origin)) {
+      if (isAllowed(event.origin)) {
         setHostAuthorized(true)
       }
       // Wrong origin — ignore, keep waiting for the timer
     }
 
     window.addEventListener('message', handleMessage)
-    window.parent.postMessage({ type: 'pqc:ready' }, targetOrigin)
+
+    // Broadcast pqc:ready to every allowed origin (and its 127.0.0.1 variant) so
+    // certs with http://localhost:N also deliver when the parent is at 127.0.0.1:N.
+    // pqc:ready carries no sensitive data; security is enforced by isAllowed() above.
+    const targets = new Set<string>()
+    for (const origin of allowedOrigins) {
+      targets.add(origin)
+      targets.add(origin.replace('localhost', '127.0.0.1'))
+    }
+    for (const target of targets) {
+      window.parent.postMessage({ type: 'pqc:ready' }, target)
+    }
 
     const timer = setTimeout(() => {
       // Only flip to false if still waiting (not already authorized)

@@ -3,15 +3,24 @@
 /**
  * Validates cross-references between the compliance, library, timeline, and leaders CSVs.
  *
- * Checks:
+ * Structural checks (fail on break):
  *   1. compliance.library_refs  → library.reference_id  (broken links in UI)
  *   2. compliance.timeline_refs → Country:OrgName pairs in timeline  (broken links in UI)
  *   3. library.dependencies     → library.reference_id  (informational, exits 0)
  *   4. leaders.KeyResourceUrl   → library.reference_id  (broken deep links in UI)
  *
+ * Semantic consistency checks (warn only):
+ *   5. compliance.deadline_year ↔ timeline event coverage — for each compliance row
+ *      with a parseable deadline year, at least one timeline event for a referenced
+ *      org must span that year (StartYear ≤ deadline ≤ EndYear). Catches drift when
+ *      either CSV is updated without the other.
+ *   6. Orphan timeline orgs — informational warning when a timeline org has no
+ *      compliance row that references it. Not all timeline events are regulatory
+ *      mandates, so this is informational only.
+ *
  * Usage:  npx tsx scripts/validate-csv-refs.ts
- * Exit 0: no broken refs in compliance → library/timeline checks
- * Exit 1: broken refs found
+ * Exit 0: no broken refs in structural checks
+ * Exit 1: structural checks failed (semantic checks never fail the run)
  */
 import fs from 'fs'
 import path from 'path'
@@ -104,12 +113,50 @@ function loadTimelinePairs(csvPath: string): Set<string> {
 }
 
 /**
+ * Returns a map from "Country:OrgName" to the list of [startYear, endYear] spans
+ * for that org. Used by the semantic deadline-coverage check.
+ * Timeline CSV header (positional):
+ *   0=Country 1=FlagCode 2=OrgName 3=OrgFullName 4=OrgLogoUrl
+ *   5=Type 6=Category 7=StartYear 8=EndYear 9=Title ...
+ */
+function loadTimelineOrgSpans(csvPath: string): Map<string, Array<[number, number]>> {
+  const map = new Map<string, Array<[number, number]>>()
+  for (const cols of parseCSV(csvPath)) {
+    const country = cols[0]?.trim()
+    const orgName = cols[2]?.trim()
+    const startYear = parseInt(cols[7] ?? '', 10)
+    const endYear = parseInt(cols[8] ?? '', 10)
+    if (!country || !orgName || Number.isNaN(startYear) || Number.isNaN(endYear)) continue
+    const key = `${country}:${orgName}`
+    if (!map.has(key)) map.set(key, [])
+    map.get(key)!.push([startYear, endYear])
+  }
+  return map
+}
+
+/**
+ * Parse the earliest future (or latest historic) year out of a free-text deadline
+ * string. Mirrors src/utils/deadlineUrgency.ts — kept in sync manually.
+ */
+function parseDeadlineYear(deadline: string, currentYear: number): number | null {
+  if (!deadline) return null
+  const trimmed = deadline.trim().toLowerCase()
+  if (trimmed.startsWith('ongoing') || trimmed.startsWith('annual')) return null
+  const matches = deadline.match(/\b(20\d{2})\b/g)
+  if (!matches || matches.length === 0) return null
+  const years = matches.map((y) => parseInt(y, 10)).sort((a, b) => a - b)
+  const future = years.find((y) => y >= currentYear)
+  return future ?? years[0]
+}
+
+/**
  * Returns compliance rows with their library_refs and timeline_refs.
  * Compliance CSV header: id,label,description,industries,countries,requires_pqc,
  *   deadline,notes,enforcement_body,library_refs,timeline_refs
  */
 interface ComplianceRow {
   id: string
+  deadline: string
   libraryRefs: string[]
   timelineRefs: string[]
   dependencyRefs: string[]
@@ -118,6 +165,7 @@ interface ComplianceRow {
 function loadCompliance(csvPath: string): ComplianceRow[] {
   return parseCSV(csvPath).map((cols) => ({
     id: cols[0] ?? '',
+    deadline: cols[6] ?? '',
     libraryRefs: parseSemicolon(cols[9] ?? ''),
     timelineRefs: parseSemicolon(cols[10] ?? ''),
     dependencyRefs: [],
@@ -159,6 +207,7 @@ function main(): void {
 
   const libraryIds = loadLibraryIds(libraryPath)
   const timelinePairs = loadTimelinePairs(timelinePath)
+  const timelineSpans = loadTimelineOrgSpans(timelinePath)
   const complianceRows = loadCompliance(compliancePath)
   const libraryDeps = loadLibraryDeps(libraryPath)
   const leaderRefs = loadLeaderRefs(leadersPath)
@@ -254,6 +303,65 @@ function main(): void {
       console.error(`  [${leaderName}] "${ref}" — not found in library CSV`)
     }
     console.error()
+  }
+
+  // ── Check 5: compliance deadline ↔ timeline event coverage ─────────────────
+  console.log('── Check 5: compliance.deadline ↔ timeline event year span (warn) ───')
+  const currentYear = new Date().getFullYear()
+  const deadlineCoverageGaps: Array<{
+    complianceId: string
+    deadline: string
+    year: number
+    ref: string
+  }> = []
+  for (const row of complianceRows) {
+    const year = parseDeadlineYear(row.deadline, currentYear)
+    if (year === null) continue
+    if (row.timelineRefs.length === 0) continue // no ref to check against
+    // At least ONE referenced org must have an event spanning the deadline year.
+    const hasCoverage = row.timelineRefs.some((ref) => {
+      const spans = timelineSpans.get(ref) ?? []
+      return spans.some(([start, end]) => start <= year && year <= end)
+    })
+    if (!hasCoverage) {
+      deadlineCoverageGaps.push({
+        complianceId: row.id,
+        deadline: row.deadline,
+        year,
+        ref: row.timelineRefs.join(', '),
+      })
+    }
+  }
+  if (deadlineCoverageGaps.length === 0) {
+    console.log('✓ Every dated compliance deadline has a timeline event covering its year\n')
+  } else {
+    console.warn(
+      `⚠  ${deadlineCoverageGaps.length} compliance deadline(s) have no matching timeline event:`
+    )
+    for (const { complianceId, deadline, year, ref } of deadlineCoverageGaps) {
+      console.warn(
+        `   [${complianceId}] deadline="${deadline}" (year=${year}) — no event in ${ref} spans ${year}`
+      )
+    }
+    console.warn()
+  }
+
+  // ── Check 6: orphan timeline orgs — no compliance row references them ──────
+  console.log('── Check 6: orphan timeline orgs (info) ─────────────────────────────')
+  const referencedPairs = new Set<string>()
+  for (const row of complianceRows) {
+    for (const ref of row.timelineRefs) referencedPairs.add(ref)
+  }
+  const orphanPairs = [...timelinePairs].filter((p) => !referencedPairs.has(p)).sort()
+  if (orphanPairs.length === 0) {
+    console.log('✓ Every timeline org is referenced by at least one compliance row\n')
+  } else {
+    console.warn(
+      `ℹ  ${orphanPairs.length} timeline org(s) are not referenced by any compliance row ` +
+        `(informational — not every event must map to a regulation):`
+    )
+    for (const p of orphanPairs) console.warn(`    ${p}`)
+    console.warn()
   }
 
   // ── Result ────────────────────────────────────────────────────────────────

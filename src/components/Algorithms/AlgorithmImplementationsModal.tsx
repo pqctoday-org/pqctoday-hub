@@ -3,6 +3,7 @@ import { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, GitBranch, ExternalLink, PackageOpen, BookOpen, Library } from 'lucide-react'
+import FocusLock from 'react-focus-lock'
 import { Button } from '../ui/button'
 import { implsByAlgorithm } from '../../data/algoProductXrefData'
 import type { AlgoProductXref } from '../../data/algoProductXrefData'
@@ -82,94 +83,96 @@ export function AlgorithmImplementationsModal({
           />
 
           <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4 print:hidden">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="glass-panel p-6 max-w-xl w-full max-h-[85dvh] overflow-y-auto"
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="algo-impl-modal-title"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Header */}
-              <div className="flex items-start justify-between mb-5 gap-3">
-                <div>
-                  <h2
-                    id="algo-impl-modal-title"
-                    className="text-lg font-bold text-foreground leading-tight"
-                  >
-                    Crypto Libraries
-                  </h2>
-                  <p className="text-sm text-primary font-mono mt-0.5">{displayName}</p>
-                </div>
-                <Button
-                  variant="ghost"
-                  onClick={onClose}
-                  className="p-2 h-auto w-auto rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground shrink-0"
-                  aria-label="Close"
-                >
-                  <X size={18} />
-                </Button>
-              </div>
-
-              {xrefs.length === 0 ? (
-                <div className="flex flex-col items-center gap-3 py-10 text-center">
-                  <PackageOpen size={36} className="text-muted-foreground/40" />
-                  <p className="text-sm text-muted-foreground">
-                    No indexed implementations yet for{' '}
-                    <span className="font-medium text-foreground">{displayName}</span>.
-                  </p>
-                  <Link
-                    to="/migrate"
+            <FocusLock returnFocus>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                className="glass-panel p-6 max-w-xl w-full max-h-[85dvh] overflow-y-auto"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="algo-impl-modal-title"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Header */}
+                <div className="flex items-start justify-between mb-5 gap-3">
+                  <div>
+                    <h2
+                      id="algo-impl-modal-title"
+                      className="text-lg font-bold text-foreground leading-tight"
+                    >
+                      Crypto Libraries
+                    </h2>
+                    <p className="text-sm text-primary font-mono mt-0.5">{displayName}</p>
+                  </div>
+                  <Button
+                    variant="ghost"
                     onClick={onClose}
-                    className="text-sm text-primary hover:underline"
+                    className="p-2 h-auto w-auto rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground shrink-0"
+                    aria-label="Close"
                   >
-                    Browse all implementations →
-                  </Link>
+                    <X size={18} />
+                  </Button>
                 </div>
-              ) : (
-                <div className="space-y-6">
-                  {/* Libraries */}
-                  {libraries.length > 0 && (
-                    <section>
-                      <div className="flex items-center gap-2 mb-3">
-                        <Library size={14} className="text-primary shrink-0" />
-                        <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-                          Libraries ({libraries.length})
-                        </p>
-                      </div>
-                      <div className="space-y-2">
-                        {libraries.map((item) => (
-                          <ImplCard key={item.implementationName} xref={item} onClose={onClose} />
-                        ))}
-                      </div>
-                    </section>
-                  )}
 
-                  {/* Reference Implementations */}
-                  {references.length > 0 && (
-                    <section>
-                      <div className="flex items-center gap-2 mb-3">
-                        <BookOpen size={14} className="text-secondary shrink-0" />
-                        <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-                          Reference Implementations ({references.length})
-                        </p>
-                      </div>
-                      <div className="space-y-2">
-                        {references.map((item) => (
-                          <ImplCard key={item.implementationName} xref={item} onClose={onClose} />
-                        ))}
-                      </div>
-                    </section>
-                  )}
+                {xrefs.length === 0 ? (
+                  <div className="flex flex-col items-center gap-3 py-10 text-center">
+                    <PackageOpen size={36} className="text-muted-foreground/40" />
+                    <p className="text-sm text-muted-foreground">
+                      No indexed implementations yet for{' '}
+                      <span className="font-medium text-foreground">{displayName}</span>.
+                    </p>
+                    <Link
+                      to="/migrate"
+                      onClick={onClose}
+                      className="text-sm text-primary hover:underline"
+                    >
+                      Browse all implementations →
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {/* Libraries */}
+                    {libraries.length > 0 && (
+                      <section>
+                        <div className="flex items-center gap-2 mb-3">
+                          <Library size={14} className="text-primary shrink-0" />
+                          <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                            Libraries ({libraries.length})
+                          </p>
+                        </div>
+                        <div className="space-y-2">
+                          {libraries.map((item) => (
+                            <ImplCard key={item.implementationName} xref={item} onClose={onClose} />
+                          ))}
+                        </div>
+                      </section>
+                    )}
 
-                  <p className="text-xs text-muted-foreground pt-1 border-t border-border">
-                    Open-source libraries &amp; reference implementations · Not exhaustive
-                  </p>
-                </div>
-              )}
-            </motion.div>
+                    {/* Reference Implementations */}
+                    {references.length > 0 && (
+                      <section>
+                        <div className="flex items-center gap-2 mb-3">
+                          <BookOpen size={14} className="text-secondary shrink-0" />
+                          <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                            Reference Implementations ({references.length})
+                          </p>
+                        </div>
+                        <div className="space-y-2">
+                          {references.map((item) => (
+                            <ImplCard key={item.implementationName} xref={item} onClose={onClose} />
+                          ))}
+                        </div>
+                      </section>
+                    )}
+
+                    <p className="text-xs text-muted-foreground pt-1 border-t border-border">
+                      Open-source libraries &amp; reference implementations · Not exhaustive
+                    </p>
+                  </div>
+                )}
+              </motion.div>
+            </FocusLock>
           </div>
         </>
       )}

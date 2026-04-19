@@ -2742,6 +2742,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Extraction Timestamp**: 2026-04-14T23:55:52
 
 ---
+
 ## NSA CNSA 2.0
 
 - **Reference ID**: NSA CNSA 2.0
@@ -2819,7 +2820,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Supply Chain & Vendor Risk**: vendors interacting with NSS, DoD, or DIB systems; code sources (signers) receiving signed code from a variety of sources; third-party library trust via CAVP testing for non-NSS signers
 - **Deployment & Migration Complexity**: transition timeframe 2025-2030 prefer, 2030-2033 exclusive, 2035 complete; waiver process for fielded equipment; cryptographic agility; phased rollout based on equipment type; firmware signatures locked in for the life of a system
 - **Extraction Note**: v3 update: 8 dimensions extracted; base fields from prior enrichment
-- **Source Document**: CSI_CNSA_2.0_FAQ_.pdf (441,742 bytes, 15,000 extracted chars)
+- **Source Document**: CSI*CNSA_2.0_FAQ*.pdf (441,742 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-14T23:57:47
 
 ---
@@ -7577,7 +7578,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Supply Chain & Vendor Risk**: Supply Chain Risk Management
 - **Deployment & Migration Complexity**: None detected
 - **Extraction Note**: v3 update: 8 dimensions extracted; base fields from prior enrichment
-- **Source Document**: NIST_SP_800-82_Rev._3.pdf (8,584,345 bytes, 15,000 extracted chars)
+- **Source Document**: NIST_SP_800-82_Rev.\_3.pdf (8,584,345 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-15T01:37:55
 
 ---
@@ -13522,7 +13523,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Supply Chain & Vendor Risk**: open-source vs proprietary (BSD-3-Clause License), third-party library trust (Cloudflare Go fork integration)
 - **Deployment & Migration Complexity**: experimental deployment, hybrid key exchanges, X-Wing
 - **Extraction Note**: v3 update: 8 dimensions extracted; base fields from prior enrichment
-- **Source Document**: CIRCL_Cloudflare_.html (381,094 bytes, 9,228 extracted chars)
+- **Source Document**: CIRCL*Cloudflare*.html (381,094 bytes, 9,228 extracted chars)
 - **Extraction Timestamp**: 2026-04-15T03:44:15
 
 ---
@@ -13599,7 +13600,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Cryptographic Discovery & Inventory**: algorithm enumeration via get_enabled_kem_mechanisms, get_enabled_sig_mechanisms, and get_enabled_stateful_sig_mechanisms functions
 - **Testing & Validation Methods**: unit tests using nose2, continuous integration via GitHub actions, examples for key encapsulation, signature, stateful signature, and RNG
 - **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: support for alternative RNGs via randombytes_* functions, module oqs/rand.py supporting RNGs from <oqs/rand.h>
+- **QRNG & Entropy Sources**: support for alternative RNGs via randombytes\_\* functions, module oqs/rand.py supporting RNGs from <oqs/rand.h>
 - **Constrained Device & IoT Suitability**: None detected
 - **Supply Chain & Vendor Risk**: dependency on liboqs C library, automatic download and installation of liboqs if not detected at runtime, MIT License
 - **Deployment & Migration Complexity**: hybrid cryptography recommendation using post-quantum algorithms alongside traditional public key algorithms like RSA or elliptic curves, prototyping focus with no warranty, platform support for Linux, macOS, and Windows
@@ -14014,7 +14015,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Supply Chain & Vendor Risk**: open source implementations, third-party library trust via Open Quantum Safe project participation
 - **Deployment & Migration Complexity**: NCCoE PQC Migration project, migration phase (assess/plan/test/migrate/launch) not explicitly detailed but migration tools and interoperability testing mentioned, difficulty of replacing existing cryptography from production software
 - **Extraction Note**: v3 update: 8 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Microsoft_Research_PQC_.html (172,216 bytes, 10,090 extracted chars)
+- **Source Document**: Microsoft*Research_PQC*.html (172,216 bytes, 10,090 extracted chars)
 - **Extraction Timestamp**: 2026-04-15T03:54:09
 
 ---
@@ -14055,7 +14056,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Supply Chain & Vendor Risk**: None detected
 - **Deployment & Migration Complexity**: None detected
 - **Extraction Note**: v3 update: 8 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Intel_Labs_PQC_.html (186,959 bytes, 6,609 extracted chars)
+- **Source Document**: Intel*Labs_PQC*.html (186,959 bytes, 6,609 extracted chars)
 - **Extraction Timestamp**: 2026-04-15T03:54:50
 
 ---
@@ -16401,7 +16402,7 @@ enrichment_method: ollama-qwen3.5:27b
 
 - **Reference ID**: Quantum-Economy-Landscape-in-Saudi-Arabia-23
 - **Title**: Quantum Economy Landscape in Saudi Arabia (23)
-- **Authors**: Quantum Economy Landscape in Saudi Arabia  (23).pdf
+- **Authors**: Quantum Economy Landscape in Saudi Arabia (23).pdf
 - **Publication Date**: Not specified
 - **Last Updated**: Not specified
 - **Document Status**: Published
@@ -17380,4 +17381,3 @@ enrichment_method: ollama-qwen3.5:27b
 - **Extraction Timestamp**: 2026-04-15T04:59:14
 
 ---
-

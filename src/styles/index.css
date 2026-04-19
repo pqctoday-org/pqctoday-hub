@@ -40,6 +40,9 @@
   --color-info: hsl(var(--info));
   --color-info-foreground: hsl(var(--info-foreground));
 
+  --color-critical: hsl(var(--critical));
+  --color-critical-foreground: hsl(var(--critical-foreground));
+
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
@@ -177,6 +180,10 @@
     --warning-foreground: 48 96% 89%;
     --info: 217 91% 60%;
     --info-foreground: 210 40% 98%;
+    /* Critical — one tier beyond destructive, darker magenta-red to visually
+       distinguish 'critical' risk level from 'high' in gauges and badges. */
+    --critical: 340 85% 38%;
+    --critical-foreground: 210 40% 98%;
 
     /* File Types (Light Mode - High Contrast) */
     --file-key: 0 84% 60%;
@@ -233,6 +240,9 @@
     --warning-foreground: 26 83.3% 14.1%;
     --info: 213 93% 68%;
     --info-foreground: 210 40% 98%;
+    /* Critical — brighter magenta-red for dark mode legibility. */
+    --critical: 335 90% 58%;
+    --critical-foreground: 210 40% 98%;
 
     /* File Types (Dark Mode) */
     --file-key: 0 84% 70%;

@@ -45,7 +45,9 @@ const EXECUTIVE_MODULES = [
 
 export const PILLAR_ARTIFACT_TYPES: Record<string, ExecutiveDocumentType[]> = {
   risk: ['risk-register', 'risk-treatment-plan', 'roi-model', 'board-deck', 'crqc-scenario'],
-  compliance: ['audit-checklist', 'compliance-timeline', 'compliance-checklist'],
+  // `compliance-checklist` is aliased to `audit-checklist` (semantically duplicated,
+  // no dedicated builder) and intentionally omitted from the placeholder list.
+  compliance: ['audit-checklist', 'compliance-timeline'],
   governance: ['raci-matrix', 'policy-draft', 'kpi-dashboard', 'stakeholder-comms'],
   vendor: [
     'vendor-scorecard',
@@ -53,6 +55,7 @@ export const PILLAR_ARTIFACT_TYPES: Record<string, ExecutiveDocumentType[]> = {
     'migration-roadmap',
     'kpi-tracker',
     'supply-chain-matrix',
+    'deployment-playbook',
   ],
 }
 
@@ -63,11 +66,11 @@ export const PILLAR_SOURCE_MODULES: Record<string, Record<ExecutiveDocumentType,
     'risk-treatment-plan': 'pqc-risk-management',
     'roi-model': 'pqc-business-case',
     'board-deck': 'pqc-business-case',
+    'crqc-scenario': 'pqc-risk-management',
   } as Record<ExecutiveDocumentType, string>,
   compliance: {
     'audit-checklist': 'compliance-strategy',
     'compliance-timeline': 'compliance-strategy',
-    'compliance-checklist': 'compliance-strategy',
   } as Record<ExecutiveDocumentType, string>,
   governance: {
     'raci-matrix': 'pqc-governance',
@@ -80,6 +83,8 @@ export const PILLAR_SOURCE_MODULES: Record<string, Record<ExecutiveDocumentType,
     'contract-clause': 'vendor-risk',
     'migration-roadmap': 'migration-program',
     'kpi-tracker': 'migration-program',
+    'supply-chain-matrix': 'vendor-risk',
+    'deployment-playbook': 'migration-program',
   } as Record<ExecutiveDocumentType, string>,
 }
 
@@ -95,7 +100,11 @@ export interface ArtifactsByPillar {
 // ── Types ─────────────────────────────────────────────────────────────────
 
 export interface ActionItem {
-  priority: 1 | 2 | 3
+  /** Base priority tier (1 = urgent, 2 = important, 3 = nice-to-have).
+   *  `adjustPriority` may nudge this by fractions so profile-aware sequencing
+   *  can re-order within or across tiers — so the stored value is any number,
+   *  not just the base tier constant. */
+  priority: number
   icon: LucideIcon
   title: string
   description: string
@@ -222,6 +231,32 @@ function parseDeadlineYear(deadline: string): number | null {
   return match ? parseInt(match[1], 10) : null
 }
 
+// Industries where breach cost dominates board conversation — bump breach-cost
+// and ROI-framed actions.
+const HIGH_BREACH_INDUSTRIES = new Set<string>([
+  'Healthcare',
+  'Finance & Banking',
+  'Retail & E-Commerce',
+])
+
+// Industries where compliance deadlines dominate — bump framework-tracking and
+// roadmap actions over generic governance.
+const HIGH_COMPLIANCE_INDUSTRIES = new Set<string>([
+  'Government & Defense',
+  'Finance & Banking',
+  'Healthcare',
+  'Energy & Utilities',
+  'Telecommunications',
+  'Aerospace',
+])
+
+interface ActionProfile {
+  industry: string
+  persona: string | null
+  vendorDependency: string
+  cryptoAgility: string
+}
+
 function computeActionItems(
   assessmentStatus: string,
   riskScore: number | null,
@@ -230,7 +265,13 @@ function computeActionItems(
   productCount: number,
   governanceStarted: boolean,
   execLearningStarted: boolean,
-  workflowActive: boolean
+  workflowActive: boolean,
+  profile: ActionProfile = {
+    industry: '',
+    persona: null,
+    vendorDependency: '',
+    cryptoAgility: '',
+  }
 ): ActionItem[] {
   const items: ActionItem[] = []
 
@@ -330,7 +371,50 @@ function computeActionItems(
     })
   }
 
-  return items.sort((a, b) => a.priority - b.priority).slice(0, 5)
+  // ── Profile-aware priority nudges ──────────────────────────────────────
+  // Shift priority by industry / persona / risk-profile so the top-of-list
+  // matches the user's highest-leverage next step rather than a generic order.
+  const adjustedItems = items.map((item) => ({ ...item, priority: adjustPriority(item, profile) }))
+
+  return adjustedItems.sort((a, b) => a.priority - b.priority).slice(0, 5)
+}
+
+/** Heuristic: shift priority up (lower number) for actions most relevant to the
+ *  user's industry + persona + risk-profile. */
+function adjustPriority(item: ActionItem, profile: ActionProfile): number {
+  let p = item.priority
+  const title = item.title.toLowerCase()
+
+  // Finance / Healthcare / Retail → breach-cost framing bumps risk-report action.
+  if (HIGH_BREACH_INDUSTRIES.has(profile.industry) && title.includes('risk report')) {
+    p -= 0.3
+  }
+
+  // Highly-regulated industries → compliance framework tracking jumps up.
+  if (HIGH_COMPLIANCE_INDUSTRIES.has(profile.industry) && title.includes('compliance framework')) {
+    p -= 0.4
+  }
+
+  // Heavy-vendor + hardcoded crypto → contract / governance tooling matters most.
+  if (
+    profile.vendorDependency === 'heavy-vendor' &&
+    profile.cryptoAgility === 'hardcoded' &&
+    title.includes('governance')
+  ) {
+    p -= 0.5
+  }
+
+  // Executive persona → learning path less urgent (they delegate execution).
+  if (profile.persona === 'executive' && title.includes('learning path')) {
+    p += 0.5
+  }
+
+  // Ops persona → migration / product tracking comes first.
+  if (profile.persona === 'ops' && title.includes('migration products')) {
+    p -= 0.3
+  }
+
+  return p
 }
 
 // ── Hook ──────────────────────────────────────────────────────────────────
@@ -439,7 +523,13 @@ export function useBusinessMetrics(): BusinessMetrics {
       resolvedProducts.length,
       governanceStarted,
       execLearningStarted,
-      workflowStore.workflowActive
+      workflowStore.workflowActive,
+      {
+        industry: assessmentStore.industry,
+        persona: personaStore.selectedPersona,
+        vendorDependency: assessmentStore.vendorDependency,
+        cryptoAgility: assessmentStore.cryptoAgility,
+      }
     )
 
     // ── Artifacts by pillar (deduplicated — keep latest per moduleId+type) ──

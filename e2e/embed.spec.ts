@@ -13,12 +13,11 @@ test.describe('Embedding Integration', () => {
     // Navigate to the local test site harness.
     // Ensure `npm start` is running in `../pqctoday-sdk/embed-test-site` before test execution.
     try {
-      await page.goto('http://localhost:3098/')
+      // Fast timeout to gracefully skip if the test harness server is not running
+      await page.goto('http://localhost:3098/', { timeout: 2000 })
+      await expect(page.locator('body')).toBeVisible({ timeout: 1000 })
     } catch {
-      test.skip(
-        true,
-        'Test site not running on localhost:3098. Please run `npm start` in ../pqctoday-sdk/embed-test-site.'
-      )
+      test.skip()
     }
   })
 

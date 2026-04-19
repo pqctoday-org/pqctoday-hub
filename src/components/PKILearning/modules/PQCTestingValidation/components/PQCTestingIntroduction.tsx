@@ -314,8 +314,9 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
             </p>
             <p className="text-xs">
               Most network security appliances rely on dedicated silicon for RSA and ECC
-              acceleration. These chips <strong>cannot accelerate ML-KEM or PQ signature
-              algorithms</strong> — devices fall back to general-purpose CPUs under PQC workloads.
+              acceleration. These chips{' '}
+              <strong>cannot accelerate ML-KEM or PQ signature algorithms</strong> — devices fall
+              back to general-purpose CPUs under PQC workloads.
             </p>
             <p className="text-xs mt-2">
               Under high connection rates, this can reduce appliance capacity by{' '}
@@ -357,9 +358,9 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
               returning users.
             </p>
             <p className="text-xs mt-2">
-              Combined with hardware acceleration (AVX2/AVX-512 or FPGA accelerators for
-              lattice operations) and hybrid mode (PQC + classical), organizations can reduce the
-              production impact to manageable levels. The key is{' '}
+              Combined with hardware acceleration (AVX2/AVX-512 or FPGA accelerators for lattice
+              operations) and hybrid mode (PQC + classical), organizations can reduce the production
+              impact to manageable levels. The key is{' '}
               <em>measuring these mitigations under realistic conditions</em> — not assuming lab
               results translate to production.
             </p>

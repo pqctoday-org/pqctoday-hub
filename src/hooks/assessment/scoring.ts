@@ -56,6 +56,18 @@ export function computeQuantumExposure(input: AssessmentInput, vulnerableCount: 
     const weight = ALGORITHM_WEIGHTS[algo] ?? DEFAULT_ALGORITHM_WEIGHT
     base += i < 3 ? weight : Math.round(weight * 0.5)
   })
+  // Fallback: user supplied crypto *categories* but no specific algorithms.
+  // This is coarse-grained but still meaningful signal — typically arrives
+  // from "I'm not sure" flows where exec / curious users know the families.
+  //   Signatures   → HNFL exposure (sig forgeries survive the key pair's life)
+  //   Key Exchange → HNDL exposure (intercepted KEX material decrypts later)
+  //   Symmetric / Hash → PQC-safe at standard sizes (AES-256, SHA-384)
+  if (vulnerableAlgos.length === 0 && input.currentCryptoCategories?.length) {
+    if (input.currentCryptoCategories.includes('Signatures')) base += 10
+    if (input.currentCryptoCategories.includes('Key Exchange')) base += 10
+    // Symmetric Encryption / Hash & MAC do not meaningfully raise PQC exposure
+    // on their own; they are included here only as context.
+  }
   const algoScore = Math.min(40, base)
   let useCaseScore = 0
   if (input.cryptoUseCases?.length) {
@@ -193,12 +205,36 @@ export function computeOrganizationalReadiness(input: AssessmentInput): number {
   )
 }
 
+/** Description of a situational boost that fired during scoring. Returned
+ *  alongside the score so the Report can surface WHY the composite was raised. */
+export interface SituationalBoost {
+  id: 'hndl-urgency' | 'hnfl-urgency' | 'cnsa-regulatory' | 'migration-inertia'
+  label: string
+  delta: number
+}
+
+export interface CompositeScoreResult {
+  score: number
+  preBoostScore: number
+  boostFactor: number
+  boosts: SituationalBoost[]
+}
+
 export function computeCompositeScore(
   categoryScores: CategoryScores,
   input: AssessmentInput
 ): number {
+  return computeCompositeScoreWithBoosts(categoryScores, input).score
+}
+
+/** Variant of `computeCompositeScore` that also returns the boost breakdown
+ *  for surfacing in the Risk Score info panel. */
+export function computeCompositeScoreWithBoosts(
+  categoryScores: CategoryScores,
+  input: AssessmentInput
+): CompositeScoreResult {
   const w = INDUSTRY_COMPOSITE_WEIGHTS[input.industry] ?? DEFAULT_COMPOSITE_WEIGHTS
-  let composite =
+  const base =
     categoryScores.quantumExposure * w.qe +
     categoryScores.migrationComplexity * w.mc +
     categoryScores.regulatoryPressure * w.rp +
@@ -206,9 +242,8 @@ export function computeCompositeScore(
 
   // Situational risk multipliers — each adds an increment, capped at 1.20x total to
   // prevent compound stacking from producing surprising score jumps.
-  // Rationale: these conditions represent compounding risk factors that warrant a
-  // moderate uplift, but the base category scores already capture most of the signal.
   let boostFactor = 1.0
+  const boosts: SituationalBoost[] = []
 
   // Critical sensitivity + long retention + not yet migrating → HNDL urgency
   if (
@@ -218,6 +253,11 @@ export function computeCompositeScore(
     input.migrationStatus !== 'started'
   ) {
     boostFactor += 0.08
+    boosts.push({
+      id: 'hndl-urgency',
+      label: 'Critical data + >10y retention + migration not started (HNDL urgency)',
+      delta: 0.08,
+    })
   }
 
   // Signing algos + long credential lifetime + not yet migrating → HNFL urgency
@@ -229,6 +269,11 @@ export function computeCompositeScore(
     input.migrationStatus !== 'started'
   ) {
     boostFactor += 0.06
+    boosts.push({
+      id: 'hnfl-urgency',
+      label: 'Signing algorithms + >10y credential lifetime + not started (HNFL urgency)',
+      delta: 0.06,
+    })
   }
 
   // Gov & Defense + CNSA 2.0 compliance + not yet migrating → regulatory urgency
@@ -238,6 +283,11 @@ export function computeCompositeScore(
     input.migrationStatus !== 'started'
   ) {
     boostFactor += 0.04
+    boosts.push({
+      id: 'cnsa-regulatory',
+      label: 'Gov/Defense with CNSA 2.0 obligation + not started (regulatory urgency)',
+      delta: 0.04,
+    })
   }
 
   // Hardcoded crypto + HSM/Legacy infra → migration inertia
@@ -246,11 +296,22 @@ export function computeCompositeScore(
     input.infrastructure?.some((i) => i.includes('HSM') || i.includes('Legacy'))
   ) {
     boostFactor += 0.04
+    boosts.push({
+      id: 'migration-inertia',
+      label: 'Hardcoded crypto + HSM/Legacy infrastructure (migration inertia)',
+      delta: 0.04,
+    })
   }
 
-  composite *= Math.min(1.2, boostFactor)
-
-  return Math.max(0, Math.min(100, Math.round(composite)))
+  const cappedBoost = Math.min(1.2, boostFactor)
+  const composite = base * cappedBoost
+  const preBoostScore = Math.max(0, Math.min(100, Math.round(base)))
+  return {
+    score: Math.max(0, Math.min(100, Math.round(composite))),
+    preBoostScore,
+    boostFactor: cappedBoost,
+    boosts,
+  }
 }
 
 export function getMaxSensitivity(arr: string[]): string {

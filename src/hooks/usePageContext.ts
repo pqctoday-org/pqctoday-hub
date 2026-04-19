@@ -30,7 +30,7 @@ export interface PageContext {
 
 const PAGE_CONTEXTS: Record<string, Omit<PageContext, 'moduleId'>> = {
   '/business': {
-    page: 'Business Center',
+    page: 'Command Center',
     relevantSources: ['business-center', 'assessment', 'compliance', 'threats', 'priority-matrix'],
     suggestedQuestions: [
       'What business planning tools are available?',

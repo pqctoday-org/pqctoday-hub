@@ -9,13 +9,65 @@ import {
   isSolanaAddress,
   isHexValue,
 } from '../utils/outputFormatters'
+import { loadPkcs11Glossary } from '@/data/glossary'
 
 interface OutputFormatterProps {
   output: string
   className?: string
 }
 
+let _pkcs11Loaded = false
+let GLOSSARY_LOOKUP: Record<string, string> = {}
+let GLOSSARY_REGEX = /(?:)/
+
+const ensurePkcs11Glossary = async () => {
+  if (_pkcs11Loaded) return
+  const terms = await loadPkcs11Glossary()
+  GLOSSARY_LOOKUP = terms.reduce(
+    (acc, t) => ({ ...acc, [t.term]: t.definition }),
+    {} as Record<string, string>
+  )
+  if (terms.length > 0) {
+    GLOSSARY_REGEX = new RegExp(
+      '(' +
+        [...terms]
+          .sort((a, b) => b.term.length - a.term.length)
+          .map((t) => t.term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+          .join('|') +
+        ')',
+      'g'
+    )
+  }
+  _pkcs11Loaded = true
+}
+
+/** Wrap known glossary tokens in hover chips. Whitespace is preserved exactly. */
+const renderWithGlossary = (text: string): React.ReactNode => {
+  if (!text || !_pkcs11Loaded) return text
+  const parts = text.split(GLOSSARY_REGEX)
+  if (parts.length === 1) return text
+  return parts.map((part, i) => {
+    const def = Object.prototype.hasOwnProperty.call(GLOSSARY_LOOKUP, part)
+      ? GLOSSARY_LOOKUP[part]
+      : undefined
+    if (!def) return <React.Fragment key={i}>{part}</React.Fragment>
+    return (
+      <span key={i} title={def} className="border-b border-dotted border-primary/50 cursor-help">
+        {part}
+      </span>
+    )
+  })
+}
+
 export const OutputFormatter: React.FC<OutputFormatterProps> = ({ output, className = '' }) => {
+  const [, setReady] = React.useState(_pkcs11Loaded)
+
+  React.useEffect(() => {
+    if (!_pkcs11Loaded) {
+      ensurePkcs11Glossary().then(() => setReady(true))
+    }
+  }, [])
+
   const lines = output.split('\n')
 
   const formatLine = (line: string, index: number) => {
@@ -79,7 +131,7 @@ export const OutputFormatter: React.FC<OutputFormatterProps> = ({ output, classN
       return (
         <div key={index} className="mb-1">
           <span className="text-muted-foreground">{label}:</span>{' '}
-          <span className="text-foreground">{trimmedValue}</span>
+          <span className="text-foreground">{renderWithGlossary(trimmedValue)}</span>
         </div>
       )
     }
@@ -128,7 +180,7 @@ export const OutputFormatter: React.FC<OutputFormatterProps> = ({ output, classN
     // Regular text line
     return (
       <div key={index} className="text-foreground mb-1">
-        {line}
+        {renderWithGlossary(line)}
       </div>
     )
   }

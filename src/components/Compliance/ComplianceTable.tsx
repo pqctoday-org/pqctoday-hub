@@ -21,6 +21,7 @@ import { Input } from '../ui/input'
 import clsx from 'clsx'
 import Papa from 'papaparse'
 import { ComplianceDetailPopover } from './ComplianceDetailPopover'
+import { complianceFrameworks } from '@/data/complianceData'
 import { MobileFilterDrawer } from '../Migrate/MobileFilterDrawer'
 
 interface ComplianceTableProps {
@@ -743,24 +744,37 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
       <div className="flex flex-col gap-2 mb-2">
         <div className="flex gap-2 p-1 bg-muted/50 rounded-lg w-fit">
           {[
-            { id: 'all', label: 'All Records' },
-            { id: 'fips', label: 'FIPS 140-3' },
-            { id: 'acvp', label: 'ACVP' },
-            { id: 'cc', label: 'Common Criteria' },
-          ].map((tab) => (
-            <Button
-              variant="ghost"
-              key={tab.id}
-              onClick={() => onCertTypeChange && onCertTypeChange(tab.id)}
-              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
-                certType === tab.id
-                  ? 'bg-background shadow text-foreground'
-                  : 'text-muted-foreground hover:bg-muted/80'
-              }`}
-            >
-              {tab.label}
-            </Button>
-          ))}
+            { id: 'all', label: 'All Records', frameworkId: null },
+            { id: 'fips', label: 'FIPS 140-3', frameworkId: 'FIPS-140-3' },
+            { id: 'acvp', label: 'ACVP', frameworkId: 'ACVP' },
+            { id: 'cc', label: 'Common Criteria', frameworkId: 'COMMON-CRITERIA' },
+          ].map((tab) => {
+            const framework = tab.frameworkId
+              ? complianceFrameworks.find((f) => f.id === tab.frameworkId)
+              : undefined
+            const deadline = framework?.deadline
+            const showDeadline = deadline && !/^ongoing$/i.test(deadline)
+            return (
+              <Button
+                variant="ghost"
+                key={tab.id}
+                onClick={() => onCertTypeChange && onCertTypeChange(tab.id)}
+                title={framework ? `${framework.label} mandate deadline: ${deadline}` : undefined}
+                className={`flex flex-col items-start px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                  certType === tab.id
+                    ? 'bg-background shadow text-foreground'
+                    : 'text-muted-foreground hover:bg-muted/80'
+                }`}
+              >
+                <span>{tab.label}</span>
+                {showDeadline && (
+                  <span className="text-[10px] font-normal text-muted-foreground leading-tight mt-0.5">
+                    Deadline: {deadline}
+                  </span>
+                )}
+              </Button>
+            )
+          })}
         </div>
 
         {totalActiveFilters > 0 && (

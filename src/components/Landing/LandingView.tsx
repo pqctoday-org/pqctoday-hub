@@ -57,7 +57,7 @@ const PERSONA_HERO_CTA: Record<
 > = {
   executive: {
     primary: { label: 'Start the Journey', path: '/learn' },
-    secondary: { label: 'Open Business Center', path: '/business' },
+    secondary: { label: 'Open Command Center', path: '/business' },
   },
   developer: {
     primary: { label: 'Start the Journey', path: '/learn' },
@@ -135,9 +135,9 @@ function buildJourneySteps(
   migrateCount: number | null,
   libraryCount: number | null
 ): JourneyStep[] {
-  const algoLabel = algorithmCount !== null ? `${algorithmCount}` : '45+'
-  const migrateLabel = migrateCount !== null ? `${migrateCount}` : '380+'
-  const libraryLabel = libraryCount !== null ? `${libraryCount}` : '320+'
+  const algoLabel = algorithmCount !== null ? `${algorithmCount}` : '80+'
+  const migrateLabel = migrateCount !== null ? `${migrateCount}` : '700+'
+  const libraryLabel = libraryCount !== null ? `${libraryCount}` : '450+'
 
   return [
     // — Start the Journey —
@@ -161,7 +161,7 @@ function buildJourneySteps(
       color: 'text-accent',
       section: 'start' as const,
       description:
-        'See when governments require action — track every PQC mandate, advisory, and milestone from 2016 to 2036',
+        'See when governments require action — track every PQC mandate, advisory, and milestone from 2020 to 2035',
       paths: ['/timeline'],
       actionLabel: 'Track Deadlines',
       resumeLabel: 'Review Timeline',
@@ -186,7 +186,7 @@ function buildJourneySteps(
       icon: ArrowRightLeft,
       color: 'text-primary',
       section: 'journey' as const,
-      description: `${migrateLabel} tested, production-ready tools for upgrading your infrastructure — from cloud services to hardware`,
+      description: `${migrateLabel} tracked, production-grade tools for upgrading your infrastructure — from cloud services to hardware`,
       paths: ['/migrate'],
       actionLabel: 'Browse Catalog',
       resumeLabel: 'Continue Planning',
@@ -199,7 +199,7 @@ function buildJourneySteps(
       color: 'text-accent',
       section: 'journey' as const,
       description:
-        'Track regulatory deadlines from 2024 to 2036 — know exactly when your industry must comply',
+        'Track regulatory deadlines from 2024 to 2035 — know exactly when your industry must comply',
       paths: ['/compliance'],
       actionLabel: 'Check Compliance',
       resumeLabel: 'Review Frameworks',
@@ -234,7 +234,7 @@ function buildJourneySteps(
     {
       id: 'business',
       step: 8,
-      label: 'Business Center',
+      label: 'Command Center',
       icon: LayoutDashboard,
       color: 'text-primary',
       section: 'assess' as const,
@@ -306,7 +306,7 @@ const SECTION_HEADING: Record<string, { title: string; sub: string }> = {
   },
   developer: {
     title: 'Your toolkit for building with PQC today',
-    sub: 'Real cryptographic operations powered by OpenSSL WASM, liboqs, and a dual-engine Rust WASM HSM — not simulations.',
+    sub: 'Real cryptographic operations powered by OpenSSL WASM, liboqs, and a dual-engine (C++/Rust) WASM HSM — not simulations.',
   },
   architect: {
     title: 'Your blueprint for PQC-ready systems',

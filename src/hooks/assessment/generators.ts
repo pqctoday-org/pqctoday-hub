@@ -144,6 +144,7 @@ export function generateExtendedActions(
       category: 'immediate',
       relatedModule: '/threats',
       effort: 'medium',
+      drivers: ['dataRetention:unknown'],
     })
   }
 
@@ -155,6 +156,7 @@ export function generateExtendedActions(
       category: 'short-term',
       relatedModule: '/migrate',
       effort: 'medium',
+      drivers: ['vendorDependency:unknown'],
     })
   }
 
@@ -166,6 +168,7 @@ export function generateExtendedActions(
       category: 'short-term',
       relatedModule: '/migrate',
       effort: 'medium',
+      drivers: ['credentialLifetime:unknown'],
     })
   }
 
@@ -275,6 +278,10 @@ export function generateExtendedActions(
       category: 'immediate',
       relatedModule: buildThreatsUrl(input.industry),
       effort: 'high',
+      drivers: [
+        `dataSensitivity:${input.dataSensitivity.includes('critical') ? 'critical' : 'high'}`,
+        `dataRetention:${input.dataRetention.join(',')}`,
+      ],
     })
   } else if (hasHighSensitivity) {
     actions.push({
@@ -283,6 +290,9 @@ export function generateExtendedActions(
       category: 'immediate',
       relatedModule: buildThreatsUrl(input.industry),
       effort: 'medium',
+      drivers: [
+        `dataSensitivity:${input.dataSensitivity.includes('critical') ? 'critical' : 'high'}`,
+      ],
     })
   }
 
@@ -305,6 +315,12 @@ export function generateExtendedActions(
       category: 'immediate',
       relatedModule: '/migrate',
       effort: 'high',
+      drivers: [
+        'currentCrypto:signing',
+        ...(input.credentialLifetime?.length
+          ? [`credentialLifetime:${input.credentialLifetime.join(',')}`]
+          : []),
+      ],
     })
   }
 
@@ -325,6 +341,7 @@ export function generateExtendedActions(
       category: 'short-term',
       relatedModule: '/migrate',
       effort: 'medium',
+      drivers: ['vendorDependency:heavy-vendor'],
     })
   }
 

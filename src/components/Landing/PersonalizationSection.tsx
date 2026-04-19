@@ -670,6 +670,21 @@ export const PersonalizationSection = () => {
     }
   }
 
+  const handleExperience = (id: ExperienceLevel) => {
+    const next = id === experienceLevel ? null : id
+    setExperienceLevel(next)
+    if (next === 'curious') {
+      // Curious experience = curious persona, global region, all industries — complete wizard
+      setPersona('curious')
+      setRegion('global')
+      setCountry('Global')
+      setIndustries([])
+      setAssessIndustry('')
+      logPersonaSelected('curious', embedState.isEmbedded ? 'embed' : 'picker')
+      setIsCompleted(true)
+    }
+  }
+
   const handleRegion = (id: Region) => {
     const next = id === selectedRegion ? null : id
     setRegion(next)
@@ -890,7 +905,7 @@ export const PersonalizationSection = () => {
                             <SelectionCard
                               key={id}
                               isActive={experienceLevel === id}
-                              onClick={() => setExperienceLevel(experienceLevel === id ? null : id)}
+                              onClick={() => handleExperience(id)}
                               icon={<Icon size={16} />}
                               cornerIcon={<CornerIcon size={13} />}
                               title={label}

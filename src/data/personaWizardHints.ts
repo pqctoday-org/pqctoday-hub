@@ -41,18 +41,42 @@ export function resolveHintKey(stepKey: string): string {
 /* ── Persona step content helpers ────────────────────────────────────────── */
 
 /**
+ * Resolve the effective hint for (persona, industry, stepKey) by layering:
+ *   1. persona × industry override  (PERSONA_INDUSTRY_STEP_HINTS)
+ *   2. persona default              (PERSONA_STEP_HINTS)
+ * Industry is matched case-insensitively via `normalizeIndustry`. A missing
+ * industry or missing override falls through to the persona default.
+ */
+function resolveHint(
+  persona: PersonaId | null,
+  stepKey: string,
+  industry?: string | null
+): PersonaStepHint | undefined {
+  if (!persona) return undefined
+  const key = resolveHintKey(stepKey)
+  // eslint-disable-next-line security/detect-object-injection
+  const base = PERSONA_STEP_HINTS[persona]?.[key]
+  if (!industry) return base
+  const norm = normalizeIndustry(industry)
+  // eslint-disable-next-line security/detect-object-injection
+  const industryOverride = PERSONA_INDUSTRY_STEP_HINTS[persona]?.[norm]?.[key]
+  if (!industryOverride) return base
+  return base ? { ...base, ...industryOverride } : (industryOverride as PersonaStepHint)
+}
+
+/**
  * Returns persona-specific title and description for a wizard step.
  * When experienceLevel is 'curious', prefers beginner variants if available.
+ * When industry is provided, persona × industry overrides take precedence.
  * Falls back to empty object when no persona or no overrides exist.
  */
 export function getPersonaStepContent(
   persona: PersonaId | null,
   stepKey: string,
-  experienceLevel?: ExperienceLevel | null
+  experienceLevel?: ExperienceLevel | null,
+  industry?: string | null
 ): { title?: string; description?: string } {
-  if (!persona) return {}
-  // eslint-disable-next-line security/detect-object-injection
-  const hint = PERSONA_STEP_HINTS[persona]?.[resolveHintKey(stepKey)]
+  const hint = resolveHint(persona, stepKey, industry)
   if (!hint) return {}
   const title = experienceLevel === 'curious' ? (hint.titleBeginner ?? hint.title) : hint.title
   const description =
@@ -64,15 +88,23 @@ export function getPersonaStepContent(
 
 /**
  * Returns persona-specific option description overrides for a wizard step.
+ * When industry is provided, persona × industry overrides take precedence.
  * Falls back to empty object when no persona or no overrides exist.
  */
 export function getPersonaOptionDescriptions(
   persona: PersonaId | null,
-  stepKey: string
+  stepKey: string,
+  industry?: string | null
 ): Record<string, string> {
-  if (!persona) return {}
-  // eslint-disable-next-line security/detect-object-injection
-  return PERSONA_STEP_HINTS[persona]?.[resolveHintKey(stepKey)]?.optionDescriptions ?? {}
+  return resolveHint(persona, stepKey, industry)?.optionDescriptions ?? {}
+}
+
+/**
+ * Lower-case + strip non-alphanumerics so 'Finance & Banking' and
+ * 'finance_banking' both resolve to the same override key.
+ */
+function normalizeIndustry(raw: string): string {
+  return raw.toLowerCase().replace(/[^a-z0-9]+/g, '')
 }
 
 /* ── Step context info (non-persona factors shown in the info modal) ───── */
@@ -727,4 +759,55 @@ export const PERSONA_STEP_HINTS: Record<PersonaId, Record<string, PersonaStepHin
       suggestUnknown: true,
     },
   },
+}
+
+/* ── Persona × Industry overrides ────────────────────────────────────────────
+ *
+ * Second-layer hint overrides keyed by (persona, normalized industry, step).
+ * Fields specified here merge over the persona default. Only seed pairs
+ * where the industry framing is clearly distinct from the generic persona
+ * copy — otherwise let the persona default apply.
+ *
+ * Industry key is normalized: lower-case + non-alphanumerics stripped
+ * (e.g. "Finance & Banking" → "financebanking"; "Healthcare" → "healthcare").
+ */
+export const PERSONA_INDUSTRY_STEP_HINTS: Record<
+  PersonaId,
+  Record<string, Record<string, Partial<PersonaStepHint>>>
+> = {
+  executive: {
+    financebanking: {
+      compliance: {
+        hint: 'PCI-DSS, SOX, GLBA, Basel III, MiFID II, DORA (EU), FINRA, and the NIST CNSA 2.0 timeline are the most commonly cited frameworks in finance. If unsure, your compliance officer will know which apply.',
+      },
+      sensitivity: {
+        hint: 'In finance, the highest-sensitivity data are customer PII, payment card data, and trading / settlement records. Regulators treat a breach of any as severe.',
+      },
+      'use-cases': {
+        hint: 'In banking, cryptography typically backs SWIFT messaging, card-present / card-not-present payment authorization, trade settlement, and core banking database encryption.',
+      },
+      retention: {
+        hint: 'Banks routinely retain transaction records 7–25 years (SOX, Basel III, FINRA). Long retention pushes HNDL risk higher.',
+      },
+    },
+    healthcare: {
+      compliance: {
+        hint: 'HIPAA, HITECH, GDPR (for EU patient data), and FDA guidance for connected medical devices are the core frameworks. If unsure, your privacy or clinical-engineering team can confirm.',
+      },
+      sensitivity: {
+        hint: 'In healthcare, the highest-sensitivity data are PHI (patient health records), clinical imaging, and genomic / research data. All are federally protected.',
+      },
+      'use-cases': {
+        hint: 'In healthcare, cryptography typically backs EHR-system encryption, patient portal TLS, medical-device telemetry, and research-data exchange (DICOM, HL7).',
+      },
+      retention: {
+        hint: 'HIPAA requires at least 6 years of medical-record retention; many states extend to 10+ years, and pediatric records can reach 25 years. Long retention pushes HNDL risk higher.',
+      },
+    },
+  },
+  developer: {},
+  architect: {},
+  researcher: {},
+  ops: {},
+  curious: {},
 }

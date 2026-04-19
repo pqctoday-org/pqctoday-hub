@@ -5,6 +5,8 @@ package-lock.json
 test-results.json
 test-results-clean.json
 public/wasm/openssl.js
+public/wasm/openssh-server.js
+public/wasm/openssh-client.js
 src/wasm/softhsmrustv3.js
 src/wasm/softhsmrustv3_bg.js
 src/wasm/softhsmrustv3.d.ts
