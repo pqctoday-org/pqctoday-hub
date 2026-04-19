@@ -8,49 +8,33 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-- **Production crash on `/learn` — `u is not a function` / `__tla` TDZ**
-  (`PKILearning/common/GlossaryAutoWrap.tsx`,
-  `VPNSSHModule/simulate/IKEv2HandshakeSimulator.tsx`): `vite-plugin-top-level-await`
-  wrapped the VPN module's lazy Rollup chunk in an async `__tla` promise because
-  `IKEv2HandshakeSimulator` statically imported `VpnSimulationPanel` +
-  `PlaygroundProvider` (which pull in `@/wasm/softhsm` and liboqs). While `__tla`
-  was still pending, `GlossaryAutoWrap`'s new `useState(isGlossaryReady())` call
-  evaluated `isGlossaryReady` as `undefined` and threw `TypeError: u is not a
-function` (Chrome) / `Cannot access '__tla' before initialization` (Safari).
-  Two-part fix: (1) guard `GlossaryAutoWrap`'s `useState` initializer with a
-  `typeof` check so it degrades gracefully if the export is temporarily absent;
-  (2) convert the static imports in `IKEv2HandshakeSimulator` to `React.lazy()`
-  so the WASM-heavy Playground chunk is split into its own async boundary and
-  never lands in `parseGlossary`'s Rollup chunk.
+- **Learn page was broken for all visitors** — navigating to `/learn` showed
+  "Something went wrong" on both Chrome and Safari. Root cause: a module
+  bundling conflict between the VPN/SSH simulator's WebAssembly code and the
+  glossary tooltip system caused the page to crash before anything rendered.
+  Fixed by isolating the heavy WASM bundle into its own loading boundary so it
+  no longer interferes with the rest of the learn module.
 
 ### Added
 
-- **ChromiumGateBanner + `useChromiumGate` hook**
-  (`src/components/shared/ChromiumGateBanner.tsx`, `src/utils/browserDetect.ts`):
-  lightweight browser detection utility that identifies Chromium-family browsers
-  (Chrome, Edge, Brave, OPR, Arc). Non-Chromium visitors see a warning banner
-  above the VPN and SSH simulators explaining that live WASM handshakes require
-  Chromium; the Run / selftest / cross-worker buttons are disabled automatically.
-  Banner renders `null` for Chromium visitors.
-- **PKCS#11 log "Crypto Only" filter**
-  (`src/components/shared/Pkcs11LogPanel.tsx`): new toggle button (default: on)
-  hides administrative calls (`C_Initialize`, `C_OpenSession`, `C_FindObjects`,
-  etc.) and shows only the 27 core crypto and KEM operations. Toggling to "All"
-  restores the full log. `CRYPTO_OPS` promoted from an inline array rebuilt on
-  every render to a module-level `Set` for O(1) lookup.
+- **Browser compatibility notice on VPN and SSH simulators** — Safari and
+  Firefox users now see a clear warning explaining that the live cryptographic
+  handshakes (strongSwan IKEv2, OpenSSH ML-KEM) require a Chromium-based
+  browser (Chrome, Edge, Brave). The Run / selftest buttons are automatically
+  disabled; all educational content and panels still render normally.
+- **"Crypto Only" filter in the PKCS#11 log panel** — a new toggle (on by
+  default) hides housekeeping calls like session open/close and object searches,
+  leaving only the 27 cryptographic operations (key generation, signing,
+  encryption, KEM encapsulate/decapsulate). Toggle it off to restore the full
+  raw log.
 
 ### Changed
 
-- **SSH simulator — WIP notice removed; Chromium gate added**
-  (`src/components/Playground/hsm/SshSimulationPanel.tsx`): replaced the
-  "Build in progress / openssh-server.wasm" warning with the shared
-  `ChromiumGateBanner`. The Run Handshake button is now also disabled on
-  non-Chromium browsers. Description line updated to reflect that ML-KEM-768 ×
-  X25519 KEX is built into OpenSSH (not a separate addon).
-- **VPN simulator — Chromium gate added**
-  (`src/components/Playground/hsm/VpnSimulationPanel.tsx`): `ChromiumGateBanner`
-  rendered above the panel; selftest, cross-worker KEM, and Start Daemon buttons
-  disabled on non-Chromium browsers.
+- **SSH simulator — "Build in progress" notice removed** — the placeholder
+  warning about missing WASM artifacts has been removed now that the
+  `openssh-client.wasm` and `openssh-server.wasm` builds are in place. The
+  panel description also clarifies that ML-KEM-768 × X25519 key exchange is
+  natively built into OpenSSH 10.x.
 
 ### Fixed
 
