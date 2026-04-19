@@ -8,11 +8,12 @@
 // Results fed into SshComparisonPanel, wire packets shown in a hex tab.
 
 import { useState, useCallback, useRef } from 'react'
-import { Terminal, Play, RotateCcw, AlertCircle, Info, BookOpen } from 'lucide-react'
+import { Terminal, Play, RotateCcw, AlertCircle, BookOpen } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 
+import { ChromiumGateBanner, useChromiumGate } from '@/components/shared/ChromiumGateBanner'
 import { SshComparisonPanel } from './SshComparisonPanel'
 import { SshLearnSection } from './SshLearnSection'
 import { sshEngine, type SshHandshakeEvent, type SshHandshakeResult } from '@/wasm/openssh'
@@ -117,6 +118,7 @@ export function SshSimulationPanel() {
     setErrorMsg(undefined)
   }, [])
 
+  const browserSupport = useChromiumGate()
   const isRunning = phase === 'running-classical' || phase === 'running-pqc'
   const runLabel =
     phase === 'running-classical'
@@ -140,8 +142,9 @@ export function SshSimulationPanel() {
         <div className="flex-1 min-w-0">
           <h2 className="text-lg font-bold text-gradient">PQC SSH Simulator</h2>
           <p className="text-sm text-muted-foreground mt-0.5">
-            OpenSSH 10.x WASM — ML-KEM-768 × X25519 KEX + ML-DSA-65 auth via softhsmv3 PKCS#11. Both
-            client and server run in browser workers; no network or container required.
+            OpenSSH 10.x WASM — ML-KEM-768 × X25519 KEX (OpenSSH built-in PQC) + ML-DSA-65 host auth
+            via softhsmv3 PKCS#11. Both client and server run in browser workers; no network or
+            container required.
           </p>
         </div>
         <Link to="/learn/network-security-pqc">
@@ -155,25 +158,15 @@ export function SshSimulationPanel() {
       {/* Learn section */}
       <SshLearnSection />
 
-      {/* WIP notice */}
-      <div className="flex items-start gap-2 px-3 py-2 rounded-lg bg-status-warning/10 border border-status-warning/30 text-status-warning text-xs">
-        <Info className="w-4 h-4 shrink-0 mt-0.5" />
-        <span>
-          <strong>Build in progress:</strong> The openssh-pkcs11 WASM artifacts (
-          <code className="font-mono">openssh-server.wasm</code>,{' '}
-          <code className="font-mono">openssh-client.wasm</code>) must be built from the{' '}
-          <code className="font-mono">pqctoday-hsm/openssh-pkcs11</code> connector before this tool
-          can run live handshakes. Until then the UI scaffold is shown with the PKCS#11 log and
-          comparison panel wired up.
-        </span>
-      </div>
+      {/* Browser gate */}
+      <ChromiumGateBanner feature="PQC SSH handshake" />
 
       {/* Controls */}
       <div className="flex items-center gap-2 flex-wrap">
         <Button
           variant="gradient"
           onClick={runHandshakes}
-          disabled={isRunning}
+          disabled={isRunning || !browserSupport.supported}
           aria-label="Run SSH handshakes"
         >
           <Play className="w-4 h-4 mr-1" />

@@ -43,12 +43,6 @@ describe('SshSimulationPanel', () => {
     expect(screen.getByText('PQC SSH Simulator')).toBeInTheDocument()
   })
 
-  it('shows a WIP notice about the build', () => {
-    renderPanel()
-    expect(screen.getByText(/Build in progress/i)).toBeInTheDocument()
-    expect(screen.getByText(/openssh-server\.wasm/i)).toBeInTheDocument()
-  })
-
   it('renders the run button in idle state', () => {
     renderPanel()
     expect(screen.getByRole('button', { name: /run.*handshake/i })).toBeInTheDocument()

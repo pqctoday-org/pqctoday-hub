@@ -55,6 +55,7 @@ import { AsnSerializer } from '@peculiar/asn1-schema'
 import { useHsmContext } from './HsmContext'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { Button } from '@/components/ui/button'
+import { ChromiumGateBanner, useChromiumGate } from '@/components/shared/ChromiumGateBanner'
 
 export interface VpnSimulationPanelProps {
   initialMode?: IKEv2Mode
@@ -434,6 +435,7 @@ const IKE_PHASE_CLASS: Record<IkePhase, string> = {
  * always-on so the deployed pqctoday.com matches the local dev experience. */
 const V2SelftestCard: React.FC = () => {
   const enabled = true
+  const { supported: browserSupported } = useChromiumGate()
   const [running, setRunning] = useState(false)
   const [result, setResult] = useState<{
     mlDsaSigLen: number
@@ -508,7 +510,7 @@ const V2SelftestCard: React.FC = () => {
             variant="outline"
             size="sm"
             onClick={onRun}
-            disabled={running}
+            disabled={running || !browserSupported}
             className="text-xs font-mono"
           >
             {running ? 'Running…' : 'Run ML-DSA + ML-KEM selftest'}
@@ -517,7 +519,7 @@ const V2SelftestCard: React.FC = () => {
             variant="outline"
             size="sm"
             onClick={onRunTwoWorker}
-            disabled={running}
+            disabled={running || !browserSupported}
             className="text-xs font-mono"
           >
             {running ? 'Running…' : 'Cross-Worker KEM handshake'}
@@ -618,6 +620,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   React.useEffect(() => {
     hsmKeysRef.current = hsmKeys
   }, [hsmKeys])
+  const browserSupport = useChromiumGate()
   const [selectedMode, setSelectedMode] = useState<IKEv2Mode>(() => {
     const p = new URLSearchParams(window.location.search).get('vpnMode')
     if (p === 'classical' || p === 'hybrid' || p === 'pure-pqc') return p
@@ -2280,6 +2283,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
 
   return (
     <div className="space-y-6">
+      <ChromiumGateBanner feature="PQC VPN simulation" />
       <V2SelftestCard />
       <Tabs defaultValue="ui" className="w-full">
         <TabsList className="mb-4">
@@ -2894,7 +2898,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     setSabError(err instanceof Error ? err.message : String(err))
                   }
                 }}
-                disabled={authMode === 'dual' && !certData}
+                disabled={(authMode === 'dual' && !certData) || !browserSupport.supported}
                 className="px-4 py-2 font-bold rounded shadow-sm text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 title={
                   authMode === 'dual' && !certData

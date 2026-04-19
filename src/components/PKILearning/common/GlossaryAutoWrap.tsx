@@ -12,7 +12,7 @@ interface Props {
  * wrapped in InlineTooltip to prevent double-wrapping.
  */
 export const GlossaryAutoWrap = ({ children }: Props) => {
-  const [, setReady] = useState(isGlossaryReady())
+  const [, setReady] = useState(typeof isGlossaryReady === 'function' ? isGlossaryReady() : false)
 
   useEffect(() => {
     onGlossaryReady(() => setReady(true))

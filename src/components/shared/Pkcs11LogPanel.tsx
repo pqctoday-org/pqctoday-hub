@@ -15,6 +15,7 @@ import {
   CheckCircle,
   Eye,
   BookOpenText,
+  Filter,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import type { Pkcs11LogEntry } from '../../wasm/softhsm'
@@ -121,6 +122,39 @@ const LogEntryRow = ({
   )
 }
 
+// ── PKCS#11 function classification ──────────────────────────────────────────
+
+const CRYPTO_OPS = new Set([
+  'C_GenerateKeyPair',
+  'C_GenerateKey',
+  'C_DeriveKey',
+  'C_WrapKey',
+  'C_UnwrapKey',
+  'C_EncryptInit',
+  'C_Encrypt',
+  'C_EncryptUpdate',
+  'C_EncryptFinal',
+  'C_DecryptInit',
+  'C_Decrypt',
+  'C_DecryptUpdate',
+  'C_DecryptFinal',
+  'C_SignInit',
+  'C_Sign',
+  'C_SignUpdate',
+  'C_SignFinal',
+  'C_VerifyInit',
+  'C_Verify',
+  'C_VerifyUpdate',
+  'C_VerifyFinal',
+  'C_DigestInit',
+  'C_Digest',
+  'C_DigestUpdate',
+  'C_DigestFinal',
+  // KEM extensions (CKM_ML_KEM)
+  'C_EncapsulateKey',
+  'C_DecapsulateKey',
+])
+
 // ── Main panel ────────────────────────────────────────────────────────────────
 
 interface Pkcs11LogPanelProps {
@@ -159,42 +193,17 @@ export const Pkcs11LogPanel = ({
   const [copied, setCopied] = useState(false)
   const [inspectMode, setInspectMode] = useState(false)
   const [beginnerMode, setBeginnerMode] = useState(false)
-
-  const CRYPTO_OPS = [
-    'C_GenerateKeyPair',
-    'C_GenerateKey',
-    'C_DeriveKey',
-    'C_WrapKey',
-    'C_UnwrapKey',
-    'C_EncryptInit',
-    'C_Encrypt',
-    'C_EncryptUpdate',
-    'C_EncryptFinal',
-    'C_DecryptInit',
-    'C_Decrypt',
-    'C_DecryptUpdate',
-    'C_DecryptFinal',
-    'C_SignInit',
-    'C_Sign',
-    'C_SignUpdate',
-    'C_SignFinal',
-    'C_VerifyInit',
-    'C_Verify',
-    'C_VerifyUpdate',
-    'C_VerifyFinal',
-    'C_DigestInit',
-    'C_Digest',
-    'C_DigestUpdate',
-    'C_DigestFinal',
-  ]
+  const [hideAdminOps, setHideAdminOps] = useState(true)
 
   const visibleLog = log.filter((e) => {
     if (e.isStepHeader) return true
+    // Crypto-only filter: hide everything that isn't a core crypto operation
+    if (hideAdminOps && !CRYPTO_OPS.has(e.fn)) return false
     if (!inspectMode && e.fn === 'C_GetAttributeValue') return false
     if (!inspectMode && e.fn === 'C_FindObjects') return false
-    if (CRYPTO_OPS.includes(e.fn)) return true
+    if (CRYPTO_OPS.has(e.fn)) return true
     if (filterFns && filterFns.length > 0) {
-      if (inspectMode) return true // Show all operations natively in inspect mode to aid diagnosis
+      if (inspectMode) return true // Show all operations in inspect mode to aid diagnosis
       return filterFns.includes(e.fn)
     }
     return true
@@ -283,6 +292,20 @@ export const Pkcs11LogPanel = ({
               Beginner
             </Button>
           )}
+          <Button
+            variant={hideAdminOps ? 'secondary' : 'ghost'}
+            size="sm"
+            className="h-6 px-1.5 text-xs mr-1"
+            onClick={() => setHideAdminOps(!hideAdminOps)}
+            title={
+              hideAdminOps
+                ? 'Showing crypto ops only — click to include admin ops'
+                : 'Show crypto operations only (hide C_Initialize, C_OpenSession, etc.)'
+            }
+          >
+            <Filter size={11} className="mr-1" />
+            Crypto Only
+          </Button>
           <Button
             variant={inspectMode ? 'secondary' : 'ghost'}
             size="sm"
