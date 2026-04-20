@@ -1,56 +1,27 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { type ReactNode } from 'react'
-import { initGlossary, type GlossaryTerm } from '../data/glossary'
+import { glossaryTerms, type GlossaryTerm } from '../data/glossaryData'
+import { InlineTooltip } from '../components/ui/InlineTooltip'
 
-// ── Lazy-initialized glossary state ──────────────────────────────────────────
-// The glossary is loaded asynchronously. Components using GlossaryAutoWrap
-// will render plain text on first paint, then re-render with tooltips once
-// the glossary is ready. This avoids bundling 269 KB of static data.
+const termLookup = new Map<string, GlossaryTerm>(
+  glossaryTerms.flatMap((t) => {
+    const entries: [string, GlossaryTerm][] = [[t.term.toLowerCase(), t]]
+    if (t.acronym) entries.push([t.acronym.toLowerCase(), t])
+    return entries
+  })
+)
 
-let termLookup = new Map<string, GlossaryTerm>()
-let GLOSSARY_REGEX: RegExp | null = null
-let _ready = false
-const _readyCallbacks: Array<() => void> = []
-
-/** Rebuild the regex + lookup from loaded terms */
-const rebuildIndex = (terms: GlossaryTerm[]) => {
-  termLookup = new Map<string, GlossaryTerm>(
-    terms.flatMap((t) => {
-      const entries: [string, GlossaryTerm][] = [[t.term.toLowerCase(), t]]
-      if (t.acronym) entries.push([t.acronym.toLowerCase(), t])
-      return entries
-    })
-  )
-
-  const keys = [...termLookup.keys()].sort((a, b) => b.length - a.length)
-  const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const patterns = keys.map(escapeRegExp).join('|')
-  GLOSSARY_REGEX = new RegExp(`(?<![a-zA-Z0-9_])(${patterns})(?![a-zA-Z0-9_])`, 'gi')
-  _ready = true
-  _readyCallbacks.forEach((cb) => cb())
-  _readyCallbacks.length = 0
-}
-
-// Kick off load immediately on module import
-initGlossary().then(rebuildIndex)
-
-/** Register a callback for when the glossary is ready (used by components to force re-render) */
-export const onGlossaryReady = (cb: () => void) => {
-  if (_ready) {
-    cb()
-    return
-  }
-  _readyCallbacks.push(cb)
-}
-
-export const isGlossaryReady = () => _ready
+const GLOSSARY_KEYS = [...termLookup.keys()].sort((a, b) => b.length - a.length)
+const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+const patterns = GLOSSARY_KEYS.map(escapeRegExp).join('|')
+const GLOSSARY_REGEX = new RegExp(`(?<![a-zA-Z0-9_])(${patterns})(?![a-zA-Z0-9_])`, 'gi')
 
 /**
  * Scans raw text and extracts a deduplicated list of glossary terms and their definitions.
  * Useful for building a static legend when text cannot be made interactive (e.g. images).
  */
 export const extractGlossaryTerms = (text: string) => {
-  if (!text || !GLOSSARY_REGEX) return []
+  if (!text) return []
   const matches = text.match(GLOSSARY_REGEX)
   if (!matches) return []
 
@@ -66,8 +37,6 @@ export const extractGlossaryTerms = (text: string) => {
     .filter((t) => t.definition)
 }
 
-import { InlineTooltip } from '../components/ui/InlineTooltip'
-
 const GlossarySpan = ({ entry, displayText }: { entry: GlossaryTerm; displayText: string }) => {
   return <InlineTooltip term={entry.term}>{displayText}</InlineTooltip>
 }
@@ -77,7 +46,7 @@ const GlossarySpan = ({ entry, displayText }: { entry: GlossaryTerm; displayText
  * where glossary terms are wrapped in interactive tooltips.
  */
 export const parseGlossaryText = (text: string): ReactNode => {
-  if (!text || !GLOSSARY_REGEX) return text
+  if (!text) return text
 
   const parts = text.split(GLOSSARY_REGEX)
   if (parts.length === 1) return text
