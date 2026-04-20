@@ -9,11 +9,12 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - **Learn page was broken for all visitors** — navigating to `/learn` showed
-  "Something went wrong" on both Chrome and Safari. Root cause: a module
-  bundling conflict between the VPN/SSH simulator's WebAssembly code and the
-  glossary tooltip system caused the page to crash before anything rendered.
-  Fixed by isolating the heavy WASM bundle into its own loading boundary so it
-  no longer interferes with the rest of the learn module.
+  "Something went wrong" on both Chrome and Safari. Root cause: the glossary
+  tooltip system was changed to load its data asynchronously, which made it
+  vulnerable to a module-bundling conflict with WebAssembly code on any learn
+  module page. The glossary data is now loaded synchronously at startup,
+  eliminating the conflict entirely. Tooltips appear immediately on first
+  render with no loading delay.
 
 ### Added
 
