@@ -4,7 +4,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [3.3.9] - April 20, 2026
 
 ### Fixed
 
