@@ -43,8 +43,17 @@ export const VULNERABILITY_MATRIX: VulnerabilityEntry[] = [
     groversImpact: 'n/a',
     classicalBestAttack: 'Pollard rho O(2^{128})',
     quantumBestAttack: "Shor's O(n³)",
-    quantumComplexity: '~2,330 logical qubits',
+    quantumComplexity: '~1,200 logical qubits (revised, Google Quantum AI 2026)',
     recommendation: 'Replace with ML-DSA',
+  },
+  {
+    algorithm: 'ECDSA secp256k1 (Bitcoin/ETH)',
+    shorsImpact: 'broken',
+    groversImpact: 'n/a',
+    classicalBestAttack: 'Pollard rho O(2^{128})',
+    quantumBestAttack: "Shor's O(n³)",
+    quantumComplexity: '≤1,200 logical qubits + ≤90M Toffoli gates (Google Quantum AI, Mar 2026)',
+    recommendation: 'Migrate to PQC signatures immediately',
   },
   {
     algorithm: 'ECDSA P-384',
@@ -61,7 +70,7 @@ export const VULNERABILITY_MATRIX: VulnerabilityEntry[] = [
     groversImpact: 'n/a',
     classicalBestAttack: 'Pollard rho O(2^{128})',
     quantumBestAttack: "Shor's O(n³)",
-    quantumComplexity: '~2,330 logical qubits',
+    quantumComplexity: '~1,200 logical qubits (revised, Google Quantum AI 2026)',
     recommendation: 'Replace with ML-KEM / ML-DSA',
   },
   {

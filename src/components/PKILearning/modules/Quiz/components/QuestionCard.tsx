@@ -103,7 +103,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             disabled={hasSubmitted}
             onClick={() => handleOptionClick(option.id)}
             className={clsx(
-              'p-4 min-h-[44px] rounded-lg border text-left transition-colors',
+              'p-4 min-h-[44px] h-auto rounded-lg border text-left transition-colors whitespace-normal',
               getOptionClasses(option.id),
               !hasSubmitted && 'cursor-pointer',
               hasSubmitted && 'cursor-default'

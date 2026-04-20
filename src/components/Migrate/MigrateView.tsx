@@ -22,7 +22,6 @@ import {
   Wrench,
   Scale,
   BookmarkCheck,
-  ShieldCheck,
 } from 'lucide-react'
 
 import debounce from 'lodash/debounce'
@@ -42,8 +41,6 @@ import { ErrorAlert } from '../ui/error-alert'
 import { EmptyState } from '../ui/empty-state'
 import { ComparisonPanel } from './ComparisonPanel'
 import { StickyCompareBar } from './StickyCompareBar'
-import { AcmePqcWalkthrough } from '@/components/PKILearning/modules/PKIWorkshop/AcmePqcWalkthrough'
-import { CertCapacityCalculator } from '@/components/PKILearning/modules/PKIWorkshop/CertCapacityCalculator'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 
 const LICENSE_FILTER_ITEMS = [
@@ -65,50 +62,6 @@ function isPersonaRelevant(item: SoftwareItem, preferredLayers: string[]): boole
   if (preferredLayers.length === 0) return false
   const itemLayers = item.infrastructureLayer.split(',').map((l) => l.trim())
   return itemLayers.some((l) => preferredLayers.includes(l))
-}
-
-type CertTool = 'acme' | 'capacity' | null
-
-function CertLifecycleSection() {
-  const [activeTool, setActiveTool] = React.useState<CertTool>(null)
-  return (
-    <div className="mt-8 px-4 sm:px-6">
-      <div className="flex items-center gap-2 mb-4">
-        <ShieldCheck size={16} className="text-primary" aria-hidden="true" />
-        <h2 className="text-base font-semibold text-foreground">Certificate Lifecycle</h2>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-        <Button
-          variant="ghost"
-          onClick={() => setActiveTool(activeTool === 'acme' ? null : 'acme')}
-          className={`glass-panel h-auto p-5 flex-col items-start whitespace-normal hover:bg-transparent group ${activeTool === 'acme' ? 'border-primary/40' : ''}`}
-        >
-          <span className="text-sm font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
-            ACME + PQC Walkthrough
-          </span>
-          <span className="text-xs text-muted-foreground leading-relaxed">
-            Interactive walk through the ACME (RFC 8555) certificate issuance flow using a real
-            ML-DSA-65 keypair generated in-browser.
-          </span>
-        </Button>
-        <Button
-          variant="ghost"
-          onClick={() => setActiveTool(activeTool === 'capacity' ? null : 'capacity')}
-          className={`glass-panel h-auto p-5 flex-col items-start whitespace-normal hover:bg-transparent group ${activeTool === 'capacity' ? 'border-primary/40' : ''}`}
-        >
-          <span className="text-sm font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
-            Cert Capacity Calculator
-          </span>
-          <span className="text-xs text-muted-foreground leading-relaxed">
-            Model storage, bandwidth, and CPU impact of migrating your PKI to ML-DSA — adjust cert
-            counts and renewal cadence.
-          </span>
-        </Button>
-      </div>
-      {activeTool === 'acme' && <AcmePqcWalkthrough />}
-      {activeTool === 'capacity' && <CertCapacityCalculator />}
-    </div>
-  )
 }
 
 export const MigrateView: React.FC = () => {
@@ -1668,8 +1621,6 @@ export const MigrateView: React.FC = () => {
           </div>
         )}
       </div>
-
-      <CertLifecycleSection />
 
       {/* Sticky compare bar — fixed bottom, visible whenever ≥1 product is queued */}
       <StickyCompareBar

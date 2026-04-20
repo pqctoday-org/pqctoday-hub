@@ -4,6 +4,54 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- **Google Quantum AI whitepaper added to library** — "Securing Elliptic Curve
+  Cryptocurrencies against Quantum Vulnerabilities" (Babbush, Gidney et al.,
+  Google Quantum AI + Ethereum Foundation, March 30 2026) is now in the library
+  with module links to Quantum Threats, Blockchain PQC, and Standards Bodies.
+- **secp256k1 added to Quantum Threats workshop** — Bitcoin/Ethereum's curve now
+  appears in the Algorithm Vulnerability Matrix and Security Level Degradation
+  tool with the verified estimate of ≤1,200 logical qubits + ≤90M Toffoli gates
+  via Shor's algorithm.
+- **ECC qubit estimates revised** — ECDSA P-256, X25519, and Ed25519 updated
+  from ~2,330 to ~1,200 logical qubits, reflecting improved Shor's circuit
+  efficiency for all 256-bit prime-order elliptic curves (Google Quantum AI,
+  Mar 2026).
+- **Fast-clock vs slow-clock CRQC distinction in HNDL/HNFL calculators** —
+  explains that fast-clock CRQCs (superconducting, photonic) enable live mempool
+  "on-spend" attacks while slow-clock types are the at-rest / HNDL threat.
+- **Guided exercise 7: "ECC Blockchain Under Quantum Attack"** — on-spend attack
+  scenario: Bitcoin transaction in the mempool, fast-clock CRQC at 1,200 qubits,
+  and why blockchain infrastructure needs PQC migration now.
+- **CertCapacityCalculator — math disclosures** — all three charts now have
+  collapsible "How this is calculated" sections with formula, assumptions, and
+  benchmark sources.
+- **HsmCapacityCalculator — estimation disclosures** — each TPS slider has a
+  "How we estimated this" toggle showing rationale, math, PQC impact, and
+  sources.
+
+### Changed
+
+- **CertCapacityCalculator — bandwidth model corrected** — TLS payload now
+  includes both `Certificate` and `CertificateVerify`; prior model used an
+  incorrect RSA-2048 delta baseline.
+- **certCapacityDefaults — AVX2 cycle-accurate benchmarks** — RSA, ECDSA, and
+  ML-DSA figures updated from rough estimates to cycle counts from
+  CRYSTALS-Dilithium Round 3 and OpenSSL 3.x AVX2 measurements.
+- **Certificate Lifecycle tools moved to PKI Workshop** — ACME PQC Walkthrough
+  and Cert Capacity Calculator removed from Migrate page; now in the learn
+  module where they belong.
+- **VPN Simulator marked work-in-progress** — WIP badge shown while
+  strongSwan IKEv2 + ML-DSA AUTH method integration is pending.
+
+### Fixed
+
+- **Quiz answer buttons — long options no longer truncate** — option buttons
+  wrap text properly instead of clipping multi-line answers.
+
 ## [3.3.9] - April 20, 2026
 
 ### Fixed

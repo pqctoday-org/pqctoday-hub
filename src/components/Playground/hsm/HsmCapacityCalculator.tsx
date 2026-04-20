@@ -20,6 +20,7 @@ import {
   CheckCircle2,
   Gauge,
   Download,
+  ChevronDown,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
@@ -509,6 +510,19 @@ export function HsmCapacityCalculator() {
     [scenarios]
   )
 
+  const [expandedEstimations, setExpandedEstimations] = useState<Set<string>>(new Set())
+  const toggleEstimation = useCallback((id: string) => {
+    setExpandedEstimations((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+      return next
+    })
+  }, [])
+
   const hsmCountMax = useMemo(
     () => Math.max(20, ...scenarios.map((s) => s.requiredWithRedundancy * 3)),
     [scenarios]
@@ -702,6 +716,49 @@ export function HsmCapacityCalculator() {
                   onChange={(v) => setUseCaseTps(uc.id, v)}
                   disabled={!s.enabled}
                 />
+                <Button
+                  variant="ghost"
+                  onClick={() => toggleEstimation(uc.id)}
+                  className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors mt-1 h-auto p-0"
+                  aria-expanded={expandedEstimations.has(uc.id)}
+                >
+                  <ChevronDown
+                    size={12}
+                    className={clsx(
+                      'transition-transform duration-150',
+                      expandedEstimations.has(uc.id) && 'rotate-180'
+                    )}
+                    aria-hidden="true"
+                  />
+                  How we estimated this
+                </Button>
+                {expandedEstimations.has(uc.id) && (
+                  <div className="mt-2 pt-2 border-t border-border/30 space-y-2 text-[10px]">
+                    <p className="text-muted-foreground leading-relaxed">
+                      {uc.estimation.rationale}
+                    </p>
+                    <p>
+                      <span className="font-mono text-secondary uppercase tracking-wide">
+                        Math ·{' '}
+                      </span>
+                      <span className="text-muted-foreground">{uc.estimation.math}</span>
+                    </p>
+                    <p>
+                      <span className="font-mono text-secondary uppercase tracking-wide">
+                        PQC impact ·{' '}
+                      </span>
+                      <span className="text-muted-foreground">{uc.estimation.pqcImpact}</span>
+                    </p>
+                    <p>
+                      <span className="font-mono text-secondary uppercase tracking-wide">
+                        Sources ·{' '}
+                      </span>
+                      <span className="text-muted-foreground">
+                        {uc.estimation.sources.join(' · ')}
+                      </span>
+                    </p>
+                  </div>
+                )}
               </div>
             )
           })}

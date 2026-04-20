@@ -174,6 +174,20 @@ export const HNFLTimeline: React.FC = () => {
                 </div>
               ))}
             </div>
+            <p className="text-[10px] text-muted-foreground mt-2">
+              <strong>Fast-clock CRQCs</strong> (superconducting, photonic) enable
+              &quot;on-setup&quot; key compromise during handshakes. Once a CRQC can forge
+              signatures, every credential signed by a compromised CA becomes retroactively
+              forgeable — the HNFL threat modeled here.{' '}
+              <a
+                href="https://quantumai.google/static/site-assets/downloads/cryptocurrency-whitepaper.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-foreground"
+              >
+                Google Quantum AI, Mar 2026
+              </a>
+            </p>
           </div>
 
           <div className="border-t border-border pt-4">

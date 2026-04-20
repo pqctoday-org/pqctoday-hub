@@ -2,12 +2,20 @@
 /**
  * Reference sizes and performance characteristics for certificate lifecycle capacity planning.
  *
- * Sources:
- * - RSA-2048 / ECDSA-P256: RFC 5280, RFC 3279, typical TLS cert measurements
- * - ML-DSA variants: NIST FIPS 204 (Table 1 and Table 2)
- * - SLH-DSA: NIST FIPS 205 (Table 2 — SLH-DSA-SHA2-128s)
- * - TLS handshake overhead: draft-ietf-tls-mldsa (Section 4)
- * - CPU estimates: NIST PQC Round 3 evaluation benchmarks (x86-64, cycles/op at 3 GHz)
+ * Size sources:
+ * - RSA-2048 / ECDSA-P256: RFC 5280, RFC 3279, RFC 5480
+ * - ML-DSA variants: NIST FIPS 204, Table 1
+ * - SLH-DSA: NIST FIPS 205, Table 2 (SLH-DSA-SHA2-128s)
+ *
+ * Performance sources (all AVX2-optimised, 3 GHz x86-64):
+ * - RSA-2048: OpenSSL 3.x with CRT + AVX2 (Haswell-class server)
+ * - ECDSA P-256: OpenSSL 3.x with AVX2 scalar-multiplication optimisations
+ * - ML-DSA-44/65/87: CRYSTALS-Dilithium AVX2 implementation, Haswell benchmarks
+ *   published in the NIST PQC Round 3 submission package (Appendix B).
+ *   Cycle counts: ML-DSA-44 sign 86 252 / verify 57 789;
+ *                 ML-DSA-65 sign 130 676 / verify 84 906;
+ *                 ML-DSA-87 sign 197 960 / verify 126 839.
+ * - SLH-DSA-128s: reference impl (SIMD gives negligible speedup for hash-tree traversal)
  */
 
 export interface AlgoCapacityProfile {
@@ -21,11 +29,11 @@ export interface AlgoCapacityProfile {
   privateKeyBytes: number
   /** Signature / ciphertext size in bytes */
   signatureBytes: number
-  /** Estimated CPU time for one sign operation (microseconds on a 3 GHz x86-64) */
+  /** AVX2-optimised sign latency (µs on a 3 GHz x86-64) */
   signCpuMicros: number
-  /** Estimated CPU time for one verify operation (microseconds) */
+  /** AVX2-optimised verify latency (µs) */
   verifyCpuMicros: number
-  /** Approximate TLS Certificate message overhead vs baseline (bytes additional) */
+  /** Approximate TLS Certificate message overhead vs RSA-2048 baseline (bytes, metadata only) */
   tlsCertOverheadBytes: number
   /** Citation for sizes */
   sizeSource: string
@@ -40,11 +48,11 @@ export const CERT_CAPACITY_DEFAULTS: AlgoCapacityProfile[] = [
     publicKeyBytes: 256,
     privateKeyBytes: 1192,
     signatureBytes: 256,
-    signCpuMicros: 700,
-    verifyCpuMicros: 20,
+    signCpuMicros: 400, // OpenSSL 3.x + CRT + AVX2, ~2500 sign/s at 3 GHz
+    verifyCpuMicros: 5, // e=65537 — single modexp, very fast
     tlsCertOverheadBytes: 0, // baseline
     sizeSource: 'RFC 3447, RFC 5280',
-    perfSource: 'OpenSSL speed benchmark average, 3 GHz x86-64',
+    perfSource: 'OpenSSL 3.x + AVX2 + CRT, 3 GHz x86-64 (Haswell-class)',
   },
   {
     name: 'ECDSA P-256',
@@ -52,11 +60,11 @@ export const CERT_CAPACITY_DEFAULTS: AlgoCapacityProfile[] = [
     publicKeyBytes: 64,
     privateKeyBytes: 32,
     signatureBytes: 72,
-    signCpuMicros: 100,
-    verifyCpuMicros: 200,
-    tlsCertOverheadBytes: -184, // smaller than RSA-2048
+    signCpuMicros: 40, // OpenSSL 3.x + AVX2 scalar-mult, ~25 000 sign/s at 3 GHz
+    verifyCpuMicros: 80, // two scalar multiplications
+    tlsCertOverheadBytes: -184,
     sizeSource: 'RFC 5480, RFC 3279',
-    perfSource: 'OpenSSL speed benchmark average, 3 GHz x86-64',
+    perfSource: 'OpenSSL 3.x + AVX2, 3 GHz x86-64 (Haswell-class)',
   },
   {
     name: 'ML-DSA-44',
@@ -64,11 +72,11 @@ export const CERT_CAPACITY_DEFAULTS: AlgoCapacityProfile[] = [
     publicKeyBytes: 1312,
     privateKeyBytes: 2560,
     signatureBytes: 2420,
-    signCpuMicros: 110,
-    verifyCpuMicros: 70,
-    tlsCertOverheadBytes: 2164, // sig delta vs RSA-2048 baseline in cert
+    signCpuMicros: 29, // 86 252 cycles ÷ 3 GHz — CRYSTALS Dilithium2 AVX2, Haswell
+    verifyCpuMicros: 19, // 57 789 cycles ÷ 3 GHz
+    tlsCertOverheadBytes: 2164,
     sizeSource: 'NIST FIPS 204, Table 1',
-    perfSource: 'NIST PQC Round 3 evaluation, x86-64 reference',
+    perfSource: 'CRYSTALS-Dilithium AVX2, Haswell — NIST PQC Round 3 submission Appendix B',
   },
   {
     name: 'ML-DSA-65',
@@ -76,11 +84,11 @@ export const CERT_CAPACITY_DEFAULTS: AlgoCapacityProfile[] = [
     publicKeyBytes: 1952,
     privateKeyBytes: 4032,
     signatureBytes: 3293,
-    signCpuMicros: 190,
-    verifyCpuMicros: 100,
+    signCpuMicros: 44, // 130 676 cycles ÷ 3 GHz
+    verifyCpuMicros: 28, // 84 906 cycles ÷ 3 GHz
     tlsCertOverheadBytes: 3037,
     sizeSource: 'NIST FIPS 204, Table 1',
-    perfSource: 'NIST PQC Round 3 evaluation, x86-64 reference',
+    perfSource: 'CRYSTALS-Dilithium AVX2, Haswell — NIST PQC Round 3 submission Appendix B',
   },
   {
     name: 'ML-DSA-87',
@@ -88,11 +96,11 @@ export const CERT_CAPACITY_DEFAULTS: AlgoCapacityProfile[] = [
     publicKeyBytes: 2592,
     privateKeyBytes: 4896,
     signatureBytes: 4595,
-    signCpuMicros: 280,
-    verifyCpuMicros: 130,
+    signCpuMicros: 66, // 197 960 cycles ÷ 3 GHz
+    verifyCpuMicros: 42, // 126 839 cycles ÷ 3 GHz
     tlsCertOverheadBytes: 4339,
     sizeSource: 'NIST FIPS 204, Table 1',
-    perfSource: 'NIST PQC Round 3 evaluation, x86-64 reference',
+    perfSource: 'CRYSTALS-Dilithium AVX2, Haswell — NIST PQC Round 3 submission Appendix B',
   },
   {
     name: 'SLH-DSA-128s',
@@ -100,7 +108,7 @@ export const CERT_CAPACITY_DEFAULTS: AlgoCapacityProfile[] = [
     publicKeyBytes: 32,
     privateKeyBytes: 64,
     signatureBytes: 7856,
-    signCpuMicros: 280000, // ~280ms — stateless hash-based, very slow sign
+    signCpuMicros: 280000, // ~280 ms — hash-tree traversal; SIMD gives negligible speedup
     verifyCpuMicros: 1200,
     tlsCertOverheadBytes: 7600,
     sizeSource: 'NIST FIPS 205, Table 2 (SLH-DSA-SHA2-128s)',

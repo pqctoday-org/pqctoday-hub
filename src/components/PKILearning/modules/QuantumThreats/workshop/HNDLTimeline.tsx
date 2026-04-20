@@ -154,6 +154,20 @@ export const HNDLTimeline: React.FC = () => {
                 </div>
               ))}
             </div>
+            <p className="text-[10px] text-muted-foreground mt-2">
+              <strong>Fast-clock CRQCs</strong> (superconducting, photonic) arriving first enable
+              &quot;on-spend&quot; interception of unconfirmed transactions. Slow-clock CRQCs
+              (trapped ion, neutral atom) enable &quot;at-rest&quot; attacks on archived ciphertext
+              — the HNDL threat modeled here.{' '}
+              <a
+                href="https://quantumai.google/static/site-assets/downloads/cryptocurrency-whitepaper.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-foreground"
+              >
+                Google Quantum AI, Mar 2026
+              </a>
+            </p>
           </div>
 
           <div className="border-t border-border pt-4">

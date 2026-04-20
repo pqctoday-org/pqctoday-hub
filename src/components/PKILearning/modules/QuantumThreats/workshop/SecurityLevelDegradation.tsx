@@ -228,6 +228,22 @@ export const SecurityLevelDegradation: React.FC<SecurityLevelDegradationProps> =
               )}
             </div>
             <p className="text-xs text-muted-foreground mt-2">{algorithmData.notes}</p>
+            {algorithmData.category === 'asymmetric' &&
+              algorithmData.quantumAttack === 'shor' &&
+              algorithmData.estimatedQubits !== null &&
+              algorithmData.estimatedQubits <= 1200 && (
+                <p className="text-[10px] text-muted-foreground mt-1">
+                  Qubit estimate revised per{' '}
+                  <a
+                    href="https://quantumai.google/static/site-assets/downloads/cryptocurrency-whitepaper.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline hover:text-foreground"
+                  >
+                    Google Quantum AI &amp; Ethereum Foundation (Mar 2026)
+                  </a>
+                </p>
+              )}
           </div>
 
           {/* Panel A — Qubit gap: required logical vs. today's physical */}

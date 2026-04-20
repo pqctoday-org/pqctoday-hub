@@ -53,9 +53,10 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     classicalBits: 128,
     quantumBits: 0,
     quantumAttack: 'shor',
-    estimatedQubits: 2330,
+    estimatedQubits: 1200,
     status: 'broken',
-    notes: "Shor's solves ECDLP. Fewer qubits needed than RSA at equivalent security.",
+    notes:
+      "Revised per Google Quantum AI (Mar 2026): improved Shor's circuits break 256-bit ECC with \u22641,200 logical qubits — roughly half prior estimates. Fewer qubits needed than RSA at equivalent security.",
   },
   {
     name: 'ECDSA P-384',
@@ -75,9 +76,10 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     classicalBits: 128,
     quantumBits: 0,
     quantumAttack: 'shor',
-    estimatedQubits: 2330,
+    estimatedQubits: 1200,
     status: 'broken',
-    notes: "Curve25519 ECDH falls to Shor's just like NIST curves.",
+    notes:
+      "Curve25519 ECDH falls to Shor's just like NIST curves. Revised to ~1,200 logical qubits per Google Quantum AI (Mar 2026) circuit efficiency improvements for 256-bit elliptic curves.",
   },
   {
     name: 'Ed25519',
@@ -86,9 +88,22 @@ export const ALGORITHM_SECURITY_DATA: AlgorithmSecurityData[] = [
     classicalBits: 128,
     quantumBits: 0,
     quantumAttack: 'shor',
-    estimatedQubits: 2330,
+    estimatedQubits: 1200,
     status: 'broken',
-    notes: "EdDSA signatures rely on discrete log — vulnerable to Shor's.",
+    notes:
+      "EdDSA signatures rely on discrete log — vulnerable to Shor's. Revised to ~1,200 logical qubits per Google Quantum AI (Mar 2026) circuit efficiency improvements for 256-bit elliptic curves.",
+  },
+  {
+    name: 'ECDSA secp256k1',
+    type: 'classical',
+    category: 'asymmetric',
+    classicalBits: 128,
+    quantumBits: 0,
+    quantumAttack: 'shor',
+    estimatedQubits: 1200,
+    status: 'broken',
+    notes:
+      'Google Quantum AI & Ethereum Foundation (Mar 2026): \u22641,200 logical qubits + \u226490M Toffoli gates breaks secp256k1 ECDLP via Shor\u2019s algorithm. Used in Bitcoin, Ethereum, and most blockchain protocols.',
   },
   // Symmetric (weakened by Grover's)
   {
@@ -304,6 +319,14 @@ export interface CRQCEstimate {
 }
 
 export const CRQC_ESTIMATES: CRQCEstimate[] = [
+  {
+    source: 'Google Quantum AI & Ethereum Foundation (2026)',
+    yearLow: 2029,
+    yearHigh: 2036,
+    confidence: 'Architecture-dependent',
+    notes:
+      'Mar 2026: secp256k1 ECDLP breakable with \u22641,200 logical qubits. Introduces fast-clock (superconducting/photonic) vs slow-clock (trapped ion/neutral atom) CRQC distinction. Fast-clock CRQCs enable on-spend attacks on public mempools; slow-clock enable at-rest attacks on dormant wallets. 2.3M BTC identified as at-risk.',
+  },
   {
     source: 'Global Risk Institute (2025)',
     yearLow: 2030,

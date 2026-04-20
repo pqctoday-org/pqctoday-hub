@@ -1,0 +1,595 @@
+---
+generated: 2026-04-20
+collection: library
+documents_processed: 14
+enrichment_method: ollama-qwen3.5:27b
+---
+
+## ref-joseph-transitioning
+
+- **Reference ID**: ref-joseph-transitioning
+- **Title**: Transitioning organizations to post-quantum cryptography
+- **Authors**: D. Joseph et al.
+- **Publication Date**: 2022-01-01
+- **Last Updated**: 2022-01-01
+- **Document Status**: Published
+- **Main Topic**: None detected
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: None detected
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: None detected
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: None detected
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: No source text available
+- **Source Document**: ref-joseph-transitioning.pdf (305,341 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-04-20T00:28:00
+
+---
+
+## ref-obrien-chrome-hybrid
+
+- **Reference ID**: ref-obrien-chrome-hybrid
+- **Title**: Protecting Chrome traffic with Hybrid Kyber KEM
+- **Authors**: D. O'Brien
+- **Publication Date**: 2023-01-01
+- **Last Updated**: 2023-01-01
+- **Document Status**: Published
+- **Main Topic**: Google announces the implementation of Hybrid Kyber KEM to protect Chrome traffic against future quantum threats.
+- **PQC Algorithms Covered**: Kyber
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: Chrome
+- **Protocols Covered**: TLS, HTTPS, HTTP/3, QUIC, DNS-over-HTTPS, DoH, TCP, SSL, SPDY
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Chrome is adopting Hybrid Kyber KEM to secure traffic; The implementation combines classical and post-quantum cryptography; This update targets the Chromium browser project; Security enhancements are part of ongoing Chrome development; No specific migration deadlines or threat models are detailed in this announcement.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid Kyber KEM
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer, Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: hybrid-crypto, tls-basics, migration-program, pqc-risk-management, algorithms
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: ref-obrien-chrome-hybrid.html (178,652 bytes, 4,505 extracted chars)
+- **Extraction Timestamp**: 2026-04-20T00:28:54
+
+---
+
+## ref-defeo-sqisign
+
+- **Reference ID**: ref-defeo-sqisign
+- **Title**: SQISign: compact post-quantum signatures from quaternions and isogenies
+- **Authors**: L. D. Feo et al.
+- **Publication Date**: 2020-01-01
+- **Last Updated**: 2020-01-01
+- **Document Status**: Published
+- **Main Topic**: Introduction of SQISign, a compact post-quantum signature scheme based on isogeny graphs of supersingular elliptic curves and quaternion algebras.
+- **PQC Algorithms Covered**: SQISign; KLPT algorithm; CSIDH; GPS (Galbraith, Petit and Silva); SIDH
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Luca De Feo; David Kohel; Antonin Leroux; Christophe Petit; Benjamin Wesolowski; Couveignes; Galbraith; Silva; Lauter; Tignol
+- **PQC Products Mentioned**: C implementation of SQISign; Magma implementation of SQISign
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: SQISign achieves signatures of 204 bytes and public keys of 64 bytes, an order of magnitude smaller than other post-quantum schemes; The scheme targets NIST-1 level of security using isogeny graphs of supersingular elliptic curves; A new variant of the KLPT algorithm is introduced to work for arbitrary maximal orders without revealing special paths; Zero-knowledge property relies on a new computational assumption regarding isogeny path finding; Implementation in C takes 0.6s for key generation, 2.5s for signing, and 50ms for verification on a modern workstation
+- **Security Levels & Parameters**: NIST-1 level of security; signatures of 204 bytes; secret keys of 16 bytes; public keys of 64 bytes
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: Key generation 0.6s; Signing 2.5s; Verification 50ms; Signature size 204 bytes; Secret key size 16 bytes; Public key size 64 bytes
+- **Target Audience**: Researcher; Developer; Security Architect
+- **Implementation Prerequisites**: C programming language; Magma software; Modern workstation
+- **Relevant PQC Today Features**: Algorithms; Leaders; pqc-101; stateful-signatures; digital-id
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: ref-defeo-sqisign.pdf (782,936 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-20T00:30:17
+
+---
+
+## ref-bravyi-quantum-memory
+
+- **Reference ID**: ref-bravyi-quantum-memory
+- **Title**: High-threshold and low-overhead fault-tolerant quantum memory
+- **Authors**: S. Bravyi et al.
+- **Publication Date**: 2024-01-01
+- **Last Updated**: 2024-01-01
+- **Document Status**: Published
+- **Main Topic**: Presentation of a low-overhead fault-tolerant quantum memory protocol using bivariate bicycle codes with an error threshold of 0.7%.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Sergey Bravyi; Andrew W. Cross; Jay M. Gambetta; Dmitri Maslov; Patrick Rall; Theodore J. Yoder
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Bivariate bicycle codes achieve an error threshold of 0.7% comparable to the surface code; The protocol reduces encoding overhead by a factor of 10 compared to the surface code; 12 logical qubits can be preserved for nearly 1 million syndrome cycles using 288 physical qubits at 0.1% physical error rate; Syndrome measurement requires a depth-7 circuit with n ancillary qubits; The qubit connectivity graph is decomposable into two planar subgraphs suitable for superconducting architectures
+- **Security Levels & Parameters**: Error threshold 0.7%; Physical error rate 0.1%; Code parameters [[288, 12, 18]]; Circuit-level distance up to 18; Net encoding rate 1/48
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: 288 physical qubits for 12 logical qubits; Depth-7 syndrome measurement circuit; Degree-6 qubit connectivity graph; 1 million syndrome cycles preservation time
+- **Target Audience**: Researcher; Quantum Hardware Architect
+- **Implementation Prerequisites**: Superconducting qubit architecture with degree-6 connectivity; Two planar subgraph decomposition capability; Microwave resonator coupling for thickness-2 architecture
+- **Relevant PQC Today Features**: quantum-threats, algorithms, leaders, pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: ref-bravyi-quantum-memory.pdf (2,799,060 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-20T00:32:37
+
+---
+
+## ref-gidney-factor-rsa
+
+- **Reference ID**: ref-gidney-factor-rsa
+- **Title**: How to factor 2048 bit RSA integers with less than a million noisy qubits
+- **Authors**: C. Gidney
+- **Publication Date**: 2025-05-01
+- **Last Updated**: 2025-05-01
+- **Document Status**: Published
+- **Main Topic**: Estimation of reduced physical qubit requirements to factor 2048-bit RSA integers using optimized quantum algorithms and fault tolerance techniques.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Shor's Algorithm; Ekerå-Håstad Period Finding; Approximate Residue Arithmetic
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Craig Gidney; Peter Shor; May and Schlieper; Chevignard, Fouque, and Schrottenloher; Ekerå and Håstad
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; 2048 bit RSA integers
+- **Key Takeaways**: Factoring 2048-bit RSA integers may require less than a million noisy qubits instead of 20 million; Approximate residue arithmetic and yoked surface codes significantly reduce qubit counts; The trade-off between space and time can be optimized to reduce Toffoli gate counts by over 100x compared to prior methods; Planning quantum-safe transitions requires updated cost models for quantum attacks on vulnerable cryptosystems
+- **Security Levels & Parameters**: 2048 bit RSA integers; less than a million noisy qubits; 0.1% uniform gate error rate; 1 microsecond surface code cycle time; 10 microseconds control system reaction time
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: Less than a week runtime for factoring 2048 bit RSA integers; less than a million physical qubits; 3 billion Toffoli gates in prior estimates; 2 trillion Toffoli gates in CFS24 estimate; over 100x reduction in Toffoli count compared to CFS24
+- **Target Audience**: Researcher; Security Architect; Policy Maker
+- **Implementation Prerequisites**: Square grid of qubits with nearest neighbor connections; uniform gate error rate of 0.1%; surface code cycle time of 1 microsecond; control system reaction time of 10 microseconds
+- **Relevant PQC Today Features**: Threats; Algorithms; Leaders; pqc-risk-management; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: ref-gidney-factor-rsa.pdf (4,175,379 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-20T00:34:46
+
+---
+
+## ref-webster-pinnacle
+
+- **Reference ID**: ref-webster-pinnacle
+- **Title**: The pinnacle architecture: Reducing the cost of breaking rsa-2048 to 100,000 physical qubits
+- **Authors**: P. Webster et al.
+- **Publication Date**: 2026-02-01
+- **Last Updated**: 2026-02-01
+- **Document Status**: Published
+- **Main Topic**: Introduction of the Pinnacle Architecture using quantum LDPC codes to reduce physical qubit requirements for factoring RSA-2048 to under 100,000.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Factoring 2048-bit RSA integers; determining ground-state energy of the Fermi-Hubbard model
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Paul Webster; Lucas Berent; Omprakash Chandra; Evan T. Hockings; Nouédyn Baspin; Felix Thomsen; Samuel C. Smith; Lawrence Z. Cohen
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA-2048
+- **Key Takeaways**: The Pinnacle Architecture reduces physical qubit requirements for breaking RSA-2048 to under 100,000 using QLDPC codes; Utility-scale quantum computing is feasible with an order of magnitude fewer qubits than surface code architectures; Magic engines enable constant throughput of high-fidelity magic states within a single code block; Clifford frame cleaning allows efficient parallelism and read-only memory access across processing units; Resource estimates show factoring RSA-2048 is possible in one month with 1 microsecond code cycle times.
+- **Security Levels & Parameters**: 2048-bit RSA; physical error rate of 10^-3; code cycle time of 1 µs; reaction time of 10 µs; lattice size L = 16 for Fermi-Hubbard model
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: Less than 100,000 physical qubits for RSA-2048 factoring at p=10^-3; 62,000 physical qubits for Fermi-Hubbard L=16 at p=10^-3; 22,000 physical qubits for Fermi-Hubbard L=16 at p=10^-4; runtime of 1-4 minutes per shot with microsecond code cycle times; 3.1 million physical qubits required for RSA-2048 factoring in one month at p=10^-4 with 1 ms code cycle time
+- **Target Audience**: Researcher; Security Architect
+- **Implementation Prerequisites**: Physical error rate of 10^-3; code cycle time of 1 µs; reaction time of 10 µs; hardware supporting quasi-local connections between physical qubits
+- **Relevant PQC Today Features**: Threats, Algorithms, Leaders, pqc-risk-management, migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: ref-webster-pinnacle.pdf (1,189,171 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-20T00:37:11
+
+---
+
+## ref-litinski-toffoli
+
+- **Reference ID**: ref-litinski-toffoli
+- **Title**: How to compute a 256-bit elliptic curve private key with only 50 million toffoli gates
+- **Authors**: D. Litinski
+- **Publication Date**: 2023-06-01
+- **Last Updated**: 2023-06-01
+- **Document Status**: Published
+- **Main Topic**: Resource estimates for breaking 256-bit elliptic curve cryptography using Shor's algorithm on fault-tolerant quantum computers with active-volume architectures.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Shor's Algorithm; Quantum computing threat to ECC and RSA
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Daniel Litinski
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; Elliptic curve cryptography (ECC)
+- **Key Takeaways**: Active-volume architectures reduce the cost per key by a factor of 300-700 compared to baseline 2D-local architectures; Algorithmic modifications like reusing stored states and parallel modular inversion can reduce Toffoli counts by up to a factor of 5; 256-bit ECC is anticipated to be the first widely used cryptosystem compromised by quantum computing due to smaller key sizes; Photonic fusion-based quantum computers benefit significantly from longer delay lines which increase logical qubit capacity; A device with an active-volume architecture can generate a 256-bit key every 9.7 minutes using 6000 logical qubit modules at a 10-microsecond code cycle
+- **Security Levels & Parameters**: 256-bit ECC; 2048-bit RSA; Code distance d=24 to d=28; 10% threshold error rate; 10-microsecond code cycle; 1-millisecond code cycle
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: 50 million Toffoli gates per key; 6000 modules with 1152 physical qubits each; 3000 logical memory qubits; Key generation time of 9.7 minutes to 16 hours depending on architecture; Active volume of 2.8 to 3.8 billion blocks
+- **Target Audience**: Researcher; Security Architect
+- **Implementation Prerequisites**: Fault-tolerant surface-code quantum computer; Non-local inter-module connections; Resource-state generators for photonic implementations; Delay lines ranging from 1 microsecond to 1 millisecond
+- **Relevant PQC Today Features**: Threats, Algorithms, pqc-risk-management, migration-program, pqc-business-case
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: ref-litinski-toffoli.pdf (3,307,283 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-20T00:39:39
+
+---
+
+## ref-kim-ecdlp
+
+- **Reference ID**: ref-kim-ecdlp
+- **Title**: New quantum circuits for ECDLP: Breaking prime elliptic curve cryptography in minutes
+- **Authors**: H. Kim et al.
+- **Publication Date**: 2026-01-01
+- **Last Updated**: 2026-01-01
+- **Document Status**: Published
+- **Main Topic**: This paper presents optimized quantum circuits for Shor's algorithm to break prime elliptic curve cryptography with reduced circuit depth and qubit counts.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Shor's Algorithm; breaking Elliptic Curve Cryptography via ECDLP
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: South Korea; Singapore; Sweden
+- **Leaders Contributions Mentioned**: Hyunji Kim; Kyungbae Jang; Siyi Wang; Anubhab Baksi; Gyeongju Song; Hwajeong Seo; Anupam Chattopadhyay; M. Roetteler; T. Häner; Proos and Zalka; Gouzien et al.; Ekerå
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; ECC; P-256; P-521; P-224; Curve25519; Brainpool curves; Montgomery algorithm; Extended Euclidean Algorithm
+- **Key Takeaways**: Optimized quantum point addition circuits achieve up to 40% improvement in qubit count-depth product compared to previous works; P-521 curve maximum depth is 228, well below the NIST MAXDEPTH constraint of 240; P-224 curve can be broken in 34 minutes using 19.1 million physical qubits or 96 minutes using 6.9 million physical qubits; ECC does not satisfy NIST post-quantum security requirements under current quantum resource analyses
+- **Security Levels & Parameters**: NIST MAXDEPTH 240; P-521 depth 228; P-521 complexity 2^65; NIST post-quantum security level 1 requirement 2^157; P-224 comparable to RSA-2048
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: 34 minutes runtime for P-224 with 19.1 million physical qubits; 96 minutes runtime for P-224 with 6.9 million physical qubits; 52% to 54% reduction in total gate count; 37% to 40% improvement in qubit count-depth product
+- **Target Audience**: Researcher; Security Architect
+- **Implementation Prerequisites**: Fault-tolerant computation environment; Noisy Intermediate-Scale Quantum (NISQ) era resources; semi-classical Fourier transform implementation
+- **Relevant PQC Today Features**: Threats; Algorithms; Assess; Leaders; quantum-threats
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: ref-kim-ecdlp.pdf (889,113 bytes, 13,375 extracted chars)
+- **Extraction Timestamp**: 2026-04-20T00:41:55
+
+---
+
+## ref-pont-downtime
+
+- **Reference ID**: ref-pont-downtime
+- **Title**: Downtime required for bitcoin quantum-safety
+- **Authors**: J. J. Pont et al.
+- **Publication Date**: 2024-10-01
+- **Last Updated**: 2024-10-01
+- **Document Status**: Published
+- **Main Topic**: Analysis of the cumulative downtime required to upgrade Bitcoin's ECDSA-based UTXOs to post-quantum cryptosystems before quantum computers become capable of breaking 256-bit keys.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Just-In-Time (JIT) quantum attack; quantum attacks on public-key cryptosystems relying on factoring and discrete logarithm problems
+- **Migration Timeline Info**: Lower bound of 1827.96 hours or 76.16 days for full upgrade; transition must be completed before availability of ECDSA-256 breaking quantum devices expected within a decade with 31% probability
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Jamie J. Pont; Joseph J. Kearney; Jack Moyler; Carlos A. Perez-Delgado; Stewart et al.
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: Bitcoin protocol; Taproot Schnorr signature scheme
+- **Infrastructure Layers**: Blockchain network; UTXO (unspent transaction outputs); mining infrastructure
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: ECDSA; RSA; Elliptic-Curve Cryptography (ECC)
+- **Key Takeaways**: Bitcoin requires a minimum of 76.16 days of cumulative downtime to upgrade all current UTXOs to quantum-safe protocols; the upgrade must be fully completed before scalable quantum computers capable of breaking 256-bit ECDSA keys are available; amortizing the upgrade over time results in network throttling rather than strict downtime; a Just-In-Time quantum attack allows attackers to hijack funds when public keys are revealed during transaction attempts; current Bitcoin protocol parameters make the required upgrade trajectory untenable without extensive changes
+- **Security Levels & Parameters**: 256-bit ECDSA key; 10-minute blocktime; 65,536 logical gates required to break ECDSA; 1kHz effective clock-speed quantum computer estimate
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: 1827.96 hours cumulative downtime for ECDSA-based UTXOs; 1306.80 hours if Taproot Schnorr scheme is adopted first; 1.45 billion USD hourly throughput; $300,000 to $1,000,000 per hour IT infrastructure downtime cost
+- **Target Audience**: Researcher; Security Architect; Policy Maker; Operations
+- **Implementation Prerequisites**: Adoption of rule requiring all newly created UTXOs to be quantum-safe; movement of all currently unspent Bitcoin to quantum-safe UTXOs; majority miner approval for protocol changes
+- **Relevant PQC Today Features**: digital-assets; threats; migration-program; pqc-risk-management; crypto-agility
+- **Implementation Attack Surface**: Just-In-Time (JIT) quantum attack on public keys revealed during transaction initiation; race condition between legitimate transaction and attacker's hijacking transaction within 10-minute blocktime
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Cumulative downtime of 76.16 days; network throttling scenarios at 25%, 50%, 75% bandwidth; requirement to upgrade all unspent Bitcoin before quantum threat materializes
+- **Financial & Business Impact**: Estimated Bitcoin network value of 500 billion USD; hourly throughput of 1.45 billion USD; IT infrastructure downtime cost between $300,000 and $1,000,000 per hour
+- **Organizational Readiness**: None detected
+- **Source Document**: ref-pont-downtime.pdf (141,774 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-20T00:44:24
+
+---
+
+## ref-fukuda-grand-challenge
+
+- **Reference ID**: ref-fukuda-grand-challenge
+- **Title**: The grand challenge of PQC migration: Analysis of modern blockchain
+- **Authors**: K. Fukuda et al.
+- **Publication Date**: 2025-01-01
+- **Last Updated**: 2025-01-01
+- **Document Status**: Published
+- **Main Topic**: Analysis of technical and human-factor challenges in migrating modern blockchains like Bitcoin and Ethereum to Post-Quantum Cryptography as of December 2025.
+- **PQC Algorithms Covered**: CRYSTALS-Dilithium, Falcon, SPHINCS+, SQIsign
+- **Quantum Threats Addressed**: Cryptographically Relevant Quantum Computers (CRQCs), Shor's algorithm, Grover's algorithm, double-spending attack, 51% attacks
+- **Migration Timeline Info**: Analysis status as of December 2025; no specific future milestones defined
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Kigen Fukuda, Shin'ichiro Matsuo, Yuji Suga, Tadahiko Ito
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS, Bitcoin protocol, Ethereum protocol
+- **Infrastructure Layers**: Decentralized networks, mining pools, centralized exchanges, custodians, off-chain protocols, scaling solutions
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: ECDSA, RSA, EdDSA, SHA-256, AES-128
+- **Key Takeaways**: PQC migration in blockchain is hindered by decentralized architecture preventing dynamic cipher suite negotiation; increased signature sizes create a trade-off between throughput and decentralization; stakeholder incentives favor short-term profits over proactive security upgrades; no comprehensive framework exists for defining migration scope or completion criteria; human factors amplify technical constraints rather than merely coexisting with them
+- **Security Levels & Parameters**: AES-128 equivalent security level, 33-byte ECDSA verification key, 71-byte ECDSA signature, 1312-byte Dilithium-44 verification key, 2420-byte Dilithium-44 signature, 897-byte Falcon verification key, 666-byte Falcon signature
+- **Hybrid & Transition Approaches**: Crypto agility discussed as a goal but rendered difficult by structural constraints; no specific hybrid schemes or dual-stack implementations described
+- **Performance & Size Considerations**: ECDSA total on-chain storage 104 bytes; Dilithium-44 verification key 1312 bytes; Dilithium-44 signature 2420 bytes; Falcon verification key 897 bytes; Falcon signature 666 bytes; SPHINCS+ 128s signature 7856 bytes; SPHINCS+ 128f signature 17088 bytes; SQIsign I signature 148 bytes
+- **Target Audience**: Researcher, Policy Maker, Security Architect, Blockchain Community
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: digital-assets, crypto-agility, migration-program, pqc-governance, stateful-signatures
+- **Implementation Attack Surface**: 51% attacks, double-spending attack, network fragmentation, hash rate fluctuations
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Consumer-grade hardware requirements for Ethereum nodes; increased bandwidth and storage capacity barriers for general users
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Difficulty in enforcing simultaneous upgrades across decentralized networks; risk of fork due to protocol discrepancies; lack of mechanism to identify honest nodes; need for discreet coordination with mining pools
+- **Financial & Business Impact**: Miners and investors prioritize short-term economic rationality; fear of asset value depreciation discourages PQC discussion; migration costs and fee burdens deter end-users
+- **Organizational Readiness**: Lack of comprehensive framework for governance challenges; ambiguous definition of migration scope and completion criteria; misaligned incentives among stakeholders
+- **Source Document**: ref-fukuda-grand-challenge.pdf (395,496 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-20T00:47:06
+
+---
+
+## ref-habovstiak-hashed-keys
+
+- **Reference ID**: ref-habovstiak-hashed-keys
+- **Title**: Hashed keys are actually fully quantum secure
+- **Authors**: M. Habov stiak
+- **Publication Date**: 2025-01-01
+- **Last Updated**: 2025-01-01
+- **Document Status**: Published
+- **Main Topic**: Announcement of the Bitcoin 0.3.23-rc1 release candidate focusing on bug fixes and network connection improvements.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Dean Lee (Updated Chinese Simp translation); Doug Huff (Fix rfc1918 and rfc3927 compliance, Add common temp files to .gitignore, Demystify magic numbers); Han Lin Yap (Added Swedish translation, Remove unused variable); Jeff Garzik (Bump version, Reduce minimum TX fee, Lower minimum relay TX fee, Add minimal release process docs); Matt Corallo (Fix CPU Usage bug); Nils Schneider (create keypool in LoadWallet()); Pieter Wuille (Update transactions, Fix small change outputs, Faster timeout)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TCP; RFC1918; RFC3927
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Release 0.3.23-rc1 is a fast bugfix-only release; Network connection issues caused by non-internet-routable hosts are addressed; Minimum transaction fees were reduced to 0.0005 BTC and relay fees to 0.0001 BTC; CPU usage bugs related to -nolisten flag are fixed
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: Minimum TX fee reduced to 0.0005; Minimum relay TX fee lowered to 0.0001 BTC
+- **Target Audience**: Developer
+- **Implementation Prerequisites**: git shortlog for 0.3.23-rc1; Gavin's ACK required for builds
+- **Relevant PQC Today Features**: None detected
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: ref-habovstiak-hashed-keys.html (3,869 bytes, 2,692 extracted chars)
+- **Extraction Timestamp**: 2026-04-20T00:49:43
+
+---
+
+## ref-stutz-reuse-pubkeys
+
+- **Reference ID**: ref-stutz-reuse-pubkeys
+- **Title**: Reuse of public keys across utxo and account-based cryptocurrencies
+- **Authors**: R. Stutz et al.
+- **Publication Date**: 2026-01-01
+- **Last Updated**: 2026-01-01
+- **Document Status**: Published
+- **Main Topic**: Analysis of public key reuse across UTXO and account-based cryptocurrencies to expose privacy and security risks through cross-chain entity clustering.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Rainer Stütz; Nicholas Stifter; Melitta Dragaschnig; Bernhard Haslhofer; Aljosha Judmayer
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: ECDSA; secp256k1
+- **Key Takeaways**: Cryptographic keys are extensively reused across Bitcoin, Ethereum, Litecoin, Dogecoin, Zcash, and Tron; 1,604,614 keys have been reused with at least 1,429,008 actively reused; Cross-chain key reuse links UTXO and account-based models despite incompatible address formats; Public key analysis enables clustering of entities where direct address conversion is impossible; Key reuse undermines privacy and security by enabling entity inference across different networks.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: 1,604,614 reused keys identified; 497,178 keys reused between Bitcoin and Ethereum; 831,056 keys reused between all analyzed UTXO and account models.
+- **Target Audience**: Researcher; Security Architect; Developer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: digital-assets; crypto-agility; pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: Cross-chain public key extraction; clustering by secret key knowledge; active vs passive key reuse classification.
+- **Testing & Validation Methods**: Reproduction of findings from related work on address-based key-reuse detection; validation via similarities between Ethereum and Tron.
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: ref-stutz-reuse-pubkeys.pdf (904,719 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-20T00:51:18
+
+---
+
+## ref-drake-hash-multisig
+
+- **Reference ID**: ref-drake-hash-multisig
+- **Title**: Hash-based multi-signatures for post-quantum ethereum
+- **Authors**: J. Drake et al.
+- **Publication Date**: 2025-01-01
+- **Last Updated**: 2025-01-01
+- **Document Status**: Published
+- **Main Topic**: Introduction of hash-based non-interactive multi-signature schemes using XMSS variants and succinct arguments for post-quantum Ethereum proof-of-stake consensus.
+- **PQC Algorithms Covered**: XMSS, Winternitz signatures, Target Sum Winternitz, Poseidon2, SHA-3
+- **Quantum Threats Addressed**: Large-scale quantum computers exploiting vulnerabilities in current signature schemes
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Justin Drake; Dmitry Khovratovich; Benedikt Wagner; Mikhail Kudinov
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: Ethereum proof-of-stake consensus
+- **Infrastructure Layers**: Proof-of-stake consensus layer
+- **Standardization Bodies**: IACR
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: SHA-3, Poseidon2
+- **Key Takeaways**: Hash-based signatures offer minimal assumptions and conceptual simplicity for post-quantum Ethereum; Aggregation via succinct arguments (pqSNARKs) enables multi-signature functionality without algebraic structure; Security proofs should avoid random oracles in favor of standard model assumptions to resolve verification paradoxes; Signature sizes below 4 KiB are critical to maintain feasible bandwidth requirements for validator committees; Parameter selection must balance security loss minimization with efficient instantiation using SHA-3 or Poseidon2.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: Signatures of size 32 KiB require 1 GiB/s bandwidth for a committee of 2^12 signers; Signatures below 4 KiB significantly soften bandwidth requirements; Minimal hashing is critical for verification efficiency.
+- **Target Audience**: Researcher, Security Architect, Developer
+- **Implementation Prerequisites**: Succinct argument systems (pqSNARKs); Tweakable hash functions based on SHA-3 or Poseidon2; Merkle tree infrastructure
+- **Relevant PQC Today Features**: stateful-signatures, digital-assets, merkle-tree-certs, algorithms, leaders
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Formal verification of verifier implementation; Heuristic bounds on standard model properties
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Transition from BLS signatures to hash-based schemes; Synchronized signature scheme tied to specific epochs
+- **Financial & Business Impact**: Potential damages worth billions of dollars if Ethereum fails to update signatures in time; Erosion of user confidence and integrity of savings.
+- **Organizational Readiness**: None detected
+- **Source Document**: ref-drake-hash-multisig.pdf (818,432 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-20T00:53:19
+
+---
+
+## ref-amy-sha2-preimage
+
+- **Reference ID**: ref-amy-sha2-preimage
+- **Title**: Estimating the cost of generic quantum pre-image attacks on SHA-2 and SHA-3
+- **Authors**: M. Amy et al.
+- **Publication Date**: 2016-01-01
+- **Last Updated**: 2016-01-01
+- **Document Status**: Published
+- **Main Topic**: Estimation of the resource cost for generic quantum pre-image attacks on SHA-2 and SHA-3 using a surface code based fault-tolerant quantum computer model.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Grover's algorithm; Shor's algorithm
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Matthew Amy; Olivia Di Matteo; Vlad Gheorghiu; Michele Mosca; Alex Parent; John Schanck
+- **PQC Products Mentioned**: T-par
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: SHA-2; SHA-3; SHA-256; SHA3-256; AES; Diffie-Hellman; RSA
+- **Key Takeaways**: Grover's algorithm reduces bit-security of hash functions by half in a simple query model; realistic fault-tolerant quantum costs are significantly higher than query counts suggest due to error correction overhead; pre-image attacks on SHA-256 and SHA3-256 require approximately 2^166.4 logical-qubit-cycles; doubling security parameters is a conservative defense but true attack costs must be evaluated; surface code architecture assumptions heavily influence resource estimates for quantum attacks
+- **Security Levels & Parameters**: 2^153.8 surface code cycles depth for SHA-256; 2^12.6 logical qubits for SHA-256; 2^146.5 surface code cycles depth for SHA3-256; 2^20 logical qubits for SHA3-256; 2^166.4 logical-qubit-cycles total cost
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: 2^153.8 surface code cycles depth; 2^12.6 logical qubits; 2^166.4 logical-qubit-cycles cost for SHA-256; 2^146.5 surface code cycles depth; 2^20 logical qubits; 2^166.5 logical-qubit-cycles cost for SHA3-256; 2^128 queries in quantum black-box model
+- **Target Audience**: Researcher; Security Architect
+- **Implementation Prerequisites**: Surface code based fault-tolerant quantum computer; Clifford+T gate set; T-par optimization tool; reversible circuit implementation of hash functions
+- **Relevant PQC Today Features**: Threats, Algorithms, Assess, pqc-risk-management, migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: ref-amy-sha2-preimage.pdf (495,224 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-20T00:55:36
+
+---

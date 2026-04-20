@@ -88,6 +88,17 @@ export const QuantumThreatsExercises: React.FC<QuantumThreatsExercisesProps> = (
       config: { step: 4 },
     },
     {
+      id: 'ecc-blockchain',
+      title: '7. ECC Blockchain Under Quantum Attack',
+      description:
+        'A Bitcoin transaction is broadcast to the mempool but not yet confirmed. Google Quantum AI (Mar 2026) demonstrated secp256k1 ECDLP can be broken with \u22641,200 logical qubits — roughly half prior estimates. Use the Security Level tool to compare secp256k1 with RSA-2048 and see why fast-clock CRQCs pose an on-spend threat before PQC migration.',
+      badge: "Shor's",
+      badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
+      observe:
+        'secp256k1 breaks with \u22641,200 logical qubits — significantly fewer than RSA-2048 (~4,098). A fast-clock CRQC (superconducting) reaching this threshold could derive the private key from an exposed public key within the mempool confirmation window (~10 min for Bitcoin). Migration to PQC signatures is critical for blockchain infrastructure.',
+      config: { step: 0, algorithmA: 'ECDSA secp256k1' },
+    },
+    {
       id: 'pqc-safe',
       title: '6. PQC Algorithms: Built for Quantum',
       description:
