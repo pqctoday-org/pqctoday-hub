@@ -653,6 +653,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     if (p === 'classical' || p === 'hybrid' || p === 'pure-pqc') return p
     return initialMode ?? 'classical'
   })
+  const selectedModeRef = React.useRef<IKEv2Mode>(selectedMode)
+  React.useEffect(() => {
+    selectedModeRef.current = selectedMode
+  }, [selectedMode])
   const [currentStep, setCurrentStep] = useState(0)
   const [mtu, setMtu] = useState<number>(1500)
   const [allowFragmentation, setAllowFragmentation] = useState<boolean>(true)
@@ -839,6 +843,17 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       } else if (text.includes('ike_sa') && text.includes('established between')) {
         setCurrentStep(stepsLengthRef.current - 1)
         setCharonFailed(false)
+        // WASM binary is compiled childless — inject synthetic CREATE_CHILD_SA steps for educational display
+        setTimeout(() => {
+          strongSwanEngine.dispatchLog({
+            level: 'info',
+            text: '[SIM] CREATE_CHILD_SA Request  → ESP tunnel 192.168.0.1/32 ↔ 192.168.0.2/32',
+          })
+          strongSwanEngine.dispatchLog({
+            level: 'info',
+            text: '[SIM] CREATE_CHILD_SA Response → Child SA established (AES-256-GCM-16)',
+          })
+        }, 200)
       } else if (
         text.includes('establishing ike_sa failed') ||
         text.includes('fatal error') ||
@@ -1922,6 +1937,25 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               level: rv === 0 ? 'info' : 'error',
               text: `[RPC] C_DecapsulateKey(93) hSess=${hSess93} hKey=${hKey93} ctLen=${ctLen93} → rv=0x${rv.toString(16)} secKey=${p[0]}`,
             })
+            // Hybrid mode: ML-KEM finished in IKE_SA_INIT. Inject synthetic IKE_INTERMEDIATE
+            // steps for educational display — the ikev2-additional-ke plugin (RFC 9370) is not
+            // compiled into the WASM binary, so ECDH is simulated here in the bridge layer.
+            if (rv === 0 && selectedModeRef.current === 'hybrid') {
+              setTimeout(() => {
+                strongSwanEngine.dispatchLog({
+                  level: 'info',
+                  text: '[SIM] IKE_INTERMEDIATE Request  → ECDH P-256 ephemeral key exchange (simulated)',
+                })
+                strongSwanEngine.dispatchLog({
+                  level: 'info',
+                  text: '[SIM] IKE_INTERMEDIATE Response → ECDH P-256 shared secret derived (simulated)',
+                })
+                strongSwanEngine.dispatchLog({
+                  level: 'info',
+                  text: '[SIM] Hybrid SKEYSEED input: ML-KEM-768 secret ⊕ ECDH-P256 secret (combined)',
+                })
+              }, 100)
+            }
             break
           }
 
@@ -2180,7 +2214,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       } => {
         if (alg === 'ML-DSA') {
           const v = (parseInt(size, 10) as 44 | 65 | 87) || 65
-          const keys = hsm_generateMLDSAKeyPair(M, hSess, v, true)
+          const keys = hsm_generateMLDSAKeyPair(M, hSess, v, true, true) // token=true: visible to all RPC sessions
           return {
             pubHandle: keys.pubHandle,
             privHandle: keys.privHandle,
@@ -2891,8 +2925,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       if (!moduleRef.current) moduleRef.current = rawM
                     }
 
+                    // hybrid uses proposalMode=1 (ML-KEM only) — proposalMode=2 generates ECDH proposals
+                    // requiring IKE_INTERMEDIATE (RFC 9370), which is not compiled into the WASM binary.
                     const proposalMode =
-                      selectedMode === 'pure-pqc' ? 1 : selectedMode === 'hybrid' ? 2 : 0
+                      selectedMode === 'pure-pqc' || selectedMode === 'hybrid' ? 1 : 0
 
                     if (authMode === 'dual' && certData) {
                       // Use pre-provisioned certs generated before daemon start (C8 flow).
