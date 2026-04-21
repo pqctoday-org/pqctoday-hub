@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-import React, { useState, useMemo } from 'react'
-import { AlertTriangle, Shield, Clock, ChevronDown, ChevronUp, CheckSquare } from 'lucide-react'
+import React, { useState } from 'react'
+import { AlertTriangle, Shield, Clock, ChevronDown, ChevronUp } from 'lucide-react'
 import type { RoleGuideData } from './types'
 import { Button } from '@/components/ui/button'
 
@@ -26,34 +26,6 @@ interface Props {
 
 export const RoleWhyItMatters: React.FC<Props> = ({ data }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null)
-  const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set())
-
-  const toggleCheck = (id: string) => {
-    setCheckedItems((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
-  }
-
-  const exposureScore = useMemo(() => {
-    let total = 0
-    let maxTotal = 0
-    for (const item of data.selfAssessment) {
-      maxTotal += item.weight
-      if (checkedItems.has(item.id)) total += item.weight
-    }
-    return maxTotal > 0 ? Math.round((total / maxTotal) * 100) : 0
-  }, [checkedItems, data.selfAssessment])
-
-  const exposureLevel = exposureScore >= 70 ? 'High' : exposureScore >= 40 ? 'Medium' : 'Low'
-  const exposureLevelClass =
-    exposureScore >= 70
-      ? 'text-status-error'
-      : exposureScore >= 40
-        ? 'text-status-warning'
-        : 'text-status-success'
 
   return (
     <div className="space-y-8 w-full">
@@ -115,63 +87,6 @@ export const RoleWhyItMatters: React.FC<Props> = ({ data }) => {
               </div>
             )
           })}
-        </div>
-      </div>
-
-      {/* Self-Assessment Checklist */}
-      <div className="glass-panel p-6">
-        <h3 className="text-lg font-semibold text-foreground mb-2 flex items-center gap-2">
-          <CheckSquare size={18} className="text-primary" />
-          Self-Assessment: Does This Apply to You?
-        </h3>
-        <p className="text-xs text-muted-foreground mb-4">
-          Check the items that apply to your organization. Your exposure score updates in real time.
-        </p>
-
-        <div className="space-y-2 mb-6">
-          {data.selfAssessment.map((item) => (
-            <label
-              key={item.id}
-              className="flex items-start gap-3 p-3 rounded-lg border border-border hover:bg-muted/30 transition-colors cursor-pointer"
-            >
-              <input
-                type="checkbox"
-                checked={checkedItems.has(item.id)}
-                onChange={() => toggleCheck(item.id)}
-                className="mt-0.5 h-4 w-4 rounded border-border accent-primary"
-              />
-              <span className="text-sm text-foreground/90">{item.label}</span>
-            </label>
-          ))}
-        </div>
-
-        {/* Exposure Score */}
-        <div className="bg-muted/50 rounded-lg p-4 border border-border">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-foreground">Your Quantum Exposure Score</span>
-            <span className={`text-lg font-bold ${exposureLevelClass}`}>
-              {exposureScore}% &mdash; {exposureLevel}
-            </span>
-          </div>
-          <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-            <div
-              className={`h-full rounded-full transition-all duration-500 ${
-                exposureScore >= 70
-                  ? 'bg-status-error'
-                  : exposureScore >= 40
-                    ? 'bg-status-warning'
-                    : 'bg-status-success'
-              }`}
-              style={{ width: `${exposureScore}%` }}
-            />
-          </div>
-          <p className="text-xs text-muted-foreground mt-2">
-            {exposureScore >= 70
-              ? 'Your organization has significant quantum exposure. Prioritize PQC migration planning immediately.'
-              : exposureScore >= 40
-                ? 'Moderate exposure detected. Begin building awareness and planning your migration timeline.'
-                : 'Lower exposure, but proactive planning is still recommended to stay ahead of regulatory deadlines.'}
-          </p>
         </div>
       </div>
     </div>

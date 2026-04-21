@@ -299,6 +299,24 @@ function buildHsmSelfSignedCert(
   return `-----BEGIN CERTIFICATE-----\n${lines.join('\n')}\n-----END CERTIFICATE-----\n`
 }
 
+// ── Set CKA_ID on an HSM key object via C_SetAttributeValue ──────────────────
+// Used after keygen to brand each ML-DSA keypair with SHA-1(pubkey) so that
+// strongSwan's PKCS#11 plugin can locate the private key by matching it to the
+// cert's SubjectPublicKey SHA-1 fingerprint (ID_PUBKEY_SHA1 per RFC 5280 §4.2.1.2).
+function hsm_setKeyId(M: SoftHSMWasmModule, hSession: number, hKey: number, id: Uint8Array): void {
+  // CKA_ID = 0x00000102 per PKCS#11 v3.2
+  // CK_ATTRIBUTE layout (wasm32): type(4) | pValue(4) | ulValueLen(4) = 12 bytes
+  const idPtr = M._malloc(id.length)
+  M.HEAPU8.set(id, idPtr)
+  const tplPtr = M._malloc(12)
+  M.setValue(tplPtr + 0, 0x00000102, 'i32') // CKA_ID
+  M.setValue(tplPtr + 4, idPtr, 'i32')
+  M.setValue(tplPtr + 8, id.length, 'i32')
+  M._C_SetAttributeValue(hSession, hKey, tplPtr, 1)
+  M._free(tplPtr)
+  M._free(idPtr)
+}
+
 // ── Build a self-signed X.509 certificate with ML-DSA signature ───────────────
 // Mirrors buildHsmSelfSignedCert but uses ML-DSA (FIPS 204 pure, no pre-hash).
 // Public key is raw ML-DSA bytes (1312 / 1952 / 2592 B for 44/65/87) wrapped as
@@ -307,7 +325,7 @@ function buildHsmSelfSignedCert(
 // AlgorithmIdentifier for ML-DSA has NO parameters per draft-ietf-lamps-
 // dilithium-certificates. @peculiar/asn1-x509's X509AlgId omits the parameters
 // field when undefined, so passing only { algorithm } produces the correct DER.
-function buildHsmMlDsaSelfSignedCert(
+async function buildHsmMlDsaSelfSignedCert(
   M: SoftHSMWasmModule,
   hSession: number,
   hPubKey: number,
@@ -315,13 +333,22 @@ function buildHsmMlDsaSelfSignedCert(
   variant: 44 | 65 | 87,
   cn: string,
   org: string
-): string {
+): Promise<string> {
   // 1. Extract raw ML-DSA public key bytes from softhsmv3
   const pubKeyBytes = hsm_extractKeyValue(M, hSession, hPubKey)
   // Copy to a plain ArrayBuffer (hsm_extractKeyValue may return a slice backed
   // by SharedArrayBuffer; peculiar's BIT STRING field wants ArrayBuffer)
   const pubKeyCopy = new Uint8Array(pubKeyBytes.length)
   pubKeyCopy.set(pubKeyBytes)
+
+  // 1b. Compute SKID = SHA-1(raw pubkey bytes) — RFC 5280 §4.2.1.2 method 1.
+  // strongSwan's PKCS#11 plugin searches for the private key using CKA_ID = this hash
+  // (ID_PUBKEY_SHA1). Without matching CKA_ID, C_FindObjects returns 0 and auth falls
+  // back to PSK.
+  const skidBuf = await crypto.subtle.digest('SHA-1', pubKeyCopy.buffer)
+  const skid = new Uint8Array(skidBuf) // 20 bytes
+  hsm_setKeyId(M, hSession, hPubKey, skid)
+  hsm_setKeyId(M, hSession, hPrivKey, skid)
 
   // 2. AlgorithmIdentifier for ML-DSA (no parameters — peculiar omits when undefined)
   const sigAlgId = new X509AlgId({ algorithm: ML_DSA_OID_FOR_VARIANT[variant] })
@@ -705,11 +732,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   // Single PKCS#11 module — softhsmv3 is statically linked.
   // Both slots (0=initiator keys, 1=responder keys) are accessible via one C_Initialize.
   // Build strongswan.conf dynamically to inject MTU (fragment_size)
-  const buildCharonConf = useCallback((authMode: 'psk' | 'dual', fragMtu: number) => {
-    const pluginList =
-      authMode === 'dual'
-        ? 'pkcs11 nonce aes sha1 sha2 hmac kdf openssl'
-        : 'pkcs11 nonce aes sha1 sha2 hmac kdf'
+  const buildCharonConf = useCallback((_authMode: 'psk' | 'dual', fragMtu: number) => {
+    const pluginList = 'pkcs11 nonce aes sha1 sha2 hmac kdf openssl'
     return `charon {
   threads = 4
   fragment_size = ${fragMtu}
@@ -749,26 +773,23 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     (role: 'initiator' | 'responder', mode: IKEv2Mode, auth: 'psk' | 'dual', frag: boolean) => {
       let modeIke = 'aes256-mlkem768-sha384!'
       if (mode === 'classical') modeIke = 'aes256-sha256-modp3072!'
-      if (mode === 'hybrid') modeIke = 'aes256-mlkem768-x25519-sha384!'
+      // hybrid uses pure ML-KEM on the strongSwan side; synthetic ECDH IKE_INTERMEDIATE
+      // is layered in the simulation bridge after IKE_SA_INIT completes
+      if (mode === 'hybrid') modeIke = 'aes256-mlkem768-sha384!'
       const left = role === 'initiator' ? '192.168.0.1' : '192.168.0.2'
       const right = role === 'initiator' ? '192.168.0.2' : '192.168.0.1'
       const auto = role === 'initiator' ? 'start' : 'route'
       const myCert = role === 'initiator' ? 'initiator' : 'responder'
       const peerCert = role === 'initiator' ? 'responder' : 'initiator'
-      const myIsMldsa = (role === 'initiator' ? clientAlg : serverAlg) === 'ML-DSA'
-      const peerIsMldsa = (role === 'initiator' ? serverAlg : clientAlg) === 'ML-DSA'
-      const leftAuthStr = myIsMldsa
-        ? `  leftsigkey=%smartcard${role === 'initiator' ? '1' : '2'}`
-        : `  leftcert=/etc/ipsec.d/certs/${myCert}.crt`
-      const rightAuthStr = peerIsMldsa
-        ? `  rightsigkey=%smartcard${role === 'initiator' ? '2' : '1'}`
-        : `  rightcert=/etc/ipsec.d/certs/${peerCert}.crt`
+      // Use leftcert= for all cert types — PKCS#11 plugin locates private key via CKA_ID
+      const leftAuthStr = `  leftcert=/etc/ipsec.d/certs/${myCert}.crt`
+      const rightAuthStr = `  rightcert=/etc/ipsec.d/certs/${peerCert}.crt`
 
       const authLines =
         auth === 'psk'
           ? `  leftauth=psk\n  right=${right}\n  rightauth=psk`
           : `  leftauth=psk\n  leftauth2=pubkey\n${leftAuthStr}\n  right=${right}\n  rightauth=psk\n  rightauth2=pubkey\n${rightAuthStr}`
-      return `config setup\n  strictcrlpolicy=no\nconn %default\n  ikelifetime=60m\n  keylife=20m\n  rekeymargin=3m\n  keyingtries=1\nconn host-host\n  left=${left}\n${authLines}\n  ike=${modeIke}\n  esp=aes256gcm16!\n  auto=${auto}\n  fragmentation=${frag ? 'yes' : 'no'}`
+      return `config setup\n  strictcrlpolicy=no\nconn %default\n  ikelifetime=60m\n  keylife=20m\n  rekeymargin=3m\n  keyingtries=1\nconn host-host\n  left=${left}\n  leftsubnet=${left}/32\n${authLines}\n  rightsubnet=${right}/32\n  type=tunnel\n  ike=${modeIke}\n  esp=aes256gcm16!\n  auto=${auto}\n  fragmentation=${frag ? 'yes' : 'no'}`
     },
     [clientAlg, serverAlg]
   )
@@ -899,6 +920,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             const slotId6 = p[0] >>> 0
             payloadView.fill(0x20, 4, 100) // space-pad label/mfr/model/serial (TOKEN_INFO bytes 0-95)
             payloadView.fill(0, 100, 164) // zero numeric fields (TOKEN_INFO bytes 96-159)
+            // Write 32-byte token label (CK_TOKEN_INFO field at offset 0 within the struct)
+            const tokenLabel = workerRole === 'initiator' ? 'PQC-Initiator' : 'PQC-Responder'
+            const labelBytes = new TextEncoder().encode(tokenLabel.padEnd(32, ' ').slice(0, 32))
+            payloadView.set(labelBytes, 4) // payload byte 4 = TOKEN_INFO byte 0 (label field)
             const dv = new DataView(sab, 48 + 4) // DataView over TOKEN_INFO struct (starts at payload byte 4)
             dv.setUint32(96, 0x409, true) // flags: TOKEN_INITIALIZED|RNG|USER_PIN_INITIALIZED
             dv.setUint32(100, 0xffffffff, true) // ulMaxSessionCount = CK_EFFECTIVELY_INFINITE
@@ -914,7 +939,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             rv = 0
             strongSwanEngine.dispatchLog({
               level: 'info',
-              text: `[RPC] C_GetTokenInfo slotId=${slotId6} → flags=0x409 ulMaxSess=∞`,
+              text: `[RPC] C_GetTokenInfo slotId=${slotId6} → label='${tokenLabel}' flags=0x409 ulMaxSess=∞`,
             })
             break
           }
@@ -1367,6 +1392,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               const keyLabel = isEC ? 'ECDH' : isMlDsa ? 'ML-DSA' : isMlKem ? 'ML-KEM' : 'RSA'
               const ts = new Date().toISOString()
               const keySlotId = workerRole === 'initiator' ? 0 : 1
+              const keySession = keySlotId === 0 ? hSessionRef.current : serverSessionRef.current
               addHsmKey({
                 handle: p[0],
                 family,
@@ -1376,6 +1402,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 engine: 'rust',
                 generatedAt: ts,
                 slotId: keySlotId,
+                sessionHandle: keySession,
               })
               addHsmKey({
                 handle: p[1],
@@ -1386,6 +1413,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 engine: 'rust',
                 generatedAt: ts,
                 slotId: keySlotId,
+                sessionHandle: keySession,
               })
             }
 
@@ -1792,6 +1820,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   engine: 'rust',
                   generatedAt: new Date().toISOString(),
                   slotId: keySlotId92,
+                  sessionHandle: keySlotId92 === 0 ? hSessionRef.current : serverSessionRef.current,
                 })
                 strongSwanEngine.dispatchLog({
                   level: 'info',
@@ -1878,6 +1907,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 engine: 'rust',
                 generatedAt: new Date().toISOString(),
                 slotId: keySlotId93,
+                sessionHandle: keySlotId93 === 0 ? hSessionRef.current : serverSessionRef.current,
               })
               strongSwanEngine.dispatchLog({
                 level: 'info',
@@ -2171,7 +2201,12 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       const initKeys = provisionKeys(clientAlg, clientSize, hSessInit, 'vpn-initiator')
       const respKeys = provisionKeys(serverAlg, serverSize, hSessResp, 'vpn-responder')
 
-      const registerKey = (keys: typeof initKeys, slotId: 0 | 1, role: 'public' | 'private') => {
+      const registerKey = (
+        keys: typeof initKeys,
+        slotId: 0 | 1,
+        hSess: number,
+        role: 'public' | 'private'
+      ) => {
         addHsmKey({
           handle: role === 'public' ? keys.pubHandle : keys.privHandle,
           family: keys.family,
@@ -2181,12 +2216,13 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           engine: 'rust',
           generatedAt: ts,
           slotId,
+          sessionHandle: hSess,
         })
       }
-      registerKey(initKeys, 0, 'public')
-      registerKey(initKeys, 0, 'private')
-      registerKey(respKeys, 1, 'public')
-      registerKey(respKeys, 1, 'private')
+      registerKey(initKeys, 0, hSessInit, 'public')
+      registerKey(initKeys, 0, hSessInit, 'private')
+      registerKey(respKeys, 1, hSessResp, 'public')
+      registerKey(respKeys, 1, hSessResp, 'private')
 
       strongSwanEngine.dispatchLog({
         level: 'info',
@@ -2194,7 +2230,11 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       })
 
       // ── 3. Build self-signed X.509 certs — private keys never leave softhsmv3 ─────
-      const buildCert = (keys: typeof initKeys, hSess: number, cn: string): string =>
+      const buildCert = async (
+        keys: typeof initKeys,
+        hSess: number,
+        cn: string
+      ): Promise<string> =>
         keys.family === 'ml-dsa'
           ? buildHsmMlDsaSelfSignedCert(
               M,
@@ -2207,8 +2247,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             )
           : buildHsmSelfSignedCert(M, hSess, keys.pubHandle, keys.privHandle, cn, 'PQC-Simulation')
 
-      const initCert = buildCert(initKeys, hSessInit, 'vpn-initiator')
-      const respCert = buildCert(respKeys, hSessResp, 'vpn-responder')
+      const initCert = await buildCert(initKeys, hSessInit, 'vpn-initiator')
+      const respCert = await buildCert(respKeys, hSessResp, 'vpn-responder')
 
       setCertData({ initCert, respCert })
       const algLabel = (keys: typeof initKeys) => keys.variant
@@ -2863,7 +2903,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       const respSecrets = `: PSK "${serverPsk}"\n`
                       strongSwanEngine.dispatchLog({
                         level: 'info',
-                        text: '[CERT] Loading pre-provisioned RSA-3072 certificates into daemon filesystem. Private keys accessed via PKCS#11 RPC.',
+                        text: `[CERT] Loading pre-provisioned ${clientAlg}/${serverAlg} certificates into daemon filesystem. Private keys accessed via PKCS#11 RPC.`,
                       })
                       strongSwanEngine.init(
                         {

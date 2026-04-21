@@ -1,7 +1,7 @@
 ---
 generated: 2026-04-20
 collection: library
-documents_processed: 14
+documents_processed: 19
 enrichment_method: ollama-qwen3.5:27b
 ---
 
@@ -44,7 +44,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Organizational Readiness**: None detected
 - **Extraction Note**: No source text available
 - **Source Document**: ref-joseph-transitioning.pdf (305,341 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-04-20T00:28:00
+- **Extraction Timestamp**: 2026-04-20T23:09:06
 
 ---
 
@@ -86,7 +86,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Source Document**: ref-obrien-chrome-hybrid.html (178,652 bytes, 4,505 extracted chars)
-- **Extraction Timestamp**: 2026-04-20T00:28:54
+- **Extraction Timestamp**: 2026-04-20T23:10:10
 
 ---
 
@@ -128,7 +128,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Source Document**: ref-defeo-sqisign.pdf (782,936 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-20T00:30:17
+- **Extraction Timestamp**: 2026-04-20T23:11:31
 
 ---
 
@@ -170,7 +170,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Source Document**: ref-bravyi-quantum-memory.pdf (2,799,060 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-20T00:32:37
+- **Extraction Timestamp**: 2026-04-20T23:13:48
 
 ---
 
@@ -212,7 +212,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Source Document**: ref-gidney-factor-rsa.pdf (4,175,379 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-20T00:34:46
+- **Extraction Timestamp**: 2026-04-20T23:15:55
 
 ---
 
@@ -254,7 +254,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Source Document**: ref-webster-pinnacle.pdf (1,189,171 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-20T00:37:11
+- **Extraction Timestamp**: 2026-04-20T23:18:17
 
 ---
 
@@ -296,7 +296,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Source Document**: ref-litinski-toffoli.pdf (3,307,283 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-20T00:39:39
+- **Extraction Timestamp**: 2026-04-20T23:20:42
 
 ---
 
@@ -338,7 +338,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Source Document**: ref-kim-ecdlp.pdf (889,113 bytes, 13,375 extracted chars)
-- **Extraction Timestamp**: 2026-04-20T00:41:55
+- **Extraction Timestamp**: 2026-04-20T23:22:55
 
 ---
 
@@ -380,7 +380,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Estimated Bitcoin network value of 500 billion USD; hourly throughput of 1.45 billion USD; IT infrastructure downtime cost between $300,000 and $1,000,000 per hour
 - **Organizational Readiness**: None detected
 - **Source Document**: ref-pont-downtime.pdf (141,774 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-20T00:44:24
+- **Extraction Timestamp**: 2026-04-20T23:25:18
 
 ---
 
@@ -422,7 +422,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Miners and investors prioritize short-term economic rationality; fear of asset value depreciation discourages PQC discussion; migration costs and fee burdens deter end-users
 - **Organizational Readiness**: Lack of comprehensive framework for governance challenges; ambiguous definition of migration scope and completion criteria; misaligned incentives among stakeholders
 - **Source Document**: ref-fukuda-grand-challenge.pdf (395,496 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-20T00:47:06
+- **Extraction Timestamp**: 2026-04-20T23:27:48
 
 ---
 
@@ -464,7 +464,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Source Document**: ref-habovstiak-hashed-keys.html (3,869 bytes, 2,692 extracted chars)
-- **Extraction Timestamp**: 2026-04-20T00:49:43
+- **Extraction Timestamp**: 2026-04-20T23:30:16
 
 ---
 
@@ -506,7 +506,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Source Document**: ref-stutz-reuse-pubkeys.pdf (904,719 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-20T00:51:18
+- **Extraction Timestamp**: 2026-04-20T23:31:49
 
 ---
 
@@ -548,7 +548,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Potential damages worth billions of dollars if Ethereum fails to update signatures in time; Erosion of user confidence and integrity of savings.
 - **Organizational Readiness**: None detected
 - **Source Document**: ref-drake-hash-multisig.pdf (818,432 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-20T00:53:19
+- **Extraction Timestamp**: 2026-04-20T23:33:48
 
 ---
 
@@ -590,6 +590,221 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Source Document**: ref-amy-sha2-preimage.pdf (495,224 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-20T00:55:36
+- **Extraction Timestamp**: 2026-04-20T23:36:03
+
+---
+
+## TCG-TPM-V185-Part0
+
+- **Reference ID**: TCG-TPM-V185-Part0
+- **Title**: TCG TPM 2.0 Library V1.85 RC4 — Part 0: Introduction
+- **Authors**: Trusted Computing Group
+- **Publication Date**: 2025-01-01
+- **Last Updated**: 2025-01-01
+- **Document Status**: Draft Specification
+- **Main Topic**: Overview and change summary for the TCG TPM 2.0 Library V1.85 RC4 specification introducing PQC algorithm IDs and buffer size increases.
+- **PQC Algorithms Covered**: ML-KEM, ML-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: David Wooten (TPM 2.0 architecture development and documentation); Jiajing Zhu (code contribution); Paul England (code contribution); Brad Litterell (Chair of TPM Working Group); Chris Fenner (Chair of TPM Working Group); Ken Goldman (Chair of TPM Working Group, editor); David Challener (Chair of TPM Working Group); David Grawrock (Chair of TPM Working Group, editor); Julian Hammersley (Chair of TPM Working Group); Graeme Proudler (Chair of TPM Working Group); Ari Singer (Chair of TPM Working Group)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Trusted Platform Module; Root of Trust for Measurement; Root of Trust for Storage; Root of Trust for Reporting
+- **Standardization Bodies**: Trusted Computing Group
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: TPM 2.0 Library V1.85 RC4 introduces algorithm IDs TPM_ALG_MLKEM (0x00A0) and TPM_ALG_MLDSA (0x00A1); TPM_BUFFER_MAX is enlarged from 4096 to 8192 bytes to accommodate ML-DSA-87 signatures; This document is an intermediate draft for comment only and products should not be designed based on it; Microsoft contributed code written by David Wooten, Jiajing Zhu, and Paul England
+- **Security Levels & Parameters**: TPM_ALG_MLKEM=0x00A0; TPM_ALG_MLDSA=0x00A1; ML-DSA-87; TPM_BUFFER_MAX 4096 bytes to 8192 bytes
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: TPM_BUFFER_MAX increased from 4096 to 8192 bytes; Accommodates ML-DSA-87 signatures
+- **Target Audience**: Developer, Security Architect, Researcher
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Algorithms, Leaders, hsm-pqc, crypto-agility, iot-ot-pqc
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: TPM 2.0 architecture; TPM_BUFFER_MAX enlargement from 4096 to 8192 bytes for ML-DSA-87 signatures
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Intermediate draft status prohibiting product design; algorithm agility support via new PQC algorithm IDs (TPM_ALG_MLKEM, TPM_ALG_MLDSA)
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: TCG-TPM-V185-Part0-Introduction.pdf (304,175 bytes, 13,503 extracted chars)
+- **Extraction Timestamp**: 2026-04-20T23:38:21
+
+---
+
+## TCG-TPM-V185-Part1
+
+- **Reference ID**: TCG-TPM-V185-Part1
+- **Title**: TCG TPM 2.0 Library V1.85 RC4 — Part 1: Architecture
+- **Authors**: Trusted Computing Group
+- **Publication Date**: 2025-01-01
+- **Last Updated**: 2025-01-01
+- **Document Status**: Draft Specification
+- **Main Topic**: Defines the TPM 2.0 architecture including the four-hierarchy model and specifies PQC key roles and impacts of ML-KEM-768 and ML-DSA-65 adoption.
+- **PQC Algorithms Covered**: ML-KEM-768; ML-DSA-65
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: TPM; Key Management
+- **Standardization Bodies**: Trusted Computing Group (TCG)
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The document defines the four-hierarchy model for TPM 2.0 including Platform, Endorsement, Storage, and Owner; Specific handle values are assigned to hierarchies such as TPM_RH_ENDORSEMENT=0x4000000B; PQC key roles include EK, SRK, AIK, and IDevID; Adoption of ML-KEM-768 and ML-DSA-65 impacts attestation flows; The specification addresses the impact on TPM_BUFFER_MAX.
+- **Security Levels & Parameters**: ML-KEM-768; ML-DSA-65
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: Impact on TPM_BUFFER_MAX mentioned without specific byte values
+- **Target Audience**: Security Architect; Developer; Researcher
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Algorithms, hsm-pqc, digital-id, entropy-randomness, pki-workshop
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: Random Number Generator (RNG) Module
+- **Constrained Device & IoT Suitability**: TPM_BUFFER_MAX; Size Requirements
+- **Supply Chain & Vendor Risk**: Trusted Computing Group (TCG); TCG membership agreements
+- **Deployment & Migration Complexity**: Field Upgrade Mode; Preserved TPM State; Field Upgrade Implementation Options
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: TCG-TPM-V185-Part1-Architecture.pdf (3,303,731 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-20T23:39:44
+
+---
+
+## TCG-TPM-V185-Part2
+
+- **Reference ID**: TCG-TPM-V185-Part2
+- **Title**: TCG TPM 2.0 Library V1.85 RC4 — Part 2: Structures
+- **Authors**: Trusted Computing Group
+- **Publication Date**: 2025-01-01
+- **Last Updated**: 2025-01-01
+- **Document Status**: Draft Specification
+- **Main Topic**: Normative structure definitions for Trusted Platform Module 2.0 Library Version 1.85 RC4 including PQC algorithm assignments and key size constants.
+- **PQC Algorithms Covered**: ML-KEM, ML-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Trusted Platform Module 2.0
+- **Standardization Bodies**: Trusted Computing Group
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: TPM_ALG_MLKEM assigned value 0x00A0 and TPM_ALG_MLDSA assigned value 0x00A1; ML-KEM-768 public key size is 1184 bytes with ciphertext size of 1088 bytes; ML-DSA-65 public key size is 1952 bytes with signature size of 3309 bytes; TPM_BUFFER_MAX and TPM2B_MAX_BUFFER sizes are set to 8192
+- **Security Levels & Parameters**: ML-KEM-768, ML-DSA-65
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: ML-KEM-768 pk=1184B; ML-KEM-768 ct=1088B; ML-DSA-65 pk=1952B; ML-DSA-65 sig=3309B; TPM_BUFFER_MAX=8192
+- **Target Audience**: Developer, Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Algorithms, hsm-pqc, pki-workshop
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: TCG-TPM-V185-Part2-Structures.pdf (888,721 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-20T23:41:15
+
+---
+
+## TCG-TPM-V185-Part3
+
+- **Reference ID**: TCG-TPM-V185-Part3
+- **Title**: TCG TPM 2.0 Library V1.85 RC4 — Part 3: Commands
+- **Authors**: Trusted Computing Group
+- **Publication Date**: 2025-01-01
+- **Last Updated**: 2025-01-01
+- **Document Status**: Draft Specification
+- **Main Topic**: Command specification for TPM 2.0 V1.85 RC4 defining PQC key roles using ML-KEM-768 and ML-DSA-65.
+- **PQC Algorithms Covered**: ML-KEM-768, ML-DSA-65
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Trusted Platform Module 2.0
+- **Standardization Bodies**: Trusted Computing Group
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA-OAEP
+- **Key Takeaways**: TPM2_CreatePrimary supports PQC key roles using ML-KEM-768 for EK/SRK; TPM2_Quote behavior is specified with ML-DSA signatures; TPM2_EncryptDecap replaces classical RSA-OAEP for KEM-based credential activation; Algorithm identifiers are defined as TPM_ALG_MLKEM=0x00A0 and TPM_ALG_MLDSA=0x00A1
+- **Security Levels & Parameters**: ML-KEM-768, ML-DSA-65, TPM_ALG_MLKEM=0x00A0, TPM_ALG_MLDSA=0x00A1
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer, Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Algorithms, hsm-pqc, pki-workshop, digital-id
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: TPM2_SelfTest, TPM2_IncrementalSelfTest, TPM2_GetTestResult
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: KEM-based credential activation replacing classical RSA-OAEP, TPM2_EncryptDecap for credential activation
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: TCG-TPM-V185-Part3-Commands.pdf (1,130,611 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-20T23:42:45
+
+---
+
+## NIST-SP-800-133r3-ipd
+
+- **Reference ID**: NIST-SP-800-133r3-ipd
+- **Title**: SP 800-133 Rev. 3 (IPD): Recommendation for Cryptographic Key Generation
+- **Authors**: NIST; Quynh Dang; Dustin Moody; Andrew Regenscheid; Hamilton Silberg
+- **Publication Date**: 2026-04-17
+- **Last Updated**: 2026-04-17
+- **Document Status**: Initial Public Draft
+- **Main Topic**: Guidance for generating cryptographic keys for use with approved algorithms. Rev. 3 integrates PQC key generation (ML-KEM, ML-DSA), introduces KEM-based symmetric key establishment, and expands seed-expansion methods via SHAKE and DRBGs. Aligns randomness guidance with SP 800-90C.
+- **PQC Algorithms Covered**: ML-KEM (FIPS 203), ML-DSA (FIPS 204); seed-based deterministic key generation using SHAKE-128/256 and SP 800-90A DRBGs
+- **Quantum Threats Addressed**: Harvest-now-decrypt-later (HNDL) risk mitigated by transitioning key generation to PQC algorithms; classical asymmetric key generation (RSA, ECDH) is quantum-vulnerable
+- **Migration Timeline Info**: Public comment period closes June 16, 2026; final publication expected late 2026; applicable to federal agencies under FISMA and OMB Circular A-130
+- **Applicable Regions / Bodies**: United States (federal); Global (advisory); NIST, U.S. Department of Commerce
+- **Leaders Contributions Mentioned**: Quynh Dang (lead author); Dustin Moody (author); Andrew Regenscheid (author); Hamilton Silberg (author)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: KEM-based key establishment; seed derivation for asymmetric key pairs; DRBG-based key generation
+- **Infrastructure Layers**: HSM firmware; cryptographic libraries; key management systems; PKCS#11 tokens
+- **Standardization Bodies**: National Institute of Standards and Technology
+- **Compliance Frameworks Referenced**: FIPS 203 (ML-KEM); FIPS 204 (ML-DSA); FIPS 186-5; SP 800-90A; SP 800-90B; SP 800-90C; SP 800-56C Rev. 2; SP 800-108 Rev. 1; FISMA 2014; OMB Circular A-130
+- **Classical Algorithms Referenced**: RSA; DSA; ECDH; ECDSA; DH; symmetric AES; Triple-DES (deprecated)
+- **Key Takeaways**: First NIST SP 800-133 revision to include KEM-based symmetric key generation (ML-KEM); Asymmetric PQC key pairs (ML-DSA, ML-KEM) can now be generated deterministically from a seed using SHAKE or DRBG expansion; SP 800-90C alignment tightens entropy requirements for all key generation paths; Seed management becomes a critical security primitive — loss or compromise of a root seed exposes all derived keys; Hybrid key generation (classical + PQC from shared seed) is acknowledged but scoped to transition guidance.
+- **Security Levels & Parameters**: ML-KEM-512 (L1), ML-KEM-768 (L3), ML-KEM-1024 (L5); ML-DSA-44 (L1), ML-DSA-65 (L3), ML-DSA-87 (L5)
+- **Hybrid & Transition Approaches**: Hybrid key generation acknowledged for transition period; classical + PQC key pairs can be derived from a common seed for interoperability during migration
+- **Performance & Size Considerations**: Seed-based deterministic generation reduces HSM entropy consumption; SHAKE expansion is computationally lightweight vs. full DRBG instantiation per key
+- **Target Audience**: Security Architect, Developer, Compliance Officer, HSM Vendor, Cryptographic Module Developer
+- **Implementation Prerequisites**: SP 800-90A/B/C-compliant entropy source; FIPS 203/204-capable cryptographic library; secure seed storage (HSM or equivalent)
+- **Relevant PQC Today Features**: entropy-randomness, hsm-pqc, kms-pqc, standards-bodies, algorithms
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: NIST SP 800-90C, DRBGs, seed-expansion via SHAKE
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: key replacement, key pair replacement, symmetric key replacement, transition purposes
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: NIST-SP-800-133r3-ipd.pdf (512,507 bytes, 11,698 extracted chars)
+- **Extraction Timestamp**: 2026-04-20T23:44:17
 
 ---

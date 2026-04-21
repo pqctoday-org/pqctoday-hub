@@ -59,6 +59,8 @@ export interface HsmKey {
   rawBytes?: Uint8Array
   /** CKA_PARAMETER_SET value (e.g. CKP_XMSS_*), required for C_CreateObject on XMSS public keys */
   paramSet?: number
+  /** PKCS#11 session handle that owns this key (for multi-session scenarios like VPN sim) */
+  sessionHandle?: number
 }
 
 export interface HsmContextValue {

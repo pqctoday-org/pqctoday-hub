@@ -385,7 +385,8 @@ export const hsm_generateMLDSAKeyPair = (
   M: SoftHSMModule,
   hSession: number,
   variant: 44 | 65 | 87,
-  extractable = false
+  extractable = false,
+  token = false
 ): { pubHandle: number; privHandle: number } => {
   const mech = M._malloc(12)
   M.setValue(mech, CKM_ML_DSA_KEY_PAIR_GEN, 'i32')
@@ -396,7 +397,7 @@ export const hsm_generateMLDSAKeyPair = (
   const pubTpl = buildTemplate(M, [
     { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_ML_DSA },
-    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_TOKEN, boolVal: token },
     { type: CKA_VERIFY, boolVal: true },
     { type: CKA_ENCRYPT, boolVal: false },
     { type: CKA_WRAP, boolVal: false },
@@ -407,7 +408,7 @@ export const hsm_generateMLDSAKeyPair = (
   const prvTpl = buildTemplate(M, [
     { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_ML_DSA },
-    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_TOKEN, boolVal: token },
     { type: CKA_PRIVATE, boolVal: true },
     { type: CKA_SENSITIVE, boolVal: !extractable },
     { type: CKA_EXTRACTABLE, boolVal: extractable },

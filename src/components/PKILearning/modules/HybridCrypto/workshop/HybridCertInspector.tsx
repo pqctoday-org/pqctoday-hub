@@ -479,7 +479,7 @@ export const HybridCertInspector: React.FC = () => {
           {certs.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Cert selector - left panel */}
-              <div className="space-y-2">
+              <div className="space-y-2 min-w-0 overflow-hidden">
                 <h4 className="text-sm font-bold text-foreground mb-2">Select Certificate</h4>
                 {certs.map((group, fIdx) => (
                   <div key={group.formatId} className="space-y-1">
@@ -777,7 +777,7 @@ export const HybridCertInspector: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* IETF cert selector - left panel */}
-            <div className="space-y-2">
+            <div className="space-y-2 min-w-0 overflow-hidden">
               <h4 className="text-sm font-bold text-foreground mb-2">Reference Certificates</h4>
               {IETF_CERT_VECTORS.map((vector) => {
                 const isSelected = ietfSelectedId === vector.id
@@ -787,13 +787,13 @@ export const HybridCertInspector: React.FC = () => {
                     variant="ghost"
                     key={vector.id}
                     onClick={() => handleIETFSelect(vector)}
-                    className={`w-full text-left px-3 py-2.5 rounded-lg text-xs transition-colors border ${
+                    className={`w-full text-left px-3 py-2.5 rounded-lg text-xs transition-colors border whitespace-normal flex-col items-start overflow-hidden min-w-0 ${
                       isSelected
                         ? 'bg-primary/10 text-primary border-primary/30'
                         : 'bg-muted/30 text-foreground border-border hover:border-primary/20'
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center justify-between mb-1 w-full min-w-0">
                       <span className="font-medium truncate pr-2">{vector.label}</span>
                       <span
                         className={`text-[10px] px-1.5 py-0.5 rounded border font-bold shrink-0 ${badgeClass}`}
@@ -801,7 +801,7 @@ export const HybridCertInspector: React.FC = () => {
                         {vector.certType}
                       </span>
                     </div>
-                    <div className="text-[10px] text-muted-foreground font-mono">
+                    <div className="text-[10px] text-muted-foreground font-mono truncate w-full">
                       {vector.algorithmOID}
                     </div>
                     <div className="text-[10px] text-muted-foreground mt-0.5">

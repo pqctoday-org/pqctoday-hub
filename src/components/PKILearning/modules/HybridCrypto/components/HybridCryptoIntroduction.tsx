@@ -5,7 +5,6 @@ import {
   Shield,
   Layers,
   Lock,
-  PenTool,
   ArrowRight,
   Cpu,
   Library,
@@ -432,63 +431,6 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
             </Link>{' '}
             module.
           </p>
-        </div>
-      </section>
-
-      {/* Section 5: Composite Signatures */}
-      <section className="glass-panel p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 rounded-lg bg-secondary/10">
-            <PenTool size={24} className="text-secondary" />
-          </div>
-          <h2 className="text-xl font-bold text-gradient">Composite Signatures</h2>
-        </div>
-        <div className="space-y-4 text-sm text-foreground/80">
-          <p>
-            Composite signatures combine <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> with{' '}
-            <InlineTooltip term="ECDSA">ECDSA</InlineTooltip> or Ed25519 into a single signature
-            operation. Both signatures must verify for the composite to be valid.
-          </p>
-          <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <h3 className="text-sm font-bold text-foreground mb-3">
-              Composite Signature Structure
-            </h3>
-            <div className="font-mono text-xs space-y-1">
-              <div className="text-muted-foreground">CompositeSignature ::= SEQUENCE {'{'}</div>
-              <div className="pl-4 text-primary">classicalSig &nbsp; ECDSA-P256-Signature,</div>
-              <div className="pl-4 text-success">
-                pqcSig &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ML-DSA-65-Signature,
-              </div>
-              <div className="text-muted-foreground">{'}'}</div>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="bg-muted/50 rounded-lg p-3 border border-border">
-              <div className="text-xs font-bold text-foreground mb-1">Advantages</div>
-              <ul className="text-xs text-muted-foreground space-y-1">
-                <li>&bull; Single OID simplifies certificate handling</li>
-                <li>&bull; Both-must-verify prevents downgrade attacks</li>
-                <li>&bull; Atomic operation &mdash; no partial verification</li>
-              </ul>
-            </div>
-            <div className="bg-muted/50 rounded-lg p-3 border border-border">
-              <div className="text-xs font-bold text-foreground mb-1">Trade-offs</div>
-              <ul className="text-xs text-muted-foreground space-y-1">
-                <li>&bull; Larger signatures (~3.4 KB vs ~72 B for ECDSA alone)</li>
-                <li>&bull; Both algorithms must be supported by verifier</li>
-                <li>&bull; Composite draft not yet finalized &mdash; OIDs may change before RFC</li>
-              </ul>
-            </div>
-          </div>
-          <div className="bg-muted/50 rounded-lg p-3 border border-success/20 mt-2">
-            <p className="text-xs text-muted-foreground">
-              <strong className="text-success">Note:</strong> If you only need quantum safety
-              without a classical fallback, use a <strong>pure PQC certificate</strong> instead
-              &mdash; ML-DSA OIDs are fully standardized in <strong>RFC 9881</strong> and work in
-              OpenSSL today. Composite is specifically for environments that require the{' '}
-              <em>both-must-verify</em> dual-algorithm property.
-            </p>
-          </div>
         </div>
       </section>
 

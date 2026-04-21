@@ -291,8 +291,11 @@ export const HsmKeyTable = () => {
     const map = new Map<number, number | null>()
     for (const k of hsmKeys) {
       if (!attrCache.current.has(k.handle)) {
-        const M = k.engine === 'rust' ? crossCheckModuleRef.current : moduleRef.current
-        const hSession = hSessionRef.current
+        const M =
+          k.engine === 'rust'
+            ? (crossCheckModuleRef.current ?? moduleRef.current)
+            : moduleRef.current
+        const hSession = k.sessionHandle ?? hSessionRef.current
         if (!M || !hSession) {
           attrCache.current.set(k.handle, null)
         } else {
@@ -318,9 +321,10 @@ export const HsmKeyTable = () => {
   }, [keySizeMap])
 
   const openInspect = (key: HsmKey) => {
-    // Route to the correct engine — Rust keys live on crossCheckModuleRef
-    const M = key.engine === 'rust' ? crossCheckModuleRef.current : moduleRef.current
-    const hSession = hSessionRef.current
+    // In dual mode, Rust keys live on crossCheckModuleRef; in Rust-only mode fall back to moduleRef
+    const M =
+      key.engine === 'rust' ? (crossCheckModuleRef.current ?? moduleRef.current) : moduleRef.current
+    const hSession = key.sessionHandle ?? hSessionRef.current
     if (!M || !hSession) return
     try {
       const a = hsm_getKeyAttributes(M, hSession, key.handle)
