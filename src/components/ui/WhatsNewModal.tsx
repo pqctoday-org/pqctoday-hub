@@ -36,6 +36,7 @@ import {
 } from '../../utils/dataFingerprint'
 import {
   ALL_CHANGELOG_VERSIONS,
+  compareChangelogVersion,
   type ChangelogEntry,
   type ChangelogSection,
   type SectionType,
@@ -73,24 +74,15 @@ const MAX_VISIBLE_ITEMS = 10
 
 // ── Changelog helpers ───────────────────────────────────────────────────────
 
-/** Numeric semver comparison: returns positive if a > b, negative if a < b, 0 if equal. */
-function compareSemver(a: string, b: string): number {
-  const pa = a.split('.').map(Number)
-  const pb = b.split('.').map(Number)
-  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
-    const diff = (pa[i] ?? 0) - (pb[i] ?? 0)
-    if (diff !== 0) return diff
-  }
-  return 0
-}
-
 function getUnseenChangelogSections(
   lastSeenVersion: string | null,
   personaId: PersonaId | null
 ): ChangelogSection[] {
-  // Collect entries from all versions newer than lastSeenVersion
+  // Collect entries from all versions newer than lastSeenVersion. Treat the
+  // literal `Unreleased` as newer than any released version so in-progress
+  // entries are surfaced automatically.
   const unseenVersions = lastSeenVersion
-    ? ALL_CHANGELOG_VERSIONS.filter((v) => compareSemver(v.version, lastSeenVersion) > 0)
+    ? ALL_CHANGELOG_VERSIONS.filter((v) => compareChangelogVersion(v.version, lastSeenVersion) > 0)
     : ALL_CHANGELOG_VERSIONS.slice(0, 1) // fallback: show latest only
 
   // Merge all sections across unseen versions
@@ -201,9 +193,14 @@ export const WhatsNewModal = () => {
         // localStorage unavailable — suppress modal
       }
 
+      // First-visit: surface the latest changes once instead of silently
+      // seeding the fingerprint. Wait for the tour to finish so the two
+      // overlays don't fight for attention. The modal's own dismiss handler
+      // calls markAllSeen(), so this only fires on the very first session.
       if (state.isFirstVisit) {
-        // Silently seed the fingerprint without showing modal
-        state.markAllSeen()
+        if (tourCompleted) {
+          setIsVisible(true)
+        }
         return
       }
 

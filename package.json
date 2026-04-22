@@ -69,7 +69,11 @@
     "xref:purl:dry": "python3 scripts/generate-purl-xref.py --dry-run",
     "xref:lei": "python3 scripts/generate-lei-xref.py",
     "xref:lei:dry": "python3 scripts/generate-lei-xref.py --dry-run",
-    "generate:manuals": "python3 scripts/generate-page-manuals.py"
+    "generate:manuals": "python3 scripts/generate-page-manuals.py",
+    "version:patch": "tsx scripts/bump-version.ts patch",
+    "version:minor": "tsx scripts/bump-version.ts minor",
+    "version:major": "tsx scripts/bump-version.ts major",
+    "lint:changelog": "tsx scripts/lint-changelog-personas.ts"
   },
   "overrides": {
     "serialize-javascript": ">=7.0.3"

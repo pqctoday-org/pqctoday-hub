@@ -18,6 +18,7 @@ export const content: ModuleContent = {
     getStandard('FIPS 205'),
     getStandard('RFC 8879'),
     getStandard('RFC 9580'),
+    getStandard('NIST SP 800-227'),
   ],
 
   algorithms: [

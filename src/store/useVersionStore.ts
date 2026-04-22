@@ -6,6 +6,11 @@ import { timelineMetadata } from '../data/timelineData'
 import { softwareMetadata } from '../data/migrateData'
 import { threatsMetadata } from '../data/threatsData'
 import { leadersMetadata } from '../data/leadersData'
+import { complianceMetadata } from '../data/complianceData'
+import { loadedTransitionMetadata } from '../data/algorithmsData'
+import { sourcesMetadata } from '../data/authoritativeSourcesData'
+import { xrefMetadata } from '../data/certificationXrefData'
+import { quizMetadata } from '../data/quizDataLoader'
 
 // Injected by Vite at build time from package.json version
 declare const __APP_VERSION__: string
@@ -13,15 +18,19 @@ const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '
 
 // ── Data fingerprint types ──────────────────────────────────────────────────
 
-export type DataSourceId = 'library' | 'timeline' | 'migrate' | 'threats' | 'leaders'
+export type DataSourceId =
+  | 'library'
+  | 'timeline'
+  | 'migrate'
+  | 'threats'
+  | 'leaders'
+  | 'compliance'
+  | 'algorithms'
+  | 'authoritativeSources'
+  | 'certificationXref'
+  | 'quiz'
 
-export interface DataFingerprint {
-  library: string | null
-  timeline: string | null
-  migrate: string | null
-  threats: string | null
-  leaders: string | null
-}
+export type DataFingerprint = Record<DataSourceId, string | null>
 
 const EMPTY_FINGERPRINT: DataFingerprint = {
   library: null,
@@ -29,6 +38,11 @@ const EMPTY_FINGERPRINT: DataFingerprint = {
   migrate: null,
   threats: null,
   leaders: null,
+  compliance: null,
+  algorithms: null,
+  authoritativeSources: null,
+  certificationXref: null,
+  quiz: null,
 }
 
 /** Reads current CSV filenames from data loader metadata exports. */
@@ -39,6 +53,11 @@ export function getCurrentDataFingerprint(): DataFingerprint {
     migrate: softwareMetadata?.filename ?? null,
     threats: threatsMetadata?.filename ?? null,
     leaders: leadersMetadata?.filename ?? null,
+    compliance: complianceMetadata?.filename ?? null,
+    algorithms: loadedTransitionMetadata?.filename ?? null,
+    authoritativeSources: sourcesMetadata?.filename ?? null,
+    certificationXref: xrefMetadata?.filename ?? null,
+    quiz: quizMetadata?.filename ?? null,
   }
 }
 
@@ -147,7 +166,7 @@ export const useVersionStore = create<VersionState>()(
     }),
     {
       name: 'pqc-version-storage',
-      version: 2,
+      version: 3,
       storage: createJSONStorage(() => localStorage),
       partialize: (state): PersistedVersionState => ({
         lastSeenVersion: state.lastSeenVersion,
@@ -172,13 +191,17 @@ export const useVersionStore = create<VersionState>()(
           state.isFirstVisit = state.lastSeenVersion === null
         }
 
-        // Ensure all fingerprint fields exist (defensive)
+        // Ensure all fingerprint fields exist (defensive). v3 widens this to
+        // include compliance, algorithms, authoritativeSources,
+        // certificationXref, and quiz — pre-existing users get null defaults
+        // for the new keys, which surfaces them as "changed" on next load and
+        // triggers What's New (intended).
         const fp = state.lastSeenDataFingerprint
         if (typeof fp !== 'object' || fp === null) {
           state.lastSeenDataFingerprint = { ...EMPTY_FINGERPRINT }
         } else {
           const fpObj = fp as Record<string, unknown>
-          for (const key of ['library', 'timeline', 'migrate', 'threats', 'leaders']) {
+          for (const key of Object.keys(EMPTY_FINGERPRINT)) {
             // eslint-disable-next-line security/detect-object-injection
             if (typeof fpObj[key] !== 'string') {
               // eslint-disable-next-line security/detect-object-injection

@@ -4,6 +4,11 @@ import { softwareData } from '../data/migrateData'
 import { threatsData } from '../data/threatsData'
 import { leadersData } from '../data/leadersData'
 import { timelineData } from '../data/timelineData'
+import { complianceFrameworks, complianceMetadata } from '../data/complianceData'
+import { algorithmsData, loadedTransitionMetadata } from '../data/algorithmsData'
+import { authoritativeSources, sourcesMetadata } from '../data/authoritativeSourcesData'
+import { certificationXrefs, xrefMetadata } from '../data/certificationXrefData'
+import { quizQuestions, quizMetadata } from '../data/quizDataLoader'
 import type { DataSourceId } from '../store/useVersionStore'
 import type { PersonaId } from '../data/learningPersonas'
 import {
@@ -47,6 +52,48 @@ const SOURCE_CONFIG: Record<DataSourceId, { label: string; iconName: string; rou
   threats: { label: 'Threat Intelligence', iconName: 'AlertTriangle', route: '/threats' },
   timeline: { label: 'Timeline', iconName: 'Globe', route: '/timeline' },
   leaders: { label: 'Thought Leaders', iconName: 'Users', route: '/leaders' },
+  compliance: { label: 'Compliance', iconName: 'AlertTriangle', route: '/compliance' },
+  algorithms: { label: 'Algorithms', iconName: 'BookOpen', route: '/algorithms' },
+  authoritativeSources: {
+    label: 'Authoritative Sources',
+    iconName: 'BookOpen',
+    route: '/library',
+  },
+  certificationXref: {
+    label: 'Certification Cross-References',
+    iconName: 'ArrowRightLeft',
+    route: '/migrate',
+  },
+  quiz: { label: 'Quiz Bank', iconName: 'BookOpen', route: '/learn/quiz' },
+}
+
+/**
+ * For data sources that do not carry per-record `New`/`Updated` status fields,
+ * emit a single synthetic "data refreshed" row keyed off the new CSV filename.
+ * The row tells the user the source was refreshed and lets them deep-link to
+ * the view; per-record diffing would require a build-time snapshot.
+ */
+function buildRefreshSummary(
+  sourceId: DataSourceId,
+  recordCount: number,
+  filename: string | null
+): DataSourceSummary {
+  const config = SOURCE_CONFIG[sourceId] // eslint-disable-line security/detect-object-injection
+  return {
+    ...config,
+    sourceId,
+    newCount: 0,
+    updatedCount: 1,
+    items: [
+      {
+        id: `${sourceId}:refresh`,
+        label: `${config.label} refreshed (${recordCount} records)`,
+        status: 'Updated',
+        deepLink: config.route,
+        description: filename ? `Latest snapshot: ${filename}` : undefined,
+      },
+    ],
+  }
 }
 
 // ── Summarisers per data source ─────────────────────────────────────────────
@@ -192,6 +239,31 @@ export function getDataSourceSummaries(changedSources: DataSourceId[]): DataSour
     threats: getThreatsSummary,
     leaders: getLeadersSummary,
     timeline: getTimelineSummary,
+    compliance: () =>
+      buildRefreshSummary(
+        'compliance',
+        complianceFrameworks.length,
+        complianceMetadata?.filename ?? null
+      ),
+    algorithms: () =>
+      buildRefreshSummary(
+        'algorithms',
+        algorithmsData.length,
+        loadedTransitionMetadata?.filename ?? null
+      ),
+    authoritativeSources: () =>
+      buildRefreshSummary(
+        'authoritativeSources',
+        authoritativeSources.length,
+        sourcesMetadata?.filename ?? null
+      ),
+    certificationXref: () =>
+      buildRefreshSummary(
+        'certificationXref',
+        certificationXrefs.length,
+        xrefMetadata?.filename ?? null
+      ),
+    quiz: () => buildRefreshSummary('quiz', quizQuestions.length, quizMetadata?.filename ?? null),
   }
 
   return changedSources
@@ -265,9 +337,15 @@ export function filterSummariesForPersona(
           return rebuildCounts(summary, filtered)
         }
 
-        // Timeline and leaders are cross-cutting — always fully relevant
+        // Timeline, leaders, and synthetic refresh-only sources are
+        // cross-cutting — always fully relevant
         case 'timeline':
         case 'leaders':
+        case 'compliance':
+        case 'algorithms':
+        case 'authoritativeSources':
+        case 'certificationXref':
+        case 'quiz':
           return summary
       }
     })

@@ -66,8 +66,10 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
                 <InlineTooltip term="NIST">NIST</InlineTooltip> SP 800-227
               </div>
               <p className="text-xs text-muted-foreground">
-                NIST recommends hybrid key exchange for TLS and other protocols during the PQC
-                transition period.
+                NIST SP 800-227 §1 frames hybrid key exchange as an <strong>interim measure</strong>{' '}
+                during the PQC transition &mdash; recommended for TLS, IKE, and similar protocols.
+                The spec ties the move to pure PQC to <em>algorithm maturation</em> (extended
+                cryptanalysis, broad deployment), not calendar deadlines alone.
               </p>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -337,6 +339,59 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
             Even if ML-KEM-768 is broken in the future, X25519 still provides classical security.
             Even if X25519 is broken by a quantum computer, ML-KEM-768 provides quantum resistance.
           </p>
+          <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-3">
+            <h4 className="text-xs font-bold text-foreground">
+              Choosing a KEM Parameter Set (NIST SP 800-227)
+            </h4>
+            <p className="text-xs text-muted-foreground">
+              SP 800-227 approves three ML-KEM parameter sets, each mapped to a NIST security
+              category matching the strength of a given AES key size. Pick the set by threat model,
+              not by default.
+            </p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left font-bold text-foreground py-1.5 pr-3">ML-KEM</th>
+                    <th className="text-left font-bold text-foreground py-1.5 pr-3">NIST Cat</th>
+                    <th className="text-left font-bold text-foreground py-1.5 pr-3">
+                      Classical equiv.
+                    </th>
+                    <th className="text-left font-bold text-foreground py-1.5">
+                      Typical deployment
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="text-muted-foreground">
+                  <tr className="border-b border-border/50">
+                    <td className="py-1.5 pr-3 font-mono">ML-KEM-512</td>
+                    <td className="py-1.5 pr-3">Category 1</td>
+                    <td className="py-1.5 pr-3">AES-128</td>
+                    <td className="py-1.5">Constrained/IoT, short-lived sessions</td>
+                  </tr>
+                  <tr className="border-b border-border/50">
+                    <td className="py-1.5 pr-3 font-mono">ML-KEM-768</td>
+                    <td className="py-1.5 pr-3">Category 3</td>
+                    <td className="py-1.5 pr-3">AES-192</td>
+                    <td className="py-1.5">
+                      <strong>Default for TLS 1.3 &amp; most internet traffic</strong>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="py-1.5 pr-3 font-mono">ML-KEM-1024</td>
+                    <td className="py-1.5 pr-3">Category 5</td>
+                    <td className="py-1.5 pr-3">AES-256</td>
+                    <td className="py-1.5">CNSA 2.0, high-assurance/federal systems</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="text-[10px] text-muted-foreground/70 italic">
+              HNDL risk + data-retention window should drive the choice: if harvested ciphertext
+              must remain secret past ~2035, prefer Cat 3 or Cat 5 over Cat 1.
+            </p>
+          </div>
+
           <div className="bg-muted/50 rounded-lg p-3 border border-border space-y-2">
             <h4 className="text-xs font-bold text-foreground">Other Hybrid KEM Variants</h4>
             <p className="text-xs text-muted-foreground">
@@ -347,10 +402,45 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               <strong>SecP384r1MLKEM1024</strong> &mdash; P-384 + ML-KEM-1024. Provides NIST Level 5
               security for high-assurance environments.
             </p>
+          </div>
+
+          <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-2">
+            <h4 className="text-xs font-bold text-foreground">
+              Combiner Construction (SP 800-227 + SP 800-56C)
+            </h4>
+            <p className="text-xs text-muted-foreground">
+              The high-level <code className="text-[11px]">KDF(X25519_ss || ML-KEM_ss)</code> above
+              hides three real requirements that SP 800-227 defers to{' '}
+              <strong>SP 800-56C-Rev2</strong>:
+            </p>
+            <ul className="text-xs text-muted-foreground space-y-1 list-disc pl-5">
+              <li>
+                <strong>Concatenation order is fixed per protocol.</strong> Hybrid TLS 1.3 drafts
+                concatenate as <code>classical_ss || pqc_ss</code> with a protocol-specific label;
+                swapping order silently breaks interop. Order does not add security, but binding to
+                a known order prevents cross-protocol confusion.
+              </li>
+              <li>
+                <strong>HKDF vs KMAC.</strong> SP 800-56C permits either an HMAC-based extractor
+                (HKDF-SHA-256/384/512) or KMAC128/256. TLS 1.3 uses HKDF through its key schedule;
+                KMAC is available for KEM-only protocols that want a single primitive.
+              </li>
+              <li>
+                <strong>Dual-PRF assumption.</strong> The combined secret stays safe as long as{' '}
+                <em>either</em> input looks uniform to the attacker &mdash; so a future break of
+                ML-KEM or of X25519 alone does not break the session key. This is why the classical
+                half is kept during the transition.
+              </li>
+              <li>
+                <strong>Domain separation is mandatory, not optional.</strong> Every context (TLS
+                handshake, KEMTLS, S/MIME, IKE) must feed a unique label/context string into the KDF
+                so shared secrets cannot be replayed across protocols.
+              </li>
+            </ul>
             <p className="text-[10px] text-muted-foreground/70 italic">
-              Note: The KDF step above is simplified. In TLS 1.3, the concatenated shared secrets
-              feed into the protocol&apos;s <InlineTooltip term="HKDF">HKDF</InlineTooltip>-based
-              key schedule. The X-Wing KEM draft uses a separate labeled extraction.
+              The X-Wing KEM draft bakes this combiner in directly (single labeled extraction); TLS
+              1.3 relies on its own <InlineTooltip term="HKDF">HKDF</InlineTooltip> key schedule for
+              the same effect.
             </p>
           </div>
         </div>
@@ -430,6 +520,74 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               TLS Basics
             </Link>{' '}
             module.
+          </p>
+        </div>
+      </section>
+
+      {/* Section 5: Implementation Requirements (SP 800-227) */}
+      <section className="glass-panel p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <Shield size={24} className="text-primary" />
+          </div>
+          <h2 className="text-xl font-bold text-gradient">
+            Implementation Requirements (SP 800-227)
+          </h2>
+        </div>
+        <div className="space-y-4 text-sm text-foreground/80">
+          <p>
+            SP 800-227 §4 is explicit: a compliant ML-KEM deployment is more than &ldquo;call the
+            library.&rdquo; Decapsulation must not leak any signal about whether a ciphertext was
+            valid, and the implementation must resist timing and side-channel analysis.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="text-xs font-bold text-foreground mb-1">
+                Implicit Rejection (FIPS 203 §7.1)
+              </div>
+              <p className="text-xs text-muted-foreground">
+                On decapsulation failure, ML-KEM returns a pseudorandom key derived from the
+                decapsulation key and ciphertext &mdash; <strong>never</strong> an error. Attackers
+                cannot distinguish a real key from a rejection, so chosen-ciphertext probing gives
+                them nothing. The workshop demo already follows this rule (&ldquo;includes ek for
+                implicit rejection&rdquo;).
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="text-xs font-bold text-foreground mb-1">
+                Constant-Time Decapsulation
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Execution time, memory access, and branch behaviour must not depend on secret key
+                bits or on whether the ciphertext verifies. SP 800-227 §4.2 requires this for FIPS
+                validation &mdash; a timing-variable implementation is non-conformant regardless of
+                correctness.
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="text-xs font-bold text-foreground mb-1">Randomness Requirements</div>
+              <p className="text-xs text-muted-foreground">
+                Encapsulation calls an approved <InlineTooltip term="DRBG">DRBG</InlineTooltip> (SP
+                800-90A/B/C) for the 32-byte <code className="text-[11px]">m</code>. Weak or
+                predictable RNG collapses ML-KEM security to zero &mdash; this is the single most
+                common real-world failure mode for KEMs.
+              </p>
+            </div>
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="text-xs font-bold text-foreground mb-1">
+                Side-Channel &amp; Fault Resistance
+              </div>
+              <p className="text-xs text-muted-foreground">
+                In hybrid constructions, both halves must be hardened: a timing leak in X25519 or
+                ML-KEM-768 can compromise the combined session key even if the other half is safe.
+                Hardware (HSM/TPM) deployments should enable their PQC side-channel countermeasures
+                explicitly &mdash; they are not always on by default.
+              </p>
+            </div>
+          </div>
+          <p className="text-[10px] text-muted-foreground/70 italic">
+            In short: hybrid gets you algorithmic safety (dual-PRF), but SP 800-227 §4 is what gets
+            you <em>deployment</em> safety. Both are required.
           </p>
         </div>
       </section>

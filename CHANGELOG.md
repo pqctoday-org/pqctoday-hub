@@ -8,7 +8,17 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- **Library CSV refresh to `04222026_r1`** — replaces `04212026` as the
+- **SP 800-227 coverage — hybrid KEM depth & cross-module tagging** [persona:architect] [persona:developer] [persona:researcher] [view:/learn] [view:/library] — closes the gap between SP 800-227 being referenced and it being taught:
+  - **HybridCrypto module depth** (`/learn/hybrid-crypto`): expanded from name-drop to spec-faithful teaching across four topic areas:
+    - _Parameter-set selection table_ — ML-KEM-512 → NIST Category 1 (AES-128, IoT/short-lived), ML-KEM-768 → Category 3 (AES-192, default TLS), ML-KEM-1024 → Category 5 (AES-256, CNSA 2.0/federal); includes HNDL risk framing for retention-window-driven selection.
+    - _Combiner construction deep-dive_ — concatenation order fixed per protocol (classical ‖ PQC per SP 800-56C); HKDF vs KMAC alternatives explained; dual-PRF assumption stated (security holds if either half remains secure); domain-separation framed as a mandatory SP 800-227 requirement, not optional.
+    - _New "Implementation Requirements" section_ (SP 800-227 §4 + FIPS 203 §7.1) — implicit rejection (why a pseudorandom output on failure prevents chosen-ciphertext probing, not just that it exists); constant-time decapsulation required for FIPS validation; approved DRBG mandatory for encapsulation randomness; side-channel hardening must cover both halves of a hybrid construction.
+    - _Transition framing_ — NIST SP 800-227 §1 "interim-measure" language surfaced; migration to pure PQC tied to algorithm maturation (cryptanalysis + deployment), not calendar deadlines alone.
+  - **Cross-module tagging** — `NIST SP 800-227` added to the `standards` registry of four modules that demonstrate hybrid KEX in practice: `TLSBasics`, `VPNSSHModule`, `OSPQC`, `PlatformEngPQC`.
+  - **Library dependencies** — `NIST SP 800-227` added to the `dependencies` field of five hybrid KEM protocol entries in `library_04222026_r2.csv`: `draft-ietf-tls-ecdhe-mlkem-04`, `draft-ietf-ipsecme-ikev2-mlkem`, `draft-ietf-lamps-pq-composite-kem-12`, `ETSI TS 103 744`, `draft-kampanakis-curdle-ssh-pq-ke`. Previous snapshot archived per the 2-version rule.
+  - **RAG corpus** — `rag-summary.md` updated with all new content; run `npm run generate-corpus` to propagate.
+
+- **Library CSV refresh to `04222026_r1`** [persona:architect] [persona:researcher] [view:/library] — replaces `04212026` as the
   current snapshot. Intentionally drops 9 reference rows that were
   audited out (`CAB-Forum-SC-081v3`, `Forrester-TEI-CLM-Automation`,
   `Gartner-CryptoCOE-Mahdi`, `Gartner-PQC-Time-To-Prepare`,
@@ -21,7 +31,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- **WASM charon validation exports (Phase 3a)** — the
+- **WASM charon validation exports (Phase 3a)** [persona:developer] [persona:architect] [view:/playground] — the
   `strongswan-v2.wasm` binary now exports three real library-level
   validators that prove the ML-DSA + ML-KEM source patches are live, not
   just present in source:
@@ -47,7 +57,7 @@ All notable changes to this project will be documented in this file.
   the real charon engine; only the full IKE handshake driver (Phase 3b+
   of the WASM shims) remains a simulation.
 
-- **VPN Simulator — gap-closure vs the Docker sandbox**, phase 1 of 6:
+- **VPN Simulator — gap-closure vs the Docker sandbox** [persona:developer] [persona:architect] [view:/playground], phase 1 of 6:
   - **Algorithm benchmark matrix** — new "Run algorithm matrix" button runs
     keygen + self-sign for RSA-3072 and ML-DSA-{44, 65, 87} against the live
     softhsmv3 session and renders a timings / cert-size / pubkey-size table.
@@ -72,7 +82,7 @@ All notable changes to this project will be documented in this file.
     calls `POST {VITE_SANDBOX_ORCHESTRATOR_URL}/sessions {scenarioId:'vpn'}`
     per `pqctoday-sandbox/docs/orchestrator-api.md` and opens the returned
     `baseUrl` in a new tab. Gracefully reports when the env var is unset.
-- **New learn module: Cryptographic Management Modernization (LM-052)** — a
+- **New learn module: Cryptographic Management Modernization (LM-052)** [persona:executive] [persona:architect] [view:/learn] — a
   55-minute, 5-step executive-track module covering modern cryptographic
   posture management across certificates, libraries, software, and keys.
   Routed at `/learn/crypto-mgmt-modernization`, slotted into the executive
@@ -94,7 +104,7 @@ All notable changes to this project will be documented in this file.
   Eight exercises, glossary-aware content, RAG + Curious summaries, and
   bidirectional cross-links to `crypto-agility` (LM-007), `pqc-governance`
   (LM-037), `pqc-business-case` (LM-036), and `kms-pqc` (LM-024).
-- **Library CSV `04212026`** — next versioned snapshot (previous
+- **Library CSV `04212026`** [persona:architect] [persona:researcher] [view:/library] — next versioned snapshot (previous
   `04202026_r2` retained per `CSVmaintenance.md` two-version rule). **26
   new authoritative references** added for the CMM module plus **13 existing
   rows tagged**; covers CA/B Forum Ballot SC-081v3 (47-day TLS cadence by
@@ -112,50 +122,50 @@ All notable changes to this project will be documented in this file.
   Global Gartner Hype Cycle positioning, IETF RFC 7030 (EST), RFC 4210
   (CMP), Security Boulevard / Forrester (Sandy Carielli) on cryptoagility,
   and Venafi / Ponemon cert-outage cost study.
-- **Google Quantum AI whitepaper added to library** — "Securing Elliptic Curve
+- **Google Quantum AI whitepaper added to library** [persona:researcher] [persona:developer] [view:/library] — "Securing Elliptic Curve
   Cryptocurrencies against Quantum Vulnerabilities" (Babbush, Gidney et al.,
   Google Quantum AI + Ethereum Foundation, March 30 2026) is now in the library
   with module links to Quantum Threats, Blockchain PQC, and Standards Bodies.
-- **secp256k1 added to Quantum Threats workshop** — Bitcoin/Ethereum's curve now
+- **secp256k1 added to Quantum Threats workshop** [persona:developer] [persona:researcher] [view:/threats] — Bitcoin/Ethereum's curve now
   appears in the Algorithm Vulnerability Matrix and Security Level Degradation
   tool with the verified estimate of ≤1,200 logical qubits + ≤90M Toffoli gates
   via Shor's algorithm.
-- **ECC qubit estimates revised** — ECDSA P-256, X25519, and Ed25519 updated
+- **ECC qubit estimates revised** [persona:researcher] [persona:developer] [view:/threats] — ECDSA P-256, X25519, and Ed25519 updated
   from ~2,330 to ~1,200 logical qubits, reflecting improved Shor's circuit
   efficiency for all 256-bit prime-order elliptic curves (Google Quantum AI,
   Mar 2026).
-- **Fast-clock vs slow-clock CRQC distinction in HNDL/HNFL calculators** —
+- **Fast-clock vs slow-clock CRQC distinction in HNDL/HNFL calculators** [persona:architect] [persona:researcher] [view:/threats] —
   explains that fast-clock CRQCs (superconducting, photonic) enable live mempool
   "on-spend" attacks while slow-clock types are the at-rest / HNDL threat.
-- **Guided exercise 7: "ECC Blockchain Under Quantum Attack"** — on-spend attack
+- **Guided exercise 7: "ECC Blockchain Under Quantum Attack"** [persona:developer] [persona:researcher] [view:/threats] — on-spend attack
   scenario: Bitcoin transaction in the mempool, fast-clock CRQC at 1,200 qubits,
   and why blockchain infrastructure needs PQC migration now.
-- **CertCapacityCalculator — math disclosures** — all three charts now have
+- **CertCapacityCalculator — math disclosures** [persona:architect] [persona:developer] [view:/playground] — all three charts now have
   collapsible "How this is calculated" sections with formula, assumptions, and
   benchmark sources.
-- **HsmCapacityCalculator — estimation disclosures** — each TPS slider has a
+- **HsmCapacityCalculator — estimation disclosures** [persona:architect] [persona:developer] [view:/playground] — each TPS slider has a
   "How we estimated this" toggle showing rationale, math, PQC impact, and
   sources.
 
 ### Changed
 
-- **CertCapacityCalculator — bandwidth model corrected** — TLS payload now
+- **CertCapacityCalculator — bandwidth model corrected** [persona:architect] [persona:developer] [view:/playground] — TLS payload now
   includes both `Certificate` and `CertificateVerify`; prior model used an
   incorrect RSA-2048 delta baseline.
-- **certCapacityDefaults — AVX2 cycle-accurate benchmarks** — RSA, ECDSA, and
+- **certCapacityDefaults — AVX2 cycle-accurate benchmarks** [persona:developer] [persona:architect] [view:/playground] — RSA, ECDSA, and
   ML-DSA figures updated from rough estimates to cycle counts from
   CRYSTALS-Dilithium Round 3 and OpenSSL 3.x AVX2 measurements.
-- **Certificate Lifecycle tools moved to PKI Workshop** — ACME PQC Walkthrough
+- **Certificate Lifecycle tools moved to PKI Workshop** [persona:developer] [view:/learn] — ACME PQC Walkthrough
   and Cert Capacity Calculator removed from Migrate page; now in the learn
   module where they belong.
-- **VPN Simulator marked work-in-progress** — WIP badge shown while
+- **VPN Simulator marked work-in-progress** [persona:developer] [persona:architect] [view:/playground] — WIP badge shown while
   strongSwan IKEv2 + ML-DSA AUTH method integration is pending.
 
 ### Fixed
 
-- **Quiz answer buttons — long options no longer truncate** — option buttons
+- **Quiz answer buttons — long options no longer truncate** [persona:all] [view:/learn] — option buttons
   wrap text properly instead of clipping multi-line answers.
-- **HSM key inspection was silently broken for all VPN simulation keys** — clicking
+- **HSM key inspection was silently broken for all VPN simulation keys** [persona:developer] [view:/playground] — clicking
   the eye icon on any key generated by the VPN Simulator did nothing. Root cause:
   in Rust engine mode `crossCheckModuleRef` is null, so the `engine: 'rust'` routing
   in `HsmKeyTable` returned early before calling `C_GetAttributeValue`. Responder
@@ -163,21 +173,21 @@ All notable changes to this project will be documented in this file.
   handle. Both are now fixed: `HsmKey` carries a `sessionHandle` set at generation
   time, and the module lookup falls back to `moduleRef` when `crossCheckModuleRef`
   is null (single-engine mode).
-- **Charon diagnostic lines misclassified as errors in VPN log panel** — strongSwan
+- **Charon diagnostic lines misclassified as errors in VPN log panel** [persona:developer] [view:/playground] — strongSwan
   routes all charon output to stderr; lines matching thread prefix patterns such as
   `00[IKE]` or `00[CFG]` are now correctly routed as informational rather than errors.
-- **Hybrid Cert Inspector panel overflows on narrow screens** — the certificate
+- **Hybrid Cert Inspector panel overflows on narrow screens** [persona:developer] [view:/playground] — the certificate
   selector left-column and IETF reference buttons now apply `min-w-0 overflow-hidden`
   and `truncate` so long OID strings clip instead of breaking the grid layout.
-- **ML-KEM-512 mis-labelled as NIST L2** — corrected to **NIST L1** in
+- **ML-KEM-512 mis-labelled as NIST L2** [persona:developer] [persona:architect] [persona:researcher] — corrected to **NIST L1** in
   `TLSClientPanel`, `TLSServerPanel`, and the TLS exercises table. Per FIPS 203,
   ML-KEM-512 targets Category 1 (≈AES-128 strength).
-- **RSA VPN-sim certs now carry SubjectKeyIdentifier extension** —
+- **RSA VPN-sim certs now carry SubjectKeyIdentifier extension** [persona:developer] [persona:architect] [view:/playground] —
   `buildHsmSelfSignedCert` (the RSA path) now embeds SKID = SHA-1(pubkey)
   matching the `CKA_ID` set on the key objects. strongSwan's PKCS#11 plugin
   discovers the private key via `C_FindObjects({CKA_ID=ski})`; without the
   extension, ML-DSA worked but RSA fell back to PSK auth.
-- **VPN sim ML-DSA cert auth fully wired end-to-end** — `hsm_generateMLDSAKeyPair`
+- **VPN sim ML-DSA cert auth fully wired end-to-end** [persona:developer] [persona:architect] [view:/playground] — `hsm_generateMLDSAKeyPair`
   now accepts an optional `keyId` parameter that's stamped as `CKA_ID` on both
   the public and private key objects at keygen time. VPN sim's `provisionKeys`
   generates a random 20-byte `keyId` per key pair and passes the same bytes into
@@ -185,7 +195,7 @@ All notable changes to this project will be documented in this file.
   pkcs11 plugin now finds the private key via `C_FindObjects({CKA_ID=ski})`
   so ML-DSA cert auth no longer falls back to PSK. `CKA_ID = 0x00000102`
   exported from `softhsm/constants.ts` + the parallel `softhsm.ts`.
-- **Mobile / iOS Safari polish** — glass-panel now sets
+- **Mobile / iOS Safari polish** [persona:developer] — glass-panel now sets
   `-webkit-backdrop-filter` so blur renders on Safari; `Button` icon size
   gets `touch-manipulation` to suppress iOS double-tap zoom; `CodeBlock`
   uses `max-h-[40vh] sm:max-h-[650px]` so long code blocks don't dominate
@@ -196,21 +206,21 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- **VPN Simulator: ML-DSA private keys now discoverable by PKCS#11 plugin** —
+- **VPN Simulator: ML-DSA private keys now discoverable by PKCS#11 plugin** [persona:developer] [persona:architect] [view:/playground] —
   `hsm_setKeyId` sets `CKA_ID = SHA-1(pubkey)` on both public and private ML-DSA key
   objects immediately after generation. This matches the RFC 5280 §4.2.1.2 SKID method
   expected by strongSwan's PKCS#11 plugin, enabling `C_FindObjects` to locate the
   private key from the certificate's SubjectPublicKeyInfo fingerprint.
-- **VPN Simulator: IPsec config hardened for tunnel mode** — initiator and responder
+- **VPN Simulator: IPsec config hardened for tunnel mode** [persona:developer] [persona:architect] [view:/playground] — initiator and responder
   configs now include `leftsubnet`, `rightsubnet`, and `type=tunnel` so the SA is
   negotiated as a proper tunnel rather than a transport-mode connection.
-- **VPN Simulator: cert auth uses `leftcert=` for all algorithm types** — removed the
+- **VPN Simulator: cert auth uses `leftcert=` for all algorithm types** [persona:developer] [persona:architect] [view:/playground] — removed the
   ML-DSA-specific `leftsigkey=%smartcard` path; the PKCS#11 plugin now discovers the
   private key via `CKA_ID` matching regardless of algorithm.
-- **Hybrid Crypto module: Composite Signatures section removed** — the section
+- **Hybrid Crypto module: Composite Signatures section removed** [persona:developer] [persona:architect] [view:/learn] — the section
   described an IETF draft whose OIDs are not yet finalized; removed to avoid teaching
   unstable identifiers. Content can be reintroduced when the RFC is published.
-- **Role guide: self-assessment checklist removed** — the interactive exposure-score
+- **Role guide: self-assessment checklist removed** [persona:executive] [view:/learn] — the interactive exposure-score
   checklist was removed from the Role Guide "Why It Matters" view to streamline the
   module and reduce scope overlap with the dedicated Assessment page.
 

@@ -63,11 +63,14 @@ export function parseChangelog(content: string): ChangelogVersion[] {
   const versionBlocks = content.split(/\n(?=## \[)/)
 
   for (const block of versionBlocks) {
-    const headerMatch = block.match(/^## \[([^\]]+)\] - (\S+)/)
+    // Match `## [version]` with an optional ` - DATE` tail; capture the full
+    // remainder of the header line as the date so multi-word dates like
+    // "April 20, 2026" survive intact.
+    const headerMatch = block.match(/^## \[([^\]]+)\](?:\s*-\s*(.+?))?\s*$/m)
     if (!headerMatch) continue
 
     const version = headerMatch[1]
-    const date = headerMatch[2]
+    const date = (headerMatch[2] ?? '').trim()
     const sections: ChangelogSection[] = []
 
     // Extract optional summary paragraph — text between ## header and first ### section
@@ -141,3 +144,27 @@ export const HAS_DATA_SECTIONS = ALL_CHANGELOG_VERSIONS.some((v) =>
 export const HAS_SECURITY_SECTIONS = ALL_CHANGELOG_VERSIONS.some((v) =>
   v.sections.some((s) => s.type === 'security')
 )
+
+/**
+ * Compare two changelog version identifiers. The literal `Unreleased` is
+ * treated as newer than any numeric semver. Returns positive if `a > b`,
+ * negative if `a < b`, 0 if equal. Non-numeric segments are coerced to 0.
+ */
+export function compareChangelogVersion(a: string, b: string): number {
+  if (a === b) return 0
+  if (a === 'Unreleased') return 1
+  if (b === 'Unreleased') return -1
+  const pa = a.split('.').map((s) => {
+    const n = Number(s)
+    return Number.isFinite(n) ? n : 0
+  })
+  const pb = b.split('.').map((s) => {
+    const n = Number(s)
+    return Number.isFinite(n) ? n : 0
+  })
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const diff = (pa[i] ?? 0) - (pb[i] ?? 0)
+    if (diff !== 0) return diff
+  }
+  return 0
+}

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { parseChangelog, ALL_CHANGELOG_VERSIONS } from './changelogParser'
+import { ALL_CHANGELOG_VERSIONS, compareChangelogVersion, parseChangelog } from './changelogParser'
 
 describe('changelogParser', () => {
   describe('parseChangelog', () => {
@@ -120,8 +120,62 @@ describe('changelogParser', () => {
     it('has the latest version first', () => {
       const first = ALL_CHANGELOG_VERSIONS[0]
       expect(first.version).toBeTruthy()
-      expect(first.date).toBeTruthy()
+      // First entry may be `Unreleased` (no date) or a released version with
+      // a date string. Either is valid.
+      if (first.version !== 'Unreleased') {
+        expect(first.date).toBeTruthy()
+      }
       expect(first.sections.length).toBeGreaterThan(0)
+    })
+  })
+
+  describe('Unreleased section parsing', () => {
+    it('parses `## [Unreleased]` with no date', () => {
+      const content = `## [Unreleased]
+
+### Added
+- **Feature X**: shipping soon
+
+## [1.0.0] - 2026-01-01
+
+### Added
+- **Feature Y**: shipped
+`
+      const versions = parseChangelog(content)
+      expect(versions).toHaveLength(2)
+      expect(versions[0].version).toBe('Unreleased')
+      expect(versions[0].date).toBe('')
+      expect(versions[0].sections[0].entries[0].title).toBe('Feature X')
+    })
+
+    it('captures multi-word dates without truncation', () => {
+      const content = `## [3.3.9] - April 20, 2026
+
+### Added
+- **Feature**: ok
+`
+      const versions = parseChangelog(content)
+      expect(versions[0].date).toBe('April 20, 2026')
+    })
+  })
+
+  describe('compareChangelogVersion', () => {
+    it('treats Unreleased as newer than any released version', () => {
+      expect(compareChangelogVersion('Unreleased', '3.3.9')).toBeGreaterThan(0)
+      expect(compareChangelogVersion('3.3.9', 'Unreleased')).toBeLessThan(0)
+      expect(compareChangelogVersion('Unreleased', 'Unreleased')).toBe(0)
+    })
+
+    it('compares numeric semver correctly', () => {
+      expect(compareChangelogVersion('3.3.10', '3.3.9')).toBeGreaterThan(0)
+      expect(compareChangelogVersion('3.3.9', '3.3.10')).toBeLessThan(0)
+      expect(compareChangelogVersion('3.4.0', '3.3.9')).toBeGreaterThan(0)
+      expect(compareChangelogVersion('3.3.9', '3.3.9')).toBe(0)
+    })
+
+    it('handles missing minor/patch segments as zero', () => {
+      expect(compareChangelogVersion('3', '3.0.0')).toBe(0)
+      expect(compareChangelogVersion('3.1', '3.0.5')).toBeGreaterThan(0)
     })
   })
 })
