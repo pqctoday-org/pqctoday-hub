@@ -51,6 +51,15 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     duration: '40 min',
     difficulty: 'intermediate',
   },
+  'crypto-mgmt-modernization': {
+    id: 'crypto-mgmt-modernization',
+    lm_id: 'LM-052',
+    title: 'Cryptographic Management Modernization',
+    description:
+      'Build a modern cryptographic posture management program across certificates, libraries, software, and keys — iterative and ROI-positive even if quantum never arrives.',
+    duration: '55 min',
+    difficulty: 'intermediate',
+  },
   'tls-basics': {
     id: 'tls-basics',
     lm_id: 'LM-008',
@@ -494,6 +503,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'quantum-threats': 5,
   'hybrid-crypto': 5,
   'crypto-agility': 4,
+  'crypto-mgmt-modernization': 5,
   'slh-dsa': 4,
   'stateful-signatures': 4,
   'email-signing': 3,
@@ -635,6 +645,7 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['compliance-strategy'],
       MODULE_CATALOG['pqc-business-case'],
       MODULE_CATALOG['pqc-governance'],
+      MODULE_CATALOG['crypto-mgmt-modernization'],
       MODULE_CATALOG['vendor-risk'],
       MODULE_CATALOG['migration-program'],
     ],
@@ -696,6 +707,14 @@ export const LEARN_SECTIONS: Record<string, { id: string; label: string }[]> = {
     { id: 'abstraction', label: 'Crypto Abstraction Layers' },
     { id: 'cbom', label: 'Cryptographic Bill of Materials (CBOM)' },
     { id: 'migration', label: '7-Phase Migration Framework' },
+  ],
+  'crypto-mgmt-modernization': [
+    { id: 'why-now', label: 'Why Modernize Crypto Management Now' },
+    { id: 'cpm-defined', label: 'CPM vs Crypto-Agility vs CryptoCOE' },
+    { id: 'asset-classes', label: 'Four Asset Classes: Certs, Libraries, Software, Keys' },
+    { id: 'five-pillars', label: 'The Five Pillars of CPM' },
+    { id: 'dual-loop', label: 'The Dual-Loop Iterative Process' },
+    { id: 'no-regret-roi', label: 'The No-Regret ROI' },
   ],
   'tls-basics': [
     { id: 'handshake', label: 'TLS 1.3 Handshake Deep Dive' },
@@ -1054,6 +1073,13 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'cbom-scanner', label: 'CBOM Scanner' },
     { id: 'migration-planning', label: 'Migration Planning' },
     { id: 'agility-assessment', label: 'Agility Readiness Assessment' },
+  ],
+  'crypto-mgmt-modernization': [
+    { id: 'maturity-assessment', label: 'CPM Maturity Self-Assessment' },
+    { id: 'inventory-lifecycle', label: 'Inventory Lifecycle Simulator' },
+    { id: 'library-cbom-builder', label: 'Library & Hardware CBOM Builder' },
+    { id: 'no-regret-roi', label: 'No-Regret ROI Builder' },
+    { id: 'posture-kpi', label: 'Posture KPI Dashboard Designer' },
   ],
   'tls-basics': [
     { id: 'simulate', label: 'TLS Handshake Simulation' },

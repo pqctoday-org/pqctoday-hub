@@ -50,8 +50,12 @@ import {
   AttributeValue as X509AttrValue,
   Validity as X509Validity,
   SubjectPublicKeyInfo as X509SPKI,
+  Extensions as X509Extensions,
+  Extension as X509Extension,
+  SubjectKeyIdentifier as X509SKI,
+  id_ce_subjectKeyIdentifier,
 } from '@peculiar/asn1-x509'
-import { AsnSerializer } from '@peculiar/asn1-schema'
+import { AsnSerializer, OctetString } from '@peculiar/asn1-schema'
 import { useHsmContext } from './HsmContext'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { Button } from '@/components/ui/button'
@@ -237,7 +241,8 @@ function buildHsmSelfSignedCert(
   hPubKey: number,
   hPrivKey: number,
   cn: string,
-  org: string
+  org: string,
+  keyId?: Uint8Array
 ): string {
   // 1. Extract RSA public key (n, e) from softhsmv3
   const { n, e } = hsmExtractRsaPublicKey(M, hSession, hPubKey)
@@ -274,7 +279,20 @@ function buildHsmSelfSignedCert(
   const expiry = new Date(now.getTime() + 10 * 365.25 * 24 * 3600 * 1000)
   const sigAlgId = new X509AlgId({ algorithm: '1.2.840.113549.1.1.11' }) // sha256WithRSAEncryption
 
-  // 5. Build TBSCertificate and serialize to DER (this is what we sign)
+  // 5. SubjectKeyIdentifier extension — matches CKA_ID on key objects so strongSwan's
+  //    pkcs11 plugin locates the private key via C_FindObjects({CKA_ID=ski}).
+  let extensions: X509Extensions | undefined
+  if (keyId && keyId.length === 20) {
+    const skiValue = new X509SKI(new Uint8Array(keyId).buffer as ArrayBuffer)
+    const skiDer = AsnSerializer.serialize(skiValue)
+    const ext = new X509Extension()
+    ext.extnID = id_ce_subjectKeyIdentifier
+    ext.critical = false
+    ext.extnValue = new OctetString(skiDer)
+    extensions = new X509Extensions([ext])
+  }
+
+  // 6. Build TBSCertificate and serialize to DER (this is what we sign)
   const tbs = new X509TBS({
     version: 2, // v3
     serialNumber: serial.buffer,
@@ -283,6 +301,7 @@ function buildHsmSelfSignedCert(
     validity: new X509Validity({ notBefore: now, notAfter: expiry }),
     subject: buildName(cn, org),
     subjectPublicKeyInfo: spki,
+    extensions,
   })
   const tbsDer = new Uint8Array(AsnSerializer.serialize(tbs))
 
@@ -299,24 +318,6 @@ function buildHsmSelfSignedCert(
   return `-----BEGIN CERTIFICATE-----\n${lines.join('\n')}\n-----END CERTIFICATE-----\n`
 }
 
-// ── Set CKA_ID on an HSM key object via C_SetAttributeValue ──────────────────
-// Used after keygen to brand each ML-DSA keypair with SHA-1(pubkey) so that
-// strongSwan's PKCS#11 plugin can locate the private key by matching it to the
-// cert's SubjectPublicKey SHA-1 fingerprint (ID_PUBKEY_SHA1 per RFC 5280 §4.2.1.2).
-function hsm_setKeyId(M: SoftHSMWasmModule, hSession: number, hKey: number, id: Uint8Array): void {
-  // CKA_ID = 0x00000102 per PKCS#11 v3.2
-  // CK_ATTRIBUTE layout (wasm32): type(4) | pValue(4) | ulValueLen(4) = 12 bytes
-  const idPtr = M._malloc(id.length)
-  M.HEAPU8.set(id, idPtr)
-  const tplPtr = M._malloc(12)
-  M.setValue(tplPtr + 0, 0x00000102, 'i32') // CKA_ID
-  M.setValue(tplPtr + 4, idPtr, 'i32')
-  M.setValue(tplPtr + 8, id.length, 'i32')
-  M._C_SetAttributeValue(hSession, hKey, tplPtr, 1)
-  M._free(tplPtr)
-  M._free(idPtr)
-}
-
 // ── Build a self-signed X.509 certificate with ML-DSA signature ───────────────
 // Mirrors buildHsmSelfSignedCert but uses ML-DSA (FIPS 204 pure, no pre-hash).
 // Public key is raw ML-DSA bytes (1312 / 1952 / 2592 B for 44/65/87) wrapped as
@@ -325,30 +326,22 @@ function hsm_setKeyId(M: SoftHSMWasmModule, hSession: number, hKey: number, id: 
 // AlgorithmIdentifier for ML-DSA has NO parameters per draft-ietf-lamps-
 // dilithium-certificates. @peculiar/asn1-x509's X509AlgId omits the parameters
 // field when undefined, so passing only { algorithm } produces the correct DER.
-async function buildHsmMlDsaSelfSignedCert(
+function buildHsmMlDsaSelfSignedCert(
   M: SoftHSMWasmModule,
   hSession: number,
   hPubKey: number,
   hPrivKey: number,
   variant: 44 | 65 | 87,
   cn: string,
-  org: string
-): Promise<string> {
+  org: string,
+  keyId?: Uint8Array
+): string {
   // 1. Extract raw ML-DSA public key bytes from softhsmv3
   const pubKeyBytes = hsm_extractKeyValue(M, hSession, hPubKey)
   // Copy to a plain ArrayBuffer (hsm_extractKeyValue may return a slice backed
   // by SharedArrayBuffer; peculiar's BIT STRING field wants ArrayBuffer)
   const pubKeyCopy = new Uint8Array(pubKeyBytes.length)
   pubKeyCopy.set(pubKeyBytes)
-
-  // 1b. Compute SKID = SHA-1(raw pubkey bytes) — RFC 5280 §4.2.1.2 method 1.
-  // strongSwan's PKCS#11 plugin searches for the private key using CKA_ID = this hash
-  // (ID_PUBKEY_SHA1). Without matching CKA_ID, C_FindObjects returns 0 and auth falls
-  // back to PSK.
-  const skidBuf = await crypto.subtle.digest('SHA-1', pubKeyCopy.buffer)
-  const skid = new Uint8Array(skidBuf) // 20 bytes
-  hsm_setKeyId(M, hSession, hPubKey, skid)
-  hsm_setKeyId(M, hSession, hPrivKey, skid)
 
   // 2. AlgorithmIdentifier for ML-DSA (no parameters — peculiar omits when undefined)
   const sigAlgId = new X509AlgId({ algorithm: ML_DSA_OID_FOR_VARIANT[variant] })
@@ -380,7 +373,23 @@ async function buildHsmMlDsaSelfSignedCert(
   const now = new Date()
   const expiry = new Date(now.getTime() + 10 * 365.25 * 24 * 3600 * 1000)
 
-  // 6. TBSCertificate
+  // 6. SubjectKeyIdentifier extension — must match CKA_ID embedded at keygen time so
+  //    strongSwan's pkcs11 plugin can locate the private key via C_FindObjects({CKA_ID=ski}).
+  //    The Rust softhsm-wasm module stubs C_SetAttributeValue (→ CKR_MECHANISM_INVALID),
+  //    so keyId is set at keygen time instead of stamped post-hoc. RFC 5280 §4.2.1.2
+  //    method 2 (arbitrary 20-byte ID) — not SHA-1 of the pubkey.
+  let extensions: X509Extensions | undefined
+  if (keyId && keyId.length === 20) {
+    const skiValue = new X509SKI(new Uint8Array(keyId).buffer as ArrayBuffer)
+    const skiDer = AsnSerializer.serialize(skiValue)
+    const ext = new X509Extension()
+    ext.extnID = id_ce_subjectKeyIdentifier
+    ext.critical = false
+    ext.extnValue = new OctetString(skiDer)
+    extensions = new X509Extensions([ext])
+  }
+
+  // 7. TBSCertificate
   const tbs = new X509TBS({
     version: 2, // v3
     serialNumber: serial.buffer,
@@ -389,6 +398,7 @@ async function buildHsmMlDsaSelfSignedCert(
     validity: new X509Validity({ notBefore: now, notAfter: expiry }),
     subject: buildName(cn, org),
     subjectPublicKeyInfo: spki,
+    extensions,
   })
   const tbsDer = new Uint8Array(AsnSerializer.serialize(tbs))
 

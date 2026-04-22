@@ -451,7 +451,7 @@ export const TLSExercises: React.FC<TLSExercisesProps> = ({ onNavigateToSimulate
                 <tbody>
                   {[
                     { grp: 'X25519', level: 'Classical', share: '32 + 32 B', dep: 'Universal' },
-                    { grp: 'ML-KEM-512', level: 'L2', share: '800 + 768 B', dep: 'Experimental' },
+                    { grp: 'ML-KEM-512', level: 'L1', share: '800 + 768 B', dep: 'Experimental' },
                     {
                       grp: 'ML-KEM-768',
                       level: 'L3',

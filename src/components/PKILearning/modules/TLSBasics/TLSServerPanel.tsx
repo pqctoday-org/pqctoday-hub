@@ -67,7 +67,7 @@ const CERTS = [
 
 // NIST security level labels — source: FIPS 203, 204, 205
 const NIST_LEVEL: Record<string, string> = {
-  'ML-KEM-512': 'NIST L2',
+  'ML-KEM-512': 'NIST L1',
   'ML-KEM-768': 'NIST L3',
   'ML-KEM-1024': 'NIST L5',
   X25519MLKEM768: 'L3 hybrid',

@@ -8,6 +8,13 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **New learn module: Cryptographic Management Modernization (LM-052)** — a
+  55-minute, 5-step executive-track module covering modern cryptographic
+  posture management across certificates, libraries, software, and keys.
+  Routed at `/learn/crypto-mgmt-modernization`, slotted into the executive
+  track between `pqc-governance` and `vendor-risk`.
+- **Library CSV `04212026`** — next versioned snapshot (previous
+  `04202026_r2` retained per `CSVmaintenance.md` two-version rule).
 - **Google Quantum AI whitepaper added to library** — "Securing Elliptic Curve
   Cryptocurrencies against Quantum Vulnerabilities" (Babbush, Gidney et al.,
   Google Quantum AI + Ethereum Foundation, March 30 2026) is now in the library
@@ -65,6 +72,14 @@ All notable changes to this project will be documented in this file.
 - **Hybrid Cert Inspector panel overflows on narrow screens** — the certificate
   selector left-column and IETF reference buttons now apply `min-w-0 overflow-hidden`
   and `truncate` so long OID strings clip instead of breaking the grid layout.
+- **ML-KEM-512 mis-labelled as NIST L2** — corrected to **NIST L1** in
+  `TLSClientPanel`, `TLSServerPanel`, and the TLS exercises table. Per FIPS 203,
+  ML-KEM-512 targets Category 1 (≈AES-128 strength).
+- **RSA VPN-sim certs now carry SubjectKeyIdentifier extension** —
+  `buildHsmSelfSignedCert` (the RSA path) now embeds SKID = SHA-1(pubkey)
+  matching the `CKA_ID` set on the key objects. strongSwan's PKCS#11 plugin
+  discovers the private key via `C_FindObjects({CKA_ID=ski})`; without the
+  extension, ML-DSA worked but RSA fell back to PSK auth.
 
 ### Changed
 

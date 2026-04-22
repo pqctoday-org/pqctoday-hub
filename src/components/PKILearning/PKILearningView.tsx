@@ -53,6 +53,11 @@ const HybridCryptoModule = lazyWithRetry(() =>
 const CryptoAgilityModule = lazyWithRetry(() =>
   import('./modules/CryptoAgility').then((module) => ({ default: module.CryptoAgilityModule }))
 )
+const CryptoMgmtModernizationModule = lazyWithRetry(() =>
+  import('./modules/CryptoMgmtModernization').then((module) => ({
+    default: module.CryptoMgmtModernizationModule,
+  }))
+)
 const StatefulSignaturesModule = lazyWithRetry(() =>
   import('./modules/StatefulSignatures').then((module) => ({
     default: module.StatefulSignaturesModule,
@@ -379,6 +384,10 @@ export const PKILearningView: React.FC = () => {
                 <Route path="quantum-threats" element={<QuantumThreatsModule />} />
                 <Route path="hybrid-crypto" element={<HybridCryptoModule />} />
                 <Route path="crypto-agility" element={<CryptoAgilityModule />} />
+                <Route
+                  path="crypto-mgmt-modernization"
+                  element={<CryptoMgmtModernizationModule />}
+                />
                 <Route path="stateful-signatures" element={<StatefulSignaturesModule />} />
                 <Route path="slh-dsa" element={<SLHDSAModule />} />
                 <Route path="email-signing" element={<EmailSigningModule />} />
