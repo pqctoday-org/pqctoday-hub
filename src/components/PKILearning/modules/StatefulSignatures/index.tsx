@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, KeyRound, GitBranch, ShieldAlert, Fingerprint } from 'lucide-react'
+import { Trash2, KeyRound, GitBranch, ShieldAlert, Fingerprint, Network } from 'lucide-react'
 import { StatefulSigsIntroduction } from './components/StatefulSigsIntroduction'
 import { StatefulSigsExercises, type WorkshopConfig } from './components/StatefulSigsExercises'
 import { LMSKeyGenDemo } from './workshop/LMSKeyGenDemo'
 import { XMSSKeyGenDemo } from './workshop/XMSSKeyGenDemo'
 import { StateManagementVisualizer } from './workshop/StateManagementVisualizer'
 import { SLHDSALiveDemo } from './workshop/SLHDSALiveDemo'
+import { ThresholdSigningDemo } from './workshop/ThresholdSigningDemo'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -45,6 +46,13 @@ const PARTS = [
     description:
       'Generate real SLH-DSA keys, sign, and verify via PKCS#11 — compare stateless vs stateful.',
     icon: Fingerprint,
+  },
+  {
+    id: 'threshold-signing',
+    title: 'Step 5: Threshold Signing',
+    description:
+      'Distributed key control via the Haystack coalition construction (Kelsey, Lang, Lucks) — t-of-n trustees, simulated.',
+    icon: Network,
   },
 ]
 
@@ -216,6 +224,7 @@ export const StatefulSignaturesModule: React.FC = () => {
               {currentPart === 1 && <XMSSKeyGenDemo key={`xmss-${configKey}`} />}
               {currentPart === 2 && <StateManagementVisualizer key={`state-${configKey}`} />}
               {currentPart === 3 && <SLHDSALiveDemo key={`slhdsa-${configKey}`} />}
+              {currentPart === 4 && <ThresholdSigningDemo key={`threshold-${configKey}`} />}
             </div>
 
             {/* Part Navigation */}

@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.1] - April 22, 2026
+
+### Added
+
+- **Threshold Signing — Step 5 in Stateful Signatures workshop** [persona:architect] [persona:researcher] [persona:developer] [view:/learn] — educational simulation of the Haystack/coalition threshold construction (Kelsey, Lang & Lucks) for hash-based signatures, accessible at `/learn/stateful-signatures?tab=workshop&step=4`:
+  - _User-configurable t-of-n threshold_ — trustees n: 2–5, threshold t: 1–n; only single-level LMS parameter sets (H5/W1, H5/W8, H10/W4) are supported, consistent with the research scope.
+  - _4-phase interactive flow_ — Configure → Dealer Setup (simulated keypair + CRV + trustee share distribution) → Threshold Signing (select ≥ t trustees to enable aggregation; "insufficient shares" error shown when below threshold) → Result (simulated signature + key reuse prevention comparison between single-signer and t-of-n).
+  - _CRV size table_ — side panel shows Common Reference Value growth: LMS single-level (practical, ~2–500 MB depending on threshold); HSS 2-level (~1–20 GB); HSS 3+ levels (Impractical). Explains why HSS hypertrees are excluded.
+  - _Research attribution_ — Haystack paper (Kelsey, Lang, Lucks) cited; note on lattice-based threshold alternatives (threshold Dilithium / FROST variants) for larger thresholds.
+  - No new WASM or external dependencies — simulation uses a deterministic FNV-1a hash for reproducible share/signature display.
+
 ## [3.5.0] - April 22, 2026
 
 ### Added

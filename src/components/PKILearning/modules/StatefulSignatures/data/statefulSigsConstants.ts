@@ -428,6 +428,50 @@ export const WORKSHOP_DISPLAY_PARAMS = {
   xmss: ['xmss-sha2-10', 'xmss-shake-10'] as const,
 }
 
+export interface ThresholdConfig {
+  n: number
+  t: number
+  lmsParamId: string
+}
+
+export interface CrvSizeRow {
+  levels: number
+  label: string
+  twoOfThree: string
+  threeOfFive: string
+  fiveOfTen: string
+  practical: boolean
+}
+
+export const CRV_SIZE_TABLE: CrvSizeRow[] = [
+  {
+    levels: 1,
+    label: 'LMS (single-level)',
+    twoOfThree: '~2 MB',
+    threeOfFive: '~50 MB',
+    fiveOfTen: '~500 MB',
+    practical: true,
+  },
+  {
+    levels: 2,
+    label: 'HSS (2-level)',
+    twoOfThree: '~1 GB',
+    threeOfFive: '~20 GB',
+    fiveOfTen: 'Impractical',
+    practical: false,
+  },
+  {
+    levels: 3,
+    label: 'HSS (3+ levels)',
+    twoOfThree: 'Impractical',
+    threeOfFive: 'Impractical',
+    fiveOfTen: 'Impractical',
+    practical: false,
+  },
+]
+
+export const THRESHOLD_DEMO_PARAMS = ['lms-h5-w1', 'lms-h5-w8', 'lms-h10-w4'] as const
+
 export function formatSignatureCount(count: number): string {
   if (count >= 1_000_000_000_000) {
     return `${(count / 1_000_000_000_000).toFixed(0)}T`
