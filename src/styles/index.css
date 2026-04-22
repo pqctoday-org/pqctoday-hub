@@ -496,6 +496,7 @@
 
   .glass-panel {
     @apply bg-card/80 backdrop-blur-md border border-border rounded-2xl shadow-2xl;
+    -webkit-backdrop-filter: blur(0.75rem);
   }
 
   .text-gradient {

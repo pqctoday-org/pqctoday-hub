@@ -14,7 +14,7 @@ const CodeBlock = React.forwardRef<HTMLPreElement, CodeBlockProps>(
         ref={ref}
         aria-label={language ? `${language} code block` : 'Code block'}
         className={cn(
-          'mb-4 mt-6 max-h-[650px] overflow-x-auto rounded-lg border bg-muted py-4',
+          'mb-4 mt-6 max-h-[40vh] sm:max-h-[650px] overflow-x-auto rounded-lg border bg-muted py-4',
           className
         )}
         {...props}

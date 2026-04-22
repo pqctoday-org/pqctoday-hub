@@ -145,7 +145,13 @@ export const MainLayout = () => {
   ]
 
   // Abbreviated labels for mobile bottom nav (only override labels that are too long)
-  const SHORT_LABELS: Record<string, string> = { Timeline: 'Time', 'Command Center': 'Biz' }
+  const SHORT_LABELS: Record<string, string> = {
+    Timeline: 'Time',
+    'Command Center': 'Biz',
+    Algorithms: 'Algos',
+    Compliance: 'Comply',
+    Playground: 'Play',
+  }
 
   const [moreMenuOpen, setMoreMenuOpen] = React.useState(false)
 
@@ -171,7 +177,7 @@ export const MainLayout = () => {
 
   return (
     <div
-      className={`h-dvh flex flex-col bg-background text-foreground print:min-h-0 print:h-auto overflow-hidden transition-[padding] duration-300 ${
+      className={`h-dvh flex flex-col bg-background text-foreground print:min-h-0 print:h-auto overflow-clip transition-[padding] duration-300 ${
         isPanelOpen ? 'sm:pr-[40vw]' : ''
       }`}
     >
@@ -334,7 +340,7 @@ export const MainLayout = () => {
             role="dialog"
             aria-modal="true"
             aria-label="More navigation"
-            className="fixed inset-x-0 bottom-0 z-nav lg:hidden bg-card border-t border-border rounded-t-2xl p-4 shadow-2xl"
+            className="fixed inset-x-0 bottom-0 z-nav lg:hidden bg-card border-t border-border rounded-t-2xl p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-2xl"
           >
             <div className="flex items-center justify-between mb-4">
               <span className="text-sm font-medium text-foreground">More</span>
@@ -348,7 +354,7 @@ export const MainLayout = () => {
                 <X size={16} />
               </Button>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {moreNavItems.map((item) => (
                 <NavLink
                   key={item.path}

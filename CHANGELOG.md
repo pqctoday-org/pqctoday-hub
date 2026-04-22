@@ -80,6 +80,14 @@ All notable changes to this project will be documented in this file.
   matching the `CKA_ID` set on the key objects. strongSwan's PKCS#11 plugin
   discovers the private key via `C_FindObjects({CKA_ID=ski})`; without the
   extension, ML-DSA worked but RSA fell back to PSK auth.
+- **Mobile / iOS Safari polish** — glass-panel now sets
+  `-webkit-backdrop-filter` so blur renders on Safari; `Button` icon size
+  gets `touch-manipulation` to suppress iOS double-tap zoom; `CodeBlock`
+  uses `max-h-[40vh] sm:max-h-[650px]` so long code blocks don't dominate
+  small screens; `MainLayout` mobile bottom-nav adds
+  `pb-[max(1rem,env(safe-area-inset-bottom))]` for iPhone home-bar
+  clearance; `MainLayout` root switches `overflow-hidden` → `overflow-clip`;
+  Timeline/Algorithms/Compliance/Playground get shorter mobile-nav labels.
 
 ### Changed
 
