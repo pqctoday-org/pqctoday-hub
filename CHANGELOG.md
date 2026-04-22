@@ -6,6 +6,19 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- **Library CSV refresh to `04222026_r1`** — replaces `04212026` as the
+  current snapshot. Intentionally drops 9 reference rows that were
+  audited out (`CAB-Forum-SC-081v3`, `Forrester-TEI-CLM-Automation`,
+  `Gartner-CryptoCOE-Mahdi`, `Gartner-PQC-Time-To-Prepare`,
+  `McKinsey-PQC-Preparation`, `Ponemon-Global-PKI-Trends-2026`,
+  `Venafi-Ponemon-Outage-Cost`, `AppViewX-47Day-Certs`,
+  `DigiCert-PQC-Maturity-Model`). Six older CSV versions archived to
+  `src/data/archive/` per the 2-version rule; `library_04212026.csv`
+  kept as the previous snapshot for New/Updated badge diffs. Ships with
+  accompanying `doc-enrichments/library_doc_enrichments_04222026.md`.
+
 ### Added
 
 - **WASM charon validation exports (Phase 3a)** — the
