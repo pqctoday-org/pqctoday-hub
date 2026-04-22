@@ -52,8 +52,12 @@ describe('SandboxScenarioEmbed', () => {
       return el!
     })
 
+    // resolveSandboxSession is async (even when it short-circuits), so the message
+    // handler effect registers one render cycle after the iframe appears. Dispatch
+    // the message inside waitFor so it retries until the handler is registered.
     const source = { postMessage: vi.fn() }
-    act(() => {
+    await waitFor(() => {
+      source.postMessage.mockClear()
       window.dispatchEvent(
         new MessageEvent('message', {
           data: { type: 'pqc:ready' },
@@ -61,9 +65,8 @@ describe('SandboxScenarioEmbed', () => {
           source: source as unknown as Window,
         })
       )
+      expect(source.postMessage).toHaveBeenCalledWith({ type: 'pqc:challenge' }, BASE_ORIGIN)
     })
-
-    expect(source.postMessage).toHaveBeenCalledWith({ type: 'pqc:challenge' }, BASE_ORIGIN)
     const configCall = source.postMessage.mock.calls.find(
       (c) => (c[0] as { type?: string })?.type === 'pqc:config'
     )
