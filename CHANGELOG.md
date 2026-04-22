@@ -6,6 +6,51 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.0] - April 22, 2026
+
+### Added
+
+- **Hybrid Signature Spectrums workshop (PT-027)** [persona:developer] [persona:architect] [persona:researcher] [view:/playground] [view:/learn] — live side-by-side demonstration of the three hybrid signature constructions from IETF `draft-ietf-pquip-hybrid-signature-spectrums`:
+  - _Concatenation_ — `sig₁ ‖ sig₂` (EC-Schnorr secp256k1 + ML-DSA-65); no non-separability; most backwards-compatible.
+  - _Nesting_ — `sign_ML(msg ‖ sig_EC)`; outer ML-DSA covers the EC component (Weak Non-Separability / WNS); EC sig still verifies alone.
+  - _Silithium (Fused Fiat-Shamir)_ — shared challenge `μ = H(R ‖ pk_ec ‖ pk_ml ‖ msg)`; neither component verifies without the shared μ; achieves Strong Non-Separability (SNS) per ePrint 2025/2059; smaller than concatenation.
+  - All three constructions perform live key generation and signing in-browser using `@noble/post-quantum` (ML-DSA) and `@noble/curves` (secp256k1).
+  - Accessible from `/playground` (PT-027) and linked from `/learn/hybrid-crypto?tab=workshop&step=5`.
+
+- **`EsvStatus` field on crypto libraries and HSMs** [persona:architect] [persona:developer] [view:/learn] — `CryptoLibrary` and `HsmVendorRecord` now carry an `esvStatus` field (`active | historical | revoked | in-mip | not-validated`) tracking SP 800-90B Entropy Source Validation status independently of the FIPS 140-3 certificate. Surfaces in the Library & Hardware CBOM Builder workshop.
+
+- **Posture KPI additions** [persona:ciso] [persona:architect] [view:/learn] — six new KPIs added to `POSTURE_KPIS`:
+  - Governance: `policy-enforcement-rate` (% endpoints with auto-verified cipher-suite config), `governance-attestation-coverage` (% decision owners completing annual attestation).
+  - Observability: `cipher-scan-coverage` (% endpoints covered by ongoing protocol-version scan), `standards-watch-lag` (days from deprecation notice to CBOM rule update).
+  - Assurance: `esv-coverage-libs` (% libraries with active SP 800-90B ESV cert), `esv-coverage-hsm` (% HSMs with active SP 800-90B ESV cert).
+
+- **Module Q&A CSV — Crypto Management Modernization** [persona:researcher] [view:/learn] — `src/data/module-qa/module_qa_crypto-mgmt-modernization_04222026.csv` closes the gap where every peer module had quiz coverage but this one had none; 20 Q&A pairs grounded in the 36 library entries, CBOM pillars, CLM 47-day cadence, FIPS 140-3 IG September 2025 PQC update, CNSA 2.0 deadlines, OMB M-23-02, and SP 800-90B ESV.
+
+### Changed
+
+- **CryptoMgmtModernization module → v1.1.0** [persona:architect] [persona:executive] [persona:developer] [view:/learn] — cross-check remediation across six gap categories:
+  - _CMVP cert numbers corrected (GAP-1 CRITICAL)_: five wrong cert numbers replaced with verified NIST CMVP values — Thales Luna G7 `#4962`, BoringCrypto `#5244`, Bouncy Castle FIPS Java `#4943`; Entrust nShield, YubiHSM 2, AWS CloudHSM, GCP Cloud HSM entries corrected; WolfCrypt FIPS posture downgraded to `yellow` (PQC APIs available but not inside FIPS boundary per CMVP #4718). AWS-LC ESV status set to `active`.
+
+  - _Content depth additions_: two new subsections in `content.ts`:
+    - `entropyCompliance` — explains the SP 800-90B ESV track as a common PQC migration gap; covers the RNG chain audit requirement (entropy source → conditioning → DRBG), cloud/container ESV re-evaluation triggers, and the CMM Assurance pillar extension for ESV status in CBOMs.
+    - `protocolDeprecation` — documents the standards-watch subscription model (IETF RFC Obsoletes/Updates, SP 800-131A cycle, NSA CNSA, CA/B Forum, ETSI TS 119 312, BSI TR-02102, ANSSI RGS) and ties each deprecation event to CBOM classification rule updates and the Observability scanning loop.
+
+  - `keyConcepts` and `workshopSummary` expanded to cover SP 800-90B ESV in the CBOM Builder and the Program Office Model (five CPM roles with RACI).
+  - `relatedStandards` updated: NIST SP 800-90B/A/C, SP 800-131A Rev 2, RFC 8996, RFC 7465, ETSI TS 119 312, BSI TR-02102, ANSSI RGS added.
+
+  - _Library tags (GAP-2)_: `crypto-mgmt-modernization` added to `module_ids` of four library entries (`US-CISA-ACDI-Strategy-2024`, `BSI TR-02102-1`, `ANSSI-PG-083-v3-2026`, `NIST-SP-800-131A-Rev3`) in `library_04222026_r4.csv` (copy of r3).
+  - _RFC 8555 library entry (GAP-3)_: new ACME entry added to `library_04222026_r4.csv` with `crypto-mgmt-modernization` tag.
+  - _Un-attributed claim attribution (GAP-4)_: CMVP queue, HSM CVE revalidation, EU DORA/NIS2, and protocol-deprecation claims wired to source `referenceId` citations in `Introduction.tsx`.
+  - _ROI Builder attribution (GAP-5)_: inline source comments added to the three previously un-sourced defaults (FIPS-drift remediation, library-CVE response, quantum-breach avoidance) citing NIST IR 8547 / ENISA PQC Integration Study / internal domain model.
+
+- **HSM Capacity Calculator — multi-location support** [persona:architect] [persona:ops] [view:/playground] — `hsmCounts` renamed to `hsmsPerLocation`; new `numLocations` parameter; per-location HA computation (`perLocationRaw`, `perLocationRequired`); fleet total = `numLocations × perLocationRequired`; `OrgParams` + `deriveUseCaseTps` helper for org-size-driven defaults. `ml-kem-768` added as a distinct algo in load distribution.
+
+### Data
+
+- **`library_04222026_r4.csv`** — copy of r3; adds `crypto-mgmt-modernization` to four entries; adds RFC 8555 (ACME) entry; previous r3 snapshot kept per 2-version rule.
+- **`pqc_product_catalog_04222026.csv`** — new product catalog snapshot dated 2026-04-22.
+- **RAG corpus + embed manifest** rebuilt to include new module Q&A content and updated library entries.
+
 ## [3.4.0] - April 22, 2026
 
 ### Changed

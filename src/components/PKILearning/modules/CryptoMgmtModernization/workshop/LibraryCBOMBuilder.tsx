@@ -1,7 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { CRYPTO_LIBRARIES, type FipsStatus, type RiskColor } from '../data/cryptoLibraries'
+import {
+  CRYPTO_LIBRARIES,
+  type EsvStatus,
+  type FipsStatus,
+  type RiskColor,
+} from '../data/cryptoLibraries'
 import { HSM_VENDORS } from '../data/hsmVendors'
 import { SAMPLE_SBOMS } from '../data/sampleSBOMs'
 
@@ -25,6 +30,22 @@ const FIPS_COLOR: Record<FipsStatus, string> = {
   'not-validated': 'bg-muted text-muted-foreground border-border',
 }
 
+const ESV_LABEL: Record<EsvStatus, string> = {
+  active: 'ESV active',
+  historical: 'ESV historical',
+  revoked: 'ESV revoked',
+  'in-mip': 'ESV in queue',
+  'not-validated': 'not validated',
+}
+
+const ESV_COLOR: Record<EsvStatus, string> = {
+  active: 'bg-status-success/15 text-status-success border-status-success/30',
+  historical: 'bg-status-warning/15 text-status-warning border-status-warning/30',
+  revoked: 'bg-status-error/15 text-status-error border-status-error/30',
+  'in-mip': 'bg-status-info/15 text-status-info border-status-info/30',
+  'not-validated': 'bg-muted text-muted-foreground border-border',
+}
+
 const POSTURE_LIGHT: Record<RiskColor, string> = {
   red: 'bg-status-error',
   yellow: 'bg-status-warning',
@@ -36,6 +57,7 @@ interface CbomRow {
   version: string
   matched: boolean
   fipsStatus: FipsStatus
+  esvStatus: EsvStatus
   pqcSupport: string
   posture: RiskColor
   notes: string
@@ -71,6 +93,7 @@ export const LibraryCBOMBuilder: React.FC = () => {
           version,
           matched: Boolean(lib),
           fipsStatus: lib?.fipsStatus ?? 'not-validated',
+          esvStatus: lib?.esvStatus ?? 'not-validated',
           pqcSupport: lib?.pqcSupport ?? '—',
           posture: lib?.posture ?? 'yellow',
           notes: lib?.notes ?? 'No posture record — add to inventory and research.',
@@ -170,6 +193,7 @@ export const LibraryCBOMBuilder: React.FC = () => {
                       <th className="p-2 font-bold">Library</th>
                       <th className="p-2 font-bold">Version</th>
                       <th className="p-2 font-bold">FIPS status</th>
+                      <th className="p-2 font-bold">ESV (SP 800-90B)</th>
                       <th className="p-2 font-bold">PQC support</th>
                       <th className="p-2 font-bold">Posture</th>
                     </tr>
@@ -184,6 +208,13 @@ export const LibraryCBOMBuilder: React.FC = () => {
                             className={`inline-block rounded px-1.5 py-0.5 text-[10px] border ${FIPS_COLOR[row.fipsStatus]}`}
                           >
                             {FIPS_LABEL[row.fipsStatus]}
+                          </span>
+                        </td>
+                        <td className="p-2">
+                          <span
+                            className={`inline-block rounded px-1.5 py-0.5 text-[10px] border ${ESV_COLOR[row.esvStatus]}`}
+                          >
+                            {ESV_LABEL[row.esvStatus]}
                           </span>
                         </td>
                         <td className="p-2 text-muted-foreground">{row.pqcSupport}</td>
@@ -211,6 +242,7 @@ export const LibraryCBOMBuilder: React.FC = () => {
                 <th className="p-2 font-bold">Latest</th>
                 <th className="p-2 font-bold">EoL</th>
                 <th className="p-2 font-bold">FIPS 140-3</th>
+                <th className="p-2 font-bold">ESV (SP 800-90B)</th>
                 <th className="p-2 font-bold">PQC</th>
                 <th className="p-2 font-bold">High CVEs (1y)</th>
                 <th className="p-2 font-bold">Posture</th>
@@ -236,6 +268,13 @@ export const LibraryCBOMBuilder: React.FC = () => {
                         {lib.cmvpCertNumber}
                       </div>
                     )}
+                  </td>
+                  <td className="p-2">
+                    <span
+                      className={`inline-block rounded px-1.5 py-0.5 text-[10px] border ${ESV_COLOR[lib.esvStatus]}`}
+                    >
+                      {ESV_LABEL[lib.esvStatus]}
+                    </span>
                   </td>
                   <td className="p-2 text-muted-foreground max-w-[220px]">{lib.pqcSupport}</td>
                   <td className="p-2 text-center">{lib.openCveHigh}</td>
@@ -263,6 +302,7 @@ export const LibraryCBOMBuilder: React.FC = () => {
                 <th className="p-2 font-bold">Vendor / Product</th>
                 <th className="p-2 font-bold">Firmware</th>
                 <th className="p-2 font-bold">FIPS level</th>
+                <th className="p-2 font-bold">ESV (SP 800-90B)</th>
                 <th className="p-2 font-bold">PQC in boundary</th>
                 <th className="p-2 font-bold">Platform binding</th>
                 <th className="p-2 font-bold">Posture</th>
@@ -287,6 +327,13 @@ export const LibraryCBOMBuilder: React.FC = () => {
                         {h.cmvpCertNumber}
                       </div>
                     )}
+                  </td>
+                  <td className="p-2">
+                    <span
+                      className={`inline-block rounded px-1.5 py-0.5 text-[10px] border ${ESV_COLOR[h.esvStatus]}`}
+                    >
+                      {ESV_LABEL[h.esvStatus]}
+                    </span>
                   </td>
                   <td className="p-2 text-muted-foreground max-w-[220px]">{h.pqcSupport}</td>
                   <td className="p-2 text-muted-foreground max-w-[180px]">{h.platformBinding}</td>

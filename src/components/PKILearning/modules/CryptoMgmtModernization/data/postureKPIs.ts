@@ -135,6 +135,50 @@ export const POSTURE_KPIS: PostureKPI[] = [
     example: '−7% QoQ',
   },
 
+  // Governance (additional)
+  {
+    id: 'policy-enforcement-rate',
+    pillar: 'governance',
+    name: 'Policy enforcement rate',
+    description:
+      '% of endpoints whose cipher-suite and TLS-version configuration has been automatically verified against policy.',
+    unit: '%',
+    audience: ['ciso', 'ops'],
+    example: '64% (target 95%)',
+  },
+  {
+    id: 'governance-attestation-coverage',
+    pillar: 'governance',
+    name: 'Crypto policy attestation coverage',
+    description:
+      '% of crypto-decision owners (architects, lead engineers) who completed annual crypto policy attestation.',
+    unit: '%',
+    audience: ['board', 'cio'],
+    example: '72% (target 100%)',
+  },
+
+  // Observability (additional)
+  {
+    id: 'cipher-scan-coverage',
+    pillar: 'observability',
+    name: 'Cipher-suite scan coverage',
+    description:
+      '% of externally and internally reachable endpoints covered by ongoing cipher-suite and protocol-version scan.',
+    unit: '%',
+    audience: ['ciso', 'architect'],
+    example: '58% (target 90%)',
+  },
+  {
+    id: 'standards-watch-lag',
+    pillar: 'observability',
+    name: 'Standards-watch lag',
+    description:
+      'Median days from a standards-body deprecation notice (IETF/NIST/NSA) to the CBOM classification rule update that flags the deprecated primitive.',
+    unit: 'days',
+    audience: ['ciso', 'ops'],
+    example: '18 d (target ≤7 d)',
+  },
+
   // Assurance / FIPS
   {
     id: 'fips-coverage',
@@ -173,5 +217,25 @@ export const POSTURE_KPIS: PostureKPI[] = [
     unit: 'days',
     audience: ['board', 'ciso'],
     example: '45 d (target ≤90 d)',
+  },
+  {
+    id: 'esv-coverage-libs',
+    pillar: 'assurance',
+    name: '% libraries with active SP 800-90B ESV',
+    description:
+      '% of crypto libraries in the CBOM whose entropy source holds a currently active SP 800-90B Entropy Source Validation certificate.',
+    unit: '%',
+    audience: ['ciso', 'architect'],
+    example: "12% (gap: most software libraries rely on OS entropy not separately ESV'd)",
+  },
+  {
+    id: 'esv-coverage-hsm',
+    pillar: 'assurance',
+    name: '% HSMs with active SP 800-90B ESV',
+    description:
+      '% of HSMs in the hardware CBOM whose hardware RNG entropy source holds a currently active SP 800-90B ESV certificate.',
+    unit: '%',
+    audience: ['board', 'ciso'],
+    example: '40% (target 100% for FIPS-scoped HSMs)',
   },
 ]

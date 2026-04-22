@@ -1,6 +1,6 @@
 {
-  "version": "3.3.9",
-  "generatedAt": "2026-04-22T12:00:14.988Z",
+  "version": "3.5.0",
+  "generatedAt": "2026-04-22T16:21:19.401Z",
   "resources": {
     "routePresets": [
       {
@@ -489,6 +489,12 @@
         "id": "hsm-capacity",
         "name": "HSM Capacity Calculator",
         "category": "",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "hybrid-sigs",
+        "name": "Hybrid Signature Spectrums",
+        "category": "HSM / PKCS#11",
         "difficulty": "intermediate"
       },
       {

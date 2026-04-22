@@ -8,38 +8,78 @@ import {
   PolarRadiusAxis,
   ResponsiveContainer,
   Tooltip,
+  Legend,
 } from 'recharts'
 import { Button } from '@/components/ui/button'
 import {
   PILLARS,
   MATURITY_LEVEL_LABELS,
+  ASSET_CLASSES,
+  ASSET_CLASS_LABELS,
+  ASSET_CLASS_META,
   type MaturityLevel,
   type PillarId,
+  type AssetClass,
 } from '../data/maturityModel'
 
-type Scores = Record<PillarId, MaturityLevel>
+type AssetScores = Record<AssetClass, MaturityLevel>
+type Scores = Record<PillarId, AssetScores>
 
 const initialScores = (): Scores =>
-  PILLARS.reduce((acc, p) => ({ ...acc, [p.id]: 1 as MaturityLevel }), {} as Scores)
+  PILLARS.reduce(
+    (acc, p) => ({
+      ...acc,
+      [p.id]: ASSET_CLASSES.reduce(
+        (a, ac) => ({ ...a, [ac]: 1 as MaturityLevel }),
+        {} as AssetScores
+      ),
+    }),
+    {} as Scores
+  )
 
 export const MaturityAssessment: React.FC = () => {
   const [scores, setScores] = useState<Scores>(initialScores())
 
-  const setScore = (id: PillarId, level: MaturityLevel) => setScores((s) => ({ ...s, [id]: level }))
+  const setScore = (pillarId: PillarId, ac: AssetClass, level: MaturityLevel) =>
+    setScores((s) => ({ ...s, [pillarId]: { ...s[pillarId], [ac]: level } }))
 
   const chartData = useMemo(
-    () => PILLARS.map((p) => ({ pillar: p.label, score: scores[p.id], fullMark: 5 })),
+    () =>
+      PILLARS.map((p) => ({
+        pillar: p.label,
+        certificates: scores[p.id].certificates,
+        libraries: scores[p.id].libraries,
+        software: scores[p.id].software,
+        keys: scores[p.id].keys,
+        fullMark: 5,
+      })),
+    [scores]
+  )
+
+  const allScores = useMemo(
+    () => PILLARS.flatMap((p) => ASSET_CLASSES.map((ac) => scores[p.id][ac])),
     [scores]
   )
 
   const average = useMemo(
-    () => PILLARS.reduce((sum, p) => sum + scores[p.id], 0) / PILLARS.length,
-    [scores]
+    () => allScores.reduce((s, v) => s + v, 0) / allScores.length,
+    [allScores]
   )
 
   const weakest = useMemo(() => {
-    const sorted = [...PILLARS].sort((a, b) => scores[a.id] - scores[b.id])
-    return sorted[0]
+    let minScore = 6 as MaturityLevel
+    let weakPillar = PILLARS[0]
+    let weakAsset: AssetClass = 'certificates'
+    for (const p of PILLARS) {
+      for (const ac of ASSET_CLASSES) {
+        if (scores[p.id][ac] < minScore) {
+          minScore = scores[p.id][ac]
+          weakPillar = p
+          weakAsset = ac
+        }
+      }
+    }
+    return { pillar: weakPillar, asset: weakAsset, score: minScore }
   }, [scores])
 
   const nextMilestone = useMemo(() => {
@@ -55,59 +95,71 @@ export const MaturityAssessment: React.FC = () => {
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
-        Rate your organization from 1 (Ad-hoc) to 5 (Optimized) on each pillar. Re-run this every
-        annual PDCA cycle — the radar chart below makes year-over-year gains visible.
+        Rate your organization from 1 (Ad-hoc) to 5 (Optimized) on each pillar for each of the four
+        asset classes. Re-run this every annual PDCA cycle — the radar chart makes year-over-year
+        gains visible per asset class.
       </p>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-4">
-          {PILLARS.map((p) => (
-            <div key={p.id} className="bg-muted/40 rounded-lg p-4 border border-border">
-              <div className="flex justify-between items-start gap-3 mb-2">
-                <div>
+          {PILLARS.map((p) => {
+            const minLevel = Math.min(
+              ...ASSET_CLASSES.map((ac) => scores[p.id][ac])
+            ) as MaturityLevel
+            return (
+              <div key={p.id} className="bg-muted/40 rounded-lg p-4 border border-border">
+                <div className="mb-2">
                   <div className="font-bold text-foreground">{p.label}</div>
                   <p className="text-xs text-muted-foreground mt-1">{p.question}</p>
                 </div>
-                <div className="text-sm font-bold text-primary whitespace-nowrap">
-                  L{scores[p.id]} · {MATURITY_LEVEL_LABELS[scores[p.id]]}
+                <div className="space-y-2 mb-2">
+                  {ASSET_CLASSES.map((ac) => (
+                    <div key={ac} className="flex items-center gap-2">
+                      <span className="text-[11px] text-muted-foreground w-28 shrink-0">
+                        {ASSET_CLASS_LABELS[ac]}
+                      </span>
+                      <div className="flex gap-1 flex-1">
+                        {([1, 2, 3, 4, 5] as MaturityLevel[]).map((lvl) => (
+                          <Button
+                            key={lvl}
+                            variant={scores[p.id][ac] === lvl ? 'gradient' : 'outline'}
+                            onClick={() => setScore(p.id, ac, lvl)}
+                            className="flex-1 py-0.5 text-[11px] font-bold h-7 min-w-0"
+                          >
+                            {lvl}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </div>
+                <p className="text-[11px] text-muted-foreground italic">{p.indicators[minLevel]}</p>
               </div>
-              <div className="flex gap-1 mb-2">
-                {[1, 2, 3, 4, 5].map((lvl) => (
-                  <Button
-                    key={lvl}
-                    variant={scores[p.id] === lvl ? 'gradient' : 'outline'}
-                    onClick={() => setScore(p.id, lvl as MaturityLevel)}
-                    className="flex-1 py-1 text-xs font-bold"
-                  >
-                    {lvl}
-                  </Button>
-                ))}
-              </div>
-              <p className="text-[11px] text-muted-foreground italic">
-                {p.indicators[scores[p.id]]}
-              </p>
-            </div>
-          ))}
+            )
+          })}
         </div>
 
         <div className="space-y-4">
           <div className="bg-muted/40 rounded-lg p-4 border border-border">
             <div className="font-bold text-foreground mb-2">CPM Posture Radar</div>
-            <div className="w-full h-[340px]">
+            <div className="w-full h-[380px]">
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart data={chartData}>
                   <PolarGrid />
                   <PolarAngleAxis dataKey="pillar" tick={{ fontSize: 11 }} />
                   <PolarRadiusAxis angle={30} domain={[0, 5]} tickCount={6} />
-                  <Radar
-                    name="Score"
-                    dataKey="score"
-                    stroke="hsl(var(--primary))"
-                    fill="hsl(var(--primary))"
-                    fillOpacity={0.35}
-                  />
+                  {ASSET_CLASSES.map((ac) => (
+                    <Radar
+                      key={ac}
+                      name={ASSET_CLASS_META[ac].label}
+                      dataKey={ac}
+                      stroke={ASSET_CLASS_META[ac].stroke}
+                      fill={ASSET_CLASS_META[ac].fill}
+                      fillOpacity={0.12}
+                    />
+                  ))}
                   <Tooltip />
+                  <Legend wrapperStyle={{ fontSize: 11 }} />
                 </RadarChart>
               </ResponsiveContainer>
             </div>
@@ -119,8 +171,12 @@ export const MaturityAssessment: React.FC = () => {
               <div className="text-xl font-bold text-primary">{average.toFixed(1)} / 5.0</div>
             </div>
             <div className="text-xs text-muted-foreground mb-3">
-              Weakest pillar: <strong className="text-foreground">{weakest.label}</strong> (L
-              {scores[weakest.id]} · {MATURITY_LEVEL_LABELS[scores[weakest.id]]})
+              Weakest combination:{' '}
+              <strong className="text-foreground">{weakest.pillar.label}</strong>
+              {' · '}
+              <strong className="text-foreground">{ASSET_CLASS_LABELS[weakest.asset]}</strong>
+              {' (L'}
+              {weakest.score} · {MATURITY_LEVEL_LABELS[weakest.score]})
             </div>
             <div className="text-sm font-bold text-accent mb-1">Recommended next milestone</div>
             <p className="text-xs text-foreground/80">{nextMilestone}</p>

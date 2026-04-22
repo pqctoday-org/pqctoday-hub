@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, Key, Lock, Shield, Layers, Search } from 'lucide-react'
+import { Trash2, Key, Lock, Shield, Layers, Search, Fingerprint } from 'lucide-react'
 import { HybridCryptoIntroduction } from './components/HybridCryptoIntroduction'
 import { HybridCryptoExercises, type WorkshopConfig } from './components/HybridCryptoExercises'
 import { HybridKeyGeneration } from './workshop/HybridKeyGeneration'
@@ -9,6 +9,7 @@ import { HybridEncryptionDemo } from './workshop/HybridEncryptionDemo'
 import { HybridCASetup } from './workshop/HybridCASetup'
 import { HybridCertFormats } from './workshop/HybridCertFormats'
 import { HybridCertInspector } from './workshop/HybridCertInspector'
+import { HybridSignatures } from './workshop/HybridSignatures'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -51,6 +52,12 @@ const PARTS = [
     title: 'Step 5: Inspect & Compare',
     description: 'Deep-dive into certificate structures with IETF reference artifacts.',
     icon: Search,
+  },
+  {
+    id: 'hybrid-signatures',
+    title: 'Step 6: Hybrid Signatures',
+    description: 'Concatenation, nesting, and Silithium — from no non-separability to SNS.',
+    icon: Fingerprint,
   },
 ]
 
@@ -227,6 +234,7 @@ export const HybridCryptoModule: React.FC = () => {
               {currentPart === 2 && <HybridCASetup key={`ca-${configKey}`} />}
               {currentPart === 3 && <HybridCertFormats key={`formats-${configKey}`} />}
               {currentPart === 4 && <HybridCertInspector key={`inspect-${configKey}`} />}
+              {currentPart === 5 && <HybridSignatures key={`hybrid-sigs-${configKey}`} />}
             </div>
 
             {/* Part Navigation */}

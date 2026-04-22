@@ -1,7 +1,7 @@
 {
   "name": "pqctoday-hub",
   "private": true,
-  "version": "3.4.0",
+  "version": "3.5.0",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -82,6 +82,7 @@
     "@mlc-ai/web-llm": "^0.2.81",
     "@noble/curves": "^2.0.1",
     "@noble/hashes": "^2.0.1",
+    "@noble/post-quantum": "^0.6.1",
     "@oqs/liboqs-js": "^0.15.1",
     "@peculiar/asn1-schema": "^2.6.0",
     "@peculiar/asn1-x509": "^2.6.1",

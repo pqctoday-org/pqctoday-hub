@@ -21,6 +21,8 @@ import {
   Gauge,
   Download,
   ChevronDown,
+  MapPin,
+  Users,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
@@ -33,10 +35,14 @@ import {
   ALGO_IDS,
   ALGO_LABELS,
   ALGO_SLIDER_RANGES,
+  ORG_PARAM_DEFAULTS,
+  ORG_PARAM_RANGES,
+  deriveUseCaseTps,
   type AlgoId,
   type DeploymentSize,
   type UseCase,
   type HsmProfile,
+  type OrgParams,
 } from '@/data/hsmCapacityDefaults'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 
@@ -60,7 +66,6 @@ interface ScenarioResult {
   workload: Workload
   hsmProfile: HsmProfile
   algoLoad: AlgoLoad[]
-  /** HSMs needed per algo (ceil(load / capacity)). */
   perAlgoHsms: Array<{
     algo: AlgoId
     hsms: number
@@ -68,17 +73,24 @@ interface ScenarioResult {
     load: number
     capacity: number
   }>
-  /** Bottleneck algo (max perAlgoHsms). */
   bottleneck: AlgoId
-  /** Minimum HSMs required to meet load (before redundancy). */
+  /** Raw HSMs needed across the whole fleet (before distribution or redundancy). */
   requiredRaw: number
-  /** Minimum HSMs after redundancy uplift. */
+  /** Per-location raw need = ceil(requiredRaw / numLocations). */
+  perLocationRaw: number
+  /** Per-location need after local HA redundancy. */
+  perLocationRequired: number
+  /** Total fleet required = numLocations × perLocationRequired. */
   requiredWithRedundancy: number
-  /** User-selected HSM count (from slider). */
+  /** HSMs per location the user has deployed. */
+  hsmsPerLocation: number
+  /** Total deployed across all locations. */
   deployedHsms: number
-  /** Utilization % of deployed fleet against peak algo demand. */
-  fleetUtilizationPct: number
+  numLocations: number
+  /** Whether each individual location meets its HA requirement. */
+  perLocationSufficient: boolean
   sufficient: boolean
+  fleetUtilizationPct: number
 }
 
 function applyRedundancy(n: number, mode: Redundancy): number {
@@ -96,6 +108,7 @@ function computeAlgoLoad(
     'ecdsa-p256': 0,
     'ecdh-p256': 0,
     'ml-dsa-65': 0,
+    'ml-kem-768': 0,
     'aes-128': 0,
     'aes-256': 0,
   }
@@ -119,13 +132,17 @@ function computeScenario(
   useCases: UseCase[],
   state: Record<string, UseCaseState>,
   redundancy: Redundancy,
-  deployedHsms: number
+  hsmsPerLocation: number,
+  numLocations: number
 ): ScenarioResult {
   const algoLoad = computeAlgoLoad(useCases, state, workload)
   const perAlgoHsms = algoLoad.map(({ algo, opsPerSec }) => {
     const capacity = hsmProfile.opsPerSec[algo]
     const hsms = opsPerSec > 0 ? Math.ceil(opsPerSec / capacity) : 0
-    const utilizationPct = deployedHsms > 0 ? (opsPerSec / (capacity * deployedHsms)) * 100 : 0
+    // Utilization is per-location: each location handles 1/numLocations of load
+    const perLocLoad = opsPerSec / numLocations
+    const perLocCapacity = capacity * hsmsPerLocation
+    const utilizationPct = hsmsPerLocation > 0 ? (perLocLoad / perLocCapacity) * 100 : 0
     return { algo, hsms, utilizationPct, load: opsPerSec, capacity }
   })
   const requiredRaw = perAlgoHsms.reduce((m, r) => Math.max(m, r.hsms), 0)
@@ -133,9 +150,12 @@ function computeScenario(
     (m, r) => (r.hsms > m.hsms ? { algo: r.algo, hsms: r.hsms } : m),
     { algo: 'rsa-2048', hsms: 0 }
   ).algo
-  const requiredWithRedundancy = applyRedundancy(requiredRaw, redundancy)
+  const perLocationRaw = requiredRaw > 0 ? Math.ceil(requiredRaw / numLocations) : 0
+  const perLocationRequired = applyRedundancy(perLocationRaw, redundancy)
+  const requiredWithRedundancy = numLocations * perLocationRequired
+  const deployedHsms = numLocations * hsmsPerLocation
+  const perLocationSufficient = hsmsPerLocation >= perLocationRequired
   const fleetUtilizationPct = perAlgoHsms.reduce((m, r) => Math.max(m, r.utilizationPct), 0)
-  const sufficient = deployedHsms >= requiredWithRedundancy
   return {
     key,
     label,
@@ -146,10 +166,15 @@ function computeScenario(
     perAlgoHsms,
     bottleneck,
     requiredRaw,
+    perLocationRaw,
+    perLocationRequired,
     requiredWithRedundancy,
+    hsmsPerLocation,
     deployedHsms,
+    numLocations,
+    perLocationSufficient,
+    sufficient: perLocationSufficient,
     fleetUtilizationPct,
-    sufficient,
   }
 }
 
@@ -159,9 +184,10 @@ export function computeScenarios(params: {
   classical: HsmProfile
   pqc: HsmProfile
   redundancy: Redundancy
-  hsmCounts: { today: number; tomorrow: number; upgraded: number }
+  hsmsPerLocation: { today: number; tomorrow: number; upgraded: number }
+  numLocations: number
 }): ScenarioResult[] {
-  const { useCases, state, classical, pqc, redundancy, hsmCounts } = params
+  const { useCases, state, classical, pqc, redundancy, hsmsPerLocation, numLocations } = params
   return [
     computeScenario(
       'today',
@@ -172,7 +198,8 @@ export function computeScenarios(params: {
       useCases,
       state,
       redundancy,
-      hsmCounts.today
+      hsmsPerLocation.today,
+      numLocations
     ),
     computeScenario(
       'tomorrow',
@@ -183,7 +210,8 @@ export function computeScenarios(params: {
       useCases,
       state,
       redundancy,
-      hsmCounts.tomorrow
+      hsmsPerLocation.tomorrow,
+      numLocations
     ),
     computeScenario(
       'upgraded',
@@ -194,9 +222,26 @@ export function computeScenarios(params: {
       useCases,
       state,
       redundancy,
-      hsmCounts.upgraded
+      hsmsPerLocation.upgraded,
+      numLocations
     ),
   ]
+}
+
+const INVENTORY_SIZING: Record<
+  DeploymentSize,
+  {
+    hsmMin: number
+    hsmMax: number
+    hsmStep: number
+    hsmDefault: number
+    locMax: number
+    locDefault: number
+  }
+> = {
+  small: { hsmMin: 2, hsmMax: 20, hsmStep: 1, hsmDefault: 4, locMax: 10, locDefault: 1 },
+  medium: { hsmMin: 4, hsmMax: 200, hsmStep: 5, hsmDefault: 20, locMax: 100, locDefault: 5 },
+  large: { hsmMin: 4, hsmMax: 10_000, hsmStep: 50, hsmDefault: 200, locMax: 1_000, locDefault: 20 },
 }
 
 function utilizationColor(pct: number): string {
@@ -264,18 +309,93 @@ function SliderRow({
   )
 }
 
+function NumericSliderRow({
+  label,
+  value,
+  min,
+  max,
+  step,
+  format,
+  tooltip,
+  onChange,
+  disabled,
+}: {
+  label: string
+  value: number
+  min: number
+  max: number
+  step: number
+  format: (v: number) => string
+  tooltip?: string
+  onChange: (v: number) => void
+  disabled?: boolean
+}) {
+  return (
+    <div className={clsx('space-y-1', disabled && 'opacity-50')}>
+      <div className="flex items-center justify-between gap-2">
+        <label className="text-xs font-medium text-foreground flex items-center gap-1">
+          {label}
+          {tooltip && (
+            <span
+              title={tooltip}
+              className="text-muted-foreground cursor-help"
+              aria-label={tooltip}
+            >
+              <Info size={11} />
+            </span>
+          )}
+        </label>
+        <input
+          type="number"
+          min={min}
+          max={max}
+          step={step}
+          value={value}
+          onChange={(e) => {
+            const v = Number(e.target.value)
+            if (!isNaN(v)) onChange(Math.min(max, Math.max(min, v)))
+          }}
+          className="w-20 text-xs font-mono text-primary bg-muted/40 border border-border rounded px-1.5 py-0.5 text-right focus:outline-none focus:border-primary"
+          aria-label={`${label} numeric input`}
+          disabled={disabled}
+        />
+      </div>
+      <div className="flex items-center gap-2">
+        <input
+          type="range"
+          min={min}
+          max={max}
+          step={step}
+          value={value}
+          onChange={(e) => onChange(Number(e.target.value))}
+          className="flex-1 accent-primary"
+          aria-label={label}
+          disabled={disabled}
+        />
+        <span className="text-[10px] font-mono text-muted-foreground w-20 text-right shrink-0">
+          {format(value)}
+        </span>
+      </div>
+    </div>
+  )
+}
+
 function ScenarioCard({
   scenario,
   onHsmCountChange,
   onResetToRequired,
   hsmCountMax,
+  inventoryLocked,
+  inventoryCallout,
 }: {
   scenario: ScenarioResult
   onHsmCountChange: (v: number) => void
   onResetToRequired: () => void
   hsmCountMax: number
+  inventoryLocked?: boolean
+  inventoryCallout?: string
 }) {
-  const sufficient = scenario.sufficient
+  const sufficient = scenario.perLocationSufficient
   const Icon = sufficient ? CheckCircle2 : AlertTriangle
   const statusClass = sufficient ? 'text-status-success' : 'text-status-error'
   const statusBg = sufficient
@@ -299,52 +419,68 @@ function ScenarioCard({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 text-xs">
+      {/* Three-column breakdown */}
+      <div className="grid grid-cols-3 gap-2 text-xs">
         <div className="rounded-md bg-muted/30 px-2 py-1.5">
-          <p className="text-muted-foreground">Required</p>
+          <p className="text-muted-foreground">Per location</p>
           <p className="font-mono text-foreground text-base">
-            {scenario.requiredWithRedundancy}{' '}
+            {scenario.perLocationRequired}{' '}
             <span className="text-xs text-muted-foreground">HSMs</span>
           </p>
-          <p className="text-[10px] text-muted-foreground">
-            {scenario.requiredRaw} raw + redundancy
-          </p>
+          <p className="text-[10px] text-muted-foreground">{scenario.perLocationRaw} raw + HA</p>
         </div>
         <div className="rounded-md bg-muted/30 px-2 py-1.5">
-          <p className="text-muted-foreground">Deployed</p>
+          <p className="text-muted-foreground">Deployed / loc</p>
           <p className="font-mono text-foreground text-base">
-            {scenario.deployedHsms} <span className="text-xs text-muted-foreground">HSMs</span>
+            {scenario.hsmsPerLocation} <span className="text-xs text-muted-foreground">HSMs</span>
           </p>
           <p className={clsx('text-[10px]', utilizationClass(scenario.fleetUtilizationPct))}>
             Peak {scenario.fleetUtilizationPct.toFixed(0)}% util
           </p>
         </div>
+        <div className="rounded-md bg-muted/30 px-2 py-1.5">
+          <p className="text-muted-foreground">Total fleet</p>
+          <p className="font-mono text-foreground text-base">
+            {scenario.deployedHsms} <span className="text-xs text-muted-foreground">HSMs</span>
+          </p>
+          <p className="text-[10px] text-muted-foreground">
+            {scenario.numLocations} × {scenario.hsmsPerLocation}
+          </p>
+        </div>
       </div>
 
-      <div>
-        <div className="flex items-center justify-between mb-1">
-          <p className="text-[11px] font-medium text-muted-foreground">Deployed HSMs (slider)</p>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onResetToRequired}
-            className="h-5 text-[10px] px-1.5"
-            aria-label="Set to required"
-          >
-            Use required
-          </Button>
+      {inventoryLocked ? (
+        <p className="text-[10px] text-muted-foreground italic">
+          HSM count locked by inventory mode
+        </p>
+      ) : (
+        <div>
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-[11px] font-medium text-muted-foreground">
+              HSMs / location (slider)
+            </p>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onResetToRequired}
+              className="h-5 text-[10px] px-1.5"
+              aria-label="Set to required"
+            >
+              Use required
+            </Button>
+          </div>
+          <input
+            type="range"
+            min={1}
+            max={hsmCountMax}
+            step={1}
+            value={scenario.hsmsPerLocation}
+            onChange={(e) => onHsmCountChange(Number(e.target.value))}
+            className="w-full accent-primary"
+            aria-label={`${scenario.shortLabel} HSMs per location`}
+          />
         </div>
-        <input
-          type="range"
-          min={1}
-          max={hsmCountMax}
-          step={1}
-          value={scenario.deployedHsms}
-          onChange={(e) => onHsmCountChange(Number(e.target.value))}
-          className="w-full accent-primary"
-          aria-label={`${scenario.shortLabel} HSM count`}
-        />
-      </div>
+      )}
 
       {/* Per-algo utilization bars */}
       <div className="space-y-1">
@@ -371,31 +507,62 @@ function ScenarioCard({
           ))}
       </div>
 
+      {scenario.key === 'tomorrow' && (
+        <p className="text-[10px] text-status-warning bg-status-warning/5 border border-status-warning/20 rounded px-2 py-1.5 leading-relaxed">
+          Requires vendor firmware update (PKCS#11 v3.2) for ML-KEM. Some classical HSMs cannot run
+          ML-KEM without hardware replacement.
+        </p>
+      )}
+      {inventoryCallout && (
+        <p className="text-[10px] text-primary bg-primary/5 border border-primary/20 rounded px-2 py-1.5 leading-relaxed">
+          {inventoryCallout}
+        </p>
+      )}
       <p className="text-[10px] text-muted-foreground italic">
         Bottleneck: <span className="font-mono">{ALGO_LABELS[scenario.bottleneck]}</span>
+        {scenario.numLocations > 1 && (
+          <span> · load split across {scenario.numLocations} locations</span>
+        )}
       </p>
     </div>
   )
 }
 
-function HsmFleetVisual({
-  count,
-  sufficient,
-  max,
-}: {
-  count: number
-  sufficient: boolean
-  max: number
-}) {
-  const display = Math.min(count, max)
-  const statusClass = sufficient ? 'text-status-success' : 'text-status-error'
+function HsmFleetVisual({ scenario }: { scenario: ScenarioResult }) {
+  const { numLocations, hsmsPerLocation, perLocationSufficient } = scenario
+  const statusClass = perLocationSufficient ? 'text-status-success' : 'text-status-error'
+  const MAX_ICONS_PER_LOC = Math.min(hsmsPerLocation, 12)
+  const MAX_LOCS = Math.min(numLocations, 8)
+  const hiddenLocs = numLocations - MAX_LOCS
+
   return (
-    <div className="flex flex-wrap gap-0.5 items-center">
-      {Array.from({ length: display }).map((_, i) => (
-        <Server key={i} size={14} className={clsx(statusClass, 'shrink-0')} aria-hidden="true" />
+    <div className="space-y-1">
+      {Array.from({ length: MAX_LOCS }).map((_, locIdx) => (
+        <div key={locIdx} className="flex items-center gap-1.5">
+          <span className="text-[9px] font-mono text-muted-foreground w-9 shrink-0">
+            Loc {locIdx + 1}
+          </span>
+          <div className="flex flex-wrap gap-0.5">
+            {Array.from({ length: MAX_ICONS_PER_LOC }).map((_, i) => (
+              <Server
+                key={i}
+                size={13}
+                className={clsx(statusClass, 'shrink-0')}
+                aria-hidden="true"
+              />
+            ))}
+            {hsmsPerLocation > 12 && (
+              <span className="text-[9px] font-mono text-muted-foreground">
+                +{hsmsPerLocation - 12}
+              </span>
+            )}
+          </div>
+        </div>
       ))}
-      {count > max && (
-        <span className="text-[10px] font-mono text-muted-foreground ml-1">+{count - max}</span>
+      {hiddenLocs > 0 && (
+        <p className="text-[10px] font-mono text-muted-foreground ml-11">
+          +{hiddenLocs} more location{hiddenLocs > 1 ? 's' : ''}
+        </p>
       )}
     </div>
   )
@@ -404,11 +571,16 @@ function HsmFleetVisual({
 export function HsmCapacityCalculator() {
   const [size, setSize] = useState<DeploymentSize>('medium')
   const [redundancy, setRedundancy] = useState<Redundancy>('n+1')
+  const [numLocations, setNumLocations] = useState(1)
+  const [orgParams, setOrgParams] = useState<OrgParams>(() => ORG_PARAM_DEFAULTS.medium)
 
   const [useCaseState, setUseCaseState] = useState<Record<string, UseCaseState>>(() => {
     const out: Record<string, UseCaseState> = {}
     for (const uc of USE_CASES) {
-      out[uc.id] = { enabled: uc.defaultEnabled, tps: uc.defaultTps.medium }
+      out[uc.id] = {
+        enabled: uc.defaultEnabled,
+        tps: deriveUseCaseTps(uc.id, ORG_PARAM_DEFAULTS.medium),
+      }
     }
     return out
   })
@@ -416,59 +588,109 @@ export function HsmCapacityCalculator() {
   const [classicalHsm, setClassicalHsm] = useState<HsmProfile>(CLASSICAL_HSM_DEFAULT)
   const [pqcHsm, setPqcHsm] = useState<HsmProfile>(PQC_HSM_DEFAULT)
 
-  // Deployed HSM counts (user-adjustable via sliders). Default snaps to the
-  // computed requirement whenever the user picks a new size preset or when
-  // the user clicks "Use required" in a card.
-  const [hsmCounts, setHsmCounts] = useState({ today: 2, tomorrow: 20, upgraded: 2 })
-  // When true, HSM count sliders auto-track the computed requirement. Any
-  // manual slider change flips the flag off for that scenario.
+  const [planningMode, setPlanningMode] = useState<'demand' | 'inventory'>('demand')
+  const [inventoryHsmCount, setInventoryHsmCount] = useState(5)
+
+  // Per-location HSM counts per scenario (user-adjustable). Auto-tracks the
+  // computed per-location requirement until the user manually overrides.
+  const [hsmsPerLocation, setHsmsPerLocation] = useState({ today: 2, tomorrow: 20, upgraded: 2 })
   const autoTrackRef = useRef<Record<'today' | 'tomorrow' | 'upgraded', boolean>>({
     today: true,
     tomorrow: true,
     upgraded: true,
   })
 
-  // When size preset changes, re-seed TPS defaults for all enabled use cases.
-  // Unchecked use cases retain their TPS value so user tuning isn't lost but
-  // still contributes 0 to the total load.
-  const handleSizeChange = useCallback((next: DeploymentSize) => {
-    setSize(next)
+  // Seed TPS from org params for all use cases.
+  const seedTpsFromOrgParams = useCallback((params: OrgParams) => {
     setUseCaseState((prev) => {
       const out: Record<string, UseCaseState> = {}
       for (const uc of USE_CASES) {
         out[uc.id] = {
           enabled: prev[uc.id]?.enabled ?? uc.defaultEnabled,
-          tps: uc.defaultTps[next],
+          tps: deriveUseCaseTps(uc.id, params),
         }
       }
       return out
     })
-    autoTrackRef.current = { today: true, tomorrow: true, upgraded: true }
   }, [])
 
-  const scenarios = useMemo(
-    () =>
-      computeScenarios({
+  const handleSizeChange = useCallback(
+    (next: DeploymentSize) => {
+      setSize(next)
+      const nextOrgParams = ORG_PARAM_DEFAULTS[next]
+      setOrgParams(nextOrgParams)
+      seedTpsFromOrgParams(nextOrgParams)
+      const s = INVENTORY_SIZING[next]
+      setInventoryHsmCount(s.hsmDefault)
+      setNumLocations(s.locDefault)
+      autoTrackRef.current = { today: true, tomorrow: true, upgraded: true }
+    },
+    [seedTpsFromOrgParams]
+  )
+
+  const handleOrgParamChange = useCallback(
+    (field: keyof OrgParams, value: number) => {
+      setOrgParams((prev) => {
+        const next = { ...prev, [field]: value }
+        seedTpsFromOrgParams(next)
+        return next
+      })
+      autoTrackRef.current = { today: true, tomorrow: true, upgraded: true }
+    },
+    [seedTpsFromOrgParams]
+  )
+
+  const scenarios = useMemo(() => {
+    let hpl = hsmsPerLocation
+    if (planningMode === 'inventory') {
+      const perLocClassical = Math.max(1, Math.ceil(inventoryHsmCount / numLocations))
+      // perLocationRequired is load-driven only — one draft call gives the correct
+      // upgraded requirement without depending on hsmsPerLocation.upgraded.
+      const draftUpgraded = computeScenarios({
         useCases: USE_CASES,
         state: useCaseState,
         classical: classicalHsm,
         pqc: pqcHsm,
         redundancy,
-        hsmCounts,
-      }),
-    [useCaseState, classicalHsm, pqcHsm, redundancy, hsmCounts]
-  )
+        numLocations,
+        hsmsPerLocation: { today: perLocClassical, tomorrow: perLocClassical, upgraded: 1 },
+      })[2]
+      hpl = {
+        today: perLocClassical,
+        tomorrow: perLocClassical,
+        upgraded: Math.max(1, draftUpgraded.perLocationRequired),
+      }
+    }
+    return computeScenarios({
+      useCases: USE_CASES,
+      state: useCaseState,
+      classical: classicalHsm,
+      pqc: pqcHsm,
+      redundancy,
+      numLocations,
+      hsmsPerLocation: hpl,
+    })
+  }, [
+    useCaseState,
+    classicalHsm,
+    pqcHsm,
+    redundancy,
+    hsmsPerLocation,
+    numLocations,
+    planningMode,
+    inventoryHsmCount,
+  ])
 
-  // Auto-track: whenever the requirement changes and the user hasn't manually
-  // overridden, snap the deployed-count slider to the required count. This
-  // gives a natural "as you check more use cases the fleet grows" feel.
+  // Auto-track per-location slider to computed requirement (demand mode only).
+  // Inventory mode computes hsmsPerLocation inline in the useMemo above.
   useEffect(() => {
-    setHsmCounts((prev) => {
+    if (planningMode === 'inventory') return
+    setHsmsPerLocation((prev) => {
       const next = { ...prev }
       let changed = false
       const keys = ['today', 'tomorrow', 'upgraded'] as const
       keys.forEach((k, i) => {
-        const req = scenarios[i].requiredWithRedundancy
+        const req = scenarios[i].perLocationRequired
         if (autoTrackRef.current[k] && prev[k] !== req) {
           next[k] = Math.max(1, req)
           changed = true
@@ -476,7 +698,7 @@ export function HsmCapacityCalculator() {
       })
       return changed ? next : prev
     })
-  }, [scenarios])
+  }, [scenarios, planningMode])
 
   const setUseCaseEnabled = useCallback((id: string, enabled: boolean) => {
     setUseCaseState((prev) => ({ ...prev, [id]: { ...prev[id], enabled } }))
@@ -493,17 +715,17 @@ export function HsmCapacityCalculator() {
 
   const setHsmCount = useCallback((key: 'today' | 'tomorrow' | 'upgraded', v: number) => {
     autoTrackRef.current[key] = false
-    setHsmCounts((prev) => ({ ...prev, [key]: v }))
+    setHsmsPerLocation((prev) => ({ ...prev, [key]: v }))
   }, [])
 
   const resetHsmCount = useCallback(
     (key: 'today' | 'tomorrow' | 'upgraded') => {
       autoTrackRef.current[key] = true
-      setHsmCounts((prev) => ({
+      setHsmsPerLocation((prev) => ({
         ...prev,
         [key]: Math.max(
           1,
-          scenarios[key === 'today' ? 0 : key === 'tomorrow' ? 1 : 2].requiredWithRedundancy
+          scenarios[key === 'today' ? 0 : key === 'tomorrow' ? 1 : 2].perLocationRequired
         ),
       }))
     },
@@ -523,19 +745,30 @@ export function HsmCapacityCalculator() {
     })
   }, [])
 
+  // Per-location slider max
   const hsmCountMax = useMemo(
-    () => Math.max(20, ...scenarios.map((s) => s.requiredWithRedundancy * 3)),
+    () => Math.max(10, ...scenarios.map((s) => s.perLocationRequired * 3)),
     [scenarios]
   )
 
-  // Chart data
+  // Inventory mode: how many next-gen HSMs give equivalent ML-DSA capacity to the classical fleet
+  const equivalentNextGenTotal = useMemo(
+    () =>
+      Math.max(
+        1,
+        Math.ceil(
+          (inventoryHsmCount * classicalHsm.opsPerSec['ml-dsa-65']) / pqcHsm.opsPerSec['ml-dsa-65']
+        )
+      ),
+    [inventoryHsmCount, classicalHsm, pqcHsm]
+  )
+
   const fleetChartData = scenarios.map((s) => ({
     name: s.shortLabel,
     Required: s.requiredWithRedundancy,
     Deployed: s.deployedHsms,
   }))
 
-  // Aggregate workload bar (per-algo ops/s across all enabled use cases, PQC workload)
   const pqcLoad = useMemo(() => computeAlgoLoad(USE_CASES, useCaseState, 'pqc'), [useCaseState])
   const classicalLoad = useMemo(
     () => computeAlgoLoad(USE_CASES, useCaseState, 'classical'),
@@ -567,9 +800,13 @@ export function HsmCapacityCalculator() {
           algorithm: ALGO_LABELS[r.algo],
           load: Math.round(r.load),
           capacity: r.capacity,
-          hsmsRequired: r.hsms,
+          numLocations: s.numLocations,
+          hsmsPerLocation: s.hsmsPerLocation,
+          perLocationRequired: s.perLocationRequired,
+          hsmsRequired: s.requiredWithRedundancy,
           deployedHsms: s.deployedHsms,
           utilizationPct: Math.round(r.utilizationPct),
+          perLocationSufficient: s.perLocationSufficient ? 'Yes' : 'No',
           sufficient: s.sufficient ? 'Yes' : 'No',
         }))
     )
@@ -581,9 +818,13 @@ export function HsmCapacityCalculator() {
         { header: 'Algorithm', accessor: (r) => r.algorithm },
         { header: 'Load (ops/s)', accessor: (r) => r.load },
         { header: 'HSM capacity (ops/s)', accessor: (r) => r.capacity },
-        { header: 'HSMs required', accessor: (r) => r.hsmsRequired },
-        { header: 'Deployed HSMs', accessor: (r) => r.deployedHsms },
-        { header: 'Utilization %', accessor: (r) => r.utilizationPct },
+        { header: 'Locations', accessor: (r) => r.numLocations },
+        { header: 'HSMs / location (deployed)', accessor: (r) => r.hsmsPerLocation },
+        { header: 'HSMs / location (required)', accessor: (r) => r.perLocationRequired },
+        { header: 'Total HSMs required', accessor: (r) => r.hsmsRequired },
+        { header: 'Total HSMs deployed', accessor: (r) => r.deployedHsms },
+        { header: 'Utilization % (per location)', accessor: (r) => r.utilizationPct },
+        { header: 'Per-location sufficient', accessor: (r) => r.perLocationSufficient },
         { header: 'Sufficient', accessor: (r) => r.sufficient },
       ]),
       csvFilename('hsm-capacity')
@@ -602,8 +843,12 @@ export function HsmCapacityCalculator() {
         </p>
       </div>
 
-      {/* Sizing model */}
-      <div className="rounded-lg border border-primary/30 bg-primary/5 px-4 py-3">
+      {/* Fleet sizing model — collapsible */}
+      <CollapsibleSection
+        title="Fleet sizing model"
+        icon={<Info size={14} className="text-primary" aria-hidden="true" />}
+        defaultOpen={false}
+      >
         <p className="text-xs text-foreground leading-relaxed">
           <span className="font-semibold text-primary">Shared-fleet sizing model.</span> A single
           HSM fleet serves all enabled use cases. Load is aggregated per algorithm across every
@@ -611,13 +856,122 @@ export function HsmCapacityCalculator() {
           algorithm (highest load / capacity ratio) determines the minimum fleet size; redundancy is
           added on top.
         </p>
-      </div>
+        <p className="text-xs text-muted-foreground leading-relaxed mt-2">
+          <span className="font-mono text-secondary">Raw required</span> = max over all algorithms
+          of ⌈ algo_ops/s ÷ hsm_capacity ⌉
+          <br />
+          <span className="font-mono text-secondary">N+1 redundancy</span> = raw + 1
+          <br />
+          <span className="font-mono text-secondary">2N redundancy</span> = raw × 2
+          <br />
+          <span className="font-mono text-secondary">Utilization</span> = load ÷ (capacity ×
+          deployed)
+        </p>
+      </CollapsibleSection>
 
-      {/* Deployment size + redundancy */}
+      {/* Deployment size + redundancy + distributed topology */}
       <div className="glass-panel p-4 space-y-4">
         <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
           Deployment profile
         </p>
+
+        {/* Planning mode toggle */}
+        <div className="flex flex-wrap items-center gap-3 pb-3 border-b border-border/40">
+          <span className="text-xs text-muted-foreground shrink-0">Planning mode:</span>
+          <div className="flex rounded-md overflow-hidden border border-border">
+            {(['demand', 'inventory'] as const).map((m) => (
+              <Button
+                key={m}
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setPlanningMode(m)
+                  if (m === 'demand')
+                    autoTrackRef.current = { today: true, tomorrow: true, upgraded: true }
+                }}
+                className={clsx(
+                  'px-3 py-1 text-xs font-mono rounded-none h-auto',
+                  planningMode === m
+                    ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                    : 'bg-muted/30 text-foreground hover:bg-muted/60'
+                )}
+                aria-pressed={planningMode === m}
+              >
+                {m === 'demand' ? 'Demand sizing' : 'Inventory sizing'}
+              </Button>
+            ))}
+          </div>
+          <span className="text-[10px] text-muted-foreground">
+            {planningMode === 'demand'
+              ? 'Enter workload → compute required HSMs'
+              : 'Enter your existing fleet → compute headroom & replacement'}
+          </span>
+        </div>
+
+        {/* Inventory mode input */}
+        {planningMode === 'inventory' && (
+          <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 space-y-2">
+            <p className="text-[10px] text-muted-foreground leading-relaxed">
+              Enter your existing classical HSM fleet size. Today&apos;s and post-PQC classical
+              scenario counts are locked to this value. The next-gen scenario is computed.
+            </p>
+            <NumericSliderRow
+              label="Classical HSMs I currently own (total fleet)"
+              value={inventoryHsmCount}
+              min={INVENTORY_SIZING[size].hsmMin}
+              max={INVENTORY_SIZING[size].hsmMax}
+              step={INVENTORY_SIZING[size].hsmStep}
+              format={(v) => `${v} HSM${v !== 1 ? 's' : ''}`}
+              tooltip="Total classical HSMs across all locations. Per-location = ceil(N ÷ locations)."
+              onChange={setInventoryHsmCount}
+            />
+            <NumericSliderRow
+              label="Number of locations"
+              value={numLocations}
+              min={1}
+              max={INVENTORY_SIZING[size].locMax}
+              step={1}
+              format={(v) => `${v} location${v !== 1 ? 's' : ''}`}
+              tooltip="Physical sites or data centres. Each independently satisfies the HA model."
+              onChange={setNumLocations}
+            />
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-muted-foreground">HA model per location:</span>
+              <div className="flex rounded-md overflow-hidden border border-border">
+                {(['n+1', '2n'] as Redundancy[]).map((r) => (
+                  <Button
+                    key={r}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setRedundancy(r)}
+                    className={clsx(
+                      'px-3 py-1 text-xs font-mono rounded-none h-auto',
+                      redundancy === r
+                        ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                        : 'bg-muted/30 text-foreground hover:bg-muted/60'
+                    )}
+                    aria-pressed={redundancy === r}
+                  >
+                    {r === 'n+1' ? 'N + 1' : '2N'}
+                  </Button>
+                ))}
+              </div>
+            </div>
+            <p className="text-[10px] font-mono text-muted-foreground">
+              Today &amp; post-PQC classical:{' '}
+              <span className="text-primary">
+                {Math.ceil(inventoryHsmCount / numLocations)} HSM
+                {Math.ceil(inventoryHsmCount / numLocations) !== 1 ? 's' : ''}/location
+              </span>{' '}
+              · Post-PQC next-gen:{' '}
+              <span className="text-primary">
+                computed · equivalent capacity: {equivalentNextGenTotal} next-gen HSM
+                {equivalentNextGenTotal !== 1 ? 's' : ''} total
+              </span>
+            </p>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
           {SIZE_PRESETS.map((p) => (
             <Button
@@ -640,33 +994,124 @@ export function HsmCapacityCalculator() {
             </Button>
           ))}
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-muted-foreground">Redundancy:</span>
-          <div className="flex rounded-md overflow-hidden border border-border">
-            {(['n+1', '2n'] as Redundancy[]).map((r) => (
-              <Button
-                key={r}
-                variant="ghost"
-                size="sm"
-                onClick={() => setRedundancy(r)}
-                className={clsx(
-                  'px-3 py-1 text-xs font-mono rounded-none h-auto',
-                  redundancy === r
-                    ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                    : 'bg-muted/30 text-foreground hover:bg-muted/60'
-                )}
-                aria-pressed={redundancy === r}
+
+        {/* Redundancy + Distributed topology — hidden in inventory mode (those controls live in the inventory panel above) */}
+        {planningMode === 'demand' && (
+          <>
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-muted-foreground">Redundancy:</span>
+              <div className="flex rounded-md overflow-hidden border border-border">
+                {(['n+1', '2n'] as Redundancy[]).map((r) => (
+                  <Button
+                    key={r}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setRedundancy(r)}
+                    className={clsx(
+                      'px-3 py-1 text-xs font-mono rounded-none h-auto',
+                      redundancy === r
+                        ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                        : 'bg-muted/30 text-foreground hover:bg-muted/60'
+                    )}
+                    aria-pressed={redundancy === r}
+                  >
+                    {r === 'n+1' ? 'N + 1' : '2N'}
+                  </Button>
+                ))}
+              </div>
+              <span className="ml-auto text-xs text-muted-foreground">
+                Checked TPS total:{' '}
+                <span className="font-mono text-primary">{totalEnabledTps.toLocaleString()}</span>
+              </span>
+            </div>
+
+            <div className="border-t border-border/40 pt-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <MapPin size={13} className="text-primary" aria-hidden="true" />
+                <p className="text-xs font-medium text-foreground">Distributed topology</p>
+              </div>
+              <p className="text-[10px] text-muted-foreground">
+                Each location independently satisfies the selected redundancy model (local HA). Load
+                is assumed evenly distributed across locations.
+              </p>
+              <NumericSliderRow
+                label="Number of locations"
+                value={numLocations}
+                min={1}
+                max={1_000}
+                step={1}
+                format={(v) => `${v} location${v !== 1 ? 's' : ''}`}
+                tooltip="Physical sites, data centres, or availability zones. Each must independently satisfy the HA model."
+                onChange={setNumLocations}
+              />
+              <CollapsibleSection
+                title="Distributed capacity formula"
+                icon={<Info size={12} className="text-muted-foreground" aria-hidden="true" />}
+                defaultOpen={false}
               >
-                {r === 'n+1' ? 'N + 1' : '2N'}
-              </Button>
-            ))}
-          </div>
-          <span className="ml-auto text-xs text-muted-foreground">
-            Checked TPS total:{' '}
-            <span className="font-mono text-primary">{totalEnabledTps.toLocaleString()}</span>
-          </span>
-        </div>
+                <div className="text-[10px] space-y-2 font-mono text-muted-foreground">
+                  <p>
+                    <span className="text-secondary">Per-location raw</span> = ⌈ R ÷ L ⌉
+                  </p>
+                  <p>
+                    <span className="text-secondary">Per-location HA need</span> = redundancy
+                    applied to per-location raw
+                  </p>
+                  <p>
+                    <span className="text-secondary">Total fleet required</span> = L × per-location
+                    HA need
+                  </p>
+                  <p className="text-muted-foreground/70">
+                    R = total raw HSMs (bottleneck algorithm) · L = number of locations
+                  </p>
+                  <div className="mt-2 pt-2 border-t border-border/30 space-y-0.5">
+                    <p className="text-foreground font-semibold">Example (N+1, R=6, L=3):</p>
+                    <p>Per-location raw = ⌈6 ÷ 3⌉ = 2</p>
+                    <p>Per-location HA = 2+1 = 3 HSMs</p>
+                    <p>Total required = 3 × 3 = 9 HSMs</p>
+                    <p className="text-muted-foreground/70">
+                      Min per location with N+1: always ≥ 2 HSMs regardless of load.
+                    </p>
+                  </div>
+                </div>
+              </CollapsibleSection>
+            </div>
+          </>
+        )}
       </div>
+
+      {/* Organisation profile — sliders that derive TPS */}
+      <CollapsibleSection
+        title="Organisation profile"
+        icon={<Users size={14} className="text-primary" aria-hidden="true" />}
+        defaultOpen={true}
+      >
+        <p className="text-[10px] text-muted-foreground mb-3">
+          Adjusting these sliders re-derives TPS defaults for all use cases using the same formulas
+          documented in each use case&apos;s estimation methodology.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+          {(Object.keys(ORG_PARAM_RANGES) as (keyof OrgParams)[]).map((field) => {
+            const range = ORG_PARAM_RANGES[field]
+            return (
+              <div key={field} className="space-y-0.5">
+                <NumericSliderRow
+                  label={range.label}
+                  value={orgParams[field]}
+                  min={range.min}
+                  max={range.max}
+                  step={range.step}
+                  format={(v) =>
+                    field === 'paymentTps' ? `${v.toLocaleString()} TPS` : v.toLocaleString()
+                  }
+                  tooltip={range.description}
+                  onChange={(v) => handleOrgParamChange(field, v)}
+                />
+              </div>
+            )
+          })}
+        </div>
+      </CollapsibleSection>
 
       {/* Use cases — checkboxes + TPS sliders */}
       <div className="glass-panel p-4 space-y-3">
@@ -765,30 +1210,39 @@ export function HsmCapacityCalculator() {
         </div>
       </div>
 
-      {/* Scenario cards — the main visualization */}
+      {/* Scenario cards */}
       <div>
         <div className="flex items-center gap-2 mb-3">
           <Gauge size={16} className="text-primary" aria-hidden="true" />
           <p className="text-sm font-semibold text-foreground">Fleet sizing & sufficiency</p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {scenarios.map((s, idx) => (
-            <ScenarioCard
-              key={s.key}
-              scenario={s}
-              hsmCountMax={hsmCountMax}
-              onHsmCountChange={(v) =>
-                setHsmCount(idx === 0 ? 'today' : idx === 1 ? 'tomorrow' : 'upgraded', v)
-              }
-              onResetToRequired={() =>
-                resetHsmCount(idx === 0 ? 'today' : idx === 1 ? 'tomorrow' : 'upgraded')
-              }
-            />
-          ))}
+          {scenarios.map((s, idx) => {
+            const isInventoryLocked = planningMode === 'inventory'
+            const inventoryCallout =
+              planningMode === 'inventory' && s.key === 'upgraded'
+                ? `Equivalent capacity: ${inventoryHsmCount} classical → ${equivalentNextGenTotal} next-gen HSM${equivalentNextGenTotal !== 1 ? 's' : ''} for ML-DSA workload (${Math.round(inventoryHsmCount / Math.max(1, equivalentNextGenTotal))}× fewer units)`
+                : undefined
+            return (
+              <ScenarioCard
+                key={s.key}
+                scenario={s}
+                hsmCountMax={hsmCountMax}
+                inventoryLocked={isInventoryLocked}
+                inventoryCallout={inventoryCallout}
+                onHsmCountChange={(v) =>
+                  setHsmCount(idx === 0 ? 'today' : idx === 1 ? 'tomorrow' : 'upgraded', v)
+                }
+                onResetToRequired={() =>
+                  resetHsmCount(idx === 0 ? 'today' : idx === 1 ? 'tomorrow' : 'upgraded')
+                }
+              />
+            )
+          })}
         </div>
       </div>
 
-      {/* HSM fleet visual */}
+      {/* HSM fleet visual — grouped by location */}
       <div className="glass-panel p-4">
         <div className="flex items-center gap-2 mb-3">
           <Server size={14} className="text-primary" aria-hidden="true" />
@@ -796,14 +1250,19 @@ export function HsmCapacityCalculator() {
             Fleet at a glance
           </p>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-4">
           {scenarios.map((s) => (
-            <div key={s.key} className="flex items-start gap-3">
-              <div className="w-40 shrink-0 text-xs">
-                <p className="font-medium text-foreground">{s.shortLabel}</p>
-                <p className="text-[10px] text-muted-foreground">{s.hsmProfile.name}</p>
+            <div key={s.key}>
+              <div className="flex items-start gap-3">
+                <div className="w-40 shrink-0 text-xs">
+                  <p className="font-medium text-foreground">{s.shortLabel}</p>
+                  <p className="text-[10px] text-muted-foreground">{s.hsmProfile.name}</p>
+                  <p className="text-[10px] font-mono text-primary mt-0.5">
+                    {s.deployedHsms} total HSMs
+                  </p>
+                </div>
+                <HsmFleetVisual scenario={s} />
               </div>
-              <HsmFleetVisual count={s.deployedHsms} sufficient={s.sufficient} max={40} />
             </div>
           ))}
         </div>

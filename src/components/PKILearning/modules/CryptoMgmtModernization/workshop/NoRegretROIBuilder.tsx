@@ -46,7 +46,7 @@ export const NoRegretROIBuilder: React.FC = () => {
     {
       id: 'fips-drift',
       label: 'FIPS 140-3 drift remediation avoided',
-      help: 'Cost of emergency re-procurement or re-validation when a cert goes historical/revoked or an IG update lands.',
+      help: 'Cost of emergency re-procurement or re-validation when a cert goes historical/revoked or an IG update lands. Domain model estimate — no published industry benchmark; scale to your HSM/library estate size and CMVP re-procurement lead time.',
       min: 0,
       max: 5_000_000,
       step: 100_000,
@@ -56,7 +56,7 @@ export const NoRegretROIBuilder: React.FC = () => {
     {
       id: 'library-cve',
       label: 'Library-CVE response acceleration',
-      help: 'Reduced exposure window × incidence rate.',
+      help: 'Reduced exposure window × annual CVE incidence rate. Domain model estimate — adjust based on your library estate footprint, patch SLA, and internal incident response cost rate.',
       min: 0,
       max: 3_000_000,
       step: 50_000,
@@ -76,7 +76,7 @@ export const NoRegretROIBuilder: React.FC = () => {
     {
       id: 'quantum-breach',
       label: 'Quantum breach avoidance (scenario B only)',
-      help: 'HNDL-era compromise of long-lived secrets.',
+      help: 'HNDL-era compromise of long-lived secrets. Domain model estimate — adjust based on your data-retention horizon, classification of long-lived secrets, and breach-impact scenario. See NIST IR 8547 §3 for scope guidance.',
       min: 0,
       max: 50_000_000,
       step: 500_000,
@@ -209,7 +209,9 @@ export const NoRegretROIBuilder: React.FC = () => {
         </div>
 
         <div className="bg-status-info/10 rounded-lg p-4 border border-status-info/30">
-          <div className="font-bold text-foreground mb-2">Scenario B — CRQC arrives within 5 y</div>
+          <div className="font-bold text-foreground mb-2">
+            Scenario B — CRQC arrives within {horizonYears} y (within the modeling horizon)
+          </div>
           <div className="space-y-1 text-xs">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Quantum-dependent benefit added</span>

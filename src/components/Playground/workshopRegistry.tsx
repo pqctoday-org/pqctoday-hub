@@ -465,6 +465,36 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     recommendedPersonas: ['architect', 'ops', 'executive'],
   },
+  {
+    id: 'hybrid-sigs',
+    pt_id: 'PT-027',
+    version: '1.0.0',
+    name: 'Hybrid Signature Spectrums',
+    description:
+      'Live concatenation, nesting, and Silithium (fused Fiat-Shamir) — from no non-separability to SNS',
+    category: 'HSM / PKCS#11',
+    algorithms: ['EC-Schnorr', 'secp256k1', 'ML-DSA-65', 'SHA-256'],
+    icon: Fingerprint,
+    moduleLink: '/learn/hybrid-crypto?tab=workshop&step=5',
+    keywords: [
+      'hybrid',
+      'signature',
+      'silithium',
+      'fused',
+      'concatenation',
+      'nesting',
+      'non-separability',
+      'sns',
+      'wns',
+      'ml-dsa',
+      'ec-schnorr',
+      'secp256k1',
+      'fiat-shamir',
+      'pqc-transition',
+    ],
+    difficulty: 'advanced',
+    recommendedPersonas: ['developer', 'architect', 'researcher'],
+  },
 
   // ── Protocol Simulations ──────────────────────────────────────────────────
   {
@@ -774,6 +804,11 @@ export const TOOL_COMPONENTS: Record<string, LazyComp> = {
     import('@/components/PKILearning/modules/HybridCrypto/workshop/HybridCertFormats').then(
       (m) => ({ default: m.HybridCertFormats })
     )
+  ),
+  'hybrid-sigs': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/HybridCrypto/workshop/HybridSignatures').then((m) => ({
+      default: m.HybridSignatures,
+    }))
   ),
   'merkle-proof': lazyWithRetry(() =>
     import('@/components/PKILearning/modules/MerkleTreeCerts/workshop/MerkleWorkshopSteps').then(

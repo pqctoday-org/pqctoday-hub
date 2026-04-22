@@ -92,9 +92,35 @@ export const PILLARS: PillarDef[] = [
 
 export type AssetClass = 'certificates' | 'libraries' | 'software' | 'keys'
 
+export const ASSET_CLASSES: AssetClass[] = ['certificates', 'libraries', 'software', 'keys']
+
 export const ASSET_CLASS_LABELS: Record<AssetClass, string> = {
   certificates: 'Certificates & PKI',
   libraries: 'Crypto Libraries',
   software: 'Application Software',
   keys: 'Key Material',
 }
+
+export const ASSET_CLASS_META: Record<AssetClass, { label: string; stroke: string; fill: string }> =
+  {
+    certificates: {
+      label: 'Certificates & PKI',
+      stroke: 'hsl(var(--primary))',
+      fill: 'hsl(var(--primary))',
+    },
+    libraries: {
+      label: 'Crypto Libraries',
+      stroke: 'hsl(var(--secondary))',
+      fill: 'hsl(var(--secondary))',
+    },
+    software: {
+      label: 'Application Software',
+      stroke: 'hsl(var(--accent))',
+      fill: 'hsl(var(--accent))',
+    },
+    keys: {
+      label: 'Key Material',
+      stroke: 'hsl(var(--warning))',
+      fill: 'hsl(var(--warning))',
+    },
+  }

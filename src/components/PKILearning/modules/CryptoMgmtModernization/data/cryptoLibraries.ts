@@ -16,6 +16,13 @@ export type FipsStatus =
   | 'in-mip' // module in Modules-in-Process queue
   | 'not-validated' // no CMVP validation
 
+export type EsvStatus =
+  | 'active' // SP 800-90B ESV certificate currently active
+  | 'historical' // ESV cert expired or superseded
+  | 'revoked' // ESV cert revoked
+  | 'in-mip' // ESV submission in NIST Entropy Source Validation Program queue
+  | 'not-validated' // no SP 800-90B ESV submission
+
 export type RiskColor = 'red' | 'yellow' | 'green'
 
 export interface CryptoLibrary {
@@ -26,6 +33,7 @@ export interface CryptoLibrary {
   eolDate: string | null // ISO date, null = actively supported
   fipsStatus: FipsStatus
   cmvpCertNumber: string | null
+  esvStatus: EsvStatus // SP 800-90B entropy source validation status
   pqcSupport: string // short description
   openCveHigh: number // count of high/critical CVEs in the last year
   lastVerified: string // ISO date
@@ -42,6 +50,7 @@ export const CRYPTO_LIBRARIES: CryptoLibrary[] = [
     eolDate: '2030-04-08',
     fipsStatus: 'active-pqc',
     cmvpCertNumber: '#4985 (FIPS provider, PQC hybrid)',
+    esvStatus: 'not-validated',
     pqcSupport: 'ML-KEM, ML-DSA via FIPS 3.5 provider; SLH-DSA pending',
     openCveHigh: 1,
     lastVerified: '2026-04-15',
@@ -56,6 +65,7 @@ export const CRYPTO_LIBRARIES: CryptoLibrary[] = [
     eolDate: '2023-09-11',
     fipsStatus: 'historical',
     cmvpCertNumber: '#3622 (historical)',
+    esvStatus: 'not-validated',
     pqcSupport: 'None',
     openCveHigh: 3,
     lastVerified: '2026-04-15',
@@ -70,7 +80,8 @@ export const CRYPTO_LIBRARIES: CryptoLibrary[] = [
     latestVersion: '20250310',
     eolDate: null,
     fipsStatus: 'active',
-    cmvpCertNumber: '#4816 (BoringCrypto)',
+    cmvpCertNumber: '#5244 (BoringCrypto)',
+    esvStatus: 'not-validated',
     pqcSupport: 'Hybrid X25519MLKEM768 in Chrome/Android production; ML-DSA experimental',
     openCveHigh: 0,
     lastVerified: '2026-04-18',
@@ -86,6 +97,7 @@ export const CRYPTO_LIBRARIES: CryptoLibrary[] = [
     eolDate: null,
     fipsStatus: 'not-validated',
     cmvpCertNumber: null,
+    esvStatus: 'not-validated',
     pqcSupport:
       'All NIST PQC families (ML-KEM, ML-DSA, SLH-DSA, Falcon, FrodoKEM, HQC, Classic McEliece)',
     openCveHigh: 0,
@@ -100,14 +112,16 @@ export const CRYPTO_LIBRARIES: CryptoLibrary[] = [
     vendor: 'wolfSSL',
     latestVersion: '5.2.1',
     eolDate: null,
-    fipsStatus: 'active-pqc',
+    fipsStatus: 'active',
     cmvpCertNumber: '#4718',
-    pqcSupport: 'ML-KEM, ML-DSA (FIPS 203/204); SLH-DSA on roadmap',
+    esvStatus: 'in-mip',
+    pqcSupport:
+      'ML-KEM, ML-DSA available in the library; not yet inside the FIPS 140-3 boundary (CMVP #4718 shows no PQC mechanisms)',
     openCveHigh: 0,
-    lastVerified: '2026-04-17',
-    posture: 'green',
+    lastVerified: '2026-04-22',
+    posture: 'yellow',
     notes:
-      'One of the first FIPS 140-3 validated modules with PQC coverage. Bound to specific build and platform list.',
+      'FIPS 140-3 boundary does not yet cover PQC algorithms per NIST CMVP. PQC APIs available outside the FIPS module; verify ACVP submission status at csrc.nist.gov.',
   },
   {
     id: 'bc-fips',
@@ -116,7 +130,8 @@ export const CRYPTO_LIBRARIES: CryptoLibrary[] = [
     latestVersion: '2.0.0',
     eolDate: null,
     fipsStatus: 'active',
-    cmvpCertNumber: '#4616',
+    cmvpCertNumber: '#4943 (BC-FJA v2.1.1)',
+    esvStatus: 'not-validated',
     pqcSupport: 'ML-KEM, ML-DSA available (non-FIPS path); FIPS IG update pending',
     openCveHigh: 2,
     lastVerified: '2026-04-10',
@@ -132,6 +147,7 @@ export const CRYPTO_LIBRARIES: CryptoLibrary[] = [
     eolDate: '2027-07-01',
     fipsStatus: 'not-validated',
     cmvpCertNumber: null,
+    esvStatus: 'not-validated',
     pqcSupport: 'Experimental ML-KEM; no FIPS path',
     openCveHigh: 1,
     lastVerified: '2026-04-14',
@@ -147,6 +163,7 @@ export const CRYPTO_LIBRARIES: CryptoLibrary[] = [
     eolDate: null,
     fipsStatus: 'not-validated',
     cmvpCertNumber: null,
+    esvStatus: 'not-validated',
     pqcSupport: 'ml-kem, ml-dsa crates (beta); SLH-DSA in progress',
     openCveHigh: 0,
     lastVerified: '2026-04-16',
@@ -162,6 +179,7 @@ export const CRYPTO_LIBRARIES: CryptoLibrary[] = [
     eolDate: null,
     fipsStatus: 'active',
     cmvpCertNumber: '#4631',
+    esvStatus: 'active',
     pqcSupport: 'ML-KEM, ML-DSA via post-quantum API surface',
     openCveHigh: 0,
     lastVerified: '2026-04-18',

@@ -12,6 +12,12 @@ import {
   ShieldCheck,
   FileBadge,
   BookOpen,
+  Network,
+  AlertCircle,
+  Users,
+  FlaskConical,
+  HardDrive,
+  Package,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
@@ -82,9 +88,16 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         </Quote>
         <p>
           In parallel, <strong>FIPS 140-3 Level 3 validation drift</strong> creates a second
-          continuous problem. The NIST CMVP Modules-in-Process queue runs 18–24 months; each library
-          or HSM firmware patch can revoke a certificate; the September 2025 FIPS 140-3
-          Implementation Guidance update retroactively imposed new{' '}
+          continuous problem. The NIST CMVP Modules-in-Process queue runs 18–24 months{' '}
+          <span className="text-xs text-muted-foreground">
+            (NIST CMVP MIP List — csrc.nist.gov; typical range, varies by lab and module type)
+          </span>
+          ; each library or HSM firmware patch can revoke a certificate; the September 2025 FIPS
+          140-3 Implementation Guidance{' '}
+          <span className="text-xs text-muted-foreground">
+            (NIST FIPS 140-3 IG, Sep 2025 PQC update)
+          </span>{' '}
+          update retroactively imposed new{' '}
           <InlineTooltip term="Key Encapsulation Mechanism">KEM</InlineTooltip> self-test
           requirements on modules already validated. You cannot &ldquo;audit once&rdquo; and walk
           away.
@@ -93,8 +106,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           Layered on top: library EoL and CVE cadence (OpenSSL 1.1.1 EoL September 2023; Bouncy
           Castle high-severity CVEs every release cycle), OMB Memorandum M-23-02 mandating{' '}
           <strong>annual</strong> cryptographic-inventory submissions for US federal agencies
-          through 2035, CNSA 2.0 deadlines for National Security Systems (2030/2033), and EU
-          DORA/NIS2 mandating demonstrable cryptographic governance.
+          through 2035, CNSA 2.0 deadlines for National Security Systems (2030/2033), and EU DORA
+          (Art. 9 — ICT risk management) and NIS2 (Art. 21 — cybersecurity measures) mandating
+          demonstrable cryptographic governance.
         </p>
       </div>
     </section>
@@ -296,6 +310,139 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             </div>
           </div>
         </div>
+        <div className="bg-status-info/10 rounded-lg p-4 border border-status-info/30 mt-2">
+          <div className="flex items-start gap-2">
+            <ShieldCheck size={18} className="text-status-info mt-0.5" />
+            <div>
+              <div className="font-bold text-foreground text-sm mb-1">
+                SP 800-90B ESV — the parallel CMVP track most programs miss
+              </div>
+              <p className="text-xs text-muted-foreground">
+                A FIPS 140-3 algorithm certificate and an SP 800-90B Entropy Source Validation (ESV)
+                certificate are two separate CMVP submissions. A library or HSM can hold a valid
+                FIPS 140-3 certificate while its entropy source has never been independently
+                validated. PQC migration is the natural moment to close this gap: PQC algorithms
+                (ML-KEM, ML-DSA) require higher-quality randomness and demand an auditable chain
+                from validated entropy source through conditioning to the approved DRBG.
+                Infrastructure migrations &mdash; cloud lift-and-shift, containerization, VM
+                consolidation &mdash; are also ESV re-evaluation triggers, since they alter the
+                entropy pool available to the OS and can silently degrade seed quality. The
+                Assurance pillar CBOM should carry an ESV status field alongside the FIPS 140-3
+                validation field, and the remediation workflow must distinguish algorithm
+                re-validation from entropy source re-validation, as timelines and responsible
+                vendors differ.
+              </p>
+              <p className="text-xs text-muted-foreground mt-2">
+                The SP 800-90 suite itself is a living document: NIST revises SP 800-90A (DRBG
+                constructions), SP 800-90B (entropy source requirements), and SP 800-90C (RBG
+                construction) independently and on different schedules. Each revision can retire
+                approved mechanisms, tighten minimum-entropy thresholds, or impose new health-test
+                requirements. An ESV certificate bound to an earlier revision of SP 800-90B is not
+                automatically compliant with a subsequent one. The same CMVP change-notice
+                subscription that tracks FIPS 140-3 Implementation Guidance updates must also track
+                SP 800-90A/B/C revision publications and their effective dates. When a revision is
+                issued, the CBOM workflow should trigger an impact assessment: which validated
+                entropy sources are bound to the superseded revision, which require re-testing under
+                the new thresholds, and which vendor roadmaps commit to updated ESV submissions.
+              </p>
+              <p className="text-xs text-muted-foreground mt-2">
+                {' '}
+                <Link to="/learn/entropy-randomness" className="underline">
+                  Entropy &amp; Randomness (LM-009)
+                </Link>{' '}
+                covers the technical depth; the CMM process obligation is to track and close the
+                status gap.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-status-warning/10 rounded-lg p-4 border border-status-warning/30 mt-2">
+          <div className="flex items-start gap-2">
+            <Network size={18} className="text-status-warning mt-0.5" />
+            <div>
+              <div className="font-bold text-foreground text-sm mb-1">
+                Protocol standards and cipher deprecation — a continuous tracking obligation
+              </div>
+              <p className="text-xs text-muted-foreground">
+                The cryptographic posture of an organization is not defined by libraries and
+                certificates alone. Every protocol version and cipher suite negotiated on the wire
+                is a posture element: TLS 1.0/1.1 deprecated by{' '}
+                <span className="text-xs text-muted-foreground">(IETF)</span> RFC 8996, 3DES sunset
+                by <span className="text-xs text-muted-foreground">(NIST)</span> SP 800-131A Rev 2,
+                SHA-1 code-signing banned by CA/B Forum, RSA-1024 below NIST minimum-security
+                thresholds, RC4 prohibited by{' '}
+                <span className="text-xs text-muted-foreground">(IETF)</span> RFC 7465. Each of
+                these was a standards-body decision published on a specific date with a specific
+                effective date — and organizations that had no process to track standards-body
+                publications discovered the gap only when auditors or scanners flagged live
+                endpoints still negotiating deprecated suites.
+              </p>
+              <p className="text-xs text-muted-foreground mt-2">
+                The CMM Assurance pillar must maintain a{' '}
+                <strong>standards-watch subscription</strong> across the relevant bodies: IETF RFC
+                Obsoletes/Updates, NIST SP 800-131A revision cycle, NSA CNSA suite announcements,
+                CA/B Forum ballot outcomes, ETSI TS 119 312, BSI TR-02102, and ANSSI RGS. When a
+                deprecation notice is published, the CBOM classification rules must be updated to
+                flag the newly prohibited primitive, and the operational loop must trigger a
+                discovery scan for affected endpoints, libraries, and application cipher-suite
+                configurations. Remediation is not limited to patching a library version — it
+                includes reconfiguring cipher-suite preference lists in TLS termination points, SSH
+                server policies, IKEv2 proposals, and code-signing pipeline configurations, each of
+                which may have separate ownership and change-management tracks.
+              </p>
+              <p className="text-xs text-muted-foreground mt-2">
+                The Observability pillar closes the loop: continuous protocol-version and
+                cipher-suite scanning (passive TLS inspection, SSH banner collection, IKE proposal
+                enumeration) ensures that deprecated primitives do not re-appear after routine
+                infrastructure refreshes. A deprecation remediation that is not covered by ongoing
+                detection is not a remediation — it is a point-in-time fix waiting to regress.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-status-error/10 rounded-lg p-4 border border-status-error/30 mt-2">
+          <div className="flex items-start gap-2">
+            <AlertCircle size={18} className="text-status-error mt-0.5" />
+            <div>
+              <div className="font-bold text-foreground text-sm mb-1">
+                CVE management for crypto resources — three compounding constraints
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Crypto library CVEs introduce a constraint that generic vulnerability management
+                does not encounter: <strong>patch-then-revalidate bind.</strong> Patching OpenSSL
+                from 3.4.x to 3.5.x closes a CVE but also bumps the library version off the CMVP
+                validated list. The security team receives a green CVE status; the compliance team
+                is simultaneously looking at a red FIPS status. Both are correct at the same time.
+                The remediation workflow must treat these as two separate work items with separate
+                timelines, and the CBOM must carry a &ldquo;patch applied, revalidation in
+                progress&rdquo; state that is distinct from both &ldquo;vulnerable&rdquo; and
+                &ldquo;validated.&rdquo;
+              </p>
+              <p className="text-xs text-muted-foreground mt-2">
+                For HSM firmware CVEs, the constraint is even harder: the validated firmware
+                revision is chosen by the vendor, not the customer. Vendor-controlled CMVP
+                re-validation timelines run 6–18 months from CVE disclosure to a validated firmware
+                release appearing on the CMVP active list{' '}
+                <span className="text-xs text-muted-foreground">
+                  (NIST CMVP MIP List; observed range across HSM vendor re-submissions)
+                </span>
+                . During that window, the organization&apos;s options are limited to residual-risk
+                acceptance, compensating controls, or emergency procurement of an alternate
+                validated module. This window must be tracked explicitly in the Assurance pillar,
+                not assumed away because the vendor has acknowledged the CVE.
+              </p>
+              <p className="text-xs text-muted-foreground mt-2">
+                The third constraint is detection prerequisite: you cannot triage a crypto CVE
+                against components you have not enumerated. An OpenSSL 3.1.x CVE published on a
+                Thursday morning requires knowing, within hours, which services in production are
+                running a 3.1.x build. If CBOM completeness is below 80%, a significant fraction of
+                the affected surface is invisible until discovered manually. CBOM completeness
+                directly gates crypto CVE mean-time-to-detect and is therefore a security metric,
+                not just a compliance metric.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -443,6 +590,265 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <BookOpen size={16} />
             Pair with the Business Case module (LM-036)
           </Link>
+        </div>
+      </div>
+    </section>
+
+    {/* Section 7: Program Office Model */}
+    <section id="program-office" className="glass-panel p-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 rounded-lg bg-secondary/10">
+          <Users size={24} className="text-secondary" />
+        </div>
+        <h2 className="text-xl font-bold text-gradient">Program Office Model — Who Runs CPM</h2>
+      </div>
+      <div className="space-y-4 text-sm text-foreground/80">
+        <p>
+          A CPM program stalls when it is owned by nobody or owned by everyone. The five roles below
+          map to pillar ownership; headcount scales with organizational complexity.
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs border border-border">
+            <thead>
+              <tr className="bg-muted/60">
+                <th className="text-left p-2 border-b border-border">Role</th>
+                <th className="text-left p-2 border-b border-border">Pillar ownership</th>
+                <th className="text-left p-2 border-b border-border">FTE — small / mid / large</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="border-b border-border">
+                <td className="p-2 font-bold">Crypto Program Manager</td>
+                <td className="p-2">All pillars (program owner)</td>
+                <td className="p-2">0.5 / 1 / 2</td>
+              </tr>
+              <tr className="border-b border-border bg-muted/20">
+                <td className="p-2 font-bold">FIPS / CMVP Engineer</td>
+                <td className="p-2">Assurance</td>
+                <td className="p-2">0.5 / 1 / 2–3</td>
+              </tr>
+              <tr className="border-b border-border">
+                <td className="p-2 font-bold">CLM Architect</td>
+                <td className="p-2">Lifecycle</td>
+                <td className="p-2">0.5 / 1 / 2</td>
+              </tr>
+              <tr className="border-b border-border bg-muted/20">
+                <td className="p-2 font-bold">Crypto Developer Champion</td>
+                <td className="p-2">Inventory + Governance</td>
+                <td className="p-2">0 / 1 per BU / 1 per BU</td>
+              </tr>
+              <tr>
+                <td className="p-2 font-bold">Supplier Crypto Risk Analyst</td>
+                <td className="p-2">Governance + Observability</td>
+                <td className="p-2">0.25 / 0.5 / 1</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div className="overflow-x-auto">
+          <div className="text-xs font-bold text-foreground mb-2">RACI — Pillars × Roles</div>
+          <table className="w-full text-xs border border-border">
+            <thead>
+              <tr className="bg-muted/60">
+                <th className="text-left p-2 border-b border-border">Pillar</th>
+                <th className="p-2 border-b border-border text-center">Crypto PM</th>
+                <th className="p-2 border-b border-border text-center">FIPS Eng.</th>
+                <th className="p-2 border-b border-border text-center">CLM Arch.</th>
+                <th className="p-2 border-b border-border text-center">Dev Champion</th>
+                <th className="p-2 border-b border-border text-center">Supplier Analyst</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                ['Inventory', 'A', 'C', 'C', 'R', 'I'],
+                ['Governance', 'R/A', 'C', 'C', 'C', 'R'],
+                ['Lifecycle (CLM)', 'A', 'C', 'R', 'C', 'I'],
+                ['Observability', 'A', 'C', 'R', 'I', 'R'],
+                ['Assurance (FIPS)', 'A', 'R', 'C', 'I', 'C'],
+              ].map(([pillar, ...cells]) => (
+                <tr key={pillar} className="border-b border-border last:border-0">
+                  <td className="p-2 font-bold">{pillar}</td>
+                  {cells.map((c, i) => (
+                    <td key={i} className="p-2 text-center text-muted-foreground">
+                      {c}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="text-[10px] text-muted-foreground mt-1">
+            R = Responsible · A = Accountable · C = Consulted · I = Informed
+          </p>
+        </div>
+
+        <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
+          <div className="text-xs font-bold text-foreground mb-2">
+            Skills gap — 6 competency domains
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {[
+              [
+                'FIPS / CMVP process',
+                'Understanding CMVP submission, IG updates, MIP queue management',
+              ],
+              [
+                'CLM tooling',
+                'ACME/EST/CMP protocols, CA integration, EJBCA / Keyfactor / Venafi API depth',
+              ],
+              [
+                'CBOM tooling',
+                'SBOM generation (Syft, cdxgen), CycloneDX enrichment, inventory pipeline',
+              ],
+              [
+                'PQC algorithms',
+                'ML-KEM, ML-DSA, SLH-DSA parameter sets, hybrid construction tradeoffs',
+              ],
+              [
+                'Vendor negotiation — HSM firmware',
+                'Reading CMVP cert scope, firmware upgrade impact analysis, re-validation timelines',
+              ],
+              [
+                'Regulatory mapping',
+                'OMB M-23-02, CNSA 2.0, DORA Art. 9, NIS2 — mapping requirements to CPM pillar actions',
+              ],
+            ].map(([domain, detail]) => (
+              <div key={domain} className="text-xs">
+                <div className="font-bold text-foreground">{domain}</div>
+                <p className="text-[11px] text-muted-foreground">{detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* Section 8: Pre-Deployment Lab Blueprint */}
+    <section id="lab-blueprint" className="glass-panel p-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 rounded-lg bg-accent/10">
+          <FlaskConical size={24} className="text-accent" />
+        </div>
+        <h2 className="text-xl font-bold text-gradient">Pre-Deployment Lab Blueprint</h2>
+      </div>
+      <div className="space-y-4 text-sm text-foreground/80">
+        <p>
+          Crypto changes — library upgrades, HSM firmware, CA rotation, cipher-suite reconfiguration
+          — must be validated in an isolated environment before touching production. The lab below
+          is the minimum viable configuration; scale it to your risk profile.
+        </p>
+
+        <div className="bg-status-warning/10 rounded-lg p-4 border border-status-warning/30">
+          <div className="flex items-start gap-2">
+            <HardDrive size={18} className="text-status-warning mt-0.5" />
+            <div>
+              <div className="font-bold text-foreground text-sm mb-2">Hardware requirements</div>
+              <ul className="text-xs space-y-1.5 text-muted-foreground list-disc list-inside">
+                <li>
+                  <strong>1× FIPS 140-3 L3 network-attached HSM</strong> — Thales Luna Network HSM 7
+                  or Entrust nShield 5c recommended for PQC boundary coverage. Used for key
+                  generation, signing, and firmware-upgrade testing under lab conditions.
+                </li>
+                <li>
+                  <strong>1× TLS termination appliance or isolated VM</strong> (nginx / HAProxy) —
+                  for cipher-suite configuration testing and protocol-version enforcement
+                  validation.
+                </li>
+                <li>
+                  <strong>1× network tap / span port</strong> — passive TLS handshake capture for
+                  cipher-suite enumeration (nmap, sslyze, testssl.sh). Verifies what the stack
+                  actually negotiates vs. what was configured.
+                </li>
+                <li>
+                  <strong>Optional:</strong> smart card / USB token (FIPS L4 boundary testing),
+                  representative IoT/embedded device sample for constrained-env library validation.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-status-info/10 rounded-lg p-4 border border-status-info/30">
+          <div className="flex items-start gap-2">
+            <Package size={18} className="text-status-info mt-0.5" />
+            <div>
+              <div className="font-bold text-foreground text-sm mb-2">Software stack</div>
+              <ul className="text-xs space-y-1.5 text-muted-foreground list-disc list-inside">
+                <li>
+                  <strong>FIPS-validated library build</strong> — OpenSSL 3.5 FIPS provider or
+                  wolfCrypt FIPS, compiled and installed in a clean isolated test environment
+                  (separate from the OS package manager&apos;s OpenSSL).
+                </li>
+                <li>
+                  <strong>ACVP client + NIST demo server</strong> — run NIST&apos;s ACVP demo
+                  endpoint for algorithm self-test before and after any library or HSM firmware
+                  change. Produces evidence artifacts for the Assurance pillar.
+                </li>
+                <li>
+                  <strong>Certificate scanner</strong> — Keyfactor Discovery, Venafi TLC scanner, or
+                  open-source tooling (crt.sh lookups + custom scripts) for shadow-cert discovery in
+                  the lab network.
+                </li>
+                <li>
+                  <strong>SBOM generator → CBOM enrichment pipeline</strong> — Syft or cdxgen
+                  generates CycloneDX SBOM; enrichment maps crypto components to CMVP status and PQC
+                  readiness.
+                </li>
+                <li>
+                  <strong>Separate test CA hierarchy</strong> — never share roots with production.
+                  Document expiry of all test CA certs; include them in the lab CBOM.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-muted/50 rounded-lg p-4 border border-border">
+          <div className="font-bold text-foreground text-sm mb-2">Lab isolation requirements</div>
+          <ul className="text-xs space-y-1 text-muted-foreground list-disc list-inside">
+            <li>
+              VLAN-segregated from production; no direct internet routing (proxy only for NIST/CMVP
+              lookups).
+            </li>
+            <li>HSM partition separate from any production HSM tenant; use dedicated lab slots.</li>
+            <li>
+              Lab credentials must not be usable in production; separate PKI roots enforces this
+              structurally.
+            </li>
+          </ul>
+        </div>
+
+        <div className="bg-accent/5 rounded-lg p-4 border border-accent/20">
+          <div className="font-bold text-foreground text-sm mb-2">
+            Lab-to-prod promotion workflow — required evidence per change type
+          </div>
+          <ol className="text-xs space-y-2 text-muted-foreground list-decimal list-inside">
+            <li>
+              <strong>Cipher-suite / protocol-version change:</strong> cipher-suite scan clean (all
+              endpoints negotiate approved suites), testssl.sh report attached, no deprecated
+              protocol negotiated.
+            </li>
+            <li>
+              <strong>Library upgrade:</strong> CMVP cert number verified active on csrc.nist.gov
+              for the new version; ACVP run results attached; CVE scan clean on the new version.
+            </li>
+            <li>
+              <strong>HSM firmware upgrade:</strong> new firmware hash verified against vendor
+              security advisory; CMVP cert number for the upgraded firmware confirmed active (not
+              historical); HSM self-test passed; ACVP evidence re-run if algorithm set changed.
+            </li>
+            <li>
+              <strong>CA rotation (intermediate or root):</strong> test CA hierarchy created, all
+              relying-party systems updated and re-tested, CRL/OCSP propagation verified, expiry of
+              new certs entered in CLM system.
+            </li>
+            <li>
+              <strong>Protocol deprecation rollout:</strong> all endpoints in scope confirmed
+              non-negotiating of deprecated protocol by passive scan; rollback procedure documented
+              and tested; SIEM drift-alert rule updated for the new policy baseline.
+            </li>
+          </ol>
         </div>
       </div>
     </section>

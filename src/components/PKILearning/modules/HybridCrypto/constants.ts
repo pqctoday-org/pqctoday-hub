@@ -1,4 +1,69 @@
 // SPDX-License-Identifier: GPL-3.0-only
+
+// ── Hybrid Signature Spectrum (IETF draft-ietf-pquip-hybrid-signature-spectrums) ──
+
+export type NonSeparabilityLevel = 'none' | 'wns' | 'sns'
+export type HybridSigConstruction = 'concatenation' | 'nesting' | 'fused'
+
+export interface HybridSignatureModel {
+  id: string
+  name: string
+  construction: HybridSigConstruction
+  nonSeparability: NonSeparabilityLevel
+  components: string[]
+  tagline: string
+  description: string
+  reference: string
+  referenceUrl: string
+  separable: boolean
+  backwardsCompatible: boolean
+}
+
+export const HYBRID_SIGNATURE_MODELS: HybridSignatureModel[] = [
+  {
+    id: 'concatenation',
+    name: 'Concatenation',
+    construction: 'concatenation',
+    nonSeparability: 'none',
+    components: ['EC-Schnorr (secp256k1)', 'ML-DSA-65'],
+    tagline: 'sig₁ ‖ sig₂',
+    description:
+      'Two independent signatures concatenated. Either component verifies alone. Easiest to implement and most backwards-compatible, but provides no protection against separability attacks.',
+    reference: 'IETF draft §1.3.3',
+    referenceUrl: 'https://datatracker.ietf.org/doc/draft-ietf-pquip-hybrid-signature-spectrums/',
+    separable: true,
+    backwardsCompatible: true,
+  },
+  {
+    id: 'nesting',
+    name: 'Nesting',
+    construction: 'nesting',
+    nonSeparability: 'wns',
+    components: ['EC-Schnorr (secp256k1)', 'ML-DSA-65'],
+    tagline: 'sign_ML(msg ‖ sig_EC)',
+    description:
+      'ML-DSA outer covers msg ‖ ecSig. Swapping the EC signature invalidates the outer layer. EC component still verifies alone — Weak Non-Separability (WNS).',
+    reference: 'IETF draft §1.3.3',
+    referenceUrl: 'https://datatracker.ietf.org/doc/draft-ietf-pquip-hybrid-signature-spectrums/',
+    separable: true,
+    backwardsCompatible: true,
+  },
+  {
+    id: 'silithium',
+    name: 'Silithium (Fused)',
+    construction: 'fused',
+    nonSeparability: 'sns',
+    components: ['EC-Schnorr (secp256k1)', 'ML-DSA-65'],
+    tagline: 'μ = H(R ‖ pk_ec ‖ pk_ml ‖ msg)',
+    description:
+      'Fused Fiat-Shamir: both components share a single challenge μ. Neither component verifies without the shared μ. Achieves Strong Non-Separability (SNS) with smaller signature than concatenation.',
+    reference: 'ePrint 2025/2059',
+    referenceUrl: 'https://eprint.iacr.org/2025/2059',
+    separable: false,
+    backwardsCompatible: false,
+  },
+]
+
 export interface HybridAlgorithmInfo {
   name: string
   type: 'classical' | 'pqc' | 'hybrid'
@@ -82,6 +147,19 @@ export const HYBRID_ALGORITHMS: HybridAlgorithmInfo[] = [
     ciphertextOrSigBytes: 3309,
     nistLevel: 3,
     description: 'FIPS 204 lattice-based signature. Recommended general-purpose.',
+  },
+  // Hybrid signatures
+  {
+    name: 'Silithium',
+    type: 'hybrid',
+    category: 'signature',
+    opensslAlgorithm: 'FUSED',
+    publicKeyBytes: 1952 + 33, // ML-DSA-65 + secp256k1 compressed
+    privateKeyBytes: 4032 + 32, // ML-DSA-65 + secp256k1
+    ciphertextOrSigBytes: 3293 + 33 + 32, // ML-DSA z + R + s = 3358
+    nistLevel: 3,
+    description:
+      'EC-Schnorr (secp256k1) + ML-DSA-65 fused via adapted Fiat-Shamir. Strong Non-Separability. ePrint 2025/2059.',
   },
 ]
 

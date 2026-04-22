@@ -14,6 +14,10 @@ import {
   PackageCheck,
   Globe,
   Radio,
+  Fingerprint,
+  ExternalLink,
+  ShieldCheck,
+  ShieldAlert,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
@@ -704,6 +708,255 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               </div>
             </div>
           </Link>
+        </div>
+      </section>
+
+      {/* ── Hybrid Signature Spectrum ──────────────────────────────────────────── */}
+      <section className="space-y-6">
+        <div className="flex items-center gap-3">
+          <Fingerprint className="text-primary shrink-0" size={22} />
+          <div>
+            <h2 className="text-xl font-bold text-foreground">Hybrid Signature Spectrum</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Signing with both a classical and a PQC algorithm at the same time. The key design
+              question: can either component be stripped and verified alone?
+            </p>
+          </div>
+        </div>
+
+        {/* IETF draft reference */}
+        <div className="flex items-start gap-3 p-3 bg-primary/5 border border-primary/20 rounded-lg text-sm">
+          <ExternalLink size={15} className="text-primary shrink-0 mt-0.5" />
+          <div>
+            <span className="font-semibold text-foreground">
+              IETF draft-ietf-pquip-hybrid-signature-spectrums-07
+            </span>{' '}
+            <span className="text-muted-foreground">(AUTH48 — near-RFC, Informational)</span>
+            <p className="text-muted-foreground mt-1">
+              Defines the taxonomy of hybrid signature constructions and a non-separability
+              spectrum. Basis for evaluating all hybrid signature proposals including Silithium.
+            </p>
+            <a
+              href="https://datatracker.ietf.org/doc/draft-ietf-pquip-hybrid-signature-spectrums/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline text-xs mt-1 inline-block"
+            >
+              datatracker.ietf.org ↗
+            </a>
+          </div>
+        </div>
+
+        {/* Construction taxonomy table */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm border-collapse">
+            <thead>
+              <tr className="border-b border-border">
+                <th className="text-left py-2 pr-4 text-muted-foreground font-medium">
+                  Construction
+                </th>
+                <th className="text-left py-2 pr-4 text-muted-foreground font-medium">
+                  How it works
+                </th>
+                <th className="text-left py-2 pr-4 text-muted-foreground font-medium">
+                  Non-separability
+                </th>
+                <th className="text-left py-2 text-muted-foreground font-medium">
+                  Backwards compat
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              <tr>
+                <td className="py-3 pr-4 font-semibold text-foreground">Concatenation</td>
+                <td className="py-3 pr-4 font-mono text-xs text-muted-foreground">sig₁ ‖ sig₂</td>
+                <td className="py-3 pr-4">
+                  <span className="inline-flex items-center gap-1 text-xs text-status-warning">
+                    <ShieldAlert size={13} /> None / WNS
+                  </span>
+                </td>
+                <td className="py-3 text-xs text-status-success">Yes</td>
+              </tr>
+              <tr>
+                <td className="py-3 pr-4 font-semibold text-foreground">Nesting</td>
+                <td className="py-3 pr-4 font-mono text-xs text-muted-foreground">
+                  sign_ML(msg ‖ sig_EC)
+                </td>
+                <td className="py-3 pr-4">
+                  <span className="inline-flex items-center gap-1 text-xs text-status-warning">
+                    <ShieldAlert size={13} /> WNS
+                  </span>
+                </td>
+                <td className="py-3 text-xs text-status-success">Yes</td>
+              </tr>
+              <tr>
+                <td className="py-3 pr-4 font-semibold text-foreground">Fused (Silithium)</td>
+                <td className="py-3 pr-4 font-mono text-xs text-muted-foreground">
+                  shared μ = H(R ‖ pk_ec ‖ pk_ml ‖ msg)
+                </td>
+                <td className="py-3 pr-4">
+                  <span className="inline-flex items-center gap-1 text-xs text-status-success">
+                    <ShieldCheck size={13} /> SNS
+                  </span>
+                </td>
+                <td className="py-3 text-xs text-status-error">No</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Non-separability spectrum */}
+        <div className="glass-panel p-4 space-y-3">
+          <h3 className="font-semibold text-foreground text-sm">Non-Separability Spectrum</h3>
+          <div className="flex items-center gap-0 text-xs">
+            <div className="flex-1 text-center py-2 bg-status-error/10 border border-status-error/20 rounded-l-lg">
+              <div className="font-semibold text-status-error">None</div>
+              <div className="text-muted-foreground">Either sig strips cleanly</div>
+            </div>
+            <div className="flex-1 text-center py-2 bg-status-warning/10 border-y border-status-warning/20">
+              <div className="font-semibold text-status-warning">WNS</div>
+              <div className="text-muted-foreground">Swapping invalidates outer</div>
+            </div>
+            <div className="flex-1 text-center py-2 bg-status-success/10 border border-status-success/20">
+              <div className="font-semibold text-status-success">SNS</div>
+              <div className="text-muted-foreground">Neither verifies alone</div>
+            </div>
+            <div className="flex-1 text-center py-2 bg-primary/10 border border-primary/20 rounded-r-lg">
+              <div className="font-semibold text-primary">SNS + Sim</div>
+              <div className="text-muted-foreground">Both must verify simultaneously</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Silithium */}
+        <div className="glass-panel p-5 space-y-4">
+          <div className="flex items-start gap-3">
+            <Fingerprint className="text-primary shrink-0 mt-0.5" size={18} />
+            <div>
+              <h3 className="font-semibold text-foreground">
+                Silithium — Compact Fused Hybrid Signature
+              </h3>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Devevey, Guerreau, Roméas · ePrint 2025/2059 · November 2025
+              </p>
+            </div>
+            <a
+              href="https://eprint.iacr.org/2025/2059"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-auto flex items-center gap-1 text-xs text-primary hover:underline shrink-0"
+            >
+              <ExternalLink size={12} /> ePrint
+            </a>
+          </div>
+
+          <p className="text-sm text-muted-foreground">
+            Silithium adapts the Fiat-Shamir transform to produce a fused hybrid signature from
+            EC-Schnorr (classical, secp256k1) and ML-DSA-65 (FIPS 204). Both components share a
+            single challenge μ derived from both public keys, the EC commitment R, and the message.
+            Neither component can be verified independently, achieving Strong Non-Separability
+            (SNS).
+          </p>
+
+          {/* Protocol steps */}
+          <div className="space-y-2 text-sm">
+            <div className="font-medium text-foreground text-xs uppercase tracking-wide text-muted-foreground">
+              Protocol (Sign)
+            </div>
+            {[
+              ['1', 'EC commitment', 'k ← DRBG(sk_ec, msg),  R = k·G  (secp256k1 base point)'],
+              [
+                '2',
+                'Shared challenge',
+                'μ = H(R ‖ pk_ec ‖ pk_ml ‖ msg)  expanded to 64 bytes  (approx.: full paper also binds ML-DSA commitment w1)',
+              ],
+              ['3', 'EC response', 's = (k + e·sk_ec) mod n   where e = μ[:32] as bigint'],
+              [
+                '4',
+                'ML-DSA response',
+                'z = ML-DSA.Sign_internal(sk_ml, μ)   (FIPS 204 §5.2 external-μ mode)',
+              ],
+              [
+                '5',
+                'Output',
+                'σ = R ‖ s ‖ z    (same total size as concatenation — savings require full w1 binding)',
+              ],
+            ].map(([step, label, code]) => (
+              <div key={step} className="flex gap-3 items-start">
+                <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-xs flex items-center justify-center shrink-0 font-bold mt-0.5">
+                  {step}
+                </span>
+                <div>
+                  <span className="text-foreground font-medium text-sm">{label}: </span>
+                  <code className="text-xs font-mono text-muted-foreground">{code}</code>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Security properties */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            {[
+              {
+                icon: ShieldCheck,
+                color: 'text-status-success',
+                label: 'Hybrid EU-CMA',
+                desc: 'Secure if either EC-Schnorr or ML-DSA is unforgeable',
+              },
+              {
+                icon: ShieldCheck,
+                color: 'text-status-success',
+                label: 'SNS achieved',
+                desc: 'Neither component verifies without the shared μ',
+              },
+              {
+                icon: ShieldAlert,
+                color: 'text-status-warning',
+                label: 'No backwards compat',
+                desc: 'Requires a verifier that understands the fused scheme',
+              },
+            ].map(({ icon: Icon, color, label, desc }) => (
+              <div key={label} className="flex gap-2 p-2 bg-muted/50 rounded">
+                <Icon size={14} className={`${color} shrink-0 mt-0.5`} />
+                <div>
+                  <div className="font-medium text-foreground">{label}</div>
+                  <div className="text-muted-foreground">{desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Attack model */}
+        <div className="space-y-3">
+          <h3 className="font-semibold text-foreground text-sm flex items-center gap-2">
+            <Shield size={16} className="text-primary" />
+            Attack Model — Why Fused Wins
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            {[
+              {
+                name: 'Separability Attack',
+                description:
+                  'Adversary strips the PQC component and presents only the classical signature. Verifiers that accept classical-only sigs are fooled. Prevented by SNS.',
+              },
+              {
+                name: 'Recombination Attack',
+                description:
+                  'Adversary combines a legitimate EC sig with a different ML-DSA sig (or vice versa) to forge a hybrid signature. Prevented because μ ties both to the same R.',
+              },
+              {
+                name: 'Cross-Protocol Attack',
+                description:
+                  'A valid signature in one hybrid scheme is replayed in another. Prevented by including both pk_ec and pk_ml in the challenge, tying the sig to both key pairs.',
+              },
+            ].map(({ name, description }) => (
+              <div key={name} className="glass-panel p-3 space-y-1">
+                <div className="font-semibold text-foreground">{name}</div>
+                <div className="text-muted-foreground">{description}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
