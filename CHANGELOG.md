@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.4.0] - April 22, 2026
+
 ### Changed
 
 - **SP 800-227 coverage — hybrid KEM depth & cross-module tagging** [persona:architect] [persona:developer] [persona:researcher] [view:/learn] [view:/library] — closes the gap between SP 800-227 being referenced and it being taught:
