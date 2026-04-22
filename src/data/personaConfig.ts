@@ -244,6 +244,13 @@ export const MODULE_INDUSTRY_RELEVANCE: Record<string, string[] | null> = {
   'arch-quantum-impact': null,
   'ops-quantum-impact': null,
   'research-quantum-impact': null,
+  'crypto-mgmt-modernization': [
+    'Finance & Banking',
+    'Government & Defense',
+    'Technology',
+    'Healthcare',
+  ],
+  'slh-dsa': ['Government & Defense', 'Finance & Banking', 'Technology'],
 }
 
 /** Nav paths that are always shown regardless of persona. */
