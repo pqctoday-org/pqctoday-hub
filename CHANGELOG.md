@@ -8,6 +8,32 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **WASM charon validation exports (Phase 3a)** — the
+  `strongswan-v2.wasm` binary now exports three real library-level
+  validators that prove the ML-DSA + ML-KEM source patches are live, not
+  just present in source:
+  - `wasm_vpn_validate_proposal(str)` — parses an IKEv2 proposal string
+    through charon's own `proposal_create_from_string()` and reports
+    whether any ML-KEM transform (IDs 35/36/37 per
+    draft-ietf-ipsecme-ikev2-mlkem) was accepted.
+  - `wasm_vpn_validate_cert(pem, len)` — loads a PEM cert via
+    `lib->creds->create(CRED_CERTIFICATE, CERT_X509, BUILD_BLOB_PEM)` and
+    reports the recognized key type, with `is_ml_dsa: true` when RFC 9881
+    OIDs were parsed.
+  - `wasm_vpn_list_key_exchanges()` — returns the numeric transform IDs
+    charon recognizes for ML-KEM + classical groups.
+
+  Exposed through `src/wasm/strongswan-v2/bridge-v2.ts` as
+  `validateProposal()`, `validateCert()`, `listKeyExchanges()`. Wired into
+  the VPN simulator as a new **Validate WASM charon** panel in the Raw
+  Config tab.
+
+  This closes plans 1 and 2 of the hub↔sandbox gap report at the library
+  validation level. The simulation-only caveat on ML-KEM proposal strings
+  has been replaced with accurate language: the proposals do parse against
+  the real charon engine; only the full IKE handshake driver (Phase 3b+
+  of the WASM shims) remains a simulation.
+
 - **VPN Simulator — gap-closure vs the Docker sandbox**, phase 1 of 6:
   - **Algorithm benchmark matrix** — new "Run algorithm matrix" button runs
     keygen + self-sign for RSA-3072 and ML-DSA-{44, 65, 87} against the live

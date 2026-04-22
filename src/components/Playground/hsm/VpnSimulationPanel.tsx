@@ -741,6 +741,13 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   } | null>(null)
   const [certGenLoading, setCertGenLoading] = useState(false)
   const [savedSessionBanner, setSavedSessionBanner] = useState<string | null>(null)
+  const [charonValidation, setCharonValidation] = useState<{
+    proposal?: { valid: boolean; hasMlKem?: boolean; error?: string }
+    cert?: { valid: boolean; keyType?: string; isMlDsa?: boolean; error?: string }
+    keMap?: Record<string, number>
+    running: boolean
+    error?: string
+  }>({ running: false })
   const [sessionHistoryOpen, setSessionHistoryOpen] = useState(false)
   const [sessionHistory, setSessionHistory] = useState<
     Array<{
@@ -2618,9 +2625,11 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               />
               {selectedMode !== 'classical' && (
                 <p className="text-[10px] text-muted-foreground/70 italic mt-1">
-                  ML-KEM proposal strings (e.g. <code>aes256-mlkem768-sha384!</code>) are
-                  simulation-only — real StrongSwan requires the ipsecme-ikev2-mlkem patch and
-                  IANA-assigned transform IDs.
+                  ML-KEM proposal strings (e.g. <code>aes256-mlkem768-sha384!</code>) parse
+                  successfully against charon&apos;s proposal engine in the WASM binary (ML-KEM
+                  transform IDs 35/36/37 per draft-ietf-ipsecme-ikev2-mlkem are recognized) — use
+                  the &ldquo;Validate WASM charon&rdquo; panel below to confirm. The full IKE
+                  handshake still runs as a simulation until Phase 3b+ of the WASM shims lands.
                 </p>
               )}
             </div>
@@ -2785,6 +2794,102 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     ))}
                   </tbody>
                 </table>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-3 p-3 border border-border rounded-lg bg-muted/30">
+            <div className="flex items-center justify-between gap-3 mb-2">
+              <div className="text-xs text-muted-foreground">
+                Validate WASM charon — exercises real library calls inside the v2 WASM build: parses
+                the current IKE proposal via{' '}
+                <code className="text-[10px]">proposal_create_from_string()</code> (confirms ML-KEM
+                transform IDs 35/36/37 per draft-ietf-ipsecme-ikev2-mlkem) and loads the active cert
+                via <code className="text-[10px]">lib-&gt;creds-&gt;create()</code> (confirms RFC
+                9881 ML-DSA OIDs are recognized).
+              </div>
+              <Button
+                variant="outline"
+                className="text-xs whitespace-nowrap"
+                disabled={charonValidation.running || !browserSupport.supported}
+                onClick={async () => {
+                  setCharonValidation({ running: true })
+                  try {
+                    const { validateProposal, validateCert, listKeyExchanges } =
+                      await import('@/wasm/strongswan-v2/bridge-v2')
+                    const keMap = await listKeyExchanges()
+                    const props = activeInitIpsec.match(/ike\s*=\s*([^\s]+)/)
+                    const proposalStr = props?.[1] ?? 'aes256-sha256-mlkem768'
+                    const prop = await validateProposal(proposalStr)
+                    const cert = certData?.initCert
+                      ? await validateCert(certData.initCert)
+                      : undefined
+                    setCharonValidation({
+                      running: false,
+                      proposal: prop,
+                      cert,
+                      keMap: {
+                        ML_KEM_512: keMap.mlKem512,
+                        ML_KEM_768: keMap.mlKem768,
+                        ML_KEM_1024: keMap.mlKem1024,
+                        CURVE_25519: keMap.curve25519,
+                        ECP_256_BIT: keMap.ecp256,
+                        ECP_384_BIT: keMap.ecp384,
+                      },
+                    })
+                  } catch (err: unknown) {
+                    setCharonValidation({
+                      running: false,
+                      error: err instanceof Error ? err.message : String(err),
+                    })
+                  }
+                }}
+              >
+                {charonValidation.running ? 'Validating…' : 'Validate WASM charon'}
+              </Button>
+            </div>
+            {charonValidation.error && (
+              <div className="text-[11px] text-status-error">Error: {charonValidation.error}</div>
+            )}
+            {charonValidation.keMap && (
+              <div className="space-y-1 text-[11px]">
+                <div className="text-muted-foreground">
+                  <strong className="text-foreground">Key-exchange transforms recognized:</strong>{' '}
+                  {Object.entries(charonValidation.keMap).map(([k, v]) => (
+                    <span key={k} className="mr-3">
+                      <code className="text-[10px]">{k}</code>=<strong>{v}</strong>
+                    </span>
+                  ))}
+                </div>
+                {charonValidation.proposal && (
+                  <div className="text-muted-foreground">
+                    <strong className="text-foreground">Proposal parse:</strong>{' '}
+                    {charonValidation.proposal.valid ? (
+                      <span className="text-status-success">
+                        valid · has ML-KEM: {charonValidation.proposal.hasMlKem ? 'yes' : 'no'}
+                      </span>
+                    ) : (
+                      <span className="text-status-error">
+                        invalid — {charonValidation.proposal.error ?? 'unknown'}
+                      </span>
+                    )}
+                  </div>
+                )}
+                {charonValidation.cert && (
+                  <div className="text-muted-foreground">
+                    <strong className="text-foreground">Initiator cert:</strong>{' '}
+                    {charonValidation.cert.valid ? (
+                      <span className="text-status-success">
+                        key type <code>{charonValidation.cert.keyType}</code>
+                        {charonValidation.cert.isMlDsa && ' · ML-DSA OID recognized'}
+                      </span>
+                    ) : (
+                      <span className="text-status-error">
+                        invalid — {charonValidation.cert.error ?? 'unknown'}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -3283,7 +3388,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   authMode === 'dual' && !certData
                     ? 'Generate certificates first'
                     : authMode === 'dual' && (clientAlg === 'ML-DSA' || serverAlg === 'ML-DSA')
-                      ? 'ML-DSA cert will be loaded but strongSwan core does not yet know the ML-DSA OID — expect charon to warn and fall through to PSK-only primary auth. The cert artifacts themselves are real and inspectable.'
+                      ? 'ML-DSA certs are recognized by the WASM charon build (RFC 9881 OIDs loaded via pkcs11 + x509 plugins — use the Validate WASM charon panel below to confirm). The full IKE handshake runs as a simulation until Phase 3b+ of the WASM shims; the cert artifacts themselves are real and inspectable.'
                       : undefined
                 }
                 data-testid="vpn-start-daemon"

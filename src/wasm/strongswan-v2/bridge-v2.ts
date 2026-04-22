@@ -19,6 +19,7 @@ interface StrongswanV2Module {
   HEAPU8: Uint8Array
   _malloc: (n: number) => number
   _free: (p: number) => void
+  UTF8ToString: (ptr: number) => string
 }
 
 type V2Factory = (opts: {
@@ -189,4 +190,82 @@ export async function runV2KemTwoWorker(
     secretsMatch: match,
     events,
   }
+}
+
+// ── Phase 3a validation exports ────────────────────────────────────────────
+// These call real charon library functions (proposal_create_from_string,
+// lib->creds->create, key_exchange enum) in the WASM binary. They deliver
+// plans 1 and 2 at the library-validation level without running a full IKE.
+
+export interface ProposalValidation {
+  valid: boolean
+  hasMlKem?: boolean
+  proposal?: string
+  error?: string
+}
+
+export interface CertValidation {
+  valid: boolean
+  keyType?: string
+  isMlDsa?: boolean
+  error?: string
+}
+
+export interface KeyExchangeList {
+  mlKem512: number
+  mlKem768: number
+  mlKem1024: number
+  curve25519: number
+  ecp256: number
+  ecp384: number
+}
+
+async function callReturningJson<T>(fn: string, argTypes: string[], args: unknown[]): Promise<T> {
+  const mod = await loadV2(() => {})
+  mod.ccall('wasm_vpn_boot', 'number', [], [])
+  const ptr = mod.ccall(fn, 'number', argTypes, args)
+  if (!ptr) throw new Error(`${fn} returned null pointer`)
+  const json = mod.UTF8ToString(ptr)
+  return JSON.parse(json) as T
+}
+
+/** Validate an IKEv2 proposal string via charon's proposal parser. Returns
+ *  whether it parses and whether any ML-KEM transform was accepted. */
+export async function validateProposal(proposal: string): Promise<ProposalValidation> {
+  const mod = await loadV2(() => {})
+  mod.ccall('wasm_vpn_boot', 'number', [], [])
+  const bytes = new TextEncoder().encode(proposal + '\0')
+  const ptr = mod._malloc(bytes.length)
+  mod.HEAPU8.set(bytes, ptr)
+  const resPtr = mod.ccall('wasm_vpn_validate_proposal', 'number', ['number'], [ptr])
+  mod._free(ptr)
+  if (!resPtr) return { valid: false, error: 'null_return' }
+  return JSON.parse(mod.UTF8ToString(resPtr)) as ProposalValidation
+}
+
+/** Validate a PEM-encoded certificate via charon's credential loader. Returns
+ *  the recognized key type; reports is_ml_dsa when the cert's SubjectPublicKeyInfo
+ *  carries ML-DSA OIDs per RFC 9881. */
+export async function validateCert(pem: string): Promise<CertValidation> {
+  const mod = await loadV2(() => {})
+  mod.ccall('wasm_vpn_boot', 'number', [], [])
+  const bytes = new TextEncoder().encode(pem)
+  const ptr = mod._malloc(bytes.length)
+  mod.HEAPU8.set(bytes, ptr)
+  const resPtr = mod.ccall(
+    'wasm_vpn_validate_cert',
+    'number',
+    ['number', 'number'],
+    [ptr, bytes.length]
+  )
+  mod._free(ptr)
+  if (!resPtr) return { valid: false, error: 'null_return' }
+  return JSON.parse(mod.UTF8ToString(resPtr)) as CertValidation
+}
+
+/** Report the numeric IKE transform IDs charon recognizes for ML-KEM and
+ *  classical groups. Useful for confirming draft-ietf-ipsecme-ikev2-mlkem
+ *  support in the active WASM build. */
+export async function listKeyExchanges(): Promise<KeyExchangeList> {
+  return callReturningJson<KeyExchangeList>('wasm_vpn_list_key_exchanges', [], [])
 }
