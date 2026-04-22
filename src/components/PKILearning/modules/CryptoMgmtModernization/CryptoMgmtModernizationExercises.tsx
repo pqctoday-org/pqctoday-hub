@@ -87,6 +87,16 @@ const EXERCISES = [
     hint: "The platform supplies data; the program supplies ownership, iteration, and decision-making. The Learn tab's dual-loop section is the canonical reply.",
     step: 0,
   },
+  {
+    id: 'legacy-crypto-gateway',
+    title: 'Crypto gateway or full migration — how do you decide?',
+    badge: 'Mitigate/Migrate',
+    badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
+    scenario:
+      'A 15-year-old PKI system issues SHA-1 certificates. The original development team is gone, the source code is partially unavailable, and the system cannot be taken offline. CSWP.39 §4.6 describes a "crypto gateway" option. Walk through the decision: gateway now + sunset plan, or emergency migration?',
+    hint: 'CSWP.39 §4.6: use a bump-in-the-wire when direct modification is infeasible. Key questions: Is there a scheduled replacement? Can the gateway itself be made agile? The gateway buys time — it is not a permanent solution. Model the sunset date in the ROI Builder. See the Visual tab for the Mitigation vs. Migration zones in the CSWP.39 process diagram.',
+    step: 3,
+  },
 ]
 
 export const CryptoMgmtModernizationExercises: React.FC<CryptoMgmtModernizationExercisesProps> = ({
@@ -97,8 +107,8 @@ export const CryptoMgmtModernizationExercises: React.FC<CryptoMgmtModernizationE
       <div className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient mb-2">CMM Exercises</h2>
         <p className="text-muted-foreground text-sm">
-          Eight real-world scenarios that stress-test Cryptographic Posture Management thinking.
-          Each points at the workshop tool where you can build the answer.
+          Nine real-world scenarios that stress-test Cryptographic Posture Management thinking. Each
+          points at the workshop tool where you can build the answer.
         </p>
       </div>
 

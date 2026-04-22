@@ -6,6 +6,20 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.2] - April 22, 2026
+
+### Added
+
+- **CryptoMgmtModernization — full NIST CSWP.39 realignment** [persona:architect] [persona:executive] [persona:ciso] [view:/learn] — the module is now explicitly framed as the operational execution layer of the NIST CSWP.39 (Dec 2025) Crypto Agility Strategic Plan:
+  - _CSWP.39 process diagram (Visual tab)_ — interactive reproduction of CSWP.39 Fig. 3 (`CryptoAgilityProcessDiagram`); six clickable zones (Governance, Assets, Management Tools, Data-Centric Risk Management, Mitigation, Migration); each zone reveals what belongs there, which CPM pillar maps to it, and the CSWP.39 section reference.
+  - _Three new Learn tab sections_ injected after "Why Modernize Now":
+    - **NIST CSWP.39 — The Crypto Agility Strategic Plan** — the five-step Govern → Inventory → Identify Gaps → Prioritise → Implement loop with reference to the Visual tab diagram.
+    - **The Management Tools Layer** — six tool categories (Crypto scanners, Vulnerability management, CMDB/SBOM pipelines, SIEM, Zero-Trust enforcement, Data classification) mapped to CPM pillars; explains why this layer is needed to prevent manual, stale data in the Risk Analysis Engine.
+    - **CSWP.39 Crypto Agility Maturity Tiers** — 4-tier table (Partial → Risk-Informed → Repeatable → Adaptive) with mapping to the existing 5-level CMM scale.
+  - _Maturity Self-Assessment CSWP.39 callout_ — Workshop Step 1 now shows the corresponding CSWP.39 tier (Tier 1–4) below the "Recommended next milestone" panel; derived dynamically from the average score.
+  - _Scenario 9 — "Crypto gateway or full migration"_ — exercises tab now has nine scenarios; Scenario 9 covers CSWP.39 §4.6 bump-in-the-wire decision framework (legacy PKI with unavailable source code, SHA-1 certs, mission-critical, team gone).
+  - _`content.ts` additions_ — `cswp39Framework`, `managementToolsLayer`, `mitigateVsMigrate`, `cswp39MaturityTiers` narrative keys added; `overview` prepended with CSWP.39 strategic context; `relatedStandards` updated with NIST CSWP.39 Dec 2025 reference.
+
 ## [3.5.1] - April 22, 2026
 
 ### Added

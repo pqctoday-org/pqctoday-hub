@@ -92,6 +92,32 @@ export const MaturityAssessment: React.FC = () => {
     return 'Drive policy-as-code enforcement, continuous CMVP/ACVP sync, and board-level attestation exports.'
   }, [average])
 
+  const cswp39Tier = useMemo(() => {
+    if (average < 2)
+      return {
+        label: 'Tier 1 — Partial',
+        description:
+          'Crypto practices unstructured; teams select their own algorithms; no formal policy; supply-chain crypto risks unknown.',
+      }
+    if (average < 3)
+      return {
+        label: 'Tier 2 — Risk-Informed',
+        description:
+          'Management-approved crypto policy exists but not organisation-wide; cryptographic architecture being developed; risk assessments drive prioritisation.',
+      }
+    if (average < 4)
+      return {
+        label: 'Tier 3 — Repeatable',
+        description:
+          'Crypto agility formally integrated into risk management; roles defined; automated discovery and remediation tools deployed; agility practices tested.',
+      }
+    return {
+      label: 'Tier 4 — Adaptive',
+      description:
+        'Crypto agility measured and reported to executives; linked to financial and mission objectives; policies updated in near-real-time as standards and threats evolve.',
+    }
+  }, [average])
+
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
@@ -180,6 +206,13 @@ export const MaturityAssessment: React.FC = () => {
             </div>
             <div className="text-sm font-bold text-accent mb-1">Recommended next milestone</div>
             <p className="text-xs text-foreground/80">{nextMilestone}</p>
+            <div className="mt-3 p-3 bg-muted/40 rounded-lg border border-border space-y-1">
+              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">
+                NIST CSWP.39 Alignment
+              </span>
+              <p className="text-sm text-foreground font-medium">{cswp39Tier.label}</p>
+              <p className="text-xs text-muted-foreground">{cswp39Tier.description}</p>
+            </div>
           </div>
         </div>
       </div>

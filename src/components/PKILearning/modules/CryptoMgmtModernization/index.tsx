@@ -18,6 +18,7 @@ import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
+import { CryptoAgilityProcessDiagram } from './visuals/CryptoAgilityProcessDiagram'
 
 const MODULE_ID = 'crypto-mgmt-modernization'
 
@@ -162,6 +163,7 @@ export const CryptoMgmtModernizationModule: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="visual">
+          <CryptoAgilityProcessDiagram />
           <ModuleVisualTab moduleId={MODULE_ID} />
         </TabsContent>
 

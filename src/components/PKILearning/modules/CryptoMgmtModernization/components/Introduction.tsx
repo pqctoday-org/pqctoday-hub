@@ -113,6 +113,184 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
       </div>
     </section>
 
+    {/* Section 1b: CSWP.39 Crypto Agility Strategic Plan */}
+    <section id="cswp39-plan" className="glass-panel p-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 rounded-lg bg-status-info/10">
+          <Repeat size={24} className="text-status-info" />
+        </div>
+        <h2 className="text-xl font-bold text-gradient">
+          NIST CSWP.39 — The Crypto Agility Strategic Plan
+        </h2>
+      </div>
+      <div className="space-y-4 text-sm text-foreground/80">
+        <p>
+          NIST CSWP.39 (December 2025, <em>Considerations for Achieving Crypto Agility</em>) defines
+          the <strong>Crypto Agility Strategic Plan</strong> as a continuously repeated five-step
+          process. CPM is the organisational discipline that executes this loop.
+        </p>
+        <ol className="space-y-2 list-decimal list-inside">
+          <li>
+            <strong>Govern</strong> — embed crypto policy into standards, mandates, technology
+            supply chains, threats, processes, business requirements, partner ecosystem,
+            stakeholders, crypto policies, and crypto architecture.
+          </li>
+          <li>
+            <strong>Inventory</strong> — build an asset-centric CBOM across Code, Libraries,
+            Applications, Files, Protocols, and Systems.
+          </li>
+          <li>
+            <strong>Identify Gaps</strong> — audit Management Tools for discovery, assessment,
+            configuration, and enforcement coverage.
+          </li>
+          <li>
+            <strong>Prioritise</strong> — run a Risk Analysis Prioritisation Engine informed by
+            crypto policy to produce a ranked asset list and KPIs.
+          </li>
+          <li>
+            <strong>Implement</strong> — execute <em>Mitigation</em> (compensating controls / crypto
+            gateway) or <em>Migration</em> (algorithm replacement) based on each asset&apos;s
+            agility level.
+          </li>
+        </ol>
+        <div className="bg-status-info/10 rounded-lg p-4 border border-status-info/30">
+          <div className="flex items-start gap-2">
+            <ArrowRight size={16} className="text-status-info mt-0.5 shrink-0" />
+            <p className="text-xs text-muted-foreground">
+              See the <strong>Visual tab</strong> for an interactive diagram of the full CSWP.39
+              Fig. 3 framework — click any zone to see what belongs there, which CPM pillar it maps
+              to, and the relevant CSWP.39 section.
+            </p>
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground text-right">
+          Source: NIST CSWP.39, December 2025
+        </p>
+      </div>
+    </section>
+
+    {/* Section 1c: Management Tools Layer */}
+    <section id="management-tools" className="glass-panel p-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 rounded-lg bg-secondary/10">
+          <Network size={24} className="text-secondary" />
+        </div>
+        <h2 className="text-xl font-bold text-gradient">The Management Tools Layer</h2>
+      </div>
+      <div className="space-y-4 text-sm text-foreground/80">
+        <p>
+          CSWP.39 places a <strong>Management Tools</strong> layer between the asset inventory and
+          the Risk Analysis Engine. Without automation at this layer, the Information Repository is
+          populated manually and the risk engine operates on incomplete, stale data.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {[
+            {
+              name: 'Crypto scanners',
+              detail: 'Detect algorithms, key lengths, cert details across code and traffic.',
+              pillar: 'Inventory + Observability',
+            },
+            {
+              name: 'Vulnerability management',
+              detail: 'CVE feeds, crypto library EoL tracking, CMVP historical-cert alerts.',
+              pillar: 'Assurance',
+            },
+            {
+              name: 'Asset management (CMDB/SBOM)',
+              detail: 'SBOM → CBOM pipelines feed the Information Repository automatically.',
+              pillar: 'Inventory',
+            },
+            {
+              name: 'Log management (SIEM)',
+              detail: 'Detect crypto-drift events and cipher-suite anomalies in real time.',
+              pillar: 'Observability',
+            },
+            {
+              name: 'Zero-Trust enforcement',
+              detail: 'Policy engines that block disallowed cipher suites at the network layer.',
+              pillar: 'Governance',
+            },
+            {
+              name: 'Data classification scanners',
+              detail: 'Classify data assets by sensitivity; drive inventory prioritisation.',
+              pillar: 'Inventory',
+            },
+          ].map(({ name, detail, pillar }) => (
+            <div key={name} className="bg-muted/40 rounded-lg p-3 border border-border">
+              <div className="text-xs font-bold text-foreground mb-1">{name}</div>
+              <p className="text-[11px] text-muted-foreground">{detail}</p>
+              <div className="mt-1 text-[10px] text-primary font-medium">CPM pillar: {pillar}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    {/* Section 1d: CSWP.39 Maturity Tiers */}
+    <section id="cswp39-maturity" className="glass-panel p-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 rounded-lg bg-accent/10">
+          <TrendingUp size={24} className="text-accent" />
+        </div>
+        <h2 className="text-xl font-bold text-gradient">CSWP.39 Crypto Agility Maturity Tiers</h2>
+      </div>
+      <div className="space-y-4 text-sm text-foreground/80">
+        <p>
+          CSWP.39 §6.5 defines a 4-tier maturity model derived from the NIST Cybersecurity Framework
+          (CSF). The Workshop&apos;s Maturity Self-Assessment maps your CPM score to the
+          corresponding CSWP.39 tier automatically.
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs border border-border">
+            <thead>
+              <tr className="bg-muted/60">
+                <th className="text-left p-2 border-b border-border">CSWP.39 Tier</th>
+                <th className="text-left p-2 border-b border-border">CMM Level (approx.)</th>
+                <th className="text-left p-2 border-b border-border">Characteristics</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="p-2 border-b border-border font-bold">Tier 1 — Partial</td>
+                <td className="p-2 border-b border-border text-muted-foreground">
+                  L1 Ad-hoc / L2 Reactive
+                </td>
+                <td className="p-2 border-b border-border text-muted-foreground">
+                  Crypto practices unstructured; teams pick their own algorithms; no formal policy;
+                  supply-chain crypto risks unknown.
+                </td>
+              </tr>
+              <tr className="bg-muted/20">
+                <td className="p-2 border-b border-border font-bold">Tier 2 — Risk-Informed</td>
+                <td className="p-2 border-b border-border text-muted-foreground">L3 Defined</td>
+                <td className="p-2 border-b border-border text-muted-foreground">
+                  Management-approved crypto policy exists but not organisation-wide; crypto
+                  architecture being developed; risk assessments drive prioritisation.
+                </td>
+              </tr>
+              <tr>
+                <td className="p-2 border-b border-border font-bold">Tier 3 — Repeatable</td>
+                <td className="p-2 border-b border-border text-muted-foreground">L4 Measured</td>
+                <td className="p-2 border-b border-border text-muted-foreground">
+                  Crypto agility formally integrated into risk management; roles defined; automated
+                  discovery and remediation tools deployed; agility practices tested.
+                </td>
+              </tr>
+              <tr className="bg-muted/20">
+                <td className="p-2 font-bold">Tier 4 — Adaptive</td>
+                <td className="p-2 text-muted-foreground">L5 Optimised</td>
+                <td className="p-2 text-muted-foreground">
+                  Crypto agility measured and reported to executives; linked to financial and
+                  mission objectives; policies updated in near-real-time as standards and threats
+                  evolve.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     {/* Section 2: CPM vs Crypto-Agility vs CryptoCOE */}
     <section id="cpm-defined" className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">
