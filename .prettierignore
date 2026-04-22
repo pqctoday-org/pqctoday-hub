@@ -7,6 +7,10 @@ test-results-clean.json
 public/wasm/openssl.js
 public/wasm/openssh-server.js
 public/wasm/openssh-client.js
+public/wasm/strongswan.js
+public/wasm/strongswan-v2.js
+public/wasm/strongswan_worker.js
+public/wasm/strongswan-v2-bob-worker.js
 src/wasm/softhsmrustv3.js
 src/wasm/softhsmrustv3_bg.js
 src/wasm/softhsmrustv3.d.ts
