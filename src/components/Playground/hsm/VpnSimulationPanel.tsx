@@ -2505,6 +2505,83 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   return (
     <div className="space-y-6">
       <ChromiumGateBanner feature="PQC VPN simulation" />
+
+      {/* Scope-transparency banner — what is real vs. simulated in this panel */}
+      <div className="p-3 border border-border rounded-lg bg-muted/20 text-xs">
+        <div className="font-bold text-foreground mb-2 flex items-center gap-2">
+          <ShieldAlert size={14} className="text-status-info" />
+          What is real vs. simulated in this panel
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-muted-foreground">
+          <div>
+            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-success/15 text-status-success border border-status-success/30 mr-1">
+              REAL
+            </span>
+            PKCS#11 v3.2 on <strong>softhsmv3 WASM</strong>: key generation, C_Sign,
+            C_EncapsulateKey, C_DecapsulateKey.
+          </div>
+          <div>
+            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-success/15 text-status-success border border-status-success/30 mr-1">
+              REAL
+            </span>
+            RSA-3072 + ML-DSA-{'{44,65,87}'} keygen &amp; self-signed X.509 on the HSM; SKID/CKA_ID
+            wired for PKCS#11 lookup.
+          </div>
+          <div>
+            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-success/15 text-status-success border border-status-success/30 mr-1">
+              REAL
+            </span>
+            Charon library: proposal parser (ML-KEM transforms 35/36/37), cert loader (RFC 9881
+            ML-DSA OIDs). See &ldquo;Validate WASM charon&rdquo; below.
+          </div>
+          <div>
+            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-success/15 text-status-success border border-status-success/30 mr-1">
+              REAL
+            </span>
+            Cross-worker ML-KEM-768 round-trip (Alice/Bob workers share a real 32 B secret). OpenSSL{' '}
+            <code>x509 -text</code> cert inspector.
+          </div>
+          <div>
+            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-warning/15 text-status-warning border border-status-warning/30 mr-1">
+              SIMULATED
+            </span>
+            IKE wire protocol: IKE_SA_INIT / IKE_INTERMEDIATE / IKE_AUTH packets are not serialized
+            or exchanged. The message diagram and payload sizes come from
+            <code className="text-[10px] mx-0.5">ikev2Constants.ts</code>.
+          </div>
+          <div>
+            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-warning/15 text-status-warning border border-status-warning/30 mr-1">
+              SIMULATED
+            </span>
+            Step auto-advance: driven by log-string heuristics, not by charon bus events. No real
+            state machine runs.
+          </div>
+          <div>
+            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-warning/15 text-status-warning border border-status-warning/30 mr-1">
+              SIMULATED
+            </span>
+            Fragmentation: the MTU check is UI-side. Charon&apos;s RFC 7383 fragment assembly never
+            runs.
+          </div>
+          <div>
+            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-warning/15 text-status-warning border border-status-warning/30 mr-1">
+              SIMULATED
+            </span>
+            Cert-auth success: when ML-DSA cert auth is selected, the panel reports success without
+            a real IKE_AUTH round-trip.
+          </div>
+          <div className="md:col-span-2 mt-1 pt-1 border-t border-border text-[11px]">
+            <strong className="text-foreground">Roadmap:</strong> full IKE handshake (Phase 3b–3e)
+            is planned — spec at{' '}
+            <code className="text-[10px]">
+              pqctoday-hsm/docs/wasm-charon-phase-3b-plus-roadmap.md
+            </code>
+            . For full-fidelity IKE today, use the &ldquo;Launch full-fidelity sandbox&rdquo; button
+            in the Raw Config tab (runs real strongSwan 6.0.5 in Docker).
+          </div>
+        </div>
+      </div>
+
       <V2SelftestCard />
       <Tabs defaultValue="ui" className="w-full">
         <TabsList className="mb-4">
