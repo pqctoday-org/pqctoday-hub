@@ -8,6 +8,28 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **VPN Simulator — gap-closure vs the Docker sandbox**, phase 1 of 6:
+  - **Algorithm benchmark matrix** — new "Run algorithm matrix" button runs
+    keygen + self-sign for RSA-3072 and ML-DSA-{44, 65, 87} against the live
+    softhsmv3 session and renders a timings / cert-size / pubkey-size table.
+    Mirrors the sandbox's `/api/run/vpn/matrix` endpoint at the cert-path
+    level (handshake-level matrix deferred until the WASM charon accepts
+    ML-KEM + ML-DSA upstream).
+  - **Config export as .zip** — new "Download config bundle" button packages
+    the currently-active `strongswan.conf` + `ipsec.conf` (initiator +
+    responder) plus either `ipsec.secrets` (PSK mode) or generated PEM certs
+    (dual auth), plus a README with the resolved CKA_ID handles, ready to
+    lift into a real strongSwan deployment.
+  - **Session history via IndexedDB** — new "Save session" button writes the
+    current mode/auth/algorithm/config bundle into the
+    `pqctoday-vpn-sessions` IndexedDB store (keeps the 20 most recent).
+    Note: this persists the **user's configuration**, not the softhsmv3
+    private-key state; true on-HSM persistence would require mounting
+    Emscripten IDBFS inside the softhsmv3 WASM build (deferred).
+  - **Sandbox launch contract** — new "Launch full-fidelity sandbox" button
+    calls `POST {VITE_SANDBOX_ORCHESTRATOR_URL}/sessions {scenarioId:'vpn'}`
+    per `pqctoday-sandbox/docs/orchestrator-api.md` and opens the returned
+    `baseUrl` in a new tab. Gracefully reports when the env var is unset.
 - **New learn module: Cryptographic Management Modernization (LM-052)** — a
   55-minute, 5-step executive-track module covering modern cryptographic
   posture management across certificates, libraries, software, and keys.

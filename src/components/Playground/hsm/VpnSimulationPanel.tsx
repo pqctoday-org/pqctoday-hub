@@ -736,8 +736,19 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   const [certData, setCertData] = useState<{
     initCert: string
     respCert: string
+    initCkaId?: string
+    respCkaId?: string
   } | null>(null)
   const [certGenLoading, setCertGenLoading] = useState(false)
+  const [savedSessionBanner, setSavedSessionBanner] = useState<string | null>(null)
+  const [benchmarkRunning, setBenchmarkRunning] = useState(false)
+  const [benchmarkResults, setBenchmarkResults] = useState<Array<{
+    algorithm: string
+    keygenMs: number
+    signMs: number
+    certBytes: number
+    pubBytes: number
+  }> | null>(null)
   const [showCertInspector, setShowCertInspector] = useState(false)
   const [certInspectorText, setCertInspectorText] = useState<string | null>(null)
 
@@ -2301,7 +2312,14 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       const initCert = await buildCert(initKeys, hSessInit, 'vpn-initiator')
       const respCert = await buildCert(respKeys, hSessResp, 'vpn-responder')
 
-      setCertData({ initCert, respCert })
+      const toHex = (bytes?: Uint8Array) =>
+        bytes ? Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('') : undefined
+      setCertData({
+        initCert,
+        respCert,
+        initCkaId: toHex(initKeys.keyId),
+        respCkaId: toHex(respKeys.keyId),
+      })
       const algLabel = (keys: typeof initKeys) => keys.variant
       strongSwanEngine.dispatchLog({
         level: 'info',
@@ -2324,6 +2342,100 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     serverAlg,
     serverSize,
   ])
+
+  // Benchmark keygen + self-sign across RSA-3072 and ML-DSA-{44,65,87}.
+  // Reuses the initiator session if already initialized; otherwise initializes it first.
+  const runBenchmarkMatrix = useCallback(async () => {
+    setBenchmarkRunning(true)
+    try {
+      // Ensure a session exists (piggyback on generateCerts's init flow if needed)
+      if (!vpnRpcInitRef.current) {
+        await generateCerts()
+      }
+      const M = moduleRef.current
+      const hSess = hSessionRef.current
+      if (!M || !hSess) {
+        setSabError('HSM session not ready for benchmarking.')
+        return
+      }
+
+      type Combo =
+        | { label: string; kind: 'rsa' }
+        | { label: string; kind: 'mldsa'; variant: 44 | 65 | 87 }
+      const combos: Combo[] = [
+        { label: 'RSA-3072', kind: 'rsa' },
+        { label: 'ML-DSA-44', kind: 'mldsa', variant: 44 },
+        { label: 'ML-DSA-65', kind: 'mldsa', variant: 65 },
+        { label: 'ML-DSA-87', kind: 'mldsa', variant: 87 },
+      ]
+
+      const out: Array<{
+        algorithm: string
+        keygenMs: number
+        signMs: number
+        certBytes: number
+        pubBytes: number
+      }> = []
+
+      for (const combo of combos) {
+        const t0 = performance.now()
+        const keys =
+          combo.kind === 'rsa'
+            ? hsm_generateRSAKeyPair(M, hSess, 3072, false, `bench-${combo.label}`, true)
+            : hsm_generateMLDSAKeyPair(
+                M,
+                hSess,
+                combo.variant,
+                true,
+                true,
+                crypto.getRandomValues(new Uint8Array(20))
+              )
+        const keygenMs = performance.now() - t0
+
+        const t1 = performance.now()
+        const certPem =
+          combo.kind === 'rsa'
+            ? buildHsmSelfSignedCert(
+                M,
+                hSess,
+                keys.pubHandle,
+                keys.privHandle,
+                `bench-${combo.label}`,
+                'Bench'
+              )
+            : buildHsmMlDsaSelfSignedCert(
+                M,
+                hSess,
+                keys.pubHandle,
+                keys.privHandle,
+                combo.variant,
+                `bench-${combo.label}`,
+                'Bench',
+                crypto.getRandomValues(new Uint8Array(20))
+              )
+        const signMs = performance.now() - t1
+
+        const certBytes = new TextEncoder().encode(certPem).length
+        // ML-DSA public-key sizes per FIPS 204; RSA-3072 SPKI ≈ 398 B
+        const MLDSA_PK: Record<44 | 65 | 87, number> = { 44: 1312, 65: 1952, 87: 2592 }
+        const pubBytes = combo.kind === 'rsa' ? 398 : MLDSA_PK[combo.variant]
+
+        out.push({
+          algorithm: combo.label,
+          keygenMs: Math.round(keygenMs * 10) / 10,
+          signMs: Math.round(signMs * 10) / 10,
+          certBytes,
+          pubBytes,
+        })
+      }
+
+      setBenchmarkResults(out)
+    } catch (err: unknown) {
+      setSabError(err instanceof Error ? err.message : String(err))
+    } finally {
+      setBenchmarkRunning(false)
+    }
+  }, [generateCerts, moduleRef, hSessionRef, vpnRpcInitRef])
 
   const inspectCert = useCallback(
     async (role: 'initiator' | 'responder') => {
@@ -2501,6 +2613,148 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 </p>
               )}
             </div>
+          </div>
+          <div className="mt-4 flex items-center justify-between gap-3 p-3 border border-border rounded-lg bg-muted/30">
+            <div className="text-xs text-muted-foreground">
+              Download the current configuration as a .zip bundle (strongswan.conf, ipsec.conf,
+              ipsec.secrets or certs) — ready to lift into a real strongSwan deployment.
+            </div>
+            <Button
+              variant="outline"
+              className="text-xs whitespace-nowrap"
+              onClick={async () => {
+                const { exportVpnConfigBundle } = await import('./vpn/configExport')
+                await exportVpnConfigBundle({
+                  mode: selectedMode,
+                  authMode,
+                  mtu,
+                  allowFragmentation,
+                  clientAlg,
+                  clientSize,
+                  clientClassAlg,
+                  serverAlg,
+                  serverSize,
+                  serverClassAlg,
+                  clientPsk,
+                  serverPsk,
+                  strongswanConfInit: activeInitConfig,
+                  strongswanConfResp: activeRespConfig,
+                  ipsecConfInit: activeInitIpsec,
+                  ipsecConfResp: activeRespIpsec,
+                  initiatorCertPem: certData?.initCert ?? null,
+                  responderCertPem: certData?.respCert ?? null,
+                  initiatorCkaId: certData?.initCkaId ?? null,
+                  responderCkaId: certData?.respCkaId ?? null,
+                })
+              }}
+            >
+              Download config bundle (.zip)
+            </Button>
+          </div>
+
+          <div className="mt-3 p-3 border border-border rounded-lg bg-muted/30">
+            <div className="flex items-center justify-between gap-3 mb-2">
+              <div className="text-xs text-muted-foreground">
+                Benchmark keygen + self-sign across RSA-3072 and ML-DSA-{'{44,65,87}'} on the live
+                softhsmv3 session. Mirrors the sandbox
+                <code className="text-[10px] mx-1">/api/run/vpn/matrix</code> endpoint at the
+                cert-path level.
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  className="text-xs whitespace-nowrap"
+                  disabled={benchmarkRunning || !browserSupport.supported}
+                  onClick={runBenchmarkMatrix}
+                >
+                  {benchmarkRunning ? 'Benchmarking…' : 'Run algorithm matrix'}
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="text-xs whitespace-nowrap border border-border"
+                  onClick={async () => {
+                    try {
+                      const { launchFullFidelityVpn, isSandboxAvailable } =
+                        await import('./vpn/sandboxLauncher')
+                      if (!isSandboxAvailable()) {
+                        setSavedSessionBanner(
+                          'Sandbox orchestrator not configured (VITE_SANDBOX_ORCHESTRATOR_URL). This panel is WASM-only.'
+                        )
+                        setTimeout(() => setSavedSessionBanner(null), 6000)
+                        return
+                      }
+                      await launchFullFidelityVpn()
+                    } catch (err: unknown) {
+                      setSavedSessionBanner(err instanceof Error ? err.message : String(err))
+                      setTimeout(() => setSavedSessionBanner(null), 6000)
+                    }
+                  }}
+                >
+                  Launch full-fidelity sandbox
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="text-xs whitespace-nowrap border border-border"
+                  onClick={async () => {
+                    const { saveSession, newSessionId } = await import('./vpn/sessionStore')
+                    const id = newSessionId()
+                    await saveSession({
+                      id,
+                      createdAt: Date.now(),
+                      mode: selectedMode,
+                      authMode,
+                      clientVariant: clientAlg === 'RSA' ? clientClassAlg : `ML-DSA-${clientSize}`,
+                      serverVariant: serverAlg === 'RSA' ? serverClassAlg : `ML-DSA-${serverSize}`,
+                      mtu,
+                      allowFragmentation,
+                      strongswanConfInit: activeInitConfig,
+                      strongswanConfResp: activeRespConfig,
+                      ipsecConfInit: activeInitIpsec,
+                      ipsecConfResp: activeRespIpsec,
+                      clientPsk,
+                      serverPsk,
+                      initiatorCertPem: certData?.initCert,
+                      responderCertPem: certData?.respCert,
+                      initiatorCkaId: certData?.initCkaId,
+                      responderCkaId: certData?.respCkaId,
+                    })
+                    setSavedSessionBanner(`Session saved (id ${id.slice(-8)})`)
+                    setTimeout(() => setSavedSessionBanner(null), 4000)
+                  }}
+                >
+                  Save session
+                </Button>
+              </div>
+            </div>
+            {savedSessionBanner && (
+              <div className="text-[11px] text-status-success mb-2">{savedSessionBanner}</div>
+            )}
+            {benchmarkResults && benchmarkResults.length > 0 && (
+              <div className="overflow-x-auto">
+                <table className="w-full text-[11px]">
+                  <thead>
+                    <tr className="text-left text-muted-foreground">
+                      <th className="py-1 pr-3 font-bold">Algorithm</th>
+                      <th className="py-1 pr-3 font-bold text-right">Keygen (ms)</th>
+                      <th className="py-1 pr-3 font-bold text-right">Self-sign (ms)</th>
+                      <th className="py-1 pr-3 font-bold text-right">Cert size (B)</th>
+                      <th className="py-1 pr-3 font-bold text-right">Public key (B)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {benchmarkResults.map((r) => (
+                      <tr key={r.algorithm} className="border-t border-border">
+                        <td className="py-1 pr-3 font-mono">{r.algorithm}</td>
+                        <td className="py-1 pr-3 text-right">{r.keygenMs}</td>
+                        <td className="py-1 pr-3 text-right">{r.signMs}</td>
+                        <td className="py-1 pr-3 text-right">{r.certBytes.toLocaleString()}</td>
+                        <td className="py-1 pr-3 text-right">{r.pubBytes.toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </TabsContent>
       </Tabs>
