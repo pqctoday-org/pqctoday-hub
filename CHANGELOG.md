@@ -12,9 +12,42 @@ All notable changes to this project will be documented in this file.
   55-minute, 5-step executive-track module covering modern cryptographic
   posture management across certificates, libraries, software, and keys.
   Routed at `/learn/crypto-mgmt-modernization`, slotted into the executive
-  track between `pqc-governance` and `vendor-risk`.
+  track between `pqc-governance` and `vendor-risk`. Six Learn sections frame
+  CPM as a continuous dual-loop program (strategic annual PDCA wrapping an
+  operational Discover → Classify → Score → Remediate → Attest → Reassess
+  loop) with explicit carve-out from crypto-agility (capability) and
+  CryptoCOE (operating model). Five workshop tools: **CPM Maturity
+  Self-Assessment** (5 pillars × 5 levels with radar chart), **Inventory
+  Lifecycle Simulator** (6-stage operational loop with canonical CLM
+  scenarios: shadow-cert discovery, 47-day cadence, intermediate-CA rotation,
+  OCSP drift), **Library & Hardware CBOM Builder** (SBOM → CBOM mapper +
+  library posture + FIPS 140-3 L3 trackers for OpenSSL, BoringSSL, liboqs,
+  wolfCrypt FIPS, BC FIPS, Mbed TLS, RustCrypto, AWS-LC plus Thales Luna,
+  Entrust nShield, Utimaco, Fortanix, YubiHSM, AWS/Azure/GCP HSMs),
+  **No-Regret ROI Builder** (IRR under quantum-happens/never-happens
+  scenarios with 5 benefit streams), and **Posture KPI Dashboard Designer**
+  (KPI taxonomy across 5 pillars, audience-filtered for board/CIO/CISO).
+  Eight exercises, glossary-aware content, RAG + Curious summaries, and
+  bidirectional cross-links to `crypto-agility` (LM-007), `pqc-governance`
+  (LM-037), `pqc-business-case` (LM-036), and `kms-pqc` (LM-024).
 - **Library CSV `04212026`** — next versioned snapshot (previous
-  `04202026_r2` retained per `CSVmaintenance.md` two-version rule).
+  `04202026_r2` retained per `CSVmaintenance.md` two-version rule). **26
+  new authoritative references** added for the CMM module plus **13 existing
+  rows tagged**; covers CA/B Forum Ballot SC-081v3 (47-day TLS cadence by
+  March 2029), NIST CMVP Validated Modules + Modules-In-Process databases,
+  NIST ACVP, FIPS 140-3 IG September 2025 PQC update, Microsoft
+  "Building your cryptographic inventory" (April 2026), EJBCA/Keyfactor
+  Cryptographic Posture Management primers, Gartner CryptoCOE framing
+  (David Mahdi, Brian Lowans), IBM Research CBOM (Ray Harishankar),
+  Keyfactor CBOM introduction, Deloitte Tech Trends 2025, McKinsey PQC
+  preparation, IBM IBV 2025 quantum-safe readiness, Sectigo 2025 State of
+  Crypto Agility, Ponemon/Entrust Global PKI & IoT Trends 2026, Forrester
+  Total Economic Impact of TLS/SSL certificate-lifecycle automation
+  (DigiCert-commissioned, 312% ROI), AppViewX 47-day lifecycles, DigiCert
+  PQC Maturity Model, Engineering at Meta PQC migration framework, InfoSec
+  Global Gartner Hype Cycle positioning, IETF RFC 7030 (EST), RFC 4210
+  (CMP), Security Boulevard / Forrester (Sandy Carielli) on cryptoagility,
+  and Venafi / Ponemon cert-outage cost study.
 - **Google Quantum AI whitepaper added to library** — "Securing Elliptic Curve
   Cryptocurrencies against Quantum Vulnerabilities" (Babbush, Gidney et al.,
   Google Quantum AI + Ethereum Foundation, March 30 2026) is now in the library
