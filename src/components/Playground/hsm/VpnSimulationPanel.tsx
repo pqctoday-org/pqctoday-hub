@@ -741,6 +741,17 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   } | null>(null)
   const [certGenLoading, setCertGenLoading] = useState(false)
   const [savedSessionBanner, setSavedSessionBanner] = useState<string | null>(null)
+  const [sessionHistoryOpen, setSessionHistoryOpen] = useState(false)
+  const [sessionHistory, setSessionHistory] = useState<
+    Array<{
+      id: string
+      createdAt: number
+      mode: IKEv2Mode
+      authMode: 'psk' | 'dual'
+      clientVariant: string
+      serverVariant: string
+    }>
+  >([])
   const [benchmarkRunning, setBenchmarkRunning] = useState(false)
   const [benchmarkResults, setBenchmarkResults] = useState<Array<{
     algorithm: string
@@ -2696,6 +2707,27 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   variant="ghost"
                   className="text-xs whitespace-nowrap border border-border"
                   onClick={async () => {
+                    const { listSessions } = await import('./vpn/sessionStore')
+                    const all = await listSessions()
+                    setSessionHistory(
+                      all.map((r) => ({
+                        id: r.id,
+                        createdAt: r.createdAt,
+                        mode: r.mode,
+                        authMode: r.authMode,
+                        clientVariant: r.clientVariant,
+                        serverVariant: r.serverVariant,
+                      }))
+                    )
+                    setSessionHistoryOpen(true)
+                  }}
+                >
+                  History
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="text-xs whitespace-nowrap border border-border"
+                  onClick={async () => {
                     const { saveSession, newSessionId } = await import('./vpn/sessionStore')
                     const id = newSessionId()
                     await saveSession({
@@ -3979,6 +4011,148 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               <Button
                 variant="ghost"
                 onClick={() => setShowCertInspector(false)}
+                className="px-3 py-1.5 bg-muted rounded text-sm font-medium hover:bg-muted/80 transition-colors"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {sessionHistoryOpen && (
+        <div
+          role="presentation"
+          className="fixed inset-0 embed-backdrop bg-black/60 flex items-center justify-center z-50"
+          onClick={(e) => e.target === e.currentTarget && setSessionHistoryOpen(false)}
+          onKeyDown={(e) => e.key === 'Escape' && setSessionHistoryOpen(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="VPN Session History"
+            className="bg-card border border-border rounded-xl shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col overflow-hidden mx-4"
+          >
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+              <h3 className="font-semibold text-sm">VPN Session History</h3>
+              <Button
+                variant="ghost"
+                onClick={() => setSessionHistoryOpen(false)}
+                className="text-muted-foreground hover:text-foreground transition-colors text-lg font-bold"
+              >
+                ×
+              </Button>
+            </div>
+            <div className="overflow-y-auto flex-1 p-4 space-y-2">
+              {sessionHistory.length === 0 && (
+                <p className="text-xs text-muted-foreground italic">
+                  No saved sessions yet. Click &quot;Save session&quot; above to capture the current
+                  configuration.
+                </p>
+              )}
+              {sessionHistory.map((row) => (
+                <div
+                  key={row.id}
+                  className="flex items-center justify-between gap-3 p-2 border border-border rounded-lg bg-muted/30"
+                >
+                  <div className="text-[11px] leading-tight">
+                    <div className="font-bold text-foreground">
+                      {row.mode} · {row.authMode} · {row.clientVariant} / {row.serverVariant}
+                    </div>
+                    <div className="text-muted-foreground">
+                      {new Date(row.createdAt).toLocaleString()} · id{' '}
+                      <code>{row.id.slice(-8)}</code>
+                    </div>
+                  </div>
+                  <div className="flex gap-1">
+                    <Button
+                      variant="outline"
+                      className="text-[10px] px-2 py-1 h-auto"
+                      onClick={async () => {
+                        const { listSessions } = await import('./vpn/sessionStore')
+                        const all = await listSessions()
+                        const rec = all.find((s) => s.id === row.id)
+                        if (!rec) return
+                        setSelectedMode(rec.mode)
+                        setAuthMode(rec.authMode)
+                        setMtu(rec.mtu)
+                        setAllowFragmentation(rec.allowFragmentation)
+                        setActiveInitConfig(rec.strongswanConfInit)
+                        setActiveRespConfig(rec.strongswanConfResp)
+                        setActiveInitIpsec(rec.ipsecConfInit)
+                        setActiveRespIpsec(rec.ipsecConfResp)
+                        setClientPsk(rec.clientPsk)
+                        setServerPsk(rec.serverPsk)
+                        if (rec.initiatorCertPem && rec.responderCertPem) {
+                          setCertData({
+                            initCert: rec.initiatorCertPem,
+                            respCert: rec.responderCertPem,
+                            initCkaId: rec.initiatorCkaId,
+                            respCkaId: rec.responderCkaId,
+                          })
+                        }
+                        if (rec.clientVariant.startsWith('ML-DSA-')) {
+                          setClientAlg('ML-DSA')
+                          setClientSize(rec.clientVariant.replace('ML-DSA-', ''))
+                        } else {
+                          setClientAlg('RSA')
+                          setClientClassAlg(rec.clientVariant)
+                        }
+                        if (rec.serverVariant.startsWith('ML-DSA-')) {
+                          setServerAlg('ML-DSA')
+                          setServerSize(rec.serverVariant.replace('ML-DSA-', ''))
+                        } else {
+                          setServerAlg('RSA')
+                          setServerClassAlg(rec.serverVariant)
+                        }
+                        setSessionHistoryOpen(false)
+                        setSavedSessionBanner(`Loaded session ${row.id.slice(-8)}`)
+                        setTimeout(() => setSavedSessionBanner(null), 4000)
+                      }}
+                    >
+                      Load
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="text-[10px] px-2 py-1 h-auto text-status-error"
+                      onClick={async () => {
+                        const { deleteSession, listSessions } = await import('./vpn/sessionStore')
+                        await deleteSession(row.id)
+                        const all = await listSessions()
+                        setSessionHistory(
+                          all.map((r) => ({
+                            id: r.id,
+                            createdAt: r.createdAt,
+                            mode: r.mode,
+                            authMode: r.authMode,
+                            clientVariant: r.clientVariant,
+                            serverVariant: r.serverVariant,
+                          }))
+                        )
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="px-4 py-3 border-t border-border flex justify-between">
+              <Button
+                variant="ghost"
+                onClick={async () => {
+                  if (!confirm('Delete all saved VPN sessions?')) return
+                  const { clearSessions } = await import('./vpn/sessionStore')
+                  await clearSessions()
+                  setSessionHistory([])
+                }}
+                className="px-3 py-1.5 text-xs text-status-error hover:bg-status-error/10 transition-colors"
+              >
+                Clear all
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => setSessionHistoryOpen(false)}
                 className="px-3 py-1.5 bg-muted rounded text-sm font-medium hover:bg-muted/80 transition-colors"
               >
                 Close

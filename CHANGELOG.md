@@ -20,12 +20,15 @@ All notable changes to this project will be documented in this file.
     responder) plus either `ipsec.secrets` (PSK mode) or generated PEM certs
     (dual auth), plus a README with the resolved CKA_ID handles, ready to
     lift into a real strongSwan deployment.
-  - **Session history via IndexedDB** — new "Save session" button writes the
-    current mode/auth/algorithm/config bundle into the
-    `pqctoday-vpn-sessions` IndexedDB store (keeps the 20 most recent).
-    Note: this persists the **user's configuration**, not the softhsmv3
-    private-key state; true on-HSM persistence would require mounting
-    Emscripten IDBFS inside the softhsmv3 WASM build (deferred).
+  - **Session history via IndexedDB** — "Save session" writes the current
+    mode/auth/algorithm/config bundle into the `pqctoday-vpn-sessions`
+    IndexedDB store (keeps the 20 most recent); "History" opens a dialog
+    listing past runs with per-row **Load** (restores mode, auth, MTU,
+    fragmentation, strongswan.conf, ipsec.conf, PSK, and cert PEMs+CKA_IDs),
+    **Delete**, and bulk **Clear all**. Note: this persists the **user's
+    configuration**, not the softhsmv3 private-key state; true on-HSM
+    persistence would require mounting Emscripten IDBFS inside the softhsmv3
+    WASM build (deferred).
   - **Sandbox launch contract** — new "Launch full-fidelity sandbox" button
     calls `POST {VITE_SANDBOX_ORCHESTRATOR_URL}/sessions {scenarioId:'vpn'}`
     per `pqctoday-sandbox/docs/orchestrator-api.md` and opens the returned
