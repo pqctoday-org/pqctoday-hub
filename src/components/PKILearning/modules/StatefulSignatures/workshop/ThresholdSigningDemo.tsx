@@ -72,7 +72,7 @@ export const ThresholdSigningDemo: React.FC = () => {
   const [aggregating, setAggregating] = useState(false)
   const [insufficientShares, setInsufficientShares] = useState(false)
 
-  const selectedCount = trustees.filter((t) => t.selected).length
+  const selectedCount = trustees.filter((tr) => tr.selected).length
   const paramSet = LMS_PARAMETER_SETS.find((p) => p.id === paramId)
 
   const handleBeginSetup = useCallback(() => {
@@ -306,8 +306,9 @@ export const ThresholdSigningDemo: React.FC = () => {
                     CRV (Published)
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Correction values for each tree node. Real size ≈ {CRV_SIZE_TABLE[0].twoOfThree}{' '}
-                    for {t}-of-{n}.
+                    Correction values for each tree node. Real size ≈{' '}
+                    {n <= 3 ? CRV_SIZE_TABLE[0].twoOfThree : CRV_SIZE_TABLE[0].threeOfFive} for {t}
+                    -of-{n}.
                   </p>
                   <div className="space-y-1">
                     {Array.from({ length: 4 }, (_, i) => (
