@@ -31,6 +31,16 @@ const POSTURE_LIGHT: Record<RiskColor, string> = {
   green: 'bg-status-success',
 }
 
+interface CbomRow {
+  name: string
+  version: string
+  matched: boolean
+  fipsStatus: FipsStatus
+  pqcSupport: string
+  posture: RiskColor
+  notes: string
+}
+
 export const LibraryCBOMBuilder: React.FC = () => {
   const [mode, setMode] = useState<Mode>('libs')
   const [selectedSbom, setSelectedSbom] = useState<string>(SAMPLE_SBOMS[0].id)
@@ -43,11 +53,12 @@ export const LibraryCBOMBuilder: React.FC = () => {
     return SAMPLE_SBOMS.find((s) => s.id === selectedSbom) ?? SAMPLE_SBOMS[0]
   }, [selectedSbom, userSbom])
 
-  const cbomSlice = useMemo(() => {
+  const cbomSlice = useMemo((): CbomRow[] => {
     try {
-      const parsed = JSON.parse(activeSbom.content)
-      const components = Array.isArray(parsed.components) ? parsed.components : []
-      return components.map((c: Record<string, unknown>) => {
+      const parsed = JSON.parse(activeSbom.content) as { components?: unknown }
+      const components: unknown[] = Array.isArray(parsed.components) ? parsed.components : []
+      return components.map((raw): CbomRow => {
+        const c = (raw ?? {}) as Record<string, unknown>
         const name = String(c.name ?? '')
         const version = String(c.version ?? '')
         const lib = CRYPTO_LIBRARIES.find(
@@ -59,9 +70,9 @@ export const LibraryCBOMBuilder: React.FC = () => {
           name,
           version,
           matched: Boolean(lib),
-          fipsStatus: lib?.fipsStatus ?? ('not-validated' as FipsStatus),
+          fipsStatus: lib?.fipsStatus ?? 'not-validated',
           pqcSupport: lib?.pqcSupport ?? '—',
-          posture: lib?.posture ?? ('yellow' as RiskColor),
+          posture: lib?.posture ?? 'yellow',
           notes: lib?.notes ?? 'No posture record — add to inventory and research.',
         }
       })

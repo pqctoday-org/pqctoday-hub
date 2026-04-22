@@ -38,6 +38,7 @@ const ROUTES = [
   '/learn/quantum-threats',
   '/learn/hybrid-crypto',
   '/learn/crypto-agility',
+  '/learn/crypto-mgmt-modernization',
   '/learn/tls-basics',
   '/learn/vpn-ssh-pqc',
   '/learn/email-signing',

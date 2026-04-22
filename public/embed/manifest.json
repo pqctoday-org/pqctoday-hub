@@ -1,6 +1,6 @@
 {
   "version": "3.3.9",
-  "generatedAt": "2026-04-20T10:40:18.576Z",
+  "generatedAt": "2026-04-22T12:00:14.988Z",
   "resources": {
     "routePresets": [
       {
@@ -80,6 +80,12 @@
         "title": "Crypto Agility",
         "difficulty": "intermediate",
         "duration": "40 min"
+      },
+      {
+        "id": "crypto-mgmt-modernization",
+        "title": "Cryptographic Management Modernization",
+        "difficulty": "intermediate",
+        "duration": "55 min"
       },
       {
         "id": "tls-basics",
