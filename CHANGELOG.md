@@ -80,6 +80,14 @@ All notable changes to this project will be documented in this file.
   matching the `CKA_ID` set on the key objects. strongSwan's PKCS#11 plugin
   discovers the private key via `C_FindObjects({CKA_ID=ski})`; without the
   extension, ML-DSA worked but RSA fell back to PSK auth.
+- **VPN sim ML-DSA cert auth fully wired end-to-end** — `hsm_generateMLDSAKeyPair`
+  now accepts an optional `keyId` parameter that's stamped as `CKA_ID` on both
+  the public and private key objects at keygen time. VPN sim's `provisionKeys`
+  generates a random 20-byte `keyId` per key pair and passes the same bytes into
+  both keygen and the X.509 `SubjectKeyIdentifier` extension. strongSwan's
+  pkcs11 plugin now finds the private key via `C_FindObjects({CKA_ID=ski})`
+  so ML-DSA cert auth no longer falls back to PSK. `CKA_ID = 0x00000102`
+  exported from `softhsm/constants.ts` + the parallel `softhsm.ts`.
 - **Mobile / iOS Safari polish** — glass-panel now sets
   `-webkit-backdrop-filter` so blur renders on Safari; `Button` icon size
   gets `touch-manipulation` to suppress iOS double-tap zoom; `CodeBlock`

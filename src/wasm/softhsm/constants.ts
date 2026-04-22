@@ -20,6 +20,7 @@ export const CKA_CLASS = 0x00000000
 export const CKA_TOKEN = 0x00000001
 export const CKA_PRIVATE = 0x00000002
 export const CKA_LABEL = 0x00000003
+export const CKA_ID = 0x00000102
 export const CKA_SENSITIVE = 0x00000103
 export const CKA_SIGN = 0x00000108
 export const CKA_VERIFY = 0x0000010a

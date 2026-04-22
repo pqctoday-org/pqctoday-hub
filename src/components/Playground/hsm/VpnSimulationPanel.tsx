@@ -2221,16 +2221,22 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         family: 'rsa' | 'ml-dsa'
         variant: 'RSA-3072' | 'ML-DSA-44' | 'ML-DSA-65' | 'ML-DSA-87'
         mldsaVariant?: 44 | 65 | 87
+        keyId?: Uint8Array
       } => {
         if (alg === 'ML-DSA') {
           const v = (parseInt(size, 10) as 44 | 65 | 87) || 65
-          const keys = hsm_generateMLDSAKeyPair(M, hSess, v, true, true) // token=true: visible to all RPC sessions
+          // 20-byte random CKA_ID — stamped into the key objects at keygen time and
+          // into the X.509 SubjectKeyIdentifier extension so strongSwan's pkcs11
+          // plugin can locate the private key via C_FindObjects({CKA_ID=ski}).
+          const keyId = crypto.getRandomValues(new Uint8Array(20))
+          const keys = hsm_generateMLDSAKeyPair(M, hSess, v, true, true, keyId)
           return {
             pubHandle: keys.pubHandle,
             privHandle: keys.privHandle,
             family: 'ml-dsa',
             variant: `ML-DSA-${v}` as 'ML-DSA-44' | 'ML-DSA-65' | 'ML-DSA-87',
             mldsaVariant: v,
+            keyId,
           }
         }
         const keys = hsm_generateRSAKeyPair(M, hSess, 3072, false, label, true)
@@ -2287,7 +2293,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               keys.privHandle,
               keys.mldsaVariant!,
               cn,
-              'PQC-Simulation'
+              'PQC-Simulation',
+              keys.keyId
             )
           : buildHsmSelfSignedCert(M, hSess, keys.pubHandle, keys.privHandle, cn, 'PQC-Simulation')
 

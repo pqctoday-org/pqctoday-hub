@@ -10,6 +10,7 @@ import {
   CKA_ENCAPSULATE,
   CKA_ENCRYPT,
   CKA_EXTRACTABLE,
+  CKA_ID,
   CKA_KEY_TYPE,
   CKA_PARAMETER_SET,
   CKA_PRIVATE,
@@ -380,21 +381,30 @@ export const hsm_getKeysRemaining = (
   return null
 }
 
-/** Generate an ML-DSA key pair. Returns {pubHandle, privHandle}. */
+/** Generate an ML-DSA key pair. Returns {pubHandle, privHandle}.
+ *  @param token  true → token object (cross-session visible; required when a PKCS#11
+ *                daemon like charon must locate the key via C_FindObjects in its own session).
+ *  @param keyId  Optional CKA_ID bytes embedded at keygen time. Must match the
+ *                SubjectKeyIdentifier extension in the corresponding X.509 cert so that
+ *                strongSwan's pkcs11 plugin can locate the private key via C_FindObjects.
+ */
 export const hsm_generateMLDSAKeyPair = (
   M: SoftHSMModule,
   hSession: number,
   variant: 44 | 65 | 87,
   extractable = false,
-  token = false
+  token = false,
+  keyId?: Uint8Array
 ): { pubHandle: number; privHandle: number } => {
   const mech = M._malloc(12)
   M.setValue(mech, CKM_ML_DSA_KEY_PAIR_GEN, 'i32')
   M.setValue(mech + 4, 0, 'i32')
   M.setValue(mech + 8, 0, 'i32')
 
+  const keyIdPtr = keyId && keyId.length ? writeBytes(M, keyId) : 0
+
   const ps = dsaParamSet(variant)
-  const pubTpl = buildTemplate(M, [
+  const pubDefs = [
     { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_ML_DSA },
     { type: CKA_TOKEN, boolVal: token },
@@ -402,10 +412,11 @@ export const hsm_generateMLDSAKeyPair = (
     { type: CKA_ENCRYPT, boolVal: false },
     { type: CKA_WRAP, boolVal: false },
     { type: CKA_PARAMETER_SET, ulongVal: ps },
-  ])
+    ...(keyIdPtr && keyId ? [{ type: CKA_ID, bytesPtr: keyIdPtr, bytesLen: keyId.length }] : []),
+  ]
   // Per spec §6.67.4: CKA_PARAMETER_SET goes in the public key template only.
   // The mechanism infers the parameter set for the private key from the public key template.
-  const prvTpl = buildTemplate(M, [
+  const prvDefs = [
     { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_ML_DSA },
     { type: CKA_TOKEN, boolVal: token },
@@ -416,22 +427,35 @@ export const hsm_generateMLDSAKeyPair = (
     { type: CKA_DECRYPT, boolVal: false },
     { type: CKA_UNWRAP, boolVal: false },
     { type: CKA_DERIVE, boolVal: false },
-  ])
+    ...(keyIdPtr && keyId ? [{ type: CKA_ID, bytesPtr: keyIdPtr, bytesLen: keyId.length }] : []),
+  ]
+  const pubTpl = buildTemplate(M, pubDefs)
+  const prvTpl = buildTemplate(M, prvDefs)
 
   const pubHPtr = allocUlong(M)
   const prvHPtr = allocUlong(M)
   try {
     checkRV(
-      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 7, prvTpl.ptr, 10, pubHPtr, prvHPtr),
+      M._C_GenerateKeyPair(
+        hSession,
+        mech,
+        pubTpl.ptr,
+        pubDefs.length,
+        prvTpl.ptr,
+        prvDefs.length,
+        pubHPtr,
+        prvHPtr
+      ),
       'C_GenerateKeyPair(ML-DSA)'
     )
     return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
   } finally {
     M._free(mech)
-    freeTemplate(M, pubTpl, 7)
-    freeTemplate(M, prvTpl, 10)
+    freeTemplate(M, pubTpl, pubDefs.length)
+    freeTemplate(M, prvTpl, prvDefs.length)
     M._free(pubHPtr)
     M._free(prvHPtr)
+    if (keyIdPtr) M._free(keyIdPtr)
   }
 }
 
