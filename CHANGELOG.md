@@ -6,6 +6,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.5] - April 23, 2026
+
+### Fixed
+
+- **CI — `QuizCategory` union missing `'crypto-mgmt-modernization'` and `'slh-dsa'`** — persona learning paths referenced these two category IDs but the `QuizCategory` discriminated union in `Quiz/types.ts` did not include them, causing `TS2322` errors at build time. Added both members to the union.
+
+- **CI — `quizDataLoader.ts` `Record<QuizCategory, ...>` incomplete** — the `CATEGORY_CONFIG` record must exhaustively cover every `QuizCategory` member; after the union was extended, the record was missing entries for `'crypto-mgmt-modernization'` and `'slh-dsa'`. Added label, description, and icon metadata for both categories.
+
+- **CI — `HsmCapacityCalculator.test.ts` expected values out of sync with revised ops/sec defaults** — classical-HSM defaults changed in v3.5.4 (ML-DSA-65: 500 → 150 ops/s; ML-KEM-768: 3 000 → 500 ops/s) but the test file still asserted the old computed HSM counts. Recalculated all expected values across 11 tests and updated inline comments to reflect the corrected formulas.
+
 ## [3.5.4] - April 23, 2026
 
 ### Fixed
