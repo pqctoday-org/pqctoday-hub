@@ -51,7 +51,7 @@ export const MaturityAssessment: React.FC = () => {
         libraries: scores[p.id].libraries,
         software: scores[p.id].software,
         keys: scores[p.id].keys,
-        fullMark: 5,
+        fullMark: 4,
       })),
     [scores]
   )
@@ -67,7 +67,7 @@ export const MaturityAssessment: React.FC = () => {
   )
 
   const weakest = useMemo(() => {
-    let minScore = 6 as MaturityLevel
+    let minScore = 5 as unknown as MaturityLevel
     let weakPillar = PILLARS[0]
     let weakAsset: AssetClass = 'certificates'
     for (const p of PILLARS) {
@@ -89,7 +89,7 @@ export const MaturityAssessment: React.FC = () => {
       return 'Document policy, roll out ACME for public TLS, and subscribe to CMVP change notices.'
     if (average < 4)
       return 'Automate cert renewal end-to-end, instrument SIEM drift alerts, launch FIPS-freshness KPI.'
-    return 'Drive policy-as-code enforcement, continuous CMVP/ACVP sync, and board-level attestation exports.'
+    return 'Your posture has reached Tier 4 Adaptive — maintain continuous CMVP/ACVP monitoring and deliver quarterly executive crypto attestation.'
   }, [average])
 
   const cswp39Tier = useMemo(() => {
@@ -121,9 +121,9 @@ export const MaturityAssessment: React.FC = () => {
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
-        Rate your organization from 1 (Ad-hoc) to 5 (Optimized) on each pillar for each of the four
-        asset classes. Re-run this every annual PDCA cycle — the radar chart makes year-over-year
-        gains visible per asset class.
+        Rate your organization from 1 (Partial) to 4 (Adaptive) on each pillar for each of the four
+        asset classes using the NIST CSWP.39 tier scale. Re-run this every annual PDCA cycle — the
+        radar chart makes year-over-year gains visible per asset class.
       </p>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -145,7 +145,7 @@ export const MaturityAssessment: React.FC = () => {
                         {ASSET_CLASS_LABELS[ac]}
                       </span>
                       <div className="flex gap-1 flex-1">
-                        {([1, 2, 3, 4, 5] as MaturityLevel[]).map((lvl) => (
+                        {([1, 2, 3, 4] as MaturityLevel[]).map((lvl) => (
                           <Button
                             key={lvl}
                             variant={scores[p.id][ac] === lvl ? 'gradient' : 'outline'}
@@ -173,7 +173,7 @@ export const MaturityAssessment: React.FC = () => {
                 <RadarChart data={chartData}>
                   <PolarGrid />
                   <PolarAngleAxis dataKey="pillar" tick={{ fontSize: 11 }} />
-                  <PolarRadiusAxis angle={30} domain={[0, 5]} tickCount={6} />
+                  <PolarRadiusAxis angle={30} domain={[0, 4]} tickCount={5} />
                   {ASSET_CLASSES.map((ac) => (
                     <Radar
                       key={ac}
@@ -194,7 +194,7 @@ export const MaturityAssessment: React.FC = () => {
           <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
             <div className="flex justify-between items-center mb-2">
               <div className="font-bold text-foreground">Overall score</div>
-              <div className="text-xl font-bold text-primary">{average.toFixed(1)} / 5.0</div>
+              <div className="text-xl font-bold text-primary">{average.toFixed(1)} / 4.0</div>
             </div>
             <div className="text-xs text-muted-foreground mb-3">
               Weakest combination:{' '}
@@ -212,6 +212,49 @@ export const MaturityAssessment: React.FC = () => {
               </span>
               <p className="text-sm text-foreground font-medium">{cswp39Tier.label}</p>
               <p className="text-xs text-muted-foreground">{cswp39Tier.description}</p>
+            </div>
+            <div className="mt-2 p-3 bg-muted/40 rounded-lg border border-border">
+              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">
+                Model Cross-Reference
+              </span>
+              <div className="mt-1.5 grid grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
+                <div>
+                  <span className="text-muted-foreground">Meta PQC Level: </span>
+                  <span className="font-medium text-foreground">
+                    {average < 1.5
+                      ? 'PQ-Unaware'
+                      : average < 2.5
+                        ? 'PQ-Aware'
+                        : average < 3.5
+                          ? 'PQ-Ready / Hardened'
+                          : 'PQ-Enabled'}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">CMMI: </span>
+                  <span className="font-medium text-foreground">
+                    {average < 1.5
+                      ? 'Level 1 · Initial'
+                      : average < 2.5
+                        ? 'Level 2 · Managed'
+                        : average < 3.5
+                          ? 'Level 3 · Defined'
+                          : 'Level 4–5'}
+                  </span>
+                </div>
+                <div className="col-span-2">
+                  <span className="text-muted-foreground">ENISA / NCCoE stage: </span>
+                  <span className="font-medium text-foreground">
+                    {average < 1.5
+                      ? '1 · Awareness'
+                      : average < 2.5
+                        ? '2 · Assessment'
+                        : average < 3.5
+                          ? '3 · Planning / Implementation'
+                          : '5 · Operations'}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

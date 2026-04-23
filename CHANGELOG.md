@@ -6,6 +6,28 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.6] - April 23, 2026
+
+### Changed
+
+- **CryptoMgmtModernization — maturity scale realigned to NIST CSWP.39 4-tier model** [persona:architect] [persona:ciso] [view:/learn] — the internal CPM assessment scale was collapsed from 5 levels (Ad-hoc → Optimized, CMM-derived) to 4 tiers that map 1:1 to NIST CSWP.39 §6.5:
+  - _`MaturityLevel` type_ (`data/maturityModel.ts`) narrowed to `1 | 2 | 3 | 4`; labels updated to CSWP.39 tier names: `Partial · Risk-Informed · Repeatable · Adaptive`.
+  - _Pillar indicators_ — each of the five pillars (Inventory, Governance, Lifecycle, Observability, Assurance) collapsed from 5 descriptors to 4; old L1/L3/L4/L5 strings mapped to new L1/L2/L3/L4 to preserve the highest-fidelity descriptors at each tier.
+  - _Workshop Step 1_ — button row reduced from `[1…5]` to `[1…4]`; radar chart domain updated to `[0, 4]`; score display shows `x.x / 4.0`; intro text updated to reference the CSWP.39 tier scale.
+  - _Introduction learn tab_ — maturity table column renamed from "CMM Level (approx.)" to "CPM Tier"; rows updated to `L1 · Partial` through `L4 · Adaptive`.
+  - _`content.ts`_ — `workshopSummary` matrix description updated (`5×5×4` → `5×4 grid, rated 1–4`); `cswp39MaturityTiers` mapping sentence updated to direct 1:1 mapping; old CMM boundary labels removed.
+
+### Added
+
+- **CryptoMgmtModernization — PQC maturity model cross-walk section** [persona:architect] [persona:ciso] [view:/learn] — new section "PQC Maturity Models — Cross-Walk" in the Introduction learn tab aligns four industry frameworks by readiness band:
+  - _Table_ — CSWP.39 (4 tiers) · Meta PQC Levels (5: PQ-Unaware → PQ-Enabled) · CMMI (5 levels: Initial → Optimizing) · ENISA/NCCoE (5 stages: Awareness → Operations); five rows from "No awareness" to "Continuous".
+  - _Callout cards_ — scale difference (CSWP.39 Tier 1 spans two Meta levels) and focus difference (outcome vs. process-maturity vs. project-phase).
+  - _Step 1 cross-reference panel_ — below the NIST CSWP.39 Alignment badge in the workshop, a compact "Model Cross-Reference" sub-panel dynamically maps the user's current average score to the equivalent Meta PQC Level, CMMI level, and ENISA/NCCoE stage.
+
+- **CryptoMgmtModernization — Meta Engineering further reading reference** [persona:architect] [persona:developer] [view:/learn] — new "Further Reading & Case Studies" section in the Introduction learn tab with a clickable card for _Post-Quantum Cryptography Migration at Meta: Framework, Lessons, and Takeaways_ (Rafael Misoczki, Isaac Elbaz, Forrest Mertens, April 2026). Card summarises the five-tier PQC maturity model, ML-KEM-768/ML-DSA-65 algorithm rationale, hybrid deployment strategy, and hyperscale deployment lessons. Reference also added to `content.ts` `relatedStandards` narrative.
+
+- **Library enrichment — Meta-PQC-Migration-2026 v3 update** — Ollama (`qwen3.5:27b`) v3 enrichment pass added 10 new dimensions: implementation attack surface, cryptographic discovery & inventory, supply chain & vendor risk (LibOQS, Open Quantum Safe consortium, HSM/CPU vendor dependencies), deployment & migration complexity (PQC Migration Levels framework), financial & business impact, and organizational readiness. Output: `src/data/doc-enrichments/library_doc_enrichments_04232026.md`. RAG corpus regenerated (6740 → 6749 chunks).
+
 ## [3.5.5] - April 23, 2026
 
 ### Fixed

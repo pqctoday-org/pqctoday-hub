@@ -1,18 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * CPM capability maturity model.
- * 5 pillars x 5 levels, with per-asset-class indicators.
+ * 5 pillars x 4 tiers (CSWP.39), with per-asset-class indicators.
  * Scores feed the MaturityAssessment workshop radar chart.
  */
 
-export type MaturityLevel = 1 | 2 | 3 | 4 | 5
+export type MaturityLevel = 1 | 2 | 3 | 4
 
 export const MATURITY_LEVEL_LABELS: Record<MaturityLevel, string> = {
-  1: 'Ad-hoc',
-  2: 'Reactive',
-  3: 'Defined',
-  4: 'Measured',
-  5: 'Optimized',
+  1: 'Partial',
+  2: 'Risk-Informed',
+  3: 'Repeatable',
+  4: 'Adaptive',
 }
 
 export type PillarId = 'inventory' | 'governance' | 'lifecycle' | 'observability' | 'assurance'
@@ -32,10 +31,9 @@ export const PILLARS: PillarDef[] = [
       'How completely do you know which certificates, libraries, software, and keys are in your estate?',
     indicators: {
       1: 'No central inventory. Teams track their own crypto locally.',
-      2: 'Spreadsheet-level tracking for certs; no library or key inventory.',
-      3: 'Unified CBOM maintained manually, refreshed quarterly.',
-      4: 'Automated CBOM ingestion from SBOM pipeline, refreshed daily.',
-      5: 'Continuous discovery across all 4 asset classes, with drift alerting.',
+      2: 'Unified CBOM maintained manually, refreshed quarterly.',
+      3: 'Automated CBOM ingestion from SBOM pipeline, refreshed daily.',
+      4: 'Continuous discovery across all 4 asset classes, with drift alerting.',
     },
   },
   {
@@ -44,10 +42,9 @@ export const PILLARS: PillarDef[] = [
     question: 'Do you have documented policy and clear ownership for every crypto decision?',
     indicators: {
       1: 'No policy. Algorithm choices made case-by-case.',
-      2: 'Informal guidance. No exception process.',
-      3: 'Policy documented; RACI for major initiatives.',
-      4: 'Enforced policy with exception workflow and KPI reporting.',
-      5: 'Policy-as-code with automated enforcement and board attestation.',
+      2: 'Policy documented; RACI for major initiatives.',
+      3: 'Enforced policy with exception workflow and KPI reporting.',
+      4: 'Policy-as-code with automated enforcement and board attestation.',
     },
   },
   {
@@ -57,10 +54,9 @@ export const PILLARS: PillarDef[] = [
       'Can you renew, rotate, and retire every cert and key without manual toil at 47-day cadence?',
     indicators: {
       1: 'Manual cert renewal via email reminders. Frequent expiry outages.',
-      2: 'Scripted renewals for some systems; manual for most.',
-      3: 'ACME/EST automation for public TLS; manual for internal CAs.',
-      4: 'End-to-end automation across public and internal CAs; root-rotation runbooks tested.',
-      5: 'Fully automated lifecycle, 47-day-ready, shadow-cert discovery, proactive revocation.',
+      2: 'ACME/EST automation for public TLS; manual for internal CAs.',
+      3: 'End-to-end automation across public and internal CAs; root-rotation runbooks tested.',
+      4: 'Fully automated lifecycle, 47-day-ready, shadow-cert discovery, proactive revocation.',
     },
   },
   {
@@ -69,10 +65,9 @@ export const PILLARS: PillarDef[] = [
     question: 'Can you detect a policy drift or FIPS-cert revocation within the same day?',
     indicators: {
       1: 'No crypto metrics. Outages revealed by users.',
-      2: 'Basic expiry alerts via email.',
-      3: 'Dashboard with coverage and MTTR. Reviewed monthly.',
-      4: 'SIEM-integrated drift alerts; CMVP change-notice subscriptions.',
-      5: 'Real-time posture dashboard with anomaly detection and automated incident creation.',
+      2: 'Dashboard with coverage and MTTR. Reviewed monthly.',
+      3: 'SIEM-integrated drift alerts; CMVP change-notice subscriptions.',
+      4: 'Real-time posture dashboard with anomaly detection and automated incident creation.',
     },
   },
   {
@@ -82,10 +77,9 @@ export const PILLARS: PillarDef[] = [
       'Can you prove, today, that every library and HSM in production is backed by a current FIPS 140-3 certificate?',
     indicators: {
       1: 'Unknown whether modules are validated. No tracking.',
-      2: 'Cert numbers recorded once at procurement; never re-verified.',
-      3: 'Annual audit checks CMVP status for production modules.',
-      4: 'Automated monthly CMVP/ACVP status sync with inventory.',
-      5: 'Continuous validation monitoring with IG-delta impact analysis and attestation export.',
+      2: 'Annual audit checks CMVP status for production modules.',
+      3: 'Automated monthly CMVP/ACVP status sync with inventory.',
+      4: 'Continuous validation monitoring with IG-delta impact analysis and attestation export.',
     },
   },
 ]

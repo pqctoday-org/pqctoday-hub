@@ -245,16 +245,14 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <thead>
               <tr className="bg-muted/60">
                 <th className="text-left p-2 border-b border-border">CSWP.39 Tier</th>
-                <th className="text-left p-2 border-b border-border">CMM Level (approx.)</th>
+                <th className="text-left p-2 border-b border-border">CPM Tier</th>
                 <th className="text-left p-2 border-b border-border">Characteristics</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td className="p-2 border-b border-border font-bold">Tier 1 — Partial</td>
-                <td className="p-2 border-b border-border text-muted-foreground">
-                  L1 Ad-hoc / L2 Reactive
-                </td>
+                <td className="p-2 border-b border-border text-muted-foreground">L1 · Partial</td>
                 <td className="p-2 border-b border-border text-muted-foreground">
                   Crypto practices unstructured; teams pick their own algorithms; no formal policy;
                   supply-chain crypto risks unknown.
@@ -262,7 +260,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               </tr>
               <tr className="bg-muted/20">
                 <td className="p-2 border-b border-border font-bold">Tier 2 — Risk-Informed</td>
-                <td className="p-2 border-b border-border text-muted-foreground">L3 Defined</td>
+                <td className="p-2 border-b border-border text-muted-foreground">
+                  L2 · Risk-Informed
+                </td>
                 <td className="p-2 border-b border-border text-muted-foreground">
                   Management-approved crypto policy exists but not organisation-wide; crypto
                   architecture being developed; risk assessments drive prioritisation.
@@ -270,7 +270,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               </tr>
               <tr>
                 <td className="p-2 border-b border-border font-bold">Tier 3 — Repeatable</td>
-                <td className="p-2 border-b border-border text-muted-foreground">L4 Measured</td>
+                <td className="p-2 border-b border-border text-muted-foreground">
+                  L3 · Repeatable
+                </td>
                 <td className="p-2 border-b border-border text-muted-foreground">
                   Crypto agility formally integrated into risk management; roles defined; automated
                   discovery and remediation tools deployed; agility practices tested.
@@ -278,7 +280,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
               </tr>
               <tr className="bg-muted/20">
                 <td className="p-2 font-bold">Tier 4 — Adaptive</td>
-                <td className="p-2 text-muted-foreground">L5 Optimised</td>
+                <td className="p-2 text-muted-foreground">L4 · Adaptive</td>
                 <td className="p-2 text-muted-foreground">
                   Crypto agility measured and reported to executives; linked to financial and
                   mission objectives; policies updated in near-real-time as standards and threats
@@ -1028,6 +1030,157 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             </li>
           </ol>
         </div>
+      </div>
+    </section>
+
+    {/* Section: Maturity Model Cross-Walk */}
+    <section id="maturity-comparison" className="glass-panel p-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 rounded-lg bg-secondary/10">
+          <Columns3 size={24} className="text-secondary" />
+        </div>
+        <h2 className="text-xl font-bold text-gradient">PQC Maturity Models — Cross-Walk</h2>
+      </div>
+      <div className="space-y-4 text-sm text-foreground/80">
+        <p>
+          Four frameworks independently converge on the same progression arc — from unstructured,
+          ad-hoc crypto practices to continuous, executive-reported quantum readiness. The table
+          aligns them by readiness band so you can map your organization across models used by
+          different stakeholders and regulators.
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs border border-border">
+            <thead>
+              <tr className="bg-muted/60">
+                <th className="text-left p-2 border-b border-border">Band</th>
+                <th className="text-left p-2 border-b border-border text-primary">
+                  CSWP.39 (4 tiers)
+                </th>
+                <th className="text-left p-2 border-b border-border text-accent">
+                  Meta PQC Levels (5)
+                </th>
+                <th className="text-left p-2 border-b border-border">CMMI (5 levels)</th>
+                <th className="text-left p-2 border-b border-border text-secondary">
+                  ENISA / NCCoE (5 stages)
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="p-2 border-b border-border font-medium text-muted-foreground">
+                  No awareness
+                </td>
+                <td className="p-2 border-b border-border font-bold">Tier 1 · Partial</td>
+                <td className="p-2 border-b border-border">PQ-Unaware</td>
+                <td className="p-2 border-b border-border text-muted-foreground">
+                  Level 1 · Initial
+                </td>
+                <td className="p-2 border-b border-border text-muted-foreground">1 · Awareness</td>
+              </tr>
+              <tr className="bg-muted/20">
+                <td className="p-2 border-b border-border font-medium text-muted-foreground">
+                  Threat recognized
+                </td>
+                <td className="p-2 border-b border-border font-bold">Tier 1 · Partial</td>
+                <td className="p-2 border-b border-border">PQ-Aware</td>
+                <td className="p-2 border-b border-border text-muted-foreground">
+                  Level 2 · Managed
+                </td>
+                <td className="p-2 border-b border-border text-muted-foreground">2 · Assessment</td>
+              </tr>
+              <tr>
+                <td className="p-2 border-b border-border font-medium text-muted-foreground">
+                  Policy &amp; design
+                </td>
+                <td className="p-2 border-b border-border font-bold">Tier 2 · Risk-Informed</td>
+                <td className="p-2 border-b border-border">PQ-Ready</td>
+                <td className="p-2 border-b border-border text-muted-foreground">
+                  Level 3 · Defined
+                </td>
+                <td className="p-2 border-b border-border text-muted-foreground">3 · Planning</td>
+              </tr>
+              <tr className="bg-muted/20">
+                <td className="p-2 border-b border-border font-medium text-muted-foreground">
+                  Tools deployed
+                </td>
+                <td className="p-2 border-b border-border font-bold">Tier 3 · Repeatable</td>
+                <td className="p-2 border-b border-border">PQ-Hardened</td>
+                <td className="p-2 border-b border-border text-muted-foreground">
+                  Level 4 · Quantitatively Managed
+                </td>
+                <td className="p-2 border-b border-border text-muted-foreground">
+                  4 · Implementation
+                </td>
+              </tr>
+              <tr>
+                <td className="p-2 font-medium text-muted-foreground">Continuous</td>
+                <td className="p-2 font-bold">Tier 4 · Adaptive</td>
+                <td className="p-2">PQ-Enabled</td>
+                <td className="p-2 text-muted-foreground">Level 5 · Optimizing</td>
+                <td className="p-2 text-muted-foreground">5 · Operations</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div className="bg-muted/40 rounded-lg p-3 border border-border">
+            <div className="font-bold text-foreground mb-1">Scale difference</div>
+            <p className="text-muted-foreground">
+              CSWP.39 uses 4 tiers — this module&apos;s native scale. Meta, CMMI, and ENISA/NCCoE
+              use 5 levels. CSWP.39 Tier 1 spans two Meta levels (PQ-Unaware and PQ-Aware) because
+              the spec treats both as &ldquo;Partial&rdquo; practice.
+            </p>
+          </div>
+          <div className="bg-muted/40 rounded-lg p-3 border border-border">
+            <div className="font-bold text-foreground mb-1">Focus difference</div>
+            <p className="text-muted-foreground">
+              Meta&apos;s model is outcome-focused (is PQC actually running?). CSWP.39 is
+              process-maturity focused (are practices repeatable?). CMMI is process-capability
+              focused. ENISA/NCCoE is project-phase focused.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* Section: Further Reading */}
+    <section id="further-reading" className="glass-panel p-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-2 rounded-lg bg-primary/10">
+          <BookOpen size={24} className="text-primary" />
+        </div>
+        <h2 className="text-xl font-bold text-gradient">Further Reading &amp; Case Studies</h2>
+      </div>
+      <div className="space-y-3">
+        <a
+          href="https://engineering.fb.com/2026/04/16/security/post-quantum-cryptography-migration-at-meta-framework-lessons-and-takeaways/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-start gap-3 bg-muted/40 rounded-lg p-4 border border-border hover:border-primary/40 transition-colors group"
+        >
+          <div className="p-2 rounded-lg bg-accent/10 shrink-0">
+            <Network size={18} className="text-accent" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
+              Post-Quantum Cryptography Migration at Meta: Framework, Lessons, and Takeaways
+            </div>
+            <div className="text-xs text-muted-foreground mt-0.5">
+              Rafael Misoczki, Isaac Elbaz, Forrest Mertens &mdash; Meta Engineering &middot; April
+              2026
+            </div>
+            <p className="text-xs text-foreground/70 mt-1">
+              Hyperscale deployment case study: five-tier PQC maturity model (PQ-Unaware →
+              PQ-Enabled), ML-KEM-768 / ML-DSA-65 algorithm rationale, hybrid deployment strategy,
+              and organizational lessons from migrating WhatsApp, Facebook/Messenger, and
+              infrastructure teams.
+            </p>
+          </div>
+          <ArrowRight
+            size={16}
+            className="text-muted-foreground shrink-0 mt-1 group-hover:text-primary transition-colors"
+          />
+        </a>
       </div>
     </section>
 
