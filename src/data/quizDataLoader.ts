@@ -443,6 +443,18 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'Passive discovery, active scanning, performance benchmarking, interoperability testing, TVLA, and test strategy design.',
       icon: 'ScanSearch',
     },
+    'crypto-mgmt-modernization': {
+      label: 'Crypto Management Modernization',
+      description:
+        'Crypto inventory, agility, lifecycle management, and modernization programs for post-quantum readiness.',
+      icon: 'RefreshCw',
+    },
+    'slh-dsa': {
+      label: 'SLH-DSA',
+      description:
+        'Stateless hash-based digital signatures (FIPS 205) — SPHINCS+ standardised for post-quantum signing.',
+      icon: 'TreePine',
+    },
   }
 
 // Compute question counts dynamically from loaded data
