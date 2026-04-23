@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   CRYPTO_LIBRARIES,
@@ -9,6 +9,7 @@ import {
 } from '../data/cryptoLibraries'
 import { HSM_VENDORS } from '../data/hsmVendors'
 import { SAMPLE_SBOMS } from '../data/sampleSBOMs'
+import type { CbomExportItem } from '../data/workshopTypes'
 
 type Mode = 'sbom' | 'libs' | 'hsm'
 
@@ -63,7 +64,11 @@ interface CbomRow {
   notes: string
 }
 
-export const LibraryCBOMBuilder: React.FC = () => {
+interface LibraryCBOMBuilderProps {
+  onCbomExport?: (items: CbomExportItem[]) => void
+}
+
+export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomExport }) => {
   const [mode, setMode] = useState<Mode>('libs')
   const [selectedSbom, setSelectedSbom] = useState<string>(SAMPLE_SBOMS[0].id)
   const [userSbom, setUserSbom] = useState<string>('')
@@ -103,6 +108,21 @@ export const LibraryCBOMBuilder: React.FC = () => {
       return []
     }
   }, [activeSbom])
+
+  useEffect(() => {
+    if (!onCbomExport) return
+    const items: CbomExportItem[] = cbomSlice.map((row) => ({
+      name: row.name,
+      version: row.version,
+      type: 'library' as const,
+      fipsStatus: row.fipsStatus,
+      esvStatus: row.esvStatus,
+      pqcSupport: row.pqcSupport,
+      posture: row.posture,
+      notes: row.notes,
+    }))
+    onCbomExport(items)
+  }, [cbomSlice, onCbomExport])
 
   return (
     <div className="space-y-6">

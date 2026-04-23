@@ -12,6 +12,7 @@ interface WorkshopStepHeaderProps {
   stepDescription: string
   stepIndex: number
   totalSteps: number
+  cswp39Step?: string
 }
 
 export const WorkshopStepHeader: React.FC<WorkshopStepHeaderProps> = ({
@@ -21,6 +22,7 @@ export const WorkshopStepHeader: React.FC<WorkshopStepHeaderProps> = ({
   stepDescription,
   stepIndex,
   totalSteps,
+  cswp39Step,
 }) => {
   const moduleMeta = MODULE_CATALOG[moduleId] // eslint-disable-line security/detect-object-injection
   const moduleTitle = moduleMeta?.title ?? moduleId
@@ -70,6 +72,13 @@ export const WorkshopStepHeader: React.FC<WorkshopStepHeaderProps> = ({
         </div>
       </div>
       <p className="text-muted-foreground break-words">{stepDescription}</p>
+      {cswp39Step && (
+        <div className="mt-1.5">
+          <span className="text-[10px] bg-status-info/10 text-status-info border border-status-info/30 px-2 py-0.5 rounded font-medium">
+            CSWP.39 Process: {cswp39Step}
+          </span>
+        </div>
+      )}
     </div>
   )
 }

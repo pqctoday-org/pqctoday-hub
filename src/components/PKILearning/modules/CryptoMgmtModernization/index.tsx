@@ -1,7 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, Gauge, Repeat, Package, DollarSign, LineChart } from 'lucide-react'
+import {
+  Trash2,
+  Gauge,
+  Repeat,
+  Package,
+  DollarSign,
+  LineChart,
+  Search,
+  BarChart3,
+  GitFork,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Introduction } from './components/Introduction'
 import { MaturityAssessment } from './workshop/MaturityAssessment'
@@ -9,7 +19,11 @@ import { InventoryLifecycleSimulator } from './workshop/InventoryLifecycleSimula
 import { LibraryCBOMBuilder } from './workshop/LibraryCBOMBuilder'
 import { NoRegretROIBuilder } from './workshop/NoRegretROIBuilder'
 import { PostureKPIDesigner } from './workshop/PostureKPIDesigner'
+import { ManagementToolsAudit } from './workshop/ManagementToolsAudit'
+import { RiskAnalysisEngine } from './workshop/RiskAnalysisEngine'
+import { MitigateMigrateWizard } from './workshop/MitigateMigrateWizard'
 import { CryptoMgmtModernizationExercises } from './CryptoMgmtModernizationExercises'
+import type { CbomExportItem } from './data/workshopTypes'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -29,6 +43,7 @@ const PARTS = [
     description:
       'Score your organization across five pillars and four asset classes. Output: radar chart, gap narrative, and your next milestone.',
     icon: Gauge,
+    cswp39Step: 'Govern · §5.1 — assess crypto posture baseline',
   },
   {
     id: 'inventory-lifecycle',
@@ -36,13 +51,15 @@ const PARTS = [
     description:
       'Walk sample assets through the six-stage operational loop: Discover → Classify → Score → Remediate → Attest → Reassess. Includes canonical CLM scenarios.',
     icon: Repeat,
+    cswp39Step: 'Inventory · §5.2 — CLM operational loop',
   },
   {
     id: 'library-cbom-builder',
     title: 'Step 3: Library & Hardware CBOM Builder',
     description:
-      'Map SBOMs into crypto-focused CBOMs, track library EoL, and monitor FIPS 140-3 Level 3 validation status for libraries and HSMs.',
+      'Map SBOMs into crypto-focused CBOMs, track library EoL, and monitor FIPS 140-3 Level 3 validation status for libraries and HSMs. Assets loaded here feed Steps 7 and 8.',
     icon: Package,
+    cswp39Step: 'Inventory · §5.2 — asset-centric CBOM',
   },
   {
     id: 'no-regret-roi',
@@ -50,6 +67,7 @@ const PARTS = [
     description:
       'Model ROI under quantum-happens and quantum-never-happens scenarios. Outage avoidance, CLM automation, FIPS-drift remediation, library-CVE response.',
     icon: DollarSign,
+    cswp39Step: 'Govern · §5.1 — business case for the program',
   },
   {
     id: 'posture-kpi',
@@ -57,6 +75,31 @@ const PARTS = [
     description:
       'Pick board-ready KPIs across inventory, lifecycle/CLM, observability, and assurance/FIPS. Preview the stakeholder dashboard.',
     icon: LineChart,
+    cswp39Step: 'Prioritise · §5.4 — KPI framework for the Risk Analysis Engine',
+  },
+  {
+    id: 'management-tools-audit',
+    title: 'Step 6: Management Tools Coverage Audit',
+    description:
+      'Rate your tooling coverage across the six CSWP.39 Management Tools categories. Produces a gap heatmap and priority recommendations.',
+    icon: Search,
+    cswp39Step: 'Identify Gaps · §5.3 — tool coverage audit',
+  },
+  {
+    id: 'risk-analysis-engine',
+    title: 'Step 7: Risk Analysis & Prioritisation Engine',
+    description:
+      'Score CBOM assets from Step 3 on FIPS status, ESV status, PQC readiness, and EoL. Output: prioritised remediation queue (Critical → Low).',
+    icon: BarChart3,
+    cswp39Step: 'Prioritise · §5.4 — risk-ranked asset queue',
+  },
+  {
+    id: 'mitigate-migrate',
+    title: 'Step 8: Implement — Mitigate or Migrate',
+    description:
+      'CSWP.39 §4.6 decision wizard: answer 5 crypto-agility questions about an asset and receive a Gateway (Mitigate) or Algorithm Replacement (Migrate) recommendation.',
+    icon: GitFork,
+    cswp39Step: 'Implement · §5.5 + §4.6 — gateway vs. migration decision',
   },
 ]
 
@@ -64,6 +107,7 @@ export const CryptoMgmtModernizationModule: React.FC = () => {
   const deepLink = getModuleDeepLink({ maxStep: PARTS.length - 1 })
   const [activeTab, setActiveTab] = useState(deepLink.initialTab)
   const [currentPart, setCurrentPart] = useState(deepLink.initialStep)
+  const [cbomAssets, setCbomAssets] = useState<CbomExportItem[]>([])
   useSyncDeepLink(activeTab, currentPart)
   const startTimeRef = useRef(0)
   const { updateModuleProgress, markStepComplete } = useModuleStore()
@@ -221,12 +265,16 @@ export const CryptoMgmtModernizationModule: React.FC = () => {
                 stepDescription={PARTS[currentPart].description}
                 stepIndex={currentPart}
                 totalSteps={PARTS.length}
+                cswp39Step={PARTS[currentPart].cswp39Step}
               />
               {currentPart === 0 && <MaturityAssessment />}
               {currentPart === 1 && <InventoryLifecycleSimulator />}
-              {currentPart === 2 && <LibraryCBOMBuilder />}
+              {currentPart === 2 && <LibraryCBOMBuilder onCbomExport={setCbomAssets} />}
               {currentPart === 3 && <NoRegretROIBuilder />}
               {currentPart === 4 && <PostureKPIDesigner />}
+              {currentPart === 5 && <ManagementToolsAudit />}
+              {currentPart === 6 && <RiskAnalysisEngine cbomAssets={cbomAssets} />}
+              {currentPart === 7 && <MitigateMigrateWizard cbomAssets={cbomAssets} />}
             </div>
 
             <div className="flex flex-col sm:flex-row justify-between gap-3">

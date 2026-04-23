@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.3] - April 22, 2026
+
+### Added
+
+- **CryptoMgmtModernization workshop — CSWP.39 Steps 6–8** [persona:architect] [persona:ciso] [view:/learn] — three new workshop steps closing the Identify Gaps → Prioritise → Implement process gaps against NIST CSWP.39:
+  - _Step 6: Management Tools Coverage Audit_ — rates 6 CSWP.39 tool categories (Crypto Scanners, Vulnerability Management, Asset Management/SBOM, Log/SIEM, Zero-Trust Enforcement, Data Classification) on a None/Manual/Partial/Automated scale; produces a gap heatmap, tool-chain completeness %, and prioritised recommendations per gap; CSWP.39 §5.3 "Identify Gaps" step.
+  - _Step 7: Risk Analysis & Prioritisation Engine_ — scores CBOM assets (loaded from Step 3 or sample data) on FIPS status, ESV (SP 800-90B) status, PQC readiness, posture, and EoL; outputs a prioritised Critical/High/Medium/Low queue with per-asset action guidance; CSWP.39 §5.4 "Prioritise" step.
+  - _Step 8: Implement — Mitigate or Migrate_ — CSWP.39 §4.6 decision-tree wizard; user picks an asset from the CBOM (or sample list), answers 5 crypto-agility questions (source available? modular API? refresh scheduled? maintenance window feasible?), and receives either a MIGRATE recommendation (algorithm + timeline + CNSA 2.0 target) or a MITIGATE recommendation (crypto gateway spec + mandatory sunset date + §4.6 "not a permanent solution" callout).
+  - _Shared CBOM state_ — Step 3 (Library CBOM Builder) now exports its parsed CBOM via `onCbomExport` callback; Steps 7 and 8 consume the live data directly; when Step 3 has not been visited, both steps fall back to sample educational assets.
+  - _CSWP.39 process badge on all 8 steps_ — `WorkshopStepHeader` now accepts `cswp39Step?: string`; every step shows which CSWP.39 process step it executes (e.g., "Govern · §5.1", "Inventory · §5.2", "Identify Gaps · §5.3").
+
 ## [3.5.2] - April 22, 2026
 
 ### Added
