@@ -59,6 +59,8 @@ export type QuizCategory =
   | 'ops-quantum-impact'
   | 'research-quantum-impact'
   | 'pqc-testing-validation'
+  | 'crypto-mgmt-modernization'
+  | 'slh-dsa'
 
 export interface QuizOption {
   id: string
