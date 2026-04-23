@@ -20,7 +20,9 @@ import {
   Scale,
   ExternalLink,
   FileText,
+  Workflow,
 } from 'lucide-react'
+import { CSWP39Explorer } from './CSWP39Explorer'
 import { logComplianceFilter } from '../../utils/analytics'
 import { PageHeader } from '../common/PageHeader'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
@@ -223,7 +225,13 @@ const CERTIFICATION_GLOSSARY = [
 
 // ── Mobile toggle ──────────────────────────────────────────────────────
 
-type MobileSection = 'standards' | 'technical' | 'certification' | 'compliance' | 'records'
+type MobileSection =
+  | 'standards'
+  | 'technical'
+  | 'certification'
+  | 'compliance'
+  | 'records'
+  | 'cswp39'
 
 function MobileViewToggle({
   activeSection,
@@ -336,8 +344,15 @@ function MobileViewToggle({
         >
           Records
         </Button>
+        <Button
+          variant="ghost"
+          className={btnClass(section === 'cswp39')}
+          onClick={() => setSection('cswp39')}
+        >
+          CSWP.39
+        </Button>
       </div>
-      {section !== 'records' && (
+      {section !== 'records' && section !== 'cswp39' && (
         <CrossTabSearchHint
           searchText={landscapeProps.searchText}
           currentTab={section as LandscapeTab}
@@ -377,6 +392,14 @@ function MobileViewToggle({
         <div className="mt-2">
           <ComplianceTable {...tableProps} />
         </div>
+      )}
+      {section === 'cswp39' && (
+        <CSWP39Explorer
+          onNavigateToFramework={(targetTab, searchQuery) => {
+            landscapeProps.onSearchTextChange(searchQuery)
+            setSection(targetTab as MobileSection)
+          }}
+        />
       )}
     </div>
   )
@@ -490,7 +513,8 @@ export const ComplianceView = () => {
       clean === 'technical' ||
       clean === 'certification' ||
       clean === 'compliance' ||
-      clean === 'records'
+      clean === 'records' ||
+      clean === 'cswp39'
     ) {
       return clean
     }
@@ -1084,6 +1108,10 @@ export const ComplianceView = () => {
               <GlobeLock size={14} />
               Cert Records
             </TabsTrigger>
+            <TabsTrigger value="cswp39" className="flex items-center gap-1.5">
+              <Workflow size={14} />
+              CSWP.39 Framework
+            </TabsTrigger>
           </TabsList>
 
           {/* ── Tab 1: Standardization Bodies ── */}
@@ -1267,6 +1295,16 @@ export const ComplianceView = () => {
               onSortColumnChange={handleRecSortColChange}
               onSortDirectionChange={handleRecSortDirChange}
               onCurrentPageChange={handleRecPageChange}
+            />
+          </TabsContent>
+
+          {/* ── Tab 6: CSWP.39 Framework ── */}
+          <TabsContent value="cswp39" className="mt-0 space-y-4">
+            <CSWP39Explorer
+              onNavigateToFramework={(targetTab, searchQuery) => {
+                handleLsSearchChange(searchQuery)
+                handleTabChange(targetTab as MobileSection)
+              }}
             />
           </TabsContent>
         </Tabs>

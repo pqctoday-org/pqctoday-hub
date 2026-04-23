@@ -6,6 +6,20 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.7] - April 23, 2026
+
+### Added
+
+- **Compliance page — new CSWP.39 Framework tab** [persona:architect] [persona:ciso] [persona:compliance] [view:/compliance] — the `/compliance` page now has a sixth tab (alongside Standardization Bodies, Technical Standards, Certification Schemes, Compliance Frameworks, Cert Records) that lets users explore the NIST CSWP.39 (Dec 2025) Crypto Agility Strategic Plan without leaving the page:
+  - _Overview banner_ — one-paragraph primer with "Open Full Learn Module" CTA (deep-links `/learn/crypto-mgmt-modernization`) and "Download PDF" link (`/library/NIST_CSWP_39.pdf`).
+  - _Interactive Process Diagram_ — reuses the existing `CryptoAgilityProcessDiagram` component (six clickable zones: Governance, Assets, Management Tools, Data-Centric Risk Management, Mitigation, Migration); click a zone to see what belongs there, the CPM pillar it maps to, and the exact CSWP.39 section reference.
+  - _5-Step Process cards_ — expandable cards for Govern (§5.1–5.4), Inventory (§5.2), Identify Gaps (§5.3), Prioritise (§5.4), and Implement — Mitigate or Migrate (§4.6/§5.5); each card shows a plain-language explainer + enumerated requirements (hybrid tone) + aligned compliance frameworks.
+  - _4-Tier Maturity Model_ — horizontal card strip for Tier 1 Partial → Tier 2 Risk-Informed → Tier 3 Repeatable → Tier 4 Adaptive, colour-coded by tone (error → warning → info → success); each card lists characteristics and "how to reach this tier" steps.
+  - _Framework Cross-Walk_ — summary table mapping each CSWP.39 step to the compliance frameworks already catalogued elsewhere on the page (OMB M-23-02, DORA Art. 9, NIS2 Art. 21, NSM-10, CNSA 2.0, CycloneDX CBOM, FIPS 140-3 IG, CMVP, NIST SP 800-131A, FIPS 203/204/205, ACVP, CA/B SC-081v3); each chip is clickable and jumps to the target tab with a pre-filled search query, so users can instantly see which framework-record supports which CSWP.39 requirement.
+  - _New files_ — `src/components/Compliance/cswp39Data.ts` (typed static data: 5 steps, 4 tiers, cross-walk rows), `src/components/Compliance/CSWP39StepCard.tsx` (expandable step card), `src/components/Compliance/CSWP39Explorer.tsx` (explorer body).
+  - _Routing_ — `?tab=cswp39` and `/compliance#cswp39` both select the new tab; mobile toggle has a new "CSWP.39" button.
+  - _No Learn-module changes_ — the CryptoMgmtModernization module's v3.5.6 state is unchanged; the compliance tab reuses its `CryptoAgilityProcessDiagram` via direct import.
+
 ## [3.5.6] - April 23, 2026
 
 ### Changed
