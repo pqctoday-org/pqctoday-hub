@@ -6,6 +6,20 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.4] - April 23, 2026
+
+### Fixed
+
+- **Hybrid Signature workshop — `RangeError: "secretKey" expected Uint8Array of length 4032`** [view:/learn] — `ml_dsa65.sign(msg, secretKey)` was called with arguments swapped (`sign(secretKey, msg)`) in both `concatenationSign` and `nestingSign`; the message bytes were being validated as the secret key, producing a length mismatch equal to the message length (~170 bytes for a typical workshop message). Corrected argument order in `HybridSignatureService.ts`.
+
+- **HSM capacity defaults — ops/sec figures corrected** [view:/learn] — classical-HSM reference profile numbers revised to better match published vendor datasheets: RSA-2048 and ECDSA/ECDH P-256 corrected to 100 000 ops/s; ML-DSA-65 software fallback revised to 150 ops/s; ML-KEM-768 revised to 500 ops/s; AES-128/256 revised to 50 000 / 25 000 ops/s. Source note updated accordingly.
+
+### Changed
+
+- **Hybrid Signature workshop — ML-DSA backend split by construction** [persona:developer] [persona:architect] [view:/learn] — concatenation and nesting now route their ML-DSA-65 operations through the softhsmv3 WASM HSM (`CKM_ML_DSA`, PKCS#11 v3.2) while Silithium remains on `@noble/post-quantum` (`Sign_internal`, external-μ mode). EC-Schnorr stays on `@noble/curves` for all three constructions (no PKCS#11 Schnorr mechanism exists in v3.2). New `HybridSignatureHsmService.ts` encapsulates the HSM-backed keygen, sign, and verify paths.
+  - _UI clarity_ — each construction now displays a backend legend showing which primitive uses which library (softhsmv3 WASM / @noble/curves / @noble/post-quantum); HSM status banner (loading / ready / error) shown on mount; key panel shows PKCS#11 handle numbers for HSM-managed ML-DSA keys.
+  - _Educational rationale_ — Silithium's fused Fiat-Shamir protocol requires `ML-DSA.Sign_internal` (external-μ mode, FIPS 204 §5.2), which has no PKCS#11 v3.2 equivalent; concatenation and nesting use standard `ML-DSA.Sign` / `ML-DSA.Verify` (FIPS 204 §§5.2–5.3), which map directly onto `CKM_ML_DSA`. This boundary is now visible in the UI.
+
 ## [3.5.3] - April 22, 2026
 
 ### Added

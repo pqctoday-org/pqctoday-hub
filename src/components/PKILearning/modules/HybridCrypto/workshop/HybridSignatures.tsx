@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useRef, useEffect } from 'react'
 import {
   Fingerprint,
   Loader2,
@@ -10,14 +10,10 @@ import {
   Lock,
   Layers,
   Target,
+  Server,
+  FlaskConical,
 } from 'lucide-react'
 import {
-  concatenationKeygen,
-  concatenationSign,
-  concatenationVerify,
-  nestingKeygen,
-  nestingSign,
-  nestingVerify,
   silithiumKeygen,
   silithiumSign,
   silithiumVerify,
@@ -26,20 +22,43 @@ import {
   type HybridSigResult,
   type VerifyResult,
 } from '../services/HybridSignatureService'
+import {
+  hsmKeygen,
+  hsmConcatenationSign,
+  hsmConcatenationVerify,
+  hsmNestingSign,
+  hsmNestingVerify,
+  type HsmHybridKeyPair,
+} from '../services/HybridSignatureHsmService'
+import { getSoftHSMCppModule } from '@/wasm/softhsm'
+import {
+  hsm_initialize,
+  hsm_getFirstSlot,
+  hsm_initToken,
+  hsm_openUserSession,
+} from '@/wasm/softhsm/session'
+import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { Button } from '@/components/ui/button'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
 type ConstructionId = 'concatenation' | 'nesting' | 'silithium'
 
+/** HSM or noble key pair, carrying the backend tag for dispatch. */
+type KeyState =
+  | { backend: 'hsm'; pair: HsmHybridKeyPair }
+  | { backend: 'noble'; pair: HybridSigKeyPair }
+
 interface ConstructionState {
-  keys: HybridSigKeyPair | null
+  keys: KeyState | null
   sigResult: HybridSigResult | null
   verifyResult: VerifyResult | null
   recombinationResult: VerifyResult | null
   loading: boolean
   error: string | null
 }
+
+type HsmStatus = 'loading' | 'ready' | 'error'
 
 const DEFAULT_MSG =
   'Hello from the post-quantum transition. This message must be signed by both classical and PQC algorithms.'
@@ -93,10 +112,53 @@ const CONSTRUCTIONS: Array<{
   },
 ]
 
+// ── Backend legend badges ─────────────────────────────────────────────────────
+
+function BackendLegend({ id }: { id: ConstructionId }) {
+  if (id === 'silithium') {
+    return (
+      <div className="flex flex-wrap gap-2 mt-2">
+        <BackendBadge kind="noble" label="Both components — @noble/post-quantum + @noble/curves" />
+        <span className="text-xs text-muted-foreground self-center">
+          Fused Fiat-Shamir requires Sign_internal (below PKCS#11 boundary)
+        </span>
+      </div>
+    )
+  }
+  return (
+    <div className="flex flex-wrap gap-2 mt-2">
+      <BackendBadge kind="hsm" label="ML-DSA-65 — softhsmv3 WASM (CKM_ML_DSA, PKCS#11 v3.2)" />
+      <BackendBadge kind="noble" label="EC-Schnorr — @noble/curves (no PKCS#11 Schnorr)" />
+    </div>
+  )
+}
+
+function BackendBadge({ kind, label }: { kind: 'hsm' | 'noble'; label: string }) {
+  const isHsm = kind === 'hsm'
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 text-[11px] font-mono px-2 py-0.5 rounded border ${
+        isHsm
+          ? 'bg-primary/5 border-primary/20 text-primary'
+          : 'bg-muted border-border text-muted-foreground'
+      }`}
+    >
+      {isHsm ? <Server size={10} /> : <FlaskConical size={10} />}
+      {label}
+    </span>
+  )
+}
+
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function hexPreview(hex: string, chars = 32): string {
   return hex.length > chars ? hex.slice(0, chars) + '…' : hex
+}
+
+function toHexDisplay(bytes: Uint8Array): string {
+  return Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
 }
 
 function SizeBadge({ bytes, label }: { bytes: number; label: string }) {
@@ -113,6 +175,9 @@ function SizeBadge({ bytes, label }: { bytes: number; label: string }) {
 export const HybridSignatures: React.FC = () => {
   const [activeConstruction, setActiveConstruction] = useState<ConstructionId>('concatenation')
   const [message, setMessage] = useState(DEFAULT_MSG)
+  const [hsmStatus, setHsmStatus] = useState<HsmStatus>('loading')
+  const hsmRef = useRef<{ M: SoftHSMModule; hSession: number } | null>(null)
+
   const [state, setState] = useState<Record<ConstructionId, ConstructionState>>({
     concatenation: {
       keys: null,
@@ -140,9 +205,51 @@ export const HybridSignatures: React.FC = () => {
     },
   })
 
+  // ── HSM init ────────────────────────────────────────────────────────────────
+
+  useEffect(() => {
+    let cancelled = false
+    async function init() {
+      try {
+        const M = await getSoftHSMCppModule()
+        try {
+          hsm_initialize(M)
+        } catch {
+          // CKR_CRYPTOKI_ALREADY_INITIALIZED — module shared with Playground, proceed
+        }
+        const slot0 = hsm_getFirstSlot(M)
+        const slot = hsm_initToken(M, slot0, 'softhsm', 'hybrid-sig-workshop')
+        const hSession = hsm_openUserSession(M, slot, 'softhsm', '1234')
+        if (!cancelled) {
+          hsmRef.current = { M, hSession }
+          setHsmStatus('ready')
+        }
+      } catch (e) {
+        if (!cancelled) setHsmStatus('error')
+        console.warn('HybridSignatures: HSM init failed', e)
+      }
+    }
+    init()
+    return () => {
+      cancelled = true
+      if (hsmRef.current) {
+        try {
+          hsmRef.current.M._C_CloseSession(hsmRef.current.hSession)
+        } catch {
+          /* ignore */
+        }
+        hsmRef.current = null
+      }
+    }
+  }, [])
+
+  // ── State helpers ───────────────────────────────────────────────────────────
+
   const updateState = useCallback((id: ConstructionId, patch: Partial<ConstructionState>) => {
     setState((prev) => ({ ...prev, [id]: { ...prev[id], ...patch } }))
   }, [])
+
+  // ── Handlers ────────────────────────────────────────────────────────────────
 
   const handleKeygen = useCallback(
     async (id: ConstructionId) => {
@@ -154,13 +261,15 @@ export const HybridSignatures: React.FC = () => {
         recombinationResult: null,
       })
       try {
-        await new Promise((r) => setTimeout(r, 10)) // yield to render
-        const keys =
-          id === 'concatenation'
-            ? concatenationKeygen()
-            : id === 'nesting'
-              ? nestingKeygen()
-              : silithiumKeygen()
+        await new Promise((r) => setTimeout(r, 10))
+        let keys: KeyState
+        if (id === 'silithium') {
+          keys = { backend: 'noble', pair: silithiumKeygen() }
+        } else {
+          if (!hsmRef.current) throw new Error('HSM not ready')
+          const { M, hSession } = hsmRef.current
+          keys = { backend: 'hsm', pair: hsmKeygen(M, hSession) }
+        }
         updateState(id, { keys, loading: false })
       } catch (err) {
         updateState(id, { loading: false, error: String(err) })
@@ -177,13 +286,49 @@ export const HybridSignatures: React.FC = () => {
       try {
         await new Promise((r) => setTimeout(r, 10))
         const msgBytes = new TextEncoder().encode(message)
-        const sigResult =
-          id === 'concatenation'
-            ? concatenationSign(msgBytes, keys)
-            : id === 'nesting'
-              ? nestingSign(msgBytes, keys)
-              : silithiumSign(msgBytes, keys)
+        let sigResult: HybridSigResult
+        if (id === 'silithium' && keys.backend === 'noble') {
+          sigResult = silithiumSign(msgBytes, keys.pair)
+        } else if (keys.backend === 'hsm') {
+          if (!hsmRef.current) throw new Error('HSM session lost')
+          const { M, hSession } = hsmRef.current
+          sigResult =
+            id === 'concatenation'
+              ? hsmConcatenationSign(msgBytes, keys.pair, M, hSession)
+              : hsmNestingSign(msgBytes, keys.pair, M, hSession)
+        } else {
+          throw new Error('Backend mismatch')
+        }
         updateState(id, { sigResult, loading: false })
+      } catch (err) {
+        updateState(id, { loading: false, error: String(err) })
+      }
+    },
+    [state, message, updateState]
+  )
+
+  const handleVerify = useCallback(
+    async (id: ConstructionId) => {
+      const { keys, sigResult } = state[id]
+      if (!keys || !sigResult) return
+      updateState(id, { loading: true, error: null })
+      try {
+        await new Promise((r) => setTimeout(r, 10))
+        const msgBytes = new TextEncoder().encode(message)
+        let verifyResult: VerifyResult
+        if (id === 'silithium' && keys.backend === 'noble') {
+          verifyResult = silithiumVerify(msgBytes, sigResult.signatureBytes, keys.pair)
+        } else if (keys.backend === 'hsm') {
+          if (!hsmRef.current) throw new Error('HSM session lost')
+          const { M, hSession } = hsmRef.current
+          verifyResult =
+            id === 'concatenation'
+              ? hsmConcatenationVerify(msgBytes, sigResult.signatureBytes, keys.pair, M, hSession)
+              : hsmNestingVerify(msgBytes, sigResult.signatureBytes, keys.pair, M, hSession)
+        } else {
+          throw new Error('Backend mismatch')
+        }
+        updateState(id, { verifyResult, loading: false })
       } catch (err) {
         updateState(id, { loading: false, error: String(err) })
       }
@@ -193,7 +338,7 @@ export const HybridSignatures: React.FC = () => {
 
   const handleRecombinationAttack = useCallback(async () => {
     const { keys, sigResult } = state['silithium']
-    if (!keys || !sigResult) return
+    if (!keys || !sigResult || keys.backend !== 'noble') return
     updateState('silithium', { loading: true, error: null, recombinationResult: null })
     try {
       await new Promise((r) => setTimeout(r, 10))
@@ -206,31 +351,74 @@ export const HybridSignatures: React.FC = () => {
     }
   }, [state, message, updateState])
 
-  const handleVerify = useCallback(
-    async (id: ConstructionId) => {
-      const { keys, sigResult } = state[id]
-      if (!keys || !sigResult) return
-      updateState(id, { loading: true, error: null })
-      try {
-        await new Promise((r) => setTimeout(r, 10))
-        const msgBytes = new TextEncoder().encode(message)
-        const verifyResult =
-          id === 'concatenation'
-            ? concatenationVerify(msgBytes, sigResult.signatureBytes, keys)
-            : id === 'nesting'
-              ? nestingVerify(msgBytes, sigResult.signatureBytes, keys)
-              : silithiumVerify(msgBytes, sigResult.signatureBytes, keys)
-        updateState(id, { verifyResult, loading: false })
-      } catch (err) {
-        updateState(id, { loading: false, error: String(err) })
-      }
-    },
-    [state, message, updateState]
-  )
-
   const current = state[activeConstruction]
   const meta = CONSTRUCTIONS.find((c) => c.id === activeConstruction)!
   const MetaIcon = meta.icon
+  const isHsmConstruction = activeConstruction !== 'silithium'
+  const hsmBlocked = isHsmConstruction && hsmStatus !== 'ready'
+
+  // ── Key display helpers ─────────────────────────────────────────────────────
+
+  function renderKeys(keys: KeyState) {
+    const ecPkHex = toHexDisplay(keys.pair.ecPk)
+    const mlPkHex =
+      keys.backend === 'hsm'
+        ? toHexDisplay(keys.pair.mlPubBytes)
+        : toHexDisplay((keys.pair as HybridSigKeyPair).mlPk)
+    const mlPkLen =
+      keys.backend === 'hsm'
+        ? keys.pair.mlPubBytes.length
+        : (keys.pair as HybridSigKeyPair).mlPk.length
+
+    return (
+      <div className="glass-panel p-4 space-y-3">
+        <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
+          <Fingerprint size={15} className="text-primary" />
+          Key Pairs
+        </h4>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
+          {/* EC-Schnorr — always noble */}
+          <div className="space-y-1">
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+              <FlaskConical size={11} />
+              EC-Schnorr (secp256k1) · @noble/curves
+            </div>
+            <div className="bg-muted rounded px-2 py-1 text-foreground break-all">
+              pk: {hexPreview(ecPkHex)}
+            </div>
+            <div className="flex gap-2">
+              <SizeBadge bytes={keys.pair.ecPk.length} label="pk" />
+              <SizeBadge bytes={keys.pair.ecSk.length} label="sk" />
+            </div>
+          </div>
+          {/* ML-DSA — HSM or noble */}
+          <div className="space-y-1">
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+              {keys.backend === 'hsm' ? <Server size={11} /> : <FlaskConical size={11} />}
+              ML-DSA-65 (FIPS 204) ·{' '}
+              {keys.backend === 'hsm' ? 'softhsmv3 WASM (PKCS#11 v3.2)' : '@noble/post-quantum'}
+            </div>
+            <div className="bg-muted rounded px-2 py-1 text-foreground break-all">
+              pk: {hexPreview(mlPkHex)}
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              <SizeBadge bytes={mlPkLen} label="pk" />
+              {keys.backend === 'hsm' ? (
+                <span className="inline-flex items-center gap-1 text-xs font-mono bg-primary/5 border border-primary/20 text-primary px-2 py-0.5 rounded">
+                  <Server size={9} />
+                  handle #{keys.pair.mlPubHandle}
+                </span>
+              ) : (
+                <SizeBadge bytes={(keys.pair as HybridSigKeyPair).mlSk.length} label="sk" />
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ── Render ──────────────────────────────────────────────────────────────────
 
   return (
     <div className="space-y-6">
@@ -245,6 +433,27 @@ export const HybridSignatures: React.FC = () => {
           </p>
         </div>
       </div>
+
+      {/* HSM status banner */}
+      {hsmStatus === 'loading' && (
+        <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 border border-border rounded-lg px-3 py-2">
+          <Loader2 size={13} className="animate-spin shrink-0" />
+          Loading softhsmv3 WASM for concatenation / nesting ML-DSA operations…
+        </div>
+      )}
+      {hsmStatus === 'error' && (
+        <div className="flex items-center gap-2 text-xs text-status-error bg-status-error/5 border border-status-error/20 rounded-lg px-3 py-2">
+          <ShieldAlert size={13} className="shrink-0" />
+          softhsmv3 WASM failed to load — concatenation and nesting unavailable. Silithium still
+          works via @noble.
+        </div>
+      )}
+      {hsmStatus === 'ready' && (
+        <div className="flex items-center gap-2 text-xs text-status-success bg-status-success/5 border border-status-success/20 rounded-lg px-3 py-2">
+          <Server size={13} className="shrink-0" />
+          softhsmv3 WASM ready · CKM_ML_DSA (PKCS#11 v3.2) active for concatenation / nesting
+        </div>
+      )}
 
       {/* Construction tabs */}
       <div className="flex flex-wrap gap-2 border-b border-border pb-4">
@@ -288,6 +497,8 @@ export const HybridSignatures: React.FC = () => {
             <ExternalLink size={12} />
             {meta.reference}
           </a>
+          {/* Backend legend */}
+          <BackendLegend id={activeConstruction} />
         </div>
         {/* Separability indicator */}
         {current.sigResult && (
@@ -330,7 +541,7 @@ export const HybridSignatures: React.FC = () => {
         <Button
           variant="outline"
           onClick={() => handleKeygen(activeConstruction)}
-          disabled={current.loading}
+          disabled={current.loading || hsmBlocked}
           className="flex items-center gap-2"
         >
           {current.loading ? (
@@ -387,46 +598,7 @@ export const HybridSignatures: React.FC = () => {
       )}
 
       {/* Key info */}
-      {current.keys && (
-        <div className="glass-panel p-4 space-y-3">
-          <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
-            <Fingerprint size={15} className="text-primary" />
-            Key Pairs
-          </h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
-            <div className="space-y-1">
-              <div className="text-muted-foreground">EC-Schnorr (secp256k1)</div>
-              <div className="bg-muted rounded px-2 py-1 text-foreground break-all">
-                pk:{' '}
-                {hexPreview(
-                  Array.from(current.keys.ecPk)
-                    .map((b) => b.toString(16).padStart(2, '0'))
-                    .join('')
-                )}
-              </div>
-              <div className="flex gap-2">
-                <SizeBadge bytes={current.keys.ecPk.length} label="pk" />
-                <SizeBadge bytes={current.keys.ecSk.length} label="sk" />
-              </div>
-            </div>
-            <div className="space-y-1">
-              <div className="text-muted-foreground">ML-DSA-65 (FIPS 204)</div>
-              <div className="bg-muted rounded px-2 py-1 text-foreground break-all">
-                pk:{' '}
-                {hexPreview(
-                  Array.from(current.keys.mlPk)
-                    .map((b) => b.toString(16).padStart(2, '0'))
-                    .join('')
-                )}
-              </div>
-              <div className="flex gap-2">
-                <SizeBadge bytes={current.keys.mlPk.length} label="pk" />
-                <SizeBadge bytes={current.keys.mlSk.length} label="sk" />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {current.keys && renderKeys(current.keys)}
 
       {/* Signature result */}
       {current.sigResult && (
@@ -503,13 +675,11 @@ export const HybridSignatures: React.FC = () => {
           </h4>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {/* Full verify */}
             <ResultBadge
               label="Full hybrid verify"
               pass={current.verifyResult.valid}
               detail={current.verifyResult.valid ? 'Both components valid' : 'Failed'}
             />
-            {/* EC alone */}
             <ResultBadge
               label="EC-Schnorr alone"
               pass={current.verifyResult.ecAloneValid}
@@ -522,7 +692,6 @@ export const HybridSignatures: React.FC = () => {
                   : 'Blocked ✓ — requires shared μ'
               }
             />
-            {/* ML-DSA alone */}
             <ResultBadge
               label="ML-DSA alone"
               pass={current.verifyResult.mlAloneValid}

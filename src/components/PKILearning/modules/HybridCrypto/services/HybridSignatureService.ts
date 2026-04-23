@@ -22,20 +22,20 @@ import { sha256 } from '@noble/hashes/sha2.js'
 
 const CURVE_ORDER = secp256k1.Point.Fn.ORDER
 
-function bigintToBytes32(n: bigint): Uint8Array {
+export function bigintToBytes32(n: bigint): Uint8Array {
   const hex = n.toString(16).padStart(64, '0')
   const out = new Uint8Array(32)
   for (let i = 0; i < 32; i++) out[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16)
   return out
 }
 
-function bytesToBigint(b: Uint8Array): bigint {
+export function bytesToBigint(b: Uint8Array): bigint {
   let result = 0n
   for (const byte of b) result = (result << 8n) | BigInt(byte)
   return result
 }
 
-function concat(...arrays: Uint8Array[]): Uint8Array {
+export function concat(...arrays: Uint8Array[]): Uint8Array {
   const total = arrays.reduce((s, a) => s + a.length, 0)
   const out = new Uint8Array(total)
   let offset = 0
@@ -53,7 +53,7 @@ function hashToMu(data: Uint8Array): Uint8Array {
   return concat(h1, h2)
 }
 
-function toHex(b: Uint8Array): string {
+export function toHex(b: Uint8Array): string {
   return Array.from(b)
     .map((x) => x.toString(16).padStart(2, '0'))
     .join('')
@@ -71,13 +71,13 @@ interface ECSchnorrSig {
   s: Uint8Array // scalar response, 32 bytes
 }
 
-function ecSchnorrKeygen(): ECSchnorrKeyPair {
+export function ecSchnorrKeygen(): ECSchnorrKeyPair {
   const { secretKey, publicKey } = secp256k1.keygen()
   return { sk: secretKey, pk: publicKey }
 }
 
 /** Deterministic nonce derived from sk and msg — prevents nonce reuse attacks. */
-function ecSchnorrDeriveNonce(sk: Uint8Array, msg: Uint8Array): bigint {
+export function ecSchnorrDeriveNonce(sk: Uint8Array, msg: Uint8Array): bigint {
   const seed = sha256(concat(sk, msg, new Uint8Array([0x4b]))) // 0x4b = 'K' (nonce domain)
   return bytesToBigint(seed) % CURVE_ORDER
 }
@@ -87,7 +87,7 @@ function ecSchnorrDeriveNonce(sk: Uint8Array, msg: Uint8Array): bigint {
  * If fusedChallenge is provided, that 32-byte value IS the challenge e (Silithium path).
  * Otherwise challenge = SHA-256(R || pk || msg).
  */
-function ecSchnorrSign(
+export function ecSchnorrSign(
   msg: Uint8Array,
   sk: Uint8Array,
   fusedChallenge?: Uint8Array
@@ -106,7 +106,7 @@ function ecSchnorrSign(
 }
 
 /** Verify EC-Schnorr: s·G == R + e·pk */
-function ecSchnorrVerify(
+export function ecSchnorrVerify(
   msg: Uint8Array,
   pk: Uint8Array,
   R: Uint8Array,
@@ -192,7 +192,7 @@ export function concatenationKeygen(): HybridSigKeyPair {
 export function concatenationSign(msg: Uint8Array, keyPair: HybridSigKeyPair): HybridSigResult {
   const t0 = performance.now()
   const ecSig = ecSchnorrSign(msg, keyPair.ecSk)
-  const mlSig = ml_dsa65.sign(keyPair.mlSk, msg)
+  const mlSig = ml_dsa65.sign(msg, keyPair.mlSk)
 
   // Wire format: 1-byte R_len prefix + R + s (33+32) + 2-byte mlSig len + mlSig
   const ecBytes = concat(ecSig.R, ecSig.s) // 65 bytes
@@ -256,7 +256,7 @@ export function nestingSign(msg: Uint8Array, keyPair: HybridSigKeyPair): HybridS
 
   // ML-DSA signs msg || ecSig (binding the EC component into the lattice signature)
   const nestedMsg = concat(msg, ecBytes)
-  const mlSig = ml_dsa65.sign(keyPair.mlSk, nestedMsg)
+  const mlSig = ml_dsa65.sign(nestedMsg, keyPair.mlSk)
 
   const totalBytes = ecBytes.length + mlSig.length
   const timingMs = performance.now() - t0
