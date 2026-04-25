@@ -694,7 +694,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
 - **Frontend**: React 19 + TypeScript + Vite 7.3.1
 - **Cryptography**:
   - OpenSSL WASM v3.6.2 (with native ML-KEM, ML-DSA, and LMS/HSS support)
-  - `@pqctoday/softhsm-wasm` v0.4.18 — SoftHSMv3 PKCS#11 v3.2 WASM; C++ engine v0.4.18 (ML-KEM, ML-DSA, SLH-DSA, AES, PBKDF2, HKDF, KBKDF, EdDSA, secp256k1, X25519, BIP32); Rust engine v0.4.18 (PKCS#11 v3.2 KEM compliance, CKA_PARAMETER_SET flags, wasm-bindgen 0.2.117)
+  - `@pqctoday/softhsm-wasm` v0.4.23 — SoftHSMv3 PKCS#11 v3.2 WASM; C++ engine (ML-KEM, ML-DSA, SLH-DSA, AES, PBKDF2, HKDF, KBKDF, EdDSA, secp256k1, X25519, BIP32); Rust engine (PKCS#11 v3.2 KEM compliance, CKA_PARAMETER_SET flags, wasm-bindgen 0.2.117)
   - `@oqs/liboqs-js` for additional PQC algorithms (FrodoKEM, HQC, Classic McEliece)
   - Web Crypto API for classical algorithms (X25519, P-256, ECDH)
   - `@noble/curves` and `@noble/hashes` for blockchain operations
@@ -781,22 +781,11 @@ npm run test:e2e
 ```bash
 # Generate test coverage report
 npm run coverage
-
-# Scrape compliance data from NIST, ANSSI, Common Criteria
-# (also runs automatically before build via prebuild hook)
-npm run scrape
-
-# Download standards library PDFs
-npm run download:library
-
-# Enrich the quantum-safe software reference CSV with infrastructure_layer classification
-# and append new software entries; outputs a date-stamped CSV to src/data/
-python scripts/update_csv.py
-
-# Generate module infographics via Google Vertex AI Imagen 3
-# Requires GCLOUD_TOKEN env var; use --test for first 3, --all for all 50
-node scripts/generate-infographics.mjs --all
 ```
+
+> **Note**: Compliance data scraping, library downloads, CSV enrichment, and infographic
+> generation run locally before pushing. All pre-generated data files (`public/data/`,
+> `src/data/`) are committed to the repository and ready to use without running any scripts.
 
 ## Architecture Overview
 
@@ -818,16 +807,13 @@ The application is structured into several key components:
 ## Project Structure
 
 ```text
-├── docs/                # Documentation and audit reports
 ├── e2e/                 # Playwright end-to-end tests
 ├── public/              # Static assets served at root
-│   ├── data/            # Scraped compliance JSON (compliance-data.json)
+│   ├── data/            # Pre-generated compliance JSON (compliance-data.json, rag-corpus.json)
 │   ├── dist/            # liboqs WASM binaries (copied at build time)
 │   ├── flags/           # Country flag icons
 │   ├── lms-sample/      # LMS/HSS sample files
 │   └── wasm/            # LMS and OpenSSL WASM binaries
-├── requirements/        # Requirements specifications
-├── scripts/             # Compliance data scrapers (NIST, ANSSI, Common Criteria)
 ├── src/
 │   ├── components/          # React components
 │   │   ├── About/           # About page, SBOM, CVE details, and Rust WASM crate versions
