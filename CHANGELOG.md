@@ -55,6 +55,12 @@ All notable changes to this project will be documented in this file.
   - New `page-guide-explore` (`/explore`) and `page-guide-report` (`/report`) chunks — both routes were uncovered by the corpus before this change.
 - **Workspace persistence — visited routes + advanced views unlock** — [src/store/useHistoryStore.ts](src/store/useHistoryStore.ts) gains a `visitedRoutes` array (persisted, version bump 2→3) and a `recordVisit(path)` action; [src/services/storage/snapshotTypes.ts](src/services/storage/snapshotTypes.ts) and [src/services/storage/UnifiedStorageService.ts](src/services/storage/UnifiedStorageService.ts) persist `advancedViewsUnlocked` in cloud snapshots; [src/components/Layout/MainLayout.tsx](src/components/Layout/MainLayout.tsx), [src/components/Landing/LandingView.tsx](src/components/Landing/LandingView.tsx), and [src/components/Landing/PersonalizationSection.tsx](src/components/Landing/PersonalizationSection.tsx) wire the new state into the UI.
 
+## [3.5.22] - April 25, 2026
+
+### Changed
+
+- **Patents data — intermediate snapshot v4** — added 16 newly enriched + scored patents to `patents_04252026.csv` (now 353 total: prior 337 + 16 new). Background `enrich_patents.py` was paused at ~154/341 to free compute; remaining ~187 patents to be processed in a later run. New entries cover blockchain-PKI integration, multi-factor auth, UAV delivery confirmation, and named content transport.
+
 ## [3.5.21] - April 25, 2026
 
 ### Added
