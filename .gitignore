@@ -203,11 +203,8 @@ docs/repomanagement.md
 docs/design-document*
 docs/pqctoday-investor*
 
-# LLM enrichment scripts
-scripts/enrich-*.py
-scripts/__pycache__/
-scripts/summarize-library.py
-scripts/generate-notebooklm.ts
+# All scripts (private — tooling, scrapers, extractors; data is pre-committed)
+scripts/
 
 # Data archive & analysis
 src/data/archive/
@@ -235,7 +232,7 @@ public/threats/*.pdf
 public/threats/*.html
 .cache/*.pdf
 
-# One-off scripts
+# Root-level dev artifacts and one-off scripts
 update_threats_csv.py
 validate_urls.py
 accessibility-audit.cjs
@@ -252,6 +249,34 @@ test_hsm_version.mjs
 test_mlkem.rs
 module_accuracy_report_local.md
 reports/
+04152026/
+acvp-log.txt
+lint_errors.txt
+issues.txt
+debug_*.js
+migrate_*.cjs
+patch_*.mjs
+generate_3d_svgs.cjs
+check_layout.cjs
+*.tar.gz.sha256
+vite-test.ts
+test-crypto.ts
+test-results-clean.json
+pqc_validate_*.json
+adjust_logo_colors.py
+apply_pqc_palette.py
+extract_logo.py
+fix_missed_slugs.py
+fix_osrng.py
+fix_slugs.*
+generate_icons.py
+light_theme_logo.py
+build-lms-wasm.sh
+build-wasm.sh
+check_compliance_sources.ts
+
+# Private Python scripts inside src/
+src/**/*.py
 
 # macOS clippings
 *.textClipping

@@ -68,12 +68,7 @@ export default defineConfig([
 
   // Node config for root files, scripts, and e2e
   {
-    files: [
-      '*.{js,cjs,mjs,ts}',
-      'scripts/**/*.{js,cjs,mjs,ts}',
-      'e2e/**/*.{ts,js}',
-      'test-improvements.cjs',
-    ],
+    files: ['*.{js,cjs,mjs,ts}', 'e2e/**/*.{ts,js}', 'test-improvements.cjs'],
     languageOptions: {
       globals: globals.node,
     },

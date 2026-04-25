@@ -222,7 +222,6 @@ export default defineConfig({
         '**/*.md',
         'src/wasm/',
         'e2e/',
-        'scripts/',
       ],
       thresholds: {
         lines: 59,
