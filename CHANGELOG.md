@@ -6,6 +6,18 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.16] - April 25, 2026
+
+### Changed
+
+- **Library CSV cross-CSV dedup — Phase 2** [view:/library] [view:/compliance] — three additional soft-duplicates resolved with coordinated cite-rewriting across library + compliance CSVs:
+  - `ANSSI-PQC-Position-2022` → `ANSSI PQC Position Paper` — 3 dependency-cites in library rewritten.
+  - `India-DST-NQM-Roadmap` → `India-DST-Quantum-Safe-Roadmap-2026` — 1 library dep + 1 compliance `library_refs` cite rewritten.
+  - `NIST SP 800-53` → `FISMA-NIST-SP-800-53r5` — 1 library dep + 3 compliance `library_refs` cites rewritten.
+  - **Outputs**: [library_04252026_r4.csv](src/data/library_04252026_r4.csv) (528 rows; 531 → 528, Δ 3) and [compliance_04252026.csv](src/data/compliance_04252026.csv) (112 rows; 4 cites updated). Verified: 0 orphan dependency or library_refs cites; canonical cite counts match expected values; build succeeds (53/53 prerendered routes).
+  - Two NIST SP 800-90 family normalizations and the NIST-FIPS-140-3-IG-PQC ↔ -Sep-2025-PQC merge remain deferred (touch older governance CSVs and require larger coordinated edits).
+  - Script: [scripts/dedupe-library-cross-csv-04252026.cjs](scripts/dedupe-library-cross-csv-04252026.cjs) — reuses the IMMUTABLE_FIELDS guard from v3.5.15 so reference_id is never modified during merge.
+
 ## [3.5.15] - April 25, 2026
 
 ### Fixed
