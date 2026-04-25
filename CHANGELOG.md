@@ -6,6 +6,22 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.13] - April 25, 2026
+
+### Added
+
+- **CSWP.39 source-metadata + staleness check** [persona:architect] [persona:ciso] [view:/compliance] — exported `CSWP39_SOURCE_METADATA` constant in [cswp39Data.ts](src/components/Compliance/cswp39Data.ts) capturing publication date (2025-12-19), canonical NIST URL, `dataExtractedAt` (2026-04-25), and `nextReviewBy` (2026-07-24). New vitest spec [cswp39Data.test.ts](src/components/Compliance/cswp39Data.test.ts) fails CI when `nextReviewBy < today`, forcing manual re-verification of hub data against upstream NIST CSWP.39. The CSWP.39 Explorer Overview banner ([CSWP39Explorer.tsx](src/components/Compliance/CSWP39Explorer.tsx)) now surfaces the source link, document version, last-verified date, and next-review date inline. Re-verification cadence: 90 days. Closes assessment N4 (CSWP.39 framework lock-in canary).
+
+- **Maturity governance corpus refresh — CC 2022 + NERC CIP** — [pqc_maturity_governance_requirements_20260425.csv](src/data/pqc_maturity_governance_requirements_20260425.csv) gains 22 rows covering Common Criteria 2022 Part 2 + Part 3 (key-management, RBG, audit, life-cycle, configuration-management requirements at maturity tiers 2–3) and NERC Reliability Standards (CIP-002-8, CIP-003-11 governance + assurance requirements). All extracted with `qwen3.5:27b` per the project enrichment standard.
+
+### Fixed
+
+- **PWA precache size limit raised 15 → 20 MB** — [vite.config.ts](vite.config.ts) `injectManifest.maximumFileSizeToCacheInBytes` bumped from 15 MB to 20 MB so the now-15.9 MB index bundle is fully precached on first install. Comment updated to reflect the broader scope (WASM + large bundles).
+
+### Removed
+
+- **Tracked Python bytecode untracked** — `scripts/__pycache__/*.pyc` files (4 stale entries plus 1 editor-swap artifact) untracked via `git rm --cached`. The directory was already in `.gitignore` line 208 but the files predated the rule and remained tracked. No on-disk changes; only git's index updated.
+
 ## [3.5.12] - April 25, 2026
 
 ### Added
