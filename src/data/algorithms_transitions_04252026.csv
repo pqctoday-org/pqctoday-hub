@@ -95,4 +95,4 @@ DH (Diffie-Hellman),2048-bit,HQC-128 (NIST Level 1),Encryption/KEM,2035 (Disallo
 DH (Diffie-Hellman),3072-bit,HQC-192 (NIST Level 3),Encryption/KEM,2035 (Disallowed),Selected 2025 (Draft ~2027),NIST,Candidate,https://csrc.nist.gov/projects/post-quantum-cryptography
 SHA-1,160-bit,SHA-256 (FIPS 180-4),Hash,Deprecated 2011 / Disallowed 2030 — Grover: no additional risk (classically broken),2012 (FIPS 180-4 Rev),NIST,FIPS 180-4,https://csrc.nist.gov/pubs/fips/180/4/final
 MD5,128-bit,SHA-256 (FIPS 180-4),Hash,Disallowed — classically broken; Grover not primary concern,2012 (FIPS 180-4 Rev),NIST,FIPS 180-4,https://csrc.nist.gov/pubs/fips/180/4/final
-HPKE (X25519+HKDF),256-bit,"HPKE-PQ (ML-KEM-768 + X25519, IETF)",Hybrid KEM (HPKE),2035 (Disallowed),IETF draft-ietf-hpke-pq-03 (2025),IETF,Candidate,
+HPKE (X25519+HKDF),256-bit,"HPKE-PQ (ML-KEM-768 + X25519, IETF)",Hybrid KEM,2035 (Disallowed),IETF draft-ietf-hpke-pq-03 (2025),IETF,Candidate,
