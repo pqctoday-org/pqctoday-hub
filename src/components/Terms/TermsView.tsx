@@ -63,7 +63,7 @@ export function TermsView() {
             <strong>GNU General Public License v3.0 (GPL-3.0-only)</strong>. The full license text
             is available in the{' '}
             <a
-              href="https://github.com/pqctoday/pqctoday-hub/blob/main/LICENSE"
+              href="https://github.com/pqctoday-org/pqctoday-hub/blob/main/LICENSE"
               target="_blank"
               rel="noopener noreferrer"
               className="text-accent hover:underline inline-flex items-center gap-1"
@@ -327,7 +327,7 @@ export function TermsView() {
           <p>
             For questions about these Terms, please open a discussion on{' '}
             <a
-              href="https://github.com/pqctoday/pqctoday-hub/discussions"
+              href="https://github.com/pqctoday-org/pqctoday-hub/discussions"
               target="_blank"
               rel="noopener noreferrer"
               className="text-accent hover:underline inline-flex items-center gap-1"

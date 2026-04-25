@@ -105,7 +105,7 @@ These Terms are governed by and construed in accordance with the laws of the Sta
 
 ## 13. Contact
 
-For questions about these Terms, please open a discussion on [GitHub Discussions](https://github.com/pqctoday/pqctoday-hub/discussions) or contact the maintainers through the repository.
+For questions about these Terms, please open a discussion on [GitHub Discussions](https://github.com/pqctoday-org/pqctoday-hub/discussions) or contact the maintainers through the repository.
 
 ---
 

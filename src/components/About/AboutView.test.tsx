@@ -124,10 +124,10 @@ describe('AboutView', () => {
     const licenseLink = screen.getByRole('link', { name: /View Full License/i })
     expect(licenseLink).toHaveAttribute(
       'href',
-      'https://github.com/pqctoday/pqctoday-hub/blob/main/LICENSE'
+      'https://github.com/pqctoday-org/pqctoday-hub/blob/main/LICENSE'
     )
 
     const repoLink = screen.getByRole('link', { name: /View GitHub Repository/i })
-    expect(repoLink).toHaveAttribute('href', 'https://github.com/pqctoday/pqctoday-hub')
+    expect(repoLink).toHaveAttribute('href', 'https://github.com/pqctoday-org/pqctoday-hub')
   })
 })

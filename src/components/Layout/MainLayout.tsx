@@ -475,7 +475,7 @@ export const MainLayout = () => {
             Content may be inaccurate. Please verify information independently. Report inaccuracies
             in{' '}
             <a
-              href="https://github.com/pqctoday/pqctoday-hub/discussions"
+              href="https://github.com/pqctoday-org/pqctoday-hub/discussions"
               target="_blank"
               rel="noopener noreferrer"
               className="underline hover:text-foreground transition-colors"

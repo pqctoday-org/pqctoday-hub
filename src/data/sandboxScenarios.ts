@@ -246,7 +246,7 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     trackId: 'infrastructure',
     tool: {
       name: 'SoftHSMv3',
-      url: 'https://github.com/pqctoday/softhsmv3',
+      url: 'https://github.com/pqctoday-org/pqctoday-hsm',
     },
   },
   {
@@ -526,7 +526,7 @@ export const SANDBOX_SCENARIOS: SandboxScenario[] = [
     trackId: 'web',
     tool: {
       name: 'pqctoday-tpm + pqctoday-hsm',
-      url: 'https://github.com/pqctoday/pqctoday-tpm',
+      url: 'https://github.com/pqctoday-org/pqctoday-tpm',
     },
   },
 ]

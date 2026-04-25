@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.18] - April 25, 2026
+
+### Fixed
+
+- **GitHub organization links updated** — all links throughout the app (source code, docs, discussions, consent flows) now point to the new `github.com/pqctoday-org/` org. Two renamed repos are also corrected: `softhsmv3` is now `pqctoday-hsm`, and `pqc-timeline-app` is now `pqctoday-hub`. No user-visible content changed — only the destination URLs.
+- **Icon compatibility with lucide-react v1** — the `GitHub` and `LinkedIn` brand icons were removed in lucide-react v1.0. Swapped for the standard external-link icon so the Leader consent, removal, transparency, disclaimer, and license sections continue to render correctly.
+
 ## [3.5.17] - April 25, 2026
 
 ### Added

@@ -85,7 +85,7 @@ export const DATA_FOUNDATION = [
   { dataset: 'PQC Patents', records: 201, sources: 'USPTO, EPO, WIPO' },
 ]
 
-export const DISCUSSIONS_BASE = 'https://github.com/pqctoday/pqctoday-hub/discussions/'
+export const DISCUSSIONS_BASE = 'https://github.com/pqctoday-org/pqctoday-hub/discussions/'
 
 export const DISCUSSIONS = [
   {
@@ -114,7 +114,7 @@ export const DISCUSSIONS = [
     icon: Trophy,
     label: 'Leaders',
     description: 'I consent to be added as a PQC leader',
-    url: 'https://github.com/pqctoday/pqctoday-hub/discussions/new?category=i-consent-to-be-added-as-a-pqc-leader',
+    url: 'https://github.com/pqctoday-org/pqctoday-hub/discussions/new?category=i-consent-to-be-added-as-a-pqc-leader',
   },
   {
     number: 117,
@@ -135,7 +135,7 @@ export const DISCUSSIONS = [
     icon: Stamp,
     label: 'Library Endorsements',
     description: 'Endorse a library resource for relevance and accuracy',
-    url: 'https://github.com/pqctoday/pqctoday-hub/discussions/categories/library-resource-endorsement',
+    url: 'https://github.com/pqctoday-org/pqctoday-hub/discussions/categories/library-resource-endorsement',
   },
 ]
 
