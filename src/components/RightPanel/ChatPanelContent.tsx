@@ -201,8 +201,8 @@ export const ChatPanelContent: React.FC = () => {
   return (
     <>
       {/* Chat header actions */}
-      <div className="px-4 md:px-12 py-2 border-b border-border shrink-0">
-        <div className="flex items-center justify-between max-w-4xl mx-auto">
+      <div className="px-3 md:px-4 py-2 border-b border-border shrink-0">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 min-w-0">
             <Bot size={18} className="text-primary shrink-0" />
             <span className="text-sm font-medium text-foreground truncate">{assistantTitle}</span>
@@ -343,7 +343,7 @@ export const ChatPanelContent: React.FC = () => {
 
           {/* Airplane Mode warning when connected to Gemini */}
           {airplaneMode && provider === 'gemini' && (
-            <div className="mx-4 md:mx-12 mt-2 rounded-lg bg-status-warning/10 border border-status-warning/30 p-3 flex items-center gap-3">
+            <div className="mx-3 md:mx-4 mt-2 rounded-lg bg-status-warning/10 border border-status-warning/30 p-3 flex items-center gap-3">
               <Plane size={16} className="text-status-warning shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-foreground font-medium">Airplane Mode active</p>
@@ -375,8 +375,8 @@ export const ChatPanelContent: React.FC = () => {
           )}
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 md:px-12">
-            <div className="max-w-4xl mx-auto space-y-4" aria-live="polite" aria-atomic="false">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden px-3 md:px-4 py-4">
+            <div className="space-y-4" aria-live="polite" aria-atomic="false">
               {messages.length === 0 && !isStreaming && (
                 <div className="text-center py-12 space-y-4">
                   <Bot size={40} className="text-muted-foreground mx-auto opacity-40" />
@@ -514,8 +514,8 @@ export const ChatPanelContent: React.FC = () => {
           </div>
 
           {/* Input */}
-          <div className="p-4 md:px-12 border-t border-border shrink-0">
-            <div className="max-w-4xl mx-auto flex gap-2">
+          <div className="px-3 md:px-4 py-3 border-t border-border shrink-0">
+            <div className="flex gap-2">
               <Textarea
                 ref={inputRef}
                 value={input}

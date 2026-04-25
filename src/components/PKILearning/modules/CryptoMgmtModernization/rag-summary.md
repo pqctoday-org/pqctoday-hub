@@ -44,8 +44,8 @@ schedule or never?"
 
 ## No-regret ROI streams
 
-1. Cert-outage avoidance ($11–15M/event × 86% annual incidence — Ponemon/Venafi).
-2. CLM automation (312% ROI, $10.1M NPV — Forrester TEI).
+1. Cert-outage avoidance (~$11M/event × 86% annual incidence — Entrust/Ponemon 2024 PKI & PQC Trends Study).
+2. CLM automation (312% ROI, $10.1M NPV over 3 years — Forrester TEI of DigiCert ONE, July 2025; vendor-commissioned, treat as upper-bound benchmark).
 3. FIPS 140-3 drift remediation avoided.
 4. Library CVE response acceleration.
 5. Time-to-market and M&A readiness (~50% lower PQC transition cost for orgs with a CryptoCOE
@@ -60,14 +60,14 @@ Quantum-dependent benefits are additive, never load-bearing.
    CLM scenarios.
 3. **Library & Hardware CBOM Builder** — SBOM → CBOM mapper, library + HSM FIPS 140-3 L3
    status trackers.
-4. **No-Regret ROI Builder** — IRR and payback under quantum-happens / never-happens.
+4. **No-Regret ROI Builder** — ROI, NPV, and payback under quantum-happens / never-happens. Every headline (program cost + 6 benefit streams) expands into an editable sub-model with formula, parameters, source citation, and plain-English explanation. Globals: horizon, discount rate, P(CRQC within horizon). "Pull from Step 3 CBOM" populates HSM/library counts.
 5. **Posture KPI Dashboard Designer** — KPI taxonomy across five pillars.
 
 ## Key standards
 
 CA/B Forum SC-081v3 · NIST FIPS 140-3 IG Sep 2025 · SP 800-140B · CMVP Validated Modules + MIP
 · OMB M-23-02 · NSA CNSA 2.0 · ENISA PQC Integration Study · BSI/ANSSI joint 2025 · OWASP
-CycloneDX CBOM · RFC 8555/7030/4210 · Forrester TEI CLM · Ponemon 2026 Global PKI · Microsoft
+CycloneDX CBOM · RFC 8555/7030/4210 · Forrester TEI of DigiCert ONE (2025) · Entrust/Ponemon 2024 Global PKI & PQC Trends Study · NIST IR 8547 (HNDL) · Microsoft
 CPM (2026-04) · Keyfactor/EJBCA CPM · Gartner (Mahdi, Lowans).
 
 ## Pairs with

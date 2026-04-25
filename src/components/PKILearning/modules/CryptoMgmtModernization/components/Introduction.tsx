@@ -736,13 +736,14 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-sm font-bold text-status-success">Outage avoidance</div>
             <p className="text-[11px] text-muted-foreground mt-1">
-              $11–15M per cert-expiry event &times; 86% annual incidence (Ponemon/Venafi).
+              ~$11M per cert-expiry event &times; 86% annual incidence (Entrust/Ponemon 2024 PKI
+              &amp; PQC Trends Study).
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
             <div className="text-sm font-bold text-status-success">CLM automation</div>
             <p className="text-[11px] text-muted-foreground mt-1">
-              312% ROI, $10.1M NPV (Forrester TEI, DigiCert-commissioned).
+              312% ROI, $10.1M NPV over 3 years (Forrester TEI of DigiCert ONE, July 2025).
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -764,13 +765,13 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             </p>
           </div>
         </div>
-        <Quote cite="Forrester Total Economic Impact of TLS/SSL Certificate Lifecycle Automation (2024)">
-          A composite organization modeled on interviewed customers realized 312% ROI and $10.1M NPV
-          over three years from automating certificate lifecycle management &mdash; with the
-          dominant value drivers being avoided outages, reduced mean-time-to-recovery, and reclaimed
-          engineering time.
+        <Quote cite="Forrester Total Economic Impact of DigiCert ONE (July 2025), commissioned by DigiCert">
+          A composite organization modeled on interviewed DigiCert ONE customers realized 312% ROI
+          and $10.1M NPV over three years &mdash; with $7.9M in labor savings, $2.8M from reduced
+          security incidents, and $2.83M in revenue and efficiency gains. Treat as upper-bound
+          benchmark for a specific product, not a guaranteed outcome for any CLM platform.
         </Quote>
-        <Quote cite="Ponemon Institute / Entrust, 2026 Global PKI &amp; IoT Trends Study">
+        <Quote cite="Entrust / Ponemon Institute, 2024 Global PKI &amp; PQC Trends Study">
           The average enterprise manages 114,000 publicly-trusted and internal certificates. 86%
           experienced at least one cert-related outage in the last 12 months. 53% still rely on
           manual spreadsheets or home-grown tools for PKI management &mdash; an operating model

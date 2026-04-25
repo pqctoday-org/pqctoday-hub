@@ -270,7 +270,7 @@ export const CryptoMgmtModernizationModule: React.FC = () => {
               {currentPart === 0 && <MaturityAssessment />}
               {currentPart === 1 && <InventoryLifecycleSimulator />}
               {currentPart === 2 && <LibraryCBOMBuilder onCbomExport={setCbomAssets} />}
-              {currentPart === 3 && <NoRegretROIBuilder />}
+              {currentPart === 3 && <NoRegretROIBuilder cbomAssets={cbomAssets} />}
               {currentPart === 4 && <PostureKPIDesigner />}
               {currentPart === 5 && <ManagementToolsAudit />}
               {currentPart === 6 && <RiskAnalysisEngine cbomAssets={cbomAssets} />}
