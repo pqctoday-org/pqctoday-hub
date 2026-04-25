@@ -712,7 +712,7 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
             pk: {ps.pub} B · sk: {ps.sk} B · sig: {ps.sig.toLocaleString()} B
           </span>
         </div>
-        <div className="grid grid-cols-3 gap-2 text-[11px]">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
           <div className="bg-muted/40 rounded px-2 py-1.5">
             <span className="text-muted-foreground block mb-0.5">Security</span>
             <span className="font-semibold">

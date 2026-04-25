@@ -354,7 +354,7 @@ export const CertificateInspector: React.FC<CertificateInspectorProps> = ({
                           PQC Certificate — {pqcAlgo} ({pqcInfo.level})
                         </span>
                       </div>
-                      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[10px]">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-[10px]">
                         <div className="text-muted-foreground">Public Key Size</div>
                         <div className="font-mono text-foreground">
                           {pqcInfo.pubKeySize}

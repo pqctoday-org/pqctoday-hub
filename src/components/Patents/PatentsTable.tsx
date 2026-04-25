@@ -475,7 +475,7 @@ export function PatentsTable({ patents, selectedId, onSelect }: Props) {
     <div className="flex h-full gap-0 overflow-hidden">
       {/* Main panel */}
       <div
-        className={`flex flex-col min-w-0 ${selectedPatent ? 'w-1/2' : 'w-full'} transition-all duration-200`}
+        className={`flex flex-col min-w-0 transition-all duration-200 ${selectedPatent ? 'hidden sm:flex sm:w-1/2' : 'w-full'}`}
       >
         {/* Filter bar */}
         <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-2.5">
@@ -620,9 +620,9 @@ export function PatentsTable({ patents, selectedId, onSelect }: Props) {
         </div>
       </div>
 
-      {/* Detail panel */}
+      {/* Detail panel — full-width on mobile, half-width on sm+ */}
       {selectedPatent && (
-        <div className="w-1/2 border-l border-border overflow-hidden flex flex-col">
+        <div className="flex flex-col w-full sm:w-1/2 sm:border-l border-border overflow-hidden">
           <PatentDetail
             patent={selectedPatent}
             inCorpusIds={inCorpusIds}

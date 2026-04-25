@@ -255,7 +255,7 @@ export const DrbgArchitectureDemo: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <div>
                   <span className="text-[10px] uppercase font-bold text-muted-foreground flex justify-between">
                     <span>Nonce — auto (16 bytes)</span>
@@ -320,7 +320,7 @@ export const DrbgArchitectureDemo: React.FC = () => {
             </h4>
 
             <div className="space-y-3">
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <div className="col-span-1">
                   <label
                     htmlFor="drbg-bytes"

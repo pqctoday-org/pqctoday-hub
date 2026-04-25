@@ -229,7 +229,7 @@ export const MaturityAssessment: React.FC = () => {
               <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">
                 Model Cross-Reference
               </span>
-              <div className="mt-1.5 grid grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
+              <div className="mt-1.5 grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
                 <div>
                   <span className="text-muted-foreground">Meta PQC Level: </span>
                   <span className="font-medium text-foreground">

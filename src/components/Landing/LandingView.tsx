@@ -22,6 +22,7 @@ import {
   CloudOff,
   Loader2,
   LogOut,
+  Monitor,
   ScrollText,
 } from 'lucide-react'
 // LogOut intentionally kept for sign-out button
@@ -103,6 +104,7 @@ interface JourneyStep {
   section: 'start' | 'journey' | 'assess' | 'current'
   actionLabel: string
   resumeLabel: string
+  desktopRecommended?: boolean
 }
 
 const JOURNEY_SECTIONS: { id: string; title: string; subtitle: string; nextHint?: string }[] = [
@@ -180,6 +182,7 @@ function buildJourneySteps(
       paths: ['/algorithms'],
       actionLabel: 'Compare Algorithms',
       resumeLabel: 'Explore More',
+      desktopRecommended: true,
     },
     // — My Journey —
     {
@@ -259,6 +262,7 @@ function buildJourneySteps(
       paths: ['/playground', '/openssl'],
       actionLabel: 'Try the Playground',
       resumeLabel: 'Build More',
+      desktopRecommended: true,
     },
     // — Keep Up to Date —
     {
@@ -710,6 +714,15 @@ export const LandingView = () => {
                                   {p}
                                 </span>
                               ))}
+                              {step.desktopRecommended && (
+                                <span
+                                  className="lg:hidden text-[10px] font-mono uppercase tracking-widest text-muted-foreground bg-muted border border-border rounded px-1.5 py-0.5 flex items-center gap-1"
+                                  title="This experience is best on a larger screen"
+                                >
+                                  <Monitor size={10} aria-hidden="true" />
+                                  Best on desktop
+                                </span>
+                              )}
                             </div>
                             <span className="text-xs font-semibold text-primary group-hover:underline underline-offset-2 flex items-center gap-0.5 shrink-0">
                               {engagement !== 'not-started' ? step.resumeLabel : step.actionLabel}

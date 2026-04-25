@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useMemo, type ComponentType } from 'react'
+import { useState, useMemo, useEffect, type ComponentType } from 'react'
 import { motion } from 'framer-motion'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -19,7 +19,7 @@ import {
   FlaskConical,
   Calendar,
 } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import clsx from 'clsx'
 import { getCurrentVersion } from '../../store/useVersionStore'
 import {
@@ -166,6 +166,8 @@ function formatDate(dateStr: string): string {
 
 export const ChangelogView = () => {
   const version = getCurrentVersion()
+  const location = useLocation()
+  const [highlightedVersion, setHighlightedVersion] = useState<string | null>(null)
 
   const [filters, setFilters] = useState<FilterState>({
     added: true,
@@ -201,6 +203,23 @@ export const ChangelogView = () => {
     filters.fixed &&
     (!HAS_DATA_SECTIONS || filters.data) &&
     (!HAS_SECURITY_SECTIONS || filters.security)
+
+  // Deep-link via hash (e.g. /changelog#v3.5.11). The route is lazy-loaded, so
+  // the browser's native anchor jump can fire before content paints — scroll
+  // here once filteredVersions is rendered.
+  useEffect(() => {
+    if (!location.hash) return
+    const id = location.hash.slice(1)
+    const el = document.getElementById(id)
+    if (!el) return
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    const show = window.setTimeout(() => setHighlightedVersion(id), 0)
+    const hide = window.setTimeout(() => setHighlightedVersion(null), 1800)
+    return () => {
+      window.clearTimeout(show)
+      window.clearTimeout(hide)
+    }
+  }, [location.hash, filteredVersions.length])
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -409,7 +428,12 @@ export const ChangelogView = () => {
               )}
             />
 
-            <div className="glass-panel p-6">
+            <div
+              className={clsx(
+                'glass-panel p-6 transition-shadow duration-500',
+                highlightedVersion === `v${v.version}` && 'ring-2 ring-primary shadow-glow'
+              )}
+            >
               {/* Version header */}
               <div className="mb-4 pb-3 border-b border-border">
                 <div className="flex items-baseline gap-3">

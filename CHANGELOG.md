@@ -6,6 +6,36 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.12] - April 25, 2026
+
+### Added
+
+- **`desktopRecommended` journey badge on Landing** [persona:all] [view:/] — two journey steps (Compare Algorithms, Try the Playground) now show a "Best on desktop" pill (Monitor icon, `lg:hidden`) on mobile so users know to expect a richer experience on larger screens. New `desktopRecommended?: boolean` field on the `JourneyStep` interface; zero layout impact on desktop. ([LandingView.tsx](src/components/Landing/LandingView.tsx))
+
+- **Changelog hash deep-link + highlight** [view:/changelog] — navigating to `/changelog#v3.5.X` now smooth-scrolls to the matching release card and briefly rings it with a `ring-primary shadow-glow` highlight (1.8 s). Implemented via `useLocation` + `useEffect` on `location.hash` + `filteredVersions.length`; handles lazy-load timing so the scroll fires after content paints. ([ChangelogView.tsx](src/components/Changelog/ChangelogView.tsx))
+
+- **RAG corpus cross-reference fields** — `generate-rag-corpus.ts` now propagates additional structured fields into each chunk's `metadata` object: `trustedSourceId` (all sources), `dependencies` + `moduleIds` (library), `relatedModules` + `cryptoAtRisk` + `pqcReplacement` (threats), `libraryRefs` + `timelineRefs` + `countries` (compliance), `categoryId` + `pqcSupport` + `learningModules` + `vendorId` (migrate). Fields are omitted when empty to keep corpus compact. Corpus regenerated. ([generate-rag-corpus.ts](scripts/generate-rag-corpus.ts))
+
+- **Golden-query Round 7** — 35 new golden queries covering Patents (assignee + landscape), CSWP.39 5-step process, governance maturity tiers, and the Curious Explorer persona. `minTop5Hits: 0` used where multiple chunk types may rank before the target but the chunk is expected in top-15. ([golden-queries.test.ts](src/services/chat/__tests__/golden-queries.test.ts))
+
+- **New data files** — `library_04242026.csv`, `library_04252026.csv` (library refresh, auto-discovered by glob loader); `module_qa_combined_04252026.csv`, `module_qa_slh-dsa_04252026.csv` (SLH-DSA module Q&A generation); `pqc_maturity_governance_requirements_20260425.csv` (governance maturity corpus update). ([src/data/](src/data/))
+
+- **iOS/Android native platform detection** [embed] — `platform.ts` exports `getNativePlatform(): 'ios' | 'android' | null` using `Capacitor.getPlatform()`; `main.tsx` writes `data-platform="ios"` or `"android"` on the document root instead of the generic `"capacitor"`, enabling platform-specific CSS selectors. ([platform.ts](src/embed/platform.ts), [main.tsx](src/main.tsx))
+
+### Fixed
+
+- **Mobile responsive layouts across PKI Learning workshop components** — nine workshop views switched from `grid-cols-2` to `grid-cols-1 md:grid-cols-2` (or `sm:grid-cols-2`): [LMSKeyGenDemo.tsx](src/components/PKILearning/modules/StatefulSignatures/workshop/LMSKeyGenDemo.tsx), [StatefulSignaturesDemo.tsx](src/components/PKILearning/modules/StatefulSignatures/workshop/StatefulSignaturesDemo.tsx), [StateManagementVisualizer.tsx](src/components/PKILearning/modules/StatefulSignatures/workshop/StateManagementVisualizer.tsx), [ThresholdSigningDemo.tsx](src/components/PKILearning/modules/StatefulSignatures/workshop/ThresholdSigningDemo.tsx), [DrbgArchitectureDemo.tsx](src/components/PKILearning/modules/Entropy/workshop/DrbgArchitectureDemo.tsx), [RandomGenerationDemo.tsx](src/components/PKILearning/modules/Entropy/workshop/RandomGenerationDemo.tsx), [CTLogSimulator.tsx](src/components/PKILearning/modules/MerkleTreeCerts/workshop/CTLogSimulator.tsx), [KPIDashboardBuilder.tsx](src/components/PKILearning/modules/PQCGovernance/components/KPIDashboardBuilder.tsx), [ComplianceGapAnalysis.tsx](src/components/PKILearning/modules/PQCRiskManagement/components/ComplianceGapAnalysis.tsx), [MaturityAssessment.tsx](src/components/PKILearning/modules/CryptoMgmtModernization/workshop/MaturityAssessment.tsx), [TEEHSMTrustedChannel.tsx](src/components/PKILearning/modules/ConfidentialComputing/workshop/TEEHSMTrustedChannel.tsx), [CertificateInspector.tsx](src/components/PKILearning/modules/TLSBasics/components/CertificateInspector.tsx), and playground tools ([HsmCapacityCalculator.tsx](src/components/Playground/hsm/HsmCapacityCalculator.tsx), [HsmSymmetricPanel.tsx](src/components/Playground/hsm/HsmSymmetricPanel.tsx), [VpnSimulationPanel.tsx](src/components/Playground/hsm/VpnSimulationPanel.tsx), [SignVerifyTab.tsx](src/components/Playground/tabs/SignVerifyTab.tsx), [ProgressDashboard.tsx](src/components/RightPanel/ProgressDashboard.tsx), [ShareButton.tsx](src/components/ui/ShareButton.tsx), [TrustScoreTooltip.tsx](src/components/ui/TrustScoreTooltip.tsx)).
+
+- **Patents page mobile layout** — `PatentsTable` list panel hides (`hidden sm:flex`) when a patent is selected on mobile so detail takes full width; detail panel is full-width (`w-full`) on mobile, half-width (`sm:w-1/2`) on desktop. `PatentDetail` responsive grids: metadata list switches to `grid-cols-1 md:grid-cols-2`; Cryptographic Profile switches to `grid-cols-1 sm:grid-cols-2`; `GridCard full` uses `sm:col-span-2` instead of `col-span-2`. ([PatentsTable.tsx](src/components/Patents/PatentsTable.tsx), [PatentDetail.tsx](src/components/Patents/PatentDetail.tsx))
+
+- **Capacitor native platform CSS — iOS/Android safe-area insets** — `index.css` adds `[data-platform='ios']` and `[data-platform='android']` selectors alongside `[data-platform='capacitor']` for the `#main-content` bottom/top padding block, plus an iOS-specific lateral safe-area rule for notch/Dynamic Island. `overscroll-behavior: none` now also targets `[data-platform='ios']` and `[data-platform='android']`. ([src/styles/index.css](src/styles/index.css))
+
+- **Narrow-viewport embed grid collapse** — new `@media (max-width: 480px)` block in `index.css` collapses `[data-embed] .grid-cols-{2,3,4}` to `1fr`, overrides `min-w-[480px]`/`[400px]`/`[360px]` to `100%`, and constrains `.w-80` dropdowns. Does not affect overflow-x-auto scroll containers (tabular/non-collapsible data). ([src/styles/index.css](src/styles/index.css))
+
+- **Compliance-fwks enrichment doc updated** — `compliance-fwks_maturity_04242026.md` refreshed with updated maturity evidence entries. ([src/data/doc-enrichments/compliance-fwks_maturity_04242026.md](src/data/doc-enrichments/compliance-fwks_maturity_04242026.md))
+
+- **Embed manifest + RAG corpus regeneration** — [public/data/embed-docs.json](public/data/embed-docs.json), [public/data/rag-corpus.json](public/data/rag-corpus.json), [public/embed/manifest.json](public/embed/manifest.json), and [public/embed/sdk.js](public/embed/sdk.js) regenerated to include cross-reference fields, new library/module-QA data, and the iOS/Android embed platform metadata.
+
 ## [3.5.11] - April 24, 2026
 
 ### Removed

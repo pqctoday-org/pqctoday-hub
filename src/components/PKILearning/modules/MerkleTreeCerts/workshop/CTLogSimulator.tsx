@@ -393,7 +393,7 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
                         the cert body is just data. No per-cert CA signature. The inclusion proof
                         (log₂N × 32 B) replaces the traditional CA signature chain.
                       </p>
-                      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[10px]">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-[10px]">
                         <div>
                           <span className="text-muted-foreground">Subject CN:</span>{' '}
                           <span className="text-foreground">{cert.subject}</span>

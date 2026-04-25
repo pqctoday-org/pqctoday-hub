@@ -525,6 +525,9 @@ function processTimeline(): RAGChunk[] {
       ? `/library?ref=${encodeParam(matchedRef)}`
       : `/timeline?country=${encodeParam(country)}`
 
+    // Cross-reference field (col 15: trusted_source_id)
+    const trustedSourceId = sanitize(row[14] ?? '')
+
     chunks.push({
       id: `timeline-${i}`,
       source: 'timeline',
@@ -535,6 +538,7 @@ function processTimeline(): RAGChunk[] {
         country: sanitize(country),
         org: sanitize(orgName),
         sourceUrl: sanitize(sourceUrl),
+        ...(trustedSourceId ? { trustedSourceId } : {}),
         ...enrichMetadata,
       },
       deepLink,
@@ -645,6 +649,11 @@ function processLibrary(): RAGChunk[] {
       }
     }
 
+    // Cross-reference fields (col 11: dependencies, col 22: module_ids, col 24: trusted_source_id)
+    const dependencies = sanitize(row[10] ?? '')
+    const moduleIds = sanitize(row[21] ?? '')
+    const trustedSourceId = sanitize(row[23] ?? '')
+
     chunks.push({
       id: `library-${sanitize(refId) || i}`,
       source: 'library',
@@ -655,6 +664,9 @@ function processLibrary(): RAGChunk[] {
         referenceId: sanitize(refId),
         url: sanitize(url),
         algorithmFamily: sanitize(algorithmFamily),
+        ...(dependencies ? { dependencies } : {}),
+        ...(moduleIds ? { moduleIds } : {}),
+        ...(trustedSourceId ? { trustedSourceId } : {}),
       },
       ...(sanitize(refId) ? { deepLink: `/library?ref=${encodeParam(refId)}` } : {}),
       priority: getLibraryPriority(sanitize(refId), sanitize(docType), sanitize(authors)),
@@ -812,6 +824,10 @@ function processThreats(): RAGChunk[] {
       `Source: ${sanitize(mainSource)}`,
     ].join('\n')
 
+    // Cross-reference fields (col 10: related_modules pipe-delimited, col 11: trusted_source_id)
+    const relatedModules = sanitize(row[9] ?? '')
+    const trustedSourceId = sanitize(row[10] ?? '')
+
     chunks.push({
       id: `threat-${sanitize(threatId) || i}`,
       source: 'threats',
@@ -822,6 +838,10 @@ function processThreats(): RAGChunk[] {
         industry: sanitize(industry),
         threatId: sanitize(threatId),
         sourceUrl: sanitize(sourceUrl),
+        ...(sanitize(cryptoAtRisk) ? { cryptoAtRisk: sanitize(cryptoAtRisk) } : {}),
+        ...(sanitize(pqcReplacement) ? { pqcReplacement: sanitize(pqcReplacement) } : {}),
+        ...(relatedModules ? { relatedModules } : {}),
+        ...(trustedSourceId ? { trustedSourceId } : {}),
       },
       ...(sanitize(threatId)
         ? { deepLink: `/threats?id=${encodeParam(threatId)}&industry=${encodeParam(industry)}` }
@@ -868,6 +888,12 @@ function processCompliance(): RAGChunk[] {
       .filter(Boolean)
       .join('\n')
 
+    // Cross-reference fields (col 10: library_refs, col 11: timeline_refs, col 14: trusted_source_id)
+    const libraryRefs = sanitize(row[9] ?? '')
+    const timelineRefs = sanitize(row[10] ?? '')
+    const countriesField = sanitize(countries)
+    const trustedSourceId = sanitize(row[13] ?? '')
+
     chunks.push({
       id: `compliance-${sanitize(id) || i}`,
       source: 'compliance',
@@ -878,6 +904,10 @@ function processCompliance(): RAGChunk[] {
         id: sanitize(id),
         deadline: sanitize(deadline),
         requiresPQC: sanitize(requiresPQC),
+        ...(libraryRefs ? { libraryRefs } : {}),
+        ...(timelineRefs ? { timelineRefs } : {}),
+        ...(countriesField ? { countries: countriesField } : {}),
+        ...(trustedSourceId ? { trustedSourceId } : {}),
       },
       deepLink: `/compliance?tab=standards&q=${encodeParam(label)}`,
     })
@@ -956,6 +986,13 @@ function processMigrateSoftware(): RAGChunk[] {
         repositoryUrl: sanitize(r.repository_url),
         validationResult: sanitize(r.validation_result) || '',
         proofUrl: sanitize(r.proof_url) || '',
+        ...(sanitize(r.category_id) ? { categoryId: sanitize(r.category_id) } : {}),
+        ...(sanitize(r.pqc_support) ? { pqcSupport: sanitize(r.pqc_support) } : {}),
+        ...(sanitize(r.learning_modules) ? { learningModules: sanitize(r.learning_modules) } : {}),
+        ...(sanitize(r.vendor_id) ? { vendorId: sanitize(r.vendor_id) } : {}),
+        ...(sanitize(r.trusted_source_id)
+          ? { trustedSourceId: sanitize(r.trusted_source_id) }
+          : {}),
       },
       deepLink: migrateDeepLink,
     })
@@ -986,6 +1023,9 @@ function processLeaders(): RAGChunk[] {
       `Contribution: ${sanitize(contribution)}`,
     ].join('\n')
 
+    // Cross-reference field (col 12: trusted_source_id)
+    const trustedSourceId = sanitize(row[11] ?? '')
+
     chunks.push({
       id: `leader-${i}`,
       source: 'leaders',
@@ -995,6 +1035,7 @@ function processLeaders(): RAGChunk[] {
       metadata: {
         country: sanitize(country),
         type: sanitize(type),
+        ...(trustedSourceId ? { trustedSourceId } : {}),
       },
       deepLink: `/leaders?leader=${encodeParam(name)}`,
     })
@@ -1041,38 +1082,442 @@ function processModules(): RAGChunk[] {
   return chunks
 }
 
-function processAuthoritativeSources(): RAGChunk[] {
-  const file = findLatestCSV('pqc_authoritative_sources_reference_')
+// processAuthoritativeSources removed 2026-04-25 — superseded by processTrustedSources
+// (trusted_sources_*.csv carries source_id slugs that other entities reference)
+
+/**
+ * Process vendors_*.csv → one chunk per vendor.
+ * Chunk ID format: `vendor-${vendor_id}` so migrate's vendorId can resolve directly.
+ */
+function processVendors(): RAGChunk[] {
+  const file = findLatestCSV('vendors_')
   if (!file) return []
 
-  const rows = readCSV(file)
+  const records = readCSVWithHeaders(file)
   const chunks: RAGChunk[] = []
 
-  for (let i = 1; i < rows.length; i++) {
-    const row = rows[i]
-    if (row.length < 5) continue
-
-    const [sourceName, sourceType, region, primaryUrl, description] = row
+  for (const r of records) {
+    const vendorId = sanitize(r.vendor_id)
+    if (!vendorId) continue
+    const displayName = sanitize(r.vendor_display_name) || sanitize(r.vendor_name) || vendorId
 
     const content = [
-      `Source: ${sanitize(sourceName)}`,
-      `Type: ${sanitize(sourceType)}`,
-      `Region: ${sanitize(region)}`,
-      `Description: ${sanitize(description)}`,
-      `URL: ${sanitize(primaryUrl)}`,
-    ].join('\n')
+      `Vendor: ${displayName}`,
+      `Type: ${sanitize(r.vendor_type)} | Category: ${sanitize(r.entity_category)}`,
+      `Headquarters: ${sanitize(r.hq_country)}`,
+      `PQC Commitment: ${sanitize(r.pqc_commitment)}`,
+      sanitize(r.website) ? `Website: ${sanitize(r.website)}` : '',
+      sanitize(r.lei_legal_name) ? `Legal Name: ${sanitize(r.lei_legal_name)}` : '',
+    ]
+      .filter(Boolean)
+      .join('\n')
 
     chunks.push({
-      id: `source-${i}`,
-      source: 'authoritative-sources',
-      title: sanitize(sourceName),
+      id: `vendor-${vendorId}`,
+      source: 'vendors',
+      title: displayName,
       content,
-      category: sanitize(sourceType),
+      category: sanitize(r.vendor_type) || 'vendor',
       metadata: {
-        region: sanitize(region),
-        url: sanitize(primaryUrl),
+        vendorId,
+        vendorType: sanitize(r.vendor_type),
+        hqCountry: sanitize(r.hq_country),
+        pqcCommitment: sanitize(r.pqc_commitment),
       },
-      ...(sanitize(primaryUrl) ? { deepLink: sanitize(primaryUrl) } : {}),
+      ...(sanitize(r.website) ? { deepLink: sanitize(r.website) } : {}),
+    })
+  }
+
+  return chunks
+}
+
+/**
+ * Process patents_*.csv → one chunk per patent.
+ * Chunk ID: `patent-${patent_number}`. Cross-refs to algorithms, compliance, standards.
+ */
+function processPatents(): RAGChunk[] {
+  const file = findLatestCSV('patents_')
+  if (!file) return []
+
+  const records = readCSVWithHeaders(file)
+  const chunks: RAGChunk[] = []
+
+  for (const r of records) {
+    const patentNum = sanitize(r.patent_number)
+    if (!patentNum) continue
+
+    const content = [
+      `Patent #: ${patentNum}`,
+      `Title: ${sanitize(r.title)}`,
+      `Assignee: ${sanitize(r.assignee)}`,
+      `Inventors: ${sanitize(r.inventors)}`,
+      `Issued: ${sanitize(r.issue_date)} | Priority: ${sanitize(r.priority_date)}`,
+      `Quantum Relevance: ${sanitize(r.quantum_relevance)}`,
+      `Crypto Agility Mode: ${sanitize(r.crypto_agility_mode)}`,
+      sanitize(r.one_sentence_summary) ? `Summary: ${sanitize(r.one_sentence_summary)}` : '',
+      sanitize(r.classical_algorithms)
+        ? `Classical Algorithms: ${sanitize(r.classical_algorithms)}`
+        : '',
+      sanitize(r.pqc_algorithms) ? `PQC Algorithms: ${sanitize(r.pqc_algorithms)}` : '',
+      sanitize(r.standards_referenced) ? `Standards: ${sanitize(r.standards_referenced)}` : '',
+      sanitize(r.compliance_targets) ? `Compliance Targets: ${sanitize(r.compliance_targets)}` : '',
+    ]
+      .filter(Boolean)
+      .join('\n')
+
+    chunks.push({
+      id: `patent-${patentNum}`,
+      source: 'patents',
+      title: `${sanitize(r.title).slice(0, 80) || patentNum} (US ${patentNum})`,
+      content,
+      category: sanitize(r.quantum_relevance) || 'patent',
+      metadata: {
+        patentNumber: patentNum,
+        assignee: sanitize(r.assignee),
+        issueDate: sanitize(r.issue_date),
+        quantumRelevance: sanitize(r.quantum_relevance),
+        ...(sanitize(r.classical_algorithms)
+          ? { classicalAlgorithms: sanitize(r.classical_algorithms) }
+          : {}),
+        ...(sanitize(r.pqc_algorithms) ? { pqcAlgorithms: sanitize(r.pqc_algorithms) } : {}),
+        ...(sanitize(r.standards_referenced)
+          ? { standardsReferenced: sanitize(r.standards_referenced) }
+          : {}),
+        ...(sanitize(r.compliance_targets)
+          ? { complianceTargets: sanitize(r.compliance_targets) }
+          : {}),
+      },
+      deepLink: `/patents?patent=${encodeParam(patentNum)}`,
+    })
+  }
+
+  return chunks
+}
+
+/**
+ * Process pqc_maturity_governance_requirements_*.csv → one chunk per requirement.
+ * Source: 'governance-maturity'. Backs the Compliance CSWP.39 Maturity Evidence Grid
+ * and the Business Center 5-step view. ~176 chunks at maturity levels 2 and 3,
+ * across pillars: governance, inventory, observability, assurance, lifecycle.
+ */
+function processGovernanceMaturity(): RAGChunk[] {
+  const file = findLatestCSV('pqc_maturity_governance_requirements_')
+  if (!file) return []
+
+  const records = readCSVWithHeaders(file)
+  const chunks: RAGChunk[] = []
+  const seenId = new Map<string, number>()
+
+  for (const r of records) {
+    const refId = sanitize(r.ref_id)
+    const sourceName = sanitize(r.source_name)
+    const requirement = sanitize(r.requirement)
+    if (!refId || !requirement) continue
+
+    const pillar = sanitize(r.pillar)
+    const maturityLevel = sanitize(r.maturity_level)
+    const assetClass = sanitize(r.asset_class)
+    const evidenceQuote = sanitize(r.evidence_quote)
+    const evidenceLocation = sanitize(r.evidence_location)
+    const sourceUrl = sanitize(r.source_url)
+    const confidence = sanitize(r.confidence)
+    const category = sanitize(r.category)
+    const sourceType = sanitize(r.source_type)
+
+    // Multiple requirements share the same ref_id → disambiguate with running counter.
+    const seq = (seenId.get(refId) ?? 0) + 1
+    seenId.set(refId, seq)
+
+    const content = [
+      `Source: ${sourceName}`,
+      category ? `Category: ${category} | Type: ${sourceType}` : '',
+      `Pillar: ${pillar} | Maturity Level: ${maturityLevel} | Asset Class: ${assetClass}`,
+      `Requirement: ${requirement}`,
+      evidenceQuote ? `Evidence: "${evidenceQuote}"` : '',
+      evidenceLocation ? `Evidence location: ${evidenceLocation}` : '',
+      sourceUrl ? `Source URL: ${sourceUrl}` : '',
+      confidence ? `Confidence: ${confidence}` : '',
+    ]
+      .filter(Boolean)
+      .join('\n')
+
+    chunks.push({
+      id: `gov-maturity-${refId}-L${maturityLevel}-${pillar}-${seq}`,
+      source: 'governance-maturity',
+      title: `${sourceName} — Tier ${maturityLevel} ${pillar} requirement`,
+      content,
+      category: 'maturity-requirement',
+      metadata: {
+        refId,
+        sourceName,
+        sourceCategory: category,
+        sourceType,
+        pillar,
+        maturityLevel,
+        assetClass,
+        ...(confidence ? { confidence } : {}),
+      },
+      deepLink: `/compliance?tab=cswp39&evref=${encodeParam(refId)}`,
+    })
+  }
+
+  return chunks
+}
+
+/**
+ * Synthesize 5 CSWP.39 step chunks (Govern → Inventory → Identify Gaps → Prioritise → Implement)
+ * from the static CSWP39_STEPS array in src/components/Compliance/cswp39Data.ts. Source: 'cswp39'.
+ * Spine of the v3.5.8 Business Center / Command Center reorganisation.
+ */
+function processCswp39Steps(): RAGChunk[] {
+  const STEPS = [
+    {
+      id: 'govern',
+      number: 1,
+      title: 'Govern',
+      sectionRef: '§5.1–5.4',
+      pillar: 'Governance',
+      explainer:
+        'Embed crypto policy into standards, mandates, supply chains, threats, business requirements, partner ecosystem, stakeholders, crypto policies, and crypto architecture.',
+      requirements: [
+        'Documented organisation-wide crypto policy',
+        'RACI (Responsible, Accountable, Consulted, Informed) across crypto decisions',
+        'Standards-watch subscription (IETF, NIST, CA/B Forum, ETSI, BSI, ANSSI)',
+        'Stakeholder and partner-ecosystem register',
+        'Exception-handling workflow with compensating-control record',
+      ],
+    },
+    {
+      id: 'inventory',
+      number: 2,
+      title: 'Inventory',
+      sectionRef: '§5.2',
+      pillar: 'Inventory',
+      explainer:
+        'Build an asset-centric Cryptographic Bill of Materials (CBOM) across all six CSWP.39 asset classes — not just certificates.',
+      requirements: [
+        'CBOM covering Code, Libraries, Applications, Files, Protocols, and Systems',
+        'Automated ingestion from SBOM / CMDB pipelines',
+        'Annual refresh cadence at minimum (daily preferred)',
+        'Asset criticality and data-sensitivity metadata per record',
+        'Entropy Source Validation (SP 800-90B) status tracked alongside FIPS 140-3 cert number',
+      ],
+    },
+    {
+      id: 'identify-gaps',
+      number: 3,
+      title: 'Identify Gaps',
+      sectionRef: '§5.3',
+      pillar: 'Observability',
+      explainer:
+        'Audit the Management Tools layer that sits between Assets and the Risk Management engine. Without this layer the Information Repository is populated manually and the Risk Analysis Engine has stale, incomplete data.',
+      requirements: [
+        'Crypto scanners — algorithms, key lengths, cert details across code and traffic',
+        'Vulnerability management — CVE feeds, library EoL tracking',
+        'Asset management — CMDB / SBOM → CBOM pipelines',
+        'Log management (SIEM) — crypto-drift events, cipher-suite anomalies',
+        'Zero-Trust enforcement — policy engines that block disallowed cipher suites',
+        'Data classification — sensitivity tags that drive prioritisation',
+      ],
+    },
+    {
+      id: 'prioritise',
+      number: 4,
+      title: 'Prioritise',
+      sectionRef: '§5.4',
+      pillar: 'Assurance',
+      explainer:
+        'Run a Risk Analysis Prioritisation Engine informed by crypto policy to produce a ranked asset list and KPIs the organisation can act on.',
+      requirements: [
+        'Scoring model incorporating FIPS status, ESV status, PQC readiness, EoL, posture score',
+        'Critical / High / Medium / Low queue with per-asset action guidance',
+        'KPI set reviewed monthly (coverage, MTTR, drift events, validation freshness)',
+        'Data-sensitivity multiplier applied to attack-surface score',
+        'Feedback loop to Governance — KPI exceptions update policy-as-code',
+      ],
+    },
+    {
+      id: 'implement',
+      number: 5,
+      title: 'Implement — Mitigate or Migrate',
+      sectionRef: '§4.6 / §5.5',
+      pillar: 'Lifecycle',
+      explainer:
+        'For each prioritised asset choose Migration (algorithm swap, preferred when agility allows) or Mitigation (crypto gateway / bump-in-the-wire, when direct modification is infeasible).',
+      requirements: [
+        'Crypto-agility assessment per asset (source available? modular API? update cadence?)',
+        'Migration path with algorithm target (ML-KEM-768, ML-DSA-65, SLH-DSA) and timeline',
+        'Mitigation gateway spec when migration blocked — with mandatory sunset date',
+        '§4.6 callout — "Mitigation is not a permanent solution"; decommission plan required',
+        'Evidence artefacts per change type — CMVP cert number, ACVP run, CVE-scan clean',
+      ],
+    },
+  ]
+
+  return STEPS.map((s) => ({
+    id: `cswp39-step-${s.number}-${s.id}`,
+    source: 'cswp39',
+    title: `CSWP.39 Step ${s.number}: ${s.title} (${s.pillar})`,
+    content: [
+      `NIST CSWP.39 (Dec 2025) — "Considerations for Achieving Crypto Agility"`,
+      `Step ${s.number} of 5: ${s.title}`,
+      `Section reference: ${s.sectionRef}`,
+      `CPM pillar: ${s.pillar}`,
+      ``,
+      s.explainer,
+      ``,
+      `Requirements:`,
+      ...s.requirements.map((r) => `- ${r}`),
+    ].join('\n'),
+    category: 'cswp39-step',
+    metadata: {
+      stepNumber: String(s.number),
+      stepId: s.id,
+      sectionRef: s.sectionRef,
+      pillar: s.pillar,
+    },
+    deepLink: `/business#step-${s.id}`,
+  }))
+}
+
+/**
+ * Process MODULE_TRACKS from moduleData.ts → one chunk per learning track.
+ * Chunk ID: `track-${slug}`. Links to its constituent modules via metadata.moduleIds.
+ */
+function processLearningTracks(): RAGChunk[] {
+  const filePath = path.join(process.cwd(), 'src', 'components', 'PKILearning', 'moduleData.ts')
+  if (!fs.existsSync(filePath)) return []
+  const raw = fs.readFileSync(filePath, 'utf-8')
+
+  const chunks: RAGChunk[] = []
+  // Find all track names first (in declaration order)
+  const trackNameRegex = /track:\s*['"]([^'"]+)['"]/g
+  const trackPositions: { name: string; idx: number }[] = []
+  let tm: RegExpExecArray | null
+  while ((tm = trackNameRegex.exec(raw)) !== null) {
+    trackPositions.push({ name: tm[1], idx: tm.index })
+  }
+
+  // For each track, grab MODULE_CATALOG['xxx'] occurrences between this track and the next
+  const idRegex = /MODULE_CATALOG\[['"]([^'"]+)['"]\]/g
+  for (let i = 0; i < trackPositions.length; i++) {
+    const start = trackPositions[i].idx
+    const end = i + 1 < trackPositions.length ? trackPositions[i + 1].idx : raw.length
+    const block = raw.slice(start, end)
+    const modIds: string[] = []
+    idRegex.lastIndex = 0
+    let im: RegExpExecArray | null
+    while ((im = idRegex.exec(block)) !== null) modIds.push(im[1])
+    if (modIds.length === 0) continue
+
+    const trackName = trackPositions[i].name
+    const slug = trackName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+    chunks.push({
+      id: `track-${slug}`,
+      source: 'tracks',
+      title: trackName,
+      content: `Learning Track: ${trackName}\n\nModules:\n${modIds.map((id) => `- ${id}`).join('\n')}`,
+      category: 'learning-track',
+      metadata: {
+        trackName,
+        moduleIds: modIds.join(';'),
+      },
+      deepLink: `/learn?track=${encodeParam(trackName)}`,
+    })
+  }
+
+  return chunks
+}
+
+/**
+ * Process learningPersonas.ts PERSONAS → one chunk per persona.
+ * Chunk ID: `persona-${id}`. Links to recommendedPath modules via metadata.recommendedModules.
+ */
+function processLearningPersonas(): RAGChunk[] {
+  const filePath = path.join(process.cwd(), 'src', 'data', 'learningPersonas.ts')
+  if (!fs.existsSync(filePath)) return []
+  const raw = fs.readFileSync(filePath, 'utf-8')
+
+  const chunks: RAGChunk[] = []
+  // Match each persona block: id: 'X', label: 'Y', ..., recommendedPath: [ 'a', 'b', ... ]
+  const personaRegex =
+    /id:\s*['"]([^'"]+)['"]\s*,\s*label:\s*['"]([^'"]+)['"]\s*,[\s\S]*?description:\s*['"]([^'"]+)['"][\s\S]*?recommendedPath:\s*\[([\s\S]*?)\]/g
+  const moduleIdRegex = /['"]([a-z0-9-]+)['"]/g
+
+  let m: RegExpExecArray | null
+  while ((m = personaRegex.exec(raw)) !== null) {
+    const id = m[1]
+    const label = m[2]
+    const description = m[3]
+    const pathBlock = m[4]
+    const modIds: string[] = []
+    let im: RegExpExecArray | null
+    while ((im = moduleIdRegex.exec(pathBlock)) !== null) {
+      const candidate = im[1]
+      if (candidate !== 'quiz') modIds.push(candidate)
+    }
+    if (modIds.length === 0) continue
+
+    chunks.push({
+      id: `persona-${id}`,
+      source: 'personas',
+      title: label,
+      content: `Persona: ${label}\n\n${description}\n\nRecommended modules:\n${modIds.map((m) => `- ${m}`).join('\n')}`,
+      category: 'learning-persona',
+      metadata: {
+        personaId: id,
+        recommendedModules: modIds.join(';'),
+      },
+      deepLink: `/learn?persona=${id}`,
+    })
+  }
+
+  return chunks
+}
+
+/**
+ * Process trusted_sources_*.csv (the canonical trusted-source registry with slugs).
+ * Each chunk gets a stable ID `trusted-source-${source_id}` so other entities can
+ * reference it by their `trustedSourceId` metadata field.
+ */
+function processTrustedSources(): RAGChunk[] {
+  const file = findLatestCSV('trusted_sources_')
+  if (!file) return []
+
+  const records = readCSVWithHeaders(file)
+  const chunks: RAGChunk[] = []
+
+  for (const r of records) {
+    const sourceId = sanitize(r.source_id)
+    if (!sourceId) continue
+
+    const content = [
+      `Source: ${sanitize(r.source_name)}`,
+      `Type: ${sanitize(r.source_type)} | Trust Tier: ${sanitize(r.trust_tier)}`,
+      `Region: ${sanitize(r.region)}`,
+      `Description: ${sanitize(r.description)}`,
+      `URL: ${sanitize(r.primary_url)}`,
+      `Verification: ${sanitize(r.verification_status)} (${sanitize(r.last_verified_date)})`,
+    ]
+      .filter(Boolean)
+      .join('\n')
+
+    chunks.push({
+      id: `trusted-source-${sourceId}`,
+      source: 'trusted-sources',
+      title: sanitize(r.source_name) || sourceId,
+      content,
+      category: sanitize(r.source_type) || 'source',
+      metadata: {
+        sourceId,
+        trustTier: sanitize(r.trust_tier),
+        region: sanitize(r.region),
+        url: sanitize(r.primary_url),
+      },
+      ...(sanitize(r.primary_url) ? { deepLink: sanitize(r.primary_url) } : {}),
     })
   }
 
@@ -1661,9 +2106,13 @@ function processQuizQuestions(): RAGChunk[] {
     let currentContent: string[] = []
     let currentLen = 0
     let chunkIdx = 0
+    let currentPaths = new Set<string>()
+    let currentIndustries = new Set<string>()
 
     const flushChunk = () => {
       if (currentContent.length === 0) return
+      const learnMorePaths = Array.from(currentPaths).join(';')
+      const industries = Array.from(currentIndustries).join(';')
       chunks.push({
         id: `quiz-${category}-${chunkIdx}`,
         source: 'quiz',
@@ -1673,12 +2122,16 @@ function processQuizQuestions(): RAGChunk[] {
         metadata: {
           quizCategory: category,
           questionCount: String(currentContent.length),
+          ...(learnMorePaths ? { learnMorePaths } : {}),
+          ...(industries ? { industries } : {}),
         },
         deepLink: `/learn/quiz?category=${category}`,
       })
       chunkIdx++
       currentContent = []
       currentLen = 0
+      currentPaths = new Set<string>()
+      currentIndustries = new Set<string>()
     }
 
     for (const q of questions) {
@@ -1705,6 +2158,16 @@ function processQuizQuestions(): RAGChunk[] {
       }
       currentContent.push(entry)
       currentLen += entry.length
+      // Aggregate cross-reference fields for this chunk
+      const path = sanitize(q.learn_more_path)
+      if (path) currentPaths.add(path)
+      const ind = sanitize(q.industries)
+      if (ind)
+        for (const i of ind
+          .split(/[;,]/)
+          .map((s) => s.trim())
+          .filter(Boolean))
+          currentIndustries.add(i)
     }
     flushChunk()
   }
@@ -2285,9 +2748,9 @@ function processBusinessCenterGuide(): RAGChunk[] {
     {
       id: 'business-center-overview',
       source: 'business-center',
-      title: 'Business Center — PQC Readiness Command Center',
+      title: 'Business Center / Command Center — CSWP.39 5-step PQC Operating Dashboard',
       content:
-        "Business Center (/business) Overview\n\nThe Business Center is a GRC (Governance, Risk, Compliance) dashboard with 14 interactive planning tools. It aggregates executive-level PQC readiness data from across the platform, providing a centralized view of risk posture, compliance status, governance artifacts, and vendor dependencies — all contextualized by the user's selected industry and country.\n\nThree routes:\n- /business — Dashboard view with 5 GRC pillar sections and executive learning bar\n- /business/tools — Searchable catalog of 14 business planning tools with category filtering\n- /business/tools/:toolId — Individual tool detail page with lazy-loaded component\n\nFive dashboard sections:\n1. Risk Management — Risk score from Assessment wizard, HNDL/HNFL exposure windows, threat summary by industry, ROI calculator, risk trend sparkline, risk delta indicator\n2. Compliance & Regulatory — Active compliance frameworks (max 6 shown), deadline tracking with urgency labels, framework coverage gaps per jurisdiction, compliance gap warnings\n3. Governance & Policy — Executive documents generated from learning modules (board briefs, policy templates, risk registers, RACI matrices) with view/edit/delete artifact management via ArtifactDrawer. Crypto agility and migration status indicators.\n4. Vendor & Supply Chain — PQC-ready vendor count from Migrate catalog, vendor dependency badges, infrastructure layer coverage dots (covered/gap/not-assessed), FIPS readiness breakdown, supply chain risk indicators\n5. Action Items — Prioritized next steps (max 5) derived from assessment results, compliance gaps, and learning progress. Priority triggers: P1 (start/finish assessment, high risk >=70), P2 (select frameworks, bookmark products, start governance/learning), P3 (re-assess after 30+ days, start guided workflow)\n\nCompact Executive Learning bar shows progress across executive-track modules: exec-quantum-impact, pqc-risk-management, pqc-business-case, pqc-governance, compliance-strategy, vendor-risk. Smart button adapts: 'Start Learning' / 'Continue' / 'Review'.\n\nWelcome state: displayed when no assessment, frameworks, products, or learning started — guides user to run assessment, explore compliance, or begin executive learning path.\n\nArtifact management: ArtifactCard shows saved documents with click-to-rename, type badge (pillar-colored), creation date, and hover actions (View/Edit/Delete). ArtifactPlaceholder links to source Learn module for unmade artifacts. ArtifactDrawer is a slide-over panel with markdown preview, edit mode (loads builder component), and markdown file export.\n\nArtifact types organized by pillar: Risk (risk-register, risk-treatment-plan, roi-model, board-deck), Compliance (audit-checklist, compliance-timeline, compliance-checklist), Governance (raci-matrix, policy-draft, kpi-dashboard, stakeholder-comms), Vendor (vendor-scorecard, contract-clause, migration-roadmap, kpi-tracker). Export ZIP functionality for filtered artifacts.",
+        "Business Center / Command Center (/business) Overview\n\nThe Command Center is the executive PQC operating dashboard, organised around the NIST CSWP.39 (Dec 2025) 5-step process: Govern → Inventory → Identify Gaps → Prioritise → Implement. Each step renders as a card with artifacts, a deterministic Tier badge, and links into the underlying Compliance and Migrate views. Reorganised in v3.5.8 from the previous 7-pillar layout.\n\nThree routes:\n- /business — Command Center dashboard, fixed 5-step stack + cross-cut strips\n- /business/tools — Searchable catalogue of business planning tools\n- /business/tools/:toolId — Individual tool detail page with lazy-loaded component\n\nFive CSWP.39 steps (always rendered in 1→5 order; persona only drives which step expands by default):\n1. Govern (§5.1–5.4, Governance pillar) — crypto policy, RACI, standards-watch subscriptions, partner ecosystem register, exception-handling workflow\n2. Inventory (§5.2, Inventory pillar) — CBOM across six asset classes (Code, Libraries, Applications, Files, Protocols, Systems) with SBOM/CMDB ingestion, criticality + sensitivity metadata, ESV (SP 800-90B) status alongside FIPS 140-3\n3. Identify Gaps (§5.3, Observability pillar) — crypto scanners, vulnerability mgmt, asset mgmt, SIEM crypto-drift logging, Zero-Trust enforcement, data classification\n4. Prioritise (§5.4, Assurance pillar) — risk-analysis prioritisation engine, scoring model, Critical/High/Medium/Low queue, monthly KPIs, feedback loop to Governance\n5. Implement — Mitigate or Migrate (§4.6 / §5.5, Lifecycle pillar) — crypto-agility assessment per asset, ML-KEM-768 / ML-DSA-65 / SLH-DSA migration paths, gateway mitigation with mandatory sunset (§4.6: 'Mitigation is not a permanent solution'), evidence artefacts (CMVP cert, ACVP run, CVE-scan)\n\nTier badges: each step shows a TierBadge (Partial / Risk-Informed / Repeatable / Adaptive) computed deterministically from existing artifacts and section markers via pure functions in src/components/BusinessCenter/lib/cswp39Tier.ts. Hover the badge for the contributing-artifacts tooltip.\n\nThree cross-cut strips:\n- Action Items (top) — outstanding tasks across all 5 steps\n- Cyber Insurance Lens (togglable side panel) — premium-impact view per step; expanded by default for executive persona\n- Learning Bar (bottom) — recommended Learn modules linked to the active step\n\nPersona emphasis (BC_STEP_EMPHASIS_BY_PERSONA in src/data/personaConfig.ts): executive opens on Govern with insurance panel open; architect opens on Identify Gaps; ops opens on Implement.\n\nArtifact management: each step has STEP_ARTIFACT_TYPES mapping in src/components/BusinessCenter/lib/cswp39StepMapping.ts. Existing artifacts render as ArtifactCard (View/Edit/Delete actions); missing artifacts render as ArtifactPlaceholder with a 'Create' link to the source Learn module. Artifacts are persisted by ExecutiveDocumentType. Export ZIP functionality groups artifacts by step.\n\nMaturity Evidence Grid linkage: the matching tier row in /compliance?tab=cswp39 deep-links from each step's Tier badge, so users can pivot from 'where am I' to 'what evidence exists at my tier'. Backed by pqc_maturity_governance_requirements_*.csv (~176 requirements at maturity levels 2 and 3 across pillars).",
       category: 'business-center',
       metadata: { feature: 'overview' },
       deepLink: '/business',
@@ -2314,9 +2777,9 @@ function processRightPanelGuide(): RAGChunk[] {
     {
       id: 'right-panel-overview',
       source: 'right-panel',
-      title: 'Right Panel — Assistant, Journey & Knowledge Graph',
+      title: 'Right Panel — PQC Assistant + Learning Journey',
       content:
-        'Right Panel Overview\n\nThe Right Panel is a slide-over drawer (60vw on desktop, full-width on mobile) accessible from every page via the floating action button (z-60). Three tabs:\n\n1. **Assistant** (Bot icon) — PQC Assistant chatbot (BYOK Gemini API key, RAG-powered over 5,400+ corpus chunks). Context-aware of current page, persona, industry, and assessment results. Conversation history persisted via useChatStore.\n\n2. **Journey** (Clock icon) — Persona-aware view:\n   - With persona selected: JourneyMapPanel showing learning path phases, milestone checkpoints, belt progression visual (White → Black), achievement badge grid, off-the-beaten-path module suggestions, and recent activity feed\n   - Without persona: ProgressDashboard with belt/score display, track completion pills, stats row (streak, total time, keys generated, certs created, executive docs), assessment status card, and 30-day streak calendar\n\n3. **Graph** (Network icon) — Four sub-tabs:\n   - Explore: Interactive node-link knowledge graph of platform entities (modules, algorithms, threats, standards) with search\n   - Coverage: Visual heatmap/bar chart of learning progress across knowledge domains\n   - Pathways: Prerequisite chains and dependency flows between modules\n   - Mindmap: Radial interactive mindmap (ReactFlow) of the entire platform with expandable nodes, track color coding, and clickable navigation links\n\nKeyboard: Escape closes panel. Body scroll locked while open.',
+        "Right Panel Overview\n\nThe Right Panel is a slide-over drawer (60vw on desktop, full-width on mobile) accessible from every page via the floating action button (z-60). Two tabs (the previous 'Graph' / Knowledge Graph tab was removed in v3.5.10–v3.5.11 and no longer exists; useRightPanelStore v2→v3 migration reroutes any persisted activeTab='graph' to 'chat'):\n\n1. **Assistant** (Bot icon) — PQC Assistant chatbot (BYOK Gemini API key, RAG-powered over the rag-corpus.json corpus). Context-aware of current page, persona, industry, and assessment results. Conversation history persisted via useChatStore.\n\n2. **Journey** (Clock icon) — Persona-aware view:\n   - With persona selected: JourneyMapPanel showing learning path phases, milestone checkpoints, belt progression visual (White → Black), achievement badge grid, off-the-beaten-path module suggestions, and recent activity feed\n   - Without persona: ProgressDashboard with belt/score display, track completion pills, stats row (streak, total time, keys generated, certs created, executive docs), assessment status card, and 30-day streak calendar\n\nKeyboard: Escape closes panel. Body scroll locked while open.",
       category: 'right-panel',
       metadata: { feature: 'overview' },
       deepLink: '/',
@@ -3188,7 +3651,15 @@ async function main() {
     { name: 'Module RAG Summaries', fn: processModuleRAGSummaries },
     { name: 'Module Curious Summaries', fn: processModuleCuriousSummaries },
     { name: 'Module Content', fn: processModuleContent },
-    { name: 'Authoritative Sources', fn: processAuthoritativeSources },
+    // Authoritative Sources deprecated 2026-04-25 — superseded by Trusted Sources
+    // (canonical registry with source_id slugs that other entities reference)
+    { name: 'Trusted Sources', fn: processTrustedSources },
+    { name: 'Vendors', fn: processVendors },
+    { name: 'Patents', fn: processPatents },
+    { name: 'Governance Maturity', fn: processGovernanceMaturity },
+    { name: 'CSWP.39 Steps', fn: processCswp39Steps },
+    { name: 'Learning Tracks', fn: processLearningTracks },
+    { name: 'Learning Personas', fn: processLearningPersonas },
     { name: 'Documentation', fn: processMarkdownDocs },
     { name: 'Quiz Questions', fn: processQuizQuestions },
     { name: 'Assessment Config', fn: processAssessmentConfig },
@@ -3250,6 +3721,8 @@ async function main() {
     'openssl-guide': 1.0,
     achievements: 0.9,
     'business-center': 0.95,
+    'governance-maturity': 1.05,
+    cswp39: 1.05,
     'right-panel': 0.95,
     'guided-tour': 0.85,
     softhsmv3: 1.0,

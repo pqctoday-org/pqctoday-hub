@@ -476,6 +476,112 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedSources: ['documentation'],
     minTop5Hits: 1,
   },
+
+  // === ROUND 7: Patents, CSWP.39, Governance Maturity, Curious persona (April 2026) ===
+
+  // --- Patents page ---
+  {
+    query: 'WELLS FARGO PQC patent assignee',
+    expectedIntent: 'general',
+    mustInclude: ['patent-'],
+    expectedSources: ['patents'],
+    minTop5Hits: 0, // assignee match returns patent chunks in top 15
+  },
+  {
+    query: 'Patent landscape for post-quantum cryptography',
+    expectedIntent: 'general',
+    mustInclude: ['patent-'],
+    expectedSources: ['patents'],
+    minTop5Hits: 0,
+  },
+
+  // --- CSWP.39 5-step process ---
+  {
+    query: 'CSWP.39 5-step process Govern Inventory',
+    expectedIntent: 'general',
+    mustInclude: ['cswp39-step-'],
+    expectedSources: ['cswp39'],
+    minTop5Hits: 0,
+  },
+  {
+    query: 'Explain CSWP.39 step 3 Identify Gaps',
+    expectedIntent: 'definition',
+    mustInclude: ['cswp39-step-3'],
+    expectedSources: ['cswp39'],
+    minTop5Hits: 1,
+  },
+  {
+    query: 'How does the Command Center work?',
+    expectedIntent: 'general',
+    mustInclude: ['business-center-overview'],
+    expectedSources: ['business-center'],
+    minTop5Hits: 0, // CSWP.39 step chunks may rank above the overview after refresh
+  },
+
+  // --- Governance maturity grid ---
+  {
+    query: 'PQC governance maturity tier evidence requirements',
+    expectedIntent: 'general',
+    mustInclude: ['gov-maturity-'],
+    expectedSources: ['governance-maturity'],
+    minTop5Hits: 0,
+  },
+
+  // --- Curious Explorer persona ---
+  {
+    query: 'PQC 101 introduction post-quantum cryptography newcomer',
+    expectedIntent: 'general',
+    mustInclude: ['module-pqc-101'],
+    expectedSources: ['modules'],
+    minTop5Hits: 1, // PQC 101 module chunk is the strongest top hit for newcomer queries
+  },
+  {
+    query: 'What is harvest now decrypt later in plain language?',
+    expectedIntent: 'definition',
+    mustInclude: ['glossary-'],
+    expectedSources: ['glossary'],
+    minTop5Hits: 1,
+  },
+
+  // --- Cross-cutting / multi-hop ---
+  {
+    query: 'Healthcare PQC migration products',
+    expectedIntent: 'general',
+    mustInclude: ['module-healthcare-pqc'],
+    expectedSources: ['modules'],
+    minTop5Hits: 0, // multi-hop; healthcare chunks spread across top 15
+  },
+
+  // === ROUND 7 NEGATIVES: disambiguation / out-of-scope ===
+
+  // --- QKD is NOT a NIST PQC replacement ---
+  {
+    query: 'Is QKD a NIST-approved replacement for TLS?',
+    expectedIntent: 'general',
+    mustInclude: ['module-qkd'],
+    expectedSources: ['modules'],
+    minTop5Hits: 0, // QKD module discusses positioning vs. NIST PQC
+  },
+
+  // --- Knowledge Graph removed (v3.5.10–v3.5.11) ---
+  // Asserts no kg-/mindmap-/graph-panel- chunks remain in the corpus.
+  {
+    query: 'Right panel knowledge graph mindmap',
+    expectedIntent: 'general',
+    mustInclude: ['right-panel-'],
+    expectedSources: ['right-panel'],
+    minTop5Hits: 0,
+    mustExclude: ['kg-', 'mindmap-', 'graph-panel-'],
+  },
+
+  // --- Falcon → FN-DSA naming ---
+  {
+    query: 'Falcon FN-DSA signature algorithm',
+    expectedIntent: 'general',
+    mustInclude: ['algo-'],
+    expectedSources: ['algorithms'],
+    minTop5Hits: 0, // FN-DSA standardised; "Falcon" was the round-3 NIST name
+  },
 ]
 
 let service: RetrievalService

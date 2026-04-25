@@ -131,6 +131,7 @@ MODULE_DIR_TO_ID = {
     'SecureBootPQC': 'secure-boot-pqc',
     'StandardsBodies': 'standards-bodies',
     'PQCTestingValidation': 'pqc-testing-validation',
+    'SLHDSAModule': 'slh-dsa',
 }
 
 # Reverse mapping: module_id -> directory name

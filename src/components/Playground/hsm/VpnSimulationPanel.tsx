@@ -3862,7 +3862,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               </div>
             )}
             <Tabs defaultValue="client" className="w-full">
-              <TabsList className="mb-4 grid grid-cols-2 w-[400px]">
+              <TabsList className="mb-4 grid grid-cols-2 w-full max-w-[400px]">
                 <TabsTrigger
                   value="client"
                   className="gap-2 data-[state=active]:bg-primary/10 data-[state=active]:text-primary"

@@ -90,7 +90,7 @@ function GridCard({
   full?: boolean
 }) {
   return (
-    <div className={`glass-panel rounded p-2.5 space-y-1.5 ${full ? 'col-span-2' : ''}`}>
+    <div className={`glass-panel rounded p-2.5 space-y-1.5 ${full ? 'sm:col-span-2' : ''}`}>
       <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">
         {title}
       </div>
@@ -226,7 +226,7 @@ export function PatentDetail({ patent, inCorpusIds, onClose, onNavigate }: Props
             </span>
           </div>
           <ImpactBar score={patent.impactScore} />
-          <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-xs text-muted-foreground">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-0.5 text-xs text-muted-foreground">
             <span>
               Crypto agility:{' '}
               <span className={`font-medium ${AGILITY_COLOR[patent.cryptoAgilityMode]}`}>
@@ -281,7 +281,7 @@ export function PatentDetail({ patent, inCorpusIds, onClose, onNavigate }: Props
           <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
             <Shield className="h-3 w-3" /> Cryptographic Profile
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <GridCard title="PQC Algorithms">
               <ColorTagList items={patent.pqcAlgorithms} variant="pqc" />
             </GridCard>

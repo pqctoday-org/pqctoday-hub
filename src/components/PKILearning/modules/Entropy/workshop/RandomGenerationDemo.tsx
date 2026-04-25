@@ -477,7 +477,7 @@ export const RandomGenerationDemo: React.FC = () => {
                 Numerical Recipes parameters (Knuth, 1997)
               </span>
             </div>
-            <div className="grid grid-cols-3 gap-2 text-xs font-mono">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-mono">
               <div className="space-y-0.5">
                 <div className="text-[10px] text-muted-foreground uppercase">a (multiplier)</div>
                 <div className="text-foreground">{lcgState.a.toLocaleString()}</div>

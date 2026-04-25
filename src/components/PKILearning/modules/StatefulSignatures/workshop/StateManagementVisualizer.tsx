@@ -694,7 +694,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
             steps. Larger W → fewer chains needed → smaller signature bytes → but each chain
             requires more hash iterations → slower to sign.
           </p>
-          <div className="grid grid-cols-4 gap-1 pt-1 font-mono">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-1 pt-1 font-mono">
             {([1, 2, 4, 8] as const).map((w) => {
               const p = (
                 lmsM === 32 ? { 1: 265, 2: 133, 4: 67, 8: 34 } : { 1: 200, 2: 101, 4: 51, 8: 26 }

@@ -80,7 +80,7 @@ export const ProgressDashboard: React.FC = () => {
       </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-5 gap-2 text-center">
+      <div className="grid grid-cols-3 md:grid-cols-5 gap-2 text-center">
         <StatCell
           icon={<Zap size={12} className="text-status-warning" />}
           value={streak.current}

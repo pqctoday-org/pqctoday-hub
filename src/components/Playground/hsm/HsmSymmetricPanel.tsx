@@ -1235,7 +1235,7 @@ const ChaCha20Panel = () => {
         <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
           Parameters & Plaintext
         </p>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="space-y-1">
             <label htmlFor="nonceHexInput" className="text-[10px] text-muted-foreground">
               Nonce (Hex, 12 bytes)

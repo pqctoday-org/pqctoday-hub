@@ -420,7 +420,7 @@ function ScenarioCard({
       </div>
 
       {/* Three-column breakdown */}
-      <div className="grid grid-cols-3 gap-2 text-xs">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
         <div className="rounded-md bg-muted/30 px-2 py-1.5">
           <p className="text-muted-foreground">Per location</p>
           <p className="font-mono text-foreground text-base">

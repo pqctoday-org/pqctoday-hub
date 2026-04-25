@@ -451,7 +451,7 @@ export function StatefulSignaturesDemo() {
           <div className="p-6 space-y-6">
             {activeTab === 'hss' && (
               <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="p-4 border border-status-info/30 rounded-md bg-status-info/10 text-status-info">
                     <h4 className="font-semibold flex items-center gap-2 mb-1">
                       <Info className="h-4 w-4" /> Strict PKCS#11 v3.2 Compliance

@@ -1073,7 +1073,7 @@ export const TEEHSMTrustedChannel: React.FC = () => {
                 <Server size={12} className="text-primary" />
                 {selectedHsmVendor} + {teeArch?.name ?? selectedTeeVendor} — Integration Notes
               </p>
-              <div className="grid grid-cols-2 gap-2 text-[10px]">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[10px]">
                 <div>
                   <span className="text-muted-foreground">Channel type: </span>
                   <span className="text-foreground font-medium">

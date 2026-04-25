@@ -470,7 +470,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
           <h3 className="text-lg font-bold flex items-center gap-2">
             <PenLine className="h-5 w-5" /> Interactive Signature Dashboard
           </h3>
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div className="space-y-2">
                 <label htmlFor="lms-sign-input" className="text-xs font-bold text-muted-foreground">

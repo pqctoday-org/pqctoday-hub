@@ -17,11 +17,19 @@ declare global {
 }
 
 export type EmbedPlatform = 'iframe' | 'capacitor' | 'none'
+export type NativePlatform = 'ios' | 'android'
 
 export function detectPlatform(): EmbedPlatform {
   if (window.Capacitor?.isNativePlatform()) return 'capacitor'
   if (window.location.pathname.startsWith('/embed/')) return 'iframe'
   return 'none'
+}
+
+/** Returns the specific native OS when running in Capacitor, or null on web. */
+export function getNativePlatform(): NativePlatform | null {
+  const p = window.Capacitor?.getPlatform()
+  if (p === 'ios' || p === 'android') return p
+  return null
 }
 
 export function isNativeApp(): boolean {

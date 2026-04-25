@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { createRoot } from 'react-dom/client'
 import { setEmbedState, getEmbedState } from './embed/embedContext'
-import { detectPlatform, isNativeApp } from './embed/platform'
+import { detectPlatform, getNativePlatform, isNativeApp } from './embed/platform'
 import './styles/index.css'
 import AppRoot from './AppRoot'
 import { initGA, logEmbedSession, logEmbedError } from './utils/analytics'
@@ -240,7 +240,9 @@ function handleEmbedError(err: unknown): void {
 // ---------------------------------------------------------------------------
 
 const platform = detectPlatform()
-document.documentElement.setAttribute('data-platform', platform)
+// Use native OS name (ios/android) when available for CSS specificity; fall back to 'capacitor'
+const dataPlatform = platform === 'capacitor' ? (getNativePlatform() ?? 'capacitor') : platform
+document.documentElement.setAttribute('data-platform', dataPlatform)
 
 if (platform === 'capacitor') {
   // Native app boot — no URL verification needed, app binary IS the trusted context.
