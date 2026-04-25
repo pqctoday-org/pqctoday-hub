@@ -579,10 +579,6 @@ class RetrievalService {
     return UnifiedSearchService.getInstance().index
   }
 
-  private get corpus(): ReadonlyArray<RAGChunk> {
-    return UnifiedSearchService.getInstance().corpus
-  }
-
   private get corpusById(): ReadonlyMap<string, RAGChunk> {
     return UnifiedSearchService.getInstance().corpusById
   }

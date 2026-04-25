@@ -31,21 +31,22 @@ let buildPromise: Promise<void> | null = null
 
 /** Pre-load the index on first ⌘K open. Subsequent calls resolve immediately. */
 export function getSearchIndex(): Promise<MiniSearch<RAGChunk>> {
-  if (UnifiedSearchService.getInstance().isReady && UnifiedSearchService.getInstance().index) {
-    return Promise.resolve(UnifiedSearchService.getInstance().index)
+  const unified = UnifiedSearchService.getInstance()
+  const ready = unified.index
+  if (unified.isReady && ready) {
+    return Promise.resolve(ready)
   }
   if (!buildPromise) {
-    buildPromise = UnifiedSearchService.getInstance()
-      .loadCached()
-      .finally(() => {
-        buildPromise = null
-      })
+    buildPromise = unified.loadCached().finally(() => {
+      buildPromise = null
+    })
   }
   return buildPromise.then(() => {
-    if (!UnifiedSearchService.getInstance().index) {
+    const built = UnifiedSearchService.getInstance().index
+    if (!built) {
       throw new Error('SearchIndex: failed to initialize')
     }
-    return UnifiedSearchService.getInstance().index
+    return built
   })
 }
 
