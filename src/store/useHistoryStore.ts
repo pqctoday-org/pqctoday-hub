@@ -8,10 +8,12 @@ const MAX_HISTORY_EVENTS = 500
 interface HistoryState {
   events: HistoryEvent[]
   seeded: boolean
+  visitedRoutes: string[]
 
   addEvent: (event: Omit<HistoryEvent, 'id'>) => void
   bulkSeed: (events: Omit<HistoryEvent, 'id'>[]) => void
   clearHistory: () => void
+  recordVisit: (path: string) => void
 }
 
 function generateEventId(): string {
@@ -24,6 +26,7 @@ export const useHistoryStore = create<HistoryState>()(
     (set, get) => ({
       events: [],
       seeded: false,
+      visitedRoutes: [],
 
       addEvent: (event) =>
         set((state) => {
@@ -44,15 +47,23 @@ export const useHistoryStore = create<HistoryState>()(
         })
       },
 
-      clearHistory: () => set({ events: [], seeded: false }),
+      clearHistory: () => set({ events: [], seeded: false, visitedRoutes: [] }),
+
+      recordVisit: (path) =>
+        set((state) =>
+          state.visitedRoutes.includes(path)
+            ? state
+            : { visitedRoutes: [...state.visitedRoutes, path] }
+        ),
     }),
     {
       name: 'pqc-history',
-      version: 2,
+      version: 3,
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         events: state.events,
         seeded: state.seeded,
+        visitedRoutes: state.visitedRoutes,
       }),
       migrate: (persistedState: unknown, version: number) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -65,6 +76,9 @@ export const useHistoryStore = create<HistoryState>()(
         if (version < 2 && state.seeded && state.events.length === 0) {
           state.seeded = false
         }
+
+        // v2 → v3: introduce visitedRoutes array for passive-page tracking
+        state.visitedRoutes = Array.isArray(state.visitedRoutes) ? state.visitedRoutes : []
 
         return state
       },

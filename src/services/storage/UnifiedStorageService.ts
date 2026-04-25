@@ -116,6 +116,7 @@ function getPersonaData(): PersonaData {
     selectedIndustries: state.selectedIndustries,
     suppressSuggestion: state.suppressSuggestion,
     experienceLevel: state.experienceLevel,
+    advancedViewsUnlocked: state.advancedViewsUnlocked,
   }
 }
 
@@ -339,6 +340,7 @@ export class UnifiedStorageService {
           : [],
         suppressSuggestion: stores.persona.suppressSuggestion ?? false,
         experienceLevel: stores.persona.experienceLevel ?? null,
+        advancedViewsUnlocked: stores.persona.advancedViewsUnlocked ?? true,
       })
     }
 

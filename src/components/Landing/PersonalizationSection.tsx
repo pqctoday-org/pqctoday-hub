@@ -772,7 +772,7 @@ export const PersonalizationSection = () => {
             </div>
             <p className="text-sm text-muted-foreground">
               {isCompleted
-                ? 'Your profile is set. Click the avatar to edit.'
+                ? 'Your profile is set. Use the buttons below to change your persona or update your details.'
                 : 'Tailor your experience by choosing your professional role.'}
             </p>
           </div>
@@ -794,26 +794,38 @@ export const PersonalizationSection = () => {
       {/* ── Completed: avatar tile + ScoreCard side by side ─────────────────── */}
       {isCompleted && (
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mt-2">
-          {/* Avatar tile — clickable */}
-          <Button
-            variant="ghost"
-            onClick={handleEditAvatar}
-            aria-label="Edit personalization settings"
-            className="relative shrink-0 w-24 sm:w-32 md:w-40 rounded-2xl group h-auto p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-          >
-            <PersonalizedAvatar
-              persona={selectedPersona}
-              experience={experienceLevel}
-              region={selectedRegion}
-              industries={selectedIndustries}
-            />
-            <div className="absolute inset-0 rounded-2xl bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1 pointer-events-none">
-              <Pencil size={16} className="text-foreground" />
-              <span className="text-foreground text-[10px] font-bold uppercase tracking-wide">
-                Edit
-              </span>
-            </div>
-          </Button>
+          <div className="flex flex-col items-center gap-2 shrink-0 w-24 sm:w-32 md:w-40">
+            {/* Avatar tile — clickable */}
+            <Button
+              variant="ghost"
+              onClick={handleEditAvatar}
+              aria-label="Edit personalization settings"
+              className="relative w-full rounded-2xl group h-auto p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              <PersonalizedAvatar
+                persona={selectedPersona}
+                experience={experienceLevel}
+                region={selectedRegion}
+                industries={selectedIndustries}
+              />
+              <div className="absolute inset-0 rounded-2xl bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1 pointer-events-none">
+                <Pencil size={16} className="text-foreground" />
+                <span className="text-foreground text-[10px] font-bold uppercase tracking-wide">
+                  Edit
+                </span>
+              </div>
+            </Button>
+            {/* Always-visible Change Persona affordance — works on touch/mobile */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleEditAvatar}
+              className="w-full text-xs gap-1.5"
+            >
+              <Pencil size={12} />
+              Change persona
+            </Button>
+          </div>
 
           {/* ScoreCard — fills remaining width */}
           <div className="flex-1 min-w-0">

@@ -6,6 +6,28 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **PQC Assistant — deep-link grammar refresh** — system prompt in [src/services/chat/promptBuilder.ts](src/services/chat/promptBuilder.ts) now documents the full deep-link grammar for every current route. Highlights:
+  - **`?tab=transition&highlight=` MUST rule** — promoted to a hard requirement with positive/negative few-shots so the model never sends classical algorithms (rsa, ecdsa, dh) to the detailed tab where they don't exist.
+  - **`/business/tools/<toolId>` enumerated** with the 17 actual tool ids (roi-calculator, board-pitch, crqc-scenario, risk-register, risk-treatment-plan, audit-checklist, compliance-timeline, raci-builder, policy-generator, kpi-dashboard, vendor-scorecard, contract-clause, supply-chain-matrix, roadmap-builder, stakeholder-comms, kpi-tracker, deployment-playbook).
+  - **`/assess?step=<n>`** — 0-based wizard steps now spelled out (0=industry, 1=country, 2=crypto … 12=timeline) so the chatbot can deep-link mid-wizard.
+  - **`/patents` full filter grammar** — all 14 query params (`?tab=`, `?patent=`, `?search=`, `?assignee=`, `?agility=`, `?domain=`, `?impact=`, `?quantumTech=`, `?quantumRelevance=`, `?region=`, `?protocol=`, `?classicalAlgorithm=`, `?hardwareComponent=`, `?nistStatus=`).
+  - **`/compliance?evref=<id>`** — CSWP.39 maturity-evidence reference deep link is now a documented destination instead of an "invalid link".
+  - **`/learn?track=<name>` and `/learn?persona=<id>`** — newly functional filters (see Changed below).
+  - Self-check rule: the model must verify each `?param=` exists in the documented grammar before emitting the link; otherwise fall back to the bare path.
+  - Local-model compact prompt (`buildLocalSystemPrompt`) mirrors the new grammar.
+- **`PERSONA_DEPTH` voices refreshed for the six personas** — executive now references Command Center / CSWP.39 / ROI Calculator; architect references HSM Workshop / Risk Register / Roadmap Builder; ops references HSM Workshop / VPN & SSH PQC / Deployment Playbook; curious gains a "no acronyms without first-use expansion" rule. Developer and researcher unchanged.
+- **`/learn?track=` and `/learn?persona=` are now real filters** — [src/components/PKILearning/Dashboard.tsx](src/components/PKILearning/Dashboard.tsx) reads the URL params on mount and preselects the track and persona dropdowns. Track names match `MODULE_TRACKS[*].track` (case-insensitive); persona ids match `PersonaId`. Used by the Assistant for journey deep-linking.
+
+### Changed
+
+- **RAG corpus regenerated** — [public/data/rag-corpus.json](public/data/rag-corpus.json), 8157 chunks (was 8135). New chunks:
+  - **17 business-tool chunks** — one per planning tool with precise `/business/tools/<id>` deep links so the chatbot can link directly to a specific tool instead of the parent page.
+  - **Patents 3-chunk split** — `/patents` (overview), `/patents?tab=insights` (assignees / agility / quantum-tech / NIST status / CSWP.39 evidence grid), `/patents?tab=patents` (filterable table & all 14 filter params).
+  - New `page-guide-explore` (`/explore`) and `page-guide-report` (`/report`) chunks — both routes were uncovered by the corpus before this change.
+- **Workspace persistence — visited routes + advanced views unlock** — [src/store/useHistoryStore.ts](src/store/useHistoryStore.ts) gains a `visitedRoutes` array (persisted, version bump 2→3) and a `recordVisit(path)` action; [src/services/storage/snapshotTypes.ts](src/services/storage/snapshotTypes.ts) and [src/services/storage/UnifiedStorageService.ts](src/services/storage/UnifiedStorageService.ts) persist `advancedViewsUnlocked` in cloud snapshots; [src/components/Layout/MainLayout.tsx](src/components/Layout/MainLayout.tsx), [src/components/Landing/LandingView.tsx](src/components/Landing/LandingView.tsx), and [src/components/Landing/PersonalizationSection.tsx](src/components/Landing/PersonalizationSection.tsx) wire the new state into the UI.
+
 ## [3.5.21] - April 25, 2026
 
 ### Added

@@ -47,12 +47,18 @@ const RightPanel = React.lazy(() =>
   import('../RightPanel/RightPanel').then((m) => ({ default: m.RightPanel }))
 )
 import { usePersonaStore } from '../../store/usePersonaStore'
+import { useHistoryStore } from '../../store/useHistoryStore'
 import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS } from '../../data/personaConfig'
 
 export const MainLayout = () => {
   const location = useLocation()
   const { selectedPersona } = usePersonaStore()
   const { isOpen: isPanelOpen, toggle: openPanel } = useRightPanelStore()
+  const recordVisit = useHistoryStore((s) => s.recordVisit)
+
+  React.useEffect(() => {
+    recordVisit(location.pathname)
+  }, [location.pathname, recordVisit])
 
   React.useEffect(() => {
     if (typeof window !== 'undefined') {

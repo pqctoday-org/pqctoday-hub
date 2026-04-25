@@ -35,6 +35,7 @@ import { useMigrationWorkflowStore } from '@/store/useMigrationWorkflowStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
+import { useHistoryStore } from '@/store/useHistoryStore'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { PersonalizationSection } from './PersonalizationSection'
 import { PQCExplainer } from './PQCExplainer'
@@ -366,6 +367,7 @@ export const LandingView = () => {
   })
   const myFrameworkCount = useComplianceSelectionStore((s) => s.myFrameworks.length)
   const migrationStarted = useMigrationWorkflowStore((s) => s.startedAt !== null)
+  const visitedRoutes = useHistoryStore((s) => s.visitedRoutes)
 
   const hasLearningProgress = useMemo(
     () => Object.values(moduleModules).some((m) => m.status !== 'not-started'),
@@ -373,32 +375,46 @@ export const LandingView = () => {
   )
 
   const stepEngagement = useMemo((): Record<string, StepEngagement> => {
+    const visited = (path: string): StepEngagement =>
+      visitedRoutes.includes(path) ? 'engaged' : 'not-started'
     return {
-      learn: hasLearningProgress ? 'engaged' : 'not-started',
-      timeline: 'not-started',
-      algorithms: artifactCount > 0 ? 'engaged' : 'not-started',
-      migrate: migrationStarted ? 'engaged' : 'not-started',
-      compliance: myFrameworkCount > 0 ? 'engaged' : 'not-started',
+      learn: hasLearningProgress ? 'engaged' : visited('/learn'),
+      timeline: visited('/timeline'),
+      algorithms: artifactCount > 0 ? 'engaged' : visited('/algorithms'),
+      migrate: migrationStarted ? 'engaged' : visited('/migrate'),
+      compliance: myFrameworkCount > 0 ? 'engaged' : visited('/compliance'),
       assess:
         assessmentStatus === 'complete'
           ? 'engaged'
           : assessmentStatus === 'in-progress'
             ? 'started'
-            : 'not-started',
-      report: assessmentStatus === 'complete' ? 'engaged' : 'not-started',
+            : visited('/assess'),
+      report: assessmentStatus === 'complete' ? 'engaged' : visited('/report'),
       business:
         assessmentStatus === 'complete' || myFrameworkCount > 0
           ? 'engaged'
           : assessmentStatus === 'in-progress'
             ? 'started'
+            : visited('/business'),
+      test:
+        artifactCount > 0
+          ? 'engaged'
+          : visitedRoutes.includes('/playground') || visitedRoutes.includes('/openssl')
+            ? 'engaged'
             : 'not-started',
-      test: artifactCount > 0 ? 'engaged' : 'not-started',
-      threats: 'not-started',
-      library: 'not-started',
-      leaders: 'not-started',
-      patents: 'not-started',
+      threats: visited('/threats'),
+      library: visited('/library'),
+      leaders: visited('/leaders'),
+      patents: visited('/patents'),
     }
-  }, [hasLearningProgress, artifactCount, myFrameworkCount, migrationStarted, assessmentStatus])
+  }, [
+    hasLearningProgress,
+    artifactCount,
+    myFrameworkCount,
+    migrationStarted,
+    assessmentStatus,
+    visitedRoutes,
+  ])
 
   // Context-aware hero CTA — evolves based on user progress
   const heroCta = useMemo(() => {

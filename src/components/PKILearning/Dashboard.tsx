@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowUpDown, BookOpen, Home, PlayCircle, Search, X, CheckSquare } from 'lucide-react'
 import clsx from 'clsx'
@@ -268,16 +268,32 @@ const ModuleTracksGrid = ({
   const { modules } = useModuleStore()
   const { selectedIndustry, experienceLevel, selectedPersona, setPersona } = usePersonaStore()
   const { myLearnModules, showOnlyLearnModules, setShowOnlyLearnModules } = useBookmarkStore()
+  const [searchParams] = useSearchParams()
+
+  // Deep-link: ?track=<name> and ?persona=<id> preset filters from corpus chunks.
+  // Both are case-insensitive; track matches MODULE_TRACKS[*].track, persona matches PersonaId.
+  const initialTrack = (() => {
+    const q = searchParams.get('track')
+    if (!q) return 'All'
+    const match = TRACK_FILTER_ITEMS.find((t) => t.toLowerCase() === q.toLowerCase())
+    return match ?? 'All'
+  })()
+  const initialPersona = (() => {
+    const q = searchParams.get('persona')
+    if (!q) return null
+    return Object.keys(PERSONAS).includes(q) ? q : null
+  })()
 
   // Filter state
   const [searchText, setSearchText] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
-  const [selectedTrack, setSelectedTrack] = useState('All')
+  const [selectedTrack, setSelectedTrack] = useState(initialTrack)
   const [selectedDifficulty, setSelectedDifficulty] = useState('All')
   const [selectedStatus, setSelectedStatus] = useState('All')
   // Professional personas pre-select their learning path; curious users start with all modules visible to explore, but advanced topics are guarded in the carousel.
+  // ?persona= URL param wins over the persona store on initial mount so chatbot deep links land precisely.
   const [selectedPersonaFilter, setSelectedPersonaFilter] = useState<string>(
-    selectedPersona === 'curious' ? 'All' : (selectedPersona ?? 'All')
+    initialPersona ?? (selectedPersona === 'curious' ? 'All' : (selectedPersona ?? 'All'))
   )
   const [sortBy, setSortBy] = useState<LearnSortMode>('default')
   const [viewMode, setViewMode] = useState<LearnViewMode>('stack')

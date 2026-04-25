@@ -82,6 +82,7 @@ export interface PersonaData {
   selectedIndustries: string[]
   suppressSuggestion: boolean
   experienceLevel: ExperienceLevel | null
+  advancedViewsUnlocked: boolean
 }
 
 /**
