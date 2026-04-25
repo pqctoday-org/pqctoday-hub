@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo } from 'react'
+import type { MaturityRequirement } from '@/types/MaturityTypes'
 import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
 import {
@@ -276,12 +277,31 @@ export function DeadlineTimeline({ frameworks }: { frameworks: ComplianceFramewo
 
 // ── Framework card ──────────────────────────────────────────────────────
 
-function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
+function FrameworkCard({
+  fw,
+  maturityByRefId,
+  onNavigateToCswp39,
+}: {
+  fw: ComplianceFramework
+  maturityByRefId?: Map<string, MaturityRequirement[]>
+  onNavigateToCswp39?: (refId: string) => void
+}) {
   const [expanded, setExpanded] = useState(false)
   const urgency = deadlineUrgency(fw.deadline)
   const hasRefs = fw.libraryRefs.length > 0 || fw.timelineRefs.length > 0
   const isSelected = useComplianceSelectionStore((s) => s.myFrameworks.includes(fw.id))
   const toggleMyFramework = useComplianceSelectionStore((s) => s.toggleMyFramework)
+
+  // Count maturity requirements reachable via this framework's library refs
+  const maturityCount = useMemo(() => {
+    if (!maturityByRefId) return 0
+    return fw.libraryRefs.reduce((sum, ref) => sum + (maturityByRefId.get(ref)?.length ?? 0), 0)
+  }, [fw.libraryRefs, maturityByRefId])
+
+  const maturityRefId = useMemo(() => {
+    if (!maturityByRefId) return null
+    return fw.libraryRefs.find((ref) => maturityByRefId.has(ref)) ?? null
+  }, [fw.libraryRefs, maturityByRefId])
 
   return (
     <div className="glass-panel p-4 space-y-3 flex flex-col">
@@ -388,6 +408,18 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
               <ExternalLink size={8} />
               Site
             </a>
+          )}
+          {maturityCount > 0 && maturityRefId && onNavigateToCswp39 && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => onNavigateToCswp39(maturityRefId)}
+              className="h-auto inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors border border-primary/20"
+              title="View CSWP.39 governance requirements extracted from this framework"
+            >
+              {maturityCount} CSWP.39 req{maturityCount !== 1 ? 's' : ''} →
+            </Button>
           )}
           {fw.libraryRefs.length > 0 && (
             <Link
@@ -684,6 +716,10 @@ interface ComplianceLandscapeProps {
   frameworks?: ComplianceFramework[]
   /** Whether to render the deadline timeline bar. Defaults to true. */
   showDeadlineTimeline?: boolean
+  /** Maturity requirements lookup — enables CSWP.39 req chips on compliance framework cards */
+  maturityByRefId?: Map<string, MaturityRequirement[]>
+  /** Called when user clicks a CSWP.39 req chip; navigates to CSWP.39 tab filtered to refId */
+  onNavigateToCswp39?: (refId: string) => void
   /** Controlled filter state (lifted to ComplianceView for URL sync) */
   orgFilter?: string
   industryFilter?: string
@@ -705,6 +741,8 @@ interface ComplianceLandscapeProps {
 export function ComplianceLandscape({
   frameworks: frameworksProp,
   showDeadlineTimeline = true,
+  maturityByRefId,
+  onNavigateToCswp39,
   orgFilter: orgFilterProp,
   industryFilter: industryFilterProp,
   regionFilter: regionFilterProp,
@@ -1034,7 +1072,12 @@ export function ComplianceLandscape({
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {displayedFrameworks.map((fw) => (
-              <FrameworkCard key={fw.id} fw={fw} />
+              <FrameworkCard
+                key={fw.id}
+                fw={fw}
+                maturityByRefId={maturityByRefId}
+                onNavigateToCswp39={onNavigateToCswp39}
+              />
             ))}
           </div>
         )

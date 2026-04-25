@@ -18,6 +18,7 @@ export const MISSION_TAGS = [
   '14 business planning tools',
   '14-step risk assessment',
   '385+ migration catalog',
+  '200+ PQC patents',
   'PKCS#11 v3.2 simulator',
   'FIPS 203 / 204 / 205',
   'AI assistant — runs locally',
@@ -72,15 +73,16 @@ export const NOT_ITEMS = [
 
 export const DATA_FOUNDATION = [
   { dataset: 'Timeline Events', records: 203, sources: '80+ orgs, 50+ countries' },
-  { dataset: 'Library Resources', records: 325, sources: '30+ standards bodies' },
+  { dataset: 'Library Resources', records: 528, sources: '30+ standards bodies' },
   { dataset: 'Algorithm Reference', records: 46, sources: 'FIPS 203/204/205/206' },
-  { dataset: 'Compliance Frameworks', records: 91, sources: 'NIST, ACVP, CC, ANSSI' },
+  { dataset: 'Compliance Frameworks', records: 112, sources: 'NIST, ACVP, CC, ANSSI' },
   { dataset: 'Migrate Products', records: 385, sources: '7 infrastructure layers' },
   { dataset: 'Threat Landscape', records: 79, sources: '8+ industry sectors' },
   { dataset: 'Industry Leaders', records: 181, sources: 'Public, Private, Academic' },
   { dataset: 'Quiz Questions', records: 820, sources: 'All PQC topic areas' },
   { dataset: 'Authoritative Sources', records: 88, sources: 'Gov, Academic, Industry' },
   { dataset: 'Learning Modules', records: 48, sources: '2,400+ min of content' },
+  { dataset: 'PQC Patents', records: 201, sources: 'USPTO, EPO, WIPO' },
 ]
 
 export const DISCUSSIONS_BASE = 'https://github.com/pqctoday/pqctoday-hub/discussions/'

@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SVG Gallery</title>
+    <style>
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        background: #f9fafb;
+        margin: 0;
+        padding: 2rem;
+        color: #111827;
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1f2937;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.5rem;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      .card {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        box-shadow:
+          0 1px 3px 0 rgba(0, 0, 0, 0.1),
+          0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        transition: transform 0.2s;
+        border: 1px solid #e5e7eb;
+      }
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow:
+          0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+      .card img {
+        max-width: 100%;
+        height: auto;
+        max-height: 80px;
+        margin-bottom: 1rem;
+      }
+      .card h3 {
+        margin: 0;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #374151;
+        word-break: break-word;
+      }
+      .card p {
+        margin: 0.25rem 0 0 0;
+        font-size: 0.75rem;
+        color: #6b7280;
+      }
+
+      .section-title {
+        grid-column: 1 / -1;
+        margin-top: 3rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e5e7eb;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #374151;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Generated SVG Assets</h1>
+    <div class="grid">
+      <div class="section-title">Application Servers</div>
+
+      <div class="card">
+        <img src="Application_Servers/app-servers.svg" alt="app-servers.svg" />
+        <h3>app-servers.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Application_Servers/blockchain.svg" alt="blockchain.svg" />
+        <h3>blockchain.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Application_Servers/cicd.svg" alt="cicd.svg" />
+        <h3>cicd.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Application_Servers/email.svg" alt="email.svg" />
+        <h3>email.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Application_Servers/messaging.svg" alt="messaging.svg" />
+        <h3>messaging.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Application_Servers/payment.svg" alt="payment.svg" />
+        <h3>payment.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Application_Servers/remote-access.svg" alt="remote-access.svg" />
+        <h3>remote-access.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Application_Servers/ssh.svg" alt="ssh.svg" />
+        <h3>ssh.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Application_Servers/tlsssl.svg" alt="tlsssl.svg" />
+        <h3>tlsssl.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Application_Servers/vpn.svg" alt="vpn.svg" />
+        <h3>vpn.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Application_Servers/web-browsers.svg" alt="web-browsers.svg" />
+        <h3>web-browsers.svg</h3>
+      </div>
+      <div class="section-title">Cloud</div>
+
+      <div class="card">
+        <img src="Cloud/cloud-hsm.svg" alt="cloud-hsm.svg" />
+        <h3>cloud-hsm.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Cloud/cloud-kms.svg" alt="cloud-kms.svg" />
+        <h3>cloud-kms.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Cloud/crypto-agility.svg" alt="crypto-agility.svg" />
+        <h3>crypto-agility.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Cloud/crypto-discovery.svg" alt="crypto-discovery.svg" />
+        <h3>crypto-discovery.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Cloud/digital-identity.svg" alt="digital-identity.svg" />
+        <h3>digital-identity.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Cloud/encryption-gateways.svg" alt="encryption-gateways.svg" />
+        <h3>encryption-gateways.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Cloud/iam.svg" alt="iam.svg" />
+        <h3>iam.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Cloud/kms.svg" alt="kms.svg" />
+        <h3>kms.svg</h3>
+      </div>
+      <div class="section-title">Database</div>
+
+      <div class="card">
+        <img
+          src="Database/database-encryption-software.svg"
+          alt="database-encryption-software.svg"
+        />
+        <h3>database-encryption-software.svg</h3>
+      </div>
+      <div class="section-title">Hardware Secure Elements</div>
+
+      <div class="card">
+        <img src="Hardware___Secure_Elements/5g-telecom.svg" alt="5g-telecom.svg" />
+        <h3>5g-telecom.svg</h3>
+      </div>
+
+      <div class="card">
+        <img
+          src="Hardware___Secure_Elements/confidential-computing.svg"
+          alt="confidential-computing.svg"
+        />
+        <h3>confidential-computing.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Hardware___Secure_Elements/hsms.svg" alt="hsms.svg" />
+        <h3>hsms.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Hardware___Secure_Elements/qkd.svg" alt="qkd.svg" />
+        <h3>qkd.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Hardware___Secure_Elements/qrng.svg" alt="qrng.svg" />
+        <h3>qrng.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Hardware___Secure_Elements/secure-boot.svg" alt="secure-boot.svg" />
+        <h3>secure-boot.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Hardware___Secure_Elements/semiconductors.svg" alt="semiconductors.svg" />
+        <h3>semiconductors.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Hardware___Secure_Elements/smart-cards.svg" alt="smart-cards.svg" />
+        <h3>smart-cards.svg</h3>
+      </div>
+      <div class="section-title">Libraries SDKs</div>
+
+      <div class="card">
+        <img src="Libraries___SDKs/api-security.svg" alt="api-security.svg" />
+        <h3>api-security.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Libraries___SDKs/code-signing.svg" alt="code-signing.svg" />
+        <h3>code-signing.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Libraries___SDKs/cryptographic-libraries.svg" alt="cryptographic-libraries.svg" />
+        <h3>cryptographic-libraries.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Libraries___SDKs/digital-signatures.svg" alt="digital-signatures.svg" />
+        <h3>digital-signatures.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Libraries___SDKs/disk-encryption.svg" alt="disk-encryption.svg" />
+        <h3>disk-encryption.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Libraries___SDKs/pqc-libraries.svg" alt="pqc-libraries.svg" />
+        <h3>pqc-libraries.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Libraries___SDKs/sdks.svg" alt="sdks.svg" />
+        <h3>sdks.svg</h3>
+      </div>
+      <div class="section-title">Network</div>
+
+      <div class="card">
+        <img src="Network/5g-telecom.svg" alt="5g-telecom.svg" />
+        <h3>5g-telecom.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Network/ipsec.svg" alt="ipsec.svg" />
+        <h3>ipsec.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Network/network-encryptors.svg" alt="network-encryptors.svg" />
+        <h3>network-encryptors.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Network/network-security.svg" alt="network-security.svg" />
+        <h3>network-security.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Network/protocol-analyzers.svg" alt="protocol-analyzers.svg" />
+        <h3>protocol-analyzers.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Network/testing-validation.svg" alt="testing-validation.svg" />
+        <h3>testing-validation.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Network/vpn.svg" alt="vpn.svg" />
+        <h3>vpn.svg</h3>
+      </div>
+      <div class="section-title">Operating System</div>
+
+      <div class="card">
+        <img src="Operating_System/disk-file-encryption.svg" alt="disk-file-encryption.svg" />
+        <h3>disk-file-encryption.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Operating_System/network-os.svg" alt="network-os.svg" />
+        <h3>network-os.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Operating_System/operating-systems.svg" alt="operating-systems.svg" />
+        <h3>operating-systems.svg</h3>
+      </div>
+      <div class="section-title">Security Software</div>
+
+      <div class="card">
+        <img src="Security_Software/aiml-security.svg" alt="aiml-security.svg" />
+        <h3>aiml-security.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Security_Software/data-protection.svg" alt="data-protection.svg" />
+        <h3>data-protection.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Security_Software/digital-identity.svg" alt="digital-identity.svg" />
+        <h3>digital-identity.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Security_Software/iotot.svg" alt="iotot.svg" />
+        <h3>iotot.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Security_Software/secrets-management.svg" alt="secrets-management.svg" />
+        <h3>secrets-management.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Security_Software/security-discovery.svg" alt="security-discovery.svg" />
+        <h3>security-discovery.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Security_Software/supply-chain.svg" alt="supply-chain.svg" />
+        <h3>supply-chain.svg</h3>
+      </div>
+      <div class="section-title">Security Stack</div>
+
+      <div class="card">
+        <img src="Security_Stack/ciam.svg" alt="ciam.svg" />
+        <h3>ciam.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Security_Stack/clm.svg" alt="clm.svg" />
+        <h3>clm.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Security_Stack/crypto-discovery.svg" alt="crypto-discovery.svg" />
+        <h3>crypto-discovery.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Security_Stack/crypto-pqc-libraries.svg" alt="crypto-pqc-libraries.svg" />
+        <h3>crypto-pqc-libraries.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Security_Stack/data-protection.svg" alt="data-protection.svg" />
+        <h3>data-protection.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Security_Stack/digital-identity.svg" alt="digital-identity.svg" />
+        <h3>digital-identity.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Security_Stack/iam.svg" alt="iam.svg" />
+        <h3>iam.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Security_Stack/kms.svg" alt="kms.svg" />
+        <h3>kms.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Security_Stack/pki.svg" alt="pki.svg" />
+        <h3>pki.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Security_Stack/secrets.svg" alt="secrets.svg" />
+        <h3>secrets.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="Security_Stack/tlsssl.svg" alt="tlsssl.svg" />
+        <h3>tlsssl.svg</h3>
+      </div>
+      <div class="section-title">Main Layers</div>
+
+      <div class="card">
+        <img src="application-servers.svg" alt="application-servers.svg" />
+        <h3>application-servers.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="cloud.svg" alt="cloud.svg" />
+        <h3>cloud.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="database.svg" alt="database.svg" />
+        <h3>database.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="hardware-secure-elements.svg" alt="hardware-secure-elements.svg" />
+        <h3>hardware-secure-elements.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="libraries-sdks.svg" alt="libraries-sdks.svg" />
+        <h3>libraries-sdks.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="network.svg" alt="network.svg" />
+        <h3>network.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="operating-system.svg" alt="operating-system.svg" />
+        <h3>operating-system.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="security-software.svg" alt="security-software.svg" />
+        <h3>security-software.svg</h3>
+      </div>
+
+      <div class="card">
+        <img src="security-stack.svg" alt="security-stack.svg" />
+        <h3>security-stack.svg</h3>
+      </div>
+    </div>
+  </body>
+</html>

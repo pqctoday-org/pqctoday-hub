@@ -24,6 +24,7 @@ import {
   Network,
   Compass,
   Search,
+  ScrollText,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { WhatsNewModal } from '../ui/WhatsNewModal'
@@ -137,6 +138,14 @@ export const MainLayout = () => {
       path: '/leaders',
       label: 'Leaders',
       icon: Users,
+      section: 'current',
+      hiddenOnMobile: true,
+      mobileMore: true,
+    },
+    {
+      path: '/patents',
+      label: 'Patents',
+      icon: ScrollText,
       section: 'current',
       hiddenOnMobile: true,
       mobileMore: true,

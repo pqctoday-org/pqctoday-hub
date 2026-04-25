@@ -9,7 +9,16 @@ import type { AssessmentMode } from '../store/useAssessmentStore'
  * null = show all (researcher / no persona)
  */
 export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
-  executive: ['/migrate', '/compliance', '/business', '/assess', '/report', '/library', '/leaders'],
+  executive: [
+    '/migrate',
+    '/compliance',
+    '/business',
+    '/assess',
+    '/report',
+    '/library',
+    '/leaders',
+    '/patents',
+  ],
   developer: [
     '/migrate',
     '/assess',
@@ -18,6 +27,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/library',
     '/playground',
     '/openssl',
+    '/patents',
   ],
   architect: [
     '/migrate',
@@ -29,6 +39,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/library',
     '/playground',
     '/leaders',
+    '/patents',
   ],
   researcher: null,
   ops: [
@@ -51,7 +62,7 @@ export const PERSONA_RECOMMENDED_PATHS: Record<PersonaId, string[]> = {
   executive: ['/learn', '/assess', '/business', '/compliance'],
   developer: ['/learn', '/algorithms', '/playground', '/openssl'],
   architect: ['/learn', '/timeline', '/assess', '/business'],
-  researcher: ['/learn', '/algorithms', '/playground', '/library'],
+  researcher: ['/learn', '/algorithms', '/playground', '/library', '/patents'],
   ops: ['/learn', '/migrate', '/openssl', '/assess'],
   curious: ['/learn', '/timeline', '/assess', '/threats'],
 }

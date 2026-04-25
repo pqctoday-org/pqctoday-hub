@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
-import { Bot, Clock, Network, Bookmark, X, Minus } from 'lucide-react'
+import { Bot, Clock, Bookmark, X, Minus } from 'lucide-react'
 import { Button } from '../ui/button'
 import type { RightPanelTab } from '@/types/HistoryTypes'
 import { useEmbedState } from '@/embed/EmbedProvider'

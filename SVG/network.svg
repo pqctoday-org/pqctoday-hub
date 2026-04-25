@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" width="1200" height="120">
+        <defs>
+            <style>
+                .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 600; fill: #1F2937; }
+                .components { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 13px; fill: #6B7280; }
+                .stats { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 12px; fill: #6B7280; }
+                .progress-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 10px; fill: #9CA3AF; }
+                .filter-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 500; fill: #4B5563; }
+            </style>
+        </defs>
+
+        <!-- Card Background -->
+        <rect x="10" y="10" width="1180" height="100" rx="12" fill="#EEF2FF" stroke="#C7D2FE" stroke-width="1"/>
+
+        <!-- Icon Box -->
+        <rect x="30" y="30" width="60" height="60" rx="12" fill="#FFFFFF"/>
+        <g transform="translate(48, 48)" color="#3B82F6">
+            <rect x="16" y="16" width="6" height="6" rx="1" stroke="currentColor" stroke-width="2" fill="none"/><rect x="2" y="16" width="6" height="6" rx="1" stroke="currentColor" stroke-width="2" fill="none"/><rect x="9" y="2" width="6" height="6" rx="1" stroke="currentColor" stroke-width="2" fill="none"/><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 12V8" stroke="currentColor" stroke-width="2" fill="none"/>
+        </g>
+
+        <!-- Texts -->
+        <text x="110" y="45" class="title">Network</text>
+        <text x="110" y="65" class="components">VPN, IPsec, Network Security, Network Encryptors, Protocol Analyzers, 5G & Telecom, Testing & Validation</text>
+
+        <!-- Progress Bars -->
+        <g transform="translate(110, 85)">
+            <rect x="0" y="0" width="99" height="4" rx="2" fill="#22C55E"/>
+            <rect x="99" y="0" width="39" height="4" rx="2" fill="#F59E0B"/>
+            <rect x="138" y="0" width="12" height="4" rx="2" fill="#E5E7EB"/>
+            
+            <text x="0" y="18" class="progress-text">66%</text>
+            <text x="150" y="18" class="progress-text" text-anchor="end">26%</text>
+        </g>
+
+        <!-- Stats -->
+        <text x="920" y="65" class="stats" text-anchor="end">70 of 106 products</text>
+
+        <!-- Dynamic Button if present -->
+        
+            <rect x="950" y="45" width="90" height="30" rx="15" fill="#EEF2FF" stroke="#C7D2FE" stroke-width="1"/>
+            <text x="995" y="65" font-family="Arial, sans-serif" font-size="12" fill="#3B82F6" text-anchor="middle" font-weight="bold">2 selected</text>
+        
+
+        <!-- Filter Button -->
+        <rect x="1060" y="40" width="100" height="40" rx="20" fill="#FFFFFF" fill-opacity="0.5"/>
+        <text x="1110" y="65" class="filter-text" text-anchor="middle">Click to filter</text>
+    </svg>

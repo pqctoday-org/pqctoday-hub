@@ -1,17 +1,29 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ExternalLink, FileText, Workflow, Layers, Columns3, GraduationCap } from 'lucide-react'
+import {
+  ExternalLink,
+  FileText,
+  Workflow,
+  Layers,
+  Columns3,
+  GraduationCap,
+  Database,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CryptoAgilityProcessDiagram } from '@/components/PKILearning/modules/CryptoMgmtModernization/visuals/CryptoAgilityProcessDiagram'
 import { CSWP39_STEPS, CSWP39_TIERS, CSWP39_CROSS_WALK } from './cswp39Data'
 import { CSWP39StepCard } from './CSWP39StepCard'
+import { MaturityEvidenceGrid } from './MaturityEvidenceGrid'
+import { maturityRequirements } from '@/data/maturityGovernanceData'
 
 interface CSWP39ExplorerProps {
   onNavigateToFramework: (
     targetTab: 'standards' | 'technical' | 'certification' | 'compliance',
     searchQuery: string
   ) => void
+  evref?: string
+  onClearEvref?: () => void
 }
 
 const tierToneClasses: Record<
@@ -44,8 +56,13 @@ const tierToneClasses: Record<
   },
 }
 
-export const CSWP39Explorer: React.FC<CSWP39ExplorerProps> = ({ onNavigateToFramework }) => {
+export const CSWP39Explorer: React.FC<CSWP39ExplorerProps> = ({
+  onNavigateToFramework,
+  evref,
+  onClearEvref,
+}) => {
   const navigate = useNavigate()
+  const uniqueSources = useMemo(() => new Set(maturityRequirements.map((r) => r.refId)).size, [])
   return (
     <div className="space-y-6">
       {/* Overview banner */}
@@ -184,8 +201,11 @@ export const CSWP39Explorer: React.FC<CSWP39ExplorerProps> = ({ onNavigateToFram
         </div>
       </section>
 
-      {/* Cross-walk summary table */}
-      <section className="glass-panel p-5 border border-border rounded-lg">
+      {/* ── Cross-walk summary table ── */}
+      <section
+        id="cswp39-cross-walk"
+        className="glass-panel p-5 border border-border rounded-lg scroll-mt-24"
+      >
         <div className="flex items-center gap-3 mb-3">
           <div className="p-2 rounded-lg bg-status-info/10">
             <Columns3 size={20} className="text-status-info" />
@@ -241,6 +261,30 @@ export const CSWP39Explorer: React.FC<CSWP39ExplorerProps> = ({ onNavigateToFram
             </tbody>
           </table>
         </div>
+      </section>
+
+      {/* ── Authoritative Evidence ── */}
+      <section className="glass-panel p-5 border border-border rounded-lg">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-lg bg-accent/10">
+            <Database size={20} className="text-accent" />
+          </div>
+          <div>
+            <h2 className="text-base font-bold text-foreground">
+              Authoritative Evidence — {maturityRequirements.length} requirements from{' '}
+              {uniqueSources} sources
+            </h2>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              LLM-extracted governance obligations mapped to each CSWP.39 pillar and maturity tier.
+              Click any highlighted cell to see sourced requirements.
+            </p>
+          </div>
+        </div>
+        <MaturityEvidenceGrid
+          requirements={maturityRequirements}
+          initialRefFilter={evref}
+          onClearRefFilter={onClearEvref}
+        />
       </section>
     </div>
   )

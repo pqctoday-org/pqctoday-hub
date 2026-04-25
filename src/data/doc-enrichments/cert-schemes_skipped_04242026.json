@@ -1,0 +1,14 @@
+[
+  {
+    "ref_id": "NIAP-CCEVS-MANUAL",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "ANSSI PQC Position Paper",
+    "reason": "Extracted text too short (0 chars) \u2014 likely empty or corrupt source"
+  },
+  {
+    "ref_id": "BSI TR-02102-4",
+    "reason": "Extracted text too short (0 chars) \u2014 likely empty or corrupt source"
+  }
+]

@@ -21,8 +21,11 @@ import {
   ExternalLink,
   FileText,
   Workflow,
+  ArrowLeft,
+  X,
 } from 'lucide-react'
 import { CSWP39Explorer } from './CSWP39Explorer'
+import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { logComplianceFilter } from '../../utils/analytics'
 import { PageHeader } from '../common/PageHeader'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
@@ -236,11 +239,19 @@ type MobileSection =
 function MobileViewToggle({
   activeSection,
   onSectionChange,
+  onCswp39Jump,
+  evref,
+  onClearEvref,
+  onNavigateToCswp39,
   landscapeProps,
   tableProps,
 }: {
   activeSection: MobileSection
   onSectionChange: (section: MobileSection) => void
+  onCswp39Jump: (targetTab: MobileSection, searchQuery: string) => void
+  evref?: string
+  onClearEvref?: () => void
+  onNavigateToCswp39?: (refId: string) => void
   landscapeProps: {
     orgFilter: string
     industryFilter: string
@@ -307,7 +318,7 @@ function MobileViewToggle({
     }`
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" id="compliance-tabs-mobile">
       <div className="flex gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
         <Button
           variant="ghost"
@@ -385,6 +396,8 @@ function MobileViewToggle({
         <ComplianceLandscape
           frameworks={complianceOnlyFrameworks}
           showDeadlineTimeline={false}
+          maturityByRefId={maturityByRefId}
+          onNavigateToCswp39={onNavigateToCswp39}
           {...landscapeProps}
         />
       )}
@@ -395,10 +408,9 @@ function MobileViewToggle({
       )}
       {section === 'cswp39' && (
         <CSWP39Explorer
-          onNavigateToFramework={(targetTab, searchQuery) => {
-            landscapeProps.onSearchTextChange(searchQuery)
-            setSection(targetTab as MobileSection)
-          }}
+          onNavigateToFramework={onCswp39Jump}
+          evref={evref}
+          onClearEvref={onClearEvref}
         />
       )}
     </div>
@@ -411,6 +423,7 @@ export const ComplianceView = () => {
   useWorkflowPhaseTracker('comply')
   const [searchParams, setSearchParams] = useSearchParams()
   const certParam = searchParams.get('cert') ?? undefined
+  const evref = searchParams.get('evref') ?? undefined
   const { data, loading, refresh, lastUpdated, enrichRecord } = useComplianceRefresh()
   const { selectedIndustries, selectedRegion, selectedPersona, experienceLevel } = usePersonaStore()
   const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
@@ -520,6 +533,10 @@ export const ComplianceView = () => {
     }
     return null
   }
+
+  // CSWP.39 jump-back marker: set when user clicks a chip from the CSWP.39 tab;
+  // clears when user changes tabs themselves. Drives the "Return to CSWP.39" banner.
+  const [cswp39JumpActive, setCswp39JumpActive] = useState(false)
 
   // Active tab
   const [activeTab, setActiveTab] = useState<MobileSection>(() => {
@@ -934,9 +951,73 @@ export const ComplianceView = () => {
       setActiveTab(tab)
       syncFiltersToUrl({ tab })
       logComplianceFilter('Tab', tab)
+      setCswp39JumpActive(false)
     },
     [syncFiltersToUrl]
   )
+
+  const handleCswp39Jump = useCallback(
+    (targetTab: MobileSection, searchQuery: string) => {
+      // Bypass the debounced search path — its stale closure of syncFiltersToUrl
+      // (captured while activeTab was 'cswp39') would overwrite the tab param
+      // 200ms later and snap the user back to the CSWP.39 tab.
+      setLsSearchInput(searchQuery)
+      setLsSearch(searchQuery)
+      setActiveTab(targetTab)
+      syncFiltersToUrl({ tab: targetTab, q: searchQuery })
+      logComplianceFilter('Tab', targetTab)
+      setCswp39JumpActive(true)
+      requestAnimationFrame(() => {
+        document
+          .getElementById('compliance-tabs')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        document
+          .getElementById('compliance-tabs-mobile')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
+    },
+    [syncFiltersToUrl]
+  )
+
+  const handleReturnToCswp39 = useCallback(() => {
+    setActiveTab('cswp39')
+    syncFiltersToUrl({ tab: 'cswp39' })
+    logComplianceFilter('Tab', 'cswp39')
+    setCswp39JumpActive(false)
+    requestAnimationFrame(() => {
+      document
+        .getElementById('cswp39-cross-walk')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  }, [syncFiltersToUrl])
+
+  const handleNavigateToCswp39 = useCallback(
+    (refId: string) => {
+      setActiveTab('cswp39')
+      setCswp39JumpActive(false)
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          next.set('tab', 'cswp39')
+          next.set('evref', refId)
+          return next
+        },
+        { replace: false }
+      )
+    },
+    [setSearchParams]
+  )
+
+  const handleClearEvref = useCallback(() => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete('evref')
+        return next
+      },
+      { replace: true }
+    )
+  }, [setSearchParams])
 
   const handleRtabChange = useCallback(
     (value: string) => {
@@ -1027,11 +1108,41 @@ export const ComplianceView = () => {
         <DeadlineTimeline frameworks={complianceFrameworks} />
       </div>
 
+      {/* Jump-back banner — visible after clicking a CSWP.39 chip that landed on another tab */}
+      {cswp39JumpActive && activeTab !== 'cswp39' && (
+        <div className="flex items-center gap-2 p-2.5 rounded-lg border border-primary/30 bg-primary/5 text-sm">
+          <Workflow size={16} className="text-primary shrink-0" />
+          <span className="text-foreground/80 text-xs flex-1 min-w-0">
+            Arrived here from the CSWP.39 cross-walk.
+          </span>
+          <Button
+            variant="ghost"
+            onClick={handleReturnToCswp39}
+            className="h-auto px-2 py-1 text-xs text-primary hover:text-primary hover:bg-primary/10 flex items-center gap-1"
+          >
+            <ArrowLeft size={14} />
+            Return to CSWP.39
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={() => setCswp39JumpActive(false)}
+            className="h-auto px-1.5 py-1 text-muted-foreground hover:text-foreground"
+            aria-label="Dismiss return-to-CSWP.39 banner"
+          >
+            <X size={14} />
+          </Button>
+        </div>
+      )}
+
       {/* Mobile: 3-section toggle */}
       <div className="md:hidden">
         <MobileViewToggle
           activeSection={activeTab}
           onSectionChange={handleTabChange}
+          onCswp39Jump={handleCswp39Jump}
+          evref={evref}
+          onClearEvref={handleClearEvref}
+          onNavigateToCswp39={handleNavigateToCswp39}
           landscapeProps={{
             orgFilter: lsOrg,
             industryFilter: lsIndustry,
@@ -1241,6 +1352,8 @@ export const ComplianceView = () => {
             <ComplianceLandscape
               frameworks={complianceOnlyFrameworks}
               showDeadlineTimeline={false}
+              maturityByRefId={maturityByRefId}
+              onNavigateToCswp39={handleNavigateToCswp39}
               orgFilter={lsOrg}
               industryFilter={lsIndustry}
               regionFilter={lsRegion}
@@ -1301,10 +1414,11 @@ export const ComplianceView = () => {
           {/* ── Tab 6: CSWP.39 Framework ── */}
           <TabsContent value="cswp39" className="mt-0 space-y-4">
             <CSWP39Explorer
-              onNavigateToFramework={(targetTab, searchQuery) => {
-                handleLsSearchChange(searchQuery)
-                handleTabChange(targetTab as MobileSection)
-              }}
+              onNavigateToFramework={(targetTab, searchQuery) =>
+                handleCswp39Jump(targetTab as MobileSection, searchQuery)
+              }
+              evref={evref}
+              onClearEvref={handleClearEvref}
             />
           </TabsContent>
         </Tabs>

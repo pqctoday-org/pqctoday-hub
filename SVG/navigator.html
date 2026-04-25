@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D IT Infrastructure Navigator</title>
+    <style>
+      :root {
+        --bg-color: #f1f5f9;
+        --text-color: #1e293b;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg-color);
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        overflow: hidden;
+        color: var(--text-color);
+        user-select: none;
+      }
+
+      /* UI Controls */
+      #ui-layer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1000;
+      }
+
+      .nav-menu {
+        position: absolute;
+        right: 40px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        pointer-events: auto;
+      }
+
+      .nav-btn {
+        background: white;
+        border: 1px solid #cbd5e1;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        color: #475569;
+        text-align: right;
+        transition: all 0.2s;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      .nav-btn:hover {
+        background: #f8fafc;
+        border-color: #94a3b8;
+        transform: translateX(-5px);
+      }
+
+      .nav-btn.active {
+        background: #3b82f6;
+        color: white;
+        border-color: #2563eb;
+        box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+      }
+
+      .instructions {
+        position: absolute;
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.9);
+        padding: 12px 24px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(4px);
+      }
+
+      /* 3D Scene Setup */
+      #viewport {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        perspective: 1500px;
+        overflow: hidden;
+      }
+
+      #camera {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        transform-style: preserve-3d;
+      }
+
+      #world {
+        position: absolute;
+        left: -400px;
+        top: -300px;
+        width: 800px;
+        height: 600px;
+        transform-style: preserve-3d;
+        transform: rotateX(60deg) rotateZ(-45deg);
+        transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
+      }
+
+      /* Deep dive mode cancels isometric tilt */
+      body.diving #world {
+        transform: rotateX(0deg) rotateZ(0deg);
+      }
+
+      .layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.9);
+        border: 2px solid;
+        border-radius: 24px;
+        box-shadow:
+          0 20px 50px rgba(0, 0, 0, 0.1),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(8px);
+        display: flex;
+        flex-direction: column;
+        padding: 40px;
+        box-sizing: border-box;
+        transform-style: preserve-3d;
+        transition: opacity 0.4s ease;
+      }
+
+      .layer.passed {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .layer-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        transform: translateZ(30px);
+      }
+
+      .layer-title {
+        font-size: 32px;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+
+      .subcomponents-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 25px;
+        transform: translateZ(10px);
+      }
+
+      .subcomponent {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 20px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+        border: 1px solid #f1f5f9;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        transform-style: preserve-3d;
+      }
+
+      .subcomponent:hover {
+        transform: translateZ(20px) scale(1.05);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        border-color: #e2e8f0;
+      }
+
+      .subcomponent img {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 15px;
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.05));
+      }
+
+      .subcomponent span {
+        font-size: 14px;
+        font-weight: 600;
+        color: #475569;
+      }
+
+      /* Micro TPM Overlay */
+      #micro-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(10px);
+        z-index: 2000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.5s ease;
+      }
+
+      #micro-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .micro-card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 24px;
+        padding: 50px;
+        color: white;
+        text-align: center;
+        max-width: 600px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        transform: scale(0.9);
+        transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      #micro-overlay.active .micro-card {
+        transform: scale(1);
+      }
+
+      .micro-card h2 {
+        font-size: 36px;
+        margin: 0 0 20px 0;
+        background: linear-gradient(90deg, #38bdf8, #818cf8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .micro-card p {
+        font-size: 18px;
+        line-height: 1.6;
+        color: #94a3b8;
+        margin-bottom: 30px;
+      }
+
+      .close-btn {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .close-btn:hover {
+        background: #2563eb;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="ui-layer">
+      <div class="instructions">Scroll to navigate the Z-axis • Click a component to dive deep</div>
+      <div class="nav-menu" id="nav-menu">
+        <!-- Auto-generated buttons -->
+      </div>
+    </div>
+
+    <div id="viewport">
+      <div id="camera">
+        <div id="world">
+          <!-- Layers injected here -->
+        </div>
+      </div>
+    </div>
+
+    <div id="micro-overlay">
+      <div class="micro-card">
+        <h2>Inner Host Architecture: TPM</h2>
+        <p>
+          You have successfully zoomed down to the absolute core of the IT infrastructure. This
+          represents the secure enclave, hardware roots of trust, and cryptographic processing logic
+          operating inside the physical host.
+        </p>
+        <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 40px">
+          <div
+            style="
+              width: 80px;
+              height: 80px;
+              border: 2px solid #3b82f6;
+              border-radius: 12px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              color: #3b82f6;
+              font-weight: bold;
+            "
+          >
+            PCRs
+          </div>
+          <div
+            style="
+              width: 80px;
+              height: 80px;
+              border: 2px solid #22c55e;
+              border-radius: 12px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              color: #22c55e;
+              font-weight: bold;
+            "
+          >
+            Crypto Engine
+          </div>
+          <div
+            style="
+              width: 80px;
+              height: 80px;
+              border: 2px solid #eab308;
+              border-radius: 12px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              color: #eab308;
+              font-weight: bold;
+            "
+          >
+            NVRAM
+          </div>
+        </div>
+        <button class="close-btn" id="close-micro">Return to Stack</button>
+      </div>
+    </div>
+
+    <script>
+      const layersData = [
+        {
+          id: 'cloud',
+          title: 'Cloud',
+          color: '#06B6D4',
+          components: [
+            'cloud-kms',
+            'cloud-hsm',
+            'encryption-gateways',
+            'crypto-agility',
+            'kms',
+            'iam',
+            'crypto-discovery',
+            'digital-identity',
+          ],
+        },
+        {
+          id: 'network',
+          title: 'Network',
+          color: '#3B82F6',
+          components: [
+            'vpn',
+            'ipsec',
+            'network-security',
+            'network-encryptors',
+            'protocol-analyzers',
+            '5g-telecom',
+            'testing-validation',
+          ],
+        },
+        {
+          id: 'application-servers',
+          title: 'Application Servers',
+          color: '#8B5CF6',
+          components: [
+            'tlsssl',
+            'ssh',
+            'web-browsers',
+            'app-servers',
+            'email',
+            'messaging',
+            'blockchain',
+            'payment',
+            'vpn',
+            'remote-access',
+            'cicd',
+          ],
+        },
+        {
+          id: 'libraries-sdks',
+          title: 'Libraries & SDKs',
+          color: '#10B981',
+          components: [
+            'cryptographic-libraries',
+            'pqc-libraries',
+            'api-security',
+            'code-signing',
+            'digital-signatures',
+            'disk-encryption',
+            'sdks',
+          ],
+        },
+        {
+          id: 'security-software',
+          title: 'Security Software',
+          color: '#D946EF',
+          components: [
+            'data-protection',
+            'digital-identity',
+            'secrets-management',
+            'security-discovery',
+            'iotot',
+            'aiml-security',
+            'supply-chain',
+          ],
+        },
+        {
+          id: 'database',
+          title: 'Database',
+          color: '#059669',
+          components: ['database-encryption-software'],
+        },
+        {
+          id: 'security-stack',
+          title: 'Security Stack',
+          color: '#EF4444',
+          components: [
+            'kms',
+            'pki',
+            'crypto-pqc-libraries',
+            'clm',
+            'secrets',
+            'iam',
+            'ciam',
+            'data-protection',
+            'crypto-discovery',
+            'tlsssl',
+            'digital-identity',
+          ],
+        },
+        {
+          id: 'operating-system',
+          title: 'Operating System',
+          color: '#F59E0B',
+          components: ['operating-systems', 'network-os', 'disk-file-encryption'],
+        },
+        {
+          id: 'hardware-secure-elements',
+          title: 'Hardware & Secure Elements',
+          color: '#6B7280',
+          components: [
+            'hsms',
+            'smart-cards',
+            'secure-boot',
+            'semiconductors',
+            'qrng',
+            'qkd',
+            'confidential-computing',
+            '5g-telecom',
+          ],
+        },
+      ]
+
+      const world = document.getElementById('world')
+      const camera = document.getElementById('camera')
+      const navMenu = document.getElementById('nav-menu')
+
+      let targetZ = -200
+      let currentZ = -200
+      const layerGap = 800
+      const layerElements = []
+      let isDiving = false
+
+      layersData.forEach((layer, index) => {
+        const zPosition = -index * layerGap
+
+        const el = document.createElement('div')
+        el.className = 'layer'
+        el.style.borderColor = layer.color
+        el.style.transform = `translateZ(${zPosition}px)`
+        el.dataset.z = zPosition
+        el.dataset.index = index
+
+        const header = document.createElement('div')
+        header.className = 'layer-header'
+        header.innerHTML = `<h2 class="layer-title" style="color: ${layer.color}">${layer.title}</h2>`
+        el.appendChild(header)
+
+        const grid = document.createElement('div')
+        grid.className = 'subcomponents-grid'
+
+        layer.components.forEach((comp) => {
+          const cleanName = comp
+            .split('-')
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(' ')
+
+          const folderName = layer.id
+            .split('-')
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join('_')
+          const imgPath = `${folderName}/${comp}.svg`
+
+          const subEl = document.createElement('div')
+          subEl.className = 'subcomponent'
+
+          subEl.innerHTML = `
+                    <img src="${imgPath}" alt="${cleanName}">
+                    <span>${cleanName}</span>
+                `
+
+          subEl.addEventListener('click', (e) => {
+            e.stopPropagation()
+            if (layer.id === 'hardware-secure-elements') {
+              document.getElementById('micro-overlay').classList.add('active')
+            } else {
+              document.body.classList.add('diving')
+              targetZ = -zPosition + 400
+            }
+          })
+
+          grid.appendChild(subEl)
+        })
+
+        el.appendChild(grid)
+        world.appendChild(el)
+        layerElements.push(el)
+
+        const btn = document.createElement('button')
+        btn.className = 'nav-btn'
+        if (index === 0) btn.classList.add('active')
+        btn.innerText = layer.title
+        btn.addEventListener('click', () => {
+          document.body.classList.remove('diving')
+          targetZ = -zPosition - 200
+        })
+        navMenu.appendChild(btn)
+      })
+
+      document.getElementById('close-micro').addEventListener('click', () => {
+        document.getElementById('micro-overlay').classList.remove('active')
+        document.body.classList.remove('diving')
+      })
+
+      window.addEventListener('wheel', (e) => {
+        if (document.getElementById('micro-overlay').classList.contains('active')) return
+        document.body.classList.remove('diving')
+
+        targetZ += e.deltaY * 3
+
+        const maxZ = 1000
+        const minZ = (layersData.length - 1) * layerGap + 500
+        if (targetZ < -maxZ) targetZ = -maxZ
+        if (targetZ > minZ) targetZ = minZ
+      })
+
+      function render() {
+        currentZ += (targetZ - currentZ) * 0.1
+
+        if (Math.abs(targetZ - currentZ) > 0.1) {
+          camera.style.transform = `translateZ(${currentZ}px)`
+        }
+
+        const navBtns = document.querySelectorAll('.nav-btn')
+        let activeIndex = 0
+
+        layerElements.forEach((el, index) => {
+          const zPos = parseFloat(el.dataset.z)
+          const distanceToCamera = zPos + currentZ
+
+          if (distanceToCamera > 300) {
+            el.classList.add('passed')
+            el.style.opacity = 0
+          } else {
+            el.classList.remove('passed')
+
+            if (distanceToCamera > -200) {
+              const opacity = 1 - (distanceToCamera + 200) / 500
+              el.style.opacity = Math.max(0, Math.min(1, opacity)).toFixed(2)
+            } else {
+              el.style.opacity = 1
+            }
+          }
+
+          if (distanceToCamera < 200 && distanceToCamera > -layerGap) {
+            activeIndex = index
+          }
+        })
+
+        navBtns.forEach((btn, i) => {
+          if (i === activeIndex) btn.classList.add('active')
+          else btn.classList.remove('active')
+        })
+
+        requestAnimationFrame(render)
+      }
+
+      requestAnimationFrame(render)
+    </script>
+  </body>
+</html>

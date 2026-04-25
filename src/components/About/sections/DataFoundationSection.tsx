@@ -34,7 +34,7 @@ export function DataFoundationSection() {
 
       <div className="mt-4 flex items-center justify-between">
         <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-bold text-gradient">2,200+</span>
+          <span className="text-2xl font-bold text-gradient">2,600+</span>
           <span className="text-sm text-muted-foreground">total curated records</span>
         </div>
         <span className="text-xs text-muted-foreground">Compliance data refreshed weekly</span>

@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D Architecture Flipbook</title>
+    <style>
+      :root {
+        --bg-color: #f8fafc;
+        --text-color: #0f172a;
+        --layer-gap: 600px;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg-color);
+        background-image:
+          linear-gradient(#e2e8f0 1px, transparent 1px),
+          linear-gradient(90deg, #e2e8f0 1px, transparent 1px);
+        background-size: 40px 40px;
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        overflow: hidden;
+        color: var(--text-color);
+        user-select: none;
+      }
+
+      /* 3D Engine */
+      #viewport {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        perspective: 1200px;
+        overflow: hidden;
+      }
+
+      #camera {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        transform-style: preserve-3d;
+      }
+
+      #world {
+        position: absolute;
+        left: -400px;
+        top: -300px;
+        width: 800px;
+        height: 600px;
+        transform-style: preserve-3d;
+        /* Classic Isometric projection */
+        transform: rotateX(60deg) rotateZ(-45deg);
+        transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
+      }
+
+      .layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid #cbd5e1;
+        border-radius: 16px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        padding: 40px;
+        box-sizing: border-box;
+        transform-style: preserve-3d;
+        transition: opacity 0.5s ease;
+      }
+
+      .layer-header {
+        transform: translateZ(20px);
+        margin-bottom: 20px;
+      }
+
+      .layer-title {
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0;
+        color: #005587; /* Corporate blue */
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .subcomponents-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 20px;
+        transform: translateZ(1px);
+      }
+
+      .subcomponent {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 15px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        cursor: pointer;
+        transform-style: preserve-3d;
+      }
+
+      .subcomponent:hover {
+        transform: translateZ(20px) scale(1.05);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+        border-color: #005587;
+      }
+
+      .subcomponent img {
+        width: 45px;
+        height: 45px;
+        margin-bottom: 10px;
+      }
+
+      .subcomponent span {
+        font-size: 13px;
+        font-weight: 600;
+        color: #475569;
+      }
+
+      /* UI Controls */
+      #ui-layer {
+        position: fixed;
+        top: 30px;
+        right: 30px;
+        pointer-events: none;
+        z-index: 1000;
+      }
+
+      .nav-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        pointer-events: auto;
+      }
+
+      .nav-btn {
+        background: white;
+        border: 1px solid #cbd5e1;
+        padding: 10px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        color: #475569;
+        text-align: right;
+        transition: all 0.2s;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+      }
+
+      .nav-btn:hover {
+        background: #f1f5f9;
+        border-color: #94a3b8;
+      }
+
+      .nav-btn.active {
+        background: #005587;
+        color: white;
+        border-color: #005587;
+        box-shadow: 0 4px 10px rgba(0, 85, 135, 0.2);
+      }
+
+      .instructions {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        padding: 12px 24px;
+        border-radius: 20px;
+        border: 1px solid #cbd5e1;
+        font-size: 14px;
+        font-weight: 500;
+        color: #334155;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        z-index: 1000;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="instructions">Scroll up/down to flip through the infrastructure layers</div>
+
+    <div id="ui-layer">
+      <div class="nav-menu" id="nav-menu">
+        <!-- Buttons injected -->
+      </div>
+    </div>
+
+    <div id="viewport">
+      <div id="camera">
+        <div id="world">
+          <!-- Layers injected here -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const layersData = [
+        {
+          id: 'cloud',
+          title: 'Cloud',
+          components: [
+            'cloud-kms',
+            'cloud-hsm',
+            'encryption-gateways',
+            'crypto-agility',
+            'kms',
+            'iam',
+            'crypto-discovery',
+            'digital-identity',
+          ],
+        },
+        {
+          id: 'network',
+          title: 'Network',
+          components: [
+            'vpn',
+            'ipsec',
+            'network-security',
+            'network-encryptors',
+            'protocol-analyzers',
+            '5g-telecom',
+            'testing-validation',
+          ],
+        },
+        {
+          id: 'application-servers',
+          title: 'Application Servers',
+          components: [
+            'tlsssl',
+            'ssh',
+            'web-browsers',
+            'app-servers',
+            'email',
+            'messaging',
+            'blockchain',
+            'payment',
+            'vpn',
+            'remote-access',
+            'cicd',
+          ],
+        },
+        {
+          id: 'libraries-sdks',
+          title: 'Libraries & SDKs',
+          components: [
+            'cryptographic-libraries',
+            'pqc-libraries',
+            'api-security',
+            'code-signing',
+            'digital-signatures',
+            'disk-encryption',
+            'sdks',
+          ],
+        },
+        {
+          id: 'security-software',
+          title: 'Security Software',
+          components: [
+            'data-protection',
+            'digital-identity',
+            'secrets-management',
+            'security-discovery',
+            'iotot',
+            'aiml-security',
+            'supply-chain',
+          ],
+        },
+        { id: 'database', title: 'Database', components: ['database-encryption-software'] },
+        {
+          id: 'security-stack',
+          title: 'Security Stack',
+          components: [
+            'kms',
+            'pki',
+            'crypto-pqc-libraries',
+            'clm',
+            'secrets',
+            'iam',
+            'ciam',
+            'data-protection',
+            'crypto-discovery',
+            'tlsssl',
+            'digital-identity',
+          ],
+        },
+        {
+          id: 'operating-system',
+          title: 'Operating System',
+          components: ['operating-systems', 'network-os', 'disk-file-encryption'],
+        },
+        {
+          id: 'hardware-secure-elements',
+          title: 'Hardware & Secure Elements',
+          components: [
+            'hsms',
+            'smart-cards',
+            'secure-boot',
+            'semiconductors',
+            'qrng',
+            'qkd',
+            'confidential-computing',
+            '5g-telecom',
+          ],
+        },
+      ]
+
+      const world = document.getElementById('world')
+      const camera = document.getElementById('camera')
+      const navMenu = document.getElementById('nav-menu')
+
+      let targetZ = -300
+      let currentZ = -300
+      const layerGap = 600
+      const layerElements = []
+
+      layersData.forEach((layer, index) => {
+        const zPosition = -index * layerGap
+
+        const el = document.createElement('div')
+        el.className = 'layer'
+        el.style.transform = `translateZ(${zPosition}px)`
+        el.dataset.z = zPosition
+
+        const header = document.createElement('div')
+        header.className = 'layer-header'
+        header.innerHTML = `<h2 class="layer-title">${layer.title}</h2>`
+        el.appendChild(header)
+
+        const grid = document.createElement('div')
+        grid.className = 'subcomponents-grid'
+
+        layer.components.forEach((comp) => {
+          const cleanName = comp
+            .split('-')
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(' ')
+          const folderName = layer.id
+            .split('-')
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join('_')
+          const imgPath = `${folderName}/${comp}.svg`
+
+          const subEl = document.createElement('div')
+          subEl.className = 'subcomponent'
+          subEl.innerHTML = `
+                    <img src="${imgPath}" alt="${cleanName}" onerror="this.style.display='none'">
+                    <span>${cleanName}</span>
+                `
+          grid.appendChild(subEl)
+        })
+
+        el.appendChild(grid)
+        world.appendChild(el)
+        layerElements.push(el)
+
+        const btn = document.createElement('button')
+        btn.className = 'nav-btn'
+        if (index === 0) btn.classList.add('active')
+        btn.innerText = layer.title
+        btn.addEventListener('click', () => {
+          targetZ = -zPosition - 300
+        })
+        navMenu.appendChild(btn)
+      })
+
+      // Mouse wheel flying
+      window.addEventListener('wheel', (e) => {
+        targetZ += e.deltaY * 2.5
+
+        const maxZ = 1000
+        const minZ = (layersData.length - 1) * layerGap + 800
+        if (targetZ < -maxZ) targetZ = -maxZ
+        if (targetZ > minZ) targetZ = minZ
+      })
+
+      function render() {
+        currentZ += (targetZ - currentZ) * 0.08
+
+        if (Math.abs(targetZ - currentZ) > 0.1) {
+          camera.style.transform = `translateZ(${currentZ}px)`
+        }
+
+        const navBtns = document.querySelectorAll('.nav-btn')
+        let activeIndex = 0
+
+        layerElements.forEach((el, index) => {
+          const zPos = parseFloat(el.dataset.z)
+          const distanceToCamera = zPos + currentZ
+
+          // Opacity fading for the "flipbook" effect
+          if (distanceToCamera > 400) {
+            el.style.opacity = 0
+            el.style.pointerEvents = 'none'
+          } else {
+            el.style.pointerEvents = 'auto'
+            if (distanceToCamera > 0) {
+              const opacity = 1 - distanceToCamera / 400
+              el.style.opacity = Math.max(0, Math.min(1, opacity)).toFixed(2)
+            } else {
+              el.style.opacity = 1
+            }
+          }
+
+          if (distanceToCamera < 300 && distanceToCamera > -layerGap / 2) {
+            activeIndex = index
+          }
+        })
+
+        navBtns.forEach((btn, i) => {
+          if (i === activeIndex) btn.classList.add('active')
+          else btn.classList.remove('active')
+        })
+
+        requestAnimationFrame(render)
+      }
+
+      requestAnimationFrame(render)
+    </script>
+  </body>
+</html>

@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IT Infrastructure Topology Map</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: #f8fafc;
+        background-image:
+          linear-gradient(#e2e8f0 1px, transparent 1px),
+          linear-gradient(90deg, #e2e8f0 1px, transparent 1px);
+        background-size: 50px 50px;
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        overflow: hidden;
+        color: #1e293b;
+        user-select: none;
+      }
+
+      #viewport {
+        width: 100vw;
+        height: 100vh;
+        cursor: grab;
+        position: relative;
+      }
+
+      #viewport:active {
+        cursor: grabbing;
+      }
+
+      #map {
+        position: absolute;
+        transform-origin: 0 0;
+        width: 6000px;
+        height: 6000px;
+      }
+
+      /* Clean Corporate Connections */
+      #connections {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .pathline {
+        fill: none;
+        stroke: #94a3b8;
+        stroke-width: 2;
+        stroke-dasharray: 6 6;
+      }
+
+      /* Clean Clusters */
+      .cluster {
+        position: absolute;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 30px;
+        width: 800px;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+      }
+
+      .cluster-title {
+        position: absolute;
+        top: -50px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 20px;
+        font-weight: 700;
+        color: #0f172a;
+        white-space: nowrap;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+
+      /* Clean Nodes */
+      .node {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 140px;
+        height: 140px;
+        text-align: center;
+        background: white;
+        border: 1px solid #cbd5e1;
+        border-radius: 12px;
+        box-shadow:
+          0 4px 6px -1px rgba(0, 0, 0, 0.05),
+          0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        transition: all 0.2s ease;
+        cursor: pointer;
+      }
+
+      .node:hover {
+        transform: translateY(-5px);
+        box-shadow:
+          0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        border-color: #005587;
+      }
+
+      .node img {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 12px;
+      }
+
+      .node span {
+        font-size: 13px;
+        font-weight: 600;
+        color: #334155;
+        padding: 0 10px;
+      }
+
+      /* Clean UI overlay */
+      .ui-panel {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: white;
+        border: 1px solid #cbd5e1;
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        z-index: 1000;
+      }
+
+      .ui-panel h1 {
+        margin: 0 0 8px 0;
+        font-size: 18px;
+        color: #0f172a;
+      }
+
+      .ui-panel p {
+        margin: 0;
+        font-size: 13px;
+        color: #64748b;
+      }
+
+      .controls {
+        margin-top: 16px;
+        display: flex;
+        gap: 8px;
+      }
+
+      .btn {
+        background: #f1f5f9;
+        border: 1px solid #cbd5e1;
+        color: #334155;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+      .btn:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ui-panel">
+      <h1>Architecture Map</h1>
+      <p>Drag to pan • Scroll to zoom</p>
+      <div class="controls">
+        <button class="btn" id="btn-cloud">Cloud Level</button>
+        <button class="btn" id="btn-hw">Hardware Level</button>
+        <button class="btn" id="btn-reset">Reset View</button>
+      </div>
+    </div>
+
+    <div id="viewport">
+      <div id="map">
+        <svg id="connections"></svg>
+        <!-- Clusters injected by JS -->
+      </div>
+    </div>
+
+    <script>
+      const layersData = [
+        {
+          id: 'cloud',
+          title: 'Cloud',
+          x: 3000,
+          y: 800,
+          components: [
+            'cloud-kms',
+            'cloud-hsm',
+            'encryption-gateways',
+            'crypto-agility',
+            'kms',
+            'iam',
+            'crypto-discovery',
+            'digital-identity',
+          ],
+        },
+        {
+          id: 'network',
+          title: 'Network',
+          x: 3000,
+          y: 1500,
+          components: [
+            'vpn',
+            'ipsec',
+            'network-security',
+            'network-encryptors',
+            'protocol-analyzers',
+            '5g-telecom',
+            'testing-validation',
+          ],
+        },
+        {
+          id: 'application-servers',
+          title: 'Application Servers',
+          x: 2200,
+          y: 2200,
+          components: [
+            'tlsssl',
+            'ssh',
+            'web-browsers',
+            'app-servers',
+            'email',
+            'messaging',
+            'blockchain',
+            'payment',
+            'vpn',
+            'remote-access',
+            'cicd',
+          ],
+        },
+        {
+          id: 'libraries-sdks',
+          title: 'Libraries & SDKs',
+          x: 3800,
+          y: 2200,
+          components: [
+            'cryptographic-libraries',
+            'pqc-libraries',
+            'api-security',
+            'code-signing',
+            'digital-signatures',
+            'disk-encryption',
+            'sdks',
+          ],
+        },
+        {
+          id: 'security-software',
+          title: 'Security Software',
+          x: 1400,
+          y: 2900,
+          components: [
+            'data-protection',
+            'digital-identity',
+            'secrets-management',
+            'security-discovery',
+            'iotot',
+            'aiml-security',
+            'supply-chain',
+          ],
+        },
+        {
+          id: 'database',
+          title: 'Database',
+          x: 4600,
+          y: 2900,
+          components: ['database-encryption-software'],
+        },
+        {
+          id: 'security-stack',
+          title: 'Security Stack',
+          x: 3000,
+          y: 3600,
+          components: [
+            'kms',
+            'pki',
+            'crypto-pqc-libraries',
+            'clm',
+            'secrets',
+            'iam',
+            'ciam',
+            'data-protection',
+            'crypto-discovery',
+            'tlsssl',
+            'digital-identity',
+          ],
+        },
+        {
+          id: 'operating-system',
+          title: 'Operating System',
+          x: 3000,
+          y: 4300,
+          components: ['operating-systems', 'network-os', 'disk-file-encryption'],
+        },
+        {
+          id: 'hardware-secure-elements',
+          title: 'Hardware & Secure Elements',
+          x: 3000,
+          y: 5000,
+          components: [
+            'hsms',
+            'smart-cards',
+            'secure-boot',
+            'semiconductors',
+            'qrng',
+            'qkd',
+            'confidential-computing',
+            '5g-telecom',
+          ],
+        },
+      ]
+
+      const edges = [
+        ['cloud', 'network'],
+        ['network', 'application-servers'],
+        ['network', 'libraries-sdks'],
+        ['application-servers', 'security-software'],
+        ['libraries-sdks', 'database'],
+        ['security-software', 'security-stack'],
+        ['database', 'security-stack'],
+        ['security-stack', 'operating-system'],
+        ['operating-system', 'hardware-secure-elements'],
+      ]
+
+      const map = document.getElementById('map')
+      const connections = document.getElementById('connections')
+
+      // Draw connections
+      edges.forEach((edge) => {
+        const source = layersData.find((l) => l.id === edge[0])
+        const target = layersData.find((l) => l.id === edge[1])
+
+        if (!source || !target) return
+
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+
+        const startY = source.y + 120
+        const endY = target.y - 120
+        const midY = (startY + endY) / 2
+
+        const d = `M ${source.x} ${startY} C ${source.x} ${midY}, ${target.x} ${midY}, ${target.x} ${endY}`
+
+        path.setAttribute('d', d)
+        path.setAttribute('class', 'pathline')
+        connections.appendChild(path)
+      })
+
+      // Draw clusters and nodes
+      layersData.forEach((layer) => {
+        const cluster = document.createElement('div')
+        cluster.className = 'cluster'
+        cluster.style.left = `${layer.x}px`
+        cluster.style.top = `${layer.y}px`
+
+        const title = document.createElement('div')
+        title.className = 'cluster-title'
+        title.innerText = layer.title
+        cluster.appendChild(title)
+
+        layer.components.forEach((comp) => {
+          const cleanName = comp
+            .split('-')
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(' ')
+          const folderName = layer.id
+            .split('-')
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join('_')
+          const imgPath = `${folderName}/${comp}.svg`
+
+          const node = document.createElement('div')
+          node.className = 'node'
+          node.innerHTML = `<img src="${imgPath}" alt="${cleanName}" onerror="this.style.display='none'"><span>${cleanName}</span>`
+          cluster.appendChild(node)
+        })
+
+        map.appendChild(cluster)
+      })
+
+      // Pan and Zoom Engine
+      let scale = 0.3
+      let panX = -3000 * scale + window.innerWidth / 2
+      let panY = -800 * scale + window.innerHeight / 2
+      let isDragging = false
+      let startX, startY
+
+      function updateTransform() {
+        map.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`
+      }
+
+      const viewport = document.getElementById('viewport')
+
+      viewport.addEventListener('mousedown', (e) => {
+        if (e.target.tagName === 'BUTTON') return
+        isDragging = true
+        startX = e.clientX - panX
+        startY = e.clientY - panY
+      })
+
+      window.addEventListener('mouseup', () => {
+        isDragging = false
+      })
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return
+        panX = e.clientX - startX
+        panY = e.clientY - startY
+        updateTransform()
+      })
+
+      viewport.addEventListener(
+        'wheel',
+        (e) => {
+          e.preventDefault()
+          const zoomSensitivity = 0.001
+          const delta = -e.deltaY * zoomSensitivity
+
+          const mouseX = e.clientX
+          const mouseY = e.clientY
+
+          const prevScale = scale
+          scale += delta
+          scale = Math.max(0.1, Math.min(scale, 2))
+
+          panX = mouseX - (mouseX - panX) * (scale / prevScale)
+          panY = mouseY - (mouseY - panY) * (scale / prevScale)
+
+          updateTransform()
+        },
+        { passive: false }
+      )
+
+      function jumpTo(x, y, targetScale) {
+        scale = targetScale
+        panX = -x * scale + window.innerWidth / 2
+        panY = -y * scale + window.innerHeight / 2
+        updateTransform()
+      }
+
+      document.getElementById('btn-cloud').addEventListener('click', () => jumpTo(3000, 800, 1))
+      document.getElementById('btn-hw').addEventListener('click', () => jumpTo(3000, 5000, 1))
+      document.getElementById('btn-reset').addEventListener('click', () => jumpTo(3000, 2900, 0.2))
+
+      // Initial setup
+      jumpTo(3000, 2900, 0.2)
+    </script>
+  </body>
+</html>

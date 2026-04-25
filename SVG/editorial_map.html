@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PQC Infrastructure - Illustrated Map</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap');
+
+      :root {
+        --bg-color: #f4efdf;
+        --line-color: #4a4036;
+        --text-main: #3d352b;
+        --text-muted: #6b6255;
+        --accent-green: #d1dbcd;
+        --accent-blue: #d4dfec;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg-color);
+        /* Subtle paper texture using CSS radial gradients */
+        background-image: radial-gradient(#d6cebd 1px, transparent 1px);
+        background-size: 30px 30px;
+        font-family: 'Inter', sans-serif;
+        color: var(--text-main);
+        overflow: hidden;
+        user-select: none;
+      }
+
+      /* Top Bar */
+      .top-bar {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid var(--line-color);
+        border-radius: 30px;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        z-index: 1000;
+        font-size: 13px;
+        color: var(--text-muted);
+        backdrop-filter: blur(5px);
+      }
+
+      .top-bar span.active {
+        font-weight: 600;
+        color: var(--text-main);
+      }
+
+      /* Viewport and Dragging */
+      #viewport {
+        width: 100vw;
+        height: 100vh;
+        cursor: grab;
+        position: relative;
+      }
+      #viewport:active {
+        cursor: grabbing;
+      }
+
+      #map {
+        position: absolute;
+        transform-origin: 0 0;
+        width: 6000px;
+        height: 6000px;
+      }
+
+      /* Pathways (Rivers/Roads) */
+      #pathways {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+      }
+      .road-line {
+        fill: none;
+        stroke: #d0c8b6;
+        stroke-width: 40;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .road-outline {
+        fill: none;
+        stroke: var(--line-color);
+        stroke-width: 42;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      /* Map Districts (The 6 AI Buildings) */
+      .district {
+        position: absolute;
+        z-index: 10;
+        transform: translate(-50%, -50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .district img {
+        width: 800px;
+        height: auto;
+        /* Drop shadow to make building pop from canvas slightly */
+        filter: drop-shadow(0 20px 20px rgba(0, 0, 0, 0.1));
+        pointer-events: none;
+      }
+
+      /* Points of Interest (The 74 components) */
+      .poi {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.95);
+        border: 1.5px solid var(--line-color);
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-main);
+        box-shadow: 2px 4px 0 rgba(74, 64, 54, 0.15);
+        cursor: pointer;
+        z-index: 20;
+        transition:
+          transform 0.2s,
+          background 0.2s;
+        white-space: nowrap;
+        /* Small line pointing from POI */
+      }
+      .poi::after {
+        content: '';
+        position: absolute;
+        bottom: -12px;
+        left: 50%;
+        width: 1.5px;
+        height: 12px;
+        background: var(--line-color);
+      }
+
+      .poi:hover {
+        transform: translateY(-3px);
+        background: #fff;
+        box-shadow: 2px 6px 0 rgba(74, 64, 54, 0.2);
+        color: #b94a3e; /* Editorial red highlight */
+      }
+
+      /* Detail Panel (Like the Notre Dame booking overlay) */
+      #detail-overlay {
+        position: fixed;
+        top: 100px;
+        left: 50px;
+        background: #fffdf9;
+        border: 1.5px solid var(--line-color);
+        border-radius: 12px;
+        width: 400px;
+        padding: 30px;
+        box-shadow: 4px 8px 0 rgba(74, 64, 54, 0.1);
+        z-index: 2000;
+        display: none;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      #detail-overlay h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 28px;
+        margin: 0;
+        color: var(--text-main);
+        font-weight: 600;
+      }
+
+      .info-box {
+        background: var(--bg-color);
+        border: 1px solid var(--line-color);
+        border-radius: 8px;
+        padding: 15px;
+      }
+
+      .info-box p {
+        margin: 0 0 10px 0;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .close-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: var(--line-color);
+      }
+
+      .btn-reserve {
+        background: var(--line-color);
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 6px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <span>Infrastructure Map</span> /
+      <span class="active" id="breadcrumb-current">Overview</span>
+    </div>
+
+    <!-- UI Overlay for POIs -->
+    <div id="detail-overlay">
+      <button class="close-btn" onclick="closeOverlay()">✕</button>
+      <h2 id="detail-title">Component Name</h2>
+      <div class="info-box">
+        <p><strong>Status:</strong> <span style="color: #4a7c59">Operational</span></p>
+        <p>
+          This component is part of the core infrastructure. Ensure compliance protocols are updated
+          before modifying.
+        </p>
+      </div>
+      <button class="btn-reserve">Inspect Component Details →</button>
+    </div>
+
+    <div id="viewport">
+      <div id="map">
+        <svg id="pathways"></svg>
+        <!-- Map elements injected by JS -->
+      </div>
+    </div>
+
+    <script>
+      // The 6 Master Buildings
+      const districts = [
+        {
+          id: 'cloud',
+          title: 'Core Cloud Servers',
+          img: 'maps/illustrated_cloud_rack.png',
+          x: 3000,
+          y: 1500,
+          components: [
+            'cloud-kms',
+            'cloud-hsm',
+            'encryption-gateways',
+            'crypto-agility',
+            'kms',
+            'iam',
+            'crypto-discovery',
+            'digital-identity',
+          ],
+        },
+        {
+          id: 'network',
+          title: 'Network Routing Matrix',
+          img: 'maps/illustrated_network_router.png',
+          x: 1800,
+          y: 2800,
+          components: [
+            'vpn',
+            'ipsec',
+            'network-security',
+            'network-encryptors',
+            'protocol-analyzers',
+            '5g-telecom',
+            'testing-validation',
+          ],
+        },
+        {
+          id: 'server',
+          title: 'Application Servers',
+          img: 'maps/illustrated_server.png',
+          x: 4200,
+          y: 2800,
+          components: [
+            'tlsssl',
+            'ssh',
+            'web-browsers',
+            'app-servers',
+            'email',
+            'messaging',
+            'blockchain',
+            'payment',
+            'vpn',
+            'remote-access',
+            'cicd',
+          ],
+        },
+        {
+          id: 'security',
+          title: 'Hardware Security Module',
+          img: 'maps/illustrated_hsm_appliance.png',
+          x: 3000,
+          y: 4000,
+          components: [
+            'kms',
+            'pki',
+            'crypto-pqc-libraries',
+            'clm',
+            'secrets',
+            'iam',
+            'ciam',
+            'data-protection',
+            'crypto-discovery',
+            'tlsssl',
+            'digital-identity',
+          ],
+        },
+        {
+          id: 'database',
+          title: 'Database Storage Array',
+          img: 'maps/illustrated_database_array.png',
+          x: 1800,
+          y: 5200,
+          components: ['database-encryption-software'],
+        },
+        {
+          id: 'hardware',
+          title: 'Secure Silicon Chip',
+          img: 'maps/illustrated_microchip.png',
+          x: 4200,
+          y: 5200,
+          components: [
+            'hsms',
+            'smart-cards',
+            'secure-boot',
+            'semiconductors',
+            'qrng',
+            'qkd',
+            'confidential-computing',
+            '5g-telecom',
+          ],
+        },
+      ]
+
+      const mapEl = document.getElementById('map')
+      const pathwaysEl = document.getElementById('pathways')
+
+      // Draw elegant illustrated roads connecting districts
+      function drawRoad(x1, y1, x2, y2) {
+        const pathOutline = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+        const pathInner = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+
+        // Curved path
+        const d = `M ${x1} ${y1} Q ${x1} ${(y1 + y2) / 2} ${(x1 + x2) / 2} ${(y1 + y2) / 2} T ${x2} ${y2}`
+
+        pathOutline.setAttribute('d', d)
+        pathOutline.setAttribute('class', 'road-outline')
+
+        pathInner.setAttribute('d', d)
+        pathInner.setAttribute('class', 'road-line')
+
+        pathwaysEl.appendChild(pathOutline)
+        pathwaysEl.appendChild(pathInner)
+      }
+
+      // Draw connections between centers
+      drawRoad(3000, 1500, 1800, 2800)
+      drawRoad(3000, 1500, 4200, 2800)
+      drawRoad(1800, 2800, 3000, 4000)
+      drawRoad(4200, 2800, 3000, 4000)
+      drawRoad(3000, 4000, 1800, 5200)
+      drawRoad(3000, 4000, 4200, 5200)
+
+      // Place Districts and POIs
+      districts.forEach((district) => {
+        // Place building
+        const distEl = document.createElement('div')
+        distEl.className = 'district'
+        distEl.style.left = `${district.x}px`
+        distEl.style.top = `${district.y}px`
+        distEl.innerHTML = `<img src="${district.img}">`
+        mapEl.appendChild(distEl)
+
+        // Place POIs around the building in a scattered radius
+        const radius = 500
+        district.components.forEach((comp, i) => {
+          const angle = (i / district.components.length) * Math.PI * 2
+          const poiX = district.x + Math.cos(angle) * radius
+          // Squish Y slightly to match isometric perspective
+          const poiY = district.y + Math.sin(angle) * (radius * 0.6)
+
+          const cleanName = comp
+            .split('-')
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(' ')
+
+          const poiEl = document.createElement('div')
+          poiEl.className = 'poi'
+          poiEl.style.left = `${poiX}px`
+          poiEl.style.top = `${poiY}px`
+          poiEl.innerText = cleanName
+
+          poiEl.onclick = (e) => {
+            e.stopPropagation()
+            openOverlay(cleanName)
+          }
+
+          mapEl.appendChild(poiEl)
+        })
+      })
+
+      // UI Interactions
+      const overlay = document.getElementById('detail-overlay')
+      const overlayTitle = document.getElementById('detail-title')
+      const breadcrumb = document.getElementById('breadcrumb-current')
+
+      function openOverlay(name) {
+        overlayTitle.innerText = name
+        breadcrumb.innerText = name
+        overlay.style.display = 'flex'
+      }
+
+      function closeOverlay() {
+        overlay.style.display = 'none'
+        breadcrumb.innerText = 'Overview'
+      }
+
+      // Pan and Zoom Engine
+      let scale = 0.25
+      let panX = -3000 * scale + window.innerWidth / 2
+      let panY = -1500 * scale + window.innerHeight / 2
+      let isDragging = false
+      let startX, startY
+
+      function updateTransform() {
+        mapEl.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`
+      }
+
+      const viewport = document.getElementById('viewport')
+
+      viewport.addEventListener('mousedown', (e) => {
+        if (e.target.closest('#detail-overlay')) return
+        isDragging = true
+        startX = e.clientX - panX
+        startY = e.clientY - panY
+        viewport.style.cursor = 'grabbing'
+      })
+
+      window.addEventListener('mouseup', () => {
+        isDragging = false
+        viewport.style.cursor = 'grab'
+      })
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return
+        panX = e.clientX - startX
+        panY = e.clientY - startY
+        updateTransform()
+      })
+
+      viewport.addEventListener(
+        'wheel',
+        (e) => {
+          if (e.target.closest('#detail-overlay')) return
+          e.preventDefault()
+          const zoomSensitivity = 0.001
+          const delta = -e.deltaY * zoomSensitivity
+
+          const mouseX = e.clientX
+          const mouseY = e.clientY
+
+          const prevScale = scale
+          scale += delta
+          scale = Math.max(0.1, Math.min(scale, 1.5))
+
+          panX = mouseX - (mouseX - panX) * (scale / prevScale)
+          panY = mouseY - (mouseY - panY) * (scale / prevScale)
+
+          updateTransform()
+        },
+        { passive: false }
+      )
+
+      // Initial setup
+      updateTransform()
+    </script>
+  </body>
+</html>

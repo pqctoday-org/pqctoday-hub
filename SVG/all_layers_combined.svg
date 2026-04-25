@@ -1,0 +1,207 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1010" width="1200" height="1010">
+    <defs>
+        <style>
+            .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 600; fill: #1F2937; }
+            .components { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 13px; fill: #6B7280; }
+            .stats { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 12px; fill: #6B7280; }
+            .progress-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 10px; fill: #9CA3AF; }
+            .filter-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 500; fill: #4B5563; }
+        </style>
+    </defs>
+    <rect width="100%" height="100%" fill="#FFFFFF"/>
+
+    <g transform="translate(10, 10)">
+        <rect x="0" y="0" width="1180" height="100" rx="12" fill="#EAF8F9" stroke="#C6E8EB" stroke-width="1"/>
+        <rect x="20" y="20" width="60" height="60" rx="12" fill="#FFFFFF"/>
+        <g transform="translate(38, 38)" color="#06B6D4">
+            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </g>
+        <text x="100" y="35" class="title">Cloud</text>
+        <text x="100" y="55" class="components">Cloud KMS, Cloud HSM, Encryption Gateways, Crypto Agility, KMS, IAM, Crypto Discovery, Digital Identity</text>
+        <g transform="translate(100, 75)">
+            <rect x="0" y="0" width="99" height="4" rx="2" fill="#22C55E"/>
+            <rect x="99" y="0" width="24" height="4" rx="2" fill="#F59E0B"/>
+            <rect x="123" y="0" width="27" height="4" rx="2" fill="#E5E7EB"/>
+            <text x="0" y="18" class="progress-text">66%</text>
+            <text x="150" y="18" class="progress-text" text-anchor="end">16%</text>
+        </g>
+        <text x="910" y="55" class="stats" text-anchor="end">38 of 49 products</text>
+        
+        <rect x="1050" y="30" width="100" height="40" rx="20" fill="#FFFFFF" fill-opacity="0.5"/>
+        <text x="1100" y="55" class="filter-text" text-anchor="middle">Click to filter</text>
+    </g>
+    
+    <g transform="translate(10, 120)">
+        <rect x="0" y="0" width="1180" height="100" rx="12" fill="#EEF2FF" stroke="#C7D2FE" stroke-width="1"/>
+        <rect x="20" y="20" width="60" height="60" rx="12" fill="#FFFFFF"/>
+        <g transform="translate(38, 38)" color="#3B82F6">
+            <rect x="16" y="16" width="6" height="6" rx="1" stroke="currentColor" stroke-width="2" fill="none"/><rect x="2" y="16" width="6" height="6" rx="1" stroke="currentColor" stroke-width="2" fill="none"/><rect x="9" y="2" width="6" height="6" rx="1" stroke="currentColor" stroke-width="2" fill="none"/><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 12V8" stroke="currentColor" stroke-width="2" fill="none"/>
+        </g>
+        <text x="100" y="35" class="title">Network</text>
+        <text x="100" y="55" class="components">VPN, IPsec, Network Security, Network Encryptors, Protocol Analyzers, 5G & Telecom, Testing & Validation</text>
+        <g transform="translate(100, 75)">
+            <rect x="0" y="0" width="99" height="4" rx="2" fill="#22C55E"/>
+            <rect x="99" y="0" width="39" height="4" rx="2" fill="#F59E0B"/>
+            <rect x="138" y="0" width="12" height="4" rx="2" fill="#E5E7EB"/>
+            <text x="0" y="18" class="progress-text">66%</text>
+            <text x="150" y="18" class="progress-text" text-anchor="end">26%</text>
+        </g>
+        <text x="910" y="55" class="stats" text-anchor="end">70 of 106 products</text>
+        
+            <rect x="940" y="35" width="90" height="30" rx="15" fill="#EEF2FF" stroke="#C7D2FE" stroke-width="1"/>
+            <text x="985" y="55" font-family="Arial, sans-serif" font-size="12" fill="#3B82F6" text-anchor="middle" font-weight="bold">2 selected</text>
+        
+        <rect x="1050" y="30" width="100" height="40" rx="20" fill="#FFFFFF" fill-opacity="0.5"/>
+        <text x="1100" y="55" class="filter-text" text-anchor="middle">Click to filter</text>
+    </g>
+    
+    <g transform="translate(10, 230)">
+        <rect x="0" y="0" width="1180" height="100" rx="12" fill="#F3E8FF" stroke="#D8B4FE" stroke-width="1"/>
+        <rect x="20" y="20" width="60" height="60" rx="12" fill="#FFFFFF"/>
+        <g transform="translate(38, 38)" color="#8B5CF6">
+            <path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.28 2.55a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45L4 16" stroke="currentColor" stroke-width="2" fill="none"/>
+        </g>
+        <text x="100" y="35" class="title">Application Servers</text>
+        <text x="100" y="55" class="components">TLS/SSL, SSH, Web Browsers, App Servers, Email, Messaging, Blockchain, Payment, VPN, Remote Access, CI/CD</text>
+        <g transform="translate(100, 75)">
+            <rect x="0" y="0" width="76.5" height="4" rx="2" fill="#22C55E"/>
+            <rect x="76.5" y="0" width="46.5" height="4" rx="2" fill="#F59E0B"/>
+            <rect x="123" y="0" width="27" height="4" rx="2" fill="#E5E7EB"/>
+            <text x="0" y="18" class="progress-text">51%</text>
+            <text x="150" y="18" class="progress-text" text-anchor="end">31%</text>
+        </g>
+        <text x="910" y="55" class="stats" text-anchor="end">78 products</text>
+        
+        <rect x="1050" y="30" width="100" height="40" rx="20" fill="#FFFFFF" fill-opacity="0.5"/>
+        <text x="1100" y="55" class="filter-text" text-anchor="middle">Click to filter</text>
+    </g>
+    
+    <g transform="translate(10, 340)">
+        <rect x="0" y="0" width="1180" height="100" rx="12" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1"/>
+        <rect x="20" y="20" width="60" height="60" rx="12" fill="#FFFFFF"/>
+        <g transform="translate(38, 38)" color="#10B981">
+            <polyline points="16 18 22 12 16 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><polyline points="8 6 2 12 8 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </g>
+        <text x="100" y="35" class="title">Libraries & SDKs</text>
+        <text x="100" y="55" class="components">Cryptographic Libraries, PQC Libraries, API Security, Code Signing, Digital Signatures, Disk Encryption, SDKs</text>
+        <g transform="translate(100, 75)">
+            <rect x="0" y="0" width="106.5" height="4" rx="2" fill="#22C55E"/>
+            <rect x="106.5" y="0" width="31.5" height="4" rx="2" fill="#F59E0B"/>
+            <rect x="138" y="0" width="12" height="4" rx="2" fill="#E5E7EB"/>
+            <text x="0" y="18" class="progress-text">71%</text>
+            <text x="150" y="18" class="progress-text" text-anchor="end">21%</text>
+        </g>
+        <text x="910" y="55" class="stats" text-anchor="end">75 of 102 products</text>
+        
+            <rect x="940" y="35" width="90" height="30" rx="15" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1"/>
+            <text x="985" y="55" font-family="Arial, sans-serif" font-size="12" fill="#10B981" text-anchor="middle" font-weight="bold">1 selected</text>
+        
+        <rect x="1050" y="30" width="100" height="40" rx="20" fill="#FFFFFF" fill-opacity="0.5"/>
+        <text x="1100" y="55" class="filter-text" text-anchor="middle">Click to filter</text>
+    </g>
+    
+    <g transform="translate(10, 450)">
+        <rect x="0" y="0" width="1180" height="100" rx="12" fill="#FDF4FF" stroke="#F0ABFC" stroke-width="1"/>
+        <rect x="20" y="20" width="60" height="60" rx="12" fill="#FFFFFF"/>
+        <g transform="translate(38, 38)" color="#D946EF">
+            <rect width="20" height="8" x="2" y="2" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/><line x1="6" x2="6.01" y1="6" y2="6" stroke="currentColor" stroke-width="2"/><line x1="6" x2="6.01" y1="18" y2="18" stroke="currentColor" stroke-width="2"/>
+        </g>
+        <text x="100" y="35" class="title">Security Software</text>
+        <text x="100" y="55" class="components">Data Protection, Digital Identity, Secrets Management, Security Discovery, IoT/OT, AI/ML Security, Supply Chain</text>
+        <g transform="translate(100, 75)">
+            <rect x="0" y="0" width="31.5" height="4" rx="2" fill="#22C55E"/>
+            <rect x="31.5" y="0" width="115.5" height="4" rx="2" fill="#F59E0B"/>
+            <rect x="147" y="0" width="3" height="4" rx="2" fill="#E5E7EB"/>
+            <text x="0" y="18" class="progress-text">21%</text>
+            <text x="150" y="18" class="progress-text" text-anchor="end">77%</text>
+        </g>
+        <text x="910" y="55" class="stats" text-anchor="end">56 of 57 products</text>
+        
+        <rect x="1050" y="30" width="100" height="40" rx="20" fill="#FFFFFF" fill-opacity="0.5"/>
+        <text x="1100" y="55" class="filter-text" text-anchor="middle">Click to filter</text>
+    </g>
+    
+    <g transform="translate(10, 560)">
+        <rect x="0" y="0" width="1180" height="100" rx="12" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="1"/>
+        <rect x="20" y="20" width="60" height="60" rx="12" fill="#FFFFFF"/>
+        <g transform="translate(38, 38)" color="#059669">
+            <ellipse cx="12" cy="5" rx="9" ry="3" stroke="currentColor" stroke-width="2" fill="none"/><path d="M3 5V19A9 3 0 0 0 21 19V5" stroke="currentColor" stroke-width="2" fill="none"/><path d="M3 12A9 3 0 0 0 21 12" stroke="currentColor" stroke-width="2" fill="none"/>
+        </g>
+        <text x="100" y="35" class="title">Database</text>
+        <text x="100" y="55" class="components">Database Encryption Software</text>
+        <g transform="translate(100, 75)">
+            <rect x="0" y="0" width="84.00000000000001" height="4" rx="2" fill="#22C55E"/>
+            <rect x="84.00000000000001" y="0" width="66" height="4" rx="2" fill="#F59E0B"/>
+            <rect x="150" y="0" width="-1.4210854715202004e-14" height="4" rx="2" fill="#E5E7EB"/>
+            <text x="0" y="18" class="progress-text">56%</text>
+            <text x="150" y="18" class="progress-text" text-anchor="end">44%</text>
+        </g>
+        <text x="910" y="55" class="stats" text-anchor="end">9 of 10 products</text>
+        
+        <rect x="1050" y="30" width="100" height="40" rx="20" fill="#FFFFFF" fill-opacity="0.5"/>
+        <text x="1100" y="55" class="filter-text" text-anchor="middle">Click to filter</text>
+    </g>
+    
+    <g transform="translate(10, 670)">
+        <rect x="0" y="0" width="1180" height="100" rx="12" fill="#FEF2F2" stroke="#FECACA" stroke-width="1"/>
+        <rect x="20" y="20" width="60" height="60" rx="12" fill="#FFFFFF"/>
+        <g transform="translate(38, 38)" color="#EF4444">
+            <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2-1 4-2 7-2 2.89 0 5.13.89 6.87 1.74a1 1 0 0 1 .53.84V13z" stroke="currentColor" stroke-width="2" fill="none"/><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </g>
+        <text x="100" y="35" class="title">Security Stack</text>
+        <text x="100" y="55" class="components">KMS, PKI, Crypto & PQC Libraries, CLM, Secrets, IAM, CIAM, Data Protection, Crypto Discovery, TLS/SSL, Digital Identity</text>
+        <g transform="translate(100, 75)">
+            <rect x="0" y="0" width="66" height="4" rx="2" fill="#22C55E"/>
+            <rect x="66" y="0" width="60" height="4" rx="2" fill="#F59E0B"/>
+            <rect x="126" y="0" width="24" height="4" rx="2" fill="#E5E7EB"/>
+            <text x="0" y="18" class="progress-text">44%</text>
+            <text x="150" y="18" class="progress-text" text-anchor="end">40%</text>
+        </g>
+        <text x="910" y="55" class="stats" text-anchor="end">103 of 111 products</text>
+        
+        <rect x="1050" y="30" width="100" height="40" rx="20" fill="#FFFFFF" fill-opacity="0.5"/>
+        <text x="1100" y="55" class="filter-text" text-anchor="middle">Click to filter</text>
+    </g>
+    
+    <g transform="translate(10, 780)">
+        <rect x="0" y="0" width="1180" height="100" rx="12" fill="#FFFBEB" stroke="#FDE68A" stroke-width="1"/>
+        <rect x="20" y="20" width="60" height="60" rx="12" fill="#FFFFFF"/>
+        <g transform="translate(38, 38)" color="#F59E0B">
+            <rect width="20" height="14" x="2" y="3" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><line x1="8" x2="16" y1="21" y2="21" stroke="currentColor" stroke-width="2"/><line x1="12" x2="12" y1="17" y2="21" stroke="currentColor" stroke-width="2"/>
+        </g>
+        <text x="100" y="35" class="title">Operating System</text>
+        <text x="100" y="55" class="components">Operating Systems, Network OS, Disk & File Encryption</text>
+        <g transform="translate(100, 75)">
+            <rect x="0" y="0" width="82.5" height="4" rx="2" fill="#22C55E"/>
+            <rect x="82.5" y="0" width="57" height="4" rx="2" fill="#F59E0B"/>
+            <rect x="139.5" y="0" width="10.5" height="4" rx="2" fill="#E5E7EB"/>
+            <text x="0" y="18" class="progress-text">55%</text>
+            <text x="150" y="18" class="progress-text" text-anchor="end">38%</text>
+        </g>
+        <text x="910" y="55" class="stats" text-anchor="end">40 of 41 products</text>
+        
+        <rect x="1050" y="30" width="100" height="40" rx="20" fill="#FFFFFF" fill-opacity="0.5"/>
+        <text x="1100" y="55" class="filter-text" text-anchor="middle">Click to filter</text>
+    </g>
+    
+    <g transform="translate(10, 890)">
+        <rect x="0" y="0" width="1180" height="100" rx="12" fill="#F3F4F6" stroke="#D1D5DB" stroke-width="1"/>
+        <rect x="20" y="20" width="60" height="60" rx="12" fill="#FFFFFF"/>
+        <g transform="translate(38, 38)" color="#6B7280">
+            <rect width="20" height="8" x="2" y="2" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/><line x1="6" x2="6.01" y1="6" y2="6" stroke="currentColor" stroke-width="2"/><line x1="6" x2="6.01" y1="18" y2="18" stroke="currentColor" stroke-width="2"/>
+        </g>
+        <text x="100" y="35" class="title">Hardware & Secure Elements</text>
+        <text x="100" y="55" class="components">HSMs, Smart Cards, Secure Boot, Semiconductors, QRNG, QKD, Confidential Computing, 5G & Telecom</text>
+        <g transform="translate(100, 75)">
+            <rect x="0" y="0" width="88.5" height="4" rx="2" fill="#22C55E"/>
+            <rect x="88.5" y="0" width="57" height="4" rx="2" fill="#F59E0B"/>
+            <rect x="145.5" y="0" width="4.5" height="4" rx="2" fill="#E5E7EB"/>
+            <text x="0" y="18" class="progress-text">59%</text>
+            <text x="150" y="18" class="progress-text" text-anchor="end">38%</text>
+        </g>
+        <text x="910" y="55" class="stats" text-anchor="end">66 of 101 products</text>
+        
+        <rect x="1050" y="30" width="100" height="40" rx="20" fill="#FFFFFF" fill-opacity="0.5"/>
+        <text x="1100" y="55" class="filter-text" text-anchor="middle">Click to filter</text>
+    </g>
+    </svg>

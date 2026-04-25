@@ -1,0 +1,414 @@
+[
+  {
+    "ref_id": "RFC 9629",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "RFC 9708",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "RFC 9802",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "RFC 9810",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "RFC 9814",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "RFC 9858",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "RFC 9882",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "draft-ietf-tls-hybrid-design-16",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "draft-ietf-tls-ecdhe-mlkem-04",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "draft-ietf-tls-mlkem-07",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "draft-ietf-ipsecme-ikev2-mlkem",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "draft-yang-tls-hybrid-sm2-mlkem-03",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "RFC 9881",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "draft-ietf-lamps-pq-composite-kem-12",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "draft-ietf-lamps-pq-composite-sigs-15",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "draft-ietf-lamps-cms-kyber-13",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "draft-ietf-openpgp-pqc-17",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "draft-wang-ipsecme-kem-auth-ikev2-03",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "ETSI TS 103 744",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "BSI TR-02102-2",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "BSI TR-02102-3",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "BSI TR-02102-4",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "NIST NCCoE SP 1800-38C",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "ISO/IEC 14888-4:2024",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "ISO/IEC 18033-2:2006/AMD1:2017",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "China OSCCA GM/T 0108-2021",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "China GB/T 42829-2023",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "China YD/T 3834.1-2021",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "GSMA PQ.03 PQC Guidelines",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "IEEE 1609.2 Amendment",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "3GPP TS 33.501",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "IETF RFC 8391",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "IETF RFC 8554",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "IETF RFC 9370",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "IETF RFC 8784",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "ETSI-TS-104-015",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "draft-wang-ipsecme-hybrid-kem-ikev2-frodo-03",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "draft-turner-lamps-cms-fn-dsa-00",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "draft-ietf-cose-falcon-04",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "CA-B-Forum-Ballot-SMC013",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "draft-kampanakis-curdle-ssh-pq-ke",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "draft-josefsson-ntruprime-ssh",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "draft-ietf-pquip-hbs-state",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "draft-sfluhrer-ipsecme-ikev2-mldsa-01",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "draft-ietf-tls-mldsa-02",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "RFC 9690",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "RFC 8551",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "NIST-SP-800-90A-R1",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "NIST-SP-800-90B",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "NIST-SP-800-90C",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "ETSI-GS-QKD-003",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "ETSI-GS-QKD-004",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "ETSI-GS-QKD-008",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "ETSI-GS-QKD-012",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "ETSI-GS-QKD-014",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "ETSI-GS-QKD-015",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "ETSI-GS-QKD-018",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "ISO-IEC-23837-1",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "ISO-IEC-23837-2",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "RFC-9258",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "NIST-SP-800-108-R1",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "NIST-SP-800-56C-R2",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "PKCS11-V3-OASIS",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "PKCS11-V31-OASIS",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "PKCS11-V32-OASIS",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "EIP-55",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "EIP-155",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "SEC2-v2",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "RFC-8032",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "BIP-141",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "BIP-340",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "BIP-341",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "Bitcoin-BIP360-P2QRH",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "Ethereum-PQC-Tasklist-Ethresearch",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "IETF-MTC-Draft-09",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "RFC-9162",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "OpenID4VCI-Spec",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "OpenID4VP-Spec",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "IETF-Token-Status-List",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "NIST-SP-800-63-3",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "NIST-SP-800-131A-Rev3",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "NIST-SP-800-22-R1A",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "BSI-AIS-20-31",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "RFC 5652",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "RFC 5083",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "IETF RFC 7296",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "IETF RFC 8731",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "Rosenpass-Protocol",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "IETF RFC 4253",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "IEEE-802-1AE-2018",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "draft-ietf-jose-pqc-kem",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "draft-ietf-jose-pqc-algorithms",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "RFC 8725",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "RFC 7519",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "RFC 7515",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "RFC 7516",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "RFC 7517",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "RFC 7518",
+    "reason": "Ollama no response"
+  },
+  {
+    "ref_id": "FIPS-207-HQC",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "BSI TR-02102",
+    "reason": "Extracted text too short (0 chars) \u2014 likely empty or corrupt source"
+  },
+  {
+    "ref_id": "SPHINCS-Plus-Spec-v31",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "Classic-McEliece-Spec",
+    "reason": "local_file missing"
+  },
+  {
+    "ref_id": "draft-ietf-pquip-hybrid-signature-spectrums",
+    "reason": "Extracted text too short (0 chars) \u2014 likely empty or corrupt source"
+  }
+]

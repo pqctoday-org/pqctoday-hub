@@ -22,6 +22,7 @@ import {
   CloudOff,
   Loader2,
   LogOut,
+  ScrollText,
 } from 'lucide-react'
 // LogOut intentionally kept for sign-out button
 import { Button } from '../ui/button'
@@ -133,11 +134,13 @@ const JOURNEY_SECTIONS: { id: string; title: string; subtitle: string; nextHint?
 function buildJourneySteps(
   algorithmCount: number | null,
   migrateCount: number | null,
-  libraryCount: number | null
+  libraryCount: number | null,
+  patentsCount: number | null
 ): JourneyStep[] {
   const algoLabel = algorithmCount !== null ? `${algorithmCount}` : '80+'
   const migrateLabel = migrateCount !== null ? `${migrateCount}` : '700+'
   const libraryLabel = libraryCount !== null ? `${libraryCount}` : '450+'
+  const patentsLabel = patentsCount !== null ? `${patentsCount}` : '200+'
 
   return [
     // — Start the Journey —
@@ -296,6 +299,18 @@ function buildJourneySteps(
       actionLabel: 'Discover Leaders',
       resumeLabel: 'Discover Leaders',
     },
+    {
+      id: 'patents',
+      step: 13,
+      label: 'Patents',
+      icon: ScrollText,
+      color: 'text-accent',
+      section: 'current' as const,
+      description: `Explore ${patentsLabel} PQC-relevant patents — track assignees, algorithms, impact scores, and the IP landscape shaping the post-quantum transition`,
+      paths: ['/patents'],
+      actionLabel: 'Explore Patents',
+      resumeLabel: 'Explore Patents',
+    },
   ]
 }
 
@@ -377,6 +392,7 @@ export const LandingView = () => {
       threats: 'not-started',
       library: 'not-started',
       leaders: 'not-started',
+      patents: 'not-started',
     }
   }, [hasLearningProgress, artifactCount, myFrameworkCount, migrationStarted, assessmentStatus])
 
@@ -403,6 +419,7 @@ export const LandingView = () => {
   const [timelineEventCount, setTimelineEventCount] = useState<number | null>(null)
   const [libraryCount, setLibraryCount] = useState<number | null>(null)
   const [migrateCount, setMigrateCount] = useState<number | null>(null)
+  const [patentsCount, setPatentsCount] = useState<number | null>(null)
 
   useEffect(() => {
     loadPQCAlgorithmsData().then((data) => setAlgorithmCount(data.length))
@@ -415,11 +432,14 @@ export const LandingView = () => {
     import('@/data/migrateData').then(({ softwareData }) => {
       setMigrateCount(softwareData.length)
     })
+    import('@/data/patentsData').then(({ patentsData }) => {
+      setPatentsCount(patentsData.length)
+    })
   }, [])
 
   const journeySteps = useMemo(
-    () => buildJourneySteps(algorithmCount, migrateCount, libraryCount),
-    [algorithmCount, migrateCount, libraryCount]
+    () => buildJourneySteps(algorithmCount, migrateCount, libraryCount, patentsCount),
+    [algorithmCount, migrateCount, libraryCount, patentsCount]
   )
 
   // Set of paths accessible to the current persona

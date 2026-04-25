@@ -6,6 +6,33 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.9] - April 24, 2026
+
+### Added
+
+- **New `/patents` page — PQC patent landscape explorer** [persona:architect] [persona:researcher] [persona:ciso] [view:/patents] — top-level route with 202 PQC-relevant patents from `src/data/patents_04242026_r5.csv`. Two-tab layout (Insights + Explore):
+  - _Insights tab_ ([PatentsInsights.tsx](src/components/Patents/PatentsInsights.tsx)) — donut charts (NIST round status, crypto-agility mode, region) + assignee leaderboard with sort toggle + categorical breakdowns (CPC codes, attack-resistance, primary inventive claim type). Click any segment / row / assignee to deep-link the Explore tab with a pre-applied filter.
+  - _Explore tab_ ([PatentsTable.tsx](src/components/Patents/PatentsTable.tsx)) — sortable columns (Title / Impact / Issued / Priority date), search bar, multi-dimension filter chips (Assignee, Region, NIST Status, Crypto Agility, Impact, CPC), CSV export of the filtered view, side-by-side detail panel ([PatentDetail.tsx](src/components/Patents/PatentDetail.tsx)) showing claims, citation graph (with in-corpus deep-links + Google Patents fallbacks), and CPC code references.
+  - _Type definitions_ in [src/types/PatentTypes.ts](src/types/PatentTypes.ts) cover `PatentItem`, `NistStatus`, `ImpactLevel`, `CryptoAgilityMode`, `InsightsFilter`, `ClaimDependency`.
+  - _Routing_ — lazy-loaded in [src/App.tsx](src/App.tsx); nav entry added to [MainLayout.tsx](src/components/Layout/MainLayout.tsx) (hidden on mobile, available via mobile-more).
+
+- **CSWP.39 Maturity Evidence Grid on `/compliance`** [persona:architect] [persona:ciso] [persona:compliance] [view:/compliance] — extends the CSWP.39 Explorer tab with a 4×5 (tier × pillar) evidence grid backed by [`maturityGovernanceData.ts`](src/data/maturityGovernanceData.ts) and the `pqc_maturity_governance_requirements_04242026.csv` corpus. New types in [src/types/MaturityTypes.ts](src/types/MaturityTypes.ts) cover `MaturityRequirement`, `PillarId`, `MaturityLevel`, `EvidenceLocation`. Component at [src/components/Compliance/MaturityEvidenceGrid.tsx](src/components/Compliance/MaturityEvidenceGrid.tsx). Cells show requirement counts; clicking a cell opens an evidence drawer with quotes, source URLs, evidence locations, and source-name filtering. The grid is also threaded into:
+  - _ComplianceLandscape framework cards_ — each compliance-framework card now shows a "N CSWP.39 reqs →" chip (when extracted maturity requirements reference that framework) that deep-links into the CSWP.39 Explorer tab pre-filtered to the corresponding `evref`.
+  - _ComplianceView URL state_ — added `?evref=<refId>` URL parameter so deep-links from elsewhere in the app (e.g., framework cards, learn module) can pre-filter the evidence grid; clearing the filter strips the param.
+  - _Workshop Step 1 (CryptoMgmtModernization)_ — current-tier indicator computed from the user's average score now links into the matching tier row in the evidence grid, so the user can pivot from "where am I" to "what evidence exists at my tier".
+
+- **3D infrastructure SVG generator** — new [generate_3d_svgs.cjs](generate_3d_svgs.cjs) script emits 93 SVG files into [SVG/](SVG/) covering nine infrastructure layers (Cloud, Network, Application Servers, Libraries & SDKs, Database, Hardware/Secure Elements, Operating System, Security Software, Security Stack), with an interactive `ai_zoom_map.html` overview. Used to generate visual assets for the Migrate / Threats / Library pages without external design tooling.
+
+- **Compliance/cert-schemes/std-bodies enrichment pipeline + shared helpers** — new [scripts/\_enrichment_common.py](scripts/_enrichment_common.py) factors HTML/PDF text extraction, Ollama prompting, and JSON normalization out of the four per-source enrichment scripts (`enrich-tech-standards-ollama.py`, `enrich-cert-schemes-ollama.py`, `enrich-compliance-fwks-ollama.py`, `enrich-std-bodies-ollama.py`). Output files added under [src/data/doc-enrichments/](src/data/doc-enrichments/) for cert-schemes, compliance-fwks, std-bodies, and tech-standards (`*_maturity_*.md` + `*_skipped_*.json` per source). The compiled CSWP.39 governance-requirements corpus lands in [src/data/pqc_maturity_governance_requirements_04242026.csv](src/data/pqc_maturity_governance_requirements_04242026.csv).
+
+- **Library + compliance data refresh (April 23–24, 2026)** — versioned CSV revisions in [src/data/](src/data/) covering library (`library_04232026.csv`, `_r2`, `_r3`, `_r4`) and compliance (`compliance_04242026.csv`). Loaders auto-discover the latest via `import.meta.glob`. Source-of-truth corrections + new entries documented in [src/data/scheme-registry-audit.md](src/data/scheme-registry-audit.md) (Phase 2a audit) and [src/data/compliancemanualdownload.md](src/data/compliancemanualdownload.md) (manual-download guide for paywalled framework PDFs).
+
+- **Embed manifest + RAG corpus regeneration** — [public/data/embed-docs.json](public/data/embed-docs.json), [public/data/rag-corpus.json](public/data/rag-corpus.json), [public/embed/manifest.json](public/embed/manifest.json), and [public/embed/sdk.js](public/embed/sdk.js) refreshed to incorporate the new Patents page (route preset, page-level chunks), MaturityEvidenceGrid (CSWP.39 governance-requirement chunks), and the v3.5.9 data refresh.
+
+### Fixed
+
+- **ESLint cleanup across new modules** — replaced 23 raw `<button>` tags with the canonical `<Button>` component from [src/components/ui/button.tsx](src/components/ui/button.tsx) across [Patents/](src/components/Patents/) (PatentDetail, PatentsInsights, PatentsTable) and [MaturityEvidenceGrid.tsx](src/components/Compliance/MaturityEvidenceGrid.tsx) and [ComplianceLandscape.tsx](src/components/Compliance/ComplianceLandscape.tsx). Also: lifted PatentsTable's inner `ThCol` component to module scope (was triggering `react-hooks/static-components` "Cannot create components during render"); refactored two `let cumPct = 0; map(seg => cumPct += ...)` accumulators in `PatentsInsights` `DonutChart` / `Section` to use a `reduce`-built cumulative-percentages array (was triggering `react-hooks/immutability` "Cannot reassign variable after render completes"); removed the `autoFocus` attribute from the AddFilterPopover search input. Net: 27 ESLint errors → 0.
+
 ## [3.5.8] - April 24, 2026
 
 ### Added

@@ -10,7 +10,10 @@ import {
   Tooltip,
   Legend,
 } from 'recharts'
+import { Database } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { MaturityEvidenceGrid } from '@/components/Compliance/MaturityEvidenceGrid'
+import { maturityRequirements } from '@/data/maturityGovernanceData'
 import {
   PILLARS,
   MATURITY_LEVEL_LABELS,
@@ -91,6 +94,15 @@ export const MaturityAssessment: React.FC = () => {
       return 'Automate cert renewal end-to-end, instrument SIEM drift alerts, launch FIPS-freshness KPI.'
     return 'Your posture has reached Tier 4 Adaptive — maintain continuous CMVP/ACVP monitoring and deliver quarterly executive crypto attestation.'
   }, [average])
+
+  const currentTier = useMemo(() => {
+    if (average < 2) return 1 as MaturityLevel
+    if (average < 3) return 2 as MaturityLevel
+    if (average < 4) return 3 as MaturityLevel
+    return 4 as MaturityLevel
+  }, [average])
+
+  const uniqueSources = useMemo(() => new Set(maturityRequirements.map((r) => r.refId)).size, [])
 
   const cswp39Tier = useMemo(() => {
     if (average < 2)
@@ -259,6 +271,28 @@ export const MaturityAssessment: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Authoritative Evidence */}
+      <section className="glass-panel p-5 border border-border rounded-lg">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-lg bg-accent/10">
+            <Database size={20} className="text-accent" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-foreground">
+              Authoritative Evidence — {maturityRequirements.length} requirements from{' '}
+              {uniqueSources} sources
+            </h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Your score ({average.toFixed(1)} / 4.0) maps to{' '}
+              <strong className="text-foreground">{cswp39Tier.label}</strong>. Click the{' '}
+              <strong className="text-foreground">Tier {currentTier}</strong> row to see the
+              governance requirements your organisation needs to satisfy at that tier.
+            </p>
+          </div>
+        </div>
+        <MaturityEvidenceGrid requirements={maturityRequirements} />
+      </section>
     </div>
   )
 }
