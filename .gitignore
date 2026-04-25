@@ -287,8 +287,9 @@ pqctoday*.png
 pqctoday*.jpg
 weneed*.png
 
-# Private sync tooling
+# Private sync tooling and build pipeline
 sync-private.sh
+build-data.sh
 splitpqctodayrepopubandpriv.md
 
 # Private data backups
