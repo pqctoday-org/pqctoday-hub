@@ -206,6 +206,9 @@ docs/pqctoday-investor*
 # All scripts (private — tooling, scrapers, extractors; data is pre-committed)
 scripts/
 
+# Private CI workflows (compliance scraper runs locally, not in public CI)
+.github/workflows/update-compliance.yml
+
 # Data archive & analysis
 src/data/archive/
 src/data/PQC_Software_Category_Strategic_Analysis.md
