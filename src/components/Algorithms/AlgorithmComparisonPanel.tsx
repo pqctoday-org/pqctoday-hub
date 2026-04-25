@@ -6,6 +6,8 @@ import {
   type AlgorithmDetail,
   getCryptoFamilyColor,
   isClassical,
+  isResearchNeeded,
+  RESEARCH_NEEDED,
 } from '../../data/pqcAlgorithmsData'
 import {
   resolveEngine,
@@ -32,28 +34,41 @@ const DETAIL_FIELDS: ComparisonField[] = [
   {
     key: 'publicKeySize',
     label: 'Public Key',
-    getValue: (a) => a.publicKeySize,
+    getValue: (a) => (a.sizesUnknown ? RESEARCH_NEEDED : a.publicKeySize),
     compare: 'lower-better',
   },
   {
     key: 'privateKeySize',
     label: 'Private Key',
-    getValue: (a) => a.privateKeySize,
+    getValue: (a) => (a.sizesUnknown ? RESEARCH_NEEDED : a.privateKeySize),
     compare: 'lower-better',
   },
   {
     key: 'sigCt',
     label: 'Sig / Ciphertext',
-    getValue: (a) => a.signatureCiphertextSize,
+    getValue: (a) => (a.sizesUnknown ? RESEARCH_NEEDED : a.signatureCiphertextSize),
     compare: 'lower-better',
   },
-  { key: 'keygen', label: 'KeyGen Cycles', getValue: (a) => a.keyGenCycles },
-  { key: 'signEncaps', label: 'Sign / Encaps Cycles', getValue: (a) => a.signEncapsCycles },
-  { key: 'verifyDecaps', label: 'Verify / Decaps Cycles', getValue: (a) => a.verifyDecapsCycles },
+  {
+    key: 'keygen',
+    label: 'KeyGen Cycles',
+    getValue: (a) => (isResearchNeeded(a.keyGenCycles) ? RESEARCH_NEEDED : a.keyGenCycles),
+  },
+  {
+    key: 'signEncaps',
+    label: 'Sign / Encaps Cycles',
+    getValue: (a) => (isResearchNeeded(a.signEncapsCycles) ? RESEARCH_NEEDED : a.signEncapsCycles),
+  },
+  {
+    key: 'verifyDecaps',
+    label: 'Verify / Decaps Cycles',
+    getValue: (a) =>
+      isResearchNeeded(a.verifyDecapsCycles) ? RESEARCH_NEEDED : a.verifyDecapsCycles,
+  },
   {
     key: 'stackRam',
     label: 'Stack RAM',
-    getValue: (a) => a.stackRAM,
+    getValue: (a) => (a.stackRAM > 0 ? a.stackRAM : RESEARCH_NEEDED),
     compare: 'lower-better',
   },
   { key: 'fips', label: 'FIPS Standard', getValue: (a) => a.fipsStandard },

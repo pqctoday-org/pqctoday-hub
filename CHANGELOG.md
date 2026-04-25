@@ -55,6 +55,32 @@ All notable changes to this project will be documented in this file.
   - New `page-guide-explore` (`/explore`) and `page-guide-report` (`/report`) chunks — both routes were uncovered by the corpus before this change.
 - **Workspace persistence — visited routes + advanced views unlock** — [src/store/useHistoryStore.ts](src/store/useHistoryStore.ts) gains a `visitedRoutes` array (persisted, version bump 2→3) and a `recordVisit(path)` action; [src/services/storage/snapshotTypes.ts](src/services/storage/snapshotTypes.ts) and [src/services/storage/UnifiedStorageService.ts](src/services/storage/UnifiedStorageService.ts) persist `advancedViewsUnlocked` in cloud snapshots; [src/components/Layout/MainLayout.tsx](src/components/Layout/MainLayout.tsx), [src/components/Landing/LandingView.tsx](src/components/Landing/LandingView.tsx), and [src/components/Landing/PersonalizationSection.tsx](src/components/Landing/PersonalizationSection.tsx) wire the new state into the UI.
 
+## [3.5.24] - April 25, 2026
+
+### Added
+
+- **Data integrity validator — N10/N18/N22/QA-C3/N23-A/N8 batch fixes (0 errors, 20→12 warnings)** —
+  - `library_04252026_r6.csv` — broke `TCG-TPM-V185-Part1 ↔ Part2` circular dependency (GC-9). Re-pointed 5 library `local_file` paths from `public/timeline/` to `public/library/` after copying the files into the library cache directory (N18).
+  - `pqc_complete_algorithm_reference_04252026.csv` — added 21 algorithm rows so the transitions CSV cross-references resolve: 2 family entries used by Q&A short names (`LMS`, `XMSS`, `Classic-McEliece`, `HQC`); 6 NIST Additional Sig Round 2 candidates (`UOV`, `SQIsign`, `CROSS`, `LESS`, `FAEST`, `SNOVA`); 3 IETF Composite Sigs and 2 IETF Composite KEMs from `draft-ietf-lamps-pq-composite-{sigs,kem}`; 1 BSI parameter set `Classic-McEliece-6688128`; placeholder/reference entries for `LAC`, `NGCC-BC`, `NGCC-CH`, `Covercrypt`, `HPKE-PQ` (N10, QA-C3).
+  - `pqc_software_category_priority_matrix.csv` — regenerated `total_software_products`, `pqc_ready_products`, `readiness_percentage` for 32 categories from the latest `pqc_product_catalog_*.csv` (N8).
+  - `threats_doc_enrichments_04202026.md` — replaced "FIPS NNN (alg)" entries inside `**PQC Algorithms Covered**` lines with the algorithm name only, since the standard ID is not an algorithm (N23-A-threats).
+  - `scripts/validators/graph-consistency-checks.ts` — added `slh-dsa` and `crypto-mgmt-modernization` to `MODULE_IDS` so Q&A coverage no longer reports them as orphans (GC-6).
+  - Removed 11 corrupt/empty cached pages from `public/timeline/` and 2 from `public/threats/` (404 / JS-stub / insufficient text — N22).
+
+### Changed — Algorithm transparency
+
+- **No-guess / "Research needed" rule for new algorithm rows** — every value in the 21 newly-added algorithm rows is either (a) a number citable to a primary spec or (b) the literal marker `Research needed`. Replaced earlier informal placeholders (`varies`, `unconfirmed`, `unbenchmarked`, `~XXX (sum, approx)`, `depends on KEM`, etc.) with the single canonical marker. Concrete numeric values are present only for: `SQIsign-I` (NIST Round 2 submission spec), `Classic-McEliece-460896` (NIST KEM submission spec), `Classic-McEliece-6688128` (NIST KEM submission spec). All other byte-size, cycle, security-level, and stack-RAM fields for the 21 rows render as `Research needed` until benchmarked / spec-verified.
+- **Status fields tightened** — every new row's `Status` and `FIPS Standard` columns now explicitly say `IETF Internet-Draft`, `NIST Additional Sig Round 2 — Candidate`, `NGCC TBD — submissions due June 2026`, `Historical NIST Round 2 (dropped 2019); CACR/NGCC reference`, `NIST Selected (Draft FIPS pending)`, etc., instead of bare `Candidate` or `Draft`.
+- **Renamed alias McEliece entries to canonical hyphenated form** — transitions CSV now uses `Classic-McEliece-460896` and `Classic-McEliece-6688128` (matching the existing canonical naming) so RAG-corpus `algo-classic-mceliece-*` chunk IDs do not collide.
+
+### Changed — Algorithm UI parser & rendering
+
+- **`pqcAlgorithmsData.ts`** — exported `RESEARCH_NEEDED` constant and `isResearchNeeded()` helper. `AlgorithmDetail` gained `hasResearchGap`, `sizesUnknown`, `perfUnknown` boolean flags computed from raw row content. `type` union widened to include `Block Cipher` and `Hash` (NGCC-BC / NGCC-CH). `getPerformanceCategory` returns a new `'Unknown'` bucket for `Research needed` cycles instead of falling through to `'Moderate'`. Numeric size parses fall back to `0` (sentinel for unknown — never `NaN`).
+- **`AlgorithmDetailedComparison.tsx`** — added `ResearchNeededBadge` (info-coloured, sits next to the existing `DraftBadge`). Sizes view, Security view, and Performance table render `Research needed` (italic muted) instead of `0 bytes` / `~0.0 KB` for unknown values, and skip the chart bar for those rows so chart maxima are not skewed by sentinel zeros.
+- **`AlgorithmComparison.tsx`** — Public-key chip in transition rows shows `pk: Research needed` for entries whose sizes are unknown.
+- **`AlgorithmComparisonPanel.tsx`** — `getValue` accessors for size/cycle fields return `RESEARCH_NEEDED` strings when the underlying value is unknown so the side-by-side compare panel shows the marker instead of `0 B`.
+- **`csvExportConfigs.ts`** — algorithm CSV export emits `Research needed` for unknown size/RAM cells instead of misleading `0` / `null`.
+
 ## [3.5.23] - April 25, 2026
 
 ### Fixed

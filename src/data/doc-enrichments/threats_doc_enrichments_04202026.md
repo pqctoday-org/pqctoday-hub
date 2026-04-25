@@ -299,7 +299,7 @@ documents_processed: 80
 - **Last Updated**: Not specified
 - **Document Status**: Not specified
 - **Main Topic**: FIPS 206 FN-DSA (Falcon) standardization status: NIST published the Initial Public Draft of FIPS 206 (FN-DSA) in late 2025 with public comment period underway as of early 2026.
-- **PQC Algorithms Covered**: FN-DSA, Falcon, FIPS 206 (FN-DSA)
+- **PQC Algorithms Covered**: FN-DSA, Falcon
 - **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: Years mentioned: 2025
 - **Applicable Regions / Bodies**: Regions: United States, Bodies: NIST
@@ -321,7 +321,7 @@ documents_processed: 80
 - **Last Updated**: Not specified
 - **Document Status**: Not specified
 - **Main Topic**: HQC selected as 5th PQC algorithm: NIST announced March 11 2025 the selection of HQC (Hamming Quasi-Cyclic) as a backup KEM to ML-KEM.
-- **PQC Algorithms Covered**: ML-KEM, Falcon, HQC, FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA)
+- **PQC Algorithms Covered**: ML-KEM, Falcon, HQC, FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA)
 - **Quantum Threats Addressed**: Quantum Computer, Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2024, 2025, 2027
 - **Applicable Regions / Bodies**: Regions: United States, Bodies: NIST
@@ -365,7 +365,7 @@ documents_processed: 80
 - **Last Updated**: Not specified
 - **Document Status**: Not specified
 - **Main Topic**: NIST SP 800-227 KEM recommendations: Published September 2025 as final guidance on key-encapsulation mechanisms.
-- **PQC Algorithms Covered**: FIPS 203 (ML-KEM)
+- **PQC Algorithms Covered**: ML-KEM
 - **Quantum Threats Addressed**: Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2025
 - **Applicable Regions / Bodies**: Regions: United States, Bodies: NIST
@@ -585,7 +585,7 @@ documents_processed: 80
 - **Last Updated**: Not specified
 - **Document Status**: Not specified
 - **Main Topic**: HSM backup key extraction vulnerability: Master encryption keys wrapped with RSA in HSM backup archives become recoverable with quantum computers, exposing entire key hierarchies protecting decades of financial data.
-- **PQC Algorithms Covered**: FIPS 203 (ML-KEM)
+- **PQC Algorithms Covered**: ML-KEM
 - **Quantum Threats Addressed**: Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2025
 - **Applicable Regions / Bodies**: Regions: United States, Bodies: NIST
@@ -959,7 +959,7 @@ documents_processed: 80
 - **Last Updated**: Not specified
 - **Document Status**: Not specified
 - **Main Topic**: NIST FIPS 203/204/205 standardization milestone: First official PQC standards published August 2024.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, Falcon, HQC, FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA)
+- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, Falcon, HQC
 - **Quantum Threats Addressed**: Quantum Computer, Post-Quantum
 - **Migration Timeline Info**: Years mentioned: 2024, 2025, 2035; Keywords: deprecat
 - **Applicable Regions / Bodies**: Regions: United States, Bodies: NIST

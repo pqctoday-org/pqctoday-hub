@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { loadLatestCSVAsync, parseIntOrNull } from './csvUtils'
 
+export const RESEARCH_NEEDED = 'Research needed'
+
 export interface AlgorithmDetail {
   family: string
   name: string
@@ -29,6 +31,23 @@ export interface AlgorithmDetail {
     | 'Classical Sig'
     | 'Classical Symmetric'
     | 'Classical Hash'
+    | 'Block Cipher'
+    | 'Hash'
+  /** True when any user-facing field equals "Research needed" — entry is incomplete and not yet researched. */
+  hasResearchGap: boolean
+  /** True when at least one numeric size field is unknown (parsed as 0 from "Research needed" or similar). */
+  sizesUnknown: boolean
+  /** True when the cycle/perf strings contain "Research needed". */
+  perfUnknown: boolean
+}
+
+/**
+ * True when the raw CSV cell indicates the value has not been researched yet.
+ * Used to display "Research needed" in the UI instead of NaN/0/empty.
+ */
+export function isResearchNeeded(rawValue: string | undefined | null): boolean {
+  if (!rawValue) return false
+  return rawValue.trim().toLowerCase() === RESEARCH_NEEDED.toLowerCase()
 }
 
 interface RawAlgorithmRow {
@@ -94,28 +113,50 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
   const { data, metadata } = await loadLatestCSVAsync<RawAlgorithmRow, AlgorithmDetail>(
     csvModule,
     /pqc_complete_algorithm_reference_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
-    (row) => ({
-      family: row['Algorithm Family'],
-      name: row['Algorithm'],
-      cryptoFamily: row['Cryptographic Family'] || '',
-      securityLevel: parseIntOrNull(row['NIST Security Level']),
-      aesEquivalent: row['AES Equivalent'],
-      publicKeySize: parseInt(row['Public Key (bytes)'], 10),
-      privateKeySize: parseInt(row['Private Key (bytes)'], 10),
-      signatureCiphertextSize: parseIntOrNull(row['Signature/Ciphertext (bytes)']),
-      sharedSecretSize: parseIntOrNull(row['Shared Secret (bytes)']),
-      keyGenCycles: row['KeyGen (cycles relative)'],
-      signEncapsCycles: row['Sign/Encaps (cycles relative)'],
-      verifyDecapsCycles: row['Verify/Decaps (cycles relative)'],
-      stackRAM: parseInt((row['Stack RAM (bytes)'] || '0').replace(/[~,]/g, ''), 10) || 0,
-      optimizationTarget: row['Optimization Target'],
-      fipsStandard: row['FIPS Standard'],
-      useCaseNotes: row['Use Case Notes'] || '',
-      region: row['Region'] || '',
-      status: row['Status'] || '',
-      statusUrl: row['Status URL'] || undefined,
-      type: row['Algorithm Family'] as AlgorithmDetail['type'],
-    })
+    (row) => {
+      const sizesUnknown =
+        isResearchNeeded(row['Public Key (bytes)']) ||
+        isResearchNeeded(row['Private Key (bytes)']) ||
+        isResearchNeeded(row['Signature/Ciphertext (bytes)'])
+      const perfUnknown =
+        isResearchNeeded(row['KeyGen (cycles relative)']) ||
+        isResearchNeeded(row['Sign/Encaps (cycles relative)']) ||
+        isResearchNeeded(row['Verify/Decaps (cycles relative)'])
+      const hasResearchGap =
+        sizesUnknown ||
+        perfUnknown ||
+        isResearchNeeded(row['NIST Security Level']) ||
+        isResearchNeeded(row['AES Equivalent']) ||
+        isResearchNeeded(row['Stack RAM (bytes)']) ||
+        isResearchNeeded(row['Optimization Target']) ||
+        isResearchNeeded(row['Shared Secret (bytes)'])
+
+      return {
+        family: row['Algorithm Family'],
+        name: row['Algorithm'],
+        cryptoFamily: row['Cryptographic Family'] || '',
+        securityLevel: parseIntOrNull(row['NIST Security Level']),
+        aesEquivalent: row['AES Equivalent'],
+        publicKeySize: parseInt(row['Public Key (bytes)'], 10) || 0,
+        privateKeySize: parseInt(row['Private Key (bytes)'], 10) || 0,
+        signatureCiphertextSize: parseIntOrNull(row['Signature/Ciphertext (bytes)']),
+        sharedSecretSize: parseIntOrNull(row['Shared Secret (bytes)']),
+        keyGenCycles: row['KeyGen (cycles relative)'],
+        signEncapsCycles: row['Sign/Encaps (cycles relative)'],
+        verifyDecapsCycles: row['Verify/Decaps (cycles relative)'],
+        stackRAM: parseInt((row['Stack RAM (bytes)'] || '0').replace(/[~,]/g, ''), 10) || 0,
+        optimizationTarget: row['Optimization Target'],
+        fipsStandard: row['FIPS Standard'],
+        useCaseNotes: row['Use Case Notes'] || '',
+        region: row['Region'] || '',
+        status: row['Status'] || '',
+        statusUrl: row['Status URL'] || undefined,
+        type: row['Algorithm Family'] as AlgorithmDetail['type'],
+        hasResearchGap,
+        sizesUnknown,
+        perfUnknown,
+      }
+    }
   )
 
   loadedFileMetadata = metadata ? { filename: metadata.filename, date: metadata.lastUpdate } : null
@@ -142,7 +183,8 @@ export function isClassical(algo: AlgorithmDetail): boolean {
   )
 }
 
-export function getPerformanceCategory(cycles: string): 'Fast' | 'Moderate' | 'Slow' {
+export function getPerformanceCategory(cycles: string): 'Fast' | 'Moderate' | 'Slow' | 'Unknown' {
+  if (isResearchNeeded(cycles)) return 'Unknown'
   if (cycles === 'Baseline' || cycles.includes('Baseline')) return 'Moderate'
 
   // eslint-disable-next-line security/detect-unsafe-regex
@@ -165,9 +207,10 @@ export function getSecurityLevelColor(level: number | null): string {
   return 'bg-destructive/10 text-destructive border-destructive/30' // Level 5
 }
 
-export function getPerformanceColor(category: 'Fast' | 'Moderate' | 'Slow'): string {
+export function getPerformanceColor(category: 'Fast' | 'Moderate' | 'Slow' | 'Unknown'): string {
   if (category === 'Fast') return 'bg-success/10 text-success border-success/30'
   if (category === 'Moderate') return 'bg-warning/10 text-warning border-warning/30'
+  if (category === 'Unknown') return 'bg-muted/50 text-muted-foreground border-border italic'
   return 'bg-destructive/10 text-destructive border-destructive/30'
 }
 

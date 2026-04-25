@@ -46,14 +46,26 @@ export const ALGORITHM_CSV_COLUMNS: CsvColumnConfig<AlgorithmDetail>[] = [
   { header: 'Type', accessor: (i) => i.type },
   { header: 'Security Level', accessor: (i) => i.securityLevel },
   { header: 'AES Equivalent', accessor: (i) => i.aesEquivalent },
-  { header: 'Public Key Size (bytes)', accessor: (i) => i.publicKeySize },
-  { header: 'Private Key Size (bytes)', accessor: (i) => i.privateKeySize },
-  { header: 'Sig/Ciphertext Size (bytes)', accessor: (i) => i.signatureCiphertextSize },
+  {
+    header: 'Public Key Size (bytes)',
+    accessor: (i) => (i.sizesUnknown ? 'Research needed' : i.publicKeySize),
+  },
+  {
+    header: 'Private Key Size (bytes)',
+    accessor: (i) => (i.sizesUnknown ? 'Research needed' : i.privateKeySize),
+  },
+  {
+    header: 'Sig/Ciphertext Size (bytes)',
+    accessor: (i) => (i.sizesUnknown ? 'Research needed' : i.signatureCiphertextSize),
+  },
   { header: 'Shared Secret Size (bytes)', accessor: (i) => i.sharedSecretSize },
   { header: 'KeyGen Cycles', accessor: (i) => i.keyGenCycles },
   { header: 'Sign/Encaps Cycles', accessor: (i) => i.signEncapsCycles },
   { header: 'Verify/Decaps Cycles', accessor: (i) => i.verifyDecapsCycles },
-  { header: 'Stack RAM (bytes)', accessor: (i) => i.stackRAM },
+  {
+    header: 'Stack RAM (bytes)',
+    accessor: (i) => (i.stackRAM > 0 ? i.stackRAM : 'Research needed'),
+  },
   { header: 'FIPS Standard', accessor: (i) => i.fipsStandard },
   { header: 'Use Case Notes', accessor: (i) => i.useCaseNotes },
 ]

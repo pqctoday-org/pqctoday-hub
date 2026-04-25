@@ -540,7 +540,9 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                                   </span>
                                 )}
                                 <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border bg-muted border-border text-muted-foreground">
-                                  {pqcDetail.publicKeySize.toLocaleString()}B pk
+                                  {pqcDetail.sizesUnknown
+                                    ? 'pk: Research needed'
+                                    : `${pqcDetail.publicKeySize.toLocaleString()}B pk`}
                                 </span>
                               </div>
                             )}

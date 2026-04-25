@@ -7,6 +7,8 @@ import {
   getPerformanceColor,
   getSecurityLevelColor,
   getFunctionGroup,
+  RESEARCH_NEEDED,
+  isResearchNeeded,
 } from '../../data/pqcAlgorithmsData'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import {
@@ -322,6 +324,42 @@ function DraftBadge({ algo }: { algo: AlgorithmDetail }) {
   )
 }
 
+function ResearchNeededBadge({ algo }: { algo: AlgorithmDetail }) {
+  if (!algo.hasResearchGap) return null
+  return (
+    <span
+      className="inline-flex items-center text-[10px] px-1.5 py-0.5 rounded bg-status-info/15 text-status-info border border-status-info/30 font-medium"
+      title="Some fields for this entry are not yet researched and are shown as 'Research needed'."
+    >
+      Research needed
+    </span>
+  )
+}
+
+/** Render either the formatted byte count or the literal "Research needed" placeholder. */
+function ByteSize({ value, unknown }: { value: number; unknown: boolean }) {
+  if (unknown) {
+    return (
+      <span className="italic text-muted-foreground" title="Not yet researched">
+        {RESEARCH_NEEDED}
+      </span>
+    )
+  }
+  return <>{value.toLocaleString()} bytes</>
+}
+
+/** Render either the cycles string or the literal "Research needed" placeholder. */
+function CyclesValue({ value }: { value: string }) {
+  if (isResearchNeeded(value)) {
+    return (
+      <span className="italic text-muted-foreground" title="Not yet benchmarked">
+        {RESEARCH_NEEDED}
+      </span>
+    )
+  }
+  return <>{value}</>
+}
+
 // Performance View Component
 const PerformanceView = ({
   algorithms,
@@ -478,6 +516,7 @@ const PerformanceView = ({
                             size="sm"
                           />
                           <DraftBadge algo={algo} />
+                          <ResearchNeededBadge algo={algo} />
                         </div>
                         {algo.securityLevel && (
                           <span
@@ -504,13 +543,15 @@ const PerformanceView = ({
                         {keyGenPerf}
                       </span>
                       <span className="text-xs text-muted-foreground font-mono">
-                        {algo.keyGenCycles}
+                        <CyclesValue value={algo.keyGenCycles} />
                       </span>
-                      <PerfBar
-                        value={getPerformanceMultiplier(algo.keyGenCycles)}
-                        max={maxValues.maxKeygen}
-                        color="bg-primary/50"
-                      />
+                      {!isResearchNeeded(algo.keyGenCycles) && (
+                        <PerfBar
+                          value={getPerformanceMultiplier(algo.keyGenCycles)}
+                          max={maxValues.maxKeygen}
+                          color="bg-primary/50"
+                        />
+                      )}
                     </div>
                   </td>
                   <td className="p-4 min-w-[110px]">
@@ -524,13 +565,15 @@ const PerformanceView = ({
                         {signPerf}
                       </span>
                       <span className="text-xs text-muted-foreground font-mono">
-                        {algo.signEncapsCycles}
+                        <CyclesValue value={algo.signEncapsCycles} />
                       </span>
-                      <PerfBar
-                        value={getPerformanceMultiplier(algo.signEncapsCycles)}
-                        max={maxValues.maxSign}
-                        color="bg-accent/50"
-                      />
+                      {!isResearchNeeded(algo.signEncapsCycles) && (
+                        <PerfBar
+                          value={getPerformanceMultiplier(algo.signEncapsCycles)}
+                          max={maxValues.maxSign}
+                          color="bg-accent/50"
+                        />
+                      )}
                     </div>
                   </td>
                   <td className="p-4 min-w-[110px]">
@@ -544,25 +587,38 @@ const PerformanceView = ({
                         {verifyPerf}
                       </span>
                       <span className="text-xs text-muted-foreground font-mono">
-                        {algo.verifyDecapsCycles}
+                        <CyclesValue value={algo.verifyDecapsCycles} />
                       </span>
-                      <PerfBar
-                        value={getPerformanceMultiplier(algo.verifyDecapsCycles)}
-                        max={maxValues.maxVerify}
-                        color="bg-secondary/50"
-                      />
+                      {!isResearchNeeded(algo.verifyDecapsCycles) && (
+                        <PerfBar
+                          value={getPerformanceMultiplier(algo.verifyDecapsCycles)}
+                          max={maxValues.maxVerify}
+                          color="bg-secondary/50"
+                        />
+                      )}
                     </div>
                   </td>
                   <td className="p-4 min-w-[90px]">
                     <div className="flex flex-col gap-0.5">
-                      <span className="text-sm font-mono text-muted-foreground">
-                        ~{(algo.stackRAM / 1000).toFixed(1)}KB
-                      </span>
-                      <PerfBar
-                        value={algo.stackRAM}
-                        max={maxValues.maxRam}
-                        color="bg-muted-foreground/40"
-                      />
+                      {algo.stackRAM > 0 ? (
+                        <>
+                          <span className="text-sm font-mono text-muted-foreground">
+                            ~{(algo.stackRAM / 1000).toFixed(1)}KB
+                          </span>
+                          <PerfBar
+                            value={algo.stackRAM}
+                            max={maxValues.maxRam}
+                            color="bg-muted-foreground/40"
+                          />
+                        </>
+                      ) : (
+                        <span
+                          className="text-xs italic text-muted-foreground"
+                          title="Not yet researched"
+                        >
+                          {RESEARCH_NEEDED}
+                        </span>
+                      )}
                     </div>
                   </td>
                   <td className="p-4 text-sm text-muted-foreground">{algo.optimizationTarget}</td>
@@ -586,6 +642,7 @@ const PerformanceView = ({
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="font-semibold text-foreground">{algo.name}</span>
                   <DraftBadge algo={algo} />
+                  <ResearchNeededBadge algo={algo} />
                   <span className="text-xs text-muted-foreground">{algo.family}</span>
                 </div>
                 {algo.securityLevel && (
@@ -632,7 +689,14 @@ const PerformanceView = ({
                 </div>
               </div>
               <div className="flex justify-between text-xs text-muted-foreground">
-                <span>RAM: ~{(algo.stackRAM / 1000).toFixed(1)}KB</span>
+                <span>
+                  RAM:{' '}
+                  {algo.stackRAM > 0 ? (
+                    <>~{(algo.stackRAM / 1000).toFixed(1)}KB</>
+                  ) : (
+                    <span className="italic">{RESEARCH_NEEDED}</span>
+                  )}
+                </span>
                 <span>{algo.optimizationTarget}</span>
               </div>
             </div>
@@ -735,13 +799,13 @@ const SecurityView = ({
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Pub Key:</span>
                       <span className="text-foreground font-mono text-xs">
-                        {algo.publicKeySize.toLocaleString()} bytes
+                        <ByteSize value={algo.publicKeySize} unknown={algo.sizesUnknown} />
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Priv Key:</span>
                       <span className="text-foreground font-mono text-xs">
-                        {algo.privateKeySize.toLocaleString()} bytes
+                        <ByteSize value={algo.privateKeySize} unknown={algo.sizesUnknown} />
                       </span>
                     </div>
                     {HARDNESS_ASSUMPTIONS[algo.cryptoFamily] && (
@@ -773,9 +837,11 @@ const SizesView = ({
 }: DetailViewProps) => {
   if (algorithms.length === 0) return <EmptyState />
 
-  const maxPubKey = Math.max(...algorithms.map((a) => a.publicKeySize))
-  const maxPrivKey = Math.max(...algorithms.map((a) => a.privateKeySize))
-  const maxSig = Math.max(...algorithms.map((a) => a.signatureCiphertextSize || 0))
+  // Skip entries with unknown sizes when computing chart maxima so bars stay meaningful.
+  const knownSizeAlgos = algorithms.filter((a) => !a.sizesUnknown)
+  const maxPubKey = Math.max(1, ...knownSizeAlgos.map((a) => a.publicKeySize))
+  const maxPrivKey = Math.max(1, ...knownSizeAlgos.map((a) => a.privateKeySize))
+  const maxSig = Math.max(1, ...knownSizeAlgos.map((a) => a.signatureCiphertextSize || 0))
 
   return (
     <div className="glass-panel p-4 md:p-6">
@@ -800,6 +866,7 @@ const SizesView = ({
                 />
                 <h5 className="font-semibold text-foreground">{algo.name}</h5>
                 <DraftBadge algo={algo} />
+                <ResearchNeededBadge algo={algo} />
               </div>
               <span className="text-xs px-2 py-1 rounded bg-primary/20 text-primary border border-primary/30">
                 {algo.family}
@@ -812,15 +879,17 @@ const SizesView = ({
                 <div className="flex justify-between text-sm mb-1">
                   <span className="text-muted-foreground">Public Key</span>
                   <span className="font-mono text-foreground">
-                    {algo.publicKeySize.toLocaleString()} bytes
+                    <ByteSize value={algo.publicKeySize} unknown={algo.sizesUnknown} />
                   </span>
                 </div>
-                <div className="h-2 bg-muted/50 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-primary/50 rounded-full"
-                    style={{ width: `${(algo.publicKeySize / maxPubKey) * 100}%` }}
-                  />
-                </div>
+                {!algo.sizesUnknown && (
+                  <div className="h-2 bg-muted/50 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-primary/50 rounded-full"
+                      style={{ width: `${(algo.publicKeySize / maxPubKey) * 100}%` }}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Private Key */}
@@ -828,19 +897,21 @@ const SizesView = ({
                 <div className="flex justify-between text-sm mb-1">
                   <span className="text-muted-foreground">Private Key</span>
                   <span className="font-mono text-foreground">
-                    {algo.privateKeySize.toLocaleString()} bytes
+                    <ByteSize value={algo.privateKeySize} unknown={algo.sizesUnknown} />
                   </span>
                 </div>
-                <div className="h-2 bg-muted/50 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-accent/50 rounded-full"
-                    style={{ width: `${(algo.privateKeySize / maxPrivKey) * 100}%` }}
-                  />
-                </div>
+                {!algo.sizesUnknown && (
+                  <div className="h-2 bg-muted/50 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-accent/50 rounded-full"
+                      style={{ width: `${(algo.privateKeySize / maxPrivKey) * 100}%` }}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Signature/Ciphertext */}
-              {algo.signatureCiphertextSize && maxSig > 0 && (
+              {algo.signatureCiphertextSize && maxSig > 0 && !algo.sizesUnknown && (
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-muted-foreground">
