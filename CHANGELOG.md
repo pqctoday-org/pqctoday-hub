@@ -638,7 +638,7 @@ All notable changes to this project will be documented in this file.
   `public/wasm/strongswan-v2-bob-worker.js`, `src/wasm/strongswan-v2/bridge-v2.ts`,
   `Playground/hsm/VpnSimulationPanel.tsx`): new 11.7 MB WASM build alongside the
   existing 12 MB baseline (`strongswan.wasm` untouched), driven by
-  [`pqctoday/pqctoday-hsm`](https://github.com/pqctoday/pqctoday-hsm)'s new
+  [`pqctoday-org/pqctoday-hsm`](https://github.com/pqctoday-org/pqctoday-hsm)'s new
   `strongswan-wasm-v2-shims/` scaffold. Gated entirely behind the
   `VITE_WASM_VPN_V2=1` env flag so regular users see no change. When the flag
   is on, a card at the top of the VPN simulator exposes two actions:

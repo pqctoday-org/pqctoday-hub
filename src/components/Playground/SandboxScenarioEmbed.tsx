@@ -104,7 +104,7 @@ export function SandboxScenarioEmbed() {
     if (!targetOrigin || !scenario || !session) return
 
     const configPayload: EmbedConfigPayload = {
-      vendorId: session.vendorId ?? 'pqc-timeline-app',
+      vendorId: session.vendorId ?? 'pqctoday-hub',
       vendorName: session.vendorName ?? 'PQC Timeline App',
       userId: session.userId ?? 'anonymous',
       scenarioId: scenario.id,

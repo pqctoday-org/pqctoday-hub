@@ -62,6 +62,24 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://www.pqctoday.com/business/tools</loc>
+    <lastmod>2026-03-31</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.pqctoday.com/explore</loc>
+    <lastmod>2026-04-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.pqctoday.com/patents</loc>
+    <lastmod>2026-04-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.pqctoday.com/faq</loc>
     <lastmod>2026-03-31</lastmod>
     <changefreq>monthly</changefreq>

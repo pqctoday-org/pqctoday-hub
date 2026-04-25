@@ -38,8 +38,8 @@ export const DockerPlaygroundView = () => {
     if (!targetOrigin) return
 
     const configPayload: EmbedConfigPayload = {
-      vendorId: 'pqc-timeline-app',
-      vendorName: 'PQC Timeline App',
+      vendorId: 'pqctoday-hub',
+      vendorName: 'PQC Today Hub',
       userId: 'anonymous',
       allowedRoutes: ['/*'],
       allowedOrigins: ['*'],

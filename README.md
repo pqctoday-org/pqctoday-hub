@@ -1,4 +1,4 @@
-# PQC Timeline App
+# PQC Today Hub
 
 Test your PQC readiness with this interactive web application visualizing the global transition to Post-Quantum Cryptography.
 
@@ -722,7 +722,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
 
    ```bash
    git clone https://github.com/pqctoday-org/pqctoday-hub.git
-   cd pqc-timeline-app
+   cd pqctoday-hub
    ```
 
 2. Install dependencies:

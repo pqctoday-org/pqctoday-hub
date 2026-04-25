@@ -37,7 +37,11 @@ export const ROUTE_META: Record<string, RouteMeta> = {
           name: 'PQC Today',
           url: BASE_URL,
           logo: `${BASE_URL}/favicon.svg`,
-          sameAs: ['https://github.com/pqctoday-org/pqctoday-hub'],
+          sameAs: [
+            'https://github.com/pqctoday-org/pqctoday-hub',
+            'https://github.com/pqctoday-org',
+            'https://www.youtube.com/@pqctoday',
+          ],
         },
         {
           '@type': 'WebApplication',
@@ -55,9 +59,10 @@ export const ROUTE_META: Record<string, RouteMeta> = {
             'OpenSSL WASM Studio',
             'PQC Migration Planning',
             'Compliance Tracker (NIST, ANSSI, Common Criteria)',
-            '48 Hands-on Learning Modules',
+            '49 Hands-on Learning Modules',
             'PQC Risk Assessment Wizard',
             'Migration Software Catalog',
+            'PQC Patent Landscape',
           ],
         },
         {
@@ -825,6 +830,27 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Challenge yourself across all PQC topics: algorithms, NIST standards, compliance, migration strategy, and protocol security. Adaptive difficulty.',
     canonical: `${BASE_URL}/learn/quiz`,
+  },
+
+  '/learn/pqc-testing-validation': {
+    title: 'PQC Network Testing & Validation | PQC Today',
+    description:
+      'Design and execute testing strategies for post-quantum cryptography deployments. Covers passive crypto discovery, active endpoint scanning, performance benchmarking, interoperability testing, TVLA side-channel assessment, and building a comprehensive PQC test program.',
+    canonical: `${BASE_URL}/learn/pqc-testing-validation`,
+  },
+
+  '/explore': {
+    title: 'Explore | PQC Today',
+    description:
+      'Discover post-quantum cryptography resources — interactive timelines, 49 learning modules, compliance tools, migration guides, and the PQC risk assessment.',
+    canonical: `${BASE_URL}/explore`,
+  },
+
+  '/patents': {
+    title: 'PQC Patent Landscape | PQC Today',
+    description:
+      'Cryptographic patents relevant to post-quantum migration, enriched with 25 technical dimensions. For research purposes only — not legal or IP advice.',
+    canonical: `${BASE_URL}/patents`,
   },
 }
 
