@@ -6,6 +6,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.11] - April 24, 2026
+
+### Removed
+
+- **Knowledge Graph orphan files** — deleted the now-unused module + right-panel mindmap files left over by the v3.5.10 removal:
+  - `src/components/PKILearning/modules/KnowledgeGraph/` (entire module: CoverageView, ExploreView, GraphLegend, NodeDetailPanel, SearchBar, edges/RelationshipEdge, nodes/{ClusterNode,EntityNode}, data/{graphBuilder,graphTypes,searchIndex,suggestedQueries}, hooks/{useGraphData,useGraphSearch}, curious-summary-curious.md).
+  - `src/components/RightPanel/{GraphPanel,MindmapView,MindmapView.test,mindmapData,useMindmapData}.tsx`/`.ts` plus `RightPanel/edges/MindmapEdge.tsx` and `RightPanel/nodes/MindmapNode.tsx`.
+  - Verified no stale imports remain (`tsc --noEmit` clean; `grep -r "MindmapView|GraphPanel|KnowledgeGraph"` returns zero matches in `src/`).
+
 ## [3.5.10] - April 24, 2026
 
 ### Removed
