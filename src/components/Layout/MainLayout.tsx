@@ -21,7 +21,6 @@ import {
   X,
   Plane,
   Clock,
-  Network,
   Compass,
   Search,
   ScrollText,
@@ -425,20 +424,6 @@ export const MainLayout = () => {
               >
                 <Clock size={18} aria-hidden="true" />
                 Journey History
-              </Button>
-
-              {/* Knowledge Graph shortcut */}
-              <Button
-                variant="ghost"
-                type="button"
-                onClick={() => {
-                  setMoreMenuOpen(false)
-                  openPanel('graph')
-                }}
-                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
-              >
-                <Network size={18} aria-hidden="true" />
-                Knowledge Graph
               </Button>
             </div>
           </div>

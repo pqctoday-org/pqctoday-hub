@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.10] - April 24, 2026
+
+### Removed
+
+- **Knowledge Graph right-panel tab** [persona:all] — removed the `graph` panel from the right-side slide-out drawer (no consumers and no longer aligned with the post-v3.5.9 navigation). [`PanelHeader.tsx`](src/components/RightPanel/PanelHeader.tsx) drops the `graph` tab definition and the `isEmbedded` filter that hid it; [`RightPanel.tsx`](src/components/RightPanel/RightPanel.tsx) drops the lazy `GraphPanel` import, the `'graph'` active-tab branch, and the title-bar fallback; [`MainLayout.tsx`](src/components/Layout/MainLayout.tsx) drops the "Knowledge Graph" entry from the More menu and the now-unused `Network` lucide import.
+- **`useRightPanelStore` v3 migration** — bumped persisted-state version `2 → 3` in [`useRightPanelStore.ts`](src/store/useRightPanelStore.ts) with a `v2 → v3` migration step that reroutes any persisted `activeTab === 'graph'` to `'chat'` so existing localStorage entries never crash the rehydrate path. [`HistoryTypes.ts`](src/types/HistoryTypes.ts) tightens the `RightPanelTab` union accordingly.
+
 ## [3.5.9] - April 24, 2026
 
 ### Added

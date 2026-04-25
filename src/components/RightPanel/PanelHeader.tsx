@@ -3,8 +3,6 @@ import React from 'react'
 import { Bot, Clock, Bookmark, X, Minus } from 'lucide-react'
 import { Button } from '../ui/button'
 import type { RightPanelTab } from '@/types/HistoryTypes'
-import { useEmbedState } from '@/embed/EmbedProvider'
-
 interface PanelHeaderProps {
   activeTab: RightPanelTab
   onTabChange: (tab: RightPanelTab) => void
@@ -18,17 +16,11 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
   onClose,
   onMinimize,
 }) => {
-  const { isEmbedded } = useEmbedState()
-  let tabs: { id: RightPanelTab; label: string; icon: React.ElementType }[] = [
+  const tabs: { id: RightPanelTab; label: string; icon: React.ElementType }[] = [
     { id: 'chat', label: 'Assistant', icon: Bot },
     { id: 'history', label: 'Journey', icon: Clock },
-    { id: 'graph', label: 'Graph', icon: Network },
     { id: 'bookmarks', label: 'Bookmarks', icon: Bookmark },
   ]
-
-  if (isEmbedded) {
-    tabs = tabs.filter((t) => t.id !== 'graph')
-  }
 
   return (
     <div className="px-4 md:px-12 pt-4 pb-0 border-b border-border shrink-0">

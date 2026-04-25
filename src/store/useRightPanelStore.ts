@@ -47,7 +47,7 @@ export const useRightPanelStore = create<RightPanelState>()(
     }),
     {
       name: 'pqc-right-panel',
-      version: 2,
+      version: 3,
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         activeTab: state.activeTab,
@@ -55,17 +55,16 @@ export const useRightPanelStore = create<RightPanelState>()(
       migrate: (persistedState: unknown, version: number) => {
         const state = (persistedState ?? {}) as Record<string, unknown>
         if (version < 1) {
-          if (
-            state.activeTab !== 'chat' &&
-            state.activeTab !== 'history' &&
-            state.activeTab !== 'graph'
-          ) {
+          if (state.activeTab !== 'chat' && state.activeTab !== 'history') {
             state.activeTab = 'chat'
           }
         }
         if (version < 2) {
           // v1 → v2: 'bookmarks' is now a valid tab; no data migration needed
-          // Existing persisted values (chat/history/graph) remain valid
+        }
+        if (version < 3) {
+          // v2 → v3: 'graph' tab removed; migrate to chat
+          if (state.activeTab === 'graph') state.activeTab = 'chat'
         }
         return state
       },

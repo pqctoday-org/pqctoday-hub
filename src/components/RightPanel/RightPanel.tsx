@@ -10,8 +10,6 @@ const HistoryPanel = React.lazy(() =>
   import('./HistoryPanel').then((m) => ({ default: m.HistoryPanel }))
 )
 
-const GraphPanel = React.lazy(() => import('./GraphPanel').then((m) => ({ default: m.GraphPanel })))
-
 const BookmarksPanel = React.lazy(() =>
   import('./BookmarksPanel').then((m) => ({ default: m.BookmarksPanel }))
 )
@@ -40,9 +38,7 @@ export const RightPanel: React.FC = () => {
       ? 'PQC Assistant'
       : activeTab === 'history'
         ? 'Journey History'
-        : activeTab === 'bookmarks'
-          ? 'Bookmarks'
-          : 'Knowledge Graph'
+        : 'Bookmarks'
 
   return (
     <AnimatePresence>
@@ -77,17 +73,6 @@ export const RightPanel: React.FC = () => {
                   }
                 >
                   <HistoryPanel />
-                </React.Suspense>
-              )}
-              {activeTab === 'graph' && (
-                <React.Suspense
-                  fallback={
-                    <div className="flex-1 flex items-center justify-center">
-                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                    </div>
-                  }
-                >
-                  <GraphPanel />
                 </React.Suspense>
               )}
               {activeTab === 'bookmarks' && (
