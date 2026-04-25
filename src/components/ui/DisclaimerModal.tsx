@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Construction, ExternalLink, MessageSquare, Linkedin, X } from 'lucide-react'
+import { Construction, ExternalLink, MessageSquare, X } from 'lucide-react'
 import { Button } from './button'
 import { useDisclaimerStore } from '../../store/useDisclaimerStore'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
@@ -100,7 +100,7 @@ export function DisclaimerModal() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline"
             >
-              <Linkedin size={12} />
+              <ExternalLink size={12} />
               Eric Amador
               <ExternalLink size={10} />
             </a>

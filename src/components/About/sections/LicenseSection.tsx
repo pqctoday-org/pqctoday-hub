@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
-import { Info, Shield, GithubIcon } from 'lucide-react'
+import { Info, Shield, ExternalLink } from 'lucide-react'
 import { LinkToUsButton } from '@/components/ui/LinkToUsButton'
 
 export function LicenseSection() {
@@ -41,7 +41,7 @@ export function LicenseSection() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-primary hover:underline hover:text-primary/80 transition-colors"
           >
-            <GithubIcon size={16} />
+            <ExternalLink size={16} />
             View GitHub Repository
           </a>
           <LinkToUsButton />

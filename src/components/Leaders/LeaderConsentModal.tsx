@@ -7,7 +7,6 @@ import {
   Award,
   ExternalLink,
   MessageSquare,
-  Linkedin,
   BookOpen,
   Cpu,
   Megaphone,
@@ -214,7 +213,7 @@ export function LeaderConsentModal({ isOpen, onClose }: LeaderConsentModalProps)
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-3 rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 transition-colors group"
                 >
-                  <Linkedin size={18} className="text-primary shrink-0" />
+                  <ExternalLink size={18} className="text-primary shrink-0" />
                   <div className="flex-1 min-w-0">
                     <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
                       LinkedIn &mdash; Eric Amador

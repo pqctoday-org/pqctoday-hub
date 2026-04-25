@@ -2,7 +2,7 @@
 import { useEffect } from 'react'
 import FocusLock from 'react-focus-lock'
 import { Button } from '../ui/button'
-import { X, ShieldX, ExternalLink, MessageSquare, Linkedin } from 'lucide-react'
+import { X, ShieldX, ExternalLink, MessageSquare } from 'lucide-react'
 
 interface LeaderRemovalModalProps {
   isOpen: boolean
@@ -114,7 +114,7 @@ export function LeaderRemovalModal({ isOpen, onClose }: LeaderRemovalModalProps)
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-3 rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 transition-colors group"
                 >
-                  <Linkedin size={18} className="text-primary shrink-0" />
+                  <ExternalLink size={18} className="text-primary shrink-0" />
                   <div className="flex-1 min-w-0">
                     <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
                       LinkedIn &mdash; Eric Amador

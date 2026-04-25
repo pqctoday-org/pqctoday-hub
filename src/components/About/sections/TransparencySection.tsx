@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
-import { MessageSquare, ExternalLink, Construction, Wrench, Linkedin } from 'lucide-react'
+import { MessageSquare, ExternalLink, Construction, Wrench } from 'lucide-react'
 
 export function TransparencySection() {
   return (
@@ -92,7 +92,7 @@ export function TransparencySection() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
           >
-            <Linkedin size={14} />
+            <ExternalLink size={14} />
             Eric Amador
             <ExternalLink size={12} />
           </a>
