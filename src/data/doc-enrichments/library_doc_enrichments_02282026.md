@@ -2096,9 +2096,9 @@ documents_processed: 163
 
 ---
 
-## IETF RFC 4253
+## RFC 4253
 
-- **Reference ID**: IETF RFC 4253
+- **Reference ID**: RFC 4253
 - **Title**: The Secure Shell (SSH) Transport Layer Protocol
 - **Authors**: T. Ylonen (SSH Communications Security); C. Lonvick (Cisco Systems)
 - **Publication Date**: 2006-01-01

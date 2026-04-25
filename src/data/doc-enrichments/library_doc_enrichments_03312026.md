@@ -997,38 +997,6 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## Avis-de-lANSSI-sur-la-migration-vers-la-cryptographie
-
-- **Reference ID**: Avis-de-lANSSI-sur-la-migration-vers-la-cryptographie
-- **Title**: Avis de l'ANSSI sur la Migration Vers la Cryptographie
-- **Authors**: ANSSI
-- **Publication Date**: Not specified
-- **Last Updated**: Not specified
-- **Document Status**: Published
-- **Main Topic**: ANSSI update on recommendations for migrating to post-quantum cryptography, emphasizing hybridization and specific algorithm choices.
-- **PQC Algorithms Covered**: CRYSTALS-Kyber, ML-KEM, FrodoKEM, CRYSTALS-Dilithium, ML-DSA, Falcon, FN-DSA, XMSS, LMS, SPHINCS+, SLH-DSA
-- **Quantum Threats Addressed**: Potential large-scale impact of quantum computers on current digital infrastructures; acceleration of exhaustive search via Grover's algorithm; attacks using decryption failure oracles; side-channel attacks
-- **Migration Timeline Info**: First French security visas for hybrid post-quantum products expected 2024-2025; protection required for information beyond 2030 or products used after 2030 without updates
-- **Applicable Regions / Bodies**: Regions: France; Bodies: ANSSI, BSI (Germany), NIST
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: Internet protocols; Authenticated protocols; TLS (implied by PQTLS project name)
-- **Infrastructure Layers**: Key Management; Cryptographic products; Software updates
-- **Standardization Bodies**: NIST, IETF
-- **Compliance Frameworks Referenced**: French security visas; Common Criteria (implied by "security visas" context but not explicitly named as framework); None detected for specific framework names like FIPS or CNSA
-- **Classical Algorithms Referenced**: AES-256, AES-192, SHA2-384, Schnorr signatures, Grover's algorithm
-- **Key Takeaways**: Hybridization of post-quantum and pre-quantum algorithms is strongly recommended for short and medium term; Use highest possible NIST security levels (Level 5 or Level 3) for PQC parameters; Avoid modifying normalized instance parameters to prevent implementation errors; Dimension symmetric primitives to at least AES-256 and SHA2-384 levels for post-quantum security
-- **Security Levels & Parameters**: NIST Level 5 (equivalent to AES-256); NIST Level 3 (equivalent to AES-192); AES-256; SHA2-384
-- **Hybrid & Transition Approaches**: Hybridization of post-quantum and pre-quantum asymmetric algorithms; Progressive transition strategy; Use of ephemeral keys
-- **Performance & Size Considerations**: CRYSTALS-Kyber has similar computation time to pre-quantum solutions with moderate expansion of message and key sizes; FrodoKEM is heavier in key size and slower than CRYSTALS-Kyber; CRYSTALS-Dilithium signatures are not as compact as pre-quantum solutions; Falcon is more compact and efficient than Dilithium
-- **Target Audience**: Security Architect, Developer, Compliance Officer, Policy Maker, Researcher
-- **Implementation Prerequisites**: Use IND-CCA secure versions of algorithms; Protect internal state integrity for stateful signatures; Ensure no decryption failure oracles are available; Avoid modifying normalized parameters
-- **Relevant PQC Today Features**: hybrid-crypto, Algorithms, Migration Timeline Info, Compliance, Migrate, stateful-signatures
-- **Source Document**: Avis de l'ANSSI sur la migration vers la cryptographie.pdf (186,014 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-03-31T16:33:44
-
----
-
 ## BitGo-Multisig-vs-MPC
 
 - **Reference ID**: BitGo-Multisig-vs-MPC
@@ -1122,39 +1090,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Relevant PQC Today Features**: Algorithms, Leaders, digital-assets
 - **Source Document**: Cardano_PQC_Research.html (281,392 bytes, 5,891 extracted chars)
 - **Extraction Timestamp**: 2026-03-31T16:38:37
-
----
-
-## Cipher-suites-supported-by-Corda-Open-Source-4.12
-
-- **Reference ID**: Cipher-suites-supported-by-Corda-Open-Source-4.12
-- **Title**: Cipher suites supported by Corda
-- Open Source 4.12
-- **Authors**: Corda
-- **Publication Date**: Not specified
-- **Last Updated**: Not specified
-- **Document Status**: Published
-- **Main Topic**: The document details the supported signature schemes and certificate hierarchy for Corda Open Source 4.12, including classical and experimental post-quantum algorithms.
-- **PQC Algorithms Covered**: SPHINCS-256
-- **Quantum Threats Addressed**: Shor's algorithm; malicious adversary obtaining a quantum computer
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: TLS 1.2
-- **Infrastructure Layers**: HSM; PKI; Certificate hierarchy
-- **Standardization Bodies**: NIST
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: EdDSA (ed25519); ECDSA (NIST P-256/secp256r1); ECDSA (secp256k1); RSA (3072bit); SHA-512; SHA-256
-- **Key Takeaways**: Corda implementations must not support pluggability of crypto algorithms to prevent consensus loss; SPHINCS-256 is included as an experimental hedge against quantum threats; TLS 1.2 compatibility restricts root network CA, doorman CA, node CA, and tls keys to specific schemes; New algorithm introduction requires a global upgrade of all nodes; EdDSA is the default for dev-mode while ECDSA NIST P-256 is standard for production networks.
-- **Security Levels & Parameters**: RSA 3072bit; ed25519 curve; NIST P-256 curve (secp256r1); secp256k1 curve; SHA-512; SHA-256
-- **Hybrid & Transition Approaches**: Cryptographic agility; Composite key support for service identity keys
-- **Performance & Size Considerations**: SPHINCS uses relatively big public keys; SPHINCS is slower than EdDSA, ECDSA and RSA; SPHINCS outputs bigger signatures than EdDSA, ECDSA and RSA
-- **Target Audience**: Developer; Security Architect; Operations
-- **Implementation Prerequisites**: Global upgrade of all nodes required for new algorithms; HSM vendor compatibility considerations; TLS 1.2 protocol support for specific certificate types
-- **Relevant PQC Today Features**: crypto-agility; stateful-signatures; hsm-pqc; tls-basics; digital-assets
-- **Source Document**: Cipher suites supported by Corda - Open Source 4.12.html (80,076 bytes, 11,671 extracted chars)
-- **Extraction Timestamp**: 2026-03-31T16:39:50
 
 ---
 

@@ -6,6 +6,18 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.19] - April 25, 2026
+
+### Fixed
+
+- **Data integrity — CI unblocked** — resolved all content-integrity failures that were preventing CI from going green:
+  - **QA-F1 (factual accuracy):** SLH-DSA Q&A entry `slh-dsa-learn-001` mentioned FIPS 203/204 without naming ML-KEM/ML-DSA alongside them; reworded to correctly pair each FIPS number with its algorithm name.
+  - **C3 (library deps):** removed non-existent `IEEE 802.1AR-2018` dependency from `TCG-TPM-V185-Part1`; removed self-referential dep from `ETSI-GS-QKD-016`; corrected `FIPS 140-3` → `FIPS-140-3-STANDARD` in `NIST-SP-800-140B`.
+  - **C4 (module IDs):** fixed 4 invalid module IDs in library CSV (`blockchain-pqc` → `digital-assets`, `pqc-signature` → `stateful-signatures`, `hybrid-signatures` → `hybrid-crypto`, `vpn-ssh` → `vpn-ssh-pqc`, `hybrid-certs` → `hybrid-crypto`); updated validator's hardcoded `MODULE_IDS` to include `crypto-mgmt-modernization`, `slh-dsa`, and `pqc-testing-validation`.
+  - **C10 (migration phases):** corrected 6 invalid phase values (`Discovery` → `assess`, `deploy` → `migrate`) across Bouncy Castle, RustCrypto ML-KEM/ML-DSA/SLH-DSA, CIRCL, and CyberZero Quantanaut.
+  - **N1 (enrichment headings):** updated 51 stale `## heading` entries across 11 library enrichment files to match current library `reference_id` values after dedup work; removed 8 sections with no library match.
+- **CSV housekeeping:** promoted `library_04252026_r5.csv` (528 rows) and `pqc_product_catalog_04252026.csv`; archived prior versions.
+
 ## [3.5.18] - April 25, 2026
 
 ### Fixed

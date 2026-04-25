@@ -5,9 +5,9 @@ documents_processed: 414
 enrichment_method: ollama-qwen3.5:27b
 ---
 
-## BSI TR-02102
+## BSI TR-02102-1
 
-- **Reference ID**: BSI TR-02102
+- **Reference ID**: BSI TR-02102-1
 - **Title**: Cryptographic Mechanisms: Recommendations and Key Lengths
 - **Authors**: BSI
 - **Publication Date**: 2024-01-01
@@ -6673,9 +6673,9 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## IETF RFC 4253
+## RFC 4253
 
-- **Reference ID**: IETF RFC 4253
+- **Reference ID**: RFC 4253
 - **Title**: The Secure Shell (SSH) Transport Layer Protocol
 - **Authors**: IETF
 - **Publication Date**: 2006-01-01
@@ -7791,9 +7791,9 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## India-DST-NQM-Roadmap
+## India-DST-Quantum-Safe-Roadmap-2026
 
-- **Reference ID**: India-DST-NQM-Roadmap
+- **Reference ID**: India-DST-Quantum-Safe-Roadmap-2026
 - **Title**: India DST Task Force Report — Phased Roadmap for Migration to Post-Quantum Cryptography under NQM
 - **Authors**: DST India; National Quantum Mission; CERT-In
 - **Publication Date**: 2026-02-04
@@ -7834,9 +7834,9 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## India-TEC-910018-2025
+## IN-TEC-PQC-Migration-Report-2025
 
-- **Reference ID**: India-TEC-910018-2025
+- **Reference ID**: IN-TEC-PQC-Migration-Report-2025
 - **Title**: India TEC Technical Report TEC 910018:2025 — Migration to Post-Quantum Cryptography
 - **Authors**: TEC India; Department of Telecommunications
 - **Publication Date**: 2025-01-01
@@ -8178,9 +8178,9 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## ANSSI-PQC-Position-2022
+## ANSSI PQC Position Paper
 
-- **Reference ID**: ANSSI-PQC-Position-2022
+- **Reference ID**: ANSSI PQC Position Paper
 - **Title**: ANSSI Views on Post-Quantum Cryptography Transition
 - **Authors**: ANSSI; French National Cybersecurity Agency
 - **Publication Date**: 2022-01-04
@@ -11102,9 +11102,9 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## NIST SP 800-53
+## FISMA-NIST-SP-800-53r5
 
-- **Reference ID**: NIST SP 800-53
+- **Reference ID**: FISMA-NIST-SP-800-53r5
 - **Title**: Security and Privacy Controls for Information Systems and Organizations
 - **Authors**: NIST
 - **Publication Date**: 2020-09-01
@@ -11747,9 +11747,9 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## draft-ietf-plants-merkle-tree-certs
+## IETF-MTC-Draft-09
 
-- **Reference ID**: draft-ietf-plants-merkle-tree-certs
+- **Reference ID**: IETF-MTC-Draft-09
 - **Title**: Merkle Tree Certificates
 - **Authors**: IETF
 - **Publication Date**: 2024-06-01
@@ -11876,9 +11876,9 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## IETF RFC 9162
+## RFC-9162
 
-- **Reference ID**: IETF RFC 9162
+- **Reference ID**: RFC-9162
 - **Title**: Certificate Transparency Version 2.0
 - **Authors**: IETF
 - **Publication Date**: 2021-12-01
@@ -12306,9 +12306,9 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## IETF RFC 8555
+## IETF-RFC-8555
 
-- **Reference ID**: IETF RFC 8555
+- **Reference ID**: IETF-RFC-8555
 - **Title**: Automatic Certificate Management Environment (ACME)
 - **Authors**: IETF
 - **Publication Date**: 2019-03-01
@@ -13080,9 +13080,9 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## ETSI-GS-QKD-016-V2
+## ETSI-GS-QKD-016
 
-- **Reference ID**: ETSI-GS-QKD-016-V2
+- **Reference ID**: ETSI-GS-QKD-016
 - **Title**: Common Criteria Protection Profile for QKD Modules V2.1.1
 - **Authors**: ETSI ISG QKD
 - **Publication Date**: 2024-01-01
@@ -15528,49 +15528,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Avalanche_AIP_QR_001.html (24,901 bytes, 2,159 extracted chars)
 - **Extraction Timestamp**: 2026-04-15T16:45:30
-
----
-
-## Avis-de-lANSSI-sur-la-migration-vers-la-cryptographie
-
-- **Reference ID**: Avis-de-lANSSI-sur-la-migration-vers-la-cryptographie
-- **Title**: Avis de l'ANSSI sur la Migration Vers la Cryptographie
-- **Authors**: ANSSI
-- **Publication Date**: Not specified
-- **Last Updated**: Not specified
-- **Document Status**: Published
-- **Main Topic**: Avis de l'ANSSI sur la migration vers la cryptographie post-quantique (suivi 2023) 21 décembre 2023 Ce document est une mise à jour de la position de l'ANSSI sur la transition vers la cryptographie post-quantique au regard des avancées récentes sur l
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, FN-DSA, Falcon, SPHINCS+, CRYSTALS-Kyber, CRYSTALS-Dilithium, FrodoKEM, XMSS, LMS
-- **Quantum Threats Addressed**: Post-Quantum
-- **Migration Timeline Info**: Years mentioned: 2020, 2022, 2023, 2024, 2025, 2030
-- **Applicable Regions / Bodies**: Regions: United States, France, International, Bodies: NIST, ANSSI
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: TLS 1.3, TLS, IKEv2
-- **Infrastructure Layers**: VPN
-- **Standardization Bodies**: NIST, IETF, ETSI, ANSSI, BSI, IETF WG (LAMPS/PQUIP)
-- **Compliance Frameworks Referenced**: French security visas; Common Criteria (implied by "security visas" context but not explicitly named as framework); None detected for specific framework names like FIPS or CNSA
-- **Classical Algorithms Referenced**: AES-256, AES-192, SHA2-384, Schnorr signatures, Grover's algorithm
-- **Key Takeaways**: Hybridization of post-quantum and pre-quantum algorithms is strongly recommended for short and medium term; Use highest possible NIST security levels (Level 5 or Level 3) for PQC parameters; Avoid modifying normalized instance parameters to prevent implementation errors; Dimension symmetric primitives to at least AES-256 and SHA2-384 levels for post-quantum security
-- **Security Levels & Parameters**: NIST Level 5 (equivalent to AES-256); NIST Level 3 (equivalent to AES-192); AES-256; SHA2-384
-- **Hybrid & Transition Approaches**: Hybridization of post-quantum and pre-quantum asymmetric algorithms; Progressive transition strategy; Use of ephemeral keys
-- **Performance & Size Considerations**: CRYSTALS-Kyber has similar computation time to pre-quantum solutions with moderate expansion of message and key sizes; FrodoKEM is heavier in key size and slower than CRYSTALS-Kyber; CRYSTALS-Dilithium signatures are not as compact as pre-quantum solutions; Falcon is more compact and efficient than Dilithium
-- **Target Audience**: Security Architect, Developer, Compliance Officer, Policy Maker, Researcher
-- **Implementation Prerequisites**: Use IND-CCA secure versions of algorithms; Protect internal state integrity for stateful signatures; Ensure no decryption failure oracles are available; Avoid modifying normalized parameters
-- **Relevant PQC Today Features**: hybrid-crypto, Algorithms, Migration Timeline Info, Compliance, Migrate, stateful-signatures
-- **Implementation Attack Surface**: side-channel attacks, decryption failure oracle attacks, implementation errors in Falcon, unprotected implementations of Falcon vulnerable to side-channel attacks
-- **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
-- **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: Gaussian distributions in Falcon must not be replaced
-- **Constrained Device & IoT Suitability**: FrodoKEM has higher key sizes and is slower making it less relevant for many use cases, XMSS and LMS suitable for contexts with limited signatures per key pair such as software updates
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: hybridization strategy required, phased transition strategy recommended, products offering protection beyond 2030 or used after 2030 without update require hybrid post-quantum protection, first French security visas for hybrid PQC products expected 2024-2025
-- **Financial & Business Impact**: French government invested 350 million euros in quantum and post-quantum research projects over two years
-- **Organizational Readiness**: industries encouraged to include quantum threat in risk analysis, define progressive transition strategy, experiment and prototype hybrid solutions
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Avis de l'ANSSI sur la migration vers la cryptographie.pdf (186,014 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-15T16:46:57
 
 ---
 

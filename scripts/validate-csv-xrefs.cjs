@@ -64,6 +64,9 @@ const MODULE_IDS = new Set([
   'secure-boot-pqc',
   'os-pqc',
   'quiz',
+  'crypto-mgmt-modernization',
+  'slh-dsa',
+  'pqc-testing-validation',
 ])
 
 const QUIZ_CATEGORIES = new Set([

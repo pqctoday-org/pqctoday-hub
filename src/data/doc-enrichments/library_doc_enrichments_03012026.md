@@ -181,9 +181,9 @@ enrichment_method: ollama-qwen3:14b
 
 ---
 
-## India-DST-NQM-Roadmap
+## India-DST-Quantum-Safe-Roadmap-2026
 
-- **Reference ID**: India-DST-NQM-Roadmap
+- **Reference ID**: India-DST-Quantum-Safe-Roadmap-2026
 - **Title**: India DST Task Force Report — Phased Roadmap for Migration to Post-Quantum Cryptography under NQM
 - **Authors**: DST India; National Quantum Mission; CERT-In
 - **Publication Date**: 2026-02-04

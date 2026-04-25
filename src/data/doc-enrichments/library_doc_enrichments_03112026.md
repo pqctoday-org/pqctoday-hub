@@ -305,9 +305,9 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## BSI TR-02102
+## BSI TR-02102-1
 
-- **Reference ID**: BSI TR-02102
+- **Reference ID**: BSI TR-02102-1
 - **Title**: Cryptographic Mechanisms: Recommendations and Key Lengths
 - **Authors**: BSI
 - **Publication Date**: 2024-01-01
@@ -486,9 +486,9 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## NIST SP 800-53
+## FISMA-NIST-SP-800-53r5
 
-- **Reference ID**: NIST SP 800-53
+- **Reference ID**: FISMA-NIST-SP-800-53r5
 - **Title**: Security and Privacy Controls for Information Systems and Organizations
 - **Authors**: NIST
 - **Publication Date**: 2020-09-01
@@ -936,9 +936,9 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## draft-ietf-plants-merkle-tree-certs
+## IETF-MTC-Draft-09
 
-- **Reference ID**: draft-ietf-plants-merkle-tree-certs
+- **Reference ID**: IETF-MTC-Draft-09
 - **Title**: Merkle Tree Certificates
 - **Authors**: IETF
 - **Publication Date**: 2024-06-01
@@ -1026,9 +1026,9 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## IETF RFC 9162
+## RFC-9162
 
-- **Reference ID**: IETF RFC 9162
+- **Reference ID**: RFC-9162
 - **Title**: Certificate Transparency Version 2.0
 - **Authors**: IETF
 - **Publication Date**: 2021-12-01
@@ -1326,9 +1326,9 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## IETF RFC 8555
+## IETF-RFC-8555
 
-- **Reference ID**: IETF RFC 8555
+- **Reference ID**: IETF-RFC-8555
 - **Title**: Automatic Certificate Management Environment (ACME)
 - **Authors**: IETF
 - **Publication Date**: 2019-03-01

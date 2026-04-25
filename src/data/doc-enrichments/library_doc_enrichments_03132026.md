@@ -365,9 +365,9 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## ETSI-GS-QKD-016-V2
+## ETSI-GS-QKD-016
 
-- **Reference ID**: ETSI-GS-QKD-016-V2
+- **Reference ID**: ETSI-GS-QKD-016
 - **Title**: Common Criteria Protection Profile for QKD Modules V2.1.1
 - **Authors**: ETSI ISG QKD
 - **Publication Date**: 2024-01-01

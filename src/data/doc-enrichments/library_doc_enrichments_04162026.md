@@ -5,9 +5,9 @@ documents_processed: 415
 enrichment_method: ollama-qwen3.5:27b
 ---
 
-## BSI TR-02102
+## BSI TR-02102-1
 
-- **Reference ID**: BSI TR-02102
+- **Reference ID**: BSI TR-02102-1
 - **Title**: Cryptographic Mechanisms: Recommendations and Key Lengths
 - **Authors**: BSI
 - **Publication Date**: 2024-01-01

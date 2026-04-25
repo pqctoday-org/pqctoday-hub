@@ -3910,9 +3910,9 @@
 
 ---
 
-## India-TEC-910018-2025
+## IN-TEC-PQC-Migration-Report-2025
 
-- **Reference ID**: India-TEC-910018-2025
+- **Reference ID**: IN-TEC-PQC-Migration-Report-2025
 - **Title**: India TEC Technical Report TEC 910018:2025 — Migration to Post-Quantum Cryptography
 - **Authors**: TEC India; Department of Telecommunications
 - **Publication Date**: 2025-01-01
@@ -4166,9 +4166,9 @@
 
 ---
 
-## ANSSI-PQC-Position-2022
+## ANSSI PQC Position Paper
 
-- **Reference ID**: ANSSI-PQC-Position-2022
+- **Reference ID**: ANSSI PQC Position Paper
 - **Title**: ANSSI Views on Post-Quantum Cryptography Transition
 - **Authors**: ANSSI; French National Cybersecurity Agency
 - **Publication Date**: 2022-01-04
@@ -5643,9 +5643,9 @@
 
 ---
 
-## NIST SP 800-53
+## FISMA-NIST-SP-800-53r5
 
-- **Reference ID**: NIST SP 800-53
+- **Reference ID**: FISMA-NIST-SP-800-53r5
 - **Title**: Security and Privacy Controls for Information Systems and Organizations
 - **Authors**: NIST
 - **Publication Date**: 2020-09-01
@@ -8657,9 +8657,9 @@
 
 ---
 
-## IETF RFC 4253
+## RFC 4253
 
-- **Reference ID**: IETF RFC 4253
+- **Reference ID**: RFC 4253
 - **Title**: The Secure Shell (SSH) Transport Layer Protocol
 - **Authors**: IETF
 - **Publication Date**: 2006-01-01
@@ -9969,9 +9969,9 @@
 
 ---
 
-## IETF RFC 8555
+## IETF-RFC-8555
 
-- **Reference ID**: IETF RFC 8555
+- **Reference ID**: IETF-RFC-8555
 - **Title**: Automatic Certificate Management Environment (ACME)
 - **Authors**: IETF
 - **Publication Date**: 2019-03-01
@@ -10230,9 +10230,9 @@
 
 ---
 
-## India-DST-NQM-Roadmap
+## India-DST-Quantum-Safe-Roadmap-2026
 
-- **Reference ID**: India-DST-NQM-Roadmap
+- **Reference ID**: India-DST-Quantum-Safe-Roadmap-2026
 - **Title**: India DST Task Force Report — Phased Roadmap for Migration to Post-Quantum Cryptography under NQM
 - **Authors**: DST India; National Quantum Mission; CERT-In
 - **Publication Date**: 2026-02-04
@@ -10406,9 +10406,9 @@
 
 ---
 
-## draft-ietf-plants-merkle-tree-certs
+## IETF-MTC-Draft-09
 
-- **Reference ID**: draft-ietf-plants-merkle-tree-certs
+- **Reference ID**: IETF-MTC-Draft-09
 - **Title**: Merkle Tree Certificates
 - **Authors**: IETF
 - **Publication Date**: 2024-06-01
@@ -10428,9 +10428,9 @@
 
 ---
 
-## IETF RFC 9162
+## RFC-9162
 
-- **Reference ID**: IETF RFC 9162
+- **Reference ID**: RFC-9162
 - **Title**: Certificate Transparency Version 2.0
 - **Authors**: IETF
 - **Publication Date**: 2021-12-01
@@ -10494,9 +10494,9 @@
 
 ---
 
-## ETSI-GS-QKD-016-V2
+## ETSI-GS-QKD-016
 
-- **Reference ID**: ETSI-GS-QKD-016-V2
+- **Reference ID**: ETSI-GS-QKD-016
 - **Title**: Common Criteria Protection Profile for QKD Modules V2.1.1
 - **Authors**: ETSI ISG QKD
 - **Publication Date**: 2024-01-01
@@ -10846,28 +10846,6 @@
 
 ---
 
-## Avis-de-lANSSI-sur-la-migration-vers-la-cryptographie
-
-- **Reference ID**: Avis-de-lANSSI-sur-la-migration-vers-la-cryptographie
-- **Title**: Avis de l'ANSSI sur la Migration Vers la Cryptographie
-- **Authors**: ANSSI
-- **Publication Date**: Not specified
-- **Last Updated**: Not specified
-- **Document Status**: Published
-- **Main Topic**: Avis de l'ANSSI sur la migration vers la cryptographie post-quantique (suivi 2023) 21 décembre 2023 Ce document est une mise à jour de la position de l'ANSSI sur la transition vers la cryptographie post-quantique au regard des avancées récentes sur l
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, FN-DSA, Falcon, SPHINCS+, CRYSTALS-Kyber, CRYSTALS-Dilithium, FrodoKEM, XMSS, LMS
-- **Quantum Threats Addressed**: Post-Quantum
-- **Migration Timeline Info**: Years mentioned: 2020, 2022, 2023, 2024, 2025, 2030
-- **Applicable Regions / Bodies**: Regions: United States, France, International, Bodies: NIST, ANSSI
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: TLS 1.3, TLS, IKEv2
-- **Infrastructure Layers**: VPN
-- **Standardization Bodies**: NIST, IETF, ETSI, ANSSI, BSI, IETF WG (LAMPS/PQUIP)
-- **Compliance Frameworks Referenced**: None detected
-
----
-
 ## BitGo-Multisig-vs-MPC
 
 - **Reference ID**: BitGo-Multisig-vs-MPC
@@ -10930,29 +10908,6 @@
 - **Protocols Covered**: None detected
 - **Infrastructure Layers**: Blockchain
 - **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
-
----
-
-## Cipher-suites-supported-by-Corda-Open-Source-4.12
-
-- **Reference ID**: Cipher-suites-supported-by-Corda-Open-Source-4.12
-- **Title**: Cipher suites supported by Corda
-- Open Source 4.12
-- **Authors**: Corda
-- **Publication Date**: Not specified
-- **Last Updated**: Not specified
-- **Document Status**: Published
-- **Main Topic**: CENM 1.7 now available Corda 4.14 now available About the docs Archived docs Support Home Corda Corda Corda tools & add-ons Open Source 4.12 Corda Corda Enterprise 4.14 Corda Open Source 4.14 Corda Enterprise 4.13 Corda Open Source 4.13 Corda Enterpr
-- **PQC Algorithms Covered**: SPHINCS+
-- **Quantum Threats Addressed**: Quantum Computer, Post-Quantum
-- **Migration Timeline Info**: Years mentioned: 2026
-- **Applicable Regions / Bodies**: Regions: United States, Bodies: NIST
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: TLS
-- **Infrastructure Layers**: HSM, Blockchain
-- **Standardization Bodies**: NIST
 - **Compliance Frameworks Referenced**: None detected
 
 ---
