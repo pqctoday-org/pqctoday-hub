@@ -57,59 +57,81 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
       </div>
       <div className="space-y-4 text-sm text-foreground/80">
         <p>
-          Quantum-safe migration gets the headlines, but three forcing functions already bite every
-          enterprise &mdash; whether a{' '}
+          Quantum-safe migration gets the headlines, but four compounding forcing functions &mdash;
+          one per crypto asset class &mdash; already bite every enterprise, whether a{' '}
           <InlineTooltip term="Cryptographically Relevant Quantum Computer">
             cryptographically relevant quantum computer
           </InlineTooltip>{' '}
-          arrives in 2030 or never.
+          arrives in 2030 or never. Certificates, libraries, application software, and key material
+          each have their own deadline; managing one without the others leaves the chain weakest at
+          the unmanaged class.
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
           <StatCard
-            label="47-day TLS certs by 2029"
+            label="Certificates & PKI — 47-day TLS by 2029"
             value="47 d"
             note="CA/B Forum SC-081v3 (April 2025). Phased: 200d (2026) → 100d (2027) → 47d (March 2029). Manual CLM breaks mathematically at this cadence."
           />
           <StatCard
-            label="$11–15M per cert outage"
-            value="$15M"
-            note="Ponemon/Venafi. 86% of organizations experienced a cert-related outage in the last 12 months."
+            label="Crypto Libraries — FIPS 140-3 CMVP queue"
+            value="18–24 mo"
+            note="NIST CMVP Modules-in-Process queue length. OpenSSL 1.1.1 EoL Sept 2023; Bouncy Castle high-severity CVEs each release cycle. Re-validation outpaces fixes."
           />
           <StatCard
-            label="53% manual PKI"
-            value="114k"
-            note="Average enterprise manages 114k+ certificates; 53% still use manual or spreadsheet-based tracking (Ponemon 2026 Global PKI Trends)."
+            label="Application Software — OMB M-23-02 inventory"
+            value="Annual"
+            note="US federal agencies must submit a prioritized cryptographic inventory of high-impact systems and HVAs annually through 2035 (M-23-02 §II.A, Nov 2022)."
+          />
+          <StatCard
+            label="Key Material — CNSA 2.0 deadlines"
+            value="2030 / 2033"
+            note="National Security Systems must use CNSA 2.0 algorithms in software/firmware signing by 2030 and broadly by 2033 (CSA/NSA CNSA 2.0). HSM/KMS rekey lead times measured in years."
           />
         </div>
-        <Quote cite="CA/B Forum Ballot SC-081v3, adopted April 2025">
-          Publicly-trusted TLS certificate maximum validity reduces from 398 days to 200 days (from
-          15 March 2026), 100 days (from 15 March 2027), and 47 days from 15 March 2029 &mdash; with
-          domain control validation reuse capped at 10 days at the final stage.
+        <Quote cite="NIST CSWP.39 §5, Considerations for Achieving Crypto Agility (December 2025)">
+          Inventory the use of cryptography for data protection across the organization by adopting
+          an assets-centric approach &hellip; to identify the organization&rsquo;s use cases and
+          most valuable assets,{' '}
+          <strong>such as application codes, libraries, software, hardware, firmware</strong>,
+          user-generated content, communication protocols, enterprise services, and systems.
         </Quote>
         <p>
-          In parallel, <strong>FIPS 140-3 Level 3 validation drift</strong> creates a second
-          continuous problem. The NIST CMVP Modules-in-Process queue runs 18–24 months{' '}
-          <span className="text-xs text-muted-foreground">
-            (NIST CMVP MIP List — csrc.nist.gov; typical range, varies by lab and module type)
-          </span>
-          ; each library or HSM firmware patch can revoke a certificate; the September 2025 FIPS
-          140-3 Implementation Guidance{' '}
-          <span className="text-xs text-muted-foreground">
-            (NIST FIPS 140-3 IG, Sep 2025 PQC update)
-          </span>{' '}
-          update retroactively imposed new{' '}
-          <InlineTooltip term="Key Encapsulation Mechanism">KEM</InlineTooltip> self-test
-          requirements on modules already validated. You cannot &ldquo;audit once&rdquo; and walk
-          away.
+          The four classes compound. A pristine certificate inventory does not save you when the
+          underlying library is stuck in the CMVP queue; an upgraded library does not help if the
+          application still calls a deprecated API; a clean codebase still fails audit if the keys
+          it consumes live in an HSM that cannot rotate fast enough. Each driver below is already in
+          force today.
         </p>
-        <p className="text-sm">
-          Layered on top: library EoL and CVE cadence (OpenSSL 1.1.1 EoL September 2023; Bouncy
-          Castle high-severity CVEs every release cycle), OMB Memorandum M-23-02 mandating{' '}
-          <strong>annual</strong> cryptographic-inventory submissions for US federal agencies
-          through 2035, CNSA 2.0 deadlines for National Security Systems (2030/2033), and EU DORA
-          (Art. 9 — ICT risk management) and NIS2 (Art. 21 — cybersecurity measures) mandating
-          demonstrable cryptographic governance.
-        </p>
+        <ul className="list-disc list-outside pl-5 space-y-2 text-sm">
+          <li>
+            <strong>Certificates &amp; PKI</strong> &mdash; the 47-day cadence is mathematically
+            incompatible with manual CLM; cert-related outages cost $11&ndash;15M per incident
+            (Ponemon/Venafi) and 86% of organizations hit one in the last 12 months. Average
+            enterprise manages 114k+ certificates with 53% still on spreadsheets (Ponemon 2026
+            Global PKI Trends).
+          </li>
+          <li>
+            <strong>Crypto Libraries</strong> &mdash; the NIST CMVP Modules-in-Process queue runs
+            18&ndash;24 months, and the September 2025 FIPS 140-3 Implementation Guidance
+            retroactively imposed new{' '}
+            <InlineTooltip term="Key Encapsulation Mechanism">KEM</InlineTooltip> self-test
+            requirements on modules already validated. You cannot &ldquo;audit once&rdquo; and walk
+            away while OpenSSL and Bouncy Castle ship high-severity CVEs each release cycle.
+          </li>
+          <li>
+            <strong>Application Software</strong> &mdash; OMB Memorandum M-23-02 mandates{' '}
+            <strong>annual</strong> cryptographic-inventory submissions for US federal agencies
+            through 2035, and EU DORA (Art. 9 &mdash; ICT risk management) and NIS2 (Art. 21 &mdash;
+            cybersecurity measures) demand demonstrable cryptographic governance across the entire
+            application portfolio &mdash; not just the TLS edge.
+          </li>
+          <li>
+            <strong>Key Material</strong> &mdash; CNSA 2.0 forces HSM and KMS roadmaps now (2030 for
+            software/firmware signing, 2033 broadly); NIST SP 800-57 Pt 1 Rev 6 key-validity periods
+            drive rekey cadence; and orphaned keys, secrets-in-repo, and unrotated service
+            credentials remain a top breach vector.
+          </li>
+        </ul>
       </div>
     </section>
 

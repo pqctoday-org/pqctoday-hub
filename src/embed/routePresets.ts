@@ -23,6 +23,7 @@ export const ROUTE_PRESETS: Record<string, string[]> = {
   playground: ['/playground', '/playground/*'],
   business: ['/business', '/business/*'],
   faq: ['/faq'],
+  patents: ['/patents'],
   all: ['/*'],
 }
 
@@ -43,6 +44,7 @@ export const ROUTE_PRESET_LABELS: Record<string, string> = {
   playground: 'Playground',
   business: 'Business',
   faq: 'FAQ',
+  patents: 'Patents',
 }
 
 // ---------------------------------------------------------------------------

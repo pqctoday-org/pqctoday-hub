@@ -1,6 +1,6 @@
 {
   "version": "3.5.17",
-  "generatedAt": "2026-04-25T06:47:00.884Z",
+  "generatedAt": "2026-04-25T21:45:14.273Z",
   "resources": {
     "routePresets": [
       {
@@ -50,6 +50,10 @@
       {
         "id": "faq",
         "paths": ["/faq"]
+      },
+      {
+        "id": "patents",
+        "paths": ["/patents"]
       },
       {
         "id": "all",
