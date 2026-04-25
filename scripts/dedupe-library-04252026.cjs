@@ -1,11 +1,22 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // One-shot dedup pass over src/data/library_04252026.csv
-// → produces src/data/library_04252026_r2.csv with 12 records consolidated:
+// → produces src/data/library_04252026_r3.csv with 12 records consolidated:
 //   - 3 hard duplicates collapsed (same referenceId × 2 rows → 1 row)
 //   - 9 easy soft duplicates dropped (un-cited side removed)
 // Five medium/hard soft-dups requiring cross-CSV citation updates are
 // deferred; see /Users/ericamador/.claude/plans/ask-clarifications-sunny-marble.md.
+//
+// HISTORY:
+//   v1 (v3.5.14, library_04252026_r2.csv) — BUGGED. mergeRowInto's
+//     "longer-wins" rule applied to ALL columns including `reference_id`.
+//     For 5 soft drops where drop_id was longer than keep_id (Avis-de-lANSSI,
+//     IETF RFC 9162, IETF RFC 4253, draft-ietf-plants-merkle-tree-certs,
+//     ETSI-GS-QKD-016-V2), the canonical row's reference_id was overwritten
+//     with the drop_id, orphaning 20+ external citations.
+//   v2 (v3.5.15, library_04252026_r3.csv) — FIXED. Added
+//     IMMUTABLE_FIELDS guard so reference_id (and any future identity
+//     columns) are never modified during merge.
 
 const fs = require('node:fs')
 const path = require('node:path')
@@ -13,7 +24,7 @@ const Papa = require('papaparse')
 
 const ROOT = path.resolve(__dirname, '..')
 const SRC = path.join(ROOT, 'src/data/library_04252026.csv')
-const DST = path.join(ROOT, 'src/data/library_04252026_r2.csv')
+const DST = path.join(ROOT, 'src/data/library_04252026_r3.csv')
 
 const HARD_DUPS = new Set([
   'G7-CEG-Financial-PQC-2026',
@@ -44,6 +55,12 @@ const MULTI_VALUE_FIELDS = new Set([
 
 const DATE_FIELDS = new Set(['initial_publication_date', 'last_update_date'])
 
+// Identity / immutable fields — NEVER overwrite during merge, even if the
+// other row's value is "longer". The bug in v1 (v3.5.14) was treating
+// reference_id like any other text field, which corrupted canonical IDs
+// when the drop_id happened to be longer than the keep_id.
+const IMMUTABLE_FIELDS = new Set(['reference_id'])
+
 function unionSemicolons(a, b) {
   const set = new Set()
   for (const part of `${a || ''};${b || ''}`.split(';')) {
@@ -65,6 +82,7 @@ function pickLatestDate(a, b) {
 // multi-value fields union; date fields take latest.
 function mergeRowInto(a, b) {
   for (const k of Object.keys(b)) {
+    if (IMMUTABLE_FIELDS.has(k)) continue
     const av = (a[k] ?? '').toString()
     const bv = (b[k] ?? '').toString()
     if (MULTI_VALUE_FIELDS.has(k)) {
@@ -147,7 +165,7 @@ function main() {
     newline: '\n',
   })
   fs.writeFileSync(DST, out + '\n', 'utf8')
-  console.log(`\nWrote: ${finalRows.length} rows → library_04252026_r2.csv`)
+  console.log(`\nWrote: ${finalRows.length} rows → library_04252026_r3.csv`)
   console.log(`Net: ${rows.length} → ${finalRows.length} (Δ ${rows.length - finalRows.length})`)
 }
 

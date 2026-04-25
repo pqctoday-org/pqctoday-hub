@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.15] - April 25, 2026
+
+### Fixed
+
+- **Library dedup script — `reference_id` corruption (v3.5.14 bug fix)** [view:/library] — the `mergeRowInto()` helper in [scripts/dedupe-library-04252026.cjs](scripts/dedupe-library-04252026.cjs) applied a generic "longer-wins" merge rule across all fields, including `reference_id`. For 5 of the 9 soft-drops in v3.5.14 where the drop_id was longer than the keep_id (Avis-de-lANSSI → ANSSI PQC Position Paper; IETF RFC 9162 → RFC-9162; IETF RFC 4253 → RFC 4253; draft-ietf-plants-merkle-tree-certs → IETF-MTC-Draft-09; ETSI-GS-QKD-016-V2 → ETSI-GS-QKD-016), the canonical row's `reference_id` got overwritten with the drop_id, orphaning 20+ external citations (most importantly "ANSSI PQC Position Paper" which has 20 cites in compliance + governance). Added `IMMUTABLE_FIELDS` guard in `mergeRowInto()` so identity columns are never modified during merge. Re-ran the dedup against the original [library_04252026.csv](src/data/library_04252026.csv) → produced [library_04252026_r3.csv](src/data/library_04252026_r3.csv) with all 14 spot-checks passing. Removed the broken `library_04252026_r2.csv` (replaced by `_r3`).
+
 ## [3.5.14] - April 25, 2026
 
 ### Changed
