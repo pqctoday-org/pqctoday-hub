@@ -55,6 +55,29 @@ All notable changes to this project will be documented in this file.
   - New `page-guide-explore` (`/explore`) and `page-guide-report` (`/report`) chunks — both routes were uncovered by the corpus before this change.
 - **Workspace persistence — visited routes + advanced views unlock** — [src/store/useHistoryStore.ts](src/store/useHistoryStore.ts) gains a `visitedRoutes` array (persisted, version bump 2→3) and a `recordVisit(path)` action; [src/services/storage/snapshotTypes.ts](src/services/storage/snapshotTypes.ts) and [src/services/storage/UnifiedStorageService.ts](src/services/storage/UnifiedStorageService.ts) persist `advancedViewsUnlocked` in cloud snapshots; [src/components/Layout/MainLayout.tsx](src/components/Layout/MainLayout.tsx), [src/components/Landing/LandingView.tsx](src/components/Landing/LandingView.tsx), and [src/components/Landing/PersonalizationSection.tsx](src/components/Landing/PersonalizationSection.tsx) wire the new state into the UI.
 
+## [3.5.25] - April 25, 2026
+
+### Added
+
+- **`Classic-McEliece-6960119`** — alternate NIST L5 parameter set for the Classic McEliece KEM family (pk=1,047,319 / sk=13,948 / ct=194 — sizes confirmed via OQS reference implementation). BSI-recommended alongside `-6688128` for conservative ~256-bit-equivalent long-term sovereign protection. Source: pqctoday-priv/docs/PQC_Algorithm_Reference_April2026.docx §2.3.
+
+### Changed — Algorithm CSV verified-data refresh
+
+- **Filled the pre-existing TLS 1.3 hybrid NamedGroup entries with verified sizes** — `X25519MLKEM768` (pk=1216, ct=1120, ss=32) and `SecP256r1MLKEM768` (pk=1249, ct=1153, ss=32) previously had empty size columns. Sizes computed from the `IETF draft-ietf-tls-ecdhe-mlkem` table in pqctoday-priv/docs/PQC_Algorithm_Reference_April2026.docx §2.14 (ML-KEM-768 component + classical component, KEM combiner output 32 B). Notes clarify these are TLS NamedGroup encodings — distinct from the IETF Composite KEM draft entries (`ML-KEM-768-ECDH-P256`, `ML-KEM-768-RSA-OAEP-2048`) which use ASN.1 encoding for X.509 certificates.
+- **Refreshed the 21 newly-added algorithm rows with verified data** from pqctoday-priv/docs/PQC_Algorithm_Reference_April2026.csv: LMS family pk/sig ranges, XMSS family pk/sk/sig ranges, HQC family pk/sk/ct ranges, Classic-McEliece family ranges, UOV-Ip / CROSS-R-SDP-1b (with Skylake cycles) / LESS-1b / FAEST-128f / SNOVA l=4 reference values, ML-DSA-44 composite component sums, ML-KEM-768-ECDH-P256 sums, HPKE-PQ ML-KEM-768 mode sizes. SQIsign III/V variants documented in notes. Corrected `Classic-McEliece-6688128` ciphertext from incorrect 240 B to 208 B per OQS spec. Reframed LAC as ELIMINATED (NIST Round 2 dropped, do not deploy) and NGCC-BC/NGCC-CH as UNRESOLVED placeholders not traceable to any published algorithm.
+
+### Renamed — IETF formal identifiers
+
+- **ML-DSA-44 composite signature entries renamed to formal IETF IDs**:
+  - `ML-DSA-44-RSA2048-PSS` → `id-MLDSA44-RSA2048-PSS-SHA256`
+  - `ML-DSA-44-Ed25519` → `id-MLDSA44-Ed25519-SHA512`
+  - `ML-DSA-44-ECDSA-P256` → `id-MLDSA44-ECDSA-P256-SHA256`
+  - Use Case Notes updated to flag the rename, and `algorithms_transitions_04252026.csv` PQC Replacement column updated to match. Naming follows the IETF `draft-ietf-lamps-pq-composite-sigs` convention. ML-KEM-768 Composite KEM entries left untouched (LAMPS Composite KEM draft does not yet publish authoritative `id-*` identifiers in the reference doc).
+
+### Changed — RAG corpus regenerated
+
+- `public/data/rag-corpus.json` regenerated to reflect the renamed and new algorithm rows (8218 chunks, +2 from the 8216 baseline after item 1's new `Classic-McEliece-6960119` entry plus the renamed composite entries).
+
 ## [3.5.24] - April 25, 2026
 
 ### Added
