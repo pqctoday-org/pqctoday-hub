@@ -4,6 +4,7 @@ node_modules
 package-lock.json
 test-results.json
 test-results-clean.json
+public/embed/sdk.js
 public/wasm/openssl.js
 public/wasm/openssh-server.js
 public/wasm/openssh-client.js

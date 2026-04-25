@@ -6,6 +6,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.21] - April 25, 2026
+
+### Added
+
+- **Daily compliance scraper workflow** — `update-compliance.yml` runs `npm run scrape` every day at 08:00 UTC and auto-commits changes to `public/data/compliance-data.json`. Supports `workflow_dispatch` for manual triggers.
+
+### Fixed
+
+- **Embed SDK minification** — `public/embed/sdk.js` is now excluded from Prettier via `.prettierignore`; committed the canonical minified single-line build so lint-staged stops reformatting it on every commit.
+
 ## [3.5.20] - April 25, 2026
 
 ### Fixed
