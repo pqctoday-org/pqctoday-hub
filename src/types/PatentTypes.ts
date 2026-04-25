@@ -83,6 +83,9 @@ export interface PatentItem {
   citationGraph: string[]
   claimDependencies: ClaimDependency[]
   nistRoundStatus: NistStatus[]
+  // PQC migration relevance score (1–10, from score_patents_pqc.py)
+  pqcMigrationScore: number
+  pqcMigrationReason: string
   // Computed
   impactScore: number
   impactLevel: ImpactLevel

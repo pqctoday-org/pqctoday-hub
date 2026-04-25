@@ -44,6 +44,8 @@ interface RawPatentRow {
   citation_graph: string
   claim_dependencies: string
   nist_round_status: string
+  pqc_migration_score: string
+  pqc_migration_reason: string
 }
 
 const FIPS_STATUSES: NistStatusValue[] = ['fips_203', 'fips_204', 'fips_205']
@@ -134,6 +136,8 @@ function transformRow(row: RawPatentRow): PatentItem | null {
     claimDependencies: parseJsonField<ClaimDependency[]>(row.claim_dependencies, []),
     nistRoundStatus: parseJsonField<NistStatus[]>(row.nist_round_status, []),
     priorityYear: parseInt(row.priority_date?.slice(0, 4) ?? '0', 10) || 0,
+    pqcMigrationScore: parseInt(row.pqc_migration_score ?? '0', 10) || 0,
+    pqcMigrationReason: row.pqc_migration_reason?.trim() ?? '',
   }
 
   const impactScore = computeImpactScore(partial)
