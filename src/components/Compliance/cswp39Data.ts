@@ -4,7 +4,34 @@
  * Content derived from NIST CSWP.39 (Dec 2025) "Considerations for Achieving Crypto Agility".
  * Shared narrative prose lives in the CryptoMgmtModernization Learn module (content.ts);
  * this file only enumerates requirements and cross-references.
+ *
+ * SOURCE STALENESS: bump CSWP39_SOURCE_METADATA.dataExtractedAt and nextReviewBy
+ * every time the upstream NIST CSWP.39 document is verified against this static data.
+ * The vitest spec in cswp39Data.test.ts fails CI if nextReviewBy < today, forcing
+ * a manual re-verification cycle.
  */
+
+export interface CSWP39SourceMetadata {
+  documentLabel: string
+  documentTitle: string
+  documentVersion: string
+  publicationDate: string
+  sourceUrl: string
+  localPdfPath: string
+  dataExtractedAt: string
+  nextReviewBy: string
+}
+
+export const CSWP39_SOURCE_METADATA: CSWP39SourceMetadata = {
+  documentLabel: 'NIST CSWP.39',
+  documentTitle: 'Considerations for Achieving Cryptographic Agility',
+  documentVersion: 'Final',
+  publicationDate: '2025-12-19',
+  sourceUrl: 'https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.39.pdf',
+  localPdfPath: '/library/NIST_CSWP_39.pdf',
+  dataExtractedAt: '2026-04-25',
+  nextReviewBy: '2026-07-24',
+}
 
 export interface CSWP39Step {
   id: 'govern' | 'inventory' | 'identify-gaps' | 'prioritise' | 'implement'

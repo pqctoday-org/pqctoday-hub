@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CryptoAgilityProcessDiagram } from '@/components/PKILearning/modules/CryptoMgmtModernization/visuals/CryptoAgilityProcessDiagram'
-import { CSWP39_STEPS, CSWP39_TIERS, CSWP39_CROSS_WALK } from './cswp39Data'
+import { CSWP39_STEPS, CSWP39_TIERS, CSWP39_CROSS_WALK, CSWP39_SOURCE_METADATA } from './cswp39Data'
 import { CSWP39StepCard } from './CSWP39StepCard'
 import { MaturityEvidenceGrid } from './MaturityEvidenceGrid'
 import { maturityRequirements } from '@/data/maturityGovernanceData'
@@ -81,6 +81,21 @@ export const CSWP39Explorer: React.FC<CSWP39ExplorerProps> = ({
               architecture (§5) that bridges asset inventory and risk management. Every step on this
               page cross-references the compliance frameworks already catalogued on the other tabs
               of this page.
+            </p>
+            <p className="text-xs text-muted-foreground mt-2">
+              <span className="font-medium">Source:</span>{' '}
+              <a
+                href={CSWP39_SOURCE_METADATA.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline inline-flex items-center gap-1"
+              >
+                {CSWP39_SOURCE_METADATA.documentLabel} ({CSWP39_SOURCE_METADATA.documentVersion},{' '}
+                {CSWP39_SOURCE_METADATA.publicationDate})
+                <ExternalLink size={10} />
+              </a>{' '}
+              · Hub data verified {CSWP39_SOURCE_METADATA.dataExtractedAt} · Next review by{' '}
+              {CSWP39_SOURCE_METADATA.nextReviewBy}
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 shrink-0">
