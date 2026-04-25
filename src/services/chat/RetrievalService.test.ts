@@ -538,7 +538,10 @@ describe('RetrievalService', () => {
     })
 
     it('should return false before initialization', () => {
-      const fresh = new RetrievalService()
+      // After convergence on UnifiedSearchService, isReady reflects the
+      // shared singleton's state. Reset the singleton before asserting.
+      RetrievalService.resetInstance()
+      const fresh = RetrievalService.getInstance()
       expect(fresh.isReady).toBe(false)
     })
   })

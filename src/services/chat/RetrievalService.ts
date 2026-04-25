@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import MiniSearch from 'minisearch'
+import type MiniSearch from 'minisearch'
 import type { RAGChunk } from '@/types/ChatTypes'
+import { UnifiedSearchService } from '@/services/search/UnifiedSearchService'
 
 /**
  * Query intent — determines source boosting and diversity strategy.
@@ -42,7 +43,13 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     'document-enrichment': 1.2,
   },
   comparison: { algorithms: 2, transitions: 3, glossary: 1.5 },
-  catalog_lookup: { migrate: 3, certifications: 2, 'priority-matrix': 1.5, 'business-center': 1.5 },
+  catalog_lookup: {
+    migrate: 3,
+    certifications: 2,
+    'priority-matrix': 1.5,
+    'business-center': 1.5,
+    vendors: 2,
+  },
   recommendation: {
     assessment: 2,
     'priority-matrix': 2,
@@ -51,6 +58,9 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     documentation: 1.5,
     'document-enrichment': 1.3,
     'business-center': 1.5,
+    'governance-maturity': 2,
+    cswp39: 1.5,
+    vendors: 1.5,
   },
   country_query: {
     timeline: 3,
@@ -65,9 +75,29 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     compliance: 1.5,
     glossary: 1.2,
     'authoritative-sources': 1.5,
+    'trusted-sources': 2,
+    patents: 1.3,
   },
   whats_new: { changelog: 10, 'app-guide': 1.5 },
-  general: { leaders: 1.5, threats: 1.5 },
+  general: {
+    leaders: 1.5,
+    threats: 1.5,
+    'module-qa': 1.3,
+    'module-summaries': 1.1,
+    patents: 1.2,
+    cswp39: 1.2,
+    'governance-maturity': 1.1,
+    'trusted-sources': 1.1,
+    quiz: 1.1,
+    tracks: 1.1,
+    personas: 1.1,
+    achievements: 1.1,
+    'playground-guide': 1.1,
+    'openssl-guide': 1.1,
+    'user-manual': 1.1,
+    'right-panel': 1.1,
+    'guided-tour': 1.1,
+  },
 }
 
 /**
@@ -79,6 +109,8 @@ const PERSONA_BOOSTS: Record<string, Record<string, number>> = {
     modules: 1.3,
     algorithms: 1.2,
     migrate: 1.2,
+    'module-qa': 1.3,
+    patents: 1.2,
   },
   executive: {
     assessment: 1.5,
@@ -88,6 +120,9 @@ const PERSONA_BOOSTS: Record<string, Record<string, number>> = {
     'priority-matrix': 1.3,
     'business-center': 2,
     leaders: 1.3,
+    'governance-maturity': 1.5,
+    cswp39: 1.4,
+    vendors: 1.3,
   },
   architect: {
     'module-content': 1.3,
@@ -95,6 +130,8 @@ const PERSONA_BOOSTS: Record<string, Record<string, number>> = {
     migrate: 1.3,
     transitions: 1.2,
     'business-center': 1.5,
+    'governance-maturity': 1.3,
+    patents: 1.2,
   },
   researcher: {
     library: 1.5,
@@ -102,12 +139,17 @@ const PERSONA_BOOSTS: Record<string, Record<string, number>> = {
     algorithms: 1.3,
     'authoritative-sources': 1.3,
     glossary: 1.4,
+    'trusted-sources': 1.5,
+    patents: 1.5,
+    'module-qa': 1.2,
   },
   ops: {
     migrate: 1.5,
     certifications: 1.3,
     'module-content': 1.2,
     compliance: 1.2,
+    vendors: 1.5,
+    'governance-maturity': 1.2,
   },
   curious: {
     glossary: 1.3,
@@ -513,14 +555,6 @@ function getLimitForIntent(intent: QueryIntent): number {
 
 class RetrievalService {
   private static instance: RetrievalService | null = null
-  private index: MiniSearch<RAGChunk> | null = null
-  private corpus: RAGChunk[] = []
-  private corpusById = new Map<string, RAGChunk>()
-  private initPromise: Promise<void> | null = null
-  private generatedAt: string | null = null
-
-  // Pre-built entity lookup: lowercased title → chunk IDs
-  private entityIndex = new Map<string, string[]>()
 
   static getInstance(): RetrievalService {
     if (!RetrievalService.instance) {
@@ -529,138 +563,46 @@ class RetrievalService {
     return RetrievalService.instance
   }
 
-  /** Reset singleton — for testing only */
+  /** Reset singleton — for testing only. Also resets the underlying
+   *  UnifiedSearchService so per-test fetch stubs / corpus injections
+   *  start from a clean slate. */
   static resetInstance(): void {
     RetrievalService.instance = null
+    UnifiedSearchService.resetInstance()
+  }
+
+  /**
+   * Index, corpus, and entityIndex are owned by UnifiedSearchService so ⌘K
+   * and the Assistant share one MiniSearch instance and one entityIndex.
+   */
+  private get index(): MiniSearch<RAGChunk> | null {
+    return UnifiedSearchService.getInstance().index
+  }
+
+  private get corpus(): ReadonlyArray<RAGChunk> {
+    return UnifiedSearchService.getInstance().corpus
+  }
+
+  private get corpusById(): ReadonlyMap<string, RAGChunk> {
+    return UnifiedSearchService.getInstance().corpusById
+  }
+
+  private get entityIndex(): ReadonlyMap<string, string[]> {
+    return UnifiedSearchService.getInstance().entityIndex
   }
 
   async initialize(): Promise<void> {
-    if (this.index) return
-    if (this.initPromise) return this.initPromise
-
-    this.initPromise = this.load().catch((err) => {
-      // Clear the promise so subsequent calls retry instead of returning the same rejection
-      this.initPromise = null
-      throw err
-    })
-    return this.initPromise
+    return UnifiedSearchService.getInstance().initialize()
   }
 
   /** Initialize with a pre-loaded corpus — for testing */
   initializeWithCorpus(corpus: RAGChunk[]): void {
-    this.corpus = corpus
-    this.buildIndex()
+    UnifiedSearchService.getInstance().initializeWithCorpus(corpus)
   }
 
   /** Timestamp when the corpus was generated (ISO string), or null for legacy format */
   get corpusDate(): string | null {
-    return this.generatedAt
-  }
-
-  private async load(): Promise<void> {
-    const response = await fetch('/data/rag-corpus.json')
-    if (!response.ok) {
-      throw new Error(`Failed to load RAG corpus: ${response.status}`)
-    }
-
-    const data = await response.json()
-
-    // Support both legacy flat-array and new wrapper format
-    if (Array.isArray(data)) {
-      this.corpus = data
-    } else {
-      this.corpus = data.chunks ?? []
-      this.generatedAt = data.generatedAt ?? null
-    }
-
-    this.buildIndex()
-  }
-
-  private buildIndex(): void {
-    // Build fast lookup by ID (deduplicates — last entry wins)
-    this.corpusById.clear()
-    this.entityIndex.clear()
-
-    for (const chunk of this.corpus) {
-      this.corpusById.set(chunk.id, chunk)
-    }
-    // Deduplicate corpus against the map so MiniSearch never sees duplicate IDs
-    this.corpus = Array.from(this.corpusById.values())
-
-    // Build entity index for direct title matching
-    for (const chunk of this.corpus) {
-      const titleLower = chunk.title.toLowerCase()
-      const existing = this.entityIndex.get(titleLower) ?? []
-      existing.push(chunk.id)
-      this.entityIndex.set(titleLower, existing)
-
-      // Also index without hyphens/numbers for fuzzy entity match
-      // "ML-DSA-44" → also indexed as "ml-dsa", "ml dsa"
-      const baseName = titleLower.replace(/-\d+.*$/, '').trim()
-      if (baseName !== titleLower) {
-        const baseExisting = this.entityIndex.get(baseName) ?? []
-        baseExisting.push(chunk.id)
-        this.entityIndex.set(baseName, baseExisting)
-      }
-
-      // Index without hyphens: "ml-kem" → also "ml kem"
-      const noHyphens = titleLower.replace(/-/g, ' ')
-      if (noHyphens !== titleLower) {
-        const nhExisting = this.entityIndex.get(noHyphens) ?? []
-        nhExisting.push(chunk.id)
-        this.entityIndex.set(noHyphens, nhExisting)
-      }
-
-      // Index metadata acronyms
-      if (chunk.metadata?.acronym) {
-        const acronymLower = chunk.metadata.acronym.toLowerCase()
-        const aExisting = this.entityIndex.get(acronymLower) ?? []
-        aExisting.push(chunk.id)
-        this.entityIndex.set(acronymLower, aExisting)
-      }
-
-      // Index metadata categoryName for migrate/software chunks
-      if (chunk.metadata?.categoryName) {
-        const catLower = chunk.metadata.categoryName.toLowerCase()
-        const catExisting = this.entityIndex.get(catLower) ?? []
-        catExisting.push(chunk.id)
-        this.entityIndex.set(catLower, catExisting)
-      }
-
-      // Index metadata referenceId for library chunks (e.g., "NIST IR 8547")
-      if (chunk.metadata?.referenceId) {
-        const refLower = chunk.metadata.referenceId.toLowerCase()
-        const refExisting = this.entityIndex.get(refLower) ?? []
-        refExisting.push(chunk.id)
-        this.entityIndex.set(refLower, refExisting)
-      }
-
-      // Index metadata country and org for timeline/threats chunks
-      if (chunk.metadata?.country) {
-        const countryLower = chunk.metadata.country.toLowerCase()
-        const cExisting = this.entityIndex.get(countryLower) ?? []
-        cExisting.push(chunk.id)
-        this.entityIndex.set(countryLower, cExisting)
-      }
-      if (chunk.metadata?.org) {
-        const orgLower = chunk.metadata.org.toLowerCase()
-        const oExisting = this.entityIndex.get(orgLower) ?? []
-        oExisting.push(chunk.id)
-        this.entityIndex.set(orgLower, oExisting)
-      }
-    }
-
-    this.index = new MiniSearch<RAGChunk>({
-      fields: ['title', 'content', 'category'],
-      storeFields: ['id', 'source', 'title', 'content', 'category', 'metadata'],
-      searchOptions: {
-        boost: { title: 3, category: 1.5 },
-        fuzzy: 0.2,
-        prefix: true,
-      },
-    })
-
-    this.index.addAll(this.corpus)
+    return UnifiedSearchService.getInstance().corpusDate
   }
 
   search(query: string, limit?: number, pageContext?: PageContext): RAGChunk[] {
@@ -701,13 +643,22 @@ class RetrievalService {
       }
     }
 
+    // Cap per-source contribution in Phase 1 so a single source (e.g. multiple
+    // governance-maturity rows that share a refId with a library entry) cannot
+    // monopolise the four entity slots at the expense of complementary sources.
+    const phase1SourceCounts = new Map<string, number>()
+    const PHASE1_MAX_PER_SOURCE = 2
     for (const gram of nGrams) {
-      if (selected.length >= 4) break // reserve slots for keyword search
+      if (selected.length >= 4) break
       const entityIds = this.entityIndex.get(gram)
       if (entityIds) {
         for (const id of entityIds) {
           if (selected.length >= 4) break
-          addChunk(id)
+          const chunk = this.corpusById.get(id)
+          if (!chunk) continue
+          const count = phase1SourceCounts.get(chunk.source) ?? 0
+          if (count >= PHASE1_MAX_PER_SOURCE) continue
+          if (addChunk(id)) phase1SourceCounts.set(chunk.source, count + 1)
         }
       }
     }
@@ -943,6 +894,43 @@ class RetrievalService {
           }
           addChunk(r.id)
           break
+        }
+      }
+    }
+
+    // Timeline guarantee for country_query: surface at least one timeline event
+    // in the top 5 so country-scoped queries land on the timeline page even when
+    // a referenced document (library / gov-maturity / doc-enrichment) wins the
+    // entityIndex race in Phase 1.
+    if (intent === 'country_query') {
+      const top5 = selected.slice(0, 5)
+      const hasTimelineTop5 = top5.some((c) => c.source === 'timeline')
+      if (!hasTimelineTop5) {
+        const timelineCandidate = boostedResults.find((r) => {
+          if (selectedIds.has(r.id)) {
+            const chunk = this.corpusById.get(r.id)
+            return chunk?.source === 'timeline'
+          }
+          const chunk = this.corpusById.get(r.id)
+          return chunk?.source === 'timeline'
+        })
+        if (timelineCandidate) {
+          const chunk = this.corpusById.get(timelineCandidate.id)
+          if (chunk) {
+            // Move into rank 5: drop existing rank-5 entry from selection, splice in
+            const existingIdx = selected.findIndex((c) => c.id === chunk.id)
+            if (existingIdx >= 5) {
+              selected.splice(existingIdx, 1)
+              selected.splice(4, 0, chunk)
+            } else if (existingIdx === -1) {
+              if (selected.length >= 5) {
+                const removed = selected.splice(4, 1)[0]
+                selectedIds.delete(removed.id)
+              }
+              selected.splice(4, 0, chunk)
+              selectedIds.add(chunk.id)
+            }
+          }
         }
       }
     }

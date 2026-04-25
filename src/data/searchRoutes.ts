@@ -92,6 +92,48 @@ export function chunkToRoute(chunk: SearchChunk): string {
     case 'priority-matrix':
       return '/'
 
+    case 'cswp39':
+      return '/compliance?tab=cswp39'
+
+    case 'document-enrichment': {
+      // Source-dependent fallback when chunk has no explicit deepLink. Generator now
+      // emits one for all collections (library/threats/timeline/catalog), so this is
+      // mostly a safety net.
+      const collection = (metadata?.collection as string | undefined) ?? ''
+      const refId = (metadata?.refId as string | undefined) ?? ''
+      if (collection === 'library' && refId) return `/library?ref=${encodeURIComponent(refId)}`
+      if (collection === 'threats' && refId) return `/threats?id=${encodeURIComponent(refId)}`
+      if (collection === 'timeline') return '/timeline'
+      if (collection === 'catalog' && refId) return `/migrate?q=${encodeURIComponent(refId)}`
+      return '/library'
+    }
+
+    case 'governance-maturity': {
+      const refId = (metadata?.refId as string | undefined) ?? ''
+      return refId
+        ? `/compliance?tab=cswp39&evref=${encodeURIComponent(refId)}`
+        : '/compliance?tab=cswp39'
+    }
+
+    case 'patents': {
+      const patent = (metadata?.patentNum as string | undefined) ?? ''
+      return patent ? `/patents?patent=${encodeURIComponent(patent)}` : '/patents'
+    }
+
+    case 'personas':
+      return '/learn'
+
+    case 'tracks':
+      return '/learn'
+
+    case 'trusted-sources':
+      return '/compliance'
+
+    case 'vendors': {
+      const vendor = (metadata?.vendorName as string | undefined) ?? chunk.title
+      return `/migrate?vendor=${encodeURIComponent(vendor)}`
+    }
+
     default:
       return '/'
   }
@@ -127,6 +169,14 @@ export const SOURCE_LABELS: Record<string, string> = {
   'right-panel': 'Assistant',
   'guided-tour': 'Tour',
   'priority-matrix': 'Matrix',
+  cswp39: 'CSWP.39',
+  'document-enrichment': 'Document Analysis',
+  'governance-maturity': 'Governance Maturity',
+  patents: 'Patents',
+  personas: 'Personas',
+  tracks: 'Learning Tracks',
+  'trusted-sources': 'Authoritative Sources',
+  vendors: 'Vendors',
 }
 
 /** Sources hidden from curious persona when advancedViewsUnlocked is false */

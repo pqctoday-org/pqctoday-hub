@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { SourcesButton } from '@/components/ui/SourcesButton'
 import { ShareButton } from '@/components/ui/ShareButton'
 import { GlossaryButton } from '@/components/ui/GlossaryButton'
+import { FAQButton } from '@/components/ui/FAQButton'
 import { UserManualButton } from '@/components/ui/UserManualButton'
 import { ExportButton } from '@/components/ui/ExportButton'
 import { EndorseButton } from '@/components/ui/EndorseButton'
@@ -134,6 +135,7 @@ export const PageHeader = ({
                 {viewType && <SourcesButton viewType={viewType} />}
                 {shareTitle && <ShareButton title={shareTitle} text={shareText} />}
                 <GlossaryButton />
+                <FAQButton />
                 {pageId && <UserManualButton pageId={pageId} />}
                 {onExport && <ExportButton onExport={onExport} />}
                 {showAssistant && (
