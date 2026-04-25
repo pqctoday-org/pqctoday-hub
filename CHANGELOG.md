@@ -6,6 +6,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.17] - April 25, 2026
+
+### Added
+
+- **Maturity governance corpus — Common Evaluation Methodology rows** — [pqc_maturity_governance_requirements_20260425.csv](src/data/pqc_maturity_governance_requirements_20260425.csv) gains 47 rows covering CC-2022-CEM (Common Evaluation Methodology 2022 R1) — governance, lifecycle, assurance, observability, and inventory requirements at maturity tiers 2–3. All extracted with `qwen3.5:27b`.
+
+### Changed
+
+- **Embed manifest + RAG corpus regenerated** — [public/data/rag-corpus.json](public/data/rag-corpus.json), [public/data/embed-docs.json](public/data/embed-docs.json), [public/embed/manifest.json](public/embed/manifest.json), and [public/embed/sdk.js](public/embed/sdk.js) refreshed to incorporate the new CC-2022-CEM evidence rows. RAG corpus output format changed from pretty-printed JSON to compact (single-line) — same data, smaller file footprint.
+
 ## [3.5.16] - April 25, 2026
 
 ### Changed
