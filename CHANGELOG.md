@@ -55,6 +55,12 @@ All notable changes to this project will be documented in this file.
   - New `page-guide-explore` (`/explore`) and `page-guide-report` (`/report`) chunks — both routes were uncovered by the corpus before this change.
 - **Workspace persistence — visited routes + advanced views unlock** — [src/store/useHistoryStore.ts](src/store/useHistoryStore.ts) gains a `visitedRoutes` array (persisted, version bump 2→3) and a `recordVisit(path)` action; [src/services/storage/snapshotTypes.ts](src/services/storage/snapshotTypes.ts) and [src/services/storage/UnifiedStorageService.ts](src/services/storage/UnifiedStorageService.ts) persist `advancedViewsUnlocked` in cloud snapshots; [src/components/Layout/MainLayout.tsx](src/components/Layout/MainLayout.tsx), [src/components/Landing/LandingView.tsx](src/components/Landing/LandingView.tsx), and [src/components/Landing/PersonalizationSection.tsx](src/components/Landing/PersonalizationSection.tsx) wire the new state into the UI.
 
+## [3.5.23] - April 25, 2026
+
+### Fixed
+
+- **C7 cert-xref cleanup** — refreshed `public/data/compliance-data.json` from live NIST CMVP/ACVP, CC, ANSSI, ENISA sources (2,384 records). Created `migrate_certification_xref_04252026.csv` (754 rows) dropping 28 stale `cert_id` entries that no longer exist in the scraped data (4 FIPS IDs + 24 CC slugs). Archived 4 older xref revisions to `src/data/archive/`. Data integrity validator C7 check now passes — 0 errors.
+
 ## [3.5.22] - April 25, 2026
 
 ### Changed
