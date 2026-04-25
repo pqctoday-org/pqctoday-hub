@@ -6,6 +6,20 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.20] - April 25, 2026
+
+### Fixed
+
+- **Data integrity — second wave** — resolved additional integrity gaps and archived stale CSV versions:
+  - **QA-F1 (combined file):** propagated `slh-dsa-learn-001` answer fix from the individual module file to `module_qa_combined_04252026.csv` (the file the validator actually reads).
+  - **QA-C1 (TCG ref):** replaced stale `TCG-TPM-PQC-Spec-2025` with canonical `TCG-TPM-V185-Part1` across 144 `library_refs` fields in the combined Q&A file.
+  - **QA-D1 (BSI ref):** corrected `BSI TR-02102` → `BSI TR-02102-1` in SLH-DSA and stateful-signatures Q&A files (question, answer, consistency_assertions, library_refs).
+  - **N7 (priority matrix):** expanded `pqc_software_category_priority_matrix.csv` from 53 to 241 rows — added 188 missing category stubs (CSC-062 through CSC-249) derived from the migrate catalog with heuristic priority assignments.
+  - **N11 (Function enum):** added `Composite Signature` and `Composite KEM` to the valid Function values in `cross-ref-checks.ts`; corrected `Hybrid KEM with Access Control` → `Hybrid KEM` in `algorithms_transitions_04252026.csv`.
+  - **N14 (catalog tags):** corrected `code-signing-pqc` → `code-signing` for 3 Ascertia/Codegic rows in the product catalog.
+  - **N15 (leaders resource URLs):** removed stale `ANSSI-PQC-Position-2022` from Vincent Strubel's `KeyResourceUrl` (renamed to `ANSSI PQC Position Paper` during dedup).
+- **CSV housekeeping:** archived 12 stale `pqc_product_catalog_04*2026*.csv` versions and 2 stale `library_04252026*.csv` intermediate revisions.
+
 ## [3.5.19] - April 25, 2026
 
 ### Fixed

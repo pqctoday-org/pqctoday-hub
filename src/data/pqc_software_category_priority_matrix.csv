@@ -1,54 +1,242 @@
-"category_id","category_name","pqc_priority","total_software_products","pqc_ready_products","readiness_percentage","related_threats","timeline_pressure","urgency_score","recommended_action_timeline","industries_affected"
-"CSC-025","Cryptographic Agility Frameworks","Critical","4","4","100.0","15","12","60.1","2026-Q3","All industries"
-"CSC-002","Hardware Security Module (HSM) Software","Critical","11","10","90.9","17","23","66.4","2026-Q3","Finance, Government, Healthcare, Defense"
-"CSC-004","Public Key Infrastructure (PKI) Software","Critical","6","4","66.7","14","16","65.0","2026-Q3","All industries"
-"CSC-003","Key Management Systems (KMS)","Critical","7","5","71.4","31","23","76.0","2026-Q2","All industries"
-"CSC-029","Payment Cryptography Systems","Critical","5","0","0.0","29","36","98.8","2025-Q4","Finance, Retail"
-"CSC-016","Post-Quantum Cryptography Libraries","Critical","8","8","100.0","7","20","60.1","2026-Q3","All industries"
-"CSC-001","Cryptographic Libraries","Critical","33","30","90.9","10","12","59.0","2026-Q3","All industries"
-"CSC-015","API Security and JWT Libraries","High","9","0","0.0","16","20","77.0","2026-Q2","All industries"
-"CSC-026","Secure Boot and Firmware Security","High","8","1","12.5","23","25","83.8","2026-Q1","All industries"
-"CSC-005","TLS/SSL Implementation Software","Critical","8","7","87.5","4","15","58.0","2026-Q3","All industries"
-"CSC-006","Disk and File Encryption Software","High","5","2","40.0","12","6","60.8","2026-Q3","All industries"
-"CSC-007","Database Encryption Software","High","11","6","54.5","12","5","59.3","2026-Q3","Finance, Healthcare, Retail, Government"
-"CSC-009","Digital Signature Software","High","6","1","16.7","22","5","68.6","2026-Q3","Finance, Legal, Government, Healthcare"
-"CSC-008","Email Encryption Software","High","5","3","60.0","12","5","58.9","2026-Q3","All industries"
-"CSC-017","Code Signing and Software Integrity","High","10","4","40.0","10","5","59.0","2026-Q3","All industries"
-"CSC-028","Cloud Encryption Gateways","High","7","6","85.7","15","4","58.1","2026-Q3","All industries"
-"CSC-018","Cryptographic Protocol Analyzers","Medium","8","6","75.0","14","13","62.7","2026-Q3","All industries"
-"CSC-010","VPN and IPsec Software","High","9","6","66.7","3","5","54.0","2026-Q3","All industries"
-"CSC-030","Quantum Key Distribution Software","Low","5","5","100.0","36","44","80.0","2026-Q1","Defense, Government, Finance"
-"CSC-011","Secure Messaging and Communication","High","7","3","42.9","11","2","57.7","2026-Q3","Defense, Government, Finance, Healthcare"
-"CSC-014","SSH Implementation Software","High","6","4","66.7","4","15","59.5","2026-Q3","All industries"
-"CSC-031","Operating Systems","High","18","17","94.4","18","22","65.8","2026-Q3","All industries"
-"CSC-032","Network Operating Systems","High","5","3","60.0","14","18","66.8","2026-Q3","Enterprise, Telecom, Government"
-"CSC-033","Network Security Software","High","12","5","41.7","16","16","69.0","2026-Q3","All industries"
-"CSC-034","Hardware Security and Semiconductors","High","8","2","25.0","12","14","67.1","2026-Q3","Government, Defense, Finance, IoT"
-"CSC-057","Digital Asset Custody","High","13","0","0.0","12","18","72.5","2026-Q2","Cryptocurrency, Finance, Enterprise"
-"CSC-058","Blockchain & DLT Protocols","Critical","17","7","41.2","14","22","71.4","2026-Q2","Cryptocurrency, DeFi, Web3, Finance, Enterprise"
-"CSC-036","Remote Access and VDI Software","High","6","1","16.7","6","12","62.4","2026-Q3","Enterprise, Finance, Government"
-"CSC-037","Web Browsers","Critical","4","4","100.0","6","16","58.2","2026-Q3","All industries"
-"CSC-049","Cryptographic Discovery Platforms","Critical","12","7","58.3","10","20","65.9","2026-Q3","All industries"
-"CSC-038","Application Servers","High","12","7","58.3","12","15","64.3","2026-Q3","All industries"
-"CSC-040","CI/CD & Artifact Management","High","7","3","42.9","14","12","65.3","2026-Q3","All industries"
-"CSC-041","Certificate Lifecycle Management","Critical","6","4","66.7","25","22","73.5","2026-Q2","All industries"
-"CSC-042","Identity & Access Management (IAM)","Critical","10","3","30.0","18","18","73.0","2026-Q2","All industries"
-"CSC-043","Data Security & Protection","High","3","1","33.3","20","16","72.5","2026-Q2","Finance, Healthcare, Government"
-"CSC-044","Customer Identity & Access Management (CIAM)","Medium","7","0","0.0","12","10","66.5","2026-Q3","Retail, Finance, Healthcare"
-"CSC-045","Cloud Key Management Service (KMS)","Critical","3","2","66.7","22","20","71.0","2026-Q2","All industries"
-"CSC-046","Cloud Hardware Security Module (HSM)","Critical","5","3","60.0","24","22","74.2","2026-Q2","Finance, Government, Healthcare, Defense"
-"CSC-047","Quantum Random Number Generator (QRNG)","High","4","4","100.0","10","12","58.2","2026-Q3","Finance, Government, Defense"
-"CSC-048","Network Encryptors","Critical","5","4","80.0","16","18","65.3","2026-Q3","Telecom, Government, Finance, Critical Infrastructure"
-"CSC-052","Confidential Computing","High","3","0","0.0","15","20","76.2","2026-Q2","Cloud, Finance, Healthcare, Government, Defense"
-"CSC-050","5G & Telecom Security","Critical","10","3","30.0","10","15","65.9","2026-Q3","Telecom, Government, Defense"
-"CSC-051","Digital Identity & Verifiable Credentials","High","10","2","20.0","10","15","66.9","2026-Q3","Government, Identity, Finance, Healthcare"
-"CSC-053","Secrets Management","High","5","2","40.0","10","15","65.0","2026-Q3","Enterprise"
-"CSC-054","Smart Cards & Secure Elements","High","5","2","40.0","10","15","65.0","2026-Q3","Government, Identity, Healthcare, Finance"
-"CSC-055","Container Orchestration & Service Mesh","Critical","4","0","0.0","10","15","68.8","2026-Q3","Technology, Finance, Cloud, Healthcare, Government"
-"CSC-056","Real-Time Operating Systems","Critical","3","0","0.0","10","15","68.8","2026-Q3","Aerospace, Defense, Industrial, Automotive, Medical"
-"CSC-059","Industrial Control System & OT Security","High","5","0","0.0","10","15","68.8","2026-Q3","Energy, Utilities, Manufacturing, Government, Critical Infrastructure"
-"CSC-060","AI/ML Security Platforms","Medium","5","0","0.0","10","15","68.8","2026-Q3","Technology, Finance, Healthcare, Government, Enterprise"
-"CSC-061","Network Testing & Validation Tools","High","9","8","88.9","10","15","60.4","2026-Q3","Enterprise, Government, Telecommunications, Defense, Financial Services"
-"CSC-013","PKI & Certificate Lifecycle","Critical","7","0","0.0","14","16","65.0","2026-Q3","All industries"
-"CSC-019","Operating Systems & Platforms","High","15","0","0.0","10","14","62.0","2026-Q4","All industries"
-"CSC-039","IoT Security","High","3","0","0.0","12","16","66.0","2026-Q4","Industrial, Healthcare, Automotive, Energy, Consumer Electronics"
+category_id,category_name,pqc_priority,total_software_products,pqc_ready_products,readiness_percentage,related_threats,timeline_pressure,urgency_score,recommended_action_timeline,industries_affected
+CSC-025,Cryptographic Agility Frameworks,Critical,4,4,100.0,15,12,60.1,2026-Q3,All industries
+CSC-002,Hardware Security Module (HSM) Software,Critical,11,10,90.9,17,23,66.4,2026-Q3,"Finance, Government, Healthcare, Defense"
+CSC-004,Public Key Infrastructure (PKI) Software,Critical,6,4,66.7,14,16,65.0,2026-Q3,All industries
+CSC-003,Key Management Systems (KMS),Critical,7,5,71.4,31,23,76.0,2026-Q2,All industries
+CSC-029,Payment Cryptography Systems,Critical,5,0,0.0,29,36,98.8,2025-Q4,"Finance, Retail"
+CSC-016,Post-Quantum Cryptography Libraries,Critical,8,8,100.0,7,20,60.1,2026-Q3,All industries
+CSC-001,Cryptographic Libraries,Critical,33,30,90.9,10,12,59.0,2026-Q3,All industries
+CSC-015,API Security and JWT Libraries,High,9,0,0.0,16,20,77.0,2026-Q2,All industries
+CSC-026,Secure Boot and Firmware Security,High,8,1,12.5,23,25,83.8,2026-Q1,All industries
+CSC-005,TLS/SSL Implementation Software,Critical,8,7,87.5,4,15,58.0,2026-Q3,All industries
+CSC-006,Disk and File Encryption Software,High,5,2,40.0,12,6,60.8,2026-Q3,All industries
+CSC-007,Database Encryption Software,High,11,6,54.5,12,5,59.3,2026-Q3,"Finance, Healthcare, Retail, Government"
+CSC-009,Digital Signature Software,High,6,1,16.7,22,5,68.6,2026-Q3,"Finance, Legal, Government, Healthcare"
+CSC-008,Email Encryption Software,High,5,3,60.0,12,5,58.9,2026-Q3,All industries
+CSC-017,Code Signing and Software Integrity,High,10,4,40.0,10,5,59.0,2026-Q3,All industries
+CSC-028,Cloud Encryption Gateways,High,7,6,85.7,15,4,58.1,2026-Q3,All industries
+CSC-018,Cryptographic Protocol Analyzers,Medium,8,6,75.0,14,13,62.7,2026-Q3,All industries
+CSC-010,VPN and IPsec Software,High,9,6,66.7,3,5,54.0,2026-Q3,All industries
+CSC-030,Quantum Key Distribution Software,Low,5,5,100.0,36,44,80.0,2026-Q1,"Defense, Government, Finance"
+CSC-011,Secure Messaging and Communication,High,7,3,42.9,11,2,57.7,2026-Q3,"Defense, Government, Finance, Healthcare"
+CSC-014,SSH Implementation Software,High,6,4,66.7,4,15,59.5,2026-Q3,All industries
+CSC-031,Operating Systems,High,18,17,94.4,18,22,65.8,2026-Q3,All industries
+CSC-032,Network Operating Systems,High,5,3,60.0,14,18,66.8,2026-Q3,"Enterprise, Telecom, Government"
+CSC-033,Network Security Software,High,12,5,41.7,16,16,69.0,2026-Q3,All industries
+CSC-034,Hardware Security and Semiconductors,High,8,2,25.0,12,14,67.1,2026-Q3,"Government, Defense, Finance, IoT"
+CSC-057,Digital Asset Custody,High,13,0,0.0,12,18,72.5,2026-Q2,"Cryptocurrency, Finance, Enterprise"
+CSC-058,Blockchain & DLT Protocols,Critical,17,7,41.2,14,22,71.4,2026-Q2,"Cryptocurrency, DeFi, Web3, Finance, Enterprise"
+CSC-036,Remote Access and VDI Software,High,6,1,16.7,6,12,62.4,2026-Q3,"Enterprise, Finance, Government"
+CSC-037,Web Browsers,Critical,4,4,100.0,6,16,58.2,2026-Q3,All industries
+CSC-049,Cryptographic Discovery Platforms,Critical,12,7,58.3,10,20,65.9,2026-Q3,All industries
+CSC-038,Application Servers,High,12,7,58.3,12,15,64.3,2026-Q3,All industries
+CSC-040,CI/CD & Artifact Management,High,7,3,42.9,14,12,65.3,2026-Q3,All industries
+CSC-041,Certificate Lifecycle Management,Critical,6,4,66.7,25,22,73.5,2026-Q2,All industries
+CSC-042,Identity & Access Management (IAM),Critical,10,3,30.0,18,18,73.0,2026-Q2,All industries
+CSC-043,Data Security & Protection,High,3,1,33.3,20,16,72.5,2026-Q2,"Finance, Healthcare, Government"
+CSC-044,Customer Identity & Access Management (CIAM),Medium,7,0,0.0,12,10,66.5,2026-Q3,"Retail, Finance, Healthcare"
+CSC-045,Cloud Key Management Service (KMS),Critical,3,2,66.7,22,20,71.0,2026-Q2,All industries
+CSC-046,Cloud Hardware Security Module (HSM),Critical,5,3,60.0,24,22,74.2,2026-Q2,"Finance, Government, Healthcare, Defense"
+CSC-047,Quantum Random Number Generator (QRNG),High,4,4,100.0,10,12,58.2,2026-Q3,"Finance, Government, Defense"
+CSC-048,Network Encryptors,Critical,5,4,80.0,16,18,65.3,2026-Q3,"Telecom, Government, Finance, Critical Infrastructure"
+CSC-052,Confidential Computing,High,3,0,0.0,15,20,76.2,2026-Q2,"Cloud, Finance, Healthcare, Government, Defense"
+CSC-050,5G & Telecom Security,Critical,10,3,30.0,10,15,65.9,2026-Q3,"Telecom, Government, Defense"
+CSC-051,Digital Identity & Verifiable Credentials,High,10,2,20.0,10,15,66.9,2026-Q3,"Government, Identity, Finance, Healthcare"
+CSC-053,Secrets Management,High,5,2,40.0,10,15,65.0,2026-Q3,Enterprise
+CSC-054,Smart Cards & Secure Elements,High,5,2,40.0,10,15,65.0,2026-Q3,"Government, Identity, Healthcare, Finance"
+CSC-055,Container Orchestration & Service Mesh,Critical,4,0,0.0,10,15,68.8,2026-Q3,"Technology, Finance, Cloud, Healthcare, Government"
+CSC-056,Real-Time Operating Systems,Critical,3,0,0.0,10,15,68.8,2026-Q3,"Aerospace, Defense, Industrial, Automotive, Medical"
+CSC-059,Industrial Control System & OT Security,High,5,0,0.0,10,15,68.8,2026-Q3,"Energy, Utilities, Manufacturing, Government, Critical Infrastructure"
+CSC-060,AI/ML Security Platforms,Medium,5,0,0.0,10,15,68.8,2026-Q3,"Technology, Finance, Healthcare, Government, Enterprise"
+CSC-061,Network Testing & Validation Tools,High,9,8,88.9,10,15,60.4,2026-Q3,"Enterprise, Government, Telecommunications, Defense, Financial Services"
+CSC-013,PKI & Certificate Lifecycle,Critical,7,0,0.0,14,16,65.0,2026-Q3,All industries
+CSC-019,Operating Systems & Platforms,High,15,0,0.0,10,14,62.0,2026-Q4,All industries
+CSC-039,IoT Security,High,3,0,0.0,12,16,66.0,2026-Q4,"Industrial, Healthcare, Automotive, Energy, Consumer Electronics"
+CSC-062,VPN and IPsec Software,Critical,1,0,0.0,,,,,
+CSC-063,Cloud Hardware Security Module (HSM),Critical,1,0,0.0,,,,,
+CSC-064,Application Servers,High,1,0,0.0,,,,,
+CSC-065,Network Security Software,High,1,0,0.0,,,,,
+CSC-066,Network Encryptors,High,1,0,0.0,,,,,
+CSC-067,Secure Messaging and Communication,High,1,0,0.0,,,,,
+CSC-068,Secure Messaging and Communication,High,1,0,0.0,,,,,
+CSC-069,Secure Messaging and Communication,High,1,0,0.0,,,,,
+CSC-070,SSH Implementation Software,Critical,1,0,0.0,,,,,
+CSC-071,SSH Implementation Software,Critical,1,0,0.0,,,,,
+CSC-072,Network Security Software,High,1,0,0.0,,,,,
+CSC-073,API Security and JWT Libraries,High,1,0,0.0,,,,,
+CSC-074,Public Key Infrastructure (PKI) Software,Critical,1,0,0.0,,,,,
+CSC-075,Quantum Key Distribution Software,High,1,0,0.0,,,,,
+CSC-076,Hardware Security and Semiconductors,High,1,0,0.0,,,,,
+CSC-077,Hardware Security and Semiconductors,High,1,0,0.0,,,,,
+CSC-078,Secrets Management,High,1,0,0.0,,,,,
+CSC-079,Hardware Security Module (HSM) Software,Critical,1,0,0.0,,,,,
+CSC-080,Hardware Security and Semiconductors,High,1,0,0.0,,,,,
+CSC-081,Secure Boot and Firmware Security,High,1,0,0.0,,,,,
+CSC-082,Network Security Appliances,High,1,0,0.0,,,,,
+CSC-083,Certificate Lifecycle Management,High,1,0,0.0,,,,,
+CSC-084,Cryptographic Discovery Platforms,Critical,1,0,0.0,,,,,
+CSC-085,Key Management Systems (KMS),Critical,1,0,0.0,,,,,
+CSC-086,Operating Systems,High,1,0,0.0,,,,,
+CSC-087,Web & Application Security,High,1,0,0.0,,,,,
+CSC-088,Cryptographic Libraries,Critical,1,0,0.0,,,,,
+CSC-089,5G & Telecom Security,High,1,0,0.0,,,,,
+CSC-090,Network Security Software,High,1,0,0.0,,,,,
+CSC-091,Cryptographic Agility Frameworks,Critical,1,0,0.0,,,,,
+CSC-092,Network Security Software,High,1,0,0.0,,,,,
+CSC-093,Network Encryptors,High,1,0,0.0,,,,,
+CSC-094,Payment Cryptography Systems,Critical,1,0,0.0,,,,,
+CSC-095,Network Security Software,High,1,0,0.0,,,,,
+CSC-096,Payment Cryptography Systems,Critical,1,0,0.0,,,,,
+CSC-097,IoT Security,High,1,0,0.0,,,,,
+CSC-098,Network Security Software,High,1,0,0.0,,,,,
+CSC-099,Hardware Security and Semiconductors,High,1,0,0.0,,,,,
+CSC-100,Network Security Appliances,High,1,0,0.0,,,,,
+CSC-101,Container Orchestration & Service Mesh,High,1,0,0.0,,,,,
+CSC-102,Container Orchestration & Service Mesh,High,1,0,0.0,,,,,
+CSC-103,Cloud Encryption Gateways,High,1,0,0.0,,,,,
+CSC-104,Secure Messaging and Communication,High,1,0,0.0,,,,,
+CSC-105,Secure Messaging and Communication,High,1,0,0.0,,,,,
+CSC-106,Secure Messaging and Communication,High,1,0,0.0,,,,,
+CSC-107,Email Encryption Software,High,1,0,0.0,,,,,
+CSC-108,Cryptographic Agility Frameworks,Critical,1,1,100.0,,,,,
+CSC-109,Cryptographic Discovery Platforms,Critical,1,1,100.0,,,,,
+CSC-110,Cryptographic Libraries,Critical,1,0,0.0,,,,,
+CSC-111,Post-Quantum Cryptography Libraries,Critical,1,0,0.0,,,,,
+CSC-112,Secrets & Data Governance,High,1,0,0.0,,,,,
+CSC-113,Web Browsers,High,1,0,0.0,,,,,
+CSC-114,Cloud Encryption Gateways,High,1,0,0.0,,,,,
+CSC-115,Blockchain & DLT,High,1,0,0.0,,,,,
+CSC-116,Blockchain & DLT,High,1,0,0.0,,,,,
+CSC-117,SASE & Zero Trust,High,1,0,0.0,,,,,
+CSC-118,SASE & Zero Trust,High,1,0,0.0,,,,,
+CSC-119,VPN & Secure Tunnels,Critical,1,0,0.0,,,,,
+CSC-120,Web Servers & Reverse Proxies,High,1,0,0.0,,,,,
+CSC-121,Hardware Security and Semiconductors,High,1,0,0.0,,,,,
+CSC-122,Blockchain & DLT,High,1,0,0.0,,,,,
+CSC-123,VPN & Secure Tunnels,Critical,1,0,0.0,,,,,
+CSC-124,IoT Security,High,1,0,0.0,,,,,
+CSC-125,Enterprise Server Platforms,High,1,0,0.0,,,,,
+CSC-126,Storage & Backup,High,1,0,0.0,,,,,
+CSC-127,Storage & Backup,High,1,0,0.0,,,,,
+CSC-128,Enterprise Server Platforms,High,1,0,0.0,,,,,
+CSC-129,Satellite & Space Security,High,1,0,0.0,,,,,
+CSC-130,Network Security Software,High,1,0,0.0,,,,,
+CSC-131,VPN & Secure Tunnels,Critical,1,0,0.0,,,,,
+CSC-132,Operating Systems & Distributions,High,1,0,0.0,,,,,
+CSC-133,Blockchain & DLT,High,1,0,0.0,,,,,
+CSC-134,Blockchain & DLT,High,1,0,0.0,,,,,
+CSC-135,Hardware Security and Semiconductors,High,1,0,0.0,,,,,
+CSC-136,Hardware Security and Semiconductors,High,1,0,0.0,,,,,
+CSC-137,Cryptographic Agility Frameworks,Critical,1,0,0.0,,,,,
+CSC-138,Smart Card & PKI,Critical,1,0,0.0,,,,,
+CSC-139,Secrets & Data Governance,High,1,0,0.0,,,,,
+CSC-140,Network Encryptors,High,1,0,0.0,,,,,
+CSC-141,IoT Security,High,1,0,0.0,,,,,
+CSC-142,Cryptographic Libraries,Critical,1,0,0.0,,,,,
+CSC-143,Developer Platforms,High,1,0,0.0,,,,,
+CSC-144,CDN & Edge Security,High,1,0,0.0,,,,,
+CSC-145,CDN & Edge Security,High,1,0,0.0,,,,,
+CSC-146,DNS Security,High,1,0,0.0,,,,,
+CSC-147,Email Encryption Software,High,1,0,0.0,,,,,
+CSC-148,Secure Messaging and Communication,High,1,0,0.0,,,,,
+CSC-149,Email Encryption Software,High,1,0,0.0,,,,,
+CSC-150,Secrets & Data Governance,High,1,0,0.0,,,,,
+CSC-151,Digital Signatures,High,1,0,0.0,,,,,
+CSC-152,Cloud Encryption Gateways,High,1,0,0.0,,,,,
+CSC-153,Hardware Security and Semiconductors,High,1,0,0.0,,,,,
+CSC-154,Hardware Security and Semiconductors,High,1,0,0.0,,,,,
+CSC-155,Hardware Security and Semiconductors,High,1,0,0.0,,,,,
+CSC-156,Hardware Security and Semiconductors,High,1,0,0.0,,,,,
+CSC-157,Cryptographic Libraries,Critical,1,0,0.0,,,,,
+CSC-158,Cryptographic Libraries,Critical,1,0,0.0,,,,,
+CSC-159,Hardware Security and Semiconductors,High,1,0,0.0,,,,,
+CSC-160,Email Encryption Software,High,1,0,0.0,,,,,
+CSC-161,Operating Systems & Distributions,High,1,0,0.0,,,,,
+CSC-162,Secure File Transfer,High,1,0,0.0,,,,,
+CSC-163,Cryptographic Libraries,Critical,1,0,0.0,,,,,
+CSC-164,Message Brokers,High,1,0,0.0,,,,,
+CSC-165,Cloud Security,High,1,0,0.0,,,,,
+CSC-166,Storage & Backup,High,1,0,0.0,,,,,
+CSC-167,Network Security Appliances,High,1,0,0.0,,,,,
+CSC-168,Network Encryptors,High,1,0,0.0,,,,,
+CSC-169,Cryptographic Discovery Platforms,Critical,1,0,0.0,,,,,
+CSC-170,Network Encryptors,High,1,0,0.0,,,,,
+CSC-171,Network Security Software,High,1,0,0.0,,,,,
+CSC-172,Network Encryptors,High,1,0,0.0,,,,,
+CSC-173,Hardware Security Module (HSM) Software,Critical,1,0,0.0,,,,,
+CSC-174,Network Security Software,High,1,0,0.0,,,,,
+CSC-175,Network Encryptors,High,1,0,0.0,,,,,
+CSC-176,VPN & Secure Tunnels,Critical,1,0,0.0,,,,,
+CSC-177,Network Security Software,High,1,0,0.0,,,,,
+CSC-178,Smart Card & PKI,Critical,1,0,0.0,,,,,
+CSC-179,Enterprise Printing,High,1,0,0.0,,,,,
+CSC-180,DNS Security,High,1,0,0.0,,,,,
+CSC-181,Web Servers & Reverse Proxies,High,1,0,0.0,,,,,
+CSC-182,Operating Systems & Distributions,High,1,0,0.0,,,,,
+CSC-183,Post-Quantum Cryptography Libraries,Critical,1,0,0.0,,,,,
+CSC-184,Post-Quantum Cryptography Libraries,Critical,1,0,0.0,,,,,
+CSC-185,Container Orchestration & Service Mesh,High,1,0,0.0,,,,,
+CSC-186,Cryptographic Agility Frameworks,Critical,1,1,100.0,,,,,
+CSC-187,Cryptographic Agility Frameworks,Critical,1,1,100.0,,,,,
+CSC-188,Cryptographic Agility Frameworks,Critical,1,1,100.0,,,,,
+CSC-189,Cryptographic Agility Frameworks,Critical,1,1,100.0,,,,,
+CSC-190,Cryptographic Agility Frameworks,Critical,1,1,100.0,,,,,
+CSC-191,Cryptographic Agility Frameworks,Critical,1,1,100.0,,,,,
+CSC-192,PQC Crypto Provider,High,1,1,100.0,,,,,
+CSC-193,Quantum Key Distribution,High,1,1,100.0,,,,,
+CSC-194,Quantum Key Management,Critical,1,1,100.0,,,,,
+CSC-195,Quantum Encryption,High,1,1,100.0,,,,,
+CSC-196,Automotive Security Controller,High,1,1,100.0,,,,,
+CSC-197,Automotive Microcontroller,High,1,1,100.0,,,,,
+CSC-198,Automotive Microcontroller,High,1,1,100.0,,,,,
+CSC-199,Automotive HSM,Critical,1,1,100.0,,,,,
+CSC-200,PQC Hardware IP,High,1,1,100.0,,,,,
+CSC-201,Railway Security,High,1,1,100.0,,,,,
+CSC-202,Quantum Encryption Platform,High,1,1,100.0,,,,,
+CSC-203,CBDC/Payment Standard,High,1,1,100.0,,,,,
+CSC-204,Payment HSM,Critical,1,1,100.0,,,,,
+CSC-205,Enterprise Secure Messaging,High,1,1,100.0,,,,,
+CSC-206,Secure Communications,High,1,1,100.0,,,,,
+CSC-207,PQC Messaging SDK,High,1,1,100.0,,,,,
+CSC-208,Secure File Transfer,High,1,0,0.0,,,,,
+CSC-209,Encrypted Collaboration,High,1,0,0.0,,,,,
+CSC-210,PQC Research Library,High,1,1,100.0,,,,,
+CSC-211,Quantum-Safe Blockchain,High,1,1,100.0,,,,,
+CSC-212,PQC Hardware Accelerator,High,1,1,100.0,,,,,
+CSC-213,Quantum Research Program,High,1,1,100.0,,,,,
+CSC-214,Continental PQC Framework,High,1,1,100.0,,,,,
+CSC-215,Telecom PQC Standard,High,1,1,100.0,,,,,
+CSC-216,PQC Messaging,High,1,1,100.0,,,,,
+CSC-217,PQC HSM,Critical,1,1,100.0,,,,,
+CSC-218,Bank PQC Migration,High,1,1,100.0,,,,,
+CSC-219,Payment PQC Research,High,1,1,100.0,,,,,
+CSC-220,Quantum-Safe Healthcare,High,1,1,100.0,,,,,
+CSC-221,National PQC Strategy,High,1,1,100.0,,,,,
+CSC-222,Telecom PQC Program,High,1,1,100.0,,,,,
+CSC-223,Telecom PQC Program,High,1,1,100.0,,,,,
+CSC-224,Telecom QSN,High,1,1,100.0,,,,,
+CSC-225,Defense PQC R&D,High,1,1,100.0,,,,,
+CSC-226,Telecom PQC,High,1,1,100.0,,,,,
+CSC-227,Quantum Research Center,High,1,1,100.0,,,,,
+CSC-228,PQC Education/Research,High,1,1,100.0,,,,,
+CSC-229,PQC Hardware,High,1,1,100.0,,,,,
+CSC-230,Telecom QSN,High,1,1,100.0,,,,,
+CSC-231,National PQC Standard,High,1,1,100.0,,,,,
+CSC-232,PQC Smart Card,High,1,1,100.0,,,,,
+CSC-233,Enterprise PQC,High,1,1,100.0,,,,,
+CSC-234,National PQC R&D,High,1,1,100.0,,,,,
+CSC-235,PQC Migration Platform,High,1,1,100.0,,,,,
+CSC-236,PQC TPM Chip,Critical,1,1,100.0,,,,,
+CSC-237,National PQC Program,High,1,1,100.0,,,,,
+CSC-238,National PQC Roadmap,High,1,1,100.0,,,,,
+CSC-239,National PQC Program,High,1,1,100.0,,,,,
+CSC-240,National PQC Migration,High,1,1,100.0,,,,,
+CSC-241,National QCI,High,1,1,100.0,,,,,
+CSC-242,National QCI,High,1,1,100.0,,,,,
+CSC-243,National PQC Strategy,High,1,1,100.0,,,,,
+CSC-244,Quantum-Safe Testbed,High,1,1,100.0,,,,,
+CSC-245,National PQC Mandate,High,1,1,100.0,,,,,
+CSC-246,National PQC Guidance,High,1,1,100.0,,,,,
+CSC-247,PQC TLS Gateway,Critical,1,1,100.0,,,,,
+CSC-248,PQC Digital Signature,High,1,1,100.0,,,,,
+CSC-249,Regional PQC Strategy,High,1,1,100.0,,,,,
