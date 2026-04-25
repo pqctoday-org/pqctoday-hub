@@ -6,6 +6,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.14] - April 25, 2026
+
+### Changed
+
+- **Library CSV deduplicated** [view:/library] — [library_04252026_r2.csv](src/data/library_04252026_r2.csv) is the new canonical library, 543 → 531 rows (Δ 12). Three hard `referenceId` collisions collapsed to single rows (`G7-CEG-Financial-PQC-2026`, `Malaysia-NACSA-PQC-2025`, `AU-ASD-ISM-Crypto-2024`); nine un-cited soft duplicates dropped (BSI TR-02102 → TR-02102-1; Avis ANSSI → ANSSI PQC Position Paper; IETF RFC 9162 → RFC-9162; IETF RFC 4253 → RFC 4253; India-TEC-910018-2025 → IN-TEC-PQC-Migration-Report-2025; draft-ietf-plants-merkle-tree-certs → IETF-MTC-Draft-09; ETSI-GS-QKD-016-V2 → ETSI-GS-QKD-016; draft-ietf-pquip-hybrid-signature-spectrums → -spectrums-07; IETF RFC 8555 → IETF-RFC-8555). Each canonical row absorbed missing fields from its dropped twin; multi-value columns (`dependencies`, `module_ids`, `applicable_industries`, `region_scope`) unioned by semicolon. Dedup logic in [scripts/dedupe-library-04252026.cjs](scripts/dedupe-library-04252026.cjs) using PapaParse `unparse()` per the project CSV write convention. Verified zero remaining hard duplicates and zero title duplicates; 0 build errors. Five medium-difficulty soft-dups requiring coordinated cross-CSV citation updates (ANSSI-PQC-Position-2022, India-DST-NQM-Roadmap, NIST SP 800-90 family, NIST SP 800-53 vs FISMA-NIST-SP-800-53r5, NIST-FIPS140-3-IG-PQC vs -Sep-2025-PQC) deferred to a follow-up cleanup.
+
+- **Library archive — older revisions** — `library_04232026_r4.csv` moved to `src/data/archive/` (kept the recent date-stamped versions in place; the loader auto-discovers latest via `import.meta.glob`).
+
 ## [3.5.13] - April 25, 2026
 
 ### Added
