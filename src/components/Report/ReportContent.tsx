@@ -40,6 +40,7 @@ import { complianceFrameworks } from '../../data/complianceData'
 import { softwareData } from '../../data/migrateData'
 import { ReportTimelineStrip } from './ReportTimelineStrip'
 import { ReportThreatsAppendix, ASSESS_TO_THREATS_INDUSTRY } from './ReportThreatsAppendix'
+import { ReportCswp39Nav } from './ReportCswp39Nav'
 import { threatsData } from '../../data/threatsData'
 import { MigrationRoadmap } from './MigrationRoadmap'
 import { MigrationToolkit } from './MigrationToolkit'
@@ -709,6 +710,10 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                       {result.categoryScores ? 'Comprehensive Assessment' : 'Quick Assessment'}
                     </span>
                   </div>
+
+                  {/* CSWP.39 navigation legend — re-groups report sections under the 5-step
+                      narrative shared with /business and /assess. Hidden in print. */}
+                  <ReportCswp39Nav />
 
                   {/* Summary / full report toggle (shown when persona hides sections) */}
                   {hasSummaryMode && !showFullReport && (

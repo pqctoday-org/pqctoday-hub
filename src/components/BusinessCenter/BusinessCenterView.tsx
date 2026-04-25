@@ -7,6 +7,9 @@ import {
   BookOpen,
   Download,
   Filter,
+  ShieldAlert,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import JSZip from 'jszip'
@@ -16,14 +19,12 @@ import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { getBusinessCenterPillarOrder, type BCPillarId } from '@/data/personaConfig'
+import { getBusinessCenterStepEmphasis } from '@/data/personaConfig'
 import { useSeedFrameworksFromCountry } from '@/hooks/assessment/useSeedFrameworksFromCountry'
+import { CSWP39_STEPS } from '@/components/Compliance/cswp39Data'
 import { useBusinessMetrics } from './hooks/useBusinessMetrics'
 import { TYPE_LABELS } from './ArtifactCard'
-import { RiskManagementSection } from './sections/RiskManagementSection'
-import { ComplianceRegulatorySection } from './sections/ComplianceRegulatorySection'
-import { GovernancePolicySection } from './sections/GovernancePolicySection'
-import { VendorSupplyChainSection } from './sections/VendorSupplyChainSection'
+import { CSWP39StepSection } from './sections/CSWP39StepSection'
 import { ActionItemsSection } from './sections/ActionItemsSection'
 import { CyberInsuranceLensSection } from './sections/CyberInsuranceLensSection'
 import { CompactLearningBar } from './CompactLearningBar'
@@ -99,17 +100,23 @@ const TYPE_FILTER_ITEMS = [
 
 export function BusinessCenterView() {
   useSeedFrameworksFromCountry()
+  const navigate = useNavigate()
   const metrics = useBusinessMetrics()
   const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
   const updateExecutiveDocument = useModuleStore((s) => s.updateExecutiveDocument)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  const pillarOrder: readonly BCPillarId[] = useMemo(
-    () => getBusinessCenterPillarOrder(selectedPersona),
+  const stepEmphasis = useMemo(
+    () => getBusinessCenterStepEmphasis(selectedPersona),
     [selectedPersona]
   )
 
   // Filter state
   const [typeFilter, setTypeFilter] = useState('all')
+
+  // Cyber Insurance side panel toggle (default per persona).
+  const [insuranceOpen, setInsuranceOpen] = useState<boolean>(
+    stepEmphasis.insurancePanelDefaultOpen ?? false
+  )
 
   // Drawer state. Create mode uses `drawerCreateType` with a null document; view/edit
   // use `drawerDoc` with createType cleared. The drawer itself handles the transition
@@ -173,6 +180,17 @@ export function BusinessCenterView() {
     [updateExecutiveDocument]
   )
 
+  const handleNavigateToFramework = useCallback(
+    (
+      targetTab: 'standards' | 'technical' | 'certification' | 'compliance',
+      searchQuery: string
+    ) => {
+      const params = new URLSearchParams({ tab: targetTab, q: searchQuery })
+      navigate(`/compliance?${params.toString()}`)
+    },
+    [navigate]
+  )
+
   const handleExportZip = useCallback(async () => {
     if (filteredArtifacts.length === 0) return
     const zip = new JSZip()
@@ -189,13 +207,13 @@ export function BusinessCenterView() {
     URL.revokeObjectURL(url)
   }, [filteredArtifacts])
 
-  const artifactCallbacks = {
+  const stepCallbacks = {
     onViewArtifact: handleViewArtifact,
     onEditArtifact: handleEditArtifact,
     onDeleteArtifact: handleDeleteArtifact,
     onRenameArtifact: handleRenameArtifact,
     onCreateArtifact: handleCreateArtifact,
-    typeFilter: typeFilter as ExecutiveDocumentType | 'all',
+    onNavigateToFramework: handleNavigateToFramework,
   }
 
   return (
@@ -205,7 +223,7 @@ export function BusinessCenterView() {
         icon={LayoutDashboard}
         pageId="business-center"
         title="Command Center"
-        description="Your PQC readiness command center — risk, compliance, governance, and next steps."
+        description="Your PQC readiness command center, organised around the NIST CSWP.39 5-step migration process."
         shareTitle="PQC Command Center — Quantum Readiness Workspace"
         shareText="Your PQC readiness command center — risk, compliance, governance, and actionable next steps."
       />
@@ -248,40 +266,50 @@ export function BusinessCenterView() {
         <WelcomeState />
       ) : (
         <div className="space-y-6">
-          {pillarOrder.map((pillar) => {
-            switch (pillar) {
-              case 'risk':
-                return <RiskManagementSection key="risk" metrics={metrics} {...artifactCallbacks} />
-              case 'compliance':
-                return (
-                  <ComplianceRegulatorySection
-                    key="compliance"
-                    metrics={metrics}
-                    {...artifactCallbacks}
-                  />
-                )
-              case 'governance':
-                return (
-                  <GovernancePolicySection
-                    key="governance"
-                    metrics={metrics}
-                    {...artifactCallbacks}
-                  />
-                )
-              case 'vendor':
-                return (
-                  <VendorSupplyChainSection key="vendor" metrics={metrics} {...artifactCallbacks} />
-                )
-              case 'learning':
-                return <CompactLearningBar key="learning" modules={metrics.execModuleProgress} />
-              case 'actions':
-                return <ActionItemsSection key="actions" metrics={metrics} />
-              case 'insurance':
-                return <CyberInsuranceLensSection key="insurance" />
-              default:
-                return null
-            }
-          })}
+          {/* Top cross-cut: Action Items strip */}
+          <ActionItemsSection metrics={metrics} />
+
+          {/* 5-step CSWP.39 stack — fixed sequence */}
+          <div className="space-y-3">
+            {CSWP39_STEPS.map((step) => (
+              <CSWP39StepSection
+                key={step.id}
+                step={step}
+                metrics={metrics}
+                defaultOpen={step.id === stepEmphasis.defaultExpandedStep}
+                featuredArtifacts={stepEmphasis.featuredArtifacts[step.id]}
+                {...stepCallbacks}
+              />
+            ))}
+          </div>
+
+          {/* Cyber Insurance side panel — togglable, persona-default open */}
+          <div className="glass-panel p-0 overflow-hidden">
+            <Button
+              variant="ghost"
+              className="w-full justify-between px-4 py-3 rounded-none"
+              onClick={() => setInsuranceOpen((v) => !v)}
+              aria-expanded={insuranceOpen}
+            >
+              <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                <ShieldAlert size={16} className="text-primary" />
+                Cyber Insurance Lens
+              </span>
+              {insuranceOpen ? (
+                <ChevronUp size={16} className="text-muted-foreground" />
+              ) : (
+                <ChevronDown size={16} className="text-muted-foreground" />
+              )}
+            </Button>
+            {insuranceOpen && (
+              <div className="border-t border-border">
+                <CyberInsuranceLensSection />
+              </div>
+            )}
+          </div>
+
+          {/* Bottom cross-cut: learning bar */}
+          <CompactLearningBar modules={metrics.execModuleProgress} />
         </div>
       )}
 

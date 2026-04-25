@@ -1,13 +1,73 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useMemo, useCallback } from 'react'
+import React, { useMemo, useCallback, useState } from 'react'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { softwareData } from '@/data/migrateData'
 import { LAYERS } from '@/components/Migrate/InfrastructureStack'
 import type { SoftwareItem } from '@/types/MigrateTypes'
-import { Info, CheckSquare, Package, CheckCircle, ShieldAlert, GitMerge } from 'lucide-react'
+import {
+  Info,
+  CheckSquare,
+  Package,
+  CheckCircle,
+  ShieldAlert,
+  GitMerge,
+  Download,
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { ExportableArtifact } from '../../../common/executive'
+
+// CSWP.39 6 asset classes
+type CSWP39AssetClass = 'Code' | 'Library' | 'Application' | 'File' | 'Protocol' | 'System'
+
+function mapToAssetClass(item: SoftwareItem): CSWP39AssetClass {
+  const cat = (item.categoryName || '').toLowerCase()
+  if (
+    cat.includes('cryptographic library') ||
+    cat.includes('cryptographic sdk') ||
+    cat.includes('jwt librar') ||
+    cat.includes('cryptographic software/librar')
+  )
+    return 'Library'
+  if (
+    cat.includes('code signing') ||
+    cat.includes('ci/cd') ||
+    cat.includes('software integrity') ||
+    cat.includes('artifact management')
+  )
+    return 'Code'
+  if (
+    cat.includes('database encryption') ||
+    cat.includes('data storage') ||
+    cat.includes('data security')
+  )
+    return 'File'
+  if (
+    cat.includes('gateway') ||
+    cat.includes('tls') ||
+    cat.includes('dns') ||
+    cat.includes('cdn') ||
+    cat.includes('edge security') ||
+    cat.includes('telecom') ||
+    cat.includes('5g') ||
+    cat.includes('service mesh') ||
+    cat.includes('vpn') ||
+    cat.includes('networking')
+  )
+    return 'Protocol'
+  if (
+    cat.includes('application server') ||
+    cat.includes('web software') ||
+    cat.includes('collaboration') ||
+    cat.includes('developer platform') ||
+    cat.includes('digital signature software') ||
+    cat.includes('ai/ml')
+  )
+    return 'Application'
+  return 'System'
+}
 
 function resolveProductNames(keys: string[]): SoftwareItem[] {
   const keySet = new Set(keys)
@@ -135,6 +195,28 @@ export const SupplyChainRiskMatrix: React.FC = () => {
     [myProducts]
   )
 
+  // CSWP.39 §5.2 educational extensions: CBOM by asset class + pipeline metadata.
+  const [pipelineSources, setPipelineSources] = useState('')
+  const [refreshCadence, setRefreshCadence] = useState('Quarterly')
+  const [cmdbMapping, setCmdbMapping] = useState('')
+
+  const cbomBuckets = useMemo(() => {
+    const source: SoftwareItem[] =
+      selectedItems.length > 0 ? selectedItems : Array.from(vendorsByLayer.values()).flat()
+    const buckets: Record<CSWP39AssetClass, SoftwareItem[]> = {
+      Code: [],
+      Library: [],
+      Application: [],
+      File: [],
+      Protocol: [],
+      System: [],
+    }
+    for (const item of source) {
+      buckets[mapToAssetClass(item)].push(item)
+    }
+    return buckets
+  }, [selectedItems, vendorsByLayer])
+
   const layerStats = useMemo(() => {
     const stats: {
       layerId: string
@@ -218,6 +300,42 @@ export const SupplyChainRiskMatrix: React.FC = () => {
       md += `| PQC Gap | ${gapCount} | ${stat.total > 0 ? Math.round((gapCount / stat.total) * 100) : 0}% |\n\n`
     }
 
+    // CSWP.39 §5.2 — CBOM grouped by 6 asset classes.
+    md += '## CBOM (CSWP.39 §5.2 — 6 asset classes)\n\n'
+    const classOrder: CSWP39AssetClass[] = [
+      'Code',
+      'Library',
+      'Application',
+      'File',
+      'Protocol',
+      'System',
+    ]
+    for (const cls of classOrder) {
+      const items = cbomBuckets[cls]
+      md += `### ${cls} (${items.length})\n\n`
+      if (items.length === 0) {
+        md += '_No products mapped to this asset class._\n\n'
+        continue
+      }
+      md += `| Product | Vendor | PQC Support | FIPS |\n|---|---|---|---|\n`
+      for (const item of items) {
+        md += `| ${item.softwareName} | ${item.vendorId ?? '—'} | ${item.pqcSupport || 'Unknown'} | ${item.fipsValidated || '—'} |\n`
+      }
+      md += '\n'
+    }
+
+    // CSWP.39 §5.2 — Pipeline + Refresh + CMDB metadata.
+    md += '## Pipeline Sources (CSWP.39 §5.2)\n\n'
+    md += pipelineSources.trim() || '_No upstream SBOM/CMDB sources documented yet._'
+    md += '\n\n'
+
+    md += '## Refresh Cadence\n\n'
+    md += `**Target cadence:** ${refreshCadence || 'Not specified'}\n\n`
+
+    md += '## CMDB → CBOM Mapping\n\n'
+    md += cmdbMapping.trim() || '_No CMDB-to-CBOM mapping documented yet._'
+    md += '\n\n'
+
     return md
   }, [
     industry,
@@ -228,7 +346,59 @@ export const SupplyChainRiskMatrix: React.FC = () => {
     overallFipsPct,
     fipsValidatedCount,
     layerStats,
+    cbomBuckets,
+    pipelineSources,
+    refreshCadence,
+    cmdbMapping,
   ])
+
+  const cbomJson = useMemo(() => {
+    // Minimal CycloneDX-shaped CBOM (educational, not spec-complete).
+    return {
+      bomFormat: 'CycloneDX',
+      specVersion: '1.6',
+      version: 1,
+      metadata: {
+        timestamp: new Date().toISOString(),
+        component: { type: 'application', name: 'PQC Today CBOM Export' },
+        properties: [
+          ...(industry ? [{ name: 'industry', value: industry }] : []),
+          ...(country ? [{ name: 'country', value: country }] : []),
+        ],
+      },
+      components: (Object.keys(cbomBuckets) as CSWP39AssetClass[]).flatMap((cls) =>
+        cbomBuckets[cls].map((item) => ({
+          type: 'cryptographic-asset',
+          name: item.softwareName,
+          publisher: item.vendorId ?? undefined,
+          version: item.latestVersion || undefined,
+          properties: [
+            { name: 'cswp39:assetClass', value: cls },
+            { name: 'cswp39:pqcSupport', value: item.pqcSupport || 'Unknown' },
+            { name: 'cswp39:fipsValidated', value: item.fipsValidated || 'Unknown' },
+            ...(item.infrastructureLayer
+              ? [{ name: 'pqctoday:infrastructureLayer', value: item.infrastructureLayer }]
+              : []),
+            ...(item.categoryName
+              ? [{ name: 'pqctoday:categoryName', value: item.categoryName }]
+              : []),
+          ],
+        }))
+      ),
+    }
+  }, [cbomBuckets, industry, country])
+
+  const handleDownloadCbomJson = useCallback(() => {
+    const blob = new Blob([JSON.stringify(cbomJson, null, 2)], {
+      type: 'application/vnd.cyclonedx+json',
+    })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `cbom-${Date.now()}.cdx.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }, [cbomJson])
 
   const handleExport = useCallback(() => {
     addExecutiveDocument({
@@ -370,6 +540,98 @@ export const SupplyChainRiskMatrix: React.FC = () => {
         </div>
       </div>
 
+      {/* CSWP.39 §5.2 — CBOM by 6 asset classes */}
+      <div className="glass-panel p-4">
+        <h3 className="text-base font-semibold text-foreground mb-1">
+          CBOM — CSWP.39 §5.2 (6 asset classes)
+        </h3>
+        <p className="text-xs text-muted-foreground mb-3">
+          Auto-derived from{' '}
+          {selectedItems.length > 0 ? 'your selected products' : 'the full catalog'}. Each product
+          is bucketed into one of the six CSWP.39 asset classes (Code / Library / Application / File
+          / Protocol / System) using its catalog category.
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {(['Code', 'Library', 'Application', 'File', 'Protocol', 'System'] as const).map(
+            (cls) => (
+              <div key={cls} className="rounded-md border border-border bg-muted/30 p-2">
+                <div className="text-xs font-semibold text-foreground">{cls}</div>
+                <div className="text-2xl font-bold tabular-nums text-primary">
+                  {cbomBuckets[cls].length}
+                </div>
+                <div className="text-[10px] text-muted-foreground">
+                  {cbomBuckets[cls].length === 1 ? 'product' : 'products'}
+                </div>
+              </div>
+            )
+          )}
+        </div>
+        <div className="mt-3">
+          <Button variant="outline" size="sm" onClick={handleDownloadCbomJson}>
+            <Download size={14} className="mr-1" />
+            Download CBOM JSON (CycloneDX-shaped)
+          </Button>
+        </div>
+      </div>
+
+      {/* CSWP.39 §5.2 — Pipeline + Refresh + CMDB metadata */}
+      <div className="glass-panel p-4 space-y-3">
+        <div>
+          <h3 className="text-base font-semibold text-foreground">
+            Inventory Pipeline (CSWP.39 §5.2)
+          </h3>
+          <p className="text-xs text-muted-foreground mt-1">
+            Document the upstream sources that should keep the CBOM fresh and the cadence at which
+            they refresh it. Educational only — these notes export with the artifact below.
+          </p>
+        </div>
+        <div>
+          <label
+            htmlFor="cswp39-pipeline-sources"
+            className="text-xs font-medium text-foreground block mb-1"
+          >
+            Pipeline sources (SBOM / CMDB / scanners feeding the CBOM)
+          </label>
+          <textarea
+            id="cswp39-pipeline-sources"
+            className="w-full text-sm rounded-md border border-input bg-background p-2 min-h-[60px]"
+            placeholder="e.g., CycloneDX SBOMs from CI; ServiceNow CMDB nightly export; Keyfactor AgileSec scan output"
+            value={pipelineSources}
+            onChange={(e) => setPipelineSources(e.target.value)}
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="cswp39-refresh-cadence"
+            className="text-xs font-medium text-foreground block mb-1"
+          >
+            Refresh cadence
+          </label>
+          <Input
+            id="cswp39-refresh-cadence"
+            type="text"
+            placeholder="Daily / Weekly / Quarterly / Annually"
+            value={refreshCadence}
+            onChange={(e) => setRefreshCadence(e.target.value)}
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="cswp39-cmdb-mapping"
+            className="text-xs font-medium text-foreground block mb-1"
+          >
+            CMDB → CBOM mapping notes
+          </label>
+          <textarea
+            id="cswp39-cmdb-mapping"
+            className="w-full text-sm rounded-md border border-input bg-background p-2 min-h-[60px]"
+            placeholder="Which CMDB asset fields map to CBOM fields (asset class, criticality, FIPS status, ESV status)…"
+            value={cmdbMapping}
+            onChange={(e) => setCmdbMapping(e.target.value)}
+          />
+        </div>
+      </div>
+
       {/* Export */}
       <ExportableArtifact
         title="Supply Chain Risk Matrix — Export"
@@ -379,7 +641,8 @@ export const SupplyChainRiskMatrix: React.FC = () => {
         onExport={handleExport}
       >
         <p className="text-sm text-muted-foreground">
-          Export the supply chain risk analysis as a shareable document.
+          Export the supply chain risk analysis as a shareable document. Includes CBOM by asset
+          class, pipeline sources, refresh cadence, and CMDB mapping.
         </p>
       </ExportableArtifact>
     </div>

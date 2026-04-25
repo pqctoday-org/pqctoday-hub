@@ -8,6 +8,7 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { ArtifactBuilder } from '@/components/PKILearning/common/executive'
 import type { ArtifactSection } from '@/components/PKILearning/common/executive'
 import { OptionTile } from '@/components/common/OptionTile'
+import { Button } from '@/components/ui/button'
 import { FileText, KeyRound, Building2, CalendarClock } from 'lucide-react'
 
 type PolicyType =
@@ -648,6 +649,27 @@ function renderPolicyPreview(
   return md
 }
 
+interface KpiDriftRule {
+  kpi: string
+  threshold: string
+  policyAction: string
+}
+
+function renderKpiDriftRulesMd(rules: KpiDriftRule[]): string {
+  let md = '\n---\n\n## KPI Drift Rules (CSWP.39 §5.4 → §5.1 feedback loop)\n\n'
+  if (rules.length === 0) {
+    md +=
+      '_No drift rules defined. Per §5.4 — KPI exceptions should feed back into policy-as-code updates._\n\n'
+    return md
+  }
+  md += '| KPI | Threshold | Policy action when threshold breached |\n|---|---|---|\n'
+  for (const r of rules) {
+    md += `| ${r.kpi || '—'} | ${r.threshold || '—'} | ${r.policyAction || '—'} |\n`
+  }
+  md += '\n'
+  return md
+}
+
 export const PolicyTemplateGenerator: React.FC = () => {
   const [activePolicyType, setActivePolicyType] = useState<PolicyType>('crypto-algorithm')
   const { addExecutiveDocument } = useModuleStore()
@@ -656,6 +678,14 @@ export const PolicyTemplateGenerator: React.FC = () => {
   const industry = useAssessmentStore((s) => s.industry)
   const dataSensitivity = useAssessmentStore((s) => s.dataSensitivity)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const [kpiDriftRules, setKpiDriftRules] = useState<KpiDriftRule[]>([])
+
+  const addKpiDriftRule = () =>
+    setKpiDriftRules((prev) => [...prev, { kpi: '', threshold: '', policyAction: '' }])
+  const updateKpiDriftRule = (idx: number, patch: Partial<KpiDriftRule>) =>
+    setKpiDriftRules((prev) => prev.map((row, i) => (i === idx ? { ...row, ...patch } : row)))
+  const removeKpiDriftRule = (idx: number) =>
+    setKpiDriftRules((prev) => prev.filter((_, i) => i !== idx))
 
   const simplified = selectedPersona === 'executive' || selectedPersona === 'curious'
 
@@ -688,7 +718,8 @@ export const PolicyTemplateGenerator: React.FC = () => {
 
   const handleExport = useCallback(
     (data: Record<string, Record<string, string | string[]>>) => {
-      const markdown = renderPolicyPreview(activePolicyType, data)
+      const markdown =
+        renderPolicyPreview(activePolicyType, data) + renderKpiDriftRulesMd(kpiDriftRules)
       const policyLabel = POLICY_TYPES.find((p) => p.id === activePolicyType)?.label || 'Policy'
 
       addExecutiveDocument({
@@ -700,7 +731,7 @@ export const PolicyTemplateGenerator: React.FC = () => {
         createdAt: Date.now(),
       })
     },
-    [activePolicyType, addExecutiveDocument]
+    [activePolicyType, addExecutiveDocument, kpiDriftRules]
   )
 
   return (
@@ -764,9 +795,76 @@ export const PolicyTemplateGenerator: React.FC = () => {
         sections={sections}
         onExport={handleExport}
         exportFilename={`pqc-${activePolicyType}-policy`}
-        renderPreview={(data) => renderPolicyPreview(activePolicyType, data)}
+        renderPreview={(data) =>
+          renderPolicyPreview(activePolicyType, data) + renderKpiDriftRulesMd(kpiDriftRules)
+        }
         exportFormats={['markdown', 'docx', 'pdf']}
       />
+
+      {/* CSWP.39 §5.4 → §5.1 KPI drift feedback loop */}
+      <div className="glass-panel p-4 space-y-3">
+        <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div>
+            <h3 className="text-base font-semibold text-foreground">
+              KPI Drift Rules (CSWP.39 §5.4 → §5.1 feedback loop)
+            </h3>
+            <p className="text-xs text-muted-foreground mt-1">
+              Define which KPI exceptions should trigger updates to this policy template — turning
+              observed drift into policy-as-code feedback. Educational only — these rows export with
+              the policy.
+            </p>
+          </div>
+          <Button type="button" variant="outline" size="sm" onClick={addKpiDriftRule}>
+            + Add drift rule
+          </Button>
+        </div>
+        {kpiDriftRules.length === 0 ? (
+          <p className="text-xs text-muted-foreground italic">No drift rules defined.</p>
+        ) : (
+          <div className="space-y-2">
+            {kpiDriftRules.map((row, idx) => (
+              <div key={idx} className="grid grid-cols-1 sm:grid-cols-3 gap-2 items-start">
+                <input
+                  type="text"
+                  className="text-sm rounded-md border border-input bg-background p-2"
+                  placeholder="KPI (e.g., FIPS coverage %)"
+                  value={row.kpi}
+                  onChange={(e) => updateKpiDriftRule(idx, { kpi: e.target.value })}
+                  aria-label="KPI"
+                />
+                <input
+                  type="text"
+                  className="text-sm rounded-md border border-input bg-background p-2"
+                  placeholder="Threshold (e.g., < 80%)"
+                  value={row.threshold}
+                  onChange={(e) => updateKpiDriftRule(idx, { threshold: e.target.value })}
+                  aria-label="Threshold"
+                />
+                <div className="flex gap-1">
+                  <input
+                    type="text"
+                    className="text-sm rounded-md border border-input bg-background p-2 flex-1"
+                    placeholder="Policy action"
+                    value={row.policyAction}
+                    onChange={(e) => updateKpiDriftRule(idx, { policyAction: e.target.value })}
+                    aria-label="Policy action"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeKpiDriftRule(idx)}
+                    aria-label="Remove drift rule"
+                    className="h-9 w-9 p-0 text-muted-foreground hover:text-destructive"
+                  >
+                    ×
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

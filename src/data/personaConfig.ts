@@ -407,52 +407,72 @@ export function getReportSectionConfig(
 }
 
 /* ──────────────────────────────────────────────────────────────────────────────
- * Command Center — per-persona pillar ordering
+ * Command Center — per-persona CSWP.39 step emphasis
  *
- * Controls the order in which the BC pillars render. Personas emphasize
- * different parts of the dashboard based on the job they actually do.
+ * The Command Center renders the 5 CSWP.39 steps in fixed sequence
+ * (Govern → Inventory → Identify Gaps → Prioritise → Implement). Personas no
+ * longer reorder steps; they only choose which step expands by default and
+ * which artifacts surface first inside each step's card.
  * ────────────────────────────────────────────────────────────────────────────── */
 
-export type BCPillarId =
-  | 'risk'
-  | 'compliance'
-  | 'governance'
-  | 'vendor'
-  | 'learning'
-  | 'actions'
-  | 'insurance'
+import type { ExecutiveDocumentType } from '@/services/storage/types'
 
-export const BC_PILLAR_DEFAULT_ORDER: readonly BCPillarId[] = [
-  'risk',
-  'compliance',
-  'governance',
-  'vendor',
-  'learning',
-  'actions',
-] as const
+export type CSWP39StepId = 'govern' | 'inventory' | 'identify-gaps' | 'prioritise' | 'implement'
 
-/**
- * Per-persona BC pillar ordering. Only executive/architect/ops see BC at all
- * (per PERSONA_NAV_PATHS). Other keys use the default order in case visibility
- * changes later.
- */
-export const BC_PILLAR_ORDER_BY_PERSONA: Record<PersonaId, readonly BCPillarId[]> = {
-  // Executive: risk + financial framing first; insurance lens second for board/CFO context.
-  executive: ['risk', 'insurance', 'actions', 'compliance', 'learning', 'governance', 'vendor'],
-  // Architect: governance + vendor front-and-center (RACI, policy, vendor scorecards).
-  architect: ['governance', 'vendor', 'compliance', 'risk', 'actions', 'learning'],
-  // Ops: migration/vendor tooling first (roadmap lives in vendor pillar), then compliance deadlines.
-  ops: ['vendor', 'compliance', 'risk', 'actions', 'governance', 'learning'],
-  // BC not normally shown to these personas — fall back to default order.
-  developer: BC_PILLAR_DEFAULT_ORDER,
-  researcher: BC_PILLAR_DEFAULT_ORDER,
-  curious: BC_PILLAR_DEFAULT_ORDER,
+export interface BCStepEmphasis {
+  /** Step expanded by default on landing. */
+  defaultExpandedStep: CSWP39StepId
+  /** Per-step artifact-type IDs surfaced first inside the card.
+   *  Order matters; unlisted artifacts render after, in default order. */
+  featuredArtifacts: Partial<Record<CSWP39StepId, ExecutiveDocumentType[]>>
+  /** Whether the cyber-insurance side panel opens by default. */
+  insurancePanelDefaultOpen?: boolean
 }
 
-export function getBusinessCenterPillarOrder(personaId: PersonaId | null): readonly BCPillarId[] {
-  if (!personaId) return BC_PILLAR_DEFAULT_ORDER
+const DEFAULT_STEP_EMPHASIS: BCStepEmphasis = {
+  defaultExpandedStep: 'govern',
+  featuredArtifacts: {},
+}
+
+export const BC_STEP_EMPHASIS_BY_PERSONA: Record<PersonaId, BCStepEmphasis> = {
+  // Executive: open with Govern (board/policy framing); insurance lens visible.
+  executive: {
+    defaultExpandedStep: 'govern',
+    insurancePanelDefaultOpen: true,
+    featuredArtifacts: {
+      govern: ['policy-draft', 'audit-checklist'],
+      'identify-gaps': ['risk-register'],
+      prioritise: ['compliance-timeline', 'kpi-dashboard'],
+    },
+  },
+  // Architect: open with Identify Gaps; surface RACI + scorecards + policy first.
+  architect: {
+    defaultExpandedStep: 'identify-gaps',
+    featuredArtifacts: {
+      govern: ['raci-matrix', 'policy-draft'],
+      'identify-gaps': ['vendor-scorecard', 'risk-register'],
+      implement: ['migration-roadmap'],
+    },
+  },
+  // Ops: open with Implement; surface roadmap, playbook, KPI tracker.
+  ops: {
+    defaultExpandedStep: 'implement',
+    featuredArtifacts: {
+      inventory: ['supply-chain-matrix'],
+      implement: ['migration-roadmap', 'deployment-playbook'],
+      prioritise: ['kpi-tracker'],
+    },
+  },
+  // BC not normally shown to these personas — fall back to default emphasis.
+  developer: DEFAULT_STEP_EMPHASIS,
+  researcher: DEFAULT_STEP_EMPHASIS,
+  curious: DEFAULT_STEP_EMPHASIS,
+}
+
+export function getBusinessCenterStepEmphasis(personaId: PersonaId | null): BCStepEmphasis {
+  if (!personaId) return DEFAULT_STEP_EMPHASIS
   // eslint-disable-next-line security/detect-object-injection
-  return BC_PILLAR_ORDER_BY_PERSONA[personaId] ?? BC_PILLAR_DEFAULT_ORDER
+  return BC_STEP_EMPHASIS_BY_PERSONA[personaId] ?? DEFAULT_STEP_EMPHASIS
 }
 
 /* ──────────────────────────────────────────────────────────────────────────────

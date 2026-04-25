@@ -2,8 +2,18 @@
 import React, { useMemo, useCallback } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
+import { softwareData } from '@/data/migrateData'
+import { Button } from '@/components/ui/button'
 import { TimelinePlanner, ExportableArtifact } from '../../../common/executive'
 import type { ExternalDeadline, Milestone } from '../../../common/executive'
+
+interface MitigationGatewayRow {
+  asset: string
+  gatewayProductId: string
+  reason: string
+  sunset: string
+}
 
 const MODULE_ID = 'migration-program'
 
@@ -77,6 +87,30 @@ export const RoadmapBuilder: React.FC = () => {
   const [currentMilestones, setCurrentMilestones] = React.useState<Milestone[]>(DEFAULT_MILESTONES)
   const [selectedDeadlines, setSelectedDeadlines] = React.useState<ExternalDeadline[]>([])
 
+  // CSWP.39 §4.6 — Mitigation gateway rows for assets where direct migration is blocked.
+  const myProductIds = useMigrateSelectionStore((s) => s.myProducts)
+  const candidateGateways = useMemo(() => {
+    const myProductSet = new Set(myProductIds)
+    const isGatewayCategory = (cat: string) => /gateway|sase|zero[\s-]?trust|tls/i.test(cat || '')
+    return softwareData
+      .filter((p) => isGatewayCategory(p.categoryName))
+      .map((p) => ({
+        productId: p.productId,
+        label: `${p.softwareName} (${p.categoryName})`,
+        selected: myProductSet.has(p.productId),
+      }))
+      .sort((a, b) => Number(b.selected) - Number(a.selected) || a.label.localeCompare(b.label))
+  }, [myProductIds])
+
+  const [mitigations, setMitigations] = React.useState<MitigationGatewayRow[]>([])
+
+  const addMitigation = () =>
+    setMitigations((prev) => [...prev, { asset: '', gatewayProductId: '', reason: '', sunset: '' }])
+  const updateMitigation = (idx: number, patch: Partial<MitigationGatewayRow>) =>
+    setMitigations((prev) => prev.map((row, i) => (i === idx ? { ...row, ...patch } : row)))
+  const removeMitigation = (idx: number) =>
+    setMitigations((prev) => prev.filter((_, i) => i !== idx))
+
   const exportMarkdown = useMemo(() => {
     let md = '# PQC Migration Roadmap\n\n'
     md += `Generated: ${new Date().toLocaleDateString()}\n\n`
@@ -111,8 +145,25 @@ export const RoadmapBuilder: React.FC = () => {
       }
     }
 
+    // CSWP.39 §4.6 — Mitigation Gateway specs (with mandatory sunset date).
+    md += '## Mitigation Gateway (CSWP.39 §4.6)\n\n'
+    if (mitigations.length === 0) {
+      md +=
+        '_No mitigation gateways specified. Per §4.6: "Mitigation is not a permanent solution" — every mitigation requires a sunset date._\n\n'
+    } else {
+      md += '| Asset | Gateway product | Reason | Sunset |\n|---|---|---|---|\n'
+      for (const m of mitigations) {
+        const gateway =
+          softwareData.find((p) => p.productId === m.gatewayProductId)?.softwareName ||
+          m.gatewayProductId ||
+          '—'
+        md += `| ${m.asset || '—'} | ${gateway} | ${m.reason || '—'} | ${m.sunset || '⚠ MISSING'} |\n`
+      }
+      md += '\n'
+    }
+
     return md
-  }, [selectedDeadlines, currentMilestones])
+  }, [selectedDeadlines, currentMilestones, mitigations])
 
   const handleExport = useCallback(() => {
     addExecutiveDocument({
@@ -150,6 +201,85 @@ export const RoadmapBuilder: React.FC = () => {
         onSelectedDeadlinesChange={setSelectedDeadlines}
       />
 
+      {/* CSWP.39 §4.6 — Mitigation Gateway specs */}
+      <div className="glass-panel p-4 space-y-3">
+        <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div>
+            <h3 className="text-base font-semibold text-foreground">
+              Mitigation Gateways (CSWP.39 §4.6)
+            </h3>
+            <p className="text-xs text-muted-foreground mt-1">
+              For assets where direct migration is blocked, document the gateway / bump-in-the-wire
+              that mitigates the risk — every entry must carry a mandatory sunset date.
+            </p>
+          </div>
+          <Button type="button" variant="outline" size="sm" onClick={addMitigation}>
+            + Add mitigation
+          </Button>
+        </div>
+        {mitigations.length === 0 ? (
+          <p className="text-xs text-muted-foreground italic">No mitigations specified.</p>
+        ) : (
+          <div className="space-y-2">
+            {mitigations.map((row, idx) => (
+              <div key={idx} className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-start">
+                <input
+                  type="text"
+                  className="text-sm rounded-md border border-input bg-background p-2"
+                  placeholder="Asset (e.g., legacy MQ)"
+                  value={row.asset}
+                  onChange={(e) => updateMitigation(idx, { asset: e.target.value })}
+                  aria-label="Asset"
+                />
+                <select
+                  className="text-sm rounded-md border border-input bg-background p-2"
+                  value={row.gatewayProductId}
+                  onChange={(e) => updateMitigation(idx, { gatewayProductId: e.target.value })}
+                  aria-label="Gateway product"
+                >
+                  <option value="">— Select gateway —</option>
+                  {candidateGateways.map((g) => (
+                    <option key={g.productId} value={g.productId}>
+                      {g.selected ? '★ ' : ''}
+                      {g.label}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="text"
+                  className="text-sm rounded-md border border-input bg-background p-2"
+                  placeholder="Reason (why migration is blocked)"
+                  value={row.reason}
+                  onChange={(e) => updateMitigation(idx, { reason: e.target.value })}
+                  aria-label="Reason"
+                />
+                <div className="flex gap-1">
+                  <input
+                    type="text"
+                    required
+                    className="text-sm rounded-md border border-input bg-background p-2 flex-1"
+                    placeholder="Sunset (YYYY-MM-DD)"
+                    value={row.sunset}
+                    onChange={(e) => updateMitigation(idx, { sunset: e.target.value })}
+                    aria-label="Sunset date"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeMitigation(idx)}
+                    aria-label="Remove mitigation"
+                    className="h-9 w-9 p-0 text-muted-foreground hover:text-destructive"
+                  >
+                    ×
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
       <ExportableArtifact
         title="Roadmap Export"
         exportData={exportMarkdown}
@@ -158,7 +288,8 @@ export const RoadmapBuilder: React.FC = () => {
         onExport={handleExport}
       >
         <p className="text-sm text-muted-foreground">
-          Export your migration roadmap with milestones and regulatory deadlines.
+          Export your migration roadmap with milestones, regulatory deadlines, and mitigation
+          gateways.
         </p>
       </ExportableArtifact>
     </div>

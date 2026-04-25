@@ -235,7 +235,7 @@ describe('BusinessCenterView', () => {
     expect(screen.getByText('Start Executive Learning')).toBeInTheDocument()
   })
 
-  it('shows 4-pillar sections when assessment is in progress', () => {
+  it('shows 5 CSWP.39 step sections in fixed order when assessment is in progress', () => {
     mockAssessmentStore.assessmentStatus = 'in-progress'
     mockAssessmentStore.industry = 'Technology'
 
@@ -244,15 +244,23 @@ describe('BusinessCenterView', () => {
     // Should NOT show welcome state
     expect(screen.queryByText('Welcome to your PQC Command Center')).not.toBeInTheDocument()
 
-    // Should show 4 pillar headings
-    expect(screen.getByText('Risk Overview')).toBeInTheDocument()
-    expect(screen.getByText('Compliance & Regulatory')).toBeInTheDocument()
-    expect(screen.getByText('Governance & Policy')).toBeInTheDocument()
-    expect(screen.getByText('Vendor & Migration')).toBeInTheDocument()
+    // Should show all 5 CSWP.39 step titles in fixed order
+    const headings = screen.getAllByRole('heading', { level: 3 })
+    const stepTitles = ['Govern', 'Inventory', 'Identify Gaps', 'Prioritise', 'Implement']
+    const renderedTitles = headings
+      .map((h) => h.textContent ?? '')
+      .filter((t) => stepTitles.some((s) => t.startsWith(s)))
+    expect(renderedTitles.length).toBe(5)
+    stepTitles.forEach((s, i) => {
+      expect(renderedTitles[i].startsWith(s)).toBe(true)
+    })
 
-    // Should show compact learning bar and action items
+    // Cross-cuts: action items strip, cyber insurance toggle, learning bar
     expect(screen.getByText('Executive Learning Path')).toBeInTheDocument()
     expect(screen.getByText('Next Steps')).toBeInTheDocument()
+    // Toggle button label appears (panel content may also use the same heading
+    // when expanded — accept either).
+    expect(screen.getAllByText('Cyber Insurance Lens').length).toBeGreaterThanOrEqual(1)
   })
 
   it('shows context banner when industry and country are set', () => {
@@ -267,22 +275,6 @@ describe('BusinessCenterView', () => {
     expect(screen.getByText('United States')).toBeInTheDocument()
   })
 
-  it('shows empty state for risk management when not started', () => {
-    mockAssessmentStore.assessmentStatus = 'in-progress'
-
-    renderView()
-
-    expect(screen.getByText('Risk Overview')).toBeInTheDocument()
-  })
-
-  it('shows empty state for compliance when no frameworks selected', () => {
-    mockAssessmentStore.assessmentStatus = 'in-progress'
-
-    renderView()
-
-    expect(screen.getByText('No compliance frameworks selected')).toBeInTheDocument()
-  })
-
   it('shows action items for in-progress assessment', () => {
     mockAssessmentStore.assessmentStatus = 'in-progress'
 
@@ -291,59 +283,31 @@ describe('BusinessCenterView', () => {
     expect(screen.getByText('Finish your risk assessment')).toBeInTheDocument()
   })
 
-  it('shows compact learning bar with start CTA when no modules started', () => {
+  it('shows compact learning bar when assessment is in-progress', () => {
     mockAssessmentStore.assessmentStatus = 'in-progress'
 
     renderView()
 
     expect(screen.getByText('Executive Learning Path')).toBeInTheDocument()
     expect(screen.getByText('0/6 modules')).toBeInTheDocument()
-    // "Start Learning" may appear in multiple sections (compact bar + governance)
-    const startButtons = screen.getAllByText('Start Learning')
-    expect(startButtons.length).toBeGreaterThanOrEqual(1)
   })
 
-  it('shows governance section with empty state when modules not started', () => {
+  it('renders the cross-walk badge for each CSWP.39 step', () => {
     mockAssessmentStore.assessmentStatus = 'in-progress'
 
     renderView()
 
-    expect(screen.getByText('Governance & Policy')).toBeInTheDocument()
-    // Governance shows empty state when no modules started and no posture data
-    expect(screen.getByText('No governance modules started')).toBeInTheDocument()
+    // Each step card shows its CSWP.39 section reference (e.g. "CSWP.39 §5.1–5.4").
+    expect(screen.getAllByText(/CSWP\.39 §/).length).toBe(5)
   })
 
-  it('shows artifact placeholders in governance section when posture data exists', () => {
-    mockAssessmentStore.assessmentStatus = 'in-progress'
-    mockAssessmentStore.cryptoAgility = 'partially-abstracted'
-    mockAssessmentStore.migrationStatus = 'planning'
-
-    renderView()
-
-    // With posture data, governance shows artifacts section
-    expect(screen.getByText('RACI Matrix')).toBeInTheDocument()
-    expect(screen.getByText('Policy Draft')).toBeInTheDocument()
-  })
-
-  it('shows vendor section with infra coverage when assessment has infrastructure data', () => {
-    mockAssessmentStore.assessmentStatus = 'in-progress'
-    mockAssessmentStore.infrastructure = ['Cloud', 'Network', 'Identity']
-
-    renderView()
-
-    // Vendor section should show (not empty state) because assessment is in-progress
-    expect(screen.getByText('Vendor & Migration')).toBeInTheDocument()
-    expect(screen.queryByText('Vendor risk not assessed')).not.toBeInTheDocument()
-    // Should show infra coverage since assessment selected layers
-    expect(screen.getByText('Infrastructure Coverage')).toBeInTheDocument()
-  })
-
-  it('shows vendor empty state only when truly no data exists', () => {
+  it('shows welcome state instead of step stack when fully empty', () => {
     mockAssessmentStore.assessmentStatus = 'not-started'
 
     renderView()
 
-    // When fully empty, welcome state shows (not individual section empty states)
+    // When fully empty, welcome state shows (not the 5-step stack).
     expect(screen.getByText('Welcome to your PQC Command Center')).toBeInTheDocument()
+    expect(screen.queryByText('Cyber Insurance Lens')).not.toBeInTheDocument()
   })
 })

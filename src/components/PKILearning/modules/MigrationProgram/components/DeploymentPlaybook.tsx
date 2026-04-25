@@ -139,6 +139,43 @@ const sections: ChecklistSection[] = [
     ],
   },
   {
+    title: 'Decommission Plan (CSWP.39 §4.6)',
+    items: [
+      {
+        id: 'decom-record-mitigation',
+        label: 'Record the mitigation in place (gateway / bump-in-the-wire / compensating control)',
+        critical: true,
+      },
+      {
+        id: 'decom-target-migration',
+        label: 'Document the target migration (algorithm + product) replacing this mitigation',
+        critical: true,
+      },
+      {
+        id: 'decom-sunset-date',
+        label: 'Set a mandatory sunset date — §4.6 "Mitigation is not a permanent solution"',
+        critical: true,
+      },
+      {
+        id: 'decom-owner',
+        label: 'Assign an accountable owner with quarterly status review',
+      },
+      {
+        id: 'decom-milestones',
+        label:
+          'Break down phased decommission milestones (pilot, partial cutover, full retirement)',
+      },
+      {
+        id: 'decom-evidence',
+        label: 'Capture evidence at retirement — CMVP cert # / ACVP run / CVE-scan clean',
+      },
+      {
+        id: 'decom-cmdb-cbom',
+        label: 'Update CMDB and CBOM to remove the mitigation entry once retired',
+      },
+    ],
+  },
+  {
     title: 'Rollback Procedures',
     items: [
       {

@@ -215,6 +215,12 @@ export const VendorScorecardBuilder: React.FC = () => {
   }, [])
 
   // Export and save to module store
+  // CSWP.39 §5.3 — Observability tooling notes per vendor relationship.
+  const [scannerNotes, setScannerNotes] = useState('')
+  const [cveNotes, setCveNotes] = useState('')
+  const [siemNotes, setSiemNotes] = useState('')
+  const [ztNotes, setZtNotes] = useState('')
+
   const exportMarkdown = useMemo(() => {
     let md = '# Vendor PQC Readiness Scorecard\n\n'
     md += `**Overall Score: ${weightedTotal}/100**\n\n`
@@ -233,8 +239,27 @@ export const VendorScorecardBuilder: React.FC = () => {
           : `${checkedProducts[d.id]?.size ?? 0}/${selectedItems.length} products`
       md += `| ${d.label} | ${score}/100 | ${Math.round(d.weight * 100)}% | ${method} |\n`
     }
+
+    // CSWP.39 §5.3 — Observability Tooling Notes
+    md += '\n## Observability Tooling Notes (CSWP.39 §5.3)\n\n'
+    md += `**Crypto scanner:** ${scannerNotes.trim() || '_Not specified_'}\n\n`
+    md += `**CVE / vuln-mgmt feed:** ${cveNotes.trim() || '_Not specified_'}\n\n`
+    md += `**SIEM crypto-drift rules:** ${siemNotes.trim() || '_Not specified_'}\n\n`
+    md += `**Zero-Trust enforcement:** ${ztNotes.trim() || '_Not specified_'}\n\n`
+
     return md
-  }, [weightedTotal, getScore, useSlider, checkedProducts, selectedItems, hasProducts])
+  }, [
+    weightedTotal,
+    getScore,
+    useSlider,
+    checkedProducts,
+    selectedItems,
+    hasProducts,
+    scannerNotes,
+    cveNotes,
+    siemNotes,
+    ztNotes,
+  ])
 
   // Save to module store when score is meaningful (store deduplicates by moduleId+type)
   useEffect(() => {
@@ -449,6 +474,93 @@ export const VendorScorecardBuilder: React.FC = () => {
         </div>
       )}
 
+      {/* CSWP.39 §5.3 — Observability tooling notes */}
+      <div className="glass-panel p-4 space-y-3">
+        <div>
+          <h3 className="text-base font-semibold text-foreground">
+            Observability Tooling Notes (CSWP.39 §5.3)
+          </h3>
+          <p className="text-xs text-muted-foreground mt-1">
+            Document which observability tooling this vendor relationship relies on. Educational —
+            these notes export with the scorecard. Browse{' '}
+            <a
+              href="/migrate?cat=Cryptographic%20Discovery%20Platforms"
+              className="text-primary hover:underline"
+            >
+              Cryptographic Discovery Platforms
+            </a>{' '}
+            and{' '}
+            <a
+              href="/migrate?cat=SASE%20%26%20Zero%20Trust"
+              className="text-primary hover:underline"
+            >
+              SASE &amp; Zero Trust
+            </a>{' '}
+            for examples.
+          </p>
+        </div>
+        <div>
+          <label
+            htmlFor="cswp39-scanner-notes"
+            className="text-xs font-medium text-foreground block mb-1"
+          >
+            Crypto scanner (algorithms / key lengths / cert details)
+          </label>
+          <textarea
+            id="cswp39-scanner-notes"
+            className="w-full text-sm rounded-md border border-input bg-background p-2 min-h-[44px]"
+            placeholder="e.g., Keyfactor AgileSec covering code + traffic"
+            value={scannerNotes}
+            onChange={(e) => setScannerNotes(e.target.value)}
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="cswp39-cve-notes"
+            className="text-xs font-medium text-foreground block mb-1"
+          >
+            CVE / vulnerability-management feed (with EoL tracking)
+          </label>
+          <textarea
+            id="cswp39-cve-notes"
+            className="w-full text-sm rounded-md border border-input bg-background p-2 min-h-[44px]"
+            placeholder="e.g., NVD subscription + CISA KEV alerts; library-EoL tracker via Snyk"
+            value={cveNotes}
+            onChange={(e) => setCveNotes(e.target.value)}
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="cswp39-siem-notes"
+            className="text-xs font-medium text-foreground block mb-1"
+          >
+            SIEM crypto-drift / cipher-suite anomaly rules
+          </label>
+          <textarea
+            id="cswp39-siem-notes"
+            className="w-full text-sm rounded-md border border-input bg-background p-2 min-h-[44px]"
+            placeholder="e.g., Splunk rule alerting on TLS handshakes negotiating non-CNSA suites"
+            value={siemNotes}
+            onChange={(e) => setSiemNotes(e.target.value)}
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="cswp39-zt-notes"
+            className="text-xs font-medium text-foreground block mb-1"
+          >
+            Zero-Trust enforcement (policy engines blocking disallowed cipher suites)
+          </label>
+          <textarea
+            id="cswp39-zt-notes"
+            className="w-full text-sm rounded-md border border-input bg-background p-2 min-h-[44px]"
+            placeholder="e.g., Cloudflare Zero Trust policy denying RSA-PKCS#1 v1.5 inbound"
+            value={ztNotes}
+            onChange={(e) => setZtNotes(e.target.value)}
+          />
+        </div>
+      </div>
+
       {/* Export */}
       <ExportableArtifact
         title="Vendor PQC Readiness — Export"
@@ -457,7 +569,7 @@ export const VendorScorecardBuilder: React.FC = () => {
         formats={['markdown']}
       >
         <p className="text-sm text-muted-foreground">
-          Export the scorecard above as a shareable document.
+          Export the scorecard above as a shareable document. Includes observability tooling notes.
         </p>
       </ExportableArtifact>
     </div>

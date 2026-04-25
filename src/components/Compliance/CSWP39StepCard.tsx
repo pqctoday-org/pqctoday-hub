@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
+import React, { useState, type ReactNode } from 'react'
 import { ChevronDown, ChevronUp, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { CSWP39Step, CSWP39CrossWalkRow } from './cswp39Data'
@@ -11,14 +11,23 @@ interface CSWP39StepCardProps {
     targetTab: 'standards' | 'technical' | 'certification' | 'compliance',
     searchQuery: string
   ) => void
+  /** Optional badge rendered next to the section-ref chip (Command Center: maturity tier). */
+  tierBadge?: ReactNode
+  /** Optional content rendered inside the expanded panel below "Aligns with". */
+  children?: ReactNode
+  /** Initial expansion state. Defaults to false (collapsed). */
+  defaultOpen?: boolean
 }
 
 export const CSWP39StepCard: React.FC<CSWP39StepCardProps> = ({
   step,
   crossWalk,
   onFrameworkChipClick,
+  tierBadge,
+  children,
+  defaultOpen = false,
 }) => {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(defaultOpen)
 
   return (
     <div className="glass-panel p-4 border border-border rounded-lg">
@@ -35,6 +44,7 @@ export const CSWP39StepCard: React.FC<CSWP39StepCardProps> = ({
             <span className="text-[10px] text-secondary font-medium px-2 py-0.5 rounded bg-secondary/10">
               CPM {step.cpmPillar}
             </span>
+            {tierBadge}
           </div>
           <p className="text-xs text-foreground/80 mt-1.5">{step.explainer}</p>
         </div>
@@ -89,6 +99,8 @@ export const CSWP39StepCard: React.FC<CSWP39StepCardProps> = ({
               </div>
             </div>
           )}
+
+          {children}
         </div>
       )}
     </div>

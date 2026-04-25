@@ -446,12 +446,37 @@ Test your PQC readiness with this interactive web application visualizing the gl
   stored in browser memory only; scope is `drive.appdata` (least-privileged). API keys are
   explicitly excluded from the sync payload. Privacy terms documented on the About page
   (`#cloud-sync-privacy`).
-- **Business Center** (`/business`): GRC command center integrating assessment results, compliance
-  framework selections, and learning progress into a unified dashboard. Live risk scores, compliance
-  tracking, vendor posture analysis, and prioritized next steps. Artifact management for creating,
-  viewing, and editing executive documents.
-  - **14 Interactive Business Tools** (`/business/tools`): Persona-aware planning and governance
-    toolkit — all tools adapt to the user's industry, geography, and regulatory context
+- **Command Center** (`/business`): unified PQC readiness command center organised around the
+  **NIST CSWP.39 5-step migration process** (Govern → Inventory → Identify Gaps → Prioritise →
+  Implement). Each step renders as an expandable card with a maturity-tier badge (Partial /
+  Risk-Informed / Repeatable / Adaptive) computed deterministically from existing artifacts —
+  hover the badge to see exactly which artefacts and sections still need to land for the next
+  tier. Steps render in fixed sequence; persona drives only which step expands by default and
+  which artifacts surface first inside it. Cross-cuts: Action Items strip on top, Cyber Insurance
+  togglable side panel, learning bar at the bottom.
+  - **Recommended Resources panel inside every step** — three sections per step: deep-links into
+    related app surfaces (`/migrate`, `/library`, `/threats`, `/compliance`, `/leaders`,
+    `/algorithms`, `/assess`, `/report`), filtered external authoritative references (NVD, CISA
+    KEV, NIST CSWP.39 PDF, NIST IR 8547, CMVP search, ACVP, CycloneDX, SPDX, etc.), and a
+    "Try it in the Playground" row of deep-links to relevant `/playground` tools (e.g.
+    `entropy-test` + `qrng-demo` for ESV; `tls-simulator` + `vpn-sim` for cipher-suite
+    observability; `hybrid-encrypt` + `slh-dsa` for migration deployment).
+  - **CSWP.39 cross-surface continuity** — `/assess` shows a CSWP.39 badge next to each wizard
+    step's "Step X of Y" label so users see which CSWP.39 step the input contributes to;
+    `/report` opens with a 5-pill CSWP.39 navigation legend that re-groups its sections under
+    Govern / Inventory / Identify Gaps / Prioritise / Implement (badges hidden in print).
+  - **17 Interactive Business Tools** (`/business/tools`): Persona-aware planning and governance
+    toolkit — all tools adapt to the user's industry, geography, and regulatory context. Seven
+    of the existing tools are CSWP.39-extended: `audit-checklist` adds Exceptions (§5.1) and
+    Evidence (CMVP / ACVP / ESV / CVE-scan, §5.5) editors; `supply-chain-matrix` auto-derives a
+    CBOM grouped by the six CSWP.39 asset classes from the user's `myProducts` selection plus a
+    CycloneDX-shaped JSON download, with Pipeline Sources / Refresh Cadence / CMDB Mapping
+    metadata; `roadmap-builder` adds Mitigation Gateway rows with mandatory sunset dates (§4.6);
+    `deployment-playbook` adds a Decommission Plan section enforcing the §4.6 "mitigation is
+    not permanent" callout; `policy-generator` adds KPI Drift Rules (§5.4 → §5.1 feedback loop);
+    `vendor-scorecard` adds Observability Tooling Notes (§5.3) for scanner / CVE feed / SIEM /
+    Zero-Trust; `kpi-dashboard` adds Composite Scoring Formula Explainer + Sensitivity
+    Multiplier (§5.4).
     - **Risk & Strategy**: ROI Calculator (IBM breach baselines, quantum amplification), Board Pitch
       Builder (section-by-section editor with assessment pre-population), CRQC Scenario Planner
       (interactive CRQC year slider with algorithm impact, compliance deadlines, HNDL exposure)

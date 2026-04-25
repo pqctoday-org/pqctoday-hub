@@ -3,6 +3,7 @@
 import React, { useMemo } from 'react'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useModuleStore } from '@/store/useModuleStore'
+import { Button } from '@/components/ui/button'
 import { ArtifactBuilder } from '../../../common/executive'
 import type { ArtifactSection } from '../../../common/executive'
 
@@ -431,9 +432,55 @@ function renderAuditPreview(
   return md
 }
 
+interface ExceptionRow {
+  scope: string
+  compensatingControl: string
+  owner: string
+  sunset: string
+}
+
+interface EvidenceRow {
+  productOrAsset: string
+  cmvpCertNumber: string
+  acvpRunId: string
+  esvStatus: string
+  cveScanDate: string
+}
+
+function renderExceptionsAndEvidenceMd(
+  exceptions: ExceptionRow[],
+  evidence: EvidenceRow[]
+): string {
+  let md = '\n---\n\n## Exceptions (CSWP.39 §5.1)\n\n'
+  if (exceptions.length === 0) {
+    md += '_No exceptions documented._\n\n'
+  } else {
+    md += '| Scope | Compensating control | Owner | Sunset |\n|---|---|---|---|\n'
+    for (const e of exceptions) {
+      md += `| ${e.scope || '—'} | ${e.compensatingControl || '—'} | ${e.owner || '—'} | ${e.sunset || '—'} |\n`
+    }
+    md += '\n'
+  }
+
+  md += '## Evidence (CSWP.39 §5.5 — CMVP / ACVP / ESV / CVE-scan)\n\n'
+  if (evidence.length === 0) {
+    md += '_No evidence rows documented._\n\n'
+  } else {
+    md +=
+      '| Product / Asset | CMVP cert # | ACVP run ID | ESV (SP 800-90B) | CVE-scan date |\n|---|---|---|---|---|\n'
+    for (const e of evidence) {
+      md += `| ${e.productOrAsset || '—'} | ${e.cmvpCertNumber || '—'} | ${e.acvpRunId || '—'} | ${e.esvStatus || '—'} | ${e.cveScanDate || '—'} |\n`
+    }
+    md += '\n'
+  }
+  return md
+}
+
 export const AuditReadinessChecklist: React.FC = () => {
   const { isAssessmentComplete, industry, country } = useExecutiveModuleData()
   const { addExecutiveDocument } = useModuleStore()
+  const [exceptions, setExceptions] = React.useState<ExceptionRow[]>([])
+  const [evidence, setEvidence] = React.useState<EvidenceRow[]>([])
 
   const sections = useMemo(
     () => buildSections(isAssessmentComplete, industry, country),
@@ -441,7 +488,9 @@ export const AuditReadinessChecklist: React.FC = () => {
   )
 
   const handleExport = (data: Record<string, Record<string, string | string[]>>) => {
-    const markdown = renderAuditPreview(data, industry, country)
+    const markdown =
+      renderAuditPreview(data, industry, country) +
+      renderExceptionsAndEvidenceMd(exceptions, evidence)
     addExecutiveDocument({
       id: `audit-checklist-${Date.now()}`,
       type: 'audit-checklist',
@@ -454,9 +503,34 @@ export const AuditReadinessChecklist: React.FC = () => {
 
   const previewRenderer = React.useCallback(
     (data: Record<string, Record<string, string | string[]>>) =>
-      renderAuditPreview(data, industry, country),
-    [industry, country]
+      renderAuditPreview(data, industry, country) +
+      renderExceptionsAndEvidenceMd(exceptions, evidence),
+    [industry, country, exceptions, evidence]
   )
+
+  const addException = () =>
+    setExceptions((prev) => [
+      ...prev,
+      { scope: '', compensatingControl: '', owner: '', sunset: '' },
+    ])
+  const updateException = (idx: number, patch: Partial<ExceptionRow>) =>
+    setExceptions((prev) => prev.map((row, i) => (i === idx ? { ...row, ...patch } : row)))
+  const removeException = (idx: number) => setExceptions((prev) => prev.filter((_, i) => i !== idx))
+
+  const addEvidence = () =>
+    setEvidence((prev) => [
+      ...prev,
+      {
+        productOrAsset: '',
+        cmvpCertNumber: '',
+        acvpRunId: '',
+        esvStatus: '',
+        cveScanDate: '',
+      },
+    ])
+  const updateEvidence = (idx: number, patch: Partial<EvidenceRow>) =>
+    setEvidence((prev) => prev.map((row, i) => (i === idx ? { ...row, ...patch } : row)))
+  const removeEvidence = (idx: number) => setEvidence((prev) => prev.filter((_, i) => i !== idx))
 
   return (
     <div className="space-y-6">
@@ -490,6 +564,147 @@ export const AuditReadinessChecklist: React.FC = () => {
         exportFilename="pqc-audit-readiness-checklist"
         renderPreview={previewRenderer}
       />
+
+      {/* CSWP.39 §5.1 — Exceptions */}
+      <div className="glass-panel p-4 space-y-3">
+        <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div>
+            <h3 className="text-base font-semibold text-foreground">Exceptions (CSWP.39 §5.1)</h3>
+            <p className="text-xs text-muted-foreground mt-1">
+              Document approved deviations from policy with their compensating controls and sunset
+              date. These rows export with the checklist.
+            </p>
+          </div>
+          <Button type="button" variant="outline" size="sm" onClick={addException}>
+            + Add exception
+          </Button>
+        </div>
+        {exceptions.length === 0 ? (
+          <p className="text-xs text-muted-foreground italic">No exceptions yet.</p>
+        ) : (
+          <div className="space-y-2">
+            {exceptions.map((row, idx) => (
+              <div key={idx} className="grid grid-cols-1 sm:grid-cols-4 gap-2 items-start">
+                <input
+                  type="text"
+                  className="text-sm rounded-md border border-input bg-background p-2"
+                  placeholder="Scope (asset / system)"
+                  value={row.scope}
+                  onChange={(e) => updateException(idx, { scope: e.target.value })}
+                />
+                <input
+                  type="text"
+                  className="text-sm rounded-md border border-input bg-background p-2"
+                  placeholder="Compensating control"
+                  value={row.compensatingControl}
+                  onChange={(e) => updateException(idx, { compensatingControl: e.target.value })}
+                />
+                <input
+                  type="text"
+                  className="text-sm rounded-md border border-input bg-background p-2"
+                  placeholder="Owner"
+                  value={row.owner}
+                  onChange={(e) => updateException(idx, { owner: e.target.value })}
+                />
+                <div className="flex gap-1">
+                  <input
+                    type="text"
+                    className="text-sm rounded-md border border-input bg-background p-2 flex-1"
+                    placeholder="Sunset (YYYY-MM-DD)"
+                    value={row.sunset}
+                    onChange={(e) => updateException(idx, { sunset: e.target.value })}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeException(idx)}
+                    aria-label="Remove exception"
+                    className="h-9 w-9 p-0 text-muted-foreground hover:text-destructive"
+                  >
+                    ×
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* CSWP.39 §5.5 — Evidence */}
+      <div className="glass-panel p-4 space-y-3">
+        <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div>
+            <h3 className="text-base font-semibold text-foreground">
+              Evidence — CMVP / ACVP / ESV / CVE-scan
+            </h3>
+            <p className="text-xs text-muted-foreground mt-1">
+              Per change, capture validation evidence. Educational template — populate from your
+              real CMVP module IDs and ACVP run records.
+            </p>
+          </div>
+          <Button type="button" variant="outline" size="sm" onClick={addEvidence}>
+            + Add evidence row
+          </Button>
+        </div>
+        {evidence.length === 0 ? (
+          <p className="text-xs text-muted-foreground italic">No evidence rows yet.</p>
+        ) : (
+          <div className="space-y-2">
+            {evidence.map((row, idx) => (
+              <div key={idx} className="grid grid-cols-1 sm:grid-cols-5 gap-2 items-start">
+                <input
+                  type="text"
+                  className="text-sm rounded-md border border-input bg-background p-2"
+                  placeholder="Product / asset"
+                  value={row.productOrAsset}
+                  onChange={(e) => updateEvidence(idx, { productOrAsset: e.target.value })}
+                />
+                <input
+                  type="text"
+                  className="text-sm rounded-md border border-input bg-background p-2"
+                  placeholder="CMVP cert #"
+                  value={row.cmvpCertNumber}
+                  onChange={(e) => updateEvidence(idx, { cmvpCertNumber: e.target.value })}
+                />
+                <input
+                  type="text"
+                  className="text-sm rounded-md border border-input bg-background p-2"
+                  placeholder="ACVP run ID"
+                  value={row.acvpRunId}
+                  onChange={(e) => updateEvidence(idx, { acvpRunId: e.target.value })}
+                />
+                <input
+                  type="text"
+                  className="text-sm rounded-md border border-input bg-background p-2"
+                  placeholder="ESV status (SP 800-90B)"
+                  value={row.esvStatus}
+                  onChange={(e) => updateEvidence(idx, { esvStatus: e.target.value })}
+                />
+                <div className="flex gap-1">
+                  <input
+                    type="text"
+                    className="text-sm rounded-md border border-input bg-background p-2 flex-1"
+                    placeholder="CVE-scan date"
+                    value={row.cveScanDate}
+                    onChange={(e) => updateEvidence(idx, { cveScanDate: e.target.value })}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeEvidence(idx)}
+                    aria-label="Remove evidence row"
+                    className="h-9 w-9 p-0 text-muted-foreground hover:text-destructive"
+                  >
+                    ×
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

@@ -24,6 +24,8 @@ import { Step9OrgScale } from './steps/Step9OrgScale'
 import { Step10CryptoAgility } from './steps/Step10CryptoAgility'
 import { Step11Infrastructure } from './steps/Step11Infrastructure'
 import { Step13TimelinePressure } from './steps/Step13TimelinePressure'
+import { CSWP39StepBadge } from '../shared/CSWP39StepBadge'
+import { ASSESS_STEP_TO_CSWP39 } from '../../data/assessStepToCswp39'
 import {
   logAssessStart,
   logAssessStep,
@@ -293,10 +295,23 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
       />
 
       <div className="glass-panel p-6 md:p-8">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-xs text-muted-foreground">
-            Step {currentStep + 1} of {steps.length}
-          </span>
+        <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-xs text-muted-foreground">
+              Step {currentStep + 1} of {steps.length}
+            </span>
+            {(() => {
+              // eslint-disable-next-line security/detect-object-injection
+              const stepKey = steps[currentStep]?.key
+              const cswp = stepKey ? ASSESS_STEP_TO_CSWP39[stepKey] : undefined
+              return cswp ? (
+                <CSWP39StepBadge
+                  stepId={cswp}
+                  hint={`This wizard step feeds the CSWP.39 ${cswp} step on the Command Center.`}
+                />
+              ) : null
+            })()}
+          </div>
           <Button
             variant="ghost"
             onClick={() => setInfoModalStep(steps[currentStep]?.key ?? null)}

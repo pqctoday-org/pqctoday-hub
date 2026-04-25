@@ -6,6 +6,43 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.8] - April 24, 2026
+
+### Added
+
+- **Command Center reorganised around the NIST CSWP.39 5-step process** [persona:executive] [persona:architect] [persona:ciso] [view:/business] — replaces the previous 7-pillar layout with a fixed 5-step stack (Govern → Inventory → Identify Gaps → Prioritise → Implement), three cross-cut strips (Action Items top, Cyber Insurance togglable side panel, Learning bar bottom), and a per-step maturity tier badge computed deterministically from existing artifacts (Partial / Risk-Informed / Repeatable / Adaptive). Steps always render in 1→5 order; persona drives only which step expands by default and which artifacts surface first inside each card.
+  - _Tier badges with reasons_ — every step card shows a tooltip listing the specific artifacts and section markers that contributed to (or are missing from) the current tier; tier rules are pure functions in `src/components/BusinessCenter/lib/cswp39Tier.ts` with hoisted threshold constants.
+  - _Persona emphasis_ — `BC_STEP_EMPHASIS_BY_PERSONA` in `src/data/personaConfig.ts` replaces `BC_PILLAR_ORDER_BY_PERSONA`; executive opens on Govern with insurance panel open, architect opens on Identify Gaps, ops opens on Implement.
+  - _Sub-widget extraction_ — `RiskOverviewWidget`, `FrameworkDeadlineList`, `PostureIndicator`, `InfraCoverageWidget`, `FipsBreakdownWidget`, and `TierBadge` promoted into `src/components/BusinessCenter/widgets/` ahead of the rebucket.
+
+- **CSWP.39 educational coverage — 26 / 26 requirement bullets** [persona:architect] [persona:ciso] [persona:compliance] [view:/business] [view:/assess] [view:/report] — closes every NIST CSWP.39 (Dec 2025) requirement bullet through reuse of existing site resources, with **zero new tools** in the business tools registry. Coverage shifted from 9 ✅ / 9 ⚠️ / 8 ❌ to 26 ✅ / 0 ⚠️ / 0 ❌. Implementation:
+  - _`RecommendedResourcesPanel` in every step card_ — three sections per step: in-app deep-links into `/migrate`, `/library`, `/threats`, `/compliance`, `/leaders`, `/algorithms`, `/assess`, `/report`; filtered external authoritative references from `authoritativeSourcesData.ts` plus curated extras (NVD, CISA KEV, NIST CSWP.39 PDF, NIST IR 8547, CMVP search, ACVP, CycloneDX, SPDX, NIST FIPS 203/204/205); horizontal "Try it in the Playground" strip linking to relevant `/playground/<tool-id>` tools per step (e.g. `entropy-test` + `qrng-demo` + `drbg-demo` on Inventory; `tls-simulator` + `vpn-sim` + `pqc-ssh-sim` on Identify Gaps; `hybrid-encrypt` + `slh-dsa` + `lms-hss` + `firmware-signing` on Implement).
+  - _Static curation point_ — `src/components/BusinessCenter/lib/cswp39ResourceMap.ts` defines per-step `inApp`, `external`, `playground` link sets plus an optional `authoritativeSourceFilter`.
+  - _CSWP.39 step badge component_ — `src/components/shared/CSWP39StepBadge.tsx` reused by `/assess` and surfaced on `/business` step anchors (`#step-{id}`).
+
+- **Existing builders extended with CSWP.39 sections** [persona:executive] [persona:architect] [persona:compliance] [view:/business/tools] — 7 of the existing 17 business tools gained Markdown sections + small form fields so the educational extensions ride the same export pipeline:
+  - `audit-checklist` — Exceptions (§5.1) and Evidence (CMVP / ACVP / ESV / CVE-scan, §5.5) row editors with add/remove controls.
+  - `supply-chain-matrix` — auto-derived CBOM by the 6 CSWP.39 asset classes (Code / Library / Application / File / Protocol / System) computed from `useMigrateSelectionStore.myProducts`; "Download CBOM JSON" button emitting a CycloneDX-shaped `application/vnd.cyclonedx+json` blob; Pipeline Sources / Refresh Cadence / CMDB → CBOM Mapping inputs.
+  - `roadmap-builder` — Mitigation Gateway rows referencing a `/migrate` gateway product (Cryptographic Discovery / SASE & Zero Trust / Cloud Encryption Gateways categories) with mandatory sunset date enforcing §4.6 "mitigation is not permanent".
+  - `deployment-playbook` — Decommission Plan section (7 milestones) with §4.6 callout: record mitigation, document target migration, set sunset date, assign owner, phased milestones, capture retirement evidence, update CMDB/CBOM.
+  - `policy-generator` — KPI Drift Rules (§5.4 → §5.1 feedback loop) with KPI / threshold / policy-action row editor.
+  - `vendor-scorecard` — Observability Tooling Notes (§5.3) capturing scanner / CVE-watch / SIEM rule / Zero-Trust enforcement notes per vendor relationship; in-line deep-links to `/migrate?cat=Cryptographic%20Discovery%20Platforms` and `/migrate?cat=SASE%20%26%20Zero%20Trust`.
+  - `kpi-dashboard` — Composite Scoring Formula Explainer (FIPS + ESV + EoL + posture + PQC readiness weights) and Sensitivity Multiplier inputs (§5.4) — both export with the dashboard markdown.
+
+- **Cross-surface CSWP.39 continuity** [persona:all] [view:/business] [view:/assess] [view:/report] — the same 5-step narrative now spans the three top-level surfaces without any route changes:
+  - _`/assess` wizard_ — every step shows a CSWP.39 step badge next to the "Step X of Y" label that links back to `/business#step-{id}`; mapping in `src/data/assessStepToCswp39.ts` (industry/country/compliance → Govern; crypto/sensitivity/use-cases/retention/credential-lifetime → Inventory; infra → Identify Gaps; scale/timeline → Prioritise; migration/agility → Implement).
+  - _`/report`_ — opens with a `<ReportCswp39Nav>` legend (5-pill grid) that re-groups every report section under the corresponding CSWP.39 step (Risk Score → Prioritise; Algorithm Migration Priority → Inventory; Compliance Impact → Govern; Recommended Actions → Prioritise; Migration Roadmap / Toolkit → Implement; HNDL/HNFL / Threat Landscape / Risk Breakdown → Identify Gaps); pills link to `/business#step-{id}`; legend hidden in print mode. Mapping in `src/data/reportSectionToCswp39.ts`.
+
+### Changed
+
+- **Tier 4 maturity gating** in `src/components/BusinessCenter/lib/cswp39Tier.ts` now requires the corresponding CSWP.39 educational section to be present in the existing tool's exported markdown (detected via `## <heading>` prefix scan). Govern Tier 4 needs `## Exceptions` in `audit-checklist`; Inventory needs `## CBOM` and `## Pipeline Sources` in `supply-chain-matrix`; Identify Gaps needs `## Observability Tooling Notes` in `vendor-scorecard`; Prioritise needs `## Formula Explainer` in `kpi-dashboard`; Implement needs `## Mitigation Gateway` in `roadmap-builder` AND `## Decommission` in `deployment-playbook` AND `## Evidence` in `audit-checklist`. Tiers 1–3 unchanged. Each gating clause adds a corresponding entry to the tier badge tooltip's `reasons` array so users see exactly what's missing.
+
+- **`CSWP39StepCard`** (`src/components/Compliance/CSWP39StepCard.tsx`) gained three optional props (`tierBadge`, `children`, `defaultOpen`) so the same component serves both `/compliance` (unchanged behaviour) and `/business` (with tier badge + per-step artifact list + resources panel via the `children` slot).
+
+### Removed
+
+- Four pillar section components (`RiskManagementSection`, `ComplianceRegulatorySection`, `GovernancePolicySection`, `VendorSupplyChainSection`) — replaced by the single `CSWP39StepSection.tsx` driven by step ID. Sub-widgets they exposed were promoted to `src/components/BusinessCenter/widgets/` first to preserve their visuals.
+
 ## [3.5.7] - April 23, 2026
 
 ### Added
