@@ -70,7 +70,7 @@ export default defineConfig({
       ],
       injectManifest: {
         globPatterns: ['**/*.{js,css,html,svg,png,wasm,json}'],
-        maximumFileSizeToCacheInBytes: 15 * 1024 * 1024, // 15 MB — accommodate WASM files
+        maximumFileSizeToCacheInBytes: 20 * 1024 * 1024, // 20 MB — accommodate WASM files + large bundles
       },
       manifest: {
         name: 'PQC Today',
