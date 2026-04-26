@@ -55,6 +55,15 @@ All notable changes to this project will be documented in this file.
   - New `page-guide-explore` (`/explore`) and `page-guide-report` (`/report`) chunks — both routes were uncovered by the corpus before this change.
 - **Workspace persistence — visited routes + advanced views unlock** — [src/store/useHistoryStore.ts](src/store/useHistoryStore.ts) gains a `visitedRoutes` array (persisted, version bump 2→3) and a `recordVisit(path)` action; [src/services/storage/snapshotTypes.ts](src/services/storage/snapshotTypes.ts) and [src/services/storage/UnifiedStorageService.ts](src/services/storage/UnifiedStorageService.ts) persist `advancedViewsUnlocked` in cloud snapshots; [src/components/Layout/MainLayout.tsx](src/components/Layout/MainLayout.tsx), [src/components/Landing/LandingView.tsx](src/components/Landing/LandingView.tsx), and [src/components/Landing/PersonalizationSection.tsx](src/components/Landing/PersonalizationSection.tsx) wire the new state into the UI.
 
+## [3.5.26] - April 25, 2026
+
+### Fixed — validator warning batch (12 → 8)
+
+- **GC-3 (algorithm canonicalization)** — added `library_04252026_r7.csv` with 2 new entries: `BIKE-Round4-Spec-2022` (NIST Round 4 KEM specification, BIKE structurally introduced into library AlgorithmFamily column) and `ETSI-GS-QKD-014-V2.1.1` (ETSI QKD REST Key Delivery API spec, marked `Information-theoretic (non-PQC)`). Note: QKD is intentionally excluded from PQC algorithm canonicalization in the validator — it is a quantum-physical key-establishment paradigm distinct from computational PQC.
+- **N21-B (rag-summary algorithm coverage)** — added `healthcare-pqc` to `FIPS 205` library row's `module_ids` and `arch-quantum-impact` to `draft-ietf-cose-falcon-04`'s `module_ids` so both modules' library enrichments now cover the SLH-DSA / FN-DSA-512 references in their `rag-summary.md`.
+- **N2 (authoritative source flag mismatches, 38 → 0)** — generated `pqc_authoritative_sources_reference_04252026.csv` (replaces `04182026`) flipping 40 boolean flags from `Yes` to `No` for sources whose display name doesn't actually appear as an organisation/vendor/issuer in the target CSV (Leaders/Library/Timeline/Compliance/Migrate/Threats). Honest accounting of which sources contribute concrete records vs. which are reference portals.
+- **QA-C6 (compliance refs, 91 → 0)** — added `KNOWN_COMPLIANCE_FRAMEWORKS` allowlist to `qa-consistency-checks.ts` (private) so Q&A rows can legitimately cite framework-level identifiers (NIST, NSA, BSI, GDPR, NIS2, eIDAS, HIPAA, PCI DSS, ITAR, CMMC, ISO 27001, NERC CIP, IEC 62351/62443, DO-326A, UNECE R155, ISO 26262, Common Criteria, EUCC, FIPS 140, etc.) without requiring a specific record ID in `compliance-data.json`.
+
 ## [3.5.25] - April 25, 2026
 
 ### Added
