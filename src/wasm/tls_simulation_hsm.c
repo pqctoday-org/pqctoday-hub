@@ -87,7 +87,9 @@ typedef CK_FUNCTION_LIST **CK_FUNCTION_LIST_PTR_PTR;
 #define CKM_ML_DSA_KEY_PAIR_GEN           0x0000001CUL
 #define CKM_ML_DSA                        0x0000001DUL
 #define CKK_ML_DSA_VAL                    0x0000004AUL
+#define CKP_ML_DSA_44_VAL                 0x00000001UL
 #define CKP_ML_DSA_65_VAL                 0x00000002UL
+#define CKP_ML_DSA_87_VAL                 0x00000003UL
 
 extern CK_RV C_GetFunctionList(CK_FUNCTION_LIST **ppFunctionList);
 
@@ -384,8 +386,43 @@ static int hsm_load_provider(void) {
 
 /* ── Server-side keygen + cert mint + SSL_CTX wiring ────────────────────── */
 
-#define HSM_KEY_LABEL "tls-server-mldsa65"
-#define HSM_PIN       "1234"
+#define HSM_PIN "1234"
+
+/* Read the server cert at /ssl/server.crt (the user-selected cert) and return
+ * the ML-DSA paramset CKP_ML_DSA_*_VAL that matches, defaulting to 65 for any
+ * non-ML-DSA cert (RSA, ECDSA) so HSM mode can still proceed. */
+static CK_ULONG detect_mldsa_paramset(char *label_out, size_t label_len) {
+    BIO *bio = BIO_new_file("/ssl/server.crt", "r");
+    if (!bio) {
+        strncpy(label_out, "tls-server-mldsa65", label_len);
+        return CKP_ML_DSA_65_VAL;
+    }
+    X509 *cert = PEM_read_bio_X509(bio, NULL, NULL, NULL);
+    BIO_free(bio);
+    if (!cert) {
+        strncpy(label_out, "tls-server-mldsa65", label_len);
+        return CKP_ML_DSA_65_VAL;
+    }
+    EVP_PKEY *pkey = X509_get0_pubkey(cert);
+    CK_ULONG  ps   = CKP_ML_DSA_65_VAL;
+    const char *pname = pkey ? EVP_PKEY_get0_type_name(pkey) : NULL;
+    if (pname) {
+        if (strstr(pname, "44") || strstr(pname, "ML-DSA-44"))
+            ps = CKP_ML_DSA_44_VAL;
+        else if (strstr(pname, "87") || strstr(pname, "ML-DSA-87"))
+            ps = CKP_ML_DSA_87_VAL;
+        /* else 65 (default) */
+    }
+    X509_free(cert);
+    if (ps == CKP_ML_DSA_44_VAL)
+        strncpy(label_out, "tls-server-mldsa44", label_len);
+    else if (ps == CKP_ML_DSA_87_VAL)
+        strncpy(label_out, "tls-server-mldsa87", label_len);
+    else
+        strncpy(label_out, "tls-server-mldsa65", label_len);
+    label_out[label_len - 1] = '\0';
+    return ps;
+}
 
 static EVP_PKEY *hsm_load_pkcs11_key(const char *uri) {
     OSSL_STORE_CTX *store = OSSL_STORE_open(uri, NULL, NULL, NULL, NULL);
@@ -490,15 +527,22 @@ int hsm_setup_server_credentials(SSL_CTX *s_ctx) {
     }
     log_event("server", "pkcs11_call", "C_Login(CKU_USER)");
 
+    char            key_label_buf[32];
+    CK_ULONG        paramset  = detect_mldsa_paramset(key_label_buf, sizeof(key_label_buf));
+    {
+        char msg[128];
+        snprintf(msg, sizeof(msg), "Detected ML-DSA paramset=0x%02lx label=%s",
+                 (unsigned long)paramset, key_label_buf);
+        log_event("server", "hsm_paramset", msg);
+    }
     CK_MECHANISM keygen_mech = { CKM_ML_DSA_KEY_PAIR_GEN, NULL, 0 };
     CK_OBJECT_CLASS pubclass  = CKO_PUBLIC_KEY;
     CK_OBJECT_CLASS privclass = CKO_PRIVATE_KEY;
     CK_KEY_TYPE     ktype     = CKK_ML_DSA_VAL;
-    CK_ULONG        paramset  = CKP_ML_DSA_65_VAL;
     CK_BBOOL        ck_true   = CK_TRUE;
     /* A token-resident keypair so OSSL_STORE can locate it via pkcs11: URI. */
     CK_BBOOL        ck_token  = CK_TRUE;
-    const char     *key_label = HSM_KEY_LABEL;
+    const char     *key_label = key_label_buf;
     const char     *key_id    = "01";
     CK_ATTRIBUTE pub_tmpl[] = {
         { CKA_CLASS,             &pubclass, sizeof(pubclass) },
@@ -531,8 +575,9 @@ int hsm_setup_server_credentials(SSL_CTX *s_ctx) {
     }
     {
         char m[160];
-        snprintf(m, sizeof(m), "C_GenerateKeyPair(CKM_ML_DSA_KEY_PAIR_GEN, CKP_ML_DSA_65) "
+        snprintf(m, sizeof(m), "C_GenerateKeyPair(CKM_ML_DSA_KEY_PAIR_GEN, paramset=0x%02lx/%s) "
                                "→ pub=0x%lx, priv=0x%lx (private never leaves softhsmv3)",
+                 (unsigned long)paramset, key_label,
                  (unsigned long)hpub, (unsigned long)hpriv);
         log_event("server", "pkcs11_call", m);
     }
@@ -577,7 +622,7 @@ int hsm_setup_server_credentials(SSL_CTX *s_ctx) {
     char uri[160];
     snprintf(uri, sizeof(uri),
              "pkcs11:object=%s;type=private?pin-value=%s",
-             HSM_KEY_LABEL, HSM_PIN);
+             key_label, HSM_PIN);
     EVP_PKEY *priv_pkey = hsm_load_pkcs11_key(uri);
     if (!priv_pkey) { free(pub_buf); return -1; }
 

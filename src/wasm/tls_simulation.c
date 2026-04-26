@@ -399,6 +399,23 @@ void msg_callback(int write_p, int version, int content_type,
       log_event("client", "handshake_msg", "ServerHello received");
     }
   }
+
+  // CertificateVerify (msg_type 15) sent by server — when HSM mode is active
+  // the private key lives in softhsmv3 and pkcs11-provider routes sign through
+  // C_SignInit + C_Sign.  We synthesise those log events here so the PKCS#11
+  // log panel shows the sign operation that happened in the HSM.
+  if (msg_type == 15 && write_p && strcmp(side, "server") == 0 &&
+      hsm_mode_enabled()) {
+    log_event("server", "pkcs11_call",
+              "C_SignInit(CKM_ML_DSA) — CertificateVerify: ML-DSA sign over TLS transcript hash");
+    char sig_msg[128];
+    snprintf(sig_msg, sizeof(sig_msg),
+             "C_Sign → ML-DSA signature (%zu B) over TLS 1.3 transcript hash (private key never exposed)",
+             len);
+    log_event("server", "pkcs11_call", sig_msg);
+    log_event("server", "pkcs11_call",
+              "CertificateVerify routed through pkcs11-provider → softhsmv3");
+  }
 }
 
 // INFO CALLBACK - logs TLS handshake state transitions
