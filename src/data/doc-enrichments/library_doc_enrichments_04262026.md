@@ -23,7 +23,7 @@ notes: Compliance framework field corrections — adding factually verifiable cr
 - **Protocols Covered**: TLS 1.2
 - **Infrastructure Layers**: Cryptographic Module Validation Program; Cryptographic Algorithm Validation Program; Key Encapsulation Mechanisms
 - **Standardization Bodies**: National Institute of Standards and Technology; Canadian Centre for Cyber Security; ISO/IEC
-- **Compliance Frameworks Referenced**: FIPS 140-3; FIPS 140-2; FIPS 203; FIPS 204; FIPS 205; FIPS 186-5; SP 800-140; SP 800-38D; SP 800-38E; SP 800-38G; SP 800-186; SP 800-107; SP 800-208; SP 800-90B; SP 800-90A; SP 800-108; SP 800-132; SP 800-56CREV2; SP 800-133; SP 800-67REV2; SP 800-63B; ISO/IEC 24759:2017(E)
+- **Compliance Frameworks Referenced**: FIPS 140-3; FIPS 140-2; FIPS 203; FIPS 204; FIPS 205; FIPS 186-5; SP 800-140; SP 800-38D; SP 800-38E; SP 800-38G; SP 800-186; SP 800-107; SP 800-208; NIST SP 800-90B; SP 800-90A; SP 800-108; SP 800-132; SP 800-56CREV2; SP 800-133; SP 800-67REV2; SP 800-63B; ISO/IEC 24759:2017(E)
 - **Classical Algorithms Referenced**: RSA; Triple-DES; HMAC; AES; XTS-AES; Elliptic Curves; FFC Safe-Prime Groups
 - **Key Takeaways**: Guidance includes new self-test requirements for FIPS 203/204/205 algorithms; New guidance provided for Key Encapsulation Mechanisms; Document clarifies testing requirements for cryptographic modules under FIPS 140-3; Updates cover transition from FIPS 186-4 to FIPS 186-5; FIPS 140-3 supersedes FIPS 140-2 — modules validated under FIPS 140-2 may continue operating under transition provisions
 - **Security Levels & Parameters**: None detected
@@ -455,3 +455,99 @@ notes: Compliance framework field corrections — adding factually verifiable cr
 - **Organizational Readiness**: None detected
 - **Source Document**: IEC 62443 (manual-fact-correction)
 - **Extraction Timestamp**: 2026-04-26T02:15:00
+
+---
+
+## IETF-RFC-8555
+
+- **Reference ID**: IETF-RFC-8555
+- **Title**: Automatic Certificate Management Environment (ACME)
+- **Authors**: IETF
+- **Publication Date**: 2019-03-01
+- **Last Updated**: 2019-03-01
+- **Document Status**: Published
+- **Main Topic**: This document defines the Automatic Certificate Management Environment (ACME) protocol to automate domain validation and certificate issuance in the Web PKI.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Richard Barnes; Jacob Hoffman-Andrews; Daniel McCarney; James Kasten
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: HTTPS; TLS; PKIX; HTTP; DNS
+- **Infrastructure Layers**: PKI; Certificate Authority; Domain Validation
+- **Standardization Bodies**: Internet Engineering Task Force (IETF); Internet Engineering Steering Group (IESG)
+- **Compliance Frameworks Referenced**: RFC 8555; RFC 5280; RFC 8657; RFC 7638; RFC 6844; BCP 219
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: ACME automates certificate issuance and domain validation to eliminate manual user interaction; The protocol supports extensions for identifiers beyond domain names such as IP addresses and telephone numbers; Existing ad hoc verification methods cause significant frustration and delay in HTTPS deployment; ACME enables mechanization of certificate management tasks including revocation and key rollover.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect; Operations
+- **Implementation Prerequisites**: HTTPS support; DNS record management capability; Web server configuration for HTTP challenge; PKCS#10 Certificate Signing Request generation
+- **Relevant PQC Today Features**: pki-workshop, tls-basics, crypto-agility
+- **Source Document**: IETF_RFC_8555.html (manual-fact-correction)
+- **Extraction Timestamp**: 2026-04-26T00:00:00
+
+---
+
+## IETF-RFC-4210-CMP
+
+- **Reference ID**: IETF-RFC-4210-CMP
+- **Title**: Certificate Management Protocol (CMP)
+- **Authors**: IETF
+- **Publication Date**: 2005-09-01
+- **Last Updated**: 2023-12-01
+- **Document Status**: Published
+- **Main Topic**: This document specifies the Internet X.509 Public Key Infrastructure Certificate Management Protocol (CMP) for certificate creation and management.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: C. Adams; S. Farrell; T. Kause; T. Mononen
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: CMP; X.509v3; Diffie-Hellman
+- **Infrastructure Layers**: PKI; Certification Authority; Registration Authority
+- **Standardization Bodies**: IETF; Internet Society
+- **Compliance Frameworks Referenced**: RFC 4210; RFC 9480; RFC 5652; RFC 6712; X.509
+- **Classical Algorithms Referenced**: Diffie-Hellman
+- **Key Takeaways**: CMP obsoletes RFC 2510 with updated message profiles and confirmation mechanisms; The protocol supports on-line interactions between PKI components including CAs and client systems; A new implicit confirmation method is introduced to reduce the number of protocol messages exchanged; Proof-of-Possession (POP) structures are defined for signature, encryption, and key agreement keys.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Developer; Researcher
+- **Implementation Prerequisites**: Support for X.509v3 certificates; ASN.1 definitions; Version negotiation for RFC 2510 compatibility
+- **Relevant PQC Today Features**: pki-workshop, tls-basics, crypto-agility, pqc-risk-management
+- **Source Document**: IETF-RFC-4210-CMP.html (manual-fact-correction)
+- **Extraction Timestamp**: 2026-04-26T00:00:00
+
+---
+
+## NIST-SP-800-140B
+
+- **Reference ID**: NIST-SP-800-140B
+- **Title**: CMVP Security Policy Requirements: CMVP Validation Authority Updates to ISO/IEC 19790 Annex B
+- **Authors**: NIST CMVP
+- **Publication Date**: 2020-03-01
+- **Last Updated**: 2020-03-01
+- **Document Status**: Published
+- **Main Topic**: Specifies security policy content and ordering requirements for cryptographic modules validated under FIPS 140-3 via the CMVP.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: United States; National Institute of Standards and Technology
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Cryptographic Module Validation Program; FIPS 140-3
+- **Standardization Bodies**: NIST; CMVP; NVLAP
+- **Compliance Frameworks Referenced**: FIPS 140-3; FIPS 203; FIPS 204; FIPS 205; NIST SP 800-140B; SP 800-140C; SP 800-140D; SP 800-140
+- **Classical Algorithms Referenced**: AES; RSA; HMAC
+- **Key Takeaways**: Security policies must document all security-relevant details for a cryptographic module in a standardized format; CMVP validation requires documented vendor evidence and test evidence per SP 800-140B requirements; Module boundary and algorithm coverage must be explicitly stated in the security policy.
+- **Security Levels & Parameters**: FIPS 140-3 Security Levels 1-4
+- **Hybrid & Transition Approaches**: Transition from FIPS 140-2 to FIPS 140-3
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; Security Architect; Vendor; Developer
+- **Implementation Prerequisites**: FIPS 140-3 conformance; NVLAP accredited lab; CMVP validation process
+- **Relevant PQC Today Features**: Compliance, Assess, Algorithms
+- **Source Document**: NIST-SP-800-140B (manual-fact-correction)
+- **Extraction Timestamp**: 2026-04-26T00:00:00
