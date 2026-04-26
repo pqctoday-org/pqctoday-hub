@@ -751,50 +751,82 @@ char *execute_tls_simulation(const char *client_conf_path,
         log_event("connection", "debug", "Debug: No negotiated group (NID<=0)");
       }
 
-      // Log the negotiated signature algorithm with fallback for PQC
-      int sig_nid = 0;
-      int get_sig_ret = SSL_get_peer_signature_nid(c_ssl, &sig_nid);
-      const char *sig_source = "peer";
+      // Log the negotiated TLS 1.3 signature scheme as a human-readable name.
+      // SSL_get_peer_signature_nid() returns the HASH NID (e.g. NID_sha256=672),
+      // not the scheme.  We combine the hash NID with the key type NID and the
+      // peer cert pubkey type to reconstruct the full scheme name.
+      int hash_nid = 0, type_nid = 0;
+      SSL_get_peer_signature_nid(c_ssl, &hash_nid);
+      SSL_get_peer_signature_type_nid(c_ssl, &type_nid);
 
-      // Fallback 1: Use server's own signature if peer lookup fails (for
-      // PQC/ML-DSA)
-      if (get_sig_ret != 1 || sig_nid == 0) {
-        get_sig_ret = SSL_get_signature_nid(s_ssl, &sig_nid);
-        sig_source = "server";
+      // Fallback: server's own sig nids
+      if (hash_nid == 0) SSL_get_signature_nid(s_ssl, &hash_nid);
+      if (type_nid == 0) SSL_get_signature_type_nid(s_ssl, &type_nid);
+
+      // Resolve peer public key type from the server cert (most reliable for PQC)
+      X509 *srv_cert = SSL_get_certificate(s_ssl); // non-owning
+      EVP_PKEY *srv_pkey = srv_cert ? X509_get0_pubkey(srv_cert) : NULL;
+      const char *pkey_type = srv_pkey ? EVP_PKEY_get0_type_name(srv_pkey) : NULL;
+
+      // Map hash NID → lowercase suffix
+      const char *hash_sfx = NULL;
+      if      (hash_nid == NID_sha224) hash_sfx = "sha224";
+      else if (hash_nid == NID_sha256) hash_sfx = "sha256";
+      else if (hash_nid == NID_sha384) hash_sfx = "sha384";
+      else if (hash_nid == NID_sha512) hash_sfx = "sha512";
+
+      char scheme[128] = "";
+
+      // ML-DSA — pkey type name IS the algorithm, no hash suffix
+      if (pkey_type && (strstr(pkey_type, "ML-DSA") || strstr(pkey_type, "MLDSA"))) {
+        if      (strstr(pkey_type, "44")) snprintf(scheme, sizeof(scheme), "mldsa44");
+        else if (strstr(pkey_type, "65")) snprintf(scheme, sizeof(scheme), "mldsa65");
+        else if (strstr(pkey_type, "87")) snprintf(scheme, sizeof(scheme), "mldsa87");
+        else snprintf(scheme, sizeof(scheme), "%s", pkey_type);
       }
-
-      // Fallback 2: Parse from Server Certificate if still no result
-      if (get_sig_ret != 1 || sig_nid == 0) {
-        X509 *cert = SSL_get_certificate(s_ssl);
-        if (cert) {
-          sig_nid = X509_get_signature_nid(cert);
-          get_sig_ret = (sig_nid != NID_undef && sig_nid != 0) ? 1 : 0;
-          sig_source = "cert";
+      // SLH-DSA — similarly no separate hash suffix in the scheme name
+      else if (pkey_type && strstr(pkey_type, "SLH-DSA")) {
+        snprintf(scheme, sizeof(scheme), "%s", pkey_type);
+      }
+      // EdDSA — no hash suffix
+      else if (type_nid == EVP_PKEY_ED25519 ||
+               (pkey_type && strcmp(pkey_type, "ED25519") == 0)) {
+        snprintf(scheme, sizeof(scheme), "ed25519");
+      }
+      else if (type_nid == EVP_PKEY_ED448 ||
+               (pkey_type && strcmp(pkey_type, "ED448") == 0)) {
+        snprintf(scheme, sizeof(scheme), "ed448");
+      }
+      // RSA-PSS (TLS 1.3 always uses PSS for RSA)
+      else if (type_nid == EVP_PKEY_RSA_PSS ||
+               (pkey_type && strcmp(pkey_type, "RSA") == 0)) {
+        if (hash_sfx)
+          snprintf(scheme, sizeof(scheme), "rsa_pss_rsae_%s", hash_sfx);
+        else
+          snprintf(scheme, sizeof(scheme), "rsa_pss_rsae_nid%d", hash_nid);
+      }
+      // ECDSA — derive curve from key bits
+      else if (type_nid == EVP_PKEY_EC ||
+               (pkey_type && strcmp(pkey_type, "EC") == 0)) {
+        const char *curve = "secp256r1"; // default
+        if (srv_pkey) {
+          int bits = EVP_PKEY_get_bits(srv_pkey);
+          if (bits == 384) curve = "secp384r1";
+          else if (bits == 521) curve = "secp521r1";
         }
+        if (hash_sfx)
+          snprintf(scheme, sizeof(scheme), "ecdsa_%s_%s", curve, hash_sfx);
+        else
+          snprintf(scheme, sizeof(scheme), "ecdsa_%s_nid%d", curve, hash_nid);
+      }
+      // Unknown — show type + hash NIDs
+      else {
+        snprintf(scheme, sizeof(scheme), "type%d_hash%d", type_nid, hash_nid);
       }
 
-      char debug_msg[128];
-      snprintf(debug_msg, sizeof(debug_msg),
-               "Debug: Sig NID=%d Ret=%d Source=%s", sig_nid, get_sig_ret,
-               sig_source);
-      log_event("connection", "debug", debug_msg);
-
-      if (get_sig_ret == 1 && sig_nid != 0) {
-        const char *sig_name = OBJ_nid2sn(sig_nid);
-        if (sig_name) {
-          char sig_msg[128];
-          snprintf(sig_msg, sizeof(sig_msg), "Peer Signature Algorithm: %s",
-                   sig_name);
-          log_event("connection", "signature_algorithm", sig_msg);
-        } else {
-          char fallback_msg[64];
-          snprintf(fallback_msg, sizeof(fallback_msg),
-                   "Peer Signature Algorithm: NID-%d", sig_nid);
-          log_event("connection", "signature_algorithm", fallback_msg);
-        }
-      } else {
-        log_event("connection", "debug", "Debug: All signature lookups failed");
-      }
+      char sig_msg[160];
+      snprintf(sig_msg, sizeof(sig_msg), "Peer Signature Algorithm: %s", scheme);
+      log_event("connection", "signature_algorithm", sig_msg);
     }
   }
 
