@@ -418,6 +418,50 @@ describe('OpenSSLService Functionality', () => {
       await expect(p).rejects.toThrow('TLS Simulation timed out')
       vi.useRealTimers()
     })
+
+    it('forwards hsmMode=true to worker TLS_SIMULATE message', async () => {
+      const worker = (openSSLService as any).worker
+      const postMessageMock = vi.fn((data: any) => {
+        worker.onmessage({
+          data: {
+            type: 'LOG',
+            stream: 'stdout',
+            message: 'SIMULATION_RESULT:{"status":"success","trace":[]}',
+            requestId: data.requestId,
+          },
+        } as MessageEvent)
+        worker.onmessage({ data: { type: 'DONE', requestId: data.requestId } } as MessageEvent)
+      })
+      worker.postMessage = postMessageMock
+
+      await openSSLService.simulateTLS('client', 'server', [], [], { hsmMode: true })
+
+      expect(postMessageMock).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'TLS_SIMULATE', hsmMode: true })
+      )
+    })
+
+    it('forwards hsmMode=false (default) to worker TLS_SIMULATE message', async () => {
+      const worker = (openSSLService as any).worker
+      const postMessageMock = vi.fn((data: any) => {
+        worker.onmessage({
+          data: {
+            type: 'LOG',
+            stream: 'stdout',
+            message: 'SIMULATION_RESULT:{"status":"success","trace":[]}',
+            requestId: data.requestId,
+          },
+        } as MessageEvent)
+        worker.onmessage({ data: { type: 'DONE', requestId: data.requestId } } as MessageEvent)
+      })
+      worker.postMessage = postMessageMock
+
+      await openSSLService.simulateTLS('client', 'server')
+
+      expect(postMessageMock).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'TLS_SIMULATE', hsmMode: false })
+      )
+    })
   })
 
   describe('executeSkey()', () => {
