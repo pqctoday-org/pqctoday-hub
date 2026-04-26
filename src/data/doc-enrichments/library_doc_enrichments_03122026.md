@@ -1,3 +1,8 @@
+---
+enrichment_method: ollama-qwen3.5:27b
+generated: 2026-03-12
+---
+
 ## GRI-Quantum-Threat-Timeline-2025
 
 - **Reference ID**: GRI-Quantum-Threat-Timeline-2025

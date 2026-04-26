@@ -1,3 +1,8 @@
+---
+enrichment_method: ollama-qwen3.5:27b
+generated: 2026-03-30
+---
+
 ## CIRCL-Cloudflare
 
 - **Reference ID**: CIRCL-Cloudflare

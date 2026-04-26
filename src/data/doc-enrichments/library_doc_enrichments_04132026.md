@@ -1,3 +1,8 @@
+---
+enrichment_method: ollama-qwen3.5:27b
+generated: 2026-04-13
+---
+
 ## KpqC-Competition-Results
 
 - **Reference ID**: KpqC-Competition-Results

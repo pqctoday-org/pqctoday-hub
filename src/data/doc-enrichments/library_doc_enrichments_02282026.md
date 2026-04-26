@@ -1,4 +1,5 @@
 ---
+enrichment_method: ollama-qwen3:14b
 generated: 2026-02-28
 collection: library
 documents_processed: 163
