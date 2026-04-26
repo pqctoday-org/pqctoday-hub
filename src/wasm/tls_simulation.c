@@ -531,6 +531,13 @@ char *execute_tls_simulation(const char *client_conf_path,
         SSL_CTX_use_certificate_file(s_ctx, "/ssl/server.crt", SSL_FILETYPE_PEM);
       if (access("/ssl/server.key", F_OK) == 0)
         SSL_CTX_use_PrivateKey_file(s_ctx, "/ssl/server.key", SSL_FILETYPE_PEM);
+    } else if (access("/ssl/hsm-server.crt", F_OK) == 0) {
+      /* HSM succeeded: the server cert is self-signed with ML-DSA-65.
+       * Add it to the client's trust store so the chain-of-trust check passes. */
+      SSL_CTX_load_verify_locations(c_ctx, "/ssl/hsm-server.crt", NULL);
+      SSL_CTX_set_verify(c_ctx, SSL_VERIFY_PEER, NULL);
+      log_event("client", "hsm_ca_loaded",
+                "HSM self-signed cert added to client trust store");
     }
   } else {
     if (access("/ssl/server.crt", F_OK) == 0) {

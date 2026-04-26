@@ -611,6 +611,17 @@ int hsm_setup_server_credentials(SSL_CTX *s_ctx) {
     log_event("server", "hsm_attached",
               "SSL_CTX configured: cert from softhsmv3 SPKI, private key via pkcs11: URI");
 
+    /* Write the self-signed cert to a well-known path so the client context
+     * can load it as a trusted CA.  Without this the client rejects the cert
+     * because it was not signed by the pre-existing RSA CA in client-ca.crt. */
+    FILE *ca_fp = fopen("/ssl/hsm-server.crt", "w");
+    if (ca_fp) {
+        fputs(cert_pem, ca_fp);
+        fclose(ca_fp);
+        log_event("server", "hsm_ca_written",
+                  "Self-signed cert written to /ssl/hsm-server.crt for client trust");
+    }
+
     /* OpenSSL retains the cert + key; we can free our refs. */
     X509_free(cert);
     EVP_PKEY_free(priv_pkey);
