@@ -678,6 +678,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     return p !== '0' // default true unless explicitly disabled
   })
   const [showQkdNote, setShowQkdNote] = useState(false)
+  const [logCopied, setLogCopied] = useState(false)
   const [ssLogs, setSsLogs] = useState<StrongSwanLog[]>([])
   const [kemSecrets, setKemSecrets] = useState<{
     responder?: { hex: string; kcv: string }
@@ -798,6 +799,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       modules {
         softhsm {
           path = libsofthsmv3.so
+          # Auto-login the pkcs11 session at module load. Without this,
+          # C_GenerateKeyPair (used for ML-KEM keygen in IKE_SA_INIT) returns
+          # CKR_USER_NOT_LOGGED_IN. PIN must match wasm_hsm_init.c USER_PIN.
+          pin = 1234
         }
       }
     }
@@ -2994,10 +2999,11 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           <div className="flex items-center gap-3">
             <ShieldAlert size={24} />
             <div>
-              <h4 className="font-bold">MTU Exceeded - Packet Dropped</h4>
+              <h4 className="font-bold">Tunnel initialization failed</h4>
               <p className="text-xs opacity-80">
-                The current payload size exceeds the MTU of {mtu} bytes, and fragmentation is
-                disabled. The VPN tunnel has failed to initialize.
+                charon aborted the IKE_SA. Common causes: PKCS#11 session not logged in, proposal
+                mismatch, MTU exceeded with fragmentation off ({mtu}-byte limit), or cert-auth
+                failure. Check the charon.log panel below for the specific error.
               </p>
             </div>
           </div>
@@ -3515,14 +3521,21 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             <span>WASM IKEv2 KEM Daemon</span>
             <Button
               variant="ghost"
-              className="px-2 py-0.5 rounded text-[10px] bg-background/50 hover:bg-background border border-border/50 transition-colors"
+              className={`px-2 py-0.5 rounded text-[10px] border transition-colors ${
+                logCopied
+                  ? 'bg-success/20 border-success text-success'
+                  : 'bg-background/50 hover:bg-background border-border/50'
+              }`}
               onClick={() => {
                 const text = ssLogs.map((l) => `[${l.level}] ${l.text}`).join('\n')
-                navigator.clipboard.writeText(text)
+                navigator.clipboard.writeText(text).then(() => {
+                  setLogCopied(true)
+                  setTimeout(() => setLogCopied(false), 1500)
+                })
               }}
               title="Copy logs to clipboard"
             >
-              Copy
+              {logCopied ? '✓ Copied' : 'Copy'}
             </Button>
           </div>
         </div>

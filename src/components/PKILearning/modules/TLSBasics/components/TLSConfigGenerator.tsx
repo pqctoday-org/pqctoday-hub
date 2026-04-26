@@ -460,6 +460,17 @@ export const TLSConfigGenerator: React.FC = () => {
             PQC group names (X25519MLKEM768, MLKEM768) require OpenSSL 3.5+ compiled with liboqs or
             the OQS provider.
           </p>
+          <p className="text-xs text-muted-foreground italic">
+            <strong>CCM cipher suites</strong> (
+            <code className="font-mono bg-muted px-1 rounded">TLS_AES_128_CCM_SHA256</code>,{' '}
+            <code className="font-mono bg-muted px-1 rounded">TLS_AES_128_CCM_8_SHA256</code>):
+            valid TLS 1.3 ciphers but not in OpenSSL&apos;s default cipher list — requires explicit
+            opt-in on both client and server via{' '}
+            <code className="font-mono bg-muted px-1 rounded">ssl_ciphersuites</code> /
+            <code className="font-mono bg-muted px-1 rounded">-ciphersuites</code>. CCM-8 truncates
+            the authentication tag to 8 bytes; only use in constrained IoT contexts where bandwidth
+            outweighs the reduced forgery resistance.
+          </p>
         </div>
       </details>
 

@@ -2,6 +2,34 @@
 import React from 'react'
 import { Lock, Unlock } from 'lucide-react'
 import { clsx } from 'clsx'
+import { useTLSStore } from '@/store/tls-learning.store'
+
+// Key-share sizes (encap key / ciphertext in bytes) per group
+const GROUP_KEY_SHARE: Record<string, { ek: number; ct: number }> = {
+  X25519MLKEM768: { ek: 1184, ct: 1088 },
+  X448MLKEM1024: { ek: 1600, ct: 1568 },
+  SecP256r1MLKEM768: { ek: 1249, ct: 1153 },
+  SecP384r1MLKEM1024: { ek: 1665, ct: 1633 },
+  MLKEM512: { ek: 800, ct: 768 },
+  MLKEM768: { ek: 1184, ct: 1088 },
+  MLKEM1024: { ek: 1568, ct: 1568 },
+  X25519: { ek: 32, ct: 32 },
+  P256: { ek: 65, ct: 65 },
+  P384: { ek: 97, ct: 97 },
+}
+
+// Signature sizes by cert selection
+const SIG_BYTES: Record<string, string> = {
+  mldsa44: '2,420 B',
+  mldsa65: '3,293 B',
+  mldsa87: '4,595 B',
+  rsa2048: '256 B',
+  rsa4096: '512 B',
+  ecdsa256: '72 B (DER)',
+  'slhdsa-sha2-128s': '7,856 B',
+  'slhdsa-sha2-192s': '16,224 B',
+  'slhdsa-sha2-256s': '29,792 B',
+}
 
 const MESSAGES = [
   {
@@ -46,7 +74,7 @@ const MESSAGES = [
   },
   {
     label: '{CertificateVerify}',
-    sublabel: 'Signature proof (ML-DSA / ECDSA)',
+    sublabel: 'Signature proof (ML-DSA / SLH-DSA / ECDSA)',
     rfcRef: 'RFC 8446 §4.4.3',
     direction: 'left' as const,
     encrypted: true,
@@ -101,6 +129,34 @@ interface TLSHandshakeDiagramProps {
 }
 
 export const TLSHandshakeDiagram: React.FC<TLSHandshakeDiagramProps> = ({ mTLSEnabled }) => {
+  const { clientConfig, serverConfig } = useTLSStore()
+  const selectedGroup = clientConfig?.groups?.[0] ?? 'X25519MLKEM768'
+  const sigAlg = serverConfig?.signatureAlgorithm ?? 'mldsa65'
+  const ks = GROUP_KEY_SHARE[selectedGroup] ?? GROUP_KEY_SHARE['X25519MLKEM768']
+  const sigSize = SIG_BYTES[sigAlg]
+
+  const dynamicMessages = MESSAGES.map((msg) => {
+    if (msg.label === 'ClientHello') {
+      return {
+        ...msg,
+        sublabel: `+ key_share (${selectedGroup}, encap key ${ks.ek} B), supported_groups`,
+      }
+    }
+    if (msg.label === 'ServerHello' && msg.direction === 'left') {
+      return {
+        ...msg,
+        sublabel: `+ key_share (KEM ciphertext / ECDH response, ${ks.ct} B)`,
+      }
+    }
+    if (msg.label === '{CertificateVerify}' && msg.direction === 'left' && sigSize) {
+      return {
+        ...msg,
+        sublabel: `Signature proof — ${sigAlg.toUpperCase()} (${sigSize})`,
+      }
+    }
+    return msg
+  })
+
   return (
     <div className="bg-muted/30 rounded-lg border border-border p-6 overflow-x-auto">
       <div className="min-w-[400px]">
@@ -130,9 +186,9 @@ export const TLSHandshakeDiagram: React.FC<TLSHandshakeDiagramProps> = ({ mTLSEn
 
           {/* Messages */}
           <div className="space-y-2">
-            {MESSAGES.map((msg, i) => {
+            {dynamicMessages.map((msg, i) => {
               // Insert encryption boundary before first encrypted message
-              const showBoundary = i > 0 && msg.encrypted && !MESSAGES[i - 1].encrypted
+              const showBoundary = i > 0 && msg.encrypted && !dynamicMessages[i - 1].encrypted
 
               // Visual state for mTLS messages
               const isMtlsActive =
@@ -167,11 +223,16 @@ export const TLSHandshakeDiagram: React.FC<TLSHandshakeDiagramProps> = ({ mTLSEn
           </div>
         </div>
 
-        {/* PQC note */}
+        {/* PQC note — dynamic based on current group selection */}
         <p className="mt-4 text-[10px] text-muted-foreground/70 text-center">
-          With PQC: ClientHello key_share carries an ML-KEM encapsulation key (~1,184 B for
-          ML-KEM-768); ServerHello key_share carries the ciphertext (~1,088 B). Classical ECDH uses
-          32 B each.
+          Current group: <span className="font-mono">{selectedGroup}</span> — encap key {ks.ek} B,
+          ciphertext {ks.ct} B (classical X25519 uses 32 B each).
+          {sigSize && (
+            <>
+              {' '}
+              CertificateVerify: {sigAlg.toUpperCase()} signature {sigSize}.
+            </>
+          )}
         </p>
       </div>
     </div>

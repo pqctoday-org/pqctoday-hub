@@ -6,6 +6,19 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- **VPN simulator — IKEv2 engine reaches `CONNECTING` with real ML-KEM-768 keygen** ([src/components/Playground/hsm/VpnSimulationPanel.tsx](src/components/Playground/hsm/VpnSimulationPanel.tsx), [public/wasm/strongswan_worker.js](public/wasm/strongswan_worker.js), [public/wasm/strongswan.js](public/wasm/strongswan.js), [public/wasm/strongswan.wasm](public/wasm/strongswan.wasm)) — full charon WASM rebuild plus surgical hub-side fixes restore the IKEv2 path through to the moment the daemon emits a real 1384-byte `IKE_SA_INIT` request:
+  - **PIN config alignment** — charon `pkcs11.modules.softhsm.pin` was sending `user1234` while `wasm_hsm_init.c` provisions `USER_PIN="1234"`. Mismatch produced `CKR_PIN_INCORRECT` → unauthenticated session → `CKR_USER_NOT_LOGGED_IN` on `C_GenerateKeyPair`. Hub-side single-line fix.
+  - **Misleading "MTU Exceeded" banner** — replaced with a generic "Tunnel initialization failed" copy that points the user to the charon log for the specific cause (PKCS#11 login, proposal mismatch, MTU+frag-off, cert-auth). The previous text fired on any tunnel-init failure regardless of cause.
+  - **`dst_ip` plumbed through `wasm_net_receive`** — the EM_JS receive helper hardcoded `dst_ip = 0`, so charon's IKEv2 config matcher saw `local=%any...remote=192.168.0.1` and emitted `NO_PROPOSAL_CHOSEN` even though the worker's static config registered `local=192.168.0.2`. The worker now sets `Module._wasm_local_ip` per role in **network byte order** (`192.168.0.1 = 0x0100A8C0`, `192.168.0.2 = 0x0200A8C0` — `sin_addr.s_addr` is network-order per POSIX so a LE WASM host stores the bytes `C0 A8 00 0X` in that LE u32 form), and the deployed `strongswan.js` glue reads it.
+  - **Charon-log "Copy" button feedback** — clicking the Copy logs button now flashes the button success-green with a "✓ Copied" label for 1.5 s. Previous state had no visual indication of whether the click registered.
+
+### Known issues / next steps
+
+- **Cross-worker packet transport is self-loopback** — the WASM glue's `wasm_net_send` writes to `Module._wasm_net_sab` (the worker's _own_ inbox) and never `postMessage`s to the bridge, so although `bridge.ts case 'PACKET_OUT'` is wired to route between worker SABs, no producer ever fires it. Each worker reads its own writes and the responder never sees the initiator's packets (latest test shows `from 192.168.0.1 to 192.168.0.1` confirming this). Fix planned: hot-edit `wasm_net_send` to `postMessage('PACKET_OUT')` plus reconcile the bridge's offset-24 packet placement with `socket_wasm.c`'s offset-16 `body` view. Not in this commit.
+- **`pkcs11_wasm_rpc_function_list` is a `memcpy` stub** ([pqctoday-hsm/strongswan-wasm-shims/pkcs11_wasm_rpc.c:112](../pqctoday-hsm/strongswan-wasm-shims/pkcs11_wasm_rpc.c#L112)) — even with `rpcMode=true`, charon's pkcs11 plugin talks to the worker's local statically-linked softhsmv3, not the panel's JS-side softhsmv3 with the cert keys. ML-DSA cert-auth path needs a real RPC bridge (multi-day) or in-worker cert generation (architectural change) — out of scope for this round.
+
 ### Added
 
 - **MiniSearch convergence — `UnifiedSearchService`** — [src/services/search/UnifiedSearchService.ts](src/services/search/UnifiedSearchService.ts) is the new singleton backing store shared by ⌘K palette and the PQC Assistant. Both surfaces now share one MiniSearch index, one entityIndex, one localforage cache, and one corpus load per session.
