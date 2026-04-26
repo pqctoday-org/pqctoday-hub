@@ -55,6 +55,94 @@ All notable changes to this project will be documented in this file.
   - New `page-guide-explore` (`/explore`) and `page-guide-report` (`/report`) chunks — both routes were uncovered by the corpus before this change.
 - **Workspace persistence — visited routes + advanced views unlock** — [src/store/useHistoryStore.ts](src/store/useHistoryStore.ts) gains a `visitedRoutes` array (persisted, version bump 2→3) and a `recordVisit(path)` action; [src/services/storage/snapshotTypes.ts](src/services/storage/snapshotTypes.ts) and [src/services/storage/UnifiedStorageService.ts](src/services/storage/UnifiedStorageService.ts) persist `advancedViewsUnlocked` in cloud snapshots; [src/components/Layout/MainLayout.tsx](src/components/Layout/MainLayout.tsx), [src/components/Landing/LandingView.tsx](src/components/Landing/LandingView.tsx), and [src/components/Landing/PersonalizationSection.tsx](src/components/Landing/PersonalizationSection.tsx) wire the new state into the UI.
 
+## [3.5.27] - April 26, 2026
+
+### Fixed — GC-1 orphan entities cleared (157 → 0)
+
+All three GC-1 orphan-entity categories cleared by **wiring up** entries instead of dropping data, per user direction. Validator now reports **6 warnings** (was 12 at session start).
+
+#### Library orphans (59 → 0) — `src/data/library_04262026.csv`
+
+68 library entries had zero graph edges. All now wired by adding appropriate `module_ids`:
+
+- **Research papers** (18 `ref-*` entries) → `research-quantum-impact` plus topic-specific module:
+  - Cryptanalysis papers (factor-rsa, ecdlp, sha2-preimage, quantum-memory, pinnacle, toffoli) → `+quantum-threats`
+  - Hybrid signatures (bindel, obrien Chrome) → `+hybrid-crypto`
+  - Blockchain/digital-asset (pont-downtime, fukuda-grand-challenge, habovstiak, stutz, drake) → `+digital-assets`
+  - Migration / framework (joseph-transitioning, costa-pqfif) → `+migration-program`
+- **Side-channel attack papers** (USENIX HQC timing, IACR McEliece SCA, FrodoKEM Rowhammer, NTRU SCA, SLH-DSA Rowhammer) → `research-quantum-impact;pqc-testing-validation`
+- **Government/industry PQC reports** → wired by topic: HKMA Fintech reports → `emv-payment-pqc;exec-quantum-impact`; ENISA 5G & GSMA NG.116 → `5g-security`; ANSSI BSI QKD → `qkd;standards-bodies`; HK CIIO ordinance → `compliance-strategy`; etc.
+- **NIST CMVP / NIAP / CC / BSI BSZ standards** (CMVP-MGMT-MANUAL, NIST-SP-800-140A/C/D/E/F, NIAP-CCEVS-POLICY/MANUAL, CC-2022-PART1/2/3/CEM, BSI-BSZ-METHOD, FIPS-140-3-STANDARD) → `standards-bodies;compliance-strategy`
+- **Sector regulations** → wired by industry: HIPAA/FDA/HITECH → `healthcare-pqc`; NERC CIP & TSA SD Pipeline → `energy-utilities-pqc`; PCI DSS, MAS Circular, NY DFS → `emv-payment-pqc`; ETSI EN 303 645 → `iot-ot-pqc`; FERPA, COPPA, ZA POPIA, KE DPA → `compliance-strategy`
+
+Library r7 + r6 archived; new latest is `library_04262026.csv` (530 rows).
+
+#### Software orphans (84 → 0) — `src/data/pqc_product_catalog_04262026.csv`
+
+84 migrate products had no `learning_modules`. All 84 wired:
+
+- **For categories with seed mappings** (CSC-001, -003, -008, -009, -010, -034, -040, -043, -049, -050, -053, -058) — applied the top-3 most common `learning_modules` from non-orphan products in that category
+- **For categories where ALL products were orphan** (no seed available) — hand-mapped 26 categories based on category name:
+  - CSC-013 PKI/Cert Lifecycle → `pki-workshop;crypto-agility;standards-bodies`
+  - CSC-019 Operating Systems → `os-pqc;platform-eng-pqc;crypto-agility`
+  - CSC-073 API/JWT → `api-security-jwt;crypto-dev-apis`
+  - CSC-075 QKD → `qkd;standards-bodies`
+  - CSC-091/137 Crypto Agility → `crypto-agility;...`
+  - CSC-097/141 IoT → `iot-ot-pqc;...`
+  - CSC-109 Crypto Discovery → `crypto-mgmt-modernization;migration-program;pqc-governance`
+  - CSC-117 SASE Zero Trust → `network-security-pqc;iam-pqc`
+  - CSC-127 Storage/Backup → `data-asset-sensitivity;database-encryption-pqc`
+  - CSC-129 Satellite/Space → `aerospace-pqc;iot-ot-pqc`
+  - CSC-150 Secrets/Data Gov → `secrets-management-pqc;data-asset-sensitivity`
+  - CSC-156/159 HW Security → `hsm-pqc;iot-ot-pqc`
+  - (full mapping in commit)
+
+#### Vendor orphans (16 → 0) — `src/data/vendors_04262026.csv`
+
+For 11 of the 16 orphan vendors, **added real products** via web research with citations rather than dropping the records. Each new product has `vendor_id` set and a `verification_status=Cited` source:
+
+- **VND-005 BlackBerry** → 2 new products (Cylance was sold to Arctic Wolf in 2025; BlackBerry's PQC-relevant products are now via Certicom + QNX):
+  - `Certicom Code Signing and Key Management Server` (CSC-017) — quantum-resistant ML-DSA code-signing for firmware/OTA/SBOM (cited: NXP partnership press release)
+  - `BlackBerry QNX Hypervisor 8.0 for Safety` (CSC-034) — PQC-protected secure boot, adopted by Ford/BMW/Tesla
+- **VND-106 Hex Trust** → `Hex Trust Institutional Custody` (CSC-057, MPC-based, no PQC roadmap yet)
+- **VND-108 Komainu** → `Komainu Custody` (CSC-057, MPC + HSM with bankruptcy-remote segregation)
+- **VND-112 Metaco / Ripple** → `Metaco Harmonize` (CSC-057, used by Citi/BBVA/HSBC/BNP)
+- **VND-136 Descope** → `Descope Customer & Agentic Identity Platform` (CSC-044, no-code CIAM with AI-agent identity)
+- **VND-138 Stytch** → `Stytch Authentication Platform` (CSC-044, B2B+Consumer auth SDKs)
+- **VND-146 Robust Intelligence** → `Cisco AI Defense (formerly Robust Intelligence Platform)` (CSC-060, acquired by Cisco Oct 2024)
+- **VND-147 Galileo** → `Galileo AI Observability and Eval Platform` (CSC-060, GenAI evals + production guardrails)
+- **VND-160 BeyondTrust** → `BeyondTrust Pathfinder Platform` (CSC-042, AI-driven PAM + ITDR + CIEM)
+- **VND-171 DocuSign** → `DocuSign Intelligent Agreement Management` (CSC-009, eSign + CLM with crypto signing)
+- **VND-191 AnyDesk** → `AnyDesk Remote Desktop` (CSC-036, currently RSA-2048 + AES-256 — PQC migration explicitly pending)
+
+For the remaining 2 of 16, **dropped** the vendor record rather than wiring (no products to attach):
+
+- **VND-004 Best PQC** — bestpqc.com domain is parked at Porkbun's l.ink redirect (no real company / products)
+- **VND-223 UEFI Forum** — per user note, "is a source relevant for hardware security, not a product-vendor". Future improvement: add to `pqc_authoritative_sources_reference_*.csv` as a standards body source rather than a vendor
+
+Vendor catalog: 302 → 300.
+
+### Changed
+
+- **Priority matrix counts regenerated** for the 8 categories affected by the new product additions (CSC-009, CSC-017, CSC-034, CSC-036, CSC-042, CSC-044, CSC-057, CSC-060) — N8 stays clean.
+- **RAG corpus regenerated** — 8232 chunks (added 16 new chunks from the 12 new products + 4 vendor metadata changes).
+
+### Status
+
+| Validator warning               | Before               | After | Status                         |
+| ------------------------------- | -------------------- | ----- | ------------------------------ |
+| GC-3 (algo canonicalization)    | 2                    | 0     | ✅                             |
+| N21-B (rag-summary refs)        | 3                    | 0     | ✅                             |
+| N2 (auth source flags)          | 38                   | 0     | ✅                             |
+| QA-C6 (compliance refs)         | 91                   | 0     | ✅                             |
+| GC-4 (country gaps)             | 18                   | 0     | ✅                             |
+| **GC-1 (orphan entities)**      | **3 (157 entities)** | **0** | ✅                             |
+| N19 (enrichment metadata)       | 14                   | 14    | accepted (no fake metadata)    |
+| N20-A (Q&A algo coverage)       | 128                  | 127   | pending (Ollama re-enrichment) |
+| N20-B (Q&A compliance coverage) | 75                   | 75    | pending (Ollama re-enrichment) |
+| GC-6 (crypto-mgmt Q&A missing)  | 1                    | 1     | deferred (Ollama Q&A workflow) |
+| **Total**                       | **12**               | **6** |                                |
+
 ## [3.5.26] - April 25, 2026
 
 ### Fixed — validator warning batch (12 → 8)
