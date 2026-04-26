@@ -2,12 +2,10 @@
 //
 // SshSimulationPanel — Playground tool PT-SSH-PQC.
 //
-// Faithful in-browser port of sandbox's SSH scenario:
-//   OpenSSH 10.x WASM + softhsmv3 PKCS#11 + SAB socket shim.
-// Two workers (ssh client + sshd) run back-to-back: classical then PQC.
-// Results fed into SshComparisonPanel, wire packets shown in a hex tab.
+// Runs real softhsmv3 PKCS#11 SSH handshakes (classical + PQC) directly in
+// the browser — no Web Workers, no network, no container required.
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback } from 'react'
 import { Terminal, Play, RotateCcw, AlertCircle, BookOpen } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -16,9 +14,10 @@ import { Button } from '@/components/ui/button'
 import { ChromiumGateBanner, useChromiumGate } from '@/components/shared/ChromiumGateBanner'
 import { SshComparisonPanel } from './SshComparisonPanel'
 import { SshLearnSection } from './SshLearnSection'
-import { sshEngine, type SshHandshakeEvent, type SshHandshakeResult } from '@/wasm/openssh'
+import { sshEngine, type SshHandshakeResult } from '@/wasm/openssh'
 import type { Pkcs11LogEntry } from '@/wasm/softhsm'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { useHsmContext } from './HsmContext'
 
 interface LogEntry {
   ts: string
@@ -31,22 +30,19 @@ function ts() {
 }
 
 export function SshSimulationPanel() {
+  const { moduleRef, hSessionRef, isReady, autoInit } = useHsmContext()
+
   const [phase, setPhase] = useState<
-    'idle' | 'running-classical' | 'running-pqc' | 'done' | 'error'
+    'idle' | 'initializing' | 'running-classical' | 'running-pqc' | 'done' | 'error'
   >('idle')
   const [classicalResult, setClassicalResult] = useState<SshHandshakeResult | undefined>()
   const [pqcResult, setPqcResult] = useState<SshHandshakeResult | undefined>()
   const [logs, setLogs] = useState<LogEntry[]>([])
-  const [pkcs11Calls, setPkcs11Calls] = useState<Pkcs11LogEntry[]>([])
+  const [pkcs11Log, setPkcs11Log] = useState<Pkcs11LogEntry[]>([])
   const [errorMsg, setErrorMsg] = useState<string>()
-  const eventListenerRef = useRef<((e: SshHandshakeEvent) => void) | null>(null)
 
   const appendLog = useCallback((text: string, level: 'info' | 'error' = 'info') => {
     setLogs((prev) => [...prev.slice(-200), { ts: ts(), level, text }])
-  }, [])
-
-  const appendPkcs11 = useCallback((entry: Pkcs11LogEntry) => {
-    setPkcs11Calls((prev) => [...prev.slice(-200), entry])
   }, [])
 
   const runHandshakes = useCallback(async () => {
@@ -54,30 +50,28 @@ export function SshSimulationPanel() {
     setClassicalResult(undefined)
     setPqcResult(undefined)
     setLogs([])
-    setPkcs11Calls([])
+    setPkcs11Log([])
     setErrorMsg(undefined)
     sshEngine.terminate()
 
-    if (eventListenerRef.current) {
-      sshEngine.removeEventListener(eventListenerRef.current)
-    }
-
-    const handler = (e: SshHandshakeEvent) => {
-      if (e.type === 'pkcs11_structured') {
-        try {
-          const entry = JSON.parse(e.payload) as Pkcs11LogEntry
-          appendPkcs11(entry)
-        } catch {
-          // malformed structured event — ignore
-        }
-        return
-      }
-      appendLog(`[${e.type}] ${e.payload}`)
-    }
-    eventListenerRef.current = handler
-    sshEngine.addEventListener(handler)
-
     try {
+      // Ensure softhsmv3 is initialized
+      if (!isReady || !moduleRef.current || !hSessionRef.current) {
+        setPhase('initializing')
+        appendLog('Initializing softhsmv3…')
+        const ok = await autoInit('rust')
+        if (!ok || !moduleRef.current || !hSessionRef.current) {
+          throw new Error('softhsmv3 init failed')
+        }
+        appendLog('softhsmv3 ready.')
+      }
+
+      sshEngine.bindHsm({
+        module: moduleRef.current,
+        hSession: hSessionRef.current,
+        onPkcs11: (e) => setPkcs11Log((prev) => [...prev.slice(-200), e]),
+      })
+
       // ── Run 1: classical ──────────────────────────────────────────────────
       setPhase('running-classical')
       appendLog('Starting classical handshake (curve25519-sha256 + ssh-ed25519)…')
@@ -86,6 +80,15 @@ export function SshSimulationPanel() {
       appendLog(
         `Classical done: connection_ok=${classical.connection_ok}, auth_ms=${classical.auth_ms.toFixed(1)}ms`
       )
+
+      // Re-bind between runs so the PQC run gets a fresh logging proxy
+      if (moduleRef.current && hSessionRef.current) {
+        sshEngine.bindHsm({
+          module: moduleRef.current,
+          hSession: hSessionRef.current,
+          onPkcs11: (e) => setPkcs11Log((prev) => [...prev.slice(-200), e]),
+        })
+      }
 
       // ── Run 2: PQC ────────────────────────────────────────────────────────
       setPhase('running-pqc')
@@ -100,13 +103,8 @@ export function SshSimulationPanel() {
       setErrorMsg(msg)
       setPhase('error')
       appendLog(`Error: ${msg}`, 'error')
-    } finally {
-      if (eventListenerRef.current) {
-        sshEngine.removeEventListener(eventListenerRef.current)
-        eventListenerRef.current = null
-      }
     }
-  }, [appendLog, appendPkcs11])
+  }, [appendLog, autoInit, hSessionRef, isReady, moduleRef])
 
   const handleReset = useCallback(() => {
     sshEngine.terminate()
@@ -114,18 +112,22 @@ export function SshSimulationPanel() {
     setClassicalResult(undefined)
     setPqcResult(undefined)
     setLogs([])
-    setPkcs11Calls([])
+    setPkcs11Log([])
     setErrorMsg(undefined)
   }, [])
 
   const browserSupport = useChromiumGate()
-  const isRunning = phase === 'running-classical' || phase === 'running-pqc'
+  const isRunning =
+    phase === 'initializing' || phase === 'running-classical' || phase === 'running-pqc'
+
   const runLabel =
-    phase === 'running-classical'
-      ? 'Running classical handshake…'
-      : phase === 'running-pqc'
-        ? 'Running PQC handshake…'
-        : 'Run both handshakes'
+    phase === 'initializing'
+      ? 'Initializing softhsmv3…'
+      : phase === 'running-classical'
+        ? 'Running classical handshake…'
+        : phase === 'running-pqc'
+          ? 'Running PQC handshake…'
+          : 'Run both handshakes'
 
   const allWirePackets = [
     ...(classicalResult?.wire_packets ?? []),
@@ -142,9 +144,9 @@ export function SshSimulationPanel() {
         <div className="flex-1 min-w-0">
           <h2 className="text-lg font-bold text-gradient">PQC SSH Simulator</h2>
           <p className="text-sm text-muted-foreground mt-0.5">
-            OpenSSH 10.x WASM — ML-KEM-768 × X25519 KEX (OpenSSH built-in PQC) + ML-DSA-65 host auth
-            via softhsmv3 PKCS#11. Both client and server run in browser workers; no network or
-            container required.
+            Real softhsmv3 PKCS#11 SSH handshakes — ML-KEM-768 × X25519 hybrid KEX + ML-DSA-65 host
+            auth. All key material lives inside the softhsmv3 WASM token; no network or container
+            required.
           </p>
         </div>
         <Link to="/learn/network-security-pqc">
@@ -178,7 +180,7 @@ export function SshSimulationPanel() {
         </Button>
         {phase !== 'idle' && (
           <span className="text-xs text-muted-foreground ml-2">
-            {phase === 'done' && '✓ Both handshakes complete'}
+            {phase === 'done' && 'Both handshakes complete'}
             {phase === 'error' && '✗ Error — see logs'}
             {isRunning && '⏳ Running…'}
           </span>
@@ -201,9 +203,9 @@ export function SshSimulationPanel() {
         <TabsList>
           <TabsTrigger value="logs">Handshake Log</TabsTrigger>
           <TabsTrigger value="pkcs11">PKCS#11 Calls</TabsTrigger>
-          {allWirePackets.length > 0 && (
-            <TabsTrigger value="wire">Wire Packets ({allWirePackets.length})</TabsTrigger>
-          )}
+          <TabsTrigger value="wire">
+            Wire Packets{allWirePackets.length > 0 ? ` (${allWirePackets.length})` : ''}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="logs">
@@ -228,7 +230,7 @@ export function SshSimulationPanel() {
 
         <TabsContent value="pkcs11">
           <Pkcs11LogPanel
-            log={pkcs11Calls}
+            log={pkcs11Log}
             title="PKCS#11 Call Log"
             defaultOpen={true}
             showBeginnerMode={false}
@@ -236,14 +238,18 @@ export function SshSimulationPanel() {
           />
         </TabsContent>
 
-        {allWirePackets.length > 0 && (
-          <TabsContent value="wire">
-            <div className="glass-panel p-3 h-64 overflow-y-auto font-mono text-xs space-y-2">
-              {allWirePackets.map((pkt, i) => (
+        <TabsContent value="wire">
+          <div className="glass-panel p-3 h-64 overflow-y-auto font-mono text-xs space-y-2">
+            {allWirePackets.length === 0 ? (
+              <p className="text-muted-foreground italic">
+                Run a handshake to populate the wire packet trace.
+              </p>
+            ) : (
+              allWirePackets.map((pkt, i) => (
                 <div key={i} className="flex gap-3 items-start border-b border-border/30 pb-1.5">
                   <span
                     className={`shrink-0 px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                      pkt.direction === 'c2s'
+                      pkt.direction === 'C→S'
                         ? 'bg-primary/20 text-primary'
                         : 'bg-accent/20 text-accent'
                     }`}
@@ -252,16 +258,18 @@ export function SshSimulationPanel() {
                   </span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="text-foreground font-semibold">{pkt.msg_name}</span>
-                      <span className="text-muted-foreground">({pkt.length} B)</span>
+                      <span className="text-foreground font-semibold">{pkt.msgType}</span>
+                      <span className="text-muted-foreground">
+                        ({pkt.sizeBytes.toLocaleString()} B)
+                      </span>
                     </div>
-                    <p className="text-muted-foreground truncate">{pkt.hex_preview}</p>
+                    <p className="text-muted-foreground truncate">{pkt.hexPreview}</p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </TabsContent>
-        )}
+              ))
+            )}
+          </div>
+        </TabsContent>
       </Tabs>
 
       <p className="text-xs text-muted-foreground">

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useEffect, useCallback } from 'react'
-import { Play } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { ExternalLink, Play, ShieldCheck } from 'lucide-react'
+import { clsx } from 'clsx'
 import { useTLSStore, type SimulationResult } from '@/store/tls-learning.store'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { generateOpenSSLConfig } from '../PKILearning/modules/TLSBasics/utils/configGenerator'
@@ -39,6 +41,11 @@ export const TLSSimulatorTab: React.FC = () => {
     clientMessage,
     serverMessage,
   } = useTLSStore()
+
+  // HSM mode: when enabled, the next handshake uses softhsmv3 (statically
+  // linked into openssl.wasm via pkcs11-provider) to hold the server private
+  // key. CertificateVerify routes through C_SignInit + C_SignMessage.
+  const [hsmMode, setHsmMode] = useState<boolean>(false)
 
   // Initialize default certificates on first mount
   useEffect(() => {
@@ -136,7 +143,8 @@ export const TLSSimulatorTab: React.FC = () => {
         clientCfg,
         serverCfg,
         simFiles,
-        currentCommands
+        currentCommands,
+        { hsmMode }
       )
 
       try {
@@ -162,7 +170,15 @@ export const TLSSimulatorTab: React.FC = () => {
     } finally {
       setIsSimulating(false)
     }
-  }, [clientConfig, serverConfig, clientMessage, serverMessage, setIsSimulating, setResults])
+  }, [
+    clientConfig,
+    serverConfig,
+    clientMessage,
+    serverMessage,
+    setIsSimulating,
+    setResults,
+    hsmMode,
+  ])
 
   // Re-run when commands change (Replay trigger)
   useEffect(() => {
@@ -178,6 +194,105 @@ export const TLSSimulatorTab: React.FC = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      {/* Citation chips + Learn cross-link */}
+      <div className="glass-panel p-4 space-y-3">
+        <div className="flex flex-wrap gap-1.5">
+          {[
+            { label: 'RFC 8446', href: 'https://www.rfc-editor.org/rfc/rfc8446', title: 'TLS 1.3' },
+            {
+              label: 'FIPS 203',
+              href: 'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf',
+              title: 'ML-KEM',
+            },
+            {
+              label: 'FIPS 204',
+              href: 'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf',
+              title: 'ML-DSA',
+            },
+            {
+              label: 'FIPS 205',
+              href: 'https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.205.pdf',
+              title: 'SLH-DSA',
+            },
+            {
+              label: 'draft-ietf-tls-hybrid-design-16',
+              href: 'https://datatracker.ietf.org/doc/draft-ietf-tls-hybrid-design/16/',
+              title: 'Hybrid KEX in TLS 1.3',
+            },
+            {
+              label: 'draft-ietf-tls-mlkem-07',
+              href: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/07/',
+              title: 'ML-KEM Key Agreement for TLS 1.3',
+            },
+            {
+              label: 'draft-ietf-tls-mldsa-02',
+              href: 'https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/02/',
+              title: 'ML-DSA for TLS 1.3',
+            },
+            {
+              label: 'BSI TR-02102-2',
+              href: 'https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-2.html',
+              title: 'BSI TLS recommendations',
+            },
+          ].map((cite) => (
+            <a
+              key={cite.label}
+              href={cite.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={cite.title}
+              className="text-[10px] px-2 py-0.5 rounded border border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-border/80 transition-colors flex items-center gap-1"
+            >
+              {cite.label}
+              <ExternalLink size={9} className="opacity-50" />
+            </a>
+          ))}
+        </div>
+        <Link
+          to="/learn/tls-basics"
+          className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline"
+        >
+          Open in Learn for HSM-backed keys, exercises, and Apache/nginx/HAProxy/Caddy snippets →
+        </Link>
+      </div>
+
+      {/* Live HSM toggle. When ON, the server's ML-DSA-65 private key is
+       *  generated inside softhsmv3 (statically linked into openssl.wasm) and
+       *  the CertificateVerify sign call routes through pkcs11-provider →
+       *  C_SignInit + C_SignMessage. */}
+      <div
+        className={clsx(
+          'glass-panel p-4 flex items-center justify-between gap-3',
+          hsmMode && 'border-success/40'
+        )}
+      >
+        <div className="flex items-start gap-3">
+          <ShieldCheck
+            size={20}
+            className={clsx('mt-0.5', hsmMode ? 'text-success' : 'text-muted-foreground')}
+          />
+          <div>
+            <div className="text-sm font-semibold">
+              Live HSM Mode (softhsmv3 + pkcs11-provider, statically linked into openssl.wasm)
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {hsmMode
+                ? 'Next run: server private key generated inside softhsmv3; CertificateVerify routes through PKCS#11 (C_SignInit + C_SignMessage). Private key never leaves the simulated HSM.'
+                : 'OFF: handshake uses bundled PEM keys (the default). Toggle ON to demonstrate HSM-resident server key signing.'}
+            </p>
+          </div>
+        </div>
+        <Button
+          variant={hsmMode ? 'gradient' : 'outline'}
+          onClick={() => setHsmMode((v) => !v)}
+          disabled={isSpinning}
+          className="px-4 py-2 text-xs font-bold whitespace-nowrap"
+          aria-pressed={hsmMode}
+        >
+          {hsmMode ? 'HSM ON' : 'HSM OFF'}
+        </Button>
+      </div>
+
       <div className="flex justify-end gap-3">
         {results && (
           <Button

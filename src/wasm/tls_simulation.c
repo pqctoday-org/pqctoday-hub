@@ -17,6 +17,13 @@
 #define EMSCRIPTEN_KEEPALIVE
 #endif
 
+/* HSM mode hooks — defined in tls_simulation_hsm.c. When enabled, the server
+ * private key is generated inside the WASM-linked softhsmv3 token and the
+ * CertificateVerify sign operation routes through pkcs11-provider during the
+ * handshake. Returns 0 on no-op / success; non-zero on error. */
+extern int hsm_mode_enabled(void);
+extern int hsm_setup_server_credentials(SSL_CTX *s_ctx);
+
 // Helper to append to valid JSON buffer
 // Real implementation would use dynamic buffer resizing
 #define LOG_BUFFER_SIZE                                                        \
@@ -513,11 +520,25 @@ char *execute_tls_simulation(const char *client_conf_path,
   if (server_conf_path)
     apply_config(s_ctx, server_conf_path, "server");
 
-  if (access("/ssl/server.crt", F_OK) == 0) {
-    SSL_CTX_use_certificate_file(s_ctx, "/ssl/server.crt", SSL_FILETYPE_PEM);
-  }
-  if (access("/ssl/server.key", F_OK) == 0) {
-    SSL_CTX_use_PrivateKey_file(s_ctx, "/ssl/server.key", SSL_FILETYPE_PEM);
+  if (hsm_mode_enabled()) {
+    /* HSM mode: server private key is generated inside softhsmv3 and
+     * referenced via a pkcs11: URI loaded through pkcs11-provider. The PEM
+     * server.key on disk (if any) is intentionally ignored. */
+    if (hsm_setup_server_credentials(s_ctx) != 0) {
+      log_event("server", "warning",
+                "HSM setup failed; falling back to PEM server cert/key");
+      if (access("/ssl/server.crt", F_OK) == 0)
+        SSL_CTX_use_certificate_file(s_ctx, "/ssl/server.crt", SSL_FILETYPE_PEM);
+      if (access("/ssl/server.key", F_OK) == 0)
+        SSL_CTX_use_PrivateKey_file(s_ctx, "/ssl/server.key", SSL_FILETYPE_PEM);
+    }
+  } else {
+    if (access("/ssl/server.crt", F_OK) == 0) {
+      SSL_CTX_use_certificate_file(s_ctx, "/ssl/server.crt", SSL_FILETYPE_PEM);
+    }
+    if (access("/ssl/server.key", F_OK) == 0) {
+      SSL_CTX_use_PrivateKey_file(s_ctx, "/ssl/server.key", SSL_FILETYPE_PEM);
+    }
   }
   // Load CA to verify client certificate (mTLS)
   if (access("/ssl/server-ca.crt", F_OK) == 0) {

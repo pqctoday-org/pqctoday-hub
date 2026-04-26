@@ -776,7 +776,13 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   // Both slots (0=initiator keys, 1=responder keys) are accessible via one C_Initialize.
   // Build strongswan.conf dynamically to inject MTU (fragment_size)
   const buildCharonConf = useCallback((_authMode: 'psk' | 'dual', fragMtu: number) => {
-    const pluginList = 'pkcs11 nonce aes sha1 sha2 hmac kdf openssl'
+    // Plugin list compiled into pqctoday-hsm/strongswan-wasm-v2-shims (verify via
+    // scripts/verify-strongswan-plugins.sh). Listing a plugin not compiled in is
+    // silently ignored. aes/sha1/sha2/hmac MUST be listed even though openssl
+    // also provides them — strongSwan's IKE engine looks up transforms by named
+    // plugin, and without these `IKE version 2 not supported` aborts the run.
+    const pluginList =
+      'pem pkcs1 pkcs8 x509 pubkey pkcs11 nonce aes sha1 sha2 hmac kdf openssl random constraints revocation'
     return `charon {
   threads = 4
   fragment_size = ${fragMtu}
@@ -814,11 +820,16 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   // Build ipsec.conf from role + KE mode + auth mode + fragmentation flag.
   const buildIpsecConf = useCallback(
     (role: 'initiator' | 'responder', mode: IKEv2Mode, auth: 'psk' | 'dual', frag: boolean) => {
-      let modeIke = 'aes256-mlkem768-sha384!'
+      // strongSwan 6.x proposal grammar (RFC 9370 multiple-key-exchange):
+      //   pure-pqc:  aes256-sha384-mlkem768           — IKE_SA_INIT only
+      //   classical: aes256-sha256-modp3072            — IKE_SA_INIT only
+      //   hybrid:    aes256-sha384-mlkem768-ke1_ecp256 — ML-KEM in IKE_SA_INIT,
+      //              then real IKE_INTERMEDIATE round with ECP-256 (RFC 9242).
+      // The `ke1_*` token names a secondary KE; charon uses IKE_INTERMEDIATE
+      // (built into core 6.0+) and the openssl plugin's ECDH for the second round.
+      let modeIke = 'aes256-sha384-mlkem768!'
       if (mode === 'classical') modeIke = 'aes256-sha256-modp3072!'
-      // hybrid uses pure ML-KEM on the strongSwan side; synthetic ECDH IKE_INTERMEDIATE
-      // is layered in the simulation bridge after IKE_SA_INIT completes
-      if (mode === 'hybrid') modeIke = 'aes256-mlkem768-sha384!'
+      if (mode === 'hybrid') modeIke = 'aes256-sha384-mlkem768-ke1_ecp256!'
       const left = role === 'initiator' ? '192.168.0.1' : '192.168.0.2'
       const right = role === 'initiator' ? '192.168.0.2' : '192.168.0.1'
       const auto = role === 'initiator' ? 'start' : 'route'
@@ -828,10 +839,15 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       const leftAuthStr = `  leftcert=/etc/ipsec.d/certs/${myCert}.crt`
       const rightAuthStr = `  rightcert=/etc/ipsec.d/certs/${peerCert}.crt`
 
+      // Auth modes:
+      //   psk:  pre-shared key only — fast, no certs.
+      //   dual: pubkey-only via ML-DSA (or RSA) cert. Drops PSK so charon does
+      //         a real IKE_AUTH round signed via C_Sign on the HSM. Private key
+      //         stays in softhsmv3; pkcs11 plugin matches CKA_ID to cert SKID.
       const authLines =
         auth === 'psk'
           ? `  leftauth=psk\n  right=${right}\n  rightauth=psk`
-          : `  leftauth=psk\n  leftauth2=pubkey\n${leftAuthStr}\n  right=${right}\n  rightauth=psk\n  rightauth2=pubkey\n${rightAuthStr}`
+          : `  leftauth=pubkey\n${leftAuthStr}\n  right=${right}\n  rightauth=pubkey\n${rightAuthStr}`
       return `config setup\n  strictcrlpolicy=no\nconn %default\n  ikelifetime=60m\n  keylife=20m\n  rekeymargin=3m\n  keyingtries=1\nconn host-host\n  left=${left}\n  leftsubnet=${left}/32\n${authLines}\n  rightsubnet=${right}/32\n  type=tunnel\n  ike=${modeIke}\n  esp=aes256gcm16!\n  auto=${auto}\n  fragmentation=${frag ? 'yes' : 'no'}`
     },
     [clientAlg, serverAlg]

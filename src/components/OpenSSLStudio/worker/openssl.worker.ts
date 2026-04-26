@@ -21,6 +21,7 @@ type WorkerMessage =
       serverConfig: string
       files?: { name: string; data: Uint8Array }[]
       commands?: string[]
+      hsmMode?: boolean
       requestId?: string
     }
   | { type: 'READY'; requestId?: string }
@@ -597,12 +598,13 @@ var executeSimulation = async (
   serverConfig: string,
   files: { name: string; data: Uint8Array }[] = [],
   commands: string[] = [],
+  hsmMode: boolean = false,
   requestId?: string
 ) => {
   self.postMessage({
     type: 'LOG',
     stream: 'stdout',
-    message: `[Debug] executeSimulation started`,
+    message: `[Debug] executeSimulation started (hsmMode=${hsmMode})`,
     requestId,
   })
 
@@ -633,7 +635,27 @@ var executeSimulation = async (
       openSSLModule.FS.writeFile(scriptPath, enc.encode(scriptContent))
     }
 
-    // 3. Bind C Function
+    // 3. Bind C Functions
+    // void tls_simulation_set_hsm_mode(int enabled)
+    const setHsmModeC = openSSLModule.cwrap('tls_simulation_set_hsm_mode', null, ['number'])
+    if (setHsmModeC) {
+      setHsmModeC(hsmMode ? 1 : 0)
+      self.postMessage({
+        type: 'LOG',
+        stream: 'stdout',
+        message: `[Debug] tls_simulation_set_hsm_mode(${hsmMode ? 1 : 0})`,
+        requestId,
+      })
+    } else if (hsmMode) {
+      self.postMessage({
+        type: 'LOG',
+        stream: 'stderr',
+        message:
+          '[Debug] tls_simulation_set_hsm_mode unavailable; running with bundled keys instead',
+        requestId,
+      })
+    }
+
     // char* execute_tls_simulation(const char* client_conf_path, const char* server_conf_path, const char* script_path)
     const simulateC = openSSLModule.cwrap('execute_tls_simulation', 'string', [
       'string',
@@ -769,15 +791,23 @@ self.addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
       }
       await executeCommand(command, args, files, requestId)
     } else if (type === 'TLS_SIMULATE') {
-      const { clientConfig, serverConfig, files, commands } = event.data as {
+      const { clientConfig, serverConfig, files, commands, hsmMode } = event.data as {
         type: 'TLS_SIMULATE'
         clientConfig: string
         serverConfig: string
         files?: { name: string; data: Uint8Array }[]
         commands?: string[]
+        hsmMode?: boolean
         requestId?: string
       }
-      await executeSimulation(clientConfig, serverConfig, files, commands || [], requestId)
+      await executeSimulation(
+        clientConfig,
+        serverConfig,
+        files,
+        commands || [],
+        Boolean(hsmMode),
+        requestId
+      )
     } else if (type === 'DELETE_FILE') {
       const { name } = event.data as { type: 'DELETE_FILE'; name: string }
       // moduleFactory is not defined in this scope, assuming it's a global or imported variable

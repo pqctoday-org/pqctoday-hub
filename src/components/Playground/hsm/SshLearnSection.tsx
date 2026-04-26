@@ -1,11 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-// SshLearnSection — Role explainer + 8-step PQC handshake diagram.
-// Port of sandbox SSHLearnSection restyled with Hub semantic tokens.
+// SshLearnSection — educational reference panels for the SSH simulator.
 
 import { useState } from 'react'
-import { ChevronDown, ChevronRight, ShieldCheck, Network } from 'lucide-react'
+import {
+  ChevronDown,
+  ChevronRight,
+  ShieldCheck,
+  Network,
+  Key,
+  BookOpen,
+  Terminal,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { CodeBlock } from '@/components/ui/code-block'
+import { SSH_KEX_ALGORITHMS } from '@/components/PKILearning/modules/VPNSSHModule/data/sshConstants'
 
 // ── Role card data ─────────────────────────────────────────────────────────────
 
@@ -79,55 +88,34 @@ const ROLES: RoleData[] = [
   },
 ]
 
-// ── Handshake steps ───────────────────────────────────────────────────────────
+// ── SSH-2 Transport phases ────────────────────────────────────────────────────
 
-const STEPS = [
-  { step: 1, from: 'client', to: 'agent', msg: 'C_FindObjects (CKK_ML_DSA)', bytes: '—' },
-  { step: 2, from: 'client', to: 'sshd', msg: 'TCP + SSH_MSG_KEXINIT', bytes: '—' },
-  { step: 3, from: 'sshd', to: 'agent', msg: 'HostKeyAgent lookup', bytes: '—' },
-  {
-    step: 4,
-    from: 'sshd',
-    to: 'token',
-    msg: 'C_SignInit / C_Sign (host KEX sig)',
-    bytes: '3,309 B',
-  },
-  {
-    step: 5,
-    from: 'sshd',
-    to: 'client',
-    msg: 'SSH_MSG_KEX_ECDH_REPLY + host-key blob',
-    bytes: '1,952 + 3,309 B',
-  },
-  {
-    step: 6,
-    from: 'client',
-    to: 'sshd',
-    msg: 'SSH_MSG_USERAUTH_REQUEST (publickey probe)',
-    bytes: '1,952 B',
-  },
-  {
-    step: 7,
-    from: 'client',
-    to: 'token',
-    msg: 'C_SignInit / C_Sign (client auth sig)',
-    bytes: '3,309 B',
-  },
-  {
-    step: 8,
-    from: 'client',
-    to: 'sshd',
-    msg: 'SSH_MSG_USERAUTH_REQUEST (with sig) → USERAUTH_SUCCESS',
-    bytes: '3,309 B',
-  },
+const PHASES = [
+  { label: 'TCP', note: 'Connection established', msgNum: null },
+  { label: 'Version', note: 'SSH-2.0 banner exchange', msgNum: null },
+  { label: 'KEXINIT', note: 'Algorithm negotiation', msgNum: 20 },
+  { label: 'KEX_ECDH_INIT', note: 'Client sends KEM/DH share', msgNum: 30 },
+  { label: 'KEX_ECDH_REPLY', note: 'Server sends reply + host sig', msgNum: 31 },
+  { label: 'NEWKEYS', note: 'Switch to derived keys', msgNum: 21 },
+  { label: 'SERVICE_REQUEST', note: 'Request ssh-userauth', msgNum: 5 },
+  { label: 'USERAUTH_REQUEST', note: 'Client auth + signature', msgNum: 50 },
+  { label: 'USERAUTH_SUCCESS', note: 'Authentication accepted', msgNum: 52 },
 ]
+
+// ── Operator cheat sheet snippet ──────────────────────────────────────────────
+
+const CHEAT_SHEET = `# ~/.ssh/config — PQC-first OpenSSH 9.9+ configuration
+Host *.example.com
+  PKCS11Provider /usr/lib/softhsm/libsofthsm2.so
+  KexAlgorithms ^mlkem768x25519-sha256,sntrup761x25519-sha512
+  HostKeyAlgorithms ssh-mldsa-65,ssh-ed25519
+  PubkeyAuthentication yes`
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 function RolePanel({ role }: { role: RoleData }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
-      {/* Classical */}
       <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-3 space-y-1.5">
         <p className="text-[10px] font-semibold text-destructive uppercase tracking-wider">
           Classical
@@ -142,7 +130,6 @@ function RolePanel({ role }: { role: RoleData }) {
         <p className="text-xs text-muted-foreground italic">{role.classical.note}</p>
       </div>
 
-      {/* PQC */}
       <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 space-y-1.5">
         <p className="text-[10px] font-semibold text-primary uppercase tracking-wider">
           PQC (FIPS 204)
@@ -158,7 +145,6 @@ function RolePanel({ role }: { role: RoleData }) {
         <p className="text-xs text-muted-foreground italic">{role.pqc.note}</p>
       </div>
 
-      {/* Why it matters */}
       <div className="md:col-span-2 rounded-lg border border-border/40 bg-muted/20 p-2.5">
         <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">
           Why this matters
@@ -169,35 +155,58 @@ function RolePanel({ role }: { role: RoleData }) {
   )
 }
 
+function SectionToggle({
+  label,
+  icon: Icon,
+  open,
+  onToggle,
+}: {
+  label: string
+  icon: React.ElementType
+  open: boolean
+  onToggle: () => void
+}) {
+  return (
+    <Button
+      variant="ghost"
+      onClick={onToggle}
+      className="w-full flex items-center gap-2 text-sm font-semibold py-3 px-4 justify-start"
+      aria-expanded={open}
+    >
+      {open ? (
+        <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />
+      ) : (
+        <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+      )}
+      <Icon className="w-4 h-4 text-primary shrink-0" />
+      <span className="text-gradient">{label}</span>
+    </Button>
+  )
+}
+
 // ── Main component ─────────────────────────────────────────────────────────────
 
 export function SshLearnSection() {
   const [rolesOpen, setRolesOpen] = useState(false)
-  const [diagramOpen, setDiagramOpen] = useState(false)
+  const [phasesOpen, setPhasesOpen] = useState(false)
+  const [timelineOpen, setTimelineOpen] = useState(false)
+  const [trustOpen, setTrustOpen] = useState(false)
+  const [cheatOpen, setCheatOpen] = useState(false)
   const [selectedRole, setSelectedRole] = useState<string | null>(null)
 
   return (
     <div className="space-y-2">
       {/* ── Section 1: Key Roles ── */}
       <div className="glass-panel overflow-hidden">
-        <Button
-          variant="ghost"
-          onClick={() => setRolesOpen((v) => !v)}
-          className="w-full flex items-center gap-2 text-sm font-semibold py-3 px-4 justify-start"
-          aria-expanded={rolesOpen}
-        >
-          {rolesOpen ? (
-            <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />
-          ) : (
-            <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
-          )}
-          <ShieldCheck className="w-4 h-4 text-primary shrink-0" />
-          <span className="text-gradient">SSH Key Roles — Classical vs PQC</span>
-        </Button>
+        <SectionToggle
+          label="SSH Key Roles — Classical vs PQC"
+          icon={ShieldCheck}
+          open={rolesOpen}
+          onToggle={() => setRolesOpen((v) => !v)}
+        />
 
         {rolesOpen && (
           <div className="px-4 pb-4 space-y-3">
-            {/* Role toggle buttons */}
             <div className="flex flex-wrap gap-2">
               {ROLES.map((role) => (
                 <Button
@@ -212,7 +221,6 @@ export function SshLearnSection() {
               ))}
             </div>
 
-            {/* Selected role panel */}
             {selectedRole &&
               (() => {
                 const role = ROLES.find((r) => r.id === selectedRole)
@@ -228,66 +236,148 @@ export function SshLearnSection() {
         )}
       </div>
 
-      {/* ── Section 2: Handshake Diagram ── */}
+      {/* ── Section 2: SSH-2 Transport Phases ── */}
       <div className="glass-panel overflow-hidden">
-        <Button
-          variant="ghost"
-          onClick={() => setDiagramOpen((v) => !v)}
-          className="w-full flex items-center gap-2 text-sm font-semibold py-3 px-4 justify-start"
-          aria-expanded={diagramOpen}
-        >
-          {diagramOpen ? (
-            <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />
-          ) : (
-            <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
-          )}
-          <Network className="w-4 h-4 text-primary shrink-0" />
-          <span className="text-gradient">SSH Handshake — PQC lane</span>
-        </Button>
+        <SectionToggle
+          label="SSH-2 Transport Phases"
+          icon={Network}
+          open={phasesOpen}
+          onToggle={() => setPhasesOpen((v) => !v)}
+        />
 
-        {diagramOpen && (
+        {phasesOpen && (
           <div className="px-4 pb-4 overflow-x-auto">
-            <table className="w-full text-xs border-collapse">
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {PHASES.map((p, i) => (
+                <div key={i} className="flex items-center gap-1">
+                  <div className="rounded border border-border/60 bg-muted/30 px-2 py-1 text-center min-w-[80px]">
+                    <p className="text-xs font-semibold text-foreground">{p.label}</p>
+                    {p.msgNum !== null && (
+                      <p className="text-[10px] font-mono text-primary">msg {p.msgNum}</p>
+                    )}
+                    <p className="text-[9px] text-muted-foreground leading-tight mt-0.5">
+                      {p.note}
+                    </p>
+                  </div>
+                  {i < PHASES.length - 1 && (
+                    <span className="text-muted-foreground text-xs">→</span>
+                  )}
+                </div>
+              ))}
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-3 italic">
+              RFC 4253 message numbers shown in monospace. KEX_ECDH_INIT (30) / KEX_ECDH_REPLY (31)
+              carry the hybrid ML-KEM-768 + X25519 shares in PQC mode.
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* ── Section 3: Migration Timeline ── */}
+      <div className="glass-panel overflow-hidden">
+        <SectionToggle
+          label="OpenSSH PQC Migration Timeline"
+          icon={Key}
+          open={timelineOpen}
+          onToggle={() => setTimelineOpen((v) => !v)}
+        />
+
+        {timelineOpen && (
+          <div className="px-4 pb-4">
+            <table className="w-full text-xs border-collapse mt-2">
               <thead>
                 <tr className="border-b border-border/50">
-                  <th className="text-left py-1.5 pr-3 text-muted-foreground font-semibold w-8">
-                    #
-                  </th>
-                  <th className="text-left py-1.5 pr-3 text-muted-foreground font-semibold whitespace-nowrap">
-                    From → To
+                  <th className="text-left py-1.5 pr-3 text-muted-foreground font-semibold">
+                    Algorithm
                   </th>
                   <th className="text-left py-1.5 pr-3 text-muted-foreground font-semibold">
-                    Message / Operation
+                    OpenSSH
                   </th>
-                  <th className="text-right py-1.5 text-muted-foreground font-semibold whitespace-nowrap">
-                    Byte size
+                  <th className="text-left py-1.5 pr-3 text-muted-foreground font-semibold">
+                    Spec
+                  </th>
+                  <th className="text-left py-1.5 text-muted-foreground font-semibold">
+                    Quantum-safe
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {STEPS.map((s) => (
+                {SSH_KEX_ALGORITHMS.map((kex) => (
                   <tr
-                    key={s.step}
+                    key={kex.id}
                     className="border-b border-border/20 hover:bg-muted/10 transition-colors"
                   >
-                    <td className="py-1.5 pr-3 font-mono text-muted-foreground">{s.step}</td>
-                    <td className="py-1.5 pr-3 font-mono text-foreground whitespace-nowrap">
-                      <span className="text-primary">{s.from}</span>
-                      <span className="text-muted-foreground mx-1">→</span>
-                      <span className="text-accent">{s.to}</span>
+                    <td className="py-1.5 pr-3 font-mono text-foreground">{kex.id}</td>
+                    <td className="py-1.5 pr-3 text-muted-foreground">{kex.opensshVersion}</td>
+                    <td className="py-1.5 pr-3 font-mono text-muted-foreground text-[10px]">
+                      {kex.rfcOrDraft}
                     </td>
-                    <td className="py-1.5 pr-3 text-foreground/80">{s.msg}</td>
-                    <td className="py-1.5 text-right font-mono text-muted-foreground whitespace-nowrap">
-                      {s.bytes}
+                    <td className="py-1.5">
+                      {kex.quantumSafe ? (
+                        <span className="text-status-success">✓</span>
+                      ) : (
+                        <span className="text-status-error">✗</span>
+                      )}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-            <p className="text-[10px] text-muted-foreground mt-2 italic">
-              Byte sizes are FIPS 204 ML-DSA-65 wire values. KEX uses ML-KEM-768 × X25519 hybrid
-              (RFC 9370 / draft-connolly-tls-mlkem-key-agreement).
+          </div>
+        )}
+      </div>
+
+      {/* ── Section 4: Host Trust & TOFU ── */}
+      <div className="glass-panel overflow-hidden">
+        <SectionToggle
+          label="Host Trust & TOFU"
+          icon={BookOpen}
+          open={trustOpen}
+          onToggle={() => setTrustOpen((v) => !v)}
+        />
+
+        {trustOpen && (
+          <div className="px-4 pb-4 space-y-3 text-xs text-muted-foreground leading-relaxed mt-2">
+            <p>
+              On first connection, SSH stores the server&apos;s host public key fingerprint in{' '}
+              <span className="font-mono text-foreground">~/.ssh/known_hosts</span> — the
+              Trust-On-First-Use (TOFU) model. Subsequent connections verify the fingerprint to
+              detect impersonation or key replacement.
             </p>
+            <p>
+              In PQC deployments the fingerprint covers an ML-DSA-65 public key (1,952 bytes vs 32
+              bytes for Ed25519), so <span className="font-mono text-foreground">known_hosts</span>{' '}
+              entries are significantly larger. Use{' '}
+              <span className="font-mono text-foreground">ssh-keygen -lf</span> to display the
+              fingerprint.
+            </p>
+            <p>
+              For enterprise deployments, replace TOFU with an{' '}
+              <span className="font-mono text-foreground">@cert-authority</span> entry in{' '}
+              <span className="font-mono text-foreground">known_hosts</span>. The SSH CA signs host
+              certificates; clients trust the CA key rather than individual host keys. This approach
+              pairs well with HSM-backed CA keys to ensure the root authority is hardware-protected.
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* ── Section 5: Operator Cheat Sheet ── */}
+      <div className="glass-panel overflow-hidden">
+        <SectionToggle
+          label="Operator Cheat Sheet"
+          icon={Terminal}
+          open={cheatOpen}
+          onToggle={() => setCheatOpen((v) => !v)}
+        />
+
+        {cheatOpen && (
+          <div className="px-4 pb-4 mt-2">
+            <p className="text-xs text-muted-foreground mb-2">
+              Example <span className="font-mono text-foreground">~/.ssh/config</span> that prefers
+              PQC algorithms via softhsmv3 PKCS#11 provider (OpenSSH 9.9+).
+            </p>
+            <CodeBlock language="text" code={CHEAT_SHEET} />
           </div>
         )}
       </div>

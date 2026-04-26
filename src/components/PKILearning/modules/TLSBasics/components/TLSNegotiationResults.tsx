@@ -555,6 +555,20 @@ const LogColumn = ({
           <CryptoLogDisplay events={cryptoEvents} title="Crypto Operations" />
         )}
       </div>
+
+      {/* See also: deployment-context modules */}
+      <div className="mt-3 pt-3 border-t border-border/50 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
+        <span className="font-semibold uppercase tracking-wider">See also:</span>
+        <a href="/learn/web-gateway-pqc" className="text-primary hover:underline">
+          Web Gateway PQC →
+        </a>
+        <a href="/learn/network-security-pqc" className="text-primary hover:underline">
+          Network Security PQC →
+        </a>
+        <a href="/learn/hsm-pqc" className="text-primary hover:underline">
+          HSM PQC →
+        </a>
+      </div>
     </div>
   )
 }

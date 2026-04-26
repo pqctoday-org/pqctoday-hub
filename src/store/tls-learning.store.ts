@@ -98,9 +98,13 @@ system_default = system_default_sect
 MinProtocol = TLSv1.3
 MaxProtocol = TLSv1.3
 Ciphersuites = TLS_AES_256_GCM_SHA384:TLS_AES_128_GCM_SHA256:TLS_CHACHA20_POLY1305_SHA256
-Groups = X25519:P-256:P-384
+Groups = X25519MLKEM768:X25519:P-256
 SignatureAlgorithms = mldsa44:mldsa65:mldsa87:ecdsa_secp256r1_sha256:rsa_pss_rsae_sha256
 `
+
+// Hybrid-first defaults: ClientHello offers X25519MLKEM768 first so a fresh
+// run already demonstrates the PQC hybrid story before any user reconfiguration.
+const V1_LEGACY_GROUPS = ['X25519', 'P-256', 'P-384']
 
 const DEFAULT_CONFIG: TLSConfig = {
   cipherSuites: [
@@ -108,7 +112,7 @@ const DEFAULT_CONFIG: TLSConfig = {
     'TLS_AES_128_GCM_SHA256',
     'TLS_CHACHA20_POLY1305_SHA256',
   ],
-  groups: ['X25519', 'P-256', 'P-384'],
+  groups: ['X25519MLKEM768', 'X25519', 'P-256'],
   signatureAlgorithms: [
     'mldsa44',
     'mldsa65',
@@ -336,7 +340,7 @@ system_default = system_default_sect
     }),
     {
       name: 'tls-learning-storage',
-      version: 1,
+      version: 2,
       storage: createJSONStorage(() => localStorage),
       // Only persist configuration and history, not ephemeral simulation state
       partialize: (state) => ({
@@ -347,7 +351,7 @@ system_default = system_default_sect
         serverMessage: state.serverMessage,
         // Exclude: results, isSimulating, commands, sessionStatus (ephemeral)
       }),
-      migrate: (persistedState: unknown) => {
+      migrate: (persistedState: unknown, version: number) => {
         const state =
           typeof persistedState === 'object' && persistedState !== null
             ? (persistedState as Record<string, unknown>)
@@ -364,6 +368,26 @@ system_default = system_default_sect
           typeof state.clientMessage === 'string' ? state.clientMessage : 'Hello Server (Encrypted)'
         state.serverMessage =
           typeof state.serverMessage === 'string' ? state.serverMessage : 'Hello Client (Encrypted)'
+
+        // v1 -> v2: migrate the classical-only default groups to hybrid-first.
+        // Preserve any customization: only rewrite when user is still on v1 default.
+        if (version < 2) {
+          const isLegacyDefault = (cfg: unknown) => {
+            if (!cfg || typeof cfg !== 'object') return false
+            const groups = (cfg as { groups?: unknown }).groups
+            if (!Array.isArray(groups)) return false
+            return (
+              groups.length === V1_LEGACY_GROUPS.length &&
+              groups.every((g, i) => g === V1_LEGACY_GROUPS[i])
+            )
+          }
+          if (isLegacyDefault(state.clientConfig)) {
+            ;(state.clientConfig as { groups?: string[] }).groups = [...DEFAULT_CONFIG.groups]
+          }
+          if (isLegacyDefault(state.serverConfig)) {
+            ;(state.serverConfig as { groups?: string[] }).groups = [...DEFAULT_CONFIG.groups]
+          }
+        }
 
         // Revive Date objects in runHistory (JSON serializes Date as ISO string)
         if (Array.isArray(state.runHistory)) {

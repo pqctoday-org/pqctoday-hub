@@ -153,6 +153,17 @@ const CRYPTO_OPS = new Set([
   // KEM extensions (CKM_ML_KEM)
   'C_EncapsulateKey',
   'C_DecapsulateKey',
+  // PKCS#11 v3.2 Message API (ML-DSA, SLH-DSA multi-message sign/verify)
+  'C_MessageSignInit',
+  'C_SignMessage',
+  'C_SignMessageBegin',
+  'C_SignMessageNext',
+  'C_MessageSignFinal',
+  'C_MessageVerifyInit',
+  'C_VerifyMessage',
+  'C_VerifyMessageBegin',
+  'C_VerifyMessageNext',
+  'C_MessageVerifyFinal',
 ])
 
 // ── Main panel ────────────────────────────────────────────────────────────────

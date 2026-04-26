@@ -323,6 +323,24 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
           INTERNAL
         </span>
       )
+    if (type === 'pkcs11_call')
+      return (
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-success/20 text-success font-bold">
+          PKCS#11
+        </span>
+      )
+    if (type === 'hsm_mode' || type === 'hsm_provider_loaded' || type === 'hsm_cert_minted')
+      return (
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-accent/20 text-accent font-bold">
+          HSM
+        </span>
+      )
+    if (type === 'hsm_error')
+      return (
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-destructive/20 text-destructive font-bold">
+          HSM ERR
+        </span>
+      )
     return null
   }
 

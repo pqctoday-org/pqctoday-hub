@@ -60,6 +60,13 @@ export const TLSBasicsModule: React.FC = () => {
   const startTimeRef = useRef(Date.now())
   const { updateModuleProgress, markStepComplete } = useModuleStore()
 
+  // Live HSM mode for the TLS handshake itself (S1 from audit). When ON, the
+  // server's ML-DSA-65 key is generated inside softhsmv3 (statically linked
+  // into openssl.wasm via pkcs11-provider) and CertificateVerify routes
+  // through C_SignInit + C_SignMessage during the real handshake — replacing
+  // the legacy side-demo button below this panel.
+  const [liveHsmMode, setLiveHsmMode] = useState<boolean>(false)
+
   const {
     clientConfig,
     serverConfig,
@@ -236,7 +243,8 @@ export const TLSBasicsModule: React.FC = () => {
         clientCfg,
         serverCfg,
         simFiles,
-        currentCommands
+        currentCommands,
+        { hsmMode: liveHsmMode }
       )
 
       try {
@@ -286,6 +294,7 @@ export const TLSBasicsModule: React.FC = () => {
     setIsSimulating,
     setResults,
     markStepComplete,
+    liveHsmMode,
   ])
 
   // Trigger simulation when commands change (Replay)
@@ -398,6 +407,39 @@ export const TLSBasicsModule: React.FC = () => {
         {/* Simulate Tab */}
         <TabsContent value="simulate">
           <div className="space-y-6">
+            {/* Live HSM Mode toggle — when ON, the next handshake's
+             *  CertificateVerify is signed by softhsmv3 (statically linked
+             *  into openssl.wasm via pkcs11-provider). The server's ML-DSA-65
+             *  private key never leaves the simulated HSM. */}
+            <div
+              className={`glass-panel p-4 flex items-center justify-between gap-3 ${liveHsmMode ? 'border-success/40' : ''}`}
+            >
+              <div className="flex items-start gap-3">
+                <span
+                  className={`mt-1 w-2.5 h-2.5 rounded-full ${liveHsmMode ? 'bg-success animate-pulse' : 'bg-muted-foreground/40'}`}
+                />
+                <div>
+                  <div className="text-sm font-semibold">
+                    Live HSM Mode (softhsmv3 + pkcs11-provider, statically linked into openssl.wasm)
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {liveHsmMode
+                      ? 'Next run: server private key generated inside softhsmv3; CertificateVerify routes through PKCS#11 (C_SignInit + C_SignMessage). Private key never leaves the simulated HSM.'
+                      : 'OFF: handshake uses bundled PEM keys. Toggle ON to demonstrate HSM-resident server key signing.'}
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant={liveHsmMode ? 'gradient' : 'outline'}
+                onClick={() => setLiveHsmMode((v) => !v)}
+                disabled={isSimulating}
+                aria-pressed={liveHsmMode}
+                className="px-4 py-2 text-xs font-bold whitespace-nowrap"
+              >
+                {liveHsmMode ? 'HSM ON' : 'HSM OFF'}
+              </Button>
+            </div>
+
             {/* Simulation Controls */}
             <div className="flex justify-end gap-3">
               {results && (
@@ -448,12 +490,20 @@ export const TLSBasicsModule: React.FC = () => {
             {/* HSM-Backed Server — Live PKCS#11 Demo */}
             <div className="space-y-3">
               <h3 className="text-base font-semibold text-foreground">
-                HSM-Backed TLS Server (PKCS#11)
+                HSM-Backed TLS Server (PKCS#11) — Side Demo
               </h3>
               <p className="text-xs text-muted-foreground">
-                In production, TLS server private keys live in a Hardware Security Module. The HSM
-                signs the TLS CertificateVerify message via PKCS#11. The Live HSM Module shows the
-                real calls in action.
+                Side-by-side demo: this panel runs an ML-DSA-65 sign operation in the SoftHSMv3 WASM
+                module separately from the TLS handshake above. For end-to-end HSM-backed signing
+                during the actual handshake, toggle <strong>Live HSM Mode</strong> at the top of
+                this Workshop tab — that route loads softhsmv3 inside openssl.wasm via
+                pkcs11-provider, so the CertificateVerify sign call routes through{' '}
+                <code className="font-mono">C_SignInit</code> +{' '}
+                <code className="font-mono">C_SignMessage</code> on the same key the cert was minted
+                from. The signed transcript here uses a placeholder string for illustration; real
+                CertificateVerify content is{' '}
+                <code className="font-mono">ContextString || SHA-256(handshake messages)</code> (RFC
+                8446 §4.4.3).
               </p>
 
               <LiveHSMToggle hsm={hsm} operations={TLS_HSM_OPERATIONS} />

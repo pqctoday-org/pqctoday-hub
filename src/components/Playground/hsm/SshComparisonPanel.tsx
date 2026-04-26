@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 // SshComparisonPanel — side-by-side classical vs PQC SSH handshake results.
-// Port of sandbox SSHComparisonVisualizer with Hub semantic-token styling.
 
 import {
   CheckCircle,
@@ -19,6 +18,17 @@ interface Props {
 }
 
 const SPEC_CITATIONS = [
+  { label: 'RFC 4253 (SSH Transport)', href: 'https://www.rfc-editor.org/rfc/rfc4253' },
+  { label: 'RFC 4252 (SSH Auth)', href: 'https://www.rfc-editor.org/rfc/rfc4252' },
+  { label: 'RFC 8731 (curve25519-sha256)', href: 'https://www.rfc-editor.org/rfc/rfc8731' },
+  {
+    label: 'draft-kampanakis-curdle-ssh-pq-ke-07',
+    href: 'https://datatracker.ietf.org/doc/draft-kampanakis-curdle-ssh-pq-ke/',
+  },
+  {
+    label: 'draft-josefsson-ntruprime-ssh',
+    href: 'https://datatracker.ietf.org/doc/draft-josefsson-ntruprime-ssh/',
+  },
   {
     label: 'draft-sfluhrer-ssh-mldsa-06',
     href: 'https://datatracker.ietf.org/doc/draft-sfluhrer-ssh-mldsa/',
@@ -26,6 +36,10 @@ const SPEC_CITATIONS = [
   { label: 'FIPS 204 (ML-DSA)', href: 'https://doi.org/10.6028/NIST.FIPS.204' },
   { label: 'FIPS 186-5 (ECDSA)', href: 'https://doi.org/10.6028/NIST.FIPS.186-5' },
   { label: 'RFC 8032 (Ed25519)', href: 'https://www.rfc-editor.org/rfc/rfc8032' },
+  {
+    label: 'BSI TR-02102-4',
+    href: 'https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-4.html',
+  },
   {
     label: 'PKCS#11 v3.2 (OASIS)',
     href: 'https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/os/pkcs11-spec-v3.2-os.html',
@@ -71,12 +85,14 @@ function LegCard({
   isPqc,
   maxPubBytes,
   maxSigBytes,
+  maxKexBytes,
 }: {
   title: string
   result?: SshHandshakeResult
   isPqc: boolean
   maxPubBytes: number
   maxSigBytes: number
+  maxKexBytes: number
 }) {
   const accent = isPqc
     ? {
@@ -97,7 +113,7 @@ function LegCard({
     return (
       <div className={`glass-panel p-5 relative overflow-hidden ${accent.ring}`}>
         <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${accent.bar}`} />
-        <div className={`flex items-center gap-2 mb-3`}>
+        <div className="flex items-center gap-2 mb-3">
           <Icon className={`w-4 h-4 ${accent.text}`} />
           <h4 className={`text-sm font-bold ${accent.text}`}>{title}</h4>
         </div>
@@ -110,10 +126,8 @@ function LegCard({
 
   if (result.error && !result.connection_ok) {
     return (
-      <div className={`glass-panel p-5 relative overflow-hidden border-status-error/20`}>
-        <div
-          className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-status-error to-orange-500`}
-        />
+      <div className="glass-panel p-5 relative overflow-hidden border-status-error/20">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-status-error to-orange-500" />
         <div className="flex items-center gap-2 mb-3">
           <XCircle className="w-4 h-4 text-status-error" />
           <h4 className="text-sm font-bold text-status-error">{title}</h4>
@@ -167,6 +181,14 @@ function LegCard({
           <p className="text-muted-foreground font-medium">Client signature</p>
           <SizeBar bytes={result.client_sig_bytes} max={maxSigBytes} className={accent.bar2} />
         </div>
+        <div className="space-y-1.5">
+          <p className="text-muted-foreground font-medium">KEX init share</p>
+          <SizeBar bytes={result.kex_share_bytes} max={maxKexBytes} className={accent.bar2} />
+        </div>
+        <div className="space-y-1.5">
+          <p className="text-muted-foreground font-medium">KEX reply share</p>
+          <SizeBar bytes={result.kex_reply_share_bytes} max={maxKexBytes} className={accent.bar2} />
+        </div>
 
         {result.token_module && (
           <div className="flex justify-between gap-4 pt-1">
@@ -177,9 +199,17 @@ function LegCard({
           </div>
         )}
 
-        <div className="pt-2 border-t border-border/30 flex justify-between items-center">
-          <dt className="text-muted-foreground text-xs">Auth wall-time</dt>
-          <dd className="font-mono text-foreground text-xs">{result.auth_ms.toFixed(1)} ms</dd>
+        <div className="pt-2 border-t border-border/30 space-y-1">
+          <div className="flex justify-between items-center">
+            <dt className="text-muted-foreground text-xs">Auth wall-time</dt>
+            <dd className="font-mono text-foreground text-xs">{result.auth_ms.toFixed(1)} ms</dd>
+          </div>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-[10px] text-muted-foreground font-mono">
+            <span>keygen: {result.keygen_ms.toFixed(1)} ms</span>
+            <span>kex: {result.kex_ms.toFixed(1)} ms</span>
+            <span>host sig: {result.host_sig_ms.toFixed(1)} ms</span>
+            <span>client sig: {result.client_sig_ms.toFixed(1)} ms</span>
+          </div>
         </div>
       </dl>
     </div>
@@ -201,6 +231,13 @@ export function SshComparisonPanel({ classical, pqc }: Props) {
     pqc?.client_sig_bytes ?? 3309,
     64
   )
+  const maxKexBytes = Math.max(
+    classical?.kex_share_bytes ?? 0,
+    classical?.kex_reply_share_bytes ?? 0,
+    pqc?.kex_share_bytes ?? 1216,
+    pqc?.kex_reply_share_bytes ?? 1120,
+    36
+  )
 
   return (
     <div className="space-y-3">
@@ -217,6 +254,7 @@ export function SshComparisonPanel({ classical, pqc }: Props) {
           isPqc={false}
           maxPubBytes={maxPubBytes}
           maxSigBytes={maxSigBytes}
+          maxKexBytes={maxKexBytes}
         />
         <LegCard
           title="PQC (ML-DSA-65 + ML-KEM-768 × X25519)"
@@ -224,6 +262,7 @@ export function SshComparisonPanel({ classical, pqc }: Props) {
           isPqc={true}
           maxPubBytes={maxPubBytes}
           maxSigBytes={maxSigBytes}
+          maxKexBytes={maxKexBytes}
         />
       </div>
 

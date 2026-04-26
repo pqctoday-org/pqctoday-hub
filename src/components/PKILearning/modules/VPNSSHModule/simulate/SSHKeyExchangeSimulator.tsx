@@ -8,6 +8,7 @@ import {
   type SSHKexAlgorithm,
 } from '../data/sshConstants'
 import { Button } from '@/components/ui/button'
+import { LiveSshHandshakeRunner } from './LiveSshHandshakeRunner'
 
 interface SSHKeyExchangeSimulatorProps {
   initialKex?: SSHKexAlgorithm
@@ -241,6 +242,8 @@ export const SSHKeyExchangeSimulator: React.FC<SSHKeyExchangeSimulatorProps> = (
           </div>
         </div>
       )}
+
+      <LiveSshHandshakeRunner algorithm={selectedKex} />
     </div>
   )
 }
