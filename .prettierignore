@@ -29,3 +29,6 @@ openssl-3.6.1-src/
 openssl-3.6.2-src/
 validate_errors.json
 pure_errors.json
+
+# Captured reference docs (PDFs + scraped HTML, not for reformatting)
+pqc-references/**
