@@ -11,7 +11,11 @@ export interface Pkcs11RpcCallback {
   (sab: SharedArrayBuffer, role: 'initiator' | 'responder'): void
 }
 
-const RESPONDER_IP_U32 = 0xc0a80002 // 192.168.0.2
+// 192.168.0.2 in NETWORK-byte-order LE u32 form: bytes [LSB..MSB] = 0xC0,
+// 0xA8, 0x00, 0x02. Matches what the C-side passes via wasm_net_send (memcpy
+// from sin_addr.s_addr, which is network order per POSIX). The destIp comparison
+// + destIpStr formatting below both use this convention.
+const RESPONDER_IP_U32 = 0x0200a8c0 // 192.168.0.2 (network-LE)
 
 export class StrongSwanEngine {
   private initWorker: Worker | null = null // 192.168.0.1
@@ -137,7 +141,9 @@ export class StrongSwanEngine {
           const destIsResponder = destIp >>> 0 === RESPONDER_IP_U32
           const targetSab = destIsResponder ? this.respNetSab : this.initNetSab
           const target = destIsResponder ? 'responder' : 'initiator'
-          const destIpStr = `${(destIp >>> 24) & 0xff}.${(destIp >> 16) & 0xff}.${(destIp >> 8) & 0xff}.${destIp & 0xff}`
+          // destIp is network-byte-order LE u32: byte 0 (LSB) is the first
+          // octet (e.g. 192 in 192.168.0.2). Format LSB→MSB.
+          const destIpStr = `${destIp & 0xff}.${(destIp >>> 8) & 0xff}.${(destIp >>> 16) & 0xff}.${(destIp >>> 24) & 0xff}`
           if (!targetSab) {
             this.dispatchLog({
               level: 'error',

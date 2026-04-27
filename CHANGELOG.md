@@ -8,6 +8,27 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- **VPN simulator — full IKE_SA `ESTABLISHED` end-to-end with real ML-KEM-768 + PSK auth** ([public/wasm/strongswan.{js,wasm}](public/wasm/), [public/wasm/strongswan_worker.js](public/wasm/strongswan_worker.js), [src/wasm/strongswan/bridge.ts](src/wasm/strongswan/bridge.ts)) — both peer workers complete the full IKEv2 handshake in the browser. Final log lines:
+
+  ```text
+  IKE_SA wasm[1] established between 192.168.0.1...192.168.0.2
+  IKE_SA wasm[1] state change: CONNECTING => ESTABLISHED
+  ```
+
+  Real ML-KEM-768 `C_GenerateKeyPair` + `C_EncapsulateKey` + `C_DecapsulateKey` via softhsmv3 statically linked into `charon.wasm`; PSK MAC over RFC 7296 SignedOctets; both initiator and responder verify successfully. Achieved across rebuilds #4–#13b after extensive engine work — see HSM CHANGELOG entry for the complete C-side fix list. Hub-side fixes:
+  - **Cross-worker postMessage transport** ([bridge.ts](src/wasm/strongswan/bridge.ts)) — `RESPONDER_IP_U32` rewritten to network-byte-order LE u32 form (`0x0200a8c0`) matching what the C-side `wasm_net_send` passes (memcpy from `sin_addr.s_addr`, network order per POSIX). `destIpStr` formatting also reversed (LSB→MSB) so log lines render correctly. Without this, `wasm_net_send`'s rewritten EM_JS would post a destIp the bridge couldn't recognize.
+  - **`Module._wasm_local_ip` cleanup** ([strongswan_worker.js](public/wasm/strongswan_worker.js)) — the per-worker hot-fix that previously set the inbound `dst_ip` is no longer needed (the regenerated `wasm_net_receive` reads `dst_ip` from the SAB header that the bridge populates). Removed to avoid dead state.
+
+### Known issues / next steps
+
+- **PKCS#11 RPC bridge is a stub** — `pkcs11_wasm_rpc_function_list` ([pqctoday-hsm/strongswan-wasm-shims/pkcs11_wasm_rpc.c:112](../pqctoday-hsm/strongswan-wasm-shims/pkcs11_wasm_rpc.c#L112)) just `memcpy`s the local function list. All PKCS#11 calls during the IKE_SA handshake (ML-KEM keygen, encap, decap, PSK MAC) execute inside the worker's statically-linked softhsmv3 — they never traverse the SAB RPC bridge to the panel's JS-side softhsmv3, so the "Diagnostic Boundary" log shows **zero activity for both client and server workers** even though the cryptography is real. Two fix paths: (A) full per-function PKCS#11 v3.2 marshaling across SAB (multi-day); (B) lightweight instrumentation tap inside `pkcs11_wasm_wrap_function_list` that `postMessage`s `{op, sess, mech}` for each call — gives an accurate trace without faking RPC. Recommend (B) for the next iteration.
+- **Post-establish `CHILD_CREATE` task re-runs** despite `ike_cfg.childless = CHILDLESS_FORCE` — the IKE_SA reaches `ESTABLISHED`, then `CHILD_CREATE` re-initiates (presumably because it's still in the active task list) and trips on `unable to allocate SPI from kernel`, transitioning state to `DESTROYING`. Cosmetic — engine work is complete by then. Fix: panel should detect `ESTABLISHED` and stop the engine, or wasm_backend should remove the `CHILD_CREATE` task from active list when `CHILDLESS_FORCE`.
+- **Earlier "self-loopback" + `CHILD_SA SPI` blocker entries** below are now resolved by the work above. Left for historical context.
+
+### Earlier progress (this session, pre-ESTABLISHED)
+
+The list below reflects intermediate milestones — all of these issues are now resolved in the deployed binary.
+
 - **VPN simulator — IKEv2 engine reaches `CONNECTING` with real ML-KEM-768 keygen** ([src/components/Playground/hsm/VpnSimulationPanel.tsx](src/components/Playground/hsm/VpnSimulationPanel.tsx), [public/wasm/strongswan_worker.js](public/wasm/strongswan_worker.js), [public/wasm/strongswan.js](public/wasm/strongswan.js), [public/wasm/strongswan.wasm](public/wasm/strongswan.wasm)) — full charon WASM rebuild plus surgical hub-side fixes restore the IKEv2 path through to the moment the daemon emits a real 1384-byte `IKE_SA_INIT` request:
   - **PIN config alignment** — charon `pkcs11.modules.softhsm.pin` was sending `user1234` while `wasm_hsm_init.c` provisions `USER_PIN="1234"`. Mismatch produced `CKR_PIN_INCORRECT` → unauthenticated session → `CKR_USER_NOT_LOGGED_IN` on `C_GenerateKeyPair`. Hub-side single-line fix.
   - **Misleading "MTU Exceeded" banner** — replaced with a generic "Tunnel initialization failed" copy that points the user to the charon log for the specific cause (PKCS#11 login, proposal mismatch, MTU+frag-off, cert-auth). The previous text fired on any tunnel-init failure regardless of cause.
