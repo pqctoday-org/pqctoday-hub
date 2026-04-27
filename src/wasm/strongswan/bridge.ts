@@ -11,6 +11,18 @@ export interface Pkcs11RpcCallback {
   (sab: SharedArrayBuffer, role: 'initiator' | 'responder'): void
 }
 
+export interface Pkcs11TraceEvent {
+  role: 'initiator' | 'responder'
+  op: string
+  sess: number
+  mech: number
+  inA: number
+  inB: number
+  rv: number
+  outA: number
+  outB: number
+}
+
 // 192.168.0.2 in NETWORK-byte-order LE u32 form: bytes [LSB..MSB] = 0xC0,
 // 0xA8, 0x00, 0x02. Matches what the C-side passes via wasm_net_send (memcpy
 // from sin_addr.s_addr, which is network order per POSIX). The destIp comparison
@@ -32,10 +44,24 @@ export class StrongSwanEngine {
   private rpcHandler: Pkcs11RpcCallback | null = null
   private logListeners = new Set<(log: StrongSwanLog) => void>()
   private stateListeners = new Set<(state: StrongSwanState) => void>()
+  private pkcs11TraceListeners = new Set<(ev: Pkcs11TraceEvent) => void>()
+  private panelPkcs11ReqId = 0
+  private panelPkcs11Pending = new Map<
+    number,
+    {
+      resolve: (r: { rv: number; data: Record<string, unknown> }) => void
+      reject: (e: Error) => void
+    }
+  >()
   private state: StrongSwanState = 'UNINITIALIZED'
   private _readyCount = 0
   private _keysReadyCount = 0
   private _epoch = 0 // Guards against late messages from terminated workers
+  // 'full' = auto-START on KEYS_READY (PSK mode default).
+  // 'spawn-only' = stop after KEYS_READY so the panel can drive provisioning
+  //                via engine.pkcs11(); engine.start() must be called explicitly.
+  private _phase: 'full' | 'spawn-only' = 'full'
+  private _keysReadyResolve: (() => void) | null = null
   private _keySpec: { algType: number; slot0Size: number; slot1Size: number } = {
     algType: 1,
     slot0Size: 3072,
@@ -64,6 +90,44 @@ export class StrongSwanEngine {
 
   public removeStateListener(fn: (state: StrongSwanState) => void) {
     this.stateListeners.delete(fn)
+  }
+
+  public addPkcs11TraceListener(fn: (ev: Pkcs11TraceEvent) => void) {
+    this.pkcs11TraceListeners.add(fn)
+  }
+
+  public removePkcs11TraceListener(fn: (ev: Pkcs11TraceEvent) => void) {
+    this.pkcs11TraceListeners.delete(fn)
+  }
+
+  /**
+   * Drive a PKCS#11 op against the specified worker's softhsmv3 instance.
+   * Used by VPN cert provisioning so ML-DSA keys + cert signing happen in
+   * the worker's softhsm — where charon's strongswan-pkcs11 plugin will
+   * find them at IKE_AUTH time via CKA_ID lookup.
+   */
+  public pkcs11(
+    role: 'initiator' | 'responder',
+    op: string,
+    args: Record<string, unknown> = {}
+  ): Promise<{ rv: number; data: Record<string, unknown> }> {
+    const worker = role === 'initiator' ? this.initWorker : this.respWorker
+    if (!worker) {
+      return Promise.reject(new Error(`pkcs11(${op}): ${role} worker not initialized`))
+    }
+    const reqId = ++this.panelPkcs11ReqId
+    return new Promise((resolve, reject) => {
+      this.panelPkcs11Pending.set(reqId, { resolve, reject })
+      worker.postMessage({ type: 'PANEL_PKCS11', payload: { reqId, op, args } })
+      // Safety timeout — softhsm ops in WASM should complete in < 1s; ML-DSA
+      // keygen may take a few seconds. Fail loudly if no reply in 30s.
+      setTimeout(() => {
+        if (this.panelPkcs11Pending.has(reqId)) {
+          this.panelPkcs11Pending.delete(reqId)
+          reject(new Error(`pkcs11(${op}) timeout after 30s`))
+        }
+      }, 30000)
+    })
   }
 
   private setState(s: StrongSwanState) {
@@ -105,6 +169,122 @@ export class StrongSwanEngine {
             })
           }
           break
+        case 'PKCS11_LOG': {
+          // Option-B trace tap: charon.wasm executes the call locally
+          // (statically-linked softhsmv3); the C-side shim posts these
+          // observation events. Format human-readable per op.
+          const p = payload as {
+            op: string
+            sess: number
+            mech: number
+            inA: number
+            inB: number
+            rv: number
+            outA: number
+            outB: number
+          }
+          const tag = role === 'initiator' ? 'INIT' : 'RESP'
+          const rvHex = `0x${p.rv.toString(16).toUpperCase().padStart(2, '0')}`
+          const rvName = p.rv === 0 ? 'CKR_OK' : rvHex
+          const sessStr = p.sess ? `sess=${p.sess}` : ''
+          const mechMap: Record<number, string> = {
+            0x00000000: 'CKM_RSA_PKCS_KEY_PAIR_GEN',
+            0x00000001: 'CKM_RSA_PKCS',
+            0x00000006: 'CKM_SHA1_RSA_PKCS',
+            0x00000040: 'CKM_SHA256_RSA_PKCS',
+            0x00000041: 'CKM_SHA384_RSA_PKCS',
+            0x00000042: 'CKM_SHA512_RSA_PKCS',
+            0x00000220: 'CKM_SHA_1',
+            0x00000250: 'CKM_SHA256',
+            0x00000260: 'CKM_SHA384',
+            0x00000270: 'CKM_SHA512',
+            0x000002f0: 'CKM_HMAC_SHA1',
+            0x000002f1: 'CKM_HMAC_SHA224',
+            0x000002f2: 'CKM_HMAC_SHA256',
+            0x000002f3: 'CKM_HMAC_SHA384',
+            0x000002f4: 'CKM_HMAC_SHA512',
+            0x00000300: 'CKM_GENERIC_SECRET_KEY_GEN',
+            0x00001080: 'CKM_AES_KEY_GEN',
+            0x00001082: 'CKM_AES_CBC',
+            0x00001087: 'CKM_AES_CTR',
+            0x00001088: 'CKM_AES_GCM',
+            // softhsmv3 vendor codes (verified against
+            // pqctoday-hsm/strongswan-pkcs11/pkcs11.h):
+            0x0000000f: 'CKM_ML_KEM_KEY_PAIR_GEN',
+            0x00000017: 'CKM_ML_KEM',
+            0x0000001c: 'CKM_ML_DSA_KEY_PAIR_GEN',
+            0x0000001d: 'CKM_ML_DSA',
+          }
+          const mechStr = p.mech
+            ? `mech=${mechMap[p.mech] || `0x${p.mech.toString(16).toUpperCase()}`}`
+            : ''
+          let detail = ''
+          switch (p.op) {
+            case 'C_GenerateKeyPair':
+              detail = `${sessStr} ${mechStr} pubAttrs=${p.inA} priAttrs=${p.inB} → ${rvName}, hPub=${p.outA} hPri=${p.outB}`
+              break
+            case 'C_GenerateKey':
+              detail = `${sessStr} ${mechStr} attrs=${p.inA} → ${rvName}, hKey=${p.outA}`
+              break
+            case 'C_SignInit':
+            case 'C_VerifyInit':
+            case 'C_EncryptInit':
+            case 'C_DecryptInit':
+              detail = `${sessStr} ${mechStr} hKey=${p.inA} → ${rvName}`
+              break
+            case 'C_Sign':
+              detail = `${sessStr} dataLen=${p.inA} → ${rvName}, sigLen=${p.outA}`
+              break
+            case 'C_Verify':
+              detail = `${sessStr} dataLen=${p.inA} sigLen=${p.inB} → ${rvName}`
+              break
+            case 'C_DigestInit':
+              detail = `${sessStr} ${mechStr} → ${rvName}`
+              break
+            case 'C_Digest':
+              detail = `${sessStr} dataLen=${p.inA} → ${rvName}, digestLen=${p.outA}`
+              break
+            case 'C_DeriveKey':
+              detail = `${sessStr} ${mechStr} hBaseKey=${p.inA} attrs=${p.inB} → ${rvName}, hKey=${p.outA}`
+              break
+            case 'C_Encrypt':
+              detail = `${sessStr} dataLen=${p.inA} → ${rvName}, encLen=${p.outA}`
+              break
+            case 'C_Decrypt':
+              detail = `${sessStr} encLen=${p.inA} → ${rvName}, dataLen=${p.outA}`
+              break
+            case 'C_GenerateRandom':
+              detail = `${sessStr} len=${p.inA} → ${rvName}`
+              break
+            case 'C_EncapsulateKey':
+            case 'C_EncapsulateKey(size)':
+              detail = `${sessStr} ${mechStr} hPub=${p.inA} → ${rvName}, ct_len=${p.outA}${p.outB ? ` hSecret=${p.outB}` : ''}`
+              break
+            case 'C_DecapsulateKey':
+              detail = `${sessStr} ${mechStr} hPri=${p.inA} ct_len=${p.inB} → ${rvName}, hSecret=${p.outA}`
+              break
+            default:
+              detail = `${sessStr} ${mechStr} a=${p.inA} b=${p.inB} → ${rvName}, oa=${p.outA} ob=${p.outB}`
+          }
+          this.dispatchLog({
+            level: p.rv === 0 ? 'info' : 'error',
+            text: `[PKCS#11 ${tag}] ${p.op}  ${detail}`,
+          })
+          this.pkcs11TraceListeners.forEach((fn) =>
+            fn({
+              role,
+              op: p.op,
+              sess: p.sess >>> 0,
+              mech: p.mech >>> 0,
+              inA: p.inA,
+              inB: p.inB,
+              rv: p.rv,
+              outA: p.outA,
+              outB: p.outB,
+            })
+          )
+          break
+        }
         case 'READY':
           this._readyCount++
           if (this._readyCount === 2) {
@@ -126,16 +306,41 @@ export class StrongSwanEngine {
             text: `[BRIDGE] ${role} keys ready (${this._keysReadyCount}/2)`,
           })
           if (this._keysReadyCount === 2) {
-            this.dispatchLog({ level: 'info', text: '[BRIDGE] Starting charon daemons...' })
-            this.initWorker?.postMessage({ type: 'START' })
-            this.respWorker?.postMessage({ type: 'START' })
-            this.setState('RUNNING')
+            if (this._phase === 'full') {
+              this.dispatchLog({ level: 'info', text: '[BRIDGE] Starting charon daemons...' })
+              this.initWorker?.postMessage({ type: 'START' })
+              this.respWorker?.postMessage({ type: 'START' })
+              this.setState('RUNNING')
+            } else {
+              this.dispatchLog({
+                level: 'info',
+                text: '[BRIDGE] Workers ready (spawn-only). Awaiting panel provisioning before START.',
+              })
+              this.setState('READY')
+              if (this._keysReadyResolve) {
+                this._keysReadyResolve()
+                this._keysReadyResolve = null
+              }
+            }
           }
           break
         case 'ERROR':
           this.setState('ERROR')
           this.dispatchLog({ level: 'error', text: payload })
           break
+        case 'PANEL_PKCS11_RESULT': {
+          const { reqId, rv, data } = e.data.payload as {
+            reqId: number
+            rv: number
+            data: Record<string, unknown>
+          }
+          const pending = this.panelPkcs11Pending.get(reqId)
+          if (pending) {
+            this.panelPkcs11Pending.delete(reqId)
+            pending.resolve({ rv, data: data || {} })
+          }
+          break
+        }
         case 'PACKET_OUT': {
           const { srcIp, srcPort, destIp, data } = payload
           const destIsResponder = destIp >>> 0 === RESPONDER_IP_U32
@@ -190,11 +395,13 @@ export class StrongSwanEngine {
     respConfigs: Record<string, string>,
     pskOpts?: { initPsk: string; respPsk: string },
     rpcMode?: boolean,
-    proposalMode?: number
-  ) {
-    if (this.initWorker) return
+    proposalMode?: number,
+    options?: { phase?: 'full' | 'spawn-only' }
+  ): Promise<void> {
+    if (this.initWorker) return Promise.resolve()
 
     this._epoch++
+    this._phase = options?.phase ?? 'full'
     this.setState('LOADING')
     this._readyCount = 0
     this._keysReadyCount = 0
@@ -210,6 +417,14 @@ export class StrongSwanEngine {
 
     const useRpcMode = rpcMode ?? false
     const usePropMode = proposalMode ?? 0
+
+    const readyPromise =
+      this._phase === 'spawn-only'
+        ? new Promise<void>((resolve) => {
+            this._keysReadyResolve = resolve
+          })
+        : Promise.resolve()
+
     this.initWorker = this._spawnWorker(
       initConfigs,
       this.initPkcs11Sab,
@@ -228,6 +443,40 @@ export class StrongSwanEngine {
       useRpcMode,
       usePropMode
     )
+    return readyPromise
+  }
+
+  /**
+   * Post START to both workers — used after spawn-only init + panel-driven
+   * provisioning to actually run charon.
+   */
+  public start() {
+    if (!this.initWorker || !this.respWorker) {
+      this.dispatchLog({ level: 'error', text: '[BRIDGE] start() called before init()' })
+      return
+    }
+    if (this.state === 'RUNNING') return
+    this.dispatchLog({ level: 'info', text: '[BRIDGE] Starting charon daemons (deferred)...' })
+    this.initWorker.postMessage({ type: 'START' })
+    this.respWorker.postMessage({ type: 'START' })
+    this.setState('RUNNING')
+  }
+
+  /**
+   * Write files into a worker's WASM filesystem post-INIT. Used to land
+   * cert PEMs after they've been built via panel-driven worker pkcs11
+   * provisioning (charon hasn't started yet so it won't see partial state).
+   */
+  public writeFiles(role: 'initiator' | 'responder', files: Record<string, string>) {
+    const worker = role === 'initiator' ? this.initWorker : this.respWorker
+    if (!worker) {
+      this.dispatchLog({
+        level: 'error',
+        text: `[BRIDGE] writeFiles(${role}): worker not initialized`,
+      })
+      return
+    }
+    worker.postMessage({ type: 'WRITE_FILES', payload: { files } })
   }
 
   public destroy() {

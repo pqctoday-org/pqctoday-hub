@@ -39,6 +39,7 @@ import {
   strongSwanEngine,
   type StrongSwanLog,
   type StrongSwanState,
+  type Pkcs11TraceEvent,
 } from '@/wasm/strongswan/bridge'
 import { runV2Selftest, runV2KemTwoWorker, type V2Event } from '@/wasm/strongswan-v2/bridge-v2'
 import {
@@ -415,6 +416,77 @@ function buildHsmMlDsaSelfSignedCert(
   return `-----BEGIN CERTIFICATE-----\n${lines.join('\n')}\n-----END CERTIFICATE-----\n`
 }
 
+/**
+ * VPN-sim variant: cert builder where pubKeyBytes are pre-extracted and the
+ * TBS signature is produced via an external (async) callback. Used for
+ * dual-mode provisioning where ML-DSA keys live in the worker softhsm — the
+ * panel can't call C_Sign directly there, so it builds the TBS locally and
+ * delegates signing back to the worker via engine.pkcs11(...).
+ */
+async function buildMlDsaSelfSignedCertAsync(
+  pubKeyBytes: Uint8Array,
+  variant: 44 | 65 | 87,
+  cn: string,
+  org: string,
+  signFn: (tbsDer: Uint8Array) => Promise<Uint8Array>,
+  keyId?: Uint8Array
+): Promise<string> {
+  const pubKeyCopy = new Uint8Array(pubKeyBytes.length)
+  pubKeyCopy.set(pubKeyBytes)
+
+  const sigAlgId = new X509AlgId({ algorithm: ML_DSA_OID_FOR_VARIANT[variant] })
+  const spki = new X509SPKI({ algorithm: sigAlgId, subjectPublicKey: pubKeyCopy.buffer })
+
+  const buildName = (commonName: string, organization: string) =>
+    new X509Name([
+      new X509RDN([
+        new X509ATV({ type: '2.5.4.3', value: new X509AttrValue({ utf8String: commonName }) }),
+      ]),
+      new X509RDN([
+        new X509ATV({
+          type: '2.5.4.10',
+          value: new X509AttrValue({ utf8String: organization }),
+        }),
+      ]),
+    ])
+
+  const serial = crypto.getRandomValues(new Uint8Array(8))
+  serial[0] &= 0x7f
+  const now = new Date()
+  const expiry = new Date(now.getTime() + 10 * 365.25 * 24 * 3600 * 1000)
+
+  let extensions: X509Extensions | undefined
+  if (keyId && keyId.length === 20) {
+    const skiValue = new X509SKI(new Uint8Array(keyId).buffer as ArrayBuffer)
+    const skiDer = AsnSerializer.serialize(skiValue)
+    const ext = new X509Extension()
+    ext.extnID = id_ce_subjectKeyIdentifier
+    ext.critical = false
+    ext.extnValue = new OctetString(skiDer)
+    extensions = new X509Extensions([ext])
+  }
+
+  const tbs = new X509TBS({
+    version: 2,
+    serialNumber: serial.buffer,
+    signature: sigAlgId,
+    issuer: buildName(cn, org),
+    validity: new X509Validity({ notBefore: now, notAfter: expiry }),
+    subject: buildName(cn, org),
+    subjectPublicKeyInfo: spki,
+    extensions,
+  })
+  const tbsDer = new Uint8Array(AsnSerializer.serialize(tbs))
+
+  const signature = await signFn(tbsDer)
+
+  const algDer = ML_DSA_ALG_DER_FOR_VARIANT[variant]
+  const certDer = derTLV(0x30, derCat(tbsDer, algDer, derBitStr(signature)))
+  const b64 = btoa(String.fromCharCode(...certDer))
+  const lines = b64.match(/.{1,64}/g) ?? []
+  return `-----BEGIN CERTIFICATE-----\n${lines.join('\n')}\n-----END CERTIFICATE-----\n`
+}
+
 const PayloadCard: React.FC<{
   payload: IKEv2Payload
   index: number
@@ -694,6 +766,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   const vpnSlotsRef = React.useRef<{ init: number; resp: number }>({ init: 0, resp: 1 })
   // Guards VPN-specific slot init — separate from moduleRef since other panels share that ref.
   const vpnRpcInitRef = React.useRef(false)
+  // Set to true when generateCertsViaWorker has spawned workers, provisioned
+  // ML-DSA keys + certs in the worker softhsm, and written cert PEMs to FS.
+  // Start Daemon then skips engine.init and goes straight to engine.start().
+  const dualWorkerReadyRef = React.useRef(false)
 
   // VPN RPC state: session mapping + per-call sign/verify context
   const vpnStateRef = React.useRef<{
@@ -803,6 +879,12 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           # C_GenerateKeyPair (used for ML-KEM keygen in IKE_SA_INIT) returns
           # CKR_USER_NOT_LOGGED_IN. PIN must match wasm_hsm_init.c USER_PIN.
           pin = 1234
+          # We provision certs as PEM files in /etc/ipsec.d/certs (written by
+          # the worker's WASM FS preRun OR via WRITE_FILES post-INIT). Setting
+          # load_certs = no keeps the SKID lookup linkage clean: charon reads
+          # the cert from the filesystem, computes its SKID, then asks the
+          # PKCS#11 module to find a private key with CKA_ID = that SKID.
+          load_certs = no
         }
       }
     }
@@ -925,8 +1007,159 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     }
     const handleState = (state: StrongSwanState) => setSsState(state)
 
+    // Map mech codes to friendly names for the PKCS#11 panel. Crypto-only ops.
+    const PKCS11_MECH_NAMES: Record<number, string> = {
+      0x00000000: 'CKM_RSA_PKCS_KEY_PAIR_GEN',
+      0x00000001: 'CKM_RSA_PKCS',
+      0x00000006: 'CKM_SHA1_RSA_PKCS',
+      0x00000040: 'CKM_SHA256_RSA_PKCS',
+      0x00000041: 'CKM_SHA384_RSA_PKCS',
+      0x00000042: 'CKM_SHA512_RSA_PKCS',
+      0x00000220: 'CKM_SHA_1',
+      0x00000250: 'CKM_SHA256',
+      0x00000260: 'CKM_SHA384',
+      0x00000270: 'CKM_SHA512',
+      0x000002f0: 'CKM_HMAC_SHA1',
+      0x000002f1: 'CKM_HMAC_SHA224',
+      0x000002f2: 'CKM_HMAC_SHA256',
+      0x000002f3: 'CKM_HMAC_SHA384',
+      0x000002f4: 'CKM_HMAC_SHA512',
+      0x00000300: 'CKM_GENERIC_SECRET_KEY_GEN',
+      0x00001080: 'CKM_AES_KEY_GEN',
+      0x00001082: 'CKM_AES_CBC',
+      0x00001087: 'CKM_AES_CTR',
+      0x00001088: 'CKM_AES_GCM',
+      // Verified against pqctoday-hsm/strongswan-pkcs11/pkcs11.h:
+      0x0000000f: 'CKM_ML_KEM_KEY_PAIR_GEN',
+      0x00000017: 'CKM_ML_KEM',
+      0x0000001c: 'CKM_ML_DSA_KEY_PAIR_GEN',
+      0x0000001d: 'CKM_ML_DSA',
+    }
+
+    const handlePkcs11Trace = (ev: Pkcs11TraceEvent) => {
+      // Tag must match the [initiator]/[responder] filter used by the
+      // per-token Pkcs11LogPanel render (hsmLog.filter on args.includes).
+      const role = ev.role
+      const sessStr = ev.sess ? `hSession=${ev.sess}` : ''
+      const mechStr = ev.mech
+        ? `mech=${PKCS11_MECH_NAMES[ev.mech] || `0x${ev.mech.toString(16).toUpperCase()}`}`
+        : ''
+      let args = ''
+      switch (ev.op) {
+        case 'C_GenerateKeyPair':
+          args = `${sessStr} ${mechStr} pubAttrs=${ev.inA} priAttrs=${ev.inB} → hPub=${ev.outA} hPri=${ev.outB}`
+          break
+        case 'C_GenerateKey':
+          args = `${sessStr} ${mechStr} attrs=${ev.inA} → hKey=${ev.outA}`
+          break
+        case 'C_SignInit':
+        case 'C_VerifyInit':
+        case 'C_EncryptInit':
+        case 'C_DecryptInit':
+          args = `${sessStr} ${mechStr} hKey=${ev.inA}`
+          break
+        case 'C_Sign':
+          args = `${sessStr} dataLen=${ev.inA} → sigLen=${ev.outA}`
+          break
+        case 'C_Verify':
+          args = `${sessStr} dataLen=${ev.inA} sigLen=${ev.inB}`
+          break
+        case 'C_DigestInit':
+          args = `${sessStr} ${mechStr}`
+          break
+        case 'C_Digest':
+          args = `${sessStr} dataLen=${ev.inA} → digestLen=${ev.outA}`
+          break
+        case 'C_DeriveKey':
+          args = `${sessStr} ${mechStr} hBaseKey=${ev.inA} attrs=${ev.inB} → hKey=${ev.outA}`
+          break
+        case 'C_Encrypt':
+          args = `${sessStr} dataLen=${ev.inA} → encLen=${ev.outA}`
+          break
+        case 'C_Decrypt':
+          args = `${sessStr} encLen=${ev.inA} → dataLen=${ev.outA}`
+          break
+        case 'C_GenerateRandom':
+          args = `${sessStr} len=${ev.inA}`
+          break
+        case 'C_EncapsulateKey':
+        case 'C_EncapsulateKey(size)':
+          args = `${sessStr} ${mechStr} hPub=${ev.inA} → ct_len=${ev.outA}${ev.outB ? ` hSecret=${ev.outB}` : ''}`
+          break
+        case 'C_DecapsulateKey':
+          args = `${sessStr} ${mechStr} hPri=${ev.inA} ct_len=${ev.inB} → hSecret=${ev.outA}`
+          break
+        default:
+          args = `${sessStr} ${mechStr} a=${ev.inA} b=${ev.inB}`
+      }
+      addHsmLog({
+        id: Date.now() + Math.floor(Math.random() * 1000),
+        timestamp: new Date().toISOString().split('T')[1]?.split('.')[0] || '',
+        fn: ev.op,
+        args: `[${role}] ${args.trim()}`,
+        rvName: ev.rv === 0 ? 'CKR_OK' : `0x${ev.rv.toString(16).toUpperCase()}`,
+        rvHex: `0x${ev.rv.toString(16).padStart(8, '0').toUpperCase()}`,
+        ok: ev.rv === 0,
+        ms: 0,
+      })
+
+      // Surface ML-KEM keys generated inside the worker softhsm so they
+      // appear in the per-tab Established Keys panel — same way the
+      // RPC-mode handler used to (cmdId 92 path), but driven from trace
+      // events now that the worker handles KEM ops locally.
+      if (ev.rv !== 0) return
+      const slotIdForRole = role === 'initiator' ? 0 : 1
+      const ts = new Date().toISOString()
+      // CKM_ML_KEM_KEY_PAIR_GEN = 0x0F, CKM_ML_KEM = 0x17 (softhsmv3 vendor).
+      if (ev.op === 'C_GenerateKeyPair' && ev.mech === 0x0f) {
+        addHsmKey({
+          handle: ev.outA,
+          family: 'ml-kem',
+          role: 'public',
+          label: `ML-KEM-768 Public Key`,
+          variant: 'ML-KEM-768',
+          engine: 'rust',
+          generatedAt: ts,
+          slotId: slotIdForRole,
+        })
+        addHsmKey({
+          handle: ev.outB,
+          family: 'ml-kem',
+          role: 'private',
+          label: `ML-KEM-768 Private Key`,
+          variant: 'ML-KEM-768',
+          engine: 'rust',
+          generatedAt: ts,
+          slotId: slotIdForRole,
+        })
+      } else if (ev.op === 'C_EncapsulateKey' && ev.mech === 0x17 && ev.outB) {
+        addHsmKey({
+          handle: ev.outB,
+          family: 'ml-kem',
+          role: 'secret',
+          label: `ML-KEM Session Key (encap)`,
+          variant: 'ML-KEM-768',
+          engine: 'rust',
+          generatedAt: ts,
+          slotId: slotIdForRole,
+        })
+      } else if (ev.op === 'C_DecapsulateKey' && ev.mech === 0x17) {
+        addHsmKey({
+          handle: ev.outA,
+          family: 'ml-kem',
+          role: 'secret',
+          label: `ML-KEM Session Key (decap)`,
+          variant: 'ML-KEM-768',
+          engine: 'rust',
+          generatedAt: ts,
+          slotId: slotIdForRole,
+        })
+      }
+    }
+
     strongSwanEngine.addLogListener(handleLog)
     strongSwanEngine.addStateListener(handleState)
+    strongSwanEngine.addPkcs11TraceListener(handlePkcs11Trace)
 
     // Wire up RPC handler — dispatches charon's PKCS#11 calls into softhsmv3 in real time.
     // Both arrays alias the same SharedArrayBuffer so writes are immediately visible to the worker.
@@ -2117,6 +2350,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     return () => {
       strongSwanEngine.removeLogListener(handleLog)
       strongSwanEngine.removeStateListener(handleState)
+      strongSwanEngine.removePkcs11TraceListener(handlePkcs11Trace)
       strongSwanEngine.setRpcHandler(() => {})
       strongSwanEngine.destroy()
     }
@@ -2380,6 +2614,211 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     clientSize,
     serverAlg,
     serverSize,
+  ])
+
+  /**
+   * VPN dual-mode (ML-DSA) cert provisioning that runs against the WORKER's
+   * softhsmv3 instances (one per role) — not the panel's. This ensures that
+   * when charon's strongswan-pkcs11 plugin queries its local softhsm for the
+   * ML-DSA private key via C_FindObjects(CKA_ID=ski) at IKE_AUTH time, the
+   * key is actually there. Resolves the two-instance softhsm split called
+   * out in pqctoday-hsm/CHANGELOG.md:64.
+   */
+  const generateCertsViaWorker = useCallback(async () => {
+    setCertGenLoading(true)
+    try {
+      const variant = (parseInt(clientSize, 10) as 44 | 65 | 87) || 65
+
+      // Step 1: Spawn workers in spawn-only mode (token init via wasm_hsm_init
+      // alg_type=2 → no RSA keygen). Configs include strongswan.conf,
+      // ipsec.conf, ipsec.secrets but NOT the cert files yet — we'll write
+      // them via writeFiles after they're built.
+      const initSecrets = `: PSK "${clientPsk}"\n`
+      const respSecrets = `: PSK "${serverPsk}"\n`
+
+      // Rebuild ipsec.conf inline with auth='dual' so the conf charon reads
+      // has leftauth=pubkey + leftcert=... — bypasses any staleness in
+      // activeInitIpsec/activeRespIpsec state. Same call signature as the
+      // useEffect at line 954 uses; verified at line 908.
+      const initIpsec = buildIpsecConf('initiator', selectedMode, 'dual', allowFragmentation)
+      const respIpsec = buildIpsecConf('responder', selectedMode, 'dual', allowFragmentation)
+
+      strongSwanEngine.dispatchLog({
+        level: 'info',
+        text: `[CERT-WORKER] Spawning workers (spawn-only) for in-worker ML-DSA provisioning... (ipsec.conf=${initIpsec.length} chars dual-mode)`,
+      })
+      strongSwanEngine.setKeySpec(2, 0, 0) // alg_type=2 → token init only
+      const ready = strongSwanEngine.init(
+        {
+          'strongswan.conf': activeInitConfig,
+          'ipsec.conf': initIpsec,
+          'ipsec.secrets': initSecrets,
+        },
+        {
+          'strongswan.conf': activeRespConfig,
+          'ipsec.conf': respIpsec,
+          'ipsec.secrets': respSecrets,
+        },
+        { initPsk: clientPsk, respPsk: serverPsk },
+        false,
+        selectedMode === 'pure-pqc' || selectedMode === 'hybrid' ? 1 : 0,
+        { phase: 'spawn-only' }
+      )
+      await ready
+      strongSwanEngine.dispatchLog({
+        level: 'info',
+        text: '[CERT-WORKER] Workers ready. Provisioning ML-DSA keys + certs via PKCS#11 RPC...',
+      })
+
+      // Step 2: For each role, open a session, login, generate ML-DSA keypair,
+      // extract pubkey bytes, build TBS + sign via worker.
+      // softhsmv3 slot IDs: wasm_hsm_init initializes slot 0 (charon-left)
+      // for initiator and slot 1 (charon-right) for responder.
+      const provisionRole = async (
+        role: 'initiator' | 'responder',
+        cn: string
+      ): Promise<{ certPem: string; ckaId: Uint8Array }> => {
+        // softhsmv3's slot IDs are NOT 0/1 — wasm_hsm_init discovers
+        // empty slots via C_GetSlotList. Ask the worker for the actual IDs
+        // (only token-present slots).
+        const list = await strongSwanEngine.pkcs11(role, 'C_GetSlotList', {
+          tokenPresent: true,
+        })
+        if (list.rv !== 0) throw new Error(`${role} C_GetSlotList rv=0x${list.rv.toString(16)}`)
+        const slotIds = (list.data.slots as number[]) || []
+        if (slotIds.length === 0) throw new Error(`${role} C_GetSlotList returned no slots`)
+        const slot = slotIds[0] // use the first token-present slot for our keys
+        strongSwanEngine.dispatchLog({
+          level: 'info',
+          text: `[CERT-WORKER] ${role} discovered slot=${slot} (of ${slotIds.length} initialized)`,
+        })
+        const open = await strongSwanEngine.pkcs11(role, 'C_OpenSession', { slot })
+        if (open.rv !== 0) throw new Error(`${role} C_OpenSession rv=0x${open.rv.toString(16)}`)
+        const hSess = open.data.hSess as number
+
+        const login = await strongSwanEngine.pkcs11(role, 'C_Login', {
+          hSess,
+          userType: 1,
+          pin: '1234',
+        })
+        // CKR_USER_ALREADY_LOGGED_IN (0x100) is OK — token was already logged
+        // in by wasm_hsm_init's setup path.
+        if (login.rv !== 0 && login.rv !== 0x100)
+          throw new Error(`${role} C_Login rv=0x${login.rv.toString(16)}`)
+
+        const ckaId = crypto.getRandomValues(new Uint8Array(20))
+        const gen = await strongSwanEngine.pkcs11(role, 'C_GenerateKeyPair_MLDSA', {
+          hSess,
+          variant,
+          ckaId: Array.from(ckaId),
+        })
+        if (gen.rv !== 0)
+          throw new Error(`${role} C_GenerateKeyPair_MLDSA rv=0x${gen.rv.toString(16)}`)
+        const hPub = gen.data.hPub as number
+        const hPri = gen.data.hPri as number
+
+        // Extract raw ML-DSA public-key bytes via C_GetAttributeValue(CKA_VALUE).
+        // Worker's CKA_EXTRACTABLE=TRUE on the public key allows this.
+        const CKA_VALUE = 0x00000011
+        const getVal = await strongSwanEngine.pkcs11(role, 'C_GetAttributeValue', {
+          hSess,
+          hObj: hPub,
+          attrType: CKA_VALUE,
+        })
+        if (getVal.rv !== 0)
+          throw new Error(`${role} C_GetAttributeValue rv=0x${getVal.rv.toString(16)}`)
+        const pubKeyBytes = new Uint8Array(getVal.data.value as number[])
+
+        const certPem = await buildMlDsaSelfSignedCertAsync(
+          pubKeyBytes,
+          variant,
+          cn,
+          'PQC-Simulation',
+          async (tbs) => {
+            const r = await strongSwanEngine.pkcs11(role, 'C_Sign_MLDSA', {
+              hSess,
+              hPri,
+              data: Array.from(tbs),
+            })
+            if (r.rv !== 0) throw new Error(`${role} C_Sign rv=0x${r.rv.toString(16)}`)
+            return new Uint8Array(r.data.sig as number[])
+          },
+          ckaId
+        )
+
+        // Surface keys in the HSM panel for visibility.
+        const ts = new Date().toISOString()
+        addHsmKey({
+          handle: hPub,
+          family: 'ml-dsa',
+          role: 'public',
+          label: `ML-DSA-${variant} Public Key (worker)`,
+          variant: `ML-DSA-${variant}` as 'ML-DSA-44' | 'ML-DSA-65' | 'ML-DSA-87',
+          engine: 'rust',
+          generatedAt: ts,
+          slotId: role === 'initiator' ? 0 : 1,
+          sessionHandle: hSess,
+        })
+        addHsmKey({
+          handle: hPri,
+          family: 'ml-dsa',
+          role: 'private',
+          label: `ML-DSA-${variant} Private Key (worker)`,
+          variant: `ML-DSA-${variant}` as 'ML-DSA-44' | 'ML-DSA-65' | 'ML-DSA-87',
+          engine: 'rust',
+          generatedAt: ts,
+          slotId: role === 'initiator' ? 0 : 1,
+          sessionHandle: hSess,
+        })
+
+        return { certPem, ckaId }
+      }
+
+      const initResult = await provisionRole('initiator', 'vpn-initiator')
+      const respResult = await provisionRole('responder', 'vpn-responder')
+
+      // Step 3: Land cert PEMs in BOTH workers (each peer needs its own cert
+      // and the other peer's cert for trust).
+      strongSwanEngine.writeFiles('initiator', {
+        '/etc/ipsec.d/certs/initiator.crt': initResult.certPem,
+        '/etc/ipsec.d/certs/responder.crt': respResult.certPem,
+      })
+      strongSwanEngine.writeFiles('responder', {
+        '/etc/ipsec.d/certs/responder.crt': respResult.certPem,
+        '/etc/ipsec.d/certs/initiator.crt': initResult.certPem,
+      })
+
+      const toHex = (b: Uint8Array) =>
+        Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('')
+      setCertData({
+        initCert: initResult.certPem,
+        respCert: respResult.certPem,
+        initCkaId: toHex(initResult.ckaId),
+        respCkaId: toHex(respResult.ckaId),
+      })
+
+      dualWorkerReadyRef.current = true
+      strongSwanEngine.dispatchLog({
+        level: 'info',
+        text: `[CERT-WORKER] ML-DSA-${variant} certs provisioned in worker softhsm. Click Start Daemon.`,
+      })
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err)
+      strongSwanEngine.dispatchLog({ level: 'error', text: `[CERT-WORKER] ${msg}` })
+      setSabError(msg)
+    } finally {
+      setCertGenLoading(false)
+    }
+  }, [
+    activeInitConfig,
+    activeRespConfig,
+    addHsmKey,
+    allowFragmentation,
+    buildIpsecConf,
+    clientPsk,
+    clientSize,
+    selectedMode,
+    serverPsk,
   ])
 
   // Benchmark keygen + self-sign across RSA-3072 and ML-DSA-{44,65,87}.
@@ -3234,7 +3673,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           >
             <RotateCcw size={16} />
           </Button>
-          {currentStep === 0 && ssState === 'UNINITIALIZED' && (
+          {currentStep === 0 && (ssState === 'UNINITIALIZED' || ssState === 'READY') && (
             <div className="flex gap-2 items-center">
               <label
                 htmlFor="vpn-psk"
@@ -3256,7 +3695,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               {pskMismatch && <span className="text-[10px] text-status-warning">mismatch</span>}
             </div>
           )}
-          {currentStep === 0 && ssState === 'UNINITIALIZED' && (
+          {currentStep === 0 && (ssState === 'UNINITIALIZED' || ssState === 'READY') && (
             <label
               className="flex items-center gap-1.5 text-[10px] text-muted-foreground cursor-pointer select-none"
               title="HSM RPC: bridges the charon WASM daemon to the softhsmv3 WASM module running on the main thread via SharedArrayBuffer. When enabled, all PKCS#11 calls (key generation, KEM encap/decap, signing) are dispatched from the daemon worker to the main-thread HSM and logged in the Diagnostic Boundary below. Requires SharedArrayBuffer (Cross-Origin Isolation). Disable to run charon with its built-in software crypto instead."
@@ -3270,13 +3709,17 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               HSM RPC
             </label>
           )}
-          {currentStep === 0 && ssState === 'UNINITIALIZED' ? (
+          {currentStep === 0 && (ssState === 'UNINITIALIZED' || ssState === 'READY') ? (
             <div className="flex items-center gap-2 flex-wrap">
               {authMode === 'dual' && (
                 <>
                   <Button
                     variant="ghost"
-                    onClick={generateCerts}
+                    onClick={
+                      authMode === 'dual' && clientAlg === 'ML-DSA' && serverAlg === 'ML-DSA'
+                        ? generateCertsViaWorker
+                        : generateCerts
+                    }
                     disabled={certGenLoading}
                     className="px-4 py-2 bg-secondary text-secondary-foreground font-bold rounded shadow-sm hover:bg-secondary/90 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
@@ -3437,7 +3880,15 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     const proposalMode =
                       selectedMode === 'pure-pqc' || selectedMode === 'hybrid' ? 1 : 0
 
-                    if (authMode === 'dual' && certData) {
+                    if (dualWorkerReadyRef.current) {
+                      // Workers were already spawned + provisioned by
+                      // generateCertsViaWorker (dual+ML-DSA). Just START.
+                      strongSwanEngine.dispatchLog({
+                        level: 'info',
+                        text: '[CERT] Workers already provisioned in dual-ML-DSA mode. Starting charon...',
+                      })
+                      strongSwanEngine.start()
+                    } else if (authMode === 'dual' && certData) {
                       // Use pre-provisioned certs generated before daemon start (C8 flow).
                       // ipsec.secrets: PSK only — charon's pkcs11 plugin discovers the private
                       // key via PKCS#11 RPC (C_FindObjects matching the cert's public key modulus).
@@ -3481,7 +3932,11 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     setSabError(err instanceof Error ? err.message : String(err))
                   }
                 }}
-                disabled={(authMode === 'dual' && !certData) || !browserSupport.supported}
+                disabled={
+                  authMode === 'dual'
+                    ? !certData // certs ready → workers already up, browser is fine
+                    : !browserSupport.supported
+                }
                 className="px-4 py-2 font-bold rounded shadow-sm text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 title={
                   authMode === 'dual' && !certData
