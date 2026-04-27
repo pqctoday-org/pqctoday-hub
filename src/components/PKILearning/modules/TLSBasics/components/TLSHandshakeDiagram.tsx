@@ -131,7 +131,7 @@ interface TLSHandshakeDiagramProps {
 export const TLSHandshakeDiagram: React.FC<TLSHandshakeDiagramProps> = ({ mTLSEnabled }) => {
   const { clientConfig, serverConfig } = useTLSStore()
   const selectedGroup = clientConfig?.groups?.[0] ?? 'X25519MLKEM768'
-  const sigAlg = serverConfig?.signatureAlgorithm ?? 'mldsa65'
+  const sigAlg = serverConfig?.signatureAlgorithms?.[0] ?? 'mldsa65'
   const ks = GROUP_KEY_SHARE[selectedGroup] ?? GROUP_KEY_SHARE['X25519MLKEM768']
   const sigSize = SIG_BYTES[sigAlg]
 
