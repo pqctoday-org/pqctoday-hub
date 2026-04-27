@@ -18,7 +18,7 @@ const ENRICHMENT_SOURCES: EnrichmentSource[] = [
   { collection: 'threats', csvPrefix: 'quantum_threats_hsm_industries_', idField: 'threat_id' },
 ]
 
-const APPROVED_MODELS = ['qwen3.5:27b', 'ollama-qwen3.5:27b', 'manual-extraction', 'manual']
+const APPROVED_MODELS = ['qwen3.6:27b', 'ollama-qwen3.6:27b', 'qwen3.5:27b', 'ollama-qwen3.5:27b', 'manual-extraction', 'manual']
 
 export function runEnrichmentChecks(): {
   results: CheckResult[]

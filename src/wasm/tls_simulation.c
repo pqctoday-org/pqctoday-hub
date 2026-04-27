@@ -181,13 +181,13 @@ void log_ca_details(const char *side, const char *caFile) {
   if (cert) {
     EVP_PKEY *pkey = X509_get_pubkey(cert);
     if (pkey) {
-      int id = EVP_PKEY_base_id(pkey);
-      const char *name = OBJ_nid2sn(id);
-
-      // Map NIDs to human friendly names for PQC if needed, or use default
+      // EVP_PKEY_get0_type_name() works for all OpenSSL 3.x key types
+      // including PQC (ML-DSA, SLH-DSA). EVP_PKEY_base_id()/OBJ_nid2sn()
+      // returns NID_undef for provider-based keys.
+      const char *name = EVP_PKEY_get0_type_name(pkey);
       char details[256];
       snprintf(details, sizeof(details), "CA Key Type: %s",
-               name ? name : "Unknown");
+               (name && name[0]) ? name : "Unknown");
       log_event(side, "config_ca_details", details);
 
       EVP_PKEY_free(pkey);
