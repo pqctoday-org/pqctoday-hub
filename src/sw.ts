@@ -4,7 +4,7 @@
 // Enables SharedArrayBuffer for WASM threading on GitHub Pages without server-side headers.
 
 import { PrecacheController, cleanupOutdatedCaches } from 'workbox-precaching'
-import { CacheFirst, StaleWhileRevalidate } from 'workbox-strategies'
+import { StaleWhileRevalidate } from 'workbox-strategies'
 import { ExpirationPlugin } from 'workbox-expiration'
 
 declare const self: ServiceWorkerGlobalScope & {
@@ -26,11 +26,6 @@ self.addEventListener('activate', (event) => {
 })
 
 // ── Runtime caching strategies ─────────────────────────────────────────────
-const wasmCache = new CacheFirst({
-  cacheName: 'wasm-cache',
-  plugins: [new ExpirationPlugin({ maxEntries: 20, maxAgeSeconds: 30 * 24 * 60 * 60 })],
-})
-
 const dataCache = new StaleWhileRevalidate({
   cacheName: 'data-cache',
   plugins: [new ExpirationPlugin({ maxEntries: 50, maxAgeSeconds: 7 * 24 * 60 * 60 })],
@@ -66,9 +61,12 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith(
     (async (): Promise<Response> => {
-      // WASM files: CacheFirst (large, rarely change)
+      // WASM files: serve from precache (revision-controlled, always fresh after deploy).
+      // Falls through to network if not precached (e.g. dynamically loaded WASM).
       if (url.pathname.endsWith('.wasm')) {
-        return withCOIHeaders(await wasmCache.handle({ event, request }), url)
+        const precachedWasm = await precache.matchPrecache(request)
+        if (precachedWasm) return withCOIHeaders(precachedWasm, url)
+        return withCOIHeaders(await fetch(request), url)
       }
 
       // JSON/CSV data: StaleWhileRevalidate

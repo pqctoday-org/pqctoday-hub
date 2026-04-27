@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.19] - April 27, 2026
+
 ### Work in progress
 
 - **VPN simulator — ML-DSA cert-auth wire-up (WIP, IKE_AUTH still falls back to PSK)** ([public/wasm/strongswan.{js,wasm}](public/wasm/), [public/wasm/strongswan_worker.js](public/wasm/strongswan_worker.js), [src/wasm/strongswan/bridge.ts](src/wasm/strongswan/bridge.ts), [src/components/Playground/hsm/VpnSimulationPanel.tsx](src/components/Playground/hsm/VpnSimulationPanel.tsx)) — partial progress over rebuilds #15–#18 toward real ML-DSA-65 IKE_AUTH inside the browser. **Not feature-complete; committed as a WIP milestone.**
@@ -28,6 +30,8 @@ All notable changes to this project will be documented in this file.
   **Next session pickup:** read `pqctoday-hsm/strongswan-pkcs11/pkcs11_creds.c` and `pkcs11_private_key.c` to map the actual cert-load → SKID → `C_FindObjects(CKA_ID=ski)` flow before writing any more glue. The infrastructure to surface ops in the panel is ready; what's missing is understanding why charon doesn't try.
 
 ### Fixed
+
+- **Service worker WASM cache staleness** ([src/sw.ts](src/sw.ts)) — `openssl.wasm` (and all WASM files) were routed through a `CacheFirst` runtime cache (`wasm-cache`, 30-day TTL) that sat in front of the precache. Every time `openssl.wasm` was recompiled and deployed, the precache received the new revision-controlled binary — but the `CacheFirst` handler intercepted WASM fetch events first, bypassing the precache entirely and serving the stale binary for up to 30 days. Root cause of TLS simulation failing in production while dev worked fine (no service worker in Vite dev mode). Fix: WASM requests now go directly to `precache.matchPrecache()`, which is always in sync with the deployed build. Non-precached WASM falls back to network.
 
 - **VPN simulator — full IKE_SA `ESTABLISHED` end-to-end with real ML-KEM-768 + PSK auth** ([public/wasm/strongswan.{js,wasm}](public/wasm/), [public/wasm/strongswan_worker.js](public/wasm/strongswan_worker.js), [src/wasm/strongswan/bridge.ts](src/wasm/strongswan/bridge.ts)) — both peer workers complete the full IKEv2 handshake in the browser. Final log lines:
 
