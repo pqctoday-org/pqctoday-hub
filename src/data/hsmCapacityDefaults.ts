@@ -315,16 +315,16 @@ export const CLASSICAL_HSM_DEFAULT: HsmProfile = {
   description:
     'General-purpose network HSM without PQC hardware acceleration. ML-DSA and ML-KEM run in firmware (software fallback). ML-KEM requires a vendor firmware update with PKCS#11 v3.2 support; some models may not support it without hardware replacement.',
   opsPerSec: {
-    'rsa-2048': 100_000,
-    'ecdsa-p256': 100_000,
-    'ecdh-p256': 100_000,
+    'rsa-2048': 10_000,
+    'ecdsa-p256': 20_000,
+    'ecdh-p256': 10_000,
     'ml-dsa-65': 150,
     'ml-kem-768': 500,
-    'aes-128': 50_000,
-    'aes-256': 25_000,
+    'aes-128': 25_000,
+    'aes-256': 20_000,
   },
   sourceNote:
-    'Reference class: Thales Luna 7 PCIe / Entrust nShield 5c / Utimaco SecurityServer Se Gen2 public datasheets. ML-DSA software fallback ~150 ops/s (NIST PQC evaluation reports). ML-KEM-768 software estimate ~500 ops/s (lattice KEM operations; no vendor publishes this figure).',
+    'Reference class: Thales Luna 7 PCIe / Entrust nShield 5c / Utimaco SecurityServer Se Gen2 public datasheets. RSA-2048 ~10k ops/s, ECDSA P-256 ~20k ops/s (vendor datasheets). ML-DSA software fallback ~150 ops/s (NIST PQC evaluation reports). ML-KEM-768 software estimate ~500 ops/s (lattice KEM operations; no vendor publishes this figure).',
 }
 
 /**
@@ -334,11 +334,11 @@ export const PQC_HSM_DEFAULT: HsmProfile = {
   id: 'pqc',
   name: 'Next-gen PQC HSM',
   description:
-    'Next-generation HSM with dedicated ML-DSA / ML-KEM hardware accelerator. Classical TPS unchanged; PQC ops ~16× faster than classical software fallback.',
+    'Next-generation HSM with dedicated ML-DSA / ML-KEM hardware accelerator. Newer silicon delivers higher classical TPS than legacy HSMs; PQC ops ~16–24× faster than classical software fallback.',
   opsPerSec: {
-    'rsa-2048': 10_000,
-    'ecdsa-p256': 20_000,
-    'ecdh-p256': 10_000,
+    'rsa-2048': 100_000,
+    'ecdsa-p256': 100_000,
+    'ecdh-p256': 100_000,
     'ml-dsa-65': 8_000,
     'ml-kem-768': 12_000,
     'aes-128': 250_000,
