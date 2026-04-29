@@ -24,6 +24,8 @@ import { ArtifactCard, ArtifactPlaceholder } from '../ArtifactCard'
 import { BUSINESS_TOOLS, ARTIFACT_TYPE_TO_TOOL_ID } from '../businessToolsRegistry'
 import { computeZoneTiers } from '../lib/cswp39Tier'
 import { TierBadge } from '../widgets/TierBadge'
+import { useAssessmentSnapshot } from '@/hooks/assessment/useAssessmentSnapshot'
+import { getArtifactSuggestion } from '@/data/assessmentToArtifactPriority'
 import { AssetsWire } from './wires/AssetsWire'
 import { GovernanceWire } from './wires/GovernanceWire'
 import { MigrationWire } from './wires/MigrationWire'
@@ -110,6 +112,7 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
   const tier = computeZoneTiers(metrics)[zone]
 
   const [open, setOpen] = useState(defaultOpen)
+  const assessmentSnap = useAssessmentSnapshot()
 
   const artifacts = orderByFeatured(getArtifactsForZone(metrics, zone), featuredArtifacts)
   const existing = new Set(artifacts.map((a) => a.type))
@@ -205,6 +208,7 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
                           type={type}
                           pillar={getPillarForType(type)}
                           onCreate={onCreateArtifact}
+                          suggestion={getArtifactSuggestion(type, assessmentSnap) ?? undefined}
                         />
                       ))}
                     </div>

@@ -2,11 +2,13 @@
 import React, { useMemo, useCallback } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { useAlgorithmTransitionsForAssessment } from '@/hooks/useAlgorithmTransitionsForAssessment'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { softwareData } from '@/data/migrateData'
 import { Button } from '@/components/ui/button'
 import { TimelinePlanner, ExportableArtifact } from '../../../common/executive'
 import type { ExternalDeadline, Milestone } from '../../../common/executive'
+import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 
 interface MitigationGatewayRow {
   asset: string
@@ -47,9 +49,20 @@ const DEFAULT_MILESTONES: Milestone[] = [
   },
 ]
 
+/**
+ * Parse the Year out of a transition CSV deprecation/standardization date.
+ * The CSV uses formats like "2030 (Deprecated) / 2035 (Disallowed)" or
+ * "2024 (FIPS 203)" or just "2030". Returns the FIRST 4-digit year.
+ */
+function extractYear(raw: string): number | null {
+  const m = raw.match(/(20\d{2})/)
+  return m ? Number(m[1]) : null
+}
+
 export const RoadmapBuilder: React.FC = () => {
-  const { countryDeadlines } = useExecutiveModuleData()
+  const { countryDeadlines, algorithmMigrations } = useExecutiveModuleData()
   const { addExecutiveDocument } = useModuleStore()
+  const transitions = useAlgorithmTransitionsForAssessment()
 
   // Map country deadlines to ExternalDeadline[] format
   const externalDeadlines: ExternalDeadline[] = useMemo(() => {
@@ -84,7 +97,32 @@ export const RoadmapBuilder: React.FC = () => {
       .sort((a, b) => a.year - b.year)
   }, [countryDeadlines])
 
-  const [currentMilestones, setCurrentMilestones] = React.useState<Milestone[]>(DEFAULT_MILESTONES)
+  // Assessment-derived milestones: one per reported algorithm transition,
+  // anchored on the deprecation year from the NIST transitions CSV. Falls back
+  // to algorithmMigrations[] urgency when the transition date is missing.
+  const assessmentMilestones = useMemo<Milestone[]>(() => {
+    if (transitions.length === 0) return []
+    return transitions.map((t, i) => {
+      const year =
+        extractYear(t.deprecationDate) ??
+        extractYear(t.standardizationDate) ??
+        (algorithmMigrations.find((m) => m.classical === t.classical)?.urgency === 'immediate'
+          ? new Date().getFullYear() + 1
+          : new Date().getFullYear() + 3)
+      return {
+        id: `assess-ms-${i + 1}`,
+        label: `Migrate ${t.classical}${t.keySize ? ` (${t.keySize})` : ''} → ${t.pqc}`,
+        year,
+        category: 'Migration',
+      }
+    })
+  }, [transitions, algorithmMigrations])
+
+  const seedMilestones = assessmentMilestones.length > 0 ? assessmentMilestones : DEFAULT_MILESTONES
+  const [currentMilestones, setCurrentMilestones] = React.useState<Milestone[]>(seedMilestones)
+  const [seededFromAssessment, setSeededFromAssessment] = React.useState(
+    assessmentMilestones.length > 0
+  )
   const [selectedDeadlines, setSelectedDeadlines] = React.useState<ExternalDeadline[]>([])
 
   // CSWP.39 §4.6 — Mitigation gateway rows for assets where direct migration is blocked.
@@ -178,6 +216,16 @@ export const RoadmapBuilder: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {seededFromAssessment && (
+        <PreFilledBanner
+          summary={`${assessmentMilestones.length} milestone${assessmentMilestones.length !== 1 ? 's' : ''} from your reported algorithms, anchored on NIST deprecation dates.`}
+          onClear={() => {
+            setCurrentMilestones(DEFAULT_MILESTONES)
+            setSeededFromAssessment(false)
+          }}
+        />
+      )}
+
       <div className="glass-panel p-4">
         <div className="flex items-center gap-2 mb-2">
           <div className="w-2 h-2 rounded-full bg-primary" />
@@ -193,7 +241,7 @@ export const RoadmapBuilder: React.FC = () => {
 
       <TimelinePlanner
         title="PQC Migration Roadmap"
-        initialMilestones={DEFAULT_MILESTONES}
+        initialMilestones={seedMilestones}
         deadlines={externalDeadlines}
         yearRange={[2025, Math.max(2036, new Date().getFullYear() + 10)] as [number, number]}
         categories={DEFAULT_CATEGORIES}

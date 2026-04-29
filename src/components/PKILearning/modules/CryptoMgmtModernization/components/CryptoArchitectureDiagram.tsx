@@ -16,6 +16,9 @@ import { Plus, Trash2, Save, Copy, Check, Network } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useAssessmentSnapshot } from '@/hooks/assessment/useAssessmentSnapshot'
+import { useAlgorithmTransitionsForAssessment } from '@/hooks/useAlgorithmTransitionsForAssessment'
+import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 
 type ComponentKind =
   | 'application'
@@ -141,9 +144,53 @@ function buildMarkdown(components: ArchComponent[]): string {
   return md
 }
 
+function buildAssessmentSeed(
+  useCases: string[],
+  transitions: ReturnType<typeof useAlgorithmTransitionsForAssessment>
+): ArchComponent[] {
+  const out: ArchComponent[] = []
+  // One library row per reported algorithm with its PQC target as detail.
+  transitions.forEach((t, i) => {
+    const id = `lib-${i + 1}`
+    out.push({
+      id,
+      kind: 'library',
+      name: `${t.classical}${t.keySize ? ` (${t.keySize})` : ''}`,
+      detail: `Target: ${t.pqc} · ${t.status} · deprecation ${t.deprecationDate || 'TBD'}`,
+      dependsOn: '',
+    })
+  })
+  // One protocol row per reported use case so the user can attach dependencies.
+  useCases.forEach((uc, i) => {
+    out.push({
+      id: `proto-${i + 1}`,
+      kind: 'protocol',
+      name: uc,
+      detail: 'Reported in assessment use cases — fill in versions and PQC support.',
+      dependsOn: out
+        .filter((c) => c.kind === 'library')
+        .map((c) => c.id)
+        .join(', '),
+    })
+  })
+  return out
+}
+
 export const CryptoArchitectureDiagram: React.FC = () => {
   const { addExecutiveDocument } = useModuleStore()
-  const [components, setComponents] = useState<ArchComponent[]>(seedComponents)
+  const { input } = useAssessmentSnapshot()
+  const transitions = useAlgorithmTransitionsForAssessment()
+  const useCases = input?.cryptoUseCases ?? []
+  const assessmentSeed = useMemo(
+    () => buildAssessmentSeed(useCases, transitions),
+    [useCases, transitions]
+  )
+  const hasAssessmentSeed = assessmentSeed.length > 0
+
+  const [components, setComponents] = useState<ArchComponent[]>(() =>
+    hasAssessmentSeed ? assessmentSeed : seedComponents()
+  )
+  const [seededFromAssessment, setSeededFromAssessment] = useState<boolean>(hasAssessmentSeed)
   const [savedAt, setSavedAt] = useState<number | null>(null)
   const [copied, setCopied] = useState(false)
 
@@ -195,6 +242,16 @@ export const CryptoArchitectureDiagram: React.FC = () => {
           </p>
         </div>
       </div>
+
+      {seededFromAssessment && (
+        <PreFilledBanner
+          summary={`${transitions.length} library row${transitions.length !== 1 ? 's' : ''} from your reported crypto and ${useCases.length} protocol row${useCases.length !== 1 ? 's' : ''} from your use cases.`}
+          onClear={() => {
+            setComponents(seedComponents())
+            setSeededFromAssessment(false)
+          }}
+        />
+      )}
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">

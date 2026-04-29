@@ -12,8 +12,10 @@ import { SAMPLE_SBOMS } from '../data/sampleSBOMs'
 import type { CbomExportItem } from '../data/workshopTypes'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useAlgorithmTransitionsForAssessment } from '@/hooks/useAlgorithmTransitionsForAssessment'
+import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 
-type Mode = 'sbom' | 'libs' | 'hsm'
+type Mode = 'sbom' | 'libs' | 'hsm' | 'assessment'
 
 const FIPS_LABEL: Record<FipsStatus, string> = {
   active: 'FIPS active',
@@ -71,7 +73,9 @@ interface LibraryCBOMBuilderProps {
 }
 
 export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomExport }) => {
-  const [mode, setMode] = useState<Mode>('libs')
+  const assessmentTransitions = useAlgorithmTransitionsForAssessment()
+  const hasAssessmentCrypto = assessmentTransitions.length > 0
+  const [mode, setMode] = useState<Mode>(hasAssessmentCrypto ? 'assessment' : 'libs')
   const [selectedSbom, setSelectedSbom] = useState<string>(SAMPLE_SBOMS[0].id)
   const [userSbom, setUserSbom] = useState<string>('')
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
@@ -135,12 +139,41 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
     const lines: string[] = []
     lines.push('# Crypto Bill of Materials (CBOM)')
     lines.push('')
-    lines.push(
-      `Mode: **${mode === 'sbom' ? 'SBOM → CBOM' : mode === 'libs' ? 'Library posture' : 'HSM inventory'}**`
-    )
+    const modeLabel =
+      mode === 'sbom'
+        ? 'SBOM → CBOM'
+        : mode === 'libs'
+          ? 'Library posture'
+          : mode === 'hsm'
+            ? 'HSM inventory'
+            : 'From your assessment'
+    lines.push(`Mode: **${modeLabel}**`)
     lines.push('')
     lines.push('Per NIST CSWP.39 §5 (Inventory step) — feeds the Information Repository.')
     lines.push('')
+    if (mode === 'assessment') {
+      lines.push(
+        `## Assessment-derived crypto inventory — ${assessmentTransitions.length} algorithm${assessmentTransitions.length !== 1 ? 's' : ''}`
+      )
+      lines.push('')
+      lines.push(
+        '_Joined from your assessment Step 3 selections against the NIST algorithm transitions catalog._'
+      )
+      lines.push('')
+      if (assessmentTransitions.length > 0) {
+        lines.push('| Classical | Function | PQC replacement | Deprecation | Standard | Region |')
+        lines.push('|---|---|---|---|---|---|')
+        for (const t of assessmentTransitions) {
+          const classical = t.keySize ? `${t.classical} (${t.keySize})` : t.classical
+          lines.push(
+            `| ${classical} | ${t.function} | ${t.pqc} | ${t.deprecationDate || '—'} | ${t.status} | ${t.region} |`
+          )
+        }
+      } else {
+        lines.push('_No assessment crypto recorded._')
+      }
+      lines.push('')
+    }
     if (mode === 'sbom' || mode === 'libs') {
       lines.push(
         `## CBOM slice — ${cbomSlice.length} component${cbomSlice.length !== 1 ? 's' : ''}`
@@ -187,6 +220,15 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
       </p>
 
       <div className="flex flex-wrap gap-2">
+        {hasAssessmentCrypto && (
+          <Button
+            variant={mode === 'assessment' ? 'gradient' : 'outline'}
+            onClick={() => setMode('assessment')}
+            className="text-xs"
+          >
+            From your assessment
+          </Button>
+        )}
         <Button
           variant={mode === 'sbom' ? 'gradient' : 'outline'}
           onClick={() => setMode('sbom')}
@@ -209,6 +251,63 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
           Hardware FIPS 140-3 L3
         </Button>
       </div>
+
+      {mode === 'assessment' && (
+        <div className="space-y-3">
+          <PreFilledBanner
+            summary={`${assessmentTransitions.length} algorithm${assessmentTransitions.length !== 1 ? 's' : ''} you reported in the assessment, joined with the NIST transitions catalog.`}
+            onClear={() => setMode('libs')}
+          />
+          <div className="overflow-x-auto bg-muted/40 rounded-lg p-3 border border-border">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="bg-muted/60 text-left">
+                  <th className="p-2 font-bold">Classical algorithm</th>
+                  <th className="p-2 font-bold">Function</th>
+                  <th className="p-2 font-bold">PQC replacement</th>
+                  <th className="p-2 font-bold">Deprecation</th>
+                  <th className="p-2 font-bold">Standard</th>
+                  <th className="p-2 font-bold">Region</th>
+                </tr>
+              </thead>
+              <tbody>
+                {assessmentTransitions.map((t) => (
+                  <tr key={t.storedKey} className="border-t border-border align-top">
+                    <td className="p-2">
+                      <div className="font-bold text-foreground">{t.classical}</div>
+                      {t.keySize && (
+                        <div className="text-[10px] text-muted-foreground">{t.keySize}</div>
+                      )}
+                    </td>
+                    <td className="p-2 text-muted-foreground">{t.function}</td>
+                    <td className="p-2 font-mono text-foreground">{t.pqc}</td>
+                    <td className="p-2 text-muted-foreground">{t.deprecationDate || '—'}</td>
+                    <td className="p-2">
+                      {t.statusUrl ? (
+                        <a
+                          href={t.statusUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:underline"
+                        >
+                          {t.status}
+                        </a>
+                      ) : (
+                        <span className="text-muted-foreground">{t.status}</span>
+                      )}
+                    </td>
+                    <td className="p-2 text-muted-foreground">{t.region}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="text-[10px] text-muted-foreground italic mt-3">
+              Source: NIST algorithm transitions catalog. Use this slice as the seed for your full
+              CBOM — match each row to actual library / HSM owners on your team.
+            </p>
+          </div>
+        </div>
+      )}
 
       {mode === 'sbom' && (
         <div className="space-y-4">
@@ -441,7 +540,12 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
             type: 'crypto-cbom',
             title: `CBOM — ${new Date().toLocaleDateString()}`,
             data: exportMarkdown,
-            inputs: { mode, selectedSbom },
+            inputs: {
+              mode,
+              selectedSbom,
+              assessmentSeed:
+                mode === 'assessment' ? assessmentTransitions.map((t) => t.storedKey) : undefined,
+            },
             createdAt: Date.now(),
           })
         }}

@@ -4,6 +4,8 @@ import { Globe, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ComplianceTimelineBuilder } from '@/components/PKILearning/modules/ComplianceStrategy/components/ComplianceTimelineBuilder'
 import { JURISDICTIONS } from '@/components/PKILearning/modules/ComplianceStrategy/data/jurisdictions'
+import { useAssessmentSnapshot } from '@/hooks/assessment/useAssessmentSnapshot'
+import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 
 /**
  * Zero-prop wrapper around {@link ComplianceTimelineBuilder} for the Command
@@ -12,8 +14,28 @@ import { JURISDICTIONS } from '@/components/PKILearning/modules/ComplianceStrate
  * requires a `selectedJurisdictions` prop that the workshop normally supplies
  * from its Step 1 JurisdictionMapper.
  */
+function deriveJurisdictionIdsFromCountry(country: string | undefined): string[] {
+  if (!country) return []
+  const lc = country.toLowerCase()
+  return JURISDICTIONS.filter((j) => j.countryNames.some((n) => n.toLowerCase() === lc)).map(
+    (j) => j.id
+  )
+}
+
 export function ComplianceTimelineBuilderStandalone() {
-  const [selectedJurisdictions, setSelectedJurisdictions] = useState<string[]>([])
+  const { input, result } = useAssessmentSnapshot()
+  const assessmentJurisdictionIds = deriveJurisdictionIdsFromCountry(input?.country)
+
+  const [selectedJurisdictions, setSelectedJurisdictions] =
+    useState<string[]>(assessmentJurisdictionIds)
+  const [seededFromAssessment, setSeededFromAssessment] = useState(
+    assessmentJurisdictionIds.length > 0
+  )
+
+  // PQC-required frameworks the user selected, with deadlines, surfaced as a
+  // hint above the jurisdiction picker — not auto-applied because frameworks
+  // are not 1:1 with jurisdictions.
+  const pqcImpacts = (result?.complianceImpacts ?? []).filter((c) => c.requiresPQC === true)
 
   const byRegion = useMemo(() => {
     const map = new Map<string, typeof JURISDICTIONS>()
@@ -33,6 +55,33 @@ export function ComplianceTimelineBuilderStandalone() {
 
   return (
     <div className="space-y-6">
+      {seededFromAssessment && (
+        <PreFilledBanner
+          summary={`Jurisdiction pre-selected from your assessment country: ${input?.country}.${pqcImpacts.length > 0 ? ` ${pqcImpacts.length} PQC-required framework${pqcImpacts.length !== 1 ? 's' : ''} also identified.` : ''}`}
+          onClear={() => {
+            setSelectedJurisdictions([])
+            setSeededFromAssessment(false)
+          }}
+        />
+      )}
+
+      {pqcImpacts.length > 0 && (
+        <div className="glass-panel p-3 border-l-4 border-status-warning">
+          <div className="text-xs font-semibold text-foreground mb-1.5">
+            Frameworks requiring PQC (from your assessment)
+          </div>
+          <ul className="text-xs text-muted-foreground space-y-1">
+            {pqcImpacts.map((c) => (
+              <li key={c.framework}>
+                <span className="font-medium text-foreground">{c.framework}</span>
+                {c.deadline && <span> — deadline: {c.deadline}</span>}
+                {c.notes && <span className="text-muted-foreground/80"> · {c.notes}</span>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div className="glass-panel p-4 space-y-3">
         <div className="flex items-center gap-2">
           <Globe size={16} className="text-primary" />

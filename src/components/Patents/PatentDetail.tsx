@@ -2,6 +2,7 @@
 import { X, ExternalLink, Shield, Zap, GitBranch, BookOpen } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { PatentItem, NistStatus } from '@/types/PatentTypes'
+import { logExternalLink } from '@/utils/analytics'
 
 interface Props {
   patent: PatentItem
@@ -188,6 +189,7 @@ export function PatentDetail({ patent, inCorpusIds, onClose, onNavigate }: Props
               href={googlePatentsUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => logExternalLink('Patents', googlePatentsUrl)}
               className="inline-flex items-center gap-0.5 text-primary hover:underline"
             >
               <ExternalLink className="h-3 w-3" />
@@ -387,6 +389,9 @@ export function PatentDetail({ patent, inCorpusIds, onClose, onNavigate }: Props
                     href={`https://patents.google.com/patent/${num}/en`}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() =>
+                      logExternalLink('Patents', `https://patents.google.com/patent/${num}/en`)
+                    }
                     className="rounded border border-border px-1.5 py-0.5 text-xs font-mono text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {num}

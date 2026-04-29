@@ -145,6 +145,36 @@ export const logExternalLink = (category: string, url: string) => {
   logEvent(category, 'External Link', url)
 }
 
+// --- Patents tracking ---
+
+export const logPatentView = (patentNumber: string) => {
+  logEvent('Patents', 'View Detail', patentNumber)
+}
+
+export const logPatentSearch = (query: string) => {
+  logEvent('Patents', 'Search', sanitizeQuery(query))
+}
+
+export const logPatentFilter = (filterKey: string, value: string) => {
+  logEvent('Patents', 'Filter', `${filterKey}:${value}`)
+}
+
+export const logPatentFilterClear = () => {
+  logEvent('Patents', 'Filter Clear')
+}
+
+export const logPatentSort = (sortKey: string) => {
+  logEvent('Patents', 'Sort', sortKey)
+}
+
+export const logPatentInsightsFilter = (filterType: string, value: string) => {
+  logEvent('Patents', 'Insights Filter', `${filterType}:${value}`)
+}
+
+export const logPatentExport = (count: number) => {
+  logEvent('Patents', 'Export CSV', String(count))
+}
+
 // Scrub PII (emails, URLs) before sending query strings to GA4
 function sanitizeQuery(q: string): string {
   return q

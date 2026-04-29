@@ -15,6 +15,13 @@ import { Button } from '@/components/ui/button'
 import { PatentDetail } from './PatentDetail'
 import type { PatentItem, ImpactLevel, CryptoAgilityMode } from '@/types/PatentTypes'
 import { inferRegion, NIST_STATUS_LABELS } from './PatentsInsights'
+import {
+  logPatentSearch,
+  logPatentFilter,
+  logPatentFilterClear,
+  logPatentSort,
+  logPatentView,
+} from '@/utils/analytics'
 
 type SortKey = 'issueDate' | 'impactScore' | 'title' | 'priorityDate'
 type SortDir = 'asc' | 'desc'
@@ -361,6 +368,12 @@ export function PatentsTable({ patents, selectedId, onSelect }: Props) {
 
   const search = searchParams.get('search') ?? ''
 
+  useEffect(() => {
+    if (!search) return
+    const t = window.setTimeout(() => logPatentSearch(search), 600)
+    return () => window.clearTimeout(t)
+  }, [search])
+
   const activeFilters = useMemo(
     () =>
       FILTER_KEYS.flatMap((key) => {
@@ -388,6 +401,7 @@ export function PatentsTable({ patents, selectedId, onSelect }: Props) {
   )
 
   const clearFilters = useCallback(() => {
+    logPatentFilterClear()
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev)
@@ -453,6 +467,7 @@ export function PatentsTable({ patents, selectedId, onSelect }: Props) {
 
   const handleSort = useCallback(
     (key: SortKey) => {
+      logPatentSort(key)
       if (sortKey === key) setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
       else {
         setSortKey(key)
@@ -467,7 +482,13 @@ export function PatentsTable({ patents, selectedId, onSelect }: Props) {
     [selectedId, patents]
   )
 
-  const handleNavigate = useCallback((num: string) => onSelect(num), [onSelect])
+  const handleNavigate = useCallback(
+    (num: string) => {
+      logPatentView(num)
+      onSelect(num)
+    },
+    [onSelect]
+  )
 
   const hasFilters = activeFilters.length > 0 || search !== ''
 
@@ -499,7 +520,10 @@ export function PatentsTable({ patents, selectedId, onSelect }: Props) {
           <AddFilterPopover
             patents={patents}
             activeKeys={activeKeys}
-            onAdd={(key, value) => setFilter(key, value)}
+            onAdd={(key, value) => {
+              logPatentFilter(key, value)
+              setFilter(key, value)
+            }}
           />
 
           {hasFilters && (
@@ -577,7 +601,10 @@ export function PatentsTable({ patents, selectedId, onSelect }: Props) {
                   return (
                     <tr
                       key={p.patentNumber}
-                      onClick={() => onSelect(isSelected ? null : p.patentNumber)}
+                      onClick={() => {
+                        if (!isSelected) logPatentView(p.patentNumber)
+                        onSelect(isSelected ? null : p.patentNumber)
+                      }}
                       className={`cursor-pointer border-b border-border transition-colors hover:bg-muted/50 ${isSelected ? 'bg-primary/5' : ''}`}
                     >
                       <td className="px-3 py-2.5 text-xs text-muted-foreground tabular-nums">

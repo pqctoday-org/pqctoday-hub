@@ -11,6 +11,7 @@ import { patentsData, patentsMetadata } from '@/data/patentsData'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import type { CsvColumnConfig } from '@/utils/csvExport'
 import type { PatentItem } from '@/types/PatentTypes'
+import { logPatentExport, logPatentInsightsFilter } from '@/utils/analytics'
 
 const PATENTS_CSV_COLUMNS: CsvColumnConfig<PatentItem>[] = [
   { header: 'Patent Number', accessor: (p) => p.patentNumber },
@@ -61,6 +62,7 @@ export function PatentsView() {
   )
 
   const handleExport = useCallback(() => {
+    logPatentExport(patentsData.length)
     const csv = generateCsv(patentsData, PATENTS_CSV_COLUMNS)
     downloadCsv(csv, csvFilename('pqc-patents'))
   }, [])
@@ -68,6 +70,9 @@ export function PatentsView() {
   // Sets URL filter params from Insights chart clicks — user navigates to Explore tab manually
   const handleInsightsFilter = useCallback(
     (filter: InsightsFilter) => {
+      Object.entries(filter).forEach(([key, val]) => {
+        if (val != null && val !== '') logPatentInsightsFilter(key, String(val))
+      })
       setSearchParams(
         (prev) => {
           const next = new URLSearchParams(prev)

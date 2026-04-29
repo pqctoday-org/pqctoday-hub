@@ -1,6 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { initGA, logPageView, logEvent } from './analytics'
+import {
+  initGA,
+  logPageView,
+  logEvent,
+  logPatentView,
+  logPatentSearch,
+  logPatentFilter,
+  logPatentFilterClear,
+  logPatentSort,
+  logPatentInsightsFilter,
+  logPatentExport,
+} from './analytics'
 import ReactGA from 'react-ga4'
 
 // Mock ReactGA
@@ -268,6 +279,90 @@ describe('analytics', () => {
       // logPageView and logEvent call ReactGA.send/event — no console output by design
       expect(ReactGA.send).toHaveBeenCalled()
       expect(ReactGA.event).toHaveBeenCalled()
+    })
+  })
+
+  describe('Patents helpers', () => {
+    it('logPatentView forwards patent number as label', () => {
+      logPatentView('US10123456')
+      expect(ReactGA.event).toHaveBeenCalledWith({
+        category: 'Patents',
+        action: 'View Detail',
+        label: 'US10123456',
+      })
+    })
+
+    it('logPatentSearch scrubs PII from query', () => {
+      logPatentSearch('user@example.com lattice https://x.com/foo')
+      const calls = (
+        ReactGA.event as unknown as {
+          mock: { calls: Array<[{ category: string; action: string; label?: string }]> }
+        }
+      ).mock.calls
+      const lastLabel = calls[calls.length - 1][0].label ?? ''
+      expect(lastLabel).not.toContain('user@example.com')
+      expect(lastLabel).not.toContain('https://')
+      expect(lastLabel).toContain('lattice')
+    })
+
+    it('logPatentFilter encodes key:value', () => {
+      logPatentFilter('assignee', 'IBM')
+      expect(ReactGA.event).toHaveBeenCalledWith({
+        category: 'Patents',
+        action: 'Filter',
+        label: 'assignee:IBM',
+      })
+    })
+
+    it('logPatentFilterClear emits a label-less event', () => {
+      logPatentFilterClear()
+      expect(ReactGA.event).toHaveBeenCalledWith({
+        category: 'Patents',
+        action: 'Filter Clear',
+        label: undefined,
+      })
+    })
+
+    it('logPatentSort emits the sort key', () => {
+      logPatentSort('issueDate')
+      expect(ReactGA.event).toHaveBeenCalledWith({
+        category: 'Patents',
+        action: 'Sort',
+        label: 'issueDate',
+      })
+    })
+
+    it('logPatentInsightsFilter encodes type:value', () => {
+      logPatentInsightsFilter('domain', 'finance')
+      expect(ReactGA.event).toHaveBeenCalledWith({
+        category: 'Patents',
+        action: 'Insights Filter',
+        label: 'domain:finance',
+      })
+    })
+
+    it('logPatentExport stringifies the row count', () => {
+      logPatentExport(42)
+      expect(ReactGA.event).toHaveBeenCalledWith({
+        category: 'Patents',
+        action: 'Export CSV',
+        label: '42',
+      })
+    })
+
+    it('Patents helpers do NOT fire on localhost', () => {
+      Object.defineProperty(window, 'location', {
+        value: { ...window.location, hostname: 'localhost' },
+      })
+      vi.clearAllMocks()
+      logPatentView('US123')
+      logPatentSearch('test')
+      logPatentFilter('region', 'US')
+      logPatentFilterClear()
+      logPatentSort('title')
+      logPatentInsightsFilter('impact', 'High')
+      logPatentExport(10)
+      expect(ReactGA.event).not.toHaveBeenCalled()
     })
   })
 })

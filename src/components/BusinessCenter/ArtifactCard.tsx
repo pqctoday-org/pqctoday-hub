@@ -162,10 +162,13 @@ export function ArtifactPlaceholder({
   type,
   pillar,
   onCreate,
+  suggestion,
 }: {
   type: ExecutiveDocumentType
   pillar?: 'risk' | 'compliance' | 'governance' | 'vendor' | 'inventory' | 'architecture'
   onCreate: (type: ExecutiveDocumentType) => void
+  /** When set, render a "Suggested by your assessment" badge with this reason as tooltip. */
+  suggestion?: { reason: string }
 }) {
   const typeLabel = TYPE_LABELS[type] ?? type
   const badgeColor = pillar
@@ -179,16 +182,28 @@ export function ArtifactPlaceholder({
     <Button
       variant="ghost"
       onClick={() => onCreate(type)}
-      className="group flex items-center gap-3 p-3 rounded-lg border border-dashed border-border hover:border-primary/30 hover:bg-muted/30 transition-colors w-full text-left"
+      className={`group flex items-center gap-3 p-3 rounded-lg border border-dashed transition-colors w-full text-left ${
+        suggestion
+          ? 'border-primary/40 bg-primary/5 hover:border-primary/60 hover:bg-primary/10'
+          : 'border-border hover:border-primary/30 hover:bg-muted/30'
+      }`}
     >
       <FileText size={16} className="text-muted-foreground/40 shrink-0 group-hover:hidden" />
       <Plus size={16} className="text-primary shrink-0 hidden group-hover:block" />
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="text-sm text-muted-foreground">{typeLabel}</span>
           <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 ${badgeColor}`}>
             Not created
           </span>
+          {suggestion && (
+            <span
+              className="text-[10px] font-semibold px-1.5 py-0.5 rounded shrink-0 bg-primary/15 text-primary border border-primary/30"
+              title={suggestion.reason}
+            >
+              Suggested by your assessment
+            </span>
+          )}
           {cswp39Ref && (
             <span
               className="text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 bg-muted text-muted-foreground border border-border"
@@ -202,7 +217,9 @@ export function ArtifactPlaceholder({
             </span>
           )}
         </div>
-        <span className="text-xs text-muted-foreground/60 line-clamp-1">{description}</span>
+        <span className="text-xs text-muted-foreground/60 line-clamp-1">
+          {suggestion ? suggestion.reason : description}
+        </span>
       </div>
     </Button>
   )

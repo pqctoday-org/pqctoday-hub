@@ -303,6 +303,8 @@ embed-root-ca/
 
 # Standalone tools repo (managed separately at pqctoday/pqctoday-sdk)
 tools/
+# ...but allow Business Center tool components (same dir name, different purpose)
+!src/components/BusinessCenter/tools/
 
 # Local enrichment workspace (CSVs, HTML/PDF cache, scripts — private dev only)
 src/cowork/
