@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Search, Wrench } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
@@ -7,10 +7,17 @@ import { Input } from '../ui/input'
 import { EmptyState } from '../ui/empty-state'
 import { BUSINESS_TOOLS, BUSINESS_CATEGORIES } from './businessToolsRegistry'
 import { Button } from '@/components/ui/button'
+import { logBusinessToolsSearch, logBusinessToolsFilter } from '@/utils/analytics'
 
 export const BusinessToolsGrid = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!searchQuery.trim()) return
+    const t = window.setTimeout(() => logBusinessToolsSearch(searchQuery), 600)
+    return () => window.clearTimeout(t)
+  }, [searchQuery])
 
   const filteredTools = useMemo(() => {
     const q = searchQuery.toLowerCase()
@@ -65,7 +72,10 @@ export const BusinessToolsGrid = () => {
         <div className="flex flex-wrap gap-2">
           <Button
             variant="ghost"
-            onClick={() => setActiveCategory(null)}
+            onClick={() => {
+              if (activeCategory !== null) logBusinessToolsFilter(null)
+              setActiveCategory(null)
+            }}
             aria-pressed={activeCategory === null}
             className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
               activeCategory === null
