@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { HelpCircle, ChevronDown, ChevronRight, Search, ExternalLink } from 'lucide-react'
 import { FAQ_DATA, type FAQCategory, type FAQItem } from './faqData'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { logFaqSearch, logFaqExpand } from '@/utils/analytics'
 
 function FAQAccordionItem({ item }: { item: FAQItem }) {
   const [open, setOpen] = useState(false)
@@ -14,7 +15,10 @@ function FAQAccordionItem({ item }: { item: FAQItem }) {
       <Button
         variant="ghost"
         className="flex w-full items-start gap-3 py-4 min-h-[44px] text-left transition-colors hover:text-accent"
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => {
+          if (!open) logFaqExpand(item.question)
+          setOpen((o) => !o)
+        }}
         aria-expanded={open}
       >
         {open ? (
@@ -75,6 +79,12 @@ function buildFAQPageSchema(data: FAQCategory[]) {
 
 export function FAQPage() {
   const [search, setSearch] = useState('')
+
+  useEffect(() => {
+    if (!search.trim()) return
+    const t = window.setTimeout(() => logFaqSearch(search), 600)
+    return () => window.clearTimeout(t)
+  }, [search])
 
   const filteredData = useMemo(() => {
     if (!search.trim()) return FAQ_DATA
