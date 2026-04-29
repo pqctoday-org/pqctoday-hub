@@ -6,6 +6,31 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.26] - April 29, 2026
+
+### Fixed
+
+- **Command Center prod-only crash** — `/business` was throwing `TypeError: Cannot convert undefined or null to object` on Chrome and `Cannot access 'ce' before initialization` on Safari. Dev was clean; only the production bundle blew up. Reproduced locally with `npm run build && npm run preview` against a Playwright fetch of `/business` (`check-bc-prod.mjs` at repo root).
+
+  **Root cause** — circular module-init order between four files, surfaced when `vite-plugin-top-level-await` wrapped the lazy-loaded registry chunk in a Promise that downstream chunks didn't await:
+
+  ```
+  useBusinessMetrics.ts (top-level IIFE) → cswp39StepMapping.ts (top-level IIFEs) →
+    businessToolsRegistry.tsx (BUSINESS_TOOL_COMPONENTS lazy-loads 21 builders) →
+      tools/CryptoVulnerabilityWatch.tsx (imports useBusinessMetrics — back-edge!)
+  ```
+
+  Crypto Vulnerability Watch (added in 3.5.21) was the back-edge that closed the cycle.
+
+  **Fix — two cuts, all tools preserved:**
+  1. **Split lazy components out of the registry** ([src/components/BusinessCenter/businessToolComponents.tsx](src/components/BusinessCenter/businessToolComponents.tsx) — new file). `BUSINESS_TOOL_COMPONENTS` and `getBuilderForArtifactType` moved out of [businessToolsRegistry.tsx](src/components/BusinessCenter/businessToolsRegistry.tsx). The registry is now pure static metadata (no `lazyWithRetry`, no `import()` calls, no TLA-tainted dependencies). Two consumers updated: [ArtifactDrawer.tsx](src/components/BusinessCenter/ArtifactDrawer.tsx) and [BusinessToolRoute.tsx](src/components/BusinessCenter/BusinessToolRoute.tsx) now pull `BUSINESS_TOOL_COMPONENTS` from the new file.
+
+  2. **Severed the back-edge in Crypto Vulnerability Watch** ([CryptoVulnerabilityWatch.tsx](src/components/BusinessCenter/tools/CryptoVulnerabilityWatch.tsx)). The tool no longer goes through `useBusinessMetrics()` — it reads `myProducts` directly from `useMigrateSelectionStore` and resolves them through `softwareData`. Identical data, no UX change.
+
+  Together: `useBusinessMetrics`'s startup IIFE runs against a fully-initialised registry chunk; even if a future tool re-introduces a `useBusinessMetrics` import, the structural split keeps the metadata graph reachable from the IIFE clean.
+
+  Verified: `npx tsc --noEmit` clean, all 53 BusinessCenter unit tests green (drift-guard test in [businessToolsRegistry.test.ts](src/components/BusinessCenter/businessToolsRegistry.test.ts) updated to import from the new component-map file; [CryptoVulnerabilityWatch.test.tsx](src/components/BusinessCenter/tools/CryptoVulnerabilityWatch.test.tsx) updated to mock `useMigrateSelectionStore` + `softwareData` instead of `useBusinessMetrics`), `npm run build` succeeds, the headless `check-bc-prod.mjs` harness reports zero console errors and the "Work in progress" WIP banner renders correctly.
+
 ## [3.5.25] - April 29, 2026
 
 ### Added

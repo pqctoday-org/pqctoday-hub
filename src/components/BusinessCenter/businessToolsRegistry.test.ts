@@ -17,11 +17,8 @@ import { describe, it, expect } from 'vitest'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 import { CSWP39_ZONE_DETAILS, type ZoneId } from '@/data/cswp39ZoneData'
 import { TYPE_LABELS } from './ArtifactCard'
-import {
-  BUSINESS_TOOLS,
-  ARTIFACT_TYPE_TO_TOOL_ID,
-  BUSINESS_TOOL_COMPONENTS,
-} from './businessToolsRegistry'
+import { BUSINESS_TOOLS, ARTIFACT_TYPE_TO_TOOL_ID } from './businessToolsRegistry'
+import { BUSINESS_TOOL_COMPONENTS } from './businessToolComponents'
 import { PILLAR_FOR_TYPE, ZONE_ARTIFACT_TYPES, ZONE_FOR_TYPE } from './lib/cswp39StepMapping'
 
 /** Exact list of every artifact type literal in the union. Kept here as a

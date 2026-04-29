@@ -8,11 +8,8 @@ import { htmlToPdf } from '@/utils/exportPdf'
 import { useModuleStore } from '@/store/useModuleStore'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 import { useIsEmbedded } from '@/embed/EmbedProvider'
-import {
-  ARTIFACT_TYPE_TO_TOOL_ID,
-  BUSINESS_TOOL_COMPONENTS,
-  TOOL_LABELS_BY_ARTIFACT_TYPE,
-} from './businessToolsRegistry'
+import { ARTIFACT_TYPE_TO_TOOL_ID, TOOL_LABELS_BY_ARTIFACT_TYPE } from './businessToolsRegistry'
+import { BUSINESS_TOOL_COMPONENTS } from './businessToolComponents'
 
 // Builders are sourced from the single registry in businessToolsRegistry.tsx,
 // which also powers the /business/tools/:id route. One registry, one lazy
