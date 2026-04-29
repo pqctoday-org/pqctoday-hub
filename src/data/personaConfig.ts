@@ -418,72 +418,98 @@ export function getReportSectionConfig(
 }
 
 /* ──────────────────────────────────────────────────────────────────────────────
- * Command Center — per-persona CSWP.39 step emphasis
+ * Command Center — per-persona CSWP.39 Fig 3 zone emphasis
  *
- * The Command Center renders the 5 CSWP.39 steps in fixed sequence
- * (Govern → Inventory → Identify Gaps → Prioritise → Implement). Personas no
- * longer reorder steps; they only choose which step expands by default and
- * which artifacts surface first inside each step's card.
+ * The Command Center renders the six Fig 3 zones (Governance, Assets,
+ * Management Tools, Data-Centric Risk Mgmt, Mitigation, Migration) in fixed
+ * sequence. Personas choose which zone is highlighted/expanded first and which
+ * artifacts surface at the top of each zone panel.
  * ────────────────────────────────────────────────────────────────────────────── */
 
 import type { ExecutiveDocumentType } from '@/services/storage/types'
+import type { ZoneId } from '@/data/cswp39ZoneData'
 
-export type CSWP39StepId = 'govern' | 'inventory' | 'identify-gaps' | 'prioritise' | 'implement'
-
-export interface BCStepEmphasis {
-  /** Step expanded by default on landing. */
-  defaultExpandedStep: CSWP39StepId
-  /** Per-step artifact-type IDs surfaced first inside the card.
-   *  Order matters; unlisted artifacts render after, in default order. */
-  featuredArtifacts: Partial<Record<CSWP39StepId, ExecutiveDocumentType[]>>
+export interface BCZoneEmphasis {
+  /** Zone highlighted on the Fig 3 diagram and expanded on landing. */
+  defaultActiveZone: ZoneId
+  /** Per-zone artifact-type ordering (unlisted types render after, in default order). */
+  featuredArtifacts: Partial<Record<ZoneId, ExecutiveDocumentType[]>>
   /** Whether the cyber-insurance side panel opens by default. */
   insurancePanelDefaultOpen?: boolean
 }
 
-const DEFAULT_STEP_EMPHASIS: BCStepEmphasis = {
-  defaultExpandedStep: 'govern',
+const DEFAULT_ZONE_EMPHASIS: BCZoneEmphasis = {
+  defaultActiveZone: 'governance',
   featuredArtifacts: {},
 }
 
-export const BC_STEP_EMPHASIS_BY_PERSONA: Record<PersonaId, BCStepEmphasis> = {
-  // Executive: open with Govern (board/policy framing); insurance lens visible.
+export const BC_ZONE_EMPHASIS_BY_PERSONA: Record<PersonaId, BCZoneEmphasis> = {
+  // Executive: open with Governance (board/policy framing); insurance lens on.
   executive: {
-    defaultExpandedStep: 'govern',
+    defaultActiveZone: 'governance',
     insurancePanelDefaultOpen: true,
     featuredArtifacts: {
-      govern: ['policy-draft', 'audit-checklist'],
-      'identify-gaps': ['risk-register'],
-      prioritise: ['compliance-timeline', 'kpi-dashboard'],
+      governance: ['board-deck', 'roi-model', 'policy-draft', 'audit-checklist'],
+      'risk-management': ['kpi-dashboard', 'risk-register'],
     },
   },
-  // Architect: open with Identify Gaps; surface RACI + scorecards + policy first.
+  // Architect: open with Governance — surface RACI, vendor scorecards, crypto
+  // architecture diagram first (architecture-of-organisation lens).
   architect: {
-    defaultExpandedStep: 'identify-gaps',
+    defaultActiveZone: 'governance',
     featuredArtifacts: {
-      govern: ['raci-matrix', 'policy-draft'],
-      'identify-gaps': ['vendor-scorecard', 'risk-register'],
-      implement: ['migration-roadmap'],
+      governance: [
+        'crypto-architecture',
+        'raci-matrix',
+        'policy-draft',
+        'vendor-scorecard',
+        'supply-chain-matrix',
+      ],
+      'risk-management': ['risk-register', 'risk-treatment-plan'],
+      migration: ['migration-roadmap'],
     },
   },
-  // Ops: open with Implement; surface roadmap, playbook, KPI tracker.
+  // Ops: open with Migration — surface deployment, roadmap, KPI tracker.
   ops: {
-    defaultExpandedStep: 'implement',
+    defaultActiveZone: 'migration',
     featuredArtifacts: {
-      inventory: ['supply-chain-matrix'],
-      implement: ['migration-roadmap', 'deployment-playbook'],
-      prioritise: ['kpi-tracker'],
+      migration: ['migration-roadmap'],
+      mitigation: ['deployment-playbook'],
+      'risk-management': ['kpi-tracker', 'kpi-dashboard'],
+      governance: ['supply-chain-matrix', 'audit-checklist'],
     },
   },
-  // BC not normally shown to these personas — fall back to default emphasis.
-  developer: DEFAULT_STEP_EMPHASIS,
-  researcher: DEFAULT_STEP_EMPHASIS,
-  curious: DEFAULT_STEP_EMPHASIS,
+  // Developer: open with Migration — implementation focus.
+  developer: {
+    defaultActiveZone: 'migration',
+    featuredArtifacts: {
+      migration: ['migration-roadmap'],
+      mitigation: ['deployment-playbook'],
+      governance: ['crypto-architecture', 'policy-draft'],
+    },
+  },
+  // Researcher: open with Risk Management — surface risk + policy reference.
+  researcher: {
+    defaultActiveZone: 'risk-management',
+    featuredArtifacts: {
+      'risk-management': ['risk-register', 'risk-treatment-plan'],
+      governance: ['policy-draft', 'audit-checklist', 'crqc-scenario'],
+    },
+  },
+  // Curious: beginner subset — start in Governance with the most approachable artifacts.
+  curious: {
+    defaultActiveZone: 'governance',
+    featuredArtifacts: {
+      governance: ['policy-draft', 'crqc-scenario'],
+      'risk-management': ['risk-register', 'kpi-dashboard'],
+    },
+  },
 }
 
-export function getBusinessCenterStepEmphasis(personaId: PersonaId | null): BCStepEmphasis {
-  if (!personaId) return DEFAULT_STEP_EMPHASIS
+export function getBusinessCenterZoneEmphasis(personaId: PersonaId | null): BCZoneEmphasis {
+  if (!personaId) return DEFAULT_ZONE_EMPHASIS
   // eslint-disable-next-line security/detect-object-injection
-  return BC_STEP_EMPHASIS_BY_PERSONA[personaId] ?? DEFAULT_STEP_EMPHASIS
+  return BC_ZONE_EMPHASIS_BY_PERSONA[personaId] ?? DEFAULT_ZONE_EMPHASIS
 }
 
 /* ──────────────────────────────────────────────────────────────────────────────

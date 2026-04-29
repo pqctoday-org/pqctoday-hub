@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useEffect, useMemo } from 'react'
 import {
   LayoutDashboard,
   ClipboardCheck,
@@ -19,12 +19,13 @@ import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { getBusinessCenterStepEmphasis } from '@/data/personaConfig'
+import { getBusinessCenterZoneEmphasis } from '@/data/personaConfig'
 import { useSeedFrameworksFromCountry } from '@/hooks/assessment/useSeedFrameworksFromCountry'
-import { CSWP39_STEPS } from '@/components/Compliance/cswp39Data'
+import { CSWP39_ZONE_ORDER, legacyToZoneId, type ZoneId } from '@/data/cswp39ZoneData'
 import { useBusinessMetrics } from './hooks/useBusinessMetrics'
 import { TYPE_LABELS } from './ArtifactCard'
-import { CSWP39StepSection } from './sections/CSWP39StepSection'
+import { CommandCenterStrategicPlan } from './sections/CommandCenterStrategicPlan'
+import { CSWP39ZonePanel } from './sections/CSWP39ZonePanel'
 import { ActionItemsSection } from './sections/ActionItemsSection'
 import { CyberInsuranceLensSection } from './sections/CyberInsuranceLensSection'
 import { CompactLearningBar } from './CompactLearningBar'
@@ -100,22 +101,56 @@ const TYPE_FILTER_ITEMS = [
 
 export function BusinessCenterView() {
   useSeedFrameworksFromCountry()
-  const navigate = useNavigate()
   const metrics = useBusinessMetrics()
   const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
   const updateExecutiveDocument = useModuleStore((s) => s.updateExecutiveDocument)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  const stepEmphasis = useMemo(
-    () => getBusinessCenterStepEmphasis(selectedPersona),
+  const zoneEmphasis = useMemo(
+    () => getBusinessCenterZoneEmphasis(selectedPersona),
     [selectedPersona]
   )
+
+  // Active zone — drives both the diagram highlight and which panel is opened
+  // by default. Falls back to the persona-derived default below.
+  const [activeZone, setActiveZone] = useState<ZoneId | null>(null)
+
+  // Legacy hash redirects. Keeps old inbound URLs from CSWP39StepBadge / Report
+  // nav (#step-govern), and from the previous §3-§6 iteration (#section-strategic),
+  // working after this Fig 3 rebuild. Maps any legacy id to its zone via
+  // `legacyToZoneId`.
+  useEffect(() => {
+    const remapHash = () => {
+      const hash = window.location.hash
+      const match = hash.match(/^#(?:step|section|zone)-([a-z-]+)$/)
+      if (!match) return
+      const zoneId = legacyToZoneId(match[1])
+      const target = document.getElementById(`zone-${zoneId}`)
+      if (target) {
+        window.history.replaceState(null, '', `#zone-${zoneId}`)
+        setActiveZone(zoneId)
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    }
+    remapHash()
+    window.addEventListener('hashchange', remapHash)
+    return () => window.removeEventListener('hashchange', remapHash)
+  }, [])
+
+  const handleZoneSelect = useCallback((zone: ZoneId) => {
+    setActiveZone(zone)
+    const target = document.getElementById(`zone-${zone}`)
+    if (target) {
+      window.history.replaceState(null, '', `#zone-${zone}`)
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [])
 
   // Filter state
   const [typeFilter, setTypeFilter] = useState('all')
 
   // Cyber Insurance side panel toggle (default per persona).
   const [insuranceOpen, setInsuranceOpen] = useState<boolean>(
-    stepEmphasis.insurancePanelDefaultOpen ?? false
+    zoneEmphasis.insurancePanelDefaultOpen ?? false
   )
 
   // Drawer state. Create mode uses `drawerCreateType` with a null document; view/edit
@@ -180,17 +215,6 @@ export function BusinessCenterView() {
     [updateExecutiveDocument]
   )
 
-  const handleNavigateToFramework = useCallback(
-    (
-      targetTab: 'standards' | 'technical' | 'certification' | 'compliance',
-      searchQuery: string
-    ) => {
-      const params = new URLSearchParams({ tab: targetTab, q: searchQuery })
-      navigate(`/compliance?${params.toString()}`)
-    },
-    [navigate]
-  )
-
   const handleExportZip = useCallback(async () => {
     if (filteredArtifacts.length === 0) return
     const zip = new JSZip()
@@ -207,14 +231,20 @@ export function BusinessCenterView() {
     URL.revokeObjectURL(url)
   }, [filteredArtifacts])
 
-  const stepCallbacks = {
+  const zoneCallbacks = {
     onViewArtifact: handleViewArtifact,
     onEditArtifact: handleEditArtifact,
     onDeleteArtifact: handleDeleteArtifact,
     onRenameArtifact: handleRenameArtifact,
     onCreateArtifact: handleCreateArtifact,
-    onNavigateToFramework: handleNavigateToFramework,
   }
+
+  // Native zone-keyed persona emphasis (BC_ZONE_EMPHASIS_BY_PERSONA).
+  const allFeaturedArtifacts: ExecutiveDocumentType[] = Object.values(
+    zoneEmphasis.featuredArtifacts
+  ).flatMap((arr) => arr ?? [])
+  // Default the diagram + first-open panel to the persona's preferred zone.
+  const effectiveActiveZone = activeZone ?? zoneEmphasis.defaultActiveZone
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6" data-testid="bc-dashboard-ready">
@@ -223,7 +253,7 @@ export function BusinessCenterView() {
         icon={LayoutDashboard}
         pageId="business-center"
         title="Command Center"
-        description="Your PQC readiness command center, organised around the NIST CSWP.39 5-step migration process."
+        description="Your PQC readiness command center, organised around the NIST CSWP.39 Fig 3 Crypto Agility Strategic Plan (Considerations for Achieving Crypto Agility, Dec 2025)."
         shareTitle="PQC Command Center — Quantum Readiness Workspace"
         shareText="Your PQC readiness command center — risk, compliance, governance, and actionable next steps."
       />
@@ -269,16 +299,23 @@ export function BusinessCenterView() {
           {/* Top cross-cut: Action Items strip */}
           <ActionItemsSection metrics={metrics} />
 
-          {/* 5-step CSWP.39 stack — fixed sequence */}
+          {/* CSWP.39 Fig 3 — Crypto Agility Strategic Plan (primary nav) */}
+          <CommandCenterStrategicPlan
+            metrics={metrics}
+            activeZone={effectiveActiveZone}
+            onZoneSelect={handleZoneSelect}
+          />
+
+          {/* Per-zone artifact panels — fixed Fig 3 order */}
           <div className="space-y-3">
-            {CSWP39_STEPS.map((step) => (
-              <CSWP39StepSection
-                key={step.id}
-                step={step}
+            {CSWP39_ZONE_ORDER.map((zone) => (
+              <CSWP39ZonePanel
+                key={zone}
+                zone={zone}
                 metrics={metrics}
-                defaultOpen={step.id === stepEmphasis.defaultExpandedStep}
-                featuredArtifacts={stepEmphasis.featuredArtifacts[step.id]}
-                {...stepCallbacks}
+                defaultOpen={zone === effectiveActiveZone}
+                featuredArtifacts={allFeaturedArtifacts}
+                {...zoneCallbacks}
               />
             ))}
           </div>

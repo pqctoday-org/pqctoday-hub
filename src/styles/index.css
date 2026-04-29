@@ -43,6 +43,14 @@
   --color-critical: hsl(var(--critical));
   --color-critical-foreground: hsl(var(--critical-foreground));
 
+  /* BusinessCenter pillar colors — risk/compliance/governance/vendor reuse
+     destructive/warning/primary/accent; inventory and architecture are new. */
+  --color-pillar-inventory: hsl(var(--pillar-inventory));
+  --color-pillar-inventory-foreground: hsl(var(--pillar-inventory-foreground));
+
+  --color-pillar-architecture: hsl(var(--pillar-architecture));
+  --color-pillar-architecture-foreground: hsl(var(--pillar-architecture-foreground));
+
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
@@ -185,6 +193,13 @@
     --critical: 340 85% 38%;
     --critical-foreground: 210 40% 98%;
 
+    /* BusinessCenter pillars — inventory (cyan) + architecture (purple).
+       WCAG AA against white background at /10 bg + 100% text usage. */
+    --pillar-inventory: 188 85% 32%;
+    --pillar-inventory-foreground: 210 40% 98%;
+    --pillar-architecture: 271 65% 45%;
+    --pillar-architecture-foreground: 210 40% 98%;
+
     /* File Types (Light Mode - High Contrast) */
     --file-key: 0 84% 60%;
     --file-key-foreground: 215.4 16.3% 46.9%;
@@ -243,6 +258,12 @@
     /* Critical — brighter magenta-red for dark mode legibility. */
     --critical: 335 90% 58%;
     --critical-foreground: 210 40% 98%;
+
+    /* BusinessCenter pillars (Dark Mode) — brighter cyan + purple for legibility. */
+    --pillar-inventory: 188 80% 60%;
+    --pillar-inventory-foreground: 188 80% 12%;
+    --pillar-architecture: 271 80% 72%;
+    --pillar-architecture-foreground: 271 80% 12%;
 
     /* File Types (Dark Mode) */
     --file-key: 0 84% 70%;
@@ -399,6 +420,11 @@
       --phase-regulation: 0 84% 60%;
       --phase-research: 258 90% 66%;
       --phase-deadline: 0 84% 60%;
+      /* BusinessCenter pillars — print forces light-mode values */
+      --pillar-inventory: 188 85% 32%;
+      --pillar-inventory-foreground: 210 40% 98%;
+      --pillar-architecture: 271 65% 45%;
+      --pillar-architecture-foreground: 210 40% 98%;
     }
 
     /* Force white background and remove glass-panel effects */

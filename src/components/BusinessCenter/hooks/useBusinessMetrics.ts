@@ -17,6 +17,7 @@ import { complianceFrameworks, type ComplianceFramework } from '@/data/complianc
 import { softwareData } from '@/data/migrateData'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import { MODULE_STEP_COUNTS, MODULE_CATALOG } from '@/components/PKILearning/moduleData'
+import { PILLAR_FOR_TYPE, type PillarKey } from '../lib/cswp39StepMapping'
 import type { LucideIcon } from 'lucide-react'
 import {
   ClipboardCheck,
@@ -43,21 +44,28 @@ const EXECUTIVE_MODULES = [
 
 // ── Pillar → Artifact type mapping ────────────────────────────────────────
 
-export const PILLAR_ARTIFACT_TYPES: Record<string, ExecutiveDocumentType[]> = {
-  risk: ['risk-register', 'risk-treatment-plan', 'roi-model', 'board-deck', 'crqc-scenario'],
-  // `compliance-checklist` is aliased to `audit-checklist` (semantically duplicated,
-  // no dedicated builder) and intentionally omitted from the placeholder list.
-  compliance: ['audit-checklist', 'compliance-timeline'],
-  governance: ['raci-matrix', 'policy-draft', 'kpi-dashboard', 'stakeholder-comms'],
-  vendor: [
-    'vendor-scorecard',
-    'contract-clause',
-    'migration-roadmap',
-    'kpi-tracker',
-    'supply-chain-matrix',
-    'deployment-playbook',
-  ],
-}
+/** Re-export the pillar key from the canonical source (`cswp39StepMapping.ts`)
+ *  so existing callers that import from this module keep working. */
+export type { PillarKey }
+
+/** Derived from PILLAR_FOR_TYPE — single source of truth lives in
+ *  `cswp39StepMapping.ts`. Computed once at module load. */
+export const PILLAR_ARTIFACT_TYPES: Record<PillarKey, ExecutiveDocumentType[]> = (() => {
+  const buckets: Record<PillarKey, ExecutiveDocumentType[]> = {
+    risk: [],
+    compliance: [],
+    governance: [],
+    vendor: [],
+    inventory: [],
+    architecture: [],
+  }
+  for (const [type, pillar] of Object.entries(PILLAR_FOR_TYPE) as Array<
+    [ExecutiveDocumentType, PillarKey]
+  >) {
+    buckets[pillar].push(type)
+  }
+  return buckets
+})()
 
 /** Module IDs that produce artifacts for each pillar (for "Build in…" placeholder links) */
 export const PILLAR_SOURCE_MODULES: Record<string, Record<ExecutiveDocumentType, string>> = {
@@ -77,24 +85,26 @@ export const PILLAR_SOURCE_MODULES: Record<string, Record<ExecutiveDocumentType,
     'policy-draft': 'pqc-governance',
     'kpi-dashboard': 'pqc-governance',
     'stakeholder-comms': 'migration-program',
+    'kpi-tracker': 'migration-program',
   } as Record<ExecutiveDocumentType, string>,
   vendor: {
     'vendor-scorecard': 'vendor-risk',
     'contract-clause': 'vendor-risk',
-    'migration-roadmap': 'migration-program',
-    'kpi-tracker': 'migration-program',
     'supply-chain-matrix': 'vendor-risk',
+  } as Record<ExecutiveDocumentType, string>,
+  architecture: {
+    'migration-roadmap': 'migration-program',
     'deployment-playbook': 'migration-program',
   } as Record<ExecutiveDocumentType, string>,
 }
-
-export type PillarKey = 'risk' | 'compliance' | 'governance' | 'vendor'
 
 export interface ArtifactsByPillar {
   risk: ExecutiveDocument[]
   compliance: ExecutiveDocument[]
   governance: ExecutiveDocument[]
   vendor: ExecutiveDocument[]
+  inventory: ExecutiveDocument[]
+  architecture: ExecutiveDocument[]
 }
 
 // ── Types ─────────────────────────────────────────────────────────────────
@@ -193,7 +203,7 @@ export interface BusinessMetrics {
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 
-const INFRA_LAYERS = [
+export const INFRA_LAYERS = [
   'Hardware',
   'Cloud',
   'Network',
@@ -203,7 +213,7 @@ const INFRA_LAYERS = [
   'Libraries',
   'SecSoftware',
   'OS',
-]
+] as const
 
 function getModuleProgress(moduleStore: LearningProgress, moduleId: string): ModuleProgressInfo {
   const progress = moduleStore.modules[moduleId] // eslint-disable-line security/detect-object-injection
@@ -544,10 +554,16 @@ export function useBusinessMetrics(): BusinessMetrics {
     }
     const allDocs = Array.from(dedupMap.values())
     const artifactsByPillar: ArtifactsByPillar = {
-      risk: allDocs.filter((d) => PILLAR_ARTIFACT_TYPES.risk.includes(d.type)),
-      compliance: allDocs.filter((d) => PILLAR_ARTIFACT_TYPES.compliance.includes(d.type)),
-      governance: allDocs.filter((d) => PILLAR_ARTIFACT_TYPES.governance.includes(d.type)),
-      vendor: allDocs.filter((d) => PILLAR_ARTIFACT_TYPES.vendor.includes(d.type)),
+      risk: [],
+      compliance: [],
+      governance: [],
+      vendor: [],
+      inventory: [],
+      architecture: [],
+    }
+    for (const d of allDocs) {
+      const pillar = PILLAR_FOR_TYPE[d.type]
+      if (pillar) artifactsByPillar[pillar].push(d)
     }
 
     // ── Page-level empty check ──────────────────────────────────

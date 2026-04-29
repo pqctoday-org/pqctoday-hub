@@ -3,6 +3,8 @@
 import React, { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { AlertCircle, CheckCircle2, Info } from 'lucide-react'
+import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
+import { useModuleStore } from '@/store/useModuleStore'
 
 type CoverageLevel = 0 | 1 | 2 | 3
 
@@ -130,6 +132,7 @@ export const ManagementToolsAudit: React.FC = () => {
 
   const [levels, setLevels] = useState<Record<string, CoverageLevel>>(initLevels)
   const [sysPct, setSysPct] = useState<Record<string, number>>(initPct)
+  const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
 
   const setLevel = (id: string, lvl: CoverageLevel) => setLevels((prev) => ({ ...prev, [id]: lvl }))
   const setPct = (id: string, val: number) => setSysPct((prev) => ({ ...prev, [id]: val }))
@@ -143,6 +146,44 @@ export const ManagementToolsAudit: React.FC = () => {
     () => TOOLS.filter((t) => levels[t.id] < 2).sort((a, b) => b.importance - a.importance),
     [levels]
   )
+
+  /** Markdown serialization of the current audit state for Command Center export. */
+  const exportMarkdown = useMemo(() => {
+    const lines: string[] = []
+    lines.push('# Management Tools Audit')
+    lines.push('')
+    lines.push(`**Tool-chain completeness:** ${completeness}%`)
+    lines.push('')
+    lines.push('Per NIST CSWP.39 §5 (Identify Gaps step) — automation pipeline that feeds the')
+    lines.push('Information Repository.')
+    lines.push('')
+    lines.push('## Coverage by tool category')
+    lines.push('')
+    lines.push('| Tool category | Coverage | Systems covered | CPM pillar | Reference |')
+    lines.push('|---|---|---|---|---|')
+    for (const t of TOOLS) {
+      lines.push(
+        `| ${t.name} | ${LEVEL_LABELS[levels[t.id]]} (${levels[t.id]}/3) | ${sysPct[t.id]}% | ${t.cpmPillar} | ${t.cswpRef} |`
+      )
+    }
+    lines.push('')
+    if (gaps.length > 0) {
+      lines.push(`## Priority gaps (${gaps.length})`)
+      lines.push('')
+      for (const t of gaps) {
+        const lvl = levels[t.id]
+        lines.push(`### ${t.name} — currently ${LEVEL_LABELS[lvl]}`)
+        lines.push('')
+        lines.push(`> ${t.recommendations[lvl]}`)
+        lines.push('')
+      }
+    } else {
+      lines.push('## No priority gaps')
+      lines.push('')
+      lines.push('All tool categories at Partial or Automated coverage.')
+    }
+    return lines.join('\n')
+  }, [levels, sysPct, completeness, gaps])
 
   return (
     <div className="space-y-6">
@@ -298,6 +339,30 @@ export const ManagementToolsAudit: React.FC = () => {
           60% means the Risk Analysis Engine (Step 7) is operating on incomplete data.
         </div>
       </div>
+
+      {/* Save to Command Center / export */}
+      <ExportableArtifact
+        title="Management Tools Audit — Export"
+        exportData={exportMarkdown}
+        filename="management-tools-audit"
+        formats={['markdown', 'pdf', 'docx']}
+        onExport={() => {
+          addExecutiveDocument({
+            id: `management-tools-audit-${Date.now()}`,
+            moduleId: 'crypto-management-modernization',
+            type: 'management-tools-audit',
+            title: `Management Tools Audit — ${new Date().toLocaleDateString()}`,
+            data: exportMarkdown,
+            inputs: { levels, sysPct, completeness },
+            createdAt: Date.now(),
+          })
+        }}
+      >
+        <p className="text-sm text-muted-foreground">
+          Save this audit to your Command Center under the Management Tools zone, or export as
+          markdown / PDF / DOCX for sharing.
+        </p>
+      </ExportableArtifact>
     </div>
   )
 }

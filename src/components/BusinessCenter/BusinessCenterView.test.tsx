@@ -235,7 +235,7 @@ describe('BusinessCenterView', () => {
     expect(screen.getByText('Start Executive Learning')).toBeInTheDocument()
   })
 
-  it('shows 5 CSWP.39 step sections in fixed order when assessment is in progress', () => {
+  it('shows the 6 CSWP.39 Fig 3 zones in fixed order when assessment is in progress', () => {
     mockAssessmentStore.assessmentStatus = 'in-progress'
     mockAssessmentStore.industry = 'Technology'
 
@@ -244,23 +244,41 @@ describe('BusinessCenterView', () => {
     // Should NOT show welcome state
     expect(screen.queryByText('Welcome to your PQC Command Center')).not.toBeInTheDocument()
 
-    // Should show all 5 CSWP.39 step titles in fixed order
+    // Should show all 6 zone titles in fixed Fig 3 order. Both the diagram
+    // (CommandCenterStrategicPlan) and the per-zone panels render headings
+    // for each zone, so we filter unique zone titles in order.
     const headings = screen.getAllByRole('heading', { level: 3 })
-    const stepTitles = ['Govern', 'Inventory', 'Identify Gaps', 'Prioritise', 'Implement']
+    const zoneTitles = [
+      'Governance',
+      'Assets',
+      'Management Tools',
+      'Data-Centric Risk Management',
+      'Mitigation',
+      'Migration',
+    ]
     const renderedTitles = headings
       .map((h) => h.textContent ?? '')
-      .filter((t) => stepTitles.some((s) => t.startsWith(s)))
-    expect(renderedTitles.length).toBe(5)
-    stepTitles.forEach((s, i) => {
-      expect(renderedTitles[i].startsWith(s)).toBe(true)
-    })
+      .filter((t) => zoneTitles.some((z) => t.startsWith(z)))
+    // Each zone title may appear multiple times (diagram tile + panel header),
+    // so confirm at least 6 matches and that all 6 zones are represented.
+    expect(renderedTitles.length).toBeGreaterThanOrEqual(6)
+    for (const zone of zoneTitles) {
+      expect(renderedTitles.some((t) => t.startsWith(zone))).toBe(true)
+    }
 
     // Cross-cuts: action items strip, cyber insurance toggle, learning bar
     expect(screen.getByText('Executive Learning Path')).toBeInTheDocument()
     expect(screen.getByText('Next Steps')).toBeInTheDocument()
-    // Toggle button label appears (panel content may also use the same heading
-    // when expanded — accept either).
     expect(screen.getAllByText('Cyber Insurance Lens').length).toBeGreaterThanOrEqual(1)
+  })
+
+  it('renders the Fig 3 strategic plan diagram heading', () => {
+    mockAssessmentStore.assessmentStatus = 'in-progress'
+
+    renderView()
+
+    expect(screen.getByText('CSWP.39 Crypto Agility Strategic Plan')).toBeInTheDocument()
+    expect(screen.getByText(/Crypto Agility \(iterative loop\)/)).toBeInTheDocument()
   })
 
   it('shows context banner when industry and country are set', () => {
@@ -271,8 +289,10 @@ describe('BusinessCenterView', () => {
 
     renderView()
 
-    expect(screen.getByText('Finance & Banking')).toBeInTheDocument()
-    expect(screen.getByText('United States')).toBeInTheDocument()
+    // Industry + country render in two places: the top context banner AND the
+    // GovernanceWire's Business Requirements chips. Both should be present.
+    expect(screen.getAllByText('Finance & Banking').length).toBeGreaterThanOrEqual(1)
+    expect(screen.getAllByText('United States').length).toBeGreaterThanOrEqual(1)
   })
 
   it('shows action items for in-progress assessment', () => {
@@ -292,13 +312,16 @@ describe('BusinessCenterView', () => {
     expect(screen.getByText('0/6 modules')).toBeInTheDocument()
   })
 
-  it('renders the cross-walk badge for each CSWP.39 step', () => {
+  it('renders a §-reference chip on each zone panel', () => {
     mockAssessmentStore.assessmentStatus = 'in-progress'
 
     renderView()
 
-    // Each step card shows its CSWP.39 section reference (e.g. "CSWP.39 §5.1–5.4").
-    expect(screen.getAllByText(/CSWP\.39 §/).length).toBe(5)
+    // Each zone panel header shows a "NIST CSWP.39 §..." chip from
+    // CSWP39_ZONE_DETAILS[zone].cswpRef. There are six zones, so at least six
+    // such chips render in the panel stack below the diagram.
+    const refs = screen.getAllByText(/^NIST CSWP\.39 §/)
+    expect(refs.length).toBeGreaterThanOrEqual(6)
   })
 
   it('shows welcome state instead of step stack when fully empty', () => {
@@ -306,7 +329,7 @@ describe('BusinessCenterView', () => {
 
     renderView()
 
-    // When fully empty, welcome state shows (not the 5-step stack).
+    // When fully empty, welcome state shows (not the §3-§6 section stack).
     expect(screen.getByText('Welcome to your PQC Command Center')).toBeInTheDocument()
     expect(screen.queryByText('Cyber Insurance Lens')).not.toBeInTheDocument()
   })

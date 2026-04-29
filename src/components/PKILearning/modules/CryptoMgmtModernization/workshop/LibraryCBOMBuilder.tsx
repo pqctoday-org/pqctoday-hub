@@ -10,6 +10,8 @@ import {
 import { HSM_VENDORS } from '../data/hsmVendors'
 import { SAMPLE_SBOMS } from '../data/sampleSBOMs'
 import type { CbomExportItem } from '../data/workshopTypes'
+import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
+import { useModuleStore } from '@/store/useModuleStore'
 
 type Mode = 'sbom' | 'libs' | 'hsm'
 
@@ -72,6 +74,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
   const [mode, setMode] = useState<Mode>('libs')
   const [selectedSbom, setSelectedSbom] = useState<string>(SAMPLE_SBOMS[0].id)
   const [userSbom, setUserSbom] = useState<string>('')
+  const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
 
   const activeSbom = useMemo(() => {
     if (userSbom.trim().length > 0) {
@@ -123,6 +126,57 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
     }))
     onCbomExport(items)
   }, [cbomSlice, onCbomExport])
+
+  /** Markdown serialization of the current CBOM slice + library posture +
+   *  HSM coverage for Command Center export. The format mirrors a CycloneDX
+   *  CBOM slice but as a human-readable table since downstream tooling
+   *  varies. The markdown captures whichever mode the user is currently in. */
+  const exportMarkdown = useMemo(() => {
+    const lines: string[] = []
+    lines.push('# Crypto Bill of Materials (CBOM)')
+    lines.push('')
+    lines.push(
+      `Mode: **${mode === 'sbom' ? 'SBOM → CBOM' : mode === 'libs' ? 'Library posture' : 'HSM inventory'}**`
+    )
+    lines.push('')
+    lines.push('Per NIST CSWP.39 §5 (Inventory step) — feeds the Information Repository.')
+    lines.push('')
+    if (mode === 'sbom' || mode === 'libs') {
+      lines.push(
+        `## CBOM slice — ${cbomSlice.length} component${cbomSlice.length !== 1 ? 's' : ''}`
+      )
+      lines.push('')
+      if (cbomSlice.length > 0) {
+        lines.push('| Component | Version | FIPS | ESV | PQC | Posture | Notes |')
+        lines.push('|---|---|---|---|---|---|---|')
+        for (const row of cbomSlice) {
+          const safeNotes = row.notes.replace(/\|/g, '\\|')
+          lines.push(
+            `| ${row.name} | ${row.version || '—'} | ${row.fipsStatus} | ${row.esvStatus} | ${row.pqcSupport} | ${row.posture} | ${safeNotes} |`
+          )
+        }
+      } else {
+        lines.push('_No components parsed from the active SBOM._')
+      }
+      lines.push('')
+    }
+    if (mode === 'hsm') {
+      lines.push(
+        `## HSM inventory — ${HSM_VENDORS.length} vendor${HSM_VENDORS.length !== 1 ? 's' : ''}`
+      )
+      lines.push('')
+      lines.push('| Vendor | Product | Firmware | FIPS Level | FIPS Status | PQC support | Notes |')
+      lines.push('|---|---|---|---|---|---|---|')
+      for (const v of HSM_VENDORS) {
+        const safeNotes = (v.notes ?? '').replace(/\|/g, '\\|')
+        lines.push(
+          `| ${v.vendor} | ${v.product} | ${v.firmwareRev} | L${v.fipsLevel} | ${v.fipsStatus} | ${v.pqcSupport} | ${safeNotes} |`
+        )
+      }
+      lines.push('')
+    }
+    return lines.join('\n')
+  }, [mode, cbomSlice])
 
   return (
     <div className="space-y-6">
@@ -373,6 +427,30 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
           </p>
         </div>
       )}
+
+      {/* Save to Command Center / export */}
+      <ExportableArtifact
+        title="CBOM — Export"
+        exportData={exportMarkdown}
+        filename="crypto-bom"
+        formats={['markdown', 'pdf', 'docx']}
+        onExport={() => {
+          addExecutiveDocument({
+            id: `crypto-cbom-${Date.now()}`,
+            moduleId: 'crypto-management-modernization',
+            type: 'crypto-cbom',
+            title: `CBOM — ${new Date().toLocaleDateString()}`,
+            data: exportMarkdown,
+            inputs: { mode, selectedSbom },
+            createdAt: Date.now(),
+          })
+        }}
+      >
+        <p className="text-sm text-muted-foreground">
+          Save the CBOM slice to your Command Center under the Management Tools zone, or export as
+          markdown / PDF / DOCX.
+        </p>
+      </ExportableArtifact>
     </div>
   )
 }

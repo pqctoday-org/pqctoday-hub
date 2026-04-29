@@ -1,0 +1,37 @@
+name: Update CVE Snapshot
+
+on:
+  schedule:
+    - cron: '0 9 * * *' # Daily at 09:00 UTC (offset from compliance scrape at 08:00)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scrape-and-update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Setup Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.11'
+
+      - name: Run NVD scraper
+        # NVD_API_KEY is optional but recommended — bumps the rate limit from
+        # 5 req/30s to 50 req/30s, cutting runtime ~30 min → ~3 min. Without
+        # the secret, the script falls back to public-rate (slower but works).
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: python3 scripts/scrape-nvd.py
+
+      - name: Commit and Push Changes
+        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7
+        with:
+          commit_message: 'chore(data): update cve-snapshot.json [skip ci]'
+          file_pattern: 'public/data/cve-snapshot.json'

@@ -50,10 +50,107 @@ export async function markdownToPdf(
     }
   }
 
-  const lines = markdown.split(/\r?\n/)
+  const rawLines = markdown.split(/\r?\n/)
 
-  for (const rawLine of lines) {
+  // Collect consecutive table lines, flush as a rendered table block.
+  const isTableRow = (l: string) => l.trimEnd().startsWith('|') && l.trimEnd().endsWith('|')
+
+  const flushTable = (tableLines: string[]) => {
+    if (tableLines.length === 0) return
+    // Parse cells: split on |, drop first/last empty strings.
+    const parsedRows = tableLines.map((l) =>
+      l
+        .split('|')
+        .slice(1, -1)
+        .map((c) => stripInline(c.trim()))
+    )
+    // Identify header / separator / data rows.
+    const separatorIdx = parsedRows.findIndex((r) => r.every((c) => /^[-: ]+$/.test(c)))
+    const hasHeader = separatorIdx === 1
+    const headers = hasHeader ? parsedRows[0] : []
+    const dataRows = hasHeader
+      ? parsedRows.slice(2)
+      : parsedRows.filter((r) => !r.every((c) => /^[-: ]+$/.test(c)))
+    const colCount = headers.length || (dataRows[0]?.length ?? 1)
+
+    // Column widths: equal split of contentWidth, capped by actual content.
+    const colWidth = contentWidth / colCount
+    const cellPad = 4
+    const fontSize = 8
+    const cellLineH = 10
+
+    // Compute row heights based on wrapped text.
+    const computeRowHeight = (cells: string[], bold: boolean): number => {
+      doc.setFont('helvetica', bold ? 'bold' : 'normal')
+      doc.setFontSize(fontSize)
+      let maxLines = 1
+      for (const cell of cells) {
+        const wrapped = doc.splitTextToSize(cell, colWidth - cellPad * 2) as string[]
+        if (wrapped.length > maxLines) maxLines = wrapped.length
+      }
+      return maxLines * cellLineH + cellPad * 2
+    }
+
+    const renderRow = (
+      cells: string[],
+      bold: boolean,
+      rowH: number,
+      fillColor?: [number, number, number]
+    ) => {
+      ensureSpace(rowH)
+      doc.setFont('helvetica', bold ? 'bold' : 'normal')
+      doc.setFontSize(fontSize)
+      doc.setDrawColor(200, 200, 200)
+      if (fillColor) {
+        doc.setFillColor(...fillColor)
+      }
+      for (let c = 0; c < colCount; c++) {
+        const cx = marginX + c * colWidth
+        if (fillColor) {
+          doc.rect(cx, y, colWidth, rowH, 'FD')
+        } else {
+          doc.rect(cx, y, colWidth, rowH, 'S')
+        }
+        // eslint-disable-next-line security/detect-object-injection
+        const cellText = cells[c] ?? ''
+        const wrapped = doc.splitTextToSize(cellText, colWidth - cellPad * 2) as string[]
+        for (let li = 0; li < wrapped.length; li++) {
+          // eslint-disable-next-line security/detect-object-injection
+          doc.text(wrapped[li], cx + cellPad, y + cellPad + (li + 1) * cellLineH - 2)
+        }
+      }
+      y += rowH
+    }
+
+    y += lineHeight / 2
+    if (hasHeader) {
+      const hRowH = computeRowHeight(headers, true)
+      renderRow(headers, true, hRowH, [235, 235, 245])
+    }
+    for (let ri = 0; ri < dataRows.length; ri++) {
+      // eslint-disable-next-line security/detect-object-injection
+      const rowH = computeRowHeight(dataRows[ri], false)
+      const fill: [number, number, number] | undefined = ri % 2 === 1 ? [248, 248, 252] : undefined
+      // eslint-disable-next-line security/detect-object-injection
+      renderRow(dataRows[ri], false, rowH, fill)
+    }
+    y += lineHeight / 2
+  }
+
+  let tableBuf: string[] = []
+
+  for (const rawLine of rawLines) {
     const line = rawLine.trimEnd()
+
+    // Buffer table rows; flush when a non-table line appears.
+    if (isTableRow(line)) {
+      tableBuf.push(line)
+      continue
+    }
+    if (tableBuf.length > 0) {
+      flushTable(tableBuf)
+      tableBuf = []
+    }
 
     if (line === '') {
       y += lineHeight / 2
@@ -121,6 +218,7 @@ export async function markdownToPdf(
         y += lineHeight
         for (let i = 1; i < valueLines.length; i++) {
           ensureSpace(lineHeight)
+          // eslint-disable-next-line security/detect-object-injection
           doc.text(valueLines[i], marginX, y)
           y += lineHeight
         }
@@ -133,9 +231,15 @@ export async function markdownToPdf(
     writeWrapped(stripInline(line), 10, false)
   }
 
+  // Flush any trailing table.
+  if (tableBuf.length > 0) flushTable(tableBuf)
+
   doc.save(`${filename}.pdf`)
 }
 
 function stripInline(s: string): string {
-  return s.replace(/\*\*([^*]+)\*\*/g, '$1').replace(/\*([^*]+)\*/g, '$1')
+  // Only strip **bold** markers. Single-star italic is deliberately excluded:
+  // CPE URIs, glob patterns, and URLs contain bare `*` characters that the
+  // italic regex `/\*([^*]+)\*/g` would incorrectly collapse (e.g. `*:*` → `:`).
+  return s.replace(/\*\*([^*]+)\*\*/g, '$1')
 }

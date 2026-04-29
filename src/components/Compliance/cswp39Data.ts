@@ -1,9 +1,22 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * Static data for the CSWP.39 Framework Explorer tab on the Compliance page.
- * Content derived from NIST CSWP.39 (Dec 2025) "Considerations for Achieving Crypto Agility".
- * Shared narrative prose lives in the CryptoMgmtModernization Learn module (content.ts);
- * this file only enumerates requirements and cross-references.
+ * Static data for the CSWP.39 Framework Explorer tab on the Compliance page,
+ * and the CSWP.39 section accordion on the Command Center.
+ *
+ * Two parallel models exported here:
+ *
+ *   1. CSWP39_SECTIONS — authoritative 4-section structure that matches the
+ *      actual NIST CSWP.39 (Dec 2025) document outline:
+ *        §3 Crypto Agility for Security Protocols
+ *        §4 Crypto Agility in System Implementations
+ *        §5 Strategic Plan for Managing Crypto Risks
+ *        §6 Future Works (incl. §6.5 Maturity Assessment)
+ *      Used by the Command Center accordion.
+ *
+ *   2. CSWP39_STEPS — synthesized 5-step migration model
+ *      (Govern → Inventory → Identify Gaps → Prioritise → Implement) cross-walked
+ *      to CSWP.39 sections. Kept for backward compatibility with the Compliance
+ *      Framework Explorer page until that page is migrated to CSWP39_SECTIONS.
  *
  * SOURCE STALENESS: bump CSWP39_SOURCE_METADATA.dataExtractedAt and nextReviewBy
  * every time the upstream NIST CSWP.39 document is verified against this static data.

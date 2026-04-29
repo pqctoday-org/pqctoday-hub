@@ -2,147 +2,13 @@
 import React, { useState } from 'react'
 import { ArrowRight, ArrowLeft, ArrowDown, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { CSWP39_ZONE_DETAILS, CSWP39_ZONE_STYLES, type ZoneId } from '@/data/cswp39ZoneData'
 
-type ZoneId =
-  | 'governance'
-  | 'assets'
-  | 'management-tools'
-  | 'risk-management'
-  | 'mitigation'
-  | 'migration'
-
-interface ZoneDetail {
-  title: string
-  what: string
-  contains: string[]
-  cpmPillar: string
-  cswpRef: string
-}
-
-const ZONE_DETAILS: Record<ZoneId, ZoneDetail> = {
-  governance: {
-    title: 'Governance',
-    what: 'The policy and compliance layer that shapes all crypto decisions across the organisation.',
-    contains: [
-      'Standards (FIPS, RFC, ETSI, BSI TR-02102)',
-      'Regulations & Mandates (CNSA 2.0, OMB M-23-02)',
-      'Technology Supply Chains',
-      'Threats & Threat Intelligence',
-      'Business Requirements & Partner Ecosystem',
-      'Stakeholders & Crypto Policies',
-      'Crypto Architecture',
-    ],
-    cpmPillar: 'Governance pillar — policy ownership, RACI, standards-watch subscription',
-    cswpRef: 'NIST CSWP.39 §5.1–5.4 (Govern step)',
-  },
-  assets: {
-    title: 'Assets',
-    what: 'The cryptographic attack surface — everything that uses, stores, or transmits cryptographic material.',
-    contains: [
-      'Code — source files referencing crypto primitives',
-      'Libraries — OpenSSL, Bouncy Castle, BoringSSL, etc.',
-      'Applications — services, APIs, mobile apps',
-      'Files — encrypted archives, keystores, certs',
-      'Protocols — TLS, SSH, IKEv2, S/MIME',
-      'Systems — HSMs, TPMs, embedded controllers',
-    ],
-    cpmPillar:
-      'Inventory pillar — CBOM covers all six asset classes; feeds the Information Repository',
-    cswpRef: 'NIST CSWP.39 §5 (Inventory step)',
-  },
-  'management-tools': {
-    title: 'Management Tools',
-    what: 'Automated discovery, assessment, configuration, and enforcement tooling that bridges Assets and Risk Management.',
-    contains: [
-      'Crypto scanners — detect algorithms, key lengths, cert details across code and traffic',
-      'Vulnerability management — CVE feeds, library EoL tracking',
-      'Asset management — CMDB / SBOM → CBOM pipelines',
-      'Log management (SIEM) — crypto-drift events, cipher-suite anomalies',
-      'Zero-Trust enforcement — policy engines blocking disallowed cipher suites',
-      'Data scanners — classify assets by sensitivity',
-    ],
-    cpmPillar: 'Observability + Inventory pillars — automate the Information Repository feed',
-    cswpRef: 'NIST CSWP.39 §5 (Identify Gaps step), §4.3 (service mesh / zero-trust)',
-  },
-  'risk-management': {
-    title: 'Data-Centric Risk Management',
-    what: 'The intelligence layer — aggregates tool output and produces a prioritised action list with KPIs for executives.',
-    contains: [
-      'Information Repository — unified CBOM data store fed by Management Tools',
-      'Risk Analysis Prioritisation Engine — scores assets by crypto risk',
-      'KPI Dashboards & Reports — board-ready posture metrics',
-      'Monitoring — continuous crypto-drift detection',
-    ],
-    cpmPillar:
-      'Observability pillar (KPIs, dashboards) + Assurance pillar (FIPS metrics, attestation)',
-    cswpRef: 'NIST CSWP.39 §5 (Prioritise step), §6.5 (maturity tiers)',
-  },
-  mitigation: {
-    title: 'Mitigation (Compensating Controls)',
-    what: 'Deploy a crypto gateway ("bump-in-the-wire") for systems that cannot be migrated now — buys time, not permanence.',
-    contains: [
-      'Crypto gateway — intercepts and re-encrypts traffic with approved algorithms',
-      'Cipher-suite proxy — enforces allowed suites at the network layer',
-      'Network-layer re-encryption — TLS termination upgrade external to the legacy system',
-      'Must be paired with a sunset date for the legacy system',
-    ],
-    cpmPillar: 'Lifecycle pillar — remediation track; gateway itself must be tracked in CBOM',
-    cswpRef: 'NIST CSWP.39 §4.6 — use when direct modification is infeasible',
-  },
-  migration: {
-    title: 'Migration (Algorithm Replacement)',
-    what: 'Full algorithm replacement — the preferred long-term path when the system has crypto agility.',
-    contains: [
-      'Library upgrades (OpenSSL 3.x, Bouncy Castle PQC branch)',
-      'Firmware updates for HSMs and embedded controllers',
-      'Certificate re-issuance and key rotation',
-      'Protocol negotiation updates (TLS 1.3, IKEv2 with ML-KEM)',
-      'ACME / EST / CMP automation for CLM at 47-day cadence',
-    ],
-    cpmPillar: 'Lifecycle pillar — CLM automation, ACME/EST/CMP, certificate renewal pipeline',
-    cswpRef: 'NIST CSWP.39 §3.2, §5 (Implement step) — preferred over mitigation when feasible',
-  },
-}
-
-const ZONE_STYLES: Record<ZoneId, { border: string; bg: string; activeBg: string; label: string }> =
-  {
-    governance: {
-      border: 'border-primary/40',
-      bg: 'bg-primary/5',
-      activeBg: 'bg-primary/15',
-      label: 'GOVERNANCE',
-    },
-    assets: {
-      border: 'border-border',
-      bg: 'bg-muted/30',
-      activeBg: 'bg-muted/60',
-      label: 'ASSETS',
-    },
-    'management-tools': {
-      border: 'border-border',
-      bg: 'bg-muted/20',
-      activeBg: 'bg-muted/50',
-      label: 'MANAGEMENT TOOLS',
-    },
-    'risk-management': {
-      border: 'border-status-success/30',
-      bg: 'bg-status-success/5',
-      activeBg: 'bg-status-success/15',
-      label: 'DATA-CENTRIC RISK MANAGEMENT',
-    },
-    mitigation: {
-      border: 'border-status-warning/40',
-      bg: 'bg-status-warning/5',
-      activeBg: 'bg-status-warning/15',
-      label: 'MITIGATION',
-    },
-    migration: {
-      border: 'border-status-info/40',
-      bg: 'bg-status-info/5',
-      activeBg: 'bg-status-info/15',
-      label: 'MIGRATION',
-    },
-  }
+// This learn-module visual previously inlined `ZONE_DETAILS` and `ZONE_STYLES`.
+// Both moved to `src/data/cswp39ZoneData.ts` so the Command Center primary nav
+// (`<CommandCenterStrategicPlan>`) and this visual stay in lockstep.
+const ZONE_DETAILS = CSWP39_ZONE_DETAILS
+const ZONE_STYLES = CSWP39_ZONE_STYLES
 
 function ZoneButton({
   id,
@@ -160,7 +26,10 @@ function ZoneButton({
     <Button
       variant="ghost"
       onClick={onClick}
-      className={`h-auto p-3 rounded-lg border-2 transition-all w-full text-left ${s.border} ${active ? s.activeBg : s.bg} ${active ? 'ring-2 ring-primary/30' : ''}`}
+      // whitespace-normal + items-start override Button base
+      // (`whitespace-nowrap items-center justify-center`), preventing
+      // descriptive text from overflowing into the adjacent grid cell.
+      className={`h-auto p-3 rounded-lg border-2 transition-all w-full text-left whitespace-normal items-start justify-start min-w-0 ${s.border} ${active ? s.activeBg : s.bg} ${active ? 'ring-2 ring-primary/30' : ''}`}
     >
       {children}
     </Button>

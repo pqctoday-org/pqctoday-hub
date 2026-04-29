@@ -123,6 +123,32 @@ function computeAlgoLoad(
   return ALGO_IDS.map((algo) => ({ algo, opsPerSec: totals[algo] }))
 }
 
+/**
+ * Compute one capacity scenario (today / tomorrow / upgraded).
+ *
+ * Math model:
+ *   load(a)        = Σ over enabled use-cases uc of: tps[uc] × uc.<workload>Ops[a]
+ *   hsms(a)        = ceil( load(a) / hsmProfile.opsPerSec[a] )
+ *   requiredRaw    = max over a of hsms(a)                       // bottleneck algorithm
+ *   perLocationRaw = ceil( requiredRaw / numLocations )
+ *   perLocationRequired   = applyRedundancy(perLocationRaw, mode)  // n+1: +1 ; 2n: ×2
+ *   requiredWithRedundancy = numLocations × perLocationRequired
+ *
+ * The three scenarios pair (workload, hsmProfile) as:
+ *   today    — classical workload on classical HSM
+ *   tomorrow — PQC workload on the *same* classical HSM (ML-DSA in software → 150 ops/s)
+ *   upgraded — PQC workload on next-gen PQC HSM (ML-DSA in hardware → 8000 ops/s)
+ *
+ * "Extra PQC capacity" is the delta in requiredRaw between scenarios:
+ *   ΔHSM_existing_fleet = requiredRaw(tomorrow) − requiredRaw(today)
+ *   ΔHSM_with_upgrade   = requiredRaw(upgraded) − requiredRaw(today)
+ *
+ * The PQC delta has two independent sources per use case:
+ *   (1) op-count change — only TLS adds an op (hybrid X25519MLKEM768 retains ECDH and adds ML-KEM)
+ *   (2) per-algorithm throughput change — dominated by ML-DSA-65 (150 ops/s on classical HSM)
+ *
+ * See HsmCapacityCalculator.test.ts for the validated size × locations matrix.
+ */
 function computeScenario(
   key: string,
   label: string,
@@ -853,19 +879,218 @@ export function HsmCapacityCalculator() {
           <span className="font-semibold text-primary">Shared-fleet sizing model.</span> A single
           HSM fleet serves all enabled use cases. Load is aggregated per algorithm across every
           checked use case, then divided by the HSM&apos;s per-algorithm capacity. The bottleneck
-          algorithm (highest load / capacity ratio) determines the minimum fleet size; redundancy is
-          added on top.
+          algorithm (highest load / capacity ratio) determines the minimum global fleet size; that
+          global count is then split across locations and redundancy is applied{' '}
+          <span className="font-semibold">per location</span>.
         </p>
         <p className="text-xs text-muted-foreground leading-relaxed mt-2">
-          <span className="font-mono text-secondary">Raw required</span> = max over all algorithms
-          of ⌈ algo_ops/s ÷ hsm_capacity ⌉
+          <span className="font-mono text-secondary">Raw required (R)</span> = max over all
+          algorithms of ⌈ algo_ops/s ÷ hsm_capacity ⌉
           <br />
-          <span className="font-mono text-secondary">N+1 redundancy</span> = raw + 1
+          <span className="font-mono text-secondary">Per-location raw</span> = ⌈ R ÷ L ⌉ &nbsp; (L =
+          locations; load split evenly)
           <br />
-          <span className="font-mono text-secondary">2N redundancy</span> = raw × 2
+          <span className="font-mono text-secondary">N+1 per location</span> = per-location raw + 1
           <br />
-          <span className="font-mono text-secondary">Utilization</span> = load ÷ (capacity ×
-          deployed)
+          <span className="font-mono text-secondary">2N per location</span> = per-location raw × 2
+          <br />
+          <span className="font-mono text-secondary">Total fleet</span> = L × per-location HA need
+          <br />
+          <span className="font-mono text-secondary">Utilization (per location)</span> = (load ÷ L)
+          ÷ (capacity × deployed/location)
+        </p>
+        <p className="text-[10px] text-muted-foreground/80 leading-relaxed mt-2">
+          <span className="font-semibold text-foreground">Assumptions:</span> traffic is split
+          equally across locations (no regional weighting); any HSM in the fleet can run any
+          algorithm; redundancy is site-local (each site survives one HSM loss for N+1, full
+          duplication for 2N) — strictly more conservative than a global N+1.
+          <br />
+          <span className="text-muted-foreground/60">
+            Verified by <span className="font-mono">HsmCapacityCalculator.test.ts</span> — size ×
+            locations matrix (small/medium/large × 2/3/20).
+          </span>
+        </p>
+      </CollapsibleSection>
+
+      {/* Model limits & caveats — collapsible */}
+      <CollapsibleSection
+        title="Model limits & caveats"
+        icon={<AlertTriangle size={14} className="text-status-warning" aria-hidden="true" />}
+        defaultOpen={false}
+      >
+        <p className="text-xs text-foreground leading-relaxed">
+          The calculator answers one specific question:{' '}
+          <span className="italic">how many HSMs does steady-state throughput require?</span> A real
+          production sizing exercise needs several factors this model deliberately does not capture.
+          Treat the output as a first-order estimate — a starting point for vendor conversations and
+          capacity-planning spreadsheets, not a final BOM.
+        </p>
+
+        <div className="mt-3 space-y-3 text-[11px] text-muted-foreground leading-relaxed">
+          <div>
+            <p className="font-semibold text-foreground mb-0.5">
+              Distribution &amp; redundancy assumptions
+            </p>
+            <ul className="list-disc list-inside space-y-0.5 marker:text-muted-foreground/60">
+              <li>
+                <span className="text-foreground">Equal load split across locations.</span> Traffic
+                is divided evenly by location count. No regional weighting, time-zone shift
+                modelling, or follow-the-sun load curves. If your busiest region carries 60% of
+                traffic, model that region as a separate single-location calculation.
+              </li>
+              <li>
+                <span className="text-foreground">Redundancy is site-local.</span> N+1 means each
+                site survives one HSM loss; 2N means each site is fully duplicated.{' '}
+                <span className="italic">Cross-location failover is not modelled</span> — a
+                whole-site outage would require additional capacity at peer sites that this
+                calculator does not size for.
+              </li>
+              <li>
+                <span className="text-foreground">No headroom / target-utilization factor.</span>{' '}
+                Sizing rounds up to 100% HSM capacity. Production ops typically design for ~70%
+                target utilization to absorb spikes. Add 30–40% to required HSMs as a working rule
+                if you do not run a separate peak-vs-average study.
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <p className="font-semibold text-foreground mb-0.5">Workload modelling</p>
+            <ul className="list-disc list-inside space-y-0.5 marker:text-muted-foreground/60">
+              <li>
+                <span className="text-foreground">Throughput-based, not latency-based.</span> The
+                model assumes a workload is feasible as long as ops/sec ≤ capacity. It does not
+                model queueing, p99 latency, or HSM session-pool saturation. A 99%-utilized HSM
+                meets throughput but typically misses tail-latency SLOs.
+              </li>
+              <li>
+                <span className="text-foreground">Shared fleet.</span> Any HSM in the fleet is
+                assumed to run any algorithm. Deployments that partition HSMs by use case (e.g.
+                dedicated payment / PKI / KMS HSMs) need separate calculations per partition.
+              </li>
+              <li>
+                <span className="text-foreground">Single PQC parameter set per algorithm.</span> The
+                model uses ML-DSA-65 and ML-KEM-768. ML-DSA-44 (faster) and ML-DSA-87 (slower) are
+                not selectable, and SLH-DSA / FN-DSA — required by some compliance regimes for
+                code-signing roots — are not modelled at all.
+              </li>
+              <li>
+                <span className="text-foreground">No batching / amortization.</span> Op counts
+                assume one HSM call per transaction. Real workloads with batched AES bulk encryption
+                or pipelined PKCS#11 calls scale differently.
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <p className="font-semibold text-foreground mb-0.5">HSM throughput data caveats</p>
+            <ul className="list-disc list-inside space-y-0.5 marker:text-muted-foreground/60">
+              <li>
+                <span className="text-foreground">PQC numbers are extrapolated.</span> No vendor
+                currently publishes production ML-DSA hardware-accelerated TPS. The &quot;next-gen
+                PQC HSM&quot; defaults are derived from FPGA / ASIC prototype benchmarks (NIST PQC
+                reports, Marvell LiquidSecurity 2, Samsung S3SSE2A). Real shipping silicon may land
+                within 1.5–3× of these estimates in either direction.
+              </li>
+              <li>
+                <span className="text-foreground">
+                  Classical numbers are vendor datasheet peaks.
+                </span>{' '}
+                Sustained TPS in production is typically 60–80% of datasheet peak after PKCS#11
+                round-trip overhead, session management, and audit logging. Override the sliders
+                with your benchmarked numbers when available.
+              </li>
+              <li>
+                <span className="text-foreground">No network / interconnect overhead.</span> A
+                network HSM adds 1–2 ms of PKCS#11 round-trip latency per call. For ML-DSA at 150
+                ops/s the network is not the bottleneck; for AES at 25 000 ops/s it can be.
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <p className="font-semibold text-foreground mb-0.5">Migration dynamics not modelled</p>
+            <ul className="list-disc list-inside space-y-0.5 marker:text-muted-foreground/60">
+              <li>
+                <span className="text-foreground">One-time re-keying spike.</span> Migrating
+                certificates, TDE master keys, code-signing roots, and PIN zones to PQC produces a
+                bulk re-signing / re-encrypting event that can run 10× steady-state for
+                hours-to-days. Plan for that separately as a project event, not as steady-state
+                capacity.
+              </li>
+              <li>
+                <span className="text-foreground">Hybrid signature transitions.</span> Only TLS is
+                modelled as hybrid (X25519MLKEM768 KEM). Some operators run hybrid signatures (RSA +
+                ML-DSA on every artifact) during the transition window — that doubles signing load
+                and is not in the current model.
+              </li>
+              <li>
+                <span className="text-foreground">Audit, backup, and key-import load.</span> HSM
+                firmware updates, partition backups, and bulk key import during provisioning
+                generate short-lived peaks not represented in the steady-state TPS view.
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <p className="font-semibold text-foreground mb-0.5">
+              UI behaviour — non-obvious slider interactions
+            </p>
+            <ul className="list-disc list-inside space-y-0.5 marker:text-muted-foreground/60">
+              <li>
+                <span className="text-foreground">
+                  Deployed HSM-per-location sliders do not affect required HSMs.
+                </span>{' '}
+                The today / tomorrow / upgraded sliders set{' '}
+                <span className="italic">what you have deployed</span>. They drive utilization % and
+                the sufficient/overloaded flag, but they do not change{' '}
+                <span className="font-mono">requiredRaw</span> or{' '}
+                <span className="font-mono">requiredWithRedundancy</span> — those depend only on
+                load and HSM capacity. Dragging the deployed slider cannot &quot;fix&quot; an
+                undersized fleet.
+              </li>
+              <li>
+                <span className="text-foreground">
+                  Changing an organisation-profile slider re-seeds every use-case TPS.
+                </span>{' '}
+                Org sliders (employees, developers, servers, databases, microservices, payment TPS)
+                feed every use case&apos;s TPS via the per-case formula. So nudging
+                &quot;employees&quot; after manually setting a TLS TPS will overwrite that manual
+                value. Per-use-case enabled checkboxes are preserved across the re-seed.
+              </li>
+              <li>
+                <span className="text-foreground">
+                  Per-scenario deployed sliders auto-track the computed requirement until you drag
+                  one.
+                </span>{' '}
+                On first render, today / tomorrow / upgraded snap to{' '}
+                <span className="font-mono">perLocationRequired</span>. Once you drag a slider, it
+                stops auto-tracking for that scenario. Clicking a deployment-size preset (small /
+                medium / large) resets all three back to auto-track.
+              </li>
+              <li>
+                <span className="text-foreground">Inventory mode locks the deployed sliders.</span>{' '}
+                In Inventory sizing, today and post-PQC classical deployed counts are computed as ⌈
+                inventory ÷ locations ⌉ and not user-editable; the next-gen scenario&apos;s deployed
+                count is sized to the load.
+              </li>
+              <li>
+                <span className="text-foreground">
+                  &quot;Deployment size&quot; (small / medium / large) is a preset, not a model
+                  parameter.
+                </span>{' '}
+                It is a one-shot button that re-seeds organisation params, inventory defaults, and
+                location count. After clicking it, every value can still be tuned individually — the
+                size label does not constrain the calculation downstream.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <p className="text-[10px] text-muted-foreground/80 leading-relaxed mt-3 italic">
+          When in doubt, override the per-algorithm capacity sliders, the per-use-case TPS sliders,
+          and the redundancy mode to match your measured environment — every default in this
+          calculator is exposed as a tunable parameter for exactly this reason.
         </p>
       </CollapsibleSection>
 
@@ -1051,11 +1276,14 @@ export function HsmCapacityCalculator() {
               >
                 <div className="text-[10px] space-y-2 font-mono text-muted-foreground">
                   <p>
-                    <span className="text-secondary">Per-location raw</span> = ⌈ R ÷ L ⌉
+                    <span className="text-secondary">Per-location raw</span> = ⌈ R ÷ L ⌉ &nbsp;
+                    (load split evenly)
                   </p>
                   <p>
                     <span className="text-secondary">Per-location HA need</span> = redundancy
                     applied to per-location raw
+                    <br />
+                    &nbsp;&nbsp;N+1 → per-location raw + 1 &nbsp;·&nbsp; 2N → per-location raw × 2
                   </p>
                   <p>
                     <span className="text-secondary">Total fleet required</span> = L × per-location
@@ -1065,14 +1293,27 @@ export function HsmCapacityCalculator() {
                     R = total raw HSMs (bottleneck algorithm) · L = number of locations
                   </p>
                   <div className="mt-2 pt-2 border-t border-border/30 space-y-0.5">
-                    <p className="text-foreground font-semibold">Example (N+1, R=6, L=3):</p>
-                    <p>Per-location raw = ⌈6 ÷ 3⌉ = 2</p>
-                    <p>Per-location HA = 2+1 = 3 HSMs</p>
-                    <p>Total required = 3 × 3 = 9 HSMs</p>
-                    <p className="text-muted-foreground/70">
-                      Min per location with N+1: always ≥ 2 HSMs regardless of load.
-                    </p>
+                    <p className="text-foreground font-semibold">Example A — N+1, R=37, L=3:</p>
+                    <p>Per-location raw = ⌈37 ÷ 3⌉ = 13</p>
+                    <p>Per-location HA = 13 + 1 = 14 HSMs</p>
+                    <p>Total required = 3 × 14 = 42 HSMs</p>
                   </div>
+                  <div className="mt-2 pt-2 border-t border-border/30 space-y-0.5">
+                    <p className="text-foreground font-semibold">Example B — 2N, R=37, L=3:</p>
+                    <p>Per-location raw = 13</p>
+                    <p>Per-location HA = 13 × 2 = 26 HSMs</p>
+                    <p>Total required = 3 × 26 = 78 HSMs</p>
+                  </div>
+                  <p className="text-muted-foreground/70 mt-2">
+                    Note: redundancy is <span className="text-foreground">per location</span>, so a
+                    fleet at L locations with N+1 carries L spare HSMs total — strictly more than a
+                    single global N+1 spare. With small R and large L, the &quot;⌈R/L⌉ ≥ 1&quot;
+                    rounding floor pins per-location to ≥1; with N+1 the total then collapses to L ×
+                    2 regardless of R.
+                  </p>
+                  <p className="text-muted-foreground/60 mt-2 not-italic">
+                    Verified by HsmCapacityCalculator.test.ts (size × locations matrix).
+                  </p>
                 </div>
               </CollapsibleSection>
             </div>

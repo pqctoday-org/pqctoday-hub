@@ -2,7 +2,19 @@
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 import type { BusinessMetrics } from '../hooks/useBusinessMetrics'
 import type { CSWP39StepId } from './cswp39Tier'
-import type { PillarKey } from '../hooks/useBusinessMetrics'
+import type { ZoneId } from '@/data/cswp39ZoneData'
+import { BUSINESS_TOOLS, ARTIFACT_TYPE_TO_TOOL_ID } from '../businessToolsRegistry'
+
+/** Pillar — drives the colored "status" badge ("Not created" in red/orange/blue/
+ *  green/cyan/purple) on each artifact card. Single source of truth: the
+ *  PILLAR_FOR_TYPE table below. */
+export type PillarKey =
+  | 'risk'
+  | 'compliance'
+  | 'governance'
+  | 'vendor'
+  | 'inventory'
+  | 'architecture'
 
 /** Artifact types surfaced under each CSWP.39 step on the Command Center.
  *  Note: `trackedFrameworks` (registry) is implicitly Govern; framework deadline
@@ -23,9 +35,10 @@ export const STEP_ARTIFACT_TYPES: Record<CSWP39StepId, ExecutiveDocumentType[]> 
   implement: ['risk-treatment-plan', 'migration-roadmap', 'deployment-playbook'],
 }
 
-/** Reverse lookup so ArtifactCard receives the legacy pillar prop without
- *  threading it through every call site. */
-const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
+/** Single source of truth for artifact-type → pillar (status colour). Drives
+ *  the badge colour on `<ArtifactCard>` / `<ArtifactPlaceholder>` and the
+ *  pillar-grouping in `useBusinessMetrics.ts`. */
+export const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
   'risk-register': 'risk',
   'risk-treatment-plan': 'risk',
   'roi-model': 'risk',
@@ -40,28 +53,101 @@ const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
   'stakeholder-comms': 'governance',
   'vendor-scorecard': 'vendor',
   'contract-clause': 'vendor',
-  'migration-roadmap': 'vendor',
-  'kpi-tracker': 'vendor',
   'supply-chain-matrix': 'vendor',
-  'deployment-playbook': 'vendor',
+  'kpi-tracker': 'governance',
+  'migration-roadmap': 'architecture',
+  'deployment-playbook': 'architecture',
+  'crypto-architecture': 'architecture',
+  // Management Tools zone artifacts. CBOM is literally an inventory artifact;
+  // the tools-audit is more of a governance/ops audit, so it lands under governance.
+  'management-tools-audit': 'governance',
+  'crypto-cbom': 'inventory',
+  'crypto-vulnerability-watch': 'risk',
 }
 
 export function getPillarForType(type: ExecutiveDocumentType): PillarKey {
+  // eslint-disable-next-line security/detect-object-injection
   return PILLAR_FOR_TYPE[type]
+}
+
+function flattenAllArtifacts(metrics: BusinessMetrics): ExecutiveDocument[] {
+  return [
+    ...metrics.artifactsByPillar.risk,
+    ...metrics.artifactsByPillar.compliance,
+    ...metrics.artifactsByPillar.governance,
+    ...metrics.artifactsByPillar.vendor,
+    ...metrics.artifactsByPillar.inventory,
+    ...metrics.artifactsByPillar.architecture,
+  ]
 }
 
 export function getArtifactsForStep(
   metrics: BusinessMetrics,
   stepId: CSWP39StepId
 ): ExecutiveDocument[] {
+  // eslint-disable-next-line security/detect-object-injection
   const types = new Set<ExecutiveDocumentType>(STEP_ARTIFACT_TYPES[stepId])
-  const all = [
-    ...metrics.artifactsByPillar.risk,
-    ...metrics.artifactsByPillar.compliance,
-    ...metrics.artifactsByPillar.governance,
-    ...metrics.artifactsByPillar.vendor,
-  ]
-  return all.filter((d) => types.has(d.type))
+  return flattenAllArtifacts(metrics).filter((d) => types.has(d.type))
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CSWP.39 Fig 3 zone-keyed artifact grouping
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Orphan artifact types whose zone cannot be derived from the tool registry
+ *  (because the type has no corresponding tool yet). Keep this small and
+ *  explicit — every entry should have a follow-up to wire a real builder. */
+const ORPHAN_TYPE_ZONE: Partial<Record<ExecutiveDocumentType, ZoneId>> = {
+  // `compliance-checklist` has no builder yet (planned: RegulatoryGapAssessment adapter).
+  // Surface it under Governance / Regulations so the placeholder still appears.
+  'compliance-checklist': 'governance',
+}
+
+/** Single source of truth for artifact-type → CSWP.39 Fig 3 zone, derived from
+ *  the tool registry plus the orphan override map. Computed at module load. */
+export const ZONE_FOR_TYPE: Record<ExecutiveDocumentType, ZoneId> = (() => {
+  const out = {} as Record<ExecutiveDocumentType, ZoneId>
+  for (const [type, toolId] of Object.entries(ARTIFACT_TYPE_TO_TOOL_ID) as Array<
+    [ExecutiveDocumentType, string]
+  >) {
+    const tool = BUSINESS_TOOLS.find((t) => t.id === toolId)
+    if (tool) out[type] = tool.cswp39Zone
+  }
+  for (const [type, zone] of Object.entries(ORPHAN_TYPE_ZONE) as Array<
+    [ExecutiveDocumentType, ZoneId]
+  >) {
+    out[type] = zone
+  }
+  return out
+})()
+
+export function getZoneForType(type: ExecutiveDocumentType): ZoneId | undefined {
+  // eslint-disable-next-line security/detect-object-injection
+  return ZONE_FOR_TYPE[type]
+}
+
+/** Inverse map: zone → artifact-type list, computed once at module load. */
+export const ZONE_ARTIFACT_TYPES: Record<ZoneId, ExecutiveDocumentType[]> = (() => {
+  const buckets: Record<ZoneId, ExecutiveDocumentType[]> = {
+    governance: [],
+    assets: [],
+    'management-tools': [],
+    'risk-management': [],
+    mitigation: [],
+    migration: [],
+  }
+  for (const [type, zone] of Object.entries(ZONE_FOR_TYPE) as Array<
+    [ExecutiveDocumentType, ZoneId]
+  >) {
+    buckets[zone].push(type)
+  }
+  return buckets
+})()
+
+export function getArtifactsForZone(metrics: BusinessMetrics, zoneId: ZoneId): ExecutiveDocument[] {
+  // eslint-disable-next-line security/detect-object-injection
+  const types = new Set<ExecutiveDocumentType>(ZONE_ARTIFACT_TYPES[zoneId])
+  return flattenAllArtifacts(metrics).filter((d) => types.has(d.type))
 }
 
 /** Re-orders artifacts so persona-featured types come first, preserving creation

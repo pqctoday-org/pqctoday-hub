@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useCallback, useEffect, Suspense } from 'react'
-import { X, Download, Pencil, Eye, Printer } from 'lucide-react'
+import { useState, useCallback, useEffect, useRef, Suspense } from 'react'
+import { X, Download, Pencil, Eye, FileDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { MarkdownView } from '@/components/ui/MarkdownView'
+import { htmlToPdf } from '@/utils/exportPdf'
 import { useModuleStore } from '@/store/useModuleStore'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 import { useIsEmbedded } from '@/embed/EmbedProvider'
@@ -15,56 +17,6 @@ import {
 // Builders are sourced from the single registry in businessToolsRegistry.tsx,
 // which also powers the /business/tools/:id route. One registry, one lazy
 // import per builder — zero duplication with that route.
-
-// ── Markdown renderer (simple) ──────────────────────────────────────────
-
-function MarkdownPreview({ content }: { content: string }) {
-  // Simple line-based renderer for artifact markdown
-  const lines = content.split('\n')
-  return (
-    <div className="prose prose-sm max-w-none text-foreground">
-      {lines.map((line, i) => {
-        if (line.startsWith('# '))
-          return (
-            <h1 key={i} className="text-xl font-bold text-foreground mt-4 mb-2">
-              {line.slice(2)}
-            </h1>
-          )
-        if (line.startsWith('## '))
-          return (
-            <h2 key={i} className="text-lg font-semibold text-foreground mt-3 mb-1.5">
-              {line.slice(3)}
-            </h2>
-          )
-        if (line.startsWith('### '))
-          return (
-            <h3 key={i} className="text-sm font-semibold text-foreground mt-2 mb-1">
-              {line.slice(4)}
-            </h3>
-          )
-        if (line.startsWith('- '))
-          return (
-            <li key={i} className="text-sm text-foreground ml-4 list-disc">
-              {line.slice(2)}
-            </li>
-          )
-        if (line.startsWith('| '))
-          return (
-            <pre key={i} className="text-xs text-muted-foreground font-mono">
-              {line}
-            </pre>
-          )
-        if (line.startsWith('---')) return <hr key={i} className="border-border my-3" />
-        if (line.trim() === '') return <div key={i} className="h-2" />
-        return (
-          <p key={i} className="text-sm text-foreground leading-relaxed">
-            {line}
-          </p>
-        )
-      })}
-    </div>
-  )
-}
 
 // ── Drawer component ────────────────────────────────────────────────────
 
@@ -118,49 +70,19 @@ export function ArtifactDrawer({
     URL.revokeObjectURL(url)
   }, [document])
 
-  const handlePrintToPdf = useCallback(() => {
-    if (!document) return
-    // Open a minimal print window with just the artifact content so the user's
-    // browser print-to-PDF captures the artifact cleanly, without the drawer
-    // chrome or the rest of the page.
-    const win = globalThis.window.open('', '_blank', 'width=900,height=1200')
-    if (!win) return
-    const safeTitle = document.title.replace(/[<>&"']/g, '')
-    const safeBody = document.data
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-    win.document.write(`<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <title>${safeTitle}</title>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 2rem; color: #111; line-height: 1.5; }
-    h1 { font-size: 1.4rem; margin-bottom: 1rem; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem; }
-    pre { white-space: pre-wrap; word-wrap: break-word; font-family: inherit; font-size: 0.95rem; }
-  </style>
-</head>
-<body>
-  <h1>${safeTitle}</h1>
-  <pre>${safeBody}</pre>
-</body>
-</html>`)
-    win.document.close()
-    // Give the window a tick to render before opening the print dialog.
-    win.addEventListener('load', () => {
-      win.focus()
-      win.print()
-    })
-    // Fallback: browsers that don't fire load for document.write close.
-    setTimeout(() => {
-      try {
-        win.focus()
-        win.print()
-      } catch {
-        /* ignore */
-      }
-    }, 300)
+  // Ref to the rendered <MarkdownView> so the PDF export captures the same
+  // visual layout the user sees, not the raw markdown source.
+  const markdownRef = useRef<HTMLDivElement>(null)
+  const [isExportingPdf, setIsExportingPdf] = useState(false)
+
+  const handleExportPdf = useCallback(async () => {
+    if (!document || !markdownRef.current) return
+    setIsExportingPdf(true)
+    try {
+      await htmlToPdf(markdownRef.current, { filename: document.title })
+    } finally {
+      setIsExportingPdf(false)
+    }
   }, [document])
 
   const handleDelete = useCallback(() => {
@@ -238,9 +160,19 @@ export function ArtifactDrawer({
                   <Download size={14} />
                   <span className="hidden sm:inline ml-1">Markdown</span>
                 </Button>
-                <Button variant="ghost" size="sm" onClick={handlePrintToPdf}>
-                  <Printer size={14} />
-                  <span className="hidden sm:inline ml-1">PDF</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleExportPdf}
+                  disabled={isExportingPdf || mode !== 'view'}
+                  title={
+                    mode === 'view' ? 'Download as PDF' : 'Switch to view mode to download as PDF'
+                  }
+                >
+                  <FileDown size={14} />
+                  <span className="hidden sm:inline ml-1">
+                    {isExportingPdf ? 'Exporting…' : 'PDF'}
+                  </span>
                 </Button>
               </>
             )}
@@ -253,7 +185,9 @@ export function ArtifactDrawer({
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-5">
           {mode === 'view' && document ? (
-            <MarkdownPreview content={document.data} />
+            <div ref={markdownRef} className="bg-background">
+              <MarkdownView content={document.data} />
+            </div>
           ) : BuilderComponent ? (
             <Suspense
               fallback={

@@ -6,6 +6,40 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.21] - April 29, 2026
+
+### Added
+
+- **BusinessCenter — CSWP.39 Command Center zone navigation** — `<CommandCenterStrategicPlan>` renders the NIST CSWP.39 Fig 3 iterative loop (Governance → Assets / Management Tools / Risk Management → Mitigation / Migration) as an interactive zone diagram with per-zone artifact-count badges ("3/12 created"). Clicking a zone scrolls to the matching `<CSWP39ZonePanel>` below, which sub-groups tools by `cswp39ZoneSubElement` (e.g., under Governance: "Standards", "Crypto Policies", "Supply Chains"). All 12 business tools in `businessToolsRegistry.tsx` now carry four new fields: `cswp39Zone`, `cswp39ZoneSubElement`, `cswp39SectionRef`, and `cswp39SubSection`.
+
+- **BusinessCenter — zone wire components** ([src/components/BusinessCenter/sections/wires/](src/components/BusinessCenter/sections/wires/)) — `AssetsWire`, `GovernanceWire`, `MigrationWire`, `RiskManagementWire` pull live data from `useBusinessMetrics` (bookmarked products, milestone status, zone progress) and surface it inside each zone panel without duplicating the metrics hook.
+
+- **Shared `cswp39ZoneData.ts`** ([src/data/cswp39ZoneData.ts](src/data/cswp39ZoneData.ts)) — canonical CSWP.39 zone definitions (`ZoneId`, `CSWP39_ZONE_DETAILS`, `CSWP39_ZONE_STYLES`) extracted from `CryptoAgilityProcessDiagram.tsx` into a single shared module. Both the Command Center and the learn-module visual now import from this file; zone-list drift is caught by the `businessToolsRegistry.test.ts` drift-guard test.
+
+- **CVE snapshot system** — `src/data/cveSnapshotData.ts` + `src/types/CveTypes.ts` lazy-fetch a daily `public/data/cve-snapshot.json` (module-level cache, single network call per session). The initial snapshot is committed. `.github/workflows/update-cve.yml` runs a daily cron at 09:00 UTC (offset from the 08:00 compliance scrape) to refresh it via `workflow_dispatch`.
+
+- **`<MarkdownView>`** ([src/components/ui/MarkdownView.tsx](src/components/ui/MarkdownView.tsx)) — shared react-markdown wrapper with `remark-gfm`, safe link rendering, and consistent prose styling for any component that needs to render markdown content.
+
+- **`exportPdf`** ([src/utils/exportPdf.ts](src/utils/exportPdf.ts)) — shared PDF export utility wrapping `jsPDF` + `html2canvas`; used by artifact export flows across Business Center and PKI Learning modules.
+
+- **PKI Learning — `CryptoArchitectureDiagram`** ([src/components/PKILearning/modules/CryptoMgmtModernization/components/CryptoArchitectureDiagram.tsx](src/components/PKILearning/modules/CryptoMgmtModernization/components/CryptoArchitectureDiagram.tsx)) — new interactive diagram visualising the crypto architecture layers aligned to CSWP.39.
+
+- **Migrate data** — `migrate_cpe_xref_04282026.csv` and `migrate_cpe_xref_04292026.csv` with updated CPE cross-references.
+
+### Changed
+
+- **PKI Learning — `LibraryCBOMBuilder` and `ManagementToolsAudit`** now call `useModuleStore.addExecutiveDocument` on export so artifacts are tracked in the Business Center artifact store alongside the existing generator tools.
+
+- **PKI Learning — `CryptoAgilityProcessDiagram`** refactored to consume `CSWP39_ZONE_DETAILS` from the shared `cswp39ZoneData.ts`; local inline `ZoneDetail` type and `ZONE_DETAILS` constant removed (−130 lines).
+
+- **Playground — HSM Capacity Calculator** ([src/components/Playground/hsm/HsmCapacityCalculator.tsx](src/components/Playground/hsm/HsmCapacityCalculator.tsx)) — per-location redundancy model corrected. Previously, N+1/2N redundancy was applied to the global raw count; the result was then used as the total fleet size, making multi-location deployments over-count. Now: `perLocationRaw = ⌈ requiredRaw ÷ L ⌉`, redundancy applied per location, `totalFleet = L × perLocationRequired`. Utilization figures updated to reflect per-location capacity. Test matrix in `HsmCapacityCalculator.test.ts` updated for the corrected math.
+
+### Fixed
+
+- **VPN simulator — WASM cleanup** — WASM-DIAG diagnostic block (~130 lines of `fprintf(stderr)` tracing added during debugging) stripped from `strongswan-wasm-shims/wasm_backend.c`; WASM rebuilt (13.83 MB, −11 KB vs 3.5.20). The diagnostic output was forwarded through Emscripten `printErr → worker postMessage → panel` and appeared in test capture; now removed for release builds.
+
+- **VPN simulator — E2E dual-auth test promotion** — `e2e/_vpn-mldsa.spec.ts` (underscore-prefix dev spec) promoted into `e2e/vpn-rust-module.spec.ts` as three named tests (`VPN classical/hybrid/pure-pqc × ML-DSA dual auth`). The previous `vpnCertAutostart=1` URL-driven dual-auth tests in that file were broken under React 18 StrictMode (first-mount effect cleanup cleared the 2 s timer; ref-guard blocked re-arming on second mount). Replaced with explicit-click flow: set client + server alg selectors to ML-DSA, click Generate Certs, wait for Start Daemon to enable, click Start Daemon, race ESTABLISHED vs PSK-fallback vs error.
+
 ## [3.5.20] - April 28, 2026
 
 ### Fixed
@@ -13,7 +47,7 @@ All notable changes to this project will be documented in this file.
 - **VPN simulator — ML-DSA-65 dual-auth IKEv2 handshake reaches `ESTABLISHED` end-to-end** (closes the WIP work tracked in 3.5.19). Both peers sign and verify each other's IKE_AUTH payload via real PKCS#11 ML-DSA on the in-process softhsmv3, then ML-KEM-768 derives the IKE shared secret. Verified by [e2e/\_vpn-mldsa.spec.ts](e2e/_vpn-mldsa.spec.ts): 2.6 s to ESTABLISHED in headless Chromium.
 
   Four root causes were chained — fixing only one was insufficient:
-  1. **Emscripten `getenv()` timing** — `engine.start(keyIds)` set `WASM_LOCAL_KEYID` AFTER the worker's `Module` had already been instantiated, so the env-table snapshot taken during `preRun` saw empty values. `wasm_setup_config`'s `getenv()` returned NULL → identity defaulted to cert subject DN → `find_lib_by_keyid` searched a different value than was stored. Fix in [VpnSimulationPanel.tsx::generateCertsViaWorker](src/components/Playground/hsm/VpnSimulationPanel.tsx): pre-generate the 20-byte CKA_IDs _before_ `engine.init`, pass them in `options.keyIds` so they land in the INIT payload → preRun sets ENV → `getenv()` returns the correct hex at `_main` time.
+  1. **Emscripten `getenv()` timing** — `engine.start(keyIds)` set `WASM_LOCAL_KEYID` AFTER the worker's `Module` had already been instantiated, so the env-table snapshot taken during `preRun` saw empty values. `wasm_setup_config`'s `getenv()` returned NULL → identity defaulted to cert subject DN → `find_lib_by_keyid` searched a different value than was stored. Fix in [VpnSimulationPanel.tsx::generateCertsViaWorker](src/components/Playground/hsm/VpnSimulationPanel.tsx): pre-generate the 20-byte CKA*IDs \_before* `engine.init`, pass them in `options.keyIds` so they land in the INIT payload → preRun sets ENV → `getenv()` returns the correct hex at `_main` time.
 
   2. **strongswan-pkcs11 plugin's empty enumerator** — upstream `pkcs11_creds.c:241` wires `create_private_enumerator = enumerator_create_empty`. Real strongSwan deployments load private keys via `stroke` / `vici` / `nm` config plugins that explicitly call `lib->creds->create(BUILD_PKCS11_KEYID, ...)` and add the result to a `mem_cred` set. The WASM build has none of those plugins. Fix in HSM repo `strongswan-wasm-shims/wasm_backend.c`: at `wasm_setup_config` decode `WASM_LOCAL_KEYID` env hex into a `chunk_t`, call `lib->creds->create(CRED_PRIVATE_KEY, KEY_ANY, BUILD_PKCS11_KEYID, chunk, BUILD_END)`, and register the result in a `mem_cred` set via `lib->credmgr->add_set(...)`.
 

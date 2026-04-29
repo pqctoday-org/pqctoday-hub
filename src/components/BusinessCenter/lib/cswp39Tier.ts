@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { BusinessMetrics } from '../hooks/useBusinessMetrics'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
+import type { ZoneId } from '@/data/cswp39ZoneData'
 
 export type CSWP39StepId = 'govern' | 'inventory' | 'identify-gaps' | 'prioritise' | 'implement'
 
@@ -32,8 +33,9 @@ const T = {
 // ── Helpers ───────────────────────────────────────────────────────────────
 
 function allArtifacts(metrics: BusinessMetrics): ExecutiveDocument[] {
-  const { risk, compliance, governance, vendor } = metrics.artifactsByPillar
-  return [...risk, ...compliance, ...governance, ...vendor]
+  const { risk, compliance, governance, vendor, inventory, architecture } =
+    metrics.artifactsByPillar
+  return [...risk, ...compliance, ...governance, ...vendor, ...inventory, ...architecture]
 }
 
 function hasArtifact(metrics: BusinessMetrics, type: ExecutiveDocumentType): boolean {
@@ -259,4 +261,44 @@ export function computeStepTiers(metrics: BusinessMetrics): Record<CSWP39StepId,
     prioritise: prioritiseTier(metrics),
     implement: implementTier(metrics),
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Zone-keyed tier aggregation (CSWP.39 Fig 3 — Crypto Agility Strategic Plan)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Which legacy step tiers feed into each Fig 3 zone's tier. The zone tier is
+ *  the max() across contributing step tiers; reasons are concatenated. */
+const ZONE_STEP_CONTRIBUTORS: Record<ZoneId, CSWP39StepId[]> = {
+  // Governance — policy, standards, supply chain, threats, business reqs
+  governance: ['govern'],
+  // Assets — CBOM coverage of code/libs/apps/files/protocols/systems
+  assets: ['inventory'],
+  // Management Tools — discovery / assessment / config / enforcement automation
+  'management-tools': ['identify-gaps'],
+  // Data-Centric Risk Mgmt — info repo, risk engine, KPIs, monitoring
+  'risk-management': ['prioritise', 'identify-gaps'],
+  // Mitigation — bump-in-the-wire compensating controls
+  mitigation: ['implement'],
+  // Migration — full algorithm replacement
+  migration: ['implement'],
+}
+
+export function computeZoneTiers(metrics: BusinessMetrics): Record<ZoneId, StepTierResult> {
+  const stepTiers = computeStepTiers(metrics)
+  const out = {} as Record<ZoneId, StepTierResult>
+  for (const [zoneId, contributors] of Object.entries(ZONE_STEP_CONTRIBUTORS) as Array<
+    [ZoneId, CSWP39StepId[]]
+  >) {
+    let tier: MaturityTier = 1
+    const reasons: string[] = []
+    for (const stepId of contributors) {
+      // eslint-disable-next-line security/detect-object-injection
+      const step = stepTiers[stepId]
+      if (step.tier > tier) tier = step.tier
+      reasons.push(...step.reasons)
+    }
+    out[zoneId] = { tier, reasons }
+  }
+  return out
 }

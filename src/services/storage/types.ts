@@ -53,6 +53,10 @@ export type ExecutiveDocumentType =
   | 'crqc-scenario'
   | 'supply-chain-matrix'
   | 'deployment-playbook'
+  | 'crypto-architecture'
+  | 'management-tools-audit'
+  | 'crypto-cbom'
+  | 'crypto-vulnerability-watch'
 
 export interface ExecutiveDocument {
   id: string

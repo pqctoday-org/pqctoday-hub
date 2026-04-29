@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react'
 import { FileText, Eye, Pencil, Trash2, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
-import { TOOL_LABELS_BY_ARTIFACT_TYPE } from './businessToolsRegistry'
+import { TOOL_LABELS_BY_ARTIFACT_TYPE, getCswp39RefForArtifactType } from './businessToolsRegistry'
 
 export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'roi-model': 'ROI Model',
@@ -24,6 +24,10 @@ export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'crqc-scenario': 'CRQC Scenario',
   'supply-chain-matrix': 'Supply Chain Matrix',
   'deployment-playbook': 'Deployment Playbook',
+  'crypto-architecture': 'Crypto Architecture',
+  'management-tools-audit': 'Management Tools Audit',
+  'crypto-cbom': 'Crypto BOM (CBOM)',
+  'crypto-vulnerability-watch': 'Crypto Vulnerability Watch',
 }
 
 const PILLAR_COLORS: Record<string, string> = {
@@ -31,11 +35,13 @@ const PILLAR_COLORS: Record<string, string> = {
   compliance: 'bg-status-warning/10 text-status-warning',
   governance: 'bg-primary/10 text-primary',
   vendor: 'bg-accent/10 text-accent',
+  inventory: 'bg-pillar-inventory/10 text-pillar-inventory',
+  architecture: 'bg-pillar-architecture/10 text-pillar-architecture',
 }
 
 export interface ArtifactCardProps {
   document: ExecutiveDocument
-  pillar?: 'risk' | 'compliance' | 'governance' | 'vendor'
+  pillar?: 'risk' | 'compliance' | 'governance' | 'vendor' | 'inventory' | 'architecture'
   onView: (doc: ExecutiveDocument) => void
   onEdit: (doc: ExecutiveDocument) => void
   onDelete: (doc: ExecutiveDocument) => void
@@ -70,6 +76,7 @@ export function ArtifactCard({
   const badgeColor = pillar
     ? (PILLAR_COLORS[pillar] ?? 'bg-muted text-muted-foreground')
     : 'bg-muted text-muted-foreground'
+  const cswp39Ref = getCswp39RefForArtifactType(document.type)
   const createdDate = new Date(document.createdAt).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
@@ -113,6 +120,18 @@ export function ArtifactCard({
           <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 ${badgeColor}`}>
             {typeLabel}
           </span>
+          {cswp39Ref && (
+            <span
+              className="text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 bg-muted text-muted-foreground border border-border"
+              title={
+                cswp39Ref.subSection
+                  ? `NIST CSWP.39 ${cswp39Ref.sectionRef} — ${cswp39Ref.subSection}`
+                  : `NIST CSWP.39 ${cswp39Ref.sectionRef}`
+              }
+            >
+              {cswp39Ref.sectionRef}
+            </span>
+          )}
         </div>
         <span className="text-xs text-muted-foreground">{createdDate}</span>
       </div>
@@ -145,7 +164,7 @@ export function ArtifactPlaceholder({
   onCreate,
 }: {
   type: ExecutiveDocumentType
-  pillar?: 'risk' | 'compliance' | 'governance' | 'vendor'
+  pillar?: 'risk' | 'compliance' | 'governance' | 'vendor' | 'inventory' | 'architecture'
   onCreate: (type: ExecutiveDocumentType) => void
 }) {
   const typeLabel = TYPE_LABELS[type] ?? type
@@ -154,6 +173,7 @@ export function ArtifactPlaceholder({
     : 'bg-muted text-muted-foreground'
   const description =
     TOOL_LABELS_BY_ARTIFACT_TYPE[type]?.description ?? 'Click to open the builder.'
+  const cswp39Ref = getCswp39RefForArtifactType(type)
 
   return (
     <Button
@@ -169,6 +189,18 @@ export function ArtifactPlaceholder({
           <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 ${badgeColor}`}>
             Not created
           </span>
+          {cswp39Ref && (
+            <span
+              className="text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 bg-muted text-muted-foreground border border-border"
+              title={
+                cswp39Ref.subSection
+                  ? `NIST CSWP.39 ${cswp39Ref.sectionRef} — ${cswp39Ref.subSection}`
+                  : `NIST CSWP.39 ${cswp39Ref.sectionRef}`
+              }
+            >
+              {cswp39Ref.sectionRef}
+            </span>
+          )}
         </div>
         <span className="text-xs text-muted-foreground/60 line-clamp-1">{description}</span>
       </div>
