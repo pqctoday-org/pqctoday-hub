@@ -14,6 +14,10 @@ const BookmarksPanel = React.lazy(() =>
   import('./BookmarksPanel').then((m) => ({ default: m.BookmarksPanel }))
 )
 
+const FAQPage = React.lazy(() =>
+  import('@/components/FAQ/FAQPage').then((m) => ({ default: m.FAQPage }))
+)
+
 export const RightPanel: React.FC = () => {
   const { isOpen, activeTab, setTab, close, minimize, toggle } = useRightPanelStore()
   // Close on Escape
@@ -38,7 +42,9 @@ export const RightPanel: React.FC = () => {
       ? 'PQC Assistant'
       : activeTab === 'history'
         ? 'Journey History'
-        : 'Bookmarks'
+        : activeTab === 'faq'
+          ? 'FAQ'
+          : 'Bookmarks'
 
   return (
     <AnimatePresence>
@@ -84,6 +90,19 @@ export const RightPanel: React.FC = () => {
                   }
                 >
                   <BookmarksPanel />
+                </React.Suspense>
+              )}
+              {activeTab === 'faq' && (
+                <React.Suspense
+                  fallback={
+                    <div className="flex-1 flex items-center justify-center">
+                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                    </div>
+                  }
+                >
+                  <div className="flex-1 overflow-y-auto">
+                    <FAQPage />
+                  </div>
                 </React.Suspense>
               )}
             </motion.div>

@@ -11,6 +11,15 @@ import {
   logPatentSort,
   logPatentInsightsFilter,
   logPatentExport,
+  logFaqSearch,
+  logFaqExpand,
+  logBusinessToolsSearch,
+  logBusinessToolsFilter,
+  logExploreTileClick,
+  logExploreUnlock,
+  logReportViewed,
+  logReportShareLinkOpened,
+  logReportCta,
 } from './analytics'
 import ReactGA from 'react-ga4'
 
@@ -362,6 +371,129 @@ describe('analytics', () => {
       logPatentSort('title')
       logPatentInsightsFilter('impact', 'High')
       logPatentExport(10)
+      expect(ReactGA.event).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('FAQ / Business / Explore / Report helpers', () => {
+    it('logFaqSearch scrubs PII', () => {
+      logFaqSearch('user@x.com kyber')
+      const calls = (
+        ReactGA.event as unknown as {
+          mock: { calls: Array<[{ category: string; action: string; label?: string }]> }
+        }
+      ).mock.calls
+      const last = calls[calls.length - 1][0]
+      expect(last.category).toBe('FAQ')
+      expect(last.action).toBe('Search')
+      expect(last.label).not.toContain('user@x.com')
+      expect(last.label).toContain('kyber')
+    })
+
+    it('logFaqExpand emits scrubbed question', () => {
+      logFaqExpand('What is ML-KEM?')
+      expect(ReactGA.event).toHaveBeenCalledWith({
+        category: 'FAQ',
+        action: 'Expand',
+        label: 'What is ML-KEM?',
+      })
+    })
+
+    it('logBusinessToolsSearch scrubs PII', () => {
+      logBusinessToolsSearch('test query')
+      expect(ReactGA.event).toHaveBeenCalledWith({
+        category: 'Business',
+        action: 'Tools Search',
+        label: 'test query',
+      })
+    })
+
+    it('logBusinessToolsFilter labels null as All', () => {
+      logBusinessToolsFilter(null)
+      expect(ReactGA.event).toHaveBeenCalledWith({
+        category: 'Business',
+        action: 'Tools Filter',
+        label: 'All',
+      })
+    })
+
+    it('logBusinessToolsFilter forwards category name', () => {
+      logBusinessToolsFilter('Governance')
+      expect(ReactGA.event).toHaveBeenCalledWith({
+        category: 'Business',
+        action: 'Tools Filter',
+        label: 'Governance',
+      })
+    })
+
+    it('logExploreTileClick forwards destination path', () => {
+      logExploreTileClick('/timeline')
+      expect(ReactGA.event).toHaveBeenCalledWith({
+        category: 'Explore',
+        action: 'Tile Click',
+        label: '/timeline',
+      })
+    })
+
+    it('logExploreUnlock emits a label-less event', () => {
+      logExploreUnlock()
+      expect(ReactGA.event).toHaveBeenCalledWith({
+        category: 'Explore',
+        action: 'Unlock Advanced',
+        label: undefined,
+      })
+    })
+
+    it('logReportViewed encodes industry:riskLevel', () => {
+      logReportViewed('finance', 'high')
+      expect(ReactGA.event).toHaveBeenCalledWith({
+        category: 'Report',
+        action: 'Viewed',
+        label: 'finance:high',
+      })
+    })
+
+    it('logReportViewed labels missing industry as unknown', () => {
+      logReportViewed('', 'medium')
+      expect(ReactGA.event).toHaveBeenCalledWith({
+        category: 'Report',
+        action: 'Viewed',
+        label: 'unknown:medium',
+      })
+    })
+
+    it('logReportShareLinkOpened emits a label-less event', () => {
+      logReportShareLinkOpened()
+      expect(ReactGA.event).toHaveBeenCalledWith({
+        category: 'Report',
+        action: 'Share Link Opened',
+        label: undefined,
+      })
+    })
+
+    it('logReportCta forwards target', () => {
+      logReportCta('start-assessment')
+      expect(ReactGA.event).toHaveBeenCalledWith({
+        category: 'Report',
+        action: 'CTA Click',
+        label: 'start-assessment',
+      })
+    })
+
+    it('FAQ/Business/Explore/Report helpers do NOT fire on localhost', () => {
+      Object.defineProperty(window, 'location', {
+        value: { ...window.location, hostname: 'localhost' },
+      })
+      vi.clearAllMocks()
+      logFaqSearch('q')
+      logFaqExpand('q')
+      logBusinessToolsSearch('q')
+      logBusinessToolsFilter(null)
+      logExploreTileClick('/x')
+      logExploreUnlock()
+      logReportViewed('finance', 'low')
+      logReportShareLinkOpened()
+      logReportCta('start-assessment')
       expect(ReactGA.event).not.toHaveBeenCalled()
     })
   })

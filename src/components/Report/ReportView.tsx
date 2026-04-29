@@ -19,6 +19,7 @@ import {
 import type { AssessmentInput } from '../../hooks/assessmentTypes'
 import { PageHeader } from '../common/PageHeader'
 import { WorkflowBreadcrumb } from '../shared/WorkflowBreadcrumb'
+import { logReportViewed, logReportShareLinkOpened, logReportCta } from '@/utils/analytics'
 
 const VALID_SENSITIVITIES = new Set(['low', 'medium', 'high', 'critical'])
 const VALID_MIGRATIONS = new Set(['started', 'planning', 'not-started', 'unknown'])
@@ -61,6 +62,7 @@ export const ReportView: React.FC = () => {
     const industry = searchParams.get('i')
     if (!industry) return
     hydratedRef.current = true
+    logReportShareLinkOpened()
 
     const store = useAssessmentStore.getState()
     if (VALID_INDUSTRIES.has(industry)) store.setIndustry(industry)
@@ -186,6 +188,7 @@ export const ReportView: React.FC = () => {
     }
     if (result && !persistedRef.current) {
       persistedRef.current = true
+      logReportViewed(useAssessmentStore.getState().industry, result.riskLevel)
       setResult(result)
       if (assessmentStatus === 'complete' && result.categoryScores) {
         const store = useAssessmentStore.getState()
@@ -225,6 +228,7 @@ export const ReportView: React.FC = () => {
           </p>
           <Link
             to="/assess"
+            onClick={() => logReportCta('start-assessment')}
             className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground font-bold hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
           >
             <ClipboardCheck size={18} />
@@ -263,6 +267,7 @@ export const ReportView: React.FC = () => {
             </div>
             <Link
               to="/assess"
+              onClick={() => logReportCta('complete-assessment')}
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-gradient-to-r from-secondary to-primary text-primary-foreground rounded-lg hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200 shrink-0"
             >
               Complete Assessment

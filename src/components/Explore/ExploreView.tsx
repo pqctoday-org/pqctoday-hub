@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { logExploreTileClick, logExploreUnlock } from '@/utils/analytics'
 
 interface ExploreTile {
   icon: LucideIcon
@@ -100,7 +101,10 @@ export function ExploreView() {
             <Button
               key={tile.path}
               variant="ghost"
-              onClick={() => navigate(tile.path)}
+              onClick={() => {
+                logExploreTileClick(tile.path)
+                navigate(tile.path)
+              }}
               className="glass-panel h-auto p-5 flex-col items-start text-left whitespace-normal hover:bg-transparent hover:border-primary/40 group"
             >
               <div className={`p-2.5 rounded-lg mb-3 ${tile.accent}`}>
@@ -133,7 +137,10 @@ export function ExploreView() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setAdvancedViewsUnlocked(true)}
+            onClick={() => {
+              logExploreUnlock()
+              setAdvancedViewsUnlocked(true)
+            }}
             className="shrink-0"
           >
             Unlock Advanced Views

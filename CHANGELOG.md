@@ -6,6 +6,21 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.25] - April 29, 2026
+
+### Added
+
+- **Right Panel — FAQ tab** ([src/components/RightPanel/PanelHeader.tsx](src/components/RightPanel/PanelHeader.tsx), [src/components/RightPanel/RightPanel.tsx](src/components/RightPanel/RightPanel.tsx)) — fourth tab joining Assistant / Journey / Bookmarks. Uses `HelpCircle` icon and lazy-loads `<FAQPage>` from `src/components/FAQ/FAQPage`. Tab type union widened to `'chat' | 'history' | 'bookmarks' | 'faq'` in [HistoryTypes.ts](src/types/HistoryTypes.ts); `useRightPanelStore` persistence version bumped 3 → 4 (no migration needed — new tab is additive).
+
+- **Analytics event wiring** — nine call sites instrumented to emit GA4 events through the existing `analytics.ts` helpers:
+  - `<ExploreView>` ([src/components/Explore/ExploreView.tsx](src/components/Explore/ExploreView.tsx)) — `logExploreTileClick(path)` on each navigation tile click; `logExploreUnlock()` when the user clicks "Unlock Advanced Views".
+  - `<ReportView>` ([src/components/Report/ReportView.tsx](src/components/Report/ReportView.tsx)) — `logReportShareLinkOpened()` when the page loads from a share URL, `logReportViewed(industry, riskLevel)` when the report renders, `logReportCta('start-assessment' | 'complete-assessment')` on the two CTA links.
+  - `<BusinessToolsGrid>` ([src/components/BusinessCenter/BusinessToolsGrid.tsx](src/components/BusinessCenter/BusinessToolsGrid.tsx)) — `logBusinessToolsFilter(next)` on category-pill clicks (logs `null` when deselecting).
+
+### Changed
+
+- **`analytics.test.ts`** — coverage extended for nine new event helpers (`logFaqSearch`, `logFaqExpand`, `logBusinessToolsSearch`, `logBusinessToolsFilter`, `logExploreTileClick`, `logExploreUnlock`, `logReportViewed`, `logReportShareLinkOpened`, `logReportCta`) — verifies each fires with the correct GA4 category/action/label/value shape and is suppressed when GA is disabled.
+
 ## [3.5.24] - April 29, 2026
 
 ### Removed

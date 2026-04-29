@@ -97,7 +97,11 @@ export const BusinessToolsGrid = () => {
               <Button
                 variant="ghost"
                 key={cat}
-                onClick={() => setActiveCategory(isActive ? null : cat)}
+                onClick={() => {
+                  const next = isActive ? null : cat
+                  logBusinessToolsFilter(next)
+                  setActiveCategory(next)
+                }}
                 aria-pressed={isActive}
                 className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
                   isActive

@@ -47,7 +47,7 @@ export const useRightPanelStore = create<RightPanelState>()(
     }),
     {
       name: 'pqc-right-panel',
-      version: 3,
+      version: 4,
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         activeTab: state.activeTab,
@@ -65,6 +65,9 @@ export const useRightPanelStore = create<RightPanelState>()(
         if (version < 3) {
           // v2 → v3: 'graph' tab removed; migrate to chat
           if (state.activeTab === 'graph') state.activeTab = 'chat'
+        }
+        if (version < 4) {
+          // v3 → v4: 'faq' tab added; no migration needed
         }
         return state
       },
