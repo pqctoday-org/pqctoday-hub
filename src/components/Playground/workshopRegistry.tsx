@@ -183,7 +183,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     id: 'vpn-sim',
     pt_id: 'PT-009',
     version: '1.0.0',
-    wip: true,
     name: 'PQC VPN Simulator',
     description:
       'Full IKEv2 handshake in WASM with PKCS#11 crypto routed through softhsmv3. Inspect live C_* calls, ECDH key exchange, and PSK authentication between initiator and responder.',

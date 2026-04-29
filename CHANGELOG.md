@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.24] - April 29, 2026
+
+### Removed
+
+- **VPN Simulator WIP badge** ([src/components/Playground/workshopRegistry.tsx](src/components/Playground/workshopRegistry.tsx)) — `wip: true` flag dropped from the `vpn-sim` workshop tool entry. ML-DSA-65 dual-auth IKEv2 + ML-KEM-768 key exchange now reach `ESTABLISHED` end-to-end (validated by 3 × dual auth × 3 modes E2E matrix in [e2e/vpn-rust-module.spec.ts](e2e/vpn-rust-module.spec.ts), all passing in 2.5–3 s headless). The "under active development" warning banner that `<PlaygroundToolRoute>` renders from `tool.wip` no longer shows for the VPN sim. The HsmPlayground page-level PKCS#11 methodology badge is unrelated and stays.
+
 ## [3.5.23] - April 29, 2026
 
 ### Added
