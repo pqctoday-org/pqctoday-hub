@@ -20,7 +20,7 @@ import { Pkcs11LogPanel } from '../../shared/Pkcs11LogPanel'
 
 import { CKF_RW_SESSION, CKF_SERIAL_SESSION, CKU_USER } from '@/wasm/softhsm/constants'
 import {
-  getSoftHSMRustModule,
+  getSoftHSMCppModule,
   hsm_generateRSAKeyPair,
   hsm_generateMLDSAKeyPair,
   hsm_extractKeyValue,
@@ -67,7 +67,7 @@ export interface VpnSimulationPanelProps {
 }
 
 type SoftHSMWasmModule = NonNullable<
-  ReturnType<typeof getSoftHSMRustModule> extends Promise<infer T> ? T : never
+  ReturnType<typeof getSoftHSMCppModule> extends Promise<infer T> ? T : never
 >
 
 // ── Minimal DER helpers (RSAPublicKey BIT STRING content only) ────────────────
@@ -761,6 +761,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   const autostartRef = React.useRef(
     new URLSearchParams(window.location.search).get('vpnAutostart') === '1'
   )
+  // URL-driven cert autostart for e2e: ?vpnCertAutostart=1 (dual auth only)
+  const certAutostartRef = React.useRef(
+    new URLSearchParams(window.location.search).get('vpnCertAutostart') === '1'
+  )
 
   const serverSessionRef = React.useRef(0)
   const vpnSlotsRef = React.useRef<{ init: number; resp: number }>({ init: 0, resp: 1 })
@@ -786,7 +790,6 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     verifyHKey: 0,
   })
 
-  // Auth mode: PSK works now, pubkey is future
   const [authMode, setAuthMode] = useState<'psk' | 'dual'>(() => {
     const p = new URLSearchParams(window.location.search).get('vpnAuth')
     return p === 'dual' ? 'dual' : 'psk'
@@ -905,8 +908,18 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   }, [])
 
   // Build ipsec.conf from role + KE mode + auth mode + fragmentation flag.
+  // keyIdHex: when present (dual auth + ML-DSA), emit leftid=@#<hex> + rightid=@#<hex>
+  // so charon's credential_manager.c::get_private hits the ID_KEY_ID fast path
+  // (get_private_by_keyid → find_lib_by_keyid by CKA_ID) instead of the broken
+  // cert-driven lookup chain.
   const buildIpsecConf = useCallback(
-    (role: 'initiator' | 'responder', mode: IKEv2Mode, auth: 'psk' | 'dual', frag: boolean) => {
+    (
+      role: 'initiator' | 'responder',
+      mode: IKEv2Mode,
+      auth: 'psk' | 'dual',
+      frag: boolean,
+      keyIdHex?: { left: string; right: string }
+    ) => {
       // strongSwan 6.x proposal grammar (RFC 9370 multiple-key-exchange):
       //   pure-pqc:  aes256-sha384-mlkem768           — IKE_SA_INIT only
       //   classical: aes256-sha256-modp3072            — IKE_SA_INIT only
@@ -931,10 +944,16 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       //   dual: pubkey-only via ML-DSA (or RSA) cert. Drops PSK so charon does
       //         a real IKE_AUTH round signed via C_Sign on the HSM. Private key
       //         stays in softhsmv3; pkcs11 plugin matches CKA_ID to cert SKID.
+      //
+      // When keyIdHex is provided (dual + ML-DSA flow), force ID_KEY_ID identity
+      // via leftid=@#<hex>/rightid=@#<hex>. credential_manager.c::get_private
+      // sees ID_KEY_ID and enters the fast path get_private_by_keyid → direct
+      // CKA_ID match in PKCS#11. Bypasses the cert→pubkey→fingerprint chain.
+      const idLines = keyIdHex ? `  leftid=@#${keyIdHex.left}\n  rightid=@#${keyIdHex.right}\n` : ''
       const authLines =
         auth === 'psk'
           ? `  leftauth=psk\n  right=${right}\n  rightauth=psk`
-          : `  leftauth=pubkey\n${leftAuthStr}\n  right=${right}\n  rightauth=pubkey\n${rightAuthStr}`
+          : `  leftauth=pubkey\n${leftAuthStr}\n${idLines}  right=${right}\n  rightauth=pubkey\n${rightAuthStr}`
       return `config setup\n  strictcrlpolicy=no\nconn %default\n  ikelifetime=60m\n  keylife=20m\n  rekeymargin=3m\n  keyingtries=1\nconn host-host\n  left=${left}\n  leftsubnet=${left}/32\n${authLines}\n  rightsubnet=${right}/32\n  type=tunnel\n  ike=${modeIke}\n  esp=aes256gcm16!\n  auto=${auto}\n  fragmentation=${frag ? 'yes' : 'no'}`
     },
     [clientAlg, serverAlg]
@@ -961,6 +980,18 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
 
   React.useEffect(() => {
     const handleLog = (log: StrongSwanLog) => {
+      // Filter out softhsm mechanism enumeration — pkcs11 plugin logs every
+      // supported mechanism (~80) per worker per init, drowning the panel
+      // log. These all follow the pattern "<size_low>-<size_high> [ <FLAGS> ]"
+      // anywhere in the line, e.g.:
+      //   00[CFG]       RSA_PKCS 512-16384 [ ENCR DECR SIGN VRFY WRAP UNWRAP ]
+      //   00[CFG]       (62) 128-256 [ SIGN VRFY ]
+      //   00[CFG]       SHA256 0-0 [ DGST ]
+      // The "[ FLAGS ]" pattern with uppercase bracket contents distinguishes
+      // mechanism dumps from other lines containing brackets (like
+      // "wasm[1] state change" or "192.168.0.1[500]").
+      const isMechDump = /\d+-\d+\s+\[\s+([A-Z][A-Z_]*\s*)+\]/.test(log.text)
+      if (isMechDump) return
       setSsLogs((prev) => {
         const next = [...prev, log]
         return next.length > 500 ? next.slice(next.length - 500) : next
@@ -2444,7 +2475,20 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     try {
       // ── 1. Initialize softhsmv3 slots (first run only; idempotent on regenerate) ─
       if (!vpnRpcInitRef.current) {
-        const rawM = moduleRef.current ?? (await getSoftHSMRustModule())
+        // VPN sim REQUIRES the C++ softhsm: it implements C_SetAttributeValue
+        // (the Rust build stubs it → CKR_NOT_IMPL=0x70). We need to set
+        // CKA_ID = SHA-1(raw_pubkey_bytes) on ML-DSA keys after keygen so
+        // charon's pkcs11 plugin can locate the private key by KEYID_PUBKEY_SHA1
+        // fingerprint at IKE_AUTH time. Override the user's HsmContext engine
+        // selector and replace moduleRef.current globally.
+        const rawM = await getSoftHSMCppModule()
+        if (moduleRef.current && moduleRef.current !== rawM) {
+          strongSwanEngine.dispatchLog({
+            level: 'info',
+            text: '[CERT] Replacing shared softhsm module with C++ build (VPN sim needs C_SetAttributeValue support).',
+          })
+        }
+        moduleRef.current = rawM
         rawM._C_Initialize(0) // idempotent — CKR_CRYPTOKI_ALREADY_INITIALIZED is OK
 
         const getRawSlots = (M: typeof rawM) => {
@@ -2466,19 +2510,22 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           M._free(cntPtr)
         }
 
+        // Single-slot pattern (mirroring the working ML-KEM flow): charon's
+        // pkcs11_manager only enumerates one token-present slot when the C++
+        // softhsm doesn't auto-extend on probe. Putting BOTH initiator and
+        // responder ML-DSA keypairs in the SAME slot means charon's
+        // find_lib_by_keyid (after KEYID_PUBKEY_SHA1 fingerprint computation)
+        // can locate either key by its CKA_ID. Each role gets its own
+        // CKA_ID = SHA-1(its_own_pubkey) via the post-keygen
+        // C_SetAttributeValue step in updateMlDsaCkaId.
         ensureEmptySlot(rawM)
         const slots0 = getRawSlots(rawM)
-        const uninitSlot0 = slots0[slots0.length - 1]
-        hsm_initToken(rawM, uninitSlot0, '1234', 'PQC VPN Initiator')
-        const realInitSlot = uninitSlot0
-        const hSessInit = hsm_openUserSession(rawM, realInitSlot, '1234', 'user1234')
-
-        ensureEmptySlot(rawM)
-        const slots1 = getRawSlots(rawM)
-        const uninitSlot1 = slots1[slots1.length - 1]
-        hsm_initToken(rawM, uninitSlot1, '1234', 'PQC VPN Responder')
-        const realRespSlot = uninitSlot1
-        const hSessResp = hsm_openUserSession(rawM, realRespSlot, '1234', 'user1234')
+        const sharedSlot = slots0[slots0.length - 1]
+        hsm_initToken(rawM, sharedSlot, '1234', 'PQC VPN Tokens')
+        const realInitSlot = sharedSlot
+        const realRespSlot = sharedSlot
+        const hSessInit = hsm_openUserSession(rawM, sharedSlot, '1234', 'user1234')
+        const hSessResp = hSessInit
 
         vpnSlotsRef.current = { init: realInitSlot, resp: realRespSlot }
         hSessionRef.current = hSessInit
@@ -2535,6 +2582,56 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       const initKeys = provisionKeys(clientAlg, clientSize, hSessInit, 'vpn-initiator')
       const respKeys = provisionKeys(serverAlg, serverSize, hSessResp, 'vpn-responder')
 
+      // ── Diagnostic: dump panel softhsm slot list as charon will see it ──────────
+      // Goal: confirm our VPN init/resp slots are visible to C_GetSlotList(tokenPresent=TRUE).
+      // If charon enumerates only one of them, we'll see it here too.
+      try {
+        for (const tokenPresent of [1, 0]) {
+          const cntPtr = M._malloc(4)
+          M.setValue(cntPtr, 32, 'i32')
+          const listPtr = M._malloc(32 * 4)
+          const lrv = M._C_GetSlotList(tokenPresent, listPtr, cntPtr) >>> 0
+          const cnt = lrv === 0 ? M.getValue(cntPtr, 'i32') >>> 0 : 0
+          const ids: number[] = []
+          for (let i = 0; i < cnt; i++) ids.push(M.getValue(listPtr + i * 4, 'i32') >>> 0)
+          M._free(listPtr)
+          M._free(cntPtr)
+          strongSwanEngine.dispatchLog({
+            level: 'info',
+            text: `[DIAG] C_GetSlotList(tokenPresent=${tokenPresent}) rv=0x${lrv.toString(16)} count=${cnt} ids=[${ids.join(',')}]`,
+          })
+          if (tokenPresent === 1) {
+            for (const id of ids) {
+              // CK_TOKEN_INFO is 600 bytes (PKCS#11 v3.2 §3.2). Fields we care about:
+              //   label[32] @ offset 0, manufacturerID[32] @ 32, model[16] @ 64, serialNumber[16] @ 80
+              const tiPtr = M._malloc(600)
+              M.HEAPU8.fill(0, tiPtr, tiPtr + 600)
+              const trv = M._C_GetTokenInfo(id, tiPtr) >>> 0
+              const readPadded = (off: number, len: number) => {
+                const bytes = M.HEAPU8.subarray(tiPtr + off, tiPtr + off + len)
+                return new TextDecoder().decode(bytes).replace(/\s+$/, '').replace(/\0+$/, '')
+              }
+              const label = trv === 0 ? readPadded(0, 32) : '?'
+              const model = trv === 0 ? readPadded(64, 16) : '?'
+              M._free(tiPtr)
+              strongSwanEngine.dispatchLog({
+                level: 'info',
+                text: `[DIAG]   slot ${id}: rv=0x${trv.toString(16)} label='${label}' model='${model}'`,
+              })
+            }
+          }
+        }
+        strongSwanEngine.dispatchLog({
+          level: 'info',
+          text: `[DIAG] panel-side slot refs: realInitSlot=${realInitSlot} realRespSlot=${realRespSlot} hSessInit=${hSessInit} hSessResp=${hSessResp}`,
+        })
+      } catch (diagErr) {
+        strongSwanEngine.dispatchLog({
+          level: 'error',
+          text: `[DIAG] slot dump failed: ${diagErr instanceof Error ? diagErr.message : String(diagErr)}`,
+        })
+      }
+
       const registerKey = (
         keys: typeof initKeys,
         slotId: 0 | 1,
@@ -2587,12 +2684,35 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
 
       const toHex = (bytes?: Uint8Array) =>
         bytes ? Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('') : undefined
+      const initHex = toHex(initKeys.keyId)
+      const respHex = toHex(respKeys.keyId)
       setCertData({
         initCert,
         respCert,
-        initCkaId: toHex(initKeys.keyId),
-        respCkaId: toHex(respKeys.keyId),
+        initCkaId: initHex,
+        respCkaId: respHex,
       })
+
+      // Rebuild ipsec.conf with leftid=@#<hex>/rightid=@#<hex> for ML-DSA so
+      // charon's get_private hits the ID_KEY_ID fast path. From each role's
+      // POV: left = self, right = peer.
+      if (authMode === 'dual' && initHex && respHex) {
+        const newInitIpsec = buildIpsecConf('initiator', selectedMode, 'dual', allowFragmentation, {
+          left: initHex,
+          right: respHex,
+        })
+        const newRespIpsec = buildIpsecConf('responder', selectedMode, 'dual', allowFragmentation, {
+          left: respHex,
+          right: initHex,
+        })
+        setActiveInitIpsec(newInitIpsec)
+        setActiveRespIpsec(newRespIpsec)
+        strongSwanEngine.dispatchLog({
+          level: 'info',
+          text: `[CERT] ipsec.conf updated with leftid=@#${initHex.slice(0, 8)}…/rightid=@#${respHex.slice(0, 8)}… for ID_KEY_ID fast path.`,
+        })
+      }
+
       const algLabel = (keys: typeof initKeys) => keys.variant
       strongSwanEngine.dispatchLog({
         level: 'info',
@@ -2614,6 +2734,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     clientSize,
     serverAlg,
     serverSize,
+    selectedMode,
+    authMode,
+    allowFragmentation,
+    buildIpsecConf,
   ])
 
   /**
@@ -2628,6 +2752,20 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     setCertGenLoading(true)
     try {
       const variant = (parseInt(clientSize, 10) as 44 | 65 | 87) || 65
+
+      // Pre-generate CKA_IDs BEFORE engine.init. Emscripten's getenv() reads
+      // from a snapshot taken during preRun (Module instantiation, triggered
+      // by INIT). Setting ENV after preRun (via START payload) is too late —
+      // wasm_setup_config's getenv("WASM_LOCAL_KEYID") returns NULL and the
+      // ID_KEY_ID identity branch never runs. Generating the keyIds up front
+      // and passing them in INIT is the only way to get them into the C-side
+      // env table by the time _main() runs.
+      const initCkaId = crypto.getRandomValues(new Uint8Array(20))
+      const respCkaId = crypto.getRandomValues(new Uint8Array(20))
+      const toHex = (b: Uint8Array) =>
+        Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('')
+      const initKeyIdHex = toHex(initCkaId)
+      const respKeyIdHex = toHex(respCkaId)
 
       // Step 1: Spawn workers in spawn-only mode (token init via wasm_hsm_init
       // alg_type=2 → no RSA keygen). Configs include strongswan.conf,
@@ -2662,7 +2800,11 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         { initPsk: clientPsk, respPsk: serverPsk },
         false,
         selectedMode === 'pure-pqc' || selectedMode === 'hybrid' ? 1 : 0,
-        { phase: 'spawn-only' }
+        {
+          phase: 'spawn-only',
+          authMode: 'dual',
+          keyIds: { initKeyId: initKeyIdHex, respKeyId: respKeyIdHex },
+        }
       )
       await ready
       strongSwanEngine.dispatchLog({
@@ -2676,7 +2818,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       // for initiator and slot 1 (charon-right) for responder.
       const provisionRole = async (
         role: 'initiator' | 'responder',
-        cn: string
+        cn: string,
+        ckaId: Uint8Array
       ): Promise<{ certPem: string; ckaId: Uint8Array }> => {
         // softhsmv3's slot IDs are NOT 0/1 — wasm_hsm_init discovers
         // empty slots via C_GetSlotList. Ask the worker for the actual IDs
@@ -2706,7 +2849,6 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         if (login.rv !== 0 && login.rv !== 0x100)
           throw new Error(`${role} C_Login rv=0x${login.rv.toString(16)}`)
 
-        const ckaId = crypto.getRandomValues(new Uint8Array(20))
         const gen = await strongSwanEngine.pkcs11(role, 'C_GenerateKeyPair_MLDSA', {
           hSess,
           variant,
@@ -2774,8 +2916,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         return { certPem, ckaId }
       }
 
-      const initResult = await provisionRole('initiator', 'vpn-initiator')
-      const respResult = await provisionRole('responder', 'vpn-responder')
+      const initResult = await provisionRole('initiator', 'vpn-initiator', initCkaId)
+      const respResult = await provisionRole('responder', 'vpn-responder', respCkaId)
 
       // Step 3: Land cert PEMs in BOTH workers (each peer needs its own cert
       // and the other peer's cert for trust).
@@ -2788,13 +2930,11 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         '/etc/ipsec.d/certs/initiator.crt': initResult.certPem,
       })
 
-      const toHex = (b: Uint8Array) =>
-        Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('')
       setCertData({
         initCert: initResult.certPem,
         respCert: respResult.certPem,
-        initCkaId: toHex(initResult.ckaId),
-        respCkaId: toHex(respResult.ckaId),
+        initCkaId: initKeyIdHex,
+        respCkaId: respKeyIdHex,
       })
 
       dualWorkerReadyRef.current = true
@@ -2945,6 +3085,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       // would be used for pure-PQC mode, causing wrong session mapping.
       vpnRpcInitRef.current = false
       vpnSlotsRef.current = { init: 0, resp: 1 }
+      vpnStateRef.current.sessions.clear()
       setCertData(null)
       setKemSecrets({})
     },
@@ -2960,6 +3101,30 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       if (btn && !btn.disabled) btn.click()
     }, 2000) // wait for panel to fully render
     return () => clearTimeout(timer)
+  }, [])
+
+  // E2E cert+daemon autostart: ?vpnCertAutostart=1 — clicks Generate Certs, then polls
+  // until Start Daemon is enabled and clicks it. Used for zero-click dual auth E2E tests.
+  React.useEffect(() => {
+    if (!certAutostartRef.current) return
+    certAutostartRef.current = false // one-shot
+    const t1 = setTimeout(() => {
+      const btn = document.querySelector<HTMLButtonElement>('[data-testid="vpn-gen-certs"]')
+      if (btn && !btn.disabled) btn.click()
+    }, 2000)
+    const poll = setInterval(() => {
+      const startBtn = document.querySelector<HTMLButtonElement>('[data-testid="vpn-start-daemon"]')
+      if (startBtn && !startBtn.disabled) {
+        clearInterval(poll)
+        startBtn.click()
+      }
+    }, 1000)
+    const safety = setTimeout(() => clearInterval(poll), 120_000)
+    return () => {
+      clearTimeout(t1)
+      clearInterval(poll)
+      clearTimeout(safety)
+    }
   }, [])
 
   return (
@@ -3024,11 +3189,18 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             runs.
           </div>
           <div>
-            <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-warning/15 text-status-warning border border-status-warning/30 mr-1">
-              SIMULATED
-            </span>
-            Cert-auth success: when ML-DSA cert auth is selected, the panel reports success without
-            a real IKE_AUTH round-trip.
+            {authMode === 'dual' ? (
+              <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-success/15 text-status-success border border-status-success/30 mr-1">
+                REAL
+              </span>
+            ) : (
+              <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-status-warning/15 text-status-warning border border-status-warning/30 mr-1">
+                SIMULATED
+              </span>
+            )}
+            {authMode === 'dual'
+              ? 'IKE_AUTH: charon uses AUTH_CLASS_PUBKEY + ML-DSA cert; C_SignInit/C_Sign run in-process via statically-linked softhsmv3.'
+              : 'IKE_AUTH cert auth: PSK mode only; switch to "PSK + Certificate" to run real ML-DSA signing.'}
           </div>
           <div className="md:col-span-2 mt-1 pt-1 border-t border-border text-[11px]">
             <strong className="text-foreground">Roadmap:</strong> full IKE handshake (Phase 3b–3e)
@@ -3714,6 +3886,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               {authMode === 'dual' && (
                 <>
                   <Button
+                    data-testid="vpn-gen-certs"
                     variant="ghost"
                     onClick={
                       authMode === 'dual' && clientAlg === 'ML-DSA' && serverAlg === 'ML-DSA'
@@ -3785,7 +3958,17 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     // NOTE: moduleRef.current may already be set by another HSM panel —
                     // we guard with vpnRpcInitRef, not moduleRef.
                     if (rpcMode) {
-                      const rawM = moduleRef.current ?? (await getSoftHSMRustModule())
+                      // Same as generateCerts: force C++ softhsm so the SAB-RPC
+                      // dispatcher and the cert provisioning operate on the same
+                      // softhsm instance, and so C_SetAttributeValue is real.
+                      const rawM = await getSoftHSMCppModule()
+                      if (moduleRef.current && moduleRef.current !== rawM) {
+                        strongSwanEngine.dispatchLog({
+                          level: 'info',
+                          text: '[VPN] Replacing shared softhsm module with C++ build (VPN sim needs C_SetAttributeValue support).',
+                        })
+                      }
+                      moduleRef.current = rawM
                       rawM._C_Initialize(0) // idempotent — CKR_CRYPTOKI_ALREADY_INITIALIZED is OK
 
                       if (!vpnRpcInitRef.current) {
@@ -3822,37 +4005,18 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                           M._free(cntPtr)
                         }
 
-                        // Guarantee at least one free (uninitialized) slot exists.
+                        // Single-slot pattern (mirroring the working ML-KEM flow).
+                        // Both initiator + responder ML-DSA keys live in the SAME
+                        // softhsm slot, distinguished by their CKA_ID = SHA-1(pubkey).
                         ensureEmptySlot(rawM)
-
-                        // The LAST slot in the direct-query list is always uninitialized.
                         const slots0 = getRawSlots(rawM)
-                        const uninitSlot0 = slots0[slots0.length - 1]
-                        hsm_initToken(rawM, uninitSlot0, '1234', 'PQC VPN Initiator')
-                        // C_InitToken leaves the slot ID unchanged → uninitSlot0 IS the init slot.
-                        const realInitSlot = uninitSlot0
+                        const sharedSlot = slots0[slots0.length - 1]
+                        hsm_initToken(rawM, sharedSlot, '1234', 'PQC VPN Tokens')
+                        const realInitSlot = sharedSlot
+                        const realRespSlot = sharedSlot
 
-                        const hSessInit = hsm_openUserSession(
-                          rawM,
-                          realInitSlot,
-                          '1234',
-                          'user1234'
-                        )
-
-                        // hsm_initToken internally calls C_GetSlotList(NULL) which may have already
-                        // added a new empty slot; ensureEmptySlot is idempotent when one exists.
-                        ensureEmptySlot(rawM)
-                        const slots1 = getRawSlots(rawM)
-                        const uninitSlot1 = slots1[slots1.length - 1]
-                        hsm_initToken(rawM, uninitSlot1, '1234', 'PQC VPN Responder')
-                        const realRespSlot = uninitSlot1
-
-                        const hSessResp = hsm_openUserSession(
-                          rawM,
-                          realRespSlot,
-                          '1234',
-                          'user1234'
-                        )
+                        const hSessInit = hsm_openUserSession(rawM, sharedSlot, '1234', 'user1234')
+                        const hSessResp = hSessInit
 
                         vpnSlotsRef.current = { init: realInitSlot, resp: realRespSlot }
                         hSessionRef.current = hSessInit
@@ -3880,14 +4044,33 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     const proposalMode =
                       selectedMode === 'pure-pqc' || selectedMode === 'hybrid' ? 1 : 0
 
+                    // Diagnostic: log which branch is taken + state at click time.
+                    // Branch selection is fragile — easy to land on PSK fallback by
+                    // accident if dualWorkerReadyRef wasn't set or certData is missing.
+                    strongSwanEngine.dispatchLog({
+                      level: 'info',
+                      text: `[START] click — authMode=${authMode} clientAlg=${clientAlg} serverAlg=${serverAlg} dualWorkerReady=${dualWorkerReadyRef.current} certData=${certData ? `set(initCkaId=${certData.initCkaId?.slice(0, 12)}…/respCkaId=${certData.respCkaId?.slice(0, 12)}…)` : 'null'}`,
+                    })
+
                     if (dualWorkerReadyRef.current) {
                       // Workers were already spawned + provisioned by
-                      // generateCertsViaWorker (dual+ML-DSA). Just START.
+                      // generateCertsViaWorker (dual+ML-DSA flow): keys live
+                      // in the in-process softhsm, certs already on FS.
+                      // Pass keyIds so wasm_setup_config builds ID_KEY_ID
+                      // identities and charon hits the get_private_by_keyid
+                      // fast path against the in-process softhsm.
+                      const keyIds =
+                        certData && certData.initCkaId && certData.respCkaId
+                          ? {
+                              initKeyId: certData.initCkaId,
+                              respKeyId: certData.respCkaId,
+                            }
+                          : undefined
                       strongSwanEngine.dispatchLog({
                         level: 'info',
-                        text: '[CERT] Workers already provisioned in dual-ML-DSA mode. Starting charon...',
+                        text: `[CERT] Workers already provisioned for ML-DSA dual auth. keyIds=${keyIds ? `init=${keyIds.initKeyId.slice(0, 12)}…/resp=${keyIds.respKeyId.slice(0, 12)}…` : 'UNDEFINED — falling back to PSK!'}`,
                       })
-                      strongSwanEngine.start()
+                      strongSwanEngine.start(keyIds)
                     } else if (authMode === 'dual' && certData) {
                       // Use pre-provisioned certs generated before daemon start (C8 flow).
                       // ipsec.secrets: PSK only — charon's pkcs11 plugin discovers the private
@@ -3899,6 +4082,19 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                         level: 'info',
                         text: `[CERT] Loading pre-provisioned ${clientAlg}/${serverAlg} certificates into daemon filesystem. Private keys accessed via PKCS#11 RPC.`,
                       })
+                      // For ML-DSA dual auth, pass the keyIds (hex CKA_IDs) to
+                      // workers via ENV. wasm_setup_config builds ID_KEY_ID
+                      // identities from those, hitting get_private fast path.
+                      const keyIds =
+                        clientAlg === 'ML-DSA' &&
+                        serverAlg === 'ML-DSA' &&
+                        certData.initCkaId &&
+                        certData.respCkaId
+                          ? {
+                              initKeyId: certData.initCkaId,
+                              respKeyId: certData.respCkaId,
+                            }
+                          : undefined
                       strongSwanEngine.init(
                         {
                           'strongswan.conf': activeInitConfig,
@@ -3916,7 +4112,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                         },
                         { initPsk: clientPsk, respPsk: serverPsk },
                         rpcMode,
-                        proposalMode
+                        proposalMode,
+                        { authMode, keyIds }
                       )
                     } else {
                       strongSwanEngine.init(
@@ -3924,7 +4121,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                         { 'strongswan.conf': activeRespConfig, 'ipsec.conf': activeRespIpsec },
                         { initPsk: clientPsk, respPsk: serverPsk },
                         rpcMode,
-                        proposalMode
+                        proposalMode,
+                        { authMode }
                       )
                     }
                     setCurrentStep(1)
@@ -3942,7 +4140,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   authMode === 'dual' && !certData
                     ? 'Generate certificates first'
                     : authMode === 'dual' && (clientAlg === 'ML-DSA' || serverAlg === 'ML-DSA')
-                      ? 'ML-DSA certs are recognized by the WASM charon build (RFC 9881 OIDs loaded via pkcs11 + x509 plugins — use the Validate WASM charon panel below to confirm). The full IKE handshake runs as a simulation until Phase 3b+ of the WASM shims; the cert artifacts themselves are real and inspectable.'
+                      ? 'ML-DSA cert auth runs end-to-end: charon uses AUTH_CLASS_PUBKEY, looks up the private key via CKA_ID=cert SKID in the statically-linked softhsmv3, and signs IKE_AUTH with C_Sign (ML-DSA).'
                       : undefined
                 }
                 data-testid="vpn-start-daemon"

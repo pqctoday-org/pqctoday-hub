@@ -6,6 +6,27 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.20] - April 28, 2026
+
+### Fixed
+
+- **VPN simulator — ML-DSA-65 dual-auth IKEv2 handshake reaches `ESTABLISHED` end-to-end** (closes the WIP work tracked in 3.5.19). Both peers sign and verify each other's IKE_AUTH payload via real PKCS#11 ML-DSA on the in-process softhsmv3, then ML-KEM-768 derives the IKE shared secret. Verified by [e2e/\_vpn-mldsa.spec.ts](e2e/_vpn-mldsa.spec.ts): 2.6 s to ESTABLISHED in headless Chromium.
+
+  Four root causes were chained — fixing only one was insufficient:
+  1. **Emscripten `getenv()` timing** — `engine.start(keyIds)` set `WASM_LOCAL_KEYID` AFTER the worker's `Module` had already been instantiated, so the env-table snapshot taken during `preRun` saw empty values. `wasm_setup_config`'s `getenv()` returned NULL → identity defaulted to cert subject DN → `find_lib_by_keyid` searched a different value than was stored. Fix in [VpnSimulationPanel.tsx::generateCertsViaWorker](src/components/Playground/hsm/VpnSimulationPanel.tsx): pre-generate the 20-byte CKA_IDs _before_ `engine.init`, pass them in `options.keyIds` so they land in the INIT payload → preRun sets ENV → `getenv()` returns the correct hex at `_main` time.
+
+  2. **strongswan-pkcs11 plugin's empty enumerator** — upstream `pkcs11_creds.c:241` wires `create_private_enumerator = enumerator_create_empty`. Real strongSwan deployments load private keys via `stroke` / `vici` / `nm` config plugins that explicitly call `lib->creds->create(BUILD_PKCS11_KEYID, ...)` and add the result to a `mem_cred` set. The WASM build has none of those plugins. Fix in HSM repo `strongswan-wasm-shims/wasm_backend.c`: at `wasm_setup_config` decode `WASM_LOCAL_KEYID` env hex into a `chunk_t`, call `lib->creds->create(CRED_PRIVATE_KEY, KEY_ANY, BUILD_PKCS11_KEYID, chunk, BUILD_END)`, and register the result in a `mem_cred` set via `lib->credmgr->add_set(...)`.
+
+  3. **`cert_policy = CERT_SEND_IF_ASKED`** sent no `CERT` payload on the wire when the peer didn't include a `CERTREQ` (which our self-signed flow doesn't). The peer received only `IDi/IDr/AUTH` with no public key to verify the signature against — `IKE_AUTH response 1 [ N(AUTH_FAILED) ]`. Fix: `cert_policy = CERT_ALWAYS_SEND` when `wasm_auth_mode == 1`. With this, IKE_AUTH carries `[ IDi CERT N(INIT_CONTACT) IDr AUTH ... ]` (~9 KB).
+
+  4. **No trust anchor for the peer's self-signed cert** — even after the cert is on the wire, the verifier needs to trust the CA. Fix: each worker now also loads the _peer's_ cert from `/etc/ipsec.d/certs/{peer}.crt` and registers it via `mem_cred->add_cert(creds, /*trusted=*/TRUE, peer_cert)`. The trust-chain validator then accepts the self-signed cert as both leaf and anchor.
+
+  Files touched in this repo: [public/wasm/strongswan.{js,wasm}](public/wasm/) (rebuilt, 13.84 MB), [public/wasm/strongswan_worker.js](public/wasm/strongswan_worker.js) (no change in this commit beyond prior 3.5.19 work), [src/wasm/strongswan/bridge.ts](src/wasm/strongswan/bridge.ts), [src/components/Playground/hsm/VpnSimulationPanel.tsx::generateCertsViaWorker](src/components/Playground/hsm/VpnSimulationPanel.tsx).
+
+  E2E coverage: [e2e/\_vpn-mldsa.spec.ts](e2e/_vpn-mldsa.spec.ts) drives the full Generate Certs → Start Daemon → ESTABLISHED chain via Playwright, plus [e2e/\_vpn-diagnostic.spec.ts](e2e/_vpn-diagnostic.spec.ts) explicitly clicks Start Daemon for PSK + ML-KEM as a regression check (the existing `e2e/vpn-rust-module.spec.ts` `?vpnAutostart=1` URL handler is broken under React 18 StrictMode — first-mount cleanup clears the 2 s timer and the one-shot ref-guard prevents re-arming on the second mount; affects all 6 scenarios in that suite). Companion HSM repo: see CHANGELOG entry for the C-side wasm_backend.c fixes (private-key load, peer trust anchor, CERT_ALWAYS_SEND) and the new 6 CKA_ID retrieval tests in `p11_v32_compliance_test.cpp`.
+
+  Cosmetic remainder: post-establish CHILD_CREATE re-runs and trips on `unable to allocate SPI from kernel` → `ESTABLISHED => DESTROYING`. The IKE_SA itself reaches ESTABLISHED with full ML-DSA cert auth before this happens, and the panel `[SIM] CREATE_CHILD_SA` lines simulate the child SA establishment for the visualization. Not blocking.
+
 ## [3.5.19] - April 27, 2026
 
 ### Work in progress

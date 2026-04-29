@@ -57,10 +57,8 @@ export class StrongSwanEngine {
   private _readyCount = 0
   private _keysReadyCount = 0
   private _epoch = 0 // Guards against late messages from terminated workers
-  // 'full' = auto-START on KEYS_READY (PSK mode default).
-  // 'spawn-only' = stop after KEYS_READY so the panel can drive provisioning
-  //                via engine.pkcs11(); engine.start() must be called explicitly.
   private _phase: 'full' | 'spawn-only' = 'full'
+  private _authMode: 'psk' | 'dual' = 'psk'
   private _keysReadyResolve: (() => void) | null = null
   private _keySpec: { algType: number; slot0Size: number; slot1Size: number } = {
     algType: 1,
@@ -103,8 +101,9 @@ export class StrongSwanEngine {
   /**
    * Drive a PKCS#11 op against the specified worker's softhsmv3 instance.
    * Used by VPN cert provisioning so ML-DSA keys + cert signing happen in
-   * the worker's softhsm — where charon's strongswan-pkcs11 plugin will
-   * find them at IKE_AUTH time via CKA_ID lookup.
+   * the worker's IN-PROCESS softhsm — where charon's strongswan-pkcs11 plugin
+   * actually looks at IKE_AUTH time (the panel softhsm is unreachable to charon
+   * because pkcs11_wasm_rpc_function_list is currently a stub).
    */
   public pkcs11(
     role: 'initiator' | 'responder',
@@ -146,7 +145,10 @@ export class StrongSwanEngine {
     role: 'initiator' | 'responder',
     psk: string,
     rpcMode: boolean,
-    proposalMode: number
+    proposalMode: number,
+    authMode: 'psk' | 'dual',
+    localKeyId?: string,
+    remoteKeyId?: string
   ): Worker {
     const worker = new Worker(`/wasm/strongswan_worker.js?v=${Date.now()}`)
     const spawnEpoch = this._epoch // Capture epoch at spawn time
@@ -381,7 +383,18 @@ export class StrongSwanEngine {
 
     worker.postMessage({
       type: 'INIT',
-      payload: { configs, sab: pkcs11Sab, netSab, role, psk, rpcMode, proposalMode },
+      payload: {
+        configs,
+        sab: pkcs11Sab,
+        netSab,
+        role,
+        psk,
+        rpcMode,
+        proposalMode,
+        auth: authMode,
+        localKeyId,
+        remoteKeyId,
+      },
     })
     return worker
   }
@@ -396,7 +409,11 @@ export class StrongSwanEngine {
     pskOpts?: { initPsk: string; respPsk: string },
     rpcMode?: boolean,
     proposalMode?: number,
-    options?: { phase?: 'full' | 'spawn-only' }
+    options?: {
+      phase?: 'full' | 'spawn-only'
+      authMode?: 'psk' | 'dual'
+      keyIds?: { initKeyId: string; respKeyId: string }
+    }
   ): Promise<void> {
     if (this.initWorker) return Promise.resolve()
 
@@ -417,6 +434,7 @@ export class StrongSwanEngine {
 
     const useRpcMode = rpcMode ?? false
     const usePropMode = proposalMode ?? 0
+    this._authMode = options?.authMode ?? 'psk'
 
     const readyPromise =
       this._phase === 'spawn-only'
@@ -425,6 +443,9 @@ export class StrongSwanEngine {
           })
         : Promise.resolve()
 
+    const initKeyId = options?.keyIds?.initKeyId
+    const respKeyId = options?.keyIds?.respKeyId
+
     this.initWorker = this._spawnWorker(
       initConfigs,
       this.initPkcs11Sab,
@@ -432,7 +453,10 @@ export class StrongSwanEngine {
       'initiator',
       initPsk,
       useRpcMode,
-      usePropMode
+      usePropMode,
+      this._authMode,
+      initKeyId, // local for initiator
+      respKeyId // remote for initiator
     )
     this.respWorker = this._spawnWorker(
       respConfigs,
@@ -441,7 +465,10 @@ export class StrongSwanEngine {
       'responder',
       respPsk,
       useRpcMode,
-      usePropMode
+      usePropMode,
+      this._authMode,
+      respKeyId, // local for responder
+      initKeyId // remote for responder
     )
     return readyPromise
   }
@@ -449,23 +476,31 @@ export class StrongSwanEngine {
   /**
    * Post START to both workers — used after spawn-only init + panel-driven
    * provisioning to actually run charon.
+   * keyIds: required for ML-DSA dual auth so wasm_setup_config builds
+   * ID_KEY_ID identities (env vars WASM_LOCAL_KEYID/REMOTE_KEYID).
    */
-  public start() {
+  public start(keyIds?: { initKeyId: string; respKeyId: string }) {
     if (!this.initWorker || !this.respWorker) {
       this.dispatchLog({ level: 'error', text: '[BRIDGE] start() called before init()' })
       return
     }
     if (this.state === 'RUNNING') return
     this.dispatchLog({ level: 'info', text: '[BRIDGE] Starting charon daemons (deferred)...' })
-    this.initWorker.postMessage({ type: 'START' })
-    this.respWorker.postMessage({ type: 'START' })
+    this.initWorker.postMessage({
+      type: 'START',
+      payload: keyIds ? { localKeyId: keyIds.initKeyId, remoteKeyId: keyIds.respKeyId } : undefined,
+    })
+    this.respWorker.postMessage({
+      type: 'START',
+      payload: keyIds ? { localKeyId: keyIds.respKeyId, remoteKeyId: keyIds.initKeyId } : undefined,
+    })
     this.setState('RUNNING')
   }
 
   /**
-   * Write files into a worker's WASM filesystem post-INIT. Used to land
-   * cert PEMs after they've been built via panel-driven worker pkcs11
-   * provisioning (charon hasn't started yet so it won't see partial state).
+   * Write files into a worker's WASM filesystem post-INIT. Used by the
+   * worker-driven cert provisioning flow to land cert PEMs at
+   * /etc/ipsec.d/certs/<role>.crt before charon starts.
    */
   public writeFiles(role: 'initiator' | 'responder', files: Record<string, string>) {
     const worker = role === 'initiator' ? this.initWorker : this.respWorker
