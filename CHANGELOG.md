@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.22] - April 29, 2026
+
+### Changed
+
+- **`CveSnapshot.totalByCpe`** ([src/types/CveTypes.ts](src/types/CveTypes.ts)) — optional `Record<string, number>` field added to `CveSnapshot` carrying the NVD `totalResults` count per CPE before the 20-cap is applied. Absent in snapshots generated before this field; UI uses it to show "showing 20 of X total CVEs". Backwards-compatible: existing snapshots without the field continue to load without error.
+
 ## [3.5.21] - April 29, 2026
 
 ### Added
