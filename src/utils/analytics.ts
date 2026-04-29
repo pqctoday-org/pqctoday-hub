@@ -175,6 +175,50 @@ export const logPatentExport = (count: number) => {
   logEvent('Patents', 'Export CSV', String(count))
 }
 
+// --- FAQ tracking ---
+
+export const logFaqSearch = (query: string) => {
+  logEvent('FAQ', 'Search', sanitizeQuery(query))
+}
+
+export const logFaqExpand = (question: string) => {
+  logEvent('FAQ', 'Expand', sanitizeQuery(question))
+}
+
+// --- Business Tools grid tracking ---
+
+export const logBusinessToolsSearch = (query: string) => {
+  logEvent('Business', 'Tools Search', sanitizeQuery(query))
+}
+
+export const logBusinessToolsFilter = (category: string | null) => {
+  logEvent('Business', 'Tools Filter', category ?? 'All')
+}
+
+// --- Explore tracking ---
+
+export const logExploreTileClick = (destination: string) => {
+  logEvent('Explore', 'Tile Click', destination)
+}
+
+export const logExploreUnlock = () => {
+  logEvent('Explore', 'Unlock Advanced')
+}
+
+// --- Report tracking ---
+
+export const logReportViewed = (industry: string, riskLevel: string) => {
+  logEvent('Report', 'Viewed', `${industry || 'unknown'}:${riskLevel}`)
+}
+
+export const logReportShareLinkOpened = () => {
+  logEvent('Report', 'Share Link Opened')
+}
+
+export const logReportCta = (target: 'start-assessment' | 'complete-assessment') => {
+  logEvent('Report', 'CTA Click', target)
+}
+
 // Scrub PII (emails, URLs) before sending query strings to GA4
 function sanitizeQuery(q: string): string {
   return q
