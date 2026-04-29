@@ -10,6 +10,7 @@ import {
   ShieldAlert,
   ChevronDown,
   ChevronUp,
+  Wrench,
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import JSZip from 'jszip'
@@ -257,6 +258,15 @@ export function BusinessCenterView() {
         shareTitle="PQC Command Center — Quantum Readiness Workspace"
         shareText="Your PQC readiness command center — risk, compliance, governance, and actionable next steps."
       />
+
+      {/* WIP banner — Command Center is under active development */}
+      <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-status-warning/10 border border-status-warning/30 text-status-warning text-sm mb-4">
+        <Wrench className="w-4 h-4 shrink-0" aria-hidden="true" />
+        <span>
+          <span className="font-semibold">Work in progress.</span> The Command Center is under
+          active development — zone panels, artifact tracking, and wire data are being expanded.
+        </span>
+      </div>
 
       <ContextBanner
         industry={metrics.industry}

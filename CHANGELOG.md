@@ -6,6 +6,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.23] - April 29, 2026
+
+### Added
+
+- **Command Center — WIP banner** ([src/components/BusinessCenter/BusinessCenterView.tsx](src/components/BusinessCenter/BusinessCenterView.tsx)) — a persistent warning-color banner with `Wrench` icon appears below the page header, signalling that zone panels, artifact tracking, and wire data are under active development. Uses the same `bg-status-warning/10 border-status-warning/30 text-status-warning` pattern as other WIP indicators in the codebase.
+
 ## [3.5.22] - April 29, 2026
 
 ### Changed
