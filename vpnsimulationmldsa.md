@@ -130,7 +130,7 @@ Each one alone was insufficient. Order discovered, not order severity.
 
 Symptom: `WASM: local identity = ID_KEY_ID @#…` log never appeared. `wasm_setup_config`'s `getenv("WASM_LOCAL_KEYID")` returned NULL → identity defaulted to cert subject DN → `find_lib_by_keyid` searched a different value than was stored.
 
-Fix in [VpnSimulationPanel.tsx::generateCertsViaWorker](src/components/Playground/hsm/VpnSimulationPanel.tsx): pre-generate the 20-byte CKA_IDs _before_ `engine.init`, pass them in `options.keyIds` so they land in the INIT payload → preRun seeds the C env table → `getenv()` returns the correct hex at `_main` time.
+Fix in [VpnSimulationPanel.tsx::generateCertsViaWorker](src/components/Playground/hsm/VpnSimulationPanel.tsx): pre-generate the 20-byte CKA*IDs \_before* `engine.init`, pass them in `options.keyIds` so they land in the INIT payload → preRun seeds the C env table → `getenv()` returns the correct hex at `_main` time.
 
 ### Bug 2 — Empty `create_private_enumerator` (HSM repo)
 
