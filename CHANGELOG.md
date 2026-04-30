@@ -8,44 +8,45 @@ All notable changes to this project will be documented in this file.
 
 ## [3.5.28] - April 30, 2026
 
-CSWP 39 governance dataset grew from 970 → 1,332 requirements (107 → 189 sources).
-Library tile detail view now lists each extracted requirement inline, and a new
-"CSWP 39" filter on `/library` narrows the grid to docs with extracted obligations.
+The CSWP.39 governance dataset on the Compliance page now covers 1,332 requirements
+from 189 source documents (up from 970 / 107). The Library page gained a CSWP.39
+filter, and clicking any library card now shows the obligations extracted from
+that source inline — with the original quote that justifies each one.
 
 ### Added
 
-- **CSWP 39 Requirements section in the library tile detail view** — Click any
-  library tile and the detail modal now includes a "CSWP 39 Requirements" section
-  grouped by Crypto Posture Management pillar (Governance, Inventory,
-  Observability, Assurance, Lifecycle), with each requirement showing its
-  maturity tier badge, requirement text, evidence quote from the source PDF,
-  page/section reference, and confidence level. Silent on docs that don't have
-  extracted requirements.
+- **See every CSWP.39 requirement extracted from a library document, inline** —
+  Open any library card and a new section lists each obligation grouped by the
+  CSWP.39 pillar it serves (Governance, Inventory, Observability, Assurance,
+  Lifecycle). Every entry shows its maturity tier, the requirement statement,
+  the exact quote from the source document that supports it, and where in the
+  document it appears. Library cards without extracted requirements simply
+  don't show this section.
 
-- **"CSWP 39" filter button on /library** — Toggle next to "My (N)" that
-  narrows the grid to docs carrying extracted CSWP 39 governance obligations.
-  Shows a count, e.g. "CSWP 39 (189)". Persists via `?cswp39=1` URL parameter.
+- **"CSWP.39" filter on the Library page** — A new toggle next to "My"
+  narrows the grid to library documents that carry extracted CSWP.39
+  governance obligations. The count next to it (e.g. "CSWP.39 (189)") tells
+  you at a glance how broad the coverage is.
 
-- **+362 new CSWP 39 governance requirements** extracted via the four-stage
-  Ollama (`qwen3.6:27b`) enrichment pipeline against the library:
-  - Migration Guidance: 12 sources, 46 requirements (UK NCSC migration
-    timelines, IETF RFC 8555 ACME, IETF RFC 9763 multi-algorithm certs, CSA
-    Practitioner's Guide, etc.)
-  - Government & Policy: 42 sources, 210 requirements (NSA CNSA 2.0 FAQ,
-    DoD CIO PQC memo, OMB M-23-02, EO-14306, EU NIS-CG roadmap, ANSSI PQC
-    FAQ, UK NCSC migration timelines, GSA buyer's guide, etc.)
-  - Protocols: 15 sources, 59 requirements (GSMA PQ.03 telecom guidelines,
-    IETF RFC 8784 PSK in IKEv2, ETSI hybrid key exchange specs, etc.)
-  - Focused tech-standards (PKI Cert Mgmt + NIST Std + Digital Signature +
-    KEM): 11 sources, 39 requirements (ITU-T X.509, NIST SP 800-131A Rev3,
-    ETSI GS QKD-008, FIPS 198-1, etc.)
+- **+362 new CSWP.39 governance obligations** drawn from 80 newly-analyzed
+  source documents, including:
+  - **Government & Policy** — NSA CNSA 2.0, DoD CIO post-quantum memo, OMB M-23-02,
+    Executive Order 14306, the EU NIS Cooperation Group roadmap, ANSSI's PQC
+    FAQ, UK NCSC migration timelines, GSA's PQC buyer's guide, and more.
+  - **Migration playbooks** — UK NCSC migration timelines, IETF RFC 8555 (ACME),
+    IETF RFC 9763 (multi-algorithm certificates), the Cloud Security Alliance
+    practitioner's guide, and others.
+  - **Protocols** — GSMA PQ.03 telecom guidelines, IETF RFC 8784 (PSK in IKEv2),
+    ETSI hybrid key-exchange specs, and similar.
+  - **Standards** — ITU-T X.509 (2019), NIST SP 800-131A Rev. 3, ETSI GS
+    QKD 008, FIPS 198-1, and more.
 
 ### Changed
 
-- **CSWP 39 explorer header** — counts updated automatically by the maturity
-  loader: "1,332 requirements from 189 sources" (was 970 / 107). Existing
-  pillar/tier matrix on `/compliance?tab=cswp39` and the per-doc filter via
-  `?evref=` continue to work without UI changes.
+- **Compliance → CSWP.39 explorer headline** updates automatically: "1,332
+  requirements from 189 sources" (was 970 / 107). The pillar × tier matrix
+  and the "view requirements from this source" link from a library card both
+  pick up the new content with no extra steps.
 
 ## [3.5.27] - April 30, 2026
 
