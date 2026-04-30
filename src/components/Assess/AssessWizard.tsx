@@ -148,13 +148,21 @@ const ALL_STEPS = [
   },
 ] as const
 
+// Quick mode covers all 5 CSWP.39 process steps with minimal user input:
+//   - govern: industry, country, compliance
+//   - inventory: crypto, sensitivity
+//   - identify-gaps: infra
+//   - prioritise: timeline
+//   - implement: migration
 const QUICK_STEP_KEYS = new Set([
   'industry',
   'country',
   'crypto',
   'sensitivity',
   'compliance',
+  'infra',
   'migration',
+  'timeline',
 ])
 
 export const AssessWizard: React.FC<AssessWizardProps> = ({

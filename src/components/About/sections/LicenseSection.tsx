@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
-import { Info, Shield, ExternalLink } from 'lucide-react'
+import { Info, Shield, ExternalLink, Scale, Heart } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { LinkToUsButton } from '@/components/ui/LinkToUsButton'
 
 export function LicenseSection() {
@@ -43,6 +44,22 @@ export function LicenseSection() {
           >
             <ExternalLink size={16} />
             View GitHub Repository
+          </a>
+          <Link
+            to="/terms"
+            className="inline-flex items-center gap-2 text-primary hover:underline hover:text-primary/80 transition-colors"
+          >
+            <Scale size={16} />
+            Terms of Use
+          </Link>
+          <a
+            href="https://github.com/sponsors/pqctoday-org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-primary hover:underline hover:text-primary/80 transition-colors"
+          >
+            <Heart size={16} />
+            Support development
           </a>
           <LinkToUsButton />
         </div>

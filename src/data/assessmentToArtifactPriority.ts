@@ -29,6 +29,51 @@ const isLongRetention = (retention: string[] | undefined): boolean => {
 const isHighRisk = (snap: AssessmentSnapshot): boolean =>
   snap.result?.riskLevel === 'high' || snap.result?.riskLevel === 'critical'
 
+/** Industries with elevated supply-chain / vendor exposure (where third-party
+ *  crypto changes drive material risk). Sourced from INDUSTRY_THREAT keys
+ *  with threat weight >= 20 and known vendor concentration. */
+const HIGH_VENDOR_EXPOSURE_INDUSTRIES = new Set([
+  'Finance & Banking',
+  'Government & Defense',
+  'Healthcare',
+  'Telecommunications',
+  'Energy & Utilities',
+  'Aerospace',
+])
+
+/** Industries where crypto incidents must surface to a board / regulator
+ *  quickly enough to warrant an executive briefing artifact. */
+const HIGH_BOARD_VISIBILITY_INDUSTRIES = new Set([
+  'Finance & Banking',
+  'Government & Defense',
+  'Healthcare',
+  'Aerospace',
+])
+
+/** Country → most-relevant compliance framework. Used to nudge the user
+ *  toward the right gap artifact in their jurisdiction. Matches values
+ *  emitted by the Country wizard step. */
+const JURISDICTION_FRAMEWORK_HINT: Record<string, string> = {
+  'United States': 'OMB M-23-02 / NSM-10',
+  Canada: 'Canadian Centre for Cyber Security guidance',
+  'European Union': 'DORA + NIS2',
+  'United Kingdom': 'NCSC PQC migration guidance',
+  France: 'ANSSI PQC roadmap',
+  Germany: 'BSI TR-02102',
+  Japan: 'CRYPTREC PQC list',
+  'South Korea': 'KISA PQC guidance',
+  Australia: 'ACSC ISM',
+  Singapore: 'CSA Singapore PQC roadmap',
+  China: 'GM/T cryptographic requirements',
+}
+
+/** Sensitivity values that warrant explicit risk artifacts. Wizard emits
+ *  values like "low", "medium", "high", "critical", "regulated", "classified". */
+const isHighSensitivity = (sensitivities: string[] | undefined): boolean => {
+  if (!sensitivities || sensitivities.length === 0) return false
+  return sensitivities.some((s) => /critical|classified|regulated|high/i.test(s))
+}
+
 const RULES: Partial<Record<ExecutiveDocumentType, SuggestionRule>> = {
   'crypto-cbom': ({ input }) => {
     if (!input) return null
@@ -57,6 +102,10 @@ const RULES: Partial<Record<ExecutiveDocumentType, SuggestionRule>> = {
       return { reason: 'You selected compliance frameworks in the assessment.' }
     if ((result?.complianceImpacts?.length ?? 0) > 0)
       return { reason: 'Compliance impacts were identified in the assessment.' }
+    if (input?.country && JURISDICTION_FRAMEWORK_HINT[input.country])
+      return {
+        reason: `${input.country} sits under ${JURISDICTION_FRAMEWORK_HINT[input.country]} — track its deadlines.`,
+      }
     return null
   },
 
@@ -69,6 +118,10 @@ const RULES: Partial<Record<ExecutiveDocumentType, SuggestionRule>> = {
   'audit-checklist': ({ input }) => {
     if ((input?.complianceRequirements?.length ?? 0) > 0)
       return { reason: 'Compliance frameworks usually require periodic audits.' }
+    if (input?.country && JURISDICTION_FRAMEWORK_HINT[input.country])
+      return {
+        reason: `Audits expected under ${JURISDICTION_FRAMEWORK_HINT[input.country]} (${input.country}).`,
+      }
     return null
   },
 
@@ -84,11 +137,15 @@ const RULES: Partial<Record<ExecutiveDocumentType, SuggestionRule>> = {
     if (isHighRisk(snap)) return { reason: `Assessment risk level is ${snap.result!.riskLevel}.` }
     if (snap.result?.hndlRiskWindow?.isAtRisk)
       return { reason: 'Harvest-now-decrypt-later window is open.' }
+    if (isHighSensitivity(snap.input?.dataSensitivity))
+      return { reason: 'High-sensitivity data warrants a tracked risk register.' }
     return null
   },
 
   'risk-treatment-plan': (snap) => {
     if (isHighRisk(snap)) return { reason: `Assessment risk level is ${snap.result!.riskLevel}.` }
+    if (isHighSensitivity(snap.input?.dataSensitivity))
+      return { reason: 'High-sensitivity data needs a documented treatment plan.' }
     return null
   },
 
@@ -99,6 +156,8 @@ const RULES: Partial<Record<ExecutiveDocumentType, SuggestionRule>> = {
       return { reason: 'Long credential lifetime puts you in CRQC scenario range.' }
     if (result?.hndlRiskWindow?.isAtRisk)
       return { reason: 'HNDL window is open per your assessment.' }
+    if (isHighSensitivity(input?.dataSensitivity))
+      return { reason: 'High-sensitivity data magnifies CRQC impact — model it.' }
     return null
   },
 
@@ -113,6 +172,8 @@ const RULES: Partial<Record<ExecutiveDocumentType, SuggestionRule>> = {
   'supply-chain-matrix': ({ input }) => {
     if (input?.vendorDependency === 'heavy-vendor' || input?.vendorDependency === 'mixed')
       return { reason: 'Significant vendor dependency — a supply-chain matrix is needed.' }
+    if (input?.industry && HIGH_VENDOR_EXPOSURE_INDUSTRIES.has(input.industry))
+      return { reason: `${input.industry} has elevated third-party crypto exposure.` }
     return null
   },
 
@@ -148,6 +209,8 @@ const RULES: Partial<Record<ExecutiveDocumentType, SuggestionRule>> = {
       return { reason: 'Executive persona — a board deck communicates the plan upward.' }
     if (isHighRisk({ ...({} as AssessmentSnapshot), result } as AssessmentSnapshot))
       return { reason: `Risk level is ${result?.riskLevel} — surface to the board.` }
+    if (input?.industry && HIGH_BOARD_VISIBILITY_INDUSTRIES.has(input.industry))
+      return { reason: `${input.industry} typically requires board-level crypto attestation.` }
     return null
   },
 

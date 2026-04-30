@@ -13,6 +13,7 @@ const PRIORITY_STYLES: Record<number, string> = {
 function ActionRow({ item }: { item: ActionItem }) {
   const navigate = useNavigate()
   const borderClass = PRIORITY_STYLES[item.priority] ?? 'border-l-border'
+  const drivers = item.drivers ?? []
 
   return (
     <div
@@ -22,6 +23,19 @@ function ActionRow({ item }: { item: ActionItem }) {
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-foreground">{item.title}</p>
         <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
+        {drivers.length > 0 && (
+          <div className="flex flex-wrap gap-1 mt-1.5">
+            {drivers.map((d) => (
+              <span
+                key={d}
+                className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20"
+                title="Why this is in your top 5: based on your assessment profile"
+              >
+                {d}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
       <Button
         variant="ghost"

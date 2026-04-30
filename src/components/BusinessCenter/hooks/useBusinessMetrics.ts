@@ -119,6 +119,11 @@ export interface ActionItem {
   title: string
   description: string
   action: { label: string; path: string }
+  /** Human-readable reasons this action is being suggested at the user's
+   *  current priority. Computed alongside `adjustPriority` from the user's
+   *  industry / persona / vendor / agility profile. Surfaced as small chips
+   *  in ActionRow so the user understands why an item is in their top-5. */
+  drivers?: string[]
 }
 
 export interface ModuleProgressInfo {
@@ -132,6 +137,9 @@ export interface ModuleProgressInfo {
 export interface TrackedFramework extends ComplianceFramework {
   daysUntilDeadline: number | null
   urgency: 'critical' | 'warning' | 'safe' | 'unknown'
+  /** Where the framework came from: starred on /compliance, captured by /assess,
+   *  or both. Used to disambiguate provenance in the GovernanceWire UI. */
+  source: 'compliance' | 'assess' | 'both'
 }
 
 export interface InfraLayerCoverage {
@@ -384,9 +392,60 @@ function computeActionItems(
   // ── Profile-aware priority nudges ──────────────────────────────────────
   // Shift priority by industry / persona / risk-profile so the top-of-list
   // matches the user's highest-leverage next step rather than a generic order.
-  const adjustedItems = items.map((item) => ({ ...item, priority: adjustPriority(item, profile) }))
+  // Also collect human-readable drivers so the UI can show "why" each item is
+  // in the user's top-5.
+  const adjustedItems = items.map((item) => ({
+    ...item,
+    priority: adjustPriority(item, profile),
+    drivers: computeDrivers(item, profile, riskScore),
+  }))
 
   return adjustedItems.sort((a, b) => a.priority - b.priority).slice(0, 5)
+}
+
+/** Mirror of the conditions in `adjustPriority` plus broader profile signals,
+ *  emitted as short labels for the UI. Each label answers "why is this here?"
+ *  in a glanceable way (industry, persona, framework count, risk score). */
+function computeDrivers(
+  item: ActionItem,
+  profile: ActionProfile,
+  riskScore: number | null
+): string[] {
+  const drivers: string[] = []
+  const title = item.title.toLowerCase()
+
+  if (HIGH_BREACH_INDUSTRIES.has(profile.industry) && title.includes('risk report')) {
+    drivers.push(`${profile.industry} breach exposure`)
+  }
+  if (HIGH_COMPLIANCE_INDUSTRIES.has(profile.industry) && title.includes('compliance framework')) {
+    drivers.push(`${profile.industry} regulator pressure`)
+  }
+  if (
+    profile.vendorDependency === 'heavy-vendor' &&
+    profile.cryptoAgility === 'hardcoded' &&
+    title.includes('governance')
+  ) {
+    drivers.push('Heavy vendors + hardcoded crypto')
+  }
+  if (profile.persona === 'executive' && title.includes('learning path')) {
+    drivers.push('Executive persona — delegated execution')
+  }
+  if (profile.persona === 'ops' && title.includes('migration products')) {
+    drivers.push('Ops persona — migration first')
+  }
+  if (riskScore !== null && riskScore >= 70 && title.includes('risk')) {
+    drivers.push(`Risk score ${riskScore} (high)`)
+  }
+  if (
+    profile.vendorDependency === 'heavy-vendor' &&
+    (title.includes('vendor') || title.includes('product'))
+  ) {
+    drivers.push('Heavy vendor dependency')
+  }
+  if (profile.cryptoAgility === 'hardcoded' && title.includes('roadmap')) {
+    drivers.push('Hardcoded crypto')
+  }
+  return drivers
 }
 
 /** Heuristic: shift priority up (lower number) for actions most relevant to the
@@ -443,10 +502,9 @@ export function useBusinessMetrics(): BusinessMetrics {
     const result = input ? computeAssessment(input) : null
 
     // ── Compliance tracking ─────────────────────────────────────
-    const trackedIds = new Set([
-      ...complianceStore.myFrameworks,
-      ...assessmentStore.complianceRequirements,
-    ])
+    const fromCompliancePage = new Set(complianceStore.myFrameworks)
+    const fromAssessment = new Set(assessmentStore.complianceRequirements)
+    const trackedIds = new Set([...fromCompliancePage, ...fromAssessment])
     const now = new Date()
     const currentYear = now.getFullYear()
 
@@ -468,7 +526,12 @@ export function useBusinessMetrics(): BusinessMetrics {
           else urgency = 'safe'
         }
 
-        return { ...f, daysUntilDeadline, urgency }
+        const inCompliance = fromCompliancePage.has(f.id)
+        const inAssess = fromAssessment.has(f.id)
+        const source: TrackedFramework['source'] =
+          inCompliance && inAssess ? 'both' : inCompliance ? 'compliance' : 'assess'
+
+        return { ...f, daysUntilDeadline, urgency, source }
       })
       .sort((a, b) => (a.daysUntilDeadline ?? Infinity) - (b.daysUntilDeadline ?? Infinity))
 

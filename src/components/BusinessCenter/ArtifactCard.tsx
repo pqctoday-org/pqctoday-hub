@@ -4,6 +4,8 @@ import { FileText, Eye, Pencil, Trash2, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 import { TOOL_LABELS_BY_ARTIFACT_TYPE, getCswp39RefForArtifactType } from './businessToolsRegistry'
+import { Cswp39SectionBadge } from './widgets/Cswp39SectionBadge'
+import { ApprovalStatusControl } from './widgets/ApprovalStatusControl'
 
 export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'roi-model': 'ROI Model',
@@ -82,6 +84,16 @@ export function ArtifactCard({
     day: 'numeric',
     year: 'numeric',
   })
+  const updatedTs = document.updatedAt ?? document.createdAt
+  const wasEdited = updatedTs > document.createdAt
+  const updatedDate = wasEdited
+    ? new Date(updatedTs).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      })
+    : null
+  const revisionCount = document.revisions?.length ?? 0
 
   return (
     <div className="group flex items-start gap-3 p-3 rounded-lg border border-border hover:border-primary/30 hover:bg-muted/30 transition-colors">
@@ -121,19 +133,36 @@ export function ArtifactCard({
             {typeLabel}
           </span>
           {cswp39Ref && (
-            <span
-              className="text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 bg-muted text-muted-foreground border border-border"
-              title={
-                cswp39Ref.subSection
-                  ? `NIST CSWP.39 ${cswp39Ref.sectionRef} — ${cswp39Ref.subSection}`
-                  : `NIST CSWP.39 ${cswp39Ref.sectionRef}`
-              }
-            >
-              {cswp39Ref.sectionRef}
-            </span>
+            <Cswp39SectionBadge
+              sectionRef={cswp39Ref.sectionRef}
+              subSection={cswp39Ref.subSection}
+            />
           )}
         </div>
-        <span className="text-xs text-muted-foreground">{createdDate}</span>
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-xs text-muted-foreground">{createdDate}</span>
+          {updatedDate && (
+            <span
+              className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20"
+              title={`Last updated ${updatedDate}`}
+            >
+              Updated {updatedDate}
+            </span>
+          )}
+          {revisionCount > 0 && (
+            <span
+              className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border"
+              title={`${revisionCount} revision${revisionCount !== 1 ? 's' : ''} recorded`}
+            >
+              Revisions: {revisionCount}
+            </span>
+          )}
+          <ApprovalStatusControl
+            status={document.approvalStatus ?? 'draft'}
+            reviewer={document.reviewer}
+            approvedAt={document.approvedAt}
+          />
+        </div>
       </div>
       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
         <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => onView(document)}>
@@ -205,16 +234,10 @@ export function ArtifactPlaceholder({
             </span>
           )}
           {cswp39Ref && (
-            <span
-              className="text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 bg-muted text-muted-foreground border border-border"
-              title={
-                cswp39Ref.subSection
-                  ? `NIST CSWP.39 ${cswp39Ref.sectionRef} — ${cswp39Ref.subSection}`
-                  : `NIST CSWP.39 ${cswp39Ref.sectionRef}`
-              }
-            >
-              {cswp39Ref.sectionRef}
-            </span>
+            <Cswp39SectionBadge
+              sectionRef={cswp39Ref.sectionRef}
+              subSection={cswp39Ref.subSection}
+            />
           )}
         </div>
         <span className="text-xs text-muted-foreground/60 line-clamp-1">

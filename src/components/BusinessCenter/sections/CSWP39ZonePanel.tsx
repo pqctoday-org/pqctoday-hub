@@ -8,7 +8,8 @@
  * Policies", "Supply Chains", etc.
  */
 import React, { useState } from 'react'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, ChevronUp, GraduationCap } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { CSWP39_ZONE_DETAILS, CSWP39_ZONE_STYLES, type ZoneId } from '@/data/cswp39ZoneData'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
@@ -28,7 +29,9 @@ import { useAssessmentSnapshot } from '@/hooks/assessment/useAssessmentSnapshot'
 import { getArtifactSuggestion } from '@/data/assessmentToArtifactPriority'
 import { AssetsWire } from './wires/AssetsWire'
 import { GovernanceWire } from './wires/GovernanceWire'
+import { ManagementToolsWire } from './wires/ManagementToolsWire'
 import { MigrationWire } from './wires/MigrationWire'
+import { MitigationWire } from './wires/MitigationWire'
 import { RiskManagementWire } from './wires/RiskManagementWire'
 
 export interface CSWP39ZonePanelProps {
@@ -139,6 +142,16 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
             <span className="text-[10px] text-muted-foreground">
               {artifacts.length}/{sectionTypes.length} created
             </span>
+            {detail.learnRoute && (
+              <Link
+                to={detail.learnRoute}
+                className="inline-flex items-center gap-1 text-[10px] font-medium text-primary hover:underline"
+                title={`Learn ${detail.title.toLowerCase()} in the workshop`}
+              >
+                <GraduationCap size={11} />
+                Learn this zone →
+              </Link>
+            )}
           </div>
           <p className="text-xs text-foreground/80 mt-1.5">{detail.what}</p>
           <div className="flex flex-wrap gap-1 mt-2">
@@ -236,9 +249,9 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
 const wireFor: Record<ZoneId, React.ComponentType<{ metrics: BusinessMetrics }> | null> = {
   governance: GovernanceWire,
   assets: AssetsWire,
-  'management-tools': null,
+  'management-tools': ManagementToolsWire,
   'risk-management': RiskManagementWire,
-  mitigation: null,
+  mitigation: MitigationWire,
   migration: MigrationWire,
 }
 

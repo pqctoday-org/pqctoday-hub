@@ -231,36 +231,35 @@ export function VisionSection() {
                 conversation, and without compromising the privacy of the people who need them.
               </p>
             </div>
-
-            <hr className="border-border" />
-
-            {/* Personal links */}
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-              <p className="text-sm text-muted-foreground">
-                Connect:{' '}
-                <a
-                  href="https://www.linkedin.com/in/eric-amador-971850a"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  Eric Amador on LinkedIn
-                </a>
-              </p>
-              <span className="hidden sm:inline text-muted-foreground/30">•</span>
-              <Button
-                variant="ghost"
-                onClick={() => setIsJourneyModalOpen(true)}
-                className="inline-flex items-center gap-2 text-accent hover:text-accent/80 group"
-              >
-                <Sparkles size={16} className="group-hover:animate-pulse" />
-                <span className="font-semibold underline decoration-2 underline-offset-4">
-                  View My Career Journey
-                </span>
-              </Button>
-            </div>
           </div>
         </div>
+      </div>
+
+      {/* Personal links — always visible */}
+      <hr className="border-border mt-5" />
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-5">
+        <p className="text-sm text-muted-foreground">
+          Connect:{' '}
+          <a
+            href="https://www.linkedin.com/in/eric-amador-971850a"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            Eric Amador on LinkedIn
+          </a>
+        </p>
+        <span className="hidden sm:inline text-muted-foreground/30">•</span>
+        <Button
+          variant="ghost"
+          onClick={() => setIsJourneyModalOpen(true)}
+          className="inline-flex items-center gap-2 text-accent hover:text-accent/80 group"
+        >
+          <Sparkles size={16} className="group-hover:animate-pulse" />
+          <span className="font-semibold underline decoration-2 underline-offset-4">
+            View My Career Journey
+          </span>
+        </Button>
       </div>
       <CareerJourneyModal
         isOpen={isJourneyModalOpen}

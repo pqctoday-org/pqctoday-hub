@@ -1,12 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useCallback, useEffect, useRef, Suspense } from 'react'
-import { X, Download, Pencil, Eye, FileDown } from 'lucide-react'
+import { X, Download, Pencil, Eye, FileDown, Maximize2, Minimize2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { MarkdownView } from '@/components/ui/MarkdownView'
 import { htmlToPdf } from '@/utils/exportPdf'
 import { useModuleStore } from '@/store/useModuleStore'
-import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
+import type {
+  ExecutiveDocument,
+  ExecutiveDocumentApprovalStatus,
+  ExecutiveDocumentType,
+} from '@/services/storage/types'
+import { ApprovalStatusControl } from './widgets/ApprovalStatusControl'
 import { useIsEmbedded } from '@/embed/EmbedProvider'
 import { ARTIFACT_TYPE_TO_TOOL_ID, TOOL_LABELS_BY_ARTIFACT_TYPE } from './businessToolsRegistry'
 import { BUSINESS_TOOL_COMPONENTS } from './businessToolComponents'
@@ -41,8 +46,33 @@ export function ArtifactDrawer({
   onCreated,
 }: ArtifactDrawerProps) {
   const [deleteConfirm, setDeleteConfirm] = useState(false)
+  // Half/full toggle. Always starts at half — per design, no persistence.
+  // On mobile (< sm) the drawer is already full-width via `w-full`, so the
+  // toggle is hidden there.
+  const [isFullPage, setIsFullPage] = useState(false)
   const [openedAt] = useState<number>(() => Date.now())
   const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
+  const updateExecutiveDocument = useModuleStore((s) => s.updateExecutiveDocument)
+
+  const advanceApproval = useCallback(
+    (next: ExecutiveDocumentApprovalStatus, reviewer?: string) => {
+      if (!document) return
+      const patch: Partial<Omit<ExecutiveDocument, 'id'>> = { approvalStatus: next }
+      if (reviewer) patch.reviewer = reviewer
+      if (next === 'approved') patch.approvedAt = Date.now()
+      updateExecutiveDocument(document.id, patch)
+    },
+    [document, updateExecutiveDocument]
+  )
+
+  const resetApproval = useCallback(() => {
+    if (!document) return
+    updateExecutiveDocument(document.id, {
+      approvalStatus: 'draft',
+      reviewer: undefined,
+      approvedAt: undefined,
+    })
+  }, [document, updateExecutiveDocument])
   const executiveDocuments = useModuleStore((s) => s.artifacts.executiveDocuments)
   const isEmbedded = useIsEmbedded()
 
@@ -103,15 +133,21 @@ export function ArtifactDrawer({
   const toolLabel = TOOL_LABELS_BY_ARTIFACT_TYPE[activeType]
   const headerTitle =
     mode === 'create' ? `New ${toolLabel?.name ?? 'artifact'}` : (document?.title ?? '')
+  const formatDate = (ts: number) =>
+    new Date(ts).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+  const docUpdatedAt = document?.updatedAt ?? document?.createdAt ?? 0
+  const docWasEdited = !!document && docUpdatedAt > document.createdAt
+  const docRevisionCount = document?.revisions?.length ?? 0
   const headerSubtitle =
     mode === 'create'
       ? (toolLabel?.description ?? 'Fill in the builder and save to add this artifact.')
       : document
-        ? `Created ${new Date(document.createdAt).toLocaleDateString('en-US', {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-          })}`
+        ? docWasEdited
+          ? `Created ${formatDate(document.createdAt)} · Updated ${formatDate(docUpdatedAt)}` +
+            (docRevisionCount > 0
+              ? ` · ${docRevisionCount} revision${docRevisionCount !== 1 ? 's' : ''}`
+              : '')
+          : `Created ${formatDate(document.createdAt)}`
         : ''
 
   return (
@@ -128,9 +164,12 @@ export function ArtifactDrawer({
         aria-label="Close drawer"
       />
 
-      {/* Drawer panel */}
+      {/* Drawer panel — width is full on mobile; on >= sm it's 600/720 by
+           default and toggles to the full viewport when isFullPage is true. */}
       <div
-        className={`${isEmbedded ? 'absolute' : 'fixed'} inset-y-0 right-0 w-full sm:w-[600px] lg:w-[720px] z-50 bg-background border-l border-border shadow-xl flex flex-col animate-in slide-in-from-right duration-200`}
+        className={`${isEmbedded ? 'absolute' : 'fixed'} inset-y-0 right-0 w-full ${
+          isFullPage ? 'sm:w-screen lg:w-screen' : 'sm:w-[600px] lg:w-[720px]'
+        } z-50 bg-background border-l border-border shadow-xl flex flex-col animate-in slide-in-from-right duration-200 transition-[width] duration-200`}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-border shrink-0">
@@ -173,6 +212,17 @@ export function ArtifactDrawer({
                 </Button>
               </>
             )}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="hidden sm:inline-flex h-8 w-8 p-0"
+              onClick={() => setIsFullPage((v) => !v)}
+              aria-label={isFullPage ? 'Collapse to half page' : 'Expand to full page'}
+              title={isFullPage ? 'Collapse to half page' : 'Expand to full page'}
+              aria-pressed={isFullPage}
+            >
+              {isFullPage ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+            </Button>
             <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={onClose}>
               <X size={16} />
             </Button>
@@ -217,8 +267,8 @@ export function ArtifactDrawer({
         </div>
 
         {/* Footer */}
-        <div className="px-5 py-3 border-t border-border shrink-0 flex items-center justify-between">
-          <div>
+        <div className="px-5 py-3 border-t border-border shrink-0 flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex items-center gap-3 flex-wrap">
             {document && deleteConfirm ? (
               <div className="flex items-center gap-2">
                 <span className="text-xs text-destructive">Delete this artifact?</span>
@@ -239,6 +289,15 @@ export function ArtifactDrawer({
                 Delete
               </Button>
             ) : null}
+            {document && (
+              <ApprovalStatusControl
+                status={document.approvalStatus ?? 'draft'}
+                reviewer={document.reviewer}
+                approvedAt={document.approvedAt}
+                onAdvance={advanceApproval}
+                onReset={resetApproval}
+              />
+            )}
           </div>
           <Button variant="outline" size="sm" onClick={onClose}>
             Close

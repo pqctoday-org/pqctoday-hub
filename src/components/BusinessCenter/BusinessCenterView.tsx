@@ -7,9 +7,6 @@ import {
   BookOpen,
   Download,
   Filter,
-  ShieldAlert,
-  ChevronDown,
-  ChevronUp,
   Wrench,
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
@@ -26,9 +23,9 @@ import { CSWP39_ZONE_ORDER, legacyToZoneId, type ZoneId } from '@/data/cswp39Zon
 import { useBusinessMetrics } from './hooks/useBusinessMetrics'
 import { TYPE_LABELS } from './ArtifactCard'
 import { CommandCenterStrategicPlan } from './sections/CommandCenterStrategicPlan'
+import { CSWP39SectionsNav } from './sections/CSWP39SectionsNav'
 import { CSWP39ZonePanel } from './sections/CSWP39ZonePanel'
 import { ActionItemsSection } from './sections/ActionItemsSection'
-import { CyberInsuranceLensSection } from './sections/CyberInsuranceLensSection'
 import { CompactLearningBar } from './CompactLearningBar'
 import { ArtifactDrawer, type DrawerMode } from './ArtifactDrawer'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
@@ -149,11 +146,6 @@ export function BusinessCenterView() {
   // Filter state
   const [typeFilter, setTypeFilter] = useState('all')
 
-  // Cyber Insurance side panel toggle (default per persona).
-  const [insuranceOpen, setInsuranceOpen] = useState<boolean>(
-    zoneEmphasis.insurancePanelDefaultOpen ?? false
-  )
-
   // Drawer state. Create mode uses `drawerCreateType` with a null document; view/edit
   // use `drawerDoc` with createType cleared. The drawer itself handles the transition
   // from create → view once a new document of the given type is persisted.
@@ -253,8 +245,11 @@ export function BusinessCenterView() {
       <PageHeader
         icon={LayoutDashboard}
         pageId="business-center"
-        title="Command Center"
-        description="Your PQC readiness command center, organised around the NIST CSWP.39 Fig 3 Crypto Agility Strategic Plan (Considerations for Achieving Crypto Agility, Dec 2025)."
+        title={zoneEmphasis.headline ?? 'Command Center'}
+        description={
+          zoneEmphasis.tagline ??
+          'Your PQC readiness command center, organised around the NIST CSWP.39 Fig 3 Crypto Agility Strategic Plan (Considerations for Achieving Crypto Agility, Dec 2025).'
+        }
         shareTitle="PQC Command Center — Quantum Readiness Workspace"
         shareText="Your PQC readiness command center — risk, compliance, governance, and actionable next steps."
       />
@@ -309,6 +304,9 @@ export function BusinessCenterView() {
           {/* Top cross-cut: Action Items strip */}
           <ActionItemsSection metrics={metrics} />
 
+          {/* NIST CSWP.39 — by document section (§3 / §4 / §5 / §6) */}
+          <CSWP39SectionsNav onZoneSelect={handleZoneSelect} />
+
           {/* CSWP.39 Fig 3 — Crypto Agility Strategic Plan (primary nav) */}
           <CommandCenterStrategicPlan
             metrics={metrics}
@@ -328,31 +326,6 @@ export function BusinessCenterView() {
                 {...zoneCallbacks}
               />
             ))}
-          </div>
-
-          {/* Cyber Insurance side panel — togglable, persona-default open */}
-          <div className="glass-panel p-0 overflow-hidden">
-            <Button
-              variant="ghost"
-              className="w-full justify-between px-4 py-3 rounded-none"
-              onClick={() => setInsuranceOpen((v) => !v)}
-              aria-expanded={insuranceOpen}
-            >
-              <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                <ShieldAlert size={16} className="text-primary" />
-                Cyber Insurance Lens
-              </span>
-              {insuranceOpen ? (
-                <ChevronUp size={16} className="text-muted-foreground" />
-              ) : (
-                <ChevronDown size={16} className="text-muted-foreground" />
-              )}
-            </Button>
-            {insuranceOpen && (
-              <div className="border-t border-border">
-                <CyberInsuranceLensSection />
-              </div>
-            )}
           </div>
 
           {/* Bottom cross-cut: learning bar */}

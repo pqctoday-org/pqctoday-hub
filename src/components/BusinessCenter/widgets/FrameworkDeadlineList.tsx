@@ -8,6 +8,18 @@ const URGENCY_STYLES: Record<string, string> = {
   unknown: 'bg-muted text-muted-foreground border-border',
 }
 
+const SOURCE_LABEL: Record<TrackedFramework['source'], string> = {
+  compliance: 'from /compliance',
+  assess: 'from /assess',
+  both: 'both',
+}
+
+const SOURCE_STYLE: Record<TrackedFramework['source'], string> = {
+  compliance: 'bg-primary/10 text-primary border-primary/20',
+  assess: 'bg-accent/10 text-accent border-accent/20',
+  both: 'bg-status-success/15 text-status-success border-status-success/30',
+}
+
 function FrameworkRow({ framework }: { framework: TrackedFramework }) {
   const style = URGENCY_STYLES[framework.urgency] ?? URGENCY_STYLES.unknown
 
@@ -21,9 +33,15 @@ function FrameworkRow({ framework }: { framework: TrackedFramework }) {
   return (
     <div className="flex items-center justify-between py-2 border-b border-border last:border-0">
       <div className="flex-1 min-w-0">
-        <span className="text-sm font-medium text-foreground truncate block">
-          {framework.label}
-        </span>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="text-sm font-medium text-foreground truncate">{framework.label}</span>
+          <span
+            className={`text-[9px] font-semibold uppercase tracking-wider px-1 py-0 rounded border ${SOURCE_STYLE[framework.source]}`}
+            title={`Source: ${SOURCE_LABEL[framework.source]}`}
+          >
+            {SOURCE_LABEL[framework.source]}
+          </span>
+        </div>
         {framework.requiresPQC && (
           <span className="text-xs text-muted-foreground">PQC required</span>
         )}

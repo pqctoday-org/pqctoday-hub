@@ -26,6 +26,8 @@ import {
   ALL_CHANGELOG_VERSIONS,
   HAS_DATA_SECTIONS,
   HAS_SECURITY_SECTIONS,
+  type ChangelogVersion,
+  type ChangelogSection,
 } from '../../utils/changelogParser'
 import { Button } from '@/components/ui/button'
 
@@ -162,6 +164,58 @@ function formatDate(dateStr: string): string {
   })
 }
 
+// Strip inline code spans and markdown links from a title so it reads as plain
+// prose in the collapsed view. Full markdown still renders inside `Show details`.
+function cleanTitle(title: string): string {
+  return title
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // [text](url) → text
+    .replace(/`([^`]+)`/g, '$1') // `code` → code
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+interface ChangelogDateGroup {
+  date: string
+  versions: ChangelogVersion[]
+}
+
+function groupVersionsByDate(versions: ChangelogVersion[]): ChangelogDateGroup[] {
+  const groups: ChangelogDateGroup[] = []
+  for (const v of versions) {
+    const last = groups[groups.length - 1]
+    if (last && last.date === v.date) {
+      last.versions.push(v)
+    } else {
+      groups.push({ date: v.date, versions: [v] })
+    }
+  }
+  return groups
+}
+
+// Section type ordering for merged display (matches the legend on the filter bar).
+const SECTION_ORDER: ChangelogSection['type'][] = [
+  'added',
+  'changed',
+  'fixed',
+  'data',
+  'security',
+  'other',
+]
+
+function mergeSections(versions: ChangelogVersion[]): ChangelogSection[] {
+  const buckets = new Map<ChangelogSection['type'], ChangelogSection['entries']>()
+  for (const v of versions) {
+    for (const s of v.sections) {
+      const existing = buckets.get(s.type) ?? []
+      buckets.set(s.type, existing.concat(s.entries))
+    }
+  }
+  return SECTION_ORDER.filter((t) => buckets.has(t)).map((t) => ({
+    type: t,
+    entries: buckets.get(t) ?? [],
+  }))
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export const ChangelogView = () => {
@@ -196,6 +250,8 @@ export const ChangelogView = () => {
       }),
     })).filter((v) => v.sections.length > 0)
   }, [filters])
+
+  const groupedByDate = useMemo(() => groupVersionsByDate(filteredVersions), [filteredVersions])
 
   const allFiltersActive =
     filters.added &&
@@ -418,130 +474,161 @@ export const ChangelogView = () => {
         {/* Timeline spine */}
         <div className="absolute left-[10px] sm:left-[14px] top-2 bottom-2 w-px bg-border/40" />
 
-        {filteredVersions.map((v, idx) => (
-          <div key={v.version} id={`v${v.version}`} className="relative">
-            {/* Version milestone dot */}
-            <div
-              className={clsx(
-                'absolute top-[22px] -left-[18px] sm:-left-6 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full ring-2 ring-background z-10',
-                idx === 0 ? 'bg-primary' : 'bg-border'
-              )}
-            />
+        {groupedByDate.map((group, idx) => {
+          const groupHighlighted = group.versions.some(
+            (v) => highlightedVersion === `v${v.version}`
+          )
+          const versionLabel =
+            group.versions.length === 1
+              ? `v${group.versions[0].version}`
+              : `v${group.versions[group.versions.length - 1].version}–v${group.versions[0].version}`
+          // Merge sections across same-date versions, preserving section order.
+          const mergedSections = mergeSections(group.versions)
+          const groupSummary = group.versions
+            .map((v) => v.summary)
+            .filter((s) => s && s.length > 0)
+            .join(' · ')
+          return (
+            <div key={group.date} className="relative">
+              {/* Date milestone dot */}
+              <div
+                className={clsx(
+                  'absolute top-[22px] -left-[18px] sm:-left-6 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full ring-2 ring-background z-10',
+                  idx === 0 ? 'bg-primary' : 'bg-border'
+                )}
+              />
 
-            <div
-              className={clsx(
-                'glass-panel p-6 transition-shadow duration-500',
-                highlightedVersion === `v${v.version}` && 'ring-2 ring-primary shadow-glow'
-              )}
-            >
-              {/* Version header */}
-              <div className="mb-4 pb-3 border-b border-border">
-                <div className="flex items-baseline gap-3">
-                  <h2 className="text-xl font-semibold text-foreground">v{v.version}</h2>
-                  <span className="text-sm text-muted-foreground">{formatDate(v.date)}</span>
-                  {idx === 0 && (
-                    <span className="ml-auto text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
-                      Current
+              {/* Per-version anchors so deep-links keep working */}
+              {group.versions.map((v) => (
+                <div
+                  key={v.version}
+                  id={`v${v.version}`}
+                  className="absolute -top-20"
+                  aria-hidden="true"
+                />
+              ))}
+
+              <div
+                className={clsx(
+                  'glass-panel p-6 transition-shadow duration-500',
+                  groupHighlighted && 'ring-2 ring-primary shadow-glow'
+                )}
+              >
+                {/* Date header */}
+                <div className="mb-4 pb-3 border-b border-border">
+                  <div className="flex items-baseline gap-3 flex-wrap">
+                    <h2 className="text-xl font-semibold text-foreground">
+                      {formatDate(group.date)}
+                    </h2>
+                    <span className="text-xs font-mono text-muted-foreground bg-muted/30 px-2 py-0.5 rounded-full border border-border">
+                      {versionLabel}
                     </span>
+                    {idx === 0 && (
+                      <span className="ml-auto text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
+                        Current
+                      </span>
+                    )}
+                  </div>
+                  {groupSummary && (
+                    <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
+                      {groupSummary}
+                    </p>
                   )}
                 </div>
-                {v.summary && (
-                  <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
-                    {v.summary}
-                  </p>
-                )}
-              </div>
 
-              {/* Sections */}
-              <div className="space-y-4">
-                {v.sections.map((section) => {
-                  const config = SECTION_CONFIG[section.type]
-                  const { Icon } = config
-                  return (
-                    <div key={section.type}>
-                      {/* Category band */}
-                      <div
-                        className={clsx(
-                          'flex items-center gap-2 px-3 py-2 rounded-r-lg border-l-4 mb-2',
-                          config.borderClass,
-                          config.bgClass
-                        )}
-                      >
-                        <Icon size={14} className={config.textClass} />
-                        <span className={clsx('text-sm font-semibold', config.textClass)}>
-                          {config.label}
-                        </span>
-                        <span
+                {/* Merged sections */}
+                <div className="space-y-4">
+                  {mergedSections.map((section) => {
+                    const config = SECTION_CONFIG[section.type]
+                    const { Icon } = config
+                    return (
+                      <div key={section.type}>
+                        {/* Category band */}
+                        <div
                           className={clsx(
-                            'text-xs ml-auto tabular-nums opacity-70',
-                            config.textClass
+                            'flex items-center gap-2 px-3 py-2 rounded-r-lg border-l-4 mb-2',
+                            config.borderClass,
+                            config.bgClass
                           )}
                         >
-                          {section.entries.length}
-                        </span>
-                      </div>
+                          <Icon size={14} className={config.textClass} />
+                          <span className={clsx('text-sm font-semibold', config.textClass)}>
+                            {config.label}
+                          </span>
+                          <span
+                            className={clsx(
+                              'text-xs ml-auto tabular-nums opacity-70',
+                              config.textClass
+                            )}
+                          >
+                            {section.entries.length}
+                          </span>
+                        </div>
 
-                      {/* Entry list */}
-                      <ul className="space-y-0.5 pl-1">
-                        {section.entries.map((entry, ei) => (
-                          <li key={ei}>
-                            <div className="py-1.5 px-2 rounded hover:bg-muted/20 transition-colors">
-                              <div className="flex items-start gap-2">
-                                <span className={clsx('mt-0.5 shrink-0 text-sm', config.textClass)}>
-                                  ›
-                                </span>
-                                <div className="flex-1 min-w-0">
-                                  <span className="font-semibold text-sm text-foreground">
-                                    {entry.title}
+                        {/* Entry list */}
+                        <ul className="space-y-0.5 pl-1">
+                          {section.entries.map((entry, ei) => (
+                            <li key={ei}>
+                              <div className="py-1.5 px-2 rounded hover:bg-muted/20 transition-colors">
+                                <div className="flex items-start gap-2">
+                                  <span
+                                    className={clsx('mt-0.5 shrink-0 text-sm', config.textClass)}
+                                  >
+                                    ›
                                   </span>
-                                  {/* Impact badges */}
-                                  {(entry.meta.personas.length > 0 ||
-                                    entry.meta.views.length > 0) && (
-                                    <div className="flex flex-wrap gap-1 mt-1.5">
-                                      {entry.meta.personas.map((p) => {
-                                        const pConf = PERSONA_CONFIG[p]
-                                        if (!pConf) return null
-                                        const { Icon: PIcon, label: pLabel } = pConf
-                                        return (
+                                  <div className="flex-1 min-w-0">
+                                    <span className="font-semibold text-sm text-foreground">
+                                      {cleanTitle(entry.title)}
+                                    </span>
+                                    {/* Impact badges */}
+                                    {(entry.meta.personas.length > 0 ||
+                                      entry.meta.views.length > 0) && (
+                                      <div className="flex flex-wrap gap-1 mt-1.5">
+                                        {entry.meta.personas.map((p) => {
+                                          const pConf = PERSONA_CONFIG[p]
+                                          if (!pConf) return null
+                                          const { Icon: PIcon, label: pLabel } = pConf
+                                          return (
+                                            <span
+                                              key={p}
+                                              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs bg-primary/10 text-primary border border-primary/20"
+                                            >
+                                              <PIcon size={10} />
+                                              {pLabel}
+                                            </span>
+                                          )
+                                        })}
+                                        {entry.meta.views.map((viewPath) => (
                                           <span
-                                            key={p}
-                                            className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs bg-primary/10 text-primary border border-primary/20"
+                                            key={viewPath}
+                                            className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-muted/50 text-muted-foreground border border-border"
                                           >
-                                            <PIcon size={10} />
-                                            {pLabel}
+                                            {VIEW_LABELS[viewPath] ?? viewPath}
                                           </span>
-                                        )
-                                      })}
-                                      {entry.meta.views.map((viewPath) => (
-                                        <span
-                                          key={viewPath}
-                                          className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-muted/50 text-muted-foreground border border-border"
-                                        >
-                                          {VIEW_LABELS[viewPath] ?? viewPath}
-                                        </span>
-                                      ))}
-                                    </div>
-                                  )}
-                                  {showDetails && entry.body && (
-                                    <div className="mt-1 prose prose-sm prose-invert max-w-none prose-p:text-muted-foreground prose-p:my-0.5 prose-li:text-muted-foreground prose-code:text-primary prose-code:bg-muted/50 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-a:text-primary">
-                                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                        {entry.body}
-                                      </ReactMarkdown>
-                                    </div>
-                                  )}
+                                        ))}
+                                      </div>
+                                    )}
+                                    {showDetails && entry.body && (
+                                      <div className="mt-1 prose prose-sm prose-invert max-w-none prose-p:text-muted-foreground prose-p:my-0.5 prose-li:text-muted-foreground prose-code:text-primary prose-code:bg-muted/50 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-a:text-primary">
+                                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                          {entry.body}
+                                        </ReactMarkdown>
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )
-                })}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </motion.div>
     </div>
   )

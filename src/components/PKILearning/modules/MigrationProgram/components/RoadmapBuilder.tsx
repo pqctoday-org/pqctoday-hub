@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { TimelinePlanner, ExportableArtifact } from '../../../common/executive'
 import type { ExternalDeadline, Milestone } from '../../../common/executive'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import { useBookmarkStore } from '@/store/useBookmarkStore'
 
 interface MitigationGatewayRow {
   asset: string
@@ -63,6 +64,9 @@ export const RoadmapBuilder: React.FC = () => {
   const { countryDeadlines, algorithmMigrations } = useExecutiveModuleData()
   const { addExecutiveDocument } = useModuleStore()
   const transitions = useAlgorithmTransitionsForAssessment()
+  const myTimelineCountries = useBookmarkStore((s) => s.myTimelineCountries)
+  const myProductIdsBookmarked = useMigrateSelectionStore((s) => s.myProducts)
+  const toggleMyProduct = useMigrateSelectionStore((s) => s.toggleMyProduct)
 
   // Map country deadlines to ExternalDeadline[] format
   const externalDeadlines: ExternalDeadline[] = useMemo(() => {
@@ -123,7 +127,16 @@ export const RoadmapBuilder: React.FC = () => {
   const [seededFromAssessment, setSeededFromAssessment] = React.useState(
     assessmentMilestones.length > 0
   )
-  const [selectedDeadlines, setSelectedDeadlines] = React.useState<ExternalDeadline[]>([])
+  // Pre-select deadlines from countries the user bookmarked on /timeline.
+  // Match by `country.countryName` since that's the field stored in
+  // `myTimelineCountries`.
+  const initialSelectedDeadlines = useMemo<ExternalDeadline[]>(() => {
+    if (myTimelineCountries.length === 0) return []
+    const set = new Set(myTimelineCountries.map((c) => c.toLowerCase()))
+    return externalDeadlines.filter((d) => set.has(d.source.toLowerCase()))
+  }, [myTimelineCountries, externalDeadlines])
+  const [selectedDeadlines, setSelectedDeadlines] =
+    React.useState<ExternalDeadline[]>(initialSelectedDeadlines)
 
   // CSWP.39 §4.6 — Mitigation gateway rows for assets where direct migration is blocked.
   const myProductIds = useMigrateSelectionStore((s) => s.myProducts)
@@ -279,20 +292,42 @@ export const RoadmapBuilder: React.FC = () => {
                   onChange={(e) => updateMitigation(idx, { asset: e.target.value })}
                   aria-label="Asset"
                 />
-                <select
-                  className="text-sm rounded-md border border-input bg-background p-2"
-                  value={row.gatewayProductId}
-                  onChange={(e) => updateMitigation(idx, { gatewayProductId: e.target.value })}
-                  aria-label="Gateway product"
-                >
-                  <option value="">— Select gateway —</option>
-                  {candidateGateways.map((g) => (
-                    <option key={g.productId} value={g.productId}>
-                      {g.selected ? '★ ' : ''}
-                      {g.label}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex items-center gap-1">
+                  <select
+                    className="text-sm rounded-md border border-input bg-background p-2 flex-1"
+                    value={row.gatewayProductId}
+                    onChange={(e) => updateMitigation(idx, { gatewayProductId: e.target.value })}
+                    aria-label="Gateway product"
+                  >
+                    <option value="">— Select gateway —</option>
+                    {candidateGateways.map((g) => (
+                      <option key={g.productId} value={g.productId}>
+                        {g.selected ? '★ ' : ''}
+                        {g.label}
+                      </option>
+                    ))}
+                  </select>
+                  {row.gatewayProductId && (
+                    <Button
+                      type="button"
+                      variant={
+                        myProductIdsBookmarked.includes(row.gatewayProductId)
+                          ? 'secondary'
+                          : 'outline'
+                      }
+                      size="sm"
+                      className="h-7 px-2 text-[10px] shrink-0"
+                      onClick={() => toggleMyProduct(row.gatewayProductId)}
+                      title={
+                        myProductIdsBookmarked.includes(row.gatewayProductId)
+                          ? 'Remove from My Products'
+                          : 'Add to My Products (saves on /migrate)'
+                      }
+                    >
+                      {myProductIdsBookmarked.includes(row.gatewayProductId) ? '★ Mine' : '+ Mine'}
+                    </Button>
+                  )}
+                </div>
                 <input
                   type="text"
                   className="text-sm rounded-md border border-input bg-background p-2"

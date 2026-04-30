@@ -24,6 +24,7 @@ import {
   Compass,
   Search,
   ScrollText,
+  Terminal,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { WhatsNewModal } from '../ui/WhatsNewModal'
@@ -98,6 +99,7 @@ export const MainLayout = () => {
       section: 'start',
       hiddenOnMobile: true,
       mobileMore: true,
+      moreOrder: 1,
     },
     // — My Journey —
     { path: '/migrate', label: 'Migrate', icon: ArrowRightLeft, section: 'journey' },
@@ -108,6 +110,7 @@ export const MainLayout = () => {
       section: 'journey',
       hiddenOnMobile: true,
       mobileMore: true,
+      moreOrder: 3,
     },
     // — Assess & Report —
     { path: '/assess', label: 'Assess', icon: ClipboardCheck, section: 'assess' },
@@ -118,6 +121,7 @@ export const MainLayout = () => {
       section: 'assess',
       hiddenOnMobile: true,
       mobileMore: true,
+      moreOrder: 4,
     },
     {
       path: '/business',
@@ -127,6 +131,7 @@ export const MainLayout = () => {
       // Visible on mobile for executive/architect; hidden for others
       hiddenOnMobile: !(selectedPersona === 'executive' || selectedPersona === 'architect'),
       mobileMore: selectedPersona !== 'executive' && selectedPersona !== 'architect',
+      moreOrder: 5,
     },
     {
       path: '/playground',
@@ -135,6 +140,16 @@ export const MainLayout = () => {
       hiddenOnMobile: true,
       mobileMore: true,
       section: 'assess',
+      moreOrder: 2,
+    },
+    {
+      path: '/openssl',
+      label: 'OpenSSL',
+      icon: Terminal,
+      hiddenOnMobile: true,
+      mobileMore: true,
+      section: 'assess',
+      moreOrder: 6,
     },
     // — Keep Up to Date —
     { path: '/threats', label: 'Threats', icon: AlertTriangle, section: 'current' },
@@ -146,6 +161,7 @@ export const MainLayout = () => {
       section: 'current',
       hiddenOnMobile: true,
       mobileMore: true,
+      moreOrder: 7,
     },
     {
       path: '/patents',
@@ -154,8 +170,16 @@ export const MainLayout = () => {
       section: 'current',
       hiddenOnMobile: true,
       mobileMore: true,
+      moreOrder: 8,
     },
-    { path: '/about', label: 'About', icon: Info, hiddenOnMobile: true, mobileMore: true },
+    {
+      path: '/about',
+      label: 'About',
+      icon: Info,
+      hiddenOnMobile: true,
+      mobileMore: true,
+      moreOrder: 9,
+    },
   ]
 
   // Abbreviated labels for mobile bottom nav (only override labels that are too long)
@@ -183,8 +207,11 @@ export const MainLayout = () => {
         : true
     )
 
-  // Items that appear in the mobile "More" bottom sheet
-  const moreNavItems = visibleNavItems.filter((item) => item.mobileMore)
+  // Items that appear in the mobile "More" bottom sheet, ordered by frequency/importance
+  const moreNavItems = visibleNavItems
+    .filter((item) => item.mobileMore)
+    .slice()
+    .sort((a, b) => (a.moreOrder ?? 999) - (b.moreOrder ?? 999))
   const isMoreActive = moreNavItems.some((item) =>
     item.end ? location.pathname === item.path : location.pathname.startsWith(item.path)
   )
@@ -322,16 +349,25 @@ export const MainLayout = () => {
                   variant="ghost"
                   size="sm"
                   onClick={() => setMoreMenuOpen(true)}
-                  aria-label="More navigation options"
+                  aria-label={`More navigation options (${moreNavItems.length} pages)`}
                   aria-expanded={moreMenuOpen}
                   aria-haspopup="dialog"
+                  title={`More pages (${moreNavItems.length})`}
                   className={
                     isMoreActive
-                      ? 'bg-primary/10 text-foreground border border-primary/20 px-1 min-h-[44px] flex-col items-center gap-0'
-                      : 'text-muted-foreground hover:text-foreground px-1 min-h-[44px] flex-col items-center gap-0'
+                      ? 'relative bg-primary/10 text-foreground border border-primary/20 px-1 min-h-[44px] flex-col items-center gap-0'
+                      : 'relative text-muted-foreground hover:text-foreground px-1 min-h-[44px] flex-col items-center gap-0'
                   }
                 >
-                  <MoreHorizontal size={18} aria-hidden="true" />
+                  <span className="relative">
+                    <MoreHorizontal size={18} aria-hidden="true" />
+                    <span
+                      aria-hidden="true"
+                      className="absolute -top-1.5 -right-2 min-w-[14px] h-[14px] px-1 rounded-full bg-primary/20 text-primary text-[9px] font-semibold leading-[14px] text-center"
+                    >
+                      {moreNavItems.length}
+                    </span>
+                  </span>
                   <span className="text-[11px] leading-tight mt-0.5">More</span>
                 </Button>
               </div>

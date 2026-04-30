@@ -109,4 +109,41 @@ describe('getArtifactSuggestion', () => {
       getArtifactSuggestion('audit-checklist', snap({ complianceRequirements: [] }))
     ).toBeNull()
   })
+
+  it('suggests supply-chain-matrix for high-vendor-exposure industries', () => {
+    expect(
+      getArtifactSuggestion('supply-chain-matrix', snap({ industry: 'Finance & Banking' }))?.reason
+    ).toMatch(/third-party crypto/i)
+    expect(getArtifactSuggestion('supply-chain-matrix', snap({ industry: 'Other' }))).toBeNull()
+  })
+
+  it('suggests board-deck for high-board-visibility industries', () => {
+    expect(
+      getArtifactSuggestion('board-deck', snap({ industry: 'Government & Defense' }))?.reason
+    ).toMatch(/board-level crypto attestation/i)
+  })
+
+  it('suggests audit-checklist when country has a known jurisdiction', () => {
+    expect(getArtifactSuggestion('audit-checklist', snap({ country: 'Germany' }))?.reason).toMatch(
+      /BSI TR-02102/i
+    )
+  })
+
+  it('suggests compliance-timeline from country jurisdiction when frameworks empty', () => {
+    expect(
+      getArtifactSuggestion('compliance-timeline', snap({ country: 'United States' }))?.reason
+    ).toMatch(/OMB M-23-02/i)
+  })
+
+  it('suggests risk-register for high-sensitivity data', () => {
+    expect(
+      getArtifactSuggestion('risk-register', snap({ dataSensitivity: ['critical'] }))?.reason
+    ).toMatch(/high-sensitivity data/i)
+  })
+
+  it('suggests crqc-scenario for high-sensitivity data', () => {
+    expect(
+      getArtifactSuggestion('crqc-scenario', snap({ dataSensitivity: ['regulated'] }))?.reason
+    ).toMatch(/high-sensitivity data/i)
+  })
 })

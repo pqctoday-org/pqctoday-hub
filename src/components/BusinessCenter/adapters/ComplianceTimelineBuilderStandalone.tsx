@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo } from 'react'
-import { Globe, Check } from 'lucide-react'
+import { Globe, Check, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ComplianceTimelineBuilder } from '@/components/PKILearning/modules/ComplianceStrategy/components/ComplianceTimelineBuilder'
 import { JURISDICTIONS } from '@/components/PKILearning/modules/ComplianceStrategy/data/jurisdictions'
 import { useAssessmentSnapshot } from '@/hooks/assessment/useAssessmentSnapshot'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
+import { complianceFrameworks } from '@/data/complianceData'
 
 /**
  * Zero-prop wrapper around {@link ComplianceTimelineBuilder} for the Command
@@ -22,20 +24,52 @@ function deriveJurisdictionIdsFromCountry(country: string | undefined): string[]
   )
 }
 
+/** Cross-walk myFrameworks (compliance framework IDs the user starred on
+ *  /compliance) to jurisdiction IDs by joining `framework.countries[]` against
+ *  `JURISDICTION.countryNames[]`. Returns dedup'd jurisdiction ids. */
+function deriveJurisdictionIdsFromFrameworks(myFrameworks: string[]): string[] {
+  if (myFrameworks.length === 0) return []
+  const frameworkSet = new Set(myFrameworks)
+  const countries = new Set<string>()
+  for (const fw of complianceFrameworks) {
+    if (!frameworkSet.has(fw.id)) continue
+    for (const c of fw.countries) countries.add(c.toLowerCase())
+  }
+  return JURISDICTIONS.filter((j) =>
+    j.countryNames.some((n) => countries.has(n.toLowerCase()))
+  ).map((j) => j.id)
+}
+
+function dedupe(...lists: string[][]): string[] {
+  return Array.from(new Set(lists.flat()))
+}
+
 export function ComplianceTimelineBuilderStandalone() {
   const { input, result } = useAssessmentSnapshot()
+  const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
+  const toggleMyFramework = useComplianceSelectionStore((s) => s.toggleMyFramework)
   const assessmentJurisdictionIds = deriveJurisdictionIdsFromCountry(input?.country)
+  const myFrameworkJurisdictionIds = deriveJurisdictionIdsFromFrameworks(myFrameworks)
+  const seedJurisdictionIds = dedupe(assessmentJurisdictionIds, myFrameworkJurisdictionIds)
 
-  const [selectedJurisdictions, setSelectedJurisdictions] =
-    useState<string[]>(assessmentJurisdictionIds)
-  const [seededFromAssessment, setSeededFromAssessment] = useState(
-    assessmentJurisdictionIds.length > 0
-  )
+  const [selectedJurisdictions, setSelectedJurisdictions] = useState<string[]>(seedJurisdictionIds)
+  const [seededFromAssessment, setSeededFromAssessment] = useState(seedJurisdictionIds.length > 0)
 
   // PQC-required frameworks the user selected, with deadlines, surfaced as a
   // hint above the jurisdiction picker — not auto-applied because frameworks
   // are not 1:1 with jurisdictions.
   const pqcImpacts = (result?.complianceImpacts ?? []).filter((c) => c.requiresPQC === true)
+
+  /** Build a sources blurb describing what fed the pre-fill (country, my-frameworks, or both). */
+  const seedSources: string[] = []
+  if (assessmentJurisdictionIds.length > 0 && input?.country) {
+    seedSources.push(`country (${input.country})`)
+  }
+  if (myFrameworkJurisdictionIds.length > 0) {
+    seedSources.push(
+      `${myFrameworks.length} framework${myFrameworks.length !== 1 ? 's' : ''} from /compliance`
+    )
+  }
 
   const byRegion = useMemo(() => {
     const map = new Map<string, typeof JURISDICTIONS>()
@@ -57,7 +91,7 @@ export function ComplianceTimelineBuilderStandalone() {
     <div className="space-y-6">
       {seededFromAssessment && (
         <PreFilledBanner
-          summary={`Jurisdiction pre-selected from your assessment country: ${input?.country}.${pqcImpacts.length > 0 ? ` ${pqcImpacts.length} PQC-required framework${pqcImpacts.length !== 1 ? 's' : ''} also identified.` : ''}`}
+          summary={`${seedJurisdictionIds.length} jurisdiction${seedJurisdictionIds.length !== 1 ? 's' : ''} pre-selected from ${seedSources.join(' + ')}.${pqcImpacts.length > 0 ? ` ${pqcImpacts.length} PQC-required framework${pqcImpacts.length !== 1 ? 's' : ''} also identified.` : ''}`}
           onClear={() => {
             setSelectedJurisdictions([])
             setSeededFromAssessment(false)
@@ -71,13 +105,39 @@ export function ComplianceTimelineBuilderStandalone() {
             Frameworks requiring PQC (from your assessment)
           </div>
           <ul className="text-xs text-muted-foreground space-y-1">
-            {pqcImpacts.map((c) => (
-              <li key={c.framework}>
-                <span className="font-medium text-foreground">{c.framework}</span>
-                {c.deadline && <span> — deadline: {c.deadline}</span>}
-                {c.notes && <span className="text-muted-foreground/80"> · {c.notes}</span>}
-              </li>
-            ))}
+            {pqcImpacts.map((c) => {
+              const fwId = complianceFrameworks.find(
+                (fw) => fw.label === c.framework || fw.id === c.framework
+              )?.id
+              const isMine = fwId ? myFrameworks.includes(fwId) : false
+              return (
+                <li key={c.framework} className="flex items-center gap-2 flex-wrap">
+                  <span className="font-medium text-foreground">{c.framework}</span>
+                  {c.deadline && <span>— deadline: {c.deadline}</span>}
+                  {c.notes && <span className="text-muted-foreground/80">· {c.notes}</span>}
+                  {fwId && (
+                    <Button
+                      variant={isMine ? 'secondary' : 'outline'}
+                      size="sm"
+                      className="h-6 px-2 text-[10px] ml-auto"
+                      onClick={() => toggleMyFramework(fwId)}
+                      title={
+                        isMine
+                          ? `Remove ${c.framework} from My Frameworks`
+                          : `Add ${c.framework} to My Frameworks (saves on /compliance)`
+                      }
+                    >
+                      {isMine ? (
+                        <Check size={11} className="mr-1" />
+                      ) : (
+                        <Plus size={11} className="mr-1" />
+                      )}
+                      {isMine ? 'Mine' : 'My Frameworks'}
+                    </Button>
+                  )}
+                </li>
+              )
+            })}
           </ul>
         </div>
       )}

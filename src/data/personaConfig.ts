@@ -265,7 +265,16 @@ export const MODULE_INDUSTRY_RELEVANCE: Record<string, string[] | null> = {
 }
 
 /** Nav paths that are always shown regardless of persona. */
-export const ALWAYS_VISIBLE_PATHS = ['/', '/learn', '/timeline', '/threats', '/about']
+export const ALWAYS_VISIBLE_PATHS = [
+  '/',
+  '/learn',
+  '/timeline',
+  '/threats',
+  '/about',
+  '/changelog',
+  '/faq',
+  '/terms',
+]
 
 /**
  * Maps AVAILABLE_INDUSTRIES names (used in Assessment + store) to the
@@ -434,8 +443,10 @@ export interface BCZoneEmphasis {
   defaultActiveZone: ZoneId
   /** Per-zone artifact-type ordering (unlisted types render after, in default order). */
   featuredArtifacts: Partial<Record<ZoneId, ExecutiveDocumentType[]>>
-  /** Whether the cyber-insurance side panel opens by default. */
-  insurancePanelDefaultOpen?: boolean
+  /** Optional persona-tailored sub-headline. Falls back to the page default. */
+  headline?: string
+  /** Optional persona-tailored description. Falls back to the page default. */
+  tagline?: string
 }
 
 const DEFAULT_ZONE_EMPHASIS: BCZoneEmphasis = {
@@ -444,10 +455,12 @@ const DEFAULT_ZONE_EMPHASIS: BCZoneEmphasis = {
 }
 
 export const BC_ZONE_EMPHASIS_BY_PERSONA: Record<PersonaId, BCZoneEmphasis> = {
-  // Executive: open with Governance (board/policy framing); insurance lens on.
+  // Executive: open with Governance (board/policy framing).
   executive: {
     defaultActiveZone: 'governance',
-    insurancePanelDefaultOpen: true,
+    headline: 'Crypto Risk — Board View',
+    tagline:
+      'Quantum-readiness scorecard organised around the NIST CSWP.39 strategic plan. Surface the artifacts your board needs first: ROI model, board deck, policy, KPIs.',
     featuredArtifacts: {
       governance: ['board-deck', 'roi-model', 'policy-draft', 'audit-checklist'],
       'risk-management': ['kpi-dashboard', 'risk-register'],
@@ -457,6 +470,9 @@ export const BC_ZONE_EMPHASIS_BY_PERSONA: Record<PersonaId, BCZoneEmphasis> = {
   // architecture diagram first (architecture-of-organisation lens).
   architect: {
     defaultActiveZone: 'governance',
+    headline: 'Crypto Architecture — System View',
+    tagline:
+      'Map the as-is and to-be cryptographic architecture across libraries, HSMs, protocols, and CAs. Track agility per asset and ownership via RACI.',
     featuredArtifacts: {
       governance: [
         'crypto-architecture',
@@ -472,6 +488,9 @@ export const BC_ZONE_EMPHASIS_BY_PERSONA: Record<PersonaId, BCZoneEmphasis> = {
   // Ops: open with Migration — surface deployment, roadmap, KPI tracker.
   ops: {
     defaultActiveZone: 'migration',
+    headline: 'Migration & Mitigation — Run View',
+    tagline:
+      'Track migration phases, deployment playbooks, and KPI burndown. Mitigation gateways carry mandatory sunset dates per CSWP.39 §4.6.',
     featuredArtifacts: {
       migration: ['migration-roadmap'],
       mitigation: ['deployment-playbook'],
@@ -482,6 +501,9 @@ export const BC_ZONE_EMPHASIS_BY_PERSONA: Record<PersonaId, BCZoneEmphasis> = {
   // Developer: open with Migration — implementation focus.
   developer: {
     defaultActiveZone: 'migration',
+    headline: 'Implementation View',
+    tagline:
+      'Algorithm transitions, library + HSM upgrade paths, and the deployment playbook for the systems you own.',
     featuredArtifacts: {
       migration: ['migration-roadmap'],
       mitigation: ['deployment-playbook'],
@@ -491,6 +513,9 @@ export const BC_ZONE_EMPHASIS_BY_PERSONA: Record<PersonaId, BCZoneEmphasis> = {
   // Researcher: open with Risk Management — surface risk + policy reference.
   researcher: {
     defaultActiveZone: 'risk-management',
+    headline: 'Risk Analysis & Reference',
+    tagline:
+      'CRQC scenarios, HNDL/HNFL windows, risk-register evidence, and policy citations to anchor your write-ups.',
     featuredArtifacts: {
       'risk-management': ['risk-register', 'risk-treatment-plan'],
       governance: ['policy-draft', 'audit-checklist', 'crqc-scenario'],
@@ -499,6 +524,9 @@ export const BC_ZONE_EMPHASIS_BY_PERSONA: Record<PersonaId, BCZoneEmphasis> = {
   // Curious: beginner subset — start in Governance with the most approachable artifacts.
   curious: {
     defaultActiveZone: 'governance',
+    headline: 'Start Here — Crypto Agility 101',
+    tagline:
+      'Walk through the CSWP.39 strategic plan one step at a time. Friendliest artifacts surface first; deeper tools unlock as you go.',
     featuredArtifacts: {
       governance: ['policy-draft', 'crqc-scenario'],
       'risk-management': ['risk-register', 'kpi-dashboard'],

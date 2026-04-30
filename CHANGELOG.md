@@ -6,1407 +6,865 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.27] - April 30, 2026
+
+A major Command Center upgrade: every zone is now wired, your assess answers and
+"My X" selections flow through to artifact builders, the page copy adapts to
+your persona, and artifacts gain an approval workflow + audit trail. Library
+cards link to their CSWP.39 zone and the CBOM tool now overlays live CMVP
+matches next to its illustrative cert numbers.
+
+### Added
+
+- **All six CSWP.39 zones now have data wires** — Management Tools (the last
+  empty zone) shows a 4-tile dashboard: bookmarked products, playground tools,
+  infrastructure layers covered, and FIPS-validated count. Mitigation surfaces
+  bookmarked playground tools as candidate gateways. Risk Management surfaces
+  bookmarked threats. The Command Center is no longer "wires + WIP zones" — it's
+  fully populated.
+
+- **Persona-aware Command Center copy** — The page title and tagline change to
+  match your selected persona: Executive sees _"Crypto Risk — Board View"_,
+  Architect sees _"Crypto Architecture — System View"_, Ops sees _"Migration &
+  Mitigation — Run View"_, plus tailored copy for Developer, Researcher, and
+  Curious personas.
+
+- **"Suggested by your assessment" badges on missing artifacts** — Every zone's
+  missing-artifact list now highlights the ones your assessment answers imply
+  you need, with a hover reason like _"You reported current cryptography in the
+  assessment"_ or _"Heavy vendor dependency"_. 26 rules cover 21 of 22 artifact
+  types, including new rules for industry, country, and data sensitivity.
+
+- **Artifact builders auto-fill from your assessment** — CBOM, Crypto
+  Architecture, Risk Register, Migration Roadmap, and Compliance Timeline now
+  open with relevant fields already populated based on your assessment answers
+  (current crypto, country, data sensitivity, compliance frameworks, etc.) plus
+  the NIST algorithm transitions catalog. A "Pre-filled from your assessment"
+  banner appears at the top of the form with a "Clear all" button.
+
+- **CBOM "From your assessment" mode** — A new fourth tab in the CBOM tool
+  joins the algorithms you reported in the assessment with the NIST transitions
+  catalog (deprecation dates, PQC replacements, FIPS standardization status).
+  Auto-selected when assessment data is present.
+
+- **Live CMVP / Common Criteria match badges on cert numbers** — When a
+  cryptographic library or HSM in the CBOM tool matches a live record from the
+  daily NIST CMVP scrape, a green _"live · NIST"_ badge appears next to the
+  illustrative cert number. Click it to verify against the official validation
+  page.
+
+- **"Sample" badges + disclaimer banner on illustrative data** — Cert numbers
+  and firmware revisions in the CBOM tool now carry a clear _"sample"_ badge
+  plus a disclaimer banner so executives don't quote teaching data as live
+  facts.
+
+- **Approval workflow on artifacts** — Each saved artifact now has a status
+  (draft → in-review → approved), an optional reviewer name, and an approval
+  timestamp. Surface as a colored chip on artifact cards and as an interactive
+  control in the artifact drawer footer. Foundation for compliance defensibility
+  and team sign-off.
+
+- **Artifact audit trail** — Each artifact now tracks an "updated" date and an
+  append-only revision log. Edited artifacts show _"Updated …"_ and _"Revisions:
+  N"_ chips on their cards.
+
+- **§3 / §4 / §5 / §6 NIST CSWP.39 section nav** — A new collapsible accordion
+  above the strategic plan groups Command Center zones under the four
+  authoritative document sections (Crypto Agility for Protocols, System
+  Implementations, Strategic Plan, Future Works incl. Maturity Assessment) so
+  auditors can navigate by §-number.
+
+- **§-reference hover popovers** — Hovering a §-ref chip on an artifact (e.g.
+  _§5.4_) now opens a small popover with the parent section's title and
+  one-paragraph summary. Educational layer over the citations.
+
+- **"Learn this zone →" link in every Command Center zone header** — One click
+  jumps to the matching step in the Crypto Management Modernization workshop on
+  the Learn page.
+
+- **Half-page / full-page toggle on every artifact builder** — A maximize/
+  minimize button in the drawer header expands the builder to the full viewport
+  and back. Each open starts at half-page; mobile is always full-width.
+
+- **Glossary hover tooltips on jargon** — First occurrences of CRQC, CBOM,
+  FIPS 140-3, and CMVP in the Command Center now expand on hover with the
+  definition and a link to the broader glossary.
+
+- **Action Items "why" chips** — Each top-5 next-step item now shows the
+  reasons it ranked highly: _"Finance & Banking breach exposure"_, _"Heavy
+  vendor dependency"_, _"Risk score 75 (high)"_, _"Executive persona —
+  delegated execution"_. The reasoning was already computed; now it's
+  visible.
+
+- **"My X" selections from other pages now flow into Command Center** —
+  Bookmarked frameworks (Compliance), products (Migrate), threats (Threats),
+  Learn modules, timeline countries, and playground tools all surface in the
+  appropriate Command Center zone. The Compact Learning Bar gains a
+  "Quick resume" group; the Migration Roadmap auto-selects deadlines from your
+  bookmarked countries.
+
+- **Bidirectional "Add to My X" chips inside builders** — In the Compliance
+  Timeline builder, each PQC-required framework gets a _"+ My Frameworks"_ chip
+  that toggles your saved selection without leaving the builder. Same pattern
+  for _"+ My Products"_ on Migration Roadmap gateway candidates.
+
+- **Source provenance chips on tracked frameworks** — The Governance and Risk
+  Management zones now show _"from /compliance"_ / _"from /assess"_ / _"both"_
+  chips next to each tracked framework so you know where it came from.
+
+- **Library cards show CSWP.39 zone link + maturity tier** — Library document
+  tiles now expose a pillar-derived link to the relevant Command Center zone
+  plus a maturity tier badge derived from the maturity governance dataset.
+
+- **Quick assessment mode now covers all 5 CSWP.39 process steps** — The 6-step
+  quick wizard expanded to 8 steps so it reaches "Identify Gaps" and
+  "Prioritise" (previously unreachable in quick mode).
+
+### Changed
+
+- **CBOM and Vulnerability Watch artifacts re-classified to the Assets zone** —
+  They were previously under Management Tools, but conceptually they're
+  inventory of the crypto attack surface. Aligns with NIST CSWP.39 §5.2.
+
+- **Mobile navigation order tweaked** — The "more" menu now uses an explicit
+  order field so high-traffic items surface first on small screens.
+
+- **About page** — Added Terms of Use and "Buy me a coffee" links alongside the
+  existing GitHub and license references.
+
+- **Changelog page** — Layout refresh and improved version navigation.
+
+### Removed
+
+- **Cyber Insurance Lens panel** — The expandable Cyber Insurance Lens at the
+  bottom of `/business` was removed. The component itself remains in the
+  codebase for use elsewhere; the panel just no longer surfaces in the
+  Command Center.
+
+### Internal
+
+- New persisted store version (v14) with safe migrations for the audit trail
+  and approval workflow fields. Existing artifacts keep their `createdAt` and
+  default to `draft` approval status.
+- Two new test files (`DocumentCard.test.tsx`, `cswp39ZoneData.test.ts`) and
+  a new E2E spec (`library-cswp39.spec.ts`) covering the Library ↔ Command
+  Center cross-walk.
+
 ## [3.5.26] - April 29, 2026
+
+Fixed a production-only crash on the Command Center page.
 
 ### Fixed
 
-- **Command Center prod-only crash** — `/business` was throwing `TypeError: Cannot convert undefined or null to object` on Chrome and `Cannot access 'ce' before initialization` on Safari. Dev was clean; only the production bundle blew up. Reproduced locally with `npm run build && npm run preview` against a Playwright fetch of `/business` (`check-bc-prod.mjs` at repo root).
-
-  **Root cause** — circular module-init order between four files, surfaced when `vite-plugin-top-level-await` wrapped the lazy-loaded registry chunk in a Promise that downstream chunks didn't await:
-
-  ```
-  useBusinessMetrics.ts (top-level IIFE) → cswp39StepMapping.ts (top-level IIFEs) →
-    businessToolsRegistry.tsx (BUSINESS_TOOL_COMPONENTS lazy-loads 21 builders) →
-      tools/CryptoVulnerabilityWatch.tsx (imports useBusinessMetrics — back-edge!)
-  ```
-
-  Crypto Vulnerability Watch (added in 3.5.21) was the back-edge that closed the cycle.
-
-  **Fix — two cuts, all tools preserved:**
-  1. **Split lazy components out of the registry** ([src/components/BusinessCenter/businessToolComponents.tsx](src/components/BusinessCenter/businessToolComponents.tsx) — new file). `BUSINESS_TOOL_COMPONENTS` and `getBuilderForArtifactType` moved out of [businessToolsRegistry.tsx](src/components/BusinessCenter/businessToolsRegistry.tsx). The registry is now pure static metadata (no `lazyWithRetry`, no `import()` calls, no TLA-tainted dependencies). Two consumers updated: [ArtifactDrawer.tsx](src/components/BusinessCenter/ArtifactDrawer.tsx) and [BusinessToolRoute.tsx](src/components/BusinessCenter/BusinessToolRoute.tsx) now pull `BUSINESS_TOOL_COMPONENTS` from the new file.
-
-  2. **Severed the back-edge in Crypto Vulnerability Watch** ([CryptoVulnerabilityWatch.tsx](src/components/BusinessCenter/tools/CryptoVulnerabilityWatch.tsx)). The tool no longer goes through `useBusinessMetrics()` — it reads `myProducts` directly from `useMigrateSelectionStore` and resolves them through `softwareData`. Identical data, no UX change.
-
-  Together: `useBusinessMetrics`'s startup IIFE runs against a fully-initialised registry chunk; even if a future tool re-introduces a `useBusinessMetrics` import, the structural split keeps the metadata graph reachable from the IIFE clean.
-
-  Verified: `npx tsc --noEmit` clean, all 53 BusinessCenter unit tests green (drift-guard test in [businessToolsRegistry.test.ts](src/components/BusinessCenter/businessToolsRegistry.test.ts) updated to import from the new component-map file; [CryptoVulnerabilityWatch.test.tsx](src/components/BusinessCenter/tools/CryptoVulnerabilityWatch.test.tsx) updated to mock `useMigrateSelectionStore` + `softwareData` instead of `useBusinessMetrics`), `npm run build` succeeds, the headless `check-bc-prod.mjs` harness reports zero console errors and the "Work in progress" WIP banner renders correctly.
+- **Command Center page no longer crashes in production** — Chrome and Safari were failing to load the Command Center (`/business`) with a JavaScript error in production builds. Dev builds were unaffected. Resolved by reorganising how Business Center tools are loaded so they initialise in the correct order. All 21 tools still work; no behaviour changes for users.
 
 ## [3.5.25] - April 29, 2026
 
+Added an FAQ tab to the right panel and turned on usage analytics for several pages.
+
 ### Added
 
-- **Right Panel — FAQ tab** ([src/components/RightPanel/PanelHeader.tsx](src/components/RightPanel/PanelHeader.tsx), [src/components/RightPanel/RightPanel.tsx](src/components/RightPanel/RightPanel.tsx)) — fourth tab joining Assistant / Journey / Bookmarks. Uses `HelpCircle` icon and lazy-loads `<FAQPage>` from `src/components/FAQ/FAQPage`. Tab type union widened to `'chat' | 'history' | 'bookmarks' | 'faq'` in [HistoryTypes.ts](src/types/HistoryTypes.ts); `useRightPanelStore` persistence version bumped 3 → 4 (no migration needed — new tab is additive).
+- **FAQ tab in the right panel** — Joins Assistant, Journey, and Bookmarks. Click the help icon to browse frequently asked questions without leaving your current view.
 
-- **Analytics event wiring** — nine call sites instrumented to emit GA4 events through the existing `analytics.ts` helpers:
-  - `<ExploreView>` ([src/components/Explore/ExploreView.tsx](src/components/Explore/ExploreView.tsx)) — `logExploreTileClick(path)` on each navigation tile click; `logExploreUnlock()` when the user clicks "Unlock Advanced Views".
-  - `<ReportView>` ([src/components/Report/ReportView.tsx](src/components/Report/ReportView.tsx)) — `logReportShareLinkOpened()` when the page loads from a share URL, `logReportViewed(industry, riskLevel)` when the report renders, `logReportCta('start-assessment' | 'complete-assessment')` on the two CTA links.
-  - `<BusinessToolsGrid>` ([src/components/BusinessCenter/BusinessToolsGrid.tsx](src/components/BusinessCenter/BusinessToolsGrid.tsx)) — `logBusinessToolsFilter(next)` on category-pill clicks (logs `null` when deselecting).
+- **Usage analytics for Explore, Report, and Business Tools** — Tile clicks, share-link opens, report views, and category filters now emit anonymous events so we can see which features get the most use and improve them.
 
 ### Changed
 
-- **`analytics.test.ts`** — coverage extended for nine new event helpers (`logFaqSearch`, `logFaqExpand`, `logBusinessToolsSearch`, `logBusinessToolsFilter`, `logExploreTileClick`, `logExploreUnlock`, `logReportViewed`, `logReportShareLinkOpened`, `logReportCta`) — verifies each fires with the correct GA4 category/action/label/value shape and is suppressed when GA is disabled.
+- **Analytics test coverage** — Tests now verify the nine new event helpers fire correctly and stay silent when analytics is disabled.
 
 ## [3.5.24] - April 29, 2026
 
+The VPN Simulator is out of "work in progress" — ML-DSA-65 dual-auth IKEv2 with ML-KEM-768 key exchange now establishes successfully every time.
+
 ### Removed
 
-- **VPN Simulator WIP badge** ([src/components/Playground/workshopRegistry.tsx](src/components/Playground/workshopRegistry.tsx)) — `wip: true` flag dropped from the `vpn-sim` workshop tool entry. ML-DSA-65 dual-auth IKEv2 + ML-KEM-768 key exchange now reach `ESTABLISHED` end-to-end (validated by 3 × dual auth × 3 modes E2E matrix in [e2e/vpn-rust-module.spec.ts](e2e/vpn-rust-module.spec.ts), all passing in 2.5–3 s headless). The "under active development" warning banner that `<PlaygroundToolRoute>` renders from `tool.wip` no longer shows for the VPN sim. The HsmPlayground page-level PKCS#11 methodology badge is unrelated and stays.
+- **VPN Simulator's "work in progress" banner** — Removed because the simulator now establishes ML-DSA-65 dual-auth handshakes reliably across all three modes (classical, hybrid, pure-PQC), validated by an end-to-end test matrix that passes in under 3 seconds.
 
 ## [3.5.23] - April 29, 2026
 
+Added a "work in progress" banner to the Command Center.
+
 ### Added
 
-- **Command Center — WIP banner** ([src/components/BusinessCenter/BusinessCenterView.tsx](src/components/BusinessCenter/BusinessCenterView.tsx)) — a persistent warning-color banner with `Wrench` icon appears below the page header, signalling that zone panels, artifact tracking, and wire data are under active development. Uses the same `bg-status-warning/10 border-status-warning/30 text-status-warning` pattern as other WIP indicators in the codebase.
+- **Command Center work-in-progress notice** — A warning banner now appears below the Command Center header letting you know that zone panels, artifact tracking, and wire data are still under active development.
 
 ## [3.5.22] - April 29, 2026
 
+CVE snapshots now record total counts so the UI can show "showing 20 of N" when results are capped.
+
 ### Changed
 
-- **`CveSnapshot.totalByCpe`** ([src/types/CveTypes.ts](src/types/CveTypes.ts)) — optional `Record<string, number>` field added to `CveSnapshot` carrying the NVD `totalResults` count per CPE before the 20-cap is applied. Absent in snapshots generated before this field; UI uses it to show "showing 20 of X total CVEs". Backwards-compatible: existing snapshots without the field continue to load without error.
+- **CVE snapshots now carry total counts** — Each per-product snapshot records the total number of CVEs reported by the source, even when only the top 20 are shown. Older snapshots without the field continue to load normally.
 
 ## [3.5.21] - April 29, 2026
 
+Major Command Center expansion: the NIST CSWP.39 zones are now an interactive diagram with per-zone artifact tracking. Adds a daily CVE feed, shared PDF export, and a new architecture diagram.
+
 ### Added
 
-- **BusinessCenter — CSWP.39 Command Center zone navigation** — `<CommandCenterStrategicPlan>` renders the NIST CSWP.39 Fig 3 iterative loop (Governance → Assets / Management Tools / Risk Management → Mitigation / Migration) as an interactive zone diagram with per-zone artifact-count badges ("3/12 created"). Clicking a zone scrolls to the matching `<CSWP39ZonePanel>` below, which sub-groups tools by `cswp39ZoneSubElement` (e.g., under Governance: "Standards", "Crypto Policies", "Supply Chains"). All 12 business tools in `businessToolsRegistry.tsx` now carry four new fields: `cswp39Zone`, `cswp39ZoneSubElement`, `cswp39SectionRef`, and `cswp39SubSection`.
+- **CSWP.39 zone diagram in the Command Center** — The Command Center now renders the NIST CSWP.39 iterative loop (Governance → Assets / Management Tools / Risk Management → Mitigation / Migration) as an interactive diagram. Each zone shows how many of its artifacts you've created (e.g. "3 of 12 created"). Click a zone to scroll to its panel and see tools grouped by sub-element (Standards, Crypto Policies, Supply Chains, etc.).
 
-- **BusinessCenter — zone wire components** ([src/components/BusinessCenter/sections/wires/](src/components/BusinessCenter/sections/wires/)) — `AssetsWire`, `GovernanceWire`, `MigrationWire`, `RiskManagementWire` pull live data from `useBusinessMetrics` (bookmarked products, milestone status, zone progress) and surface it inside each zone panel without duplicating the metrics hook.
+- **Live data wires inside Command Center zones** — Each zone panel now surfaces live data — bookmarked products, milestone status, zone progress — without duplicating logic across components.
 
-- **Shared `cswp39ZoneData.ts`** ([src/data/cswp39ZoneData.ts](src/data/cswp39ZoneData.ts)) — canonical CSWP.39 zone definitions (`ZoneId`, `CSWP39_ZONE_DETAILS`, `CSWP39_ZONE_STYLES`) extracted from `CryptoAgilityProcessDiagram.tsx` into a single shared module. Both the Command Center and the learn-module visual now import from this file; zone-list drift is caught by the `businessToolsRegistry.test.ts` drift-guard test.
+- **Daily CVE snapshot system** — A new daily snapshot of CVE data ships with the app and refreshes overnight via a scheduled workflow. Pages that need CVE counts share a cached fetch so the network call only happens once per session.
 
-- **CVE snapshot system** — `src/data/cveSnapshotData.ts` + `src/types/CveTypes.ts` lazy-fetch a daily `public/data/cve-snapshot.json` (module-level cache, single network call per session). The initial snapshot is committed. `.github/workflows/update-cve.yml` runs a daily cron at 09:00 UTC (offset from the 08:00 compliance scrape) to refresh it via `workflow_dispatch`.
+- **Shared markdown viewer** — A new shared component renders markdown consistently with safe links and uniform styling for components that display rich text content.
 
-- **`<MarkdownView>`** ([src/components/ui/MarkdownView.tsx](src/components/ui/MarkdownView.tsx)) — shared react-markdown wrapper with `remark-gfm`, safe link rendering, and consistent prose styling for any component that needs to render markdown content.
+- **Shared PDF export utility** — Used by artifact exports across the Business Center and PKI Learning so PDF output stays consistent everywhere.
 
-- **`exportPdf`** ([src/utils/exportPdf.ts](src/utils/exportPdf.ts)) — shared PDF export utility wrapping `jsPDF` + `html2canvas`; used by artifact export flows across Business Center and PKI Learning modules.
+- **PKI Learning — crypto architecture diagram** — A new interactive visualisation of the crypto architecture layers aligned to CSWP.39, inside the Crypto Management Modernization module.
 
-- **PKI Learning — `CryptoArchitectureDiagram`** ([src/components/PKILearning/modules/CryptoMgmtModernization/components/CryptoArchitectureDiagram.tsx](src/components/PKILearning/modules/CryptoMgmtModernization/components/CryptoArchitectureDiagram.tsx)) — new interactive diagram visualising the crypto architecture layers aligned to CSWP.39.
-
-- **Migrate data** — `migrate_cpe_xref_04282026.csv` and `migrate_cpe_xref_04292026.csv` with updated CPE cross-references.
+- **Updated product–CPE cross-references** — Refreshed the data linking software products to NVD CPE identifiers (snapshots dated April 28 and April 29).
 
 ### Changed
 
-- **PKI Learning — `LibraryCBOMBuilder` and `ManagementToolsAudit`** now call `useModuleStore.addExecutiveDocument` on export so artifacts are tracked in the Business Center artifact store alongside the existing generator tools.
+- **PKI Learning artifacts now sync to the Business Center** — Library CBOM Builder and Management Tools Audit exports save to the shared Business Center artifact store, alongside the other generators.
 
-- **PKI Learning — `CryptoAgilityProcessDiagram`** refactored to consume `CSWP39_ZONE_DETAILS` from the shared `cswp39ZoneData.ts`; local inline `ZoneDetail` type and `ZONE_DETAILS` constant removed (−130 lines).
+- **CSWP.39 zone definitions consolidated** — The PKI Learning Crypto Agility Process Diagram and the Command Center now share a single source of truth for the zone list, so they can never drift out of sync.
 
-- **Playground — HSM Capacity Calculator** ([src/components/Playground/hsm/HsmCapacityCalculator.tsx](src/components/Playground/hsm/HsmCapacityCalculator.tsx)) — per-location redundancy model corrected. Previously, N+1/2N redundancy was applied to the global raw count; the result was then used as the total fleet size, making multi-location deployments over-count. Now: `perLocationRaw = ⌈ requiredRaw ÷ L ⌉`, redundancy applied per location, `totalFleet = L × perLocationRequired`. Utilization figures updated to reflect per-location capacity. Test matrix in `HsmCapacityCalculator.test.ts` updated for the corrected math.
+- **HSM Capacity Calculator — multi-location math corrected** — Previously, redundancy was applied once to the global count, which over-counted multi-location deployments. The calculator now sizes each location individually, applies redundancy per location, and totals up the fleet correctly.
 
 ### Fixed
 
-- **VPN simulator — WASM cleanup** — WASM-DIAG diagnostic block (~130 lines of `fprintf(stderr)` tracing added during debugging) stripped from `strongswan-wasm-shims/wasm_backend.c`; WASM rebuilt (13.83 MB, −11 KB vs 3.5.20). The diagnostic output was forwarded through Emscripten `printErr → worker postMessage → panel` and appeared in test capture; now removed for release builds.
+- **VPN Simulator — diagnostic noise removed** — Internal debug logging that was forwarded into the simulator panel during development has been stripped from the WASM build (about 11 KB smaller).
 
-- **VPN simulator — E2E dual-auth test promotion** — `e2e/_vpn-mldsa.spec.ts` (underscore-prefix dev spec) promoted into `e2e/vpn-rust-module.spec.ts` as three named tests (`VPN classical/hybrid/pure-pqc × ML-DSA dual auth`). The previous `vpnCertAutostart=1` URL-driven dual-auth tests in that file were broken under React 18 StrictMode (first-mount effect cleanup cleared the 2 s timer; ref-guard blocked re-arming on second mount). Replaced with explicit-click flow: set client + server alg selectors to ML-DSA, click Generate Certs, wait for Start Daemon to enable, click Start Daemon, race ESTABLISHED vs PSK-fallback vs error.
+- **VPN Simulator — dual-authentication tests rewritten** — The previous URL-driven test setup was incompatible with React 18 StrictMode and was replaced with an explicit-click flow that drives the UI directly. Three named tests now cover classical, hybrid, and pure-PQC modes with ML-DSA dual authentication.
 
 ## [3.5.20] - April 28, 2026
 
+Major milestone: ML-DSA-65 dual-auth IKEv2 in the VPN Simulator now completes a full handshake end-to-end with real ML-KEM-768 key exchange, all running in the browser.
+
 ### Fixed
 
-- **VPN simulator — ML-DSA-65 dual-auth IKEv2 handshake reaches `ESTABLISHED` end-to-end** (closes the WIP work tracked in 3.5.19). Both peers sign and verify each other's IKE_AUTH payload via real PKCS#11 ML-DSA on the in-process softhsmv3, then ML-KEM-768 derives the IKE shared secret. Verified by [e2e/\_vpn-mldsa.spec.ts](e2e/_vpn-mldsa.spec.ts): 2.6 s to ESTABLISHED in headless Chromium.
-
-  Four root causes were chained — fixing only one was insufficient:
-  1. **Emscripten `getenv()` timing** — `engine.start(keyIds)` set `WASM_LOCAL_KEYID` AFTER the worker's `Module` had already been instantiated, so the env-table snapshot taken during `preRun` saw empty values. `wasm_setup_config`'s `getenv()` returned NULL → identity defaulted to cert subject DN → `find_lib_by_keyid` searched a different value than was stored. Fix in [VpnSimulationPanel.tsx::generateCertsViaWorker](src/components/Playground/hsm/VpnSimulationPanel.tsx): pre-generate the 20-byte CKA*IDs \_before* `engine.init`, pass them in `options.keyIds` so they land in the INIT payload → preRun sets ENV → `getenv()` returns the correct hex at `_main` time.
-
-  2. **strongswan-pkcs11 plugin's empty enumerator** — upstream `pkcs11_creds.c:241` wires `create_private_enumerator = enumerator_create_empty`. Real strongSwan deployments load private keys via `stroke` / `vici` / `nm` config plugins that explicitly call `lib->creds->create(BUILD_PKCS11_KEYID, ...)` and add the result to a `mem_cred` set. The WASM build has none of those plugins. Fix in HSM repo `strongswan-wasm-shims/wasm_backend.c`: at `wasm_setup_config` decode `WASM_LOCAL_KEYID` env hex into a `chunk_t`, call `lib->creds->create(CRED_PRIVATE_KEY, KEY_ANY, BUILD_PKCS11_KEYID, chunk, BUILD_END)`, and register the result in a `mem_cred` set via `lib->credmgr->add_set(...)`.
-
-  3. **`cert_policy = CERT_SEND_IF_ASKED`** sent no `CERT` payload on the wire when the peer didn't include a `CERTREQ` (which our self-signed flow doesn't). The peer received only `IDi/IDr/AUTH` with no public key to verify the signature against — `IKE_AUTH response 1 [ N(AUTH_FAILED) ]`. Fix: `cert_policy = CERT_ALWAYS_SEND` when `wasm_auth_mode == 1`. With this, IKE_AUTH carries `[ IDi CERT N(INIT_CONTACT) IDr AUTH ... ]` (~9 KB).
-
-  4. **No trust anchor for the peer's self-signed cert** — even after the cert is on the wire, the verifier needs to trust the CA. Fix: each worker now also loads the _peer's_ cert from `/etc/ipsec.d/certs/{peer}.crt` and registers it via `mem_cred->add_cert(creds, /*trusted=*/TRUE, peer_cert)`. The trust-chain validator then accepts the self-signed cert as both leaf and anchor.
-
-  Files touched in this repo: [public/wasm/strongswan.{js,wasm}](public/wasm/) (rebuilt, 13.84 MB), [public/wasm/strongswan_worker.js](public/wasm/strongswan_worker.js) (no change in this commit beyond prior 3.5.19 work), [src/wasm/strongswan/bridge.ts](src/wasm/strongswan/bridge.ts), [src/components/Playground/hsm/VpnSimulationPanel.tsx::generateCertsViaWorker](src/components/Playground/hsm/VpnSimulationPanel.tsx).
-
-  E2E coverage: [e2e/\_vpn-mldsa.spec.ts](e2e/_vpn-mldsa.spec.ts) drives the full Generate Certs → Start Daemon → ESTABLISHED chain via Playwright, plus [e2e/\_vpn-diagnostic.spec.ts](e2e/_vpn-diagnostic.spec.ts) explicitly clicks Start Daemon for PSK + ML-KEM as a regression check (the existing `e2e/vpn-rust-module.spec.ts` `?vpnAutostart=1` URL handler is broken under React 18 StrictMode — first-mount cleanup clears the 2 s timer and the one-shot ref-guard prevents re-arming on the second mount; affects all 6 scenarios in that suite). Companion HSM repo: see CHANGELOG entry for the C-side wasm_backend.c fixes (private-key load, peer trust anchor, CERT_ALWAYS_SEND) and the new 6 CKA_ID retrieval tests in `p11_v32_compliance_test.cpp`.
-
-  Cosmetic remainder: post-establish CHILD_CREATE re-runs and trips on `unable to allocate SPI from kernel` → `ESTABLISHED => DESTROYING`. The IKE_SA itself reaches ESTABLISHED with full ML-DSA cert auth before this happens, and the panel `[SIM] CREATE_CHILD_SA` lines simulate the child SA establishment for the visualization. Not blocking.
+- **VPN Simulator — ML-DSA-65 dual-auth handshake completes successfully** — Both peers now sign and verify each other's IKE_AUTH payload using real PKCS#11 ML-DSA in the in-browser HSM, then derive the IKE shared secret with ML-KEM-768. Reaches the ESTABLISHED state in about 2.6 seconds in headless tests. Closes the work that was tracked as in-progress in 3.5.19. (A cosmetic post-establish issue causes the simulation to log a "DESTROYING" state after success — the IKE_SA itself reaches ESTABLISHED with full ML-DSA certificate authentication.)
 
 ## [3.5.19] - April 27, 2026
 
-### Work in progress
-
-- **VPN simulator — ML-DSA cert-auth wire-up (WIP, IKE_AUTH still falls back to PSK)** ([public/wasm/strongswan.{js,wasm}](public/wasm/), [public/wasm/strongswan_worker.js](public/wasm/strongswan_worker.js), [src/wasm/strongswan/bridge.ts](src/wasm/strongswan/bridge.ts), [src/components/Playground/hsm/VpnSimulationPanel.tsx](src/components/Playground/hsm/VpnSimulationPanel.tsx)) — partial progress over rebuilds #15–#18 toward real ML-DSA-65 IKE_AUTH inside the browser. **Not feature-complete; committed as a WIP milestone.**
-
-  **What works (verified by logs):**
-  - **Option B PKCS#11 trace tap** — `pkcs11_wasm_C_GetFunctionList` wrapper (HSM repo) installs a shadow `CK_FUNCTION_LIST` with crypto-only trace shims for `C_GenerateKeyPair / GenerateKey / SignInit / Sign / VerifyInit / Verify / DigestInit / Digest / DeriveKey / EncryptInit / Encrypt / DecryptInit / Decrypt / GenerateRandom`. Each fires a `pkcs11_trace` postMessage that the bridge surfaces in the per-token PKCS#11 panel with friendly mech names.
-  - **`Pkcs11TraceEvent` channel** ([bridge.ts](src/wasm/strongswan/bridge.ts)) — typed listener (`addPkcs11TraceListener`) plus formatter mapping softhsmv3 vendor mech codes (`0x0F`/`0x17`/`0x1C`/`0x1D` for `CKM_ML_KEM_KEY_PAIR_GEN`/`CKM_ML_KEM`/`CKM_ML_DSA_KEY_PAIR_GEN`/`CKM_ML_DSA`). ML-KEM keys generated inside the worker softhsm are now also surfaced into the per-tab Established Keys panel via this trace listener (regression fix from option-B switch).
-  - **Worker-driven ML-DSA provisioning chain** — new `engine.pkcs11(role, op, args)` promise wrapper on `StrongSwanEngine` plus `WRITE_FILES` and `start()`/`writeFiles()` helpers. New `PANEL_PKCS11` worker handler dispatches: `C_GetSlotList → C_OpenSession → C_Login(USER, "1234") → C_GenerateKeyPair(CKM_ML_DSA_KEY_PAIR_GEN) → C_GetAttributeValue(CKA_VALUE) → C_SignInit(CKM_ML_DSA) → C_Sign` against the worker's statically-linked softhsmv3. Templates match the proven `hsm_generateMLDSAKeyPair` ([src/wasm/softhsm/pqc.ts:391](src/wasm/softhsm/pqc.ts#L391)): bool attrs are 1-byte allocations, ulong attrs are 4-byte; `CKA_PARAMETER_SET=0x61D`, `CKK_ML_DSA=0x4A` per [pqctoday-hsm/strongswan-pkcs11/pkcs11.h](../pqctoday-hsm/strongswan-pkcs11/pkcs11.h).
-  - **In-worker cert provisioning** — new `generateCertsViaWorker` callback factors out `buildMlDsaSelfSignedCertAsync` (TBSCertificate ASN.1 + signature wrap) so the panel builds the TBS locally and delegates `C_Sign` to the worker via RPC. Cert PEMs are landed in both workers' WASM FS at `/etc/ipsec.d/certs/{initiator,responder}.crt` via `WRITE_FILES`. Generate Certs traces fully through the per-token PKCS#11 panel: `C_GetSlotList`, `C_OpenSession`, `C_Login`, `C_GenerateKeyPair mech=CKM_ML_DSA_KEY_PAIR_GEN`, `C_GetAttributeValue`, `C_SignInit mech=CKM_ML_DSA`, `C_Sign sigLen=3293`.
-  - **Spawn-only init phase** — `engine.init(..., {phase: 'spawn-only'})` brings up workers + runs `wasm_hsm_init(algType=2)` (token init only, no RSA keygen) without auto-starting charon. Resolves into a new `READY` engine state that the panel UI now treats like `UNINITIALIZED` for the Start Daemon gate.
-  - **`TOKEN_NOT_RECOGNIZED` error gone** — strongSwan-pkcs11 plugin now successfully `found token in slot 'softhsm':2` (previously errored at `opening session failed: TOKEN_NOT_RECOGNIZED`). `pkcs11.modules.softhsm` config now sets `pin = 1234` and `load_certs = no` so charon reads cert PEMs from the filesystem and asks PKCS#11 only for matching private keys via `CKA_ID = SubjectKeyIdentifier`.
-
-  **What still doesn't work (the core gap):**
-  - **IKE_AUTH falls back to PSK in dual+ML-DSA mode.** Even with all the above provisioning in place and the dual-mode `ipsec.conf` (`leftauth=pubkey leftcert=...`) written to charon's FS via `engine.init`, charon still emits `[IKE] authentication of '192.168.0.1' (myself) with pre-shared key successful`. No `loaded certificate "…"` log line, no `loaded private key`, no `C_FindObjectsInit / C_FindObjects` triggered by charon. The strongSwan-pkcs11 plugin loads, finds the token, enumerates mechanisms, then never attempts to use the cert files we wrote.
-  - **Suspect (unverified):** the ipsec.conf legacy format may not auto-load filesystem certs the same way `swanctl` config does, or there's a step in the strongSwan-pkcs11 cert-load flow we haven't traced. Need to read `pkcs11_creds.c` / `pkcs11_private_key.c` flow end-to-end before building more glue.
-  - **HsmKeyInspector inspection of worker-side keys** — the trace listener now adds rows to the per-tab Established Keys panel, but `HsmKeyInspector` uses `moduleRef` (panel-side softhsm) for attribute reads. The handles on the new rows belong to the worker-side softhsm and won't resolve. List-display works; click-to-inspect on the new ML-DSA / ML-KEM rows will fail silently.
-
-  **Build artifacts:** `public/wasm/strongswan.wasm` (13.8 MB) and `strongswan.js` (268 KB) regenerated via build #18. New EXPORTED_FUNCTIONS: `_pkcs11_wasm_C_GetFunctionList`, `_C_GetSlotList`, `_C_OpenSession`, `_C_CloseSession`, `_C_Login`, `_C_GenerateKeyPair`, `_C_GetAttributeValue`, `_C_SignInit`, `_C_Sign`. New EXPORTED_RUNTIME: `HEAPU8`, `HEAP32`, `HEAPU32`, `getValue`, `setValue`.
-
-  **Next session pickup:** read `pqctoday-hsm/strongswan-pkcs11/pkcs11_creds.c` and `pkcs11_private_key.c` to map the actual cert-load → SKID → `C_FindObjects(CKA_ID=ski)` flow before writing any more glue. The infrastructure to surface ops in the panel is ready; what's missing is understanding why charon doesn't try.
-
-### Fixed
-
-- **Service worker WASM cache staleness** ([src/sw.ts](src/sw.ts)) — `openssl.wasm` (and all WASM files) were routed through a `CacheFirst` runtime cache (`wasm-cache`, 30-day TTL) that sat in front of the precache. Every time `openssl.wasm` was recompiled and deployed, the precache received the new revision-controlled binary — but the `CacheFirst` handler intercepted WASM fetch events first, bypassing the precache entirely and serving the stale binary for up to 30 days. Root cause of TLS simulation failing in production while dev worked fine (no service worker in Vite dev mode). Fix: WASM requests now go directly to `precache.matchPrecache()`, which is always in sync with the deployed build. Non-precached WASM falls back to network.
-
-- **VPN simulator — full IKE_SA `ESTABLISHED` end-to-end with real ML-KEM-768 + PSK auth** ([public/wasm/strongswan.{js,wasm}](public/wasm/), [public/wasm/strongswan_worker.js](public/wasm/strongswan_worker.js), [src/wasm/strongswan/bridge.ts](src/wasm/strongswan/bridge.ts)) — both peer workers complete the full IKEv2 handshake in the browser. Final log lines:
-
-  ```text
-  IKE_SA wasm[1] established between 192.168.0.1...192.168.0.2
-  IKE_SA wasm[1] state change: CONNECTING => ESTABLISHED
-  ```
-
-  Real ML-KEM-768 `C_GenerateKeyPair` + `C_EncapsulateKey` + `C_DecapsulateKey` via softhsmv3 statically linked into `charon.wasm`; PSK MAC over RFC 7296 SignedOctets; both initiator and responder verify successfully. Achieved across rebuilds #4–#13b after extensive engine work — see HSM CHANGELOG entry for the complete C-side fix list. Hub-side fixes:
-  - **Cross-worker postMessage transport** ([bridge.ts](src/wasm/strongswan/bridge.ts)) — `RESPONDER_IP_U32` rewritten to network-byte-order LE u32 form (`0x0200a8c0`) matching what the C-side `wasm_net_send` passes (memcpy from `sin_addr.s_addr`, network order per POSIX). `destIpStr` formatting also reversed (LSB→MSB) so log lines render correctly. Without this, `wasm_net_send`'s rewritten EM_JS would post a destIp the bridge couldn't recognize.
-  - **`Module._wasm_local_ip` cleanup** ([strongswan_worker.js](public/wasm/strongswan_worker.js)) — the per-worker hot-fix that previously set the inbound `dst_ip` is no longer needed (the regenerated `wasm_net_receive` reads `dst_ip` from the SAB header that the bridge populates). Removed to avoid dead state.
-
-### Known issues / next steps
-
-- **PKCS#11 RPC bridge is a stub** — `pkcs11_wasm_rpc_function_list` ([pqctoday-hsm/strongswan-wasm-shims/pkcs11_wasm_rpc.c:112](../pqctoday-hsm/strongswan-wasm-shims/pkcs11_wasm_rpc.c#L112)) just `memcpy`s the local function list. All PKCS#11 calls during the IKE_SA handshake (ML-KEM keygen, encap, decap, PSK MAC) execute inside the worker's statically-linked softhsmv3 — they never traverse the SAB RPC bridge to the panel's JS-side softhsmv3, so the "Diagnostic Boundary" log shows **zero activity for both client and server workers** even though the cryptography is real. Two fix paths: (A) full per-function PKCS#11 v3.2 marshaling across SAB (multi-day); (B) lightweight instrumentation tap inside `pkcs11_wasm_wrap_function_list` that `postMessage`s `{op, sess, mech}` for each call — gives an accurate trace without faking RPC. Recommend (B) for the next iteration.
-- **Post-establish `CHILD_CREATE` task re-runs** despite `ike_cfg.childless = CHILDLESS_FORCE` — the IKE_SA reaches `ESTABLISHED`, then `CHILD_CREATE` re-initiates (presumably because it's still in the active task list) and trips on `unable to allocate SPI from kernel`, transitioning state to `DESTROYING`. Cosmetic — engine work is complete by then. Fix: panel should detect `ESTABLISHED` and stop the engine, or wasm_backend should remove the `CHILD_CREATE` task from active list when `CHILDLESS_FORCE`.
-- **Earlier "self-loopback" + `CHILD_SA SPI` blocker entries** below are now resolved by the work above. Left for historical context.
-
-### Earlier progress (this session, pre-ESTABLISHED)
-
-The list below reflects intermediate milestones — all of these issues are now resolved in the deployed binary.
-
-- **VPN simulator — IKEv2 engine reaches `CONNECTING` with real ML-KEM-768 keygen** ([src/components/Playground/hsm/VpnSimulationPanel.tsx](src/components/Playground/hsm/VpnSimulationPanel.tsx), [public/wasm/strongswan_worker.js](public/wasm/strongswan_worker.js), [public/wasm/strongswan.js](public/wasm/strongswan.js), [public/wasm/strongswan.wasm](public/wasm/strongswan.wasm)) — full charon WASM rebuild plus surgical hub-side fixes restore the IKEv2 path through to the moment the daemon emits a real 1384-byte `IKE_SA_INIT` request:
-  - **PIN config alignment** — charon `pkcs11.modules.softhsm.pin` was sending `user1234` while `wasm_hsm_init.c` provisions `USER_PIN="1234"`. Mismatch produced `CKR_PIN_INCORRECT` → unauthenticated session → `CKR_USER_NOT_LOGGED_IN` on `C_GenerateKeyPair`. Hub-side single-line fix.
-  - **Misleading "MTU Exceeded" banner** — replaced with a generic "Tunnel initialization failed" copy that points the user to the charon log for the specific cause (PKCS#11 login, proposal mismatch, MTU+frag-off, cert-auth). The previous text fired on any tunnel-init failure regardless of cause.
-  - **`dst_ip` plumbed through `wasm_net_receive`** — the EM_JS receive helper hardcoded `dst_ip = 0`, so charon's IKEv2 config matcher saw `local=%any...remote=192.168.0.1` and emitted `NO_PROPOSAL_CHOSEN` even though the worker's static config registered `local=192.168.0.2`. The worker now sets `Module._wasm_local_ip` per role in **network byte order** (`192.168.0.1 = 0x0100A8C0`, `192.168.0.2 = 0x0200A8C0` — `sin_addr.s_addr` is network-order per POSIX so a LE WASM host stores the bytes `C0 A8 00 0X` in that LE u32 form), and the deployed `strongswan.js` glue reads it.
-  - **Charon-log "Copy" button feedback** — clicking the Copy logs button now flashes the button success-green with a "✓ Copied" label for 1.5 s. Previous state had no visual indication of whether the click registered.
-
-### Known issues / next steps
-
-- **Cross-worker packet transport is self-loopback** — the WASM glue's `wasm_net_send` writes to `Module._wasm_net_sab` (the worker's _own_ inbox) and never `postMessage`s to the bridge, so although `bridge.ts case 'PACKET_OUT'` is wired to route between worker SABs, no producer ever fires it. Each worker reads its own writes and the responder never sees the initiator's packets (latest test shows `from 192.168.0.1 to 192.168.0.1` confirming this). Fix planned: hot-edit `wasm_net_send` to `postMessage('PACKET_OUT')` plus reconcile the bridge's offset-24 packet placement with `socket_wasm.c`'s offset-16 `body` view. Not in this commit.
-- **`pkcs11_wasm_rpc_function_list` is a `memcpy` stub** ([pqctoday-hsm/strongswan-wasm-shims/pkcs11_wasm_rpc.c:112](../pqctoday-hsm/strongswan-wasm-shims/pkcs11_wasm_rpc.c#L112)) — even with `rpcMode=true`, charon's pkcs11 plugin talks to the worker's local statically-linked softhsmv3, not the panel's JS-side softhsmv3 with the cert keys. ML-DSA cert-auth path needs a real RPC bridge (multi-day) or in-worker cert generation (architectural change) — out of scope for this round.
+Major VPN Simulator milestone: full IKE_SA reaches ESTABLISHED with real ML-KEM-768 inside the browser. Also unifies the search service shared by ⌘K and the PQC Assistant, and adds a deep-link validator that ensures every link in the corpus actually works.
 
 ### Added
 
-- **MiniSearch convergence — `UnifiedSearchService`** — [src/services/search/UnifiedSearchService.ts](src/services/search/UnifiedSearchService.ts) is the new singleton backing store shared by ⌘K palette and the PQC Assistant. Both surfaces now share one MiniSearch index, one entityIndex, one localforage cache, and one corpus load per session.
-  - [src/services/search/SearchIndex.ts](src/services/search/SearchIndex.ts) becomes a thin ⌘K facade preserving its public API (`getSearchIndex`, `search`, `invalidateSearchCache`, `SearchChunk`, `SearchResult`); all heavy lifting delegates to the unified service.
-  - [src/services/chat/RetrievalService.ts](src/services/chat/RetrievalService.ts) drops its private `load()` / `buildIndex()` (~150 lines) and reads `index`, `corpusById`, `entityIndex`, `corpusDate` from the shared singleton. Public API (`initialize`, `initializeWithCorpus`, `search`, `isReady`, `corpusDate`) and the full re-rank pipeline (intent classification, persona/industry/region boosts, diversity caps, library guarantee) are unchanged.
-  - **EntityIndex enrichment** — `metadata.toolId` (business-center), `metadata.patentNumber` / `assignee` / `quantumRelevance` (patents — both `core_invention` and `core invention` aliases), `metadata.vendorId`, governance-maturity `pillar` / `refId` / `sourceName`, document-enrichment `refId`, trusted-sources `sourceId`. Direct queries like "deployment-playbook", "core invention patents", "BIP-32" now resolve through the shared entityIndex on **both** ⌘K and Assistant.
-  - **Phase-1 source cap** — Phase-1 entityIndex matches in `RetrievalService.search()` now cap at 2 chunks per source, preventing a single source (e.g. 12 governance-maturity rows for one document) from monopolising the four reserved entity slots.
-  - **Country-query timeline guarantee** — mirrors the existing library guarantee: country-scoped queries always include at least one timeline event in top 5 even when entity-matched library / governance-maturity / document-enrichment chunks dominate Phase 1.
-- **Deep-link grammar validator** — [src/services/search/deepLinkGrammar.ts](src/services/search/deepLinkGrammar.ts) — typed `RoutePattern[]` + `validateDeepLink()` / `validateCorpusDeepLinks()`. Single source of truth: corpus generation now fails the build when any chunk emits an unrecognised `deepLink`. Hash fragments are treated as opaque client anchors; query keys are validated per route. Resolved 0 violations on 8,184 chunks.
-- **Strict corpus invariants gate** — [scripts/corpus-invariants.test.ts](scripts/corpus-invariants.test.ts) — fails CI when any source value present in `rag-corpus.json` is missing from `SOURCE_LABELS`, `chunkToRoute`, or both `INTENT_BOOSTS` + `PERSONA_BOOSTS`. Also enforces non-empty `category`, ≥ 20 char `content`, unique IDs, and full deep-link grammar conformance. Replaces the previous hardcoded 14-source list in [scripts/generate-rag-corpus.test.ts](scripts/generate-rag-corpus.test.ts) which silently missed 8 sources.
-- **⌘K palette parity for 8 sources** — [src/data/searchRoutes.ts](src/data/searchRoutes.ts) — added `chunkToRoute` cases and `SOURCE_LABELS` entries for `cswp39`, `document-enrichment`, `governance-maturity`, `patents`, `personas`, `tracks`, `trusted-sources`, `vendors`. Previously these fell through `default → '/'`, rendering as headerless groups in ⌘K. Each source now navigates to a real, deep-linked destination (e.g. `vendors → /migrate?vendor=`, `governance-maturity → /compliance?tab=cswp39&evref=`, `document-enrichment` is source-dependent: `library | threats | timeline | catalog`).
-- **Boost-table coverage for 16 previously-unmapped sources** — [src/services/chat/RetrievalService.ts](src/services/chat/RetrievalService.ts) `INTENT_BOOSTS` and `PERSONA_BOOSTS` now reference `module-qa`, `governance-maturity`, `vendors`, `patents`, `trusted-sources`, `cswp39`, `module-summaries`, `tracks`, `personas`, `achievements`, `playground-guide`, `openssl-guide`, `user-manual`, `right-panel`, `guided-tour`, plus persona-specific tuning (executive ⇒ governance-maturity / cswp39 / vendors; architect ⇒ governance-maturity / patents; researcher ⇒ trusted-sources / patents; ops ⇒ vendors / governance-maturity).
-- **`FAQButton` next to `GlossaryButton` in `PageHeader`** — [src/components/ui/FAQButton.tsx](src/components/ui/FAQButton.tsx) — surfaces `/faq` in the desktop action row and the mobile-more menu of every content page using [src/components/common/PageHeader.tsx](src/components/common/PageHeader.tsx). The route + page already existed but were only reachable via embed mode or chatbot links.
+- **Unified search service shared by ⌘K and the PQC Assistant** — Both surfaces now share one search index, one entity index, and one cache, so they always return the same results and only load once per session. Direct queries like "deployment-playbook", "core invention patents", or "BIP-32" now resolve through the shared entity index everywhere.
+
+- **Deep-link grammar validator** — A new build-time check ensures every deep link emitted by the search corpus actually points to a real destination. The build now fails if any chunk has a broken deep link (validated 8,184 chunks, zero violations).
+
+- **Strict corpus invariants gate** — A new CI check ensures every data source listed in the corpus has matching labels, route handlers, and intent boosts. Replaces a hardcoded list that silently missed 8 sources.
+
+- **⌘K parity for 8 missing sources** — Patents, vendors, governance maturity, CSWP.39, document enrichment, personas, tracks, and trusted sources now route to real destinations from the ⌘K palette. Previously they fell back to the home page.
+
+- **Persona and intent boosts for 16 more sources** — The PQC Assistant now ranks results from module Q&A, governance maturity, vendors, patents, trusted sources, CSWP.39, and others, with persona-specific tuning for executives, architects, researchers, and ops.
+
+- **FAQ button on every content page header** — A new FAQ icon joins Glossary in the page header action row and the mobile menu, surfacing the FAQ page from every content page.
 
 ### Changed
 
-- **RAG corpus deep-link backfill — 0 missing deepLinks (was 722)** — [public/data/rag-corpus.json](public/data/rag-corpus.json) regenerated to 8,184 chunks (was 8,157). Generator changes in [scripts/generate-rag-corpus.ts](scripts/generate-rag-corpus.ts):
-  - **Document enrichment `catalog` collection now deep-links to `/migrate?q=<software>`** — fixed 675 missing deepLinks for catalog enrichments (BTQ Bitcoin Quantum, Hitachi DoMobile, SEALSQ Quantum Shield, etc.) which previously had no navigation target.
-  - **`MODULE_DIR_TO_ID`** — added missing entries `CryptoMgmtModernization → crypto-mgmt-modernization` and `SLHDSAModule → slh-dsa`. Fixed 38 module-content + 2 module-summary + 1 module-curious orphans.
-  - **Glossary fallback** — terms with empty `relatedModule` (ECDH, IKE_SA_INIT, IKE_INTERMEDIATE …) now default to `/learn` instead of omitting `deepLink`. Fixed 9 glossary orphans.
-  - Build fails with chunk-level diagnostics if any deepLink violates the route grammar.
+- **RAG corpus deep links — 0 missing (down from 722)** — Catalog enrichments (BTQ Bitcoin Quantum, Hitachi DoMobile, SEALSQ Quantum Shield, etc.) now navigate to their products on the Migrate page. Module content for two new modules (Crypto Management Modernization, SLH-DSA) now resolves correctly. Glossary terms without a related module (ECDH, IKE_SA_INIT, etc.) now fall back to the Learn page instead of having no link.
 
-### Tests
+- **PQC Assistant deep-link grammar refreshed** — The assistant's system prompt documents the full deep-link grammar for every route, including the 17 business tool IDs, 13 assessment wizard steps, and all 14 patent filter parameters. The model now validates each `?param=` against the documented grammar before emitting a link.
 
-- **`UnifiedSearchService.test.ts` — 11 convergence tests** — validates: shared MiniSearch instance, palette ranked search, source filter, limit handling, entityIndex aliases (toolId, quantumRelevance, refId, acronym), palette↔assistant corpus parity, palette can find chunks from every source.
-- **All 1,843 unit tests pass** — including 67 golden queries, 266 chat/search/palette tests, and the new 7-test corpus invariants gate. Lint clean (0 errors).
+- **Track and persona filters on the Learn page now work from URL** — Visiting `/learn?track=…` or `/learn?persona=…` preselects the track and persona dropdowns, so the assistant can deep-link mid-journey.
 
----
+- **Workspace persistence — visited routes and advanced-views unlock** — Visited routes are now tracked across sessions, and the "advanced views unlocked" state persists to your cloud workspace so it survives across devices.
 
-- **PQC Assistant — deep-link grammar refresh** — system prompt in [src/services/chat/promptBuilder.ts](src/services/chat/promptBuilder.ts) now documents the full deep-link grammar for every current route. Highlights:
-  - **`?tab=transition&highlight=` MUST rule** — promoted to a hard requirement with positive/negative few-shots so the model never sends classical algorithms (rsa, ecdsa, dh) to the detailed tab where they don't exist.
-  - **`/business/tools/<toolId>` enumerated** with the 17 actual tool ids (roi-calculator, board-pitch, crqc-scenario, risk-register, risk-treatment-plan, audit-checklist, compliance-timeline, raci-builder, policy-generator, kpi-dashboard, vendor-scorecard, contract-clause, supply-chain-matrix, roadmap-builder, stakeholder-comms, kpi-tracker, deployment-playbook).
-  - **`/assess?step=<n>`** — 0-based wizard steps now spelled out (0=industry, 1=country, 2=crypto … 12=timeline) so the chatbot can deep-link mid-wizard.
-  - **`/patents` full filter grammar** — all 14 query params (`?tab=`, `?patent=`, `?search=`, `?assignee=`, `?agility=`, `?domain=`, `?impact=`, `?quantumTech=`, `?quantumRelevance=`, `?region=`, `?protocol=`, `?classicalAlgorithm=`, `?hardwareComponent=`, `?nistStatus=`).
-  - **`/compliance?evref=<id>`** — CSWP.39 maturity-evidence reference deep link is now a documented destination instead of an "invalid link".
-  - **`/learn?track=<name>` and `/learn?persona=<id>`** — newly functional filters (see Changed below).
-  - Self-check rule: the model must verify each `?param=` exists in the documented grammar before emitting the link; otherwise fall back to the bare path.
-  - Local-model compact prompt (`buildLocalSystemPrompt`) mirrors the new grammar.
-- **`PERSONA_DEPTH` voices refreshed for the six personas** — executive now references Command Center / CSWP.39 / ROI Calculator; architect references HSM Workshop / Risk Register / Roadmap Builder; ops references HSM Workshop / VPN & SSH PQC / Deployment Playbook; curious gains a "no acronyms without first-use expansion" rule. Developer and researcher unchanged.
-- **`/learn?track=` and `/learn?persona=` are now real filters** — [src/components/PKILearning/Dashboard.tsx](src/components/PKILearning/Dashboard.tsx) reads the URL params on mount and preselects the track and persona dropdowns. Track names match `MODULE_TRACKS[*].track` (case-insensitive); persona ids match `PersonaId`. Used by the Assistant for journey deep-linking.
+- **Persona voice refresh** — Executive, architect, and ops personas now reference the Command Center, HSM Workshop, and Deployment Playbook tools where relevant. The Curious Explorer voice gained a no-acronyms-without-expansion rule.
 
-### Changed
+### Fixed
 
-- **RAG corpus regenerated** — [public/data/rag-corpus.json](public/data/rag-corpus.json), 8157 chunks (was 8135). New chunks:
-  - **17 business-tool chunks** — one per planning tool with precise `/business/tools/<id>` deep links so the chatbot can link directly to a specific tool instead of the parent page.
-  - **Patents 3-chunk split** — `/patents` (overview), `/patents?tab=insights` (assignees / agility / quantum-tech / NIST status / CSWP.39 evidence grid), `/patents?tab=patents` (filterable table & all 14 filter params).
-  - New `page-guide-explore` (`/explore`) and `page-guide-report` (`/report`) chunks — both routes were uncovered by the corpus before this change.
-- **Workspace persistence — visited routes + advanced views unlock** — [src/store/useHistoryStore.ts](src/store/useHistoryStore.ts) gains a `visitedRoutes` array (persisted, version bump 2→3) and a `recordVisit(path)` action; [src/services/storage/snapshotTypes.ts](src/services/storage/snapshotTypes.ts) and [src/services/storage/UnifiedStorageService.ts](src/services/storage/UnifiedStorageService.ts) persist `advancedViewsUnlocked` in cloud snapshots; [src/components/Layout/MainLayout.tsx](src/components/Layout/MainLayout.tsx), [src/components/Landing/LandingView.tsx](src/components/Landing/LandingView.tsx), and [src/components/Landing/PersonalizationSection.tsx](src/components/Landing/PersonalizationSection.tsx) wire the new state into the UI.
+- **VPN Simulator — full IKE_SA reaches ESTABLISHED in the browser** — Both peer workers complete a real IKEv2 handshake with ML-KEM-768 key exchange and PSK authentication, all running inside WebAssembly. Required cross-worker packet routing fixes and addressing-byte-order corrections.
+
+- **Service worker WASM cache staleness** — `openssl.wasm` (and other WASM files) were being served from a 30-day-stale cache that bypassed the precache, so production users got up-to-30-day-old binaries even after we deployed updates. Was the root cause of TLS simulation failing in production while dev worked fine. WASM requests now go through precache directly.
+
+### Work in progress
+
+- **VPN Simulator — ML-DSA cert-auth wiring (partial)** — Real ML-DSA-65 IKE_AUTH inside the browser is wired up: a PKCS#11 trace channel surfaces every operation in the simulator panel, certificate generation runs end-to-end via the in-worker HSM, and the strongSwan PKCS#11 plugin successfully finds and logs into the token. The remaining gap is that in dual+ML-DSA mode, the daemon still falls back to PSK because the cert-load path inside the plugin isn't yet triggered. Tracked for completion in 3.5.20.
 
 ## [3.5.27] - April 26, 2026
 
-### Fixed — GC-1 orphan entities cleared (157 → 0)
+Cleared 157 orphan entities across the library, software catalog, and vendor data — every record now connects to its module, category, or product.
 
-All three GC-1 orphan-entity categories cleared by **wiring up** entries instead of dropping data, per user direction. Validator now reports **6 warnings** (was 12 at session start).
+### Fixed
 
-#### Library orphans (59 → 0) — `src/data/library_04262026.csv`
+- **Library entries — all 59 orphans wired to learning modules** — Research papers, government reports, NIST/CC/BSI standards, and sector regulations (HIPAA, NERC, PCI DSS, ETSI, etc.) now link to the right learning modules. Library catalog now stands at 530 rows.
 
-68 library entries had zero graph edges. All now wired by adding appropriate `module_ids`:
+- **Software products — all 84 orphans wired to learning modules** — Every product in the migrate catalog now references the learning modules relevant to its category, including PKI lifecycle, OS security, JWT/API, QKD, satellite/space, IoT, hardware security, and others.
 
-- **Research papers** (18 `ref-*` entries) → `research-quantum-impact` plus topic-specific module:
-  - Cryptanalysis papers (factor-rsa, ecdlp, sha2-preimage, quantum-memory, pinnacle, toffoli) → `+quantum-threats`
-  - Hybrid signatures (bindel, obrien Chrome) → `+hybrid-crypto`
-  - Blockchain/digital-asset (pont-downtime, fukuda-grand-challenge, habovstiak, stutz, drake) → `+digital-assets`
-  - Migration / framework (joseph-transitioning, costa-pqfif) → `+migration-program`
-- **Side-channel attack papers** (USENIX HQC timing, IACR McEliece SCA, FrodoKEM Rowhammer, NTRU SCA, SLH-DSA Rowhammer) → `research-quantum-impact;pqc-testing-validation`
-- **Government/industry PQC reports** → wired by topic: HKMA Fintech reports → `emv-payment-pqc;exec-quantum-impact`; ENISA 5G & GSMA NG.116 → `5g-security`; ANSSI BSI QKD → `qkd;standards-bodies`; HK CIIO ordinance → `compliance-strategy`; etc.
-- **NIST CMVP / NIAP / CC / BSI BSZ standards** (CMVP-MGMT-MANUAL, NIST-SP-800-140A/C/D/E/F, NIAP-CCEVS-POLICY/MANUAL, CC-2022-PART1/2/3/CEM, BSI-BSZ-METHOD, FIPS-140-3-STANDARD) → `standards-bodies;compliance-strategy`
-- **Sector regulations** → wired by industry: HIPAA/FDA/HITECH → `healthcare-pqc`; NERC CIP & TSA SD Pipeline → `energy-utilities-pqc`; PCI DSS, MAS Circular, NY DFS → `emv-payment-pqc`; ETSI EN 303 645 → `iot-ot-pqc`; FERPA, COPPA, ZA POPIA, KE DPA → `compliance-strategy`
-
-Library r7 + r6 archived; new latest is `library_04262026.csv` (530 rows).
-
-#### Software orphans (84 → 0) — `src/data/pqc_product_catalog_04262026.csv`
-
-84 migrate products had no `learning_modules`. All 84 wired:
-
-- **For categories with seed mappings** (CSC-001, -003, -008, -009, -010, -034, -040, -043, -049, -050, -053, -058) — applied the top-3 most common `learning_modules` from non-orphan products in that category
-- **For categories where ALL products were orphan** (no seed available) — hand-mapped 26 categories based on category name:
-  - CSC-013 PKI/Cert Lifecycle → `pki-workshop;crypto-agility;standards-bodies`
-  - CSC-019 Operating Systems → `os-pqc;platform-eng-pqc;crypto-agility`
-  - CSC-073 API/JWT → `api-security-jwt;crypto-dev-apis`
-  - CSC-075 QKD → `qkd;standards-bodies`
-  - CSC-091/137 Crypto Agility → `crypto-agility;...`
-  - CSC-097/141 IoT → `iot-ot-pqc;...`
-  - CSC-109 Crypto Discovery → `crypto-mgmt-modernization;migration-program;pqc-governance`
-  - CSC-117 SASE Zero Trust → `network-security-pqc;iam-pqc`
-  - CSC-127 Storage/Backup → `data-asset-sensitivity;database-encryption-pqc`
-  - CSC-129 Satellite/Space → `aerospace-pqc;iot-ot-pqc`
-  - CSC-150 Secrets/Data Gov → `secrets-management-pqc;data-asset-sensitivity`
-  - CSC-156/159 HW Security → `hsm-pqc;iot-ot-pqc`
-  - (full mapping in commit)
-
-#### Vendor orphans (16 → 0) — `src/data/vendors_04262026.csv`
-
-For 11 of the 16 orphan vendors, **added real products** via web research with citations rather than dropping the records. Each new product has `vendor_id` set and a `verification_status=Cited` source:
-
-- **VND-005 BlackBerry** → 2 new products (Cylance was sold to Arctic Wolf in 2025; BlackBerry's PQC-relevant products are now via Certicom + QNX):
-  - `Certicom Code Signing and Key Management Server` (CSC-017) — quantum-resistant ML-DSA code-signing for firmware/OTA/SBOM (cited: NXP partnership press release)
-  - `BlackBerry QNX Hypervisor 8.0 for Safety` (CSC-034) — PQC-protected secure boot, adopted by Ford/BMW/Tesla
-- **VND-106 Hex Trust** → `Hex Trust Institutional Custody` (CSC-057, MPC-based, no PQC roadmap yet)
-- **VND-108 Komainu** → `Komainu Custody` (CSC-057, MPC + HSM with bankruptcy-remote segregation)
-- **VND-112 Metaco / Ripple** → `Metaco Harmonize` (CSC-057, used by Citi/BBVA/HSBC/BNP)
-- **VND-136 Descope** → `Descope Customer & Agentic Identity Platform` (CSC-044, no-code CIAM with AI-agent identity)
-- **VND-138 Stytch** → `Stytch Authentication Platform` (CSC-044, B2B+Consumer auth SDKs)
-- **VND-146 Robust Intelligence** → `Cisco AI Defense (formerly Robust Intelligence Platform)` (CSC-060, acquired by Cisco Oct 2024)
-- **VND-147 Galileo** → `Galileo AI Observability and Eval Platform` (CSC-060, GenAI evals + production guardrails)
-- **VND-160 BeyondTrust** → `BeyondTrust Pathfinder Platform` (CSC-042, AI-driven PAM + ITDR + CIEM)
-- **VND-171 DocuSign** → `DocuSign Intelligent Agreement Management` (CSC-009, eSign + CLM with crypto signing)
-- **VND-191 AnyDesk** → `AnyDesk Remote Desktop` (CSC-036, currently RSA-2048 + AES-256 — PQC migration explicitly pending)
-
-For the remaining 2 of 16, **dropped** the vendor record rather than wiring (no products to attach):
-
-- **VND-004 Best PQC** — bestpqc.com domain is parked at Porkbun's l.ink redirect (no real company / products)
-- **VND-223 UEFI Forum** — per user note, "is a source relevant for hardware security, not a product-vendor". Future improvement: add to `pqc_authoritative_sources_reference_*.csv` as a standards body source rather than a vendor
-
-Vendor catalog: 302 → 300.
+- **Vendor records — all 16 orphans resolved** — For 11 vendors, real products were added with cited sources (BlackBerry's Certicom + QNX after the Cylance divestiture, Hex Trust, Komainu, Metaco/Ripple, Descope, Stytch, Cisco AI Defense, Galileo, BeyondTrust, DocuSign, AnyDesk). Two orphan vendors were removed (Best PQC was a parked domain; UEFI Forum is a standards body, not a product vendor). Vendor catalog now stands at 300.
 
 ### Changed
 
-- **Priority matrix counts regenerated** for the 8 categories affected by the new product additions (CSC-009, CSC-017, CSC-034, CSC-036, CSC-042, CSC-044, CSC-057, CSC-060) — N8 stays clean.
-- **RAG corpus regenerated** — 8232 chunks (added 16 new chunks from the 12 new products + 4 vendor metadata changes).
+- **Priority matrix counts refreshed** — Updated for the 8 categories affected by the new product additions.
 
-### Status
-
-| Validator warning               | Before               | After | Status                         |
-| ------------------------------- | -------------------- | ----- | ------------------------------ |
-| GC-3 (algo canonicalization)    | 2                    | 0     | ✅                             |
-| N21-B (rag-summary refs)        | 3                    | 0     | ✅                             |
-| N2 (auth source flags)          | 38                   | 0     | ✅                             |
-| QA-C6 (compliance refs)         | 91                   | 0     | ✅                             |
-| GC-4 (country gaps)             | 18                   | 0     | ✅                             |
-| **GC-1 (orphan entities)**      | **3 (157 entities)** | **0** | ✅                             |
-| N19 (enrichment metadata)       | 14                   | 14    | accepted (no fake metadata)    |
-| N20-A (Q&A algo coverage)       | 128                  | 127   | pending (Ollama re-enrichment) |
-| N20-B (Q&A compliance coverage) | 75                   | 75    | pending (Ollama re-enrichment) |
-| GC-6 (crypto-mgmt Q&A missing)  | 1                    | 1     | deferred (Ollama Q&A workflow) |
-| **Total**                       | **12**               | **6** |                                |
+- **Search corpus refreshed** — 8,232 chunks (16 new chunks from the new products and vendor updates).
 
 ## [3.5.26] - April 25, 2026
 
-### Fixed — validator warning batch (12 → 8)
+Cleared a batch of data-quality warnings — algorithm tagging, RAG coverage, authoritative-source flags, and Q&A compliance refs.
 
-- **GC-3 (algorithm canonicalization)** — added `library_04252026_r7.csv` with 2 new entries: `BIKE-Round4-Spec-2022` (NIST Round 4 KEM specification, BIKE structurally introduced into library AlgorithmFamily column) and `ETSI-GS-QKD-014-V2.1.1` (ETSI QKD REST Key Delivery API spec, marked `Information-theoretic (non-PQC)`). Note: QKD is intentionally excluded from PQC algorithm canonicalization in the validator — it is a quantum-physical key-establishment paradigm distinct from computational PQC.
-- **N21-B (rag-summary algorithm coverage)** — added `healthcare-pqc` to `FIPS 205` library row's `module_ids` and `arch-quantum-impact` to `draft-ietf-cose-falcon-04`'s `module_ids` so both modules' library enrichments now cover the SLH-DSA / FN-DSA-512 references in their `rag-summary.md`.
-- **N2 (authoritative source flag mismatches, 38 → 0)** — generated `pqc_authoritative_sources_reference_04252026.csv` (replaces `04182026`) flipping 40 boolean flags from `Yes` to `No` for sources whose display name doesn't actually appear as an organisation/vendor/issuer in the target CSV (Leaders/Library/Timeline/Compliance/Migrate/Threats). Honest accounting of which sources contribute concrete records vs. which are reference portals.
-- **QA-C6 (compliance refs, 91 → 0)** — added `KNOWN_COMPLIANCE_FRAMEWORKS` allowlist to `qa-consistency-checks.ts` (private) so Q&A rows can legitimately cite framework-level identifiers (NIST, NSA, BSI, GDPR, NIS2, eIDAS, HIPAA, PCI DSS, ITAR, CMMC, ISO 27001, NERC CIP, IEC 62351/62443, DO-326A, UNECE R155, ISO 26262, Common Criteria, EUCC, FIPS 140, etc.) without requiring a specific record ID in `compliance-data.json`.
+### Fixed
+
+- **Algorithm canonicalization** — Added BIKE Round 4 spec and ETSI QKD REST API spec to the library so all referenced algorithm families are recognised.
+
+- **RAG summary coverage** — Wired healthcare and architecture modules to FIPS 205 (SLH-DSA) and FN-DSA-512 references so module summaries fully cover the algorithms they discuss.
+
+- **Authoritative source flags — 38 mismatches resolved** — Updated 40 boolean flags so each source is correctly marked for the data types it actually contributes (vs. reference-only portals).
+
+- **Q&A compliance refs — 91 mismatches resolved** — Q&A entries can now legitimately cite framework-level identifiers (NIST, BSI, GDPR, NIS2, eIDAS, HIPAA, PCI DSS, ITAR, CMMC, ISO 27001, etc.) without requiring an exact compliance record ID.
 
 ## [3.5.25] - April 25, 2026
 
+Refreshed the algorithm catalog with verified data from the April 2026 reference doc, renamed composite-signature entries to their formal IETF identifiers, and added the alternate Classic-McEliece-6960119 parameter set.
+
 ### Added
 
-- **`Classic-McEliece-6960119`** — alternate NIST L5 parameter set for the Classic McEliece KEM family (pk=1,047,319 / sk=13,948 / ct=194 — sizes confirmed via OQS reference implementation). BSI-recommended alongside `-6688128` for conservative ~256-bit-equivalent long-term sovereign protection. Source: pqctoday-priv/docs/PQC_Algorithm_Reference_April2026.docx §2.3.
+- **Classic-McEliece-6960119** — Alternate NIST Level 5 parameter set, BSI-recommended alongside `-6688128` for conservative ~256-bit-equivalent long-term sovereign protection.
 
-### Changed — Algorithm CSV verified-data refresh
+### Changed
 
-- **Filled the pre-existing TLS 1.3 hybrid NamedGroup entries with verified sizes** — `X25519MLKEM768` (pk=1216, ct=1120, ss=32) and `SecP256r1MLKEM768` (pk=1249, ct=1153, ss=32) previously had empty size columns. Sizes computed from the `IETF draft-ietf-tls-ecdhe-mlkem` table in pqctoday-priv/docs/PQC_Algorithm_Reference_April2026.docx §2.14 (ML-KEM-768 component + classical component, KEM combiner output 32 B). Notes clarify these are TLS NamedGroup encodings — distinct from the IETF Composite KEM draft entries (`ML-KEM-768-ECDH-P256`, `ML-KEM-768-RSA-OAEP-2048`) which use ASN.1 encoding for X.509 certificates.
-- **Refreshed the 21 newly-added algorithm rows with verified data** from pqctoday-priv/docs/PQC_Algorithm_Reference_April2026.csv: LMS family pk/sig ranges, XMSS family pk/sk/sig ranges, HQC family pk/sk/ct ranges, Classic-McEliece family ranges, UOV-Ip / CROSS-R-SDP-1b (with Skylake cycles) / LESS-1b / FAEST-128f / SNOVA l=4 reference values, ML-DSA-44 composite component sums, ML-KEM-768-ECDH-P256 sums, HPKE-PQ ML-KEM-768 mode sizes. SQIsign III/V variants documented in notes. Corrected `Classic-McEliece-6688128` ciphertext from incorrect 240 B to 208 B per OQS spec. Reframed LAC as ELIMINATED (NIST Round 2 dropped, do not deploy) and NGCC-BC/NGCC-CH as UNRESOLVED placeholders not traceable to any published algorithm.
+- **Algorithm sizes refreshed with verified data** — The TLS 1.3 hybrid named groups (X25519MLKEM768, SecP256r1MLKEM768) now show their correct key, ciphertext, and shared-secret sizes. Twenty-one newly added algorithm rows have been refreshed with verified spec data: LMS, XMSS, HQC, Classic-McEliece, UOV, CROSS, LESS, FAEST, SNOVA, ML-DSA composite signatures, ML-KEM composite KEMs, and HPKE post-quantum modes. Corrected the Classic-McEliece-6688128 ciphertext size (208 bytes, was incorrectly listed as 240).
 
-### Renamed — IETF formal identifiers
+- **ML-DSA-44 composite signatures renamed to formal IETF IDs** — `ML-DSA-44-RSA2048-PSS` becomes `id-MLDSA44-RSA2048-PSS-SHA256`, `ML-DSA-44-Ed25519` becomes `id-MLDSA44-Ed25519-SHA512`, and `ML-DSA-44-ECDSA-P256` becomes `id-MLDSA44-ECDSA-P256-SHA256`, matching the IETF composite signatures draft.
 
-- **ML-DSA-44 composite signature entries renamed to formal IETF IDs**:
-  - `ML-DSA-44-RSA2048-PSS` → `id-MLDSA44-RSA2048-PSS-SHA256`
-  - `ML-DSA-44-Ed25519` → `id-MLDSA44-Ed25519-SHA512`
-  - `ML-DSA-44-ECDSA-P256` → `id-MLDSA44-ECDSA-P256-SHA256`
-  - Use Case Notes updated to flag the rename, and `algorithms_transitions_04252026.csv` PQC Replacement column updated to match. Naming follows the IETF `draft-ietf-lamps-pq-composite-sigs` convention. ML-KEM-768 Composite KEM entries left untouched (LAMPS Composite KEM draft does not yet publish authoritative `id-*` identifiers in the reference doc).
-
-### Changed — RAG corpus regenerated
-
-- `public/data/rag-corpus.json` regenerated to reflect the renamed and new algorithm rows (8218 chunks, +2 from the 8216 baseline after item 1's new `Classic-McEliece-6960119` entry plus the renamed composite entries).
+- **Search corpus refreshed** — Regenerated to reflect the renamed algorithm rows and the new Classic-McEliece entry.
 
 ## [3.5.24] - April 25, 2026
 
+Filled out 21 algorithm rows with rigorous "research needed" markers anywhere data is unverified, so the comparison views never show fabricated values.
+
 ### Added
 
-- **Data integrity validator — N10/N18/N22/QA-C3/N23-A/N8 batch fixes (0 errors, 20→12 warnings)** —
-  - `library_04252026_r6.csv` — broke `TCG-TPM-V185-Part1 ↔ Part2` circular dependency (GC-9). Re-pointed 5 library `local_file` paths from `public/timeline/` to `public/library/` after copying the files into the library cache directory (N18).
-  - `pqc_complete_algorithm_reference_04252026.csv` — added 21 algorithm rows so the transitions CSV cross-references resolve: 2 family entries used by Q&A short names (`LMS`, `XMSS`, `Classic-McEliece`, `HQC`); 6 NIST Additional Sig Round 2 candidates (`UOV`, `SQIsign`, `CROSS`, `LESS`, `FAEST`, `SNOVA`); 3 IETF Composite Sigs and 2 IETF Composite KEMs from `draft-ietf-lamps-pq-composite-{sigs,kem}`; 1 BSI parameter set `Classic-McEliece-6688128`; placeholder/reference entries for `LAC`, `NGCC-BC`, `NGCC-CH`, `Covercrypt`, `HPKE-PQ` (N10, QA-C3).
-  - `pqc_software_category_priority_matrix.csv` — regenerated `total_software_products`, `pqc_ready_products`, `readiness_percentage` for 32 categories from the latest `pqc_product_catalog_*.csv` (N8).
-  - `threats_doc_enrichments_04202026.md` — replaced "FIPS NNN (alg)" entries inside `**PQC Algorithms Covered**` lines with the algorithm name only, since the standard ID is not an algorithm (N23-A-threats).
-  - `scripts/validators/graph-consistency-checks.ts` — added `slh-dsa` and `crypto-mgmt-modernization` to `MODULE_IDS` so Q&A coverage no longer reports them as orphans (GC-6).
-  - Removed 11 corrupt/empty cached pages from `public/timeline/` and 2 from `public/threats/` (404 / JS-stub / insufficient text — N22).
+- **21 new algorithm catalog rows** — Family entries for LMS, XMSS, Classic-McEliece, HQC; NIST Additional Signatures Round 2 candidates (UOV, SQIsign, CROSS, LESS, FAEST, SNOVA); IETF composite signatures and KEMs; the BSI-recommended Classic-McEliece-6688128 parameter set; placeholder entries for LAC, NGCC-BC, NGCC-CH, Covercrypt, and HPKE-PQ.
 
-### Changed — Algorithm transparency
+### Changed
 
-- **No-guess / "Research needed" rule for new algorithm rows** — every value in the 21 newly-added algorithm rows is either (a) a number citable to a primary spec or (b) the literal marker `Research needed`. Replaced earlier informal placeholders (`varies`, `unconfirmed`, `unbenchmarked`, `~XXX (sum, approx)`, `depends on KEM`, etc.) with the single canonical marker. Concrete numeric values are present only for: `SQIsign-I` (NIST Round 2 submission spec), `Classic-McEliece-460896` (NIST KEM submission spec), `Classic-McEliece-6688128` (NIST KEM submission spec). All other byte-size, cycle, security-level, and stack-RAM fields for the 21 rows render as `Research needed` until benchmarked / spec-verified.
-- **Status fields tightened** — every new row's `Status` and `FIPS Standard` columns now explicitly say `IETF Internet-Draft`, `NIST Additional Sig Round 2 — Candidate`, `NGCC TBD — submissions due June 2026`, `Historical NIST Round 2 (dropped 2019); CACR/NGCC reference`, `NIST Selected (Draft FIPS pending)`, etc., instead of bare `Candidate` or `Draft`.
-- **Renamed alias McEliece entries to canonical hyphenated form** — transitions CSV now uses `Classic-McEliece-460896` and `Classic-McEliece-6688128` (matching the existing canonical naming) so RAG-corpus `algo-classic-mceliece-*` chunk IDs do not collide.
+- **"Research needed" marker for unverified algorithm data** — Every byte size, cycle count, security level, or RAM figure for the new rows is either citable to a primary spec or shows the literal marker `Research needed`. Replaces earlier informal placeholders.
 
-### Changed — Algorithm UI parser & rendering
+- **Algorithm comparison views show "Research needed" gracefully** — Sizes, security, and performance views render the marker in italics rather than `0 bytes`, and skip chart bars for unknown values so chart maxima aren't skewed by sentinel zeros. CSV exports emit `Research needed` instead of misleading `0` or `null`.
 
-- **`pqcAlgorithmsData.ts`** — exported `RESEARCH_NEEDED` constant and `isResearchNeeded()` helper. `AlgorithmDetail` gained `hasResearchGap`, `sizesUnknown`, `perfUnknown` boolean flags computed from raw row content. `type` union widened to include `Block Cipher` and `Hash` (NGCC-BC / NGCC-CH). `getPerformanceCategory` returns a new `'Unknown'` bucket for `Research needed` cycles instead of falling through to `'Moderate'`. Numeric size parses fall back to `0` (sentinel for unknown — never `NaN`).
-- **`AlgorithmDetailedComparison.tsx`** — added `ResearchNeededBadge` (info-coloured, sits next to the existing `DraftBadge`). Sizes view, Security view, and Performance table render `Research needed` (italic muted) instead of `0 bytes` / `~0.0 KB` for unknown values, and skip the chart bar for those rows so chart maxima are not skewed by sentinel zeros.
-- **`AlgorithmComparison.tsx`** — Public-key chip in transition rows shows `pk: Research needed` for entries whose sizes are unknown.
-- **`AlgorithmComparisonPanel.tsx`** — `getValue` accessors for size/cycle fields return `RESEARCH_NEEDED` strings when the underlying value is unknown so the side-by-side compare panel shows the marker instead of `0 B`.
-- **`csvExportConfigs.ts`** — algorithm CSV export emits `Research needed` for unknown size/RAM cells instead of misleading `0` / `null`.
+- **Status fields tightened** — Algorithm status now distinguishes IETF Internet-Draft, NIST Additional Signatures Round 2 — Candidate, NGCC TBD (submissions due June 2026), Historical NIST Round 2 (dropped 2019), and NIST Selected (Draft FIPS pending), instead of bare "Candidate" or "Draft".
+
+### Fixed
+
+- **Library and validator cleanups** — Broke a circular library dependency in TPM specs, re-pointed 5 library files from the timeline cache to the library cache, refreshed the priority matrix counts for 32 categories, cleaned up enrichment headings, and removed 13 corrupt cached pages.
 
 ## [3.5.23] - April 25, 2026
 
+Refreshed the live PQC certification data from NIST CMVP/ACVP, Common Criteria, ANSSI, and ENISA — and dropped 28 stale certification cross-references that no longer exist upstream.
+
 ### Fixed
 
-- **C7 cert-xref cleanup** — refreshed `public/data/compliance-data.json` from live NIST CMVP/ACVP, CC, ANSSI, ENISA sources (2,384 records). Created `migrate_certification_xref_04252026.csv` (754 rows) dropping 28 stale `cert_id` entries that no longer exist in the scraped data (4 FIPS IDs + 24 CC slugs). Archived 4 older xref revisions to `src/data/archive/`. Data integrity validator C7 check now passes — 0 errors.
+- **Certification data refreshed and cross-references cleaned** — Live PQC certification data updated from the four upstream sources (2,384 records). New product-to-certification cross-reference snapshot (754 rows) drops 28 stale FIPS and CC IDs that no longer exist in the scraped data.
 
 ## [3.5.22] - April 25, 2026
 
+Added 16 newly enriched and scored patents covering blockchain–PKI integration, multi-factor authentication, UAV delivery confirmation, and named content transport.
+
 ### Changed
 
-- **Patents data — intermediate snapshot v4** — added 16 newly enriched + scored patents to `patents_04252026.csv` (now 353 total: prior 337 + 16 new). Background `enrich_patents.py` was paused at ~154/341 to free compute; remaining ~187 patents to be processed in a later run. New entries cover blockchain-PKI integration, multi-factor auth, UAV delivery confirmation, and named content transport.
+- **Patents data — 16 new patents added** — Now 353 patents total. Background enrichment paused at 154 of 341 to free compute; the remaining patents will be processed in a later run.
 
 ## [3.5.21] - April 25, 2026
 
+Added a daily compliance scraper that auto-refreshes certification data overnight, and stopped the embed SDK from getting reformatted on every commit.
+
 ### Added
 
-- **Daily compliance scraper workflow** — `update-compliance.yml` runs `npm run scrape` every day at 08:00 UTC and auto-commits changes to `public/data/compliance-data.json`. Supports `workflow_dispatch` for manual triggers.
+- **Daily compliance scraper** — Runs every day at 08:00 UTC and auto-commits any changes to the compliance dataset (NIST CMVP/ACVP, CC, ANSSI, ENISA). Manual trigger also available.
 
 ### Fixed
 
-- **Embed SDK minification** — `public/embed/sdk.js` is now excluded from Prettier via `.prettierignore`; committed the canonical minified single-line build so lint-staged stops reformatting it on every commit.
+- **Embed SDK no longer reformatted on every commit** — The embed bundle is now correctly excluded from Prettier so lint-staged stops mangling the canonical minified single-line build.
 
 ## [3.5.20] - April 25, 2026
 
+Second wave of data integrity fixes — Q&A factual accuracy, library references, priority matrix coverage, and category tagging.
+
 ### Fixed
 
-- **Data integrity — second wave** — resolved additional integrity gaps and archived stale CSV versions:
-  - **QA-F1 (combined file):** propagated `slh-dsa-learn-001` answer fix from the individual module file to `module_qa_combined_04252026.csv` (the file the validator actually reads).
-  - **QA-C1 (TCG ref):** replaced stale `TCG-TPM-PQC-Spec-2025` with canonical `TCG-TPM-V185-Part1` across 144 `library_refs` fields in the combined Q&A file.
-  - **QA-D1 (BSI ref):** corrected `BSI TR-02102` → `BSI TR-02102-1` in SLH-DSA and stateful-signatures Q&A files (question, answer, consistency_assertions, library_refs).
-  - **N7 (priority matrix):** expanded `pqc_software_category_priority_matrix.csv` from 53 to 241 rows — added 188 missing category stubs (CSC-062 through CSC-249) derived from the migrate catalog with heuristic priority assignments.
-  - **N11 (Function enum):** added `Composite Signature` and `Composite KEM` to the valid Function values in `cross-ref-checks.ts`; corrected `Hybrid KEM with Access Control` → `Hybrid KEM` in `algorithms_transitions_04252026.csv`.
-  - **N14 (catalog tags):** corrected `code-signing-pqc` → `code-signing` for 3 Ascertia/Codegic rows in the product catalog.
-  - **N15 (leaders resource URLs):** removed stale `ANSSI-PQC-Position-2022` from Vincent Strubel's `KeyResourceUrl` (renamed to `ANSSI PQC Position Paper` during dedup).
-- **CSV housekeeping:** archived 12 stale `pqc_product_catalog_04*2026*.csv` versions and 2 stale `library_04252026*.csv` intermediate revisions.
+- **Q&A consistency across modules** — Propagated SLH-DSA Q&A fixes to the combined Q&A file; replaced 144 stale TPM PQC spec references with the canonical TPM 1.85 Part 1 reference; corrected BSI TR-02102 references to TR-02102-1 across SLH-DSA and stateful-signatures Q&A.
+
+- **Priority matrix expanded to all categories** — Grew from 53 to 241 rows by adding 188 missing category stubs (CSC-062 through CSC-249) derived from the migrate catalog.
+
+- **Function-type values cleaned up** — Added "Composite Signature" and "Composite KEM" as recognised function values; corrected "Hybrid KEM with Access Control" to "Hybrid KEM".
+
+- **Catalog tag corrections** — Fixed 3 product entries from `code-signing-pqc` to `code-signing`.
+
+- **Leader resource link cleanup** — Removed a stale ANSSI position-paper URL that had been renamed during dedup work.
+
+- **CSV housekeeping** — Archived 12 stale product catalog versions and 2 stale library intermediate revisions.
 
 ## [3.5.19] - April 25, 2026
 
+Resolved all content-integrity failures that were blocking CI from going green.
+
 ### Fixed
 
-- **Data integrity — CI unblocked** — resolved all content-integrity failures that were preventing CI from going green:
-  - **QA-F1 (factual accuracy):** SLH-DSA Q&A entry `slh-dsa-learn-001` mentioned FIPS 203/204 without naming ML-KEM/ML-DSA alongside them; reworded to correctly pair each FIPS number with its algorithm name.
-  - **C3 (library deps):** removed non-existent `IEEE 802.1AR-2018` dependency from `TCG-TPM-V185-Part1`; removed self-referential dep from `ETSI-GS-QKD-016`; corrected `FIPS 140-3` → `FIPS-140-3-STANDARD` in `NIST-SP-800-140B`.
-  - **C4 (module IDs):** fixed 4 invalid module IDs in library CSV (`blockchain-pqc` → `digital-assets`, `pqc-signature` → `stateful-signatures`, `hybrid-signatures` → `hybrid-crypto`, `vpn-ssh` → `vpn-ssh-pqc`, `hybrid-certs` → `hybrid-crypto`); updated validator's hardcoded `MODULE_IDS` to include `crypto-mgmt-modernization`, `slh-dsa`, and `pqc-testing-validation`.
-  - **C10 (migration phases):** corrected 6 invalid phase values (`Discovery` → `assess`, `deploy` → `migrate`) across Bouncy Castle, RustCrypto ML-KEM/ML-DSA/SLH-DSA, CIRCL, and CyberZero Quantanaut.
-  - **N1 (enrichment headings):** updated 51 stale `## heading` entries across 11 library enrichment files to match current library `reference_id` values after dedup work; removed 8 sections with no library match.
-- **CSV housekeeping:** promoted `library_04252026_r5.csv` (528 rows) and `pqc_product_catalog_04252026.csv`; archived prior versions.
+- **SLH-DSA Q&A factual accuracy** — Q&A now correctly pairs each FIPS number with its algorithm name (FIPS 203 / ML-KEM, FIPS 204 / ML-DSA, FIPS 205 / SLH-DSA).
+
+- **Library dependencies cleaned** — Removed a non-existent IEEE 802.1AR-2018 dependency from the TPM 1.85 spec, removed a self-referential dependency from ETSI GS QKD-016, and corrected a FIPS 140-3 reference in NIST SP 800-140B.
+
+- **Module ID corrections** — Fixed 4 invalid module IDs in the library catalog and added three modules (Crypto Management Modernization, SLH-DSA, PQC Testing & Validation) to the validator's recognised list.
+
+- **Migration phase corrections** — Fixed 6 invalid phase values across Bouncy Castle, RustCrypto ML-KEM/ML-DSA/SLH-DSA, CIRCL, and CyberZero Quantanaut entries.
+
+- **Enrichment heading sync** — Updated 51 stale headings across 11 library enrichment files after dedup; removed 8 sections with no library match.
 
 ## [3.5.18] - April 25, 2026
 
+Updated GitHub organisation links throughout the app and swapped a brand icon that was removed in lucide-react v1.
+
 ### Fixed
 
-- **GitHub organization links updated** — all links throughout the app (source code, docs, discussions, consent flows) now point to the new `github.com/pqctoday-org/` org. Two renamed repos are also corrected: `softhsmv3` is now `pqctoday-hsm`, and `pqc-timeline-app` is now `pqctoday-hub`. No user-visible content changed — only the destination URLs.
-- **Icon compatibility with lucide-react v1** — the `GitHub` and `LinkedIn` brand icons were removed in lucide-react v1.0. Swapped for the standard external-link icon so the Leader consent, removal, transparency, disclaimer, and license sections continue to render correctly.
+- **GitHub organisation links updated** — All links throughout the app (source code, docs, discussions, consent flows) now point to the new `github.com/pqctoday-org/` organisation. Two renamed repos are also corrected. No user-visible content changed — only the destination URLs.
+
+- **Icon compatibility** — Swapped the GitHub and LinkedIn brand icons (removed in lucide-react v1.0) for the standard external-link icon so the Leader consent, removal, transparency, disclaimer, and licence sections continue to render.
 
 ## [3.5.17] - April 25, 2026
 
+Added 47 Common Evaluation Methodology requirements to the maturity governance corpus.
+
 ### Added
 
-- **Maturity governance corpus — Common Evaluation Methodology rows** — [pqc_maturity_governance_requirements_20260425.csv](src/data/pqc_maturity_governance_requirements_20260425.csv) gains 47 rows covering CC-2022-CEM (Common Evaluation Methodology 2022 R1) — governance, lifecycle, assurance, observability, and inventory requirements at maturity tiers 2–3. All extracted with `qwen3.5:27b`.
+- **Common Evaluation Methodology requirements** — 47 new rows covering CC 2022 R1 governance, lifecycle, assurance, observability, and inventory requirements at maturity tiers 2 and 3.
 
 ### Changed
 
-- **Embed manifest + RAG corpus regenerated** — [public/data/rag-corpus.json](public/data/rag-corpus.json), [public/data/embed-docs.json](public/data/embed-docs.json), [public/embed/manifest.json](public/embed/manifest.json), and [public/embed/sdk.js](public/embed/sdk.js) refreshed to incorporate the new CC-2022-CEM evidence rows. RAG corpus output format changed from pretty-printed JSON to compact (single-line) — same data, smaller file footprint.
+- **Search corpus and embed SDK refreshed** — Regenerated to incorporate the new CC-2022-CEM evidence rows. Search corpus output is now compact JSON (same data, smaller file).
 
 ## [3.5.16] - April 25, 2026
 
+Resolved three soft-duplicate library entries with coordinated cite rewriting across library and compliance data.
+
 ### Changed
 
-- **Library CSV cross-CSV dedup — Phase 2** [view:/library] [view:/compliance] — three additional soft-duplicates resolved with coordinated cite-rewriting across library + compliance CSVs:
-  - `ANSSI-PQC-Position-2022` → `ANSSI PQC Position Paper` — 3 dependency-cites in library rewritten.
-  - `India-DST-NQM-Roadmap` → `India-DST-Quantum-Safe-Roadmap-2026` — 1 library dep + 1 compliance `library_refs` cite rewritten.
-  - `NIST SP 800-53` → `FISMA-NIST-SP-800-53r5` — 1 library dep + 3 compliance `library_refs` cites rewritten.
-  - **Outputs**: [library_04252026_r4.csv](src/data/library_04252026_r4.csv) (528 rows; 531 → 528, Δ 3) and [compliance_04252026.csv](src/data/compliance_04252026.csv) (112 rows; 4 cites updated). Verified: 0 orphan dependency or library_refs cites; canonical cite counts match expected values; build succeeds (53/53 prerendered routes).
-  - Two NIST SP 800-90 family normalizations and the NIST-FIPS-140-3-IG-PQC ↔ -Sep-2025-PQC merge remain deferred (touch older governance CSVs and require larger coordinated edits).
-  - Script: [scripts/dedupe-library-cross-csv-04252026.cjs](scripts/dedupe-library-cross-csv-04252026.cjs) — reuses the IMMUTABLE_FIELDS guard from v3.5.15 so reference_id is never modified during merge.
+- **Library deduplication — Phase 2** — Three soft-duplicate libraries collapsed into their canonical entries, with all dependency and library-ref citations rewritten across both the library and compliance datasets. Library now stands at 528 rows. Reuses the immutable-fields guard introduced in v3.5.15 so identity columns are never modified during merge.
 
 ## [3.5.15] - April 25, 2026
 
+Fixed a regression introduced in v3.5.14: the library dedup script was overwriting `reference_id` values, orphaning 20+ external citations.
+
 ### Fixed
 
-- **Library dedup script — `reference_id` corruption (v3.5.14 bug fix)** [view:/library] — the `mergeRowInto()` helper in [scripts/dedupe-library-04252026.cjs](scripts/dedupe-library-04252026.cjs) applied a generic "longer-wins" merge rule across all fields, including `reference_id`. For 5 of the 9 soft-drops in v3.5.14 where the drop_id was longer than the keep_id (Avis-de-lANSSI → ANSSI PQC Position Paper; IETF RFC 9162 → RFC-9162; IETF RFC 4253 → RFC 4253; draft-ietf-plants-merkle-tree-certs → IETF-MTC-Draft-09; ETSI-GS-QKD-016-V2 → ETSI-GS-QKD-016), the canonical row's `reference_id` got overwritten with the drop_id, orphaning 20+ external citations (most importantly "ANSSI PQC Position Paper" which has 20 cites in compliance + governance). Added `IMMUTABLE_FIELDS` guard in `mergeRowInto()` so identity columns are never modified during merge. Re-ran the dedup against the original [library_04252026.csv](src/data/library_04252026.csv) → produced [library_04252026_r3.csv](src/data/library_04252026_r3.csv) with all 14 spot-checks passing. Removed the broken `library_04252026_r2.csv` (replaced by `_r3`).
+- **Library dedup — `reference_id` corruption fix** — The previous dedup helper applied a generic "longer-wins" merge rule across all fields, including identity columns. For 5 of the 9 soft-drops in v3.5.14, the canonical row's `reference_id` was overwritten with the dropped one, orphaning 20+ external citations (most importantly the ANSSI PQC Position Paper, which has 20 cites in compliance and governance). Added an immutable-fields guard so identity columns are never modified during merge.
 
 ## [3.5.14] - April 25, 2026
 
+Library catalog deduplicated: 543 → 531 rows.
+
 ### Changed
 
-- **Library CSV deduplicated** [view:/library] — [library_04252026_r2.csv](src/data/library_04252026_r2.csv) is the new canonical library, 543 → 531 rows (Δ 12). Three hard `referenceId` collisions collapsed to single rows (`G7-CEG-Financial-PQC-2026`, `Malaysia-NACSA-PQC-2025`, `AU-ASD-ISM-Crypto-2024`); nine un-cited soft duplicates dropped (BSI TR-02102 → TR-02102-1; Avis ANSSI → ANSSI PQC Position Paper; IETF RFC 9162 → RFC-9162; IETF RFC 4253 → RFC 4253; India-TEC-910018-2025 → IN-TEC-PQC-Migration-Report-2025; draft-ietf-plants-merkle-tree-certs → IETF-MTC-Draft-09; ETSI-GS-QKD-016-V2 → ETSI-GS-QKD-016; draft-ietf-pquip-hybrid-signature-spectrums → -spectrums-07; IETF RFC 8555 → IETF-RFC-8555). Each canonical row absorbed missing fields from its dropped twin; multi-value columns (`dependencies`, `module_ids`, `applicable_industries`, `region_scope`) unioned by semicolon. Dedup logic in [scripts/dedupe-library-04252026.cjs](scripts/dedupe-library-04252026.cjs) using PapaParse `unparse()` per the project CSV write convention. Verified zero remaining hard duplicates and zero title duplicates; 0 build errors. Five medium-difficulty soft-dups requiring coordinated cross-CSV citation updates (ANSSI-PQC-Position-2022, India-DST-NQM-Roadmap, NIST SP 800-90 family, NIST SP 800-53 vs FISMA-NIST-SP-800-53r5, NIST-FIPS140-3-IG-PQC vs -Sep-2025-PQC) deferred to a follow-up cleanup.
+- **Library deduplicated — 543 → 531 rows** — Three hard reference-ID collisions collapsed into single rows; nine un-cited soft duplicates dropped. Each canonical row absorbed missing fields from its dropped twin; multi-value columns (dependencies, module IDs, applicable industries, region scope) were unioned. Verified zero remaining hard or title duplicates. Five medium-difficulty soft-dups requiring coordinated cross-CSV citation updates remain for a follow-up.
 
-- **Library archive — older revisions** — `library_04232026_r4.csv` moved to `src/data/archive/` (kept the recent date-stamped versions in place; the loader auto-discovers latest via `import.meta.glob`).
+- **Library archive** — Older revisions moved to the archive directory; the loader auto-discovers the latest version.
 
 ## [3.5.13] - April 25, 2026
 
+Added a freshness check on the CSWP.39 source data, expanded the maturity governance corpus with CC 2022 and NERC CIP rows, and raised the offline cache size limit so the full bundle precaches.
+
 ### Added
 
-- **CSWP.39 source-metadata + staleness check** [persona:architect] [persona:ciso] [view:/compliance] — exported `CSWP39_SOURCE_METADATA` constant in [cswp39Data.ts](src/components/Compliance/cswp39Data.ts) capturing publication date (2025-12-19), canonical NIST URL, `dataExtractedAt` (2026-04-25), and `nextReviewBy` (2026-07-24). New vitest spec [cswp39Data.test.ts](src/components/Compliance/cswp39Data.test.ts) fails CI when `nextReviewBy < today`, forcing manual re-verification of hub data against upstream NIST CSWP.39. The CSWP.39 Explorer Overview banner ([CSWP39Explorer.tsx](src/components/Compliance/CSWP39Explorer.tsx)) now surfaces the source link, document version, last-verified date, and next-review date inline. Re-verification cadence: 90 days. Closes assessment N4 (CSWP.39 framework lock-in canary).
+- **CSWP.39 source freshness check** — The CSWP.39 Explorer Overview now shows the source link, document version, last-verified date, and next-review date inline. A CI check fails if the next-review date passes, forcing manual re-verification of hub data against the upstream NIST publication. Re-verification cadence: 90 days.
 
-- **Maturity governance corpus refresh — CC 2022 + NERC CIP** — [pqc_maturity_governance_requirements_20260425.csv](src/data/pqc_maturity_governance_requirements_20260425.csv) gains 22 rows covering Common Criteria 2022 Part 2 + Part 3 (key-management, RBG, audit, life-cycle, configuration-management requirements at maturity tiers 2–3) and NERC Reliability Standards (CIP-002-8, CIP-003-11 governance + assurance requirements). All extracted with `qwen3.5:27b` per the project enrichment standard.
+- **Maturity governance corpus refresh** — Added 22 rows covering Common Criteria 2022 Parts 2 and 3 (key management, RBG, audit, lifecycle, configuration management at maturity tiers 2–3) and NERC Reliability Standards (CIP-002-8, CIP-003-11 governance and assurance requirements).
 
 ### Fixed
 
-- **PWA precache size limit raised 15 → 20 MB** — [vite.config.ts](vite.config.ts) `injectManifest.maximumFileSizeToCacheInBytes` bumped from 15 MB to 20 MB so the now-15.9 MB index bundle is fully precached on first install. Comment updated to reflect the broader scope (WASM + large bundles).
-
-### Removed
-
-- **Tracked Python bytecode untracked** — `scripts/__pycache__/*.pyc` files (4 stale entries plus 1 editor-swap artifact) untracked via `git rm --cached`. The directory was already in `.gitignore` line 208 but the files predated the rule and remained tracked. No on-disk changes; only git's index updated.
+- **Offline cache size raised from 15 MB to 20 MB** — So the now-15.9 MB index bundle is fully precached on first install.
 
 ## [3.5.12] - April 25, 2026
 
+Across-the-board mobile responsive fixes for PKI Learning, Patents, Playground, and embed views; iOS/Android safe-area insets; deep-link to specific changelog versions; and new data files for SLH-DSA Q&A and the governance corpus.
+
 ### Added
 
-- **`desktopRecommended` journey badge on Landing** [persona:all] [view:/] — two journey steps (Compare Algorithms, Try the Playground) now show a "Best on desktop" pill (Monitor icon, `lg:hidden`) on mobile so users know to expect a richer experience on larger screens. New `desktopRecommended?: boolean` field on the `JourneyStep` interface; zero layout impact on desktop. ([LandingView.tsx](src/components/Landing/LandingView.tsx))
+- **"Best on desktop" badge on Landing journey steps** — Compare Algorithms and Try the Playground steps now show a "Best on desktop" pill on mobile so users know to expect a richer experience on larger screens.
 
-- **Changelog hash deep-link + highlight** [view:/changelog] — navigating to `/changelog#v3.5.X` now smooth-scrolls to the matching release card and briefly rings it with a `ring-primary shadow-glow` highlight (1.8 s). Implemented via `useLocation` + `useEffect` on `location.hash` + `filteredVersions.length`; handles lazy-load timing so the scroll fires after content paints. ([ChangelogView.tsx](src/components/Changelog/ChangelogView.tsx))
+- **Changelog deep links** — Visiting `/changelog#v3.5.X` now smooth-scrolls to the matching release and briefly highlights it.
 
-- **RAG corpus cross-reference fields** — `generate-rag-corpus.ts` now propagates additional structured fields into each chunk's `metadata` object: `trustedSourceId` (all sources), `dependencies` + `moduleIds` (library), `relatedModules` + `cryptoAtRisk` + `pqcReplacement` (threats), `libraryRefs` + `timelineRefs` + `countries` (compliance), `categoryId` + `pqcSupport` + `learningModules` + `vendorId` (migrate). Fields are omitted when empty to keep corpus compact. Corpus regenerated. ([generate-rag-corpus.ts](scripts/generate-rag-corpus.ts))
+- **Search corpus enriched with cross-reference fields** — Each chunk now carries trusted source IDs, library dependencies and module IDs, threat-related modules, compliance library/timeline refs and countries, and migrate category, PQC support, learning modules, and vendor IDs.
 
-- **Golden-query Round 7** — 35 new golden queries covering Patents (assignee + landscape), CSWP.39 5-step process, governance maturity tiers, and the Curious Explorer persona. `minTop5Hits: 0` used where multiple chunk types may rank before the target but the chunk is expected in top-15. ([golden-queries.test.ts](src/services/chat/__tests__/golden-queries.test.ts))
+- **35 new golden queries** — Round 7 covers Patents (assignee + landscape), CSWP.39 5-step process, governance maturity tiers, and the Curious Explorer persona.
 
-- **New data files** — `library_04242026.csv`, `library_04252026.csv` (library refresh, auto-discovered by glob loader); `module_qa_combined_04252026.csv`, `module_qa_slh-dsa_04252026.csv` (SLH-DSA module Q&A generation); `pqc_maturity_governance_requirements_20260425.csv` (governance maturity corpus update). ([src/data/](src/data/))
+- **New data files** — Library refreshes for April 24 and 25; combined and SLH-DSA Q&A; and the maturity governance corpus update.
 
-- **iOS/Android native platform detection** [embed] — `platform.ts` exports `getNativePlatform(): 'ios' | 'android' | null` using `Capacitor.getPlatform()`; `main.tsx` writes `data-platform="ios"` or `"android"` on the document root instead of the generic `"capacitor"`, enabling platform-specific CSS selectors. ([platform.ts](src/embed/platform.ts), [main.tsx](src/main.tsx))
+- **iOS/Android native platform detection** — Embed mode now sets `data-platform="ios"` or `"android"` on the document root instead of a generic `"capacitor"` value, enabling platform-specific styling.
 
 ### Fixed
 
-- **Mobile responsive layouts across PKI Learning workshop components** — nine workshop views switched from `grid-cols-2` to `grid-cols-1 md:grid-cols-2` (or `sm:grid-cols-2`): [LMSKeyGenDemo.tsx](src/components/PKILearning/modules/StatefulSignatures/workshop/LMSKeyGenDemo.tsx), [StatefulSignaturesDemo.tsx](src/components/PKILearning/modules/StatefulSignatures/workshop/StatefulSignaturesDemo.tsx), [StateManagementVisualizer.tsx](src/components/PKILearning/modules/StatefulSignatures/workshop/StateManagementVisualizer.tsx), [ThresholdSigningDemo.tsx](src/components/PKILearning/modules/StatefulSignatures/workshop/ThresholdSigningDemo.tsx), [DrbgArchitectureDemo.tsx](src/components/PKILearning/modules/Entropy/workshop/DrbgArchitectureDemo.tsx), [RandomGenerationDemo.tsx](src/components/PKILearning/modules/Entropy/workshop/RandomGenerationDemo.tsx), [CTLogSimulator.tsx](src/components/PKILearning/modules/MerkleTreeCerts/workshop/CTLogSimulator.tsx), [KPIDashboardBuilder.tsx](src/components/PKILearning/modules/PQCGovernance/components/KPIDashboardBuilder.tsx), [ComplianceGapAnalysis.tsx](src/components/PKILearning/modules/PQCRiskManagement/components/ComplianceGapAnalysis.tsx), [MaturityAssessment.tsx](src/components/PKILearning/modules/CryptoMgmtModernization/workshop/MaturityAssessment.tsx), [TEEHSMTrustedChannel.tsx](src/components/PKILearning/modules/ConfidentialComputing/workshop/TEEHSMTrustedChannel.tsx), [CertificateInspector.tsx](src/components/PKILearning/modules/TLSBasics/components/CertificateInspector.tsx), and playground tools ([HsmCapacityCalculator.tsx](src/components/Playground/hsm/HsmCapacityCalculator.tsx), [HsmSymmetricPanel.tsx](src/components/Playground/hsm/HsmSymmetricPanel.tsx), [VpnSimulationPanel.tsx](src/components/Playground/hsm/VpnSimulationPanel.tsx), [SignVerifyTab.tsx](src/components/Playground/tabs/SignVerifyTab.tsx), [ProgressDashboard.tsx](src/components/RightPanel/ProgressDashboard.tsx), [ShareButton.tsx](src/components/ui/ShareButton.tsx), [TrustScoreTooltip.tsx](src/components/ui/TrustScoreTooltip.tsx)).
+- **Mobile responsive layouts across the app** — Nine PKI Learning workshop views, Playground tools, Right Panel progress dashboard, share button, and trust score tooltip all switched from fixed two-column grids to responsive grids that collapse on narrow screens.
 
-- **Patents page mobile layout** — `PatentsTable` list panel hides (`hidden sm:flex`) when a patent is selected on mobile so detail takes full width; detail panel is full-width (`w-full`) on mobile, half-width (`sm:w-1/2`) on desktop. `PatentDetail` responsive grids: metadata list switches to `grid-cols-1 md:grid-cols-2`; Cryptographic Profile switches to `grid-cols-1 sm:grid-cols-2`; `GridCard full` uses `sm:col-span-2` instead of `col-span-2`. ([PatentsTable.tsx](src/components/Patents/PatentsTable.tsx), [PatentDetail.tsx](src/components/Patents/PatentDetail.tsx))
+- **Patents page mobile layout** — On mobile, the patents list hides when a patent is selected so detail takes full width. Patent detail's metadata, cryptographic profile, and grid cards adapt to one column on the smallest screens.
 
-- **Capacitor native platform CSS — iOS/Android safe-area insets** — `index.css` adds `[data-platform='ios']` and `[data-platform='android']` selectors alongside `[data-platform='capacitor']` for the `#main-content` bottom/top padding block, plus an iOS-specific lateral safe-area rule for notch/Dynamic Island. `overscroll-behavior: none` now also targets `[data-platform='ios']` and `[data-platform='android']`. ([src/styles/index.css](src/styles/index.css))
+- **iOS/Android safe-area insets** — Notch and Dynamic Island handling now applies to iOS specifically; Android also gets the safe-area padding rules. Overscroll bounce is disabled on both.
 
-- **Narrow-viewport embed grid collapse** — new `@media (max-width: 480px)` block in `index.css` collapses `[data-embed] .grid-cols-{2,3,4}` to `1fr`, overrides `min-w-[480px]`/`[400px]`/`[360px]` to `100%`, and constrains `.w-80` dropdowns. Does not affect overflow-x-auto scroll containers (tabular/non-collapsible data). ([src/styles/index.css](src/styles/index.css))
+- **Narrow-viewport embed grids** — At widths below 480 px, embed grids collapse to a single column and constrained-width dropdowns expand to fit the viewport.
 
-- **Compliance-fwks enrichment doc updated** — `compliance-fwks_maturity_04242026.md` refreshed with updated maturity evidence entries. ([src/data/doc-enrichments/compliance-fwks_maturity_04242026.md](src/data/doc-enrichments/compliance-fwks_maturity_04242026.md))
-
-- **Embed manifest + RAG corpus regeneration** — [public/data/embed-docs.json](public/data/embed-docs.json), [public/data/rag-corpus.json](public/data/rag-corpus.json), [public/embed/manifest.json](public/embed/manifest.json), and [public/embed/sdk.js](public/embed/sdk.js) regenerated to include cross-reference fields, new library/module-QA data, and the iOS/Android embed platform metadata.
+- **Compliance frameworks enrichment refreshed** — Updated maturity evidence entries for the compliance frameworks document.
 
 ## [3.5.11] - April 24, 2026
 
-### Removed
+Removed unused Knowledge Graph module files left over from the v3.5.10 cleanup.
 
-- **Knowledge Graph orphan files** — deleted the now-unused module + right-panel mindmap files left over by the v3.5.10 removal:
-  - `src/components/PKILearning/modules/KnowledgeGraph/` (entire module: CoverageView, ExploreView, GraphLegend, NodeDetailPanel, SearchBar, edges/RelationshipEdge, nodes/{ClusterNode,EntityNode}, data/{graphBuilder,graphTypes,searchIndex,suggestedQueries}, hooks/{useGraphData,useGraphSearch}, curious-summary-curious.md).
-  - `src/components/RightPanel/{GraphPanel,MindmapView,MindmapView.test,mindmapData,useMindmapData}.tsx`/`.ts` plus `RightPanel/edges/MindmapEdge.tsx` and `RightPanel/nodes/MindmapNode.tsx`.
-  - Verified no stale imports remain (`tsc --noEmit` clean; `grep -r "MindmapView|GraphPanel|KnowledgeGraph"` returns zero matches in `src/`).
+### Changed
+
+- **Knowledge Graph orphan files removed** — All Knowledge Graph module and right-panel mindmap files have been deleted now that the feature has been retired. No remaining imports reference the removed code.
 
 ## [3.5.10] - April 24, 2026
 
-### Removed
+Removed the Knowledge Graph tab from the right-side panel. Existing user state is migrated automatically.
 
-- **Knowledge Graph right-panel tab** [persona:all] — removed the `graph` panel from the right-side slide-out drawer (no consumers and no longer aligned with the post-v3.5.9 navigation). [`PanelHeader.tsx`](src/components/RightPanel/PanelHeader.tsx) drops the `graph` tab definition and the `isEmbedded` filter that hid it; [`RightPanel.tsx`](src/components/RightPanel/RightPanel.tsx) drops the lazy `GraphPanel` import, the `'graph'` active-tab branch, and the title-bar fallback; [`MainLayout.tsx`](src/components/Layout/MainLayout.tsx) drops the "Knowledge Graph" entry from the More menu and the now-unused `Network` lucide import.
-- **`useRightPanelStore` v3 migration** — bumped persisted-state version `2 → 3` in [`useRightPanelStore.ts`](src/store/useRightPanelStore.ts) with a `v2 → v3` migration step that reroutes any persisted `activeTab === 'graph'` to `'chat'` so existing localStorage entries never crash the rehydrate path. [`HistoryTypes.ts`](src/types/HistoryTypes.ts) tightens the `RightPanelTab` union accordingly.
+### Changed
+
+- **Knowledge Graph right-panel tab removed** — The graph tab no longer appears in the right-side slide-out drawer or in the More menu. Persisted state version was bumped with a migration so existing users with the graph tab selected are seamlessly redirected to the Assistant tab.
 
 ## [3.5.9] - April 24, 2026
 
+New Patents landscape explorer with 202 PQC-relevant patents. New CSWP.39 Maturity Evidence Grid on the Compliance page. Refreshed library and compliance data, plus a new compliance and standards-bodies enrichment pipeline.
+
 ### Added
 
-- **New `/patents` page — PQC patent landscape explorer** [persona:architect] [persona:researcher] [persona:ciso] [view:/patents] — top-level route with 202 PQC-relevant patents from `src/data/patents_04242026_r5.csv`. Two-tab layout (Insights + Explore):
-  - _Insights tab_ ([PatentsInsights.tsx](src/components/Patents/PatentsInsights.tsx)) — donut charts (NIST round status, crypto-agility mode, region) + assignee leaderboard with sort toggle + categorical breakdowns (CPC codes, attack-resistance, primary inventive claim type). Click any segment / row / assignee to deep-link the Explore tab with a pre-applied filter.
-  - _Explore tab_ ([PatentsTable.tsx](src/components/Patents/PatentsTable.tsx)) — sortable columns (Title / Impact / Issued / Priority date), search bar, multi-dimension filter chips (Assignee, Region, NIST Status, Crypto Agility, Impact, CPC), CSV export of the filtered view, side-by-side detail panel ([PatentDetail.tsx](src/components/Patents/PatentDetail.tsx)) showing claims, citation graph (with in-corpus deep-links + Google Patents fallbacks), and CPC code references.
-  - _Type definitions_ in [src/types/PatentTypes.ts](src/types/PatentTypes.ts) cover `PatentItem`, `NistStatus`, `ImpactLevel`, `CryptoAgilityMode`, `InsightsFilter`, `ClaimDependency`.
-  - _Routing_ — lazy-loaded in [src/App.tsx](src/App.tsx); nav entry added to [MainLayout.tsx](src/components/Layout/MainLayout.tsx) (hidden on mobile, available via mobile-more).
+- **New Patents page — PQC patent landscape explorer** — Top-level `/patents` route with 202 PQC-relevant patents. Two tabs: Insights (donut charts for NIST round status, crypto-agility mode, region; assignee leaderboard; categorical breakdowns) and Explore (sortable table, search, multi-dimension filter chips, CSV export, side-by-side detail panel with claims, citation graph, and CPC code references). Click any chart segment or assignee to deep-link the Explore tab with a pre-applied filter.
 
-- **CSWP.39 Maturity Evidence Grid on `/compliance`** [persona:architect] [persona:ciso] [persona:compliance] [view:/compliance] — extends the CSWP.39 Explorer tab with a 4×5 (tier × pillar) evidence grid backed by [`maturityGovernanceData.ts`](src/data/maturityGovernanceData.ts) and the `pqc_maturity_governance_requirements_04242026.csv` corpus. New types in [src/types/MaturityTypes.ts](src/types/MaturityTypes.ts) cover `MaturityRequirement`, `PillarId`, `MaturityLevel`, `EvidenceLocation`. Component at [src/components/Compliance/MaturityEvidenceGrid.tsx](src/components/Compliance/MaturityEvidenceGrid.tsx). Cells show requirement counts; clicking a cell opens an evidence drawer with quotes, source URLs, evidence locations, and source-name filtering. The grid is also threaded into:
-  - _ComplianceLandscape framework cards_ — each compliance-framework card now shows a "N CSWP.39 reqs →" chip (when extracted maturity requirements reference that framework) that deep-links into the CSWP.39 Explorer tab pre-filtered to the corresponding `evref`.
-  - _ComplianceView URL state_ — added `?evref=<refId>` URL parameter so deep-links from elsewhere in the app (e.g., framework cards, learn module) can pre-filter the evidence grid; clearing the filter strips the param.
-  - _Workshop Step 1 (CryptoMgmtModernization)_ — current-tier indicator computed from the user's average score now links into the matching tier row in the evidence grid, so the user can pivot from "where am I" to "what evidence exists at my tier".
+- **CSWP.39 Maturity Evidence Grid on Compliance** — A new 4×5 (tier × pillar) evidence grid extends the CSWP.39 Explorer tab. Each cell shows a count of governance requirements; clicking it opens an evidence drawer with quotes, source URLs, and source-name filtering. Compliance framework cards now show a "N CSWP.39 reqs →" chip that deep-links into the grid pre-filtered to the relevant evidence reference. The Crypto Management Modernization workshop's current-tier indicator now links into the matching tier row in the grid.
 
-- **3D infrastructure SVG generator** — new [generate_3d_svgs.cjs](generate_3d_svgs.cjs) script emits 93 SVG files into [SVG/](SVG/) covering nine infrastructure layers (Cloud, Network, Application Servers, Libraries & SDKs, Database, Hardware/Secure Elements, Operating System, Security Software, Security Stack), with an interactive `ai_zoom_map.html` overview. Used to generate visual assets for the Migrate / Threats / Library pages without external design tooling.
+- **3D infrastructure SVG generator** — A new script emits 93 SVG files covering nine infrastructure layers (Cloud, Network, Application Servers, Libraries & SDKs, Database, Hardware/Secure Elements, Operating System, Security Software, Security Stack), with an interactive overview HTML. Used to generate visual assets for the Migrate, Threats, and Library pages without external design tooling.
 
-- **Compliance/cert-schemes/std-bodies enrichment pipeline + shared helpers** — new [scripts/\_enrichment_common.py](scripts/_enrichment_common.py) factors HTML/PDF text extraction, Ollama prompting, and JSON normalization out of the four per-source enrichment scripts (`enrich-tech-standards-ollama.py`, `enrich-cert-schemes-ollama.py`, `enrich-compliance-fwks-ollama.py`, `enrich-std-bodies-ollama.py`). Output files added under [src/data/doc-enrichments/](src/data/doc-enrichments/) for cert-schemes, compliance-fwks, std-bodies, and tech-standards (`*_maturity_*.md` + `*_skipped_*.json` per source). The compiled CSWP.39 governance-requirements corpus lands in [src/data/pqc_maturity_governance_requirements_04242026.csv](src/data/pqc_maturity_governance_requirements_04242026.csv).
+- **Compliance and standards-bodies enrichment pipeline** — A new shared helper factors HTML/PDF text extraction, Ollama prompting, and JSON normalization out of the per-source enrichment scripts. Output files for cert schemes, compliance frameworks, standards bodies, and tech standards (maturity entries plus skipped-source logs). The compiled CSWP.39 governance-requirements corpus lands in a new dataset.
 
-- **Library + compliance data refresh (April 23–24, 2026)** — versioned CSV revisions in [src/data/](src/data/) covering library (`library_04232026.csv`, `_r2`, `_r3`, `_r4`) and compliance (`compliance_04242026.csv`). Loaders auto-discover the latest via `import.meta.glob`. Source-of-truth corrections + new entries documented in [src/data/scheme-registry-audit.md](src/data/scheme-registry-audit.md) (Phase 2a audit) and [src/data/compliancemanualdownload.md](src/data/compliancemanualdownload.md) (manual-download guide for paywalled framework PDFs).
+- **Library and compliance data refresh (April 23–24)** — Versioned CSV revisions covering library and compliance datasets. Source-of-truth corrections plus new entries documented in audit notes; manual-download guide added for paywalled framework PDFs.
 
-- **Embed manifest + RAG corpus regeneration** — [public/data/embed-docs.json](public/data/embed-docs.json), [public/data/rag-corpus.json](public/data/rag-corpus.json), [public/embed/manifest.json](public/embed/manifest.json), and [public/embed/sdk.js](public/embed/sdk.js) refreshed to incorporate the new Patents page (route preset, page-level chunks), MaturityEvidenceGrid (CSWP.39 governance-requirement chunks), and the v3.5.9 data refresh.
+- **Search corpus and embed SDK refreshed** — Regenerated to include the new Patents page, the Maturity Evidence Grid governance requirements, and the data refresh.
 
 ### Fixed
 
-- **ESLint cleanup across new modules** — replaced 23 raw `<button>` tags with the canonical `<Button>` component from [src/components/ui/button.tsx](src/components/ui/button.tsx) across [Patents/](src/components/Patents/) (PatentDetail, PatentsInsights, PatentsTable) and [MaturityEvidenceGrid.tsx](src/components/Compliance/MaturityEvidenceGrid.tsx) and [ComplianceLandscape.tsx](src/components/Compliance/ComplianceLandscape.tsx). Also: lifted PatentsTable's inner `ThCol` component to module scope (was triggering `react-hooks/static-components` "Cannot create components during render"); refactored two `let cumPct = 0; map(seg => cumPct += ...)` accumulators in `PatentsInsights` `DonutChart` / `Section` to use a `reduce`-built cumulative-percentages array (was triggering `react-hooks/immutability` "Cannot reassign variable after render completes"); removed the `autoFocus` attribute from the AddFilterPopover search input. Net: 27 ESLint errors → 0.
+- **Lint cleanup across new modules** — Replaced 23 raw button tags with the canonical Button component across the Patents page and Compliance maturity grid; lifted an inner table component to module scope to satisfy the static-components rule; refactored two cumulative-percentage loops to use immutable arrays. Net: 27 lint errors → 0.
 
 ## [3.5.8] - April 24, 2026
 
+Command Center reorganised around the NIST CSWP.39 5-step process (Govern → Inventory → Identify Gaps → Prioritise → Implement) with maturity tier badges. Closes coverage of every CSWP.39 (December 2025) requirement bullet — 26 of 26 — through reuse of existing site resources and extensions to existing planning tools, with no new tools added.
+
 ### Added
 
-- **Command Center reorganised around the NIST CSWP.39 5-step process** [persona:executive] [persona:architect] [persona:ciso] [view:/business] — replaces the previous 7-pillar layout with a fixed 5-step stack (Govern → Inventory → Identify Gaps → Prioritise → Implement), three cross-cut strips (Action Items top, Cyber Insurance togglable side panel, Learning bar bottom), and a per-step maturity tier badge computed deterministically from existing artifacts (Partial / Risk-Informed / Repeatable / Adaptive). Steps always render in 1→5 order; persona drives only which step expands by default and which artifacts surface first inside each card.
-  - _Tier badges with reasons_ — every step card shows a tooltip listing the specific artifacts and section markers that contributed to (or are missing from) the current tier; tier rules are pure functions in `src/components/BusinessCenter/lib/cswp39Tier.ts` with hoisted threshold constants.
-  - _Persona emphasis_ — `BC_STEP_EMPHASIS_BY_PERSONA` in `src/data/personaConfig.ts` replaces `BC_PILLAR_ORDER_BY_PERSONA`; executive opens on Govern with insurance panel open, architect opens on Identify Gaps, ops opens on Implement.
-  - _Sub-widget extraction_ — `RiskOverviewWidget`, `FrameworkDeadlineList`, `PostureIndicator`, `InfraCoverageWidget`, `FipsBreakdownWidget`, and `TierBadge` promoted into `src/components/BusinessCenter/widgets/` ahead of the rebucket.
+- **CSWP.39 5-step Command Center** — Replaces the previous 7-pillar layout with a fixed 5-step stack (Govern, Inventory, Identify Gaps, Prioritise, Implement), three cross-cut strips (action items at top, cyber insurance side panel, learning bar at bottom), and a per-step maturity tier badge (Partial / Risk-Informed / Repeatable / Adaptive) computed deterministically from your existing artifacts. Each tier badge shows a tooltip listing the artifacts and section markers contributing to (or missing from) the current tier. Persona drives only which step expands by default and which artifacts surface first inside each card.
 
-- **CSWP.39 educational coverage — 26 / 26 requirement bullets** [persona:architect] [persona:ciso] [persona:compliance] [view:/business] [view:/assess] [view:/report] — closes every NIST CSWP.39 (Dec 2025) requirement bullet through reuse of existing site resources, with **zero new tools** in the business tools registry. Coverage shifted from 9 ✅ / 9 ⚠️ / 8 ❌ to 26 ✅ / 0 ⚠️ / 0 ❌. Implementation:
-  - _`RecommendedResourcesPanel` in every step card_ — three sections per step: in-app deep-links into `/migrate`, `/library`, `/threats`, `/compliance`, `/leaders`, `/algorithms`, `/assess`, `/report`; filtered external authoritative references from `authoritativeSourcesData.ts` plus curated extras (NVD, CISA KEV, NIST CSWP.39 PDF, NIST IR 8547, CMVP search, ACVP, CycloneDX, SPDX, NIST FIPS 203/204/205); horizontal "Try it in the Playground" strip linking to relevant `/playground/<tool-id>` tools per step (e.g. `entropy-test` + `qrng-demo` + `drbg-demo` on Inventory; `tls-simulator` + `vpn-sim` + `pqc-ssh-sim` on Identify Gaps; `hybrid-encrypt` + `slh-dsa` + `lms-hss` + `firmware-signing` on Implement).
-  - _Static curation point_ — `src/components/BusinessCenter/lib/cswp39ResourceMap.ts` defines per-step `inApp`, `external`, `playground` link sets plus an optional `authoritativeSourceFilter`.
-  - _CSWP.39 step badge component_ — `src/components/shared/CSWP39StepBadge.tsx` reused by `/assess` and surfaced on `/business` step anchors (`#step-{id}`).
+- **CSWP.39 educational coverage — 26 of 26 requirement bullets** — A Recommended Resources panel in every step card surfaces deep links into Migrate, Library, Threats, Compliance, Leaders, Algorithms, Assess, and Report; filtered authoritative external references; and a "Try it in the Playground" strip with relevant playground tools per step (entropy and DRBG demos on Inventory; TLS and VPN simulators on Identify Gaps; SLH-DSA, LMS/HSS, and firmware signing on Implement). Coverage shifted from 9 fully covered / 9 partial / 8 missing to 26 fully covered.
 
-- **Existing builders extended with CSWP.39 sections** [persona:executive] [persona:architect] [persona:compliance] [view:/business/tools] — 7 of the existing 17 business tools gained Markdown sections + small form fields so the educational extensions ride the same export pipeline:
-  - `audit-checklist` — Exceptions (§5.1) and Evidence (CMVP / ACVP / ESV / CVE-scan, §5.5) row editors with add/remove controls.
-  - `supply-chain-matrix` — auto-derived CBOM by the 6 CSWP.39 asset classes (Code / Library / Application / File / Protocol / System) computed from `useMigrateSelectionStore.myProducts`; "Download CBOM JSON" button emitting a CycloneDX-shaped `application/vnd.cyclonedx+json` blob; Pipeline Sources / Refresh Cadence / CMDB → CBOM Mapping inputs.
-  - `roadmap-builder` — Mitigation Gateway rows referencing a `/migrate` gateway product (Cryptographic Discovery / SASE & Zero Trust / Cloud Encryption Gateways categories) with mandatory sunset date enforcing §4.6 "mitigation is not permanent".
-  - `deployment-playbook` — Decommission Plan section (7 milestones) with §4.6 callout: record mitigation, document target migration, set sunset date, assign owner, phased milestones, capture retirement evidence, update CMDB/CBOM.
-  - `policy-generator` — KPI Drift Rules (§5.4 → §5.1 feedback loop) with KPI / threshold / policy-action row editor.
-  - `vendor-scorecard` — Observability Tooling Notes (§5.3) capturing scanner / CVE-watch / SIEM rule / Zero-Trust enforcement notes per vendor relationship; in-line deep-links to `/migrate?cat=Cryptographic%20Discovery%20Platforms` and `/migrate?cat=SASE%20%26%20Zero%20Trust`.
-  - `kpi-dashboard` — Composite Scoring Formula Explainer (FIPS + ESV + EoL + posture + PQC readiness weights) and Sensitivity Multiplier inputs (§5.4) — both export with the dashboard markdown.
+- **Existing builders extended with CSWP.39 sections** — Seven of the existing 17 business tools gained Markdown sections and small form fields so the educational extensions ride the same export pipeline: audit checklist (Exceptions and Evidence), supply chain matrix (auto-derived CycloneDX CBOM, pipeline sources, refresh cadence), roadmap builder (mitigation gateways with mandatory sunset dates), deployment playbook (decommission plan with 7 milestones), policy generator (KPI drift rules), vendor scorecard (observability tooling notes), and KPI dashboard (composite-scoring formula explainer and sensitivity multiplier).
 
-- **Cross-surface CSWP.39 continuity** [persona:all] [view:/business] [view:/assess] [view:/report] — the same 5-step narrative now spans the three top-level surfaces without any route changes:
-  - _`/assess` wizard_ — every step shows a CSWP.39 step badge next to the "Step X of Y" label that links back to `/business#step-{id}`; mapping in `src/data/assessStepToCswp39.ts` (industry/country/compliance → Govern; crypto/sensitivity/use-cases/retention/credential-lifetime → Inventory; infra → Identify Gaps; scale/timeline → Prioritise; migration/agility → Implement).
-  - _`/report`_ — opens with a `<ReportCswp39Nav>` legend (5-pill grid) that re-groups every report section under the corresponding CSWP.39 step (Risk Score → Prioritise; Algorithm Migration Priority → Inventory; Compliance Impact → Govern; Recommended Actions → Prioritise; Migration Roadmap / Toolkit → Implement; HNDL/HNFL / Threat Landscape / Risk Breakdown → Identify Gaps); pills link to `/business#step-{id}`; legend hidden in print mode. Mapping in `src/data/reportSectionToCswp39.ts`.
+- **Cross-surface CSWP.39 continuity** — Every Assess wizard step shows a CSWP.39 step badge that links back to the matching Command Center step. The Report page opens with a CSWP.39 nav legend that re-groups every report section under the corresponding step. The same 5-step narrative now spans Command Center, Assess, and Report without route changes.
 
 ### Changed
 
-- **Tier 4 maturity gating** in `src/components/BusinessCenter/lib/cswp39Tier.ts` now requires the corresponding CSWP.39 educational section to be present in the existing tool's exported markdown (detected via `## <heading>` prefix scan). Govern Tier 4 needs `## Exceptions` in `audit-checklist`; Inventory needs `## CBOM` and `## Pipeline Sources` in `supply-chain-matrix`; Identify Gaps needs `## Observability Tooling Notes` in `vendor-scorecard`; Prioritise needs `## Formula Explainer` in `kpi-dashboard`; Implement needs `## Mitigation Gateway` in `roadmap-builder` AND `## Decommission` in `deployment-playbook` AND `## Evidence` in `audit-checklist`. Tiers 1–3 unchanged. Each gating clause adds a corresponding entry to the tier badge tooltip's `reasons` array so users see exactly what's missing.
+- **Tier 4 maturity gating** — Tier 4 now requires the corresponding CSWP.39 educational section to be present in the relevant tool's exported markdown. Each gating clause is reflected in the tier badge tooltip so users see exactly what's missing.
 
-- **`CSWP39StepCard`** (`src/components/Compliance/CSWP39StepCard.tsx`) gained three optional props (`tierBadge`, `children`, `defaultOpen`) so the same component serves both `/compliance` (unchanged behaviour) and `/business` (with tier badge + per-step artifact list + resources panel via the `children` slot).
-
-### Removed
-
-- Four pillar section components (`RiskManagementSection`, `ComplianceRegulatorySection`, `GovernancePolicySection`, `VendorSupplyChainSection`) — replaced by the single `CSWP39StepSection.tsx` driven by step ID. Sub-widgets they exposed were promoted to `src/components/BusinessCenter/widgets/` first to preserve their visuals.
+- **Compliance and Command Center share the same step card** — The CSWP.39 step card component now serves both the Compliance page (unchanged behaviour) and the Command Center (with tier badge, per-step artifact list, and resources panel).
 
 ## [3.5.7] - April 23, 2026
 
+New CSWP.39 Framework tab on the Compliance page lets users explore the NIST CSWP.39 (December 2025) Crypto Agility Strategic Plan in-place — overview, interactive process diagram, 5-step process cards, 4-tier maturity model, and a framework cross-walk to compliance frameworks already catalogued elsewhere on the page.
+
 ### Added
 
-- **Compliance page — new CSWP.39 Framework tab** [persona:architect] [persona:ciso] [persona:compliance] [view:/compliance] — the `/compliance` page now has a sixth tab (alongside Standardization Bodies, Technical Standards, Certification Schemes, Compliance Frameworks, Cert Records) that lets users explore the NIST CSWP.39 (Dec 2025) Crypto Agility Strategic Plan without leaving the page:
-  - _Overview banner_ — one-paragraph primer with "Open Full Learn Module" CTA (deep-links `/learn/crypto-mgmt-modernization`) and "Download PDF" link (`/library/NIST_CSWP_39.pdf`).
-  - _Interactive Process Diagram_ — reuses the existing `CryptoAgilityProcessDiagram` component (six clickable zones: Governance, Assets, Management Tools, Data-Centric Risk Management, Mitigation, Migration); click a zone to see what belongs there, the CPM pillar it maps to, and the exact CSWP.39 section reference.
-  - _5-Step Process cards_ — expandable cards for Govern (§5.1–5.4), Inventory (§5.2), Identify Gaps (§5.3), Prioritise (§5.4), and Implement — Mitigate or Migrate (§4.6/§5.5); each card shows a plain-language explainer + enumerated requirements (hybrid tone) + aligned compliance frameworks.
-  - _4-Tier Maturity Model_ — horizontal card strip for Tier 1 Partial → Tier 2 Risk-Informed → Tier 3 Repeatable → Tier 4 Adaptive, colour-coded by tone (error → warning → info → success); each card lists characteristics and "how to reach this tier" steps.
-  - _Framework Cross-Walk_ — summary table mapping each CSWP.39 step to the compliance frameworks already catalogued elsewhere on the page (OMB M-23-02, DORA Art. 9, NIS2 Art. 21, NSM-10, CNSA 2.0, CycloneDX CBOM, FIPS 140-3 IG, CMVP, NIST SP 800-131A, FIPS 203/204/205, ACVP, CA/B SC-081v3); each chip is clickable and jumps to the target tab with a pre-filled search query, so users can instantly see which framework-record supports which CSWP.39 requirement.
-  - _New files_ — `src/components/Compliance/cswp39Data.ts` (typed static data: 5 steps, 4 tiers, cross-walk rows), `src/components/Compliance/CSWP39StepCard.tsx` (expandable step card), `src/components/Compliance/CSWP39Explorer.tsx` (explorer body).
-  - _Routing_ — `?tab=cswp39` and `/compliance#cswp39` both select the new tab; mobile toggle has a new "CSWP.39" button.
-  - _No Learn-module changes_ — the CryptoMgmtModernization module's v3.5.6 state is unchanged; the compliance tab reuses its `CryptoAgilityProcessDiagram` via direct import.
+- **CSWP.39 Framework tab on Compliance** — A sixth tab on the Compliance page covering the NIST CSWP.39 Crypto Agility Strategic Plan: an overview banner, an interactive process diagram with six clickable zones (Governance, Assets, Management Tools, Data-Centric Risk Management, Mitigation, Migration), 5-step process cards (Govern, Inventory, Identify Gaps, Prioritise, Implement) with plain-language explainers and aligned compliance frameworks, a 4-tier maturity model (Partial → Risk-Informed → Repeatable → Adaptive), and a cross-walk table mapping each step to the existing compliance framework records on the page. Each chip is clickable and jumps to the matching framework with a pre-filled search query.
 
 ## [3.5.6] - April 23, 2026
 
-### Changed
-
-- **CryptoMgmtModernization — maturity scale realigned to NIST CSWP.39 4-tier model** [persona:architect] [persona:ciso] [view:/learn] — the internal CPM assessment scale was collapsed from 5 levels (Ad-hoc → Optimized, CMM-derived) to 4 tiers that map 1:1 to NIST CSWP.39 §6.5:
-  - _`MaturityLevel` type_ (`data/maturityModel.ts`) narrowed to `1 | 2 | 3 | 4`; labels updated to CSWP.39 tier names: `Partial · Risk-Informed · Repeatable · Adaptive`.
-  - _Pillar indicators_ — each of the five pillars (Inventory, Governance, Lifecycle, Observability, Assurance) collapsed from 5 descriptors to 4; old L1/L3/L4/L5 strings mapped to new L1/L2/L3/L4 to preserve the highest-fidelity descriptors at each tier.
-  - _Workshop Step 1_ — button row reduced from `[1…5]` to `[1…4]`; radar chart domain updated to `[0, 4]`; score display shows `x.x / 4.0`; intro text updated to reference the CSWP.39 tier scale.
-  - _Introduction learn tab_ — maturity table column renamed from "CMM Level (approx.)" to "CPM Tier"; rows updated to `L1 · Partial` through `L4 · Adaptive`.
-  - _`content.ts`_ — `workshopSummary` matrix description updated (`5×5×4` → `5×4 grid, rated 1–4`); `cswp39MaturityTiers` mapping sentence updated to direct 1:1 mapping; old CMM boundary labels removed.
+Realigned the Crypto Management Modernization module's maturity scale to NIST CSWP.39's 4-tier model and added a cross-walk between four industry frameworks.
 
 ### Added
 
-- **CryptoMgmtModernization — PQC maturity model cross-walk section** [persona:architect] [persona:ciso] [view:/learn] — new section "PQC Maturity Models — Cross-Walk" in the Introduction learn tab aligns four industry frameworks by readiness band:
-  - _Table_ — CSWP.39 (4 tiers) · Meta PQC Levels (5: PQ-Unaware → PQ-Enabled) · CMMI (5 levels: Initial → Optimizing) · ENISA/NCCoE (5 stages: Awareness → Operations); five rows from "No awareness" to "Continuous".
-  - _Callout cards_ — scale difference (CSWP.39 Tier 1 spans two Meta levels) and focus difference (outcome vs. process-maturity vs. project-phase).
-  - _Step 1 cross-reference panel_ — below the NIST CSWP.39 Alignment badge in the workshop, a compact "Model Cross-Reference" sub-panel dynamically maps the user's current average score to the equivalent Meta PQC Level, CMMI level, and ENISA/NCCoE stage.
+- **PQC maturity model cross-walk** — A new section in the Crypto Management Modernization Introduction tab aligns four industry frameworks by readiness band: NIST CSWP.39 (4 tiers), Meta PQC Levels (5: PQ-Unaware → PQ-Enabled), CMMI (5 levels), and ENISA/NCCoE (5 stages). Workshop Step 1 also gains a compact cross-reference panel that maps the user's current average score to the equivalent Meta, CMMI, and ENISA stages.
 
-- **CryptoMgmtModernization — Meta Engineering further reading reference** [persona:architect] [persona:developer] [view:/learn] — new "Further Reading & Case Studies" section in the Introduction learn tab with a clickable card for _Post-Quantum Cryptography Migration at Meta: Framework, Lessons, and Takeaways_ (Rafael Misoczki, Isaac Elbaz, Forrest Mertens, April 2026). Card summarises the five-tier PQC maturity model, ML-KEM-768/ML-DSA-65 algorithm rationale, hybrid deployment strategy, and hyperscale deployment lessons. Reference also added to `content.ts` `relatedStandards` narrative.
+- **Meta Engineering further reading** — A clickable card in the Introduction tab references the April 2026 paper "Post-Quantum Cryptography Migration at Meta: Framework, Lessons, and Takeaways", summarising the five-tier PQC maturity model, ML-KEM-768 / ML-DSA-65 algorithm rationale, hybrid deployment strategy, and hyperscale lessons.
 
-- **Library enrichment — Meta-PQC-Migration-2026 v3 update** — Ollama (`qwen3.5:27b`) v3 enrichment pass added 10 new dimensions: implementation attack surface, cryptographic discovery & inventory, supply chain & vendor risk (LibOQS, Open Quantum Safe consortium, HSM/CPU vendor dependencies), deployment & migration complexity (PQC Migration Levels framework), financial & business impact, and organizational readiness. Output: `src/data/doc-enrichments/library_doc_enrichments_04232026.md`. RAG corpus regenerated (6740 → 6749 chunks).
+- **Library enrichment for the Meta PQC migration paper** — Added 10 new dimensions covering implementation attack surface, cryptographic discovery, supply chain and vendor risk, deployment complexity, financial impact, and organizational readiness.
+
+### Changed
+
+- **Maturity scale realigned to NIST CSWP.39's 4 tiers** — Collapsed from 5 levels (Ad-hoc → Optimized) to 4 (Partial · Risk-Informed · Repeatable · Adaptive), mapping 1:1 to NIST CSWP.39 §6.5. Pillar indicators, workshop Step 1 (button row, radar chart, score display), and the Introduction maturity table all updated.
 
 ## [3.5.5] - April 23, 2026
 
+Three CI fixes — type union completeness, exhaustive record coverage, and test expectations updated for revised HSM ops/sec defaults.
+
 ### Fixed
 
-- **CI — `QuizCategory` union missing `'crypto-mgmt-modernization'` and `'slh-dsa'`** — persona learning paths referenced these two category IDs but the `QuizCategory` discriminated union in `Quiz/types.ts` did not include them, causing `TS2322` errors at build time. Added both members to the union.
+- **Quiz category type union completeness** — Persona learning paths referenced `crypto-mgmt-modernization` and `slh-dsa` quiz categories, but the type union didn't include them, causing build errors. Both now in the union.
 
-- **CI — `quizDataLoader.ts` `Record<QuizCategory, ...>` incomplete** — the `CATEGORY_CONFIG` record must exhaustively cover every `QuizCategory` member; after the union was extended, the record was missing entries for `'crypto-mgmt-modernization'` and `'slh-dsa'`. Added label, description, and icon metadata for both categories.
+- **Quiz category metadata exhaustiveness** — The category configuration record was missing entries for the two newly added categories. Label, description, and icon metadata now in place for both.
 
-- **CI — `HsmCapacityCalculator.test.ts` expected values out of sync with revised ops/sec defaults** — classical-HSM defaults changed in v3.5.4 (ML-DSA-65: 500 → 150 ops/s; ML-KEM-768: 3 000 → 500 ops/s) but the test file still asserted the old computed HSM counts. Recalculated all expected values across 11 tests and updated inline comments to reflect the corrected formulas.
+- **HSM Capacity Calculator test expectations** — Test expected values were out of sync with the revised ops/sec defaults from v3.5.4 (ML-DSA-65: 500 → 150 ops/s; ML-KEM-768: 3,000 → 500 ops/s). Updated all 11 tests with recalculated values.
 
 ## [3.5.4] - April 23, 2026
 
+Fixed a Hybrid Signature workshop crash, corrected HSM ops/sec defaults to better match published vendor data, and routed ML-DSA hybrid signatures through the in-browser HSM where the standard mode applies.
+
 ### Fixed
 
-- **Hybrid Signature workshop — `RangeError: "secretKey" expected Uint8Array of length 4032`** [view:/learn] — `ml_dsa65.sign(msg, secretKey)` was called with arguments swapped (`sign(secretKey, msg)`) in both `concatenationSign` and `nestingSign`; the message bytes were being validated as the secret key, producing a length mismatch equal to the message length (~170 bytes for a typical workshop message). Corrected argument order in `HybridSignatureService.ts`.
+- **Hybrid Signature workshop crash** — `ml_dsa65.sign(msg, secretKey)` was being called with arguments swapped, causing a length-mismatch error every time a user tried to sign with concatenation or nesting. Argument order corrected.
 
-- **HSM capacity defaults — ops/sec figures corrected** [view:/learn] — classical-HSM reference profile numbers revised to better match published vendor datasheets: RSA-2048 and ECDSA/ECDH P-256 corrected to 100 000 ops/s; ML-DSA-65 software fallback revised to 150 ops/s; ML-KEM-768 revised to 500 ops/s; AES-128/256 revised to 50 000 / 25 000 ops/s. Source note updated accordingly.
+- **HSM ops/sec defaults corrected** — Reference profile numbers revised to match published vendor datasheets: RSA-2048 and ECDSA/ECDH P-256 corrected to 100,000 ops/s; ML-DSA-65 software fallback revised to 150 ops/s; ML-KEM-768 to 500 ops/s; AES-128/256 to 50,000 / 25,000 ops/s.
 
 ### Changed
 
-- **Hybrid Signature workshop — ML-DSA backend split by construction** [persona:developer] [persona:architect] [view:/learn] — concatenation and nesting now route their ML-DSA-65 operations through the softhsmv3 WASM HSM (`CKM_ML_DSA`, PKCS#11 v3.2) while Silithium remains on `@noble/post-quantum` (`Sign_internal`, external-μ mode). EC-Schnorr stays on `@noble/curves` for all three constructions (no PKCS#11 Schnorr mechanism exists in v3.2). New `HybridSignatureHsmService.ts` encapsulates the HSM-backed keygen, sign, and verify paths.
-  - _UI clarity_ — each construction now displays a backend legend showing which primitive uses which library (softhsmv3 WASM / @noble/curves / @noble/post-quantum); HSM status banner (loading / ready / error) shown on mount; key panel shows PKCS#11 handle numbers for HSM-managed ML-DSA keys.
-  - _Educational rationale_ — Silithium's fused Fiat-Shamir protocol requires `ML-DSA.Sign_internal` (external-μ mode, FIPS 204 §5.2), which has no PKCS#11 v3.2 equivalent; concatenation and nesting use standard `ML-DSA.Sign` / `ML-DSA.Verify` (FIPS 204 §§5.2–5.3), which map directly onto `CKM_ML_DSA`. This boundary is now visible in the UI.
+- **Hybrid Signatures — ML-DSA backend split by construction** — Concatenation and nesting now route their ML-DSA-65 operations through the softhsmv3 in-browser HSM (using the standard PKCS#11 ML-DSA mechanism), while Silithium remains on the noble post-quantum library because its fused Fiat-Shamir protocol requires the external-μ mode of FIPS 204 §5.2, which has no PKCS#11 v3.2 equivalent. Each construction now displays a backend legend showing which primitive uses which library, with HSM status banner and PKCS#11 handle numbers visible.
 
 ## [3.5.3] - April 22, 2026
 
+Three new workshop steps in the Crypto Management Modernization module that close the gap on CSWP.39 Identify Gaps → Prioritise → Implement, and a CSWP.39 process badge on every workshop step.
+
 ### Added
 
-- **CryptoMgmtModernization workshop — CSWP.39 Steps 6–8** [persona:architect] [persona:ciso] [view:/learn] — three new workshop steps closing the Identify Gaps → Prioritise → Implement process gaps against NIST CSWP.39:
-  - _Step 6: Management Tools Coverage Audit_ — rates 6 CSWP.39 tool categories (Crypto Scanners, Vulnerability Management, Asset Management/SBOM, Log/SIEM, Zero-Trust Enforcement, Data Classification) on a None/Manual/Partial/Automated scale; produces a gap heatmap, tool-chain completeness %, and prioritised recommendations per gap; CSWP.39 §5.3 "Identify Gaps" step.
-  - _Step 7: Risk Analysis & Prioritisation Engine_ — scores CBOM assets (loaded from Step 3 or sample data) on FIPS status, ESV (SP 800-90B) status, PQC readiness, posture, and EoL; outputs a prioritised Critical/High/Medium/Low queue with per-asset action guidance; CSWP.39 §5.4 "Prioritise" step.
-  - _Step 8: Implement — Mitigate or Migrate_ — CSWP.39 §4.6 decision-tree wizard; user picks an asset from the CBOM (or sample list), answers 5 crypto-agility questions (source available? modular API? refresh scheduled? maintenance window feasible?), and receives either a MIGRATE recommendation (algorithm + timeline + CNSA 2.0 target) or a MITIGATE recommendation (crypto gateway spec + mandatory sunset date + §4.6 "not a permanent solution" callout).
-  - _Shared CBOM state_ — Step 3 (Library CBOM Builder) now exports its parsed CBOM via `onCbomExport` callback; Steps 7 and 8 consume the live data directly; when Step 3 has not been visited, both steps fall back to sample educational assets.
-  - _CSWP.39 process badge on all 8 steps_ — `WorkshopStepHeader` now accepts `cswp39Step?: string`; every step shows which CSWP.39 process step it executes (e.g., "Govern · §5.1", "Inventory · §5.2", "Identify Gaps · §5.3").
+- **Three new workshop steps in Crypto Management Modernization** — Step 6 Management Tools Coverage Audit rates 6 CSWP.39 tool categories (Crypto Scanners, Vulnerability Management, Asset Management/SBOM, Log/SIEM, Zero-Trust Enforcement, Data Classification) on a 4-point scale and produces a gap heatmap. Step 7 Risk Analysis & Prioritisation Engine scores CBOM assets on FIPS, ESV, PQC readiness, posture, and end-of-life into a Critical/High/Medium/Low queue. Step 8 Implement — Mitigate or Migrate is a CSWP.39 §4.6 decision-tree wizard that produces either a MIGRATE recommendation (algorithm, timeline, CNSA 2.0 target) or a MITIGATE recommendation (crypto gateway spec with mandatory sunset date). Steps 7 and 8 consume the live CBOM from Step 3, falling back to sample data when not yet built.
+
+- **CSWP.39 process badge on every workshop step** — Each step now shows which CSWP.39 process step it executes (e.g., "Govern · §5.1", "Inventory · §5.2", "Identify Gaps · §5.3").
 
 ## [3.5.2] - April 22, 2026
 
+Realigned the Crypto Management Modernization module to NIST CSWP.39 (December 2025), framing it explicitly as the operational execution layer of the Crypto Agility Strategic Plan.
+
 ### Added
 
-- **CryptoMgmtModernization — full NIST CSWP.39 realignment** [persona:architect] [persona:executive] [persona:ciso] [view:/learn] — the module is now explicitly framed as the operational execution layer of the NIST CSWP.39 (Dec 2025) Crypto Agility Strategic Plan:
-  - _CSWP.39 process diagram (Visual tab)_ — interactive reproduction of CSWP.39 Fig. 3 (`CryptoAgilityProcessDiagram`); six clickable zones (Governance, Assets, Management Tools, Data-Centric Risk Management, Mitigation, Migration); each zone reveals what belongs there, which CPM pillar maps to it, and the CSWP.39 section reference.
-  - _Three new Learn tab sections_ injected after "Why Modernize Now":
-    - **NIST CSWP.39 — The Crypto Agility Strategic Plan** — the five-step Govern → Inventory → Identify Gaps → Prioritise → Implement loop with reference to the Visual tab diagram.
-    - **The Management Tools Layer** — six tool categories (Crypto scanners, Vulnerability management, CMDB/SBOM pipelines, SIEM, Zero-Trust enforcement, Data classification) mapped to CPM pillars; explains why this layer is needed to prevent manual, stale data in the Risk Analysis Engine.
-    - **CSWP.39 Crypto Agility Maturity Tiers** — 4-tier table (Partial → Risk-Informed → Repeatable → Adaptive) with mapping to the existing 5-level CMM scale.
-  - _Maturity Self-Assessment CSWP.39 callout_ — Workshop Step 1 now shows the corresponding CSWP.39 tier (Tier 1–4) below the "Recommended next milestone" panel; derived dynamically from the average score.
-  - _Scenario 9 — "Crypto gateway or full migration"_ — exercises tab now has nine scenarios; Scenario 9 covers CSWP.39 §4.6 bump-in-the-wire decision framework (legacy PKI with unavailable source code, SHA-1 certs, mission-critical, team gone).
-  - _`content.ts` additions_ — `cswp39Framework`, `managementToolsLayer`, `mitigateVsMigrate`, `cswp39MaturityTiers` narrative keys added; `overview` prepended with CSWP.39 strategic context; `relatedStandards` updated with NIST CSWP.39 Dec 2025 reference.
+- **CSWP.39 process diagram on the Visual tab** — Interactive reproduction of CSWP.39 Figure 3 with six clickable zones (Governance, Assets, Management Tools, Data-Centric Risk Management, Mitigation, Migration). Each zone reveals what belongs there, which CPM pillar maps to it, and the CSWP.39 section reference.
+
+- **Three new Learn tab sections** — "NIST CSWP.39 — The Crypto Agility Strategic Plan" describes the five-step Govern → Inventory → Identify Gaps → Prioritise → Implement loop. "The Management Tools Layer" maps six tool categories to CPM pillars and explains why this layer is needed to prevent stale data in the risk analysis engine. "CSWP.39 Crypto Agility Maturity Tiers" presents the 4-tier table with mapping to the existing 5-level CMM scale.
+
+- **Maturity Self-Assessment CSWP.39 callout** — Workshop Step 1 now shows the corresponding CSWP.39 tier (Tier 1–4) below the recommended next milestone, derived from the average score.
+
+- **Scenario 9 — "Crypto gateway or full migration"** — Exercises tab now has nine scenarios; Scenario 9 covers CSWP.39 §4.6 bump-in-the-wire decision framework (legacy PKI with unavailable source code, SHA-1 certs, mission-critical, team gone).
 
 ## [3.5.1] - April 22, 2026
 
+New Threshold Signing step in the Stateful Signatures workshop — educational simulation of the Haystack/coalition threshold construction for hash-based signatures, with configurable t-of-n thresholds.
+
 ### Added
 
-- **Threshold Signing — Step 5 in Stateful Signatures workshop** [persona:architect] [persona:researcher] [persona:developer] [view:/learn] — educational simulation of the Haystack/coalition threshold construction (Kelsey, Lang & Lucks) for hash-based signatures, accessible at `/learn/stateful-signatures?tab=workshop&step=4`:
-  - _User-configurable t-of-n threshold_ — trustees n: 2–5, threshold t: 1–n; only single-level LMS parameter sets (H5/W1, H5/W8, H10/W4) are supported, consistent with the research scope.
-  - _4-phase interactive flow_ — Configure → Dealer Setup (simulated keypair + CRV + trustee share distribution) → Threshold Signing (select ≥ t trustees to enable aggregation; "insufficient shares" error shown when below threshold) → Result (simulated signature + key reuse prevention comparison between single-signer and t-of-n).
-  - _CRV size table_ — side panel shows Common Reference Value growth: LMS single-level (practical, ~2–500 MB depending on threshold); HSS 2-level (~1–20 GB); HSS 3+ levels (Impractical). Explains why HSS hypertrees are excluded.
-  - _Research attribution_ — Haystack paper (Kelsey, Lang, Lucks) cited; note on lattice-based threshold alternatives (threshold Dilithium / FROST variants) for larger thresholds.
-  - No new WASM or external dependencies — simulation uses a deterministic FNV-1a hash for reproducible share/signature display.
+- **Threshold Signing — Step 5 in Stateful Signatures workshop** — Educational simulation of the Haystack/coalition threshold construction (Kelsey, Lang & Lucks) for hash-based signatures. User-configurable t-of-n threshold (n: 2–5, t: 1–n) over single-level LMS parameter sets. Four-phase interactive flow: Configure → Dealer Setup (simulated keypair, common reference value, trustee share distribution) → Threshold Signing (select ≥ t trustees to enable aggregation; "insufficient shares" error when below threshold) → Result (simulated signature with key reuse prevention comparison). Side panel shows common reference value size growth: LMS single-level (~2–500 MB depending on threshold), HSS 2-level (~1–20 GB), HSS 3+ levels (impractical), explaining why HSS hypertrees are excluded. Research attribution: Haystack paper, plus a note on lattice-based threshold alternatives (threshold Dilithium, FROST variants) for larger thresholds.
 
 ## [3.5.0] - April 22, 2026
 
+Major release: a new Hybrid Signature Spectrums workshop demonstrating three hybrid signature constructions (concatenation, nesting, and Silithium fused Fiat-Shamir); SP 800-90B Entropy Source Validation status now tracked on libraries and HSMs; six new posture KPIs; and a complete cross-check remediation of the Crypto Management Modernization module to v1.1.0 with five corrected CMVP cert numbers and two new content sections.
+
 ### Added
 
-- **Hybrid Signature Spectrums workshop (PT-027)** [persona:developer] [persona:architect] [persona:researcher] [view:/playground] [view:/learn] — live side-by-side demonstration of the three hybrid signature constructions from IETF `draft-ietf-pquip-hybrid-signature-spectrums`:
-  - _Concatenation_ — `sig₁ ‖ sig₂` (EC-Schnorr secp256k1 + ML-DSA-65); no non-separability; most backwards-compatible.
-  - _Nesting_ — `sign_ML(msg ‖ sig_EC)`; outer ML-DSA covers the EC component (Weak Non-Separability / WNS); EC sig still verifies alone.
-  - _Silithium (Fused Fiat-Shamir)_ — shared challenge `μ = H(R ‖ pk_ec ‖ pk_ml ‖ msg)`; neither component verifies without the shared μ; achieves Strong Non-Separability (SNS) per ePrint 2025/2059; smaller than concatenation.
-  - All three constructions perform live key generation and signing in-browser using `@noble/post-quantum` (ML-DSA) and `@noble/curves` (secp256k1).
-  - Accessible from `/playground` (PT-027) and linked from `/learn/hybrid-crypto?tab=workshop&step=5`.
+- **Hybrid Signature Spectrums workshop** — Live side-by-side demonstration of the three hybrid signature constructions from the IETF hybrid signature spectrums draft. Concatenation simply pairs two independent signatures (most backwards-compatible). Nesting wraps the inner signature in the outer (Weak Non-Separability). Silithium uses a shared challenge so neither component verifies without the shared component, achieving Strong Non-Separability per ePrint 2025/2059 and resulting in smaller signatures than concatenation. All three constructions perform live key generation and signing in-browser. Accessible from the Playground (PT-027) and the Hybrid Crypto learn module.
 
-- **`EsvStatus` field on crypto libraries and HSMs** [persona:architect] [persona:developer] [view:/learn] — `CryptoLibrary` and `HsmVendorRecord` now carry an `esvStatus` field (`active | historical | revoked | in-mip | not-validated`) tracking SP 800-90B Entropy Source Validation status independently of the FIPS 140-3 certificate. Surfaces in the Library & Hardware CBOM Builder workshop.
+- **Entropy Source Validation status on libraries and HSMs** — Crypto libraries and HSMs now carry an `esvStatus` field tracking SP 800-90B Entropy Source Validation status (active, historical, revoked, in-MIP, not validated) independently of the FIPS 140-3 certificate. Surfaces in the Library & Hardware CBOM Builder workshop.
 
-- **Posture KPI additions** [persona:ciso] [persona:architect] [view:/learn] — six new KPIs added to `POSTURE_KPIS`:
-  - Governance: `policy-enforcement-rate` (% endpoints with auto-verified cipher-suite config), `governance-attestation-coverage` (% decision owners completing annual attestation).
-  - Observability: `cipher-scan-coverage` (% endpoints covered by ongoing protocol-version scan), `standards-watch-lag` (days from deprecation notice to CBOM rule update).
-  - Assurance: `esv-coverage-libs` (% libraries with active SP 800-90B ESV cert), `esv-coverage-hsm` (% HSMs with active SP 800-90B ESV cert).
+- **Six new posture KPIs** — Governance: policy enforcement rate (% endpoints with auto-verified cipher-suite config), governance attestation coverage (% decision owners completing annual attestation). Observability: cipher-scan coverage, standards-watch lag (days from deprecation notice to CBOM rule update). Assurance: ESV coverage for libraries and ESV coverage for HSMs.
 
-- **Module Q&A CSV — Crypto Management Modernization** [persona:researcher] [view:/learn] — `src/data/module-qa/module_qa_crypto-mgmt-modernization_04222026.csv` closes the gap where every peer module had quiz coverage but this one had none; 20 Q&A pairs grounded in the 36 library entries, CBOM pillars, CLM 47-day cadence, FIPS 140-3 IG September 2025 PQC update, CNSA 2.0 deadlines, OMB M-23-02, and SP 800-90B ESV.
+- **Crypto Management Modernization Q&A coverage** — A new Q&A CSV closes the gap where every peer module had quiz coverage but this one had none. Twenty Q&A pairs grounded in library entries, CBOM pillars, the 47-day TLS cadence, FIPS 140-3 IG September 2025 PQC update, CNSA 2.0 deadlines, OMB M-23-02, and SP 800-90B ESV.
 
 ### Changed
 
-- **CryptoMgmtModernization module → v1.1.0** [persona:architect] [persona:executive] [persona:developer] [view:/learn] — cross-check remediation across six gap categories:
-  - _CMVP cert numbers corrected (GAP-1 CRITICAL)_: five wrong cert numbers replaced with verified NIST CMVP values — Thales Luna G7 `#4962`, BoringCrypto `#5244`, Bouncy Castle FIPS Java `#4943`; Entrust nShield, YubiHSM 2, AWS CloudHSM, GCP Cloud HSM entries corrected; WolfCrypt FIPS posture downgraded to `yellow` (PQC APIs available but not inside FIPS boundary per CMVP #4718). AWS-LC ESV status set to `active`.
+- **Crypto Management Modernization → v1.1.0 — cross-check remediation** — Five wrong CMVP cert numbers replaced with verified NIST CMVP values (Thales Luna G7 #4962, BoringCrypto #5244, Bouncy Castle FIPS Java #4943, plus corrections to Entrust nShield, YubiHSM 2, AWS CloudHSM, and GCP Cloud HSM entries). WolfCrypt FIPS posture downgraded to amber (PQC APIs available but not inside FIPS boundary per CMVP #4718). Two new content sections added: an entropy compliance section explaining the SP 800-90B ESV track as a common PQC migration gap, and a protocol deprecation section documenting the standards-watch subscription model. Library tags, RFC 8555 (ACME) entry, and unattributed-claim source citations all added.
 
-  - _Content depth additions_: two new subsections in `content.ts`:
-    - `entropyCompliance` — explains the SP 800-90B ESV track as a common PQC migration gap; covers the RNG chain audit requirement (entropy source → conditioning → DRBG), cloud/container ESV re-evaluation triggers, and the CMM Assurance pillar extension for ESV status in CBOMs.
-    - `protocolDeprecation` — documents the standards-watch subscription model (IETF RFC Obsoletes/Updates, SP 800-131A cycle, NSA CNSA, CA/B Forum, ETSI TS 119 312, BSI TR-02102, ANSSI RGS) and ties each deprecation event to CBOM classification rule updates and the Observability scanning loop.
-
-  - `keyConcepts` and `workshopSummary` expanded to cover SP 800-90B ESV in the CBOM Builder and the Program Office Model (five CPM roles with RACI).
-  - `relatedStandards` updated: NIST SP 800-90B/A/C, SP 800-131A Rev 2, RFC 8996, RFC 7465, ETSI TS 119 312, BSI TR-02102, ANSSI RGS added.
-
-  - _Library tags (GAP-2)_: `crypto-mgmt-modernization` added to `module_ids` of four library entries (`US-CISA-ACDI-Strategy-2024`, `BSI TR-02102-1`, `ANSSI-PG-083-v3-2026`, `NIST-SP-800-131A-Rev3`) in `library_04222026_r4.csv` (copy of r3).
-  - _RFC 8555 library entry (GAP-3)_: new ACME entry added to `library_04222026_r4.csv` with `crypto-mgmt-modernization` tag.
-  - _Un-attributed claim attribution (GAP-4)_: CMVP queue, HSM CVE revalidation, EU DORA/NIS2, and protocol-deprecation claims wired to source `referenceId` citations in `Introduction.tsx`.
-  - _ROI Builder attribution (GAP-5)_: inline source comments added to the three previously un-sourced defaults (FIPS-drift remediation, library-CVE response, quantum-breach avoidance) citing NIST IR 8547 / ENISA PQC Integration Study / internal domain model.
-
-- **HSM Capacity Calculator — multi-location support** [persona:architect] [persona:ops] [view:/playground] — `hsmCounts` renamed to `hsmsPerLocation`; new `numLocations` parameter; per-location HA computation (`perLocationRaw`, `perLocationRequired`); fleet total = `numLocations × perLocationRequired`; `OrgParams` + `deriveUseCaseTps` helper for org-size-driven defaults. `ml-kem-768` added as a distinct algo in load distribution.
-
-### Data
-
-- **`library_04222026_r4.csv`** — copy of r3; adds `crypto-mgmt-modernization` to four entries; adds RFC 8555 (ACME) entry; previous r3 snapshot kept per 2-version rule.
-- **`pqc_product_catalog_04222026.csv`** — new product catalog snapshot dated 2026-04-22.
-- **RAG corpus + embed manifest** rebuilt to include new module Q&A content and updated library entries.
+- **HSM Capacity Calculator — multi-location support** — Per-location HA computation, fleet total now respects the number of locations, and ML-KEM-768 added as a distinct algorithm in the load distribution.
 
 ## [3.4.0] - April 22, 2026
 
-### Changed
-
-- **SP 800-227 coverage — hybrid KEM depth & cross-module tagging** [persona:architect] [persona:developer] [persona:researcher] [view:/learn] [view:/library] — closes the gap between SP 800-227 being referenced and it being taught:
-  - **HybridCrypto module depth** (`/learn/hybrid-crypto`): expanded from name-drop to spec-faithful teaching across four topic areas:
-    - _Parameter-set selection table_ — ML-KEM-512 → NIST Category 1 (AES-128, IoT/short-lived), ML-KEM-768 → Category 3 (AES-192, default TLS), ML-KEM-1024 → Category 5 (AES-256, CNSA 2.0/federal); includes HNDL risk framing for retention-window-driven selection.
-    - _Combiner construction deep-dive_ — concatenation order fixed per protocol (classical ‖ PQC per SP 800-56C); HKDF vs KMAC alternatives explained; dual-PRF assumption stated (security holds if either half remains secure); domain-separation framed as a mandatory SP 800-227 requirement, not optional.
-    - _New "Implementation Requirements" section_ (SP 800-227 §4 + FIPS 203 §7.1) — implicit rejection (why a pseudorandom output on failure prevents chosen-ciphertext probing, not just that it exists); constant-time decapsulation required for FIPS validation; approved DRBG mandatory for encapsulation randomness; side-channel hardening must cover both halves of a hybrid construction.
-    - _Transition framing_ — NIST SP 800-227 §1 "interim-measure" language surfaced; migration to pure PQC tied to algorithm maturation (cryptanalysis + deployment), not calendar deadlines alone.
-  - **Cross-module tagging** — `NIST SP 800-227` added to the `standards` registry of four modules that demonstrate hybrid KEX in practice: `TLSBasics`, `VPNSSHModule`, `OSPQC`, `PlatformEngPQC`.
-  - **Library dependencies** — `NIST SP 800-227` added to the `dependencies` field of five hybrid KEM protocol entries in `library_04222026_r2.csv`: `draft-ietf-tls-ecdhe-mlkem-04`, `draft-ietf-ipsecme-ikev2-mlkem`, `draft-ietf-lamps-pq-composite-kem-12`, `ETSI TS 103 744`, `draft-kampanakis-curdle-ssh-pq-ke`. Previous snapshot archived per the 2-version rule.
-  - **RAG corpus** — `rag-summary.md` updated with all new content; run `npm run generate-corpus` to propagate.
-
-- **Library CSV refresh to `04222026_r1`** [persona:architect] [persona:researcher] [view:/library] — replaces `04212026` as the
-  current snapshot. Intentionally drops 9 reference rows that were
-  audited out (`CAB-Forum-SC-081v3`, `Forrester-TEI-CLM-Automation`,
-  `Gartner-CryptoCOE-Mahdi`, `Gartner-PQC-Time-To-Prepare`,
-  `McKinsey-PQC-Preparation`, `Ponemon-Global-PKI-Trends-2026`,
-  `Venafi-Ponemon-Outage-Cost`, `AppViewX-47Day-Certs`,
-  `DigiCert-PQC-Maturity-Model`). Six older CSV versions archived to
-  `src/data/archive/` per the 2-version rule; `library_04212026.csv`
-  kept as the previous snapshot for New/Updated badge diffs. Ships with
-  accompanying `doc-enrichments/library_doc_enrichments_04222026.md`.
+Major release: SP 800-227 hybrid KEM coverage expanded from name-drop to spec-faithful teaching across the Hybrid Crypto module; new Cryptographic Management Modernization learn module (LM-052) — a 55-minute, 5-step executive-track module covering posture management; first WASM charon validation exports proving the ML-DSA + ML-KEM source patches are live; VPN Simulator gap-closure phase 1 (algorithm benchmark matrix, config-bundle export, IndexedDB session history, sandbox launch contract); and a major library refresh adding 26 authoritative references plus 13 newly tagged rows.
 
 ### Added
 
-- **WASM charon validation exports (Phase 3a)** [persona:developer] [persona:architect] [view:/playground] — the
-  `strongswan-v2.wasm` binary now exports three real library-level
-  validators that prove the ML-DSA + ML-KEM source patches are live, not
-  just present in source:
-  - `wasm_vpn_validate_proposal(str)` — parses an IKEv2 proposal string
-    through charon's own `proposal_create_from_string()` and reports
-    whether any ML-KEM transform (IDs 35/36/37 per
-    draft-ietf-ipsecme-ikev2-mlkem) was accepted.
-  - `wasm_vpn_validate_cert(pem, len)` — loads a PEM cert via
-    `lib->creds->create(CRED_CERTIFICATE, CERT_X509, BUILD_BLOB_PEM)` and
-    reports the recognized key type, with `is_ml_dsa: true` when RFC 9881
-    OIDs were parsed.
-  - `wasm_vpn_list_key_exchanges()` — returns the numeric transform IDs
-    charon recognizes for ML-KEM + classical groups.
+- **New learn module: Cryptographic Management Modernization** — A 55-minute, 5-step executive-track module covering modern cryptographic posture management across certificates, libraries, software, and keys. Six Learn sections frame posture management as a continuous dual-loop program (strategic annual loop wrapping an operational Discover → Classify → Score → Remediate → Attest → Reassess loop). Five workshop tools: a CPM Maturity Self-Assessment with radar chart, an Inventory Lifecycle Simulator with canonical scenarios (shadow-cert discovery, the 47-day TLS cadence, intermediate-CA rotation, OCSP drift), a Library & Hardware CBOM Builder, a No-Regret ROI Builder (IRR under quantum-happens / never-happens scenarios with 5 benefit streams), and a Posture KPI Dashboard Designer. Eight exercises, glossary-aware content, and bidirectional cross-links to the crypto-agility, PQC governance, PQC business case, and KMS modules.
 
-  Exposed through `src/wasm/strongswan-v2/bridge-v2.ts` as
-  `validateProposal()`, `validateCert()`, `listKeyExchanges()`. Wired into
-  the VPN simulator as a new **Validate WASM charon** panel in the Raw
-  Config tab.
+- **WASM charon validation exports (Phase 3a)** — The strongSwan WASM binary now exports three real library-level validators that prove the ML-DSA and ML-KEM source patches are live, not just present in source: a proposal validator (parses an IKEv2 proposal string through charon's own parser and reports whether any ML-KEM transform was accepted), a certificate validator (loads a PEM cert and reports the recognized key type, including ML-DSA), and a key-exchange enumerator (lists the numeric transform IDs charon recognizes for ML-KEM and classical groups). Wired into the VPN Simulator as a new "Validate WASM charon" panel in the Raw Config tab.
 
-  This closes plans 1 and 2 of the hub↔sandbox gap report at the library
-  validation level. The simulation-only caveat on ML-KEM proposal strings
-  has been replaced with accurate language: the proposals do parse against
-  the real charon engine; only the full IKE handshake driver (Phase 3b+
-  of the WASM shims) remains a simulation.
+- **VPN Simulator gap-closure (phase 1 of 6)** — Four new capabilities: a "Run algorithm matrix" button that runs keygen and self-sign for RSA-3072 and ML-DSA-{44,65,87} against the live HSM and renders a timings/cert-size/pubkey-size table; a "Download config bundle" button that packages strongswan.conf, ipsec.conf for both peers, plus PSK or generated PEM certs into a zip; a "Save session" + "History" flow backed by IndexedDB that persists the user's configuration (mode, auth, MTU, fragmentation, configs, PSK, cert PEMs and key handles) for the 20 most recent sessions; and a "Launch full-fidelity sandbox" button that calls the orchestrator API to spin up a real Docker scenario.
 
-- **VPN Simulator — gap-closure vs the Docker sandbox** [persona:developer] [persona:architect] [view:/playground], phase 1 of 6:
-  - **Algorithm benchmark matrix** — new "Run algorithm matrix" button runs
-    keygen + self-sign for RSA-3072 and ML-DSA-{44, 65, 87} against the live
-    softhsmv3 session and renders a timings / cert-size / pubkey-size table.
-    Mirrors the sandbox's `/api/run/vpn/matrix` endpoint at the cert-path
-    level (handshake-level matrix deferred until the WASM charon accepts
-    ML-KEM + ML-DSA upstream).
-  - **Config export as .zip** — new "Download config bundle" button packages
-    the currently-active `strongswan.conf` + `ipsec.conf` (initiator +
-    responder) plus either `ipsec.secrets` (PSK mode) or generated PEM certs
-    (dual auth), plus a README with the resolved CKA_ID handles, ready to
-    lift into a real strongSwan deployment.
-  - **Session history via IndexedDB** — "Save session" writes the current
-    mode/auth/algorithm/config bundle into the `pqctoday-vpn-sessions`
-    IndexedDB store (keeps the 20 most recent); "History" opens a dialog
-    listing past runs with per-row **Load** (restores mode, auth, MTU,
-    fragmentation, strongswan.conf, ipsec.conf, PSK, and cert PEMs+CKA_IDs),
-    **Delete**, and bulk **Clear all**. Note: this persists the **user's
-    configuration**, not the softhsmv3 private-key state; true on-HSM
-    persistence would require mounting Emscripten IDBFS inside the softhsmv3
-    WASM build (deferred).
-  - **Sandbox launch contract** — new "Launch full-fidelity sandbox" button
-    calls `POST {VITE_SANDBOX_ORCHESTRATOR_URL}/sessions {scenarioId:'vpn'}`
-    per `pqctoday-sandbox/docs/orchestrator-api.md` and opens the returned
-    `baseUrl` in a new tab. Gracefully reports when the env var is unset.
-- **New learn module: Cryptographic Management Modernization (LM-052)** [persona:executive] [persona:architect] [view:/learn] — a
-  55-minute, 5-step executive-track module covering modern cryptographic
-  posture management across certificates, libraries, software, and keys.
-  Routed at `/learn/crypto-mgmt-modernization`, slotted into the executive
-  track between `pqc-governance` and `vendor-risk`. Six Learn sections frame
-  CPM as a continuous dual-loop program (strategic annual PDCA wrapping an
-  operational Discover → Classify → Score → Remediate → Attest → Reassess
-  loop) with explicit carve-out from crypto-agility (capability) and
-  CryptoCOE (operating model). Five workshop tools: **CPM Maturity
-  Self-Assessment** (5 pillars × 5 levels with radar chart), **Inventory
-  Lifecycle Simulator** (6-stage operational loop with canonical CLM
-  scenarios: shadow-cert discovery, 47-day cadence, intermediate-CA rotation,
-  OCSP drift), **Library & Hardware CBOM Builder** (SBOM → CBOM mapper +
-  library posture + FIPS 140-3 L3 trackers for OpenSSL, BoringSSL, liboqs,
-  wolfCrypt FIPS, BC FIPS, Mbed TLS, RustCrypto, AWS-LC plus Thales Luna,
-  Entrust nShield, Utimaco, Fortanix, YubiHSM, AWS/Azure/GCP HSMs),
-  **No-Regret ROI Builder** (IRR under quantum-happens/never-happens
-  scenarios with 5 benefit streams), and **Posture KPI Dashboard Designer**
-  (KPI taxonomy across 5 pillars, audience-filtered for board/CIO/CISO).
-  Eight exercises, glossary-aware content, RAG + Curious summaries, and
-  bidirectional cross-links to `crypto-agility` (LM-007), `pqc-governance`
-  (LM-037), `pqc-business-case` (LM-036), and `kms-pqc` (LM-024).
-- **Library CSV `04212026`** [persona:architect] [persona:researcher] [view:/library] — next versioned snapshot (previous
-  `04202026_r2` retained per `CSVmaintenance.md` two-version rule). **26
-  new authoritative references** added for the CMM module plus **13 existing
-  rows tagged**; covers CA/B Forum Ballot SC-081v3 (47-day TLS cadence by
-  March 2029), NIST CMVP Validated Modules + Modules-In-Process databases,
-  NIST ACVP, FIPS 140-3 IG September 2025 PQC update, Microsoft
-  "Building your cryptographic inventory" (April 2026), EJBCA/Keyfactor
-  Cryptographic Posture Management primers, Gartner CryptoCOE framing
-  (David Mahdi, Brian Lowans), IBM Research CBOM (Ray Harishankar),
-  Keyfactor CBOM introduction, Deloitte Tech Trends 2025, McKinsey PQC
-  preparation, IBM IBV 2025 quantum-safe readiness, Sectigo 2025 State of
-  Crypto Agility, Ponemon/Entrust Global PKI & IoT Trends 2026, Forrester
-  Total Economic Impact of TLS/SSL certificate-lifecycle automation
-  (DigiCert-commissioned, 312% ROI), AppViewX 47-day lifecycles, DigiCert
-  PQC Maturity Model, Engineering at Meta PQC migration framework, InfoSec
-  Global Gartner Hype Cycle positioning, IETF RFC 7030 (EST), RFC 4210
-  (CMP), Security Boulevard / Forrester (Sandy Carielli) on cryptoagility,
-  and Venafi / Ponemon cert-outage cost study.
-- **Google Quantum AI whitepaper added to library** [persona:researcher] [persona:developer] [view:/library] — "Securing Elliptic Curve
-  Cryptocurrencies against Quantum Vulnerabilities" (Babbush, Gidney et al.,
-  Google Quantum AI + Ethereum Foundation, March 30 2026) is now in the library
-  with module links to Quantum Threats, Blockchain PQC, and Standards Bodies.
-- **secp256k1 added to Quantum Threats workshop** [persona:developer] [persona:researcher] [view:/threats] — Bitcoin/Ethereum's curve now
-  appears in the Algorithm Vulnerability Matrix and Security Level Degradation
-  tool with the verified estimate of ≤1,200 logical qubits + ≤90M Toffoli gates
-  via Shor's algorithm.
-- **ECC qubit estimates revised** [persona:researcher] [persona:developer] [view:/threats] — ECDSA P-256, X25519, and Ed25519 updated
-  from ~2,330 to ~1,200 logical qubits, reflecting improved Shor's circuit
-  efficiency for all 256-bit prime-order elliptic curves (Google Quantum AI,
-  Mar 2026).
-- **Fast-clock vs slow-clock CRQC distinction in HNDL/HNFL calculators** [persona:architect] [persona:researcher] [view:/threats] —
-  explains that fast-clock CRQCs (superconducting, photonic) enable live mempool
-  "on-spend" attacks while slow-clock types are the at-rest / HNDL threat.
-- **Guided exercise 7: "ECC Blockchain Under Quantum Attack"** [persona:developer] [persona:researcher] [view:/threats] — on-spend attack
-  scenario: Bitcoin transaction in the mempool, fast-clock CRQC at 1,200 qubits,
-  and why blockchain infrastructure needs PQC migration now.
-- **CertCapacityCalculator — math disclosures** [persona:architect] [persona:developer] [view:/playground] — all three charts now have
-  collapsible "How this is calculated" sections with formula, assumptions, and
-  benchmark sources.
-- **HsmCapacityCalculator — estimation disclosures** [persona:architect] [persona:developer] [view:/playground] — each TPS slider has a
-  "How we estimated this" toggle showing rationale, math, PQC impact, and
-  sources.
+- **SP 800-227 coverage expanded — Hybrid Crypto module** — Spec-faithful teaching across four topic areas: a parameter-set selection table (ML-KEM-512 → Category 1 / IoT, ML-KEM-768 → Category 3 / default TLS, ML-KEM-1024 → Category 5 / CNSA 2.0); a combiner construction deep-dive (concatenation order, HKDF vs KMAC, dual-PRF assumption, mandatory domain separation per SP 800-227); a new "Implementation Requirements" section covering implicit rejection, constant-time decapsulation for FIPS validation, approved DRBG, and side-channel hardening on both halves; and transition framing surfacing the SP 800-227 §1 "interim measure" language.
+
+- **Google Quantum AI whitepaper added to library** — "Securing Elliptic Curve Cryptocurrencies against Quantum Vulnerabilities" (Babbush, Gidney et al., March 30 2026) now in the library with module links to Quantum Threats, Blockchain PQC, and Standards Bodies.
+
+- **secp256k1 added to Quantum Threats workshop** — Bitcoin/Ethereum's curve now appears in the Algorithm Vulnerability Matrix and Security Level Degradation tool with the verified estimate of ≤1,200 logical qubits and ≤90M Toffoli gates via Shor's algorithm.
+
+- **ECC qubit estimates revised** — ECDSA P-256, X25519, and Ed25519 updated from ~2,330 to ~1,200 logical qubits, reflecting improved Shor's circuit efficiency for all 256-bit prime-order elliptic curves.
+
+- **Fast-clock vs slow-clock CRQC distinction** — HNDL/HNFL calculators now explain that fast-clock CRQCs (superconducting, photonic) enable live mempool "on-spend" attacks while slow-clock types are the at-rest / harvest-now-decrypt-later threat.
+
+- **Guided exercise — "ECC Blockchain Under Quantum Attack"** — On-spend attack scenario: Bitcoin transaction in the mempool, fast-clock CRQC at 1,200 qubits, and why blockchain infrastructure needs PQC migration now.
+
+- **Calculator math disclosures** — All three Cert Capacity Calculator charts now have collapsible "How this is calculated" sections with formula, assumptions, and benchmark sources. Each TPS slider in the HSM Capacity Calculator has a "How we estimated this" toggle.
+
+- **Library refresh — 26 new authoritative references plus 13 newly tagged rows** — Covers CA/B Forum Ballot SC-081v3 (47-day TLS cadence by March 2029), NIST CMVP Validated Modules and Modules-In-Process databases, NIST ACVP, FIPS 140-3 IG September 2025 PQC update, Microsoft "Building your cryptographic inventory", EJBCA and Keyfactor posture management primers, Gartner CryptoCOE framing, IBM Research CBOM, Deloitte Tech Trends 2025, McKinsey PQC preparation, IBM IBV 2025 quantum-safe readiness, Sectigo State of Crypto Agility, Ponemon/Entrust Global PKI Trends 2026, Forrester TEI of TLS/SSL certificate-lifecycle automation (DigiCert-commissioned, 312% ROI), AppViewX 47-day lifecycles, DigiCert PQC Maturity Model, Engineering at Meta PQC migration framework, IETF RFC 7030 (EST), RFC 4210 (CMP), Security Boulevard / Forrester (Sandy Carielli) on crypto agility, and the Venafi/Ponemon cert-outage cost study.
 
 ### Changed
 
-- **CertCapacityCalculator — bandwidth model corrected** [persona:architect] [persona:developer] [view:/playground] — TLS payload now
-  includes both `Certificate` and `CertificateVerify`; prior model used an
-  incorrect RSA-2048 delta baseline.
-- **certCapacityDefaults — AVX2 cycle-accurate benchmarks** [persona:developer] [persona:architect] [view:/playground] — RSA, ECDSA, and
-  ML-DSA figures updated from rough estimates to cycle counts from
-  CRYSTALS-Dilithium Round 3 and OpenSSL 3.x AVX2 measurements.
-- **Certificate Lifecycle tools moved to PKI Workshop** [persona:developer] [view:/learn] — ACME PQC Walkthrough
-  and Cert Capacity Calculator removed from Migrate page; now in the learn
-  module where they belong.
-- **VPN Simulator marked work-in-progress** [persona:developer] [persona:architect] [view:/playground] — WIP badge shown while
-  strongSwan IKEv2 + ML-DSA AUTH method integration is pending.
+- **Cert Capacity Calculator — bandwidth model corrected** — TLS payload now includes both `Certificate` and `CertificateVerify`; prior model used an incorrect RSA-2048 delta baseline.
+
+- **Cert Capacity defaults — AVX2 cycle-accurate benchmarks** — RSA, ECDSA, and ML-DSA figures updated from rough estimates to cycle counts from CRYSTALS-Dilithium Round 3 and OpenSSL 3.x AVX2 measurements.
+
+- **Certificate Lifecycle tools moved to PKI Workshop** — ACME PQC Walkthrough and Cert Capacity Calculator removed from the Migrate page; now in the learn module where they belong.
+
+- **VPN Simulator marked work-in-progress** — WIP badge shown while strongSwan IKEv2 + ML-DSA AUTH method integration is pending.
+
+- **VPN Simulator — ML-DSA private keys discoverable by PKCS#11 plugin** — `CKA_ID` is now set to SHA-1 of the public key on both public and private ML-DSA key objects immediately after generation, matching the RFC 5280 SubjectKeyIdentifier method expected by strongSwan's PKCS#11 plugin.
+
+- **VPN Simulator — IPsec config hardened for tunnel mode** — Initiator and responder configs now include left/right subnets and explicit tunnel type so the SA is negotiated as a proper tunnel rather than a transport-mode connection.
+
+- **VPN Simulator — cert auth uses `leftcert=` for all algorithm types** — Removed the ML-DSA-specific `leftsigkey=%smartcard` path; the PKCS#11 plugin now discovers the private key via `CKA_ID` matching regardless of algorithm.
+
+- **Hybrid Crypto module — Composite Signatures section removed** — The section described an IETF draft whose OIDs are not yet finalized; removed to avoid teaching unstable identifiers. Will be reintroduced when the RFC is published.
+
+- **Role guide — self-assessment checklist removed** — The interactive exposure-score checklist was removed from the Role Guide "Why It Matters" view to streamline the module and reduce scope overlap with the dedicated Assessment page.
+
+- **Library CSV refresh** — Replaces the prior snapshot. Intentionally drops 9 reference rows that were audited out. Six older versions archived per the 2-version retention rule.
 
 ### Fixed
 
-- **Quiz answer buttons — long options no longer truncate** [persona:all] [view:/learn] — option buttons
-  wrap text properly instead of clipping multi-line answers.
-- **HSM key inspection was silently broken for all VPN simulation keys** [persona:developer] [view:/playground] — clicking
-  the eye icon on any key generated by the VPN Simulator did nothing. Root cause:
-  in Rust engine mode `crossCheckModuleRef` is null, so the `engine: 'rust'` routing
-  in `HsmKeyTable` returned early before calling `C_GetAttributeValue`. Responder
-  keys (Slot 2) had a second issue — they were queried against the initiator session
-  handle. Both are now fixed: `HsmKey` carries a `sessionHandle` set at generation
-  time, and the module lookup falls back to `moduleRef` when `crossCheckModuleRef`
-  is null (single-engine mode).
-- **Charon diagnostic lines misclassified as errors in VPN log panel** [persona:developer] [view:/playground] — strongSwan
-  routes all charon output to stderr; lines matching thread prefix patterns such as
-  `00[IKE]` or `00[CFG]` are now correctly routed as informational rather than errors.
-- **Hybrid Cert Inspector panel overflows on narrow screens** [persona:developer] [view:/playground] — the certificate
-  selector left-column and IETF reference buttons now apply `min-w-0 overflow-hidden`
-  and `truncate` so long OID strings clip instead of breaking the grid layout.
-- **ML-KEM-512 mis-labelled as NIST L2** [persona:developer] [persona:architect] [persona:researcher] — corrected to **NIST L1** in
-  `TLSClientPanel`, `TLSServerPanel`, and the TLS exercises table. Per FIPS 203,
-  ML-KEM-512 targets Category 1 (≈AES-128 strength).
-- **RSA VPN-sim certs now carry SubjectKeyIdentifier extension** [persona:developer] [persona:architect] [view:/playground] —
-  `buildHsmSelfSignedCert` (the RSA path) now embeds SKID = SHA-1(pubkey)
-  matching the `CKA_ID` set on the key objects. strongSwan's PKCS#11 plugin
-  discovers the private key via `C_FindObjects({CKA_ID=ski})`; without the
-  extension, ML-DSA worked but RSA fell back to PSK auth.
-- **VPN sim ML-DSA cert auth fully wired end-to-end** [persona:developer] [persona:architect] [view:/playground] — `hsm_generateMLDSAKeyPair`
-  now accepts an optional `keyId` parameter that's stamped as `CKA_ID` on both
-  the public and private key objects at keygen time. VPN sim's `provisionKeys`
-  generates a random 20-byte `keyId` per key pair and passes the same bytes into
-  both keygen and the X.509 `SubjectKeyIdentifier` extension. strongSwan's
-  pkcs11 plugin now finds the private key via `C_FindObjects({CKA_ID=ski})`
-  so ML-DSA cert auth no longer falls back to PSK. `CKA_ID = 0x00000102`
-  exported from `softhsm/constants.ts` + the parallel `softhsm.ts`.
-- **Mobile / iOS Safari polish** [persona:developer] — glass-panel now sets
-  `-webkit-backdrop-filter` so blur renders on Safari; `Button` icon size
-  gets `touch-manipulation` to suppress iOS double-tap zoom; `CodeBlock`
-  uses `max-h-[40vh] sm:max-h-[650px]` so long code blocks don't dominate
-  small screens; `MainLayout` mobile bottom-nav adds
-  `pb-[max(1rem,env(safe-area-inset-bottom))]` for iPhone home-bar
-  clearance; `MainLayout` root switches `overflow-hidden` → `overflow-clip`;
-  Timeline/Algorithms/Compliance/Playground get shorter mobile-nav labels.
+- **Quiz answer buttons no longer truncate long options** — Option buttons wrap text properly instead of clipping multi-line answers.
 
-### Changed
+- **HSM key inspection was silently broken for VPN simulation keys** — Clicking the eye icon on any key generated by the VPN Simulator did nothing. Two issues: in Rust engine mode the cross-check module was null and the routing returned early; responder keys were also being queried against the initiator session handle. Both fixed.
 
-- **VPN Simulator: ML-DSA private keys now discoverable by PKCS#11 plugin** [persona:developer] [persona:architect] [view:/playground] —
-  `hsm_setKeyId` sets `CKA_ID = SHA-1(pubkey)` on both public and private ML-DSA key
-  objects immediately after generation. This matches the RFC 5280 §4.2.1.2 SKID method
-  expected by strongSwan's PKCS#11 plugin, enabling `C_FindObjects` to locate the
-  private key from the certificate's SubjectPublicKeyInfo fingerprint.
-- **VPN Simulator: IPsec config hardened for tunnel mode** [persona:developer] [persona:architect] [view:/playground] — initiator and responder
-  configs now include `leftsubnet`, `rightsubnet`, and `type=tunnel` so the SA is
-  negotiated as a proper tunnel rather than a transport-mode connection.
-- **VPN Simulator: cert auth uses `leftcert=` for all algorithm types** [persona:developer] [persona:architect] [view:/playground] — removed the
-  ML-DSA-specific `leftsigkey=%smartcard` path; the PKCS#11 plugin now discovers the
-  private key via `CKA_ID` matching regardless of algorithm.
-- **Hybrid Crypto module: Composite Signatures section removed** [persona:developer] [persona:architect] [view:/learn] — the section
-  described an IETF draft whose OIDs are not yet finalized; removed to avoid teaching
-  unstable identifiers. Content can be reintroduced when the RFC is published.
-- **Role guide: self-assessment checklist removed** [persona:executive] [view:/learn] — the interactive exposure-score
-  checklist was removed from the Role Guide "Why It Matters" view to streamline the
-  module and reduce scope overlap with the dedicated Assessment page.
+- **Charon diagnostic lines no longer misclassified as errors** — strongSwan routes all charon output to stderr; lines matching thread prefix patterns like `00[IKE]` or `00[CFG]` are now correctly routed as informational.
+
+- **Hybrid Cert Inspector panel no longer overflows on narrow screens** — The certificate selector and IETF reference buttons now truncate long OID strings instead of breaking the grid layout.
+
+- **ML-KEM-512 corrected to NIST Level 1** — Per FIPS 203, ML-KEM-512 targets Category 1 (≈AES-128 strength), not Level 2. Corrected in the TLS panels and exercises table.
+
+- **VPN sim RSA certs now carry SubjectKeyIdentifier extension** — The RSA path now embeds the SKID extension matching the `CKA_ID` set on the key objects, so strongSwan's PKCS#11 plugin can discover the private key. Without this, ML-DSA worked but RSA fell back to PSK auth.
+
+- **VPN sim ML-DSA cert auth fully wired end-to-end** — ML-DSA key generation now accepts an optional key ID that's stamped as `CKA_ID` on both public and private key objects at keygen time. The simulator generates a random 20-byte key ID per key pair and uses the same bytes in both keygen and the X.509 SubjectKeyIdentifier extension. ML-DSA cert auth no longer falls back to PSK.
+
+- **Mobile / iOS Safari polish** — Glass panels now render the blur effect on Safari (added the WebKit prefix); button icons no longer trigger iOS double-tap zoom; long code blocks no longer dominate small screens; mobile bottom nav respects the iPhone home-bar safe area; Timeline, Algorithms, Compliance, and Playground get shorter mobile-nav labels.
 
 ## [3.3.9] - April 20, 2026
 
+Major release. Highlights: a critical Learn page crash fixed for all visitors; an experimental WASM strongSwan v2 build with in-browser ML-DSA + ML-KEM selftest and cross-Worker handshake; a new HSM Capacity Calculator covering the top 10 enterprise HSM workflows; a Command Center overhaul including in-drawer artifact creation and a redesigned ROI Calculator; a complete compliance ↔ timeline consistency pipeline; a 5G SUCI playground UX overhaul with plain-English mode; the Right Panel migrated from a bottom drawer to a right sidebar; comprehensive PKI / TPM / TLS workshop additions; updated NIST CMVP scraper covering all security levels; and Implementation Attacks + KAT Validation tabs in the Detailed Comparison view.
+
 ### Fixed
 
-- **Learn page was broken for all visitors** — navigating to `/learn` showed
-  "Something went wrong" on both Chrome and Safari. Root cause: the glossary
-  tooltip system was changed to load its data asynchronously, which made it
-  vulnerable to a module-bundling conflict with WebAssembly code on any learn
-  module page. The glossary data is now loaded synchronously at startup,
-  eliminating the conflict entirely. Tooltips appear immediately on first
-  render with no loading delay.
+- **Learn page crash on first visit** — Navigating to `/learn` showed "Something went wrong" on Chrome and Safari. The glossary tooltip system was loading data asynchronously, which conflicted with WebAssembly module loading on learn-module pages. Glossary data is now loaded synchronously at startup; tooltips appear immediately with no loading delay.
+
+- **Compliance facets (Org / Industry / Region) derived from full dataset** — Filter dropdowns previously rebuilt from the active body-type tab's slice, so populated facets disappeared when switching tabs (Africa would vanish from Standards while remaining present on All Frameworks). All three facets now derive from the full dataset, and the Industry list is unioned across all framework records so new industries appear automatically.
+
+- **VPN Simulator — daemon-default cert algorithm switched to RSA** — The default client signing algorithm changed from ML-DSA to RSA so the strongSwan WASM daemon handshake works out of the box on first visit. Users can still switch to ML-DSA to generate real PQC cert artifacts; a mode-aware warning explains that the daemon itself doesn't yet run on ML-DSA certs (strongSwan core lacks the IKEv2 ML-DSA AUTH method draft).
+
+- **VPN Simulator — visual SKF payload fragmentation slicing** — KE payloads now visually slice into IKE_INTERMEDIATE fragments per the configured fragment-size budget so learners can see fragmentation behaviour, rather than just an aggregate total.
+
+- **VPN Simulator — ML-DSA raw pubkey configuration respected** — ML-DSA signature generation was ignoring the raw-pubkey setting; now honours the configured key format end-to-end.
+
+- **VPN Simulator — WASM OOM and thread-pool exhaustion** — Long IKE runs were saturating the WASM thread pool and tripping out-of-memory errors when users re-ran scenarios. Lifecycle and pool reuse tightened so the simulator stays stable across repeated runs.
+
+- **What's New modal — View Changelog deep link** — The link previously used the first unseen changelog section's version, which resolved to `Unreleased` and produced an invalid anchor. Now uses the current version so the link always targets a released section.
+
+- **Bouncy Castle FIPS 140-3 cert #4943 security level corrected** — Was incorrectly inherited from the old NIST scraper filter; now correctly L1.
 
 ### Added
 
-- **Browser compatibility notice on VPN and SSH simulators** — Safari and
-  Firefox users now see a clear warning explaining that the live cryptographic
-  handshakes (strongSwan IKEv2, OpenSSH ML-KEM) require a Chromium-based
-  browser (Chrome, Edge, Brave). The Run / selftest buttons are automatically
-  disabled; all educational content and panels still render normally.
-- **"Crypto Only" filter in the PKCS#11 log panel** — a new toggle (on by
-  default) hides housekeeping calls like session open/close and object searches,
-  leaving only the 27 cryptographic operations (key generation, signing,
-  encryption, KEM encapsulate/decapsulate). Toggle it off to restore the full
-  raw log.
+- **Experimental WASM strongSwan v2 — selftest + cross-Worker KEM handshake** — A new 11.7 MB build alongside the existing baseline, gated behind an environment flag. Two actions: a "Run ML-DSA + ML-KEM selftest" that round-trips through the in-browser HSM (ML-DSA-65 keygen → sign → verify, plus ML-KEM-768 encap/decap loopback per FIPS 203/204), and a "Cross-Worker KEM handshake" where the main thread plays Alice and a Web Worker plays Bob with independent WASM instances and independent HSM state. Both sides derive a 32-byte shared secret that must match byte-for-byte. Lays the groundwork for a future full IKE_SA_INIT + IKE_AUTH wire-format exchange.
+
+- **HSM Capacity Calculator** — A new fleet-sizing tool covering the top 10 enterprise HSM workflows (TLS, code signing, payment HSM, TDE/database, KMS root keys, VPN/IPsec, SSH host, DNSSEC, etc.) with side-by-side classical (RSA-3072 / ECDSA P-256) vs PQC (ML-DSA-44/65/87) sizing. Outputs storage MB, TLS cert bandwidth, aggregate network MB/s, and CPU-core utilisation per workflow plus a totals row. Surfaced as Step 5 of the HSM-PQC learning module.
+
+- **PKI Workshop — Certificate Capacity Calculator overhaul** — Bandwidth column converted from per-cert KB to aggregate MB/s; CPU column converted from "max sign ops/sec" to "% of single core consumed" so numbers map cleanly to capacity-planning conversations. CSV export now includes the new bandwidth and CPU columns.
+
+- **Command Center — in-drawer artifact creation with builder adapters** — Empty placeholders now launch the matching builder directly inside the drawer, with no navigation away from the Command Center. New standalone adapters wrap the full-page learning-module builders (Risk Register, Risk Heatmap Generator, Compliance Timeline Builder) to handle form-state persistence and artifact save. The drawer auto-flips from create to view mode when a save happens. Risk register builder state lives in its own dedicated store, isolated from the module store.
+
+- **Deployment Playbook → Command Center save** — The Ops Checklist gained a "Save to Command Center" button alongside the existing "Copy Markdown" action; checked items are captured for later edit-mode restoration.
+
+- **Compliance Table — mandate deadline labels** — Framework tabs (FIPS 140-3, ACVP, Common Criteria) now display a resolved "Deadline: YYYY" sub-label, plus a tooltip on tab hover for screen-reader and pointer accessibility. Ongoing mandates suppress the year label.
+
+- **FilterDropdown keyboard navigation** — ARIA-listbox keyboard support added to the shared dropdown: ArrowUp/Down to cycle, Home/End to jump, Escape to close. WCAG 2.1 AA keyboard-operable.
+
+- **Manufacturing industry support in assessment** — Added Manufacturing entries to the industry threat model and composite weights (IEC 62443 OT/ICS exposure, ISO/SAE 21434, TISAX, long-lived embedded controllers). Closes a gap where manufacturing respondents had to choose "Other".
+
+- **Compliance ↔ Timeline consistency pipeline** — Established a closed loop between the Compliance and Timeline views. The validator now requires every compliance row with a parseable deadline year to have at least one timeline event spanning that year in one of its referenced organisations; orphan timeline organisations are surfaced as informational. Added 10 timeline rows to cover previously dangling compliance refs (African Union/AUC, GSMA, China/ICCS, G7 CEG, 3GPP SA3, TCG TPM 2.0 v1.85 PQC draft, South Africa POPIA, Nigeria NDPC, Kenya ODPC, Egypt MCIT). The compliance UI's timeline chips now deep-link to the timeline filtered by country, with a dated summary on hover. Frameworks with no matching timeline events surface a visible warning. Validator now reports zero broken refs and zero coverage gaps across 112 compliance rows × 219 timeline events.
+
+- **Compliance data — accuracy and completeness overhaul** — Added 5 African frameworks (South Africa POPIA, Nigeria NDPR/NDPA, Kenya DPA, Egypt PDPL, African Union Malabo Convention) closing the Africa regional gap. Populated `library_refs` on all 48 frameworks that previously had empty cross-references (PCI-DSS, HIPAA, SWIFT-CSP, GDPR, ISO-27001, SOC-2, HITECH, FDA 21 CFR 11, NATO STANAG 4774, UN ECE WP.29, NERC-CIP, IEC-62443, DO-326A, FERPA, COPPA, TISAX, MICA, TSA Pipeline, KpqC/KCMVP, NZISM, INCD, BOI, OSCCA NGCC, Swiss/Dutch NCSC, KISA, INDIA-DST, UAE, ACVP, Taiwan MODA, Malaysia NACSA, Saudi NCA, India CERT-In CBOM, Italy ACN, Spain CCN, Bahrain NCSC, Jordan CBJ, CSA, ITU-T SG17, ISO 19790, Brazil ANPD, Denmark CFCS, NY DFS 23 NYCRR 500, ETSI EN 303 645, PQC Coalition, QED-C). Flagged 33 authoritative sources as Compliance contributors. Loader added a missing industry-alliance body type so PQC Coalition, PQCA, and QED-C are no longer silently misclassified. UI added a global Region filter (with per-bloc counts) and Deadline filter (Active, Imminent, Near-term, Mid-term, Long-term, Ongoing) wired to URL params for deep-linking.
+
+- **Command Center — ROI Calculator overhaul** — A new shared pure-math module backed by 43 unit tests, with NPV plus WACC discount rate (new KPI card), capex/opex split (benefit net of opex for payback/NPV), a decomposed quantum multiplier (HNDL / post-CRQC uplift / detection uplift) replacing the opaque 2.5× default, a tornado sensitivity chart ranking drivers at ±30%, a Cost of Inaction KPI for counterfactual exposure, PDF/DOCX exports alongside markdown, a board-ready executive framing banner, and an `asOf` plus penalty-type schema on the ROI baselines.
+
+- **Command Center — KPI plan completion (E4 / D9 / E2 / E1)** — Closes remaining persona-fit gaps. E4 Board-Ready NIST CSF Composite produces a single 0–100 executive score derived from assessment category scores, mapped to CSF 2.0 Govern / Identify / Protect / Respond. D9 Per-Layer Vendor Readiness adds a meta-KPI that expands to one row per infrastructure layer for architects. E2 Regulatory Exposure Index uses a new framework-fines lookup (25+ frameworks, USD millions) with log-scaled auto-score. E1 Crown-Jewel Coverage is a manual-input KPI with CSF / ISO / SOC 2 mappings.
+
+- **VPN Simulator — ML-DSA authentication via draft standards** — Restores ML-DSA-65 authentication in the IKEv2 handshake, guarded by an explicit warning that calls out the draft-ietf-ipsecme-ikev2-auth-ml-dsa status so users understand the mode is not yet standards-track.
+
+- **5G SUCI Playground — UX overhaul** — Three new sub-components: a collapsible Configure card (first-visit vs returning-user settings), a Scenario Intro Strip (operator ↔ IMSI-catcher perspective toggle), and an Attacker Sidecar (per-step "what the eavesdropper captures" sidebar). Plain-English mode is on by default and persisted; scenario view is session-scoped.
+
+- **Step Wizard — phase progress and plain-English rail** — A new Phase Progress component renders a phase-grouped progress bar (labelled segments with per-step ticks) when steps carry phase fields. A Plain English Rail renders plain-English explanations beside the terminal when the toggle is on.
+
+- **PKCS#11 Log Panel — Beginner Mode** — Every PKCS#11 call now has a 4–8-word plain-English description (algorithm-aware: distinguishes ML-KEM, ML-DSA, X25519, RSA, etc.). A Beginner Mode toggle adds an extra grid column with the translation alongside the raw function name and arguments.
+
+- **PKCS#11 log panel — "Crypto Only" filter** — A new toggle (on by default) hides housekeeping calls (session open/close, object searches), leaving only the 27 cryptographic operations. Toggle off to restore the full raw log.
+
+- **Browser compatibility notice on VPN and SSH simulators** — Safari and Firefox users now see a clear warning explaining that the live cryptographic handshakes (strongSwan IKEv2, OpenSSH ML-KEM) require a Chromium-based browser. The Run / selftest buttons are automatically disabled; all educational content and panels still render normally.
+
+- **Secure Boot PQC — TPM 2.0 sandbox deep-link** — A banner in the TPM Key Hierarchy Explorer tab links to the live PQC TPM migration scenario for real `TPM2_CreatePrimary` outputs covering EK / SRK / AIK / IDevID in ML-KEM-768 and ML-DSA-65.
+
+- **Docker Playground — pqctoday-sandbox iframe embed** — The Docker Playground was rewritten from a scenario-tile UI to an iframe embedding the pqctoday-sandbox app. A postMessage handshake configures vendor ID, theme, and allowed routes; dynamic resize events drive auto-height (600–1600 px).
+
+- **Glossary — TPM 2.0 / TCG V1.85 terms** — Five new entries: Endorsement Key (EK, ML-KEM-768 in TCG V1.85), Attestation Identity Key (AIK, ML-DSA-65), Storage Root Key (SRK, ML-KEM-768 wrapping), Initial Device Identifier (IDevID, IEEE 802.1AR factory ML-DSA-65), and Platform Configuration Register (PCR). All linked to the Secure Boot PQC learn module.
+
+- **PKCS#11 glossary terms** — Token-level hover-chip definitions used for inline tooltips.
+
+- **Library v04172026 entries** — KpqC Competition Results (HAETAE, AIMer, SMAUG-T, NTRU+ final selections), FIPS 140-3 IG PQC self-test requirements for FIPS 203/204/205, 3GPP TR 33.841 PQC Study 2025 (hybrid PQC for TLS / IPSec / IKEv2 in 5G), liboqs v0.15.0.
+
+- **Implementation Attacks tab in Detailed Comparison** — 12 algorithm attack profiles covering ML-KEM, ML-DSA, FN-DSA/Falcon, HQC, Classic McEliece, FrodoKEM, NTRU+, SLH-DSA, LMS/XMSS, Hybrid KEM, Composite Signatures, and cross-cutting RNG/API risks. Each profile includes per-attack severity ratings (Critical/High/Medium/Low), countermeasures, and peer-reviewed references with local archive links.
+
+- **KAT Validation tab in Detailed Comparison** — In-browser NIST Known Answer Tests via the in-browser HSM for ML-KEM (FIPS 203), ML-DSA (FIPS 204), and SLH-DSA (FIPS 205), with a collapsible PKCS#11 diagnostics panel.
+
+- **FN-DSA / Falcon attack profile** — Documents the floating-point Gaussian sampler side-channel vulnerability (most SCA-vulnerable NIST PQC standard) with five countermeasures.
+
+- **LMS / XMSS stateful signature attack profile** — Documents the catastrophic state-reuse vulnerability with crash-safe persistence and state management countermeasures.
+
+- **BIKE-1/3/5 added to algorithm reference** — NIST Round 4 code-based KEM (QC-MDPC) with sizes from the BIKE specification. 80 algorithms now in the reference data.
+
+- **Cryptographic hardness assumptions in Security Levels view** — Each algorithm card displays the underlying mathematical problem (Module-LWE, binary Goppa decoding, hash collision resistance, MQ problem, etc.).
+
+- **"Why KATs Matter" explainer** — Collapsible educational content covering FIPS 140-3 requirements, implementation correctness, and in-browser verification value.
+
+- **"Quick Reference" panel in About modal** — Practical analogies for security levels, key sizes, and signature sizes for non-expert users.
+
+- **Curious persona — single-click experience shortcut** — Selecting the Curious persona now completes the personalisation wizard immediately (curious persona, Global region, all industries, marked completed) so first-touch visitors aren't forced through the multi-step wizard before exploring.
 
 ### Changed
 
-- **SSH simulator — "Build in progress" notice removed** — the placeholder
-  warning about missing WASM artifacts has been removed now that the
-  `openssh-client.wasm` and `openssh-server.wasm` builds are in place. The
-  panel description also clarifies that ML-KEM-768 × X25519 key exchange is
-  natively built into OpenSSH 10.x.
+- **Right Panel layout — bottom drawer → right sidebar** — Migrated from a 50%-height bottom drawer (slide-up) to a fixed right sidebar (40% viewport width, slide-in from right). Both layouts add transition padding when the panel is open so the main content reflows smoothly without overlap.
 
-### Fixed
+- **strongSwan WASM rebuilt** — Latest charon plus in-browser HSM plumbing from the companion repo. The WASM binary grew (additional plugins now linked in) but the loader/JS shrank ~55% as more bootstrap moved into the WASM module.
 
-- **Compliance facets — Org / Industry / Region derived from full dataset**
-  (`Compliance/ComplianceLandscape.tsx`): the Organization, Industry, and Region
-  filter dropdowns previously rebuilt their option lists from `sourceFrameworks`
-  (the active body-type tab's slice), so populated facets were silently hidden
-  whenever the user switched tabs — e.g. the Africa region disappeared from
-  Standards while remaining present on All Frameworks. Switched all three
-  facets to derive their option set from the full `complianceFrameworks` dataset
-  so every populated facet stays selectable on every tab; also dropped the
-  hardcoded `AVAILABLE_INDUSTRIES` list in favour of a union over `fw.industries`
-  so new industries in the CSV appear automatically. Region count next to the
-  "All Regions" label still reflects the in-tab framework count.
-- **VPN Simulator — daemon-default cert algorithm switched to RSA**
-  (`Playground/hsm/VpnSimulationPanel.tsx`): default client signing algorithm
-  changed from `ML-DSA` → `RSA` so the strongSwan WASM daemon handshake works
-  out of the box on first visit. Users can still switch to ML-DSA to generate
-  real PQC cert artifacts (visible via Inspect + HSM Key panels + PKCS#11 log),
-  with a new mode-aware warning banner explaining that the daemon itself does
-  not yet run on ML-DSA certs (strongSwan core lacks the
-  `draft-ietf-ipsecme-ikev2-mldsa` AUTH method) and a Start-Daemon tooltip that
-  surfaces the same warning when ML-DSA is selected in dual-auth mode.
+- **strongSwan WASM — 44% size reduction** — A subsequent rebuild trimmed the WASM down by 44% by building and patching out of the companion repo; the local build script and standalone patch are no longer needed and were deleted.
 
-### Changed
+- **VPN Simulator — true MTU and fragmentation config logic** — Assessment-driven MTU and fragment-size smart defaults now flow through to the IKEv2 simulator so learners see realistic IKE_INTERMEDIATE fragmentation behaviour. Previously the UI accepted inputs but the simulator ignored them.
 
-- **Playground Workshop — WIP tools hidden by default**
-  (`Playground/PlaygroundWorkshop.tsx`): `wipFilter` initial state flipped from
-  `'all'` → `'hide'` for every visitor (embed mode already hid them). The
-  filter remains user-toggleable via the WIP control; this change just makes
-  the first-visit surface match the stable, vendor-presentable subset.
-- **strongSwan WASM rebuilt** (`public/wasm/strongswan.wasm` 9.7MB → 11.9MB,
-  `public/wasm/strongswan.js` 1488 → 671 lines): rebuilt from the
-  `pqctoday-hsm` companion repo with the latest charon + softhsmv3 plumbing.
-  Loader/JS shrank ~55% as the build moved more bootstrap into the wasm
-  module; the wasm itself grew because additional plugins are now linked in.
+- **VPN Simulator — FlaskConical icon for ML-DSA draft warning** — Replaces the generic warning icon on the ML-DSA draft-standards banner with a flask icon to better signal experimental status.
 
-### Added
+- **Module store — persisted version 12 migration** — Filters out any stray `roadmap` document type (replaced by `migration-roadmap`) and preserves an optional `inputs` field on executive documents so builders can round-trip form state for edit mode.
 
-- **strongSwan v2 WASM — experimental softhsmv3 PKCS#11 selftest + cross-Worker
-  ML-KEM-768 handshake** (`public/wasm/strongswan-v2.{js,wasm}`,
-  `public/wasm/strongswan-v2-bob-worker.js`, `src/wasm/strongswan-v2/bridge-v2.ts`,
-  `Playground/hsm/VpnSimulationPanel.tsx`): new 11.7 MB WASM build alongside the
-  existing 12 MB baseline (`strongswan.wasm` untouched), driven by
-  [`pqctoday-org/pqctoday-hsm`](https://github.com/pqctoday-org/pqctoday-hsm)'s new
-  `strongswan-wasm-v2-shims/` scaffold. Gated entirely behind the
-  `VITE_WASM_VPN_V2=1` env flag so regular users see no change. When the flag
-  is on, a card at the top of the VPN simulator exposes two actions:
-  - **"Run ML-DSA + ML-KEM selftest"** — in-browser round-trip through softhsmv3:
-    ML-DSA-65 keygen → sign → verify (3309 B signature per FIPS 204) AND
-    ML-KEM-768 encap/decap loopback (1184 B pubkey / 1088 B ciphertext /
-    32 B shared secret per FIPS 203). All crypto is real HSM via PKCS#11
-    mechanisms `CKM_ML_DSA` (0x1D) and `CKM_ML_KEM` (0x17); same code path the
-    native sandbox fixed in `pqctoday-hsm` commit `236d9a4` (10-bug stack:
-    OID alignment, `CKA_ENCAPSULATE`/`DECAPSULATE` attributes, v3.2 function
-    signatures, role-aware length checks).
-  - **"Cross-Worker KEM handshake"** — main thread plays Alice, a dedicated
-    Web Worker plays Bob with an independent WASM instance and independent
-    softhsmv3 state. Bytes-only exchange via `postMessage` (Alice's 1184 B
-    pubkey out, Bob's 1088 B ciphertext back). Both sides derive a 32 B
-    shared secret that must match byte-for-byte. Validates the browser
-    transport primitive needed for the future full IKE_SA_INIT + IKE_AUTH
-    wire-format exchange. The Bob worker lives at
-    `public/wasm/strongswan-v2-bob-worker.js` and uses `importScripts` to
-    load the same v2 loader.
+- **NIST CMVP scraper — all security levels** — Now fetches all active FIPS 140-3 certificates (previously filtered to L3 only). Actual security level (L1/L2/L3) is extracted from each cert's detail page. Compliance data updated: 2,386 records (NIST 1,269, CC 913, ANSSI 179, ENISA 25).
 
-  Live event log + per-metric pass/fail indicators render under both buttons.
-  The experimental label is intentional: this lands the cryptographic
-  primitives + cross-Worker transport, but the full IKE wire format (SA/KE/No
-  payloads, IKE_AUTH with ML-DSA signature) is Phase 5c, not yet integrated.
+- **Compliance data re-scraped** — 2,386 total records (was 2,391, with 5 expired certs removed); NIST records now include correct per-cert security levels instead of hardcoded L3.
 
-- **HSM Capacity Calculator** (`src/components/Playground/hsm/HsmCapacityCalculator.tsx`,
-  `HsmCapacityCalculator.test.ts`, `src/data/hsmCapacityDefaults.ts`,
-  `Playground/workshopRegistry.tsx`, `PKILearning/modules/HsmPqc/index.tsx`,
-  `PKILearning/moduleData.ts`): new fleet-sizing tool covering the top 10 enterprise HSM
-  workflows (TLS, code signing, payment HSM, TDE/database, KMS root keys, VPN/IPsec,
-  SSH host, DNSSEC, etc.) with side-by-side classical (RSA-3072 / ECDSA P-256) vs PQC
-  (ML-DSA-44/65/87) sizing. Outputs storage MB, TLS cert bandwidth, aggregate network
-  MB/s, and CPU-core utilisation per workflow, plus a totals row. Registered as
-  `PT-026` in the workshop registry and surfaced as Step 5 of the HSM-PQC learning
-  module (Gauge icon) — module step count bumped from 4 to 5. Defaults table
-  (`hsmCapacityDefaults.ts`) is the single source of truth for ops/sec, signature
-  sizes, and certificate bandwidth assumptions; covered by colocated unit tests.
-- **PKI Workshop — Certificate Capacity Calculator overhaul**
-  (`PKIWorkshop/CertCapacityCalculator.tsx`): bandwidth column converted from
-  per-cert KB to aggregate MB/s, CPU column converted from "max sign ops/sec" to
-  "% of single core consumed" so numbers map cleanly to capacity-planning
-  conversations. Legend removed in favour of clarified table headers; CSV export
-  now includes the new bandwidth and CPU columns.
-- **Command Center — in-drawer artifact creation + builder adapters**
-  (`BusinessCenter/ArtifactCard.tsx`, `ArtifactDrawer.tsx`, `ArtifactCard.test.tsx`,
-  `businessToolsRegistry.tsx`, `BusinessCenter/adapters/RiskRegisterBuilderStandalone.tsx`,
-  `RiskHeatmapGeneratorStandalone.tsx`, `ComplianceTimelineBuilderStandalone.tsx`,
-  `BusinessCenterView.tsx`, `useBusinessMetrics.ts`, sections under
-  `BusinessCenter/sections/*`): refactored the artifact pipeline so empty
-  placeholders launch the matching builder directly inside the drawer (no
-  navigation away from the Command Center). New standalone adapter wrappers around
-  the full-page learning-module builders (`RiskRegisterBuilder`,
-  `RiskHeatmapGenerator`, `ComplianceTimelineBuilder`) handle form-state
-  persistence and artifact save. Single source of truth registry
-  (`ARTIFACT_TYPE_TO_TOOL_ID`, `TOOL_LABELS_BY_ARTIFACT_TYPE`) now shared with the
-  `/business/tools/:id` route, eliminating the duplicated mapping previously kept in
-  two places. Drawer auto-flips from create → view mode when a save callback fires.
-- **Risk Register store** (`src/store/useRiskRegisterStore.ts`): dedicated Zustand
-  store for risk-register builder state, isolated from `useModuleStore` so
-  in-flight form data doesn't pollute persisted module artifacts. Follows the
-  project persistence conventions (explicit `version`, `migrate`,
-  `onRehydrateStorage` crash guard).
-- **Deployment Playbook → Command Center save**
-  (`PKILearning/modules/MigrationProgram/components/DeploymentPlaybook.tsx`,
-  `PKILearning/common/OpsChecklist.tsx`): `OpsChecklist` gained an optional
-  `onSave` prop that renders a "Save to Command Center" button alongside the
-  existing "Copy Markdown" action with toggling saved-state feedback. Deployment
-  Playbook wires this up to persist completed checklists as
-  `deployment-playbook` artifacts (with checked items captured in `inputs` for
-  later edit-mode restoration).
-- **Compliance Table — mandate deadline labels**
-  (`Compliance/ComplianceTable.tsx`): framework tabs (FIPS 140-3, ACVP, Common
-  Criteria) now display a resolved "Deadline: YYYY" sub-label pulled from the
-  loaded compliance data, plus a tooltip on tab hover for screen-reader / pointer
-  accessibility. Ongoing mandates suppress the year label.
-- **FilterDropdown — keyboard navigation** (`src/components/common/FilterDropdown.tsx`):
-  ARIA-listbox keyboard support added to the shared dropdown — ArrowUp/Down to
-  cycle options, Home/End to jump, Escape to close. Focus management targets
-  `[role="option"]` buttons in the portal menu so the control is now WCAG 2.1 AA
-  keyboard-operable.
-- **Manufacturing industry support in assessment** (`src/hooks/assessmentData.ts`):
-  added Manufacturing entries to `INDUSTRY_THREAT` (level 18, reflecting IEC 62443
-  OT/ICS exposure, ISO/SAE 21434, TISAX, long-lived embedded controllers) and
-  `INDUSTRY_COMPOSITE_WEIGHTS` (risk profile aligned to Aerospace/Defense). Closes
-  a gap where manufacturing respondents were forced into "Other".
-- **ComplianceStrategy module — extracted jurisdictions data**
-  (`PKILearning/modules/ComplianceStrategy/data/jurisdictions.ts`,
-  `components/JurisdictionMapper.tsx`): hardcoded `JURISDICTIONS` array lifted
-  out of `JurisdictionMapper.tsx` into a typed data module
-  (`JurisdictionConfig`) for reuse across the codebase and easier maintenance.
-- **Curious persona — single-click experience shortcut**
-  (`Landing/PersonalizationSection.tsx`): selecting the Curious persona now
-  completes the personalization wizard immediately (sets curious persona, Global
-  region, all industries, marks completed) so first-touch visitors aren't forced
-  through the multi-step wizard before exploring.
+- **Library v04152026** — 450 records (+21 new entries).
 
-### Changed
+- **Product catalog v04162026** — 731 records (+2 new entries including Cosmian KMS and SOPS).
 
-- **RightPanel — bottom drawer → right sidebar layout**
-  (`RightPanel/RightPanel.tsx`, `Layout/EmbedLayout.tsx`, `Layout/MainLayout.tsx`):
-  migrated the contextual side panel from a 50%-height bottom drawer (slide-up
-  animation) to a fixed right sidebar (40vw width, slide-in from right). Both
-  layouts add `sm:pr-[40vw]` transition padding when the panel is open so the
-  main content reflows smoothly without the previous absolute-positioning
-  overlap.
-- **Module store — version 12 migration (roadmap cleanup + form-state inputs)**
-  (`src/store/useModuleStore.ts`, `useModuleStore.test.ts`,
-  `src/services/storage/types.ts`): bumped persisted version to 12; migration
-  now filters out any stray `roadmap` document type (replaced by
-  `migration-roadmap`) and preserves the new optional `inputs` field on
-  `ExecutiveDocument` so builders can round-trip form state for Edit mode.
-  `ExecutiveDocumentType` adds `deployment-playbook` and removes the retired
-  `roadmap`. Migration tested against synthetic v11 stores.
-- **OpenSSH WASM — connector path & event types** (`src/wasm/openssh.ts`,
-  `openssh.test.ts`, `Playground/hsm/SshSimulationPanel.tsx`): comments and the
-  build-in-progress banner now point at `pqctoday-hsm/openssh-pkcs11/` (the
-  folded-in connector, per the 2026-04-18 repo consolidation) instead of the
-  retired standalone `pqctoday-openssh` repo. New
-  `pkcs11_structured` event added to the `SshHandshakeEvent` union for richer
-  PKCS#11 logging from the worker.
-- **strongSwan WASM — 44% size reduction + build-script cleanup**
-  (`public/wasm/strongswan.wasm` 11.9MB → 6.7MB, `public/wasm/strongswan.js`
-  regenerated, `public/wasm/openssh_server_worker.js` rebuilt, removed
-  `scripts/build_strongswan_wasm.sh` and `strongswan-pqc-pkcs11.patch`):
-  strongSwan WASM module now built and patched out of the `pqctoday-hsm`
-  companion repo; the local build script and standalone patch are no longer
-  needed in this repo and were deleted to remove a stale maintenance surface.
-- **SearchIndex — limit slicing refactor** (`src/services/search/SearchIndex.ts`):
-  removed `as const` narrowing on `MINISEARCH_OPTS` and switched the result-limit
-  enforcement to a post-search `slice` so the configured `MAX_RESULTS` is honoured
-  consistently regardless of MiniSearch's internal scoring shortcuts.
-- **Embed manifest + RAG corpus regeneration** (`public/embed/manifest.json`,
-  `public/data/embed-docs.json`, `public/data/rag-corpus.json`): regenerated
-  artifacts to pick up the compliance/timeline data refresh and the deletion of
-  retired CSVs (`compliance_03282026_r2.csv`,
-  `pqc_authoritative_sources_reference_02282026.csv`,
-  `timeline_03312026.csv`/`04012026.csv`/`04062026.csv`). RAG corpus shrinks
-  significantly after dedup against the new authoritative files.
+- **Vendors v04162026** — 302 records (+1 new vendor).
 
-- **Compliance ↔ Timeline consistency pipeline** (`timeline_04182026.csv`,
-  `src/utils/timelineResolver.ts`, `scripts/validate-csv-refs.ts`,
-  `ComplianceLandscape.tsx`, `KnowledgeGraph/data/graphBuilder.ts`): established a closed
-  loop between the `/compliance` and `/timeline` views. **Validator**: extended
-  `validate-csv-refs.ts` with two semantic checks — (5) every compliance row with a
-  parseable `deadline` year must have at least one timeline event spanning that year in
-  one of its referenced orgs; (6) orphan timeline orgs surfaced as informational.
-  Exposed via new `npm run validate:compliance-timeline` alias. **Timeline data**: added
-  10 timeline rows to cover previously-dangling compliance refs — `African Union:AUC`
-  (Malabo Convention 2023), `International:GSMA` (2026-2028 MNO transition phase),
-  `China:ICCS` (2027-2030 NGCC migration), `G7:G7 CEG` (2030-2032 critical financial
-  systems), `Global:3GPP SA3` (TR 33.841 study), `Global:TCG` (TPM 2.0 v1.85 PQC draft),
-  `South Africa:IR` (POPIA enforcement), `Nigeria:NDPC` (NDPA 2023), `Kenya:ODPC`
-  (2022 Guidance Note), `Egypt:MCIT` (Law 151/2020 regs). Validator now reports 0
-  broken refs / 0 coverage gaps across 112 compliance rows × 219 timeline events.
-  **Resolver** (`timelineResolver.ts`): new pure `resolveTimelineRef()` utility that
-  parses `Country:OrgName` refs and returns the matching `TimelineEvent[]` + earliest
-  / latest year; indexed once on module load. **UI** (`ComplianceLandscape.tsx`): card
-  - table timeline chips now deep-link to `/timeline?country=<country>` (landing on
-    the correct Gantt lane instead of the unfiltered timeline root) and show a dated
-    summary in the hover tooltip. Expanded framework-details list resolves each ref to
-    show the top 3 events with year ranges; frameworks with no matching timeline events
-    surface a visible "no events in timeline" warning so drift is obvious at a glance.
-    **Knowledge graph** (`graphBuilder.ts`): replaced the broken fuzzy-match on event
-    _titles_ (which always missed because refs are org labels) with a proper
-    `country:org` → eventIds index; the `compliance-timeline` graph edge is no longer
-    dead code. **Deadline-urgency parser** (`deadlineUrgency.ts`,
-    `complianceData.ts`): strings starting with `ongoing` / `annual` are now treated as
-    year-less regardless of parenthetical provenance like `"Ongoing (GL-2004-2022)"`
-    that previously mis-parsed as year 2004 and pushed dots ~167% off the timeline bar;
-    for ranged deadlines, the earliest future year is preferred. **Deadline-timeline
-    viz bug fix** (`ComplianceLandscape.tsx`): year labels migrated from `flex
-justify-between` to absolute `yearLeftPercent()` positioning so labels and dot
-    columns share a centerline; dense-year stacks (2025 = 21 deadlines) now render in
-    a 3-column grid with a dynamically-sized container (no more vertical clipping);
-    added `px-4` padding on the overflow wrapper so edge dots at 2024 / 2036 are fully
-    visible.
-- **Compliance data & UI — accuracy + completeness overhaul** (`compliance_04182026.csv`,
-  `pqc_authoritative_sources_reference_04182026.csv`, `complianceData.ts`,
-  `ComplianceLandscape.tsx`, `ComplianceView.tsx`): audit-driven refresh of the compliance
-  data source and the `/compliance` UI. **Data**: added 5 African frameworks (South Africa
-  POPIA, Nigeria NDPR/NDPA, Kenya DPA, Egypt PDPL, African Union Malabo Convention) closing
-  the Africa regional gap; populated `library_refs` on all 48 frameworks that previously had
-  empty cross-references (PCI-DSS, HIPAA, SWIFT-CSP, GDPR, ISO-27001, SOC-2, HITECH, FDA
-  21 CFR 11, NATO STANAG 4774, UN ECE WP.29, NERC-CIP, IEC-62443, DO-326A, RTCA DO-355A,
-  FERPA, COPPA, TISAX, MICA, TSA Pipeline, KpqC/KCMVP, NZISM, INCD, BOI, OSCCA NGCC,
-  Swiss/Dutch NCSC, KISA, INDIA-DST, UAE, ACVP, Taiwan MODA, Malaysia NACSA, Saudi NCA,
-  India CERT-In CBOM, Italy ACN, Spain CCN, Bahrain NCSC, Jordan CBJ, CSA, ITU-T SG17,
-  ISO 19790, Brazil ANPD, Denmark CFCS, NY DFS 23 NYCRR 500, ETSI EN 303 645,
-  PQC Coalition, QED-C); every new reference validated against `library_04172026.csv`.
-  Flagged 33 authoritative sources as `Compliance_CSV=Yes` (NIST, ENISA, ANSSI, BSI,
-  NCSC UK, NSA/CISA, ACSC, CSE, IETF, ISO/IEC, ETSI, IEEE, PQCA, TCG, FS-ISAC, CMVP, etc.)
-  — previously zero, breaking the "what feeds this view?" contract. **Loader**
-  (`complianceData.ts`): added missing `industry_alliance` body type to `validBodyTypes[]`
-  (PQC Coalition, PQCA, QED-C no longer silently misclassified); mapped previously-orphaned
-  `trusted_source_id` column; added derived `deadlineYear` + `deadlinePhase` fields and a
-  9-bloc `regionForCountry()` taxonomy (NORAM, LATAM, EU, Europe non-EU, UK, APAC, MENA,
-  Africa, Global). **UI** (`ComplianceLandscape.tsx`, `ComplianceView.tsx`): added global
-  Region filter (with per-bloc framework counts) and Deadline filter (Active / Imminent /
-  Near-term / Mid-term / Long-term / Ongoing) wired to URL params (`region=`, `phase=`) so
-  filter state deep-links and survives back/forward nav across all 4 Landscape tabs;
-  added inline Glossary button on the Certification Schemes `SectionHeader` explaining
-  FIPS 140-3, ACVP, Common Criteria, EUCC, CNSA 2.0, and CSPN/ANSSI Qualification; wrapped
-  CSV export in `try/catch` with a dismissible inline error banner (was previously
-  uncaught). Archived `compliance_03282026_r2.csv` and
-  `pqc_authoritative_sources_reference_02282026.csv`.
-- **Command Center — ROI Calculator overhaul** (`src/utils/roiMath.ts`,
-  `ROICalculatorSection`, `ROICalculator`): new shared pure-math module (43 unit tests) with
-  NPV + WACC discount rate (new KPI card), capex/opex split (benefit net-of-opex for
-  payback/NPV), decomposed quantum multiplier (HNDL / post-CRQC uplift / detection uplift)
-  replacing the opaque 2.5× default, tornado sensitivity chart ranking drivers at ±30%, a
-  Cost of Inaction KPI for counterfactual exposure, PDF/DOCX exports alongside markdown,
-  board-ready executive framing banner, and an `asOf` + `PenaltyType` schema on
-  `roiBaselines`. Applicable-frameworks default now tightens to the assessment's mandated
-  subset first, user selections second, industry list last.
-- **Command Center — KPI plan completion (E4 / D9 / E2 / E1)**
-  (`~/.claude/plans/review-command-center-kpi-federated-seahorse.md`): closes the remaining
-  persona-fit gaps. **E4 Board-Ready NIST CSF Composite** — single 0–100 exec score derived
-  from assessment `categoryScores`, mapped to CSF 2.0 Govern / Identify / Protect / Respond
-  (row CTAs deep-link to `/assess`). **D9 Per-Layer Vendor Readiness** — new
-  `vendorReadinessByLayer` map on `useExecutiveModuleData`; meta-KPI expands to one row per
-  infrastructure layer for architects; architect persona removed from global
-  vendor-readiness to avoid double-counting. **E2 Regulatory Exposure Index** — new
-  `frameworkFines.ts` lookup (25+ frameworks, USD millions) with log-scaled auto-score
-  (`100 − 50·log10`). **E1 Crown-Jewel Coverage** — manual-input KPI with CSF / ISO /
-  SOC 2 mappings and TODO anchor for future assessment integration. 18 new vitest cases
-  across four files; full suite 1,769/1,769 pass.
-- **VPN Simulator — visual SKF payload fragmentation slicing**
-  (`VpnSimulationPanel.tsx`): payload rendering now visually slices KE payloads into SKF
-  fragments per the configured fragment-size budget so learners can see IKE_INTERMEDIATE
-  fragmentation in action (rather than just an aggregate total).
-- **VPN Simulator — ML-DSA authentication via draft standards** (`VpnSimulationPanel.tsx`):
-  restores ML-DSA-65 authentication in the IKEv2 handshake, guarded by an explicit UI
-  warning (`FlaskConical` icon) that calls out the
-  [draft-ietf-ipsecme-ikev2-auth-ml-dsa] status so users understand the mode is not yet
-  standards-track.
+- **Catalog enrichments** — Two full enrichment runs covering 361 and 661 entries; 11 products skipped due to bad source documents.
 
-- **5G SUCI Playground — UX overhaul**: three new sub-components — `ConfigureCard` (collapsible
-  first-visit vs returning-user settings panel), `ScenarioIntroStrip` (operator ↔ IMSI-catcher
-  perspective toggle), and `AttackerSidecar` (per-step "what the eavesdropper captures" sidebar).
-  New `suciUxMeta.ts` provides per-step phase labels, plain-English step explanations, and
-  attacker-observation copy. Plain-English mode toggle is on by default and persisted to
-  `localStorage`; scenario view (operator/attacker) is session-scoped via `sessionStorage`.
-- **StepWizard — phase progress + plain-English rail**: `PhaseProgress` component renders a
-  phase-grouped progress bar (labelled segments with per-step tick marks) that activates when
-  `Step.phase` fields are present. `PlainEnglishRail` component renders plain-English
-  explanations beside the terminal when `plainEnglishEnabled` is true. New optional `Step`
-  fields: `phase`, `plainEnglish`, `attackerSidecar`, `isClimax`, `climaxBanner`. New
-  `StepWizardProps`: `plainEnglishEnabled`, `phaseLabels`, `canonicalTabNames`, `tabExplainer`.
-- **PKCS#11 Log Panel — Beginner Mode**: `pkcs11PlainEnglish.ts` maps every PKCS#11 C\_ call to
-  a 4–8-word plain-English description (algorithm-aware: distinguishes ML-KEM, ML-DSA, X25519,
-  RSA, etc.). A new `beginnerMode` prop on `Pkcs11LogPanel` adds a `BookOpenText` toggle that
-  renders an extra grid column with the translation alongside the raw function name and args.
-- **SecureBootPQC — TPM 2.0 sandbox deep-link**: banner CTA in the TPM Key Hierarchy Explorer
-  tab links to `/playground/sbx-tpm-pqc-migration`, pointing users at the live pqctoday-tpm
-  (Stefan Berger's libtpms + swtpm) + pqctoday-hsm softhsmv3 scenario for real TPM2_CreatePrimary
-  outputs covering EK / SRK / AIK / IDevID in ML-KEM-768 and ML-DSA-65.
-- **Docker Playground — pqctoday-sandbox iframe embed**: `DockerPlaygroundView` completely
-  rewritten from scenario-tile/modal UI to an `<iframe>` embedding the pqctoday-sandbox app.
-  postMessage handshake: sandbox sends `pqc:ready` → hub responds `pqc:challenge` +
-  `pqc:config` (vendorId, theme, allowedRoutes). Dynamic `pqc:resize` events drive
-  auto-height (600–1600 px). Reads `VITE_SANDBOX_BASE_URL` (default `http://localhost:4000`);
-  shows `EmptyState` when unset.
-- **Glossary — TPM 2.0 / TCG V1.85 terms**: five new entries — EK (Endorsement Key, ML-KEM-768
-  in TCG V1.85), AIK (Attestation Identity Key, ML-DSA-65, used in TPM2_Quote), SRK (Storage
-  Root Key, ML-KEM-768 wrapping, drove TPM_BUFFER_MAX 4096→8192), IDevID (IEEE 802.1AR, factory
-  ML-DSA-65), and PCR (Platform Configuration Register, extend-only hash chain). All linked to
-  `/learn/secure-boot-pqc`.
-- **PKCS#11 glossary** (`src/data/glossary/pkcs11Terms.ts`): PKCS#11 token hover-chip
-  definitions used by `OutputFormatter` for inline tooltips.
-- **Library CSV v04172026** — new entries: KpqC Competition Results (HAETAE/AIMer/SMAUG-T/NTRU+
-  final selections), FIPS 140-3 IG PQC (NIST CMVP self-test requirements for FIPS 203/204/205),
-  3GPP TR 33.841 PQC Study 2025 (hybrid PQC for TLS/IPSec/IKEv2 in 5G), liboqs v0.15.0 (PQCA).
-- **Library enrichments v04172026** (`src/data/doc-enrichments/library_doc_enrichments_04172026.md`):
-  full enrichment run for the new library entries.
+- **Library and timeline enrichments refreshed** — Full re-runs for the latest snapshots.
 
-### Changed
+- **SSH simulator — "Build in progress" notice removed** — Removed now that the OpenSSH client and server WASM builds are in place. The panel description clarifies that ML-KEM-768 × X25519 key exchange is natively built into OpenSSH 10.x.
 
-- **VPN Simulator — true MTU + fragmentation config logic**
-  (`VpnSimulationPanel.tsx`, `useAssessmentFormStore.ts`,
-  `Assess/smartDefaults.ts`, `Step5Compliance.tsx`, `LandingView.tsx`,
-  `workshopRegistry.tsx`, `src/wasm/openssh.ts`): assessment-driven MTU + fragment-size
-  smart defaults now flow through to the IKEv2 simulator so learners see realistic
-  IKE_INTERMEDIATE fragmentation behaviour (previously the UI accepted inputs but the
-  simulator ignored them).
-- **VPN Simulator — FlaskConical icon for ML-DSA draft warning** (`VpnSimulationPanel.tsx`):
-  replaces the generic warning icon on the ML-DSA draft-standards banner with `FlaskConical`
-  to better signal experimental status.
+- **Playground Workshop — work-in-progress tools hidden by default** — Initial state flipped from "show" to "hide" for every visitor (embed mode already hid them). The filter remains user-toggleable; this change just makes the first-visit surface match the stable, vendor-presentable subset.
 
-- **Dev server network-accessible** (`vite.config.ts`): `host: true` added so the dev server
-  binds to all interfaces, enabling the pqctoday-sandbox iframe embed to reach the hub from
-  localhost on port 4000.
+- **Performance baseline description fixed** — Info modal now correctly states RSA-2048 is the universal baseline across all algorithm families (previously incorrectly split between RSA-2048 for KEMs and ECDSA-P256 for signatures).
 
-- **NIST CMVP scraper — all security levels** (`scripts/scrapers/nist.ts`): now fetches all
-  active FIPS 140-3 certificates (previously filtered to L3 only). Actual security level
-  (L1/L2/L3) is extracted from each cert's detail page via `extractSecurityLevel()` parsing
-  the "Overall Level" field. Compliance data updated: 2,386 records (NIST 1,269, CC 913,
-  ANSSI 179, ENISA 25).
-- **Library CSV v04152026** — 450 records (+21 new entries)
-- **Product catalog CSV v04162026** — 731 records (+2 new entries including Cosmian KMS and SOPS)
-- **Vendors CSV v04162026** — 302 records (+1 new vendor)
-- **Catalog enrichments** — two full enrichment runs: `catalog_doc_enrichments_04152026.md`
-  (361 entries) and `catalog_doc_enrichments_04162026.md` (661 entries); 11 products skipped
-  due to bad source docs (DigiCert x5, Thales x2, CATO, Hitachi, SK Telecom, NZISM)
-- **Library enrichments** — `library_doc_enrichments_04152026.md` updated (+414 entries full
-  re-run); `library_doc_enrichments_04162026.md` (2 new entries)
-- **Timeline enrichments** — `timeline_doc_enrichments_04152026.md` updated (+205 entries
-  full re-run); 1 skipped entry (Europol QSFF — 33 chars, corrupt source)
-- **Catalog entry script** (`scripts/add-catalog-entries-04162026.mjs`): one-off script for
-  adding Cosmian KMS and SOPS to the product catalog
+- **Composite & Hybrid attack profile split into two tiles** — Hybrid KEM (X25519+ML-KEM) and Composite Signatures (ML-DSA+ECDSA) with distinct attack details and countermeasures.
 
-### Fixed
+- **NTRU+ attack reference clarified** — Notes that the research was on classic NTRU, transferable to NTRU+ via shared polynomial multiplication structure.
 
-- **VPN Simulator — ML-DSA raw pubkey configuration respected**
-  (`VpnSimulationPanel.tsx`): ML-DSA signature generation was ignoring the raw-pubkey
-  setting, causing a config/behaviour mismatch with `CKA_EC_PARAMS`-driven ML-DSA draft
-  flows. Fixed to honour the configured key format end-to-end.
-- **VPN Simulator — WASM OOM + thread pool exhaustion in IKE simulator**
-  (`VpnSimulationPanel.tsx`): long IKE runs were saturating the WASM thread pool and
-  tripping out-of-memory errors when users re-ran scenarios without a full reset. Tightened
-  lifecycle + pool reuse so the simulator stays stable across repeated runs.
-- **What's New modal — View Changelog deep link** (`src/components/ui/WhatsNewModal.tsx`): the
-  "View Changelog" action used the first unseen changelog section's version, which resolved to
-  `Unreleased` and produced an invalid `/changelog#vUnreleased` anchor. Now uses
-  `getCurrentVersion()` so the link always targets the released version section (e.g.
-  `/changelog#v3.3.8`).
-- **Bouncy Castle cert #4943 security level** (`migrate_certification_xref_04012026_r1.csv`):
-  corrected FIPS 140-3 L3 → L1 across 4 rows (bouncy-castle-c-net, bouncy-castle-c-java,
-  bouncy-castle-java, bouncy-castle-java-lts) — level was incorrectly inherited from the
-  old L3-only NIST scraper filter
+- **Draft / Candidate badges added to Performance and Size views** — Amber "Draft" badge shown for algorithms still in candidate or draft standardisation (HQC, BIKE, MAYO, HAWK, etc.).
 
-### Changed
+- **Attack severity ratings replace uniform "Vulnerable" badges** — 4-tier system: Critical (remote, practical key recovery), High (physical access required), Medium (theoretical), Low (easily mitigated). Colour-coded legend.
 
-- **Compliance data re-scraped** (`public/data/compliance-data.json`): 2,386 total records
-  (was 2,391 — 5 expired certs removed); NIST records now include correct per-cert security
-  levels (L1/L2/L3) instead of hardcoded L3
+- **Countermeasures section added to all attack profiles** — Actionable mitigations including masking, constant-time implementation, DRBG compliance, zeroization, and FIPS 140-3 guidance.
 
----
+- **SLH-DSA side-channel status corrected** — From "Unknown" to "Not Found"; hash operations are inherently constant-time with no known SCA vulnerabilities.
 
-- **Implementation Attacks sub-tab** in Detailed Comparison — 12 algorithm attack profiles
-  covering ML-KEM, ML-DSA, FN-DSA/Falcon, HQC, Classic McEliece, FrodoKEM, NTRU+, SLH-DSA,
-  LMS/XMSS, Hybrid KEM, Composite Signatures, and cross-cutting RNG/API risks. Each profile
-  includes per-attack severity ratings (Critical/High/Medium/Low), countermeasures, and
-  peer-reviewed references with local archive links.
-- **KAT Validation sub-tab** in Detailed Comparison — in-browser NIST Known Answer Tests via
-  softhsmv3 WASM PKCS#11 for ML-KEM (FIPS 203), ML-DSA (FIPS 204), and SLH-DSA (FIPS 205)
-  with collapsible PKCS#11 diagnostics panel.
-- **FN-DSA/Falcon attack profile** — documents floating-point Gaussian sampler side-channel
-  vulnerability (most SCA-vulnerable NIST PQC standard) with five countermeasures.
-- **LMS/XMSS stateful signature attack profile** — documents catastrophic state-reuse
-  vulnerability with crash-safe persistence and state management countermeasures.
-- **BIKE-1/3/5 added to algorithm reference CSV** — NIST Round 4 code-based KEM (QC-MDPC)
-  with sizes from the BIKE specification and liboqs; 80 algorithms now in the reference data.
-- **Cryptographic hardness assumptions** shown in Security Levels view — each algorithm card
-  displays the underlying mathematical problem (Module-LWE, binary Goppa decoding, hash
-  collision resistance, MQ problem, etc.).
-- **"Why KATs Matter" explainer** in KAT Validation — collapsible educational content covering
-  FIPS 140-3 requirements, implementation correctness, and in-browser verification value.
-- **"Quick Reference" panel** in the About modal — practical analogies for security levels,
-  key sizes, and signature sizes for non-expert users.
+- **Search corpus and embed manifest regenerated** — Picks up the compliance/timeline data refresh and the deletion of retired CSVs. RAG corpus shrinks significantly after dedup against the new authoritative files.
 
-### Changed
-
-- **Performance baseline description fixed** — Info modal now correctly states RSA-2048 is the
-  universal baseline across all algorithm families (previously incorrectly split between RSA-2048
-  for KEMs and ECDSA-P256 for signatures).
-- **Composite & Hybrid attack profile split into two tiles** — "Hybrid KEM (X25519+ML-KEM)"
-  and "Composite Signatures (ML-DSA+ECDSA)" with distinct attack details and countermeasures.
-- **NTRU+ attack reference clarified** — notes that research was on classic NTRU, transferable
-  to NTRU+ via shared polynomial multiplication structure.
-- **Draft/Candidate indicator badges** added to Performance and Size views — amber "Draft" badge
-  shown for algorithms still in candidate or draft standardisation (HQC, BIKE, MAYO, HAWK, etc.).
-- **Attack severity ratings** replace uniform "Vulnerable" badges — 4-tier system (Critical for
-  remote/practical key recovery, High for physical access required, Medium for theoretical,
-  Low for easily mitigated) with color-coded legend.
-- **Countermeasures section** added to all attack profiles — actionable mitigations including
-  masking, constant-time implementation, DRBG compliance, zeroization, and FIPS 140-3 guidance.
-- **SLH-DSA side-channel status corrected** from "Unknown" to "Not Found" — hash operations
-  are inherently constant-time with no known SCA vulnerabilities.
+- **OpenSSH WASM connector path** — Comments and the build-in-progress banner now point at the folded-in connector in the HSM repo (per the April 18 repo consolidation) instead of the retired standalone repo.
 
 ## [3.3.8] - April 14, 2026
 

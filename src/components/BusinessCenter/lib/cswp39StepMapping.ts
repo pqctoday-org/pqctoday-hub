@@ -29,7 +29,7 @@ export const STEP_ARTIFACT_TYPES: Record<CSWP39StepId, ExecutiveDocumentType[]> 
     'compliance-checklist',
     'contract-clause',
   ],
-  inventory: ['supply-chain-matrix'],
+  inventory: ['supply-chain-matrix', 'crypto-cbom', 'crypto-vulnerability-watch'],
   'identify-gaps': ['risk-register', 'vendor-scorecard'],
   prioritise: ['kpi-dashboard', 'kpi-tracker', 'compliance-timeline', 'crqc-scenario'],
   implement: ['risk-treatment-plan', 'migration-roadmap', 'deployment-playbook'],

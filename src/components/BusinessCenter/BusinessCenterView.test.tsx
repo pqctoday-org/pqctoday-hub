@@ -220,11 +220,12 @@ describe('BusinessCenterView', () => {
     mockAssessmentStore.getInput.mockReturnValue(null)
   })
 
-  it('renders page header with title and description', () => {
+  it('renders persona-aware page header for executive', () => {
     renderView()
-    // Note: 'Command Center' also appears in the WorkflowBreadcrumb; use heading role to disambiguate.
-    expect(screen.getByRole('heading', { name: 'Command Center' })).toBeInTheDocument()
-    expect(screen.getAllByText(/Your PQC readiness command center/)[0]).toBeInTheDocument()
+    // Mock persona is 'executive', so the header reflects the persona-aware
+    // headline + tagline from `personaConfig.ts` rather than the generic copy.
+    expect(screen.getByRole('heading', { name: 'Crypto Risk — Board View' })).toBeInTheDocument()
+    expect(screen.getAllByText(/Quantum-readiness scorecard/)[0]).toBeInTheDocument()
   })
 
   it('shows welcome state when fully empty', () => {
@@ -266,10 +267,9 @@ describe('BusinessCenterView', () => {
       expect(renderedTitles.some((t) => t.startsWith(zone))).toBe(true)
     }
 
-    // Cross-cuts: action items strip, cyber insurance toggle, learning bar
+    // Cross-cuts: action items strip + learning bar
     expect(screen.getByText('Executive Learning Path')).toBeInTheDocument()
     expect(screen.getByText('Next Steps')).toBeInTheDocument()
-    expect(screen.getAllByText('Cyber Insurance Lens').length).toBeGreaterThanOrEqual(1)
   })
 
   it('renders the Fig 3 strategic plan diagram heading', () => {
@@ -331,6 +331,5 @@ describe('BusinessCenterView', () => {
 
     // When fully empty, welcome state shows (not the §3-§6 section stack).
     expect(screen.getByText('Welcome to your PQC Command Center')).toBeInTheDocument()
-    expect(screen.queryByText('Cyber Insurance Lens')).not.toBeInTheDocument()
   })
 })

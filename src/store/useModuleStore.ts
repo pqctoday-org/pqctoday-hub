@@ -11,7 +11,7 @@ import {
 } from '../utils/analytics'
 import { LEARN_SECTIONS } from '../components/PKILearning/moduleData'
 
-const MODULE_STORE_VERSION = 12
+const MODULE_STORE_VERSION = 14
 const KPI_HISTORY_CAP = 30
 
 // Ephemeral session tracker — NOT in Zustand state, intentionally non-persisted.
@@ -258,7 +258,9 @@ export const useModuleStore = create<ModuleState>()(
         logArtifactGenerated('learning', 'executive-document')
         set((state) => {
           const existing = state.artifacts.executiveDocuments ?? []
-          // Replace existing doc of same module+type, or append if new
+          // Replace existing doc of same module+type, or append if new.
+          // updatedAt defaults to createdAt when caller omits it; the field is
+          // consumed by ArtifactCard / ArtifactDrawer for audit-trail display.
           const idx = existing.findIndex((d) => d.moduleId === doc.moduleId && d.type === doc.type)
           const updated =
             idx >= 0 ? existing.map((d, i) => (i === idx ? doc : d)) : [...existing, doc]
@@ -273,9 +275,21 @@ export const useModuleStore = create<ModuleState>()(
         set((state) => ({
           artifacts: {
             ...state.artifacts,
-            executiveDocuments: (state.artifacts.executiveDocuments ?? []).map((doc) =>
-              doc.id === id ? { ...doc, ...updates, id: doc.id } : doc
-            ),
+            executiveDocuments: (state.artifacts.executiveDocuments ?? []).map((doc) => {
+              if (doc.id !== id) return doc
+              const now = Date.now()
+              const summary =
+                typeof (updates as { revisionSummary?: string }).revisionSummary === 'string'
+                  ? (updates as { revisionSummary?: string }).revisionSummary
+                  : undefined
+              return {
+                ...doc,
+                ...updates,
+                id: doc.id,
+                updatedAt: now,
+                revisions: [...(doc.revisions ?? []), { updatedAt: now, summary }],
+              }
+            }),
           },
           timestamp: Date.now(),
         }))
@@ -599,6 +613,40 @@ export const useModuleStore = create<ModuleState>()(
               )
           }
           state.version = '12.0.0'
+          state.timestamp = Date.now()
+        }
+
+        // Version 12 → Version 13: ExecutiveDocument audit trail
+        // - Default updatedAt = createdAt for documents that have neither
+        // - Default revisions = [] when missing
+        if (version <= 12) {
+          if (Array.isArray(state.artifacts?.executiveDocuments)) {
+            state.artifacts.executiveDocuments = state.artifacts.executiveDocuments.map(
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (d: any) => ({
+                ...d,
+                updatedAt: typeof d.updatedAt === 'number' ? d.updatedAt : (d.createdAt ?? 0),
+                revisions: Array.isArray(d.revisions) ? d.revisions : [],
+              })
+            )
+          }
+          state.version = '13.0.0'
+          state.timestamp = Date.now()
+        }
+
+        // Version 13 → Version 14: ExecutiveDocument approval workflow
+        // - Default approvalStatus = 'draft' for documents that have none
+        if (version <= 13) {
+          if (Array.isArray(state.artifacts?.executiveDocuments)) {
+            state.artifacts.executiveDocuments = state.artifacts.executiveDocuments.map(
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (d: any) => ({
+                ...d,
+                approvalStatus: d.approvalStatus ?? 'draft',
+              })
+            )
+          }
+          state.version = '14.0.0'
           state.timestamp = Date.now()
         }
 

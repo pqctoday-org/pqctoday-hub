@@ -11,6 +11,8 @@
  * `BC_ZONE_EMPHASIS_BY_PERSONA`, and the drift-guard test in lockstep.
  */
 
+import type { PillarId } from '@/types/MaturityTypes'
+
 export type ZoneId =
   | 'governance'
   | 'assets'
@@ -32,6 +34,10 @@ export interface CSWP39ZoneDetail {
   cswpRef: string
   /** Short banner label rendered on the diagram tile. */
   label: string
+  /** Optional deep-link to the CryptoMgmtModernization workshop step that
+   *  most-thoroughly teaches this zone. Used by `Learn this zone →` link
+   *  in the zone-panel header. */
+  learnRoute?: string
 }
 
 export const CSWP39_ZONE_DETAILS: Record<ZoneId, CSWP39ZoneDetail> = {
@@ -50,6 +56,7 @@ export const CSWP39_ZONE_DETAILS: Record<ZoneId, CSWP39ZoneDetail> = {
     cpmPillar: 'Governance pillar — policy ownership, RACI, standards-watch subscription',
     cswpRef: 'NIST CSWP.39 §5.1–5.4',
     label: 'GOVERNANCE',
+    learnRoute: '/learn/crypto-mgmt-modernization?step=0',
   },
   assets: {
     title: 'Assets',
@@ -59,6 +66,7 @@ export const CSWP39_ZONE_DETAILS: Record<ZoneId, CSWP39ZoneDetail> = {
       'Inventory pillar — CBOM covers all six asset classes; feeds the Information Repository',
     cswpRef: 'NIST CSWP.39 §5.2 (Crypto Security Policy Enforcement)',
     label: 'ASSETS',
+    learnRoute: '/learn/crypto-mgmt-modernization?step=1',
   },
   'management-tools': {
     title: 'Management Tools',
@@ -67,6 +75,7 @@ export const CSWP39_ZONE_DETAILS: Record<ZoneId, CSWP39ZoneDetail> = {
     cpmPillar: 'Observability + Inventory pillars — automate the Information Repository feed',
     cswpRef: 'NIST CSWP.39 §4.3 (service mesh / zero-trust), §5.2 (enforcement)',
     label: 'MANAGEMENT TOOLS',
+    learnRoute: '/learn/crypto-mgmt-modernization?step=5',
   },
   'risk-management': {
     title: 'Data-Centric Risk Management',
@@ -81,6 +90,7 @@ export const CSWP39_ZONE_DETAILS: Record<ZoneId, CSWP39ZoneDetail> = {
       'Observability pillar (KPIs, dashboards) + Assurance pillar (FIPS metrics, attestation)',
     cswpRef: 'NIST CSWP.39 §6.5 (Maturity Assessment)',
     label: 'DATA-CENTRIC RISK MGMT',
+    learnRoute: '/learn/crypto-mgmt-modernization?step=4',
   },
   mitigation: {
     title: 'Mitigation',
@@ -94,6 +104,7 @@ export const CSWP39_ZONE_DETAILS: Record<ZoneId, CSWP39ZoneDetail> = {
     cpmPillar: 'Lifecycle pillar — remediation track; gateway itself must be tracked in CBOM',
     cswpRef: 'NIST CSWP.39 §4.6 (Crypto Gateway for Legacy Systems)',
     label: 'MITIGATION',
+    learnRoute: '/learn/crypto-mgmt-modernization?step=7',
   },
   migration: {
     title: 'Migration',
@@ -108,6 +119,7 @@ export const CSWP39_ZONE_DETAILS: Record<ZoneId, CSWP39ZoneDetail> = {
     cpmPillar: 'Lifecycle pillar — CLM automation, ACME/EST/CMP, certificate renewal pipeline',
     cswpRef: 'NIST CSWP.39 §3.2 (Algorithm Transitions)',
     label: 'MIGRATION',
+    learnRoute: '/learn/crypto-mgmt-modernization?step=7',
   },
 }
 
@@ -172,6 +184,27 @@ export const CSWP39_ZONE_ORDER: ZoneId[] = [
   'mitigation',
   'migration',
 ]
+
+/** Map a CSWP 39 pillar to its corresponding step id in the 5-step model. */
+export const PILLAR_TO_STEP: Record<
+  PillarId,
+  'govern' | 'inventory' | 'identify-gaps' | 'prioritise' | 'implement'
+> = {
+  governance: 'govern',
+  inventory: 'inventory',
+  observability: 'identify-gaps',
+  assurance: 'prioritise',
+  lifecycle: 'implement',
+}
+
+/** Map a CSWP 39 pillar directly to its Fig 3 zone for deep-linking. */
+export const PILLAR_TO_ZONE: Record<PillarId, ZoneId> = {
+  governance: 'governance',
+  inventory: 'assets',
+  observability: 'management-tools',
+  assurance: 'risk-management',
+  lifecycle: 'migration',
+}
 
 /** Map a legacy step or section id (from earlier iterations of this UI) to its
  *  canonical Fig 3 zone. Used by the Command Center hashchange redirect to keep

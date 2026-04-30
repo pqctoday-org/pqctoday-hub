@@ -4,6 +4,9 @@ import { Clock, AlertTriangle, ShieldAlert, ShieldCheck, Calendar, TrendingUp } 
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useModuleStore } from '@/store/useModuleStore'
 import { ExportableArtifact } from '../../../common/executive'
+import { InlineTooltip } from '@/components/ui/InlineTooltip'
+import { useBookmarkStore } from '@/store/useBookmarkStore'
+import { threatsData } from '@/data/threatsData'
 
 interface AlgorithmImpact {
   name: string
@@ -102,6 +105,11 @@ export const CRQCScenarioPlanner: React.FC = () => {
   const [crqcYear, setCrqcYear] = useState(2035)
   const { migrationDeadlineYear, industry, country } = useExecutiveModuleData()
   const { addExecutiveDocument } = useModuleStore()
+  const myThreatIds = useBookmarkStore((s) => s.myThreats)
+  const myTrackedThreats = useMemo(
+    () => threatsData.filter((t) => myThreatIds.includes(t.threatId)),
+    [myThreatIds]
+  )
 
   const currentYear = new Date().getFullYear()
 
@@ -225,11 +233,41 @@ export const CRQCScenarioPlanner: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {myTrackedThreats.length > 0 && (
+        <div className="glass-panel p-3 border-l-4 border-status-warning">
+          <div className="text-xs font-semibold text-foreground mb-1.5">
+            Tracked threats from /threats ({myTrackedThreats.length})
+          </div>
+          <p className="text-[11px] text-muted-foreground mb-2">
+            These threats are part of your scenario. Adjust the slider below to model when CRQC
+            arrives and re-evaluate exposure.
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {myTrackedThreats.slice(0, 6).map((t) => (
+              <span
+                key={t.threatId}
+                className="text-[10px] px-2 py-0.5 rounded bg-muted text-foreground border border-border"
+                title={t.description}
+              >
+                {t.threatId}
+              </span>
+            ))}
+            {myTrackedThreats.length > 6 && (
+              <span className="text-[10px] text-muted-foreground">
+                +{myTrackedThreats.length - 6} more
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* CRQC Year Slider */}
       <div className="glass-panel p-6">
         <div className="flex items-center gap-3 mb-4">
           <Clock size={20} className="text-primary" />
-          <h3 className="text-lg font-semibold text-foreground">CRQC Arrival Year</h3>
+          <h3 className="text-lg font-semibold text-foreground">
+            <InlineTooltip term="CRQC">CRQC</InlineTooltip> Arrival Year
+          </h3>
         </div>
         <p className="text-sm text-muted-foreground mb-4">
           Adjust the slider to model when a cryptographically relevant quantum computer might

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useEffect, useMemo, useState } from 'react'
+import { FlaskConical } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   CRYPTO_LIBRARIES,
@@ -14,6 +15,10 @@ import { ExportableArtifact } from '@/components/PKILearning/common/executive/Ex
 import { useModuleStore } from '@/store/useModuleStore'
 import { useAlgorithmTransitionsForAssessment } from '@/hooks/useAlgorithmTransitionsForAssessment'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
+import { SampleDataBadge } from '@/components/BusinessCenter/widgets/SampleDataBadge'
+import { InlineTooltip } from '@/components/ui/InlineTooltip'
+import { useLiveCmvpStatus } from '@/hooks/useLiveCmvpStatus'
+import { LiveCmvpBadge } from '@/components/BusinessCenter/widgets/LiveCmvpBadge'
 
 type Mode = 'sbom' | 'libs' | 'hsm' | 'assessment'
 
@@ -79,6 +84,7 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
   const [selectedSbom, setSelectedSbom] = useState<string>(SAMPLE_SBOMS[0].id)
   const [userSbom, setUserSbom] = useState<string>('')
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
+  const liveCmvp = useLiveCmvpStatus()
 
   const activeSbom = useMemo(() => {
     if (userSbom.trim().length > 0) {
@@ -215,8 +221,9 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground">
         Three linked views over the software and hardware inventory: map an SBOM into a
-        crypto-focused CBOM slice, inspect your library posture, and track FIPS 140-3 Level 3 status
-        for every HSM your keys live in.
+        crypto-focused <InlineTooltip term="CBOM">CBOM</InlineTooltip> slice, inspect your library
+        posture, and track <InlineTooltip term="FIPS 140-3">FIPS 140-3</InlineTooltip> Level 3
+        status for every HSM your keys live in.
       </p>
 
       <div className="flex flex-wrap gap-2">
@@ -406,6 +413,26 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
         </div>
       )}
 
+      {(mode === 'libs' || mode === 'hsm') && (
+        <div className="rounded-md border border-status-warning/40 bg-status-warning/10 p-3 flex items-start gap-2">
+          <FlaskConical size={14} className="text-status-warning shrink-0 mt-0.5" />
+          <p className="text-xs text-foreground">
+            <span className="font-semibold">Illustrative data for teaching.</span> Cert numbers,
+            firmware revisions, and PQC support claims below are educational snapshots, not live{' '}
+            <InlineTooltip term="CMVP">CMVP</InlineTooltip> records. Verify against the{' '}
+            <a
+              href="https://csrc.nist.gov/projects/cryptographic-module-validation-program"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline"
+            >
+              NIST CMVP database
+            </a>{' '}
+            and the vendor&apos;s product page before quoting.
+          </p>
+        </div>
+      )}
+
       {mode === 'libs' && (
         <div className="overflow-x-auto bg-muted/40 rounded-lg p-3 border border-border">
           <table className="w-full text-xs">
@@ -437,8 +464,10 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
                       {FIPS_LABEL[lib.fipsStatus]}
                     </span>
                     {lib.cmvpCertNumber && (
-                      <div className="text-[10px] text-muted-foreground mt-1">
-                        {lib.cmvpCertNumber}
+                      <div className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1 flex-wrap">
+                        <span>{lib.cmvpCertNumber}</span>
+                        <SampleDataBadge />
+                        <LiveCmvpBadge match={liveCmvp.match(lib.vendor, lib.name)} />
                       </div>
                     )}
                   </td>
@@ -488,7 +517,10 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
                     <div className="font-bold text-foreground">{h.product}</div>
                     <div className="text-[10px] text-muted-foreground">{h.vendor}</div>
                   </td>
-                  <td className="p-2 font-mono text-[11px]">{h.firmwareRev}</td>
+                  <td className="p-2 font-mono text-[11px]">
+                    <span>{h.firmwareRev}</span>{' '}
+                    <SampleDataBadge tooltip="Firmware revision is an illustrative sample. Verify against the vendor's product page." />
+                  </td>
                   <td className="p-2">
                     <span
                       className={`inline-block rounded px-1.5 py-0.5 text-[10px] border ${FIPS_COLOR[h.fipsStatus]}`}
@@ -496,8 +528,10 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
                       L{h.fipsLevel} · {FIPS_LABEL[h.fipsStatus]}
                     </span>
                     {h.cmvpCertNumber && (
-                      <div className="text-[10px] text-muted-foreground mt-1">
-                        {h.cmvpCertNumber}
+                      <div className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1 flex-wrap">
+                        <span>{h.cmvpCertNumber}</span>
+                        <SampleDataBadge />
+                        <LiveCmvpBadge match={liveCmvp.match(h.vendor, h.product)} />
                       </div>
                     )}
                   </td>

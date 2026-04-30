@@ -324,3 +324,96 @@ export const CSWP39_CROSS_WALK: CSWP39CrossWalkRow[] = [
     ],
   },
 ]
+
+// ────────────────────────────────────────────────────────────────────────────
+// CSWP39_SECTIONS — authoritative document outline
+//
+// Mirrors the actual NIST CSWP.39 (2025-12-19) section structure so the
+// Command Center can surface §3 / §4 / §5 / §6 explicitly for auditors who
+// expect to see them by section number, separate from the synthesized 5-step
+// migration model in CSWP39_STEPS.
+//
+// `relatedStepIds` and `relatedZoneIds` map a section back into the existing
+// 5-step process and the Fig 3 zones, so a reader who clicks "§4 System
+// Implementations" lands on the relevant strategic-plan step and the
+// Mitigation / Migration zones without having to re-navigate.
+// ────────────────────────────────────────────────────────────────────────────
+
+import type { ZoneId } from '@/data/cswp39ZoneData'
+
+export interface CSWP39Section {
+  id: 'section-3' | 'section-4' | 'section-5' | 'section-6'
+  /** Section reference label, e.g. "§3" — matches how artifacts cite it. */
+  ref: string
+  /** Document title for the section. */
+  title: string
+  /** One-paragraph plain-English summary suitable for an executive. */
+  summary: string
+  /** Sub-sections of interest in the section, with their numbers. */
+  subSections: Array<{ ref: string; title: string }>
+  /** 5-step process steps that aggregate the work of this section. */
+  relatedStepIds: CSWP39Step['id'][]
+  /** Fig 3 zones whose artifacts roll up to this section. */
+  relatedZoneIds: ZoneId[]
+}
+
+export const CSWP39_SECTIONS: CSWP39Section[] = [
+  {
+    id: 'section-3',
+    ref: '§3',
+    title: 'Crypto Agility for Security Protocols',
+    summary:
+      'How protocols (TLS, IPsec, SSH, S/MIME, code-signing) negotiate algorithms and how new algorithms — including post-quantum primitives — are introduced without breaking backwards compatibility.',
+    subSections: [
+      { ref: '§3.1', title: 'Negotiation and parameter selection' },
+      { ref: '§3.2', title: 'Algorithm transitions in deployed protocols' },
+      { ref: '§3.3', title: 'Hybrid and composite schemes' },
+    ],
+    relatedStepIds: ['inventory', 'implement'],
+    relatedZoneIds: ['assets', 'migration'],
+  },
+  {
+    id: 'section-4',
+    ref: '§4',
+    title: 'Crypto Agility in System Implementations',
+    summary:
+      'Building crypto-agile systems: modular API boundaries, key-store abstractions, certificate lifecycle automation, and crypto gateways for legacy assets that cannot be modified directly.',
+    subSections: [
+      { ref: '§4.1', title: 'Modular cryptographic APIs' },
+      { ref: '§4.2', title: 'Key store and certificate management' },
+      { ref: '§4.3', title: 'Library and HSM upgrade paths' },
+      { ref: '§4.6', title: 'Crypto Gateways (mitigation, with mandatory sunset)' },
+    ],
+    relatedStepIds: ['identify-gaps', 'implement'],
+    relatedZoneIds: ['management-tools', 'mitigation', 'migration'],
+  },
+  {
+    id: 'section-5',
+    ref: '§5',
+    title: 'Strategic Plan for Managing Crypto Risks',
+    summary:
+      'The five-step operational playbook the Command Center is built around: Govern, Inventory, Identify Gaps, Prioritise, Implement. Includes the Information Repository concept that aggregates inventory across systems.',
+    subSections: [
+      { ref: '§5.1', title: 'Govern — policy, RACI, standards-watch' },
+      { ref: '§5.2', title: 'Inventory — CBOM and Information Repository' },
+      { ref: '§5.3', title: 'Identify Gaps — vulnerability + standard delta' },
+      { ref: '§5.4', title: 'Prioritise — risk + deadline-driven scoring' },
+      { ref: '§5.5', title: 'Implement — migration / mitigation execution' },
+    ],
+    relatedStepIds: ['govern', 'inventory', 'identify-gaps', 'prioritise', 'implement'],
+    relatedZoneIds: ['governance', 'assets', 'management-tools', 'risk-management', 'migration'],
+  },
+  {
+    id: 'section-6',
+    ref: '§6',
+    title: 'Future Works & Maturity Assessment',
+    summary:
+      'Open questions for next revisions, plus the four-tier maturity model (§6.5: Partial → Risk-Informed → Repeatable → Adaptive) the tier badges in every Command Center zone are computed against.',
+    subSections: [
+      { ref: '§6.1', title: 'Open research questions' },
+      { ref: '§6.5', title: 'Maturity Assessment (4-tier model)' },
+    ],
+    relatedStepIds: ['govern', 'identify-gaps'],
+    relatedZoneIds: ['governance', 'risk-management'],
+  },
+]

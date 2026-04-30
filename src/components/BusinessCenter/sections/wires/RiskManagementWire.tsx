@@ -10,10 +10,12 @@
  */
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowRight, Activity, Calendar } from 'lucide-react'
+import { ArrowRight, Activity, Calendar, ShieldAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { BusinessMetrics } from '../../hooks/useBusinessMetrics'
 import { FrameworkDeadlineList } from '../../widgets/FrameworkDeadlineList'
+import { useBookmarkStore } from '@/store/useBookmarkStore'
+import { threatsData } from '@/data/threatsData'
 
 export interface RiskManagementWireProps {
   metrics: BusinessMetrics
@@ -147,10 +149,52 @@ function FrameworkBlock({ metrics }: { metrics: BusinessMetrics }) {
   )
 }
 
+function TrackedThreatsBlock() {
+  const navigate = useNavigate()
+  const myThreats = useBookmarkStore((s) => s.myThreats)
+  if (myThreats.length === 0) return null
+  const tracked = threatsData.filter((t) => myThreats.includes(t.threatId))
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <ShieldAlert size={14} className="text-muted-foreground" />
+          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
+            Tracked threats from /threats ({tracked.length})
+          </span>
+        </div>
+        <Button
+          variant="link"
+          size="sm"
+          onClick={() => navigate('/threats')}
+          className="h-auto p-0 text-xs"
+        >
+          Manage <ArrowRight size={12} className="ml-0.5" />
+        </Button>
+      </div>
+      <div className="flex flex-wrap gap-1.5">
+        {tracked.slice(0, 8).map((t) => (
+          <span
+            key={t.threatId}
+            className="text-[10px] px-2 py-0.5 rounded bg-muted text-foreground border border-border"
+            title={t.description}
+          >
+            {t.threatId}
+          </span>
+        ))}
+        {tracked.length > 8 && (
+          <span className="text-[10px] text-muted-foreground">+{tracked.length - 8} more</span>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export const RiskManagementWire: React.FC<RiskManagementWireProps> = ({ metrics }) => {
   return (
     <div className="space-y-3">
       <HealthTile metrics={metrics} />
+      <TrackedThreatsBlock />
       <FrameworkBlock metrics={metrics} />
     </div>
   )

@@ -58,6 +58,20 @@ export type ExecutiveDocumentType =
   | 'crypto-cbom'
   | 'crypto-vulnerability-watch'
 
+export interface ExecutiveDocumentRevision {
+  /** Unix ms when this revision was recorded. */
+  updatedAt: number
+  /** Optional human summary of what changed (e.g. "Re-ran with new compliance frameworks"). */
+  summary?: string
+}
+
+/**
+ * Approval workflow state. Pre-existing artifacts default to `'draft'` via
+ * the v14 store migration; new artifacts also start at `'draft'`. The user
+ * advances through review → approved manually from the artifact drawer.
+ */
+export type ExecutiveDocumentApprovalStatus = 'draft' | 'in-review' | 'approved'
+
 export interface ExecutiveDocument {
   id: string
   moduleId: string
@@ -65,6 +79,18 @@ export interface ExecutiveDocument {
   title: string
   data: string
   createdAt: number
+  /** Last edit time. Defaults to `createdAt` when omitted. The store
+   *  populates this on `addExecutiveDocument` if the caller didn't set it. */
+  updatedAt?: number
+  /** Append-only revision log. Empty for documents that have never been
+   *  re-saved. Each entry corresponds to one `updateExecutiveDocument` call. */
+  revisions?: ExecutiveDocumentRevision[]
+  /** Approval workflow state. Defaults to 'draft' for new + migrated docs. */
+  approvalStatus?: ExecutiveDocumentApprovalStatus
+  /** Free-text reviewer name; populated when status moves to 'in-review' or 'approved'. */
+  reviewer?: string
+  /** Unix ms when status moved to 'approved'. */
+  approvedAt?: number
   // Serialized builder form state so Edit can restore prior inputs.
   // Shape is builder-specific and opaque to the store.
   inputs?: unknown

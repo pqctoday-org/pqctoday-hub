@@ -1,8 +1,22 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { Bookmark, BookmarkCheck, Calendar, Eye, ExternalLink, Sparkles } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import {
+  Bookmark,
+  BookmarkCheck,
+  Calendar,
+  Eye,
+  ExternalLink,
+  Sparkles,
+  ArrowRight,
+} from 'lucide-react'
 import type { LibraryItem } from '../../data/libraryData'
 import { libraryEnrichments } from '../../data/libraryEnrichmentData'
+import { maturityByRefId } from '../../data/maturityGovernanceData'
+import { PILLAR_TO_ZONE, CSWP39_ZONE_DETAILS, CSWP39_ZONE_STYLES } from '../../data/cswp39ZoneData'
+import { CSWP39_TIERS } from '../Compliance/cswp39Data'
+import type { PillarId, MaturityLevel } from '@/types/MaturityTypes'
 import { StatusBadge } from '../common/StatusBadge'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
@@ -26,10 +40,45 @@ const URGENCY_COLORS: Record<string, string> = {
   Low: 'bg-status-success text-status-success border-status-success',
 }
 
+// Pillars rendered in CSWP 39 5-step process order so the pill cluster reads
+// left-to-right as Govern → Inventory → Identify Gaps → Prioritise → Implement.
+const PILLAR_ORDER: PillarId[] = [
+  'governance',
+  'inventory',
+  'observability',
+  'assurance',
+  'lifecycle',
+]
+
+const TIER_TONE_TO_FILL: Record<'error' | 'warning' | 'info' | 'success', string> = {
+  error: 'bg-status-error',
+  warning: 'bg-status-warning',
+  info: 'bg-status-info',
+  success: 'bg-status-success',
+}
+
 export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardProps) => {
   const { libraryBookmarks, toggleLibraryBookmark } = useBookmarkStore()
   const isBookmarked = libraryBookmarks.includes(item.referenceId)
   const isEnriched = !!libraryEnrichments[item.referenceId]
+
+  // CSWP 39 rollup: pillar counts + tier coverage from the maturity dataset.
+  // Silent (renders nothing) when this referenceId has no enriched requirements.
+  const cswp39 = useMemo(() => {
+    const reqs = maturityByRefId.get(item.referenceId)
+    if (!reqs || reqs.length === 0) return null
+    const pillarCounts = new Map<PillarId, number>()
+    const tiers = new Set<MaturityLevel>()
+    for (const r of reqs) {
+      pillarCounts.set(r.pillar, (pillarCounts.get(r.pillar) ?? 0) + 1)
+      tiers.add(r.maturityLevel)
+    }
+    const pillars = PILLAR_ORDER.filter((p) => pillarCounts.has(p)).map((p) => ({
+      pillar: p,
+      count: pillarCounts.get(p)!,
+    }))
+    return { pillars, tiers, total: reqs.length }
+  }, [item.referenceId])
 
   return (
     <motion.article
@@ -90,6 +139,72 @@ export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardPro
           </span>
         ) : null}
       </div>
+
+      {cswp39 && (
+        <div
+          className="mb-2"
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+          role="presentation"
+        >
+          <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
+            CSWP 39
+            <span className="text-muted-foreground/50">▸</span>
+          </div>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {cswp39.pillars.map(({ pillar, count }) => {
+              const zoneId = PILLAR_TO_ZONE[pillar]
+              const style = CSWP39_ZONE_STYLES[zoneId]
+              const detail = CSWP39_ZONE_DETAILS[zoneId]
+              return (
+                <Link
+                  key={pillar}
+                  to={`/business#zone-${zoneId}`}
+                  title={`${detail.title} — ${count} requirement${count === 1 ? '' : 's'}; click to open the ${detail.title} zone`}
+                  className={clsx(
+                    'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold border transition-opacity hover:opacity-80',
+                    style.border,
+                    style.bg,
+                    style.text
+                  )}
+                >
+                  <span className="capitalize">{pillar}</span>
+                  <span className="opacity-70">·{count}</span>
+                </Link>
+              )
+            })}
+            <div
+              className="inline-flex items-center gap-0.5 ml-1"
+              title="Maturity tiers covered (Tier 1 Partial → Tier 4 Adaptive)"
+            >
+              {([1, 2, 3, 4] as MaturityLevel[]).map((level) => {
+                const tier = CSWP39_TIERS[level - 1]
+                const filled = cswp39.tiers.has(level)
+                return (
+                  <span
+                    key={level}
+                    aria-label={`Tier ${level} ${tier.name}${filled ? ' covered' : ' not covered'}`}
+                    className={clsx(
+                      'w-2 h-2 rounded-full border',
+                      filled
+                        ? `${TIER_TONE_TO_FILL[tier.tone]} border-transparent`
+                        : 'bg-transparent border-muted-foreground/30'
+                    )}
+                  />
+                )
+              })}
+            </div>
+            <Link
+              to={`/compliance?tab=cswp39&evref=${encodeURIComponent(item.referenceId)}`}
+              title={`View ${cswp39.total} CSWP 39 requirements extracted from this document`}
+              className="ml-auto inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold border border-primary/30 bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+            >
+              {cswp39.total} req{cswp39.total === 1 ? '' : 's'}
+              <ArrowRight size={10} aria-hidden="true" />
+            </Link>
+          </div>
+        </div>
+      )}
 
       <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
         <Calendar size={12} aria-hidden="true" />
