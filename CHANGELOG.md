@@ -6,6 +6,47 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.28] - April 30, 2026
+
+CSWP 39 governance dataset grew from 970 → 1,332 requirements (107 → 189 sources).
+Library tile detail view now lists each extracted requirement inline, and a new
+"CSWP 39" filter on `/library` narrows the grid to docs with extracted obligations.
+
+### Added
+
+- **CSWP 39 Requirements section in the library tile detail view** — Click any
+  library tile and the detail modal now includes a "CSWP 39 Requirements" section
+  grouped by Crypto Posture Management pillar (Governance, Inventory,
+  Observability, Assurance, Lifecycle), with each requirement showing its
+  maturity tier badge, requirement text, evidence quote from the source PDF,
+  page/section reference, and confidence level. Silent on docs that don't have
+  extracted requirements.
+
+- **"CSWP 39" filter button on /library** — Toggle next to "My (N)" that
+  narrows the grid to docs carrying extracted CSWP 39 governance obligations.
+  Shows a count, e.g. "CSWP 39 (189)". Persists via `?cswp39=1` URL parameter.
+
+- **+362 new CSWP 39 governance requirements** extracted via the four-stage
+  Ollama (`qwen3.6:27b`) enrichment pipeline against the library:
+  - Migration Guidance: 12 sources, 46 requirements (UK NCSC migration
+    timelines, IETF RFC 8555 ACME, IETF RFC 9763 multi-algorithm certs, CSA
+    Practitioner's Guide, etc.)
+  - Government & Policy: 42 sources, 210 requirements (NSA CNSA 2.0 FAQ,
+    DoD CIO PQC memo, OMB M-23-02, EO-14306, EU NIS-CG roadmap, ANSSI PQC
+    FAQ, UK NCSC migration timelines, GSA buyer's guide, etc.)
+  - Protocols: 15 sources, 59 requirements (GSMA PQ.03 telecom guidelines,
+    IETF RFC 8784 PSK in IKEv2, ETSI hybrid key exchange specs, etc.)
+  - Focused tech-standards (PKI Cert Mgmt + NIST Std + Digital Signature +
+    KEM): 11 sources, 39 requirements (ITU-T X.509, NIST SP 800-131A Rev3,
+    ETSI GS QKD-008, FIPS 198-1, etc.)
+
+### Changed
+
+- **CSWP 39 explorer header** — counts updated automatically by the maturity
+  loader: "1,332 requirements from 189 sources" (was 970 / 107). Existing
+  pillar/tier matrix on `/compliance?tab=cswp39` and the per-doc filter via
+  `?evref=` continue to work without UI changes.
+
 ## [3.5.27] - April 30, 2026
 
 A major Command Center upgrade: every zone is now wired, your assess answers and

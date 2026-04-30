@@ -1,0 +1,10 @@
+[
+  {
+    "ref_id": "EO-14144",
+    "reason": "Error page detected: \"aggressive automated scraping\" found in first 500 chars"
+  },
+  {
+    "ref_id": "GSMA-PQC-Country-Survey-2025",
+    "reason": "Ollama no response"
+  }
+]

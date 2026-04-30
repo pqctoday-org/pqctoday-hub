@@ -27,17 +27,20 @@ test('library tile CSWP 39 pillar pill jumps to /business zone', async ({ page }
   const cluster = page.getByText('CSWP 39').first()
   await expect(cluster).toBeVisible()
 
-  // Governance pillar pill is the most consistently present across enrichment runs.
-  const governancePill = page
-    .locator('a[href="/business#zone-governance"]')
-    .filter({ hasText: /governance/i })
-    .first()
-  await expect(governancePill).toBeVisible()
-  await governancePill.click()
-
-  await expect(page).toHaveURL(/\/business#zone-governance/)
-  // The Governance zone panel should be present in the DOM.
-  await expect(page.locator('#zone-governance')).toBeVisible()
+  // Any zone pill on the cluster — BSI TR-02102-2 carries lifecycle/inventory/
+  // observability/assurance but not governance, so don't pin to a specific
+  // pillar. The href + URL change after click is the actual contract under
+  // test. The /business view itself renders a Welcome state when there are
+  // no artifacts (metrics.isFullyEmpty), which is the default in a fresh
+  // test browser — so we assert URL hash only, not the destination DOM.
+  const pillarPill = page.locator('a[href^="/business#zone-"]').first()
+  await expect(pillarPill).toBeVisible()
+  const href = await pillarPill.getAttribute('href')
+  expect(href).toMatch(
+    /^\/business#zone-(governance|assets|management-tools|risk-management|mitigation|migration)$/
+  )
+  await pillarPill.click()
+  await expect(page).toHaveURL(new RegExp(href!.replace('#', '\\#')))
 })
 
 test('library tile "N reqs" link deep-links into the Compliance CSWP 39 explorer', async ({

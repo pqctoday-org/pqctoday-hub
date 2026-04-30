@@ -26,6 +26,7 @@ import debounce from 'lodash/debounce'
 import { logLibrarySearch, logEvent } from '../../utils/analytics'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
+import { maturityByRefId } from '../../data/maturityGovernanceData'
 import { PERSONA_LIBRARY_CATEGORIES } from '../../data/personaConfig'
 import { ErrorAlert } from '../ui/error-alert'
 import { EmptyState } from '../ui/empty-state'
@@ -220,6 +221,7 @@ export const LibraryView: React.FC = () => {
   const [sortBy, setSortBy] = useState<SortOption>(
     () => (searchParams.get('sort') as SortOption | null) ?? 'newest'
   )
+  const [cswp39Only, setCswp39Only] = useState<boolean>(() => searchParams.get('cswp39') === '1')
   const [showFilters, setShowFilters] = useState(false)
   const [selectedItem, setSelectedItem] = useState<LibraryItem | null>(() => {
     const ref = searchParams.get('ref')
@@ -251,6 +253,10 @@ export const LibraryView: React.FC = () => {
     setInputValue((prev) => (prev !== nextQ ? nextQ : prev))
     setViewMode((prev) => (prev !== nextView ? nextView : prev))
     setSortBy((prev) => (prev !== nextSort ? nextSort : prev))
+    setCswp39Only((prev) => {
+      const next = searchParams.get('cswp39') === '1'
+      return prev !== next ? next : prev
+    })
   }, [searchParams, storeIndustry])
 
   /** Write all current filter state back to the URL. Call with overrides for the value that
@@ -265,6 +271,7 @@ export const LibraryView: React.FC = () => {
       q?: string
       view?: ViewMode
       sort?: SortOption
+      cswp39?: boolean
     }) => {
       setSearchParams(
         (prev) => {
@@ -275,6 +282,7 @@ export const LibraryView: React.FC = () => {
           const q = overrides.q ?? filterText
           const view = overrides.view ?? viewMode
           const sort = overrides.sort ?? sortBy
+          const cswp39Flag = overrides.cswp39 ?? cswp39Only
 
           if (cat !== 'All') next.set('cat', cat)
           else next.delete('cat')
@@ -288,12 +296,23 @@ export const LibraryView: React.FC = () => {
           else next.delete('view')
           if (sort !== 'newest') next.set('sort', sort)
           else next.delete('sort')
+          if (cswp39Flag) next.set('cswp39', '1')
+          else next.delete('cswp39')
           return next
         },
         { replace: true }
       )
     },
-    [activeCategory, activeOrg, activeIndustry, filterText, viewMode, sortBy, setSearchParams]
+    [
+      activeCategory,
+      activeOrg,
+      activeIndustry,
+      filterText,
+      viewMode,
+      sortBy,
+      cswp39Only,
+      setSearchParams,
+    ]
   )
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -316,6 +335,13 @@ export const LibraryView: React.FC = () => {
     syncFiltersToUrl({ cat: category })
     logEvent('Library', 'Filter Category', category)
   }
+
+  // Count of library docs that carry at least one extracted CSWP 39 requirement.
+  // maturityByRefId is built once at module load, so this resolves once per render.
+  const cswp39EnrichedCount = useMemo(
+    () => libraryData.filter((item) => maturityByRefId.has(item.referenceId)).length,
+    []
+  )
 
   const industries = useMemo(() => {
     const set = new Set<string>()
@@ -400,6 +426,9 @@ export const LibraryView: React.FC = () => {
       // My bookmarks filter
       if (showOnlyLibraryBookmarks && !libraryBookmarks.includes(item.referenceId)) return false
 
+      // CSWP 39 enriched-only filter
+      if (cswp39Only && !maturityByRefId.has(item.referenceId)) return false
+
       // Search filter
       if (!filterText) return true
       const searchLower = filterText.toLowerCase()
@@ -417,6 +446,7 @@ export const LibraryView: React.FC = () => {
     filterText,
     showOnlyLibraryBookmarks,
     libraryBookmarks,
+    cswp39Only,
   ])
 
   // Persona-preferred categories for secondary sort boost
@@ -632,6 +662,25 @@ export const LibraryView: React.FC = () => {
               My ({libraryBookmarks.length})
             </Button>
           )}
+
+          <Button
+            variant="ghost"
+            onClick={() => {
+              const next = !cswp39Only
+              setCswp39Only(next)
+              syncFiltersToUrl({ cswp39: next })
+              logEvent('Library', 'Filter CSWP39', next ? 'on' : 'off')
+            }}
+            className={`inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border transition-colors font-medium whitespace-nowrap min-h-[44px] ${
+              cswp39Only
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+            }`}
+            aria-pressed={cswp39Only}
+            title="Show only documents with extracted CSWP 39 governance requirements"
+          >
+            CSWP 39 ({cswp39EnrichedCount})
+          </Button>
 
           {viewMode === 'cards' && (
             <div className="hidden sm:block">

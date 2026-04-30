@@ -11,6 +11,9 @@ import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { buildLibraryEndorsementUrl, buildLibraryFlagUrl } from './libraryEndorsement'
 import { libraryEnrichments } from '../../data/libraryEnrichmentData'
+import { maturityByRefId } from '../../data/maturityGovernanceData'
+import { CSWP39_TIERS } from '../Compliance/cswp39Data'
+import { CSWP39_ZONE_DETAILS, CSWP39_ZONE_STYLES, PILLAR_TO_ZONE } from '../../data/cswp39ZoneData'
 import { DocumentAnalysis } from './DocumentAnalysis'
 import { leadersData } from '../../data/leadersData'
 import clsx from 'clsx'
@@ -246,6 +249,111 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                     {item.shortDescription?.trim() || 'No description available.'}
                   </p>
                 </div>
+
+                {/* CSWP 39 governance requirements extracted from this doc */}
+                {(() => {
+                  const reqs = maturityByRefId.get(item.referenceId) ?? []
+                  if (reqs.length === 0) return null
+                  // Group by pillar (CSWP 39 process order), then sort by tier ASC
+                  const pillarOrder = [
+                    'governance',
+                    'inventory',
+                    'observability',
+                    'assurance',
+                    'lifecycle',
+                  ] as const
+                  const grouped = pillarOrder
+                    .map((p) => ({
+                      pillar: p,
+                      items: reqs
+                        .filter((r) => r.pillar === p)
+                        .sort((a, b) => a.maturityLevel - b.maturityLevel),
+                    }))
+                    .filter((g) => g.items.length > 0)
+                  return (
+                    <div>
+                      <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                        CSWP 39 Requirements ({reqs.length})
+                      </h4>
+                      <p className="text-xs text-muted-foreground/80 mb-3">
+                        Governance obligations extracted from this source document by{' '}
+                        <code className="text-[10px] bg-muted/40 px-1 rounded">qwen3.6:27b</code>,
+                        grouped by Crypto Posture Management pillar and tagged with the maturity
+                        tier each one represents.
+                      </p>
+                      <div className="space-y-3">
+                        {grouped.map(({ pillar, items }) => {
+                          const zone = PILLAR_TO_ZONE[pillar]
+                          const style = CSWP39_ZONE_STYLES[zone]
+                          const detail = CSWP39_ZONE_DETAILS[zone]
+                          return (
+                            <div
+                              key={pillar}
+                              className={clsx('rounded-md border p-3 bg-card/40', style.border)}
+                            >
+                              <div
+                                className={clsx(
+                                  'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold border mb-2',
+                                  style.bg,
+                                  style.text,
+                                  style.border
+                                )}
+                                title={detail.title}
+                              >
+                                <span className="capitalize">{pillar}</span>
+                                <span className="opacity-70">·{items.length}</span>
+                              </div>
+                              <ul className="space-y-2">
+                                {items.map((r, i) => {
+                                  const tier = CSWP39_TIERS[r.maturityLevel - 1]
+                                  const tierClass =
+                                    tier.tone === 'error'
+                                      ? 'bg-status-error/15 text-status-error border-status-error/30'
+                                      : tier.tone === 'warning'
+                                        ? 'bg-status-warning/15 text-status-warning border-status-warning/30'
+                                        : tier.tone === 'info'
+                                          ? 'bg-status-info/15 text-status-info border-status-info/30'
+                                          : 'bg-status-success/15 text-status-success border-status-success/30'
+                                  return (
+                                    <li key={`${pillar}-${i}`} className="text-xs text-foreground">
+                                      <div className="flex items-start gap-2">
+                                        <span
+                                          className={clsx(
+                                            'shrink-0 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border whitespace-nowrap',
+                                            tierClass
+                                          )}
+                                          title={`Tier ${r.maturityLevel} — ${tier.name}`}
+                                        >
+                                          T{r.maturityLevel}
+                                        </span>
+                                        <div className="min-w-0">
+                                          <p className="leading-snug">{r.requirement}</p>
+                                          {r.evidenceQuote && (
+                                            <blockquote className="mt-1 text-[11px] text-muted-foreground border-l-2 border-border pl-2 italic line-clamp-3">
+                                              {r.evidenceQuote}
+                                            </blockquote>
+                                          )}
+                                          <div className="mt-1 flex items-center gap-2 text-[10px] text-muted-foreground/80">
+                                            {r.evidenceLocation && (
+                                              <span>{r.evidenceLocation}</span>
+                                            )}
+                                            {r.confidence && (
+                                              <span>· {r.confidence} confidence</span>
+                                            )}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </li>
+                                  )
+                                })}
+                              </ul>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )
+                })()}
 
                 {/* Document Analysis — enriched dimensions */}
                 {libraryEnrichments[item.referenceId] && (
