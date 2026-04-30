@@ -24,7 +24,6 @@ import {
   Compass,
   Search,
   ScrollText,
-  Terminal,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { WhatsNewModal } from '../ui/WhatsNewModal'
@@ -141,15 +140,6 @@ export const MainLayout = () => {
       mobileMore: true,
       section: 'assess',
       moreOrder: 2,
-    },
-    {
-      path: '/openssl',
-      label: 'OpenSSL',
-      icon: Terminal,
-      hiddenOnMobile: true,
-      mobileMore: true,
-      section: 'assess',
-      moreOrder: 6,
     },
     // — Keep Up to Date —
     { path: '/threats', label: 'Threats', icon: AlertTriangle, section: 'current' },
