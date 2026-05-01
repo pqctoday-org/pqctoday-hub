@@ -293,6 +293,15 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
     }
   }
 
+  const stepsLeft = steps.length - 1 - currentStep
+  const secLeft = stepsLeft * (mode === 'quick' ? 20 : 23)
+  const mobileTimeLabel =
+    stepsLeft === 0
+      ? 'Last step'
+      : secLeft >= 60
+        ? `~${Math.ceil(secLeft / 60)} min remaining`
+        : '< 1 min remaining'
+
   return (
     <div>
       <StepIndicator
@@ -300,6 +309,7 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
         total={steps.length}
         titles={stepTitles}
         onStepClick={(step) => setStep(step)}
+        timeLabel={mobileTimeLabel}
       />
 
       <div className="glass-panel p-6 md:p-8">
@@ -308,6 +318,11 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
             <span className="text-xs text-muted-foreground">
               Step {currentStep + 1} of {steps.length}
             </span>
+            {stepsLeft === 0 ? (
+              <span className="text-xs text-primary font-medium">Last step</span>
+            ) : (
+              <span className="text-xs text-muted-foreground/70">{mobileTimeLabel}</span>
+            )}
             {(() => {
               // eslint-disable-next-line security/detect-object-injection
               const stepKey = steps[currentStep]?.key

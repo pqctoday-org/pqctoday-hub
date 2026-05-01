@@ -135,8 +135,11 @@ export const AssessView: React.FC = () => {
   useEffect(() => {
     if (assessmentStatus === 'complete') return
     const state = useAssessmentStore.getState()
-    if (state.currentStep > 0 && state.industry && state.lastWizardUpdate) {
-      setShowResumeBanner(true)
+    if (state.assessmentMode !== null && state.industry && state.lastWizardUpdate) {
+      const ageMs = Date.now() - new Date(state.lastWizardUpdate).getTime()
+      if (ageMs < 24 * 60 * 60 * 1000) {
+        setShowResumeBanner(true)
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

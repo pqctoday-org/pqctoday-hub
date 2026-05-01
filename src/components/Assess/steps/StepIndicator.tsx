@@ -10,12 +10,15 @@ function StepIndicator({
   total,
   titles,
   onStepClick,
+  timeLabel,
 }: {
   current: number
   total: number
   titles: string[]
   /** Called when user clicks any step to jump to it. */
   onStepClick?: (step: number) => void
+  /** Optional time-remaining estimate shown on mobile (e.g. "~3 min remaining"). */
+  timeLabel?: string
 }) {
   const activeRef = useRef<HTMLDivElement>(null)
 
@@ -27,9 +30,12 @@ function StepIndicator({
     <>
       {/* Compact display for small screens */}
       <div className="flex items-center justify-center gap-3 mb-6 sm:hidden">
-        <span className="text-sm font-bold text-primary">
-          Step {current + 1} of {total}
-        </span>
+        <div className="flex flex-col items-center gap-0.5">
+          <span className="text-sm font-bold text-primary">
+            Step {current + 1} of {total}
+          </span>
+          {timeLabel && <span className="text-[10px] text-muted-foreground/70">{timeLabel}</span>}
+        </div>
         <div
           className="flex-1 max-w-48 h-2 rounded-full bg-border overflow-hidden"
           role="progressbar"
