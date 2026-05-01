@@ -23,6 +23,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { logEvent } from '../../utils/analytics'
 import { MobileAlgorithmList } from './MobileAlgorithmList'
 import { AlgorithmImplementationsModal } from './AlgorithmImplementationsModal'
+import { AlgoCtaStrip } from './AlgoCtaStrip'
 
 type SortColumn = 'function' | 'classical' | 'pqc' | 'deprecation' | 'region' | 'status'
 type SortDirection = 'asc' | 'desc' | null
@@ -563,6 +564,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                                 Implementations
                               </Button>
                             </div>
+                            <AlgoCtaStrip algoName={pqcName} />
                           </div>
                         </td>
                         <td className="px-4 py-3" style={{ width: `${columnWidths.region}px` }}>

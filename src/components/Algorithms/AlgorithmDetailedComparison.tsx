@@ -30,6 +30,7 @@ import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { Button } from '@/components/ui/button'
 import { ImplementationAttacksView } from './ImplementationAttacksView'
 import { KATView } from './KATView'
+import { AlgoCtaStrip } from './AlgoCtaStrip'
 
 type SortField = 'name' | 'type' | 'keygen' | 'sign' | 'verify' | 'ram' | 'optimization'
 type SortDir = 'asc' | 'desc'
@@ -528,6 +529,7 @@ const PerformanceView = ({
                             Level {algo.securityLevel}
                           </span>
                         )}
+                        <AlgoCtaStrip algoName={algo.name} />
                       </div>
                     </div>
                   </td>
@@ -656,6 +658,7 @@ const PerformanceView = ({
                   </span>
                 )}
               </div>
+              <AlgoCtaStrip algoName={algo.name} />
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
                 <div>
                   <span className="text-muted-foreground block">KeyGen</span>
