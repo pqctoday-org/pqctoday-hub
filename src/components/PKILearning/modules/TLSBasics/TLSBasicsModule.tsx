@@ -51,10 +51,13 @@ import {
 const MODULE_ID = 'tls-basics'
 
 export const TLSBasicsModule: React.FC = () => {
-  const deepLink = getModuleDeepLink({ validTabs: ['learn', 'workshop', 'simulate'] })
+  const deepLink = getModuleDeepLink({
+    validTabs: ['learn', 'workshop', 'exercises', 'references', 'tools'],
+  })
   const [activeTab, setActiveTab] = useState(() => {
-    // Map external 'workshop' URL param to internal 'simulate' tab value
-    return deepLink.initialTab === 'workshop' ? 'simulate' : deepLink.initialTab
+    // 'simulate' was the legacy internal tab name; redirect to canonical 'workshop'
+    const tab = deepLink.initialTab
+    return tab === 'simulate' ? 'workshop' : tab
   })
   useSyncDeepLink(activeTab, 0)
   const startTimeRef = useRef(Date.now())
@@ -259,7 +262,7 @@ export const TLSBasicsModule: React.FC = () => {
         setResults(simulationResult as any)
 
         if (simulationResult.status === 'success') {
-          markStepComplete(MODULE_ID, 'simulate')
+          markStepComplete(MODULE_ID, 'workshop')
           markStepComplete(MODULE_ID, 'comparison')
         }
 
@@ -306,7 +309,7 @@ export const TLSBasicsModule: React.FC = () => {
 
   const navigateToSimulate = useCallback(() => {
     markStepComplete(MODULE_ID, activeTab)
-    setActiveTab('simulate')
+    setActiveTab('workshop')
   }, [activeTab, markStepComplete])
 
   // --- Live HSM demo — HSM-backed TLS server key operations ---
@@ -393,7 +396,7 @@ export const TLSBasicsModule: React.FC = () => {
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="w-full sm:w-auto">
           <TabsTrigger value="learn">Learn</TabsTrigger>
-          <TabsTrigger value="simulate">Workshop</TabsTrigger>
+          <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
           <TabsTrigger value="tools">Tools & Products</TabsTrigger>
@@ -405,7 +408,7 @@ export const TLSBasicsModule: React.FC = () => {
         </TabsContent>
 
         {/* Simulate Tab */}
-        <TabsContent value="simulate">
+        <TabsContent value="workshop">
           <div className="space-y-6">
             {/* Live HSM Mode toggle — when ON, the next handshake's
              *  CertificateVerify is signed by softhsmv3 (statically linked

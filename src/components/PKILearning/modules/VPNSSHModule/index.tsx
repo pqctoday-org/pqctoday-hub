@@ -45,7 +45,7 @@ const PARTS = [
 
 export const VPNSSHModule: React.FC = () => {
   const deepLink = getModuleDeepLink({
-    validTabs: ['learn', 'visual', 'simulate'],
+    validTabs: ['learn', 'visual', 'workshop', 'exercises', 'references', 'tools'],
     maxStep: PARTS.length - 1,
   })
   const [activeTab, setActiveTab] = useState(deepLink.initialTab)
@@ -90,7 +90,7 @@ export const VPNSSHModule: React.FC = () => {
   // Navigate from Learn/Exercises to Simulate tab
   const navigateToSimulate = useCallback(() => {
     markStepComplete(MODULE_ID, activeTab)
-    setActiveTab('simulate')
+    setActiveTab('workshop')
   }, [activeTab, markStepComplete])
 
   // Exercise pre-configuration
@@ -148,7 +148,7 @@ export const VPNSSHModule: React.FC = () => {
         <TabsList className="w-full sm:w-auto">
           <TabsTrigger value="learn">Learn</TabsTrigger>
           <TabsTrigger value="visual">Visual</TabsTrigger>
-          <TabsTrigger value="simulate">Workshop</TabsTrigger>
+          <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
           <TabsTrigger value="tools">Tools & Products</TabsTrigger>
@@ -167,7 +167,7 @@ export const VPNSSHModule: React.FC = () => {
         </TabsContent>
 
         {/* Simulate Tab */}
-        <TabsContent value="simulate">
+        <TabsContent value="workshop">
           <div className="max-w-7xl mx-auto space-y-6">
             {/* Reset button */}
             <div className="flex justify-end">

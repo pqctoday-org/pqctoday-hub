@@ -44,7 +44,7 @@ const PARTS = [
 export const FiveGModule: React.FC = () => {
   const deepLink = getModuleDeepLink({
     maxStep: PARTS.length - 1,
-    validTabs: ['learn', 'visual', 'simulate', 'exercises', 'references', 'tools'],
+    validTabs: ['learn', 'visual', 'workshop', 'exercises', 'references', 'tools'],
   })
 
   // Parse 5G-specific deep-link params on mount
@@ -82,7 +82,7 @@ export const FiveGModule: React.FC = () => {
       url.searchParams.delete('step')
     }
     // Only include profile/pqcMode when on the simulate tab showing SUCI (part 0)
-    if (activeTab === 'simulate' && currentPart === 0) {
+    if (activeTab === 'workshop' && currentPart === 0) {
       if (currentProfile !== 'A') {
         url.searchParams.set('profile', currentProfile)
       } else {
@@ -137,7 +137,7 @@ export const FiveGModule: React.FC = () => {
   // Navigate from Learn/Exercises to Simulate tab
   const navigateToSimulate = useCallback(() => {
     markStepComplete(MODULE_ID, activeTab)
-    setActiveTab('simulate')
+    setActiveTab('workshop')
   }, [activeTab, markStepComplete])
 
   // Exercise pre-configuration: set part, profile, and PQC mode
@@ -197,7 +197,7 @@ export const FiveGModule: React.FC = () => {
         <TabsList className="w-full sm:w-auto">
           <TabsTrigger value="learn">Learn</TabsTrigger>
           <TabsTrigger value="visual">Visual</TabsTrigger>
-          <TabsTrigger value="simulate">Workshop</TabsTrigger>
+          <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
           <TabsTrigger value="tools">Tools & Products</TabsTrigger>
@@ -216,7 +216,7 @@ export const FiveGModule: React.FC = () => {
         </TabsContent>
 
         {/* Simulate Tab */}
-        <TabsContent value="simulate">
+        <TabsContent value="workshop">
           <div className="max-w-7xl mx-auto space-y-6">
             {/* Reset button */}
             <div className="flex justify-end">

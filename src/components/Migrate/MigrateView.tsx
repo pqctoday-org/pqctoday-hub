@@ -5,7 +5,6 @@ import { useSearchParams } from 'react-router-dom'
 
 import { SoftwareTable } from './SoftwareTable'
 import { SoftwareCardGrid } from './SoftwareCardGrid'
-import { MigrationWorkflow } from './MigrationWorkflow'
 import { InfrastructureStack, LAYERS, CISA_LAYERS } from './InfrastructureStack'
 import { MobileFilterDrawer } from './MobileFilterDrawer'
 import { FilterDrawer } from '../common/FilterDrawer'
@@ -15,8 +14,6 @@ import { FilterDropdown } from '../common/FilterDropdown'
 import {
   Search,
   X,
-  ChevronRight,
-  ChevronDown,
   PackageSearch,
   EyeOff,
   ArrowRightLeft,
@@ -43,6 +40,8 @@ import { EmptyState } from '../ui/empty-state'
 import { ComparisonPanel } from './ComparisonPanel'
 import { StickyCompareBar } from './StickyCompareBar'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
+import { CatalogSizeBanner } from './CatalogSizeBanner'
+import { MigrateContextStrip } from './MigrateContextStrip'
 
 const LICENSE_FILTER_ITEMS = [
   { id: 'Open Source', label: 'Open Source' },
@@ -915,90 +914,22 @@ export const MigrateView: React.FC = () => {
         onExport={handleExportCsv}
       />
 
-      {/* WIP Disclaimer */}
-      <div className="glass-panel border border-status-warning/30 bg-status-warning/5 px-4 py-3 rounded-lg text-sm text-secondary flex items-start gap-3">
-        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border border-status-warning/40 bg-status-warning/15 text-status-warning animate-pulse-glow shrink-0 mt-0.5">
-          <Wrench size={12} className="animate-bounce-subtle" />
-          WIP
-        </span>
-        <p className="hidden md:block">
-          I am in the process of reviewing and validating the PQC product information. There are
-          still many inaccuracies that need to be addressed. The community can help with this effort
-          by submitting product update requests via the <em>Update PQC Info</em> link available in
-          each product card.
-        </p>
-        <p className="md:hidden text-xs">
-          Data under review. Please help by submitting product update requests via the{' '}
-          <em>Update PQC Info</em> link in each product card.
-        </p>
-      </div>
-
-      {/* Migration Workflow Hero — collapsible (desktop only) */}
-      <div className="hidden md:block">
-        <Button
-          variant="ghost"
-          onClick={() => setWorkflowCollapsed(!workflowCollapsed)}
-          className="flex items-center gap-2 text-sm text-muted-foreground mb-2"
-          aria-expanded={!workflowCollapsed}
-          aria-controls="migration-workflow-hero"
-        >
-          {workflowCollapsed ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
-          {workflowCollapsed ? 'Show Migration Framework' : 'Hide Migration Framework'}
-        </Button>
-        {!workflowCollapsed && (
-          <div id="migration-workflow-hero" className="animate-fade-in">
-            <MigrationWorkflow onViewSoftware={handleViewSoftware} />
-          </div>
-        )}
-      </div>
-
-      {/* Removed standalone mobile migration step selector to save vertical space; it now lives inside the Filter Drawer */}
-
-      {/* Industry filter banner (from ?industry= deep link) */}
-      {industryFilter && (
-        <div className="flex items-center gap-2 text-xs text-primary bg-primary/10 border border-primary/20 rounded-md px-3 py-2">
-          <span>
-            Showing products relevant to <strong>{industryFilter}</strong>
-          </span>
-          <Button
-            variant="link"
-            onClick={() => {
-              setIndustryFilter(null)
-              syncFiltersToUrl({ industry: null })
-            }}
-            className="ml-auto flex items-center gap-1"
-            aria-label="Clear industry filter"
-          >
-            <X size={12} />
-            Clear
-          </Button>
-        </div>
-      )}
-
-      {/* Step filter banner */}
-      {stepFilter && (
-        <div className="flex items-center gap-2 text-xs text-primary bg-primary/10 border border-primary/20 rounded-md px-3 py-2">
-          <span>
-            Showing products for{' '}
-            <strong>
-              Step {stepFilter.stepNumber}: {stepFilter.stepTitle}
-            </strong>{' '}
-            — select a layer below to view matching products
-          </span>
-          <Button
-            variant="link"
-            onClick={() => {
-              setStepFilter(null)
-              syncFiltersToUrl({ step: null })
-            }}
-            className="ml-auto flex items-center gap-1"
-            aria-label="Clear step filter"
-          >
-            <X size={12} />
-            Clear
-          </Button>
-        </div>
-      )}
+      {/* Context strip — WIP disclaimer + workflow toggle + active filter banners */}
+      <MigrateContextStrip
+        industryFilter={industryFilter}
+        onClearIndustry={() => {
+          setIndustryFilter(null)
+          syncFiltersToUrl({ industry: null })
+        }}
+        stepFilter={stepFilter}
+        onClearStep={() => {
+          setStepFilter(null)
+          syncFiltersToUrl({ step: null })
+        }}
+        workflowCollapsed={workflowCollapsed}
+        onToggleWorkflow={() => setWorkflowCollapsed(!workflowCollapsed)}
+        onViewSoftware={handleViewSoftware}
+      />
 
       {/* Sticky filter container */}
       <div className="sticky top-0 z-40 bg-background/95 backdrop-blur backdrop-saturate-150 border-b border-border/50 pb-3 pt-3 -mx-4 px-4 md:mx-0 md:px-0 mb-6 shadow-sm transition-all duration-300">
@@ -1509,6 +1440,17 @@ export const MigrateView: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Catalog size banner — visible count + view-switch CTA */}
+      <CatalogSizeBanner
+        visible={isStackMode ? stackFilteredCount : flatVisibleCount}
+        total={softwareData.length}
+        viewMode={effectiveViewMode}
+        onSwitchView={(m) => {
+          setViewMode(m)
+          syncFiltersToUrl({ mode: m })
+        }}
+      />
 
       {/* Content area — mode-specific rendering */}
       <div className="py-4">
