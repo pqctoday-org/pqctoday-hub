@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useId, useState } from 'react'
+import React, { useId, useState, useContext, useEffect } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { Button } from './button'
 import clsx from 'clsx'
+import { SectionExpandContext } from '@/contexts/sectionExpandContext'
 
 export function CollapsibleSection({
   title,
@@ -12,6 +13,7 @@ export function CollapsibleSection({
   infoTip,
   className,
   headerExtra,
+  id,
 }: {
   title: string
   icon: React.ReactNode
@@ -20,11 +22,24 @@ export function CollapsibleSection({
   infoTip?: React.ReactNode
   className?: string
   headerExtra?: React.ReactNode
+  id?: string
 }) {
   const [open, setOpen] = useState(defaultOpen)
   const contentId = useId()
+  const { expandToken, collapseToken } = useContext(SectionExpandContext)
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (expandToken > 0) setOpen(true)
+  }, [expandToken])
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (collapseToken > 0) setOpen(false)
+  }, [collapseToken])
+
   return (
-    <div className={clsx('glass-panel p-6 print:border print:border-border', className)}>
+    <div id={id} className={clsx('glass-panel p-6 print:border print:border-border', className)}>
       <div className="flex items-center justify-between w-full print:hidden gap-2">
         <Button
           variant="ghost"

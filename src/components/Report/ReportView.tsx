@@ -1,14 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { FileBarChart, ClipboardCheck, AlertCircle, ArrowRight } from 'lucide-react'
 import { ReportContent } from './ReportContent'
+import { ReportToc } from './ReportToc'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { computeAssessment } from '../../hooks/assessmentUtils'
 import { useModuleStore } from '../../store/useModuleStore'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
-import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
+import { REGION_COUNTRIES_MAP, getReportSectionConfig } from '../../data/personaConfig'
+import type { ReportSectionId } from '../../data/personaConfig'
+import { REPORT_SECTION_LABELS } from '../../data/reportSectionToCswp39'
 import {
   AVAILABLE_INDUSTRIES,
   AVAILABLE_ALGORITHMS,
@@ -44,6 +47,22 @@ const VALID_USE_CASES = new Set(AVAILABLE_USE_CASES)
 const VALID_INFRA = new Set(AVAILABLE_INFRASTRUCTURE)
 const VALID_COUNTRIES = new Set(Object.values(REGION_COUNTRIES_MAP).flat())
 
+const REPORT_SECTION_ORDER: ReportSectionId[] = [
+  'countryTimeline',
+  'riskScore',
+  'keyFindings',
+  'riskBreakdown',
+  'executiveSummary',
+  'assessmentProfile',
+  'hndlHnfl',
+  'algorithmMigration',
+  'complianceImpact',
+  'recommendedActions',
+  'migrationRoadmap',
+  'migrationToolkit',
+  'threatLandscape',
+]
+
 export const ReportView: React.FC = () => {
   const { assessmentStatus, getInput, setResult, lastResult } = useAssessmentStore()
   useWorkflowPhaseTracker('assess')
@@ -56,6 +75,20 @@ export const ReportView: React.FC = () => {
         : null
   const persistedRef = useRef(false)
   const [searchParams] = useSearchParams()
+
+  const [expandToken, setExpandToken] = useState(0)
+  const [collapseToken, setCollapseToken] = useState(0)
+  const handleExpandAll = useCallback(() => setExpandToken((t) => t + 1), [])
+  const handleCollapseAll = useCallback(() => setCollapseToken((t) => t + 1), [])
+
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const tocSections = useMemo(
+    () =>
+      REPORT_SECTION_ORDER.filter(
+        (id) => getReportSectionConfig(selectedPersona, id).state !== 'hidden'
+      ).map((id) => ({ id: `report-section-${id}`, label: REPORT_SECTION_LABELS[id] })),
+    [selectedPersona]
+  )
   const hydratedRef = useRef(false)
 
   // Hydrate store from shared URL params on first mount
@@ -344,7 +377,20 @@ export const ReportView: React.FC = () => {
       )}
 
       {result ? (
-        <ReportContent result={result} />
+        <div className="flex flex-col lg:flex-row gap-6 items-start">
+          <ReportToc
+            sections={tocSections}
+            onExpandAll={handleExpandAll}
+            onCollapseAll={handleCollapseAll}
+          />
+          <div className="flex-1 min-w-0 w-full">
+            <ReportContent
+              result={result}
+              expandToken={expandToken}
+              collapseToken={collapseToken}
+            />
+          </div>
+        </div>
       ) : (
         <div className="text-center py-12 text-muted-foreground">
           <p>Unable to generate report. Please complete all required fields.</p>
