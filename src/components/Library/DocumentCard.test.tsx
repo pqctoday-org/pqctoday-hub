@@ -27,6 +27,7 @@ const baseItem: LibraryItem = {
   initialPublicationDate: '2025-01-01',
   lastUpdateDate: '2025-06-01',
   documentStatus: 'Final',
+  documentStatusBucket: 'Published',
   shortDescription: 'short',
   documentType: 'Standard',
   applicableIndustries: [],
