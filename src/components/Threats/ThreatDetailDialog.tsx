@@ -12,7 +12,10 @@ import {
   Clock,
   DollarSign,
   Shield,
+  ClipboardCheck,
+  ArrowRight,
 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import type { ThreatItem } from '../../data/threatsData'
 import { StatusBadge } from '../common/StatusBadge'
 import { MODULE_CATALOG } from '../PKILearning/moduleData'
@@ -261,6 +264,26 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                 </div>
               </div>
             )}
+          </div>
+
+          {/* Run Assessment CTA */}
+          <div className="mx-6 mb-4 p-4 rounded-lg border border-primary/20 bg-primary/5 flex flex-col sm:flex-row sm:items-center gap-3">
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                <ClipboardCheck size={14} className="text-primary shrink-0" />
+                Does this threat apply to your organization?
+              </p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Run the PQC Risk Assessment to see your exposure score and migration priorities.
+              </p>
+            </div>
+            <Link
+              to="/assess"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-gradient-to-r from-secondary to-primary text-primary-foreground rounded-lg hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200 shrink-0"
+            >
+              Run Assessment
+              <ArrowRight size={12} />
+            </Link>
           </div>
 
           {/* Sticky Bottom Action Bar */}

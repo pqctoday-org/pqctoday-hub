@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
+import React from 'react'
 import { AlertOctagon, AlertTriangle, AlertCircle, Info, CheckCircle } from 'lucide-react'
 import type { ThreatItem } from '../../data/threatsData'
-import { ThreatDetailDialog } from './ThreatDetailDialog'
-import { AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
@@ -11,6 +9,7 @@ import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 
 interface MobileThreatsListProps {
   items: ThreatItem[]
+  onItemClick: (item: ThreatItem) => void
 }
 
 const criticalityConfig = {
@@ -38,9 +37,7 @@ const criticalityConfig = {
 
 type CriticalityKey = keyof typeof criticalityConfig
 
-export const MobileThreatsList: React.FC<MobileThreatsListProps> = ({ items }) => {
-  const [selectedThreat, setSelectedThreat] = useState<ThreatItem | null>(null)
-
+export const MobileThreatsList: React.FC<MobileThreatsListProps> = ({ items, onItemClick }) => {
   return (
     <div className="space-y-3">
       <ul className="space-y-3">
@@ -54,9 +51,9 @@ export const MobileThreatsList: React.FC<MobileThreatsListProps> = ({ items }) =
               <div
                 role="button"
                 tabIndex={0}
-                onClick={() => setSelectedThreat(item)}
+                onClick={() => onItemClick(item)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') setSelectedThreat(item)
+                  if (e.key === 'Enter' || e.key === ' ') onItemClick(item)
                 }}
                 className="w-full text-left glass-panel p-4 hover:border-primary/30 transition-colors active:scale-[0.99] cursor-pointer"
               >
@@ -157,12 +154,6 @@ export const MobileThreatsList: React.FC<MobileThreatsListProps> = ({ items }) =
           No threats found matching your filters.
         </div>
       )}
-
-      <AnimatePresence>
-        {selectedThreat && (
-          <ThreatDetailDialog threat={selectedThreat} onClose={() => setSelectedThreat(null)} />
-        )}
-      </AnimatePresence>
     </div>
   )
 }

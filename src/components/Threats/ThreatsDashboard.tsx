@@ -530,7 +530,13 @@ export const ThreatsDashboard: React.FC = () => {
               />
             </div>
             <div className="md:hidden">
-              <MobileThreatsList items={filteredAndSortedData} />
+              <MobileThreatsList
+                items={filteredAndSortedData}
+                onItemClick={(item) => {
+                  setSelectedThreat(item)
+                  syncFiltersToUrl({ id: item.threatId })
+                }}
+              />
             </div>
           </>
         )}
