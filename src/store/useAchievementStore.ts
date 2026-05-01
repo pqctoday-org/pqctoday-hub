@@ -2,6 +2,8 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import type { UnlockedAchievement } from '@/types/AchievementTypes'
+import { logAchievementUnlocked } from '@/utils/analytics'
+import { ACHIEVEMENT_CATALOG } from '@/data/achievementCatalog'
 
 const ACHIEVEMENT_STORE_VERSION = 2
 
@@ -51,6 +53,8 @@ export const useAchievementStore = create<AchievementState>()(
           unlocked: [...state.unlocked, newUnlock],
           toastQueue: [...state.toastQueue, id],
         })
+        const def = ACHIEVEMENT_CATALOG.find((a) => a.id === id)
+        logAchievementUnlocked(id, def?.rarity)
       },
 
       markSeen: (id) =>

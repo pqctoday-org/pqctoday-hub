@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
+import { logEndorsementGiven } from '@/utils/analytics'
 
 interface EndorsementRecord {
   endorsed: boolean
@@ -42,6 +43,7 @@ export const useEndorsementStore = create<EndorsementState>()(
             },
           },
         }))
+        logEndorsementGiven(resourceType, resourceId, 'endorse')
       },
 
       markFlagged: (resourceType, resourceId) => {
@@ -57,6 +59,7 @@ export const useEndorsementStore = create<EndorsementState>()(
             },
           },
         }))
+        logEndorsementGiven(resourceType, resourceId, 'flag')
       },
 
       isEndorsed: (resourceType, resourceId) => {

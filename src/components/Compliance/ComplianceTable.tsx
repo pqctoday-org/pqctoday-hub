@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useRef } from 'react'
+import { useVirtualizer } from '@tanstack/react-virtual'
 import {
   X,
   ArrowUpDown,
@@ -587,6 +588,20 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
 
   const totalPages = Math.ceil(filteredAndSortedData.length / ITEMS_PER_PAGE)
 
+  const tableContainerRef = useRef<HTMLDivElement>(null)
+  const rowVirtualizer = useVirtualizer({
+    count: filteredAndSortedData.length,
+    getScrollElement: () => tableContainerRef.current,
+    estimateSize: () => 48,
+    overscan: 10,
+  })
+  const virtualRows = rowVirtualizer.getVirtualItems()
+  const virtualPaddingTop = virtualRows.length > 0 ? (virtualRows[0]?.start ?? 0) : 0
+  const virtualPaddingBottom =
+    virtualRows.length > 0
+      ? rowVirtualizer.getTotalSize() - (virtualRows[virtualRows.length - 1]?.end ?? 0)
+      : 0
+
   const handleExport = () => {
     if (filteredAndSortedData.length === 0) return
 
@@ -885,12 +900,12 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
             </div>
           </div>
         )}
-        <div className="overflow-x-auto">
+        <div ref={tableContainerRef} className="overflow-auto max-h-[72vh]">
           <table className="max-md:hidden w-full text-sm text-left table-fixed">
             <caption className="sr-only">
               Compliance certifications table with PQC coverage and classical algorithm details
             </caption>
-            <thead className="text-xs uppercase bg-muted/50 text-muted-foreground">
+            <thead className="text-xs uppercase bg-muted/50 text-muted-foreground sticky top-0 z-10">
               <tr>
                 {/* Source Column with Filter */}
                 <th scope="col" className="px-4 py-3 w-24 relative">
@@ -1394,15 +1409,28 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
               </tr>
             </thead>
             <tbody>
-              {paginatedData.map((record, index) => (
-                <ComplianceRow
-                  key={record.id}
-                  record={record}
-                  index={index}
-                  onEnrich={onEnrich}
-                  autoOpen={record.id === autoOpenId}
-                />
-              ))}
+              {virtualPaddingTop > 0 && (
+                <tr>
+                  <td style={{ height: `${virtualPaddingTop}px` }} colSpan={8} />
+                </tr>
+              )}
+              {virtualRows.map((virtualRow) => {
+                const record = filteredAndSortedData[virtualRow.index]
+                return (
+                  <ComplianceRow
+                    key={record.id}
+                    record={record}
+                    index={virtualRow.index}
+                    onEnrich={onEnrich}
+                    autoOpen={record.id === autoOpenId}
+                  />
+                )
+              })}
+              {virtualPaddingBottom > 0 && (
+                <tr>
+                  <td style={{ height: `${virtualPaddingBottom}px` }} colSpan={8} />
+                </tr>
+              )}
               {filteredAndSortedData.length === 0 && (
                 <tr>
                   <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">

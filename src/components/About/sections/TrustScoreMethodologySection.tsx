@@ -109,8 +109,19 @@ export function TrustScoreMethodologySection() {
                 tables. Hover over any badge to see the full breakdown.
               </p>
 
-              {/* Dimensions table */}
-              <div className="overflow-x-auto">
+              {/* Dimensions — stacked cards on mobile, table on md+ */}
+              <div className="md:hidden space-y-3">
+                {DIMENSIONS.map((d) => (
+                  <div key={d.name} className="rounded-lg border border-border bg-muted/30 p-3">
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <span className="text-sm font-medium text-foreground">{d.name}</span>
+                      <span className="text-xs font-mono text-primary shrink-0">{d.weight}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{d.description}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-border">

@@ -39,7 +39,7 @@ export function SbomSection() {
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
-            <div className="columns-1 md:columns-3 gap-4 md:p-6 space-y-6 mt-6">
+            <div className="columns-1 md:columns-3 gap-4 p-3 md:p-6 space-y-6 mt-6">
               <div className="break-inside-avoid">
                 <h3 className="text-lg font-semibold text-primary mb-3">
                   UI Frameworks & Libraries

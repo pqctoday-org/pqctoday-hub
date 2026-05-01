@@ -21,6 +21,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
   ],
   developer: [
     '/migrate',
+    '/business',
     '/assess',
     '/report',
     '/algorithms',
@@ -454,7 +455,8 @@ const DEFAULT_ZONE_EMPHASIS: BCZoneEmphasis = {
   featuredArtifacts: {},
 }
 
-export const BC_ZONE_EMPHASIS_BY_PERSONA: Record<PersonaId, BCZoneEmphasis> = {
+// curious is nav-blocked from /business — see PERSONA_NAV_PATHS line 55
+export const BC_ZONE_EMPHASIS_BY_PERSONA: Partial<Record<PersonaId, BCZoneEmphasis>> = {
   // Executive: open with Governance (board/policy framing).
   executive: {
     defaultActiveZone: 'governance',
@@ -519,17 +521,6 @@ export const BC_ZONE_EMPHASIS_BY_PERSONA: Record<PersonaId, BCZoneEmphasis> = {
     featuredArtifacts: {
       'risk-management': ['risk-register', 'risk-treatment-plan'],
       governance: ['policy-draft', 'audit-checklist', 'crqc-scenario'],
-    },
-  },
-  // Curious: beginner subset — start in Governance with the most approachable artifacts.
-  curious: {
-    defaultActiveZone: 'governance',
-    headline: 'Start Here — Crypto Agility 101',
-    tagline:
-      'Walk through the CSWP.39 strategic plan one step at a time. Friendliest artifacts surface first; deeper tools unlock as you go.',
-    featuredArtifacts: {
-      governance: ['policy-draft', 'crqc-scenario'],
-      'risk-management': ['risk-register', 'kpi-dashboard'],
     },
   },
 }

@@ -8,7 +8,7 @@
  * override that falls back to the global persona when unset.
  */
 import React from 'react'
-import { Briefcase, ShieldCheck, Server, GraduationCap } from 'lucide-react'
+import { Briefcase, ShieldCheck, Server, GraduationCap, Code2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { KpiPersonaId } from '@/data/kpiCatalog'
 import { KPI_PERSONAS } from '@/data/kpiCatalog'
@@ -18,6 +18,7 @@ const ICONS: Record<KpiPersonaId, React.ComponentType<{ size?: number; className
   architect: ShieldCheck,
   ops: Server,
   researcher: GraduationCap,
+  developer: Code2,
 }
 
 const LABELS: Record<KpiPersonaId, string> = {
@@ -25,6 +26,7 @@ const LABELS: Record<KpiPersonaId, string> = {
   architect: 'Architect',
   ops: 'Ops',
   researcher: 'Researcher',
+  developer: 'Developer',
 }
 
 interface KpiPersonaSelectorProps {

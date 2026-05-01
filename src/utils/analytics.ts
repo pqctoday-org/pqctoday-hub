@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import ReactGA from 'react-ga4'
 import { useHistoryStore } from '@/store/useHistoryStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import type { HistoryEventType } from '@/types/HistoryTypes'
 
@@ -48,6 +49,25 @@ export const logEvent = (category: string, action: string, label?: string) => {
   }
 }
 
+// --- Persona dimension helper ---
+
+/**
+ * Appends persona + experience-level dimensions to a GA4 event label so every
+ * event can be sliced by persona cohort in the GA4 dashboard.
+ * Format: `${label}|p=<persona>|x=<experienceLevel>`
+ * Reads the store non-reactively so it's safe to call outside React components.
+ */
+export function personaLabel(label?: string): string | undefined {
+  try {
+    const { selectedPersona, experienceLevel } = usePersonaStore.getState()
+    if (!selectedPersona) return label
+    const suffix = `p=${selectedPersona}|x=${experienceLevel ?? 'unknown'}`
+    return label ? `${label}|${suffix}` : suffix
+  } catch {
+    return label
+  }
+}
+
 // --- History event helper ---
 
 function addHistoryEvent(
@@ -74,7 +94,7 @@ function getModuleTitle(moduleId: string): string {
 // Engagement event helpers for key user journeys
 
 export const logModuleStart = (moduleId: string) => {
-  logEvent('Learning', 'Module Start', moduleId)
+  logEvent('Learning', 'Module Start', personaLabel(moduleId))
   addHistoryEvent('module_started', `Started ${getModuleTitle(moduleId)}`, {
     moduleId,
     route: `/learn/${moduleId}`,
@@ -82,7 +102,7 @@ export const logModuleStart = (moduleId: string) => {
 }
 
 export const logModuleComplete = (moduleId: string) => {
-  logEvent('Learning', 'Module Complete', moduleId)
+  logEvent('Learning', 'Module Complete', personaLabel(moduleId))
   addHistoryEvent('module_completed', `Completed ${getModuleTitle(moduleId)}`, {
     moduleId,
     route: `/learn/${moduleId}`,
@@ -90,7 +110,7 @@ export const logModuleComplete = (moduleId: string) => {
 }
 
 export const logStepComplete = (moduleId: string, stepIndex: number, workshopStep?: number) => {
-  logEvent('Learning', 'Step Complete', `${moduleId}:step-${stepIndex}`)
+  logEvent('Learning', 'Step Complete', personaLabel(`${moduleId}:step-${stepIndex}`))
   const route =
     workshopStep !== undefined
       ? `/learn/${moduleId}?tab=workshop&step=${workshopStep}`
@@ -103,7 +123,7 @@ export const logStepComplete = (moduleId: string, stepIndex: number, workshopSte
 }
 
 export const logArtifactGenerated = (moduleId: string, artifactType: string) => {
-  logEvent('Learning', 'Artifact Generated', `${moduleId}:${artifactType}`)
+  logEvent('Learning', 'Artifact Generated', personaLabel(`${moduleId}:${artifactType}`))
   const typeMap: Record<string, HistoryEventType> = {
     key: 'artifact_key',
     certificate: 'artifact_cert',
@@ -353,5 +373,35 @@ export const logIndustrySelected = (industry: string) => {
 // --- Learning module tab tracking ---
 
 export const logModuleTabSwitch = (moduleId: string, tab: 'learn' | 'workshop' | string) => {
-  logEvent('Learning', 'Tab Switch', `${moduleId}:${tab}`)
+  logEvent('Learning', 'Tab Switch', personaLabel(`${moduleId}:${tab}`))
+}
+
+// --- Engagement event loggers (UX-GLOBAL-01) ---
+
+export const logAchievementUnlocked = (achievementId: string, rarity?: string) => {
+  logEvent(
+    'Achievement',
+    'Unlocked',
+    personaLabel(rarity ? `${achievementId}:${rarity}` : achievementId)
+  )
+}
+
+export const logBookmarkToggle = (section: string, id: string, action: 'add' | 'remove') => {
+  logEvent('Bookmark', action === 'add' ? 'Added' : 'Removed', personaLabel(`${section}:${id}`))
+}
+
+export const logEndorsementGiven = (
+  resourceType: string,
+  resourceId: string,
+  kind: 'endorse' | 'flag'
+) => {
+  logEvent(
+    'Endorsement',
+    kind === 'endorse' ? 'Endorsed' : 'Flagged',
+    personaLabel(`${resourceType}:${resourceId}`)
+  )
+}
+
+export const logQuizAnswer = (questionId: string, correct: boolean) => {
+  logEvent('Quiz', correct ? 'Correct' : 'Incorrect', personaLabel(questionId))
 }

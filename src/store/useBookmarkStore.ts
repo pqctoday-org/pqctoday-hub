@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
+import { logBookmarkToggle } from '@/utils/analytics'
 
 interface BookmarkState {
   // ── Library ──────────────────────────────────────────────────────────────
@@ -55,21 +56,31 @@ export const useBookmarkStore = create<BookmarkState>()(
     (set, get) => ({
       // Library
       libraryBookmarks: [],
-      toggleLibraryBookmark: (id) =>
-        set((s) => ({ libraryBookmarks: toggle(s.libraryBookmarks, id) })),
+      toggleLibraryBookmark: (id) => {
+        const action = get().libraryBookmarks.includes(id) ? 'remove' : 'add'
+        set((s) => ({ libraryBookmarks: toggle(s.libraryBookmarks, id) }))
+        logBookmarkToggle('library', id, action)
+      },
       isLibraryBookmarked: (id) => get().libraryBookmarks.includes(id),
       showOnlyLibraryBookmarks: false,
       setShowOnlyLibraryBookmarks: (val) => set({ showOnlyLibraryBookmarks: val }),
 
       // Migrate (legacy)
       migrateBookmarks: [],
-      toggleMigrateBookmark: (name) =>
-        set((s) => ({ migrateBookmarks: toggle(s.migrateBookmarks, name) })),
+      toggleMigrateBookmark: (name) => {
+        const action = get().migrateBookmarks.includes(name) ? 'remove' : 'add'
+        set((s) => ({ migrateBookmarks: toggle(s.migrateBookmarks, name) }))
+        logBookmarkToggle('migrate', name, action)
+      },
       isMigrateBookmarked: (name) => get().migrateBookmarks.includes(name),
 
       // Learn
       myLearnModules: [],
-      toggleMyLearnModule: (id) => set((s) => ({ myLearnModules: toggle(s.myLearnModules, id) })),
+      toggleMyLearnModule: (id) => {
+        const action = get().myLearnModules.includes(id) ? 'remove' : 'add'
+        set((s) => ({ myLearnModules: toggle(s.myLearnModules, id) }))
+        logBookmarkToggle('learn', id, action)
+      },
       clearMyLearnModules: () => set({ myLearnModules: [], showOnlyLearnModules: false }),
       showOnlyLearnModules: false,
       setShowOnlyLearnModules: (val) => set({ showOnlyLearnModules: val }),

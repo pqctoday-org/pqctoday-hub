@@ -25,6 +25,7 @@ import {
   X,
 } from 'lucide-react'
 import { CSWP39Explorer } from './CSWP39Explorer'
+import { MoreTabsMenu } from './MoreTabsMenu'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { logComplianceFilter } from '../../utils/analytics'
 import { PageHeader } from '../common/PageHeader'
@@ -1204,18 +1205,11 @@ export const ComplianceView = () => {
           className="w-full"
           onValueChange={(tab) => handleTabChange(tab as MobileSection)}
         >
-          <TabsList className="mb-4 bg-muted/50 border border-border flex-wrap md:flex-nowrap h-auto overflow-x-auto scrollbar-none">
-            <TabsTrigger value="standards" className="flex items-center gap-1.5">
-              <BookOpen size={14} />
-              Standardization Bodies
-            </TabsTrigger>
+          <TabsList className="mb-4 bg-muted/50 border border-border h-auto flex items-center gap-1">
+            {/* 3 primary tabs — always visible */}
             <TabsTrigger value="technical" className="flex items-center gap-1.5">
               <FileText size={14} />
               Technical Standards
-            </TabsTrigger>
-            <TabsTrigger value="certification" className="flex items-center gap-1.5">
-              <Award size={14} />
-              Certification Schemes
             </TabsTrigger>
             <TabsTrigger value="compliance" className="flex items-center gap-1.5">
               <Scale size={14} />
@@ -1225,10 +1219,21 @@ export const ComplianceView = () => {
               <GlobeLock size={14} />
               Cert Records
             </TabsTrigger>
-            <TabsTrigger value="cswp39" className="flex items-center gap-1.5">
-              <Workflow size={14} />
-              CSWP.39 Framework
-            </TabsTrigger>
+            {/* Secondary tabs — promoted into strip when active */}
+            {(['standards', 'certification', 'cswp39'] as const).includes(
+              activeTab as 'standards' | 'certification' | 'cswp39'
+            ) && (
+              <TabsTrigger value={activeTab} className="flex items-center gap-1.5">
+                {activeTab === 'standards' && <BookOpen size={14} />}
+                {activeTab === 'certification' && <Award size={14} />}
+                {activeTab === 'cswp39' && <Workflow size={14} />}
+                {activeTab === 'standards' && 'Standardization Bodies'}
+                {activeTab === 'certification' && 'Certification Schemes'}
+                {activeTab === 'cswp39' && 'CSWP.39 Framework'}
+              </TabsTrigger>
+            )}
+            {/* More overflow menu */}
+            <MoreTabsMenu activeTab={activeTab} onSelect={(tab) => handleTabChange(tab)} />
           </TabsList>
 
           {/* ── Tab 1: Standardization Bodies ── */}

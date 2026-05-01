@@ -32,11 +32,11 @@ export function CommunitySection() {
             href={url ?? `${DISCUSSIONS_BASE}${number}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 transition-colors group"
+            className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 focus-visible:border-primary/40 focus-visible:bg-muted/60 focus-visible:outline-none transition-colors group"
           >
             <Icon className="text-primary shrink-0 mt-0.5" size={18} />
             <div>
-              <p className="text-sm font-medium group-hover:text-primary transition-colors">
+              <p className="text-sm font-medium group-hover:text-primary group-focus-visible:text-primary transition-colors">
                 {label}
               </p>
               <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
@@ -59,11 +59,11 @@ export function CommunitySection() {
                     href={url ?? `${DISCUSSIONS_BASE}${number}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 transition-colors group"
+                    className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 focus-visible:border-primary/40 focus-visible:bg-muted/60 focus-visible:outline-none transition-colors group"
                   >
                     <Icon className="text-primary shrink-0 mt-0.5" size={18} />
                     <div>
-                      <p className="text-sm font-medium group-hover:text-primary transition-colors">
+                      <p className="text-sm font-medium group-hover:text-primary group-focus-visible:text-primary transition-colors">
                         {label}
                       </p>
                       <p className="text-xs text-muted-foreground mt-0.5">{description}</p>

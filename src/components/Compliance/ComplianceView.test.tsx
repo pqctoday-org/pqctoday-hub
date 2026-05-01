@@ -132,16 +132,17 @@ describe('ComplianceView', () => {
     expect(screen.getByRole('button', { name: /glossary/i })).toBeInTheDocument()
   })
 
-  it('renders the four top-level tab triggers', () => {
+  it('renders the three primary tab triggers and More overflow button', () => {
     render(
       <MemoryRouter>
         <ComplianceView />
       </MemoryRouter>
     )
-    expect(screen.getByRole('button', { name: /Standardization Bodies/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Certification Schemes/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Technical Standards/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Compliance Frameworks/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Cert Records/i })).toBeInTheDocument()
+    // Secondary tabs are behind the More overflow menu (may render multiple in desktop+mobile layout)
+    expect(screen.getAllByRole('button', { name: /More/i }).length).toBeGreaterThan(0)
   })
 
   it('shows cert records table when Records tab is clicked', () => {

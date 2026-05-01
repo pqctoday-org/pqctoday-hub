@@ -19,7 +19,7 @@ export function DataFoundationSection() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mt-4">
         {DATA_FOUNDATION.map(({ dataset, records, sources }) => (
           <div
             key={dataset}
@@ -27,7 +27,7 @@ export function DataFoundationSection() {
           >
             <div className="text-lg font-bold text-gradient">{records}</div>
             <div className="text-xs font-medium text-foreground mt-1">{dataset}</div>
-            <div className="text-[10px] text-muted-foreground mt-0.5">{sources}</div>
+            <div className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">{sources}</div>
           </div>
         ))}
       </div>

@@ -311,21 +311,29 @@ describe('ReportContent', () => {
       fireEvent.click(screen.getByText('Share'))
       await waitFor(() => {
         expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-          expect.stringContaining('i=Technology')
+          expect.stringContaining('share=')
         )
       })
     })
 
-    it('encodes all assessment params in share URL', async () => {
+    it('encodes all assessment params in share URL as a compact token', async () => {
       renderReport()
       fireEvent.click(screen.getByText('Share'))
       await waitFor(() => {
         expect(navigator.clipboard.writeText).toHaveBeenCalled()
       })
       const url = (navigator.clipboard.writeText as ReturnType<typeof vi.fn>).mock.calls[0][0]
-      expect(url).toContain('c=RSA-2048')
-      expect(url).toContain('d=high')
-      expect(url).toContain('m=not-started')
+      // New format: single compact ?share=<base64url-token> instead of individual params
+      expect(url).toContain('share=')
+      // Decode the token and verify it carries the expected fields
+      const tokenMatch = url.match(/share=([^&]+)/)
+      expect(tokenMatch).not.toBeNull()
+      const decoded = atob(tokenMatch![1].replace(/-/g, '+').replace(/_/g, '/') + '==')
+      const parsed = JSON.parse(decoded)
+      expect(parsed.industry).toBe('Technology')
+      expect(parsed.currentCrypto).toContain('RSA-2048')
+      expect(parsed.dataSensitivity).toContain('high')
+      expect(parsed.migrationStatus).toBe('not-started')
     })
 
     it('calls editFromStep(0) and navigates to /assess when Edit Answers is clicked', () => {

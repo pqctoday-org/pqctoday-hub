@@ -61,11 +61,11 @@ export function CryptoBuffSection() {
                     href={site.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 transition-colors group"
+                    className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 focus-visible:border-primary/40 focus-visible:bg-muted/60 focus-visible:outline-none transition-colors group"
                   >
                     <ExternalLink className="text-primary shrink-0 mt-0.5" size={16} />
                     <div>
-                      <p className="text-sm font-medium group-hover:text-primary transition-colors">
+                      <p className="text-sm font-medium group-hover:text-primary group-focus-visible:text-primary transition-colors">
                         {site.label}
                       </p>
                       <p className="text-xs text-muted-foreground mt-0.5">{site.description}</p>
@@ -112,17 +112,17 @@ export function CryptoBuffSection() {
                     href={book.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-start justify-between gap-3 p-3 rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 transition-colors group"
+                    className="flex items-start justify-between gap-3 p-3 rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 focus-visible:border-primary/40 focus-visible:bg-muted/60 focus-visible:outline-none transition-colors group"
                   >
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold group-hover:text-primary transition-colors">
+                      <p className="text-sm font-semibold group-hover:text-primary group-focus-visible:text-primary transition-colors">
                         {book.title}
                       </p>
                       <p className="text-xs text-accent mt-0.5">by {book.author}</p>
                       <p className="text-xs text-muted-foreground mt-1">{book.description}</p>
                     </div>
                     <ExternalLink
-                      className="text-muted-foreground shrink-0 mt-0.5 group-hover:text-primary transition-colors"
+                      className="text-muted-foreground shrink-0 mt-0.5 group-hover:text-primary group-focus-visible:text-primary transition-colors"
                       size={14}
                     />
                   </a>

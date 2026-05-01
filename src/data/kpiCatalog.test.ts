@@ -157,9 +157,15 @@ describe('getKpiSet', () => {
     expect(ids).toContain('standards-coverage')
   })
 
-  it('developer / curious get an empty set (nav-blocked)', () => {
-    // @ts-expect-error — ensure the type rules out these personas
-    expect(getKpiSet('developer', 'governance')).toEqual([])
+  it('curious gets an empty set (nav-blocked)', () => {
+    // @ts-expect-error — ensure the type rules out curious persona
+    expect(getKpiSet('curious', 'governance')).toEqual([])
+  })
+
+  it('developer gets KPIs now that /business is unlocked', () => {
+    const ids = getKpiSet('developer', 'governance').map((k) => k.id)
+    expect(ids.length).toBeGreaterThan(0)
+    expect(ids).toContain('systems-inventoried')
   })
 })
 

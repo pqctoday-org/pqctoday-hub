@@ -40,7 +40,7 @@ export function ReleaseNotesSection() {
             className="flex flex-1 sm:flex-none justify-center items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground font-bold text-xs md:text-sm hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
           >
             View
-            <span className="hidden md:inline"> Changelog</span>
+            <span className="hidden sm:inline"> Changelog</span>
             <ChevronRight className="w-4 h-4" />
           </a>
         </div>

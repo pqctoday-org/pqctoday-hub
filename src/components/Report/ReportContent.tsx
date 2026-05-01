@@ -66,6 +66,7 @@ import type {
   HNFLRiskWindow,
 } from '../../hooks/assessmentTypes'
 import { SIGNING_ALGORITHMS } from '../../hooks/assessmentData'
+import { encodeShareToken } from '@/utils/reportShareToken'
 
 declare const __APP_VERSION__: string
 const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'
@@ -546,27 +547,20 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
 
   const handleShare = async () => {
     const input = useAssessmentStore.getState().getInput()
-    const params = new URLSearchParams()
-    if (input) {
-      params.set('i', input.industry)
-      params.set('c', input.currentCrypto.join(','))
-      params.set('d', input.dataSensitivity.join(','))
-      if (input.complianceRequirements.length > 0) {
-        params.set('f', input.complianceRequirements.join(','))
-      }
-      params.set('m', input.migrationStatus)
-      // Extended params
-      if (input.country) params.set('cy', encodeURIComponent(input.country))
-      if (input.cryptoUseCases?.length) params.set('u', input.cryptoUseCases.join(','))
-      if (input.dataRetention?.length) params.set('r', input.dataRetention.join(','))
-      if (input.systemCount) params.set('s', input.systemCount)
-      if (input.teamSize) params.set('t', input.teamSize)
-      if (input.cryptoAgility) params.set('a', input.cryptoAgility)
-      if (input.infrastructure?.length) params.set('n', input.infrastructure.join(','))
-      if (input.vendorDependency) params.set('v', input.vendorDependency)
-      if (input.timelinePressure) params.set('p', input.timelinePressure)
-    }
-    const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`
+    const personaState = usePersonaStore.getState()
+    const token = encodeShareToken({
+      industry: input?.industry,
+      country: input?.country ?? undefined,
+      region: personaState.selectedRegion ?? undefined,
+      currentCrypto: input?.currentCrypto,
+      dataSensitivity: input?.dataSensitivity,
+      complianceRequirements: input?.complianceRequirements,
+      migrationStatus: input?.migrationStatus,
+      persona: personaState.selectedPersona ?? undefined,
+      riskScore: result.riskScore,
+      riskLevel: result.riskLevel,
+    })
+    const url = `${window.location.origin}${window.location.pathname}?share=${token}`
 
     if (navigator.share) {
       try {

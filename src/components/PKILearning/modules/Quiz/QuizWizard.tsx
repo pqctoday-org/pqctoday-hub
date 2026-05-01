@@ -8,6 +8,7 @@ import { QuestionCard } from './components/QuestionCard'
 import { FeedbackPanel } from './components/FeedbackPanel'
 import { useQuizState } from './hooks/useQuizState'
 import type { QuizQuestion, QuizScoreSummary } from './types'
+import { logQuizAnswer } from '@/utils/analytics'
 
 export interface QuizCompletionData {
   summary: QuizScoreSummary
@@ -73,6 +74,14 @@ export const QuizWizard: React.FC<QuizWizardProps> = ({ questions, onComplete, o
   if (!currentQuestion) return null
 
   const handleCheckAnswer = () => {
+    if (currentQuestion && currentAnswer !== undefined) {
+      const correct =
+        currentQuestion.type === 'multi-select'
+          ? [...(currentQuestion.correctAnswer as string[])].sort().join('|') ===
+            [...(currentAnswer as string[])].sort().join('|')
+          : currentAnswer === currentQuestion.correctAnswer
+      logQuizAnswer(currentQuestion.id, correct)
+    }
     submitAnswer()
   }
 

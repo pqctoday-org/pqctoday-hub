@@ -101,7 +101,7 @@ export const SampleQuestionsModal = ({
                           onClick={() => handleCopy(q)}
                           onDoubleClick={() => handleDoubleClick(q)}
                           title="Click to copy, double-click to send"
-                          className="group inline-flex items-center gap-1.5 px-3 py-1.5 h-auto rounded-full text-xs bg-muted/30 hover:bg-primary/10 border border-border hover:border-primary/30 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                          className="group inline-flex items-center gap-1.5 px-3 py-1.5 h-auto rounded-full text-xs bg-muted/30 hover:bg-primary/10 active:bg-primary/10 border border-border hover:border-primary/30 active:border-primary/30 text-muted-foreground hover:text-foreground active:text-foreground transition-colors cursor-pointer"
                         >
                           <span>{q}</span>
                           {copiedQuestion === q ? (
@@ -109,7 +109,7 @@ export const SampleQuestionsModal = ({
                           ) : (
                             <Copy
                               size={12}
-                              className="shrink-0 opacity-0 group-hover:opacity-60 transition-opacity"
+                              className="shrink-0 opacity-40 group-hover:opacity-100 transition-opacity"
                             />
                           )}
                         </Button>

@@ -127,7 +127,7 @@ export function VisionSection() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-border border border-border rounded-xl overflow-hidden">
                 {PRINCIPLES.map(({ label, text }) => (
                   <div key={label} className="bg-card p-3">
-                    <p className="text-[10px] font-medium uppercase tracking-wider text-primary mb-1">
+                    <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wider text-primary mb-1">
                       {label}
                     </p>
                     <p className="text-xs text-muted-foreground leading-relaxed">{text}</p>
@@ -144,7 +144,7 @@ export function VisionSection() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {NOT_ITEMS.map(({ label, text }) => (
                   <div key={label} className="bg-muted/30 rounded-lg p-3">
-                    <p className="text-[10px] font-medium uppercase tracking-wider text-status-error mb-1">
+                    <p className="text-[10px] sm:text-xs font-medium uppercase tracking-wider text-status-error mb-1">
                       {label}
                     </p>
                     <p className="text-xs text-muted-foreground leading-relaxed">{text}</p>

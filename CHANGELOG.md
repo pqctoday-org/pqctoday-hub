@@ -6,6 +6,59 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.33] - May 1, 2026
+
+Wave 1 UX/UI implementation: 8 P0/P1 plans executed covering persona access,
+analytics instrumentation, filter UX, table virtualization, compliance tab
+overflow, and shareable report URLs.
+
+### Added
+
+- **Developer persona unlocked for /business**: Developer persona can now
+  access the Business Center; `KpiPersonaId` widened to include `developer`
+  with weighted KPI scores across 10 metrics. `KpiPersonaSelector` gains a
+  Code2 icon for the developer tab. (`personaConfig.ts`, `kpiCatalog.ts`)
+
+- **Analytics: persona-labeled events + 4 new event types**: `personaLabel()`
+  helper appends `|p=<persona>|x=<level>` to every module-lifecycle event.
+  Added `logAchievementUnlocked`, `logBookmarkToggle`, `logEndorsementGiven`,
+  `logQuizAnswer` — wired into achievement, bookmark, endorsement stores and
+  the Quiz wizard. (`analytics.ts`, all four stores, `QuizWizard.tsx`)
+
+- **FilterDrawer**: New `src/components/common/FilterDrawer.tsx` — universal
+  slide-in filter panel. Used by `/migrate` to collapse secondary facets
+  (vendor, verification, license, WIP, sort, restore-hidden) out of the
+  toolbar, keeping the primary bar to Layer + Category + search + view toggle.
+
+- **Table virtualization**: `/migrate` SoftwareTable and `/compliance` Cert
+  Records table now use `@tanstack/react-virtual` for row virtualization
+  (`max-h-[72vh]`, sticky `thead`). Eliminates layout jank on large datasets.
+  (`SoftwareTable.tsx`, `ComplianceTable.tsx`)
+
+- **Compliance tab overflow menu**: `MoreTabsMenu` component collapses
+  Standardization Bodies, Certification Schemes, and CSWP.39 Framework into a
+  "More ▾" overflow dropdown, leaving three primary tabs visible. Active
+  secondary tab is promoted to the strip. (`MoreTabsMenu.tsx`, `ComplianceView.tsx`)
+
+- **Shareable report URL token**: `/report?share=<base64url>` replaces the
+  previous 12-param query string. `encodeShareToken`/`decodeShareToken`
+  encode all assessment inputs into a compact JSON blob. `ReportView` decodes
+  the token and shows a "Viewing a shared report" read-only banner.
+  (`reportShareToken.ts`, `ReportContent.tsx`, `ReportView.tsx`)
+
+- **Removed curious dead config**: `BC_ZONE_EMPHASIS_BY_PERSONA` pruned of its
+  unreachable `curious` entry (curious is nav-blocked from /business).
+  Type narrowed to `Partial<Record<PersonaId, BCZoneEmphasis>>`.
+
+### Internal
+
+- Added `@tanstack/react-virtual` dependency.
+- Global vitest setup mocks `@tanstack/react-virtual` so table tests pass in
+  jsdom (no layout engine). Updated `kpiCatalog.test.ts`, `ComplianceView.test.tsx`,
+  and `ReportContent.test.tsx` to reflect new developer KPI access and compact
+  share token format.
+- All 2015 unit tests pass; `tsc --noEmit` clean.
+
 ## [3.5.32] - May 1, 2026
 
 Routine dependency hygiene: 5 Dependabot updates landed in one batch after

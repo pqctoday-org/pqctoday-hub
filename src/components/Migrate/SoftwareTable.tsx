@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo, useEffect, useRef } from 'react'
+import { useVirtualizer } from '@tanstack/react-virtual'
 import { createPortal } from 'react-dom'
 import clsx from 'clsx'
 import FocusLock from 'react-focus-lock'
@@ -338,16 +339,30 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
   const hasCompare = !!(compareProducts && onToggleCompare)
   const totalCols = (hasSelection ? 1 : 0) + (hasCompare ? 1 : 0) + 9 // my? + compare? + hide + bookmark + expand + 6 data columns
 
+  const tableContainerRef = useRef<HTMLDivElement>(null)
+  const rowVirtualizer = useVirtualizer({
+    count: visibleData.length,
+    getScrollElement: () => tableContainerRef.current,
+    estimateSize: (index) => (expandedIds.has(rowKey(visibleData[index])) ? 600 : 56),
+    overscan: 8,
+  })
+  const virtualRows = rowVirtualizer.getVirtualItems()
+  const paddingTop = virtualRows.length > 0 ? (virtualRows[0]?.start ?? 0) : 0
+  const paddingBottom =
+    virtualRows.length > 0
+      ? rowVirtualizer.getTotalSize() - (virtualRows[virtualRows.length - 1]?.end ?? 0)
+      : 0
+
   return (
     <div className="glass-panel overflow-hidden">
-      <div className="overflow-x-auto">
+      <div ref={tableContainerRef} className="overflow-auto max-h-[72vh]">
         <table className="w-full text-left border-collapse">
           <caption className="sr-only">
             Software products with PQC support, FIPS validation status, and migration details.
             Expandable rows show capabilities and certifications.
           </caption>
           <thead>
-            <tr className="border-b border-border bg-muted/20">
+            <tr className="border-b border-border bg-muted/20 sticky top-0 z-10">
               {hasCompare && (
                 <th
                   scope="col"
@@ -394,7 +409,13 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
             </tr>
           </thead>
           <tbody>
-            {visibleData.map((item) => {
+            {paddingTop > 0 && (
+              <tr>
+                <td style={{ height: `${paddingTop}px` }} colSpan={totalCols} />
+              </tr>
+            )}
+            {virtualRows.map((virtualRow) => {
+              const item = visibleData[virtualRow.index]
               const key = rowKey(item)
               const isExpanded = expandedIds.has(key)
               return (
@@ -897,6 +918,11 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                 </React.Fragment>
               )
             })}
+            {paddingBottom > 0 && (
+              <tr>
+                <td style={{ height: `${paddingBottom}px` }} colSpan={totalCols} />
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

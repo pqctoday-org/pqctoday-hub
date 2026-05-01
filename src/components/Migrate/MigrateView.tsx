@@ -8,6 +8,7 @@ import { SoftwareCardGrid } from './SoftwareCardGrid'
 import { MigrationWorkflow } from './MigrationWorkflow'
 import { InfrastructureStack, LAYERS, CISA_LAYERS } from './InfrastructureStack'
 import { MobileFilterDrawer } from './MobileFilterDrawer'
+import { FilterDrawer } from '../common/FilterDrawer'
 import { MigrateViewToggle } from './MigrateViewToggle'
 import { MigrateSortControl, type MigrateSortOption } from './MigrateSortControl'
 import { FilterDropdown } from '../common/FilterDropdown'
@@ -1221,7 +1222,7 @@ export const MigrateView: React.FC = () => {
             </div>
           </div>
 
-          {/* Desktop Layout: Inline Filter Band */}
+          {/* Desktop Layout: Compact filter bar — search + layer + drawer + view toggle */}
           <div className="hidden md:flex flex-wrap items-center gap-2 flex-1 relative z-10 w-full overflow-visible">
             {/* Layer dropdown — flat modes */}
             <div className={isStackMode ? 'hidden' : ''}>
@@ -1254,79 +1255,150 @@ export const MigrateView: React.FC = () => {
               </div>
             )}
 
-            {/* Vendor dropdown */}
-            {vendorFilterItems.length > 0 && (
-              <div>
-                <FilterDropdown
-                  items={vendorFilterItems}
-                  selectedId={vendorFilter}
-                  onSelect={(id) => {
-                    setVendorFilter(id)
-                    syncFiltersToUrl({ vendor: id })
-                    logMigrateAction('Filter Vendor', id)
-                  }}
-                  defaultLabel="All Vendors"
-                  searchable
-                />
-              </div>
-            )}
-
-            {/* Verification status dropdown */}
-            <div>
-              <FilterDropdown
-                items={verificationFilterItems}
-                selectedId={verificationFilter}
-                onSelect={(id) => {
-                  setVerificationFilter(id)
-                  syncFiltersToUrl({ verification: id })
-                  logMigrateAction('Filter Verification', id)
-                }}
-                defaultLabel="All Verification"
-              />
-            </div>
-
-            {/* License dropdown */}
-            <div>
-              <FilterDropdown
-                items={LICENSE_FILTER_ITEMS}
-                selectedId={licenseFilter}
-                onSelect={(id) => {
-                  setLicenseFilter(id)
-                  syncFiltersToUrl({ licenseFilter: id })
-                  logMigrateAction('Filter License', id)
-                }}
-                defaultLabel="All Licenses"
-              />
-            </div>
-
-            {/* WIP filter — same cycling pill as Playground */}
-            <Button
-              variant="ghost"
-              onClick={() => {
-                const next: WipFilter =
-                  wipFilter === 'hidden' ? 'include' : wipFilter === 'include' ? 'only' : 'hidden'
-                setWipFilter(next)
-                syncFiltersToUrl({ wip: next })
-                logMigrateAction('Filter WIP', next)
-              }}
-              className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors shrink-0 ${
-                wipFilter === 'only'
-                  ? 'bg-status-warning/15 text-status-warning border-status-warning/40'
-                  : wipFilter === 'hidden'
-                    ? 'bg-muted text-muted-foreground border-border line-through'
-                    : 'text-muted-foreground border-border hover:text-foreground hover:border-border/60'
-              }`}
-              title={
-                wipFilter === 'include'
-                  ? 'Click to show only WIP products'
-                  : wipFilter === 'only'
-                    ? 'Click to hide WIP products'
-                    : 'Click to show all products'
+            {/* Secondary filters drawer */}
+            <FilterDrawer
+              activeFilterCount={
+                (vendorFilter !== 'All' ? 1 : 0) +
+                (verificationFilter !== 'All' ? 1 : 0) +
+                (licenseFilter !== 'All' ? 1 : 0) +
+                (wipFilter !== 'hidden' ? 1 : 0) +
+                (sortBy !== 'pqcMigrationPriority' ? 1 : 0) +
+                (stepFilter ? 1 : 0)
               }
-            >
-              <Wrench size={12} aria-hidden="true" />
-              {wipFilter === 'hidden' ? 'WIP hidden' : 'WIP'}
-            </Button>
+              onClearAll={() => {
+                setStepFilter(null)
+                setVendorFilter('All')
+                setVerificationFilter('All')
+                setLicenseFilter('All')
+                setWipFilter('hidden')
+                setSortBy('pqcMigrationPriority')
+                syncFiltersToUrl({
+                  step: null,
+                  vendor: 'All',
+                  verification: 'All',
+                  licenseFilter: 'All',
+                  wip: 'hidden',
+                  sort: 'pqcMigrationPriority',
+                })
+              }}
+              filterContent={
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    <p className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">
+                      Migration Phase
+                    </p>
+                    <FilterDropdown
+                      items={MIGRATION_STEPS.map((s) => ({
+                        id: s.id,
+                        label: `${s.stepNumber}. ${s.shortTitle}`,
+                      }))}
+                      selectedId={stepFilter?.stepId ?? 'All'}
+                      onSelect={(id) => {
+                        if (id === 'All') {
+                          setStepFilter(null)
+                          syncFiltersToUrl({ step: null })
+                        } else {
+                          const step = MIGRATION_STEPS.find((s) => s.id === id)
+                          if (step) handleViewSoftware(step)
+                        }
+                      }}
+                      defaultLabel="All Phases"
+                    />
+                  </div>
+
+                  <div className="space-y-3">
+                    <p className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">
+                      Properties
+                    </p>
+                    {vendorFilterItems.length > 0 && (
+                      <FilterDropdown
+                        items={vendorFilterItems}
+                        selectedId={vendorFilter}
+                        onSelect={(id) => {
+                          setVendorFilter(id)
+                          syncFiltersToUrl({ vendor: id })
+                          logMigrateAction('Filter Vendor', id)
+                        }}
+                        defaultLabel="All Vendors"
+                        searchable
+                      />
+                    )}
+                    <FilterDropdown
+                      items={verificationFilterItems}
+                      selectedId={verificationFilter}
+                      onSelect={(id) => {
+                        setVerificationFilter(id)
+                        syncFiltersToUrl({ verification: id })
+                        logMigrateAction('Filter Verification', id)
+                      }}
+                      defaultLabel="All Verification"
+                    />
+                    <FilterDropdown
+                      items={LICENSE_FILTER_ITEMS}
+                      selectedId={licenseFilter}
+                      onSelect={(id) => {
+                        setLicenseFilter(id)
+                        syncFiltersToUrl({ licenseFilter: id })
+                        logMigrateAction('Filter License', id)
+                      }}
+                      defaultLabel="All Licenses"
+                    />
+                    {!isEmbedded && (
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          const next: WipFilter =
+                            wipFilter === 'hidden'
+                              ? 'include'
+                              : wipFilter === 'include'
+                                ? 'only'
+                                : 'hidden'
+                          setWipFilter(next)
+                          syncFiltersToUrl({ wip: next })
+                          logMigrateAction('Filter WIP', next)
+                        }}
+                        className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                          wipFilter === 'only'
+                            ? 'bg-status-warning/15 text-status-warning border-status-warning/40'
+                            : wipFilter === 'hidden'
+                              ? 'bg-muted text-muted-foreground border-border line-through'
+                              : 'text-muted-foreground border-border hover:text-foreground hover:border-border/60'
+                        }`}
+                      >
+                        <Wrench size={12} aria-hidden="true" />
+                        {wipFilter === 'hidden' ? 'WIP hidden' : 'WIP'}
+                      </Button>
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    <p className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">
+                      Sorting
+                    </p>
+                    <MigrateSortControl
+                      value={sortBy}
+                      onChange={(s) => {
+                        setSortBy(s)
+                        syncFiltersToUrl({ sort: s })
+                      }}
+                    />
+                  </div>
+
+                  {hiddenSet.size > 0 && (
+                    <div className="pt-6 border-t border-border">
+                      <Button
+                        variant="outline"
+                        onClick={() => restoreAll()}
+                        className="w-full text-status-warning border-status-warning/50 hover:bg-status-warning/10"
+                      >
+                        <EyeOff size={16} className="mr-2" />
+                        Restore {hiddenSet.size} hidden products
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              }
+            />
 
             {/* Search */}
             <div className="relative flex-1 min-w-[150px]">
@@ -1345,30 +1417,6 @@ export const MigrateView: React.FC = () => {
                 className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[40px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
               />
             </div>
-
-            {/* Sort — cards mode */}
-            <div className={effectiveViewMode !== 'cards' ? 'hidden' : ''}>
-              <MigrateSortControl
-                value={sortBy}
-                onChange={(s) => {
-                  setSortBy(s)
-                  syncFiltersToUrl({ sort: s })
-                }}
-              />
-            </div>
-
-            {/* Restore hidden */}
-            {hiddenSet.size > 0 && (
-              <Button
-                variant="ghost"
-                onClick={() => restoreAll()}
-                className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-                aria-label={`Restore ${hiddenSet.size} hidden product${hiddenSet.size !== 1 ? 's' : ''}`}
-              >
-                <EyeOff size={14} />
-                {hiddenSet.size} hidden
-              </Button>
-            )}
 
             {/* View toggle + My filter — grouped together */}
             <div className="flex items-center gap-2">

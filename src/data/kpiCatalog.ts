@@ -22,14 +22,18 @@ import { getFrameworkMaxFine } from './frameworkFines'
 
 // ── Persona scope ────────────────────────────────────────────────────────
 // Only personas who can reach the Business Center get a KPI variant.
-// (developer / curious are nav-blocked from /business — see personaConfig.ts)
-export type KpiPersonaId = Extract<PersonaId, 'executive' | 'architect' | 'ops' | 'researcher'>
+// (curious is nav-blocked from /business — see personaConfig.ts)
+export type KpiPersonaId = Extract<
+  PersonaId,
+  'executive' | 'architect' | 'ops' | 'researcher' | 'developer'
+>
 
 export const KPI_PERSONAS: readonly KpiPersonaId[] = [
   'executive',
   'architect',
   'ops',
   'researcher',
+  'developer',
 ] as const
 
 // ── KPI surfaces ─────────────────────────────────────────────────────────
@@ -245,7 +249,7 @@ export const KPI_CATALOG: readonly KpiDefinition[] = [
     description: 'Percentage of systems scanned for cryptographic usage (CBOM coverage).',
     category: 'coverage',
     surfaces: ['governance', 'migration'],
-    weights: { executive: 0.1, architect: 0.15, ops: 0.25, researcher: 0.1 },
+    weights: { executive: 0.1, architect: 0.15, ops: 0.25, researcher: 0.1, developer: 0.1 },
     userOverride: true,
     mappings: { csf2: 'ID.AM-2', iso27001: 'A.8.1', soc2: 'CC3.2' },
     defaultTarget: 90,
@@ -257,7 +261,7 @@ export const KPI_CATALOG: readonly KpiDefinition[] = [
       'Percentage of inventoried systems with a merged SBOM+CBOM (algorithms, key lengths, protocols).',
     category: 'coverage',
     surfaces: ['governance', 'migration'],
-    weights: { architect: 0.1, ops: 0.1 },
+    weights: { architect: 0.1, ops: 0.1, developer: 0.15 },
     userOverride: true,
     mappings: { csf2: 'ID.AM-3', iso27001: 'A.8.8' },
     defaultTarget: 80,
@@ -271,7 +275,7 @@ export const KPI_CATALOG: readonly KpiDefinition[] = [
       'Percentage of quantum-vulnerable algorithms replaced with PQC or hybrid alternatives.',
     category: 'progress',
     surfaces: ['governance', 'migration'],
-    weights: { executive: 0.15, architect: 0.3, ops: 0.2, researcher: 0.2 },
+    weights: { executive: 0.15, architect: 0.3, ops: 0.2, researcher: 0.2, developer: 0.25 },
     userOverride: true,
     mappings: { csf2: 'PR.DS-2', iso27001: 'A.10.1', soc2: 'CC6.1' },
     defaultTarget: 70,
@@ -283,7 +287,7 @@ export const KPI_CATALOG: readonly KpiDefinition[] = [
       'Percentage of catalog products / endpoints running hybrid PQC (e.g. X25519 + ML-KEM).',
     category: 'progress',
     surfaces: ['governance', 'migration'],
-    weights: { architect: 0.1, researcher: 0.1 },
+    weights: { architect: 0.1, researcher: 0.1, developer: 0.15 },
     autoScore: hybridCoverageAuto,
     userOverride: true,
     mappings: { csf2: 'PR.DS-2' },
@@ -299,7 +303,7 @@ export const KPI_CATALOG: readonly KpiDefinition[] = [
     category: 'vendor',
     surfaces: ['governance', 'migration'],
     // Architect gets per-layer rows instead (see vendor-readiness-by-layer).
-    weights: { executive: 0.1, ops: 0.2, researcher: 0.05 },
+    weights: { executive: 0.1, ops: 0.2, researcher: 0.05, developer: 0.05 },
     autoScore: vendorReadinessAuto,
     userOverride: true,
     mappings: { csf2: 'ID.SC-1', iso27001: 'A.5.19', soc2: 'CC9.2' },
@@ -328,7 +332,7 @@ export const KPI_CATALOG: readonly KpiDefinition[] = [
     description: 'Percentage of catalog products with FIPS 140-2/3 validation certificates.',
     category: 'vendor',
     surfaces: ['governance', 'migration'],
-    weights: { executive: 0.05, architect: 0.05, ops: 0.1, researcher: 0.05 },
+    weights: { executive: 0.05, architect: 0.05, ops: 0.1, researcher: 0.05, developer: 0.15 },
     autoScore: fipsValidatedAuto,
     userOverride: true,
     mappings: { csf2: 'PR.DS-1', iso27001: 'A.10.1' },
@@ -343,7 +347,7 @@ export const KPI_CATALOG: readonly KpiDefinition[] = [
       'Percentage of selected frameworks (FIPS / CMMC / ANSSI / BSI …) whose PQC requirements have been addressed.',
     category: 'compliance',
     surfaces: ['governance', 'migration'],
-    weights: { executive: 0.2, architect: 0.1, ops: 0.1, researcher: 0.05 },
+    weights: { executive: 0.2, architect: 0.1, ops: 0.1, researcher: 0.05, developer: 0.05 },
     autoScore: complianceGapsAuto,
     userOverride: true,
     disabledReason: 'Select compliance frameworks in the assessment to enable auto-scoring.',
@@ -404,7 +408,7 @@ export const KPI_CATALOG: readonly KpiDefinition[] = [
     description: 'Inverse of critical + high industry-scoped threats (higher = lower exposure).',
     category: 'risk',
     surfaces: ['governance', 'migration'],
-    weights: { executive: 0.15, architect: 0.05, ops: 0.05 },
+    weights: { executive: 0.15, architect: 0.05, ops: 0.05, developer: 0.05 },
     autoScore: threatExposureAuto,
     userOverride: true,
     mappings: { csf2: 'ID.RA-1', iso27001: 'A.5.7' },
@@ -445,7 +449,7 @@ export const KPI_CATALOG: readonly KpiDefinition[] = [
     description: 'Inverse of your assessment risk score (higher = lower risk).',
     category: 'risk',
     surfaces: ['migration'],
-    weights: { executive: 0.05, architect: 0.05, ops: 0.05, researcher: 0.05 },
+    weights: { executive: 0.05, architect: 0.05, ops: 0.05, researcher: 0.05, developer: 0.05 },
     autoScore: riskPostureAuto,
     userOverride: true,
     disabledReason: 'Complete the risk assessment at /assess to unlock this KPI.',
@@ -486,7 +490,7 @@ export const KPI_CATALOG: readonly KpiDefinition[] = [
       'Percentage of relevant staff who have completed PQC awareness and technical training.',
     category: 'operational',
     surfaces: ['governance'],
-    weights: { executive: 0.05, architect: 0.05, ops: 0.05 },
+    weights: { executive: 0.05, architect: 0.05, ops: 0.05, developer: 0.05 },
     userOverride: true,
     mappings: { csf2: 'PR.AT-1', iso27001: 'A.6.3', soc2: 'CC1.4' },
     defaultTarget: 80,

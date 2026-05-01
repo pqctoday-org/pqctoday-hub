@@ -20,6 +20,8 @@ import type { AssessmentInput } from '../../hooks/assessmentTypes'
 import { PageHeader } from '../common/PageHeader'
 import { WorkflowBreadcrumb } from '../shared/WorkflowBreadcrumb'
 import { logReportViewed, logReportShareLinkOpened, logReportCta } from '@/utils/analytics'
+import { decodeShareToken } from '@/utils/reportShareToken'
+import { usePersonaStore } from '@/store/usePersonaStore'
 
 const VALID_SENSITIVITIES = new Set(['low', 'medium', 'high', 'critical'])
 const VALID_MIGRATIONS = new Set(['started', 'planning', 'not-started', 'unknown'])
@@ -59,6 +61,53 @@ export const ReportView: React.FC = () => {
   // Hydrate store from shared URL params on first mount
   useEffect(() => {
     if (hydratedRef.current) return
+
+    // New compact token path: ?share=<base64token>
+    const shareToken = searchParams.get('share')
+    if (shareToken) {
+      hydratedRef.current = true
+      const schema = decodeShareToken(shareToken)
+      if (schema) {
+        logReportShareLinkOpened()
+        const store = useAssessmentStore.getState()
+        if (schema.industry && VALID_INDUSTRIES.has(schema.industry))
+          store.setIndustry(schema.industry)
+        if (schema.country && VALID_COUNTRIES.has(schema.country)) store.setCountry(schema.country)
+        if (schema.currentCrypto) {
+          schema.currentCrypto
+            .filter((a) => VALID_ALGORITHMS.has(a))
+            .forEach((a) => {
+              if (!store.currentCrypto.includes(a)) store.toggleCrypto(a)
+            })
+        }
+        if (schema.dataSensitivity) {
+          schema.dataSensitivity
+            .filter((s) => VALID_SENSITIVITIES.has(s))
+            .forEach((s) => {
+              if (!store.dataSensitivity.includes(s)) store.toggleDataSensitivity(s)
+            })
+        }
+        if (schema.complianceRequirements) {
+          schema.complianceRequirements
+            .filter((f) => VALID_COMPLIANCE.has(f))
+            .forEach((f) => {
+              if (!store.complianceRequirements.includes(f)) store.toggleCompliance(f)
+            })
+        }
+        if (schema.migrationStatus && VALID_MIGRATIONS.has(schema.migrationStatus)) {
+          store.setMigrationStatus(schema.migrationStatus as AssessmentInput['migrationStatus'])
+        }
+        if (schema.persona) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          usePersonaStore.getState().setPersona(schema.persona as any)
+        }
+        store.setAssessmentMode('comprehensive')
+        store.markComplete()
+      }
+      return
+    }
+
+    // Legacy individual-param path: ?i=&cy=&c=&d=&f=&m=…
     const industry = searchParams.get('i')
     if (!industry) return
     hydratedRef.current = true
@@ -251,6 +300,23 @@ export const ReportView: React.FC = () => {
         shareTitle="PQC Assessment Report — Post-Quantum Cryptography Risk Analysis"
         shareText="View your personalized PQC risk score, migration priorities, and actionable recommendations."
       />
+      {/* Banner when viewing a shared report */}
+      {searchParams.get('share') && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4"
+        >
+          <div className="glass-panel p-3 border-l-4 border-l-primary flex items-center gap-3">
+            <FileBarChart size={16} className="text-primary shrink-0" />
+            <span className="text-sm text-foreground">
+              Viewing a shared report. This is a read-only snapshot — your own assessment is
+              unaffected.
+            </span>
+          </div>
+        </motion.div>
+      )}
+
       {/* Banner when assessment is in-progress */}
       {assessmentStatus === 'in-progress' && (
         <motion.div
