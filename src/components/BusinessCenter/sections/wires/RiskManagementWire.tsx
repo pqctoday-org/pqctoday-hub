@@ -10,7 +10,15 @@
  */
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowRight, Activity, Calendar, ShieldAlert } from 'lucide-react'
+import {
+  ArrowRight,
+  Activity,
+  Calendar,
+  ShieldAlert,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { BusinessMetrics } from '../../hooks/useBusinessMetrics'
 import { FrameworkDeadlineList } from '../../widgets/FrameworkDeadlineList'
@@ -70,6 +78,12 @@ function HealthTile({ metrics }: { metrics: BusinessMetrics }) {
   // complete
   const levelStyle =
     (metrics.riskLevel && RISK_LEVEL_STYLES[metrics.riskLevel]) ?? RISK_LEVEL_STYLES.medium
+
+  const delta =
+    metrics.riskScore !== null && metrics.previousRiskScore !== null
+      ? metrics.riskScore - metrics.previousRiskScore
+      : null
+
   return (
     <div className="rounded-lg border border-border bg-card/50 p-3 flex items-center gap-3 flex-wrap">
       <Activity size={18} className="text-primary shrink-0" />
@@ -86,6 +100,24 @@ function HealthTile({ metrics }: { metrics: BusinessMetrics }) {
           {metrics.riskScore !== null && (
             <span className="text-[10px] font-mono text-muted-foreground">
               score {metrics.riskScore}/100
+            </span>
+          )}
+          {delta !== null && delta !== 0 && (
+            <span
+              className={`inline-flex items-center gap-0.5 text-[10px] font-semibold ${delta > 0 ? 'text-status-error' : 'text-status-success'}`}
+              title={`Risk score changed ${delta > 0 ? '+' : ''}${delta} vs. previous assessment`}
+            >
+              {delta > 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
+              {delta > 0 ? '+' : ''}
+              {delta} vs. prev
+            </span>
+          )}
+          {delta === 0 && metrics.previousRiskScore !== null && (
+            <span
+              className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground/60"
+              title="No change vs. previous assessment"
+            >
+              <Minus size={10} /> no change
             </span>
           )}
         </div>
