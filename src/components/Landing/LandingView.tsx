@@ -486,6 +486,27 @@ export const LandingView = () => {
 
   const heading = SECTION_HEADING[selectedPersona ?? 'default'] ?? SECTION_HEADING.default
 
+  // Journey fold state — show first 5 steps by default
+  const [showAllSteps, setShowAllSteps] = useState(false)
+  const INITIAL_VISIBLE = 5
+  const visibleStepIds = useMemo(() => {
+    const ids = new Set(journeySteps.slice(0, INITIAL_VISIBLE).map((s) => s.id))
+    return ids
+  }, [journeySteps])
+
+  // Resume banner — last module with in-progress or completed status
+  const lastVisitedModule = useMemo(() => {
+    const entries = Object.entries(moduleModules)
+      .filter(([, m]) => m.status !== 'not-started' && m.lastVisited)
+      .sort(([, a], [, b]) => b.lastVisited - a.lastVisited)
+    const topEntry = entries[0]
+    if (!topEntry) return null
+    const [moduleId] = topEntry
+    const catalog = MODULE_CATALOG[moduleId]
+    if (!catalog) return null
+    return { id: moduleId, title: catalog.title, path: `/learn/${moduleId}` }
+  }, [moduleModules])
+
   return (
     <div className="w-full space-y-16 md:space-y-24">
       {/* Hero Section */}
@@ -531,6 +552,34 @@ export const LandingView = () => {
         >
           <PQCExplainer />
         </motion.div>
+
+        {/* Resume banner — shown when a module is in-progress/completed */}
+        {lastVisitedModule && (
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            custom={2.4}
+            className="mb-4 flex justify-center"
+          >
+            <Link
+              to={lastVisitedModule.path}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-primary/30 bg-primary/5 text-sm text-foreground hover:border-primary/60 hover:bg-primary/10 transition-colors group"
+            >
+              <GraduationCap size={15} className="text-primary shrink-0" aria-hidden="true" />
+              <span>
+                Continue{' '}
+                <span className="font-semibold group-hover:text-primary transition-colors">
+                  {lastVisitedModule.title}
+                </span>
+              </span>
+              <ArrowRight
+                size={13}
+                className="text-primary/60 group-hover:text-primary transition-colors"
+              />
+            </Link>
+          </motion.div>
+        )}
 
         {/* Personalization Section */}
         <motion.div
@@ -681,7 +730,9 @@ export const LandingView = () => {
           variants={{ visible: { transition: { delayChildren: 0.5, staggerChildren: 0.07 } } }}
         >
           {JOURNEY_SECTIONS.map((section) => {
-            const sectionSteps = journeySteps.filter((s) => s.section === section.id)
+            const sectionSteps = journeySteps.filter(
+              (s) => s.section === section.id && (showAllSteps || visibleStepIds.has(s.id))
+            )
             if (sectionSteps.length === 0) return null
             return (
               <React.Fragment key={section.id}>
@@ -785,6 +836,33 @@ export const LandingView = () => {
             )
           })}
         </motion.div>
+
+        {/* Show all / collapse toggle */}
+        {!showAllSteps ? (
+          <div className="mt-6 flex justify-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowAllSteps(true)}
+              className="text-muted-foreground hover:text-foreground gap-1.5"
+            >
+              Show all {journeySteps.length} steps
+              <ArrowRight size={14} className="rotate-90" />
+            </Button>
+          </div>
+        ) : (
+          <div className="mt-6 flex justify-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowAllSteps(false)}
+              className="text-muted-foreground hover:text-foreground gap-1.5"
+            >
+              Show less
+              <ArrowRight size={14} className="-rotate-90" />
+            </Button>
+          </div>
+        )}
       </section>
 
       {/* Progress Management */}
