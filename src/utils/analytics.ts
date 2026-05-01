@@ -358,7 +358,10 @@ export const logAssessReset = () => {
 
 // --- Persona / personalization tracking ---
 
-export const logPersonaSelected = (persona: string, source: 'picker' | 'assessment' | 'embed') => {
+export const logPersonaSelected = (
+  persona: string,
+  source: 'picker' | 'assessment' | 'embed' | 'switch'
+) => {
   logEvent('Persona', 'Selected', `${persona}:${source}`)
 }
 

@@ -24,6 +24,7 @@ import {
   Compass,
   Search,
   ScrollText,
+  UserCog,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { WhatsNewModal } from '../ui/WhatsNewModal'
@@ -42,6 +43,8 @@ import { AirplaneModeToast } from '../ui/AirplaneModeToast'
 import { useAirplaneModeStore } from '../../store/useAirplaneModeStore'
 import { CommandPalette } from '../Search/CommandPalette'
 import { useCommandPaletteStore } from '../../store/useCommandPaletteStore'
+import { PersonaChip } from '../Persona/PersonaChip'
+import { PersonaSwitchModal } from '../Persona/PersonaSwitchModal'
 
 const RightPanel = React.lazy(() =>
   import('../RightPanel/RightPanel').then((m) => ({ default: m.RightPanel }))
@@ -178,6 +181,7 @@ export const MainLayout = () => {
   }
 
   const [moreMenuOpen, setMoreMenuOpen] = React.useState(false)
+  const [mobilePersonaSwitchOpen, setMobilePersonaSwitchOpen] = React.useState(false)
 
   // Close the More menu on route changes (e.g., browser back button)
   React.useEffect(() => {
@@ -264,18 +268,21 @@ export const MainLayout = () => {
           </div>
 
           {/* Search chip — desktop only */}
-          <Button
-            variant="outline"
-            onClick={openPalette}
-            className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg border-border bg-muted/30 hover:border-primary/30 hover:bg-muted/50 text-sm text-muted-foreground min-w-[180px] h-auto"
-            aria-label="Search (⌘K)"
-          >
-            <Search size={14} aria-hidden="true" />
-            <span className="flex-1 text-left">Search…</span>
-            <kbd className="hidden lg:inline text-[10px] font-mono px-1.5 py-0.5 rounded border border-border bg-muted/50">
-              ⌘K
-            </kbd>
-          </Button>
+          <div className="hidden lg:flex items-center gap-2">
+            <Button
+              variant="outline"
+              onClick={openPalette}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg border-border bg-muted/30 hover:border-primary/30 hover:bg-muted/50 text-sm text-muted-foreground min-w-[180px] h-auto"
+              aria-label="Search (⌘K)"
+            >
+              <Search size={14} aria-hidden="true" />
+              <span className="flex-1 text-left">Search…</span>
+              <kbd className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-border bg-muted/50">
+                ⌘K
+              </kbd>
+            </Button>
+            <PersonaChip />
+          </div>
 
           {/* Universal Navigation: Row of Icons on Mobile, Full Nav on Desktop */}
           <nav
@@ -452,9 +459,29 @@ export const MainLayout = () => {
                 <Clock size={18} aria-hidden="true" />
                 Journey History
               </Button>
+
+              {/* Switch role shortcut — only when a persona is set */}
+              {selectedPersona && (
+                <Button
+                  variant="ghost"
+                  type="button"
+                  onClick={() => {
+                    setMoreMenuOpen(false)
+                    setMobilePersonaSwitchOpen(true)
+                  }}
+                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
+                >
+                  <UserCog size={18} aria-hidden="true" />
+                  Switch role
+                </Button>
+              )}
             </div>
           </div>
         </>
+      )}
+
+      {mobilePersonaSwitchOpen && (
+        <PersonaSwitchModal onClose={() => setMobilePersonaSwitchOpen(false)} />
       )}
 
       {/* Scrollable content area */}
