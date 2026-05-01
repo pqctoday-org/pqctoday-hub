@@ -6,6 +6,58 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.29] - April 30, 2026
+
+The app gets a new logo, the top navigation no longer overflows on standard
+laptop screens, and pages stop drifting sideways when wide content is on
+screen. The Compliance page is also tidier on phones — filters wrap into
+neat rows and overflowing strips show a soft fade so it's clear there's
+more to scroll to.
+
+### Added
+
+- **Brand refresh across favicons, PWA icons, and social previews** — Browser
+  tab favicon, the Apple "Add to Home Screen" tile, all PWA install icons
+  (192/512/1024 px), and the social-share image (Twitter/Slack/LinkedIn
+  previews) all use the new "PQC Today — For a Quantum Safe World" artwork.
+  The favicon shows a glyph-only crop so it stays readable at 32 px; larger
+  icons keep the full wordmark.
+
+- **Android adaptive home-screen icons** — Two new "maskable" icons
+  (`pwa-maskable-192.png`, `pwa-maskable-512.png`) let Android render the
+  app's home-screen tile as a circle, squircle, or whatever shape your
+  launcher uses, with the glyph centered in the safe area so the OS never
+  crops the logo.
+
+### Changed
+
+- **Top navigation no longer scrolls horizontally on typical laptops** —
+  Each nav item now stacks the icon over a small label (matching the
+  existing mobile pattern) instead of icon-next-to-label. The row is
+  noticeably narrower so all items fit on common 1440 / 1366 px viewports
+  without horizontal scrolling. The active-state border, dividers, and
+  touch targets are unchanged.
+
+- **Compliance filter chips on mobile** — Organization, Industry, Region,
+  and Deadline filters now collapse to half-width pairs on phones and
+  expand to their natural width on tablets and up. Easier to tap and
+  scan; nothing wraps awkwardly into a narrow column.
+
+- **Compliance mobile tab strip and CSWP.39 framework matrix show a soft
+  right-edge fade** — When the tab list (Bodies, Tech Stds, Cert Schemes,
+  Frameworks, Records, CSWP.39) or the framework × maturity table extends
+  past the screen edge, a subtle gradient hints there's more content to
+  scroll to. Pure visual affordance — no behavior change.
+
+### Fixed
+
+- **Pages no longer drift sideways on phones** — The inner scroll wrapper
+  was silently allowing horizontal scroll whenever any child (a wide chart,
+  a table, a long code block) extended past the viewport, so the entire
+  page could be swiped left/right past the header gutters. Locked the
+  wrapper to vertical scrolling only; wide visualizations still scroll
+  inside their own bordered containers as intended.
+
 ## [3.5.28] - April 30, 2026
 
 The CSWP.39 governance dataset on the Compliance page now covers 1,332 requirements

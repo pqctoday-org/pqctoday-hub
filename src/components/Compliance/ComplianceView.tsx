@@ -319,49 +319,55 @@ function MobileViewToggle({
 
   return (
     <div className="space-y-4" id="compliance-tabs-mobile">
-      <div className="flex gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
-        <Button
-          variant="ghost"
-          className={btnClass(section === 'standards')}
-          onClick={() => setSection('standards')}
-        >
-          Bodies
-        </Button>
-        <Button
-          variant="ghost"
-          className={btnClass(section === 'technical')}
-          onClick={() => setSection('technical')}
-        >
-          Tech Stds
-        </Button>
-        <Button
-          variant="ghost"
-          className={btnClass(section === 'certification')}
-          onClick={() => setSection('certification')}
-        >
-          Cert Schemes
-        </Button>
-        <Button
-          variant="ghost"
-          className={btnClass(section === 'compliance')}
-          onClick={() => setSection('compliance')}
-        >
-          Frameworks
-        </Button>
-        <Button
-          variant="ghost"
-          className={btnClass(section === 'records')}
-          onClick={() => setSection('records')}
-        >
-          Records
-        </Button>
-        <Button
-          variant="ghost"
-          className={btnClass(section === 'cswp39')}
-          onClick={() => setSection('cswp39')}
-        >
-          CSWP.39
-        </Button>
+      <div className="relative">
+        <div className="flex gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
+          <Button
+            variant="ghost"
+            className={btnClass(section === 'standards')}
+            onClick={() => setSection('standards')}
+          >
+            Bodies
+          </Button>
+          <Button
+            variant="ghost"
+            className={btnClass(section === 'technical')}
+            onClick={() => setSection('technical')}
+          >
+            Tech Stds
+          </Button>
+          <Button
+            variant="ghost"
+            className={btnClass(section === 'certification')}
+            onClick={() => setSection('certification')}
+          >
+            Cert Schemes
+          </Button>
+          <Button
+            variant="ghost"
+            className={btnClass(section === 'compliance')}
+            onClick={() => setSection('compliance')}
+          >
+            Frameworks
+          </Button>
+          <Button
+            variant="ghost"
+            className={btnClass(section === 'records')}
+            onClick={() => setSection('records')}
+          >
+            Records
+          </Button>
+          <Button
+            variant="ghost"
+            className={btnClass(section === 'cswp39')}
+            onClick={() => setSection('cswp39')}
+          >
+            CSWP.39
+          </Button>
+        </div>
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-background to-transparent"
+        />
       </div>
       {section !== 'records' && section !== 'cswp39' && (
         <CrossTabSearchHint

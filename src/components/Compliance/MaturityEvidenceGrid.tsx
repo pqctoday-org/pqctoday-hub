@@ -247,7 +247,11 @@ export function MaturityEvidenceGrid({
       </div>
 
       {/* Grid */}
-      <div className="overflow-x-auto rounded-lg border border-border">
+      <div className="relative overflow-x-auto rounded-lg border border-border">
+        <div
+          aria-hidden="true"
+          className="md:hidden pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-card to-transparent"
+        />
         <table className="w-full text-xs min-w-[520px]">
           <thead>
             <tr className="bg-muted/40">

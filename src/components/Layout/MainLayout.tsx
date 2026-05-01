@@ -172,13 +172,9 @@ export const MainLayout = () => {
     },
   ]
 
-  // Abbreviated labels for mobile bottom nav (only override labels that are too long)
+  // Abbreviated labels for stacked icon+label nav (only override labels that don't fit)
   const SHORT_LABELS: Record<string, string> = {
-    Timeline: 'Time',
-    'Command Center': 'Biz',
-    Algorithms: 'Algos',
-    Compliance: 'Comply',
-    Playground: 'Play',
+    'Command Center': 'Command',
   }
 
   const [moreMenuOpen, setMoreMenuOpen] = React.useState(false)
@@ -295,7 +291,7 @@ export const MainLayout = () => {
                 <React.Fragment key={item.path}>
                   {showDivider && (
                     <span
-                      className="hidden lg:block w-px h-5 bg-border/40 shrink-0"
+                      className="hidden lg:block w-px h-9 bg-border/40 shrink-0"
                       aria-hidden="true"
                     />
                   )}
@@ -316,15 +312,14 @@ export const MainLayout = () => {
                         aria-current={isActive ? 'page' : undefined}
                         className={
                           isActive
-                            ? 'bg-primary/10 text-foreground border border-primary/20 px-1 lg:px-4 min-h-[44px] lg:min-h-0 flex-col lg:flex-row items-center gap-0'
-                            : 'text-muted-foreground hover:text-foreground px-1 lg:px-4 min-h-[44px] lg:min-h-0 flex-col lg:flex-row items-center gap-0'
+                            ? 'bg-primary/10 text-foreground border border-primary/20 px-2 lg:px-3 min-h-[44px] flex-col items-center gap-0'
+                            : 'text-muted-foreground hover:text-foreground px-2 lg:px-3 min-h-[44px] flex-col items-center gap-0'
                         }
                       >
-                        <item.icon size={18} aria-hidden="true" className="lg:mr-2" />
-                        <span className="lg:hidden text-[11px] leading-tight mt-0.5 truncate max-w-[56px] text-center">
+                        <item.icon size={18} aria-hidden="true" />
+                        <span className="text-[11px] leading-tight mt-1 truncate max-w-[72px] text-center">
                           {SHORT_LABELS[item.label] ?? item.label}
                         </span>
-                        <span className="hidden lg:inline">{item.label}</span>
                       </Button>
                     )}
                   </NavLink>
@@ -463,7 +458,7 @@ export const MainLayout = () => {
       )}
 
       {/* Scrollable content area */}
-      <div className="flex-1 overflow-y-auto min-h-0">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0">
         {/* Main Content Area */}
         <main id="main-content" className="container py-4 px-4 md:py-8 md:px-8" role="main">
           {/* Offline mode info banner */}

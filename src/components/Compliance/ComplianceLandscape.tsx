@@ -925,7 +925,7 @@ export function ComplianceLandscape({
       {/* Library-style filter band */}
       <div className="bg-card border border-border rounded-lg shadow-sm p-2 flex items-center gap-2 flex-wrap">
         {/* Organization dropdown */}
-        <div className="min-w-[140px]">
+        <div className="flex-1 basis-[calc(50%-0.25rem)] min-w-0 md:flex-none md:basis-auto md:min-w-[140px]">
           <FilterDropdown
             items={orgItems}
             selectedId={orgFilter}
@@ -937,8 +937,8 @@ export function ComplianceLandscape({
         </div>
 
         {/* Industry dropdown + clear */}
-        <div className="flex items-center gap-1">
-          <div className="min-w-[140px]">
+        <div className="flex items-center gap-1 flex-1 basis-[calc(50%-0.25rem)] min-w-0 md:flex-none md:basis-auto">
+          <div className="flex-1 min-w-0 md:flex-none md:min-w-[140px]">
             <FilterDropdown
               items={industryItems}
               selectedId={industryFilter}
@@ -962,8 +962,8 @@ export function ComplianceLandscape({
         </div>
 
         {/* Region dropdown + clear */}
-        <div className="flex items-center gap-1">
-          <div className="min-w-[150px]">
+        <div className="flex items-center gap-1 flex-1 basis-[calc(50%-0.25rem)] min-w-0 md:flex-none md:basis-auto">
+          <div className="flex-1 min-w-0 md:flex-none md:min-w-[150px]">
             <FilterDropdown
               items={regionItems}
               selectedId={regionFilter}
@@ -987,8 +987,8 @@ export function ComplianceLandscape({
         </div>
 
         {/* Deadline dropdown + clear */}
-        <div className="flex items-center gap-1">
-          <div className="min-w-[150px]">
+        <div className="flex items-center gap-1 flex-1 basis-[calc(50%-0.25rem)] min-w-0 md:flex-none md:basis-auto">
+          <div className="flex-1 min-w-0 md:flex-none md:min-w-[150px]">
             <FilterDropdown
               items={deadlineItems}
               selectedId={deadlineFilter}
