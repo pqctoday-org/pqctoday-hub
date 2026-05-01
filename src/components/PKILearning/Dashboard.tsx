@@ -3,7 +3,16 @@
 import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowUpDown, BookOpen, Home, PlayCircle, Search, X, CheckSquare } from 'lucide-react'
+import {
+  ArrowUpDown,
+  BookOpen,
+  Home,
+  PlayCircle,
+  Search,
+  X,
+  CheckSquare,
+  SlidersHorizontal,
+} from 'lucide-react'
 import clsx from 'clsx'
 import { useModuleStore } from '../../store/useModuleStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
@@ -164,6 +173,173 @@ const LearnSortControl = ({
               {option.label}
             </Button>
           ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// DesktopLearnFilterPopover — collapsible advanced-filter pill (desktop only)
+// ---------------------------------------------------------------------------
+
+interface DesktopLearnFilterPopoverProps {
+  activeFilterCount: number
+  showTrackFilter: boolean
+  sortDisabled: boolean
+  selectedTrack: string
+  selectedDifficulty: string
+  selectedStatus: string
+  sortBy: LearnSortMode
+  personaFilterItems: { id: string; label: string }[]
+  selectedPersonaFilter: string
+  onTrackChange: (v: string) => void
+  onDifficultyChange: (v: string) => void
+  onStatusChange: (v: string) => void
+  onSortChange: (v: LearnSortMode) => void
+  onPersonaChange: (v: string) => void
+  onClear: () => void
+}
+
+const DesktopLearnFilterPopover: React.FC<DesktopLearnFilterPopoverProps> = ({
+  activeFilterCount,
+  showTrackFilter,
+  sortDisabled,
+  selectedTrack,
+  selectedDifficulty,
+  selectedStatus,
+  sortBy,
+  personaFilterItems,
+  selectedPersonaFilter,
+  onTrackChange,
+  onDifficultyChange,
+  onStatusChange,
+  onSortChange,
+  onPersonaChange,
+  onClear,
+}) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: Event) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setIsOpen(false)
+    }
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('touchstart', handleClickOutside)
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('touchstart', handleClickOutside)
+    }
+  }, [isOpen])
+
+  return (
+    <div className="relative" ref={ref}>
+      <Button
+        variant="ghost"
+        onClick={() => setIsOpen((o) => !o)}
+        aria-haspopup="true"
+        aria-expanded={isOpen}
+        className={clsx(
+          'flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors',
+          activeFilterCount > 0
+            ? 'border-primary bg-primary/10 text-primary'
+            : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground'
+        )}
+      >
+        <SlidersHorizontal size={14} aria-hidden="true" />
+        Filters
+        {activeFilterCount > 0 && (
+          <span className="ml-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+            {activeFilterCount}
+          </span>
+        )}
+      </Button>
+
+      {isOpen && (
+        <div className="absolute top-full left-0 mt-1 w-72 bg-popover border border-border rounded-lg shadow-xl z-50 p-4 space-y-4">
+          <div className="space-y-1.5">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Role / Path
+            </span>
+            <FilterDropdown
+              items={personaFilterItems}
+              selectedId={selectedPersonaFilter}
+              onSelect={onPersonaChange}
+              defaultLabel="All Roles"
+              noContainer
+            />
+          </div>
+
+          {showTrackFilter && (
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Track
+              </span>
+              <FilterDropdown
+                items={TRACK_FILTER_ITEMS}
+                selectedId={selectedTrack}
+                onSelect={onTrackChange}
+                defaultLabel="All Tracks"
+                noContainer
+              />
+            </div>
+          )}
+
+          <div className="space-y-1.5">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Difficulty
+            </span>
+            <FilterDropdown
+              items={DIFFICULTY_FILTER_ITEMS.map((d) => ({
+                id: d,
+                label: d === 'All' ? 'All Levels' : d.charAt(0).toUpperCase() + d.slice(1),
+              }))}
+              selectedId={selectedDifficulty}
+              onSelect={onDifficultyChange}
+              defaultLabel="All Levels"
+              noContainer
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Status
+            </span>
+            <FilterDropdown
+              items={STATUS_FILTER_ITEMS.map((s) => ({
+                id: s,
+                label: s === 'All' ? 'All Statuses' : (STATUS_LABELS[s] ?? s),
+              }))}
+              selectedId={selectedStatus}
+              onSelect={onStatusChange}
+              defaultLabel="All Statuses"
+              noContainer
+            />
+          </div>
+
+          <div className="space-y-1.5 pt-3 border-t border-border/50">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Sort By
+            </span>
+            <LearnSortControl value={sortBy} onChange={onSortChange} disabled={sortDisabled} />
+          </div>
+
+          {activeFilterCount > 0 && (
+            <Button
+              variant="ghost"
+              onClick={() => {
+                onClear()
+                setIsOpen(false)
+              }}
+              className="w-full h-8 text-xs text-muted-foreground hover:text-destructive border border-border/50 rounded-md"
+            >
+              <X size={11} className="mr-1" />
+              Clear all filters
+            </Button>
+          )}
         </div>
       )}
     </div>
@@ -575,18 +751,6 @@ const ModuleTracksGrid = ({
         </p>
       )}
 
-      {/* Desktop Profile Banner */}
-      <div className="hidden md:flex justify-between items-center bg-muted/10 p-3 rounded-lg border border-border/50">
-        <span className="text-sm font-medium text-foreground">Learning Journey Profile:</span>
-        <FilterDropdown
-          items={personaFilterItems}
-          selectedId={selectedPersonaFilter}
-          onSelect={handlePersonaFilterChange}
-          defaultLabel={isCuriousMode ? 'All Paths' : 'All Roles'}
-          noContainer
-        />
-      </div>
-
       {/* Mobile Search & Filter Drawer */}
       <div className="flex md:hidden items-center gap-2">
         <div className="relative flex-1">
@@ -672,7 +836,7 @@ const ModuleTracksGrid = ({
         </div>
       </div>
 
-      {/* Desktop Controls bar */}
+      {/* Desktop Controls bar — search + filter pill + my-modules + view toggle */}
       <div className="hidden md:flex flex-wrap items-center gap-2">
         {/* Search */}
         <div className="relative flex-1 min-w-[160px]">
@@ -691,45 +855,24 @@ const ModuleTracksGrid = ({
           />
         </div>
 
-        {/* Track filter — hidden in stack mode */}
-        {showTrackFilter && (
-          <FilterDropdown
-            items={TRACK_FILTER_ITEMS}
-            selectedId={selectedTrack}
-            onSelect={setSelectedTrack}
-            defaultLabel="All Tracks"
-            noContainer
-          />
-        )}
-
-        {/* Difficulty */}
-        <FilterDropdown
-          items={DIFFICULTY_FILTER_ITEMS.map((d) => ({
-            id: d,
-            label: d === 'All' ? 'All Levels' : d.charAt(0).toUpperCase() + d.slice(1),
-          }))}
-          selectedId={selectedDifficulty}
-          onSelect={setSelectedDifficulty}
-          defaultLabel="All Levels"
-          noContainer
+        {/* Collapsed advanced filters */}
+        <DesktopLearnFilterPopover
+          activeFilterCount={activeFilterCount}
+          showTrackFilter={showTrackFilter}
+          sortDisabled={sortDisabled}
+          selectedTrack={selectedTrack}
+          selectedDifficulty={selectedDifficulty}
+          selectedStatus={selectedStatus}
+          sortBy={sortBy}
+          personaFilterItems={personaFilterItems}
+          selectedPersonaFilter={selectedPersonaFilter}
+          onTrackChange={setSelectedTrack}
+          onDifficultyChange={setSelectedDifficulty}
+          onStatusChange={setSelectedStatus}
+          onSortChange={setSortBy}
+          onPersonaChange={handlePersonaFilterChange}
+          onClear={clearFilters}
         />
-
-        {/* Status */}
-        <FilterDropdown
-          items={STATUS_FILTER_ITEMS.map((s) => ({
-            id: s,
-            label: s === 'All' ? 'All Statuses' : (STATUS_LABELS[s] ?? s),
-          }))}
-          selectedId={selectedStatus}
-          onSelect={setSelectedStatus}
-          defaultLabel="All Statuses"
-          noContainer
-        />
-
-        {/* Sort — hidden in stack mode, disabled when persona active */}
-        {viewMode !== 'stack' && (
-          <LearnSortControl value={sortBy} onChange={setSortBy} disabled={sortDisabled} />
-        )}
 
         {/* My Modules filter toggle */}
         {myLearnModules.length > 0 && (
