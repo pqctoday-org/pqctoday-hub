@@ -20,6 +20,8 @@ interface ExploreTile {
   title: string
   description: string
   path: string
+  /** Alternate destination for gated-curious users (avoids sending them to blocked routes). */
+  gatedPath?: string
   accent: string
 }
 
@@ -70,14 +72,17 @@ const TILES: ExploreTile[] = [
     description:
       'ML-KEM, ML-DSA, SLH-DSA — compare the new NIST-standardized algorithms side by side.',
     path: '/algorithms',
+    gatedPath: '/learn/pqc-101',
     accent: 'text-secondary bg-secondary/10',
   },
 ]
 
 export function ExploreView() {
   const navigate = useNavigate()
-  const { selectedPersona, viewAccess, setViewAccess } = usePersonaStore()
-  const showUnlockPrompt = selectedPersona === 'curious' && viewAccess === 'gated'
+  const { selectedPersona, experienceLevel, viewAccess, setViewAccess } = usePersonaStore()
+  const isCurious = selectedPersona === 'curious' || experienceLevel === 'curious'
+  const isGated = isCurious && viewAccess === 'gated'
+  const showUnlockPrompt = isGated
 
   return (
     <div className="max-w-4xl mx-auto py-4 md:py-8 px-2">
@@ -93,17 +98,18 @@ export function ExploreView() {
         </p>
       </div>
 
-      {/* Tile grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Tile grid — max-w-5xl prevents stretching on ultrawide */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
         {TILES.map((tile) => {
           const Icon = tile.icon
+          const destination = isGated && tile.gatedPath ? tile.gatedPath : tile.path
           return (
             <Button
               key={tile.path}
               variant="ghost"
               onClick={() => {
-                logExploreTileClick(tile.path)
-                navigate(tile.path)
+                logExploreTileClick(destination)
+                navigate(destination)
               }}
               className="glass-panel h-auto p-5 flex-col items-start text-left whitespace-normal hover:bg-transparent hover:border-primary/40 group"
             >
