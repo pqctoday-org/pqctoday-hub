@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { ScrollText } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import { PageHeader } from '@/components/common/PageHeader'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PatentsTable } from './PatentsTable'
+import type { SortKey, SortDir } from './PatentsTable'
 import { PatentsInsights } from './PatentsInsights'
 import type { InsightsFilter } from '@/types/PatentTypes'
 import { patentsData, patentsMetadata } from '@/data/patentsData'
@@ -32,10 +33,54 @@ const PATENTS_CSV_COLUMNS: CsvColumnConfig<PatentItem>[] = [
   { header: 'Summary', accessor: (p) => p.summary },
 ]
 
+const SORT_LS_KEY = 'pqc-patents-sort'
+const VALID_SORT_KEYS: SortKey[] = ['issueDate', 'impactScore', 'title', 'priorityDate']
+const VALID_SORT_DIRS: SortDir[] = ['asc', 'desc']
+
+function readSavedSort(): { key: SortKey; dir: SortDir } {
+  try {
+    const raw = localStorage.getItem(SORT_LS_KEY)
+    if (raw) {
+      const { key, dir } = JSON.parse(raw)
+      if (VALID_SORT_KEYS.includes(key) && VALID_SORT_DIRS.includes(dir)) return { key, dir }
+    }
+  } catch {
+    // ignore
+  }
+  return { key: 'issueDate', dir: 'desc' }
+}
+
 export function PatentsView() {
   const [searchParams, setSearchParams] = useSearchParams()
   const activeTab = searchParams.get('tab') ?? 'insights'
   const selectedPatent = searchParams.get('patent')
+
+  const sortKey = useMemo<SortKey>(() => {
+    const s = searchParams.get('sort') as SortKey | null
+    return s && VALID_SORT_KEYS.includes(s) ? s : readSavedSort().key
+  }, [searchParams])
+
+  const sortDir = useMemo<SortDir>(() => {
+    const d = searchParams.get('dir') as SortDir | null
+    return d && VALID_SORT_DIRS.includes(d) ? d : readSavedSort().dir
+  }, [searchParams])
+
+  const handleSort = useCallback(
+    (key: SortKey) => {
+      const nextDir: SortDir = sortKey === key ? (sortDir === 'asc' ? 'desc' : 'asc') : 'desc'
+      localStorage.setItem(SORT_LS_KEY, JSON.stringify({ key, dir: nextDir }))
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          next.set('sort', key)
+          next.set('dir', nextDir)
+          return next
+        },
+        { replace: true }
+      )
+    },
+    [sortKey, sortDir, setSearchParams]
+  )
 
   const handleTabChange = useCallback(
     (tab: string) => {
@@ -119,6 +164,9 @@ export function PatentsView() {
                 patents={patentsData}
                 selectedId={selectedPatent}
                 onSelect={handleSelect}
+                sortKey={sortKey}
+                sortDir={sortDir}
+                onSort={handleSort}
               />
             </div>
           </TabsContent>

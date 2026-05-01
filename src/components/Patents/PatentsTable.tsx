@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { PatentDetail } from './PatentDetail'
 import type { PatentItem, ImpactLevel, CryptoAgilityMode } from '@/types/PatentTypes'
 import { inferRegion, NIST_STATUS_LABELS } from './PatentsInsights'
@@ -23,8 +24,8 @@ import {
   logPatentView,
 } from '@/utils/analytics'
 
-type SortKey = 'issueDate' | 'impactScore' | 'title' | 'priorityDate'
-type SortDir = 'asc' | 'desc'
+export type SortKey = 'issueDate' | 'impactScore' | 'title' | 'priorityDate'
+export type SortDir = 'asc' | 'desc'
 
 const AGILITY_LABELS: Record<CryptoAgilityMode, string> = {
   classical_only: 'Classical only',
@@ -318,12 +319,12 @@ function AddFilterPopover({
                 <span className="font-medium">{selectedDef?.label}</span>
               </Button>
               <div className="border-b border-border">
-                <input
+                <Input
                   type="text"
                   placeholder="Search…"
                   value={catSearch}
                   onChange={(e) => setCatSearch(e.target.value)}
-                  className="w-full bg-background px-3 py-1.5 text-xs outline-none placeholder:text-muted-foreground"
+                  className="w-full rounded-none border-0 text-xs h-8 px-3 focus-visible:ring-0"
                 />
               </div>
               <div className="max-h-52 overflow-auto py-1">
@@ -359,12 +360,13 @@ interface Props {
   patents: PatentItem[]
   selectedId: string | null
   onSelect: (id: string | null) => void
+  sortKey: SortKey
+  sortDir: SortDir
+  onSort: (key: SortKey) => void
 }
 
-export function PatentsTable({ patents, selectedId, onSelect }: Props) {
+export function PatentsTable({ patents, selectedId, onSelect, sortKey, sortDir, onSort }: Props) {
   const [searchParams, setSearchParams] = useSearchParams()
-  const [sortKey, setSortKey] = useState<SortKey>('issueDate')
-  const [sortDir, setSortDir] = useState<SortDir>('desc')
 
   const search = searchParams.get('search') ?? ''
 
@@ -468,13 +470,9 @@ export function PatentsTable({ patents, selectedId, onSelect }: Props) {
   const handleSort = useCallback(
     (key: SortKey) => {
       logPatentSort(key)
-      if (sortKey === key) setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
-      else {
-        setSortKey(key)
-        setSortDir('desc')
-      }
+      onSort(key)
     },
-    [sortKey]
+    [onSort]
   )
 
   const selectedPatent = useMemo(
@@ -500,12 +498,12 @@ export function PatentsTable({ patents, selectedId, onSelect }: Props) {
       >
         {/* Filter bar */}
         <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-2.5">
-          <input
+          <Input
             type="search"
             placeholder="Search patents…"
             value={search}
             onChange={(e) => setFilter('search', e.target.value)}
-            className="h-7 rounded border border-input bg-background px-3 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary w-44"
+            className="h-7 text-xs w-44"
           />
 
           {activeFilters.map(({ key, value }) => (
