@@ -552,6 +552,8 @@ export const ComplianceView = () => {
     if (tab) return tab
     const hashTab = typeof window !== 'undefined' ? parseTabFromHash(window.location.hash) : null
     if (hashTab) return hashTab
+    // Developer persona defaults to certification records (FIPS/ACVP/CC) tab
+    if (!certParam && !complianceHint && selectedPersona === 'developer') return 'records'
     return (certParam ? 'records' : (complianceHint?.section ?? 'standards')) as MobileSection
   })
 

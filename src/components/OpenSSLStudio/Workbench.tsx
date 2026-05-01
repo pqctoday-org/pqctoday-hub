@@ -4,7 +4,7 @@ import { useOpenSSLStore } from './store'
 import { WorkbenchToolbar } from './components/WorkbenchToolbar'
 import { WorkbenchHeader } from './components/WorkbenchHeader'
 import { WorkbenchConfig } from './components/WorkbenchConfig'
-
+import { WorkbenchPresets } from './components/WorkbenchPresets'
 import { WorkbenchPreview } from './components/WorkbenchPreview'
 import {
   sanitizeCountryCode,
@@ -486,6 +486,7 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
   return (
     <div className="h-full flex flex-col gap-6 p-4">
       <WorkbenchHeader />
+      <WorkbenchPresets setCategory={setCategory} />
       <WorkbenchToolbar category={category} setCategory={setCategory} />
 
       {/* Content Area */}
