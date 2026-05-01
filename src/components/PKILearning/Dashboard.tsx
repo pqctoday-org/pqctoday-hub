@@ -21,6 +21,9 @@ import { MODULE_CATALOG, MODULE_TRACKS, MODULE_STEP_COUNTS, MODULE_TO_TRACK } fr
 import { MobileLearnFilterDrawer } from './MobileLearnFilterDrawer'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
+import { useAssessmentResultStore } from '../../store/useAssessmentResultStore'
+import { inferRecommendedModules } from '../../utils/inferRecommendedModules'
+import { AssessmentRecommendationsBanner } from './AssessmentRecommendationsBanner'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -184,6 +187,17 @@ export const Dashboard: React.FC = () => {
     .sort((a, b) => (modules[b.id]?.lastVisited || 0) - (modules[a.id]?.lastVisited || 0))
   const resumeModule = inProgressModules[0]
 
+  // Assessment-derived recommendations
+  const assessmentResult = useAssessmentResultStore()
+  const { selectedPersona } = usePersonaStore()
+  const recommendedModuleIds = useMemo(() => {
+    if (!assessmentResult.completedAt || !assessmentResult.categoryScores) return []
+    return inferRecommendedModules(
+      assessmentResult.categoryScores,
+      (selectedPersona as import('../../data/learningPersonas').PersonaId) ?? 'curious'
+    )
+  }, [assessmentResult.completedAt, assessmentResult.categoryScores, selectedPersona])
+
   const getProgressPercentage = (moduleId: string): number => {
     const module = modules[moduleId]
     if (!module) return 0
@@ -242,6 +256,14 @@ export const Dashboard: React.FC = () => {
             </Button>
           </div>
         </motion.div>
+      )}
+
+      {/* Assessment-derived path — shown when assessment is complete */}
+      {recommendedModuleIds.length > 0 && !isEmbedded && (
+        <AssessmentRecommendationsBanner
+          moduleIds={recommendedModuleIds}
+          onRetakeAssessment={() => navigate('/assess')}
+        />
       )}
 
       {/* Module Tracks Grid — always visible */}
