@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { Suspense, useEffect } from 'react'
-import { useParams, useNavigate, useSearchParams, Navigate } from 'react-router-dom'
-import { ArrowLeft, Wrench } from 'lucide-react'
+import { useParams, useNavigate, useSearchParams, Navigate, Link } from 'react-router-dom'
+import { ArrowLeft, Wrench, ArrowRight } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Skeleton } from '../ui/skeleton'
 import { WORKSHOP_TOOLS, TOOL_COMPONENTS, ONBACK_COMPONENTS } from './workshopRegistry'
@@ -123,6 +123,53 @@ export const PlaygroundToolRoute = () => {
             <Comp />
           ))}
       </Suspense>
+
+      <NextToolSuggestion currentToolId={tool.id} currentCategory={tool.category} />
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// NextToolSuggestion — "up next" CTA at bottom of each tool
+// ---------------------------------------------------------------------------
+
+function NextToolSuggestion({
+  currentToolId,
+  currentCategory,
+}: {
+  currentToolId: string
+  currentCategory: string
+}) {
+  const sameCat = WORKSHOP_TOOLS.filter(
+    (t) => t.category === currentCategory && t.id !== currentToolId && !t.wip
+  )
+  // Pick up to 2: prefer the tool immediately after in category order, then one more
+  const suggestions = sameCat.slice(0, 2)
+  if (suggestions.length === 0) return null
+
+  return (
+    <div className="mt-8 pt-6 border-t border-border/50">
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+        Next in {currentCategory}
+      </p>
+      <div className="flex flex-wrap gap-3">
+        {suggestions.map((t) => {
+          const Icon = t.icon
+          return (
+            <Link
+              key={t.id}
+              to={`/playground/${t.id}`}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-card/50 hover:border-primary/40 hover:bg-primary/5 transition-colors group"
+            >
+              <Icon className="w-4 h-4 text-muted-foreground group-hover:text-primary shrink-0 transition-colors" />
+              <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                {t.name}
+              </span>
+              <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary ml-1 shrink-0 transition-colors" />
+            </Link>
+          )
+        })}
+      </div>
     </div>
   )
 }
