@@ -6,6 +6,83 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.30] - May 1, 2026
+
+This release closes a long backlog of cross-reference gaps in the data layer.
+The Library now contains every standard, RFC, and policy that the rest of the
+site already cited; the Migrate page knows the vendors behind 31 products it
+previously labeled with bare names; and the trust-source attribution badges
+catch up to the current data after a 32-day lag.
+
+### Added
+
+- **32 missing Library entries** — IEC 62443, IEEE 1609.2 Amendment, ISO/IEC
+  18033-2, ISO/IEC NP 29192-8, CAB Forum SC-081v3, ENISA EUDI Wallet Security,
+  FIPS 207 (HQC), Samsung-Thales ML-KEM eSE 2026, NSA CSfC PQC Guidance
+  Addendum, Australia ASD PQC Guidance, China OSCCA / GB/T / YD/T standards,
+  RFC 9142, RFC 9528, W3C WebAuthn Level 3, and 16 others. Compliance pages,
+  Leaders bios, and Quiz questions that previously linked to nothing now resolve
+  to real reference cards.
+
+- **30 new vendor profiles** — Akamai, Fastly, Mozilla, Opera, Tailscale,
+  ZeroTier, Netskope, OVHcloud, Rambus, Quantropi, QNu Labs, IronCore Labs,
+  Versa Networks, Forward Networks, SimpleX, Spherity, SWIFT, ASUSTOR, ETAS,
+  Dyber (Fraunhofer SIT), Internxt, Postfix Project, QANplatform, Session
+  Technology Foundation, SignQuantum, PQSecure Technologies, TrustCloud,
+  WinSCP, Applivery, Prestige Systems, backbone-hq. Migrate cards for 31
+  products (Qrypt + 30) now have proper vendor attribution instead of the
+  raw product name.
+
+### Changed
+
+- **Trusted-source cross-reference refreshed** — `trusted_source_xref` grew
+  from 1281 to 1600 rows after a regen against the current Library and Migrate
+  catalog. The 63 stale references it carried (35 to renamed Library entries,
+  28 to renamed Migrate products) are gone.
+
+- **`migrate_purl_xref` regenerated against the current product catalog** —
+  every catalog entry is now represented (155 with detected package URLs,
+  588 explicitly marked `not_found`). The previous file was 29 days behind.
+
+- **`migrate_certification_xref` regenerated** — picked up 51 new
+  product↔certificate links (754 → 805 rows) including the new vendor profiles.
+
+- **Catalog vendor IDs normalized to `VND-XXX` format** — 31 catalog rows
+  that previously stored raw vendor names ("Akamai", "Fastly", "Qrypt") now
+  point to proper vendor codes. Vendor lookup, vendor counts, and the trust
+  badges all see the same data.
+
+### Fixed
+
+- **Two corrupted Library archive files removed** — `OpenSSL-3x-Docs.html`
+  was a 314-byte JavaScript redirect stub (not real content), and
+  `ref-joseph-transitioning.pdf` was HTML mislabeled as a PDF. Both deleted;
+  the OpenSSL Library card now points only to the live URL since the archive
+  was unusable.
+
+- **Trusted-source-xref test was rejecting legitimate cross-resource
+  attributions** — the uniqueness check used `(resourceId, sourceId)` as the
+  key, which incorrectly flagged `GSMA-NG116` and `ETSI-EN-303645` as
+  duplicates because they appear under both `library` and `compliance`
+  resource types attributed to the same source. Fixed to include
+  `resourceType` so the same standard can legitimately be attributed in
+  multiple contexts.
+
+### Internal
+
+- **Data integrity validator: 6 ERRORs → 0**, 86 → 87 checks passing. The
+  remaining 2 warnings (1 sparse-enrichment quiz item, 1 enrichment metadata
+  referencing a non-existent "Performance" page) are content-quality issues
+  for a future enrichment pass, not structural defects.
+
+- **CSV archive hygiene** — 21 obsolete CSV versions moved to
+  `src/data/archive/` so each family now keeps only the two latest versions
+  in `src/data/` (per CSVmaintenance.md), restoring the New/Updated badge
+  diff window.
+
+- **RAG corpus regenerated** — 8463 → 8511 chunks reflecting the merged
+  Library and remapped Migrate catalog.
+
 ## [3.5.29] - April 30, 2026
 
 The app gets a new logo, the top navigation no longer overflows on standard

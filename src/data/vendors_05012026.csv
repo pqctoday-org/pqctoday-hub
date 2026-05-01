@@ -3,8 +3,6 @@ VND-000,Unassigned,Unassigned,https://pqctoday.com,Open Source Community,Open So
 VND-001,Amazon Web Services Inc.,AWS,https://aws.amazon.com,Trusted Vendor,Commercial Vendor,United States,Active,2026-03-26,2549000I2PRQGGIGCA75,"AMAZON WEB SERVICES, INC.",ACTIVE,https://search.gleif.org/#/record/2549000I2PRQGGIGCA75,2026-04-01
 VND-002,Apple Inc.,Apple,https://apple.com,Trusted Vendor,Commercial Vendor,United States,Active,2026-03-26,HWUPKR0MPOU8FGXBT394,Apple Inc.,ACTIVE,https://search.gleif.org/#/record/HWUPKR0MPOU8FGXBT394,2026-04-01
 VND-003,Arista Networks Inc.,Arista,https://arista.com,Trusted Vendor,Commercial Vendor,United States,Partial,2026-03-26,635400H1WKBLOQERUU95,"Arista Networks, Inc",ACTIVE,https://search.gleif.org/#/record/635400H1WKBLOQERUU95,2026-04-01
-VND-004,Best PQC Intelligent Cybersecurity Ltd.,Best PQC,https://bestpqc.com,Trusted Vendor,Commercial Vendor,China,Active,2026-03-26,,,,,
-VND-005,Blackberry Limited,BlackBerry,https://blackberry.com,Trusted Vendor,Commercial Vendor,Canada,Partial,2026-03-26,549300HJD8NEGT71RF07,BlackBerry Limited,ACTIVE,https://search.gleif.org/#/record/549300HJD8NEGT71RF07,2026-04-01
 VND-006,Canonical Ltd.,Canonical,https://canonical.com,Community/Commercial,Hybrid Commercial/Community,United Kingdom,Partial,2026-03-26,,,,,
 VND-007,Check Point Software Technologies Ltd.,Check Point,https://checkpoint.com,Trusted Vendor,Commercial Vendor,Israel,Active,2026-03-26,,,,,
 VND-008,Cisco Systems Inc.,Cisco,https://cisco.com,Trusted Vendor,Commercial Vendor,United States,Active,2026-03-26,549300LKFJ962MZ46593,"CISCO SYSTEMS, INC.",ACTIVE,https://search.gleif.org/#/record/549300LKFJ962MZ46593,2026-04-01
@@ -105,13 +103,10 @@ VND-102,BitGo Inc.,BitGo,https://bitgo.com,Trusted Vendor,Commercial Vendor,Unit
 VND-103,Anchorage Digital Bank,Anchorage Digital,https://anchorage.com,Trusted Vendor,Commercial Vendor,United States,Partial,2026-03-26,549300JJSDEHXA1AKJ69,ANCHORAGE DIGITAL BANK NATIONAL ASSOCIATION,ACTIVE,https://search.gleif.org/#/record/549300JJSDEHXA1AKJ69,2026-04-01
 VND-104,Fireblocks Inc.,Fireblocks,https://fireblocks.com,Trusted Vendor,Commercial Vendor,United States,Partial,2026-03-26,,,,,
 VND-105,Coinbase Inc.,Coinbase Custody,https://coinbase.com,Trusted Vendor,Commercial Vendor,United States,Partial,2026-03-26,549300QHD76EP6ZKTT48,"COINBASE, INC.",ACTIVE,https://search.gleif.org/#/record/549300QHD76EP6ZKTT48,2026-04-01
-VND-106,Hex Trust Ltd.,Hex Trust,https://hextrust.com,Trusted Vendor,Commercial Vendor,Hong Kong,Partial,2026-03-26,,,,,
 VND-107,Taurus SA,Taurus SA,https://taurushq.com,Trusted Vendor,Commercial Vendor,Switzerland,Partial,2026-03-26,506700HJTJ42L5IJDG59,Taurus SA,ACTIVE,https://search.gleif.org/#/record/506700HJTJ42L5IJDG59,2026-04-01
-VND-108,Komainu Ltd.,Komainu,https://komainu.com,Trusted Vendor,Commercial Vendor,United Kingdom,Partial,2026-03-26,,,,,
 VND-109,Copper Technologies Ltd.,Copper.co,https://copper.co,Trusted Vendor,Commercial Vendor,United Kingdom,Partial,2026-03-26,,,,,
 VND-110,DFNS SAS,DFNS,https://www.dfns.co,Trusted Vendor,Commercial Vendor,France,Partial,2026-03-26,,,,,
 VND-111,Zodia Custody Ltd.,Zodia Custody,https://zodiacustody.com,Trusted Vendor,Commercial Vendor,United Kingdom,Partial,2026-03-26,213800HLGCVYVUOZPZ83,ZODIA CUSTODY (SINGAPORE) PTE. LTD.,ACTIVE,https://search.gleif.org/#/record/213800HLGCVYVUOZPZ83,2026-04-01
-VND-112,Ripple Labs Inc.,Metaco / Ripple,https://ripple.com,Trusted Vendor,Commercial Vendor,United States,Partial,2026-03-26,9845001L01C142EE4094,RIPPLE LABS INC.,ACTIVE,https://search.gleif.org/#/record/9845001L01C142EE4094,2026-04-01
 VND-113,Ledger SAS,Ledger Enterprise,https://ledger.com,Trusted Vendor,Commercial Vendor,France,Partial,2026-03-26,,,,,
 VND-114,1Password Inc.,1Password,https://1password.com,Trusted Vendor,SaaS Platform,Canada,Active,2026-03-26,,,,,
 VND-115,Bitwarden Inc.,Bitwarden,https://bitwarden.com,Community/Commercial,Hybrid Commercial/Community,United States,Partial,2026-03-26,,,,,
@@ -135,9 +130,7 @@ VND-132,Keysight Technologies Inc.,Keysight,https://keysight.com,Trusted Vendor,
 VND-133,Mavenir Systems Inc.,Mavenir,https://mavenir.com,Trusted Vendor,Commercial Vendor,United States,Partial,2026-03-26,,,,,
 VND-134,Rakuten Symphony Inc.,Rakuten Symphony,https://symphony.rakuten.com,Trusted Vendor,Commercial Vendor,Japan,Partial,2026-03-26,,,,,
 VND-135,Hitachi Ltd.,Hitachi,https://hitachi.com,Trusted Vendor,Commercial Vendor,Japan,Partial,2026-03-26,,,,,2026-04-01
-VND-136,Descope Inc.,Descope,https://descope.com,Trusted Vendor,Commercial Vendor,United States,Partial,2026-03-26,,,,,
 VND-137,FusionAuth Inc.,FusionAuth,https://fusionauth.io,Trusted Vendor,Commercial Vendor,United States,None,2026-03-26,,,,,
-VND-138,Stytch Inc.,Stytch,https://stytch.com,Trusted Vendor,Commercial Vendor,United States,None,2026-03-26,254900AQYS03VQOJGM87,"Stytch, Inc.",ACTIVE,https://search.gleif.org/#/record/254900AQYS03VQOJGM87,2026-04-01
 VND-139,Qrypt Inc.,Qrypt,https://qrypt.com,Trusted Vendor,Commercial Vendor,United States,Active,2026-03-26,,,,,
 VND-140,Forward Edge-AI Inc.,Forward Edge-AI,https://forwardedge-ai.com,Trusted Vendor,Commercial Vendor,United States,Active,2026-03-26,,,,,
 VND-141,PQC-LEO Authors,PQC-LEO,https://github.com/PQC-LEO,Research Project,Research Project,International,Active,2026-03-26,,,,,
@@ -145,8 +138,6 @@ VND-142,Cranium Inc.,Cranium AI,https://cranium.ai,Trusted Vendor,Commercial Ven
 VND-143,HiddenLayer Inc.,HiddenLayer,https://hiddenlayer.ai,Trusted Vendor,Commercial Vendor,United States,None,2026-03-26,,,,,
 VND-144,Lakera AG,Lakera,https://lakera.ai,Trusted Vendor,Commercial Vendor,Switzerland,None,2026-03-26,,,,,
 VND-145,Protect AI Inc.,Protect AI,https://protectai.com,Trusted Vendor,Commercial Vendor,United States,None,2026-03-26,,,,,
-VND-146,Robust Intelligence Inc.,Robust Intelligence,https://robustintelligence.com,Trusted Vendor,Commercial Vendor,United States,None,2026-03-26,,,,,
-VND-147,Galileo Technologies Inc.,Galileo,https://rungalileo.io,Trusted Vendor,Commercial Vendor,United States,None,2026-03-26,254900M0NSSA3K4GQJ26,"GALILEO TECHNOLOGIES, INC.",ACTIVE,https://search.gleif.org/#/record/254900M0NSSA3K4GQJ26,2026-04-01
 VND-148,Advanced Micro Devices Inc.,AMD,https://amd.com,Trusted Vendor,Commercial Vendor,United States,Active,2026-03-26,R2I72C950HOYXII45366,"ADVANCED MICRO DEVICES, INC.",ACTIVE,https://search.gleif.org/#/record/R2I72C950HOYXII45366,2026-04-01
 VND-149,ARM Holdings plc,ARM,https://arm.com,Trusted Vendor,Commercial Vendor,United Kingdom,Active,2026-03-26,2138001E66EELTE7Y904,ARM HOLDINGS PLC,ACTIVE,https://search.gleif.org/#/record/2138001E66EELTE7Y904,2026-04-01
 VND-150,Qualcomm Incorporated,Qualcomm,https://qualcomm.com,Trusted Vendor,Commercial Vendor,United States,Active,2026-03-26,H1J8DDZKZP6H7RWC0H53,QUALCOMM INCORPORATED,ACTIVE,https://search.gleif.org/#/record/H1J8DDZKZP6H7RWC0H53,2026-04-01
@@ -159,7 +150,6 @@ VND-156,Quantum Bridge Technologies Inc.,Quantum Bridge,https://quantumbridge.co
 VND-157,ID Quantique SA,ID Quantique,https://idquantique.com,Trusted Vendor,Commercial Vendor,Switzerland,Active,2026-03-26,,,,,
 VND-158,Toshiba Corporation,Toshiba,https://toshiba.com,Trusted Vendor,Commercial Vendor,Japan,Active,2026-03-26,,,,,2026-04-01
 VND-159,Giesecke+Devrient GmbH,G+D,https://gi-de.com,Trusted Vendor,Commercial Vendor,Germany,Active,2026-03-26,529900YGGJOGXCNDQC85,Giesecke+Devrient Currency Technology GmbH,ACTIVE,https://search.gleif.org/#/record/529900YGGJOGXCNDQC85,2026-04-01
-VND-160,BeyondTrust Corporation,BeyondTrust,https://beyondtrust.com,Trusted Vendor,Commercial Vendor,United States,None,2026-03-26,,,,,
 VND-161,CrowdStrike Holdings Inc.,CrowdStrike,https://crowdstrike.com,Trusted Vendor,Commercial Vendor,United States,None,2026-03-26,549300YBY08K9KM4HX32,"CROWDSTRIKE HOLDINGS, INC.",ACTIVE,https://search.gleif.org/#/record/549300YBY08K9KM4HX32,2026-04-01
 VND-162,CyberArk Software Ltd.,CyberArk,https://cyberark.com,Trusted Vendor,Commercial Vendor,Israel,None,2026-03-26,529900YEXNDM894PWS93,CyberArk Software Ltd.,ACTIVE,https://search.gleif.org/#/record/529900YEXNDM894PWS93,2026-04-01
 VND-164,Qualys Inc.,Qualys,https://qualys.com,Trusted Vendor,Commercial Vendor,United States,None,2026-03-26,549300EMBXYOW9W1XA17,"QUALYS, INC.",ACTIVE,https://search.gleif.org/#/record/549300EMBXYOW9W1XA17,2026-04-01
@@ -169,7 +159,6 @@ VND-167,AppViewX Inc.,AppViewX,https://appviewx.com,Trusted Vendor,Commercial Ve
 VND-168,Arqit Quantum Inc.,Arqit,https://arqit.uk,Trusted Vendor,Commercial Vendor,United Kingdom,Active,2026-03-26,254900G93Z1SN49J9J68,ARQIT QUANTUM INC.,ACTIVE,https://search.gleif.org/#/record/254900G93Z1SN49J9J68,2026-04-01
 VND-169,Cryptomathic A/S,Cryptomathic,https://cryptomathic.com,Trusted Vendor,Commercial Vendor,Denmark,Active,2026-03-26,254900D56CUAAGTKZ214,CRYPTOMATHIC A/S,ACTIVE,https://search.gleif.org/#/record/254900D56CUAAGTKZ214,2026-04-01
 VND-170,Delinea Inc.,Delinea,https://delinea.com,Trusted Vendor,Commercial Vendor,United States,None,2026-03-26,98450012C62DD794AE31,DELINEA INC.,ACTIVE,https://search.gleif.org/#/record/98450012C62DD794AE31,2026-04-01
-VND-171,DocuSign Inc.,DocuSign,https://docusign.com,Trusted Vendor,SaaS Platform,United States,None,2026-03-26,549300Q7PVDWRZ39JG09,"DOCUSIGN, INC.",ACTIVE,https://search.gleif.org/#/record/549300Q7PVDWRZ39JG09,2026-04-01
 VND-172,Elastic NV,Elastic,https://elastic.co,Trusted Vendor,Commercial Vendor,Netherlands,None,2026-03-26,,,,,
 VND-173,GlobalSign Ltd.,GlobalSign,https://globalsign.com,Trusted Vendor,Commercial Vendor,United Kingdom,Active,2026-03-26,,,,,
 VND-174,JFrog Ltd.,JFrog,https://jfrog.com,Trusted Vendor,Commercial Vendor,United States,None,2026-03-26,,,,,
@@ -189,7 +178,6 @@ VND-187,Tuta GmbH,Tuta,https://tuta.com,Trusted Vendor,Commercial Vendor,Germany
 VND-188,Virtru Corporation,Virtru,https://virtru.com,Trusted Vendor,Commercial Vendor,United States,Partial,2026-03-26,,,,,
 VND-189,Wire Swiss GmbH,Wire,https://wire.com,Trusted Vendor,Commercial Vendor,Switzerland,Partial,2026-03-26,5299009GLMJXTGQK5061,Wire Swiss GmbH,ACTIVE,https://search.gleif.org/#/record/5299009GLMJXTGQK5061,2026-04-01
 VND-190,Zscaler Inc.,Zscaler,https://zscaler.com,Trusted Vendor,Commercial Vendor,United States,None,2026-03-26,529900MZ0RTK1BWRNF46,"ZSCALER, INC.",ACTIVE,https://search.gleif.org/#/record/529900MZ0RTK1BWRNF46,2026-04-01
-VND-191,AnyDesk Software GmbH,AnyDesk,https://anydesk.com,Trusted Vendor,Commercial Vendor,Germany,None,2026-03-26,,,,,
 VND-192,Garantir Inc.,Garantir,https://garantir.io,Trusted Vendor,Commercial Vendor,United States,Active,2026-03-26,,,,,
 VND-193,MikroTik SIA,MikroTik,https://mikrotik.com,Trusted Vendor,Commercial Vendor,Latvia,None,2026-03-26,,,,,
 VND-194,Deciso BV,Deciso / OPNsense,https://deciso.com,Trusted Vendor,Hybrid Commercial/Community,Netherlands,None,2026-03-26,,,,,
@@ -221,7 +209,6 @@ VND-219,CREDEBL Community,CREDEBL,https://credebl.id,Open Source Community,Open 
 VND-220,European Commission,European Commission,https://digital-strategy.ec.europa.eu,Government / Standards Body,Government / Standards Body,European Union,Active,2026-03-26,,,,,
 VND-221,CockroachDB Inc.,CockroachDB,https://cockroachlabs.com,Trusted Vendor,Commercial Vendor,United States,None,2026-03-26,,,,,
 VND-222,MongoDB Inc.,MongoDB,https://mongodb.com,Trusted Vendor,Commercial Vendor,United States,None,2026-03-26,549300TPTG69WKWE1Z37,"MONGODB, INC.",ACTIVE,https://search.gleif.org/#/record/549300TPTG69WKWE1Z37,2026-04-01
-VND-223,UEFI Forum,UEFI Forum,https://uefi.org,Government / Standards Body,Government / Standards Body,International,None,2026-03-26,,,,,
 VND-224,Smallstep Labs Inc.,Smallstep,https://smallstep.com,Trusted Vendor,Commercial Vendor,United States,Active,2026-03-26,636700IJQG1DLEXZK504,"SMALLSTEP LABS, INC.",ACTIVE,https://search.gleif.org/#/record/636700IJQG1DLEXZK504,2026-04-01
 VND-225,Proton AG,Proton,https://proton.me,Trusted Vendor,Commercial Vendor,Switzerland,Active,2026-03-26,506700YLQ614KA7PB723,Proton AG,ACTIVE,https://search.gleif.org/#/record/506700YLQ614KA7PB723,2026-04-01
 VND-226,Element HQ Ltd.,Element,https://element.io,Trusted Vendor,Hybrid Commercial/Community,United Kingdom,Partial,2026-03-26,,,,,
@@ -301,3 +288,44 @@ VND-299,ICS Holding / Kryptonite (Russia),Kryptonite Russia,https://postquantum.
 VND-300,EU NIS Cooperation Group,EU NIS Group,https://digital-strategy.ec.europa.eu,Government / Standards Body,Government / Standards Body,European Union,Active,2026-04-01,,,,,
 VND-301,Bradesco S.A. (Banco Bradesco),Bradesco,https://banco.bradesco,Trusted Vendor,Commercial Vendor,Brazil,Partial,2026-04-01,,,,,
 VND-302,getsops (CNCF Sandbox),SOPS / getsops,https://github.com/getsops/sops,Open Source Community,Open Source Community,International,Yes,2026-04-16,,,,,
+VND-005,Blackberry Limited,BlackBerry,https://blackberry.com,Trusted Vendor,Commercial Vendor,Canada,Partial,2026-03-26,549300HJD8NEGT71RF07,BlackBerry Limited,ACTIVE,https://search.gleif.org/#/record/549300HJD8NEGT71RF07,2026-04-01
+VND-106,Hex Trust Ltd.,Hex Trust,https://hextrust.com,Trusted Vendor,Commercial Vendor,Hong Kong,Partial,2026-03-26,,,,,
+VND-108,Komainu Ltd.,Komainu,https://komainu.com,Trusted Vendor,Commercial Vendor,United Kingdom,Partial,2026-03-26,,,,,
+VND-112,Ripple Labs Inc.,Metaco / Ripple,https://ripple.com,Trusted Vendor,Commercial Vendor,United States,Partial,2026-03-26,9845001L01C142EE4094,RIPPLE LABS INC.,ACTIVE,https://search.gleif.org/#/record/9845001L01C142EE4094,2026-04-01
+VND-136,Descope Inc.,Descope,https://descope.com,Trusted Vendor,Commercial Vendor,United States,Partial,2026-03-26,,,,,
+VND-138,Stytch Inc.,Stytch,https://stytch.com,Trusted Vendor,Commercial Vendor,United States,None,2026-03-26,254900AQYS03VQOJGM87,"Stytch, Inc.",ACTIVE,https://search.gleif.org/#/record/254900AQYS03VQOJGM87,2026-04-01
+VND-146,Robust Intelligence Inc.,Robust Intelligence,https://robustintelligence.com,Trusted Vendor,Commercial Vendor,United States,None,2026-03-26,,,,,
+VND-147,Galileo Technologies Inc.,Galileo,https://rungalileo.io,Trusted Vendor,Commercial Vendor,United States,None,2026-03-26,254900M0NSSA3K4GQJ26,"GALILEO TECHNOLOGIES, INC.",ACTIVE,https://search.gleif.org/#/record/254900M0NSSA3K4GQJ26,2026-04-01
+VND-160,BeyondTrust Corporation,BeyondTrust,https://beyondtrust.com,Trusted Vendor,Commercial Vendor,United States,None,2026-03-26,,,,,
+VND-171,DocuSign Inc.,DocuSign,https://docusign.com,Trusted Vendor,SaaS Platform,United States,None,2026-03-26,549300Q7PVDWRZ39JG09,"DOCUSIGN, INC.",ACTIVE,https://search.gleif.org/#/record/549300Q7PVDWRZ39JG09,2026-04-01
+VND-191,AnyDesk Software GmbH,AnyDesk,https://anydesk.com,Trusted Vendor,Commercial Vendor,Germany,None,2026-03-26,,,,,
+VND-303,ASUSTOR Inc.,ASUSTOR,https://www.asustor.com,Trusted Vendor,Commercial Vendor,Taiwan,Pending,2026-05-01,,,,,
+VND-304,"Akamai Technologies, Inc.",Akamai,https://www.akamai.com,Trusted Vendor,Commercial Vendor,United States,Active,2026-05-01,,,,,
+VND-305,Applivery,Applivery,https://www.applivery.com,Trusted Vendor,Commercial Vendor,Spain,Pending,2026-05-01,,,,,
+VND-306,Fraunhofer Institute for Secure Information Technology (Dyber Project),Dyber (Fraunhofer SIT),https://www.sit.fraunhofer.de,Research Institute,Research/Academic,Germany,Active,2026-05-01,,,,,
+VND-307,ETAS GmbH (Robert Bosch subsidiary),ETAS (Bosch),https://www.etas.com,Trusted Vendor,Commercial Vendor,Germany,Active,2026-05-01,,,,,
+VND-308,"Fastly, Inc.",Fastly,https://www.fastly.com,Trusted Vendor,Commercial Vendor,United States,Active,2026-05-01,,,,,
+VND-309,"Forward Networks, Inc.",Forward Networks,https://www.forwardnetworks.com,Trusted Vendor,Commercial Vendor,United States,Pending,2026-05-01,,,,,
+VND-310,Internxt SL,Internxt,https://internxt.com,Trusted Vendor,Commercial Vendor,Spain,Active,2026-05-01,,,,,
+VND-311,"IronCore Labs, Inc.",IronCore Labs,https://ironcorelabs.com,Trusted Vendor,Commercial Vendor,United States,Active,2026-05-01,,,,,
+VND-312,"Netskope, Inc.",Netskope,https://www.netskope.com,Trusted Vendor,Commercial Vendor,United States,Active,2026-05-01,,,,,
+VND-313,OVH Groupe SA,OVHcloud,https://www.ovhcloud.com,Trusted Vendor,Commercial Vendor,France,Active,2026-05-01,,,,,
+VND-314,Opera Limited,Opera,https://www.opera.com,Trusted Vendor,Commercial Vendor,Norway,Pending,2026-05-01,,,,,
+VND-315,"PQSecure Technologies, Inc.",PQSecure Technologies,https://pqsecurity.com,Trusted Vendor,Commercial Vendor,United States,Active,2026-05-01,,,,,
+VND-316,Postfix Project,Postfix Project,https://www.postfix.org,Open Source Community,Open Source Community,International,Active,2026-05-01,,,,,
+VND-317,Prestige Systems,Prestige Systems,https://prestigesystems.com,Trusted Vendor,Commercial Vendor,International,Pending,2026-05-01,,,,,
+VND-318,QANplatform,QANplatform,https://qanplatform.com,Trusted Vendor,Commercial Vendor,Hungary,Active,2026-05-01,,,,,
+VND-319,QNu Labs Pvt. Ltd.,QNu Labs,https://www.qnulabs.com,Trusted Vendor,Commercial Vendor,India,Active,2026-05-01,,,,,
+VND-320,Quantropi Inc.,Quantropi,https://www.quantropi.com,Trusted Vendor,Commercial Vendor,Canada,Active,2026-05-01,,,,,
+VND-321,Rambus Inc.,Rambus,https://www.rambus.com,Trusted Vendor,Commercial Vendor,United States,Active,2026-05-01,,,,,
+VND-322,Society for Worldwide Interbank Financial Telecommunication SC,SWIFT,https://www.swift.com,Trusted Vendor,Industry Body,Belgium,Active,2026-05-01,,,,,
+VND-323,Session Technology Foundation,Session Technology Foundation,https://session.foundation,Open Source Community,Foundation,International,Active,2026-05-01,,,,,
+VND-324,SignQuantum,SignQuantum,https://signquantum.com,Trusted Vendor,Commercial Vendor,International,Pending,2026-05-01,,,,,
+VND-325,SimpleX Chat Ltd,SimpleX,https://simplex.chat,Trusted Vendor,Commercial Vendor,United Kingdom,Active,2026-05-01,,,,,
+VND-326,Spherity GmbH,Spherity,https://spherity.com,Trusted Vendor,Commercial Vendor,Germany,Active,2026-05-01,,,,,
+VND-327,Tailscale Inc.,Tailscale,https://tailscale.com,Trusted Vendor,Commercial Vendor,Canada,Active,2026-05-01,,,,,
+VND-328,"TrustCloud, Inc.",TrustCloud,https://www.trustcloud.ai,Trusted Vendor,Commercial Vendor,United States,Pending,2026-05-01,,,,,
+VND-329,"Versa Networks, Inc.",Versa Networks,https://versa-networks.com,Trusted Vendor,Commercial Vendor,United States,Active,2026-05-01,,,,,
+VND-330,WinSCP Project (Martin Prikryl),WinSCP,https://winscp.net,Open Source Community,Open Source Community,Czech Republic,Active,2026-05-01,,,,,
+VND-331,"ZeroTier, Inc.",ZeroTier,https://www.zerotier.com,Trusted Vendor,Commercial Vendor,United States,Active,2026-05-01,,,,,
+VND-332,Backbone HQ,backbone-hq,https://backbone.hq,Trusted Vendor,Commercial Vendor,International,Pending,2026-05-01,,,,,

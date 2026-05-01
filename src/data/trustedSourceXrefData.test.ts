@@ -21,7 +21,9 @@ describe('trustedSourceXrefData', () => {
   })
 
   it('has unique primary keys or combination keys', () => {
-    const ids = trustedSourceXrefs.map((item) => item.resourceId + '-' + item.sourceId)
+    const ids = trustedSourceXrefs.map(
+      (item) => item.resourceType + '|' + item.resourceId + '|' + item.sourceId
+    )
     const validIds = ids.filter((id) => id)
     const uniqueIds = new Set(validIds)
     if (validIds.length > 0) {
