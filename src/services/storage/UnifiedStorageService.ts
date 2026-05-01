@@ -116,7 +116,7 @@ function getPersonaData(): PersonaData {
     selectedIndustries: state.selectedIndustries,
     suppressSuggestion: state.suppressSuggestion,
     experienceLevel: state.experienceLevel,
-    advancedViewsUnlocked: state.advancedViewsUnlocked,
+    viewAccess: state.viewAccess,
   }
 }
 
@@ -340,7 +340,7 @@ export class UnifiedStorageService {
           : [],
         suppressSuggestion: stores.persona.suppressSuggestion ?? false,
         experienceLevel: stores.persona.experienceLevel ?? null,
-        advancedViewsUnlocked: stores.persona.advancedViewsUnlocked ?? true,
+        viewAccess: stores.persona.viewAccess ?? 'unlocked',
       })
     }
 

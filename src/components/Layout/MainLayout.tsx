@@ -45,6 +45,7 @@ import { CommandPalette } from '../Search/CommandPalette'
 import { useCommandPaletteStore } from '../../store/useCommandPaletteStore'
 import { PersonaChip } from '../Persona/PersonaChip'
 import { PersonaSwitchModal } from '../Persona/PersonaSwitchModal'
+import { PreviewBanner } from '../common/PreviewBanner'
 
 const RightPanel = React.lazy(() =>
   import('../RightPanel/RightPanel').then((m) => ({ default: m.RightPanel }))
@@ -55,7 +56,7 @@ import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS } from '../../data/personaConfi
 
 export const MainLayout = () => {
   const location = useLocation()
-  const { selectedPersona } = usePersonaStore()
+  const { selectedPersona, viewAccess } = usePersonaStore()
   const { isOpen: isPanelOpen, toggle: openPanel } = useRightPanelStore()
   const recordVisit = useHistoryStore((s) => s.recordVisit)
 
@@ -493,6 +494,12 @@ export const MainLayout = () => {
 
           {/* Migration planning workflow progress banner */}
           <WorkflowBanner />
+
+          {/* Preview mode banner — curious persona browsing advanced routes */}
+          {selectedPersona === 'curious' &&
+            viewAccess === 'preview' &&
+            !ALWAYS_VISIBLE_PATHS.includes(location.pathname) &&
+            !(PERSONA_NAV_PATHS.curious ?? []).includes(location.pathname) && <PreviewBanner />}
 
           {/* Suspense boundary for route-level code splitting */}
           <React.Suspense

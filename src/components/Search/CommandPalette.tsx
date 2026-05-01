@@ -60,7 +60,7 @@ function renderHighlighted(text: string, query: string): React.ReactNode {
 export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const navigate = useNavigate()
   const { recentQueries, pushQuery } = useSearchHistoryStore()
-  const { selectedPersona, advancedViewsUnlocked } = usePersonaStore()
+  const { selectedPersona, viewAccess } = usePersonaStore()
 
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
@@ -71,7 +71,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const activeItemRef = useRef<HTMLButtonElement>(null)
 
-  const curiousLocked = selectedPersona === 'curious' && !advancedViewsUnlocked
+  const curiousLocked = selectedPersona === 'curious' && viewAccess === 'gated'
 
   // Pre-warm index on mount so it's ready when the user types
   useEffect(() => {

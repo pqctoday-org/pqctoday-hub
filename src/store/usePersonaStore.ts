@@ -4,6 +4,7 @@ import type { PersonaId } from '../data/learningPersonas'
 
 export type Region = 'americas' | 'eu' | 'apac' | 'global'
 export type ExperienceLevel = 'curious' | 'basics' | 'expert'
+export type ViewAccess = 'gated' | 'preview' | 'unlocked'
 
 interface PersonaState {
   selectedPersona: PersonaId | null
@@ -13,7 +14,7 @@ interface PersonaState {
   selectedIndustries: string[]
   suppressSuggestion: boolean
   experienceLevel: ExperienceLevel | null
-  advancedViewsUnlocked: boolean
+  viewAccess: ViewAccess
   setPersona: (persona: PersonaId | null) => void
   clearPersona: () => void
   markPickerSeen: () => void
@@ -21,6 +22,8 @@ interface PersonaState {
   setIndustry: (industry: string | null) => void
   setIndustries: (industries: string[]) => void
   setExperienceLevel: (level: ExperienceLevel | null) => void
+  setViewAccess: (access: ViewAccess) => void
+  /** Backwards-compat alias: true → 'unlocked', false → 'gated' */
   setAdvancedViewsUnlocked: (unlocked: boolean) => void
   clearPreferences: () => void
 }
@@ -35,15 +38,15 @@ export const usePersonaStore = create<PersonaState>()(
       selectedIndustries: [],
       suppressSuggestion: false,
       experienceLevel: null,
-      advancedViewsUnlocked: true,
+      viewAccess: 'unlocked',
 
       setPersona: (persona) =>
         set({
           selectedPersona: persona,
           hasSeenPersonaPicker: persona !== null,
           suppressSuggestion: true,
-          // Curious persona starts with advanced views locked; all others default to unlocked
-          advancedViewsUnlocked: persona !== 'curious',
+          // Curious starts in preview; all others are fully unlocked
+          viewAccess: persona === 'curious' ? 'preview' : 'unlocked',
         }),
 
       clearPersona: () => set({ selectedPersona: null, hasSeenPersonaPicker: false }),
@@ -59,7 +62,9 @@ export const usePersonaStore = create<PersonaState>()(
 
       setExperienceLevel: (level) => set({ experienceLevel: level }),
 
-      setAdvancedViewsUnlocked: (unlocked) => set({ advancedViewsUnlocked: unlocked }),
+      setViewAccess: (access) => set({ viewAccess: access }),
+
+      setAdvancedViewsUnlocked: (unlocked) => set({ viewAccess: unlocked ? 'unlocked' : 'gated' }),
 
       clearPreferences: () =>
         set({
@@ -69,13 +74,13 @@ export const usePersonaStore = create<PersonaState>()(
           selectedIndustries: [],
           suppressSuggestion: true,
           experienceLevel: null,
-          advancedViewsUnlocked: true,
+          viewAccess: 'unlocked',
         }),
     }),
     {
       name: 'pqc-learning-persona',
       storage: createJSONStorage(() => localStorage),
-      version: 3,
+      version: 4,
       migrate: (persisted: unknown, fromVersion: number) => {
         const s = (persisted ?? {}) as Record<string, unknown>
         if (fromVersion < 1) {
@@ -86,8 +91,14 @@ export const usePersonaStore = create<PersonaState>()(
           if (s.experienceLevel === 'new') s.experienceLevel = 'curious'
         }
         if (fromVersion < 3) {
-          // Default existing users to unlocked so they don't lose access
           s.advancedViewsUnlocked = s.advancedViewsUnlocked ?? true
+        }
+        if (fromVersion < 4) {
+          // Convert boolean advancedViewsUnlocked → ViewAccess
+          // true → 'unlocked' (preserve access); false → 'preview' (softer than before)
+          const wasUnlocked = (s.advancedViewsUnlocked as boolean | undefined) !== false
+          s.viewAccess = wasUnlocked ? 'unlocked' : 'preview'
+          delete s.advancedViewsUnlocked
         }
         return s
       },

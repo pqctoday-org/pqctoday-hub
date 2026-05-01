@@ -76,8 +76,8 @@ const TILES: ExploreTile[] = [
 
 export function ExploreView() {
   const navigate = useNavigate()
-  const { selectedPersona, advancedViewsUnlocked, setAdvancedViewsUnlocked } = usePersonaStore()
-  const showUnlockPrompt = selectedPersona === 'curious' && !advancedViewsUnlocked
+  const { selectedPersona, viewAccess, setViewAccess } = usePersonaStore()
+  const showUnlockPrompt = selectedPersona === 'curious' && viewAccess === 'gated'
 
   return (
     <div className="max-w-4xl mx-auto py-4 md:py-8 px-2">
@@ -139,7 +139,7 @@ export function ExploreView() {
             size="sm"
             onClick={() => {
               logExploreUnlock()
-              setAdvancedViewsUnlocked(true)
+              setViewAccess('unlocked')
             }}
             className="shrink-0"
           >
