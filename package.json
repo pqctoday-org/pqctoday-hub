@@ -1,7 +1,7 @@
 {
   "name": "pqctoday-hub",
   "private": true,
-  "version": "3.5.31",
+  "version": "3.5.32",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -34,7 +34,8 @@
     "prepare": "husky"
   },
   "overrides": {
-    "serialize-javascript": ">=7.0.3"
+    "serialize-javascript": ">=7.0.3",
+    "uuid": "^14.0.0"
   },
   "dependencies": {
     "@mlc-ai/web-llm": "^0.2.81",
@@ -66,7 +67,7 @@
     "jspdf": "^4.2.1",
     "jszip": "^3.10.1",
     "localforage": "^1.10.0",
-    "lucide-react": "^0.577.0",
+    "lucide-react": "^1.14.0",
     "micro-eth-signer": "^0.18.1",
     "minisearch": "^7.2.0",
     "papaparse": "^5.5.3",

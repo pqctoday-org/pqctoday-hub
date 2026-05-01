@@ -6,6 +6,50 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.32] - May 1, 2026
+
+Routine dependency hygiene: 5 Dependabot updates landed in one batch after
+local CI verification, plus a transitive override that closes the last
+remaining moderate-severity vulnerability flagged by GitHub Security. No
+runtime or visible behaviour changes.
+
+### Security
+
+- **`postcss` 8.5.6 → 8.5.13** (closes **GHSA-qx2v-qp2m-jg93** — XSS via
+  unescaped `</style>` in CSS stringify output). Transitive dependency
+  upgraded; no source code touches.
+
+- **`uuid` pinned to ^14.0.0 via `overrides`** (closes **GHSA-w5hq-g745-h8pq**
+  — missing buffer-bounds check in `v3`/`v5`/`v6` when a `buf` argument is
+  provided). The advisory is theoretical for our usage —
+  `vite-plugin-top-level-await` only calls `uuid.v5(seed, namespace)` without
+  a `buf` argument — but the override eliminates the dependency-graph signal
+  cleanly.
+
+### Changed
+
+- **`lucide-react` 0.577.0 → 1.14.0** (major). The 1.0 cut was an API
+  stabilisation, not a breaking icon rename: all 746 icon imports across the
+  app continue to resolve, and the icon SVGs render identically.
+
+- **`@tailwindcss/vite` + `tailwindcss` 4.2.2 → 4.2.4** (patch). Bug fixes
+  in the vite plugin and core engine; no Tailwind directive surface changes.
+
+- **`@mlc-ai/web-llm` 0.2.81 → 0.2.83** (patch). PQC Assistant model loader.
+
+- **`zustand` 5.0.11 → 5.0.12** (patch).
+
+### Internal
+
+- **Verified locally before push**: full vitest run (2014 / 2014), `tsc -b`,
+  `npm run build`, and `npm audit` — all green at every stage of the bump
+  sequence in an isolated worktree.
+
+- **Eslint group bump (#175) not yet adopted** — `eslint v10` requires
+  `eslint-plugin-jsx-a11y` to publish a release that peers on
+  `eslint^10`; current `6.10.2` caps at `eslint^9`. Will pick up
+  automatically on the next Dependabot retry once jsx-a11y ships.
+
 ## [3.5.31] - May 1, 2026
 
 A second data-substrate sweep on the same day: vendor partnerships now have a
