@@ -269,6 +269,7 @@ function MobileViewToggle({
     onSearchTextChange: (text: string) => void
     onSortByChange: (sort: FrameworkSortOption) => void
     onViewModeChange: (mode: ViewMode) => void
+    highlightFrameworkId?: string | null
   }
   tableProps: React.ComponentProps<typeof ComplianceTable>
 }) {
@@ -554,16 +555,32 @@ export const ComplianceView = () => {
     return (certParam ? 'records' : (complianceHint?.section ?? 'standards')) as MobileSection
   })
 
+  // Framework deep-link highlight — ?framework=<id> scrolls to and rings the card for 3 s
+  const [highlightFrameworkId, setHighlightFrameworkId] = useState<string | null>(
+    () => searchParams.get('framework') ?? null
+  )
+  useEffect(() => {
+    if (!highlightFrameworkId) return
+    const timer = setTimeout(() => setHighlightFrameworkId(null), 3000)
+    return () => clearTimeout(timer)
+  }, [highlightFrameworkId])
+
   // Landscape filter state
   const [lsOrg, setLsOrg] = useState(() => searchParams.get('org') ?? 'All')
   const [lsIndustry, setLsIndustry] = useState(
+    // ?industry= is the canonical alias; ?ind= is the legacy param kept for back-compat
     // Only pre-select an industry when exactly one is active (cert restricts to single industry).
-    // Multiple industries (including "all allowed") → default to 'All' so nothing is filtered out.
     () =>
-      searchParams.get('ind') ?? (selectedIndustries.length === 1 ? selectedIndustries[0] : 'All')
+      searchParams.get('industry') ??
+      searchParams.get('ind') ??
+      (selectedIndustries.length === 1 ? selectedIndustries[0] : 'All')
   )
   const [lsRegion, setLsRegion] = useState<RegionBloc | 'All'>(
-    () => (searchParams.get('region') as RegionBloc | null) ?? 'All'
+    // ?country= is an alias for ?region= (ISO country code maps to RegionBloc)
+    () =>
+      (searchParams.get('region') as RegionBloc | null) ??
+      (searchParams.get('country') as RegionBloc | null) ??
+      'All'
   )
   const [lsDeadline, setLsDeadline] = useState<'All' | DeadlinePhase>(
     () => (searchParams.get('phase') as DeadlinePhase | null) ?? 'All'
@@ -1166,6 +1183,7 @@ export const ComplianceView = () => {
             onSearchTextChange: handleLsSearchChange,
             onSortByChange: handleLsSortChange,
             onViewModeChange: handleLsViewChange,
+            highlightFrameworkId,
           }}
           tableProps={{
             data: data,
@@ -1269,6 +1287,7 @@ export const ComplianceView = () => {
               onSearchTextChange={handleLsSearchChange}
               onSortByChange={handleLsSortChange}
               onViewModeChange={handleLsViewChange}
+              highlightFrameworkId={highlightFrameworkId}
             />
           </TabsContent>
 
@@ -1305,6 +1324,7 @@ export const ComplianceView = () => {
               onSearchTextChange={handleLsSearchChange}
               onSortByChange={handleLsSortChange}
               onViewModeChange={handleLsViewChange}
+              highlightFrameworkId={highlightFrameworkId}
             />
           </TabsContent>
 
@@ -1342,6 +1362,7 @@ export const ComplianceView = () => {
               onSearchTextChange={handleLsSearchChange}
               onSortByChange={handleLsSortChange}
               onViewModeChange={handleLsViewChange}
+              highlightFrameworkId={highlightFrameworkId}
             />
           </TabsContent>
 
@@ -1380,6 +1401,7 @@ export const ComplianceView = () => {
               onSearchTextChange={handleLsSearchChange}
               onSortByChange={handleLsSortChange}
               onViewModeChange={handleLsViewChange}
+              highlightFrameworkId={highlightFrameworkId}
             />
           </TabsContent>
 

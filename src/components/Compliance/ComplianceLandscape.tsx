@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import type { MaturityRequirement } from '@/types/MaturityTypes'
 import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
@@ -281,10 +281,12 @@ function FrameworkCard({
   fw,
   maturityByRefId,
   onNavigateToCswp39,
+  highlighted,
 }: {
   fw: ComplianceFramework
   maturityByRefId?: Map<string, MaturityRequirement[]>
   onNavigateToCswp39?: (refId: string) => void
+  highlighted?: boolean
 }) {
   const [expanded, setExpanded] = useState(false)
   const urgency = deadlineUrgency(fw.deadline)
@@ -304,7 +306,10 @@ function FrameworkCard({
   }, [fw.libraryRefs, maturityByRefId])
 
   return (
-    <div className="glass-panel p-4 space-y-3 flex flex-col">
+    <div
+      id={`fw-${fw.id}`}
+      className={`glass-panel p-4 space-y-3 flex flex-col scroll-mt-20 transition-shadow duration-300 ${highlighted ? 'ring-2 ring-primary shadow-glow' : ''}`}
+    >
       <div className="flex items-start gap-2">
         {fw.requiresPQC ? (
           <ShieldCheck size={18} className="text-status-success shrink-0 mt-0.5" />
@@ -736,6 +741,8 @@ interface ComplianceLandscapeProps {
   onSearchTextChange?: (text: string) => void
   onSortByChange?: (sort: FrameworkSortOption) => void
   onViewModeChange?: (mode: ViewMode) => void
+  /** When set, scroll to and ring-highlight this framework ID for 3 s */
+  highlightFrameworkId?: string | null
 }
 
 export function ComplianceLandscape({
@@ -751,6 +758,7 @@ export function ComplianceLandscape({
   searchInputValue: searchInputValueProp,
   sortBy: sortByProp,
   viewMode: viewModeProp,
+  highlightFrameworkId,
   onOrgFilterChange,
   onIndustryFilterChange,
   onRegionFilterChange,
@@ -894,6 +902,15 @@ export function ComplianceLandscape({
   // Stats
   const pqcCount = displayedFrameworks.filter((f) => f.requiresPQC).length
   const deadlineCount = displayedFrameworks.filter((f) => extractYear(f.deadline) !== null).length
+
+  // Scroll to and briefly highlight a framework when deep-linked via ?framework=<id>
+  const prevHighlightRef = useRef<string | null | undefined>(undefined)
+  useEffect(() => {
+    if (!highlightFrameworkId || highlightFrameworkId === prevHighlightRef.current) return
+    prevHighlightRef.current = highlightFrameworkId
+    const el = document.getElementById(`fw-${highlightFrameworkId}`)
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }, [highlightFrameworkId])
 
   return (
     <div className="space-y-4">
@@ -1077,6 +1094,7 @@ export function ComplianceLandscape({
                 fw={fw}
                 maturityByRefId={maturityByRefId}
                 onNavigateToCswp39={onNavigateToCswp39}
+                highlighted={highlightFrameworkId === fw.id}
               />
             ))}
           </div>
