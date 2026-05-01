@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { ScrollText } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import { PageHeader } from '@/components/common/PageHeader'
@@ -13,6 +13,13 @@ import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import type { CsvColumnConfig } from '@/utils/csvExport'
 import type { PatentItem } from '@/types/PatentTypes'
 import { logPatentExport, logPatentInsightsFilter } from '@/utils/analytics'
+import {
+  COLUMN_PRESETS,
+  ALL_COLUMN_IDS,
+  COLUMNS_LS_KEY,
+  type ColumnId,
+  type PresetKey,
+} from './patentColumns'
 
 const PATENTS_CSV_COLUMNS: CsvColumnConfig<PatentItem>[] = [
   { header: 'Patent Number', accessor: (p) => p.patentNumber },
@@ -32,6 +39,25 @@ const PATENTS_CSV_COLUMNS: CsvColumnConfig<PatentItem>[] = [
   { header: 'Threat Model', accessor: (p) => p.threatModel.join('; ') },
   { header: 'Summary', accessor: (p) => p.summary },
 ]
+
+function readSavedColumns(): { preset: PresetKey | 'custom'; columns: ColumnId[] } {
+  try {
+    const raw = localStorage.getItem(COLUMNS_LS_KEY)
+    if (raw) {
+      const { preset, columns } = JSON.parse(raw)
+      const validPresets = ['essential', 'algorithms', 'full', 'custom']
+      if (validPresets.includes(preset) && Array.isArray(columns)) {
+        const safe = columns.filter((c: unknown) => ALL_COLUMN_IDS.includes(c as ColumnId))
+        if (safe.length > 0) return { preset, columns: safe }
+      }
+    }
+  } catch {
+    // ignore
+  }
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024
+  const defaultPreset: PresetKey = isMobile ? 'essential' : 'algorithms'
+  return { preset: defaultPreset, columns: COLUMN_PRESETS[defaultPreset] }
+}
 
 const SORT_LS_KEY = 'pqc-patents-sort'
 const VALID_SORT_KEYS: SortKey[] = ['issueDate', 'impactScore', 'title', 'priorityDate']
@@ -54,6 +80,24 @@ export function PatentsView() {
   const [searchParams, setSearchParams] = useSearchParams()
   const activeTab = searchParams.get('tab') ?? 'insights'
   const selectedPatent = searchParams.get('patent')
+
+  const [columnPreset, setColumnPreset] = useState<PresetKey | 'custom'>(
+    () => readSavedColumns().preset
+  )
+  const [visibleColumns, setVisibleColumns] = useState<ColumnId[]>(() => readSavedColumns().columns)
+
+  const handlePresetChange = useCallback((preset: PresetKey) => {
+    const columns = COLUMN_PRESETS[preset]
+    setColumnPreset(preset)
+    setVisibleColumns(columns)
+    localStorage.setItem(COLUMNS_LS_KEY, JSON.stringify({ preset, columns }))
+  }, [])
+
+  const handleColumnsChange = useCallback((columns: ColumnId[]) => {
+    setColumnPreset('custom')
+    setVisibleColumns(columns)
+    localStorage.setItem(COLUMNS_LS_KEY, JSON.stringify({ preset: 'custom', columns }))
+  }, [])
 
   const sortKey = useMemo<SortKey>(() => {
     const s = searchParams.get('sort') as SortKey | null
@@ -167,6 +211,10 @@ export function PatentsView() {
                 sortKey={sortKey}
                 sortDir={sortDir}
                 onSort={handleSort}
+                visibleColumns={visibleColumns}
+                columnPreset={columnPreset}
+                onPresetChange={handlePresetChange}
+                onColumnsChange={handleColumnsChange}
               />
             </div>
           </TabsContent>

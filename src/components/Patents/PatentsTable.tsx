@@ -14,6 +14,8 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { PatentDetail } from './PatentDetail'
+import { ColumnPicker } from './ColumnPicker'
+import type { ColumnId, PresetKey } from './patentColumns'
 import type { PatentItem, ImpactLevel, CryptoAgilityMode } from '@/types/PatentTypes'
 import { inferRegion, NIST_STATUS_LABELS } from './PatentsInsights'
 import {
@@ -50,9 +52,9 @@ const IMPACT_BADGE: Record<ImpactLevel, string> = {
 }
 
 const RELEVANCE_LABELS: Record<string, string> = {
-  core_invention: 'Core invention',
-  dependent_claim_only: 'Dependent claim only',
-  background_only: 'Background only',
+  core_invention: 'Core',
+  dependent_claim_only: 'Dependent',
+  background_only: 'Background',
   none: 'None',
 }
 
@@ -160,6 +162,13 @@ const FILTER_DEFS: {
         .map((v) => ({ id: v, label: NIST_STATUS_LABELS[v] ?? v })),
   },
 ]
+
+function renderTags(items: string[], max = 2): string {
+  if (!items || items.length === 0) return '—'
+  const shown = items.slice(0, max).map((s) => s.replace(/_/g, ' '))
+  const rest = items.length - max
+  return rest > 0 ? `${shown.join(', ')} +${rest}` : shown.join(', ')
+}
 
 function SortIcon({ col, active, dir }: { col: string; active: string; dir: SortDir }) {
   if (active !== col) return <ChevronsUpDown className="h-3 w-3 text-muted-foreground" />
@@ -363,9 +372,24 @@ interface Props {
   sortKey: SortKey
   sortDir: SortDir
   onSort: (key: SortKey) => void
+  visibleColumns: ColumnId[]
+  columnPreset: PresetKey | 'custom'
+  onPresetChange: (preset: PresetKey) => void
+  onColumnsChange: (columns: ColumnId[]) => void
 }
 
-export function PatentsTable({ patents, selectedId, onSelect, sortKey, sortDir, onSort }: Props) {
+export function PatentsTable({
+  patents,
+  selectedId,
+  onSelect,
+  sortKey,
+  sortDir,
+  onSort,
+  visibleColumns,
+  columnPreset,
+  onPresetChange,
+  onColumnsChange,
+}: Props) {
   const [searchParams, setSearchParams] = useSearchParams()
 
   const search = searchParams.get('search') ?? ''
@@ -489,6 +513,9 @@ export function PatentsTable({ patents, selectedId, onSelect, sortKey, sortDir, 
   )
 
   const hasFilters = activeFilters.length > 0 || search !== ''
+  const show = (id: ColumnId) => visibleColumns.includes(id)
+
+  const thProps = { sortKey, sortDir, onSort: handleSort }
 
   return (
     <div className="flex h-full gap-0 overflow-hidden">
@@ -539,6 +566,13 @@ export function PatentsTable({ patents, selectedId, onSelect, sortKey, sortDir, 
           <span className="ml-auto text-xs text-muted-foreground tabular-nums">
             {filtered.length} of {patents.length}
           </span>
+
+          <ColumnPicker
+            preset={columnPreset}
+            visibleColumns={visibleColumns}
+            onPresetChange={onPresetChange}
+            onColumnsChange={onColumnsChange}
+          />
         </div>
 
         {/* Table */}
@@ -552,45 +586,37 @@ export function PatentsTable({ patents, selectedId, onSelect, sortKey, sortDir, 
             <table className="w-full text-sm border-collapse">
               <thead className="sticky top-0 z-10 bg-card border-b border-border">
                 <tr>
-                  <ThCol
-                    label="#"
-                    className="w-10"
-                    sortKey={sortKey}
-                    sortDir={sortDir}
-                    onSort={handleSort}
-                  />
-                  <ThCol
-                    label="Title"
-                    sortable="title"
-                    sortKey={sortKey}
-                    sortDir={sortDir}
-                    onSort={handleSort}
-                  />
-                  {!selectedPatent && (
-                    <ThCol
-                      label="Assignee"
-                      className="hidden lg:table-cell"
-                      sortKey={sortKey}
-                      sortDir={sortDir}
-                      onSort={handleSort}
-                    />
+                  {show('num') && <ThCol label="#" className="w-10" {...thProps} />}
+                  {show('title') && <ThCol label="Title" sortable="title" {...thProps} />}
+                  {show('assignee') && !selectedPatent && <ThCol label="Assignee" {...thProps} />}
+                  {show('pqcAlgorithms') && (
+                    <ThCol label="PQC Algorithms" className="max-w-[160px]" {...thProps} />
                   )}
-                  <ThCol label="Agility" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
-                  <ThCol
-                    label="Impact"
-                    sortable="impactScore"
-                    sortKey={sortKey}
-                    sortDir={sortDir}
-                    onSort={handleSort}
-                  />
-                  <ThCol
-                    label="Issued"
-                    sortable="issueDate"
-                    className="hidden md:table-cell"
-                    sortKey={sortKey}
-                    sortDir={sortDir}
-                    onSort={handleSort}
-                  />
+                  {show('classicalAlgorithms') && (
+                    <ThCol label="Classical Algorithms" className="max-w-[160px]" {...thProps} />
+                  )}
+                  {show('quantumRelevance') && <ThCol label="Q. Relevance" {...thProps} />}
+                  {show('threatModel') && (
+                    <ThCol label="Threat Model" className="max-w-[140px]" {...thProps} />
+                  )}
+                  {show('applicationDomain') && (
+                    <ThCol label="Domain" className="max-w-[140px]" {...thProps} />
+                  )}
+                  {show('agility') && <ThCol label="Agility" {...thProps} />}
+                  {show('impact') && <ThCol label="Impact" sortable="impactScore" {...thProps} />}
+                  {show('issueDate') && <ThCol label="Issued" sortable="issueDate" {...thProps} />}
+                  {show('priorityDate') && (
+                    <ThCol label="Priority" sortable="priorityDate" {...thProps} />
+                  )}
+                  {show('quantumTechnology') && (
+                    <ThCol label="Quantum Tech" className="max-w-[140px]" {...thProps} />
+                  )}
+                  {show('impactScore') && (
+                    <ThCol label="Score" sortable="impactScore" {...thProps} />
+                  )}
+                  {show('inventors') && (
+                    <ThCol label="Inventors" className="max-w-[160px]" {...thProps} />
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -605,37 +631,110 @@ export function PatentsTable({ patents, selectedId, onSelect, sortKey, sortDir, 
                       }}
                       className={`cursor-pointer border-b border-border transition-colors hover:bg-muted/50 ${isSelected ? 'bg-primary/5' : ''}`}
                     >
-                      <td className="px-3 py-2.5 text-xs text-muted-foreground tabular-nums">
-                        {i + 1}
-                      </td>
-                      <td className="px-3 py-2.5 max-w-0">
-                        <div className="font-medium text-foreground truncate">{p.title}</div>
-                        <div className="text-xs text-muted-foreground font-mono">
-                          {p.patentNumber}
-                        </div>
-                      </td>
-                      {!selectedPatent && (
-                        <td className="px-3 py-2.5 text-xs text-muted-foreground hidden lg:table-cell max-w-[180px] truncate">
+                      {show('num') && (
+                        <td className="px-3 py-2.5 text-xs text-muted-foreground tabular-nums">
+                          {i + 1}
+                        </td>
+                      )}
+                      {show('title') && (
+                        <td className="px-3 py-2.5 max-w-0">
+                          <div className="font-medium text-foreground truncate">{p.title}</div>
+                          <div className="text-xs text-muted-foreground font-mono">
+                            {p.patentNumber}
+                          </div>
+                        </td>
+                      )}
+                      {show('assignee') && !selectedPatent && (
+                        <td className="px-3 py-2.5 text-xs text-muted-foreground max-w-[180px] truncate">
                           {p.assignee}
                         </td>
                       )}
-                      <td className="px-3 py-2.5">
-                        <span
-                          className={`inline-block rounded border px-1.5 py-0.5 text-xs font-medium ${AGILITY_BADGE[p.cryptoAgilityMode]}`}
+                      {show('pqcAlgorithms') && (
+                        <td
+                          className="px-3 py-2.5 text-xs text-muted-foreground max-w-[160px] truncate"
+                          title={p.pqcAlgorithms.join(', ')}
                         >
-                          {AGILITY_LABELS[p.cryptoAgilityMode]}
-                        </span>
-                      </td>
-                      <td className="px-3 py-2.5">
-                        <span
-                          className={`inline-block rounded border px-1.5 py-0.5 text-xs font-medium ${IMPACT_BADGE[p.impactLevel]}`}
+                          {renderTags(p.pqcAlgorithms)}
+                        </td>
+                      )}
+                      {show('classicalAlgorithms') && (
+                        <td
+                          className="px-3 py-2.5 text-xs text-muted-foreground max-w-[160px] truncate"
+                          title={p.classicalAlgorithms.join(', ')}
                         >
-                          {p.impactLevel}
-                        </span>
-                      </td>
-                      <td className="px-3 py-2.5 text-xs text-muted-foreground hidden md:table-cell whitespace-nowrap">
-                        {p.issueDate}
-                      </td>
+                          {renderTags(p.classicalAlgorithms)}
+                        </td>
+                      )}
+                      {show('quantumRelevance') && (
+                        <td className="px-3 py-2.5 text-xs text-muted-foreground whitespace-nowrap">
+                          {RELEVANCE_LABELS[p.quantumRelevance] ?? p.quantumRelevance}
+                        </td>
+                      )}
+                      {show('threatModel') && (
+                        <td
+                          className="px-3 py-2.5 text-xs text-muted-foreground max-w-[140px] truncate"
+                          title={p.threatModel.join(', ')}
+                        >
+                          {renderTags(p.threatModel)}
+                        </td>
+                      )}
+                      {show('applicationDomain') && (
+                        <td
+                          className="px-3 py-2.5 text-xs text-muted-foreground max-w-[140px] truncate"
+                          title={p.applicationDomain.join(', ')}
+                        >
+                          {renderTags(p.applicationDomain)}
+                        </td>
+                      )}
+                      {show('agility') && (
+                        <td className="px-3 py-2.5">
+                          <span
+                            className={`inline-block rounded border px-1.5 py-0.5 text-xs font-medium ${AGILITY_BADGE[p.cryptoAgilityMode]}`}
+                          >
+                            {AGILITY_LABELS[p.cryptoAgilityMode]}
+                          </span>
+                        </td>
+                      )}
+                      {show('impact') && (
+                        <td className="px-3 py-2.5">
+                          <span
+                            className={`inline-block rounded border px-1.5 py-0.5 text-xs font-medium ${IMPACT_BADGE[p.impactLevel]}`}
+                          >
+                            {p.impactLevel}
+                          </span>
+                        </td>
+                      )}
+                      {show('issueDate') && (
+                        <td className="px-3 py-2.5 text-xs text-muted-foreground whitespace-nowrap">
+                          {p.issueDate}
+                        </td>
+                      )}
+                      {show('priorityDate') && (
+                        <td className="px-3 py-2.5 text-xs text-muted-foreground whitespace-nowrap">
+                          {p.priorityDate}
+                        </td>
+                      )}
+                      {show('quantumTechnology') && (
+                        <td
+                          className="px-3 py-2.5 text-xs text-muted-foreground max-w-[140px] truncate"
+                          title={p.quantumTechnology.join(', ')}
+                        >
+                          {renderTags(p.quantumTechnology)}
+                        </td>
+                      )}
+                      {show('impactScore') && (
+                        <td className="px-3 py-2.5 text-xs text-muted-foreground tabular-nums">
+                          {p.impactScore}
+                        </td>
+                      )}
+                      {show('inventors') && (
+                        <td
+                          className="px-3 py-2.5 text-xs text-muted-foreground max-w-[160px] truncate"
+                          title={p.inventors}
+                        >
+                          {p.inventors}
+                        </td>
+                      )}
                     </tr>
                   )
                 })}
