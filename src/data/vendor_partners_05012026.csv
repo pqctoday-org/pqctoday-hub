@@ -1,0 +1,33 @@
+software_name,partner_vendor_id,partner_name,role,last_updated
+SK Telecom 5G PQC SIM,VND-348,SK Telecom,primary,2026-05-01
+SK Telecom 5G PQC SIM,VND-041,Thales,partner,2026-05-01
+PacketLight PQC Optical Encryption,VND-345,PacketLight Networks,primary,2026-05-01
+PacketLight PQC Optical Encryption,VND-157,ID Quantique,partner,2026-05-01
+Mastercard Quantum-Resistant Contactless,VND-341,Mastercard,primary,2026-05-01
+Mastercard Quantum-Resistant Contactless,VND-159,Giesecke+Devrient,partner,2026-05-01
+Mastercard Quantum-Resistant Contactless,VND-041,Thales,partner,2026-05-01
+Inturai PQ Station ESP32,VND-338,Inturai,primary,2026-05-01
+Inturai PQ Station ESP32,VND-344,PQ Station,partner,2026-05-01
+STV Post-Quantum Secure Drones,VND-350,STV Group,primary,2026-05-01
+STV Post-Quantum Secure Drones,VND-346,Post-Quantum Ltd,partner,2026-05-01
+Threema PQC,VND-353,Threema AG,primary,2026-05-01
+Threema PQC,VND-337,IBM Research,partner,2026-05-01
+Thunderbird PQC (OpenPGP),VND-342,Mozilla,primary,2026-05-01
+Thunderbird PQC (OpenPGP),VND-340,MTG AG,partner,2026-05-01
+CISA PQC Migration Framework,VND-336,CISA,primary,2026-05-01
+CISA PQC Migration Framework,VND-334,ATRC,partner,2026-05-01
+Trezor Safe 7 PQC,VND-351,SatoshiLabs,primary,2026-05-01
+Trezor Safe 7 PQC,VND-355,Trezor,partner,2026-05-01
+Arqit 6WIND Telco PQC,VND-168,Arqit,primary,2026-05-01
+Arqit 6WIND Telco PQC,VND-333,6WIND,partner,2026-05-01
+TOPPAN SecureBridge HPKI PQC,VND-352,TOPPAN Digital,primary,2026-05-01
+TOPPAN SecureBridge HPKI PQC,VND-343,NICT,partner,2026-05-01
+TOPPAN SecureBridge HPKI PQC,VND-053,ISARA,partner,2026-05-01
+Landis+Gyr SEALSQ Smart Grid PKI,VND-339,Landis+Gyr,primary,2026-05-01
+Landis+Gyr SEALSQ Smart Grid PKI,VND-056,SEALSQ,partner,2026-05-01
+PQChat Quantum-Safe Messaging,VND-349,SRD Wireless,primary,2026-05-01
+PQChat Quantum-Safe Messaging,VND-346,Post-Quantum Ltd,partner,2026-05-01
+TikTok PQC Data Protection,VND-354,TikTok,primary,2026-05-01
+TikTok PQC Data Protection,VND-335,ByteDance,partner,2026-05-01
+Renesas Veridify PQC for RA MCUs,VND-347,Renesas,primary,2026-05-01
+Renesas Veridify PQC for RA MCUs,VND-356,Veridify Security,partner,2026-05-01

@@ -1,55 +1,69 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { DimensionResult, ScoringContext } from '../types'
 
+const HEURISTIC_METHODS = new Set(['inferred', 'category-inferred'])
+
 /**
- * Count distinct cross-references for a resource.
+ * Count distinct cross-references for a resource, separating verified
+ * (direct/mapped) from heuristic (inferred/category-inferred) attributions.
+ *
  * Sources: xref table, compliance libraryRefs/timelineRefs,
  * library dependencies, threat module refs.
  */
-function countRefs(resourceId: string, ctx: ScoringContext): number {
-  const refs = new Set<string>()
+function countRefs(
+  resourceId: string,
+  ctx: ScoringContext
+): { verified: number; heuristic: number } {
+  const verifiedRefs = new Set<string>()
+  const heuristicRefs = new Set<string>()
 
-  // TrustedSourceXref entries
+  // TrustedSourceXref entries — split by matchMethod
   const xrefs = ctx.xrefsByResource.get(resourceId)
   if (xrefs) {
-    for (const x of xrefs) refs.add(`xref:${x.sourceId}`)
+    for (const x of xrefs) {
+      const key = `xref:${x.sourceId}`
+      if (HEURISTIC_METHODS.has(x.matchMethod)) heuristicRefs.add(key)
+      else verifiedRefs.add(key)
+    }
   }
 
-  // Compliance frameworks referencing this resource via libraryRefs
+  // Compliance, library deps, threat module refs are all direct edges → verified
   for (const [fwId, libraryRefs] of ctx.complianceLibraryRefs) {
-    if (libraryRefs.includes(resourceId)) refs.add(`compliance:${fwId}`)
+    if (libraryRefs.includes(resourceId)) verifiedRefs.add(`compliance:${fwId}`)
   }
-
-  // Compliance frameworks referencing this resource via timelineRefs
   for (const [fwId, timelineRefs] of ctx.complianceTimelineRefs) {
-    if (timelineRefs.includes(resourceId)) refs.add(`compliance-tl:${fwId}`)
+    if (timelineRefs.includes(resourceId)) verifiedRefs.add(`compliance-tl:${fwId}`)
   }
-
-  // Library items that depend on this resource
   for (const [libId, deps] of ctx.libraryDependencies) {
-    if (deps.includes(resourceId)) refs.add(`lib-dep:${libId}`)
+    if (deps.includes(resourceId)) verifiedRefs.add(`lib-dep:${libId}`)
   }
-
-  // Threats that reference this resource via modules
   for (const [threatId, modules] of ctx.threatModuleRefs) {
-    if (modules.includes(resourceId)) refs.add(`threat:${threatId}`)
+    if (modules.includes(resourceId)) verifiedRefs.add(`threat:${threatId}`)
   }
 
-  return refs.size
+  return { verified: verifiedRefs.size, heuristic: heuristicRefs.size }
 }
 
 export function scoreCrossRefDensity(resourceId: string, ctx: ScoringContext): DimensionResult {
-  const count = countRefs(resourceId, ctx)
+  const { verified, heuristic } = countRefs(resourceId, ctx)
+  // Heuristic refs count as half-weight: a category-inferred match is weaker
+  // evidence than a direct/mapped one.
+  const effective = verified + heuristic * 0.5
+  const total = verified + heuristic
 
   let score: number
-  if (count >= 7) score = 100
-  else if (count >= 4) score = 80
-  else if (count >= 2) score = 60
-  else if (count >= 1) score = 40
+  if (effective >= 7) score = 100
+  else if (effective >= 4) score = 80
+  else if (effective >= 2) score = 60
+  else if (effective >= 1) score = 40
   else score = 10
 
-  return {
-    rawScore: score,
-    rationale: count === 0 ? 'No cross-references' : `${count} cross-reference(s)`,
-  }
+  let rationale: string
+  if (total === 0) rationale = 'No cross-references'
+  else if (heuristic === 0) rationale = `${verified} verified cross-reference(s)`
+  else if (verified === 0)
+    rationale = `${heuristic} heuristic-only reference(s) (inferred / category-inferred)`
+  else rationale = `${total} cross-reference(s) (${verified} verified, ${heuristic} heuristic)`
+
+  return { rawScore: score, rationale }
 }

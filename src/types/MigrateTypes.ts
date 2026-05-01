@@ -176,6 +176,21 @@ export interface PurlXref {
   lastVerifiedDate: string
 }
 
+export interface SaasXref {
+  softwareName: string
+  saasUrl: string
+  deploymentModel: 'managed-service' | 'api-platform' | 'hybrid-cloud'
+  lastVerifiedDate: string
+}
+
+export interface VendorPartner {
+  softwareName: string
+  partnerVendorId: string
+  partnerName: string
+  role: 'primary' | 'partner'
+  lastUpdated: string
+}
+
 export interface PqcStats {
   established: number
   inProgress: number

@@ -132,6 +132,29 @@ describe('scoreCrossRefDensity', () => {
   it('returns 10 when no refs', () => {
     expect(scoreCrossRefDensity('id', emptyContext()).rawScore).toBe(10)
   })
+
+  it('weights inferred xref entries at half', () => {
+    const ctx = emptyContext()
+    ctx.xrefsByResource.set('id', [
+      { sourceId: 'a', matchMethod: 'inferred' },
+      { sourceId: 'b', matchMethod: 'inferred' },
+    ])
+    // 2 heuristic × 0.5 = 1 effective → score 40
+    const r = scoreCrossRefDensity('id', ctx)
+    expect(r.rawScore).toBe(40)
+    expect(r.rationale).toMatch(/heuristic-only/)
+  })
+
+  it('separates verified from heuristic in rationale', () => {
+    const ctx = emptyContext()
+    ctx.xrefsByResource.set('id', [
+      { sourceId: 'a', matchMethod: 'mapped' },
+      { sourceId: 'b', matchMethod: 'inferred' },
+    ])
+    // 1 verified + 1 heuristic × 0.5 = 1.5 effective → score 40
+    const r = scoreCrossRefDensity('id', ctx)
+    expect(r.rationale).toMatch(/1 verified, 1 heuristic/)
+  })
 })
 
 describe('scoreEnrichmentCompleteness', () => {

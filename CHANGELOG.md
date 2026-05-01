@@ -6,6 +6,93 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.31] - May 1, 2026
+
+A second data-substrate sweep on the same day: vendor partnerships now have a
+proper schema, SaaS-only products land in their own cross-reference family,
+the assessment wizard knows which compliance frameworks and threats each
+question maps to, the maturity corpus consolidates into a single canonical
+file, and the trust-score tooltip honestly distinguishes verified attribution
+from heuristic guesses.
+
+### Added
+
+- **Vendor partnerships table** — joint ventures and integration partnerships
+  (Mastercard / Giesecke+Devrient / Thales, SK Telecom / Thales, Renesas /
+  Veridify, etc.) are now first-class data: each multi-vendor product gets
+  one row per partner in `vendor_partners_05012026.csv` (32 rows across 15
+  products), with a "primary" / "partner" role. The catalog row points to
+  the primary vendor's `VND-XXX`; the rest of the partnership lives in the
+  partner table. 24 new partner vendors added (`VND-333` … `VND-356`)
+  including Mastercard, Mozilla, Renesas, IBM Research, CISA, and more.
+
+- **SaaS cross-reference family** — 11 SaaS-only products that have no CPE,
+  pURL, or certification representation (AWS Certificate Manager, AnyDesk,
+  BeyondTrust Pathfinder, Descope, Galileo, Hex Trust, Komainu, Metaco
+  Harmonize, Stytch, etc.) now live in `migrate_saas_xref_05012026.csv` with
+  a SaaS URL and a `deployment_model` (`managed-service`, `api-platform`,
+  `hybrid-cloud`).
+
+- **Assessment wizard FK columns** — `pqcassessment` gains explicit
+  `compliance_id` and `threat_id` columns (semicolon-delimited multi-value)
+  so the assessment can link to specific compliance frameworks (CNSA-2,
+  FIPS-140-3, HIPAA, GDPR, PCI-DSS, ISO/SAE 21434, eIDAS 2.0, GSMA NG.116,
+  etc.) and threat IDs (CROSS-001, AUTO-001, AERO-001, GOV-001, CRYPTO-001,
+  IOT-001, ENERGY-001, etc.) per question. New validator checks **N12-B**
+  and **N12-C** enforce both FKs.
+
+### Changed
+
+- **Maturity governance corpus consolidated** — the loader previously merged
+  five files at runtime (`04232026`, `04242026`, `04302026`, plus two in the
+  legacy `YYYYMMDD` format). Those five are merged at build time into one
+  canonical `pqc_maturity_governance_requirements_05012026.csv` (1,332 rows /
+  189 reference IDs after dedup), and the five sources are archived. Loader
+  behaviour is unchanged; only the file layout is cleaner.
+
+- **Assessment wizard content refresh** — all 83 rows now carry an explicit
+  `compliance_deadline` and `compliance_notes` anchored on CNSA 2.0 (2025
+  preferred / 2030 required / 2035 disallow), CISA Jan 2026 PQC categories,
+  and ANSSI PG 083 v3 (Mar 2026, hybrid by 2026-2028, full PQC by 2030).
+  Industry-specific use cases get sector deadlines (V2X / OTA aligned with
+  ISO/SAE 21434, AVIONICS with RTCA DO-326A, SCADA with IEC 62443).
+
+- **Trust-score cross-reference scoring distinguishes verified vs heuristic
+  attribution** — `inferred` and `category-inferred` `trusted_source_xref`
+  matches now count at half-weight, and the tooltip rationale explicitly
+  reports the split (e.g. _"5 cross-reference(s) (3 verified, 2 heuristic)"_).
+  Pure-heuristic attributions are flagged in plain text. Two new dimension
+  tests cover the split.
+
+- **Authoritative-source freshness sweep** — 21 auth_sources rows + 43
+  trusted_sources rows last verified ≥90 days ago were HEAD-checked against
+  their primary URLs. 54 came back live (`Last_Verified_Date` advanced to
+  today); 10 returned 404, blocked, or timed out and were either left at
+  their old date or marked `Pending` for manual review.
+
+### Fixed
+
+- **CHANGELOG version-number duplicates** — versions 3.5.19 through 3.5.27
+  were each defined twice (April 25-26 set vs April 27-30 set). The April
+  25-26 entries were superseded by the later releases; both
+  `corpus-invariants.test.ts` and `generate-rag-corpus.test.ts` failed on
+  the duplicate IDs. Removed the 10 superseded duplicate entries; both tests
+  now pass.
+
+- **Validator graph-consistency now recognizes vendor_partners** — `GC-1`
+  and `GC-5` previously flagged partner-only vendors (Mozilla, Mastercard,
+  IBM Research, etc.) as orphans because they had no direct catalog vendor_id.
+  Both checks now count `vendor_partners` edges, so legitimate partner
+  vendors no longer appear as orphans.
+
+### Internal
+
+- **Validator: 99 → 101 checks**, 87 → 90 passing, 0 errors. New: N12-B,
+  N12-C. Cleared: GC-1, GC-5 partner-vendor false positives. RAG corpus
+  regenerated (8511 → 8503 chunks, reflects the deduped CHANGELOG).
+
+- **Test suite: 2010/2012 → 2014/2014** — both stale corpus tests now pass.
+
 ## [3.5.30] - May 1, 2026
 
 This release closes a long backlog of cross-reference gaps in the data layer.
@@ -448,136 +535,6 @@ Major VPN Simulator milestone: full IKE_SA reaches ESTABLISHED with real ML-KEM-
 ### Work in progress
 
 - **VPN Simulator — ML-DSA cert-auth wiring (partial)** — Real ML-DSA-65 IKE_AUTH inside the browser is wired up: a PKCS#11 trace channel surfaces every operation in the simulator panel, certificate generation runs end-to-end via the in-worker HSM, and the strongSwan PKCS#11 plugin successfully finds and logs into the token. The remaining gap is that in dual+ML-DSA mode, the daemon still falls back to PSK because the cert-load path inside the plugin isn't yet triggered. Tracked for completion in 3.5.20.
-
-## [3.5.27] - April 26, 2026
-
-Cleared 157 orphan entities across the library, software catalog, and vendor data — every record now connects to its module, category, or product.
-
-### Fixed
-
-- **Library entries — all 59 orphans wired to learning modules** — Research papers, government reports, NIST/CC/BSI standards, and sector regulations (HIPAA, NERC, PCI DSS, ETSI, etc.) now link to the right learning modules. Library catalog now stands at 530 rows.
-
-- **Software products — all 84 orphans wired to learning modules** — Every product in the migrate catalog now references the learning modules relevant to its category, including PKI lifecycle, OS security, JWT/API, QKD, satellite/space, IoT, hardware security, and others.
-
-- **Vendor records — all 16 orphans resolved** — For 11 vendors, real products were added with cited sources (BlackBerry's Certicom + QNX after the Cylance divestiture, Hex Trust, Komainu, Metaco/Ripple, Descope, Stytch, Cisco AI Defense, Galileo, BeyondTrust, DocuSign, AnyDesk). Two orphan vendors were removed (Best PQC was a parked domain; UEFI Forum is a standards body, not a product vendor). Vendor catalog now stands at 300.
-
-### Changed
-
-- **Priority matrix counts refreshed** — Updated for the 8 categories affected by the new product additions.
-
-- **Search corpus refreshed** — 8,232 chunks (16 new chunks from the new products and vendor updates).
-
-## [3.5.26] - April 25, 2026
-
-Cleared a batch of data-quality warnings — algorithm tagging, RAG coverage, authoritative-source flags, and Q&A compliance refs.
-
-### Fixed
-
-- **Algorithm canonicalization** — Added BIKE Round 4 spec and ETSI QKD REST API spec to the library so all referenced algorithm families are recognised.
-
-- **RAG summary coverage** — Wired healthcare and architecture modules to FIPS 205 (SLH-DSA) and FN-DSA-512 references so module summaries fully cover the algorithms they discuss.
-
-- **Authoritative source flags — 38 mismatches resolved** — Updated 40 boolean flags so each source is correctly marked for the data types it actually contributes (vs. reference-only portals).
-
-- **Q&A compliance refs — 91 mismatches resolved** — Q&A entries can now legitimately cite framework-level identifiers (NIST, BSI, GDPR, NIS2, eIDAS, HIPAA, PCI DSS, ITAR, CMMC, ISO 27001, etc.) without requiring an exact compliance record ID.
-
-## [3.5.25] - April 25, 2026
-
-Refreshed the algorithm catalog with verified data from the April 2026 reference doc, renamed composite-signature entries to their formal IETF identifiers, and added the alternate Classic-McEliece-6960119 parameter set.
-
-### Added
-
-- **Classic-McEliece-6960119** — Alternate NIST Level 5 parameter set, BSI-recommended alongside `-6688128` for conservative ~256-bit-equivalent long-term sovereign protection.
-
-### Changed
-
-- **Algorithm sizes refreshed with verified data** — The TLS 1.3 hybrid named groups (X25519MLKEM768, SecP256r1MLKEM768) now show their correct key, ciphertext, and shared-secret sizes. Twenty-one newly added algorithm rows have been refreshed with verified spec data: LMS, XMSS, HQC, Classic-McEliece, UOV, CROSS, LESS, FAEST, SNOVA, ML-DSA composite signatures, ML-KEM composite KEMs, and HPKE post-quantum modes. Corrected the Classic-McEliece-6688128 ciphertext size (208 bytes, was incorrectly listed as 240).
-
-- **ML-DSA-44 composite signatures renamed to formal IETF IDs** — `ML-DSA-44-RSA2048-PSS` becomes `id-MLDSA44-RSA2048-PSS-SHA256`, `ML-DSA-44-Ed25519` becomes `id-MLDSA44-Ed25519-SHA512`, and `ML-DSA-44-ECDSA-P256` becomes `id-MLDSA44-ECDSA-P256-SHA256`, matching the IETF composite signatures draft.
-
-- **Search corpus refreshed** — Regenerated to reflect the renamed algorithm rows and the new Classic-McEliece entry.
-
-## [3.5.24] - April 25, 2026
-
-Filled out 21 algorithm rows with rigorous "research needed" markers anywhere data is unverified, so the comparison views never show fabricated values.
-
-### Added
-
-- **21 new algorithm catalog rows** — Family entries for LMS, XMSS, Classic-McEliece, HQC; NIST Additional Signatures Round 2 candidates (UOV, SQIsign, CROSS, LESS, FAEST, SNOVA); IETF composite signatures and KEMs; the BSI-recommended Classic-McEliece-6688128 parameter set; placeholder entries for LAC, NGCC-BC, NGCC-CH, Covercrypt, and HPKE-PQ.
-
-### Changed
-
-- **"Research needed" marker for unverified algorithm data** — Every byte size, cycle count, security level, or RAM figure for the new rows is either citable to a primary spec or shows the literal marker `Research needed`. Replaces earlier informal placeholders.
-
-- **Algorithm comparison views show "Research needed" gracefully** — Sizes, security, and performance views render the marker in italics rather than `0 bytes`, and skip chart bars for unknown values so chart maxima aren't skewed by sentinel zeros. CSV exports emit `Research needed` instead of misleading `0` or `null`.
-
-- **Status fields tightened** — Algorithm status now distinguishes IETF Internet-Draft, NIST Additional Signatures Round 2 — Candidate, NGCC TBD (submissions due June 2026), Historical NIST Round 2 (dropped 2019), and NIST Selected (Draft FIPS pending), instead of bare "Candidate" or "Draft".
-
-### Fixed
-
-- **Library and validator cleanups** — Broke a circular library dependency in TPM specs, re-pointed 5 library files from the timeline cache to the library cache, refreshed the priority matrix counts for 32 categories, cleaned up enrichment headings, and removed 13 corrupt cached pages.
-
-## [3.5.23] - April 25, 2026
-
-Refreshed the live PQC certification data from NIST CMVP/ACVP, Common Criteria, ANSSI, and ENISA — and dropped 28 stale certification cross-references that no longer exist upstream.
-
-### Fixed
-
-- **Certification data refreshed and cross-references cleaned** — Live PQC certification data updated from the four upstream sources (2,384 records). New product-to-certification cross-reference snapshot (754 rows) drops 28 stale FIPS and CC IDs that no longer exist in the scraped data.
-
-## [3.5.22] - April 25, 2026
-
-Added 16 newly enriched and scored patents covering blockchain–PKI integration, multi-factor authentication, UAV delivery confirmation, and named content transport.
-
-### Changed
-
-- **Patents data — 16 new patents added** — Now 353 patents total. Background enrichment paused at 154 of 341 to free compute; the remaining patents will be processed in a later run.
-
-## [3.5.21] - April 25, 2026
-
-Added a daily compliance scraper that auto-refreshes certification data overnight, and stopped the embed SDK from getting reformatted on every commit.
-
-### Added
-
-- **Daily compliance scraper** — Runs every day at 08:00 UTC and auto-commits any changes to the compliance dataset (NIST CMVP/ACVP, CC, ANSSI, ENISA). Manual trigger also available.
-
-### Fixed
-
-- **Embed SDK no longer reformatted on every commit** — The embed bundle is now correctly excluded from Prettier so lint-staged stops mangling the canonical minified single-line build.
-
-## [3.5.20] - April 25, 2026
-
-Second wave of data integrity fixes — Q&A factual accuracy, library references, priority matrix coverage, and category tagging.
-
-### Fixed
-
-- **Q&A consistency across modules** — Propagated SLH-DSA Q&A fixes to the combined Q&A file; replaced 144 stale TPM PQC spec references with the canonical TPM 1.85 Part 1 reference; corrected BSI TR-02102 references to TR-02102-1 across SLH-DSA and stateful-signatures Q&A.
-
-- **Priority matrix expanded to all categories** — Grew from 53 to 241 rows by adding 188 missing category stubs (CSC-062 through CSC-249) derived from the migrate catalog.
-
-- **Function-type values cleaned up** — Added "Composite Signature" and "Composite KEM" as recognised function values; corrected "Hybrid KEM with Access Control" to "Hybrid KEM".
-
-- **Catalog tag corrections** — Fixed 3 product entries from `code-signing-pqc` to `code-signing`.
-
-- **Leader resource link cleanup** — Removed a stale ANSSI position-paper URL that had been renamed during dedup work.
-
-- **CSV housekeeping** — Archived 12 stale product catalog versions and 2 stale library intermediate revisions.
-
-## [3.5.19] - April 25, 2026
-
-Resolved all content-integrity failures that were blocking CI from going green.
-
-### Fixed
-
-- **SLH-DSA Q&A factual accuracy** — Q&A now correctly pairs each FIPS number with its algorithm name (FIPS 203 / ML-KEM, FIPS 204 / ML-DSA, FIPS 205 / SLH-DSA).
-
-- **Library dependencies cleaned** — Removed a non-existent IEEE 802.1AR-2018 dependency from the TPM 1.85 spec, removed a self-referential dependency from ETSI GS QKD-016, and corrected a FIPS 140-3 reference in NIST SP 800-140B.
-
-- **Module ID corrections** — Fixed 4 invalid module IDs in the library catalog and added three modules (Crypto Management Modernization, SLH-DSA, PQC Testing & Validation) to the validator's recognised list.
-
-- **Migration phase corrections** — Fixed 6 invalid phase values across Bouncy Castle, RustCrypto ML-KEM/ML-DSA/SLH-DSA, CIRCL, and CyberZero Quantanaut entries.
-
-- **Enrichment heading sync** — Updated 51 stale headings across 11 library enrichment files after dedup; removed 8 sections with no library match.
 
 ## [3.5.18] - April 25, 2026
 

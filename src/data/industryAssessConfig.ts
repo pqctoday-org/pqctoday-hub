@@ -20,6 +20,8 @@ export interface IndustryUseCaseConfig {
   industries: string[]
   hndlRelevance: number
   migrationPriority: number
+  complianceIds: string[]
+  threatIds: string[]
 }
 
 export interface IndustryRetentionConfig {
@@ -29,6 +31,8 @@ export interface IndustryRetentionConfig {
   description: string
   industries: string[]
   retentionYears: number
+  complianceIds: string[]
+  threatIds: string[]
 }
 
 export interface IndustrySensitivityConfig {
@@ -38,6 +42,8 @@ export interface IndustrySensitivityConfig {
   description: string
   industries: string[]
   sensitivityScore: number
+  complianceIds: string[]
+  threatIds: string[]
 }
 
 export type IndustryConfigRow =
@@ -58,6 +64,8 @@ interface RawAssessRow {
   compliance_deadline: string
   compliance_notes: string
   countries: string
+  compliance_id: string
+  threat_id: string
 }
 
 const modules = import.meta.glob('./pqcassessment_*.csv', {
@@ -72,6 +80,8 @@ const { data: allRows, metadata: parsedMetadata } = loadLatestCSV<RawAssessRow, 
   (row) => {
     const industries = splitSemicolon(row.industries)
     const countries = splitSemicolon(row.countries)
+    const complianceIds = splitSemicolon(row.compliance_id)
+    const threatIds = splitSemicolon(row.threat_id)
 
     if (row.category === 'compliance') {
       return {
@@ -95,6 +105,8 @@ const { data: allRows, metadata: parsedMetadata } = loadLatestCSV<RawAssessRow, 
         industries,
         hndlRelevance: row.hndl_relevance ? parseIntSafe(row.hndl_relevance) : 5,
         migrationPriority: row.migration_priority ? parseIntSafe(row.migration_priority) : 5,
+        complianceIds,
+        threatIds,
       } satisfies IndustryUseCaseConfig
     }
 
@@ -106,6 +118,8 @@ const { data: allRows, metadata: parsedMetadata } = loadLatestCSV<RawAssessRow, 
         description: row.description || '',
         industries,
         retentionYears: row.retention_years ? parseIntSafe(row.retention_years) : 0,
+        complianceIds,
+        threatIds,
       } satisfies IndustryRetentionConfig
     }
 
@@ -117,6 +131,8 @@ const { data: allRows, metadata: parsedMetadata } = loadLatestCSV<RawAssessRow, 
         description: row.description || '',
         industries,
         sensitivityScore: row.hndl_relevance ? parseIntSafe(row.hndl_relevance) : 5,
+        complianceIds,
+        threatIds,
       } satisfies IndustrySensitivityConfig
     }
 
