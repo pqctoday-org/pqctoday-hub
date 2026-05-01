@@ -10,6 +10,7 @@ export interface DocumentCardGridProps {
   items: LibraryItem[]
   onViewDetails: (item: LibraryItem) => void
   showHierarchicalAccordion?: boolean
+  highlightedRefId?: string | null
 }
 
 const HierarchicalCardGroup = ({
@@ -76,6 +77,7 @@ export const DocumentCardGrid = ({
   items,
   onViewDetails,
   showHierarchicalAccordion = false,
+  highlightedRefId,
 }: DocumentCardGridProps) => {
   const displayRoots = useMemo(() => {
     if (!showHierarchicalAccordion) return items
@@ -116,6 +118,7 @@ export const DocumentCardGrid = ({
                 item={item}
                 onViewDetails={onViewDetails}
                 index={i}
+                highlighted={!!highlightedRefId && item.referenceId === highlightedRefId}
               />
             ))}
       </AnimatePresence>

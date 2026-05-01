@@ -67,6 +67,7 @@ import type {
 } from '../../hooks/assessmentTypes'
 import { SIGNING_ALGORITHMS } from '../../hooks/assessmentData'
 import { encodeShareToken } from '@/utils/reportShareToken'
+import { FilteredChip } from './FilteredChip'
 
 declare const __APP_VERSION__: string
 const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'
@@ -1399,17 +1400,14 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                         infoTip="threatLandscape"
                         headerExtra={
                           hiddenForIndustryCount > 0 ? (
-                            <Button
-                              variant="ghost"
-                              type="button"
-                              onClick={(e) => {
+                            <FilteredChip
+                              context={industry ?? 'industry'}
+                              hiddenCount={hiddenForIndustryCount}
+                              onRestore={(e) => {
                                 e.stopPropagation()
                                 restoreAllThreats()
                               }}
-                              className="text-xs px-2.5 py-1 h-auto rounded-full bg-status-warning/10 text-status-warning border border-status-warning/30 hover:bg-status-warning/20 print:hidden"
-                            >
-                              {hiddenForIndustryCount} hidden · Restore
-                            </Button>
+                            />
                           ) : undefined
                         }
                       >

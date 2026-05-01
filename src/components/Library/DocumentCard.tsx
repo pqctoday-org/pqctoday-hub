@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useMemo } from 'react'
+import { useEffect, useRef, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import {
@@ -31,6 +31,7 @@ interface DocumentCardProps {
   item: LibraryItem
   onViewDetails: (item: LibraryItem) => void
   index?: number
+  highlighted?: boolean
 }
 
 const URGENCY_COLORS: Record<string, string> = {
@@ -57,9 +58,21 @@ const TIER_TONE_TO_FILL: Record<'error' | 'warning' | 'info' | 'success', string
   success: 'bg-status-success',
 }
 
-export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardProps) => {
+export const DocumentCard = ({
+  item,
+  onViewDetails,
+  index = 0,
+  highlighted,
+}: DocumentCardProps) => {
   const { libraryBookmarks, toggleLibraryBookmark } = useBookmarkStore()
   const isBookmarked = libraryBookmarks.includes(item.referenceId)
+  const cardRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    if (highlighted && cardRef.current) {
+      cardRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, [highlighted])
   const isEnriched = !!libraryEnrichments[item.referenceId]
 
   // CSWP 39 rollup: pillar counts + tier coverage from the maturity dataset.
@@ -82,11 +95,13 @@ export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardPro
 
   return (
     <motion.article
+      ref={cardRef}
+      id={`doc-${item.referenceId}`}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, delay: index * 0.03 }}
       onClick={() => onViewDetails(item)}
-      className="glass-panel p-5 flex flex-col h-full hover:border-secondary/50 hover:shadow-md cursor-pointer transition-all bg-card/50 relative"
+      className={`glass-panel p-5 flex flex-col h-full hover:border-secondary/50 hover:shadow-md cursor-pointer transition-all bg-card/50 relative scroll-mt-20 ${highlighted ? 'ring-2 ring-primary shadow-glow' : ''}`}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import {
   libraryData,
@@ -223,10 +223,38 @@ export const LibraryView: React.FC = () => {
   )
   const [cswp39Only, setCswp39Only] = useState<boolean>(() => searchParams.get('cswp39') === '1')
   const [showFilters, setShowFilters] = useState(false)
+  const [highlightedDocId, setHighlightedDocId] = useState<string | null>(
+    () => searchParams.get('doc') ?? null
+  )
+  const prevDocHighlightRef = useRef<string | null>(null)
   const [selectedItem, setSelectedItem] = useState<LibraryItem | null>(() => {
     const ref = searchParams.get('ref')
     return ref ? findByRef(libraryData, ref) : null
   })
+
+  // ?doc=<refId> — scroll-to-card + 3 s highlight, then clear
+  useEffect(() => {
+    const docId = searchParams.get('doc')
+    if (!docId || docId === prevDocHighlightRef.current) return
+    prevDocHighlightRef.current = docId
+    const found = findByRef(libraryData, docId)
+    if (found) {
+      // Ensure the card is visible by setting its primary category
+      const cat = found.categories[0]
+      if (cat) setActiveCategory(cat)
+      setHighlightedDocId(docId)
+      setTimeout(() => {
+        setHighlightedDocId(null)
+        setSearchParams(
+          (p) => {
+            p.delete('doc')
+            return p
+          },
+          { replace: true }
+        )
+      }, 3000)
+    }
+  }, [searchParams, setSearchParams])
 
   // Sync all filter params on same-route navigations (e.g. chatbot deep links, back/forward).
   // Functional setters prevent infinite loops: React bails out when the returned value equals
@@ -841,7 +869,11 @@ export const LibraryView: React.FC = () => {
 
       {/* Content area */}
       {viewMode === 'cards' ? (
-        <DocumentCardGrid items={sortedItems} onViewDetails={openDetail} />
+        <DocumentCardGrid
+          items={sortedItems}
+          onViewDetails={openDetail}
+          highlightedRefId={highlightedDocId}
+        />
       ) : (
         <>
           <div className="hidden md:block">{renderTableView()}</div>
@@ -850,6 +882,7 @@ export const LibraryView: React.FC = () => {
               items={sortedItems}
               onViewDetails={openDetail}
               showHierarchicalAccordion
+              highlightedRefId={highlightedDocId}
             />
           </div>
         </>
