@@ -2,6 +2,7 @@
 import { MOCK_LIBRARY_CSV_CONTENT } from './mockTimelineData'
 import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
 import { loadLatestCSV, splitSemicolon } from './csvUtils'
+import { getDocumentStatusBucket, type DocumentStatusBucket } from '../utils/documentStatusBucket'
 
 export interface LibraryItem {
   referenceId: string
@@ -10,6 +11,7 @@ export interface LibraryItem {
   initialPublicationDate: string
   lastUpdateDate: string
   documentStatus: string
+  documentStatusBucket: DocumentStatusBucket
   shortDescription: string
   documentType: string
   applicableIndustries: string[]
@@ -167,6 +169,7 @@ function transformLibraryRow(row: RawLibraryRow): LibraryItem {
     initialPublicationDate: row.initial_publication_date,
     lastUpdateDate: row.last_update_date,
     documentStatus: row.document_status,
+    documentStatusBucket: getDocumentStatusBucket(row.document_status ?? ''),
     shortDescription: row.short_description,
     documentType: row.document_type,
     applicableIndustries: splitSemicolon(row.applicable_industries),

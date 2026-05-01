@@ -99,8 +99,8 @@ export const IndustryStack = ({
                   <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/5 to-transparent group-hover:animate-[shimmer_1.5s_infinite]" />
                 </div>
 
-                <div className="flex flex-col md:flex-row items-center justify-between w-full">
-                  <div className="flex items-center gap-4 w-full md:w-auto">
+                <div className="flex flex-col md:flex-row items-center gap-4 w-full">
+                  <div className="flex items-center gap-4 shrink-0">
                     <div
                       className={`flex items-center justify-center w-12 h-12 rounded-lg bg-background/50 backdrop-blur border border-border/30 shadow-inner transition-colors ${
                         isActive
@@ -121,6 +121,8 @@ export const IndustryStack = ({
                       </p>
                     </div>
                   </div>
+
+                  <div className="hidden md:block flex-1 h-px bg-gradient-to-r from-border/40 via-border/20 to-transparent" />
 
                   <div className="hidden md:flex items-center gap-2 flex-shrink-0">
                     {layer.criticalCount > 0 && (

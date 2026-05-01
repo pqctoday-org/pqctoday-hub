@@ -28,6 +28,10 @@ import { usePersonaStore } from '../../store/usePersonaStore'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
 import { maturityByRefId } from '../../data/maturityGovernanceData'
 import { PERSONA_LIBRARY_CATEGORIES } from '../../data/personaConfig'
+import {
+  LIFECYCLE_FILTER_OPTIONS,
+  type DocumentStatusBucket,
+} from '../../utils/documentStatusBucket'
 import { ErrorAlert } from '../ui/error-alert'
 import { EmptyState } from '../ui/empty-state'
 import { Button } from '@/components/ui/button'
@@ -222,6 +226,9 @@ export const LibraryView: React.FC = () => {
     () => (searchParams.get('sort') as SortOption | null) ?? 'newest'
   )
   const [cswp39Only, setCswp39Only] = useState<boolean>(() => searchParams.get('cswp39') === '1')
+  const [lifecycleBucket, setLifecycleBucket] = useState<string>(
+    () => searchParams.get('lifecycle') ?? 'All'
+  )
   const [showFilters, setShowFilters] = useState(false)
   const [highlightedDocId, setHighlightedDocId] = useState<string | null>(
     () => searchParams.get('doc') ?? null
@@ -285,6 +292,10 @@ export const LibraryView: React.FC = () => {
       const next = searchParams.get('cswp39') === '1'
       return prev !== next ? next : prev
     })
+    setLifecycleBucket((prev) => {
+      const next = searchParams.get('lifecycle') ?? 'All'
+      return prev !== next ? next : prev
+    })
   }, [searchParams, storeIndustry])
 
   /** Write all current filter state back to the URL. Call with overrides for the value that
@@ -300,6 +311,7 @@ export const LibraryView: React.FC = () => {
       view?: ViewMode
       sort?: SortOption
       cswp39?: boolean
+      lifecycle?: string
     }) => {
       setSearchParams(
         (prev) => {
@@ -311,6 +323,7 @@ export const LibraryView: React.FC = () => {
           const view = overrides.view ?? viewMode
           const sort = overrides.sort ?? sortBy
           const cswp39Flag = overrides.cswp39 ?? cswp39Only
+          const lifecycle = overrides.lifecycle ?? lifecycleBucket
 
           if (cat !== 'All') next.set('cat', cat)
           else next.delete('cat')
@@ -326,6 +339,8 @@ export const LibraryView: React.FC = () => {
           else next.delete('sort')
           if (cswp39Flag) next.set('cswp39', '1')
           else next.delete('cswp39')
+          if (lifecycle !== 'All') next.set('lifecycle', lifecycle)
+          else next.delete('lifecycle')
           return next
         },
         { replace: true }
@@ -339,6 +354,7 @@ export const LibraryView: React.FC = () => {
       viewMode,
       sortBy,
       cswp39Only,
+      lifecycleBucket,
       setSearchParams,
     ]
   )
@@ -393,6 +409,22 @@ export const LibraryView: React.FC = () => {
       }
     })
     return ['All', ...Array.from(o).sort()]
+  }, [])
+
+  // Lifecycle bucket options with item counts for the filter dropdown
+  const lifecycleOptions = useMemo(() => {
+    const counts = new Map<string, number>()
+    libraryData.forEach((item) => {
+      const b = item.documentStatusBucket
+      counts.set(b, (counts.get(b) ?? 0) + 1)
+    })
+    return LIFECYCLE_FILTER_OPTIONS.map((opt) => ({
+      id: opt.id,
+      label:
+        opt.id === 'All'
+          ? `All (${libraryData.length})`
+          : `${opt.label} (${counts.get(opt.id as DocumentStatusBucket) ?? 0})`,
+    }))
   }, [])
 
   // Items with New or Updated status for the activity feed
@@ -457,6 +489,9 @@ export const LibraryView: React.FC = () => {
       // CSWP 39 enriched-only filter
       if (cswp39Only && !maturityByRefId.has(item.referenceId)) return false
 
+      // Lifecycle status bucket filter
+      if (lifecycleBucket !== 'All' && item.documentStatusBucket !== lifecycleBucket) return false
+
       // Search filter
       if (!filterText) return true
       const searchLower = filterText.toLowerCase()
@@ -475,6 +510,7 @@ export const LibraryView: React.FC = () => {
     showOnlyLibraryBookmarks,
     libraryBookmarks,
     cswp39Only,
+    lifecycleBucket,
   ])
 
   // Persona-preferred categories for secondary sort boost
@@ -661,7 +697,8 @@ export const LibraryView: React.FC = () => {
               showFilters ||
               activeCategory !== 'All' ||
               activeOrg !== 'All' ||
-              activeIndustry !== 'All'
+              activeIndustry !== 'All' ||
+              lifecycleBucket !== 'All'
                 ? 'bg-primary/10 border-primary/30 text-primary'
                 : 'bg-muted/30 border-border text-foreground hover:bg-muted/50'
             }`}
@@ -670,9 +707,10 @@ export const LibraryView: React.FC = () => {
             <SlidersHorizontal size={16} />
             <span className="hidden sm:inline">Filters</span>
             {/* Show badge if filters are active */}
-            {(activeCategory !== 'All' || activeOrg !== 'All' || activeIndustry !== 'All') && (
-              <span className="w-2 h-2 rounded-full bg-primary" />
-            )}
+            {(activeCategory !== 'All' ||
+              activeOrg !== 'All' ||
+              activeIndustry !== 'All' ||
+              lifecycleBucket !== 'All') && <span className="w-2 h-2 rounded-full bg-primary" />}
           </Button>
 
           {libraryBookmarks.length > 0 && (
@@ -766,6 +804,25 @@ export const LibraryView: React.FC = () => {
                   logEvent('Library', 'Filter Industry', ind)
                 }}
                 defaultLabel="Industry"
+                noContainer
+                opaque
+                className="mb-0 w-full"
+              />
+            </div>
+
+            <div className="flex-1 min-w-[160px]">
+              <span className="text-xs font-medium text-muted-foreground mb-1 block">
+                Doc Status
+              </span>
+              <FilterDropdown
+                items={lifecycleOptions}
+                selectedId={lifecycleBucket}
+                onSelect={(bucket) => {
+                  setLifecycleBucket(bucket)
+                  syncFiltersToUrl({ lifecycle: bucket })
+                  logEvent('Library', 'Filter Lifecycle', bucket)
+                }}
+                defaultLabel="Doc Status"
                 noContainer
                 opaque
                 className="mb-0 w-full"

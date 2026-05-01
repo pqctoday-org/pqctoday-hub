@@ -18,6 +18,7 @@ import {
 import { LibraryDetailPopover } from './LibraryDetailPopover'
 import { StatusBadge } from '../common/StatusBadge'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
+import { BUCKET_STYLES } from '../../utils/documentStatusBucket'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { buildLibraryEndorsementUrl, buildLibraryFlagUrl } from './libraryEndorsement'
@@ -219,7 +220,15 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
             </div>
           </td>
           <td className="p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors">
-            {item.documentStatus}
+            <span
+              className={clsx(
+                'inline-flex items-center px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider',
+                BUCKET_STYLES[item.documentStatusBucket].badge
+              )}
+              title={item.documentStatus}
+            >
+              {BUCKET_STYLES[item.documentStatusBucket].label}
+            </span>
           </td>
           <td className="p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors">
             {item.lastUpdateDate}

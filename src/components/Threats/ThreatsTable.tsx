@@ -47,11 +47,21 @@ export const ThreatsTable = ({
   return (
     <div className="glass-panel overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
+        <table className="w-full min-w-[1050px] text-left border-collapse table-fixed">
+          <colgroup>
+            <col className="w-[155px]" />
+            <col className="w-[155px]" />
+            <col className="w-[215px]" />
+            <col className="w-[95px]" />
+            <col className="w-[185px]" />
+            <col className="w-[195px]" />
+            <col className="w-[95px]" />
+            <col className="w-[50px]" />
+          </colgroup>
           <thead>
             <tr className="border-b border-border bg-muted/20">
               <th
-                className="p-4 font-semibold text-sm cursor-pointer hover:text-primary transition-colors max-w-[60px] md:max-w-none"
+                className="p-4 font-semibold text-sm cursor-pointer hover:text-primary transition-colors"
                 onClick={() => onSort('industry')}
               >
                 <div className="flex items-center gap-1 justify-center md:justify-start">
@@ -71,9 +81,9 @@ export const ThreatsTable = ({
                     (sortDirection === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />)}
                 </div>
               </th>
-              <th className="hidden md:table-cell p-4 font-semibold text-sm w-1/3">Description</th>
+              <th className="hidden md:table-cell p-4 font-semibold text-sm">Description</th>
               <th
-                className="p-4 font-semibold text-sm cursor-pointer hover:text-primary transition-colors max-w-[60px] md:max-w-none"
+                className="p-4 font-semibold text-sm cursor-pointer hover:text-primary transition-colors"
                 onClick={() => onSort('criticality')}
               >
                 <div className="flex items-center gap-1 justify-center md:justify-start">
@@ -131,13 +141,13 @@ export const ThreatsTable = ({
                       />
                     </div>
                   </td>
-                  <td className="hidden md:table-cell p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors max-w-[300px]">
+                  <td className="hidden md:table-cell p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors overflow-hidden">
                     <div className="line-clamp-2 md:line-clamp-3">{item.description}</div>
-                    <div className="text-xs text-muted-foreground/50 mt-1 uppercase tracking-wider">
+                    <div className="text-xs text-muted-foreground/50 mt-1 uppercase tracking-wider truncate">
                       Source: {item.mainSource}
                     </div>
                   </td>
-                  <td className="p-4 text-center md:text-left">
+                  <td className="p-4 text-center md:text-left overflow-hidden">
                     <span
                       className={clsx(
                         'hidden md:inline-block px-2 py-1 rounded text-xs font-bold border',
@@ -150,24 +160,24 @@ export const ThreatsTable = ({
                       {item.criticality}
                     </span>
                   </td>
-                  <td className="p-4 text-xs font-mono">
+                  <td className="p-4 text-xs font-mono overflow-hidden">
                     <div className="flex flex-wrap gap-1">
                       {item.cryptoAtRisk.split(',').map((c, i) => (
                         <span
                           key={i}
-                          className="px-1.5 py-0.5 rounded-sm bg-muted/50 border border-border/50 text-muted-foreground whitespace-nowrap"
+                          className="px-1.5 py-0.5 rounded-sm bg-muted/50 border border-border/50 text-muted-foreground break-words"
                         >
                           {c.trim()}
                         </span>
                       ))}
                     </div>
                   </td>
-                  <td className="p-4 text-xs font-mono">
+                  <td className="p-4 text-xs font-mono overflow-hidden">
                     <div className="flex flex-wrap gap-1">
                       {item.pqcReplacement.split(',').map((c, i) => (
                         <span
                           key={i}
-                          className="px-1.5 py-0.5 rounded-sm bg-status-success/10 border border-status-success/20 text-status-success/80 whitespace-nowrap"
+                          className="px-1.5 py-0.5 rounded-sm bg-status-success/10 border border-status-success/20 text-status-success/80 break-words"
                         >
                           {c.trim()}
                         </span>

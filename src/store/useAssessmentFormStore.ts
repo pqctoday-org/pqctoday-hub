@@ -699,7 +699,7 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
     {
       name: 'pqc-assessment-form',
       storage: createJSONStorage(() => localStorage),
-      version: 0,
+      version: 1,
       migrate: (persistedState: unknown, version: number) => {
         let state = (persistedState ?? {}) as Record<string, unknown>
 
@@ -710,6 +710,14 @@ export const useAssessmentFormStore = create<AssessmentFormState>()(
             state = runLegacyAssessmentMigrations(legacy.state, legacy.version)
           }
         }
+
+        // V1 Guard: if industry is unset but wizard advanced past step 0,
+        // clamp back to step 0 so industry selection is always completed before
+        // compliance frameworks are shown (prevents unfiltered GSMA / all-frameworks display).
+        if (!state.industry && ((state.currentStep as number) ?? 0) > 0) {
+          state = { ...state, currentStep: 0 }
+        }
+
         return state
       },
       partialize: (state) => ({

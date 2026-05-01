@@ -351,7 +351,7 @@ const SECTION_HEADING: Record<string, { title: string; sub: string }> = {
 }
 
 export const LandingView = () => {
-  const { selectedPersona } = usePersonaStore()
+  const { selectedPersona, setPersona } = usePersonaStore()
   const { signIn, signOut, isSignedIn, syncStatus, lastSyncedAt, isConfigured } = useGoogleAuth()
   // eslint-disable-next-line security/detect-object-injection
   const recommendedPaths = selectedPersona ? PERSONA_RECOMMENDED_PATHS[selectedPersona] : []
@@ -580,6 +580,26 @@ export const LandingView = () => {
             }
           />
         </motion.div>
+
+        {/* Switch role hint — visible only when a persona is active */}
+        {selectedPersona && (
+          <motion.p
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            custom={3.5}
+            className="mt-3 text-xs text-muted-foreground/60 text-center"
+          >
+            Viewing as {selectedPersona.charAt(0).toUpperCase() + selectedPersona.slice(1)} ·{' '}
+            <Button
+              variant="link"
+              className="text-xs h-auto p-0 text-muted-foreground/60 hover:text-primary"
+              onClick={() => setPersona(null)}
+            >
+              Switch role
+            </Button>
+          </motion.p>
+        )}
 
         {/* Stats bar */}
         <motion.div

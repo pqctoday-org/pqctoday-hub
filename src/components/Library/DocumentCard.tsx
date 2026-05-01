@@ -18,6 +18,7 @@ import { PILLAR_TO_ZONE, CSWP39_ZONE_DETAILS, CSWP39_ZONE_STYLES } from '../../d
 import { CSWP39_TIERS } from '../Compliance/cswp39Data'
 import type { PillarId, MaturityLevel } from '@/types/MaturityTypes'
 import { StatusBadge } from '../common/StatusBadge'
+import { BUCKET_STYLES } from '../../utils/documentStatusBucket'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { buildLibraryEndorsementUrl, buildLibraryFlagUrl } from './libraryEndorsement'
@@ -101,7 +102,12 @@ export const DocumentCard = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, delay: index * 0.03 }}
       onClick={() => onViewDetails(item)}
-      className={`glass-panel p-5 flex flex-col h-full hover:border-secondary/50 hover:shadow-md cursor-pointer transition-all bg-card/50 relative scroll-mt-20 ${highlighted ? 'ring-2 ring-primary shadow-glow' : ''}`}
+      className={clsx(
+        'glass-panel p-5 flex flex-col h-full hover:border-secondary/50 hover:shadow-md cursor-pointer transition-all bg-card/50 relative scroll-mt-20',
+        highlighted && 'ring-2 ring-primary shadow-glow',
+        (item.documentStatusBucket === 'Expired' || item.documentStatusBucket === 'Superseded') &&
+          'opacity-50 hover:opacity-90'
+      )}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -131,10 +137,11 @@ export const DocumentCard = ({
         <span
           className={clsx(
             'inline-flex self-start items-center px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider',
-            'bg-status-info text-status-info border border-status-info/50'
+            BUCKET_STYLES[item.documentStatusBucket].badge
           )}
+          title={item.documentStatus}
         >
-          {item.documentStatus}
+          {BUCKET_STYLES[item.documentStatusBucket].label}
         </span>
         {isEnriched ? (
           <span

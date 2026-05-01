@@ -914,7 +914,7 @@ notes: Compliance framework field corrections — adding factually verifiable cr
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Researcher; Security Architect
 - **Implementation Prerequisites**: Standard built-in processor acceleration features (AES-NI, ASIMD); commodity hardware
-- **Relevant PQC Today Features**: Algorithms; Performance; Threats; Migrate
+- **Relevant PQC Today Features**: Algorithms; Threats; Migrate
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Performance testing; empirical performance benchmarks
