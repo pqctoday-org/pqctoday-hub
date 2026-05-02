@@ -7,18 +7,36 @@ export type WorkshopMode = 'idle' | 'running' | 'paused' | 'video'
 export type PlaybackSpeed = 'slow' | 'normal' | 'fast'
 
 /**
- * Video Mode per-step duration. Each step's cues are scaled proportionally
- * within this fixed window — a step's content always plays end-to-end,
- * regardless of its authored estMinutes.
+ * Two playback semantics:
  *
- *   slow   → 20 s / step
- *   normal → 10 s / step (default)
- *   fast   →  5 s / step
+ *   - **preview**: every step plays for a fixed window (5/10/20s per
+ *     PlaybackSpeed). Authored cue tMs is scaled into the window so each step
+ *     ends on time. Use when you want a fast tour without per-step depth.
+ *   - **presentation**: cues play at their authored tMs, scaled by a speed
+ *     multiplier (slow=2x, normal=1x, fast=0.5x). Rich-cue steps (e.g. 3-min
+ *     module tours) get their authored duration. Use for presentations and
+ *     master video recording.
+ */
+export type PlaybackMode = 'preview' | 'presentation'
+
+/**
+ * Preview-mode per-step duration. See PlaybackMode docs.
+ *   slow → 20 s / step · normal → 10 s · fast → 5 s
  */
 export const STEP_DURATION_MS: Record<PlaybackSpeed, number> = {
   slow: 20_000,
   normal: 10_000,
   fast: 5_000,
+}
+
+/**
+ * Presentation-mode multiplier applied to authored tMs.
+ *   slow → 2x (twice as long) · normal → 1x · fast → 0.5x
+ */
+export const PRESENTATION_SPEED_MULTIPLIER: Record<PlaybackSpeed, number> = {
+  slow: 2,
+  normal: 1,
+  fast: 0.5,
 }
 
 interface WorkshopState {
@@ -28,8 +46,10 @@ interface WorkshopState {
   completedStepIds: string[]
   startedAt: string | null
   selectedRegion: WorkshopRegion | null
-  /** Video Mode per-step duration preset. See STEP_DURATION_MS for the ms values. */
+  /** Per-step duration preset (slow/normal/fast). Meaning depends on playbackMode. */
   playbackSpeed: PlaybackSpeed
+  /** Preview = fast tour; Presentation = authored timeline scaled by speed. */
+  playbackMode: PlaybackMode
   /** Manifest id of a flow chosen via "Browse all" — overrides auto-match. Null = use auto-match. */
   flowOverrideId: string | null
 
@@ -41,6 +61,7 @@ interface WorkshopState {
   setStep: (stepId: string) => void
   markStepComplete: (stepId: string) => void
   setPlaybackSpeed: (speed: PlaybackSpeed) => void
+  setPlaybackMode: (mode: PlaybackMode) => void
   setFlowOverrideId: (id: string | null) => void
   reset: () => void
 }
@@ -54,6 +75,7 @@ const INITIAL: Pick<
   | 'startedAt'
   | 'selectedRegion'
   | 'playbackSpeed'
+  | 'playbackMode'
   | 'flowOverrideId'
 > = {
   mode: 'idle',
@@ -63,6 +85,7 @@ const INITIAL: Pick<
   startedAt: null,
   selectedRegion: null,
   playbackSpeed: 'normal',
+  playbackMode: 'preview',
   flowOverrideId: null,
 }
 
@@ -105,6 +128,8 @@ export const useWorkshopStore = create<WorkshopState>()(
 
       setPlaybackSpeed: (speed) => set({ playbackSpeed: speed }),
 
+      setPlaybackMode: (mode) => set({ playbackMode: mode }),
+
       setFlowOverrideId: (id) => set({ flowOverrideId: id }),
 
       markStepComplete: (stepId) => {
@@ -117,7 +142,7 @@ export const useWorkshopStore = create<WorkshopState>()(
     }),
     {
       name: 'pqc-workshop',
-      version: 2,
+      version: 3,
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         mode: state.mode === 'video' ? 'idle' : state.mode,
@@ -127,6 +152,7 @@ export const useWorkshopStore = create<WorkshopState>()(
         startedAt: state.startedAt,
         selectedRegion: state.selectedRegion,
         playbackSpeed: state.playbackSpeed,
+        playbackMode: state.playbackMode,
         flowOverrideId: state.flowOverrideId,
       }),
       migrate: (persistedState: unknown) => {
@@ -153,6 +179,7 @@ export const useWorkshopStore = create<WorkshopState>()(
           selectedRegion:
             typeof s.selectedRegion === 'string' ? (s.selectedRegion as WorkshopRegion) : null,
           playbackSpeed,
+          playbackMode: s.playbackMode === 'presentation' ? 'presentation' : 'preview',
           flowOverrideId: typeof s.flowOverrideId === 'string' ? s.flowOverrideId : null,
         }
       },

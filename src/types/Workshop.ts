@@ -47,6 +47,23 @@ export type WorkshopCue =
   | { tMs: number; kind: 'fill-literal'; selector: string; value: string }
   /** Choose a dropdown option by visible label, from a fixture key. */
   | { tMs: number; kind: 'select-from-fixture'; selector: string; fixtureKey: string }
+  /**
+   * Click "Create" on a Business Center artifact placeholder. Engine targets
+   * `[data-workshop-target="business-artifact-{artifactType}-create"]`,
+   * waits for the drawer to mount, then clicks the builder's primary CTA
+   * (`[data-workshop-target="business-builder-generate"]`).
+   */
+  | { tMs: number; kind: 'generate-artifact'; artifactType: string }
+  /**
+   * Open an existing artifact in view mode. Targets
+   * `[data-workshop-target="business-artifact-{artifactType}-view"]`.
+   */
+  | { tMs: number; kind: 'view-artifact'; artifactType: string }
+  /**
+   * Click an export button inside the open artifact drawer. Default format
+   * is markdown. Targets `[data-workshop-target="business-artifact-export-{format}"]`.
+   */
+  | { tMs: number; kind: 'download-artifact'; artifactType: string; format?: 'markdown' | 'pdf' }
   | { tMs: number; kind: 'advance' }
 
 /**

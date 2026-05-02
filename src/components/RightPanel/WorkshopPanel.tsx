@@ -33,6 +33,7 @@ export const WorkshopPanel: React.FC = () => {
     completedStepIds,
     selectedRegion,
     playbackSpeed,
+    playbackMode,
     start,
     startVideo,
     exit,
@@ -41,6 +42,7 @@ export const WorkshopPanel: React.FC = () => {
     setStep,
     markStepComplete,
     setPlaybackSpeed,
+    setPlaybackMode,
   } = useWorkshopStore()
 
   const [pickedRegion, setPickedRegion] = useState<WorkshopRegion | null>(selectedRegion)
@@ -199,40 +201,79 @@ export const WorkshopPanel: React.FC = () => {
           Start Workshop
         </Button>
 
-        {/* Video Mode speed picker — chosen before Start, kept in store across the recording.
-            Each preset sets a fixed per-step duration; cues fire at proportional offsets. */}
-        <div className="rounded-md border border-border bg-card p-2 space-y-1.5">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              Video Mode speed
-            </span>
-            <span className="text-[10px] text-muted-foreground tabular-nums">
-              {playbackSpeed === 'slow'
-                ? '20s/step'
-                : playbackSpeed === 'fast'
-                  ? '5s/step'
-                  : '10s/step'}
-            </span>
+        {/* Video Mode playback — Mode (Preview vs Presentation) + Speed.
+            Preview: each step plays for fixed STEP_DURATION_MS[speed] (5/10/20s).
+            Presentation: cues play at authored tMs, multiplied by speed (2x/1x/0.5x). */}
+        <div className="rounded-md border border-border bg-card p-2 space-y-2">
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                Mode
+              </span>
+              <span className="text-[10px] text-muted-foreground">
+                {playbackMode === 'preview' ? 'Fast tour' : 'Authored timeline'}
+              </span>
+            </div>
+            <div className="flex gap-1.5">
+              {(
+                [
+                  { value: 'preview', label: 'Preview' },
+                  { value: 'presentation', label: 'Presentation' },
+                ] as const
+              ).map((opt) => (
+                <Button
+                  key={opt.value}
+                  variant={playbackMode === opt.value ? 'gradient' : 'outline'}
+                  size="sm"
+                  className="flex-1 h-8 text-xs"
+                  onClick={() => setPlaybackMode(opt.value)}
+                  aria-pressed={playbackMode === opt.value}
+                >
+                  {opt.label}
+                </Button>
+              ))}
+            </div>
           </div>
-          <div className="flex gap-1.5">
-            {(
-              [
-                { value: 'slow', label: 'Slow' },
-                { value: 'normal', label: 'Normal' },
-                { value: 'fast', label: 'Fast' },
-              ] as const
-            ).map((opt) => (
-              <Button
-                key={opt.value}
-                variant={playbackSpeed === opt.value ? 'gradient' : 'outline'}
-                size="sm"
-                className="flex-1 h-8 text-xs"
-                onClick={() => setPlaybackSpeed(opt.value)}
-                aria-pressed={playbackSpeed === opt.value}
-              >
-                {opt.label}
-              </Button>
-            ))}
+
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                Speed
+              </span>
+              <span className="text-[10px] text-muted-foreground tabular-nums">
+                {playbackMode === 'preview'
+                  ? playbackSpeed === 'slow'
+                    ? '20s/step'
+                    : playbackSpeed === 'fast'
+                      ? '5s/step'
+                      : '10s/step'
+                  : playbackSpeed === 'slow'
+                    ? '2× (longer)'
+                    : playbackSpeed === 'fast'
+                      ? '0.5× (faster)'
+                      : '1× (authored)'}
+              </span>
+            </div>
+            <div className="flex gap-1.5">
+              {(
+                [
+                  { value: 'slow', label: 'Slow' },
+                  { value: 'normal', label: 'Normal' },
+                  { value: 'fast', label: 'Fast' },
+                ] as const
+              ).map((opt) => (
+                <Button
+                  key={opt.value}
+                  variant={playbackSpeed === opt.value ? 'gradient' : 'outline'}
+                  size="sm"
+                  className="flex-1 h-8 text-xs"
+                  onClick={() => setPlaybackSpeed(opt.value)}
+                  aria-pressed={playbackSpeed === opt.value}
+                >
+                  {opt.label}
+                </Button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -284,10 +325,12 @@ const FlowAgenda: React.FC<FlowAgendaProps> = ({ flow, region }) => {
   }
   orderedChapters.push({ chapter: flow.close })
 
+  const scopedMinutes = orderedChapters.reduce((s, { chapter }) => s + (chapter.estMinutes ?? 0), 0)
+
   return (
     <section className="rounded-lg border border-border bg-card p-3 space-y-2">
       <h3 className="text-sm font-medium text-foreground flex items-center gap-1.5">
-        <Clock size={14} className="text-muted-foreground" /> Agenda · {flow.totalEstMinutes} min
+        <Clock size={14} className="text-muted-foreground" /> Agenda · {scopedMinutes} min
       </h3>
       <div className="space-y-1.5">
         {orderedChapters.map(({ chapter, regionLabel }) => (

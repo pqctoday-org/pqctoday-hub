@@ -49,10 +49,16 @@ export function useCueApplier(): CueApplierState & CueApplierActions {
   }, [])
 
   const applyCue = useCallback(
-    (cue: WorkshopCue, fixtures: WorkshopFixtures, currentStepId: string | null): void => {
+    (
+      cue: WorkshopCue,
+      fixtures: WorkshopFixtures,
+      currentStepId: string | null,
+      nextCues?: WorkshopCue[]
+    ): void => {
       switch (cue.kind) {
         case 'navigate':
           navigate(buildUrl(cue.route, cue.query))
+          scheduleAutoScrollFromNextCues(nextCues)
           return
         case 'caption':
           setCaptionState(cue.text)
@@ -70,8 +76,10 @@ export function useCueApplier(): CueApplierState & CueApplierActions {
           return
         }
         case 'click': {
-          const el = document.querySelector(cue.selector)
-          if (el instanceof HTMLElement) el.click()
+          retrySelector(cue.selector, (el) => {
+            el.click()
+            return true
+          })
           return
         }
         case 'highlight-tab':
@@ -81,17 +89,19 @@ export function useCueApplier(): CueApplierState & CueApplierActions {
           selectTab(cue.tabName)
           return
         case 'expand-section': {
-          const el = document.querySelector(cue.selector)
-          if (!(el instanceof HTMLElement)) return
-          if (el.getAttribute('aria-expanded') === 'true') return
-          el.click()
+          retrySelector(cue.selector, (el) => {
+            if (el.getAttribute('aria-expanded') === 'true') return true
+            el.click()
+            return true
+          })
           return
         }
         case 'collapse-section': {
-          const el = document.querySelector(cue.selector)
-          if (!(el instanceof HTMLElement)) return
-          if (el.getAttribute('aria-expanded') !== 'true') return
-          el.click()
+          retrySelector(cue.selector, (el) => {
+            if (el.getAttribute('aria-expanded') !== 'true') return true
+            el.click()
+            return true
+          })
           return
         }
         case 'scroll-to': {
@@ -124,6 +134,40 @@ export function useCueApplier(): CueApplierState & CueApplierActions {
           selectOption(cue.selector, String(value))
           return
         }
+        case 'generate-artifact': {
+          retrySelector(
+            `[data-workshop-target="business-artifact-${cue.artifactType}-create"]`,
+            (el) => {
+              el.click()
+              setTimeout(() => {
+                const generate = document.querySelector(
+                  '[data-workshop-target="business-builder-generate"]'
+                )
+                if (generate instanceof HTMLElement) generate.click()
+              }, 600)
+              return true
+            }
+          )
+          return
+        }
+        case 'view-artifact': {
+          retrySelector(
+            `[data-workshop-target="business-artifact-${cue.artifactType}-view"]`,
+            (el) => {
+              el.click()
+              return true
+            }
+          )
+          return
+        }
+        case 'download-artifact': {
+          const fmt = cue.format ?? 'markdown'
+          retrySelector(`[data-workshop-target="business-artifact-export-${fmt}"]`, (el) => {
+            el.click()
+            return true
+          })
+          return
+        }
         case 'advance':
           // Caller decides what to do with 'advance' — useCueApplier never
           // mutates step state.
@@ -142,6 +186,44 @@ export function useCueApplier(): CueApplierState & CueApplierActions {
     clearOverlays,
     applyCue,
   }
+}
+
+function scheduleAutoScrollFromNextCues(nextCues?: WorkshopCue[]): void {
+  if (!nextCues || nextCues.length === 0) return
+  if (nextCues.some((c) => c.kind === 'scroll-to')) return
+  const firstWithSelector = nextCues.find(
+    (c): c is WorkshopCue & { selector: string } =>
+      'selector' in c && typeof (c as { selector?: unknown }).selector === 'string'
+  )
+  if (!firstWithSelector) return
+  const sel = firstWithSelector.selector
+  let n = 0
+  const tick = () => {
+    const el = document.querySelector(sel)
+    if (el instanceof HTMLElement) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      return
+    }
+    n++
+    if (n < 4) setTimeout(tick, 200)
+  }
+  setTimeout(tick, 700)
+}
+
+function retrySelector(
+  selector: string,
+  apply: (el: HTMLElement) => boolean,
+  attempts = 4,
+  delay = 200
+): void {
+  let n = 0
+  const tick = () => {
+    const el = document.querySelector(selector)
+    if (el instanceof HTMLElement && apply(el)) return
+    n++
+    if (n < attempts) setTimeout(tick, delay)
+  }
+  tick()
 }
 
 function selectTab(tabName: string): void {

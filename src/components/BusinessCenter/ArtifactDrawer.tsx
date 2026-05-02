@@ -192,7 +192,12 @@ export function ArtifactDrawer({
             )}
             {document && (
               <>
-                <Button variant="ghost" size="sm" onClick={handleExportMarkdown}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleExportMarkdown}
+                  data-workshop-target="business-artifact-export-markdown"
+                >
                   <Download size={14} />
                   <span className="hidden sm:inline ml-1">Markdown</span>
                 </Button>
@@ -204,6 +209,7 @@ export function ArtifactDrawer({
                   title={
                     mode === 'view' ? 'Download as PDF' : 'Switch to view mode to download as PDF'
                   }
+                  data-workshop-target="business-artifact-export-pdf"
                 >
                   <FileDown size={14} />
                   <span className="hidden sm:inline ml-1">

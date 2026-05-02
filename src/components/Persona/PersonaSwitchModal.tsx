@@ -105,8 +105,9 @@ export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
                 <Button
                   key={id}
                   variant="ghost"
+                  size="tile"
                   onClick={() => handleSelect(id)}
-                  className={`h-auto flex flex-col items-start gap-1.5 px-3 py-3 rounded-xl border transition-colors text-left ${
+                  className={`min-h-[76px] gap-1 rounded-xl border transition-colors ${
                     isActive
                       ? 'border-primary/40 bg-primary/10 text-foreground'
                       : 'border-border bg-card/60 hover:border-primary/30 hover:bg-card text-muted-foreground hover:text-foreground'
@@ -118,10 +119,10 @@ export const PersonaSwitchModal: React.FC<Props> = ({ onClose }) => {
                     className={isActive ? 'text-primary' : 'text-muted-foreground'}
                     aria-hidden="true"
                   />
-                  <span className="text-sm font-medium text-foreground leading-snug">
+                  <span className="text-sm font-medium text-foreground leading-tight">
                     {persona.label}
                   </span>
-                  <span className="text-xs text-muted-foreground leading-snug line-clamp-2">
+                  <span className="text-[11px] text-muted-foreground leading-tight line-clamp-2">
                     {persona.subtitle}
                   </span>
                 </Button>

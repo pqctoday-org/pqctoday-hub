@@ -165,7 +165,14 @@ export function ArtifactCard({
         </div>
       </div>
       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-        <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => onView(document)}>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7 w-7 p-0"
+          onClick={() => onView(document)}
+          data-workshop-target={`business-artifact-${document.type}-view`}
+          aria-label="View artifact"
+        >
           <Eye size={14} />
         </Button>
         <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => onEdit(document)}>

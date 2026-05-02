@@ -71,7 +71,7 @@ export const WorkshopStepCard: React.FC<WorkshopStepCardProps> = ({
     if (cueIdx + 1 >= visibleCues.length) return
     const next = cueIdx + 1
     setCueIdx(next)
-    applyCue(visibleCues[next], fixtures, step.id)
+    applyCue(visibleCues[next], fixtures, step.id, visibleCues.slice(next + 1))
   }
   const showPrevHint = (): void => {
     if (cueIdx <= 0) {
@@ -87,7 +87,7 @@ export const WorkshopStepCard: React.FC<WorkshopStepCardProps> = ({
     clearOverlays()
     setCaption(step.narration, true)
     for (let i = 0; i <= target; i++) {
-      applyCue(visibleCues[i], fixtures, step.id)
+      applyCue(visibleCues[i], fixtures, step.id, visibleCues.slice(i + 1))
     }
     setCueIdx(target)
   }

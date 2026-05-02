@@ -7,7 +7,7 @@
     "industries": ["Finance & Banking"],
     "regions": ["US", "CA", "AU"]
   },
-  "totalEstMinutes": 95,
+  "totalEstMinutes": 142,
   "intro": {
     "id": "intro",
     "title": "Welcome",
@@ -61,7 +61,7 @@
     {
       "id": "foundations",
       "title": "Foundations",
-      "estMinutes": 40,
+      "estMinutes": 67,
       "steps": [
         {
           "id": "f1-landing",
@@ -119,21 +119,22 @@
           ]
         },
         {
-          "id": "f2-learn",
+          "id": "f-mod-exec-quantum-impact",
           "chapter": "foundations",
-          "title": "Learn the quantum impact",
-          "estMinutes": 8,
-          "whyItMatters": "You need a common vocabulary with your board. Q-Day, Harvest-Now Decrypt-Later, and FIPS 203/204 must be five-second answers, not five-minute explanations.",
+          "title": "Executive Quantum Impact",
+          "estMinutes": 3,
+          "whyItMatters": "You need a common board-ready vocabulary: Q-Day, HNDL, FIPS 203/204. This module gives you the five-second answers.",
           "page": {
-            "route": "/learn"
+            "route": "/learn/exec-quantum-impact"
           },
           "tasks": [
-            "Open the module \"Executive Quantum Impact\"",
-            "Walk through the first checkpoint",
-            "Note the three terms surfaced: Q-Day, HNDL, FIPS 203/204"
+            "Read the why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
           ],
-          "expectedOutput": "First checkpoint of the executive quantum impact module is closed.",
-          "narration": "This module explains in plain language the three terms you need at boardroom speed. Q-Day is the day a sufficiently large quantum computer breaks RSA and elliptic-curve cryptography. Harvest-Now Decrypt-Later is the present-tense problem: adversaries are already collecting encrypted finance data today to decrypt later. FIPS 203 and 204 are the two NIST standards that fix this — ML-KEM for key exchange, ML-DSA for signatures.",
+          "expectedOutput": "Module-level talking points from \"Executive Quantum Impact\" you can take to your next governance conversation.",
+          "narration": "You need a common board-ready vocabulary: Q-Day, HNDL, FIPS 203/204. This module gives you the five-second answers.",
           "completionSignal": {
             "kind": "module-progress",
             "moduleId": "exec-quantum-impact",
@@ -141,84 +142,1237 @@
           },
           "cues": [
             {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/exec-quantum-impact"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Executive Quantum Impact — three terms you need at boardroom speed: Q-Day, HNDL, FIPS 203/204"
+            },
+            {
               "tMs": 4000,
-              "kind": "caption",
-              "text": "Three terms you need at boardroom speed."
-            },
-            {
-              "tMs": 8000,
-              "kind": "scroll-to",
-              "selector": "[data-workshop-target=\"learn-module-exec-quantum-impact\"]"
-            },
-            {
-              "tMs": 12000,
-              "kind": "spotlight",
-              "selector": "[data-workshop-target=\"learn-module-exec-quantum-impact\"]"
-            },
-            {
-              "tMs": 16000,
-              "kind": "callout",
-              "selector": "[data-workshop-target=\"learn-module-exec-quantum-impact\"]",
-              "label": "Open this module",
-              "arrow": "right"
-            },
-            {
-              "tMs": 24000,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-module-exec-quantum-impact\"]"
-            },
-            {
-              "tMs": 60000,
-              "kind": "caption",
-              "text": "Module structure — Learn · Workshop · Reference."
-            },
-            {
-              "tMs": 70000,
               "kind": "select-tab",
               "tabName": "Learn"
             },
             {
-              "tMs": 90000,
+              "tMs": 6000,
               "kind": "caption",
-              "text": "Q-Day — the day a quantum computer breaks RSA and elliptic-curve cryptography."
+              "text": "Section 1/3: Why It Matters"
             },
             {
-              "tMs": 180000,
+              "tMs": 35333,
               "kind": "caption",
-              "text": "Harvest-Now Decrypt-Later — adversaries collect encrypted finance data today."
+              "text": "Section 2/3: What To Learn"
             },
             {
-              "tMs": 220000,
+              "tMs": 64666,
+              "kind": "caption",
+              "text": "Section 3/3: How To Act"
+            },
+            {
+              "tMs": 96000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 97500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 113000,
               "kind": "select-tab",
               "tabName": "Workshop"
             },
             {
-              "tMs": 230000,
+              "tMs": 114500,
               "kind": "caption",
-              "text": "Workshop tab — interactive crypto running in your browser via OpenSSL WASM and liboqs."
+              "text": "Workshop tab — hands-on, in-browser crypto demos."
             },
             {
-              "tMs": 300000,
+              "tMs": 130000,
               "kind": "select-tab",
-              "tabName": "Reference"
+              "tabName": "Exercises"
             },
             {
-              "tMs": 310000,
+              "tMs": 131500,
               "kind": "caption",
-              "text": "Reference — primary sources for every claim. NIST FIPS 203/204 cited inline."
+              "text": "Exercises — short knowledge checks to confirm you got it."
             },
             {
-              "tMs": 360000,
+              "tMs": 147000,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 148500,
               "kind": "caption",
-              "text": "FIPS 203 = ML-KEM (replaces RSA key exchange). FIPS 204 = ML-DSA (replaces ECDSA)."
+              "text": "References — primary sources every claim is cited from."
             },
             {
-              "tMs": 420000,
+              "tMs": 164000,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 165500,
               "kind": "caption",
-              "text": "These two acronyms your board will hear for the next decade."
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
             },
             {
-              "tMs": 480000,
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-pqc-101",
+          "chapter": "foundations",
+          "title": "PQC 101",
+          "estMinutes": 3,
+          "whyItMatters": "Plain-language tour of post-quantum cryptography — what is being replaced, what is replacing it, on what timeline.",
+          "page": {
+            "route": "/learn/pqc-101"
+          },
+          "tasks": [
+            "Read the why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points from \"PQC 101\" you can take to your next governance conversation.",
+          "narration": "Plain-language tour of post-quantum cryptography — what is being replaced, what is replacing it, on what timeline.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "pqc-101",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/pqc-101"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "PQC 101 — post-quantum cryptography in 5 minutes — what it is and why your bank cares"
+            },
+            {
+              "tMs": 5000,
+              "kind": "caption",
+              "text": "Section 1/5: Quantum Threat"
+            },
+            {
+              "tMs": 39800,
+              "kind": "caption",
+              "text": "Section 2/5: Algorithms"
+            },
+            {
+              "tMs": 74600,
+              "kind": "caption",
+              "text": "Section 3/5: Timeline"
+            },
+            {
+              "tMs": 109400,
+              "kind": "caption",
+              "text": "Section 4/5: Readiness"
+            },
+            {
+              "tMs": 144200,
+              "kind": "caption",
+              "text": "Section 5/5: Next Steps"
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-quantum-threats",
+          "chapter": "foundations",
+          "title": "Quantum Threats",
+          "estMinutes": 3,
+          "whyItMatters": "Shor, Grover, CRQC, and Harvest-Now-Decrypt-Later — the four words a finance CISO will say at every PQC meeting.",
+          "page": {
+            "route": "/learn/quantum-threats"
+          },
+          "tasks": [
+            "Read the why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points from \"Quantum Threats\" you can take to your next governance conversation.",
+          "narration": "Shor, Grover, CRQC, and Harvest-Now-Decrypt-Later — the four words a finance CISO will say at every PQC meeting.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "quantum-threats",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/quantum-threats"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Quantum Threats — Shor, Grover, CRQC, HNDL — the four threats your CISO will quote at you"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/5: Shor"
+            },
+            {
+              "tMs": 23600,
+              "kind": "caption",
+              "text": "Section 2/5: Grover"
+            },
+            {
+              "tMs": 41200,
+              "kind": "caption",
+              "text": "Section 3/5: Crqc"
+            },
+            {
+              "tMs": 58800,
+              "kind": "caption",
+              "text": "Section 4/5: Hndl"
+            },
+            {
+              "tMs": 76400,
+              "kind": "caption",
+              "text": "Section 5/5: Security Levels"
+            },
+            {
+              "tMs": 96000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 97500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 113000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 114500,
+              "kind": "caption",
+              "text": "Workshop tab — hands-on, in-browser crypto demos."
+            },
+            {
+              "tMs": 130000,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 131500,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 147000,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 148500,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 164000,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 165500,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-entropy-randomness",
+          "chapter": "foundations",
+          "title": "Entropy & Randomness",
+          "estMinutes": 3,
+          "whyItMatters": "Every PQC algorithm depends on quality randomness. Your HSM's entropy source is the most under-discussed crypto risk in your stack.",
+          "page": {
+            "route": "/learn/entropy-randomness"
+          },
+          "tasks": [
+            "Read the why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points from \"Entropy & Randomness\" you can take to your next governance conversation.",
+          "narration": "Every PQC algorithm depends on quality randomness. Your HSM's entropy source is the most under-discussed crypto risk in your stack.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "entropy-randomness",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/entropy-randomness"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Entropy & Randomness — randomness is the one input your crypto cannot fake"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/5: Entropy"
+            },
+            {
+              "tMs": 23600,
+              "kind": "caption",
+              "text": "Section 2/5: Drbg"
+            },
+            {
+              "tMs": 41200,
+              "kind": "caption",
+              "text": "Section 3/5: Testing"
+            },
+            {
+              "tMs": 58800,
+              "kind": "caption",
+              "text": "Section 4/5: Qrng"
+            },
+            {
+              "tMs": 76400,
+              "kind": "caption",
+              "text": "Section 5/5: Combining"
+            },
+            {
+              "tMs": 96000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 97500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 113000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 114500,
+              "kind": "caption",
+              "text": "Workshop tab — hands-on, in-browser crypto demos."
+            },
+            {
+              "tMs": 130000,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 131500,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 147000,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 148500,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 164000,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 165500,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-pqc-risk-management",
+          "chapter": "foundations",
+          "title": "PQC Risk Management",
+          "estMinutes": 3,
+          "whyItMatters": "How to put quantum risk on your enterprise risk register, score it on a heatmap, and turn it into a board-level KPI.",
+          "page": {
+            "route": "/learn/pqc-risk-management"
+          },
+          "tasks": [
+            "Read the why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points from \"PQC Risk Management\" you can take to your next governance conversation.",
+          "narration": "How to put quantum risk on your enterprise risk register, score it on a heatmap, and turn it into a board-level KPI.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "pqc-risk-management",
+            "minSteps": 1
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/pqc-risk-management"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "PQC Risk Management — how to put quantum risk on your enterprise risk register"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/3: Crqc"
+            },
+            {
+              "tMs": 35333,
+              "kind": "caption",
+              "text": "Section 2/3: Register"
+            },
+            {
+              "tMs": 64666,
+              "kind": "caption",
+              "text": "Section 3/3: Heatmap"
+            },
+            {
+              "tMs": 96000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 97500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 113000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 114500,
+              "kind": "caption",
+              "text": "Workshop tab — hands-on, in-browser crypto demos."
+            },
+            {
+              "tMs": 130000,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 131500,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 147000,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 148500,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 164000,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 165500,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-compliance-strategy",
+          "chapter": "foundations",
+          "title": "Compliance & Regulatory Strategy",
+          "estMinutes": 3,
+          "whyItMatters": "Map your jurisdiction's PQC deadlines (NIST 2030/2035, CCCS 2031/2035, ASD end-2030) to your audit calendar.",
+          "page": {
+            "route": "/learn/compliance-strategy"
+          },
+          "tasks": [
+            "Read the why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points from \"Compliance & Regulatory Strategy\" you can take to your next governance conversation.",
+          "narration": "Map your jurisdiction's PQC deadlines (NIST 2030/2035, CCCS 2031/2035, ASD end-2030) to your audit calendar.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "compliance-strategy",
+            "minSteps": 1
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/compliance-strategy"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Compliance & Regulatory Strategy — map your jurisdiction's PQC deadlines to your audit calendar"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/3: Frameworks"
+            },
+            {
+              "tMs": 30933,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 35333,
+              "kind": "caption",
+              "text": "Section 2/3: Jurisdiction"
+            },
+            {
+              "tMs": 60266,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 64666,
+              "kind": "caption",
+              "text": "Section 3/3: Audit"
+            },
+            {
+              "tMs": 95000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-complete\"]"
+            },
+            {
+              "tMs": 96000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 97500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 113000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 114500,
+              "kind": "caption",
+              "text": "Workshop tab — hands-on, in-browser crypto demos."
+            },
+            {
+              "tMs": 130000,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 131500,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 147000,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 148500,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 164000,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 165500,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-pqc-business-case",
+          "chapter": "foundations",
+          "title": "PQC Business Case",
+          "estMinutes": 3,
+          "whyItMatters": "ROI, breach cost modelling, and the three slides every CFO will ask for before signing the budget.",
+          "page": {
+            "route": "/learn/pqc-business-case"
+          },
+          "tasks": [
+            "Read the why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points from \"PQC Business Case\" you can take to your next governance conversation.",
+          "narration": "ROI, breach cost modelling, and the three slides every CFO will ask for before signing the budget.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "pqc-business-case",
+            "minSteps": 1
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/pqc-business-case"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "PQC Business Case — ROI, breach cost, board narrative — the three slides every CFO asks for"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/3: Roi"
+            },
+            {
+              "tMs": 30933,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 35333,
+              "kind": "caption",
+              "text": "Section 2/3: Breach"
+            },
+            {
+              "tMs": 60266,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 64666,
+              "kind": "caption",
+              "text": "Section 3/3: Board"
+            },
+            {
+              "tMs": 95000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-complete\"]"
+            },
+            {
+              "tMs": 96000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 97500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 113000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 114500,
+              "kind": "caption",
+              "text": "Workshop tab — hands-on, in-browser crypto demos."
+            },
+            {
+              "tMs": 130000,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 131500,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 147000,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 148500,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 164000,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 165500,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-pqc-governance",
+          "chapter": "foundations",
+          "title": "PQC Governance & Policy",
+          "estMinutes": 3,
+          "whyItMatters": "Who owns cryptography, who approves exceptions, who reports to the board. The org-chart questions PQC forces you to answer.",
+          "page": {
+            "route": "/learn/pqc-governance"
+          },
+          "tasks": [
+            "Read the why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points from \"PQC Governance & Policy\" you can take to your next governance conversation.",
+          "narration": "Who owns cryptography, who approves exceptions, who reports to the board. The org-chart questions PQC forces you to answer.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "pqc-governance",
+            "minSteps": 1
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/pqc-governance"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "PQC Governance & Policy — who owns crypto, who approves exceptions, who reports to the board"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/3: Model"
+            },
+            {
+              "tMs": 30933,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 35333,
+              "kind": "caption",
+              "text": "Section 2/3: Policy"
+            },
+            {
+              "tMs": 60266,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 64666,
+              "kind": "caption",
+              "text": "Section 3/3: Kpi"
+            },
+            {
+              "tMs": 95000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-complete\"]"
+            },
+            {
+              "tMs": 96000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 97500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 113000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 114500,
+              "kind": "caption",
+              "text": "Workshop tab — hands-on, in-browser crypto demos."
+            },
+            {
+              "tMs": 130000,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 131500,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 147000,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 148500,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 164000,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 165500,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-crypto-mgmt-modernization",
+          "chapter": "foundations",
+          "title": "Cryptographic Management Modernization",
+          "estMinutes": 3,
+          "whyItMatters": "PQC is the forcing function that pushes you from one-off key management to a modernised, agile cryptography programme.",
+          "page": {
+            "route": "/learn/crypto-mgmt-modernization"
+          },
+          "tasks": [
+            "Read the why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points from \"Cryptographic Management Modernization\" you can take to your next governance conversation.",
+          "narration": "PQC is the forcing function that pushes you from one-off key management to a modernised, agile cryptography programme.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "crypto-mgmt-modernization",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/crypto-mgmt-modernization"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Cryptographic Management Modernization — from one-off key management to a modernised cryptography programme"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/5: Why Now"
+            },
+            {
+              "tMs": 23600,
+              "kind": "caption",
+              "text": "Section 2/5: Cpm Defined"
+            },
+            {
+              "tMs": 41200,
+              "kind": "caption",
+              "text": "Section 3/5: Asset Classes"
+            },
+            {
+              "tMs": 58800,
+              "kind": "caption",
+              "text": "Section 4/5: Five Pillars"
+            },
+            {
+              "tMs": 76400,
+              "kind": "caption",
+              "text": "Section 5/5: Dual Loop"
+            },
+            {
+              "tMs": 96000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 97500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 113000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 114500,
+              "kind": "caption",
+              "text": "Workshop tab — hands-on, in-browser crypto demos."
+            },
+            {
+              "tMs": 130000,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 131500,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 147000,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 148500,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 164000,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 165500,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-vendor-risk",
+          "chapter": "foundations",
+          "title": "Vendor & Supply Chain Risk",
+          "estMinutes": 3,
+          "whyItMatters": "Your vendors' PQC roadmap IS your PQC roadmap. Contract language, certification deadlines, and the readiness scorecard you should send to every supplier.",
+          "page": {
+            "route": "/learn/vendor-risk"
+          },
+          "tasks": [
+            "Read the why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points from \"Vendor & Supply Chain Risk\" you can take to your next governance conversation.",
+          "narration": "Your vendors' PQC roadmap IS your PQC roadmap. Contract language, certification deadlines, and the readiness scorecard you should send to every supplier.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "vendor-risk",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/vendor-risk"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Vendor & Supply Chain Risk — your vendors' PQC roadmap is your PQC roadmap"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/4: Readiness"
+            },
+            {
+              "tMs": 28000,
+              "kind": "caption",
+              "text": "Section 2/4: Supply Chain"
+            },
+            {
+              "tMs": 50000,
+              "kind": "caption",
+              "text": "Section 3/4: Contracts"
+            },
+            {
+              "tMs": 72000,
+              "kind": "caption",
+              "text": "Section 4/4: Risk Matrix"
+            },
+            {
+              "tMs": 96000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 97500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 113000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 114500,
+              "kind": "caption",
+              "text": "Workshop tab — hands-on, in-browser crypto demos."
+            },
+            {
+              "tMs": 130000,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 131500,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 147000,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 148500,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 164000,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 165500,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-migration-program",
+          "chapter": "foundations",
+          "title": "Migration Program Mgmt",
+          "estMinutes": 3,
+          "whyItMatters": "Treat PQC migration like Y2K — a 3-year programme with stakeholders, milestones, and a deployment plan, not a one-quarter project.",
+          "page": {
+            "route": "/learn/migration-program"
+          },
+          "tasks": [
+            "Read the why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points from \"Migration Program Mgmt\" you can take to your next governance conversation.",
+          "narration": "Treat PQC migration like Y2K — a 3-year programme with stakeholders, milestones, and a deployment plan, not a one-quarter project.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "migration-program",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/migration-program"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Migration Program Mgmt — treat PQC migration like Y2K — a 3-year programme, not a project"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/4: Roadmap"
+            },
+            {
+              "tMs": 24700,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 28000,
+              "kind": "caption",
+              "text": "Section 2/4: Stakeholders"
+            },
+            {
+              "tMs": 46700,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 50000,
+              "kind": "caption",
+              "text": "Section 3/4: Kpi"
+            },
+            {
+              "tMs": 68700,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 72000,
+              "kind": "caption",
+              "text": "Section 4/4: Deployment"
+            },
+            {
+              "tMs": 95000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-complete\"]"
+            },
+            {
+              "tMs": 96000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 97500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 113000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 114500,
+              "kind": "caption",
+              "text": "Workshop tab — hands-on, in-browser crypto demos."
+            },
+            {
+              "tMs": 130000,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 131500,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 147000,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 148500,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 164000,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 165500,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
               "kind": "advance"
             }
           ]
@@ -562,14 +1716,14 @@
     {
       "id": "action",
       "title": "Action plan — Command Center CSWP 39 walk-through",
-      "estMinutes": 20,
+      "estMinutes": 40,
       "steps": [
         {
-          "id": "a1-cswp-governance",
+          "id": "a1a-gov-business-and-threats",
           "chapter": "action",
-          "title": "CSWP 39 §5.1–5.4 — Governance zone",
+          "title": "Governance — Business case + Threats (CSWP §5.1)",
           "estMinutes": 5,
-          "whyItMatters": "Governance is the policy layer that shapes every other crypto decision. Without a named owner and a published policy, every later artifact stalls in committee. CSWP.39 §5.1–5.4 makes this the first zone for a reason.",
+          "whyItMatters": "Before policy you need executive narrative. ROI, board deck, and a CRQC-scenario walk give the C-suite a defensible reason to fund migration.",
           "page": {
             "route": "/business",
             "query": {
@@ -578,87 +1732,510 @@
           },
           "tasks": [
             "Open the Command Center and select the Governance zone",
-            "Generate the Policy draft (one-page mandate)",
-            "Generate the RACI (PQC champion · CISO responsible · CRO consulted · Board sponsor accountable)",
-            "Generate the Standards-watch subscription list"
+            "Generate the ROI Model",
+            "Generate the Board Deck",
+            "Generate the CRQC Scenario"
           ],
-          "expectedOutput": "Policy draft + RACI + standards-watch list downloaded.",
-          "narration": "The Governance zone of NIST Cybersecurity White Paper 39 — sections five-point-one through five-point-four — is where every executive crypto migration begins. Three artifacts come out of this zone: a one-page policy draft your legal team finishes in an afternoon, a RACI that names four humans, and a standards-watch subscription list so your team is alerted when NIST, ASD, or CCCS publish updates. If you only do one zone in this session, do this one.",
+          "expectedOutput": "3 governance artifacts created.",
+          "narration": "Before policy you need executive narrative. ROI, board deck, and a CRQC-scenario walk give the C-suite a defensible reason to fund migration. ROI Model, Board Deck, CRQC Scenario.",
           "cues": [
             {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/business",
+              "query": {
+                "zone": "governance"
+              }
+            },
+            {
               "tMs": 1500,
-              "kind": "spotlight",
-              "selector": "[data-workshop-target=\"business-zone-governance\"]"
+              "kind": "caption",
+              "text": "Before policy you need executive narrative. ROI, board deck, and a CRQC-scenario walk give the C-suite a defensible reason to fund migration."
             },
             {
-              "tMs": 2500,
-              "kind": "callout",
-              "selector": "[data-workshop-target=\"business-zone-governance\"]",
-              "label": "Start here",
-              "arrow": "top"
-            },
-            {
-              "tMs": 5000,
+              "tMs": 3000,
               "kind": "click",
               "selector": "[data-workshop-target=\"business-zone-governance\"]"
             },
             {
-              "tMs": 60000,
+              "tMs": 4000,
               "kind": "caption",
-              "text": "Governance is the policy layer. CSWP.39 §5.1–5.4. Without it every later artifact stalls in committee."
+              "text": "Artifact: ROI Model"
             },
             {
-              "tMs": 90000,
+              "tMs": 5500,
+              "kind": "generate-artifact",
+              "artifactType": "roi-model"
+            },
+            {
+              "tMs": 10000,
               "kind": "caption",
-              "text": "Three artifacts: policy draft, RACI, standards-watch subscription."
+              "text": "Quantifies migration cost vs. breach cost vs. compliance penalty. The CFO's first question gets a number."
             },
             {
               "tMs": 100000,
-              "kind": "spotlight",
-              "selector": "[data-workshop-target=\"business-artifact-policy-create\"]"
-            },
-            {
-              "tMs": 110000,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"business-artifact-policy-create\"]"
-            },
-            {
-              "tMs": 130000,
               "kind": "caption",
-              "text": "Policy draft generated — your legal team finishes it in an afternoon."
+              "text": "Artifact: Board Deck"
             },
             {
-              "tMs": 150000,
-              "kind": "spotlight",
-              "selector": "[data-workshop-target=\"business-artifact-raci-create\"]"
+              "tMs": 101500,
+              "kind": "generate-artifact",
+              "artifactType": "board-deck"
             },
             {
-              "tMs": 160000,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"business-artifact-raci-create\"]"
-            },
-            {
-              "tMs": 180000,
+              "tMs": 106000,
               "kind": "caption",
-              "text": "RACI: PQC champion responsible, CISO accountable, Board sponsor informed."
+              "text": "Pre-built slides citing your jurisdiction's deadline. 12 minutes, not 60."
             },
             {
-              "tMs": 210000,
-              "kind": "spotlight",
-              "selector": "[data-workshop-target=\"business-artifact-standards-watch-create\"]"
-            },
-            {
-              "tMs": 220000,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"business-artifact-standards-watch-create\"]"
-            },
-            {
-              "tMs": 240000,
+              "tMs": 196000,
               "kind": "caption",
-              "text": "Three artifacts created. If you only do one zone in this session, do this one."
+              "text": "Artifact: CRQC Scenario"
+            },
+            {
+              "tMs": 197500,
+              "kind": "generate-artifact",
+              "artifactType": "crqc-scenario"
+            },
+            {
+              "tMs": 202000,
+              "kind": "caption",
+              "text": "A scripted what-if for \"the day a CRQC is announced\" — your incident response, day zero."
+            },
+            {
+              "tMs": 296000,
+              "kind": "caption",
+              "text": "3 governance artifacts created."
             },
             {
               "tMs": 300000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "a1b-gov-standards-and-regulations",
+          "chapter": "action",
+          "title": "Governance — Standards & Regulations (CSWP §5.1)",
+          "estMinutes": 5,
+          "whyItMatters": "Policy authority comes from external standards. The audit checklist and compliance docs make your governance defensible to regulators and external auditors.",
+          "page": {
+            "route": "/business",
+            "query": {
+              "zone": "governance"
+            }
+          },
+          "tasks": [
+            "Open the Command Center and select the Governance zone",
+            "Generate the Audit Checklist",
+            "Generate the Compliance Timeline",
+            "Generate the Compliance Checklist"
+          ],
+          "expectedOutput": "3 governance artifacts created.",
+          "narration": "Policy authority comes from external standards. The audit checklist and compliance docs make your governance defensible to regulators and external auditors. Audit Checklist, Compliance Timeline, Compliance Checklist.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/business",
+              "query": {
+                "zone": "governance"
+              }
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Policy authority comes from external standards. The audit checklist and compliance docs make your governance defensible to regulators and external auditors."
+            },
+            {
+              "tMs": 3000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-zone-governance\"]"
+            },
+            {
+              "tMs": 4000,
+              "kind": "caption",
+              "text": "Artifact: Audit Checklist"
+            },
+            {
+              "tMs": 5500,
+              "kind": "generate-artifact",
+              "artifactType": "audit-checklist"
+            },
+            {
+              "tMs": 10000,
+              "kind": "caption",
+              "text": "Maps your crypto inventory to FIPS 140-3, NIST IR 8547, and CNSA 2.0 line items. Drop-in for your audit cycle."
+            },
+            {
+              "tMs": 100000,
+              "kind": "caption",
+              "text": "Artifact: Compliance Timeline"
+            },
+            {
+              "tMs": 101500,
+              "kind": "generate-artifact",
+              "artifactType": "compliance-timeline"
+            },
+            {
+              "tMs": 106000,
+              "kind": "caption",
+              "text": "Visual of every binding deadline (NIST, CCCS, ASD, PCI 4.0) overlaid on your fiscal calendar."
+            },
+            {
+              "tMs": 196000,
+              "kind": "caption",
+              "text": "Artifact: Compliance Checklist"
+            },
+            {
+              "tMs": 197500,
+              "kind": "generate-artifact",
+              "artifactType": "compliance-checklist"
+            },
+            {
+              "tMs": 202000,
+              "kind": "caption",
+              "text": "One-pager you hand to your CISO's deputy. They sign every line monthly."
+            },
+            {
+              "tMs": 296000,
+              "kind": "caption",
+              "text": "3 governance artifacts created."
+            },
+            {
+              "tMs": 300000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "a1c-gov-crypto-policies",
+          "chapter": "action",
+          "title": "Governance — Crypto Policies (CSWP §5.3)",
+          "estMinutes": 5,
+          "whyItMatters": "The policy layer itself. Without a published mandate, every later artifact stalls in committee. CSWP §5.3 is the heart of governance.",
+          "page": {
+            "route": "/business",
+            "query": {
+              "zone": "governance"
+            }
+          },
+          "tasks": [
+            "Open the Command Center and select the Governance zone",
+            "Generate the Policy Draft",
+            "Generate the RACI Matrix",
+            "Generate the Stakeholder Comms"
+          ],
+          "expectedOutput": "3 governance artifacts created.",
+          "narration": "The policy layer itself. Without a published mandate, every later artifact stalls in committee. CSWP §5.3 is the heart of governance. Policy Draft, RACI Matrix, Stakeholder Comms.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/business",
+              "query": {
+                "zone": "governance"
+              }
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "The policy layer itself. Without a published mandate, every later artifact stalls in committee. CSWP §5.3 is the heart of governance."
+            },
+            {
+              "tMs": 3000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-zone-governance\"]"
+            },
+            {
+              "tMs": 4000,
+              "kind": "caption",
+              "text": "Artifact: Policy Draft"
+            },
+            {
+              "tMs": 5500,
+              "kind": "generate-artifact",
+              "artifactType": "policy-draft"
+            },
+            {
+              "tMs": 10000,
+              "kind": "caption",
+              "text": "One-page mandate your legal team finishes in an afternoon. The signed policy becomes the audit anchor."
+            },
+            {
+              "tMs": 100000,
+              "kind": "caption",
+              "text": "Artifact: RACI Matrix"
+            },
+            {
+              "tMs": 101500,
+              "kind": "generate-artifact",
+              "artifactType": "raci-matrix"
+            },
+            {
+              "tMs": 106000,
+              "kind": "caption",
+              "text": "PQC champion responsible · CISO accountable · CRO consulted · Board sponsor informed. Names, not roles."
+            },
+            {
+              "tMs": 196000,
+              "kind": "caption",
+              "text": "Artifact: Stakeholder Comms"
+            },
+            {
+              "tMs": 197500,
+              "kind": "generate-artifact",
+              "artifactType": "stakeholder-comms"
+            },
+            {
+              "tMs": 202000,
+              "kind": "caption",
+              "text": "Email and slide templates for the announcements that make migration real to your org."
+            },
+            {
+              "tMs": 296000,
+              "kind": "caption",
+              "text": "3 governance artifacts created."
+            },
+            {
+              "tMs": 300000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "a1d-gov-supply-chain",
+          "chapter": "action",
+          "title": "Governance — Supply Chain (CSWP §5.4)",
+          "estMinutes": 5,
+          "whyItMatters": "Your vendors' PQC roadmap IS your PQC roadmap. The scorecard, contract clause, and supply chain matrix close the loop on third-party risk.",
+          "page": {
+            "route": "/business",
+            "query": {
+              "zone": "governance"
+            }
+          },
+          "tasks": [
+            "Open the Command Center and select the Governance zone",
+            "Generate the Vendor Scorecard",
+            "Generate the Contract Clause",
+            "Generate the Supply Chain Matrix"
+          ],
+          "expectedOutput": "3 governance artifacts created.",
+          "narration": "Your vendors' PQC roadmap IS your PQC roadmap. The scorecard, contract clause, and supply chain matrix close the loop on third-party risk. Vendor Scorecard, Contract Clause, Supply Chain Matrix.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/business",
+              "query": {
+                "zone": "governance"
+              }
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Your vendors' PQC roadmap IS your PQC roadmap. The scorecard, contract clause, and supply chain matrix close the loop on third-party risk."
+            },
+            {
+              "tMs": 3000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-zone-governance\"]"
+            },
+            {
+              "tMs": 4000,
+              "kind": "caption",
+              "text": "Artifact: Vendor Scorecard"
+            },
+            {
+              "tMs": 5500,
+              "kind": "generate-artifact",
+              "artifactType": "vendor-scorecard"
+            },
+            {
+              "tMs": 10000,
+              "kind": "caption",
+              "text": "Rates your top-20 crypto vendors on PQC roadmap, FIPS 140-3 status, and migration commitment."
+            },
+            {
+              "tMs": 100000,
+              "kind": "caption",
+              "text": "Artifact: Contract Clause"
+            },
+            {
+              "tMs": 101500,
+              "kind": "generate-artifact",
+              "artifactType": "contract-clause"
+            },
+            {
+              "tMs": 106000,
+              "kind": "caption",
+              "text": "Drop-in PQC readiness language for procurement and renewal contracts. Your legal team will thank you."
+            },
+            {
+              "tMs": 196000,
+              "kind": "caption",
+              "text": "Artifact: Supply Chain Matrix"
+            },
+            {
+              "tMs": 197500,
+              "kind": "generate-artifact",
+              "artifactType": "supply-chain-matrix"
+            },
+            {
+              "tMs": 202000,
+              "kind": "caption",
+              "text": "End-to-end view: which vendors' systems hold which crypto assets. The map your CISO needs at every audit."
+            },
+            {
+              "tMs": 296000,
+              "kind": "caption",
+              "text": "3 governance artifacts created."
+            },
+            {
+              "tMs": 300000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "a1e-gov-architecture",
+          "chapter": "action",
+          "title": "Governance — Crypto Architecture (CSWP §5.1)",
+          "estMinutes": 2,
+          "whyItMatters": "A single architectural diagram of your cryptographic estate. The picture every executive review starts with.",
+          "page": {
+            "route": "/business",
+            "query": {
+              "zone": "governance"
+            }
+          },
+          "tasks": [
+            "Open the Command Center and select the Governance zone",
+            "Generate the Crypto Architecture"
+          ],
+          "expectedOutput": "1 governance artifact created.",
+          "narration": "A single architectural diagram of your cryptographic estate. The picture every executive review starts with. Crypto Architecture.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/business",
+              "query": {
+                "zone": "governance"
+              }
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "A single architectural diagram of your cryptographic estate. The picture every executive review starts with."
+            },
+            {
+              "tMs": 3000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-zone-governance\"]"
+            },
+            {
+              "tMs": 4000,
+              "kind": "caption",
+              "text": "Artifact: Crypto Architecture"
+            },
+            {
+              "tMs": 5500,
+              "kind": "generate-artifact",
+              "artifactType": "crypto-architecture"
+            },
+            {
+              "tMs": 10000,
+              "kind": "caption",
+              "text": "Layered diagram: applications → libraries → HSMs → vendors. Annotated with classical and post-quantum algorithms."
+            },
+            {
+              "tMs": 116000,
+              "kind": "caption",
+              "text": "1 governance artifact created."
+            },
+            {
+              "tMs": 120000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "a1f-gov-kpis",
+          "chapter": "action",
+          "title": "Governance — KPIs & Tools Audit (cross-zone)",
+          "estMinutes": 3,
+          "whyItMatters": "Governance feeds risk-management dashboards. The KPI dashboard and management tools audit make your migration progress visible quarterly.",
+          "page": {
+            "route": "/business",
+            "query": {
+              "zone": "governance"
+            }
+          },
+          "tasks": [
+            "Open the Command Center and select the Governance zone",
+            "Generate the KPI Dashboard",
+            "Generate the Management Tools Audit"
+          ],
+          "expectedOutput": "2 governance artifacts created.",
+          "narration": "Governance feeds risk-management dashboards. The KPI dashboard and management tools audit make your migration progress visible quarterly. KPI Dashboard, Management Tools Audit.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/business",
+              "query": {
+                "zone": "governance"
+              }
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Governance feeds risk-management dashboards. The KPI dashboard and management tools audit make your migration progress visible quarterly."
+            },
+            {
+              "tMs": 3000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-zone-governance\"]"
+            },
+            {
+              "tMs": 4000,
+              "kind": "caption",
+              "text": "Artifact: KPI Dashboard"
+            },
+            {
+              "tMs": 5500,
+              "kind": "generate-artifact",
+              "artifactType": "kpi-dashboard"
+            },
+            {
+              "tMs": 10000,
+              "kind": "caption",
+              "text": "Three numbers your board will track: FIPS 140-3 coverage, PQC-ready certificate share, vendor PQC commitment."
+            },
+            {
+              "tMs": 88000,
+              "kind": "caption",
+              "text": "Artifact: Management Tools Audit"
+            },
+            {
+              "tMs": 89500,
+              "kind": "generate-artifact",
+              "artifactType": "management-tools-audit"
+            },
+            {
+              "tMs": 94000,
+              "kind": "caption",
+              "text": "Inventory of every crypto-related management tool (CA, KMS, HSM panels, CMDB) and their PQC readiness."
+            },
+            {
+              "tMs": 176000,
+              "kind": "caption",
+              "text": "2 governance artifacts created."
+            },
+            {
+              "tMs": 180000,
               "kind": "advance"
             }
           ]
@@ -742,7 +2319,10 @@
           "estMinutes": 4,
           "whyItMatters": "These three frameworks set the binding deadlines for U.S. financial institutions and federal counterparties: 2030 for hybrid TLS, 2035 for full disallowance.",
           "page": {
-            "route": "/compliance"
+            "route": "/compliance",
+            "query": {
+              "country": "United States"
+            }
           },
           "tasks": [
             "Filter by NIST",
@@ -784,7 +2364,7 @@
           "page": {
             "route": "/threats",
             "query": {
-              "industry": "FIN"
+              "industry": "Financial Services / Banking"
             }
           },
           "tasks": [
@@ -805,8 +2385,7 @@
           "page": {
             "route": "/leaders",
             "query": {
-              "country": "US",
-              "sector": "Finance"
+              "country": "United States"
             }
           },
           "tasks": ["Open Sudha Iyer’s profile", "Bookmark for board citation"],
@@ -860,7 +2439,10 @@
           "estMinutes": 4,
           "whyItMatters": "Canada has the most prescriptive federal roadmap of the three jurisdictions: 2026 plans due, 2031 high-priority complete, 2035 full migration.",
           "page": {
-            "route": "/compliance"
+            "route": "/compliance",
+            "query": {
+              "country": "Canada"
+            }
           },
           "tasks": [
             "Filter by CCCS",
@@ -901,7 +2483,7 @@
           "page": {
             "route": "/threats",
             "query": {
-              "industry": "FIN"
+              "industry": "Financial Services / Banking"
             }
           },
           "tasks": [
@@ -980,7 +2562,10 @@
           "estMinutes": 4,
           "whyItMatters": "Australia has the tightest deadline of the three jurisdictions by five years. By end-2030, traditional crypto is prohibited under the Information Security Manual.",
           "page": {
-            "route": "/compliance"
+            "route": "/compliance",
+            "query": {
+              "country": "Australia"
+            }
           },
           "tasks": [
             "Filter by ASD",
@@ -1174,7 +2759,7 @@
           "page": {
             "route": "/leaders",
             "query": {
-              "leader": "Rachel Noble"
+              "country": "Australia"
             }
           },
           "tasks": ["Open Rachel Noble profile (deep-linked)", "Bookmark for board citation"],

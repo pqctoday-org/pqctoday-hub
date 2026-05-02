@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { useWorkshopStore, STEP_DURATION_MS } from '@/store/useWorkshopStore'
+import {
+  useWorkshopStore,
+  STEP_DURATION_MS,
+  PRESENTATION_SPEED_MULTIPLIER,
+} from '@/store/useWorkshopStore'
 import { useWorkshopOverlayStore } from '@/store/useWorkshopOverlayStore'
 import { flattenFlow, findStepIndex, getNextStep, getPrevStep } from '@/data/workshopRegistry'
 import { useWorkshopManifest } from '@/hooks/useWorkshopManifest'
@@ -21,6 +25,7 @@ export const VideoOverlay: React.FC = () => {
   const exit = useWorkshopStore((s) => s.exit)
   const markStepComplete = useWorkshopStore((s) => s.markStepComplete)
   const playbackSpeed = useWorkshopStore((s) => s.playbackSpeed)
+  const playbackMode = useWorkshopStore((s) => s.playbackMode)
 
   const applyCue = useWorkshopOverlayStore((s) => s.applyCue)
   const setCaption = useWorkshopOverlayStore((s) => s.setCaption)
@@ -95,11 +100,14 @@ export const VideoOverlay: React.FC = () => {
     setCaption(step.narration, true)
     setPaused(false)
 
-    // Navigate to step page (via store-bound nav).
+    // Navigate to step page (via store-bound nav). Pass the step's own cues as
+    // `nextCues` so auto-scroll can target the first selector after the route
+    // settles.
     applyCue(
       { tMs: 0, kind: 'navigate', route: step.page.route, query: step.page.query },
       fixtures,
-      step.id
+      step.id,
+      step.cues ?? []
     )
 
     window.dispatchEvent(
@@ -123,9 +131,18 @@ export const VideoOverlay: React.FC = () => {
     let raf = 0
     const cues = step.cues ?? []
     const cuesSorted = [...cues].sort((a, b) => a.tMs - b.tMs)
-    const targetMs = STEP_DURATION_MS[playbackSpeed]
     const originalMs = Math.max(1, step.estMinutes * 60_000)
-    const scale = targetMs / originalMs
+
+    // Two playback modes:
+    //   preview      → step plays for fixed STEP_DURATION_MS[speed]; cue tMs scaled into that window
+    //   presentation → cue tMs * (1/speedMultiplier); step duration = lastCueTMs / speedMultiplier
+    const isPreview = playbackMode === 'preview'
+    const targetMs = isPreview
+      ? STEP_DURATION_MS[playbackSpeed]
+      : Math.max(1, originalMs / PRESENTATION_SPEED_MULTIPLIER[playbackSpeed])
+    const scale = isPreview
+      ? STEP_DURATION_MS[playbackSpeed] / originalMs
+      : 1 / PRESENTATION_SPEED_MULTIPLIER[playbackSpeed]
 
     const tick = (): void => {
       if (pausedAtRef.current !== null) {
@@ -141,7 +158,7 @@ export const VideoOverlay: React.FC = () => {
           advanceToNext()
           return
         }
-        applyCue(next, fixtures, step.id)
+        applyCue(next, fixtures, step.id, cuesSorted.slice(handledIdxRef.current + 1))
       }
       if (cuesSorted.length === 0 && elapsed >= targetMs) {
         advanceToNext()

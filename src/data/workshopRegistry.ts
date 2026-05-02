@@ -5,9 +5,8 @@ import type {
   WorkshopRegion,
   WorkshopStep,
 } from '@/types/Workshop'
-import { executiveFinanceFlow } from './workshopFlows/executiveFinance'
 
-export const WORKSHOP_FLOWS: WorkshopFlow[] = [executiveFinanceFlow]
+export const WORKSHOP_FLOWS: WorkshopFlow[] = []
 
 /**
  * Resolve the best workshop flow for the active persona context.

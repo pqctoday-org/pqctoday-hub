@@ -11,6 +11,7 @@ import { UserManualButton } from '@/components/ui/UserManualButton'
 import { ExportButton } from '@/components/ui/ExportButton'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
+import { PersonaChip } from '@/components/Persona/PersonaChip'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import type { ViewType } from '@/data/authoritativeSourcesData'
 import { useEmbedState } from '@/embed/EmbedProvider'
@@ -193,6 +194,7 @@ export const PageHeader = ({
               <span>Assistant</span>
             </Button>
           )}
+          <PersonaChip />
         </div>
       )}
     </div>
