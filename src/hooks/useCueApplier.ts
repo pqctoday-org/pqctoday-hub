@@ -221,27 +221,49 @@ function retrySelector(
 }
 
 function selectTab(tabName: string): void {
-  // 1. Workshop target slug
-  const slug = tabName.toLowerCase().replace(/\s+/g, '-')
-  const targeted = document.querySelector(`[data-workshop-target="tab-${slug}"]`)
-  if (targeted instanceof HTMLElement) {
-    targeted.click()
-    return
+  const wantSlug = tabName
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+  const wantLower = tabName.toLowerCase().trim()
+
+  const tryOnce = (): boolean => {
+    const targets = document.querySelectorAll('[data-workshop-target^="tab-"]')
+    for (const t of Array.from(targets)) {
+      const attr = t.getAttribute('data-workshop-target') ?? ''
+      const slug = attr.replace(/^tab-/, '')
+      if (slug === wantSlug || wantSlug.startsWith(slug + '-') || slug.startsWith(wantSlug + '-')) {
+        if (t instanceof HTMLElement) {
+          t.click()
+          return true
+        }
+      }
+    }
+    const roleTab = Array.from(document.querySelectorAll('[role="tab"]')).find(
+      (el) => (el.textContent ?? '').trim().toLowerCase() === wantLower
+    )
+    if (roleTab instanceof HTMLElement) {
+      roleTab.click()
+      return true
+    }
+    const btn = Array.from(document.querySelectorAll('button')).find(
+      (b) => (b.textContent ?? '').trim().toLowerCase() === wantLower
+    )
+    if (btn instanceof HTMLElement) {
+      btn.click()
+      return true
+    }
+    return false
   }
-  // 2. role="tab"
-  const tabs = Array.from(document.querySelectorAll('[role="tab"]'))
-  const roleMatch = tabs.find(
-    (t) => (t.textContent ?? '').trim().toLowerCase() === tabName.toLowerCase()
-  )
-  if (roleMatch instanceof HTMLElement) {
-    roleMatch.click()
-    return
+
+  if (tryOnce()) return
+  let n = 0
+  const tick = () => {
+    if (tryOnce()) return
+    n++
+    if (n < 4) setTimeout(tick, 200)
   }
-  // 3. <button>
-  const btnMatch = Array.from(document.querySelectorAll('button')).find(
-    (b) => (b.textContent ?? '').trim().toLowerCase() === tabName.toLowerCase()
-  )
-  if (btnMatch) btnMatch.click()
+  setTimeout(tick, 200)
 }
 
 function fillElement(selector: string, value: string): void {
