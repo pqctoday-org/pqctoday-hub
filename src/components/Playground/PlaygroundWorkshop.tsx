@@ -100,7 +100,7 @@ const ExecutiveBanner = () => (
       <div>
         <p className="font-semibold text-foreground">Tailored for Executive / GRC</p>
         <p className="text-sm text-muted-foreground mt-1">
-          The crypto workshop demonstrates the technical operations behind PQC migration. For
+          The Crypto Lab demonstrates the technical operations behind PQC migration. For
           business-case framing, compliance deadlines, and risk governance — start with the
           Assessment to get a personalised migration readiness report.
         </p>
@@ -378,9 +378,9 @@ export const PlaygroundWorkshop = () => {
       <PageHeader
         icon={FlaskConical}
         pageId="playground"
-        title="Crypto Workshop"
+        title="Crypto Lab"
         description="Hands-on cryptographic tools — interactive playground, PKCS#11 HSM, and 25 specialized crypto demos."
-        shareTitle="PQC Crypto Workshop — Interactive Cryptography in Your Browser"
+        shareTitle="PQC Crypto Lab — Interactive Cryptography in Your Browser"
         shareText="Run real post-quantum cryptographic operations in your browser — key generation, PKCS#11 HSM, ML-KEM, ML-DSA and more via WASM."
       />
 

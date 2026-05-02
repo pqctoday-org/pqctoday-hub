@@ -30,7 +30,7 @@ type CapabilityStatus = 'checking' | 'supported' | 'unsupported' | 'dismissed'
 const TABS = [
   { id: 'kem', label: 'KEM', icon: Key },
   { id: 'sign', label: 'Sign & Verify', icon: FileSignature },
-  { id: 'workshop', label: 'Workshop', icon: FlaskConical },
+  { id: 'workshop', label: 'Crypto Lab', icon: FlaskConical },
 ] as const
 
 type TabId = (typeof TABS)[number]['id']

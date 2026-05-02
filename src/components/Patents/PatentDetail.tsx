@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { X, ExternalLink, Shield, Zap, GitBranch, BookOpen } from 'lucide-react'
+import { X, ExternalLink, Shield, Zap, GitBranch, BookOpen, ArrowRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import type { PatentItem, NistStatus } from '@/types/PatentTypes'
 import { logExternalLink } from '@/utils/analytics'
@@ -398,6 +399,41 @@ export function PatentDetail({ patent, inCorpusIds, onClose, onNavigate }: Props
                   </a>
                 )
               })}
+            </div>
+          </div>
+        )}
+
+        {/* Explore related — cross-links to Algorithms and Library */}
+        {(patent.pqcAlgorithms.length > 0 || patent.standardsReferenced.length > 0) && (
+          <div className="border-t border-border pt-4 space-y-2">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              Explore Related
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {patent.pqcAlgorithms.length > 0 && (
+                <Link
+                  to={`/algorithms?highlight=${encodeURIComponent(patent.pqcAlgorithms.slice(0, 6).join(','))}&tab=detailed`}
+                  onClick={onClose}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-muted/30 border border-border hover:bg-muted/60 hover:border-primary/30 text-muted-foreground hover:text-foreground transition-all"
+                  title={`View ${patent.pqcAlgorithms.join(', ')} in Algorithms`}
+                >
+                  <Shield size={12} aria-hidden="true" />
+                  Algorithms ↗
+                  <ArrowRight size={10} className="opacity-50" />
+                </Link>
+              )}
+              {patent.standardsReferenced.length > 0 && (
+                <Link
+                  to={`/library?q=${encodeURIComponent(patent.standardsReferenced[0])}`}
+                  onClick={onClose}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-muted/30 border border-border hover:bg-muted/60 hover:border-primary/30 text-muted-foreground hover:text-foreground transition-all"
+                  title={`Search for ${patent.standardsReferenced[0]} in Library`}
+                >
+                  <BookOpen size={12} aria-hidden="true" />
+                  Library ↗
+                  <ArrowRight size={10} className="opacity-50" />
+                </Link>
+              )}
             </div>
           </div>
         )}

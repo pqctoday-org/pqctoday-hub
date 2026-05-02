@@ -18,6 +18,7 @@ import {
   ExternalLink,
   BookmarkCheck,
   Bookmark,
+  Award,
 } from 'lucide-react'
 import {
   complianceFrameworks,
@@ -458,6 +459,16 @@ function FrameworkCard({
                 </Link>
               )
             })()}
+          {fw.enforcementBody && fw.bodyType === 'certification_body' && (
+            <Link
+              to={`/compliance?tab=records&q=${encodeURIComponent(fw.enforcementBody)}`}
+              className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-medium hover:bg-muted/80 hover:text-foreground transition-colors"
+              title={`Cert records for ${fw.enforcementBody}`}
+            >
+              <Award size={8} />
+              Certs
+            </Link>
+          )}
           {fw.notes && (
             <Button
               variant="ghost"
