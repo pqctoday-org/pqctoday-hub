@@ -119,3 +119,11 @@ export const useWorkshopStore = create<WorkshopState>()(
 
 export const isWorkshopActive = (mode: WorkshopMode): boolean =>
   mode === 'running' || mode === 'video'
+
+/**
+ * Workshop modes that pin the right panel open. Video Mode is excluded
+ * because the recorder needs the full viewport for the main pane plus
+ * the spotlight + caption overlays.
+ */
+export const isWorkshopPinning = (mode: WorkshopMode): boolean =>
+  mode === 'running' || mode === 'paused'
