@@ -72,6 +72,37 @@ const foundations: WorkshopChapter = {
         'You can describe the four executive sections without scrolling and you know where the Command Center lives.',
       narration:
         'This is the executive landing. Notice the journey is already filtered for you — no playgrounds, no algorithm trees. The primary action is Start the Journey, the secondary is Open Command Center, which we will visit at the end. For now, we follow the journey.',
+      cues: [
+        {
+          tMs: 4_000,
+          kind: 'caption',
+          text: 'The executive landing — journey already filtered for you.',
+        },
+        { tMs: 8_000, kind: 'spotlight', selector: '[data-workshop-target="landing-cta-primary"]' },
+        {
+          tMs: 12_000,
+          kind: 'callout',
+          selector: '[data-workshop-target="landing-cta-primary"]',
+          label: 'Start the Journey',
+          arrow: 'right',
+        },
+        {
+          tMs: 60_000,
+          kind: 'caption',
+          text: 'Secondary CTA — Open Command Center — is where we end the workshop.',
+        },
+        {
+          tMs: 65_000,
+          kind: 'spotlight',
+          selector: '[data-workshop-target="landing-cta-secondary"]',
+        },
+        {
+          tMs: 120_000,
+          kind: 'caption',
+          text: 'Four sections: Start the Journey · My Journey · Assess & Report · Keep Up to Date.',
+        },
+        { tMs: 240_000, kind: 'advance' },
+      ],
     },
     {
       id: 'f2-learn',
@@ -90,6 +121,44 @@ const foundations: WorkshopChapter = {
       narration:
         'This module explains in plain language the three terms you need at boardroom speed. Q-Day is the day a sufficiently large quantum computer breaks RSA and elliptic-curve cryptography. Harvest-Now Decrypt-Later is the present-tense problem: adversaries are already collecting encrypted finance data today to decrypt later. FIPS 203 and 204 are the two NIST standards that fix this — ML-KEM for key exchange, ML-DSA for signatures.',
       completionSignal: { kind: 'module-progress', moduleId: 'exec-quantum-impact', minSteps: 1 },
+      cues: [
+        // 0-120s: Q-Day framing
+        { tMs: 4_000, kind: 'caption', text: 'Three terms you need at boardroom speed.' },
+        {
+          tMs: 60_000,
+          kind: 'caption',
+          text: 'Q-Day — the day a quantum computer breaks RSA and elliptic-curve cryptography.',
+        },
+        // 120-240s: HNDL
+        {
+          tMs: 120_000,
+          kind: 'caption',
+          text: 'Harvest-Now Decrypt-Later — adversaries collect encrypted finance data today to decrypt later.',
+        },
+        {
+          tMs: 180_000,
+          kind: 'caption',
+          text: 'Once collected, those records cannot be re-encrypted. Permanent privacy exposure.',
+        },
+        // 240-360s: FIPS 203/204
+        {
+          tMs: 240_000,
+          kind: 'caption',
+          text: 'FIPS 203 standardises ML-KEM — replaces RSA key exchange.',
+        },
+        {
+          tMs: 300_000,
+          kind: 'caption',
+          text: 'FIPS 204 standardises ML-DSA — replaces ECDSA signatures.',
+        },
+        // 360-480s: close
+        {
+          tMs: 360_000,
+          kind: 'caption',
+          text: 'These are the two terms your board will hear in every PQC conversation for the next decade.',
+        },
+        { tMs: 480_000, kind: 'advance' },
+      ],
     },
     {
       id: 'f3-threats',
@@ -98,7 +167,7 @@ const foundations: WorkshopChapter = {
       estMinutes: 5,
       whyItMatters:
         'Generic quantum risk talk does not move budgets. The five FIN- threats here are concrete and tied to systems your bank already runs: TARGET2, SWIFT, HSMs, transaction logs.',
-      page: { route: '/threats', query: { industry: 'FIN' } },
+      page: { route: '/threats', query: { industry: 'Financial Services / Banking' } },
       tasks: [
         'Filter by Finance & Banking',
         'Open FIN-001: BIS Project Leap (TARGET2 hybrid PQC)',
@@ -110,6 +179,52 @@ const foundations: WorkshopChapter = {
       narration:
         'These are not generic threats. FIN-001 is the Bank for International Settlements live test of hybrid PQC on TARGET2 — that is real-time gross settlement for the euro area. FIN-004 explains why your hardware security modules are not safe even when offline: backup keys wrapped with RSA become recoverable retroactively. FIN-005 is the FS-ISAC warning that the financial sector has not allocated the resources to meet 2030 deadlines.',
       completionSignal: { kind: 'bookmark-added', surface: 'compliance' },
+      cues: [
+        {
+          tMs: 4_000,
+          kind: 'caption',
+          text: 'Five concrete threats tied to systems your bank already runs.',
+        },
+        {
+          tMs: 8_000,
+          kind: 'spotlight',
+          selector: '[data-workshop-target="threats-toc-FIN-001"]',
+        },
+        {
+          tMs: 12_000,
+          kind: 'click',
+          selector: '[data-workshop-target="threats-toc-FIN-001"]',
+        },
+        // 60-150s: FIN-001 BIS Project Leap
+        {
+          tMs: 60_000,
+          kind: 'caption',
+          text: 'FIN-001: BIS Project Leap — live hybrid-PQC test on TARGET2 real-time settlement.',
+        },
+        // 150-200s: FIN-004 HSM
+        {
+          tMs: 150_000,
+          kind: 'click',
+          selector: '[data-workshop-target="threats-toc-FIN-004"]',
+        },
+        {
+          tMs: 155_000,
+          kind: 'caption',
+          text: 'FIN-004: HSM backup keys wrapped with RSA become recoverable retroactively. Offline does not save you.',
+        },
+        // 200-260s: FIN-005 FS-ISAC
+        {
+          tMs: 200_000,
+          kind: 'click',
+          selector: '[data-workshop-target="threats-toc-FIN-005"]',
+        },
+        {
+          tMs: 205_000,
+          kind: 'caption',
+          text: 'FIN-005: FS-ISAC — financial sector under-resourced to meet 2030.',
+        },
+        { tMs: 300_000, kind: 'advance' },
+      ],
     },
     {
       id: 'f4-timeline',
@@ -128,6 +243,30 @@ const foundations: WorkshopChapter = {
       narration:
         'The runway is shorter than most boards realise. We will land on the specific deadlines for your country in the region chapter. For now, note three patterns: announcements have already happened, mandatory deadlines cluster around 2030, and procurement decisions you make in the next twelve to eighteen months will determine whether you meet them.',
       completionSignal: { kind: 'bookmark-added', surface: 'timeline' },
+      cues: [
+        { tMs: 4_000, kind: 'caption', text: 'The runway is shorter than most boards realise.' },
+        {
+          tMs: 60_000,
+          kind: 'caption',
+          text: 'Pattern 1: announcements have already happened. The first ASD guide is from 2022.',
+        },
+        {
+          tMs: 120_000,
+          kind: 'caption',
+          text: 'Pattern 2: mandatory deadlines cluster around 2030.',
+        },
+        {
+          tMs: 180_000,
+          kind: 'caption',
+          text: 'Pattern 3: procurement decisions in the next 12–18 months determine whether you meet them.',
+        },
+        {
+          tMs: 240_000,
+          kind: 'caption',
+          text: 'We will land on country-specific deadlines in the region chapter.',
+        },
+        { tMs: 300_000, kind: 'advance' },
+      ],
     },
     {
       id: 'f5-library',
@@ -147,6 +286,34 @@ const foundations: WorkshopChapter = {
       narration:
         'These are the primary sources. FIPS 203 standardises ML-KEM, the key encapsulation mechanism that replaces RSA key exchange. FIPS 204 standardises ML-DSA, the signature algorithm. NIST Internal Report 8547 is the deprecation calendar — it is the document your auditors will cite when they ask why you are still running ECDSA in 2031.',
       completionSignal: { kind: 'bookmark-added', surface: 'library' },
+      cues: [
+        {
+          tMs: 4_000,
+          kind: 'caption',
+          text: 'Primary sources — what your CISO will cite when asked "what document says that?".',
+        },
+        {
+          tMs: 60_000,
+          kind: 'caption',
+          text: 'FIPS 203 — ML-KEM. Replaces RSA key exchange.',
+        },
+        {
+          tMs: 150_000,
+          kind: 'caption',
+          text: 'FIPS 204 — ML-DSA. Replaces ECDSA signatures.',
+        },
+        {
+          tMs: 240_000,
+          kind: 'caption',
+          text: 'NIST IR 8547 — the deprecation calendar your auditors will cite in 2031.',
+        },
+        {
+          tMs: 300_000,
+          kind: 'caption',
+          text: 'Bookmark all three so they are one click away during board prep.',
+        },
+        { tMs: 360_000, kind: 'advance' },
+      ],
     },
     {
       id: 'f6-leaders',
@@ -155,9 +322,9 @@ const foundations: WorkshopChapter = {
       estMinutes: 4,
       whyItMatters:
         'Boards respond to peer movement. Concrete names — Citi, Santander, FS-ISAC working groups — convert "we should look at this" into "we are already behind".',
-      page: { route: '/leaders', query: { sector: 'Finance' } },
+      page: { route: '/leaders', query: { cat: 'Industry Adopter' } },
       tasks: [
-        'Filter by sector Finance',
+        'Filter by category: Industry Adopter',
         'Open Sudha Iyer (Citi, founding FS-ISAC PQC working group member)',
         'Open Jaime Gomez Garcia (Banco Santander Head of Quantum Technologies)',
         'Bookmark one leader',
@@ -166,6 +333,25 @@ const foundations: WorkshopChapter = {
       narration:
         'These are real names, real institutions. Citi has had a chief cybersecurity architect inside the FS-ISAC PQC working group since its founding. Santander has a head of quantum technologies who is active in the European Telecommunications Standards Institute and the IBM Quantum Network. If your board asks "are our peers doing this", the answer is yes, and these are the people they are sending.',
       completionSignal: { kind: 'bookmark-added', surface: 'leaders' },
+      cues: [
+        { tMs: 4_000, kind: 'caption', text: 'Real names. Real institutions. Real movement.' },
+        {
+          tMs: 60_000,
+          kind: 'caption',
+          text: 'Sudha Iyer — Citi Chief Cybersecurity Architect. Founding FS-ISAC PQC working-group member.',
+        },
+        {
+          tMs: 120_000,
+          kind: 'caption',
+          text: 'Jaime Gomez Garcia — Banco Santander, Head of Quantum Technologies.',
+        },
+        {
+          tMs: 180_000,
+          kind: 'caption',
+          text: 'When the board asks "are our peers doing this?" — these are the people they are sending.',
+        },
+        { tMs: 240_000, kind: 'advance' },
+      ],
     },
     {
       id: 'f7-assess',
@@ -184,6 +370,40 @@ const foundations: WorkshopChapter = {
       narration:
         'Quick mode is calibrated for executives — six questions, two minutes. The questions are about data sensitivity, retention horizon, and whether you already have a cryptographic inventory. The output is a risk profile that we use as the input to the next page.',
       completionSignal: { kind: 'assessment-complete' },
+      cues: [
+        { tMs: 4_000, kind: 'caption', text: 'Quick mode — calibrated for executives.' },
+        { tMs: 8_000, kind: 'spotlight', selector: '[data-workshop-target="assess-mode-quick"]' },
+        {
+          tMs: 12_000,
+          kind: 'callout',
+          selector: '[data-workshop-target="assess-mode-quick"]',
+          label: 'Recommended for you',
+          arrow: 'right',
+        },
+        {
+          tMs: 20_000,
+          kind: 'click',
+          selector: '[data-workshop-target="assess-mode-quick"]',
+        },
+        // 60-180s: question framing
+        {
+          tMs: 60_000,
+          kind: 'caption',
+          text: 'Six questions. Data sensitivity, retention horizon, crypto inventory.',
+        },
+        {
+          tMs: 180_000,
+          kind: 'caption',
+          text: 'Two minutes — and the output seeds your board-ready report.',
+        },
+        // 240-360s: results
+        {
+          tMs: 240_000,
+          kind: 'caption',
+          text: 'The risk profile is the input to the next page.',
+        },
+        { tMs: 360_000, kind: 'advance' },
+      ],
     },
     {
       id: 'f8-report',
@@ -202,6 +422,25 @@ const foundations: WorkshopChapter = {
         'Shareable report URL is visible; you can describe the top five actions in one breath.',
       narration:
         'Notice what is hidden: algorithm migration tables, mitigation deep-dives. Those are not for you. What is shown is a five-action shortlist tied to your jurisdiction. The share button generates a token-bearing URL — not a PDF — that your board secretary can embed in the next agenda. PDFs go stale; this URL re-renders against current data.',
+      cues: [
+        { tMs: 4_000, kind: 'caption', text: 'Your board pack — hides developer-only sections.' },
+        {
+          tMs: 60_000,
+          kind: 'caption',
+          text: 'Five-action shortlist tied to your jurisdiction.',
+        },
+        {
+          tMs: 120_000,
+          kind: 'caption',
+          text: 'Share button generates a token-bearing URL — not a PDF.',
+        },
+        {
+          tMs: 180_000,
+          kind: 'caption',
+          text: 'PDFs go stale. This URL re-renders against current data every time.',
+        },
+        { tMs: 240_000, kind: 'advance' },
+      ],
     },
   ],
 }
