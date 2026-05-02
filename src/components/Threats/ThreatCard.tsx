@@ -25,11 +25,13 @@ export const ThreatCard = ({ item, index = 0, onClick, dimmed = false }: ThreatC
 
   return (
     <motion.article
+      id={`threat-${item.threatId}`}
+      data-workshop-target={`threats-card-${item.threatId}`}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, delay: index * 0.03 }}
       className={clsx(
-        'glass-panel p-5 flex flex-col h-full hover:border-secondary/50 transition-all bg-card/50 relative cursor-pointer',
+        'glass-panel p-5 flex flex-col h-full hover:border-secondary/50 transition-all bg-card/50 relative cursor-pointer scroll-mt-20',
         dimmed && 'opacity-40 hover:opacity-100'
       )}
       onClick={() => onClick?.(item)}

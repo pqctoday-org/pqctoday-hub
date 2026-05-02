@@ -30,6 +30,7 @@ type SortDirection = 'asc' | 'desc'
 
 import { getIndustryIcon } from './threatsHelper'
 import { ThreatsViewToggle, type ThreatsViewMode } from './ThreatsViewToggle'
+import { LeftNavTOC } from '@/components/common/LeftNavTOC'
 import { ThreatsCardGrid } from './ThreatsCardGrid'
 import { ThreatsTable } from './ThreatsTable'
 import { IndustryStack } from './IndustryStack'
@@ -492,66 +493,103 @@ export const ThreatsDashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* View Rendering */}
-      <div className="w-full">
-        {viewMode === 'stack' && (
-          <IndustryStack
-            activeLayer={activeLayer}
-            onSelectLayer={setActiveLayer}
-            items={filteredAndSortedData}
-            expandedContent={
-              <ThreatsTable
-                items={filteredAndSortedData.filter(
-                  (t) => t.industry === activeLayer || activeLayer === 'All'
-                )}
-                sortField={sortField}
-                sortDirection={sortDirection}
-                onSort={handleSort}
-                onItemClick={(item) => {
-                  setSelectedThreat(item)
-                  syncFiltersToUrl({ id: item.threatId })
-                }}
-              />
-            }
+      {/* View Rendering — left-rail TOC of filtered threats + main view */}
+      <div className="flex flex-col lg:flex-row gap-6">
+        <aside className="lg:w-64 lg:shrink-0 lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
+          <LeftNavTOC
+            title="Threats"
+            ariaLabel="Filtered threats"
+            targetPrefix="threats-toc"
+            activeItemId={selectedThreat?.threatId ?? null}
+            onSelect={(id) => {
+              const item = filteredAndSortedData.find((t) => t.threatId === id)
+              if (!item) return
+              setSelectedThreat(item)
+              syncFiltersToUrl({ id })
+              // Scroll the corresponding card into view (cards mode anchors via id="threat-<id>").
+              const target = document.getElementById(`threat-${id}`)
+              target?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            }}
+            groups={(() => {
+              const byIndustry = new Map<string, typeof filteredAndSortedData>()
+              for (const item of filteredAndSortedData) {
+                if (!byIndustry.has(item.industry)) byIndustry.set(item.industry, [])
+                byIndustry.get(item.industry)!.push(item)
+              }
+              return Array.from(byIndustry.entries()).map(([ind, items]) => ({
+                id: ind.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+                label: ind,
+                items: items.map((i) => ({
+                  id: i.threatId,
+                  label: `${i.threatId} — ${i.threatDescription.split(':')[0].slice(0, 60)}`,
+                  hint: i.criticality,
+                })),
+              }))
+            })()}
+            emptyMessage="No threats match the current filters."
           />
-        )}
-        {viewMode === 'cards' && (
-          <div className="mb-8">
-            <ThreatsCardGrid
+        </aside>
+
+        <div className="flex-1 min-w-0">
+          {viewMode === 'stack' && (
+            <IndustryStack
+              activeLayer={activeLayer}
+              onSelectLayer={setActiveLayer}
               items={filteredAndSortedData}
-              onItemClick={(item) => {
-                setSelectedThreat(item)
-                syncFiltersToUrl({ id: item.threatId })
-              }}
-              relevantIndustries={personaRelevantIndustries}
+              expandedContent={
+                <ThreatsTable
+                  items={filteredAndSortedData.filter(
+                    (t) => t.industry === activeLayer || activeLayer === 'All'
+                  )}
+                  sortField={sortField}
+                  sortDirection={sortDirection}
+                  onSort={handleSort}
+                  onItemClick={(item) => {
+                    setSelectedThreat(item)
+                    syncFiltersToUrl({ id: item.threatId })
+                  }}
+                />
+              }
             />
-          </div>
-        )}
-        {viewMode === 'table' && (
-          <>
-            <div className="hidden md:block">
-              <ThreatsTable
-                items={filteredAndSortedData}
-                sortField={sortField}
-                sortDirection={sortDirection}
-                onSort={handleSort}
-                onItemClick={(item) => {
-                  setSelectedThreat(item)
-                  syncFiltersToUrl({ id: item.threatId })
-                }}
-              />
-            </div>
-            <div className="md:hidden">
-              <MobileThreatsList
+          )}
+          {viewMode === 'cards' && (
+            <div className="mb-8">
+              <ThreatsCardGrid
                 items={filteredAndSortedData}
                 onItemClick={(item) => {
                   setSelectedThreat(item)
                   syncFiltersToUrl({ id: item.threatId })
                 }}
+                relevantIndustries={personaRelevantIndustries}
               />
             </div>
-          </>
-        )}
+          )}
+          {viewMode === 'table' && (
+            <>
+              <div className="hidden md:block">
+                <ThreatsTable
+                  items={filteredAndSortedData}
+                  sortField={sortField}
+                  sortDirection={sortDirection}
+                  onSort={handleSort}
+                  onItemClick={(item) => {
+                    setSelectedThreat(item)
+                    syncFiltersToUrl({ id: item.threatId })
+                  }}
+                />
+              </div>
+              <div className="md:hidden">
+                <MobileThreatsList
+                  items={filteredAndSortedData}
+                  onItemClick={(item) => {
+                    setSelectedThreat(item)
+                    syncFiltersToUrl({ id: item.threatId })
+                  }}
+                />
+              </div>
+            </>
+          )}
+        </div>
       </div>
       {/* End detail dialog wrapper */}
       <AnimatePresence>
