@@ -6,13 +6,41 @@ import { WorkbenchFileManager } from './components/WorkbenchFileManager'
 import { TerminalOutput } from './TerminalOutput'
 import { FileEditor } from './FileEditor'
 import { FileViewer } from './components/FileViewer'
-import { Terminal, ChevronDown, ChevronUp, FileText, Monitor, History } from 'lucide-react'
+import {
+  Terminal,
+  ChevronDown,
+  ChevronUp,
+  FileText,
+  Monitor,
+  History,
+  Lightbulb,
+  BookOpen,
+} from 'lucide-react'
+import { Link } from 'react-router-dom'
 import clsx from 'clsx'
 import { LogsTab } from './LogsTab'
 import { PageHeader } from '../common/PageHeader'
 import { Button } from '../ui/button'
+import { usePersonaStore } from '@/store/usePersonaStore'
 
 import { useOpenSSLStore } from './store'
+
+type QuickCmd = { label: string; cmd: OpenSSLCategory; hint: string }
+const DEV_CHEATSHEET: QuickCmd[] = [
+  { label: 'genpkey', cmd: 'genpkey', hint: 'Generate PQC or classical private keys' },
+  { label: 'req', cmd: 'req', hint: 'Create / inspect certificate signing requests' },
+  { label: 'x509', cmd: 'x509', hint: 'Self-sign, view or convert certificates' },
+  { label: 'dgst', cmd: 'dgst', hint: 'Hash files + produce digital signatures' },
+  { label: 'kem', cmd: 'kem', hint: 'ML-KEM encapsulate / decapsulate' },
+  { label: 'enc', cmd: 'enc', hint: 'Symmetric encryption / decryption' },
+]
+const RESEARCHER_LINKS = [
+  { label: 'ML-KEM', to: '/algorithms?highlight=ML-KEM-768&tab=detailed' },
+  { label: 'ML-DSA', to: '/algorithms?highlight=ML-DSA-65&tab=detailed' },
+  { label: 'TLS 1.3', to: '/library?q=TLS+1.3' },
+  { label: 'PKCS#12', to: '/library?q=PKCS12' },
+  { label: 'X.509', to: '/library?q=X.509' },
+]
 
 type OpenSSLCategory =
   | 'genpkey'
@@ -82,6 +110,7 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
     embedded ? 'genpkey' : resolveCmd(searchParams.get('cmd'))
   )
   const { editingFile, activeTab, structuredLogs } = useOpenSSLStore()
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
 
   const handleCategoryChange = useCallback(
     (cat: OpenSSLCategory) => {
@@ -119,6 +148,46 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
         <div className="lg:hidden glass-panel p-3 mb-4 flex items-center gap-2 text-sm text-muted-foreground">
           <Monitor size={16} className="shrink-0 text-primary" aria-hidden="true" />
           <span>Best experienced on desktop — scroll down for terminal and file manager.</span>
+        </div>
+      )}
+
+      {/* Developer cheat sheet / Researcher doc links — persona-aware strip */}
+      {!embedded && selectedPersona === 'developer' && (
+        <div className="mb-4 flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/5 border border-primary/15 text-xs flex-wrap">
+          <Lightbulb size={13} className="shrink-0 text-primary" aria-hidden="true" />
+          <span className="text-muted-foreground font-medium shrink-0">Quick jump:</span>
+          {DEV_CHEATSHEET.map(({ label, cmd, hint }) => (
+            <Button
+              key={cmd}
+              variant="ghost"
+              size="sm"
+              title={hint}
+              onClick={() => handleCategoryChange(cmd)}
+              className={clsx(
+                'h-auto px-2 py-0.5 text-[11px] font-mono rounded border transition-colors',
+                category === cmd
+                  ? 'bg-primary/15 border-primary/30 text-primary'
+                  : 'border-border text-muted-foreground hover:text-foreground hover:border-primary/20 hover:bg-muted/30'
+              )}
+            >
+              {label}
+            </Button>
+          ))}
+        </div>
+      )}
+      {!embedded && selectedPersona === 'researcher' && (
+        <div className="mb-4 flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/5 border border-primary/15 text-xs flex-wrap">
+          <BookOpen size={13} className="shrink-0 text-primary" aria-hidden="true" />
+          <span className="text-muted-foreground font-medium shrink-0">Related specs:</span>
+          {RESEARCHER_LINKS.map(({ label, to }) => (
+            <Link
+              key={label}
+              to={to}
+              className="h-auto px-2 py-0.5 text-[11px] font-medium rounded border border-border text-muted-foreground hover:text-foreground hover:border-primary/20 hover:bg-muted/30 transition-colors"
+            >
+              {label} ↗
+            </Link>
+          ))}
         </div>
       )}
 

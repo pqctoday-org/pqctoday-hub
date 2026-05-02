@@ -35,6 +35,9 @@ interface DocumentCardProps {
   highlighted?: boolean
 }
 
+const TWO_YEARS_MS = 730 * 24 * 60 * 60 * 1000
+const RENDER_NOW_MS = Date.now()
+
 const URGENCY_COLORS: Record<string, string> = {
   Critical: 'bg-destructive/10 text-destructive border-destructive/20',
   High: 'bg-status-warning text-status-warning',
@@ -75,6 +78,18 @@ export const DocumentCard = ({
     }
   }, [highlighted])
   const isEnriched = !!libraryEnrichments[item.referenceId]
+
+  const isStale = useMemo(() => {
+    if (
+      item.documentStatusBucket === 'Expired' ||
+      item.documentStatusBucket === 'Superseded' ||
+      item.documentStatusBucket === 'Withdrawn'
+    )
+      return false
+    const parsed = new Date(item.lastUpdateDate)
+    if (isNaN(parsed.getTime())) return false
+    return RENDER_NOW_MS - parsed.getTime() > TWO_YEARS_MS
+  }, [item.lastUpdateDate, item.documentStatusBucket])
 
   // CSWP 39 rollup: pillar counts + tier coverage from the maturity dataset.
   // Silent (renders nothing) when this referenceId has no enriched requirements.
@@ -231,6 +246,14 @@ export const DocumentCard = ({
       <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
         <Calendar size={12} aria-hidden="true" />
         <span>{item.lastUpdateDate}</span>
+        {isStale && (
+          <span
+            className="text-[10px] text-status-warning font-medium"
+            title="Last updated over 2 years ago — content may need re-verification"
+          >
+            · verify
+          </span>
+        )}
       </div>
 
       {item.migrationUrgency && (

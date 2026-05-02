@@ -2,8 +2,9 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronRight, ChevronLeft, RotateCcw, Info } from 'lucide-react'
+import { ChevronRight, ChevronLeft, RotateCcw, Info, Link2 } from 'lucide-react'
 import { Button } from '../ui/button'
+import toast from 'react-hot-toast'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
 
@@ -394,6 +395,21 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
           >
             <RotateCcw size={13} />
             Reset
+          </Button>
+
+          <Button
+            variant="ghost"
+            onClick={() => {
+              const url = new URL(window.location.href)
+              url.searchParams.set('step', String(currentStep))
+              navigator.clipboard.writeText(url.toString())
+              toast.success('Resume link copied — your answers are saved on this device')
+            }}
+            className="text-xs min-h-[44px] gap-1 text-muted-foreground hover:text-primary"
+            title="Copy a link to resume from this step — your answers are auto-saved locally"
+          >
+            <Link2 size={13} />
+            Save link
           </Button>
 
           <Button
