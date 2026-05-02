@@ -597,6 +597,52 @@ const auRegion: WorkshopChapter = {
       expectedOutput: 'ISM-1917 framework bookmarked; required algorithms noted.',
       narration:
         'The Australian Signals Directorate updated the Information Security Manual in December 2024 with control 1917. By end of 2030, traditional cryptography — RSA, ECDSA, ECDH — is prohibited for protected systems. Required algorithms are at the highest NIST security levels: ML-DSA-87 for signatures, ML-KEM-1024 for key encapsulation, SHA-384 or SHA-512, AES-256. This is five years ahead of the U.S. and U.K. equivalents.',
+      cues: [
+        // 0–60s: arrive on /compliance, switch to the Compliance Frameworks tab
+        {
+          tMs: 4_000,
+          kind: 'caption',
+          text: 'ASD updated the ISM in December 2024 with control 1917 — by end-2030, traditional crypto is prohibited.',
+        },
+        { tMs: 8_000, kind: 'select-tab', tabName: 'Compliance Frameworks' },
+        { tMs: 12_000, kind: 'spotlight', selector: '[data-workshop-target="tab-compliance"]' },
+        // 60–120s: spotlight the ISM-1917 framework card (slug from FrameworkCard id)
+        {
+          tMs: 60_000,
+          kind: 'caption',
+          text: 'Required algorithms are at the highest NIST security levels.',
+        },
+        {
+          tMs: 65_000,
+          kind: 'scroll-to',
+          selector: '[data-workshop-target="compliance-framework-asd-ism-1917"]',
+        },
+        {
+          tMs: 70_000,
+          kind: 'spotlight',
+          selector: '[data-workshop-target="compliance-framework-asd-ism-1917"]',
+        },
+        {
+          tMs: 75_000,
+          kind: 'callout',
+          selector: '[data-workshop-target="compliance-framework-asd-ism-1917"]',
+          label: 'ISM-1917 — 2030 prohibition',
+          arrow: 'left',
+        },
+        // 120–180s: highlight specific algorithm callouts
+        {
+          tMs: 120_000,
+          kind: 'caption',
+          text: 'ML-DSA-87 for signatures · ML-KEM-1024 for key encapsulation · SHA-384/512 · AES-256.',
+        },
+        // 180–240s: close — the comparative urgency
+        {
+          tMs: 180_000,
+          kind: 'caption',
+          text: 'Five years ahead of U.S. and U.K. equivalents — the tightest deadline of the three jurisdictions.',
+        },
+        { tMs: 240_000, kind: 'advance' },
+      ],
     },
     {
       id: 'au-02-timeline',
@@ -615,6 +661,44 @@ const auRegion: WorkshopChapter = {
       expectedOutput: 'Three milestones reviewed; phasing noted.',
       narration:
         'The first ASD planning guide is from 2022. The binding update is from December 2024. The most recent practitioner refresh is the LATICE framework from September 2025. The three phases — planning by 2026, critical migration by 2028, full migration by 2030 — leave Australian banks with the smallest remaining runway of the three jurisdictions in this workshop.',
+      cues: [
+        // 0–60s: arrive on /timeline?country=Australia, spotlight the country TOC entry
+        {
+          tMs: 4_000,
+          kind: 'caption',
+          text: 'Three documents define your runway. The 2022 ASD guide. The binding December 2024 ISM update. The September 2025 LATICE refresh.',
+        },
+        {
+          tMs: 8_000,
+          kind: 'spotlight',
+          selector: '[data-workshop-target="timeline-toc-Australia"]',
+        },
+        {
+          tMs: 12_000,
+          kind: 'callout',
+          selector: '[data-workshop-target="timeline-toc-Australia"]',
+          label: 'Australia row pinned',
+          arrow: 'right',
+        },
+        // 60–180s: walk the three milestones
+        {
+          tMs: 60_000,
+          kind: 'caption',
+          text: 'Three phases — planning 2024-2026, critical-systems migration 2026-2028, full migration 2028-2030.',
+        },
+        {
+          tMs: 120_000,
+          kind: 'caption',
+          text: 'Smallest remaining runway of the three jurisdictions in this workshop.',
+        },
+        // 180–240s: phase comparison close
+        {
+          tMs: 180_000,
+          kind: 'caption',
+          text: 'You are already in phase one.',
+        },
+        { tMs: 240_000, kind: 'advance' },
+      ],
     },
     {
       id: 'au-03-threats',
@@ -624,7 +708,7 @@ const auRegion: WorkshopChapter = {
       estMinutes: 3,
       whyItMatters:
         'Same FIN- threats, different countdown. By 2030, ISM-1917 makes most of these threats compliance failures, not just risk items.',
-      page: { route: '/threats', query: { industry: 'FIN' } },
+      page: { route: '/threats', query: { industry: 'Financial Services / Banking' } },
       tasks: [
         'Open FIN-001 BIS Project Leap',
         'Open FIN-004 HSM backup key extraction',
@@ -633,6 +717,31 @@ const auRegion: WorkshopChapter = {
       expectedOutput: 'Three threats reviewed under 2030-deadline pressure.',
       narration:
         'In Australia, these stop being threats and become compliance gates. After end-2030, an HSM fleet that still wraps backup keys with RSA is non-compliant under ISM-1917. The FS-ISAC sector readiness warning applies, with the additional dimension that you have five years less than your U.S. peers to act.',
+      cues: [
+        // 0–60s: spotlight the threat TOC, click FIN-001
+        {
+          tMs: 3_000,
+          kind: 'caption',
+          text: 'In Australia, these stop being threats — they become compliance gates after end-2030.',
+        },
+        { tMs: 6_000, kind: 'spotlight', selector: '[data-workshop-target="threats-toc-FIN-001"]' },
+        { tMs: 12_000, kind: 'click', selector: '[data-workshop-target="threats-toc-FIN-001"]' },
+        // 60–120s: FIN-004 HSM extraction
+        {
+          tMs: 60_000,
+          kind: 'caption',
+          text: 'FIN-004: an HSM fleet wrapping backup keys with RSA is non-compliant under ISM-1917 by 2030.',
+        },
+        { tMs: 65_000, kind: 'click', selector: '[data-workshop-target="threats-toc-FIN-004"]' },
+        // 120–180s: FIN-005 sector readiness
+        {
+          tMs: 120_000,
+          kind: 'caption',
+          text: 'FIN-005: FS-ISAC warns the sector is short of resources — and you have five fewer years than U.S. peers.',
+        },
+        { tMs: 125_000, kind: 'click', selector: '[data-workshop-target="threats-toc-FIN-005"]' },
+        { tMs: 180_000, kind: 'advance' },
+      ],
     },
     {
       id: 'au-04-leaders',
@@ -642,11 +751,29 @@ const auRegion: WorkshopChapter = {
       estMinutes: 3,
       whyItMatters:
         'Rachel Noble led ASD from 2020 to September 2024 and oversaw the Australian quantum-safe strategy. Her statements are board-grade citations.',
-      page: { route: '/leaders', query: { country: 'Australia' } },
-      tasks: ['Open Rachel Noble profile', 'Bookmark for board citation'],
+      page: { route: '/leaders', query: { leader: 'Rachel Noble' } },
+      tasks: ['Open Rachel Noble profile (deep-linked)', 'Bookmark for board citation'],
       expectedOutput: 'Citation bookmarked.',
       narration:
         'Rachel Noble was the Director-General of ASD from 2020 to September 2024 and was the public face of Australia’s post-quantum migration strategy and quantum-computing investments. She is your reference point for "what does the Australian government expect us to do".',
+      cues: [
+        {
+          tMs: 4_000,
+          kind: 'caption',
+          text: 'Rachel Noble led ASD from 2020 to September 2024 — the public face of Australia’s post-quantum strategy.',
+        },
+        {
+          tMs: 60_000,
+          kind: 'caption',
+          text: 'Your reference point for "what does the Australian government expect us to do".',
+        },
+        {
+          tMs: 120_000,
+          kind: 'caption',
+          text: 'Bookmark her profile to cite her in your board materials.',
+        },
+        { tMs: 180_000, kind: 'advance' },
+      ],
     },
     {
       id: 'au-05-migrate',
@@ -665,6 +792,54 @@ const auRegion: WorkshopChapter = {
       expectedOutput: 'Two Dell BSAFE certifications opened.',
       narration:
         'Dell Australia is the named vendor on multiple ACVP certificates — A8272 for the C module, with separate certificates for Java. ML-DSA and ML-KEM are both validated. This matters because the most common board objection — "the vendors are not ready" — is already factually incorrect for your jurisdiction.',
+      cues: [
+        // 0–60s: spotlight a Dell BSAFE row in the filtered table
+        {
+          tMs: 4_000,
+          kind: 'caption',
+          text: 'Dell Australia is the named vendor on multiple ACVP certificates — ML-DSA and ML-KEM both validated.',
+        },
+        {
+          tMs: 8_000,
+          kind: 'scroll-to',
+          selector: '[data-workshop-target="migrate-product-dell-bsafe-crypto-module-for-c"]',
+        },
+        {
+          tMs: 12_000,
+          kind: 'spotlight',
+          selector: '[data-workshop-target="migrate-product-dell-bsafe-crypto-module-for-c"]',
+        },
+        {
+          tMs: 16_000,
+          kind: 'callout',
+          selector: '[data-workshop-target="migrate-product-dell-bsafe-crypto-module-for-c"]',
+          label: 'A8272 — ACVP certified',
+          arrow: 'right',
+        },
+        // 60–120s: Java module
+        {
+          tMs: 60_000,
+          kind: 'caption',
+          text: 'A8272 for the C module · separate certificates for Java.',
+        },
+        {
+          tMs: 65_000,
+          kind: 'scroll-to',
+          selector: '[data-workshop-target="migrate-product-dell-bsafe-crypto-module-for-java"]',
+        },
+        {
+          tMs: 70_000,
+          kind: 'spotlight',
+          selector: '[data-workshop-target="migrate-product-dell-bsafe-crypto-module-for-java"]',
+        },
+        // 120–180s: close
+        {
+          tMs: 120_000,
+          kind: 'caption',
+          text: 'The most common board objection — "the vendors are not ready" — is already factually incorrect.',
+        },
+        { tMs: 180_000, kind: 'advance' },
+      ],
     },
     {
       id: 'au-06-business',
@@ -674,7 +849,7 @@ const auRegion: WorkshopChapter = {
       estMinutes: 3,
       whyItMatters:
         'Specific to Australia: a 2030 gap analysis and a board urgency memo. Note the workshop flags the absence of APRA-specific PQC guidance — that gap is your own-risk item.',
-      page: { route: '/business' },
+      page: { route: '/business', query: { zone: 'risk-management' } },
       tasks: [
         'Open Risk Management zone',
         'Generate the 2030 readiness gap analysis',
@@ -683,6 +858,39 @@ const auRegion: WorkshopChapter = {
       expectedOutput: 'Gap analysis and urgency memo downloaded.',
       narration:
         'The gap analysis maps every cryptographic system in your inventory against ISM-1917 requirements with end-2030 as the gate. The urgency memo for your board names the timing reality plainly: five years less than U.S. and U.K. peers, no APRA-specific PQC guidance yet, and therefore an own-risk decision on how aggressively to interpret ASD requirements for the financial sector.',
+      cues: [
+        // 0–60s: arrive on /business?zone=risk-management; spotlight the zone tile
+        {
+          tMs: 4_000,
+          kind: 'caption',
+          text: 'Risk Management zone — where the work of every other zone becomes visible to executives.',
+        },
+        {
+          tMs: 8_000,
+          kind: 'spotlight',
+          selector: '[data-workshop-target="business-zone-risk-management"]',
+        },
+        {
+          tMs: 12_000,
+          kind: 'callout',
+          selector: '[data-workshop-target="business-zone-risk-management"]',
+          label: 'CSWP.39 §6.5 — Maturity',
+          arrow: 'top',
+        },
+        // 60–120s: gap analysis framing
+        {
+          tMs: 60_000,
+          kind: 'caption',
+          text: 'The 2030 gap analysis maps every cryptographic system against ISM-1917 with end-2030 as the gate.',
+        },
+        // 120–180s: own-risk note
+        {
+          tMs: 120_000,
+          kind: 'caption',
+          text: 'No APRA-specific PQC guidance yet — own-risk interpretation of ASD requirements for finance.',
+        },
+        { tMs: 180_000, kind: 'advance' },
+      ],
     },
   ],
 }
