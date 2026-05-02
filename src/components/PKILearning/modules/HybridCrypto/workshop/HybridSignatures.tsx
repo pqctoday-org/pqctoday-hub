@@ -39,6 +39,7 @@ import {
 } from '@/wasm/softhsm/session'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { Button } from '@/components/ui/button'
+import { ErrorAlert } from '@/components/ui/error-alert'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -437,7 +438,7 @@ export const HybridSignatures: React.FC = () => {
       {/* HSM status banner */}
       {hsmStatus === 'loading' && (
         <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 border border-border rounded-lg px-3 py-2">
-          <Loader2 size={13} className="animate-spin shrink-0" />
+          <Loader2 size={13} className="animate-spin shrink-0" aria-hidden="true" />
           Loading softhsmv3 WASM for concatenation / nesting ML-DSA operations…
         </div>
       )}
@@ -545,7 +546,7 @@ export const HybridSignatures: React.FC = () => {
           className="flex items-center gap-2"
         >
           {current.loading ? (
-            <Loader2 size={15} className="animate-spin" />
+            <Loader2 size={15} className="animate-spin" aria-hidden="true" />
           ) : (
             <Fingerprint size={15} />
           )}
@@ -557,7 +558,11 @@ export const HybridSignatures: React.FC = () => {
           disabled={!current.keys || current.loading}
           className="flex items-center gap-2"
         >
-          {current.loading ? <Loader2 size={15} className="animate-spin" /> : <Lock size={15} />}
+          {current.loading ? (
+            <Loader2 size={15} className="animate-spin" aria-hidden="true" />
+          ) : (
+            <Lock size={15} />
+          )}
           Sign
         </Button>
         <Button
@@ -567,7 +572,7 @@ export const HybridSignatures: React.FC = () => {
           className="flex items-center gap-2"
         >
           {current.loading ? (
-            <Loader2 size={15} className="animate-spin" />
+            <Loader2 size={15} className="animate-spin" aria-hidden="true" />
           ) : (
             <ShieldCheck size={15} />
           )}
@@ -581,7 +586,7 @@ export const HybridSignatures: React.FC = () => {
             className="flex items-center gap-2 border-status-warning/40 text-status-warning hover:bg-status-warning/10"
           >
             {current.loading ? (
-              <Loader2 size={15} className="animate-spin" />
+              <Loader2 size={15} className="animate-spin" aria-hidden="true" />
             ) : (
               <Target size={15} />
             )}
@@ -591,11 +596,7 @@ export const HybridSignatures: React.FC = () => {
       </div>
 
       {/* Error */}
-      {current.error && (
-        <div className="text-sm text-status-error bg-status-error/10 border border-status-error/20 rounded-lg px-4 py-3">
-          {current.error}
-        </div>
-      )}
+      {current.error && <ErrorAlert message={current.error} />}
 
       {/* Key info */}
       {current.keys && renderKeys(current.keys)}

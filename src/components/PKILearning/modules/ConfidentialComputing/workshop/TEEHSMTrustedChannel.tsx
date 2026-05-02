@@ -20,6 +20,7 @@ import {
   ShieldCheck,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ErrorAlert } from '@/components/ui/error-alert'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
   TEE_HSM_INTEGRATIONS,
@@ -621,7 +622,7 @@ export const TEEHSMTrustedChannel: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <p className="text-sm text-foreground/80">
+      <p className="text-sm text-muted-foreground">
         Design and explore TEE-HSM integration architectures with mutual attestation and PQC key
         provisioning. Select a TEE vendor and HSM vendor to visualize the trusted channel.
       </p>
@@ -667,7 +668,7 @@ export const TEEHSMTrustedChannel: React.FC = () => {
       {/* ── No match message ──────────────────────────────────────── */}
       {bothSelected && !integration && (
         <div className="glass-panel p-6 text-center">
-          <XCircle size={32} className="text-muted-foreground mx-auto mb-2" />
+          <XCircle size={32} className="text-muted-foreground mx-auto mb-2" aria-hidden="true" />
           <p className="text-sm font-medium text-foreground">Integration not available</p>
           <p className="text-xs text-muted-foreground mt-1">
             No documented integration exists between{' '}
@@ -861,7 +862,7 @@ export const TEEHSMTrustedChannel: React.FC = () => {
                       <div className="text-[10px] font-semibold text-primary mb-0.5 uppercase tracking-wide">
                         Why this step matters
                       </div>
-                      <p className="text-[10px] text-foreground/80">{activeStep.whyItMatters}</p>
+                      <p className="text-[10px] text-muted-foreground">{activeStep.whyItMatters}</p>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       <div className="flex items-start gap-2">
@@ -1012,7 +1013,7 @@ export const TEEHSMTrustedChannel: React.FC = () => {
             <Button variant="default" size="sm" onClick={runLiveDemo} disabled={liveRunning}>
               {liveRunning ? (
                 <>
-                  <Loader2 size={11} className="animate-spin mr-1" /> Running…
+                  <Loader2 size={11} className="animate-spin mr-1" aria-hidden="true" /> Running…
                 </>
               ) : (
                 'Execute (Live WASM)'
@@ -1020,7 +1021,7 @@ export const TEEHSMTrustedChannel: React.FC = () => {
             </Button>
           </div>
 
-          {liveError && <p className="text-xs text-status-error font-mono">{liveError}</p>}
+          {liveError && <ErrorAlert message={liveError} />}
 
           {liveResults.length > 0 && (
             <div className="space-y-2">
@@ -1042,9 +1043,9 @@ export const TEEHSMTrustedChannel: React.FC = () => {
                   </div>
 
                   {/* PKCS#11 call */}
-                  <div className="bg-background/60 rounded px-2 py-1.5 border border-border/50">
+                  <div className="bg-muted/50 rounded px-2 py-1.5 border border-border/50">
                     {r.pkcs11Call.split('\n').map((line, i) => (
-                      <p key={i} className="text-[11px] font-mono text-foreground/80 break-all">
+                      <p key={i} className="text-[11px] font-mono text-muted-foreground break-all">
                         {line}
                       </p>
                     ))}
@@ -1167,7 +1168,7 @@ export const TEEHSMTrustedChannel: React.FC = () => {
               <p className="text-[10px] text-muted-foreground">{threat.vulnerability}</p>
               <div className="flex items-start gap-1 text-[10px]">
                 <span className="text-status-success font-medium shrink-0">PQC fix:</span>
-                <span className="text-foreground/80">{threat.pqcSolution}</span>
+                <span className="text-muted-foreground">{threat.pqcSolution}</span>
               </div>
               <div className="flex items-center gap-2 text-[10px] text-muted-foreground border-t border-border/30 pt-1">
                 <span>Timeline: {threat.vendorTimeline}</span>

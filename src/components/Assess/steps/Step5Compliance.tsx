@@ -17,11 +17,13 @@ import clsx from 'clsx'
 
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 import { useComplianceSelectionStore } from '../../../store/useComplianceSelectionStore'
+import { usePersonaStore } from '../../../store/usePersonaStore'
 import {
   complianceFrameworks,
   type ComplianceFramework,
   type BodyType,
 } from '../../../data/complianceData'
+import { REGION_COUNTRIES_MAP } from '../../../data/personaConfig'
 import { deadlineUrgency, urgencyColor } from '../../../utils/deadlineUrgency'
 import { EU_MEMBER_COUNTRIES } from '../../../utils/euCountries'
 import { Button } from '../../ui/button'
@@ -46,13 +48,18 @@ const Step5Compliance = () => {
     setImportComplianceSelection,
   } = useAssessmentStore()
   const country = useAssessmentStore((s) => s.country)
+  const { selectedRegion } = usePersonaStore()
 
   const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
   const toggleMyFramework = useComplianceSelectionStore((s) => s.toggleMyFramework)
 
-  // Filter frameworks by industry + country, then group by bodyType
+  // Filter frameworks by industry + country (region fallback), then group by bodyType
   const { groupedFrameworks, filteredFrameworkIds } = useMemo(() => {
     const isEuMember = country ? EU_MEMBER_COUNTRIES.has(country) : false
+    const regionCountries =
+      (!country || country === 'Global') && selectedRegion && selectedRegion !== 'global'
+        ? new Set(REGION_COUNTRIES_MAP[selectedRegion])
+        : null
 
     const filtered = complianceFrameworks.filter((fw) => {
       // Industry filter: show if universal (0 or 3+ industries) or matches selected industry
@@ -61,7 +68,7 @@ const Step5Compliance = () => {
         if (!isUniversal && !fw.industries.includes(industry)) return false
       }
 
-      // Country filter
+      // Country filter: exact match takes priority; region fallback when country is blank
       if (country && country !== 'Global') {
         const matchesCountry =
           fw.countries.length === 0 ||
@@ -69,6 +76,13 @@ const Step5Compliance = () => {
           fw.countries.includes(country) ||
           (isEuMember && fw.countries.includes('European Union'))
         if (!matchesCountry) return false
+      } else if (regionCountries) {
+        const matchesRegion =
+          fw.countries.length === 0 ||
+          fw.countries.includes('Global') ||
+          fw.countries.some((c) => regionCountries.has(c)) ||
+          (selectedRegion === 'eu' && fw.countries.includes('European Union'))
+        if (!matchesRegion) return false
       }
 
       return true
@@ -96,7 +110,7 @@ const Step5Compliance = () => {
       groups.set(fw.bodyType, list)
     }
     return { groupedFrameworks: groups, filteredFrameworkIds: ids }
-  }, [industry, country])
+  }, [industry, country, selectedRegion])
 
   // Bidirectional sync: when import ON, sync complianceRequirements from myFrameworks
   useEffect(() => {

@@ -426,7 +426,7 @@ export const TokenMigrationLab: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-bold text-foreground mb-2">Token Signing Migration Lab</h3>
+        <h3 className="text-lg font-bold text-gradient mb-2">Token Signing Migration Lab</h3>
         <p className="text-sm text-muted-foreground">
           Compare JWT signing algorithms side-by-side. Toggle between classical RS256/ES256 and
           quantum-safe ML-DSA variants to observe signature size impact and header changes.

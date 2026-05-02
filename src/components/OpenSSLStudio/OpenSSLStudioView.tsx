@@ -6,7 +6,7 @@ import { WorkbenchFileManager } from './components/WorkbenchFileManager'
 import { TerminalOutput } from './TerminalOutput'
 import { FileEditor } from './FileEditor'
 import { FileViewer } from './components/FileViewer'
-import { Terminal, ChevronDown, ChevronUp, FileText, Monitor } from 'lucide-react'
+import { Terminal, ChevronDown, ChevronUp, FileText, Monitor, History } from 'lucide-react'
 import clsx from 'clsx'
 import { LogsTab } from './LogsTab'
 import { PageHeader } from '../common/PageHeader'
@@ -77,10 +77,11 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
   const [searchParams, setSearchParams] = useSearchParams()
   const [showTerminal, setShowTerminal] = useState(true)
   const [workbenchCollapsed, setWorkbenchCollapsed] = useState(false)
+  const [historyCollapsed, setHistoryCollapsed] = useState(true)
   const [category, setCategory] = useState<OpenSSLCategory>(() =>
     embedded ? 'genpkey' : resolveCmd(searchParams.get('cmd'))
   )
-  const { editingFile, activeTab } = useOpenSSLStore()
+  const { editingFile, activeTab, structuredLogs } = useOpenSSLStore()
 
   const handleCategoryChange = useCallback(
     (cat: OpenSSLCategory) => {
@@ -149,6 +150,49 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
           >
             <Workbench category={category} setCategory={handleCategoryChange} />
           </div>
+
+          {/* Command History — collapsible strip at the bottom of left pane */}
+          {structuredLogs.length > 0 && (
+            <div className="border-t border-border shrink-0">
+              <Button
+                variant="ghost"
+                className="w-full flex items-center justify-between px-4 py-2 text-xs text-muted-foreground hover:bg-muted/40 transition-colors h-auto rounded-none"
+                onClick={() => setHistoryCollapsed(!historyCollapsed)}
+                aria-expanded={!historyCollapsed}
+              >
+                <span className="flex items-center gap-1.5 font-semibold">
+                  <History size={13} />
+                  Recent Commands ({structuredLogs.length})
+                </span>
+                {historyCollapsed ? <ChevronDown size={13} /> : <ChevronUp size={13} />}
+              </Button>
+              {!historyCollapsed && (
+                <ul className="max-h-48 overflow-y-auto custom-scrollbar divide-y divide-border/50 bg-muted/20">
+                  {structuredLogs
+                    .slice(-10)
+                    .reverse()
+                    .map((log) => (
+                      <li key={log.id} className="px-4 py-2 space-y-0.5">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-[10px] font-semibold text-primary truncate">
+                            {log.operationType}
+                          </span>
+                          <span className="text-[10px] text-muted-foreground/60 shrink-0 tabular-nums">
+                            {log.executionTime.toFixed(0)} ms
+                          </span>
+                        </div>
+                        <p
+                          className="text-[10px] font-mono text-muted-foreground truncate"
+                          title={log.command}
+                        >
+                          {log.command}
+                        </p>
+                      </li>
+                    ))}
+                </ul>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Right Pane: File Manager, File Editor, & Terminal Output */}

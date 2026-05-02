@@ -25,6 +25,7 @@ import {
   type ConditioningMode,
 } from './sourceCombiningCrypto'
 import { RbgConstructionPanel } from './RbgConstructionPanel'
+import { ErrorAlert } from '@/components/ui/error-alert'
 
 /** Hex display for a labelled byte array */
 const HexDisplay: React.FC<{ label: string; data: Uint8Array }> = ({ label, data }) => (
@@ -305,7 +306,7 @@ export const SourceCombiningDemo: React.FC = () => {
             SoftHSMv3 v{SOFTHSM_PRODUCT_VERSION} PKCS#11 session active
           </p>
         )}
-        {hsmError && <p className="text-xs text-status-error">HSM error: {hsmError}</p>}
+        {hsmError && <ErrorAlert message={`HSM error: ${hsmError}`} />}
       </div>
 
       {/* RBG Construction Types */}

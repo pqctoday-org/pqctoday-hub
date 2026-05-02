@@ -588,34 +588,88 @@ export function PatentsTable({
                 <tr>
                   {show('num') && <ThCol label="#" className="w-10" {...thProps} />}
                   {show('title') && <ThCol label="Title" sortable="title" {...thProps} />}
-                  {show('assignee') && !selectedPatent && <ThCol label="Assignee" {...thProps} />}
+                  {show('assignee') && !selectedPatent && (
+                    <ThCol label="Assignee" className="hidden sm:table-cell" {...thProps} />
+                  )}
                   {show('pqcAlgorithms') && (
-                    <ThCol label="PQC Algorithms" className="max-w-[160px]" {...thProps} />
+                    <ThCol
+                      label="PQC Algorithms"
+                      className="hidden sm:table-cell max-w-[160px]"
+                      {...thProps}
+                    />
                   )}
                   {show('classicalAlgorithms') && (
-                    <ThCol label="Classical Algorithms" className="max-w-[160px]" {...thProps} />
+                    <ThCol
+                      label="Classical Algorithms"
+                      className="hidden sm:table-cell max-w-[160px]"
+                      {...thProps}
+                    />
                   )}
-                  {show('quantumRelevance') && <ThCol label="Q. Relevance" {...thProps} />}
+                  {show('quantumRelevance') && (
+                    <ThCol label="Q. Relevance" className="hidden sm:table-cell" {...thProps} />
+                  )}
                   {show('threatModel') && (
-                    <ThCol label="Threat Model" className="max-w-[140px]" {...thProps} />
+                    <ThCol
+                      label="Threat Model"
+                      className="hidden sm:table-cell max-w-[140px]"
+                      {...thProps}
+                    />
                   )}
                   {show('applicationDomain') && (
-                    <ThCol label="Domain" className="max-w-[140px]" {...thProps} />
+                    <ThCol
+                      label="Domain"
+                      className="hidden sm:table-cell max-w-[140px]"
+                      {...thProps}
+                    />
                   )}
-                  {show('agility') && <ThCol label="Agility" {...thProps} />}
-                  {show('impact') && <ThCol label="Impact" sortable="impactScore" {...thProps} />}
-                  {show('issueDate') && <ThCol label="Issued" sortable="issueDate" {...thProps} />}
+                  {show('agility') && (
+                    <ThCol label="Agility" className="hidden sm:table-cell" {...thProps} />
+                  )}
+                  {show('impact') && (
+                    <ThCol
+                      label="Impact"
+                      sortable="impactScore"
+                      className="hidden sm:table-cell"
+                      {...thProps}
+                    />
+                  )}
+                  {show('issueDate') && (
+                    <ThCol
+                      label="Issued"
+                      sortable="issueDate"
+                      className="hidden sm:table-cell"
+                      {...thProps}
+                    />
+                  )}
                   {show('priorityDate') && (
-                    <ThCol label="Priority" sortable="priorityDate" {...thProps} />
+                    <ThCol
+                      label="Priority"
+                      sortable="priorityDate"
+                      className="hidden sm:table-cell"
+                      {...thProps}
+                    />
                   )}
                   {show('quantumTechnology') && (
-                    <ThCol label="Quantum Tech" className="max-w-[140px]" {...thProps} />
+                    <ThCol
+                      label="Quantum Tech"
+                      className="hidden sm:table-cell max-w-[140px]"
+                      {...thProps}
+                    />
                   )}
                   {show('impactScore') && (
-                    <ThCol label="Score" sortable="impactScore" {...thProps} />
+                    <ThCol
+                      label="Score"
+                      sortable="impactScore"
+                      className="hidden sm:table-cell"
+                      {...thProps}
+                    />
                   )}
                   {show('inventors') && (
-                    <ThCol label="Inventors" className="max-w-[160px]" {...thProps} />
+                    <ThCol
+                      label="Inventors"
+                      className="hidden sm:table-cell max-w-[160px]"
+                      {...thProps}
+                    />
                   )}
                 </tr>
               </thead>
@@ -645,13 +699,13 @@ export function PatentsTable({
                         </td>
                       )}
                       {show('assignee') && !selectedPatent && (
-                        <td className="px-3 py-2.5 text-xs text-muted-foreground max-w-[180px] truncate">
+                        <td className="hidden sm:table-cell px-3 py-2.5 text-xs text-muted-foreground max-w-[180px] truncate">
                           {p.assignee}
                         </td>
                       )}
                       {show('pqcAlgorithms') && (
                         <td
-                          className="px-3 py-2.5 text-xs text-muted-foreground max-w-[160px] truncate"
+                          className="hidden sm:table-cell px-3 py-2.5 text-xs text-muted-foreground max-w-[160px] truncate"
                           title={p.pqcAlgorithms.join(', ')}
                         >
                           {renderTags(p.pqcAlgorithms)}
@@ -659,20 +713,20 @@ export function PatentsTable({
                       )}
                       {show('classicalAlgorithms') && (
                         <td
-                          className="px-3 py-2.5 text-xs text-muted-foreground max-w-[160px] truncate"
+                          className="hidden sm:table-cell px-3 py-2.5 text-xs text-muted-foreground max-w-[160px] truncate"
                           title={p.classicalAlgorithms.join(', ')}
                         >
                           {renderTags(p.classicalAlgorithms)}
                         </td>
                       )}
                       {show('quantumRelevance') && (
-                        <td className="px-3 py-2.5 text-xs text-muted-foreground whitespace-nowrap">
+                        <td className="hidden sm:table-cell px-3 py-2.5 text-xs text-muted-foreground whitespace-nowrap">
                           {RELEVANCE_LABELS[p.quantumRelevance] ?? p.quantumRelevance}
                         </td>
                       )}
                       {show('threatModel') && (
                         <td
-                          className="px-3 py-2.5 text-xs text-muted-foreground max-w-[140px] truncate"
+                          className="hidden sm:table-cell px-3 py-2.5 text-xs text-muted-foreground max-w-[140px] truncate"
                           title={p.threatModel.join(', ')}
                         >
                           {renderTags(p.threatModel)}
@@ -680,14 +734,14 @@ export function PatentsTable({
                       )}
                       {show('applicationDomain') && (
                         <td
-                          className="px-3 py-2.5 text-xs text-muted-foreground max-w-[140px] truncate"
+                          className="hidden sm:table-cell px-3 py-2.5 text-xs text-muted-foreground max-w-[140px] truncate"
                           title={p.applicationDomain.join(', ')}
                         >
                           {renderTags(p.applicationDomain)}
                         </td>
                       )}
                       {show('agility') && (
-                        <td className="px-3 py-2.5">
+                        <td className="hidden sm:table-cell px-3 py-2.5">
                           <span
                             className={`inline-block rounded border px-1.5 py-0.5 text-xs font-medium ${AGILITY_BADGE[p.cryptoAgilityMode]}`}
                           >
@@ -696,7 +750,7 @@ export function PatentsTable({
                         </td>
                       )}
                       {show('impact') && (
-                        <td className="px-3 py-2.5">
+                        <td className="hidden sm:table-cell px-3 py-2.5">
                           <span
                             className={`inline-block rounded border px-1.5 py-0.5 text-xs font-medium ${IMPACT_BADGE[p.impactLevel]}`}
                           >
@@ -705,31 +759,31 @@ export function PatentsTable({
                         </td>
                       )}
                       {show('issueDate') && (
-                        <td className="px-3 py-2.5 text-xs text-muted-foreground whitespace-nowrap">
+                        <td className="hidden sm:table-cell px-3 py-2.5 text-xs text-muted-foreground whitespace-nowrap">
                           {p.issueDate}
                         </td>
                       )}
                       {show('priorityDate') && (
-                        <td className="px-3 py-2.5 text-xs text-muted-foreground whitespace-nowrap">
+                        <td className="hidden sm:table-cell px-3 py-2.5 text-xs text-muted-foreground whitespace-nowrap">
                           {p.priorityDate}
                         </td>
                       )}
                       {show('quantumTechnology') && (
                         <td
-                          className="px-3 py-2.5 text-xs text-muted-foreground max-w-[140px] truncate"
+                          className="hidden sm:table-cell px-3 py-2.5 text-xs text-muted-foreground max-w-[140px] truncate"
                           title={p.quantumTechnology.join(', ')}
                         >
                           {renderTags(p.quantumTechnology)}
                         </td>
                       )}
                       {show('impactScore') && (
-                        <td className="px-3 py-2.5 text-xs text-muted-foreground tabular-nums">
+                        <td className="hidden sm:table-cell px-3 py-2.5 text-xs text-muted-foreground tabular-nums">
                           {p.impactScore}
                         </td>
                       )}
                       {show('inventors') && (
                         <td
-                          className="px-3 py-2.5 text-xs text-muted-foreground max-w-[160px] truncate"
+                          className="hidden sm:table-cell px-3 py-2.5 text-xs text-muted-foreground max-w-[160px] truncate"
                           title={p.inventors}
                         >
                           {p.inventors}

@@ -21,6 +21,21 @@ import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
 import { Button } from '@/components/ui/button'
 
+const DOCUMENT_TYPE_DESCRIPTIONS: Record<string, string> = {
+  Standard:
+    'Normative requirements published by a standards body (e.g. NIST, ISO, IETF). Compliance is often mandatory or contractually required.',
+  Specification:
+    'Precise technical definition of an algorithm, protocol, or format. Implementors follow this to achieve interoperability.',
+  Framework:
+    'High-level guidance that organises principles, controls, and processes. Compliance is typically self-assessed rather than certified.',
+  Guidance:
+    'Informational recommendations and best-practice advice; not normative. Useful for planning and education.',
+  Recommendation:
+    'Formal advice from a standards body or government agency. Carries weight but is not always legally binding.',
+  'Request for Comments':
+    'RFC — IETF process document defining internet protocols and standards. Status ranges from Informational to Internet Standard.',
+}
+
 /** Strip parenthetical annotations and honorific prefixes, then lowercase. */
 function normalizeLeaderName(raw: string): string {
   return raw
@@ -181,7 +196,15 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
               <div className="flex justify-between items-start gap-4">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-status-info text-status-info border-status-info/50">
+                    <span
+                      className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-status-info text-status-info border-status-info/50 cursor-help"
+                      title={
+                        item.documentType?.trim()
+                          ? (DOCUMENT_TYPE_DESCRIPTIONS[item.documentType.trim()] ??
+                            `Document type: ${item.documentType.trim()}`)
+                          : undefined
+                      }
+                    >
                       {item.documentType?.trim()}
                     </span>
                     <span className="text-xs text-muted-foreground">

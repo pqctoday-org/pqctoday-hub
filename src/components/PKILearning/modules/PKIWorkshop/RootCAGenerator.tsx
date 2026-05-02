@@ -760,7 +760,7 @@ x509_extensions = v3_ca
           <div className="mb-4 border-b border-border pb-3">
             <h3 className="text-lg font-bold text-foreground flex items-center gap-3">
               <span className="text-primary font-mono text-xl">01</span>
-              <span className="text-foreground/80">|</span>
+              <span className="text-muted-foreground">|</span>
               ROOT CA KEY
             </h3>
             <p className="text-xs text-muted-foreground mt-1 ml-11">
@@ -835,7 +835,7 @@ x509_extensions = v3_ca
           <div className="mb-4 border-b border-border pb-3">
             <h3 className="text-lg font-bold text-foreground flex items-center gap-3">
               <span className="text-primary font-mono text-xl">02</span>
-              <span className="text-foreground/80">|</span>
+              <span className="text-muted-foreground">|</span>
               SELECT PROFILE
             </h3>
             <p className="text-xs text-muted-foreground mt-1 ml-11">

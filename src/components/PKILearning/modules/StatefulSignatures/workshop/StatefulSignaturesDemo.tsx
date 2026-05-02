@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button'
 import { Info, CheckCircle2, XCircle, ShieldCheck, ShieldAlert } from 'lucide-react'
 import { Input } from '@/components/ui/input'
+import { ErrorAlert } from '@/components/ui/error-alert'
 import { useHSM } from '@/hooks/useHSM'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -489,20 +490,13 @@ export function StatefulSignaturesDemo() {
                     </p>
                   )}
                   {hsmCpp.phase === 'error' && (
-                    <div className="flex items-center gap-2 text-xs text-status-error">
-                      <XCircle size={13} className="shrink-0" />
-                      C++ engine failed: {hsmCpp.error}
-                      <Button
-                        variant="ghost"
-                        onClick={() => hsmCpp.initialize()}
-                        className="underline ml-1 text-primary"
-                      >
-                        Retry
-                      </Button>
-                    </div>
+                    <ErrorAlert
+                      message={`C++ engine failed: ${hsmCpp.error}`}
+                      onRetry={() => hsmCpp.initialize()}
+                    />
                   )}
-                  {verifyError && <p className="text-xs text-status-error">{verifyError}</p>}
-                  {importError && <p className="text-xs text-status-error">{importError}</p>}
+                  {verifyError && <ErrorAlert message={verifyError} />}
+                  {importError && <ErrorAlert message={importError} />}
 
                   {/* Step 1 — Select key pair */}
                   <div className="glass-panel p-4 space-y-3">
@@ -520,40 +514,43 @@ export function StatefulSignaturesDemo() {
                         No keys yet — generate a key pair in the HSS / LMS Explorer above first.
                       </p>
                     ) : (
-                      <div className="space-y-1">
-                        {hsm.keys
-                          .filter((k) => k.role === 'public')
-                          .map((k) => {
-                            const cppHandle = cppHandleMap[k.handle]
-                            return (
-                              <label
-                                key={k.handle}
-                                className="flex items-center gap-2 text-xs cursor-pointer"
-                              >
-                                <input
-                                  type="radio"
-                                  name="hss-verify-pubkey"
-                                  checked={selectedPubHandle === k.handle}
-                                  onChange={() => handleSelectKey(k.handle)}
-                                  className="accent-primary w-3 h-3"
-                                />
-                                <span className="font-mono">{k.label}</span>
-                                <span className="text-muted-foreground font-mono">
-                                  [Rust h=0x{k.handle.toString(16).padStart(2, '0')}]
-                                </span>
-                                {cppHandle !== undefined ? (
-                                  <span className="text-status-success font-mono text-[10px]">
-                                    [C++ h=0x{cppHandle.toString(16).padStart(2, '0')} ✓]
+                      <fieldset>
+                        <legend className="sr-only">Select public key for HSS verification</legend>
+                        <div className="space-y-1">
+                          {hsm.keys
+                            .filter((k) => k.role === 'public')
+                            .map((k) => {
+                              const cppHandle = cppHandleMap[k.handle]
+                              return (
+                                <label
+                                  key={k.handle}
+                                  className="flex items-center gap-2 text-xs cursor-pointer"
+                                >
+                                  <input
+                                    type="radio"
+                                    name="hss-verify-pubkey"
+                                    checked={selectedPubHandle === k.handle}
+                                    onChange={() => handleSelectKey(k.handle)}
+                                    className="accent-primary w-3 h-3"
+                                  />
+                                  <span className="font-mono">{k.label}</span>
+                                  <span className="text-muted-foreground font-mono">
+                                    [Rust h=0x{k.handle.toString(16).padStart(2, '0')}]
                                   </span>
-                                ) : selectedPubHandle === k.handle ? (
-                                  <span className="text-status-warning text-[10px]">
-                                    importing into C++…
-                                  </span>
-                                ) : null}
-                              </label>
-                            )
-                          })}
-                      </div>
+                                  {cppHandle !== undefined ? (
+                                    <span className="text-status-success font-mono text-[10px]">
+                                      [C++ h=0x{cppHandle.toString(16).padStart(2, '0')} ✓]
+                                    </span>
+                                  ) : selectedPubHandle === k.handle ? (
+                                    <span className="text-status-warning text-[10px]">
+                                      importing into C++…
+                                    </span>
+                                  ) : null}
+                                </label>
+                              )
+                            })}
+                        </div>
+                      </fieldset>
                     )}
                   </div>
 
@@ -608,43 +605,50 @@ export function StatefulSignaturesDemo() {
                         C_VerifyInit + C_Verify · C++
                       </span>
                     </div>
-                    <div className="p-3 border border-status-warning/30 bg-status-warning/5 rounded-md space-y-2">
-                      <div className="flex items-center gap-1.5">
-                        <ShieldAlert size={13} className="text-status-warning shrink-0" />
-                        <span className="text-[11px] font-semibold text-status-warning">
-                          Tamper Controls
-                        </span>
+                    <fieldset>
+                      <legend className="sr-only">Tamper Controls</legend>
+                      <div className="p-3 border border-status-warning/30 bg-status-warning/5 rounded-md space-y-2">
+                        <div className="flex items-center gap-1.5">
+                          <ShieldAlert
+                            size={13}
+                            className="text-status-warning shrink-0"
+                            aria-hidden="true"
+                          />
+                          <span className="text-[11px] font-semibold text-status-warning">
+                            Tamper Controls
+                          </span>
+                        </div>
+                        <label className="flex items-center gap-2 text-xs cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={tamperMessage}
+                            onChange={(e) => {
+                              setTamperMessage(e.target.checked)
+                              setVerifyResult(null)
+                            }}
+                            className="accent-primary w-3 h-3"
+                          />
+                          Tamper with message — flip byte[4] before C_Verify
+                        </label>
+                        <label className="flex items-center gap-2 text-xs cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={tamperSignature}
+                            onChange={(e) => {
+                              setTamperSignature(e.target.checked)
+                              setVerifyResult(null)
+                            }}
+                            className="accent-primary w-3 h-3"
+                          />
+                          Tamper with signature — flip byte[8] before C_Verify
+                        </label>
+                        {(tamperMessage || tamperSignature) && (
+                          <p className="text-[10px] text-status-warning font-mono">
+                            Expected result: CKR_SIGNATURE_INVALID (0x000000C0)
+                          </p>
+                        )}
                       </div>
-                      <label className="flex items-center gap-2 text-xs cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={tamperMessage}
-                          onChange={(e) => {
-                            setTamperMessage(e.target.checked)
-                            setVerifyResult(null)
-                          }}
-                          className="accent-primary w-3 h-3"
-                        />
-                        Tamper with message — flip byte[4] before C_Verify
-                      </label>
-                      <label className="flex items-center gap-2 text-xs cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={tamperSignature}
-                          onChange={(e) => {
-                            setTamperSignature(e.target.checked)
-                            setVerifyResult(null)
-                          }}
-                          className="accent-primary w-3 h-3"
-                        />
-                        Tamper with signature — flip byte[8] before C_Verify
-                      </label>
-                      {(tamperMessage || tamperSignature) && (
-                        <p className="text-[10px] text-status-warning font-mono">
-                          Expected result: CKR_SIGNATURE_INVALID (0x000000C0)
-                        </p>
-                      )}
-                    </div>
+                    </fieldset>
                     <Button
                       variant="gradient"
                       disabled={
@@ -664,13 +668,13 @@ export function StatefulSignaturesDemo() {
                       >
                         {verifyResult ? (
                           <>
-                            <CheckCircle2 size={16} /> Cross-Engine Parity: Rust signature verified
-                            by C++ — CKR_OK
+                            <CheckCircle2 size={16} aria-hidden="true" /> Cross-Engine Parity: Rust
+                            signature verified by C++ — CKR_OK
                           </>
                         ) : (
                           <>
-                            <XCircle size={16} /> Signature Invalid — CKR_SIGNATURE_INVALID —
-                            tampered data detected
+                            <XCircle size={16} aria-hidden="true" /> Signature Invalid —
+                            CKR_SIGNATURE_INVALID — tampered data detected
                           </>
                         )}
                       </div>
@@ -742,20 +746,13 @@ export function StatefulSignaturesDemo() {
                     </p>
                   )}
                   {hsmCpp.phase === 'error' && (
-                    <div className="flex items-center gap-2 text-xs text-status-error">
-                      <XCircle size={13} className="shrink-0" />
-                      C++ engine failed: {hsmCpp.error}
-                      <Button
-                        variant="ghost"
-                        onClick={() => hsmCpp.initialize()}
-                        className="underline ml-1 text-primary"
-                      >
-                        Retry
-                      </Button>
-                    </div>
+                    <ErrorAlert
+                      message={`C++ engine failed: ${hsmCpp.error}`}
+                      onRetry={() => hsmCpp.initialize()}
+                    />
                   )}
-                  {verifyError && <p className="text-xs text-status-error">{verifyError}</p>}
-                  {importError && <p className="text-xs text-status-error">{importError}</p>}
+                  {verifyError && <ErrorAlert message={verifyError} />}
+                  {importError && <ErrorAlert message={importError} />}
 
                   {/* Step 1 — Select key pair */}
                   <div className="glass-panel p-4 space-y-3">
@@ -773,40 +770,43 @@ export function StatefulSignaturesDemo() {
                         No keys yet — generate a key pair in the XMSS / MT Explorer above first.
                       </p>
                     ) : (
-                      <div className="space-y-1">
-                        {hsm.keys
-                          .filter((k) => k.role === 'public')
-                          .map((k) => {
-                            const cppHandle = cppHandleMap[k.handle]
-                            return (
-                              <label
-                                key={k.handle}
-                                className="flex items-center gap-2 text-xs cursor-pointer"
-                              >
-                                <input
-                                  type="radio"
-                                  name="xmss-verify-pubkey"
-                                  checked={selectedPubHandle === k.handle}
-                                  onChange={() => handleSelectKey(k.handle)}
-                                  className="accent-primary w-3 h-3"
-                                />
-                                <span className="font-mono">{k.label}</span>
-                                <span className="text-muted-foreground font-mono">
-                                  [Rust h=0x{k.handle.toString(16).padStart(2, '0')}]
-                                </span>
-                                {cppHandle !== undefined ? (
-                                  <span className="text-status-success font-mono text-[10px]">
-                                    [C++ h=0x{cppHandle.toString(16).padStart(2, '0')} ✓]
+                      <fieldset>
+                        <legend className="sr-only">Select public key for XMSS verification</legend>
+                        <div className="space-y-1">
+                          {hsm.keys
+                            .filter((k) => k.role === 'public')
+                            .map((k) => {
+                              const cppHandle = cppHandleMap[k.handle]
+                              return (
+                                <label
+                                  key={k.handle}
+                                  className="flex items-center gap-2 text-xs cursor-pointer"
+                                >
+                                  <input
+                                    type="radio"
+                                    name="xmss-verify-pubkey"
+                                    checked={selectedPubHandle === k.handle}
+                                    onChange={() => handleSelectKey(k.handle)}
+                                    className="accent-primary w-3 h-3"
+                                  />
+                                  <span className="font-mono">{k.label}</span>
+                                  <span className="text-muted-foreground font-mono">
+                                    [Rust h=0x{k.handle.toString(16).padStart(2, '0')}]
                                   </span>
-                                ) : selectedPubHandle === k.handle ? (
-                                  <span className="text-status-warning text-[10px]">
-                                    importing into C++…
-                                  </span>
-                                ) : null}
-                              </label>
-                            )
-                          })}
-                      </div>
+                                  {cppHandle !== undefined ? (
+                                    <span className="text-status-success font-mono text-[10px]">
+                                      [C++ h=0x{cppHandle.toString(16).padStart(2, '0')} ✓]
+                                    </span>
+                                  ) : selectedPubHandle === k.handle ? (
+                                    <span className="text-status-warning text-[10px]">
+                                      importing into C++…
+                                    </span>
+                                  ) : null}
+                                </label>
+                              )
+                            })}
+                        </div>
+                      </fieldset>
                     )}
                   </div>
 
@@ -861,43 +861,50 @@ export function StatefulSignaturesDemo() {
                         C_VerifyInit + C_Verify · C++
                       </span>
                     </div>
-                    <div className="p-3 border border-status-warning/30 bg-status-warning/5 rounded-md space-y-2">
-                      <div className="flex items-center gap-1.5">
-                        <ShieldAlert size={13} className="text-status-warning shrink-0" />
-                        <span className="text-[11px] font-semibold text-status-warning">
-                          Tamper Controls
-                        </span>
+                    <fieldset>
+                      <legend className="sr-only">Tamper Controls</legend>
+                      <div className="p-3 border border-status-warning/30 bg-status-warning/5 rounded-md space-y-2">
+                        <div className="flex items-center gap-1.5">
+                          <ShieldAlert
+                            size={13}
+                            className="text-status-warning shrink-0"
+                            aria-hidden="true"
+                          />
+                          <span className="text-[11px] font-semibold text-status-warning">
+                            Tamper Controls
+                          </span>
+                        </div>
+                        <label className="flex items-center gap-2 text-xs cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={tamperMessage}
+                            onChange={(e) => {
+                              setTamperMessage(e.target.checked)
+                              setVerifyResult(null)
+                            }}
+                            className="accent-primary w-3 h-3"
+                          />
+                          Tamper with message — flip byte[4] before C_Verify
+                        </label>
+                        <label className="flex items-center gap-2 text-xs cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={tamperSignature}
+                            onChange={(e) => {
+                              setTamperSignature(e.target.checked)
+                              setVerifyResult(null)
+                            }}
+                            className="accent-primary w-3 h-3"
+                          />
+                          Tamper with signature — flip byte[8] before C_Verify
+                        </label>
+                        {(tamperMessage || tamperSignature) && (
+                          <p className="text-[10px] text-status-warning font-mono">
+                            Expected result: CKR_SIGNATURE_INVALID (0x000000C0)
+                          </p>
+                        )}
                       </div>
-                      <label className="flex items-center gap-2 text-xs cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={tamperMessage}
-                          onChange={(e) => {
-                            setTamperMessage(e.target.checked)
-                            setVerifyResult(null)
-                          }}
-                          className="accent-primary w-3 h-3"
-                        />
-                        Tamper with message — flip byte[4] before C_Verify
-                      </label>
-                      <label className="flex items-center gap-2 text-xs cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={tamperSignature}
-                          onChange={(e) => {
-                            setTamperSignature(e.target.checked)
-                            setVerifyResult(null)
-                          }}
-                          className="accent-primary w-3 h-3"
-                        />
-                        Tamper with signature — flip byte[8] before C_Verify
-                      </label>
-                      {(tamperMessage || tamperSignature) && (
-                        <p className="text-[10px] text-status-warning font-mono">
-                          Expected result: CKR_SIGNATURE_INVALID (0x000000C0)
-                        </p>
-                      )}
-                    </div>
+                    </fieldset>
                     <Button
                       variant="gradient"
                       disabled={
@@ -917,13 +924,13 @@ export function StatefulSignaturesDemo() {
                       >
                         {verifyResult ? (
                           <>
-                            <CheckCircle2 size={16} /> Cross-Engine Parity: Rust signature verified
-                            by C++ — CKR_OK
+                            <CheckCircle2 size={16} aria-hidden="true" /> Cross-Engine Parity: Rust
+                            signature verified by C++ — CKR_OK
                           </>
                         ) : (
                           <>
-                            <XCircle size={16} /> Signature Invalid — CKR_SIGNATURE_INVALID —
-                            tampered data detected
+                            <XCircle size={16} aria-hidden="true" /> Signature Invalid —
+                            CKR_SIGNATURE_INVALID — tampered data detected
                           </>
                         )}
                       </div>
@@ -1238,25 +1245,28 @@ export function StatefulSignaturesDemo() {
                 </div>
 
                 {/* Scheme selector */}
-                <div className="flex items-center gap-6">
-                  {(['hss', 'xmss'] as const).map((s) => (
-                    <label key={s} className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="kat-scheme"
-                        value={s}
-                        checked={katScheme === s}
-                        onChange={() => setKatScheme(s)}
-                        className="accent-primary w-3.5 h-3.5"
-                      />
-                      <span
-                        className={`text-sm font-medium ${katScheme === s ? 'text-primary' : 'text-muted-foreground'}`}
-                      >
-                        {s === 'hss' ? 'HSS / LMS — RFC 8554' : 'XMSS — RFC 8391'}
-                      </span>
-                    </label>
-                  ))}
-                </div>
+                <fieldset>
+                  <legend className="sr-only">KAT scheme selection</legend>
+                  <div className="flex items-center gap-6">
+                    {(['hss', 'xmss'] as const).map((s) => (
+                      <label key={s} className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="kat-scheme"
+                          value={s}
+                          checked={katScheme === s}
+                          onChange={() => setKatScheme(s)}
+                          className="accent-primary w-3.5 h-3.5"
+                        />
+                        <span
+                          className={`text-sm font-medium ${katScheme === s ? 'text-primary' : 'text-muted-foreground'}`}
+                        >
+                          {s === 'hss' ? 'HSS / LMS — RFC 8554' : 'XMSS — RFC 8391'}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
 
                 {/* HSS panel */}
                 {katScheme === 'hss' && (
@@ -1275,9 +1285,15 @@ export function StatefulSignaturesDemo() {
                       {hssKatStatus && (
                         <div className="flex items-center gap-2 text-sm">
                           {hssKatStatus.startsWith('PASS') ? (
-                            <CheckCircle2 className="h-4 w-4 text-status-success shrink-0" />
+                            <CheckCircle2
+                              className="h-4 w-4 text-status-success shrink-0"
+                              aria-hidden="true"
+                            />
                           ) : (
-                            <XCircle className="h-4 w-4 text-status-error shrink-0" />
+                            <XCircle
+                              className="h-4 w-4 text-status-error shrink-0"
+                              aria-hidden="true"
+                            />
                           )}
                           <span className="font-mono text-xs text-foreground">{hssKatStatus}</span>
                         </div>
@@ -1348,11 +1364,20 @@ export function StatefulSignaturesDemo() {
                       {xmssKatStatus && (
                         <div className="flex items-center gap-2 text-sm">
                           {xmssKatStatus.startsWith('PASS') ? (
-                            <CheckCircle2 className="h-4 w-4 text-status-success shrink-0" />
+                            <CheckCircle2
+                              className="h-4 w-4 text-status-success shrink-0"
+                              aria-hidden="true"
+                            />
                           ) : xmssKatStatus.startsWith('WARN') ? (
-                            <Info className="h-4 w-4 text-status-warning shrink-0" />
+                            <Info
+                              className="h-4 w-4 text-status-warning shrink-0"
+                              aria-hidden="true"
+                            />
                           ) : (
-                            <XCircle className="h-4 w-4 text-status-error shrink-0" />
+                            <XCircle
+                              className="h-4 w-4 text-status-error shrink-0"
+                              aria-hidden="true"
+                            />
                           )}
                           <span className="font-mono text-xs text-foreground">{xmssKatStatus}</span>
                         </div>

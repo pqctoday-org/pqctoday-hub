@@ -102,11 +102,11 @@ export const IndustryStack = ({
                 <div className="flex flex-col md:flex-row items-center gap-4 w-full">
                   <div className="flex items-center gap-4 shrink-0">
                     <div
-                      className={`flex items-center justify-center w-12 h-12 rounded-lg bg-background/50 backdrop-blur border border-border/30 shadow-inner transition-colors ${
+                      className={`flex items-center justify-center w-12 h-12 rounded-lg backdrop-blur shadow-inner transition-all duration-300 ${layer.iconColor} ${
                         isActive
-                          ? layer.iconColor
-                          : 'text-muted-foreground group-hover:text-foreground'
-                      } ${isActive ? 'animate-pulse' : ''}`}
+                          ? 'bg-background/70 border border-current/40 scale-110 drop-shadow-[0_0_8px_currentColor]'
+                          : 'bg-background/40 border border-current/20 opacity-60 group-hover:opacity-100 group-hover:scale-105 group-hover:border-current/40'
+                      }`}
                     >
                       {layer.icon}
                     </div>

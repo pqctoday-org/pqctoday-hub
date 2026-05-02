@@ -3,6 +3,8 @@ import React, { useState, useCallback, useRef } from 'react'
 import { Loader2, CheckCircle, XCircle, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ErrorAlert } from '@/components/ui/error-alert'
+import { CodeBlock } from '@/components/ui/code-block'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
@@ -466,7 +468,8 @@ export const SLHDSALiveDemo: React.FC = () => {
             >
               {loading === 'keygen' ? (
                 <>
-                  <Loader2 size={14} className="animate-spin mr-1" /> Generating...
+                  <Loader2 size={14} className="animate-spin mr-1" aria-hidden="true" />{' '}
+                  Generating...
                 </>
               ) : (
                 '1. Generate Key Pair'
@@ -480,7 +483,7 @@ export const SLHDSALiveDemo: React.FC = () => {
             >
               {loading === 'sign' ? (
                 <>
-                  <Loader2 size={14} className="animate-spin mr-1" /> Signing...
+                  <Loader2 size={14} className="animate-spin mr-1" aria-hidden="true" /> Signing...
                 </>
               ) : (
                 '2. Sign Message'
@@ -494,7 +497,8 @@ export const SLHDSALiveDemo: React.FC = () => {
             >
               {loading === 'verify' ? (
                 <>
-                  <Loader2 size={14} className="animate-spin mr-1" /> Verifying...
+                  <Loader2 size={14} className="animate-spin mr-1" aria-hidden="true" />{' '}
+                  Verifying...
                 </>
               ) : (
                 '3. Verify Signature'
@@ -509,21 +513,19 @@ export const SLHDSALiveDemo: React.FC = () => {
           </div>
 
           {/* Error display */}
-          {error && (
-            <div className="bg-status-error/10 border border-status-error/30 rounded-lg p-3 text-xs text-status-error">
-              {error}
-            </div>
-          )}
+          {error && <ErrorAlert message={error} />}
 
           {/* Results */}
           {pubKeyHex && (
             <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-3">
               <div className="text-xs font-bold text-foreground">Public Key (CKA_VALUE)</div>
-              <pre className="text-[10px] font-mono text-muted-foreground bg-background rounded p-2 border border-border overflow-x-auto whitespace-pre-wrap break-all">
-                {pubKeyHex.length > 120
-                  ? `${pubKeyHex.slice(0, 60)}...${pubKeyHex.slice(-60)}`
-                  : pubKeyHex}
-              </pre>
+              <CodeBlock
+                code={
+                  pubKeyHex.length > 120
+                    ? `${pubKeyHex.slice(0, 60)}...${pubKeyHex.slice(-60)}`
+                    : pubKeyHex
+                }
+              />
               <div className="text-[10px] text-muted-foreground">
                 {(pubKeyHex.length / 2).toLocaleString()} bytes — extracted via C_GetAttributeValue.
                 Private key is HSM-protected (CKA_EXTRACTABLE=FALSE).
@@ -542,9 +544,7 @@ export const SLHDSALiveDemo: React.FC = () => {
                   {formatBytes(signature.length)}
                 </span>
               </div>
-              <pre className="text-[10px] font-mono text-primary/80 bg-background rounded p-2 border border-primary/20 overflow-x-auto whitespace-pre-wrap break-all">
-                {toHex(signature).slice(0, 120)}...
-              </pre>
+              <CodeBlock code={`${toHex(signature).slice(0, 120)}...`} />
             </div>
           )}
 
@@ -557,9 +557,9 @@ export const SLHDSALiveDemo: React.FC = () => {
               }`}
             >
               {verifyResult ? (
-                <CheckCircle size={16} className="text-status-success" />
+                <CheckCircle size={16} className="text-status-success" aria-hidden="true" />
               ) : (
-                <XCircle size={16} className="text-status-error" />
+                <XCircle size={16} className="text-status-error" aria-hidden="true" />
               )}
               <span
                 className={`text-sm font-bold ${verifyResult ? 'text-status-success' : 'text-status-error'}`}

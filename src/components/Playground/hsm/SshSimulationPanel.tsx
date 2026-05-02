@@ -218,7 +218,9 @@ export function SshSimulationPanel() {
               logs.map((entry, i) => (
                 <div
                   key={i}
-                  className={entry.level === 'error' ? 'text-status-error' : 'text-foreground/80'}
+                  className={
+                    entry.level === 'error' ? 'text-status-error' : 'text-muted-foreground'
+                  }
                 >
                   <span className="text-muted-foreground mr-2">{entry.ts}</span>
                   {entry.text}

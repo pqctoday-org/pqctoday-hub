@@ -710,7 +710,7 @@ distinguished_name = dn
           <div className="mb-4 border-b border-border pb-3">
             <h3 className="text-lg font-bold text-foreground flex items-center gap-3">
               <span className="text-primary font-mono text-xl">01</span>
-              <span className="text-foreground/80">|</span>
+              <span className="text-muted-foreground">|</span>
               KEY CONFIGURATION
             </h3>
             <p className="text-xs text-muted-foreground mt-1 ml-11">
@@ -810,7 +810,7 @@ distinguished_name = dn
           <div className="mb-4 border-b border-border pb-3">
             <h3 className="text-lg font-bold text-foreground flex items-center gap-3">
               <span className="text-primary font-mono text-xl">02</span>
-              <span className="text-foreground/80">|</span>
+              <span className="text-muted-foreground">|</span>
               SELECT PROFILE
             </h3>
             <p className="text-xs text-muted-foreground mt-1 ml-11">
@@ -920,7 +920,7 @@ distinguished_name = dn
                       <span>{attr.label}</span>
                       <div className="flex gap-1 mt-1">
                         {attr.status === 'mandatory' && (
-                          <span className="text-[10px] bg-status-error text-status-error px-1.5 py-0.5 rounded w-fit">
+                          <span className="text-[10px] bg-status-error/10 text-status-error px-1.5 py-0.5 rounded w-fit">
                             Mandatory
                           </span>
                         )}

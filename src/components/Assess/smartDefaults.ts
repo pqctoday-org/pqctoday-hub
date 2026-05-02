@@ -15,7 +15,9 @@ import {
 } from '../../data/industryAssessConfig'
 import { COUNTRY_PLANNING_HORIZON } from '../../hooks/assessmentData'
 import type { AssessmentInput } from '../../hooks/assessmentTypes'
-import type { ExperienceLevel } from '../../store/usePersonaStore'
+import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
+import { usePersonaStore } from '../../store/usePersonaStore'
+import type { ExperienceLevel, Region } from '../../store/usePersonaStore'
 import { EU_MEMBER_COUNTRIES } from '../../utils/euCountries'
 
 // ── Output type ──────────────────────────────────────────────────────────
@@ -223,13 +225,14 @@ export function computeSmartDefaults(
   country: string,
   persona: string | null,
   experienceLevel: ExperienceLevel | null = null,
-  skipExpertTrim = false
+  skipExpertTrim = false,
+  region: Region | null = usePersonaStore.getState().selectedRegion
 ): SmartDefaults {
   const base: SmartDefaults = {
     currentCryptoCategories: getCryptoDefaults(industry),
     currentCrypto: getCryptoAlgoDefaults(industry),
     dataSensitivity: getSensitivityDefaults(industry),
-    complianceRequirements: getComplianceDefaults(industry, country),
+    complianceRequirements: getComplianceDefaults(industry, country, region),
     migrationStatus: 'not-started',
     cryptoUseCases: getUseCaseDefaults(industry),
     dataRetention: getRetentionDefaults(industry),
@@ -386,8 +389,17 @@ function getSensitivityDefaults(industry: string): string[] {
   return INDUSTRY_SENSITIVITY[industry] ?? ['medium']
 }
 
-function getComplianceDefaults(industry: string, country: string): string[] {
+function getComplianceDefaults(
+  industry: string,
+  country: string,
+  region?: Region | null
+): string[] {
   const isEuMember = country ? EU_MEMBER_COUNTRIES.has(country) : false
+  // When no specific country is set, use the persona region as a fallback filter
+  const regionCountries =
+    (!country || country === 'Global') && region && region !== 'global'
+      ? new Set(REGION_COUNTRIES_MAP[region])
+      : null
 
   const filtered = complianceFrameworks.filter((fw) => {
     // Industry filter (same logic as Step5Compliance)
@@ -395,7 +407,7 @@ function getComplianceDefaults(industry: string, country: string): string[] {
       const isUniversal = fw.industries.length === 0 || fw.industries.length >= 3
       if (!isUniversal && !fw.industries.includes(industry)) return false
     }
-    // Country filter
+    // Country filter: exact match takes priority; region fallback when country is blank
     if (country && country !== 'Global') {
       const matchesCountry =
         fw.countries.length === 0 ||
@@ -403,6 +415,13 @@ function getComplianceDefaults(industry: string, country: string): string[] {
         fw.countries.includes(country) ||
         (isEuMember && fw.countries.includes('European Union'))
       if (!matchesCountry) return false
+    } else if (regionCountries) {
+      const matchesRegion =
+        fw.countries.length === 0 ||
+        fw.countries.includes('Global') ||
+        fw.countries.some((c) => regionCountries.has(c)) ||
+        (region === 'eu' && fw.countries.includes('European Union'))
+      if (!matchesRegion) return false
     }
     return true
   })

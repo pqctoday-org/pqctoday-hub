@@ -544,7 +544,7 @@ export const HybridEncryptionDemo: React.FC = () => {
 
       {/* Section header */}
       <div className="px-6 mb-4">
-        <h2 className="text-lg font-semibold text-foreground">
+        <h2 className="text-lg font-semibold text-gradient">
           Hybrid Key Establishment (X25519 + ML-KEM-768)
         </h2>
         <p className="text-sm text-muted-foreground mt-1">

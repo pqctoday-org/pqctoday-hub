@@ -488,7 +488,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
                 <span className="text-xs font-bold text-muted-foreground">
                   Pre-Signature Breakdown (Hex)
                 </span>
-                <pre className="text-[10px] font-mono bg-black/40 text-muted-foreground p-3 rounded border border-border/50 break-all whitespace-pre-wrap">
+                <pre className="text-[10px] font-mono bg-muted/60 text-muted-foreground p-3 rounded border border-border/50 break-all whitespace-pre-wrap">
                   {toHex(new TextEncoder().encode(messageToSign))}
                 </pre>
               </div>
@@ -503,7 +503,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
                   <span className="text-xs font-bold text-success">
                     Signature Payload ({signatureHex.length / 2} bytes)
                   </span>
-                  <pre className="text-[10px] font-mono bg-black/40 text-muted-foreground p-3 rounded border border-success/30 break-all whitespace-pre-wrap h-32 overflow-y-auto">
+                  <pre className="text-[10px] font-mono bg-muted/60 text-muted-foreground p-3 rounded border border-success/30 break-all whitespace-pre-wrap h-32 overflow-y-auto">
                     {signatureHex}
                   </pre>
                 </div>

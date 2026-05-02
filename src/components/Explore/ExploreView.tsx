@@ -85,7 +85,7 @@ export function ExploreView() {
   const showUnlockPrompt = isGated
 
   return (
-    <div className="max-w-4xl mx-auto py-4 md:py-8 px-2">
+    <div className="max-w-5xl mx-auto py-4 md:py-8 px-2">
       {/* Header */}
       <div className="text-center mb-8 md:mb-12">
         <h1 className="text-xl md:text-4xl font-bold text-gradient flex items-center justify-center gap-2 md:gap-3 mb-3">

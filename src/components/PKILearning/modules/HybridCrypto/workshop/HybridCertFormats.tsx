@@ -344,7 +344,7 @@ export const HybridCertFormats: React.FC = () => {
         >
           {generating === 'all' ? (
             <>
-              <Loader2 size={18} className="animate-spin" />
+              <Loader2 size={18} className="animate-spin" aria-hidden="true" />
               Generating All Formats...
             </>
           ) : (
@@ -426,7 +426,7 @@ export const HybridCertFormats: React.FC = () => {
 
                 {isGeneratingThis && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Loader2 size={16} className="animate-spin" />
+                    <Loader2 size={16} className="animate-spin" aria-hidden="true" />
                     Generating...
                   </div>
                 )}

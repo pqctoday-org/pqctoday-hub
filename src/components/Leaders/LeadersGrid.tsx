@@ -12,6 +12,7 @@ import {
   Award,
   ShieldX,
   Info,
+  X,
 } from 'lucide-react'
 
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -170,6 +171,23 @@ export const LeadersGrid = () => {
   const [isRemovalModalOpen, setIsRemovalModalOpen] = useState(false)
   const gridRef = useRef<HTMLDivElement>(null)
   const { selectedIndustries, selectedPersona, experienceLevel } = usePersonaStore()
+
+  const activeFilterCount =
+    FILTER_KEYS.filter((k) => filters.values[k] !== LEADER_FILTERS[k].defaultValue).length +
+    (searchQuery ? 1 : 0)
+
+  const handleClearAll = useCallback(() => {
+    filters.reset()
+    setSearchQuery('')
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete('q')
+        return next
+      },
+      { replace: true }
+    )
+  }, [filters, setSearchParams])
 
   // Sync non-filter URL params on same-route navigations (e.g. chatbot deep links).
   // Filter params (region/country/sector/cat/layer) are synced by useLeaderFilters internally.
@@ -599,11 +617,28 @@ export const LeadersGrid = () => {
         </div>
       </div>
 
-      {/* Results count */}
-      <p className="text-xs text-muted-foreground">
-        {filteredLeaders.length} leader{filteredLeaders.length !== 1 ? 's' : ''}
-        {activeCategory !== 'All' && ` in ${activeCategory}`}
-      </p>
+      {/* Results count + active filter badge */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <p className="text-xs text-muted-foreground">
+          {filteredLeaders.length} leader{filteredLeaders.length !== 1 ? 's' : ''}
+          {activeCategory !== 'All' && ` in ${activeCategory}`}
+        </p>
+        {activeFilterCount > 0 && (
+          <span className="inline-flex items-center rounded-full bg-primary/10 text-primary px-2 py-0.5 text-[11px] font-semibold">
+            {activeFilterCount} active filter{activeFilterCount !== 1 ? 's' : ''}
+          </span>
+        )}
+        {activeFilterCount > 0 && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleClearAll}
+            className="h-auto p-0 text-xs text-muted-foreground hover:text-foreground gap-1"
+          >
+            <X size={12} /> Clear all
+          </Button>
+        )}
+      </div>
 
       {/* Not found toast */}
       <AnimatePresence>

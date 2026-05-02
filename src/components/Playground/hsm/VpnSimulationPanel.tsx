@@ -636,7 +636,7 @@ const V2SelftestCard: React.FC = () => {
         </div>
       </div>
 
-      {err && <p className="text-xs text-red-400 font-mono">Error: {err}</p>}
+      {err && <p className="text-xs text-status-error font-mono">Error: {err}</p>}
 
       {result && (
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs font-mono">
@@ -696,7 +696,7 @@ const V2SelftestCard: React.FC = () => {
           <summary className="cursor-pointer text-muted-foreground">
             v2 event log ({events.length})
           </summary>
-          <pre className="mt-2 max-h-40 overflow-auto bg-background/60 p-2 rounded border border-border">
+          <pre className="mt-2 max-h-40 overflow-auto bg-muted/50 p-2 rounded border border-border">
             {events.map((e) => `[${e.type}] ${e.payload}`).join('\n')}
           </pre>
         </details>
@@ -707,10 +707,10 @@ const V2SelftestCard: React.FC = () => {
 
 const Stat: React.FC<{ label: string; value: string; ok: boolean }> = ({ label, value, ok }) => (
   <div
-    className={`p-2 rounded border ${ok ? 'border-primary/40 bg-primary/5' : 'border-red-500/40 bg-red-500/5'}`}
+    className={`p-2 rounded border ${ok ? 'border-primary/40 bg-primary/5' : 'border-status-error/40 bg-status-error/5'}`}
   >
     <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
-    <div className={ok ? 'text-primary' : 'text-red-400'}>{value}</div>
+    <div className={ok ? 'text-primary' : 'text-status-error'}>{value}</div>
   </div>
 )
 

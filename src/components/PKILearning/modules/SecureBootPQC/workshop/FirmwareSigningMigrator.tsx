@@ -49,6 +49,7 @@ import {
   StepWizard,
   type Step,
 } from '@/components/PKILearning/modules/DigitalAssets/components/StepWizard'
+import { ErrorAlert } from '@/components/ui/error-alert'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -1403,12 +1404,7 @@ export const FirmwareSigningMigrator: React.FC = () => {
                   </span>
                 )}
               </div>
-              {signError && (
-                <div className="flex items-center gap-2 text-xs text-status-error bg-status-error/5 border border-status-error/20 rounded px-3 py-2">
-                  <AlertTriangle size={13} className="shrink-0" aria-hidden="true" />
-                  {signError}
-                </div>
-              )}
+              {signError && <ErrorAlert message={signError} />}
             </div>
           )}
 

@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { ChevronRight, ChevronLeft, CheckCircle, Circle, Lock, Info, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ErrorAlert } from '@/components/ui/error-alert'
 import { ENVELOPE_ENCRYPTION_STEPS, type EnvelopeEncryptionStep } from '../data/kmsConstants'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
@@ -751,7 +752,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-bold text-foreground mb-2">Envelope Encryption Demo</h3>
+        <h3 className="text-lg font-bold text-gradient mb-2">Envelope Encryption Demo</h3>
         <p className="text-sm text-muted-foreground">
           Step through the complete envelope encryption flow. Compare how RSA-OAEP directly wraps a
           DEK in one step versus the 3-step ML-KEM process: encapsulate &rarr; KDF &rarr; AES wrap
@@ -861,7 +862,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
             >
               {liveRunning ? (
                 <>
-                  <Loader2 size={11} className="animate-spin" /> Running…
+                  <Loader2 size={11} className="animate-spin" aria-hidden="true" /> Running…
                 </>
               ) : (
                 'Execute (Live WASM)'
@@ -869,13 +870,13 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
             </Button>
           </div>
 
-          {liveError && <p className="text-xs text-status-error font-mono">{liveError}</p>}
+          {liveError && <ErrorAlert message={liveError} />}
 
           {/* ── Summary lines ──────────────────────────────────────────────────── */}
           {liveLines.length > 0 && (
             <div className="bg-status-success/5 border border-status-success/20 rounded-lg p-3 space-y-1">
               {liveLines.map((line, i) => (
-                <p key={i} className="text-xs font-mono text-foreground/80 break-all">
+                <p key={i} className="text-xs font-mono text-muted-foreground break-all">
                   {line}
                 </p>
               ))}
@@ -966,7 +967,11 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
                     : 'bg-muted/50 text-muted-foreground'
               }`}
             >
-              {completedSteps.has(idx) ? <CheckCircle size={12} /> : <Circle size={12} />}
+              {completedSteps.has(idx) ? (
+                <CheckCircle size={12} aria-hidden="true" />
+              ) : (
+                <Circle size={12} aria-hidden="true" />
+              )}
               <span className="hidden sm:inline">Step {s.step}</span>
               <span className="sm:hidden">{s.step}</span>
             </Button>
@@ -989,7 +994,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         <div className="glass-panel p-6">
           <div className="flex items-start gap-4 mb-4">
             <div className="p-3 rounded-lg bg-primary/10 shrink-0">
-              <Lock size={24} className="text-primary" />
+              <Lock size={24} className="text-primary" aria-hidden="true" />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1 flex-wrap">
@@ -997,7 +1002,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
                   Step {displayStep.step} of {ENVELOPE_ENCRYPTION_STEPS.length}
                 </span>
               </div>
-              <h4 className="text-xl font-bold text-foreground">{displayStep.title}</h4>
+              <h4 className="text-xl font-bold text-gradient">{displayStep.title}</h4>
             </div>
           </div>
 
@@ -1011,7 +1016,9 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
                 </span>
                 <span className="text-xs text-muted-foreground">RSA-OAEP</span>
               </div>
-              <p className="text-xs text-foreground/80 mb-3">{displayStep.classicalDescription}</p>
+              <p className="text-xs text-muted-foreground mb-3">
+                {displayStep.classicalDescription}
+              </p>
               <div className="bg-background rounded p-3 border border-border">
                 <div className="text-[10px] font-bold text-foreground mb-1">Artifact</div>
                 <p className="text-xs text-muted-foreground">{displayStep.classicalArtifact}</p>
@@ -1034,7 +1041,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
                   {isRSA ? 'RSA-OAEP' : kekAlgo.toUpperCase()}
                 </span>
               </div>
-              <p className="text-xs text-foreground/80 mb-3">{displayStep.pqcDescription}</p>
+              <p className="text-xs text-muted-foreground mb-3">{displayStep.pqcDescription}</p>
               <div className="bg-background rounded p-3 border border-border">
                 <div className="text-[10px] font-bold text-foreground mb-1">Artifact</div>
                 <p className="text-xs text-muted-foreground">{displayStep.pqcArtifact}</p>
@@ -1049,8 +1056,8 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           {/* Context note */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="flex items-start gap-2">
-              <Info size={14} className="text-primary shrink-0 mt-0.5" />
-              <p className="text-xs text-foreground/80">
+              <Info size={14} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
+              <p className="text-xs text-muted-foreground">
                 {displayStep.step === 1 &&
                   (step1ComparisonNote ??
                     'Select an ML-KEM variant to see the size comparison against RSA-2048.')}
@@ -1257,7 +1264,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           disabled={currentStep === 0}
           className="flex items-center gap-1"
         >
-          <ChevronLeft size={14} /> Previous
+          <ChevronLeft size={14} aria-hidden="true" /> Previous
         </Button>
         <Button
           variant="gradient"
@@ -1267,15 +1274,15 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         >
           {completedSteps.has(currentStep) ? (
             <>
-              <CheckCircle size={14} /> Completed
+              <CheckCircle size={14} aria-hidden="true" /> Completed
             </>
           ) : currentStep === ENVELOPE_ENCRYPTION_STEPS.length - 1 ? (
             <>
-              Mark Complete <CheckCircle size={14} />
+              Mark Complete <CheckCircle size={14} aria-hidden="true" />
             </>
           ) : (
             <>
-              Complete &amp; Next <ChevronRight size={14} />
+              Complete &amp; Next <ChevronRight size={14} aria-hidden="true" />
             </>
           )}
         </Button>
@@ -1284,7 +1291,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
       {/* Hybrid migration callout — NIST SP 800-227 guidance */}
       <div className="glass-panel p-4 border border-primary/20">
         <div className="flex items-start gap-3">
-          <Info size={16} className="text-primary shrink-0 mt-0.5" />
+          <Info size={16} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
           <div className="space-y-1.5">
             <p className="text-sm font-semibold text-foreground">
               Migration Path: Use Hybrid (Classical + PQC)

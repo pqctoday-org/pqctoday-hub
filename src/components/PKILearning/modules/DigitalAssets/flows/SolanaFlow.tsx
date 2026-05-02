@@ -305,7 +305,7 @@ const { pubHandle, privHandle } = hsm_generateEdDSAKeyPair(
               placeholder="Run steps 4–5 to generate recipient address"
             />
             {editableRecipientAddress && editableRecipientAddress !== recipientAddress && (
-              <p className="text-xs text-status-error mt-1.5">
+              <p className="text-xs text-status-warning mt-1.5">
                 ⚠️ Address modified — the signed transaction will commit to this recipient, not the
                 generated one.
               </p>
