@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useMemo, useCallback, useRef, Fragment } from 'react'
+import { useState, useMemo, useCallback, useRef, useEffect, Fragment } from 'react'
 import {
   ArrowUpDown,
   ArrowUp,
@@ -218,6 +218,13 @@ export const SimpleGanttChart = ({
     () => processedData.reduce((sum, d) => sum + d.phases.length, 0),
     [processedData]
   )
+
+  useEffect(() => {
+    if (!filterText || processedData.length === 0) return
+    const slug = processedData[0].country.countryName.toLowerCase().replace(/\s+/g, '-')
+    const el = document.getElementById(`timeline-row-${slug}`)
+    if (el?.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+  }, [filterText, processedData])
 
   const hasActiveFilters =
     regionFilter !== 'All' ||
@@ -683,6 +690,11 @@ export const SimpleGanttChart = ({
                       return (
                         <tr
                           key={`${country.countryName}-${phaseData.phase}-${idx}`}
+                          id={
+                            idx === 0
+                              ? `timeline-row-${country.countryName.toLowerCase().replace(/\s+/g, '-')}`
+                              : undefined
+                          }
                           className="hover:bg-muted/50 transition-colors"
                           style={
                             isLastRow

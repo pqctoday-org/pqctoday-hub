@@ -451,10 +451,30 @@ export function AlgorithmsView() {
 
       {/* eslint-disable-next-line security/detect-object-injection */}
       {selectedPersona && ALGO_PERSONA_HINTS[selectedPersona] && (
-        <div className="mt-3 mb-2 flex items-start gap-2 px-3 py-2 rounded-lg bg-primary/5 border border-primary/15 text-xs text-muted-foreground">
+        <div className="mt-3 mb-2 flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/5 border border-primary/15 text-xs text-muted-foreground">
           <Lightbulb size={13} className="shrink-0 text-primary mt-0.5" aria-hidden="true" />
           {/* eslint-disable-next-line security/detect-object-injection */}
-          <span>{ALGO_PERSONA_HINTS[selectedPersona]}</span>
+          <span className="flex-1">{ALGO_PERSONA_HINTS[selectedPersona]}</span>
+          {selectedPersona === 'executive' && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-auto px-2 py-0.5 text-[10px] font-medium text-primary hover:bg-primary/10 border border-primary/20 rounded shrink-0"
+              onClick={() =>
+                setSearchParams(
+                  (prev) => {
+                    const next = new URLSearchParams(prev)
+                    next.set('highlight', 'ML-KEM-768,ML-DSA-65,SLH-DSA-SHA2-128s,Falcon-512')
+                    next.set('tab', 'detailed')
+                    return next
+                  },
+                  { replace: true }
+                )
+              }
+            >
+              View Top 5 →
+            </Button>
+          )}
         </div>
       )}
 

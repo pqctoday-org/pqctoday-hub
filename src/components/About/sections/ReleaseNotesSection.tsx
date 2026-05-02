@@ -4,6 +4,8 @@ import { FileText, Sparkles, ChevronRight } from 'lucide-react'
 import { getCurrentVersion, useVersionStore } from '@/store/useVersionStore'
 import { Button } from '@/components/ui/button'
 
+declare const __BUILD_TIMESTAMP__: string
+
 export function ReleaseNotesSection() {
   const version = getCurrentVersion()
   const requestShowWhatsNew = useVersionStore((s) => s.requestShowWhatsNew)
@@ -23,6 +25,9 @@ export function ReleaseNotesSection() {
             <h2 className="text-base md:text-xl font-semibold">Release Notes</h2>
             <p className="text-xs md:text-sm text-muted-foreground">
               What&apos;s new in v{version} — features, fixes, and improvements
+            </p>
+            <p className="text-[10px] text-muted-foreground/60 mt-0.5">
+              Deployed: {__BUILD_TIMESTAMP__}
             </p>
           </div>
         </div>
