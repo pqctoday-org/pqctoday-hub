@@ -158,27 +158,52 @@
             {
               "tMs": 6000,
               "kind": "caption",
-              "text": "Section 1/5: Quantum Threat"
+              "text": "Section 1/5: Why Pqc"
+            },
+            {
+              "tMs": 20960,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
             },
             {
               "tMs": 23600,
               "kind": "caption",
-              "text": "Section 2/5: Algorithms"
+              "text": "Section 2/5: Whats Changing"
+            },
+            {
+              "tMs": 38560,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
             },
             {
               "tMs": 41200,
               "kind": "caption",
-              "text": "Section 3/5: Timeline"
+              "text": "Section 3/5: The Timeline"
+            },
+            {
+              "tMs": 56160,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
             },
             {
               "tMs": 58800,
               "kind": "caption",
-              "text": "Section 4/5: Readiness"
+              "text": "Section 4/5: Who Acts"
+            },
+            {
+              "tMs": 73760,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
             },
             {
               "tMs": 76400,
               "kind": "caption",
               "text": "Section 5/5: Next Steps"
+            },
+            {
+              "tMs": 95000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-complete\"]"
             },
             {
               "tMs": 96000,
