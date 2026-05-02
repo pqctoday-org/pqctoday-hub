@@ -1,36 +1,34 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { GraduationCap, Play, Video, Clock, Pause, X, ChevronDown } from 'lucide-react'
+import {
+  GraduationCap,
+  Play,
+  Video,
+  Clock,
+  Pause,
+  X,
+  ChevronDown,
+  Sparkles,
+  List,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { usePersonaStore } from '@/store/usePersonaStore'
 import { useWorkshopStore } from '@/store/useWorkshopStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
-import {
-  WORKSHOP_FLOWS,
-  flattenFlow,
-  resolveWorkshopFlow,
-  getNextStep,
-  getPrevStep,
-  findStepIndex,
-} from '@/data/workshopRegistry'
+import { flattenFlow, getNextStep, getPrevStep, findStepIndex } from '@/data/workshopRegistry'
 import type { WorkshopChapter, WorkshopFlow, WorkshopRegion, WorkshopStep } from '@/types/Workshop'
 import { WorkshopPrereqList } from './WorkshopPrereqList'
 import { labelForRegion } from '@/utils/workshopRegion'
 import { WorkshopStepCard } from './WorkshopStepCard'
 import { useWorkshopAutoComplete } from '@/hooks/useWorkshopAutoComplete'
+import { useWorkshopManifest } from '@/hooks/useWorkshopManifest'
 import { buildStepUrl } from '@/utils/workshopDeepLink'
 
 export const WorkshopPanel: React.FC = () => {
   useWorkshopAutoComplete()
 
-  const role = usePersonaStore((s) => s.selectedPersona)
-  const proficiency = usePersonaStore((s) => s.experienceLevel)
-  const industry = usePersonaStore((s) => s.selectedIndustry)
-
   const {
     mode,
-    currentFlowId,
     currentStepId,
     completedStepIds,
     selectedRegion,
@@ -46,18 +44,21 @@ export const WorkshopPanel: React.FC = () => {
   } = useWorkshopStore()
 
   const [pickedRegion, setPickedRegion] = useState<WorkshopRegion | null>(selectedRegion)
+  const [activeTab, setActiveTab] = useState<'recommended' | 'browse'>('recommended')
 
-  const matchedFlow = useMemo<WorkshopFlow | null>(() => {
-    if (!role || !proficiency || !industry || !pickedRegion) return null
-    return resolveWorkshopFlow({ role, proficiency, industry, region: pickedRegion })
-  }, [role, proficiency, industry, pickedRegion])
+  // Manifest hook resolves the matched flow + honors the user's flowOverrideId.
+  const { manifest, activeEntry, matchedEntry, activeFlow, isLoading } =
+    useWorkshopManifest(pickedRegion)
+
+  const flowOverrideId = useWorkshopStore((s) => s.flowOverrideId)
+  const setFlowOverrideId = useWorkshopStore((s) => s.setFlowOverrideId)
 
   const isRunningOrVideo = mode === 'running' || mode === 'video' || mode === 'paused'
 
   if (isRunningOrVideo) {
     return (
       <RunningView
-        currentFlowId={currentFlowId}
+        flow={activeFlow}
         currentStepId={currentStepId}
         completedStepIds={completedStepIds}
         selectedRegion={selectedRegion}
@@ -72,11 +73,10 @@ export const WorkshopPanel: React.FC = () => {
     )
   }
 
-  const prereqsReady =
-    role === 'executive' &&
-    proficiency === 'basics' &&
-    industry === 'Finance & Banking' &&
-    pickedRegion !== null
+  // The Start / Record buttons are enabled when prerequisites are met for the
+  // active flow (matched OR overridden). Generic flows have wildcard match so
+  // they're always available; specific flows require the picked region.
+  const prereqsReady = activeFlow !== null && pickedRegion !== null
 
   return (
     <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 space-y-4">
@@ -105,28 +105,94 @@ export const WorkshopPanel: React.FC = () => {
         <WorkshopPrereqList pickedRegion={pickedRegion} onPickRegion={setPickedRegion} />
       </section>
 
-      {matchedFlow ? (
-        <FlowAgenda flow={matchedFlow} region={pickedRegion!} />
-      ) : (
+      {/* Recommended / Browse-all tab bar */}
+      <div className="flex items-center gap-1 border-b border-border" role="tablist">
+        <Button
+          variant="ghost"
+          size="sm"
+          role="tab"
+          aria-selected={activeTab === 'recommended'}
+          onClick={() => setActiveTab('recommended')}
+          className={`flex-1 rounded-none rounded-t-md border-b-2 ${
+            activeTab === 'recommended'
+              ? 'border-primary text-foreground'
+              : 'border-transparent text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <Sparkles size={14} className="mr-1.5" />
+          Recommended
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          role="tab"
+          aria-selected={activeTab === 'browse'}
+          onClick={() => setActiveTab('browse')}
+          className={`flex-1 rounded-none rounded-t-md border-b-2 ${
+            activeTab === 'browse'
+              ? 'border-primary text-foreground'
+              : 'border-transparent text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <List size={14} className="mr-1.5" />
+          Browse all
+        </Button>
+      </div>
+
+      {isLoading && !manifest ? (
         <section className="rounded-lg border border-border bg-card p-3 text-sm text-muted-foreground">
-          {!role || !proficiency || !industry
-            ? 'Set role, proficiency, and industry to see the workshop agenda.'
-            : pickedRegion
-              ? 'No workshop flow available for the selected combination yet — additional persona flows are in development.'
-              : 'Pick a country to see the workshop agenda.'}
+          Loading workshop catalogue…
         </section>
+      ) : activeTab === 'recommended' ? (
+        activeFlow ? (
+          <>
+            {flowOverrideId && matchedEntry && activeEntry?.id !== matchedEntry.id && (
+              <div className="rounded-md bg-primary/5 border border-primary/20 px-3 py-2 text-xs text-foreground flex items-center justify-between gap-2">
+                <span>
+                  Using <strong>{activeEntry?.title}</strong>. Reset to recommended (
+                  <em>{matchedEntry.title}</em>)?
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-2 text-xs"
+                  onClick={() => setFlowOverrideId(null)}
+                >
+                  Reset
+                </Button>
+              </div>
+            )}
+            <FlowAgenda flow={activeFlow} region={pickedRegion ?? 'US'} />
+          </>
+        ) : (
+          <section className="rounded-lg border border-border bg-card p-3 text-sm text-muted-foreground">
+            {!pickedRegion
+              ? 'Pick a country in the pre-flight checklist to see the recommended workshop.'
+              : 'No matched workshop flow yet — switch to Browse all to pick one manually.'}
+          </section>
+        )
+      ) : (
+        <BrowseAllFlows
+          manifest={manifest}
+          activeId={activeEntry?.id ?? null}
+          matchedId={matchedEntry?.id ?? null}
+          onSelect={(id) => {
+            setFlowOverrideId(id)
+            setActiveTab('recommended')
+          }}
+        />
       )}
 
       <div className="flex flex-col gap-2">
         <Button
           variant="gradient"
           className="w-full"
-          disabled={!matchedFlow || !prereqsReady}
+          disabled={!activeFlow || !prereqsReady}
           onClick={() => {
-            if (!matchedFlow || !pickedRegion) return
-            const steps = flattenFlow(matchedFlow, pickedRegion)
+            if (!activeFlow || !pickedRegion) return
+            const steps = flattenFlow(activeFlow, pickedRegion)
             if (steps.length === 0) return
-            start(matchedFlow.id, steps[0].id, pickedRegion)
+            start(activeFlow.id, steps[0].id, pickedRegion)
           }}
         >
           <Play size={16} className="mr-2" />
@@ -173,12 +239,12 @@ export const WorkshopPanel: React.FC = () => {
         <Button
           variant="outline"
           className="w-full"
-          disabled={!matchedFlow || !prereqsReady}
+          disabled={!activeFlow || !prereqsReady}
           onClick={() => {
-            if (!matchedFlow || !pickedRegion) return
-            const steps = flattenFlow(matchedFlow, pickedRegion)
+            if (!activeFlow || !pickedRegion) return
+            const steps = flattenFlow(activeFlow, pickedRegion)
             if (steps.length === 0) return
-            startVideo(matchedFlow.id, steps[0].id, pickedRegion)
+            startVideo(activeFlow.id, steps[0].id, pickedRegion)
             // Minimize the panel — Video Mode renders captions + spotlight on top of the main pane.
             useRightPanelStore.getState().minimize()
           }}
@@ -189,9 +255,9 @@ export const WorkshopPanel: React.FC = () => {
       </div>
 
       <p className="text-xs text-muted-foreground">
-        {WORKSHOP_FLOWS.length} flow available. Additional persona flows (Curious, Developer,
-        Architect, Ops, Researcher; other industries; intermediate / advanced proficiency) are in
-        development.
+        {manifest?.flows.length ?? 0} flow{(manifest?.flows.length ?? 0) === 1 ? '' : 's'}{' '}
+        available. Additional persona flows (Curious, Developer, Architect, Ops, Researcher; other
+        industries) are in development.
       </p>
     </div>
   )
@@ -301,7 +367,7 @@ const AgendaChapterSection: React.FC<AgendaChapterSectionProps> = ({ chapter, re
 }
 
 interface RunningViewProps {
-  currentFlowId: string | null
+  flow: WorkshopFlow | null
   currentStepId: string | null
   completedStepIds: string[]
   selectedRegion: WorkshopRegion | null
@@ -315,7 +381,7 @@ interface RunningViewProps {
 }
 
 const RunningView: React.FC<RunningViewProps> = ({
-  currentFlowId,
+  flow,
   currentStepId,
   completedStepIds,
   selectedRegion,
@@ -328,10 +394,6 @@ const RunningView: React.FC<RunningViewProps> = ({
   onResume,
 }) => {
   const navigate = useNavigate()
-  const flow = useMemo(
-    () => WORKSHOP_FLOWS.find((f) => f.id === currentFlowId) ?? null,
-    [currentFlowId]
-  )
   const steps: WorkshopStep[] = useMemo(() => {
     if (!flow || !selectedRegion) return []
     return flattenFlow(flow, selectedRegion)
@@ -423,5 +485,69 @@ const RunningView: React.FC<RunningViewProps> = ({
         onMarkComplete={() => onMarkComplete(step.id)}
       />
     </div>
+  )
+}
+
+interface BrowseAllFlowsProps {
+  manifest: import('@/services/workshopFlowLoader').WorkshopFlowManifest | null
+  activeId: string | null
+  matchedId: string | null
+  onSelect: (id: string) => void
+}
+
+const BrowseAllFlows: React.FC<BrowseAllFlowsProps> = ({
+  manifest,
+  activeId,
+  matchedId,
+  onSelect,
+}) => {
+  if (!manifest || manifest.flows.length === 0) {
+    return (
+      <section className="rounded-lg border border-border bg-card p-3 text-sm text-muted-foreground">
+        No workshop flows in the catalogue yet.
+      </section>
+    )
+  }
+  return (
+    <section className="rounded-lg border border-border bg-card p-3 space-y-2">
+      <h3 className="text-sm font-medium text-foreground">All workshops</h3>
+      <ul className="space-y-1.5">
+        {manifest.flows.map((entry) => {
+          const isActive = entry.id === activeId
+          const isMatched = entry.id === matchedId
+          return (
+            <li key={entry.id}>
+              <Button
+                variant={isActive ? 'gradient' : 'outline'}
+                size="sm"
+                onClick={() => onSelect(entry.id)}
+                className="w-full h-auto justify-start p-3 whitespace-normal text-left"
+                aria-pressed={isActive}
+              >
+                <div className="flex flex-col items-start gap-1 min-w-0 w-full">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-sm font-medium text-foreground">{entry.title}</span>
+                    {isMatched && (
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary/15 text-primary">
+                        Recommended
+                      </span>
+                    )}
+                    {entry.isGenericFallback && (
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+                        Generic
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {entry.stepCount} step{entry.stepCount === 1 ? '' : 's'} ·{' '}
+                    {entry.totalEstMinutes} min
+                  </div>
+                </div>
+              </Button>
+            </li>
+          )
+        })}
+      </ul>
+    </section>
   )
 }

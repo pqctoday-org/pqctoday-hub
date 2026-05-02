@@ -2,14 +2,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useWorkshopStore, STEP_DURATION_MS } from '@/store/useWorkshopStore'
 import { useWorkshopOverlayStore } from '@/store/useWorkshopOverlayStore'
-import {
-  WORKSHOP_FLOWS,
-  flattenFlow,
-  findStepIndex,
-  getNextStep,
-  getPrevStep,
-} from '@/data/workshopRegistry'
-import type { WorkshopFixtures, WorkshopStep } from '@/types/Workshop'
+import { flattenFlow, findStepIndex, getNextStep, getPrevStep } from '@/data/workshopRegistry'
+import { useWorkshopManifest } from '@/hooks/useWorkshopManifest'
+import type { WorkshopStep } from '@/types/Workshop'
 import { VideoControlBar } from './VideoControlBar'
 
 /**
@@ -20,7 +15,6 @@ import { VideoControlBar } from './VideoControlBar'
  */
 export const VideoOverlay: React.FC = () => {
   const mode = useWorkshopStore((s) => s.mode)
-  const currentFlowId = useWorkshopStore((s) => s.currentFlowId)
   const currentStepId = useWorkshopStore((s) => s.currentStepId)
   const selectedRegion = useWorkshopStore((s) => s.selectedRegion)
   const setStep = useWorkshopStore((s) => s.setStep)
@@ -32,10 +26,10 @@ export const VideoOverlay: React.FC = () => {
   const setCaption = useWorkshopOverlayStore((s) => s.setCaption)
   const clearOverlays = useWorkshopOverlayStore((s) => s.clearOverlays)
 
-  const flow = useMemo(
-    () => WORKSHOP_FLOWS.find((f) => f.id === currentFlowId) ?? null,
-    [currentFlowId]
-  )
+  // Hydrate the active flow from the JSON manifest (not the build-time
+  // WORKSHOP_FLOWS array). The hook also reads any flowOverrideId so a
+  // user-picked flow from Browse-all is honored here too.
+  const { activeFlow: flow } = useWorkshopManifest(selectedRegion)
   const steps = useMemo<WorkshopStep[]>(() => {
     if (!flow || !selectedRegion) return []
     return flattenFlow(flow, selectedRegion)
