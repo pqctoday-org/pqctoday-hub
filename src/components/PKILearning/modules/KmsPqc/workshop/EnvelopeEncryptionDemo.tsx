@@ -1,7 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState } from 'react'
-import { ChevronRight, ChevronLeft, CheckCircle, Circle, Lock, Info, Loader2 } from 'lucide-react'
+import {
+  ChevronRight,
+  ChevronLeft,
+  ChevronDown,
+  CheckCircle,
+  Circle,
+  Lock,
+  Info,
+  Loader2,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ErrorAlert } from '@/components/ui/error-alert'
 import { ENVELOPE_ENCRYPTION_STEPS, type EnvelopeEncryptionStep } from '../data/kmsConstants'
@@ -208,6 +217,11 @@ const BlobHexPanel: React.FC<{ label: string; bytes: Uint8Array }> = ({ label, b
 export const EnvelopeEncryptionDemo: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0)
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set())
+  const [executedSteps, setExecutedSteps] = useState<Set<number>>(new Set())
+
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+  const [flowDiagramOpen, setFlowDiagramOpen] = useState(!isMobile)
+  const [artifactTableOpen, setArtifactTableOpen] = useState(!isMobile)
 
   // Configuration
   const [kekAlgo, setKekAlgo] = useState<KekAlgorithm>('ml-kem-768')
@@ -218,6 +232,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
   const [liveLines, setLiveLines] = useState<string[]>([])
   const [liveRunning, setLiveRunning] = useState(false)
   const [liveError, setLiveError] = useState<string | null>(null)
+  const [progressLabel, setProgressLabel] = useState<string | null>(null)
   const [kcvResult, setKcvResult] = useState<{
     before: string
     after: string
@@ -259,6 +274,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         // fall back to raw byte comparison when CKA_CHECK_VALUE is unavailable (C_UnwrapKey
         // gap in SoftHSMv3). In production, DEKs would be extractable=false, sensitive=true;
         // KCV would be the only integrity verification method.
+        setProgressLabel('Generating key pair...')
         const dekHandle = hsm_generateAESKey(
           M,
           hSession,
@@ -282,6 +298,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         hsm.addStepLog('── Step 1: Generate AES-256 DEK (CKM_AES_KEY_GEN) ─────────────────')
 
         // Step 2: Generate RSA key pair (KEK)
+        setProgressLabel('Generating key pair...')
         const { pubHandle, privHandle } = hsm_generateRSAWrapKeyPair(M, hSession, bits)
         hsm.addKey({
           handle: pubHandle,
@@ -307,6 +324,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         const dekBytesOrig = hsm_extractKeyValue(M, hSession, dekHandle)
 
         // Step 3: Wrap DEK with RSA-OAEP public key
+        setProgressLabel('Wrapping DEK...')
         const wrappedDek = hsm_rsaOaepWrapKey(M, hSession, pubHandle, dekHandle)
         addLine(`Wrapped DEK: ${wrappedDek.length} B (RSA-OAEP, ${RSA_OAEP_STANDARD})`)
         hsm.addStepLog(
@@ -314,6 +332,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         )
 
         // Step 4: Unwrap DEK with RSA-OAEP private key
+        setProgressLabel('Verifying integrity...')
         const recoveredDekHandle = hsm_rsaOaepUnwrapKey(
           M,
           hSession,
@@ -366,6 +385,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         // fall back to raw byte comparison when CKA_CHECK_VALUE is unavailable (C_UnwrapKey
         // gap in SoftHSMv3). In production, DEKs would be extractable=false, sensitive=true;
         // KCV would be the only integrity verification method.
+        setProgressLabel('Generating key pair...')
         const dekHandle = hsm_generateAESKey(
           M,
           hSession,
@@ -389,6 +409,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         hsm.addStepLog('── Step 1: Generate AES-256 DEK (CKM_AES_KEY_GEN) ─────────────────')
 
         // Step 2: Generate ML-KEM key pair (KEK)
+        setProgressLabel('Generating key pair...')
         const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(M, hSession, variant)
         hsm.addKey({
           handle: pubHandle,
@@ -411,6 +432,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         hsm.addStepLog(`── Step 2: Generate ML-KEM-${variant} Key Pair (FIPS 203) ──────────────`)
 
         // Step 3: KEM Encapsulate → shared secret + ciphertext
+        setProgressLabel('Encapsulating shared secret...')
         const { ciphertextBytes, secretHandle } = hsm_encapsulate(M, hSession, pubHandle, variant)
         hsm.addKey({
           handle: secretHandle,
@@ -437,6 +459,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
 
         const envelopeInfo = new TextEncoder().encode('kms-envelope-v1')
         const rawWrapHandleOut = { current: 0 }
+        setProgressLabel('Deriving session key (HKDF)...')
         const wrapKeyBytes = hsm_hkdf(
           M,
           hSession,
@@ -488,6 +511,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         let wrappedDek: Uint8Array
         let gcmIv: Uint8Array | null = null
 
+        setProgressLabel('Encrypting data (AES-GCM)...')
         if (wrapMech === 'aes-gcm') {
           const gcmResult = hsm_aesGcmWrapKey(
             M,
@@ -502,6 +526,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
             `Wrapped DEK: ${wrappedDek.length} B ciphertext + ${gcmIv.length} B nonce (AES-GCM, NIST SP 800-38D)`
           )
         } else {
+          setProgressLabel('Wrapping DEK...')
           wrappedDek = hsm_wrapKeyMech(M, hSession, mechMeta.ckm!, wrapKeyHandle, dekHandle)
           addLine(`Wrapped DEK: ${wrappedDek.length} B (${mechMeta.label}, ${mechMeta.standard})`)
         }
@@ -510,6 +535,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         )
 
         // Step 6: Decapsulate → recover shared secret → re-derive wrapping key → unwrap DEK
+        setProgressLabel('Verifying integrity...')
         const recoveredSecretHandle = hsm_decapsulate(
           M,
           hSession,
@@ -647,10 +673,12 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           gcmIv: gcmIv ?? null,
         })
       }
+      setExecutedSteps((prev) => new Set([...prev, currentStep]))
     } catch (e) {
       setLiveError(translateCryptoError(e instanceof Error ? e.message : String(e)))
     } finally {
       setLiveRunning(false)
+      setProgressLabel(null)
     }
   }
 
@@ -787,7 +815,10 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
                     key={alg}
                     variant="outline"
                     size="sm"
-                    onClick={() => setKekAlgo(alg)}
+                    onClick={() => {
+                      setKekAlgo(alg)
+                      setExecutedSteps(new Set())
+                    }}
                     disabled={liveRunning}
                     className={`font-mono text-xs h-auto py-1 px-2.5 ${
                       kekAlgo === alg
@@ -825,7 +856,10 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
                       key={key}
                       variant="outline"
                       size="sm"
-                      onClick={() => setWrapMech(key)}
+                      onClick={() => {
+                        setWrapMech(key)
+                        setExecutedSteps(new Set())
+                      }}
                       disabled={liveRunning}
                       title={meta.standard}
                       className={`font-mono text-xs h-auto py-1 px-2.5 ${
@@ -863,7 +897,8 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
             >
               {liveRunning ? (
                 <>
-                  <Loader2 size={11} className="animate-spin" aria-hidden="true" /> Running…
+                  <Loader2 size={11} className="animate-spin" aria-hidden="true" />
+                  {progressLabel ?? 'Running…'}
                 </>
               ) : (
                 'Execute (Live WASM)'
@@ -1012,6 +1047,13 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
                 </span>
               </div>
               <h4 className="text-xl font-bold text-gradient">{displayStep.title}</h4>
+              {displayStep.step === 1 && (
+                <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
+                  <Info size={12} className="shrink-0" />
+                  PQC envelope (ML-KEM-1024) is typically 3–4× larger than RSA-2048 — execute the
+                  demo to see exact sizes.
+                </div>
+              )}
             </div>
           </div>
 
@@ -1099,89 +1141,107 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
       )}
 
       {/* Flow diagram */}
-      <div className="glass-panel p-6">
-        <h4 className="text-sm font-bold text-foreground mb-3">Envelope Encryption Flow</h4>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Classical flow */}
-          <div>
-            <div className="text-xs font-bold text-destructive mb-2 text-center">
-              Classical (RSA-OAEP)
-            </div>
-            <div className="space-y-2 text-center">
-              {[
-                {
-                  label: `1. Generate RSA-${isRSA ? kekAlgo.split('-')[1] : '2048'} key pair`,
-                  active: currentStep === 0,
-                },
-                {
-                  label: `2. RSA-OAEP wrap DEK → ${classicalPkBytes} B`,
-                  active: currentStep === 1,
-                },
-                { label: '3. (no KDF step)', active: currentStep === 2 },
-                { label: '4. (DEK already wrapped)', active: currentStep === 3 },
-                { label: '5. RSA-OAEP unwrap → DEK · KCV ✓', active: currentStep === 4 },
-              ].map((item, idx) => (
-                <div
-                  key={idx}
-                  className={`p-2 rounded border text-[10px] font-bold transition-colors ${
-                    item.active
-                      ? 'bg-destructive/20 text-destructive border-destructive/50'
-                      : completedSteps.has(idx)
-                        ? 'bg-status-success/10 text-status-success border-status-success/20'
-                        : 'bg-muted/50 text-muted-foreground border-border'
-                  }`}
-                >
-                  {item.label}
+      <div className="glass-panel border border-border">
+        <Button
+          variant="ghost"
+          className="w-full flex items-center justify-between p-4 text-sm font-semibold text-foreground hover:bg-muted/30 transition-colors h-auto rounded-none"
+          onClick={() => setFlowDiagramOpen((v) => !v)}
+          aria-expanded={flowDiagramOpen}
+        >
+          <span>Envelope Encryption Flow</span>
+          <ChevronDown
+            size={16}
+            className={`transition-transform ${flowDiagramOpen ? 'rotate-180' : ''}`}
+          />
+        </Button>
+        {flowDiagramOpen && (
+          <div className="px-4 pb-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {/* Classical flow */}
+              <div>
+                <div className="text-xs font-bold text-destructive mb-2 text-center">
+                  Classical (RSA-OAEP)
                 </div>
-              ))}
-            </div>
-          </div>
+                <div className="space-y-2 text-center">
+                  {[
+                    {
+                      label: `1. Generate RSA-${isRSA ? kekAlgo.split('-')[1] : '2048'} key pair`,
+                      active: currentStep === 0,
+                    },
+                    {
+                      label: `2. RSA-OAEP wrap DEK → ${classicalPkBytes} B`,
+                      active: currentStep === 1,
+                    },
+                    { label: '3. (no KDF step)', active: currentStep === 2 },
+                    { label: '4. (DEK already wrapped)', active: currentStep === 3 },
+                    { label: '5. RSA-OAEP unwrap → DEK · KCV ✓', active: currentStep === 4 },
+                  ].map((item, idx) => (
+                    <div
+                      key={idx}
+                      className={`p-2 rounded border text-[10px] font-bold transition-colors ${
+                        item.active
+                          ? 'bg-destructive/20 text-destructive border-destructive/50'
+                          : completedSteps.has(idx)
+                            ? 'bg-status-success/10 text-status-success border-status-success/20'
+                            : 'bg-muted/50 text-muted-foreground border-border'
+                      }`}
+                    >
+                      {item.label}
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-          {/* PQC flow */}
-          <div>
-            <div className="text-xs font-bold text-primary mb-2 text-center">
-              PQC ({kekAlgo.toUpperCase()}
-              {!isRSA ? ` + ${WRAP_MECH_META[wrapMech].label}` : ''})
-            </div>
-            <div className="space-y-2 text-center">
-              {(isRSA
-                ? [
-                    {
-                      label: `1. Generate ${kekAlgo.toUpperCase()} key pair`,
-                      active: currentStep === 0,
-                    },
-                    { label: '2. Generate AES-256 DEK', active: currentStep === 1 },
-                    { label: '3. RSA-OAEP wrap DEK', active: currentStep === 2 },
-                    { label: '4. RSA-OAEP unwrap → DEK · KCV ✓', active: currentStep === 3 },
-                    { label: '—', active: currentStep === 4 },
-                  ]
-                : [
-                    {
-                      label: `1. Generate ${kekAlgo.toUpperCase()} key pair`,
-                      active: currentStep === 0,
-                    },
-                    { label: '2. Encaps → ct + shared secret', active: currentStep === 1 },
-                    { label: '3. HKDF(ss) → wrapping key (RFC 5869)', active: currentStep === 2 },
-                    {
-                      label: `4. ${WRAP_MECH_META[wrapMech].label} wrap DEK`,
-                      active: currentStep === 3,
-                    },
-                    {
-                      label: '5. Decaps → HKDF → unwrap → DEK · KCV ✓',
-                      active: currentStep === 4,
-                    },
-                  ]
-              ).map((step, i) => (
-                <div
-                  key={i}
-                  className={`text-[10px] px-2 py-1 rounded ${step.active ? 'bg-primary/20 text-primary font-semibold' : 'text-muted-foreground'}`}
-                >
-                  {step.label}
+              {/* PQC flow */}
+              <div>
+                <div className="text-xs font-bold text-primary mb-2 text-center">
+                  PQC ({kekAlgo.toUpperCase()}
+                  {!isRSA ? ` + ${WRAP_MECH_META[wrapMech].label}` : ''})
                 </div>
-              ))}
+                <div className="space-y-2 text-center">
+                  {(isRSA
+                    ? [
+                        {
+                          label: `1. Generate ${kekAlgo.toUpperCase()} key pair`,
+                          active: currentStep === 0,
+                        },
+                        { label: '2. Generate AES-256 DEK', active: currentStep === 1 },
+                        { label: '3. RSA-OAEP wrap DEK', active: currentStep === 2 },
+                        { label: '4. RSA-OAEP unwrap → DEK · KCV ✓', active: currentStep === 3 },
+                        { label: '—', active: currentStep === 4 },
+                      ]
+                    : [
+                        {
+                          label: `1. Generate ${kekAlgo.toUpperCase()} key pair`,
+                          active: currentStep === 0,
+                        },
+                        { label: '2. Encaps → ct + shared secret', active: currentStep === 1 },
+                        {
+                          label: '3. HKDF(ss) → wrapping key (RFC 5869)',
+                          active: currentStep === 2,
+                        },
+                        {
+                          label: `4. ${WRAP_MECH_META[wrapMech].label} wrap DEK`,
+                          active: currentStep === 3,
+                        },
+                        {
+                          label: '5. Decaps → HKDF → unwrap → DEK · KCV ✓',
+                          active: currentStep === 4,
+                        },
+                      ]
+                  ).map((step, i) => (
+                    <div
+                      key={i}
+                      className={`text-[10px] px-2 py-1 rounded ${step.active ? 'bg-primary/20 text-primary font-semibold' : 'text-muted-foreground'}`}
+                    >
+                      {step.label}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Total comparison — shown when all steps complete */}
@@ -1227,41 +1287,56 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
       )}
 
       {/* Step-by-step size table */}
-      <div className="glass-panel p-6">
-        <h4 className="text-sm font-bold text-foreground mb-3">Artifact Sizes by Step</h4>
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="border-b border-border">
-                <th className="text-left py-2 px-2 text-muted-foreground font-medium">Step</th>
-                <th className="text-left py-2 px-2 text-muted-foreground font-medium">Operation</th>
-                <th className="text-right py-2 px-2 text-muted-foreground font-medium">
-                  Classical
-                </th>
-                <th className="text-right py-2 px-2 text-muted-foreground font-medium">
-                  {isRSA ? 'PQC (ML-KEM-768 ref)' : `PQC (${kekAlgo.toUpperCase()})`}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {ENVELOPE_ENCRYPTION_STEPS.map((s, idx) => (
-                <tr
-                  key={s.id}
-                  className={`border-b border-border/50 ${idx === currentStep ? 'bg-primary/5' : ''}`}
-                >
-                  <td className="py-2 px-2 font-bold text-foreground">{s.step}</td>
-                  <td className="py-2 px-2 text-foreground">{s.title}</td>
-                  <td className="py-2 px-2 text-right font-mono text-destructive">
-                    {classicalTotalSizes[idx]}
-                  </td>
-                  <td className="py-2 px-2 text-right font-mono text-primary">
-                    {pqcTotalSizes[idx]}
-                  </td>
+      <div className="glass-panel border border-border">
+        <Button
+          variant="ghost"
+          className="w-full flex items-center justify-between p-4 text-sm font-semibold text-foreground hover:bg-muted/30 transition-colors h-auto rounded-none"
+          onClick={() => setArtifactTableOpen((v) => !v)}
+          aria-expanded={artifactTableOpen}
+        >
+          <span>Artifact Sizes by Step</span>
+          <ChevronDown
+            size={16}
+            className={`transition-transform ${artifactTableOpen ? 'rotate-180' : ''}`}
+          />
+        </Button>
+        {artifactTableOpen && (
+          <div className="px-4 pb-4 overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left py-2 px-2 text-muted-foreground font-medium">Step</th>
+                  <th className="text-left py-2 px-2 text-muted-foreground font-medium">
+                    Operation
+                  </th>
+                  <th className="text-right py-2 px-2 text-muted-foreground font-medium">
+                    Classical
+                  </th>
+                  <th className="text-right py-2 px-2 text-muted-foreground font-medium">
+                    {isRSA ? 'PQC (ML-KEM-768 ref)' : `PQC (${kekAlgo.toUpperCase()})`}
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {ENVELOPE_ENCRYPTION_STEPS.map((s, idx) => (
+                  <tr
+                    key={s.id}
+                    className={`border-b border-border/50 ${idx === currentStep ? 'bg-primary/5' : ''}`}
+                  >
+                    <td className="py-2 px-2 font-bold text-foreground">{s.step}</td>
+                    <td className="py-2 px-2 text-foreground">{s.title}</td>
+                    <td className="py-2 px-2 text-right font-mono text-destructive">
+                      {classicalTotalSizes[idx]}
+                    </td>
+                    <td className="py-2 px-2 text-right font-mono text-primary">
+                      {pqcTotalSizes[idx]}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* Navigation */}
@@ -1279,8 +1354,8 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           variant="gradient"
           size="sm"
           onClick={markComplete}
-          disabled={!envelopeBlob}
-          title={!envelopeBlob ? 'Run the Live WASM execution first' : ''}
+          disabled={!executedSteps.has(currentStep)}
+          title={!executedSteps.has(currentStep) ? 'Run the live demo for this step first' : ''}
           className="flex items-center gap-2"
         >
           {completedSteps.has(currentStep) ? (

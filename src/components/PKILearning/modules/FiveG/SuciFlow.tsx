@@ -358,6 +358,7 @@ const Z = zKemBytes`,
     return r
   }
   const executeStep = async () => {
+    if (supiError) throw new Error(supiError)
     const stepData = rawSteps[wizard.currentStep]
     fiveGService.state.supi = customSupi || '310260123456789'
     fiveGService.state.profile = profile // ensure profile is always set before any step runs

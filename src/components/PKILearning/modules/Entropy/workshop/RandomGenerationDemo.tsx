@@ -466,9 +466,19 @@ export const RandomGenerationDemo: React.FC = () => {
         </Button>
 
         {hasResults && (
-          <Button variant="outline" size="sm" onClick={handleCompareAll}>
-            Compare All Tests
-          </Button>
+          <div className="flex flex-col items-start gap-1">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleCompareAll}
+              title="Run NIST SP 800-22 statistical tests across all active sources and display a side-by-side comparison"
+            >
+              Compare All Tests
+            </Button>
+            <p className="text-[10px] text-muted-foreground mt-0.5">
+              Statistical tests across all sources
+            </p>
+          </div>
         )}
       </div>
 
@@ -633,7 +643,7 @@ export const RandomGenerationDemo: React.FC = () => {
                   <p className="text-xs font-medium text-foreground mb-2">
                     {SOURCES.find((s) => s.id === id)!.label}
                   </p>
-                  <LagPlot data={res.data} size={enabledSources.length > 2 ? 180 : 200} />
+                  <LagPlot data={res.data} size={enabledSources.length > 2 ? 200 : 220} />
                 </div>
               )
             })}

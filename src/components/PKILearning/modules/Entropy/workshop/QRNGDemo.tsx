@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button'
 import { getRandomBytes } from '@/utils/webCrypto'
 import { runAllTests, type TestResult } from '../utils/entropyTests'
 import { formatHex, binnedFrequency } from '../utils/outputFormatters'
-import { QRNG_SAMPLE_64, QRNG_SAMPLE_128 } from '../utils/entropyConstants'
 import { BitMatrixGrid } from '../components/BitMatrixGrid'
 import { LagPlot } from '../components/LagPlot'
 
@@ -81,13 +80,18 @@ function formatTestValue(result: TestResult): string {
   return result.value.toFixed(2)
 }
 
+const generateSimulatedQrng = (bytes: number): Uint8Array => {
+  const buf = new Uint8Array(bytes)
+  crypto.getRandomValues(buf)
+  return buf
+}
+
 export const QRNGDemo: React.FC = () => {
   const [sampleSize, setSampleSize] = useState<SampleSize>(64)
+  const [qrngSample, setQrngSample] = useState<Uint8Array>(() => generateSimulatedQrng(64))
   const [trngData, setTrngData] = useState<Uint8Array | null>(null)
   const [qrngResults, setQrngResults] = useState<TestResult[] | null>(null)
   const [trngResults, setTrngResults] = useState<TestResult[] | null>(null)
-
-  const qrngSample = sampleSize === 64 ? QRNG_SAMPLE_64 : QRNG_SAMPLE_128
 
   const handleGenerateTRNG = useCallback(() => {
     const bytes = getRandomBytes(sampleSize)
@@ -105,6 +109,7 @@ export const QRNGDemo: React.FC = () => {
 
   const handleSizeChange = useCallback((size: SampleSize) => {
     setSampleSize(size)
+    setQrngSample(generateSimulatedQrng(size))
     setTrngData(null)
     setQrngResults(null)
     setTrngResults(null)
@@ -301,34 +306,46 @@ export const QRNGDemo: React.FC = () => {
         </div>
       )}
 
+      {hasComparison && (
+        <div className="mt-4 rounded-lg border border-border bg-muted/40 p-4">
+          <p className="text-sm font-semibold text-foreground">
+            Why use QRNG if the tests are identical?
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Statistical tests measure <em>output quality</em>, not <em>source security</em>. A
+            CSPRNG seeded with a compromised value (weak entropy, side-channel, backdoored RNG) can
+            produce output that passes all tests while being completely predictable to an attacker.
+            QRNG eliminates the seed entirely — randomness comes from quantum measurement, which is
+            physically irreducible and cannot be predicted even with unlimited compute.
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            For most applications, a properly seeded CSPRNG is sufficient. QRNG provides defense
+            against seed-level attacks — relevant in high-assurance, long-lived cryptographic
+            systems and post-quantum migration contexts where classical RNG assumptions may not
+            hold.
+          </p>
+        </div>
+      )}
+
+      {hasComparison && (
+        <div className="mt-4 flex justify-center">
+          <Button
+            variant="outline"
+            onClick={() => {
+              setQrngSample(generateSimulatedQrng(sampleSize))
+              setTrngData(null)
+              setQrngResults(null)
+              setTrngResults(null)
+            }}
+          >
+            Try Another Sample
+          </Button>
+        </div>
+      )}
+
       {/* Educational Callout */}
       {hasComparison && (
         <div className="glass-panel p-4 space-y-3 border-l-4 border-l-primary bg-primary/5">
-          <h4 className="text-sm font-bold text-foreground">Why QRNG?</h4>
-          <p className="text-sm text-foreground leading-relaxed">
-            Both CSPRNG and QRNG produce high-quality randomness that passes statistical tests.
-          </p>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            The fundamental difference is the entropy source: a CSPRNG like Web Crypto API uses a
-            DRBG seeded from OS entropy (hardware TRNG), while a QRNG derives randomness directly
-            from quantum mechanical phenomena (photon detection, vacuum fluctuations).
-          </p>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            <span className="font-medium text-foreground">For PQC:</span> Hardware TRNGs are already
-            quantum-safe (they don&apos;t rely on computational hardness). QRNG adds
-            defense-in-depth by providing an independent entropy source grounded in quantum physics
-            per{' '}
-            <a
-              href="/library?ref=NIST-SP-800-90C"
-              className="text-primary underline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              SP 800-90C
-            </a>{' '}
-            RBG construction guidelines.
-          </p>
-
           {/* Production QRNG Products */}
           <div className="pt-1 border-t border-border/50">
             <p className="text-xs font-medium text-foreground mb-2">

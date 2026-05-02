@@ -1,13 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo, useCallback } from 'react'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
 import { Input } from '@/components/ui/input'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { HardDrive, Zap, Network, Download, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CERT_CAPACITY_DEFAULTS } from '@/data/certCapacityDefaults'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
+
+const ALGO_ABBREV: Record<string, string> = {
+  'RSA-2048': 'RSA',
+  'ECDSA P-256': 'ECDSA',
+  'ML-DSA-44': 'ML-44',
+  'ML-DSA-65': 'ML-65',
+  'ML-DSA-87': 'ML-87',
+}
 
 const DISPLAYED_ALGOS = ['RSA-2048', 'ECDSA P-256', 'ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87']
 
@@ -210,11 +216,23 @@ export function CertCapacityCalculator() {
           <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
             Parameters
           </p>
-          <div className="flex items-center gap-2">
-            <Label htmlFor="relative-mode" className="text-xs font-medium text-muted-foreground">
-              Relative to ECDSA P-256
-            </Label>
-            <Switch id="relative-mode" checked={relativeMode} onCheckedChange={setRelativeMode} />
+          <div className="flex items-center gap-1 bg-muted p-1 rounded-md">
+            <Button
+              variant={!relativeMode ? 'secondary' : 'ghost'}
+              size="sm"
+              onClick={() => setRelativeMode(false)}
+              className="h-6 text-[10px] px-2 shadow-none"
+            >
+              Absolute
+            </Button>
+            <Button
+              variant={relativeMode ? 'secondary' : 'ghost'}
+              size="sm"
+              onClick={() => setRelativeMode(true)}
+              className="h-6 text-[10px] px-2 shadow-none"
+            >
+              Relative to ECDSA
+            </Button>
           </div>
         </div>
         <SliderRow
@@ -246,6 +264,41 @@ export function CertCapacityCalculator() {
         />
       </div>
 
+      {/* Business Impact Summary */}
+      <div className="glass-panel p-4 border-l-4 border-l-primary bg-primary/5 space-y-2">
+        <h4 className="text-sm font-bold text-foreground">Business Impact Summary</h4>
+        <p className="text-xs text-foreground leading-relaxed">
+          Transitioning from <span className="font-semibold text-primary">ECDSA P-256</span> to{' '}
+          <span className="font-semibold text-primary">ML-DSA-44</span> (PQC equivalent security)
+          will increase your CA archive storage by roughly{' '}
+          <span className="font-mono bg-muted px-1 py-0.5 rounded text-primary">
+            {(results.find((r) => r.algo === 'ML-DSA-44')!.storageMB / ecdsaRef.storageMB).toFixed(
+              1
+            )}
+            x
+          </span>{' '}
+          and TLS handshake bandwidth by{' '}
+          <span className="font-mono bg-muted px-1 py-0.5 rounded text-primary">
+            {(
+              results.find((r) => r.algo === 'ML-DSA-44')!.tlsAggregateMBPerSec /
+              ecdsaRef.tlsAggregateMBPerSec
+            ).toFixed(1)}
+            x
+          </span>
+          . However, ML-DSA is heavily optimized for fast signing operations — it requires{' '}
+          <span className="font-mono bg-muted px-1 py-0.5 rounded text-primary">
+            {Math.abs(
+              100 -
+                (results.find((r) => r.algo === 'ML-DSA-44')!.cpuCorePercent /
+                  ecdsaRef.cpuCorePercent) *
+                  100
+            ).toFixed(0)}
+            % less
+          </span>{' '}
+          CPU overhead per handshake compared to ECDSA.
+        </p>
+      </div>
+
       {/* Charts */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Storage */}
@@ -262,8 +315,7 @@ export function CertCapacityCalculator() {
               <XAxis
                 dataKey="name"
                 tick={{ fontSize: 9, fill: 'var(--color-muted-foreground)' }}
-                angle={-35}
-                textAnchor="end"
+                tickFormatter={(val: string) => ALGO_ABBREV[val] || val}
               />
               <YAxis
                 tick={{ fontSize: 9, fill: 'var(--color-muted-foreground)' }}
@@ -318,8 +370,7 @@ export function CertCapacityCalculator() {
               <XAxis
                 dataKey="name"
                 tick={{ fontSize: 9, fill: 'var(--color-muted-foreground)' }}
-                angle={-35}
-                textAnchor="end"
+                tickFormatter={(val: string) => ALGO_ABBREV[val] || val}
               />
               <YAxis
                 tick={{ fontSize: 9, fill: 'var(--color-muted-foreground)' }}
@@ -377,8 +428,7 @@ export function CertCapacityCalculator() {
               <XAxis
                 dataKey="name"
                 tick={{ fontSize: 9, fill: 'var(--color-muted-foreground)' }}
-                angle={-35}
-                textAnchor="end"
+                tickFormatter={(val: string) => ALGO_ABBREV[val] || val}
               />
               <YAxis
                 tick={{ fontSize: 9, fill: 'var(--color-muted-foreground)' }}
@@ -469,7 +519,14 @@ export function CertCapacityCalculator() {
         </table>
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center">
+        <a
+          href="/migrate?category=Hardware+Security+Modules"
+          className="text-[11px] text-primary hover:underline flex items-center gap-1"
+        >
+          <HardDrive size={11} />
+          Need to size HSM hardware for this workload? Explore HSMs →
+        </a>
         <Button variant="outline" size="sm" onClick={handleExport} className="gap-2">
           <Download size={14} />
           Export CSV

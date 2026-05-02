@@ -157,346 +157,339 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
 
   // Render alternate modes (KAT panel shown in all modes — it tests conditioning
   // functions that are independent of the active testing mode)
-  if (mode === 'bitflip') {
-    return (
-      <div className="space-y-6">
-        <ModeSelector mode={mode} onChange={setMode} />
-        <BitFlipExperiment />
-        <KatValidationPanel
-          specs={ENTROPY_KAT_SPECS}
-          label="Entropy Testing Known Answer Tests"
-          authorityNote="SP 800-90B · FIPS 180-4 · FIPS 198-1"
-        />
-      </div>
-    )
-  }
-
-  if (mode === 'streaming') {
-    return (
-      <div className="space-y-6">
-        <ModeSelector mode={mode} onChange={setMode} />
-        <StreamingEntropyMonitor />
-        <KatValidationPanel
-          specs={ENTROPY_KAT_SPECS}
-          label="Entropy Testing Known Answer Tests"
-          authorityNote="SP 800-90B · FIPS 180-4 · FIPS 198-1"
-        />
-      </div>
-    )
-  }
-
   return (
     <div className="space-y-6">
-      {/* Mode selector */}
       <ModeSelector mode={mode} onChange={setMode} />
 
-      {/* Header */}
-      <div>
-        <h3 className="text-lg font-bold text-foreground mb-2">Entropy Testing Dashboard</h3>
-        <p className="text-sm text-muted-foreground">
-          Load a data sample and run simplified entropy tests to see how randomness quality is
-          evaluated. Compare truly random data against known-bad samples.
-        </p>
+      <div className={mode === 'bitflip' ? 'block' : 'hidden'}>
+        <div className="space-y-6">
+          <BitFlipExperiment />
+        </div>
       </div>
 
-      {/* Data source selector */}
-      <div className="glass-panel p-4">
-        <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
-          Data Source
+      <div className={mode === 'streaming' ? 'block' : 'hidden'}>
+        <div className="space-y-6">
+          <StreamingEntropyMonitor />
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button variant="gradient" size="sm" onClick={() => loadSample('good')}>
-            Generate Random
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => loadSample('bad-zeros')}>
-            All Zeros
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => loadSample('bad-pattern')}>
-            Repeating Pattern
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => loadSample('bad-increment')}>
-            Incrementing
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              setShowPasteInput(!showPasteInput)
-              if (showPasteInput) setPasteHex('')
-            }}
-          >
-            Paste Hex
-          </Button>
-        </div>
-
-        {/* Paste hex input */}
-        {showPasteInput && (
-          <div className="mt-3">
-            <div className="flex gap-2">
-              <Input
-                type="text"
-                value={pasteHex}
-                onChange={(e) => {
-                  setPasteHex(e.target.value)
-                  if (pasteHexError) setPasteHexError(null)
-                }}
-                placeholder="e.g. deadbeef01020304..."
-                className="flex-1 font-mono"
-              />
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handlePasteHex}
-                disabled={pasteHex.length === 0}
-              >
-                Load
-              </Button>
-            </div>
-            {pasteHexError && (
-              <p className="mt-1.5 text-xs flex items-center gap-1 text-status-error">
-                <AlertTriangle size={12} />
-                {pasteHexError}
-              </p>
-            )}
-          </div>
-        )}
       </div>
 
-      {/* Hex data display + Bit Matrix */}
-      {sampleData && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div className="glass-panel p-4">
-            <div className="flex items-center justify-between mb-2">
-              <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                Sample Data
-              </div>
-              <span className="text-xs text-primary font-medium">{sampleLabel}</span>
-            </div>
-            <div className="bg-muted rounded-lg p-3 border border-border overflow-x-auto">
-              <pre className="text-xs font-mono text-foreground whitespace-pre-wrap break-all leading-relaxed">
-                {formatHex(sampleData, 4)}
-              </pre>
-            </div>
-            <div className="text-[10px] text-muted-foreground mt-1.5">
-              {sampleData.length} bytes ({sampleData.length * 8} bits)
-            </div>
-          </div>
-
-          <div className="glass-panel p-4">
-            <BitMatrixGrid data={sampleData} />
-          </div>
+      <div className={mode === 'static' ? 'block space-y-6' : 'hidden'}>
+        {/* Header */}
+        <div>
+          <h3 className="text-lg font-bold text-foreground mb-2">Entropy Testing Dashboard</h3>
+          <p className="text-sm text-muted-foreground">
+            Load a data sample and run simplified entropy tests to see how randomness quality is
+            evaluated. Compare truly random data against known-bad samples.
+          </p>
         </div>
-      )}
 
-      {/* Run Tests button */}
-      {sampleData && !testResults && (
-        <div className="flex justify-center">
-          <Button variant="gradient" onClick={handleRunTests} className="gap-2">
-            <Play size={16} />
-            Run All Entropy Tests
-          </Button>
-        </div>
-      )}
-
-      {/* Test Results Dashboard */}
-      {testResults && (
-        <div className="space-y-4">
-          {/* Summary bar */}
-          <div className="glass-panel p-4">
-            <div className="flex items-center gap-3">
-              {passCount === totalCount ? (
-                <CheckCircle size={20} className="text-success shrink-0" />
-              ) : passCount === 0 ? (
-                <XCircle size={20} className="text-destructive shrink-0" />
-              ) : (
-                <AlertTriangle size={20} className="text-warning shrink-0" />
-              )}
-              <div>
-                <div className="text-sm font-bold text-foreground">
-                  {passCount}/{totalCount} Tests Passed
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {passCount === totalCount
-                    ? 'All tests passed — this sample shows good randomness characteristics.'
-                    : passCount === 0
-                      ? 'All tests failed — this data has no randomness.'
-                      : `${totalCount - passCount} test${totalCount - passCount > 1 ? 's' : ''} failed — this data has detectable patterns.`}
-                </div>
-              </div>
-              {pasteHexError && <p className="mt-1 text-xs text-status-error">{pasteHexError}</p>}
-            </div>
+        {/* Data source selector */}
+        <div className="glass-panel p-4">
+          <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
+            Data Source
           </div>
-
-          {/* Test result cards grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {testResults.map((result) => (
-              <div
-                key={result.name}
-                className={`rounded-lg p-4 border-l-4 border border-border ${
-                  result.passed
-                    ? 'border-l-success bg-status-success/10'
-                    : 'border-l-destructive bg-status-error/10'
-                }`}
-              >
-                {/* Test name and badge */}
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-bold text-foreground">{result.name}</span>
-                  {result.passed ? (
-                    <span className="flex items-center gap-1 text-xs font-bold text-success">
-                      <CheckCircle size={14} />
-                      PASS
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1 text-xs font-bold text-destructive">
-                      <XCircle size={14} />
-                      FAIL
-                    </span>
-                  )}
-                </div>
-
-                {/* Value and threshold */}
-                <div className="flex gap-4 mb-2 text-xs">
-                  <div>
-                    <span className="text-muted-foreground">Value: </span>
-                    <span className="font-mono font-bold text-foreground">
-                      {result.value.toFixed(4)}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Threshold: </span>
-                    <span className="font-mono text-foreground">{result.threshold.toFixed(4)}</span>
-                  </div>
-                </div>
-
-                {/* Description */}
-                <p className="text-[11px] text-muted-foreground mb-1">{result.description}</p>
-
-                {/* Detail */}
-                <p className="text-[10px] text-muted-foreground/80 font-mono">{result.detail}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Run again button */}
-          <div className="flex justify-center">
+          <div className="flex flex-wrap gap-2">
+            <Button variant="gradient" size="sm" onClick={() => loadSample('good')}>
+              Generate Random
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => loadSample('bad-zeros')}>
+              All Zeros
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => loadSample('bad-pattern')}>
+              Repeating Pattern
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => loadSample('bad-increment')}>
+              Incrementing
+            </Button>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setTestResults(null)}
-              className="gap-2"
+              onClick={() => {
+                setShowPasteInput(!showPasteInput)
+                if (showPasteInput) setPasteHex('')
+              }}
             >
-              <Play size={14} />
-              Reset &amp; Choose New Sample
+              Paste Hex
             </Button>
           </div>
-        </div>
-      )}
 
-      {/* Visualizations side by side */}
-      {sampleData && bins && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Byte Frequency Histogram */}
-          <div className="glass-panel p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <BarChart3 size={16} className="text-primary" />
-              <span className="text-sm font-bold text-foreground">
-                Byte Frequency Distribution (16 bins)
-              </span>
+          {/* Paste hex input */}
+          {showPasteInput && (
+            <div className="mt-3">
+              <div className="flex gap-2">
+                <Input
+                  type="text"
+                  value={pasteHex}
+                  onChange={(e) => {
+                    const val = e.target.value
+                    setPasteHex(val)
+                    const cleaned = val.replace(/[\s,0x]/g, '')
+                    if (cleaned.length > 0 && !/^[0-9a-fA-F]+$/.test(cleaned)) {
+                      setPasteHexError(
+                        'Invalid characters — enter hexadecimal digits only (0–9, a–f)'
+                      )
+                    } else if (cleaned.length > 0 && cleaned.length % 2 !== 0) {
+                      setPasteHexError('Odd number of hex digits — each byte requires 2 digits')
+                    } else {
+                      setPasteHexError(null)
+                    }
+                  }}
+                  placeholder="e.g. deadbeef01020304..."
+                  className="flex-1 font-mono"
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handlePasteHex}
+                  disabled={pasteHex.length === 0}
+                >
+                  Load
+                </Button>
+              </div>
+              {pasteHexError && (
+                <p className="mt-1.5 text-xs flex items-center gap-1 text-status-error">
+                  <AlertTriangle size={12} />
+                  {pasteHexError}
+                </p>
+              )}
             </div>
-            <div className="flex items-end gap-1 h-32">
-              {bins.map((count, i) => {
-                const height = maxBinCount > 0 ? (count / maxBinCount) * 100 : 0
-                const rangeStart = i * 16
-                const rangeEnd = rangeStart + 15
-                return (
-                  <div
-                    key={i}
-                    className="flex-1 flex flex-col items-center justify-end h-full group"
-                  >
-                    {/* Bar */}
-                    <div
-                      className="w-full rounded-t bg-primary/70 group-hover:bg-primary transition-colors relative"
-                      style={{ height: `${Math.max(height, 2)}%` }}
-                      title={`Bin ${i} (0x${rangeStart.toString(16).padStart(2, '0')}-0x${rangeEnd.toString(16).padStart(2, '0')}): ${count}`}
-                    >
-                      {/* Count label on hover */}
-                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-[8px] text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                        {count}
-                      </div>
+          )}
+
+          {sampleData && !testResults && (
+            <Button variant="gradient" className="mt-3 w-full" onClick={handleRunTests}>
+              Run All Entropy Tests
+            </Button>
+          )}
+        </div>
+
+        {/* Hex data display + Bit Matrix */}
+        {sampleData && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="glass-panel p-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                  Sample Data
+                </div>
+                <span className="text-xs text-primary font-medium">{sampleLabel}</span>
+              </div>
+              <div className="bg-muted rounded-lg p-3 border border-border overflow-x-auto">
+                <pre className="text-xs font-mono text-foreground whitespace-pre-wrap break-all leading-relaxed">
+                  {formatHex(sampleData, 4)}
+                </pre>
+              </div>
+              <div className="text-[10px] text-muted-foreground mt-1.5">
+                {sampleData.length} bytes ({sampleData.length * 8} bits)
+              </div>
+            </div>
+
+            <div className="glass-panel p-4">
+              <BitMatrixGrid data={sampleData} />
+            </div>
+          </div>
+        )}
+
+        {/* Test Results Dashboard */}
+        {testResults && (
+          <div className="space-y-4">
+            {/* Summary bar */}
+            <div className="glass-panel p-4">
+              <div className="flex items-center gap-3">
+                {passCount === totalCount ? (
+                  <CheckCircle size={20} className="text-success shrink-0" />
+                ) : passCount === 0 ? (
+                  <XCircle size={20} className="text-destructive shrink-0" />
+                ) : (
+                  <AlertTriangle size={20} className="text-warning shrink-0" />
+                )}
+                <div>
+                  <div className="text-sm font-bold text-foreground">
+                    {passCount}/{totalCount} Tests Passed
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {passCount === totalCount
+                      ? 'All tests passed — this sample shows good randomness characteristics.'
+                      : passCount === 0
+                        ? 'All tests failed — this data has no randomness.'
+                        : `${totalCount - passCount} test${totalCount - passCount > 1 ? 's' : ''} failed — this data has detectable patterns.`}
+                  </div>
+                </div>
+                {pasteHexError && <p className="mt-1 text-xs text-status-error">{pasteHexError}</p>}
+              </div>
+            </div>
+
+            {/* Test result cards grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {testResults.map((result) => (
+                <div
+                  key={result.name}
+                  className={`rounded-lg p-4 border-l-4 border border-border ${
+                    result.passed
+                      ? 'border-l-success bg-status-success/10'
+                      : 'border-l-destructive bg-status-error/10'
+                  }`}
+                >
+                  {/* Test name and badge */}
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-bold text-foreground">{result.name}</span>
+                    {result.passed ? (
+                      <span className="flex items-center gap-1 text-xs font-bold text-success">
+                        <CheckCircle size={14} />
+                        PASS
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1 text-xs font-bold text-destructive">
+                        <XCircle size={14} />
+                        FAIL
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Value and threshold */}
+                  <div className="flex gap-4 mb-2 text-xs">
+                    <div>
+                      <span className="text-muted-foreground">Value: </span>
+                      <span className="font-mono font-bold text-foreground">
+                        {result.value.toFixed(4)}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Threshold: </span>
+                      <span className="font-mono text-foreground">
+                        {result.threshold.toFixed(4)}
+                      </span>
                     </div>
                   </div>
-                )
-              })}
-            </div>
-            {/* Bin labels */}
-            <div className="flex gap-1 mt-1">
-              {bins.map((_, i) => (
-                <div
-                  key={i}
-                  className="flex-1 text-center text-[7px] text-muted-foreground font-mono"
-                >
-                  {(i * 16).toString(16).padStart(2, '0')}
+
+                  {/* Description */}
+                  <p className="text-[11px] text-muted-foreground mb-1">{result.description}</p>
+
+                  {/* Detail */}
+                  <p className="text-[10px] text-muted-foreground/80 font-mono">{result.detail}</p>
                 </div>
               ))}
             </div>
-            <div className="text-[10px] text-muted-foreground mt-2 text-center">
-              Byte value range (hex) — uniform distribution indicates good randomness
+
+            {/* Run again button */}
+            <div className="flex justify-center">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setTestResults(null)}
+                className="gap-2"
+              >
+                <Play size={14} />
+                Reset &amp; Choose New Sample
+              </Button>
             </div>
           </div>
+        )}
 
-          {/* Lag Plot */}
-          <div className="glass-panel p-4">
-            <LagPlot data={sampleData} />
+        {/* Visualizations side by side */}
+        {sampleData && bins && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Byte Frequency Histogram */}
+            <div className="glass-panel p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <BarChart3 size={16} className="text-primary" />
+                <span className="text-sm font-bold text-foreground">
+                  Byte Frequency Distribution (16 bins)
+                </span>
+              </div>
+              <div className="flex items-end gap-1 h-32">
+                {bins.map((count, i) => {
+                  const height = maxBinCount > 0 ? (count / maxBinCount) * 100 : 0
+                  const rangeStart = i * 16
+                  const rangeEnd = rangeStart + 15
+                  return (
+                    <div
+                      key={i}
+                      className="flex-1 flex flex-col items-center justify-end h-full group"
+                    >
+                      {/* Bar */}
+                      <div
+                        className="w-full rounded-t bg-primary/70 group-hover:bg-primary transition-colors relative"
+                        style={{ height: `${Math.max(height, 2)}%` }}
+                        title={`Bin ${i} (0x${rangeStart.toString(16).padStart(2, '0')}-0x${rangeEnd.toString(16).padStart(2, '0')}): ${count}`}
+                      >
+                        {/* Count label on hover */}
+                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-[8px] text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                          {count}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+              {/* Bin labels */}
+              <div className="flex gap-1 mt-1">
+                {bins.map((_, i) => (
+                  <div
+                    key={i}
+                    className="flex-1 text-center text-[7px] text-muted-foreground font-mono"
+                  >
+                    {(i * 16).toString(16).padStart(2, '0')}
+                  </div>
+                ))}
+              </div>
+              <div className="text-[10px] text-muted-foreground mt-2 text-center">
+                Byte value range (hex) — uniform distribution indicates good randomness
+              </div>
+            </div>
+
+            {/* Lag Plot */}
+            <div className="glass-panel p-4">
+              <LagPlot data={sampleData} />
+            </div>
+          </div>
+        )}
+
+        {/* Educational note */}
+        <div className="glass-panel p-4 border-l-4 border-l-warning">
+          <div className="flex items-start gap-2">
+            <AlertTriangle size={14} className="text-warning shrink-0 mt-0.5" />
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              These are simplified educational implementations. Production entropy validation
+              requires the NIST SP 800-90B EntropyAssessment tool (
+              <a
+                href="https://github.com/usnistgov/SP800-90B_EntropyAssessment"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                github.com/usnistgov/SP800-90B_EntropyAssessment
+              </a>
+              ) with &gt;1,000,000 samples.
+            </p>
           </div>
         </div>
-      )}
 
-      {/* Educational note */}
-      <div className="glass-panel p-4 border-l-4 border-l-warning">
-        <div className="flex items-start gap-2">
-          <AlertTriangle size={14} className="text-warning shrink-0 mt-0.5" />
+        {/* Related products note */}
+        <div className="glass-panel p-4">
+          <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+            Related Products
+          </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            These are simplified educational implementations. Production entropy validation requires
-            the NIST SP 800-90B EntropyAssessment tool (
+            Hardware entropy sources and HSMs that provide NIST-validated entropy for production use
+            are tracked in the{' '}
             <a
-              href="https://github.com/usnistgov/SP800-90B_EntropyAssessment"
+              href="/migrate?category=Hardware+Security+Modules"
+              className="text-primary hover:underline"
+            >
+              Migrate catalog → Hardware Security Modules
+            </a>
+            . No standalone entropy-source products are currently cataloged; contributions welcome
+            via the{' '}
+            <a
+              href="https://github.com/pqctoday-org/pqctoday-hub/issues"
               target="_blank"
               rel="noopener noreferrer"
               className="text-primary hover:underline"
             >
-              github.com/usnistgov/SP800-90B_EntropyAssessment
+              issue tracker
             </a>
-            ) with &gt;1,000,000 samples.
+            .
           </p>
         </div>
-      </div>
-
-      {/* Related products note */}
-      <div className="glass-panel p-4">
-        <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
-          Related Products
-        </div>
-        <p className="text-xs text-muted-foreground leading-relaxed">
-          Hardware entropy sources and HSMs that provide NIST-validated entropy for production use
-          are tracked in the{' '}
-          <a
-            href="/migrate?category=Hardware+Security+Modules"
-            className="text-primary hover:underline"
-          >
-            Migrate catalog → Hardware Security Modules
-          </a>
-          . No standalone entropy-source products are currently cataloged; contributions welcome via
-          the{' '}
-          <a
-            href="https://github.com/pqctoday-org/pqctoday-hub/issues"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary hover:underline"
-          >
-            issue tracker
-          </a>
-          .
-        </p>
       </div>
 
       <KatValidationPanel
