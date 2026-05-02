@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useCallback, useRef } from 'react'
-import { Loader2, CheckCircle, XCircle, Info } from 'lucide-react'
+import { Loader2, CheckCircle, XCircle, Info, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ErrorAlert } from '@/components/ui/error-alert'
@@ -33,6 +33,7 @@ import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 import { PREHASH_OPTIONS as PREHASH_OPTIONS_BASE } from '@/components/Playground/tabs/softhsm/SoftHsmUI'
+import { translateCryptoError } from '@/utils/cryptoErrorHint'
 
 const STATEFUL_KAT_SPECS: KatTestSpec[] = [
   {
@@ -311,7 +312,7 @@ export const SLHDSALiveDemo: React.FC = () => {
       const pubBytes = hsm_extractKeyValue(M, hSession, pubHandle)
       setPubKeyHex(toHex(pubBytes))
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err))
+      setError(translateCryptoError(err instanceof Error ? err.message : String(err)))
     }
     setLoading(null)
   }, [hsm, selectedParam.ckp, selectedParam.label])
@@ -330,7 +331,7 @@ export const SLHDSALiveDemo: React.FC = () => {
       setSignedPreHash(preHash)
       signPreHashRef.current = preHash
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err))
+      setError(translateCryptoError(err instanceof Error ? err.message : String(err)))
     }
     setLoading(null)
   }, [hsm, keyHandles, message, preHash])
@@ -349,7 +350,7 @@ export const SLHDSALiveDemo: React.FC = () => {
       const ok = hsm_slhdsaVerify(M, hSession, keyHandles.pub, message, signature, opts)
       setVerifyResult(ok)
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err))
+      setError(translateCryptoError(err instanceof Error ? err.message : String(err)))
     }
     setLoading(null)
   }, [hsm, keyHandles, signature, message])
@@ -550,22 +551,33 @@ export const SLHDSALiveDemo: React.FC = () => {
 
           {verifyResult !== null && (
             <div
-              className={`flex items-center gap-2 rounded-lg p-3 border ${
+              className={`flex items-center justify-between gap-2 rounded-lg p-3 border ${
                 verifyResult
                   ? 'border-status-success/30 bg-status-success/10'
                   : 'border-status-error/30 bg-status-error/10'
               }`}
             >
-              {verifyResult ? (
-                <CheckCircle size={16} className="text-status-success" aria-hidden="true" />
-              ) : (
-                <XCircle size={16} className="text-status-error" aria-hidden="true" />
-              )}
-              <span
-                className={`text-sm font-bold ${verifyResult ? 'text-status-success' : 'text-status-error'}`}
+              <div className="flex items-center gap-2">
+                {verifyResult ? (
+                  <CheckCircle size={16} className="text-status-success" aria-hidden="true" />
+                ) : (
+                  <XCircle size={16} className="text-status-error" aria-hidden="true" />
+                )}
+                <span
+                  className={`text-sm font-bold ${verifyResult ? 'text-status-success' : 'text-status-error'}`}
+                >
+                  {verifyResult ? 'Signature Valid' : 'Signature Invalid'}
+                </span>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={resetResults}
+                className="gap-1.5 text-xs"
               >
-                {verifyResult ? 'Signature Valid' : 'Signature Invalid'}
-              </span>
+                <RotateCcw size={12} aria-hidden="true" />
+                Start Over
+              </Button>
             </div>
           )}
 

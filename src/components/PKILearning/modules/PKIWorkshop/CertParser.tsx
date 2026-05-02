@@ -19,7 +19,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Button } from '@/components/ui/button'
-import { getCryptoErrorHint } from './cryptoErrorHints'
+import { getCryptoErrorHint } from '@/utils/cryptoErrorHint'
 
 interface CertParserProps {
   onComplete: () => void

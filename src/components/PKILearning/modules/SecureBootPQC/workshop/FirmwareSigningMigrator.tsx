@@ -44,12 +44,14 @@ import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
+import { WasmModeIndicator } from '@/components/shared/WasmModeIndicator'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
   StepWizard,
   type Step,
 } from '@/components/PKILearning/modules/DigitalAssets/components/StepWizard'
 import { ErrorAlert } from '@/components/ui/error-alert'
+import { translateCryptoError } from '@/utils/cryptoErrorHint'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -488,6 +490,7 @@ export const FirmwareSigningMigrator: React.FC = () => {
   })
   const [pqcPubKeyBytes, setPqcPubKeyBytes] = useState<number>(0)
   const [pqcKeysReady, setPqcKeysReady] = useState(false)
+  const [isSimulationMode, setIsSimulationMode] = useState(false)
 
   // Classical key handles
   const classicalKeyRef = useRef<{ pubHandle: number; privHandle: number }>({
@@ -524,6 +527,7 @@ export const FirmwareSigningMigrator: React.FC = () => {
     pqcSigBytesRef.current = null
 
     setPqcKeysReady(false)
+    setIsSimulationMode(false)
     setPqcPubKeyBytes(0)
     setPqcSigHex('')
     setPqcSigSize(0)
@@ -538,6 +542,7 @@ export const FirmwareSigningMigrator: React.FC = () => {
     classicalSigBytesRef.current = null
 
     setClassicalKeysReady(false)
+    setIsSimulationMode(false)
     setClassicalPubKeyBytes(0)
     setClassicalSigHex('')
     setClassicalSigSize(0)
@@ -673,6 +678,7 @@ export const FirmwareSigningMigrator: React.FC = () => {
         generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
       })
     } catch (err) {
+      setIsSimulationMode(true)
       console.error('[FirmwareSigningMigrator] keygen error:', err)
     }
     setIsProcessing(false)
@@ -759,6 +765,7 @@ export const FirmwareSigningMigrator: React.FC = () => {
       })
       setPqcCmsDer(pqcCms)
     } catch (err) {
+      setIsSimulationMode(true)
       console.error('[FirmwareSigningMigrator] sign error:', err)
       setSignError(`Sign failed: ${err instanceof Error ? err.message : String(err)}`)
     }
@@ -823,6 +830,7 @@ export const FirmwareSigningMigrator: React.FC = () => {
       }
       setPqcVerified(pvResult)
     } catch (err) {
+      setIsSimulationMode(true)
       console.error('[FirmwareSigningMigrator] verify error:', err)
     }
     setIsProcessing(false)
@@ -833,7 +841,9 @@ export const FirmwareSigningMigrator: React.FC = () => {
     setWizardOutput(null)
     setWizardError(null)
     setPqcKeysReady(false)
+    setIsSimulationMode(false)
     setClassicalKeysReady(false)
+    setIsSimulationMode(false)
     setPqcPubKeyBytes(0)
     setClassicalPubKeyBytes(0)
     setPqcSigHex('')
@@ -928,7 +938,8 @@ export const FirmwareSigningMigrator: React.FC = () => {
           break
       }
     } catch (err) {
-      setWizardError(err instanceof Error ? err.message : String(err))
+      setIsSimulationMode(true)
+      setWizardError(translateCryptoError(err instanceof Error ? err.message : String(err)))
     } finally {
       setIsWizardExecuting(false)
     }
@@ -1951,6 +1962,16 @@ export const FirmwareSigningMigrator: React.FC = () => {
       {/* LiveHSMToggle — per hsm-ui-layout-pattern.md §2.1 */}
       <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-muted/10 mb-6 rounded-t-xl">
         <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} />
+
+        {hsm.isReady && (
+          <WasmModeIndicator
+            isLive={!isSimulationMode}
+            simulationReason={
+              isSimulationMode ? 'Firmware signing fell back to mock mode.' : undefined
+            }
+            className="mb-4"
+          />
+        )}
         <Button
           onClick={handleReset}
           variant="ghost"
@@ -1963,6 +1984,8 @@ export const FirmwareSigningMigrator: React.FC = () => {
 
       {/* StepWizard — per hsm-ui-layout-pattern.md §2.2 */}
       <StepWizard
+        onComplete={handleReset}
+        completeLabel="Start Over"
         steps={wizardSteps}
         currentStepIndex={wizardStep}
         onNext={handleWizardNext}

@@ -14,6 +14,7 @@ import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import type { HsmFamily, HsmKeyRole } from '@/components/Playground/hsm/HsmContext'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { translateCryptoError } from '@/utils/cryptoErrorHint'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { Button } from '@/components/ui/button'
 
@@ -291,7 +292,7 @@ export const HybridCertFormats: React.FC = () => {
             formatId,
             certs: [],
             timingMs: performance.now() - start,
-            error: e instanceof Error ? e.message : 'Generation failed',
+            error: translateCryptoError(e instanceof Error ? e.message : 'Generation failed'),
           },
         }))
       }

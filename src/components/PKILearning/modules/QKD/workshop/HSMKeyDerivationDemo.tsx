@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback } from 'react'
-import { Play, ExternalLink, CheckCircle2, Lock, Key, Cpu, Zap } from 'lucide-react'
+import { Play, ExternalLink, CheckCircle2, Lock, Key, Cpu, Zap, RotateCcw } from 'lucide-react'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 import { useHSM } from '@/hooks/useHSM'
@@ -101,6 +101,12 @@ export const HSMKeyDerivationDemo: React.FC = () => {
   const [state, setState] = useState<Partial<DemoState>>({})
   const [processing, setProcessing] = useState(false)
   const hsm = useHSM()
+
+  const handleReset = useCallback(() => {
+    setCurrentStep(0)
+    setState({})
+    setProcessing(false)
+  }, [])
 
   // Step 1: Simulate ETSI QKD 014 REST key retrieval
   const handleFetch = useCallback(async () => {
@@ -646,6 +652,12 @@ export const HSMKeyDerivationDemo: React.FC = () => {
           </p>
           <div className="text-xs font-bold text-success">
             Simulated — for educational purposes only
+          </div>
+          <div className="flex justify-end pt-2">
+            <Button variant="outline" size="sm" onClick={handleReset} className="gap-1.5 text-xs">
+              <RotateCcw size={12} aria-hidden="true" />
+              Start Over
+            </Button>
           </div>
         </div>
       )}

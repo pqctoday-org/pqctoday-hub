@@ -236,9 +236,11 @@ export const StepWizard: React.FC<StepWizardProps> = ({
               <Button
                 variant="outline"
                 onClick={onNext}
-                disabled={currentStepIndex === steps.length - 1 || isExecuting}
-                title="Skip this step"
-                aria-label="Proceed to next step"
+                disabled={currentStepIndex === steps.length - 1 || isExecuting || !isStepComplete}
+                title={
+                  !isStepComplete ? 'Execute this step first before advancing' : 'Skip to next step'
+                }
+                aria-label="Skip to next step"
                 className="min-h-[44px] min-w-[44px] gap-2"
               >
                 <span className="hidden sm:inline">Skip</span>

@@ -10,7 +10,7 @@ import { KNOWN_OIDS } from '@/services/crypto/oidMapping'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { getCryptoErrorHint } from './cryptoErrorHints'
+import { getCryptoErrorHint } from '@/utils/cryptoErrorHint'
 
 // Import CSR profiles using Vite's glob import
 const csrProfiles = import.meta.glob('../../../../data/x509_profiles/CSR*.csv', {
@@ -431,7 +431,7 @@ export const CSRGenerator: React.FC<CSRGeneratorProps> = ({ onComplete }) => {
       })
     } catch (error) {
       const msg = error instanceof Error ? error.message : 'Unknown error'
-      const hint = getCryptoErrorHint(msg)
+      const hint = getCryptoErrorHint(msg)?.summary
       setOutput((prev) => prev + `Error generating key: ${msg}\n${hint ? `  → ${hint}\n` : ''}`)
       setGeneratedKeyInfo({
         id: '',
@@ -687,7 +687,7 @@ distinguished_name = dn
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-      const hint = getCryptoErrorHint(errorMessage)
+      const hint = getCryptoErrorHint(errorMessage)?.summary
       setOutput((prev) => prev + `Error: ${errorMessage}\n${hint ? `  → ${hint}\n` : ''}`)
     } finally {
       setIsGenerating(false)

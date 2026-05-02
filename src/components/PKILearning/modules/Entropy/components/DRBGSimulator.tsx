@@ -123,6 +123,14 @@ export const DRBGSimulator: React.FC = () => {
     }, 400)
   }, [])
 
+  const handleReset = () => {
+    setOutputBytes(null)
+    setGeneratedLength(0)
+    setValidation(null)
+    setInternalState(null)
+    setDrbgError(null)
+  }
+
   const handleGenerate = useCallback(() => {
     if (phase === 'needs-reseed') return
 

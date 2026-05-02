@@ -23,6 +23,7 @@ import {
 import { hsm_generateStatefulKeyPair, hsm_statefulSignBytes } from '@/wasm/softhsm/pqc'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import { translateCryptoError } from '@/utils/cryptoErrorHint'
 
 const LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_SignInit', 'C_Sign']
 
@@ -107,7 +108,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
         generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
       })
     } catch (e: unknown) {
-      setOpError(e instanceof Error ? e.message : String(e))
+      setOpError(translateCryptoError(e instanceof Error ? e.message : String(e)))
     } finally {
       setIsGenerating(false)
     }
@@ -140,7 +141,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
         })
       }
     } catch (e: unknown) {
-      setOpError(e instanceof Error ? e.message : String(e))
+      setOpError(translateCryptoError(e instanceof Error ? e.message : String(e)))
     }
   }, [hsm, activeKeyHandle, messageToSign, selected])
 

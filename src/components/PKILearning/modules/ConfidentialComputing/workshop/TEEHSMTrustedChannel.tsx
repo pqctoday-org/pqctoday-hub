@@ -34,6 +34,7 @@ import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import type { HsmKeyPurpose } from '@/components/Playground/hsm/HsmContext'
+import { translateCryptoError } from '@/utils/cryptoErrorHint'
 import {
   hsm_generateMLDSAKeyPair,
   hsm_generateMLKEMKeyPair,
@@ -612,7 +613,7 @@ export const TEEHSMTrustedChannel: React.FC = () => {
         })
       }
     } catch (e) {
-      setLiveError(e instanceof Error ? e.message : String(e))
+      setLiveError(translateCryptoError(e instanceof Error ? e.message : String(e)))
     } finally {
       setLiveRunning(false)
     }

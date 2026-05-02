@@ -16,6 +16,7 @@ import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
+import { WasmModeIndicator } from '@/components/shared/WasmModeIndicator'
 import {
   hsm_generateMLDSAKeyPair,
   hsm_generateECKeyPair,
@@ -244,6 +245,7 @@ export const TokenMigrationLab: React.FC = () => {
   const [liveSignatureBytes, setLiveSignatureBytes] = useState<number | null>(null)
   const [verifying, setVerifying] = useState(false)
   const [verifyResult, setVerifyResult] = useState<boolean | null>(null)
+  const [isSimulationMode, setIsSimulationMode] = useState(false)
   // Stores raw signature bytes from live signing for subsequent live verification
   const liveSigBytesRef = useRef<Uint8Array | null>(null)
 
@@ -263,6 +265,7 @@ export const TokenMigrationLab: React.FC = () => {
     setLiveSignatureBytes(null)
     setVerifyResult(null)
     liveSigBytesRef.current = null
+    setIsSimulationMode(false)
   }
 
   /** Generate or retrieve cached key pair for the selected algorithm */
@@ -363,6 +366,7 @@ export const TokenMigrationLab: React.FC = () => {
         setSigned(true)
       } catch (err) {
         console.error('[TokenMigrationLab] live sign error:', err)
+        setIsSimulationMode(true)
         // Fall back to mock on error
         const delay = algoData.timingMs * 10 + Math.random() * 5
         await new Promise((resolve) => setTimeout(resolve, delay))
@@ -403,6 +407,7 @@ export const TokenMigrationLab: React.FC = () => {
       setVerifyResult(ok)
     } catch (err) {
       console.error('[TokenMigrationLab] live verify error:', err)
+      setIsSimulationMode(true)
       setVerifyResult(false)
     }
     setVerifying(false)
@@ -435,6 +440,18 @@ export const TokenMigrationLab: React.FC = () => {
 
       {/* Live HSM Toggle */}
       <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} />
+
+      {hsm.isReady && (
+        <WasmModeIndicator
+          isLive={!isSimulationMode}
+          simulationReason={
+            isSimulationMode
+              ? 'Live operation failed — check the browser console for details.'
+              : undefined
+          }
+          className="mb-3"
+        />
+      )}
 
       {/* Algorithm Selector */}
       <div className="glass-panel p-5">

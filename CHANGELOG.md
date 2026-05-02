@@ -6,6 +6,63 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.59] - May 1, 2026
+
+### Added
+
+- **Product catalog module mapping — 100% coverage**: All 743 products in
+  `pqc_product_catalog_05012026_r2.csv` now have `learning_modules` values.
+  Previously 204 products (27%) were unmapped. New `scripts/enrich-module-mappings-ollama.py`
+  ran two passes: Pass 1 tagged 84 products with `slh-dsa` (keyword match on
+  SLH-DSA/SPHINCS+/FIPS 205 in description); Pass 2 used `qwen3.6:27b` to
+  assign 1–6 module IDs to each unmapped product.
+
+- **`slh-dsa` module fully stocked**: Was EMPTY (0 products). Now has 92
+  products — CRITICAL tier — covering libraries, HSMs, CLM tools, and
+  blockchain implementations that explicitly support FIPS 205.
+
+- **`scripts/generate-module-gap-report.py`**: One-shot analysis script that
+  reads the product catalog and `moduleData.ts`, computes per-module product
+  counts by category and infrastructure layer, assigns coverage tiers
+  (CRITICAL/GOOD/SPARSE/GAP/EMPTY), and writes `tasks/module-gap-report.md`.
+
+- **`crypto-mgmt-modernization` module cleanup**: Removed 17 misclassified
+  products (storage arrays, MDM/endpoint, DLP, messaging apps) that Ollama
+  incorrectly tagged as CPM tools. Module now contains 22 accurate entries:
+  CLM tools, PKI software, crypto discovery platforms, and KMS.
+
+### Fixed
+
+- **`TEEHSMTrustedChannel.tsx` import syntax error**: `translateCryptoError`
+  import was inserted inside another import block, breaking `tsc`. Moved to
+  its own import statement.
+
+- **Workshop WASM error messages**: Replaced raw PKCS#11 error codes and
+  Emscripten stack traces with user-readable summaries across 8 workshop
+  components (`TEEHSMTrustedChannel`, `HybridSignatures`, `SLHDSALiveDemo`,
+  `LMSKeyGenDemo`, `FirmwareSigningMigrator`, `HybridCertFormats`,
+  `TokenMigrationLab`, `LiveSshHandshakeRunner`) via new shared
+  `translateCryptoError()` in `src/utils/cryptoErrorHint.ts`.
+
+- **`cryptoErrorHints.ts` deprecated**: Inline PKI Workshop error-hint
+  function consolidated into shared `src/utils/cryptoErrorHint.ts` which adds
+  PKCS#11 v3.2 return-code patterns on top of the original OpenSSL patterns.
+
+### Added (components)
+
+- **`WasmModeIndicator`** (`src/components/shared/WasmModeIndicator.tsx`):
+  New shared indicator banner that shows live vs simulation fallback state in
+  workshop components. Wired into `TokenMigrationLab`, `FirmwareSigningMigrator`,
+  `HSMKeyDerivationDemo`, and `SLHDSALiveDemo`.
+
+- **Reset / Start Over buttons**: `HSMKeyDerivationDemo` (QKD module) and
+  `SLHDSALiveDemo` gain a `RotateCcw` reset button to restart the demo flow
+  without reloading the page.
+
+### Internal
+
+- `tsc --noEmit` clean; all 232 unit tests pass.
+
 ## [3.5.33] - May 1, 2026
 
 Wave 1 UX/UI implementation: 8 P0/P1 plans executed covering persona access,

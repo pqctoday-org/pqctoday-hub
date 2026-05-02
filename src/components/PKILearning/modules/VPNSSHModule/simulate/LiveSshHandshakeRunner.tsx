@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { HsmProvider, useHsmContext } from '@/components/Playground/hsm/HsmContext'
 import { sshEngine, type SshHandshakeResult } from '@/wasm/openssh'
+import { translateCryptoError } from '@/utils/cryptoErrorHint'
 import {
   SSH_KEX_SIZES,
   type SSHKexAlgorithm,
@@ -97,7 +98,7 @@ function RunnerInner({ algorithm }: Props) {
       setResult(r)
       setPhase('done')
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : String(err))
+      setErrorMsg(translateCryptoError(err instanceof Error ? err.message : String(err)))
       setPhase('error')
     }
   }, [autoInit, hSessionRef, isReady, mode, moduleRef])

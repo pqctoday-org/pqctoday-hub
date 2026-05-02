@@ -40,6 +40,7 @@ import {
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { Button } from '@/components/ui/button'
 import { ErrorAlert } from '@/components/ui/error-alert'
+import { translateCryptoError } from '@/utils/cryptoErrorHint'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -273,7 +274,7 @@ export const HybridSignatures: React.FC = () => {
         }
         updateState(id, { keys, loading: false })
       } catch (err) {
-        updateState(id, { loading: false, error: String(err) })
+        updateState(id, { loading: false, error: translateCryptoError(String(err)) })
       }
     },
     [updateState]
@@ -302,7 +303,7 @@ export const HybridSignatures: React.FC = () => {
         }
         updateState(id, { sigResult, loading: false })
       } catch (err) {
-        updateState(id, { loading: false, error: String(err) })
+        updateState(id, { loading: false, error: translateCryptoError(String(err)) })
       }
     },
     [state, message, updateState]
@@ -331,7 +332,7 @@ export const HybridSignatures: React.FC = () => {
         }
         updateState(id, { verifyResult, loading: false })
       } catch (err) {
-        updateState(id, { loading: false, error: String(err) })
+        updateState(id, { loading: false, error: translateCryptoError(String(err)) })
       }
     },
     [state, message, updateState]
@@ -348,7 +349,7 @@ export const HybridSignatures: React.FC = () => {
       const result = silithiumRecombinationAttack(msgBytes, sigResult.signatureBytes, attackerKeys)
       updateState('silithium', { loading: false, recombinationResult: result })
     } catch (err) {
-      updateState('silithium', { loading: false, error: String(err) })
+      updateState('silithium', { loading: false, error: translateCryptoError(String(err)) })
     }
   }, [state, message, updateState])
 
