@@ -208,6 +208,18 @@ const KeyAttrModal = ({
           </Button>
         </div>
 
+        {/* Diagnostic: surface when C_GetAttributeValue returned no usable
+            data. ckClass is the most fundamental attribute — every key has it,
+            so if it's null the underlying read failed entirely (stale session,
+            destroyed object, terminated worker). */}
+        {attrs.ckClass === null && attrs.ckKeyType === null && (
+          <div className="rounded border border-status-warning/30 bg-status-warning/10 px-3 py-2 text-xs text-status-warning">
+            Could not read PKCS#11 attributes for this key. The session or object handle may have
+            expired (e.g., the strongSwan worker terminated, or the daemon closed its session). The
+            handle and label are still shown above for reference.
+          </div>
+        )}
+
         {/* Identity attributes */}
         <div className="space-y-1">
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">

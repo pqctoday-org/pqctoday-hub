@@ -778,33 +778,85 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   const vpnSlotsRef = React.useRef<{ init: number; resp: number }>({ init: 0, resp: 1 })
 
   // Attribute resolver for HsmKeyInspector. Two cases:
-  //   • 'main' (or undefined) → key lives in panel rawM; read attributes directly.
+  //   • 'main' (or undefined) → key lives in panel rawM. Try the live refs and
+  //     the stored key.sessionHandle in turn — any of them can be stale after a
+  //     Generate Certs / Start Daemon cycle. Always returns a KeyAttributeSet
+  //     (possibly with every field null) so the modal opens with a visible
+  //     diagnostic instead of silently failing.
   //   • 'worker-init' / 'worker-resp' → key lives in a strongSwan worker's
-  //     statically-linked softhsmv3 (handle is invalid in panel WASM). Route the
-  //     read through strongSwanEngine.pkcs11(role, 'getKeyAttributes', …) so the
-  //     worker's own softhsmv3 answers, then return the same KeyAttributeSet shape.
+  //     statically-linked softhsmv3. Route through strongSwanEngine.pkcs11.
+  const emptyAttrs: KeyAttributeSet = React.useMemo(
+    () => ({
+      ckClass: null,
+      ckKeyType: null,
+      ckParameterSet: null,
+      ckKeyGenMechanism: null,
+      ckToken: null,
+      ckPrivate: null,
+      ckSensitive: null,
+      ckExtractable: null,
+      ckAlwaysSensitive: null,
+      ckNeverExtractable: null,
+      ckLocal: null,
+      ckEncrypt: null,
+      ckDecrypt: null,
+      ckSign: null,
+      ckVerify: null,
+      ckWrap: null,
+      ckUnwrap: null,
+      ckDerive: null,
+      ckEncapsulate: null,
+      ckDecapsulate: null,
+      ckValueLen: null,
+      ckHssKeysRemaining: null,
+      ckXmssKeysRemaining: null,
+      ckCheckValue: null,
+    }),
+    []
+  )
+
+  const isAllNull = React.useCallback(
+    (a: KeyAttributeSet) => a.ckClass === null && a.ckKeyType === null && a.ckToken === null,
+    []
+  )
+
   const vpnAttrsResolver = React.useCallback(
     async (key: HsmKey): Promise<KeyAttributeSet | null> => {
       if (!key.wasmContext || key.wasmContext === 'main') {
         const M = moduleRef.current
-        const hSession =
-          key.sessionHandle ?? (key.slotId === 1 ? serverSessionRef.current : hSessionRef.current)
-        if (!M || !hSession) return null
-        try {
-          return hsm_getKeyAttributes(M, hSession, key.handle)
-        } catch {
-          return null
+        if (!M) return emptyAttrs
+        // Build a fallback chain of session handles to try. Stale handles from
+        // a previous Generate Certs run yield CKR_SESSION_HANDLE_INVALID; the
+        // live refs may point to a fresher session opened by the daemon flow.
+        const candidates: number[] = []
+        const liveSlotSession = key.slotId === 1 ? serverSessionRef.current : hSessionRef.current
+        if (liveSlotSession) candidates.push(liveSlotSession)
+        if (key.sessionHandle && !candidates.includes(key.sessionHandle))
+          candidates.push(key.sessionHandle)
+        const otherLive = key.slotId === 1 ? hSessionRef.current : serverSessionRef.current
+        if (otherLive && !candidates.includes(otherLive)) candidates.push(otherLive)
+        for (const hSession of candidates) {
+          try {
+            const a = hsm_getKeyAttributes(M, hSession, key.handle)
+            if (!isAllNull(a)) return a
+          } catch {
+            // try next candidate
+          }
         }
+        // No candidate produced data — surface the modal anyway with all-null
+        // fields so the user sees a clear "no attributes available" state
+        // instead of a silent no-op.
+        return emptyAttrs
       }
       const role = key.wasmContext === 'worker-init' ? 'initiator' : 'responder'
       const hSess = key.sessionHandle
-      if (!hSess) return null
+      if (!hSess) return emptyAttrs
       try {
         const { rv, data } = await strongSwanEngine.pkcs11(role, 'getKeyAttributes', {
           hSess,
           hObj: key.handle,
         })
-        if (rv !== 0) return null
+        if (rv !== 0) return emptyAttrs
         const d = data as Record<string, unknown>
         // ckCheckValue arrives as number[] over postMessage; rehydrate to Uint8Array.
         const cv = d.ckCheckValue
@@ -813,10 +865,12 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           ckCheckValue: Array.isArray(cv) ? new Uint8Array(cv as number[]) : null,
         }
       } catch {
-        return null
+        // Worker terminated or RPC timed out — return empty so the modal still
+        // opens and the user sees the key handle / label rather than nothing.
+        return emptyAttrs
       }
     },
-    [moduleRef, hSessionRef]
+    [moduleRef, hSessionRef, emptyAttrs, isAllNull]
   )
   // Guards VPN-specific slot init — separate from moduleRef since other panels share that ref.
   const vpnRpcInitRef = React.useRef(false)
