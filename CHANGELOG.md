@@ -6,6 +6,104 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.63] - May 2, 2026
+
+Playground UX audit Wave 2A/2B/2C: error UX hardening across workshop tools,
+WasmModeIndicator in HSM Key Derivation, isStepComplete gating in all three
+blockchain flows, and supporting UX additions (SSH hybrid KEX rationale, Source
+Combining FilterDropdown, HD Wallet mnemonic panel, Solana tamper toggle,
+Patents full-text search, 5G scenario intro strip, PKI Workshop artifact strip).
+
+### Added
+
+- **Patents — full-text search panel**: `PatentSearchPanel` component uses
+  `minisearch` to index all patents by title, assignees, abstract, and PQC
+  algorithms. Results appear as cards with algorithm badges and a direct link
+  to the patent detail. Keyboard-accessible with `<Input>` and clear button.
+  (`PatentSearchPanel.tsx`, `PatentsView.tsx`)
+
+- **5G SUCI — scenario intro strip**: `ScenarioIntroStrip` component renders
+  an attacker vs. subscriber perspective toggle (`role="group"`) above the SUCI
+  flow, making the scenario context immediately visible without scrolling.
+  (`ScenarioIntroStrip.tsx`, `SuciFlow.tsx`)
+
+- **PKI Workshop — artifact summary strip**: `ArtifactSummaryStrip` at the top
+  of the workshop surfaces all generated CSRs, CA keys, and certificates as icon
+  chips, giving users a persistent view of what they've built across steps.
+  (`PKIWorkshop/index.tsx`)
+
+- **HD Wallet — BIP-39 mnemonic word grid**: After Step 0 completes,
+  a 24-word mnemonic panel appears with per-word index numbers and a note
+  that the final word encodes checksum bits. Conditional on `isStepComplete`.
+  (`HDWalletFlow.tsx`)
+
+- **HD Wallet — extractable-key security callout**: After Step 3 completes,
+  an `AlertTriangle` callout explains that address derivation required extracting
+  the private bytes from the HSM — and why production deployments avoid this.
+  (`HDWalletFlow.tsx`)
+
+- **Solana — tamper-signature toggle**: A WCAG-compliant custom checkbox
+  (`role="checkbox"`, `aria-checked`, keyboard-navigable) lets users flip one
+  signature byte before Step 9, producing a live `❌ INVALID` result to
+  demonstrate that even a single-bit change breaks verification. (`SolanaFlow.tsx`)
+
+- **SSH Sim — hybrid KEX rationale callout**: During and after the PQC phase,
+  an inline `ShieldCheck` panel explains why `mlkem768x25519-sha256` combines
+  X25519 with ML-KEM-768 and what "both algorithms must break" means in practice.
+  (`SshSimulationPanel.tsx`)
+
+- **SSH Sim — wire-packets view switcher**: Three-way toggle (list / diagram /
+  compare) lets users see packet payloads as a flat list, a visual flow diagram,
+  or a side-by-side classical vs. PQC comparison. (`SshSimulationPanel.tsx`)
+
+- **SSH Sim — beginner PKCS#11 mode**: `pkcs11BeginnerMode` toggle (default on)
+  hides raw CK handle numbers and replaces them with plain-English operation
+  labels. Expert mode reveals all handle IDs. (`SshSimulationPanel.tsx`)
+
+### Fixed
+
+- **VPN Simulator — `translateCryptoError` + `<ErrorAlert>`**: All catch blocks
+  in `VpnSimulationPanel.tsx` now route errors through `translateCryptoError()`.
+  The top-level error display is upgraded from a bare `<p className="text-xs
+text-status-error">` to `<ErrorAlert>` with `role="alert"`. SharedArrayBuffer
+  unavailability surfaces as a named inline badge rather than a raw error string.
+  (`VpnSimulationPanel.tsx`)
+
+- **Source Combining — `translateCryptoError`**: PKCS#11 error strings from the
+  HSM source-combining operations are now routed through `translateCryptoError()`
+  before reaching the existing `<ErrorAlert>`. Combination-method selector
+  upgraded from a raw `<select>` to `<FilterDropdown>`. (`SourceCombiningDemo.tsx`)
+
+- **SSH Sim — `translateCryptoError` + `<ErrorAlert>`**: Raw error strings in
+  the SSH handshake runner replaced with `translateCryptoError()` output;
+  the phase-level error display upgraded to `<ErrorAlert>`. (`SshSimulationPanel.tsx`)
+
+- **HSM Key Derivation — `WasmModeIndicator`**: `WasmModeIndicator` added
+  beside `LiveHSMToggle` to surface WASM-simulation mode for the SP 800-108
+  KDF demo, matching the pattern established in `TokenMigrationLab` and
+  `FirmwareSigningMigrator`. (`HSMKeyDerivationDemo.tsx`)
+
+- **Library — staleness badge excludes Expired/Superseded**: `DocumentCard`
+  now suppresses the `· verify` staleness badge for documents whose
+  `documentStatusBucket` is `Expired` or `Superseded` — they are already
+  visually dimmed, so the badge was redundant. (`DocumentCard.tsx`)
+
+### Changed
+
+- **Bitcoin — `isStepComplete` step gating**: `gatedHandleNext` callback
+  blocks advancement and surfaces an inline error if the user clicks Next
+  before executing the current step. (`BitcoinFlow.tsx`)
+
+- **Solana — `isStepComplete` step gating**: Same `gatedHandleNext` pattern
+  as Bitcoin. (`SolanaFlow.tsx`)
+
+- **HD Wallet — `isStepComplete` step gating**: Same `gatedHandleNext` pattern;
+  Step 2 action label updated to `'Demonstrate Derivation'`. (`HDWalletFlow.tsx`)
+
+### Internal
+
+- `tsc --noEmit` clean; 2021 unit tests pass.
+
 ## [3.5.62] - May 1, 2026
 
 Wave 3 UI audit completion: all P1, P2, and P3 items shipped. Learn module
