@@ -383,7 +383,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
               sign again.
             </p>
             <Button
-              variant="ghost"
+              variant="gradient"
               onClick={handleGenerateKey}
               disabled={!hsm.isReady || isGenerating}
               className="w-full font-bold"
@@ -397,7 +397,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
         </div>
 
         {/* Right: Parameter details and Tradeoffs */}
-        <div className="space-y-4">
+        <div id="lms-keygen-section" className="space-y-4">
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
               Key Parameters & Impact

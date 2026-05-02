@@ -47,6 +47,8 @@ interface StepWizardProps {
   completeLabel?: string
   onExecute: () => Promise<void>
   isExecuting: boolean
+  /** Additional disabled condition for Execute (e.g. HSM not ready). */
+  isExecuteDisabled?: boolean
   output: string | Record<string, string> | null
   error: string | null
   isStepComplete: boolean
@@ -164,31 +166,54 @@ export const StepWizard: React.FC<StepWizardProps> = ({
         {step.diagram && <div className="mb-4">{step.diagram}</div>}
 
         {step.explanationTable ? (
-          <div className="mb-4 overflow-x-auto rounded-lg border border-border">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-muted/30 text-muted-foreground">
-                <tr>
-                  <th className="p-2 sm:p-3 font-medium">Field</th>
-                  <th className="p-2 sm:p-3 font-medium">Value</th>
-                  <th className="p-2 sm:p-3 font-medium hidden sm:table-cell">Description</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {step.explanationTable.map((row, i) => (
-                  <tr key={i} className="hover:bg-muted/20 transition-colors">
-                    <td className="p-2 sm:p-3 font-mono text-primary text-xs sm:text-sm break-words">
-                      {row.label}
-                    </td>
-                    <td className="p-2 sm:p-3 font-mono text-foreground/80 text-xs sm:text-sm break-all">
+          <div className="mb-4">
+            {/* Mobile: card layout */}
+            <div className="sm:hidden space-y-2">
+              {step.explanationTable.map((row, i) => (
+                <div
+                  key={i}
+                  className="rounded-md border border-border p-2 space-y-0.5 bg-muted/10"
+                >
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs font-semibold text-primary">{row.label}</span>
+                    <span className="font-mono text-[10px] text-foreground/80 break-all">
                       {row.value}
-                    </td>
-                    <td className="p-2 sm:p-3 text-muted-foreground text-xs sm:text-sm hidden sm:table-cell">
-                      {row.description}
-                    </td>
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed mt-1">
+                    {row.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop: table layout */}
+            <div className="hidden sm:block overflow-x-auto rounded-lg border border-border">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-muted/30 text-muted-foreground">
+                  <tr>
+                    <th className="p-2 sm:p-3 font-medium w-[25%]">Field</th>
+                    <th className="p-2 sm:p-3 font-medium w-[40%]">Value</th>
+                    <th className="p-2 sm:p-3 font-medium w-[35%]">Description</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {step.explanationTable.map((row, i) => (
+                    <tr key={i} className="hover:bg-muted/20 transition-colors">
+                      <td className="p-2 sm:p-3 font-mono text-primary text-xs sm:text-sm break-words">
+                        {row.label}
+                      </td>
+                      <td className="p-2 sm:p-3 font-mono text-foreground/80 text-xs sm:text-sm break-all">
+                        {row.value}
+                      </td>
+                      <td className="p-2 sm:p-3 text-muted-foreground text-xs sm:text-sm">
+                        {row.description}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         ) : (
           <CodeBlock
@@ -357,8 +382,8 @@ export const StepWizard: React.FC<StepWizardProps> = ({
                 />
               )
             ) : (
-              <div className="h-full flex items-center justify-center text-foreground/20 text-sm">
-                Waiting for execution...
+              <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
+                Click Execute to run this step.
               </div>
             )}
 
