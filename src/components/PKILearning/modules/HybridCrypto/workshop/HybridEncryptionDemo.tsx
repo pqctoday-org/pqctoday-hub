@@ -576,6 +576,8 @@ export const HybridEncryptionDemo: React.FC = () => {
       <div className="px-6">
         <StepWizard
           steps={STEPS}
+          isExecuteDisabled={!hsm.isReady}
+          plainEnglishEnabled={true}
           currentStepIndex={wizard.currentStep}
           onNext={wizard.handleNext}
           onBack={wizard.handleBack}

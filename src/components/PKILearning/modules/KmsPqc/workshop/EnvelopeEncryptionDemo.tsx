@@ -41,6 +41,7 @@ import {
 } from '@/wasm/softhsm'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
+import { translateCryptoError } from '@/utils/cryptoErrorHint'
 import type { KatTestSpec } from '@/utils/katRunner'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -647,7 +648,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         })
       }
     } catch (e) {
-      setLiveError(e instanceof Error ? e.message : String(e))
+      setLiveError(translateCryptoError(e instanceof Error ? e.message : String(e)))
     } finally {
       setLiveRunning(false)
     }
