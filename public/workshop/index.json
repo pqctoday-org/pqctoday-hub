@@ -9,7 +9,7 @@
       "title": "Executive PQC Workshop — Finance (US / Canada / Australia)",
       "match": {
         "roles": ["executive"],
-        "proficiencies": ["basics"],
+        "proficiencies": ["basics", "expert"],
         "industries": ["Finance & Banking"],
         "regions": ["US", "CA", "AU"]
       },

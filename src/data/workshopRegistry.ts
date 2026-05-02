@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import type { PersonaId } from '@/data/learningPersonas'
+import type { ExperienceLevel } from '@/store/usePersonaStore'
 import type {
   ResolvedFlowContext,
   WorkshopFlow,
@@ -50,7 +52,9 @@ function specificityScore(flow: WorkshopFlow): number {
 export function flattenFlow(
   flow: WorkshopFlow,
   region: WorkshopRegion,
-  industry?: string
+  industry?: string,
+  role?: PersonaId,
+  proficiency?: ExperienceLevel
 ): WorkshopStep[] {
   const steps: WorkshopStep[] = []
   steps.push(...flow.intro.steps)
@@ -63,18 +67,23 @@ export function flattenFlow(
     steps.push(...chapter.steps)
   }
   steps.push(...flow.close.steps)
-  return steps.filter((s) => stepMatchesContext(s, region, industry))
+  return steps.filter((s) => stepMatchesContext(s, region, industry, role, proficiency))
 }
 
 function stepMatchesContext(
   step: WorkshopStep,
   region: WorkshopRegion,
-  industry?: string
+  industry?: string,
+  role?: PersonaId,
+  proficiency?: ExperienceLevel
 ): boolean {
   const w = step.when
   if (!w) return true
   if (w.industries && industry !== undefined && !w.industries.includes(industry)) return false
   if (w.regions && !w.regions.includes(region)) return false
+  if (w.roles && role !== undefined && !w.roles.includes(role)) return false
+  if (w.proficiencies && proficiency !== undefined && !w.proficiencies.includes(proficiency))
+    return false
   return true
 }
 

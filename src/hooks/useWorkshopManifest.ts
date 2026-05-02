@@ -5,6 +5,7 @@ import {
   loadFlow,
   resolveFromManifest,
   findEntry,
+  findAllCompatible,
   type WorkshopFlowManifest,
   type WorkshopFlowManifestEntry,
 } from '@/services/workshopFlowLoader'
@@ -21,6 +22,12 @@ interface UseWorkshopManifestResult {
   activeEntry: WorkshopFlowManifestEntry | null
   /** Always the auto-matched entry — independent of any override. */
   matchedEntry: WorkshopFlowManifestEntry | null
+  /**
+   * Every manifest entry compatible with the persona context, sorted
+   * most-specific first with the generic fallback last. Powers the
+   * Recommended tab's inner per-flow tab bar.
+   */
+  compatibleEntries: WorkshopFlowManifestEntry[]
   /** Hydrated full flow JSON for the active entry. Null while loading. */
   activeFlow: WorkshopFlow | null
 }
@@ -82,6 +89,17 @@ export function useWorkshopManifest(region: WorkshopRegion | null): UseWorkshopM
 
   const activeEntry = overrideEntry ?? matchedEntry
 
+  // Every flow whose `match` accepts the active persona context (loose match —
+  // null persona facets are treated as wildcards). Most-specific first.
+  const compatibleEntries: WorkshopFlowManifestEntry[] = manifest
+    ? findAllCompatible(manifest, {
+        role: role ?? undefined,
+        proficiency: proficiency ?? undefined,
+        industry: industry ?? undefined,
+        region: region ?? undefined,
+      })
+    : []
+
   // Hydrate the active flow whenever the file ref changes.
   const activeFile = activeEntry?.file ?? null
   useEffect(() => {
@@ -99,5 +117,5 @@ export function useWorkshopManifest(region: WorkshopRegion | null): UseWorkshopM
     }
   }, [activeFile])
 
-  return { manifest, isLoading, error, activeEntry, matchedEntry, activeFlow }
+  return { manifest, isLoading, error, activeEntry, matchedEntry, compatibleEntries, activeFlow }
 }

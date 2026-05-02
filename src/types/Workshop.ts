@@ -106,6 +106,8 @@ export interface WorkshopStep {
    * surfaces the step only for finance + healthcare personas.
    */
   when?: {
+    roles?: PersonaId[]
+    proficiencies?: ExperienceLevel[]
     industries?: string[]
     regions?: WorkshopRegion[]
   }
@@ -128,7 +130,13 @@ export interface FlowMatch {
 export interface WorkshopFlow {
   id: string
   title: string
+  /** Compatibility descriptor — which persona slices this flow is offered to. */
   match: FlowMatch
+  /**
+   * Short bullets shown in the "What to expect" section on the idle Workshop
+   * panel. 3-5 outcome-oriented sentences.
+   */
+  whatToExpect: string[]
   totalEstMinutes: number
   intro: WorkshopChapter
   prerequisites: WorkshopChapter

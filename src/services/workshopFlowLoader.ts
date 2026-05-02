@@ -79,6 +79,27 @@ export function resolveFromManifest(
   return manifest.flows.find((f) => f.isGenericFallback) ?? null
 }
 
+/**
+ * Returns every manifest entry compatible with the persona context, sorted
+ * most-specific first. The generic fallback (if present) is appended at the
+ * end so it always appears as a last-resort tab in the Recommended view.
+ *
+ * "Compatible" uses loose matching: a null persona facet (e.g. industry='All')
+ * is treated as a wildcard against any flow value. Symmetrically, a flow
+ * declaring `industries: '*'` matches any persona industry.
+ */
+export function findAllCompatible(
+  manifest: WorkshopFlowManifest,
+  ctx: Partial<ResolvedFlowContext>
+): WorkshopFlowManifestEntry[] {
+  const matched = manifest.flows.filter(
+    (f) => !f.isGenericFallback && matchesCtxLoose(f.match, ctx)
+  )
+  matched.sort((a, b) => specificity(b.match) - specificity(a.match))
+  const generic = manifest.flows.find((f) => f.isGenericFallback)
+  return generic ? [...matched, generic] : matched
+}
+
 function matchesCtx(match: FlowMatch, ctx: ResolvedFlowContext): boolean {
   return (
     arrMatches(match.roles, ctx.role as PersonaId) &&
@@ -88,9 +109,28 @@ function matchesCtx(match: FlowMatch, ctx: ResolvedFlowContext): boolean {
   )
 }
 
+/**
+ * Loose-match: a missing/null/All persona facet is treated as a wildcard.
+ * Lets architects with industry=null see every industry-specific flow.
+ */
+function matchesCtxLoose(match: FlowMatch, ctx: Partial<ResolvedFlowContext>): boolean {
+  return (
+    looseAxisMatches(match.roles, ctx.role) &&
+    looseAxisMatches(match.proficiencies, ctx.proficiency) &&
+    looseAxisMatches(match.industries, ctx.industry) &&
+    looseAxisMatches(match.regions, ctx.region)
+  )
+}
+
 function arrMatches<T>(allowed: T[] | '*' | undefined, value: T): boolean {
   if (!allowed || allowed === '*') return true
   return allowed.includes(value)
+}
+
+function looseAxisMatches<T>(allowed: T[] | '*' | undefined, value: T | null | undefined): boolean {
+  if (!allowed || allowed === '*') return true
+  if (value === null || value === undefined) return true // user has no preference → wildcard
+  return (allowed as T[]).includes(value)
 }
 
 function specificity(match: FlowMatch): number {

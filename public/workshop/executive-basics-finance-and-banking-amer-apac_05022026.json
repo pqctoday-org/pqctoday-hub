@@ -3,10 +3,16 @@
   "title": "Executive PQC Workshop — Finance (US / Canada / Australia)",
   "match": {
     "roles": ["executive"],
-    "proficiencies": ["basics"],
+    "proficiencies": ["basics", "expert"],
     "industries": ["Finance & Banking"],
     "regions": ["US", "CA", "AU"]
   },
+  "whatToExpect": [
+    "Plain-English understanding of the quantum threat to finance",
+    "Your jurisdiction's post-quantum deadlines (US, Canada, or Australia)",
+    "A board-ready, shareable risk report tailored to your context",
+    "A 90-day action plan walked through the four CSWP 39 zones"
+  ],
   "totalEstMinutes": 142,
   "intro": {
     "id": "intro",

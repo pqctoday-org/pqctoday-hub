@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import {
   GraduationCap,
   Play,
@@ -48,8 +49,25 @@ export const WorkshopPanel: React.FC = () => {
   const [pickedRegion, setPickedRegion] = useState<WorkshopRegion | null>(selectedRegion)
   const [activeTab, setActiveTab] = useState<'recommended' | 'browse'>('recommended')
 
+  // Auto-clear flowOverrideId when the persona context changes — a previously
+  // hand-picked flow shouldn't keep showing after the user switches role,
+  // proficiency, or industry. The hook fires once on mount with the current
+  // values; the ref skips that initial run so we don't clobber a fresh override.
+  const personaRole = usePersonaStore((s) => s.selectedPersona)
+  const personaProf = usePersonaStore((s) => s.experienceLevel)
+  const personaIndustry = usePersonaStore((s) => s.selectedIndustry)
+  const setFlowOverride = useWorkshopStore((s) => s.setFlowOverrideId)
+  const lastPersonaSig = useRef<string | null>(null)
+  useEffect(() => {
+    const sig = `${personaRole}|${personaProf}|${personaIndustry}`
+    if (lastPersonaSig.current !== null && lastPersonaSig.current !== sig) {
+      setFlowOverride(null)
+    }
+    lastPersonaSig.current = sig
+  }, [personaRole, personaProf, personaIndustry, setFlowOverride])
+
   // Manifest hook resolves the matched flow + honors the user's flowOverrideId.
-  const { manifest, activeEntry, matchedEntry, activeFlow, isLoading } =
+  const { manifest, activeEntry, matchedEntry, compatibleEntries, activeFlow, isLoading } =
     useWorkshopManifest(pickedRegion)
 
   const flowOverrideId = useWorkshopStore((s) => s.flowOverrideId)
@@ -80,31 +98,74 @@ export const WorkshopPanel: React.FC = () => {
   // they're always available; specific flows require the picked region.
   const prereqsReady = activeFlow !== null && pickedRegion !== null
 
+  const headerTitle = activeEntry?.title ?? 'Workshop'
+  const headerSubtitle = activeEntry
+    ? `${formatMatchSummary(activeEntry.match)} · ~${activeEntry.totalEstMinutes} min`
+    : 'Pick a flow to begin'
+
   return (
     <div className="flex-1 overflow-y-auto px-4 md:px-6 py-4 space-y-4">
       <header className="space-y-1">
         <div className="flex items-center gap-2">
           <GraduationCap size={18} className="text-primary" />
-          <h2 className="text-base font-semibold text-foreground">Executive PQC Workshop</h2>
+          <h2 className="text-base font-semibold text-foreground">{headerTitle}</h2>
         </div>
-        <p className="text-xs text-muted-foreground">
-          Finance · United States, Canada, or Australia · ~90 minutes
-        </p>
+        <p className="text-xs text-muted-foreground">{headerSubtitle}</p>
       </header>
 
-      <section className="rounded-lg border border-border bg-card p-3 space-y-2">
-        <h3 className="text-sm font-medium text-foreground">What to expect</h3>
-        <ul className="text-sm text-muted-foreground space-y-1.5 list-disc list-inside marker:text-primary">
-          <li>Plain-English understanding of the quantum threat to finance</li>
-          <li>Your jurisdiction&rsquo;s post-quantum deadlines (US, Canada, or Australia)</li>
-          <li>A board-ready, shareable risk report tailored to your context</li>
-          <li>A 90-day action plan walked through the four CSWP 39 zones</li>
-        </ul>
-      </section>
+      {/* Per-flow inner tab bar — one tab per compatible flow, generic last. */}
+      {compatibleEntries.length > 1 && (
+        <div
+          className="flex flex-wrap items-center gap-1 border-b border-border"
+          role="tablist"
+          aria-label="Compatible workshops"
+        >
+          {compatibleEntries.map((entry) => {
+            const isActive = activeEntry?.id === entry.id
+            const isMatched = matchedEntry?.id === entry.id
+            return (
+              <Button
+                key={entry.id}
+                variant="ghost"
+                size="sm"
+                role="tab"
+                aria-selected={isActive}
+                onClick={() => setFlowOverrideId(isMatched ? null : entry.id)}
+                className={`rounded-none rounded-t-md border-b-2 text-xs ${
+                  isActive
+                    ? 'border-primary text-foreground'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {entry.title}
+                {entry.isGenericFallback && (
+                  <span className="ml-1.5 text-[10px] text-muted-foreground/70">(fallback)</span>
+                )}
+              </Button>
+            )
+          })}
+        </div>
+      )}
+
+      {activeFlow && activeFlow.whatToExpect && activeFlow.whatToExpect.length > 0 && (
+        <section className="rounded-lg border border-border bg-card p-3 space-y-2">
+          <h3 className="text-sm font-medium text-foreground">What to expect</h3>
+          <ul className="text-sm text-muted-foreground space-y-1.5 list-disc list-inside marker:text-primary">
+            {activeFlow.whatToExpect.map((bullet, i) => (
+              <li key={i}>{bullet}</li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section className="rounded-lg border border-border bg-card p-3 space-y-2">
         <h3 className="text-sm font-medium text-foreground">Pre-flight checklist</h3>
-        <WorkshopPrereqList pickedRegion={pickedRegion} onPickRegion={setPickedRegion} />
+        <WorkshopPrereqList
+          pickedRegion={pickedRegion}
+          onPickRegion={setPickedRegion}
+          flowMatch={activeEntry?.match}
+          onPickAnotherFlow={() => setActiveTab('browse')}
+        />
       </section>
 
       {/* Recommended / Browse-all tab bar */}
@@ -302,6 +363,17 @@ export const WorkshopPanel: React.FC = () => {
       </p>
     </div>
   )
+}
+
+function formatMatchSummary(match: import('@/types/Workshop').FlowMatch): string {
+  const fmt = (val: readonly string[] | '*' | undefined): string => {
+    if (val === '*' || val === undefined) return 'any'
+    if (val.length === 0) return 'any'
+    if (val.length <= 2) return val.join(' / ')
+    return `${val.length} options`
+  }
+  const parts = [fmt(match.roles), fmt(match.industries), fmt(match.regions)]
+  return parts.join(' · ')
 }
 
 interface FlowAgendaProps {

@@ -8,6 +8,12 @@
     "industries": "*",
     "regions": "*"
   },
+  "whatToExpect": [
+    "A 6-minute tour of every PQC Today section",
+    "Pointers into the right module for your role and industry",
+    "Where to find authoritative standards (NIST, CCCS, ASD, ENISA)",
+    "What to read next once you've picked your persona"
+  ],
   "isGenericFallback": true,
   "totalEstMinutes": 6,
   "intro": {
