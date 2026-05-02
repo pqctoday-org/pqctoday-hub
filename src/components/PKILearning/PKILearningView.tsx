@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { Suspense } from 'react'
+import React, { Suspense, useRef } from 'react'
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { Dashboard } from './Dashboard'
 import { ArrowLeft } from 'lucide-react'
@@ -20,6 +20,7 @@ import { usePersonaStore } from '../../store/usePersonaStore'
 import { WipModuleBadge } from './common/WipModuleBadge'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { Button } from '@/components/ui/button'
+import { AutoToc } from './common/AutoToc'
 
 const PKIWorkshop = lazyWithRetry(() =>
   import('./modules/PKIWorkshop').then((module) => ({ default: module.PKIWorkshop }))
@@ -260,6 +261,7 @@ const OSPQCModule = lazyWithRetry(() =>
 export const PKILearningView: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const contentRef = useRef<HTMLDivElement>(null)
   const isDashboard = location.pathname === '/learn' || location.pathname === '/learn/'
 
   const isEmbed = useIsEmbedded()
@@ -351,7 +353,8 @@ export const PKILearningView: React.FC = () => {
 
       <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 items-start">
         {/* Main module content */}
-        <div className="flex-1 min-w-0 w-full">
+        <div ref={contentRef} className="flex-1 min-w-0 w-full">
+          <AutoToc containerRef={contentRef} />
           {/* Dual progress header bar — mobile only slim header */}
           {showSidebar && !isCuriousMode && (
             <div className="lg:hidden sticky top-[60px] z-30 -mx-4 px-4 bg-background/80 backdrop-blur-md pb-2 pt-2 mb-4 border-b border-border/50">

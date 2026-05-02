@@ -1,6 +1,42 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
+import {
+  Search,
+  Briefcase,
+  Building2,
+  School,
+  AlertCircle,
+  Users,
+  Award,
+  ShieldX,
+  Info,
+} from 'lucide-react'
+
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { leadersData, leadersMetadata } from '../../data/leadersData'
+import type { Leader } from '../../data/leadersData'
+import { logEvent } from '../../utils/analytics'
+import { FilterDropdown } from '../common/FilterDropdown'
+import { EmptyState } from '../ui/empty-state'
+import { CountryFlag } from '../common/CountryFlag'
+import { LeaderCard } from './LeaderCard'
+import { LeadersTable } from './LeadersTable'
+import { LeaderDetailPopover } from './LeaderDetailPopover'
+import { LeaderCategorySidebar, LEADER_CATEGORIES } from './LeaderCategorySidebar'
+import { FLAG_CODE_MAP, LEADERS_REGION_COUNTRIES } from './leadersConstants'
+import { LeadersViewToggle } from './LeadersViewToggle'
+import type { LeadersViewMode } from './LeadersViewToggle'
+import { SectorStack } from './SectorStack'
+import { SortControl } from '../Library/SortControl'
+import { PageHeader } from '../common/PageHeader'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
+import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
+import { LEADERS_CSV_COLUMNS } from '@/utils/csvExportConfigs'
+import { LeaderConsentModal } from './LeaderConsentModal'
+import { LeaderRemovalModal } from './LeaderRemovalModal'
+import { Button } from '../ui/button'
 
 type FilterKey = 'region' | 'country' | 'sector' | 'category' | 'layer'
 
@@ -94,42 +130,6 @@ function useLeaderFilters(
 
   return { values, set, reset }
 }
-import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Search,
-  Briefcase,
-  Building2,
-  School,
-  AlertCircle,
-  Users,
-  Award,
-  ShieldX,
-  Info,
-} from 'lucide-react'
-
-import { usePersonaStore } from '@/store/usePersonaStore'
-import { leadersData, leadersMetadata } from '../../data/leadersData'
-import type { Leader } from '../../data/leadersData'
-import { logEvent } from '../../utils/analytics'
-import { FilterDropdown } from '../common/FilterDropdown'
-import { EmptyState } from '../ui/empty-state'
-import { CountryFlag } from '../common/CountryFlag'
-import { LeaderCard } from './LeaderCard'
-import { LeadersTable } from './LeadersTable'
-import { LeaderDetailPopover } from './LeaderDetailPopover'
-import { LeaderCategorySidebar, LEADER_CATEGORIES } from './LeaderCategorySidebar'
-import { FLAG_CODE_MAP, LEADERS_REGION_COUNTRIES } from './leadersConstants'
-import { LeadersViewToggle } from './LeadersViewToggle'
-import type { LeadersViewMode } from './LeadersViewToggle'
-import { SectorStack } from './SectorStack'
-import { SortControl } from '../Library/SortControl'
-import { PageHeader } from '../common/PageHeader'
-import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
-import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
-import { LEADERS_CSV_COLUMNS } from '@/utils/csvExportConfigs'
-import { LeaderConsentModal } from './LeaderConsentModal'
-import { LeaderRemovalModal } from './LeaderRemovalModal'
-import { Button } from '../ui/button'
 
 const REGION_LABELS: Record<string, string> = {
   americas: 'Americas',
