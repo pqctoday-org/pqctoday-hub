@@ -137,14 +137,15 @@ export const VideoOverlay: React.FC = () => {
     //                  advance. Compressing rich-cue steps (3 min authored)
     //                  into 10s makes clicks fire before the page renders, so
     //                  Preview is captions-only.
-    //   presentation → cues fire at authored tMs / speedMultiplier; step runs
-    //                  for its full authored duration scaled by speed.
+    //   presentation → cues fire at authored tMs * speedMultiplier; step runs
+    //                  for `originalMs * speedMultiplier`. Slow (mul=2) doubles
+    //                  the duration and pushes every cue out by 2×; fast
+    //                  (mul=0.5) halves both.
     const isPreview = playbackMode === 'preview'
     const cuesSorted = isPreview ? [] : [...(step.cues ?? [])].sort((a, b) => a.tMs - b.tMs)
-    const targetMs = isPreview
-      ? STEP_DURATION_MS[playbackSpeed]
-      : Math.max(1, originalMs / PRESENTATION_SPEED_MULTIPLIER[playbackSpeed])
-    const scale = isPreview ? 0 : 1 / PRESENTATION_SPEED_MULTIPLIER[playbackSpeed]
+    const mul = PRESENTATION_SPEED_MULTIPLIER[playbackSpeed]
+    const targetMs = isPreview ? STEP_DURATION_MS[playbackSpeed] : Math.max(1, originalMs * mul)
+    const scale = isPreview ? 0 : mul
 
     const tick = (): void => {
       if (pausedAtRef.current !== null) {
