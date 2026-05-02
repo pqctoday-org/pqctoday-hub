@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { ExternalLink, Play, ShieldCheck } from 'lucide-react'
+import { ExternalLink, Loader2, Play, ShieldCheck } from 'lucide-react'
 import { clsx } from 'clsx'
 import { useTLSStore, type SimulationResult } from '@/store/tls-learning.store'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
@@ -301,21 +301,21 @@ export const TLSSimulatorTab: React.FC = () => {
               setResults(null)
               clearSession()
             }}
-            className="btn btn-secondary flex items-center gap-2 px-4 py-3"
+            className="flex items-center gap-2 px-4 py-3"
           >
             Reset
           </Button>
         )}
         <Button
-          variant="ghost"
+          variant="gradient"
           onClick={triggerSimulation}
           disabled={isSpinning}
-          className="btn btn-primary flex items-center gap-2 px-6 py-3 text-lg"
+          className="flex items-center gap-2 px-6 py-3 text-lg"
         >
           {isSpinning ? (
-            <span className="loading loading-spinner loading-sm" />
+            <Loader2 size={20} className="animate-spin" aria-hidden="true" />
           ) : (
-            <Play size={20} fill="currentColor" />
+            <Play size={20} fill="currentColor" aria-hidden="true" />
           )}
           {results ? 'Run Again' : 'Start Full Interaction'}
         </Button>

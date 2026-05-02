@@ -463,7 +463,7 @@ export const SLHDSALiveDemo: React.FC = () => {
             <Button
               onClick={handleGenerateKey}
               disabled={!!loading}
-              variant="outline"
+              variant="gradient"
               className="text-sm"
             >
               {loading === 'keygen' ? (
