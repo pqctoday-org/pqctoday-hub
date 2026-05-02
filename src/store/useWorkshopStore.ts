@@ -85,7 +85,9 @@ const INITIAL: Pick<
   startedAt: null,
   selectedRegion: null,
   playbackSpeed: 'normal',
-  playbackMode: 'preview',
+  // Default to Presentation: cues fire at authored timing and tabs / clicks /
+  // module walks actually play. Preview is the explicit fast-tour opt-in.
+  playbackMode: 'presentation',
   flowOverrideId: null,
 }
 
@@ -142,7 +144,10 @@ export const useWorkshopStore = create<WorkshopState>()(
     }),
     {
       name: 'pqc-workshop',
-      version: 3,
+      // v4 changes default playbackMode 'preview' → 'presentation'. Force-reset
+      // existing 'preview' to 'presentation' so the tour works out of the box.
+      // Users can switch back via the Mode picker.
+      version: 4,
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         mode: state.mode === 'video' ? 'idle' : state.mode,
@@ -155,7 +160,7 @@ export const useWorkshopStore = create<WorkshopState>()(
         playbackMode: state.playbackMode,
         flowOverrideId: state.flowOverrideId,
       }),
-      migrate: (persistedState: unknown) => {
+      migrate: (persistedState: unknown, version: number) => {
         const s = (persistedState ?? {}) as Record<string, unknown>
         const allowedModes: WorkshopMode[] = ['idle', 'running', 'paused', 'video']
         const mode = allowedModes.includes(s.mode as WorkshopMode)
@@ -168,6 +173,12 @@ export const useWorkshopStore = create<WorkshopState>()(
         if (s.playbackSpeed === 'slow' || s.playbackSpeed === 0.5) playbackSpeed = 'slow'
         else if (s.playbackSpeed === 'fast' || s.playbackSpeed === 2) playbackSpeed = 'fast'
 
+        // v4: force playbackMode → 'presentation' for everyone. v3 default was
+        // 'preview' which silently broke module-tour cues. Users can opt-in to
+        // preview again via the Mode picker.
+        const playbackMode: PlaybackMode =
+          version >= 4 && s.playbackMode === 'preview' ? 'preview' : 'presentation'
+
         return {
           mode: mode === 'running' ? 'paused' : mode,
           currentFlowId: typeof s.currentFlowId === 'string' ? s.currentFlowId : null,
@@ -179,7 +190,7 @@ export const useWorkshopStore = create<WorkshopState>()(
           selectedRegion:
             typeof s.selectedRegion === 'string' ? (s.selectedRegion as WorkshopRegion) : null,
           playbackSpeed,
-          playbackMode: s.playbackMode === 'presentation' ? 'presentation' : 'preview',
+          playbackMode,
           flowOverrideId: typeof s.flowOverrideId === 'string' ? s.flowOverrideId : null,
         }
       },
