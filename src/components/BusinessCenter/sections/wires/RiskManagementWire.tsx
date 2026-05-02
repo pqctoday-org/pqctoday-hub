@@ -23,7 +23,7 @@ import { Button } from '@/components/ui/button'
 import type { BusinessMetrics } from '../../hooks/useBusinessMetrics'
 import { FrameworkDeadlineList } from '../../widgets/FrameworkDeadlineList'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
-import { threatsData } from '@/data/threatsData'
+import { useThreatsData } from '@/hooks/useThreatsData'
 
 export interface RiskManagementWireProps {
   metrics: BusinessMetrics
@@ -184,6 +184,7 @@ function FrameworkBlock({ metrics }: { metrics: BusinessMetrics }) {
 function TrackedThreatsBlock() {
   const navigate = useNavigate()
   const myThreats = useBookmarkStore((s) => s.myThreats)
+  const { data: threatsData } = useThreatsData()
   if (myThreats.length === 0) return null
   const tracked = threatsData.filter((t) => myThreats.includes(t.threatId))
   return (

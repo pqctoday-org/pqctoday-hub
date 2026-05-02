@@ -91,6 +91,8 @@ export const threatsData: ThreatData[] = currentItems.map((item) => ({
 
 export const threatsMetadata = metadata
 
+export const THREATS_COUNT = threatsData.length
+
 // Standalone CSV parser for use by tests and RAG corpus generator
 export function parseThreatsCSV(csvContent: string): ThreatData[] {
   if (!csvContent.trim()) return []

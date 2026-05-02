@@ -13,7 +13,8 @@ import { ArrowRight, Briefcase, Calendar, ShieldAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { BusinessMetrics } from '../../hooks/useBusinessMetrics'
 import { FrameworkDeadlineList } from '../../widgets/FrameworkDeadlineList'
-import { threatsData, type ThreatData } from '@/data/threatsData'
+import type { ThreatData } from '@/data/threatsData'
+import { useThreatsData } from '@/hooks/useThreatsData'
 
 export interface GovernanceWireProps {
   metrics: BusinessMetrics
@@ -63,6 +64,7 @@ function FrameworksBlock({ metrics }: { metrics: BusinessMetrics }) {
 
 function ThreatsBlock({ metrics }: { metrics: BusinessMetrics }) {
   const navigate = useNavigate()
+  const { data: threatsData } = useThreatsData()
   const industry = metrics.industry
   const matched = useMemo(() => {
     if (!industry) return []
@@ -73,7 +75,7 @@ function ThreatsBlock({ metrics }: { metrics: BusinessMetrics }) {
         (a, b) => (CRITICALITY_RANK[b.criticality] ?? 0) - (CRITICALITY_RANK[a.criticality] ?? 0)
       )
       .slice(0, 5)
-  }, [industry])
+  }, [industry, threatsData])
 
   if (!industry || matched.length === 0) return null
 

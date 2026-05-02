@@ -1,6 +1,99 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
+
+type FilterKey = 'region' | 'country' | 'sector' | 'category' | 'layer'
+
+interface FilterSpec {
+  defaultValue: string
+  urlParam: string // '' = not URL-synced
+}
+
+const LEADER_FILTERS: Record<FilterKey, FilterSpec> = {
+  region: { defaultValue: 'All', urlParam: 'region' },
+  country: { defaultValue: 'All', urlParam: 'country' },
+  sector: { defaultValue: 'All', urlParam: 'sector' },
+  category: { defaultValue: 'All', urlParam: 'cat' },
+  layer: { defaultValue: 'All', urlParam: '' },
+}
+
+const FILTER_KEYS = Object.keys(LEADER_FILTERS) as FilterKey[]
+type FilterValues = Record<FilterKey, string>
+type SetSearchParams = ReturnType<typeof useSearchParams>[1]
+
+function useLeaderFilters(
+  searchParams: URLSearchParams,
+  setSearchParams: SetSearchParams
+): { values: FilterValues; set: (changes: Partial<FilterValues>) => void; reset: () => void } {
+  const [values, setValues] = useState<FilterValues>(
+    () =>
+      Object.fromEntries(
+        FILTER_KEYS.map((k) => {
+          const { urlParam, defaultValue } = LEADER_FILTERS[k]
+          return [k, urlParam ? (searchParams.get(urlParam) ?? defaultValue) : defaultValue]
+        })
+      ) as FilterValues
+  )
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync is the purpose of this effect
+    setValues((prev) => {
+      const next = { ...prev }
+      let changed = false
+      for (const k of FILTER_KEYS) {
+        const { urlParam, defaultValue } = LEADER_FILTERS[k]
+        if (!urlParam) continue
+        const urlVal = searchParams.get(urlParam) ?? defaultValue
+        if (prev[k] !== urlVal) {
+          next[k] = urlVal
+          changed = true
+        }
+      }
+      return changed ? next : prev
+    })
+  }, [searchParams])
+
+  const set = useCallback(
+    (changes: Partial<FilterValues>) => {
+      setValues((prev) => ({ ...prev, ...changes }))
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          for (const [k, v] of Object.entries(changes) as [FilterKey, string][]) {
+            const { urlParam, defaultValue } = LEADER_FILTERS[k]
+            if (!urlParam) continue
+            if (v !== defaultValue) next.set(urlParam, v)
+            else next.delete(urlParam)
+          }
+          return next
+        },
+        { replace: true }
+      )
+    },
+    [setSearchParams]
+  )
+
+  const reset = useCallback(() => {
+    setValues(
+      Object.fromEntries(
+        FILTER_KEYS.map((k) => [k, LEADER_FILTERS[k].defaultValue])
+      ) as FilterValues
+    )
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        for (const k of FILTER_KEYS) {
+          const { urlParam } = LEADER_FILTERS[k]
+          if (urlParam) next.delete(urlParam)
+        }
+        return next
+      },
+      { replace: true }
+    )
+  }, [setSearchParams])
+
+  return { values, set, reset }
+}
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Search,
@@ -54,17 +147,13 @@ const LEADER_SORT_OPTIONS: { id: LeaderSortOption; label: string }[] = [
 
 export const LeadersGrid = () => {
   const [searchParams, setSearchParams] = useSearchParams()
-  const [selectedRegion, setSelectedRegion] = useState<string>(() => {
-    return searchParams.get('region') ?? 'All'
-  })
-  const [selectedCountry, setSelectedCountry] = useState<string>(() => {
-    return searchParams.get('country') ?? 'All'
-  })
-  const [selectedSector, setSelectedSector] = useState<string>(() => {
-    const sector = searchParams.get('sector')
-    return sector && ['Public', 'Private', 'Academic'].includes(sector) ? sector : 'All'
-  })
-  const [activeCategory, setActiveCategory] = useState(() => searchParams.get('cat') ?? 'All')
+  const filters = useLeaderFilters(searchParams, setSearchParams)
+  const { set: setFilters } = filters
+  const selectedRegion = filters.values.region
+  const selectedCountry = filters.values.country
+  const selectedSector = filters.values.sector
+  const activeCategory = filters.values.category
+  const activeLayer = filters.values.layer
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') ?? '')
   const [highlightedLeader, setHighlightedLeader] = useState<string | null>(() =>
     searchParams.get('leader')
@@ -73,7 +162,6 @@ export const LeadersGrid = () => {
   const [viewMode, setViewMode] = useState<LeadersViewMode>(
     () => (searchParams.get('mode') as LeadersViewMode | null) ?? 'cards'
   )
-  const [activeLayer, setActiveLayer] = useState<string>('All')
   const [sortBy, setSortBy] = useState<LeaderSortOption>(
     () => (searchParams.get('sort') as LeaderSortOption | null) ?? 'name'
   )
@@ -83,78 +171,16 @@ export const LeadersGrid = () => {
   const gridRef = useRef<HTMLDivElement>(null)
   const { selectedIndustries, selectedPersona, experienceLevel } = usePersonaStore()
 
-  /** Write all filter state back to URL. Call with overrides for the value that just changed.
-   *  Uses replace:true to avoid history spam. Functional setSearchParams preserves ?leader=. */
-  const syncFiltersToUrl = useCallback(
-    (overrides: {
-      region?: string
-      country?: string
-      sector?: string
-      q?: string
-      cat?: string
-      sort?: LeaderSortOption
-      mode?: LeadersViewMode
-    }) => {
-      setSearchParams(
-        (prev) => {
-          const next = new URLSearchParams(prev) // preserves ?leader= if present
-          const region = overrides.region ?? selectedRegion
-          const country = overrides.country ?? selectedCountry
-          const sector = overrides.sector ?? selectedSector
-          const q = overrides.q ?? searchQuery
-          const cat = overrides.cat ?? activeCategory
-          const sort = overrides.sort ?? sortBy
-          const mode = overrides.mode ?? viewMode
-
-          if (region !== 'All') next.set('region', region)
-          else next.delete('region')
-          if (country !== 'All') next.set('country', country)
-          else next.delete('country')
-          if (sector !== 'All') next.set('sector', sector)
-          else next.delete('sector')
-          if (q) next.set('q', q)
-          else next.delete('q')
-          if (cat !== 'All') next.set('cat', cat)
-          else next.delete('cat')
-          if (sort !== 'name') next.set('sort', sort)
-          else next.delete('sort')
-          if (mode !== 'cards') next.set('mode', mode)
-          else next.delete('mode')
-          return next
-        },
-        { replace: true }
-      )
-    },
-    [
-      selectedRegion,
-      selectedCountry,
-      selectedSector,
-      searchQuery,
-      activeCategory,
-      sortBy,
-      viewMode,
-      setSearchParams,
-    ]
-  )
-
-  // Sync all URL params on same-route navigations (e.g. chatbot deep links).
-  // Functional setters prevent cascade loops when syncFiltersToUrl triggers a searchParams update.
+  // Sync non-filter URL params on same-route navigations (e.g. chatbot deep links).
+  // Filter params (region/country/sector/cat/layer) are synced by useLeaderFilters internally.
   useEffect(() => {
     const nextQ = searchParams.get('q') ?? ''
-    const nextSector = searchParams.get('sector') ?? 'All'
-    const nextRegion = searchParams.get('region') ?? 'All'
-    const nextCountry = searchParams.get('country') ?? 'All'
-    const nextCat = searchParams.get('cat') ?? 'All'
     const nextSort = (searchParams.get('sort') as LeaderSortOption | null) ?? 'name'
     const nextMode = (searchParams.get('mode') as LeadersViewMode | null) ?? 'cards'
     const nextLeader = searchParams.get('leader')
 
     // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync is the purpose of this effect
     setSearchQuery((prev) => (prev !== nextQ ? nextQ : prev))
-    setSelectedSector((prev) => (prev !== nextSector ? nextSector : prev))
-    setSelectedRegion((prev) => (prev !== nextRegion ? nextRegion : prev))
-    setSelectedCountry((prev) => (prev !== nextCountry ? nextCountry : prev))
-    setActiveCategory((prev) => (prev !== nextCat ? nextCat : prev))
     setSortBy((prev) => (prev !== nextSort ? nextSort : prev))
     setViewMode((prev) => (prev !== nextMode ? nextMode : prev))
     // ?leader= handled by the scroll-to effect below
@@ -175,10 +201,7 @@ export const LeadersGrid = () => {
         const existsUnfiltered = leadersData.some((l) => l.name === highlightedLeader)
         if (existsUnfiltered) {
           // Clear filters so the card becomes visible, then re-trigger scroll
-          setSelectedRegion('All')
-          setSelectedCountry('All')
-          setSelectedSector('All')
-          setActiveCategory('All')
+          setFilters({ region: 'All', country: 'All', sector: 'All', category: 'All' })
           setSearchQuery('')
         } else {
           // Leader doesn't exist in database at all
@@ -189,7 +212,7 @@ export const LeadersGrid = () => {
       }
     }, 300)
     return () => clearTimeout(timer)
-  }, [highlightedLeader, selectedCountry, selectedSector, searchQuery, activeCategory])
+  }, [highlightedLeader, selectedCountry, selectedSector, searchQuery, activeCategory, setFilters])
 
   // Region items
   const regionItems = useMemo(
@@ -346,8 +369,7 @@ export const LeadersGrid = () => {
   }, [sortedLeaders])
 
   const handleCategorySelect = (category: string) => {
-    setActiveCategory(category)
-    syncFiltersToUrl({ cat: category })
+    filters.set({ category })
     logEvent('Leaders', 'Filter Category', category)
   }
 
@@ -466,8 +488,7 @@ export const LeadersGrid = () => {
               items={sectorItems}
               selectedId={selectedSector}
               onSelect={(id) => {
-                setSelectedSector(id)
-                syncFiltersToUrl({ sector: id })
+                filters.set({ sector: id })
                 logEvent('Leaders', 'Filter Sector', id)
               }}
               defaultLabel="Sector"
@@ -482,9 +503,7 @@ export const LeadersGrid = () => {
               items={regionItems}
               selectedId={selectedRegion}
               onSelect={(id) => {
-                setSelectedRegion(id)
-                setSelectedCountry('All')
-                syncFiltersToUrl({ region: id, country: 'All' })
+                filters.set({ region: id, country: 'All' })
                 logEvent('Leaders', 'Filter Region', id)
               }}
               defaultLabel="Region"
@@ -499,8 +518,7 @@ export const LeadersGrid = () => {
               items={countryItems}
               selectedId={selectedCountry}
               onSelect={(id) => {
-                setSelectedCountry(id)
-                syncFiltersToUrl({ country: id })
+                filters.set({ country: id })
                 logEvent('Leaders', 'Filter Country', id)
               }}
               defaultLabel="Country"
@@ -525,11 +543,18 @@ export const LeadersGrid = () => {
               placeholder="Search leaders..."
               value={searchQuery}
               onChange={(e) => {
-                setSearchQuery(e.target.value)
-                syncFiltersToUrl({ q: e.target.value })
-                if (e.target.value.length > 2) {
-                  logEvent('Leaders', 'Search', e.target.value)
-                }
+                const q = e.target.value
+                setSearchQuery(q)
+                setSearchParams(
+                  (prev) => {
+                    const next = new URLSearchParams(prev)
+                    if (q) next.set('q', q)
+                    else next.delete('q')
+                    return next
+                  },
+                  { replace: true }
+                )
+                if (q.length > 2) logEvent('Leaders', 'Search', q)
               }}
               className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
             />
@@ -540,7 +565,15 @@ export const LeadersGrid = () => {
               value={sortBy}
               onChange={(s) => {
                 setSortBy(s)
-                syncFiltersToUrl({ sort: s })
+                setSearchParams(
+                  (prev) => {
+                    const next = new URLSearchParams(prev)
+                    if (s !== 'name') next.set('sort', s)
+                    else next.delete('sort')
+                    return next
+                  },
+                  { replace: true }
+                )
               }}
               options={LEADER_SORT_OPTIONS}
             />
@@ -551,7 +584,15 @@ export const LeadersGrid = () => {
               mode={viewMode}
               onChange={(mode) => {
                 setViewMode(mode)
-                syncFiltersToUrl({ mode })
+                setSearchParams(
+                  (prev) => {
+                    const next = new URLSearchParams(prev)
+                    if (mode !== 'cards') next.set('mode', mode)
+                    else next.delete('mode')
+                    return next
+                  },
+                  { replace: true }
+                )
               }}
             />
           </div>
@@ -593,7 +634,7 @@ export const LeadersGrid = () => {
         <div className="mb-8 hidden md:block">
           <SectorStack
             activeLayer={activeLayer}
-            onSelectLayer={setActiveLayer}
+            onSelectLayer={(l) => filters.set({ layer: l })}
             items={filteredLeaders}
             expandedContent={
               <div className="p-4 md:p-6 bg-background rounded-lg border border-border mt-4">

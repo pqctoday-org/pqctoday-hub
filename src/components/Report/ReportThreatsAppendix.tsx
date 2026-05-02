@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useMemo } from 'react'
 import { ExternalLink, EyeOff } from 'lucide-react'
-import { threatsData } from '../../data/threatsData'
 import type { ThreatData } from '../../data/threatsData'
+import { useThreatsData } from '../../hooks/useThreatsData'
 import { Button } from '../ui/button'
 import clsx from 'clsx'
 
@@ -135,6 +135,7 @@ export const ReportThreatsAppendix: React.FC<ReportThreatsAppendixProps> = ({
   hiddenThreatIds,
   onHideThreat,
 }) => {
+  const { data: threatsData } = useThreatsData()
   const hiddenSet = useMemo(() => new Set(hiddenThreatIds), [hiddenThreatIds])
 
   const industryThreats = useMemo(() => {
@@ -143,7 +144,7 @@ export const ReportThreatsAppendix: React.FC<ReportThreatsAppendixProps> = ({
     return threatsData.filter(
       (t) => threatIndustryNames.includes(t.industry) && !hiddenSet.has(t.threatId)
     )
-  }, [industry, hiddenSet])
+  }, [industry, hiddenSet, threatsData])
 
   return (
     <div className="space-y-4 overflow-x-auto print:overflow-visible">

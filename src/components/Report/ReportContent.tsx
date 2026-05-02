@@ -41,7 +41,7 @@ import { softwareData } from '../../data/migrateData'
 import { ReportTimelineStrip } from './ReportTimelineStrip'
 import { ReportThreatsAppendix, ASSESS_TO_THREATS_INDUSTRY } from './ReportThreatsAppendix'
 import { ReportCswp39Nav } from './ReportCswp39Nav'
-import { threatsData } from '../../data/threatsData'
+import { useThreatsData } from '../../hooks/useThreatsData'
 import { MigrationRoadmap } from './MigrationRoadmap'
 import { MigrationToolkit } from './MigrationToolkit'
 import { ReportMethodologyModal } from './ReportMethodologyModal'
@@ -454,6 +454,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   collapseToken = 0,
 }) => {
   const navigate = useNavigate()
+  const { data: threatsData } = useThreatsData()
   const { reset, editFromStep } = useAssessmentStore()
   const assessmentStatus = useAssessmentStore((s) => s.assessmentStatus)
   const { workflowActive, startWorkflow } = useMigrationWorkflowStore()
@@ -483,7 +484,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
       threatsData.filter((t) => threatIndustryNames.includes(t.industry)).map((t) => t.threatId)
     )
     return hiddenThreats.filter((id) => industryThreatIds.has(id)).length
-  }, [industry, hiddenThreats])
+  }, [industry, hiddenThreats, threatsData])
 
   const [showFullReport, setShowFullReport] = useState(false)
   const [methodologyOpen, setMethodologyOpen] = useState(false)

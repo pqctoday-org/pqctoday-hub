@@ -6,7 +6,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { ExportableArtifact } from '../../../common/executive'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
-import { threatsData } from '@/data/threatsData'
+import { useThreatsData } from '@/hooks/useThreatsData'
 
 interface AlgorithmImpact {
   name: string
@@ -106,9 +106,10 @@ export const CRQCScenarioPlanner: React.FC = () => {
   const { migrationDeadlineYear, industry, country } = useExecutiveModuleData()
   const { addExecutiveDocument } = useModuleStore()
   const myThreatIds = useBookmarkStore((s) => s.myThreats)
+  const { data: threatsData } = useThreatsData()
   const myTrackedThreats = useMemo(
     () => threatsData.filter((t) => myThreatIds.includes(t.threatId)),
-    [myThreatIds]
+    [myThreatIds, threatsData]
   )
 
   const currentYear = new Date().getFullYear()
