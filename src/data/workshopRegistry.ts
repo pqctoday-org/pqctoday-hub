@@ -42,11 +42,17 @@ function specificityScore(flow: WorkshopFlow): number {
 
 /**
  * Flatten a flow into an ordered step list for the active region. Order:
- *   intro → prereq → common chapters (in array order) → region chapter → action/close (last common entry assumed close, see executiveFinance shape)
- * The flow's `common` array contains all chapters except the region-specific one;
- * the region chapter (if defined) is inserted just before any chapter whose id is 'action'.
+ *   intro → prereq → common chapters (in array order) → region chapter → action/close
+ * The region chapter (if defined) is inserted just before the 'action' chapter.
+ *
+ * Optionally filters steps via their `when:` clause against the active persona
+ * context (industry + region). Steps without `when:` always pass.
  */
-export function flattenFlow(flow: WorkshopFlow, region: WorkshopRegion): WorkshopStep[] {
+export function flattenFlow(
+  flow: WorkshopFlow,
+  region: WorkshopRegion,
+  industry?: string
+): WorkshopStep[] {
   const steps: WorkshopStep[] = []
   steps.push(...flow.intro.steps)
   steps.push(...flow.prerequisites.steps)
@@ -58,7 +64,19 @@ export function flattenFlow(flow: WorkshopFlow, region: WorkshopRegion): Worksho
     steps.push(...chapter.steps)
   }
   steps.push(...flow.close.steps)
-  return steps
+  return steps.filter((s) => stepMatchesContext(s, region, industry))
+}
+
+function stepMatchesContext(
+  step: WorkshopStep,
+  region: WorkshopRegion,
+  industry?: string
+): boolean {
+  const w = step.when
+  if (!w) return true
+  if (w.industries && industry !== undefined && !w.industries.includes(industry)) return false
+  if (w.regions && !w.regions.includes(region)) return false
+  return true
 }
 
 export function findStepIndex(steps: WorkshopStep[], stepId: string): number {

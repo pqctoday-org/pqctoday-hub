@@ -80,6 +80,18 @@ export interface WorkshopStep {
   narration: string
   completionSignal?: WorkshopCompletionSignal
   cues?: WorkshopCue[]
+  /**
+   * Optional step-level visibility filter. When present, the step is
+   * included in the flattened flow only if every declared facet matches
+   * the active persona context. Omitted facets always match.
+   *
+   * Example: `when: { industries: ['Finance & Banking', 'Healthcare'] }`
+   * surfaces the step only for finance + healthcare personas.
+   */
+  when?: {
+    industries?: string[]
+    regions?: WorkshopRegion[]
+  }
 }
 
 export interface WorkshopChapter {
