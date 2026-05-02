@@ -272,7 +272,9 @@ export const WorkshopPanel: React.FC = () => {
                 Mode
               </span>
               <span className="text-[10px] text-muted-foreground">
-                {playbackMode === 'preview' ? 'Fast tour' : 'Authored timeline'}
+                {playbackMode === 'preview'
+                  ? 'Fast URL tour · captions only'
+                  : 'Full module walks · clicks + tabs'}
               </span>
             </div>
             <div className="flex gap-1.5">

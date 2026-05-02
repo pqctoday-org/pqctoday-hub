@@ -129,20 +129,22 @@ export const VideoOverlay: React.FC = () => {
   useEffect(() => {
     if (mode !== 'video' || !step) return
     let raf = 0
-    const cues = step.cues ?? []
-    const cuesSorted = [...cues].sort((a, b) => a.tMs - b.tMs)
     const originalMs = Math.max(1, step.estMinutes * 60_000)
 
     // Two playback modes:
-    //   preview      → step plays for fixed STEP_DURATION_MS[speed]; cue tMs scaled into that window
-    //   presentation → cue tMs * (1/speedMultiplier); step duration = lastCueTMs / speedMultiplier
+    //   preview      → fast tour. Skip cue timeline entirely; just dwell on
+    //                  the narration caption for STEP_DURATION_MS[speed], then
+    //                  advance. Compressing rich-cue steps (3 min authored)
+    //                  into 10s makes clicks fire before the page renders, so
+    //                  Preview is captions-only.
+    //   presentation → cues fire at authored tMs / speedMultiplier; step runs
+    //                  for its full authored duration scaled by speed.
     const isPreview = playbackMode === 'preview'
+    const cuesSorted = isPreview ? [] : [...(step.cues ?? [])].sort((a, b) => a.tMs - b.tMs)
     const targetMs = isPreview
       ? STEP_DURATION_MS[playbackSpeed]
       : Math.max(1, originalMs / PRESENTATION_SPEED_MULTIPLIER[playbackSpeed])
-    const scale = isPreview
-      ? STEP_DURATION_MS[playbackSpeed] / originalMs
-      : 1 / PRESENTATION_SPEED_MULTIPLIER[playbackSpeed]
+    const scale = isPreview ? 0 : 1 / PRESENTATION_SPEED_MULTIPLIER[playbackSpeed]
 
     const tick = (): void => {
       if (pausedAtRef.current !== null) {
@@ -160,11 +162,6 @@ export const VideoOverlay: React.FC = () => {
         }
         applyCue(next, fixtures, step.id, cuesSorted.slice(handledIdxRef.current + 1))
       }
-      if (cuesSorted.length === 0 && elapsed >= targetMs) {
-        advanceToNext()
-        return
-      }
-      // Safety: even with cues, never exceed the target window for the step.
       if (elapsed >= targetMs) {
         advanceToNext()
         return
@@ -174,7 +171,7 @@ export const VideoOverlay: React.FC = () => {
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, step?.id, restartToken, fixtures, playbackSpeed])
+  }, [mode, step?.id, restartToken, fixtures, playbackSpeed, playbackMode])
 
   if (mode !== 'video' || !step) return null
 
