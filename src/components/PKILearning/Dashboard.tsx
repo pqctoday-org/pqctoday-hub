@@ -467,6 +467,7 @@ const ModuleTracksGrid = ({
   const { selectedIndustry, experienceLevel, selectedPersona, setPersona } = usePersonaStore()
   const { myLearnModules, showOnlyLearnModules, setShowOnlyLearnModules } = useBookmarkStore()
   const [searchParams] = useSearchParams()
+  const gridScrollRef = useRef<HTMLDivElement>(null)
 
   // Deep-link: ?track=<name> and ?persona=<id> preset filters from corpus chunks.
   // Both are case-insensitive; track matches MODULE_TRACKS[*].track, persona matches PersonaId.
@@ -481,6 +482,15 @@ const ModuleTracksGrid = ({
     if (!q) return null
     return Object.keys(PERSONAS).includes(q) ? q : null
   })()
+
+  // Auto-scroll to grid when arriving via ?track= deep-link so content is immediately visible
+  useEffect(() => {
+    if (initialTrack !== 'All' && gridScrollRef.current) {
+      gridScrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+    // Only run on mount — initialTrack and ref are stable after initial render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Filter state
   const [searchText, setSearchText] = useState('')
@@ -717,7 +727,7 @@ const ModuleTracksGrid = ({
   if (personaFilterActive) activeFilterCount++
 
   return (
-    <div className="space-y-6 pt-4">
+    <div className="space-y-6 pt-4" ref={gridScrollRef}>
       {/* Header */}
       <div className="mb-2 md:mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>

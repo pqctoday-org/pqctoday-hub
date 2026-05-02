@@ -8,9 +8,14 @@ import { ShieldAlert } from 'lucide-react'
 interface ThreatsCardGridProps {
   items: ThreatItem[]
   onItemClick: (item: ThreatItem) => void
+  relevantIndustries?: Set<string>
 }
 
-export const ThreatsCardGrid = ({ items, onItemClick }: ThreatsCardGridProps) => {
+export const ThreatsCardGrid = ({
+  items,
+  onItemClick,
+  relevantIndustries,
+}: ThreatsCardGridProps) => {
   if (items.length === 0) {
     return (
       <EmptyState
@@ -25,7 +30,13 @@ export const ThreatsCardGrid = ({ items, onItemClick }: ThreatsCardGridProps) =>
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       <AnimatePresence mode="popLayout">
         {items.map((item, i) => (
-          <ThreatCard key={item.threatId} item={item} index={i} onClick={onItemClick} />
+          <ThreatCard
+            key={item.threatId}
+            item={item}
+            index={i}
+            onClick={onItemClick}
+            dimmed={relevantIndustries != null && !relevantIndustries.has(item.industry)}
+          />
         ))}
       </AnimatePresence>
     </div>

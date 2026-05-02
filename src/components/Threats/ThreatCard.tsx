@@ -16,9 +16,10 @@ interface ThreatCardProps {
   item: ThreatItem
   index?: number
   onClick?: (item: ThreatItem) => void
+  dimmed?: boolean
 }
 
-export const ThreatCard = ({ item, index = 0, onClick }: ThreatCardProps) => {
+export const ThreatCard = ({ item, index = 0, onClick, dimmed = false }: ThreatCardProps) => {
   const isBookmarked = useBookmarkStore((s) => s.myThreats.includes(item.threatId))
   const toggleMyThreat = useBookmarkStore((s) => s.toggleMyThreat)
 
@@ -27,7 +28,10 @@ export const ThreatCard = ({ item, index = 0, onClick }: ThreatCardProps) => {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, delay: index * 0.03 }}
-      className="glass-panel p-5 flex flex-col h-full hover:border-secondary/50 transition-colors bg-card/50 relative cursor-pointer"
+      className={clsx(
+        'glass-panel p-5 flex flex-col h-full hover:border-secondary/50 transition-all bg-card/50 relative cursor-pointer',
+        dimmed && 'opacity-40 hover:opacity-100'
+      )}
       onClick={() => onClick?.(item)}
       role="button"
       tabIndex={0}

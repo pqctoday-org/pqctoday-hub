@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
-import { MessageSquare, ChevronDown } from 'lucide-react'
+import { MessageSquare, ChevronDown, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DISCUSSIONS_BASE, DISCUSSIONS } from '../aboutData'
 
@@ -75,6 +75,29 @@ export function CommunitySection() {
           )}
         </AnimatePresence>
       </div>
+      <div className="mt-4 pt-4 border-t border-border/50 flex flex-wrap gap-3">
+        <a
+          href="https://github.com/pqctoday-org/pqctoday-hub/graphs/contributors"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors"
+          title="View all contributors on GitHub"
+        >
+          <Users size={13} aria-hidden="true" />
+          Contributors
+        </a>
+        <a
+          href="https://github.com/pqctoday-org/pqctoday-hub"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors"
+          title="View source on GitHub"
+        >
+          <MessageSquare size={13} aria-hidden="true" />
+          Source on GitHub
+        </a>
+      </div>
+
       <Button
         variant="ghost"
         onClick={() => setIsShowAllDiscussions(!isShowAllDiscussions)}

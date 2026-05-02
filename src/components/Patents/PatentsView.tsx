@@ -13,6 +13,7 @@ import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import type { CsvColumnConfig } from '@/utils/csvExport'
 import type { PatentItem } from '@/types/PatentTypes'
 import { logPatentExport, logPatentInsightsFilter } from '@/utils/analytics'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import {
   COLUMN_PRESETS,
   ALL_COLUMN_IDS,
@@ -78,6 +79,7 @@ function readSavedSort(): { key: SortKey; dir: SortDir } {
 
 export function PatentsView() {
   const [searchParams, setSearchParams] = useSearchParams()
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const activeTab = searchParams.get('tab') ?? 'insights'
   const selectedPatent = searchParams.get('patent')
 
@@ -101,13 +103,18 @@ export function PatentsView() {
 
   const sortKey = useMemo<SortKey>(() => {
     const s = searchParams.get('sort') as SortKey | null
-    return s && VALID_SORT_KEYS.includes(s) ? s : readSavedSort().key
-  }, [searchParams])
+    if (s && VALID_SORT_KEYS.includes(s)) return s
+    // Executive persona defaults to impact-first when no explicit sort preference is saved
+    if (!localStorage.getItem(SORT_LS_KEY) && selectedPersona === 'executive') return 'impactScore'
+    return readSavedSort().key
+  }, [searchParams, selectedPersona])
 
   const sortDir = useMemo<SortDir>(() => {
     const d = searchParams.get('dir') as SortDir | null
-    return d && VALID_SORT_DIRS.includes(d) ? d : readSavedSort().dir
-  }, [searchParams])
+    if (d && VALID_SORT_DIRS.includes(d)) return d
+    if (!localStorage.getItem(SORT_LS_KEY) && selectedPersona === 'executive') return 'desc'
+    return readSavedSort().dir
+  }, [searchParams, selectedPersona])
 
   const handleSort = useCallback(
     (key: SortKey) => {

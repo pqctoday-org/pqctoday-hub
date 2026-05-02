@@ -301,6 +301,17 @@ export const ThreatsDashboard: React.FC = () => {
     myThreats,
   ])
 
+  // When a persona is set but no explicit industry filter is active, compute the persona's
+  // relevant industries to drive card dimming — irrelevant threats remain visible but faded.
+  const personaRelevantIndustries = useMemo<Set<string> | undefined>(() => {
+    if (!selectedPersona || selectedIndustries.length > 0 || storeIndustries.length === 0)
+      return undefined
+    const mapped = storeIndustries
+      .flatMap((ind) => INDUSTRY_TO_THREATS_MAP[ind] ?? []) // eslint-disable-line security/detect-object-injection
+      .filter((ind) => threatsData.some((d) => d.industry === ind))
+    return mapped.length > 0 ? new Set(mapped) : undefined
+  }, [selectedPersona, selectedIndustries, storeIndustries])
+
   // Persona-aware summary statistics
   const personaSummary = useMemo(() => {
     if (!selectedPersona || selectedIndustries.length === 0) return null
@@ -512,6 +523,7 @@ export const ThreatsDashboard: React.FC = () => {
                 setSelectedThreat(item)
                 syncFiltersToUrl({ id: item.threatId })
               }}
+              relevantIndustries={personaRelevantIndustries}
             />
           </div>
         )}

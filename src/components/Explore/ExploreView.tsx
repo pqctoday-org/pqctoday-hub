@@ -9,6 +9,7 @@ import {
   ClipboardCheck,
   Shield,
   Unlock,
+  Sparkles,
   type LucideIcon,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -23,6 +24,8 @@ interface ExploreTile {
   /** Alternate destination for gated-curious users (avoids sending them to blocked routes). */
   gatedPath?: string
   accent: string
+  /** Persona IDs for which this tile is highlighted as recommended. */
+  recommendedFor?: string[]
 }
 
 const TILES: ExploreTile[] = [
@@ -33,6 +36,7 @@ const TILES: ExploreTile[] = [
       "Start with the essentials. Why quantum computers threaten today's encryption and what's being done about it.",
     path: '/learn',
     accent: 'text-primary bg-primary/10',
+    recommendedFor: ['executive', 'developer', 'architect', 'researcher'],
   },
   {
     icon: Globe,
@@ -41,6 +45,7 @@ const TILES: ExploreTile[] = [
       'See which governments and organizations have already committed to post-quantum cryptography — and when.',
     path: '/timeline',
     accent: 'text-secondary bg-secondary/10',
+    recommendedFor: ['executive', 'architect'],
   },
   {
     icon: AlertTriangle,
@@ -49,6 +54,7 @@ const TILES: ExploreTile[] = [
       '"Harvest now, decrypt later" attacks are happening today. Learn what data is already at risk.',
     path: '/threats',
     accent: 'text-status-warning bg-status-warning/10',
+    recommendedFor: ['executive'],
   },
   {
     icon: ShieldCheck,
@@ -57,6 +63,7 @@ const TILES: ExploreTile[] = [
       'NIST, FIPS, NSA CNSA — see which regulations apply to your industry and how to stay ahead.',
     path: '/compliance',
     accent: 'text-accent bg-accent/10',
+    recommendedFor: ['executive', 'architect'],
   },
   {
     icon: ClipboardCheck,
@@ -65,6 +72,7 @@ const TILES: ExploreTile[] = [
       "A 2-minute questionnaire that estimates your organization's exposure to the quantum threat.",
     path: '/assess',
     accent: 'text-primary bg-primary/10',
+    recommendedFor: ['executive', 'architect'],
   },
   {
     icon: Shield,
@@ -74,6 +82,7 @@ const TILES: ExploreTile[] = [
     path: '/algorithms',
     gatedPath: '/learn/pqc-101',
     accent: 'text-secondary bg-secondary/10',
+    recommendedFor: ['developer', 'researcher'],
   },
 ]
 
@@ -103,6 +112,10 @@ export function ExploreView() {
         {TILES.map((tile) => {
           const Icon = tile.icon
           const destination = isGated && tile.gatedPath ? tile.gatedPath : tile.path
+          const isRecommended =
+            selectedPersona != null &&
+            selectedPersona !== 'curious' &&
+            tile.recommendedFor?.includes(selectedPersona)
           return (
             <Button
               key={tile.path}
@@ -111,8 +124,14 @@ export function ExploreView() {
                 logExploreTileClick(destination)
                 navigate(destination)
               }}
-              className="glass-panel h-auto p-5 flex-col items-start text-left whitespace-normal hover:bg-transparent hover:border-primary/40 group"
+              className={`glass-panel h-auto p-5 flex-col items-start text-left whitespace-normal hover:bg-transparent hover:border-primary/40 group relative ${isRecommended ? 'border-primary/30' : ''}`}
             >
+              {isRecommended && (
+                <span className="absolute top-2.5 right-2.5 flex items-center gap-1 text-[10px] font-semibold text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+                  <Sparkles size={9} aria-hidden="true" />
+                  For you
+                </span>
+              )}
               <div className={`p-2.5 rounded-lg mb-3 ${tile.accent}`}>
                 <Icon size={20} aria-hidden="true" />
               </div>
