@@ -27,8 +27,8 @@
         "industries": "*",
         "regions": "*"
       },
-      "totalEstMinutes": 30,
-      "stepCount": 14,
+      "totalEstMinutes": 6,
+      "stepCount": 34,
       "isGenericFallback": true,
       "date": "05022026"
     }
