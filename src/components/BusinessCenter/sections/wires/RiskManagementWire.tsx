@@ -19,6 +19,18 @@ import {
   TrendingDown,
   Minus,
 } from 'lucide-react'
+import type { CategoryScores } from '@/hooks/assessmentTypes'
+
+const CATEGORY_TREND_ROWS: {
+  key: keyof CategoryScores
+  label: string
+  lowerIsBetter: boolean
+}[] = [
+  { key: 'quantumExposure', label: 'Quantum Exposure', lowerIsBetter: true },
+  { key: 'migrationComplexity', label: 'Migration Complexity', lowerIsBetter: true },
+  { key: 'regulatoryPressure', label: 'Regulatory Pressure', lowerIsBetter: true },
+  { key: 'organizationalReadiness', label: 'Org. Readiness', lowerIsBetter: false },
+]
 import { Button } from '@/components/ui/button'
 import type { BusinessMetrics } from '../../hooks/useBusinessMetrics'
 import { FrameworkDeadlineList } from '../../widgets/FrameworkDeadlineList'
@@ -126,6 +138,40 @@ function HealthTile({ metrics }: { metrics: BusinessMetrics }) {
             ? `${metrics.complianceGapCount} compliance gap${metrics.complianceGapCount !== 1 ? 's' : ''} flagged`
             : 'No compliance gaps flagged'}
         </p>
+        {metrics.categoryScores && metrics.previousCategoryScores && (
+          <div className="mt-2 pt-2 border-t border-border/50 space-y-0.5">
+            {CATEGORY_TREND_ROWS.map(({ key, label, lowerIsBetter }) => {
+              const curr = metrics.categoryScores![key] // eslint-disable-line security/detect-object-injection
+              const prev = metrics.previousCategoryScores![key] // eslint-disable-line security/detect-object-injection
+              const d = curr - prev
+              const isGood = lowerIsBetter ? d < 0 : d > 0
+              const colorClass =
+                d === 0
+                  ? 'text-muted-foreground/60'
+                  : isGood
+                    ? 'text-status-success'
+                    : 'text-status-error'
+              return (
+                <div key={key} className="flex items-center justify-between">
+                  <span className="text-[10px] text-muted-foreground">{label}</span>
+                  <span
+                    className={`flex items-center gap-0.5 text-[10px] font-mono ${colorClass}`}
+                    title={`${label}: ${curr} (was ${prev})`}
+                  >
+                    {d > 0 ? (
+                      <TrendingUp size={9} />
+                    ) : d < 0 ? (
+                      <TrendingDown size={9} />
+                    ) : (
+                      <Minus size={9} />
+                    )}
+                    {d > 0 ? `+${d}` : d < 0 ? `${d}` : '—'}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+        )}
       </div>
       <Button variant="link" size="sm" onClick={() => navigate('/assess')} className="h-auto p-0">
         View assessment <ArrowRight size={12} className="ml-0.5" />

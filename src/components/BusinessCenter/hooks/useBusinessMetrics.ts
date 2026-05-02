@@ -7,7 +7,7 @@ import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { useMigrationWorkflowStore } from '@/store/useMigrationWorkflowStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { computeAssessment } from '@/hooks/assessmentUtils'
-import type { AssessmentResult } from '@/hooks/assessmentTypes'
+import type { AssessmentResult, CategoryScores } from '@/hooks/assessmentTypes'
 import type {
   ExecutiveDocument,
   ExecutiveDocumentType,
@@ -153,12 +153,8 @@ export interface BusinessMetrics {
   // Risk overview
   riskScore: number | null
   riskLevel: 'low' | 'medium' | 'high' | 'critical' | null
-  categoryScores: {
-    quantumExposure: number
-    migrationComplexity: number
-    regulatoryPressure: number
-    organizationalReadiness: number
-  } | null
+  categoryScores: CategoryScores | null
+  previousCategoryScores: CategoryScores | null
   assessmentStatus: 'not-started' | 'in-progress' | 'complete'
   assessmentHistory: { completedAt: string; riskScore: number }[]
   previousRiskScore: number | null
@@ -501,6 +497,10 @@ export function useBusinessMetrics(): BusinessMetrics {
     const input = assessmentStore.getInput()
     const result = input ? computeAssessment(input) : null
 
+    const history = assessmentStore.assessmentHistory
+    const prevSnapshot = history.length >= 2 ? history[history.length - 2] : null
+    const previousCategoryScores: CategoryScores | null = prevSnapshot?.categoryScores ?? null
+
     // ── Compliance tracking ─────────────────────────────────────
     const fromCompliancePage = new Set(complianceStore.myFrameworks)
     const fromAssessment = new Set(assessmentStore.complianceRequirements)
@@ -641,6 +641,7 @@ export function useBusinessMetrics(): BusinessMetrics {
       riskScore: result?.riskScore ?? null,
       riskLevel: result?.riskLevel ?? null,
       categoryScores: result?.categoryScores ?? null,
+      previousCategoryScores,
       assessmentStatus: assessmentStore.assessmentStatus,
       assessmentHistory: assessmentStore.assessmentHistory,
       previousRiskScore: assessmentStore.previousRiskScore,
