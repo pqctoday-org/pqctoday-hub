@@ -4,6 +4,7 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import type { WorkshopRegion } from '@/types/Workshop'
 
 export type WorkshopMode = 'idle' | 'running' | 'paused' | 'video'
+export type PlaybackSpeed = 0.5 | 1 | 2
 
 interface WorkshopState {
   mode: WorkshopMode
@@ -12,6 +13,8 @@ interface WorkshopState {
   completedStepIds: string[]
   startedAt: string | null
   selectedRegion: WorkshopRegion | null
+  /** Video Mode playback speed multiplier — 0.5 (slow), 1 (normal), 2 (fast). */
+  playbackSpeed: PlaybackSpeed
 
   start: (flowId: string, firstStepId: string, region: WorkshopRegion) => void
   pause: () => void
@@ -20,12 +23,19 @@ interface WorkshopState {
   startVideo: (flowId: string, firstStepId: string, region: WorkshopRegion) => void
   setStep: (stepId: string) => void
   markStepComplete: (stepId: string) => void
+  setPlaybackSpeed: (speed: PlaybackSpeed) => void
   reset: () => void
 }
 
 const INITIAL: Pick<
   WorkshopState,
-  'mode' | 'currentFlowId' | 'currentStepId' | 'completedStepIds' | 'startedAt' | 'selectedRegion'
+  | 'mode'
+  | 'currentFlowId'
+  | 'currentStepId'
+  | 'completedStepIds'
+  | 'startedAt'
+  | 'selectedRegion'
+  | 'playbackSpeed'
 > = {
   mode: 'idle',
   currentFlowId: null,
@@ -33,6 +43,7 @@ const INITIAL: Pick<
   completedStepIds: [],
   startedAt: null,
   selectedRegion: null,
+  playbackSpeed: 1,
 }
 
 export const useWorkshopStore = create<WorkshopState>()(
@@ -72,6 +83,8 @@ export const useWorkshopStore = create<WorkshopState>()(
 
       setStep: (stepId) => set({ currentStepId: stepId }),
 
+      setPlaybackSpeed: (speed) => set({ playbackSpeed: speed }),
+
       markStepComplete: (stepId) => {
         const { completedStepIds } = get()
         if (completedStepIds.includes(stepId)) return
@@ -91,6 +104,7 @@ export const useWorkshopStore = create<WorkshopState>()(
         completedStepIds: state.completedStepIds,
         startedAt: state.startedAt,
         selectedRegion: state.selectedRegion,
+        playbackSpeed: state.playbackSpeed,
       }),
       migrate: (persistedState: unknown) => {
         const s = (persistedState ?? {}) as Record<string, unknown>

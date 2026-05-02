@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { GraduationCap, Play, Video, Clock, Pause, X } from 'lucide-react'
+import { GraduationCap, Play, Video, Clock, Pause, X, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useWorkshopStore } from '@/store/useWorkshopStore'
+import { useRightPanelStore } from '@/store/useRightPanelStore'
 import {
   WORKSHOP_FLOWS,
   flattenFlow,
@@ -13,7 +14,7 @@ import {
   getPrevStep,
   findStepIndex,
 } from '@/data/workshopRegistry'
-import type { WorkshopFlow, WorkshopRegion, WorkshopStep } from '@/types/Workshop'
+import type { WorkshopChapter, WorkshopFlow, WorkshopRegion, WorkshopStep } from '@/types/Workshop'
 import { WorkshopPrereqList } from './WorkshopPrereqList'
 import { labelForRegion } from '@/utils/workshopRegion'
 import { WorkshopStepCard } from './WorkshopStepCard'
@@ -33,6 +34,7 @@ export const WorkshopPanel: React.FC = () => {
     currentStepId,
     completedStepIds,
     selectedRegion,
+    playbackSpeed,
     start,
     startVideo,
     exit,
@@ -40,6 +42,7 @@ export const WorkshopPanel: React.FC = () => {
     resume,
     setStep,
     markStepComplete,
+    setPlaybackSpeed,
   } = useWorkshopStore()
 
   const [pickedRegion, setPickedRegion] = useState<WorkshopRegion | null>(selectedRegion)
@@ -129,6 +132,39 @@ export const WorkshopPanel: React.FC = () => {
           <Play size={16} className="mr-2" />
           Start Workshop
         </Button>
+
+        {/* Video Mode speed picker — chosen before Start, kept in store across the recording */}
+        <div className="rounded-md border border-border bg-card p-2 space-y-1.5">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+              Video Mode speed
+            </span>
+            <span className="text-[10px] text-muted-foreground tabular-nums">
+              {playbackSpeed === 0.5 ? '0.5×' : playbackSpeed === 2 ? '2×' : '1×'}
+            </span>
+          </div>
+          <div className="flex gap-1.5">
+            {(
+              [
+                { value: 0.5, label: 'Slow' },
+                { value: 1, label: 'Normal' },
+                { value: 2, label: 'Fast' },
+              ] as const
+            ).map((opt) => (
+              <Button
+                key={opt.value}
+                variant={playbackSpeed === opt.value ? 'gradient' : 'outline'}
+                size="sm"
+                className="flex-1 h-8 text-xs"
+                onClick={() => setPlaybackSpeed(opt.value)}
+                aria-pressed={playbackSpeed === opt.value}
+              >
+                {opt.label}
+              </Button>
+            ))}
+          </div>
+        </div>
+
         <Button
           variant="outline"
           className="w-full"
@@ -138,6 +174,8 @@ export const WorkshopPanel: React.FC = () => {
             const steps = flattenFlow(matchedFlow, pickedRegion)
             if (steps.length === 0) return
             startVideo(matchedFlow.id, steps[0].id, pickedRegion)
+            // Minimize the panel — Video Mode renders captions + spotlight on top of the main pane.
+            useRightPanelStore.getState().minimize()
           }}
         >
           <Video size={16} className="mr-2" />
@@ -161,68 +199,101 @@ interface FlowAgendaProps {
 
 const FlowAgenda: React.FC<FlowAgendaProps> = ({ flow, region }) => {
   const regionChapter = flow.regions?.[region]
+
+  // Ordered chapter list, inserting the region chapter just before the 'action'
+  // chapter (matches flattenFlow's order).
+  const orderedChapters: { chapter: WorkshopChapter; regionLabel?: string }[] = []
+  orderedChapters.push({ chapter: flow.intro })
+  orderedChapters.push({ chapter: flow.prerequisites })
+  for (const c of flow.common) {
+    if (c.id === 'action' && regionChapter) {
+      orderedChapters.push({ chapter: regionChapter, regionLabel: labelForRegion(region) })
+    }
+    orderedChapters.push({ chapter: c })
+  }
+  orderedChapters.push({ chapter: flow.close })
+
   return (
     <section className="rounded-lg border border-border bg-card p-3 space-y-2">
       <h3 className="text-sm font-medium text-foreground flex items-center gap-1.5">
         <Clock size={14} className="text-muted-foreground" /> Agenda · {flow.totalEstMinutes} min
       </h3>
-      <ul className="text-sm space-y-1">
-        <AgendaItem
-          title={flow.intro.title}
-          minutes={flow.intro.estMinutes}
-          count={flow.intro.steps.length}
-        />
-        <AgendaItem
-          title={flow.prerequisites.title}
-          minutes={flow.prerequisites.estMinutes}
-          count={flow.prerequisites.steps.length}
-        />
-        {flow.common.map((c) => {
-          if (c.id === 'action') {
-            return (
-              <React.Fragment key={c.id}>
-                {regionChapter && (
-                  <AgendaItem
-                    title={regionChapter.title}
-                    minutes={regionChapter.estMinutes}
-                    count={regionChapter.steps.length}
-                    region={labelForRegion(region)}
-                  />
-                )}
-                <AgendaItem title={c.title} minutes={c.estMinutes} count={c.steps.length} />
-              </React.Fragment>
-            )
-          }
-          return (
-            <AgendaItem key={c.id} title={c.title} minutes={c.estMinutes} count={c.steps.length} />
-          )
-        })}
-        <AgendaItem
-          title={flow.close.title}
-          minutes={flow.close.estMinutes}
-          count={flow.close.steps.length}
-        />
-      </ul>
+      <div className="space-y-1.5">
+        {orderedChapters.map(({ chapter, regionLabel }) => (
+          <AgendaChapterSection key={chapter.id} chapter={chapter} regionLabel={regionLabel} />
+        ))}
+      </div>
     </section>
   )
 }
 
-const AgendaItem: React.FC<{ title: string; minutes: number; count: number; region?: string }> = ({
-  title,
-  minutes,
-  count,
-  region,
-}) => (
-  <li className="flex items-center justify-between gap-2 text-foreground">
-    <span className="truncate">
-      {title}
-      {region ? <span className="text-muted-foreground"> · {region}</span> : null}
-    </span>
-    <span className="text-xs text-muted-foreground tabular-nums shrink-0">
-      {count} step{count === 1 ? '' : 's'} · {minutes} min
-    </span>
-  </li>
-)
+interface AgendaChapterSectionProps {
+  chapter: WorkshopChapter
+  regionLabel?: string
+}
+
+const AgendaChapterSection: React.FC<AgendaChapterSectionProps> = ({ chapter, regionLabel }) => {
+  const [open, setOpen] = useState(false)
+  return (
+    <div className="rounded-md border border-border/70 bg-background/40">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        className="w-full h-auto justify-between gap-2 px-2.5 py-2 text-left rounded-md font-normal"
+      >
+        <span className="flex items-center gap-2 min-w-0">
+          <ChevronDown
+            size={14}
+            className={`text-muted-foreground shrink-0 transition-transform ${open ? '' : '-rotate-90'}`}
+          />
+          <span className="text-sm text-foreground truncate">
+            {chapter.title}
+            {regionLabel ? <span className="text-muted-foreground"> · {regionLabel}</span> : null}
+          </span>
+        </span>
+        <span className="text-xs text-muted-foreground tabular-nums shrink-0">
+          {chapter.steps.length} step{chapter.steps.length === 1 ? '' : 's'} · {chapter.estMinutes}{' '}
+          min
+        </span>
+      </Button>
+      {open && (
+        <ol className="px-2.5 pb-2 pt-0 space-y-2">
+          {chapter.steps.map((step, i) => (
+            <li
+              key={step.id}
+              className="text-xs leading-relaxed pt-2 border-t border-border/40 first:border-t-0"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex gap-2 min-w-0 flex-1">
+                  <span className="text-muted-foreground tabular-nums shrink-0 w-5">{i + 1}.</span>
+                  <div className="min-w-0 flex-1">
+                    <span className="text-foreground block font-medium">{step.title}</span>
+                    <code className="block text-[11px] text-primary/90 break-all mt-0.5 font-mono">
+                      {buildStepUrl(step)}
+                    </code>
+                    <ul className="mt-1 space-y-0.5">
+                      {step.tasks.map((task, j) => (
+                        <li key={j} className="flex gap-1.5 text-muted-foreground/90">
+                          <span className="text-muted-foreground/60 shrink-0">·</span>
+                          <span>{task}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+                <span className="text-muted-foreground tabular-nums shrink-0">
+                  ~{step.estMinutes}m
+                </span>
+              </div>
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
+  )
+}
 
 interface RunningViewProps {
   currentFlowId: string | null
