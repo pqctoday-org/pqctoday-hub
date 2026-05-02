@@ -30,6 +30,8 @@ import {
   hsm_signBytesMLDSA,
   hsm_initToken,
   hsm_openUserSession,
+  hsm_getKeyAttributes,
+  type KeyAttributeSet,
 } from '@/wasm/softhsm'
 
 import {
@@ -60,7 +62,7 @@ import {
   id_ce_subjectKeyIdentifier,
 } from '@peculiar/asn1-x509'
 import { AsnSerializer, OctetString } from '@peculiar/asn1-schema'
-import { useHsmContext } from './HsmContext'
+import { useHsmContext, type HsmKey } from './HsmContext'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { translateCryptoError } from '@/utils/cryptoErrorHint'
 import { ErrorAlert } from '@/components/ui/error-alert'
@@ -774,6 +776,48 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
 
   const serverSessionRef = React.useRef(0)
   const vpnSlotsRef = React.useRef<{ init: number; resp: number }>({ init: 0, resp: 1 })
+
+  // Attribute resolver for HsmKeyInspector. Two cases:
+  //   • 'main' (or undefined) → key lives in panel rawM; read attributes directly.
+  //   • 'worker-init' / 'worker-resp' → key lives in a strongSwan worker's
+  //     statically-linked softhsmv3 (handle is invalid in panel WASM). Route the
+  //     read through strongSwanEngine.pkcs11(role, 'getKeyAttributes', …) so the
+  //     worker's own softhsmv3 answers, then return the same KeyAttributeSet shape.
+  const vpnAttrsResolver = React.useCallback(
+    async (key: HsmKey): Promise<KeyAttributeSet | null> => {
+      if (!key.wasmContext || key.wasmContext === 'main') {
+        const M = moduleRef.current
+        const hSession =
+          key.sessionHandle ?? (key.slotId === 1 ? serverSessionRef.current : hSessionRef.current)
+        if (!M || !hSession) return null
+        try {
+          return hsm_getKeyAttributes(M, hSession, key.handle)
+        } catch {
+          return null
+        }
+      }
+      const role = key.wasmContext === 'worker-init' ? 'initiator' : 'responder'
+      const hSess = key.sessionHandle
+      if (!hSess) return null
+      try {
+        const { rv, data } = await strongSwanEngine.pkcs11(role, 'getKeyAttributes', {
+          hSess,
+          hObj: key.handle,
+        })
+        if (rv !== 0) return null
+        const d = data as Record<string, unknown>
+        // ckCheckValue arrives as number[] over postMessage; rehydrate to Uint8Array.
+        const cv = d.ckCheckValue
+        return {
+          ...(d as unknown as KeyAttributeSet),
+          ckCheckValue: Array.isArray(cv) ? new Uint8Array(cv as number[]) : null,
+        }
+      } catch {
+        return null
+      }
+    },
+    [moduleRef, hSessionRef]
+  )
   // Guards VPN-specific slot init — separate from moduleRef since other panels share that ref.
   const vpnRpcInitRef = React.useRef(false)
   // Set to true when generateCertsViaWorker has spawned workers, provisioned
@@ -1146,8 +1190,14 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       // events now that the worker handles KEM ops locally.
       if (ev.rv !== 0) return
       const slotIdForRole = role === 'initiator' ? 0 : 1
+      const wasmCtx: 'worker-init' | 'worker-resp' =
+        role === 'initiator' ? 'worker-init' : 'worker-resp'
       const ts = new Date().toISOString()
       // CKM_ML_KEM_KEY_PAIR_GEN = 0x0F, CKM_ML_KEM = 0x17 (softhsmv3 vendor).
+      // Trace-captured handles live in the worker's softhsmv3 instance, NOT in
+      // the panel's rawM. Tag with wasmContext so HsmKeyInspector routes attribute
+      // reads through strongSwanEngine.pkcs11(role, 'getKeyAttributes', …) instead
+      // of querying panel WASM (which would return CKR_OBJECT_HANDLE_INVALID).
       if (ev.op === 'C_GenerateKeyPair' && ev.mech === 0x0f) {
         addHsmKey({
           handle: ev.outA,
@@ -1158,6 +1208,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           engine: 'rust',
           generatedAt: ts,
           slotId: slotIdForRole,
+          sessionHandle: ev.sess,
+          wasmContext: wasmCtx,
         })
         addHsmKey({
           handle: ev.outB,
@@ -1168,6 +1220,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           engine: 'rust',
           generatedAt: ts,
           slotId: slotIdForRole,
+          sessionHandle: ev.sess,
+          wasmContext: wasmCtx,
         })
       } else if (ev.op === 'C_EncapsulateKey' && ev.mech === 0x17 && ev.outB) {
         addHsmKey({
@@ -1179,6 +1233,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           engine: 'rust',
           generatedAt: ts,
           slotId: slotIdForRole,
+          sessionHandle: ev.sess,
+          wasmContext: wasmCtx,
         })
       } else if (ev.op === 'C_DecapsulateKey' && ev.mech === 0x17) {
         addHsmKey({
@@ -1190,6 +1246,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           engine: 'rust',
           generatedAt: ts,
           slotId: slotIdForRole,
+          sessionHandle: ev.sess,
+          wasmContext: wasmCtx,
         })
       }
     }
@@ -4719,6 +4777,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       onRemoveKey={removeHsmKey}
                       onClear={clearHsmKeys}
                       title="Client Token (Slot 1)"
+                      attrsResolver={vpnAttrsResolver}
                     />
                   </div>
                   <div className="border border-border/50 rounded-lg p-3 bg-muted/30 text-foreground">
@@ -4823,6 +4882,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       onRemoveKey={removeHsmKey}
                       onClear={clearHsmKeys}
                       title="Server Token (Slot 2)"
+                      attrsResolver={vpnAttrsResolver}
                     />
                   </div>
                   <div className="border border-border/50 rounded-lg p-3 bg-muted/30 text-foreground">
