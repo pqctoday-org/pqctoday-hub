@@ -309,6 +309,7 @@ function FrameworkCard({
   return (
     <div
       id={`fw-${fw.id}`}
+      data-workshop-target={`compliance-framework-${fw.id}`}
       className={`glass-panel p-4 space-y-3 flex flex-col scroll-mt-20 transition-shadow duration-300 ${highlighted ? 'ring-2 ring-primary shadow-glow' : ''}`}
     >
       <div className="flex items-start gap-2">

@@ -418,10 +418,13 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
               const item = visibleData[virtualRow.index]
               const key = rowKey(item)
               const isExpanded = expandedIds.has(key)
+              const productSlug = item.softwareName.toLowerCase().replace(/[^a-z0-9]+/g, '-')
               return (
                 <React.Fragment key={key}>
                   <tr
-                    className="border-b border-border hover:bg-muted/50 transition-colors cursor-pointer"
+                    id={`migrate-row-${productSlug}`}
+                    data-workshop-target={`migrate-product-${productSlug}`}
+                    className="border-b border-border hover:bg-muted/50 transition-colors cursor-pointer scroll-mt-20"
                     onClick={() => toggleExpand(key)}
                   >
                     {hasCompare && (
