@@ -30,6 +30,8 @@ interface WorkshopState {
   selectedRegion: WorkshopRegion | null
   /** Video Mode per-step duration preset. See STEP_DURATION_MS for the ms values. */
   playbackSpeed: PlaybackSpeed
+  /** Manifest id of a flow chosen via "Browse all" — overrides auto-match. Null = use auto-match. */
+  flowOverrideId: string | null
 
   start: (flowId: string, firstStepId: string, region: WorkshopRegion) => void
   pause: () => void
@@ -39,6 +41,7 @@ interface WorkshopState {
   setStep: (stepId: string) => void
   markStepComplete: (stepId: string) => void
   setPlaybackSpeed: (speed: PlaybackSpeed) => void
+  setFlowOverrideId: (id: string | null) => void
   reset: () => void
 }
 
@@ -51,6 +54,7 @@ const INITIAL: Pick<
   | 'startedAt'
   | 'selectedRegion'
   | 'playbackSpeed'
+  | 'flowOverrideId'
 > = {
   mode: 'idle',
   currentFlowId: null,
@@ -59,6 +63,7 @@ const INITIAL: Pick<
   startedAt: null,
   selectedRegion: null,
   playbackSpeed: 'normal',
+  flowOverrideId: null,
 }
 
 export const useWorkshopStore = create<WorkshopState>()(
@@ -100,6 +105,8 @@ export const useWorkshopStore = create<WorkshopState>()(
 
       setPlaybackSpeed: (speed) => set({ playbackSpeed: speed }),
 
+      setFlowOverrideId: (id) => set({ flowOverrideId: id }),
+
       markStepComplete: (stepId) => {
         const { completedStepIds } = get()
         if (completedStepIds.includes(stepId)) return
@@ -120,6 +127,7 @@ export const useWorkshopStore = create<WorkshopState>()(
         startedAt: state.startedAt,
         selectedRegion: state.selectedRegion,
         playbackSpeed: state.playbackSpeed,
+        flowOverrideId: state.flowOverrideId,
       }),
       migrate: (persistedState: unknown) => {
         const s = (persistedState ?? {}) as Record<string, unknown>
@@ -145,6 +153,7 @@ export const useWorkshopStore = create<WorkshopState>()(
           selectedRegion:
             typeof s.selectedRegion === 'string' ? (s.selectedRegion as WorkshopRegion) : null,
           playbackSpeed,
+          flowOverrideId: typeof s.flowOverrideId === 'string' ? s.flowOverrideId : null,
         }
       },
       onRehydrateStorage: () => (_state, error) => {

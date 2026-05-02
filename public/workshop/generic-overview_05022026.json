@@ -1,0 +1,396 @@
+{
+  "$schema": "WorkshopFlow",
+  "id": "generic-overview",
+  "title": "PQC Today — Quick Overview",
+  "match": {
+    "roles": "*",
+    "proficiencies": "*",
+    "industries": "*",
+    "regions": "*"
+  },
+  "isGenericFallback": true,
+  "totalEstMinutes": 30,
+  "intro": {
+    "id": "intro",
+    "title": "Welcome",
+    "estMinutes": 2,
+    "steps": [
+      {
+        "id": "g-intro-01-welcome",
+        "chapter": "intro",
+        "title": "Welcome to PQC Today",
+        "estMinutes": 2,
+        "whyItMatters": "PQC Today is a comprehensive resource for understanding and acting on the post-quantum cryptography migration. This 30-minute tour covers every major surface so you know where to dive deeper afterwards.",
+        "page": { "route": "/" },
+        "tasks": [
+          "Read the hero copy",
+          "Note the four journey sections",
+          "Spot the persona switcher in the top-right"
+        ],
+        "expectedOutput": "You can describe PQC Today's purpose in one sentence.",
+        "narration": "Welcome to PQC Today — a free, vendor-neutral resource that helps any organisation understand and act on the post-quantum cryptography migration. In thirty minutes we will tour every major surface: the threat landscape, the regulatory timeline, the algorithm catalogue, the migration tools, and the action plan workspace. By the end you will know where to come back to and what to dive into for your role.",
+        "cues": [
+          {
+            "tMs": 4000,
+            "kind": "caption",
+            "text": "PQC Today — vendor-neutral resource for the post-quantum migration."
+          },
+          {
+            "tMs": 8000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"landing-cta-primary\"]"
+          },
+          {
+            "tMs": 60000,
+            "kind": "caption",
+            "text": "We'll tour every major surface in 30 minutes."
+          },
+          { "tMs": 120000, "kind": "advance" }
+        ]
+      }
+    ]
+  },
+  "prerequisites": {
+    "id": "prereq",
+    "title": "No prerequisites",
+    "estMinutes": 1,
+    "steps": [
+      {
+        "id": "g-prereq-01-noprereq",
+        "chapter": "prereq",
+        "title": "No setup needed",
+        "estMinutes": 1,
+        "whyItMatters": "The generic overview makes no assumptions about your role, industry, or region. Every page works without an account or any settings.",
+        "page": { "route": "/" },
+        "tasks": ["Continue when ready"],
+        "expectedOutput": "You're ready to start the tour.",
+        "narration": "No setup needed. PQC Today works in your browser without any account. You can pick a persona later if you want a more tailored experience — for now, we'll cover the surfaces every visitor uses.",
+        "cues": [
+          { "tMs": 4000, "kind": "caption", "text": "No setup needed — let's tour." },
+          { "tMs": 60000, "kind": "advance" }
+        ]
+      }
+    ]
+  },
+  "common": [
+    {
+      "id": "tour",
+      "title": "Tour the major surfaces",
+      "estMinutes": 25,
+      "steps": [
+        {
+          "id": "g-01-learn",
+          "chapter": "foundations",
+          "title": "Learn — modules and tutorials",
+          "estMinutes": 3,
+          "whyItMatters": "The Learn section has 40+ modules covering quantum threats, PQC algorithms, migration patterns, and industry-specific deep dives. It's the first stop when you need to build understanding.",
+          "page": { "route": "/learn" },
+          "tasks": [
+            "Browse the module catalogue",
+            "Note the persona-recommended modules at the top",
+            "Open any module to see the workshop tooling"
+          ],
+          "expectedOutput": "You know where to find learning content.",
+          "narration": "Learn is the educational core of PQC Today. Forty-plus modules covering Q-Day, Harvest-Now Decrypt-Later, FIPS 203 and 204, and industry deep dives for finance, healthcare, telecom, and more. Each module has interactive workshops where you can run real cryptographic operations in your browser.",
+          "cues": [
+            {
+              "tMs": 4000,
+              "kind": "caption",
+              "text": "40+ learning modules — quantum threat, PQC algorithms, industry deep dives."
+            },
+            {
+              "tMs": 90000,
+              "kind": "caption",
+              "text": "Each module has interactive workshops with real crypto in the browser."
+            },
+            { "tMs": 180000, "kind": "advance" }
+          ]
+        },
+        {
+          "id": "g-02-threats",
+          "chapter": "foundations",
+          "title": "Threats — quantum risk by industry",
+          "estMinutes": 3,
+          "whyItMatters": "Threats catalogues concrete quantum risks tied to specific industries — finance, healthcare, energy, telecom — with severity scores, sources, and links to the systems involved.",
+          "page": { "route": "/threats" },
+          "tasks": [
+            "Filter by your industry",
+            "Open one threat for detail",
+            "Note the bookmark + share controls"
+          ],
+          "expectedOutput": "You can describe the structure of the threat catalogue.",
+          "narration": "Threats organises quantum risks by industry. Each card shows what is at risk, what cryptography it relies on, what NIST recommends as the replacement, and where to find primary sources. Filter by your sector and you'll see the threats that apply to systems you actually run.",
+          "cues": [
+            {
+              "tMs": 4000,
+              "kind": "caption",
+              "text": "Quantum risks organised by industry, with severity and primary sources."
+            },
+            {
+              "tMs": 90000,
+              "kind": "caption",
+              "text": "Each threat tells you what's at risk and what to migrate to."
+            },
+            { "tMs": 180000, "kind": "advance" }
+          ]
+        },
+        {
+          "id": "g-03-timeline",
+          "chapter": "foundations",
+          "title": "Timeline — global migration roadmap",
+          "estMinutes": 3,
+          "whyItMatters": "The Timeline shows when governments and standards bodies require PQC adoption — every milestone from 2020 to 2035, country by country.",
+          "page": { "route": "/timeline" },
+          "tasks": [
+            "Switch between regions",
+            "Click a country in the left rail",
+            "Open one milestone for detail"
+          ],
+          "expectedOutput": "You can describe the deadline calendar for any major jurisdiction.",
+          "narration": "Timeline tracks every PQC mandate, advisory, and milestone from 2020 to 2035. Filter by region to compare migration velocity across the U.S., E.U., and Asia-Pacific. The left rail lets you jump straight to a country's row.",
+          "cues": [
+            {
+              "tMs": 4000,
+              "kind": "caption",
+              "text": "Every PQC mandate and milestone from 2020 to 2035."
+            },
+            {
+              "tMs": 90000,
+              "kind": "caption",
+              "text": "Compare migration velocity across regions."
+            },
+            { "tMs": 180000, "kind": "advance" }
+          ]
+        },
+        {
+          "id": "g-04-algorithms",
+          "chapter": "foundations",
+          "title": "Algorithms — the PQC catalogue",
+          "estMinutes": 3,
+          "whyItMatters": "Algorithms compares every standardised and candidate post-quantum algorithm — performance, security level, key sizes, standardisation status. The Transition tab shows the classical → PQC mapping.",
+          "page": { "route": "/algorithms" },
+          "tasks": [
+            "Search for ML-KEM and ML-DSA",
+            "Open the Transition tab",
+            "Compare two algorithms side by side"
+          ],
+          "expectedOutput": "You can name the FIPS-standardised PQC algorithms and their classical predecessors.",
+          "narration": "Algorithms is the technical reference. ML-KEM and ML-DSA are the two primary FIPS-standardised algorithms — they replace RSA key exchange and ECDSA signatures respectively. The Transition tab maps every classical algorithm to its post-quantum successor.",
+          "cues": [
+            {
+              "tMs": 4000,
+              "kind": "caption",
+              "text": "Every standardised and candidate PQC algorithm — performance, key sizes, status."
+            },
+            {
+              "tMs": 90000,
+              "kind": "caption",
+              "text": "ML-KEM replaces RSA. ML-DSA replaces ECDSA."
+            },
+            { "tMs": 180000, "kind": "advance" }
+          ]
+        },
+        {
+          "id": "g-05-library",
+          "chapter": "foundations",
+          "title": "Library — standards and references",
+          "estMinutes": 2,
+          "whyItMatters": "Library aggregates every primary source: NIST FIPS, RFCs, agency guidance, and academic papers. When someone asks 'what document says that?', this is where you find it.",
+          "page": { "route": "/library" },
+          "tasks": ["Open Government & Policy", "Bookmark NIST FIPS 203", "Search for RFC"],
+          "expectedOutput": "You know where to source authoritative PQC documents.",
+          "narration": "Library is your citation desk. NIST publications, IETF RFCs, agency guidance from CCCS, ASD, ENISA. Bookmark anything you might cite later — the bookmark surface follows you across the app.",
+          "cues": [
+            {
+              "tMs": 4000,
+              "kind": "caption",
+              "text": "Every primary source — NIST FIPS, RFCs, agency guidance, academic papers."
+            },
+            { "tMs": 60000, "kind": "advance" }
+          ]
+        },
+        {
+          "id": "g-06-leaders",
+          "chapter": "foundations",
+          "title": "Leaders — who's driving PQC adoption",
+          "estMinutes": 2,
+          "whyItMatters": "Leaders profiles the academics, industry adopters, and government officials shaping the PQC migration globally. Useful when you need a quotable name for board materials.",
+          "page": { "route": "/leaders" },
+          "tasks": ["Browse the Industry Adopter category", "Filter by region", "Open one profile"],
+          "expectedOutput": "You can name two PQC leaders relevant to your context.",
+          "narration": "Leaders profiles the people driving the post-quantum migration — academics, industry adopters, government officials. Sorted by category and region. When your board asks 'who else is doing this', this is where you find names.",
+          "cues": [
+            {
+              "tMs": 4000,
+              "kind": "caption",
+              "text": "Academics, industry adopters, and government officials shaping PQC."
+            },
+            { "tMs": 60000, "kind": "advance" }
+          ]
+        },
+        {
+          "id": "g-07-compliance",
+          "chapter": "foundations",
+          "title": "Compliance — frameworks and certifications",
+          "estMinutes": 3,
+          "whyItMatters": "Compliance maps every framework that governs cryptographic adoption — NIST, FIPS 140-3, CCCS, ASD, PCI DSS, and more — with deadlines and required algorithms.",
+          "page": { "route": "/compliance" },
+          "tasks": [
+            "Open the Frameworks tab",
+            "Filter by your region",
+            "Open one framework for required algorithms"
+          ],
+          "expectedOutput": "You know which frameworks govern your jurisdiction.",
+          "narration": "Compliance is where regulatory deadlines turn into procurement pressure. NIST CNSA 2.0, FIPS 140-3, CCCS ITSM, ASD ISM, PCI DSS — every framework with required algorithms and binding dates. Filter by region to see what applies to you.",
+          "cues": [
+            {
+              "tMs": 4000,
+              "kind": "caption",
+              "text": "Every framework with required algorithms and binding dates."
+            },
+            {
+              "tMs": 90000,
+              "kind": "caption",
+              "text": "Filter by region. The deadlines drive procurement."
+            },
+            { "tMs": 180000, "kind": "advance" }
+          ]
+        },
+        {
+          "id": "g-08-migrate",
+          "chapter": "foundations",
+          "title": "Migrate — 700+ vendor products tracked",
+          "estMinutes": 3,
+          "whyItMatters": "Migrate is the buyer's guide: 700+ products across cloud, app servers, hardware, identity, and crypto libraries — with their PQC roadmap, certifications, and migration steps.",
+          "page": { "route": "/migrate" },
+          "tasks": [
+            "Filter by infrastructure layer",
+            "Search for a vendor you use",
+            "Open one product for migration steps"
+          ],
+          "expectedOutput": "You can find at least one tracked product from a vendor in your stack.",
+          "narration": "Migrate is the buyer's guide. Seven hundred-plus products tracked across cloud services, app servers, hardware modules, identity providers, and crypto libraries. Each entry has the vendor's PQC roadmap, certification status, and migration steps. If you use a major vendor, they're probably here.",
+          "cues": [
+            {
+              "tMs": 4000,
+              "kind": "caption",
+              "text": "700+ products tracked across cloud, hardware, identity, libraries."
+            },
+            {
+              "tMs": 90000,
+              "kind": "caption",
+              "text": "Each entry has vendor roadmap, certification status, migration steps."
+            },
+            { "tMs": 180000, "kind": "advance" }
+          ]
+        },
+        {
+          "id": "g-09-assess",
+          "chapter": "foundations",
+          "title": "Assess — your readiness profile",
+          "estMinutes": 2,
+          "whyItMatters": "The Assess wizard generates a personalised readiness profile in 2-5 minutes — your risk score, top recommended actions, and a board-ready report.",
+          "page": { "route": "/assess" },
+          "tasks": [
+            "Choose Quick or Comprehensive mode",
+            "Note the question categories",
+            "See the resulting risk profile"
+          ],
+          "expectedOutput": "You understand the assessment input → report output flow.",
+          "narration": "Assess turns a few minutes of questions into a personalised readiness profile. Quick mode is six questions in two minutes; Comprehensive is thirteen in five. The output is a risk score and a top-five action list calibrated to your industry and country.",
+          "cues": [
+            {
+              "tMs": 4000,
+              "kind": "caption",
+              "text": "Personalised readiness profile in 2–5 minutes."
+            },
+            { "tMs": 60000, "kind": "advance" }
+          ]
+        },
+        {
+          "id": "g-10-report",
+          "chapter": "foundations",
+          "title": "Report — your shareable risk pack",
+          "estMinutes": 1,
+          "whyItMatters": "Report renders your assessment as a board-ready document with a token-bearing share URL. PDFs go stale; this URL re-renders against current data every time.",
+          "page": { "route": "/report" },
+          "tasks": [
+            "Skim the executive summary",
+            "Note the share URL button",
+            "See the recommended actions"
+          ],
+          "expectedOutput": "You know how to share a board-ready report.",
+          "narration": "Report turns your assessment into a board-ready document. Executive summary, risk score, recommended actions, regional compliance map. Share via a token URL — it re-renders against current data each time, so the report your board sees is always fresh.",
+          "cues": [
+            {
+              "tMs": 4000,
+              "kind": "caption",
+              "text": "Board-ready report. Token URL — always fresh."
+            },
+            { "tMs": 60000, "kind": "advance" }
+          ]
+        },
+        {
+          "id": "g-11-about",
+          "chapter": "foundations",
+          "title": "About — how the platform works",
+          "estMinutes": 2,
+          "whyItMatters": "About answers the trust questions: where does the data come from, who maintains it, what stays in your browser, and what is licensed.",
+          "page": { "route": "/about" },
+          "tasks": ["Open Vision", "Open Data Privacy", "Open Security Audit"],
+          "expectedOutput": "You can answer 'is this safe to use?' for your team.",
+          "narration": "About is the trust page. Vision explains intent. Data Privacy explains what stays in your browser — answer: nothing leaves unless you opt in. Security Audit shows the platform itself is reviewed. License and SBOM cover compliance.",
+          "cues": [
+            {
+              "tMs": 4000,
+              "kind": "caption",
+              "text": "Trust questions answered: data, privacy, security, license."
+            },
+            {
+              "tMs": 30000,
+              "kind": "scroll-to",
+              "selector": "[data-workshop-target=\"section-data-privacy\"]"
+            },
+            {
+              "tMs": 60000,
+              "kind": "scroll-to",
+              "selector": "[data-workshop-target=\"section-security-audit\"]"
+            },
+            { "tMs": 120000, "kind": "advance" }
+          ]
+        }
+      ]
+    }
+  ],
+  "close": {
+    "id": "close",
+    "title": "Where to go next",
+    "estMinutes": 2,
+    "steps": [
+      {
+        "id": "g-close-01-pickpersona",
+        "chapter": "close",
+        "title": "Pick a persona for a tailored deep dive",
+        "estMinutes": 2,
+        "whyItMatters": "The generic tour shows what is available. A persona-specific workshop tells you what to do — for executives, developers, architects, ops, researchers, or curious learners.",
+        "page": { "route": "/" },
+        "tasks": [
+          "Open the persona switcher",
+          "Pick the role that fits you",
+          "Re-open the Workshop tab — a tailored flow will be available"
+        ],
+        "expectedOutput": "You know how to switch from generic overview to a persona-specific workshop.",
+        "narration": "You've seen the surfaces. The next step is to pick a persona — Executive, Developer, Architect, Ops, Researcher, or Curious — and open the Workshop tab again. A persona-specific flow will surface, walking you through the parts of PQC Today most relevant to your role. Welcome to the platform.",
+        "cues": [
+          {
+            "tMs": 4000,
+            "kind": "caption",
+            "text": "You've seen the surfaces. Now pick a persona for a tailored workshop."
+          },
+          { "tMs": 60000, "kind": "caption", "text": "Welcome to PQC Today." },
+          { "tMs": 120000, "kind": "advance" }
+        ]
+      }
+    ]
+  }
+}
