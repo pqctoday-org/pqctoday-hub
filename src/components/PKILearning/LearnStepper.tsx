@@ -84,6 +84,7 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
         <Button
           variant="ghost"
           type="button"
+          data-workshop-target="learn-stepper-prev"
           onClick={() => setCurrent((c) => Math.max(0, c - 1))}
           disabled={isFirst}
           className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted/10 disabled:opacity-50 transition-colors text-foreground"
@@ -101,6 +102,7 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
             <Button
               variant="ghost"
               type="button"
+              data-workshop-target="learn-stepper-complete"
               onClick={() => moduleId && markAllLearnSectionsComplete(moduleId)}
               className="px-6 py-3 min-h-[44px] bg-status-success text-foreground font-bold rounded-lg hover:bg-status-success/90 transition-colors"
             >
@@ -111,6 +113,7 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
           <Button
             variant="gradient"
             type="button"
+            data-workshop-target="learn-stepper-next"
             onClick={() => setCurrent((c) => Math.min(steps.length - 1, c + 1))}
             className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
           >

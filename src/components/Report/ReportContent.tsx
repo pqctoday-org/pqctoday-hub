@@ -135,6 +135,9 @@ export function CollapsibleSection({
   className?: string
   headerExtra?: React.ReactNode
   id?: string
+  /** Workshop selector slug — emits `data-workshop-target="section-<targetId>"`
+   *  on the toggle button so `expand-section` cues can open the section. */
+  targetId?: string
 }) {
   return (
     <BaseCollapsibleSection

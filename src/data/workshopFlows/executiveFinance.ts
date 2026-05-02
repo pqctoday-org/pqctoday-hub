@@ -122,71 +122,98 @@ const foundations: WorkshopChapter = {
         'This module explains in plain language the three terms you need at boardroom speed. Q-Day is the day a sufficiently large quantum computer breaks RSA and elliptic-curve cryptography. Harvest-Now Decrypt-Later is the present-tense problem: adversaries are already collecting encrypted finance data today to decrypt later. FIPS 203 and 204 are the two NIST standards that fix this — ML-KEM for key exchange, ML-DSA for signatures.',
       completionSignal: { kind: 'module-progress', moduleId: 'exec-quantum-impact', minSteps: 1 },
       cues: [
-        // 0–60s: Land on /learn, spotlight + click into the executive module
-        { tMs: 4_000, kind: 'caption', text: 'Three terms you need at boardroom speed.' },
+        // 0–60s: Foundation first — walk PQC 101
+        {
+          tMs: 4_000,
+          kind: 'caption',
+          text: 'Foundation first — start with PQC 101 for the shared vocabulary.',
+        },
         {
           tMs: 8_000,
           kind: 'scroll-to',
-          selector: '[data-workshop-target="learn-module-exec-quantum-impact"]',
+          selector: '[data-workshop-target="learn-module-pqc-101"]',
         },
         {
           tMs: 12_000,
           kind: 'spotlight',
-          selector: '[data-workshop-target="learn-module-exec-quantum-impact"]',
+          selector: '[data-workshop-target="learn-module-pqc-101"]',
         },
         {
-          tMs: 16_000,
-          kind: 'callout',
-          selector: '[data-workshop-target="learn-module-exec-quantum-impact"]',
-          label: 'Open this module',
-          arrow: 'right',
-        },
-        {
-          tMs: 24_000,
+          tMs: 20_000,
           kind: 'click',
-          selector: '[data-workshop-target="learn-module-exec-quantum-impact"]',
+          selector: '[data-workshop-target="learn-module-pqc-101"]',
         },
-        // 60–180s: Inside the module — Learn / Workshop / Reference tabs
+        // 60–180s: Inside PQC 101 — Next button clicks demonstrate stepper navigation
         {
           tMs: 60_000,
           kind: 'caption',
-          text: 'Module structure — Learn · Workshop · Reference.',
+          text: 'PQC 101 — quantum threat in plain language.',
         },
-        { tMs: 70_000, kind: 'select-tab', tabName: 'Learn' },
         {
           tMs: 90_000,
-          kind: 'caption',
-          text: 'Q-Day — the day a quantum computer breaks RSA and elliptic-curve cryptography.',
+          kind: 'click',
+          selector: '[data-workshop-target="learn-stepper-next"]',
         },
-        // 180–300s: HNDL beat + Workshop tab
+        {
+          tMs: 120_000,
+          kind: 'caption',
+          text: 'Q-Day — the day a quantum computer breaks RSA and elliptic-curve crypto.',
+        },
+        {
+          tMs: 150_000,
+          kind: 'click',
+          selector: '[data-workshop-target="learn-stepper-next"]',
+        },
         {
           tMs: 180_000,
           kind: 'caption',
-          text: 'Harvest-Now Decrypt-Later — adversaries collect encrypted finance data today.',
+          text: 'Harvest-Now Decrypt-Later — already happening to finance traffic today.',
         },
-        { tMs: 220_000, kind: 'select-tab', tabName: 'Workshop' },
+        // 180–300s: Back to /learn, then into the role-specific exec module
+        { tMs: 220_000, kind: 'navigate', route: '/learn' },
         {
           tMs: 230_000,
           kind: 'caption',
-          text: 'Workshop tab — interactive crypto running in your browser via OpenSSL WASM and liboqs.',
-        },
-        // 300–420s: Reference tab + FIPS framing
-        { tMs: 300_000, kind: 'select-tab', tabName: 'Reference' },
-        {
-          tMs: 310_000,
-          kind: 'caption',
-          text: 'Reference — primary sources for every claim. NIST FIPS 203/204 cited inline.',
+          text: 'Now the role-specific module — Executive Quantum Impact.',
         },
         {
-          tMs: 360_000,
+          tMs: 240_000,
+          kind: 'scroll-to',
+          selector: '[data-workshop-target="learn-module-exec-quantum-impact"]',
+        },
+        {
+          tMs: 250_000,
+          kind: 'spotlight',
+          selector: '[data-workshop-target="learn-module-exec-quantum-impact"]',
+        },
+        {
+          tMs: 260_000,
+          kind: 'click',
+          selector: '[data-workshop-target="learn-module-exec-quantum-impact"]',
+        },
+        // 300–420s: Walk module structure — Learn → Workshop → Reference
+        {
+          tMs: 300_000,
           kind: 'caption',
-          text: 'FIPS 203 = ML-KEM (replaces RSA key exchange). FIPS 204 = ML-DSA (replaces ECDSA).',
+          text: 'Module structure — Learn · Workshop · Reference.',
+        },
+        { tMs: 320_000, kind: 'select-tab', tabName: 'Workshop' },
+        {
+          tMs: 330_000,
+          kind: 'caption',
+          text: 'Workshop tab — interactive crypto in your browser via OpenSSL WASM + liboqs.',
+        },
+        { tMs: 360_000, kind: 'select-tab', tabName: 'Reference' },
+        {
+          tMs: 370_000,
+          kind: 'caption',
+          text: 'Reference — every claim cites NIST FIPS 203/204 and primary sources.',
         },
         // 420–480s: close
         {
           tMs: 420_000,
           kind: 'caption',
-          text: 'These two acronyms your board will hear for the next decade.',
+          text: 'FIPS 203 = ML-KEM (replaces RSA). FIPS 204 = ML-DSA (replaces ECDSA).',
         },
         { tMs: 480_000, kind: 'advance' },
       ],
