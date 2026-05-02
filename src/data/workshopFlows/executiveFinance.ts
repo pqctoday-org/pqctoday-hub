@@ -572,10 +572,84 @@ const action: WorkshopChapter = {
 const close: WorkshopChapter = {
   id: 'close',
   title: 'Close',
-  estMinutes: 4,
+  estMinutes: 7,
   steps: [
     {
-      id: 'close-01-recap',
+      id: 'close-01-about',
+      chapter: 'close',
+      title: 'Trust and transparency — the About page',
+      estMinutes: 3,
+      whyItMatters:
+        'Before you share this report with your board, your CISO will ask three questions: where does the data come from, who maintains it, and is the platform itself secure? The About page answers all three in one page.',
+      page: { route: '/about' },
+      tasks: [
+        'Read the Vision section',
+        'Open Security Audit',
+        'Open Data Privacy',
+        'Note the SBOM and License sections',
+      ],
+      expectedOutput: 'Three sections reviewed: Vision, Security Audit, Data Privacy.',
+      narration:
+        'Before sharing the report, walk your CISO through the About page. Vision establishes intent. Security Audit shows the platform itself is reviewed. Data Privacy explains what stays in the browser and what is sent to the cloud — answer: nothing leaves your browser unless you opt in. SBOM lists every dependency. License shows the terms. Three minutes of trust-building.',
+      cues: [
+        {
+          tMs: 4_000,
+          kind: 'caption',
+          text: 'Three questions your CISO will ask before approving the report.',
+        },
+        // 0-60s: Vision
+        {
+          tMs: 8_000,
+          kind: 'scroll-to',
+          selector: '[data-workshop-target="section-vision"]',
+        },
+        {
+          tMs: 12_000,
+          kind: 'spotlight',
+          selector: '[data-workshop-target="section-vision"]',
+        },
+        {
+          tMs: 16_000,
+          kind: 'caption',
+          text: 'Vision — establishes intent.',
+        },
+        // 60-120s: Security Audit
+        {
+          tMs: 60_000,
+          kind: 'scroll-to',
+          selector: '[data-workshop-target="section-security-audit"]',
+        },
+        {
+          tMs: 65_000,
+          kind: 'spotlight',
+          selector: '[data-workshop-target="section-security-audit"]',
+        },
+        {
+          tMs: 70_000,
+          kind: 'caption',
+          text: 'Security Audit — the platform itself is reviewed.',
+        },
+        // 120-180s: Data Privacy
+        {
+          tMs: 120_000,
+          kind: 'scroll-to',
+          selector: '[data-workshop-target="section-data-privacy"]',
+        },
+        {
+          tMs: 125_000,
+          kind: 'spotlight',
+          selector: '[data-workshop-target="section-data-privacy"]',
+        },
+        {
+          tMs: 130_000,
+          kind: 'caption',
+          text: 'Data Privacy — nothing leaves your browser unless you opt in.',
+        },
+        { tMs: 180_000, kind: 'advance' },
+      ],
+    },
+    {
+      id: 'close-02-recap',
       chapter: 'close',
       title: 'Recap and share',
       estMinutes: 4,
@@ -589,6 +663,29 @@ const close: WorkshopChapter = {
       expectedOutput: 'Share URL copied; follow-up scheduled.',
       narration:
         'You now have, in one URL, a board-ready report tied to your jurisdiction and your industry. You have governance, risk, and a 90-day plan. The single highest-leverage action you can take in the next sixty seconds is to share this URL with the colleague who will own the inventory pilot. Schedule a thirty-day follow-up. The deadlines are not waiting.',
+      cues: [
+        {
+          tMs: 4_000,
+          kind: 'caption',
+          text: 'You now have a board-ready report tied to your jurisdiction and finance.',
+        },
+        {
+          tMs: 60_000,
+          kind: 'caption',
+          text: 'One URL — governance, risk, 90-day plan, region chapter.',
+        },
+        {
+          tMs: 120_000,
+          kind: 'caption',
+          text: 'Highest-leverage action in the next sixty seconds: share this URL with whoever owns the inventory pilot.',
+        },
+        {
+          tMs: 180_000,
+          kind: 'caption',
+          text: 'Schedule a thirty-day follow-up. The deadlines are not waiting.',
+        },
+        { tMs: 240_000, kind: 'advance' },
+      ],
     },
   ],
 }
@@ -1143,7 +1240,8 @@ export const executiveFinanceFlow: WorkshopFlow = {
     industries: ['Finance & Banking'],
     regions: ['US', 'CA', 'AU'],
   },
-  totalEstMinutes: 90,
+  // Welcome 5 + Pre-flight 3 + Foundations 40 + Action 20 + Region 20 + Close 7
+  totalEstMinutes: 95,
   intro,
   prerequisites,
   common: [foundations, action],

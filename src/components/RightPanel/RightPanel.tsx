@@ -23,10 +23,6 @@ const WorkshopPanel = React.lazy(() =>
   import('./WorkshopPanel').then((m) => ({ default: m.WorkshopPanel }))
 )
 
-const WorkshopPanel = React.lazy(() =>
-  import('./WorkshopPanel').then((m) => ({ default: m.WorkshopPanel }))
-)
-
 export const RightPanel: React.FC = () => {
   const { isOpen, activeTab, setTab, close, minimize, toggle } = useRightPanelStore()
   const workshopMode = useWorkshopStore((s) => s.mode)
