@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { useWorkshopStore } from '@/store/useWorkshopStore'
+import { useWorkshopStore, STEP_DURATION_MS } from '@/store/useWorkshopStore'
 import { useWorkshopOverlayStore } from '@/store/useWorkshopOverlayStore'
 import {
   WORKSHOP_FLOWS,
@@ -26,6 +26,7 @@ export const VideoOverlay: React.FC = () => {
   const setStep = useWorkshopStore((s) => s.setStep)
   const exit = useWorkshopStore((s) => s.exit)
   const markStepComplete = useWorkshopStore((s) => s.markStepComplete)
+  const playbackSpeed = useWorkshopStore((s) => s.playbackSpeed)
 
   const applyCue = useWorkshopOverlayStore((s) => s.applyCue)
   const setCaption = useWorkshopOverlayStore((s) => s.setCaption)
@@ -115,12 +116,22 @@ export const VideoOverlay: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, step?.id, restartToken])
 
-  // RAF scheduler — fires cues whose tMs has elapsed since step entry.
+  // RAF scheduler — fires cues whose scaled tMs has elapsed since step entry.
+  // Each step plays for a fixed `targetMs` window (per playback-speed preset);
+  // cue offsets are scaled proportionally from their authored tMs (within the
+  // step's estMinutes * 60_000 timeline) into that window. So a cue authored
+  // at tMs=120_000 of a 4-minute (240_000ms) step fires at:
+  //   slow   → 120_000 / 240_000 * 20_000 = 10_000 ms (10s into the step)
+  //   normal → 120_000 / 240_000 * 10_000 =  5_000 ms (5s into the step)
+  //   fast   → 120_000 / 240_000 * 5_000  =  2_500 ms (2.5s into the step)
   useEffect(() => {
     if (mode !== 'video' || !step) return
     let raf = 0
     const cues = step.cues ?? []
     const cuesSorted = [...cues].sort((a, b) => a.tMs - b.tMs)
+    const targetMs = STEP_DURATION_MS[playbackSpeed]
+    const originalMs = Math.max(1, step.estMinutes * 60_000)
+    const scale = targetMs / originalMs
 
     const tick = (): void => {
       if (pausedAtRef.current !== null) {
@@ -130,7 +141,7 @@ export const VideoOverlay: React.FC = () => {
       const elapsed = performance.now() - startTimeRef.current - pausedAccumRef.current
       while (handledIdxRef.current + 1 < cuesSorted.length) {
         const next = cuesSorted[handledIdxRef.current + 1]
-        if (next.tMs > elapsed) break
+        if (next.tMs * scale > elapsed) break
         handledIdxRef.current += 1
         if (next.kind === 'advance') {
           advanceToNext()
@@ -138,7 +149,12 @@ export const VideoOverlay: React.FC = () => {
         }
         applyCue(next, fixtures, step.id)
       }
-      if (cuesSorted.length === 0 && elapsed >= step.estMinutes * 60_000) {
+      if (cuesSorted.length === 0 && elapsed >= targetMs) {
+        advanceToNext()
+        return
+      }
+      // Safety: even with cues, never exceed the target window for the step.
+      if (elapsed >= targetMs) {
         advanceToNext()
         return
       }
@@ -147,7 +163,7 @@ export const VideoOverlay: React.FC = () => {
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, step?.id, restartToken, fixtures])
+  }, [mode, step?.id, restartToken, fixtures, playbackSpeed])
 
   if (mode !== 'video' || !step) return null
 

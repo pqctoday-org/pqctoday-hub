@@ -35,10 +35,16 @@ export const VideoControlBar: React.FC<VideoControlBarProps> = ({
   onRestart,
   onExit,
 }) => {
-  const [visible, setVisible] = useState(false)
+  // Start visible on Video Mode entry so the user knows the controls exist;
+  // auto-hide after 5 seconds of inactivity. Reveal again on mousemove or
+  // keypress with a 3-second hide-after-idle window.
+  const [visible, setVisible] = useState(true)
 
   useEffect(() => {
     let timer: number | undefined
+    // Initial visible window — give the user 5 seconds to notice the bar.
+    timer = window.setTimeout(() => setVisible(false), 5000)
+
     const reveal = (): void => {
       setVisible(true)
       if (timer !== undefined) window.clearTimeout(timer)

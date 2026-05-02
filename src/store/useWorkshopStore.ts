@@ -4,7 +4,22 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import type { WorkshopRegion } from '@/types/Workshop'
 
 export type WorkshopMode = 'idle' | 'running' | 'paused' | 'video'
-export type PlaybackSpeed = 0.5 | 1 | 2
+export type PlaybackSpeed = 'slow' | 'normal' | 'fast'
+
+/**
+ * Video Mode per-step duration. Each step's cues are scaled proportionally
+ * within this fixed window — a step's content always plays end-to-end,
+ * regardless of its authored estMinutes.
+ *
+ *   slow   → 20 s / step
+ *   normal → 10 s / step (default)
+ *   fast   →  5 s / step
+ */
+export const STEP_DURATION_MS: Record<PlaybackSpeed, number> = {
+  slow: 20_000,
+  normal: 10_000,
+  fast: 5_000,
+}
 
 interface WorkshopState {
   mode: WorkshopMode
@@ -13,7 +28,7 @@ interface WorkshopState {
   completedStepIds: string[]
   startedAt: string | null
   selectedRegion: WorkshopRegion | null
-  /** Video Mode playback speed multiplier — 0.5 (slow), 1 (normal), 2 (fast). */
+  /** Video Mode per-step duration preset. See STEP_DURATION_MS for the ms values. */
   playbackSpeed: PlaybackSpeed
 
   start: (flowId: string, firstStepId: string, region: WorkshopRegion) => void
@@ -43,7 +58,7 @@ const INITIAL: Pick<
   completedStepIds: [],
   startedAt: null,
   selectedRegion: null,
-  playbackSpeed: 1,
+  playbackSpeed: 'normal',
 }
 
 export const useWorkshopStore = create<WorkshopState>()(
@@ -95,7 +110,7 @@ export const useWorkshopStore = create<WorkshopState>()(
     }),
     {
       name: 'pqc-workshop',
-      version: 1,
+      version: 2,
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         mode: state.mode === 'video' ? 'idle' : state.mode,
@@ -112,6 +127,13 @@ export const useWorkshopStore = create<WorkshopState>()(
         const mode = allowedModes.includes(s.mode as WorkshopMode)
           ? (s.mode as WorkshopMode)
           : 'idle'
+
+        // playbackSpeed: previously stored as numeric multiplier (0.5/1/2);
+        // now stored as 'slow' | 'normal' | 'fast'. Map the legacy values.
+        let playbackSpeed: PlaybackSpeed = 'normal'
+        if (s.playbackSpeed === 'slow' || s.playbackSpeed === 0.5) playbackSpeed = 'slow'
+        else if (s.playbackSpeed === 'fast' || s.playbackSpeed === 2) playbackSpeed = 'fast'
+
         return {
           mode: mode === 'running' ? 'paused' : mode,
           currentFlowId: typeof s.currentFlowId === 'string' ? s.currentFlowId : null,
@@ -122,6 +144,7 @@ export const useWorkshopStore = create<WorkshopState>()(
           startedAt: typeof s.startedAt === 'string' ? s.startedAt : null,
           selectedRegion:
             typeof s.selectedRegion === 'string' ? (s.selectedRegion as WorkshopRegion) : null,
+          playbackSpeed,
         }
       },
       onRehydrateStorage: () => (_state, error) => {

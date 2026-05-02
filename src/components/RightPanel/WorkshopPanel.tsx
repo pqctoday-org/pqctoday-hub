@@ -133,22 +133,27 @@ export const WorkshopPanel: React.FC = () => {
           Start Workshop
         </Button>
 
-        {/* Video Mode speed picker — chosen before Start, kept in store across the recording */}
+        {/* Video Mode speed picker — chosen before Start, kept in store across the recording.
+            Each preset sets a fixed per-step duration; cues fire at proportional offsets. */}
         <div className="rounded-md border border-border bg-card p-2 space-y-1.5">
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
               Video Mode speed
             </span>
             <span className="text-[10px] text-muted-foreground tabular-nums">
-              {playbackSpeed === 0.5 ? '0.5×' : playbackSpeed === 2 ? '2×' : '1×'}
+              {playbackSpeed === 'slow'
+                ? '20s/step'
+                : playbackSpeed === 'fast'
+                  ? '5s/step'
+                  : '10s/step'}
             </span>
           </div>
           <div className="flex gap-1.5">
             {(
               [
-                { value: 0.5, label: 'Slow' },
-                { value: 1, label: 'Normal' },
-                { value: 2, label: 'Fast' },
+                { value: 'slow', label: 'Slow' },
+                { value: 'normal', label: 'Normal' },
+                { value: 'fast', label: 'Fast' },
               ] as const
             ).map((opt) => (
               <Button
