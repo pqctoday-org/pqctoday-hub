@@ -9,7 +9,7 @@ import {
   Filter,
   Wrench,
 } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import JSZip from 'jszip'
 import { PageHeader } from '@/components/common/PageHeader'
 import { WorkflowBreadcrumb } from '@/components/shared/WorkflowBreadcrumb'
@@ -111,6 +111,25 @@ export function BusinessCenterView() {
   // Active zone — drives both the diagram highlight and which panel is opened
   // by default. Falls back to the persona-derived default below.
   const [activeZone, setActiveZone] = useState<ZoneId | null>(null)
+  const [searchParams] = useSearchParams()
+
+  // ?zone=<id> deep-link (used by the Workshop Video Mode and external links).
+  // Only valid CSWP-39 zone ids are honoured; anything else is ignored.
+  // Resolved synchronously during render so we avoid set-state-in-effect.
+  const zoneFromQuery = useMemo<ZoneId | null>(() => {
+    const requested = searchParams.get('zone')
+    if (!requested) return null
+    return CSWP39_ZONE_ORDER.includes(requested as ZoneId) ? (requested as ZoneId) : null
+  }, [searchParams])
+
+  useEffect(() => {
+    if (!zoneFromQuery) return
+    const target = document.getElementById(`zone-${zoneFromQuery}`)
+    if (target) {
+      window.history.replaceState(null, '', `#zone-${zoneFromQuery}`)
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [zoneFromQuery])
 
   // Legacy hash redirects. Keeps old inbound URLs from CSWP39StepBadge / Report
   // nav (#step-govern), and from the previous §3-§6 iteration (#section-strategic),
@@ -237,7 +256,8 @@ export function BusinessCenterView() {
     zoneEmphasis.featuredArtifacts
   ).flatMap((arr) => arr ?? [])
   // Default the diagram + first-open panel to the persona's preferred zone.
-  const effectiveActiveZone = activeZone ?? zoneEmphasis.defaultActiveZone
+  // ?zone=<id> wins over user click (which wins over persona default).
+  const effectiveActiveZone = zoneFromQuery ?? activeZone ?? zoneEmphasis.defaultActiveZone
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6" data-testid="bc-dashboard-ready">

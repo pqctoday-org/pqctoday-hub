@@ -30,4 +30,4 @@ export interface HistoryEvent {
   meta?: Record<string, string | number | boolean>
 }
 
-export type RightPanelTab = 'chat' | 'history' | 'bookmarks' | 'faq'
+export type RightPanelTab = 'chat' | 'history' | 'bookmarks' | 'faq' | 'workshop' | 'workshop'

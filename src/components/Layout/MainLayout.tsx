@@ -46,9 +46,18 @@ import { useCommandPaletteStore } from '../../store/useCommandPaletteStore'
 import { PersonaChip } from '../Persona/PersonaChip'
 import { PersonaSwitchModal } from '../Persona/PersonaSwitchModal'
 import { PreviewBanner } from '../common/PreviewBanner'
+import { useWorkshopUrlAutostart } from '../../hooks/useWorkshopUrlAutostart'
 
 const RightPanel = React.lazy(() =>
   import('../RightPanel/RightPanel').then((m) => ({ default: m.RightPanel }))
+)
+
+const VideoOverlay = React.lazy(() =>
+  import('../Workshop/VideoOverlay').then((m) => ({ default: m.VideoOverlay }))
+)
+
+const WorkshopOverlayHost = React.lazy(() =>
+  import('../Workshop/WorkshopOverlayHost').then((m) => ({ default: m.WorkshopOverlayHost }))
 )
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useHistoryStore } from '../../store/useHistoryStore'
@@ -59,6 +68,8 @@ export const MainLayout = () => {
   const { selectedPersona, viewAccess } = usePersonaStore()
   const { isOpen: isPanelOpen, toggle: openPanel } = useRightPanelStore()
   const recordVisit = useHistoryStore((s) => s.recordVisit)
+  // Auto-start Workshop Video Mode from `?workshop=video&autoplay=1` (Playwright recorder hook).
+  useWorkshopUrlAutostart()
 
   React.useEffect(() => {
     recordVisit(location.pathname)
@@ -575,6 +586,15 @@ export const MainLayout = () => {
       {/* Assistant bottom drawer — pinned below scrollable content */}
       <RightPanelFAB />
       <React.Suspense fallback={null}>{isPanelOpen && <RightPanel />}</React.Suspense>
+
+      {/* Workshop overlay primitives (Spotlight / Callout / CaptionBar) — shared by Workshop Mode + Video Mode */}
+      <React.Suspense fallback={null}>
+        <WorkshopOverlayHost />
+      </React.Suspense>
+      {/* Video Mode driver — RAF cue scheduler + bottom control bar */}
+      <React.Suspense fallback={null}>
+        <VideoOverlay />
+      </React.Suspense>
 
       {/* Command palette — ⌘K search */}
       <CommandPalette isOpen={paletteOpen} onClose={closePalette} />

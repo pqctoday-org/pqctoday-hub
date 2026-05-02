@@ -6,6 +6,105 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added — Executive PQC Workshop (Workshop tab + Workshop Mode + Video Mode)
+
+- **Workshop tab in the right panel** (`WorkshopPanel.tsx`) — sits next to Assistant /
+  Journey / Bookmarks / FAQ. Idle view shows hero, "what to expect" bullets,
+  live-validated prerequisites checklist, region picker (US / Canada / Australia),
+  collapsible agenda with per-step page URL + activities + minutes, plus
+  `Start Workshop` and `Record this workshop (video mode)` CTAs.
+- **Workshop Mode (manual, hybrid navigation)** — pinned right panel, step header
+  with `Step N / total · chapter · ~min`, body (why-it-matters, deep-link button,
+  numbered try-it tasks, expected output, collapsible narration), footer
+  `Back · Skip · Mark done · Next`. Auto-detects step completion against existing
+  stores (assessment status, bookmarks, module progress).
+- **Video Mode (auto-advance, recordable)** — RAF cue scheduler drives a per-step
+  cue timeline. Overlays: lower-third caption (`CaptionBar`), SVG-mask spotlight
+  (`Spotlight`), anchored callouts (`Callout`). Auto-hide control bar (`VideoControlBar`)
+  with Prev / Pause / Restart / step-progress / Skip / Next / Exit. Pause clock
+  freezes via `pausedAccumRef` so resumes pick up exactly where the timer stopped.
+- **Manual cue stepper in Workshop Mode** (`WorkshopStepCard.tsx`) — when a step
+  has `cues[]`, footer shows `[Prev hint] · Hint N/M · [Show next hint ›]`. Same
+  cues fire as Video Mode, just driven by user clicks. Idempotent for caption/spotlight;
+  click cues replay from start to keep state coherent. Backed by shared
+  `useWorkshopOverlayStore`.
+- **Persona-keyed flow registry** (`workshopRegistry.ts`) — flows match against
+  `{role, proficiency, industry, region}` with most-specific-wins. Most-specific
+  flow wins; unmatched contexts show a "planned" state. First flow ships:
+  `executive × basics × Finance & Banking × {US|CA|AU}`.
+- **Executive flow content** (`executiveFinance.ts`, 22 steps, ~92 min) —
+  Welcome (5m) · Pre-flight (3m) · 8 Foundations (40m: Landing, Learn, Threats,
+  Timeline, Library, Leaders, Assess, Report) · Region chapter 6 steps (20m:
+  US/CA/AU CSWP-39 + Compliance + Timeline + Threats + Leaders + Library + Business) ·
+  CSWP-39 4-step action (20m: Governance / Assets / Risk-Mgmt / Migration) · Close (4m).
+  Region chapters cite real CSV records: ISM-1917 for AU, ITSM.40.001 phases for CA,
+  CNSA 2.0 + PCI 12.3.3 for US.
+- **Per-flow fixtures JSON** (`public/workshop-fixtures/executive-finance-amer-apac-v1.json`) —
+  fields the Video Mode auto-fills into wizard inputs (assessment answers, RACI roles,
+  KPI thresholds, pilot scope, etc.) so the recording demonstrates form-driven flows
+  without human input.
+- **Cue kinds** (`Workshop.ts`) — `navigate`, `caption`, `spotlight`, `callout`, `click`,
+  `highlight-tab`, `select-tab`, `expand-section`, `collapse-section`, `scroll-to`,
+  `fill-from-fixture`, `fill-literal`, `select-from-fixture`, `advance`. Authoring
+  pattern: 3-7 cues per step on top of automatic step-entry navigation + caption.
+- **Stable workshop selectors** — `data-workshop-target="<page>-<element>"` convention
+  with `wt(id)` helper (`workshopTarget.ts`). Instrumented: Landing CTAs
+  (`landing-cta-primary`/`-secondary`), Assess Quick mode (`assess-mode-quick`),
+  Business Center zone tiles (`business-zone-{governance|assets|risk-management|...}`).
+- **Reusable collapsible/tab targeting** (`CollapsibleSection.tsx`, `tabs.tsx`) —
+  `<CollapsibleSection>` accepts an optional `targetId` prop; toggle button gets
+  `data-workshop-target="section-<targetId>"`. `<TabsTrigger>` auto-derives
+  `data-workshop-target="tab-<slug>"` from its `value` prop — every existing tab
+  in the app is now workshop-targetable with zero per-callsite work. Cues use
+  `expand-section` / `select-tab` against these slugs.
+- **`/business?zone=…` deep-link** (`BusinessCenterView.tsx`) — fixed: now reads
+  `?zone=` query param via `useSearchParams()` and activates the matching CSWP-39
+  zone. Previously only `#zone-…` hash worked; cues that drive the four CSWP-39
+  action steps now land on the correct zone deterministically.
+- **Headless Playwright recorder** (`scripts/record-workshop.ts`) — launches
+  Chromium 1920×1080, navigates to `?workshop=video&region=US|CA|AU&autoplay=1`,
+  waits for the `workshop-finished` CustomEvent, saves a `.webm` to `dist-videos/`.
+  Run via `npm run video:workshop -- --region=AU` or `--all`.
+- **Caption export pipeline** (`scripts/finalize-video.ts`) — generates a sidecar
+  `.vtt` (WebVTT subtitles) and a structured `.captions.json` (TTS-ready timeline)
+  from the registry's narration. Optionally transcodes `.webm → .mp4` (h264) and
+  soft-muxes the VTT as a `mov_text` subtitle track when ffmpeg is available.
+- **URL auto-start** (`useWorkshopUrlAutostart.ts`) — Playwright recorder hook;
+  reads `persona`, `proficiency`, `industry`, `region` from URL params, seeds the
+  persona store, resolves the matching flow, calls `startVideo()`. Right panel
+  auto-minimises in Video Mode so the camera captures the full main pane plus
+  overlays.
+- **Registry validator** (`scripts/validate-workshop.ts`, `npm run validate:workshop`) —
+  asserts every step has a route + non-empty narration + non-empty tasks; cue
+  timelines (when present) end with `'advance'` and total runtime is within ±10%
+  of `estMinutes * 60_000`; flatten produces non-zero step lists per declared
+  region.
+- **17 unit tests** — `useWorkshopStore` (persist + migrate + rehydrate),
+  `workshopRegistry` (resolve + flatten + nav helpers + CSWP-39 step count),
+  `workshopDeepLink` (URL building + step matching).
+
+### Changed
+
+- **Persona/data alignment in workshop flow** — `industry` query param now uses
+  the canonical CSV value `Financial Services / Banking` (not `FIN`); leaders
+  steps use `?leader=<full-name>` deep-link instead of `?country=US&sector=Finance`
+  since the leaders CSV stores country of residence (Sudha Iyer is `Ireland`,
+  not `US`); `?sector=` only accepts `Public|Private|Academic` so finance-sector
+  filtering uses `?cat=Industry+Adopter`.
+
+### Documentation
+
+- **CLAUDE.md — Multi-Session Safety Rules** — new mandatory section under
+  `Git Operations` forbidding `git reset --hard`, `git clean -f*`, `git checkout .`,
+  `git stash drop|clear|pop`, `git push --force`, `rm -rf` on code dirs, and
+  `git worktree remove --force` unless the user explicitly authorises by phrase.
+  Added because a parallel Claude session running `git reset --hard && git clean -fd`
+  for unrelated VPN/HSM cleanup destroyed in-progress workshop work; recovery
+  required extracting `Write` tool calls from the session transcript at
+  `~/.claude/projects/.../{session-id}.jsonl`. Now-mandatory rule prevents
+  recurrence: WIP commits early, status-check + confirmation handshake before
+  destructive ops, leave unfamiliar files alone (they may belong to another session).
+
 ## [3.5.63] - May 2, 2026
 
 Playground UX audit Wave 2A/2B/2C: error UX hardening across workshop tools,

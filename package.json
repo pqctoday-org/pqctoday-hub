@@ -31,7 +31,13 @@
     "coverage": "vitest run --coverage",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "validate:workshop": "tsx scripts/validate-workshop.ts",
+    "video:workshop": "tsx scripts/record-workshop.ts",
+    "video:finalize": "tsx scripts/finalize-video.ts",
+    "validate:workshop": "tsx scripts/validate-workshop.ts",
+    "video:workshop": "tsx scripts/record-workshop.ts",
+    "video:finalize": "tsx scripts/finalize-video.ts"
   },
   "overrides": {
     "serialize-javascript": ">=7.0.3",

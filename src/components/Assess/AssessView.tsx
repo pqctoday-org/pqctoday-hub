@@ -48,6 +48,7 @@ const ModeSelector: React.FC<{
         variant="ghost"
         onClick={() => onSelect('quick')}
         className="glass-panel h-auto p-6 flex-col items-start whitespace-normal hover:bg-transparent hover:border-primary/40 group"
+        data-workshop-target="assess-mode-quick"
       >
         <div className="flex items-center gap-3 mb-3">
           <div className="p-2 rounded-full bg-warning/10 group-hover:bg-warning/20 transition-colors">

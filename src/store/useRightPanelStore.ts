@@ -47,7 +47,7 @@ export const useRightPanelStore = create<RightPanelState>()(
     }),
     {
       name: 'pqc-right-panel',
-      version: 4,
+      version: 5,
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         activeTab: state.activeTab,
@@ -69,6 +69,11 @@ export const useRightPanelStore = create<RightPanelState>()(
         if (version < 4) {
           // v3 → v4: 'faq' tab added; no migration needed
         }
+        if (version < 5) {
+          // v4 → v5: 'workshop' tab added; no migration needed
+        }
+        const allowed = ['chat', 'history', 'bookmarks', 'faq', 'workshop']
+        if (!allowed.includes(state.activeTab as string)) state.activeTab = 'chat'
         return state
       },
       onRehydrateStorage: () => (_state, error) => {

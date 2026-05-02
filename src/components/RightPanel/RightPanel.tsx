@@ -3,6 +3,7 @@ import React, { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import FocusLock from 'react-focus-lock'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
+import { useWorkshopStore, isWorkshopPinning } from '@/store/useWorkshopStore'
 import { PanelHeader } from './PanelHeader'
 import { ChatPanelContent } from './ChatPanelContent'
 
@@ -18,16 +19,36 @@ const FAQPage = React.lazy(() =>
   import('@/components/FAQ/FAQPage').then((m) => ({ default: m.FAQPage }))
 )
 
+const WorkshopPanel = React.lazy(() =>
+  import('./WorkshopPanel').then((m) => ({ default: m.WorkshopPanel }))
+)
+
+const WorkshopPanel = React.lazy(() =>
+  import('./WorkshopPanel').then((m) => ({ default: m.WorkshopPanel }))
+)
+
 export const RightPanel: React.FC = () => {
   const { isOpen, activeTab, setTab, close, minimize, toggle } = useRightPanelStore()
-  // Close on Escape
+  const workshopMode = useWorkshopStore((s) => s.mode)
+  const workshopActive = isWorkshopPinning(workshopMode)
+
+  // Close on Escape — disabled while workshop is pinned (running or video).
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
+      if (workshopActive) return
       if (e.key === 'Escape') close()
     }
     if (isOpen) window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [isOpen, close])
+  }, [isOpen, close, workshopActive])
+
+  // Force panel open while workshop is running so the user cannot accidentally close it.
+  useEffect(() => {
+    if (workshopActive && !isOpen) {
+      // Re-open the panel and switch to the workshop tab.
+      useRightPanelStore.setState({ isOpen: true, isMinimized: false, activeTab: 'workshop' })
+    }
+  }, [workshopActive, isOpen])
 
   // E2E UI Bypass
   useEffect(() => {
@@ -44,7 +65,9 @@ export const RightPanel: React.FC = () => {
         ? 'Journey History'
         : activeTab === 'faq'
           ? 'FAQ'
-          : 'Bookmarks'
+          : activeTab === 'workshop'
+            ? 'Workshop'
+            : 'Bookmarks'
 
   return (
     <AnimatePresence>
@@ -65,11 +88,22 @@ export const RightPanel: React.FC = () => {
               <PanelHeader
                 activeTab={activeTab}
                 onTabChange={setTab}
-                onClose={close}
-                onMinimize={minimize}
+                onClose={workshopActive ? () => {} : close}
+                onMinimize={workshopActive ? undefined : minimize}
               />
 
               {activeTab === 'chat' && <ChatPanelContent />}
+              {activeTab === 'workshop' && (
+                <React.Suspense
+                  fallback={
+                    <div className="flex-1 flex items-center justify-center">
+                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                    </div>
+                  }
+                >
+                  <WorkshopPanel />
+                </React.Suspense>
+              )}
               {activeTab === 'history' && (
                 <React.Suspense
                   fallback={
