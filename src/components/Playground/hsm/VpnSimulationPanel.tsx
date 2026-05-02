@@ -2297,7 +2297,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             })
         }
       } catch (err: unknown) {
-        const msg = translateCryptoError(err instanceof Error ? err.message : String(err))
+        const msg = err instanceof Error ? err.message : String(err)
         strongSwanEngine.dispatchLog({ level: 'error', text: `[RPC cmd=${cmdId}] ${msg}` })
         rv = 0x50 // CKR_FUNCTION_NOT_SUPPORTED
       }
@@ -3220,7 +3220,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         </div>
       </div>
 
-            <div className="mb-3 flex items-center gap-2">
+      <div className="mb-3 flex items-center gap-2">
         {sabError ? (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-status-error/10 px-2.5 py-0.5 text-xs font-medium text-status-error">
             <span className="h-1.5 w-1.5 rounded-full bg-status-error" />
@@ -3252,11 +3252,20 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             <p className="text-sm font-medium text-foreground">How to run a PQC VPN handshake</p>
             <ol className="mt-1 list-decimal pl-4 text-sm text-muted-foreground space-y-0.5">
               <li>Choose a VPN mode (Classical / Hybrid / Pure-PQC)</li>
-              <li>For Dual Cert auth: click <strong>Generate Certs</strong> first</li>
-              <li>Click <strong>Start Daemon</strong> and watch the IKEv2 exchange</li>
+              <li>
+                For Dual Cert auth: click <strong>Generate Certs</strong> first
+              </li>
+              <li>
+                Click <strong>Start Daemon</strong> and watch the IKEv2 exchange
+              </li>
             </ol>
           </div>
-          <div role="button" tabIndex={0} onKeyDown={(e) => { if(e.key==='Enter' || e.key===' ') setShowInstructions(false) }}
+          <div
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') setShowInstructions(false)
+            }}
             aria-label="Dismiss instructions"
             className="ml-auto shrink-0 text-muted-foreground hover:text-foreground"
             onClick={() => setShowInstructions(false)}
@@ -3465,7 +3474,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       }
                       await launchFullFidelityVpn()
                     } catch (err: unknown) {
-                      setSavedSessionBanner(translateCryptoError(err instanceof Error ? err.message : String(err)))
+                      setSavedSessionBanner(
+                        translateCryptoError(err instanceof Error ? err.message : String(err))
+                      )
                       setTimeout(() => setSavedSessionBanner(null), 6000)
                     }
                   }}
@@ -4178,7 +4189,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     }
                     setCurrentStep(1)
                   } catch (err: unknown) {
-                    setSabError(translateCryptoError(err instanceof Error ? err.message : String(err)))
+                    setSabError(
+                      translateCryptoError(err instanceof Error ? err.message : String(err))
+                    )
                   }
                 }}
                 disabled={
