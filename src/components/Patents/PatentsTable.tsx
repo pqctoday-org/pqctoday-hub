@@ -696,6 +696,9 @@ export function PatentsTable({
                           <div className="text-xs text-muted-foreground font-mono">
                             {p.patentNumber}
                           </div>
+                          <span className="sm:hidden inline-flex items-center gap-0.5 text-[10px] text-primary mt-0.5">
+                            View details <ChevronRight size={10} />
+                          </span>
                         </td>
                       )}
                       {show('assignee') && !selectedPatent && (

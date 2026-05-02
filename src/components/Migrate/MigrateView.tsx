@@ -20,6 +20,7 @@ import {
   Wrench,
   Scale,
   BookmarkCheck,
+  HelpCircle,
 } from 'lucide-react'
 
 import debounce from 'lodash/debounce'
@@ -989,8 +990,13 @@ export const MigrateView: React.FC = () => {
                 filterContent={
                   <div className="space-y-6">
                     <div className="space-y-3">
-                      <p className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">
+                      <p className="font-semibold text-sm text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                         Migration Phase
+                        <HelpCircle
+                          size={13}
+                          className="text-muted-foreground/50 cursor-help shrink-0"
+                          title="7-phase framework aligned with NIST IR 8547, NSA CNSA 2.0, and CISA guidance. Each phase maps to specific readiness actions: Inventory → Prioritize → Plan → Procure → Deploy → Validate → Operate."
+                        />
                       </p>
                       <FilterDropdown
                         items={MIGRATION_STEPS.map((s) => ({

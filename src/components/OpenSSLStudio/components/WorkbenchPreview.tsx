@@ -4,7 +4,7 @@ import { Play, Settings, Copy, Terminal, BookOpen } from 'lucide-react'
 import { useOpenSSLStore } from '../store'
 import { useOpenSSL } from '../hooks/useOpenSSL'
 import { logEvent } from '../../../utils/analytics'
-import { getOpenSSLDocUrl } from '../../../utils/opensslDocsData'
+import { getOpenSSLDocUrl, tokenizeCommand } from '../../../utils/opensslDocsData'
 import { Button } from '@/components/ui/button'
 
 interface WorkbenchPreviewProps {
@@ -76,7 +76,20 @@ export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({ category, sk
 
         <div className="p-4 bg-muted/40 flex gap-3 group min-h-[80px] sm:min-h-[160px] relative">
           <code className="text-primary flex-1 break-all font-mono text-sm leading-relaxed whitespace-pre-wrap">
-            $ {command}
+            ${' '}
+            {tokenizeCommand(command).map((tok, i) =>
+              tok.hint ? (
+                <span
+                  key={i}
+                  title={tok.hint}
+                  className="underline decoration-dotted decoration-primary/40 cursor-help"
+                >
+                  {tok.text}
+                </span>
+              ) : (
+                <React.Fragment key={i}>{tok.text}</React.Fragment>
+              )
+            )}
           </code>
           <Button
             variant="ghost"
