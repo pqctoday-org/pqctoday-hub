@@ -519,11 +519,15 @@ export const ThreatsDashboard: React.FC = () => {
               return Array.from(byIndustry.entries()).map(([ind, items]) => ({
                 id: ind.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
                 label: ind,
-                items: items.map((i) => ({
-                  id: i.threatId,
-                  label: `${i.threatId} — ${i.threatDescription.split(':')[0].slice(0, 60)}`,
-                  hint: i.criticality,
-                })),
+                items: items.map((i) => {
+                  const desc = i.threatDescription ?? ''
+                  const summary = desc.split(':')[0].slice(0, 60)
+                  return {
+                    id: i.threatId,
+                    label: summary ? `${i.threatId} — ${summary}` : i.threatId,
+                    hint: i.criticality,
+                  }
+                }),
               }))
             })()}
             emptyMessage="No threats match the current filters."
