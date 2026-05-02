@@ -78,15 +78,18 @@ export function useCueApplier(): CueApplierState & CueApplierActions {
         case 'click': {
           retrySelector(cue.selector, (el) => {
             el.click()
+            if (cue.selector.includes('learn-stepper-')) scrollToTopAfterContentChange()
             return true
           })
           return
         }
         case 'highlight-tab':
           selectTab(cue.tabName)
+          scrollToTopAfterContentChange()
           return
         case 'select-tab':
           selectTab(cue.tabName)
+          scrollToTopAfterContentChange()
           return
         case 'expand-section': {
           retrySelector(cue.selector, (el) => {
@@ -189,25 +192,16 @@ export function useCueApplier(): CueApplierState & CueApplierActions {
 }
 
 function scheduleAutoScrollFromNextCues(nextCues?: WorkshopCue[]): void {
-  if (!nextCues || nextCues.length === 0) return
-  if (nextCues.some((c) => c.kind === 'scroll-to')) return
-  const firstWithSelector = nextCues.find(
-    (c): c is WorkshopCue & { selector: string } =>
-      'selector' in c && typeof (c as { selector?: unknown }).selector === 'string'
-  )
-  if (!firstWithSelector) return
-  const sel = firstWithSelector.selector
-  let n = 0
-  const tick = () => {
-    const el = document.querySelector(sel)
-    if (el instanceof HTMLElement) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      return
-    }
-    n++
-    if (n < 4) setTimeout(tick, 200)
-  }
-  setTimeout(tick, 700)
+  if (nextCues && nextCues.some((c) => c.kind === 'scroll-to')) return
+  setTimeout(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, 700)
+}
+
+function scrollToTopAfterContentChange(): void {
+  setTimeout(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, 250)
 }
 
 function retrySelector(

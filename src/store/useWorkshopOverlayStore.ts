@@ -78,6 +78,10 @@ export const useWorkshopOverlayStore = create<WorkshopOverlayState>()((set, get)
       case 'click': {
         retrySelector(cue.selector, (el) => {
           el.click()
+          // Stepper-next/prev clicks swap the visible content panel; scroll the
+          // user back to the top so the new section/step renders from its
+          // heading rather than wherever they last scrolled to.
+          if (cue.selector.includes('learn-stepper-')) scrollToTopAfterContentChange()
           return true
         })
         return
@@ -85,6 +89,7 @@ export const useWorkshopOverlayStore = create<WorkshopOverlayState>()((set, get)
       case 'highlight-tab':
       case 'select-tab':
         selectTab(cue.tabName)
+        scrollToTopAfterContentChange()
         return
       case 'expand-section': {
         retrySelector(cue.selector, (el) => {
@@ -177,30 +182,26 @@ export const useWorkshopOverlayStore = create<WorkshopOverlayState>()((set, get)
 }))
 
 /**
- * After a `navigate` cue, look for the first selector in upcoming cues and
- * scroll it into view (after a short delay for route + lazy chunks). Skipped
- * when an explicit `scroll-to` cue is already queued — the author wins.
+ * After a `navigate` cue, scroll the page back to the top so the user sees
+ * the new content from the heading down. Skipped when an explicit `scroll-to`
+ * cue is queued — the author wins.
+ *
+ * (Earlier we tried scrolling to the first cue selector, but for module
+ * tours the first selector is often the Next button at page bottom — that
+ * scrolled past the actual content. Top-of-page is the right default.)
  */
 function scheduleAutoScrollFromNextCues(nextCues?: WorkshopCue[]): void {
-  if (!nextCues || nextCues.length === 0) return
-  if (nextCues.some((c) => c.kind === 'scroll-to')) return
-  const firstWithSelector = nextCues.find(
-    (c): c is WorkshopCue & { selector: string } =>
-      'selector' in c && typeof (c as { selector?: unknown }).selector === 'string'
-  )
-  if (!firstWithSelector) return
-  const sel = firstWithSelector.selector
-  let n = 0
-  const tick = () => {
-    const el = document.querySelector(sel)
-    if (el instanceof HTMLElement) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      return
-    }
-    n++
-    if (n < 4) setTimeout(tick, 200)
-  }
-  setTimeout(tick, 700)
+  if (nextCues && nextCues.some((c) => c.kind === 'scroll-to')) return
+  setTimeout(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, 700)
+}
+
+/** Same as auto-scroll on navigate but with a shorter delay for in-page content changes. */
+function scrollToTopAfterContentChange(): void {
+  setTimeout(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, 250)
 }
 
 /**
