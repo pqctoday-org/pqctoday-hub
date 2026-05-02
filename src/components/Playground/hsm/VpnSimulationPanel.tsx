@@ -2,6 +2,8 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback, useMemo } from 'react'
 import {
+  Info,
+  X,
   ArrowRight,
   ArrowLeft,
   RotateCcw,
@@ -11,6 +13,7 @@ import {
   KeyRound,
   BookOpen,
   FlaskConical,
+  Loader2,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -59,6 +62,8 @@ import {
 import { AsnSerializer, OctetString } from '@peculiar/asn1-schema'
 import { useHsmContext } from './HsmContext'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
+import { translateCryptoError } from '@/utils/cryptoErrorHint'
+import { ErrorAlert } from '@/components/ui/error-alert'
 import { Button } from '@/components/ui/button'
 import { ChromiumGateBanner, useChromiumGate } from '@/components/shared/ChromiumGateBanner'
 
@@ -573,7 +578,7 @@ const V2SelftestCard: React.FC = () => {
       const r = await runV2Selftest((e) => setEvents((prev) => [...prev, e]))
       setResult(r)
     } catch (e) {
-      setErr(e instanceof Error ? e.message : String(e))
+      setErr(translateCryptoError(e instanceof Error ? e.message : String(e)))
     } finally {
       setRunning(false)
     }
@@ -596,7 +601,7 @@ const V2SelftestCard: React.FC = () => {
         aliceSecretHex: hex,
       })
     } catch (e) {
-      setErr(e instanceof Error ? e.message : String(e))
+      setErr(translateCryptoError(e instanceof Error ? e.message : String(e)))
     } finally {
       setRunning(false)
     }
@@ -636,7 +641,7 @@ const V2SelftestCard: React.FC = () => {
         </div>
       </div>
 
-      {err && <p className="text-xs text-status-error font-mono">Error: {err}</p>}
+      {err && <ErrorAlert message={err} />}
 
       {result && (
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs font-mono">
@@ -740,6 +745,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     selectedModeRef.current = selectedMode
   }, [selectedMode])
   const [currentStep, setCurrentStep] = useState(0)
+  const [showInstructions, setShowInstructions] = useState(true)
   const [mtu, setMtu] = useState<number>(1500)
   const [allowFragmentation, setAllowFragmentation] = useState<boolean>(true)
   const [ssState, setSsState] = useState<StrongSwanState>('UNINITIALIZED')
@@ -2291,7 +2297,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             })
         }
       } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : String(err)
+        const msg = translateCryptoError(err instanceof Error ? err.message : String(err))
         strongSwanEngine.dispatchLog({ level: 'error', text: `[RPC cmd=${cmdId}] ${msg}` })
         rv = 0x50 // CKR_FUNCTION_NOT_SUPPORTED
       }
@@ -2719,7 +2725,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         text: `[CERT] Certs signed by softhsmv3 — initiator=${algLabel(initKeys)} responder=${algLabel(respKeys)}. Private keys remain in HSM. Click Start Daemon to begin.`,
       })
     } catch (err: unknown) {
-      setSabError(err instanceof Error ? err.message : String(err))
+      setSabError(translateCryptoError(err instanceof Error ? err.message : String(err)))
     } finally {
       setCertGenLoading(false)
     }
@@ -2943,7 +2949,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         text: `[CERT-WORKER] ML-DSA-${variant} certs provisioned in worker softhsm. Click Start Daemon.`,
       })
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : String(err)
+      const msg = translateCryptoError(err instanceof Error ? err.message : String(err))
       strongSwanEngine.dispatchLog({ level: 'error', text: `[CERT-WORKER] ${msg}` })
       setSabError(msg)
     } finally {
@@ -3049,7 +3055,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
 
       setBenchmarkResults(out)
     } catch (err: unknown) {
-      setSabError(err instanceof Error ? err.message : String(err))
+      setSabError(translateCryptoError(err instanceof Error ? err.message : String(err)))
     } finally {
       setBenchmarkRunning(false)
     }
@@ -3065,7 +3071,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         ])
         setCertInspectorText(res.stdout || 'No output from openssl x509')
       } catch (err: unknown) {
-        setCertInspectorText(err instanceof Error ? err.message : String(err))
+        setCertInspectorText(translateCryptoError(err instanceof Error ? err.message : String(err)))
       }
       setShowCertInspector(true)
     },
@@ -3214,6 +3220,51 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         </div>
       </div>
 
+            <div className="mb-3 flex items-center gap-2">
+        {sabError ? (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-status-error/10 px-2.5 py-0.5 text-xs font-medium text-status-error">
+            <span className="h-1.5 w-1.5 rounded-full bg-status-error" />
+            SharedArrayBuffer unavailable — try Chrome or Firefox
+          </span>
+        ) : ssState === 'UNINITIALIZED' ? (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+            <Loader2 size={10} className="animate-spin" />
+            Loading strongSwan WASM…
+          </span>
+        ) : ssState === 'RUNNING' ? (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-status-success/10 px-2.5 py-0.5 text-xs font-medium text-status-success">
+            <span className="h-1.5 w-1.5 rounded-full bg-status-success" />
+            Daemon running
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-status-success/10 px-2.5 py-0.5 text-xs font-medium text-status-success">
+            <span className="h-1.5 w-1.5 rounded-full bg-status-success" />
+            strongSwan WASM ready
+          </span>
+        )}
+      </div>
+      {showInstructions && (
+        <div className="mb-4 flex items-start gap-3 rounded-lg border border-border bg-muted/50 px-4 py-3">
+          <div className="mt-0.5 shrink-0 text-primary">
+            <Info size={16} />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-foreground">How to run a PQC VPN handshake</p>
+            <ol className="mt-1 list-decimal pl-4 text-sm text-muted-foreground space-y-0.5">
+              <li>Choose a VPN mode (Classical / Hybrid / Pure-PQC)</li>
+              <li>For Dual Cert auth: click <strong>Generate Certs</strong> first</li>
+              <li>Click <strong>Start Daemon</strong> and watch the IKEv2 exchange</li>
+            </ol>
+          </div>
+          <div role="button" tabIndex={0} onKeyDown={(e) => { if(e.key==='Enter' || e.key===' ') setShowInstructions(false) }}
+            aria-label="Dismiss instructions"
+            className="ml-auto shrink-0 text-muted-foreground hover:text-foreground"
+            onClick={() => setShowInstructions(false)}
+          >
+            <X size={14} />
+          </div>
+        </div>
+      )}
       <V2SelftestCard />
       <Tabs defaultValue="ui" className="w-full">
         <TabsList className="mb-4">
@@ -3414,7 +3465,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       }
                       await launchFullFidelityVpn()
                     } catch (err: unknown) {
-                      setSavedSessionBanner(err instanceof Error ? err.message : String(err))
+                      setSavedSessionBanner(translateCryptoError(err instanceof Error ? err.message : String(err)))
                       setTimeout(() => setSavedSessionBanner(null), 6000)
                     }
                   }}
@@ -3549,7 +3600,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   } catch (err: unknown) {
                     setCharonValidation({
                       running: false,
-                      error: err instanceof Error ? err.message : String(err),
+                      error: translateCryptoError(err instanceof Error ? err.message : String(err)),
                     })
                   }
                 }}
@@ -4127,7 +4178,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     }
                     setCurrentStep(1)
                   } catch (err: unknown) {
-                    setSabError(err instanceof Error ? err.message : String(err))
+                    setSabError(translateCryptoError(err instanceof Error ? err.message : String(err)))
                   }
                 }}
                 disabled={

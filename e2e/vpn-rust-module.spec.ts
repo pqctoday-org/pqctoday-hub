@@ -167,6 +167,10 @@ for (const { mode, expectEcdh, expectMlKem } of PSK_SCENARIOS) {
       errorMarker.waitFor({ timeout: TIMEOUT }).then(() => 'error' as const),
     ]).catch(() => 'timeout' as const)
 
+    const logsTab = page.locator('text=charon.log').first()
+    if (await logsTab.isVisible()) {
+      await logsTab.click()
+    }
     const body = await page.evaluate(() => document.body.innerText)
     const logs = body
       .split('\n')

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React from 'react'
+import React, { useState } from 'react'
 import type { X509Attribute } from './types'
 
 interface AttributeTableProps {
@@ -13,6 +13,7 @@ export const AttributeTable: React.FC<AttributeTableProps> = ({
   onAttributeChange,
   showSource = false,
 }) => {
+  const [cnTouched, setCnTouched] = useState(false)
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-left border-collapse">
@@ -64,6 +65,9 @@ export const AttributeTable: React.FC<AttributeTableProps> = ({
               <td className="p-3 text-foreground font-medium text-sm">
                 <div className="flex flex-col">
                   <span>{attr.label}</span>
+                  {attr.id === 'CN' && (
+                    <span className="ml-1 text-status-error" aria-label="required">*</span>
+                  )}
                   <div className="flex gap-1 mt-1">
                     {attr.status === 'mandatory' && (
                       <span className="text-[10px] bg-status-error text-status-error px-1.5 py-0.5 rounded w-fit">
@@ -78,11 +82,17 @@ export const AttributeTable: React.FC<AttributeTableProps> = ({
                   type="text"
                   value={attr.value}
                   onChange={(e) => onAttributeChange(attr.id, 'value', e.target.value)}
+                  onBlur={() => {
+                    if (attr.id === 'CN') setCnTouched(true)
+                  }}
                   placeholder={attr.placeholder}
                   disabled={!attr.enabled || (showSource && attr.source === 'CSR')}
                   aria-label={attr.label}
                   className="w-full bg-muted border border-border rounded px-2 py-1.5 text-sm text-foreground focus:border-primary/50 outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 />
+                {attr.id === 'CN' && cnTouched && attr.value.trim() === '' && (
+                  <p className="mt-0.5 text-xs text-status-error">Common Name is required</p>
+                )}
               </td>
               <td className="p-3 text-muted-foreground text-xs max-w-[200px]">
                 {attr.description}

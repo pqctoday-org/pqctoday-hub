@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
-import { ShieldAlert, Loader2, Plus, Trash2, Check, AlertTriangle } from 'lucide-react'
+import { ShieldAlert, Loader2, Plus, Trash2, Check, AlertTriangle, X } from 'lucide-react'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
@@ -53,6 +53,7 @@ export const CRLGenerator: React.FC<CRLGeneratorProps> = ({ onComplete }) => {
   const [selectedKeyId, setSelectedKeyId] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [output, setOutput] = useState('')
+  const [errorHint, setErrorHint] = useState<string | null>(null)
   const [crlContent, setCrlContent] = useState<string | null>(null)
   const [parsedCrl, setParsedCrl] = useState<string | null>(null)
 
@@ -130,6 +131,7 @@ export const CRLGenerator: React.FC<CRLGeneratorProps> = ({ onComplete }) => {
   const handleGenerate = async () => {
     if (!selectedKeyId) return
     setIsGenerating(true)
+    setErrorHint(null)
     setOutput((prev) => prev + '\n--- Generating CRL ---\n')
     setCrlContent(null)
     setParsedCrl(null)
@@ -304,6 +306,7 @@ authorityKeyIdentifier = keyid:always
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       const hint = getCryptoErrorHint(errorMessage)?.summary
+      setErrorHint(hint || null)
       setOutput((prev) => prev + `Error: ${errorMessage}\n${hint ? `  → ${hint}\n` : ''}`)
     } finally {
       setIsGenerating(false)
@@ -446,7 +449,24 @@ authorityKeyIdentifier = keyid:always
             className="w-full"
           />
 
-          <Button
+          
+          {errorHint && (
+            <div className="mb-3 flex items-start gap-2 rounded-md border border-status-warning/40 bg-status-warning/10 px-3 py-2 text-sm text-status-warning">
+              <AlertTriangle size={14} className="mt-0.5 shrink-0" />
+              <div>
+                <p className="font-medium">Hint</p>
+                <p>{errorHint}</p>
+              </div>
+              <button
+                aria-label="Dismiss hint"
+                className="ml-auto text-muted-foreground hover:text-foreground"
+                onClick={() => setErrorHint(null)}
+              >
+                <X size={12} />
+              </div>
+            </div>
+          )}
+<Button
             variant="gradient"
             onClick={handleGenerate}
             disabled={isGenerating || !selectedKeyId}

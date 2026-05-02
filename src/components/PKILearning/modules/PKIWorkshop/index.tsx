@@ -3,6 +3,9 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import {
   Trash2,
+  FileKey,
+  Key,
+  ShieldCheck,
   FilePlus,
   Shield,
   FileCheck,
@@ -32,6 +35,33 @@ import { AcmePqcWalkthrough } from './AcmePqcWalkthrough'
 import { CertCapacityCalculator } from './CertCapacityCalculator'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 import { Button } from '@/components/ui/button'
+
+
+const ArtifactSummaryStrip: React.FC = () => {
+  const { artifacts } = useModuleStore()
+  
+  const chips = [
+    ...artifacts.csrs.map(c => ({ icon: FileKey, label: `CSR ${c.name}`, algo: '' })),
+    ...artifacts.keys.map(k => ({ icon: ShieldCheck, label: `CA Key ${k.name}`, algo: k.algorithm })),
+    ...artifacts.certificates.map(c => ({ icon: Key, label: `Cert ${c.name}`, algo: '' }))
+  ]
+
+  if (chips.length === 0) return null
+
+  return (
+    <div className="mb-4 flex flex-wrap gap-2 rounded-lg bg-muted/40 p-2 border border-border">
+      {chips.map((chip, i) => (
+        <div key={i} className="flex items-center gap-1.5 rounded-full bg-background px-2.5 py-1 text-xs border border-border shadow-sm">
+          <chip.icon size={12} className="text-muted-foreground" />
+          <span className="font-medium text-foreground max-w-[120px] truncate" title={chip.label}>
+            {chip.label}
+          </span>
+          <span className="text-muted-foreground ml-1">· {chip.algo}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
 
 const MODULE_ID = 'pki-workshop'
 
@@ -228,6 +258,8 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({ playgroundMode = false
           stepIndex={currentStep}
           totalSteps={parts.length}
         />
+
+        <ArtifactSummaryStrip />
 
         {currentStep === 0 && (
           <CSRGenerator onComplete={() => markStepComplete(MODULE_ID, 'csr', 0)} />

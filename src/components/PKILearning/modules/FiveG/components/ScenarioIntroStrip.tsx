@@ -6,6 +6,44 @@ import { Button } from '@/components/ui/button'
 
 export type ScenarioView = 'operator' | 'attacker'
 
+interface ScenarioViewSwitcherProps {
+  view: ScenarioView
+  onViewChange: (view: ScenarioView) => void
+}
+
+export const ScenarioViewSwitcher: React.FC<ScenarioViewSwitcherProps> = ({ view, onViewChange }) => (
+  <div
+    role="group"
+    aria-label="Scenario perspective"
+    className="inline-flex rounded-lg border border-border bg-muted/40 p-0.5"
+  >
+    <Button
+      variant="ghost"
+      onClick={() => onViewChange('operator')}
+      aria-pressed={view === 'operator'}
+      className={clsx(
+        'h-7 px-2 text-xs gap-1.5 rounded-md',
+        view === 'operator' ? 'bg-primary/15 text-primary' : 'text-muted-foreground hover:text-foreground'
+      )}
+    >
+      <Radio size={12} />
+      Operator view
+    </Button>
+    <Button
+      variant="ghost"
+      onClick={() => onViewChange('attacker')}
+      aria-pressed={view === 'attacker'}
+      className={clsx(
+        'h-7 px-2 text-xs gap-1.5 rounded-md',
+        view === 'attacker' ? 'bg-destructive/15 text-destructive' : 'text-muted-foreground hover:text-foreground'
+      )}
+    >
+      <EyeOff size={12} />
+      IMSI-catcher view
+    </Button>
+  </div>
+)
+
 export interface ScenarioIntroStripProps {
   view: ScenarioView
   onViewChange: (view: ScenarioView) => void

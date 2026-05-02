@@ -60,12 +60,36 @@ export async function htmlToPdf(
 ): Promise<void> {
   const { filename = 'artifact', scale = 2, backgroundColor = '#ffffff' } = options
 
-  const canvas = await html2canvas(element, {
-    scale,
-    backgroundColor,
-    useCORS: true,
-    logging: false,
-  })
+  // html2canvas only rasterises the visible scroll viewport of any ancestor
+  // with overflow:auto/scroll/hidden, clipping tall elements at the bottom.
+  // Temporarily override those ancestors so the full content height is captured.
+  type Saved = { el: HTMLElement; overflow: string; maxHeight: string }
+  const overrides: Saved[] = []
+  let node: HTMLElement | null = element.parentElement
+  while (node && node !== document.documentElement) {
+    const ov = window.getComputedStyle(node).overflowY
+    if (ov === 'auto' || ov === 'scroll' || ov === 'hidden') {
+      overrides.push({ el: node, overflow: node.style.overflow, maxHeight: node.style.maxHeight })
+      node.style.overflow = 'visible'
+      node.style.maxHeight = 'none'
+    }
+    node = node.parentElement
+  }
+
+  let canvas: HTMLCanvasElement
+  try {
+    canvas = await html2canvas(element, {
+      scale,
+      backgroundColor,
+      useCORS: true,
+      logging: false,
+    })
+  } finally {
+    for (const saved of overrides) {
+      saved.el.style.overflow = saved.overflow
+      saved.el.style.maxHeight = saved.maxHeight
+    }
+  }
 
   const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' })
 

@@ -248,6 +248,7 @@ export const SLHDSALiveDemo: React.FC = () => {
   // Parameter set & pre-hash selection
   const [paramSetId, setParamSetId] = useState('sha2-128s')
   const [preHash, setPreHash] = useState('')
+  const [showAdvancedPreHash, setShowAdvancedPreHash] = useState(false)
   const [message, setMessage] = useState('SLH-DSA test message for stateful signatures module')
 
   // Operation results
@@ -387,23 +388,38 @@ export const SLHDSALiveDemo: React.FC = () => {
             </div>
             <div>
               <p className="block text-xs font-medium text-muted-foreground mb-1.5">
-                Pre-hash (optional, default: Pure)
+                Pre-hash mode
               </p>
-              <FilterDropdown
-                items={PREHASH_OPTIONS}
-                selectedId={preHash || 'All'}
-                onSelect={(id) => setPreHash(id === 'All' ? '' : id)}
-                defaultLabel="Pure (no pre-hash)"
-              />
-              {preHash && !PREHASH_OPTIONS_BASE.find((o) => o.id === preHash)?.fips205Slh && (
-                <p className="text-[10px] text-status-warning mt-1 leading-relaxed">
-                  ⚠ Not approved for HashSLH-DSA by FIPS 205 §11. FIPS 205 permits only SHA-256,
-                  SHA-512, SHAKE-128, and SHAKE-256 — the four hash functions that match the
-                  internal hash families of the 12 parameter sets (SHA2-* variants use SHA-256 or
-                  SHA-512; SHAKE-* variants use SHAKE-128 or SHAKE-256). SHA-3 and other variants
-                  are available in PKCS#11 v3.2 but are outside the FIPS 205 HashSLH-DSA
-                  specification entirely.
-                </p>
+              {showAdvancedPreHash ? (
+                <>
+                  <FilterDropdown
+                    items={PREHASH_OPTIONS}
+                    selectedId={preHash || 'All'}
+                    onSelect={(id) => setPreHash(id === 'All' ? '' : id)}
+                    defaultLabel="Pure (no pre-hash)"
+                  />
+                  {preHash && !PREHASH_OPTIONS_BASE.find((o) => o.id === preHash)?.fips205Slh && (
+                    <p className="text-[10px] text-status-warning mt-1 leading-relaxed">
+                      ⚠ Not approved for HashSLH-DSA by FIPS 205 §11. FIPS 205 permits only SHA-256,
+                      SHA-512, SHAKE-128, and SHAKE-256 — the four hash functions that match the
+                      internal hash families of the 12 parameter sets (SHA2-* variants use SHA-256 or
+                      SHA-512; SHAKE-* variants use SHAKE-128 or SHAKE-256). SHA-3 and other variants
+                      are available in PKCS#11 v3.2 but are outside the FIPS 205 HashSLH-DSA
+                      specification entirely.
+                    </p>
+                  )}
+                </>
+              ) : (
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="text-sm text-foreground">Pure (FIPS 205 — recommended)</span>
+                  <Button
+                    variant="link"
+                    onClick={() => setShowAdvancedPreHash(true)}
+                    className="text-xs h-auto p-0 text-muted-foreground"
+                  >
+                    Show HashSLH-DSA variants
+                  </Button>
+                </div>
               )}
             </div>
           </div>
@@ -546,6 +562,10 @@ export const SLHDSALiveDemo: React.FC = () => {
                 </span>
               </div>
               <CodeBlock code={`${toHex(signature).slice(0, 120)}...`} />
+              <p className="text-[11px] text-muted-foreground mt-1">
+                SLH-DSA signatures contain: WOTS+ one-time signature, FORS forest signatures, and a
+                Merkle hypertree authentication path — see FIPS 205 §6.
+              </p>
             </div>
           )}
 

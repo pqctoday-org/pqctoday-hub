@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useEffect, useRef } from 'react'
-import { Shield, Loader2, Info, X, CheckCircle2 } from 'lucide-react'
+import { AlertTriangle, Shield, Loader2, Info, X, CheckCircle2 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
@@ -156,6 +156,7 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
   const [selectedKeyId, setSelectedKeyId] = useState<string>(`new-${ALGORITHMS[0].id}`)
   const [isGenerating, setIsGenerating] = useState(false)
   const [output, setOutput] = useState('')
+  const [errorHint, setErrorHint] = useState<string | null>(null)
   const [caCert, setCaCert] = useState<string | null>(null)
   const [showProfileInfo, setShowProfileInfo] = useState(false)
   const [profileDocContent, setProfileDocContent] = useState<string>('')
@@ -353,6 +354,7 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
     } catch (error) {
       const msg = error instanceof Error ? error.message : 'Unknown error'
       const hint = getCryptoErrorHint(msg)?.summary
+      setErrorHint(hint || null)
       setOutput((prev) => prev + `Error generating key: ${msg}\n${hint ? `  → ${hint}\n` : ''}`)
       setGeneratedKeyInfo({
         id: '',
@@ -368,6 +370,7 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
 
   const handleGenerate = async () => {
     setIsGenerating(true)
+    setErrorHint(null)
     setOutput((prev) => (prev ? prev + '\n--- Generating Root CA Certificate ---\n' : ''))
     setCaCert(null)
 
@@ -742,6 +745,7 @@ x509_extensions = v3_ca
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       const hint = getCryptoErrorHint(errorMessage)?.summary
+      setErrorHint(hint || null)
       setOutput((prev) => prev + `Error: ${errorMessage}\n${hint ? `  → ${hint}\n` : ''}`)
     } finally {
       setIsGenerating(false)
@@ -935,7 +939,24 @@ x509_extensions = v3_ca
             </p>
           </div>
 
-          <Button
+          
+          {errorHint && (
+            <div className="mb-3 flex items-start gap-2 rounded-md border border-status-warning/40 bg-status-warning/10 px-3 py-2 text-sm text-status-warning">
+              <AlertTriangle size={14} className="mt-0.5 shrink-0" />
+              <div>
+                <p className="font-medium">Hint</p>
+                <p>{errorHint}</p>
+              </div>
+              <button
+                aria-label="Dismiss hint"
+                className="ml-auto text-muted-foreground hover:text-foreground"
+                onClick={() => setErrorHint(null)}
+              >
+                <X size={12} />
+              </div>
+            </div>
+          )}
+<Button
             variant="gradient"
             onClick={handleGenerate}
             disabled={isGenerating}

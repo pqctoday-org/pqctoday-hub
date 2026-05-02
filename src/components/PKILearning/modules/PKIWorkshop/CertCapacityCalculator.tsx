@@ -178,10 +178,8 @@ export function CertCapacityCalculator() {
   }))
 
   const formatYAxis = (v: number) => (relativeMode ? `${v}%` : v.toLocaleString())
-  const tooltipFormatter = (value: number) => [
-    relativeMode ? `${value}%` : value.toLocaleString(),
-    '',
-  ]
+  const tooltipFormatter = (value: number | undefined, _name: string | undefined) =>
+    value === undefined ? '' : relativeMode ? `${value}%` : value.toLocaleString()
 
   const handleExport = useCallback(() => {
     downloadCsv(

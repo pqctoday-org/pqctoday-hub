@@ -13,6 +13,7 @@ import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import type { CsvColumnConfig } from '@/utils/csvExport'
 import type { PatentItem } from '@/types/PatentTypes'
 import { logPatentExport, logPatentInsightsFilter } from '@/utils/analytics'
+import { PatentSearchPanel } from './PatentSearchPanel'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import {
   COLUMN_PRESETS,
@@ -157,6 +158,19 @@ export function PatentsView() {
     [setSearchParams]
   )
 
+  // From search panel: navigate to Explore tab with the patent selected
+  const handleSearchSelect = useCallback(
+    (id: string) => {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev)
+        next.set('tab', 'explore')
+        next.set('patent', id)
+        return next
+      })
+    },
+    [setSearchParams]
+  )
+
   const handleExport = useCallback(() => {
     logPatentExport(patentsData.length)
     const csv = generateCsv(patentsData, PATENTS_CSV_COLUMNS)
@@ -205,9 +219,16 @@ export function PatentsView() {
           className="flex flex-1 flex-col overflow-hidden"
         >
           <TabsList className="mb-3 shrink-0">
+            <TabsTrigger value="search">Search</TabsTrigger>
             <TabsTrigger value="explore">Explore</TabsTrigger>
             <TabsTrigger value="insights">Insights</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="search" className="flex-1 overflow-hidden mt-0">
+            <div className="glass-panel h-full overflow-hidden rounded-lg p-4">
+              <PatentSearchPanel patents={patentsData} onSelectPatent={handleSearchSelect} />
+            </div>
+          </TabsContent>
 
           <TabsContent value="explore" className="flex-1 overflow-hidden mt-0">
             <div className="glass-panel h-full overflow-hidden rounded-lg">

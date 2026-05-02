@@ -995,7 +995,7 @@ export const MigrateView: React.FC = () => {
                         <HelpCircle
                           size={13}
                           className="text-muted-foreground/50 cursor-help shrink-0"
-                          title="7-phase framework aligned with NIST IR 8547, NSA CNSA 2.0, and CISA guidance. Each phase maps to specific readiness actions: Inventory → Prioritize → Plan → Procure → Deploy → Validate → Operate."
+                          aria-label="7-phase framework aligned with NIST IR 8547, NSA CNSA 2.0, and CISA guidance."
                         />
                       </p>
                       <FilterDropdown

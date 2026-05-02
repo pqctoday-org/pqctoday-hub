@@ -10,10 +10,7 @@ const scores = (
   quantumExposure,
   migrationComplexity,
   organizationalReadiness,
-  // other fields not used by the function
-  technicalDebt: 0,
-  dataExposure: 0,
-  regulatoryImpact: 0,
+  regulatoryPressure: 0,
 })
 
 describe('inferRecommendedModules', () => {

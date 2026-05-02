@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { ChevronDown, ChevronRight, Wrench, X, Factory, ListChecks } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { MigrationWorkflow } from './MigrationWorkflow'
+import type { MigrationStep } from '../../types/MigrateTypes'
 
 interface StepFilter {
   stepNumber: number
@@ -17,7 +18,7 @@ interface MigrateContextStripProps {
   onClearStep: () => void
   workflowCollapsed: boolean
   onToggleWorkflow: () => void
-  onViewSoftware: (stepId: string, stepNumber: number) => void
+  onViewSoftware: (step: MigrationStep) => void
 }
 
 const LS_KEY = 'pqc-migrate-context-strip-open'

@@ -614,6 +614,16 @@ const isValid = hsm_ecdsaVerify(module, hSession, pubHandle, sighash, sig, CKM_E
 
   const wizard = useStepWizard({ steps, onBack })
 
+  const gatedHandleNext = React.useCallback(() => {
+    if (!wizard.isStepComplete) {
+      wizard.setError(
+        `Complete this step first — click "${steps[wizard.currentStep]?.actionLabel ?? 'Execute'}" before advancing.`
+      )
+      return
+    }
+    wizard.handleNext()
+  }, [wizard, steps])
+
   return (
     <div className="flex flex-col h-full relative">
       <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-muted/10 rounded-t-xl">
@@ -634,7 +644,7 @@ const isValid = hsm_ecdsaVerify(module, hSession, pubHandle, sighash, sig, CKM_E
         isExecuting={wizard.isExecuting}
         error={wizard.error}
         isStepComplete={wizard.isStepComplete}
-        onNext={wizard.handleNext}
+        onNext={gatedHandleNext}
         onBack={wizard.handleBack}
         onComplete={onBack}
       />

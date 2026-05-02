@@ -80,11 +80,7 @@ export const DocumentCard = ({
   const isEnriched = !!libraryEnrichments[item.referenceId]
 
   const isStale = useMemo(() => {
-    if (
-      item.documentStatusBucket === 'Expired' ||
-      item.documentStatusBucket === 'Superseded' ||
-      item.documentStatusBucket === 'Withdrawn'
-    )
+    if (item.documentStatusBucket === 'Expired' || item.documentStatusBucket === 'Superseded')
       return false
     const parsed = new Date(item.lastUpdateDate)
     if (isNaN(parsed.getTime())) return false
