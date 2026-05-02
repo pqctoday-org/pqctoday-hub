@@ -95,6 +95,7 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
   const [testResults, setTestResults] = useState<TestResult[] | null>(null)
   const [showPasteInput, setShowPasteInput] = useState(false)
   const [pasteHex, setPasteHex] = useState('')
+  const [pasteHexError, setPasteHexError] = useState<string | null>(null)
 
   const loadSample = useCallback((type: SampleType) => {
     setTestResults(null)
@@ -123,7 +124,14 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
 
   const handlePasteHex = useCallback(() => {
     const cleaned = pasteHex.replace(/[\s,0x]/g, '')
-    if (cleaned.length < 2 || !/^[0-9a-fA-F]+$/.test(cleaned)) return
+    if (cleaned.length < 2) {
+      setPasteHexError('Hex string must be at least 2 characters (1 byte).')
+      return
+    }
+    if (!/^[0-9a-fA-F]+$/.test(cleaned)) {
+      setPasteHexError('Invalid hex characters. Only 0-9 and A-F are allowed.')
+      return
+    }
     const byteCount = Math.floor(cleaned.length / 2)
     const hexPairs = Array.from({ length: byteCount }, (_, idx) =>
       parseInt(cleaned.slice(idx * 2, idx * 2 + 2), 16)
@@ -132,6 +140,7 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
     setSampleData(bytes)
     setSampleLabel(`Pasted Hex (${bytes.length} bytes)`)
     setTestResults(null)
+    setPasteHexError(null)
   }, [pasteHex])
 
   const handleRunTests = useCallback(() => {
@@ -222,22 +231,33 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
 
         {/* Paste hex input */}
         {showPasteInput && (
-          <div className="mt-3 flex gap-2">
-            <Input
-              type="text"
-              value={pasteHex}
-              onChange={(e) => setPasteHex(e.target.value)}
-              placeholder="e.g. deadbeef01020304..."
-              className="flex-1 font-mono"
-            />
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handlePasteHex}
-              disabled={pasteHex.replace(/[\s,0x]/g, '').length < 2}
-            >
-              Load
-            </Button>
+          <div className="mt-3">
+            <div className="flex gap-2">
+              <Input
+                type="text"
+                value={pasteHex}
+                onChange={(e) => {
+                  setPasteHex(e.target.value)
+                  if (pasteHexError) setPasteHexError(null)
+                }}
+                placeholder="e.g. deadbeef01020304..."
+                className="flex-1 font-mono"
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handlePasteHex}
+                disabled={pasteHex.length === 0}
+              >
+                Load
+              </Button>
+            </div>
+            {pasteHexError && (
+              <p className="mt-1.5 text-xs flex items-center gap-1 text-status-error">
+                <AlertTriangle size={12} />
+                {pasteHexError}
+              </p>
+            )}
           </div>
         )}
       </div>
@@ -303,6 +323,7 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
                       : `${totalCount - passCount} test${totalCount - passCount > 1 ? 's' : ''} failed — this data has detectable patterns.`}
                 </div>
               </div>
+              {pasteHexError && <p className="mt-1 text-xs text-status-error">{pasteHexError}</p>}
             </div>
           </div>
 

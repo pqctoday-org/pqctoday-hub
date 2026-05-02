@@ -223,15 +223,17 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
           </Button>
         )}
       </div>
-      <div className="flex justify-end">
-        <Button
-          variant="ghost"
-          onClick={handleReset}
-          className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
-        >
-          <Trash2 size={16} />
-          Reset
-        </Button>
+      <div className="flex justify-end min-h-[36px]">
+        {(wallet.keys.length > 0 || wallet.credentials.length > 0) && (
+          <Button
+            variant="ghost"
+            onClick={handleReset}
+            className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
+          >
+            <Trash2 size={16} />
+            Reset
+          </Button>
+        )}
       </div>
 
       {/* Part Progress Steps */}

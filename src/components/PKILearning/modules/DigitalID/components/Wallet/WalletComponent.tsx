@@ -93,7 +93,25 @@ export const WalletComponent: React.FC<WalletComponentProps> = ({ wallet, onAddC
                         {new Date(cred.issuanceDate).toLocaleDateString()}
                       </p>
                       <p>
-                        <span className="font-semibold">Status:</span> Valid
+                        <span className="font-semibold">Status:</span>{' '}
+                        {(() => {
+                          const issued = new Date(cred.issuanceDate)
+                          const validityDays =
+                            (cred as { validityDays?: number }).validityDays ?? 365
+                          const expiry = new Date(issued.getTime() + validityDays * 86_400_000)
+                          const status = Date.now() > expiry.getTime() ? 'Expired' : 'Valid'
+                          return (
+                            <span
+                              className={
+                                status === 'Valid'
+                                  ? 'text-status-success font-semibold'
+                                  : 'text-status-error font-bold'
+                              }
+                            >
+                              {status}
+                            </span>
+                          )
+                        })()}
                       </p>
                       <Button
                         variant="outline"

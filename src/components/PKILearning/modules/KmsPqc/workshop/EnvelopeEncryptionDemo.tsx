@@ -981,13 +981,21 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
       </div>
 
       {/* Progress bar */}
-      <div className="h-2 bg-muted rounded-full overflow-hidden">
-        <div
-          className="h-full bg-primary rounded-full transition-all duration-300"
-          style={{
-            width: `${(completedSteps.size / ENVELOPE_ENCRYPTION_STEPS.length) * 100}%`,
-          }}
-        />
+      <div className="space-y-1">
+        <div className="flex justify-between text-[10px] text-muted-foreground font-medium">
+          <span>Progress</span>
+          <span>
+            {Math.round((completedSteps.size / ENVELOPE_ENCRYPTION_STEPS.length) * 100)}% Complete
+          </span>
+        </div>
+        <div className="h-2 bg-muted rounded-full overflow-hidden">
+          <div
+            className="h-full bg-primary rounded-full transition-all duration-300"
+            style={{
+              width: `${(completedSteps.size / ENVELOPE_ENCRYPTION_STEPS.length) * 100}%`,
+            }}
+          />
+        </div>
       </div>
 
       {/* Current step detail */}
@@ -1271,6 +1279,8 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           variant="gradient"
           size="sm"
           onClick={markComplete}
+          disabled={!envelopeBlob}
+          title={!envelopeBlob ? 'Run the Live WASM execution first' : ''}
           className="flex items-center gap-2"
         >
           {completedSteps.has(currentStep) ? (

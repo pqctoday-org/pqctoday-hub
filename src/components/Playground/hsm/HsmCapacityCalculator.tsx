@@ -23,6 +23,10 @@ import {
   ChevronDown,
   MapPin,
   Users,
+  Network,
+  Lock,
+  CreditCard,
+  Shield,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
@@ -489,7 +493,8 @@ function ScenarioCard({
               variant="ghost"
               size="sm"
               onClick={onResetToRequired}
-              className="h-5 text-[10px] px-1.5"
+              className="h-8 min-w-[44px] text-[11px] px-2"
+              title="Set deployed HSMs to the computed required count"
               aria-label="Set to required"
             >
               Use required
@@ -594,12 +599,37 @@ function HsmFleetVisual({ scenario }: { scenario: ScenarioResult }) {
   )
 }
 
+const USE_CASE_CATEGORIES = [
+  {
+    label: 'Network & Infrastructure',
+    icon: Network,
+    ids: ['tls', 'vpn-ike', 'ssh', 'dnssec'],
+  },
+  {
+    label: 'PKI & Signing',
+    icon: Shield,
+    ids: ['pki-ca', 'code-signing', 'doc-signing'],
+  },
+  {
+    label: 'Data Security & Cloud',
+    icon: Lock,
+    ids: ['tde', 'kms'],
+  },
+  {
+    label: 'Payments',
+    icon: CreditCard,
+    ids: ['payment'],
+  },
+]
+
 export function HsmCapacityCalculator() {
   const [size, setSize] = useState<DeploymentSize>('medium')
   const [redundancy, setRedundancy] = useState<Redundancy>('n+1')
   const [numLocations, setNumLocations] = useState(1)
   const [orgParams, setOrgParams] = useState<OrgParams>(() => ORG_PARAM_DEFAULTS.medium)
 
+  const [hasManualTpsAdjustments, setHasManualTpsAdjustments] = useState(false)
+  const [, setReseedWarning] = useState(false)
   const [useCaseState, setUseCaseState] = useState<Record<string, UseCaseState>>(() => {
     const out: Record<string, UseCaseState> = {}
     for (const uc of USE_CASES) {
@@ -642,6 +672,10 @@ export function HsmCapacityCalculator() {
 
   const handleSizeChange = useCallback(
     (next: DeploymentSize) => {
+      if (hasManualTpsAdjustments) {
+        setReseedWarning(true)
+        setHasManualTpsAdjustments(false)
+      }
       setSize(next)
       const nextOrgParams = ORG_PARAM_DEFAULTS[next]
       setOrgParams(nextOrgParams)
@@ -651,11 +685,15 @@ export function HsmCapacityCalculator() {
       setNumLocations(s.locDefault)
       autoTrackRef.current = { today: true, tomorrow: true, upgraded: true }
     },
-    [seedTpsFromOrgParams]
+    [hasManualTpsAdjustments, seedTpsFromOrgParams]
   )
 
   const handleOrgParamChange = useCallback(
     (field: keyof OrgParams, value: number) => {
+      if (hasManualTpsAdjustments) {
+        setReseedWarning(true)
+        setHasManualTpsAdjustments(false)
+      }
       setOrgParams((prev) => {
         const next = { ...prev, [field]: value }
         seedTpsFromOrgParams(next)
@@ -663,7 +701,7 @@ export function HsmCapacityCalculator() {
       })
       autoTrackRef.current = { today: true, tomorrow: true, upgraded: true }
     },
-    [seedTpsFromOrgParams]
+    [hasManualTpsAdjustments, seedTpsFromOrgParams]
   )
 
   const scenarios = useMemo(() => {
@@ -731,6 +769,7 @@ export function HsmCapacityCalculator() {
   }, [])
 
   const setUseCaseTps = useCallback((id: string, tps: number) => {
+    setHasManualTpsAdjustments(true)
     setUseCaseState((prev) => ({ ...prev, [id]: { ...prev[id], tps } }))
   }, [])
 
@@ -1364,87 +1403,105 @@ export function HsmCapacityCalculator() {
             Check a use case to add its load to the fleet requirement.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {USE_CASES.map((uc) => {
-            const s = useCaseState[uc.id]
-            const pqcAlgos = Object.keys(uc.pqcOps) as AlgoId[]
+        <div>
+          {USE_CASE_CATEGORIES.map((cat) => {
+            const categoryUseCases = USE_CASES.filter((uc) => cat.ids.includes(uc.id))
+            if (categoryUseCases.length === 0) return null
             return (
-              <div
-                key={uc.id}
-                className={clsx(
-                  'rounded-lg border p-3 space-y-2 transition-colors',
-                  s.enabled ? 'border-primary/40 bg-primary/5' : 'border-border bg-muted/10'
-                )}
-              >
-                <label className="flex items-start gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={s.enabled}
-                    onChange={(e) => setUseCaseEnabled(uc.id, e.target.checked)}
-                    className="mt-0.5 accent-primary"
-                    aria-label={`Enable ${uc.name}`}
-                  />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-foreground">{uc.name}</p>
-                    <p className="text-[10px] text-muted-foreground">{uc.description}</p>
-                    <p className="text-[10px] font-mono text-secondary mt-1">
-                      Post-PQC ops: {pqcAlgos.map((a) => ALGO_LABELS[a]).join(' + ')}
-                    </p>
-                  </div>
-                </label>
-                <SliderRow
-                  label="Transactions / sec"
-                  value={s.tps}
-                  min={0}
-                  max={Math.max(uc.defaultTps.large * 3, 100)}
-                  step={Math.max(1, Math.floor(uc.defaultTps[size] / 50) || 1)}
-                  format={(v) => v.toLocaleString()}
-                  onChange={(v) => setUseCaseTps(uc.id, v)}
-                  disabled={!s.enabled}
-                />
-                <Button
-                  variant="ghost"
-                  onClick={() => toggleEstimation(uc.id)}
-                  className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors mt-1 h-auto p-0"
-                  aria-expanded={expandedEstimations.has(uc.id)}
-                >
-                  <ChevronDown
-                    size={12}
-                    className={clsx(
-                      'transition-transform duration-150',
-                      expandedEstimations.has(uc.id) && 'rotate-180'
-                    )}
-                    aria-hidden="true"
-                  />
-                  How we estimated this
-                </Button>
-                {expandedEstimations.has(uc.id) && (
-                  <div className="mt-2 pt-2 border-t border-border/30 space-y-2 text-[10px]">
-                    <p className="text-muted-foreground leading-relaxed">
-                      {uc.estimation.rationale}
-                    </p>
-                    <p>
-                      <span className="font-mono text-secondary uppercase tracking-wide">
-                        Math ·{' '}
-                      </span>
-                      <span className="text-muted-foreground">{uc.estimation.math}</span>
-                    </p>
-                    <p>
-                      <span className="font-mono text-secondary uppercase tracking-wide">
-                        PQC impact ·{' '}
-                      </span>
-                      <span className="text-muted-foreground">{uc.estimation.pqcImpact}</span>
-                    </p>
-                    <p>
-                      <span className="font-mono text-secondary uppercase tracking-wide">
-                        Sources ·{' '}
-                      </span>
-                      <span className="text-muted-foreground">
-                        {uc.estimation.sources.join(' · ')}
-                      </span>
-                    </p>
-                  </div>
-                )}
+              <div key={cat.label} className="mb-6 last:mb-0">
+                <div className="flex items-center gap-1.5 mb-3">
+                  <cat.icon size={14} className="text-muted-foreground" />
+                  <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    {cat.label}
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {categoryUseCases.map((uc) => {
+                    const s = useCaseState[uc.id]
+                    const pqcAlgos = Object.keys(uc.pqcOps) as AlgoId[]
+                    return (
+                      <div
+                        key={uc.id}
+                        className={clsx(
+                          'rounded-lg border p-3 space-y-2 transition-colors',
+                          s.enabled ? 'border-primary/40 bg-primary/5' : 'border-border bg-muted/10'
+                        )}
+                      >
+                        <label className="flex items-start gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={s.enabled}
+                            onChange={(e) => setUseCaseEnabled(uc.id, e.target.checked)}
+                            className="mt-0.5 accent-primary"
+                            aria-label={`Enable ${uc.name}`}
+                          />
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-foreground">{uc.name}</p>
+                            <p className="text-[10px] text-muted-foreground">{uc.description}</p>
+                            <p className="text-[10px] font-mono text-secondary mt-1">
+                              Post-PQC ops: {pqcAlgos.map((a) => ALGO_LABELS[a]).join(' + ')}
+                            </p>
+                          </div>
+                        </label>
+                        <SliderRow
+                          label="Transactions / sec"
+                          value={s.tps}
+                          min={0}
+                          max={Math.max(uc.defaultTps.large * 3, 100)}
+                          step={Math.max(1, Math.floor(uc.defaultTps[size] / 50) || 1)}
+                          format={(v) => v.toLocaleString()}
+                          onChange={(v) => setUseCaseTps(uc.id, v)}
+                          disabled={!s.enabled}
+                        />
+                        <Button
+                          variant="ghost"
+                          onClick={() => toggleEstimation(uc.id)}
+                          className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors mt-1 h-auto p-0"
+                          aria-expanded={expandedEstimations.has(uc.id)}
+                        >
+                          <ChevronDown
+                            size={12}
+                            className={clsx(
+                              'transition-transform duration-150',
+                              expandedEstimations.has(uc.id) && 'rotate-180'
+                            )}
+                            aria-hidden="true"
+                          />
+                          How we estimated this
+                        </Button>
+                        {expandedEstimations.has(uc.id) && (
+                          <div className="mt-2 pt-2 border-t border-border/30 space-y-2 text-[10px]">
+                            <p className="text-muted-foreground leading-relaxed">
+                              {uc.estimation.rationale}
+                            </p>
+                            <p>
+                              <span className="font-mono text-secondary uppercase tracking-wide">
+                                Math ·{' '}
+                              </span>
+                              <span className="text-muted-foreground">{uc.estimation.math}</span>
+                            </p>
+                            <p>
+                              <span className="font-mono text-secondary uppercase tracking-wide">
+                                PQC impact ·{' '}
+                              </span>
+                              <span className="text-muted-foreground">
+                                {uc.estimation.pqcImpact}
+                              </span>
+                            </p>
+                            <p>
+                              <span className="font-mono text-secondary uppercase tracking-wide">
+                                Sources ·{' '}
+                              </span>
+                              <span className="text-muted-foreground">
+                                {uc.estimation.sources.join(' · ')}
+                              </span>
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
             )
           })}

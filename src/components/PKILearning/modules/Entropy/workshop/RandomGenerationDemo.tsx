@@ -189,8 +189,9 @@ const TestComparisonTable: React.FC<{
 const SourceCard: React.FC<{
   source: SourceConfig
   result: GenerationResult | null
+  error: string | null
   loading: boolean
-}> = ({ source, result, loading }) => (
+}> = ({ source, result, error, loading }) => (
   <div className="glass-panel p-4 flex-1 min-w-0 space-y-3">
     <div className="flex items-center justify-between gap-2">
       <div className="flex items-center gap-2 min-w-0">
@@ -217,6 +218,11 @@ const SourceCard: React.FC<{
       <div className="h-24 flex items-center justify-center">
         <div className="animate-spin rounded-full h-6 w-6 border-2 border-primary border-t-transparent" />
       </div>
+    ) : error ? (
+      <div className="h-24 flex flex-col items-center justify-center text-status-error text-xs gap-1 text-center px-4 bg-status-error/5 rounded border border-status-error/20">
+        <AlertTriangle size={16} />
+        <span className="line-clamp-2">{error}</span>
+      </div>
     ) : result ? (
       <>
         <pre className="font-mono text-[11px] text-foreground bg-muted/30 rounded-lg p-2 overflow-x-auto whitespace-pre-wrap break-all leading-relaxed max-h-20 overflow-y-auto">
@@ -236,6 +242,7 @@ export const RandomGenerationDemo: React.FC = () => {
   const [byteCount, setByteCount] = useState<number>(64)
   const [enabledSources, setEnabledSources] = useState<SourceId[]>(['webcrypto', 'openssl'])
   const [results, setResults] = useState<Partial<Record<SourceId, GenerationResult>>>({})
+  const [errors, setErrors] = useState<Partial<Record<SourceId, string>>>({})
   const [loading, setLoading] = useState(false)
   const [lcgState, setLcgState] = useState<LCGResult | null>(null)
   const [prediction, setPrediction] = useState<Uint8Array | null>(null)
@@ -261,6 +268,7 @@ export const RandomGenerationDemo: React.FC = () => {
   const handleGenerate = useCallback(async () => {
     setLoading(true)
     setResults({})
+    setErrors({})
     setLcgState(null)
     setPrediction(null)
     setShowPrediction(false)
@@ -275,13 +283,20 @@ export const RandomGenerationDemo: React.FC = () => {
       if (enabledSources.includes('webcrypto')) {
         generators.push(
           (async () => {
-            const t0 = performance.now()
-            const bytes = getRandomBytes(byteCount)
-            const timeMs = performance.now() - t0
-            newResults.webcrypto = {
-              hex: arrayBufferToHex(bytes.buffer as ArrayBuffer),
-              data: bytes,
-              timeMs,
+            try {
+              const t0 = performance.now()
+              const bytes = getRandomBytes(byteCount)
+              const timeMs = performance.now() - t0
+              newResults.webcrypto = {
+                hex: arrayBufferToHex(bytes.buffer as ArrayBuffer),
+                data: bytes,
+                timeMs,
+              }
+            } catch (e) {
+              setErrors((prev) => ({
+                ...prev,
+                webcrypto: e instanceof Error ? e.message : String(e),
+              }))
             }
           })()
         )
@@ -290,15 +305,22 @@ export const RandomGenerationDemo: React.FC = () => {
       if (enabledSources.includes('openssl')) {
         generators.push(
           (async () => {
-            const t0 = performance.now()
-            const result = await openSSLService.execute(`rand -hex ${byteCount}`)
-            const timeMs = performance.now() - t0
-            const hexString = result.stdout.trim().replace(/[\s\n]/g, '')
-            const bytes = new Uint8Array(byteCount)
-            for (let i = 0; i < byteCount; i++) {
-              bytes[i] = parseInt(hexString.substring(i * 2, i * 2 + 2), 16)
+            try {
+              const t0 = performance.now()
+              const result = await openSSLService.execute(`rand -hex ${byteCount}`)
+              const timeMs = performance.now() - t0
+              const hexString = result.stdout.trim().replace(/[\s\n]/g, '')
+              const bytes = new Uint8Array(byteCount)
+              for (let i = 0; i < byteCount; i++) {
+                bytes[i] = parseInt(hexString.substring(i * 2, i * 2 + 2), 16)
+              }
+              newResults.openssl = { hex: hexString, data: bytes, timeMs }
+            } catch (e) {
+              setErrors((prev) => ({
+                ...prev,
+                openssl: e instanceof Error ? e.message : String(e),
+              }))
             }
-            newResults.openssl = { hex: hexString, data: bytes, timeMs }
           })()
         )
       }
@@ -306,13 +328,20 @@ export const RandomGenerationDemo: React.FC = () => {
       if (enabledSources.includes('mathrandom')) {
         generators.push(
           (async () => {
-            const t0 = performance.now()
-            const bytes = mathRandomBytes(byteCount)
-            const timeMs = performance.now() - t0
-            newResults.mathrandom = {
-              hex: formatHex(bytes, 0),
-              data: bytes,
-              timeMs,
+            try {
+              const t0 = performance.now()
+              const bytes = mathRandomBytes(byteCount)
+              const timeMs = performance.now() - t0
+              newResults.mathrandom = {
+                hex: formatHex(bytes, 0),
+                data: bytes,
+                timeMs,
+              }
+            } catch (e) {
+              setErrors((prev) => ({
+                ...prev,
+                mathrandom: e instanceof Error ? e.message : String(e),
+              }))
             }
           })()
         )
@@ -321,15 +350,19 @@ export const RandomGenerationDemo: React.FC = () => {
       if (enabledSources.includes('lcg')) {
         generators.push(
           (async () => {
-            const seed = Date.now() & 0xffffffff
-            const t0 = performance.now()
-            const lcgResult = lcgBytes(byteCount, seed)
-            const timeMs = performance.now() - t0
-            setLcgState(lcgResult)
-            newResults.lcg = {
-              hex: formatHex(lcgResult.bytes, 0),
-              data: lcgResult.bytes,
-              timeMs,
+            try {
+              const seed = Date.now() & 0xffffffff
+              const t0 = performance.now()
+              const lcgResult = lcgBytes(byteCount, seed)
+              const timeMs = performance.now() - t0
+              setLcgState(lcgResult)
+              newResults.lcg = {
+                hex: formatHex(lcgResult.bytes, 0),
+                data: lcgResult.bytes,
+                timeMs,
+              }
+            } catch (e) {
+              setErrors((prev) => ({ ...prev, lcg: e instanceof Error ? e.message : String(e) }))
             }
           })()
         )
@@ -443,7 +476,15 @@ export const RandomGenerationDemo: React.FC = () => {
       <div className={`grid ${gridCols} gap-4`}>
         {enabledSources.map((id) => {
           const src = SOURCES.find((s) => s.id === id)!
-          return <SourceCard key={id} source={src} result={results[id] ?? null} loading={loading} />
+          return (
+            <SourceCard
+              key={id}
+              source={src}
+              result={results[id] ?? null}
+              error={errors[id] ?? null}
+              loading={loading}
+            />
+          )
         })}
       </div>
 

@@ -1,7 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback } from 'react'
-import { Trash2, TreePine, Search, ShieldCheck, BarChart3, FileCheck } from 'lucide-react'
+import {
+  TreePine,
+  Search,
+  ShieldCheck,
+  BarChart3,
+  FileCheck,
+  RotateCcw,
+  AlertTriangle,
+  CheckCircle2,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { MerkleTreeBuilder } from './MerkleTreeBuilder'
 import { InclusionProofGenerator } from './InclusionProofGenerator'
@@ -58,6 +67,7 @@ export const MerkleWorkshopSteps: React.FC = () => {
   // Shared tree built in Step 1 — passed to Step 2 so the user proves their own certificates.
   const [sharedLevels, setSharedLevels] = useState<MerkleNode[][] | null>(null)
   const [sharedCerts, setSharedCerts] = useState<CertLeaf[] | null>(null)
+  const [confirmingReset, setConfirmingReset] = useState(false)
 
   const handlePartChange = useCallback(
     (newPart: number) => {
@@ -70,27 +80,43 @@ export const MerkleWorkshopSteps: React.FC = () => {
   )
 
   const handleReset = () => {
-    if (confirm('Restart Merkle Tree Workshop?')) {
-      setCurrentPart(0)
-      setConfigKey((prev) => prev + 1)
-      setCompletedSteps(new Set())
-      setSharedLevels(null)
-      setSharedCerts(null)
-    }
+    setCurrentPart(0)
+    setConfigKey((prev) => prev + 1)
+    setCompletedSteps(new Set())
+    setSharedLevels(null)
+    setSharedCerts(null)
+    setConfirmingReset(false)
   }
 
   return (
     <div className="space-y-6">
       {/* Reset button */}
       <div className="flex justify-end">
-        <Button
-          onClick={handleReset}
-          variant="outline"
-          className="flex items-center gap-2 bg-destructive/10 text-destructive border-destructive/20 hover:bg-destructive/20 text-sm"
-        >
-          <Trash2 size={16} />
-          Reset
-        </Button>
+        {confirmingReset ? (
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">Reset all steps?</span>
+            <Button variant="destructive" size="sm" onClick={handleReset} className="h-7 text-xs">
+              Yes, reset
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setConfirmingReset(false)}
+              className="h-7 text-xs"
+            >
+              Cancel
+            </Button>
+          </div>
+        ) : (
+          <Button
+            onClick={() => setConfirmingReset(true)}
+            variant="outline"
+            className="flex items-center gap-1 bg-destructive/10 text-destructive border-destructive/20 hover:bg-destructive/20 text-xs h-7"
+          >
+            <RotateCcw size={12} />
+            Reset
+          </Button>
+        )}
       </div>
 
       {/* Part Progress Steps */}
@@ -106,6 +132,8 @@ export const MerkleWorkshopSteps: React.FC = () => {
                 key={part.id}
                 onClick={() => handlePartChange(idx)}
                 variant="ghost"
+                title={part.title}
+                aria-label={`Go to step ${idx + 1}: ${part.title}`}
                 className={`flex flex-col items-center gap-2 group h-auto px-1 sm:px-2 ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
               >
                 <div
@@ -139,6 +167,22 @@ export const MerkleWorkshopSteps: React.FC = () => {
           stepIndex={currentPart}
           totalSteps={PARTS.length}
         />
+        {(currentPart === 1 || currentPart === 2) && !sharedLevels && (
+          <div className="mb-4 flex items-center gap-2 rounded-lg border border-warning/30 bg-warning/5 px-3 py-2 text-sm text-muted-foreground">
+            <AlertTriangle size={14} className="shrink-0 text-warning" />
+            <span>
+              Complete{' '}
+              <Button
+                variant="link"
+                className="h-auto p-0 text-sm underline text-primary hover:text-primary/80"
+                onClick={() => setCurrentPart(0)}
+              >
+                Step 1: Build Tree
+              </Button>{' '}
+              first — this step uses the tree you build there.
+            </span>
+          </div>
+        )}
         {currentPart === 0 && (
           <MerkleTreeBuilder
             key={`build-${configKey}`}
@@ -164,6 +208,24 @@ export const MerkleWorkshopSteps: React.FC = () => {
         )}
         {currentPart === 3 && <SizeComparison key={`size-${configKey}`} />}
         {currentPart === 4 && <CTLogSimulator key={`ctlog-${configKey}`} />}
+        {completedSteps.has(4) && currentPart === 4 && (
+          <div className="mt-4 rounded-lg border border-success/30 bg-success/5 px-4 py-3 flex flex-col gap-2">
+            <div className="flex items-center gap-2 text-sm font-medium text-success">
+              <CheckCircle2 size={16} />
+              Workshop complete!
+            </div>
+            <p className="text-xs text-muted-foreground">
+              You have built a Merkle tree, generated and verified inclusion proofs, compared
+              certificate transparency log sizes, and signed a CT log entry with ML-DSA-65.
+            </p>
+            <a
+              href="/learn?module=merkle-trees"
+              className="text-xs text-primary underline hover:text-primary/80 w-fit"
+            >
+              Explore the theory in the Learn module →
+            </a>
+          </div>
+        )}
       </div>
 
       {/* Part Navigation */}

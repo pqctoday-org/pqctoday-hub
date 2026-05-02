@@ -6,7 +6,7 @@ import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 
 export const TerminalOutput = () => {
-  const { logs, clearTerminalLogs } = useOpenSSLStore()
+  const { logs, clearTerminalLogs, setCommand } = useOpenSSLStore()
   const scrollRef = useRef<HTMLDivElement>(null)
   const [showStdout, setShowStdout] = useState(true)
   const [showStderr, setShowStderr] = useState(true)
@@ -102,8 +102,43 @@ export const TerminalOutput = () => {
         className="flex-1 overflow-y-auto custom-scrollbar bg-background/50 min-w-0"
       >
         {filteredLogs.length === 0 ? (
-          <div className="text-foreground/20 italic text-center mt-10">
-            {logs.length === 0 ? 'Ready to execute commands...' : 'No output in this stream.'}
+          <div className="flex flex-col items-center justify-center mt-10 space-y-4">
+            <div className="text-foreground/40 italic">
+              {logs.length === 0 ? 'Ready to execute commands...' : 'No output in this stream.'}
+            </div>
+            {logs.length === 0 && (
+              <div className="flex flex-col items-center gap-2 mt-4 w-full max-w-sm px-4">
+                <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold mb-1">
+                  Example Starters
+                </p>
+                <Button
+                  variant="ghost"
+                  onClick={() =>
+                    setCommand(
+                      'req -x509 -newkey ml-dsa-65 -keyout mldsa.key -out mldsa.crt -nodes -subj "/CN=Test" -days 365'
+                    )
+                  }
+                  className="w-full justify-start px-3 py-2 text-[10px] font-mono text-primary bg-primary/5 hover:bg-primary/10 border border-primary/20 rounded transition-colors truncate h-auto"
+                  title='req -x509 -newkey ml-dsa-65 -keyout mldsa.key -out mldsa.crt -nodes -subj "/CN=Test" -days 365'
+                >
+                  $ req -x509 -newkey ml-dsa-65 ...
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => setCommand('genpkey -algorithm ML-KEM-768 -out mlkem.key')}
+                  className="w-full justify-start px-3 py-2 text-[10px] font-mono text-primary bg-primary/5 hover:bg-primary/10 border border-primary/20 rounded transition-colors truncate h-auto"
+                >
+                  $ genpkey -algorithm ML-KEM-768 ...
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => setCommand('speed ml-dsa-44 ml-dsa-65')}
+                  className="w-full justify-start px-3 py-2 text-[10px] font-mono text-primary bg-primary/5 hover:bg-primary/10 border border-primary/20 rounded transition-colors truncate h-auto"
+                >
+                  $ speed ml-dsa-44 ml-dsa-65
+                </Button>
+              </div>
+            )}
           </div>
         ) : (
           <table className="w-full text-left border-collapse table-fixed">

@@ -6,6 +6,109 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.62] - May 1, 2026
+
+Wave 3 UI audit completion: all P1, P2, and P3 items shipped. Learn module
+workshop UX fixes for EntropyTestingDemo, SuciFlow, and MerkleTreeCerts.
+
+### Added
+
+- **OpenSSL Studio — persona cheat sheet strip**: When `developer` persona is
+  active, a strip above the workbench shows 6 clickable command shortcuts
+  (genpkey / req / x509 / dgst / kem / enc) that switch the active category.
+  When `researcher` persona is active, the strip shows quick-jump links to
+  ML-KEM, ML-DSA, TLS 1.3, PKCS#12, and X.509 specs in the Library and
+  Algorithms pages. (`OpenSSLStudioView.tsx`)
+
+- **Library — citation staleness badge**: Documents with `lastUpdateDate` older
+  than 2 years that are still in Active or Draft status show a `· verify`
+  warning next to the date in the card. Expired/Superseded/Withdrawn docs are
+  excluded (already visually dimmed). (`DocumentCard.tsx`)
+
+- **Assess — "Save link" CTA**: A "Save link" button (Link2 icon) in the wizard
+  navigation bar copies `/assess?step=N` to the clipboard with a toast. Wizard
+  answers are auto-persisted to localStorage, so the link resumes progress on
+  the same device. (`AssessWizard.tsx`)
+
+- **Algorithms — executive "Top 5" shortcut**: A "View Top 5 →" button appears
+  in the executive persona hint strip. Clicking it highlights ML-KEM-768,
+  ML-DSA-65, SLH-DSA-SHA2-128s, and Falcon-512 in the Detailed tab.
+  (`AlgorithmsView.tsx`)
+
+- **Timeline — search auto-scroll**: Each country's first `<tr>` in the Gantt
+  gets an `id` attribute. When `filterText` changes and results exist, the first
+  matching row scrolls into view with smooth behavior. (`SimpleGanttChart.tsx`)
+
+- **About — deploy timestamp**: `__BUILD_TIMESTAMP__` (injected by Vite at build
+  time) shown as a "Deployed: …" sub-line under the version in Release Notes.
+  (`ReleaseNotesSection.tsx`)
+
+- **Compliance — cert-records cross-link**: `FrameworkCard` footer now includes
+  a "Certs →" chip for frameworks whose `bodyType === 'certification_body'`,
+  linking to `/compliance?tab=records&q=<enforcementBody>`. (`ComplianceLandscape.tsx`)
+
+- **Patents — "Explore Related" cross-links**: `PatentDetail` panel gains an
+  "Explore Related" section with Algorithms and Library deep-links derived from
+  `patent.pqcAlgorithms` and `patent.standardsReferenced`. (`PatentDetail.tsx`)
+
+- **SuciFlow — SUPI input validation**: Live format guard enforces 15-digit
+  MCC+MNC+MSIN. An inline error message appears below the field when the value
+  is non-empty but not yet 15 digits. (`SuciFlow.tsx`)
+
+- **SuciFlow — Perspective switcher in config panel**: `ScenarioViewSwitcher` now
+  appears inline in the configuration panel under a "Perspective" heading, making
+  the attacker vs. subscriber toggle discoverable without scrolling to the top.
+  (`SuciFlow.tsx`)
+
+- **SuciFlow — HSM/OpenSSL mode indicator**: A status badge below `LiveHSMToggle`
+  shows whether the demo is running in PKCS#11/softhsmv3 mode (ShieldCheck,
+  success color) or OpenSSL software mode (Shield, muted). (`SuciFlow.tsx`)
+
+- **MerkleTreeCerts — two-stage reset confirmation**: Replaced browser `confirm()`
+  with an inline confirmation row ("Reset all steps?" + Yes/Cancel buttons),
+  eliminating the native dialog. (`MerkleWorkshopSteps.tsx`)
+
+- **MerkleTreeCerts — step-dependency warning**: When the user navigates to Step 2
+  or Step 3 without having built a tree in Step 1, an `AlertTriangle` banner
+  prompts them to complete Step 1 first with a direct link. (`MerkleWorkshopSteps.tsx`)
+
+- **MerkleTreeCerts — workshop completion card**: After completing all 5 steps a
+  success card ("Workshop complete!") summarises what was covered and links back
+  to the theory in the Learn module. (`MerkleWorkshopSteps.tsx`)
+
+- **MerkleTreeCerts — step nav accessibility**: Step navigation buttons gain
+  `title` and `aria-label` attributes. (`MerkleWorkshopSteps.tsx`)
+
+- **Entropy Testing — paste-hex error state**: `pasteHexError` state tracks
+  malformed paste input and surfaces an inline error message below the test
+  results area. (`EntropyTestingDemo.tsx`)
+
+### Changed
+
+- **Playground — "Crypto Workshop" → "Crypto Lab"**: Renamed across
+  `PlaygroundWorkshop.tsx` and `MobilePlaygroundOps.tsx` to resolve terminology
+  overlap with the PKI Learn module's "Workshop" tab.
+
+- **Compliance — Leaders cross-links**: `LeaderDetailPopover` footer now links to
+  `/timeline?country=<country>` and `/compliance?industry=…` for each leader.
+
+- **Patents — executive default sort**: When `selectedPersona === 'executive'`
+  and no explicit sort preference is stored, Patents defaults to `impactScore`
+  descending. (`PatentsView.tsx`)
+
+- **Learn Dashboard — "Path" terminology**: Filter sidebar and mobile drawer now
+  show "Path" / "All Paths" (was "Track" / "All Tracks"). (`Dashboard.tsx`)
+
+- **Timeline — persona hint strip**: Each persona sees a one-line context tip
+  below the page header. (`TimelineView.tsx`)
+
+- **Algorithms — persona hint strip**: Same pattern as Timeline, with an
+  additional "View Top 5 →" shortcut for the executive persona.
+
+### Internal
+
+- `tsc --noEmit` clean; 2021 Vitest unit tests pass.
+
 ## [3.5.59] - May 1, 2026
 
 ### Added

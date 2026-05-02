@@ -7,12 +7,12 @@ import { FIVE_G_CONSTANTS } from './constants'
 import { FiveGDiagram } from './components/FiveGDiagram'
 import { GsmaTestDataModal } from './components/GsmaTestDataModal'
 import { ConfigureCard } from './components/ConfigureCard'
-import { ScenarioIntroStrip } from './components/ScenarioIntroStrip'
+import { ScenarioIntroStrip, ScenarioViewSwitcher } from './components/ScenarioIntroStrip'
 import type { ScenarioView } from './components/ScenarioIntroStrip'
 import { AttackerSidecar } from './components/AttackerSidecar'
 import { getSuciStepMeta, SUCI_PHASE_LABELS } from './suciUxMeta'
 import { fiveGService } from './services/FiveGService'
-import { Shield, Radio, Info } from 'lucide-react'
+import { Shield, Radio, Info, ShieldCheck } from 'lucide-react'
 import clsx from 'clsx'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
@@ -204,7 +204,19 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({
       setPqcMode(initialPqcMode ?? 'hybrid')
     }
   }, [initialPqcMode])
+  const SUPI_REGEX = /^\d{15}$/
   const [customSupi, setCustomSupi] = useState('310260123456789')
+  const [supiError, setSupiError] = useState<string | null>(null)
+
+  const handleSupiChange = (val: string) => {
+    const digits = val.replace(/\D/g, '').slice(0, 15)
+    setCustomSupi(digits)
+    if (digits && !SUPI_REGEX.test(digits)) {
+      setSupiError('SUPI must be exactly 15 digits (MCC + MNC + MSIN). Example: 310260123456789')
+    } else {
+      setSupiError(null)
+    }
+  }
   const [gsmaModalOpen, setGsmaModalOpen] = useState(false)
   const hsm = useHSM()
 
@@ -1436,12 +1448,17 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             <input
               type="text"
               value={customSupi}
-              onChange={(e) => {
-                setCustomSupi(e.target.value.replace(/\D/g, '').slice(0, 15))
-              }}
-              className="bg-background border border-border rounded p-2 text-sm font-mono mt-1 focus:outline-none focus:border-primary max-w-sm"
+              className={`bg-background border rounded p-2 text-sm font-mono mt-1 focus:outline-none focus:border-primary max-w-sm ${supiError ? 'border-destructive focus:border-destructive' : 'border-border'}`}
+              aria-invalid={supiError ? 'true' : undefined}
+              aria-describedby={supiError ? 'supi-error' : undefined}
               placeholder="310260123456789"
+              onChange={(e) => handleSupiChange(e.target.value)}
             />
+            {supiError && (
+              <p id="supi-error" className="text-xs text-destructive mt-1" role="alert">
+                {supiError}
+              </p>
+            )}
           </label>
         </div>
 
@@ -1583,7 +1600,37 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
           </div>
         )}
 
+        <div className="bg-muted/50 p-4 rounded-lg border border-border mt-4">
+          <div className="flex flex-col gap-1">
+            <span className="text-sm font-bold text-foreground flex items-center gap-2 uppercase tracking-wider">
+              <Shield size={14} /> Perspective
+            </span>
+            <p className="text-xs text-muted-foreground mb-1">
+              Choose your viewpoint. "Attacker" shows what an eavesdropper observes at each step.
+            </p>
+            <ScenarioViewSwitcher view={scenarioView} onViewChange={setScenarioView} />
+          </div>
+        </div>
+
         <LiveHSMToggle hsm={hsm} operations={SUCI_LIVE_OPERATIONS} />
+
+        <div
+          className={`flex items-center gap-1.5 text-xs px-2 py-1 rounded-md w-fit ${
+            hsm.isReady
+              ? 'bg-status-success/10 text-status-success border border-status-success/20'
+              : 'bg-muted text-muted-foreground border border-border'
+          }`}
+        >
+          {hsm.isReady ? (
+            <>
+              <ShieldCheck size={11} /> Running in PKCS#11 / softhsmv3 mode
+            </>
+          ) : (
+            <>
+              <Shield size={11} /> Running in OpenSSL software mode (HSM off)
+            </>
+          )}
+        </div>
 
         <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted/40 text-xs text-muted-foreground">
           <Info size={13} className="shrink-0" />

@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo, useCallback } from 'react'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
+import { Input } from '@/components/ui/input'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { HardDrive, Zap, Network, Download, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -71,7 +74,6 @@ function SliderRow({
   min,
   max,
   step,
-  format,
   tooltip,
   onChange,
 }: {
@@ -80,12 +82,11 @@ function SliderRow({
   min: number
   max: number
   step: number
-  format: (v: number) => string
   tooltip: string
   onChange: (v: number) => void
 }) {
   return (
-    <div className="space-y-1">
+    <div className="space-y-2">
       <div className="flex items-center justify-between">
         <label className="text-xs font-medium text-foreground flex items-center gap-1">
           {label}
@@ -93,18 +94,30 @@ function SliderRow({
             <Info size={11} />
           </span>
         </label>
-        <span className="text-xs font-mono text-primary">{format(value)}</span>
       </div>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full accent-primary"
-        aria-label={label}
-      />
+      <div className="flex items-center gap-3">
+        <input
+          type="range"
+          min={min}
+          max={max}
+          step={step}
+          value={value}
+          onChange={(e) => onChange(Number(e.target.value))}
+          className="flex-1 accent-primary"
+          aria-label={label}
+        />
+        <Input
+          type="number"
+          min={min}
+          max={max}
+          value={value}
+          onChange={(e) => {
+            const v = Number(e.target.value)
+            if (v >= min && v <= max) onChange(v)
+          }}
+          className="w-24 h-7 text-xs font-mono"
+        />
+      </div>
     </div>
   )
 }
@@ -126,6 +139,7 @@ export function CertCapacityCalculator() {
     renewalDays: 90,
     handshakesPerSec: 1000,
   })
+  const [relativeMode, setRelativeMode] = useState(false)
 
   const results = useMemo(() => computeOutputs(inputs), [inputs])
 
@@ -136,12 +150,32 @@ export function CertCapacityCalculator() {
     []
   )
 
-  const storageData = results.map((r) => ({ name: r.algo, 'Archive (MB)': r.storageMB }))
+  const ecdsaRef = results.find((r) => r.algo === 'ECDSA P-256') || results[0]
+
+  const storageData = results.map((r) => ({
+    name: r.algo,
+    'Archive (MB)': relativeMode
+      ? Number(((r.storageMB / ecdsaRef.storageMB) * 100).toFixed(1))
+      : r.storageMB,
+  }))
   const bandwidthData = results.map((r) => ({
     name: r.algo,
-    'Bandwidth (MB/s)': r.tlsAggregateMBPerSec,
+    'Bandwidth (MB/s)': relativeMode
+      ? Number(((r.tlsAggregateMBPerSec / ecdsaRef.tlsAggregateMBPerSec) * 100).toFixed(1))
+      : r.tlsAggregateMBPerSec,
   }))
-  const cpuData = results.map((r) => ({ name: r.algo, 'CPU (% core)': r.cpuCorePercent }))
+  const cpuData = results.map((r) => ({
+    name: r.algo,
+    'CPU (% core)': relativeMode
+      ? Number(((r.cpuCorePercent / ecdsaRef.cpuCorePercent) * 100).toFixed(1))
+      : r.cpuCorePercent,
+  }))
+
+  const formatYAxis = (v: number) => (relativeMode ? `${v}%` : v.toLocaleString())
+  const tooltipFormatter = (value: number) => [
+    relativeMode ? `${value}%` : value.toLocaleString(),
+    '',
+  ]
 
   const handleExport = useCallback(() => {
     downloadCsv(
@@ -172,16 +206,23 @@ export function CertCapacityCalculator() {
 
       {/* Inputs */}
       <div className="glass-panel p-4 space-y-4">
-        <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-          Parameters
-        </p>
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+            Parameters
+          </p>
+          <div className="flex items-center gap-2">
+            <Label htmlFor="relative-mode" className="text-xs font-medium text-muted-foreground">
+              Relative to ECDSA P-256
+            </Label>
+            <Switch id="relative-mode" checked={relativeMode} onCheckedChange={setRelativeMode} />
+          </div>
+        </div>
         <SliderRow
           label="Certificate count"
           value={inputs.certCount}
           min={10_000}
           max={10_000_000}
           step={10_000}
-          format={(v) => v.toLocaleString()}
           tooltip="Total number of certificates in your PKI (leaf certs). Affects storage only."
           onChange={set('certCount')}
         />
@@ -191,7 +232,6 @@ export function CertCapacityCalculator() {
           min={30}
           max={365}
           step={30}
-          format={(v) => `${v}d`}
           tooltip="How often each certificate is renewed. 90 days is the Let's Encrypt standard. Affects storage only."
           onChange={set('renewalDays')}
         />
@@ -201,7 +241,6 @@ export function CertCapacityCalculator() {
           min={100}
           max={100_000}
           step={100}
-          format={(v) => v.toLocaleString()}
           tooltip="Peak TLS handshake rate your servers handle. Affects bandwidth and CPU only."
           onChange={set('handshakesPerSec')}
         />
@@ -226,8 +265,12 @@ export function CertCapacityCalculator() {
                 angle={-35}
                 textAnchor="end"
               />
-              <YAxis tick={{ fontSize: 9, fill: 'var(--color-muted-foreground)' }} />
+              <YAxis
+                tick={{ fontSize: 9, fill: 'var(--color-muted-foreground)' }}
+                tickFormatter={formatYAxis}
+              />
               <Tooltip
+                formatter={tooltipFormatter}
                 contentStyle={{
                   background: 'var(--color-card)',
                   border: '1px solid var(--color-border)',
@@ -278,8 +321,12 @@ export function CertCapacityCalculator() {
                 angle={-35}
                 textAnchor="end"
               />
-              <YAxis tick={{ fontSize: 9, fill: 'var(--color-muted-foreground)' }} />
+              <YAxis
+                tick={{ fontSize: 9, fill: 'var(--color-muted-foreground)' }}
+                tickFormatter={formatYAxis}
+              />
               <Tooltip
+                formatter={tooltipFormatter}
                 contentStyle={{
                   background: 'var(--color-card)',
                   border: '1px solid var(--color-border)',
@@ -333,8 +380,12 @@ export function CertCapacityCalculator() {
                 angle={-35}
                 textAnchor="end"
               />
-              <YAxis tick={{ fontSize: 9, fill: 'var(--color-muted-foreground)' }} />
+              <YAxis
+                tick={{ fontSize: 9, fill: 'var(--color-muted-foreground)' }}
+                tickFormatter={formatYAxis}
+              />
               <Tooltip
+                formatter={tooltipFormatter}
                 contentStyle={{
                   background: 'var(--color-card)',
                   border: '1px solid var(--color-border)',

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useCallback } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, Link } from 'react-router-dom'
 import { Workbench } from './Workbench'
 import { WorkbenchFileManager } from './components/WorkbenchFileManager'
 import { TerminalOutput } from './TerminalOutput'
@@ -15,12 +15,15 @@ import {
   History,
   Lightbulb,
   BookOpen,
+  PanelLeft,
+  Network,
+  ArrowRight,
 } from 'lucide-react'
-import { Link } from 'react-router-dom'
 import clsx from 'clsx'
 import { LogsTab } from './LogsTab'
 import { PageHeader } from '../common/PageHeader'
 import { Button } from '../ui/button'
+import { CopyButton } from '@/components/ui/CopyButton'
 import { usePersonaStore } from '@/store/usePersonaStore'
 
 import { useOpenSSLStore } from './store'
@@ -109,7 +112,7 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
   const [category, setCategory] = useState<OpenSSLCategory>(() =>
     embedded ? 'genpkey' : resolveCmd(searchParams.get('cmd'))
   )
-  const { editingFile, activeTab, structuredLogs } = useOpenSSLStore()
+  const { editingFile, activeTab, structuredLogs, setActiveTab } = useOpenSSLStore()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
 
   const handleCategoryChange = useCallback(
@@ -131,6 +134,18 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
 
   return (
     <div className="h-full flex flex-col animate-fade-in">
+      {workbenchCollapsed && (
+        <Button
+          variant="outline"
+          onClick={() => setWorkbenchCollapsed(false)}
+          className="fixed bottom-4 left-4 z-30 flex items-center gap-1.5 rounded-full bg-card border border-border shadow-glow px-3 py-2 text-xs font-medium text-foreground lg:hidden"
+          aria-label="Expand workbench panel"
+        >
+          <PanelLeft size={14} />
+          Workbench
+        </Button>
+      )}
+
       {!embedded && (
         <PageHeader
           icon={Terminal}
@@ -270,6 +285,19 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
           <div className="glass-panel p-4 mb-6 shrink-0 max-h-[300px] overflow-y-auto custom-scrollbar">
             <WorkbenchFileManager />
           </div>
+          {/* Cross-link to TLS Simulator — always visible */}
+          <div className="mt-3 rounded-lg border border-border bg-muted/20 px-3 py-2 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Network size={12} className="shrink-0" />
+              <span>Generated a cert? Test it in the TLS Simulator.</span>
+            </div>
+            <Link
+              to="/playground?tool=tls-simulator"
+              className="text-xs text-primary underline hover:text-primary/80 shrink-0 flex items-center gap-0.5"
+            >
+              TLS Simulator <ArrowRight size={10} />
+            </Link>
+          </div>
 
           {/* File Editor Section (Only visible when editing) */}
           <FileEditor key={editingFile?.name} />
@@ -279,33 +307,93 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
 
           <div className={showTerminal ? 'flex-1 min-h-0' : 'shrink-0'}>
             <div className="glass-panel h-full flex flex-col overflow-hidden">
-              <div className="p-4 border-b border-border bg-muted flex items-center justify-between">
-                <h3 className="font-bold text-foreground flex items-center gap-2">
-                  {activeTab === 'terminal' ? (
-                    <>
-                      <Terminal size={16} />
-                      Terminal Output
-                    </>
-                  ) : (
-                    <>
-                      <FileText size={16} />
-                      Operation Log
-                    </>
+              <div className="flex items-center gap-1 border-b border-border px-3 py-1.5 bg-muted/20">
+                <Button
+                  variant="ghost"
+                  onClick={() => setActiveTab('terminal')}
+                  className={`h-auto flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium transition-colors ${
+                    activeTab === 'terminal'
+                      ? 'bg-muted text-foreground'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  <Terminal size={12} />
+                  Terminal
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => setActiveTab('logs')}
+                  className={`h-auto flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium transition-colors ${
+                    activeTab === 'logs'
+                      ? 'bg-muted text-foreground'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  <FileText size={12} />
+                  Log
+                  {structuredLogs.length > 0 && (
+                    <span className="ml-1 text-[10px] bg-primary/20 text-primary rounded px-1">
+                      {structuredLogs.length}
+                    </span>
                   )}
-                </h3>
+                </Button>
+              </div>
+              <div className="p-2 border-b border-border bg-muted/50 flex items-center justify-end">
                 <Button
                   variant="ghost"
                   size="icon"
+                  className="h-6 w-6"
                   onClick={() => setShowTerminal(!showTerminal)}
                   title={showTerminal ? 'Hide Panel' : 'Show Panel'}
                   aria-label={showTerminal ? 'Hide Panel' : 'Show Panel'}
                 >
-                  {showTerminal ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
+                  {showTerminal ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
                 </Button>
               </div>
               {showTerminal && (
                 <div className="flex-1 overflow-hidden">
-                  {activeTab === 'terminal' ? <TerminalOutput /> : <LogsTab />}
+                  {structuredLogs.length === 0 ? (
+                    <div className="flex flex-col items-start justify-center h-full p-6 gap-4">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Terminal size={16} />
+                        <span className="text-sm font-medium">OpenSSL Studio — ready</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground max-w-sm">
+                        Select a command category on the left and configure your parameters, or copy
+                        and paste one of these to get started:
+                      </p>
+                      <div className="flex flex-col gap-2 w-full max-w-sm">
+                        {[
+                          { cmd: 'openssl version', label: 'Check OpenSSL version' },
+                          {
+                            cmd: 'openssl genpkey -algorithm ml-dsa-65 -out ml_dsa.key',
+                            label: 'Generate ML-DSA-65 key',
+                          },
+                          {
+                            cmd: 'openssl genpkey -algorithm ed25519 -out ed25519.key',
+                            label: 'Generate Ed25519 key',
+                          },
+                        ].map(({ cmd, label }) => (
+                          <div
+                            key={cmd}
+                            className="flex flex-col items-start rounded-lg border border-border bg-muted/20 px-3 py-2 text-left relative group"
+                          >
+                            <span className="text-xs font-mono text-primary pr-8">{cmd}</span>
+                            <span className="text-[11px] text-muted-foreground mt-0.5">
+                              {label}
+                            </span>
+                            <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <CopyButton text={cmd} />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : activeTab === 'terminal' ? (
+                    <TerminalOutput />
+                  ) : (
+                    <LogsTab />
+                  )}
                 </div>
               )}
             </div>

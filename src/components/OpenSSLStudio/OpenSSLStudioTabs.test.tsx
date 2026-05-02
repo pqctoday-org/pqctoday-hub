@@ -21,9 +21,8 @@ describe('OpenSSLStudioView Tabs', () => {
       </MemoryRouter>
     )
 
-    // Default is Terminal
-    expect(screen.getByText('Terminal Output')).toBeInTheDocument()
-    expect(screen.getByText('TerminalOutput Component')).toBeInTheDocument()
+    // Default is Terminal tab — header is now a tab button, not a heading
+    expect(screen.getByRole('button', { name: /terminal/i })).toBeInTheDocument()
 
     // Switch to Logs via store (simulating sidebar click)
     // We need to mock the store or use the real one. Since we are using the real store in the component,
