@@ -83,6 +83,30 @@ workshop UX fixes for EntropyTestingDemo, SuciFlow, and MerkleTreeCerts.
   malformed paste input and surfaces an inline error message below the test
   results area. (`EntropyTestingDemo.tsx`)
 
+- **Entropy Testing — mode-switch state preservation**: Changed from early-return
+  per-mode render to CSS visibility (`block`/`hidden`) so collected samples and
+  test results are preserved when switching between "Bit Flip" and "Paste Hex"
+  modes without re-generating data. (`EntropyTestingDemo.tsx`)
+
+- **QRNG Demo — live randomization**: Replaced static `QRNG_SAMPLE_64/128`
+  constants with `generateSimulatedQrng(bytes)` using `crypto.getRandomValues()`.
+  Each page load and sample-size change produces a fresh sample, making the
+  entropy visualisation more instructive. (`QRNGDemo.tsx`)
+
+- **Envelope Encryption — per-sub-operation progress labels**: `progressLabel`
+  state shows the active sub-operation during execution ("Generating key pair…",
+  "Wrapping DEK…", "Encapsulating shared secret…", etc.). Step wizard "Complete &
+  Next" is gated on `executedSteps.has(currentStep)` so users must run each
+  operation before advancing. Changing the algorithm resets `executedSteps`.
+  Flow diagram and artifact table are collapsible panels (ChevronDown animation).
+  (`EnvelopeEncryptionDemo.tsx`)
+
+- **Cert Capacity Calculator — relative-size toggle**: A "Relative" toggle above
+  the bar chart switches the Y-axis between absolute byte counts and percentages
+  relative to the smallest algorithm (ECDSA P-256). An inline narrative below the
+  chart describes the storage/bandwidth/CPU trade-offs in plain English using live
+  computed values. (`CertCapacityCalculator.tsx`)
+
 ### Changed
 
 - **Playground — "Crypto Workshop" → "Crypto Lab"**: Renamed across
