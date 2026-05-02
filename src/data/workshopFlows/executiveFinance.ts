@@ -122,40 +122,71 @@ const foundations: WorkshopChapter = {
         'This module explains in plain language the three terms you need at boardroom speed. Q-Day is the day a sufficiently large quantum computer breaks RSA and elliptic-curve cryptography. Harvest-Now Decrypt-Later is the present-tense problem: adversaries are already collecting encrypted finance data today to decrypt later. FIPS 203 and 204 are the two NIST standards that fix this — ML-KEM for key exchange, ML-DSA for signatures.',
       completionSignal: { kind: 'module-progress', moduleId: 'exec-quantum-impact', minSteps: 1 },
       cues: [
-        // 0-120s: Q-Day framing
+        // 0–60s: Land on /learn, spotlight + click into the executive module
         { tMs: 4_000, kind: 'caption', text: 'Three terms you need at boardroom speed.' },
+        {
+          tMs: 8_000,
+          kind: 'scroll-to',
+          selector: '[data-workshop-target="learn-module-exec-quantum-impact"]',
+        },
+        {
+          tMs: 12_000,
+          kind: 'spotlight',
+          selector: '[data-workshop-target="learn-module-exec-quantum-impact"]',
+        },
+        {
+          tMs: 16_000,
+          kind: 'callout',
+          selector: '[data-workshop-target="learn-module-exec-quantum-impact"]',
+          label: 'Open this module',
+          arrow: 'right',
+        },
+        {
+          tMs: 24_000,
+          kind: 'click',
+          selector: '[data-workshop-target="learn-module-exec-quantum-impact"]',
+        },
+        // 60–180s: Inside the module — Learn / Workshop / Reference tabs
         {
           tMs: 60_000,
           kind: 'caption',
+          text: 'Module structure — Learn · Workshop · Reference.',
+        },
+        { tMs: 70_000, kind: 'select-tab', tabName: 'Learn' },
+        {
+          tMs: 90_000,
+          kind: 'caption',
           text: 'Q-Day — the day a quantum computer breaks RSA and elliptic-curve cryptography.',
         },
-        // 120-240s: HNDL
-        {
-          tMs: 120_000,
-          kind: 'caption',
-          text: 'Harvest-Now Decrypt-Later — adversaries collect encrypted finance data today to decrypt later.',
-        },
+        // 180–300s: HNDL beat + Workshop tab
         {
           tMs: 180_000,
           kind: 'caption',
-          text: 'Once collected, those records cannot be re-encrypted. Permanent privacy exposure.',
+          text: 'Harvest-Now Decrypt-Later — adversaries collect encrypted finance data today.',
         },
-        // 240-360s: FIPS 203/204
+        { tMs: 220_000, kind: 'select-tab', tabName: 'Workshop' },
         {
-          tMs: 240_000,
+          tMs: 230_000,
           kind: 'caption',
-          text: 'FIPS 203 standardises ML-KEM — replaces RSA key exchange.',
+          text: 'Workshop tab — interactive crypto running in your browser via OpenSSL WASM and liboqs.',
         },
+        // 300–420s: Reference tab + FIPS framing
+        { tMs: 300_000, kind: 'select-tab', tabName: 'Reference' },
         {
-          tMs: 300_000,
+          tMs: 310_000,
           kind: 'caption',
-          text: 'FIPS 204 standardises ML-DSA — replaces ECDSA signatures.',
+          text: 'Reference — primary sources for every claim. NIST FIPS 203/204 cited inline.',
         },
-        // 360-480s: close
         {
           tMs: 360_000,
           kind: 'caption',
-          text: 'These are the two terms your board will hear in every PQC conversation for the next decade.',
+          text: 'FIPS 203 = ML-KEM (replaces RSA key exchange). FIPS 204 = ML-DSA (replaces ECDSA).',
+        },
+        // 420–480s: close
+        {
+          tMs: 420_000,
+          kind: 'caption',
+          text: 'These two acronyms your board will hear for the next decade.',
         },
         { tMs: 480_000, kind: 'advance' },
       ],
@@ -469,7 +500,7 @@ const action: WorkshopChapter = {
         'The Governance zone of NIST Cybersecurity White Paper 39 — sections five-point-one through five-point-four — is where every executive crypto migration begins. Three artifacts come out of this zone: a one-page policy draft your legal team finishes in an afternoon, a RACI that names four humans, and a standards-watch subscription list so your team is alerted when NIST, ASD, or CCCS publish updates. If you only do one zone in this session, do this one.',
       cues: [
         // Step entry already navigates to /business?zone=governance.
-        // Beat 1 (0-60s): Frame why Governance comes first.
+        // 0–60s: Frame Governance, spotlight + click the zone tile
         {
           tMs: 1500,
           kind: 'spotlight',
@@ -483,32 +514,68 @@ const action: WorkshopChapter = {
           arrow: 'top',
         },
         {
-          tMs: 60_000,
-          kind: 'caption',
-          text: 'Governance is the policy layer. CSWP.39 §5.1–5.4. Without it every later artifact stalls in committee.',
-        },
-        // Beat 2 (60-180s): Click into governance zone, focus on policy draft.
-        {
-          tMs: 65_000,
+          tMs: 5_000,
           kind: 'click',
           selector: '[data-workshop-target="business-zone-governance"]',
         },
         {
-          tMs: 120_000,
+          tMs: 60_000,
+          kind: 'caption',
+          text: 'Governance is the policy layer. CSWP.39 §5.1–5.4. Without it every later artifact stalls in committee.',
+        },
+        // 60–120s: Click the Policy artifact create button
+        {
+          tMs: 90_000,
           kind: 'caption',
           text: 'Three artifacts: policy draft, RACI, standards-watch subscription.',
         },
-        // Beat 3 (180-240s): Highlight RACI fields the executive will fill.
+        {
+          tMs: 100_000,
+          kind: 'spotlight',
+          selector: '[data-workshop-target="business-artifact-policy-create"]',
+        },
+        {
+          tMs: 110_000,
+          kind: 'click',
+          selector: '[data-workshop-target="business-artifact-policy-create"]',
+        },
+        // 120–180s: RACI artifact
+        {
+          tMs: 130_000,
+          kind: 'caption',
+          text: 'Policy draft generated — your legal team finishes it in an afternoon.',
+        },
+        {
+          tMs: 150_000,
+          kind: 'spotlight',
+          selector: '[data-workshop-target="business-artifact-raci-create"]',
+        },
+        {
+          tMs: 160_000,
+          kind: 'click',
+          selector: '[data-workshop-target="business-artifact-raci-create"]',
+        },
         {
           tMs: 180_000,
           kind: 'caption',
           text: 'RACI: PQC champion responsible, CISO accountable, Board sponsor informed.',
         },
-        // Beat 4 (240-290s): Close.
+        // 180–240s: Standards-watch artifact
+        {
+          tMs: 210_000,
+          kind: 'spotlight',
+          selector: '[data-workshop-target="business-artifact-standards-watch-create"]',
+        },
+        {
+          tMs: 220_000,
+          kind: 'click',
+          selector: '[data-workshop-target="business-artifact-standards-watch-create"]',
+        },
+        // 240–300s: Close
         {
           tMs: 240_000,
           kind: 'caption',
-          text: 'If you only do one zone in this session, do this one.',
+          text: 'Three artifacts created. If you only do one zone in this session, do this one.',
         },
         { tMs: 300_000, kind: 'advance' },
       ],

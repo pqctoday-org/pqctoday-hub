@@ -146,34 +146,76 @@
               "text": "Three terms you need at boardroom speed."
             },
             {
+              "tMs": 8000,
+              "kind": "scroll-to",
+              "selector": "[data-workshop-target=\"learn-module-exec-quantum-impact\"]"
+            },
+            {
+              "tMs": 12000,
+              "kind": "spotlight",
+              "selector": "[data-workshop-target=\"learn-module-exec-quantum-impact\"]"
+            },
+            {
+              "tMs": 16000,
+              "kind": "callout",
+              "selector": "[data-workshop-target=\"learn-module-exec-quantum-impact\"]",
+              "label": "Open this module",
+              "arrow": "right"
+            },
+            {
+              "tMs": 24000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-module-exec-quantum-impact\"]"
+            },
+            {
               "tMs": 60000,
+              "kind": "caption",
+              "text": "Module structure — Learn · Workshop · Reference."
+            },
+            {
+              "tMs": 70000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 90000,
               "kind": "caption",
               "text": "Q-Day — the day a quantum computer breaks RSA and elliptic-curve cryptography."
             },
             {
-              "tMs": 120000,
-              "kind": "caption",
-              "text": "Harvest-Now Decrypt-Later — adversaries collect encrypted finance data today to decrypt later."
-            },
-            {
               "tMs": 180000,
               "kind": "caption",
-              "text": "Once collected, those records cannot be re-encrypted. Permanent privacy exposure."
+              "text": "Harvest-Now Decrypt-Later — adversaries collect encrypted finance data today."
             },
             {
-              "tMs": 240000,
+              "tMs": 220000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 230000,
               "kind": "caption",
-              "text": "FIPS 203 standardises ML-KEM — replaces RSA key exchange."
+              "text": "Workshop tab — interactive crypto running in your browser via OpenSSL WASM and liboqs."
             },
             {
               "tMs": 300000,
+              "kind": "select-tab",
+              "tabName": "Reference"
+            },
+            {
+              "tMs": 310000,
               "kind": "caption",
-              "text": "FIPS 204 standardises ML-DSA — replaces ECDSA signatures."
+              "text": "Reference — primary sources for every claim. NIST FIPS 203/204 cited inline."
             },
             {
               "tMs": 360000,
               "kind": "caption",
-              "text": "These are the two terms your board will hear in every PQC conversation for the next decade."
+              "text": "FIPS 203 = ML-KEM (replaces RSA key exchange). FIPS 204 = ML-DSA (replaces ECDSA)."
+            },
+            {
+              "tMs": 420000,
+              "kind": "caption",
+              "text": "These two acronyms your board will hear for the next decade."
             },
             {
               "tMs": 480000,
@@ -556,19 +598,44 @@
               "arrow": "top"
             },
             {
+              "tMs": 5000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-zone-governance\"]"
+            },
+            {
               "tMs": 60000,
               "kind": "caption",
               "text": "Governance is the policy layer. CSWP.39 §5.1–5.4. Without it every later artifact stalls in committee."
             },
             {
-              "tMs": 65000,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"business-zone-governance\"]"
-            },
-            {
-              "tMs": 120000,
+              "tMs": 90000,
               "kind": "caption",
               "text": "Three artifacts: policy draft, RACI, standards-watch subscription."
+            },
+            {
+              "tMs": 100000,
+              "kind": "spotlight",
+              "selector": "[data-workshop-target=\"business-artifact-policy-create\"]"
+            },
+            {
+              "tMs": 110000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-artifact-policy-create\"]"
+            },
+            {
+              "tMs": 130000,
+              "kind": "caption",
+              "text": "Policy draft generated — your legal team finishes it in an afternoon."
+            },
+            {
+              "tMs": 150000,
+              "kind": "spotlight",
+              "selector": "[data-workshop-target=\"business-artifact-raci-create\"]"
+            },
+            {
+              "tMs": 160000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-artifact-raci-create\"]"
             },
             {
               "tMs": 180000,
@@ -576,9 +643,19 @@
               "text": "RACI: PQC champion responsible, CISO accountable, Board sponsor informed."
             },
             {
+              "tMs": 210000,
+              "kind": "spotlight",
+              "selector": "[data-workshop-target=\"business-artifact-standards-watch-create\"]"
+            },
+            {
+              "tMs": 220000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"business-artifact-standards-watch-create\"]"
+            },
+            {
               "tMs": 240000,
               "kind": "caption",
-              "text": "If you only do one zone in this session, do this one."
+              "text": "Three artifacts created. If you only do one zone in this session, do this one."
             },
             {
               "tMs": 300000,

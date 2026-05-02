@@ -141,14 +141,25 @@
           "estMinutes": 1,
           "whyItMatters": "Each Learn module has a Workshop tab where you run real cryptographic operations — generate keys, sign messages, verify certs — entirely in your browser.",
           "page": { "route": "/learn" },
-          "tasks": ["Open any module and switch to Workshop"],
-          "expectedOutput": "You know modules have hands-on workshops.",
+          "tasks": ["Open the PQC 101 module", "Switch to its Workshop tab"],
+          "expectedOutput": "You see real crypto operations running in the browser.",
           "narration": "Each module has a Workshop tab. Real cryptographic operations — keygen, signing, verification — run in your browser using OpenSSL WASM and liboqs.",
           "cues": [
             {
               "tMs": 0,
+              "kind": "spotlight",
+              "selector": "[data-workshop-target=\"learn-module-pqc-101\"]"
+            },
+            {
+              "tMs": 2000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-module-pqc-101\"]"
+            },
+            { "tMs": 4000, "kind": "select-tab", "tabName": "Workshop" },
+            {
+              "tMs": 5000,
               "kind": "caption",
-              "text": "Workshop tab — real crypto operations in the browser via OpenSSL WASM + liboqs."
+              "text": "Workshop tab — real keygen, signing, verification in the browser."
             },
             { "tMs": 10000, "kind": "advance" }
           ]

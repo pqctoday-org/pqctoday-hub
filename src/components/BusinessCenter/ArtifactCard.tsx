@@ -210,6 +210,7 @@ export function ArtifactPlaceholder({
   return (
     <Button
       variant="ghost"
+      data-workshop-target={`business-artifact-${type}-create`}
       onClick={() => onCreate(type)}
       className={`group flex items-center gap-3 p-3 rounded-lg border border-dashed transition-colors w-full text-left ${
         suggestion
