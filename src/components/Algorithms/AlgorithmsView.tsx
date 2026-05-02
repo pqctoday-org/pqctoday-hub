@@ -8,7 +8,7 @@ import { AlgorithmFilters } from './AlgorithmFilters'
 import { AlgorithmCompareBar } from './AlgorithmCompareBar'
 import { AlgorithmComparisonPanel } from './AlgorithmComparisonPanel'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
-import { ArrowRight, BarChart3, Shield, Monitor } from 'lucide-react'
+import { ArrowRight, BarChart3, Shield, Monitor, Lightbulb } from 'lucide-react'
 import {
   loadPQCAlgorithmsData,
   loadedFileMetadata,
@@ -28,8 +28,20 @@ import { PageHeader } from '../common/PageHeader'
 import { generateCsv, downloadCsv, csvFilename } from '../../utils/csvExport'
 import { ALGORITHM_CSV_COLUMNS } from '../../utils/csvExportConfigs'
 import { AlgorithmInfoModal } from './AlgorithmInfoModal'
+import { usePersonaStore } from '../../store/usePersonaStore'
 
 const MAX_COMPARE = 6 // allows up to 3 classical+PQC pairs from the transition tab
+
+const ALGO_PERSONA_HINTS: Record<string, string> = {
+  executive:
+    'Start with FIPS-standardized picks: ML-KEM-768 and ML-DSA-65 — the required choices for US federal compliance.',
+  developer:
+    "Filter by 'Standardized' status and compare key/signature sizes — performance varies 10× across families.",
+  architect:
+    'Use the Transition tab to find your classical algorithms and their recommended PQC replacements.',
+  researcher:
+    'Switch to the Detailed tab for full parameter sets, attack vectors, and cross-family security comparisons.',
+}
 
 /**
  * Map a transition row's (classical, keySize) fields to the matching AlgorithmDetail name.
@@ -58,6 +70,7 @@ function getBaselineName(compareType: 'KEM' | 'Signature' | null): string | null
 
 export function AlgorithmsView() {
   const [searchParams, setSearchParams] = useSearchParams()
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const comparisonPanelRef = useRef<HTMLDivElement>(null)
 
   // --- Highlight from URL ---
@@ -435,6 +448,15 @@ export function AlgorithmsView() {
         shareText="Compare 42 post-quantum cryptographic algorithms side-by-side — security levels, key sizes, and performance."
         onExport={handleExportCsv}
       />
+
+      {/* eslint-disable-next-line security/detect-object-injection */}
+      {selectedPersona && ALGO_PERSONA_HINTS[selectedPersona] && (
+        <div className="mt-3 mb-2 flex items-start gap-2 px-3 py-2 rounded-lg bg-primary/5 border border-primary/15 text-xs text-muted-foreground">
+          <Lightbulb size={13} className="shrink-0 text-primary mt-0.5" aria-hidden="true" />
+          {/* eslint-disable-next-line security/detect-object-injection */}
+          <span>{ALGO_PERSONA_HINTS[selectedPersona]}</span>
+        </div>
+      )}
 
       {/* Desktop recommended notice — shown on small screens only */}
       <div className="lg:hidden glass-panel p-3 mb-4 flex items-center gap-2 text-sm text-muted-foreground">

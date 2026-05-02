@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Globe, Link2, Check, Search, Download } from 'lucide-react'
+import { Globe, Link2, Check, Search, Download, Lightbulb } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { timelineData, timelineMetadata, transformToGanttData } from '../../data/timelineData'
 import type { GanttCountryData } from '../../types/timeline'
@@ -28,8 +28,20 @@ const REGION_LABELS: Record<string, string> = {
   global: 'Global',
 }
 
+const TIMELINE_PERSONA_HINTS: Record<string, string> = {
+  executive:
+    'Focus on regulatory deadlines — countries approaching 2025–2026 milestones need immediate procurement action.',
+  developer:
+    'Track early-mover countries (US, UK, Germany) to align your library adoption with first production deployments.',
+  architect:
+    'Map which countries have entered the Deploy or Validate phase — these migration patterns are production-ready.',
+  researcher:
+    'Toggle the region filter to compare migration velocity across blocs and identify adoption outliers.',
+}
+
 export const TimelineView = () => {
   useWorkflowPhaseTracker('timeline')
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const myTimelineCountries = useBookmarkStore((s) => s.myTimelineCountries)
   const toggleMyTimelineCountry = useBookmarkStore((s) => s.toggleMyTimelineCountry)
   const showOnlyTimelineCountries = useBookmarkStore((s) => s.showOnlyTimelineCountries)
@@ -245,6 +257,15 @@ export const TimelineView = () => {
         flagResourceType="Timeline"
         testId="timeline-header"
       />
+
+      {/* eslint-disable-next-line security/detect-object-injection */}
+      {selectedPersona && TIMELINE_PERSONA_HINTS[selectedPersona] && (
+        <div className="mt-3 flex items-start gap-2 px-3 py-2 rounded-lg bg-primary/5 border border-primary/15 text-xs text-muted-foreground">
+          <Lightbulb size={13} className="shrink-0 text-primary mt-0.5" aria-hidden="true" />
+          {/* eslint-disable-next-line security/detect-object-injection */}
+          <span>{TIMELINE_PERSONA_HINTS[selectedPersona]}</span>
+        </div>
+      )}
 
       <div className="mt-2 md:mt-12">
         {/* Desktop View: Full Gantt Chart */}

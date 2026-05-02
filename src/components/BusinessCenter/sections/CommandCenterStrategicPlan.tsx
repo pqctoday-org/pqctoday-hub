@@ -133,7 +133,7 @@ export const CommandCenterStrategicPlan: React.FC<CommandCenterStrategicPlanProp
         />
 
         {/* Middle row: Assets | Management Tools | Risk Management */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
           <ZoneTile
             zone="assets"
             active={activeZone === 'assets'}

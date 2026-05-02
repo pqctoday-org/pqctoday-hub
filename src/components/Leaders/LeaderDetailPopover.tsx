@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { X, Briefcase, Building2, MapPin, User, BookOpen } from 'lucide-react'
+import { X, Briefcase, Building2, MapPin, User, BookOpen, Clock, ShieldCheck } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -191,6 +191,28 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
             <p className="text-sm text-muted-foreground leading-relaxed italic">
               &ldquo;{leader.bio}&rdquo;
             </p>
+          </div>
+
+          {/* Cross-links — related views filtered to this leader's context */}
+          <div className="flex flex-wrap gap-2">
+            <Link
+              to={`/timeline?country=${encodeURIComponent(leader.country)}`}
+              onClick={onClose}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-muted/30 border border-border hover:bg-muted/60 hover:border-primary/30 text-muted-foreground hover:text-foreground transition-all"
+              title={`View timeline events from ${leader.country}`}
+            >
+              <Clock size={12} aria-hidden="true" />
+              Events from {leader.country}
+            </Link>
+            <Link
+              to={`/compliance${leader.type === 'Public' ? '?industry=Government+%26+Defense' : leader.type === 'Academic' ? '' : '?industry=Technology'}`}
+              onClick={onClose}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-muted/30 border border-border hover:bg-muted/60 hover:border-primary/30 text-muted-foreground hover:text-foreground transition-all"
+              title="View compliance frameworks for this sector"
+            >
+              <ShieldCheck size={12} aria-hidden="true" />
+              Compliance frameworks
+            </Link>
           </div>
 
           {/* Key Resources — links to validated library references */}

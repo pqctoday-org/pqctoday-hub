@@ -276,13 +276,13 @@ const DesktopLearnFilterPopover: React.FC<DesktopLearnFilterPopoverProps> = ({
           {showTrackFilter && (
             <div className="space-y-1.5">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Track
+                Path
               </span>
               <FilterDropdown
                 items={TRACK_FILTER_ITEMS}
                 selectedId={selectedTrack}
                 onSelect={onTrackChange}
-                defaultLabel="All Tracks"
+                defaultLabel="All Paths"
                 noContainer
               />
             </div>
@@ -786,12 +786,12 @@ const ModuleTracksGrid = ({
                 </div>
                 {showTrackFilter && (
                   <div className="space-y-2 flex flex-col">
-                    <span className="text-sm font-semibold text-foreground">Track</span>
+                    <span className="text-sm font-semibold text-foreground">Path</span>
                     <FilterDropdown
                       items={TRACK_FILTER_ITEMS}
                       selectedId={selectedTrack}
                       onSelect={setSelectedTrack}
-                      defaultLabel="All Tracks"
+                      defaultLabel="All Paths"
                       noContainer
                     />
                   </div>
