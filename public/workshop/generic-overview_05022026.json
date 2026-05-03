@@ -820,6 +820,30 @@
           ]
         },
         {
+          "id": "g-31-changelog",
+          "chapter": "foundations",
+          "title": "Changelog — what's new",
+          "estMinutes": 1,
+          "whyItMatters": "The Changelog page shows every release — new modules, data updates, security fixes — so you know when to revisit.",
+          "page": {
+            "route": "/changelog"
+          },
+          "tasks": ["Open the Changelog"],
+          "expectedOutput": "You know how to track what is new in PQC Today.",
+          "narration": "The Changelog tracks every release. New modules, data updates, security fixes — so you know when to revisit.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "caption",
+              "text": "Changelog — track every release: new modules, data, fixes."
+            },
+            {
+              "tMs": 10000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
           "id": "g-25-about-overview",
           "chapter": "foundations",
           "title": "About — how the platform works",
@@ -976,30 +1000,6 @@
               "tMs": 5000,
               "kind": "scroll-to",
               "selector": "[data-workshop-target=\"section-community\"]"
-            },
-            {
-              "tMs": 10000,
-              "kind": "advance"
-            }
-          ]
-        },
-        {
-          "id": "g-31-changelog",
-          "chapter": "foundations",
-          "title": "Changelog — what's new",
-          "estMinutes": 1,
-          "whyItMatters": "The Changelog page shows every release — new modules, data updates, security fixes — so you know when to revisit.",
-          "page": {
-            "route": "/changelog"
-          },
-          "tasks": ["Open the Changelog"],
-          "expectedOutput": "You know how to track what is new in PQC Today.",
-          "narration": "The Changelog tracks every release. New modules, data updates, security fixes — so you know when to revisit.",
-          "cues": [
-            {
-              "tMs": 0,
-              "kind": "caption",
-              "text": "Changelog — track every release: new modules, data, fixes."
             },
             {
               "tMs": 10000,
