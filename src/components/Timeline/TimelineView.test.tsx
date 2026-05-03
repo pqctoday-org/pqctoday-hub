@@ -169,7 +169,7 @@ describe('TimelineView', () => {
       render(<TimelineView />)
 
       const desktopContainer = screen.getByTestId('desktop-view-container')
-      expect(desktopContainer).toHaveClass('hidden', 'md:block')
+      expect(desktopContainer).toHaveClass('hidden', 'md:flex')
     })
 
     it('shows mobile view elements with proper classes', () => {
