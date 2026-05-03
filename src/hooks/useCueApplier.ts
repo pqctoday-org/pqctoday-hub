@@ -63,6 +63,7 @@ export function useCueApplier(): CueApplierState & CueApplierActions {
         case 'caption':
           setCaptionState(cue.text)
           setCaptionVisible(true)
+          scheduleCaptionAutoScroll(cue.text, nextCues)
           return
         case 'spotlight':
           setSpotlightSelector(cue.selector)
@@ -196,6 +197,29 @@ function scheduleAutoScrollFromNextCues(nextCues?: WorkshopCue[]): void {
   setTimeout(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, 700)
+}
+
+function scheduleCaptionAutoScroll(text: string, nextCues?: WorkshopCue[]): void {
+  if (nextCues && nextCues.some((c) => c.kind === 'scroll-to')) return
+  let s = text
+    .replace(/^(Section|Step|Workshop|Artifact|Module|Tab)\s*\d*\s*\/?\s*\d*\s*:\s*/i, '')
+    .replace(/^[—-]\s*/, '')
+    .trim()
+  const dashIdx = s.indexOf(' — ')
+  if (dashIdx > 0) s = s.slice(0, dashIdx)
+  s = s.split(/[.!?]/)[0].trim()
+  if (s.length < 3 || s.length > 60 || !/[a-zA-Z]/.test(s)) return
+  setTimeout(() => {
+    const headings = Array.from(document.querySelectorAll('h1, h2, h3'))
+    const wanted = s.toLowerCase().replace(/[^a-z0-9 ]+/g, '')
+    const match = headings.find((h) => {
+      const t = (h.textContent ?? '').toLowerCase().replace(/[^a-z0-9 ]+/g, '')
+      return t.includes(wanted) || wanted.includes(t)
+    })
+    if (match instanceof HTMLElement) {
+      match.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, 400)
 }
 
 function scrollToTopAfterContentChange(): void {

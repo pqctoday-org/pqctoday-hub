@@ -1,0 +1,2997 @@
+{
+  "id": "architect-basics-all-all-v1",
+  "title": "Security Architect Workshop — All Industries, All Regions",
+  "match": {
+    "roles": ["architect"],
+    "proficiencies": ["basics", "expert"],
+    "industries": "*",
+    "regions": "*"
+  },
+  "whatToExpect": [
+    "Concept-to-implementation tour through 18 architecture-relevant learn modules",
+    "Hands-on Migrate + Compliance + Threats + Timeline walkthrough filtered to your country and industry",
+    "Stable selectors auto-clicked so each module’s Workshop tab steps execute end-to-end",
+    "~70 minutes at normal speed (35 min fast / 140 min slow)"
+  ],
+  "totalEstMinutes": 72,
+  "intro": {
+    "id": "intro",
+    "title": "Welcome",
+    "estMinutes": 1,
+    "steps": [
+      {
+        "id": "arch-intro-01-welcome",
+        "chapter": "intro",
+        "title": "What you will leave with",
+        "estMinutes": 1,
+        "whyItMatters": "Sets the destination so every module has a clear payoff for your architecture work.",
+        "page": {
+          "route": "/"
+        },
+        "tasks": ["Skim the four outcomes", "Confirm 70 minutes of uninterrupted time"],
+        "expectedOutput": "Clear understanding of the agenda.",
+        "narration": "In the next seventy minutes you will tour every architecture-relevant learn module on PQC Today, then visit the Migrate, Compliance, Threats, and Timeline pages with your country + industry filter applied. The output: a personal reading list and a vendor-by-vendor migration checklist."
+      }
+    ]
+  },
+  "prerequisites": {
+    "id": "prereq",
+    "title": "Pre-flight checklist",
+    "estMinutes": 1,
+    "steps": [
+      {
+        "id": "arch-prereq-01-checklist",
+        "chapter": "prereq",
+        "title": "Set persona to Security Architect",
+        "estMinutes": 1,
+        "whyItMatters": "Every page personalises from your persona. Architect surfaces the protocol + hardware modules first.",
+        "page": {
+          "route": "/"
+        },
+        "tasks": [
+          "Confirm role = Security Architect",
+          "Set proficiency to Basics or Expert",
+          "Set country (any) and industry (any)"
+        ],
+        "expectedOutput": "Persona chip shows Security Architect.",
+        "narration": "Confirm your persona is Security Architect. Country and industry can be anything — this workshop is region-agnostic and applies the same architecture lens regardless of where you sit."
+      }
+    ]
+  },
+  "common": [
+    {
+      "id": "foundations",
+      "title": "Modules + side surfaces",
+      "estMinutes": 69,
+      "steps": [
+        {
+          "id": "arch-mod-arch-quantum-impact",
+          "chapter": "foundations",
+          "title": "Architect Quantum Impact",
+          "estMinutes": 3,
+          "whyItMatters": "Role-specific architecture lens on the quantum threat — the why for the rest of this tour.",
+          "page": {
+            "route": "/learn/arch-quantum-impact"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Architecture-level talking points from \"Architect Quantum Impact\" you can apply to your migration plan.",
+          "narration": "Role-specific architecture lens on the quantum threat — the why for the rest of this tour.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "arch-quantum-impact",
+            "minSteps": 1
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/arch-quantum-impact"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Architect Quantum Impact — why it matters here"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/3: Why It Matters"
+            },
+            {
+              "tMs": 23333,
+              "kind": "caption",
+              "text": "Section 2/3: What To Learn"
+            },
+            {
+              "tMs": 40666,
+              "kind": "caption",
+              "text": "Section 3/3: How To Act"
+            },
+            {
+              "tMs": 57999,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59499,
+              "kind": "caption",
+              "text": "Workshop 1/3: Why It Matters"
+            },
+            {
+              "tMs": 74232,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 76832,
+              "kind": "caption",
+              "text": "Workshop 2/3: What To Learn"
+            },
+            {
+              "tMs": 91565,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 94165,
+              "kind": "caption",
+              "text": "Workshop 3/3: How To Act"
+            },
+            {
+              "tMs": 111999,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113499,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128749,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130249,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145499,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 146999,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162249,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163749,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "arch-mod-pqc-101",
+          "chapter": "foundations",
+          "title": "PQC 101",
+          "estMinutes": 3,
+          "whyItMatters": "Foundation vocabulary — Q-Day, HNDL, FIPS 203/204 — the same five-second answers any architect needs.",
+          "page": {
+            "route": "/learn/pqc-101"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Architecture-level talking points from \"PQC 101\" you can apply to your migration plan.",
+          "narration": "Foundation vocabulary — Q-Day, HNDL, FIPS 203/204 — the same five-second answers any architect needs.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "pqc-101",
+            "minSteps": 1
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/pqc-101"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "PQC 101 — why it matters here"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/5: Why Pqc"
+            },
+            {
+              "tMs": 16400,
+              "kind": "caption",
+              "text": "Section 2/5: Whats Changing"
+            },
+            {
+              "tMs": 26800,
+              "kind": "caption",
+              "text": "Section 3/5: The Timeline"
+            },
+            {
+              "tMs": 37200,
+              "kind": "caption",
+              "text": "Section 4/5: Who Acts"
+            },
+            {
+              "tMs": 47600,
+              "kind": "caption",
+              "text": "Section 5/5: Next Steps"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Workshop 1/5: Why Pqc"
+            },
+            {
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Workshop 2/5: Whats Changing"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Workshop 3/5: The Timeline"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Workshop 4/5: Who Acts"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Workshop 5/5: Next Steps"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "arch-mod-quantum-threats",
+          "chapter": "foundations",
+          "title": "Quantum Threats",
+          "estMinutes": 3,
+          "whyItMatters": "Shor, Grover, CRQC, HNDL — the four threat patterns you will design around.",
+          "page": {
+            "route": "/learn/quantum-threats"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Architecture-level talking points from \"Quantum Threats\" you can apply to your migration plan.",
+          "narration": "Shor, Grover, CRQC, HNDL — the four threat patterns you will design around.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "quantum-threats",
+            "minSteps": 1
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/quantum-threats"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Quantum Threats — why it matters here"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/5: Shor"
+            },
+            {
+              "tMs": 16400,
+              "kind": "caption",
+              "text": "Section 2/5: Grover"
+            },
+            {
+              "tMs": 26800,
+              "kind": "caption",
+              "text": "Section 3/5: Crqc"
+            },
+            {
+              "tMs": 37200,
+              "kind": "caption",
+              "text": "Section 4/5: Hndl"
+            },
+            {
+              "tMs": 47600,
+              "kind": "caption",
+              "text": "Section 5/5: Security Levels"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Workshop 1/5: Shor"
+            },
+            {
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Workshop 2/5: Grover"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Workshop 3/5: Crqc"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Workshop 4/5: Hndl"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Workshop 5/5: Security Levels"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "arch-mod-entropy-randomness",
+          "chapter": "foundations",
+          "title": "Entropy & Randomness",
+          "estMinutes": 3,
+          "whyItMatters": "The most under-discussed architecture risk. Bad RNG breaks every PQC algorithm regardless of the math.",
+          "page": {
+            "route": "/learn/entropy-randomness"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Architecture-level talking points from \"Entropy & Randomness\" you can apply to your migration plan.",
+          "narration": "The most under-discussed architecture risk. Bad RNG breaks every PQC algorithm regardless of the math.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "entropy-randomness",
+            "minSteps": 1
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/entropy-randomness"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Entropy & Randomness — why it matters here"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/5: Entropy"
+            },
+            {
+              "tMs": 16400,
+              "kind": "caption",
+              "text": "Section 2/5: Drbg"
+            },
+            {
+              "tMs": 26800,
+              "kind": "caption",
+              "text": "Section 3/5: Testing"
+            },
+            {
+              "tMs": 37200,
+              "kind": "caption",
+              "text": "Section 4/5: Qrng"
+            },
+            {
+              "tMs": 47600,
+              "kind": "caption",
+              "text": "Section 5/5: Combining"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Workshop 1/5: Entropy"
+            },
+            {
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Workshop 2/5: Drbg"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Workshop 3/5: Testing"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Workshop 4/5: Qrng"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Workshop 5/5: Combining"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "arch-mod-standards-bodies",
+          "chapter": "foundations",
+          "title": "Standards, Certification & Compliance Bodies",
+          "estMinutes": 3,
+          "whyItMatters": "Who publishes what — NIST, IETF, ISO, ETSI, ENISA, CCCS, ASD. The org chart of crypto authority.",
+          "page": {
+            "route": "/learn/standards-bodies"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Architecture-level talking points from \"Standards, Certification & Compliance Bodies\" you can apply to your migration plan.",
+          "narration": "Who publishes what — NIST, IETF, ISO, ETSI, ENISA, CCCS, ASD. The org chart of crypto authority.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "standards-bodies",
+            "minSteps": 1
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/standards-bodies"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Standards, Certification & Compliance Bodies — why it matters here"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/5: Three Roles"
+            },
+            {
+              "tMs": 16400,
+              "kind": "caption",
+              "text": "Section 2/5: Gov Vs Nongov"
+            },
+            {
+              "tMs": 26800,
+              "kind": "caption",
+              "text": "Section 3/5: Global Regional"
+            },
+            {
+              "tMs": 37200,
+              "kind": "caption",
+              "text": "Section 4/5: App Pages Guide"
+            },
+            {
+              "tMs": 47600,
+              "kind": "caption",
+              "text": "Section 5/5: Ietf Process"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Workshop 1/5: Three Roles"
+            },
+            {
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Workshop 2/5: Gov Vs Nongov"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Workshop 3/5: Global Regional"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Workshop 4/5: App Pages Guide"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Workshop 5/5: Ietf Process"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "arch-mod-data-asset-sensitivity",
+          "chapter": "foundations",
+          "title": "Data & Asset Sensitivity",
+          "estMinutes": 3,
+          "whyItMatters": "Classify before migrating. The crypto inventory that has no data classification is a guess.",
+          "page": {
+            "route": "/learn/data-asset-sensitivity"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Architecture-level talking points from \"Data & Asset Sensitivity\" you can apply to your migration plan.",
+          "narration": "Classify before migrating. The crypto inventory that has no data classification is a guess.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "data-asset-sensitivity",
+            "minSteps": 1
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/data-asset-sensitivity"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Data & Asset Sensitivity — why it matters here"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/5: Classification"
+            },
+            {
+              "tMs": 16400,
+              "kind": "caption",
+              "text": "Section 2/5: Compliance"
+            },
+            {
+              "tMs": 26800,
+              "kind": "caption",
+              "text": "Section 3/5: Methodology"
+            },
+            {
+              "tMs": 37200,
+              "kind": "caption",
+              "text": "Section 4/5: Scoring"
+            },
+            {
+              "tMs": 47600,
+              "kind": "caption",
+              "text": "Section 5/5: Priority"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Workshop 1/5: Classification"
+            },
+            {
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Workshop 2/5: Compliance"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Workshop 3/5: Methodology"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Workshop 4/5: Scoring"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Workshop 5/5: Priority"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "arch-mod-hybrid-crypto",
+          "chapter": "foundations",
+          "title": "Hybrid Cryptography",
+          "estMinutes": 3,
+          "whyItMatters": "KEM combiners, composite signatures, X.509 hybrid certificate formats. The transition state.",
+          "page": {
+            "route": "/learn/hybrid-crypto"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Architecture-level talking points from \"Hybrid Cryptography\" you can apply to your migration plan.",
+          "narration": "KEM combiners, composite signatures, X.509 hybrid certificate formats. The transition state.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "hybrid-crypto",
+            "minSteps": 1
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/hybrid-crypto"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Hybrid Cryptography — why it matters here"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/5: Why Hybrid"
+            },
+            {
+              "tMs": 16400,
+              "kind": "caption",
+              "text": "Section 2/5: Kem"
+            },
+            {
+              "tMs": 26800,
+              "kind": "caption",
+              "text": "Section 3/5: Composite"
+            },
+            {
+              "tMs": 37200,
+              "kind": "caption",
+              "text": "Section 4/5: Cert Formats"
+            },
+            {
+              "tMs": 47600,
+              "kind": "caption",
+              "text": "Section 5/5: Standards"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Workshop 1/5: Why Hybrid"
+            },
+            {
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Workshop 2/5: Kem"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Workshop 3/5: Composite"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Workshop 4/5: Cert Formats"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Workshop 5/5: Standards"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "arch-mod-crypto-agility",
+          "chapter": "foundations",
+          "title": "Crypto Agility",
+          "estMinutes": 3,
+          "whyItMatters": "Abstraction layers, CBOM, migration patterns. The architectural posture that makes the next migration cheaper.",
+          "page": {
+            "route": "/learn/crypto-agility"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Architecture-level talking points from \"Crypto Agility\" you can apply to your migration plan.",
+          "narration": "Abstraction layers, CBOM, migration patterns. The architectural posture that makes the next migration cheaper.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "crypto-agility",
+            "minSteps": 1
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/crypto-agility"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Crypto Agility — why it matters here"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/3: Abstraction"
+            },
+            {
+              "tMs": 23333,
+              "kind": "caption",
+              "text": "Section 2/3: Cbom"
+            },
+            {
+              "tMs": 40666,
+              "kind": "caption",
+              "text": "Section 3/3: Migration"
+            },
+            {
+              "tMs": 57999,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59499,
+              "kind": "caption",
+              "text": "Workshop 1/3: Abstraction"
+            },
+            {
+              "tMs": 74232,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 76832,
+              "kind": "caption",
+              "text": "Workshop 2/3: Cbom"
+            },
+            {
+              "tMs": 91565,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 94165,
+              "kind": "caption",
+              "text": "Workshop 3/3: Migration"
+            },
+            {
+              "tMs": 111999,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113499,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128749,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130249,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145499,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 146999,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162249,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163749,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "arch-mod-pqc-testing-validation",
+          "chapter": "foundations",
+          "title": "PQC Network Testing & Validation",
+          "estMinutes": 3,
+          "whyItMatters": "Performance testing, interop, side-channel TVLA, FIPS ACVP — how you verify the migration actually works.",
+          "page": {
+            "route": "/learn/pqc-testing-validation"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Architecture-level talking points from \"PQC Network Testing & Validation\" you can apply to your migration plan.",
+          "narration": "Performance testing, interop, side-channel TVLA, FIPS ACVP — how you verify the migration actually works.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "pqc-testing-validation",
+            "minSteps": 1
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/pqc-testing-validation"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "PQC Network Testing & Validation — why it matters here"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/6: Why Pqc Testing"
+            },
+            {
+              "tMs": 14666,
+              "kind": "caption",
+              "text": "Section 2/6: Passive Vs Active"
+            },
+            {
+              "tMs": 23332,
+              "kind": "caption",
+              "text": "Section 3/6: Performance Testing Method"
+            },
+            {
+              "tMs": 31998,
+              "kind": "caption",
+              "text": "Section 4/6: Interop Testing"
+            },
+            {
+              "tMs": 40664,
+              "kind": "caption",
+              "text": "Section 5/6: Side Channel Tvla"
+            },
+            {
+              "tMs": 49330,
+              "kind": "caption",
+              "text": "Section 6/6: Fips Acvp"
+            },
+            {
+              "tMs": 57996,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59496,
+              "kind": "caption",
+              "text": "Workshop 1/6: Why Pqc Testing"
+            },
+            {
+              "tMs": 66862,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 68162,
+              "kind": "caption",
+              "text": "Workshop 2/6: Passive Vs Active"
+            },
+            {
+              "tMs": 75528,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 76828,
+              "kind": "caption",
+              "text": "Workshop 3/6: Performance Testing Method"
+            },
+            {
+              "tMs": 84194,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 85494,
+              "kind": "caption",
+              "text": "Workshop 4/6: Interop Testing"
+            },
+            {
+              "tMs": 92860,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 94160,
+              "kind": "caption",
+              "text": "Workshop 5/6: Side Channel Tvla"
+            },
+            {
+              "tMs": 101526,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 102826,
+              "kind": "caption",
+              "text": "Workshop 6/6: Fips Acvp"
+            },
+            {
+              "tMs": 111996,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113496,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128746,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130246,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145496,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 146996,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162246,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163746,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "arch-mod-network-security-pqc",
+          "chapter": "foundations",
+          "title": "Network Security & PQC Migration",
+          "estMinutes": 3,
+          "whyItMatters": "TLS inspection break, IDS/IPS migration, vendor roadmaps, zero-trust impact.",
+          "page": {
+            "route": "/learn/network-security-pqc"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Architecture-level talking points from \"Network Security & PQC Migration\" you can apply to your migration plan.",
+          "narration": "TLS inspection break, IDS/IPS migration, vendor roadmaps, zero-trust impact.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "network-security-pqc",
+            "minSteps": 1
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/network-security-pqc"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Network Security & PQC Migration — why it matters here"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/5: Pqc Network Impact"
+            },
+            {
+              "tMs": 16400,
+              "kind": "caption",
+              "text": "Section 2/5: Tls Inspection Pqc"
+            },
+            {
+              "tMs": 26800,
+              "kind": "caption",
+              "text": "Section 3/5: Ids Ips Migration"
+            },
+            {
+              "tMs": 37200,
+              "kind": "caption",
+              "text": "Section 4/5: Vendor Roadmaps"
+            },
+            {
+              "tMs": 47600,
+              "kind": "caption",
+              "text": "Section 5/5: Zero Trust Pqc"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Workshop 1/5: Pqc Network Impact"
+            },
+            {
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Workshop 2/5: Tls Inspection Pqc"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Workshop 3/5: Ids Ips Migration"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Workshop 4/5: Vendor Roadmaps"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Workshop 5/5: Zero Trust Pqc"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "arch-mod-tls-basics",
+          "chapter": "foundations",
+          "title": "TLS Basics",
+          "estMinutes": 3,
+          "whyItMatters": "Handshake, certificates, ciphers — refresh the protocol you will be migrating most often.",
+          "page": {
+            "route": "/learn/tls-basics"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Architecture-level talking points from \"TLS Basics\" you can apply to your migration plan.",
+          "narration": "Handshake, certificates, ciphers — refresh the protocol you will be migrating most often.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "tls-basics",
+            "minSteps": 1
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/tls-basics"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "TLS Basics — why it matters here"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/4: Handshake"
+            },
+            {
+              "tMs": 19000,
+              "kind": "caption",
+              "text": "Section 2/4: Certificates"
+            },
+            {
+              "tMs": 32000,
+              "kind": "caption",
+              "text": "Section 3/4: Ciphers"
+            },
+            {
+              "tMs": 45000,
+              "kind": "caption",
+              "text": "Section 4/4: Pqc Tls"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Workshop tab — hands-on, in-browser crypto demos."
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 134333,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 135833,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 156666,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 158166,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "arch-mod-vpn-ssh-pqc",
+          "chapter": "foundations",
+          "title": "VPN/IPsec & SSH",
+          "estMinutes": 3,
+          "whyItMatters": "IKEv2 ML-KEM, SSH ML-KEM, WireGuard outlook. Three high-traffic protocols to update first.",
+          "page": {
+            "route": "/learn/vpn-ssh-pqc"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Architecture-level talking points from \"VPN/IPsec & SSH\" you can apply to your migration plan.",
+          "narration": "IKEv2 ML-KEM, SSH ML-KEM, WireGuard outlook. Three high-traffic protocols to update first.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "vpn-ssh-pqc",
+            "minSteps": 1
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/vpn-ssh-pqc"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "VPN/IPsec & SSH — why it matters here"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/3: Ikev2"
+            },
+            {
+              "tMs": 23333,
+              "kind": "caption",
+              "text": "Section 2/3: Ssh"
+            },
+            {
+              "tMs": 40666,
+              "kind": "caption",
+              "text": "Section 3/3: Wireguard"
+            },
+            {
+              "tMs": 57999,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59499,
+              "kind": "caption",
+              "text": "Workshop 1/3: Ikev2"
+            },
+            {
+              "tMs": 74232,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 76832,
+              "kind": "caption",
+              "text": "Workshop 2/3: Ssh"
+            },
+            {
+              "tMs": 91565,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 94165,
+              "kind": "caption",
+              "text": "Workshop 3/3: Wireguard"
+            },
+            {
+              "tMs": 111999,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113499,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128749,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130249,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145499,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 146999,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162249,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163749,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "arch-mod-web-gateway-pqc",
+          "chapter": "foundations",
+          "title": "Web Gateway PQC",
+          "estMinutes": 3,
+          "whyItMatters": "Edge architecture, certificate lifecycle, performance, inspection, CDN/edge, vendor paths.",
+          "page": {
+            "route": "/learn/web-gateway-pqc"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Architecture-level talking points from \"Web Gateway PQC\" you can apply to your migration plan.",
+          "narration": "Edge architecture, certificate lifecycle, performance, inspection, CDN/edge, vendor paths.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "web-gateway-pqc",
+            "minSteps": 1
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/web-gateway-pqc"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Web Gateway PQC — why it matters here"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/6: Architecture"
+            },
+            {
+              "tMs": 14666,
+              "kind": "caption",
+              "text": "Section 2/6: Cert Lifecycle"
+            },
+            {
+              "tMs": 23332,
+              "kind": "caption",
+              "text": "Section 3/6: Performance"
+            },
+            {
+              "tMs": 31998,
+              "kind": "caption",
+              "text": "Section 4/6: Inspection"
+            },
+            {
+              "tMs": 40664,
+              "kind": "caption",
+              "text": "Section 5/6: Cdn Edge"
+            },
+            {
+              "tMs": 49330,
+              "kind": "caption",
+              "text": "Section 6/6: Vendor Paths"
+            },
+            {
+              "tMs": 57996,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59496,
+              "kind": "caption",
+              "text": "Workshop 1/6: Architecture"
+            },
+            {
+              "tMs": 66862,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 68162,
+              "kind": "caption",
+              "text": "Workshop 2/6: Cert Lifecycle"
+            },
+            {
+              "tMs": 75528,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 76828,
+              "kind": "caption",
+              "text": "Workshop 3/6: Performance"
+            },
+            {
+              "tMs": 84194,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 85494,
+              "kind": "caption",
+              "text": "Workshop 4/6: Inspection"
+            },
+            {
+              "tMs": 92860,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 94160,
+              "kind": "caption",
+              "text": "Workshop 5/6: Cdn Edge"
+            },
+            {
+              "tMs": 101526,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 102826,
+              "kind": "caption",
+              "text": "Workshop 6/6: Vendor Paths"
+            },
+            {
+              "tMs": 111996,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113496,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128746,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130246,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145496,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 146996,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162246,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163746,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "arch-mod-secure-boot-pqc",
+          "chapter": "foundations",
+          "title": "Secure Boot & Firmware PQC",
+          "estMinutes": 3,
+          "whyItMatters": "TPM attestation, firmware signing (SLH-DSA / LMS), DICE roots of trust, vendor roadmaps.",
+          "page": {
+            "route": "/learn/secure-boot-pqc"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Architecture-level talking points from \"Secure Boot & Firmware PQC\" you can apply to your migration plan.",
+          "narration": "TPM attestation, firmware signing (SLH-DSA / LMS), DICE roots of trust, vendor roadmaps.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "secure-boot-pqc",
+            "minSteps": 1
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/secure-boot-pqc"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Secure Boot & Firmware PQC — why it matters here"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/5: Secure Boot Fundamentals"
+            },
+            {
+              "tMs": 16400,
+              "kind": "caption",
+              "text": "Section 2/5: Tpm Attestation"
+            },
+            {
+              "tMs": 26800,
+              "kind": "caption",
+              "text": "Section 3/5: Firmware Signing"
+            },
+            {
+              "tMs": 37200,
+              "kind": "caption",
+              "text": "Section 4/5: Dice Hardware Roots"
+            },
+            {
+              "tMs": 47600,
+              "kind": "caption",
+              "text": "Section 5/5: Vendor Roadmaps"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Workshop 1/5: Secure Boot Fundamentals"
+            },
+            {
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Workshop 2/5: Tpm Attestation"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Workshop 3/5: Firmware Signing"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Workshop 4/5: Dice Hardware Roots"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Workshop 5/5: Vendor Roadmaps"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "arch-mod-confidential-computing",
+          "chapter": "foundations",
+          "title": "Confidential Computing & TEEs",
+          "estMinutes": 3,
+          "whyItMatters": "Vendor architectures, attestation, memory encryption, TEE+HSM topology, quantum threats.",
+          "page": {
+            "route": "/learn/confidential-computing"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Architecture-level talking points from \"Confidential Computing & TEEs\" you can apply to your migration plan.",
+          "narration": "Vendor architectures, attestation, memory encryption, TEE+HSM topology, quantum threats.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "confidential-computing",
+            "minSteps": 1
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/confidential-computing"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Confidential Computing & TEEs — why it matters here"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/6: Tee Fundamentals"
+            },
+            {
+              "tMs": 14666,
+              "kind": "caption",
+              "text": "Section 2/6: Vendor Architectures"
+            },
+            {
+              "tMs": 23332,
+              "kind": "caption",
+              "text": "Section 3/6: Attestation"
+            },
+            {
+              "tMs": 31998,
+              "kind": "caption",
+              "text": "Section 4/6: Memory Encryption"
+            },
+            {
+              "tMs": 40664,
+              "kind": "caption",
+              "text": "Section 5/6: Tee Hsm"
+            },
+            {
+              "tMs": 49330,
+              "kind": "caption",
+              "text": "Section 6/6: Quantum Threats"
+            },
+            {
+              "tMs": 57996,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59496,
+              "kind": "caption",
+              "text": "Workshop 1/6: Tee Fundamentals"
+            },
+            {
+              "tMs": 66862,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 68162,
+              "kind": "caption",
+              "text": "Workshop 2/6: Vendor Architectures"
+            },
+            {
+              "tMs": 75528,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 76828,
+              "kind": "caption",
+              "text": "Workshop 3/6: Attestation"
+            },
+            {
+              "tMs": 84194,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 85494,
+              "kind": "caption",
+              "text": "Workshop 4/6: Memory Encryption"
+            },
+            {
+              "tMs": 92860,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 94160,
+              "kind": "caption",
+              "text": "Workshop 5/6: Tee Hsm"
+            },
+            {
+              "tMs": 101526,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 102826,
+              "kind": "caption",
+              "text": "Workshop 6/6: Quantum Threats"
+            },
+            {
+              "tMs": 111996,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113496,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128746,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130246,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145496,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 146996,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162246,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163746,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "arch-mod-hsm-pqc",
+          "chapter": "foundations",
+          "title": "HSM & PQC Operations",
+          "estMinutes": 3,
+          "whyItMatters": "PKCS#11 v3.2, vendor catalogue, migration playbook, FIPS 140-3 module status.",
+          "page": {
+            "route": "/learn/hsm-pqc"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Architecture-level talking points from \"HSM & PQC Operations\" you can apply to your migration plan.",
+          "narration": "PKCS#11 v3.2, vendor catalogue, migration playbook, FIPS 140-3 module status.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "hsm-pqc",
+            "minSteps": 1
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/hsm-pqc"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "HSM & PQC Operations — why it matters here"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/4: Pkcs11"
+            },
+            {
+              "tMs": 19000,
+              "kind": "caption",
+              "text": "Section 2/4: Vendors"
+            },
+            {
+              "tMs": 32000,
+              "kind": "caption",
+              "text": "Section 3/4: Migration"
+            },
+            {
+              "tMs": 45000,
+              "kind": "caption",
+              "text": "Section 4/4: Fips"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Workshop 1/4: Pkcs11"
+            },
+            {
+              "tMs": 70550,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 72500,
+              "kind": "caption",
+              "text": "Workshop 2/4: Vendors"
+            },
+            {
+              "tMs": 83550,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 85500,
+              "kind": "caption",
+              "text": "Workshop 3/4: Migration"
+            },
+            {
+              "tMs": 96550,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 98500,
+              "kind": "caption",
+              "text": "Workshop 4/4: Fips"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "arch-mod-kms-pqc",
+          "chapter": "foundations",
+          "title": "KMS & PQC Key Management",
+          "estMinutes": 3,
+          "whyItMatters": "Key hierarchy, envelope encryption, hybrid wrap, rotation cadence, KMIP coverage.",
+          "page": {
+            "route": "/learn/kms-pqc"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Architecture-level talking points from \"KMS & PQC Key Management\" you can apply to your migration plan.",
+          "narration": "Key hierarchy, envelope encryption, hybrid wrap, rotation cadence, KMIP coverage.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "kms-pqc",
+            "minSteps": 1
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/kms-pqc"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "KMS & PQC Key Management — why it matters here"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/5: Key Hierarchy"
+            },
+            {
+              "tMs": 16400,
+              "kind": "caption",
+              "text": "Section 2/5: Envelope"
+            },
+            {
+              "tMs": 26800,
+              "kind": "caption",
+              "text": "Section 3/5: Hybrid Wrap"
+            },
+            {
+              "tMs": 37200,
+              "kind": "caption",
+              "text": "Section 4/5: Rotation"
+            },
+            {
+              "tMs": 47600,
+              "kind": "caption",
+              "text": "Section 5/5: Kmip"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Workshop 1/5: Key Hierarchy"
+            },
+            {
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Workshop 2/5: Envelope"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Workshop 3/5: Hybrid Wrap"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Workshop 4/5: Rotation"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Workshop 5/5: Kmip"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "arch-mod-qkd",
+          "chapter": "foundations",
+          "title": "Quantum Key Distribution",
+          "estMinutes": 3,
+          "whyItMatters": "BB84, post-processing, deployment topologies, protocol integration, HSM derivation.",
+          "page": {
+            "route": "/learn/qkd"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Architecture-level talking points from \"Quantum Key Distribution\" you can apply to your migration plan.",
+          "narration": "BB84, post-processing, deployment topologies, protocol integration, HSM derivation.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "qkd",
+            "minSteps": 1
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/qkd"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Quantum Key Distribution — why it matters here"
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/5: Bb84 Simulator"
+            },
+            {
+              "tMs": 16400,
+              "kind": "caption",
+              "text": "Section 2/5: Post Processing"
+            },
+            {
+              "tMs": 26800,
+              "kind": "caption",
+              "text": "Section 3/5: Deployment Explorer"
+            },
+            {
+              "tMs": 37200,
+              "kind": "caption",
+              "text": "Section 4/5: Protocol Integration"
+            },
+            {
+              "tMs": 47600,
+              "kind": "caption",
+              "text": "Section 5/5: Hsm Derivation"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Workshop 1/5: Bb84 Simulator"
+            },
+            {
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Workshop 2/5: Post Processing"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Workshop 3/5: Deployment Explorer"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Workshop 4/5: Protocol Integration"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Workshop 5/5: Hsm Derivation"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "arch-side-01-migrate",
+          "chapter": "foundations",
+          "title": "Migrate — vendor + product catalogue",
+          "estMinutes": 5,
+          "whyItMatters": "The CBOM you build needs vendor mappings. The Migrate page is the catalogue you cite when filing tickets with each vendor.",
+          "page": {
+            "route": "/migrate"
+          },
+          "tasks": [
+            "Filter by a vendor relevant to your stack",
+            "Open a product detail row",
+            "Check the certification cross-reference column"
+          ],
+          "expectedOutput": "You can identify which of your active vendors have published a PQC-ready roadmap.",
+          "narration": "The Migrate page is your vendor catalogue. Each row links to the vendor’s public PQC roadmap and to the certifications that vendor’s products carry — FIPS 140-3, ACVP, Common Criteria.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/migrate"
+            },
+            {
+              "tMs": 2000,
+              "kind": "caption",
+              "text": "Migrate — vendor + product catalogue. The list you cite in vendor PQC tickets."
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "Each row carries the vendor’s public PQC roadmap and current certifications."
+            },
+            {
+              "tMs": 180000,
+              "kind": "caption",
+              "text": "Filter by a vendor in your stack. Open a product to see its FIPS / ACVP / CC status."
+            },
+            {
+              "tMs": 300000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "arch-side-02-compliance",
+          "chapter": "foundations",
+          "title": "Compliance — frameworks + binding deadlines",
+          "estMinutes": 5,
+          "whyItMatters": "Every architecture decision lands in an audit. The Compliance page maps your country’s active frameworks to the algorithms they require.",
+          "page": {
+            "route": "/compliance"
+          },
+          "tasks": [
+            "Filter by your country",
+            "Open the most-cited framework",
+            "Note the binding deadline + required algorithms"
+          ],
+          "expectedOutput": "You can quote the framework + deadline + required algorithm for any architecture review.",
+          "narration": "Compliance maps every published framework to the binding deadline and the required algorithm set. NIST CNSA 2.0, CCCS ITSM.40.001, ASD ISM-1917, ENISA — all in one filter.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/compliance"
+            },
+            {
+              "tMs": 2000,
+              "kind": "caption",
+              "text": "Compliance — every published framework with binding deadlines and required algorithms."
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "Filter by your country to surface the frameworks that bind your audit cycle."
+            },
+            {
+              "tMs": 180000,
+              "kind": "caption",
+              "text": "NIST CNSA 2.0, CCCS ITSM.40.001, ASD ISM-1917, ENISA — pick yours."
+            },
+            {
+              "tMs": 300000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "arch-side-03-threats",
+          "chapter": "foundations",
+          "title": "Threats — cross-industry threat catalogue",
+          "estMinutes": 3,
+          "whyItMatters": "Architects design across industries. The Threats catalogue is sorted by industry but the underlying patterns generalise.",
+          "page": {
+            "route": "/threats"
+          },
+          "tasks": [
+            "Skim a HIGH severity threat in your industry",
+            "Note the affected protocols / surfaces"
+          ],
+          "expectedOutput": "You can describe at least one HIGH-severity threat that affects your stack.",
+          "narration": "Threats — cross-industry catalogue. Filter by industry to surface what affects your stack first.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/threats"
+            },
+            {
+              "tMs": 2000,
+              "kind": "caption",
+              "text": "Threats — sorted by industry. The patterns generalise across stacks."
+            },
+            {
+              "tMs": 90000,
+              "kind": "caption",
+              "text": "Pick your industry. Open a HIGH-severity threat. Note the affected protocols."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "arch-side-04-timeline",
+          "chapter": "foundations",
+          "title": "Timeline — government + industry milestones",
+          "estMinutes": 2,
+          "whyItMatters": "Federal moves cascade into private sector procurement. The Timeline is the runway for every contract you sign in the next five years.",
+          "page": {
+            "route": "/timeline"
+          },
+          "tasks": ["Filter by your country", "Skim the next 12 months of milestones"],
+          "expectedOutput": "You can recite the next 3 government milestones for your jurisdiction.",
+          "narration": "Timeline — government + industry milestones. The runway for every contract you sign in the next five years.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/timeline"
+            },
+            {
+              "tMs": 2000,
+              "kind": "caption",
+              "text": "Timeline — government + industry milestones, your migration runway."
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "Filter by your country and skim the next 12 months."
+            },
+            {
+              "tMs": 120000,
+              "kind": "advance"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "close": {
+    "id": "close",
+    "title": "Where to go next",
+    "estMinutes": 1,
+    "steps": [
+      {
+        "id": "arch-close-01-next",
+        "chapter": "close",
+        "title": "Next steps for an architect",
+        "estMinutes": 1,
+        "whyItMatters": "Wraps the tour with concrete next-week actions.",
+        "page": {
+          "route": "/learn/arch-quantum-impact"
+        },
+        "tasks": [
+          "Bookmark 3 modules to deep-dive",
+          "Identify 1 vendor to file a PQC ticket with this week"
+        ],
+        "expectedOutput": "Personal architect reading list + one vendor outreach.",
+        "narration": "Three concrete next-week actions: bookmark three modules to deep-dive, file a PQC question with one vendor in your stack, and put the next compliance deadline in your audit calendar."
+      }
+    ]
+  }
+}

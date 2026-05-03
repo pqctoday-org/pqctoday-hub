@@ -257,6 +257,7 @@ export const SecureBootPQCModule: React.FC = () => {
                 onClick={() => handlePartChange(Math.max(0, currentPart - 1))}
                 disabled={currentPart === 0}
                 className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
+                data-workshop-target="learn-stepper-prev"
               >
                 &larr; Previous Step
               </Button>
@@ -265,6 +266,7 @@ export const SecureBootPQCModule: React.FC = () => {
                   variant="gradient"
                   onClick={() => markStepComplete(MODULE_ID, PARTS[currentPart].id)}
                   className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
+                  data-workshop-target="learn-stepper-complete"
                 >
                   Complete Module
                 </Button>
@@ -273,6 +275,7 @@ export const SecureBootPQCModule: React.FC = () => {
                   variant="gradient"
                   onClick={() => handlePartChange(currentPart + 1)}
                   className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
+                  data-workshop-target="learn-stepper-next"
                 >
                   Next Step &rarr;
                 </Button>

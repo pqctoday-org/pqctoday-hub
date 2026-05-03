@@ -18,6 +18,20 @@
       "date": "05022026"
     },
     {
+      "id": "architect-basics-all-all-v1",
+      "file": "architect-basics-all-all_05032026.json",
+      "title": "Security Architect Workshop — All Industries, All Regions",
+      "match": {
+        "roles": ["architect"],
+        "proficiencies": ["basics", "expert"],
+        "industries": "*",
+        "regions": "*"
+      },
+      "totalEstMinutes": 72,
+      "stepCount": 25,
+      "date": "05032026"
+    },
+    {
       "id": "generic-overview",
       "file": "generic-overview_05022026.json",
       "title": "PQC Today — Quick Overview",

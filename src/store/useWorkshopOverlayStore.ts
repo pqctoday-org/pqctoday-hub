@@ -61,6 +61,7 @@ export const useWorkshopOverlayStore = create<WorkshopOverlayState>()((set, get)
       }
       case 'caption':
         set({ caption: cue.text, captionVisible: true })
+        scheduleCaptionAutoScroll(cue.text, nextCues)
         return
       case 'spotlight':
         set({ spotlightSelector: cue.selector })
@@ -195,6 +196,46 @@ function scheduleAutoScrollFromNextCues(nextCues?: WorkshopCue[]): void {
   setTimeout(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, 700)
+}
+
+/**
+ * When a caption cue mentions a section name, smooth-scroll to the matching
+ * heading on the current page. Skipped if an explicit `scroll-to` cue is
+ * queued (author override wins). The "subject" is extracted by stripping
+ * leading prefixes like "Section N/M:", "Step N:", "Workshop N/M:", "Artifact:".
+ */
+function scheduleCaptionAutoScroll(text: string, nextCues?: WorkshopCue[]): void {
+  if (nextCues && nextCues.some((c) => c.kind === 'scroll-to')) return
+  const subject = extractCaptionSubject(text)
+  if (!subject) return
+  setTimeout(() => {
+    const headings = Array.from(document.querySelectorAll('h1, h2, h3'))
+    const wanted = subject.toLowerCase()
+    const match = headings.find((h) => {
+      const t = (h.textContent ?? '').toLowerCase().replace(/[^a-z0-9 ]+/g, '')
+      const w = wanted.replace(/[^a-z0-9 ]+/g, '')
+      return t.includes(w) || w.includes(t)
+    })
+    if (match instanceof HTMLElement) {
+      match.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, 400)
+}
+
+function extractCaptionSubject(text: string): string | null {
+  // Drop common workshop prefixes
+  let s = text
+    .replace(/^(Section|Step|Workshop|Artifact|Module|Tab)\s*\d*\s*\/?\s*\d*\s*:\s*/i, '')
+    .replace(/^[—-]\s*/, '')
+    .trim()
+  // Take only the first sentence / before the dash
+  const dashIdx = s.indexOf(' — ')
+  if (dashIdx > 0) s = s.slice(0, dashIdx)
+  s = s.split(/[.!?]/)[0].trim()
+  // Need at least one alpha char and reasonable length
+  if (s.length < 3 || s.length > 60) return null
+  if (!/[a-zA-Z]/.test(s)) return null
+  return s
 }
 
 /** Same as auto-scroll on navigate but with a shorter delay for in-page content changes. */
