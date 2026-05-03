@@ -144,8 +144,20 @@ export const VideoOverlay: React.FC = () => {
     const isPreview = playbackMode === 'preview'
     const cuesSorted = isPreview ? [] : [...(step.cues ?? [])].sort((a, b) => a.tMs - b.tMs)
     const mul = PRESENTATION_SPEED_MULTIPLIER[playbackSpeed]
-    const targetMs = isPreview ? STEP_DURATION_MS[playbackSpeed] : Math.max(1, originalMs * mul)
     const scale = isPreview ? 0 : mul
+
+    // Step duration:
+    //   preview                                  → fixed STEP_DURATION_MS[speed]
+    //   presentation, no cues authored           → STEP_DURATION_MS[speed] × 3 (caption-only steps shouldn't block for estMinutes — feels frozen)
+    //   presentation, has cues                   → originalMs × speed multiplier
+    let targetMs: number
+    if (isPreview) {
+      targetMs = STEP_DURATION_MS[playbackSpeed]
+    } else if (cuesSorted.length === 0) {
+      targetMs = STEP_DURATION_MS[playbackSpeed] * 3
+    } else {
+      targetMs = Math.max(1, originalMs * mul)
+    }
 
     const tick = (): void => {
       if (pausedAtRef.current !== null) {
