@@ -299,7 +299,12 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         code: `// Bitcoin (BIP32 / secp256k1)\nconst btcKey = HDKey.fromMasterSeed(seed).derive("${DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.BITCOIN}");\n\n// Ethereum (BIP32 / secp256k1, same master)\nconst ethKey = HDKey.fromMasterSeed(seed).derive("${DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.ETHEREUM}");\n\n// Solana (SLIP-0010 / Ed25519, all-hardened)\nconst solKey = deriveSLIP0010(seed, "${DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.SOLANA}");`,
         language: 'javascript',
         actionLabel: 'Derive Accounts',
-        diagram: derivedLeaves.length > 0 ? <KeyDerivationTree leaves={derivedLeaves} /> : <HDWalletFlowDiagram />,
+        diagram:
+          derivedLeaves.length > 0 ? (
+            <KeyDerivationTree leaves={derivedLeaves} />
+          ) : (
+            <HDWalletFlowDiagram />
+          ),
       },
       {
         id: 'quantum',
@@ -557,7 +562,9 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
           generatedAt: new Date().toISOString(),
         })
 
-        hsm.addStepLog('Step 4x: C_GetAttributeValue — extracted BTC private bytes to JS for address derivation')
+        hsm.addStepLog(
+          'Step 4x: C_GetAttributeValue — extracted BTC private bytes to JS for address derivation'
+        )
         const btcPriv = hsm_extractKeyValue(M, hSession, btcLeafHandle)
         const btcPub = secp256k1.getPublicKey(btcPriv, true)
         const btcHash160 = ripemd160(sha256(btcPub))
@@ -582,7 +589,9 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
           generatedAt: new Date().toISOString(),
         })
 
-        hsm.addStepLog('Step 4x: C_GetAttributeValue — extracted ETH private bytes to JS for address derivation')
+        hsm.addStepLog(
+          'Step 4x: C_GetAttributeValue — extracted ETH private bytes to JS for address derivation'
+        )
         const ethPriv = hsm_extractKeyValue(M, hSession, ethLeafHandle)
         const ethPubKey = secp256k1.getPublicKey(ethPriv, false).slice(1)
         const ethAddrWasm = toChecksumAddress(bytesToHex(keccak_256(ethPubKey).slice(-20)))
@@ -608,7 +617,9 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
           generatedAt: new Date().toISOString(),
         })
 
-        hsm.addStepLog('Step 4x: C_GetAttributeValue — extracted SOL private bytes to JS for address derivation')
+        hsm.addStepLog(
+          'Step 4x: C_GetAttributeValue — extracted SOL private bytes to JS for address derivation'
+        )
         const solPriv = hsm_extractKeyValue(M, hSession, solLeafHandle)
         const solAddrWasm = base58.encode(ed25519.getPublicKey(solPriv))
         hsmOutput += `Solana\nPath: ${solPath}\nHandle: ${solLeafHandle}\nAddress: ${solAddrWasm}`
@@ -748,8 +759,8 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         <div className="mt-4 flex items-start gap-1.5 rounded border border-warning/20 bg-warning/5 px-3 py-2 text-xs text-muted-foreground">
           <AlertTriangle size={14} className="mt-0.5 shrink-0 text-status-warning" />
           <span>
-            <strong>Note:</strong> Private key material was extracted from the HSM into JavaScript to derive
-            multi-chain public keys and addresses. In a production HSM, this would not be
+            <strong>Note:</strong> Private key material was extracted from the HSM into JavaScript
+            to derive multi-chain public keys and addresses. In a production HSM, this would not be
             permitted on non-extractable keys.
           </span>
         </div>

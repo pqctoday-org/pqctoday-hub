@@ -36,16 +36,17 @@ export const WalletComponent: React.FC<WalletComponentProps> = ({ wallet, onAddC
           expected to mandate PQC-safe algorithms (ML-DSA, SLH-DSA) for long-lived credentials to
           protect against quantum threats.
           <span className="text-muted-foreground/80">
-            {' '}Target: 2027–2030 per ETSI TS 119 182-2 and the EU eIDAS 2.0 implementing acts.
+            {' '}
+            Target: 2027–2030 per ETSI TS 119 182-2 and the EU eIDAS 2.0 implementing acts.
           </span>
         </p>
       </div>
 
       <div className="rounded-lg border border-border bg-muted/30 px-3 py-2 text-xs text-muted-foreground mb-4">
-        <strong className="text-foreground">What is selective disclosure?</strong>{' '}
-        In EUDI wallets, you control which credential fields you share with each relying party.
-        For example, you can prove "over 18" to a bank without revealing your exact date of birth.
-        You will choose which fields to reveal in Step 4.
+        <strong className="text-foreground">What is selective disclosure?</strong> In EUDI wallets,
+        you control which credential fields you share with each relying party. For example, you can
+        prove "over 18" to a bank without revealing your exact date of birth. You will choose which
+        fields to reveal in Step 4.
       </div>
 
       <Tabs defaultValue="credentials" className="w-full">

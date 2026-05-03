@@ -66,7 +66,9 @@ export const AttributeTable: React.FC<AttributeTableProps> = ({
                 <div className="flex flex-col">
                   <span>{attr.label}</span>
                   {attr.id === 'CN' && (
-                    <span className="ml-1 text-status-error" aria-label="required">*</span>
+                    <span className="ml-1 text-status-error" aria-label="required">
+                      *
+                    </span>
                   )}
                   <div className="flex gap-1 mt-1">
                     {attr.status === 'mandatory' && (

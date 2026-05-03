@@ -500,7 +500,11 @@ const isValid = hsm_eddsaVerify(
         actionLabel: 'Verify Signature',
         customControls: (
           <div className="mb-4 flex items-start gap-3 rounded-lg border border-warning/20 bg-warning/10 p-3">
-            <div tabIndex={0} onKeyDown={(e) => { if(e.key==='Enter' || e.key===' ') setInvalidateSignature(!invalidateSignature) }}
+            <div
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') setInvalidateSignature(!invalidateSignature)
+              }}
               role="checkbox"
               aria-checked={simulateError}
               onClick={() => setSimulateError((v) => !v)}
@@ -517,15 +521,17 @@ const isValid = hsm_eddsaVerify(
               <div
                 className="text-sm font-medium text-foreground cursor-pointer select-none"
                 onClick={() => setSimulateError((v) => !v)}
-                onKeyDown={(e) => { if(e.key==='Enter' || e.key===' ') setSimulateError((v) => !v) }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') setSimulateError((v) => !v)
+                }}
                 role="button"
                 tabIndex={0}
               >
                 Simulate Invalid Signature
               </div>
               <p className="text-xs text-muted-foreground mt-0.5">
-                When checked, a byte of the signature is flipped before verification — Step 9
-                will show <span className="font-mono text-status-error font-bold">❌ INVALID</span>.
+                When checked, a byte of the signature is flipped before verification — Step 9 will
+                show <span className="font-mono text-status-error font-bold">❌ INVALID</span>.
               </p>
             </div>
           </div>

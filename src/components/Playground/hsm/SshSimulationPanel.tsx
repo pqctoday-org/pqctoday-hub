@@ -8,7 +8,19 @@
 import { useState, useCallback } from 'react'
 import { ErrorAlert } from '@/components/ui/error-alert'
 import { translateCryptoError } from '@/utils/cryptoErrorHint'
-import { Terminal, Play, RotateCcw, BookOpen, ShieldCheck, Code, ArrowLeftRight, List, Columns, ChevronRight, ExternalLink } from 'lucide-react'
+import {
+  Terminal,
+  Play,
+  RotateCcw,
+  BookOpen,
+  ShieldCheck,
+  Code,
+  ArrowLeftRight,
+  List,
+  Columns,
+  ChevronRight,
+  ExternalLink,
+} from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -190,12 +202,7 @@ export function SshSimulationPanel() {
           </span>
         )}
         {phase === 'done' && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleReset}
-            className="gap-1.5 ml-auto"
-          >
+          <Button variant="outline" size="sm" onClick={handleReset} className="gap-1.5 ml-auto">
             <RotateCcw size={14} />
             Run Again
           </Button>
@@ -205,22 +212,21 @@ export function SshSimulationPanel() {
       {/* Error banner */}
       {errorMsg && <ErrorAlert message={errorMsg} />}
 
-            {/* Fix 1: Hybrid KEX rationale */}
+      {/* Fix 1: Hybrid KEX rationale */}
       {(phase === 'running-pqc' || phase === 'done') && (
         <div className="my-4 flex items-start gap-3 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm">
           <ShieldCheck size={16} className="mt-0.5 shrink-0 text-primary" />
           <div className="space-y-1">
             <p className="font-medium text-foreground">Why hybrid? Defense in depth.</p>
             <p className="text-muted-foreground text-xs">
-              <strong className="text-foreground">mlkem768x25519-sha256</strong> combines
-              classical X25519 with ML-KEM-768 in a single key exchange. Both algorithms must
-              be broken for the session key to be compromised.
+              <strong className="text-foreground">mlkem768x25519-sha256</strong> combines classical
+              X25519 with ML-KEM-768 in a single key exchange. Both algorithms must be broken for
+              the session key to be compromised.
             </p>
             <p className="text-muted-foreground text-xs">
               <strong className="text-foreground">X25519</strong> protects against classical
-              adversaries today.{' '}
-              <strong className="text-foreground">ML-KEM-768</strong> protects against
-              &quot;harvest now, decrypt later&quot; (HNDL) attacks by quantum computers.
+              adversaries today. <strong className="text-foreground">ML-KEM-768</strong> protects
+              against &quot;harvest now, decrypt later&quot; (HNDL) attacks by quantum computers.
             </p>
             <a
               href="https://datatracker.ietf.org/doc/draft-ietf-sshm-hybrid/"
@@ -279,9 +285,13 @@ export function SshSimulationPanel() {
               className="h-6 text-[11px] gap-1 text-muted-foreground hover:text-foreground"
             >
               {pkcs11BeginnerMode ? (
-                <><Code size={11} /> Show raw</>
+                <>
+                  <Code size={11} /> Show raw
+                </>
               ) : (
-                <><BookOpen size={11} /> Show descriptions</>
+                <>
+                  <BookOpen size={11} /> Show descriptions
+                </>
               )}
             </Button>
           </div>
@@ -296,20 +306,35 @@ export function SshSimulationPanel() {
 
         <TabsContent value="wire" className="flex flex-col gap-2">
           <div className="flex gap-1 p-2 border-b border-border/50">
-            <Button variant={wirePacketsView === 'diagram' ? 'default' : 'outline'} size="sm"
-              className="h-7 text-xs gap-1" onClick={() => setWirePacketsView('diagram')}>
+            <Button
+              variant={wirePacketsView === 'diagram' ? 'default' : 'outline'}
+              size="sm"
+              className="h-7 text-xs gap-1"
+              onClick={() => setWirePacketsView('diagram')}
+            >
               <ArrowLeftRight size={11} /> Diagram
             </Button>
-            <Button variant={wirePacketsView === 'list' ? 'default' : 'outline'} size="sm"
-              className="h-7 text-xs gap-1" onClick={() => setWirePacketsView('list')}>
+            <Button
+              variant={wirePacketsView === 'list' ? 'default' : 'outline'}
+              size="sm"
+              className="h-7 text-xs gap-1"
+              onClick={() => setWirePacketsView('list')}
+            >
               <List size={11} /> List
             </Button>
-            {classicalResult && classicalResult.wire_packets.length > 0 && pqcResult && pqcResult.wire_packets.length > 0 && (
-              <Button variant={wirePacketsView === 'compare' ? 'default' : 'outline'} size="sm"
-                className="h-7 text-xs gap-1" onClick={() => setWirePacketsView('compare')}>
-                <Columns size={11} /> Compare
-              </Button>
-            )}
+            {classicalResult &&
+              classicalResult.wire_packets.length > 0 &&
+              pqcResult &&
+              pqcResult.wire_packets.length > 0 && (
+                <Button
+                  variant={wirePacketsView === 'compare' ? 'default' : 'outline'}
+                  size="sm"
+                  className="h-7 text-xs gap-1"
+                  onClick={() => setWirePacketsView('compare')}
+                >
+                  <Columns size={11} /> Compare
+                </Button>
+              )}
           </div>
           <div className="glass-panel h-64 overflow-y-auto">
             {allWirePackets.length === 0 ? (
@@ -318,21 +343,28 @@ export function SshSimulationPanel() {
               </div>
             ) : wirePacketsView === 'diagram' ? (
               <div className="flex flex-col">
-                 {classicalResult && classicalResult.wire_packets.length > 0 && (
-                   <div className="mb-4">
-                     <div className="px-3 pt-3 text-xs font-semibold text-muted-foreground">Classical Handshake</div>
-                     <WirePacketLadder packets={classicalResult.wire_packets} />
-                   </div>
-                 )}
-                 {pqcResult && pqcResult.wire_packets.length > 0 && (
-                   <div className="border-t border-border/30">
-                     <div className="px-3 pt-3 text-xs font-semibold text-muted-foreground">PQC Handshake</div>
-                     <WirePacketLadder packets={pqcResult.wire_packets} />
-                   </div>
-                 )}
+                {classicalResult && classicalResult.wire_packets.length > 0 && (
+                  <div className="mb-4">
+                    <div className="px-3 pt-3 text-xs font-semibold text-muted-foreground">
+                      Classical Handshake
+                    </div>
+                    <WirePacketLadder packets={classicalResult.wire_packets} />
+                  </div>
+                )}
+                {pqcResult && pqcResult.wire_packets.length > 0 && (
+                  <div className="border-t border-border/30">
+                    <div className="px-3 pt-3 text-xs font-semibold text-muted-foreground">
+                      PQC Handshake
+                    </div>
+                    <WirePacketLadder packets={pqcResult.wire_packets} />
+                  </div>
+                )}
               </div>
             ) : wirePacketsView === 'compare' ? (
-              <WirePacketCompare classical={classicalResult?.wire_packets || []} pqc={pqcResult?.wire_packets || []} />
+              <WirePacketCompare
+                classical={classicalResult?.wire_packets || []}
+                pqc={pqcResult?.wire_packets || []}
+              />
             ) : (
               <div className="p-3 font-mono text-xs space-y-2">
                 {allWirePackets.map((pkt, i) => (
@@ -377,9 +409,12 @@ const WirePacketLadder: React.FC<{ packets: Record<string, unknown>[] }> = ({ pa
       <span>SERVER</span>
     </div>
     {packets.map((pkt, i) => (
-      <div key={i} className={`flex items-center gap-2 ${
-        pkt.direction === 'C→S' ? 'flex-row' : 'flex-row-reverse'
-      }`}>
+      <div
+        key={i}
+        className={`flex items-center gap-2 ${
+          pkt.direction === 'C→S' ? 'flex-row' : 'flex-row-reverse'
+        }`}
+      >
         <span className="shrink-0 w-24 text-[10px] text-primary truncate" title={pkt.msgType}>
           {pkt.msgType}
         </span>
@@ -398,33 +433,46 @@ const WirePacketLadder: React.FC<{ packets: Record<string, unknown>[] }> = ({ pa
   </div>
 )
 
-const WirePacketCompare: React.FC<{ classical: Record<string, unknown>[]; pqc: Record<string, unknown>[] }> = ({ classical, pqc }) => {
-  const rows = [];
-  const maxLen = Math.max(classical.length, pqc.length);
-  for (let i=0; i<maxLen; i++) {
-     const c = classical[i];
-     const p = pqc[i];
-     rows.push(
-       <div key={i} className="flex gap-4 border-b border-border/30 py-1 text-[10px] font-mono">
-         <div className="flex-1 flex justify-between pr-4">
-           {c ? <span className="text-primary truncate max-w-[120px]">{c.msgType}</span> : <span />}
-           {c && <span className="text-muted-foreground">{c.sizeBytes}B</span>}
-         </div>
-         <div className="flex-1 flex justify-between border-l border-border/50 pl-4">
-           {p ? <span className="text-primary truncate max-w-[120px]">{p.msgType}</span> : <span />}
-           {p && <span className={c && p.sizeBytes > c.sizeBytes ? 'text-status-warning font-bold' : 'text-muted-foreground'}>
-             {p.sizeBytes}B
-             {c && p.sizeBytes !== c.sizeBytes && ` (+${p.sizeBytes - c.sizeBytes}B)`}
-           </span>}
-         </div>
-       </div>
-     )
+const WirePacketCompare: React.FC<{
+  classical: Record<string, unknown>[]
+  pqc: Record<string, unknown>[]
+}> = ({ classical, pqc }) => {
+  const rows = []
+  const maxLen = Math.max(classical.length, pqc.length)
+  for (let i = 0; i < maxLen; i++) {
+    const c = classical[i]
+    const p = pqc[i]
+    rows.push(
+      <div key={i} className="flex gap-4 border-b border-border/30 py-1 text-[10px] font-mono">
+        <div className="flex-1 flex justify-between pr-4">
+          {c ? <span className="text-primary truncate max-w-[120px]">{c.msgType}</span> : <span />}
+          {c && <span className="text-muted-foreground">{c.sizeBytes}B</span>}
+        </div>
+        <div className="flex-1 flex justify-between border-l border-border/50 pl-4">
+          {p ? <span className="text-primary truncate max-w-[120px]">{p.msgType}</span> : <span />}
+          {p && (
+            <span
+              className={
+                c && p.sizeBytes > c.sizeBytes
+                  ? 'text-status-warning font-bold'
+                  : 'text-muted-foreground'
+              }
+            >
+              {p.sizeBytes}B
+              {c && p.sizeBytes !== c.sizeBytes && ` (+${p.sizeBytes - c.sizeBytes}B)`}
+            </span>
+          )}
+        </div>
+      </div>
+    )
   }
-  return <div className="p-3">
-    <div className="flex gap-4 border-b border-border text-[10px] text-muted-foreground font-semibold pb-2 mb-2">
-      <div className="flex-1">CLASSICAL</div>
-      <div className="flex-1 border-l border-border/50 pl-4">PQC</div>
+  return (
+    <div className="p-3">
+      <div className="flex gap-4 border-b border-border text-[10px] text-muted-foreground font-semibold pb-2 mb-2">
+        <div className="flex-1">CLASSICAL</div>
+        <div className="flex-1 border-l border-border/50 pl-4">PQC</div>
+      </div>
+      {rows}
     </div>
-    {rows}
-  </div>
+  )
 }

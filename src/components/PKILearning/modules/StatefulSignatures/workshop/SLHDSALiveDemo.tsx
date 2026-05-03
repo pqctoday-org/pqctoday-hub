@@ -402,10 +402,10 @@ export const SLHDSALiveDemo: React.FC = () => {
                     <p className="text-[10px] text-status-warning mt-1 leading-relaxed">
                       ⚠ Not approved for HashSLH-DSA by FIPS 205 §11. FIPS 205 permits only SHA-256,
                       SHA-512, SHAKE-128, and SHAKE-256 — the four hash functions that match the
-                      internal hash families of the 12 parameter sets (SHA2-* variants use SHA-256 or
-                      SHA-512; SHAKE-* variants use SHAKE-128 or SHAKE-256). SHA-3 and other variants
-                      are available in PKCS#11 v3.2 but are outside the FIPS 205 HashSLH-DSA
-                      specification entirely.
+                      internal hash families of the 12 parameter sets (SHA2-* variants use SHA-256
+                      or SHA-512; SHAKE-* variants use SHAKE-128 or SHAKE-256). SHA-3 and other
+                      variants are available in PKCS#11 v3.2 but are outside the FIPS 205
+                      HashSLH-DSA specification entirely.
                     </p>
                   )}
                 </>

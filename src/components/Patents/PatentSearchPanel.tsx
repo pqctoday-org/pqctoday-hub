@@ -134,11 +134,11 @@ export function PatentSearchPanel({ patents, onSelectPatent }: PatentSearchPanel
   const analyticsRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Build index from patents (memoized by patents reference)
-  const index = useMemo(() => {
-    const idx = buildIndex(patents)
+  const index = useMemo(() => buildIndex(patents), [patents])
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: clear loading state after the (heavy) index rebuild settles
     setIsBuilding(false)
-    return idx
-  }, [patents])
+  }, [index])
 
   // Lookup map
   const patentMap = useMemo(() => {
@@ -205,19 +205,22 @@ export function PatentSearchPanel({ patents, onSelectPatent }: PatentSearchPanel
           className="pl-9 pr-9"
           aria-label="Patent natural-language search"
           disabled={isBuilding}
+          // eslint-disable-next-line jsx-a11y/no-autofocus -- search panel auto-focus is intentional UX
           autoFocus
         />
         {query && (
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => {
               setQuery('')
               inputRef.current?.focus()
             }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            className="absolute right-3 top-1/2 -translate-y-1/2 h-auto p-1 text-muted-foreground hover:text-foreground"
             aria-label="Clear search"
           >
             <X size={14} />
-          </button>
+          </Button>
         )}
       </div>
 
@@ -239,13 +242,15 @@ export function PatentSearchPanel({ patents, onSelectPatent }: PatentSearchPanel
           </p>
           <div className="flex flex-wrap gap-2">
             {EXAMPLE_QUERIES.map((q) => (
-              <button
+              <Button
                 key={q}
+                variant="ghost"
+                size="sm"
                 onClick={() => setQuery(q)}
-                className="text-xs px-2.5 py-1 rounded-full border border-border bg-muted/40 hover:bg-muted text-foreground transition-colors"
+                className="text-xs h-auto px-2.5 py-1 rounded-full border border-border bg-muted/40 hover:bg-muted text-foreground transition-colors"
               >
                 {q}
-              </button>
+              </Button>
             ))}
           </div>
           <p className="text-xs text-muted-foreground mt-2">
@@ -272,7 +277,8 @@ export function PatentSearchPanel({ patents, onSelectPatent }: PatentSearchPanel
         <div className="flex flex-col items-center justify-center py-12 gap-2">
           <Search size={28} className="text-muted-foreground/40" aria-hidden="true" />
           <p className="text-sm text-muted-foreground">
-            No patents matched <span className="text-foreground">&ldquo;{debouncedQuery}&rdquo;</span>
+            No patents matched{' '}
+            <span className="text-foreground">&ldquo;{debouncedQuery}&rdquo;</span>
           </p>
           <p className="text-xs text-muted-foreground/70">
             Try broader terms — algorithm name, assignee, or protocol
@@ -325,7 +331,13 @@ const FIELD_LABEL: Partial<Record<string, string>> = {
   threatModel: 'threat model',
 }
 
-function PatentResultCard({ patent, score, matchedFields, query, onSelect }: PatentResultCardProps) {
+function PatentResultCard({
+  patent,
+  score,
+  matchedFields,
+  query,
+  onSelect,
+}: PatentResultCardProps) {
   const summarySnippet = useMemo(() => {
     const text = patent.summary || patent.primaryInventiveClaim || ''
     return text.length > 220 ? text.slice(0, 220) + '…' : text
@@ -346,7 +358,18 @@ function PatentResultCard({ patent, score, matchedFields, query, onSelect }: Pat
   const scoreBar = Math.min(100, Math.round((score / 20) * 100))
 
   return (
-    <article className="glass-panel p-3.5 flex flex-col gap-2 hover:border-primary/40 transition-colors cursor-pointer group" onClick={() => onSelect(patent.patentNumber)}>
+    <div
+      className="glass-panel p-3.5 flex flex-col gap-2 hover:border-primary/40 transition-colors cursor-pointer group"
+      onClick={() => onSelect(patent.patentNumber)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onSelect(patent.patentNumber)
+        }
+      }}
+      role="button"
+      tabIndex={0}
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           {/* Number + assignee */}
@@ -451,6 +474,6 @@ function PatentResultCard({ patent, score, matchedFields, query, onSelect }: Pat
           </Button>
         </div>
       </div>
-    </article>
+    </div>
   )
 }

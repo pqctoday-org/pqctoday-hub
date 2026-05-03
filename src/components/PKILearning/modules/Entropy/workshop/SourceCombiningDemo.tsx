@@ -274,7 +274,11 @@ export const SourceCombiningDemo: React.FC = () => {
           non-standard alternatives for comparison.
         </p>
         <div className="flex flex-wrap gap-4 min-h-[60px]">
-          {!sourceA && <div className="text-sm text-muted-foreground italic flex items-center">Generate Source A to unlock configuration options.</div>}
+          {!sourceA && (
+            <div className="text-sm text-muted-foreground italic flex items-center">
+              Generate Source A to unlock configuration options.
+            </div>
+          )}
           {sourceA && (
             <div className="space-y-1">
               <p className="text-xs font-medium text-foreground">Combination method (step 2):</p>

@@ -1,7 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback } from 'react'
-import { Info, Loader2, Play, FileText, ExternalLink, Link2, Copy, Check, Download } from 'lucide-react'
+import {
+  Info,
+  Loader2,
+  Play,
+  FileText,
+  ExternalLink,
+  Link2,
+  Copy,
+  Check,
+  Download,
+} from 'lucide-react'
 import { hybridCryptoService } from '../services/HybridCryptoService'
 import {
   HYBRID_CERT_FORMATS,
@@ -37,7 +47,7 @@ function pemToDerSize(pem: string): number {
 
 export const HybridCertFormats: React.FC = () => {
   const [results, setResults] = useState<Record<string, FormatResult>>({})
-    const [generating, setGenerating] = useState<string | null>(null)
+  const [generating, setGenerating] = useState<string | null>(null)
   const [generatingFormat, setGeneratingFormat] = useState<string | null>(null)
   const [phase, setPhase] = useState<string>('')
 
@@ -316,8 +326,8 @@ export const HybridCertFormats: React.FC = () => {
       }
 
       setGeneratingFormat(null)
-          setGeneratingFormat(null)
-          if (!skipStateReset) setGenerating(null)
+      setGeneratingFormat(null)
+      if (!skipStateReset) setGenerating(null)
     },
     [hsm, onKeyTracked, pushHybridFiles]
   )
@@ -335,7 +345,10 @@ export const HybridCertFormats: React.FC = () => {
   return (
     <div className="flex flex-col h-full relative">
       {/* Header bar — LiveHSMToggle anchored per hsm-ui-layout-pattern.md §2 */}
-      <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-muted/10 mb-6 rounded-t-xl" title="Loads softhsmv3 WASM in-browser; required for PKCS#11-backed key generation and signing.">
+      <div
+        className="flex items-center justify-between px-6 py-3 border-b border-border bg-muted/10 mb-6 rounded-t-xl"
+        title="Loads softhsmv3 WASM in-browser; required for PKCS#11-backed key generation and signing."
+      >
         <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} />
       </div>
 
@@ -380,13 +393,13 @@ export const HybridCertFormats: React.FC = () => {
         </Button>
 
         {/* Recommended starting point callout */}
-        {Object.keys(results).filter(k => !results[k].error).length === 0 && (
+        {Object.keys(results).filter((k) => !results[k].error).length === 0 && (
           <div className="mb-4 flex items-start gap-2 rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 text-sm text-muted-foreground">
             <Info size={14} className="mt-0.5 shrink-0 text-primary" />
             <span>
-              <strong className="text-foreground">Start here:</strong> Try{' '}
-              <strong>Pure PQC</strong> or <strong>Related Certs</strong> first — they show the
-              greatest visual contrast in the comparison table.
+              <strong className="text-foreground">Start here:</strong> Try <strong>Pure PQC</strong>{' '}
+              or <strong>Related Certs</strong> first — they show the greatest visual contrast in
+              the comparison table.
             </span>
           </div>
         )}

@@ -181,8 +181,10 @@ function getHybridSigErrorHint(err: unknown): string {
   }
   if (msg.includes('rv=0x') || msg.includes('C_Generate') || msg.includes('C_Sign')) {
     const rv = msg.match(/rv=0x([0-9a-fA-F]+)/)?.[1]
-    if (rv === '00000002') return 'PKCS#11 error: invalid argument (CKR_ARGUMENTS_BAD). The algorithm parameters may not be supported.'
-    if (rv === '00000005') return 'PKCS#11 error: operation failed (CKR_GENERAL_ERROR). Try reloading the page.'
+    if (rv === '00000002')
+      return 'PKCS#11 error: invalid argument (CKR_ARGUMENTS_BAD). The algorithm parameters may not be supported.'
+    if (rv === '00000005')
+      return 'PKCS#11 error: operation failed (CKR_GENERAL_ERROR). Try reloading the page.'
     return `PKCS#11 operation failed. If this persists, reload the page and retry.`
   }
   if (msg.includes('Backend mismatch')) {
@@ -200,7 +202,7 @@ export const HybridSignatures: React.FC = () => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const [message, setMessage] = useState(DEFAULT_MSG)
   const retryInit = useCallback(() => {
-    setHsmInitAttempts(n => n + 1)
+    setHsmInitAttempts((n) => n + 1)
   }, [])
   const [hsmStatus, setHsmStatus] = useState<HsmStatus>('loading')
   const hsmRef = useRef<{ M: SoftHSMModule; hSession: number } | null>(null)
@@ -316,9 +318,7 @@ export const HybridSignatures: React.FC = () => {
       setSignPhase('Computing EC-Schnorr component (64B)…')
       intervalRef.current = setInterval(() => {
         setSignPhase((prev) =>
-          prev?.includes('EC-Schnorr')
-            ? 'Computing ML-DSA-65 component (3,287B)…'
-            : prev
+          prev?.includes('EC-Schnorr') ? 'Computing ML-DSA-65 component (3,287B)…' : prev
         )
       }, 80)
       try {
@@ -489,7 +489,8 @@ export const HybridSignatures: React.FC = () => {
         <div className="flex items-center gap-2 flex-wrap text-xs text-status-error bg-status-error/5 border border-status-error/20 rounded-lg px-3 py-2">
           <ShieldAlert size={13} className="shrink-0" />
           <span className="text-sm">
-            softhsmv3 WASM failed to load — concatenation and nesting unavailable. Silithium still works via @noble.
+            softhsmv3 WASM failed to load — concatenation and nesting unavailable. Silithium still
+            works via @noble.
           </span>
           {hsmInitAttempts < 3 ? (
             <Button
@@ -502,7 +503,9 @@ export const HybridSignatures: React.FC = () => {
               Retry
             </Button>
           ) : (
-            <span className="ml-auto font-medium">WASM failed to load after 3 attempts — try refreshing the page.</span>
+            <span className="ml-auto font-medium">
+              WASM failed to load after 3 attempts — try refreshing the page.
+            </span>
           )}
         </div>
       )}
@@ -513,7 +516,7 @@ export const HybridSignatures: React.FC = () => {
         </div>
       )}
 
-            <details className="mb-4">
+      <details className="mb-4">
         <summary className="flex items-center gap-2 cursor-pointer rounded-lg border border-border bg-muted/20 px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/30 transition-colors w-full text-left">
           <HelpCircle size={14} className="text-primary shrink-0" />
           Why hybrid signatures? — Migration context

@@ -11,7 +11,10 @@ interface ScenarioViewSwitcherProps {
   onViewChange: (view: ScenarioView) => void
 }
 
-export const ScenarioViewSwitcher: React.FC<ScenarioViewSwitcherProps> = ({ view, onViewChange }) => (
+export const ScenarioViewSwitcher: React.FC<ScenarioViewSwitcherProps> = ({
+  view,
+  onViewChange,
+}) => (
   <div
     role="group"
     aria-label="Scenario perspective"
@@ -23,7 +26,9 @@ export const ScenarioViewSwitcher: React.FC<ScenarioViewSwitcherProps> = ({ view
       aria-pressed={view === 'operator'}
       className={clsx(
         'h-7 px-2 text-xs gap-1.5 rounded-md',
-        view === 'operator' ? 'bg-primary/15 text-primary' : 'text-muted-foreground hover:text-foreground'
+        view === 'operator'
+          ? 'bg-primary/15 text-primary'
+          : 'text-muted-foreground hover:text-foreground'
       )}
     >
       <Radio size={12} />
@@ -35,7 +40,9 @@ export const ScenarioViewSwitcher: React.FC<ScenarioViewSwitcherProps> = ({ view
       aria-pressed={view === 'attacker'}
       className={clsx(
         'h-7 px-2 text-xs gap-1.5 rounded-md',
-        view === 'attacker' ? 'bg-destructive/15 text-destructive' : 'text-muted-foreground hover:text-foreground'
+        view === 'attacker'
+          ? 'bg-destructive/15 text-destructive'
+          : 'text-muted-foreground hover:text-foreground'
       )}
     >
       <EyeOff size={12} />
