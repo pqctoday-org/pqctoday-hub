@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { useWorkshopStore, isWorkshopActive } from '@/store/useWorkshopStore'
 import { getBusinessCenterZoneEmphasis } from '@/data/personaConfig'
 import { useSeedFrameworksFromCountry } from '@/hooks/assessment/useSeedFrameworksFromCountry'
 import { CSWP39_ZONE_ORDER, legacyToZoneId, type ZoneId } from '@/data/cswp39ZoneData'
@@ -103,6 +104,7 @@ export function BusinessCenterView() {
   const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
   const updateExecutiveDocument = useModuleStore((s) => s.updateExecutiveDocument)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const workshopActive = useWorkshopStore((s) => isWorkshopActive(s.mode))
   const zoneEmphasis = useMemo(
     () => getBusinessCenterZoneEmphasis(selectedPersona),
     [selectedPersona]
@@ -316,8 +318,10 @@ export function BusinessCenterView() {
         </div>
       )}
 
-      {/* Page-level empty state */}
-      {metrics.isFullyEmpty ? (
+      {/* Page-level empty state — bypassed when a workshop is active so the
+           cue tour can target zone panels + artifact placeholders even when
+           the user hasn't yet completed an assessment. */}
+      {metrics.isFullyEmpty && !workshopActive ? (
         <WelcomeState />
       ) : (
         <div className="space-y-6">
