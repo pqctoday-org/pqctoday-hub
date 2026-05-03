@@ -171,6 +171,7 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-label={open ? `Collapse ${detail.title}` : `Expand ${detail.title}`}
+          data-workshop-target={`section-business-zone-${zone}`}
         >
           {open ? (
             <ChevronUp size={16} className="text-muted-foreground" />

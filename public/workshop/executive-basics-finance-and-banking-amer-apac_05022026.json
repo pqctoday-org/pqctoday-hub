@@ -2077,6 +2077,11 @@
               "selector": "[data-workshop-target=\"business-zone-governance\"]"
             },
             {
+              "tMs": 3500,
+              "kind": "expand-section",
+              "selector": "[data-workshop-target=\"section-business-zone-governance\"]"
+            },
+            {
               "tMs": 4000,
               "kind": "caption",
               "text": "Artifact: ROI Model"
@@ -2170,6 +2175,11 @@
               "tMs": 3000,
               "kind": "click",
               "selector": "[data-workshop-target=\"business-zone-governance\"]"
+            },
+            {
+              "tMs": 3500,
+              "kind": "expand-section",
+              "selector": "[data-workshop-target=\"section-business-zone-governance\"]"
             },
             {
               "tMs": 4000,
@@ -2267,6 +2277,11 @@
               "selector": "[data-workshop-target=\"business-zone-governance\"]"
             },
             {
+              "tMs": 3500,
+              "kind": "expand-section",
+              "selector": "[data-workshop-target=\"section-business-zone-governance\"]"
+            },
+            {
               "tMs": 4000,
               "kind": "caption",
               "text": "Artifact: Policy Draft"
@@ -2362,6 +2377,11 @@
               "selector": "[data-workshop-target=\"business-zone-governance\"]"
             },
             {
+              "tMs": 3500,
+              "kind": "expand-section",
+              "selector": "[data-workshop-target=\"section-business-zone-governance\"]"
+            },
+            {
               "tMs": 4000,
               "kind": "caption",
               "text": "Artifact: Vendor Scorecard"
@@ -2455,6 +2475,11 @@
               "selector": "[data-workshop-target=\"business-zone-governance\"]"
             },
             {
+              "tMs": 3500,
+              "kind": "expand-section",
+              "selector": "[data-workshop-target=\"section-business-zone-governance\"]"
+            },
+            {
               "tMs": 4000,
               "kind": "caption",
               "text": "Artifact: Crypto Architecture"
@@ -2517,6 +2542,11 @@
               "tMs": 3000,
               "kind": "click",
               "selector": "[data-workshop-target=\"business-zone-governance\"]"
+            },
+            {
+              "tMs": 3500,
+              "kind": "expand-section",
+              "selector": "[data-workshop-target=\"section-business-zone-governance\"]"
             },
             {
               "tMs": 4000,
