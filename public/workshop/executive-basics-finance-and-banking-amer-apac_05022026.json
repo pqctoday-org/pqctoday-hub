@@ -13,7 +13,7 @@
     "A board-ready, shareable risk report tailored to your context",
     "A 90-day action plan walked through the four CSWP 39 zones"
   ],
-  "totalEstMinutes": 142,
+  "totalEstMinutes": 125,
   "intro": {
     "id": "intro",
     "title": "Welcome",
@@ -67,7 +67,7 @@
     {
       "id": "foundations",
       "title": "Foundations",
-      "estMinutes": 67,
+      "estMinutes": 53,
       "steps": [
         {
           "id": "f1-landing",
@@ -1694,131 +1694,7 @@
           ]
         },
         {
-          "id": "f3-threats",
-          "chapter": "foundations",
-          "title": "See finance-specific threats",
-          "estMinutes": 5,
-          "whyItMatters": "Generic quantum risk talk does not move budgets. The five FIN- threats here are concrete and tied to systems your bank already runs: TARGET2, SWIFT, HSMs, transaction logs.",
-          "page": {
-            "route": "/threats",
-            "query": {
-              "industry": "Financial Services / Banking"
-            }
-          },
-          "tasks": [
-            "Filter by Finance & Banking",
-            "Open FIN-001: BIS Project Leap (TARGET2 hybrid PQC)",
-            "Open FIN-004: HSM backup key extraction",
-            "Open FIN-005: FS-ISAC sector-readiness warning",
-            "Bookmark at least one threat"
-          ],
-          "expectedOutput": "At least one finance threat is bookmarked, criticality scores noted.",
-          "narration": "These are not generic threats. FIN-001 is the Bank for International Settlements live test of hybrid PQC on TARGET2 — that is real-time gross settlement for the euro area. FIN-004 explains why your hardware security modules are not safe even when offline: backup keys wrapped with RSA become recoverable retroactively. FIN-005 is the FS-ISAC warning that the financial sector has not allocated the resources to meet 2030 deadlines.",
-          "completionSignal": {
-            "kind": "bookmark-added",
-            "surface": "compliance"
-          },
-          "cues": [
-            {
-              "tMs": 4000,
-              "kind": "caption",
-              "text": "Five concrete threats tied to systems your bank already runs."
-            },
-            {
-              "tMs": 8000,
-              "kind": "spotlight",
-              "selector": "[data-workshop-target=\"threats-toc-FIN-001\"]"
-            },
-            {
-              "tMs": 12000,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"threats-toc-FIN-001\"]"
-            },
-            {
-              "tMs": 60000,
-              "kind": "caption",
-              "text": "FIN-001: BIS Project Leap — live hybrid-PQC test on TARGET2 real-time settlement."
-            },
-            {
-              "tMs": 150000,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"threats-toc-FIN-004\"]"
-            },
-            {
-              "tMs": 155000,
-              "kind": "caption",
-              "text": "FIN-004: HSM backup keys wrapped with RSA become recoverable retroactively. Offline does not save you."
-            },
-            {
-              "tMs": 200000,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"threats-toc-FIN-005\"]"
-            },
-            {
-              "tMs": 205000,
-              "kind": "caption",
-              "text": "FIN-005: FS-ISAC — financial sector under-resourced to meet 2030."
-            },
-            {
-              "tMs": 300000,
-              "kind": "advance"
-            }
-          ]
-        },
-        {
-          "id": "f4-timeline",
-          "chapter": "foundations",
-          "title": "Walk the regulatory runway",
-          "estMinutes": 5,
-          "whyItMatters": "Deadlines drive procurement. The timeline shows exactly how many quarters you have, which agencies own each milestone, and what binds in your jurisdiction.",
-          "page": {
-            "route": "/timeline"
-          },
-          "tasks": [
-            "Filter by your region",
-            "Bookmark your country",
-            "Export the timeline CSV for your board secretary"
-          ],
-          "expectedOutput": "Country bookmarked; CSV download triggered.",
-          "narration": "The runway is shorter than most boards realise. We will land on the specific deadlines for your country in the region chapter. For now, note three patterns: announcements have already happened, mandatory deadlines cluster around 2030, and procurement decisions you make in the next twelve to eighteen months will determine whether you meet them.",
-          "completionSignal": {
-            "kind": "bookmark-added",
-            "surface": "timeline"
-          },
-          "cues": [
-            {
-              "tMs": 4000,
-              "kind": "caption",
-              "text": "The runway is shorter than most boards realise."
-            },
-            {
-              "tMs": 60000,
-              "kind": "caption",
-              "text": "Pattern 1: announcements have already happened. The first ASD guide is from 2022."
-            },
-            {
-              "tMs": 120000,
-              "kind": "caption",
-              "text": "Pattern 2: mandatory deadlines cluster around 2030."
-            },
-            {
-              "tMs": 180000,
-              "kind": "caption",
-              "text": "Pattern 3: procurement decisions in the next 12–18 months determine whether you meet them."
-            },
-            {
-              "tMs": 240000,
-              "kind": "caption",
-              "text": "We will land on country-specific deadlines in the region chapter."
-            },
-            {
-              "tMs": 300000,
-              "kind": "advance"
-            }
-          ]
-        },
-        {
-          "id": "f5-library",
+          "id": "f3-library",
           "chapter": "foundations",
           "title": "Source the standards",
           "estMinutes": 6,
@@ -1871,58 +1747,7 @@
           ]
         },
         {
-          "id": "f6-leaders",
-          "chapter": "foundations",
-          "title": "See finance peers leading",
-          "estMinutes": 4,
-          "whyItMatters": "Boards respond to peer movement. Concrete names — Citi, Santander, FS-ISAC working groups — convert \"we should look at this\" into \"we are already behind\".",
-          "page": {
-            "route": "/leaders",
-            "query": {
-              "cat": "Industry Adopter"
-            }
-          },
-          "tasks": [
-            "Filter by category: Industry Adopter",
-            "Open Sudha Iyer (Citi, founding FS-ISAC PQC working group member)",
-            "Open Jaime Gomez Garcia (Banco Santander Head of Quantum Technologies)",
-            "Bookmark one leader"
-          ],
-          "expectedOutput": "One leader bookmarked.",
-          "narration": "These are real names, real institutions. Citi has had a chief cybersecurity architect inside the FS-ISAC PQC working group since its founding. Santander has a head of quantum technologies who is active in the European Telecommunications Standards Institute and the IBM Quantum Network. If your board asks \"are our peers doing this\", the answer is yes, and these are the people they are sending.",
-          "completionSignal": {
-            "kind": "bookmark-added",
-            "surface": "leaders"
-          },
-          "cues": [
-            {
-              "tMs": 4000,
-              "kind": "caption",
-              "text": "Real names. Real institutions. Real movement."
-            },
-            {
-              "tMs": 60000,
-              "kind": "caption",
-              "text": "Sudha Iyer — Citi Chief Cybersecurity Architect. Founding FS-ISAC PQC working-group member."
-            },
-            {
-              "tMs": 120000,
-              "kind": "caption",
-              "text": "Jaime Gomez Garcia — Banco Santander, Head of Quantum Technologies."
-            },
-            {
-              "tMs": 180000,
-              "kind": "caption",
-              "text": "When the board asks \"are our peers doing this?\" — these are the people they are sending."
-            },
-            {
-              "tMs": 240000,
-              "kind": "advance"
-            }
-          ]
-        },
-        {
-          "id": "f7-assess",
+          "id": "f4-assess",
           "chapter": "foundations",
           "title": "Run the executive risk assessment",
           "estMinutes": 6,
@@ -1959,17 +1784,26 @@
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-mode-quick\"]"
             },
-
             {
               "tMs": 12000,
               "kind": "caption",
               "text": "Step 1: Industry — pre-filled from your persona."
             },
-            { "tMs": 16000, "kind": "click", "selector": "[data-workshop-target=\"assess-next\"]" },
-
-            { "tMs": 22000, "kind": "caption", "text": "Step 2: Country — pre-filled." },
-            { "tMs": 26000, "kind": "click", "selector": "[data-workshop-target=\"assess-next\"]" },
-
+            {
+              "tMs": 16000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"assess-next\"]"
+            },
+            {
+              "tMs": 22000,
+              "kind": "caption",
+              "text": "Step 2: Country — pre-filled."
+            },
+            {
+              "tMs": 26000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"assess-next\"]"
+            },
             {
               "tMs": 32000,
               "kind": "caption",
@@ -1980,8 +1814,11 @@
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-not-sure\"]"
             },
-            { "tMs": 42000, "kind": "click", "selector": "[data-workshop-target=\"assess-next\"]" },
-
+            {
+              "tMs": 42000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"assess-next\"]"
+            },
             {
               "tMs": 50000,
               "kind": "caption",
@@ -1992,8 +1829,11 @@
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-not-sure\"]"
             },
-            { "tMs": 60000, "kind": "click", "selector": "[data-workshop-target=\"assess-next\"]" },
-
+            {
+              "tMs": 60000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"assess-next\"]"
+            },
             {
               "tMs": 68000,
               "kind": "caption",
@@ -2004,8 +1844,11 @@
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-not-sure\"]"
             },
-            { "tMs": 78000, "kind": "click", "selector": "[data-workshop-target=\"assess-next\"]" },
-
+            {
+              "tMs": 78000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"assess-next\"]"
+            },
             {
               "tMs": 86000,
               "kind": "caption",
@@ -2016,8 +1859,11 @@
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-not-sure\"]"
             },
-            { "tMs": 96000, "kind": "click", "selector": "[data-workshop-target=\"assess-next\"]" },
-
+            {
+              "tMs": 96000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"assess-next\"]"
+            },
             {
               "tMs": 104000,
               "kind": "caption",
@@ -2033,7 +1879,6 @@
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-next\"]"
             },
-
             {
               "tMs": 122000,
               "kind": "caption",
@@ -2044,14 +1889,16 @@
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-not-sure\"]"
             },
-
-            { "tMs": 134000, "kind": "caption", "text": "Generating your board-ready report..." },
+            {
+              "tMs": 134000,
+              "kind": "caption",
+              "text": "Generating your board-ready report..."
+            },
             {
               "tMs": 138000,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-submit\"]"
             },
-
             {
               "tMs": 200000,
               "kind": "caption",
@@ -2062,11 +1909,14 @@
               "kind": "caption",
               "text": "The report is the input to every Command Center artifact."
             },
-            { "tMs": 360000, "kind": "advance" }
+            {
+              "tMs": 360000,
+              "kind": "advance"
+            }
           ]
         },
         {
-          "id": "f8-report",
+          "id": "f5-report",
           "chapter": "foundations",
           "title": "Read the personalised risk report",
           "estMinutes": 4,
@@ -2736,7 +2586,7 @@
     "US": {
       "id": "region-us",
       "title": "United States — your region",
-      "estMinutes": 20,
+      "estMinutes": 17,
       "steps": [
         {
           "id": "us-01-compliance",
@@ -2832,31 +2682,13 @@
           "tasks": ["Search PCI DSS 4.0", "Open requirement 12.3.3", "Bookmark NIST IR 8547"],
           "expectedOutput": "PCI 12.3.3 requirement open; NIST IR 8547 bookmarked.",
           "narration": "PCI DSS 4.0 requirement 12.3.3 has been mandatory since March 2025. It requires you to maintain a cryptographic inventory and a crypto-agility plan. Your assessor reads this as post-quantum readiness. If you have been deferring inventory work, this requirement has already moved your deadline forward to today."
-        },
-        {
-          "id": "us-06-business",
-          "chapter": "region",
-          "region": "US",
-          "title": "Generate U.S. board deck + PCI inventory plan",
-          "estMinutes": 3,
-          "whyItMatters": "Your specific deliverables for a U.S. finance executive: a board deck framed around CNSA 2.0 and the G7 roadmap, and a PCI 12.3.3 inventory plan.",
-          "page": {
-            "route": "/business"
-          },
-          "tasks": [
-            "Open the Governance zone",
-            "Generate the Board Deck artifact",
-            "Generate the PCI 12.3.3 inventory plan"
-          ],
-          "expectedOutput": "Board deck and PCI plan downloaded.",
-          "narration": "These two artifacts are tuned for U.S. finance. The board deck cites CNSA 2.0 and the G7 financial-sector roadmap. The PCI plan maps requirement 12.3.3 to a phased inventory across cardholder-data systems and HSMs. Both download as editable formats — your team finishes them; the workshop got you ninety percent of the way there."
         }
       ]
     },
     "CA": {
       "id": "region-ca",
       "title": "Canada — your region",
-      "estMinutes": 20,
+      "estMinutes": 17,
       "steps": [
         {
           "id": "ca-01-compliance",
@@ -2955,31 +2787,13 @@
           ],
           "expectedOutput": "CCCS practitioner guide and NIST FIPS bookmarked.",
           "narration": "Canada aligns to NIST standards — there is no separate Canadian algorithm suite. ITSAP.00.017 is the practitioner guide that translates NIST FIPS 203 and 204 into deployment guidance for federal departments. Your CISO will treat this as the authoritative implementation document."
-        },
-        {
-          "id": "ca-06-business",
-          "chapter": "region",
-          "region": "CA",
-          "title": "Generate Canadian migration-plan template",
-          "estMinutes": 3,
-          "whyItMatters": "Specific to Canada: a migration-plan template framed against the April 2026 federal-plan deadline, even if you are private sector — your federal counterparties will ask.",
-          "page": {
-            "route": "/business"
-          },
-          "tasks": [
-            "Open Migration zone",
-            "Generate Departmental migration plan template",
-            "Generate Board Deck (Canadian framing)"
-          ],
-          "expectedOutput": "Migration plan template and board deck downloaded.",
-          "narration": "The migration plan template is structured around the CCCS three-phase calendar. Even private-sector banks should produce one — federal procurement counterparties already ask for it as part of their own April 2026 obligation. The board deck cites the three Canadian documents and frames the urgency around federal cascades."
         }
       ]
     },
     "AU": {
       "id": "region-au",
       "title": "Australia — your region",
-      "estMinutes": 20,
+      "estMinutes": 17,
       "steps": [
         {
           "id": "au-01-compliance",
@@ -3276,60 +3090,6 @@
               "tMs": 120000,
               "kind": "caption",
               "text": "The most common board objection — \"the vendors are not ready\" — is already factually incorrect."
-            },
-            {
-              "tMs": 180000,
-              "kind": "advance"
-            }
-          ]
-        },
-        {
-          "id": "au-06-business",
-          "chapter": "region",
-          "region": "AU",
-          "title": "Generate 2030 readiness gap analysis",
-          "estMinutes": 3,
-          "whyItMatters": "Specific to Australia: a 2030 gap analysis and a board urgency memo. Note the workshop flags the absence of APRA-specific PQC guidance — that gap is your own-risk item.",
-          "page": {
-            "route": "/business",
-            "query": {
-              "zone": "risk-management"
-            }
-          },
-          "tasks": [
-            "Open Risk Management zone",
-            "Generate the 2030 readiness gap analysis",
-            "Generate the board urgency memo"
-          ],
-          "expectedOutput": "Gap analysis and urgency memo downloaded.",
-          "narration": "The gap analysis maps every cryptographic system in your inventory against ISM-1917 requirements with end-2030 as the gate. The urgency memo for your board names the timing reality plainly: five years less than U.S. and U.K. peers, no APRA-specific PQC guidance yet, and therefore an own-risk decision on how aggressively to interpret ASD requirements for the financial sector.",
-          "cues": [
-            {
-              "tMs": 4000,
-              "kind": "caption",
-              "text": "Risk Management zone — where the work of every other zone becomes visible to executives."
-            },
-            {
-              "tMs": 8000,
-              "kind": "spotlight",
-              "selector": "[data-workshop-target=\"business-zone-risk-management\"]"
-            },
-            {
-              "tMs": 12000,
-              "kind": "callout",
-              "selector": "[data-workshop-target=\"business-zone-risk-management\"]",
-              "label": "CSWP.39 §6.5 — Maturity",
-              "arrow": "top"
-            },
-            {
-              "tMs": 60000,
-              "kind": "caption",
-              "text": "The 2030 gap analysis maps every cryptographic system against ISM-1917 with end-2030 as the gate."
-            },
-            {
-              "tMs": 120000,
-              "kind": "caption",
-              "text": "No APRA-specific PQC guidance yet — own-risk interpretation of ASD requirements for finance."
             },
             {
               "tMs": 180000,
