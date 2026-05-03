@@ -939,7 +939,6 @@ x509_extensions = v3_ca
             </p>
           </div>
 
-          
           {errorHint && (
             <div className="mb-3 flex items-start gap-2 rounded-md border border-status-warning/40 bg-status-warning/10 px-3 py-2 text-sm text-status-warning">
               <AlertTriangle size={14} className="mt-0.5 shrink-0" />
@@ -947,16 +946,18 @@ x509_extensions = v3_ca
                 <p className="font-medium">Hint</p>
                 <p>{errorHint}</p>
               </div>
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
                 aria-label="Dismiss hint"
-                className="ml-auto text-muted-foreground hover:text-foreground"
+                className="ml-auto h-auto p-1 text-muted-foreground hover:text-foreground"
                 onClick={() => setErrorHint(null)}
               >
                 <X size={12} />
-              </div>
+              </Button>
             </div>
           )}
-<Button
+          <Button
             variant="gradient"
             onClick={handleGenerate}
             disabled={isGenerating}
