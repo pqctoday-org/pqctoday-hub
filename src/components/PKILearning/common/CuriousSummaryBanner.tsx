@@ -4,7 +4,6 @@ import { ChevronDown, ChevronUp, Lightbulb, X } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { usePersonaStore } from '../../../store/usePersonaStore'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { applyGlossaryToChildren } from '@/utils/parseGlossary'
 import { Button } from '@/components/ui/button'
 
@@ -143,7 +142,7 @@ export const CuriousSummaryBanner = ({
   const [expanded, setExpanded] = useState(true)
   const [lightboxOpen, setLightboxOpen] = useState(false)
 
-  const idealImgSrc = `/images/infographics/nllm_${moduleId}.jpg`
+  const idealImgSrc = `/images/infographics/pqcstd_${moduleId}.png`
 
   const [imgSrc, setImgSrc] = useState(idealImgSrc)
 
@@ -152,8 +151,10 @@ export const CuriousSummaryBanner = ({
   }, [idealImgSrc])
 
   const handleImgError = () => {
-    // Fallback chain: nllm → gcp curious variant → gcp standard
-    if (imgSrc.startsWith('/images/infographics/nllm_')) {
+    // Fallback chain: pqcstd → nllm → gcp curious variant → gcp standard
+    if (imgSrc.startsWith('/images/infographics/pqcstd_')) {
+      setImgSrc(`/images/infographics/nllm_${moduleId}.jpg`)
+    } else if (imgSrc.startsWith('/images/infographics/nllm_')) {
       setImgSrc(
         isCuriousMode
           ? `/images/infographics/gcp_${moduleId}-curious.png`
@@ -205,67 +206,56 @@ export const CuriousSummaryBanner = ({
 
       {(expanded || isFullPage) && (
         <div className={isFullPage ? '' : 'px-4 pb-4 -mt-1'}>
-          {/* Mobile Layout: Tabs */}
-          <div className="md:hidden">
-            <Tabs defaultValue="infographic" className="w-full">
-              <TabsList className="w-full mb-4">
-                <TabsTrigger value="infographic" className="flex-1">
-                  Infographic
-                </TabsTrigger>
-                <TabsTrigger value="text" className="flex-1">
+          {/* Mobile Layout: Full-width visual stacked above In Simple Terms */}
+          <div className="md:hidden flex flex-col gap-y-4">
+            <div className="w-full bg-muted/30 rounded-lg border border-border p-2 sm:p-3 flex flex-col items-center">
+              <Button
+                variant="ghost"
+                type="button"
+                onClick={() => setLightboxOpen(true)}
+                className="block w-full p-0 h-auto bg-transparent hover:bg-transparent cursor-zoom-in"
+                aria-label="View infographic full size"
+              >
+                <img
+                  src={`${imgSrc}?v=conversational_v2`}
+                  alt={altText}
+                  loading="lazy"
+                  onError={handleImgError}
+                  className="w-full h-auto max-h-[60vh] object-contain rounded-md shadow-md"
+                />
+              </Button>
+              <p className="text-center text-[11px] text-muted-foreground mt-1.5">
+                Tap image to zoom
+              </p>
+            </div>
+
+            <div className="overflow-x-auto">
+              <div className="prose prose-sm max-w-none text-muted-foreground prose-headings:text-foreground prose-headings:text-sm prose-headings:font-semibold prose-p:text-sm prose-p:leading-relaxed prose-strong:text-foreground prose-ul:text-sm prose-li:text-sm">
+                <h3 className="text-base font-bold text-foreground mb-3 border-b border-border pb-2 mt-0 flex items-center gap-2">
+                  <Lightbulb size={18} className="text-warning" />
                   In Simple Terms
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="infographic" className="mt-0">
-                <div className="w-full bg-muted/30 rounded-lg border border-border p-2 sm:p-3 flex flex-col items-center">
-                  <Button
-                    variant="ghost"
-                    type="button"
-                    onClick={() => setLightboxOpen(true)}
-                    className="block w-full p-0 h-auto bg-transparent hover:bg-transparent cursor-zoom-in"
-                    aria-label="View infographic full size"
-                  >
-                    <img
-                      src={`${imgSrc}?v=conversational_v2`}
-                      alt={altText}
-                      loading="lazy"
-                      onError={handleImgError}
-                      className="w-full h-auto max-h-[60vh] object-contain rounded-md shadow-md"
-                    />
-                  </Button>
-                  <p className="text-center text-[11px] text-muted-foreground mt-1.5">
-                    Tap image to zoom
-                  </p>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="text" className="mt-0">
-                <div className="overflow-x-auto">
-                  <div className="prose prose-sm max-w-none text-muted-foreground prose-headings:text-foreground prose-headings:text-sm prose-headings:font-semibold prose-p:text-sm prose-p:leading-relaxed prose-strong:text-foreground prose-ul:text-sm prose-li:text-sm">
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        p({ children, ...props }) {
-                          return <p {...props}>{applyGlossaryToChildren(children)}</p>
-                        },
-                        li({ children, ...props }) {
-                          return <li {...props}>{applyGlossaryToChildren(children)}</li>
-                        },
-                      }}
-                    >
-                      {body}
-                    </ReactMarkdown>
-                  </div>
-                </div>
-              </TabsContent>
-            </Tabs>
+                </h3>
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    p({ children, ...props }) {
+                      return <p {...props}>{applyGlossaryToChildren(children)}</p>
+                    },
+                    li({ children, ...props }) {
+                      return <li {...props}>{applyGlossaryToChildren(children)}</li>
+                    },
+                  }}
+                >
+                  {body}
+                </ReactMarkdown>
+              </div>
+            </div>
           </div>
 
-          {/* Desktop Layout: Full-width visual, then full-width In Simple Terms below */}
-          <div className="hidden md:flex md:flex-col gap-y-6">
-            {/* Full-width Infographic */}
-            <div className="w-full bg-muted/30 rounded-lg border border-border p-3 flex flex-col items-center">
+          {/* Desktop Layout: Visual on left, In Simple Terms on right */}
+          <div className="hidden md:grid md:grid-cols-[6fr_4fr] gap-x-6">
+            {/* Left: Infographic */}
+            <div className="w-full bg-muted/30 rounded-lg border border-border p-3 flex flex-col items-center self-start">
               <Button
                 variant="ghost"
                 type="button"
@@ -286,7 +276,7 @@ export const CuriousSummaryBanner = ({
               </p>
             </div>
 
-            {/* Full-width In Simple Terms */}
+            {/* Right: In Simple Terms */}
             <div className="overflow-x-auto">
               <div className="prose prose-sm max-w-none text-muted-foreground prose-headings:text-foreground prose-headings:text-sm prose-headings:font-semibold prose-p:text-sm prose-p:leading-relaxed prose-strong:text-foreground prose-ul:text-sm prose-li:text-sm">
                 <h3 className="text-lg font-bold text-foreground mb-4 border-b border-border pb-2 mt-0 flex items-center gap-2">

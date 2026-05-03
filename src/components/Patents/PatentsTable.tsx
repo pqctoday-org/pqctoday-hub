@@ -391,8 +391,15 @@ export function PatentsTable({
   onColumnsChange,
 }: Props) {
   const [searchParams, setSearchParams] = useSearchParams()
+  const [isDetailExpanded, setIsDetailExpanded] = useState(false)
 
   const search = searchParams.get('search') ?? ''
+
+  // Reset to half-width when selection clears (intentional state sync to prop change)
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (!selectedId) setIsDetailExpanded(false)
+  }, [selectedId])
 
   useEffect(() => {
     if (!search) return
@@ -521,7 +528,9 @@ export function PatentsTable({
     <div className="flex h-full gap-0 overflow-hidden">
       {/* Main panel */}
       <div
-        className={`flex flex-col min-w-0 transition-all duration-200 ${selectedPatent ? 'hidden sm:flex sm:w-1/2' : 'w-full'}`}
+        className={`flex flex-col min-w-0 transition-all duration-200 ${
+          selectedPatent ? (isDetailExpanded ? 'hidden' : 'hidden sm:flex sm:w-1/2') : 'w-full'
+        }`}
       >
         {/* Filter bar */}
         <div className="flex flex-wrap items-center gap-2 border-b border-border px-4 py-2.5">
@@ -801,14 +810,20 @@ export function PatentsTable({
         </div>
       </div>
 
-      {/* Detail panel — full-width on mobile, half-width on sm+ */}
+      {/* Detail panel — full-width on mobile, half-width on sm+ (or full when expanded) */}
       {selectedPatent && (
-        <div className="flex flex-col w-full sm:w-1/2 sm:border-l border-border overflow-hidden">
+        <div
+          className={`flex flex-col w-full sm:border-l border-border overflow-hidden transition-all duration-200 ${
+            isDetailExpanded ? 'sm:w-full sm:border-l-0' : 'sm:w-1/2'
+          }`}
+        >
           <PatentDetail
             patent={selectedPatent}
             inCorpusIds={inCorpusIds}
             onClose={() => onSelect(null)}
             onNavigate={handleNavigate}
+            isExpanded={isDetailExpanded}
+            onToggleExpand={() => setIsDetailExpanded((v) => !v)}
           />
         </div>
       )}

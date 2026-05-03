@@ -1,5 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { X, ExternalLink, Shield, Zap, GitBranch, BookOpen, ArrowRight } from 'lucide-react'
+import {
+  X,
+  ExternalLink,
+  Shield,
+  Zap,
+  GitBranch,
+  BookOpen,
+  ArrowRight,
+  Maximize2,
+  Minimize2,
+} from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import type { PatentItem, NistStatus } from '@/types/PatentTypes'
@@ -10,6 +20,8 @@ interface Props {
   inCorpusIds: Set<string>
   onClose: () => void
   onNavigate: (patentNumber: string) => void
+  isExpanded?: boolean
+  onToggleExpand?: () => void
 }
 
 // ─── Color tokens ────────────────────────────────────────────────────────────
@@ -174,7 +186,14 @@ function ClaimTree({ claims }: { claims: ClaimDependency[] }) {
 
 // ─── Main component ──────────────────────────────────────────────────────────
 
-export function PatentDetail({ patent, inCorpusIds, onClose, onNavigate }: Props) {
+export function PatentDetail({
+  patent,
+  inCorpusIds,
+  onClose,
+  onNavigate,
+  isExpanded,
+  onToggleExpand,
+}: Props) {
   const googlePatentsUrl = `https://patents.google.com/patent/${patent.patentNumber}/en`
 
   return (
@@ -213,9 +232,29 @@ export function PatentDetail({ patent, inCorpusIds, onClose, onNavigate }: Props
             </p>
           )}
         </div>
-        <Button variant="ghost" size="icon" onClick={onClose} className="shrink-0 h-7 w-7">
-          <X className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-1 shrink-0">
+          {onToggleExpand && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onToggleExpand}
+              className="hidden sm:inline-flex h-7 w-7"
+              aria-label={isExpanded ? 'Collapse to half width' : 'Expand to full width'}
+              title={isExpanded ? 'Collapse to half width' : 'Expand to full width'}
+            >
+              {isExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="h-7 w-7"
+            aria-label="Close detail panel"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       {/* Scrollable body */}

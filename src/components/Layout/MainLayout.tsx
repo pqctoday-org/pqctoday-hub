@@ -36,14 +36,12 @@ import { GuidedTour } from '../common/GuidedTour'
 import { Breadcrumb } from '../common/Breadcrumb'
 import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
 import { useRightPanelStore } from '../../store/useRightPanelStore'
-import { PageAccuracyFeedback } from '../ui/PageAccuracyFeedback'
 import { WorkflowBanner } from '../common/WorkflowBanner'
 import { AirplaneModeBanner } from '../ui/AirplaneModeBanner'
 import { AirplaneModeToast } from '../ui/AirplaneModeToast'
 import { useAirplaneModeStore } from '../../store/useAirplaneModeStore'
 import { CommandPalette } from '../Search/CommandPalette'
 import { useCommandPaletteStore } from '../../store/useCommandPaletteStore'
-import { PersonaChip } from '../Persona/PersonaChip'
 import { PersonaSwitchModal } from '../Persona/PersonaSwitchModal'
 import { PreviewBanner } from '../common/PreviewBanner'
 import { useWorkshopUrlAutostart } from '../../hooks/useWorkshopUrlAutostart'
@@ -293,7 +291,6 @@ export const MainLayout = () => {
                 ⌘K
               </kbd>
             </Button>
-            <PersonaChip />
           </div>
 
           {/* Universal Navigation: Row of Icons on Mobile, Full Nav on Desktop */}
@@ -557,9 +554,6 @@ export const MainLayout = () => {
             .
           </p>
         </footer>
-
-        {/* Page accuracy feedback widget */}
-        <PageAccuracyFeedback />
 
         {/* Offline connectivity toast + monitor */}
         <AirplaneModeToast />
