@@ -62,6 +62,7 @@ const Step13TimelinePressure = () => {
             ? 'border-muted-foreground bg-muted/20 text-foreground hover:bg-muted/20'
             : 'border-dashed border-muted-foreground/40 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground hover:bg-transparent'
         )}
+        data-workshop-target="assess-not-sure"
       >
         <Info size={14} className="shrink-0" />
         I&apos;m not sure — help me choose

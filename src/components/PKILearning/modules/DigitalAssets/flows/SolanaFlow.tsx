@@ -19,7 +19,7 @@ import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { Input } from '@/components/ui/input'
-import { Skull } from 'lucide-react'
+import { Skull, Check } from 'lucide-react'
 
 interface SolanaFlowProps {
   onBack: () => void
@@ -53,6 +53,7 @@ export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack }) => {
     dstPrivHandle?: number
     dstPubHandle?: number
   }>({})
+  const hsmPubKeyBytesRef = React.useRef<Uint8Array | null>(null)
   // Saved in step 7 so step 8 signs exactly what was visualized
   const msgBytesRef = React.useRef<Uint8Array | null>(null)
   // SHA-256 digest of msgBytesRef — used in step 8 to prove the signed bytes are the visualized ones
@@ -498,23 +499,41 @@ const isValid = hsm_eddsaVerify(
         language: 'javascript',
         actionLabel: 'Verify Signature',
         customControls: (
-          <div className="flex items-center gap-2 mb-4 p-3 bg-warning/10 border border-warning/20 rounded-lg">
-            <input
-              type="checkbox"
-              id="simulate-error"
-              checked={simulateError}
-              onChange={(e) => setSimulateError(e.target.checked)}
-              className="w-4 h-4 rounded border-input text-primary focus:ring-primary"
-            />
-            <label
-              htmlFor="simulate-error"
-              className="text-sm font-medium cursor-pointer select-none"
+          <div className="mb-4 flex items-start gap-3 rounded-lg border border-warning/20 bg-warning/10 p-3">
+            <div
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') setSimulateError((v) => !v)
+              }}
+              role="checkbox"
+              aria-checked={simulateError}
+              onClick={() => setSimulateError((v) => !v)}
+              className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors focus-visible:ring-2 focus-visible:ring-primary ${
+                simulateError
+                  ? 'border-warning bg-warning text-warning-foreground'
+                  : 'border-muted-foreground bg-transparent'
+              }`}
+              aria-label="Simulate invalid signature"
             >
-              Simulate Invalid Signature (Proof of Verification)
-              <span className="block text-xs text-muted-foreground font-normal mt-0.5">
-                Intentionally corrupts the signature to prove that verification actually fails.
-              </span>
-            </label>
+              {simulateError && <Check size={12} />}
+            </div>
+            <div>
+              <div
+                className="text-sm font-medium text-foreground cursor-pointer select-none"
+                onClick={() => setSimulateError((v) => !v)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') setSimulateError((v) => !v)
+                }}
+                role="button"
+                tabIndex={0}
+              >
+                Simulate Invalid Signature
+              </div>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                When checked, a byte of the signature is flipped before verification — Step 9 will
+                show <span className="font-mono text-status-error font-bold">❌ INVALID</span>.
+              </p>
+            </div>
           </div>
         ),
       },
@@ -526,6 +545,16 @@ const isValid = hsm_eddsaVerify(
     steps,
     onBack,
   })
+
+  const gatedHandleNext = React.useCallback(() => {
+    if (!wizard.isStepComplete) {
+      wizard.setError(
+        `Complete this step first — click "${steps[wizard.currentStep]?.actionLabel ?? 'Execute'}" before advancing.`
+      )
+      return
+    }
+    wizard.handleNext()
+  }, [wizard, steps])
 
   const executeStep = async () => {
     const step = steps[wizard.currentStep]
@@ -582,6 +611,7 @@ const isValid = hsm_eddsaVerify(
           const hSession = hsm.hSessionRef.current!
           const spki = hsm_getPublicKeyInfo(M, hSession, hsmHandlesRef.current.srcPubHandle)
           const rawPubKey = spki.slice(-32)
+          hsmPubKeyBytesRef.current = rawPubKey
           const hsmPubHex = bytesToHex(rawPubKey)
           result.SoftHSMv3 = `Public Key extracted via C_GetAttributeValue(CKA_PUBLIC_KEY_INFO).\n\nPublic Key (Hex): ${hsmPubHex}\n\nPrivate key is non-extractable — it remains inside the HSM.`
         } catch (e) {
@@ -591,12 +621,20 @@ const isValid = hsm_eddsaVerify(
         result = `Source Public Key (Hex): ${keyGen.publicKeyHex}`
       }
     } else if (step.id === 'address') {
-      if (!keyGen.publicKey)
-        throw new Error('Public key not found. Please go back and regenerate the key.')
+      const hsmActive = hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current
+      if (hsmActive && hsmPubKeyBytesRef.current) {
+        const addr = base58.encode(hsmPubKeyBytesRef.current)
+        setSourceAddress(addr)
+        result.SoftHSMv3 = `Source Solana Address (Base58): ${addr}
 
-      const addr = base58.encode(keyGen.publicKey)
-      setSourceAddress(addr)
-      result = `Source Solana Address (Base58): ${addr}`
+Note: Address derived from the HSM Ed25519 public key.`
+      } else {
+        if (!keyGen.publicKey)
+          throw new Error('Public key not found. Please go back and regenerate the key.')
+        const addr = base58.encode(keyGen.publicKey)
+        setSourceAddress(addr)
+        result = `Source Solana Address (Base58): ${addr}`
+      }
     } else if (step.id === 'gen_recipient_key') {
       const hsmActive = hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current
       if (hsmActive) {
@@ -826,7 +864,7 @@ const isValid = hsm_eddsaVerify(
         isExecuting={wizard.isExecuting}
         error={wizard.error}
         isStepComplete={wizard.isStepComplete}
-        onNext={wizard.handleNext}
+        onNext={gatedHandleNext}
         onBack={wizard.handleBack}
         onComplete={onBack}
       />

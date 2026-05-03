@@ -282,6 +282,7 @@ export const CryptoMgmtModernizationModule: React.FC = () => {
                 variant="ghost"
                 onClick={() => handlePartChange(Math.max(0, currentPart - 1))}
                 disabled={currentPart === 0}
+                data-workshop-target="learn-stepper-prev"
                 className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
               >
                 &larr; Previous Step
@@ -290,6 +291,7 @@ export const CryptoMgmtModernizationModule: React.FC = () => {
                 <Button
                   variant="gradient"
                   onClick={() => markStepComplete(MODULE_ID, PARTS[currentPart].id)}
+                  data-workshop-target="learn-stepper-complete"
                   className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
                 >
                   Complete Module
@@ -298,6 +300,7 @@ export const CryptoMgmtModernizationModule: React.FC = () => {
                 <Button
                   variant="gradient"
                   onClick={() => handlePartChange(currentPart + 1)}
+                  data-workshop-target="learn-stepper-next"
                   className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
                 >
                   Next Step &rarr;

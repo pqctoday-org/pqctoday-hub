@@ -6,6 +6,7 @@ import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import { WasmModeIndicator } from '@/components/shared/WasmModeIndicator'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { Button } from '@/components/ui/button'
@@ -191,7 +192,13 @@ export const HSMKeyDerivationDemo: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <LiveHSMToggle hsm={hsm} operations={['C_CreateObject', 'C_DeriveKey']} />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <LiveHSMToggle hsm={hsm} operations={['C_CreateObject', 'C_DeriveKey']} />
+        <WasmModeIndicator
+          isLive={false}
+          simulationReason="WASM mode active for SP 800-108 Key Derivation Demo"
+        />
+      </div>
       {/* Broader KDF context */}
       <div className="glass-panel p-4">
         <h4 className="text-sm font-bold text-foreground mb-2">

@@ -1,7 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback } from 'react'
-import { Loader2, Play, FileText, ExternalLink, Link2, Copy, Check, Download } from 'lucide-react'
+import {
+  Info,
+  Loader2,
+  Play,
+  FileText,
+  ExternalLink,
+  Link2,
+  Copy,
+  Check,
+  Download,
+} from 'lucide-react'
 import { hybridCryptoService } from '../services/HybridCryptoService'
 import {
   HYBRID_CERT_FORMATS,
@@ -38,6 +48,21 @@ function pemToDerSize(pem: string): number {
 export const HybridCertFormats: React.FC = () => {
   const [results, setResults] = useState<Record<string, FormatResult>>({})
   const [generating, setGenerating] = useState<string | null>(null)
+  const [generatingFormat, setGeneratingFormat] = useState<string | null>(null)
+  const [phase, setPhase] = useState<string>('')
+
+  React.useEffect(() => {
+    if (!generatingFormat) {
+      setPhase('')
+      return
+    }
+    // Best-effort estimate since service doesn't expose mid-operation callbacks
+    setPhase('Generating key pair...')
+    const t1 = setTimeout(() => {
+      setPhase('Building ASN.1 & signing...')
+    }, 1500)
+    return () => clearTimeout(t1)
+  }, [generatingFormat])
   const [expandedViews, setExpandedViews] = useState<Record<string, 'pem' | 'parsed' | null>>({})
   const [copiedKey, setCopiedKey] = useState<string | null>(null)
   const hsm = useHSM()
@@ -104,6 +129,7 @@ export const HybridCertFormats: React.FC = () => {
       const M = hsm.moduleRef.current
       const hSession = hsm.hSessionRef.current
 
+      setGeneratingFormat(formatId)
       if (!skipStateReset) setGenerating(formatId)
       const start = performance.now()
       const subject = '/CN=Hybrid Certificate Demo/O=PQC Today/OU=Hybrid Certificate Sandbox'
@@ -137,6 +163,8 @@ export const HybridCertFormats: React.FC = () => {
             },
           }))
           if (!certResult.error) pushHybridFiles(formatId, slhCerts)
+          setGeneratingFormat(null)
+          setGeneratingFormat(null)
           if (!skipStateReset) setGenerating(null)
           return
         } else if (formatId === 'pure-pqc') {
@@ -297,6 +325,8 @@ export const HybridCertFormats: React.FC = () => {
         }))
       }
 
+      setGeneratingFormat(null)
+      setGeneratingFormat(null)
       if (!skipStateReset) setGenerating(null)
     },
     [hsm, onKeyTracked, pushHybridFiles]
@@ -315,7 +345,10 @@ export const HybridCertFormats: React.FC = () => {
   return (
     <div className="flex flex-col h-full relative">
       {/* Header bar — LiveHSMToggle anchored per hsm-ui-layout-pattern.md §2 */}
-      <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-muted/10 mb-6 rounded-t-xl">
+      <div
+        className="flex items-center justify-between px-6 py-3 border-b border-border bg-muted/10 mb-6 rounded-t-xl"
+        title="Loads softhsmv3 WASM in-browser; required for PKCS#11-backed key generation and signing."
+      >
         <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} />
       </div>
 
@@ -332,7 +365,10 @@ export const HybridCertFormats: React.FC = () => {
         {/* HSM not ready hint */}
         {!hsm.isReady && (
           <p className="text-xs text-muted-foreground bg-muted/20 border border-border rounded-lg px-4 py-2">
-            Enable the HSM above to generate certificates.
+            Enable the HSM above to generate certificates.{' '}
+            <span className="text-muted-foreground/70">
+              (softhsmv3 WASM loads once — allow 3–8 seconds on first use.)
+            </span>
           </p>
         )}
 
@@ -356,11 +392,24 @@ export const HybridCertFormats: React.FC = () => {
           )}
         </Button>
 
+        {/* Recommended starting point callout */}
+        {Object.keys(results).filter((k) => !results[k].error).length === 0 && (
+          <div className="mb-4 flex items-start gap-2 rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 text-sm text-muted-foreground">
+            <Info size={14} className="mt-0.5 shrink-0 text-primary" />
+            <span>
+              <strong className="text-foreground">Start here:</strong> Try <strong>Pure PQC</strong>{' '}
+              or <strong>Related Certs</strong> first — they show the greatest visual contrast in
+              the comparison table.
+            </span>
+          </div>
+        )}
+
         {/* Format cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {HYBRID_CERT_FORMATS.map((fmt) => {
             const result = results[fmt.id]
             const isGeneratingThis = generating === fmt.id || (generating === 'all' && !result)
+            const isCurrentlyExecuting = generatingFormat === fmt.id
             const badgeClass =
               STATUS_BADGE_CLASSES[fmt.statusColor] ?? STATUS_BADGE_CLASSES['muted']
 
@@ -426,9 +475,14 @@ export const HybridCertFormats: React.FC = () => {
                 )}
 
                 {isGeneratingThis && (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Loader2 size={16} className="animate-spin" aria-hidden="true" />
-                    Generating...
+                  <div className="flex flex-col items-start gap-1">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Loader2 size={16} className="animate-spin" aria-hidden="true" />
+                      Generating...
+                    </div>
+                    {isCurrentlyExecuting && (
+                      <span className="text-xs text-muted-foreground h-4">{phase}</span>
+                    )}
                   </div>
                 )}
 
@@ -451,6 +505,18 @@ export const HybridCertFormats: React.FC = () => {
                           {fmt.id === 'chameleon' &&
                             'Requires ML-DSA-65 primary and ECDSA delta key pair; DeltaCertificateDescriptor extension must encode both.'}
                         </p>
+                        {!isGeneratingThis && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => generateFormat(fmt.id)}
+                            disabled={generating !== null || !hsm.isReady}
+                            className="flex items-center gap-2 text-destructive border-destructive/20 hover:bg-destructive/10 mt-2"
+                          >
+                            <Play size={14} fill="currentColor" />
+                            Retry
+                          </Button>
+                        )}
                       </div>
                     ) : (
                       <>

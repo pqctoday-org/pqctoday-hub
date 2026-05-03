@@ -963,7 +963,7 @@ S8Y=
                 <div className="bg-status-info/10 border border-status-info/30 rounded p-3 flex items-start gap-2 text-status-info text-xs">
                   <AlertTriangle size={14} className="shrink-0 mt-0.5" />
                   <span>
-                    <strong>What this means:</strong> {getCryptoErrorHint(error)}
+                    <strong>What this means:</strong> {getCryptoErrorHint(error)?.summary}
                   </span>
                 </div>
               )}

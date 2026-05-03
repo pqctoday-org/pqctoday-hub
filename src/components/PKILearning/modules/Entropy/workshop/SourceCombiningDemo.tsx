@@ -26,6 +26,7 @@ import {
 } from './sourceCombiningCrypto'
 import { RbgConstructionPanel } from './RbgConstructionPanel'
 import { ErrorAlert } from '@/components/ui/error-alert'
+import { translateCryptoError } from '@/utils/cryptoErrorHint'
 
 /** Hex display for a labelled byte array */
 const HexDisplay: React.FC<{ label: string; data: Uint8Array }> = ({ label, data }) => (
@@ -99,6 +100,7 @@ export const SourceCombiningDemo: React.FC = () => {
   const [compromiseResults, setCompromiseResults] = useState<TestResult[] | null>(null)
   const [compromiseExpanded, setCompromiseExpanded] = useState<Uint8Array | null>(null)
   const [isRunning, setIsRunning] = useState(false)
+  const [compromiseLoading, setCompromiseLoading] = useState(false)
 
   // Mode selection — defaults are NIST-compliant (90C §3.1 concat, 90A §10.3.1 Hash_df)
   const [combinationMode, setCombinationMode] = useState<CombinationMode>('concat')
@@ -200,7 +202,7 @@ export const SourceCombiningDemo: React.FC = () => {
 
   const handleCompromiseDemo = useCallback(async () => {
     if (!hsmReady) return
-    setIsRunning(true)
+    setCompromiseLoading(true)
     try {
       const compromisedA = new Uint8Array(32).fill(0)
       const compromisedCombined = combine(
@@ -223,7 +225,7 @@ export const SourceCombiningDemo: React.FC = () => {
       setCompromiseResults(results)
       setShowCompromiseDemo(true)
     } finally {
-      setIsRunning(false)
+      setCompromiseLoading(false)
     }
   }, [sourceB, combinationMode, conditioningMode, hsmReady, moduleRef, hSessionRef])
 
@@ -271,29 +273,44 @@ export const SourceCombiningDemo: React.FC = () => {
           Defaults follow NIST SP 800-90 series. Options marked &quot;educational&quot; are
           non-standard alternatives for comparison.
         </p>
-        <div className="flex flex-wrap gap-4">
-          <FilterDropdown
-            items={COMBINATION_MODES}
-            selectedId={combinationMode}
-            onSelect={(id) => {
-              setCombinationMode(id as CombinationMode)
-              resetFrom(1)
-            }}
-            label="Assembly"
-            noContainer
-            variant="ghost"
-          />
-          <FilterDropdown
-            items={CONDITIONING_MODES}
-            selectedId={conditioningMode}
-            onSelect={(id) => {
-              setConditioningMode(id as ConditioningMode)
-              resetFrom(2)
-            }}
-            label="Conditioning"
-            noContainer
-            variant="ghost"
-          />
+        <div className="flex flex-wrap gap-4 min-h-[60px]">
+          {!sourceA && (
+            <div className="text-sm text-muted-foreground italic flex items-center">
+              Generate Source A to unlock configuration options.
+            </div>
+          )}
+          {sourceA && (
+            <div className="space-y-1">
+              <p className="text-xs font-medium text-foreground">Combination method (step 2):</p>
+              <FilterDropdown
+                items={COMBINATION_MODES}
+                selectedId={combinationMode}
+                onSelect={(id) => {
+                  setCombinationMode(id as CombinationMode)
+                  resetFrom(1)
+                }}
+                label="Assembly"
+                noContainer
+                variant="ghost"
+              />
+            </div>
+          )}
+          {combinedResult && (
+            <div className="space-y-1">
+              <p className="text-xs font-medium text-foreground">Conditioning method (step 3):</p>
+              <FilterDropdown
+                items={CONDITIONING_MODES}
+                selectedId={conditioningMode}
+                onSelect={(id) => {
+                  setConditioningMode(id as ConditioningMode)
+                  resetFrom(2)
+                }}
+                label="Conditioning"
+                noContainer
+                variant="ghost"
+              />
+            </div>
+          )}
         </div>
         {hsmPhase === 'loading' && (
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -306,7 +323,7 @@ export const SourceCombiningDemo: React.FC = () => {
             SoftHSMv3 v{SOFTHSM_PRODUCT_VERSION} PKCS#11 session active
           </p>
         )}
-        {hsmError && <ErrorAlert message={`HSM error: ${hsmError}`} />}
+        {hsmError && <ErrorAlert message={translateCryptoError(`HSM error: ${hsmError}`)} />}
       </div>
 
       {/* RBG Construction Types */}
@@ -423,10 +440,18 @@ export const SourceCombiningDemo: React.FC = () => {
         <h4 className="text-sm font-semibold text-foreground">
           Step 2: {combineLabel} Assembly (SP 800-90C §3.1)
         </h4>
-        <Button variant="outline" onClick={handleCombine} disabled={combineDisabled}>
-          <Combine size={16} className="mr-2" />
-          Assemble via {combineLabel}
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button variant="outline" onClick={handleCombine} disabled={combineDisabled}>
+            <Combine size={16} className="mr-2" />
+            Assemble via {combineLabel}
+          </Button>
+          {sourceA && hsmPhase !== 'session_open' && !hsmError && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Loader2 size={14} className="animate-spin" />
+              Initializing HSM… step 2 will be ready shortly
+            </div>
+          )}
+        </div>
 
         {combinedResult && (
           <>
@@ -573,10 +598,19 @@ export const SourceCombiningDemo: React.FC = () => {
           <Button
             variant="outline"
             onClick={handleCompromiseDemo}
-            disabled={isRunning || !hsmReady}
+            disabled={compromiseLoading || !hsmReady}
           >
-            <Shield size={16} className="mr-2" />
-            What if Source A is compromised?
+            {compromiseLoading ? (
+              <>
+                <Loader2 size={14} className="mr-2 animate-spin" />
+                Running…
+              </>
+            ) : (
+              <>
+                <Shield size={16} className="mr-2" />
+                What if Source A is compromised?
+              </>
+            )}
           </Button>
 
           {showCompromiseDemo && compromiseExpanded && compromiseResults && (

@@ -29,6 +29,7 @@ import { generateCsv, downloadCsv, csvFilename } from '../../utils/csvExport'
 import { ALGORITHM_CSV_COLUMNS } from '../../utils/csvExportConfigs'
 import { AlgorithmInfoModal } from './AlgorithmInfoModal'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import { Button } from '../ui/button'
 
 const MAX_COMPARE = 6 // allows up to 3 classical+PQC pairs from the transition tab
 
@@ -536,6 +537,7 @@ export function AlgorithmsView() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
+                data-workshop-target="section-algorithm-transition"
               >
                 <AlgorithmComparison
                   highlightAlgorithms={highlightAlgorithms}
@@ -553,6 +555,7 @@ export function AlgorithmsView() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
+                data-workshop-target="section-algorithm-detailed"
               >
                 <AlgorithmDetailedComparison
                   highlightAlgorithms={highlightAlgorithms}

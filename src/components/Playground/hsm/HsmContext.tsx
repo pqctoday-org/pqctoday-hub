@@ -61,6 +61,12 @@ export interface HsmKey {
   paramSet?: number
   /** PKCS#11 session handle that owns this key (for multi-session scenarios like VPN sim) */
   sessionHandle?: number
+  /**
+   * Which WASM instance owns this key. Defaults to 'main' (panel softhsm). VPN sim uses
+   * 'worker-init' / 'worker-resp' for keys that live inside a strongSwan worker's local
+   * softhsmv3 — those handles are invalid in the panel WASM and require worker RPC to inspect.
+   */
+  wasmContext?: 'main' | 'worker-init' | 'worker-resp'
 }
 
 export interface HsmContextValue {

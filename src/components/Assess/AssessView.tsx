@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   ClipboardCheck,
@@ -48,6 +48,7 @@ const ModeSelector: React.FC<{
         variant="ghost"
         onClick={() => onSelect('quick')}
         className="glass-panel h-auto p-6 flex-col items-start whitespace-normal hover:bg-transparent hover:border-primary/40 group"
+        data-workshop-target="assess-mode-quick"
       >
         <div className="flex items-center gap-3 mb-3">
           <div className="p-2 rounded-full bg-warning/10 group-hover:bg-warning/20 transition-colors">
@@ -94,6 +95,7 @@ const ModeSelector: React.FC<{
 
 export const AssessView: React.FC = () => {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const {
     assessmentStatus,
     markComplete,
@@ -106,6 +108,17 @@ export const AssessView: React.FC = () => {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const recommendedMode = selectedPersona ? PERSONA_RECOMMENDED_MODE[selectedPersona] : null
   const [showResumeBanner, setShowResumeBanner] = useState(false)
+
+  // URL param `?mode=quick|comprehensive` forces the assessment mode (used by
+  // the workshop's deep-link cues so a Quick-mode walkthrough always lands on
+  // Quick mode regardless of the user's prior assessment state).
+  useEffect(() => {
+    const m = searchParams.get('mode')
+    if (m === 'quick' || m === 'comprehensive') {
+      if (assessmentMode !== m) setAssessmentMode(m)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
 
   // Command Center is only shown to executive / architect / ops personas.
   const personaSeesBusinessCenter = selectedPersona

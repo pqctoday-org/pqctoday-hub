@@ -9,6 +9,7 @@ import { FilterChip } from '../common/FilterChip'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
 import { SimpleGanttChart } from './SimpleGanttChart'
+import { LeftNavTOC } from '@/components/common/LeftNavTOC'
 import { GanttLegend } from './GanttLegend'
 import { MobileTimelineList } from './MobileTimelineList'
 import { CountryFlag } from '../common/CountryFlag'
@@ -268,23 +269,52 @@ export const TimelineView = () => {
       )}
 
       <div className="mt-2 md:mt-12">
-        {/* Desktop View: Full Gantt Chart */}
-        <div className="hidden md:block" data-testid="desktop-view-container">
-          <SimpleGanttChart
-            data={ganttData}
-            regionFilter={regionFilter}
-            onRegionSelect={handleRegionChange}
-            regionItems={regionItems}
-            selectedCountry={countryFilter}
-            onCountrySelect={handleCountrySelect}
-            countryItems={countryItems}
-            searchText={searchText}
-            onSearchChange={handleSearchChange}
-            myCountries={myTimelineCountries}
-            onToggleMyCountry={toggleMyTimelineCountry}
-            showOnlyMyCountries={showOnlyTimelineCountries}
-            onSetShowOnlyMyCountries={setShowOnlyTimelineCountries}
-          />
+        {/* Desktop View: Left-rail country TOC + Full Gantt Chart */}
+        <div className="hidden md:flex md:gap-6" data-testid="desktop-view-container">
+          <aside className="md:w-56 lg:w-64 md:shrink-0 md:sticky md:top-20 md:self-start md:max-h-[calc(100vh-6rem)] md:overflow-y-auto">
+            <LeftNavTOC
+              title="Countries"
+              ariaLabel="Filtered countries"
+              targetPrefix="timeline-toc"
+              activeItemId={countryFilter !== 'All' ? countryFilter : null}
+              onSelect={(id) => {
+                handleCountrySelect(id)
+                const target = document.getElementById(
+                  `timeline-row-${id.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}`
+                )
+                target?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+              }}
+              groups={(() => {
+                const filtered = countryItems.filter((c) => c.id !== 'All')
+                if (filtered.length === 0) return []
+                return [
+                  {
+                    id: 'all',
+                    label: 'Countries',
+                    items: filtered.map((c) => ({ id: c.id, label: c.label })),
+                  },
+                ]
+              })()}
+              emptyMessage="No countries match the current region filter."
+            />
+          </aside>
+          <div className="flex-1 min-w-0">
+            <SimpleGanttChart
+              data={ganttData}
+              regionFilter={regionFilter}
+              onRegionSelect={handleRegionChange}
+              regionItems={regionItems}
+              selectedCountry={countryFilter}
+              onCountrySelect={handleCountrySelect}
+              countryItems={countryItems}
+              searchText={searchText}
+              onSearchChange={handleSearchChange}
+              myCountries={myTimelineCountries}
+              onToggleMyCountry={toggleMyTimelineCountry}
+              showOnlyMyCountries={showOnlyTimelineCountries}
+              onSetShowOnlyMyCountries={setShowOnlyTimelineCountries}
+            />
+          </div>
         </div>
 
         {/* Mobile View: Simplified List */}

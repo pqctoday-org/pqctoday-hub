@@ -53,6 +53,7 @@ function ZoneTile({ zone, active, metrics, onSelect, variant }: ZoneTileProps) {
       // the grid cell. min-w-0 lets the inner div shrink properly.
       className={`h-auto p-3 rounded-lg border-2 transition-all w-full text-left whitespace-normal items-start justify-start min-w-0 ${style.border} ${active ? style.activeBg : style.bg} ${active ? 'ring-2 ring-primary/30' : ''}`}
       aria-pressed={active}
+      data-workshop-target={`business-zone-${zone}`}
     >
       <div className="space-y-1.5 w-full min-w-0">
         <div className="flex items-center justify-between gap-2">

@@ -733,6 +733,7 @@ export const PQC101Module: React.FC = () => {
           variant="ghost"
           onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
           disabled={currentStep === 0}
+          data-workshop-target="learn-stepper-prev"
           className="px-6 py-2 rounded-lg border border-border hover:bg-muted/10 disabled:opacity-50 transition-colors text-foreground"
         >
           ← Previous
@@ -742,6 +743,7 @@ export const PQC101Module: React.FC = () => {
           <Button
             variant="ghost"
             onClick={handleFinalComplete}
+            data-workshop-target="learn-stepper-complete"
             className="px-6 py-2 bg-status-success text-foreground font-bold rounded-lg hover:bg-status-success/90 transition-colors"
           >
             ✓ Complete Module
@@ -754,6 +756,7 @@ export const PQC101Module: React.FC = () => {
 
               handleStepComplete(step.id, currentStep + 1)
             }}
+            data-workshop-target="learn-stepper-next"
             className="px-6 py-2 font-bold rounded-lg transition-colors"
           >
             Next →

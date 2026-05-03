@@ -101,6 +101,11 @@ const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
     const context = React.useContext(TabsContext)
     const isActive = context?.value === value
 
+    // Auto-derive a stable workshop selector slug from the tab value so cues
+    // can target tabs without per-callsite instrumentation. Cues use either:
+    //   `data-workshop-target="tab-<slug>"`  OR  `select-tab` cue with the visible name.
+    const workshopSlug = `tab-${value.toLowerCase().replace(/\s+/g, '-')}`
+
     return (
       // eslint-disable-next-line no-restricted-syntax
       <button
@@ -111,6 +116,7 @@ const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
           className
         )}
         data-state={isActive ? 'active' : 'inactive'}
+        data-workshop-target={workshopSlug}
         onClick={(e) => {
           context?.onValueChange(value)
           onClick?.(e)

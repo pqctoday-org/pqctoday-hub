@@ -18,6 +18,7 @@ import {
   AppWindow,
   Globe,
   ShieldCheck,
+  Info,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ErrorAlert } from '@/components/ui/error-alert'
@@ -218,6 +219,7 @@ export const TEEHSMTrustedChannel: React.FC = () => {
   const [selectedHsmVendor, setSelectedHsmVendor] = useState<string>('All')
   const [pqcMode, setPqcMode] = useState(false)
   const [currentStep, setCurrentStep] = useState(0)
+  const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set())
 
   // Find matching integration
   const integration = useMemo(() => {
@@ -243,6 +245,7 @@ export const TEEHSMTrustedChannel: React.FC = () => {
 
   const handleReset = () => {
     setCurrentStep(0)
+    setCompletedSteps(new Set())
   }
 
   // Live HSM demo — TEE-HSM key provisioning flow
@@ -260,7 +263,10 @@ export const TEEHSMTrustedChannel: React.FC = () => {
     hsm.clearKeys()
 
     const now = () => new Date().toLocaleTimeString()
-    const addResult = (r: ProvisioningResult) => setLiveResults((prev) => [...prev, r])
+    const addResult = (r: ProvisioningResult) => {
+      setLiveResults((prev) => [...prev, r])
+      setCompletedSteps((prev) => new Set([...prev, r.step - 1]))
+    }
 
     try {
       const M = hsm.moduleRef.current
@@ -634,6 +640,43 @@ export const TEEHSMTrustedChannel: React.FC = () => {
       {/* ── Scenario Selector ─────────────────────────────────────── */}
       <div className="glass-panel p-4">
         <div className="text-sm font-bold text-foreground mb-3">Scenario Selector</div>
+        {!integration && (
+          <>
+            <div className="flex items-start gap-2 rounded-lg p-3 bg-muted/40 border border-border mb-3 text-sm">
+              <Info
+                size={14}
+                className="text-muted-foreground mt-0.5 shrink-0"
+                aria-hidden="true"
+              />
+              <p className="text-muted-foreground">
+                Select a TEE vendor and HSM vendor below. The tool will load the documented
+                integration architecture and live provisioning demo for that combination. Not all
+                pairings are supported — try using a preset below.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2 mb-3">
+              {[
+                { label: 'Intel SGX + Thales Luna', tee: 'intel', hsm: 'thales' },
+                { label: 'AMD SEV + AWS CloudHSM', tee: 'amd', hsm: 'aws' },
+                { label: 'ARM TrustZone + nCipher', tee: 'arm', hsm: 'ncipher' },
+              ].map((preset) => (
+                <Button
+                  key={preset.label}
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedTeeVendor(preset.tee)
+                    setSelectedHsmVendor(preset.hsm)
+                    setCurrentStep(0)
+                  }}
+                  className="text-xs px-3 py-1.5 rounded-full border border-border bg-muted/30 text-muted-foreground hover:bg-muted/60 hover:text-foreground transition-colors"
+                >
+                  {preset.label}
+                </Button>
+              ))}
+            </div>
+          </>
+        )}
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="flex-1">
             <FilterDropdown
@@ -642,6 +685,7 @@ export const TEEHSMTrustedChannel: React.FC = () => {
               onSelect={(id) => {
                 setSelectedTeeVendor(id)
                 setCurrentStep(0)
+                setCompletedSteps(new Set())
               }}
               label="TEE Vendor"
               defaultLabel="Select TEE"
@@ -656,6 +700,7 @@ export const TEEHSMTrustedChannel: React.FC = () => {
               onSelect={(id) => {
                 setSelectedHsmVendor(id)
                 setCurrentStep(0)
+                setCompletedSteps(new Set())
               }}
               label="HSM Vendor"
               defaultLabel="Select HSM"
@@ -744,6 +789,7 @@ export const TEEHSMTrustedChannel: React.FC = () => {
                   onClick={() => {
                     setPqcMode(false)
                     setCurrentStep(0)
+                    setCompletedSteps(new Set())
                   }}
                   className="rounded-none"
                 >
@@ -755,6 +801,7 @@ export const TEEHSMTrustedChannel: React.FC = () => {
                   onClick={() => {
                     setPqcMode(true)
                     setCurrentStep(0)
+                    setCompletedSteps(new Set())
                   }}
                   className="rounded-none"
                 >
@@ -830,14 +877,14 @@ export const TEEHSMTrustedChannel: React.FC = () => {
                 <div key={idx} className="flex items-center gap-1 flex-1">
                   <div
                     className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-                      idx < currentStep
-                        ? 'bg-status-success/20 text-status-success'
+                      completedSteps.has(idx)
+                        ? 'bg-status-success text-white'
                         : idx === currentStep
-                          ? 'bg-primary/20 text-primary ring-2 ring-primary/50'
+                          ? 'bg-primary text-primary-foreground ring-2 ring-primary/50'
                           : 'bg-muted text-muted-foreground'
                     }`}
                   >
-                    {idx < currentStep ? <CheckCircle size={14} /> : idx + 1}
+                    {completedSteps.has(idx) ? <CheckCircle size={14} /> : idx + 1}
                   </div>
                   {idx < provisioningSteps.length - 1 && (
                     <div
@@ -1005,6 +1052,108 @@ export const TEEHSMTrustedChannel: React.FC = () => {
         </>
       )}
 
+      <details open className="glass-panel p-4 group">
+        <summary className="text-sm font-bold text-foreground cursor-pointer flex items-center gap-2 outline-none">
+          Quantum Threat Analysis
+        </summary>
+        <div className="mt-4 space-y-6">
+          {/* ── Quantum Threat Analysis ──────────────────────────────── */}
+          <div className="glass-panel p-4 space-y-3">
+            <div className="text-sm font-bold text-foreground flex items-center gap-2">
+              <Shield size={14} className="text-status-error" />
+              Quantum Threat Analysis — TEE &amp; HSM Components
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Each component of a TEE-HSM deployment faces distinct quantum risks. Vectors marked{' '}
+              <span className="font-semibold text-status-warning">HNDL</span> are subject to
+              harvest-now-decrypt-later attacks — adversaries recording traffic today can decrypt it
+              once a cryptographically-relevant quantum computer (CRQC) is available.
+            </p>
+            <div className="space-y-2">
+              {QUANTUM_THREAT_VECTORS.map((threat) => (
+                <div
+                  key={threat.id}
+                  className="rounded-lg border border-border bg-muted/20 p-3 space-y-1.5"
+                >
+                  <div className="flex items-start gap-2 flex-wrap">
+                    <span
+                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${
+                        threat.severity === 'critical'
+                          ? 'bg-status-error/20 text-status-error'
+                          : threat.severity === 'high'
+                            ? 'bg-status-warning/20 text-status-warning'
+                            : 'bg-status-info/20 text-status-info'
+                      }`}
+                    >
+                      {threat.severity.toUpperCase()}
+                    </span>
+                    {threat.hndlExposure && (
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-primary/20 text-primary shrink-0">
+                        HNDL
+                      </span>
+                    )}
+                    <span className="text-xs font-semibold text-foreground">{threat.name}</span>
+                    <span className="text-[10px] text-muted-foreground ml-auto">
+                      {threat.component}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground">{threat.vulnerability}</p>
+                  <div className="flex items-start gap-1 text-[10px]">
+                    <span className="text-status-success font-medium shrink-0">PQC fix:</span>
+                    <span className="text-muted-foreground">{threat.pqcSolution}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-[10px] text-muted-foreground border-t border-border/30 pt-1">
+                    <span>Timeline: {threat.vendorTimeline}</span>
+                    <span>· Effort: {threat.migrationEffort}/5</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── Memory Encryption Quantum Impact ─────────────────────── */}
+          <div className="glass-panel p-4 space-y-3">
+            <div className="text-sm font-bold text-foreground flex items-center gap-2">
+              <Cpu size={14} className="text-status-warning" />
+              Memory Encryption Engines — Quantum Impact
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Enclave sealing keys and memory encryption are often AES-128, which Grover&apos;s
+              algorithm halves to 64-bit effective post-quantum security — below NIST Level 1
+              (128-bit).
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {MEMORY_ENCRYPTION_ENGINES.map((eng) => (
+                <div
+                  key={eng.id}
+                  className="rounded-lg border border-border bg-muted/20 p-3 space-y-1.5"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-semibold text-foreground">{eng.name}</span>
+                    <span
+                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                        eng.quantumImpact === 'grover-halved'
+                          ? 'bg-status-warning/20 text-status-warning'
+                          : 'bg-status-success/20 text-status-success'
+                      }`}
+                    >
+                      {eng.quantumImpact === 'grover-halved' ? 'Grover Halved' : 'Quantum Safe'}
+                    </span>
+                  </div>
+                  <div className="text-[10px] font-mono text-muted-foreground">
+                    {eng.algorithm} · {eng.keyWidth}-bit key
+                  </div>
+                  <p className="text-[10px] text-muted-foreground">{eng.quantumNotes}</p>
+                  <div className="text-[10px] text-muted-foreground border-t border-border/30 pt-1">
+                    <span className="font-medium">Sealing:</span> {eng.sealingKeyDerivation}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </details>
+
       {hsm.isReady && (
         <div className="glass-panel p-4 space-y-3">
           <div className="flex items-center justify-between gap-2">
@@ -1125,100 +1274,6 @@ export const TEEHSMTrustedChannel: React.FC = () => {
           )}
         </div>
       )}
-
-      {/* ── Quantum Threat Analysis ──────────────────────────────── */}
-      <div className="glass-panel p-4 space-y-3">
-        <div className="text-sm font-bold text-foreground flex items-center gap-2">
-          <Shield size={14} className="text-status-error" />
-          Quantum Threat Analysis — TEE &amp; HSM Components
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Each component of a TEE-HSM deployment faces distinct quantum risks. Vectors marked{' '}
-          <span className="font-semibold text-status-warning">HNDL</span> are subject to
-          harvest-now-decrypt-later attacks — adversaries recording traffic today can decrypt it
-          once a cryptographically-relevant quantum computer (CRQC) is available.
-        </p>
-        <div className="space-y-2">
-          {QUANTUM_THREAT_VECTORS.map((threat) => (
-            <div
-              key={threat.id}
-              className="rounded-lg border border-border bg-muted/20 p-3 space-y-1.5"
-            >
-              <div className="flex items-start gap-2 flex-wrap">
-                <span
-                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${
-                    threat.severity === 'critical'
-                      ? 'bg-status-error/20 text-status-error'
-                      : threat.severity === 'high'
-                        ? 'bg-status-warning/20 text-status-warning'
-                        : 'bg-status-info/20 text-status-info'
-                  }`}
-                >
-                  {threat.severity.toUpperCase()}
-                </span>
-                {threat.hndlExposure && (
-                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-primary/20 text-primary shrink-0">
-                    HNDL
-                  </span>
-                )}
-                <span className="text-xs font-semibold text-foreground">{threat.name}</span>
-                <span className="text-[10px] text-muted-foreground ml-auto">
-                  {threat.component}
-                </span>
-              </div>
-              <p className="text-[10px] text-muted-foreground">{threat.vulnerability}</p>
-              <div className="flex items-start gap-1 text-[10px]">
-                <span className="text-status-success font-medium shrink-0">PQC fix:</span>
-                <span className="text-muted-foreground">{threat.pqcSolution}</span>
-              </div>
-              <div className="flex items-center gap-2 text-[10px] text-muted-foreground border-t border-border/30 pt-1">
-                <span>Timeline: {threat.vendorTimeline}</span>
-                <span>· Effort: {threat.migrationEffort}/5</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Memory Encryption Quantum Impact ─────────────────────── */}
-      <div className="glass-panel p-4 space-y-3">
-        <div className="text-sm font-bold text-foreground flex items-center gap-2">
-          <Cpu size={14} className="text-status-warning" />
-          Memory Encryption Engines — Quantum Impact
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Enclave sealing keys and memory encryption are often AES-128, which Grover&apos;s
-          algorithm halves to 64-bit effective post-quantum security — below NIST Level 1 (128-bit).
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {MEMORY_ENCRYPTION_ENGINES.map((eng) => (
-            <div
-              key={eng.id}
-              className="rounded-lg border border-border bg-muted/20 p-3 space-y-1.5"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-semibold text-foreground">{eng.name}</span>
-                <span
-                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
-                    eng.quantumImpact === 'grover-halved'
-                      ? 'bg-status-warning/20 text-status-warning'
-                      : 'bg-status-success/20 text-status-success'
-                  }`}
-                >
-                  {eng.quantumImpact === 'grover-halved' ? 'Grover Halved' : 'Quantum Safe'}
-                </span>
-              </div>
-              <div className="text-[10px] font-mono text-muted-foreground">
-                {eng.algorithm} · {eng.keyWidth}-bit key
-              </div>
-              <p className="text-[10px] text-muted-foreground">{eng.quantumNotes}</p>
-              <div className="text-[10px] text-muted-foreground border-t border-border/30 pt-1">
-                <span className="font-medium">Sealing:</span> {eng.sealingKeyDerivation}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* ── Standards Referenced ──────────────────────────────────── */}
       <div className="glass-panel p-4 space-y-2">

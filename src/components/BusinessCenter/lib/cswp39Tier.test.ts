@@ -30,6 +30,7 @@ function emptyMetrics(): BusinessMetrics {
     assessmentStatus: 'not-started',
     assessmentHistory: [],
     previousRiskScore: null,
+    previousCategoryScores: null,
     completedAt: null,
     trackedFrameworks: [],
     complianceGapCount: 0,

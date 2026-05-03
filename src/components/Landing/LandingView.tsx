@@ -600,13 +600,23 @@ export const LandingView = () => {
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
           <Link to={heroCta.primary.path} className="block sm:inline-block">
-            <Button variant="gradient" size="lg" className="w-full sm:w-auto text-base">
+            <Button
+              variant="gradient"
+              size="lg"
+              className="w-full sm:w-auto text-base"
+              data-workshop-target="landing-cta-primary"
+            >
               {heroCta.primary.label}
               <ArrowRight className="ml-2" size={18} />
             </Button>
           </Link>
           <Link to={heroCta.secondary.path} className="block sm:inline-block">
-            <Button variant="outline" size="lg" className="w-full sm:w-auto text-base">
+            <Button
+              variant="outline"
+              size="lg"
+              className="w-full sm:w-auto text-base"
+              data-workshop-target="landing-cta-secondary"
+            >
               {heroCta.secondary.label}
             </Button>
           </Link>

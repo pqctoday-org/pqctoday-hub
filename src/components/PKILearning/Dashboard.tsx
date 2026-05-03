@@ -366,13 +366,15 @@ export const Dashboard: React.FC = () => {
   // Assessment-derived recommendations
   const assessmentResult = useAssessmentResultStore()
   const { selectedPersona } = usePersonaStore()
+  const completedAt = assessmentResult.completedAt
+  const categoryScores = assessmentResult.lastResult?.categoryScores
   const recommendedModuleIds = useMemo(() => {
-    if (!assessmentResult.completedAt || !assessmentResult.categoryScores) return []
+    if (!completedAt || !categoryScores) return []
     return inferRecommendedModules(
-      assessmentResult.categoryScores,
+      categoryScores,
       (selectedPersona as import('../../data/learningPersonas').PersonaId) ?? 'curious'
     )
-  }, [assessmentResult.completedAt, assessmentResult.categoryScores, selectedPersona])
+  }, [completedAt, categoryScores, selectedPersona])
 
   const getProgressPercentage = (moduleId: string): number => {
     const module = modules[moduleId]

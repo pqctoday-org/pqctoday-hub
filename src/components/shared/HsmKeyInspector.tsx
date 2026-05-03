@@ -208,6 +208,18 @@ const KeyAttrModal = ({
           </Button>
         </div>
 
+        {/* Diagnostic: surface when C_GetAttributeValue returned no usable
+            data. ckClass is the most fundamental attribute — every key has it,
+            so if it's null the underlying read failed entirely (stale session,
+            destroyed object, terminated worker). */}
+        {attrs.ckClass === null && attrs.ckKeyType === null && (
+          <div className="rounded border border-status-warning/30 bg-status-warning/10 px-3 py-2 text-xs text-status-warning">
+            Could not read PKCS#11 attributes for this key. The session or object handle may have
+            expired (e.g., the strongSwan worker terminated, or the daemon closed its session). The
+            handle and label are still shown above for reference.
+          </div>
+        )}
+
         {/* Identity attributes */}
         <div className="space-y-1">
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
@@ -354,6 +366,13 @@ export interface HsmKeyInspectorProps {
   onClear?: () => void
   /** Optional title override (default: "HSM Key Registry") */
   title?: string
+  /**
+   * Override how key attributes are read. When set, replaces direct hsm_getKeyAttributes
+   * calls in both the size-estimate effect and the inspect modal. Used by VPN sim to
+   * route keys whose handles live in a strongSwan worker WASM through worker RPC.
+   * Returning null means "could not read attributes" (treated like a thrown error).
+   */
+  attrsResolver?: (key: HsmKey) => Promise<KeyAttributeSet | null>
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
@@ -365,6 +384,7 @@ export const HsmKeyInspector = ({
   onRemoveKey,
   onClear,
   title = 'HSM Key Registry',
+  attrsResolver,
 }: HsmKeyInspectorProps) => {
   const [inspectedKey, setInspectedKey] = useState<HsmKey | null>(null)
   const [attrs, setAttrs] = useState<KeyAttributeSet | null>(null)
@@ -374,25 +394,36 @@ export const HsmKeyInspector = ({
   const [keySizeMap, setKeySizeMap] = useState<Map<number, number | null>>(new Map())
   const keyTracker = useMemo(() => keys.map((k) => k.handle).join(','), [keys])
   useEffect(() => {
-    const M = moduleRef.current
-    const hSession = hSessionRef.current
-    const map = new Map<number, number | null>()
-    for (const k of keys) {
-      if (!M || !hSession) {
-        map.set(k.handle, null)
-        continue
+    let cancelled = false
+    const run = async () => {
+      const M = moduleRef.current
+      const hSession = hSessionRef.current
+      const map = new Map<number, number | null>()
+      for (const k of keys) {
+        let a: KeyAttributeSet | null = null
+        if (attrsResolver) {
+          try {
+            a = await attrsResolver(k)
+          } catch {
+            a = null
+          }
+        } else if (M && hSession) {
+          try {
+            a = hsm_getKeyAttributes(M, hSession, k.handle)
+          } catch {
+            a = null
+          }
+        }
+        map.set(k.handle, a ? estimateKeySize(a) : null)
       }
-      try {
-        const a = hsm_getKeyAttributes(M, hSession, k.handle)
-        map.set(k.handle, estimateKeySize(a))
-      } catch {
-        map.set(k.handle, null)
-      }
+      if (!cancelled) setKeySizeMap(map)
     }
-
-    setKeySizeMap(map)
+    void run()
+    return () => {
+      cancelled = true
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [keyTracker]) // moduleRef and hSessionRef are stable refs — intentionally omitted
+  }, [keyTracker, attrsResolver]) // moduleRef and hSessionRef are stable refs — intentionally omitted
 
   const totalBytes = useMemo(() => {
     let sum = 0
@@ -403,7 +434,19 @@ export const HsmKeyInspector = ({
   }, [keySizeMap])
 
   const openInspect = useCallback(
-    (key: HsmKey) => {
+    async (key: HsmKey) => {
+      if (attrsResolver) {
+        try {
+          const a = await attrsResolver(key)
+          if (a) {
+            setAttrs(a)
+            setInspectedKey(key)
+          }
+        } catch {
+          // resolver failed — fail silently
+        }
+        return
+      }
       const M = moduleRef.current
       const hSession = hSessionRef.current
       if (!M || !hSession) return
@@ -415,7 +458,7 @@ export const HsmKeyInspector = ({
         // key may be invalid or destroyed — fail silently
       }
     },
-    [moduleRef, hSessionRef]
+    [moduleRef, hSessionRef, attrsResolver]
   )
 
   const destroyKey = useCallback(

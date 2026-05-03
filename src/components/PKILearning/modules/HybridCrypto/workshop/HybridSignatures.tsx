@@ -2,6 +2,9 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react'
 import {
   Fingerprint,
+  HelpCircle,
+  ChevronDown,
+  RotateCcw,
   Loader2,
   ShieldCheck,
   ShieldAlert,
@@ -40,7 +43,6 @@ import {
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { Button } from '@/components/ui/button'
 import { ErrorAlert } from '@/components/ui/error-alert'
-import { translateCryptoError } from '@/utils/cryptoErrorHint'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -165,18 +167,43 @@ function toHexDisplay(bytes: Uint8Array): string {
 
 function SizeBadge({ bytes, label }: { bytes: number; label: string }) {
   return (
-    <span className="inline-flex items-center gap-1 text-xs font-mono bg-muted px-2 py-0.5 rounded">
+    <span className="inline-flex items-center gap-1 text-xs font-mono bg-muted px-2 py-0.5 rounded animate-in fade-in zoom-in duration-300">
       <span className="text-muted-foreground">{label}</span>
       <span className="text-primary font-semibold">{bytes}B</span>
     </span>
   )
 }
 
+function getHybridSigErrorHint(err: unknown): string {
+  const msg = String(err)
+  if (msg.includes('HSM not ready') || (msg.includes('WASM') && msg.includes('not init'))) {
+    return 'HSM is still initializing — wait for the status banner to show "ready" and try again.'
+  }
+  if (msg.includes('rv=0x') || msg.includes('C_Generate') || msg.includes('C_Sign')) {
+    const rv = msg.match(/rv=0x([0-9a-fA-F]+)/)?.[1]
+    if (rv === '00000002')
+      return 'PKCS#11 error: invalid argument (CKR_ARGUMENTS_BAD). The algorithm parameters may not be supported.'
+    if (rv === '00000005')
+      return 'PKCS#11 error: operation failed (CKR_GENERAL_ERROR). Try reloading the page.'
+    return `PKCS#11 operation failed. If this persists, reload the page and retry.`
+  }
+  if (msg.includes('Backend mismatch')) {
+    return 'Internal configuration error. Please reload the page.'
+  }
+  return msg.substring(0, 150)
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 export const HybridSignatures: React.FC = () => {
   const [activeConstruction, setActiveConstruction] = useState<ConstructionId>('concatenation')
+  const [hsmInitAttempts, setHsmInitAttempts] = useState(0)
+  const [signPhase, setSignPhase] = useState<string | null>(null)
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const [message, setMessage] = useState(DEFAULT_MSG)
+  const retryInit = useCallback(() => {
+    setHsmInitAttempts((n) => n + 1)
+  }, [])
   const [hsmStatus, setHsmStatus] = useState<HsmStatus>('loading')
   const hsmRef = useRef<{ M: SoftHSMModule; hSession: number } | null>(null)
 
@@ -243,7 +270,7 @@ export const HybridSignatures: React.FC = () => {
         hsmRef.current = null
       }
     }
-  }, [])
+  }, [hsmInitAttempts])
 
   // ── State helpers ───────────────────────────────────────────────────────────
 
@@ -274,7 +301,9 @@ export const HybridSignatures: React.FC = () => {
         }
         updateState(id, { keys, loading: false })
       } catch (err) {
-        updateState(id, { loading: false, error: translateCryptoError(String(err)) })
+        if (intervalRef.current) clearInterval(intervalRef.current)
+        setSignPhase(null)
+        updateState(id, { loading: false, error: getHybridSigErrorHint(err) })
       }
     },
     [updateState]
@@ -285,6 +314,13 @@ export const HybridSignatures: React.FC = () => {
       const { keys } = state[id]
       if (!keys) return
       updateState(id, { loading: true, error: null, verifyResult: null })
+      if (intervalRef.current) clearInterval(intervalRef.current)
+      setSignPhase('Computing EC-Schnorr component (64B)…')
+      intervalRef.current = setInterval(() => {
+        setSignPhase((prev) =>
+          prev?.includes('EC-Schnorr') ? 'Computing ML-DSA-65 component (3,287B)…' : prev
+        )
+      }, 80)
       try {
         await new Promise((r) => setTimeout(r, 10))
         const msgBytes = new TextEncoder().encode(message)
@@ -302,8 +338,12 @@ export const HybridSignatures: React.FC = () => {
           throw new Error('Backend mismatch')
         }
         updateState(id, { sigResult, loading: false })
+        if (intervalRef.current) clearInterval(intervalRef.current)
+        setSignPhase(null)
       } catch (err) {
-        updateState(id, { loading: false, error: translateCryptoError(String(err)) })
+        if (intervalRef.current) clearInterval(intervalRef.current)
+        setSignPhase(null)
+        updateState(id, { loading: false, error: getHybridSigErrorHint(err) })
       }
     },
     [state, message, updateState]
@@ -332,7 +372,9 @@ export const HybridSignatures: React.FC = () => {
         }
         updateState(id, { verifyResult, loading: false })
       } catch (err) {
-        updateState(id, { loading: false, error: translateCryptoError(String(err)) })
+        if (intervalRef.current) clearInterval(intervalRef.current)
+        setSignPhase(null)
+        updateState(id, { loading: false, error: getHybridSigErrorHint(err) })
       }
     },
     [state, message, updateState]
@@ -349,7 +391,7 @@ export const HybridSignatures: React.FC = () => {
       const result = silithiumRecombinationAttack(msgBytes, sigResult.signatureBytes, attackerKeys)
       updateState('silithium', { loading: false, recombinationResult: result })
     } catch (err) {
-      updateState('silithium', { loading: false, error: translateCryptoError(String(err)) })
+      updateState('silithium', { loading: false, error: getHybridSigErrorHint(err) })
     }
   }, [state, message, updateState])
 
@@ -444,10 +486,27 @@ export const HybridSignatures: React.FC = () => {
         </div>
       )}
       {hsmStatus === 'error' && (
-        <div className="flex items-center gap-2 text-xs text-status-error bg-status-error/5 border border-status-error/20 rounded-lg px-3 py-2">
+        <div className="flex items-center gap-2 flex-wrap text-xs text-status-error bg-status-error/5 border border-status-error/20 rounded-lg px-3 py-2">
           <ShieldAlert size={13} className="shrink-0" />
-          softhsmv3 WASM failed to load — concatenation and nesting unavailable. Silithium still
-          works via @noble.
+          <span className="text-sm">
+            softhsmv3 WASM failed to load — concatenation and nesting unavailable. Silithium still
+            works via @noble.
+          </span>
+          {hsmInitAttempts < 3 ? (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={retryInit}
+              className="h-7 text-xs gap-1 shrink-0 text-foreground"
+            >
+              <RotateCcw size={12} />
+              Retry
+            </Button>
+          ) : (
+            <span className="ml-auto font-medium">
+              WASM failed to load after 3 attempts — try refreshing the page.
+            </span>
+          )}
         </div>
       )}
       {hsmStatus === 'ready' && (
@@ -457,20 +516,54 @@ export const HybridSignatures: React.FC = () => {
         </div>
       )}
 
+      <details className="mb-4">
+        <summary className="flex items-center gap-2 cursor-pointer rounded-lg border border-border bg-muted/20 px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/30 transition-colors w-full text-left">
+          <HelpCircle size={14} className="text-primary shrink-0" />
+          Why hybrid signatures? — Migration context
+          <ChevronDown size={14} className="ml-auto text-muted-foreground" />
+        </summary>
+        <div className="mt-2 rounded-lg border border-border bg-muted/10 px-4 py-3 text-sm text-muted-foreground space-y-2">
+          <p>
+            During the PQC transition, systems must support verifiers that understand{' '}
+            <strong className="text-foreground">only classical algorithms</strong> (legacy) and
+            verifiers that require{' '}
+            <strong className="text-foreground">post-quantum algorithms</strong> (future-safe).
+            Hybrid signatures let one signed artifact satisfy both.
+          </p>
+          <p>
+            The critical security question is:{' '}
+            <strong className="text-foreground">
+              what prevents an attacker from stripping the PQC component?
+            </strong>{' '}
+            If they can, the document is no longer quantum-safe — it degrades silently to classical
+            security. This is the non-separability problem this tool demonstrates.
+          </p>
+          <p className="text-xs">
+            Standards: IETF draft-ietf-lamps-pq-composite-sigs (Concatenation),
+            draft-ietf-pquip-hybrid-signature-spectrums (Nesting/Silithium).
+          </p>
+        </div>
+      </details>
+
       {/* Construction tabs */}
       <div className="flex flex-wrap gap-2 border-b border-border pb-4">
         {CONSTRUCTIONS.map((c) => {
           const CIcon = c.icon
           const isActive = activeConstruction === c.id
+          const constructionState = state[c.id]
+          const hasKeys = constructionState?.keys !== null
           return (
             <Button
               key={c.id}
               variant={isActive ? 'gradient' : 'outline'}
               onClick={() => setActiveConstruction(c.id)}
-              className="flex items-center gap-2 text-sm"
+              className="flex items-center gap-2 text-sm relative"
             >
               <CIcon size={15} />
               {c.label}
+              {hasKeys && (
+                <div className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-status-success shadow-[0_0_4px_rgba(var(--status-success),0.8)]" />
+              )}
             </Button>
           )
         })}
@@ -559,12 +652,22 @@ export const HybridSignatures: React.FC = () => {
           disabled={!current.keys || current.loading}
           className="flex items-center gap-2"
         >
-          {current.loading ? (
-            <Loader2 size={15} className="animate-spin" aria-hidden="true" />
+          {current.loading && signPhase ? (
+            <>
+              <Loader2 size={15} className="animate-spin" aria-hidden="true" />
+              {signPhase}
+            </>
+          ) : current.loading ? (
+            <>
+              <Loader2 size={15} className="animate-spin" aria-hidden="true" />
+              Signing...
+            </>
           ) : (
-            <Lock size={15} />
+            <>
+              <Lock size={15} />
+              Sign
+            </>
           )}
-          Sign
         </Button>
         <Button
           variant="gradient"

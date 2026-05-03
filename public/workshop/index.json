@@ -1,0 +1,50 @@
+{
+  "$schema": "WorkshopManifest",
+  "version": "v1",
+  "generatedAt": "2026-05-02",
+  "flows": [
+    {
+      "id": "executive-basics-finance-and-banking-amer-apac",
+      "file": "executive-basics-finance-and-banking-amer-apac_05022026.json",
+      "title": "Executive PQC Workshop — Finance (US / Canada / Australia)",
+      "match": {
+        "roles": ["executive"],
+        "proficiencies": ["basics", "expert"],
+        "industries": ["Finance & Banking"],
+        "regions": ["US", "CA", "AU"]
+      },
+      "totalEstMinutes": 125,
+      "stepCount": 33,
+      "date": "05022026"
+    },
+    {
+      "id": "architect-basics-all-all-v1",
+      "file": "architect-basics-all-all_05032026.json",
+      "title": "Security Architect Workshop — All Industries, All Regions",
+      "match": {
+        "roles": ["architect"],
+        "proficiencies": ["basics", "expert"],
+        "industries": "*",
+        "regions": "*"
+      },
+      "totalEstMinutes": 75,
+      "stepCount": 26,
+      "date": "05032026"
+    },
+    {
+      "id": "generic-overview",
+      "file": "generic-overview_05022026.json",
+      "title": "PQC Today — Quick Overview",
+      "match": {
+        "roles": "*",
+        "proficiencies": "*",
+        "industries": "*",
+        "regions": "*"
+      },
+      "totalEstMinutes": 20,
+      "stepCount": 19,
+      "isGenericFallback": true,
+      "date": "05022026"
+    }
+  ]
+}

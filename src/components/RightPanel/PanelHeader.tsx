@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
-import { Bot, Clock, Bookmark, HelpCircle, X, Minus } from 'lucide-react'
+import { Bot, Clock, Bookmark, HelpCircle, X, Minus, GraduationCap } from 'lucide-react'
 import { Button } from '../ui/button'
 import type { RightPanelTab } from '@/types/HistoryTypes'
 interface PanelHeaderProps {
@@ -19,6 +19,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
   const tabs: { id: RightPanelTab; label: string; icon: React.ElementType }[] = [
     { id: 'chat', label: 'Assistant', icon: Bot },
     { id: 'history', label: 'Journey', icon: Clock },
+    { id: 'workshop', label: 'Workshop', icon: GraduationCap },
     { id: 'bookmarks', label: 'Bookmarks', icon: Bookmark },
     { id: 'faq', label: 'FAQ', icon: HelpCircle },
   ]

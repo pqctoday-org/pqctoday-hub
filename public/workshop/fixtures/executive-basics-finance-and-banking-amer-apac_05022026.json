@@ -1,0 +1,70 @@
+{
+  "$schema": "WorkshopFixtures",
+  "_comment": "Per-step fixture data consumed by Video Mode auto-fill cues. Keys are referenced by `fill-from-fixture` / `select-from-fixture` cues in the flow's step.cues. Edit values to change the demo persona without touching code.",
+
+  "prereq-01-checklist": {
+    "role": "Executive",
+    "proficiency": "Basics",
+    "industry": "Finance & Banking",
+    "country.US": "United States",
+    "country.CA": "Canada",
+    "country.AU": "Australia"
+  },
+
+  "f7-assess": {
+    "mode": "quick",
+    "dataSensitivity": ["Customer PII", "Transaction records", "Settlement logs"],
+    "dataRetention": ["7 years (regulatory minimum)", "Indefinite (audit trail)"],
+    "cryptoInventoryStatus": "Partial — CMDB exists, no cryptographic asset class yet",
+    "vendorPqcRoadmapAwareness": "Aware of major vendors only",
+    "boardEngagement": "Briefed once in last 12 months",
+    "remediationCapacity": "Limited — competing 2026 modernisation backlog"
+  },
+
+  "a1-cswp-governance": {
+    "policyOwner": "Chief Information Security Officer",
+    "boardSponsor": "Chair of the Risk Committee",
+    "raci.responsible": "CISO",
+    "raci.accountable": "Board Risk Committee",
+    "raci.consulted": "Chief Risk Officer; Chief Technology Officer",
+    "raci.informed": "Internal Audit; Legal; Compliance"
+  },
+
+  "a2-cswp-assets": {
+    "cbomScope": "All production systems handling customer financial data",
+    "cbomDeadline": "End of next quarter",
+    "vendorLetterRecipients": "Top 20 cryptographic vendors by spend"
+  },
+
+  "a3-cswp-risk": {
+    "riskTitle": "Harvest-Now Decrypt-Later exposure on settlement and transaction logs",
+    "inherentRiskScore": "High",
+    "targetResidualRisk": "Moderate",
+    "kpi.fipsCoverage": "65%",
+    "kpi.pqcReadyCertShare": "0%",
+    "kpi.vendorRoadmapShare": "30%"
+  },
+
+  "a4-cswp-migration": {
+    "pilotScope": "Internal TLS between core banking and message broker",
+    "pilotKems": ["ML-KEM-768", "X25519-MLKEM768 hybrid"],
+    "pilotSignatures": ["ML-DSA-65"],
+    "pilotDuration": "60 days",
+    "pilotSuccessCriteria": "Hybrid handshake stable under production load for 14 consecutive days"
+  },
+
+  "us-06-business": {
+    "boardDeckTitle": "Post-Quantum Cryptography — CNSA 2.0 and G7 Roadmap Implications",
+    "pciRequirement": "12.3.3",
+    "pciInventoryDeadline": "Q4 (next assessor cycle)"
+  },
+  "ca-06-business": {
+    "boardDeckTitle": "Post-Quantum Cryptography — CCCS ITSM.40.001 Phased Roadmap",
+    "departmentalPlanDeadline": "April 2026 (federal counterparty alignment)"
+  },
+  "au-06-business": {
+    "boardDeckTitle": "Post-Quantum Cryptography — ASD ISM-1917 2030 Prohibition",
+    "gapAnalysisGate": "End of 2030",
+    "ownRiskNote": "No APRA-specific PQC guidance published as of workshop date — own-risk interpretation of ISM-1917 for financial sector"
+  }
+}

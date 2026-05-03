@@ -9,7 +9,7 @@ import {
   Filter,
   Wrench,
 } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import JSZip from 'jszip'
 import { PageHeader } from '@/components/common/PageHeader'
 import { WorkflowBreadcrumb } from '@/components/shared/WorkflowBreadcrumb'
@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { useWorkshopStore, isWorkshopActive } from '@/store/useWorkshopStore'
 import { getBusinessCenterZoneEmphasis } from '@/data/personaConfig'
 import { useSeedFrameworksFromCountry } from '@/hooks/assessment/useSeedFrameworksFromCountry'
 import { CSWP39_ZONE_ORDER, legacyToZoneId, type ZoneId } from '@/data/cswp39ZoneData'
@@ -103,6 +104,7 @@ export function BusinessCenterView() {
   const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
   const updateExecutiveDocument = useModuleStore((s) => s.updateExecutiveDocument)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const workshopActive = useWorkshopStore((s) => isWorkshopActive(s.mode))
   const zoneEmphasis = useMemo(
     () => getBusinessCenterZoneEmphasis(selectedPersona),
     [selectedPersona]
@@ -111,6 +113,25 @@ export function BusinessCenterView() {
   // Active zone — drives both the diagram highlight and which panel is opened
   // by default. Falls back to the persona-derived default below.
   const [activeZone, setActiveZone] = useState<ZoneId | null>(null)
+  const [searchParams] = useSearchParams()
+
+  // ?zone=<id> deep-link (used by the Workshop Video Mode and external links).
+  // Only valid CSWP-39 zone ids are honoured; anything else is ignored.
+  // Resolved synchronously during render so we avoid set-state-in-effect.
+  const zoneFromQuery = useMemo<ZoneId | null>(() => {
+    const requested = searchParams.get('zone')
+    if (!requested) return null
+    return CSWP39_ZONE_ORDER.includes(requested as ZoneId) ? (requested as ZoneId) : null
+  }, [searchParams])
+
+  useEffect(() => {
+    if (!zoneFromQuery) return
+    const target = document.getElementById(`zone-${zoneFromQuery}`)
+    if (target) {
+      window.history.replaceState(null, '', `#zone-${zoneFromQuery}`)
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [zoneFromQuery])
 
   // Legacy hash redirects. Keeps old inbound URLs from CSWP39StepBadge / Report
   // nav (#step-govern), and from the previous §3-§6 iteration (#section-strategic),
@@ -237,7 +258,8 @@ export function BusinessCenterView() {
     zoneEmphasis.featuredArtifacts
   ).flatMap((arr) => arr ?? [])
   // Default the diagram + first-open panel to the persona's preferred zone.
-  const effectiveActiveZone = activeZone ?? zoneEmphasis.defaultActiveZone
+  // ?zone=<id> wins over user click (which wins over persona default).
+  const effectiveActiveZone = zoneFromQuery ?? activeZone ?? zoneEmphasis.defaultActiveZone
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6" data-testid="bc-dashboard-ready">
@@ -296,8 +318,10 @@ export function BusinessCenterView() {
         </div>
       )}
 
-      {/* Page-level empty state */}
-      {metrics.isFullyEmpty ? (
+      {/* Page-level empty state — bypassed when a workshop is active so the
+           cue tour can target zone panels + artifact placeholders even when
+           the user hasn't yet completed an assessment. */}
+      {metrics.isFullyEmpty && !workshopActive ? (
         <WelcomeState />
       ) : (
         <div className="space-y-6">

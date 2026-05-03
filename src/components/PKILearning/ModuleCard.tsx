@@ -62,11 +62,12 @@ export const ModuleCard = ({
   return (
     <motion.article
       layout
+      data-workshop-target={`learn-module-${module.id}`}
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: isAboveLevel && status !== 'completed' ? 0.4 : 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.9 }}
       transition={{ duration: 0.2 }}
-      className="glass-panel p-6 flex flex-col h-full transition-colors hover:border-secondary/50 cursor-pointer"
+      className="glass-panel p-6 flex flex-col h-full transition-colors hover:border-secondary/50 cursor-pointer scroll-mt-20"
       onClick={() => onSelectModule(module.id)}
     >
       <div className="flex items-start justify-between mb-4">

@@ -32,6 +32,7 @@ import {
 import { hsm_bip32MasterDerive, hsm_bip32ChildDerive } from '@/wasm/softhsm/classical'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { HDWalletFlowDiagram } from '../components/CryptoFlowDiagram'
+import { AlertTriangle } from 'lucide-react'
 
 function derivePathWasm(
   M: SoftHSMModule,
@@ -288,7 +289,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         description: HARDENED_DERIVATION.description,
         code: `// BIP32 child key derivation\n// Hardened (i' = i + 2³¹): uses parent PRIVATE key\nHMAC-SHA512(key=chainCode, data=0x00 || privKey || i+0x80000000)\n// → child private key + child chain code\n\n// Non-Hardened (i): uses parent PUBLIC key\nHMAC-SHA512(key=chainCode, data=pubKey || i)\n// → child private key + child chain code\n// WARNING: If child privKey leaks → parent privKey recoverable!\n\n// Ed25519 (SLIP-0010): HARDENED ONLY\n// Non-hardened derivation is undefined → CKR_MECHANISM_PARAM_INVALID`,
         language: 'javascript',
-        actionLabel: 'Run KAT',
+        actionLabel: 'Demonstrate Derivation',
       },
       {
         id: 'derive',
@@ -298,7 +299,12 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         code: `// Bitcoin (BIP32 / secp256k1)\nconst btcKey = HDKey.fromMasterSeed(seed).derive("${DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.BITCOIN}");\n\n// Ethereum (BIP32 / secp256k1, same master)\nconst ethKey = HDKey.fromMasterSeed(seed).derive("${DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.ETHEREUM}");\n\n// Solana (SLIP-0010 / Ed25519, all-hardened)\nconst solKey = deriveSLIP0010(seed, "${DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.SOLANA}");`,
         language: 'javascript',
         actionLabel: 'Derive Accounts',
-        diagram: <HDWalletFlowDiagram />,
+        diagram:
+          derivedLeaves.length > 0 ? (
+            <KeyDerivationTree leaves={derivedLeaves} />
+          ) : (
+            <HDWalletFlowDiagram />
+          ),
       },
       {
         id: 'quantum',
@@ -360,7 +366,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         ],
       },
     ],
-    []
+    [derivedLeaves]
   )
 
   const executeStep = async () => {
@@ -556,6 +562,9 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
           generatedAt: new Date().toISOString(),
         })
 
+        hsm.addStepLog(
+          'Step 4x: C_GetAttributeValue — extracted BTC private bytes to JS for address derivation'
+        )
         const btcPriv = hsm_extractKeyValue(M, hSession, btcLeafHandle)
         const btcPub = secp256k1.getPublicKey(btcPriv, true)
         const btcHash160 = ripemd160(sha256(btcPub))
@@ -580,6 +589,9 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
           generatedAt: new Date().toISOString(),
         })
 
+        hsm.addStepLog(
+          'Step 4x: C_GetAttributeValue — extracted ETH private bytes to JS for address derivation'
+        )
         const ethPriv = hsm_extractKeyValue(M, hSession, ethLeafHandle)
         const ethPubKey = secp256k1.getPublicKey(ethPriv, false).slice(1)
         const ethAddrWasm = toChecksumAddress(bytesToHex(keccak_256(ethPubKey).slice(-20)))
@@ -605,6 +617,9 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
           generatedAt: new Date().toISOString(),
         })
 
+        hsm.addStepLog(
+          'Step 4x: C_GetAttributeValue — extracted SOL private bytes to JS for address derivation'
+        )
         const solPriv = hsm_extractKeyValue(M, hSession, solLeafHandle)
         const solAddrWasm = base58.encode(ed25519.getPublicKey(solPriv))
         hsmOutput += `Solana\nPath: ${solPath}\nHandle: ${solLeafHandle}\nAddress: ${solAddrWasm}`
@@ -689,6 +704,16 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
     onBack,
   })
 
+  const gatedHandleNext = React.useCallback(() => {
+    if (!wizard.isStepComplete) {
+      wizard.setError(
+        `Complete this step first — click "${steps[wizard.currentStep]?.actionLabel ?? 'Execute'}" before advancing.`
+      )
+      return
+    }
+    wizard.handleNext()
+  }, [wizard, steps])
+
   return (
     <div className="flex flex-col h-full relative">
       <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-muted/10 mb-6 rounded-t-xl">
@@ -706,12 +731,51 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         isExecuting={wizard.isExecuting}
         error={wizard.error}
         isStepComplete={wizard.isStepComplete}
-        onNext={wizard.handleNext}
+        onNext={gatedHandleNext}
         onBack={wizard.handleBack}
         onComplete={onBack}
       />
 
-      <KeyDerivationTree leaves={derivedLeaves} />
+      {wizard.currentStep === 0 && wizard.isStepComplete && mnemonic && (
+        <div className="mt-4 glass-panel p-4 rounded-xl border border-border">
+          <p className="text-xs text-muted-foreground mb-2">BIP-39 Mnemonic (24 words):</p>
+          <div className="grid grid-cols-4 gap-2">
+            {mnemonic.split(' ').map((word, i) => (
+              <div key={i} className="flex items-center gap-1.5 rounded bg-muted/40 px-2 py-1">
+                <span className="text-[10px] text-muted-foreground font-mono w-4 shrink-0">
+                  {i + 1}.
+                </span>
+                <span className="text-xs font-mono text-foreground font-semibold">{word}</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-[10px] text-muted-foreground mt-2">
+            Word 24 includes checksum bits. Each word encodes 11 bits from the entropy.
+          </p>
+        </div>
+      )}
+
+      {wizard.currentStep === 3 && wizard.isStepComplete && hsm.isReady && (
+        <div className="mt-4 flex items-start gap-1.5 rounded border border-warning/20 bg-warning/5 px-3 py-2 text-xs text-muted-foreground">
+          <AlertTriangle size={14} className="mt-0.5 shrink-0 text-status-warning" />
+          <span>
+            <strong>Note:</strong> Private key material was extracted from the HSM into JavaScript
+            to derive multi-chain public keys and addresses. In a production HSM, this would not be
+            permitted on non-extractable keys.
+          </span>
+        </div>
+      )}
+
+      {derivedLeaves.length > 0 && wizard.currentStep > 3 && (
+        <details className="mt-4 glass-panel border border-border p-3 rounded-xl">
+          <summary className="text-xs font-medium text-foreground cursor-pointer hover:text-primary transition-colors">
+            Show derivation tree from Step 4
+          </summary>
+          <div className="mt-3">
+            <KeyDerivationTree leaves={derivedLeaves} />
+          </div>
+        </details>
+      )}
 
       {hsm.isReady && (
         <Pkcs11LogPanel

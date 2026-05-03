@@ -14,6 +14,7 @@ export function CollapsibleSection({
   className,
   headerExtra,
   id,
+  targetId,
 }: {
   title: string
   icon: React.ReactNode
@@ -23,6 +24,12 @@ export function CollapsibleSection({
   className?: string
   headerExtra?: React.ReactNode
   id?: string
+  /**
+   * Stable workshop selector slug. When provided, the toggle button gets
+   * `data-workshop-target="section-<targetId>"` so workshop cues
+   * (`expand-section` / `collapse-section`) can target it reliably.
+   */
+  targetId?: string
 }) {
   const [open, setOpen] = useState(defaultOpen)
   const contentId = useId()
@@ -48,6 +55,7 @@ export function CollapsibleSection({
           aria-expanded={open}
           aria-controls={contentId}
           aria-label={title}
+          {...(targetId ? { 'data-workshop-target': `section-${targetId}` } : {})}
         >
           <div className="flex items-center gap-2 font-semibold text-foreground">
             {icon}

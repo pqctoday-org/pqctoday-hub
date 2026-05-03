@@ -1990,8 +1990,6 @@ export const FirmwareSigningMigrator: React.FC = () => {
         currentStepIndex={wizardStep}
         onNext={handleWizardNext}
         onBack={handleWizardBack}
-        onComplete={() => setWizardOutput('Migration walkthrough complete.')}
-        completeLabel="Complete"
         onExecute={executeCurrentStep}
         isExecuting={isWizardExecuting}
         output={wizardOutput}

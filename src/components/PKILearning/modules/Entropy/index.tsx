@@ -239,6 +239,7 @@ export const EntropyModule: React.FC = () => {
                 variant="outline"
                 onClick={() => handlePartChange(Math.max(0, currentPart - 1))}
                 disabled={currentPart === 0}
+                data-workshop-target="learn-stepper-prev"
                 className="min-h-[44px]"
               >
                 <ArrowLeft size={16} className="mr-2" />
@@ -248,6 +249,7 @@ export const EntropyModule: React.FC = () => {
                 <Button
                   variant="gradient"
                   onClick={() => markStepComplete(MODULE_ID, PARTS[currentPart].id)}
+                  data-workshop-target="learn-stepper-complete"
                   className="min-h-[44px]"
                 >
                   <Check size={16} className="mr-2" />
@@ -257,6 +259,7 @@ export const EntropyModule: React.FC = () => {
                 <Button
                   variant="gradient"
                   onClick={() => handlePartChange(currentPart + 1)}
+                  data-workshop-target="learn-stepper-next"
                   className="min-h-[44px]"
                 >
                   Next Step

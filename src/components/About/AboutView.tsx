@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import React from 'react'
 import { ReleaseNotesSection } from './sections/ReleaseNotesSection'
 import { VisionSection } from './sections/VisionSection'
 import { TransparencySection } from './sections/TransparencySection'
@@ -20,21 +21,73 @@ export function AboutView() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 md:space-y-8">
-      <ReleaseNotesSection />
-      <VisionSection />
-      <TransparencySection />
+      <AboutSection slug="release-notes">
+        <ReleaseNotesSection />
+      </AboutSection>
+      <AboutSection slug="vision">
+        <VisionSection />
+      </AboutSection>
+      <AboutSection slug="transparency">
+        <TransparencySection />
+      </AboutSection>
       {/* Cloud sync, community, embedding docs, and appearance are standalone-only */}
-      {!isEmbedded && <CloudSyncPrivacySection />}
-      {!isEmbedded && <CommunitySection />}
-      <DataFoundationSection />
-      <SbomSection />
-      <SecurityAuditSection />
-      <DataPrivacySection />
-      {!isEmbedded && <EnterpriseSection />}
-      <LicenseSection />
-      <RagAiSection />
-      {!isEmbedded && <CryptoBuffSection />}
-      {!isEmbedded && <AppearanceSection />}
+      {!isEmbedded && (
+        <AboutSection slug="cloud-sync">
+          <CloudSyncPrivacySection />
+        </AboutSection>
+      )}
+      {!isEmbedded && (
+        <AboutSection slug="community">
+          <CommunitySection />
+        </AboutSection>
+      )}
+      <AboutSection slug="data-foundation">
+        <DataFoundationSection />
+      </AboutSection>
+      <AboutSection slug="sbom">
+        <SbomSection />
+      </AboutSection>
+      <AboutSection slug="security-audit">
+        <SecurityAuditSection />
+      </AboutSection>
+      <AboutSection slug="data-privacy">
+        <DataPrivacySection />
+      </AboutSection>
+      {!isEmbedded && (
+        <AboutSection slug="enterprise">
+          <EnterpriseSection />
+        </AboutSection>
+      )}
+      <AboutSection slug="license">
+        <LicenseSection />
+      </AboutSection>
+      <AboutSection slug="rag-ai">
+        <RagAiSection />
+      </AboutSection>
+      {!isEmbedded && (
+        <AboutSection slug="cryptobuff">
+          <CryptoBuffSection />
+        </AboutSection>
+      )}
+      {!isEmbedded && (
+        <AboutSection slug="appearance">
+          <AppearanceSection />
+        </AboutSection>
+      )}
     </div>
   )
 }
+
+/**
+ * Wrapper that gives each /about section a stable HTML anchor (`id="about-{slug}"`)
+ * and a workshop selector (`data-workshop-target="section-{slug}"`). Workshop cues
+ * use `scroll-to` + `spotlight` to walk a viewer through the about page.
+ */
+const AboutSection: React.FC<{ slug: string; children: React.ReactNode }> = ({
+  slug,
+  children,
+}) => (
+  <div id={`about-${slug}`} data-workshop-target={`section-${slug}`} className="scroll-mt-20">
+    {children}
+  </div>
+)

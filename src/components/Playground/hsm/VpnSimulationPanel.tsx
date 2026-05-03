@@ -2,6 +2,8 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback, useMemo } from 'react'
 import {
+  Info,
+  X,
   ArrowRight,
   ArrowLeft,
   RotateCcw,
@@ -11,6 +13,7 @@ import {
   KeyRound,
   BookOpen,
   FlaskConical,
+  Loader2,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -27,6 +30,8 @@ import {
   hsm_signBytesMLDSA,
   hsm_initToken,
   hsm_openUserSession,
+  hsm_getKeyAttributes,
+  type KeyAttributeSet,
 } from '@/wasm/softhsm'
 
 import {
@@ -57,8 +62,10 @@ import {
   id_ce_subjectKeyIdentifier,
 } from '@peculiar/asn1-x509'
 import { AsnSerializer, OctetString } from '@peculiar/asn1-schema'
-import { useHsmContext } from './HsmContext'
+import { useHsmContext, type HsmKey } from './HsmContext'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
+import { translateCryptoError } from '@/utils/cryptoErrorHint'
+import { ErrorAlert } from '@/components/ui/error-alert'
 import { Button } from '@/components/ui/button'
 import { ChromiumGateBanner, useChromiumGate } from '@/components/shared/ChromiumGateBanner'
 
@@ -573,7 +580,7 @@ const V2SelftestCard: React.FC = () => {
       const r = await runV2Selftest((e) => setEvents((prev) => [...prev, e]))
       setResult(r)
     } catch (e) {
-      setErr(e instanceof Error ? e.message : String(e))
+      setErr(translateCryptoError(e instanceof Error ? e.message : String(e)))
     } finally {
       setRunning(false)
     }
@@ -596,7 +603,7 @@ const V2SelftestCard: React.FC = () => {
         aliceSecretHex: hex,
       })
     } catch (e) {
-      setErr(e instanceof Error ? e.message : String(e))
+      setErr(translateCryptoError(e instanceof Error ? e.message : String(e)))
     } finally {
       setRunning(false)
     }
@@ -636,7 +643,7 @@ const V2SelftestCard: React.FC = () => {
         </div>
       </div>
 
-      {err && <p className="text-xs text-status-error font-mono">Error: {err}</p>}
+      {err && <ErrorAlert message={err} />}
 
       {result && (
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs font-mono">
@@ -740,6 +747,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     selectedModeRef.current = selectedMode
   }, [selectedMode])
   const [currentStep, setCurrentStep] = useState(0)
+  const [showInstructions, setShowInstructions] = useState(true)
   const [mtu, setMtu] = useState<number>(1500)
   const [allowFragmentation, setAllowFragmentation] = useState<boolean>(true)
   const [ssState, setSsState] = useState<StrongSwanState>('UNINITIALIZED')
@@ -768,6 +776,102 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
 
   const serverSessionRef = React.useRef(0)
   const vpnSlotsRef = React.useRef<{ init: number; resp: number }>({ init: 0, resp: 1 })
+
+  // Attribute resolver for HsmKeyInspector. Two cases:
+  //   • 'main' (or undefined) → key lives in panel rawM. Try the live refs and
+  //     the stored key.sessionHandle in turn — any of them can be stale after a
+  //     Generate Certs / Start Daemon cycle. Always returns a KeyAttributeSet
+  //     (possibly with every field null) so the modal opens with a visible
+  //     diagnostic instead of silently failing.
+  //   • 'worker-init' / 'worker-resp' → key lives in a strongSwan worker's
+  //     statically-linked softhsmv3. Route through strongSwanEngine.pkcs11.
+  const emptyAttrs: KeyAttributeSet = React.useMemo(
+    () => ({
+      ckClass: null,
+      ckKeyType: null,
+      ckParameterSet: null,
+      ckKeyGenMechanism: null,
+      ckToken: null,
+      ckPrivate: null,
+      ckSensitive: null,
+      ckExtractable: null,
+      ckAlwaysSensitive: null,
+      ckNeverExtractable: null,
+      ckLocal: null,
+      ckEncrypt: null,
+      ckDecrypt: null,
+      ckSign: null,
+      ckVerify: null,
+      ckWrap: null,
+      ckUnwrap: null,
+      ckDerive: null,
+      ckEncapsulate: null,
+      ckDecapsulate: null,
+      ckValueLen: null,
+      ckHssKeysRemaining: null,
+      ckXmssKeysRemaining: null,
+      ckCheckValue: null,
+    }),
+    []
+  )
+
+  const isAllNull = React.useCallback(
+    (a: KeyAttributeSet) => a.ckClass === null && a.ckKeyType === null && a.ckToken === null,
+    []
+  )
+
+  const vpnAttrsResolver = React.useCallback(
+    async (key: HsmKey): Promise<KeyAttributeSet | null> => {
+      if (!key.wasmContext || key.wasmContext === 'main') {
+        const M = moduleRef.current
+        if (!M) return emptyAttrs
+        // Build a fallback chain of session handles to try. Stale handles from
+        // a previous Generate Certs run yield CKR_SESSION_HANDLE_INVALID; the
+        // live refs may point to a fresher session opened by the daemon flow.
+        const candidates: number[] = []
+        const liveSlotSession = key.slotId === 1 ? serverSessionRef.current : hSessionRef.current
+        if (liveSlotSession) candidates.push(liveSlotSession)
+        if (key.sessionHandle && !candidates.includes(key.sessionHandle))
+          candidates.push(key.sessionHandle)
+        const otherLive = key.slotId === 1 ? hSessionRef.current : serverSessionRef.current
+        if (otherLive && !candidates.includes(otherLive)) candidates.push(otherLive)
+        for (const hSession of candidates) {
+          try {
+            const a = hsm_getKeyAttributes(M, hSession, key.handle)
+            if (!isAllNull(a)) return a
+          } catch {
+            // try next candidate
+          }
+        }
+        // No candidate produced data — surface the modal anyway with all-null
+        // fields so the user sees a clear "no attributes available" state
+        // instead of a silent no-op.
+        return emptyAttrs
+      }
+      const role = key.wasmContext === 'worker-init' ? 'initiator' : 'responder'
+      const hSess = key.sessionHandle
+      if (!hSess) return emptyAttrs
+      try {
+        const { rv, data } = await strongSwanEngine.pkcs11(role, 'getKeyAttributes', {
+          hSess,
+          hObj: key.handle,
+        })
+        if (rv !== 0) return emptyAttrs
+        const d = data as Record<string, unknown>
+        // ckCheckValue arrives as number[] over postMessage; rehydrate to Uint8Array.
+        const cv = d.ckCheckValue
+        return {
+          ...(d as unknown as KeyAttributeSet),
+          ckCheckValue: Array.isArray(cv) ? new Uint8Array(cv as number[]) : null,
+        }
+      } catch {
+        // Worker terminated or RPC timed out — return empty so the modal still
+        // opens and the user sees the key handle / label rather than nothing.
+        return emptyAttrs
+      }
+    },
+    [moduleRef, hSessionRef, emptyAttrs, isAllNull]
+  )
   // Guards VPN-specific slot init — separate from moduleRef since other panels share that ref.
   const vpnRpcInitRef = React.useRef(false)
   // Set to true when generateCertsViaWorker has spawned workers, provisioned
@@ -1140,8 +1244,14 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       // events now that the worker handles KEM ops locally.
       if (ev.rv !== 0) return
       const slotIdForRole = role === 'initiator' ? 0 : 1
+      const wasmCtx: 'worker-init' | 'worker-resp' =
+        role === 'initiator' ? 'worker-init' : 'worker-resp'
       const ts = new Date().toISOString()
       // CKM_ML_KEM_KEY_PAIR_GEN = 0x0F, CKM_ML_KEM = 0x17 (softhsmv3 vendor).
+      // Trace-captured handles live in the worker's softhsmv3 instance, NOT in
+      // the panel's rawM. Tag with wasmContext so HsmKeyInspector routes attribute
+      // reads through strongSwanEngine.pkcs11(role, 'getKeyAttributes', …) instead
+      // of querying panel WASM (which would return CKR_OBJECT_HANDLE_INVALID).
       if (ev.op === 'C_GenerateKeyPair' && ev.mech === 0x0f) {
         addHsmKey({
           handle: ev.outA,
@@ -1152,6 +1262,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           engine: 'rust',
           generatedAt: ts,
           slotId: slotIdForRole,
+          sessionHandle: ev.sess,
+          wasmContext: wasmCtx,
         })
         addHsmKey({
           handle: ev.outB,
@@ -1162,6 +1274,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           engine: 'rust',
           generatedAt: ts,
           slotId: slotIdForRole,
+          sessionHandle: ev.sess,
+          wasmContext: wasmCtx,
         })
       } else if (ev.op === 'C_EncapsulateKey' && ev.mech === 0x17 && ev.outB) {
         addHsmKey({
@@ -1173,6 +1287,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           engine: 'rust',
           generatedAt: ts,
           slotId: slotIdForRole,
+          sessionHandle: ev.sess,
+          wasmContext: wasmCtx,
         })
       } else if (ev.op === 'C_DecapsulateKey' && ev.mech === 0x17) {
         addHsmKey({
@@ -1184,6 +1300,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           engine: 'rust',
           generatedAt: ts,
           slotId: slotIdForRole,
+          sessionHandle: ev.sess,
+          wasmContext: wasmCtx,
         })
       }
     }
@@ -2719,7 +2837,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         text: `[CERT] Certs signed by softhsmv3 — initiator=${algLabel(initKeys)} responder=${algLabel(respKeys)}. Private keys remain in HSM. Click Start Daemon to begin.`,
       })
     } catch (err: unknown) {
-      setSabError(err instanceof Error ? err.message : String(err))
+      setSabError(translateCryptoError(err instanceof Error ? err.message : String(err)))
     } finally {
       setCertGenLoading(false)
     }
@@ -2943,7 +3061,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         text: `[CERT-WORKER] ML-DSA-${variant} certs provisioned in worker softhsm. Click Start Daemon.`,
       })
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : String(err)
+      const msg = translateCryptoError(err instanceof Error ? err.message : String(err))
       strongSwanEngine.dispatchLog({ level: 'error', text: `[CERT-WORKER] ${msg}` })
       setSabError(msg)
     } finally {
@@ -3049,7 +3167,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
 
       setBenchmarkResults(out)
     } catch (err: unknown) {
-      setSabError(err instanceof Error ? err.message : String(err))
+      setSabError(translateCryptoError(err instanceof Error ? err.message : String(err)))
     } finally {
       setBenchmarkRunning(false)
     }
@@ -3065,7 +3183,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         ])
         setCertInspectorText(res.stdout || 'No output from openssl x509')
       } catch (err: unknown) {
-        setCertInspectorText(err instanceof Error ? err.message : String(err))
+        setCertInspectorText(translateCryptoError(err instanceof Error ? err.message : String(err)))
       }
       setShowCertInspector(true)
     },
@@ -3214,6 +3332,60 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         </div>
       </div>
 
+      <div className="mb-3 flex items-center gap-2">
+        {sabError ? (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-status-error/10 px-2.5 py-0.5 text-xs font-medium text-status-error">
+            <span className="h-1.5 w-1.5 rounded-full bg-status-error" />
+            SharedArrayBuffer unavailable — try Chrome or Firefox
+          </span>
+        ) : ssState === 'UNINITIALIZED' ? (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+            <Loader2 size={10} className="animate-spin" />
+            Loading strongSwan WASM…
+          </span>
+        ) : ssState === 'RUNNING' ? (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-status-success/10 px-2.5 py-0.5 text-xs font-medium text-status-success">
+            <span className="h-1.5 w-1.5 rounded-full bg-status-success" />
+            Daemon running
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-status-success/10 px-2.5 py-0.5 text-xs font-medium text-status-success">
+            <span className="h-1.5 w-1.5 rounded-full bg-status-success" />
+            strongSwan WASM ready
+          </span>
+        )}
+      </div>
+      {showInstructions && (
+        <div className="mb-4 flex items-start gap-3 rounded-lg border border-border bg-muted/50 px-4 py-3">
+          <div className="mt-0.5 shrink-0 text-primary">
+            <Info size={16} />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-foreground">How to run a PQC VPN handshake</p>
+            <ol className="mt-1 list-decimal pl-4 text-sm text-muted-foreground space-y-0.5">
+              <li>Choose a VPN mode (Classical / Hybrid / Pure-PQC)</li>
+              <li>
+                For Dual Cert auth: click <strong>Generate Certs</strong> first
+              </li>
+              <li>
+                Click <strong>Start Daemon</strong> and watch the IKEv2 exchange
+              </li>
+            </ol>
+          </div>
+          <div
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') setShowInstructions(false)
+            }}
+            aria-label="Dismiss instructions"
+            className="ml-auto shrink-0 text-muted-foreground hover:text-foreground"
+            onClick={() => setShowInstructions(false)}
+          >
+            <X size={14} />
+          </div>
+        </div>
+      )}
       <V2SelftestCard />
       <Tabs defaultValue="ui" className="w-full">
         <TabsList className="mb-4">
@@ -3414,7 +3586,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       }
                       await launchFullFidelityVpn()
                     } catch (err: unknown) {
-                      setSavedSessionBanner(err instanceof Error ? err.message : String(err))
+                      setSavedSessionBanner(
+                        translateCryptoError(err instanceof Error ? err.message : String(err))
+                      )
                       setTimeout(() => setSavedSessionBanner(null), 6000)
                     }
                   }}
@@ -3549,7 +3723,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   } catch (err: unknown) {
                     setCharonValidation({
                       running: false,
-                      error: err instanceof Error ? err.message : String(err),
+                      error: translateCryptoError(err instanceof Error ? err.message : String(err)),
                     })
                   }
                 }}
@@ -4127,7 +4301,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     }
                     setCurrentStep(1)
                   } catch (err: unknown) {
-                    setSabError(err instanceof Error ? err.message : String(err))
+                    setSabError(
+                      translateCryptoError(err instanceof Error ? err.message : String(err))
+                    )
                   }
                 }}
                 disabled={
@@ -4655,6 +4831,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       onRemoveKey={removeHsmKey}
                       onClear={clearHsmKeys}
                       title="Client Token (Slot 1)"
+                      attrsResolver={vpnAttrsResolver}
                     />
                   </div>
                   <div className="border border-border/50 rounded-lg p-3 bg-muted/30 text-foreground">
@@ -4759,6 +4936,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       onRemoveKey={removeHsmKey}
                       onClear={clearHsmKeys}
                       title="Server Token (Slot 2)"
+                      attrsResolver={vpnAttrsResolver}
                     />
                   </div>
                   <div className="border border-border/50 rounded-lg p-3 bg-muted/30 text-foreground">
