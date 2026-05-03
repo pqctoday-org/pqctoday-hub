@@ -6,6 +6,114 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Workshop — Increments H–K (May 2-3, 2026)
+
+23 commits since `c9b184b8` covering bug fixes, persona-driven matching, the
+Security Architect flow, caption-driven section auto-scroll, and aggressive
+flow refactoring. Highlights:
+
+#### Increment H — bug-fix wave + artifact-management cues + governance sub-steps
+
+- **URL deep-link fixes** (`/threats?industry=Financial Services / Banking`,
+  `/leaders?country=United States`, `/compliance?country=…`). Old codes like
+  `industry=FIN` and `country=US` were broken; replaced with values that match
+  CSV columns or page-component fallbacks.
+- **Region scoping** — agenda preview computes its own minutes from the picked
+  region's chapters, not the cross-region `flow.totalEstMinutes`.
+- **Collapsibles + click cue retry** — `click` / `expand-section` /
+  `collapse-section` now retry up to 4×200ms when the target selector hasn't
+  rendered yet.
+- **Auto-scroll on navigate** — extends `applyCue` with `nextCues?` parameter;
+  after a `navigate` cue settles (~700ms), auto-scrolls window to top.
+- **Speed picker → Preview vs Presentation modes** — Preview = fixed 5/10/20s
+  per step (captions only, no cue clicks); Presentation = cues fire at authored
+  tMs × multiplier (slow=2x, normal=1x, fast=0.5x). Default is Presentation
+  (store version bumped to v4).
+- **Three new cue kinds**: `generate-artifact`, `view-artifact`, `download-artifact`
+  for the Command Center artifact builders. `ArtifactCard` Eye button + drawer
+  Markdown / PDF export buttons get stable selectors.
+- **6 governance sub-steps** (`a1a-a1f`) replace the single A1 step. Each walks
+  through the artifacts in a CSWP §5 sub-element via `generate-artifact` cues.
+
+#### Increment I — persona-driven flow matching + multi-flow Recommended tab
+
+- **Schema**: `WorkshopStep.when` extends to four-axis (`roles`, `proficiencies`,
+  `industries`, `regions`). `WorkshopFlow.whatToExpect: string[]` added as a
+  required field. Both shipped flows updated.
+- **Loose matching** — `findAllCompatible(manifest, ctx)` returns every flow
+  whose match accepts the persona, sorted most-specific first with the generic
+  fallback last. Null persona facets treated as wildcards.
+- **Manifest hook** exposes `compatibleEntries[]`. WorkshopPanel header is
+  dynamic (no more hardcoded "Executive PQC Workshop" title).
+- **WorkshopPanel** grew an inner per-flow tab bar in Recommended (one tab per
+  compatible flow). Auto-clears `flowOverrideId` on persona context change.
+- **WorkshopPrereqList** rewritten: side-by-side "Your: X / Needs: Y" rows per
+  axis. Mismatch rows show ⚠ + buttons for Switch persona / Pick another flow.
+- **Executive flow widened** to `proficiencies: ['basics', 'expert']`.
+
+#### Increment K — Security Architect flow + caption-driven section auto-scroll
+
+- **New flow** `architect-basics-all-all_05032026.json`:
+  `roles: ['architect']`, `proficiencies: ['basics','expert']`,
+  `industries: '*'`, `regions: '*'`. 26 steps · 75 min · 18 module tours +
+  4 side surfaces (Migrate / Compliance / Threats / Timeline) + close.
+- **Caption-driven section auto-scroll** — when a `caption` cue text matches a
+  visible h1/h2/h3 text on the current page (multi-candidate extraction +
+  scoring), engine smooth-scrolls to the heading. Constrained to `<main>`
+  headings first; falls back to all h1-h3. Author can override with explicit
+  `scroll-to` cue.
+- **14 architect module index files** instrumented with
+  `learn-stepper-{prev,next,complete}` selectors on Workshop-tab PARTS Next/
+  Previous/Complete buttons.
+
+#### Workshop content cleanup (May 3, 2026)
+
+- **Executive flow dedupe + renumber** — dropped redundant Foundations
+  side-surface visits (f3-threats / f4-timeline / f6-leaders), renumbered
+  remaining to f3-library / f4-assess / f5-report. Dropped XX-06-business
+  steps from each region chapter (they overlapped with the action chapter's
+  CSWP zones). 40 → 33 steps, 142 → 125 min.
+- **Generic flow refactor** — consolidated 34 single-caption per-page steps
+  into 19 multi-caption steps (one per page). Added missing core-page steps:
+  Assess, Report, Command Center, Playground, Patents. About-page block
+  reordered to play last in the tour. 34 → 20 min.
+- **About-page captions aligned to real headings** in all 3 flows. Generic
+  `g-16-about` / Executive `close-01-about` / Architect `arch-close-02-about`
+  use literal heading text (`About PQC Today`, `Our founding principles`,
+  `Who this is for`, `The timeline is not optional`, `Data Privacy`,
+  `Security Audit`, `Open Source License`, `Community`) so the engine
+  auto-scrolls section by section.
+- **Timeline + compliance captions aligned to real headings**: g-03-timeline
+  walks 7 country headings (United States → European Union → Canada →
+  Australia → Japan → United Kingdom → G7); g-09-compliance walks 2 H2/H3.
+- **Algorithms scroll-to** — `data-workshop-target="section-algorithm-transition"`
+  and `section-algorithm-detailed` added to AlgorithmsView's TabsContent
+  panels. g-04-algorithms now does select-tab + scroll-to per tab.
+- **Threats scroll-to** — g-05-threats uses existing `threats-card-FIN-001`
+  selector to scroll to a HIGH-severity finance threat as an example.
+
+#### Engine fixes also landed in this batch
+
+- **selectTab** handles "Tools & Products" label / `tools` value mismatch
+  (prefix-substring match) + retries 4×200ms when tabs aren't yet in DOM.
+- **Preview mode skips cues entirely** — was firing clicks before pages
+  rendered, then the safety advance jumped to the next step's URL.
+- **Slow/Fast math fix** — `PRESENTATION_SPEED_MULTIPLIER` was inverted;
+  slow now plays for 2× authored, fast for 0.5×.
+- **No-cue step duration cap** — Presentation mode was waiting full
+  `estMinutes` (e.g. 5 min) for caption-only intro steps. Now capped to
+  `STEP_DURATION_MS[speed] × 3` (~30s normal) when no cues.
+- **Persona region propagates** — workshop's `pickedRegion` now derived from
+  persona store's `selectedRegion` (americas → US, apac → AU, eu → EU) and
+  resets on persona change.
+- **Command Center bypass** — `BusinessCenterView` skips the WelcomeState
+  empty-state when a workshop is active so artifact-create cues find their
+  targets even on a fresh user.
+- **Assess wizard auto-walks** — 12 step files instrumented with
+  `assess-not-sure` and Wizard Next button gets `assess-next` /
+  `assess-submit`. Executive `f7-assess` cue chain clicks Quick mode → 8
+  steps × "I'm not sure" → Generate Report.
+
 ### Added — Executive PQC Workshop (Workshop tab + Workshop Mode + Video Mode)
 
 - **Workshop tab in the right panel** (`WorkshopPanel.tsx`) — sits next to Assistant /
