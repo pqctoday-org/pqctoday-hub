@@ -325,38 +325,43 @@
           "chapter": "foundations",
           "title": "Algorithms — NIST PQC standards",
           "estMinutes": 1,
-          "whyItMatters": "Compare classical vs post-quantum: ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205) and the transition matrix.",
+          "whyItMatters": "Two views: Transition Guide maps classical→PQC; Detailed Comparison shows every algorithm's key sizes, performance, FIPS status.",
           "page": {
             "route": "/algorithms"
           },
-          "tasks": ["Open ML-KEM", "Compare against RSA / ECDH"],
+          "tasks": ["Watch the page switch tabs + scroll into each section"],
           "expectedOutput": "You can name the FIPS number for each new standard.",
-          "narration": "Algorithms is the catalogue of every PQC standard plus the classical schemes they replace. ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205). Each card shows key sizes, performance, and migration notes.",
+          "narration": "Algorithms has two views — Transition Guide for classical→PQC mappings, and Detailed Comparison for per-algorithm specs. ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205).",
           "cues": [
-            {
-              "tMs": 0,
-              "kind": "navigate",
-              "route": "/algorithms"
-            },
+            { "tMs": 0, "kind": "navigate", "route": "/algorithms" },
             {
               "tMs": 2000,
               "kind": "caption",
               "text": "Algorithms — NIST PQC standards + classical comparison."
             },
+            { "tMs": 6000, "kind": "select-tab", "tabName": "Transition Guide" },
+            {
+              "tMs": 8000,
+              "kind": "scroll-to",
+              "selector": "[data-workshop-target=\"section-algorithm-transition\"]"
+            },
             {
               "tMs": 10000,
               "kind": "caption",
-              "text": "ML-KEM (FIPS 203) · ML-DSA (FIPS 204) · SLH-DSA (FIPS 205)."
+              "text": "Transition Guide — what to swap and when."
+            },
+            { "tMs": 18000, "kind": "select-tab", "tabName": "Detailed Comparison" },
+            {
+              "tMs": 20000,
+              "kind": "scroll-to",
+              "selector": "[data-workshop-target=\"section-algorithm-detailed\"]"
             },
             {
-              "tMs": 18000,
+              "tMs": 22000,
               "kind": "caption",
-              "text": "Transition matrix shows what to swap and when."
+              "text": "Detailed Comparison — key sizes, performance, FIPS status."
             },
-            {
-              "tMs": 25000,
-              "kind": "advance"
-            }
+            { "tMs": 30000, "kind": "advance" }
           ]
         },
         {
@@ -372,30 +377,28 @@
           "expectedOutput": "You can name one HIGH-severity threat affecting your stack.",
           "narration": "Threats catalogues every public quantum-related threat by industry. Each row shows severity, affected protocols, and evidence links. Bookmark the ones that affect your stack.",
           "cues": [
-            {
-              "tMs": 0,
-              "kind": "navigate",
-              "route": "/threats"
-            },
+            { "tMs": 0, "kind": "navigate", "route": "/threats" },
             {
               "tMs": 2000,
               "kind": "caption",
-              "text": "Threats — industry-specific catalogue with severity and evidence."
+              "text": "Threats — industry-specific catalogue with severity + evidence."
+            },
+            {
+              "tMs": 8000,
+              "kind": "scroll-to",
+              "selector": "[data-workshop-target=\"threats-card-FIN-001\"]"
             },
             {
               "tMs": 10000,
               "kind": "caption",
-              "text": "Filter by your industry. Open a HIGH-severity row."
+              "text": "FIN-001 — example: a finance HIGH-severity threat."
             },
             {
               "tMs": 18000,
               "kind": "caption",
-              "text": "Bookmark threats that affect your stack for the next planning meeting."
+              "text": "Each row links to evidence + affected protocols. Bookmark for planning."
             },
-            {
-              "tMs": 25000,
-              "kind": "advance"
-            }
+            { "tMs": 25000, "kind": "advance" }
           ]
         },
         {
