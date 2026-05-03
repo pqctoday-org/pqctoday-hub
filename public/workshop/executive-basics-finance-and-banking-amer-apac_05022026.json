@@ -3114,64 +3114,54 @@
         "page": {
           "route": "/about"
         },
-        "tasks": [
-          "Read the Vision section",
-          "Open Security Audit",
-          "Open Data Privacy",
-          "Note the SBOM and License sections"
-        ],
-        "expectedOutput": "Three sections reviewed: Vision, Security Audit, Data Privacy.",
-        "narration": "Before sharing the report, walk your CISO through the About page. Vision establishes intent. Security Audit shows the platform itself is reviewed. Data Privacy explains what stays in the browser and what is sent to the cloud — answer: nothing leaves your browser unless you opt in. SBOM lists every dependency. License shows the terms. Three minutes of trust-building.",
+        "tasks": ["Watch the page scroll through About sections"],
+        "expectedOutput": "You can describe the project trust model: vision, who-it-is-for, privacy, security, license, community.",
+        "narration": "Before sharing the report with your CISO, walk the About page top-to-bottom. The captions below name each section as the page scrolls — vision, founding principles, who it is for, urgency, data privacy, security audit, open source license, and community.",
         "cues": [
           {
-            "tMs": 4000,
-            "kind": "caption",
-            "text": "Three questions your CISO will ask before approving the report."
+            "tMs": 0,
+            "kind": "navigate",
+            "route": "/about"
           },
           {
-            "tMs": 8000,
-            "kind": "scroll-to",
-            "selector": "[data-workshop-target=\"section-vision\"]"
+            "tMs": 2000,
+            "kind": "caption",
+            "text": "About PQC Today"
           },
           {
             "tMs": 12000,
-            "kind": "spotlight",
-            "selector": "[data-workshop-target=\"section-vision\"]"
-          },
-          {
-            "tMs": 16000,
             "kind": "caption",
-            "text": "Vision — establishes intent."
+            "text": "Our founding principles"
           },
           {
-            "tMs": 60000,
-            "kind": "scroll-to",
-            "selector": "[data-workshop-target=\"section-security-audit\"]"
-          },
-          {
-            "tMs": 65000,
-            "kind": "spotlight",
-            "selector": "[data-workshop-target=\"section-security-audit\"]"
-          },
-          {
-            "tMs": 70000,
+            "tMs": 22000,
             "kind": "caption",
-            "text": "Security Audit — the platform itself is reviewed."
+            "text": "Who this is for"
           },
           {
-            "tMs": 120000,
-            "kind": "scroll-to",
-            "selector": "[data-workshop-target=\"section-data-privacy\"]"
-          },
-          {
-            "tMs": 125000,
-            "kind": "spotlight",
-            "selector": "[data-workshop-target=\"section-data-privacy\"]"
-          },
-          {
-            "tMs": 130000,
+            "tMs": 32000,
             "kind": "caption",
-            "text": "Data Privacy — nothing leaves your browser unless you opt in."
+            "text": "The timeline is not optional"
+          },
+          {
+            "tMs": 50000,
+            "kind": "caption",
+            "text": "Data Privacy"
+          },
+          {
+            "tMs": 68000,
+            "kind": "caption",
+            "text": "Security Audit"
+          },
+          {
+            "tMs": 90000,
+            "kind": "caption",
+            "text": "Open Source License"
+          },
+          {
+            "tMs": 110000,
+            "kind": "caption",
+            "text": "Community"
           },
           {
             "tMs": 180000,

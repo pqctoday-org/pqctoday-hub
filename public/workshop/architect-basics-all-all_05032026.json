@@ -13,7 +13,7 @@
     "Stable selectors auto-clicked so each module’s Workshop tab steps execute end-to-end",
     "~70 minutes at normal speed (35 min fast / 140 min slow)"
   ],
-  "totalEstMinutes": 72,
+  "totalEstMinutes": 75,
   "intro": {
     "id": "intro",
     "title": "Welcome",
@@ -2974,7 +2974,7 @@
   "close": {
     "id": "close",
     "title": "Where to go next",
-    "estMinutes": 1,
+    "estMinutes": 4,
     "steps": [
       {
         "id": "arch-close-01-next",
@@ -2991,6 +2991,70 @@
         ],
         "expectedOutput": "Personal architect reading list + one vendor outreach.",
         "narration": "Three concrete next-week actions: bookmark three modules to deep-dive, file a PQC question with one vendor in your stack, and put the next compliance deadline in your audit calendar."
+      },
+      {
+        "id": "arch-close-02-about",
+        "chapter": "close",
+        "title": "About PQC Today — trust + transparency",
+        "estMinutes": 3,
+        "whyItMatters": "Before sharing this workshop with your team, the About page answers the trust questions: who maintains the platform, what data leaves your browser, and what license governs reuse.",
+        "page": {
+          "route": "/about"
+        },
+        "tasks": ["Watch the page scroll through About sections"],
+        "expectedOutput": "You can answer team trust questions: vision, privacy, security, license, community.",
+        "narration": "About is the trust page. The captions below name each section as the page scrolls — vision, founding principles, who it is for, urgency, data privacy, security audit, open source license, and community.",
+        "cues": [
+          {
+            "tMs": 0,
+            "kind": "navigate",
+            "route": "/about"
+          },
+          {
+            "tMs": 2000,
+            "kind": "caption",
+            "text": "About PQC Today"
+          },
+          {
+            "tMs": 12000,
+            "kind": "caption",
+            "text": "Our founding principles"
+          },
+          {
+            "tMs": 22000,
+            "kind": "caption",
+            "text": "Who this is for"
+          },
+          {
+            "tMs": 32000,
+            "kind": "caption",
+            "text": "The timeline is not optional"
+          },
+          {
+            "tMs": 50000,
+            "kind": "caption",
+            "text": "Data Privacy"
+          },
+          {
+            "tMs": 68000,
+            "kind": "caption",
+            "text": "Security Audit"
+          },
+          {
+            "tMs": 90000,
+            "kind": "caption",
+            "text": "Open Source License"
+          },
+          {
+            "tMs": 110000,
+            "kind": "caption",
+            "text": "Community"
+          },
+          {
+            "tMs": 180000,
+            "kind": "advance"
+          }
+        ]
       }
     ]
   }

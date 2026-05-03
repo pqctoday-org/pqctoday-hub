@@ -776,50 +776,26 @@
         {
           "id": "g-16-about",
           "chapter": "foundations",
-          "title": "About — mission, privacy, security, license, community",
+          "title": "About — trust + transparency",
           "estMinutes": 2,
-          "whyItMatters": "About is trust + transparency — mission, no-tracking privacy posture, OWASP security model, GPL-3.0 license, community feed.",
+          "whyItMatters": "About is the trust page. Each caption literally names a section heading so the page auto-scrolls through the page in real time.",
           "page": {
             "route": "/about"
           },
-          "tasks": ["Skim the five sections"],
+          "tasks": ["Watch the page scroll through About sections"],
           "expectedOutput": "You can describe the project trust model.",
-          "narration": "About is the trust page. Mission, privacy posture (no analytics, no tracking, all-local), OWASP security model, GPL-3.0 open-source license, and community feedback feed.",
+          "narration": "About is the trust page. The next minute walks through the page top-to-bottom: project intro, founding principles, who it is for, data privacy, security audit, open source license, and community.",
           "cues": [
-            {
-              "tMs": 0,
-              "kind": "navigate",
-              "route": "/about"
-            },
-            {
-              "tMs": 2000,
-              "kind": "caption",
-              "text": "About — mission · privacy · security · license · community."
-            },
-            {
-              "tMs": 12000,
-              "kind": "caption",
-              "text": "Mission: educate every persona about PQC migration with citable sources."
-            },
-            {
-              "tMs": 24000,
-              "kind": "caption",
-              "text": "Privacy: no analytics, no tracking, no server-side state. Everything local."
-            },
-            {
-              "tMs": 36000,
-              "kind": "caption",
-              "text": "Security: OWASP Top 10 enforced; CSP locked; lockfile committed."
-            },
-            {
-              "tMs": 48000,
-              "kind": "caption",
-              "text": "License: GPL-3.0. Community feed at the bottom of the page."
-            },
-            {
-              "tMs": 60000,
-              "kind": "advance"
-            }
+            { "tMs": 0, "kind": "navigate", "route": "/about" },
+            { "tMs": 2000, "kind": "caption", "text": "About PQC Today" },
+            { "tMs": 11000, "kind": "caption", "text": "Our founding principles" },
+            { "tMs": 20000, "kind": "caption", "text": "Who this is for" },
+            { "tMs": 29000, "kind": "caption", "text": "The timeline is not optional" },
+            { "tMs": 38000, "kind": "caption", "text": "Data Privacy" },
+            { "tMs": 47000, "kind": "caption", "text": "Security Audit" },
+            { "tMs": 56000, "kind": "caption", "text": "Open Source License" },
+            { "tMs": 65000, "kind": "caption", "text": "Community" },
+            { "tMs": 75000, "kind": "advance" }
           ]
         }
       ]
