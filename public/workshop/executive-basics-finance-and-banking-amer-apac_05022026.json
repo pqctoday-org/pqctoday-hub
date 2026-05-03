@@ -1928,7 +1928,10 @@
           "estMinutes": 6,
           "whyItMatters": "The Quick mode generates a personalised risk profile in two minutes. It is the input to your board-ready report and seeds the Command Center artifacts.",
           "page": {
-            "route": "/assess"
+            "route": "/assess",
+            "query": {
+              "mode": "quick"
+            }
           },
           "tasks": [
             "Choose Quick mode (badged for executives)",
