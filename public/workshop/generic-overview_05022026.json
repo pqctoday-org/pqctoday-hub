@@ -299,40 +299,25 @@
         {
           "id": "g-03-timeline",
           "chapter": "foundations",
-          "title": "Timeline — government + industry milestones",
-          "estMinutes": 1,
-          "whyItMatters": "Timeline is the runway: NIST CNSA 2.0, CCCS, ASD, ENISA, BIS — every binding deadline on one rail.",
+          "title": "Timeline — every country's PQC runway",
+          "estMinutes": 2,
+          "whyItMatters": "Timeline is the runway. Each caption below names a country heading on the page so the page auto-scrolls through major jurisdictions in real time.",
           "page": {
             "route": "/timeline"
           },
-          "tasks": ["Filter by your country", "Note the next 12 months of milestones"],
-          "expectedOutput": "You can recite the next 3 milestones for your jurisdiction.",
-          "narration": "Timeline is your migration runway. Every binding government and industry deadline is on a single rail — NIST, CCCS, ASD, ENISA, BIS, G7. Filter by country to scope to your audit calendar.",
+          "tasks": ["Watch the page scroll through major countries"],
+          "expectedOutput": "You see milestones for every major PQC jurisdiction.",
+          "narration": "Timeline is your migration runway. Every country block is its own section — the next 70 seconds walks through the major jurisdictions: United States, European Union, Canada, Australia, Japan, United Kingdom, G7.",
           "cues": [
-            {
-              "tMs": 0,
-              "kind": "navigate",
-              "route": "/timeline"
-            },
-            {
-              "tMs": 2000,
-              "kind": "caption",
-              "text": "Timeline — every binding milestone on one rail."
-            },
-            {
-              "tMs": 10000,
-              "kind": "caption",
-              "text": "NIST CNSA 2.0, CCCS ITSM.40.001, ASD ISM-1917, ENISA, BIS, G7."
-            },
-            {
-              "tMs": 18000,
-              "kind": "caption",
-              "text": "Filter by country to scope to your audit calendar."
-            },
-            {
-              "tMs": 25000,
-              "kind": "advance"
-            }
+            { "tMs": 0, "kind": "navigate", "route": "/timeline" },
+            { "tMs": 2000, "kind": "caption", "text": "United States" },
+            { "tMs": 12000, "kind": "caption", "text": "European Union" },
+            { "tMs": 22000, "kind": "caption", "text": "Canada" },
+            { "tMs": 32000, "kind": "caption", "text": "Australia" },
+            { "tMs": 42000, "kind": "caption", "text": "Japan" },
+            { "tMs": 52000, "kind": "caption", "text": "United Kingdom" },
+            { "tMs": 62000, "kind": "caption", "text": "G7" },
+            { "tMs": 75000, "kind": "advance" }
           ]
         },
         {
@@ -543,25 +528,9 @@
               "kind": "navigate",
               "route": "/compliance"
             },
-            {
-              "tMs": 2000,
-              "kind": "caption",
-              "text": "Compliance — every framework with deadlines and required algorithms."
-            },
-            {
-              "tMs": 10000,
-              "kind": "caption",
-              "text": "Filter by your country to surface what binds your audit cycle."
-            },
-            {
-              "tMs": 18000,
-              "kind": "caption",
-              "text": "Open a framework to see required algorithms and source documents."
-            },
-            {
-              "tMs": 25000,
-              "kind": "advance"
-            }
+            { "tMs": 2000, "kind": "caption", "text": "PQC Compliance Deadlines" },
+            { "tMs": 14000, "kind": "caption", "text": "Standardization Bodies" },
+            { "tMs": 25000, "kind": "advance" }
           ]
         },
         {
