@@ -201,25 +201,77 @@ function scheduleAutoScrollFromNextCues(nextCues?: WorkshopCue[]): void {
 
 function scheduleCaptionAutoScroll(text: string, nextCues?: WorkshopCue[]): void {
   if (nextCues && nextCues.some((c) => c.kind === 'scroll-to')) return
-  let s = text
+  const candidates = extractCaptionSubjects(text)
+  if (candidates.length === 0) return
+  setTimeout(() => {
+    const mainHeadings = Array.from(document.querySelectorAll('main h1, main h2, main h3'))
+    const headings =
+      mainHeadings.length > 0 ? mainHeadings : Array.from(document.querySelectorAll('h1, h2, h3'))
+    let best: { el: HTMLElement; score: number } | null = null
+    for (const wanted of candidates) {
+      const w = wanted
+        .toLowerCase()
+        .replace(/[^a-z0-9 ]+/g, '')
+        .trim()
+      if (w.length < 3) continue
+      for (const h of headings) {
+        if (!(h instanceof HTMLElement)) continue
+        const t = (h.textContent ?? '')
+          .toLowerCase()
+          .replace(/[^a-z0-9 ]+/g, '')
+          .trim()
+        if (!t) continue
+        let score = 0
+        if (t === w) score = 1.0
+        else if (t.startsWith(w + ' ') || t.endsWith(' ' + w)) score = 0.9
+        else if (t.includes(` ${w} `)) score = 0.7
+        else if (t.includes(w) || w.includes(t)) score = 0.5
+        const coverage = w.length / Math.max(t.length, 1)
+        if (score < 1 && coverage < 0.5) continue
+        if (score > 0 && (!best || score > best.score)) {
+          best = { el: h, score }
+        }
+        if (best && best.score >= 0.9) break
+      }
+      if (best && best.score >= 0.9) break
+    }
+    if (best) {
+      best.el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, 400)
+}
+
+function extractCaptionSubjects(text: string): string[] {
+  const out: string[] = []
+  const stripped = text
     .replace(/^(Section|Step|Workshop|Artifact|Module|Tab)\s*\d*\s*\/?\s*\d*\s*:\s*/i, '')
     .replace(/^[—-]\s*/, '')
     .trim()
-  const dashIdx = s.indexOf(' — ')
-  if (dashIdx > 0) s = s.slice(0, dashIdx)
-  s = s.split(/[.!?]/)[0].trim()
-  if (s.length < 3 || s.length > 60 || !/[a-zA-Z]/.test(s)) return
-  setTimeout(() => {
-    const headings = Array.from(document.querySelectorAll('h1, h2, h3'))
-    const wanted = s.toLowerCase().replace(/[^a-z0-9 ]+/g, '')
-    const match = headings.find((h) => {
-      const t = (h.textContent ?? '').toLowerCase().replace(/[^a-z0-9 ]+/g, '')
-      return t.includes(wanted) || wanted.includes(t)
-    })
-    if (match instanceof HTMLElement) {
-      match.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  const colonIdx = stripped.indexOf(':')
+  if (colonIdx > 0 && colonIdx < 40) {
+    const head = stripped.slice(0, colonIdx).trim()
+    if (head.length >= 3 && /[a-zA-Z]/.test(head)) out.push(head)
+  }
+  const dashIdx = stripped.indexOf(' — ')
+  if (dashIdx > 0) {
+    const head = stripped.slice(0, dashIdx).trim()
+    if (head.length >= 3 && /[a-zA-Z]/.test(head)) out.push(head)
+  }
+  let s = stripped.split(/[.!?]/)[0].trim()
+  if (colonIdx > 0 && colonIdx < 40) s = s.slice(colonIdx + 1).trim()
+  if (s.length > 60) s = s.slice(0, 60).trim()
+  if (s.length >= 3 && /[a-zA-Z]/.test(s)) out.push(s)
+  const words = stripped.split(/\s+/).filter(Boolean)
+  for (let n = Math.min(4, words.length); n >= 1; n--) {
+    const phrase = words
+      .slice(0, n)
+      .join(' ')
+      .replace(/[:.,—-]+$/, '')
+    if (phrase.length >= 3 && /[a-zA-Z]/.test(phrase) && !out.includes(phrase)) {
+      out.push(phrase)
     }
-  }, 400)
+  }
+  return out
 }
 
 function scrollToTopAfterContentChange(): void {

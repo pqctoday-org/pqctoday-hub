@@ -206,36 +206,99 @@ function scheduleAutoScrollFromNextCues(nextCues?: WorkshopCue[]): void {
  */
 function scheduleCaptionAutoScroll(text: string, nextCues?: WorkshopCue[]): void {
   if (nextCues && nextCues.some((c) => c.kind === 'scroll-to')) return
-  const subject = extractCaptionSubject(text)
-  if (!subject) return
+  const candidates = extractCaptionSubjects(text)
+  if (candidates.length === 0) return
   setTimeout(() => {
-    const headings = Array.from(document.querySelectorAll('h1, h2, h3'))
-    const wanted = subject.toLowerCase()
-    const match = headings.find((h) => {
-      const t = (h.textContent ?? '').toLowerCase().replace(/[^a-z0-9 ]+/g, '')
-      const w = wanted.replace(/[^a-z0-9 ]+/g, '')
-      return t.includes(w) || w.includes(t)
-    })
-    if (match instanceof HTMLElement) {
-      match.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    // Prefer headings inside <main>; fall back to all visible h1-h3 if none.
+    const mainHeadings = Array.from(document.querySelectorAll('main h1, main h2, main h3'))
+    const headings =
+      mainHeadings.length > 0 ? mainHeadings : Array.from(document.querySelectorAll('h1, h2, h3'))
+
+    let best: { el: HTMLElement; score: number } | null = null
+    for (const wanted of candidates) {
+      const w = wanted
+        .toLowerCase()
+        .replace(/[^a-z0-9 ]+/g, '')
+        .trim()
+      if (w.length < 3) continue
+      for (const h of headings) {
+        if (!(h instanceof HTMLElement)) continue
+        const t = (h.textContent ?? '')
+          .toLowerCase()
+          .replace(/[^a-z0-9 ]+/g, '')
+          .trim()
+        if (!t) continue
+        let score = 0
+        if (t === w) score = 1.0
+        else if (t.startsWith(w + ' ') || t.endsWith(' ' + w)) score = 0.9
+        else if (t.includes(` ${w} `)) score = 0.7
+        else if (t.includes(w) || w.includes(t)) score = 0.5
+        // Require coverage: candidate length / heading length >= 0.5 OR exact-word
+        const coverage = w.length / Math.max(t.length, 1)
+        if (score < 1 && coverage < 0.5) continue
+        if (score > 0 && (!best || score > best.score)) {
+          best = { el: h, score }
+        }
+        if (best && best.score >= 0.9) break
+      }
+      if (best && best.score >= 0.9) break
+    }
+    if (best) {
+      best.el.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
   }, 400)
 }
 
-function extractCaptionSubject(text: string): string | null {
-  // Drop common workshop prefixes
-  let s = text
+/**
+ * Extract a list of candidate "section subjects" from a caption, in priority
+ * order. The matcher tries each candidate against page headings until one hits.
+ *
+ * Examples:
+ *   "Section 2/5: Whats Changing"        → ["Whats Changing"]
+ *   "Mission: educate every persona…"    → ["Mission", "educate every persona…"]
+ *   "PQC 101 — post-quantum cryptography" → ["PQC 101", "PQC 101 — post-quantum cryptography"]
+ *   "Six roles: executive, developer, …"  → ["Six roles"]
+ */
+function extractCaptionSubjects(text: string): string[] {
+  const out: string[] = []
+  // Strip common workshop prefixes
+  const stripped = text
     .replace(/^(Section|Step|Workshop|Artifact|Module|Tab)\s*\d*\s*\/?\s*\d*\s*:\s*/i, '')
     .replace(/^[—-]\s*/, '')
     .trim()
-  // Take only the first sentence / before the dash
-  const dashIdx = s.indexOf(' — ')
-  if (dashIdx > 0) s = s.slice(0, dashIdx)
-  s = s.split(/[.!?]/)[0].trim()
-  // Need at least one alpha char and reasonable length
-  if (s.length < 3 || s.length > 60) return null
-  if (!/[a-zA-Z]/.test(s)) return null
-  return s
+
+  // 1. Prefix before the first ":" — e.g. "Mission" from "Mission: ..."
+  const colonIdx = stripped.indexOf(':')
+  if (colonIdx > 0 && colonIdx < 40) {
+    const head = stripped.slice(0, colonIdx).trim()
+    if (head.length >= 3 && /[a-zA-Z]/.test(head)) out.push(head)
+  }
+
+  // 2. Prefix before " — " (em-dash with spaces) — e.g. "PQC 101"
+  const dashIdx = stripped.indexOf(' — ')
+  if (dashIdx > 0) {
+    const head = stripped.slice(0, dashIdx).trim()
+    if (head.length >= 3 && /[a-zA-Z]/.test(head)) out.push(head)
+  }
+
+  // 3. First sentence (without prefixes) capped to first 60 chars
+  let s = stripped.split(/[.!?]/)[0].trim()
+  if (colonIdx > 0 && colonIdx < 40) s = s.slice(colonIdx + 1).trim()
+  if (s.length > 60) s = s.slice(0, 60).trim()
+  if (s.length >= 3 && /[a-zA-Z]/.test(s)) out.push(s)
+
+  // 4. First N words (1-4) — last-resort fuzzy match
+  const words = stripped.split(/\s+/).filter(Boolean)
+  for (let n = Math.min(4, words.length); n >= 1; n--) {
+    const phrase = words
+      .slice(0, n)
+      .join(' ')
+      .replace(/[:.,—-]+$/, '')
+    if (phrase.length >= 3 && /[a-zA-Z]/.test(phrase) && !out.includes(phrase)) {
+      out.push(phrase)
+    }
+  }
+  return out
 }
 
 /** Same as auto-scroll on navigate but with a shorter delay for in-page content changes. */
