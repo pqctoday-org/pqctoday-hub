@@ -503,7 +503,7 @@ const isValid = hsm_eddsaVerify(
             <div
               tabIndex={0}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') setInvalidateSignature(!invalidateSignature)
+                if (e.key === 'Enter' || e.key === ' ') setSimulateError((v) => !v)
               }}
               role="checkbox"
               aria-checked={simulateError}

@@ -8,7 +8,7 @@ import {
 import { useWorkshopOverlayStore } from '@/store/useWorkshopOverlayStore'
 import { flattenFlow, findStepIndex, getNextStep, getPrevStep } from '@/data/workshopRegistry'
 import { useWorkshopManifest } from '@/hooks/useWorkshopManifest'
-import type { WorkshopStep } from '@/types/Workshop'
+import type { WorkshopStep, WorkshopFixtures } from '@/types/Workshop'
 import { VideoControlBar } from './VideoControlBar'
 
 /**

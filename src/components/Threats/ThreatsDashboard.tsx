@@ -520,7 +520,7 @@ export const ThreatsDashboard: React.FC = () => {
                 id: ind.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
                 label: ind,
                 items: items.map((i) => {
-                  const desc = i.threatDescription ?? ''
+                  const desc = i.description ?? ''
                   const summary = desc.split(':')[0].slice(0, 60)
                   return {
                     id: i.threatId,

@@ -28,7 +28,7 @@ import { Button } from '@/components/ui/button'
 import { ChromiumGateBanner, useChromiumGate } from '@/components/shared/ChromiumGateBanner'
 import { SshComparisonPanel } from './SshComparisonPanel'
 import { SshLearnSection } from './SshLearnSection'
-import { sshEngine, type SshHandshakeResult } from '@/wasm/openssh'
+import { sshEngine, type SshHandshakeResult, type SshWirePacket } from '@/wasm/openssh'
 import type { Pkcs11LogEntry } from '@/wasm/softhsm'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { useHsmContext } from './HsmContext'
@@ -402,7 +402,7 @@ export function SshSimulationPanel() {
   )
 }
 
-const WirePacketLadder: React.FC<{ packets: Record<string, unknown>[] }> = ({ packets }) => (
+const WirePacketLadder: React.FC<{ packets: SshWirePacket[] }> = ({ packets }) => (
   <div className="p-3 space-y-1.5 font-mono text-xs overflow-x-auto">
     <div className="flex justify-between text-[10px] text-muted-foreground mb-3 px-1">
       <span>CLIENT</span>
@@ -434,8 +434,8 @@ const WirePacketLadder: React.FC<{ packets: Record<string, unknown>[] }> = ({ pa
 )
 
 const WirePacketCompare: React.FC<{
-  classical: Record<string, unknown>[]
-  pqc: Record<string, unknown>[]
+  classical: SshWirePacket[]
+  pqc: SshWirePacket[]
 }> = ({ classical, pqc }) => {
   const rows = []
   const maxLen = Math.max(classical.length, pqc.length)
