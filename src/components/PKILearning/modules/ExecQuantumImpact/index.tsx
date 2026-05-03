@@ -336,6 +336,7 @@ export const ExecQuantumImpactModule: React.FC = () => {
                 size="lg"
                 onClick={() => handlePartChange(Math.max(0, currentPart - 1))}
                 disabled={currentPart === 0}
+                data-workshop-target="learn-stepper-prev"
               >
                 &larr; Previous Step
               </Button>
@@ -344,11 +345,16 @@ export const ExecQuantumImpactModule: React.FC = () => {
                   variant="gradient"
                   size="lg"
                   onClick={() => markStepComplete(MODULE_ID, PARTS[currentPart].id)}
+                  data-workshop-target="learn-stepper-complete"
                 >
                   Complete Module
                 </Button>
               ) : (
-                <Button size="lg" onClick={() => handlePartChange(currentPart + 1)}>
+                <Button
+                  size="lg"
+                  onClick={() => handlePartChange(currentPart + 1)}
+                  data-workshop-target="learn-stepper-next"
+                >
                   Next Step &rarr;
                 </Button>
               )}

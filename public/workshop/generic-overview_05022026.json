@@ -161,97 +161,112 @@
               "text": "Section 1/5: Why Pqc"
             },
             {
-              "tMs": 20960,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 23600,
+              "tMs": 16400,
               "kind": "caption",
               "text": "Section 2/5: Whats Changing"
             },
             {
-              "tMs": 38560,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 41200,
+              "tMs": 26800,
               "kind": "caption",
               "text": "Section 3/5: The Timeline"
             },
             {
-              "tMs": 56160,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 58800,
+              "tMs": 37200,
               "kind": "caption",
               "text": "Section 4/5: Who Acts"
             },
             {
-              "tMs": 73760,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 76400,
+              "tMs": 47600,
               "kind": "caption",
               "text": "Section 5/5: Next Steps"
             },
             {
-              "tMs": 95000,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-complete\"]"
-            },
-            {
-              "tMs": 96000,
-              "kind": "select-tab",
-              "tabName": "Visual"
-            },
-            {
-              "tMs": 97500,
-              "kind": "caption",
-              "text": "Visual tab — diagrams and animations for this topic."
-            },
-            {
-              "tMs": 113000,
+              "tMs": 58000,
               "kind": "select-tab",
               "tabName": "Workshop"
             },
             {
-              "tMs": 114500,
+              "tMs": 59500,
               "kind": "caption",
-              "text": "Workshop tab — hands-on, in-browser crypto demos."
+              "text": "Workshop 1/5: Why Pqc"
             },
             {
-              "tMs": 130000,
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Workshop 2/5: Whats Changing"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Workshop 3/5: The Timeline"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Workshop 4/5: Who Acts"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Workshop 5/5: Next Steps"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
               "kind": "select-tab",
               "tabName": "Exercises"
             },
             {
-              "tMs": 131500,
+              "tMs": 130250,
               "kind": "caption",
               "text": "Exercises — short knowledge checks to confirm you got it."
             },
             {
-              "tMs": 147000,
+              "tMs": 145500,
               "kind": "select-tab",
               "tabName": "References"
             },
             {
-              "tMs": 148500,
+              "tMs": 147000,
               "kind": "caption",
               "text": "References — primary sources every claim is cited from."
             },
             {
-              "tMs": 164000,
+              "tMs": 162250,
               "kind": "select-tab",
               "tabName": "Tools & Products"
             },
             {
-              "tMs": 165500,
+              "tMs": 163750,
               "kind": "caption",
               "text": "Tools & Products — vendor tooling and PQC-ready software."
             },

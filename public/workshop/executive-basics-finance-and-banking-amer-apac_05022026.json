@@ -168,62 +168,82 @@
               "text": "Section 1/3: Why It Matters"
             },
             {
-              "tMs": 35333,
+              "tMs": 23333,
               "kind": "caption",
               "text": "Section 2/3: What To Learn"
             },
             {
-              "tMs": 64666,
+              "tMs": 40666,
               "kind": "caption",
               "text": "Section 3/3: How To Act"
             },
             {
-              "tMs": 96000,
-              "kind": "select-tab",
-              "tabName": "Visual"
-            },
-            {
-              "tMs": 97500,
-              "kind": "caption",
-              "text": "Visual tab — diagrams and animations for this topic."
-            },
-            {
-              "tMs": 113000,
+              "tMs": 57999,
               "kind": "select-tab",
               "tabName": "Workshop"
             },
             {
-              "tMs": 114500,
+              "tMs": 59499,
               "kind": "caption",
-              "text": "Workshop tab — hands-on, in-browser crypto demos."
+              "text": "Workshop 1/3: Why It Matters"
             },
             {
-              "tMs": 130000,
+              "tMs": 74232,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 76832,
+              "kind": "caption",
+              "text": "Workshop 2/3: What To Learn"
+            },
+            {
+              "tMs": 91565,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 94165,
+              "kind": "caption",
+              "text": "Workshop 3/3: How To Act"
+            },
+            {
+              "tMs": 111999,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113499,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128749,
               "kind": "select-tab",
               "tabName": "Exercises"
             },
             {
-              "tMs": 131500,
+              "tMs": 130249,
               "kind": "caption",
               "text": "Exercises — short knowledge checks to confirm you got it."
             },
             {
-              "tMs": 147000,
+              "tMs": 145499,
               "kind": "select-tab",
               "tabName": "References"
             },
             {
-              "tMs": 148500,
+              "tMs": 146999,
               "kind": "caption",
               "text": "References — primary sources every claim is cited from."
             },
             {
-              "tMs": 164000,
+              "tMs": 162249,
               "kind": "select-tab",
               "tabName": "Tools & Products"
             },
             {
-              "tMs": 165500,
+              "tMs": 163749,
               "kind": "caption",
               "text": "Tools & Products — vendor tooling and PQC-ready software."
             },
@@ -264,32 +284,127 @@
             {
               "tMs": 1500,
               "kind": "caption",
-              "text": "PQC 101 — post-quantum cryptography in 5 minutes — what it is and why your bank cares"
+              "text": "PQC 101 — post-quantum cryptography in plain language - what it is, why your org cares"
             },
             {
-              "tMs": 5000,
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 6000,
               "kind": "caption",
-              "text": "Section 1/5: Quantum Threat"
+              "text": "Section 1/5: Why Pqc"
             },
             {
-              "tMs": 39800,
+              "tMs": 16400,
               "kind": "caption",
-              "text": "Section 2/5: Algorithms"
+              "text": "Section 2/5: Whats Changing"
             },
             {
-              "tMs": 74600,
+              "tMs": 26800,
               "kind": "caption",
-              "text": "Section 3/5: Timeline"
+              "text": "Section 3/5: The Timeline"
             },
             {
-              "tMs": 109400,
+              "tMs": 37200,
               "kind": "caption",
-              "text": "Section 4/5: Readiness"
+              "text": "Section 4/5: Who Acts"
             },
             {
-              "tMs": 144200,
+              "tMs": 47600,
               "kind": "caption",
               "text": "Section 5/5: Next Steps"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Workshop 1/5: Why Pqc"
+            },
+            {
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Workshop 2/5: Whats Changing"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Workshop 3/5: The Timeline"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Workshop 4/5: Who Acts"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Workshop 5/5: Next Steps"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
             },
             {
               "tMs": 180000,
@@ -328,7 +443,7 @@
             {
               "tMs": 1500,
               "kind": "caption",
-              "text": "Quantum Threats — Shor, Grover, CRQC, HNDL — the four threats your CISO will quote at you"
+              "text": "Quantum Threats — Shor, Grover, CRQC, HNDL — the four threats your CISO will quote"
             },
             {
               "tMs": 4000,
@@ -341,72 +456,112 @@
               "text": "Section 1/5: Shor"
             },
             {
-              "tMs": 23600,
+              "tMs": 16400,
               "kind": "caption",
               "text": "Section 2/5: Grover"
             },
             {
-              "tMs": 41200,
+              "tMs": 26800,
               "kind": "caption",
               "text": "Section 3/5: Crqc"
             },
             {
-              "tMs": 58800,
+              "tMs": 37200,
               "kind": "caption",
               "text": "Section 4/5: Hndl"
             },
             {
-              "tMs": 76400,
+              "tMs": 47600,
               "kind": "caption",
               "text": "Section 5/5: Security Levels"
             },
             {
-              "tMs": 96000,
-              "kind": "select-tab",
-              "tabName": "Visual"
-            },
-            {
-              "tMs": 97500,
-              "kind": "caption",
-              "text": "Visual tab — diagrams and animations for this topic."
-            },
-            {
-              "tMs": 113000,
+              "tMs": 58000,
               "kind": "select-tab",
               "tabName": "Workshop"
             },
             {
-              "tMs": 114500,
+              "tMs": 59500,
               "kind": "caption",
-              "text": "Workshop tab — hands-on, in-browser crypto demos."
+              "text": "Workshop 1/5: Shor"
             },
             {
-              "tMs": 130000,
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Workshop 2/5: Grover"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Workshop 3/5: Crqc"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Workshop 4/5: Hndl"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Workshop 5/5: Security Levels"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
               "kind": "select-tab",
               "tabName": "Exercises"
             },
             {
-              "tMs": 131500,
+              "tMs": 130250,
               "kind": "caption",
               "text": "Exercises — short knowledge checks to confirm you got it."
             },
             {
-              "tMs": 147000,
+              "tMs": 145500,
               "kind": "select-tab",
               "tabName": "References"
             },
             {
-              "tMs": 148500,
+              "tMs": 147000,
               "kind": "caption",
               "text": "References — primary sources every claim is cited from."
             },
             {
-              "tMs": 164000,
+              "tMs": 162250,
               "kind": "select-tab",
               "tabName": "Tools & Products"
             },
             {
-              "tMs": 165500,
+              "tMs": 163750,
               "kind": "caption",
               "text": "Tools & Products — vendor tooling and PQC-ready software."
             },
@@ -460,72 +615,112 @@
               "text": "Section 1/5: Entropy"
             },
             {
-              "tMs": 23600,
+              "tMs": 16400,
               "kind": "caption",
               "text": "Section 2/5: Drbg"
             },
             {
-              "tMs": 41200,
+              "tMs": 26800,
               "kind": "caption",
               "text": "Section 3/5: Testing"
             },
             {
-              "tMs": 58800,
+              "tMs": 37200,
               "kind": "caption",
               "text": "Section 4/5: Qrng"
             },
             {
-              "tMs": 76400,
+              "tMs": 47600,
               "kind": "caption",
               "text": "Section 5/5: Combining"
             },
             {
-              "tMs": 96000,
-              "kind": "select-tab",
-              "tabName": "Visual"
-            },
-            {
-              "tMs": 97500,
-              "kind": "caption",
-              "text": "Visual tab — diagrams and animations for this topic."
-            },
-            {
-              "tMs": 113000,
+              "tMs": 58000,
               "kind": "select-tab",
               "tabName": "Workshop"
             },
             {
-              "tMs": 114500,
+              "tMs": 59500,
               "kind": "caption",
-              "text": "Workshop tab — hands-on, in-browser crypto demos."
+              "text": "Workshop 1/5: Entropy"
             },
             {
-              "tMs": 130000,
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Workshop 2/5: Drbg"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Workshop 3/5: Testing"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Workshop 4/5: Qrng"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Workshop 5/5: Combining"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
               "kind": "select-tab",
               "tabName": "Exercises"
             },
             {
-              "tMs": 131500,
+              "tMs": 130250,
               "kind": "caption",
               "text": "Exercises — short knowledge checks to confirm you got it."
             },
             {
-              "tMs": 147000,
+              "tMs": 145500,
               "kind": "select-tab",
               "tabName": "References"
             },
             {
-              "tMs": 148500,
+              "tMs": 147000,
               "kind": "caption",
               "text": "References — primary sources every claim is cited from."
             },
             {
-              "tMs": 164000,
+              "tMs": 162250,
               "kind": "select-tab",
               "tabName": "Tools & Products"
             },
             {
-              "tMs": 165500,
+              "tMs": 163750,
               "kind": "caption",
               "text": "Tools & Products — vendor tooling and PQC-ready software."
             },
@@ -579,62 +774,82 @@
               "text": "Section 1/3: Crqc"
             },
             {
-              "tMs": 35333,
+              "tMs": 23333,
               "kind": "caption",
               "text": "Section 2/3: Register"
             },
             {
-              "tMs": 64666,
+              "tMs": 40666,
               "kind": "caption",
               "text": "Section 3/3: Heatmap"
             },
             {
-              "tMs": 96000,
-              "kind": "select-tab",
-              "tabName": "Visual"
-            },
-            {
-              "tMs": 97500,
-              "kind": "caption",
-              "text": "Visual tab — diagrams and animations for this topic."
-            },
-            {
-              "tMs": 113000,
+              "tMs": 57999,
               "kind": "select-tab",
               "tabName": "Workshop"
             },
             {
-              "tMs": 114500,
+              "tMs": 59499,
               "kind": "caption",
-              "text": "Workshop tab — hands-on, in-browser crypto demos."
+              "text": "Workshop 1/3: Crqc"
             },
             {
-              "tMs": 130000,
+              "tMs": 74232,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 76832,
+              "kind": "caption",
+              "text": "Workshop 2/3: Register"
+            },
+            {
+              "tMs": 91565,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 94165,
+              "kind": "caption",
+              "text": "Workshop 3/3: Heatmap"
+            },
+            {
+              "tMs": 111999,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113499,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128749,
               "kind": "select-tab",
               "tabName": "Exercises"
             },
             {
-              "tMs": 131500,
+              "tMs": 130249,
               "kind": "caption",
               "text": "Exercises — short knowledge checks to confirm you got it."
             },
             {
-              "tMs": 147000,
+              "tMs": 145499,
               "kind": "select-tab",
               "tabName": "References"
             },
             {
-              "tMs": 148500,
+              "tMs": 146999,
               "kind": "caption",
               "text": "References — primary sources every claim is cited from."
             },
             {
-              "tMs": 164000,
+              "tMs": 162249,
               "kind": "select-tab",
               "tabName": "Tools & Products"
             },
             {
-              "tMs": 165500,
+              "tMs": 163749,
               "kind": "caption",
               "text": "Tools & Products — vendor tooling and PQC-ready software."
             },
@@ -688,77 +903,82 @@
               "text": "Section 1/3: Frameworks"
             },
             {
-              "tMs": 30933,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 35333,
+              "tMs": 23333,
               "kind": "caption",
               "text": "Section 2/3: Jurisdiction"
             },
             {
-              "tMs": 60266,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 64666,
+              "tMs": 40666,
               "kind": "caption",
               "text": "Section 3/3: Audit"
             },
             {
-              "tMs": 95000,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-complete\"]"
-            },
-            {
-              "tMs": 96000,
-              "kind": "select-tab",
-              "tabName": "Visual"
-            },
-            {
-              "tMs": 97500,
-              "kind": "caption",
-              "text": "Visual tab — diagrams and animations for this topic."
-            },
-            {
-              "tMs": 113000,
+              "tMs": 57999,
               "kind": "select-tab",
               "tabName": "Workshop"
             },
             {
-              "tMs": 114500,
+              "tMs": 59499,
               "kind": "caption",
-              "text": "Workshop tab — hands-on, in-browser crypto demos."
+              "text": "Workshop 1/3: Frameworks"
             },
             {
-              "tMs": 130000,
+              "tMs": 74232,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 76832,
+              "kind": "caption",
+              "text": "Workshop 2/3: Jurisdiction"
+            },
+            {
+              "tMs": 91565,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 94165,
+              "kind": "caption",
+              "text": "Workshop 3/3: Audit"
+            },
+            {
+              "tMs": 111999,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113499,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128749,
               "kind": "select-tab",
               "tabName": "Exercises"
             },
             {
-              "tMs": 131500,
+              "tMs": 130249,
               "kind": "caption",
               "text": "Exercises — short knowledge checks to confirm you got it."
             },
             {
-              "tMs": 147000,
+              "tMs": 145499,
               "kind": "select-tab",
               "tabName": "References"
             },
             {
-              "tMs": 148500,
+              "tMs": 146999,
               "kind": "caption",
               "text": "References — primary sources every claim is cited from."
             },
             {
-              "tMs": 164000,
+              "tMs": 162249,
               "kind": "select-tab",
               "tabName": "Tools & Products"
             },
             {
-              "tMs": 165500,
+              "tMs": 163749,
               "kind": "caption",
               "text": "Tools & Products — vendor tooling and PQC-ready software."
             },
@@ -812,77 +1032,82 @@
               "text": "Section 1/3: Roi"
             },
             {
-              "tMs": 30933,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 35333,
+              "tMs": 23333,
               "kind": "caption",
               "text": "Section 2/3: Breach"
             },
             {
-              "tMs": 60266,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 64666,
+              "tMs": 40666,
               "kind": "caption",
               "text": "Section 3/3: Board"
             },
             {
-              "tMs": 95000,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-complete\"]"
-            },
-            {
-              "tMs": 96000,
-              "kind": "select-tab",
-              "tabName": "Visual"
-            },
-            {
-              "tMs": 97500,
-              "kind": "caption",
-              "text": "Visual tab — diagrams and animations for this topic."
-            },
-            {
-              "tMs": 113000,
+              "tMs": 57999,
               "kind": "select-tab",
               "tabName": "Workshop"
             },
             {
-              "tMs": 114500,
+              "tMs": 59499,
               "kind": "caption",
-              "text": "Workshop tab — hands-on, in-browser crypto demos."
+              "text": "Workshop 1/3: Roi"
             },
             {
-              "tMs": 130000,
+              "tMs": 74232,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 76832,
+              "kind": "caption",
+              "text": "Workshop 2/3: Breach"
+            },
+            {
+              "tMs": 91565,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 94165,
+              "kind": "caption",
+              "text": "Workshop 3/3: Board"
+            },
+            {
+              "tMs": 111999,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113499,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128749,
               "kind": "select-tab",
               "tabName": "Exercises"
             },
             {
-              "tMs": 131500,
+              "tMs": 130249,
               "kind": "caption",
               "text": "Exercises — short knowledge checks to confirm you got it."
             },
             {
-              "tMs": 147000,
+              "tMs": 145499,
               "kind": "select-tab",
               "tabName": "References"
             },
             {
-              "tMs": 148500,
+              "tMs": 146999,
               "kind": "caption",
               "text": "References — primary sources every claim is cited from."
             },
             {
-              "tMs": 164000,
+              "tMs": 162249,
               "kind": "select-tab",
               "tabName": "Tools & Products"
             },
             {
-              "tMs": 165500,
+              "tMs": 163749,
               "kind": "caption",
               "text": "Tools & Products — vendor tooling and PQC-ready software."
             },
@@ -936,77 +1161,82 @@
               "text": "Section 1/3: Model"
             },
             {
-              "tMs": 30933,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 35333,
+              "tMs": 23333,
               "kind": "caption",
               "text": "Section 2/3: Policy"
             },
             {
-              "tMs": 60266,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 64666,
+              "tMs": 40666,
               "kind": "caption",
               "text": "Section 3/3: Kpi"
             },
             {
-              "tMs": 95000,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-complete\"]"
-            },
-            {
-              "tMs": 96000,
-              "kind": "select-tab",
-              "tabName": "Visual"
-            },
-            {
-              "tMs": 97500,
-              "kind": "caption",
-              "text": "Visual tab — diagrams and animations for this topic."
-            },
-            {
-              "tMs": 113000,
+              "tMs": 57999,
               "kind": "select-tab",
               "tabName": "Workshop"
             },
             {
-              "tMs": 114500,
+              "tMs": 59499,
               "kind": "caption",
-              "text": "Workshop tab — hands-on, in-browser crypto demos."
+              "text": "Workshop 1/3: Model"
             },
             {
-              "tMs": 130000,
+              "tMs": 74232,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 76832,
+              "kind": "caption",
+              "text": "Workshop 2/3: Policy"
+            },
+            {
+              "tMs": 91565,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 94165,
+              "kind": "caption",
+              "text": "Workshop 3/3: Kpi"
+            },
+            {
+              "tMs": 111999,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113499,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128749,
               "kind": "select-tab",
               "tabName": "Exercises"
             },
             {
-              "tMs": 131500,
+              "tMs": 130249,
               "kind": "caption",
               "text": "Exercises — short knowledge checks to confirm you got it."
             },
             {
-              "tMs": 147000,
+              "tMs": 145499,
               "kind": "select-tab",
               "tabName": "References"
             },
             {
-              "tMs": 148500,
+              "tMs": 146999,
               "kind": "caption",
               "text": "References — primary sources every claim is cited from."
             },
             {
-              "tMs": 164000,
+              "tMs": 162249,
               "kind": "select-tab",
               "tabName": "Tools & Products"
             },
             {
-              "tMs": 165500,
+              "tMs": 163749,
               "kind": "caption",
               "text": "Tools & Products — vendor tooling and PQC-ready software."
             },
@@ -1060,72 +1290,112 @@
               "text": "Section 1/5: Why Now"
             },
             {
-              "tMs": 23600,
+              "tMs": 16400,
               "kind": "caption",
               "text": "Section 2/5: Cpm Defined"
             },
             {
-              "tMs": 41200,
+              "tMs": 26800,
               "kind": "caption",
               "text": "Section 3/5: Asset Classes"
             },
             {
-              "tMs": 58800,
+              "tMs": 37200,
               "kind": "caption",
               "text": "Section 4/5: Five Pillars"
             },
             {
-              "tMs": 76400,
+              "tMs": 47600,
               "kind": "caption",
               "text": "Section 5/5: Dual Loop"
             },
             {
-              "tMs": 96000,
-              "kind": "select-tab",
-              "tabName": "Visual"
-            },
-            {
-              "tMs": 97500,
-              "kind": "caption",
-              "text": "Visual tab — diagrams and animations for this topic."
-            },
-            {
-              "tMs": 113000,
+              "tMs": 58000,
               "kind": "select-tab",
               "tabName": "Workshop"
             },
             {
-              "tMs": 114500,
+              "tMs": 59500,
               "kind": "caption",
-              "text": "Workshop tab — hands-on, in-browser crypto demos."
+              "text": "Workshop 1/5: Why Now"
             },
             {
-              "tMs": 130000,
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Workshop 2/5: Cpm Defined"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Workshop 3/5: Asset Classes"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Workshop 4/5: Five Pillars"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Workshop 5/5: Dual Loop"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
               "kind": "select-tab",
               "tabName": "Exercises"
             },
             {
-              "tMs": 131500,
+              "tMs": 130250,
               "kind": "caption",
               "text": "Exercises — short knowledge checks to confirm you got it."
             },
             {
-              "tMs": 147000,
+              "tMs": 145500,
               "kind": "select-tab",
               "tabName": "References"
             },
             {
-              "tMs": 148500,
+              "tMs": 147000,
               "kind": "caption",
               "text": "References — primary sources every claim is cited from."
             },
             {
-              "tMs": 164000,
+              "tMs": 162250,
               "kind": "select-tab",
               "tabName": "Tools & Products"
             },
             {
-              "tMs": 165500,
+              "tMs": 163750,
               "kind": "caption",
               "text": "Tools & Products — vendor tooling and PQC-ready software."
             },
@@ -1179,67 +1449,97 @@
               "text": "Section 1/4: Readiness"
             },
             {
-              "tMs": 28000,
+              "tMs": 19000,
               "kind": "caption",
               "text": "Section 2/4: Supply Chain"
             },
             {
-              "tMs": 50000,
+              "tMs": 32000,
               "kind": "caption",
               "text": "Section 3/4: Contracts"
             },
             {
-              "tMs": 72000,
+              "tMs": 45000,
               "kind": "caption",
               "text": "Section 4/4: Risk Matrix"
             },
             {
-              "tMs": 96000,
-              "kind": "select-tab",
-              "tabName": "Visual"
-            },
-            {
-              "tMs": 97500,
-              "kind": "caption",
-              "text": "Visual tab — diagrams and animations for this topic."
-            },
-            {
-              "tMs": 113000,
+              "tMs": 58000,
               "kind": "select-tab",
               "tabName": "Workshop"
             },
             {
-              "tMs": 114500,
+              "tMs": 59500,
               "kind": "caption",
-              "text": "Workshop tab — hands-on, in-browser crypto demos."
+              "text": "Workshop 1/4: Readiness"
             },
             {
-              "tMs": 130000,
+              "tMs": 70550,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 72500,
+              "kind": "caption",
+              "text": "Workshop 2/4: Supply Chain"
+            },
+            {
+              "tMs": 83550,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 85500,
+              "kind": "caption",
+              "text": "Workshop 3/4: Contracts"
+            },
+            {
+              "tMs": 96550,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 98500,
+              "kind": "caption",
+              "text": "Workshop 4/4: Risk Matrix"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
               "kind": "select-tab",
               "tabName": "Exercises"
             },
             {
-              "tMs": 131500,
+              "tMs": 130250,
               "kind": "caption",
               "text": "Exercises — short knowledge checks to confirm you got it."
             },
             {
-              "tMs": 147000,
+              "tMs": 145500,
               "kind": "select-tab",
               "tabName": "References"
             },
             {
-              "tMs": 148500,
+              "tMs": 147000,
               "kind": "caption",
               "text": "References — primary sources every claim is cited from."
             },
             {
-              "tMs": 164000,
+              "tMs": 162250,
               "kind": "select-tab",
               "tabName": "Tools & Products"
             },
             {
-              "tMs": 165500,
+              "tMs": 163750,
               "kind": "caption",
               "text": "Tools & Products — vendor tooling and PQC-ready software."
             },
@@ -1293,87 +1593,97 @@
               "text": "Section 1/4: Roadmap"
             },
             {
-              "tMs": 24700,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 28000,
+              "tMs": 19000,
               "kind": "caption",
               "text": "Section 2/4: Stakeholders"
             },
             {
-              "tMs": 46700,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 50000,
+              "tMs": 32000,
               "kind": "caption",
               "text": "Section 3/4: Kpi"
             },
             {
-              "tMs": 68700,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 72000,
+              "tMs": 45000,
               "kind": "caption",
               "text": "Section 4/4: Deployment"
             },
             {
-              "tMs": 95000,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-complete\"]"
-            },
-            {
-              "tMs": 96000,
-              "kind": "select-tab",
-              "tabName": "Visual"
-            },
-            {
-              "tMs": 97500,
-              "kind": "caption",
-              "text": "Visual tab — diagrams and animations for this topic."
-            },
-            {
-              "tMs": 113000,
+              "tMs": 58000,
               "kind": "select-tab",
               "tabName": "Workshop"
             },
             {
-              "tMs": 114500,
+              "tMs": 59500,
               "kind": "caption",
-              "text": "Workshop tab — hands-on, in-browser crypto demos."
+              "text": "Workshop 1/4: Roadmap"
             },
             {
-              "tMs": 130000,
+              "tMs": 70550,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 72500,
+              "kind": "caption",
+              "text": "Workshop 2/4: Stakeholders"
+            },
+            {
+              "tMs": 83550,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 85500,
+              "kind": "caption",
+              "text": "Workshop 3/4: Kpi"
+            },
+            {
+              "tMs": 96550,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 98500,
+              "kind": "caption",
+              "text": "Workshop 4/4: Deployment"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
               "kind": "select-tab",
               "tabName": "Exercises"
             },
             {
-              "tMs": 131500,
+              "tMs": 130250,
               "kind": "caption",
               "text": "Exercises — short knowledge checks to confirm you got it."
             },
             {
-              "tMs": 147000,
+              "tMs": 145500,
               "kind": "select-tab",
               "tabName": "References"
             },
             {
-              "tMs": 148500,
+              "tMs": 147000,
               "kind": "caption",
               "text": "References — primary sources every claim is cited from."
             },
             {
-              "tMs": 164000,
+              "tMs": 162250,
               "kind": "select-tab",
               "tabName": "Tools & Products"
             },
             {
-              "tMs": 165500,
+              "tMs": 163750,
               "kind": "caption",
               "text": "Tools & Products — vendor tooling and PQC-ready software."
             },

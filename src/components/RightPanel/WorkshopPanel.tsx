@@ -49,22 +49,34 @@ export const WorkshopPanel: React.FC = () => {
   const [pickedRegion, setPickedRegion] = useState<WorkshopRegion | null>(selectedRegion)
   const [activeTab, setActiveTab] = useState<'recommended' | 'browse'>('recommended')
 
-  // Auto-clear flowOverrideId when the persona context changes — a previously
-  // hand-picked flow shouldn't keep showing after the user switches role,
-  // proficiency, or industry. The hook fires once on mount with the current
-  // values; the ref skips that initial run so we don't clobber a fresh override.
+  // Auto-clear flowOverrideId + reset region when the persona context changes
+  // — a previously hand-picked flow / region shouldn't keep showing after the
+  // user switches role, proficiency, or industry.
   const personaRole = usePersonaStore((s) => s.selectedPersona)
   const personaProf = usePersonaStore((s) => s.experienceLevel)
   const personaIndustry = usePersonaStore((s) => s.selectedIndustry)
+  const personaRegion = usePersonaStore((s) => s.selectedRegion)
   const setFlowOverride = useWorkshopStore((s) => s.setFlowOverrideId)
   const lastPersonaSig = useRef<string | null>(null)
   useEffect(() => {
-    const sig = `${personaRole}|${personaProf}|${personaIndustry}`
+    const sig = `${personaRole}|${personaProf}|${personaIndustry}|${personaRegion}`
     if (lastPersonaSig.current !== null && lastPersonaSig.current !== sig) {
       setFlowOverride(null)
+      // Also reset the in-panel picked region so it picks up the persona's
+      // new region on the next render.
+      setPickedRegion(personaRegionToWorkshop(personaRegion))
     }
     lastPersonaSig.current = sig
-  }, [personaRole, personaProf, personaIndustry, setFlowOverride])
+  }, [personaRole, personaProf, personaIndustry, personaRegion, setFlowOverride])
+
+  // Auto-derive pickedRegion from persona's region when the user hasn't picked
+  // one yet (initial mount path).
+  useEffect(() => {
+    if (pickedRegion !== null) return
+    const derived = personaRegionToWorkshop(personaRegion)
+    if (derived !== null) setPickedRegion(derived)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [personaRegion])
 
   // Manifest hook resolves the matched flow + honors the user's flowOverrideId.
   const { manifest, activeEntry, matchedEntry, compatibleEntries, activeFlow, isLoading } =
@@ -365,6 +377,26 @@ export const WorkshopPanel: React.FC = () => {
       </p>
     </div>
   )
+}
+
+/**
+ * Map the persona store's coarse region (americas | eu | apac | global) to the
+ * workshop's finer-grained region. Picks a sensible default for each bloc:
+ * americas → US, apac → AU, eu → EU. Global / null → null (user picks manually).
+ */
+function personaRegionToWorkshop(
+  r: import('@/store/usePersonaStore').Region | null
+): WorkshopRegion | null {
+  switch (r) {
+    case 'americas':
+      return 'US'
+    case 'apac':
+      return 'AU'
+    case 'eu':
+      return 'EU'
+    default:
+      return null
+  }
 }
 
 function formatMatchSummary(match: import('@/types/Workshop').FlowMatch): string {
