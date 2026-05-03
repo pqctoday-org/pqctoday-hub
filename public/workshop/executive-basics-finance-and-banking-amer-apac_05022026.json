@@ -1945,46 +1945,124 @@
           },
           "cues": [
             {
-              "tMs": 4000,
+              "tMs": 2000,
               "kind": "caption",
-              "text": "Quick mode — calibrated for executives."
+              "text": "Quick mode — six questions, calibrated for executives."
             },
             {
-              "tMs": 8000,
+              "tMs": 4000,
               "kind": "spotlight",
               "selector": "[data-workshop-target=\"assess-mode-quick\"]"
             },
             {
-              "tMs": 12000,
-              "kind": "callout",
-              "selector": "[data-workshop-target=\"assess-mode-quick\"]",
-              "label": "Recommended for you",
-              "arrow": "right"
-            },
-            {
-              "tMs": 20000,
+              "tMs": 7000,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-mode-quick\"]"
             },
+
             {
-              "tMs": 60000,
+              "tMs": 12000,
               "kind": "caption",
-              "text": "Six questions. Data sensitivity, retention horizon, crypto inventory."
+              "text": "Step 1: Industry — pre-filled from your persona."
+            },
+            { "tMs": 16000, "kind": "click", "selector": "[data-workshop-target=\"assess-next\"]" },
+
+            { "tMs": 22000, "kind": "caption", "text": "Step 2: Country — pre-filled." },
+            { "tMs": 26000, "kind": "click", "selector": "[data-workshop-target=\"assess-next\"]" },
+
+            {
+              "tMs": 32000,
+              "kind": "caption",
+              "text": "Step 3: Existing crypto inventory — picking 'I'm not sure'."
             },
             {
-              "tMs": 180000,
+              "tMs": 36000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"assess-not-sure\"]"
+            },
+            { "tMs": 42000, "kind": "click", "selector": "[data-workshop-target=\"assess-next\"]" },
+
+            {
+              "tMs": 50000,
               "kind": "caption",
-              "text": "Two minutes — and the output seeds your board-ready report."
+              "text": "Step 4: Data sensitivity — picking 'I'm not sure'."
             },
             {
-              "tMs": 240000,
+              "tMs": 54000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"assess-not-sure\"]"
+            },
+            { "tMs": 60000, "kind": "click", "selector": "[data-workshop-target=\"assess-next\"]" },
+
+            {
+              "tMs": 68000,
               "kind": "caption",
-              "text": "The risk profile is the input to the next page."
+              "text": "Step 5: Compliance frameworks — picking 'I'm not sure'."
             },
             {
-              "tMs": 360000,
-              "kind": "advance"
-            }
+              "tMs": 72000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"assess-not-sure\"]"
+            },
+            { "tMs": 78000, "kind": "click", "selector": "[data-workshop-target=\"assess-next\"]" },
+
+            {
+              "tMs": 86000,
+              "kind": "caption",
+              "text": "Step 6: Infrastructure — picking 'I'm not sure'."
+            },
+            {
+              "tMs": 90000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"assess-not-sure\"]"
+            },
+            { "tMs": 96000, "kind": "click", "selector": "[data-workshop-target=\"assess-next\"]" },
+
+            {
+              "tMs": 104000,
+              "kind": "caption",
+              "text": "Step 7: Migration status — picking 'I'm not sure'."
+            },
+            {
+              "tMs": 108000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"assess-not-sure\"]"
+            },
+            {
+              "tMs": 114000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"assess-next\"]"
+            },
+
+            {
+              "tMs": 122000,
+              "kind": "caption",
+              "text": "Step 8: Timeline pressure — picking 'I'm not sure'."
+            },
+            {
+              "tMs": 126000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"assess-not-sure\"]"
+            },
+
+            { "tMs": 134000, "kind": "caption", "text": "Generating your board-ready report..." },
+            {
+              "tMs": 138000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"assess-submit\"]"
+            },
+
+            {
+              "tMs": 200000,
+              "kind": "caption",
+              "text": "Risk profile complete — your personalised report is live."
+            },
+            {
+              "tMs": 320000,
+              "kind": "caption",
+              "text": "The report is the input to every Command Center artifact."
+            },
+            { "tMs": 360000, "kind": "advance" }
           ]
         },
         {

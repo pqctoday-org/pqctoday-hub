@@ -416,6 +416,9 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
             variant="ghost"
             onClick={handleNext}
             disabled={!canProceed() || isGenerating}
+            data-workshop-target={
+              currentStep === steps.length - 1 ? 'assess-submit' : 'assess-next'
+            }
             className="gap-1 font-bold"
           >
             {isGenerating ? (
