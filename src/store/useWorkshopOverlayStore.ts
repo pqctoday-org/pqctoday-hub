@@ -47,6 +47,7 @@ interface WorkshopOverlayState {
 }
 
 let calloutCounter = 0
+let _speechGeneration = 0
 
 export const useWorkshopOverlayStore = create<WorkshopOverlayState>()((set, get) => ({
   caption: '',
@@ -228,6 +229,10 @@ function speakCaption(text: string): void {
   try {
     const { ttsEnabled, ttsVoiceURI } = useWorkshopStore.getState()
     if (!ttsEnabled) return
+    // Increment generation BEFORE cancel so the previous utterance's onend
+    // fires with an outdated generation number and is ignored.
+    _speechGeneration++
+    const gen = _speechGeneration
     window.speechSynthesis.cancel()
     const utter = new SpeechSynthesisUtterance(prepareForSpeech(text))
     // English-only captions — force `lang` so the browser picks an English
@@ -242,7 +247,12 @@ function speakCaption(text: string): void {
       if (voice) utter.voice = voice
     }
     utter.onend = () => {
-      useWorkshopOverlayStore.setState({ speechEndedAt: performance.now() })
+      // Only release the block if this is still the current utterance.
+      // cancel() fires onend of the previous utterance — that stale onend must
+      // not overwrite speechEndedAt and prematurely unblock the scheduler.
+      if (gen === _speechGeneration) {
+        useWorkshopOverlayStore.setState({ speechEndedAt: performance.now() })
+      }
     }
     window.speechSynthesis.speak(utter)
   } catch (e) {
