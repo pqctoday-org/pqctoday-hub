@@ -749,9 +749,9 @@ export const FAQ_DATA: FAQCategory[] = [
         deepLink: '/learn/hsm-pqc?tab=workshop',
       },
       {
-        question: 'What is the Migration Readiness Assessment?',
+        question: 'How do I navigate the PQC Risk Assessment wizard?',
         answer:
-          "The Migration Readiness Assessment is a 14-step wizard that evaluates your organization's PQC preparedness across industry context, regulatory exposure, cryptographic inventory maturity, data sensitivity classification, compliance framework alignment, and infrastructure readiness. It produces a scored report with four risk categories, a compliance gap matrix, a threat landscape visualization, and a prioritized list of action items. The report can be printed or saved as PDF.",
+          'The Risk Assessment wizard walks through 14 sequential steps, starting with your industry and country to anchor regulatory context, then progressing through cryptographic usage patterns, data sensitivity levels (you can select multiple), compliance frameworks you must meet, infrastructure maturity, vendor dependencies, and migration timeline constraints. Each step has an informational tooltip explaining why the question matters. Your answers are auto-saved to localStorage so you can pause and resume — no account needed. The final step previews your risk tier before generating the full scored report.',
         deepLink: '/assess',
       },
       {
