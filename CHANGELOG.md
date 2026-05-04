@@ -86,6 +86,21 @@ All notable changes to this project will be documented in this file.
   TPM2_SignDigest (`inScheme=ALG_NULL`, TPM2B size prefix, context+hint
   trailing fields); `MLKEM_CT_SIZES` per-param-set ciphertext lengths;
   CommandBuilder resolves real transient key handle.
+- **References tab deduplicated across foundation modules** — every `f-mod-*`
+  step repeated the same `select-tab: References` cue, "References — primary
+  sources every claim is cited from." caption, and "Note Reference standards"
+  task. All three removed from the 9 modules after `f-mod-exec-quantum-impact`;
+  the first module keeps them to establish the pattern once.
+  (`executive-basics-finance-and-banking-amer-apac_05022026.json`)
+- **Assess wizard navigation broken after workshop reset** — `useSeedAssessFromPersona`
+  used a one-shot `seededRef`. When the workshop navigated to `/assess?reset=1`
+  while `AssessView` was already mounted (same-route navigation doesn't remount),
+  `reset()` cleared `industry` but the ref blocked re-seeding. Step 1's
+  `canProceed()` returned `false` → Next button disabled → workshop click silently
+  dropped. Fixed by replacing the ref guard with reactive deps `[industry,
+assessmentStatus]`: the hook re-seeds from persona whenever `industry` is empty,
+  covering both fresh mounts and post-reset scenarios.
+  (`useSeedAssessFromPersona.ts`)
 
 ### Data
 
@@ -95,7 +110,7 @@ All notable changes to this project will be documented in this file.
 ### Internal
 
 - `npx tsc -b` clean; full vitest suite passes; `changelogParser` parses
-  this Unreleased block as `Added=1, Fixed=6, Data=1, Internal=1`.
+  this Unreleased block as `Added=1, Fixed=8, Data=1, Internal=1`.
 
 ## [3.5.64] - May 3, 2026
 
