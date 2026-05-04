@@ -6,6 +6,57 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **`pqctoday-tpm` listed in About SBOM** — added to the Cryptography & PQC
+  section alongside softhsmv3, with link to the public repo
+  (`pqctoday-org/pqctoday-tpm`), BSD-3-Clause license, version v0.2.0, and
+  description noting TCG V1.85 PQC support (ML-KEM-768 + ML-DSA-65 command
+  codes 0x1a3–0x1aa, Emscripten WASM build, fork of swtpm + libtpms).
+  (`SbomSection.tsx`)
+
+### Fixed
+
+- **PQC 101 phantom "Hands-on 5/5" caption** in generic-overview's
+  `p-learn-pqc101` step — the Workshop tab only has 4 hands-on steps but
+  the captions claimed 5 with stale labels ("Why Pqc / Whats Changing /
+  The Timeline / Who Acts / Next Steps"). Step regenerated from the cue
+  generator so captions pull current `WORKSHOP_STEPS` (4) and current
+  `LEARN_SECTIONS` labels (5). (`generic-overview_05022026.json`)
+- **Executive `p-landing` step referenced removed home-page sections** —
+  the prior CTA fix only updated `ROLE_ADAPTATIONS` modal copy; the
+  workshop captions still mentioned "four journey sections: Start, My
+  Journey, Assess & Report, Keep Up to Date" (which were removed in the
+  LandingView refactor). Rewrote tasks, narration, and the first cue to
+  describe the current persona-personalised hero CTAs (Start the Journey
+  and Open Command Center) and the three OnboardingCTAs panel below
+  (Watch Quick Overview, Browse Workshops, Start Your Journey).
+  Spotlight + callout cues unchanged — `landing-cta-primary` /
+  `landing-cta-secondary` selectors still exist.
+  (`executive-basics-finance-and-banking-amer-apac_05022026.json`)
+- **TPM Playground full TCG V1.85 PQC compliance** — V185-012 through
+  V185-016 now pass (Encapsulate / Decapsulate / SignDigest with correct
+  RC, output sizes, and 3309-byte ML-DSA-65 signature). All 16/16 checks
+  green. Required: WASM `wasm_platform.c` calling
+  `TPMLIB_SetProfile("default-v1")` before `MainInit` to runtime-enable
+  PQC command codes 0x1a3–0x1aa; Emscripten stubs for `CryptMlKemEncap` /
+  `CryptMlKemDecap` / `CryptMlDsaSign` returning deterministic placeholder
+  output (avoiding EVP crashes from fake key material); serializer fixes
+  for TPM2_Encapsulate (`TPM_ST_NO_SESSIONS`, no auth area) and
+  TPM2_SignDigest (`inScheme=ALG_NULL`, TPM2B size prefix, context+hint
+  trailing fields); `MLKEM_CT_SIZES` per-param-set ciphertext lengths;
+  CommandBuilder resolves real transient key handle.
+
+### Data
+
+- **`rag-corpus.json` regenerated** — auto build artifact, content
+  unchanged (now persisted minified instead of pretty-printed).
+
+### Internal
+
+- `npx tsc -b` clean; full vitest suite passes; `changelogParser` parses
+  this Unreleased block as `Added=1, Fixed=3, Data=1, Internal=1`.
+
 ## [3.5.64] - May 3, 2026
 
 ### Added

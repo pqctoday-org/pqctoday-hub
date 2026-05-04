@@ -292,6 +292,26 @@ export function SbomSection() {
                       </span>
                     </div>
                   </li>
+                  <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
+                    <a
+                      href="https://github.com/pqctoday-org/pqctoday-tpm/releases/tag/v0.2.0"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline flex items-center gap-1"
+                    >
+                      pqctoday-tpm
+                      <Link2 size={12} aria-hidden="true" />
+                    </a>
+                    <div className="flex flex-col items-end shrink-0">
+                      <span className="text-xs text-muted-foreground/40 font-mono">
+                        BSD-3-Clause
+                      </span>
+                      <span className="text-xs text-muted-foreground/60">
+                        v0.2.0 — TCG V1.85 PQC TPM emulator (fork of swtpm + libtpms); ML-KEM-768 +
+                        ML-DSA-65 command codes 0x1a3-0x1aa, Emscripten WASM
+                      </span>
+                    </div>
+                  </li>
                 </ul>
               </div>
               <div className="break-inside-avoid">
