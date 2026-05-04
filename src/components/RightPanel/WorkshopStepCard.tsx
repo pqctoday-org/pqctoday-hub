@@ -91,7 +91,9 @@ export const WorkshopStepCard: React.FC<WorkshopStepCardProps> = ({
   // Workshop Mode RAF cue scheduler — auto-fires the step's cues at
   // playback-speed-scaled offsets so the user doesn't click "Show next hint"
   // 25× per step. Pause stops the clock; Skip cue jumps to the next cue;
-  // Restart replays from cue 0. Step→step still requires manual Next.
+  // Restart replays from cue 0. When the step has an 'advance' cue, the
+  // scheduler auto-advances to the next step once all cues have fired and TTS
+  // has finished (mirrors VideoOverlay behaviour for Workshop mode).
   useEffect(() => {
     if (mode !== 'running' || visibleCues.length === 0) return
     let raf = 0
@@ -102,6 +104,11 @@ export const WorkshopStepCard: React.FC<WorkshopStepCardProps> = ({
     const originalMs = Math.max(1, step.estMinutes * 60_000)
     const targetMs = Math.min(originalMs * mul, STEP_DURATION_MS[playbackSpeed] * 6)
     const SPEECH_BUFFER_MS = 1500
+
+    // 'advance' is filtered from visibleCues but we still need its tMs for the
+    // non-TTS timing gate so the step doesn't jump past its authored hold time.
+    const advanceCue = (step.cues ?? []).find((c) => c.kind === 'advance')
+    const advanceTMs = advanceCue ? advanceCue.tMs * mul : targetMs
 
     startTimeRef.current = performance.now()
     pausedAtRef.current = null
@@ -133,7 +140,24 @@ export const WorkshopStepCard: React.FC<WorkshopStepCardProps> = ({
         setCueIdx(handledIdx)
         applyCue(next, fixtures, step.id, visibleCues.slice(handledIdx + 1))
       }
-      if (handledIdx + 1 >= visibleCues.length) return
+      if (handledIdx + 1 >= visibleCues.length) {
+        // All visible cues fired. If an 'advance' cue exists, auto-advance once
+        // TTS finishes (TTS mode) or the advance tMs elapses (timed mode).
+        if (advanceCue && onNext) {
+          const { speechEndedAt } = useWorkshopOverlayStore.getState()
+          const ttsStillPlaying =
+            ttsEnabled &&
+            (window.speechSynthesis?.speaking ||
+              performance.now() < speechEndedAt + SPEECH_BUFFER_MS)
+          const timingHolds = !ttsEnabled && elapsed < advanceTMs
+          if (ttsStillPlaying || timingHolds) {
+            raf = requestAnimationFrame(tick)
+            return
+          }
+          onNext()
+        }
+        return
+      }
       if (elapsed >= targetMs) return
       raf = requestAnimationFrame(tick)
     }
