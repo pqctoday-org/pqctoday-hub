@@ -26,7 +26,7 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
 
       {/* Section 1: The Executive Quantum Challenge */}
       <section className="glass-panel p-6">
-        <div className="flex items-center gap-3 mb-4">
+        <div data-section-id="why-it-matters" className="flex items-center gap-3 mb-4 scroll-mt-20">
           <div className="p-2 rounded-lg bg-primary/10">
             <Briefcase size={24} className="text-primary" />
           </div>
@@ -68,7 +68,7 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
 
       {/* Section 2: Why Now? */}
       <section className="glass-panel p-6">
-        <div className="flex items-center gap-3 mb-4">
+        <div data-section-id="what-to-learn" className="flex items-center gap-3 mb-4 scroll-mt-20">
           <div className="p-2 rounded-lg bg-status-warning/10">
             <Clock size={24} className="text-status-warning" />
           </div>
@@ -117,7 +117,7 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
 
       {/* Section 3: What You Will Learn */}
       <section className="glass-panel p-6">
-        <div className="flex items-center gap-3 mb-4">
+        <div data-section-id="how-to-act" className="flex items-center gap-3 mb-4 scroll-mt-20">
           <div className="p-2 rounded-lg bg-primary/10">
             <Scale size={24} className="text-primary" />
           </div>

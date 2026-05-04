@@ -1,0 +1,2171 @@
+{
+  "id": "researcher-basics-all-all-v1",
+  "title": "Researcher PQC Workshop — All Industries, All Regions",
+  "match": {
+    "roles": ["researcher"],
+    "proficiencies": ["basics", "expert"],
+    "industries": "*",
+    "regions": "*"
+  },
+  "whatToExpect": [
+    "Cutting-edge PQC research surfaces — algorithm internals, security levels, side-channel, QKD",
+    "Modules for the standards landscape, hybrid combiners, SLH-DSA, stateful signatures, QKD",
+    "Page tours for /algorithms (full candidate set), /library (RFC corpus), /threats (research models)",
+    "~60 minutes at normal speed"
+  ],
+  "totalEstMinutes": 52,
+  "intro": {
+    "id": "intro",
+    "title": "Welcome",
+    "estMinutes": 3,
+    "steps": [
+      {
+        "id": "intro-01-welcome",
+        "chapter": "intro",
+        "title": "What you will leave with",
+        "estMinutes": 3,
+        "whyItMatters": "A research-grade map of the PQC landscape and the open problems worth pursuing.",
+        "page": {
+          "route": "/"
+        },
+        "tasks": ["Skim the research scope", "Confirm researcher persona is set"],
+        "expectedOutput": "A research reading list and current open-problem inventory.",
+        "narration": "This workshop is the research-grade tour — algorithm candidates beyond the NIST primary picks, security levels math, side-channel testing, the IETF / standards process, hash-based and stateful signatures as long-life-key alternatives, and QKD as a parallel research thread.",
+        "cues": [
+          {
+            "tMs": 0,
+            "kind": "navigate",
+            "route": "/"
+          },
+          {
+            "tMs": 1500,
+            "kind": "caption",
+            "text": "Researcher workshop — algorithm landscape, security models, side-channel, standards process."
+          },
+          {
+            "tMs": 180000,
+            "kind": "advance"
+          }
+        ]
+      }
+    ]
+  },
+  "prerequisites": {
+    "id": "prereq",
+    "title": "Prerequisites",
+    "estMinutes": 2,
+    "steps": [
+      {
+        "id": "prereq-01-persona",
+        "chapter": "prereq",
+        "title": "Confirm researcher persona",
+        "estMinutes": 2,
+        "whyItMatters": "The persona drives research-relevant deep links and module visibility.",
+        "page": {
+          "route": "/"
+        },
+        "tasks": ["Confirm role = Researcher", "Confirm proficiency = Expert (recommended)"],
+        "expectedOutput": "Persona context locked to Researcher.",
+        "narration": "Researcher persona surfaces every advanced module and the full standards corpus.",
+        "cues": [
+          {
+            "tMs": 0,
+            "kind": "navigate",
+            "route": "/"
+          },
+          {
+            "tMs": 1000,
+            "kind": "scroll-to",
+            "selector": "#personalization-section"
+          },
+          {
+            "tMs": 1500,
+            "kind": "caption",
+            "text": "Persona definition — four picks shape every page. Researcher drives this flow."
+          },
+          {
+            "tMs": 5000,
+            "kind": "click",
+            "selector": "[data-workshop-target=\"persona-edit\"]"
+          },
+          {
+            "tMs": 5500,
+            "kind": "caption",
+            "text": "Opening the persona wizard."
+          },
+          {
+            "tMs": 8000,
+            "kind": "caption",
+            "text": "Step 1 — Track. Technical track unlocks developer, architect, ops, and researcher roles."
+          },
+          {
+            "tMs": 10000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target^=\"persona-track-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 14000,
+            "kind": "click",
+            "selector": "[data-workshop-target^=\"persona-track-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 16000,
+            "kind": "caption",
+            "text": "Step 2 — Role. Researcher surfaces the modules and tools tuned to your job."
+          },
+          {
+            "tMs": 18000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target^=\"persona-role-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 22000,
+            "kind": "callout",
+            "selector": "[data-workshop-target^=\"persona-role-\"][aria-pressed=\"true\"]",
+            "label": "Researcher — pre-selected for this flow"
+          },
+          {
+            "tMs": 30000,
+            "kind": "click",
+            "selector": "[data-workshop-target^=\"persona-role-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 32000,
+            "kind": "caption",
+            "text": "Step 3 — Region. Filters timeline, leaders, threats and compliance to your jurisdiction."
+          },
+          {
+            "tMs": 34000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target^=\"persona-region-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 42000,
+            "kind": "click",
+            "selector": "[data-workshop-target=\"persona-wizard-next\"]"
+          },
+          {
+            "tMs": 44000,
+            "kind": "caption",
+            "text": "Step 4 — Industry. Surfaces industry-specific threats, frameworks and vendors."
+          },
+          {
+            "tMs": 46000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target^=\"persona-industry-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 56000,
+            "kind": "click",
+            "selector": "[data-workshop-target=\"persona-wizard-done\"]"
+          },
+          {
+            "tMs": 57000,
+            "kind": "caption",
+            "text": "These four facets shape every workshop step. Change any one to re-personalize."
+          },
+          {
+            "tMs": 120000,
+            "kind": "advance"
+          }
+        ]
+      }
+    ]
+  },
+  "common": [
+    {
+      "id": "foundations",
+      "title": "Foundations",
+      "estMinutes": 42,
+      "steps": [
+        {
+          "id": "f-mod-research-quantum-impact",
+          "chapter": "foundations",
+          "title": "Research Quantum Impact",
+          "estMinutes": 3,
+          "whyItMatters": "The research-grade view — open problems, candidate algorithms beyond NIST, security model evolution.",
+          "page": {
+            "route": "/learn/research-quantum-impact"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on Research Quantum Impact",
+          "narration": "A research-focused tour of the open problems in PQC — second-round candidates, unresolved security levels, side-channel attacks, hybrid combiner provability, and the IETF process for standardising new constructions.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "research-quantum-impact",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/research-quantum-impact"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Research Quantum Impact — The research-grade view — open problems, candidate algorithms beyond NIST, security model evolution."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"why-it-matters\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/3: Why It Matters: Research Quantum Exposure"
+            },
+            {
+              "tMs": 23133,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"what-to-learn\"]"
+            },
+            {
+              "tMs": 23333,
+              "kind": "caption",
+              "text": "Section 2/3: What to Learn: Knowledge & Skills Gap"
+            },
+            {
+              "tMs": 40466,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"how-to-act\"]"
+            },
+            {
+              "tMs": 40666,
+              "kind": "caption",
+              "text": "Section 3/3: How to Act: Phased Action Plan"
+            },
+            {
+              "tMs": 57999,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59499,
+              "kind": "caption",
+              "text": "Hands-on 1/4: Why It Matters"
+            },
+            {
+              "tMs": 70549,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 72499,
+              "kind": "caption",
+              "text": "Hands-on 2/4: What to Learn"
+            },
+            {
+              "tMs": 83549,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 85499,
+              "kind": "caption",
+              "text": "Hands-on 3/4: How to Act"
+            },
+            {
+              "tMs": 96549,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 98499,
+              "kind": "caption",
+              "text": "Hands-on 4/4: Research Readiness Self-Assessment"
+            },
+            {
+              "tMs": 111999,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113499,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128749,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130249,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145499,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 146999,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162249,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163749,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-pqc-101",
+          "chapter": "foundations",
+          "title": "PQC 101",
+          "estMinutes": 3,
+          "whyItMatters": "Even researchers benefit from the canonical primer — sets vocabulary for the rest of the flow.",
+          "page": {
+            "route": "/learn/pqc-101"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on PQC 101",
+          "narration": "The canonical PQC primer. Ensures every concept and acronym referenced in later modules is grounded.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "pqc-101",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/pqc-101"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "PQC 101 — Even researchers benefit from the canonical primer — sets vocabulary for the rest of the flow."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"quantum-threat\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/5: The Quantum Threat to Cryptography"
+            },
+            {
+              "tMs": 16100,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 16400,
+              "kind": "caption",
+              "text": "Section 2/5: NIST-Selected PQC Algorithms"
+            },
+            {
+              "tMs": 26500,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 26800,
+              "kind": "caption",
+              "text": "Section 3/5: Global Migration Timeline"
+            },
+            {
+              "tMs": 36900,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 37200,
+              "kind": "caption",
+              "text": "Section 4/5: Organizational Readiness"
+            },
+            {
+              "tMs": 47300,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 47600,
+              "kind": "caption",
+              "text": "Section 5/5: Your Next Steps"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Hands-on 1/4: Algorithm Families"
+            },
+            {
+              "tMs": 70550,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 72500,
+              "kind": "caption",
+              "text": "Hands-on 2/4: Algorithm Comparison"
+            },
+            {
+              "tMs": 83550,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 85500,
+              "kind": "caption",
+              "text": "Hands-on 3/4: Key Generation"
+            },
+            {
+              "tMs": 96550,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 98500,
+              "kind": "caption",
+              "text": "Hands-on 4/4: Signature Demo"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-quantum-threats",
+          "chapter": "foundations",
+          "title": "Quantum Threats",
+          "estMinutes": 3,
+          "whyItMatters": "Shor's, Grover's, and the CRQC timeline projections that pace research priorities.",
+          "page": {
+            "route": "/learn/quantum-threats"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on Quantum Threats",
+          "narration": "Detailed walk through Shor's algorithm, Grover's algorithm, CRQC timeline projections, and HNDL/HNFL attack models. The mathematical foundation for everything that follows.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "quantum-threats",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/quantum-threats"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Quantum Threats — Shor's, Grover's, and the CRQC timeline projections that pace research priorities."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"crqc\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/3: CRQC Timeline & Harvest Now Decrypt Later"
+            },
+            {
+              "tMs": 23133,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"hndl\"]"
+            },
+            {
+              "tMs": 23333,
+              "kind": "caption",
+              "text": "Section 2/3: HNDL/HNFL Risk Windows & Prioritization"
+            },
+            {
+              "tMs": 40466,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"security-levels\"]"
+            },
+            {
+              "tMs": 40666,
+              "kind": "caption",
+              "text": "Section 3/3: Post-Quantum Security Levels"
+            },
+            {
+              "tMs": 57999,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59499,
+              "kind": "caption",
+              "text": "Hands-on 1/5: Security Level Degradation"
+            },
+            {
+              "tMs": 68339,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69899,
+              "kind": "caption",
+              "text": "Hands-on 2/5: Vulnerability Matrix"
+            },
+            {
+              "tMs": 78739,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80299,
+              "kind": "caption",
+              "text": "Hands-on 3/5: Key Size Analyzer"
+            },
+            {
+              "tMs": 89139,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90699,
+              "kind": "caption",
+              "text": "Hands-on 4/5: HNDL Timeline"
+            },
+            {
+              "tMs": 99539,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101099,
+              "kind": "caption",
+              "text": "Hands-on 5/5: HNFL Risk Calculator"
+            },
+            {
+              "tMs": 111999,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113499,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128749,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130249,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145499,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 146999,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162249,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163749,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-entropy-randomness",
+          "chapter": "foundations",
+          "title": "Entropy & Randomness",
+          "estMinutes": 3,
+          "whyItMatters": "TRNG vs QRNG, NIST SP 800-90B testing, ESV program — entropy is a live research area.",
+          "page": {
+            "route": "/learn/entropy-randomness"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on Entropy & Randomness",
+          "narration": "Entropy sources, NIST SP 800-90 DRBG mechanisms, SP 800-90B entropy testing, the ESV validation program, and TRNG vs QRNG comparison. Combining sources for defence in depth.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "entropy-randomness",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/entropy-randomness"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Entropy and randomness. T R N G versus Q R N G. NIST S P 800 dash 90 B testing. The E S V program. Entropy is a live research area."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"entropy\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/5: Entropy Sources & Collection"
+            },
+            {
+              "tMs": 16200,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"drbg\"]"
+            },
+            {
+              "tMs": 16400,
+              "kind": "caption",
+              "text": "Section 2/5: NIST SP 800-90 DRBG Mechanisms"
+            },
+            {
+              "tMs": 26600,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"testing\"]"
+            },
+            {
+              "tMs": 26800,
+              "kind": "caption",
+              "text": "Section 3/5: Entropy Testing (SP 800-90B)"
+            },
+            {
+              "tMs": 37000,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"qrng\"]"
+            },
+            {
+              "tMs": 37200,
+              "kind": "caption",
+              "text": "Section 4/5: TRNG vs QRNG Comparison"
+            },
+            {
+              "tMs": 47400,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"combining\"]"
+            },
+            {
+              "tMs": 47600,
+              "kind": "caption",
+              "text": "Section 5/5: Defense-in-Depth: Combining Sources"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Hands-on 1/5: Random Byte Generation"
+            },
+            {
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Hands-on 2/5: Entropy Testing"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Hands-on 3/5: ESV Validation Walkthrough"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Hands-on 4/5: QRNG Exploration"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Hands-on 5/5: Combining Sources"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-standards-bodies",
+          "chapter": "foundations",
+          "title": "Standards, Certification & Compliance Bodies",
+          "estMinutes": 3,
+          "whyItMatters": "NIST, ETSI, IETF, ISO — the bodies whose process you need to navigate to publish results.",
+          "page": {
+            "route": "/learn/standards-bodies"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on Standards, Certification & Compliance Bodies",
+          "narration": "The standards landscape — NIST, ETSI, IETF, ISO/IEC, regional bodies. How drafts become RFCs, how the IETF process works, where research insights land in the formal standards stack.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "standards-bodies",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/standards-bodies"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Standards, Certification & Compliance Bodies — NIST, ETSI, IETF, ISO — the bodies whose process you need to navigate to publish results."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"three-roles\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/5: Three Roles"
+            },
+            {
+              "tMs": 16200,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"gov-vs-nongov\"]"
+            },
+            {
+              "tMs": 16400,
+              "kind": "caption",
+              "text": "Section 2/5: Gov vs Non-Gov"
+            },
+            {
+              "tMs": 26600,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"global-regional\"]"
+            },
+            {
+              "tMs": 26800,
+              "kind": "caption",
+              "text": "Section 3/5: Global & Regional"
+            },
+            {
+              "tMs": 37000,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"app-pages-guide\"]"
+            },
+            {
+              "tMs": 37200,
+              "kind": "caption",
+              "text": "Section 4/5: App Pages Guide"
+            },
+            {
+              "tMs": 47400,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"ietf-process\"]"
+            },
+            {
+              "tMs": 47600,
+              "kind": "caption",
+              "text": "Section 5/5: IETF & RFC Process"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Hands-on 1/5: Body Classifier"
+            },
+            {
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Hands-on 2/5: Org Explorer"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Hands-on 3/5: Chain Builder"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Hands-on 4/5: Coverage Grid"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Hands-on 5/5: Scenario Challenge"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-hybrid-crypto",
+          "chapter": "foundations",
+          "title": "Hybrid Cryptography",
+          "estMinutes": 3,
+          "whyItMatters": "KEM combiners, composite signatures, certificate formats — the active research area.",
+          "page": {
+            "route": "/learn/hybrid-crypto"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on Hybrid Cryptography",
+          "narration": "Hybrid cryptography is an active research area. KEM combiner constructions and security proofs, composite signature formats, certificate carrying both keys, draft IETF specs.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "hybrid-crypto",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/hybrid-crypto"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Hybrid Cryptography — KEM combiners, composite signatures, certificate formats — the active research area."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"why-hybrid\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/4: Why Hybrid Cryptography?"
+            },
+            {
+              "tMs": 16200,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"cert-formats\"]"
+            },
+            {
+              "tMs": 16400,
+              "kind": "caption",
+              "text": "Section 2/4: Hybrid Certificate Formats"
+            },
+            {
+              "tMs": 26600,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"kem\"]"
+            },
+            {
+              "tMs": 26800,
+              "kind": "caption",
+              "text": "Section 3/4: Hybrid KEM Construction"
+            },
+            {
+              "tMs": 37000,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"composite\"]"
+            },
+            {
+              "tMs": 37200,
+              "kind": "caption",
+              "text": "Section 4/4: Hybrid Signature Spectrum"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Hands-on 1/5: Key Generation"
+            },
+            {
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Hands-on 2/5: Encrypt & Sign"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Hands-on 3/5: CA Setup"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Hands-on 4/5: Hybrid Formats"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Hands-on 5/5: Inspect & Compare"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-pqc-testing-validation",
+          "chapter": "foundations",
+          "title": "PQC Testing & Validation",
+          "estMinutes": 3,
+          "whyItMatters": "TVLA side-channel analysis, ACVP, FIPS 140-3 — the validation methodology stack.",
+          "page": {
+            "route": "/learn/pqc-testing-validation"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on PQC Testing & Validation",
+          "narration": "Testing PQC implementations — passive vs active testing, TVLA side-channel analysis, FIPS 140-3 and ACVP automated validation, interoperability testing across libraries.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "pqc-testing-validation",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/pqc-testing-validation"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Post-quantum network testing and validation. T V L A side-channel analysis. The ACVP automated validation protocol. And FIPS 140 dash 3."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"why-pqc-testing\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/6: Why PQC Testing Is Different"
+            },
+            {
+              "tMs": 14466,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"passive-vs-active\"]"
+            },
+            {
+              "tMs": 14666,
+              "kind": "caption",
+              "text": "Section 2/6: Passive Discovery vs Active Scanning"
+            },
+            {
+              "tMs": 23132,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"performance-testing-method\"]"
+            },
+            {
+              "tMs": 23332,
+              "kind": "caption",
+              "text": "Section 3/6: PQC Performance Benchmarking Methodology"
+            },
+            {
+              "tMs": 31798,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"interop-testing\"]"
+            },
+            {
+              "tMs": 31998,
+              "kind": "caption",
+              "text": "Section 4/6: Interoperability Testing & RFC 9794 Compliance"
+            },
+            {
+              "tMs": 40464,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"side-channel-tvla\"]"
+            },
+            {
+              "tMs": 40664,
+              "kind": "caption",
+              "text": "Section 5/6: Side-Channel Testing & TVLA for Lattice Crypto"
+            },
+            {
+              "tMs": 49130,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"fips-acvp\"]"
+            },
+            {
+              "tMs": 49330,
+              "kind": "caption",
+              "text": "Section 6/6: FIPS 140-3 & Algorithmic Validation (ACVP)"
+            },
+            {
+              "tMs": 57996,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59496,
+              "kind": "caption",
+              "text": "Hands-on 1/7: Passive Crypto Discovery Lab"
+            },
+            {
+              "tMs": 65809,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 66924,
+              "kind": "caption",
+              "text": "Hands-on 2/7: Active PQC Server Scanner"
+            },
+            {
+              "tMs": 73237,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 74352,
+              "kind": "caption",
+              "text": "Hands-on 3/7: Performance Benchmark Designer"
+            },
+            {
+              "tMs": 80665,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 81780,
+              "kind": "caption",
+              "text": "Hands-on 4/7: Interoperability Test Matrix"
+            },
+            {
+              "tMs": 88093,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 89208,
+              "kind": "caption",
+              "text": "Hands-on 5/7: TVLA Leakage Analyzer"
+            },
+            {
+              "tMs": 95521,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 96636,
+              "kind": "caption",
+              "text": "Hands-on 6/7: Test Strategy Builder"
+            },
+            {
+              "tMs": 102949,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 104064,
+              "kind": "caption",
+              "text": "Hands-on 7/7: NIST ACVP Validation"
+            },
+            {
+              "tMs": 111996,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113496,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128746,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130246,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145496,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 146996,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162246,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163746,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-slh-dsa",
+          "chapter": "foundations",
+          "title": "SLH-DSA",
+          "estMinutes": 3,
+          "whyItMatters": "Hash-based signatures — stateless, conservative security, the long-key-lifetime fallback.",
+          "page": {
+            "route": "/learn/slh-dsa"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on SLH-DSA",
+          "narration": "SLH-DSA (formerly SPHINCS+) — the stateless hash-based signature scheme. Conservative security assumptions, large signatures, the role as a long-key-lifetime fallback when ML-DSA is questioned.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "slh-dsa",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/slh-dsa"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "SLH-DSA — Hash-based signatures — stateless, conservative security, the long-key-lifetime fallback."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"overview\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/4: SLH-DSA Overview & Why Stateless"
+            },
+            {
+              "tMs": 18800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"internals\"]"
+            },
+            {
+              "tMs": 19000,
+              "kind": "caption",
+              "text": "Section 2/4: WOTS+, FORS & Hypertree Architecture (§3–5)"
+            },
+            {
+              "tMs": 31800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"parameters\"]"
+            },
+            {
+              "tMs": 32000,
+              "kind": "caption",
+              "text": "Section 3/4: Parameter Sets, Tradeoffs & FIPS 205 §6"
+            },
+            {
+              "tMs": 44800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"advanced\"]"
+            },
+            {
+              "tMs": 45000,
+              "kind": "caption",
+              "text": "Section 4/4: Context Strings, Deterministic Mode & HashSLH-DSA"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Hands-on 1/4: Key Generation & Parameter Explorer"
+            },
+            {
+              "tMs": 70550,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 72500,
+              "kind": "caption",
+              "text": "Hands-on 2/4: Sign & Verify (Pure + HashSLH-DSA)"
+            },
+            {
+              "tMs": 83550,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 85500,
+              "kind": "caption",
+              "text": "Hands-on 3/4: Context Strings & Deterministic Mode"
+            },
+            {
+              "tMs": 96550,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 98500,
+              "kind": "caption",
+              "text": "Hands-on 4/4: LMS vs XMSS vs SLH-DSA Comparison"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-stateful-signatures",
+          "chapter": "foundations",
+          "title": "Stateful Signatures",
+          "estMinutes": 3,
+          "whyItMatters": "LMS / HSS / XMSS — pre-quantum hash-based signatures with constraints worth understanding.",
+          "page": {
+            "route": "/learn/stateful-signatures"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on Stateful Signatures",
+          "narration": "Stateful hash-based signatures — LMS, HSS, XMSS. The state-management constraints, why they pre-date NIST PQC, and where they fit (firmware signing, root signing).",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "stateful-signatures",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/stateful-signatures"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Stateful Signatures — LMS / HSS / XMSS — pre-quantum hash-based signatures with constraints worth understanding."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"lms\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/3: Why Stateful Signatures & Merkle Trees"
+            },
+            {
+              "tMs": 23133,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"xmss\"]"
+            },
+            {
+              "tMs": 23333,
+              "kind": "caption",
+              "text": "Section 2/3: LMS/HSS & XMSS/XMSS^MT"
+            },
+            {
+              "tMs": 40466,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"state\"]"
+            },
+            {
+              "tMs": 40666,
+              "kind": "caption",
+              "text": "Section 3/3: The State Problem & Resources"
+            },
+            {
+              "tMs": 57999,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59499,
+              "kind": "caption",
+              "text": "Hands-on 1/4: LMS Key Generation"
+            },
+            {
+              "tMs": 70549,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 72499,
+              "kind": "caption",
+              "text": "Hands-on 2/4: XMSS Key Generation"
+            },
+            {
+              "tMs": 83549,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 85499,
+              "kind": "caption",
+              "text": "Hands-on 3/4: State Management"
+            },
+            {
+              "tMs": 96549,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 98499,
+              "kind": "caption",
+              "text": "Hands-on 4/4: SLH-DSA Live Demo"
+            },
+            {
+              "tMs": 111999,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113499,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128749,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130249,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145499,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 146999,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162249,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163749,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-qkd",
+          "chapter": "foundations",
+          "title": "Quantum Key Distribution",
+          "estMinutes": 3,
+          "whyItMatters": "QKD as a parallel research thread — physics-based key distribution, deployment realities.",
+          "page": {
+            "route": "/learn/qkd"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on Quantum Key Distribution",
+          "narration": "QKD as a complementary research area — BB84 protocol, post-processing, deployment explorers, integration with classical PKI/HSMs, where QKD fits and where PQC suffices.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "qkd",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/qkd"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Quantum Key Distribution — QKD as a parallel research thread — physics-based key distribution, deployment realities."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"bb84\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/4: BB84 Protocol & Quantum Channel"
+            },
+            {
+              "tMs": 26600,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"integration\"]"
+            },
+            {
+              "tMs": 26800,
+              "kind": "caption",
+              "text": "Section 2/4: QKD + Classical Protocol Integration"
+            },
+            {
+              "tMs": 37000,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"hsm-derivation\"]"
+            },
+            {
+              "tMs": 37200,
+              "kind": "caption",
+              "text": "Section 3/4: HSM Key Derivation from QKD"
+            },
+            {
+              "tMs": 47400,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"deployment\"]"
+            },
+            {
+              "tMs": 47600,
+              "kind": "caption",
+              "text": "Section 4/4: Global QKD Deployments & Infrastructure"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Hands-on 1/5: BB84 Protocol"
+            },
+            {
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Hands-on 2/5: Post-Processing"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Hands-on 3/5: Global Deployments"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Hands-on 4/5: Protocol Integration"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Hands-on 5/5: HSM Key Derivation"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "p-algorithms",
+          "chapter": "foundations",
+          "title": "/algorithms — full NIST candidate landscape",
+          "estMinutes": 4,
+          "whyItMatters": "Beyond the primary picks — second-round candidates, withdrawn algorithms, security level analysis.",
+          "page": {
+            "route": "/algorithms"
+          },
+          "tasks": ["Open the page", "Note the key affordances called out by the workshop"],
+          "expectedOutput": "Familiarity with /algorithms — full NIST candidate landscape",
+          "narration": "The /algorithms page covers more than the NIST winners — second-round candidates, withdrawn entries, the security level analysis behind each pick.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/algorithms"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "NIST PQC algorithms — primary picks plus second-round candidates and withdrawn entries."
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "Security level math — NIST levels 1, 3, 5 vs concrete bit-security claims."
+            },
+            {
+              "tMs": 180000,
+              "kind": "caption",
+              "text": "Performance benchmarks help you compare lattice, code-based, hash-based families."
+            },
+            {
+              "tMs": 240000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "p-library",
+          "chapter": "foundations",
+          "title": "/library — full standards and RFC corpus",
+          "estMinutes": 4,
+          "whyItMatters": "The /library is the primary-source corpus — RFCs, drafts, FIPS docs, NIST publications.",
+          "page": {
+            "route": "/library"
+          },
+          "tasks": ["Open the page", "Note the key affordances called out by the workshop"],
+          "expectedOutput": "Familiarity with /library — full standards and RFC corpus",
+          "narration": "The /library is where every claim in the platform traces back to a primary source. RFCs, IETF drafts, FIPS 203/204/205, NIST IR series.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/library"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "/library — the full standards and RFC corpus. Every PQC claim traces to a primary source."
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "FIPS 203 standardises M L K E M. FIPS 204 standardises M L D S A. FIPS 205 standardises S L H D S A. Three canonical NIST standards."
+            },
+            {
+              "tMs": 180000,
+              "kind": "caption",
+              "text": "IETF drafts on hybrid TLS, composite signatures, KEM combiners — track the active negotiations."
+            },
+            {
+              "tMs": 240000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "p-threats",
+          "chapter": "foundations",
+          "title": "/threats — research-relevant threat models",
+          "estMinutes": 4,
+          "whyItMatters": "HNDL, HNFL, side-channel — the threat models that motivate research priorities.",
+          "page": {
+            "route": "/threats"
+          },
+          "tasks": ["Open the page", "Note the key affordances called out by the workshop"],
+          "expectedOutput": "Familiarity with /threats — research-relevant threat models",
+          "narration": "The /threats page enumerates the threats driving PQC research — HNDL (harvest-now-decrypt-later), HNFL (forge-later), side-channel families.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/threats"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "/threats — the threat models that motivate PQC research and standards."
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "HNDL: encrypted traffic captured today, decrypted post-CRQC. The first-mover threat."
+            },
+            {
+              "tMs": 180000,
+              "kind": "caption",
+              "text": "HNFL: signed artifacts harvested, forged post-CRQC. Long-lifetime signatures most affected."
+            },
+            {
+              "tMs": 240000,
+              "kind": "advance"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "close": {
+    "id": "close",
+    "title": "Close",
+    "estMinutes": 5,
+    "steps": [
+      {
+        "id": "close-quiz",
+        "chapter": "close",
+        "title": "Quiz — test what you learned",
+        "estMinutes": 3,
+        "whyItMatters": "A 5-to-45-minute quiz with persona-tuned topics gives you a quick measure of what stuck.",
+        "page": {
+          "route": "/learn/quiz",
+          "query": {
+            "category": "algorithm-families,quantum-threats,nist-standards,stateful-signatures"
+          }
+        },
+        "tasks": [
+          "Note the duration slider and difficulty filter",
+          "See how persona-tuned topics are pre-selected",
+          "Run the quiz yourself after the workshop"
+        ],
+        "expectedOutput": "A working knowledge of the quiz interface; you'll come back to actually take it.",
+        "narration": "The quiz is the quickest way to check what you've absorbed. Pick how much time you have, pick the topics that matter, and get a scored breakdown by category and difficulty.",
+        "cues": [
+          {
+            "tMs": 0,
+            "kind": "navigate",
+            "route": "/learn/quiz",
+            "query": {
+              "category": "algorithm-families,quantum-threats,nist-standards,stateful-signatures"
+            }
+          },
+          {
+            "tMs": 1500,
+            "kind": "caption",
+            "text": "Test what you learned. Pick a duration, pick topics, go."
+          },
+          {
+            "tMs": 6000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"quiz-duration-slider\"]"
+          },
+          {
+            "tMs": 7500,
+            "kind": "caption",
+            "text": "Duration slider. Five to forty-five minutes. Quiz scales the question count to match."
+          },
+          {
+            "tMs": 22000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"quiz-difficulty-row\"]"
+          },
+          {
+            "tMs": 23500,
+            "kind": "caption",
+            "text": "Difficulty filter. Beginner, Intermediate, Advanced. Multi-select."
+          },
+          {
+            "tMs": 38000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"quiz-topic-grid\"]"
+          },
+          {
+            "tMs": 39500,
+            "kind": "caption",
+            "text": "Topic grid. Categories pre-filtered by your persona context."
+          },
+          {
+            "tMs": 55000,
+            "kind": "click",
+            "selector": "[data-workshop-target=\"quiz-category-algorithm-families\"]"
+          },
+          {
+            "tMs": 56500,
+            "kind": "caption",
+            "text": "Selected topics show a checkmark. The Start button activates once you pick at least one."
+          },
+          {
+            "tMs": 75000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"quiz-start-category\"]"
+          },
+          {
+            "tMs": 76500,
+            "kind": "caption",
+            "text": "Start the quiz when you're ready. We'll skip running it inside the workshop."
+          },
+          {
+            "tMs": 165000,
+            "kind": "caption",
+            "text": "Results show your score, category breakdown, difficulty breakdown, and let you retake or change topics."
+          },
+          {
+            "tMs": 180000,
+            "kind": "advance"
+          }
+        ]
+      },
+      {
+        "id": "close-01-recap",
+        "chapter": "close",
+        "title": "Recap and next research steps",
+        "estMinutes": 2,
+        "whyItMatters": "The open-problem inventory you take into your next research cycle.",
+        "page": {
+          "route": "/"
+        },
+        "tasks": ["Note your reading list", "Pick one open problem to follow"],
+        "expectedOutput": "A research reading list and an open-problem to track.",
+        "narration": "Three research takeaways: the standards process is your publication path, hybrid combiners and side-channel are active areas, and stateful signatures + QKD remain underexplored frontiers.",
+        "cues": [
+          {
+            "tMs": 0,
+            "kind": "navigate",
+            "route": "/"
+          },
+          {
+            "tMs": 1500,
+            "kind": "caption",
+            "text": "Three research takeaways: standards process, hybrid + side-channel as live areas, stateful + QKD frontiers."
+          },
+          {
+            "tMs": 120000,
+            "kind": "advance"
+          }
+        ]
+      }
+    ]
+  }
+}

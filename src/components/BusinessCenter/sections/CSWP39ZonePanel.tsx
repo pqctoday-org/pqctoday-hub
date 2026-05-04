@@ -38,6 +38,10 @@ export interface CSWP39ZonePanelProps {
   zone: ZoneId
   metrics: BusinessMetrics
   defaultOpen?: boolean
+  /** Controlled open state. When provided, the panel is fully controlled by the parent. */
+  open?: boolean
+  /** Called when the toggle button is clicked in controlled mode. */
+  onToggle?: () => void
   /** Optional ordering for featured artifact types (drives persona-aware sort). */
   featuredArtifacts?: ExecutiveDocumentType[]
   onViewArtifact: (doc: ExecutiveDocument) => void
@@ -98,6 +102,8 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
   zone,
   metrics,
   defaultOpen = false,
+  open: controlledOpen,
+  onToggle,
   featuredArtifacts,
   onViewArtifact,
   onEditArtifact,
@@ -114,7 +120,10 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
   // eslint-disable-next-line security/detect-object-injection
   const tier = computeZoneTiers(metrics)[zone]
 
-  const [open, setOpen] = useState(defaultOpen)
+  const isControlled = controlledOpen !== undefined
+  const [internalOpen, setInternalOpen] = useState(defaultOpen)
+  const open = isControlled ? controlledOpen : internalOpen
+  const handleToggle = isControlled ? (onToggle ?? (() => {})) : () => setInternalOpen((v) => !v)
   const assessmentSnap = useAssessmentSnapshot()
 
   const artifacts = orderByFeatured(getArtifactsForZone(metrics, zone), featuredArtifacts)
@@ -168,7 +177,7 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
         <Button
           variant="ghost"
           className="shrink-0 h-8 px-2"
-          onClick={() => setOpen((v) => !v)}
+          onClick={handleToggle}
           aria-expanded={open}
           aria-label={open ? `Collapse ${detail.title}` : `Expand ${detail.title}`}
           data-workshop-target={`section-business-zone-${zone}`}

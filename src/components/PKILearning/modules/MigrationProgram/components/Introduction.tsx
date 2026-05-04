@@ -372,10 +372,12 @@ const Step2SuccessAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> = 
 export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop }) => {
   const steps = [
     {
+      id: 'roadmap',
       label: 'Program Overview & 7-Phase Framework',
       content: <Step1ProgramAndFramework />,
     },
     {
+      id: 'deployment',
       label: 'Critical Success Factors & Workshop',
       content: <Step2SuccessAndWorkshop onNavigateToWorkshop={onNavigateToWorkshop} />,
     },

@@ -28,7 +28,7 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
   return (
     <div className="space-y-6 w-full">
       {/* Section 1: Why Entropy Matters */}
-      <section className="glass-panel p-6">
+      <section data-section-id="entropy" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Shuffle size={20} /> Why Entropy Matters
         </h2>
@@ -143,7 +143,7 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
       </section>
 
       {/* Section 3: DRBG Mechanisms (SP 800-90A) */}
-      <section className="glass-panel p-6">
+      <section data-section-id="drbg" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Cog size={20} /> DRBG Mechanisms (SP 800-90A)
         </h2>
@@ -201,7 +201,7 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
       </section>
 
       {/* Section 4: Entropy Testing (SP 800-90B) */}
-      <section className="glass-panel p-6">
+      <section data-section-id="testing" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <TestTubes size={20} /> Entropy Testing (SP 800-90B)
         </h2>
@@ -326,7 +326,7 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
       </section>
 
       {/* Section 6: TRNG vs QRNG */}
-      <section className="glass-panel p-6">
+      <section data-section-id="qrng" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Cpu size={20} className="shrink-0" /> <InlineTooltip term="TRNG">TRNG</InlineTooltip> vs{' '}
           <Atom size={20} className="shrink-0" /> <InlineTooltip term="QRNG">QRNG</InlineTooltip>
@@ -358,7 +358,7 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
       </section>
 
       {/* Section 7: Combining Sources for PQC */}
-      <section className="glass-panel p-6">
+      <section data-section-id="combining" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Shield size={20} /> Combining Sources for PQC
         </h2>

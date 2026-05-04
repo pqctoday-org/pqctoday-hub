@@ -592,18 +592,22 @@ const Step4Advanced: React.FC<{ onNavigateToWorkshop: () => void }> = ({
 export const SLHDSAIntroduction: React.FC<SLHDSAIntroductionProps> = ({ onNavigateToWorkshop }) => {
   const steps = [
     {
+      id: 'overview',
       label: 'SLH-DSA Overview & Why Stateless',
       content: <Step1Overview />,
     },
     {
+      id: 'internals',
       label: 'WOTS+, FORS & Hypertree Architecture (§3–5)',
       content: <Step2Internals />,
     },
     {
+      id: 'parameters',
       label: 'Parameter Sets, Tradeoffs & FIPS 205 §6',
       content: <Step3Parameters />,
     },
     {
+      id: 'advanced',
       label: 'Context Strings, Deterministic Mode & HashSLH-DSA',
       content: <Step4Advanced onNavigateToWorkshop={onNavigateToWorkshop} />,
     },

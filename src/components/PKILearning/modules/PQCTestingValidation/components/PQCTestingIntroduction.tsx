@@ -23,6 +23,7 @@ interface CollapsibleSectionProps {
   title: string
   defaultOpen?: boolean
   children: React.ReactNode
+  sectionId?: string
 }
 
 const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
@@ -30,11 +31,12 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   title,
   defaultOpen = false,
   children,
+  sectionId,
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen)
 
   return (
-    <section className="glass-panel p-6">
+    <section data-section-id={sectionId} className="glass-panel p-6 scroll-mt-20">
       <Button
         variant="ghost"
         onClick={() => setIsOpen(!isOpen)}
@@ -66,6 +68,7 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
         icon={<AlertTriangle size={24} className="text-primary" />}
         title="Why PQC Testing Is Different"
         defaultOpen
+        sectionId="why-pqc-testing"
       >
         <p>
           Testing post-quantum cryptography deployments is fundamentally different from classical
@@ -126,6 +129,7 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
       <CollapsibleSection
         icon={<Radio size={24} className="text-primary" />}
         title="Passive Discovery vs Active Scanning"
+        sectionId="passive-vs-active"
       >
         <p>
           Two complementary approaches cover different parts of the{' '}
@@ -211,6 +215,7 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
       <CollapsibleSection
         icon={<BarChart2 size={24} className="text-primary" />}
         title="PQC Performance Benchmarking Methodology"
+        sectionId="performance-testing-method"
       >
         <p>
           Performance testing for PQC requires a layered methodology — because the bottleneck is
@@ -389,6 +394,7 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
       <CollapsibleSection
         icon={<GitBranch size={24} className="text-primary" />}
         title="Interoperability Testing & RFC 9794 Compliance"
+        sectionId="interop-testing"
       >
         <p>
           <InlineTooltip term="RFC 9794">RFC 9794</InlineTooltip> standardizes hybrid PQC scheme
@@ -433,6 +439,7 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
       <CollapsibleSection
         icon={<Cpu size={24} className="text-primary" />}
         title="Side-Channel Testing & TVLA for Lattice Crypto"
+        sectionId="side-channel-tvla"
       >
         <p>
           <InlineTooltip term="TVLA">Test Vector Leakage Assessment</InlineTooltip> is the standard
@@ -493,6 +500,7 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
       <CollapsibleSection
         icon={<FileBadge size={24} className="text-primary" />}
         title="FIPS 140-3 & Algorithmic Validation (ACVP)"
+        sectionId="fips-acvp"
       >
         <p>
           Before performance testing, interoperability, or TVLA, a cryptographic module must be

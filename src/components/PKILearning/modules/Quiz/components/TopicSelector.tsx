@@ -64,6 +64,7 @@ export const TopicSelector: React.FC<TopicSelectorProps> = ({
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.2, delay: index * 0.03 }}
             onClick={() => onToggleCategory(category.id)}
+            data-workshop-target={`quiz-category-${category.id}`}
             className={clsx(
               'glass-panel p-4 text-left transition-all cursor-pointer',
               isSelected

@@ -82,7 +82,7 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
       </section>
 
       {/* Section 2: ML-KEM in IKEv2 */}
-      <section className="glass-panel p-6">
+      <section data-section-id="ikev2" className="glass-panel p-6 scroll-mt-20">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-secondary/10">
             <Network size={24} className="text-secondary" />
@@ -134,7 +134,7 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
       </section>
 
       {/* Section 3: SSH Key Exchange with PQC */}
-      <section className="glass-panel p-6">
+      <section data-section-id="ssh" className="glass-panel p-6 scroll-mt-20">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">
             <Terminal size={24} className="text-primary" />
@@ -200,7 +200,7 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
       </section>
 
       {/* Section 4: WireGuard PQC */}
-      <section className="glass-panel p-6">
+      <section data-section-id="wireguard" className="glass-panel p-6 scroll-mt-20">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-secondary/10">
             <Lock size={24} className="text-secondary" />

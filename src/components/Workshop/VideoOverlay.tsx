@@ -26,6 +26,7 @@ export const VideoOverlay: React.FC = () => {
   const markStepComplete = useWorkshopStore((s) => s.markStepComplete)
   const playbackSpeed = useWorkshopStore((s) => s.playbackSpeed)
   const playbackMode = useWorkshopStore((s) => s.playbackMode)
+  const ttsEnabled = useWorkshopStore((s) => s.ttsEnabled)
 
   const applyCue = useWorkshopOverlayStore((s) => s.applyCue)
   const setCaption = useWorkshopOverlayStore((s) => s.setCaption)
@@ -143,13 +144,24 @@ export const VideoOverlay: React.FC = () => {
     //                  (mul=0.5) halves both.
     const isPreview = playbackMode === 'preview'
     const cuesSorted = isPreview ? [] : [...(step.cues ?? [])].sort((a, b) => a.tMs - b.tMs)
+    // Voice off: cues fire on authored timing × playbackSpeed (Slow=2x, Fast=0.25x).
+    // Voice on : DYNAMIC timing — captions wait until the previous caption's
+    //            speech finishes + a 1.5s buffer, then fire (regardless of
+    //            authored tMs). Eliminates dead air after short captions and
+    //            naturally extends for long ones. Click/scroll/spotlight cues
+    //            still fire on authored timing within each caption window.
+    //            Estimate: 14 chars/sec at the 0.85 speech rate.
     const mul = PRESENTATION_SPEED_MULTIPLIER[playbackSpeed]
     const scale = isPreview ? 0 : mul
+    const SPEECH_BUFFER_MS = 1500
+    const speechMsFor = (text: string): number => Math.max(1500, (text.length / 14) * 1000)
+    let captionEndAt = 0 // real-elapsed-ms when current caption's speech is expected to end
+    const stripPrefix = (s: string) =>
+      s.replace(
+        /^\s*(?:Section|Workshop|Layer|Step|Hint|Artifact|Module|Tab)\s+\d+(?:\s*(?:\/|of|out of)\s*\d+)?\s*[:.\-—]\s*/i,
+        ''
+      )
 
-    // Step duration:
-    //   preview                                  → fixed STEP_DURATION_MS[speed]
-    //   presentation, no cues authored           → STEP_DURATION_MS[speed] × 3 (caption-only steps shouldn't block for estMinutes — feels frozen)
-    //   presentation, has cues                   → originalMs × speed multiplier
     let targetMs: number
     if (isPreview) {
       targetMs = STEP_DURATION_MS[playbackSpeed]
@@ -167,15 +179,28 @@ export const VideoOverlay: React.FC = () => {
       const elapsed = performance.now() - startTimeRef.current - pausedAccumRef.current
       while (handledIdxRef.current + 1 < cuesSorted.length) {
         const next = cuesSorted[handledIdxRef.current + 1]
-        if (next.tMs * scale > elapsed) break
+        // Caption gating: voice on → wait for previous speech to finish + buffer.
+        //                 voice off → authored timing.
+        if (next.kind === 'caption' && ttsEnabled) {
+          if (elapsed < captionEndAt + SPEECH_BUFFER_MS) break
+        } else if (next.tMs * scale > elapsed) {
+          break
+        }
         handledIdxRef.current += 1
         if (next.kind === 'advance') {
           advanceToNext()
           return
         }
+        if (next.kind === 'caption' && ttsEnabled) {
+          // Schedule when this speech is expected to end.
+          captionEndAt = elapsed + speechMsFor(stripPrefix(next.text))
+        }
         applyCue(next, fixtures, step.id, cuesSorted.slice(handledIdxRef.current + 1))
       }
-      if (elapsed >= targetMs) {
+      // Step boundary: when voice on, hold the step open until current speech
+      // (if any) finishes — prevents truncating the last caption.
+      const speechHoldOk = !ttsEnabled || elapsed >= captionEndAt
+      if (elapsed >= targetMs && speechHoldOk) {
         advanceToNext()
         return
       }
@@ -184,7 +209,7 @@ export const VideoOverlay: React.FC = () => {
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, step?.id, restartToken, fixtures, playbackSpeed, playbackMode])
+  }, [mode, step?.id, restartToken, fixtures, playbackSpeed, playbackMode, ttsEnabled])
 
   if (mode !== 'video' || !step) return null
 

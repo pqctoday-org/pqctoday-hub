@@ -1,40 +1,26 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo, useEffect, useCallback } from 'react'
-import {
-  ArrowRight,
-  Info,
-  ShieldCheck,
-  ShieldAlert,
-  Clock,
-  BookOpen,
-  FileText,
-  Award,
-  Scale,
-  Import,
-} from 'lucide-react'
+import { ArrowRight, Info, ShieldCheck, ShieldAlert, Clock, Import } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
 
 import { useAssessmentStore } from '../../../store/useAssessmentStore'
 import { useComplianceSelectionStore } from '../../../store/useComplianceSelectionStore'
 import { usePersonaStore } from '../../../store/usePersonaStore'
-import {
-  complianceFrameworks,
-  type ComplianceFramework,
-  type BodyType,
-} from '../../../data/complianceData'
-import { REGION_COUNTRIES_MAP } from '../../../data/personaConfig'
+import { complianceFrameworks, type ComplianceFramework } from '../../../data/complianceData'
 import { deadlineUrgency, urgencyColor } from '../../../utils/deadlineUrgency'
-import { EU_MEMBER_COUNTRIES } from '../../../utils/euCountries'
+import {
+  applicableFrameworks,
+  isProfileEmpty,
+  type ApplicabilityResult,
+  type ApplicabilityTier,
+} from '../../../utils/applicabilityEngine'
+import { TIER_STYLES } from '../../applicability/parts/tierStyles'
 import { Button } from '../../ui/button'
 import { PersonaHint } from './PersonaHint'
 
-const BODY_TYPE_SECTIONS: { bodyType: BodyType; label: string; icon: typeof BookOpen }[] = [
-  { bodyType: 'standardization_body', label: 'Standardization Bodies', icon: BookOpen },
-  { bodyType: 'technical_standard', label: 'Technical Standards', icon: FileText },
-  { bodyType: 'certification_body', label: 'Certification Schemes', icon: Award },
-  { bodyType: 'compliance_framework', label: 'Compliance Frameworks', icon: Scale },
-]
+// Tiers shown in the assess step — informational omitted (too noisy for selection).
+const TIER_ORDER: ApplicabilityTier[] = ['mandatory', 'recognized', 'cross-border', 'advisory']
 
 const Step5Compliance = () => {
   const {
@@ -53,63 +39,42 @@ const Step5Compliance = () => {
   const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
   const toggleMyFramework = useComplianceSelectionStore((s) => s.toggleMyFramework)
 
-  // Filter frameworks by industry + country (region fallback), then group by bodyType
-  const { groupedFrameworks, filteredFrameworkIds } = useMemo(() => {
-    const isEuMember = country ? EU_MEMBER_COUNTRIES.has(country) : false
-    const regionCountries =
-      (!country || country === 'Global') && selectedRegion && selectedRegion !== 'global'
-        ? new Set(REGION_COUNTRIES_MAP[selectedRegion])
-        : null
+  // Group applicable frameworks by tier (mandatory → recognized → cross-border → advisory).
+  // Uses the shared applicabilityEngine directly (no persona lens caps) so the user
+  // sees every applicable framework ranked by regulatory relevance — mandatory
+  // obligations listed first with their reason string ("Your regulator: ASD").
+  // Empty profile falls back to all frameworks as advisory.
+  const { groupedByTier, filteredFrameworkIds } = useMemo(() => {
+    const profile = { industry, country, region: selectedRegion }
 
-    const filtered = complianceFrameworks.filter((fw) => {
-      // Industry filter: show if universal (0 or 3+ industries) or matches selected industry
-      if (industry && industry !== 'Other') {
-        const isUniversal = fw.industries.length === 0 || fw.industries.length >= 3
-        if (!isUniversal && !fw.industries.includes(industry)) return false
-      }
+    const results: ApplicabilityResult<ComplianceFramework>[] = isProfileEmpty(profile)
+      ? complianceFrameworks.map((fw) => ({ item: fw, tier: 'advisory' as const, reason: '' }))
+      : applicableFrameworks(profile).filter((r) => r.tier !== 'informational')
 
-      // Country filter: exact match takes priority; region fallback when country is blank
-      if (country && country !== 'Global') {
-        const matchesCountry =
-          fw.countries.length === 0 ||
-          fw.countries.includes('Global') ||
-          fw.countries.includes(country) ||
-          (isEuMember && fw.countries.includes('European Union'))
-        if (!matchesCountry) return false
-      } else if (regionCountries) {
-        const matchesRegion =
-          fw.countries.length === 0 ||
-          fw.countries.includes('Global') ||
-          fw.countries.some((c) => regionCountries.has(c)) ||
-          (selectedRegion === 'eu' && fw.countries.includes('European Union'))
-        if (!matchesRegion) return false
-      }
+    const ids = new Set(results.map((r) => r.item.id))
 
-      return true
+    // Sort: tier order → requiresPQC first → deadline year asc → label asc
+    results.sort((a, b) => {
+      const ta = TIER_ORDER.indexOf(a.tier)
+      const tb = TIER_ORDER.indexOf(b.tier)
+      if (ta !== tb) return (ta < 0 ? 99 : ta) - (tb < 0 ? 99 : tb)
+      if (a.item.requiresPQC !== b.item.requiresPQC) return a.item.requiresPQC ? -1 : 1
+      const ya = a.item.deadline.match(/\b(20\d{2})\b/)?.[1]
+      const yb = b.item.deadline.match(/\b(20\d{2})\b/)?.[1]
+      if (ya && yb) return parseInt(ya, 10) - parseInt(yb, 10)
+      if (ya) return -1
+      if (yb) return 1
+      return a.item.label.localeCompare(b.item.label)
     })
 
-    // Sort: requiresPQC first, then by deadline year ascending, then alphabetical
-    filtered.sort((a, b) => {
-      if (a.requiresPQC !== b.requiresPQC) return a.requiresPQC ? -1 : 1
-      const yearA = a.deadline.match(/\b(20\d{2})\b/)?.[1]
-      const yearB = b.deadline.match(/\b(20\d{2})\b/)?.[1]
-      if (yearA && yearB) return parseInt(yearA, 10) - parseInt(yearB, 10)
-      if (yearA) return -1
-      if (yearB) return 1
-      return a.label.localeCompare(b.label)
-    })
-
-    // Build ID set for filter intersection
-    const ids = new Set(filtered.map((fw) => fw.id))
-
-    // Group by bodyType
-    const groups = new Map<BodyType, ComplianceFramework[]>()
-    for (const fw of filtered) {
-      const list = groups.get(fw.bodyType) ?? []
-      list.push(fw)
-      groups.set(fw.bodyType, list)
+    const groups = new Map<ApplicabilityTier, ApplicabilityResult<ComplianceFramework>[]>()
+    for (const r of results) {
+      const tier: ApplicabilityTier = TIER_ORDER.includes(r.tier) ? r.tier : 'advisory'
+      if (!groups.has(tier)) groups.set(tier, [])
+      groups.get(tier)!.push(r)
     }
-    return { groupedFrameworks: groups, filteredFrameworkIds: ids }
+
+    return { groupedByTier: groups, filteredFrameworkIds: ids }
   }, [industry, country, selectedRegion])
 
   // Bidirectional sync: when import ON, sync complianceRequirements from myFrameworks
@@ -131,19 +96,14 @@ const Step5Compliance = () => {
   const handleToggle = useCallback(
     (fw: ComplianceFramework) => {
       if (importComplianceSelection) {
-        // Update compliance page store → useEffect syncs complianceRequirements
         toggleMyFramework(fw.id)
       } else {
-        // Manual mode: only update assessment store
         toggleCompliance(fw.label)
       }
     },
     [importComplianceSelection, toggleMyFramework, toggleCompliance]
   )
 
-  // Determine if a framework is selected.
-  // When "I'm not sure" is active, smart-defaults land in complianceRequirements —
-  // honor that regardless of import-mode so the pre-selected items highlight.
   const isSelected = useCallback(
     (fw: ComplianceFramework) => {
       if (complianceUnknown) return complianceRequirements.includes(fw.label)
@@ -245,27 +205,27 @@ const Step5Compliance = () => {
           </div>
         )}
 
-        {BODY_TYPE_SECTIONS.map((section) => {
-          const frameworks = groupedFrameworks.get(section.bodyType)
-          if (!frameworks?.length) return null
+        {TIER_ORDER.map((tier) => {
+          const results = groupedByTier.get(tier)
+          if (!results?.length) return null
+          const styles = TIER_STYLES[tier]
 
-          const SectionIcon = section.icon
           return (
-            <div key={section.bodyType}>
+            <div key={tier}>
               <div className="flex items-center gap-2 mb-2">
-                <SectionIcon size={14} className="text-muted-foreground" />
+                <span className={clsx('w-2 h-2 rounded-full shrink-0', styles.dot)} />
                 <span className="text-xs font-semibold text-foreground uppercase tracking-wide">
-                  {section.label}
+                  {styles.label}
                 </span>
-                <span className="text-xs text-muted-foreground">({frameworks.length})</span>
+                <span className="text-xs text-muted-foreground">({results.length})</span>
               </div>
 
               <div
                 className="grid grid-cols-1 md:grid-cols-2 gap-2"
                 role="group"
-                aria-label={section.label}
+                aria-label={styles.label}
               >
-                {frameworks.map((fw) => {
+                {results.map(({ item: fw, reason }) => {
                   const selected = isSelected(fw)
                   const urgency = deadlineUrgency(fw.deadline)
                   const showDeadline = fw.deadline && fw.deadline !== 'Ongoing'
@@ -291,6 +251,11 @@ const Step5Compliance = () => {
                         )}
                         <span className="text-sm font-medium">{fw.label}</span>
                       </div>
+                      {reason && (
+                        <p className="text-[10px] mt-0.5 text-muted-foreground/70 font-normal leading-snug">
+                          {reason}
+                        </p>
+                      )}
                       {showDeadline && (
                         <div
                           className={clsx(

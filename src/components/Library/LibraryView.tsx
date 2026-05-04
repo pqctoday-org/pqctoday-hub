@@ -101,6 +101,12 @@ const ORG_CANONICAL_MAP: Record<string, string> = {
   'Trusted Computing Group': 'Trusted Computing Group',
   'UK NCSC': 'UK NCSC',
   'White House': 'White House',
+  // ASD / ACSC Australia — multiple CSV authorship forms roll up to 'ASD Australia'
+  ASD: 'ASD Australia',
+  'Australian Signals Directorate': 'ASD Australia',
+  ACSC: 'ASD Australia',
+  'Australian Cyber Security Centre': 'ASD Australia',
+  'Australian Cyber Security Centre (ACSC)': 'ASD Australia',
   // Excluded (not in map): 'Browser vendors', 'CAs', 'Ministry of Science and ICT',
   // 'NIS Korea', 'NIS Korea', 'Samsung System LSI', 'Thales'
 }
@@ -217,6 +223,9 @@ export const LibraryView: React.FC = () => {
   const [activeIndustry, setActiveIndustry] = useState<string>(
     () => searchParams.get('ind') ?? storeIndustry ?? 'All'
   )
+  const [activeRegion, setActiveRegion] = useState<string>(
+    () => searchParams.get('region') ?? 'All'
+  )
   const [filterText, setFilterText] = useState(() => searchParams.get('q') ?? '')
   const [inputValue, setInputValue] = useState(() => searchParams.get('q') ?? '')
   const [viewMode, setViewMode] = useState<ViewMode>(
@@ -277,6 +286,7 @@ export const LibraryView: React.FC = () => {
     const nextCat = searchParams.get('cat') ?? 'All'
     const nextOrg = searchParams.get('org') ?? 'All'
     const nextInd = searchParams.get('ind') ?? storeIndustry ?? 'All'
+    const nextRegion = searchParams.get('region') ?? 'All'
     const nextQ = searchParams.get('q') ?? ''
     const nextView = (searchParams.get('view') as ViewMode | null) ?? 'cards'
     const nextSort = (searchParams.get('sort') as SortOption | null) ?? 'newest'
@@ -284,6 +294,7 @@ export const LibraryView: React.FC = () => {
     setActiveCategory((prev) => (prev !== nextCat ? nextCat : prev))
     setActiveOrg((prev) => (prev !== nextOrg ? nextOrg : prev))
     setActiveIndustry((prev) => (prev !== nextInd ? nextInd : prev))
+    setActiveRegion((prev) => (prev !== nextRegion ? nextRegion : prev))
     setFilterText((prev) => (prev !== nextQ ? nextQ : prev))
     setInputValue((prev) => (prev !== nextQ ? nextQ : prev))
     setViewMode((prev) => (prev !== nextView ? nextView : prev))
@@ -307,6 +318,7 @@ export const LibraryView: React.FC = () => {
       cat?: string
       org?: string
       ind?: string
+      region?: string
       q?: string
       view?: ViewMode
       sort?: SortOption
@@ -319,6 +331,7 @@ export const LibraryView: React.FC = () => {
           const cat = overrides.cat ?? activeCategory
           const org = overrides.org ?? activeOrg
           const ind = overrides.ind ?? activeIndustry
+          const region = overrides.region ?? activeRegion
           const q = overrides.q ?? filterText
           const view = overrides.view ?? viewMode
           const sort = overrides.sort ?? sortBy
@@ -331,6 +344,8 @@ export const LibraryView: React.FC = () => {
           else next.delete('org')
           if (ind !== 'All') next.set('ind', ind)
           else next.delete('ind')
+          if (region !== 'All') next.set('region', region)
+          else next.delete('region')
           if (q) next.set('q', q)
           else next.delete('q')
           if (view !== 'cards') next.set('view', view)
@@ -350,6 +365,7 @@ export const LibraryView: React.FC = () => {
       activeCategory,
       activeOrg,
       activeIndustry,
+      activeRegion,
       filterText,
       viewMode,
       sortBy,
@@ -409,6 +425,19 @@ export const LibraryView: React.FC = () => {
       }
     })
     return ['All', ...Array.from(o).sort()]
+  }, [])
+
+  const regions = useMemo(() => {
+    const r = new Set<string>()
+    libraryData.forEach((item) => {
+      if (item.regionScope) {
+        item.regionScope.split(';').forEach((s) => {
+          const v = s.trim()
+          if (v && v !== 'Global') r.add(v)
+        })
+      }
+    })
+    return ['All', 'Global', ...Array.from(r).sort()]
   }, [])
 
   // Lifecycle bucket options with item counts for the filter dropdown
@@ -483,6 +512,22 @@ export const LibraryView: React.FC = () => {
         if (!itemCanonicalOrgs.includes(activeOrg)) return false
       }
 
+      // Region/country filter — items tagged 'Global' always pass through
+      if (activeRegion !== 'All') {
+        const itemRegions = item.regionScope
+          ? item.regionScope
+              .split(';')
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : []
+        if (
+          itemRegions.length > 0 &&
+          !itemRegions.includes('Global') &&
+          !itemRegions.includes(activeRegion)
+        )
+          return false
+      }
+
       // My bookmarks filter
       if (showOnlyLibraryBookmarks && !libraryBookmarks.includes(item.referenceId)) return false
 
@@ -506,6 +551,7 @@ export const LibraryView: React.FC = () => {
     activeCategory,
     activeOrg,
     activeIndustry,
+    activeRegion,
     filterText,
     showOnlyLibraryBookmarks,
     libraryBookmarks,
@@ -698,6 +744,7 @@ export const LibraryView: React.FC = () => {
               activeCategory !== 'All' ||
               activeOrg !== 'All' ||
               activeIndustry !== 'All' ||
+              activeRegion !== 'All' ||
               lifecycleBucket !== 'All'
                 ? 'bg-primary/10 border-primary/30 text-primary'
                 : 'bg-muted/30 border-border text-foreground hover:bg-muted/50'
@@ -710,6 +757,7 @@ export const LibraryView: React.FC = () => {
             {(activeCategory !== 'All' ||
               activeOrg !== 'All' ||
               activeIndustry !== 'All' ||
+              activeRegion !== 'All' ||
               lifecycleBucket !== 'All') && <span className="w-2 h-2 rounded-full bg-primary" />}
           </Button>
 
@@ -829,6 +877,25 @@ export const LibraryView: React.FC = () => {
               />
             </div>
 
+            <div className="flex-1 min-w-[160px]">
+              <span className="text-xs font-medium text-muted-foreground mb-1 block">
+                Country / Region
+              </span>
+              <FilterDropdown
+                items={regions}
+                selectedId={activeRegion}
+                onSelect={(region) => {
+                  setActiveRegion(region)
+                  syncFiltersToUrl({ region })
+                  logEvent('Library', 'Filter Region', region)
+                }}
+                defaultLabel="Country / Region"
+                noContainer
+                opaque
+                className="mb-0 w-full"
+              />
+            </div>
+
             {/* Sort Dropdown for Mobile (Inside filters drawer) */}
             {viewMode === 'cards' && (
               <div className="flex-1 min-w-[160px] sm:hidden">
@@ -851,7 +918,10 @@ export const LibraryView: React.FC = () => {
       </div>
 
       {/* Active Filter Chips */}
-      {(activeOrg !== 'All' || activeIndustry !== 'All' || filterText !== '') && (
+      {(activeOrg !== 'All' ||
+        activeIndustry !== 'All' ||
+        activeRegion !== 'All' ||
+        filterText !== '') && (
         <div className="flex flex-wrap items-center gap-2 text-xs">
           {filterText && (
             <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
@@ -902,14 +972,31 @@ export const LibraryView: React.FC = () => {
               </Button>
             </span>
           )}
+          {activeRegion !== 'All' && (
+            <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
+              <span className="text-muted-foreground">Region:</span> {activeRegion}
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setActiveRegion('All')
+                  syncFiltersToUrl({ region: 'All' })
+                }}
+                className="text-muted-foreground hover:text-foreground"
+                aria-label="Clear region filter"
+              >
+                <X size={12} aria-hidden="true" />
+              </Button>
+            </span>
+          )}
           <Button
             variant="ghost"
             onClick={() => {
               setActiveOrg('All')
               setActiveIndustry('All')
+              setActiveRegion('All')
               setFilterText('')
               setInputValue('')
-              syncFiltersToUrl({ org: 'All', ind: 'All', q: '' })
+              syncFiltersToUrl({ org: 'All', ind: 'All', region: 'All', q: '' })
             }}
             className="text-muted-foreground hover:text-foreground underline decoration-muted-foreground/30 hover:decoration-muted-foreground transition-all ml-1"
           >

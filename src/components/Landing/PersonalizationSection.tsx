@@ -4,8 +4,6 @@ import { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import type { LucideIcon } from 'lucide-react'
 import {
-  Award,
-  BookOpen,
   Briefcase,
   Car,
   Check,
@@ -32,7 +30,6 @@ import {
   Shield,
   ShieldCheck,
   ShoppingCart,
-  Star,
   Sun,
   User,
   Wrench,
@@ -42,9 +39,9 @@ import {
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import type { Region, ExperienceLevel } from '@/store/usePersonaStore'
+import type { Region } from '@/store/usePersonaStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
-import { PERSONAS, inferPersonaFromAssessment, type PersonaId } from '@/data/learningPersonas'
+import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 import { REGION_COUNTRIES_MAP } from '@/data/personaConfig'
 import { AVAILABLE_INDUSTRIES } from '@/hooks/assessmentData'
 import { PersonalizedAvatar } from './PersonalizedAvatar'
@@ -52,18 +49,42 @@ import { ScoreCard } from './ScoreCard'
 import { useEmbedState } from '@/embed/EmbedProvider'
 import { logPersonaSelected, logRegionSelected, logIndustrySelected } from '@/utils/analytics'
 
-type ActiveModal = 'experience' | 'role' | 'region' | 'industry' | null
+type TrackType = 'curious' | 'business' | 'technical'
+type ActiveModal = 'role' | 'region' | 'industry' | null
 
 // ─── Static data ──────────────────────────────────────────────────────────────
 
-const PERSONA_ORDER: PersonaId[] = [
-  'curious',
-  'executive',
-  'developer',
-  'architect',
-  'ops',
-  'researcher',
+const TRACKS: {
+  id: TrackType
+  label: string
+  description: string
+  Icon: LucideIcon
+  cornerIcon: LucideIcon
+}[] = [
+  {
+    id: 'curious',
+    label: 'Curious',
+    description: 'New to cryptography & quantum — quick setup, no further steps',
+    Icon: Lightbulb,
+    cornerIcon: HelpCircle,
+  },
+  {
+    id: 'business',
+    label: 'Business',
+    description: 'Risk, governance & compliance — executive profile',
+    Icon: Briefcase,
+    cornerIcon: User,
+  },
+  {
+    id: 'technical',
+    label: 'Technical',
+    description: 'Developer, architect, ops, or researcher — pick your role next',
+    Icon: Code,
+    cornerIcon: Code2,
+  },
 ]
+
+const TECHNICAL_PERSONAS: PersonaId[] = ['developer', 'architect', 'ops', 'researcher']
 
 const PERSONA_ICONS = {
   Lightbulb,
@@ -133,36 +154,6 @@ const REGIONS: {
   },
 ]
 
-const EXPERIENCE_LEVELS: {
-  id: ExperienceLevel
-  label: string
-  description: string
-  Icon: LucideIcon
-  cornerIcon: LucideIcon
-}[] = [
-  {
-    id: 'curious',
-    label: 'Curious',
-    description: 'No technical background needed',
-    Icon: Lightbulb,
-    cornerIcon: HelpCircle,
-  },
-  {
-    id: 'basics',
-    label: 'Know the Basics',
-    description: 'Familiar with concepts',
-    Icon: GraduationCap,
-    cornerIcon: Star,
-  },
-  {
-    id: 'expert',
-    label: 'Expert',
-    description: 'Deep technical knowledge',
-    Icon: Award,
-    cornerIcon: Zap,
-  },
-]
-
 // ─── SelectionCard ─────────────────────────────────────────────────────────────
 
 interface SelectionCardProps {
@@ -173,6 +164,7 @@ interface SelectionCardProps {
   title: string
   description?: string
   badge?: React.ReactNode
+  workshopTarget?: string
 }
 
 const SelectionCard = ({
@@ -183,6 +175,7 @@ const SelectionCard = ({
   title,
   description,
   badge,
+  workshopTarget,
 }: SelectionCardProps) => (
   <div
     role="button"
@@ -190,7 +183,8 @@ const SelectionCard = ({
     onClick={onClick}
     onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick()}
     aria-pressed={isActive}
-    className={`relative flex flex-col rounded-xl transition-all duration-200 cursor-pointer select-none p-3 min-h-[44px]
+    data-workshop-target={workshopTarget}
+    className={`relative flex flex-col rounded-xl transition-all duration-200 cursor-pointer select-none p-3 min-h-[44px] scroll-mt-20
       ${
         isActive
           ? 'bg-primary/[0.08] border-2 border-primary shadow-sm'
@@ -239,36 +233,6 @@ const SelectionCard = ({
 
 // ─── Modal content data ───────────────────────────────────────────────────────
 
-const EXPERIENCE_HIGHLIGHTS: { level: string; Icon: LucideIcon; items: string[] }[] = [
-  {
-    level: 'Curious',
-    Icon: Lightbulb,
-    items: [
-      'Jargon-free "In Simple Terms" summaries shown on every module',
-      'Chat assistant explains everything in everyday language with analogies',
-      'Technical workshop steps are hidden — only visual and conceptual activities shown',
-    ],
-  },
-  {
-    level: 'Know the Basics',
-    Icon: GraduationCap,
-    items: [
-      'Learning paths skip introductory modules and go deeper',
-      'Quiz difficulty includes intermediate algorithm and protocol questions',
-      'Explore and Test steps are prominently featured',
-    ],
-  },
-  {
-    level: 'Expert',
-    Icon: Award,
-    items: [
-      'Learning paths surface advanced modules (hybrid crypto, stateful sigs, QKD)',
-      'Quiz difficulty includes deep-dive protocol and math questions',
-      'All platform sections treated as equally accessible — no guidance guardrails',
-    ],
-  },
-]
-
 const ROLE_ADAPTATIONS: {
   id: PersonaId
   icon: LucideIcon
@@ -280,8 +244,8 @@ const ROLE_ADAPTATIONS: {
     icon: Briefcase,
     color: 'text-primary',
     highlights: [
-      'Hero CTA leads to "Start the Journey" — shortcut to Risk Assessment',
-      'Learn, Assess, Compliance, and Timeline steps are featured',
+      'Primary CTA opens "Start the Journey"; secondary opens the Command Center for board-pack artifacts',
+      'Featured surfaces: Learn modules, Risk Assessment, Compliance, Timeline',
       'Headings and descriptions focus on governance, risk, and compliance deadlines',
     ],
   },
@@ -290,8 +254,8 @@ const ROLE_ADAPTATIONS: {
     icon: Code,
     color: 'text-secondary',
     highlights: [
-      'Hero CTA leads to "Start the Journey" — shortcut to Playground',
-      'Learn, Algorithms, Playground, and OpenSSL steps are featured',
+      'Primary CTA opens "Start the Journey"; secondary jumps directly to the Playground',
+      'Featured surfaces: Learn modules, Algorithms, Playground, OpenSSL Studio',
       'Headings and descriptions focus on hands-on crypto operations and APIs',
     ],
   },
@@ -300,8 +264,8 @@ const ROLE_ADAPTATIONS: {
     icon: ShieldCheck,
     color: 'text-accent',
     highlights: [
-      'Hero CTA leads to "Start the Journey" — shortcut to Timeline',
-      'Learn, Timeline, Assess, and Compliance steps are featured',
+      'Primary CTA opens "Start the Journey"; secondary jumps directly to the Timeline',
+      'Featured surfaces: Learn modules, Timeline, Risk Assessment, Compliance',
       'Headings and descriptions focus on migration blueprints and system design',
     ],
   },
@@ -310,8 +274,8 @@ const ROLE_ADAPTATIONS: {
     icon: Server,
     color: 'text-secondary',
     highlights: [
-      'Hero CTA leads to "Start the Journey" — shortcut to Migration Catalog',
-      'Learn, Migrate, OpenSSL, and Assess steps are featured',
+      'Primary CTA opens "Start the Journey"; secondary jumps directly to the Migration Catalog',
+      'Featured surfaces: Learn modules, Migrate, OpenSSL Studio, Risk Assessment',
       'Headings and descriptions focus on infrastructure deployment and operations',
     ],
   },
@@ -320,7 +284,7 @@ const ROLE_ADAPTATIONS: {
     icon: GraduationCap,
     color: 'text-primary',
     highlights: [
-      'Hero CTA leads to "Start the Journey" — shortcut to Algorithms',
+      'Primary CTA opens "Start the Journey"; secondary jumps directly to Algorithms',
       'All sections fully accessible — no dimming applied',
       'Headings and descriptions focus on mathematical foundations and protocol detail',
     ],
@@ -410,7 +374,6 @@ const InfoModal = ({
   const prevFocusRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
-    // Save trigger element and focus close button on open
     prevFocusRef.current = document.activeElement as HTMLElement
     closeRef.current?.focus()
 
@@ -420,7 +383,6 @@ const InfoModal = ({
     document.addEventListener('keydown', onKey)
     return () => {
       document.removeEventListener('keydown', onKey)
-      // Restore focus to trigger on close
       prevFocusRef.current?.focus()
     }
   }, [onClose])
@@ -473,30 +435,6 @@ const InfoModal = ({
 }
 
 // ─── Modal content per section ────────────────────────────────────────────────
-
-const ExperienceModalContent = () => (
-  <div className="space-y-3">
-    <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-      How each level shapes the experience
-    </p>
-    {EXPERIENCE_HIGHLIGHTS.map(({ level, Icon, items }) => (
-      <div key={level} className="glass-panel p-4 border-border/50">
-        <div className="flex items-center gap-2 mb-2">
-          <Icon size={14} className="text-primary" />
-          <span className="text-sm font-semibold">{level}</span>
-        </div>
-        <ul className="space-y-1">
-          {items.map((h) => (
-            <li key={h} className="text-xs text-muted-foreground flex items-start gap-2">
-              <span className="text-primary mt-0.5 shrink-0">·</span>
-              {h}
-            </li>
-          ))}
-        </ul>
-      </div>
-    ))}
-  </div>
-)
 
 const RoleModalContent = () => (
   <div className="space-y-3">
@@ -571,7 +509,6 @@ export const PersonalizationSection = () => {
     selectedPersona,
     selectedRegion,
     selectedIndustries,
-    suppressSuggestion,
     experienceLevel,
     setPersona,
     setRegion,
@@ -586,16 +523,22 @@ export const PersonalizationSection = () => {
     editFromStep,
   } = useAssessmentStore()
 
-  // Embed mode: restrict pickers to cert-allowed options
+  // Embed mode: restrict options to cert-allowed values
   const embedState = useEmbedState()
   const embedPersonas = embedState.isEmbedded ? (embedState.allowedPersonas ?? null) : null
   const embedRegions = embedState.isEmbedded ? (embedState.allowedRegions ?? null) : null
   const embedIndustries = embedState.isEmbedded ? (embedState.allowedIndustries ?? null) : null
 
-  // Filtered options — in embed mode, restrict to cert-allowed values; otherwise full list
-  const visiblePersonaOrder = embedPersonas
-    ? PERSONA_ORDER.filter((id) => embedPersonas.includes(id))
-    : PERSONA_ORDER
+  // Filtered options in embed mode
+  const visibleTechnicalPersonas = embedPersonas
+    ? TECHNICAL_PERSONAS.filter((id) => embedPersonas.includes(id))
+    : TECHNICAL_PERSONAS
+  const visibleTracks = TRACKS.filter((t) => {
+    if (!embedPersonas) return true
+    if (t.id === 'curious') return embedPersonas.includes('curious')
+    if (t.id === 'business') return embedPersonas.includes('executive')
+    return visibleTechnicalPersonas.length > 0
+  })
   const visibleRegions = embedRegions ? REGIONS.filter((r) => embedRegions.includes(r.id)) : REGIONS
   const visibleIndustries = embedIndustries
     ? AVAILABLE_INDUSTRIES.filter((ind) => embedIndustries.includes(ind))
@@ -604,8 +547,15 @@ export const PersonalizationSection = () => {
   const [activeModal, setActiveModal] = useState<ActiveModal>(null)
   const [currentStep, setCurrentStep] = useState(0)
 
+  // Derive selectedTrack from stored persona on mount; updated on each handleTrack call
+  const [selectedTrack, setSelectedTrack] = useState<TrackType | null>(() => {
+    if (!selectedPersona) return null
+    if (selectedPersona === 'curious') return 'curious'
+    if (selectedPersona === 'executive') return 'business'
+    return 'technical'
+  })
+
   const hasAnySelection =
-    experienceLevel !== null ||
     selectedPersona !== null ||
     (selectedRegion !== null && selectedRegion !== 'global') ||
     selectedIndustries.length > 0
@@ -619,70 +569,76 @@ export const PersonalizationSection = () => {
   // Handle ?scroll=persona deep-link from PQC-101 "Update profile" CTA
   useEffect(() => {
     const params = new URLSearchParams(location.search)
-    if (params.get('scroll') === 'persona') {
-      setIsCompleted(false)
-      setTimeout(() => {
-        document.getElementById('personalization-heading')?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-        })
-      }, 100)
-      navigate('/', { replace: true })
-    }
+    if (params.get('scroll') !== 'persona') return
+    // Deep-link from another page: synchronously reset wizard state on mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsCompleted(false)
+    setCurrentStep(0)
+    setTimeout(() => {
+      document.getElementById('personalization-heading')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      })
+    }, 100)
+    navigate('/', { replace: true })
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Steps array derived from the selected track
   const steps =
-    selectedPersona === 'curious'
+    selectedTrack === 'technical'
       ? [
-          { id: 'experience', label: 'Experience' },
-          { id: 'role', label: 'Role' },
-        ]
-      : [
-          { id: 'experience', label: 'Experience' },
+          { id: 'track', label: 'Track' },
           { id: 'role', label: 'Role' },
           { id: 'region', label: 'Region' },
           { id: 'industry', label: 'Industry' },
         ]
+      : selectedTrack === 'business'
+        ? [
+            { id: 'track', label: 'Track' },
+            { id: 'region', label: 'Region' },
+            { id: 'industry', label: 'Industry' },
+          ]
+        : [{ id: 'track', label: 'Track' }]
 
-  const suggestedPersona = inferPersonaFromAssessment({
-    assessmentStatus,
-    teamSize: useAssessmentStore.getState().teamSize,
-    migrationStatus: useAssessmentStore.getState().migrationStatus,
-    cryptoAgility: useAssessmentStore.getState().cryptoAgility,
-    currentCrypto: useAssessmentStore.getState().currentCrypto,
-    complianceRequirements: useAssessmentStore.getState().complianceRequirements,
-    cryptoUseCases: useAssessmentStore.getState().cryptoUseCases,
-    infrastructure: useAssessmentStore.getState().infrastructure,
-  })
+  // What content to render at the current step
+  const stepContent = steps[currentStep]?.id ?? 'track'
 
-  const handlePersona = (id: PersonaId) => {
-    const next = id === selectedPersona ? null : id
-    setPersona(next)
-    if (next) logPersonaSelected(next, embedState.isEmbedded ? 'embed' : 'picker')
-    if (next === 'curious') {
-      // Auto-set experience level, region (Global), and industry (All) — then complete wizard
+  // ─── Handlers ─────────────────────────────────────────────────────────────
+
+  const handleTrack = (track: TrackType) => {
+    if (track === 'curious') {
+      setPersona('curious')
       setExperienceLevel('curious')
       setRegion('global')
       setCountry('Global')
       setIndustries([])
       setAssessIndustry('')
+      logPersonaSelected('curious', embedState.isEmbedded ? 'embed' : 'picker')
+      setSelectedTrack('curious')
       setIsCompleted(true)
+      return
     }
+    setSelectedTrack(track)
+    if (track === 'business') {
+      if (selectedPersona !== 'executive') {
+        setPersona('executive')
+        setExperienceLevel('basics')
+        logPersonaSelected('executive', embedState.isEmbedded ? 'embed' : 'picker')
+      }
+    } else {
+      // Technical — clear executive persona if switching from business track
+      if (selectedPersona === 'executive') {
+        setPersona(null)
+      }
+    }
+    setCurrentStep(1)
   }
 
-  const handleExperience = (id: ExperienceLevel) => {
-    const next = id === experienceLevel ? null : id
-    setExperienceLevel(next)
-    if (next === 'curious') {
-      // Curious experience = curious persona, global region, all industries — complete wizard
-      setPersona('curious')
-      setRegion('global')
-      setCountry('Global')
-      setIndustries([])
-      setAssessIndustry('')
-      logPersonaSelected('curious', embedState.isEmbedded ? 'embed' : 'picker')
-      setIsCompleted(true)
-    }
+  const handleTechnicalPersona = (id: PersonaId) => {
+    setPersona(id)
+    setExperienceLevel(id === 'researcher' ? 'expert' : 'basics')
+    logPersonaSelected(id, embedState.isEmbedded ? 'embed' : 'picker')
+    setCurrentStep(2) // advance to region
   }
 
   const handleRegion = (id: Region) => {
@@ -706,6 +662,7 @@ export const PersonalizationSection = () => {
     clearPreferences()
     setIsCompleted(false)
     setCurrentStep(0)
+    setSelectedTrack(null)
   }
 
   const handleDone = () => {
@@ -714,18 +671,13 @@ export const PersonalizationSection = () => {
 
   const handleEditAvatar = () => {
     setIsCompleted(false)
+    setCurrentStep(0)
   }
 
   const MODAL_CONFIG: Record<
     NonNullable<ActiveModal>,
     { title: string; subtitle: string; content: React.ReactNode }
   > = {
-    experience: {
-      title: 'How Experience Level shapes your journey',
-      subtitle:
-        'Your experience level adjusts learning path recommendations, quiz difficulty, and how platform features are surfaced.',
-      content: <ExperienceModalContent />,
-    },
     role: {
       title: 'How Role shapes your experience',
       subtitle:
@@ -747,7 +699,12 @@ export const PersonalizationSection = () => {
   }
 
   return (
-    <section aria-labelledby="personalization-heading" className="glass-panel p-4 sm:p-6 lg:p-8">
+    <section
+      id="personalization-section"
+      data-section-id="personalization"
+      aria-labelledby="personalization-heading"
+      className="glass-panel p-4 sm:p-6 lg:p-8 scroll-mt-20"
+    >
       {/* ── Header ────────────────────────────────────────────────────────────── */}
       <div className="mb-4">
         <div className="flex items-start justify-between gap-3 sm:gap-6">
@@ -773,11 +730,11 @@ export const PersonalizationSection = () => {
             <p className="text-sm text-muted-foreground">
               {isCompleted
                 ? 'Your profile is set. Use the buttons below to change your persona or update your details.'
-                : 'Tailor your experience by choosing your professional role.'}
+                : 'Choose your path to tailor every section of the platform to your role and goals.'}
             </p>
           </div>
 
-          {/* Avatar — always in header row */}
+          {/* Avatar — in header when wizard is open */}
           {!isCompleted && (
             <div className="shrink-0 w-24 sm:w-32 md:w-40">
               <PersonalizedAvatar
@@ -795,7 +752,6 @@ export const PersonalizationSection = () => {
       {isCompleted && (
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mt-2">
           <div className="flex flex-col items-center gap-2 shrink-0 w-24 sm:w-32 md:w-40">
-            {/* Avatar tile — clickable */}
             <Button
               variant="ghost"
               onClick={handleEditAvatar}
@@ -815,10 +771,10 @@ export const PersonalizationSection = () => {
                 </span>
               </div>
             </Button>
-            {/* Always-visible Change Persona affordance — works on touch/mobile */}
             <Button
               variant="outline"
               size="sm"
+              data-workshop-target="persona-edit"
               onClick={handleEditAvatar}
               className="w-full text-xs gap-1.5"
             >
@@ -846,45 +802,65 @@ export const PersonalizationSection = () => {
             className="overflow-hidden"
           >
             <div className="pt-2">
-              {/* Stepper Progress Indicator */}
-              <div className="relative flex items-center justify-between w-full max-w-lg mx-auto mb-8 px-2">
-                <div className="absolute left-[8%] right-[8%] top-4 -translate-y-1/2 h-0.5 bg-border rounded-full -z-10" />
-                <div
-                  className="absolute left-[8%] top-4 -translate-y-1/2 h-0.5 bg-primary rounded-full transition-all duration-500 -z-10"
-                  style={{ width: `${(currentStep / (steps.length - 1)) * 84}%` }}
-                />
-                {steps.map((step, index) => {
-                  const isPast = index < currentStep
-                  const isActive = index === currentStep
-                  return (
-                    <div key={step.id} className="flex flex-col items-center gap-1.5">
-                      <Button
-                        variant="ghost"
-                        onClick={() => index <= currentStep && setCurrentStep(index)}
-                        disabled={index > currentStep}
-                        className={`w-9 h-9 flex items-center justify-center rounded-full text-sm font-bold transition-all shadow-sm
-                          ${
-                            isActive
-                              ? 'bg-primary text-primary-foreground ring-4 ring-primary/20 scale-110'
-                              : isPast
-                                ? 'bg-primary text-primary-foreground cursor-pointer hover:scale-105'
-                                : 'bg-card text-muted-foreground border border-border cursor-default'
-                          }`}
-                        aria-current={isActive ? 'step' : undefined}
-                        aria-label={`Step ${index + 1}: ${step.label}`}
-                      >
-                        {isPast ? <Check size={14} strokeWidth={3} /> : index + 1}
-                      </Button>
-                      <span
-                        className={`text-[11px] uppercase tracking-wider font-bold transition-colors
-                          ${isActive || isPast ? 'text-foreground' : 'text-muted-foreground'}`}
-                      >
-                        {step.label}
-                      </span>
-                    </div>
-                  )
-                })}
-              </div>
+              {/* Intro text — condensed WHY above the track tiles */}
+              {stepContent === 'track' && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="mb-6 text-center"
+                >
+                  <p className="text-sm text-muted-foreground max-w-xl mx-auto leading-relaxed">
+                    Quantum computers will break RSA and ECC — the encryption protecting banking,
+                    government, and global communications. NIST standardized post-quantum algorithms
+                    in 2024, and governments are mandating migration by 2030–2035.{' '}
+                    <span className="text-foreground font-medium">Where do you start?</span>
+                  </p>
+                </motion.div>
+              )}
+
+              {/* Stepper — shown when track is set and there are multiple steps */}
+              {selectedTrack && selectedTrack !== 'curious' && steps.length > 1 && (
+                <div className="relative flex items-center justify-between w-full max-w-lg mx-auto mb-8 px-2">
+                  <div className="absolute left-[8%] right-[8%] top-4 -translate-y-1/2 h-0.5 bg-border rounded-full -z-10" />
+                  <div
+                    className="absolute left-[8%] top-4 -translate-y-1/2 h-0.5 bg-primary rounded-full transition-all duration-500 -z-10"
+                    style={{ width: `${(currentStep / (steps.length - 1)) * 84}%` }}
+                  />
+                  {steps.map((step, index) => {
+                    const isPast = index < currentStep
+                    const isActive = index === currentStep
+                    return (
+                      <div key={step.id} className="flex flex-col items-center gap-1.5">
+                        <Button
+                          variant="ghost"
+                          data-workshop-target={`persona-wizard-step-${step.id}`}
+                          onClick={() => index < currentStep && setCurrentStep(index)}
+                          disabled={index >= currentStep}
+                          className={`w-9 h-9 flex items-center justify-center rounded-full text-sm font-bold transition-all shadow-sm
+                            ${
+                              isActive
+                                ? 'bg-primary text-primary-foreground ring-4 ring-primary/20 scale-110'
+                                : isPast
+                                  ? 'bg-primary text-primary-foreground cursor-pointer hover:scale-105'
+                                  : 'bg-card text-muted-foreground border border-border cursor-default'
+                            }`}
+                          aria-current={isActive ? 'step' : undefined}
+                          aria-label={`Step ${index + 1}: ${step.label}`}
+                        >
+                          {isPast ? <Check size={14} strokeWidth={3} /> : index + 1}
+                        </Button>
+                        <span
+                          className={`text-[11px] uppercase tracking-wider font-bold transition-colors
+                            ${isActive || isPast ? 'text-foreground' : 'text-muted-foreground'}`}
+                        >
+                          {step.label}
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
 
               {/* Step Content */}
               <AnimatePresence mode="wait">
@@ -895,33 +871,21 @@ export const PersonalizationSection = () => {
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.2 }}
                 >
-                  {/* STEP 0: Experience */}
-                  {currentStep === 0 && (
+                  {/* TRACK SELECTION */}
+                  {stepContent === 'track' && (
                     <div className="w-full">
-                      <div className="mb-4">
-                        <h3 className="text-base font-bold tracking-tight flex items-center gap-2">
-                          <BookOpen className="text-primary" size={16} />
-                          Select Your Experience Level
-                        </h3>
-                        <Button
-                          variant="ghost"
-                          onClick={() => setActiveModal('experience')}
-                          className="text-xs text-muted-foreground hover:text-primary mt-0.5 inline-flex items-center gap-1 transition-colors"
-                        >
-                          <Info size={12} /> How does this reshape the platform?
-                        </Button>
-                      </div>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        {EXPERIENCE_LEVELS.map(
+                        {visibleTracks.map(
                           ({ id, label, description, Icon, cornerIcon: CornerIcon }) => (
                             <SelectionCard
                               key={id}
-                              isActive={experienceLevel === id}
-                              onClick={() => handleExperience(id)}
+                              isActive={selectedTrack === id}
+                              onClick={() => handleTrack(id)}
                               icon={<Icon size={16} />}
                               cornerIcon={<CornerIcon size={13} />}
                               title={label}
                               description={description}
+                              workshopTarget={`persona-track-${id}`}
                             />
                           )
                         )}
@@ -929,13 +893,13 @@ export const PersonalizationSection = () => {
                     </div>
                   )}
 
-                  {/* STEP 1: Role */}
-                  {currentStep === 1 && (
+                  {/* ROLE — Technical sub-persona */}
+                  {stepContent === 'role' && (
                     <div className="w-full">
                       <div className="mb-4">
                         <h3 className="text-base font-bold tracking-tight flex items-center gap-2">
-                          <Briefcase className="text-primary" size={16} />
-                          Select Your Role
+                          <Code className="text-primary" size={16} />
+                          What best describes your role?
                         </h3>
                         <Button
                           variant="ghost"
@@ -945,29 +909,21 @@ export const PersonalizationSection = () => {
                           <Info size={12} /> How does this adapt content?
                         </Button>
                       </div>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                        {visiblePersonaOrder.map((id) => {
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        {visibleTechnicalPersonas.map((id) => {
                           const persona = PERSONAS[id]
                           const Icon = PERSONA_ICONS[persona.icon]
                           const CornerIcon = PERSONA_CORNER_ICONS[id]
-                          const isActive = selectedPersona === id
-                          const isSuggested = !suppressSuggestion && suggestedPersona === id
                           return (
                             <SelectionCard
                               key={id}
-                              isActive={isActive}
-                              onClick={() => handlePersona(id)}
+                              isActive={selectedPersona === id}
+                              onClick={() => handleTechnicalPersona(id)}
                               icon={<Icon size={16} />}
                               cornerIcon={<CornerIcon size={13} />}
                               title={persona.label}
                               description={persona.subtitle}
-                              badge={
-                                isSuggested && !isActive ? (
-                                  <span className="text-[9px] font-bold uppercase tracking-wide bg-secondary text-secondary-foreground px-1 py-0.5 rounded-full leading-none">
-                                    For you
-                                  </span>
-                                ) : undefined
-                              }
+                              workshopTarget={`persona-role-${id}`}
                             />
                           )
                         })}
@@ -975,8 +931,8 @@ export const PersonalizationSection = () => {
                     </div>
                   )}
 
-                  {/* STEP 2: Region */}
-                  {currentStep === 2 && (
+                  {/* REGION */}
+                  {stepContent === 'region' && (
                     <div className="w-full">
                       <div className="mb-4">
                         <h3 className="text-base font-bold tracking-tight flex items-center gap-2">
@@ -1002,6 +958,7 @@ export const PersonalizationSection = () => {
                               cornerIcon={<CornerIcon size={13} />}
                               title={label}
                               description={description}
+                              workshopTarget={`persona-region-${id}`}
                             />
                           )
                         )}
@@ -1009,8 +966,8 @@ export const PersonalizationSection = () => {
                     </div>
                   )}
 
-                  {/* STEP 3: Industry */}
-                  {currentStep === 3 && (
+                  {/* INDUSTRY */}
+                  {stepContent === 'industry' && (
                     <div className="w-full">
                       <div className="mb-4">
                         <h3 className="text-base font-bold tracking-tight flex items-center gap-2">
@@ -1036,10 +993,15 @@ export const PersonalizationSection = () => {
                             icon={<Globe size={16} />}
                             cornerIcon={<Globe2 size={13} />}
                             title="All Industries"
+                            workshopTarget="persona-industry-all"
                           />
                         )}
                         {visibleIndustries.map((industry) => {
                           const Icon = INDUSTRY_ICONS[industry] ?? Layers
+                          const slug = industry
+                            .toLowerCase()
+                            .replace(/[^a-z0-9]+/g, '-')
+                            .replace(/^-|-$/g, '')
                           return (
                             <SelectionCard
                               key={industry}
@@ -1048,6 +1010,7 @@ export const PersonalizationSection = () => {
                               icon={<Icon size={16} />}
                               cornerIcon={<Icon size={13} />}
                               title={industry}
+                              workshopTarget={`persona-industry-${slug}`}
                             />
                           )
                         })}
@@ -1057,34 +1020,38 @@ export const PersonalizationSection = () => {
                 </motion.div>
               </AnimatePresence>
 
-              {/* Navigation buttons */}
-              <div className="flex items-center justify-center gap-3 pt-6 mt-4 border-t border-border/50">
-                <Button
-                  variant="outline"
-                  onClick={() => setCurrentStep((prev) => Math.max(0, prev - 1))}
-                  disabled={currentStep === 0}
-                  className="flex-1 sm:flex-none px-8 rounded-full font-bold border-border/60 hover:border-border hover:bg-muted/50"
-                >
-                  Back
-                </Button>
-                {currentStep === steps.length - 1 ? (
+              {/* Navigation buttons — shown from step 1 onward */}
+              {currentStep > 0 && (
+                <div className="flex items-center justify-center gap-3 pt-6 mt-4 border-t border-border/50">
                   <Button
-                    variant="gradient"
-                    onClick={handleDone}
-                    className="flex-1 sm:flex-none px-8 rounded-full font-bold shadow-sm"
+                    variant="outline"
+                    data-workshop-target="persona-wizard-back"
+                    onClick={() => setCurrentStep((prev) => Math.max(0, prev - 1))}
+                    className="flex-1 sm:flex-none px-8 rounded-full font-bold border-border/60 hover:border-border hover:bg-muted/50"
                   >
-                    Done
+                    Back
                   </Button>
-                ) : (
-                  <Button
-                    variant="gradient"
-                    onClick={() => setCurrentStep((prev) => Math.min(steps.length - 1, prev + 1))}
-                    className="flex-1 sm:flex-none px-8 rounded-full font-bold shadow-sm"
-                  >
-                    Next
-                  </Button>
-                )}
-              </div>
+                  {currentStep === steps.length - 1 ? (
+                    <Button
+                      variant="gradient"
+                      data-workshop-target="persona-wizard-done"
+                      onClick={handleDone}
+                      className="flex-1 sm:flex-none px-8 rounded-full font-bold shadow-sm"
+                    >
+                      Done
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="gradient"
+                      data-workshop-target="persona-wizard-next"
+                      onClick={() => setCurrentStep((prev) => Math.min(steps.length - 1, prev + 1))}
+                      className="flex-1 sm:flex-none px-8 rounded-full font-bold shadow-sm"
+                    >
+                      Next
+                    </Button>
+                  )}
+                </div>
+              )}
             </div>
           </motion.div>
         )}

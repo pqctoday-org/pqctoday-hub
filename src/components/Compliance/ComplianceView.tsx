@@ -22,10 +22,13 @@ import {
   FileText,
   Workflow,
   ArrowLeft,
+  Sparkles,
   X,
 } from 'lucide-react'
 import { CSWP39Explorer } from './CSWP39Explorer'
 import { MoreTabsMenu } from './MoreTabsMenu'
+import { ApplicabilityPanel } from '../applicability/ApplicabilityPanel'
+import { ExecutiveTimelineView } from './views/ExecutiveTimelineView'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { logComplianceFilter } from '../../utils/analytics'
 import { PageHeader } from '../common/PageHeader'
@@ -230,12 +233,40 @@ const CERTIFICATION_GLOSSARY = [
 // ── Mobile toggle ──────────────────────────────────────────────────────
 
 type MobileSection =
+  | 'foryou'
   | 'standards'
   | 'technical'
   | 'certification'
   | 'compliance'
   | 'records'
   | 'cswp39'
+
+/**
+ * Resolves the For-You tab content per persona — executives get the
+ * dramatized ExecutiveTimelineView with a regulatory clock + framework cards
+ * with embedded milestones; everyone else gets the generic 4-section
+ * ApplicabilityPanel until their persona-specific view ships (Phase 5).
+ *
+ * Both branches consume the same `useApplicability` engine output; only the
+ * rendering differs. Profile override is plumbed identically so the workshop
+ * deep-link `?country=Australia&ind=Government & Defense` works regardless
+ * of persona.
+ */
+function ForYouSection({
+  landscapeProps,
+}: {
+  landscapeProps: { countryFilter: string; industryFilter: string }
+}) {
+  const persona = usePersonaStore((s) => s.selectedPersona)
+  const profileOverride = {
+    country: landscapeProps.countryFilter !== 'All' ? landscapeProps.countryFilter : undefined,
+    industry: landscapeProps.industryFilter !== 'All' ? landscapeProps.industryFilter : undefined,
+  }
+  if (persona === 'executive') {
+    return <ExecutiveTimelineView profileOverride={profileOverride} />
+  }
+  return <ApplicabilityPanel variant="tab" profileOverride={profileOverride} />
+}
 
 function MobileViewToggle({
   activeSection,
@@ -257,6 +288,7 @@ function MobileViewToggle({
     orgFilter: string
     industryFilter: string
     regionFilter: RegionBloc | 'All'
+    countryFilter: string
     deadlineFilter: 'All' | DeadlinePhase
     searchText: string
     searchInputValue: string
@@ -265,6 +297,7 @@ function MobileViewToggle({
     onOrgFilterChange: (org: string) => void
     onIndustryFilterChange: (ind: string) => void
     onRegionFilterChange: (region: RegionBloc | 'All') => void
+    onCountryFilterChange: (country: string) => void
     onDeadlineFilterChange: (phase: 'All' | DeadlinePhase) => void
     onSearchTextChange: (text: string) => void
     onSortByChange: (sort: FrameworkSortOption) => void
@@ -325,6 +358,14 @@ function MobileViewToggle({
         <div className="flex gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
           <Button
             variant="ghost"
+            data-workshop-target="compliance-tab-foryou"
+            className={btnClass(section === 'foryou')}
+            onClick={() => setSection('foryou')}
+          >
+            For You
+          </Button>
+          <Button
+            variant="ghost"
             className={btnClass(section === 'standards')}
             onClick={() => setSection('standards')}
           >
@@ -371,7 +412,7 @@ function MobileViewToggle({
           className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-background to-transparent"
         />
       </div>
-      {section !== 'records' && section !== 'cswp39' && (
+      {section !== 'records' && section !== 'cswp39' && section !== 'foryou' && (
         <CrossTabSearchHint
           searchText={landscapeProps.searchText}
           currentTab={section as LandscapeTab}
@@ -379,6 +420,7 @@ function MobileViewToggle({
           onSwitchTab={switchLandscapeTab}
         />
       )}
+      {section === 'foryou' && <ForYouSection landscapeProps={landscapeProps} />}
       {section === 'standards' && (
         <ComplianceLandscape
           frameworks={standardsFrameworks}
@@ -530,6 +572,7 @@ export const ComplianceView = () => {
   const parseTabFromHash = (hash: string): MobileSection | null => {
     const clean = hash.replace(/^#/, '').trim() as MobileSection
     if (
+      clean === 'foryou' ||
       clean === 'standards' ||
       clean === 'technical' ||
       clean === 'certification' ||
@@ -578,12 +621,9 @@ export const ComplianceView = () => {
       (selectedIndustries.length === 1 ? selectedIndustries[0] : 'All')
   )
   const [lsRegion, setLsRegion] = useState<RegionBloc | 'All'>(
-    // ?country= is an alias for ?region= (ISO country code maps to RegionBloc)
-    () =>
-      (searchParams.get('region') as RegionBloc | null) ??
-      (searchParams.get('country') as RegionBloc | null) ??
-      'All'
+    () => (searchParams.get('region') as RegionBloc | null) ?? 'All'
   )
+  const [lsCountry, setLsCountry] = useState<string>(() => searchParams.get('country') ?? 'All')
   const [lsDeadline, setLsDeadline] = useState<'All' | DeadlinePhase>(
     () => (searchParams.get('phase') as DeadlinePhase | null) ?? 'All'
   )
@@ -640,6 +680,7 @@ export const ComplianceView = () => {
       org?: string
       ind?: string
       region?: RegionBloc | 'All'
+      country?: string
       phase?: 'All' | DeadlinePhase
       q?: string
       sort?: string
@@ -670,6 +711,7 @@ export const ComplianceView = () => {
             'org',
             'ind',
             'region',
+            'country',
             'phase',
             'q',
             'sort',
@@ -687,10 +729,11 @@ export const ComplianceView = () => {
             next.delete(key)
           }
 
-          if (isLandscapeTab(tab)) {
+          if (isLandscapeTab(tab) || tab === 'foryou') {
             const org = overrides.org ?? lsOrg
             const ind = overrides.ind ?? lsIndustry
             const region = overrides.region ?? lsRegion
+            const country = overrides.country ?? lsCountry
             const phase = overrides.phase ?? lsDeadline
             const q = overrides.q ?? lsSearch
             const sort = overrides.sort ?? lsSort
@@ -699,6 +742,7 @@ export const ComplianceView = () => {
             if (org !== 'All') next.set('org', org)
             if (ind !== 'All') next.set('ind', ind)
             if (region !== 'All') next.set('region', region)
+            if (country !== 'All') next.set('country', country)
             if (phase !== 'All') next.set('phase', phase)
             if (q) next.set('q', q)
             if (sort !== 'deadline') next.set('sort', sort)
@@ -739,6 +783,7 @@ export const ComplianceView = () => {
       lsOrg,
       lsIndustry,
       lsRegion,
+      lsCountry,
       lsDeadline,
       lsSearch,
       lsSort,
@@ -764,11 +809,12 @@ export const ComplianceView = () => {
     const tab = (searchParams.get('tab') as MobileSection | null) ?? 'standards'
     setActiveTab((prev) => (prev !== tab ? tab : prev))
 
-    if (isLandscapeTab(tab)) {
+    if (isLandscapeTab(tab) || tab === 'foryou') {
       const nextOrg = searchParams.get('org') ?? 'All'
       const nextInd =
         searchParams.get('ind') ?? (selectedIndustries.length === 1 ? selectedIndustries[0] : 'All')
       const nextRegion = (searchParams.get('region') as RegionBloc | null) ?? 'All'
+      const nextCountry = searchParams.get('country') ?? 'All'
       const nextPhase = (searchParams.get('phase') as DeadlinePhase | null) ?? 'All'
       const nextQ = searchParams.get('q') ?? ''
       const nextSort = (searchParams.get('sort') as FrameworkSortOption) ?? 'deadline'
@@ -777,6 +823,7 @@ export const ComplianceView = () => {
       setLsOrg((prev) => (prev !== nextOrg ? nextOrg : prev))
       setLsIndustry((prev) => (prev !== nextInd ? nextInd : prev))
       setLsRegion((prev) => (prev !== nextRegion ? nextRegion : prev))
+      setLsCountry((prev) => (prev !== nextCountry ? nextCountry : prev))
       setLsDeadline((prev) => (prev !== nextPhase ? nextPhase : prev))
       setLsSearch((prev) => (prev !== nextQ ? nextQ : prev))
       setLsSearchInput((prev) => (prev !== nextQ ? nextQ : prev))
@@ -855,6 +902,14 @@ export const ComplianceView = () => {
     (region: RegionBloc | 'All') => {
       setLsRegion(region)
       syncFiltersToUrl({ region })
+    },
+    [syncFiltersToUrl]
+  )
+
+  const handleLsCountryChange = useCallback(
+    (country: string) => {
+      setLsCountry(country)
+      syncFiltersToUrl({ country })
     },
     [syncFiltersToUrl]
   )
@@ -1173,6 +1228,7 @@ export const ComplianceView = () => {
             orgFilter: lsOrg,
             industryFilter: lsIndustry,
             regionFilter: lsRegion,
+            countryFilter: lsCountry,
             deadlineFilter: lsDeadline,
             searchText: lsSearch,
             searchInputValue: lsSearchInput,
@@ -1181,6 +1237,7 @@ export const ComplianceView = () => {
             onOrgFilterChange: handleLsOrgChange,
             onIndustryFilterChange: handleLsIndustryChange,
             onRegionFilterChange: handleLsRegionChange,
+            onCountryFilterChange: handleLsCountryChange,
             onDeadlineFilterChange: handleLsDeadlineChange,
             onSearchTextChange: handleLsSearchChange,
             onSortByChange: handleLsSortChange,
@@ -1226,6 +1283,15 @@ export const ComplianceView = () => {
           onValueChange={(tab) => handleTabChange(tab as MobileSection)}
         >
           <TabsList className="mb-4 bg-muted/50 border border-border h-auto flex items-center gap-1">
+            {/* For You — first primary tab, applies user profile across all content */}
+            <TabsTrigger
+              value="foryou"
+              data-workshop-target="compliance-tab-foryou"
+              className="flex items-center gap-1.5"
+            >
+              <Sparkles size={14} />
+              For You
+            </TabsTrigger>
             {/* 3 primary tabs — always visible */}
             <TabsTrigger value="technical" className="flex items-center gap-1.5">
               <FileText size={14} />
@@ -1256,6 +1322,23 @@ export const ComplianceView = () => {
             <MoreTabsMenu activeTab={activeTab} onSelect={(tab) => handleTabChange(tab)} />
           </TabsList>
 
+          {/* ── Tab: For You — applies user profile across all content ── */}
+          <TabsContent value="foryou" className="mt-0 space-y-4">
+            <SectionHeader
+              icon={<Sparkles size={20} className="text-primary" />}
+              title="For You"
+              description="Standards, threats, library docs, and timeline milestones that apply to your industry, country, and region. Powered by your assessment profile (or set inline below)."
+              learnLabel="Take the full assessment"
+              learnTo="/assess"
+            />
+            <ForYouSection
+              landscapeProps={{
+                countryFilter: lsCountry,
+                industryFilter: lsIndustry,
+              }}
+            />
+          </TabsContent>
+
           {/* ── Tab 1: Standardization Bodies ── */}
           <TabsContent value="standards" className="mt-0 space-y-4">
             <SectionHeader
@@ -1277,6 +1360,7 @@ export const ComplianceView = () => {
               orgFilter={lsOrg}
               industryFilter={lsIndustry}
               regionFilter={lsRegion}
+              countryFilter={lsCountry}
               deadlineFilter={lsDeadline}
               searchText={lsSearch}
               searchInputValue={lsSearchInput}
@@ -1285,6 +1369,7 @@ export const ComplianceView = () => {
               onOrgFilterChange={handleLsOrgChange}
               onIndustryFilterChange={handleLsIndustryChange}
               onRegionFilterChange={handleLsRegionChange}
+              onCountryFilterChange={handleLsCountryChange}
               onDeadlineFilterChange={handleLsDeadlineChange}
               onSearchTextChange={handleLsSearchChange}
               onSortByChange={handleLsSortChange}
@@ -1314,6 +1399,7 @@ export const ComplianceView = () => {
               orgFilter={lsOrg}
               industryFilter={lsIndustry}
               regionFilter={lsRegion}
+              countryFilter={lsCountry}
               deadlineFilter={lsDeadline}
               searchText={lsSearch}
               searchInputValue={lsSearchInput}
@@ -1322,6 +1408,7 @@ export const ComplianceView = () => {
               onOrgFilterChange={handleLsOrgChange}
               onIndustryFilterChange={handleLsIndustryChange}
               onRegionFilterChange={handleLsRegionChange}
+              onCountryFilterChange={handleLsCountryChange}
               onDeadlineFilterChange={handleLsDeadlineChange}
               onSearchTextChange={handleLsSearchChange}
               onSortByChange={handleLsSortChange}
@@ -1352,6 +1439,7 @@ export const ComplianceView = () => {
               orgFilter={lsOrg}
               industryFilter={lsIndustry}
               regionFilter={lsRegion}
+              countryFilter={lsCountry}
               deadlineFilter={lsDeadline}
               searchText={lsSearch}
               searchInputValue={lsSearchInput}
@@ -1360,6 +1448,7 @@ export const ComplianceView = () => {
               onOrgFilterChange={handleLsOrgChange}
               onIndustryFilterChange={handleLsIndustryChange}
               onRegionFilterChange={handleLsRegionChange}
+              onCountryFilterChange={handleLsCountryChange}
               onDeadlineFilterChange={handleLsDeadlineChange}
               onSearchTextChange={handleLsSearchChange}
               onSortByChange={handleLsSortChange}
@@ -1391,6 +1480,7 @@ export const ComplianceView = () => {
               orgFilter={lsOrg}
               industryFilter={lsIndustry}
               regionFilter={lsRegion}
+              countryFilter={lsCountry}
               deadlineFilter={lsDeadline}
               searchText={lsSearch}
               searchInputValue={lsSearchInput}
@@ -1399,6 +1489,7 @@ export const ComplianceView = () => {
               onOrgFilterChange={handleLsOrgChange}
               onIndustryFilterChange={handleLsIndustryChange}
               onRegionFilterChange={handleLsRegionChange}
+              onCountryFilterChange={handleLsCountryChange}
               onDeadlineFilterChange={handleLsDeadlineChange}
               onSearchTextChange={handleLsSearchChange}
               onSortByChange={handleLsSortChange}

@@ -86,6 +86,7 @@ export function ReportToc({ sections, onExpandAll, onCollapseAll }: ReportTocPro
                   variant="ghost"
                   size="sm"
                   onClick={() => scrollTo(id)}
+                  data-workshop-target={`report-toc-${id.replace(/^report-section-/, '')}`}
                   className={`w-full h-auto py-1.5 px-2 text-left justify-start text-[11px] leading-snug whitespace-normal transition-colors ${
                     activeId === id
                       ? 'text-primary bg-primary/5 font-semibold'

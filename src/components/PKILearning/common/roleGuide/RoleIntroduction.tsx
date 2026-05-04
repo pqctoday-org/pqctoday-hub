@@ -37,7 +37,7 @@ export const RoleIntroduction: React.FC<Props> = ({ data, onNavigateToWorkshop }
       </div>
 
       {/* Why this matters */}
-      <div className="glass-panel p-6">
+      <div data-section-id="why-it-matters" className="glass-panel p-6 scroll-mt-20">
         <h3 className="text-lg font-bold text-foreground mb-3 flex items-center gap-2">
           <AlertTriangle className="w-5 h-5 text-status-warning" />
           Why This Matters for You
@@ -91,7 +91,7 @@ export const RoleIntroduction: React.FC<Props> = ({ data, onNavigateToWorkshop }
       </div>
 
       {/* What you'll learn */}
-      <div className="glass-panel p-6">
+      <div data-section-id="what-to-learn" className="glass-panel p-6 scroll-mt-20">
         <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
           <BookOpen className="w-5 h-5 text-primary" />
           Knowledge Domains
@@ -118,7 +118,7 @@ export const RoleIntroduction: React.FC<Props> = ({ data, onNavigateToWorkshop }
       </div>
 
       {/* Workshop overview */}
-      <div className="glass-panel p-6">
+      <div data-section-id="how-to-act" className="glass-panel p-6 scroll-mt-20">
         <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
           <Target className="w-5 h-5 text-primary" />
           Workshop: 3-Step Action Plan

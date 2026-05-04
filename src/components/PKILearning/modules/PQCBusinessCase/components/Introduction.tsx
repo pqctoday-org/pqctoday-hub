@@ -326,10 +326,12 @@ const Step2WorkshopAndResources: React.FC<{ onNavigateToWorkshop: () => void }> 
 export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop }) => {
   const steps = [
     {
+      id: 'roi',
       label: 'Why PQC Investment & Cost Categories',
       content: <Step1WhyConceptsCosts />,
     },
     {
+      id: 'board',
       label: 'Workshop & Resources',
       content: <Step2WorkshopAndResources onNavigateToWorkshop={onNavigateToWorkshop} />,
     },

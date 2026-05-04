@@ -323,6 +323,7 @@ export const DevQuantumImpactModule: React.FC = () => {
 
             <div className="flex flex-col sm:flex-row justify-between gap-3">
               <Button
+                data-workshop-target="learn-stepper-prev"
                 variant="outline"
                 size="lg"
                 onClick={() => handlePartChange(Math.max(0, currentPart - 1))}
@@ -332,6 +333,7 @@ export const DevQuantumImpactModule: React.FC = () => {
               </Button>
               {currentPart === PARTS.length - 1 ? (
                 <Button
+                  data-workshop-target="learn-stepper-complete"
                   variant="gradient"
                   size="lg"
                   onClick={() => markStepComplete(MODULE_ID, PARTS[currentPart].id)}
@@ -339,7 +341,11 @@ export const DevQuantumImpactModule: React.FC = () => {
                   Complete Module
                 </Button>
               ) : (
-                <Button size="lg" onClick={() => handlePartChange(currentPart + 1)}>
+                <Button
+                  data-workshop-target="learn-stepper-next"
+                  size="lg"
+                  onClick={() => handlePartChange(currentPart + 1)}
+                >
                   Next Step &rarr;
                 </Button>
               )}

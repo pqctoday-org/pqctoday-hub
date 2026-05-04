@@ -44,7 +44,7 @@ const FIXTURE: WorkshopFlow = {
       id: 'foundations',
       title: 'Foundations',
       estMinutes: 1,
-      steps: [step('f1-landing')],
+      steps: [step('p-landing')],
     },
     {
       id: 'action',
@@ -91,7 +91,7 @@ describe('workshopRegistry', () => {
     expect(ids).toEqual([
       'intro-01',
       'prereq-01',
-      'f1-landing',
+      'p-landing',
       'us-01-compliance',
       'a1',
       'a2',

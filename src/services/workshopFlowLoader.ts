@@ -26,7 +26,11 @@ export interface WorkshopFlowManifest {
   flows: WorkshopFlowManifestEntry[]
 }
 
-const MANIFEST_URL = 'workshop/index.json'
+// Absolute path so the fetch resolves correctly from any route. Earlier
+// `'workshop/index.json'` (no leading slash) hit `/learn/workshop/index.json`
+// when the user opened the Workshop panel from a /learn/* route — 404,
+// manifest stays null, BrowseAllFlows shows "No workshop flows".
+const MANIFEST_URL = '/workshop/index.json'
 
 let manifestCache: WorkshopFlowManifest | null = null
 const flowCache = new Map<string, WorkshopFlow>()
@@ -37,7 +41,11 @@ const flowCache = new Map<string, WorkshopFlow>()
  */
 export async function loadManifest(force = false): Promise<WorkshopFlowManifest> {
   if (manifestCache && !force) return manifestCache
-  const res = await fetch(MANIFEST_URL, { cache: force ? 'no-cache' : 'default' })
+  // Always bypass HTTP cache — the manifest is small (a few KB) and fetched
+  // once per session. SW / browser caches were serving stale entries on first
+  // load after authors edited the JSON; the in-memory `manifestCache` is the
+  // session-level cache we want, not the HTTP layer.
+  const res = await fetch(MANIFEST_URL, { cache: 'no-cache' })
   if (!res.ok) {
     throw new Error(`Failed to load workshop manifest: ${res.status}`)
   }
@@ -51,7 +59,9 @@ export async function loadManifest(force = false): Promise<WorkshopFlowManifest>
  */
 export async function loadFlow(file: string): Promise<WorkshopFlow> {
   if (flowCache.has(file)) return flowCache.get(file)!
-  const res = await fetch(`workshop/${file}`)
+  // Bypass HTTP cache for the same reason as the manifest fetch — flow JSONs
+  // change frequently during authoring and SW / browser caches mask edits.
+  const res = await fetch(`/workshop/${file}`, { cache: 'no-cache' })
   if (!res.ok) {
     throw new Error(`Failed to load workshop flow ${file}: ${res.status}`)
   }

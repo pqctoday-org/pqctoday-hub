@@ -1,50 +1,102 @@
 {
   "$schema": "WorkshopManifest",
   "version": "v1",
-  "generatedAt": "2026-05-02",
+  "generatedAt": "2026-05-03",
   "flows": [
     {
-      "id": "executive-basics-finance-and-banking-amer-apac",
+      "id": "executive-basics-finance-and-banking-amer-apac-v1",
       "file": "executive-basics-finance-and-banking-amer-apac_05022026.json",
-      "title": "Executive PQC Workshop — Finance (US / Canada / Australia)",
+      "title": "Executive PQC Workshop \u2014 Finance (US / Canada / Australia)",
       "match": {
         "roles": ["executive"],
         "proficiencies": ["basics", "expert"],
         "industries": ["Finance & Banking"],
         "regions": ["US", "CA", "AU"]
       },
-      "totalEstMinutes": 125,
-      "stepCount": 33,
+      "totalEstMinutes": 127,
+      "stepCount": 44,
       "date": "05022026"
     },
     {
       "id": "architect-basics-all-all-v1",
       "file": "architect-basics-all-all_05032026.json",
-      "title": "Security Architect Workshop — All Industries, All Regions",
+      "title": "Security Architect Workshop \u2014 All Industries, All Regions",
       "match": {
         "roles": ["architect"],
         "proficiencies": ["basics", "expert"],
         "industries": "*",
         "regions": "*"
       },
-      "totalEstMinutes": 75,
-      "stepCount": 26,
+      "totalEstMinutes": 81,
+      "stepCount": 27,
       "date": "05032026"
     },
     {
       "id": "generic-overview",
       "file": "generic-overview_05022026.json",
-      "title": "PQC Today — Quick Overview",
+      "title": "PQC Today \u2014 Quick Overview",
       "match": {
         "roles": "*",
         "proficiencies": "*",
         "industries": "*",
         "regions": "*"
       },
-      "totalEstMinutes": 20,
-      "stepCount": 19,
+      "totalEstMinutes": 25,
+      "stepCount": 20,
       "isGenericFallback": true,
       "date": "05022026"
+    },
+    {
+      "id": "developer-basics-all-all-v1",
+      "file": "developer-basics-all-all_05032026.json",
+      "title": "Developer PQC Workshop \u2014 All Industries, All Regions",
+      "match": {
+        "roles": ["developer"],
+        "proficiencies": ["basics", "expert"],
+        "industries": "*",
+        "regions": "*"
+      },
+      "totalEstMinutes": 50,
+      "stepCount": 16
+    },
+    {
+      "id": "devops-basics-all-all-v1",
+      "file": "devops-basics-all-all_05032026.json",
+      "title": "DevOps PQC Workshop \u2014 All Industries, All Regions",
+      "match": {
+        "roles": ["ops"],
+        "proficiencies": ["basics", "expert"],
+        "industries": "*",
+        "regions": "*"
+      },
+      "totalEstMinutes": 49,
+      "stepCount": 16
+    },
+    {
+      "id": "researcher-basics-all-all-v1",
+      "file": "researcher-basics-all-all_05032026.json",
+      "title": "Researcher PQC Workshop \u2014 All Industries, All Regions",
+      "match": {
+        "roles": ["researcher"],
+        "proficiencies": ["basics", "expert"],
+        "industries": "*",
+        "regions": "*"
+      },
+      "totalEstMinutes": 52,
+      "stepCount": 17
+    },
+    {
+      "id": "curious-curious-all-all-v1",
+      "file": "curious-curious-all-all_05032026.json",
+      "title": "PQC for the Curious \u2014 Visual Tour",
+      "match": {
+        "roles": ["curious"],
+        "proficiencies": ["curious"],
+        "industries": "*",
+        "regions": "*"
+      },
+      "totalEstMinutes": 29,
+      "stepCount": 11
     }
   ]
 }

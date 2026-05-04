@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import React from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronUp, ChevronDown, ShieldAlert, BookmarkCheck, Bookmark } from 'lucide-react'
 import type { ThreatItem } from '../../data/threatsData'
@@ -102,156 +103,182 @@ export const ThreatsTable = ({
             </tr>
           </thead>
           <tbody>
-            <AnimatePresence mode="popLayout">
-              {items.map((item) => (
-                <motion.tr
-                  key={item.threatId}
-                  layout
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="border-b border-border hover:bg-muted/30 transition-colors group cursor-pointer"
-                  onClick={() => onItemClick(item)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
-                      onItemClick(item)
-                    }
-                  }}
-                >
-                  <td className="p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors text-center md:text-left">
-                    <span
-                      className="md:hidden flex items-center justify-center text-primary"
-                      title={item.industry}
-                    >
-                      {getIndustryIcon(item.industry, 16)}
-                    </span>
-                    <span className="hidden md:inline">{item.industry}</span>
-                  </td>
-                  <td className="hidden md:table-cell p-4 text-sm font-mono text-primary/80">
-                    <div className="flex items-center gap-2">
-                      {item.threatId}
-                      <StatusBadge status={item.status} size="sm" />
-                      <TrustScoreBadge
-                        resourceType="threats"
-                        resourceId={item.threatId}
-                        size="sm"
-                      />
-                    </div>
-                  </td>
-                  <td className="hidden md:table-cell p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors overflow-hidden">
-                    <div className="line-clamp-2 md:line-clamp-3">{item.description}</div>
-                    <div className="text-xs text-muted-foreground/50 mt-1 uppercase tracking-wider truncate">
-                      Source: {item.mainSource}
-                    </div>
-                  </td>
-                  <td className="p-4 text-center md:text-left overflow-hidden">
-                    <span
-                      className={clsx(
-                        'hidden md:inline-block px-2 py-1 rounded text-xs font-bold border',
-                        item.criticality.toLowerCase() === 'critical' ||
-                          item.criticality.toLowerCase() === 'high'
-                          ? 'bg-status-error text-status-error border-status-error'
-                          : 'bg-primary/10 text-primary border-primary/20'
-                      )}
-                    >
-                      {item.criticality}
-                    </span>
-                  </td>
-                  <td className="p-4 text-xs font-mono overflow-hidden">
-                    <div className="flex flex-wrap gap-1">
-                      {item.cryptoAtRisk.split(',').map((c, i) => (
-                        <span
-                          key={i}
-                          className="px-1.5 py-0.5 rounded-sm bg-muted/50 border border-border/50 text-muted-foreground break-words"
-                        >
-                          {c.trim()}
+            {(() => {
+              const groups: [string, ThreatItem[]][] = []
+              const seen = new Map<string, ThreatItem[]>()
+              for (const item of items) {
+                if (!seen.has(item.industry)) {
+                  seen.set(item.industry, [])
+                  groups.push([item.industry, seen.get(item.industry)!])
+                }
+                seen.get(item.industry)!.push(item)
+              }
+              return groups.map(([industry, groupItems]) => {
+                const slug = industry.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+                return (
+                  <React.Fragment key={industry}>
+                    <tr id={`industry-${slug}`} className="bg-muted/10 border-b border-border/40">
+                      <td colSpan={8} className="px-4 py-2">
+                        <span className="flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                          {getIndustryIcon(industry, 13)}
+                          {industry}
                         </span>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="p-4 text-xs font-mono overflow-hidden">
-                    <div className="flex flex-wrap gap-1">
-                      {item.pqcReplacement.split(',').map((c, i) => (
-                        <span
-                          key={i}
-                          className="px-1.5 py-0.5 rounded-sm bg-status-success/10 border border-status-success/20 text-status-success/80 break-words"
+                      </td>
+                    </tr>
+                    <AnimatePresence mode="popLayout">
+                      {groupItems.map((item) => (
+                        <motion.tr
+                          key={item.threatId}
+                          layout
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="border-b border-border hover:bg-muted/30 transition-colors group cursor-pointer"
+                          onClick={() => onItemClick(item)}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault()
+                              onItemClick(item)
+                            }
+                          }}
                         >
-                          {c.trim()}
-                        </span>
+                          <td className="p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors text-center md:text-left">
+                            <span
+                              className="md:hidden flex items-center justify-center text-primary"
+                              title={item.industry}
+                            >
+                              {getIndustryIcon(item.industry, 16)}
+                            </span>
+                            <span className="hidden md:inline">{item.industry}</span>
+                          </td>
+                          <td className="hidden md:table-cell p-4 text-sm font-mono text-primary/80">
+                            <div className="flex items-center gap-2">
+                              {item.threatId}
+                              <StatusBadge status={item.status} size="sm" />
+                              <TrustScoreBadge
+                                resourceType="threats"
+                                resourceId={item.threatId}
+                                size="sm"
+                              />
+                            </div>
+                          </td>
+                          <td className="hidden md:table-cell p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors overflow-hidden">
+                            <div className="line-clamp-2 md:line-clamp-3">{item.description}</div>
+                            <div className="text-xs text-muted-foreground/50 mt-1 uppercase tracking-wider truncate">
+                              Source: {item.mainSource}
+                            </div>
+                          </td>
+                          <td className="p-4 text-center md:text-left overflow-hidden">
+                            <span
+                              className={clsx(
+                                'hidden md:inline-block px-2 py-1 rounded text-xs font-bold border',
+                                item.criticality.toLowerCase() === 'critical' ||
+                                  item.criticality.toLowerCase() === 'high'
+                                  ? 'bg-status-error text-status-error border-status-error'
+                                  : 'bg-primary/10 text-primary border-primary/20'
+                              )}
+                            >
+                              {item.criticality}
+                            </span>
+                          </td>
+                          <td className="p-4 text-xs font-mono overflow-hidden">
+                            <div className="flex flex-wrap gap-1">
+                              {item.cryptoAtRisk.split(',').map((c, i) => (
+                                <span
+                                  key={i}
+                                  className="px-1.5 py-0.5 rounded-sm bg-muted/50 border border-border/50 text-muted-foreground break-words"
+                                >
+                                  {c.trim()}
+                                </span>
+                              ))}
+                            </div>
+                          </td>
+                          <td className="p-4 text-xs font-mono overflow-hidden">
+                            <div className="flex flex-wrap gap-1">
+                              {item.pqcReplacement.split(',').map((c, i) => (
+                                <span
+                                  key={i}
+                                  className="px-1.5 py-0.5 rounded-sm bg-status-success/10 border border-status-success/20 text-status-success/80 break-words"
+                                >
+                                  {c.trim()}
+                                </span>
+                              ))}
+                            </div>
+                          </td>
+                          <td className="hidden lg:table-cell p-4 text-center">
+                            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+                            <div
+                              className="flex items-center justify-center gap-1"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Button
+                                variant="ghost"
+                                onClick={() => toggleMyThreat(item.threatId)}
+                                className={`p-1 rounded transition-colors ${
+                                  myThreats.includes(item.threatId)
+                                    ? 'text-primary hover:text-primary/80'
+                                    : 'text-muted-foreground/40 hover:text-primary'
+                                }`}
+                                aria-label={
+                                  myThreats.includes(item.threatId)
+                                    ? 'Remove from My Threats'
+                                    : 'Add to My Threats'
+                                }
+                              >
+                                {myThreats.includes(item.threatId) ? (
+                                  <BookmarkCheck size={16} />
+                                ) : (
+                                  <Bookmark size={16} />
+                                )}
+                              </Button>
+                              <EndorseButton
+                                endorseUrl={buildEndorsementUrl({
+                                  category: 'threat-endorsement',
+                                  title: `Endorse: ${item.threatId} — ${item.industry}`,
+                                  resourceType: 'Threat Assessment',
+                                  resourceId: item.threatId,
+                                  resourceDetails: [
+                                    `**Threat ID:** ${item.threatId}`,
+                                    `**Industry:** ${item.industry}`,
+                                    `**Criticality:** ${item.criticality}`,
+                                  ].join('\n'),
+                                  pageUrl: `/threats?threat=${encodeURIComponent(item.threatId)}`,
+                                })}
+                                resourceLabel={item.threatId}
+                                resourceType="Threat"
+                              />
+                              <FlagButton
+                                flagUrl={buildFlagUrl({
+                                  category: 'threat-endorsement',
+                                  title: `Flag: ${item.threatId} — ${item.industry}`,
+                                  resourceType: 'Threat Assessment',
+                                  resourceId: item.threatId,
+                                  resourceDetails: [
+                                    `**Threat ID:** ${item.threatId}`,
+                                    `**Industry:** ${item.industry}`,
+                                    `**Criticality:** ${item.criticality}`,
+                                  ].join('\n'),
+                                  pageUrl: `/threats?threat=${encodeURIComponent(item.threatId)}`,
+                                })}
+                                resourceLabel={item.threatId}
+                                resourceType="Threat"
+                              />
+                            </div>
+                          </td>
+                          <td className="p-4 text-center">
+                            <div className="text-muted-foreground group-hover:text-primary transition-colors flex justify-center items-center h-full">
+                              <ChevronDown className="-rotate-90" size={16} />
+                            </div>
+                          </td>
+                        </motion.tr>
                       ))}
-                    </div>
-                  </td>
-                  <td className="hidden lg:table-cell p-4 text-center">
-                    {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-                    <div
-                      className="flex items-center justify-center gap-1"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Button
-                        variant="ghost"
-                        onClick={() => toggleMyThreat(item.threatId)}
-                        className={`p-1 rounded transition-colors ${
-                          myThreats.includes(item.threatId)
-                            ? 'text-primary hover:text-primary/80'
-                            : 'text-muted-foreground/40 hover:text-primary'
-                        }`}
-                        aria-label={
-                          myThreats.includes(item.threatId)
-                            ? 'Remove from My Threats'
-                            : 'Add to My Threats'
-                        }
-                      >
-                        {myThreats.includes(item.threatId) ? (
-                          <BookmarkCheck size={16} />
-                        ) : (
-                          <Bookmark size={16} />
-                        )}
-                      </Button>
-                      <EndorseButton
-                        endorseUrl={buildEndorsementUrl({
-                          category: 'threat-endorsement',
-                          title: `Endorse: ${item.threatId} — ${item.industry}`,
-                          resourceType: 'Threat Assessment',
-                          resourceId: item.threatId,
-                          resourceDetails: [
-                            `**Threat ID:** ${item.threatId}`,
-                            `**Industry:** ${item.industry}`,
-                            `**Criticality:** ${item.criticality}`,
-                          ].join('\n'),
-                          pageUrl: `/threats?threat=${encodeURIComponent(item.threatId)}`,
-                        })}
-                        resourceLabel={item.threatId}
-                        resourceType="Threat"
-                      />
-                      <FlagButton
-                        flagUrl={buildFlagUrl({
-                          category: 'threat-endorsement',
-                          title: `Flag: ${item.threatId} — ${item.industry}`,
-                          resourceType: 'Threat Assessment',
-                          resourceId: item.threatId,
-                          resourceDetails: [
-                            `**Threat ID:** ${item.threatId}`,
-                            `**Industry:** ${item.industry}`,
-                            `**Criticality:** ${item.criticality}`,
-                          ].join('\n'),
-                          pageUrl: `/threats?threat=${encodeURIComponent(item.threatId)}`,
-                        })}
-                        resourceLabel={item.threatId}
-                        resourceType="Threat"
-                      />
-                    </div>
-                  </td>
-                  <td className="p-4 text-center">
-                    <div className="text-muted-foreground group-hover:text-primary transition-colors flex justify-center items-center h-full">
-                      <ChevronDown className="-rotate-90" size={16} />
-                    </div>
-                  </td>
-                </motion.tr>
-              ))}
-            </AnimatePresence>
+                    </AnimatePresence>
+                  </React.Fragment>
+                )
+              })
+            })()}
           </tbody>
         </table>
       </div>

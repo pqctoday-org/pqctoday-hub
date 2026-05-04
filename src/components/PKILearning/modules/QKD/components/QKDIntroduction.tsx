@@ -69,7 +69,7 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
       </section>
 
       {/* Section 2: BB84 Protocol */}
-      <section className="glass-panel p-6">
+      <section data-section-id="bb84" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Radio size={20} /> The BB84 Protocol
         </h2>
@@ -414,7 +414,7 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
       </section>
 
       {/* Section 6: QKD + Classical KEM */}
-      <section className="glass-panel p-6">
+      <section data-section-id="integration" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Key size={20} /> QKD + PQC KEM Integration
         </h2>
@@ -453,7 +453,7 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
       </section>
 
       {/* Section 7: QKD + HSM */}
-      <section className="glass-panel p-6">
+      <section data-section-id="hsm-derivation" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Server size={20} /> QKD + HSM Integration
         </h2>
@@ -510,7 +510,7 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
       </section>
 
       {/* Section 8: Telecom & Government Adoption */}
-      <section className="glass-panel p-6">
+      <section data-section-id="deployment" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Globe size={20} /> Telecom &amp; Government Adoption
         </h2>

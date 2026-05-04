@@ -12,6 +12,8 @@ import {
   ChevronDown,
   Sparkles,
   List,
+  Volume2,
+  VolumeX,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useWorkshopStore } from '@/store/useWorkshopStore'
@@ -35,6 +37,8 @@ export const WorkshopPanel: React.FC = () => {
     selectedRegion,
     playbackSpeed,
     playbackMode,
+    ttsEnabled,
+    ttsVoiceURI,
     start,
     startVideo,
     exit,
@@ -44,14 +48,67 @@ export const WorkshopPanel: React.FC = () => {
     markStepComplete,
     setPlaybackSpeed,
     setPlaybackMode,
+    setTtsEnabled,
+    setTtsVoiceURI,
   } = useWorkshopStore()
+
+  // Enumerate browser-native TTS voices. The list loads asynchronously in
+  // some browsers (Chrome fires `voiceschanged`); subscribe + initial fetch.
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>(() => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return []
+    return window.speechSynthesis.getVoices()
+  })
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return
+    const refresh = () => setVoices(window.speechSynthesis.getVoices())
+    refresh()
+    window.speechSynthesis.addEventListener('voiceschanged', refresh)
+    // Chrome 15-second idle TTS bug: speechSynthesis goes silent if the page
+    // loses focus or is idle. Polling resume() every 10s keeps the engine
+    // warm. Cheap (resume() on a non-paused engine is a no-op) and prevents
+    // the "voice stops mid-workshop" complaint.
+    const keepAlive = window.setInterval(() => {
+      if ('speechSynthesis' in window) window.speechSynthesis.resume()
+    }, 10_000)
+    return () => {
+      window.speechSynthesis.removeEventListener('voiceschanged', refresh)
+      window.clearInterval(keepAlive)
+    }
+  }, [])
+  const ttsAvailable = typeof window !== 'undefined' && 'speechSynthesis' in window
+
+  // Auto-pick the best-available neural English voice if the user hasn't
+  // explicitly picked one. Chrome → Google WaveNet; Safari/macOS → Premium
+  // (Ava, Zoe, Eloquence, Samantha-Premium); Edge → Microsoft Aria/Guy. Fall
+  // back to default if nothing matches.
+  useEffect(() => {
+    if (ttsVoiceURI || voices.length === 0) return
+    const englishVoices = voices.filter((v) => v.lang?.toLowerCase().startsWith('en'))
+    if (englishVoices.length === 0) return
+    const NEURAL_PATTERNS = [
+      /\bWaveNet\b/i,
+      /^Google\s+(US|UK|Australian|Indian|British)\s+English/i,
+      /Microsoft\s+(Aria|Guy|Davis|Jenny|Sonia|Ryan|Andrew|Emma)\b/i,
+      /\b(Ava|Zoe|Eloquence|Samantha)\s*\((Premium|Enhanced|Neural)\)/i,
+      /\bSiri\b/i,
+      /\(Premium\)/i,
+      /\(Enhanced\)/i,
+      /\bNeural\b/i,
+    ]
+    const neural = englishVoices.find((v) => NEURAL_PATTERNS.some((p) => p.test(v.name)))
+    if (neural) {
+      setTtsVoiceURI(neural.voiceURI)
+    }
+  }, [voices, ttsVoiceURI, setTtsVoiceURI])
 
   const [pickedRegion, setPickedRegion] = useState<WorkshopRegion | null>(selectedRegion)
   const [activeTab, setActiveTab] = useState<'recommended' | 'browse'>('recommended')
 
-  // Auto-clear flowOverrideId + reset region when the persona context changes
-  // — a previously hand-picked flow / region shouldn't keep showing after the
-  // user switches role, proficiency, or industry.
+  // Auto-clear flowOverrideId + reset region + exit any active workshop when
+  // the persona context changes. A previously hand-picked flow / region — and
+  // a running workshop bound to the OLD persona — shouldn't keep showing after
+  // the user switches role, proficiency, or industry. The new persona's flow
+  // is what they want.
   const personaRole = usePersonaStore((s) => s.selectedPersona)
   const personaProf = usePersonaStore((s) => s.experienceLevel)
   const personaIndustry = usePersonaStore((s) => s.selectedIndustry)
@@ -65,6 +122,12 @@ export const WorkshopPanel: React.FC = () => {
       // Also reset the in-panel picked region so it picks up the persona's
       // new region on the next render.
       setPickedRegion(personaRegionToWorkshop(personaRegion))
+      // If a workshop is running under the OLD persona, exit it. The user
+      // wants the new persona's workshop, not the previous one's stale steps.
+      const currentMode = useWorkshopStore.getState().mode
+      if (currentMode === 'running' || currentMode === 'video' || currentMode === 'paused') {
+        useWorkshopStore.getState().exit()
+      }
     }
     lastPersonaSig.current = sig
   }, [personaRole, personaProf, personaIndustry, personaRegion, setFlowOverride])
@@ -267,6 +330,7 @@ export const WorkshopPanel: React.FC = () => {
             if (!activeFlow || !pickedRegion) return
             const steps = flattenFlow(activeFlow, pickedRegion)
             if (steps.length === 0) return
+            primeTtsIfEnabled(ttsEnabled)
             start(activeFlow.id, steps[0].id, pickedRegion)
           }}
         >
@@ -350,6 +414,77 @@ export const WorkshopPanel: React.FC = () => {
               ))}
             </div>
           </div>
+
+          {/* VOICE — browser-native TTS via Web Speech API. Off by default;
+              when on, captions are spoken aloud and the caption bar shows a
+              pulsing voice icon in the same primary color as the halo. */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                Voice
+              </span>
+              <span className="text-[10px] text-muted-foreground tabular-nums">
+                {!ttsAvailable
+                  ? 'Not supported in this browser'
+                  : !ttsEnabled
+                    ? 'Off — captions silent'
+                    : (voices.find((v) => v.voiceURI === ttsVoiceURI)?.name ?? 'Browser default')}
+              </span>
+            </div>
+            <div className="flex gap-1.5">
+              <Button
+                variant={!ttsEnabled ? 'gradient' : 'outline'}
+                size="sm"
+                disabled={!ttsAvailable}
+                className="flex-1 h-8 text-xs"
+                onClick={() => setTtsEnabled(false)}
+                aria-pressed={!ttsEnabled}
+              >
+                <VolumeX size={14} className="mr-1.5" />
+                Off
+              </Button>
+              <Button
+                variant={ttsEnabled ? 'gradient' : 'outline'}
+                size="sm"
+                disabled={!ttsAvailable}
+                className="flex-1 h-8 text-xs"
+                onClick={() => setTtsEnabled(true)}
+                aria-pressed={ttsEnabled}
+              >
+                <Volume2 size={14} className="mr-1.5" />
+                On
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={!ttsAvailable}
+                className="h-8 px-2 text-xs"
+                title="Speak a test phrase to verify your browser's TTS is working"
+                onClick={() => testTtsNow(ttsVoiceURI, voices)}
+              >
+                Test
+              </Button>
+            </div>
+            {ttsEnabled && voices.length > 0 && (
+              <select
+                value={ttsVoiceURI ?? ''}
+                onChange={(e) => setTtsVoiceURI(e.target.value || null)}
+                aria-label="Pick an English voice"
+                className="w-full h-8 text-xs rounded-md bg-card border border-border text-foreground px-2 hover:border-primary/40 focus:border-primary focus:outline-none transition-colors"
+              >
+                <option value="">Browser default</option>
+                {voices
+                  .filter((v) => v.lang?.toLowerCase().startsWith('en'))
+                  .map((v) => (
+                    <option key={v.voiceURI} value={v.voiceURI}>
+                      {v.name}
+                      {v.lang ? ` · ${v.lang}` : ''}
+                      {v.default ? ' · default' : ''}
+                    </option>
+                  ))}
+              </select>
+            )}
+          </div>
         </div>
 
         <Button
@@ -360,6 +495,7 @@ export const WorkshopPanel: React.FC = () => {
             if (!activeFlow || !pickedRegion) return
             const steps = flattenFlow(activeFlow, pickedRegion)
             if (steps.length === 0) return
+            primeTtsIfEnabled(ttsEnabled)
             startVideo(activeFlow.id, steps[0].id, pickedRegion)
             // Minimize the panel — Video Mode renders captions + spotlight on top of the main pane.
             useRightPanelStore.getState().minimize()
@@ -699,4 +835,81 @@ const BrowseAllFlows: React.FC<BrowseAllFlowsProps> = ({
       </ul>
     </section>
   )
+}
+
+/**
+ * If TTS is enabled, fire an audible priming utterance INSIDE the current
+ * user-gesture click handler. Browsers (Safari + iOS strict, Chrome since v88)
+ * gate the first speak() call to require a user gesture; subsequent RAF-fired
+ * speak() calls inherit the unlock for the session. Without this, voice
+ * silently fails when ttsEnabled was persisted from a prior session and
+ * restored without the user clicking the Voice toggle this session.
+ */
+function primeTtsIfEnabled(enabled: boolean): void {
+  if (!enabled) return
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return
+  try {
+    window.speechSynthesis.cancel()
+    const prime = new SpeechSynthesisUtterance('Voice ready')
+    prime.volume = 1.0
+    prime.rate = 1.0
+    prime.lang = 'en-US'
+    prime.onerror = (ev) => console.warn('[workshop] TTS prime error:', ev.error)
+    window.speechSynthesis.speak(prime)
+  } catch (e) {
+    console.warn('[workshop] TTS priming failed:', e)
+  }
+}
+
+/**
+ * Test the browser's TTS engine end-to-end inside an explicit user gesture.
+ * Verbose logging so users can diagnose silent failures (browser autoplay
+ * gating, system mute, empty voice list on first load, etc.).
+ */
+function testTtsNow(voiceURI: string | null, voices: SpeechSynthesisVoice[]): void {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+    console.warn('[workshop] TTS not supported in this browser')
+    return
+  }
+  const synth = window.speechSynthesis
+  const availableVoices = voices.length > 0 ? voices : synth.getVoices()
+  console.warn('[workshop] TTS test:', {
+    voicesAvailable: availableVoices.length,
+    selectedVoiceURI: voiceURI,
+    speaking: synth.speaking,
+    paused: synth.paused,
+    pending: synth.pending,
+  })
+  try {
+    synth.cancel()
+    const u = new SpeechSynthesisUtterance(
+      'This is a voice test. If you can hear this, the workshop voice will work too.'
+    )
+    u.volume = 1.0
+    u.rate = 1.0
+    u.lang = 'en-US'
+    if (voiceURI) {
+      const v = availableVoices.find((x) => x.voiceURI === voiceURI)
+      if (v) u.voice = v
+    }
+    u.onstart = () => console.warn('[workshop] TTS test: speaking started')
+    u.onend = () => console.warn('[workshop] TTS test: speaking ended OK')
+    u.onerror = (ev) =>
+      console.warn(
+        '[workshop] TTS test error:',
+        ev.error,
+        '— check system volume / browser tab mute / output device'
+      )
+    synth.speak(u)
+    // Diagnostic: after 500ms, check if `speaking` flipped to true.
+    setTimeout(() => {
+      if (!synth.speaking && !synth.pending) {
+        console.warn(
+          '[workshop] TTS test: speak() returned but engine never started. Likely causes: browser tab is muted (right-click tab → Unmute), system audio is muted, output device routing problem, or browser autoplay policy needs another user gesture.'
+        )
+      }
+    }, 500)
+  } catch (e) {
+    console.warn('[workshop] TTS test failed:', e)
+  }
 }

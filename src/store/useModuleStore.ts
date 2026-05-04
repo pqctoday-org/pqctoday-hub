@@ -26,6 +26,7 @@ interface ModuleState extends LearningProgress {
   ) => void
   markStepComplete: (moduleId: string, stepId: string, workshopStep?: number) => void
   toggleLearnSection: (moduleId: string, sectionId: string) => void
+  markLearnSectionRead: (moduleId: string, sectionId: string) => void
   markAllLearnSectionsComplete: (moduleId: string) => void
   saveProgress: () => void
   loadProgress: (progress: LearningProgress) => void
@@ -171,6 +172,46 @@ export const useModuleStore = create<ModuleState>()(
             newStatus = 'in-progress'
           }
 
+          return {
+            modules: {
+              ...state.modules,
+              [moduleId]: {
+                ...module,
+                status: newStatus,
+                lastVisited: Date.now(),
+                learnSectionChecks: updatedChecks,
+              },
+            },
+            timestamp: Date.now(),
+          }
+        }),
+
+      markLearnSectionRead: (moduleId, sectionId) =>
+        set((state) => {
+          const existing = state.modules[moduleId]
+          const currentChecks = existing?.learnSectionChecks ?? {}
+          if (currentChecks[sectionId]) return state
+          const module = existing || {
+            status: 'in-progress' as const,
+            lastVisited: Date.now(),
+            timeSpent: 0,
+            completedSteps: [],
+            quizScores: {},
+            learnSectionChecks: {},
+          }
+          if (!existing || module.status === 'not-started') {
+            logModuleStart(moduleId)
+          }
+          const updatedChecks = { ...currentChecks, [sectionId]: true }
+          const sections = LEARN_SECTIONS[moduleId] ?? []
+          const allChecked = sections.length > 0 && sections.every((s) => updatedChecks[s.id])
+          let newStatus = module.status
+          if (allChecked && module.status !== 'completed') {
+            newStatus = 'completed'
+            logModuleComplete(moduleId)
+          } else if (module.status === 'not-started') {
+            newStatus = 'in-progress'
+          }
           return {
             modules: {
               ...state.modules,

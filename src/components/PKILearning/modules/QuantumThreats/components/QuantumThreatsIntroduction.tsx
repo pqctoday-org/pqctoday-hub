@@ -228,7 +228,7 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
       </section>
 
       {/* CRQC Timeline */}
-      <section className="glass-panel p-6">
+      <section data-section-id="crqc" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Clock size={20} /> CRQC Timeline Projections
         </h2>
@@ -289,7 +289,7 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
       </section>
 
       {/* HNDL Attack Model */}
-      <section className="glass-panel p-6">
+      <section data-section-id="hndl" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <Shield size={20} />{' '}
           <InlineTooltip term="HNDL">Harvest Now, Decrypt Later (HNDL)</InlineTooltip>
@@ -336,7 +336,7 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
       </section>
 
       {/* HNFL Attack Model */}
-      <section className="glass-panel p-6">
+      <section data-section-id="security-levels" className="glass-panel p-6 scroll-mt-20">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
           <PenLine size={20} />{' '}
           <InlineTooltip term="HNFL">Harvest Now, Forge Later (HNFL)</InlineTooltip>

@@ -80,7 +80,7 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
       </section>
 
       {/* Section 2: Architecture Patterns */}
-      <section className="glass-panel p-6">
+      <section data-section-id="abstraction" className="glass-panel p-6 scroll-mt-20">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-secondary/10">
             <Layers size={24} className="text-secondary" />
@@ -170,7 +170,7 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
       </section>
 
       {/* Section 3: CBOM */}
-      <section className="glass-panel p-6">
+      <section data-section-id="cbom" className="glass-panel p-6 scroll-mt-20">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">
             <FileSearch size={24} className="text-primary" />
@@ -211,7 +211,7 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
       </section>
 
       {/* Section 4: 7-Phase Migration */}
-      <section className="glass-panel p-6">
+      <section data-section-id="migration" className="glass-panel p-6 scroll-mt-20">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-secondary/10">
             <Route size={24} className="text-secondary" />

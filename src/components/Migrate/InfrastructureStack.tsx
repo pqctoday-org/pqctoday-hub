@@ -389,6 +389,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
               <div
                 role="button"
                 tabIndex={0}
+                data-workshop-target={`migrate-layer-${layer.id}`}
                 onClick={() => handleSelect(layer.id as InfrastructureLayerType)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {

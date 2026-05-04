@@ -448,14 +448,17 @@ const Step3ResourcesAndCta: React.FC<{ onNavigateToWorkshop: () => void }> = ({
 export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop }) => {
   const steps = [
     {
+      id: 'model',
       label: 'Why Governance, RACI & Policy Hierarchy',
       content: <Step1WhyRaciPolicy />,
     },
     {
+      id: 'policy',
       label: 'Governance Models, Escalation & KPIs',
       content: <Step2ModelsEscalationKpis />,
     },
     {
+      id: 'kpi',
       label: 'Resources & Workshop',
       content: <Step3ResourcesAndCta onNavigateToWorkshop={onNavigateToWorkshop} />,
     },

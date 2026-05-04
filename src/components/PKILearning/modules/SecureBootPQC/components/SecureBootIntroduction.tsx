@@ -30,6 +30,7 @@ interface CollapsibleSectionProps {
   title: string
   defaultOpen?: boolean
   children: React.ReactNode
+  sectionId?: string
 }
 
 const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
@@ -37,11 +38,12 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   title,
   defaultOpen = false,
   children,
+  sectionId,
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen)
 
   return (
-    <section className="glass-panel p-6">
+    <section data-section-id={sectionId} className="glass-panel p-6 scroll-mt-20">
       <Button
         variant="ghost"
         onClick={() => setIsOpen(!isOpen)}
@@ -69,6 +71,7 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
         icon={<Shield size={24} className="text-primary" />}
         title="UEFI Secure Boot: Key Hierarchy and Chain of Trust"
         defaultOpen
+        sectionId="secure-boot-fundamentals"
       >
         <p>
           <InlineTooltip term="UEFI">UEFI</InlineTooltip> Secure Boot establishes a{' '}
@@ -192,6 +195,7 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
       <CollapsibleSection
         icon={<FileCode size={24} className="text-primary" />}
         title="ML-DSA-65 for Firmware Signature Migration"
+        sectionId="firmware-signing"
       >
         <p>
           <InlineTooltip term="ML-DSA">ML-DSA-65</InlineTooltip> (FIPS 204, formerly
@@ -307,6 +311,7 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
       <CollapsibleSection
         icon={<Key size={24} className="text-primary" />}
         title="TPM 2.0 and the Path to Post-Quantum Attestation"
+        sectionId="tpm-attestation"
       >
         <p>
           <InlineTooltip term="TPM">TPM 2.0</InlineTooltip> (ISO/IEC 11889:2015) is the hardware
@@ -381,6 +386,7 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
       <CollapsibleSection
         icon={<Building2 size={24} className="text-primary" />}
         title="AMI, Insyde, EDK2, Dell, HPE Firmware PQC Roadmaps"
+        sectionId="vendor-roadmaps"
       >
         <p>
           BIOS and firmware vendors are at different stages of PQC adoption. Understanding each

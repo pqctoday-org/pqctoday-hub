@@ -133,10 +133,10 @@ describe('ThreatsDashboard', () => {
     const table = screen.getByRole('table')
     expect(table).toBeInTheDocument()
 
-    // Check for row data
-    expect(within(table).getByText('Finance')).toBeInTheDocument()
+    // Check for row data (industry names appear in both the group header and data cell)
+    expect(within(table).getAllByText('Finance')[0]).toBeInTheDocument()
     expect(within(table).getByText('THR-001')).toBeInTheDocument()
-    expect(within(table).getByText('Healthcare')).toBeInTheDocument()
+    expect(within(table).getAllByText('Healthcare')[0]).toBeInTheDocument()
     expect(within(table).getByText('THR-002')).toBeInTheDocument()
   })
 
@@ -149,8 +149,8 @@ describe('ThreatsDashboard', () => {
 
     // Check initial state (all present)
     const table = screen.getByRole('table')
-    expect(within(table).getByText('Finance')).toBeInTheDocument()
-    expect(within(table).getByText('Automotive')).toBeInTheDocument()
+    expect(within(table).getAllByText('Finance')[0]).toBeInTheDocument()
+    expect(within(table).getAllByText('Automotive')[0]).toBeInTheDocument()
 
     // Interact with Industry dropdown
     const dropdown = screen.getByTestId('filter-Industry') // defaultLabel="Industry"
@@ -159,7 +159,7 @@ describe('ThreatsDashboard', () => {
     fireEvent.click(financeOption)
 
     // Check filtered state
-    expect(within(table).getByText('Finance')).toBeInTheDocument()
+    expect(within(table).getAllByText('Finance')[0]).toBeInTheDocument()
     expect(within(table).queryByText('Automotive')).not.toBeInTheDocument()
   })
 
@@ -178,7 +178,7 @@ describe('ThreatsDashboard', () => {
 
     // Check filtered state (Healthcare is High, Finance is Critical)
     const table = screen.getByRole('table')
-    expect(within(table).getByText('Healthcare')).toBeInTheDocument()
+    expect(within(table).getAllByText('Healthcare')[0]).toBeInTheDocument()
     expect(within(table).queryByText('Finance')).not.toBeInTheDocument()
   })
 
@@ -193,7 +193,7 @@ describe('ThreatsDashboard', () => {
     fireEvent.change(searchInput, { target: { value: 'banking' } }) // matches "Quantum attack on banking..."
 
     const table = screen.getByRole('table')
-    expect(within(table).getByText('Finance')).toBeInTheDocument() // The row with "banking" description
+    expect(within(table).getAllByText('Finance')[0]).toBeInTheDocument() // The row with "banking" description
     expect(within(table).queryByText('Healthcare')).not.toBeInTheDocument()
   })
 

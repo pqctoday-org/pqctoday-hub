@@ -232,7 +232,7 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
       </section>
 
       {/* Section 3: Classical vs PQC Code Signing */}
-      <section className="glass-panel p-6">
+      <section data-section-id="classical" className="glass-panel p-6 scroll-mt-20">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-secondary/10">
             <ShieldCheck size={24} className="text-secondary" />
@@ -394,7 +394,7 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
       </section>
 
       {/* Section 5: Package Manager Signing */}
-      <section className="glass-panel p-6">
+      <section data-section-id="packages" className="glass-panel p-6 scroll-mt-20">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-secondary/10">
             <Package size={24} className="text-secondary" />
@@ -453,7 +453,7 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
       </section>
 
       {/* Section 6: Sigstore & Keyless Signing */}
-      <section className="glass-panel p-6">
+      <section data-section-id="sigstore" className="glass-panel p-6 scroll-mt-20">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">
             <Globe size={24} className="text-primary" />
@@ -510,7 +510,7 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
       </section>
 
       {/* Section 7: Secure Boot & Firmware Signing */}
-      <section className="glass-panel p-6">
+      <section data-section-id="secure-boot" className="glass-panel p-6 scroll-mt-20">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">
             <Cpu size={24} className="text-primary" />

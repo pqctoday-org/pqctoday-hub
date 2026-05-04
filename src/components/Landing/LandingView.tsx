@@ -1,44 +1,26 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
-  Globe,
-  FlaskConical,
   GraduationCap,
-  Shield,
-  ShieldCheck,
-  ArrowRightLeft,
   ArrowRight,
-  ClipboardCheck,
-  FileBarChart,
-  LayoutDashboard,
   Save,
   Upload,
-  Compass,
-  AlertTriangle,
-  Check,
   Cloud,
   CloudOff,
   Loader2,
   LogOut,
-  Monitor,
-  ScrollText,
 } from 'lucide-react'
-// LogOut intentionally kept for sign-out button
 import { Button } from '../ui/button'
 import { loadPQCAlgorithmsData } from '@/data/pqcAlgorithmsData'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { UnifiedStorageService } from '@/services/storage/UnifiedStorageService'
-import { PERSONA_RECOMMENDED_PATHS, PERSONA_NAV_PATHS } from '@/data/personaConfig'
-import { useMigrationWorkflowStore } from '@/store/useMigrationWorkflowStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { useModuleStore } from '@/store/useModuleStore'
-import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
-import { useHistoryStore } from '@/store/useHistoryStore'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { PersonalizationSection } from './PersonalizationSection'
-import { PQCExplainer } from './PQCExplainer'
+import { OnboardingCTAs } from './OnboardingCTAs'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { TransparencyBanner } from './TransparencyBanner'
 import { useGoogleAuth } from '@/contexts/GoogleAuthContext'
@@ -89,332 +71,17 @@ const DEFAULT_HERO_CTA = {
   secondary: { label: 'Explore the Timeline', path: '/timeline' },
 }
 
-// Paths always visible regardless of persona
-const ALWAYS_VISIBLE_PATHS = ['/learn', '/timeline', '/threats']
-
-type StepEngagement = 'not-started' | 'started' | 'engaged'
-
-interface JourneyStep {
-  id: string
-  step: number
-  label: string
-  icon: React.ElementType
-  description: string
-  paths: string[]
-  color: string
-  section: 'start' | 'journey' | 'assess' | 'current'
-  actionLabel: string
-  resumeLabel: string
-  desktopRecommended?: boolean
-}
-
-const JOURNEY_SECTIONS: { id: string; title: string; subtitle: string; nextHint?: string }[] = [
-  {
-    id: 'start',
-    title: 'Start the Journey',
-    subtitle: 'Build your understanding of the quantum threat and the new cryptographic standards.',
-    nextHint: 'Ready to plan your migration?',
-  },
-  {
-    id: 'journey',
-    title: 'My Journey',
-    subtitle: 'Map your specific requirements — products, compliance frameworks, and deadlines.',
-    nextHint: 'Time to assess your readiness.',
-  },
-  {
-    id: 'assess',
-    title: 'Assess & Report',
-    subtitle: 'Get a personalized risk score, migration roadmap, and hands-on testing.',
-    nextHint: 'Stay informed as the landscape evolves.',
-  },
-  {
-    id: 'current',
-    title: 'Keep Up to Date',
-    subtitle: 'Monitor evolving threats, new standards, and industry leaders.',
-  },
-]
-
-function buildJourneySteps(
-  algorithmCount: number | null,
-  migrateCount: number | null,
-  libraryCount: number | null,
-  patentsCount: number | null
-): JourneyStep[] {
-  const algoLabel = algorithmCount !== null ? `${algorithmCount}` : '80+'
-  const migrateLabel = migrateCount !== null ? `${migrateCount}` : '700+'
-  const libraryLabel = libraryCount !== null ? `${libraryCount}` : '450+'
-  const patentsLabel = patentsCount !== null ? `${patentsCount}` : '200+'
-
-  return [
-    // — Start the Journey —
-    {
-      id: 'learn',
-      step: 1,
-      label: 'Learn',
-      icon: GraduationCap,
-      color: 'text-secondary',
-      section: 'start' as const,
-      description: `Start from zero or go deep — ${MODULE_COUNT} hands-on modules covering the quantum threat, new encryption standards, and what your organization needs to do`,
-      paths: ['/learn'],
-      actionLabel: 'Start Learning',
-      resumeLabel: 'Continue Learning',
-    },
-    {
-      id: 'timeline',
-      step: 2,
-      label: 'Timeline',
-      icon: Globe,
-      color: 'text-accent',
-      section: 'start' as const,
-      description:
-        'See when governments require action — track every PQC mandate, advisory, and milestone from 2020 to 2035',
-      paths: ['/timeline'],
-      actionLabel: 'Track Deadlines',
-      resumeLabel: 'Review Timeline',
-    },
-    {
-      id: 'algorithms',
-      step: 3,
-      label: 'Algorithms',
-      icon: Shield,
-      color: 'text-primary',
-      section: 'start' as const,
-      description: `Compare ${algoLabel} post-quantum encryption algorithms — performance, security levels, key sizes, and standardization status`,
-      paths: ['/algorithms'],
-      actionLabel: 'Compare Algorithms',
-      resumeLabel: 'Explore More',
-      desktopRecommended: true,
-    },
-    // — My Journey —
-    {
-      id: 'migrate',
-      step: 4,
-      label: 'Migrate',
-      icon: ArrowRightLeft,
-      color: 'text-primary',
-      section: 'journey' as const,
-      description: `${migrateLabel} tracked, production-grade tools for upgrading your infrastructure — from cloud services to hardware`,
-      paths: ['/migrate'],
-      actionLabel: 'Browse Catalog',
-      resumeLabel: 'Continue Planning',
-    },
-    {
-      id: 'compliance',
-      step: 5,
-      label: 'Compliance',
-      icon: ShieldCheck,
-      color: 'text-accent',
-      section: 'journey' as const,
-      description:
-        'Track regulatory deadlines from 2024 to 2035 — know exactly when your industry must comply',
-      paths: ['/compliance'],
-      actionLabel: 'Check Compliance',
-      resumeLabel: 'Review Frameworks',
-    },
-    // — Assess & Report —
-    {
-      id: 'assess',
-      step: 6,
-      label: 'Assess',
-      icon: ClipboardCheck,
-      color: 'text-primary',
-      section: 'assess' as const,
-      description:
-        'Answer a few questions about your organization and get a personalized readiness score with concrete next steps',
-      paths: ['/assess'],
-      actionLabel: 'Run Assessment',
-      resumeLabel: 'Update Assessment',
-    },
-    {
-      id: 'report',
-      step: 7,
-      label: 'Report',
-      icon: FileBarChart,
-      color: 'text-accent',
-      section: 'assess' as const,
-      description:
-        'Review your personalized readiness report with risk scores, migration roadmap, and actionable recommendations',
-      paths: ['/report'],
-      actionLabel: 'View Report',
-      resumeLabel: 'Review Report',
-    },
-    {
-      id: 'business',
-      step: 8,
-      label: 'Command Center',
-      icon: LayoutDashboard,
-      color: 'text-primary',
-      section: 'assess' as const,
-      description:
-        'Your GRC command center — live risk scores, compliance tracking, vendor posture, and prioritized next steps',
-      paths: ['/business'],
-      actionLabel: 'Open Dashboard',
-      resumeLabel: 'View Dashboard',
-    },
-    {
-      id: 'test',
-      step: 9,
-      label: 'Test & Build',
-      icon: FlaskConical,
-      color: 'text-secondary',
-      section: 'assess' as const,
-      description:
-        'Generate quantum-resistant keys and test new encryption algorithms right in your browser — no setup required',
-      paths: ['/playground', '/openssl'],
-      actionLabel: 'Try the Playground',
-      resumeLabel: 'Build More',
-      desktopRecommended: true,
-    },
-    // — Keep Up to Date —
-    {
-      id: 'threats',
-      step: 10,
-      label: 'Threats',
-      icon: AlertTriangle,
-      color: 'text-accent',
-      section: 'current' as const,
-      description:
-        'Stay current on evolving threats by industry — understand attack vectors, risk timelines, and what to prioritize',
-      paths: ['/threats'],
-      actionLabel: 'Explore Threats',
-      resumeLabel: 'Check Updates',
-    },
-    {
-      id: 'library',
-      step: 11,
-      label: 'Library',
-      icon: Shield,
-      color: 'text-primary',
-      section: 'current' as const,
-      description: `Browse ${libraryLabel} tracked standards, RFCs, and specifications driving the post-quantum transition`,
-      paths: ['/library'],
-      actionLabel: 'Browse Standards',
-      resumeLabel: 'Browse Standards',
-    },
-    {
-      id: 'leaders',
-      step: 12,
-      label: 'Leaders',
-      icon: Globe,
-      color: 'text-secondary',
-      section: 'current' as const,
-      description:
-        'Discover the organizations and individuals driving the post-quantum transition worldwide',
-      paths: ['/leaders'],
-      actionLabel: 'Discover Leaders',
-      resumeLabel: 'Discover Leaders',
-    },
-    {
-      id: 'patents',
-      step: 13,
-      label: 'Patents',
-      icon: ScrollText,
-      color: 'text-accent',
-      section: 'current' as const,
-      description: `Explore ${patentsLabel} PQC-relevant patents — track assignees, algorithms, impact scores, and the IP landscape shaping the post-quantum transition`,
-      paths: ['/patents'],
-      actionLabel: 'Explore Patents',
-      resumeLabel: 'Explore Patents',
-    },
-  ]
-}
-
-const SECTION_HEADING: Record<string, { title: string; sub: string }> = {
-  executive: {
-    title: 'Your roadmap to organizational PQC readiness',
-    sub: 'Risk assessment, compliance tracking, and governance planning — built for decision makers and compliance professionals.',
-  },
-  developer: {
-    title: 'Your toolkit for building with PQC today',
-    sub: 'Real cryptographic operations powered by OpenSSL WASM, liboqs, and a dual-engine (C++/Rust) WASM HSM — not simulations.',
-  },
-  architect: {
-    title: 'Your blueprint for PQC-ready systems',
-    sub: 'Architecture patterns, compliance mappings, and live crypto tools — from planning to deployment.',
-  },
-  researcher: {
-    title: 'Your platform for exploring the PQC frontier',
-    sub: 'Full algorithm implementations, protocol deep-dives, and interactive simulations — real science, real data.',
-  },
-  ops: {
-    title: 'Your operations hub for PQC deployment',
-    sub: 'Migration catalogs, key management, and infrastructure tooling — built for the teams who keep it running.',
-  },
-  curious: {
-    title: 'Your guide to understanding the quantum security shift',
-    sub: 'No technical background needed — learn why encryption is changing and what it means for you.',
-  },
-  default: {
-    title: 'The complete platform for your PQC transformation',
-    sub: 'Understand, assess, and stay current — every step of the journey, all in one place.',
-  },
-}
-
 export const LandingView = () => {
-  const { selectedPersona, setPersona } = usePersonaStore()
+  const { selectedPersona, selectedRegion, setPersona } = usePersonaStore()
   const { signIn, signOut, isSignedIn, syncStatus, lastSyncedAt, isConfigured } = useGoogleAuth()
-  // eslint-disable-next-line security/detect-object-injection
-  const recommendedPaths = selectedPersona ? PERSONA_RECOMMENDED_PATHS[selectedPersona] : []
-  const { workflowActive, startWorkflow } = useMigrationWorkflowStore()
   const assessmentStatus = useAssessmentStore((s) => s.assessmentStatus)
-  const showWorkflowCta = assessmentStatus === 'complete' && !workflowActive
 
-  // Engagement tracking — derive from existing stores (no new persistence)
   const moduleModules = useModuleStore((s) => s.modules)
-  const artifactCount = useModuleStore((s) => {
-    const a = s.artifacts
-    return a.keys.length + a.certificates.length + a.csrs.length
-  })
-  const myFrameworkCount = useComplianceSelectionStore((s) => s.myFrameworks.length)
-  const migrationStarted = useMigrationWorkflowStore((s) => s.startedAt !== null)
-  const visitedRoutes = useHistoryStore((s) => s.visitedRoutes)
 
   const hasLearningProgress = useMemo(
     () => Object.values(moduleModules).some((m) => m.status !== 'not-started'),
     [moduleModules]
   )
-
-  const stepEngagement = useMemo((): Record<string, StepEngagement> => {
-    const visited = (path: string): StepEngagement =>
-      visitedRoutes.includes(path) ? 'engaged' : 'not-started'
-    return {
-      learn: hasLearningProgress ? 'engaged' : visited('/learn'),
-      timeline: visited('/timeline'),
-      algorithms: artifactCount > 0 ? 'engaged' : visited('/algorithms'),
-      migrate: migrationStarted ? 'engaged' : visited('/migrate'),
-      compliance: myFrameworkCount > 0 ? 'engaged' : visited('/compliance'),
-      assess:
-        assessmentStatus === 'complete'
-          ? 'engaged'
-          : assessmentStatus === 'in-progress'
-            ? 'started'
-            : visited('/assess'),
-      report: assessmentStatus === 'complete' ? 'engaged' : visited('/report'),
-      business:
-        assessmentStatus === 'complete' || myFrameworkCount > 0
-          ? 'engaged'
-          : assessmentStatus === 'in-progress'
-            ? 'started'
-            : visited('/business'),
-      test:
-        artifactCount > 0
-          ? 'engaged'
-          : visitedRoutes.includes('/playground') || visitedRoutes.includes('/openssl')
-            ? 'engaged'
-            : 'not-started',
-      threats: visited('/threats'),
-      library: visited('/library'),
-      leaders: visited('/leaders'),
-      patents: visited('/patents'),
-    }
-  }, [
-    hasLearningProgress,
-    artifactCount,
-    myFrameworkCount,
-    migrationStarted,
-    assessmentStatus,
-    visitedRoutes,
-  ])
 
   // Context-aware hero CTA — evolves based on user progress
   const heroCta = useMemo(() => {
@@ -438,8 +105,6 @@ export const LandingView = () => {
   const [algorithmCount, setAlgorithmCount] = useState<number | null>(null)
   const [timelineEventCount, setTimelineEventCount] = useState<number | null>(null)
   const [libraryCount, setLibraryCount] = useState<number | null>(null)
-  const [migrateCount, setMigrateCount] = useState<number | null>(null)
-  const [patentsCount, setPatentsCount] = useState<number | null>(null)
 
   useEffect(() => {
     loadPQCAlgorithmsData().then((data) => setAlgorithmCount(data.length))
@@ -449,50 +114,7 @@ export const LandingView = () => {
     import('@/data/libraryData').then(({ libraryData }) => {
       setLibraryCount(libraryData.length)
     })
-    import('@/data/migrateData').then(({ softwareData }) => {
-      setMigrateCount(softwareData.length)
-    })
-    import('@/data/patentsData').then(({ patentsData }) => {
-      setPatentsCount(patentsData.length)
-    })
   }, [])
-
-  const journeySteps = useMemo(
-    () => buildJourneySteps(algorithmCount, migrateCount, libraryCount, patentsCount),
-    [algorithmCount, migrateCount, libraryCount, patentsCount]
-  )
-
-  // Set of paths accessible to the current persona
-  const accessiblePaths = useMemo((): Set<string> => {
-    if (!selectedPersona) return new Set(['*'])
-    // eslint-disable-next-line security/detect-object-injection
-    const personaPaths = PERSONA_NAV_PATHS[selectedPersona]
-    if (personaPaths === null) return new Set(['*']) // researcher = all
-    return new Set([...ALWAYS_VISIBLE_PATHS, ...personaPaths])
-  }, [selectedPersona])
-
-  const isAccessible = (step: JourneyStep) =>
-    accessiblePaths.has('*') || step.paths.some((p) => accessiblePaths.has(p))
-
-  const isRecommendedStep = (step: JourneyStep) =>
-    step.paths.some((p) => recommendedPaths.includes(p))
-
-  // First recommended step the user hasn't engaged with yet — gets "Start here" badge
-  const firstRecommendedUnvisited = useMemo(() => {
-    const recommended = journeySteps.filter((s) => isRecommendedStep(s))
-    return recommended.find((s) => stepEngagement[s.id] === 'not-started')?.id ?? null
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [journeySteps, stepEngagement, recommendedPaths])
-
-  const heading = SECTION_HEADING[selectedPersona ?? 'default'] ?? SECTION_HEADING.default
-
-  // Journey fold state — show first 5 steps by default
-  const [showAllSteps, setShowAllSteps] = useState(false)
-  const INITIAL_VISIBLE = 5
-  const visibleStepIds = useMemo(() => {
-    const ids = new Set(journeySteps.slice(0, INITIAL_VISIBLE).map((s) => s.id))
-    return ids
-  }, [journeySteps])
 
   // Resume banner — last module with in-progress or completed status
   const lastVisitedModule = useMemo(() => {
@@ -542,17 +164,6 @@ export const LandingView = () => {
           understanding the threat to deploying quantum-resistant cryptography — step by step.
         </motion.p>
 
-        {/* PQC Explainer for non-experts */}
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={fadeUp}
-          custom={2.3}
-          className="mb-6"
-        >
-          <PQCExplainer />
-        </motion.div>
-
         {/* Resume banner — shown when a module is in-progress/completed */}
         {lastVisitedModule && (
           <motion.div
@@ -587,9 +198,20 @@ export const LandingView = () => {
           animate="visible"
           variants={fadeUp}
           custom={2.5}
-          className="mb-8"
+          className="mb-6"
         >
           <PersonalizationSection />
+        </motion.div>
+
+        {/* Onboarding CTAs */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={fadeUp}
+          custom={2.8}
+          className="mb-8"
+        >
+          <OnboardingCTAs persona={selectedPersona} region={selectedRegion} />
         </motion.div>
 
         <motion.div
@@ -696,185 +318,6 @@ export const LandingView = () => {
       {/* Transparency Banner */}
       <TransparencyBanner />
 
-      {/* Journey Section */}
-      <section>
-        {/* Persona-aware heading */}
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          className="text-center mb-10"
-          variants={{ visible: { transition: { delayChildren: 0.3, staggerChildren: 0.1 } } }}
-        >
-          <motion.h2 variants={fadeUp} className="text-2xl md:text-3xl font-bold mb-3">
-            <span className="text-gradient">{heading.title}</span>
-          </motion.h2>
-          <motion.p variants={fadeUp} className="text-muted-foreground max-w-xl mx-auto">
-            {heading.sub}
-          </motion.p>
-        </motion.div>
-
-        {/* Guided workflow CTA — shown after assessment is complete */}
-        {showWorkflowCta && (
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            className="mb-6 flex justify-center"
-          >
-            <Button
-              variant="outline"
-              onClick={() => startWorkflow()}
-              className="inline-flex items-center gap-2"
-            >
-              <Compass size={16} aria-hidden="true" />
-              Start Guided Migration Planning
-            </Button>
-          </motion.div>
-        )}
-
-        {/* Journey Step Cards — grouped by section */}
-        <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
-          initial="hidden"
-          animate="visible"
-          variants={{ visible: { transition: { delayChildren: 0.5, staggerChildren: 0.07 } } }}
-        >
-          {JOURNEY_SECTIONS.map((section) => {
-            const sectionSteps = journeySteps.filter(
-              (s) => s.section === section.id && (showAllSteps || visibleStepIds.has(s.id))
-            )
-            if (sectionSteps.length === 0) return null
-            return (
-              <React.Fragment key={section.id}>
-                <motion.div variants={fadeUp} className="col-span-full mt-6 first:mt-0">
-                  <div className="flex items-baseline gap-3 mb-1">
-                    <h3 className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-                      {section.title}
-                    </h3>
-                    <div className="flex-1 h-px bg-border/50" />
-                  </div>
-                  <p className="text-xs text-muted-foreground/70 mb-3 max-w-lg">
-                    {section.subtitle}
-                  </p>
-                </motion.div>
-                {sectionSteps.map((step) => {
-                  const accessible = isAccessible(step)
-                  const recommended = isRecommendedStep(step)
-                  const engagement = stepEngagement[step.id] ?? 'not-started'
-                  const isStartHere = step.id === firstRecommendedUnvisited
-                  return (
-                    <motion.div
-                      key={step.id}
-                      variants={fadeUp}
-                      className={`flex h-full ${accessible ? '' : 'opacity-40'}`}
-                    >
-                      <Link to={step.paths[0]} className="block w-full group">
-                        <div className="glass-panel p-4 h-full border-border/50 hover:border-primary/30 transition-all duration-300 flex flex-col">
-                          <div className="flex items-start justify-between gap-2 mb-2">
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs font-mono text-muted-foreground w-4 underline underline-offset-4 decoration-primary/30">
-                                {step.step}
-                              </span>
-                              <step.icon className={step.color} size={18} />
-                            </div>
-                            {isStartHere ? (
-                              <span className="text-[10px] font-mono uppercase tracking-widest text-secondary border border-secondary/30 rounded px-1.5 py-0.5 shrink-0 bg-secondary/5 animate-pulse">
-                                Start here
-                              </span>
-                            ) : engagement === 'engaged' ? (
-                              <span className="text-[10px] font-mono text-status-success flex items-center gap-1">
-                                <Check size={10} /> Explored
-                              </span>
-                            ) : engagement === 'started' ? (
-                              <span className="text-[10px] font-mono text-status-warning flex items-center gap-1">
-                                <ArrowRight size={10} /> In progress
-                              </span>
-                            ) : recommended ? (
-                              <span className="text-[10px] font-mono uppercase tracking-widest text-primary border border-primary/30 rounded px-1.5 py-0.5 shrink-0 bg-primary/5">
-                                For you
-                              </span>
-                            ) : null}
-                          </div>
-                          <h3 className="text-sm font-bold mb-1 group-hover:text-primary transition-colors tracking-tight">
-                            {step.label}
-                          </h3>
-                          <p className="text-xs text-muted-foreground leading-snug flex-1 line-clamp-3">
-                            {step.description}
-                          </p>
-                          <div className="flex items-center justify-between mt-3">
-                            <div className="flex flex-wrap gap-1">
-                              {step.paths.map((p) => (
-                                <span
-                                  key={p}
-                                  className="text-[10px] font-mono text-muted-foreground bg-muted rounded px-1.5 py-0.5"
-                                >
-                                  {p}
-                                </span>
-                              ))}
-                              {step.desktopRecommended && (
-                                <span
-                                  className="lg:hidden text-[10px] font-mono uppercase tracking-widest text-muted-foreground bg-muted border border-border rounded px-1.5 py-0.5 flex items-center gap-1"
-                                  title="This experience is best on a larger screen"
-                                >
-                                  <Monitor size={10} aria-hidden="true" />
-                                  Best on desktop
-                                </span>
-                              )}
-                            </div>
-                            <span className="text-xs font-semibold text-primary group-hover:underline underline-offset-2 flex items-center gap-0.5 shrink-0">
-                              {engagement !== 'not-started' ? step.resumeLabel : step.actionLabel}
-                              <ArrowRight size={12} />
-                            </span>
-                          </div>
-                        </div>
-                      </Link>
-                    </motion.div>
-                  )
-                })}
-                {section.nextHint && (
-                  <motion.div
-                    variants={fadeUp}
-                    className="col-span-full hidden sm:flex justify-center py-2"
-                  >
-                    <span className="text-xs text-muted-foreground/60 flex items-center gap-1.5">
-                      {section.nextHint}
-                      <ArrowRight size={12} className="text-primary/50" />
-                    </span>
-                  </motion.div>
-                )}
-              </React.Fragment>
-            )
-          })}
-        </motion.div>
-
-        {/* Show all / collapse toggle */}
-        {!showAllSteps ? (
-          <div className="mt-6 flex justify-center">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowAllSteps(true)}
-              className="text-muted-foreground hover:text-foreground gap-1.5"
-            >
-              Show all {journeySteps.length} steps
-              <ArrowRight size={14} className="rotate-90" />
-            </Button>
-          </div>
-        ) : (
-          <div className="mt-6 flex justify-center">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowAllSteps(false)}
-              className="text-muted-foreground hover:text-foreground gap-1.5"
-            >
-              Show less
-              <ArrowRight size={14} className="-rotate-90" />
-            </Button>
-          </div>
-        )}
-      </section>
-
       {/* Progress Management */}
       <section className="pt-4">
         <h3 className="text-lg font-bold text-foreground mb-3 flex items-center gap-2">
@@ -930,8 +373,6 @@ export const LandingView = () => {
                   const snapshot = await UnifiedStorageService.importSnapshot(file)
                   UnifiedStorageService.restoreSnapshot(snapshot)
                   alert('Backup restored successfully. The page will now reload.')
-
-                  // Reload to ensure all components pick up the newly restored state
                   setTimeout(() => window.location.reload(), 500)
                 } catch (error) {
                   console.error('Failed to restore backup:', error)

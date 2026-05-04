@@ -38,7 +38,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
 
       {/* Section 1: Why PQC Risk Management? */}
       <section className="glass-panel p-6">
-        <div className="flex items-center gap-3 mb-4">
+        <div data-section-id="crqc" className="flex items-center gap-3 mb-4 scroll-mt-20">
           <div className="p-2 rounded-lg bg-primary/10">
             <ShieldAlert size={24} className="text-primary" />
           </div>
@@ -93,7 +93,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
 
       {/* Section 2: Key Concepts */}
       <section className="glass-panel p-6">
-        <div className="flex items-center gap-3 mb-4">
+        <div data-section-id="register" className="flex items-center gap-3 mb-4 scroll-mt-20">
           <div className="p-2 rounded-lg bg-secondary/10">
             <AlertTriangle size={24} className="text-secondary" />
           </div>
@@ -208,7 +208,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
 
       {/* Section 4: Why This Matters for Executives */}
       <section className="glass-panel p-6">
-        <div className="flex items-center gap-3 mb-4">
+        <div data-section-id="heatmap" className="flex items-center gap-3 mb-4 scroll-mt-20">
           <div className="p-2 rounded-lg bg-secondary/10">
             <BarChart3 size={24} className="text-secondary" />
           </div>

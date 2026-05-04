@@ -65,7 +65,8 @@ export const SoftwareCard = ({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, delay: index * 0.03 }}
-      className="glass-panel p-5 flex flex-col h-full hover:border-secondary/50 transition-colors bg-card/50 relative"
+      data-workshop-target={`migrate-product-${item.productId}`}
+      className="glass-panel p-5 flex flex-col h-full hover:border-secondary/50 transition-colors bg-card/50 relative scroll-mt-20"
     >
       {/* Top row: layer badge + status + hide */}
       <div className="flex items-center gap-2 mb-3">

@@ -1,0 +1,1952 @@
+{
+  "id": "devops-basics-all-all-v1",
+  "title": "DevOps PQC Workshop — All Industries, All Regions",
+  "match": {
+    "roles": ["ops"],
+    "proficiencies": ["basics", "expert"],
+    "industries": "*",
+    "regions": "*"
+  },
+  "whatToExpect": [
+    "Operational PQC concerns — TLS at scale, KMS rotation, HSM migration, gateway readiness",
+    "Module walkthroughs for ops-quantum-impact, network/VPN/SSH/web-gateway PQC, KMS, HSM, platform engineering",
+    "Page tours for /timeline, /compliance, /migrate — the deadlines and vendors that pace your runbook",
+    "~55 minutes at normal speed"
+  ],
+  "totalEstMinutes": 49,
+  "intro": {
+    "id": "intro",
+    "title": "Welcome",
+    "estMinutes": 3,
+    "steps": [
+      {
+        "id": "intro-01-welcome",
+        "chapter": "intro",
+        "title": "What you will leave with",
+        "estMinutes": 3,
+        "whyItMatters": "A runbook-ready view of which operational layers need PQC migration first.",
+        "page": {
+          "route": "/"
+        },
+        "tasks": ["Skim the operational scope", "Confirm ops persona is set"],
+        "expectedOutput": "A ranked list of operational layers (KMS, HSM, gateways, TLS) by migration urgency.",
+        "narration": "This workshop walks DevOps through the operational layers that need PQC migration — TLS at scale, KMS key rotation, HSM hardware migration, gateway and VPN readiness. By the end you have a ranked runbook of layers to address and the vendor catalog to source replacements from.",
+        "cues": [
+          {
+            "tMs": 0,
+            "kind": "navigate",
+            "route": "/"
+          },
+          {
+            "tMs": 1500,
+            "kind": "caption",
+            "text": "DevOps workshop — TLS at scale, KMS rotation, HSM migration, gateway readiness."
+          },
+          {
+            "tMs": 180000,
+            "kind": "advance"
+          }
+        ]
+      }
+    ]
+  },
+  "prerequisites": {
+    "id": "prereq",
+    "title": "Prerequisites",
+    "estMinutes": 2,
+    "steps": [
+      {
+        "id": "prereq-01-persona",
+        "chapter": "prereq",
+        "title": "Confirm DevOps persona",
+        "estMinutes": 2,
+        "whyItMatters": "The persona drives operational deep links and recommendations.",
+        "page": {
+          "route": "/"
+        },
+        "tasks": ["Confirm role = Ops", "Confirm proficiency = Beginner or Expert"],
+        "expectedOutput": "Persona context locked to Ops.",
+        "narration": "Set the persona once — the platform tunes every page to operational concerns.",
+        "cues": [
+          {
+            "tMs": 0,
+            "kind": "navigate",
+            "route": "/"
+          },
+          {
+            "tMs": 1000,
+            "kind": "scroll-to",
+            "selector": "#personalization-section"
+          },
+          {
+            "tMs": 1500,
+            "kind": "caption",
+            "text": "Persona definition — four picks shape every page. Ops drives this flow."
+          },
+          {
+            "tMs": 5000,
+            "kind": "click",
+            "selector": "[data-workshop-target=\"persona-edit\"]"
+          },
+          {
+            "tMs": 5500,
+            "kind": "caption",
+            "text": "Opening the persona wizard."
+          },
+          {
+            "tMs": 8000,
+            "kind": "caption",
+            "text": "Step 1 — Track. Technical track unlocks developer, architect, ops, and researcher roles."
+          },
+          {
+            "tMs": 10000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target^=\"persona-track-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 14000,
+            "kind": "click",
+            "selector": "[data-workshop-target^=\"persona-track-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 16000,
+            "kind": "caption",
+            "text": "Step 2 — Role. Ops surfaces the modules and tools tuned to your job."
+          },
+          {
+            "tMs": 18000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target^=\"persona-role-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 22000,
+            "kind": "callout",
+            "selector": "[data-workshop-target^=\"persona-role-\"][aria-pressed=\"true\"]",
+            "label": "Ops — pre-selected for this flow"
+          },
+          {
+            "tMs": 30000,
+            "kind": "click",
+            "selector": "[data-workshop-target^=\"persona-role-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 32000,
+            "kind": "caption",
+            "text": "Step 3 — Region. Filters timeline, leaders, threats and compliance to your jurisdiction."
+          },
+          {
+            "tMs": 34000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target^=\"persona-region-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 42000,
+            "kind": "click",
+            "selector": "[data-workshop-target=\"persona-wizard-next\"]"
+          },
+          {
+            "tMs": 44000,
+            "kind": "caption",
+            "text": "Step 4 — Industry. Surfaces industry-specific threats, frameworks and vendors."
+          },
+          {
+            "tMs": 46000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target^=\"persona-industry-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 56000,
+            "kind": "click",
+            "selector": "[data-workshop-target=\"persona-wizard-done\"]"
+          },
+          {
+            "tMs": 57000,
+            "kind": "caption",
+            "text": "These four facets shape every workshop step. Change any one to re-personalize."
+          },
+          {
+            "tMs": 120000,
+            "kind": "advance"
+          }
+        ]
+      }
+    ]
+  },
+  "common": [
+    {
+      "id": "foundations",
+      "title": "Foundations",
+      "estMinutes": 39,
+      "steps": [
+        {
+          "id": "f-mod-ops-quantum-impact",
+          "chapter": "foundations",
+          "title": "Ops Quantum Impact",
+          "estMinutes": 3,
+          "whyItMatters": "What changes operationally — runbooks, key rotation cadence, monitoring, vendor tickets.",
+          "page": {
+            "route": "/learn/ops-quantum-impact"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on Ops Quantum Impact",
+          "narration": "A DevOps-focused tour of operational changes — runbook updates, key rotation cadence shifts, new monitoring signals, and the vendor tickets you should be filing today.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "ops-quantum-impact",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/ops-quantum-impact"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Ops Quantum Impact — What changes operationally — runbooks, key rotation cadence, monitoring, vendor tickets."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"why-it-matters\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/3: Why It Matters: Ops Quantum Exposure"
+            },
+            {
+              "tMs": 23133,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"what-to-learn\"]"
+            },
+            {
+              "tMs": 23333,
+              "kind": "caption",
+              "text": "Section 2/3: What to Learn: Knowledge & Skills Gap"
+            },
+            {
+              "tMs": 40466,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"how-to-act\"]"
+            },
+            {
+              "tMs": 40666,
+              "kind": "caption",
+              "text": "Section 3/3: How to Act: Phased Action Plan"
+            },
+            {
+              "tMs": 57999,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59499,
+              "kind": "caption",
+              "text": "Hands-on 1/4: Why It Matters"
+            },
+            {
+              "tMs": 70549,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 72499,
+              "kind": "caption",
+              "text": "Hands-on 2/4: What to Learn"
+            },
+            {
+              "tMs": 83549,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 85499,
+              "kind": "caption",
+              "text": "Hands-on 3/4: How to Act"
+            },
+            {
+              "tMs": 96549,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 98499,
+              "kind": "caption",
+              "text": "Hands-on 4/4: Ops Readiness Self-Assessment"
+            },
+            {
+              "tMs": 111999,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113499,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128749,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130249,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145499,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 146999,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162249,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163749,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-entropy-randomness",
+          "chapter": "foundations",
+          "title": "Entropy & Randomness",
+          "estMinutes": 3,
+          "whyItMatters": "PQC keys eat entropy — your runtime entropy story is now on the operational radar.",
+          "page": {
+            "route": "/learn/entropy-randomness"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on Entropy & Randomness",
+          "narration": "PQC keys consume more entropy than classical. NIST SP 800-90 DRBG selection, entropy sources, and how to verify your fleet has safe randomness at scale.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "entropy-randomness",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/entropy-randomness"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Entropy & Randomness — PQC keys eat entropy — your runtime entropy story is now on the operational radar."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"entropy\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/5: Entropy Sources & Collection"
+            },
+            {
+              "tMs": 16200,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"drbg\"]"
+            },
+            {
+              "tMs": 16400,
+              "kind": "caption",
+              "text": "Section 2/5: NIST SP 800-90 DRBG Mechanisms"
+            },
+            {
+              "tMs": 26600,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"testing\"]"
+            },
+            {
+              "tMs": 26800,
+              "kind": "caption",
+              "text": "Section 3/5: Entropy Testing (SP 800-90B)"
+            },
+            {
+              "tMs": 37000,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"qrng\"]"
+            },
+            {
+              "tMs": 37200,
+              "kind": "caption",
+              "text": "Section 4/5: TRNG vs QRNG Comparison"
+            },
+            {
+              "tMs": 47400,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"combining\"]"
+            },
+            {
+              "tMs": 47600,
+              "kind": "caption",
+              "text": "Section 5/5: Defense-in-Depth: Combining Sources"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Hands-on 1/5: Random Byte Generation"
+            },
+            {
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Hands-on 2/5: Entropy Testing"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Hands-on 3/5: ESV Validation Walkthrough"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Hands-on 4/5: QRNG Exploration"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Hands-on 5/5: Combining Sources"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-crypto-agility",
+          "chapter": "foundations",
+          "title": "Crypto Agility",
+          "estMinutes": 3,
+          "whyItMatters": "Operational migration patterns — feature flags, canary rollouts, rollback paths for crypto changes.",
+          "page": {
+            "route": "/learn/crypto-agility"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on Crypto Agility",
+          "narration": "Crypto agility from an ops lens — how to roll out new algorithms with feature flags, canary deployments, and tested rollback paths so a bad cipher choice never bricks production.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "crypto-agility",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/crypto-agility"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Crypto Agility — Operational migration patterns — feature flags, canary rollouts, rollback paths for crypto changes."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"abstraction\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/3: Crypto Abstraction Layers"
+            },
+            {
+              "tMs": 23133,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"cbom\"]"
+            },
+            {
+              "tMs": 23333,
+              "kind": "caption",
+              "text": "Section 2/3: Cryptographic Bill of Materials (CBOM)"
+            },
+            {
+              "tMs": 40466,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"migration\"]"
+            },
+            {
+              "tMs": 40666,
+              "kind": "caption",
+              "text": "Section 3/3: 7-Phase Migration Framework"
+            },
+            {
+              "tMs": 57999,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59499,
+              "kind": "caption",
+              "text": "Hands-on 1/4: Abstraction Layer"
+            },
+            {
+              "tMs": 70549,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 72499,
+              "kind": "caption",
+              "text": "Hands-on 2/4: CBOM Scanner"
+            },
+            {
+              "tMs": 83549,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 85499,
+              "kind": "caption",
+              "text": "Hands-on 3/4: Migration Planning"
+            },
+            {
+              "tMs": 96549,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 98499,
+              "kind": "caption",
+              "text": "Hands-on 4/4: Agility Readiness Assessment"
+            },
+            {
+              "tMs": 111999,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113499,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128749,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130249,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145499,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 146999,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162249,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163749,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-tls-basics",
+          "chapter": "foundations",
+          "title": "TLS Basics",
+          "estMinutes": 3,
+          "whyItMatters": "The protocol you operate at scale — handshake cost, certificate rotation, cipher policy.",
+          "page": {
+            "route": "/learn/tls-basics"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on TLS Basics",
+          "narration": "TLS in production — handshake CPU cost, certificate rotation cadence, cipher suite policy enforcement across thousands of endpoints.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "tls-basics",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/tls-basics"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "TLS Basics — The protocol you operate at scale — handshake cost, certificate rotation, cipher policy."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"handshake\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/4: TLS 1.3 Handshake Deep Dive"
+            },
+            {
+              "tMs": 18800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"certificates\"]"
+            },
+            {
+              "tMs": 19000,
+              "kind": "caption",
+              "text": "Section 2/4: Certificate Chains & Trust Anchors"
+            },
+            {
+              "tMs": 31800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"ciphers\"]"
+            },
+            {
+              "tMs": 32000,
+              "kind": "caption",
+              "text": "Section 3/4: Cipher Suites & Key Exchange"
+            },
+            {
+              "tMs": 44800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"pqc-tls\"]"
+            },
+            {
+              "tMs": 45000,
+              "kind": "caption",
+              "text": "Section 4/4: PQC in TLS & Hybrid Modes"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Workshop tab — hands-on, in-browser crypto demos."
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 134333,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 135833,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 156666,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 158166,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-network-security-pqc",
+          "chapter": "foundations",
+          "title": "Network Security & PQC Migration",
+          "estMinutes": 3,
+          "whyItMatters": "TLS inspection, IDS/IPS rule updates, zero-trust gateway upgrades.",
+          "page": {
+            "route": "/learn/network-security-pqc"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on Network Security & PQC Migration",
+          "narration": "Network security ops — how PQC affects TLS inspection (deep packet inspect on encrypted traffic), IDS/IPS signature updates, and zero-trust gateway upgrades.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "network-security-pqc",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/network-security-pqc"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Network security and post-quantum migration. TLS inspection. IDS and IPS rule updates. Zero-trust gateway upgrades."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"pqc-network-impact\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/5: How PQC Changes Network Security Operations"
+            },
+            {
+              "tMs": 16200,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"tls-inspection-pqc\"]"
+            },
+            {
+              "tMs": 16400,
+              "kind": "caption",
+              "text": "Section 2/5: TLS Inspection & Deep Packet Inspection Challenges"
+            },
+            {
+              "tMs": 26600,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"ids-ips-migration\"]"
+            },
+            {
+              "tMs": 26800,
+              "kind": "caption",
+              "text": "Section 3/5: IDS/IPS: Signature Updates & Algorithm Visibility"
+            },
+            {
+              "tMs": 37000,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"vendor-roadmaps\"]"
+            },
+            {
+              "tMs": 37200,
+              "kind": "caption",
+              "text": "Section 4/5: Cisco, Palo Alto, Fortinet, Juniper Migration Timelines"
+            },
+            {
+              "tMs": 47400,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"zero-trust-pqc\"]"
+            },
+            {
+              "tMs": 47600,
+              "kind": "caption",
+              "text": "Section 5/5: Zero Trust Network Access with PQC"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Hands-on 1/5: NGFW Cipher Policy Analyzer"
+            },
+            {
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Hands-on 2/5: TLS Inspection Lab"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Hands-on 3/5: IDS Signature Updater"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Hands-on 4/5: Vendor Migration Matrix"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Hands-on 5/5: ZTNA PQC Designer"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-vpn-ssh-pqc",
+          "chapter": "foundations",
+          "title": "VPN/IPsec & SSH",
+          "estMinutes": 3,
+          "whyItMatters": "IKEv2, SSH, WireGuard — the operational tunnels that need PQC keys.",
+          "page": {
+            "route": "/learn/vpn-ssh-pqc"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on VPN/IPsec & SSH",
+          "narration": "IKEv2 with ML-KEM, SSH with hybrid keys, WireGuard PQC variants. The operational tunnels every DevOps team owns and how to migrate them.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "vpn-ssh-pqc",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/vpn-ssh-pqc"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "VPN/IPsec & SSH — IKEv2, SSH, WireGuard — the operational tunnels that need PQC keys."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"ikev2\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/3: IKEv2 & IPsec with ML-KEM"
+            },
+            {
+              "tMs": 23133,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"ssh\"]"
+            },
+            {
+              "tMs": 23333,
+              "kind": "caption",
+              "text": "Section 2 of 3. SSH post-quantum key exchange. Two options: sntrup 761 and M L K E M."
+            },
+            {
+              "tMs": 40466,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"wireguard\"]"
+            },
+            {
+              "tMs": 40666,
+              "kind": "caption",
+              "text": "Section 3/3: WireGuard Rosenpass & Protocol Comparison"
+            },
+            {
+              "tMs": 57999,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59499,
+              "kind": "caption",
+              "text": "Hands-on 1/3: IKEv2 Handshake"
+            },
+            {
+              "tMs": 74232,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 76832,
+              "kind": "caption",
+              "text": "Hands-on 2/3: SSH Key Exchange"
+            },
+            {
+              "tMs": 91565,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 94165,
+              "kind": "caption",
+              "text": "Hands-on 3/3: Protocol Comparison"
+            },
+            {
+              "tMs": 111999,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113499,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128749,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130249,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145499,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 146999,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162249,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163749,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-hsm-pqc",
+          "chapter": "foundations",
+          "title": "HSM & PQC Operations",
+          "estMinutes": 3,
+          "whyItMatters": "PKCS#11 v3.2, vendor migration paths, FIPS 140-3 implications for your HSM fleet.",
+          "page": {
+            "route": "/learn/hsm-pqc"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on HSM & PQC Operations",
+          "narration": "HSM operations under PQC — PKCS#11 v3.2 with ML-KEM/ML-DSA mechanisms, vendor migration paths (Thales, Entrust, AWS CloudHSM), FIPS 140-3 cert timelines.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "hsm-pqc",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/hsm-pqc"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Hardware security modules in operations. The PKCS 11 version 3.2 specification. Vendor migration paths. FIPS 140 dash 3 implications for your HSM fleet."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"pkcs11\"]"
+            },
+            {
+              "tMs": 6500,
+              "kind": "caption",
+              "text": "Section 1/3: PKCS#11 v3.2 PQC Mechanisms"
+            },
+            {
+              "tMs": 19300,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"vendors\"]"
+            },
+            {
+              "tMs": 19500,
+              "kind": "caption",
+              "text": "Section 2/3: HSM Vendor Landscape"
+            },
+            {
+              "tMs": 32300,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"migration\"]"
+            },
+            {
+              "tMs": 32500,
+              "kind": "caption",
+              "text": "Section 3/3: Firmware Migration & Dual-Partition Strategy"
+            },
+            {
+              "tMs": 58500,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "Hands-on 1/5: PKCS#11 Simulator"
+            },
+            {
+              "tMs": 68840,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 70400,
+              "kind": "caption",
+              "text": "Hands-on 2/5: Vendor Comparison"
+            },
+            {
+              "tMs": 79240,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80800,
+              "kind": "caption",
+              "text": "Hands-on 3/5: Migration Planner"
+            },
+            {
+              "tMs": 89640,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 91200,
+              "kind": "caption",
+              "text": "Hands-on 4/5: FIPS Tracker"
+            },
+            {
+              "tMs": 100040,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101600,
+              "kind": "caption",
+              "text": "Hands-on 5/5: Capacity Calculator"
+            },
+            {
+              "tMs": 112500,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 114000,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 129250,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130750,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 146000,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147500,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162750,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 164250,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180500,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-kms-pqc",
+          "chapter": "foundations",
+          "title": "KMS & PQC Key Management",
+          "estMinutes": 3,
+          "whyItMatters": "Key hierarchies, envelope encryption, hybrid wrapping, KMIP for PQC keys.",
+          "page": {
+            "route": "/learn/kms-pqc"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on KMS & PQC Key Management",
+          "narration": "KMS operations — hierarchical key models with PQC roots, envelope encryption with hybrid wrappers, KMIP protocol updates for PQC key types, rotation policies that match new key lifetimes.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "kms-pqc",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/kms-pqc"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "KMS & PQC Key Management — Key hierarchies, envelope encryption, hybrid wrapping, KMIP for PQC keys."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"key-hierarchy\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/5: PQC Key Hierarchy Design"
+            },
+            {
+              "tMs": 16200,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"envelope\"]"
+            },
+            {
+              "tMs": 16400,
+              "kind": "caption",
+              "text": "Section 2/5: ML-KEM Envelope Encryption"
+            },
+            {
+              "tMs": 26600,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"hybrid-wrap\"]"
+            },
+            {
+              "tMs": 26800,
+              "kind": "caption",
+              "text": "Section 3/5: Hybrid Key Wrapping Patterns"
+            },
+            {
+              "tMs": 37000,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"rotation\"]"
+            },
+            {
+              "tMs": 37200,
+              "kind": "caption",
+              "text": "Section 4/5: Key Rotation Planning"
+            },
+            {
+              "tMs": 47400,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"kmip\"]"
+            },
+            {
+              "tMs": 47600,
+              "kind": "caption",
+              "text": "Section 5/5: KMIP Protocol & Cross-Provider Sync"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Hands-on 1/5: Key Hierarchy"
+            },
+            {
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Hands-on 2/5: Envelope Encryption"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Hands-on 3/5: Hybrid Wrapping"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Hands-on 4/5: Rotation Planner"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Hands-on 5/5: KMIP Protocol Explorer"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-platform-eng-pqc",
+          "chapter": "foundations",
+          "title": "Platform Engineering for PQC",
+          "estMinutes": 3,
+          "whyItMatters": "IaC modules, golden paths, paved-road crypto choices for app teams.",
+          "page": {
+            "route": "/learn/platform-eng-pqc"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on Platform Engineering for PQC",
+          "narration": "Platform engineering for PQC — IaC modules that ship safe defaults, golden paths for new services, paved-road crypto choices so app teams can ignore the algorithm rotation underneath.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "platform-eng-pqc",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/platform-eng-pqc"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Platform Engineering for PQC — IaC modules, golden paths, paved-road crypto choices for app teams."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"quantum-threats-platform\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/7: Quantum Threats to Platform Cryptography"
+            },
+            {
+              "tMs": 13228,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"crypto-asset-discovery\"]"
+            },
+            {
+              "tMs": 13428,
+              "kind": "caption",
+              "text": "Section 2/7: Crypto Asset Discovery in CI/CD Pipelines"
+            },
+            {
+              "tMs": 20656,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"container-signing\"]"
+            },
+            {
+              "tMs": 20856,
+              "kind": "caption",
+              "text": "Section 3/7: Container & Artifact Signing: ECDSA → ML-DSA"
+            },
+            {
+              "tMs": 28084,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"iac-crypto-config\"]"
+            },
+            {
+              "tMs": 28284,
+              "kind": "caption",
+              "text": "Section 4/7: IaC Crypto Configuration & Quantum-Vulnerable Defaults"
+            },
+            {
+              "tMs": 35512,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"policy-enforcement\"]"
+            },
+            {
+              "tMs": 35712,
+              "kind": "caption",
+              "text": "Section 5/7: Policy Enforcement for Algorithm Agility"
+            },
+            {
+              "tMs": 42940,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"monitoring-posture\"]"
+            },
+            {
+              "tMs": 43140,
+              "kind": "caption",
+              "text": "Section 6/7: Monitoring Cryptographic Posture"
+            },
+            {
+              "tMs": 50368,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"migration-runway\"]"
+            },
+            {
+              "tMs": 50568,
+              "kind": "caption",
+              "text": "Section 7/7: Migration Runway, Rollback & Cut-Over Planning"
+            },
+            {
+              "tMs": 57996,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59496,
+              "kind": "caption",
+              "text": "Hands-on 1/6: Pipeline Crypto Inventory"
+            },
+            {
+              "tMs": 66862,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 68162,
+              "kind": "caption",
+              "text": "Hands-on 2/6: Quantum Threat Timeline"
+            },
+            {
+              "tMs": 75528,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 76828,
+              "kind": "caption",
+              "text": "Hands-on 3/6: Container Signing Migration"
+            },
+            {
+              "tMs": 84194,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 85494,
+              "kind": "caption",
+              "text": "Hands-on 4/6: Policy-as-Code Enforcer"
+            },
+            {
+              "tMs": 92860,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 94160,
+              "kind": "caption",
+              "text": "Hands-on 5/6: Crypto Posture Monitor"
+            },
+            {
+              "tMs": 101526,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 102826,
+              "kind": "caption",
+              "text": "Hands-on 6/6: Platform Migration Planner"
+            },
+            {
+              "tMs": 111996,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113496,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128746,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130246,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145496,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 146996,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162246,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163746,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "p-timeline",
+          "chapter": "foundations",
+          "title": "/timeline — operational deadline planning",
+          "estMinutes": 4,
+          "whyItMatters": "The deadline runway — what your runbooks need to address and by when.",
+          "page": {
+            "route": "/timeline"
+          },
+          "tasks": ["Open the page", "Note the key affordances called out by the workshop"],
+          "expectedOutput": "Familiarity with /timeline — operational deadline planning",
+          "narration": "The /timeline page lists every regulatory and standards deadline. Filter by your country to see your operational runway.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/timeline"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Global PQC migration timeline — every deadline operations needs to plan against."
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "NIST. Hybrid TLS by 2030. Legacy disallowed by 2035. CCCS Canada. High-priority systems by 2031. ASD Australia. End of 2030."
+            },
+            {
+              "tMs": 180000,
+              "kind": "caption",
+              "text": "Filter to your country to see jurisdiction-specific deadlines."
+            },
+            {
+              "tMs": 240000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "p-compliance",
+          "chapter": "foundations",
+          "title": "/compliance — frameworks and operational impact",
+          "estMinutes": 4,
+          "whyItMatters": "Which frameworks gate your operational changes — PCI, ISM, CCCS, FedRAMP.",
+          "page": {
+            "route": "/compliance"
+          },
+          "tasks": ["Open the page", "Note the key affordances called out by the workshop"],
+          "expectedOutput": "Familiarity with /compliance — frameworks and operational impact",
+          "narration": "The /compliance page maps frameworks to operational requirements — what audits will check, what evidence you need to retain.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/compliance"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Compliance frameworks with PQC requirements — what audits will check."
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "PCI DSS version 4 section 12 dot 3 dot 3 forces a crypto inventory. Your configuration management database needs post-quantum fields."
+            },
+            {
+              "tMs": 180000,
+              "kind": "caption",
+              "text": "ASD ISM-1917 prohibits classical crypto end-2030. Operational deadline is firm."
+            },
+            {
+              "tMs": 240000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "p-migrate",
+          "chapter": "foundations",
+          "title": "/migrate — operational vendor catalog",
+          "estMinutes": 4,
+          "whyItMatters": "Vendor products ranked by PQC readiness — pick replacements for your KMS, HSM, gateways.",
+          "page": {
+            "route": "/migrate"
+          },
+          "tasks": ["Open the page", "Note the key affordances called out by the workshop"],
+          "expectedOutput": "Familiarity with /migrate — operational vendor catalog",
+          "narration": "The /migrate catalog filters vendor products by infrastructure layer. Use it to source replacements for your operational stack.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/migrate"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "/migrate — operational vendor catalog. Filter by layer to find replacement candidates."
+            },
+            {
+              "tMs": 30000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"migrate-layer-Hardware\"]"
+            },
+            {
+              "tMs": 31500,
+              "kind": "caption",
+              "text": "Hardware layer — HSMs and secure elements with PQC support. Entrust nShield is the verified leader."
+            },
+            {
+              "tMs": 90000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"migrate-layer-Network\"]"
+            },
+            {
+              "tMs": 91500,
+              "kind": "caption",
+              "text": "Network layer — gateways, firewalls, load balancers with PQC TLS support."
+            },
+            {
+              "tMs": 180000,
+              "kind": "caption",
+              "text": "Filter by Verified status only to shortlist production-ready vendors."
+            },
+            {
+              "tMs": 240000,
+              "kind": "advance"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "close": {
+    "id": "close",
+    "title": "Close",
+    "estMinutes": 5,
+    "steps": [
+      {
+        "id": "close-quiz",
+        "chapter": "close",
+        "title": "Quiz — test what you learned",
+        "estMinutes": 3,
+        "whyItMatters": "A 5-to-45-minute quiz with persona-tuned topics gives you a quick measure of what stuck.",
+        "page": {
+          "route": "/learn/quiz",
+          "query": {
+            "category": "migration-planning,protocol-integration,kms-pqc,hsm-pqc"
+          }
+        },
+        "tasks": [
+          "Note the duration slider and difficulty filter",
+          "See how persona-tuned topics are pre-selected",
+          "Run the quiz yourself after the workshop"
+        ],
+        "expectedOutput": "A working knowledge of the quiz interface; you'll come back to actually take it.",
+        "narration": "The quiz is the quickest way to check what you've absorbed. Pick how much time you have, pick the topics that matter, and get a scored breakdown by category and difficulty.",
+        "cues": [
+          {
+            "tMs": 0,
+            "kind": "navigate",
+            "route": "/learn/quiz",
+            "query": {
+              "category": "migration-planning,protocol-integration,kms-pqc,hsm-pqc"
+            }
+          },
+          {
+            "tMs": 1500,
+            "kind": "caption",
+            "text": "Test what you learned. Pick a duration, pick topics, go."
+          },
+          {
+            "tMs": 6000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"quiz-duration-slider\"]"
+          },
+          {
+            "tMs": 7500,
+            "kind": "caption",
+            "text": "Duration slider. Five to forty-five minutes. Quiz scales the question count to match."
+          },
+          {
+            "tMs": 22000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"quiz-difficulty-row\"]"
+          },
+          {
+            "tMs": 23500,
+            "kind": "caption",
+            "text": "Difficulty filter. Beginner, Intermediate, Advanced. Multi-select."
+          },
+          {
+            "tMs": 38000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"quiz-topic-grid\"]"
+          },
+          {
+            "tMs": 39500,
+            "kind": "caption",
+            "text": "Topic grid. Categories pre-filtered by your persona context."
+          },
+          {
+            "tMs": 55000,
+            "kind": "click",
+            "selector": "[data-workshop-target=\"quiz-category-migration-planning\"]"
+          },
+          {
+            "tMs": 56500,
+            "kind": "caption",
+            "text": "Selected topics show a checkmark. The Start button activates once you pick at least one."
+          },
+          {
+            "tMs": 75000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"quiz-start-category\"]"
+          },
+          {
+            "tMs": 76500,
+            "kind": "caption",
+            "text": "Start the quiz when you're ready. We'll skip running it inside the workshop."
+          },
+          {
+            "tMs": 165000,
+            "kind": "caption",
+            "text": "Results show your score, category breakdown, difficulty breakdown, and let you retake or change topics."
+          },
+          {
+            "tMs": 180000,
+            "kind": "advance"
+          }
+        ]
+      },
+      {
+        "id": "close-01-recap",
+        "chapter": "close",
+        "title": "Recap and next steps",
+        "estMinutes": 2,
+        "whyItMatters": "Three operational items to file in your runbook today.",
+        "page": {
+          "route": "/"
+        },
+        "tasks": ["Note your top deadline", "Note your top vendor migration"],
+        "expectedOutput": "A short ranked list of operational layers needing migration.",
+        "narration": "Three operational takeaways: deadline-driven prioritization, KMS+HSM as your highest-blast-radius migrations, and crypto agility patterns to roll out without breaking prod.",
+        "cues": [
+          {
+            "tMs": 0,
+            "kind": "navigate",
+            "route": "/"
+          },
+          {
+            "tMs": 1500,
+            "kind": "caption",
+            "text": "Three ops takeaways: deadlines, KMS+HSM as biggest blast radius, agility patterns."
+          },
+          {
+            "tMs": 120000,
+            "kind": "advance"
+          }
+        ]
+      }
+    ]
+  }
+}

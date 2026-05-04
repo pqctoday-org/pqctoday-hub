@@ -1,0 +1,533 @@
+{
+  "id": "curious-curious-all-all-v1",
+  "title": "PQC for the Curious \u2014 Visual Tour",
+  "match": {
+    "roles": ["curious"],
+    "proficiencies": ["curious"],
+    "industries": "*",
+    "regions": "*"
+  },
+  "whatToExpect": [
+    "Plain-language tour of post-quantum cryptography \u2014 no prior background needed",
+    "See one quantum threat, one milestone, three algorithm names, one in-browser demo",
+    "PQC 101 module shown via the Visual tab only \u2014 pictures over equations",
+    "~26 minutes at normal speed"
+  ],
+  "totalEstMinutes": 29,
+  "intro": {
+    "id": "intro",
+    "title": "Welcome",
+    "estMinutes": 2,
+    "steps": [
+      {
+        "id": "intro-01-welcome",
+        "chapter": "intro",
+        "title": "A 26-minute visual tour",
+        "estMinutes": 2,
+        "whyItMatters": "Get the big picture without needing a technical background.",
+        "page": {
+          "route": "/"
+        },
+        "tasks": ["Watch the workshop play through", "Pause whenever you want to read more"],
+        "expectedOutput": "A clear mental picture of why PQC matters and what is being built.",
+        "narration": "This is the curious-explorer tour. We will visit a few pages, see one threat, one milestone, three algorithm names, and run one in-browser demo. No code, no equations \u2014 pictures and plain language.",
+        "cues": [
+          {
+            "tMs": 0,
+            "kind": "navigate",
+            "route": "/"
+          },
+          {
+            "tMs": 1500,
+            "kind": "caption",
+            "text": "A 26-minute visual tour \u2014 pictures over equations, plain language throughout."
+          },
+          {
+            "tMs": 180000,
+            "kind": "advance"
+          }
+        ]
+      }
+    ]
+  },
+  "prerequisites": {
+    "id": "prereq",
+    "title": "Prerequisites",
+    "estMinutes": 2,
+    "steps": [
+      {
+        "id": "prereq-01-persona",
+        "chapter": "prereq",
+        "title": "Confirm Curious persona",
+        "estMinutes": 2,
+        "whyItMatters": "Curious mode shows visual content and hides technical-only modules.",
+        "page": {
+          "route": "/"
+        },
+        "tasks": ["Confirm role = Curious", "Confirm proficiency = Curious"],
+        "expectedOutput": "Persona context locked to Curious.",
+        "narration": "Curious mode reshapes the platform \u2014 visual diagrams replace tables, advanced modules stay hidden.",
+        "cues": [
+          {
+            "tMs": 0,
+            "kind": "navigate",
+            "route": "/"
+          },
+          {
+            "tMs": 1000,
+            "kind": "scroll-to",
+            "selector": "#personalization-section"
+          },
+          {
+            "tMs": 1500,
+            "kind": "caption",
+            "text": "Persona definition \u2014 one pick is enough for the curious tour."
+          },
+          {
+            "tMs": 5000,
+            "kind": "click",
+            "selector": "[data-workshop-target=\"persona-edit\"]"
+          },
+          {
+            "tMs": 5500,
+            "kind": "caption",
+            "text": "Opening the persona wizard."
+          },
+          {
+            "tMs": 9000,
+            "kind": "caption",
+            "text": "Curious track \u2014 visual content, plain language, no further setup needed."
+          },
+          {
+            "tMs": 11000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target^=\"persona-track-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 15000,
+            "kind": "callout",
+            "selector": "[data-workshop-target^=\"persona-track-\"][aria-pressed=\"true\"]",
+            "label": "Curious \u2014 pre-selected for this flow"
+          },
+          {
+            "tMs": 60000,
+            "kind": "caption",
+            "text": "That's it \u2014 Curious skips region and industry. The platform shows visual content tuned for newcomers."
+          },
+          {
+            "tMs": 120000,
+            "kind": "advance"
+          }
+        ]
+      }
+    ]
+  },
+  "common": [
+    {
+      "id": "foundations",
+      "title": "Foundations",
+      "estMinutes": 21,
+      "steps": [
+        {
+          "id": "p-landing",
+          "chapter": "foundations",
+          "title": "Orient on the landing page",
+          "estMinutes": 3,
+          "whyItMatters": "A 30-second orient \u2014 what this platform is and what each section does.",
+          "page": {
+            "route": "/"
+          },
+          "tasks": ["Open the page", "Note the key affordances called out by the workshop"],
+          "expectedOutput": "Familiarity with Orient on the landing page",
+          "narration": "The landing page is the home base. It tracks your journey, surfaces upcoming milestones, and links to every section. Take a moment to orient.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "PQC Today \u2014 your guide to post-quantum cryptography. Built for every level of expertise."
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "After your persona, three CTAs appear: Video Tour, Browse Workshops, and Start Your Journey. Pick the one that fits."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "p-threats",
+          "chapter": "foundations",
+          "title": "One quantum threat \u2014 what it does",
+          "estMinutes": 3,
+          "whyItMatters": "See a single concrete threat \u2014 what it does and who it affects.",
+          "page": {
+            "route": "/threats"
+          },
+          "tasks": ["Open the page", "Note the key affordances called out by the workshop"],
+          "expectedOutput": "Familiarity with One quantum threat \u2014 what it does",
+          "narration": "The /threats page lists every quantum-related threat we track. We will look at just one to get the idea \u2014 what it does, who it affects, when.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/threats"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Quantum threats \u2014 risks the cryptography we use today might face soon."
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "Harvest-Now-Decrypt-Later: an attacker saves encrypted traffic today, decrypts it years from now once they own a quantum computer."
+            },
+            {
+              "tMs": 120000,
+              "kind": "caption",
+              "text": "This is why long-lived secrets need PQC protection today, not when CRQC arrives."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "p-timeline",
+          "chapter": "foundations",
+          "title": "One major milestone on the timeline",
+          "estMinutes": 3,
+          "whyItMatters": "See one global milestone to get a sense of the pace of change.",
+          "page": {
+            "route": "/timeline"
+          },
+          "tasks": ["Open the page", "Note the key affordances called out by the workshop"],
+          "expectedOutput": "Familiarity with One major milestone on the timeline",
+          "narration": "The /timeline page lists every regulatory and industry milestone. We will spot just one to get a sense of how fast the industry is moving.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/timeline"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "The migration timeline \u2014 milestones from governments, standards bodies, and industry leaders."
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "NIST published its first three PQC standards in 2024. Now organisations have until 2030\u20132035 to adopt."
+            },
+            {
+              "tMs": 120000,
+              "kind": "caption",
+              "text": "Hover any event for source links \u2014 every milestone is backed by a primary document."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "p-algorithms",
+          "chapter": "foundations",
+          "title": "Three NIST PQC algorithm names",
+          "estMinutes": 3,
+          "whyItMatters": "Meet the three algorithms NIST has standardized. You only need to remember the names.",
+          "page": {
+            "route": "/algorithms"
+          },
+          "tasks": ["Open the page", "Note the key affordances called out by the workshop"],
+          "expectedOutput": "Familiarity with Three NIST PQC algorithm names",
+          "narration": "Three algorithm names you'll keep hearing \u2014 ML-KEM (key exchange), ML-DSA (signing), SLH-DSA (signing with extra-conservative security). That's the core PQC vocabulary.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/algorithms"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "NIST PQC algorithms \u2014 three names to remember."
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "M L K E M, the key exchange algorithm. Standardised as FIPS 203. It replaces RSA and Diffie-Hellman."
+            },
+            {
+              "tMs": 120000,
+              "kind": "caption",
+              "text": "M L D S A, standardised as FIPS 204. And S L H D S A, standardised as FIPS 205. Both handle digital signatures, replacing RSA and ECDSA."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "p-playground",
+          "chapter": "foundations",
+          "title": "Make a key \u2014 interactive ML-KEM demo",
+          "estMinutes": 4,
+          "whyItMatters": "Click a button, watch a quantum-safe key get generated in your browser.",
+          "page": {
+            "route": "/playground"
+          },
+          "tasks": ["Open the page", "Note the key affordances called out by the workshop"],
+          "expectedOutput": "Familiarity with Make a key \u2014 interactive ML-KEM demo",
+          "narration": "The /playground lets you try the new algorithms without writing code. We'll just generate one ML-KEM key \u2014 see what the public key looks like.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/playground"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "The playground \u2014 try every PQC algorithm in your browser. No installation, no code."
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "Find the ML-KEM section. The \"Generate Keys\" button creates a quantum-safe keypair."
+            },
+            {
+              "tMs": 180000,
+              "kind": "caption",
+              "text": "The public key shown is what your browser would send to a server in a quantum-safe TLS handshake."
+            },
+            {
+              "tMs": 240000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "p-pqc-101",
+          "chapter": "foundations",
+          "title": "PQC 101 \u2014 Visual tab only",
+          "estMinutes": 3,
+          "whyItMatters": "A picture-first walk through the basics. Visual tab keeps it intuitive.",
+          "page": {
+            "route": "/learn/pqc-101",
+            "query": {
+              "tab": "visual"
+            }
+          },
+          "tasks": ["Open the page", "Note the key affordances called out by the workshop"],
+          "expectedOutput": "Familiarity with PQC 101 \u2014 Visual tab only",
+          "narration": "We'll open the PQC 101 module on its Visual tab \u2014 diagrams and animations only, no equations or technical text.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/pqc-101",
+              "query": {
+                "tab": "visual"
+              }
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "PQC 101 \u2014 the visual primer. Diagrams and animations explain the basics."
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "See how a quantum computer breaks RSA \u2014 and how lattice-based cryptography resists it."
+            },
+            {
+              "tMs": 120000,
+              "kind": "caption",
+              "text": "Visual is the easiest tab for newcomers. Other tabs go deeper if you're curious."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "p-about",
+          "chapter": "foundations",
+          "title": "Trust and transparency",
+          "estMinutes": 2,
+          "whyItMatters": "Who built this, where the data comes from, why you can trust it.",
+          "page": {
+            "route": "/about"
+          },
+          "tasks": ["Open the page", "Note the key affordances called out by the workshop"],
+          "expectedOutput": "Familiarity with Trust and transparency",
+          "narration": "The /about page explains who built this platform, where the data comes from, and why every claim is sourced.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/about"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "About PQC Today \u2014 open source, transparent sources, no vendor pitch."
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "Every claim links back to a primary source \u2014 RFCs, NIST docs, vendor whitepapers."
+            },
+            {
+              "tMs": 120000,
+              "kind": "advance"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "close": {
+    "id": "close",
+    "title": "Close",
+    "estMinutes": 4,
+    "steps": [
+      {
+        "id": "close-quiz",
+        "chapter": "close",
+        "title": "Quiz \u2014 test what you learned",
+        "estMinutes": 3,
+        "whyItMatters": "A 5-to-45-minute quiz with persona-tuned topics gives you a quick measure of what stuck.",
+        "page": {
+          "route": "/learn/quiz",
+          "query": {
+            "category": "pqc-fundamentals"
+          }
+        },
+        "tasks": [
+          "Note the duration slider and difficulty filter",
+          "See how persona-tuned topics are pre-selected",
+          "Run the quiz yourself after the workshop"
+        ],
+        "expectedOutput": "A working knowledge of the quiz interface; you'll come back to actually take it.",
+        "narration": "The quiz is the quickest way to check what you've absorbed. Pick how much time you have, pick the topics that matter, and get a scored breakdown by category and difficulty.",
+        "cues": [
+          {
+            "tMs": 0,
+            "kind": "navigate",
+            "route": "/learn/quiz",
+            "query": {
+              "category": "pqc-fundamentals"
+            }
+          },
+          {
+            "tMs": 1500,
+            "kind": "caption",
+            "text": "Test what you learned. Pick a duration, pick topics, go."
+          },
+          {
+            "tMs": 6000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"quiz-duration-slider\"]"
+          },
+          {
+            "tMs": 7500,
+            "kind": "caption",
+            "text": "Duration slider. Five to forty-five minutes. Quiz scales the question count to match."
+          },
+          {
+            "tMs": 22000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"quiz-difficulty-row\"]"
+          },
+          {
+            "tMs": 23500,
+            "kind": "caption",
+            "text": "Difficulty filter. Beginner, Intermediate, Advanced. Multi-select."
+          },
+          {
+            "tMs": 38000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"quiz-topic-grid\"]"
+          },
+          {
+            "tMs": 39500,
+            "kind": "caption",
+            "text": "Topic grid. Categories pre-filtered by your persona context."
+          },
+          {
+            "tMs": 55000,
+            "kind": "click",
+            "selector": "[data-workshop-target=\"quiz-category-pqc-fundamentals\"]"
+          },
+          {
+            "tMs": 56500,
+            "kind": "caption",
+            "text": "Selected topics show a checkmark. The Start button activates once you pick at least one."
+          },
+          {
+            "tMs": 75000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"quiz-start-category\"]"
+          },
+          {
+            "tMs": 76500,
+            "kind": "caption",
+            "text": "Start the quiz when you're ready. We'll skip running it inside the workshop."
+          },
+          {
+            "tMs": 165000,
+            "kind": "caption",
+            "text": "Results show your score, category breakdown, difficulty breakdown, and let you retake or change topics."
+          },
+          {
+            "tMs": 180000,
+            "kind": "advance"
+          }
+        ]
+      },
+      {
+        "id": "close-01-recap",
+        "chapter": "close",
+        "title": "Three things to remember",
+        "estMinutes": 1,
+        "whyItMatters": "Three takeaways you can drop into a coffee chat this week.",
+        "page": {
+          "route": "/"
+        },
+        "tasks": ["Remember: HNDL, NIST 2024, ML-KEM/ML-DSA"],
+        "expectedOutput": "Three sentences you can repeat to a colleague.",
+        "narration": "Three things to remember \u2014 the threat (HNDL), the timeline (NIST standards published 2024), and the names (ML-KEM, ML-DSA, SLH-DSA). That is the curious-explorer takeaway.",
+        "cues": [
+          {
+            "tMs": 0,
+            "kind": "navigate",
+            "route": "/"
+          },
+          {
+            "tMs": 1500,
+            "kind": "caption",
+            "text": "Three things to remember. The threat is called Harvest Now Decrypt Later. NIST published the new standards in 2024. The two names you will hear are M L K E M and M L D S A."
+          },
+          {
+            "tMs": 60000,
+            "kind": "advance"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -228,7 +228,9 @@ describe('ReportContent', () => {
 
     it('shows framework names', () => {
       renderReport()
-      expect(screen.getByText('FIPS 140-3')).toBeInTheDocument()
+      // FIPS 140-3 may also appear in the applicability panel for Technology/US,
+      // so allow ≥1 occurrence; PCI DSS is unique to the curated list.
+      expect(screen.getAllByText('FIPS 140-3').length).toBeGreaterThanOrEqual(1)
       expect(screen.getByText('PCI DSS')).toBeInTheDocument()
     })
 

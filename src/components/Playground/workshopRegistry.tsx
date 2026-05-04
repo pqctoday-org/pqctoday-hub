@@ -650,6 +650,21 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
   },
+  {
+    id: 'tpm-playground',
+    pt_id: 'PT-028',
+    version: '1.0.0',
+    name: 'TPM 2.0 PQC Playground',
+    description:
+      'Execute raw TPM 2.0 Post-Quantum operations entirely in the browser using the WebAssembly-compiled pqctpm emulator.',
+    category: 'Protocol Simulations',
+    algorithms: ['ML-KEM-768', 'ML-DSA-65', 'WASM'],
+    icon: Cpu,
+    moduleLink: '/playground/tpm-playground',
+    keywords: ['tpm', 'pqc', 'wasm', 'ml-kem', 'ml-dsa', 'hardware', 'tcg'],
+    difficulty: 'advanced',
+    recommendedPersonas: ['developer', 'architect', 'researcher'],
+  },
 ]
 
 export const CATEGORIES = [
@@ -844,6 +859,11 @@ export const TOOL_COMPONENTS: Record<string, LazyComp> = {
   'tls-simulator': lazyWithRetry(() =>
     import('@/components/OpenSSLStudio/TLSSimulatorTab').then((m) => ({
       default: m.TLSSimulatorTab,
+    }))
+  ),
+  'tpm-playground': lazyWithRetry(() =>
+    import('@/components/Playground/TpmPlayground/TpmPlayground').then((m) => ({
+      default: m.default,
     }))
   ),
 }

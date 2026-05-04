@@ -3,6 +3,7 @@ import { useCallback, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { WorkshopCue, WorkshopFixtures } from '@/types/Workshop'
 import { buildUrl } from '@/utils/workshopDeepLink'
+import { useWorkshopStore } from '@/store/useWorkshopStore'
 
 interface ActiveCallout {
   id: number
@@ -64,6 +65,7 @@ export function useCueApplier(): CueApplierState & CueApplierActions {
           setCaptionState(cue.text)
           setCaptionVisible(true)
           scheduleCaptionAutoScroll(cue.text, nextCues)
+          speakCaption(cue.text)
           return
         case 'spotlight':
           setSpotlightSelector(cue.selector)
@@ -192,15 +194,60 @@ export function useCueApplier(): CueApplierState & CueApplierActions {
   }
 }
 
+function prepareForSpeech(text: string): string {
+  return text
+    .replace(
+      /^\s*(?:Section|Workshop|Layer|Step|Hint|Artifact|Module|Tab)\s+\d+(?:\s*(?:\/|of|out of)\s*\d+)?\s*[:.\-—]\s*/i,
+      ''
+    )
+    .replace(/\s*[—–]\s*/g, '. ')
+    .replace(/\s+·\s+/g, ', ')
+    .replace(/\s+\/\s+/g, ' or ')
+    .replace(/\*\*/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function speakCaption(text: string): void {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return
+  try {
+    const { ttsEnabled, ttsVoiceURI } = useWorkshopStore.getState()
+    if (!ttsEnabled) return
+    window.speechSynthesis.cancel()
+    const utter = new SpeechSynthesisUtterance(prepareForSpeech(text))
+    utter.lang = 'en-US'
+    utter.rate = 0.85
+    if (ttsVoiceURI) {
+      const voice = window.speechSynthesis.getVoices().find((v) => v.voiceURI === ttsVoiceURI)
+      if (voice) utter.voice = voice
+    }
+    window.speechSynthesis.speak(utter)
+  } catch (e) {
+    console.warn('[workshop] TTS speak failed:', e)
+  }
+}
+
 function scheduleAutoScrollFromNextCues(nextCues?: WorkshopCue[]): void {
-  if (nextCues && nextCues.some((c) => c.kind === 'scroll-to')) return
+  // Suppress only if a scroll-to fires before the first caption.
+  if (nextCues) {
+    for (const c of nextCues) {
+      if (c.kind === 'caption') break
+      if (c.kind === 'scroll-to') return
+    }
+  }
   setTimeout(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, 700)
 }
 
 function scheduleCaptionAutoScroll(text: string, nextCues?: WorkshopCue[]): void {
-  if (nextCues && nextCues.some((c) => c.kind === 'scroll-to')) return
+  // Suppress only if scroll-to is queued before the next caption (same section).
+  if (nextCues) {
+    for (const c of nextCues) {
+      if (c.kind === 'caption') break
+      if (c.kind === 'scroll-to') return
+    }
+  }
   const candidates = extractCaptionSubjects(text)
   if (candidates.length === 0) return
   setTimeout(() => {
@@ -244,7 +291,10 @@ function scheduleCaptionAutoScroll(text: string, nextCues?: WorkshopCue[]): void
 function extractCaptionSubjects(text: string): string[] {
   const out: string[] = []
   const stripped = text
-    .replace(/^(Section|Step|Workshop|Artifact|Module|Tab)\s*\d*\s*\/?\s*\d*\s*:\s*/i, '')
+    .replace(
+      /^(Section|Step|Workshop|Layer|Hint|Artifact|Module|Tab)\s+\d+(?:\s*(?:\/|of|out of)\s*\d+)?\s*[:.\-—]\s*/i,
+      ''
+    )
     .replace(/^[—-]\s*/, '')
     .trim()
   const colonIdx = stripped.indexOf(':')
@@ -291,7 +341,11 @@ function retrySelector(
     const el = document.querySelector(selector)
     if (el instanceof HTMLElement && apply(el)) return
     n++
-    if (n < attempts) setTimeout(tick, delay)
+    if (n < attempts) {
+      setTimeout(tick, delay)
+    } else {
+      console.warn('[workshop] cue selector unresolved after retries:', selector)
+    }
   }
   tick()
 }

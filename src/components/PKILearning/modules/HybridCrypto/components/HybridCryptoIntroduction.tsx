@@ -33,7 +33,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
   return (
     <div className="space-y-8 w-full">
       {/* Section 1: Why Hybrid? */}
-      <section className="glass-panel p-6">
+      <section data-section-id="why-hybrid" className="glass-panel p-6 scroll-mt-20">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">
             <Shield size={24} className="text-primary" />
@@ -104,7 +104,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
       </section>
 
       {/* Section 2: Certificate Format Approaches */}
-      <section className="glass-panel p-6">
+      <section data-section-id="cert-formats" className="glass-panel p-6 scroll-mt-20">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-secondary/10">
             <Layers size={24} className="text-secondary" />
@@ -291,7 +291,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
       </section>
 
       {/* Section 3: Hybrid KEMs */}
-      <section className="glass-panel p-6">
+      <section data-section-id="kem" className="glass-panel p-6 scroll-mt-20">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-primary/10">
             <Lock size={24} className="text-primary" />
@@ -712,7 +712,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
       </section>
 
       {/* ── Hybrid Signature Spectrum ──────────────────────────────────────────── */}
-      <section className="space-y-6">
+      <section data-section-id="composite" className="space-y-6 scroll-mt-20">
         <div className="flex items-center gap-3">
           <Fingerprint className="text-primary shrink-0" size={22} />
           <div>

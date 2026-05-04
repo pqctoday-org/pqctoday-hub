@@ -2,6 +2,7 @@
 import { create } from 'zustand'
 import type { WorkshopCue, WorkshopFixtures } from '@/types/Workshop'
 import { buildUrl } from '@/utils/workshopDeepLink'
+import { useWorkshopStore } from './useWorkshopStore'
 
 interface ActiveCallout {
   id: number
@@ -62,6 +63,7 @@ export const useWorkshopOverlayStore = create<WorkshopOverlayState>()((set, get)
       case 'caption':
         set({ caption: cue.text, captionVisible: true })
         scheduleCaptionAutoScroll(cue.text, nextCues)
+        speakCaption(cue.text)
         return
       case 'spotlight':
         set({ spotlightSelector: cue.selector })
@@ -183,6 +185,59 @@ export const useWorkshopOverlayStore = create<WorkshopOverlayState>()((set, get)
 }))
 
 /**
+ * Speak a caption via the browser's native Web Speech API. Reads ttsEnabled
+ * + playbackSpeed lazily so toggling either takes effect on the next caption.
+ * Cancels any in-flight utterance so words don't pile up across captions.
+ */
+/**
+ * Convert a screen-reading caption into something that speaks well:
+ *   - Strip "Section N/M:", "Workshop N/M:", "Layer N/M:", "Step N:" prefixes
+ *     (visual signposting, not meant to be read aloud).
+ *   - Em-dash with spaces → period (creates a natural sentence-break pause).
+ *   - Center dot · → comma (avoids "middle dot" being read literally).
+ *   - "X / Y" → "X or Y" (slash is awkwardly read as "slash").
+ *   - "X.Y.Z" version numbers and slug-ids stay as-is.
+ *   - Strip markdown emphasis markers.
+ */
+function prepareForSpeech(text: string): string {
+  return text
+    .replace(
+      /^\s*(?:Section|Workshop|Layer|Step|Hint|Artifact|Module|Tab)\s+\d+(?:\s*(?:\/|of|out of)\s*\d+)?\s*[:.\-—]\s*/i,
+      ''
+    )
+    .replace(/\s*[—–]\s*/g, '. ')
+    .replace(/\s+·\s+/g, ', ')
+    .replace(/\s+\/\s+/g, ' or ')
+    .replace(/\*\*/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function speakCaption(text: string): void {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return
+  try {
+    const { ttsEnabled, ttsVoiceURI } = useWorkshopStore.getState()
+    if (!ttsEnabled) return
+    window.speechSynthesis.cancel()
+    const utter = new SpeechSynthesisUtterance(prepareForSpeech(text))
+    // English-only captions — force `lang` so the browser picks an English
+    // voice when no specific voice is selected.
+    utter.lang = 'en-US'
+    // Fixed narration pace, decoupled from playbackSpeed.
+    utter.rate = 0.85
+    utter.pitch = 1.0
+    utter.volume = 1.0
+    if (ttsVoiceURI) {
+      const voice = window.speechSynthesis.getVoices().find((v) => v.voiceURI === ttsVoiceURI)
+      if (voice) utter.voice = voice
+    }
+    window.speechSynthesis.speak(utter)
+  } catch (e) {
+    console.warn('[workshop] TTS speak failed:', e)
+  }
+}
+
+/**
  * After a `navigate` cue, scroll the page back to the top so the user sees
  * the new content from the heading down. Skipped when an explicit `scroll-to`
  * cue is queued — the author wins.
@@ -192,7 +247,15 @@ export const useWorkshopOverlayStore = create<WorkshopOverlayState>()((set, get)
  * scrolled past the actual content. Top-of-page is the right default.)
  */
 function scheduleAutoScrollFromNextCues(nextCues?: WorkshopCue[]): void {
-  if (nextCues && nextCues.some((c) => c.kind === 'scroll-to')) return
+  // Only suppress if a scroll-to fires before the first caption — that scroll-to
+  // is part of the navigation sequence. A scroll-to AFTER the first caption
+  // belongs to a later section, so post-navigate scroll-to-top is still wanted.
+  if (nextCues) {
+    for (const c of nextCues) {
+      if (c.kind === 'caption') break
+      if (c.kind === 'scroll-to') return
+    }
+  }
   setTimeout(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, 700)
@@ -200,12 +263,18 @@ function scheduleAutoScrollFromNextCues(nextCues?: WorkshopCue[]): void {
 
 /**
  * When a caption cue mentions a section name, smooth-scroll to the matching
- * heading on the current page. Skipped if an explicit `scroll-to` cue is
- * queued (author override wins). The "subject" is extracted by stripping
- * leading prefixes like "Section N/M:", "Step N:", "Workshop N/M:", "Artifact:".
+ * heading on the current page. Skipped only if an explicit `scroll-to` cue is
+ * queued BEFORE the next caption — that means the author is overriding scroll
+ * for THIS section. A scroll-to for a future section (after the next caption)
+ * does not suppress; it belongs to that future section.
  */
 function scheduleCaptionAutoScroll(text: string, nextCues?: WorkshopCue[]): void {
-  if (nextCues && nextCues.some((c) => c.kind === 'scroll-to')) return
+  if (nextCues) {
+    for (const c of nextCues) {
+      if (c.kind === 'caption') break
+      if (c.kind === 'scroll-to') return
+    }
+  }
   const candidates = extractCaptionSubjects(text)
   if (candidates.length === 0) return
   setTimeout(() => {
@@ -263,7 +332,11 @@ function extractCaptionSubjects(text: string): string[] {
   const out: string[] = []
   // Strip common workshop prefixes
   const stripped = text
-    .replace(/^(Section|Step|Workshop|Artifact|Module|Tab)\s*\d*\s*\/?\s*\d*\s*:\s*/i, '')
+    // Match both old `Section 1/3:` and new spoken-friendly `Section 1 of 3.` forms
+    .replace(
+      /^(Section|Step|Workshop|Layer|Hint|Artifact|Module|Tab)\s+\d+(?:\s*(?:\/|of|out of)\s*\d+)?\s*[:.\-—]\s*/i,
+      ''
+    )
     .replace(/^[—-]\s*/, '')
     .trim()
 
@@ -327,7 +400,11 @@ function retrySelector(
       if (apply(el)) return
     }
     n++
-    if (n < attempts) setTimeout(tick, delay)
+    if (n < attempts) {
+      setTimeout(tick, delay)
+    } else {
+      console.warn('[workshop] cue selector unresolved after retries:', selector)
+    }
   }
   tick()
 }

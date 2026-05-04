@@ -934,22 +934,27 @@ const Step5IETFProcess: React.FC<{ onNavigateToWorkshop: () => void }> = ({
 export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop }) => {
   const steps = [
     {
+      id: 'three-roles',
       label: 'Three Roles',
       content: <Step1ThreeRoles />,
     },
     {
+      id: 'gov-vs-nongov',
       label: 'Gov vs Non-Gov',
       content: <Step2GovVsNonGov />,
     },
     {
+      id: 'global-regional',
       label: 'Global & Regional',
       content: <Step3GlobalRegional />,
     },
     {
+      id: 'app-pages-guide',
       label: 'App Pages Guide',
       content: <Step4AppPagesGuide />,
     },
     {
+      id: 'ietf-process',
       label: 'IETF & RFC Process',
       content: <Step5IETFProcess onNavigateToWorkshop={onNavigateToWorkshop} />,
     },

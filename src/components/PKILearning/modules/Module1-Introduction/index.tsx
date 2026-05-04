@@ -264,6 +264,7 @@ export const Module1: React.FC = () => {
             {/* Part Navigation */}
             <div className="flex flex-col sm:flex-row justify-between gap-3">
               <Button
+                data-workshop-target="learn-stepper-prev"
                 variant="ghost"
                 onClick={() => handlePartChange(Math.max(0, currentPart - 1))}
                 disabled={currentPart === 0}
@@ -273,6 +274,7 @@ export const Module1: React.FC = () => {
               </Button>
               {currentPart === visibleParts.length - 1 ? (
                 <Button
+                  data-workshop-target="learn-stepper-complete"
                   variant="gradient"
                   onClick={() => markStepComplete(MODULE_ID, visibleParts[currentPart].id)}
                   className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
@@ -281,6 +283,7 @@ export const Module1: React.FC = () => {
                 </Button>
               ) : (
                 <Button
+                  data-workshop-target="learn-stepper-next"
                   variant="gradient"
                   onClick={() => handlePartChange(currentPart + 1)}
                   className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"

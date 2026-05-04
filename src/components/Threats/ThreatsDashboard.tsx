@@ -87,6 +87,7 @@ export const ThreatsDashboard: React.FC = () => {
     () => (searchParams.get('mode') as ThreatsViewMode | null) ?? 'table'
   )
   const [activeLayer, setActiveLayer] = useState<string>('All')
+  const [activeNavIndustry, setActiveNavIndustry] = useState<string | null>(null)
 
   // Sync all filter params on same-route navigations (e.g. chatbot deep links).
   // Functional setters prevent infinite loops when syncFiltersToUrl triggers a searchParams update.
@@ -497,39 +498,41 @@ export const ThreatsDashboard: React.FC = () => {
       <div className="flex flex-col lg:flex-row gap-6">
         <aside className="lg:w-64 lg:shrink-0 lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
           <LeftNavTOC
-            title="Threats"
-            ariaLabel="Filtered threats"
+            title="Industries"
+            ariaLabel="Industries"
             targetPrefix="threats-toc"
-            activeItemId={selectedThreat?.threatId ?? null}
-            onSelect={(id) => {
-              const item = filteredAndSortedData.find((t) => t.threatId === id)
-              if (!item) return
-              setSelectedThreat(item)
-              syncFiltersToUrl({ id })
-              // Scroll the corresponding card into view (cards mode anchors via id="threat-<id>").
-              const target = document.getElementById(`threat-${id}`)
-              target?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-            }}
-            groups={(() => {
-              const byIndustry = new Map<string, typeof filteredAndSortedData>()
-              for (const item of filteredAndSortedData) {
-                if (!byIndustry.has(item.industry)) byIndustry.set(item.industry, [])
-                byIndustry.get(item.industry)!.push(item)
+            activeItemId={activeNavIndustry}
+            onSelect={(slug) => {
+              setActiveNavIndustry(slug)
+              if (viewMode === 'stack') {
+                const ind = filteredAndSortedData.find(
+                  (t) => t.industry.toLowerCase().replace(/[^a-z0-9]+/g, '-') === slug
+                )?.industry
+                if (ind) setActiveLayer(ind)
+              } else {
+                document
+                  .getElementById(`industry-${slug}`)
+                  ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
               }
-              return Array.from(byIndustry.entries()).map(([ind, items]) => ({
-                id: ind.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-                label: ind,
-                items: items.map((i) => {
-                  const desc = i.description ?? ''
-                  const summary = desc.split(':')[0].slice(0, 60)
-                  return {
-                    id: i.threatId,
-                    label: summary ? `${i.threatId} — ${summary}` : i.threatId,
-                    hint: i.criticality,
-                  }
-                }),
-              }))
-            })()}
+            }}
+            groups={[
+              {
+                id: 'industries',
+                label: 'Industries',
+                items: Array.from(
+                  new Map(
+                    filteredAndSortedData.map((t) => [
+                      t.industry,
+                      {
+                        id: t.industry.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+                        label: t.industry,
+                        hint: `${filteredAndSortedData.filter((x) => x.industry === t.industry).length} threats`,
+                      },
+                    ])
+                  ).values()
+                ),
+              },
+            ]}
             emptyMessage="No threats match the current filters."
           />
         </aside>

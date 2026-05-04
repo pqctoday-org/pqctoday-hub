@@ -741,6 +741,7 @@ interface ComplianceLandscapeProps {
   orgFilter?: string
   industryFilter?: string
   regionFilter?: RegionBloc | 'All'
+  countryFilter?: string
   deadlineFilter?: 'All' | DeadlinePhase
   searchText?: string
   searchInputValue?: string
@@ -749,6 +750,7 @@ interface ComplianceLandscapeProps {
   onOrgFilterChange?: (org: string) => void
   onIndustryFilterChange?: (ind: string) => void
   onRegionFilterChange?: (region: RegionBloc | 'All') => void
+  onCountryFilterChange?: (country: string) => void
   onDeadlineFilterChange?: (phase: 'All' | DeadlinePhase) => void
   onSearchTextChange?: (text: string) => void
   onSortByChange?: (sort: FrameworkSortOption) => void
@@ -765,6 +767,7 @@ export function ComplianceLandscape({
   orgFilter: orgFilterProp,
   industryFilter: industryFilterProp,
   regionFilter: regionFilterProp,
+  countryFilter: countryFilterProp,
   deadlineFilter: deadlineFilterProp,
   searchText: searchTextProp,
   searchInputValue: searchInputValueProp,
@@ -774,6 +777,7 @@ export function ComplianceLandscape({
   onOrgFilterChange,
   onIndustryFilterChange,
   onRegionFilterChange,
+  onCountryFilterChange,
   onDeadlineFilterChange,
   onSearchTextChange,
   onSortByChange,
@@ -791,6 +795,7 @@ export function ComplianceLandscape({
     selectedIndustries.length === 1 ? selectedIndustries[0] : 'All'
   )
   const [localRegion, setLocalRegion] = useState<RegionBloc | 'All'>('All')
+  const [localCountry, setLocalCountry] = useState<string>('All')
   const [localDeadline, setLocalDeadline] = useState<'All' | DeadlinePhase>('All')
   const [localSearch, setLocalSearch] = useState<string>('')
   const [localSort, setLocalSort] = useState<FrameworkSortOption>('deadline')
@@ -799,6 +804,7 @@ export function ComplianceLandscape({
   const orgFilter = orgFilterProp ?? localOrg
   const industryFilter = industryFilterProp ?? localIndustry
   const regionFilter = regionFilterProp ?? localRegion
+  const countryFilter = countryFilterProp ?? localCountry
   const deadlineFilter = deadlineFilterProp ?? localDeadline
   const searchInputVal = searchInputValueProp ?? localSearch
   const searchFilterText = searchTextProp ?? localSearch
@@ -808,6 +814,7 @@ export function ComplianceLandscape({
   const setOrgFilter = onOrgFilterChange ?? setLocalOrg
   const setIndustryFilter = onIndustryFilterChange ?? setLocalIndustry
   const setRegionFilter = onRegionFilterChange ?? setLocalRegion
+  const setCountryFilter = onCountryFilterChange ?? setLocalCountry
   const setDeadlineFilter = onDeadlineFilterChange ?? setLocalDeadline
   const setSearchText = onSearchTextChange ?? setLocalSearch
   const setSortBy = onSortByChange ?? setLocalSort
@@ -863,6 +870,26 @@ export function ComplianceLandscape({
     ]
   }, [sourceFrameworks.length])
 
+  // Country options — derived from full dataset, sorted alphabetically with per-country
+  // counts. Multi-country frameworks contribute to each tagged country's count.
+  const countryItems = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const fw of complianceFrameworks) {
+      const seen = new Set<string>()
+      for (const c of fw.countries) {
+        const trimmed = c.trim()
+        if (!trimmed || seen.has(trimmed)) continue
+        counts.set(trimmed, (counts.get(trimmed) ?? 0) + 1)
+        seen.add(trimmed)
+      }
+    }
+    const sorted = [...counts.keys()].sort()
+    return [
+      { id: 'All', label: 'All Countries' },
+      ...sorted.map((c) => ({ id: c, label: `${c} (${counts.get(c) ?? 0})` })),
+    ]
+  }, [])
+
   // Sort options as FilterDropdown items
   const sortItems = FRAMEWORK_SORT_OPTIONS.map((o) => ({ id: o.id, label: o.label }))
 
@@ -881,6 +908,9 @@ export function ComplianceLandscape({
     }
     if (regionFilter !== 'All') {
       result = result.filter((fw) => fw.countries.some((c) => regionForCountry(c) === regionFilter))
+    }
+    if (countryFilter !== 'All') {
+      result = result.filter((fw) => fw.countries.some((c) => c.trim() === countryFilter))
     }
     if (deadlineFilter !== 'All') {
       result = result.filter((fw) => fw.deadlinePhase === deadlineFilter)
@@ -904,6 +934,7 @@ export function ComplianceLandscape({
     orgFilter,
     industryFilter,
     regionFilter,
+    countryFilter,
     deadlineFilter,
     searchFilterText,
     sortBy,
@@ -1009,6 +1040,31 @@ export function ComplianceLandscape({
               onClick={() => setRegionFilter('All')}
               className="h-auto py-1 px-2 text-xs bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20"
               aria-label="Clear region filter"
+            >
+              All
+            </Button>
+          )}
+        </div>
+
+        {/* Country dropdown + clear */}
+        <div className="flex items-center gap-1 flex-1 basis-[calc(50%-0.25rem)] min-w-0 md:flex-none md:basis-auto">
+          <div className="flex-1 min-w-0 md:flex-none md:min-w-[150px]">
+            <FilterDropdown
+              items={countryItems}
+              selectedId={countryFilter}
+              onSelect={setCountryFilter}
+              defaultLabel="Country"
+              noContainer
+              opaque
+            />
+          </div>
+          {countryFilter !== 'All' && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setCountryFilter('All')}
+              className="h-auto py-1 px-2 text-xs bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20"
+              aria-label="Clear country filter"
             >
               All
             </Button>

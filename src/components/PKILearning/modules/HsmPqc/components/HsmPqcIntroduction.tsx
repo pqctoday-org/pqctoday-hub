@@ -178,279 +178,288 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
       </CollapsibleSection>
 
       {/* Section 2: PKCS#11 v3.2 PQC Mechanisms */}
-      <CollapsibleSection
-        title="PKCS#11 v3.2 PQC Mechanisms"
-        icon={<Lock size={24} className="text-primary" />}
-      >
-        <div className="space-y-4 text-sm text-foreground/80">
-          <p>
-            The <strong>PKCS#11 v3.2 draft</strong> (OASIS) introduces new mechanism types for
-            post-quantum cryptography. These define how applications interact with PQC keys inside
-            HSMs via the standard Cryptoki API.
-          </p>
+      <div data-section-id="pkcs11" className="scroll-mt-20">
+        <CollapsibleSection
+          title="PKCS#11 v3.2 PQC Mechanisms"
+          icon={<Lock size={24} className="text-primary" />}
+        >
+          <div className="space-y-4 text-sm text-foreground/80">
+            <p>
+              The <strong>PKCS#11 v3.2 draft</strong> (OASIS) introduces new mechanism types for
+              post-quantum cryptography. These define how applications interact with PQC keys inside
+              HSMs via the standard Cryptoki API.
+            </p>
 
-          <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
-            <h4 className="text-sm font-bold text-foreground mb-2">New PQC Key Types</h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              <div>
-                <span className="font-mono text-primary">CKK_ML_KEM</span>
-                <p className="text-muted-foreground mt-1">
-                  Key type for ML-KEM (FIPS 203) key encapsulation mechanism. Public keys are 1,184
-                  bytes (ML-KEM-768), requiring applications to accommodate larger buffer sizes.
-                </p>
-              </div>
-              <div>
-                <span className="font-mono text-primary">CKK_ML_DSA</span>
-                <p className="text-muted-foreground mt-1">
-                  Key type for ML-DSA (FIPS 204) digital signatures. Signatures are 3,309 bytes
-                  (ML-DSA-65) &mdash; existing buffers sized for 64-byte ECDSA will overflow.
-                </p>
+            <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
+              <h4 className="text-sm font-bold text-foreground mb-2">New PQC Key Types</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div>
+                  <span className="font-mono text-primary">CKK_ML_KEM</span>
+                  <p className="text-muted-foreground mt-1">
+                    Key type for ML-KEM (FIPS 203) key encapsulation mechanism. Public keys are
+                    1,184 bytes (ML-KEM-768), requiring applications to accommodate larger buffer
+                    sizes.
+                  </p>
+                </div>
+                <div>
+                  <span className="font-mono text-primary">CKK_ML_DSA</span>
+                  <p className="text-muted-foreground mt-1">
+                    Key type for ML-DSA (FIPS 204) digital signatures. Signatures are 3,309 bytes
+                    (ML-DSA-65) &mdash; existing buffers sized for 64-byte ECDSA will overflow.
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Classical Mechanisms Table */}
-          <h4 className="text-sm font-bold text-foreground">Classical Mechanisms (v2.40+)</h4>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left p-2 text-muted-foreground font-medium">Mechanism</th>
-                  <th className="text-left p-2 text-muted-foreground font-medium">Code</th>
-                  <th className="text-left p-2 text-muted-foreground font-medium">Description</th>
-                  <th className="text-left p-2 text-muted-foreground font-medium">Key Size</th>
-                </tr>
-              </thead>
-              <tbody>
-                {classicalMechanisms.map((m) => (
-                  <tr key={m.id} className="border-b border-border/50">
-                    <td className="p-2 font-mono text-xs text-foreground">{m.name}</td>
-                    <td className="p-2 font-mono text-xs text-muted-foreground">
-                      {m.mechanismCode}
-                    </td>
-                    <td className="p-2 text-xs text-muted-foreground">{m.description}</td>
-                    <td className="p-2 text-xs text-muted-foreground">{m.keySize}</td>
+            {/* Classical Mechanisms Table */}
+            <h4 className="text-sm font-bold text-foreground">Classical Mechanisms (v2.40+)</h4>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left p-2 text-muted-foreground font-medium">Mechanism</th>
+                    <th className="text-left p-2 text-muted-foreground font-medium">Code</th>
+                    <th className="text-left p-2 text-muted-foreground font-medium">Description</th>
+                    <th className="text-left p-2 text-muted-foreground font-medium">Key Size</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {classicalMechanisms.map((m) => (
+                    <tr key={m.id} className="border-b border-border/50">
+                      <td className="p-2 font-mono text-xs text-foreground">{m.name}</td>
+                      <td className="p-2 font-mono text-xs text-muted-foreground">
+                        {m.mechanismCode}
+                      </td>
+                      <td className="p-2 text-xs text-muted-foreground">{m.description}</td>
+                      <td className="p-2 text-xs text-muted-foreground">{m.keySize}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-          {/* PQC Mechanisms Table */}
-          <h4 className="text-sm font-bold text-foreground">PQC Mechanisms (v3.2 Draft)</h4>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left p-2 text-muted-foreground font-medium">Mechanism</th>
-                  <th className="text-left p-2 text-muted-foreground font-medium">Code</th>
-                  <th className="text-left p-2 text-muted-foreground font-medium">Description</th>
-                  <th className="text-left p-2 text-muted-foreground font-medium">Parameters</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pqcMechanisms.map((m) => (
-                  <tr key={m.id} className="border-b border-border/50 bg-primary/5">
-                    <td className="p-2 font-mono text-xs text-primary font-bold">{m.name}</td>
-                    <td className="p-2 font-mono text-xs text-muted-foreground">
-                      {m.mechanismCode}
-                    </td>
-                    <td className="p-2 text-xs text-foreground">{m.description}</td>
-                    <td className="p-2 text-xs text-muted-foreground">{m.keySize}</td>
+            {/* PQC Mechanisms Table */}
+            <h4 className="text-sm font-bold text-foreground">PQC Mechanisms (v3.2 Draft)</h4>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left p-2 text-muted-foreground font-medium">Mechanism</th>
+                    <th className="text-left p-2 text-muted-foreground font-medium">Code</th>
+                    <th className="text-left p-2 text-muted-foreground font-medium">Description</th>
+                    <th className="text-left p-2 text-muted-foreground font-medium">Parameters</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {pqcMechanisms.map((m) => (
+                    <tr key={m.id} className="border-b border-border/50 bg-primary/5">
+                      <td className="p-2 font-mono text-xs text-primary font-bold">{m.name}</td>
+                      <td className="p-2 font-mono text-xs text-muted-foreground">
+                        {m.mechanismCode}
+                      </td>
+                      <td className="p-2 text-xs text-foreground">{m.description}</td>
+                      <td className="p-2 text-xs text-muted-foreground">{m.keySize}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-          {/* Key Size Comparison */}
-          <h4 className="text-sm font-bold text-foreground">Buffer Size Impact</h4>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left p-2 text-muted-foreground font-medium">Algorithm</th>
-                  <th className="text-right p-2 text-muted-foreground font-medium">Public Key</th>
-                  <th className="text-right p-2 text-muted-foreground font-medium">Private Key</th>
-                  <th className="text-right p-2 text-muted-foreground font-medium">
-                    Sig/Ciphertext
-                  </th>
-                  <th className="text-center p-2 text-muted-foreground font-medium">
-                    Quantum Safe
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {KEY_SIZE_COMPARISONS.map((k) => (
-                  <tr
-                    key={k.algorithm}
-                    className={`border-b border-border/50 ${k.quantumSafe ? 'bg-primary/5' : ''}`}
-                  >
-                    <td className="p-2 font-mono text-xs text-foreground">{k.algorithm}</td>
-                    <td className="p-2 text-right font-mono text-xs text-foreground">
-                      {k.publicKeyBytes.toLocaleString()} B
-                    </td>
-                    <td className="p-2 text-right font-mono text-xs text-foreground">
-                      {k.privateKeyBytes.toLocaleString()} B
-                    </td>
-                    <td className="p-2 text-right font-mono text-xs text-foreground">
-                      {k.signatureOrCiphertextBytes.toLocaleString()} B
-                    </td>
-                    <td className="p-2 text-center">
-                      {k.quantumSafe ? (
-                        <span className="text-success font-bold text-xs">Yes</span>
-                      ) : (
-                        <span className="text-destructive font-bold text-xs">No</span>
-                      )}
-                    </td>
+            {/* Key Size Comparison */}
+            <h4 className="text-sm font-bold text-foreground">Buffer Size Impact</h4>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left p-2 text-muted-foreground font-medium">Algorithm</th>
+                    <th className="text-right p-2 text-muted-foreground font-medium">Public Key</th>
+                    <th className="text-right p-2 text-muted-foreground font-medium">
+                      Private Key
+                    </th>
+                    <th className="text-right p-2 text-muted-foreground font-medium">
+                      Sig/Ciphertext
+                    </th>
+                    <th className="text-center p-2 text-muted-foreground font-medium">
+                      Quantum Safe
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {KEY_SIZE_COMPARISONS.map((k) => (
+                    <tr
+                      key={k.algorithm}
+                      className={`border-b border-border/50 ${k.quantumSafe ? 'bg-primary/5' : ''}`}
+                    >
+                      <td className="p-2 font-mono text-xs text-foreground">{k.algorithm}</td>
+                      <td className="p-2 text-right font-mono text-xs text-foreground">
+                        {k.publicKeyBytes.toLocaleString()} B
+                      </td>
+                      <td className="p-2 text-right font-mono text-xs text-foreground">
+                        {k.privateKeyBytes.toLocaleString()} B
+                      </td>
+                      <td className="p-2 text-right font-mono text-xs text-foreground">
+                        {k.signatureOrCiphertextBytes.toLocaleString()} B
+                      </td>
+                      <td className="p-2 text-center">
+                        {k.quantumSafe ? (
+                          <span className="text-success font-bold text-xs">Yes</span>
+                        ) : (
+                          <span className="text-destructive font-bold text-xs">No</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      </CollapsibleSection>
+        </CollapsibleSection>
+      </div>
 
       {/* Section 3: On-Prem HSM PQC Deep Dive */}
-      <CollapsibleSection
-        title="On-Prem HSM PQC Deep Dive"
-        icon={<Cpu size={24} className="text-primary" />}
-      >
-        <div className="space-y-4 text-sm text-foreground/80">
-          <p>
-            On-premises HSMs from the three major vendors now offer production-ready PQC firmware.
-            Each takes a different approach to integrating post-quantum algorithms.
-          </p>
+      <div data-section-id="vendors" className="scroll-mt-20">
+        <CollapsibleSection
+          title="On-Prem HSM PQC Deep Dive"
+          icon={<Cpu size={24} className="text-primary" />}
+        >
+          <div className="space-y-4 text-sm text-foreground/80">
+            <p>
+              On-premises HSMs from the three major vendors now offer production-ready PQC firmware.
+              Each takes a different approach to integrating post-quantum algorithms.
+            </p>
 
-          <div className="grid grid-cols-1 gap-4">
-            {/* Thales Luna */}
-            <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-sm font-bold text-foreground">Thales Luna Network HSM 7</h4>
-                <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/10 text-success border-success/20">
-                  PRODUCTION
-                </span>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div>
-                  <span className="text-muted-foreground">Firmware:</span>{' '}
-                  <span className="font-mono text-foreground">v7.9.2+</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">FIPS Status:</span>{' '}
-                  <span className="text-success font-medium">FIPS 140-3 Level 3</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">PQC Algorithms:</span>{' '}
-                  <span className="text-foreground">
-                    ML-KEM-512/768/1024, ML-DSA-44/65/87, LMS/HSS
+            <div className="grid grid-cols-1 gap-4">
+              {/* Thales Luna */}
+              <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-sm font-bold text-foreground">Thales Luna Network HSM 7</h4>
+                  <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/10 text-success border-success/20">
+                    PRODUCTION
                   </span>
                 </div>
-                <div>
-                  <span className="text-muted-foreground">PKCS#11:</span>{' '}
-                  <span className="text-foreground">v3.0 (PQC extensions)</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <span className="text-muted-foreground">Firmware:</span>{' '}
+                    <span className="font-mono text-foreground">v7.9.2+</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">FIPS Status:</span>{' '}
+                    <span className="text-success font-medium">FIPS 140-3 Level 3</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">PQC Algorithms:</span>{' '}
+                    <span className="text-foreground">
+                      ML-KEM-512/768/1024, ML-DSA-44/65/87, LMS/HSS
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">PKCS#11:</span>{' '}
+                    <span className="text-foreground">v3.0 (PQC extensions)</span>
+                  </div>
+                </div>
+                <div className="mt-3 space-y-1 text-xs text-muted-foreground">
+                  <p>
+                    <strong>Upgrade Path:</strong> In-place firmware upgrade from v7.8.x. Existing
+                    keys preserved. Luna Client must be upgraded to 10.9.2+.
+                  </p>
+                  <p>
+                    <strong>Unique Features:</strong> PQC integrated into core firmware (no external
+                    modules). CBOM (Cryptographic Bill of Materials) REST API. USB G7 extension
+                    supports PQC.
+                  </p>
                 </div>
               </div>
-              <div className="mt-3 space-y-1 text-xs text-muted-foreground">
-                <p>
-                  <strong>Upgrade Path:</strong> In-place firmware upgrade from v7.8.x. Existing
-                  keys preserved. Luna Client must be upgraded to 10.9.2+.
-                </p>
-                <p>
-                  <strong>Unique Features:</strong> PQC integrated into core firmware (no external
-                  modules). CBOM (Cryptographic Bill of Materials) REST API. USB G7 extension
-                  supports PQC.
-                </p>
-              </div>
-            </div>
 
-            {/* Entrust nShield */}
-            <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-sm font-bold text-foreground">Entrust nShield 5</h4>
-                <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/10 text-success border-success/20">
-                  PRODUCTION
-                </span>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div>
-                  <span className="text-muted-foreground">Firmware:</span>{' '}
-                  <span className="font-mono text-foreground">v13.8.0+</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">FIPS Status:</span>{' '}
-                  <span className="text-warning font-medium">FIPS 140-3 Level 3 (submitted)</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">PQC Algorithms:</span>{' '}
-                  <span className="text-foreground">
-                    ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA (all 12 param sets), LMS/HSS
-                    (PQSDK), XMSS (PQSDK)
+              {/* Entrust nShield */}
+              <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-sm font-bold text-foreground">Entrust nShield 5</h4>
+                  <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/10 text-success border-success/20">
+                    PRODUCTION
                   </span>
                 </div>
-                <div>
-                  <span className="text-muted-foreground">PKCS#11:</span>{' '}
-                  <span className="text-foreground">v3.0 (PQC extensions)</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <span className="text-muted-foreground">Firmware:</span>{' '}
+                    <span className="font-mono text-foreground">v13.8.0+</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">FIPS Status:</span>{' '}
+                    <span className="text-warning font-medium">FIPS 140-3 Level 3 (submitted)</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">PQC Algorithms:</span>{' '}
+                    <span className="text-foreground">
+                      ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA (all 12 param sets), LMS/HSS
+                      (PQSDK), XMSS (PQSDK)
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">PKCS#11:</span>{' '}
+                    <span className="text-foreground">v3.0 (PQC extensions)</span>
+                  </div>
+                </div>
+                <div className="mt-3 space-y-1 text-xs text-muted-foreground">
+                  <p>
+                    <strong>Upgrade Path:</strong> Firmware + PQSDK v1.2.1+ installation. 1&ndash;2
+                    hours per HSM. FIPS 140-3 re-submission in progress.
+                  </p>
+                  <p>
+                    <strong>Unique Features:</strong> Broadest algorithm support (includes SLH-DSA
+                    and XMSS). Hardware-accelerated PQC. CodeSafe secure execution environment.
+                    Available via PKCS#11, CNG, and JCE interfaces.
+                  </p>
                 </div>
               </div>
-              <div className="mt-3 space-y-1 text-xs text-muted-foreground">
-                <p>
-                  <strong>Upgrade Path:</strong> Firmware + PQSDK v1.2.1+ installation. 1&ndash;2
-                  hours per HSM. FIPS 140-3 re-submission in progress.
-                </p>
-                <p>
-                  <strong>Unique Features:</strong> Broadest algorithm support (includes SLH-DSA and
-                  XMSS). Hardware-accelerated PQC. CodeSafe secure execution environment. Available
-                  via PKCS#11, CNG, and JCE interfaces.
-                </p>
-              </div>
-            </div>
 
-            {/* Utimaco */}
-            <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-sm font-bold text-foreground">
-                  Utimaco SecurityServer Se Gen2 (Quantum Protect)
-                </h4>
-                <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/10 text-success border-success/20">
-                  PRODUCTION
-                </span>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div>
-                  <span className="text-muted-foreground">Firmware:</span>{' '}
-                  <span className="font-mono text-foreground">5.0+ (Q-safe extension)</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">FIPS Status:</span>{' '}
-                  <span className="text-success font-medium">FIPS 140-3 Level 3 (cert #3925)</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">PQC Algorithms:</span>{' '}
-                  <span className="text-foreground">
-                    ML-KEM-512/768/1024, ML-DSA-44/65/87, LMS, XMSS
+              {/* Utimaco */}
+              <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-sm font-bold text-foreground">
+                    Utimaco SecurityServer Se Gen2 (Quantum Protect)
+                  </h4>
+                  <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/10 text-success border-success/20">
+                    PRODUCTION
                   </span>
                 </div>
-                <div>
-                  <span className="text-muted-foreground">PKCS#11:</span>{' '}
-                  <span className="text-foreground">v3.0</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <span className="text-muted-foreground">Firmware:</span>{' '}
+                    <span className="font-mono text-foreground">5.0+ (Q-safe extension)</span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">FIPS Status:</span>{' '}
+                    <span className="text-success font-medium">
+                      FIPS 140-3 Level 3 (cert #3925)
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">PQC Algorithms:</span>{' '}
+                    <span className="text-foreground">
+                      ML-KEM-512/768/1024, ML-DSA-44/65/87, LMS, XMSS
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">PKCS#11:</span>{' '}
+                    <span className="text-foreground">v3.0</span>
+                  </div>
                 </div>
-              </div>
-              <div className="mt-3 space-y-1 text-xs text-muted-foreground">
-                <p>
-                  <strong>Upgrade Path:</strong> Q-safe is a firmware extension (not a full
-                  replacement). 1&ndash;3 hours per HSM. Existing keys preserved.
-                </p>
-                <p>
-                  <strong>Unique Features:</strong> FIPS 140-3 Level 3 (cert #3925). PQC simulator
-                  available for API testing. SLH-DSA on roadmap. PCIe form factor for data center
-                  deployment.
-                </p>
+                <div className="mt-3 space-y-1 text-xs text-muted-foreground">
+                  <p>
+                    <strong>Upgrade Path:</strong> Q-safe is a firmware extension (not a full
+                    replacement). 1&ndash;3 hours per HSM. Existing keys preserved.
+                  </p>
+                  <p>
+                    <strong>Unique Features:</strong> FIPS 140-3 Level 3 (cert #3925). PQC simulator
+                    available for API testing. SLH-DSA on roadmap. PCIe form factor for data center
+                    deployment.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </CollapsibleSection>
+        </CollapsibleSection>
+      </div>
 
       {/* Section 4: Cloud HSM PQC Deep Dive */}
       <CollapsibleSection
@@ -665,76 +674,84 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
       </CollapsibleSection>
 
       {/* Section 6: HSM Firmware Migration */}
-      <CollapsibleSection
-        title="HSM Firmware Migration"
-        icon={<RefreshCw size={24} className="text-primary" />}
-      >
-        <div className="space-y-4 text-sm text-foreground/80">
-          <p>
-            Upgrading HSM firmware to support PQC algorithms requires careful planning. Each vendor
-            has a different upgrade path, complexity, and recertification timeline.
-          </p>
+      <div data-section-id="migration" className="scroll-mt-20">
+        <CollapsibleSection
+          title="HSM Firmware Migration"
+          icon={<RefreshCw size={24} className="text-primary" />}
+        >
+          <div className="space-y-4 text-sm text-foreground/80">
+            <p>
+              Upgrading HSM firmware to support PQC algorithms requires careful planning. Each
+              vendor has a different upgrade path, complexity, and recertification timeline.
+            </p>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left p-2 text-muted-foreground font-medium">Vendor</th>
-                  <th className="text-left p-2 text-muted-foreground font-medium">
-                    Current &rarr; Target
-                  </th>
-                  <th className="text-left p-2 text-muted-foreground font-medium">
-                    Algorithms Added
-                  </th>
-                  <th className="text-center p-2 text-muted-foreground font-medium">Complexity</th>
-                  <th className="text-left p-2 text-muted-foreground font-medium">
-                    Downtime (est.)
-                  </th>
-                  <th className="text-center p-2 text-muted-foreground font-medium">FIPS Recert</th>
-                </tr>
-              </thead>
-              <tbody>
-                {FIRMWARE_UPGRADE_PATHS.map((path) => (
-                  <tr key={path.vendorId} className="border-b border-border/50">
-                    <td className="p-2 text-xs font-bold text-foreground">{path.vendorName}</td>
-                    <td className="p-2 text-xs font-mono text-muted-foreground">
-                      {path.currentFirmware} &rarr; {path.targetFirmware}
-                    </td>
-                    <td className="p-2 text-xs text-foreground">
-                      {path.pqcAlgorithmsAdded.slice(0, 2).join(', ')}
-                      {path.pqcAlgorithmsAdded.length > 2 &&
-                        ` +${path.pqcAlgorithmsAdded.length - 2} more`}
-                    </td>
-                    <td className="p-2 text-center">
-                      <span
-                        className={`text-[10px] px-2 py-0.5 rounded border font-bold ${
-                          path.upgradeComplexity === 'low'
-                            ? 'bg-success/10 text-success border-success/20'
-                            : path.upgradeComplexity === 'medium'
-                              ? 'bg-warning/10 text-warning border-warning/20'
-                              : 'bg-destructive/10 text-destructive border-destructive/20'
-                        }`}
-                      >
-                        {path.upgradeComplexity.toUpperCase()}
-                      </span>
-                    </td>
-                    <td className="p-2 text-xs text-muted-foreground">{path.estimatedDowntime}</td>
-                    <td className="p-2 text-center">
-                      <span className="text-warning text-xs font-bold">Required</span>
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left p-2 text-muted-foreground font-medium">Vendor</th>
+                    <th className="text-left p-2 text-muted-foreground font-medium">
+                      Current &rarr; Target
+                    </th>
+                    <th className="text-left p-2 text-muted-foreground font-medium">
+                      Algorithms Added
+                    </th>
+                    <th className="text-center p-2 text-muted-foreground font-medium">
+                      Complexity
+                    </th>
+                    <th className="text-left p-2 text-muted-foreground font-medium">
+                      Downtime (est.)
+                    </th>
+                    <th className="text-center p-2 text-muted-foreground font-medium">
+                      FIPS Recert
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {FIRMWARE_UPGRADE_PATHS.map((path) => (
+                    <tr key={path.vendorId} className="border-b border-border/50">
+                      <td className="p-2 text-xs font-bold text-foreground">{path.vendorName}</td>
+                      <td className="p-2 text-xs font-mono text-muted-foreground">
+                        {path.currentFirmware} &rarr; {path.targetFirmware}
+                      </td>
+                      <td className="p-2 text-xs text-foreground">
+                        {path.pqcAlgorithmsAdded.slice(0, 2).join(', ')}
+                        {path.pqcAlgorithmsAdded.length > 2 &&
+                          ` +${path.pqcAlgorithmsAdded.length - 2} more`}
+                      </td>
+                      <td className="p-2 text-center">
+                        <span
+                          className={`text-[10px] px-2 py-0.5 rounded border font-bold ${
+                            path.upgradeComplexity === 'low'
+                              ? 'bg-success/10 text-success border-success/20'
+                              : path.upgradeComplexity === 'medium'
+                                ? 'bg-warning/10 text-warning border-warning/20'
+                                : 'bg-destructive/10 text-destructive border-destructive/20'
+                          }`}
+                        >
+                          {path.upgradeComplexity.toUpperCase()}
+                        </span>
+                      </td>
+                      <td className="p-2 text-xs text-muted-foreground">
+                        {path.estimatedDowntime}
+                      </td>
+                      <td className="p-2 text-center">
+                        <span className="text-warning text-xs font-bold">Required</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-          <div className="bg-muted/50 rounded-lg p-3 border border-border text-xs text-muted-foreground">
-            <strong>Note:</strong> Recertification timelines for FIPS 140-3 typically range from
-            12&ndash;24 months. During this period, the HSM firmware operates with PQC algorithms
-            but the formal CMVP certificate has not yet been re-issued.
+            <div className="bg-muted/50 rounded-lg p-3 border border-border text-xs text-muted-foreground">
+              <strong>Note:</strong> Recertification timelines for FIPS 140-3 typically range from
+              12&ndash;24 months. During this period, the HSM firmware operates with PQC algorithms
+              but the formal CMVP certificate has not yet been re-issued.
+            </div>
           </div>
-        </div>
-      </CollapsibleSection>
+        </CollapsibleSection>
+      </div>
 
       {/* Section 7: Stateful Signature State in HSMs */}
       <CollapsibleSection

@@ -109,6 +109,16 @@ export const AssessView: React.FC = () => {
   const recommendedMode = selectedPersona ? PERSONA_RECOMMENDED_MODE[selectedPersona] : null
   const [showResumeBanner, setShowResumeBanner] = useState(false)
 
+  // URL param `?reset=1` clears any prior assessment state. The workshop uses
+  // this so the p-assess walkthrough always starts on a clean wizard regardless
+  // of prior completions, "I'm not sure" toggles, or persisted answers.
+  useEffect(() => {
+    if (searchParams.get('reset') === '1') {
+      reset()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
+
   // URL param `?mode=quick|comprehensive` forces the assessment mode (used by
   // the workshop's deep-link cues so a Quick-mode walkthrough always lands on
   // Quick mode regardless of the user's prior assessment state).

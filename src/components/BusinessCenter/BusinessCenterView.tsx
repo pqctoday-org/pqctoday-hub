@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useCallback, useEffect, useMemo } from 'react'
+import { flushSync } from 'react-dom'
 import {
   LayoutDashboard,
   ClipboardCheck,
@@ -20,10 +21,17 @@ import { usePersonaStore } from '@/store/usePersonaStore'
 import { useWorkshopStore, isWorkshopActive } from '@/store/useWorkshopStore'
 import { getBusinessCenterZoneEmphasis } from '@/data/personaConfig'
 import { useSeedFrameworksFromCountry } from '@/hooks/assessment/useSeedFrameworksFromCountry'
-import { CSWP39_ZONE_ORDER, legacyToZoneId, type ZoneId } from '@/data/cswp39ZoneData'
+import {
+  CSWP39_ZONE_ORDER,
+  CSWP39_ZONE_DETAILS,
+  CSWP39_ZONE_STYLES,
+  legacyToZoneId,
+  type ZoneId,
+} from '@/data/cswp39ZoneData'
 import { useBusinessMetrics } from './hooks/useBusinessMetrics'
 import { TYPE_LABELS } from './ArtifactCard'
 import { CommandCenterStrategicPlan } from './sections/CommandCenterStrategicPlan'
+import { ApplicabilityPanel } from '../applicability/ApplicabilityPanel'
 import { CSWP39SectionsNav } from './sections/CSWP39SectionsNav'
 import { CSWP39ZonePanel } from './sections/CSWP39ZonePanel'
 import { ActionItemsSection } from './sections/ActionItemsSection'
@@ -110,9 +118,9 @@ export function BusinessCenterView() {
     [selectedPersona]
   )
 
-  // Active zone — drives both the diagram highlight and which panel is opened
-  // by default. Falls back to the persona-derived default below.
-  const [activeZone, setActiveZone] = useState<ZoneId | null>(null)
+  // openZone — single source of truth for which zone panel is expanded.
+  // Initialised to the persona-derived default; user nav/toggle overrides it.
+  const [openZone, setOpenZone] = useState<ZoneId | null>(() => zoneEmphasis.defaultActiveZone)
   const [searchParams] = useSearchParams()
 
   // ?zone=<id> deep-link (used by the Workshop Video Mode and external links).
@@ -146,7 +154,7 @@ export function BusinessCenterView() {
       const target = document.getElementById(`zone-${zoneId}`)
       if (target) {
         window.history.replaceState(null, '', `#zone-${zoneId}`)
-        setActiveZone(zoneId)
+        setOpenZone(zoneId)
         target.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }
     }
@@ -156,12 +164,21 @@ export function BusinessCenterView() {
   }, [])
 
   const handleZoneSelect = useCallback((zone: ZoneId) => {
-    setActiveZone(zone)
+    // flushSync ensures the panel expand/collapse is committed before we
+    // measure scroll position — otherwise scrollIntoView uses stale layout
+    // and the new panel ends up off-target after the re-render.
+    flushSync(() => {
+      setOpenZone(zone)
+    })
     const target = document.getElementById(`zone-${zone}`)
     if (target) {
       window.history.replaceState(null, '', `#zone-${zone}`)
       target.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
+  }, [])
+
+  const handleZoneToggle = useCallback((zone: ZoneId) => {
+    setOpenZone((prev) => (prev === zone ? null : zone))
   }, [])
 
   // Filter state
@@ -257,9 +274,8 @@ export function BusinessCenterView() {
   const allFeaturedArtifacts: ExecutiveDocumentType[] = Object.values(
     zoneEmphasis.featuredArtifacts
   ).flatMap((arr) => arr ?? [])
-  // Default the diagram + first-open panel to the persona's preferred zone.
-  // ?zone=<id> wins over user click (which wins over persona default).
-  const effectiveActiveZone = zoneFromQuery ?? activeZone ?? zoneEmphasis.defaultActiveZone
+  // ?zone=<id> deep-link wins over user selection.
+  const effectiveOpenZone: ZoneId | null = zoneFromQuery ?? openZone
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6" data-testid="bc-dashboard-ready">
@@ -328,28 +344,108 @@ export function BusinessCenterView() {
           {/* Top cross-cut: Action Items strip */}
           <ActionItemsSection metrics={metrics} />
 
+          {/* What applies to your profile — drives prioritization across the strategic plan */}
+          <ApplicabilityPanel variant="summary-card" />
+
           {/* NIST CSWP.39 — by document section (§3 / §4 / §5 / §6) */}
           <CSWP39SectionsNav onZoneSelect={handleZoneSelect} />
 
           {/* CSWP.39 Fig 3 — Crypto Agility Strategic Plan (primary nav) */}
           <CommandCenterStrategicPlan
             metrics={metrics}
-            activeZone={effectiveActiveZone}
+            activeZone={effectiveOpenZone}
             onZoneSelect={handleZoneSelect}
           />
 
-          {/* Per-zone artifact panels — fixed Fig 3 order */}
-          <div className="space-y-3">
-            {CSWP39_ZONE_ORDER.map((zone) => (
-              <CSWP39ZonePanel
-                key={zone}
-                zone={zone}
-                metrics={metrics}
-                defaultOpen={zone === effectiveActiveZone}
-                featuredArtifacts={allFeaturedArtifacts}
-                {...zoneCallbacks}
-              />
-            ))}
+          {/* Per-zone artifact panels — left sidebar nav (desktop) + scrollable tab bar (mobile) */}
+          <div>
+            {/* Mobile: horizontal scrollable zone tab bar */}
+            <div className="flex md:hidden gap-1 overflow-x-auto pb-2 -mx-4 px-4 mb-3">
+              {CSWP39_ZONE_ORDER.map((zone) => {
+                // eslint-disable-next-line security/detect-object-injection
+                const detail = CSWP39_ZONE_DETAILS[zone]
+                // eslint-disable-next-line security/detect-object-injection
+                const style = CSWP39_ZONE_STYLES[zone]
+                const isActive = zone === effectiveOpenZone
+                return (
+                  <Button
+                    key={zone}
+                    variant="ghost"
+                    onClick={() => handleZoneSelect(zone)}
+                    className={`shrink-0 h-7 px-2.5 text-[10px] font-semibold rounded-md border transition-colors ${
+                      isActive
+                        ? `${style.activeBg} ${style.text} ${style.border}`
+                        : 'border-border text-muted-foreground'
+                    }`}
+                  >
+                    {detail.title}
+                  </Button>
+                )
+              })}
+            </div>
+
+            {/* Desktop: two-column layout — sticky left nav + zone panels */}
+            <div className="flex items-start gap-5">
+              {/* Left sidebar — desktop only */}
+              <aside className="hidden md:flex flex-col gap-1 w-72 shrink-0 sticky top-6 self-start">
+                <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest px-3 mb-1">
+                  Zones
+                </div>
+                {CSWP39_ZONE_ORDER.map((zone) => {
+                  // eslint-disable-next-line security/detect-object-injection
+                  const detail = CSWP39_ZONE_DETAILS[zone]
+                  // eslint-disable-next-line security/detect-object-injection
+                  const style = CSWP39_ZONE_STYLES[zone]
+                  const isActive = zone === effectiveOpenZone
+                  return (
+                    <Button
+                      key={zone}
+                      variant="ghost"
+                      onClick={() => handleZoneSelect(zone)}
+                      className={`w-full h-auto justify-start p-0 rounded-lg border transition-colors ${
+                        isActive
+                          ? `${style.bg} ${style.border}`
+                          : 'border-transparent hover:bg-muted/40'
+                      }`}
+                    >
+                      <div className="flex items-start gap-2.5 px-3 py-2.5 w-full text-left">
+                        <div
+                          className={`w-0.5 min-h-full self-stretch rounded-full mt-0.5 shrink-0 ${
+                            isActive ? style.activeBg : 'bg-border'
+                          }`}
+                          aria-hidden
+                        />
+                        <div className="min-w-0">
+                          <div
+                            className={`text-xs font-semibold mb-0.5 ${isActive ? style.text : 'text-foreground'}`}
+                          >
+                            {detail.title}
+                          </div>
+                          <p className="text-[11px] text-muted-foreground line-clamp-3 leading-relaxed">
+                            {detail.what}
+                          </p>
+                        </div>
+                      </div>
+                    </Button>
+                  )
+                })}
+              </aside>
+
+              {/* Zone panels */}
+              <div className="flex-1 min-w-0 space-y-3">
+                {CSWP39_ZONE_ORDER.map((zone) => (
+                  <CSWP39ZonePanel
+                    key={zone}
+                    zone={zone}
+                    metrics={metrics}
+                    open={zone === effectiveOpenZone}
+                    onToggle={() => handleZoneToggle(zone)}
+                    featuredArtifacts={allFeaturedArtifacts}
+                    {...zoneCallbacks}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Bottom cross-cut: learning bar */}

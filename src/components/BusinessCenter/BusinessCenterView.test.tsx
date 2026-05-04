@@ -158,6 +158,7 @@ vi.mock('../../hooks/assessmentUtils', () => ({
 // Mock data loaders
 vi.mock('../../data/complianceData', () => ({
   complianceFrameworks: [],
+  complianceDB: {},
 }))
 
 vi.mock('../../data/migrateData', () => ({

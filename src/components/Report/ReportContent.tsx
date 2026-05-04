@@ -37,6 +37,7 @@ import {
 import type { ReportSectionId, ReportCTA } from '../../data/personaConfig'
 import { PERSONAS } from '../../data/learningPersonas'
 import { complianceFrameworks } from '../../data/complianceData'
+import { ApplicabilityPanel } from '../applicability/ApplicabilityPanel'
 import { softwareData } from '../../data/migrateData'
 import { ReportTimelineStrip } from './ReportTimelineStrip'
 import { ReportThreatsAppendix, ASSESS_TO_THREATS_INDUSTRY } from './ReportThreatsAppendix'
@@ -1270,6 +1271,16 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                               <ArrowRight size={12} />
                               Explore all compliance frameworks
                             </Link>
+                          </div>
+                          <div className="mt-4 pt-4 border-t border-border">
+                            <h4 className="text-sm font-semibold text-foreground mb-2">
+                              Profile-driven applicability
+                            </h4>
+                            <p className="text-xs text-muted-foreground mb-3">
+                              Frameworks, threats, library docs, and milestones the engine
+                              identifies as applicable to your industry and country.
+                            </p>
+                            <ApplicabilityPanel variant="report-section" />
                           </div>
                         </CollapsibleSection>
                       )}

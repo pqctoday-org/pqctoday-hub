@@ -161,6 +161,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
               step={5}
               value={timeMinutes}
               onChange={(e) => setTimeMinutes(Number(e.target.value))}
+              data-workshop-target="quiz-duration-slider"
               className="w-full accent-primary h-2 rounded-lg cursor-pointer"
               aria-label="Quiz duration in minutes"
               aria-valuemin={5}
@@ -184,7 +185,12 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
               Quick Pick (5 min)
             </Button>
             <div className="flex-grow" />
-            <Button variant="gradient" onClick={handleStartTimed} data-action="start-quiz-timed">
+            <Button
+              variant="gradient"
+              onClick={handleStartTimed}
+              data-action="start-quiz-timed"
+              data-workshop-target="quiz-start-timed"
+            >
               Start Quiz
             </Button>
           </div>
@@ -192,7 +198,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
       </div>
 
       {/* Difficulty filter */}
-      <div>
+      <div data-workshop-target="quiz-difficulty-row">
         <h3 className="text-sm font-bold text-foreground uppercase tracking-wider mb-3">
           Difficulty
         </h3>
@@ -204,6 +210,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
                 variant="ghost"
                 key={opt.id}
                 onClick={() => onToggleDifficulty(opt.id)}
+                data-workshop-target={`quiz-difficulty-${opt.id}`}
                 className={clsx(
                   'px-4 py-2 rounded-full text-sm font-medium transition-all border',
                   isActive
@@ -219,7 +226,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
       </div>
 
       {/* Topic selection */}
-      <div>
+      <div data-workshop-target="quiz-topic-grid">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-bold text-foreground uppercase tracking-wider">
             {initialCategories && initialCategories.length > 0
@@ -253,6 +260,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
               variant="gradient"
               onClick={handleStartCategory}
               data-action="start-quiz-category"
+              data-workshop-target="quiz-start-category"
             >
               <Brain size={16} className="mr-2" />
               Start Quiz

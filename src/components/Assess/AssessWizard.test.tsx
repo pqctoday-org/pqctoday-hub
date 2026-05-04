@@ -536,12 +536,11 @@ describe('AssessWizard', () => {
       mockStore.currentStep = 4
     })
 
-    it('renders compliance framework options grouped by bodyType', () => {
+    it('renders compliance framework options grouped by tier', () => {
       render(<AssessWizard onComplete={onComplete} />)
       expect(screen.getByText(/Which compliance frameworks/)).toBeInTheDocument()
-      // Frameworks grouped by bodyType — certification schemes and compliance frameworks visible
-      expect(screen.getByRole('group', { name: 'Certification Schemes' })).toBeInTheDocument()
-      expect(screen.getByRole('group', { name: 'Compliance Frameworks' })).toBeInTheDocument()
+      // Empty profile → all frameworks shown as Advisory (no industry/country to tier-classify)
+      expect(screen.getByRole('group', { name: 'Advisory' })).toBeInTheDocument()
     })
 
     it('calls toggleCompliance when a framework is clicked', () => {
@@ -658,11 +657,11 @@ describe('AssessWizard', () => {
   })
 
   describe('step 5: compliance — industry-aware', () => {
-    it('renders frameworks grouped by bodyType when industry is Other', () => {
+    it('renders frameworks grouped by tier when industry is Other', () => {
       mockStore.currentStep = 4
       mockStore.industry = 'Other'
       render(<AssessWizard onComplete={onComplete} />)
-      // All frameworks visible (universal) grouped by bodyType
+      // Frameworks that match 'Other' (or universal) are shown grouped by tier
       expect(screen.getByText('FIPS 140-3')).toBeInTheDocument()
       expect(screen.getByText('SOC 2')).toBeInTheDocument()
     })

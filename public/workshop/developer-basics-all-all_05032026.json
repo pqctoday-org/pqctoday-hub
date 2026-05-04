@@ -1,0 +1,2017 @@
+{
+  "id": "developer-basics-all-all-v1",
+  "title": "Developer PQC Workshop — All Industries, All Regions",
+  "match": {
+    "roles": ["developer"],
+    "proficiencies": ["basics", "expert"],
+    "industries": "*",
+    "regions": "*"
+  },
+  "whatToExpect": [
+    "Hands-on tour of the algorithms, libraries, and migration patterns developers need",
+    "Module walkthroughs for PQC primer, hybrid crypto, crypto agility, TLS, dev APIs, code signing",
+    "Page tours for /algorithms, /playground, /migrate — the developer's working surfaces",
+    "~55 minutes at normal speed"
+  ],
+  "totalEstMinutes": 50,
+  "intro": {
+    "id": "intro",
+    "title": "Welcome",
+    "estMinutes": 3,
+    "steps": [
+      {
+        "id": "intro-01-welcome",
+        "chapter": "intro",
+        "title": "What you will leave with",
+        "estMinutes": 3,
+        "whyItMatters": "A clear shortlist of libraries, APIs, and migration patterns to start prototyping in your codebase tomorrow.",
+        "page": {
+          "route": "/"
+        },
+        "tasks": ["Skim what the workshop covers", "Confirm developer persona is set"],
+        "expectedOutput": "A working list of PQC libraries to evaluate, with hands-on demo experience.",
+        "narration": "This workshop walks you from the post-quantum primer through the developer-relevant modules and the three pages you will use most: /algorithms, /playground, and /migrate. By the end you will have run an interactive ML-KEM demo, identified a library shortlist for your stack, and understood the migration patterns (crypto agility, hybrid handshakes) you need to design into new code today.",
+        "cues": [
+          {
+            "tMs": 0,
+            "kind": "navigate",
+            "route": "/"
+          },
+          {
+            "tMs": 1500,
+            "kind": "caption",
+            "text": "Developer workshop — algorithms, libraries, hands-on demos, migration patterns."
+          },
+          {
+            "tMs": 180000,
+            "kind": "advance"
+          }
+        ]
+      }
+    ]
+  },
+  "prerequisites": {
+    "id": "prereq",
+    "title": "Prerequisites",
+    "estMinutes": 2,
+    "steps": [
+      {
+        "id": "prereq-01-persona",
+        "chapter": "prereq",
+        "title": "Confirm developer persona",
+        "estMinutes": 2,
+        "whyItMatters": "The persona drives every recommendation, deep link, and module visibility.",
+        "page": {
+          "route": "/"
+        },
+        "tasks": ["Confirm role = Developer", "Confirm proficiency = Beginner or Expert"],
+        "expectedOutput": "Persona context locked to Developer.",
+        "narration": "The persona context drives every recommendation across the platform — set it before starting any flow.",
+        "cues": [
+          {
+            "tMs": 0,
+            "kind": "navigate",
+            "route": "/"
+          },
+          {
+            "tMs": 1000,
+            "kind": "scroll-to",
+            "selector": "#personalization-section"
+          },
+          {
+            "tMs": 1500,
+            "kind": "caption",
+            "text": "Persona definition — four picks shape every page. Developer drives this flow."
+          },
+          {
+            "tMs": 5000,
+            "kind": "click",
+            "selector": "[data-workshop-target=\"persona-edit\"]"
+          },
+          {
+            "tMs": 5500,
+            "kind": "caption",
+            "text": "Opening the persona wizard."
+          },
+          {
+            "tMs": 8000,
+            "kind": "caption",
+            "text": "Step 1 — Track. Technical track unlocks developer, architect, ops, and researcher roles."
+          },
+          {
+            "tMs": 10000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target^=\"persona-track-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 14000,
+            "kind": "click",
+            "selector": "[data-workshop-target^=\"persona-track-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 16000,
+            "kind": "caption",
+            "text": "Step 2 — Role. Developer surfaces the modules and tools tuned to your job."
+          },
+          {
+            "tMs": 18000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target^=\"persona-role-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 22000,
+            "kind": "callout",
+            "selector": "[data-workshop-target^=\"persona-role-\"][aria-pressed=\"true\"]",
+            "label": "Developer — pre-selected for this flow"
+          },
+          {
+            "tMs": 30000,
+            "kind": "click",
+            "selector": "[data-workshop-target^=\"persona-role-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 32000,
+            "kind": "caption",
+            "text": "Step 3 — Region. Filters timeline, leaders, threats and compliance to your jurisdiction."
+          },
+          {
+            "tMs": 34000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target^=\"persona-region-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 42000,
+            "kind": "click",
+            "selector": "[data-workshop-target=\"persona-wizard-next\"]"
+          },
+          {
+            "tMs": 44000,
+            "kind": "caption",
+            "text": "Step 4 — Industry. Surfaces industry-specific threats, frameworks and vendors."
+          },
+          {
+            "tMs": 46000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target^=\"persona-industry-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 56000,
+            "kind": "click",
+            "selector": "[data-workshop-target=\"persona-wizard-done\"]"
+          },
+          {
+            "tMs": 57000,
+            "kind": "caption",
+            "text": "These four facets shape every workshop step. Change any one to re-personalize."
+          },
+          {
+            "tMs": 120000,
+            "kind": "advance"
+          }
+        ]
+      }
+    ]
+  },
+  "common": [
+    {
+      "id": "foundations",
+      "title": "Foundations",
+      "estMinutes": 40,
+      "steps": [
+        {
+          "id": "f-mod-dev-quantum-impact",
+          "chapter": "foundations",
+          "title": "Developer Quantum Impact",
+          "estMinutes": 3,
+          "whyItMatters": "What changes for the code you write — APIs, key sizes, latency, library availability.",
+          "page": {
+            "route": "/learn/dev-quantum-impact"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on Developer Quantum Impact",
+          "narration": "A developer-focused tour of which APIs change, where new key/sig sizes appear in your protocols, and how to evaluate library readiness today.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "dev-quantum-impact",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/dev-quantum-impact"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Developer Quantum Impact — What changes for the code you write — APIs, key sizes, latency, library availability."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"why-it-matters\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/3: Why It Matters: Developer Quantum Exposure"
+            },
+            {
+              "tMs": 23133,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"what-to-learn\"]"
+            },
+            {
+              "tMs": 23333,
+              "kind": "caption",
+              "text": "Section 2/3: What to Learn: Knowledge & Skills Gap"
+            },
+            {
+              "tMs": 40466,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"how-to-act\"]"
+            },
+            {
+              "tMs": 40666,
+              "kind": "caption",
+              "text": "Section 3/3: How to Act: Phased Action Plan"
+            },
+            {
+              "tMs": 57999,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59499,
+              "kind": "caption",
+              "text": "Hands-on 1/4: Why It Matters"
+            },
+            {
+              "tMs": 70549,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 72499,
+              "kind": "caption",
+              "text": "Hands-on 2/4: What to Learn"
+            },
+            {
+              "tMs": 83549,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 85499,
+              "kind": "caption",
+              "text": "Hands-on 3/4: How to Act"
+            },
+            {
+              "tMs": 96549,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 98499,
+              "kind": "caption",
+              "text": "Hands-on 4/4: Skill Self-Assessment"
+            },
+            {
+              "tMs": 111999,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113499,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128749,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130249,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145499,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 146999,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162249,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163749,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-pqc-101",
+          "chapter": "foundations",
+          "title": "PQC 101",
+          "estMinutes": 3,
+          "whyItMatters": "The algorithm primer — what is being replaced, what is replacing it, what the names mean.",
+          "page": {
+            "route": "/learn/pqc-101"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on PQC 101",
+          "narration": "A plain-language introduction to post-quantum cryptography — the threat, the NIST algorithm picks, and what your code needs to support.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "pqc-101",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/pqc-101"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "PQC 101 — The algorithm primer — what is being replaced, what is replacing it, what the names mean."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"quantum-threat\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/5: The Quantum Threat to Cryptography"
+            },
+            {
+              "tMs": 16100,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 16400,
+              "kind": "caption",
+              "text": "Section 2/5: NIST-Selected PQC Algorithms"
+            },
+            {
+              "tMs": 26500,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 26800,
+              "kind": "caption",
+              "text": "Section 3/5: Global Migration Timeline"
+            },
+            {
+              "tMs": 36900,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 37200,
+              "kind": "caption",
+              "text": "Section 4/5: Organizational Readiness"
+            },
+            {
+              "tMs": 47300,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 47600,
+              "kind": "caption",
+              "text": "Section 5/5: Your Next Steps"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Hands-on 1/4: Algorithm Families"
+            },
+            {
+              "tMs": 70550,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 72500,
+              "kind": "caption",
+              "text": "Hands-on 2/4: Algorithm Comparison"
+            },
+            {
+              "tMs": 83550,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 85500,
+              "kind": "caption",
+              "text": "Hands-on 3/4: Key Generation"
+            },
+            {
+              "tMs": 96550,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 98500,
+              "kind": "caption",
+              "text": "Hands-on 4/4: Signature Demo"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-quantum-threats",
+          "chapter": "foundations",
+          "title": "Quantum Threats",
+          "estMinutes": 3,
+          "whyItMatters": "Shor and Grover — the two algorithms that motivate every line of PQC code you'll write.",
+          "page": {
+            "route": "/learn/quantum-threats"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on Quantum Threats",
+          "narration": "Shor's and Grover's algorithms drive the entire PQC effort. Understanding them helps you reason about which protocols need replacement and which just need bigger keys.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "quantum-threats",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/quantum-threats"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Quantum Threats — Shor and Grover — the two algorithms that motivate every line of PQC code you'll write."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"crqc\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/3: CRQC Timeline & Harvest Now Decrypt Later"
+            },
+            {
+              "tMs": 23133,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"hndl\"]"
+            },
+            {
+              "tMs": 23333,
+              "kind": "caption",
+              "text": "Section 2/3: HNDL/HNFL Risk Windows & Prioritization"
+            },
+            {
+              "tMs": 40466,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"security-levels\"]"
+            },
+            {
+              "tMs": 40666,
+              "kind": "caption",
+              "text": "Section 3/3: Post-Quantum Security Levels"
+            },
+            {
+              "tMs": 57999,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59499,
+              "kind": "caption",
+              "text": "Hands-on 1/5: Security Level Degradation"
+            },
+            {
+              "tMs": 68339,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69899,
+              "kind": "caption",
+              "text": "Hands-on 2/5: Vulnerability Matrix"
+            },
+            {
+              "tMs": 78739,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80299,
+              "kind": "caption",
+              "text": "Hands-on 3/5: Key Size Analyzer"
+            },
+            {
+              "tMs": 89139,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90699,
+              "kind": "caption",
+              "text": "Hands-on 4/5: HNDL Timeline"
+            },
+            {
+              "tMs": 99539,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101099,
+              "kind": "caption",
+              "text": "Hands-on 5/5: HNFL Risk Calculator"
+            },
+            {
+              "tMs": 111999,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113499,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128749,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130249,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145499,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 146999,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162249,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163749,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-entropy-randomness",
+          "chapter": "foundations",
+          "title": "Entropy & Randomness",
+          "estMinutes": 3,
+          "whyItMatters": "Every PQC algorithm depends on quality randomness — and your DRBG choice still matters.",
+          "page": {
+            "route": "/learn/entropy-randomness"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on Entropy & Randomness",
+          "narration": "PQC keys are bigger and need more entropy. NIST SP 800-90 DRBG selection, entropy sources, and how to verify your runtime gives you safe randomness.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "entropy-randomness",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/entropy-randomness"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Entropy & Randomness — Every PQC algorithm depends on quality randomness — and your DRBG choice still matters."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"entropy\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/5: Entropy Sources & Collection"
+            },
+            {
+              "tMs": 16200,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"drbg\"]"
+            },
+            {
+              "tMs": 16400,
+              "kind": "caption",
+              "text": "Section 2/5: NIST SP 800-90 DRBG Mechanisms"
+            },
+            {
+              "tMs": 26600,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"testing\"]"
+            },
+            {
+              "tMs": 26800,
+              "kind": "caption",
+              "text": "Section 3/5: Entropy Testing (SP 800-90B)"
+            },
+            {
+              "tMs": 37000,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"qrng\"]"
+            },
+            {
+              "tMs": 37200,
+              "kind": "caption",
+              "text": "Section 4/5: TRNG vs QRNG Comparison"
+            },
+            {
+              "tMs": 47400,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"combining\"]"
+            },
+            {
+              "tMs": 47600,
+              "kind": "caption",
+              "text": "Section 5/5: Defense-in-Depth: Combining Sources"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Hands-on 1/5: Random Byte Generation"
+            },
+            {
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Hands-on 2/5: Entropy Testing"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Hands-on 3/5: ESV Validation Walkthrough"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Hands-on 4/5: QRNG Exploration"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Hands-on 5/5: Combining Sources"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-hybrid-crypto",
+          "chapter": "foundations",
+          "title": "Hybrid Cryptography",
+          "estMinutes": 3,
+          "whyItMatters": "KEM combiners and composite signatures — the migration bridge between classical and PQC.",
+          "page": {
+            "route": "/learn/hybrid-crypto"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on Hybrid Cryptography",
+          "narration": "Hybrid cryptography combines classical and PQC algorithms so neither failing alone breaks security. The KEM combiner standard, composite signature formats, and certificate carrying both keys.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "hybrid-crypto",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/hybrid-crypto"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Hybrid Cryptography — KEM combiners and composite signatures — the migration bridge between classical and PQC."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"why-hybrid\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/4: Why Hybrid Cryptography?"
+            },
+            {
+              "tMs": 16200,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"cert-formats\"]"
+            },
+            {
+              "tMs": 16400,
+              "kind": "caption",
+              "text": "Section 2/4: Hybrid Certificate Formats"
+            },
+            {
+              "tMs": 26600,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"kem\"]"
+            },
+            {
+              "tMs": 26800,
+              "kind": "caption",
+              "text": "Section 3/4: Hybrid KEM Construction"
+            },
+            {
+              "tMs": 37000,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"composite\"]"
+            },
+            {
+              "tMs": 37200,
+              "kind": "caption",
+              "text": "Section 4/4: Hybrid Signature Spectrum"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Hands-on 1/5: Key Generation"
+            },
+            {
+              "tMs": 68340,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 69900,
+              "kind": "caption",
+              "text": "Hands-on 2/5: Encrypt & Sign"
+            },
+            {
+              "tMs": 78740,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80300,
+              "kind": "caption",
+              "text": "Hands-on 3/5: CA Setup"
+            },
+            {
+              "tMs": 89140,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 90700,
+              "kind": "caption",
+              "text": "Hands-on 4/5: Hybrid Formats"
+            },
+            {
+              "tMs": 99540,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101100,
+              "kind": "caption",
+              "text": "Hands-on 5/5: Inspect & Compare"
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128750,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130250,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162250,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163750,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-crypto-agility",
+          "chapter": "foundations",
+          "title": "Crypto Agility",
+          "estMinutes": 3,
+          "whyItMatters": "Abstraction layers, CBOM, and the migration patterns to build in once and survive every algorithm rotation.",
+          "page": {
+            "route": "/learn/crypto-agility"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on Crypto Agility",
+          "narration": "Crypto agility is the design principle for code that survives algorithm changes — abstraction layers, CBOM (Crypto Bill of Materials), and the runtime-vs-compile-time tradeoffs that determine your migration speed.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "crypto-agility",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/crypto-agility"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Crypto Agility — Abstraction layers, CBOM, and the migration patterns to build in once and survive every algorithm rotation."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"abstraction\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/3: Crypto Abstraction Layers"
+            },
+            {
+              "tMs": 23133,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"cbom\"]"
+            },
+            {
+              "tMs": 23333,
+              "kind": "caption",
+              "text": "Section 2/3: Cryptographic Bill of Materials (CBOM)"
+            },
+            {
+              "tMs": 40466,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"migration\"]"
+            },
+            {
+              "tMs": 40666,
+              "kind": "caption",
+              "text": "Section 3/3: 7-Phase Migration Framework"
+            },
+            {
+              "tMs": 57999,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59499,
+              "kind": "caption",
+              "text": "Hands-on 1/4: Abstraction Layer"
+            },
+            {
+              "tMs": 70549,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 72499,
+              "kind": "caption",
+              "text": "Hands-on 2/4: CBOM Scanner"
+            },
+            {
+              "tMs": 83549,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 85499,
+              "kind": "caption",
+              "text": "Hands-on 3/4: Migration Planning"
+            },
+            {
+              "tMs": 96549,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 98499,
+              "kind": "caption",
+              "text": "Hands-on 4/4: Agility Readiness Assessment"
+            },
+            {
+              "tMs": 111999,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 113499,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 128749,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130249,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 145499,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 146999,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162249,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 163749,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-tls-basics",
+          "chapter": "foundations",
+          "title": "TLS Basics",
+          "estMinutes": 3,
+          "whyItMatters": "TLS handshake, certificate chain, cipher suites — the protocol every developer touches first.",
+          "page": {
+            "route": "/learn/tls-basics"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on TLS Basics",
+          "narration": "TLS is where most developers will see PQC first. The handshake, how certificates carry algorithm choices, and the new hybrid TLS 1.3 cipher suites with X25519MLKEM768.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "tls-basics",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/tls-basics"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "TLS Basics — TLS handshake, certificate chain, cipher suites — the protocol every developer touches first."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"handshake\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/4: TLS 1.3 Handshake Deep Dive"
+            },
+            {
+              "tMs": 18800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"certificates\"]"
+            },
+            {
+              "tMs": 19000,
+              "kind": "caption",
+              "text": "Section 2/4: Certificate Chains & Trust Anchors"
+            },
+            {
+              "tMs": 31800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"ciphers\"]"
+            },
+            {
+              "tMs": 32000,
+              "kind": "caption",
+              "text": "Section 3/4: Cipher Suites & Key Exchange"
+            },
+            {
+              "tMs": 44800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"pqc-tls\"]"
+            },
+            {
+              "tMs": 45000,
+              "kind": "caption",
+              "text": "Section 4/4: PQC in TLS & Hybrid Modes"
+            },
+            {
+              "tMs": 58000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 59500,
+              "kind": "caption",
+              "text": "Workshop tab — hands-on, in-browser crypto demos."
+            },
+            {
+              "tMs": 112000,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 113500,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 134333,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 135833,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 156666,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 158166,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-crypto-dev-apis",
+          "chapter": "foundations",
+          "title": "Crypto Developer APIs",
+          "estMinutes": 3,
+          "whyItMatters": "Web Crypto, JCA, OpenSSL EVP, BoringSSL, libsodium — the API surfaces that need PQC.",
+          "page": {
+            "route": "/learn/crypto-dev-apis"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on Crypto Developer APIs",
+          "narration": "The API surfaces developers use — Web Crypto, Java JCA, OpenSSL's EVP_PKEY interfaces, BoringSSL — and where PQC support lands first in each.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "crypto-dev-apis",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/crypto-dev-apis"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Crypto developer APIs. Web Crypto in the browser. The Java JCA. OpenSSL EVP. BoringSSL and libsodium. These are the API surfaces that need post-quantum support."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"landscape\"]"
+            },
+            {
+              "tMs": 6500,
+              "kind": "caption",
+              "text": "Section 1/10: The Crypto API Landscape"
+            },
+            {
+              "tMs": 11500,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"principles\"]"
+            },
+            {
+              "tMs": 11700,
+              "kind": "caption",
+              "text": "Section 2/10: Common Principles Across All APIs"
+            },
+            {
+              "tMs": 16700,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"jca-bc\"]"
+            },
+            {
+              "tMs": 16900,
+              "kind": "caption",
+              "text": "Section 3/10: JCA/JCE & Bouncy Castle"
+            },
+            {
+              "tMs": 21900,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"openssl\"]"
+            },
+            {
+              "tMs": 22100,
+              "kind": "caption",
+              "text": "Section 4/10: OpenSSL & libcrypto"
+            },
+            {
+              "tMs": 27100,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"pkcs11\"]"
+            },
+            {
+              "tMs": 27300,
+              "kind": "caption",
+              "text": "Section 5/10: PKCS#11 — Hardware Abstraction"
+            },
+            {
+              "tMs": 32300,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"cng\"]"
+            },
+            {
+              "tMs": 32500,
+              "kind": "caption",
+              "text": "Section 6/10: KSP & Windows CNG"
+            },
+            {
+              "tMs": 37500,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"build-buy\"]"
+            },
+            {
+              "tMs": 37700,
+              "kind": "caption",
+              "text": "Section 7/10: Build vs Buy vs Open Source"
+            },
+            {
+              "tMs": 42700,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"pqc-libs\"]"
+            },
+            {
+              "tMs": 42900,
+              "kind": "caption",
+              "text": "Section 8/10: Open-Source PQC Libraries"
+            },
+            {
+              "tMs": 47900,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"languages\"]"
+            },
+            {
+              "tMs": 48100,
+              "kind": "caption",
+              "text": "Section 9/10: Language Ecosystem Overview"
+            },
+            {
+              "tMs": 53100,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"pqc-roadmap\"]"
+            },
+            {
+              "tMs": 53300,
+              "kind": "caption",
+              "text": "Section 10/10: PQC Readiness & Roadmap"
+            },
+            {
+              "tMs": 58500,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "Hands-on 1/8: API Architecture Explorer"
+            },
+            {
+              "tMs": 65525,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 66500,
+              "kind": "caption",
+              "text": "Hands-on 2/8: Language Ecosystem Comparator"
+            },
+            {
+              "tMs": 72025,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 73000,
+              "kind": "caption",
+              "text": "Hands-on 3/8: Provider Pattern Workshop"
+            },
+            {
+              "tMs": 78525,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 79500,
+              "kind": "caption",
+              "text": "Hands-on 4/8: Build vs Buy vs Open Source"
+            },
+            {
+              "tMs": 85025,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 86000,
+              "kind": "caption",
+              "text": "Hands-on 5/8: PQC Library Explorer"
+            },
+            {
+              "tMs": 91525,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 92500,
+              "kind": "caption",
+              "text": "Hands-on 6/8: PQC Support Matrix"
+            },
+            {
+              "tMs": 98025,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 99000,
+              "kind": "caption",
+              "text": "Hands-on 7/8: Crypto Agility Patterns"
+            },
+            {
+              "tMs": 104525,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 105500,
+              "kind": "caption",
+              "text": "Hands-on 8/8: Migration Decision Lab"
+            },
+            {
+              "tMs": 112500,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 114000,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 129250,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130750,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 146000,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147500,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162750,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 164250,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180500,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-code-signing",
+          "chapter": "foundations",
+          "title": "Code Signing",
+          "estMinutes": 3,
+          "whyItMatters": "Signing artifacts, container images, and OS packages — where ML-DSA and SLH-DSA replace RSA/ECDSA.",
+          "page": {
+            "route": "/learn/code-signing"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Glance at the Workshop demo",
+            "Note Reference standards"
+          ],
+          "expectedOutput": "Module-level talking points on Code Signing",
+          "narration": "Code signing pipelines are an early PQC adopter — sigstore, container image signing, package signing all need ML-DSA or SLH-DSA replacements for long-lived signatures.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "code-signing",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/code-signing"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Code signing. Signing artifacts, container images, and operating system packages. This is where M L D S A and S L H D S A replace RSA and ECDSA."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"classical\"]"
+            },
+            {
+              "tMs": 6500,
+              "kind": "caption",
+              "text": "Section 1/4: Classical vs PQC Code Signing"
+            },
+            {
+              "tMs": 27100,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"packages\"]"
+            },
+            {
+              "tMs": 27300,
+              "kind": "caption",
+              "text": "Section 2/4: Package Signing & Verification (RPM/APT)"
+            },
+            {
+              "tMs": 37500,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"sigstore\"]"
+            },
+            {
+              "tMs": 37700,
+              "kind": "caption",
+              "text": "Section 3/4: Sigstore Keyless Signing"
+            },
+            {
+              "tMs": 47900,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"secure-boot\"]"
+            },
+            {
+              "tMs": 48100,
+              "kind": "caption",
+              "text": "Section 4/4: Secure Boot & Firmware Trust Chains"
+            },
+            {
+              "tMs": 58500,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "Hands-on 1/5: Binary Signing"
+            },
+            {
+              "tMs": 68840,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 70400,
+              "kind": "caption",
+              "text": "Hands-on 2/5: Certificate Chain"
+            },
+            {
+              "tMs": 79240,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 80800,
+              "kind": "caption",
+              "text": "Hands-on 3/5: Package Signing"
+            },
+            {
+              "tMs": 89640,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 91200,
+              "kind": "caption",
+              "text": "Hands-on 4/5: Sigstore Flow"
+            },
+            {
+              "tMs": 100040,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 101600,
+              "kind": "caption",
+              "text": "Hands-on 5/5: Secure Boot Chain"
+            },
+            {
+              "tMs": 112500,
+              "kind": "select-tab",
+              "tabName": "Visual"
+            },
+            {
+              "tMs": 114000,
+              "kind": "caption",
+              "text": "Visual tab — diagrams and animations for this topic."
+            },
+            {
+              "tMs": 129250,
+              "kind": "select-tab",
+              "tabName": "Exercises"
+            },
+            {
+              "tMs": 130750,
+              "kind": "caption",
+              "text": "Exercises — short knowledge checks to confirm you got it."
+            },
+            {
+              "tMs": 146000,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 147500,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 162750,
+              "kind": "select-tab",
+              "tabName": "Tools & Products"
+            },
+            {
+              "tMs": 164250,
+              "kind": "caption",
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
+            },
+            {
+              "tMs": 180500,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "p-algorithms",
+          "chapter": "foundations",
+          "title": "NIST PQC Algorithms — sizes and tradeoffs",
+          "estMinutes": 4,
+          "whyItMatters": "See key sizes, signature sizes, and performance for the NIST primary picks at a glance.",
+          "page": {
+            "route": "/algorithms"
+          },
+          "tasks": ["Open the page", "Note the key affordances called out by the workshop"],
+          "expectedOutput": "Familiarity with NIST PQC Algorithms — sizes and tradeoffs",
+          "narration": "The /algorithms page lists every NIST PQC algorithm with key sizes, signature sizes, and benchmark data. Use this when sizing your protocols.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/algorithms"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "NIST post-quantum algorithms. Three names. M L K E M for key exchange. M L D S A for signatures. And S L H D S A for hash-based signatures. Key sizes drive your protocol overhead."
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "Compare. M L D S A 65 signatures are about 3.3 kilobytes. ECDSA P 256 signatures are about 64 bytes. That difference is your TLS handshake cost."
+            },
+            {
+              "tMs": 180000,
+              "kind": "caption",
+              "text": "Benchmark numbers help you decide hybrid vs pure-PQC for your protocol."
+            },
+            {
+              "tMs": 240000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "p-playground",
+          "chapter": "foundations",
+          "title": "/playground — interactive ML-KEM + ML-DSA demos",
+          "estMinutes": 5,
+          "whyItMatters": "Run real PQC keygen, sign, verify in the browser. Confirm the algorithms work end-to-end.",
+          "page": {
+            "route": "/playground"
+          },
+          "tasks": ["Open the page", "Note the key affordances called out by the workshop"],
+          "expectedOutput": "Familiarity with /playground — interactive ML-KEM + ML-DSA demos",
+          "narration": "The /playground gives you working in-browser PQC demos — keygen, sign, verify, KEM encapsulate/decapsulate. The fastest way to confirm your mental model.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/playground"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Interactive PQC playground — every NIST algorithm runs in your browser via WASM."
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "Run an ML-KEM keygen — see the actual public/private key sizes and shared secret derivation."
+            },
+            {
+              "tMs": 180000,
+              "kind": "caption",
+              "text": "Try ML-DSA sign + verify with the same key. Note the signature size."
+            },
+            {
+              "tMs": 270000,
+              "kind": "caption",
+              "text": "The playground uses the same WASM crypto as production — these are not toy implementations."
+            },
+            {
+              "tMs": 300000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "p-migrate",
+          "chapter": "foundations",
+          "title": "/migrate — library and SDK options",
+          "estMinutes": 4,
+          "whyItMatters": "Find PQC-ready libraries for your language and stack — filter by layer, vendor, license.",
+          "page": {
+            "route": "/migrate"
+          },
+          "tasks": ["Open the page", "Note the key affordances called out by the workshop"],
+          "expectedOutput": "Familiarity with /migrate — library and SDK options",
+          "narration": "The /migrate page is the catalog of PQC-ready software — filter by infrastructure layer, vendor, license type, FIPS validation status. Your library shortlist starts here.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/migrate"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "/migrate — vendor catalog of PQC-ready libraries, KMS, HSMs, gateways."
+            },
+            {
+              "tMs": 30000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"migrate-layer-Libraries\"]"
+            },
+            {
+              "tMs": 31500,
+              "kind": "caption",
+              "text": "Libraries layer — filter to crypto SDKs you can drop into your codebase today."
+            },
+            {
+              "tMs": 90000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"migrate-layer-AppServers\"]"
+            },
+            {
+              "tMs": 91500,
+              "kind": "caption",
+              "text": "AppServers layer — TLS-terminating products with PQC support."
+            },
+            {
+              "tMs": 180000,
+              "kind": "caption",
+              "text": "Each entry shows verification status — Verified, Trusted Vendor, or Pending."
+            },
+            {
+              "tMs": 240000,
+              "kind": "advance"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "close": {
+    "id": "close",
+    "title": "Close",
+    "estMinutes": 5,
+    "steps": [
+      {
+        "id": "close-quiz",
+        "chapter": "close",
+        "title": "Quiz — test what you learned",
+        "estMinutes": 3,
+        "whyItMatters": "A 5-to-45-minute quiz with persona-tuned topics gives you a quick measure of what stuck.",
+        "page": {
+          "route": "/learn/quiz",
+          "query": {
+            "category": "algorithm-families,crypto-operations,protocol-integration,tls-basics"
+          }
+        },
+        "tasks": [
+          "Note the duration slider and difficulty filter",
+          "See how persona-tuned topics are pre-selected",
+          "Run the quiz yourself after the workshop"
+        ],
+        "expectedOutput": "A working knowledge of the quiz interface; you'll come back to actually take it.",
+        "narration": "The quiz is the quickest way to check what you've absorbed. Pick how much time you have, pick the topics that matter, and get a scored breakdown by category and difficulty.",
+        "cues": [
+          {
+            "tMs": 0,
+            "kind": "navigate",
+            "route": "/learn/quiz",
+            "query": {
+              "category": "algorithm-families,crypto-operations,protocol-integration,tls-basics"
+            }
+          },
+          {
+            "tMs": 1500,
+            "kind": "caption",
+            "text": "Test what you learned. Pick a duration, pick topics, go."
+          },
+          {
+            "tMs": 6000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"quiz-duration-slider\"]"
+          },
+          {
+            "tMs": 7500,
+            "kind": "caption",
+            "text": "Duration slider. Five to forty-five minutes. Quiz scales the question count to match."
+          },
+          {
+            "tMs": 22000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"quiz-difficulty-row\"]"
+          },
+          {
+            "tMs": 23500,
+            "kind": "caption",
+            "text": "Difficulty filter. Beginner, Intermediate, Advanced. Multi-select."
+          },
+          {
+            "tMs": 38000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"quiz-topic-grid\"]"
+          },
+          {
+            "tMs": 39500,
+            "kind": "caption",
+            "text": "Topic grid. Categories pre-filtered by your persona context."
+          },
+          {
+            "tMs": 55000,
+            "kind": "click",
+            "selector": "[data-workshop-target=\"quiz-category-algorithm-families\"]"
+          },
+          {
+            "tMs": 56500,
+            "kind": "caption",
+            "text": "Selected topics show a checkmark. The Start button activates once you pick at least one."
+          },
+          {
+            "tMs": 75000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"quiz-start-category\"]"
+          },
+          {
+            "tMs": 76500,
+            "kind": "caption",
+            "text": "Start the quiz when you're ready. We'll skip running it inside the workshop."
+          },
+          {
+            "tMs": 165000,
+            "kind": "caption",
+            "text": "Results show your score, category breakdown, difficulty breakdown, and let you retake or change topics."
+          },
+          {
+            "tMs": 180000,
+            "kind": "advance"
+          }
+        ]
+      },
+      {
+        "id": "close-01-recap",
+        "chapter": "close",
+        "title": "Recap and next steps",
+        "estMinutes": 2,
+        "whyItMatters": "Capture the three things to take back to your codebase.",
+        "page": {
+          "route": "/"
+        },
+        "tasks": ["Note your library shortlist", "Pick one demo to reproduce locally"],
+        "expectedOutput": "A working library shortlist plus a hands-on demo to reproduce.",
+        "narration": "Three things to leave with: a library shortlist for your stack, the hybrid TLS pattern, and crypto-agility patterns for new code.",
+        "cues": [
+          {
+            "tMs": 0,
+            "kind": "navigate",
+            "route": "/"
+          },
+          {
+            "tMs": 1500,
+            "kind": "caption",
+            "text": "Three takeaways: library shortlist, hybrid TLS pattern, crypto-agility for new code."
+          },
+          {
+            "tMs": 120000,
+            "kind": "advance"
+          }
+        ]
+      }
+    ]
+  }
+}

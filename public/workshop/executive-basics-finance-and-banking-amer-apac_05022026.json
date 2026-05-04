@@ -1,5 +1,5 @@
 {
-  "id": "executive-finance-amer-apac-v1",
+  "id": "executive-basics-finance-and-banking-amer-apac-v1",
   "title": "Executive PQC Workshop — Finance (US / Canada / Australia)",
   "match": {
     "roles": ["executive"],
@@ -13,7 +13,7 @@
     "A board-ready, shareable risk report tailored to your context",
     "A 90-day action plan walked through the four CSWP 39 zones"
   ],
-  "totalEstMinutes": 125,
+  "totalEstMinutes": 127,
   "intro": {
     "id": "intro",
     "title": "Welcome",
@@ -30,14 +30,15 @@
         },
         "tasks": ["Skim the four outcomes below", "Confirm 90 minutes of uninterrupted time"],
         "expectedOutput": "Clear understanding of the four outcomes: quantum threat literacy, jurisdictional deadlines, board-ready risk report, 90-day action plan.",
-        "narration": "Welcome. In the next ninety minutes you will leave with four things: first, a plain-English understanding of why quantum computing breaks classical cryptography and what Harvest-Now Decrypt-Later already does to your data. Second, your jurisdiction’s post-quantum deadlines — the dates regulators have already committed to. Third, a personalised, board-ready risk report tied to your country and to finance. And fourth, a ninety-day action plan you can hand to your CISO before close of business."
+        "narration": "Welcome. In the next ninety minutes you will leave with four things: first, a plain-English understanding of why quantum computing breaks classical cryptography and what Harvest-Now Decrypt-Later already does to your data. Second, your jurisdiction’s post-quantum deadlines — the dates regulators have already committed to. Third, a personalised, board-ready risk report tied to your country and to finance. And fourth, a ninety-day action plan you can hand to your CISO before close of business.",
+        "cues": []
       }
     ]
   },
   "prerequisites": {
     "id": "prereq",
     "title": "Pre-flight checklist",
-    "estMinutes": 3,
+    "estMinutes": 5,
     "steps": [
       {
         "id": "prereq-01-checklist",
@@ -59,7 +60,124 @@
         "completionSignal": {
           "kind": "route-visited",
           "route": "/"
-        }
+        },
+        "cues": []
+      },
+      {
+        "id": "prereq-02-persona",
+        "chapter": "prereq",
+        "title": "Persona Definition — How the Platform Personalises Every Page",
+        "estMinutes": 2,
+        "whyItMatters": "Every recommendation, every filter, every score is derived from four persona facets: experience × role × region × industry.",
+        "page": {
+          "route": "/"
+        },
+        "tasks": [
+          "See where the persona wizard lives on the landing page",
+          "Note the four facets that drive personalisation",
+          "Confirm the executive · beginner · Americas · Finance combination is set"
+        ],
+        "expectedOutput": "A clear mental model of how the platform reshapes itself from your four picks.",
+        "narration": "PQC Today personalises every page from four persona facets — experience level, role, region, and industry. Set on this landing page, they ripple through every filter, every recommendation, every score and chart. The executive flow you are running now assumes Beginner experience, Executive role, Americas region, and Finance & Banking industry. Change any one and the entire workshop re-personalises around the new combination.",
+        "cues": [
+          {
+            "tMs": 0,
+            "kind": "navigate",
+            "route": "/"
+          },
+          {
+            "tMs": 1000,
+            "kind": "scroll-to",
+            "selector": "#personalization-section"
+          },
+          {
+            "tMs": 1500,
+            "kind": "caption",
+            "text": "Persona definition — three picks shape every page, every recommendation, every score."
+          },
+          {
+            "tMs": 5000,
+            "kind": "click",
+            "selector": "[data-workshop-target=\"persona-edit\"]"
+          },
+          {
+            "tMs": 5500,
+            "kind": "caption",
+            "text": "Opening the persona wizard — it's collapsed once you've set a profile."
+          },
+          {
+            "tMs": 9000,
+            "kind": "caption",
+            "text": "Step 1 — Track. Business track sets you up as an executive: governance, risk, compliance focus."
+          },
+          {
+            "tMs": 11000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target^=\"persona-track-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 14000,
+            "kind": "callout",
+            "selector": "[data-workshop-target^=\"persona-track-\"][aria-pressed=\"true\"]",
+            "label": "Business — pre-selected for the executive flow"
+          },
+          {
+            "tMs": 22000,
+            "kind": "click",
+            "selector": "[data-workshop-target^=\"persona-track-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 24000,
+            "kind": "caption",
+            "text": "Step 2 — Region. Filters timeline, leaders, threats and compliance to your jurisdiction."
+          },
+          {
+            "tMs": 26000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target^=\"persona-region-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 30000,
+            "kind": "callout",
+            "selector": "[data-workshop-target^=\"persona-region-\"][aria-pressed=\"true\"]",
+            "label": "Americas — drives the region chapter (US / CA / AU branch)"
+          },
+          {
+            "tMs": 38000,
+            "kind": "click",
+            "selector": "[data-workshop-target=\"persona-wizard-next\"]"
+          },
+          {
+            "tMs": 40000,
+            "kind": "caption",
+            "text": "Step 3 — Industry. Surfaces industry-specific threats, frameworks and vendors."
+          },
+          {
+            "tMs": 42000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target^=\"persona-industry-\"][aria-pressed=\"true\"]"
+          },
+          {
+            "tMs": 46000,
+            "kind": "callout",
+            "selector": "[data-workshop-target^=\"persona-industry-\"][aria-pressed=\"true\"]",
+            "label": "Finance & Banking — drives every industry-scoped filter"
+          },
+          {
+            "tMs": 56000,
+            "kind": "click",
+            "selector": "[data-workshop-target=\"persona-wizard-done\"]"
+          },
+          {
+            "tMs": 57000,
+            "kind": "caption",
+            "text": "These three facets define the entire workshop journey. Change any one to re-personalize."
+          },
+          {
+            "tMs": 120000,
+            "kind": "advance"
+          }
+        ]
       }
     ]
   },
@@ -67,10 +185,10 @@
     {
       "id": "foundations",
       "title": "Foundations",
-      "estMinutes": 53,
+      "estMinutes": 50,
       "steps": [
         {
-          "id": "f1-landing",
+          "id": "p-landing",
           "chapter": "foundations",
           "title": "Orient on the Landing page",
           "estMinutes": 4,
@@ -116,7 +234,7 @@
             {
               "tMs": 120000,
               "kind": "caption",
-              "text": "Four sections: Start the Journey · My Journey · Assess & Report · Keep Up to Date."
+              "text": "Three starting CTAs after your persona: Video Tour, Browse Workshops, Start Your Journey. Pick the entry that fits your day."
             },
             {
               "tMs": 240000,
@@ -129,7 +247,7 @@
           "chapter": "foundations",
           "title": "Executive Quantum Impact",
           "estMinutes": 3,
-          "whyItMatters": "You need a common board-ready vocabulary: Q-Day, HNDL, FIPS 203/204. This module gives you the five-second answers.",
+          "whyItMatters": "You need a common board-ready vocabulary: Q-Day, HNDL, CNSA 2.0 deadlines. This module gives you the five-second answers.",
           "page": {
             "route": "/learn/exec-quantum-impact"
           },
@@ -140,7 +258,7 @@
             "Note Reference standards"
           ],
           "expectedOutput": "Module-level talking points from \"Executive Quantum Impact\" you can take to your next governance conversation.",
-          "narration": "You need a common board-ready vocabulary: Q-Day, HNDL, FIPS 203/204. This module gives you the five-second answers.",
+          "narration": "You need a common board-ready vocabulary: Q-Day, HNDL, CNSA 2.0 deadlines. This module gives you the five-second answers.",
           "completionSignal": {
             "kind": "module-progress",
             "moduleId": "exec-quantum-impact",
@@ -155,7 +273,7 @@
             {
               "tMs": 1500,
               "kind": "caption",
-              "text": "Executive Quantum Impact — three terms you need at boardroom speed: Q-Day, HNDL, FIPS 203/204"
+              "text": "Executive Quantum Impact — You need a common board-ready vocabulary: Q-Day, HNDL, CNSA 2.0 deadlines. This module gives you the five-second answers."
             },
             {
               "tMs": 4000,
@@ -163,248 +281,44 @@
               "tabName": "Learn"
             },
             {
-              "tMs": 6000,
-              "kind": "caption",
-              "text": "Section 1/3: Why It Matters"
-            },
-            {
-              "tMs": 23333,
-              "kind": "caption",
-              "text": "Section 2/3: What To Learn"
-            },
-            {
-              "tMs": 40666,
-              "kind": "caption",
-              "text": "Section 3/3: How To Act"
-            },
-            {
-              "tMs": 57999,
-              "kind": "select-tab",
-              "tabName": "Workshop"
-            },
-            {
-              "tMs": 59499,
-              "kind": "caption",
-              "text": "Workshop 1/3: Why It Matters"
-            },
-            {
-              "tMs": 74232,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 76832,
-              "kind": "caption",
-              "text": "Workshop 2/3: What To Learn"
-            },
-            {
-              "tMs": 91565,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 94165,
-              "kind": "caption",
-              "text": "Workshop 3/3: How To Act"
-            },
-            {
-              "tMs": 111999,
-              "kind": "select-tab",
-              "tabName": "Visual"
-            },
-            {
-              "tMs": 113499,
-              "kind": "caption",
-              "text": "Visual tab — diagrams and animations for this topic."
-            },
-            {
-              "tMs": 128749,
-              "kind": "select-tab",
-              "tabName": "Exercises"
-            },
-            {
-              "tMs": 130249,
-              "kind": "caption",
-              "text": "Exercises — short knowledge checks to confirm you got it."
-            },
-            {
-              "tMs": 145499,
-              "kind": "select-tab",
-              "tabName": "References"
-            },
-            {
-              "tMs": 146999,
-              "kind": "caption",
-              "text": "References — primary sources every claim is cited from."
-            },
-            {
-              "tMs": 162249,
-              "kind": "select-tab",
-              "tabName": "Tools & Products"
-            },
-            {
-              "tMs": 163749,
-              "kind": "caption",
-              "text": "Tools & Products — vendor tooling and PQC-ready software."
-            },
-            {
-              "tMs": 180000,
-              "kind": "advance"
-            }
-          ]
-        },
-        {
-          "id": "f-mod-pqc-101",
-          "chapter": "foundations",
-          "title": "PQC 101",
-          "estMinutes": 3,
-          "whyItMatters": "Plain-language tour of post-quantum cryptography — what is being replaced, what is replacing it, on what timeline.",
-          "page": {
-            "route": "/learn/pqc-101"
-          },
-          "tasks": [
-            "Read the why-it-matters intro",
-            "Walk the Learn sections",
-            "Glance at the Workshop demo",
-            "Note Reference standards"
-          ],
-          "expectedOutput": "Module-level talking points from \"PQC 101\" you can take to your next governance conversation.",
-          "narration": "Plain-language tour of post-quantum cryptography — what is being replaced, what is replacing it, on what timeline.",
-          "completionSignal": {
-            "kind": "module-progress",
-            "moduleId": "pqc-101",
-            "minSteps": 2
-          },
-          "cues": [
-            {
-              "tMs": 0,
-              "kind": "navigate",
-              "route": "/learn/pqc-101"
-            },
-            {
-              "tMs": 1500,
-              "kind": "caption",
-              "text": "PQC 101 — post-quantum cryptography in plain language - what it is, why your org cares"
-            },
-            {
-              "tMs": 4000,
-              "kind": "select-tab",
-              "tabName": "Learn"
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"why-it-matters\"]"
             },
             {
               "tMs": 6000,
               "kind": "caption",
-              "text": "Section 1/5: Why Pqc"
+              "text": "Section 1/3: Why It Matters: Executive Quantum Exposure"
             },
             {
-              "tMs": 16400,
+              "tMs": 53133,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"what-to-learn\"]"
+            },
+            {
+              "tMs": 53333,
               "kind": "caption",
-              "text": "Section 2/5: Whats Changing"
+              "text": "Section 2/3: What to Learn: Knowledge & Skills Gap"
             },
             {
-              "tMs": 26800,
+              "tMs": 100466,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"how-to-act\"]"
+            },
+            {
+              "tMs": 100666,
               "kind": "caption",
-              "text": "Section 3/5: The Timeline"
+              "text": "Section 3/3: How to Act: Phased Action Plan"
             },
             {
-              "tMs": 37200,
-              "kind": "caption",
-              "text": "Section 4/5: Who Acts"
-            },
-            {
-              "tMs": 47600,
-              "kind": "caption",
-              "text": "Section 5/5: Next Steps"
-            },
-            {
-              "tMs": 58000,
-              "kind": "select-tab",
-              "tabName": "Workshop"
-            },
-            {
-              "tMs": 59500,
-              "kind": "caption",
-              "text": "Workshop 1/5: Why Pqc"
-            },
-            {
-              "tMs": 68340,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 69900,
-              "kind": "caption",
-              "text": "Workshop 2/5: Whats Changing"
-            },
-            {
-              "tMs": 78740,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 80300,
-              "kind": "caption",
-              "text": "Workshop 3/5: The Timeline"
-            },
-            {
-              "tMs": 89140,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 90700,
-              "kind": "caption",
-              "text": "Workshop 4/5: Who Acts"
-            },
-            {
-              "tMs": 99540,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 101100,
-              "kind": "caption",
-              "text": "Workshop 5/5: Next Steps"
-            },
-            {
-              "tMs": 112000,
-              "kind": "select-tab",
-              "tabName": "Visual"
-            },
-            {
-              "tMs": 113500,
-              "kind": "caption",
-              "text": "Visual tab — diagrams and animations for this topic."
-            },
-            {
-              "tMs": 128750,
-              "kind": "select-tab",
-              "tabName": "Exercises"
-            },
-            {
-              "tMs": 130250,
-              "kind": "caption",
-              "text": "Exercises — short knowledge checks to confirm you got it."
-            },
-            {
-              "tMs": 145500,
+              "tMs": 149499,
               "kind": "select-tab",
               "tabName": "References"
             },
             {
-              "tMs": 147000,
+              "tMs": 150999,
               "kind": "caption",
               "text": "References — primary sources every claim is cited from."
-            },
-            {
-              "tMs": 162250,
-              "kind": "select-tab",
-              "tabName": "Tools & Products"
-            },
-            {
-              "tMs": 163750,
-              "kind": "caption",
-              "text": "Tools & Products — vendor tooling and PQC-ready software."
             },
             {
               "tMs": 180000,
@@ -443,7 +357,7 @@
             {
               "tMs": 1500,
               "kind": "caption",
-              "text": "Quantum Threats — Shor, Grover, CRQC, HNDL — the four threats your CISO will quote"
+              "text": "Quantum Threats — Shor, Grover, CRQC, and Harvest-Now-Decrypt-Later — the four words a finance CISO will say at every PQC meeting."
             },
             {
               "tMs": 4000,
@@ -451,278 +365,44 @@
               "tabName": "Learn"
             },
             {
-              "tMs": 6000,
-              "kind": "caption",
-              "text": "Section 1/5: Shor"
-            },
-            {
-              "tMs": 16400,
-              "kind": "caption",
-              "text": "Section 2/5: Grover"
-            },
-            {
-              "tMs": 26800,
-              "kind": "caption",
-              "text": "Section 3/5: Crqc"
-            },
-            {
-              "tMs": 37200,
-              "kind": "caption",
-              "text": "Section 4/5: Hndl"
-            },
-            {
-              "tMs": 47600,
-              "kind": "caption",
-              "text": "Section 5/5: Security Levels"
-            },
-            {
-              "tMs": 58000,
-              "kind": "select-tab",
-              "tabName": "Workshop"
-            },
-            {
-              "tMs": 59500,
-              "kind": "caption",
-              "text": "Workshop 1/5: Shor"
-            },
-            {
-              "tMs": 68340,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 69900,
-              "kind": "caption",
-              "text": "Workshop 2/5: Grover"
-            },
-            {
-              "tMs": 78740,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 80300,
-              "kind": "caption",
-              "text": "Workshop 3/5: Crqc"
-            },
-            {
-              "tMs": 89140,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 90700,
-              "kind": "caption",
-              "text": "Workshop 4/5: Hndl"
-            },
-            {
-              "tMs": 99540,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 101100,
-              "kind": "caption",
-              "text": "Workshop 5/5: Security Levels"
-            },
-            {
-              "tMs": 112000,
-              "kind": "select-tab",
-              "tabName": "Visual"
-            },
-            {
-              "tMs": 113500,
-              "kind": "caption",
-              "text": "Visual tab — diagrams and animations for this topic."
-            },
-            {
-              "tMs": 128750,
-              "kind": "select-tab",
-              "tabName": "Exercises"
-            },
-            {
-              "tMs": 130250,
-              "kind": "caption",
-              "text": "Exercises — short knowledge checks to confirm you got it."
-            },
-            {
-              "tMs": 145500,
-              "kind": "select-tab",
-              "tabName": "References"
-            },
-            {
-              "tMs": 147000,
-              "kind": "caption",
-              "text": "References — primary sources every claim is cited from."
-            },
-            {
-              "tMs": 162250,
-              "kind": "select-tab",
-              "tabName": "Tools & Products"
-            },
-            {
-              "tMs": 163750,
-              "kind": "caption",
-              "text": "Tools & Products — vendor tooling and PQC-ready software."
-            },
-            {
-              "tMs": 180000,
-              "kind": "advance"
-            }
-          ]
-        },
-        {
-          "id": "f-mod-entropy-randomness",
-          "chapter": "foundations",
-          "title": "Entropy & Randomness",
-          "estMinutes": 3,
-          "whyItMatters": "Every PQC algorithm depends on quality randomness. Your HSM's entropy source is the most under-discussed crypto risk in your stack.",
-          "page": {
-            "route": "/learn/entropy-randomness"
-          },
-          "tasks": [
-            "Read the why-it-matters intro",
-            "Walk the Learn sections",
-            "Glance at the Workshop demo",
-            "Note Reference standards"
-          ],
-          "expectedOutput": "Module-level talking points from \"Entropy & Randomness\" you can take to your next governance conversation.",
-          "narration": "Every PQC algorithm depends on quality randomness. Your HSM's entropy source is the most under-discussed crypto risk in your stack.",
-          "completionSignal": {
-            "kind": "module-progress",
-            "moduleId": "entropy-randomness",
-            "minSteps": 2
-          },
-          "cues": [
-            {
-              "tMs": 0,
-              "kind": "navigate",
-              "route": "/learn/entropy-randomness"
-            },
-            {
-              "tMs": 1500,
-              "kind": "caption",
-              "text": "Entropy & Randomness — randomness is the one input your crypto cannot fake"
-            },
-            {
-              "tMs": 4000,
-              "kind": "select-tab",
-              "tabName": "Learn"
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"crqc\"]"
             },
             {
               "tMs": 6000,
               "kind": "caption",
-              "text": "Section 1/5: Entropy"
+              "text": "Section 1/3: CRQC Timeline & Harvest Now Decrypt Later"
             },
             {
-              "tMs": 16400,
+              "tMs": 53133,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"hndl\"]"
+            },
+            {
+              "tMs": 53333,
               "kind": "caption",
-              "text": "Section 2/5: Drbg"
+              "text": "Section 2/3: HNDL/HNFL Risk Windows & Prioritization"
             },
             {
-              "tMs": 26800,
+              "tMs": 100466,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"security-levels\"]"
+            },
+            {
+              "tMs": 100666,
               "kind": "caption",
-              "text": "Section 3/5: Testing"
+              "text": "Section 3/3: Post-Quantum Security Levels"
             },
             {
-              "tMs": 37200,
-              "kind": "caption",
-              "text": "Section 4/5: Qrng"
-            },
-            {
-              "tMs": 47600,
-              "kind": "caption",
-              "text": "Section 5/5: Combining"
-            },
-            {
-              "tMs": 58000,
-              "kind": "select-tab",
-              "tabName": "Workshop"
-            },
-            {
-              "tMs": 59500,
-              "kind": "caption",
-              "text": "Workshop 1/5: Entropy"
-            },
-            {
-              "tMs": 68340,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 69900,
-              "kind": "caption",
-              "text": "Workshop 2/5: Drbg"
-            },
-            {
-              "tMs": 78740,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 80300,
-              "kind": "caption",
-              "text": "Workshop 3/5: Testing"
-            },
-            {
-              "tMs": 89140,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 90700,
-              "kind": "caption",
-              "text": "Workshop 4/5: Qrng"
-            },
-            {
-              "tMs": 99540,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 101100,
-              "kind": "caption",
-              "text": "Workshop 5/5: Combining"
-            },
-            {
-              "tMs": 112000,
-              "kind": "select-tab",
-              "tabName": "Visual"
-            },
-            {
-              "tMs": 113500,
-              "kind": "caption",
-              "text": "Visual tab — diagrams and animations for this topic."
-            },
-            {
-              "tMs": 128750,
-              "kind": "select-tab",
-              "tabName": "Exercises"
-            },
-            {
-              "tMs": 130250,
-              "kind": "caption",
-              "text": "Exercises — short knowledge checks to confirm you got it."
-            },
-            {
-              "tMs": 145500,
+              "tMs": 149499,
               "kind": "select-tab",
               "tabName": "References"
             },
             {
-              "tMs": 147000,
+              "tMs": 150999,
               "kind": "caption",
               "text": "References — primary sources every claim is cited from."
-            },
-            {
-              "tMs": 162250,
-              "kind": "select-tab",
-              "tabName": "Tools & Products"
-            },
-            {
-              "tMs": 163750,
-              "kind": "caption",
-              "text": "Tools & Products — vendor tooling and PQC-ready software."
             },
             {
               "tMs": 180000,
@@ -761,7 +441,7 @@
             {
               "tMs": 1500,
               "kind": "caption",
-              "text": "PQC Risk Management — how to put quantum risk on your enterprise risk register"
+              "text": "PQC Risk Management — How to put quantum risk on your enterprise risk register, score it on a heatmap, and turn it into a board-level KPI."
             },
             {
               "tMs": 4000,
@@ -769,89 +449,44 @@
               "tabName": "Learn"
             },
             {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"crqc\"]"
+            },
+            {
               "tMs": 6000,
               "kind": "caption",
-              "text": "Section 1/3: Crqc"
+              "text": "Section 1/3: CRQC Timeline Modeling"
             },
             {
-              "tMs": 23333,
+              "tMs": 53133,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"register\"]"
+            },
+            {
+              "tMs": 53333,
               "kind": "caption",
-              "text": "Section 2/3: Register"
+              "text": "Section 2/3: Risk Register & Quantification"
             },
             {
-              "tMs": 40666,
+              "tMs": 100466,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"heatmap\"]"
+            },
+            {
+              "tMs": 100666,
               "kind": "caption",
-              "text": "Section 3/3: Heatmap"
+              "text": "Section 3/3: Risk Heatmap & Prioritization"
             },
             {
-              "tMs": 57999,
-              "kind": "select-tab",
-              "tabName": "Workshop"
-            },
-            {
-              "tMs": 59499,
-              "kind": "caption",
-              "text": "Workshop 1/3: Crqc"
-            },
-            {
-              "tMs": 74232,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 76832,
-              "kind": "caption",
-              "text": "Workshop 2/3: Register"
-            },
-            {
-              "tMs": 91565,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 94165,
-              "kind": "caption",
-              "text": "Workshop 3/3: Heatmap"
-            },
-            {
-              "tMs": 111999,
-              "kind": "select-tab",
-              "tabName": "Visual"
-            },
-            {
-              "tMs": 113499,
-              "kind": "caption",
-              "text": "Visual tab — diagrams and animations for this topic."
-            },
-            {
-              "tMs": 128749,
-              "kind": "select-tab",
-              "tabName": "Exercises"
-            },
-            {
-              "tMs": 130249,
-              "kind": "caption",
-              "text": "Exercises — short knowledge checks to confirm you got it."
-            },
-            {
-              "tMs": 145499,
+              "tMs": 149499,
               "kind": "select-tab",
               "tabName": "References"
             },
             {
-              "tMs": 146999,
+              "tMs": 150999,
               "kind": "caption",
               "text": "References — primary sources every claim is cited from."
-            },
-            {
-              "tMs": 162249,
-              "kind": "select-tab",
-              "tabName": "Tools & Products"
-            },
-            {
-              "tMs": 163749,
-              "kind": "caption",
-              "text": "Tools & Products — vendor tooling and PQC-ready software."
             },
             {
               "tMs": 180000,
@@ -890,7 +525,7 @@
             {
               "tMs": 1500,
               "kind": "caption",
-              "text": "Compliance & Regulatory Strategy — map your jurisdiction's PQC deadlines to your audit calendar"
+              "text": "Compliance & Regulatory Strategy — Map your jurisdiction's PQC deadlines (NIST 2030/2035, CCCS 2031/2035, ASD end-2030) to your audit calendar."
             },
             {
               "tMs": 4000,
@@ -898,89 +533,44 @@
               "tabName": "Learn"
             },
             {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"frameworks\"]"
+            },
+            {
               "tMs": 6000,
               "kind": "caption",
-              "text": "Section 1/3: Frameworks"
+              "text": "Section 1/3: Compliance Landscape & Key Frameworks"
             },
             {
-              "tMs": 23333,
+              "tMs": 53133,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"jurisdiction\"]"
+            },
+            {
+              "tMs": 53333,
               "kind": "caption",
-              "text": "Section 2/3: Jurisdiction"
+              "text": "Section 2/3: Compliance vs Risk Approach & Major Deadlines"
             },
             {
-              "tMs": 40666,
+              "tMs": 100466,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"audit\"]"
+            },
+            {
+              "tMs": 100666,
               "kind": "caption",
-              "text": "Section 3/3: Audit"
+              "text": "Section 3/3: Country Deadlines, Dependencies & Workshop"
             },
             {
-              "tMs": 57999,
-              "kind": "select-tab",
-              "tabName": "Workshop"
-            },
-            {
-              "tMs": 59499,
-              "kind": "caption",
-              "text": "Workshop 1/3: Frameworks"
-            },
-            {
-              "tMs": 74232,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 76832,
-              "kind": "caption",
-              "text": "Workshop 2/3: Jurisdiction"
-            },
-            {
-              "tMs": 91565,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 94165,
-              "kind": "caption",
-              "text": "Workshop 3/3: Audit"
-            },
-            {
-              "tMs": 111999,
-              "kind": "select-tab",
-              "tabName": "Visual"
-            },
-            {
-              "tMs": 113499,
-              "kind": "caption",
-              "text": "Visual tab — diagrams and animations for this topic."
-            },
-            {
-              "tMs": 128749,
-              "kind": "select-tab",
-              "tabName": "Exercises"
-            },
-            {
-              "tMs": 130249,
-              "kind": "caption",
-              "text": "Exercises — short knowledge checks to confirm you got it."
-            },
-            {
-              "tMs": 145499,
+              "tMs": 149499,
               "kind": "select-tab",
               "tabName": "References"
             },
             {
-              "tMs": 146999,
+              "tMs": 150999,
               "kind": "caption",
               "text": "References — primary sources every claim is cited from."
-            },
-            {
-              "tMs": 162249,
-              "kind": "select-tab",
-              "tabName": "Tools & Products"
-            },
-            {
-              "tMs": 163749,
-              "kind": "caption",
-              "text": "Tools & Products — vendor tooling and PQC-ready software."
             },
             {
               "tMs": 180000,
@@ -1019,7 +609,7 @@
             {
               "tMs": 1500,
               "kind": "caption",
-              "text": "PQC Business Case — ROI, breach cost, board narrative — the three slides every CFO asks for"
+              "text": "PQC Business Case — ROI, breach cost modelling, and the three slides every CFO will ask for before signing the budget."
             },
             {
               "tMs": 4000,
@@ -1027,89 +617,34 @@
               "tabName": "Learn"
             },
             {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"roi\"]"
+            },
+            {
               "tMs": 6000,
               "kind": "caption",
-              "text": "Section 1/3: Roi"
+              "text": "Section 1/2: Why PQC Investment & Cost Categories"
             },
             {
-              "tMs": 23333,
+              "tMs": 76800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"board\"]"
+            },
+            {
+              "tMs": 77000,
               "kind": "caption",
-              "text": "Section 2/3: Breach"
+              "text": "Section 2/2: Workshop & Resources"
             },
             {
-              "tMs": 40666,
-              "kind": "caption",
-              "text": "Section 3/3: Board"
-            },
-            {
-              "tMs": 57999,
-              "kind": "select-tab",
-              "tabName": "Workshop"
-            },
-            {
-              "tMs": 59499,
-              "kind": "caption",
-              "text": "Workshop 1/3: Roi"
-            },
-            {
-              "tMs": 74232,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 76832,
-              "kind": "caption",
-              "text": "Workshop 2/3: Breach"
-            },
-            {
-              "tMs": 91565,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 94165,
-              "kind": "caption",
-              "text": "Workshop 3/3: Board"
-            },
-            {
-              "tMs": 111999,
-              "kind": "select-tab",
-              "tabName": "Visual"
-            },
-            {
-              "tMs": 113499,
-              "kind": "caption",
-              "text": "Visual tab — diagrams and animations for this topic."
-            },
-            {
-              "tMs": 128749,
-              "kind": "select-tab",
-              "tabName": "Exercises"
-            },
-            {
-              "tMs": 130249,
-              "kind": "caption",
-              "text": "Exercises — short knowledge checks to confirm you got it."
-            },
-            {
-              "tMs": 145499,
+              "tMs": 149500,
               "kind": "select-tab",
               "tabName": "References"
             },
             {
-              "tMs": 146999,
+              "tMs": 151000,
               "kind": "caption",
               "text": "References — primary sources every claim is cited from."
-            },
-            {
-              "tMs": 162249,
-              "kind": "select-tab",
-              "tabName": "Tools & Products"
-            },
-            {
-              "tMs": 163749,
-              "kind": "caption",
-              "text": "Tools & Products — vendor tooling and PQC-ready software."
             },
             {
               "tMs": 180000,
@@ -1148,7 +683,7 @@
             {
               "tMs": 1500,
               "kind": "caption",
-              "text": "PQC Governance & Policy — who owns crypto, who approves exceptions, who reports to the board"
+              "text": "PQC Governance & Policy — Who owns cryptography, who approves exceptions, who reports to the board. The org-chart questions PQC forces you to answer."
             },
             {
               "tMs": 4000,
@@ -1156,248 +691,44 @@
               "tabName": "Learn"
             },
             {
-              "tMs": 6000,
-              "kind": "caption",
-              "text": "Section 1/3: Model"
-            },
-            {
-              "tMs": 23333,
-              "kind": "caption",
-              "text": "Section 2/3: Policy"
-            },
-            {
-              "tMs": 40666,
-              "kind": "caption",
-              "text": "Section 3/3: Kpi"
-            },
-            {
-              "tMs": 57999,
-              "kind": "select-tab",
-              "tabName": "Workshop"
-            },
-            {
-              "tMs": 59499,
-              "kind": "caption",
-              "text": "Workshop 1/3: Model"
-            },
-            {
-              "tMs": 74232,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 76832,
-              "kind": "caption",
-              "text": "Workshop 2/3: Policy"
-            },
-            {
-              "tMs": 91565,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 94165,
-              "kind": "caption",
-              "text": "Workshop 3/3: Kpi"
-            },
-            {
-              "tMs": 111999,
-              "kind": "select-tab",
-              "tabName": "Visual"
-            },
-            {
-              "tMs": 113499,
-              "kind": "caption",
-              "text": "Visual tab — diagrams and animations for this topic."
-            },
-            {
-              "tMs": 128749,
-              "kind": "select-tab",
-              "tabName": "Exercises"
-            },
-            {
-              "tMs": 130249,
-              "kind": "caption",
-              "text": "Exercises — short knowledge checks to confirm you got it."
-            },
-            {
-              "tMs": 145499,
-              "kind": "select-tab",
-              "tabName": "References"
-            },
-            {
-              "tMs": 146999,
-              "kind": "caption",
-              "text": "References — primary sources every claim is cited from."
-            },
-            {
-              "tMs": 162249,
-              "kind": "select-tab",
-              "tabName": "Tools & Products"
-            },
-            {
-              "tMs": 163749,
-              "kind": "caption",
-              "text": "Tools & Products — vendor tooling and PQC-ready software."
-            },
-            {
-              "tMs": 180000,
-              "kind": "advance"
-            }
-          ]
-        },
-        {
-          "id": "f-mod-crypto-mgmt-modernization",
-          "chapter": "foundations",
-          "title": "Cryptographic Management Modernization",
-          "estMinutes": 3,
-          "whyItMatters": "PQC is the forcing function that pushes you from one-off key management to a modernised, agile cryptography programme.",
-          "page": {
-            "route": "/learn/crypto-mgmt-modernization"
-          },
-          "tasks": [
-            "Read the why-it-matters intro",
-            "Walk the Learn sections",
-            "Glance at the Workshop demo",
-            "Note Reference standards"
-          ],
-          "expectedOutput": "Module-level talking points from \"Cryptographic Management Modernization\" you can take to your next governance conversation.",
-          "narration": "PQC is the forcing function that pushes you from one-off key management to a modernised, agile cryptography programme.",
-          "completionSignal": {
-            "kind": "module-progress",
-            "moduleId": "crypto-mgmt-modernization",
-            "minSteps": 2
-          },
-          "cues": [
-            {
-              "tMs": 0,
-              "kind": "navigate",
-              "route": "/learn/crypto-mgmt-modernization"
-            },
-            {
-              "tMs": 1500,
-              "kind": "caption",
-              "text": "Cryptographic Management Modernization — from one-off key management to a modernised cryptography programme"
-            },
-            {
-              "tMs": 4000,
-              "kind": "select-tab",
-              "tabName": "Learn"
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"model\"]"
             },
             {
               "tMs": 6000,
               "kind": "caption",
-              "text": "Section 1/5: Why Now"
+              "text": "Section 1/3: Why Governance, RACI & Policy Hierarchy"
             },
             {
-              "tMs": 16400,
+              "tMs": 53133,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"policy\"]"
+            },
+            {
+              "tMs": 53333,
               "kind": "caption",
-              "text": "Section 2/5: Cpm Defined"
+              "text": "Section 2/3: Governance Models, Escalation & KPIs"
             },
             {
-              "tMs": 26800,
+              "tMs": 100466,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"kpi\"]"
+            },
+            {
+              "tMs": 100666,
               "kind": "caption",
-              "text": "Section 3/5: Asset Classes"
+              "text": "Section 3/3: Resources & Workshop"
             },
             {
-              "tMs": 37200,
-              "kind": "caption",
-              "text": "Section 4/5: Five Pillars"
-            },
-            {
-              "tMs": 47600,
-              "kind": "caption",
-              "text": "Section 5/5: Dual Loop"
-            },
-            {
-              "tMs": 58000,
-              "kind": "select-tab",
-              "tabName": "Workshop"
-            },
-            {
-              "tMs": 59500,
-              "kind": "caption",
-              "text": "Workshop 1/5: Why Now"
-            },
-            {
-              "tMs": 68340,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 69900,
-              "kind": "caption",
-              "text": "Workshop 2/5: Cpm Defined"
-            },
-            {
-              "tMs": 78740,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 80300,
-              "kind": "caption",
-              "text": "Workshop 3/5: Asset Classes"
-            },
-            {
-              "tMs": 89140,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 90700,
-              "kind": "caption",
-              "text": "Workshop 4/5: Five Pillars"
-            },
-            {
-              "tMs": 99540,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 101100,
-              "kind": "caption",
-              "text": "Workshop 5/5: Dual Loop"
-            },
-            {
-              "tMs": 112000,
-              "kind": "select-tab",
-              "tabName": "Visual"
-            },
-            {
-              "tMs": 113500,
-              "kind": "caption",
-              "text": "Visual tab — diagrams and animations for this topic."
-            },
-            {
-              "tMs": 128750,
-              "kind": "select-tab",
-              "tabName": "Exercises"
-            },
-            {
-              "tMs": 130250,
-              "kind": "caption",
-              "text": "Exercises — short knowledge checks to confirm you got it."
-            },
-            {
-              "tMs": 145500,
+              "tMs": 149499,
               "kind": "select-tab",
               "tabName": "References"
             },
             {
-              "tMs": 147000,
+              "tMs": 150999,
               "kind": "caption",
               "text": "References — primary sources every claim is cited from."
-            },
-            {
-              "tMs": 162250,
-              "kind": "select-tab",
-              "tabName": "Tools & Products"
-            },
-            {
-              "tMs": 163750,
-              "kind": "caption",
-              "text": "Tools & Products — vendor tooling and PQC-ready software."
             },
             {
               "tMs": 180000,
@@ -1436,7 +767,7 @@
             {
               "tMs": 1500,
               "kind": "caption",
-              "text": "Vendor & Supply Chain Risk — your vendors' PQC roadmap is your PQC roadmap"
+              "text": "Vendor & Supply Chain Risk — Your vendors' PQC roadmap IS your PQC roadmap. Contract language, certification deadlines, and the readiness scorecard you should send to every supplier."
             },
             {
               "tMs": 4000,
@@ -1444,104 +775,54 @@
               "tabName": "Learn"
             },
             {
-              "tMs": 6000,
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"readiness\"]"
+            },
+            {
+              "tMs": 8000,
               "kind": "caption",
-              "text": "Section 1/4: Readiness"
+              "text": "Section 1/4: Vendor PQC Readiness Assessment"
             },
             {
-              "tMs": 19000,
+              "tMs": 41300,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"supply-chain\"]"
+            },
+            {
+              "tMs": 41500,
               "kind": "caption",
-              "text": "Section 2/4: Supply Chain"
+              "text": "Section 2/4: Supply Chain Cryptographic Dependencies"
             },
             {
-              "tMs": 32000,
+              "tMs": 76800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"contracts\"]"
+            },
+            {
+              "tMs": 77000,
               "kind": "caption",
-              "text": "Section 3/4: Contracts"
+              "text": "Section 3/4: PQC Contract Requirements"
             },
             {
-              "tMs": 45000,
+              "tMs": 112300,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"risk-matrix\"]"
+            },
+            {
+              "tMs": 112500,
               "kind": "caption",
-              "text": "Section 4/4: Risk Matrix"
+              "text": "Section 4/4: Layer-wise Risk Matrix"
             },
             {
-              "tMs": 58000,
-              "kind": "select-tab",
-              "tabName": "Workshop"
-            },
-            {
-              "tMs": 59500,
-              "kind": "caption",
-              "text": "Workshop 1/4: Readiness"
-            },
-            {
-              "tMs": 70550,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 72500,
-              "kind": "caption",
-              "text": "Workshop 2/4: Supply Chain"
-            },
-            {
-              "tMs": 83550,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 85500,
-              "kind": "caption",
-              "text": "Workshop 3/4: Contracts"
-            },
-            {
-              "tMs": 96550,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 98500,
-              "kind": "caption",
-              "text": "Workshop 4/4: Risk Matrix"
-            },
-            {
-              "tMs": 112000,
-              "kind": "select-tab",
-              "tabName": "Visual"
-            },
-            {
-              "tMs": 113500,
-              "kind": "caption",
-              "text": "Visual tab — diagrams and animations for this topic."
-            },
-            {
-              "tMs": 128750,
-              "kind": "select-tab",
-              "tabName": "Exercises"
-            },
-            {
-              "tMs": 130250,
-              "kind": "caption",
-              "text": "Exercises — short knowledge checks to confirm you got it."
-            },
-            {
-              "tMs": 145500,
+              "tMs": 149500,
               "kind": "select-tab",
               "tabName": "References"
             },
             {
-              "tMs": 147000,
+              "tMs": 151000,
               "kind": "caption",
               "text": "References — primary sources every claim is cited from."
-            },
-            {
-              "tMs": 162250,
-              "kind": "select-tab",
-              "tabName": "Tools & Products"
-            },
-            {
-              "tMs": 163750,
-              "kind": "caption",
-              "text": "Tools & Products — vendor tooling and PQC-ready software."
             },
             {
               "tMs": 180000,
@@ -1580,7 +861,7 @@
             {
               "tMs": 1500,
               "kind": "caption",
-              "text": "Migration Program Mgmt — treat PQC migration like Y2K — a 3-year programme, not a project"
+              "text": "Migration Program Mgmt — Treat PQC migration like Y2K — a 3-year programme with stakeholders, milestones, and a deployment plan, not a one-quarter project."
             },
             {
               "tMs": 4000,
@@ -1588,104 +869,34 @@
               "tabName": "Learn"
             },
             {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"roadmap\"]"
+            },
+            {
               "tMs": 6000,
               "kind": "caption",
-              "text": "Section 1/4: Roadmap"
+              "text": "Section 1/2: Program Overview & 7-Phase Framework"
             },
             {
-              "tMs": 19000,
+              "tMs": 76800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"deployment\"]"
+            },
+            {
+              "tMs": 77000,
               "kind": "caption",
-              "text": "Section 2/4: Stakeholders"
+              "text": "Section 2/2: Critical Success Factors & Workshop"
             },
             {
-              "tMs": 32000,
-              "kind": "caption",
-              "text": "Section 3/4: Kpi"
-            },
-            {
-              "tMs": 45000,
-              "kind": "caption",
-              "text": "Section 4/4: Deployment"
-            },
-            {
-              "tMs": 58000,
-              "kind": "select-tab",
-              "tabName": "Workshop"
-            },
-            {
-              "tMs": 59500,
-              "kind": "caption",
-              "text": "Workshop 1/4: Roadmap"
-            },
-            {
-              "tMs": 70550,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 72500,
-              "kind": "caption",
-              "text": "Workshop 2/4: Stakeholders"
-            },
-            {
-              "tMs": 83550,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 85500,
-              "kind": "caption",
-              "text": "Workshop 3/4: Kpi"
-            },
-            {
-              "tMs": 96550,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 98500,
-              "kind": "caption",
-              "text": "Workshop 4/4: Deployment"
-            },
-            {
-              "tMs": 112000,
-              "kind": "select-tab",
-              "tabName": "Visual"
-            },
-            {
-              "tMs": 113500,
-              "kind": "caption",
-              "text": "Visual tab — diagrams and animations for this topic."
-            },
-            {
-              "tMs": 128750,
-              "kind": "select-tab",
-              "tabName": "Exercises"
-            },
-            {
-              "tMs": 130250,
-              "kind": "caption",
-              "text": "Exercises — short knowledge checks to confirm you got it."
-            },
-            {
-              "tMs": 145500,
+              "tMs": 149500,
               "kind": "select-tab",
               "tabName": "References"
             },
             {
-              "tMs": 147000,
+              "tMs": 151000,
               "kind": "caption",
               "text": "References — primary sources every claim is cited from."
-            },
-            {
-              "tMs": 162250,
-              "kind": "select-tab",
-              "tabName": "Tools & Products"
-            },
-            {
-              "tMs": 163750,
-              "kind": "caption",
-              "text": "Tools & Products — vendor tooling and PQC-ready software."
             },
             {
               "tMs": 180000,
@@ -1694,7 +905,193 @@
           ]
         },
         {
-          "id": "f3-library",
+          "id": "f-mod-data-asset-sensitivity",
+          "chapter": "foundations",
+          "title": "Data & Asset Sensitivity",
+          "estMinutes": 3,
+          "whyItMatters": "Classify what you're protecting before you spend a dollar migrating it. The board will ask which crown-jewel data falls under HNDL exposure.",
+          "page": {
+            "route": "/learn/data-asset-sensitivity"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Note References standards"
+          ],
+          "expectedOutput": "Module-level talking points on Data & Asset Sensitivity",
+          "narration": "Before you can prioritise a multi-year PQC migration, you need to know which assets carry the highest stakes. Classification + sensitivity scoring give you the prioritised list the board needs to see — what is HNDL-exposed, what is regulator-bound, what is high-blast-radius.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "data-asset-sensitivity",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/data-asset-sensitivity"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Data & Asset Sensitivity — Classify what you're protecting before you spend a dollar migrating it. The board will ask which crown-jewel data falls under HNDL exposure."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"classification\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/3: Data Asset Classification"
+            },
+            {
+              "tMs": 34200,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"compliance\"]"
+            },
+            {
+              "tMs": 34400,
+              "kind": "caption",
+              "text": "Section 2/3: Compliance Mapping (GDPR, HIPAA, DORA, NIS2)"
+            },
+            {
+              "tMs": 62600,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"methodology\"]"
+            },
+            {
+              "tMs": 62800,
+              "kind": "caption",
+              "text": "Section 3/3: Risk Methodology (NIST RMF, ISO 27005, FAIR)"
+            },
+            {
+              "tMs": 149500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 151000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "f-mod-standards-bodies",
+          "chapter": "foundations",
+          "title": "Standards, Certification & Compliance Bodies",
+          "estMinutes": 3,
+          "whyItMatters": "Know which body publishes, which certifies, which enforces — so when a regulator cites a framework, you know its authority and timeline.",
+          "page": {
+            "route": "/learn/standards-bodies"
+          },
+          "tasks": [
+            "Read why-it-matters intro",
+            "Walk the Learn sections",
+            "Note References standards"
+          ],
+          "expectedOutput": "Module-level talking points on Standards, Certification & Compliance Bodies",
+          "narration": "The PQC standards landscape can look like an alphabet soup. NIST publishes algorithms; ETSI and IETF publish protocols; ISO certifies; ASD, CCCS, ENISA enforce. Knowing this org chart lets you read regulatory letters with the right lens.",
+          "completionSignal": {
+            "kind": "module-progress",
+            "moduleId": "standards-bodies",
+            "minSteps": 2
+          },
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/learn/standards-bodies"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Standards, Certification & Compliance Bodies — Know which body publishes, which certifies, which enforces — so when a regulator cites a framework, you know its authority and timeline."
+            },
+            {
+              "tMs": 4000,
+              "kind": "select-tab",
+              "tabName": "Learn"
+            },
+            {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"three-roles\"]"
+            },
+            {
+              "tMs": 6000,
+              "kind": "caption",
+              "text": "Section 1/5: Three Roles"
+            },
+            {
+              "tMs": 34200,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"gov-vs-nongov\"]"
+            },
+            {
+              "tMs": 34400,
+              "kind": "caption",
+              "text": "Section 2/5: Gov vs Non-Gov"
+            },
+            {
+              "tMs": 62600,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"global-regional\"]"
+            },
+            {
+              "tMs": 62800,
+              "kind": "caption",
+              "text": "Section 3/5: Global & Regional"
+            },
+            {
+              "tMs": 91000,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"app-pages-guide\"]"
+            },
+            {
+              "tMs": 91200,
+              "kind": "caption",
+              "text": "Section 4/5: App Pages Guide"
+            },
+            {
+              "tMs": 119400,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"ietf-process\"]"
+            },
+            {
+              "tMs": 119600,
+              "kind": "caption",
+              "text": "Section 5/5: IETF & RFC Process"
+            },
+            {
+              "tMs": 149500,
+              "kind": "select-tab",
+              "tabName": "References"
+            },
+            {
+              "tMs": 151000,
+              "kind": "caption",
+              "text": "References — primary sources every claim is cited from."
+            },
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
+          ]
+        },
+        {
+          "id": "p-library",
           "chapter": "foundations",
           "title": "Source the standards",
           "estMinutes": 6,
@@ -1723,12 +1120,12 @@
             {
               "tMs": 60000,
               "kind": "caption",
-              "text": "FIPS 203 — ML-KEM. Replaces RSA key exchange."
+              "text": "FIPS 203 is the standard for M L K E M. It replaces RSA key exchange."
             },
             {
               "tMs": 150000,
               "kind": "caption",
-              "text": "FIPS 204 — ML-DSA. Replaces ECDSA signatures."
+              "text": "FIPS 204 is the standard for M L D S A. It replaces ECDSA signatures."
             },
             {
               "tMs": 240000,
@@ -1738,7 +1135,7 @@
             {
               "tMs": 300000,
               "kind": "caption",
-              "text": "Bookmark all three so they are one click away during board prep."
+              "text": "Keep these one tap away during board prep."
             },
             {
               "tMs": 360000,
@@ -1747,7 +1144,7 @@
           ]
         },
         {
-          "id": "f4-assess",
+          "id": "p-assess",
           "chapter": "foundations",
           "title": "Run the executive risk assessment",
           "estMinutes": 6,
@@ -1755,7 +1152,8 @@
           "page": {
             "route": "/assess",
             "query": {
-              "mode": "quick"
+              "mode": "quick",
+              "reset": "1"
             }
           },
           "tasks": [
@@ -1807,7 +1205,7 @@
             {
               "tMs": 32000,
               "kind": "caption",
-              "text": "Step 3: Existing crypto inventory — picking 'I'm not sure'."
+              "text": "Step 3: Crypto inventory — picking 'I'm not sure'."
             },
             {
               "tMs": 36000,
@@ -1852,7 +1250,7 @@
             {
               "tMs": 86000,
               "kind": "caption",
-              "text": "Step 6: Infrastructure — picking 'I'm not sure'."
+              "text": "Step 6: Migration status — picking 'I'm not sure'."
             },
             {
               "tMs": 90000,
@@ -1867,7 +1265,7 @@
             {
               "tMs": 104000,
               "kind": "caption",
-              "text": "Step 7: Migration status — picking 'I'm not sure'."
+              "text": "Step 7: Infrastructure — picking 'I'm not sure'."
             },
             {
               "tMs": 108000,
@@ -1916,7 +1314,7 @@
           ]
         },
         {
-          "id": "f5-report",
+          "id": "p-report",
           "chapter": "foundations",
           "title": "Read the personalised risk report",
           "estMinutes": 4,
@@ -1933,24 +1331,99 @@
           "narration": "Notice what is hidden: algorithm migration tables, mitigation deep-dives. Those are not for you. What is shown is a five-action shortlist tied to your jurisdiction. The share button generates a token-bearing URL — not a PDF — that your board secretary can embed in the next agenda. PDFs go stale; this URL re-renders against current data.",
           "cues": [
             {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/report"
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Your personalised PQC report — board-pack format, hides developer-only sections."
+            },
+            {
               "tMs": 4000,
-              "kind": "caption",
-              "text": "Your board pack — hides developer-only sections."
+              "kind": "click",
+              "selector": "[data-workshop-target=\"report-toc-keyFindings\"]"
             },
             {
-              "tMs": 60000,
+              "tMs": 4200,
               "kind": "caption",
-              "text": "Five-action shortlist tied to your jurisdiction."
+              "text": "Section 1/8: Key Findings — your personalised top-line risks, ranked."
             },
             {
-              "tMs": 120000,
-              "kind": "caption",
-              "text": "Share button generates a token-bearing URL — not a PDF."
+              "tMs": 29000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"report-toc-riskScore\"]"
             },
             {
-              "tMs": 180000,
+              "tMs": 29200,
               "kind": "caption",
-              "text": "PDFs go stale. This URL re-renders against current data every time."
+              "text": "Section 2/8: Risk Score — quantified exposure based on your inputs."
+            },
+            {
+              "tMs": 54000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"report-toc-executiveSummary\"]"
+            },
+            {
+              "tMs": 54200,
+              "kind": "caption",
+              "text": "Section 3/8: Executive Summary — the 60-second board-pack narrative."
+            },
+            {
+              "tMs": 79000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"report-toc-hndlHnfl\"]"
+            },
+            {
+              "tMs": 79200,
+              "kind": "caption",
+              "text": "Section 4/8: HNDL / HNFL — what an attacker can harvest today and decrypt later."
+            },
+            {
+              "tMs": 104000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"report-toc-algorithmMigration\"]"
+            },
+            {
+              "tMs": 104200,
+              "kind": "caption",
+              "text": "Section 5/8: Algorithm Migration — which classical algorithms need replacing first."
+            },
+            {
+              "tMs": 129000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"report-toc-complianceImpact\"]"
+            },
+            {
+              "tMs": 129200,
+              "kind": "caption",
+              "text": "Section 6/8: Compliance Impact — frameworks that gate your jurisdiction."
+            },
+            {
+              "tMs": 154000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"report-toc-recommendedActions\"]"
+            },
+            {
+              "tMs": 154200,
+              "kind": "caption",
+              "text": "Section 7/8: Recommended Actions — the 5-action shortlist tied to your country."
+            },
+            {
+              "tMs": 179000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"report-toc-migrationRoadmap\"]"
+            },
+            {
+              "tMs": 179200,
+              "kind": "caption",
+              "text": "Section 8/8: Migration Roadmap — your 3-year phased plan."
+            },
+            {
+              "tMs": 208000,
+              "kind": "caption",
+              "text": "Share button generates a token-bearing URL — re-renders against current data, no PDFs going stale."
             },
             {
               "tMs": 240000,
@@ -2010,57 +1483,57 @@
               "selector": "[data-workshop-target=\"section-business-zone-governance\"]"
             },
             {
-              "tMs": 4000,
+              "tMs": 6000,
               "kind": "caption",
               "text": "Artifact: ROI Model"
             },
             {
-              "tMs": 5500,
+              "tMs": 7500,
               "kind": "generate-artifact",
               "artifactType": "roi-model"
             },
             {
-              "tMs": 10000,
+              "tMs": 16000,
               "kind": "caption",
               "text": "Quantifies migration cost vs. breach cost vs. compliance penalty. The CFO's first question gets a number."
             },
             {
-              "tMs": 100000,
+              "tMs": 102000,
               "kind": "caption",
               "text": "Artifact: Board Deck"
             },
             {
-              "tMs": 101500,
+              "tMs": 103500,
               "kind": "generate-artifact",
               "artifactType": "board-deck"
             },
             {
-              "tMs": 106000,
+              "tMs": 108000,
               "kind": "caption",
               "text": "Pre-built slides citing your jurisdiction's deadline. 12 minutes, not 60."
             },
             {
-              "tMs": 196000,
+              "tMs": 198000,
               "kind": "caption",
               "text": "Artifact: CRQC Scenario"
             },
             {
-              "tMs": 197500,
+              "tMs": 199500,
               "kind": "generate-artifact",
               "artifactType": "crqc-scenario"
             },
             {
-              "tMs": 202000,
+              "tMs": 204000,
               "kind": "caption",
               "text": "A scripted what-if for \"the day a CRQC is announced\" — your incident response, day zero."
             },
             {
-              "tMs": 296000,
+              "tMs": 298000,
               "kind": "caption",
               "text": "3 governance artifacts created."
             },
             {
-              "tMs": 300000,
+              "tMs": 302000,
               "kind": "advance"
             }
           ]
@@ -2110,57 +1583,57 @@
               "selector": "[data-workshop-target=\"section-business-zone-governance\"]"
             },
             {
-              "tMs": 4000,
+              "tMs": 6500,
               "kind": "caption",
               "text": "Artifact: Audit Checklist"
             },
             {
-              "tMs": 5500,
+              "tMs": 8000,
               "kind": "generate-artifact",
               "artifactType": "audit-checklist"
             },
             {
-              "tMs": 10000,
+              "tMs": 16500,
               "kind": "caption",
-              "text": "Maps your crypto inventory to FIPS 140-3, NIST IR 8547, and CNSA 2.0 line items. Drop-in for your audit cycle."
+              "text": "Maps your crypto inventory to three standards. FIPS 140 dash 3. NIST I R 8547. And CNSA version 2. Drop-in for your audit cycle."
             },
             {
-              "tMs": 100000,
+              "tMs": 102500,
               "kind": "caption",
               "text": "Artifact: Compliance Timeline"
             },
             {
-              "tMs": 101500,
+              "tMs": 104000,
               "kind": "generate-artifact",
               "artifactType": "compliance-timeline"
             },
             {
-              "tMs": 106000,
+              "tMs": 108500,
               "kind": "caption",
-              "text": "Visual of every binding deadline (NIST, CCCS, ASD, PCI 4.0) overlaid on your fiscal calendar."
+              "text": "A visual of every binding deadline. NIST. CCCS. ASD. PCI version 4. All overlaid on your fiscal calendar."
             },
             {
-              "tMs": 196000,
+              "tMs": 198500,
               "kind": "caption",
               "text": "Artifact: Compliance Checklist"
             },
             {
-              "tMs": 197500,
+              "tMs": 200000,
               "kind": "generate-artifact",
               "artifactType": "compliance-checklist"
             },
             {
-              "tMs": 202000,
+              "tMs": 204500,
               "kind": "caption",
               "text": "One-pager you hand to your CISO's deputy. They sign every line monthly."
             },
             {
-              "tMs": 296000,
+              "tMs": 298500,
               "kind": "caption",
               "text": "3 governance artifacts created."
             },
             {
-              "tMs": 300000,
+              "tMs": 302500,
               "kind": "advance"
             }
           ]
@@ -2210,57 +1683,57 @@
               "selector": "[data-workshop-target=\"section-business-zone-governance\"]"
             },
             {
-              "tMs": 4000,
+              "tMs": 6000,
               "kind": "caption",
               "text": "Artifact: Policy Draft"
             },
             {
-              "tMs": 5500,
+              "tMs": 7500,
               "kind": "generate-artifact",
               "artifactType": "policy-draft"
             },
             {
-              "tMs": 10000,
+              "tMs": 16000,
               "kind": "caption",
               "text": "One-page mandate your legal team finishes in an afternoon. The signed policy becomes the audit anchor."
             },
             {
-              "tMs": 100000,
+              "tMs": 102000,
               "kind": "caption",
               "text": "Artifact: RACI Matrix"
             },
             {
-              "tMs": 101500,
+              "tMs": 103500,
               "kind": "generate-artifact",
               "artifactType": "raci-matrix"
             },
             {
-              "tMs": 106000,
+              "tMs": 108000,
               "kind": "caption",
               "text": "PQC champion responsible · CISO accountable · CRO consulted · Board sponsor informed. Names, not roles."
             },
             {
-              "tMs": 196000,
+              "tMs": 198000,
               "kind": "caption",
               "text": "Artifact: Stakeholder Comms"
             },
             {
-              "tMs": 197500,
+              "tMs": 199500,
               "kind": "generate-artifact",
               "artifactType": "stakeholder-comms"
             },
             {
-              "tMs": 202000,
+              "tMs": 204000,
               "kind": "caption",
               "text": "Email and slide templates for the announcements that make migration real to your org."
             },
             {
-              "tMs": 296000,
+              "tMs": 298000,
               "kind": "caption",
               "text": "3 governance artifacts created."
             },
             {
-              "tMs": 300000,
+              "tMs": 302000,
               "kind": "advance"
             }
           ]
@@ -2310,57 +1783,57 @@
               "selector": "[data-workshop-target=\"section-business-zone-governance\"]"
             },
             {
-              "tMs": 4000,
+              "tMs": 6000,
               "kind": "caption",
               "text": "Artifact: Vendor Scorecard"
             },
             {
-              "tMs": 5500,
+              "tMs": 7500,
               "kind": "generate-artifact",
               "artifactType": "vendor-scorecard"
             },
             {
-              "tMs": 10000,
+              "tMs": 16000,
               "kind": "caption",
               "text": "Rates your top-20 crypto vendors on PQC roadmap, FIPS 140-3 status, and migration commitment."
             },
             {
-              "tMs": 100000,
+              "tMs": 102000,
               "kind": "caption",
               "text": "Artifact: Contract Clause"
             },
             {
-              "tMs": 101500,
+              "tMs": 103500,
               "kind": "generate-artifact",
               "artifactType": "contract-clause"
             },
             {
-              "tMs": 106000,
+              "tMs": 108000,
               "kind": "caption",
               "text": "Drop-in PQC readiness language for procurement and renewal contracts. Your legal team will thank you."
             },
             {
-              "tMs": 196000,
+              "tMs": 198000,
               "kind": "caption",
               "text": "Artifact: Supply Chain Matrix"
             },
             {
-              "tMs": 197500,
+              "tMs": 199500,
               "kind": "generate-artifact",
               "artifactType": "supply-chain-matrix"
             },
             {
-              "tMs": 202000,
+              "tMs": 204000,
               "kind": "caption",
               "text": "End-to-end view: which vendors' systems hold which crypto assets. The map your CISO needs at every audit."
             },
             {
-              "tMs": 296000,
+              "tMs": 298000,
               "kind": "caption",
               "text": "3 governance artifacts created."
             },
             {
-              "tMs": 300000,
+              "tMs": 302000,
               "kind": "advance"
             }
           ]
@@ -2408,27 +1881,27 @@
               "selector": "[data-workshop-target=\"section-business-zone-governance\"]"
             },
             {
-              "tMs": 4000,
+              "tMs": 5000,
               "kind": "caption",
               "text": "Artifact: Crypto Architecture"
             },
             {
-              "tMs": 5500,
+              "tMs": 6500,
               "kind": "generate-artifact",
               "artifactType": "crypto-architecture"
             },
             {
-              "tMs": 10000,
+              "tMs": 15000,
               "kind": "caption",
               "text": "Layered diagram: applications → libraries → HSMs → vendors. Annotated with classical and post-quantum algorithms."
             },
             {
-              "tMs": 116000,
+              "tMs": 117000,
               "kind": "caption",
               "text": "1 governance artifact created."
             },
             {
-              "tMs": 120000,
+              "tMs": 121000,
               "kind": "advance"
             }
           ]
@@ -2477,42 +1950,42 @@
               "selector": "[data-workshop-target=\"section-business-zone-governance\"]"
             },
             {
-              "tMs": 4000,
+              "tMs": 6000,
               "kind": "caption",
               "text": "Artifact: KPI Dashboard"
             },
             {
-              "tMs": 5500,
+              "tMs": 7500,
               "kind": "generate-artifact",
               "artifactType": "kpi-dashboard"
             },
             {
-              "tMs": 10000,
+              "tMs": 16000,
               "kind": "caption",
               "text": "Three numbers your board will track: FIPS 140-3 coverage, PQC-ready certificate share, vendor PQC commitment."
             },
             {
-              "tMs": 88000,
+              "tMs": 90000,
               "kind": "caption",
               "text": "Artifact: Management Tools Audit"
             },
             {
-              "tMs": 89500,
+              "tMs": 91500,
               "kind": "generate-artifact",
               "artifactType": "management-tools-audit"
             },
             {
-              "tMs": 94000,
+              "tMs": 96000,
               "kind": "caption",
-              "text": "Inventory of every crypto-related management tool (CA, KMS, HSM panels, CMDB) and their PQC readiness."
+              "text": "An inventory of every crypto-related management tool. Certificate authorities. Key management. Hardware security module panels. Configuration management. And their post-quantum readiness."
             },
             {
-              "tMs": 176000,
+              "tMs": 178000,
               "kind": "caption",
               "text": "2 governance artifacts created."
             },
             {
-              "tMs": 180000,
+              "tMs": 182000,
               "kind": "advance"
             }
           ]
@@ -2535,7 +2008,8 @@
             "Generate the vendor-letter campaign (asks every crypto vendor for their PQC roadmap)"
           ],
           "expectedOutput": "CBOM template + vendor-letter campaign downloaded.",
-          "narration": "The Assets zone is the cryptographic bill of materials. Six classes — code, libraries, applications, files, protocols, systems — every one of which can hide a cryptographic dependency. The CBOM template is pre-populated with the six classes; your team fills in the rows over four to six weeks using existing CMDB and SBOM tooling. The vendor-letter campaign sends a single templated request to every cryptographic vendor in your inventory: tell us your post-quantum roadmap. The replies are themselves a CBOM input."
+          "narration": "The Assets zone is the cryptographic bill of materials. Six classes — code, libraries, applications, files, protocols, systems — every one of which can hide a cryptographic dependency. The CBOM template is pre-populated with the six classes; your team fills in the rows over four to six weeks using existing CMDB and SBOM tooling. The vendor-letter campaign sends a single templated request to every cryptographic vendor in your inventory: tell us your post-quantum roadmap. The replies are themselves a CBOM input.",
+          "cues": []
         },
         {
           "id": "a3-cswp-risk",
@@ -2556,7 +2030,8 @@
             "Generate the quarterly board report template"
           ],
           "expectedOutput": "Risk register entry + KPI dashboard + board report template downloaded.",
-          "narration": "Section six-point-five of CSWP 39 is the maturity assessment. This zone is where the work of every other zone becomes visible to executives. Three KPIs matter: the percentage of your cryptographic estate covered by FIPS 140-3 certified modules, the share of your active certificates that are post-quantum-ready or hybrid, and the percentage of your top-twenty cryptographic vendors with a published PQC roadmap. The dashboard renders these against your jurisdictional deadline — 2030 for ASD, 2031 for CCCS high-priority, 2035 for NIST disallow."
+          "narration": "Section six-point-five of CSWP 39 is the maturity assessment. This zone is where the work of every other zone becomes visible to executives. Three KPIs matter: the percentage of your cryptographic estate covered by FIPS 140-3 certified modules, the share of your active certificates that are post-quantum-ready or hybrid, and the percentage of your top-twenty cryptographic vendors with a published PQC roadmap. The dashboard renders these against your jurisdictional deadline — 2030 for ASD, 2031 for CCCS high-priority, 2035 for NIST disallow.",
+          "cues": []
         },
         {
           "id": "a4-cswp-migration",
@@ -2577,7 +2052,8 @@
             "Download the full report bundle as a ZIP"
           ],
           "expectedOutput": "90-day plan + cert-automation checklist + report ZIP downloaded.",
-          "narration": "CSWP 39 section three-point-two covers algorithm transitions — the migration zone. Three workstreams, ninety days. First, the cryptographic inventory pilot using existing CMDB and SBOM tooling — output is a populated CBOM. Second, the vendor-letter campaign you saw in the Assets zone — output is a vendor-readiness scorecard. Third, a hybrid post-quantum pilot, usually on internal TLS or code-signing, that proves your operations team can run ML-KEM and ML-DSA in production. Three workstreams, three artifacts, one board meeting at the end of the quarter."
+          "narration": "CSWP 39 section three-point-two covers algorithm transitions — the migration zone. Three workstreams, ninety days. First, the cryptographic inventory pilot using existing CMDB and SBOM tooling — output is a populated CBOM. Second, the vendor-letter campaign you saw in the Assets zone — output is a vendor-readiness scorecard. Third, a hybrid post-quantum pilot, usually on internal TLS or code-signing, that proves your operations team can run ML-KEM and ML-DSA in production. Three workstreams, three artifacts, one board meeting at the end of the quarter.",
+          "cues": []
         }
       ]
     }
@@ -2608,7 +2084,116 @@
             "Note the 2030 hybrid TLS and 2035 disallow markers"
           ],
           "expectedOutput": "Three U.S. frameworks bookmarked; deadlines noted.",
-          "narration": "CNSA 2.0 is the National Security Agency’s Commercial National Security Algorithm Suite, version two. By 2030, federal TLS, code-signing, and key exchange must use hybrid post-quantum schemes. By 2035, classical-only is disallowed. FIPS 140-3 is the validation programme — your hardware security modules and crypto libraries must hold a current certificate."
+          "narration": "CNSA 2.0 is the National Security Agency’s Commercial National Security Algorithm Suite, version two. By 2030, federal TLS, code-signing, and key exchange must use hybrid post-quantum schemes. By 2035, classical-only is disallowed. FIPS 140-3 is the validation programme — your hardware security modules and crypto libraries must hold a current certificate.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/compliance",
+              "query": {
+                "country": "United States"
+              }
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "United States. NIST plus CNSA version 2 plus FIPS 140 dash 3. That is your binding stack."
+            },
+            {
+              "tMs": 4000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"compliance-tab-foryou\"]"
+            },
+            {
+              "tMs": 4500,
+              "kind": "caption",
+              "text": "For You — your personalised compliance view, computed from your persona context."
+            },
+            {
+              "tMs": 11800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"profile-summary\"]"
+            },
+            {
+              "tMs": 12000,
+              "kind": "caption",
+              "text": "Profile Summary — your country + industry + role drives every section below."
+            },
+            {
+              "tMs": 36800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"regulatory-clock\"]"
+            },
+            {
+              "tMs": 37000,
+              "kind": "caption",
+              "text": "Regulatory Clock — visual countdown to your most binding deadline."
+            },
+            {
+              "tMs": 61800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"frameworks-mandatory\"]"
+            },
+            {
+              "tMs": 62000,
+              "kind": "caption",
+              "text": "Mandatory frameworks — what your jurisdiction binds you to today."
+            },
+            {
+              "tMs": 86800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"frameworks-recognized\"]"
+            },
+            {
+              "tMs": 87000,
+              "kind": "caption",
+              "text": "Recognized standards — what your auditor will accept as evidence."
+            },
+            {
+              "tMs": 111800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"frameworks-crossborder\"]"
+            },
+            {
+              "tMs": 112000,
+              "kind": "caption",
+              "text": "Cross-border frameworks — what subsidiaries and partners need."
+            },
+            {
+              "tMs": 136800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"next-decision\"]"
+            },
+            {
+              "tMs": 137000,
+              "kind": "caption",
+              "text": "Next Decision — the one action your board should sign off on this quarter."
+            },
+            {
+              "tMs": 161800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"sidebar-threats\"]"
+            },
+            {
+              "tMs": 162000,
+              "kind": "caption",
+              "text": "Sector threats — country-tagged threats your finance peers are tracking."
+            },
+            {
+              "tMs": 186800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"sidebar-library\"]"
+            },
+            {
+              "tMs": 187000,
+              "kind": "caption",
+              "text": "Top library docs — primary-source reading list for the CISO."
+            },
+            {
+              "tMs": 240000,
+              "kind": "advance"
+            }
+          ]
         },
         {
           "id": "us-02-timeline",
@@ -2629,7 +2214,8 @@
             "Open G7 Cyber Expert Group financial-sector roadmap (Jan 2026)"
           ],
           "expectedOutput": "Three milestones reviewed; G7 financial roadmap bookmarked.",
-          "narration": "Three signals: the Department of Defense five-year agreement with SandboxAQ for cryptographic discovery across the Pentagon. FedRAMP Ready, which means cloud vendors selling to federal agencies are now being evaluated for automated PQC discovery. And the Group of Seven Cyber Expert Group financial-sector roadmap, co-chaired by U.S. Treasury and the Bank of England, with critical-systems migration by 2030 to 2032 and full migration by 2035."
+          "narration": "Three signals: the Department of Defense five-year agreement with SandboxAQ for cryptographic discovery across the Pentagon. FedRAMP Ready, which means cloud vendors selling to federal agencies are now being evaluated for automated PQC discovery. And the Group of Seven Cyber Expert Group financial-sector roadmap, co-chaired by U.S. Treasury and the Bank of England, with critical-systems migration by 2030 to 2032 and full migration by 2035.",
+          "cues": []
         },
         {
           "id": "us-03-threats",
@@ -2650,7 +2236,8 @@
             "Open FIN-005 FS-ISAC sector-readiness warning"
           ],
           "expectedOutput": "You can recite the three U.S.-relevant FIN threats in one minute.",
-          "narration": "In a U.S. context, the BIS Project Leap test on TARGET2 is a preview of what FedWire and CHIPS will face. FIN-004 explains why your domestic HSM fleet is on the timeline regardless of your application stack. FIN-005 is the FS-ISAC warning that, by their measurement, the sector is short of resources to hit 2030."
+          "narration": "In a U.S. context, the BIS Project Leap test on TARGET2 is a preview of what FedWire and CHIPS will face. FIN-004 explains why your domestic HSM fleet is on the timeline regardless of your application stack. FIN-005 is the FS-ISAC warning that, by their measurement, the sector is short of resources to hit 2030.",
+          "cues": []
         },
         {
           "id": "us-04-leaders",
@@ -2667,7 +2254,8 @@
           },
           "tasks": ["Open Sudha Iyer’s profile", "Bookmark for board citation"],
           "expectedOutput": "Citation bookmarked.",
-          "narration": "Sudha Iyer has been at Citi for two decades and is a founding member of the FS-ISAC post-quantum working group. She is your reference point for \"what is a tier-one U.S. bank already doing\"."
+          "narration": "Sudha Iyer has been at Citi for two decades and is a founding member of the FS-ISAC post-quantum working group. She is your reference point for \"what is a tier-one U.S. bank already doing\".",
+          "cues": []
         },
         {
           "id": "us-05-library",
@@ -2681,7 +2269,8 @@
           },
           "tasks": ["Search PCI DSS 4.0", "Open requirement 12.3.3", "Bookmark NIST IR 8547"],
           "expectedOutput": "PCI 12.3.3 requirement open; NIST IR 8547 bookmarked.",
-          "narration": "PCI DSS 4.0 requirement 12.3.3 has been mandatory since March 2025. It requires you to maintain a cryptographic inventory and a crypto-agility plan. Your assessor reads this as post-quantum readiness. If you have been deferring inventory work, this requirement has already moved your deadline forward to today."
+          "narration": "PCI DSS 4.0 requirement 12.3.3 has been mandatory since March 2025. It requires you to maintain a cryptographic inventory and a crypto-agility plan. Your assessor reads this as post-quantum readiness. If you have been deferring inventory work, this requirement has already moved your deadline forward to today.",
+          "cues": []
         }
       ]
     },
@@ -2709,7 +2298,116 @@
             "Note the three-phase calendar: 2026 / 2031 / 2035"
           ],
           "expectedOutput": "ITSM.40.001 framework bookmarked; three-phase calendar noted.",
-          "narration": "The Canadian Centre for Cyber Security published ITSM.40.001 in June 2025. It is phased: by April 2026, federal departments must submit migration plans. By 2031, high-priority systems must be migrated. By 2035, the full government of Canada non-classified estate must be on post-quantum cryptography. Federal procurement alignment cascades to the financial sector through service contracts."
+          "narration": "The Canadian Centre for Cyber Security published ITSM.40.001 in June 2025. It is phased: by April 2026, federal departments must submit migration plans. By 2031, high-priority systems must be migrated. By 2035, the full government of Canada non-classified estate must be on post-quantum cryptography. Federal procurement alignment cascades to the financial sector through service contracts.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/compliance",
+              "query": {
+                "country": "Canada"
+              }
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Canada — CCCS ITSM.40.001 phased mandate (2026 plans, 2031 high-priority, 2035 full)."
+            },
+            {
+              "tMs": 4000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"compliance-tab-foryou\"]"
+            },
+            {
+              "tMs": 4500,
+              "kind": "caption",
+              "text": "For You — your personalised compliance view, computed from your persona context."
+            },
+            {
+              "tMs": 11800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"profile-summary\"]"
+            },
+            {
+              "tMs": 12000,
+              "kind": "caption",
+              "text": "Profile Summary — your country + industry + role drives every section below."
+            },
+            {
+              "tMs": 36800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"regulatory-clock\"]"
+            },
+            {
+              "tMs": 37000,
+              "kind": "caption",
+              "text": "Regulatory Clock — visual countdown to your most binding deadline."
+            },
+            {
+              "tMs": 61800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"frameworks-mandatory\"]"
+            },
+            {
+              "tMs": 62000,
+              "kind": "caption",
+              "text": "Mandatory frameworks — what your jurisdiction binds you to today."
+            },
+            {
+              "tMs": 86800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"frameworks-recognized\"]"
+            },
+            {
+              "tMs": 87000,
+              "kind": "caption",
+              "text": "Recognized standards — what your auditor will accept as evidence."
+            },
+            {
+              "tMs": 111800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"frameworks-crossborder\"]"
+            },
+            {
+              "tMs": 112000,
+              "kind": "caption",
+              "text": "Cross-border frameworks — what subsidiaries and partners need."
+            },
+            {
+              "tMs": 136800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"next-decision\"]"
+            },
+            {
+              "tMs": 137000,
+              "kind": "caption",
+              "text": "Next Decision — the one action your board should sign off on this quarter."
+            },
+            {
+              "tMs": 161800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"sidebar-threats\"]"
+            },
+            {
+              "tMs": 162000,
+              "kind": "caption",
+              "text": "Sector threats — country-tagged threats your finance peers are tracking."
+            },
+            {
+              "tMs": 186800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"sidebar-library\"]"
+            },
+            {
+              "tMs": 187000,
+              "kind": "caption",
+              "text": "Top library docs — primary-source reading list for the CISO."
+            },
+            {
+              "tMs": 240000,
+              "kind": "advance"
+            }
+          ]
         },
         {
           "id": "ca-02-timeline",
@@ -2730,7 +2428,8 @@
             "Open TBS SPIN Notice (2025-10-09)"
           ],
           "expectedOutput": "Three Canadian milestones reviewed; country bookmarked.",
-          "narration": "The runway is in three documents. Innovation, Science and Economic Development Canada published the original best practices in 2023 — that is when your peers first started budgeting. The CCCS roadmap of June 2025 is the binding federal document. The Treasury Board Secretariat Security Policy Implementation Notice of October 2025 turns the roadmap into a contractual obligation across federal procurement."
+          "narration": "The runway is in three documents. Innovation, Science and Economic Development Canada published the original best practices in 2023 — that is when your peers first started budgeting. The CCCS roadmap of June 2025 is the binding federal document. The Treasury Board Secretariat Security Policy Implementation Notice of October 2025 turns the roadmap into a contractual obligation across federal procurement.",
+          "cues": []
         },
         {
           "id": "ca-03-threats",
@@ -2751,7 +2450,8 @@
             "Open FIN-005 FS-ISAC sector-readiness warning"
           ],
           "expectedOutput": "Three threats reviewed in Canadian context.",
-          "narration": "For Canadian banks, FIN-001 matters because Canada participates in the Group of Seven coordinating framework. FIN-002 is operationally severe because HNDL on cross-border settlement traffic creates a permanent privacy exposure that pre-existing Canadian privacy law — PIPEDA, the new C-27 — already covers. FIN-005 applies — your sector readiness is no better than your U.S. peers."
+          "narration": "For Canadian banks, FIN-001 matters because Canada participates in the Group of Seven coordinating framework. FIN-002 is operationally severe because HNDL on cross-border settlement traffic creates a permanent privacy exposure that pre-existing Canadian privacy law — PIPEDA, the new C-27 — already covers. FIN-005 applies — your sector readiness is no better than your U.S. peers.",
+          "cues": []
         },
         {
           "id": "ca-04-leaders",
@@ -2768,7 +2468,8 @@
           },
           "tasks": ["Open Sami Khoury profile", "Bookmark for board citation"],
           "expectedOutput": "Citation bookmarked.",
-          "narration": "Sami Khoury is currently Canada’s Senior Official for Cyber Security and was the head of the Canadian Centre for Cyber Security when ITSAP.00.017 was published. He is your in-country reference point."
+          "narration": "Sami Khoury is currently Canada’s Senior Official for Cyber Security and was the head of the Canadian Centre for Cyber Security when ITSAP.00.017 was published. He is your in-country reference point.",
+          "cues": []
         },
         {
           "id": "ca-05-library",
@@ -2786,7 +2487,8 @@
             "Bookmark NIST FIPS 203 and 204 (Canada aligns to NIST)"
           ],
           "expectedOutput": "CCCS practitioner guide and NIST FIPS bookmarked.",
-          "narration": "Canada aligns to NIST standards — there is no separate Canadian algorithm suite. ITSAP.00.017 is the practitioner guide that translates NIST FIPS 203 and 204 into deployment guidance for federal departments. Your CISO will treat this as the authoritative implementation document."
+          "narration": "Canada aligns to NIST standards — there is no separate Canadian algorithm suite. ITSAP.00.017 is the practitioner guide that translates NIST FIPS 203 and 204 into deployment guidance for federal departments. Your CISO will treat this as the authoritative implementation document.",
+          "cues": []
         }
       ]
     },
@@ -2817,54 +2519,110 @@
           "narration": "The Australian Signals Directorate updated the Information Security Manual in December 2024 with control 1917. By end of 2030, traditional cryptography — RSA, ECDSA, ECDH — is prohibited for protected systems. Required algorithms are at the highest NIST security levels: ML-DSA-87 for signatures, ML-KEM-1024 for key encapsulation, SHA-384 or SHA-512, AES-256. This is five years ahead of the U.S. and U.K. equivalents.",
           "cues": [
             {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/compliance",
+              "query": {
+                "country": "Australia"
+              }
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Australia. ASD I S M 1917 prohibits classical crypto by end of 2030. Five years ahead of the US and UK."
+            },
+            {
               "tMs": 4000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"compliance-tab-foryou\"]"
+            },
+            {
+              "tMs": 5000,
               "kind": "caption",
-              "text": "ASD updated the ISM in December 2024 with control 1917 — by end-2030, traditional crypto is prohibited."
+              "text": "For You — your personalised compliance view, computed from your persona context."
             },
             {
-              "tMs": 8000,
-              "kind": "select-tab",
-              "tabName": "Compliance Frameworks"
-            },
-            {
-              "tMs": 12000,
-              "kind": "spotlight",
-              "selector": "[data-workshop-target=\"tab-compliance\"]"
-            },
-            {
-              "tMs": 60000,
-              "kind": "caption",
-              "text": "Required algorithms are at the highest NIST security levels."
-            },
-            {
-              "tMs": 65000,
+              "tMs": 12300,
               "kind": "scroll-to",
-              "selector": "[data-workshop-target=\"compliance-framework-asd-ism-1917\"]"
+              "selector": "[data-section-id=\"profile-summary\"]"
             },
             {
-              "tMs": 70000,
-              "kind": "spotlight",
-              "selector": "[data-workshop-target=\"compliance-framework-asd-ism-1917\"]"
-            },
-            {
-              "tMs": 75000,
-              "kind": "callout",
-              "selector": "[data-workshop-target=\"compliance-framework-asd-ism-1917\"]",
-              "label": "ISM-1917 — 2030 prohibition",
-              "arrow": "left"
-            },
-            {
-              "tMs": 120000,
+              "tMs": 12500,
               "kind": "caption",
-              "text": "ML-DSA-87 for signatures · ML-KEM-1024 for key encapsulation · SHA-384/512 · AES-256."
+              "text": "Profile Summary — your country + industry + role drives every section below."
             },
             {
-              "tMs": 180000,
+              "tMs": 37300,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"regulatory-clock\"]"
+            },
+            {
+              "tMs": 37500,
               "kind": "caption",
-              "text": "Five years ahead of U.S. and U.K. equivalents — the tightest deadline of the three jurisdictions."
+              "text": "Regulatory Clock — visual countdown to your most binding deadline."
             },
             {
-              "tMs": 240000,
+              "tMs": 62300,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"frameworks-mandatory\"]"
+            },
+            {
+              "tMs": 62500,
+              "kind": "caption",
+              "text": "Mandatory frameworks — what your jurisdiction binds you to today."
+            },
+            {
+              "tMs": 87300,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"frameworks-recognized\"]"
+            },
+            {
+              "tMs": 87500,
+              "kind": "caption",
+              "text": "Recognized standards — what your auditor will accept as evidence."
+            },
+            {
+              "tMs": 112300,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"frameworks-crossborder\"]"
+            },
+            {
+              "tMs": 112500,
+              "kind": "caption",
+              "text": "Cross-border frameworks — what subsidiaries and partners need."
+            },
+            {
+              "tMs": 137300,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"next-decision\"]"
+            },
+            {
+              "tMs": 137500,
+              "kind": "caption",
+              "text": "Next Decision — the one action your board should sign off on this quarter."
+            },
+            {
+              "tMs": 162300,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"sidebar-threats\"]"
+            },
+            {
+              "tMs": 162500,
+              "kind": "caption",
+              "text": "Sector threats — country-tagged threats your finance peers are tracking."
+            },
+            {
+              "tMs": 187300,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"sidebar-library\"]"
+            },
+            {
+              "tMs": 187500,
+              "kind": "caption",
+              "text": "Top library docs — primary-source reading list for the CISO."
+            },
+            {
+              "tMs": 240500,
               "kind": "advance"
             }
           ]
@@ -2967,7 +2725,7 @@
             {
               "tMs": 60000,
               "kind": "caption",
-              "text": "FIN-004: an HSM fleet wrapping backup keys with RSA is non-compliant under ISM-1917 by 2030."
+              "text": "F I N 004. A hardware security module fleet wrapping backup keys with RSA is non-compliant under I S M 1917 by 2030."
             },
             {
               "tMs": 65000,
@@ -3036,10 +2794,7 @@
           "estMinutes": 3,
           "whyItMatters": "Dell Australia’s BSAFE products are already NIST-validated for ML-DSA and ML-KEM. Concrete proof that the vendor ecosystem is ready before your deadline.",
           "page": {
-            "route": "/migrate",
-            "query": {
-              "vendor": "Dell"
-            }
+            "route": "/migrate"
           },
           "tasks": [
             "Filter by vendor Dell",
@@ -3052,7 +2807,7 @@
             {
               "tMs": 4000,
               "kind": "caption",
-              "text": "Dell Australia is the named vendor on multiple ACVP certificates — ML-DSA and ML-KEM both validated."
+              "text": "Dell Australia is named on multiple ACVP certificates. M L D S A and M L K E M both validated."
             },
             {
               "tMs": 8000,
@@ -3103,8 +2858,102 @@
   "close": {
     "id": "close",
     "title": "Close",
-    "estMinutes": 7,
+    "estMinutes": 10,
     "steps": [
+      {
+        "id": "close-quiz",
+        "chapter": "close",
+        "title": "Quiz — test what you learned",
+        "estMinutes": 3,
+        "whyItMatters": "A 5-to-45-minute quiz with persona-tuned topics gives you a quick measure of what stuck.",
+        "page": {
+          "route": "/learn/quiz",
+          "query": {
+            "category": "compliance,industry-threats,migration-planning"
+          }
+        },
+        "tasks": [
+          "Note the duration slider and difficulty filter",
+          "See how persona-tuned topics are pre-selected",
+          "Run the quiz yourself after the workshop"
+        ],
+        "expectedOutput": "A working knowledge of the quiz interface; you'll come back to actually take it.",
+        "narration": "The quiz is the quickest way to check what you've absorbed. Pick how much time you have, pick the topics that matter, and get a scored breakdown by category and difficulty.",
+        "cues": [
+          {
+            "tMs": 0,
+            "kind": "navigate",
+            "route": "/learn/quiz",
+            "query": {
+              "category": "compliance,industry-threats,migration-planning"
+            }
+          },
+          {
+            "tMs": 1500,
+            "kind": "caption",
+            "text": "Test what you learned. Pick a duration, pick topics, go."
+          },
+          {
+            "tMs": 6000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"quiz-duration-slider\"]"
+          },
+          {
+            "tMs": 7500,
+            "kind": "caption",
+            "text": "Duration slider. Five to forty-five minutes. Quiz scales the question count to match."
+          },
+          {
+            "tMs": 22000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"quiz-difficulty-row\"]"
+          },
+          {
+            "tMs": 23500,
+            "kind": "caption",
+            "text": "Difficulty filter. Beginner, Intermediate, Advanced. Multi-select."
+          },
+          {
+            "tMs": 38000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"quiz-topic-grid\"]"
+          },
+          {
+            "tMs": 39500,
+            "kind": "caption",
+            "text": "Topic grid. Categories pre-filtered by your persona context."
+          },
+          {
+            "tMs": 55000,
+            "kind": "click",
+            "selector": "[data-workshop-target=\"quiz-category-compliance\"]"
+          },
+          {
+            "tMs": 56500,
+            "kind": "caption",
+            "text": "Selected topics show a checkmark. The Start button activates once you pick at least one."
+          },
+          {
+            "tMs": 75000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"quiz-start-category\"]"
+          },
+          {
+            "tMs": 76500,
+            "kind": "caption",
+            "text": "Start the quiz when you're ready. We'll skip running it inside the workshop."
+          },
+          {
+            "tMs": 165000,
+            "kind": "caption",
+            "text": "Results show your score, category breakdown, difficulty breakdown, and let you retake or change topics."
+          },
+          {
+            "tMs": 180000,
+            "kind": "advance"
+          }
+        ]
+      },
       {
         "id": "close-01-about",
         "chapter": "close",

@@ -49,7 +49,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
   <div className="space-y-8 w-full">
     {/* Section 1: Why Modernize Crypto Management Now */}
     <section id="why-now" className="glass-panel p-6">
-      <div className="flex items-center gap-3 mb-4">
+      <div data-section-id="why-now" className="flex items-center gap-3 mb-4 scroll-mt-20">
         <div className="p-2 rounded-lg bg-primary/10">
           <AlarmClock size={24} className="text-primary" />
         </div>
@@ -317,7 +317,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
 
     {/* Section 2: CPM vs Crypto-Agility vs CryptoCOE */}
     <section id="cpm-defined" className="glass-panel p-6">
-      <div className="flex items-center gap-3 mb-4">
+      <div data-section-id="cpm-defined" className="flex items-center gap-3 mb-4 scroll-mt-20">
         <div className="p-2 rounded-lg bg-secondary/10">
           <Layers size={24} className="text-secondary" />
         </div>
@@ -394,7 +394,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
 
     {/* Section 3: Four Asset Classes */}
     <section id="asset-classes" className="glass-panel p-6">
-      <div className="flex items-center gap-3 mb-4">
+      <div data-section-id="asset-classes" className="flex items-center gap-3 mb-4 scroll-mt-20">
         <div className="p-2 rounded-lg bg-accent/10">
           <Boxes size={24} className="text-accent" />
         </div>
@@ -447,7 +447,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
 
     {/* Section 4: Five Pillars */}
     <section id="five-pillars" className="glass-panel p-6">
-      <div className="flex items-center gap-3 mb-4">
+      <div data-section-id="five-pillars" className="flex items-center gap-3 mb-4 scroll-mt-20">
         <div className="p-2 rounded-lg bg-tertiary/10">
           <Columns3 size={24} className="text-tertiary" />
         </div>
@@ -650,7 +650,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
 
     {/* Section 5: Dual-Loop Iterative Process */}
     <section id="dual-loop" className="glass-panel p-6">
-      <div className="flex items-center gap-3 mb-4">
+      <div data-section-id="dual-loop" className="flex items-center gap-3 mb-4 scroll-mt-20">
         <div className="p-2 rounded-lg bg-status-info/15">
           <Repeat size={24} className="text-status-info" />
         </div>
@@ -721,7 +721,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
 
     {/* Section 6: No-Regret ROI */}
     <section id="no-regret-roi" className="glass-panel p-6">
-      <div className="flex items-center gap-3 mb-4">
+      <div data-section-id="no-regret-roi" className="flex items-center gap-3 mb-4 scroll-mt-20">
         <div className="p-2 rounded-lg bg-status-success/15">
           <TrendingUp size={24} className="text-status-success" />
         </div>

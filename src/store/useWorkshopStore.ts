@@ -21,22 +21,22 @@ export type PlaybackMode = 'preview' | 'presentation'
 
 /**
  * Preview-mode per-step duration. See PlaybackMode docs.
- *   slow → 20 s / step · normal → 10 s · fast → 5 s
+ *   slow → 20 s / step · normal → 10 s · fast → 2.5 s (50 % faster than 1× fast)
  */
 export const STEP_DURATION_MS: Record<PlaybackSpeed, number> = {
   slow: 20_000,
   normal: 10_000,
-  fast: 5_000,
+  fast: 2_500,
 }
 
 /**
  * Presentation-mode multiplier applied to authored tMs.
- *   slow → 2x (twice as long) · normal → 1x · fast → 0.5x
+ *   slow → 2x (twice as long) · normal → 1x · fast → 0.25x (50 % faster than 0.5×)
  */
 export const PRESENTATION_SPEED_MULTIPLIER: Record<PlaybackSpeed, number> = {
   slow: 2,
   normal: 1,
-  fast: 0.5,
+  fast: 0.25,
 }
 
 interface WorkshopState {
@@ -46,6 +46,12 @@ interface WorkshopState {
   completedStepIds: string[]
   startedAt: string | null
   selectedRegion: WorkshopRegion | null
+  /** Browser-native TTS for captions via Web Speech API. Persisted; default off
+   *  so captions remain silent unless the user opts in. */
+  ttsEnabled: boolean
+  /** Optional `SpeechSynthesisVoice.voiceURI` for the picked voice. null = browser
+   *  default. Persisted; voice list is browser/OS-dependent. */
+  ttsVoiceURI: string | null
   /** Per-step duration preset (slow/normal/fast). Meaning depends on playbackMode. */
   playbackSpeed: PlaybackSpeed
   /** Preview = fast tour; Presentation = authored timeline scaled by speed. */
@@ -62,6 +68,8 @@ interface WorkshopState {
   markStepComplete: (stepId: string) => void
   setPlaybackSpeed: (speed: PlaybackSpeed) => void
   setPlaybackMode: (mode: PlaybackMode) => void
+  setTtsEnabled: (enabled: boolean) => void
+  setTtsVoiceURI: (voiceURI: string | null) => void
   setFlowOverrideId: (id: string | null) => void
   reset: () => void
 }
@@ -76,6 +84,8 @@ const INITIAL: Pick<
   | 'selectedRegion'
   | 'playbackSpeed'
   | 'playbackMode'
+  | 'ttsEnabled'
+  | 'ttsVoiceURI'
   | 'flowOverrideId'
 > = {
   mode: 'idle',
@@ -88,6 +98,8 @@ const INITIAL: Pick<
   // Default to Presentation: cues fire at authored timing and tabs / clicks /
   // module walks actually play. Preview is the explicit fast-tour opt-in.
   playbackMode: 'presentation',
+  ttsEnabled: false,
+  ttsVoiceURI: null,
   flowOverrideId: null,
 }
 
@@ -129,6 +141,54 @@ export const useWorkshopStore = create<WorkshopState>()(
       setStep: (stepId) => set({ currentStepId: stepId }),
 
       setPlaybackSpeed: (speed) => set({ playbackSpeed: speed }),
+      setTtsEnabled: (enabled) => {
+        set({ ttsEnabled: enabled })
+        if (typeof window === 'undefined' || !('speechSynthesis' in window)) return
+        if (!enabled) {
+          window.speechSynthesis.cancel()
+          return
+        }
+        // Toggling ON: prime the speech engine with an AUDIBLE confirmation
+        // utterance INSIDE the user-gesture handler.
+        //
+        // Why audible (not silent): we need the user to hear that voice is
+        // working. A silent prime would unlock the engine but the user has no
+        // feedback and reports "voice doesn't start" when in fact it's the
+        // first cue caption that drops because of a Chrome bug where
+        // speechSynthesis goes idle if the page is unfocused for ~15 seconds
+        // between the gesture and the first cue.
+        //
+        // Why inside the gesture: Safari + iOS gate the first speak() call to
+        // a user gesture. Subsequent RAF-fired speak() calls inherit the unlock
+        // for the session. Without this, voice silently fails forever.
+        //
+        // Workaround for Chrome's resume-on-cancel quirk: chained cancel + speak
+        // forces the engine out of any stuck state.
+        try {
+          window.speechSynthesis.cancel()
+          const prime = new SpeechSynthesisUtterance('Voice ready')
+          prime.volume = 1.0
+          prime.rate = 1.0
+          prime.lang = 'en-US'
+          // Safari fires onend reliably; Chrome sometimes drops onend if the
+          // engine is in a bad state. The presence of the listener is what
+          // matters — keeps the utterance alive long enough to play.
+          prime.onend = () => {}
+          prime.onerror = (ev) => {
+            console.warn('[workshop] TTS prime error:', ev.error)
+          }
+          window.speechSynthesis.speak(prime)
+        } catch (e) {
+          console.warn('[workshop] TTS priming failed:', e)
+        }
+      },
+      setTtsVoiceURI: (voiceURI) => {
+        set({ ttsVoiceURI: voiceURI })
+        // Cancel current utterance so the next caption picks up the new voice.
+        if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+          window.speechSynthesis.cancel()
+        }
+      },
 
       setPlaybackMode: (mode) => set({ playbackMode: mode }),
 
@@ -144,10 +204,12 @@ export const useWorkshopStore = create<WorkshopState>()(
     }),
     {
       name: 'pqc-workshop',
-      // v4 changes default playbackMode 'preview' → 'presentation'. Force-reset
-      // existing 'preview' to 'presentation' so the tour works out of the box.
-      // Users can switch back via the Mode picker.
-      version: 4,
+      // v5: drop `flowOverrideId` from persistence — a Browse-all manual flow
+      //     pick is session-scoped, not durable. Persisted overrides outlived
+      //     persona switches and made the workshop "stick" on the wrong flow.
+      // v4: default playbackMode 'preview' → 'presentation' so the tour works
+      //     out of the box. Users can switch back via the Mode picker.
+      version: 5,
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         mode: state.mode === 'video' ? 'idle' : state.mode,
@@ -158,7 +220,8 @@ export const useWorkshopStore = create<WorkshopState>()(
         selectedRegion: state.selectedRegion,
         playbackSpeed: state.playbackSpeed,
         playbackMode: state.playbackMode,
-        flowOverrideId: state.flowOverrideId,
+        ttsEnabled: state.ttsEnabled,
+        ttsVoiceURI: state.ttsVoiceURI,
       }),
       migrate: (persistedState: unknown, version: number) => {
         const s = (persistedState ?? {}) as Record<string, unknown>
@@ -191,7 +254,10 @@ export const useWorkshopStore = create<WorkshopState>()(
             typeof s.selectedRegion === 'string' ? (s.selectedRegion as WorkshopRegion) : null,
           playbackSpeed,
           playbackMode,
-          flowOverrideId: typeof s.flowOverrideId === 'string' ? s.flowOverrideId : null,
+          ttsEnabled: typeof s.ttsEnabled === 'boolean' ? s.ttsEnabled : false,
+          ttsVoiceURI: typeof s.ttsVoiceURI === 'string' ? s.ttsVoiceURI : null,
+          // v5: flowOverrideId is no longer persisted — start fresh every session.
+          flowOverrideId: null,
         }
       },
       onRehydrateStorage: () => (_state, error) => {

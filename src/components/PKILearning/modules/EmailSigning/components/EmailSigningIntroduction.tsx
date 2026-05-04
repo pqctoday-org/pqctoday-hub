@@ -398,10 +398,12 @@ export const EmailSigningIntroduction: React.FC<EmailSigningIntroductionProps> =
 }) => {
   const steps = [
     {
+      id: 'smime',
       label: 'S/MIME, CMS & KEM Encryption',
       content: <Step1SmimeCmsKem />,
     },
     {
+      id: 'cms',
       label: 'Certificate Requirements & Migration',
       content: <Step2CertsMigration onNavigateToWorkshop={onNavigateToWorkshop} />,
     },
