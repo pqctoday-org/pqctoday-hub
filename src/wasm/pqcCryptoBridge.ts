@@ -52,7 +52,6 @@ let hsmInitialized = false
 // Cache generated key handles for the TPM bridge
 let mlkemPubHandle = 0
 let mlkemPrivHandle = 0
-let mldsaPubHandle = 0
 let mldsaPrivHandle = 0
 
 // ── HSM memory helpers ────────────────────────────────────────────────────────
@@ -187,7 +186,7 @@ async function ensureHSM(): Promise<void> {
 // ── ML-KEM keygen via PKCS#11 ─────────────────────────────────────────────────
 function mlkemKeygen(
   _paramSet: number,
-  seedPtr: number,
+  _seedPtr: number,
   _seedLen: number,
   pkOutPtr: number,
   pkOutMax: number,
@@ -434,7 +433,7 @@ function mlkemDecap(
 // ── ML-DSA keygen via PKCS#11 ─────────────────────────────────────────────────
 function mldsaKeygen(
   _paramSet: number,
-  seedPtr: number,
+  _seedPtr: number,
   _seedLen: number,
   pkOutPtr: number,
   pkOutMax: number,
@@ -495,7 +494,6 @@ function mldsaKeygen(
       return -2
     }
 
-    mldsaPubHandle = pubH
     mldsaPrivHandle = privH
 
     const pkBytes = extractAttribute(M, pubH, CKA_VALUE, pkOutMax)
