@@ -66,14 +66,19 @@ All notable changes to this project will be documented in this file.
   updated to include EM_JS bridge entry points. (`pqcCryptoBridge.ts`,
   `tpmBridge.ts`, `ComplianceRunner.tsx`, `tpmCommandDefs.ts`,
   `public/wasm/pqctpm.js`, `public/wasm/pqctpm.wasm`)
-- **TTS caption interruptions eliminated** — `window.speechSynthesis.cancel()`
-  synchronously fires the previous utterance's `onend`, which was overwriting
-  `speechEndedAt` with `performance.now()` and releasing the scheduler block
-  before the new caption started speaking. Fixed with a module-level
+- **TTS caption interruptions eliminated — generation counter** —
+  `window.speechSynthesis.cancel()` synchronously fires the previous
+  utterance's `onend`, overwriting `speechEndedAt` and releasing the scheduler
+  block before the new caption started speaking. Fixed with a module-level
   `_speechGeneration` counter: incremented before each `cancel()` call so the
-  stale `onend` from the cancelled utterance sees a mismatched generation and is
-  silently ignored; only the current utterance's `onend` updates `speechEndedAt`.
+  stale `onend` sees a mismatched generation and is ignored.
   (`useWorkshopOverlayStore.ts`)
+- **TTS audio still interrupted — `speechSynthesis.speaking` primary guard** —
+  `utter.onend` can fire before audio fully drains on some browsers (known Web
+  Speech API bug). Added `window.speechSynthesis?.speaking` as the first check
+  in the RAF scheduler; if the browser reports speech in progress the scheduler
+  breaks regardless of `speechEndedAt`. The 1500 ms buffer remains as a
+  secondary guard after `speaking` becomes false. (`WorkshopStepCard.tsx`)
 - **TPM Playground full TCG V1.85 PQC compliance** — V185-012 through
   V185-016 now pass (Encapsulate / Decapsulate / SignDigest with correct
   RC, output sizes, and 3309-byte ML-DSA-65 signature). All 16/16 checks
@@ -110,7 +115,7 @@ assessmentStatus]`: the hook re-seeds from persona whenever `industry` is empty,
 ### Internal
 
 - `npx tsc -b` clean; full vitest suite passes; `changelogParser` parses
-  this Unreleased block as `Added=1, Fixed=8, Data=1, Internal=1`.
+  this Unreleased block as `Added=1, Fixed=9, Data=1, Internal=1`.
 
 ## [3.5.64] - May 3, 2026
 
