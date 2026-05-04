@@ -32,8 +32,16 @@
         "expectedOutput": "Clear understanding of the four outcomes: quantum threat literacy, jurisdictional deadlines, board-ready risk report, 90-day action plan.",
         "narration": "Welcome. In the next ninety minutes you will leave with four things: first, a plain-English understanding of why quantum computing breaks classical cryptography and what Harvest-Now Decrypt-Later already does to your data. Second, your jurisdiction’s post-quantum deadlines — the dates regulators have already committed to. Third, a personalised, board-ready risk report tied to your country and to finance. And fourth, a ninety-day action plan you can hand to your CISO before close of business.",
         "cues": [
-          { "tMs": 0, "kind": "navigate", "route": "/" },
-          { "tMs": 1500, "kind": "caption", "text": "Four outcomes in the next ninety minutes." },
+          {
+            "tMs": 0,
+            "kind": "navigate",
+            "route": "/"
+          },
+          {
+            "tMs": 1500,
+            "kind": "caption",
+            "text": "Four outcomes in the next ninety minutes."
+          },
           {
             "tMs": 20000,
             "kind": "caption",
@@ -64,7 +72,10 @@
             "kind": "caption",
             "text": "Threat literacy → deadlines → risk score → action plan. Each outcome feeds the next."
           },
-          { "tMs": 220000, "kind": "advance" }
+          {
+            "tMs": 220000,
+            "kind": "advance"
+          }
         ]
       }
     ]
@@ -96,8 +107,16 @@
           "route": "/"
         },
         "cues": [
-          { "tMs": 0, "kind": "navigate", "route": "/" },
-          { "tMs": 1000, "kind": "scroll-to", "selector": "#personalization-section" },
+          {
+            "tMs": 0,
+            "kind": "navigate",
+            "route": "/"
+          },
+          {
+            "tMs": 1000,
+            "kind": "scroll-to",
+            "selector": "#personalization-section"
+          },
           {
             "tMs": 1500,
             "kind": "caption",
@@ -128,7 +147,10 @@
             "kind": "caption",
             "text": "Set all four now. You can compare jurisdictions by swapping country later."
           },
-          { "tMs": 150000, "kind": "advance" }
+          {
+            "tMs": 150000,
+            "kind": "advance"
+          }
         ]
       },
       {
@@ -407,8 +429,7 @@
           "tasks": [
             "Read the why-it-matters intro",
             "Walk the Learn sections",
-            "Glance at the Workshop demo",
-            "Note Reference standards"
+            "Glance at the Workshop demo"
           ],
           "expectedOutput": "Module-level talking points from \"Quantum Threats\" you can take to your next governance conversation.",
           "narration": "Shor, Grover, CRQC, and Harvest-Now-Decrypt-Later — the four words a finance CISO will say at every PQC meeting. Open the module and walk the Vulnerability Matrix in the Workshop tab.",
@@ -464,16 +485,6 @@
               "text": "Section 3/3: Post-Quantum Security Levels"
             },
             {
-              "tMs": 149499,
-              "kind": "select-tab",
-              "tabName": "References"
-            },
-            {
-              "tMs": 150999,
-              "kind": "caption",
-              "text": "References — primary sources every claim is cited from."
-            },
-            {
               "tMs": 180000,
               "kind": "advance"
             }
@@ -491,8 +502,7 @@
           "tasks": [
             "Read the why-it-matters intro",
             "Walk the Learn sections",
-            "Glance at the Workshop demo",
-            "Note Reference standards"
+            "Glance at the Workshop demo"
           ],
           "expectedOutput": "Module-level talking points from \"PQC Risk Management\" you can take to your next governance conversation.",
           "narration": "How to put quantum risk on your enterprise risk register, score it on a heatmap, and turn it into a board-level KPI. Start with the CRQC Scenario Planner in the Workshop tab.",
@@ -548,16 +558,6 @@
               "text": "Section 3/3: Risk Heatmap & Prioritization"
             },
             {
-              "tMs": 149499,
-              "kind": "select-tab",
-              "tabName": "References"
-            },
-            {
-              "tMs": 150999,
-              "kind": "caption",
-              "text": "References — primary sources every claim is cited from."
-            },
-            {
               "tMs": 180000,
               "kind": "advance"
             }
@@ -575,8 +575,7 @@
           "tasks": [
             "Read the why-it-matters intro",
             "Walk the Learn sections",
-            "Glance at the Workshop demo",
-            "Note Reference standards"
+            "Glance at the Workshop demo"
           ],
           "expectedOutput": "Module-level talking points from \"Compliance & Regulatory Strategy\" you can take to your next governance conversation.",
           "narration": "Map your jurisdiction's PQC deadlines (NIST 2030/2035, CCCS 2031/2035, ASD end-2030) to your audit calendar. The Jurisdiction Mapper in the Workshop tab is your first stop.",
@@ -632,16 +631,6 @@
               "text": "Section 3/3: Country Deadlines, Dependencies & Workshop"
             },
             {
-              "tMs": 149499,
-              "kind": "select-tab",
-              "tabName": "References"
-            },
-            {
-              "tMs": 150999,
-              "kind": "caption",
-              "text": "References — primary sources every claim is cited from."
-            },
-            {
               "tMs": 180000,
               "kind": "advance"
             }
@@ -659,8 +648,7 @@
           "tasks": [
             "Read the why-it-matters intro",
             "Walk the Learn sections",
-            "Glance at the Workshop demo",
-            "Note Reference standards"
+            "Glance at the Workshop demo"
           ],
           "expectedOutput": "Module-level talking points from \"PQC Business Case\" you can take to your next governance conversation.",
           "narration": "ROI, breach cost modelling, and the three slides every CFO will ask for before signing the budget. Start with the ROI Calculator in the Workshop tab.",
@@ -706,16 +694,6 @@
               "text": "Section 2/2: Workshop & Resources"
             },
             {
-              "tMs": 149500,
-              "kind": "select-tab",
-              "tabName": "References"
-            },
-            {
-              "tMs": 151000,
-              "kind": "caption",
-              "text": "References — primary sources every claim is cited from."
-            },
-            {
               "tMs": 180000,
               "kind": "advance"
             }
@@ -733,8 +711,7 @@
           "tasks": [
             "Read the why-it-matters intro",
             "Walk the Learn sections",
-            "Glance at the Workshop demo",
-            "Note Reference standards"
+            "Glance at the Workshop demo"
           ],
           "expectedOutput": "Module-level talking points from \"PQC Governance & Policy\" you can take to your next governance conversation.",
           "narration": "Who owns cryptography, who approves exceptions, who reports to the board. The org-chart questions PQC forces you to answer. Walk the RACI Builder in the Workshop tab to see who owns what.",
@@ -790,16 +767,6 @@
               "text": "Section 3/3: Resources & Workshop"
             },
             {
-              "tMs": 149499,
-              "kind": "select-tab",
-              "tabName": "References"
-            },
-            {
-              "tMs": 150999,
-              "kind": "caption",
-              "text": "References — primary sources every claim is cited from."
-            },
-            {
               "tMs": 180000,
               "kind": "advance"
             }
@@ -817,8 +784,7 @@
           "tasks": [
             "Read the why-it-matters intro",
             "Walk the Learn sections",
-            "Glance at the Workshop demo",
-            "Note Reference standards"
+            "Glance at the Workshop demo"
           ],
           "expectedOutput": "Module-level talking points from \"Vendor & Supply Chain Risk\" you can take to your next governance conversation.",
           "narration": "Your vendors' PQC roadmap IS your PQC roadmap. Contract language, certification deadlines, and the readiness scorecard you should send to every supplier. Start with the vendor readiness scorecard template in the Workshop tab.",
@@ -884,16 +850,6 @@
               "text": "Section 4/4: Layer-wise Risk Matrix"
             },
             {
-              "tMs": 149500,
-              "kind": "select-tab",
-              "tabName": "References"
-            },
-            {
-              "tMs": 151000,
-              "kind": "caption",
-              "text": "References — primary sources every claim is cited from."
-            },
-            {
               "tMs": 180000,
               "kind": "advance"
             }
@@ -911,8 +867,7 @@
           "tasks": [
             "Read the why-it-matters intro",
             "Walk the Learn sections",
-            "Glance at the Workshop demo",
-            "Note Reference standards"
+            "Glance at the Workshop demo"
           ],
           "expectedOutput": "Module-level talking points from \"Migration Program Mgmt\" you can take to your next governance conversation.",
           "narration": "Treat PQC migration like Y2K — a 3-year programme with stakeholders, milestones, and a deployment plan, not a one-quarter project. The 90-day plan template in the Workshop tab is your starting point.",
@@ -958,16 +913,6 @@
               "text": "Section 2/2: Critical Success Factors & Workshop"
             },
             {
-              "tMs": 149500,
-              "kind": "select-tab",
-              "tabName": "References"
-            },
-            {
-              "tMs": 151000,
-              "kind": "caption",
-              "text": "References — primary sources every claim is cited from."
-            },
-            {
               "tMs": 180000,
               "kind": "advance"
             }
@@ -982,11 +927,7 @@
           "page": {
             "route": "/learn/data-asset-sensitivity"
           },
-          "tasks": [
-            "Read why-it-matters intro",
-            "Walk the Learn sections",
-            "Note References standards"
-          ],
+          "tasks": ["Read why-it-matters intro", "Walk the Learn sections"],
           "expectedOutput": "Module-level talking points on Data & Asset Sensitivity",
           "narration": "Before you can prioritise a multi-year PQC migration, you need to know which assets carry the highest stakes. Classification + sensitivity scoring give you the prioritised list the board needs to see — what is HNDL-exposed, what is regulator-bound, what is high-blast-radius. Start with the data classification matrix in the Workshop tab.",
           "completionSignal": {
@@ -1041,16 +982,6 @@
               "text": "Section 3/3: Risk Methodology (NIST RMF, ISO 27005, FAIR)"
             },
             {
-              "tMs": 149500,
-              "kind": "select-tab",
-              "tabName": "References"
-            },
-            {
-              "tMs": 151000,
-              "kind": "caption",
-              "text": "References — primary sources every claim is cited from."
-            },
-            {
               "tMs": 180000,
               "kind": "advance"
             }
@@ -1065,11 +996,7 @@
           "page": {
             "route": "/learn/standards-bodies"
           },
-          "tasks": [
-            "Read why-it-matters intro",
-            "Walk the Learn sections",
-            "Note References standards"
-          ],
+          "tasks": ["Read why-it-matters intro", "Walk the Learn sections"],
           "expectedOutput": "Module-level talking points on Standards, Certification & Compliance Bodies",
           "narration": "The PQC standards landscape can look like an alphabet soup. NIST publishes algorithms; ETSI and IETF publish protocols; ISO certifies; ASD, CCCS, ENISA enforce. Knowing this org chart lets you read regulatory letters with the right lens. Skim the Why-It-Matters tab first for the full map.",
           "completionSignal": {
@@ -1142,16 +1069,6 @@
               "tMs": 119600,
               "kind": "caption",
               "text": "Section 5/5: IETF & RFC Process"
-            },
-            {
-              "tMs": 149500,
-              "kind": "select-tab",
-              "tabName": "References"
-            },
-            {
-              "tMs": 151000,
-              "kind": "caption",
-              "text": "References — primary sources every claim is cited from."
             },
             {
               "tMs": 180000,
@@ -2105,7 +2022,9 @@
               "tMs": 0,
               "kind": "navigate",
               "route": "/business",
-              "query": { "zone": "risk-management" }
+              "query": {
+                "zone": "risk-management"
+              }
             },
             {
               "tMs": 1500,
@@ -2122,7 +2041,10 @@
               "kind": "caption",
               "text": "Your deadline: end-2030 (Australia) · 2031 high-priority (Canada) · 2035 disallow (United States)."
             },
-            { "tMs": 180000, "kind": "advance" }
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
           ]
         },
         {
@@ -2312,7 +2234,9 @@
               "tMs": 0,
               "kind": "navigate",
               "route": "/timeline",
-              "query": { "country": "United States" }
+              "query": {
+                "country": "United States"
+              }
             },
             {
               "tMs": 1500,
@@ -2341,7 +2265,10 @@
               "kind": "caption",
               "text": "Federal moves cascade into private sector procurement — especially banks serving federal customers."
             },
-            { "tMs": 180000, "kind": "advance" }
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
           ]
         },
         {
@@ -2369,7 +2296,9 @@
               "tMs": 0,
               "kind": "navigate",
               "route": "/threats",
-              "query": { "industry": "Financial Services / Banking" }
+              "query": {
+                "industry": "Financial Services / Banking"
+              }
             },
             {
               "tMs": 3000,
@@ -2406,7 +2335,10 @@
               "kind": "click",
               "selector": "[data-workshop-target=\"threats-toc-FIN-005\"]"
             },
-            { "tMs": 180000, "kind": "advance" }
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
           ]
         },
         {
@@ -2430,7 +2362,9 @@
               "tMs": 0,
               "kind": "navigate",
               "route": "/leaders",
-              "query": { "country": "United States" }
+              "query": {
+                "country": "United States"
+              }
             },
             {
               "tMs": 4000,
@@ -2447,7 +2381,10 @@
               "kind": "caption",
               "text": "Bookmark her profile for your board materials."
             },
-            { "tMs": 180000, "kind": "advance" }
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
           ]
         },
         {
@@ -2464,7 +2401,11 @@
           "expectedOutput": "PCI 12.3.3 requirement open; NIST IR 8547 bookmarked.",
           "narration": "PCI DSS 4.0 requirement 12.3.3 has been mandatory since March 2025. It requires you to maintain a cryptographic inventory and a crypto-agility plan. Your assessor reads this as post-quantum readiness. If you have been deferring inventory work, this requirement has already moved your deadline forward to today.",
           "cues": [
-            { "tMs": 0, "kind": "navigate", "route": "/library" },
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/library"
+            },
             {
               "tMs": 1500,
               "kind": "caption",
@@ -2485,13 +2426,20 @@
               "kind": "caption",
               "text": "Checkpoint: PCI DSS 4.0 §12.3.3 — when must your cryptographic inventory be complete?"
             },
-            { "tMs": 155000, "kind": "navigate", "route": "/assess" },
+            {
+              "tMs": 155000,
+              "kind": "navigate",
+              "route": "/assess"
+            },
             {
               "tMs": 157000,
               "kind": "caption",
               "text": "Re-run your risk assessment — your PCI deadline is now in view."
             },
-            { "tMs": 180000, "kind": "advance" }
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
           ]
         }
       ]
@@ -2656,7 +2604,9 @@
               "tMs": 0,
               "kind": "navigate",
               "route": "/timeline",
-              "query": { "country": "Canada" }
+              "query": {
+                "country": "Canada"
+              }
             },
             {
               "tMs": 1500,
@@ -2685,7 +2635,10 @@
               "kind": "caption",
               "text": "TBS SPIN October 2025 — turns the roadmap into a contractual obligation across federal procurement."
             },
-            { "tMs": 180000, "kind": "advance" }
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
           ]
         },
         {
@@ -2713,7 +2666,9 @@
               "tMs": 0,
               "kind": "navigate",
               "route": "/threats",
-              "query": { "industry": "Financial Services / Banking" }
+              "query": {
+                "industry": "Financial Services / Banking"
+              }
             },
             {
               "tMs": 3000,
@@ -2750,7 +2705,10 @@
               "kind": "click",
               "selector": "[data-workshop-target=\"threats-toc-FIN-005\"]"
             },
-            { "tMs": 180000, "kind": "advance" }
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
           ]
         },
         {
@@ -2770,7 +2728,14 @@
           "expectedOutput": "Citation bookmarked.",
           "narration": "Sami Khoury served as Head of the Canadian Centre for Cyber Security when ITSAP.00.017 was published and now holds the broader role of Canada’s Senior Official for Cyber Security. He is your in-country reference point.",
           "cues": [
-            { "tMs": 0, "kind": "navigate", "route": "/leaders", "query": { "country": "Canada" } },
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/leaders",
+              "query": {
+                "country": "Canada"
+              }
+            },
             {
               "tMs": 4000,
               "kind": "caption",
@@ -2786,7 +2751,10 @@
               "kind": "caption",
               "text": "Bookmark his profile to cite in your board materials."
             },
-            { "tMs": 180000, "kind": "advance" }
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
           ]
         },
         {
@@ -2807,7 +2775,11 @@
           "expectedOutput": "CCCS practitioner guide and NIST FIPS bookmarked.",
           "narration": "Canada aligns to NIST standards — there is no separate Canadian algorithm suite. ITSAP.00.017 is the practitioner guide that translates NIST FIPS 203 and 204 into deployment guidance for federal departments. Your CISO will treat this as the authoritative implementation document.",
           "cues": [
-            { "tMs": 0, "kind": "navigate", "route": "/library" },
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/library"
+            },
             {
               "tMs": 1500,
               "kind": "caption",
@@ -2828,13 +2800,20 @@
               "kind": "caption",
               "text": "Checkpoint: Canada's CCCS high-priority systems — migrated by when?"
             },
-            { "tMs": 155000, "kind": "navigate", "route": "/assess" },
+            {
+              "tMs": 155000,
+              "kind": "navigate",
+              "route": "/assess"
+            },
             {
               "tMs": 157000,
               "kind": "caption",
               "text": "Re-run your risk assessment — your 2031 CCCS deadline is now in view."
             },
-            { "tMs": 180000, "kind": "advance" }
+            {
+              "tMs": 180000,
+              "kind": "advance"
+            }
           ]
         }
       ]
@@ -3152,7 +3131,11 @@
           "expectedOutput": "Three primary sources bookmarked: ASD ISM, FIPS 203/204, NIST IR 8547.",
           "narration": "These are your three primary sources. The ASD ISM Guidelines for Cryptography, December 2024 edition, is the document that codifies control 1917 and sets the end-2030 requirement. NIST FIPS 203 and 204 define ML-KEM and ML-DSA — the algorithms ISM-1917 mandates. And NIST IR 8547 is the deprecation calendar, showing exactly when RSA and ECDSA are scheduled to be disallowed. Your CISO will cite these three documents in every board update.",
           "cues": [
-            { "tMs": 0, "kind": "navigate", "route": "/library" },
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/library"
+            },
             {
               "tMs": 1500,
               "kind": "caption",
@@ -3178,13 +3161,20 @@
               "kind": "caption",
               "text": "Checkpoint: Australia's new-deployment deadline under ASD ISM-1917 — which year?"
             },
-            { "tMs": 192000, "kind": "navigate", "route": "/assess" },
+            {
+              "tMs": 192000,
+              "kind": "navigate",
+              "route": "/assess"
+            },
             {
               "tMs": 194000,
               "kind": "caption",
               "text": "Re-run your risk assessment — your end-2030 ASD deadline is now in view."
             },
-            { "tMs": 210000, "kind": "advance" }
+            {
+              "tMs": 210000,
+              "kind": "advance"
+            }
           ]
         }
       ]
