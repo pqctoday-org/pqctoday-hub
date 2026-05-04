@@ -1,6 +1,6 @@
 {
   "id": "generic-overview",
-  "title": "PQC Today \u2014 Quick Overview",
+  "title": "PQC Today — Quick Overview",
   "match": {
     "roles": "*",
     "proficiencies": "*",
@@ -24,18 +24,18 @@
         "chapter": "intro",
         "title": "Welcome to PQC Today",
         "estMinutes": 1,
-        "whyItMatters": "Sets the destination \u2014 a vendor-neutral resource for the post-quantum cryptography migration.",
+        "whyItMatters": "Sets the destination — a vendor-neutral resource for the post-quantum cryptography migration.",
         "page": {
           "route": "/"
         },
         "tasks": ["Skim the landing page"],
         "expectedOutput": "You can describe PQC Today in one sentence.",
-        "narration": "Welcome to PQC Today \u2014 a free, vendor-neutral resource for the post-quantum cryptography migration. We will tour every page in about six minutes.",
+        "narration": "Welcome to PQC Today — a free, vendor-neutral resource for the post-quantum cryptography migration. We will tour every page in about six minutes.",
         "cues": [
           {
             "tMs": 0,
             "kind": "caption",
-            "text": "Welcome to PQC Today \u2014 vendor-neutral resource for the post-quantum migration."
+            "text": "Welcome to PQC Today — vendor-neutral resource for the post-quantum migration."
           },
           {
             "tMs": 5000,
@@ -58,20 +58,20 @@
       {
         "id": "prereq-01-persona",
         "chapter": "prereq",
-        "title": "Persona picker \u2014 pick your role",
+        "title": "Persona picker — pick your role",
         "estMinutes": 1,
-        "whyItMatters": "The persona switcher tailors the entire app \u2014 modules, hints, journey steps, recommended actions \u2014 to your role, proficiency, industry, and region.",
+        "whyItMatters": "The persona switcher tailors the entire app — modules, hints, journey steps, recommended actions — to your role, proficiency, industry, and region.",
         "page": {
           "route": "/"
         },
         "tasks": ["Open the persona switcher", "Pick a role that fits you"],
         "expectedOutput": "You know how to set your persona context.",
-        "narration": "The persona switcher in the top-right tailors every page to your role \u2014 executive, developer, architect, ops, researcher, or curious \u2014 plus your proficiency, industry, and region.",
+        "narration": "The persona switcher in the top-right tailors every page to your role — executive, developer, architect, ops, researcher, or curious — plus your proficiency, industry, and region.",
         "cues": [
           {
             "tMs": 0,
             "kind": "caption",
-            "text": "Persona switcher \u2014 tailor every page to your role, proficiency, industry, and region."
+            "text": "Persona switcher — tailor every page to your role, proficiency, industry, and region."
           },
           {
             "tMs": 5000,
@@ -95,7 +95,7 @@
         {
           "id": "p-learn",
           "chapter": "foundations",
-          "title": "Learn \u2014 40+ modules",
+          "title": "Learn — 40+ modules",
           "estMinutes": 1,
           "whyItMatters": "Learn is the index of every module on PQC Today. Each module has Learn / Visual / Workshop / Exercises / References / Tools tabs.",
           "page": {
@@ -113,7 +113,7 @@
             {
               "tMs": 2000,
               "kind": "caption",
-              "text": "Learn \u2014 40+ modules indexed across foundations, roles, industries, and protocols."
+              "text": "Learn — 40+ modules indexed across foundations, roles, industries, and protocols."
             },
             {
               "tMs": 8000,
@@ -139,9 +139,9 @@
         {
           "id": "p-learn-pqc101",
           "chapter": "foundations",
-          "title": "Walk PQC 101 \u2014 the foundation module",
+          "title": "Walk PQC 101 — the foundation module",
           "estMinutes": 3,
-          "whyItMatters": "PQC 101 is the foundation module everyone starts with \u2014 Q-Day, Harvest-Now Decrypt-Later, the new NIST standards (FIPS 203 ML-KEM and FIPS 204 ML-DSA), the migration timeline, and what a ready org looks like.",
+          "whyItMatters": "PQC 101 is the foundation module everyone starts with — Q-Day, Harvest-Now Decrypt-Later, the new NIST standards (FIPS 203 ML-KEM and FIPS 204 ML-DSA), the migration timeline, and what a ready org looks like.",
           "page": {
             "route": "/learn/pqc-101"
           },
@@ -167,7 +167,7 @@
             {
               "tMs": 1500,
               "kind": "caption",
-              "text": "PQC 101 \u2014 post-quantum cryptography in plain language - what it is, why your org cares"
+              "text": "PQC 101 — PQC 101 is the foundation module everyone starts with — Q-Day, Harvest-Now Decrypt-Later, the new NIST standards (FIPS 203 ML-KEM and FIPS 204 ML-DSA), the migration timeline, and what a ready org looks like."
             },
             {
               "tMs": 4000,
@@ -175,9 +175,14 @@
               "tabName": "Learn"
             },
             {
+              "tMs": 5800,
+              "kind": "scroll-to",
+              "selector": "[data-section-id=\"quantum-threat\"]"
+            },
+            {
               "tMs": 6000,
               "kind": "caption",
-              "text": "Section 1/5: Why Pqc"
+              "text": "Section 1/5: The Quantum Threat to Cryptography"
             },
             {
               "tMs": 16100,
@@ -187,7 +192,7 @@
             {
               "tMs": 16400,
               "kind": "caption",
-              "text": "Section 2/5: Whats Changing"
+              "text": "Section 2/5: NIST-Selected PQC Algorithms"
             },
             {
               "tMs": 26500,
@@ -197,7 +202,7 @@
             {
               "tMs": 26800,
               "kind": "caption",
-              "text": "Section 3/5: The Timeline"
+              "text": "Section 3/5: Global Migration Timeline"
             },
             {
               "tMs": 36900,
@@ -207,7 +212,7 @@
             {
               "tMs": 37200,
               "kind": "caption",
-              "text": "Section 4/5: Who Acts"
+              "text": "Section 4/5: Organizational Readiness"
             },
             {
               "tMs": 47300,
@@ -217,7 +222,7 @@
             {
               "tMs": 47600,
               "kind": "caption",
-              "text": "Section 5/5: Next Steps"
+              "text": "Section 5/5: Your Next Steps"
             },
             {
               "tMs": 58000,
@@ -227,47 +232,37 @@
             {
               "tMs": 59500,
               "kind": "caption",
-              "text": "Hands-on 1/5: Why Pqc"
+              "text": "Hands-on 1/4: Algorithm Families"
             },
             {
-              "tMs": 68340,
+              "tMs": 70550,
               "kind": "click",
               "selector": "[data-workshop-target=\"learn-stepper-next\"]"
             },
             {
-              "tMs": 69900,
+              "tMs": 72500,
               "kind": "caption",
-              "text": "Hands-on 2/5: Whats Changing"
+              "text": "Hands-on 2/4: Algorithm Comparison"
             },
             {
-              "tMs": 78740,
+              "tMs": 83550,
               "kind": "click",
               "selector": "[data-workshop-target=\"learn-stepper-next\"]"
             },
             {
-              "tMs": 80300,
+              "tMs": 85500,
               "kind": "caption",
-              "text": "Hands-on 3/5: The Timeline"
+              "text": "Hands-on 3/4: Key Generation"
             },
             {
-              "tMs": 89140,
+              "tMs": 96550,
               "kind": "click",
               "selector": "[data-workshop-target=\"learn-stepper-next\"]"
             },
             {
-              "tMs": 90700,
+              "tMs": 98500,
               "kind": "caption",
-              "text": "Hands-on 4/5: Who Acts"
-            },
-            {
-              "tMs": 99540,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
-            },
-            {
-              "tMs": 101100,
-              "kind": "caption",
-              "text": "Hands-on 5/5: Next Steps"
+              "text": "Hands-on 4/4: Signature Demo"
             },
             {
               "tMs": 112000,
@@ -277,7 +272,7 @@
             {
               "tMs": 113500,
               "kind": "caption",
-              "text": "Visual tab \u2014 diagrams and animations for this topic."
+              "text": "Visual tab — diagrams and animations for this topic."
             },
             {
               "tMs": 128750,
@@ -287,7 +282,7 @@
             {
               "tMs": 130250,
               "kind": "caption",
-              "text": "Exercises \u2014 short knowledge checks to confirm you got it."
+              "text": "Exercises — short knowledge checks to confirm you got it."
             },
             {
               "tMs": 145500,
@@ -297,7 +292,7 @@
             {
               "tMs": 147000,
               "kind": "caption",
-              "text": "References \u2014 primary sources every claim is cited from."
+              "text": "References — primary sources every claim is cited from."
             },
             {
               "tMs": 162250,
@@ -307,7 +302,7 @@
             {
               "tMs": 163750,
               "kind": "caption",
-              "text": "Tools & Products \u2014 vendor tooling and PQC-ready software."
+              "text": "Tools & Products — vendor tooling and PQC-ready software."
             },
             {
               "tMs": 180000,
@@ -318,7 +313,7 @@
         {
           "id": "p-timeline",
           "chapter": "foundations",
-          "title": "Timeline \u2014 every country's PQC runway",
+          "title": "Timeline — every country's PQC runway",
           "estMinutes": 2,
           "whyItMatters": "Timeline is the runway. Each caption below names a country heading on the page so the page auto-scrolls through major jurisdictions in real time.",
           "page": {
@@ -326,7 +321,7 @@
           },
           "tasks": ["Watch the page scroll through major countries"],
           "expectedOutput": "You see milestones for every major PQC jurisdiction.",
-          "narration": "Timeline is your migration runway. Every country block is its own section \u2014 the next 70 seconds walks through the major jurisdictions: United States, European Union, Canada, Australia, Japan, United Kingdom, G7.",
+          "narration": "Timeline is your migration runway. Every country block is its own section — the next 70 seconds walks through the major jurisdictions: United States, European Union, Canada, Australia, Japan, United Kingdom, G7.",
           "cues": [
             {
               "tMs": 0,
@@ -377,15 +372,15 @@
         {
           "id": "p-algorithms",
           "chapter": "foundations",
-          "title": "Algorithms \u2014 NIST PQC standards",
+          "title": "Algorithms — NIST PQC standards",
           "estMinutes": 1,
-          "whyItMatters": "Two views: Transition Guide maps classical\u2192PQC; Detailed Comparison shows every algorithm's key sizes, performance, FIPS status.",
+          "whyItMatters": "Two views: Transition Guide maps classical→PQC; Detailed Comparison shows every algorithm's key sizes, performance, FIPS status.",
           "page": {
             "route": "/algorithms"
           },
           "tasks": ["Watch the page switch tabs + scroll into each section"],
           "expectedOutput": "You can name the FIPS number for each new standard.",
-          "narration": "Algorithms has two views \u2014 Transition Guide for classical\u2192PQC mappings, and Detailed Comparison for per-algorithm specs. ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205).",
+          "narration": "Algorithms has two views — Transition Guide for classical→PQC mappings, and Detailed Comparison for per-algorithm specs. ML-KEM (FIPS 203), ML-DSA (FIPS 204), SLH-DSA (FIPS 205).",
           "cues": [
             {
               "tMs": 0,
@@ -395,7 +390,7 @@
             {
               "tMs": 2000,
               "kind": "caption",
-              "text": "Algorithms \u2014 NIST PQC standards + classical comparison."
+              "text": "Algorithms — NIST PQC standards + classical comparison."
             },
             {
               "tMs": 6000,
@@ -410,7 +405,7 @@
             {
               "tMs": 10000,
               "kind": "caption",
-              "text": "Transition Guide \u2014 what to swap and when."
+              "text": "Transition Guide — what to swap and when."
             },
             {
               "tMs": 18000,
@@ -425,7 +420,7 @@
             {
               "tMs": 22000,
               "kind": "caption",
-              "text": "Detailed Comparison \u2014 key sizes, performance, FIPS status."
+              "text": "Detailed Comparison — key sizes, performance, FIPS status."
             },
             {
               "tMs": 30000,
@@ -436,7 +431,7 @@
         {
           "id": "p-threats",
           "chapter": "foundations",
-          "title": "Threats \u2014 industry-specific catalogue",
+          "title": "Threats — industry-specific catalogue",
           "estMinutes": 1,
           "whyItMatters": "Threats are sorted by industry. Each row links to evidence, affected protocols, and severity.",
           "page": {
@@ -454,7 +449,7 @@
             {
               "tMs": 2000,
               "kind": "caption",
-              "text": "Threats \u2014 industry-specific catalogue with severity + evidence."
+              "text": "Threats — industry-specific catalogue with severity + evidence."
             },
             {
               "tMs": 8000,
@@ -464,7 +459,7 @@
             {
               "tMs": 10000,
               "kind": "caption",
-              "text": "FIN-001 \u2014 example: a finance HIGH-severity threat."
+              "text": "FIN-001 — example: a finance HIGH-severity threat."
             },
             {
               "tMs": 18000,
@@ -480,7 +475,7 @@
         {
           "id": "p-library",
           "chapter": "foundations",
-          "title": "Library \u2014 standards, RFCs, specs",
+          "title": "Library — standards, RFCs, specs",
           "estMinutes": 1,
           "whyItMatters": "Library is the citable source set. Search any standard ID; bookmark for inline reference in your reports.",
           "page": {
@@ -488,7 +483,7 @@
           },
           "tasks": ["Search a standard you know", "Bookmark it"],
           "expectedOutput": "You can find any cited standard in <30 seconds.",
-          "narration": "Library is the source set behind every claim on PQC Today. NIST FIPS / IR / SP, IETF RFCs, ISO / ETSI / ENISA / CCCS / ASD documents \u2014 all searchable, all linkable.",
+          "narration": "Library is the source set behind every claim on PQC Today. NIST FIPS / IR / SP, IETF RFCs, ISO / ETSI / ENISA / CCCS / ASD documents — all searchable, all linkable.",
           "cues": [
             {
               "tMs": 0,
@@ -498,7 +493,7 @@
             {
               "tMs": 2000,
               "kind": "caption",
-              "text": "Library \u2014 every standard, RFC, and spec cited on PQC Today."
+              "text": "Library — every standard, RFC, and spec cited on PQC Today."
             },
             {
               "tMs": 10000,
@@ -519,9 +514,9 @@
         {
           "id": "p-leaders",
           "chapter": "foundations",
-          "title": "Leaders \u2014 who is publicly leading PQC",
+          "title": "Leaders — who is publicly leading PQC",
           "estMinutes": 1,
-          "whyItMatters": "Leaders surfaces the named PQC champions across government, finance, healthcare, telecom \u2014 the citations your board will recognise.",
+          "whyItMatters": "Leaders surfaces the named PQC champions across government, finance, healthcare, telecom — the citations your board will recognise.",
           "page": {
             "route": "/leaders"
           },
@@ -537,7 +532,7 @@
             {
               "tMs": 2000,
               "kind": "caption",
-              "text": "Leaders \u2014 named PQC champions across government and industry."
+              "text": "Leaders — named PQC champions across government and industry."
             },
             {
               "tMs": 10000,
@@ -553,7 +548,7 @@
         {
           "id": "p-migrate",
           "chapter": "foundations",
-          "title": "Migrate \u2014 vendor + product catalogue",
+          "title": "Migrate — vendor + product catalogue",
           "estMinutes": 1,
           "whyItMatters": "Migrate is the catalogue of vendors and products with PQC roadmaps + certifications. The list you cite when filing tickets.",
           "page": {
@@ -561,7 +556,7 @@
           },
           "tasks": ["Filter by a vendor in your stack", "Open a product detail row"],
           "expectedOutput": "You can identify which vendors in your stack have a PQC roadmap.",
-          "narration": "Migrate is the vendor + product catalogue. Each row links to public PQC roadmaps and to the certifications products carry \u2014 FIPS 140-3, ACVP, Common Criteria.",
+          "narration": "Migrate is the vendor + product catalogue. Each row links to public PQC roadmaps and to the certifications products carry — FIPS 140-3, ACVP, Common Criteria.",
           "cues": [
             {
               "tMs": 0,
@@ -571,7 +566,7 @@
             {
               "tMs": 2000,
               "kind": "caption",
-              "text": "Migrate \u2014 vendor + product catalogue with PQC roadmaps."
+              "text": "Migrate — vendor + product catalogue with PQC roadmaps."
             },
             {
               "tMs": 10000,
@@ -592,7 +587,7 @@
         {
           "id": "p-compliance",
           "chapter": "foundations",
-          "title": "Compliance \u2014 frameworks + binding deadlines",
+          "title": "Compliance — frameworks + binding deadlines",
           "estMinutes": 1,
           "whyItMatters": "Compliance maps every published framework to deadlines, required algorithms, and source documents.",
           "page": {
@@ -600,7 +595,7 @@
           },
           "tasks": ["Filter by your country", "Open the most-cited framework"],
           "expectedOutput": "You can quote the framework + deadline + required algorithm for any review.",
-          "narration": "Compliance maps every published PQC framework to its binding deadline and the required algorithm set. NIST CNSA 2.0, CCCS ITSM.40.001, ASD ISM-1917, ENISA \u2014 all in one filter.",
+          "narration": "Compliance maps every published PQC framework to its binding deadline and the required algorithm set. NIST CNSA 2.0, CCCS ITSM.40.001, ASD ISM-1917, ENISA — all in one filter.",
           "cues": [
             {
               "tMs": 0,
@@ -626,7 +621,7 @@
         {
           "id": "p-assess",
           "chapter": "foundations",
-          "title": "Assess \u2014 your personalised risk profile",
+          "title": "Assess — your personalised risk profile",
           "estMinutes": 1,
           "whyItMatters": "Assess is the wizard that produces a personalised risk profile in 6-13 questions.",
           "page": {
@@ -644,7 +639,7 @@
             {
               "tMs": 2000,
               "kind": "caption",
-              "text": "Assess \u2014 wizard producing a personalised risk profile."
+              "text": "Assess — wizard producing a personalised risk profile."
             },
             {
               "tMs": 10000,
@@ -665,7 +660,7 @@
         {
           "id": "p-report",
           "chapter": "foundations",
-          "title": "Report \u2014 board-ready output",
+          "title": "Report — board-ready output",
           "estMinutes": 1,
           "whyItMatters": "Report is the board pack: shareable URL, hideable sections, and exportable PDF / DOCX.",
           "page": {
@@ -683,7 +678,7 @@
             {
               "tMs": 2000,
               "kind": "caption",
-              "text": "Report \u2014 board pack with share URL and PDF / DOCX export."
+              "text": "Report — board pack with share URL and PDF / DOCX export."
             },
             {
               "tMs": 10000,
@@ -699,7 +694,7 @@
         {
           "id": "p-business",
           "chapter": "foundations",
-          "title": "Command Center \u2014 CSWP-39 strategic plan",
+          "title": "Command Center — CSWP-39 strategic plan",
           "estMinutes": 1,
           "whyItMatters": "Command Center organises every artifact (RACI, policy draft, KPI dashboard, board deck) by NIST CSWP-39 zone.",
           "page": {
@@ -717,17 +712,17 @@
             {
               "tMs": 2000,
               "kind": "caption",
-              "text": "Command Center \u2014 CSWP-39 strategic plan + artifact builders."
+              "text": "Command Center — CSWP-39 strategic plan + artifact builders."
             },
             {
               "tMs": 10000,
               "kind": "caption",
-              "text": "Six zones: Governance \u00b7 Assets \u00b7 Management Tools \u00b7 Risk \u00b7 Mitigation \u00b7 Migration."
+              "text": "Six zones: Governance · Assets · Management Tools · Risk · Mitigation · Migration."
             },
             {
               "tMs": 18000,
               "kind": "caption",
-              "text": "Each zone holds artifact builders \u2014 RACI, policy draft, KPI dashboard, board deck."
+              "text": "Each zone holds artifact builders — RACI, policy draft, KPI dashboard, board deck."
             },
             {
               "tMs": 25000,
@@ -738,15 +733,15 @@
         {
           "id": "p-playground",
           "chapter": "foundations",
-          "title": "Playground \u2014 interactive PQC + crypto demos",
+          "title": "Playground — interactive PQC + crypto demos",
           "estMinutes": 1,
-          "whyItMatters": "Playground runs real cryptographic operations in your browser \u2014 keygen, signing, KEM exchange \u2014 using OpenSSL WASM and liboqs.",
+          "whyItMatters": "Playground runs real cryptographic operations in your browser — keygen, signing, KEM exchange — using OpenSSL WASM and liboqs.",
           "page": {
             "route": "/playground"
           },
           "tasks": ["Open one of the interactive workshops"],
           "expectedOutput": "You see the interactive crypto playground.",
-          "narration": "Playground is interactive crypto. Keygen, signing, KEM exchange \u2014 all running in your browser via OpenSSL WASM and liboqs. No server, no network round-trip, your keys stay local.",
+          "narration": "Playground is interactive crypto. Keygen, signing, KEM exchange — all running in your browser via OpenSSL WASM and liboqs. No server, no network round-trip, your keys stay local.",
           "cues": [
             {
               "tMs": 0,
@@ -756,12 +751,12 @@
             {
               "tMs": 2000,
               "kind": "caption",
-              "text": "Playground \u2014 interactive crypto running in your browser."
+              "text": "Playground — interactive crypto running in your browser."
             },
             {
               "tMs": 10000,
               "kind": "caption",
-              "text": "OpenSSL WASM + liboqs \u2014 no server, no network, keys stay local."
+              "text": "OpenSSL WASM + liboqs — no server, no network, keys stay local."
             },
             {
               "tMs": 18000,
@@ -772,9 +767,9 @@
         {
           "id": "p-patents",
           "chapter": "foundations",
-          "title": "Patents \u2014 PQC patent landscape",
+          "title": "Patents — PQC patent landscape",
           "estMinutes": 1,
-          "whyItMatters": "Patents catalogues the PQC IP landscape \u2014 algorithm patents, implementation patents, and assignee mapping.",
+          "whyItMatters": "Patents catalogues the PQC IP landscape — algorithm patents, implementation patents, and assignee mapping.",
           "page": {
             "route": "/patents"
           },
@@ -790,7 +785,7 @@
             {
               "tMs": 2000,
               "kind": "caption",
-              "text": "Patents \u2014 PQC IP landscape: algorithms, implementations, side-channels."
+              "text": "Patents — PQC IP landscape: algorithms, implementations, side-channels."
             },
             {
               "tMs": 10000,
@@ -806,9 +801,9 @@
         {
           "id": "p-changelog",
           "chapter": "foundations",
-          "title": "Changelog \u2014 what is new on PQC Today",
+          "title": "Changelog — what is new on PQC Today",
           "estMinutes": 1,
-          "whyItMatters": "Changelog is how the app stays current \u2014 new modules, refreshed data, new vendors, updated standards.",
+          "whyItMatters": "Changelog is how the app stays current — new modules, refreshed data, new vendors, updated standards.",
           "page": {
             "route": "/changelog"
           },
@@ -824,7 +819,7 @@
             {
               "tMs": 2000,
               "kind": "caption",
-              "text": "Changelog \u2014 module + data + vendor + standard updates."
+              "text": "Changelog — module + data + vendor + standard updates."
             },
             {
               "tMs": 10000,
@@ -835,7 +830,7 @@
         {
           "id": "p-about",
           "chapter": "foundations",
-          "title": "About \u2014 trust + transparency",
+          "title": "About — trust + transparency",
           "estMinutes": 2,
           "whyItMatters": "About is the trust page. Each caption literally names a section heading so the page auto-scrolls through the page in real time.",
           "page": {
@@ -907,7 +902,7 @@
       {
         "id": "close-quiz",
         "chapter": "close",
-        "title": "Quiz \u2014 test what you learned",
+        "title": "Quiz — test what you learned",
         "estMinutes": 3,
         "whyItMatters": "A 5-to-45-minute quiz with persona-tuned topics gives you a quick measure of what stuck.",
         "page": {
@@ -1003,13 +998,13 @@
         "chapter": "close",
         "title": "Pick a persona for the tailored workshop",
         "estMinutes": 1,
-        "whyItMatters": "The generic tour shows what is available. A persona-specific workshop tells you what to do \u2014 pick yours and re-open the Workshop tab.",
+        "whyItMatters": "The generic tour shows what is available. A persona-specific workshop tells you what to do — pick yours and re-open the Workshop tab.",
         "page": {
           "route": "/"
         },
         "tasks": ["Open the persona switcher", "Re-open the Workshop tab"],
         "expectedOutput": "You know how to switch from generic overview to a persona-specific workshop.",
-        "narration": "You have seen the surfaces. Pick a persona \u2014 Executive, Developer, Architect, Ops, Researcher, or Curious \u2014 and the Workshop tab will surface a flow tailored to your role.",
+        "narration": "You have seen the surfaces. Pick a persona — Executive, Developer, Architect, Ops, Researcher, or Curious — and the Workshop tab will surface a flow tailored to your role.",
         "cues": [
           {
             "tMs": 0,
