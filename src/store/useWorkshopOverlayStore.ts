@@ -25,6 +25,10 @@ interface WorkshopOverlayState {
    * never fire while the previous one is still being spoken.
    */
   speechEndedAt: number
+  /** performance.now() when the current utterance's speak() was called. */
+  speechStartedAt: number
+  /** Word-count-based minimum duration estimate (words × 500 ms at rate 0.85). */
+  speechEstimatedMs: number
 
   setCaption: (text: string, visible?: boolean) => void
   clearOverlays: () => void
@@ -56,6 +60,8 @@ export const useWorkshopOverlayStore = create<WorkshopOverlayState>()((set, get)
   callouts: [],
   navigate: null,
   speechEndedAt: 0,
+  speechStartedAt: 0,
+  speechEstimatedMs: 0,
 
   setCaption: (text, visible = true) => set({ caption: text, captionVisible: visible }),
   clearOverlays: () => set({ spotlightSelector: null, callouts: [] }),
@@ -240,7 +246,9 @@ function speakCaption(text: string): void {
     _speechGeneration++
     const gen = _speechGeneration
     window.speechSynthesis.cancel()
-    const utter = new SpeechSynthesisUtterance(prepareForSpeech(text))
+    const prepared = prepareForSpeech(text)
+    const wordCount = prepared.trim().split(/\s+/).filter(Boolean).length
+    const utter = new SpeechSynthesisUtterance(prepared)
     // English-only captions — force `lang` so the browser picks an English
     // voice when no specific voice is selected.
     utter.lang = 'en-US'
@@ -252,6 +260,10 @@ function speakCaption(text: string): void {
       const voice = window.speechSynthesis.getVoices().find((v) => v.voiceURI === ttsVoiceURI)
       if (voice) utter.voice = voice
     }
+    useWorkshopOverlayStore.setState({
+      speechStartedAt: performance.now(),
+      speechEstimatedMs: wordCount * 500,
+    })
     utter.onend = () => {
       // Only release the block if this is still the current utterance.
       // cancel() fires onend of the previous utterance — that stale onend must

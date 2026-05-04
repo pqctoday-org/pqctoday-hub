@@ -127,10 +127,14 @@ export const WorkshopStepCard: React.FC<WorkshopStepCardProps> = ({
           // Primary guard: browser's own truth — speech is still playing.
           // onend can fire before audio finishes on some browsers (known bug).
           if (typeof window !== 'undefined' && window.speechSynthesis?.speaking) break
-          // Secondary guard: 1.5s buffer after speech ends (absorbs late audio flush).
+          // Secondary guard: max(1.5s after onend, word-count estimated duration).
+          // The word-count floor prevents the next caption from firing when onend
+          // misfires early (Chrome bug) and 1.5s isn't enough margin.
+          const { speechEndedAt, speechStartedAt, speechEstimatedMs } =
+            useWorkshopOverlayStore.getState()
           if (
             performance.now() <
-            useWorkshopOverlayStore.getState().speechEndedAt + SPEECH_BUFFER_MS
+            Math.max(speechEndedAt + SPEECH_BUFFER_MS, speechStartedAt + speechEstimatedMs)
           )
             break
         } else if (next.tMs * mul > elapsed) {
@@ -144,11 +148,13 @@ export const WorkshopStepCard: React.FC<WorkshopStepCardProps> = ({
         // All visible cues fired. If an 'advance' cue exists, auto-advance once
         // TTS finishes (TTS mode) or the advance tMs elapses (timed mode).
         if (advanceCue && onNext) {
-          const { speechEndedAt } = useWorkshopOverlayStore.getState()
+          const { speechEndedAt, speechStartedAt, speechEstimatedMs } =
+            useWorkshopOverlayStore.getState()
           const ttsStillPlaying =
             ttsEnabled &&
             (window.speechSynthesis?.speaking ||
-              performance.now() < speechEndedAt + SPEECH_BUFFER_MS)
+              performance.now() <
+                Math.max(speechEndedAt + SPEECH_BUFFER_MS, speechStartedAt + speechEstimatedMs))
           const timingHolds = !ttsEnabled && elapsed < advanceTMs
           if (ttsStillPlaying || timingHolds) {
             raf = requestAnimationFrame(tick)

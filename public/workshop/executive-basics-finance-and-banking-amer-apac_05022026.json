@@ -13,7 +13,7 @@
     "A board-ready, shareable risk report tailored to your context",
     "A 90-day action plan walked through the four CSWP 39 zones"
   ],
-  "totalEstMinutes": 127,
+  "totalEstMinutes": 118,
   "intro": {
     "id": "intro",
     "title": "Welcome",
@@ -30,7 +30,7 @@
         },
         "tasks": ["Skim the four outcomes below", "Confirm 90 minutes of uninterrupted time"],
         "expectedOutput": "Clear understanding of the four outcomes: quantum threat literacy, jurisdictional deadlines, board-ready risk report, 90-day action plan.",
-        "narration": "Welcome. In the next ninety minutes you will leave with four things: first, a plain-English understanding of why quantum computing breaks classical cryptography and what Harvest-Now Decrypt-Later already does to your data. Second, your jurisdiction’s post-quantum deadlines — the dates regulators have already committed to. Third, a personalised, board-ready risk report tied to your country and to finance. And fourth, a ninety-day action plan you can hand to your CISO before close of business.",
+        "narration": "Welcome. In the next 90 minutes you will leave with four things: a plain-English understanding of why quantum computing breaks classical cryptography, your jurisdiction's post-quantum deadlines, a personalised board-ready risk report, and a 90-day action plan. First, personalize your experience by setting your role to Executive, proficiency to Basics, your country, and industry to Finance and Banking. The landing page gives you two starting points: Start the Journey for the Learn modules, and Open Command Center for the artifact builders we visit at the end.",
         "cues": [
           {
             "tMs": 0,
@@ -40,40 +40,45 @@
           {
             "tMs": 1500,
             "kind": "caption",
-            "text": "Four outcomes in the next ninety minutes."
+            "text": "Four outcomes in 90 minutes: quantum threat literacy, your jurisdiction's deadlines, a board-ready risk report, and a 90-day action plan."
           },
           {
-            "tMs": 20000,
+            "tMs": 18000,
             "kind": "caption",
-            "text": "One — why quantum computing breaks RSA and ECDSA. Harvest-Now Decrypt-Later is already happening."
+            "text": "Harvest-Now Decrypt-Later is already happening. Adversaries collect your encrypted traffic today to decrypt once a quantum computer exists."
+          },
+          {
+            "tMs": 34000,
+            "kind": "scroll-to",
+            "selector": "#personalization-section"
+          },
+          {
+            "tMs": 36000,
+            "kind": "caption",
+            "text": "Personalize first: set role to Executive, proficiency to Basics, choose your country, and industry to Finance and Banking. Every page adapts from these four picks."
           },
           {
             "tMs": 50000,
-            "kind": "caption",
-            "text": "Adversaries collect your encrypted traffic today to decrypt it once a cryptographically-relevant quantum computer exists."
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"persona-edit\"]"
           },
           {
-            "tMs": 80000,
-            "kind": "caption",
-            "text": "Two — your jurisdiction's post-quantum deadlines. Regulators have already committed to dates."
+            "tMs": 56000,
+            "kind": "scroll-to",
+            "selector": "[data-workshop-target=\"landing-cta-primary\"]"
           },
           {
-            "tMs": 110000,
+            "tMs": 58000,
             "kind": "caption",
-            "text": "Three — a personalised, board-ready risk report tied to your country and industry."
+            "text": "When ready: Start the Journey opens the Learn modules. Open Command Center — where we build your board report — is the last stop of the workshop."
           },
           {
-            "tMs": 140000,
-            "kind": "caption",
-            "text": "Four — a 90-day action plan you can hand to your CISO before close of business."
+            "tMs": 70000,
+            "kind": "spotlight",
+            "selector": "[data-workshop-target=\"landing-cta-primary\"]"
           },
           {
-            "tMs": 175000,
-            "kind": "caption",
-            "text": "Threat literacy → deadlines → risk score → action plan. Each outcome feeds the next."
-          },
-          {
-            "tMs": 220000,
+            "tMs": 66000,
             "kind": "advance"
           }
         ]
@@ -83,193 +88,8 @@
   "prerequisites": {
     "id": "prereq",
     "title": "Pre-flight checklist",
-    "estMinutes": 5,
-    "steps": [
-      {
-        "id": "prereq-01-checklist",
-        "chapter": "prereq",
-        "title": "Set persona, country, and industry",
-        "estMinutes": 3,
-        "whyItMatters": "Every page in the app personalises content from your persona context. Setting it once now means the rest of the workshop will surface the right deadlines, threats, and peers automatically.",
-        "page": {
-          "route": "/"
-        },
-        "tasks": [
-          "Open the persona switcher and choose Executive",
-          "Set proficiency to Basics (no prior PQC needed)",
-          "Choose your country: United States, Canada, or Australia",
-          "Set industry to Finance & Banking"
-        ],
-        "expectedOutput": "Persona chip shows Executive · Basics · your country · Finance & Banking. The journey panel reflects the executive sequence.",
-        "narration": "Before we begin, we set four things: your role as executive, your proficiency at basics — meaning we assume no prior post-quantum exposure — your country, and your industry as finance and banking. The application personalises every page from these four signals. Pick one country now; we will swap it later if you want to compare jurisdictions.",
-        "completionSignal": {
-          "kind": "route-visited",
-          "route": "/"
-        },
-        "cues": [
-          {
-            "tMs": 0,
-            "kind": "navigate",
-            "route": "/"
-          },
-          {
-            "tMs": 1000,
-            "kind": "scroll-to",
-            "selector": "#personalization-section"
-          },
-          {
-            "tMs": 1500,
-            "kind": "caption",
-            "text": "Pre-flight: set four signals that personalise every page."
-          },
-          {
-            "tMs": 20000,
-            "kind": "caption",
-            "text": "Role: Executive. Removes developer deep-dives from your module sequence."
-          },
-          {
-            "tMs": 45000,
-            "kind": "caption",
-            "text": "Proficiency: Basics. No prior post-quantum exposure assumed."
-          },
-          {
-            "tMs": 70000,
-            "kind": "caption",
-            "text": "Country: your jurisdiction. US, Canada, and Australia each have different deadlines."
-          },
-          {
-            "tMs": 100000,
-            "kind": "caption",
-            "text": "Industry: Finance & Banking. Narrows the threat library and compliance view."
-          },
-          {
-            "tMs": 130000,
-            "kind": "caption",
-            "text": "Set all four now. You can compare jurisdictions by swapping country later."
-          },
-          {
-            "tMs": 150000,
-            "kind": "advance"
-          }
-        ]
-      },
-      {
-        "id": "prereq-02-persona",
-        "chapter": "prereq",
-        "title": "Persona Definition — How the Platform Personalises Every Page",
-        "estMinutes": 2,
-        "whyItMatters": "Every recommendation, every filter, every score is derived from four persona facets: experience × role × region × industry.",
-        "page": {
-          "route": "/"
-        },
-        "tasks": [
-          "See where the persona wizard lives on the landing page",
-          "Note the four facets that drive personalisation",
-          "Confirm the executive · beginner · Americas · Finance combination is set"
-        ],
-        "expectedOutput": "A clear mental model of how the platform reshapes itself from your four picks.",
-        "narration": "PQC Today personalises every page from four persona facets — experience level, role, region, and industry. Set on this landing page, they ripple through every filter, every recommendation, every score and chart. The executive flow you are running now assumes Basics proficiency, Executive role, Americas region, and Finance & Banking industry. Change any one and the entire workshop re-personalises around the new combination.",
-        "cues": [
-          {
-            "tMs": 0,
-            "kind": "navigate",
-            "route": "/"
-          },
-          {
-            "tMs": 1000,
-            "kind": "scroll-to",
-            "selector": "#personalization-section"
-          },
-          {
-            "tMs": 1500,
-            "kind": "caption",
-            "text": "Persona definition — four picks shape every page, every recommendation, every score."
-          },
-          {
-            "tMs": 5000,
-            "kind": "click",
-            "selector": "[data-workshop-target=\"persona-edit\"]"
-          },
-          {
-            "tMs": 5500,
-            "kind": "caption",
-            "text": "Opening the persona wizard — it's collapsed once you've set a profile."
-          },
-          {
-            "tMs": 9000,
-            "kind": "caption",
-            "text": "Step 1 — Track. Business track sets you up as an executive: governance, risk, compliance focus."
-          },
-          {
-            "tMs": 11000,
-            "kind": "spotlight",
-            "selector": "[data-workshop-target^=\"persona-track-\"][aria-pressed=\"true\"]"
-          },
-          {
-            "tMs": 14000,
-            "kind": "callout",
-            "selector": "[data-workshop-target^=\"persona-track-\"][aria-pressed=\"true\"]",
-            "label": "Business — pre-selected for the executive flow"
-          },
-          {
-            "tMs": 22000,
-            "kind": "click",
-            "selector": "[data-workshop-target^=\"persona-track-\"][aria-pressed=\"true\"]"
-          },
-          {
-            "tMs": 24000,
-            "kind": "caption",
-            "text": "Step 2 — Region. Filters timeline, leaders, threats and compliance to your jurisdiction."
-          },
-          {
-            "tMs": 26000,
-            "kind": "spotlight",
-            "selector": "[data-workshop-target^=\"persona-region-\"][aria-pressed=\"true\"]"
-          },
-          {
-            "tMs": 30000,
-            "kind": "callout",
-            "selector": "[data-workshop-target^=\"persona-region-\"][aria-pressed=\"true\"]",
-            "label": "Americas — drives the region chapter (US / CA / AU branch)"
-          },
-          {
-            "tMs": 38000,
-            "kind": "click",
-            "selector": "[data-workshop-target=\"persona-wizard-next\"]"
-          },
-          {
-            "tMs": 40000,
-            "kind": "caption",
-            "text": "Step 3 — Industry. Surfaces industry-specific threats, frameworks and vendors."
-          },
-          {
-            "tMs": 42000,
-            "kind": "spotlight",
-            "selector": "[data-workshop-target^=\"persona-industry-\"][aria-pressed=\"true\"]"
-          },
-          {
-            "tMs": 46000,
-            "kind": "callout",
-            "selector": "[data-workshop-target^=\"persona-industry-\"][aria-pressed=\"true\"]",
-            "label": "Finance & Banking — drives every industry-scoped filter"
-          },
-          {
-            "tMs": 56000,
-            "kind": "click",
-            "selector": "[data-workshop-target=\"persona-wizard-done\"]"
-          },
-          {
-            "tMs": 57000,
-            "kind": "caption",
-            "text": "These three facets define the entire workshop journey. Change any one to re-personalize."
-          },
-          {
-            "tMs": 120000,
-            "kind": "advance"
-          }
-        ]
-      }
-    ]
+    "estMinutes": 0,
+    "steps": []
   },
   "common": [
     {
@@ -277,62 +97,6 @@
       "title": "Foundations",
       "estMinutes": 50,
       "steps": [
-        {
-          "id": "p-landing",
-          "chapter": "foundations",
-          "title": "Orient on the Landing page",
-          "estMinutes": 4,
-          "whyItMatters": "The landing page is your starting point. The hero CTA and content are personalised to your executive persona — Risk Assessment, Compliance, and the Command Center take priority over developer playgrounds.",
-          "page": {
-            "route": "/"
-          },
-          "tasks": [
-            "Read the executive hero copy",
-            "Identify the primary CTA: Start the Journey",
-            "Identify the secondary CTA: Open Command Center",
-            "Notice the three onboarding shortcuts: Watch Quick Overview, Browse Workshops, Start Your Journey"
-          ],
-          "expectedOutput": "You can locate the executive hero CTAs and know where the Command Center lives.",
-          "narration": "This is the executive landing. The hero gives you two actions: Start the Journey opens the Learn modules, and Open Command Center jumps to the artifact builders we will visit at the end of the workshop. Below the hero, three shortcuts let you pick how to dive in — a guided video tour, browse all workshops, or jump straight into the learning track.",
-          "cues": [
-            {
-              "tMs": 4000,
-              "kind": "caption",
-              "text": "The executive landing — content personalised for your role."
-            },
-            {
-              "tMs": 8000,
-              "kind": "spotlight",
-              "selector": "[data-workshop-target=\"landing-cta-primary\"]"
-            },
-            {
-              "tMs": 12000,
-              "kind": "callout",
-              "selector": "[data-workshop-target=\"landing-cta-primary\"]",
-              "label": "Start the Journey",
-              "arrow": "right"
-            },
-            {
-              "tMs": 60000,
-              "kind": "caption",
-              "text": "Secondary CTA — Open Command Center — is where we end the workshop."
-            },
-            {
-              "tMs": 65000,
-              "kind": "spotlight",
-              "selector": "[data-workshop-target=\"landing-cta-secondary\"]"
-            },
-            {
-              "tMs": 120000,
-              "kind": "caption",
-              "text": "Three starting CTAs after your persona: Video Tour, Browse Workshops, Start Your Journey. Pick the entry that fits your day."
-            },
-            {
-              "tMs": 240000,
-              "kind": "advance"
-            }
-          ]
-        },
         {
           "id": "f-mod-exec-quantum-impact",
           "chapter": "foundations",
@@ -412,7 +176,7 @@
               "text": "References — primary sources every claim is cited from."
             },
             {
-              "tMs": 180000,
+              "tMs": 158999,
               "kind": "advance"
             }
           ]
@@ -485,7 +249,7 @@
               "text": "Section 3/3: Harvest Now, Forge Later"
             },
             {
-              "tMs": 180000,
+              "tMs": 108666,
               "kind": "advance"
             }
           ]
@@ -558,7 +322,7 @@
               "text": "Section 3/3: Executive Perspective"
             },
             {
-              "tMs": 180000,
+              "tMs": 108666,
               "kind": "advance"
             }
           ]
@@ -631,7 +395,7 @@
               "text": "Section 3/3: Country Deadlines, Dependencies & Workshop"
             },
             {
-              "tMs": 180000,
+              "tMs": 108666,
               "kind": "advance"
             }
           ]
@@ -739,7 +503,7 @@
               "text": "Step 4/4: Cost of Inaction — what delay costs per quarter in your jurisdiction."
             },
             {
-              "tMs": 185000,
+              "tMs": 182000,
               "kind": "advance"
             }
           ]
@@ -812,7 +576,7 @@
               "text": "Section 3/3: Resources & Workshop"
             },
             {
-              "tMs": 180000,
+              "tMs": 108666,
               "kind": "advance"
             }
           ]
@@ -895,7 +659,7 @@
               "text": "Section 4/4: Vendor Assessment Framework"
             },
             {
-              "tMs": 180000,
+              "tMs": 120500,
               "kind": "advance"
             }
           ]
@@ -958,7 +722,7 @@
               "text": "Section 2/2: Critical Success Factors & Workshop"
             },
             {
-              "tMs": 180000,
+              "tMs": 85000,
               "kind": "advance"
             }
           ]
@@ -1027,7 +791,7 @@
               "text": "Section 3/3: Risk Methodology (NIST RMF, ISO 27005, FAIR)"
             },
             {
-              "tMs": 180000,
+              "tMs": 70800,
               "kind": "advance"
             }
           ]
@@ -1116,7 +880,7 @@
               "text": "Section 5/5: IETF & RFC Process"
             },
             {
-              "tMs": 180000,
+              "tMs": 127600,
               "kind": "advance"
             }
           ]
@@ -1169,7 +933,7 @@
               "text": "Keep these one tap away during board prep."
             },
             {
-              "tMs": 360000,
+              "tMs": 308000,
               "kind": "advance"
             }
           ]
@@ -1339,7 +1103,7 @@
               "text": "The report is the input to every Command Center artifact."
             },
             {
-              "tMs": 120000,
+              "tMs": 88000,
               "kind": "advance"
             }
           ]
@@ -1437,7 +1201,7 @@
               "text": "Share button generates a token-bearing URL — re-renders against current data, no PDFs going stale."
             },
             {
-              "tMs": 80000,
+              "tMs": 61000,
               "kind": "advance"
             }
           ]
@@ -2067,7 +1831,7 @@
               "text": "Your deadline: end-2030 (Australia) · 2031 high-priority (Canada) · 2035 disallow (United States)."
             },
             {
-              "tMs": 180000,
+              "tMs": 128000,
               "kind": "advance"
             }
           ]
@@ -2229,7 +1993,7 @@
               "text": "Top library docs — primary-source reading list for the CISO."
             },
             {
-              "tMs": 240000,
+              "tMs": 195000,
               "kind": "advance"
             }
           ]
@@ -2291,7 +2055,7 @@
               "text": "Federal moves cascade into private sector procurement — especially banks serving federal customers."
             },
             {
-              "tMs": 180000,
+              "tMs": 128000,
               "kind": "advance"
             }
           ]
@@ -2361,7 +2125,7 @@
               "selector": "[data-workshop-target=\"threats-toc-FIN-005\"]"
             },
             {
-              "tMs": 180000,
+              "tMs": 128000,
               "kind": "advance"
             }
           ]
@@ -2407,7 +2171,7 @@
               "text": "Bookmark her profile for your board materials."
             },
             {
-              "tMs": 180000,
+              "tMs": 128000,
               "kind": "advance"
             }
           ]
@@ -2465,7 +2229,7 @@
               "text": "Re-run your risk assessment — your PCI deadline is now in view."
             },
             {
-              "tMs": 180000,
+              "tMs": 165000,
               "kind": "advance"
             }
           ]
@@ -2602,7 +2366,7 @@
               "text": "Top library docs — primary-source reading list for the CISO."
             },
             {
-              "tMs": 240000,
+              "tMs": 195000,
               "kind": "advance"
             }
           ]
@@ -2664,7 +2428,7 @@
               "text": "TBS SPIN October 2025 — turns the roadmap into a contractual obligation across federal procurement."
             },
             {
-              "tMs": 180000,
+              "tMs": 128000,
               "kind": "advance"
             }
           ]
@@ -2734,7 +2498,7 @@
               "selector": "[data-workshop-target=\"threats-toc-FIN-005\"]"
             },
             {
-              "tMs": 180000,
+              "tMs": 128000,
               "kind": "advance"
             }
           ]
@@ -2780,7 +2544,7 @@
               "text": "Bookmark his profile to cite in your board materials."
             },
             {
-              "tMs": 180000,
+              "tMs": 128000,
               "kind": "advance"
             }
           ]
@@ -2842,7 +2606,7 @@
               "text": "Re-run your risk assessment — your 2031 CCCS deadline is now in view."
             },
             {
-              "tMs": 180000,
+              "tMs": 165000,
               "kind": "advance"
             }
           ]
@@ -2979,7 +2743,7 @@
               "text": "Top library docs — primary-source reading list for the CISO."
             },
             {
-              "tMs": 240500,
+              "tMs": 195500,
               "kind": "advance"
             }
           ]
@@ -3038,7 +2802,7 @@
               "text": "You are already in phase one."
             },
             {
-              "tMs": 240000,
+              "tMs": 188000,
               "kind": "advance"
             }
           ]
@@ -3100,7 +2864,7 @@
               "selector": "[data-workshop-target=\"threats-toc-FIN-005\"]"
             },
             {
-              "tMs": 180000,
+              "tMs": 128000,
               "kind": "advance"
             }
           ]
@@ -3138,7 +2902,7 @@
               "text": "Bookmark her profile to cite her in your board materials."
             },
             {
-              "tMs": 180000,
+              "tMs": 128000,
               "kind": "advance"
             }
           ]
@@ -3206,7 +2970,7 @@
               "text": "Re-run your risk assessment — your end-2030 ASD deadline is now in view."
             },
             {
-              "tMs": 210000,
+              "tMs": 202000,
               "kind": "advance"
             }
           ]
@@ -3308,7 +3072,7 @@
             "text": "Results show your score, category breakdown, difficulty breakdown, and let you retake or change topics."
           },
           {
-            "tMs": 180000,
+            "tMs": 173000,
             "kind": "advance"
           }
         ]
@@ -3372,7 +3136,7 @@
             "text": "Community — GitHub, feedback, issues. Your corrections improve everyone's workshop."
           },
           {
-            "tMs": 180000,
+            "tMs": 118000,
             "kind": "advance"
           }
         ]
@@ -3414,7 +3178,7 @@
             "text": "Schedule a thirty-day follow-up. The deadlines are not waiting."
           },
           {
-            "tMs": 240000,
+            "tMs": 188000,
             "kind": "advance"
           }
         ]
