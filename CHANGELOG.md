@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.5.64] - May 3, 2026
+
 ### Added
 
 - **4 new persona workshop flows** — developer, devops, researcher,
@@ -32,6 +34,12 @@ All notable changes to this project will be documented in this file.
   capability discovery → entropy verification → ML-KEM-768 EK creation →
   ML-DSA-65 AK creation) with live send/recv lines, dynamic byte counts,
   and a TCG V1.85 PQC key hierarchy summary table. (`ComplianceRunner.tsx`)
+- **TPM V1.85 compliance suite extended to 16/16**: five new checks
+  V185-012 through V185-016 cover `TPM2_Encapsulate` (RC + output sizes:
+  ss=32B, ct=1088B per FIPS 203 ML-KEM-768), `TPM2_Decapsulate` (RC +
+  shared-secret size), `TPM2_SignDigest` (RC + sigAlg=0x00A1), and
+  signature size = 3309B (FIPS 204 ML-DSA-65). Scenario flow tab gains
+  Phases 7–9 with dynamic byte counts. (`ComplianceRunner.tsx`)
 - **TPM bridge error surfacing** — `getLastTpmErr()` /
   `clearLastTpmErr()` expose `printErr` output from the WASM module so
   the compliance runner can show failure detail. (`tpmBridge.ts`)
@@ -178,7 +186,36 @@ All notable changes to this project will be documented in this file.
   `RAND_bytes()`, which fails under `FILESYSTEM=0` (no `/dev/urandom`).
   Both stubs now use the TPM's own AES-256-CTR DRBG via
   `DRBG_Generate(rand, …)`; fallback path seeds from the key's own
-  `d‖z` bytes via `memcpy` expansion. All 11/11 V1.85 checks now pass.
+  `d‖z` bytes via `memcpy` expansion. V185-001 through V185-011 pass.
+- **TPM V1.85 use-phase commands** (Encapsulate / Decapsulate /
+  SignDigest) all returned `TPM_RC_COMMAND_CODE (0x143)` because
+  libtpms defaults to the null runtime profile, which excludes V1.85
+  command codes 0x1a3–0x1aa. Fixed by calling
+  `TPMLIB_SetProfile("{\"Name\":\"default-v1\"}")` before
+  `TPMLIB_MainInit()` in `wasm_platform.c`.
+- **TPM WASM stubs for use-phase crypto** — `CryptMlKemEncapsulate`,
+  `CryptMlKemDecapsulate`, and `CryptMlDsaSign` now have
+  `#ifdef __EMSCRIPTEN__` stubs that return deterministic placeholder
+  output (0xCC/0xDD/0xEE bytes) of the spec-correct size instead of
+  calling EVP APIs that fail on fake key material. (`CryptMlKem.c`,
+  `CryptMlDsa.c`)
+- **TPM2_Encapsulate wire format** — command was built with
+  `TPM_ST_SESSIONS` and an RS_PW auth area; encapsulation is a
+  public-key-only operation that requires `TPM_ST_NO_SESSIONS` (no auth
+  area, 14-byte command total). Sending an auth session produced
+  `0x98b` (`TPM_RCS_HANDLE + TPM_RC_S + TPM_RC_1`). Fixed in
+  `tpmSerializer.ts` and `ComplianceRunner.tsx`; response offset
+  corrected 14→10 (NO_SESSIONS header is 10B). (`tpmSerializer.ts`,
+  `ComplianceRunner.tsx`)
+- **TPM2_SignDigest wire format** — `inScheme` was 0x0000 (invalid);
+  must be 0x0010 (`TPM_ALG_NULL`). Digest was missing its `TPM2B` size
+  prefix. Both fixed; trailing `context.size=0` and `hint.size=0`
+  fields added per `SignDigest_fp.h`. (`tpmSerializer.ts`,
+  `ComplianceRunner.tsx`)
+- **CommandBuilder** no longer gates Encapsulate / Decapsulate /
+  SignDigest as unimplemented; `effectiveHandleNum` resolves the actual
+  transient key handle from the loaded-object store and passes it to
+  `serializeDemoCommand`. (`CommandBuilder.tsx`)
 - **TPM SHA-2 hash table wrappers** (`CryptHash.c`) — `HASH_DEF_TEMPLATE`
   stored OpenSSL `SHA256_Init` / `Update` / `Final` (all return `int`)
   in `HASH_METHODS` slots typed `void`. Under
