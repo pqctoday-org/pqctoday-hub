@@ -192,22 +192,23 @@
           "chapter": "foundations",
           "title": "Orient on the Landing page",
           "estMinutes": 4,
-          "whyItMatters": "The landing page is your command centre entry point. The hero CTA and journey steps are filtered to the executive persona — there is no need to wade through developer playgrounds.",
+          "whyItMatters": "The landing page is your starting point. The hero CTA and content are personalised to your executive persona — Risk Assessment, Compliance, and the Command Center take priority over developer playgrounds.",
           "page": {
             "route": "/"
           },
           "tasks": [
             "Read the executive hero copy",
-            "Note the four journey sections: Start, My Journey, Assess & Report, Keep Up to Date",
-            "Identify the secondary CTA: Open Command Center"
+            "Identify the primary CTA: Start the Journey",
+            "Identify the secondary CTA: Open Command Center",
+            "Notice the three onboarding shortcuts: Watch Quick Overview, Browse Workshops, Start Your Journey"
           ],
-          "expectedOutput": "You can describe the four executive sections without scrolling and you know where the Command Center lives.",
-          "narration": "This is the executive landing. Notice the journey is already filtered for you — no playgrounds, no algorithm trees. The primary action is Start the Journey, the secondary is Open Command Center, which we will visit at the end. For now, we follow the journey.",
+          "expectedOutput": "You can locate the executive hero CTAs and know where the Command Center lives.",
+          "narration": "This is the executive landing. The hero gives you two actions: Start the Journey opens the Learn modules, and Open Command Center jumps to the artifact builders we will visit at the end of the workshop. Below the hero, three shortcuts let you pick how to dive in — a guided video tour, browse all workshops, or jump straight into the learning track.",
           "cues": [
             {
               "tMs": 4000,
               "kind": "caption",
-              "text": "The executive landing — journey already filtered for you."
+              "text": "The executive landing — content personalised for your role."
             },
             {
               "tMs": 8000,
