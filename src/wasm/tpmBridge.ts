@@ -63,6 +63,22 @@ export async function initTpm(): Promise<void> {
           }
 
           console.log('PQC TPM Successfully Initialized!')
+
+          // Issue #9: Register the softhsm-wasm PQC bridge so that
+          // CryptMlKem/CryptMlDsa operations use real crypto instead of
+          // 0xCC/0xDD/0xEE placeholders.
+          try {
+            const { registerPqcBridge } = await import('./pqcCryptoBridge')
+            await registerPqcBridge(module)
+            console.log('PQC Crypto Bridge registered — real ML-KEM/ML-DSA active')
+          } catch (bridgeErr) {
+            // Non-fatal: compliance suite will fall back to placeholder bytes
+            console.warn(
+              'PQC Bridge registration failed (falling back to placeholders):',
+              bridgeErr
+            )
+          }
+
           resolve()
         } catch (e) {
           reject(e)

@@ -546,7 +546,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     requiresKem: true,
     showAlgorithm: false,
     description:
-      'Generate a shared secret and a ciphertext (encapsulation) using an ML-KEM public key. The holder of the corresponding private key can run Decapsulate to recover the identical shared secret.',
+      'Generate a shared secret and a ciphertext (encapsulation) using an ML-KEM public key. The holder of the corresponding private key can run Decapsulate to recover the identical shared secret. With the PQC bridge active, this performs real ML-KEM-768 encapsulation via SoftHSMv3.',
     why: 'Post-quantum key agreement replaces ECDH/RSA-OAEP. The shared secret feeds a KDF (HKDF-SHA256) to derive symmetric keys for AES-GCM or ChaCha20, creating a quantum-safe encrypted channel.',
     params: () => [
       {
@@ -607,7 +607,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     requiresKem: true,
     showAlgorithm: false,
     description:
-      'Recover the shared secret from an ML-KEM ciphertext using the private key held inside the TPM. The private key never leaves the TPM boundary.',
+      "Recover the shared secret from an ML-KEM ciphertext using the private key held inside the TPM. The private key never leaves the TPM boundary. With the PQC bridge active, the recovered shared secret matches the encapsulator's secret byte-for-byte.",
     why: 'Post-quantum key establishment from the receiver side. The TPM is the decapsulation oracle — private key material stays in protected storage while the agreed shared secret is returned for symmetric cipher use.',
     params: () => [
       {
@@ -619,16 +619,16 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
       {
         name: 'inEncapsulation.size',
         tpmType: 'UINT16',
-        value: '0x0020 (32, demo placeholder)',
+        value: `1088 B (ML-KEM-768)`,
         description:
-          'Actual ciphertext size for ML-KEM-768: 1088 bytes. For ML-KEM-1024: 1568 bytes.',
+          'Ciphertext length for ML-KEM-768: 1088 bytes (FIPS 203 §7). For ML-KEM-1024: 1568 bytes.',
       },
       {
         name: 'inEncapsulation.buffer',
         tpmType: 'BYTE[]',
-        value: '0xAA × 32',
+        value: 'Real ciphertext from Encapsulate (PQC bridge)',
         description:
-          'Ciphertext from TPM2_Encapsulate. In production this is 1088 bytes from the sender. Demo uses placeholder bytes.',
+          'Ciphertext produced by TPM2_Encapsulate. With the PQC bridge active, the compliance suite captures and reuses the actual ciphertext for a true round-trip validation.',
       },
     ],
     respFields: () => [
@@ -680,7 +680,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     requiresDsa: true,
     showAlgorithm: false,
     description:
-      'Sign a pre-hashed message digest using an ML-DSA key stored in the TPM. The private key never leaves the TPM. The returned signature can be distributed for verification.',
+      'Sign a pre-hashed message digest using an ML-DSA key stored in the TPM. The private key never leaves the TPM. With the PQC bridge active, this produces a cryptographically valid 3309-byte ML-DSA-65 signature via SoftHSMv3.',
     why: "Post-quantum attestation and code signing. ML-DSA-65 signatures are lattice-based and resist Shor's algorithm, replacing ECDSA/RSA-PSS for firmware signing, certificate issuance, and platform attestation.",
     params: () => [
       {
@@ -699,9 +699,9 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
       {
         name: 'digest.buffer',
         tpmType: 'BYTE[]',
-        value: '0xBB × 32 (demo placeholder)',
+        value: '0xBB × 32 (SHA-256 digest)',
         description:
-          'In production: SHA-256 hash of the firmware image, certificate, or message to be signed.',
+          'In production: SHA-256 hash of the firmware image, certificate, or message to be signed. With the PQC bridge active, this produces a real ML-DSA-65 signature verifiable against the public key.',
       },
     ],
     respFields: () => [

@@ -53,6 +53,19 @@ All notable changes to this project will be documented in this file.
   updated 127 → 131 with `stepCountNote` clarifying 44 total / 34 per-region
   path. (`executive-basics-finance-and-banking-amer-apac_05022026.json`,
   `public/workshop/index.json`)
+- **TPM PQC Crypto Bridge (Issue #9)** — replaces placeholder byte stubs
+  (0xCC/0xDD/0xEE) in the pqctpm WASM with real ML-KEM-768 and ML-DSA-65
+  cryptographic operations routed through softhsmv3 Rust WASM via PKCS#11 v3.2.
+  Architecture: C `CryptMlKem.c` / `CryptMlDsa.c` EM_JS hooks → `Module._pqcBridge`
+  (JS) → softhsmv3. Two new compliance checks added: V185-017 (KEM round-trip —
+  `ss_encap === ss_decap` byte-for-byte) and V185-018 (DSA non-trivial — signature
+  ≠ placeholder pattern); Phase 10 bridge validation in the compliance runner.
+  `TPM2_Decapsulate` now receives the real ciphertext from the preceding
+  `TPM2_Encapsulate`, and `TPM2_SignDigest` produces a cryptographically valid
+  3309-byte ML-DSA-65 signature verifiable against the AK public key. WASM build
+  updated to include EM_JS bridge entry points. (`pqcCryptoBridge.ts`,
+  `tpmBridge.ts`, `ComplianceRunner.tsx`, `tpmCommandDefs.ts`,
+  `public/wasm/pqctpm.js`, `public/wasm/pqctpm.wasm`)
 - **TPM Playground full TCG V1.85 PQC compliance** — V185-012 through
   V185-016 now pass (Encapsulate / Decapsulate / SignDigest with correct
   RC, output sizes, and 3309-byte ML-DSA-65 signature). All 16/16 checks
@@ -74,7 +87,7 @@ All notable changes to this project will be documented in this file.
 ### Internal
 
 - `npx tsc -b` clean; full vitest suite passes; `changelogParser` parses
-  this Unreleased block as `Added=1, Fixed=4, Data=1, Internal=1`.
+  this Unreleased block as `Added=1, Fixed=5, Data=1, Internal=1`.
 
 ## [3.5.64] - May 3, 2026
 

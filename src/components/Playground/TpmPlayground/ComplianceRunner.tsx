@@ -176,6 +176,8 @@ const INITIAL_CHECKS: Omit<CheckEntry, 'status' | 'detail'>[] = [
   { id: 'V185-014', name: 'TPM2_Decapsulate (ML-KEM-768 EK)', section: '§29.5.2' },
   { id: 'V185-015', name: 'TPM2_SignDigest (ML-DSA-65 AK)', section: '§29.2.1' },
   { id: 'V185-016', name: 'SignDigest Signature Size = 3309 B', section: 'FIPS 204 §7' },
+  { id: 'V185-017', name: 'KEM Round-Trip: ss_encap === ss_decap', section: 'FIPS 203 §7.3' },
+  { id: 'V185-018', name: 'DSA Non-Trivial: sig ≠ placeholder', section: 'Issue #9' },
 ]
 
 export function ComplianceRunner() {
@@ -212,6 +214,10 @@ export function ComplianceRunner() {
     const algList: number[] = []
     let ekHandle = 0
     let akHandle = 0
+    let encapSharedSecret: Uint8Array | null = null
+    let decapSharedSecret: Uint8Array | null = null
+    let signatureBytes: Uint8Array | null = null
+    let encapCiphertext: Uint8Array | null = null
 
     const markPass = (id: string, detail: string) => {
       pass++
@@ -571,6 +577,14 @@ export function ComplianceRunner() {
                 `    ← ciphertext   = ${ctSize} B (FIPS 203 ML-KEM-768: 1088 B) ✓`,
                 true
               )
+              // Capture shared secret for round-trip validation (V185-017)
+              // Response layout: tag(2)+size(4)+rc(4)=10, then TPM2B_DIGEST: size(2)+bytes[ssSize]
+              // then TPM2B_KEM_CIPHERTEXT: size(2)+bytes[ctSize]
+              const ssDataStart = 12 // offset 10 + 2 (ssSize field)
+              encapSharedSecret = resp.slice(ssDataStart, ssDataStart + ssSize)
+              // Ciphertext data starts after ss TPM2B: 10 + 2 + ssSize + 2
+              const ctDataStart = 10 + 2 + ssSize + 2
+              encapCiphertext = resp.slice(ctDataStart, ctDataStart + ctSize)
             } else {
               markFail('V185-013', `ss=${ssSize}B (exp 32) ct=${ctSize}B (exp 1088)`)
               addLine('recv', `    ← ss=${ssSize}B ct=${ctSize}B (sizes wrong) ✗`, false)
@@ -613,7 +627,12 @@ export function ComplianceRunner() {
           p.push(0)
           putU16(0)
           putU16(MLKEM_768_CT_SIZE)
-          for (let i = 0; i < MLKEM_768_CT_SIZE; i++) p.push(0xcc)
+          // Use real ciphertext from Encapsulate if available, otherwise 0xCC
+          if (encapCiphertext && encapCiphertext.length === MLKEM_768_CT_SIZE) {
+            for (let i = 0; i < MLKEM_768_CT_SIZE; i++) p.push(encapCiphertext[i])
+          } else {
+            for (let i = 0; i < MLKEM_768_CT_SIZE; i++) p.push(0xcc)
+          }
           const total = p.length
           p[2] = (total >> 24) & 0xff
           p[3] = (total >> 16) & 0xff
@@ -630,6 +649,8 @@ export function ComplianceRunner() {
             markPass('V185-014', `Decapsulate RC=0x00000000 ss=${ssSize}B ✓`)
             addLine('recv', '    ← RC: TPM_RC_SUCCESS ✓', true)
             addLine('recv', `    ← sharedSecret = ${ssSize} B ✓`, true)
+            // Capture shared secret for round-trip validation (V185-017)
+            decapSharedSecret = resp.slice(16, 16 + ssSize)
           }
         }
       } catch (e) {
@@ -697,6 +718,8 @@ export function ComplianceRunner() {
                 true
               )
               addLine('recv', `    ← signature = ${sigSize} B (FIPS 204 ML-DSA-65: 3309 B) ✓`, true)
+              // Capture signature for non-trivial validation (V185-018)
+              signatureBytes = resp.slice(18, 18 + sigSize)
             } else {
               markFail(
                 'V185-016',
@@ -714,6 +737,89 @@ export function ComplianceRunner() {
         markError('V185-015', String(e))
         markFail('V185-016', 'Skipped — SignDigest error')
         addLine('recv', `    ← ERROR: ${String(e)}`, false)
+      }
+
+      addLine('divider', '')
+
+      // ── Phase 10: Bridge Validation (Issue #9) ───────────────────
+      addLine('phase', '[+] Phase 10 — PQC Crypto Bridge Validation  (Issue #9)')
+
+      // V185-017: KEM Round-Trip Parity
+      updateCheck('V185-017', { status: 'running' })
+      await delay()
+      addLine('send', '    → Comparing ss_encap vs ss_decap (FIPS 203 §7.3 round-trip)')
+      if (encapSharedSecret && decapSharedSecret) {
+        const match =
+          encapSharedSecret.length === decapSharedSecret.length &&
+          encapSharedSecret.every((b, i) => b === decapSharedSecret![i])
+        // Also check it's not trivial placeholder
+        const allDD = encapSharedSecret.every((b) => b === 0xdd)
+        if (match && !allDD) {
+          markPass(
+            'V185-017',
+            `ss_A === ss_B (${encapSharedSecret.length}B, non-trivial) — real crypto ✓`
+          )
+          addLine(
+            'recv',
+            `    ← ss_encap === ss_decap (${encapSharedSecret.length}B) — round-trip VALID ✓`,
+            true
+          )
+          addLine(
+            'recv',
+            `    ← first 4B: ${toHex(encapSharedSecret.slice(0, 4))} (non-placeholder) ✓`,
+            true
+          )
+        } else if (match && allDD) {
+          markFail('V185-017', 'ss_A === ss_B but all bytes are 0xDD — placeholder stubs active')
+          addLine(
+            'recv',
+            '    ← ss matches but all 0xDD — PQC bridge NOT active (placeholder stubs) ✗',
+            false
+          )
+        } else {
+          markFail(
+            'V185-017',
+            `ss_A ≠ ss_B — ${encapSharedSecret.length}B vs ${decapSharedSecret.length}B`
+          )
+          addLine('recv', '    ← ss_encap ≠ ss_decap — round-trip MISMATCH ✗', false)
+        }
+      } else {
+        markFail('V185-017', 'Skipped — encap/decap shared secrets not available')
+        addLine('recv', '    ← Skipped (no shared secrets captured from encap/decap) ✗', false)
+      }
+
+      // V185-018: DSA Non-Trivial Signature
+      updateCheck('V185-018', { status: 'running' })
+      await delay()
+      addLine('send', '    → Checking signature bytes ≠ 0xEE placeholder (Issue #9)')
+      if (signatureBytes && signatureBytes.length > 0) {
+        const allEE = signatureBytes.every((b) => b === 0xee)
+        const allZero = signatureBytes.every((b) => b === 0x00)
+        if (!allEE && !allZero) {
+          markPass(
+            'V185-018',
+            `sig[0..3]=${toHex(signatureBytes.slice(0, 4))} — real ML-DSA signature ✓`
+          )
+          addLine(
+            'recv',
+            `    ← sig[0..3] = ${toHex(signatureBytes.slice(0, 4))} — non-trivial ✓`,
+            true
+          )
+          addLine('recv', '    ← PQC Bridge producing real ML-DSA-65 signatures ✓', true)
+        } else if (allEE) {
+          markFail('V185-018', 'All signature bytes are 0xEE — placeholder stub active')
+          addLine(
+            'recv',
+            '    ← All bytes 0xEE — PQC bridge NOT active (placeholder stubs) ✗',
+            false
+          )
+        } else {
+          markFail('V185-018', 'All signature bytes are 0x00 — degenerate')
+          addLine('recv', '    ← All bytes 0x00 — degenerate signature ✗', false)
+        }
+      } else {
+        markFail('V185-018', 'Skipped — no signature captured from SignDigest')
+        addLine('recv', '    ← Skipped (no signature captured) ✗', false)
       }
 
       // ── Summary table ────────────────────────────────────────────
