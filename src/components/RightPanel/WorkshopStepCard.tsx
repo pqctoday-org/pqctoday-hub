@@ -117,6 +117,10 @@ export const WorkshopStepCard: React.FC<WorkshopStepCardProps> = ({
       while (handledIdx + 1 < visibleCues.length) {
         const next = visibleCues[handledIdx + 1]
         if (next.kind === 'caption' && ttsEnabled) {
+          // Primary guard: browser's own truth — speech is still playing.
+          // onend can fire before audio finishes on some browsers (known bug).
+          if (typeof window !== 'undefined' && window.speechSynthesis?.speaking) break
+          // Secondary guard: 1.5s buffer after speech ends (absorbs late audio flush).
           if (
             performance.now() <
             useWorkshopOverlayStore.getState().speechEndedAt + SPEECH_BUFFER_MS
