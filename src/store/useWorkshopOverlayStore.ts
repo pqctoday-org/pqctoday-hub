@@ -18,6 +18,13 @@ interface WorkshopOverlayState {
   callouts: ActiveCallout[]
   /** Optional hook for the navigate function. Set by WorkshopOverlayHost on mount. */
   navigate: ((to: string) => void) | null
+  /**
+   * Absolute `performance.now()` timestamp when the last TTS utterance ended
+   * (or will end, if set to a far-future value while speech is in progress).
+   * The RAF scheduler checks this instead of an estimated duration so captions
+   * never fire while the previous one is still being spoken.
+   */
+  speechEndedAt: number
 
   setCaption: (text: string, visible?: boolean) => void
   clearOverlays: () => void
@@ -47,6 +54,7 @@ export const useWorkshopOverlayStore = create<WorkshopOverlayState>()((set, get)
   spotlightSelector: null,
   callouts: [],
   navigate: null,
+  speechEndedAt: 0,
 
   setCaption: (text, visible = true) => set({ caption: text, captionVisible: visible }),
   clearOverlays: () => set({ spotlightSelector: null, callouts: [] }),
@@ -61,7 +69,9 @@ export const useWorkshopOverlayStore = create<WorkshopOverlayState>()((set, get)
         return
       }
       case 'caption':
-        set({ caption: cue.text, captionVisible: true })
+        // Block the scheduler from advancing to the next caption until speech
+        // actually ends. The far-future value is reset by utter.onend in speakCaption.
+        set({ caption: cue.text, captionVisible: true, speechEndedAt: performance.now() + 120_000 })
         scheduleCaptionAutoScroll(cue.text, nextCues)
         speakCaption(cue.text)
         return
@@ -231,9 +241,14 @@ function speakCaption(text: string): void {
       const voice = window.speechSynthesis.getVoices().find((v) => v.voiceURI === ttsVoiceURI)
       if (voice) utter.voice = voice
     }
+    utter.onend = () => {
+      useWorkshopOverlayStore.setState({ speechEndedAt: performance.now() })
+    }
     window.speechSynthesis.speak(utter)
   } catch (e) {
     console.warn('[workshop] TTS speak failed:', e)
+    // Release the block so the scheduler can continue even if TTS fails.
+    useWorkshopOverlayStore.setState({ speechEndedAt: performance.now() })
   }
 }
 

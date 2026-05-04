@@ -102,13 +102,6 @@ export const WorkshopStepCard: React.FC<WorkshopStepCardProps> = ({
     const originalMs = Math.max(1, step.estMinutes * 60_000)
     const targetMs = Math.min(originalMs * mul, STEP_DURATION_MS[playbackSpeed] * 6)
     const SPEECH_BUFFER_MS = 1500
-    const speechMsFor = (text: string): number => Math.max(1500, (text.length / 14) * 1000)
-    let captionEndAt = 0
-    const stripPrefix = (s: string) =>
-      s.replace(
-        /^\s*(?:Section|Workshop|Layer|Step|Hint|Artifact|Module|Tab)\s+\d+(?:\s*(?:\/|of|out of)\s*\d+)?\s*[:.\-—]\s*/i,
-        ''
-      )
 
     startTimeRef.current = performance.now()
     pausedAtRef.current = null
@@ -124,15 +117,16 @@ export const WorkshopStepCard: React.FC<WorkshopStepCardProps> = ({
       while (handledIdx + 1 < visibleCues.length) {
         const next = visibleCues[handledIdx + 1]
         if (next.kind === 'caption' && ttsEnabled) {
-          if (elapsed < captionEndAt + SPEECH_BUFFER_MS) break
+          if (
+            performance.now() <
+            useWorkshopOverlayStore.getState().speechEndedAt + SPEECH_BUFFER_MS
+          )
+            break
         } else if (next.tMs * mul > elapsed) {
           break
         }
         handledIdx += 1
         setCueIdx(handledIdx)
-        if (next.kind === 'caption' && ttsEnabled) {
-          captionEndAt = elapsed + speechMsFor(stripPrefix(next.text))
-        }
         applyCue(next, fixtures, step.id, visibleCues.slice(handledIdx + 1))
       }
       if (handledIdx + 1 >= visibleCues.length) return
