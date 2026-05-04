@@ -78,7 +78,7 @@
           "Confirm the executive · beginner · Americas · Finance combination is set"
         ],
         "expectedOutput": "A clear mental model of how the platform reshapes itself from your four picks.",
-        "narration": "PQC Today personalises every page from four persona facets — experience level, role, region, and industry. Set on this landing page, they ripple through every filter, every recommendation, every score and chart. The executive flow you are running now assumes Beginner experience, Executive role, Americas region, and Finance & Banking industry. Change any one and the entire workshop re-personalises around the new combination.",
+        "narration": "PQC Today personalises every page from four persona facets — experience level, role, region, and industry. Set on this landing page, they ripple through every filter, every recommendation, every score and chart. The executive flow you are running now assumes Basics proficiency, Executive role, Americas region, and Finance & Banking industry. Change any one and the entire workshop re-personalises around the new combination.",
         "cues": [
           {
             "tMs": 0,
@@ -93,7 +93,7 @@
           {
             "tMs": 1500,
             "kind": "caption",
-            "text": "Persona definition — three picks shape every page, every recommendation, every score."
+            "text": "Persona definition — four picks shape every page, every recommendation, every score."
           },
           {
             "tMs": 5000,
@@ -247,7 +247,7 @@
           "id": "f-mod-exec-quantum-impact",
           "chapter": "foundations",
           "title": "Executive Quantum Impact",
-          "estMinutes": 3,
+          "estMinutes": 5,
           "whyItMatters": "You need a common board-ready vocabulary: Q-Day, HNDL, CNSA 2.0 deadlines. This module gives you the five-second answers.",
           "page": {
             "route": "/learn/exec-quantum-impact"
@@ -259,7 +259,7 @@
             "Note Reference standards"
           ],
           "expectedOutput": "Module-level talking points from \"Executive Quantum Impact\" you can take to your next governance conversation.",
-          "narration": "You need a common board-ready vocabulary: Q-Day, HNDL, CNSA 2.0 deadlines. This module gives you the five-second answers.",
+          "narration": "You need a common board-ready vocabulary: Q-Day, HNDL, CNSA 2.0 deadlines. This module gives you the five-second answers. Open the module and start with the Why-It-Matters tab.",
           "completionSignal": {
             "kind": "module-progress",
             "moduleId": "exec-quantum-impact",
@@ -343,7 +343,7 @@
             "Note Reference standards"
           ],
           "expectedOutput": "Module-level talking points from \"Quantum Threats\" you can take to your next governance conversation.",
-          "narration": "Shor, Grover, CRQC, and Harvest-Now-Decrypt-Later — the four words a finance CISO will say at every PQC meeting.",
+          "narration": "Shor, Grover, CRQC, and Harvest-Now-Decrypt-Later — the four words a finance CISO will say at every PQC meeting. Open the module and walk the Vulnerability Matrix in the Workshop tab.",
           "completionSignal": {
             "kind": "module-progress",
             "moduleId": "quantum-threats",
@@ -415,7 +415,7 @@
           "id": "f-mod-pqc-risk-management",
           "chapter": "foundations",
           "title": "PQC Risk Management",
-          "estMinutes": 3,
+          "estMinutes": 5,
           "whyItMatters": "How to put quantum risk on your enterprise risk register, score it on a heatmap, and turn it into a board-level KPI.",
           "page": {
             "route": "/learn/pqc-risk-management"
@@ -427,7 +427,7 @@
             "Note Reference standards"
           ],
           "expectedOutput": "Module-level talking points from \"PQC Risk Management\" you can take to your next governance conversation.",
-          "narration": "How to put quantum risk on your enterprise risk register, score it on a heatmap, and turn it into a board-level KPI.",
+          "narration": "How to put quantum risk on your enterprise risk register, score it on a heatmap, and turn it into a board-level KPI. Start with the CRQC Scenario Planner in the Workshop tab.",
           "completionSignal": {
             "kind": "module-progress",
             "moduleId": "pqc-risk-management",
@@ -511,7 +511,7 @@
             "Note Reference standards"
           ],
           "expectedOutput": "Module-level talking points from \"Compliance & Regulatory Strategy\" you can take to your next governance conversation.",
-          "narration": "Map your jurisdiction's PQC deadlines (NIST 2030/2035, CCCS 2031/2035, ASD end-2030) to your audit calendar.",
+          "narration": "Map your jurisdiction's PQC deadlines (NIST 2030/2035, CCCS 2031/2035, ASD end-2030) to your audit calendar. The Jurisdiction Mapper in the Workshop tab is your first stop.",
           "completionSignal": {
             "kind": "module-progress",
             "moduleId": "compliance-strategy",
@@ -595,7 +595,7 @@
             "Note Reference standards"
           ],
           "expectedOutput": "Module-level talking points from \"PQC Business Case\" you can take to your next governance conversation.",
-          "narration": "ROI, breach cost modelling, and the three slides every CFO will ask for before signing the budget.",
+          "narration": "ROI, breach cost modelling, and the three slides every CFO will ask for before signing the budget. Start with the ROI Calculator in the Workshop tab.",
           "completionSignal": {
             "kind": "module-progress",
             "moduleId": "pqc-business-case",
@@ -669,7 +669,7 @@
             "Note Reference standards"
           ],
           "expectedOutput": "Module-level talking points from \"PQC Governance & Policy\" you can take to your next governance conversation.",
-          "narration": "Who owns cryptography, who approves exceptions, who reports to the board. The org-chart questions PQC forces you to answer.",
+          "narration": "Who owns cryptography, who approves exceptions, who reports to the board. The org-chart questions PQC forces you to answer. Walk the RACI Builder in the Workshop tab to see who owns what.",
           "completionSignal": {
             "kind": "module-progress",
             "moduleId": "pqc-governance",
@@ -753,7 +753,7 @@
             "Note Reference standards"
           ],
           "expectedOutput": "Module-level talking points from \"Vendor & Supply Chain Risk\" you can take to your next governance conversation.",
-          "narration": "Your vendors' PQC roadmap IS your PQC roadmap. Contract language, certification deadlines, and the readiness scorecard you should send to every supplier.",
+          "narration": "Your vendors' PQC roadmap IS your PQC roadmap. Contract language, certification deadlines, and the readiness scorecard you should send to every supplier. Start with the vendor readiness scorecard template in the Workshop tab.",
           "completionSignal": {
             "kind": "module-progress",
             "moduleId": "vendor-risk",
@@ -847,7 +847,7 @@
             "Note Reference standards"
           ],
           "expectedOutput": "Module-level talking points from \"Migration Program Mgmt\" you can take to your next governance conversation.",
-          "narration": "Treat PQC migration like Y2K — a 3-year programme with stakeholders, milestones, and a deployment plan, not a one-quarter project.",
+          "narration": "Treat PQC migration like Y2K — a 3-year programme with stakeholders, milestones, and a deployment plan, not a one-quarter project. The 90-day plan template in the Workshop tab is your starting point.",
           "completionSignal": {
             "kind": "module-progress",
             "moduleId": "migration-program",
@@ -920,7 +920,7 @@
             "Note References standards"
           ],
           "expectedOutput": "Module-level talking points on Data & Asset Sensitivity",
-          "narration": "Before you can prioritise a multi-year PQC migration, you need to know which assets carry the highest stakes. Classification + sensitivity scoring give you the prioritised list the board needs to see — what is HNDL-exposed, what is regulator-bound, what is high-blast-radius.",
+          "narration": "Before you can prioritise a multi-year PQC migration, you need to know which assets carry the highest stakes. Classification + sensitivity scoring give you the prioritised list the board needs to see — what is HNDL-exposed, what is regulator-bound, what is high-blast-radius. Start with the data classification matrix in the Workshop tab.",
           "completionSignal": {
             "kind": "module-progress",
             "moduleId": "data-asset-sensitivity",
@@ -1003,7 +1003,7 @@
             "Note References standards"
           ],
           "expectedOutput": "Module-level talking points on Standards, Certification & Compliance Bodies",
-          "narration": "The PQC standards landscape can look like an alphabet soup. NIST publishes algorithms; ETSI and IETF publish protocols; ISO certifies; ASD, CCCS, ENISA enforce. Knowing this org chart lets you read regulatory letters with the right lens.",
+          "narration": "The PQC standards landscape can look like an alphabet soup. NIST publishes algorithms; ETSI and IETF publish protocols; ISO certifies; ASD, CCCS, ENISA enforce. Knowing this org chart lets you read regulatory letters with the right lens. Skim the Why-It-Matters tab first for the full map.",
           "completionSignal": {
             "kind": "module-progress",
             "moduleId": "standards-bodies",
@@ -1163,7 +1163,7 @@
             "Answer four to six questions about data sensitivity, retention, and existing crypto inventory"
           ],
           "expectedOutput": "Assessment status changes to complete; report becomes available.",
-          "narration": "Quick mode is calibrated for executives — six questions, two minutes. The questions are about data sensitivity, retention horizon, and whether you already have a cryptographic inventory. The output is a risk profile that we use as the input to the next page.",
+          "narration": "Quick mode is calibrated for executives — six questions, two minutes. The questions are about data sensitivity, how long you keep sensitive data, and whether you already have a cryptographic inventory. The output is a risk profile that we use as the input to the next page.",
           "completionSignal": {
             "kind": "assessment-complete"
           },
@@ -2031,8 +2031,31 @@
             "Generate the quarterly board report template"
           ],
           "expectedOutput": "Risk register entry + KPI dashboard + board report template downloaded.",
-          "narration": "Section six-point-five of CSWP 39 is the maturity assessment. This zone is where the work of every other zone becomes visible to executives. Three KPIs matter: the percentage of your cryptographic estate covered by FIPS 140-3 certified modules, the share of your active certificates that are post-quantum-ready or hybrid, and the percentage of your top-twenty cryptographic vendors with a published PQC roadmap. The dashboard renders these against your jurisdictional deadline — 2030 for ASD, 2031 for CCCS high-priority, 2035 for NIST disallow.",
-          "cues": []
+          "narration": "The maturity assessment zone of CSWP 39 — section six-point-five — is where the work of every other zone becomes visible to executives. Three KPIs matter: the percentage of your cryptographic estate covered by FIPS 140-3 certified modules, the share of your active certificates that are post-quantum-ready or hybrid, and the percentage of your top-twenty cryptographic vendors with a published PQC roadmap. The dashboard renders these against your jurisdictional deadline — end-2030 if you are in Australia, 2031 for Canada's high-priority systems, 2035 for the U.S. NIST disallow date.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/business",
+              "query": { "zone": "risk-management" }
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Risk Management zone — where KPIs become visible to the board."
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "Three KPIs: FIPS 140-3 coverage · post-quantum certificate share · vendor PQC commitment rate."
+            },
+            {
+              "tMs": 120000,
+              "kind": "caption",
+              "text": "Your deadline: end-2030 (Australia) · 2031 high-priority (Canada) · 2035 disallow (United States)."
+            },
+            { "tMs": 180000, "kind": "advance" }
+          ]
         },
         {
           "id": "a4-cswp-migration",
@@ -2215,8 +2238,43 @@
             "Open G7 Cyber Expert Group financial-sector roadmap (Jan 2026)"
           ],
           "expectedOutput": "Three milestones reviewed; G7 financial roadmap bookmarked.",
-          "narration": "Three signals: the Department of Defense five-year agreement with SandboxAQ for cryptographic discovery across the Pentagon. FedRAMP Ready, which means cloud vendors selling to federal agencies are now being evaluated for automated PQC discovery. And the Group of Seven Cyber Expert Group financial-sector roadmap, co-chaired by U.S. Treasury and the Bank of England, with critical-systems migration by 2030 to 2032 and full migration by 2035.",
-          "cues": []
+          "narration": "Three signals: the Department of Defense five-year agreement with SandboxAQ for cryptographic discovery across the Pentagon. FedRAMP Ready, which means cloud vendors selling to federal agencies are now being evaluated for automated PQC discovery. And the Group of Seven Cyber Expert Group financial-sector roadmap. Co-chaired by U.S. Treasury and the Bank of England, it targets critical-systems migration by 2030 to 2032 and full migration by 2035.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/timeline",
+              "query": { "country": "United States" }
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Three signals: DoD · FedRAMP · G7 financial roadmap."
+            },
+            {
+              "tMs": 4000,
+              "kind": "spotlight",
+              "selector": "[data-workshop-target=\"timeline-toc-United States\"]"
+            },
+            {
+              "tMs": 8000,
+              "kind": "callout",
+              "selector": "[data-workshop-target=\"timeline-toc-United States\"]",
+              "label": "United States timeline pinned",
+              "arrow": "right"
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "DoD five-year SandboxAQ agreement · FedRAMP PQC evaluation criteria · G7 2030–2035 roadmap."
+            },
+            {
+              "tMs": 120000,
+              "kind": "caption",
+              "text": "Federal moves cascade into private sector procurement — especially banks serving federal customers."
+            },
+            { "tMs": 180000, "kind": "advance" }
+          ]
         },
         {
           "id": "us-03-threats",
@@ -2238,7 +2296,50 @@
           ],
           "expectedOutput": "You can recite the three U.S.-relevant FIN threats in one minute.",
           "narration": "In a U.S. context, the BIS Project Leap test on TARGET2 is a preview of what FedWire and CHIPS will face. FIN-004 explains why your domestic HSM fleet is on the timeline regardless of your application stack. FIN-005 is the FS-ISAC warning that, by their measurement, the sector is short of resources to hit 2030.",
-          "cues": []
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/threats",
+              "query": { "industry": "Financial Services / Banking" }
+            },
+            {
+              "tMs": 3000,
+              "kind": "caption",
+              "text": "In a U.S. context — FedWire, CHIPS, SWIFT HSM exposure."
+            },
+            {
+              "tMs": 6000,
+              "kind": "spotlight",
+              "selector": "[data-workshop-target=\"threats-toc-FIN-001\"]"
+            },
+            {
+              "tMs": 12000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"threats-toc-FIN-001\"]"
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "F I N 004. Your domestic HSM fleet is on the timeline regardless of your application stack."
+            },
+            {
+              "tMs": 65000,
+              "kind": "spotlight",
+              "selector": "[data-workshop-target=\"threats-toc-FIN-004\"]"
+            },
+            {
+              "tMs": 120000,
+              "kind": "caption",
+              "text": "F I N 005. FS-ISAC: by their measurement, the sector is short of resources to hit 2030."
+            },
+            {
+              "tMs": 125000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"threats-toc-FIN-005\"]"
+            },
+            { "tMs": 180000, "kind": "advance" }
+          ]
         },
         {
           "id": "us-04-leaders",
@@ -2255,8 +2356,31 @@
           },
           "tasks": ["Open Sudha Iyer’s profile", "Bookmark for board citation"],
           "expectedOutput": "Citation bookmarked.",
-          "narration": "Sudha Iyer has been at Citi for two decades and is a founding member of the FS-ISAC post-quantum working group. She is your reference point for \"what is a tier-one U.S. bank already doing\".",
-          "cues": []
+          "narration": "Sudha Iyer has been at Citi for two decades and is a founding member of the FS-ISAC post-quantum working group. Sudha Iyer is your reference point for what a tier-one U.S. bank is already doing.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/leaders",
+              "query": { "country": "United States" }
+            },
+            {
+              "tMs": 4000,
+              "kind": "caption",
+              "text": "Sudha Iyer — Citi, founding FS-ISAC post-quantum working group member."
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "Two decades at Citi. Your reference point for what a tier-one U.S. bank is already doing."
+            },
+            {
+              "tMs": 120000,
+              "kind": "caption",
+              "text": "Bookmark her profile for your board materials."
+            },
+            { "tMs": 180000, "kind": "advance" }
+          ]
         },
         {
           "id": "us-05-library",
@@ -2271,7 +2395,36 @@
           "tasks": ["Search PCI DSS 4.0", "Open requirement 12.3.3", "Bookmark NIST IR 8547"],
           "expectedOutput": "PCI 12.3.3 requirement open; NIST IR 8547 bookmarked.",
           "narration": "PCI DSS 4.0 requirement 12.3.3 has been mandatory since March 2025. It requires you to maintain a cryptographic inventory and a crypto-agility plan. Your assessor reads this as post-quantum readiness. If you have been deferring inventory work, this requirement has already moved your deadline forward to today.",
-          "cues": []
+          "cues": [
+            { "tMs": 0, "kind": "navigate", "route": "/library" },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "PCI DSS 4.0 requirement 12.3.3 — mandatory since March 2025."
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "Cryptographic inventory and crypto-agility plan required. Your assessor reads this as post-quantum readiness."
+            },
+            {
+              "tMs": 120000,
+              "kind": "caption",
+              "text": "Also bookmark NIST IR 8547 — the deprecation calendar your auditor will cite."
+            },
+            {
+              "tMs": 140000,
+              "kind": "caption",
+              "text": "Checkpoint: PCI DSS 4.0 §12.3.3 — when must your cryptographic inventory be complete?"
+            },
+            { "tMs": 155000, "kind": "navigate", "route": "/assess" },
+            {
+              "tMs": 157000,
+              "kind": "caption",
+              "text": "Re-run your risk assessment — your PCI deadline is now in view."
+            },
+            { "tMs": 180000, "kind": "advance" }
+          ]
         }
       ]
     },
@@ -2430,7 +2583,42 @@
           ],
           "expectedOutput": "Three Canadian milestones reviewed; country bookmarked.",
           "narration": "The runway is in three documents. Innovation, Science and Economic Development Canada published the original best practices in 2023 — that is when your peers first started budgeting. The CCCS roadmap of June 2025 is the binding federal document. The Treasury Board Secretariat Security Policy Implementation Notice of October 2025 turns the roadmap into a contractual obligation across federal procurement.",
-          "cues": []
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/timeline",
+              "query": { "country": "Canada" }
+            },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "Three documents define your runway — ISED 2023 · CCCS June 2025 · TBS SPIN October 2025."
+            },
+            {
+              "tMs": 4000,
+              "kind": "spotlight",
+              "selector": "[data-workshop-target=\"timeline-toc-Canada\"]"
+            },
+            {
+              "tMs": 8000,
+              "kind": "callout",
+              "selector": "[data-workshop-target=\"timeline-toc-Canada\"]",
+              "label": "Canada timeline pinned",
+              "arrow": "right"
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "ISED 2023 — when your peers started budgeting. CCCS June 2025 — the binding federal document."
+            },
+            {
+              "tMs": 120000,
+              "kind": "caption",
+              "text": "TBS SPIN October 2025 — turns the roadmap into a contractual obligation across federal procurement."
+            },
+            { "tMs": 180000, "kind": "advance" }
+          ]
         },
         {
           "id": "ca-03-threats",
@@ -2451,8 +2639,51 @@
             "Open FIN-005 FS-ISAC sector-readiness warning"
           ],
           "expectedOutput": "Three threats reviewed in Canadian context.",
-          "narration": "For Canadian banks, FIN-001 matters because Canada participates in the Group of Seven coordinating framework. FIN-002 is operationally severe because HNDL on cross-border settlement traffic creates a permanent privacy exposure that pre-existing Canadian privacy law — PIPEDA, the new C-27 — already covers. FIN-005 applies — your sector readiness is no better than your U.S. peers.",
-          "cues": []
+          "narration": "For Canadian banks, FIN-001 matters because Canada participates in the Group of Seven coordinating framework. FIN-002 is operationally severe because HNDL on cross-border settlement traffic creates a permanent privacy exposure that pre-existing Canadian privacy law — PIPEDA — and the proposed Bill C-27 now before Parliament — already address. FIN-005 applies — your sector readiness is no better than your U.S. peers.",
+          "cues": [
+            {
+              "tMs": 0,
+              "kind": "navigate",
+              "route": "/threats",
+              "query": { "industry": "Financial Services / Banking" }
+            },
+            {
+              "tMs": 3000,
+              "kind": "caption",
+              "text": "For Canadian banks — G7 framework participation, cross-border settlement exposure."
+            },
+            {
+              "tMs": 6000,
+              "kind": "spotlight",
+              "selector": "[data-workshop-target=\"threats-toc-FIN-001\"]"
+            },
+            {
+              "tMs": 12000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"threats-toc-FIN-001\"]"
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "F I N 002. HNDL on cross-border settlement traffic — a permanent privacy exposure under PIPEDA."
+            },
+            {
+              "tMs": 65000,
+              "kind": "spotlight",
+              "selector": "[data-workshop-target=\"threats-toc-FIN-002\"]"
+            },
+            {
+              "tMs": 120000,
+              "kind": "caption",
+              "text": "F I N 005. Your sector readiness is no better than your U.S. peers."
+            },
+            {
+              "tMs": 125000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"threats-toc-FIN-005\"]"
+            },
+            { "tMs": 180000, "kind": "advance" }
+          ]
         },
         {
           "id": "ca-04-leaders",
@@ -2469,8 +2700,26 @@
           },
           "tasks": ["Open Sami Khoury profile", "Bookmark for board citation"],
           "expectedOutput": "Citation bookmarked.",
-          "narration": "Sami Khoury is currently Canada’s Senior Official for Cyber Security and was the head of the Canadian Centre for Cyber Security when ITSAP.00.017 was published. He is your in-country reference point.",
-          "cues": []
+          "narration": "Sami Khoury served as Head of the Canadian Centre for Cyber Security when ITSAP.00.017 was published and now holds the broader role of Canada’s Senior Official for Cyber Security. He is your in-country reference point.",
+          "cues": [
+            { "tMs": 0, "kind": "navigate", "route": "/leaders", "query": { "country": "Canada" } },
+            {
+              "tMs": 4000,
+              "kind": "caption",
+              "text": "Sami Khoury — former Head of CCCS, now Canada’s Senior Official for Cyber Security."
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "He authored the playbook. His public statements are board-grade citations."
+            },
+            {
+              "tMs": 120000,
+              "kind": "caption",
+              "text": "Bookmark his profile to cite in your board materials."
+            },
+            { "tMs": 180000, "kind": "advance" }
+          ]
         },
         {
           "id": "ca-05-library",
@@ -2489,7 +2738,36 @@
           ],
           "expectedOutput": "CCCS practitioner guide and NIST FIPS bookmarked.",
           "narration": "Canada aligns to NIST standards — there is no separate Canadian algorithm suite. ITSAP.00.017 is the practitioner guide that translates NIST FIPS 203 and 204 into deployment guidance for federal departments. Your CISO will treat this as the authoritative implementation document.",
-          "cues": []
+          "cues": [
+            { "tMs": 0, "kind": "navigate", "route": "/library" },
+            {
+              "tMs": 1500,
+              "kind": "caption",
+              "text": "CCCS ITSAP.00.017 — the practitioner guide your CISO will hand to engineering."
+            },
+            {
+              "tMs": 60000,
+              "kind": "caption",
+              "text": "Canada aligns to NIST. No separate Canadian algorithm suite. FIPS 203 and 204 are your references."
+            },
+            {
+              "tMs": 120000,
+              "kind": "caption",
+              "text": "Also bookmark NIST IR 8547 — the deprecation calendar."
+            },
+            {
+              "tMs": 140000,
+              "kind": "caption",
+              "text": "Checkpoint: Canada's CCCS high-priority systems — migrated by when?"
+            },
+            { "tMs": 155000, "kind": "navigate", "route": "/assess" },
+            {
+              "tMs": 157000,
+              "kind": "caption",
+              "text": "Re-run your risk assessment — your 2031 CCCS deadline is now in view."
+            },
+            { "tMs": 180000, "kind": "advance" }
+          ]
         }
       ]
     },
@@ -2517,7 +2795,7 @@
             "Note the required algorithms: ML-DSA-87, ML-KEM-1024, SHA-384/512, AES-256"
           ],
           "expectedOutput": "ISM-1917 framework bookmarked; required algorithms noted.",
-          "narration": "The Australian Signals Directorate updated the Information Security Manual in December 2024 with control 1917. By end of 2030, traditional cryptography — RSA, ECDSA, ECDH — is prohibited for protected systems. Required algorithms are at the highest NIST security levels: ML-DSA-87 for signatures, ML-KEM-1024 for key encapsulation, SHA-384 or SHA-512, AES-256. This is five years ahead of the U.S. and U.K. equivalents.",
+          "narration": "The Australian Signals Directorate updated the Information Security Manual in December 2024 with control 1917. By end of 2030, protected systems must use post-quantum algorithms — RSA, ECDSA, and ECDH are no longer accepted for new deployments under ISM-1917. Required algorithms are at the highest NIST security levels: ML-DSA-87 for signatures, ML-KEM-1024 for key encapsulation, SHA-384 or SHA-512, AES-256. This is five years ahead of the U.S. and U.K. equivalents.",
           "cues": [
             {
               "tMs": 0,
@@ -2644,15 +2922,15 @@
           "tasks": [
             "Open ASD initial planning guide (2022-07)",
             "Open ISM December 2024 update",
-            "Open ASD September 2025 LATICE update"
+            "Open ASD LATICE practitioner guidance"
           ],
           "expectedOutput": "Three milestones reviewed; phasing noted.",
-          "narration": "The first ASD planning guide is from 2022. The binding update is from December 2024. The most recent practitioner refresh is the LATICE framework from September 2025. The three phases — planning by 2026, critical migration by 2028, full migration by 2030 — leave Australian banks with the smallest remaining runway of the three jurisdictions in this workshop.",
+          "narration": "The first ASD planning guide is from 2022. The binding update is from December 2024. The most recent practitioner refresh is the ASD LATICE practitioner guidance. The three phases — planning by 2026, critical migration by 2028, full migration by 2030 — leave Australian banks with the smallest remaining runway of the three jurisdictions in this workshop.",
           "cues": [
             {
               "tMs": 4000,
               "kind": "caption",
-              "text": "Three documents define your runway. The 2022 ASD guide. The binding December 2024 ISM update. The September 2025 LATICE refresh."
+              "text": "Three documents define your runway. The 2022 ASD guide. The binding December 2024 ISM update. The ASD LATICE practitioner guidance."
             },
             {
               "tMs": 8000,
@@ -2726,7 +3004,7 @@
             {
               "tMs": 60000,
               "kind": "caption",
-              "text": "F I N 004. A hardware security module fleet wrapping backup keys with RSA is non-compliant under I S M 1917 by 2030."
+              "text": "F I N 004. A hardware security module fleet wrapping backup keys with RSA is non-compliant under ASD I S M 1917 by 2030."
             },
             {
               "tMs": 65000,
@@ -2788,69 +3066,57 @@
           ]
         },
         {
-          "id": "au-05-migrate",
+          "id": "au-05-library",
           "chapter": "region",
           "region": "AU",
-          "title": "Vendor reality — Dell BSAFE certified products",
+          "title": "ASD ISM + NIST FIPS — primary sources",
           "estMinutes": 3,
-          "whyItMatters": "Dell Australia’s BSAFE products are already NIST-validated for ML-DSA and ML-KEM. Concrete proof that the vendor ecosystem is ready before your deadline.",
+          "whyItMatters": "Your CISO will ask ‘what document says that?’ for every claim in this workshop. This step bookmarks the three primary sources ASD-aligned organisations rely on.",
           "page": {
-            "route": "/migrate"
+            "route": "/library"
           },
           "tasks": [
-            "Filter by vendor Dell",
-            "Open the BSAFE Crypto Module for C (ACVP A8272)",
-            "Open the BSAFE Crypto Module for Java"
+            "Search ASD ISM in the library",
+            "Bookmark ISM Guidelines for Cryptography (December 2024)",
+            "Bookmark NIST FIPS 203 (ML-KEM) and FIPS 204 (ML-DSA)",
+            "Bookmark NIST IR 8547 (deprecation timeline)"
           ],
-          "expectedOutput": "Two Dell BSAFE certifications opened.",
-          "narration": "Dell Australia is the named vendor on multiple ACVP certificates — A8272 for the C module, with separate certificates for Java. ML-DSA and ML-KEM are both validated. This matters because the most common board objection — \"the vendors are not ready\" — is already factually incorrect for your jurisdiction.",
+          "expectedOutput": "Three primary sources bookmarked: ASD ISM, FIPS 203/204, NIST IR 8547.",
+          "narration": "These are your three primary sources. The ASD ISM Guidelines for Cryptography, December 2024 edition, is the document that codifies control 1917 and sets the end-2030 requirement. NIST FIPS 203 and 204 define ML-KEM and ML-DSA — the algorithms ISM-1917 mandates. And NIST IR 8547 is the deprecation calendar, showing exactly when RSA and ECDSA are scheduled to be disallowed. Your CISO will cite these three documents in every board update.",
           "cues": [
+            { "tMs": 0, "kind": "navigate", "route": "/library" },
             {
-              "tMs": 4000,
+              "tMs": 1500,
               "kind": "caption",
-              "text": "Dell Australia is named on multiple ACVP certificates. M L D S A and M L K E M both validated."
-            },
-            {
-              "tMs": 8000,
-              "kind": "scroll-to",
-              "selector": "[data-workshop-target=\"migrate-product-dell-bsafe-crypto-module-for-c\"]"
-            },
-            {
-              "tMs": 12000,
-              "kind": "spotlight",
-              "selector": "[data-workshop-target=\"migrate-product-dell-bsafe-crypto-module-for-c\"]"
-            },
-            {
-              "tMs": 16000,
-              "kind": "callout",
-              "selector": "[data-workshop-target=\"migrate-product-dell-bsafe-crypto-module-for-c\"]",
-              "label": "A8272 — ACVP certified",
-              "arrow": "right"
+              "text": "Three primary sources: ASD ISM December 2024 · NIST FIPS 203 and 204 · NIST IR 8547."
             },
             {
               "tMs": 60000,
               "kind": "caption",
-              "text": "A8272 for the C module · separate certificates for Java."
-            },
-            {
-              "tMs": 65000,
-              "kind": "scroll-to",
-              "selector": "[data-workshop-target=\"migrate-product-dell-bsafe-crypto-module-for-java\"]"
-            },
-            {
-              "tMs": 70000,
-              "kind": "spotlight",
-              "selector": "[data-workshop-target=\"migrate-product-dell-bsafe-crypto-module-for-java\"]"
+              "text": "ASD ISM Guidelines for Cryptography December 2024 — the document behind control 1917."
             },
             {
               "tMs": 120000,
               "kind": "caption",
-              "text": "The most common board objection — \"the vendors are not ready\" — is already factually incorrect."
+              "text": "FIPS 203 and 204 define M L K E M and M L D S A — the algorithms ISM-1917 mandates."
             },
             {
-              "tMs": 180000,
-              "kind": "advance"
-            }
+              "tMs": 160000,
+              "kind": "caption",
+              "text": "NIST IR 8547 — the deprecation calendar. RSA and ECDSA disallowance dates, jurisdiction by jurisdiction."
+            },
+            {
+              "tMs": 175000,
+              "kind": "caption",
+              "text": "Checkpoint: Australia's new-deployment deadline under ASD ISM-1917 — which year?"
+            },
+            { "tMs": 192000, "kind": "navigate", "route": "/assess" },
+            {
+              "tMs": 194000,
+              "kind": "caption",
+              "text": "Re-run your risk assessment — your end-2030 ASD deadline is now in view."
+            },
+            { "tMs": 210000, "kind": "advance" }
           ]
         }
       ]
@@ -2942,7 +3208,7 @@
           {
             "tMs": 76500,
             "kind": "caption",
-            "text": "Start the quiz when you're ready. We'll skip running it inside the workshop."
+            "text": "Start the quiz when you're ready. Run it after the workshop to benchmark your retention."
           },
           {
             "tMs": 165000,
@@ -2976,42 +3242,42 @@
           {
             "tMs": 2000,
             "kind": "caption",
-            "text": "About PQC Today"
+            "text": "About PQC Today — who we are and why we built this."
           },
           {
             "tMs": 12000,
             "kind": "caption",
-            "text": "Our founding principles"
+            "text": "Our founding principles — accuracy, transparency, and urgency."
           },
           {
             "tMs": 22000,
             "kind": "caption",
-            "text": "Who this is for"
+            "text": "Who this is for — executives, architects, developers, and researchers."
           },
           {
             "tMs": 32000,
             "kind": "caption",
-            "text": "The timeline is not optional"
+            "text": "The timeline is not optional — 2030 is less than four years away."
           },
           {
             "tMs": 50000,
             "kind": "caption",
-            "text": "Data Privacy"
+            "text": "Data Privacy — no tracking, no accounts, no data stored on our servers."
           },
           {
             "tMs": 68000,
             "kind": "caption",
-            "text": "Security Audit"
+            "text": "Security Audit — results published. We hold ourselves to the same standard we recommend."
           },
           {
             "tMs": 90000,
             "kind": "caption",
-            "text": "Open Source License"
+            "text": "Open Source — Apache 2.0. Inspect the code, fork it, contribute."
           },
           {
             "tMs": 110000,
             "kind": "caption",
-            "text": "Community"
+            "text": "Community — GitHub, feedback, issues. Your corrections improve everyone's workshop."
           },
           {
             "tMs": 180000,
@@ -3033,7 +3299,7 @@
           "Schedule a 30-day follow-up to revisit the report after the inventory pilot"
         ],
         "expectedOutput": "Share URL copied; follow-up scheduled.",
-        "narration": "You now have, in one URL, a board-ready report tied to your jurisdiction and your industry. You have governance, risk, and a 90-day plan. The single highest-leverage action you can take in the next sixty seconds is to share this URL with the colleague who will own the inventory pilot. Schedule a thirty-day follow-up. The deadlines are not waiting.",
+        "narration": "You now have, in one URL, a board-ready report tied to your jurisdiction and your industry. You have governance, risk, and a 90-day plan. The single highest-leverage action you can take right now is to share this URL with the colleague who will own the inventory pilot. Schedule a thirty-day follow-up. The deadlines are not waiting.",
         "cues": [
           {
             "tMs": 4000,
@@ -3048,7 +3314,7 @@
           {
             "tMs": 120000,
             "kind": "caption",
-            "text": "Highest-leverage action in the next sixty seconds: share this URL with whoever owns the inventory pilot."
+            "text": "Highest-leverage action right now: share this URL with whoever owns the inventory pilot."
           },
           {
             "tMs": 180000,

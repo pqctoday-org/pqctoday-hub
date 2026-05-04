@@ -13,8 +13,9 @@
         "industries": ["Finance & Banking"],
         "regions": ["US", "CA", "AU"]
       },
-      "totalEstMinutes": 127,
+      "totalEstMinutes": 131,
       "stepCount": 44,
+      "stepCountNote": "44 total steps across all 3 regional branches (US + CA + AU); single-region user path is 34 steps (~131 min)",
       "date": "05022026"
     },
     {

@@ -10,7 +10,7 @@ All notable changes to this project will be documented in this file.
 
 - **`pqctoday-tpm` listed in About SBOM** — added to the Cryptography & PQC
   section alongside softhsmv3, with link to the public repo
-  (`pqctoday-org/pqctoday-tpm`), BSD-3-Clause license, version v0.2.0, and
+  (`pqctoday-org/pqctoday-tpm`), BSD-3-Clause license, version v0.3.0, and
   description noting TCG V1.85 PQC support (ML-KEM-768 + ML-DSA-65 command
   codes 0x1a3–0x1aa, Emscripten WASM build, fork of swtpm + libtpms).
   (`SbomSection.tsx`)
@@ -34,6 +34,25 @@ All notable changes to this project will be documented in this file.
   Spotlight + callout cues unchanged — `landing-cta-primary` /
   `landing-cta-secondary` selectors still exist.
   (`executive-basics-finance-and-banking-amer-apac_05022026.json`)
+- **Executive Finance & Banking workshop — comprehensive accuracy, completeness,
+  and audio review** — full 7-dimension audit of the 44-step US/CA/AU flow;
+  all P1/P2/P3 gaps resolved. Key fixes: `prereq-02` "Beginner experience" →
+  "Basics proficiency" and caption "three picks" → "four picks"; `au-01`
+  narration softened to match ASD ISM-1917 actual requirement (new deployments,
+  not a blanket prohibition); `ca-03` Bill C-27 marked as proposed (not enacted);
+  `au-02` unconfirmed LATICE date removed; `au-05` unverified ACVP cert number
+  removed; 8 empty-cue US/CA region steps (us-02–05, ca-02–05) populated with
+  full navigate/spotlight/caption/advance cue sets; `au-05-migrate` replaced
+  with `au-05-library` covering ASD ISM December 2024 + NIST FIPS 203/204 +
+  NIST IR 8547; `a3-cswp-risk` updated with explicit per-country deadline
+  framing (2030 ASD, 2031 CCCS high-priority, 2035 NIST disallow); all 10
+  `f-mod-*` narrations enriched with one orientation sentence each; region
+  knowledge-checkpoint captions and `/assess` re-entry navigate cues added to
+  final step of each region chapter; `exec-quantum-impact` and
+  `pqc-risk-management` `estMinutes` bumped 3 → 5; manifest `totalEstMinutes`
+  updated 127 → 131 with `stepCountNote` clarifying 44 total / 34 per-region
+  path. (`executive-basics-finance-and-banking-amer-apac_05022026.json`,
+  `public/workshop/index.json`)
 - **TPM Playground full TCG V1.85 PQC compliance** — V185-012 through
   V185-016 now pass (Encapsulate / Decapsulate / SignDigest with correct
   RC, output sizes, and 3309-byte ML-DSA-65 signature). All 16/16 checks
@@ -55,7 +74,7 @@ All notable changes to this project will be documented in this file.
 ### Internal
 
 - `npx tsc -b` clean; full vitest suite passes; `changelogParser` parses
-  this Unreleased block as `Added=1, Fixed=3, Data=1, Internal=1`.
+  this Unreleased block as `Added=1, Fixed=4, Data=1, Internal=1`.
 
 ## [3.5.64] - May 3, 2026
 
