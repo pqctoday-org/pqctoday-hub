@@ -47,7 +47,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is FN-DSA (Falcon)?',
         answer:
-          'FN-DSA (FFT over NTRU-Lattice-Based Digital Signature Algorithm), formerly known as Falcon, is expected to be standardized as FIPS 206 in 2025. It produces more compact signatures than ML-DSA, making it attractive for bandwidth-constrained environments like smart cards, though its implementation is more complex due to floating-point arithmetic. The Algorithms page compares FN-DSA-512 and FN-DSA-1024 parameters.',
+          'FN-DSA (FFT over NTRU-Lattice-Based Digital Signature Algorithm), formerly known as Falcon, is expected to be standardized as FIPS 206 in late 2026 or early 2027, pending final NIST clearance — the initial public draft was submitted for internal NIST review in August 2025. It produces more compact signatures than ML-DSA, making it attractive for bandwidth-constrained environments like smart cards, though its implementation is more complex due to floating-point arithmetic. The Algorithms page compares FN-DSA-512 and FN-DSA-1024 parameters.',
         deepLink: '/algorithms?highlight=fn-dsa',
       },
       {
@@ -135,7 +135,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How many industries does the PQC Today Threats dashboard cover?',
         answer:
-          'The Threats dashboard covers 12 or more industries, each with detailed threat criticality levels, HNDL and HNFL risk assessments, and actionable mitigation strategies. Industries include financial services, healthcare, government, telecom, energy, automotive, aerospace, and more. The dashboard allows filtering by industry to see sector-specific threat profiles and compliance requirements.',
+          'The Threats dashboard covers over 20 industries, each with detailed threat criticality levels, HNDL and HNFL risk assessments, and actionable mitigation strategies. Industries span financial services, healthcare, government, telecom, energy, automotive, aerospace, IoT, payment card, supply chain, media/DRM, legal/eSignature, and more. The dashboard allows filtering by industry to see sector-specific threat profiles and compliance requirements.',
         deepLink: '/threats',
       },
     ],
@@ -175,7 +175,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What does RFC 9629 cover?',
         answer:
-          'RFC 9629 specifies how to use post-quantum algorithms within the Cryptographic Message Syntax (CMS), enabling PQC-protected S/MIME email encryption and digital signatures. It defines algorithm identifiers and encoding rules for ML-KEM and ML-DSA within the existing CMS framework. The Reference Library includes this RFC alongside related email security standards.',
+          'RFC 9629 specifies how to use ML-KEM for key encapsulation within the Cryptographic Message Syntax (CMS), enabling PQC-protected S/MIME email encryption. It defines algorithm identifiers and encoding rules for ML-KEM only — ML-DSA digital signatures in CMS are covered separately by RFC 9882. The Reference Library includes both RFCs alongside related email security standards.',
         deepLink: '/library',
       },
       {
@@ -205,7 +205,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What are RFC 9881 and RFC 9882?',
         answer:
-          'RFC 9881 and RFC 9882 are IETF standards that define the algorithm identifiers and encoding rules for using ML-KEM and ML-DSA within CMS (Cryptographic Message Syntax), enabling their use in protocols like S/MIME, code signing, and timestamping. They provide the wire format and OID assignments needed for interoperability across implementations. The Reference Library catalogs these alongside the broader suite of PQC-related RFCs.',
+          'RFC 9881 defines algorithm identifiers for ML-DSA within the X.509 Public Key Infrastructure — specifying OIDs and SubjectPublicKeyInfo encodings for ML-DSA public keys and signatures in certificates. RFC 9882 covers the use of ML-DSA within the Cryptographic Message Syntax (CMS), enabling ML-DSA digital signatures in S/MIME, code signing, and timestamping. Together they provide the interoperability foundation for ML-DSA across PKI and messaging protocols. The Reference Library catalogs both alongside the broader suite of PQC-related RFCs.',
         deepLink: '/library',
       },
     ],
@@ -251,7 +251,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: "What is Germany's QUANTITY initiative?",
         answer:
-          "QUANTITY is a BSI-led initiative to deploy quantum-safe cryptography across German government infrastructure, covering both federal IT systems and critical infrastructure operators. The program coordinates with broader EU efforts and emphasizes hybrid deployment and crypto agility as transitional measures. The Timeline view shows Germany's milestone dates within the European context.",
+          "QUANTITY is a joint BSI and DLR (German Aerospace Center) initiative launched in March 2025 focused on quantum cryptanalysis — stress-testing PQC algorithm candidates to validate their security assumptions and inform algorithm selection, rather than deploying quantum-safe infrastructure directly. Its findings complement BSI's broader PQC transition guidance (TR-02102) and strengthen confidence in standardized algorithms. The Timeline view shows Germany's milestone dates within the European context.",
         deepLink: '/timeline?country=Germany',
       },
       {
@@ -315,7 +315,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is Executive Order 14306?',
         answer:
-          'Executive Order 14306 directs US federal agencies to migrate their cryptographic systems to post-quantum algorithms, referencing NIST standards and establishing timelines for inventory, assessment, and migration. It builds on NSM-10 (National Security Memorandum 10) and mandates annual progress reporting by agency CISOs. The Compliance Tracker tracks the EO 14306 milestones and agency compliance status.',
+          'Executive Order 14306 (June 2025) ties CNSA 2.0 requirements to federal procurement by linking them to the CISA product category list, effectively mandating that agencies purchase PQC-capable products for national security system use cases. It operationalizes the CNSA 2.0 transition by embedding quantum-readiness into the federal acquisition process rather than leaving it as optional agency guidance. The Compliance Tracker tracks the EO 14306 procurement requirements and their intersection with NIST IR 8547 migration timelines.',
         deepLink: '/compliance',
       },
       {
@@ -605,7 +605,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How many learning modules does PQC Today offer?',
         answer:
-          'PQC Today offers 50 interactive learning modules organized across nine tracks: Foundations, Protocols, Applications, Hardware Infrastructure, Software Infrastructure, Strategy, Industries, Executive, and Role Guides. Each module includes an introduction with glossary-linked terms, interactive workshop exercises, and knowledge assessment questions. Module durations range from 30 minutes to 120 minutes depending on complexity.',
+          'PQC Today offers over 70 interactive learning modules organized across nine tracks: Foundations, Protocols, Applications, Hardware Infrastructure, Software Infrastructure, Strategy, Industries, Executive, and Role Guides. Each module includes an introduction with glossary-linked terms, interactive workshop exercises, and knowledge assessment questions. Module durations range from 30 minutes to 120 minutes depending on complexity.',
         deepLink: '/learn',
       },
       {
@@ -623,7 +623,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is the PQC Reference Library?',
         answer:
-          'The PQC Reference Library is a curated collection of over 375 standards, RFCs, research papers, and migration guides relevant to post-quantum cryptography, with cross-references linking related documents and enrichment metadata providing summaries and PQC relevance assessments. Documents are categorized by type, issuing organization, and relevance to specific algorithms and use cases. The Library supports full-text search and filtering.',
+          'The PQC Reference Library is a curated collection of over 540 standards, RFCs, research papers, and migration guides relevant to post-quantum cryptography, with cross-references linking related documents and enrichment metadata providing summaries and PQC relevance assessments. Documents are categorized by type, issuing organization, and relevance to specific algorithms and use cases. The Library supports full-text search and filtering.',
         deepLink: '/library',
       },
       {

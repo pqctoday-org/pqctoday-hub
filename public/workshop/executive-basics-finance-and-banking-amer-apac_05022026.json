@@ -379,7 +379,7 @@
             {
               "tMs": 6000,
               "kind": "caption",
-              "text": "Section 1/3: Why It Matters: Executive Quantum Exposure"
+              "text": "Section 1/3: The Executive Quantum Challenge"
             },
             {
               "tMs": 53133,
@@ -389,7 +389,7 @@
             {
               "tMs": 53333,
               "kind": "caption",
-              "text": "Section 2/3: What to Learn: Knowledge & Skills Gap"
+              "text": "Section 2/3: Why Now?"
             },
             {
               "tMs": 100466,
@@ -399,7 +399,7 @@
             {
               "tMs": 100666,
               "kind": "caption",
-              "text": "Section 3/3: How to Act: Phased Action Plan"
+              "text": "Section 3/3: What This Module Covers"
             },
             {
               "tMs": 149499,
@@ -462,7 +462,7 @@
             {
               "tMs": 6000,
               "kind": "caption",
-              "text": "Section 1/3: CRQC Timeline & Harvest Now Decrypt Later"
+              "text": "Section 1/3: CRQC Timeline Projections"
             },
             {
               "tMs": 53133,
@@ -472,7 +472,7 @@
             {
               "tMs": 53333,
               "kind": "caption",
-              "text": "Section 2/3: HNDL/HNFL Risk Windows & Prioritization"
+              "text": "Section 2/3: Harvest Now, Decrypt Later"
             },
             {
               "tMs": 100466,
@@ -482,7 +482,7 @@
             {
               "tMs": 100666,
               "kind": "caption",
-              "text": "Section 3/3: Post-Quantum Security Levels"
+              "text": "Section 3/3: Harvest Now, Forge Later"
             },
             {
               "tMs": 180000,
@@ -535,7 +535,7 @@
             {
               "tMs": 6000,
               "kind": "caption",
-              "text": "Section 1/3: CRQC Timeline Modeling"
+              "text": "Section 1/3: Why PQC Risk Management?"
             },
             {
               "tMs": 53133,
@@ -545,7 +545,7 @@
             {
               "tMs": 53333,
               "kind": "caption",
-              "text": "Section 2/3: Risk Register & Quantification"
+              "text": "Section 2/3: Key Concepts"
             },
             {
               "tMs": 100466,
@@ -555,7 +555,7 @@
             {
               "tMs": 100666,
               "kind": "caption",
-              "text": "Section 3/3: Risk Heatmap & Prioritization"
+              "text": "Section 3/3: Executive Perspective"
             },
             {
               "tMs": 180000,
@@ -694,7 +694,52 @@
               "text": "Section 2/2: Workshop & Resources"
             },
             {
-              "tMs": 180000,
+              "tMs": 130000,
+              "kind": "select-tab",
+              "tabName": "Workshop"
+            },
+            {
+              "tMs": 132000,
+              "kind": "caption",
+              "text": "Workshop: 4 hands-on tools — ROI Calculator, Breach Simulator, Board Pitch Builder, Cost of Inaction."
+            },
+            {
+              "tMs": 138000,
+              "kind": "caption",
+              "text": "Step 1/4: ROI Calculator — model migration cost vs. breach cost vs. compliance penalty."
+            },
+            {
+              "tMs": 148000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 150000,
+              "kind": "caption",
+              "text": "Step 2/4: Breach Scenario Simulator — quantify CRQC breach impact for your sector."
+            },
+            {
+              "tMs": 160000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 162000,
+              "kind": "caption",
+              "text": "Step 3/4: Board Pitch Builder — the three slides every CFO needs to approve budget."
+            },
+            {
+              "tMs": 172000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"learn-stepper-next\"]"
+            },
+            {
+              "tMs": 174000,
+              "kind": "caption",
+              "text": "Step 4/4: Cost of Inaction — what delay costs per quarter in your jurisdiction."
+            },
+            {
+              "tMs": 185000,
               "kind": "advance"
             }
           ]
@@ -817,7 +862,7 @@
             {
               "tMs": 8000,
               "kind": "caption",
-              "text": "Section 1/4: Vendor PQC Readiness Assessment"
+              "text": "Section 1/4: Why Vendor PQC Risk Matters"
             },
             {
               "tMs": 41300,
@@ -827,7 +872,7 @@
             {
               "tMs": 41500,
               "kind": "caption",
-              "text": "Section 2/4: Supply Chain Cryptographic Dependencies"
+              "text": "Section 2/4: Vendor PQC Scorecards"
             },
             {
               "tMs": 76800,
@@ -837,7 +882,7 @@
             {
               "tMs": 77000,
               "kind": "caption",
-              "text": "Section 3/4: PQC Contract Requirements"
+              "text": "Section 3/4: CBOM — Crypto Bill of Materials"
             },
             {
               "tMs": 112300,
@@ -847,7 +892,7 @@
             {
               "tMs": 112500,
               "kind": "caption",
-              "text": "Section 4/4: Layer-wise Risk Matrix"
+              "text": "Section 4/4: Vendor Assessment Framework"
             },
             {
               "tMs": 180000,
@@ -2384,7 +2429,10 @@
             {
               "tMs": 0,
               "kind": "navigate",
-              "route": "/library"
+              "route": "/library",
+              "query": {
+                "region": "USA"
+              }
             },
             {
               "tMs": 1500,
@@ -2758,7 +2806,10 @@
             {
               "tMs": 0,
               "kind": "navigate",
-              "route": "/library"
+              "route": "/library",
+              "query": {
+                "region": "Canada"
+              }
             },
             {
               "tMs": 1500,
@@ -3114,7 +3165,10 @@
             {
               "tMs": 0,
               "kind": "navigate",
-              "route": "/library"
+              "route": "/library",
+              "query": {
+                "region": "Australia"
+              }
             },
             {
               "tMs": 1500,

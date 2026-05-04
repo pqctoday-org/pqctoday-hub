@@ -220,6 +220,8 @@ function prepareForSpeech(text: string): string {
       /^\s*(?:Section|Workshop|Layer|Step|Hint|Artifact|Module|Tab)\s+\d+(?:\s*(?:\/|of|out of)\s*\d+)?\s*[:.\-—]\s*/i,
       ''
     )
+    .replace(/\s*→\s*/g, ', then ')
+    .replace(/\s*←\s*/g, ', back to ')
     .replace(/\s*[—–]\s*/g, '. ')
     .replace(/\s+·\s+/g, ', ')
     .replace(/\s+\/\s+/g, ' or ')
