@@ -26,7 +26,6 @@ import { buildEndorsementUrl, buildFlagUrl } from '../../utils/endorsement'
 import { CountryFlag } from '../common/CountryFlag'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { StatusBadge } from '../common/StatusBadge'
-import { usePersonaStore } from '../../store/usePersonaStore'
 import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
 
 import { FilterChip } from '../common/FilterChip'
@@ -93,9 +92,7 @@ export const SimpleGanttChart = ({
   const [sortField, setSortField] = useState<'country' | 'organization'>('country')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   const [selectedPhase, setSelectedPhase] = useState<TimelinePhase | null>(null)
-  const [selectedPhaseType, setSelectedPhaseType] = useState(() =>
-    usePersonaStore.getState().selectedPersona === 'executive' ? 'Deadline' : 'All'
-  )
+  const [selectedPhaseType, setSelectedPhaseType] = useState('All')
   const [selectedEventType, setSelectedEventType] = useState('All')
 
   const phaseTypeItems = useMemo(

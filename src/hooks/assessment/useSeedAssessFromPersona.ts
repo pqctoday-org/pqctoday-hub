@@ -3,7 +3,6 @@ import { useEffect } from 'react'
 import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { REGION_COUNTRIES_MAP } from '@/data/personaConfig'
 
 export function useSeedAssessFromPersona(): void {
   const industry = useAssessmentFormStore((s) => s.industry)
@@ -17,12 +16,11 @@ export function useSeedAssessFromPersona(): void {
     // Re-seed whenever industry is empty — handles both initial mount and
     // post-reset() scenarios (e.g. workshop navigates to /assess?reset=1
     // while AssessView is already mounted, so the component never remounts).
-    const { selectedIndustry, selectedRegion } = usePersonaStore.getState()
+    const { selectedIndustry } = usePersonaStore.getState()
     const store = useAssessmentStore.getState()
     if (selectedIndustry) store.setIndustry(selectedIndustry)
-    if (selectedRegion && selectedRegion !== 'global') {
-      const country = REGION_COUNTRIES_MAP[selectedRegion]?.[0]
-      if (country) store.setCountry(country)
-    }
+    // Country is NOT auto-seeded from region — the region already filters the
+    // Step 2 country list to the right subset; picking region[0] would
+    // pre-select the wrong country (e.g. Japan for Australian users).
   }, [industry, assessmentStatus])
 }
