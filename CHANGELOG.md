@@ -106,6 +106,28 @@ All notable changes to this project will be documented in this file.
 assessmentStatus]`: the hook re-seeds from persona whenever `industry` is empty,
   covering both fresh mounts and post-reset scenarios.
   (`useSeedAssessFromPersona.ts`)
+- **p-assess step: only 6 of 8 wizard steps driven; submit never fired** —
+  root cause: `targetMs` caps the RAF cue scheduler at `STEP_DURATION_MS[speed] × 6 = 60 s`
+  at normal speed, so any cue with `tMs > 60 000` never fires. The old last click
+  was at `tMs = 138 000`. Fixed by compressing all p-assess cues to ≤ 50 s: all
+  8 Quick-mode steps (industry → timeline) are navigated, and `assess-submit` fires
+  at `tMs = 50 000`. Caption corrected from "six questions" → "eight questions".
+  (`executive-basics-finance-and-banking-amer-apac_05022026.json`)
+- **p-report step: wrong section order, hidden sections cited, all TOC clicks missed** —
+  same 60 s `targetMs` cap: last click was at `tMs = 179 200`, never firing. Sections
+  also visited in wrong order (Key Findings before Risk Score) and cited two sections
+  explicitly hidden for executive persona (Algorithm Migration) or unpopulated in
+  Quick mode (HNDL/HNFL). Rewrote cues to follow actual executive TOC order
+  (Risk Score → Key Findings → Executive Summary → Compliance Impact → Recommended
+  Actions → Migration Roadmap), compressed all 6 TOC clicks to ≤ 45 s.
+  (`executive-basics-finance-and-banking-amer-apac_05022026.json`)
+- **Command Center artifact drawer "works only once"** — `generate-artifact` and
+  `view-artifact` cues failed on the second artifact per step because the first
+  drawer remained open, covering the artifact card list. Added
+  `data-workshop-target="artifact-drawer-close"` to the ArtifactDrawer X button;
+  both `generate-artifact` and `view-artifact` handlers in the overlay store now
+  close any open drawer before calling `retrySelector`.
+  (`ArtifactDrawer.tsx`, `useWorkshopOverlayStore.ts`)
 
 ### Data
 
@@ -115,7 +137,7 @@ assessmentStatus]`: the hook re-seeds from persona whenever `industry` is empty,
 ### Internal
 
 - `npx tsc -b` clean; full vitest suite passes; `changelogParser` parses
-  this Unreleased block as `Added=1, Fixed=9, Data=1, Internal=1`.
+  this Unreleased block as `Added=1, Fixed=12, Data=1, Internal=1`.
 
 ## [3.5.64] - May 3, 2026
 

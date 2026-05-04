@@ -152,6 +152,8 @@ export const useWorkshopOverlayStore = create<WorkshopOverlayState>()((set, get)
         return
       }
       case 'generate-artifact': {
+        const openDrawer = document.querySelector('[data-workshop-target="artifact-drawer-close"]')
+        if (openDrawer instanceof HTMLElement) openDrawer.click()
         retrySelector(
           `[data-workshop-target="business-artifact-${cue.artifactType}-create"]`,
           (el) => {
@@ -170,6 +172,8 @@ export const useWorkshopOverlayStore = create<WorkshopOverlayState>()((set, get)
         return
       }
       case 'view-artifact': {
+        const openDrawer = document.querySelector('[data-workshop-target="artifact-drawer-close"]')
+        if (openDrawer instanceof HTMLElement) openDrawer.click()
         retrySelector(
           `[data-workshop-target="business-artifact-${cue.artifactType}-view"]`,
           (el) => {

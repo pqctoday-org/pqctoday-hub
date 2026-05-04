@@ -229,7 +229,13 @@ export function ArtifactDrawer({
             >
               {isFullPage ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
             </Button>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={onClose}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0"
+              onClick={onClose}
+              data-workshop-target="artifact-drawer-close"
+            >
               <X size={16} />
             </Button>
           </div>

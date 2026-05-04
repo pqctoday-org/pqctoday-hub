@@ -1154,147 +1154,147 @@
           },
           "cues": [
             {
-              "tMs": 2000,
+              "tMs": 0,
               "kind": "caption",
-              "text": "Quick mode — six questions, calibrated for executives."
+              "text": "Quick mode — eight questions, calibrated for executives."
             },
             {
-              "tMs": 4000,
+              "tMs": 2000,
               "kind": "spotlight",
               "selector": "[data-workshop-target=\"assess-mode-quick\"]"
             },
             {
-              "tMs": 7000,
+              "tMs": 3000,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-mode-quick\"]"
             },
             {
-              "tMs": 12000,
+              "tMs": 5000,
               "kind": "caption",
               "text": "Step 1: Industry — pre-filled from your persona."
             },
             {
-              "tMs": 16000,
+              "tMs": 7000,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-next\"]"
             },
             {
-              "tMs": 22000,
+              "tMs": 9000,
               "kind": "caption",
               "text": "Step 2: Country — pre-filled."
             },
             {
-              "tMs": 26000,
+              "tMs": 11000,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-next\"]"
             },
             {
-              "tMs": 32000,
+              "tMs": 13000,
               "kind": "caption",
-              "text": "Step 3: Crypto inventory — picking 'I'm not sure'."
+              "text": "Step 3: Crypto inventory — picking 'I’m not sure'."
             },
             {
-              "tMs": 36000,
+              "tMs": 15000,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-not-sure\"]"
             },
             {
-              "tMs": 42000,
+              "tMs": 17000,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-next\"]"
             },
             {
-              "tMs": 50000,
+              "tMs": 19000,
               "kind": "caption",
-              "text": "Step 4: Data sensitivity — picking 'I'm not sure'."
+              "text": "Step 4: Data sensitivity — picking 'I’m not sure'."
             },
             {
-              "tMs": 54000,
+              "tMs": 21000,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-not-sure\"]"
             },
             {
-              "tMs": 60000,
+              "tMs": 23000,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-next\"]"
             },
             {
-              "tMs": 68000,
+              "tMs": 25000,
               "kind": "caption",
-              "text": "Step 5: Compliance frameworks — picking 'I'm not sure'."
+              "text": "Step 5: Compliance frameworks — picking 'I’m not sure'."
             },
             {
-              "tMs": 72000,
+              "tMs": 27000,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-not-sure\"]"
             },
             {
-              "tMs": 78000,
+              "tMs": 29000,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-next\"]"
             },
             {
-              "tMs": 86000,
+              "tMs": 31000,
               "kind": "caption",
-              "text": "Step 6: Migration status — picking 'I'm not sure'."
+              "text": "Step 6: Migration status — picking 'I’m not sure'."
             },
             {
-              "tMs": 90000,
+              "tMs": 33000,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-not-sure\"]"
             },
             {
-              "tMs": 96000,
+              "tMs": 35000,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-next\"]"
             },
             {
-              "tMs": 104000,
+              "tMs": 37000,
               "kind": "caption",
-              "text": "Step 7: Infrastructure — picking 'I'm not sure'."
+              "text": "Step 7: Infrastructure — picking 'I’m not sure'."
             },
             {
-              "tMs": 108000,
+              "tMs": 39000,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-not-sure\"]"
             },
             {
-              "tMs": 114000,
+              "tMs": 41000,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-next\"]"
             },
             {
-              "tMs": 122000,
+              "tMs": 43000,
               "kind": "caption",
-              "text": "Step 8: Timeline pressure — picking 'I'm not sure'."
+              "text": "Step 8: Timeline pressure — picking 'I’m not sure'."
             },
             {
-              "tMs": 126000,
+              "tMs": 45000,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-not-sure\"]"
             },
             {
-              "tMs": 134000,
+              "tMs": 48000,
               "kind": "caption",
               "text": "Generating your board-ready report..."
             },
             {
-              "tMs": 138000,
+              "tMs": 50000,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-submit\"]"
             },
             {
-              "tMs": 200000,
+              "tMs": 55000,
               "kind": "caption",
               "text": "Risk profile complete — your personalised report is live."
             },
             {
-              "tMs": 320000,
+              "tMs": 80000,
               "kind": "caption",
               "text": "The report is the input to every Command Center artifact."
             },
             {
-              "tMs": 360000,
+              "tMs": 120000,
               "kind": "advance"
             }
           ]
@@ -1324,95 +1324,75 @@
             {
               "tMs": 1500,
               "kind": "caption",
-              "text": "Your personalised PQC report — board-pack format, hides developer-only sections."
+              "text": "Your board-ready PQC risk report — personalised to Finance & Banking in your jurisdiction."
             },
             {
-              "tMs": 4000,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"report-toc-keyFindings\"]"
-            },
-            {
-              "tMs": 4200,
-              "kind": "caption",
-              "text": "Section 1/8: Key Findings — your personalised top-line risks, ranked."
-            },
-            {
-              "tMs": 29000,
+              "tMs": 5000,
               "kind": "click",
               "selector": "[data-workshop-target=\"report-toc-riskScore\"]"
             },
             {
-              "tMs": 29200,
+              "tMs": 5200,
               "kind": "caption",
-              "text": "Section 2/8: Risk Score — quantified exposure based on your inputs."
+              "text": "Section 1/6: Risk Score — your quantified exposure and migration urgency."
             },
             {
-              "tMs": 54000,
+              "tMs": 13000,
+              "kind": "click",
+              "selector": "[data-workshop-target=\"report-toc-keyFindings\"]"
+            },
+            {
+              "tMs": 13200,
+              "kind": "caption",
+              "text": "Section 2/6: Key Findings — your personalised top-line risks, ranked."
+            },
+            {
+              "tMs": 21000,
               "kind": "click",
               "selector": "[data-workshop-target=\"report-toc-executiveSummary\"]"
             },
             {
-              "tMs": 54200,
+              "tMs": 21200,
               "kind": "caption",
-              "text": "Section 3/8: Executive Summary — the 60-second board-pack narrative."
+              "text": "Section 3/6: Executive Summary — the 60-second board-pack narrative."
             },
             {
-              "tMs": 79000,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"report-toc-hndlHnfl\"]"
-            },
-            {
-              "tMs": 79200,
-              "kind": "caption",
-              "text": "Section 4/8: HNDL / HNFL — what an attacker can harvest today and decrypt later."
-            },
-            {
-              "tMs": 104000,
-              "kind": "click",
-              "selector": "[data-workshop-target=\"report-toc-algorithmMigration\"]"
-            },
-            {
-              "tMs": 104200,
-              "kind": "caption",
-              "text": "Section 5/8: Algorithm Migration — which classical algorithms need replacing first."
-            },
-            {
-              "tMs": 129000,
+              "tMs": 29000,
               "kind": "click",
               "selector": "[data-workshop-target=\"report-toc-complianceImpact\"]"
             },
             {
-              "tMs": 129200,
+              "tMs": 29200,
               "kind": "caption",
-              "text": "Section 6/8: Compliance Impact — frameworks that gate your jurisdiction."
+              "text": "Section 4/6: Compliance Impact — frameworks that gate your jurisdiction."
             },
             {
-              "tMs": 154000,
+              "tMs": 37000,
               "kind": "click",
               "selector": "[data-workshop-target=\"report-toc-recommendedActions\"]"
             },
             {
-              "tMs": 154200,
+              "tMs": 37200,
               "kind": "caption",
-              "text": "Section 7/8: Recommended Actions — the 5-action shortlist tied to your country."
+              "text": "Section 5/6: Recommended Actions — the 5-action shortlist tied to your country."
             },
             {
-              "tMs": 179000,
+              "tMs": 45000,
               "kind": "click",
               "selector": "[data-workshop-target=\"report-toc-migrationRoadmap\"]"
             },
             {
-              "tMs": 179200,
+              "tMs": 45200,
               "kind": "caption",
-              "text": "Section 8/8: Migration Roadmap — your 3-year phased plan."
+              "text": "Section 6/6: Migration Roadmap — your 3-year phased plan."
             },
             {
-              "tMs": 208000,
+              "tMs": 53000,
               "kind": "caption",
               "text": "Share button generates a token-bearing URL — re-renders against current data, no PDFs going stale."
             },
             {
-              "tMs": 240000,
+              "tMs": 80000,
               "kind": "advance"
             }
           ]
