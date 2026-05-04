@@ -90,9 +90,15 @@ export function CommandBuilder({
     return algorithm
   }, [cmdDef, kemHandle, dsaHandle, algorithm, objects])
 
+  // Resolve the numeric handle for commands that reference a loaded key
+  const effectiveHandleNum = useMemo(() => {
+    const h = cmdDef?.requiresKem ? kemHandle : cmdDef?.requiresDsa ? dsaHandle : null
+    return h ? parseInt(h, 16) : 0x80000000
+  }, [cmdDef, kemHandle, dsaHandle])
+
   const serializedBytes = useMemo(
-    () => serializeDemoCommand(commandType, effectiveAlgo),
-    [commandType, effectiveAlgo]
+    () => serializeDemoCommand(commandType, effectiveAlgo, effectiveHandleNum),
+    [commandType, effectiveAlgo, effectiveHandleNum]
   )
 
   // Lifecycle phase completion state
@@ -341,7 +347,7 @@ export function CommandBuilder({
         </p>
       </div>
 
-      {/* ── Gate warning ── */}
+      {/* ── Notices ── */}
       {(isGatedOnKem || isGatedOnDsa) && (
         <div className="text-xs text-status-warning bg-status-warning/10 border border-status-warning/30 rounded px-3 py-2">
           {isGatedOnKem
@@ -356,7 +362,6 @@ export function CommandBuilder({
           .
         </div>
       )}
-
       <Button
         onClick={handleExecute}
         disabled={isCommandDisabled}

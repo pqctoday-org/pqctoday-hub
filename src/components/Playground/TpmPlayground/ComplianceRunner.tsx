@@ -14,6 +14,9 @@ const CC_SELF_TEST = 0x00000143
 const CC_GET_CAPABILITY = 0x0000017a
 const CC_GET_RANDOM = 0x0000017b
 const CC_CREATE_PRIMARY = 0x00000131
+const CC_ENCAPSULATE = 0x000001a7
+const CC_DECAPSULATE = 0x000001a8
+const CC_SIGN_DIGEST = 0x000001a6
 const CAP_ALGS = 0x00000000
 
 const ALG_MLKEM = 0x00a0
@@ -41,7 +44,10 @@ const OBJ_SIGN = 0x00040000
 
 // FIPS size constants
 const MLKEM_768_PK_SIZE = 1184
+const MLKEM_768_CT_SIZE = 1088
+const MLKEM_SHARED_SECRET_SIZE = 32
 const MLDSA_65_PK_SIZE = 1952
+const MLDSA_65_SIG_SIZE = 3309
 
 // ── Helpers ─────────────────────────────────────────────────────────
 function parseHeader(resp: Uint8Array) {
@@ -165,6 +171,11 @@ const INITIAL_CHECKS: Omit<CheckEntry, 'status' | 'detail'>[] = [
   { id: 'V185-009', name: 'ML-KEM-768 Public Key = 1184 B', section: 'FIPS 203' },
   { id: 'V185-010', name: 'CreatePrimary ML-DSA-65 AK', section: '§11.2.7 Table 207' },
   { id: 'V185-011', name: 'ML-DSA-65 Public Key = 1952 B', section: 'FIPS 204' },
+  { id: 'V185-012', name: 'TPM2_Encapsulate (ML-KEM-768 EK)', section: '§29.5.1' },
+  { id: 'V185-013', name: 'Encapsulate Output Sizes', section: 'FIPS 203 §7' },
+  { id: 'V185-014', name: 'TPM2_Decapsulate (ML-KEM-768 EK)', section: '§29.5.2' },
+  { id: 'V185-015', name: 'TPM2_SignDigest (ML-DSA-65 AK)', section: '§29.2.1' },
+  { id: 'V185-016', name: 'SignDigest Signature Size = 3309 B', section: 'FIPS 204 §7' },
 ]
 
 export function ComplianceRunner() {
@@ -200,6 +211,7 @@ export function ComplianceRunner() {
     let fail = 0
     const algList: number[] = []
     let ekHandle = 0
+    let akHandle = 0
 
     const markPass = (id: string, detail: string) => {
       pass++
@@ -470,7 +482,7 @@ export function ComplianceRunner() {
           addLine('recv', `    ← RC=0x${h.rc.toString(16).padStart(8, '0')} (FAILED) ✗`, false)
           markFail('V185-011', 'Skipped — CreatePrimary failed')
         } else {
-          const akHandle = getU32(resp, 10)
+          akHandle = getU32(resp, 10)
           markPass('V185-010', `handle=0x${akHandle.toString(16).padStart(8, '0')}`)
           addLine('recv', '    ← RC: TPM_RC_SUCCESS ✓', true)
           addLine(
@@ -504,6 +516,203 @@ export function ComplianceRunner() {
       } catch (e) {
         markError('V185-010', String(e))
         markFail('V185-011', 'Skipped — CreatePrimary failed')
+        addLine('recv', `    ← ERROR: ${String(e)}`, false)
+      }
+
+      addLine('divider', '')
+
+      // ── Phase 7: Encapsulate ─────────────────────────────────────
+      addLine('phase', '[+] Phase 7 — Key Encapsulation  (ML-KEM-768 EK)')
+      addLine('send', '    → TPM2_Encapsulate(keyHandle = EK handle)')
+
+      updateCheck('V185-012', { status: 'running' })
+      await delay()
+      try {
+        if (ekHandle === 0) {
+          markFail('V185-012', 'Skipped — CreatePrimary ML-KEM-768 failed')
+          markFail('V185-013', 'Skipped')
+          addLine('recv', '    ← Skipped (no EK handle)', false)
+        } else {
+          // Build TPM2_Encapsulate: NO_SESSIONS — public-key encapsulation needs no auth
+          // Wire: tag(2)+size(4)+cc(4)+keyHandle(4) = 14 bytes total
+          const p: number[] = []
+          const putU16 = (v: number) => p.push((v >> 8) & 0xff, v & 0xff)
+          const putU32 = (v: number) =>
+            p.push((v >> 24) & 0xff, (v >> 16) & 0xff, (v >> 8) & 0xff, v & 0xff)
+          putU16(0x8001) // TPM_ST_NO_SESSIONS
+          putU32(0) // size placeholder
+          putU32(CC_ENCAPSULATE)
+          putU32(ekHandle) // keyHandle — no auth area for public-key-only operation
+          const total = p.length
+          p[2] = (total >> 24) & 0xff
+          p[3] = (total >> 16) & 0xff
+          p[4] = (total >> 8) & 0xff
+          p[5] = total & 0xff
+          const cmd = new Uint8Array(p)
+          const resp = await executeTpmCommand(cmd)
+          const h = parseHeader(resp)
+          if (h.rc !== 0) {
+            markFail('V185-012', `RC=0x${h.rc.toString(16).padStart(8, '0')}`)
+            markFail('V185-013', 'Skipped — Encapsulate failed')
+            addLine('recv', `    ← RC=0x${h.rc.toString(16).padStart(8, '0')} ✗`, false)
+          } else {
+            markPass('V185-012', 'Encapsulate RC=0x00000000 ✓')
+            addLine('recv', '    ← RC: TPM_RC_SUCCESS ✓', true)
+            updateCheck('V185-013', { status: 'running' })
+            await delay()
+            // NO_SESSIONS response: tag(2)+size(4)+rc(4) = 10-byte header, then params directly
+            const ssSize = getU16(resp, 10)
+            const ctSize = getU16(resp, 10 + 2 + ssSize)
+            if (ssSize === MLKEM_SHARED_SECRET_SIZE && ctSize === MLKEM_768_CT_SIZE) {
+              markPass('V185-013', `ss=${ssSize}B ct=${ctSize}B ✓`)
+              addLine('recv', `    ← sharedSecret = ${ssSize} B (FIPS 203: 32 B) ✓`, true)
+              addLine(
+                'recv',
+                `    ← ciphertext   = ${ctSize} B (FIPS 203 ML-KEM-768: 1088 B) ✓`,
+                true
+              )
+            } else {
+              markFail('V185-013', `ss=${ssSize}B (exp 32) ct=${ctSize}B (exp 1088)`)
+              addLine('recv', `    ← ss=${ssSize}B ct=${ctSize}B (sizes wrong) ✗`, false)
+            }
+          }
+        }
+      } catch (e) {
+        markError('V185-012', String(e))
+        markFail('V185-013', 'Skipped — Encapsulate error')
+        addLine('recv', `    ← ERROR: ${String(e)}`, false)
+      }
+
+      addLine('divider', '')
+
+      // ── Phase 8: Decapsulate ─────────────────────────────────────
+      addLine('phase', '[+] Phase 8 — Key Decapsulation  (ML-KEM-768 EK)')
+      addLine(
+        'send',
+        `    → TPM2_Decapsulate(keyHandle = EK handle, ciphertext = ${MLKEM_768_CT_SIZE}B)`
+      )
+
+      updateCheck('V185-014', { status: 'running' })
+      await delay()
+      try {
+        if (ekHandle === 0) {
+          markFail('V185-014', 'Skipped — CreatePrimary ML-KEM-768 failed')
+          addLine('recv', '    ← Skipped (no EK handle)', false)
+        } else {
+          const p: number[] = []
+          const putU16 = (v: number) => p.push((v >> 8) & 0xff, v & 0xff)
+          const putU32 = (v: number) =>
+            p.push((v >> 24) & 0xff, (v >> 16) & 0xff, (v >> 8) & 0xff, v & 0xff)
+          putU16(0x8002)
+          putU32(0)
+          putU32(CC_DECAPSULATE)
+          putU32(ekHandle)
+          putU32(9)
+          putU32(RS_PW)
+          putU16(0)
+          p.push(0)
+          putU16(0)
+          putU16(MLKEM_768_CT_SIZE)
+          for (let i = 0; i < MLKEM_768_CT_SIZE; i++) p.push(0xcc)
+          const total = p.length
+          p[2] = (total >> 24) & 0xff
+          p[3] = (total >> 16) & 0xff
+          p[4] = (total >> 8) & 0xff
+          p[5] = total & 0xff
+          const cmd = new Uint8Array(p)
+          const resp = await executeTpmCommand(cmd)
+          const h = parseHeader(resp)
+          if (h.rc !== 0) {
+            markFail('V185-014', `RC=0x${h.rc.toString(16).padStart(8, '0')}`)
+            addLine('recv', `    ← RC=0x${h.rc.toString(16).padStart(8, '0')} ✗`, false)
+          } else {
+            const ssSize = getU16(resp, 14)
+            markPass('V185-014', `Decapsulate RC=0x00000000 ss=${ssSize}B ✓`)
+            addLine('recv', '    ← RC: TPM_RC_SUCCESS ✓', true)
+            addLine('recv', `    ← sharedSecret = ${ssSize} B ✓`, true)
+          }
+        }
+      } catch (e) {
+        markError('V185-014', String(e))
+        addLine('recv', `    ← ERROR: ${String(e)}`, false)
+      }
+
+      addLine('divider', '')
+
+      // ── Phase 9: SignDigest ──────────────────────────────────────
+      addLine('phase', '[+] Phase 9 — Digest Signing  (ML-DSA-65 AK)')
+      addLine('send', '    → TPM2_SignDigest(keyHandle = AK handle, digest = 32B SHA-256)')
+
+      updateCheck('V185-015', { status: 'running' })
+      await delay()
+      try {
+        if (akHandle === 0) {
+          markFail('V185-015', 'Skipped — CreatePrimary ML-DSA-65 failed')
+          markFail('V185-016', 'Skipped')
+          addLine('recv', '    ← Skipped (no AK handle)', false)
+        } else {
+          const p: number[] = []
+          const putU16 = (v: number) => p.push((v >> 8) & 0xff, v & 0xff)
+          const putU32 = (v: number) =>
+            p.push((v >> 24) & 0xff, (v >> 16) & 0xff, (v >> 8) & 0xff, v & 0xff)
+          putU16(0x8002)
+          putU32(0)
+          putU32(CC_SIGN_DIGEST)
+          putU32(akHandle)
+          putU32(9)
+          putU32(RS_PW)
+          putU16(0)
+          p.push(0)
+          putU16(0) // auth area
+          putU16(0x0010) // inScheme.scheme = TPM_ALG_NULL (0x0010) → key default
+          putU16(32) // digest.size = 32 (TPM2B_DIGEST size prefix)
+          for (let i = 0; i < 32; i++) p.push(0xbb) // digest bytes
+          putU16(0) // context.size = 0 (empty domain-separation context)
+          putU16(0) // hint.size = 0 (empty determinism hint)
+          const total = p.length
+          p[2] = (total >> 24) & 0xff
+          p[3] = (total >> 16) & 0xff
+          p[4] = (total >> 8) & 0xff
+          p[5] = total & 0xff
+          const cmd = new Uint8Array(p)
+          const resp = await executeTpmCommand(cmd)
+          const h = parseHeader(resp)
+          if (h.rc !== 0) {
+            markFail('V185-015', `RC=0x${h.rc.toString(16).padStart(8, '0')}`)
+            markFail('V185-016', 'Skipped — SignDigest failed')
+            addLine('recv', `    ← RC=0x${h.rc.toString(16).padStart(8, '0')} ✗`, false)
+          } else {
+            markPass('V185-015', 'SignDigest RC=0x00000000 ✓')
+            addLine('recv', '    ← RC: TPM_RC_SUCCESS ✓', true)
+            updateCheck('V185-016', { status: 'running' })
+            await delay()
+            // Response: tag(2)+size(4)+rc(4)+paramSize(4) = 14B; sigAlg(2)+sig.size(2)+sig.bytes
+            const sigAlg = getU16(resp, 14)
+            const sigSize = getU16(resp, 16)
+            if (sigAlg === ALG_MLDSA && sigSize === MLDSA_65_SIG_SIZE) {
+              markPass('V185-016', `sigAlg=0x${sigAlg.toString(16)} sig=${sigSize}B ✓`)
+              addLine(
+                'recv',
+                `    ← sigAlg = 0x${sigAlg.toString(16).padStart(4, '0')} (ML-DSA) ✓`,
+                true
+              )
+              addLine('recv', `    ← signature = ${sigSize} B (FIPS 204 ML-DSA-65: 3309 B) ✓`, true)
+            } else {
+              markFail(
+                'V185-016',
+                `sigAlg=0x${sigAlg.toString(16)} sig=${sigSize}B (exp 0xa1 + 3309)`
+              )
+              addLine(
+                'recv',
+                `    ← sig=${sigSize}B sigAlg=0x${sigAlg.toString(16)} (wrong) ✗`,
+                false
+              )
+            }
+          }
+        }
+      } catch (e) {
+        markError('V185-015', String(e))
+        markFail('V185-016', 'Skipped — SignDigest error')
         addLine('recv', `    ← ERROR: ${String(e)}`, false)
       }
 

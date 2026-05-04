@@ -32,6 +32,8 @@ export interface TpmCommandDef {
 
 // ── RC table ─────────────────────────────────────────────────────────────────
 
+// RC codes per TCG TPM2.0 Library Specification Part 2 Table 16 (Format-0)
+// and IBM TPM reference implementation (RC_VER1 = 0x100 base).
 export const TPM_RC_TABLE: Record<number, { name: string; description: string }> = {
   0x00000000: {
     name: 'TPM_RC_SUCCESS',
@@ -40,14 +42,14 @@ export const TPM_RC_TABLE: Record<number, { name: string; description: string }>
   0x00000100: {
     name: 'TPM_RC_INITIALIZE',
     description:
-      'TPM already initialized. TPM2_Startup was called when the TPM was already running. This is expected if the WASM module has already initialized the TPM at load time.',
+      'TPM already initialized. TPM2_Startup was called when the TPM was already running. This is expected — the WASM module calls Startup automatically at load time.',
   },
   0x00000101: {
     name: 'TPM_RC_FAILURE',
     description:
-      'General failure. The TPM encountered an unrecoverable error, possibly due to an internal assertion, missing algorithm support, or entropy failure.',
+      'General failure. The TPM encountered an unrecoverable error — possibly an internal assertion, missing algorithm support, or entropy failure.',
   },
-  0x00000102: {
+  0x00000103: {
     name: 'TPM_RC_SEQUENCE',
     description: 'Improper use of a sequence handle.',
   },
@@ -55,25 +57,45 @@ export const TPM_RC_TABLE: Record<number, { name: string; description: string }>
     name: 'TPM_RC_PRIVATE',
     description: 'Private key material was not found or could not be decrypted.',
   },
-  0x00000123: {
-    name: 'TPM_RC_PARENT',
-    description: 'The parent object is not usable for this operation.',
-  },
-  0x0000012d: {
-    name: 'TPM_RC_HIERARCHY',
-    description: 'The specified hierarchy is disabled or not applicable for this command.',
-  },
-  0x00000134: {
-    name: 'TPM_RC_KEY',
-    description: 'Key type is not correct for the requested operation.',
-  },
-  0x00000146: {
+  0x00000120: {
     name: 'TPM_RC_DISABLED',
-    description: 'This command is disabled in the current TPM configuration.',
+    description: 'This command is disabled in the current TPM configuration or command set.',
   },
-  0x0000018b: {
+  0x00000131: {
+    name: 'TPM_RC_UNBALANCED',
+    description:
+      'The context can only be loaded if: 1) both the EK and the HMK are loaded; or 2) neither is loaded.',
+  },
+  0x00000142: {
+    name: 'TPM_RC_COMMAND_SIZE',
+    description: 'The commandSize value does not match the actual size of the command.',
+  },
+  0x00000143: {
     name: 'TPM_RC_COMMAND_CODE',
-    description: 'Command code not recognized or not supported by this TPM firmware.',
+    description:
+      'Command code not supported. This command code is not enabled in the current runtime profile.',
+  },
+  0x00000144: {
+    name: 'TPM_RC_AUTHSIZE',
+    description:
+      'The value of authorizationSize is out of range or the number of octets in the Authorization Area is greater than required.',
+  },
+  0x00000145: {
+    name: 'TPM_RC_AUTH_CONTEXT',
+    description:
+      'Use of an authorization session with a context command or another command that cannot have an authorization session.',
+  },
+  0x00000150: {
+    name: 'TPM_RC_BAD_CONTEXT',
+    description: 'A context identifier is not valid.',
+  },
+  0x00000152: {
+    name: 'TPM_RC_PARENT',
+    description: 'The parent object is not correct for this operation (wrong hierarchy or type).',
+  },
+  0x00000154: {
+    name: 'TPM_RC_NO_RESULT',
+    description: 'The TPM was unable to marshal a response back for this command.',
   },
   0x00000185: {
     name: 'TPM_RC_ATTRIBUTES',
@@ -82,6 +104,10 @@ export const TPM_RC_TABLE: Record<number, { name: string; description: string }>
   0x00000184: {
     name: 'TPM_RC_SCHEME',
     description: 'The scheme is not acceptable for the key type or usage.',
+  },
+  0x0000018b: {
+    name: 'TPM_RC_KEY',
+    description: 'Key type is not correct for the requested operation.',
   },
 }
 
@@ -537,7 +563,8 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
         tpmType: 'TPM_ST',
         byteOffset: 0,
         byteSize: 2,
-        description: '0x8002 = TPM_ST_SESSIONS',
+        description:
+          '0x8001 = TPM_ST_NO_SESSIONS (encapsulation uses public key only — no auth needed)',
       },
       {
         name: 'size',

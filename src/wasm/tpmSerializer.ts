@@ -191,13 +191,24 @@ const MLKEM_PARAM_SETS: Record<string, number> = {
   'MLKEM-768': 0x0002,
   'MLKEM-1024': 0x0003,
 }
+
+// ML-KEM ciphertext sizes per TCG V1.85 RC4 / FIPS 203
+const MLKEM_CT_SIZES: Record<string, number> = {
+  'MLKEM-512': 768,
+  'MLKEM-768': 1088,
+  'MLKEM-1024': 1568,
+}
 const MLDSA_PARAM_SETS: Record<string, number> = {
   'MLDSA-44': 0x0001,
   'MLDSA-65': 0x0002,
   'MLDSA-87': 0x0003,
 }
 
-export function serializeDemoCommand(type: string, algorithm: string): Uint8Array {
+export function serializeDemoCommand(
+  type: string,
+  algorithm: string,
+  handle: number = 0x80000000
+): Uint8Array {
   switch (type) {
     case 'TPM2_Startup':
       return buildCommand(TPM_ST_NO_SESSIONS, TPM_CC_Startup, new Uint8Array([0x00, 0x00]))
@@ -231,38 +242,37 @@ export function serializeDemoCommand(type: string, algorithm: string): Uint8Arra
 
     case 'TPM2_Encapsulate': {
       const p: number[] = []
-      putU32(p, 0x80000000) // keyHandle
-      putU32(p, 9) // authSize
-      putU32(p, RS_PW)
-      putU16(p, 0)
-      p.push(0)
-      putU16(p, 0)
-      return buildCommand(TPM_ST_SESSIONS, TPM_CC_Encapsulate, new Uint8Array(p))
+      putU32(p, handle) // keyHandle — public-key-only operation, no auth needed
+      return buildCommand(TPM_ST_NO_SESSIONS, TPM_CC_Encapsulate, new Uint8Array(p))
     }
 
     case 'TPM2_Decapsulate': {
+      const ctSize = MLKEM_CT_SIZES[algorithm] ?? 1088
       const p: number[] = []
-      putU32(p, 0x80000000) // keyHandle
+      putU32(p, handle) // keyHandle — use actual KEM key handle
       putU32(p, 9) // authSize
       putU32(p, RS_PW)
       putU16(p, 0)
       p.push(0)
       putU16(p, 0)
-      putU16(p, 32) // inEncapsulation.size (demo placeholder)
-      for (let i = 0; i < 32; i++) p.push(0xaa)
+      putU16(p, ctSize) // inEncapsulation.size — correct size per parameter set
+      for (let i = 0; i < ctSize; i++) p.push(0xcc) // placeholder ciphertext bytes
       return buildCommand(TPM_ST_SESSIONS, TPM_CC_Decapsulate, new Uint8Array(p))
     }
 
     case 'TPM2_SignDigest': {
       const p: number[] = []
-      putU32(p, 0x80000001) // keyHandle
+      putU32(p, handle) // keyHandle — use actual DSA key handle
       putU32(p, 9) // authSize
       putU32(p, RS_PW)
       putU16(p, 0)
       p.push(0)
       putU16(p, 0)
-      putU16(p, 32) // digest.size
+      putU16(p, ALG_NULL) // inScheme = TPM_ALG_NULL → use key default (FIPS 204)
+      putU16(p, 32) // digest.size (TPM2B_DIGEST size prefix)
       for (let i = 0; i < 32; i++) p.push(0xbb)
+      putU16(p, 0) // context.size = 0 (empty domain-separation context)
+      putU16(p, 0) // hint.size = 0 (empty determinism hint)
       return buildCommand(TPM_ST_SESSIONS, TPM_CC_SignDigest, new Uint8Array(p))
     }
 
