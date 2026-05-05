@@ -57,6 +57,8 @@ const STEP_TITLES_QUICK = [
   'Sensitivity',
   'Compliance',
   'Migration',
+  'Infra',
+  'Timeline',
 ]
 
 interface AssessWizardProps {

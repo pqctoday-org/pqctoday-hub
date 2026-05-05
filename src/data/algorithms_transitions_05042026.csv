@@ -1,0 +1,98 @@
+Classical Algorithm,Key Size,PQC Replacement,Function,Deprecation Date,Standardization Date,Region,Status,Status URL
+RSA,2048-bit,ML-KEM-512 (NIST Level 1),Encryption/KEM,2030 (Deprecated) / 2035 (Disallowed),2024 (FIPS 203),NIST,FIPS 203,https://csrc.nist.gov/pubs/fips/203/final
+RSA,3072-bit,ML-KEM-768 (NIST Level 3),Encryption/KEM,2035 (Disallowed),2024 (FIPS 203),NIST,FIPS 203,https://csrc.nist.gov/pubs/fips/203/final
+RSA,4096-bit,ML-KEM-1024 (NIST Level 5),Encryption/KEM,2035 (Disallowed),2024 (FIPS 203),NIST,FIPS 203,https://csrc.nist.gov/pubs/fips/203/final
+ECDH (P-256),256-bit,ML-KEM-512 (NIST Level 1),Encryption/KEM,2035 (Disallowed),2024 (FIPS 203),NIST,FIPS 203,https://csrc.nist.gov/pubs/fips/203/final
+ECDH (P-384),384-bit,ML-KEM-768 (NIST Level 3),Encryption/KEM,2035 (Disallowed),2024 (FIPS 203),NIST,FIPS 203,https://csrc.nist.gov/pubs/fips/203/final
+ECDH (P-521),521-bit,ML-KEM-1024 (NIST Level 5),Encryption/KEM,2035 (Disallowed),2024 (FIPS 203),NIST,FIPS 203,https://csrc.nist.gov/pubs/fips/203/final
+X25519,256-bit,ML-KEM-768 (NIST Level 3),Encryption/KEM,2035 (Disallowed),2024 (FIPS 203),NIST,FIPS 203,https://csrc.nist.gov/pubs/fips/203/final
+X448,448-bit,ML-KEM-1024 (NIST Level 5),Encryption/KEM,2035 (Disallowed),2024 (FIPS 203),NIST,FIPS 203,https://csrc.nist.gov/pubs/fips/203/final
+DH (Diffie-Hellman),2048-bit,ML-KEM-768 (NIST Level 3),Encryption/KEM,2035 (Disallowed),2024 (FIPS 203),NIST,FIPS 203,https://csrc.nist.gov/pubs/fips/203/final
+RSA,2048-bit,HQC-128 (NIST Level 1),Encryption/KEM,2030 (Deprecated) / 2035 (Disallowed),Selected 2025 (Draft ~2027),NIST,NIST Round 4 Selection,https://www.nist.gov/news-events/news/2025/03/nist-selects-hqc-fifth-algorithm-post-quantum-encryption
+RSA,3072-bit,HQC-192 (NIST Level 3),Encryption/KEM,2035 (Disallowed),Selected 2025 (Draft ~2027),NIST,NIST Round 4 Selection,https://www.nist.gov/news-events/news/2025/03/nist-selects-hqc-fifth-algorithm-post-quantum-encryption
+RSA,4096-bit,HQC-256 (NIST Level 5),Encryption/KEM,2035 (Disallowed),Selected 2025 (Draft ~2027),NIST,NIST Round 4 Selection,https://www.nist.gov/news-events/news/2025/03/nist-selects-hqc-fifth-algorithm-post-quantum-encryption
+ECDH (P-256),256-bit,HQC-128 (NIST Level 1),Encryption/KEM,2035 (Disallowed),Selected 2025 (Draft ~2027),NIST,NIST Round 4 Selection,https://www.nist.gov/news-events/news/2025/03/nist-selects-hqc-fifth-algorithm-post-quantum-encryption
+ECDH (P-384),384-bit,HQC-192 (NIST Level 3),Encryption/KEM,2035 (Disallowed),Selected 2025 (Draft ~2027),NIST,NIST Round 4 Selection,https://www.nist.gov/news-events/news/2025/03/nist-selects-hqc-fifth-algorithm-post-quantum-encryption
+ECDH (P-521),521-bit,HQC-256 (NIST Level 5),Encryption/KEM,2035 (Disallowed),Selected 2025 (Draft ~2027),NIST,NIST Round 4 Selection,https://www.nist.gov/news-events/news/2025/03/nist-selects-hqc-fifth-algorithm-post-quantum-encryption
+X25519,256-bit,HQC-192 (NIST Level 3),Encryption/KEM,2035 (Disallowed),Selected 2025 (Draft ~2027),NIST,NIST Round 4 Selection,https://www.nist.gov/news-events/news/2025/03/nist-selects-hqc-fifth-algorithm-post-quantum-encryption
+X448,448-bit,HQC-256 (NIST Level 5),Encryption/KEM,2035 (Disallowed),Selected 2025 (Draft ~2027),NIST,NIST Round 4 Selection,https://www.nist.gov/news-events/news/2025/03/nist-selects-hqc-fifth-algorithm-post-quantum-encryption
+X25519,256-bit,X25519MLKEM768 (Hybrid Level 3),Hybrid KEM,2035 (Disallowed),~2026 (IETF RFC Pending),IETF,Candidate,
+ECDH (P-256),256-bit,SecP256r1MLKEM768 (Hybrid Level 3),Hybrid KEM,2035 (Disallowed),~2026 (IETF RFC Pending),IETF,Candidate,
+ECDH (P-384),384-bit,SecP384r1MLKEM1024 (Hybrid Level 5),Hybrid KEM,2035 (Disallowed),~2026 (IETF RFC Pending),IETF,Candidate,
+RSA-PSS,2048-bit,ML-DSA-44 (NIST Level 2),Signature,2030 (Deprecated) / 2035 (Disallowed),2024 (FIPS 204),NIST,FIPS 204,https://csrc.nist.gov/pubs/fips/204/final
+RSA-PSS,3072-bit,ML-DSA-65 (NIST Level 3),Signature,2035 (Disallowed),2024 (FIPS 204),NIST,FIPS 204,https://csrc.nist.gov/pubs/fips/204/final
+ECDSA (P-256),256-bit,ML-DSA-44 (NIST Level 2),Signature,2035 (Disallowed),2024 (FIPS 204),NIST,FIPS 204,https://csrc.nist.gov/pubs/fips/204/final
+ECDSA (P-384),384-bit,ML-DSA-65 (NIST Level 3),Signature,2035 (Disallowed),2024 (FIPS 204),NIST,FIPS 204,https://csrc.nist.gov/pubs/fips/204/final
+ECDSA (P-521),521-bit,ML-DSA-87 (NIST Level 5),Signature,2035 (Disallowed),2024 (FIPS 204),NIST,FIPS 204,https://csrc.nist.gov/pubs/fips/204/final
+RSA-PSS,4096-bit,ML-DSA-87 (NIST Level 5),Signature,2035 (Disallowed),2024 (FIPS 204),NIST,FIPS 204,https://csrc.nist.gov/pubs/fips/204/final
+RSA-PSS,2048-bit,FN-DSA-512 (NIST Level 1),Signature,2030 (Deprecated) / 2035 (Disallowed),Draft submitted 2025 (Final ~2027),NIST,FIPS 206 (Draft),https://csrc.nist.gov/pubs/fips/206/ipd
+RSA-PSS,3072-bit,FN-DSA-1024 (NIST Level 5),Signature,2035 (Disallowed),Draft submitted 2025 (Final ~2027),NIST,FIPS 206 (Draft),https://csrc.nist.gov/pubs/fips/206/ipd
+ECDSA (P-256),256-bit,FN-DSA-512 (NIST Level 1),Signature,2035 (Disallowed),Draft submitted 2025 (Final ~2027),NIST,FIPS 206 (Draft),https://csrc.nist.gov/pubs/fips/206/ipd
+ECDSA (P-384),384-bit,FN-DSA-1024 (NIST Level 5),Signature,2035 (Disallowed),Draft submitted 2025 (Final ~2027),NIST,FIPS 206 (Draft),https://csrc.nist.gov/pubs/fips/206/ipd
+ECDSA (P-521),521-bit,FN-DSA-1024 (NIST Level 5),Signature,2035 (Disallowed),Draft submitted 2025 (Final ~2027),NIST,FIPS 206 (Draft),https://csrc.nist.gov/pubs/fips/206/ipd
+Ed25519,256-bit,FN-DSA-512 (NIST Level 1),Signature,2035 (Disallowed),Draft submitted 2025 (Final ~2027),NIST,FIPS 206 (Draft),https://csrc.nist.gov/pubs/fips/206/ipd
+Ed448,456-bit,FN-DSA-1024 (NIST Level 5),Signature,2035 (Disallowed),Draft submitted 2025 (Final ~2027),NIST,FIPS 206 (Draft),https://csrc.nist.gov/pubs/fips/206/ipd
+Ed25519,256-bit,ML-DSA-44 (NIST Level 2),Signature,2035 (Disallowed),2024 (FIPS 204),NIST,FIPS 204,https://csrc.nist.gov/pubs/fips/204/final
+Ed25519,256-bit,SLH-DSA-SHA2-128s (Level 1),Signature,2035 (Disallowed),2024 (FIPS 205),NIST,FIPS 205,https://csrc.nist.gov/pubs/fips/205/final
+Ed448,456-bit,SLH-DSA-SHA2-192s (Level 3),Signature,2035 (Disallowed),2024 (FIPS 205),NIST,FIPS 205,https://csrc.nist.gov/pubs/fips/205/final
+Ed448,456-bit,ML-DSA-65 (NIST Level 3),Signature,2035 (Disallowed),2024 (FIPS 204),NIST,FIPS 204,https://csrc.nist.gov/pubs/fips/204/final
+RSA-PSS,2048-bit,SLH-DSA-SHA2-128s (Level 1),Signature,2030 (Deprecated) / 2035 (Disallowed),2024 (FIPS 205),NIST,FIPS 205,https://csrc.nist.gov/pubs/fips/205/final
+ECDSA (P-256),256-bit,SLH-DSA-SHA2-128s (Level 1),Signature,2035 (Disallowed),2024 (FIPS 205),NIST,FIPS 205,https://csrc.nist.gov/pubs/fips/205/final
+secp256k1,256-bit,ML-DSA-44 (NIST Level 2),Signature,2035 (Disallowed),2024 (FIPS 204),NIST,FIPS 204,https://csrc.nist.gov/pubs/fips/204/final
+secp256k1,256-bit,FN-DSA-512 (NIST Level 1),Signature,2035 (Disallowed),Draft submitted 2025 (Final ~2027),NIST,FIPS 206 (Draft),https://csrc.nist.gov/pubs/fips/206/ipd
+Any (Stateless),N/A,SLH-DSA (All Variants),Signature,N/A,2024 (FIPS 205),NIST,FIPS 205,https://csrc.nist.gov/pubs/fips/205/final
+Any (Firmware Signing),N/A,LMS-SHA256 (Stateful),Signature,N/A,2020 (SP 800-208),NIST,SP 800-208,https://csrc.nist.gov/pubs/sp/800/208/final
+Any (Firmware Signing),N/A,XMSS-SHA2_20 (Stateful),Signature,N/A,2020 (SP 800-208),NIST,SP 800-208,https://csrc.nist.gov/pubs/sp/800/208/final
+SHA-1,160-bit,SHA3-256 (FIPS 202),Hash,Deprecated 2011 / Disallowed 2030 — Grover: no additional risk (classically broken),2015 (FIPS 202),NIST,FIPS 202,https://csrc.nist.gov/pubs/fips/202/final
+MD5,128-bit,SHA3-256 (FIPS 202),Hash,Disallowed — classically broken; Grover not primary concern,2015 (FIPS 202),NIST,FIPS 202,https://csrc.nist.gov/pubs/fips/202/final
+SHA-256,256-bit,SHA3-256 (FIPS 202),Hash,Grover reduces to ~128-bit — still quantum-safe; upgrade recommended for new PQC systems,2015 (FIPS 202),NIST,FIPS 202,https://csrc.nist.gov/pubs/fips/202/final
+HMAC-MD5,128-bit,HMAC-SHA256 (FIPS 198-1),Hash,Disallowed — classically broken; migrate immediately,2002 (FIPS 198-1),NIST,FIPS 198-1,https://csrc.nist.gov/pubs/fips/198/1/final
+SHA-1 (HMAC),160-bit,HMAC-SHA256 (FIPS 198-1),Hash,Deprecated 2011 / Disallowed 2030,2002 (FIPS 198-1),NIST,FIPS 198-1,https://csrc.nist.gov/pubs/fips/198/1/final
+AES-256,256-bit,AES-256 (FIPS 197),Symmetric,Safe beyond 2030 — Grover reduces to ~128-bit; remains quantum-resistant for symmetric encryption,2001 (FIPS 197),NIST,FIPS 197,https://csrc.nist.gov/pubs/fips/197/final
+AES-128,128-bit,AES-256 (FIPS 197),Symmetric,Not deprecated by NIST — Grover's theoretically halves security but deemed impractical (NIST 2024); CNSA 2.0 recommends AES-256 for national security systems,2001 (FIPS 197),NIST,FIPS 197,https://csrc.nist.gov/pubs/fips/197/final
+AES-192,192-bit,AES-256 (FIPS 197),Symmetric,Grover reduces to ~96-bit quantum security — upgrade recommended,2001 (FIPS 197),NIST,FIPS 197,https://csrc.nist.gov/pubs/fips/197/final
+3DES,112-bit effective,AES-256 (FIPS 197),Symmetric,Disallowed Jan 2024 — Grover reduces to ~56-bit; migrate immediately,2001 (FIPS 197),NIST,FIPS 197,https://csrc.nist.gov/pubs/fips/197/final
+DES,56-bit,AES-256 (FIPS 197),Symmetric,Disallowed — broken classically and by Grover,2001 (FIPS 197),NIST,FIPS 197,https://csrc.nist.gov/pubs/fips/197/final
+SM2 (OSCCA),256-bit,Aigis-sig (CACR Level 1),Signature,TBD — NGCC program targeting ~2028,2020 (CACR 1st Prize); NGCC standardization ~2028,CACR,To Be Checked,
+SM2 (OSCCA),256-bit,Aigis-sig (CACR Level 5),Signature,TBD — NGCC program targeting ~2028,2020 (CACR 1st Prize); NGCC standardization ~2028,CACR,To Be Checked,
+SM2 (OSCCA),256-bit,Aigis-enc (CACR Level 1),Encryption/KEM,TBD — NGCC program targeting ~2028,2020 (CACR 1st Prize); NGCC standardization ~2028,CACR,To Be Checked,
+SM2 (OSCCA),256-bit,Aigis-enc (CACR Level 5),Encryption/KEM,TBD — NGCC program targeting ~2028,2020 (CACR 1st Prize); NGCC standardization ~2028,CACR,To Be Checked,
+SM2 (OSCCA),256-bit,LAC (CACR LWE-based KEM),Encryption/KEM,TBD — NGCC program targeting ~2028,2020 (CACR 1st Prize); NGCC standardization ~2028,CACR,To Be Checked,
+SM4 (OSCCA),128-bit,NGCC-BC (TBD — Chinese PQ block cipher),Symmetric,Not deprecated — Grover reduces to ~64-bit; NGCC-BC track initiated,NGCC call open; submissions due June 2026; standard ~2028,CACR,To Be Checked,
+SM3 (OSCCA),256-bit,NGCC-CH (TBD — Chinese PQ hash),Hash,Not deprecated — Grover reduces to ~128-bit; NGCC-CH track initiated,NGCC call open; submissions due June 2026; standard ~2028,CACR,To Be Checked,
+ECDH (P-256),256-bit,SMAUG-T (KpqC Level 1),Encryption/KEM,2035 (Disallowed),2025 (KpqC Final Winner); Korean national standard TBD,KpqC,KpqC Selected,https://www.kpqc.or.kr
+ECDH (P-384),384-bit,NTRU+ (KpqC Level 3),Encryption/KEM,2035 (Disallowed),2025 (KpqC Final Winner); Korean national standard TBD,KpqC,KpqC Selected,https://www.kpqc.or.kr
+ECDSA (P-256),256-bit,HAETAE (KpqC Lattice Signature),Signature,2035 (Disallowed),2025 (KpqC Final Winner); Korean national standard TBD,KpqC,KpqC Selected,https://www.kpqc.or.kr
+ECDSA (P-256),256-bit,AIMer (KpqC Symmetric Signature),Signature,2035 (Disallowed),2025 (KpqC Final Winner); Korean national standard TBD,KpqC,KpqC Selected,https://www.kpqc.or.kr
+RSA,3072-bit,FrodoKEM-976 (BSI/ANSSI/ISO Level 3),Encryption/KEM,2035 (Disallowed),ISO/IEC 18033-2 Amd2 approved; BSI TR-02102-1 recommended,BSI/ANSSI,ISO 18033-2 Amd2,https://www.iso.org/standard/85646.html
+RSA,4096-bit,FrodoKEM-1344 (BSI/ANSSI/ISO Level 5),Encryption/KEM,2035 (Disallowed),ISO/IEC 18033-2 Amd2 approved; BSI TR-02102-1 recommended,BSI/ANSSI,ISO 18033-2 Amd2,https://www.iso.org/standard/85646.html
+ECDH (P-256),256-bit,FrodoKEM-640 (BSI/ISO Level 1),Encryption/KEM,2035 (Disallowed),ISO/IEC 18033-2 Amd2 approved; BSI TR-02102-1 recommended,BSI/ANSSI,ISO 18033-2 Amd2,https://www.iso.org/standard/85646.html
+RSA,3072-bit,Classic-McEliece-460896 (BSI Level 1),Encryption/KEM,2035 (Disallowed),BSI TR-02102-1 recommended; NIST delayed for ISO alignment,BSI/ANSSI,BSI TR-02102-1,https://www.bsi.bund.de/dok/TR-02102-1-en
+RSA,4096-bit,Classic-McEliece-6688128 (BSI Level 5),Encryption/KEM,2035 (Disallowed),BSI TR-02102-1 recommended; NIST delayed for ISO alignment,BSI/ANSSI,BSI TR-02102-1,https://www.bsi.bund.de/dok/TR-02102-1-en
+Any (Attribute-Based Encryption),N/A,Covercrypt (ETSI TS 104 015),Hybrid KEM,N/A,Feb 2025 (ETSI TS 104 015 published),ETSI,ETSI TS 104 015,https://www.etsi.org/deliver/etsi_ts/104000_104099/104015/01.01.01_60/ts_104015v010101p.pdf
+ECDSA (P-256),256-bit,UOV (NIST Sig Round 2 — Multivariate),Signature,2035 (Disallowed),NIST Additional Sig Round 2 (Oct 2024); final ~2027,NIST,Candidate,https://csrc.nist.gov/projects/pqc-dig-sig/round-2-additional-digital-signature-schemes
+ECDSA (P-256),256-bit,MAYO (NIST Sig Round 2 — Multivariate),Signature,2035 (Disallowed),NIST Additional Sig Round 2 (Oct 2024); final ~2027,NIST,Candidate,https://csrc.nist.gov/projects/pqc-dig-sig/round-2-additional-digital-signature-schemes
+ECDSA (P-256),256-bit,SQIsign (NIST Sig Round 2 — Isogeny),Signature,2035 (Disallowed),NIST Additional Sig Round 2 (Oct 2024); final ~2027,NIST,Candidate,https://csrc.nist.gov/projects/pqc-dig-sig/round-2-additional-digital-signature-schemes
+ECDSA (P-256),256-bit,CROSS (NIST Sig Round 2 — Code-based),Signature,2035 (Disallowed),NIST Additional Sig Round 2 (Oct 2024); final ~2027,NIST,Candidate,https://csrc.nist.gov/projects/pqc-dig-sig/round-2-additional-digital-signature-schemes
+ECDSA (P-256),256-bit,LESS (NIST Sig Round 2 — Code-based),Signature,2035 (Disallowed),NIST Additional Sig Round 2 (Oct 2024); final ~2027,NIST,Candidate,https://csrc.nist.gov/projects/pqc-dig-sig/round-2-additional-digital-signature-schemes
+ECDSA (P-256),256-bit,FAEST (NIST Sig Round 2 — Hash-based),Signature,2035 (Disallowed),NIST Additional Sig Round 2 (Oct 2024); final ~2027,NIST,Candidate,https://csrc.nist.gov/projects/pqc-dig-sig/round-2-additional-digital-signature-schemes
+ECDSA (P-256),256-bit,HAWK (NIST Sig Round 2 — Lattice),Signature,2035 (Disallowed),NIST Additional Sig Round 2 (Oct 2024); final ~2027,NIST,Candidate,https://csrc.nist.gov/projects/pqc-dig-sig/round-2-additional-digital-signature-schemes
+ECDSA (P-256),256-bit,SNOVA (NIST Sig Round 2 — Multivariate),Signature,2035 (Disallowed),NIST Additional Sig Round 2 (Oct 2024); final ~2027,NIST,Candidate,https://csrc.nist.gov/projects/pqc-dig-sig/round-2-additional-digital-signature-schemes
+RSA-PSS + ML-DSA,Composite,id-MLDSA44-RSA2048-PSS-SHA256 (IETF Composite Sig),Composite Signature,2035 (Disallowed),IETF draft-ietf-lamps-pq-composite-sigs-15 (2025),IETF,Candidate,
+ECDSA + ML-DSA,Composite,id-MLDSA44-ECDSA-P256-SHA256 (IETF Composite Sig),Composite Signature,2035 (Disallowed),IETF draft-ietf-lamps-pq-composite-sigs-15 (2025),IETF,Candidate,
+Ed25519 + ML-DSA,Composite,id-MLDSA44-Ed25519-SHA512 (IETF Composite Sig),Composite Signature,2035 (Disallowed),IETF draft-ietf-lamps-pq-composite-sigs-15 (2025),IETF,Candidate,
+ECDH + ML-KEM,Composite,ML-KEM-768-ECDH-P256 (IETF Composite KEM),Composite KEM,2035 (Disallowed),IETF draft-ietf-lamps-pq-composite-kem-12 (2025),IETF,Candidate,
+RSA-OAEP + ML-KEM,Composite,ML-KEM-768-RSA-OAEP-2048 (IETF Composite KEM),Composite KEM,2035 (Disallowed),IETF draft-ietf-lamps-pq-composite-kem-12 (2025),IETF,Candidate,
+DH (Diffie-Hellman),3072-bit,ML-KEM-768 (NIST Level 3),Encryption/KEM,2035 (Disallowed),2024 (FIPS 203),NIST,FIPS 203,https://csrc.nist.gov/pubs/fips/203/final
+DH (Diffie-Hellman),4096-bit,ML-KEM-1024 (NIST Level 5),Encryption/KEM,2035 (Disallowed),2024 (FIPS 203),NIST,FIPS 203,https://csrc.nist.gov/pubs/fips/203/final
+RSA PKCS#1 v1.5,2048-bit,ML-DSA-44 (NIST Level 2),Signature,2030 (Deprecated) / 2035 (Disallowed),2024 (FIPS 204),NIST,FIPS 204,https://csrc.nist.gov/pubs/fips/204/final
+RSA PKCS#1 v1.5,3072-bit,ML-DSA-65 (NIST Level 3),Signature,2035 (Disallowed),2024 (FIPS 204),NIST,FIPS 204,https://csrc.nist.gov/pubs/fips/204/final
+RSA-PSS,4096-bit,SLH-DSA-SHA2-256s (Level 5),Signature,2035 (Disallowed),2024 (FIPS 205),NIST,FIPS 205,https://csrc.nist.gov/pubs/fips/205/final
+ECDSA (P-521),521-bit,SLH-DSA-SHA2-256s (Level 5),Signature,2035 (Disallowed),2024 (FIPS 205),NIST,FIPS 205,https://csrc.nist.gov/pubs/fips/205/final
+Ed25519,256-bit,SLH-DSA-SHAKE-128s (Level 1),Signature,2035 (Disallowed),2024 (FIPS 205),NIST,FIPS 205,https://csrc.nist.gov/pubs/fips/205/final
+ECDSA (P-384),384-bit,SLH-DSA-SHAKE-192s (Level 3),Signature,2035 (Disallowed),2024 (FIPS 205),NIST,FIPS 205,https://csrc.nist.gov/pubs/fips/205/final
+DH (Diffie-Hellman),2048-bit,HQC-128 (NIST Level 1),Encryption/KEM,2035 (Disallowed),Selected 2025 (Draft ~2027),NIST,NIST Round 4 Selection,https://www.nist.gov/news-events/news/2025/03/nist-selects-hqc-fifth-algorithm-post-quantum-encryption
+DH (Diffie-Hellman),3072-bit,HQC-192 (NIST Level 3),Encryption/KEM,2035 (Disallowed),Selected 2025 (Draft ~2027),NIST,NIST Round 4 Selection,https://www.nist.gov/news-events/news/2025/03/nist-selects-hqc-fifth-algorithm-post-quantum-encryption
+SHA-1,160-bit,SHA-256 (FIPS 180-4),Hash,Deprecated 2011 / Disallowed 2030 — Grover: no additional risk (classically broken),2012 (FIPS 180-4 Rev),NIST,FIPS 180-4,https://csrc.nist.gov/pubs/fips/180/4/final
+MD5,128-bit,SHA-256 (FIPS 180-4),Hash,Disallowed — classically broken; Grover not primary concern,2012 (FIPS 180-4 Rev),NIST,FIPS 180-4,https://csrc.nist.gov/pubs/fips/180/4/final
+HPKE (X25519+HKDF),256-bit,"HPKE-PQ (ML-KEM-768 + X25519, IETF)",Hybrid KEM,2035 (Disallowed),IETF draft-ietf-hpke-pq-03 (2025),IETF,Candidate,

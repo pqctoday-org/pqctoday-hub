@@ -62,9 +62,10 @@ const ModeSelector: React.FC<{
           )}
         </div>
         <p className="text-sm text-muted-foreground mb-3">
-          6 questions covering your industry, crypto stack, data sensitivity, and migration status.
+          8 questions covering your industry, crypto stack, data sensitivity, infrastructure, and
+          migration status.
         </p>
-        <span className="text-xs font-mono text-muted-foreground/60">~2 minutes</span>
+        <span className="text-xs font-mono text-muted-foreground/60">~3 minutes</span>
       </Button>
 
       <Button

@@ -110,6 +110,54 @@ All notable changes to this project will be documented in this file.
 
 ### Data
 
+- **May 4 accuracy & completeness data audit** — full cross-checked audit of
+  all active CSVs; 7 new dated files written per `CSVmaintenance.md` rules:
+  - `timeline_05042026.csv` (230 rows): deleted the unsupported NXP/PQShield
+    Quantum-Safe Secure Element Pilot entry; corrected IBM Kookaburra and IBM
+    Quantum Advantage `Type` from `Milestone` → `Phase`; appended IPD2 note
+    to the NIST IR 8547 IPD1 description; inserted OpenSSL 3.5.0 native PQC
+    milestone (April 2025) and NIST IR 8547 IPD2 event (April 2026);
+    backfilled `trusted_source_id` for 161 rows via OrgName→source mapping.
+  - `quantum_threats_hsm_industries_05042026.csv` (112 rows): renamed
+    IOT-005 `industry` from `Internet of Things` → `Internet of Things (IoT)`;
+    updated CROSS-002 to reference IPD2 (April 2026); added probabilistic
+    correction note to CROSS-004 (GRI survey framing); inserted IT-006
+    (AI-assisted lattice-reduction / BKZ cryptanalysis acceleration threat)
+    and HSM-002 (ML-KEM/ML-DSA key-size incompatibility with pre-2024
+    PKCS#11 firmware); backfilled `trusted_source_id` for 65 rows.
+  - `library_05042026_r3.csv` (517 rows): deleted `draft-josefsson-ntruprime-ssh`
+    (abandoned 2022, IETF expired Feb 2025); corrected FIPS 203/204/205
+    `last_update_date` (2026-04-12 was a data artifact — reset to actual NIST
+    publication dates); updated NIST IR 8547 `download_url` to IPD2 PDF;
+    annotated 7 expired IETF drafts with current status; refreshed
+    `OpenSSL-3x-Docs` date and description; inserted `OpenSSL-3.5.0-Release`
+    (April 2025 — first native PQC release) and `NIST-IR-8547-IPD2`
+    companion record preserving IPD1 provenance; backfilled `trusted_source_id`
+    for 275 rows.
+  - `pqc_product_catalog_05042026.csv` (744 rows): corrected `android-16`
+    `pqc_support` (ACVP ML-DSA/ML-KEM/SLH-DSA claims belong to android-17-pqc
+    which already exists as VALIDATED); set `thales-payshield-10k` to
+    `Unknown` (no public PQC roadmap found); clarified `filevault-macos`
+    scope (AES-256-XTS is quantum-resistant, not a PQC migration target);
+    flagged `mavenir-cloud-ran` as simulation-only; fixed `crucible` identity
+    (SymbolicSoft conformance harness, not Atlassian Crucible); standardized
+    25 `Hardware Security and Semiconductors` entries to `Hardware Security &
+Semiconductors`; inserted `openssl-3-5-0`; backfilled `trusted_source_id`
+    for 148 rows.
+  - `pqc_authoritative_sources_reference_05042026.csv` (92 rows): enabled
+    `Timeline_CSV`, `Threats_CSV`, `Library_CSV`, and/or `Migrate_CSV` flags
+    for NSA, CISA, BSI, NCSC UK, ANSSI, and ENISA (were all blank despite
+    being primary data sources); removed trailing blank row.
+  - `algorithms_transitions_05042026.csv` (97 rows): updated 10 HQC rows to
+    `NIST Round 4 Selection`, 8 FN-DSA rows to `FIPS 206 (Draft)`, and 4
+    KpqC rows to `KpqC Selected` (all were incorrectly `Candidate`).
+  - `trusted_sources_05042026.csv` (216 rows): added 16 missing registry
+    entries (`google-quantum-ai`, `oasis-open`, `etsi`, `nzism`, `w3c`,
+    `dod-cio`, `ibm-ibv`, `deloitte`, `forrester`, `sectigo`,
+    `microsoft-security`, `applied-quantum`, `charter-of-trust`,
+    `cambridge-jbs`, `meta-engineering`, `infosec-global`) to resolve FK
+    violations flagged by the data integrity validator.
+  - `rag-corpus.json` regenerated to pick up all 7 CSV refreshes.
 - **Compliance CSV** rolled to `compliance_05032026_r2.csv` (May 3
   revision 2 — kept alongside `compliance_05032026.csv` per the 2-file
   retention rule in `CSVmaintenance.md`).
@@ -122,6 +170,10 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- **Assess quick-mode step count corrected to 8** — `ModeSelector` description
+  updated from "6 questions" to "8 questions" and time estimate from "~2 minutes"
+  to "~3 minutes" to reflect the two additional steps (`Infra`, `Timeline`)
+  already present in `STEP_TITLES_QUICK`. (`AssessView.tsx`, `AssessWizard.tsx`)
 - **Command Center crash opening Compliance Timeline artifact under
   `/business#zone-governance`** — `ComplianceGantt`'s phase-legend path looked
   up `phaseColors[phase]` without a fallback and unconditionally read
