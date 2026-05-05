@@ -80,6 +80,18 @@ export const FAQ_DATA: FAQCategory[] = [
           "Shor's algorithm can factor large integers and compute discrete logarithms in polynomial time on a quantum computer, directly breaking RSA and elliptic curve cryptography. Grover's algorithm, the best known quantum attack on symmetric ciphers, only provides a quadratic speedup — halving the effective key length — so AES-256 retains 128-bit security even against a quantum adversary. The Quantum Threats module illustrates these attack complexities side by side.",
         deepLink: '/learn/quantum-threats',
       },
+      {
+        question: 'When should I use ML-KEM vs ML-DSA vs SLH-DSA?',
+        answer:
+          'Choose the algorithm based on operation type: ML-KEM (FIPS 203) is the right choice for key exchange and establishing shared secrets — it replaces ECDH and RSA key encapsulation. ML-DSA (FIPS 204) is the primary choice for digital signatures, offering the best balance of signature speed, key size, and security; prefer it for general-purpose authentication, code signing, and certificate issuance. SLH-DSA (FIPS 205) is a conservative hash-based fallback when algorithm diversity matters more than performance — its security relies only on hash function properties, providing a hedge if lattice assumptions are weakened. FN-DSA (FIPS 206, pending) is preferred when compact signatures are critical, such as for smart cards or bandwidth-constrained IoT devices. The Algorithms page provides a side-by-side comparison of all parameter sets.',
+        deepLink: '/algorithms',
+      },
+      {
+        question: 'What are LMS and XMSS, and how do they differ from SLH-DSA?',
+        answer:
+          'LMS (Leighton-Micali Signature) and XMSS (eXtended Merkle Signature Scheme) are stateful hash-based signature schemes standardized in NIST SP 800-208. They are highly efficient but require the signer to maintain reliable state — each private key can only be used a fixed number of times, and reusing a state breaks security. This makes them well-suited for controlled environments like firmware signing where state tracking is manageable. SLH-DSA (FIPS 205), by contrast, is stateless — it derives one-time keys internally and has no reuse risk, making it safer for general-purpose use at the cost of larger signatures. The Reference Library includes SP 800-208 alongside the FIPS 205 specification.',
+        deepLink: '/library',
+      },
     ],
   },
 
@@ -136,6 +148,12 @@ export const FAQ_DATA: FAQCategory[] = [
         question: 'How many industries does the PQC Today Threats dashboard cover?',
         answer:
           'The Threats dashboard covers over 20 industries, each with detailed threat criticality levels, HNDL and HNFL risk assessments, and actionable mitigation strategies. Industries span financial services, healthcare, government, telecom, energy, automotive, aerospace, IoT, payment card, supply chain, media/DRM, legal/eSignature, and more. The dashboard allows filtering by industry to see sector-specific threat profiles and compliance requirements.',
+        deepLink: '/threats',
+      },
+      {
+        question: 'What is the difference between physical and logical qubits?',
+        answer:
+          "Physical qubits are the raw hardware units in today's quantum processors — they are extremely noisy and error-prone, making them unsuitable for long computations on their own. Logical qubits are error-corrected qubits built from many physical qubits using quantum error correction codes, providing the reliability needed to run algorithms like Shor's. The conversion ratio is steep: current estimates require roughly 1,000 physical qubits per logical qubit for fault-tolerant operation, meaning a CRQC capable of attacking RSA-2048 would need millions of physical qubits — far beyond today's largest devices (Google's Willow chip reached 105 physical qubits in 2024, a milestone but orders of magnitude short of CRQC scale). The Quantum Threats module contextualizes hardware progress against CRQC thresholds.",
         deepLink: '/threats',
       },
     ],
@@ -278,6 +296,12 @@ export const FAQ_DATA: FAQCategory[] = [
           "Microsoft has announced the integration of ML-KEM across its core infrastructure including Azure cloud services, Windows, and Microsoft 365, with hybrid PQC key exchange already available in some services. The rollout covers TLS, code signing, and internal authentication systems. The Timeline view tracks Microsoft's milestones alongside other major vendor announcements.",
         deepLink: '/timeline',
       },
+      {
+        question: 'What PQC timelines exist for Japan, Singapore, and Australia?',
+        answer:
+          "Japan's NISC (National center of Incident readiness and Strategy for Cybersecurity) has aligned its PQC guidance with NIST standards, recommending organizations begin cryptographic inventories now and prioritize systems with long data retention periods. Singapore's CSA (Cyber Security Agency) issued a quantum safety advisory in 2023 and updated its Critical Information Infrastructure protection framework to include quantum risk. Australia's ASD (Australian Signals Directorate) and ACSC published quantum risk guidance endorsing NIST-aligned PQC algorithms and recommending that government agencies begin migration planning. All three are less prescriptive on deadlines than the US or EU but are accelerating their frameworks. The Timeline view tracks APAC milestones alongside Western deadlines.",
+        deepLink: '/timeline',
+      },
     ],
   },
 
@@ -334,6 +358,12 @@ export const FAQ_DATA: FAQCategory[] = [
         question: 'What is ISO/SAE 21434?',
         answer:
           'ISO/SAE 21434 is the international standard for automotive cybersecurity engineering, requiring threat analysis and risk assessment throughout the vehicle lifecycle including cryptographic components. It mandates crypto agility — the ability to update algorithms without hardware replacement — which is critical given 15-year vehicle lifetimes spanning the quantum transition. The Compliance Tracker maps ISO 21434 to PQC requirements.',
+        deepLink: '/compliance',
+      },
+      {
+        question: 'What does PCI DSS 4.0 require for PQC?',
+        answer:
+          'PCI DSS 4.0 (mandatory compliance as of March 2025) introduced Requirement 12.3.3, which mandates that organizations maintain a documented inventory of all cryptographic cipher suites and protocols in use and have a plan to address algorithm weaknesses — effectively requiring cryptographic agility planning. While PCI DSS 4.0 does not yet mandate specific PQC algorithms, the PCI Security Standards Council is actively monitoring NIST standards and is expected to incorporate PQC requirements in a future version. Organizations subject to PCI DSS should treat the Req 12.3.3 inventory as the foundation for their eventual PQC migration. The Compliance Tracker cross-references PCI DSS requirements with NIST migration guidance.',
         deepLink: '/compliance',
       },
     ],
@@ -637,6 +667,12 @@ export const FAQ_DATA: FAQCategory[] = [
         answer:
           'The PQC Assistant is a RAG-powered (Retrieval-Augmented Generation) AI chatbot that searches over 6,500 content chunks aggregated from all 22 data sources in the application — including modules, standards, compliance frameworks, and enrichment data — to provide verified answers with source references and deep-links. It runs entirely client-side and does not send your questions to any external AI service. Answers include citations to specific modules, library entries, and compliance frameworks.',
         deepLink: '/about',
+      },
+      {
+        question: "Where should I start if I'm new to PQC?",
+        answer:
+          "Start with PQC 101 — a 30-minute foundational module covering what quantum computers can break, why migration is urgent, and how to use Mosca's Theorem to gauge your own deadline. If you prefer context by role: executives should visit the Executive Quantum Impact module, developers the Developer Quantum Impact module, and architects the Architect module. For an organization-specific starting point, run the PQC Risk Assessment wizard — it takes about 15 minutes and produces a prioritized action list based on your industry, country, and data profile. Use this FAQ's search bar to jump directly to any specific topic.",
+        deepLink: '/learn/pqc-101',
       },
     ],
   },

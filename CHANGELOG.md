@@ -94,6 +94,31 @@ All notable changes to this project will be documented in this file.
   `sbom|cbom|component|backdoor|firmware|hsm|library)/i` against threat
   description, threatId, and `cryptoAtRisk`.
   (`SupplyChainRiskMatrix.tsx`)
+- **Chat assistant Bloch-sphere icon** — the right-panel chat FAB now
+  shows the new `ChatBotFlow.gif` Bloch-sphere animation instead of the
+  generic Lucide `Bot` icon, and the FAB grew from 14×14 to 24×24 to
+  give the animation room to read. Supporting `<QubitIcon>` wrapper
+  added for reuse elsewhere in the app. (`RightPanelFAB.tsx`,
+  `ui/QubitIcon.tsx`, `public/ChatBotFlow.gif`)
+- **5 new FAQ entries** spanning algorithm selection, hash-based
+  signatures, hardware, regional timelines, and payments compliance:
+  "When should I use ML-KEM vs ML-DSA vs SLH-DSA?", "What are LMS and
+  XMSS, and how do they differ from SLH-DSA?", "What is the difference
+  between physical and logical qubits?", "What PQC timelines exist for
+  Japan, Singapore, and Australia?", "What does PCI DSS 4.0 require
+  for PQC?". (`FAQ/faqData.ts`)
+
+### Data
+
+- **Compliance CSV** rolled to `compliance_05032026_r2.csv` (May 3
+  revision 2 — kept alongside `compliance_05032026.csv` per the 2-file
+  retention rule in `CSVmaintenance.md`).
+- **Library CSV** new `library_05042026.csv` + `library_05042026_r2.csv`
+  (May 4 base + revision 2).
+- **Library doc enrichments** for May 4 — 4 documents enriched via
+  `qwen3.6:27b` (`library_doc_enrichments_05042026.md`).
+- **`rag-corpus.json` regenerated** to pick up the new compliance and
+  library CSV revisions.
 
 ### Fixed
 

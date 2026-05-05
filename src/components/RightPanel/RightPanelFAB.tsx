@@ -59,10 +59,19 @@ export const RightPanelFAB: React.FC = () => {
             toggle()
             if (isChat) logChatOpened()
           }}
-          className="relative w-14 h-14 rounded-full shadow-lg shadow-primary/25 p-0"
+          className="relative w-24 h-24 rounded-full shadow-lg shadow-primary/25 p-0 overflow-hidden"
           aria-label={label}
         >
-          <Icon size={24} />
+          {isChat ? (
+            <img
+              src="/ChatBotFlow.gif"
+              alt="PQC Assistant"
+              className="w-full h-full rounded-full object-cover"
+              draggable={false}
+            />
+          ) : (
+            <Icon size={24} />
+          )}
           {/* Badge when minimized with active conversation */}
           {isMinimized && (
             <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-status-info rounded-full border-2 border-background" />
