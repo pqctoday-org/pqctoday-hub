@@ -14,6 +14,7 @@ import type { CbomExportItem } from '../data/workshopTypes'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useAlgorithmTransitionsForAssessment } from '@/hooks/useAlgorithmTransitionsForAssessment'
+import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { SampleDataBadge } from '@/components/BusinessCenter/widgets/SampleDataBadge'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
@@ -79,7 +80,8 @@ interface LibraryCBOMBuilderProps {
 
 export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomExport }) => {
   const assessmentTransitions = useAlgorithmTransitionsForAssessment()
-  const hasAssessmentCrypto = assessmentTransitions.length > 0
+  const { myProducts } = useExecutiveModuleData()
+  const hasAssessmentCrypto = assessmentTransitions.length > 0 || myProducts.length > 0
   const [mode, setMode] = useState<Mode>(hasAssessmentCrypto ? 'assessment' : 'libs')
   const [selectedSbom, setSelectedSbom] = useState<string>(SAMPLE_SBOMS[0].id)
   const [userSbom, setUserSbom] = useState<string>('')
@@ -179,6 +181,20 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
         lines.push('_No assessment crypto recorded._')
       }
       lines.push('')
+      if (myProducts.length > 0) {
+        lines.push(
+          `## Products from /migrate — ${myProducts.length} item${myProducts.length !== 1 ? 's' : ''}`
+        )
+        lines.push('')
+        lines.push('| Product | Vendor | FIPS | PQC support | Layer |')
+        lines.push('|---|---|---|---|---|')
+        for (const p of myProducts) {
+          lines.push(
+            `| ${p.softwareName} | ${p.vendorId || '—'} | ${p.fipsValidated || '—'} | ${p.pqcSupport || '—'} | ${p.infrastructureLayer || '—'} |`
+          )
+        }
+        lines.push('')
+      }
     }
     if (mode === 'sbom' || mode === 'libs') {
       lines.push(
@@ -262,7 +278,16 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
       {mode === 'assessment' && (
         <div className="space-y-3">
           <PreFilledBanner
-            summary={`${assessmentTransitions.length} algorithm${assessmentTransitions.length !== 1 ? 's' : ''} you reported in the assessment, joined with the NIST transitions catalog.`}
+            summary={
+              [
+                assessmentTransitions.length > 0 &&
+                  `${assessmentTransitions.length} algorithm${assessmentTransitions.length !== 1 ? 's' : ''} from your assessment`,
+                myProducts.length > 0 &&
+                  `${myProducts.length} product${myProducts.length !== 1 ? 's' : ''} from /migrate`,
+              ]
+                .filter(Boolean)
+                .join(' + ') + '.'
+            }
             onClear={() => setMode('libs')}
           />
           <div className="overflow-x-auto bg-muted/40 rounded-lg p-3 border border-border">

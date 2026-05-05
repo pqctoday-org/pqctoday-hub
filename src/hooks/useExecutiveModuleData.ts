@@ -6,6 +6,9 @@ import { complianceFrameworks, type ComplianceFramework } from '@/data/complianc
 import { timelineData, type CountryData } from '@/data/timelineData'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
+import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
+import { useBookmarkStore } from '@/store/useBookmarkStore'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import { pqcReadinessTier } from '@/data/kpiCatalog'
 import type {
@@ -65,6 +68,15 @@ export interface ExecutiveModuleData {
   keyFindings: string[]
   assessmentProfile: AssessmentProfile | null
 
+  // Cross-page user selections (raw IDs from each page's bookmark store)
+  myFrameworks: string[]
+  myProductIds: string[]
+  myProducts: SoftwareItem[]
+  myThreatIds: string[]
+  myThreats: ThreatData[]
+  myTimelineCountries: string[]
+  myTimelineCountryData: CountryData[]
+
   // Derived
   isAssessmentComplete: boolean
   migrationDeadlineYear: number | null
@@ -77,6 +89,10 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
   const lastResult = useAssessmentStore((s) => s.lastResult)
   const assessmentStatus = useAssessmentStore((s) => s.assessmentStatus)
   const personaIndustry = usePersonaStore((s) => s.selectedIndustry)
+  const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
+  const myProductIds = useMigrateSelectionStore((s) => s.myProducts)
+  const myThreatIds = useBookmarkStore((s) => s.myThreats)
+  const myTimelineCountries = useBookmarkStore((s) => s.myTimelineCountries)
 
   const effectiveIndustry = industry || personaIndustry || ''
 
@@ -184,6 +200,18 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
       ? (timelineData.find((c) => c.countryName.toLowerCase() === country.toLowerCase()) ?? null)
       : null
 
+    // ── Cross-page user selections (resolve IDs to records) ───────────────
+    const myProductsSet = new Set(myProductIds)
+    const myProducts = softwareData.filter((s) => myProductsSet.has(s.productId))
+
+    const myThreatsSet = new Set(myThreatIds)
+    const myThreats = threatsData.filter((t) => myThreatsSet.has(t.threatId))
+
+    const myTimelineCountrySet = new Set(myTimelineCountries.map((n) => n.toLowerCase()))
+    const myTimelineCountryData = timelineData.filter((c) =>
+      myTimelineCountrySet.has(c.countryName.toLowerCase())
+    )
+
     // Derive earliest mandatory deadline year from user's country events
     let migrationDeadlineYear: number | null = null
     if (userCountryData) {
@@ -228,6 +256,13 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
       algorithmMigrations: lastResult?.algorithmMigrations ?? [],
       keyFindings: lastResult?.keyFindings ?? [],
       assessmentProfile: lastResult?.assessmentProfile ?? null,
+      myFrameworks,
+      myProductIds,
+      myProducts,
+      myThreatIds,
+      myThreats,
+      myTimelineCountries,
+      myTimelineCountryData,
       isAssessmentComplete: assessmentStatus === 'complete',
       migrationDeadlineYear,
     }
@@ -239,5 +274,9 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
     assessmentStatus,
     personaIndustry,
     selectedProductKeys,
+    myFrameworks,
+    myProductIds,
+    myThreatIds,
+    myTimelineCountries,
   ])
 }

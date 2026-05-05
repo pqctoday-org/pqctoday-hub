@@ -8,6 +8,7 @@ import { useAssessmentSnapshot } from '@/hooks/assessment/useAssessmentSnapshot'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { complianceFrameworks } from '@/data/complianceData'
+import { useBookmarkStore } from '@/store/useBookmarkStore'
 
 /**
  * Zero-prop wrapper around {@link ComplianceTimelineBuilder} for the Command
@@ -40,6 +41,16 @@ function deriveJurisdictionIdsFromFrameworks(myFrameworks: string[]): string[] {
   ).map((j) => j.id)
 }
 
+/** Cross-walk myTimelineCountries (country names bookmarked on /timeline) to
+ *  jurisdiction IDs by matching against `JURISDICTION.countryNames[]`. */
+function deriveJurisdictionIdsFromTimelineCountries(countryNames: string[]): string[] {
+  if (countryNames.length === 0) return []
+  const countrySet = new Set(countryNames.map((n) => n.toLowerCase()))
+  return JURISDICTIONS.filter((j) =>
+    j.countryNames.some((n) => countrySet.has(n.toLowerCase()))
+  ).map((j) => j.id)
+}
+
 function dedupe(...lists: string[][]): string[] {
   return Array.from(new Set(lists.flat()))
 }
@@ -48,9 +59,15 @@ export function ComplianceTimelineBuilderStandalone() {
   const { input, result } = useAssessmentSnapshot()
   const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
   const toggleMyFramework = useComplianceSelectionStore((s) => s.toggleMyFramework)
+  const myTimelineCountries = useBookmarkStore((s) => s.myTimelineCountries)
   const assessmentJurisdictionIds = deriveJurisdictionIdsFromCountry(input?.country)
   const myFrameworkJurisdictionIds = deriveJurisdictionIdsFromFrameworks(myFrameworks)
-  const seedJurisdictionIds = dedupe(assessmentJurisdictionIds, myFrameworkJurisdictionIds)
+  const myTimelineJurisdictionIds = deriveJurisdictionIdsFromTimelineCountries(myTimelineCountries)
+  const seedJurisdictionIds = dedupe(
+    assessmentJurisdictionIds,
+    myFrameworkJurisdictionIds,
+    myTimelineJurisdictionIds
+  )
 
   const [selectedJurisdictions, setSelectedJurisdictions] = useState<string[]>(seedJurisdictionIds)
   const [seededFromAssessment, setSeededFromAssessment] = useState(seedJurisdictionIds.length > 0)
@@ -68,6 +85,11 @@ export function ComplianceTimelineBuilderStandalone() {
   if (myFrameworkJurisdictionIds.length > 0) {
     seedSources.push(
       `${myFrameworks.length} framework${myFrameworks.length !== 1 ? 's' : ''} from /compliance`
+    )
+  }
+  if (myTimelineJurisdictionIds.length > 0) {
+    seedSources.push(
+      `${myTimelineCountries.length} countr${myTimelineCountries.length !== 1 ? 'ies' : 'y'} from /timeline`
     )
   }
 

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useMemo, useCallback, useState } from 'react'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { softwareData } from '@/data/migrateData'
@@ -186,8 +187,15 @@ const LAYER_MAP = new Map(LAYERS.map((l) => [l.id, l]))
 
 export const SupplyChainRiskMatrix: React.FC = () => {
   const myProducts = useMigrateSelectionStore((s) => s.myProducts)
-  const { vendorsByLayer, fipsValidatedCount, pqcReadyCount, totalProducts, industry, country } =
-    useExecutiveModuleData(myProducts.length > 0 ? myProducts : undefined)
+  const {
+    vendorsByLayer,
+    fipsValidatedCount,
+    pqcReadyCount,
+    totalProducts,
+    industry,
+    country,
+    industryThreats,
+  } = useExecutiveModuleData(myProducts.length > 0 ? myProducts : undefined)
   const { addExecutiveDocument } = useModuleStore()
 
   const selectedItems = useMemo(
@@ -411,8 +419,44 @@ export const SupplyChainRiskMatrix: React.FC = () => {
     })
   }, [addExecutiveDocument, overallPqcPct, exportMarkdown])
 
+  // Filter industry threats to supply-chain–relevant ones. We keyword-match
+  // the threat description and threatId for terms tied to the supply-chain
+  // attack surface (vendor backdoors, third-party components, software
+  // supply, CBOM gaps, etc.) so the banner count accurately reflects
+  // what's surfaced — not a generic industry-threat tally.
+  const supplyChainThreats = useMemo(() => {
+    const KEYWORDS =
+      /(supply[- ]?chain|vendor|third[- ]?party|sbom|cbom|component|backdoor|firmware|hsm|library)/i
+    return industryThreats.filter(
+      (t) =>
+        KEYWORDS.test(t.description || '') ||
+        KEYWORDS.test(t.threatId || '') ||
+        KEYWORDS.test(t.cryptoAtRisk || '')
+    )
+  }, [industryThreats])
+
+  const seedSources: string[] = []
+  if (myProducts.length > 0)
+    seedSources.push(
+      `${myProducts.length} product${myProducts.length !== 1 ? 's' : ''} from /migrate`
+    )
+  if (industry) seedSources.push(`industry (${industry})`)
+  if (country) seedSources.push(`country (${country})`)
+  if (supplyChainThreats.length > 0)
+    seedSources.push(
+      `${supplyChainThreats.length} supply-chain threat${supplyChainThreats.length !== 1 ? 's' : ''} from your industry`
+    )
+
   return (
     <div className="space-y-6">
+      {seedSources.length > 0 && (
+        <PreFilledBanner
+          summary={`Matrix derived from ${seedSources.join(' + ')}.`}
+          onClear={() => {
+            /* matrix recomputes from live catalog data; clear is informational */
+          }}
+        />
+      )}
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-sm text-foreground/80">
           This view maps {myProducts.length > 0 ? 'your selected' : ''} product capabilities across

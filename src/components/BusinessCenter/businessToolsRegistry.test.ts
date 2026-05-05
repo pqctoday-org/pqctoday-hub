@@ -53,10 +53,7 @@ const ALL_ARTIFACT_TYPES: ExecutiveDocumentType[] = [
 /** Artifact types that intentionally have NO builder component. Each entry
  *  must include a justification — usually because the type is a placeholder
  *  for a future tool, or has been deprecated. */
-const NO_BUILDER_ALLOWLIST: ReadonlySet<ExecutiveDocumentType> = new Set([
-  // 'compliance-checklist' will get its own builder in Phase 3 (RegulatoryGapAssessment adapter).
-  'compliance-checklist',
-])
+const NO_BUILDER_ALLOWLIST: ReadonlySet<ExecutiveDocumentType> = new Set<ExecutiveDocumentType>()
 
 describe('Command Center registry — drift guard', () => {
   it('every ExecutiveDocumentType has a TYPE_LABELS entry', () => {

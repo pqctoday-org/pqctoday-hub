@@ -2,6 +2,7 @@
 import React, { useMemo, useCallback, useState, useEffect, useRef } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import {
   DataDrivenScorecard,
@@ -113,8 +114,30 @@ export const KPITrackerTemplate: React.FC = () => {
     })
   }, [addExecutiveDocument, exportMarkdown, activePersona])
 
+  const seedSources: string[] = []
+  if (execData.riskScore !== null) seedSources.push('assessment risk score')
+  if (execData.totalProducts > 0) seedSources.push(`${execData.totalProducts} catalog products`)
+  if (execData.myFrameworks.length > 0)
+    seedSources.push(
+      `${execData.myFrameworks.length} framework${execData.myFrameworks.length !== 1 ? 's' : ''} from /compliance`
+    )
+  if (execData.myProducts.length > 0)
+    seedSources.push(
+      `${execData.myProducts.length} product${execData.myProducts.length !== 1 ? 's' : ''} from /migrate`
+    )
+  if (execData.migrationDeadlineYear)
+    seedSources.push(`deadline ${execData.migrationDeadlineYear} from /timeline`)
+
   return (
     <div className="space-y-6">
+      {seedSources.length > 0 && (
+        <PreFilledBanner
+          summary={`Tracker auto-scored from ${seedSources.join(' + ')}.`}
+          onClear={() => {
+            /* dimensions auto-recompute from live data; clear is informational */
+          }}
+        />
+      )}
       <div className="glass-panel p-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex-1">

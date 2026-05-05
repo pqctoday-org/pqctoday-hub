@@ -3,8 +3,10 @@
 import React, { useState, useCallback, useMemo } from 'react'
 import { AlertTriangle } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { ExportableArtifact } from '../../../common/executive'
 import { Button } from '@/components/ui/button'
+import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 
 type RACIValue = 'R' | 'A' | 'C' | 'I' | ''
 
@@ -65,9 +67,38 @@ function buildInitialMatrix(): MatrixState {
   return matrix
 }
 
+/** Default Accountable + key Responsible assignments per CSWP.39 §5 governance
+ *  patterns. The user is expected to refine; this surfaces sensible owners
+ *  rather than an empty grid. */
+const DEFAULT_ASSIGNMENTS: Record<string, Partial<Record<(typeof ROLES)[number], RACIValue>>> = {
+  'Crypto Inventory': { CISO: 'A', 'Enterprise Architect': 'R', 'Dev Lead': 'C' },
+  'Risk Assessment': { CISO: 'A', 'Compliance Officer': 'C', 'Enterprise Architect': 'R' },
+  'Vendor Assessment': { Procurement: 'A', CISO: 'C', 'Compliance Officer': 'C' },
+  'Algorithm Selection': { CTO: 'A', 'Enterprise Architect': 'R', 'Dev Lead': 'C' },
+  'Testing & Validation': { 'Dev Lead': 'A', 'Enterprise Architect': 'C', CTO: 'I' },
+  Deployment: { CTO: 'A', 'Dev Lead': 'R', CISO: 'I' },
+  'Monitoring & Compliance': { 'Compliance Officer': 'A', CISO: 'C', CTO: 'I' },
+  'Training & Awareness': { CISO: 'A', 'Compliance Officer': 'R' },
+  'Compliance Auditing': { 'Compliance Officer': 'A', CISO: 'C' },
+  'Stakeholder Communications': { CISO: 'A', CTO: 'C', 'Compliance Officer': 'I' },
+}
+
+function buildSeededMatrix(): MatrixState {
+  const matrix = buildInitialMatrix()
+  for (const activity of ACTIVITIES) {
+    const defaults = DEFAULT_ASSIGNMENTS[activity] ?? {}
+    for (const role of ROLES) {
+      matrix[activity][role] = defaults[role] ?? ''
+    }
+  }
+  return matrix
+}
+
 export const RACIBuilder: React.FC = () => {
-  const [matrix, setMatrix] = useState<MatrixState>(buildInitialMatrix)
+  const [matrix, setMatrix] = useState<MatrixState>(buildSeededMatrix)
+  const [seedCleared, setSeedCleared] = useState(false)
   const { addExecutiveDocument } = useModuleStore()
+  const { industry } = useExecutiveModuleData()
 
   const activitiesMissingAccountable = useMemo(() => {
     return ACTIVITIES.filter((activity) => {
@@ -137,6 +168,15 @@ export const RACIBuilder: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {!seedCleared && (
+        <PreFilledBanner
+          summary={`Default Accountable / Responsible assignments seeded from CSWP.39 governance patterns${industry ? ` (${industry} context)` : ''}. Refine per your org chart.`}
+          onClear={() => {
+            setMatrix(buildInitialMatrix())
+            setSeedCleared(true)
+          }}
+        />
+      )}
       <p className="text-sm text-muted-foreground">
         Assign RACI designations for each PQC migration activity. Click a cell to cycle through
         Responsible, Accountable, Consulted, Informed, or empty.

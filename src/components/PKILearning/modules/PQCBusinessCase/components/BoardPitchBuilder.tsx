@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { FileText, ExternalLink } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { ArtifactBuilder } from '@/components/PKILearning/common/executive'
@@ -7,6 +7,7 @@ import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useModuleStore } from '@/store/useModuleStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PersonaPitchBanner } from './PersonaPitchBanner'
+import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { getPitchVariant } from './pitchVariants'
 import type { FormData } from './pitchVariants'
 
@@ -16,10 +17,33 @@ export const BoardPitchBuilder: React.FC = () => {
   const data = useExecutiveModuleData()
   const { addExecutiveDocument } = useModuleStore()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const [seedCleared, setSeedCleared] = useState(false)
 
   // Key the variant (and therefore the whole ArtifactBuilder below) on persona
   // so switching roles resets the form state to the new persona's defaults.
   const variant = useMemo(() => getPitchVariant(selectedPersona, data), [selectedPersona, data])
+
+  const sources: string[] = []
+  if (!seedCleared) {
+    if (data.industry) sources.push(`industry (${data.industry})`)
+    if (data.riskScore !== null) sources.push(`assessment risk score`)
+    if (data.myFrameworks.length > 0)
+      sources.push(
+        `${data.myFrameworks.length} starred framework${data.myFrameworks.length !== 1 ? 's' : ''}`
+      )
+    if (data.myProducts.length > 0)
+      sources.push(
+        `${data.myProducts.length} product${data.myProducts.length !== 1 ? 's' : ''} from /migrate`
+      )
+    if (data.myThreats.length > 0)
+      sources.push(
+        `${data.myThreats.length} threat${data.myThreats.length !== 1 ? 's' : ''} from /threats`
+      )
+    if (data.myTimelineCountries.length > 0)
+      sources.push(
+        `${data.myTimelineCountries.length} deadline countr${data.myTimelineCountries.length !== 1 ? 'ies' : 'y'} from /timeline`
+      )
+  }
 
   const renderPreviewBound = useCallback(
     (formData: FormData) => variant.renderPreview(formData, data),
@@ -44,6 +68,13 @@ export const BoardPitchBuilder: React.FC = () => {
   return (
     <div className="space-y-6">
       <PersonaPitchBanner persona={selectedPersona} objective={variant.objective} />
+
+      {sources.length > 0 && (
+        <PreFilledBanner
+          summary={`Seeded from ${sources.join(' + ')}.`}
+          onClear={() => setSeedCleared(true)}
+        />
+      )}
 
       <div className="glass-panel p-4 flex items-start gap-3">
         <FileText size={20} className="text-primary shrink-0 mt-0.5" />

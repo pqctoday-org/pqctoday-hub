@@ -97,11 +97,7 @@ export function getArtifactsForStep(
 /** Orphan artifact types whose zone cannot be derived from the tool registry
  *  (because the type has no corresponding tool yet). Keep this small and
  *  explicit — every entry should have a follow-up to wire a real builder. */
-const ORPHAN_TYPE_ZONE: Partial<Record<ExecutiveDocumentType, ZoneId>> = {
-  // `compliance-checklist` has no builder yet (planned: RegulatoryGapAssessment adapter).
-  // Surface it under Governance / Regulations so the placeholder still appears.
-  'compliance-checklist': 'governance',
-}
+const ORPHAN_TYPE_ZONE: Partial<Record<ExecutiveDocumentType, ZoneId>> = {}
 
 /** Single source of truth for artifact-type → CSWP.39 Fig 3 zone, derived from
  *  the tool registry plus the orphan override map. Computed at module load. */

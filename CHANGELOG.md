@@ -41,6 +41,59 @@ All notable changes to this project will be documented in this file.
   description noting TCG V1.85 PQC support (ML-KEM-768 + ML-DSA-65 command
   codes 0x1a3–0x1aa, Emscripten WASM build, fork of swtpm + libtpms).
   (`SbomSection.tsx`)
+- **Command Center artifact pre-fill — full coverage across all 22
+  artifacts** — every artifact builder now opens with defaults derived
+  from the user's persona, assessment, and starred selections from
+  `/compliance`, `/threats`, `/migrate`, and `/timeline`, with a
+  `PreFilledBanner` listing the contributing source pages and a Clear
+  action. Foundation hook `useExecutiveModuleData` extended with
+  `myFrameworks` / `myProductIds` / `myProducts` / `myThreatIds` /
+  `myThreats` / `myTimelineCountries` / `myTimelineCountryData` so every
+  builder reads cross-page user data through one canonical hook.
+  (`useExecutiveModuleData.ts`, all 22 artifact builders under
+  `BusinessCenter/adapters/`, `BusinessCenter/tools/`, and
+  `PKILearning/modules/*/components/`)
+- **New `compliance-checklist` artifact builder** — net-new
+  `ComplianceChecklistBuilderStandalone` builds one checklist section
+  per starred framework on `/compliance`, pre-checks the
+  "Identified PQC dependency" item for frameworks that the assessment
+  flagged as `requiresPQC`, and pre-fills industry/country/deadline per
+  framework. Wired into `businessToolsRegistry`,
+  `businessToolComponents`, `cswp39StepMapping` (orphan entry removed),
+  and the registry drift-guard test allowlist. Closes the long-standing
+  "🚫 no builder mapped" gap.
+  (`ComplianceChecklistBuilderStandalone.tsx`,
+  `businessToolsRegistry.tsx`, `businessToolComponents.tsx`,
+  `lib/cswp39StepMapping.ts`, `businessToolsRegistry.test.ts`)
+- **`crypto-vulnerability-watch` highlights tracked-algorithm CVEs** —
+  CVE rows whose summary mentions any algorithm in your bookmarked
+  `/threats` (matched against each threat's `cryptoAtRisk` field) now
+  render an amber `TRACKED` badge next to the CVE ID. The cross-page
+  link is no longer banner-only; bookmarking a threat for RSA-2048 on
+  `/threats` actively flags every RSA CVE in the watch table.
+  (`CryptoVulnerabilityWatch.tsx`)
+- **`policy-draft` rotation period seeded from `cryptoAgility`** — the
+  Maximum Key Rotation Period default now considers crypto agility
+  alongside data sensitivity: `hardcoded` → 2 years, `agile` + critical
+  data → 90 days. `cryptoAgility` is also surfaced in the seed banner.
+  (`PolicyTemplateGenerator.tsx`)
+- **`vendor-scorecard` opens roadmap dimension first for heavy
+  vendor-dependency** — when the assessment reports
+  `vendorDependency === 'heavy-vendor'` the PQC Roadmap dimension is
+  pre-expanded so reviewers see roadmap risk first; banner mentions the
+  source. (`VendorScorecardBuilder.tsx`)
+- **`contract-clause` shows "High vendor exposure" hint above the
+  editor** — when `vendorDependency` is `heavy-vendor` or `mixed` an
+  amber callout above the clause sections recommends tighter penalty
+  caps, audit-rights frequency, and termination triggers; banner
+  mentions the source. (`ContractClauseGenerator.tsx`)
+- **`supply-chain-matrix` filters industry threats to supply-chain
+  scope** — replaces the misleading "industry-specific supply-chain
+  threats" tally (which counted every industry threat) with a
+  keyword-filtered subset matching `/(supply-chain|vendor|third-party|`
+  `sbom|cbom|component|backdoor|firmware|hsm|library)/i` against threat
+  description, threatId, and `cryptoAtRisk`.
+  (`SupplyChainRiskMatrix.tsx`)
 
 ### Fixed
 

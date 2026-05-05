@@ -8,6 +8,7 @@ import {
 } from '@/store/useRiskRegisterStore'
 import { useAssessmentSnapshot } from '@/hooks/assessment/useAssessmentSnapshot'
 import { useAlgorithmTransitionsForAssessment } from '@/hooks/useAlgorithmTransitionsForAssessment'
+import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 
 /**
@@ -48,17 +49,62 @@ function buildAssessmentSeed(
   transitions: ReturnType<typeof useAlgorithmTransitionsForAssessment>,
   hndlOpen: boolean,
   migrationStatus: string | undefined,
+  sensitivities: string[],
+  hasFrameworkPressure: boolean
+): RiskEntry[] {
+  return transitions.map((t, i) => {
+    // Framework deadline pressure bumps impact +1 (capped at 5).
+    const baseImpact = pickImpact(sensitivities)
+    const impact = hasFrameworkPressure ? Math.min(5, baseImpact + 1) : baseImpact
+    return {
+      id: `assess-risk-${i + 1}`,
+      assetName: `${t.classical}${t.keySize ? ` (${t.keySize})` : ''} usage — ${t.function}`,
+      currentAlgorithm: t.storedKey,
+      threatVector: pickThreatVector(t.function),
+      likelihood: pickLikelihood(hndlOpen, migrationStatus),
+      impact,
+      mitigation: `Migrate to ${t.pqc}${t.deprecationDate ? ` before ${t.deprecationDate}` : ''} (${t.status}).`,
+    }
+  })
+}
+
+/** Add one row per bookmarked product, marking each as an at-risk asset. */
+function buildProductSeed(
+  products: ReturnType<typeof useExecutiveModuleData>['myProducts'],
   sensitivities: string[]
 ): RiskEntry[] {
-  return transitions.map((t, i) => ({
-    id: `assess-risk-${i + 1}`,
-    assetName: `${t.classical}${t.keySize ? ` (${t.keySize})` : ''} usage — ${t.function}`,
-    currentAlgorithm: t.storedKey,
-    threatVector: pickThreatVector(t.function),
-    likelihood: pickLikelihood(hndlOpen, migrationStatus),
+  return products.slice(0, 12).map((p, i) => ({
+    id: `assess-risk-product-${i + 1}`,
+    assetName: `${p.softwareName}${p.vendorId ? ` (${p.vendorId})` : ''}`,
+    currentAlgorithm: p.pqcSupport && p.pqcSupport !== 'None' ? p.pqcSupport : 'Classical',
+    threatVector: 'hndl',
+    likelihood: 4,
     impact: pickImpact(sensitivities),
-    mitigation: `Migrate to ${t.pqc}${t.deprecationDate ? ` before ${t.deprecationDate}` : ''} (${t.status}).`,
+    mitigation: `Track vendor PQC roadmap; substitute or contain if no PQC support before deadline.`,
   }))
+}
+
+/** Add one row per bookmarked threat to surface industry-specific concerns. */
+function buildThreatSeed(
+  threats: ReturnType<typeof useExecutiveModuleData>['myThreats'],
+  sensitivities: string[]
+): RiskEntry[] {
+  return threats.slice(0, 8).map((t, i) => {
+    const crit = (t.criticality || '').toLowerCase()
+    const likelihood = crit === 'critical' ? 5 : crit === 'high' ? 4 : 3
+    const headline = (t.description || t.threatId).split(/[.;]/)[0]?.trim() || t.threatId
+    return {
+      id: `assess-risk-threat-${i + 1}`,
+      assetName: `${t.industry}: ${headline}`,
+      currentAlgorithm: t.cryptoAtRisk || 'Classical',
+      threatVector: 'hndl',
+      likelihood,
+      impact: pickImpact(sensitivities),
+      mitigation: t.pqcReplacement
+        ? `Replace with ${t.pqcReplacement}; tie to PQC roadmap milestone.`
+        : 'Document mitigation plan; tie to PQC roadmap milestone.',
+    }
+  })
 }
 
 /**
@@ -73,20 +119,32 @@ export function RiskRegisterBuilderStandalone() {
   const setRiskEntries = useRiskRegisterStore((s) => s.setRiskEntries)
   const { input, result } = useAssessmentSnapshot()
   const transitions = useAlgorithmTransitionsForAssessment()
+  const { myFrameworks, myProducts, myThreats } = useExecutiveModuleData()
 
-  const assessmentSeed = useMemo(() => {
-    if (transitions.length === 0) return null
-    return buildAssessmentSeed(
-      transitions,
-      result?.hndlRiskWindow?.isAtRisk ?? false,
-      input?.migrationStatus,
-      input?.dataSensitivity ?? []
-    )
+  const sensitivities = input?.dataSensitivity ?? []
+  const hasFrameworkPressure = myFrameworks.length > 0
+
+  const fullSeed = useMemo(() => {
+    const algoRows = transitions.length
+      ? buildAssessmentSeed(
+          transitions,
+          result?.hndlRiskWindow?.isAtRisk ?? false,
+          input?.migrationStatus,
+          sensitivities,
+          hasFrameworkPressure
+        )
+      : []
+    const productRows = myProducts.length ? buildProductSeed(myProducts, sensitivities) : []
+    const threatRows = myThreats.length ? buildThreatSeed(myThreats, sensitivities) : []
+    return [...algoRows, ...productRows, ...threatRows]
   }, [
     transitions,
     result?.hndlRiskWindow?.isAtRisk,
     input?.migrationStatus,
-    input?.dataSensitivity,
+    sensitivities,
+    hasFrameworkPressure,
+    myProducts,
+    myThreats,
   ])
 
   // Derive whether the current entries originated from the assessment seeder
@@ -95,22 +153,31 @@ export function RiskRegisterBuilderStandalone() {
     riskEntries.length > 0 && riskEntries[0]?.id?.startsWith('assess-risk-')
 
   useEffect(() => {
-    // Only auto-seed when the register is empty AND we have assessment-derived
-    // entries to offer. Otherwise let RiskRegisterBuilder's own defaults run.
-    if (riskEntries.length === 0 && assessmentSeed && assessmentSeed.length > 0) {
-      setRiskEntries(assessmentSeed)
+    // Only auto-seed when the register is empty AND we have at least one
+    // seed row. Otherwise let RiskRegisterBuilder's own defaults run.
+    if (riskEntries.length === 0 && fullSeed.length > 0) {
+      setRiskEntries(fullSeed)
     }
-  }, [riskEntries.length, assessmentSeed, setRiskEntries])
+  }, [riskEntries.length, fullSeed, setRiskEntries])
 
   const handleClear = () => {
     setRiskEntries(DEFAULT_RISK_ENTRIES)
   }
 
+  const sources: string[] = []
+  if (transitions.length > 0)
+    sources.push(`${transitions.length} reported algorithm${transitions.length !== 1 ? 's' : ''}`)
+  if (myProducts.length > 0)
+    sources.push(`${myProducts.length} product${myProducts.length !== 1 ? 's' : ''} from /migrate`)
+  if (myThreats.length > 0)
+    sources.push(`${myThreats.length} threat${myThreats.length !== 1 ? 's' : ''} from /threats`)
+  if (hasFrameworkPressure) sources.push(`framework pressure from ${myFrameworks.length} starred`)
+
   return (
     <div className="space-y-3">
-      {seededFromAssessment && assessmentSeed && (
+      {seededFromAssessment && fullSeed.length > 0 && (
         <PreFilledBanner
-          summary={`${assessmentSeed.length} risk entr${assessmentSeed.length !== 1 ? 'ies' : 'y'} from your reported algorithms, with likelihood and impact derived from your data sensitivity and HNDL window.`}
+          summary={`${fullSeed.length} risk entr${fullSeed.length !== 1 ? 'ies' : 'y'} seeded from ${sources.join(' + ')}.`}
           onClear={handleClear}
         />
       )}

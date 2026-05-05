@@ -50,6 +50,11 @@ export const BUSINESS_TOOL_COMPONENTS: Record<string, LazyComp> = {
       (m) => ({ default: m.AuditReadinessChecklist })
     )
   ),
+  'compliance-checklist': lazyWithRetry(() =>
+    import('./adapters/ComplianceChecklistBuilderStandalone').then((m) => ({
+      default: m.ComplianceChecklistBuilderStandalone,
+    }))
+  ),
   'compliance-timeline': lazyWithRetry(() =>
     import('./adapters/ComplianceTimelineBuilderStandalone').then((m) => ({
       default: m.ComplianceTimelineBuilderStandalone,

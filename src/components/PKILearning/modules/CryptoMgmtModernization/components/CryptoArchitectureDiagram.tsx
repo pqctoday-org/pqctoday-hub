@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useAssessmentSnapshot } from '@/hooks/assessment/useAssessmentSnapshot'
 import { useAlgorithmTransitionsForAssessment } from '@/hooks/useAlgorithmTransitionsForAssessment'
+import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 
 type ComponentKind =
@@ -146,7 +147,8 @@ function buildMarkdown(components: ArchComponent[]): string {
 
 function buildAssessmentSeed(
   useCases: string[],
-  transitions: ReturnType<typeof useAlgorithmTransitionsForAssessment>
+  transitions: ReturnType<typeof useAlgorithmTransitionsForAssessment>,
+  myProducts: ReturnType<typeof useExecutiveModuleData>['myProducts']
 ): ArchComponent[] {
   const out: ArchComponent[] = []
   // One library row per reported algorithm with its PQC target as detail.
@@ -157,6 +159,21 @@ function buildAssessmentSeed(
       kind: 'library',
       name: `${t.classical}${t.keySize ? ` (${t.keySize})` : ''}`,
       detail: `Target: ${t.pqc} · ${t.status} · deprecation ${t.deprecationDate || 'TBD'}`,
+      dependsOn: '',
+    })
+  })
+  // One library/HSM row per bookmarked product on /migrate. Use kind=library
+  // for typical crypto libraries; kind=hsm if the product name hints at one.
+  myProducts.slice(0, 12).forEach((p, i) => {
+    const isHsm = /hsm|nshield|cloudhsm/i.test(p.softwareName || '')
+    const fipsBadge =
+      p.fipsValidated && p.fipsValidated !== 'No' ? ` · FIPS: ${p.fipsValidated}` : ''
+    const pqcBadge = p.pqcSupport && p.pqcSupport !== 'None' ? ` · PQC: ${p.pqcSupport}` : ''
+    out.push({
+      id: `prod-${i + 1}`,
+      kind: isHsm ? 'hsm' : 'library',
+      name: `${p.softwareName}${p.vendorId ? ` (${p.vendorId})` : ''}`,
+      detail: `From /migrate selection.${fipsBadge}${pqcBadge}`,
       dependsOn: '',
     })
   })
@@ -180,10 +197,11 @@ export const CryptoArchitectureDiagram: React.FC = () => {
   const { addExecutiveDocument } = useModuleStore()
   const { input } = useAssessmentSnapshot()
   const transitions = useAlgorithmTransitionsForAssessment()
+  const { myProducts } = useExecutiveModuleData()
   const useCases = input?.cryptoUseCases ?? []
   const assessmentSeed = useMemo(
-    () => buildAssessmentSeed(useCases, transitions),
-    [useCases, transitions]
+    () => buildAssessmentSeed(useCases, transitions, myProducts),
+    [useCases, transitions, myProducts]
   )
   const hasAssessmentSeed = assessmentSeed.length > 0
 
@@ -245,7 +263,16 @@ export const CryptoArchitectureDiagram: React.FC = () => {
 
       {seededFromAssessment && (
         <PreFilledBanner
-          summary={`${transitions.length} library row${transitions.length !== 1 ? 's' : ''} from your reported crypto and ${useCases.length} protocol row${useCases.length !== 1 ? 's' : ''} from your use cases.`}
+          summary={[
+            transitions.length > 0 &&
+              `${transitions.length} library row${transitions.length !== 1 ? 's' : ''} from reported crypto`,
+            myProducts.length > 0 &&
+              `${myProducts.length} product${myProducts.length !== 1 ? 's' : ''} from /migrate`,
+            useCases.length > 0 &&
+              `${useCases.length} protocol row${useCases.length !== 1 ? 's' : ''} from use cases`,
+          ]
+            .filter(Boolean)
+            .join(' + ')}
           onClear={() => {
             setComponents(seedComponents())
             setSeededFromAssessment(false)

@@ -117,6 +117,19 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
 
   // ── Compliance & Audit ─────────────────────────────────────────────────────
   {
+    id: 'compliance-checklist',
+    name: 'Compliance Checklist',
+    description:
+      'Per-framework PQC compliance checklist seeded from your starred frameworks and assessment',
+    category: 'Compliance & Audit',
+    icon: ClipboardCheck,
+    keywords: ['compliance', 'checklist', 'framework', 'controls', 'pqc'],
+    cswp39Zone: 'governance',
+    cswp39ZoneSubElement: 'Standards',
+    cswp39SectionRef: '§5.1',
+    cswp39SubSection: 'Standards, regulations, mandates',
+  },
+  {
     id: 'audit-checklist',
     name: 'Audit Readiness Checklist',
     description:
@@ -368,6 +381,7 @@ export const ARTIFACT_TYPE_TO_TOOL_ID: Partial<Record<ExecutiveDocumentType, str
   'risk-register': 'risk-register',
   'risk-treatment-plan': 'risk-treatment-plan',
   'audit-checklist': 'audit-checklist',
+  'compliance-checklist': 'compliance-checklist',
   'compliance-timeline': 'compliance-timeline',
   'raci-matrix': 'raci-builder',
   'policy-draft': 'policy-generator',

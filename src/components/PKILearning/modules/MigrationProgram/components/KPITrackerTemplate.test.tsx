@@ -57,6 +57,13 @@ function baseData(riskScore: number | null): ExecutiveModuleData {
     algorithmMigrations: [],
     keyFindings: [],
     assessmentProfile: null,
+    myFrameworks: [],
+    myProductIds: [],
+    myProducts: [],
+    myThreatIds: [],
+    myThreats: [],
+    myTimelineCountries: [],
+    myTimelineCountryData: [],
     isAssessmentComplete: false,
     migrationDeadlineYear: null,
   }

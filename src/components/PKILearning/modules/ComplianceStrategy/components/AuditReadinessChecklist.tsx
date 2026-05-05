@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { useModuleStore } from '@/store/useModuleStore'
 import { Button } from '@/components/ui/button'
 import { ArtifactBuilder } from '../../../common/executive'
 import type { ArtifactSection } from '../../../common/executive'
+import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 
 interface ChecklistItem {
   value: string
@@ -253,7 +254,10 @@ function getMaturityTier(pct: number): { label: string; color: string } {
 function buildSections(
   isAssessmentComplete: boolean,
   industry: string,
-  country: string
+  country: string,
+  myFrameworksCount: number,
+  myProductsCount: number,
+  myThreatsCount: number
 ): ArtifactSection[] {
   const toOptions = (items: ChecklistItem[]) =>
     items.map((i) => ({
@@ -303,7 +307,7 @@ function buildSections(
           label: 'Risk Assessment Readiness',
           type: 'checklist',
           options: toOptions(RISK_ITEMS),
-          defaultValue: [],
+          defaultValue: myThreatsCount > 0 ? ['threat-model-updated'] : [],
         },
       ],
     },
@@ -331,7 +335,7 @@ function buildSections(
           label: 'Vendor Management Readiness',
           type: 'checklist',
           options: toOptions(VENDOR_ITEMS),
-          defaultValue: [],
+          defaultValue: myProductsCount > 0 ? ['vendors-assessed'] : [],
         },
       ],
     },
@@ -346,7 +350,10 @@ function buildSections(
           label: 'Evidence & Documentation Readiness',
           type: 'checklist',
           options: toOptions(EVIDENCE_ITEMS),
-          defaultValue: isAssessmentComplete ? ['migration-plan'] : [],
+          defaultValue: [
+            ...(isAssessmentComplete ? ['migration-plan'] : []),
+            ...(myFrameworksCount > 0 ? ['compliance-mapping'] : []),
+          ],
         },
       ],
     },
@@ -477,14 +484,50 @@ function renderExceptionsAndEvidenceMd(
 }
 
 export const AuditReadinessChecklist: React.FC = () => {
-  const { isAssessmentComplete, industry, country } = useExecutiveModuleData()
+  const { isAssessmentComplete, industry, country, myFrameworks, myProducts, myThreats } =
+    useExecutiveModuleData()
   const { addExecutiveDocument } = useModuleStore()
   const [exceptions, setExceptions] = React.useState<ExceptionRow[]>([])
   const [evidence, setEvidence] = React.useState<EvidenceRow[]>([])
+  const [seedCleared, setSeedCleared] = useState(false)
+
+  const seedSources: string[] = []
+  if (!seedCleared) {
+    if (industry) seedSources.push(`industry (${industry})`)
+    if (country) seedSources.push(`country (${country})`)
+    if (isAssessmentComplete) seedSources.push('completed assessment')
+    if (myFrameworks.length > 0)
+      seedSources.push(
+        `${myFrameworks.length} framework${myFrameworks.length !== 1 ? 's' : ''} from /compliance`
+      )
+    if (myProducts.length > 0)
+      seedSources.push(
+        `${myProducts.length} product${myProducts.length !== 1 ? 's' : ''} from /migrate`
+      )
+    if (myThreats.length > 0)
+      seedSources.push(
+        `${myThreats.length} threat${myThreats.length !== 1 ? 's' : ''} from /threats`
+      )
+  }
 
   const sections = useMemo(
-    () => buildSections(isAssessmentComplete, industry, country),
-    [isAssessmentComplete, industry, country]
+    () =>
+      buildSections(
+        isAssessmentComplete,
+        industry,
+        country,
+        myFrameworks.length,
+        myProducts.length,
+        myThreats.length
+      ),
+    [
+      isAssessmentComplete,
+      industry,
+      country,
+      myFrameworks.length,
+      myProducts.length,
+      myThreats.length,
+    ]
   )
 
   const handleExport = (data: Record<string, Record<string, string | string[]>>) => {
@@ -534,6 +577,12 @@ export const AuditReadinessChecklist: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {seedSources.length > 0 && (
+        <PreFilledBanner
+          summary={`Seeded from ${seedSources.join(' + ')}.`}
+          onClear={() => setSeedCleared(true)}
+        />
+      )}
       {isAssessmentComplete && (
         <div className="bg-status-success/10 border border-status-success/30 rounded-lg p-3">
           <p className="text-sm text-foreground/80">

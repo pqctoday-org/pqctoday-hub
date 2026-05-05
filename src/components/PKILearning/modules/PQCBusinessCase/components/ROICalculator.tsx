@@ -24,6 +24,7 @@ import {
   ReferenceLine,
 } from 'recharts'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
 import {
@@ -308,6 +309,33 @@ export const ROICalculator: React.FC = () => {
           </p>
         </div>
       )}
+
+      {(() => {
+        const sources: string[] = []
+        if (data.industry) sources.push(`industry (${data.industry})`)
+        if (data.riskScore !== null) sources.push('assessment risk score')
+        if (data.myFrameworks.length > 0)
+          sources.push(
+            `${data.myFrameworks.length} framework${data.myFrameworks.length !== 1 ? 's' : ''} from /compliance`
+          )
+        if (data.myProducts.length > 0)
+          sources.push(
+            `${data.myProducts.length} product${data.myProducts.length !== 1 ? 's' : ''} from /migrate`
+          )
+        if (data.criticalThreatCount > 0 && data.industry)
+          sources.push(`${data.industryThreats.length} industry threats`)
+        if (data.migrationDeadlineYear)
+          sources.push(`deadline ${data.migrationDeadlineYear} from /timeline`)
+        if (sources.length === 0) return null
+        return (
+          <PreFilledBanner
+            summary={`ROI defaults pulled from ${sources.join(' + ')}.`}
+            onClear={() => {
+              /* assumptions are user-driven sliders; PreFilledBanner here is informational */
+            }}
+          />
+        )
+      })()}
 
       {/* Financial Summary KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

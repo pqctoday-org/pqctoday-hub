@@ -2,6 +2,7 @@
 import React, { useMemo, useCallback, useRef, useEffect, useState } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { DataDrivenScorecard, KpiPersonaSelector } from '@/components/PKILearning/common/executive'
 import type { KpiPersonaId } from '@/data/kpiCatalog'
@@ -110,8 +111,34 @@ export const KPIDashboardBuilder: React.FC = () => {
     [dimensions, addExecutiveDocument, activePersona, sensHigh, sensMed, sensLow]
   )
 
+  const seedSources: string[] = []
+  if (execData.industry) seedSources.push(`industry (${execData.industry})`)
+  if (execData.riskScore !== null) seedSources.push('assessment risk score')
+  if (execData.myFrameworks.length > 0)
+    seedSources.push(
+      `${execData.myFrameworks.length} framework${execData.myFrameworks.length !== 1 ? 's' : ''} from /compliance`
+    )
+  if (execData.myProducts.length > 0)
+    seedSources.push(
+      `${execData.myProducts.length} product${execData.myProducts.length !== 1 ? 's' : ''} from /migrate`
+    )
+  if (execData.myThreats.length > 0)
+    seedSources.push(
+      `${execData.myThreats.length} threat${execData.myThreats.length !== 1 ? 's' : ''} from /threats`
+    )
+  if (execData.migrationDeadlineYear)
+    seedSources.push(`deadline year ${execData.migrationDeadlineYear} from /timeline`)
+
   return (
     <div className="space-y-6">
+      {seedSources.length > 0 && (
+        <PreFilledBanner
+          summary={`KPI defaults derived from ${seedSources.join(' + ')}.`}
+          onClear={() => {
+            /* KPIs auto-recompute from data; nothing local to clear */
+          }}
+        />
+      )}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground flex-1">
           Adjust KPI sliders to reflect your organization&apos;s PQC migration progress. Vendor

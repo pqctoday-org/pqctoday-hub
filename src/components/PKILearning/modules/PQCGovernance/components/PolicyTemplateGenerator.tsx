@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useCallback } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { useAssessmentStore } from '@/store/useAssessmentStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { ArtifactBuilder } from '@/components/PKILearning/common/executive'
@@ -63,10 +64,15 @@ interface BuildArgs {
   country: string
   industry: string
   dataSensitivity: string[]
+  cryptoAgility: string
   simplified: boolean
 }
 
-function suggestRotationPeriod(dataSensitivity: string[]): string {
+function suggestRotationPeriod(dataSensitivity: string[], cryptoAgility: string): string {
+  // Hardcoded crypto can't rotate often → push to longer rotation; agile orgs
+  // can run aggressive 90-day rotation safely.
+  if (cryptoAgility === 'hardcoded') return '2-years'
+  if (cryptoAgility === 'agile' && dataSensitivity.includes('critical')) return '90-days'
   if (dataSensitivity.includes('critical')) return '90-days'
   if (dataSensitivity.includes('high')) return '180-days'
   if (dataSensitivity.includes('medium')) return '1-year'
@@ -326,9 +332,9 @@ function cryptoAlgorithmSections(args: BuildArgs): ArtifactSection[] {
 }
 
 function keyManagementSections(args: BuildArgs): ArtifactSection[] {
-  const { simplified, dataSensitivity } = args
+  const { simplified, dataSensitivity, cryptoAgility } = args
   const common = generalSection(args)
-  const suggestedRotation = suggestRotationPeriod(dataSensitivity)
+  const suggestedRotation = suggestRotationPeriod(dataSensitivity, cryptoAgility)
 
   return [
     common,
@@ -677,6 +683,7 @@ export const PolicyTemplateGenerator: React.FC = () => {
   const country = useAssessmentStore((s) => s.country)
   const industry = useAssessmentStore((s) => s.industry)
   const dataSensitivity = useAssessmentStore((s) => s.dataSensitivity)
+  const cryptoAgility = useAssessmentStore((s) => s.cryptoAgility)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const [kpiDriftRules, setKpiDriftRules] = useState<KpiDriftRule[]>([])
 
@@ -703,6 +710,7 @@ export const PolicyTemplateGenerator: React.FC = () => {
         country,
         industry,
         dataSensitivity,
+        cryptoAgility,
         simplified,
       }),
     [
@@ -712,6 +720,7 @@ export const PolicyTemplateGenerator: React.FC = () => {
       country,
       industry,
       dataSensitivity,
+      cryptoAgility,
       simplified,
     ]
   )
@@ -734,8 +743,28 @@ export const PolicyTemplateGenerator: React.FC = () => {
     [activePolicyType, addExecutiveDocument, kpiDriftRules]
   )
 
+  const seedSources: string[] = []
+  if (industry) seedSources.push(`industry (${industry})`)
+  if (country) seedSources.push(`country (${country})`)
+  if (execData.myFrameworks.length > 0)
+    seedSources.push(
+      `${execData.myFrameworks.length} framework${execData.myFrameworks.length !== 1 ? 's' : ''} from /compliance`
+    )
+  if (dataSensitivity.length > 0) seedSources.push(`${dataSensitivity.length} sensitivity classes`)
+  if (cryptoAgility) seedSources.push(`crypto agility (${cryptoAgility})`)
+  if (execData.migrationDeadlineYear)
+    seedSources.push(`deadline ${execData.migrationDeadlineYear} from /timeline`)
+
   return (
     <div className="space-y-6">
+      {seedSources.length > 0 && (
+        <PreFilledBanner
+          summary={`Policy fields seeded from ${seedSources.join(' + ')}.`}
+          onClear={() => {
+            /* Per-section defaults are computed in buildSections — clear is informational */
+          }}
+        />
+      )}
       <p className="text-sm text-muted-foreground">
         Select a policy type, fill in the template fields, and export a customized PQC policy
         document. Framework options, jurisdiction, industry, and suggested key rotation are

@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button'
 import { AlertCircle, CheckCircle2, Info } from 'lucide-react'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 
 type CoverageLevel = 0 | 1 | 2 | 3
 
@@ -123,15 +125,29 @@ const TOOLS: ToolDef[] = [
 ]
 
 export const ManagementToolsAudit: React.FC = () => {
+  const { myProducts, industry } = useExecutiveModuleData()
   const initLevels = () =>
     Object.fromEntries(TOOLS.map((t) => [t.id, 0 as CoverageLevel])) as Record<
       string,
       CoverageLevel
     >
-  const initPct = () => Object.fromEntries(TOOLS.map((t) => [t.id, 25])) as Record<string, number>
+  // Seed coverage % from /migrate selections — products in mgmt-tool layers
+  // hint that the user has at least Partial coverage.
+  const initPct = () => {
+    const base: Record<string, number> = {}
+    const productMgmt = myProducts.filter((p) =>
+      /(scanner|siem|cmdb|sbom|zero[- ]?trust|inventory|pam)/i.test(
+        `${p.softwareName} ${p.infrastructureLayer || ''}`
+      )
+    ).length
+    const seed = productMgmt > 0 ? Math.min(75, 25 + productMgmt * 10) : 25
+    for (const t of TOOLS) base[t.id] = seed
+    return base
+  }
 
   const [levels, setLevels] = useState<Record<string, CoverageLevel>>(initLevels)
   const [sysPct, setSysPct] = useState<Record<string, number>>(initPct)
+  const [seedCleared, setSeedCleared] = useState(false)
   const addExecutiveDocument = useModuleStore((s) => s.addExecutiveDocument)
 
   const setLevel = (id: string, lvl: CoverageLevel) => setLevels((prev) => ({ ...prev, [id]: lvl }))
@@ -185,8 +201,26 @@ export const ManagementToolsAudit: React.FC = () => {
     return lines.join('\n')
   }, [levels, sysPct, completeness, gaps])
 
+  const seedSources: string[] = []
+  if (!seedCleared) {
+    if (myProducts.length > 0)
+      seedSources.push(
+        `${myProducts.length} product${myProducts.length !== 1 ? 's' : ''} from /migrate`
+      )
+    if (industry) seedSources.push(`industry (${industry})`)
+  }
+
   return (
     <div className="space-y-6">
+      {seedSources.length > 0 && (
+        <PreFilledBanner
+          summary={`Coverage % seeded from ${seedSources.join(' + ')}.`}
+          onClear={() => {
+            setSysPct(Object.fromEntries(TOOLS.map((t) => [t.id, 25])))
+            setSeedCleared(true)
+          }}
+        />
+      )}
       <p className="text-sm text-muted-foreground">
         CSWP.39 §5 step 3 (Identify Gaps) requires auditing the Management Tools layer — the
         automation pipeline that feeds the Information Repository. Without these tools, your Risk

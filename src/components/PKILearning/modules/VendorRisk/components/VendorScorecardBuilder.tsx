@@ -4,6 +4,9 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react'
 import { ExportableArtifact } from '../../../common/executive'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
+import { useAssessmentStore } from '@/store/useAssessmentStore'
+import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { softwareData } from '@/data/migrateData'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import {
@@ -105,6 +108,9 @@ export const VendorScorecardBuilder: React.FC = () => {
   const myProducts = useMigrateSelectionStore((s) => s.myProducts)
   const { addExecutiveDocument } = useModuleStore()
   const hasProducts = myProducts.length > 0
+  const { myFrameworks, industry } = useExecutiveModuleData()
+  const vendorDependency = useAssessmentStore((s) => s.vendorDependency)
+  const [seedCleared, setSeedCleared] = useState(false)
 
   const selectedItems = useMemo(
     () => (hasProducts ? resolveProductNames(myProducts) : []),
@@ -138,8 +144,12 @@ export const VendorScorecardBuilder: React.FC = () => {
     return initial
   })
 
-  // Which dimension is expanded
-  const [expandedDim, setExpandedDim] = useState<string | null>(null)
+  // Which dimension is expanded — open pqc-roadmap first when the user
+  // reports heavy vendor dependency (so they immediately see roadmap risk),
+  // otherwise let the user pick.
+  const [expandedDim, setExpandedDim] = useState<string | null>(
+    vendorDependency === 'heavy-vendor' ? 'pqc-roadmap' : null
+  )
 
   // Auto-initialize checked products when selectedItems change
   useEffect(() => {
@@ -277,8 +287,28 @@ export const VendorScorecardBuilder: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [weightedTotal])
 
+  const seedSources: string[] = []
+  if (!seedCleared) {
+    if (hasProducts)
+      seedSources.push(
+        `${myProducts.length} product${myProducts.length !== 1 ? 's' : ''} from /migrate`
+      )
+    if (industry) seedSources.push(`industry (${industry})`)
+    if (vendorDependency) seedSources.push(`vendor dependency (${vendorDependency})`)
+    if (myFrameworks.length > 0)
+      seedSources.push(
+        `${myFrameworks.length} framework${myFrameworks.length !== 1 ? 's' : ''} from /compliance`
+      )
+  }
+
   return (
     <div className="space-y-6">
+      {seedSources.length > 0 && (
+        <PreFilledBanner
+          summary={`Vendors and dimensions seeded from ${seedSources.join(' + ')}.`}
+          onClear={() => setSeedCleared(true)}
+        />
+      )}
       {/* Intro */}
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-sm text-foreground/80">

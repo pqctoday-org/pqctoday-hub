@@ -41,6 +41,13 @@ const mockData: ExecutiveModuleData = {
   algorithmMigrations: [],
   keyFindings: [],
   assessmentProfile: null,
+  myFrameworks: [],
+  myProductIds: [],
+  myProducts: [],
+  myThreatIds: [],
+  myThreats: [],
+  myTimelineCountries: [],
+  myTimelineCountryData: [],
   isAssessmentComplete: false,
   migrationDeadlineYear: 2035,
 }

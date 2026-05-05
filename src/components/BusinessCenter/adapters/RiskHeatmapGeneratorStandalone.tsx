@@ -4,6 +4,8 @@ import { Grid3X3 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { RiskHeatmapGenerator } from '@/components/PKILearning/modules/PQCRiskManagement/components/RiskHeatmapGenerator'
 import { useRiskRegisterStore, DEFAULT_RISK_ENTRIES } from '@/store/useRiskRegisterStore'
+import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 
 /**
  * Zero-prop wrapper around {@link RiskHeatmapGenerator} for the Command Center
@@ -16,6 +18,23 @@ export function RiskHeatmapGeneratorStandalone() {
   const riskEntries = useRiskRegisterStore((s) => s.riskEntries)
   const setRiskEntries = useRiskRegisterStore((s) => s.setRiskEntries)
   const navigate = useNavigate()
+  const { myFrameworks, myProducts, myThreats } = useExecutiveModuleData()
+  const seededFromAssessment =
+    riskEntries.length > 0 && riskEntries[0]?.id?.startsWith('assess-risk-')
+
+  const sources: string[] = []
+  if (seededFromAssessment) {
+    if (myProducts.length > 0)
+      sources.push(
+        `${myProducts.length} product${myProducts.length !== 1 ? 's' : ''} from /migrate`
+      )
+    if (myThreats.length > 0)
+      sources.push(`${myThreats.length} threat${myThreats.length !== 1 ? 's' : ''} from /threats`)
+    if (myFrameworks.length > 0)
+      sources.push(
+        `${myFrameworks.length} framework${myFrameworks.length !== 1 ? 's' : ''} from /compliance`
+      )
+  }
 
   if (riskEntries.length === 0) {
     return (
@@ -44,7 +63,17 @@ export function RiskHeatmapGeneratorStandalone() {
     )
   }
 
-  return <RiskHeatmapGenerator riskEntries={riskEntries} />
+  return (
+    <div className="space-y-3">
+      {seededFromAssessment && (
+        <PreFilledBanner
+          summary={`Heatmap reflects ${riskEntries.length} risk entr${riskEntries.length !== 1 ? 'ies' : 'y'} from your Risk Register${sources.length ? ` (seeded from ${sources.join(' + ')})` : ''}.`}
+          onClear={() => setRiskEntries(DEFAULT_RISK_ENTRIES)}
+        />
+      )}
+      <RiskHeatmapGenerator riskEntries={riskEntries} />
+    </div>
+  )
 }
 
 export default RiskHeatmapGeneratorStandalone

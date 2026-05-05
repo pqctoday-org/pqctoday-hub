@@ -5,6 +5,8 @@ import { ArtifactBuilder } from '../../../common/executive'
 import type { ArtifactSection } from '../../../common/executive'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { useAssessmentStore } from '@/store/useAssessmentStore'
+import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 
 const MODULE_ID = 'vendor-risk'
 
@@ -360,7 +362,9 @@ function renderContractPreview(data: Record<string, Record<string, string | stri
 
 export const ContractClauseGenerator: React.FC = () => {
   const { addExecutiveDocument } = useModuleStore()
-  const { industry, country } = useExecutiveModuleData()
+  const { industry, country, myFrameworks, myProducts, migrationDeadlineYear } =
+    useExecutiveModuleData()
+  const vendorDependency = useAssessmentStore((s) => s.vendorDependency)
 
   const handleExport = useCallback(
     (data: Record<string, Record<string, string | string[]>>) => {
@@ -377,8 +381,43 @@ export const ContractClauseGenerator: React.FC = () => {
     [addExecutiveDocument]
   )
 
+  const seedSources: string[] = []
+  if (industry) seedSources.push(`industry (${industry})`)
+  if (country) seedSources.push(`country (${country})`)
+  if (vendorDependency) seedSources.push(`vendor dependency (${vendorDependency})`)
+  if (myFrameworks.length > 0)
+    seedSources.push(
+      `${myFrameworks.length} framework${myFrameworks.length !== 1 ? 's' : ''} from /compliance`
+    )
+  if (myProducts.length > 0)
+    seedSources.push(
+      `${myProducts.length} vendor product${myProducts.length !== 1 ? 's' : ''} from /migrate`
+    )
+  if (migrationDeadlineYear) seedSources.push(`deadline ${migrationDeadlineYear} from /timeline`)
+
+  // Heavy / mixed vendor dependency → escalate severity guidance shown above
+  // the section editor so reviewers know to tighten penalty + termination
+  // clauses. (The clause sections themselves remain editable.)
+  const showHighSeverityHint = vendorDependency === 'heavy-vendor' || vendorDependency === 'mixed'
+
   return (
     <div className="space-y-6">
+      {seedSources.length > 0 && (
+        <PreFilledBanner
+          summary={`Contract scope informed by ${seedSources.join(' + ')}.`}
+          onClear={() => {
+            /* CONTRACT_SECTIONS are static — clear is informational */
+          }}
+        />
+      )}
+      {showHighSeverityHint && (
+        <div className="rounded-lg border border-status-warning/40 bg-status-warning/5 p-3 text-xs text-foreground/80">
+          <strong>High vendor exposure:</strong> your assessment reports{' '}
+          <span className="font-mono">{vendorDependency}</span> vendor dependency. Consider
+          tightening penalty caps, audit-rights frequency, and termination triggers in the clauses
+          below.
+        </div>
+      )}
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-sm text-foreground/80">
           Build PQC-ready contract clauses for vendor agreements

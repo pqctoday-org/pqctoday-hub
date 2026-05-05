@@ -2,6 +2,7 @@
 import React, { useState, useMemo, useCallback } from 'react'
 import { Clock, AlertTriangle, ShieldAlert, ShieldCheck, Calendar, TrendingUp } from 'lucide-react'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
 import { useModuleStore } from '@/store/useModuleStore'
 import { ExportableArtifact } from '../../../common/executive'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
@@ -102,8 +103,12 @@ const COMPLIANCE_DEADLINES = [
 ]
 
 export const CRQCScenarioPlanner: React.FC = () => {
-  const [crqcYear, setCrqcYear] = useState(2035)
-  const { migrationDeadlineYear, industry, country } = useExecutiveModuleData()
+  const { migrationDeadlineYear, industry, country, hndlRiskWindow } = useExecutiveModuleData()
+  // Derive a default CRQC year from the user's nearest framework deadline
+  // (deadline + 3-year buffer) — falls back to 2035 if no data.
+  const defaultCrqcYear = migrationDeadlineYear ? migrationDeadlineYear + 3 : 2035
+  const [crqcYear, setCrqcYear] = useState(defaultCrqcYear)
+  const [seedCleared, setSeedCleared] = useState(false)
   const { addExecutiveDocument } = useModuleStore()
   const myThreatIds = useBookmarkStore((s) => s.myThreats)
   const { data: threatsData } = useThreatsData()
@@ -111,6 +116,19 @@ export const CRQCScenarioPlanner: React.FC = () => {
     () => threatsData.filter((t) => myThreatIds.includes(t.threatId)),
     [myThreatIds, threatsData]
   )
+
+  const seedSources: string[] = []
+  if (!seedCleared) {
+    if (migrationDeadlineYear)
+      seedSources.push(`deadline ${migrationDeadlineYear} (CRQC default = +3y)`)
+    if (industry) seedSources.push(`industry (${industry})`)
+    if (country) seedSources.push(`country (${country})`)
+    if (hndlRiskWindow?.isAtRisk) seedSources.push('open HNDL window from assessment')
+    if (myTrackedThreats.length > 0)
+      seedSources.push(
+        `${myTrackedThreats.length} threat${myTrackedThreats.length !== 1 ? 's' : ''} from /threats`
+      )
+  }
 
   const currentYear = new Date().getFullYear()
 
@@ -234,6 +252,15 @@ export const CRQCScenarioPlanner: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {seedSources.length > 0 && (
+        <PreFilledBanner
+          summary={`Scenario seeded from ${seedSources.join(' + ')}.`}
+          onClear={() => {
+            setCrqcYear(2035)
+            setSeedCleared(true)
+          }}
+        />
+      )}
       {myTrackedThreats.length > 0 && (
         <div className="glass-panel p-3 border-l-4 border-status-warning">
           <div className="text-xs font-semibold text-foreground mb-1.5">
