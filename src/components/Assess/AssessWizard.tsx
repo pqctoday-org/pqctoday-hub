@@ -113,7 +113,7 @@ const ALL_STEPS = [
     key: 'migration',
     component: <Step6Migration />,
     canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
-      !!s.migrationStatus,
+      !!s.migrationStatus || s.migrationUnknown,
   },
   { key: 'use-cases', component: <Step7UseCases />, canProceed: () => true },
   {
@@ -138,14 +138,14 @@ const ALL_STEPS = [
     key: 'agility',
     component: <Step10CryptoAgility />,
     canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
-      !!s.cryptoAgility,
+      !!s.cryptoAgility || s.agilityUnknown,
   },
   { key: 'infra', component: <Step11Infrastructure />, canProceed: () => true },
   {
     key: 'timeline',
     component: <Step13TimelinePressure />,
     canProceed: (s: typeof useAssessmentStore extends { getState: () => infer R } ? R : never) =>
-      !!s.timelinePressure,
+      !!s.timelinePressure || s.timelineUnknown,
   },
 ] as const
 
