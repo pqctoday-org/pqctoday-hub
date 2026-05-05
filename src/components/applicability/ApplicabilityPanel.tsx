@@ -14,6 +14,10 @@ import { ProfileEditor } from './parts/ProfileEditor'
 import { ProfileSummary } from './parts/ProfileSummary'
 import { TIER_STYLES } from './parts/tierStyles'
 import { FrameworkItem, ThreatItem, LibraryDocItem, TimelineItem } from './parts/items'
+import type { LibraryItem } from '../../data/libraryData'
+import type { ThreatData } from '../../data/threatsData'
+import type { TimelineEvent } from '../../types/timeline'
+import type { ComplianceFramework } from '../../data/complianceData'
 
 type Variant = 'tab' | 'report-section' | 'summary-card'
 
@@ -23,6 +27,11 @@ interface ApplicabilityPanelProps {
   profileOverride?: Partial<UserProfile>
   /** Show the inline profile editor even when profile is non-empty. */
   alwaysShowProfileEditor?: boolean
+  /** When provided, items open an inline detail pane instead of navigating away. */
+  onSelectLibrary?: (item: LibraryItem) => void
+  onSelectThreat?: (item: ThreatData) => void
+  onSelectTimeline?: (item: TimelineEvent) => void
+  onSelectFramework?: (item: ComplianceFramework) => void
 }
 
 /**
@@ -36,6 +45,10 @@ export function ApplicabilityPanel({
   variant = 'tab',
   profileOverride,
   alwaysShowProfileEditor = false,
+  onSelectLibrary,
+  onSelectThreat,
+  onSelectTimeline,
+  onSelectFramework,
 }: ApplicabilityPanelProps) {
   const { profile, isEmpty, frameworks, library, threats, timeline, droppedCounts, lens } =
     useApplicability(profileOverride)
@@ -62,7 +75,9 @@ export function ApplicabilityPanel({
         title="Compliance Frameworks"
         results={frameworks}
         dropped={droppedCounts.frameworks}
-        renderItem={(r) => <FrameworkItem result={r} compact={isCompact} />}
+        renderItem={(r) => (
+          <FrameworkItem result={r} compact={isCompact} onSelect={onSelectFramework} />
+        )}
         compact={isCompact}
       />
     ),
@@ -73,7 +88,7 @@ export function ApplicabilityPanel({
         title="Threats"
         results={threats}
         dropped={droppedCounts.threats}
-        renderItem={(r) => <ThreatItem result={r} />}
+        renderItem={(r) => <ThreatItem result={r} onSelect={onSelectThreat} />}
         compact={isCompact}
       />
     ),
@@ -84,7 +99,7 @@ export function ApplicabilityPanel({
         title="Library — Standards & Specifications"
         results={library}
         dropped={droppedCounts.library}
-        renderItem={(r) => <LibraryDocItem result={r} />}
+        renderItem={(r) => <LibraryDocItem result={r} onSelect={onSelectLibrary} />}
         compact={isCompact}
       />
     ),
@@ -95,7 +110,7 @@ export function ApplicabilityPanel({
         title="Timeline Milestones"
         results={timeline}
         dropped={droppedCounts.timeline}
-        renderItem={(r) => <TimelineItem result={r} />}
+        renderItem={(r) => <TimelineItem result={r} onSelect={onSelectTimeline} />}
         compact={isCompact}
       />
     ),

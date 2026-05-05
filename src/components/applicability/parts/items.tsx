@@ -7,6 +7,7 @@ import type { ThreatData } from '../../../data/threatsData'
 import type { TimelineEvent } from '../../../types/timeline'
 import type { ApplicabilityResult, ApplicabilityTier } from '../../../utils/applicabilityEngine'
 import { TIER_STYLES } from './tierStyles'
+import { Button } from '../../ui/button'
 
 /**
  * Compact tier badge — used inline next to item titles when the tier needs
@@ -28,17 +29,16 @@ export function TierBadge({ tier }: { tier: ApplicabilityTier }) {
 export function FrameworkItem({
   result,
   compact,
+  onSelect,
 }: {
   result: ApplicabilityResult<ComplianceFramework>
   compact: boolean
+  onSelect?: (item: ComplianceFramework) => void
 }) {
   const fw = result.item
-  return (
-    <Link
-      to={`/compliance?framework=${encodeURIComponent(fw.id)}`}
-      className="flex items-start gap-2 py-1 px-2 -mx-2 rounded hover:bg-muted/40 transition-colors"
-      title={result.reason}
-    >
+  const cls = 'flex items-start gap-2 py-1 px-2 -mx-2 rounded hover:bg-muted/40 transition-colors'
+  const content = (
+    <>
       <ShieldCheck size={14} className="text-primary mt-0.5 shrink-0" aria-hidden="true" />
       <div className="flex-1 min-w-0">
         <div className="flex flex-wrap items-center gap-1.5">
@@ -52,18 +52,42 @@ export function FrameworkItem({
         </div>
         {!compact && <p className="text-xs text-muted-foreground line-clamp-1">{fw.description}</p>}
       </div>
+    </>
+  )
+  if (onSelect)
+    return (
+      <Button
+        type="button"
+        variant="ghost"
+        onClick={() => onSelect(fw)}
+        className={`${cls} h-auto text-left w-full`}
+        title={result.reason}
+      >
+        {content}
+      </Button>
+    )
+  return (
+    <Link
+      to={`/compliance?framework=${encodeURIComponent(fw.id)}`}
+      className={cls}
+      title={result.reason}
+    >
+      {content}
     </Link>
   )
 }
 
-export function ThreatItem({ result }: { result: ApplicabilityResult<ThreatData> }) {
+export function ThreatItem({
+  result,
+  onSelect,
+}: {
+  result: ApplicabilityResult<ThreatData>
+  onSelect?: (item: ThreatData) => void
+}) {
   const t = result.item
-  return (
-    <Link
-      to={`/threats?id=${encodeURIComponent(t.threatId)}`}
-      className="flex items-start gap-2 py-1 px-2 -mx-2 rounded hover:bg-muted/40 transition-colors"
-      title={result.reason}
-    >
+  const cls = 'flex items-start gap-2 py-1 px-2 -mx-2 rounded hover:bg-muted/40 transition-colors'
+  const content = (
+    <>
       <AlertTriangle size={14} className="text-status-warning mt-0.5 shrink-0" aria-hidden="true" />
       <div className="flex-1 min-w-0">
         <div className="flex flex-wrap items-center gap-1.5">
@@ -72,18 +96,42 @@ export function ThreatItem({ result }: { result: ApplicabilityResult<ThreatData>
         </div>
         <p className="text-xs text-muted-foreground line-clamp-1">{t.description}</p>
       </div>
+    </>
+  )
+  if (onSelect)
+    return (
+      <Button
+        type="button"
+        variant="ghost"
+        onClick={() => onSelect(t)}
+        className={`${cls} h-auto`}
+        title={result.reason}
+      >
+        {content}
+      </Button>
+    )
+  return (
+    <Link
+      to={`/threats?id=${encodeURIComponent(t.threatId)}`}
+      className={cls}
+      title={result.reason}
+    >
+      {content}
     </Link>
   )
 }
 
-export function LibraryDocItem({ result }: { result: ApplicabilityResult<LibraryItem> }) {
+export function LibraryDocItem({
+  result,
+  onSelect,
+}: {
+  result: ApplicabilityResult<LibraryItem>
+  onSelect?: (item: LibraryItem) => void
+}) {
   const doc = result.item
-  return (
-    <Link
-      to={`/library?ref=${encodeURIComponent(doc.referenceId)}`}
-      className="flex items-start gap-2 py-1 px-2 -mx-2 rounded hover:bg-muted/40 transition-colors"
-      title={result.reason}
-    >
+  const cls = 'flex items-start gap-2 py-1 px-2 -mx-2 rounded hover:bg-muted/40 transition-colors'
+  const content = (
+    <>
       <BookOpen size={14} className="text-secondary mt-0.5 shrink-0" aria-hidden="true" />
       <div className="flex-1 min-w-0">
         <div className="flex flex-wrap items-center gap-1.5">
@@ -95,18 +143,42 @@ export function LibraryDocItem({ result }: { result: ApplicabilityResult<Library
           <p className="text-xs text-muted-foreground line-clamp-1">{doc.authorsOrOrganization}</p>
         )}
       </div>
+    </>
+  )
+  if (onSelect)
+    return (
+      <Button
+        type="button"
+        variant="ghost"
+        onClick={() => onSelect(doc)}
+        className={`${cls} h-auto`}
+        title={result.reason}
+      >
+        {content}
+      </Button>
+    )
+  return (
+    <Link
+      to={`/library?ref=${encodeURIComponent(doc.referenceId)}`}
+      className={cls}
+      title={result.reason}
+    >
+      {content}
     </Link>
   )
 }
 
-export function TimelineItem({ result }: { result: ApplicabilityResult<TimelineEvent> }) {
+export function TimelineItem({
+  result,
+  onSelect,
+}: {
+  result: ApplicabilityResult<TimelineEvent>
+  onSelect?: (item: TimelineEvent) => void
+}) {
   const ev = result.item
-  return (
-    <Link
-      to={`/timeline?country=${encodeURIComponent(ev.countryName)}`}
-      className="flex items-start gap-2 py-1 px-2 -mx-2 rounded hover:bg-muted/40 transition-colors"
-      title={result.reason}
-    >
+  const cls = 'flex items-start gap-2 py-1 px-2 -mx-2 rounded hover:bg-muted/40 transition-colors'
+  const content = (
+    <>
       <Calendar size={14} className="text-status-info mt-0.5 shrink-0" aria-hidden="true" />
       <div className="flex-1 min-w-0">
         <div className="flex flex-wrap items-center gap-1.5">
@@ -120,6 +192,27 @@ export function TimelineItem({ result }: { result: ApplicabilityResult<TimelineE
           {ev.orgName} — {ev.countryName}
         </p>
       </div>
+    </>
+  )
+  if (onSelect)
+    return (
+      <Button
+        type="button"
+        variant="ghost"
+        onClick={() => onSelect(ev)}
+        className={`${cls} h-auto`}
+        title={result.reason}
+      >
+        {content}
+      </Button>
+    )
+  return (
+    <Link
+      to={`/timeline?country=${encodeURIComponent(ev.countryName)}`}
+      className={cls}
+      title={result.reason}
+    >
+      {content}
     </Link>
   )
 }

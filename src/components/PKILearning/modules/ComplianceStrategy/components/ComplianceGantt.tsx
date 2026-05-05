@@ -420,7 +420,11 @@ export const ComplianceGantt: React.FC<ComplianceGanttProps> = ({
         <div className="flex flex-wrap gap-3 px-1">
           {presentPhases.map((phase) => {
             // eslint-disable-next-line security/detect-object-injection
-            const colors = phaseColors[phase]
+            const colors = phaseColors[phase] ?? {
+              start: 'hsl(var(--muted-foreground))',
+              end: 'hsl(var(--muted))',
+              glow: 'hsl(var(--ring))',
+            }
             return (
               <div key={phase} className="flex items-center gap-1.5">
                 <div

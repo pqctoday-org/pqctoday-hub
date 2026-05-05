@@ -19,6 +19,7 @@ import {
   BookmarkCheck,
   Bookmark,
   Award,
+  Globe,
 } from 'lucide-react'
 import {
   complianceFrameworks,
@@ -170,7 +171,13 @@ function yearLeftPercent(year: number): number {
   return ((clamped - TIMELINE_START) / TIMELINE_SPAN) * 100
 }
 
-export function DeadlineTimeline({ frameworks }: { frameworks: ComplianceFramework[] }) {
+export function DeadlineTimeline({
+  frameworks,
+  label,
+}: {
+  frameworks: ComplianceFramework[]
+  label?: string
+}) {
   const withDeadlines = frameworks.filter((f) => extractYear(f.deadline) !== null)
   const years = Array.from({ length: TIMELINE_SPAN + 1 }, (_, i) => TIMELINE_START + i)
 
@@ -191,7 +198,15 @@ export function DeadlineTimeline({ frameworks }: { frameworks: ComplianceFramewo
 
   return (
     <div className="glass-panel p-4 space-y-3">
-      <h3 className="text-sm font-semibold text-foreground">PQC Compliance Deadlines</h3>
+      <div className="flex items-center gap-2">
+        <h3 className="text-sm font-semibold text-foreground">PQC Compliance Deadlines</h3>
+        {label && (
+          <span className="inline-flex items-center gap-1 text-xs text-muted-foreground border border-border rounded-full px-2 py-0.5">
+            <Globe size={10} aria-hidden="true" />
+            {label}
+          </span>
+        )}
+      </div>
       <div className="relative overflow-x-auto">
         {/* px-3 keeps edge dots (2024 / 2036) fully visible inside the overflow container. */}
         <div className="min-w-[480px] px-3">

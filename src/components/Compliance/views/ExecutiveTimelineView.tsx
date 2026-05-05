@@ -13,10 +13,19 @@ import { ThreatItem, LibraryDocItem, TimelineItem } from '../../applicability/pa
 import { RegulatoryClock } from './parts/RegulatoryClock'
 import { FrameworkDeadlineCard } from './parts/FrameworkDeadlineCard'
 import { NextDecisionCard } from './parts/NextDecisionCard'
+import type { LibraryItem } from '../../../data/libraryData'
+import type { ThreatData } from '../../../data/threatsData'
+import type { TimelineEvent } from '../../../types/timeline'
+import type { ComplianceFramework } from '../../../data/complianceData'
 
 interface ExecutiveTimelineViewProps {
   /** Override the ambient profile — used for `?country=X&ind=Y` workshop deep-links. */
   profileOverride?: Partial<UserProfile>
+  /** When provided, items open an inline detail pane instead of navigating away. */
+  onSelectLibrary?: (item: LibraryItem) => void
+  onSelectThreat?: (item: ThreatData) => void
+  onSelectTimeline?: (item: TimelineEvent) => void
+  onSelectFramework?: (item: ComplianceFramework) => void
 }
 
 /**
@@ -33,7 +42,13 @@ interface ExecutiveTimelineViewProps {
  *      - Right (1/3): top-5 sector threats, top-3 library docs, top-5 industry
  *        events (cross-framework timeline events)
  */
-export function ExecutiveTimelineView({ profileOverride }: ExecutiveTimelineViewProps) {
+export function ExecutiveTimelineView({
+  profileOverride,
+  onSelectLibrary,
+  onSelectThreat,
+  onSelectTimeline,
+  onSelectFramework,
+}: ExecutiveTimelineViewProps) {
   const { profile, isEmpty, frameworks, library, threats, timeline } =
     useApplicability(profileOverride)
 
@@ -80,6 +95,8 @@ export function ExecutiveTimelineView({ profileOverride }: ExecutiveTimelineView
             sectionId="frameworks-mandatory"
             frameworks={mandatory}
             linkedEvents={linkedTimeline.byFrameworkId}
+            onSelectTimeline={onSelectTimeline}
+            onSelectFramework={onSelectFramework}
             emptyText="No domestic regulator framework matched — your country may not author its own PQC mandate yet."
           />
           <FrameworkSection
@@ -87,18 +104,24 @@ export function ExecutiveTimelineView({ profileOverride }: ExecutiveTimelineView
             sectionId="frameworks-recognized"
             frameworks={recognized}
             linkedEvents={linkedTimeline.byFrameworkId}
+            onSelectTimeline={onSelectTimeline}
+            onSelectFramework={onSelectFramework}
           />
           <FrameworkSection
             title="Cross-border"
             sectionId="frameworks-crossborder"
             frameworks={crossBorder}
             linkedEvents={linkedTimeline.byFrameworkId}
+            onSelectTimeline={onSelectTimeline}
+            onSelectFramework={onSelectFramework}
           />
           <FrameworkSection
             title="Advisory"
             sectionId="frameworks-advisory"
             frameworks={advisory}
             linkedEvents={linkedTimeline.byFrameworkId}
+            onSelectTimeline={onSelectTimeline}
+            onSelectFramework={onSelectFramework}
           />
 
           <div data-section-id="next-decision" className="scroll-mt-20">
@@ -118,7 +141,7 @@ export function ExecutiveTimelineView({ profileOverride }: ExecutiveTimelineView
             <ul className="space-y-1">
               {threats.map((r, i) => (
                 <li key={i}>
-                  <ThreatItem result={r} />
+                  <ThreatItem result={r} onSelect={onSelectThreat} />
                 </li>
               ))}
             </ul>
@@ -134,7 +157,7 @@ export function ExecutiveTimelineView({ profileOverride }: ExecutiveTimelineView
             <ul className="space-y-1">
               {library.map((r, i) => (
                 <li key={i}>
-                  <LibraryDocItem result={r} />
+                  <LibraryDocItem result={r} onSelect={onSelectLibrary} />
                 </li>
               ))}
             </ul>
@@ -150,7 +173,7 @@ export function ExecutiveTimelineView({ profileOverride }: ExecutiveTimelineView
             <ul className="space-y-1">
               {industryEvents.map((r, i) => (
                 <li key={i}>
-                  <TimelineItem result={r} />
+                  <TimelineItem result={r} onSelect={onSelectTimeline} />
                 </li>
               ))}
             </ul>
@@ -176,6 +199,8 @@ interface FrameworkSectionProps {
     >[]
   >
   emptyText?: string
+  onSelectTimeline?: (item: TimelineEvent) => void
+  onSelectFramework?: (item: ComplianceFramework) => void
 }
 
 function FrameworkSection({
@@ -184,6 +209,8 @@ function FrameworkSection({
   frameworks,
   linkedEvents,
   emptyText,
+  onSelectTimeline,
+  onSelectFramework,
 }: FrameworkSectionProps) {
   if (frameworks.length === 0) {
     if (!emptyText) return null
@@ -207,6 +234,8 @@ function FrameworkSection({
           key={r.item.id}
           result={r}
           events={linkedEvents.get(r.item.id) ?? []}
+          onSelectTimeline={onSelectTimeline}
+          onSelectFramework={onSelectFramework}
         />
       ))}
     </div>

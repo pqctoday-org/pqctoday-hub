@@ -29,6 +29,18 @@ import { CSWP39Explorer } from './CSWP39Explorer'
 import { MoreTabsMenu } from './MoreTabsMenu'
 import { ApplicabilityPanel } from '../applicability/ApplicabilityPanel'
 import { ExecutiveTimelineView } from './views/ExecutiveTimelineView'
+import { LibraryDetailPopover } from '@/components/Library/LibraryDetailPopover'
+import { ThreatDetailDialog } from '@/components/Threats/ThreatDetailDialog'
+import {
+  TimelineDocumentDetailPopover,
+  type TimelineDocumentRow,
+} from '@/components/Timeline/TimelineDocumentDetailPopover'
+import { FrameworkDetailPopover } from '@/components/Compliance/FrameworkDetailPopover'
+import type { LibraryItem } from '@/data/libraryData'
+import type { ThreatData } from '@/data/threatsData'
+import type { TimelineEvent } from '@/types/timeline'
+import type { ComplianceFramework } from '@/data/complianceData'
+import { useApplicability } from '@/hooks/useApplicability'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { logComplianceFilter } from '../../utils/analytics'
 import { PageHeader } from '../common/PageHeader'
@@ -241,6 +253,22 @@ type MobileSection =
   | 'records'
   | 'cswp39'
 
+function timelineEventToRow(ev: TimelineEvent): TimelineDocumentRow {
+  return {
+    countryName: ev.countryName,
+    org: ev.orgName,
+    phase: ev.phase,
+    type: ev.type,
+    title: ev.title,
+    startYear: ev.startYear,
+    endYear: ev.endYear,
+    description: ev.description,
+    sourceUrl: ev.sourceUrl,
+    sourceDate: ev.sourceDate,
+    status: ev.status,
+  }
+}
+
 /**
  * Resolves the For-You tab content per persona — executives get the
  * dramatized ExecutiveTimelineView with a regulatory clock + framework cards
@@ -262,10 +290,54 @@ function ForYouSection({
     country: landscapeProps.countryFilter !== 'All' ? landscapeProps.countryFilter : undefined,
     industry: landscapeProps.industryFilter !== 'All' ? landscapeProps.industryFilter : undefined,
   }
-  if (persona === 'executive') {
-    return <ExecutiveTimelineView profileOverride={profileOverride} />
+
+  const [selectedLibrary, setSelectedLibrary] = useState<LibraryItem | null>(null)
+  const [selectedThreat, setSelectedThreat] = useState<ThreatData | null>(null)
+  const [selectedTimeline, setSelectedTimeline] = useState<TimelineDocumentRow | null>(null)
+  const [selectedFramework, setSelectedFramework] = useState<ComplianceFramework | null>(null)
+
+  const callbacks = {
+    onSelectLibrary: setSelectedLibrary,
+    onSelectThreat: setSelectedThreat,
+    onSelectTimeline: (ev: TimelineEvent) => setSelectedTimeline(timelineEventToRow(ev)),
+    onSelectFramework: setSelectedFramework,
   }
-  return <ApplicabilityPanel variant="tab" profileOverride={profileOverride} />
+
+  return (
+    <>
+      {persona === 'executive' ? (
+        <ExecutiveTimelineView profileOverride={profileOverride} {...callbacks} />
+      ) : (
+        <ApplicabilityPanel variant="tab" profileOverride={profileOverride} {...callbacks} />
+      )}
+      <LibraryDetailPopover
+        isOpen={!!selectedLibrary}
+        onClose={() => setSelectedLibrary(null)}
+        item={selectedLibrary}
+      />
+      {selectedThreat && (
+        <ThreatDetailDialog threat={selectedThreat} onClose={() => setSelectedThreat(null)} />
+      )}
+      <TimelineDocumentDetailPopover
+        isOpen={!!selectedTimeline}
+        onClose={() => setSelectedTimeline(null)}
+        row={selectedTimeline}
+      />
+      <FrameworkDetailPopover
+        isOpen={!!selectedFramework}
+        onClose={() => setSelectedFramework(null)}
+        framework={selectedFramework}
+        onSelectLibrary={(doc) => {
+          setSelectedFramework(null)
+          setSelectedLibrary(doc)
+        }}
+        onSelectTimeline={(ev) => {
+          setSelectedFramework(null)
+          setSelectedTimeline(timelineEventToRow(ev))
+        }}
+      />
+    </>
+  )
 }
 
 function MobileViewToggle({
@@ -635,6 +707,29 @@ export const ComplianceView = () => {
   const [lsView, setLsView] = useState<ViewMode>(
     () => (searchParams.get('view') as ViewMode | null) ?? 'cards'
   )
+
+  // Resolve effective For-You profile for the country-specific DeadlineTimeline.
+  const forYouProfileOverride = useMemo(
+    () => ({
+      country: lsCountry !== 'All' ? lsCountry : undefined,
+      industry: lsIndustry !== 'All' ? lsIndustry : undefined,
+    }),
+    [lsCountry, lsIndustry]
+  )
+  const { profile: forYouProfile } = useApplicability(forYouProfileOverride)
+
+  const deadlineTimelineFrameworks = useMemo(() => {
+    if (activeTab !== 'foryou' || !forYouProfile.country) return complianceFrameworks
+    const filtered = complianceFrameworks.filter((f) =>
+      f.countries.includes(forYouProfile.country!)
+    )
+    return filtered.length > 0 ? filtered : complianceFrameworks
+  }, [activeTab, forYouProfile.country])
+
+  const deadlineTimelineLabel =
+    activeTab === 'foryou' && forYouProfile.country
+      ? `${forYouProfile.country} deadlines`
+      : undefined
 
   // Records filter state
   const [rtab, setRtab] = useState(() => searchParams.get('rtab') ?? 'all')
@@ -1182,11 +1277,10 @@ export const ComplianceView = () => {
         </div>
       )}
 
-      {/* Global PQC deadline timeline — always visible on /compliance (desktop).
-          Renders across ALL frameworks with parseable deadlines so the big
-          picture is immediately legible regardless of which sub-tab is active. */}
+      {/* PQC deadline timeline — desktop only. Shows all frameworks normally; when the
+          For You tab is active with a resolved country, filters to that country's deadlines. */}
       <div className="hidden md:block">
-        <DeadlineTimeline frameworks={complianceFrameworks} />
+        <DeadlineTimeline frameworks={deadlineTimelineFrameworks} label={deadlineTimelineLabel} />
       </div>
 
       {/* Jump-back banner — visible after clicking a CSWP.39 chip that landed on another tab */}

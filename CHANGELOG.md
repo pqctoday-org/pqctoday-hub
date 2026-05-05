@@ -8,6 +8,33 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **Compliance For You tab — inline detail panes for resources** — clicking
+  a library doc, threat, timeline event, embedded framework event, or framework
+  card in the For You tab now opens the corresponding detail modal in place
+  instead of navigating away to `/library`, `/threats`, `/timeline`, or
+  `/compliance?framework=…`. Reuses the existing `LibraryDetailPopover`,
+  `ThreatDetailDialog`, and `TimelineDocumentDetailPopover` modals. Adds a new
+  `FrameworkDetailPopover` showing framework metadata + clickable cross-links
+  to referenced library docs and timeline events (each opens its own detail
+  modal, replacing the framework one). The user stays on the For You tab
+  throughout. Item components (`ThreatItem`, `LibraryDocItem`, `TimelineItem`,
+  `FrameworkItem`, plus embedded year/title rows inside `FrameworkDeadlineCard`)
+  accept an optional `onSelect` callback — when supplied they render as a
+  `<button>`; when absent they keep the existing `<Link>` navigation, so the
+  assessment report and command-center summary card are unaffected. Wired for
+  both executive (`ExecutiveTimelineView`) and non-executive
+  (`ApplicabilityPanel`) personas. (`ComplianceView.tsx`,
+  `ApplicabilityPanel.tsx`, `ExecutiveTimelineView.tsx`,
+  `FrameworkDeadlineCard.tsx`, `applicability/parts/items.tsx`,
+  `FrameworkDetailPopover.tsx`)
+- **Country-specific deadline timeline on For You tab** — the top
+  `DeadlineTimeline` bar now filters to the resolved country's frameworks
+  whenever the For You tab is active and shows a `[Country] deadlines` pill
+  next to the title; on every other tab it reverts to the consolidated
+  all-frameworks view. Country is resolved through `useApplicability` so the
+  URL filter (`?country=…`) wins, falling back to the user's assessment-store
+  profile. Optional `label` prop added to `DeadlineTimeline`.
+  (`ComplianceView.tsx`, `ComplianceLandscape.tsx`)
 - **`pqctoday-tpm` listed in About SBOM** — added to the Cryptography & PQC
   section alongside softhsmv3, with link to the public repo
   (`pqctoday-org/pqctoday-tpm`), BSD-3-Clause license, version v0.3.0, and
@@ -17,6 +44,15 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- **Command Center crash opening Compliance Timeline artifact under
+  `/business#zone-governance`** — `ComplianceGantt`'s phase-legend path looked
+  up `phaseColors[phase]` without a fallback and unconditionally read
+  `colors.start` / `colors.glow`, throwing "Cannot read properties of undefined
+  (reading 'start')" whenever `presentPhases` contained a value not in the
+  canonical color map (e.g. legacy CSV phase or a phase added without a
+  matching color entry). The cell-rendering path on line 132 already had the
+  defensive fallback; ported it to the legend path on line 423. Pre-existing
+  bug, surfaced by the user opening the artifact. (`ComplianceGantt.tsx`)
 - **PQC 101 phantom "Hands-on 5/5" caption** in generic-overview's
   `p-learn-pqc101` step — the Workshop tab only has 4 hands-on steps but
   the captions claimed 5 with stale labels ("Why Pqc / Whats Changing /
