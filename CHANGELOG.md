@@ -110,63 +110,52 @@ All notable changes to this project will be documented in this file.
 
 ### Data
 
-- **May 4 accuracy & completeness data audit** — full cross-checked audit of
-  all active CSVs; 7 new dated files written per `CSVmaintenance.md` rules:
-  - `timeline_05042026.csv` (230 rows): deleted the unsupported NXP/PQShield
-    Quantum-Safe Secure Element Pilot entry; corrected IBM Kookaburra and IBM
-    Quantum Advantage `Type` from `Milestone` → `Phase`; appended IPD2 note
-    to the NIST IR 8547 IPD1 description; inserted OpenSSL 3.5.0 native PQC
-    milestone (April 2025) and NIST IR 8547 IPD2 event (April 2026);
-    backfilled `trusted_source_id` for 161 rows via OrgName→source mapping.
-  - `quantum_threats_hsm_industries_05042026.csv` (112 rows): renamed
-    IOT-005 `industry` from `Internet of Things` → `Internet of Things (IoT)`;
-    updated CROSS-002 to reference IPD2 (April 2026); added probabilistic
-    correction note to CROSS-004 (GRI survey framing); inserted IT-006
-    (AI-assisted lattice-reduction / BKZ cryptanalysis acceleration threat)
-    and HSM-002 (ML-KEM/ML-DSA key-size incompatibility with pre-2024
-    PKCS#11 firmware); backfilled `trusted_source_id` for 65 rows.
-  - `library_05042026_r3.csv` (517 rows): deleted `draft-josefsson-ntruprime-ssh`
-    (abandoned 2022, IETF expired Feb 2025); corrected FIPS 203/204/205
-    `last_update_date` (2026-04-12 was a data artifact — reset to actual NIST
-    publication dates); updated NIST IR 8547 `download_url` to IPD2 PDF;
-    annotated 7 expired IETF drafts with current status; refreshed
-    `OpenSSL-3x-Docs` date and description; inserted `OpenSSL-3.5.0-Release`
-    (April 2025 — first native PQC release) and `NIST-IR-8547-IPD2`
-    companion record preserving IPD1 provenance; backfilled `trusted_source_id`
-    for 275 rows.
-  - `pqc_product_catalog_05042026.csv` (744 rows): corrected `android-16`
-    `pqc_support` (ACVP ML-DSA/ML-KEM/SLH-DSA claims belong to android-17-pqc
-    which already exists as VALIDATED); set `thales-payshield-10k` to
-    `Unknown` (no public PQC roadmap found); clarified `filevault-macos`
-    scope (AES-256-XTS is quantum-resistant, not a PQC migration target);
-    flagged `mavenir-cloud-ran` as simulation-only; fixed `crucible` identity
-    (SymbolicSoft conformance harness, not Atlassian Crucible); standardized
-    25 `Hardware Security and Semiconductors` entries to `Hardware Security &
-Semiconductors`; inserted `openssl-3-5-0`; backfilled `trusted_source_id`
-    for 148 rows.
-  - `pqc_authoritative_sources_reference_05042026.csv` (92 rows): enabled
-    `Timeline_CSV`, `Threats_CSV`, `Library_CSV`, and/or `Migrate_CSV` flags
-    for NSA, CISA, BSI, NCSC UK, ANSSI, and ENISA (were all blank despite
-    being primary data sources); removed trailing blank row.
-  - `algorithms_transitions_05042026.csv` (97 rows): updated 10 HQC rows to
-    `NIST Round 4 Selection`, 8 FN-DSA rows to `FIPS 206 (Draft)`, and 4
-    KpqC rows to `KpqC Selected` (all were incorrectly `Candidate`).
-  - `trusted_sources_05042026.csv` (216 rows): added 16 missing registry
-    entries (`google-quantum-ai`, `oasis-open`, `etsi`, `nzism`, `w3c`,
-    `dod-cio`, `ibm-ibv`, `deloitte`, `forrester`, `sectigo`,
-    `microsoft-security`, `applied-quantum`, `charter-of-trust`,
-    `cambridge-jbs`, `meta-engineering`, `infosec-global`) to resolve FK
-    violations flagged by the data integrity validator.
-  - `rag-corpus.json` regenerated to pick up all 7 CSV refreshes.
-- **Compliance CSV** rolled to `compliance_05032026_r2.csv` (May 3
-  revision 2 — kept alongside `compliance_05032026.csv` per the 2-file
-  retention rule in `CSVmaintenance.md`).
-- **Library CSV** new `library_05042026.csv` + `library_05042026_r2.csv`
-  (May 4 base + revision 2).
-- **Library doc enrichments** for May 4 — 4 documents enriched via
-  `qwen3.6:27b` (`library_doc_enrichments_05042026.md`).
-- **`rag-corpus.json` regenerated** to pick up the new compliance and
-  library CSV revisions.
+- **May 4 data accuracy refresh** — full audit of all data sources against
+  trusted references. Changes users will see across the app:
+
+  **Timeline** — OpenSSL 3.5.0 (April 2025) added as the milestone when
+  ML-KEM, ML-DSA, and SLH-DSA first shipped natively in the world's most
+  widely used TLS library. NIST IR 8547 IPD2 (April 2026) added as a separate
+  event. IBM Kookaburra and IBM Quantum Advantage correctly reclassified as
+  forward-looking roadmap targets rather than completed milestones. One
+  unverified entry removed (NXP/PQShield pilot — cited source did not support
+  the claim). Source attribution improved across the full timeline.
+
+  **Threats** — Two new threats added: _AI-assisted cryptanalysis_ (emerging
+  ML models that accelerate lattice-reduction attacks, potentially reducing
+  security margins of ML-KEM-512 before a quantum computer exists) and _HSM
+  key-size incompatibility_ (ML-KEM and ML-DSA keys are far larger than RSA
+  keys — legacy HSM firmware buffer limits can block deployment). NIST IR 8547
+  migration guidance updated to reference the April 2026 IPD2 revision.
+
+  **Library** — OpenSSL 3.5.0 release notes added as a reference document.
+  NIST IR 8547 now links to the April 2026 IPD2 PDF. FIPS 203, 204, and 205
+  publication dates corrected (a data artifact had incorrectly set them to
+  April 2026). Seven IETF drafts annotated with current expiry/status. One
+  abandoned draft (NTRU Prime SSH, last updated 2022) removed.
+
+  **Migrate** — Android 16 PQC support correctly scoped to Chrome/WebView
+  TLS only (platform-level ML-DSA Keystore support is Android 17, which is
+  already a separate entry). Thales payShield 10K status changed to Unknown —
+  no public PQC roadmap exists for the payment HSM product line. FileVault
+  clarified as not a PQC migration target — AES-256-XTS disk encryption is
+  already quantum-resistant. Mavenir Cloud RAN flagged as simulation-only.
+  OpenSSL 3.5.0 added as a product entry. Hardware category labels
+  standardised across all entries.
+
+  **Algorithms** — HQC correctly shows "NIST Round 4 Selection" (not
+  "Candidate"). FN-DSA (Falcon) correctly shows "FIPS 206 (Draft)". KpqC
+  algorithms correctly show "KpqC Selected" for the Korean standard.
+
+  **Sources panel** — NSA, CISA, BSI, NCSC UK, ANSSI, and ENISA now appear
+  in the Sources panel on Timeline, Threats, and Library views (their flags
+  were previously left blank despite being primary data contributors).
+
+- **OpenSSL 3.5.0 enriched** — full AI-assisted enrichment added for the
+  new OpenSSL 3.5.0 library entry, covering TLS hybrid key exchange, FIPS
+  140-3 compliance context, implementation prerequisites, and known security
+  patches in the 3.5.x series.
+- **RAG search index regenerated** (9,867 chunks) to reflect all data updates.
 
 ### Fixed
 
