@@ -131,3 +131,54 @@ enrichment_method: ollama-qwen3.6:27b
 - **Extraction Timestamp**: 2026-05-04T17:43:15
 
 ---
+
+---
+
+generated: 2026-05-04
+collection: library
+documents_processed: 1
+enrichment_method: ollama-qwen3.6:27b
+
+---
+
+## OpenSSL-3.5.0-Release
+
+- **Reference ID**: OpenSSL-3.5.0-Release
+- **Title**: OpenSSL 3.5.0 — First Release with Native Post-Quantum Cryptography
+- **Authors**: OpenSSL Project
+- **Publication Date**: 2025-04-29
+- **Last Updated**: 2025-04-29
+- **Document Status**: Released
+- **Main Topic**: OpenSSL 3.5.0 is the first release to include native support for ML-KEM, ML-DSA, SLH-DSA, and X25519MLKEM768 hybrid TLS without requiring the OQS provider.
+- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: OpenSSL
+- **Protocols Covered**: TLS, QUIC, X.509, CMS, S/MIME, DANE, CMP
+- **Infrastructure Layers**: PKI, Key Management
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: FIPS 140-3, FIPS 203, FIPS 204, FIPS 205
+- **Classical Algorithms Referenced**: RSA, EC, ECX, DH, X25519, AES-256-CBC, DES-EDE3-CBC, SM2, PBMAC1, OCB
+- **Key Takeaways**: OpenSSL 3.5.0 enables mainstream PQC adoption by natively supporting ML-KEM, ML-DSA, and SLH-DSA without the OQS provider; Default TLS configurations now prefer hybrid PQC KEM groups including X25519MLKEM768; The release introduces server-side QUIC support and improved TLS key establishment configurability; Security patch releases (3.5.1-3.5.6) address critical vulnerabilities in RSA KEM, CMS parsing, and PKCS#12 handling; FIPS provider updates include PCT on key generation and import for RSA, EC, and ECX.
+- **Security Levels & Parameters**: ML-KEM-768, X25519MLKEM768
+- **Hybrid & Transition Approaches**: Hybrid PQC KEM groups, X25519MLKEM768 hybrid TLS, multiple TLS keyshares
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer, Security Architect, Operations
+- **Implementation Prerequisites**: OpenSSL 3.5.0 or later; Configuration of no-tls-deprecated-ec option; FIPS provider configuration for jitter seed source
+- **Relevant PQC Today Features**: Algorithms, hybrid-crypto, tls-basics, migration-program
+- **Implementation Attack Surface**: Timing side-channel in SM2 algorithm; Use-after-free in DANE client code; NULL pointer dereference in delta CRL and CMS processing; Heap buffer overflow in hexadecimal conversion; Stack buffer overflow in CMS AuthEnvelopedData; Out-of-bounds read/write in RFC 3211 KEK Unwrap and HTTP client no_proxy handling; Improper validation of PBMAC1 parameters; Unauthenticated trailing bytes with OCB function calls
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Performance benchmarks; FIPS 140-3 PCT (Provider Self-Test) on key generation and import
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: JITTER seed source for FIPS provider
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Breaking changes in default encryption cipher (des-ede3-cbc to aes-256-cbc); Deprecated BIO*meth_get*\*() functions; Changes to default TLS supported groups and keyshares; Known issue with SSL_accept on objects from SSL_accept_connection requiring SSL_do_handshake
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: OpenSSL-3.5.0-Release.html (45,881 bytes, 7,447 extracted chars)
+- **Extraction Timestamp**: 2026-05-04T23:50:56
+
+---
