@@ -12,6 +12,7 @@ import { SubstationMigrationPlanner } from './workshop/SubstationMigrationPlanne
 import { SmartMeterKeyManager } from './workshop/SmartMeterKeyManager'
 import { SafetyRiskScorer } from './workshop/SafetyRiskScorer'
 import { GridMigrationRoadmap } from './workshop/GridMigrationRoadmap'
+import { RFMeshSimulator } from './workshop/RFMeshSimulator'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -68,6 +69,13 @@ const PARTS = [
     description:
       'Generate a utility-wide PQC migration roadmap with NERC CIP milestones and budget estimates.',
     icon: Map,
+  },
+  {
+    id: 'rf-mesh-simulator',
+    title: 'Step 6: RF Mesh Simulator',
+    description:
+      'Model the Time-on-Air and network saturation of 900MHz smart meter mesh networks under PQC payload loads.',
+    icon: Network,
   },
 ]
 
@@ -301,6 +309,7 @@ export const EnergyUtilitiesModule: React.FC = () => {
                   onComplete={handleStepComplete}
                 />
               )}
+              {currentPart === 5 && <RFMeshSimulator key={`rfmesh-${configKey}`} />}
             </div>
 
             {/* Step Navigation */}

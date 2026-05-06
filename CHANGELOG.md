@@ -64,6 +64,25 @@ All notable changes to this project will be documented in this file.
   - **NetworkSecurityPQC — Step 6 "Network Telemetry"**
     (`NetworkTelemetryAnalyzer`): analyze PQC certificate and handshake payload
     sizes against TCP `initcwnd` constraints and model fragmentation latency.
+- **3 new learn module workshop steps** — three additional modules each gain a
+  new interactive workshop step with a colocated math/engine utility and unit
+  tests:
+  - **AISecurityPQC — Step 8 "VRAM Sizing Guide"** (`VRAMSizingCalculator`,
+    `aiVramMath.ts`): model GPU VRAM overhead of terminating large PQC
+    cryptographic payloads at high-concurrency LLM inference endpoints; supports
+    NVIDIA L4 / A10G / A100 GPU profiles, Llama 3 8B and 70B model weights, and
+    classical / hybrid / pure-PQC crypto payload profiles.
+  - **EnergyUtilities — Step 6 "RF Mesh Simulator"** (`RFMeshSimulator`,
+    `rfMeshMath.ts`): model Time-on-Air and network saturation of 900 MHz
+    Wi-SUN smart meter mesh networks under PQC payload loads; compares daily
+    meter-read and firmware-update payloads for classical ECDSA vs pure-PQC
+    ML-DSA-87; surfaces mesh-collapse risk when ToA exceeds the 24 h reporting
+    window.
+  - **KmsPqc — Step 6 "AWS Policy Lab"** (`AwsKmsPolicyLab`,
+    `kmsPolicyEngine.ts`): write and validate an AWS KMS Key Policy JSON that
+    enforces Hybrid PQC TLS connections via `aws:tlsCipherSuites`; policy engine
+    checks for a Deny statement, correct action coverage, and a `_PQ`
+    cipher-suite condition.
 
 ### Changed
 

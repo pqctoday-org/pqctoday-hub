@@ -20,6 +20,7 @@ workshop_steps: 7
 - Agent-to-agent communication protocols (mTLS with PQC, message signing, session KEM)
 - Encryption at petabyte scale (hierarchical KMS, key counts, HNDL risk windows)
 - Privacy-preserving ML (FHE, MPC, federated learning, differential privacy)
+- GPU VRAM consumption modeling for high-concurrency PQC batch decryption (cuPQC) during LLM inference
 
 ## Workshop
 
@@ -30,6 +31,7 @@ workshop_steps: 7
 5. Agentic Commerce Simulator — Step through agent transaction flows with quantum overlay
 6. Agent-to-Agent Protocol — Design PQC communication protocols, compare bandwidth/latency
 7. Scale Encryption Planner — Calculate enterprise-scale PQC migration requirements
+8. VRAM Sizing Guide — Model the GPU VRAM overhead of terminating massive PQC payloads during LLM inference
 
 ## Key Standards
 

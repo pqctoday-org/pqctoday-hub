@@ -20,6 +20,7 @@ import { AgentAuthDesigner } from './workshop/AgentAuthDesigner'
 import { AgenticCommerceSimulator } from './workshop/AgenticCommerceSimulator'
 import { Agent2AgentProtocol } from './workshop/Agent2AgentProtocol'
 import { ScaleEncryptionPlanner } from './workshop/ScaleEncryptionPlanner'
+import { VRAMSizingCalculator } from './workshop/VRAMSizingCalculator'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -80,6 +81,13 @@ const PARTS = [
     description:
       'Calculate PQC migration requirements at enterprise scale — key counts, KMS ops, HNDL risk windows.',
     icon: Calculator,
+  },
+  {
+    id: 'vram-sizing-calculator',
+    title: 'Step 8: VRAM Sizing Guide',
+    description:
+      'Model the GPU VRAM overhead of terminating massive PQC cryptographic payloads for high-concurrency LLM inference endpoints.',
+    icon: Database,
   },
 ]
 
@@ -247,6 +255,7 @@ export const AISecurityPQCModule: React.FC = () => {
               {currentPart === 4 && <AgenticCommerceSimulator key={`acs-${configKey}`} />}
               {currentPart === 5 && <Agent2AgentProtocol key={`a2a-${configKey}`} />}
               {currentPart === 6 && <ScaleEncryptionPlanner key={`sep-${configKey}`} />}
+              {currentPart === 7 && <VRAMSizingCalculator key={`vram-${configKey}`} />}
             </div>
 
             {/* Part Navigation */}

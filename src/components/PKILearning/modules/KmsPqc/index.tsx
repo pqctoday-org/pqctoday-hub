@@ -10,6 +10,7 @@ import { HybridKeyWrapping } from './workshop/HybridKeyWrapping'
 import { KmsRotationPlanner } from './workshop/KmsRotationPlanner'
 import { KmipProtocolExplorer } from './workshop/KmipProtocolExplorer'
 import { KmsMigrationRunbook } from './workshop/KmsMigrationRunbook'
+import { AwsKmsPolicyLab } from './workshop/AwsKmsPolicyLab'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -54,6 +55,13 @@ const PARTS = [
     description:
       'Explore KMIP v2.1 operations, PQC key type mappings, and cross-provider key sync.',
     icon: Globe,
+  },
+  {
+    id: 'aws-policy-lab',
+    title: 'Step 6: AWS Policy Lab',
+    description:
+      'Write and validate an AWS KMS Key Policy that enforces Hybrid PQC TLS connections.',
+    icon: Lock,
   },
 ]
 
@@ -227,6 +235,7 @@ export const KmsPqcModule: React.FC = () => {
                   </div>
                 </>
               )}
+              {currentPart === 5 && <AwsKmsPolicyLab key={`aws-${configKey}`} />}
             </div>
 
             {/* Part Navigation */}
