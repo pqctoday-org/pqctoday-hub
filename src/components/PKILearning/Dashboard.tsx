@@ -22,6 +22,7 @@ import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { EmptyState } from '../ui/empty-state'
 import { FilterDropdown } from '../common/FilterDropdown'
+import { MODULE_TOPIC_SUMMARIES } from '../../data/moduleTopicSummaries'
 import { ModuleCard } from './ModuleCard'
 import { LearnViewToggle, type LearnViewMode } from './LearnViewToggle'
 import { LearnTrackStack } from './LearnTrackStack'
@@ -613,7 +614,12 @@ const ModuleTracksGrid = ({
       // In embed mode, WIP modules are never shown — accuracy over completeness
       if (isEmbedded && module.workInProgress) return false
       if (showOnlyLearnModules && !myLearnModules.includes(module.id)) return false
-      if (needle && !`${module.title} ${module.description}`.toLowerCase().includes(needle))
+      if (
+        needle &&
+        !`${module.title} ${module.description} ${MODULE_TOPIC_SUMMARIES[module.id] ?? ''}`
+          .toLowerCase()
+          .includes(needle)
+      )
         return false
       if (selectedTrack !== 'All' && track !== selectedTrack) return false
       if (selectedDifficulty !== 'All' && (module.difficulty ?? '') !== selectedDifficulty)
@@ -679,7 +685,13 @@ const ModuleTracksGrid = ({
       allModules
         .filter((m) => {
           if (showOnlyLearnModules && !myLearnModules.includes(m.id)) return false
-          if (needle && !`${m.title} ${m.description}`.toLowerCase().includes(needle)) return false
+          if (
+            needle &&
+            !`${m.title} ${m.description} ${MODULE_TOPIC_SUMMARIES[m.id] ?? ''}`
+              .toLowerCase()
+              .includes(needle)
+          )
+            return false
           if (selectedDifficulty !== 'All' && (m.difficulty ?? '') !== selectedDifficulty)
             return false
           if (selectedStatus !== 'All') {

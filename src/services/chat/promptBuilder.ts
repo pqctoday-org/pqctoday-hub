@@ -32,6 +32,7 @@ const ENTITY_CATEGORY_LABELS: Record<string, string> = {
   modules: 'Learning Modules',
   'module-content': 'Learning Modules',
   'module-summaries': 'Learning Modules',
+  'module-topic-summaries': 'Learning Modules',
   'document-enrichment': 'Document Analysis',
   'business-center': 'Business Planning Tools',
   'guided-tour': 'App Guides',
@@ -49,6 +50,7 @@ const SKIP_SOURCES = new Set([
   'modules',
   'module-content',
   'module-summaries',
+  'module-topic-summaries',
 ])
 
 /**

@@ -161,6 +161,7 @@ describe('usePageContext', () => {
         'modules',
         'module-content',
         'module-summaries',
+        'module-topic-summaries',
         'glossary',
         'quiz',
       ])
@@ -190,6 +191,7 @@ describe('usePageContext', () => {
         'modules',
         'module-content',
         'module-summaries',
+        'module-topic-summaries',
         'glossary',
         'algorithms',
       ])
@@ -484,6 +486,7 @@ describe('usePageContext', () => {
         'modules',
         'module-content',
         'module-summaries',
+        'module-topic-summaries',
         'glossary',
         'quiz',
       ])

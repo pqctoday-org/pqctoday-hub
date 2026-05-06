@@ -50,6 +50,7 @@ export function chunkToRoute(chunk: SearchChunk): string {
     case 'modules':
     case 'module-content':
     case 'module-summaries':
+    case 'module-topic-summaries':
     case 'module-curious':
     case 'module-qa': {
       const mod = (metadata?.moduleId as string | undefined) ?? ''
@@ -152,6 +153,7 @@ export const SOURCE_LABELS: Record<string, string> = {
   leaders: 'Leaders',
   'module-content': 'Learn',
   'module-summaries': 'Learn',
+  'module-topic-summaries': 'Learn',
   modules: 'Learn',
   'module-curious': 'Learn',
   'module-qa': 'Learn',

@@ -84,6 +84,7 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     threats: 1.5,
     'module-qa': 1.3,
     'module-summaries': 1.1,
+    'module-topic-summaries': 1.1,
     patents: 1.2,
     cswp39: 1.2,
     'governance-maturity': 1.1,

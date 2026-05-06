@@ -136,7 +136,14 @@ const PAGE_CONTEXTS: Record<string, Omit<PageContext, 'moduleId'>> = {
   },
   '/learn': {
     page: 'Learn',
-    relevantSources: ['modules', 'module-content', 'module-summaries', 'glossary', 'quiz'],
+    relevantSources: [
+      'modules',
+      'module-content',
+      'module-summaries',
+      'module-topic-summaries',
+      'glossary',
+      'quiz',
+    ],
     suggestedQuestions: [
       'What learning modules are available?',
       'Where should I start learning about PQC?',
@@ -583,6 +590,7 @@ export function usePageContext(): PageContext {
             'modules',
             'module-content',
             'module-summaries',
+            'module-topic-summaries',
             'glossary',
             'algorithms',
           ],
