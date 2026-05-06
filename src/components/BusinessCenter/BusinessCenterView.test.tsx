@@ -123,6 +123,12 @@ vi.mock('../../store/useMigrateSelectionStore', () => ({
 }))
 
 vi.mock('../../store/useMigrationWorkflowStore', () => ({
+  WORKFLOW_PHASES: [
+    { id: 'assess', label: 'Risk Assessment', description: '', route: '/assess' },
+    { id: 'comply', label: 'Compliance Review', description: '', route: '/compliance' },
+    { id: 'migrate', label: 'Product Selection', description: '', route: '/migrate' },
+    { id: 'timeline', label: 'Timeline Review', description: '', route: '/timeline' },
+  ],
   useMigrationWorkflowStore: (selector?: (s: Record<string, unknown>) => unknown) => {
     const state = {
       workflowActive: false,
@@ -135,19 +141,19 @@ vi.mock('../../store/useMigrationWorkflowStore', () => ({
   },
 }))
 
+const mockPersonaStore = {
+  selectedPersona: 'executive' as string | null,
+  selectedRegion: 'global',
+  selectedIndustry: '',
+  selectedIndustries: [],
+  experienceLevel: 'curious' as string | null,
+  hasSeenPersonaPicker: true,
+  suppressSuggestion: true,
+}
+
 vi.mock('../../store/usePersonaStore', () => ({
-  usePersonaStore: (selector?: (s: Record<string, unknown>) => unknown) => {
-    const state = {
-      selectedPersona: 'executive',
-      selectedRegion: 'global',
-      selectedIndustry: '',
-      selectedIndustries: [],
-      experienceLevel: 'curious',
-      hasSeenPersonaPicker: true,
-      suppressSuggestion: true,
-    }
-    return selector ? selector(state) : state
-  },
+  usePersonaStore: (selector?: (s: typeof mockPersonaStore) => unknown) =>
+    selector ? selector(mockPersonaStore) : mockPersonaStore,
 }))
 
 // Mock computeAssessment
@@ -219,6 +225,8 @@ describe('BusinessCenterView', () => {
     mockAssessmentStore.assessmentHistory = []
     mockAssessmentStore.previousRiskScore = null
     mockAssessmentStore.getInput.mockReturnValue(null)
+    mockPersonaStore.selectedPersona = 'executive'
+    mockPersonaStore.experienceLevel = 'curious'
   })
 
   it('renders persona-aware page header for executive', () => {
@@ -270,7 +278,7 @@ describe('BusinessCenterView', () => {
 
     // Cross-cuts: action items strip + learning bar
     expect(screen.getByText('Executive Learning Path')).toBeInTheDocument()
-    expect(screen.getByText('Next Steps')).toBeInTheDocument()
+    expect(screen.getByText('Your next steps')).toBeInTheDocument()
   })
 
   it('renders the Fig 3 strategic plan diagram heading', () => {
@@ -315,6 +323,10 @@ describe('BusinessCenterView', () => {
 
   it('renders a §-reference chip on each zone panel', () => {
     mockAssessmentStore.assessmentStatus = 'in-progress'
+    // §-ref chips are only shown at intermediate/advanced density.
+    // Use developer persona with no experienceLevel override to get advanced density.
+    mockPersonaStore.selectedPersona = 'developer'
+    mockPersonaStore.experienceLevel = null
 
     renderView()
 

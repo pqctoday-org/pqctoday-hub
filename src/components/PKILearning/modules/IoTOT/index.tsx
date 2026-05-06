@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, Cpu, FileCode, Network, Link2, Factory } from 'lucide-react'
+import { Trash2, Cpu, FileCode, Network, Link2, Factory, Zap } from 'lucide-react'
 import { IoTOTIntroduction } from './components/IoTOTIntroduction'
 import { IoTOTExercises, type WorkshopConfig } from './components/IoTOTExercises'
 import { ConstrainedAlgorithmExplorer } from './workshop/ConstrainedAlgorithmExplorer'
@@ -9,6 +9,7 @@ import { FirmwareSigningSimulator } from './workshop/FirmwareSigningSimulator'
 import { DTLSHandshakeVisualizer } from './workshop/DTLSHandshakeVisualizer'
 import { CertChainBloatAnalyzer } from './workshop/CertChainBloatAnalyzer'
 import { SCADAMigrationPlanner } from './workshop/SCADAMigrationPlanner'
+import { HardwareConstraintsSimulator } from './workshop/HardwareConstraintsSimulator'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -52,6 +53,12 @@ const PARTS = [
     description:
       'Assess a SCADA/ICS environment and plan PQC migration across Purdue model layers.',
     icon: Factory,
+  },
+  {
+    id: 'hardware-constraints',
+    title: 'Step 6: Hardware Constraints',
+    description: 'Simulate Secure Boot RAM load latency and Automotive V2X Broadcast Storms.',
+    icon: Zap,
   },
 ]
 
@@ -220,6 +227,7 @@ export const IoTOTModule: React.FC = () => {
               {currentPart === 2 && <DTLSHandshakeVisualizer key={`dtls-${configKey}`} />}
               {currentPart === 3 && <CertChainBloatAnalyzer key={`cert-chain-${configKey}`} />}
               {currentPart === 4 && <SCADAMigrationPlanner key={`scada-${configKey}`} />}
+              {currentPart === 5 && <HardwareConstraintsSimulator key={`hardware-${configKey}`} />}
             </div>
 
             {/* Part Navigation */}

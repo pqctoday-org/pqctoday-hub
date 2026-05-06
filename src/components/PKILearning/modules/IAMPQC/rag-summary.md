@@ -9,6 +9,7 @@ Module covering PQC migration for enterprise IAM systems including JWT/SAML toke
 - IAM vendor roadmaps: Okta, Microsoft Entra, PingFederate, ForgeRock, CyberArk, HashiCorp Vault, Keycloak
 - Zero trust identity architecture with PQC across five pillars
 - Harvest Now, Decrypt Later (HNDL) risk for Kerberos tickets, SAML assertions, and JWT refresh tokens
+- **Identity Proxy Architecture**: Bridging PQC-migrated Identity Providers (IdP) with classical Service Providers (SP) by translating SAML signatures (ML-DSA to RSA).
 
 ## Workshop Steps
 
@@ -17,6 +18,7 @@ Module covering PQC migration for enterprise IAM systems including JWT/SAML toke
 3. Directory Services Analyzer — AD/LDAP/Azure AD HNDL risk scoring and attack scenario analysis
 4. Vendor Readiness Scorer — score IAM vendors across token signing, MFA, API security, roadmap dimensions
 5. Zero Trust Identity Architect — assign migration years to 5 identity pillars and generate a phased roadmap
+6. Identity Proxy Simulator — test authentication flows by translating ML-DSA SAML assertions into classical RSA assertions for legacy downstream apps.
 
 ## Algorithms Covered
 

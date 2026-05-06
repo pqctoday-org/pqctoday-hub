@@ -1,3 +1,0 @@
-Large organizations use millions of digital 'keys' to lock and unlock their data every single day. Managing these keys is handled by a central, highly secure brain called a Key Management System (KMS).
-
-To prepare for the quantum computing threat, this entire central brain must be fully upgraded. It needs to be able to generate and track completely new, mathematically heavy Post-Quantum keys alongside the older ones. Upgrading a KMS is incredibly difficult: think of it like trying to replace every single lock-manufacturing plant in a major city without anyone ever losing access to their doors.

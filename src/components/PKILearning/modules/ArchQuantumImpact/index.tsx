@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, AlertTriangle, BookOpen, Rocket, ClipboardCheck } from 'lucide-react'
+import { Trash2, AlertTriangle, BookOpen, Rocket, ClipboardCheck, GitMerge } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Introduction } from './components/Introduction'
+import { StranglerFigArchitect } from './components/StranglerFigArchitect'
 import { ARCH_GUIDE_DATA } from './data'
 import { ARCH_QUANTUM_EXERCISES } from './exercises'
 import { RoleWhyItMatters, RoleWhatToLearn, RoleHowToAct } from '../../common/roleGuide'
@@ -45,6 +46,13 @@ const PARTS = [
     description:
       'Score your architecture exposure across nine criteria to identify which systems need crypto-agility work first.',
     icon: ClipboardCheck,
+  },
+  {
+    id: 'strangler-fig',
+    title: 'Step 5: Strangler Fig',
+    description:
+      'Model the gradual migration of a legacy monolithic service using a PQC API Gateway.',
+    icon: GitMerge,
   },
 ]
 
@@ -323,6 +331,7 @@ export const ArchQuantumImpactModule: React.FC = () => {
                 <RoleHowToAct key={`how-${configKey}`} data={ARCH_GUIDE_DATA} />
               )}
               {currentPart === 3 && <SelfAssessmentStep key={`assess-${configKey}`} />}
+              {currentPart === 4 && <StranglerFigArchitect key={`strangler-${configKey}`} />}
             </div>
 
             <div className="flex flex-col sm:flex-row justify-between gap-3">

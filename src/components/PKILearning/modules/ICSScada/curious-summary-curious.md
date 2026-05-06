@@ -1,3 +1,0 @@
-The massive industrial computers that run our water treatment plants, oil pipelines, and factory floors are rarely connected to the open internet for safety reasons. However, when engineers perform necessary remote maintenance or software updates, they establish a securely encrypted connection to these critical systems.
-
-Today, a patient and well-funded hacker could intercept and record these encrypted maintenance sessions, saving them for years. Once quantum computers become viable, the hacker could effortlessly decrypt those old sessions to steal the complex passwords or layout blueprints needed to remotely sabotage the physical machinery. Upgrading these connections to Post-Quantum math prevents this delayed attack.

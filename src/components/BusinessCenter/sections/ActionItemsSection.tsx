@@ -49,13 +49,24 @@ function ActionRow({ item }: { item: ActionItem }) {
   )
 }
 
-export function ActionItemsSection({ metrics }: { metrics: BusinessMetrics }) {
-  if (metrics.actionItems.length === 0) {
+export interface ActionItemsSectionProps {
+  metrics: BusinessMetrics
+  /** Max items to show above the fold. Driven by density from the parent
+   *  (basic=3, intermediate=4, advanced=5). When unset, all items render. */
+  cap?: number
+}
+
+export function ActionItemsSection({ metrics, cap }: ActionItemsSectionProps) {
+  const allItems = metrics.actionItems
+  const visibleItems = cap !== undefined ? allItems.slice(0, cap) : allItems
+  const hiddenCount = allItems.length - visibleItems.length
+
+  if (allItems.length === 0) {
     return (
-      <div className="glass-panel p-6">
+      <div className="glass-panel p-6" data-testid="action-items-hero">
         <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground mb-4">
           <ListChecks size={20} className="text-primary" />
-          Next Steps
+          Your next steps
         </h2>
         <div className="flex items-center justify-center gap-3 py-8 text-center">
           <CheckCircle2 size={24} className="text-status-success" />
@@ -69,16 +80,26 @@ export function ActionItemsSection({ metrics }: { metrics: BusinessMetrics }) {
   }
 
   return (
-    <div className="glass-panel p-6">
-      <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground mb-4">
+    <div className="glass-panel p-6" data-testid="action-items-hero">
+      <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground mb-1">
         <ListChecks size={20} className="text-primary" />
-        Next Steps
+        Your next steps
       </h2>
+      <p className="text-xs text-muted-foreground mb-4">
+        Personalised to your industry, persona, and assessment so far.
+      </p>
       <div className="space-y-2">
-        {metrics.actionItems.map((item, i) => (
+        {visibleItems.map((item, i) => (
           <ActionRow key={i} item={item} />
         ))}
       </div>
+      {hiddenCount > 0 && (
+        <p className="mt-3 text-xs text-muted-foreground">
+          +{hiddenCount} more next-step{hiddenCount === 1 ? '' : 's'} available — switch persona to{' '}
+          <span className="font-semibold text-foreground">developer</span> or{' '}
+          <span className="font-semibold text-foreground">researcher</span> to see all.
+        </p>
+      )}
     </div>
   )
 }

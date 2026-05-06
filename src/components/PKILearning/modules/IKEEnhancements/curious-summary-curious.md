@@ -1,3 +1,0 @@
-Creating a Secure Virtual Private Network (VPN) requires two computers to agree on a secret language before they start talking. This negotiation process (called IKE) relies heavily on mathematical locks that are totally vulnerable to quantum computers.
-
-A sophisticated attacker could monitor the very beginning of a VPN conversation from anywhere in the world, steal the vulnerable negotiation math, and use a future quantum computer to decrypt the rest of the private corporate network traffic. Fixing this invisible vulnerability requires a massive update to the fundamental rules of how commercial VPNs negotiate security.

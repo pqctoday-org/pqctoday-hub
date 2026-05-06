@@ -12,6 +12,7 @@ import { TLSInspectionLab } from './workshop/TLSInspectionLab'
 import { IDSSignatureUpdater } from './workshop/IDSSignatureUpdater'
 import { VendorMigrationMatrix } from './workshop/VendorMigrationMatrix'
 import { ZTNAPQCDesigner } from './workshop/ZTNAPQCDesigner'
+import { NetworkTelemetryAnalyzer } from './workshop/NetworkTelemetryAnalyzer'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -59,6 +60,13 @@ const PARTS = [
     description:
       'Design a quantum-safe Zero Trust Network Access architecture across 5 ZTNA components.',
     icon: Network,
+  },
+  {
+    id: 'network-telemetry-analyzer',
+    title: 'Step 6: Network Telemetry',
+    description:
+      'Analyze PQC payload sizes against TCP initcwnd constraints and simulate fragmentation latency.',
+    icon: BarChart3,
   },
 ]
 
@@ -226,6 +234,7 @@ export const NetworkSecurityPQCModule: React.FC = () => {
               {currentPart === 2 && <IDSSignatureUpdater key={`ids-${configKey}`} />}
               {currentPart === 3 && <VendorMigrationMatrix key={`vendor-${configKey}`} />}
               {currentPart === 4 && <ZTNAPQCDesigner key={`ztna-${configKey}`} />}
+              {currentPart === 5 && <NetworkTelemetryAnalyzer key={`telemetry-${configKey}`} />}
             </div>
 
             {/* Part Navigation */}

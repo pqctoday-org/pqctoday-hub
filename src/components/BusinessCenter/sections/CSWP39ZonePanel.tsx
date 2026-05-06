@@ -15,6 +15,12 @@ import { CSWP39_ZONE_DETAILS, CSWP39_ZONE_STYLES, type ZoneId } from '@/data/csw
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 import type { BusinessMetrics } from '../hooks/useBusinessMetrics'
 import {
+  type Density,
+  showAdvancedZoneMetadata,
+  showSubElementGroups,
+  showZoneWires,
+} from '../lib/density'
+import {
   ZONE_ARTIFACT_TYPES,
   getArtifactsForZone,
   getZoneForType,
@@ -44,6 +50,10 @@ export interface CSWP39ZonePanelProps {
   onToggle?: () => void
   /** Optional ordering for featured artifact types (drives persona-aware sort). */
   featuredArtifacts?: ExecutiveDocumentType[]
+  /** UI density. Suppresses tier badge, §-ref, sub-element grouping and wire
+   *  at 'basic'; shows everything at 'advanced'. Defaults to 'advanced' so
+   *  callers that don't pass a density still get the legacy full UI. */
+  density?: Density
   onViewArtifact: (doc: ExecutiveDocument) => void
   onEditArtifact: (doc: ExecutiveDocument) => void
   onDeleteArtifact: (doc: ExecutiveDocument) => void
@@ -105,6 +115,7 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
   open: controlledOpen,
   onToggle,
   featuredArtifacts,
+  density = 'advanced',
   onViewArtifact,
   onEditArtifact,
   onDeleteArtifact,
@@ -144,14 +155,29 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <h3 className={`text-base font-bold ${style.text}`}>{detail.title}</h3>
-            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide px-2 py-0.5 rounded bg-muted/60">
-              {detail.cswpRef}
-            </span>
-            <TierBadge result={tier} />
+            {showAdvancedZoneMetadata(density) && (
+              <>
+                <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide px-2 py-0.5 rounded bg-muted/60">
+                  {detail.cswpRef}
+                </span>
+                <TierBadge result={tier} />
+              </>
+            )}
             <span className="text-[10px] text-muted-foreground">
               {artifacts.length}/{sectionTypes.length} created
             </span>
-            {detail.learnRoute && (
+            {detail.learnRoute && !open && (
+              // Collapsed: promote "Learn this zone" to a primary button so
+              // first-time learners have an obvious entry point.
+              <Button asChild size="sm" variant="default" className="h-6 px-2 gap-1 text-[10px]">
+                <Link to={detail.learnRoute}>
+                  <GraduationCap size={11} />
+                  Learn this zone
+                </Link>
+              </Button>
+            )}
+            {detail.learnRoute && open && (
+              // Expanded: keep the original lightweight inline link.
               <Link
                 to={detail.learnRoute}
                 className="inline-flex items-center gap-1 text-[10px] font-medium text-primary hover:underline"
@@ -194,7 +220,9 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
         <div className="mt-3 pl-12 space-y-4">
           {/* Data wires — surface user-state from existing pages/stores
                (Migrate selection, Assess result, Compliance frameworks, etc.). */}
-          {wireFor[zone] && <div>{React.createElement(wireFor[zone]!, { metrics })}</div>}
+          {showZoneWires(density) && wireFor[zone] && (
+            <div>{React.createElement(wireFor[zone]!, { metrics })}</div>
+          )}
 
           {/* Artifacts section. When a zone has both a wire and registered
                tools, the wire renders above; when it only has a wire (no tools
@@ -208,7 +236,7 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
               <div className="space-y-3">
                 {subGroups.map((group) => (
                   <div key={group.label}>
-                    {group.label !== UNGROUPED_LABEL && (
+                    {group.label !== UNGROUPED_LABEL && showSubElementGroups(density) && (
                       <div className="text-[10px] font-semibold text-muted-foreground/80 uppercase tracking-wide mb-1">
                         {group.label}
                       </div>

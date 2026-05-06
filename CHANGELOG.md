@@ -8,6 +8,73 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **Business Center — `LearningFrameBanner` replaces WIP warning** — the
+  "Work in progress" amber banner is replaced by a `LearningFrameBanner` that
+  names the Command Center as a _Worked example_ organised around NIST CSWP.39
+  Fig 3. First-time learners now see what kind of artefact the page is (a
+  reference program, not a workspace they're already behind on). Banner shows
+  the persona-derived density label (`Basic` / `Intermediate` / `Advanced`).
+  (`BusinessCenterView.tsx`, `LearningFrameBanner.tsx`)
+- **Business Center — persona-aware density system** — new `lib/density.ts`
+  derives a `Density` value (`basic` / `intermediate` / `advanced`) from the
+  active persona + experience level (`executive`/`curious` → basic,
+  `ops`/`architect` → intermediate, `developer`/`researcher` → advanced;
+  `experienceLevel` from the persona store overrides the persona default).
+  Density gates: CSWP-tier badges and §-ref chips in zone panels
+  (`showAdvancedZoneMetadata`), sub-element grouping (`showSubElementGroups`),
+  per-zone wires (`showZoneWires`), and action-item cap
+  (`actionItemCap`: 3 / 4 / 5). At `basic` density the default open zone
+  anchors to Assets (`BASIC_DENSITY_DEFAULT_ZONE`) instead of the
+  persona-derived zone. (`lib/density.ts`, `BusinessCenterView.tsx`,
+  `CSWP39ZonePanel.tsx`, `ActionItemsSection.tsx`)
+- **Business Center — action items cap + personalisation copy** —
+  `ActionItemsSection` accepts a `cap` prop (driven by density) that limits
+  items rendered above the fold. When items are hidden a `+N more` hint
+  appears directing the user to switch to developer or researcher persona. Title
+  changed to "Your next steps"; subtitle "Personalised to your industry, persona,
+  and assessment so far." added. (`ActionItemsSection.tsx`)
+- **Compliance — `LearningFrameBanner` + `GlossaryStrip`** — a small
+  `LearningFrameBanner` (persona-aware density label, "Reference Catalog"
+  framing) appears at the top of the Compliance page. Below it a `GlossaryStrip`
+  renders four always-visible chips — Body · Standard · Certification ·
+  Regulation — with colour swatches that match the `LandscapeTypeFacet`, so the
+  facet doubles as a legend. (`LearningFrameBanner.tsx`,
+  `GlossaryStrip.tsx`, `ComplianceView.tsx`)
+- **Compliance — unified Landscape tab** — the four legacy desktop tabs
+  (Standards / Technical / Certification / Compliance) are merged into a single
+  "Landscape" tab backed by a `LandscapeTypeFacet` type selector. Old `?tab=`
+  deep links (`standards`, `technical`, `certification`, `compliance`) remain
+  backward-compatible: they resolve to the appropriate facet value on load. The
+  CSWP.39 cross-walk jump sets the facet instead of swapping tabs.
+  (`LandscapeTab.tsx`, `LandscapeTypeFacet.tsx`, `ComplianceView.tsx`)
+- **5 new learn module workshop steps** — each of the five modules below gains
+  one additional interactive workshop step:
+  - **ArchQuantumImpact — Step 5 "Strangler Fig"** (`StranglerFigArchitect`):
+    model gradual migration of a legacy monolithic service using a PQC API
+    Gateway pattern.
+  - **CryptoMgmtModernization — Step 9 "CLM Vendor Evaluator"**
+    (`CLMVendorEvaluator`): interactive scorecard comparing Venafi, AppViewX, and
+    Keyfactor on PQC readiness criteria; mapped to CSWP.39 §5.1 Govern.
+  - **IAMPQC — Step 6 "Identity Proxy"** (`IdentityProxySimulator`): simulate
+    translating PQC SAML assertions to classical RSA for legacy identity-unaware
+    applications.
+  - **IoTOT — Step 6 "Hardware Constraints"** (`HardwareConstraintsSimulator`):
+    simulate Secure Boot RAM load latency under ML-DSA and Automotive V2X
+    Broadcast Storm overhead.
+  - **NetworkSecurityPQC — Step 6 "Network Telemetry"**
+    (`NetworkTelemetryAnalyzer`): analyze PQC certificate and handshake payload
+    sizes against TCP `initcwnd` constraints and model fragmentation latency.
+
+### Changed
+
+- **Learn modules — removed stale `content.ts` / `curious-summary-curious.md`
+  files** — 14 modules that completed migration to the `rag-summary.md` +
+  `index.tsx` pattern had their legacy `content.ts` and
+  `curious-summary-curious.md` stubs deleted: EnterpriseKeyMgmt,
+  FinancialLedgers, HardwareSecurityModules, HybridCerts, ICSScada,
+  IKEEnhancements, IdentityMgmtCerts, LogIntegrity, NetworkProtocols,
+  PKCS11PQC, QuantumCloud, QuantumKeyDistribution, QuantumSafeVPN, SecureBoot.
+
 - **Compliance For You tab — inline detail panes for resources** — clicking
   a library doc, threat, timeline event, embedded framework event, or framework
   card in the For You tab now opens the corresponding detail modal in place

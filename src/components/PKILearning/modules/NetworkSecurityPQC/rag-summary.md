@@ -10,6 +10,7 @@ Module covering PQC migration for network security infrastructure including NGFW
 - IDS/IPS signature updates for PQC traffic detection (hybrid KEM handshakes, cert size anomalies, downgrade attacks)
 - Vendor roadmaps: Cisco (FTD 7.4+), Palo Alto (PAN-OS 11.x), Fortinet (FortiOS 7.6), Juniper (Junos 24.x), Check Point (R82), Sophos, SonicWall, pfSense/OPNsense
 - Zero trust network access (ZTNA) PQC migration priorities: IdP → Policy Engine → Application Gateway → Micro-Segmentation
+- TCP Initial Congestion Window (`initcwnd`) starvation: PQC TLS handshakes (which can exceed 25 KB) require multiple TCP flights because they surpass the standard 10-segment `initcwnd` limit, adding significant latency (RTT penalties) and increasing fragmentation risks at middleboxes.
 
 ## Workshop Steps
 
@@ -18,6 +19,7 @@ Module covering PQC migration for network security infrastructure including NGFW
 3. IDS Signature Updater — PQC-aware rule categories, false positive rate analysis, detection coverage balancing
 4. Vendor Migration Matrix — interactive filtering by ML-KEM/ML-DSA support, TLS inspection, hardware offload, readiness status
 5. ZTNA PQC Designer — component-by-component migration approach selection, risk score, architecture diagram
+6. Network Telemetry Analyzer — visualization of TCP `initcwnd` limits and the latency penalties associated with massive PQC payloads forcing multi-flight handshakes.
 
 ## Key Data Points
 

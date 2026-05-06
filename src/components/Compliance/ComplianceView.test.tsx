@@ -138,10 +138,15 @@ describe('ComplianceView', () => {
         <ComplianceView />
       </MemoryRouter>
     )
-    expect(screen.getByRole('button', { name: /Technical Standards/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Compliance Frameworks/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Cert Records/i })).toBeInTheDocument()
-    // Secondary tabs are behind the More overflow menu (may render multiple in desktop+mobile layout)
+    // Post-refactor: For You · Landscape · Records.
+    // TabsTrigger is a custom <button> (no role="tab") — use getByRole('button').
+    // "Landscape" is unique to the desktop strip (mobile uses facet buttons instead).
+    expect(screen.getByRole('button', { name: /Landscape/i })).toBeInTheDocument()
+    // For You and Records appear in both desktop and mobile strips.
+    expect(screen.getAllByRole('button', { name: /For You/i }).length).toBeGreaterThanOrEqual(1)
+    expect(screen.getAllByRole('button', { name: /Records/i }).length).toBeGreaterThanOrEqual(1)
+    expect(screen.getByTestId('compliance-learning-frame-banner')).toBeInTheDocument()
+    // CSWP.39 still reachable via More menu (deletion is Phase 2)
     expect(screen.getAllByRole('button', { name: /More/i }).length).toBeGreaterThan(0)
   })
 
@@ -151,9 +156,9 @@ describe('ComplianceView', () => {
         <ComplianceView />
       </MemoryRouter>
     )
-    // Navigate to the Records tab (flat architecture post-v2.74.0 refactor)
-    fireEvent.click(screen.getByRole('button', { name: /^Records$/i }))
-    // Records tab is now active — no sub-tabs exist in the flat layout
-    expect(screen.getByRole('button', { name: /^Records$/i })).toBeInTheDocument()
+    // Both desktop and mobile strips have a "Records" button — click the first.
+    const recordsButtons = screen.getAllByRole('button', { name: /^Records$/i })
+    fireEvent.click(recordsButtons[0])
+    expect(recordsButtons[0]).toBeInTheDocument()
   })
 })

@@ -11,9 +11,11 @@ import {
   Search,
   BarChart3,
   GitFork,
+  CheckCircle2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Introduction } from './components/Introduction'
+import { CLMVendorEvaluator } from './components/CLMVendorEvaluator'
 import { MaturityAssessment } from './workshop/MaturityAssessment'
 import { InventoryLifecycleSimulator } from './workshop/InventoryLifecycleSimulator'
 import { LibraryCBOMBuilder } from './workshop/LibraryCBOMBuilder'
@@ -100,6 +102,14 @@ const PARTS = [
       'CSWP.39 §4.6 decision wizard: answer 5 crypto-agility questions about an asset and receive a Gateway (Mitigate) or Algorithm Replacement (Migrate) recommendation.',
     icon: GitFork,
     cswp39Step: 'Implement · §5.5 + §4.6 — gateway vs. migration decision',
+  },
+  {
+    id: 'clm-vendor-evaluator',
+    title: 'Step 9: CLM Vendor Evaluator',
+    description:
+      'Interactive scorecard for evaluating Venafi, AppViewX, and Keyfactor based on PQC readiness criteria.',
+    icon: CheckCircle2,
+    cswp39Step: 'Govern · §5.1 — Vendor readiness',
   },
 ]
 
@@ -275,6 +285,7 @@ export const CryptoMgmtModernizationModule: React.FC = () => {
               {currentPart === 5 && <ManagementToolsAudit />}
               {currentPart === 6 && <RiskAnalysisEngine cbomAssets={cbomAssets} />}
               {currentPart === 7 && <MitigateMigrateWizard cbomAssets={cbomAssets} />}
+              {currentPart === 8 && <CLMVendorEvaluator />}
             </div>
 
             <div className="flex flex-col sm:flex-row justify-between gap-3">

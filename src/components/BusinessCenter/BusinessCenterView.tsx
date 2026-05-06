@@ -8,7 +8,6 @@ import {
   BookOpen,
   Download,
   Filter,
-  Wrench,
 } from 'lucide-react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import JSZip from 'jszip'
@@ -36,6 +35,14 @@ import { CSWP39SectionsNav } from './sections/CSWP39SectionsNav'
 import { CSWP39ZonePanel } from './sections/CSWP39ZonePanel'
 import { ActionItemsSection } from './sections/ActionItemsSection'
 import { CompactLearningBar } from './CompactLearningBar'
+import { LearningFrameBanner } from './LearningFrameBanner'
+import {
+  deriveDensity,
+  showSectionsNav,
+  showTopToolbar,
+  actionItemCap,
+  BASIC_DENSITY_DEFAULT_ZONE,
+} from './lib/density'
 import { ArtifactDrawer, type DrawerMode } from './ArtifactDrawer'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 
@@ -112,15 +119,27 @@ export function BusinessCenterView() {
   const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
   const updateExecutiveDocument = useModuleStore((s) => s.updateExecutiveDocument)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const experienceLevel = usePersonaStore((s) => s.experienceLevel)
   const workshopActive = useWorkshopStore((s) => isWorkshopActive(s.mode))
   const zoneEmphasis = useMemo(
     () => getBusinessCenterZoneEmphasis(selectedPersona),
     [selectedPersona]
   )
 
+  // Density adapts the page to the user's persona/experience. See lib/density.ts.
+  const density = useMemo(
+    () => deriveDensity(selectedPersona, experienceLevel),
+    [selectedPersona, experienceLevel]
+  )
+
   // openZone — single source of truth for which zone panel is expanded.
   // Initialised to the persona-derived default; user nav/toggle overrides it.
-  const [openZone, setOpenZone] = useState<ZoneId | null>(() => zoneEmphasis.defaultActiveZone)
+  // At basic density we always anchor on the Assets zone — the audit-recommended
+  // "start here" entry point for first-time learners. Other densities honour
+  // the persona-derived default.
+  const [openZone, setOpenZone] = useState<ZoneId | null>(() =>
+    density === 'basic' ? BASIC_DENSITY_DEFAULT_ZONE : zoneEmphasis.defaultActiveZone
+  )
   const [searchParams] = useSearchParams()
 
   // ?zone=<id> deep-link (used by the Workshop Video Mode and external links).
@@ -292,14 +311,14 @@ export function BusinessCenterView() {
         shareText="Your PQC readiness command center — risk, compliance, governance, and actionable next steps."
       />
 
-      {/* WIP banner — Command Center is under active development */}
-      <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-status-warning/10 border border-status-warning/30 text-status-warning text-sm mb-4">
-        <Wrench className="w-4 h-4 shrink-0" aria-hidden="true" />
-        <span>
-          <span className="font-semibold">Work in progress.</span> The Command Center is under
-          active development — zone panels, artifact tracking, and wire data are being expanded.
-        </span>
-      </div>
+      {/* LearningFrame — names what kind of artifact this page is. The
+           Command Center is a worked example of a PQC program (NIST CSWP.39
+           Fig 3), not a real GRC console. Density label adapts to persona. */}
+      <LearningFrameBanner
+        kind="Worked example"
+        description="A reference Command Center organised around the NIST CSWP.39 Fig 3 strategic plan. Use it to learn the shape of a real PQC program — then build your own off-platform."
+        densityLabel={density}
+      />
 
       <ContextBanner
         industry={metrics.industry}
@@ -307,8 +326,10 @@ export function BusinessCenterView() {
         completedAt={metrics.completedAt}
       />
 
-      {/* Filter + Export bar */}
-      {!metrics.isFullyEmpty && allArtifacts.length > 0 && (
+      {/* Filter + Export bar — gated to advanced density. Basic/intermediate
+           learners don't need a portfolio toolbar at the top; cross-zone
+           filtering belongs on the artifact library page. */}
+      {!metrics.isFullyEmpty && allArtifacts.length > 0 && showTopToolbar(density) && (
         <div className="flex flex-wrap items-center gap-3 mb-6">
           <Filter size={14} className="text-muted-foreground shrink-0" />
           <FilterDropdown
@@ -341,14 +362,16 @@ export function BusinessCenterView() {
         <WelcomeState />
       ) : (
         <div className="space-y-6">
-          {/* Top cross-cut: Action Items strip */}
-          <ActionItemsSection metrics={metrics} />
+          {/* HERO: personalised next steps — first content slot. Cap by density
+               (basic=3, intermediate=4, advanced=5). */}
+          <ActionItemsSection metrics={metrics} cap={actionItemCap(density)} />
 
           {/* What applies to your profile — drives prioritization across the strategic plan */}
           <ApplicabilityPanel variant="summary-card" />
 
-          {/* NIST CSWP.39 — by document section (§3 / §4 / §5 / §6) */}
-          <CSWP39SectionsNav onZoneSelect={handleZoneSelect} />
+          {/* §3-§6 document-section nav — advanced density only. Auditors and
+               researchers want it; basic learners get the Fig 3 zone view alone. */}
+          {showSectionsNav(density) && <CSWP39SectionsNav onZoneSelect={handleZoneSelect} />}
 
           {/* CSWP.39 Fig 3 — Crypto Agility Strategic Plan (primary nav) */}
           <CommandCenterStrategicPlan
@@ -386,50 +409,53 @@ export function BusinessCenterView() {
 
             {/* Desktop: two-column layout — sticky left nav + zone panels */}
             <div className="flex items-start gap-5">
-              {/* Left sidebar — desktop only */}
-              <aside className="hidden md:flex flex-col gap-1 w-72 shrink-0 sticky top-6 self-start">
-                <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest px-3 mb-1">
-                  Zones
-                </div>
-                {CSWP39_ZONE_ORDER.map((zone) => {
-                  // eslint-disable-next-line security/detect-object-injection
-                  const detail = CSWP39_ZONE_DETAILS[zone]
-                  // eslint-disable-next-line security/detect-object-injection
-                  const style = CSWP39_ZONE_STYLES[zone]
-                  const isActive = zone === effectiveOpenZone
-                  return (
-                    <Button
-                      key={zone}
-                      variant="ghost"
-                      onClick={() => handleZoneSelect(zone)}
-                      className={`w-full h-auto justify-start p-0 rounded-lg border transition-colors ${
-                        isActive
-                          ? `${style.bg} ${style.border}`
-                          : 'border-transparent hover:bg-muted/40'
-                      }`}
-                    >
-                      <div className="flex items-start gap-2.5 px-3 py-2.5 w-full text-left">
-                        <div
-                          className={`w-0.5 min-h-full self-stretch rounded-full mt-0.5 shrink-0 ${
-                            isActive ? style.activeBg : 'bg-border'
-                          }`}
-                          aria-hidden
-                        />
-                        <div className="min-w-0">
+              {/* Left sidebar — desktop only, intermediate+ density. At basic
+                   density the Fig 3 diagram is the single source of zone nav. */}
+              {density !== 'basic' && (
+                <aside className="hidden md:flex flex-col gap-1 w-72 shrink-0 sticky top-6 self-start">
+                  <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest px-3 mb-1">
+                    Zones
+                  </div>
+                  {CSWP39_ZONE_ORDER.map((zone) => {
+                    // eslint-disable-next-line security/detect-object-injection
+                    const detail = CSWP39_ZONE_DETAILS[zone]
+                    // eslint-disable-next-line security/detect-object-injection
+                    const style = CSWP39_ZONE_STYLES[zone]
+                    const isActive = zone === effectiveOpenZone
+                    return (
+                      <Button
+                        key={zone}
+                        variant="ghost"
+                        onClick={() => handleZoneSelect(zone)}
+                        className={`w-full h-auto justify-start p-0 rounded-lg border transition-colors ${
+                          isActive
+                            ? `${style.bg} ${style.border}`
+                            : 'border-transparent hover:bg-muted/40'
+                        }`}
+                      >
+                        <div className="flex items-start gap-2.5 px-3 py-2.5 w-full text-left">
                           <div
-                            className={`text-xs font-semibold mb-0.5 ${isActive ? style.text : 'text-foreground'}`}
-                          >
-                            {detail.title}
+                            className={`w-0.5 min-h-full self-stretch rounded-full mt-0.5 shrink-0 ${
+                              isActive ? style.activeBg : 'bg-border'
+                            }`}
+                            aria-hidden
+                          />
+                          <div className="min-w-0">
+                            <div
+                              className={`text-xs font-semibold mb-0.5 ${isActive ? style.text : 'text-foreground'}`}
+                            >
+                              {detail.title}
+                            </div>
+                            <p className="text-[11px] text-muted-foreground line-clamp-3 leading-relaxed">
+                              {detail.what}
+                            </p>
                           </div>
-                          <p className="text-[11px] text-muted-foreground line-clamp-3 leading-relaxed">
-                            {detail.what}
-                          </p>
                         </div>
-                      </div>
-                    </Button>
-                  )
-                })}
-              </aside>
+                      </Button>
+                    )
+                  })}
+                </aside>
+              )}
 
               {/* Zone panels */}
               <div className="flex-1 min-w-0 space-y-3">
@@ -441,6 +467,7 @@ export function BusinessCenterView() {
                     open={zone === effectiveOpenZone}
                     onToggle={() => handleZoneToggle(zone)}
                     featuredArtifacts={allFeaturedArtifacts}
+                    density={density}
                     {...zoneCallbacks}
                   />
                 ))}

@@ -15,6 +15,8 @@ This module addresses the unique post-quantum cryptography migration challenges 
 - **Energy constraints**: PQC operations consume significantly more energy than classical crypto; battery-powered devices must budget this overhead, favoring session resumption (PSK) over repeated handshakes
 - **Lightweight symmetric crypto**: NIST selected Ascon (2023) as the lightweight AEAD standard for constrained environments; complements PQC asymmetric algorithms for comprehensive IoT security
 - **Hardware acceleration**: Secure elements (ARM TrustZone-M, Infineon OPTIGA TPM, Microchip ATECC608) can offload PQC operations from the main MCU; industry leaders including Samsung and Thales are developing ML-KEM support for embedded secure elements
+- **Secure Boot RAM Load Latency**: During a Secure Boot sequence, the MCU must load the signature and public key from SPI Flash into SRAM. ML-DSA's large sizes (2.4KB sig, 1.3KB pk) introduce significant SPI load delays compared to ECDSA, potentially exceeding strict real-time RTOS boot constraints (e.g., 100ms) on low-MHz processors.
+- **Automotive V2X Broadcast Storms**: V2X standards require vehicles to broadcast Basic Safety Messages (BSMs) at 10Hz. Switching from 64-byte ECDSA to 2.4KB ML-DSA signatures can quickly overwhelm the limited RF channel capacity (e.g., 6 Mbps DSRC) at a busy intersection, causing packet drops and endangering autonomous safety features.
 
 ## Workshop Activities
 
@@ -23,6 +25,7 @@ This module addresses the unique post-quantum cryptography migration challenges 
 3. **DTLS Handshake Visualizer**: Simulate a CoAP/DTLS 1.3 handshake with PQC and measure overhead including fragment count and transmission time
 4. **Certificate Chain Bloat Analyzer**: Analyze PQC certificate chain sizes across algorithms and their impact on constrained TLS with visual size comparisons
 5. **SCADA Migration Planner**: Assess a SCADA/ICS environment and plan PQC migration across Purdue model layers with priority-based recommendations
+6. **Hardware Constraints Simulator**: Explore how the physical limitations of embedded devices (SPI read speeds, MCU clock speeds) and constrained networks (V2X broadcast channel limits) react to the massive cryptographic parameters of PQC.
 
 ## Related Standards
 

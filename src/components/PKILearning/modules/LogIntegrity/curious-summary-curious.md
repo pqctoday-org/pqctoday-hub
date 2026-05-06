@@ -1,3 +1,0 @@
-In cybersecurity, system logs are the irrefutable "black-box" recordings of every single action that happens on a digital network. If a hacker breaks in, the security team uses these digitally signed logs to track exactly what the hacker touched and when.
-
-Because a quantum computer could forge the digital signatures protecting these logs, a hacker could theoretically rewrite a company's cyber-history, perfectly covering their tracks. Upgrading log servers to Post-Quantum signatures ensures that no computer in the future can ever alter the historical security record of a company without immediately raising alarms.

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, UserCheck, Key, Database, BarChart3, Shield } from 'lucide-react'
+import { Trash2, UserCheck, Key, Database, BarChart3, Shield, ArrowRightLeft } from 'lucide-react'
 import { IAMPQCIntroduction } from './components/IAMPQCIntroduction'
 import { IAMPQCExercises, type WorkshopConfig } from './components/IAMPQCExercises'
 import { IAMCryptoInventory } from './workshop/IAMCryptoInventory'
@@ -8,6 +8,7 @@ import { TokenMigrationLab } from './workshop/TokenMigrationLab'
 import { DirectoryServicesAnalyzer } from './workshop/DirectoryServicesAnalyzer'
 import { VendorReadinessScorer } from './workshop/VendorReadinessScorer'
 import { ZeroTrustIdentityArchitect } from './workshop/ZeroTrustIdentityArchitect'
+import { IdentityProxySimulator } from './workshop/IdentityProxySimulator'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -50,6 +51,12 @@ const PARTS = [
     title: 'Step 5: Zero Trust',
     description: 'Design a phased PQC migration roadmap for all five identity pillars.',
     icon: Shield,
+  },
+  {
+    id: 'identity-proxy',
+    title: 'Step 6: Identity Proxy',
+    description: 'Simulate translating PQC SAML assertions to classical RSA for legacy apps.',
+    icon: ArrowRightLeft,
   },
 ]
 
@@ -218,6 +225,7 @@ export const IAMPQCModule: React.FC = () => {
               {currentPart === 2 && <DirectoryServicesAnalyzer key={`directory-${configKey}`} />}
               {currentPart === 3 && <VendorReadinessScorer key={`vendor-${configKey}`} />}
               {currentPart === 4 && <ZeroTrustIdentityArchitect key={`zerotrust-${configKey}`} />}
+              {currentPart === 5 && <IdentityProxySimulator key={`idproxy-${configKey}`} />}
             </div>
 
             {/* Part Navigation */}

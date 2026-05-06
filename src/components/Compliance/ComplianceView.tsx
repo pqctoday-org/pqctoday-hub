@@ -15,19 +15,20 @@ import {
   ShieldCheck,
   GlobeLock,
   Info,
-  BookOpen,
-  Award,
-  Scale,
   ExternalLink,
-  FileText,
   Workflow,
   ArrowLeft,
   Sparkles,
   X,
+  Layers,
 } from 'lucide-react'
 import { CSWP39Explorer } from './CSWP39Explorer'
 import { MoreTabsMenu } from './MoreTabsMenu'
 import { ApplicabilityPanel } from '../applicability/ApplicabilityPanel'
+import { LearningFrameBanner } from './LearningFrameBanner'
+import { GlossaryStrip } from './GlossaryStrip'
+import { LandscapeTab as LandscapeTabBody } from './LandscapeTab'
+import type { LandscapeType } from './LandscapeTypeFacet'
 import { ExecutiveTimelineView } from './views/ExecutiveTimelineView'
 import { LibraryDetailPopover } from '@/components/Library/LibraryDetailPopover'
 import { ThreatDetailDialog } from '@/components/Threats/ThreatDetailDialog'
@@ -209,6 +210,7 @@ function SectionHeader({
   )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CERTIFICATION_GLOSSARY = [
   {
     term: 'FIPS 140-3',
@@ -606,6 +608,7 @@ export const ComplianceView = () => {
     []
   )
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const landscapeTabFrameworksDesktop = useMemo(
     () => ({
       standards: standardsFrameworks,
@@ -670,6 +673,20 @@ export const ComplianceView = () => {
     // Developer persona defaults to certification records (FIPS/ACVP/CC) tab
     if (!certParam && !complianceHint && selectedPersona === 'developer') return 'records'
     return (certParam ? 'records' : (complianceHint?.section ?? 'standards')) as MobileSection
+  })
+
+  // Landscape type facet — derived from the legacy ?tab= value so deep links
+  // into the old tab names (standards / technical / certification / compliance)
+  // still land on the right facet selection. CSWP.39 cross-walk jumps also
+  // route through this — `handleCswp39Jump` calls `setLandscapeType` instead
+  // of `setActiveTab` for landscape destinations.
+  const [landscapeType, setLandscapeType] = useState<LandscapeType>(() => {
+    const tab = searchParams.get('tab')
+    if (tab === 'standards') return 'bodies'
+    if (tab === 'technical') return 'standards'
+    if (tab === 'certification') return 'certifications'
+    if (tab === 'compliance') return 'regulations'
+    return 'regulations'
   })
 
   // Framework deep-link highlight — ?framework=<id> scrolls to and rings the card for 3 s
@@ -1221,6 +1238,9 @@ export const ComplianceView = () => {
         onExport={handleExportCsv}
       />
 
+      <LearningFrameBanner />
+      <GlossaryStrip />
+
       {exportError && (
         <div
           role="alert"
@@ -1369,15 +1389,39 @@ export const ComplianceView = () => {
         />
       </div>
 
-      {/* Desktop: 3-tab layout */}
+      {/* Desktop: 3-tab layout — refactored from 7 tabs.
+          For You · Landscape (with type facet) · Records.
+          CSWP.39 still reachable via the More menu and via deep links. */}
       <div id="compliance-tabs" className="hidden md:block">
         <Tabs
-          value={activeTab}
+          value={
+            // Map any legacy landscape tab value into the unified 'landscape' surface.
+            activeTab === 'standards' ||
+            activeTab === 'technical' ||
+            activeTab === 'certification' ||
+            activeTab === 'compliance'
+              ? 'landscape'
+              : activeTab
+          }
           className="w-full"
-          onValueChange={(tab) => handleTabChange(tab as MobileSection)}
+          onValueChange={(tab) => {
+            if (tab === 'landscape') {
+              // Land on whichever facet the user last had selected.
+              const map: Record<LandscapeType, MobileSection> = {
+                regulations: 'compliance',
+                standards: 'technical',
+                certifications: 'certification',
+                bodies: 'standards',
+              }
+              // eslint-disable-next-line security/detect-object-injection
+              handleTabChange(map[landscapeType])
+            } else {
+              handleTabChange(tab as MobileSection)
+            }
+          }}
         >
           <TabsList className="mb-4 bg-muted/50 border border-border h-auto flex items-center gap-1">
-            {/* For You — first primary tab, applies user profile across all content */}
+            {/* For You */}
             <TabsTrigger
               value="foryou"
               data-workshop-target="compliance-tab-foryou"
@@ -1386,33 +1430,27 @@ export const ComplianceView = () => {
               <Sparkles size={14} />
               For You
             </TabsTrigger>
-            {/* 3 primary tabs — always visible */}
-            <TabsTrigger value="technical" className="flex items-center gap-1.5">
-              <FileText size={14} />
-              Technical Standards
+            {/* Landscape — combined surface (was 4 tabs) with a type facet inside */}
+            <TabsTrigger value="landscape" className="flex items-center gap-1.5">
+              <Layers size={14} />
+              Landscape
             </TabsTrigger>
-            <TabsTrigger value="compliance" className="flex items-center gap-1.5">
-              <Scale size={14} />
-              Compliance Frameworks
-            </TabsTrigger>
+            {/* Records */}
             <TabsTrigger value="records" className="flex items-center gap-1.5">
               <GlobeLock size={14} />
-              Cert Records
+              Records
             </TabsTrigger>
-            {/* Secondary tabs — promoted into strip when active */}
-            {(['standards', 'certification', 'cswp39'] as const).includes(
-              activeTab as 'standards' | 'certification' | 'cswp39'
-            ) && (
-              <TabsTrigger value={activeTab} className="flex items-center gap-1.5">
-                {activeTab === 'standards' && <BookOpen size={14} />}
-                {activeTab === 'certification' && <Award size={14} />}
-                {activeTab === 'cswp39' && <Workflow size={14} />}
-                {activeTab === 'standards' && 'Standardization Bodies'}
-                {activeTab === 'certification' && 'Certification Schemes'}
-                {activeTab === 'cswp39' && 'CSWP.39 Framework'}
+            {/* CSWP.39 only — promoted into strip when active.
+                Deletion is Phase 2 of the refactor. */}
+            {activeTab === 'cswp39' && (
+              <TabsTrigger value="cswp39" className="flex items-center gap-1.5">
+                <Workflow size={14} />
+                CSWP.39 Framework
               </TabsTrigger>
             )}
-            {/* More overflow menu */}
+            {/* More menu — kept only for CSWP.39 entry. The other secondary
+                tabs (Standardization Bodies / Certification Schemes) collapsed
+                into the Landscape facet. */}
             <MoreTabsMenu activeTab={activeTab} onSelect={(tab) => handleTabChange(tab)} />
           </TabsList>
 
@@ -1433,24 +1471,25 @@ export const ComplianceView = () => {
             />
           </TabsContent>
 
-          {/* ── Tab 1: Standardization Bodies ── */}
-          <TabsContent value="standards" className="mt-0 space-y-4">
-            <SectionHeader
-              icon={<BookOpen size={20} className="text-secondary" />}
-              title="Standardization Bodies"
-              description={`${standardsFrameworks.length} organizations that define PQC algorithms, protocols, and security requirements — the bodies whose publications the world implements, plus industry alliances (marked with an "Alliance" badge) that produce reference implementations and migration tooling.`}
-              learnLabel="Explore in Learn module"
-              learnTo="/learn/standards-bodies?step=2"
-            />
-            <CrossTabSearchHint
-              searchText={lsSearch}
-              currentTab="standards"
-              tabFrameworks={landscapeTabFrameworksDesktop}
-              onSwitchTab={(t) => handleTabChange(t)}
-            />
-            <ComplianceLandscape
-              frameworks={standardsFrameworks}
-              showDeadlineTimeline={false}
+          {/* ── Landscape — unified surface with a type facet ── */}
+          <TabsContent value="landscape" className="mt-0 space-y-4">
+            <LandscapeTabBody
+              type={landscapeType}
+              onTypeChange={(next) => {
+                setLandscapeType(next)
+                // Mirror the facet change into the legacy ?tab= param so
+                // CSWP.39 cross-walk + share links still work.
+                const map: Record<LandscapeType, MobileSection> = {
+                  regulations: 'compliance',
+                  standards: 'technical',
+                  certifications: 'certification',
+                  bodies: 'standards',
+                }
+                // eslint-disable-next-line security/detect-object-injection
+                const targetTab = map[next]
+                setActiveTab(targetTab)
+                syncFiltersToUrl({ tab: targetTab })
+              }}
               orgFilter={lsOrg}
               industryFilter={lsIndustry}
               regionFilter={lsRegion}
@@ -1468,126 +1507,7 @@ export const ComplianceView = () => {
               onSearchTextChange={handleLsSearchChange}
               onSortByChange={handleLsSortChange}
               onViewModeChange={handleLsViewChange}
-              highlightFrameworkId={highlightFrameworkId}
-            />
-          </TabsContent>
-
-          {/* ── Tab 2: Technical Standards ── */}
-          <TabsContent value="technical" className="mt-0 space-y-4">
-            <SectionHeader
-              icon={<FileText size={20} className="text-secondary" />}
-              title="Technical Standards"
-              description={`${technicalStandards.length} published specifications, guidelines, and technical standards — the documents that define cryptographic requirements organizations must implement.`}
-              learnLabel="Explore in Learn module"
-              learnTo="/learn/standards-bodies?step=2"
-            />
-            <CrossTabSearchHint
-              searchText={lsSearch}
-              currentTab="technical"
-              tabFrameworks={landscapeTabFrameworksDesktop}
-              onSwitchTab={(t) => handleTabChange(t)}
-            />
-            <ComplianceLandscape
-              frameworks={technicalStandards}
-              showDeadlineTimeline={false}
-              orgFilter={lsOrg}
-              industryFilter={lsIndustry}
-              regionFilter={lsRegion}
-              countryFilter={lsCountry}
-              deadlineFilter={lsDeadline}
-              searchText={lsSearch}
-              searchInputValue={lsSearchInput}
-              sortBy={lsSort}
-              viewMode={lsView}
-              onOrgFilterChange={handleLsOrgChange}
-              onIndustryFilterChange={handleLsIndustryChange}
-              onRegionFilterChange={handleLsRegionChange}
-              onCountryFilterChange={handleLsCountryChange}
-              onDeadlineFilterChange={handleLsDeadlineChange}
-              onSearchTextChange={handleLsSearchChange}
-              onSortByChange={handleLsSortChange}
-              onViewModeChange={handleLsViewChange}
-              highlightFrameworkId={highlightFrameworkId}
-            />
-          </TabsContent>
-
-          {/* ── Tab 3: Certification Schemes ── */}
-          <TabsContent value="certification" className="mt-0 space-y-4">
-            <SectionHeader
-              icon={<Award size={20} className="text-status-success" />}
-              title="Certification Schemes"
-              description={`${certificationFrameworks.length} validation programs and schemes that certify cryptographic products and algorithm implementations against published standards.`}
-              learnLabel="Understand the cert chain"
-              learnTo="/learn/standards-bodies?step=2"
-              glossary={CERTIFICATION_GLOSSARY}
-            />
-            <CrossTabSearchHint
-              searchText={lsSearch}
-              currentTab="certification"
-              tabFrameworks={landscapeTabFrameworksDesktop}
-              onSwitchTab={(t) => handleTabChange(t)}
-            />
-            <ComplianceLandscape
-              frameworks={certificationFrameworks}
-              showDeadlineTimeline={false}
-              orgFilter={lsOrg}
-              industryFilter={lsIndustry}
-              regionFilter={lsRegion}
-              countryFilter={lsCountry}
-              deadlineFilter={lsDeadline}
-              searchText={lsSearch}
-              searchInputValue={lsSearchInput}
-              sortBy={lsSort}
-              viewMode={lsView}
-              onOrgFilterChange={handleLsOrgChange}
-              onIndustryFilterChange={handleLsIndustryChange}
-              onRegionFilterChange={handleLsRegionChange}
-              onCountryFilterChange={handleLsCountryChange}
-              onDeadlineFilterChange={handleLsDeadlineChange}
-              onSearchTextChange={handleLsSearchChange}
-              onSortByChange={handleLsSortChange}
-              onViewModeChange={handleLsViewChange}
-              highlightFrameworkId={highlightFrameworkId}
-            />
-          </TabsContent>
-
-          {/* ── Tab 4: Compliance Frameworks ── */}
-          <TabsContent value="compliance" className="mt-0 space-y-4">
-            <SectionHeader
-              icon={<Scale size={20} className="text-primary" />}
-              title="Compliance Frameworks"
-              description={`${complianceOnlyFrameworks.length} regulations, directives, and mandates — the legal and contractual obligations that require organizations to adopt PQC across specific industries and geographies.`}
-              learnLabel="Build your strategy"
-              learnTo="/learn/compliance-strategy"
-            />
-            <CrossTabSearchHint
-              searchText={lsSearch}
-              currentTab="compliance"
-              tabFrameworks={landscapeTabFrameworksDesktop}
-              onSwitchTab={(t) => handleTabChange(t)}
-            />
-            <ComplianceLandscape
-              frameworks={complianceOnlyFrameworks}
-              showDeadlineTimeline={false}
-              maturityByRefId={maturityByRefId}
               onNavigateToCswp39={handleNavigateToCswp39}
-              orgFilter={lsOrg}
-              industryFilter={lsIndustry}
-              regionFilter={lsRegion}
-              countryFilter={lsCountry}
-              deadlineFilter={lsDeadline}
-              searchText={lsSearch}
-              searchInputValue={lsSearchInput}
-              sortBy={lsSort}
-              viewMode={lsView}
-              onOrgFilterChange={handleLsOrgChange}
-              onIndustryFilterChange={handleLsIndustryChange}
-              onRegionFilterChange={handleLsRegionChange}
-              onCountryFilterChange={handleLsCountryChange}
-              onDeadlineFilterChange={handleLsDeadlineChange}
-              onSearchTextChange={handleLsSearchChange}
-              onSortByChange={handleLsSortChange}
-              onViewModeChange={handleLsViewChange}
               highlightFrameworkId={highlightFrameworkId}
             />
           </TabsContent>
