@@ -53,7 +53,7 @@ export const IdentityProxySimulator: React.FC = () => {
           >
             <h3 className="font-bold mb-2">Identity Proxy</h3>
             <Button
-              variant={proxyEnabled ? 'success' : 'secondary'}
+              variant={proxyEnabled ? 'default' : 'secondary'}
               onClick={() => setProxyEnabled(!proxyEnabled)}
               className="px-4 py-2"
             >

@@ -169,12 +169,12 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
             {detail.learnRoute && !open && (
               // Collapsed: promote "Learn this zone" to a primary button so
               // first-time learners have an obvious entry point.
-              <Button asChild size="sm" variant="default" className="h-6 px-2 gap-1 text-[10px]">
-                <Link to={detail.learnRoute}>
+              <Link to={detail.learnRoute}>
+                <Button size="sm" variant="default" className="h-6 px-2 gap-1 text-[10px]">
                   <GraduationCap size={11} />
                   Learn this zone
-                </Link>
-              </Button>
+                </Button>
+              </Link>
             )}
             {detail.learnRoute && open && (
               // Expanded: keep the original lightweight inline link.

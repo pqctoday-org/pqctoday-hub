@@ -210,40 +210,6 @@ function SectionHeader({
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const CERTIFICATION_GLOSSARY = [
-  {
-    term: 'FIPS 140-3',
-    definition:
-      'NIST Cryptographic Module Validation Program (CMVP). Validates crypto modules against FIPS 140-3 security levels 1-4; mandatory for U.S. federal procurement. FIPS 140-2 certificates move to Historical list on 2026-09-21.',
-  },
-  {
-    term: 'ACVP',
-    definition:
-      'NIST Automated Cryptographic Validation Program. Tests individual algorithm implementations (e.g., ML-KEM, ML-DSA) for correctness. Prerequisite for CMVP module validation.',
-  },
-  {
-    term: 'Common Criteria (CC)',
-    definition:
-      'ISO/IEC 15408 international security evaluation framework. Products are certified against Protection Profiles at Evaluation Assurance Levels (EAL1-EAL7). Recognized across 31 CCRA countries.',
-  },
-  {
-    term: 'EUCC',
-    definition:
-      'EU Cybersecurity Certification scheme on Common Criteria (Regulation 2024/482). Managed by ENISA + ECCG; mandatory replacement for national CC schemes in the EU. PQC Protection Profiles emerging in 2026.',
-  },
-  {
-    term: 'CNSA 2.0',
-    definition:
-      'NSA Commercial National Security Algorithm suite v2.0. Phased mandate for U.S. national security systems: ML-KEM-1024 + ML-DSA-87, AES-256, SHA-384/512. Deadlines 2025-2033 by product category.',
-  },
-  {
-    term: 'CSPN / ANSSI Qualification',
-    definition:
-      'France ANSSI first-party certification scheme. Three qualification tiers (Elementary, Standard, Reinforced). Mandatory PQC qualification effective 2027; first PQC certs issued Sept-Oct 2025.',
-  },
-]
-
 // ── Mobile toggle ──────────────────────────────────────────────────────
 
 type MobileSection =
@@ -583,41 +549,6 @@ export const ComplianceView = () => {
     : selectedRegion === 'eu'
       ? 'EU region'
       : null
-
-  // Pre-filtered framework sets for each tab
-  // Industry alliances (PQC-COALITION, PQCA, QED-C) are surfaced alongside
-  // standardization bodies — they're standardization-adjacent organisations that
-  // produce reference implementations, policy guidance, and migration tooling.
-  const standardsFrameworks = useMemo(
-    () =>
-      complianceFrameworks.filter(
-        (f) => f.bodyType === 'standardization_body' || f.bodyType === 'industry_alliance'
-      ),
-    []
-  )
-  const technicalStandards = useMemo(
-    () => complianceFrameworks.filter((f) => f.bodyType === 'technical_standard'),
-    []
-  )
-  const certificationFrameworks = useMemo(
-    () => complianceFrameworks.filter((f) => f.bodyType === 'certification_body'),
-    []
-  )
-  const complianceOnlyFrameworks = useMemo(
-    () => complianceFrameworks.filter((f) => f.bodyType === 'compliance_framework'),
-    []
-  )
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const landscapeTabFrameworksDesktop = useMemo(
-    () => ({
-      standards: standardsFrameworks,
-      technical: technicalStandards,
-      certification: certificationFrameworks,
-      compliance: complianceOnlyFrameworks,
-    }),
-    [standardsFrameworks, technicalStandards, certificationFrameworks, complianceOnlyFrameworks]
-  )
 
   const [exportError, setExportError] = useState<string | null>(null)
 
