@@ -286,6 +286,23 @@ assessmentStatus]`: the hook re-seeds from persona whenever `industry` is empty,
 
 ### Data
 
+- **Learn module reference and product mappings curated** — a full 53-module
+  gap audit was run against the library and product catalogs. Every module's
+  mapped references and products were reviewed against the module's actual topic
+  scope; off-topic and redundant entries were removed and clearly relevant
+  unmapped items were added. Net effect on the two data files:
+
+  _Library_ (`library_05052026.csv`): 176 ref-to-module links removed,
+  323 added — modules such as `slh-dsa`, `stateful-signatures`, `qkd`, and
+  `entropy-randomness` gained missing foundational standards (FIPS 203/204/205,
+  SP 800-208, ETSI QKD specs) while unrelated standards were pruned.
+
+  _Product catalog_ (`pqc_product_catalog_05052026.csv`): 876 product-to-module
+  links removed, 300 added — algorithm-specific modules (`ml-kem`, `ml-dsa`,
+  `slh-dsa`) no longer surface generic TLS scanners or IAM suites; vertical
+  modules (`healthcare-pqc`, `aerospace-pqc`, `emv-payment-pqc`) now surface
+  sector-specific products instead of the full catalog.
+
 - **`rag-corpus.json` regenerated** — auto build artifact, content
   unchanged (now persisted minified instead of pretty-printed).
 
