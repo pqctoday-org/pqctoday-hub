@@ -54,7 +54,8 @@ import {
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { ShareButton } from '../ui/ShareButton'
 import { Button } from '@/components/ui/button'
-import { VendorRoadmapLink } from './VendorRoadmapLink'
+import { VendorRoadmapPanel } from './VendorRoadmapPanel'
+import { enrichmentByVendorId } from '../../data/vendorRoadmapEnrichmentData'
 
 function ValidationResultBadge({ result }: { result: SoftwareItem['validationResult'] }) {
   if (!result) return null
@@ -732,18 +733,19 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                               )
                             })()}
 
-                            {item.vendorId && roadmapByVendorId && (
-                              <div>
-                                <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2 text-sm">
-                                  Vendor PQC Roadmap
-                                </h4>
-                                <VendorRoadmapLink
-                                  roadmap={roadmapByVendorId.get(item.vendorId)}
-                                  size="md"
-                                  showLabel
-                                />
-                              </div>
-                            )}
+                            {item.vendorId &&
+                              (roadmapByVendorId?.get(item.vendorId) ||
+                                enrichmentByVendorId.get(item.vendorId)) && (
+                                <div>
+                                  <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2 text-sm">
+                                    Vendor PQC Roadmap
+                                  </h4>
+                                  <VendorRoadmapPanel
+                                    roadmap={roadmapByVendorId?.get(item.vendorId)}
+                                    enrichment={enrichmentByVendorId.get(item.vendorId)}
+                                  />
+                                </div>
+                              )}
 
                             {(() => {
                               const cpe = cpeByProduct.get(item.softwareName)
