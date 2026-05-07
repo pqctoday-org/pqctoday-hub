@@ -188,6 +188,17 @@ export interface SaasXref {
   lastVerifiedDate: string
 }
 
+export interface VendorRoadmap {
+  vendorId: string
+  vendorName: string
+  roadmapUrl: string
+  roadmapTitle: string
+  roadmapType: 'official_doc' | 'blog_post' | 'announcement' | 'whitepaper' | ''
+  publishDate: string
+  lastVerifiedDate: string
+  coverageNotes: string
+}
+
 export interface VendorPartner {
   softwareName: string
   partnerVendorId: string

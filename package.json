@@ -35,7 +35,9 @@
     "validate:workshop": "tsx scripts/validate-workshop.ts",
     "video:workshop": "tsx scripts/record-workshop.ts",
     "video:finalize": "tsx scripts/finalize-video.ts",
-    "build:workshop-manifest": "tsx scripts/build-workshop-manifest.ts"
+    "build:workshop-manifest": "tsx scripts/build-workshop-manifest.ts",
+    "download:vendor-roadmaps": "node scripts/download-vendor-roadmaps.js",
+    "download:vendor-roadmaps:dry": "node scripts/download-vendor-roadmaps.js --dry-run"
   },
   "overrides": {
     "serialize-javascript": ">=7.0.3",
