@@ -348,7 +348,8 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
   const rowVirtualizer = useVirtualizer({
     count: visibleData.length,
     getScrollElement: () => tableContainerRef.current,
-    estimateSize: (index) => (expandedIds.has(rowKey(visibleData[index])) ? 600 : 56),
+    estimateSize: (index) => (expandedIds.has(rowKey(visibleData[index])) ? 400 : 56),
+    measureElement: (el) => el.getBoundingClientRect().height,
     overscan: 8,
   })
   const virtualRows = rowVirtualizer.getVirtualItems()
@@ -413,539 +414,535 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
               ))}
             </tr>
           </thead>
-          <tbody>
-            {paddingTop > 0 && (
+          {paddingTop > 0 && (
+            <tbody>
               <tr>
                 <td style={{ height: `${paddingTop}px` }} colSpan={totalCols} />
               </tr>
-            )}
-            {virtualRows.map((virtualRow) => {
-              const item = visibleData[virtualRow.index]
-              const key = rowKey(item)
-              const isExpanded = expandedIds.has(key)
-              const productSlug = item.softwareName.toLowerCase().replace(/[^a-z0-9]+/g, '-')
-              return (
-                <React.Fragment key={key}>
-                  <tr
-                    id={`migrate-row-${productSlug}`}
-                    data-workshop-target={`migrate-product-${productSlug}`}
-                    className="border-b border-border hover:bg-muted/50 transition-colors cursor-pointer scroll-mt-20"
-                    onClick={() => toggleExpand(key)}
-                  >
-                    {hasCompare && (
-                      <td className="p-2 w-8 text-center">
-                        <Button
-                          variant="ghost"
-                          type="button"
-                          aria-label={
-                            compareProducts!.has(key)
-                              ? 'Remove from comparison'
-                              : 'Add to comparison'
-                          }
-                          title={
-                            maxCompareReached && !compareProducts!.has(key)
-                              ? 'Max 3 reached'
-                              : compareProducts!.has(key)
-                                ? 'Remove from comparison'
-                                : 'Add to comparison'
-                          }
-                          disabled={maxCompareReached && !compareProducts!.has(key)}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            onToggleCompare!(key)
-                          }}
-                          className={`p-1 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${
-                            compareProducts!.has(key)
-                              ? 'text-secondary hover:text-secondary/80'
-                              : 'text-muted-foreground/40 hover:text-secondary'
-                          }`}
-                        >
-                          <Scale
-                            size={16}
-                            className={
-                              compareProducts!.has(key)
-                                ? 'text-secondary'
-                                : 'text-muted-foreground/40'
-                            }
-                          />
-                        </Button>
-                      </td>
-                    )}
-                    <td className="p-2 w-8">
+            </tbody>
+          )}
+          {virtualRows.map((virtualRow) => {
+            const item = visibleData[virtualRow.index]
+            const key = rowKey(item)
+            const isExpanded = expandedIds.has(key)
+            const productSlug = item.softwareName.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+            return (
+              <tbody key={key} ref={rowVirtualizer.measureElement} data-index={virtualRow.index}>
+                <tr
+                  id={`migrate-row-${productSlug}`}
+                  data-workshop-target={`migrate-product-${productSlug}`}
+                  className="border-b border-border hover:bg-muted/50 transition-colors cursor-pointer scroll-mt-20"
+                  onClick={() => toggleExpand(key)}
+                >
+                  {hasCompare && (
+                    <td className="p-2 w-8 text-center">
                       <Button
                         variant="ghost"
                         type="button"
                         aria-label={
-                          selectedProducts?.has(key)
-                            ? `Remove ${item.softwareName} from My`
-                            : `Add ${item.softwareName} to My`
+                          compareProducts!.has(key) ? 'Remove from comparison' : 'Add to comparison'
                         }
-                        title={selectedProducts?.has(key) ? 'Remove from My' : 'Add to My'}
+                        title={
+                          maxCompareReached && !compareProducts!.has(key)
+                            ? 'Max 3 reached'
+                            : compareProducts!.has(key)
+                              ? 'Remove from comparison'
+                              : 'Add to comparison'
+                        }
+                        disabled={maxCompareReached && !compareProducts!.has(key)}
                         onClick={(e) => {
                           e.stopPropagation()
-                          onToggleProduct?.(key)
+                          onToggleCompare!(key)
                         }}
-                        className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded transition-colors"
+                        className={`p-1 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${
+                          compareProducts!.has(key)
+                            ? 'text-secondary hover:text-secondary/80'
+                            : 'text-muted-foreground/40 hover:text-secondary'
+                        }`}
                       >
-                        {selectedProducts?.has(key) ? (
-                          <BookmarkCheck size={14} className="text-primary" />
-                        ) : (
-                          <Bookmark
-                            size={14}
-                            className="text-muted-foreground/40 hover:text-primary"
-                          />
-                        )}
+                        <Scale
+                          size={16}
+                          className={
+                            compareProducts!.has(key)
+                              ? 'text-secondary'
+                              : 'text-muted-foreground/40'
+                          }
+                        />
                       </Button>
                     </td>
-                    <td className="p-4">
+                  )}
+                  <td className="p-2 w-8">
+                    <Button
+                      variant="ghost"
+                      type="button"
+                      aria-label={
+                        selectedProducts?.has(key)
+                          ? `Remove ${item.softwareName} from My`
+                          : `Add ${item.softwareName} to My`
+                      }
+                      title={selectedProducts?.has(key) ? 'Remove from My' : 'Add to My'}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onToggleProduct?.(key)
+                      }}
+                      className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded transition-colors"
+                    >
+                      {selectedProducts?.has(key) ? (
+                        <BookmarkCheck size={14} className="text-primary" />
+                      ) : (
+                        <Bookmark
+                          size={14}
+                          className="text-muted-foreground/40 hover:text-primary"
+                        />
+                      )}
+                    </Button>
+                  </td>
+                  <td className="p-4">
+                    <Button
+                      variant="ghost"
+                      type="button"
+                      aria-expanded={isExpanded}
+                      aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${item.softwareName}`}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        toggleExpand(key)
+                      }}
+                      className="p-1 rounded text-muted-foreground hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                    >
+                      {isExpanded ? (
+                        <ChevronDown size={16} aria-hidden="true" />
+                      ) : (
+                        <ChevronRight size={16} aria-hidden="true" />
+                      )}
+                    </Button>
+                  </td>
+                  <td className="p-4 font-medium text-foreground">
+                    <div className="flex items-center gap-3">
+                      {(() => {
+                        const layerIds = item.infrastructureLayer.split(',').map((l) => l.trim())
+                        const layer = LAYERS.find((l) => layerIds.includes(l.id))
+                        if (!layer) return null
+                        const Icon = layer.icon
+                        return (
+                          <div
+                            className={`p-1.5 rounded-md bg-muted/20 border ${layer.borderColor} ${layer.iconColor}`}
+                            aria-label={layerIds
+                              .map((id) => LAYERS.find((l) => l.id === id)?.label ?? id)
+                              .join(', ')}
+                          >
+                            <Icon size={16} aria-hidden="true" />
+                          </div>
+                        )
+                      })()}
+                      <div className="flex flex-col">
+                        <div className="flex items-center gap-2">
+                          <span>{item.softwareName}</span>
+                          {item.status && (
+                            <span
+                              className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold border ${
+                                item.status === 'New'
+                                  ? 'bg-primary/10 text-primary border-primary/20'
+                                  : 'bg-status-warning/10 text-status-warning border-status-warning/20'
+                              }`}
+                            >
+                              {item.status}
+                            </span>
+                          )}
+                          {item.wip && (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full font-bold border border-status-warning/40 bg-status-warning/10 text-status-warning">
+                              WIP
+                            </span>
+                          )}
+                          {(getProductExtraction(item.softwareName) ||
+                            catalogEnrichments[item.softwareName]) && (
+                            <span
+                              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20"
+                              title="AI-analyzed product with enriched extraction data"
+                            >
+                              <Sparkles size={10} aria-hidden="true" />
+                              Enriched
+                            </span>
+                          )}
+                          <TrustScoreBadge
+                            resourceType="migrate"
+                            resourceId={item.softwareName}
+                            size="sm"
+                          />
+                          {renderQuantumTech(item.quantumTech)}
+                          <CertBadges certs={certsByProduct.get(item.softwareName) || []} />
+                        </div>
+                        <span className="text-xs text-muted-foreground">{item.latestVersion}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="p-4 text-sm text-muted-foreground">
+                    {item.infrastructureLayer
+                      .split(',')
+                      .map((id) => id.trim())
+                      .map((id) => LAYERS.find((l) => l.id === id)?.label ?? id)
+                      .join(', ')}
+                  </td>
+                  <td className="p-4 text-sm text-muted-foreground hidden md:table-cell">
+                    {item.categoryName}
+                  </td>
+                  <td className="p-4 text-sm">{renderPqcSupport(item.pqcSupport)}</td>
+                  <td className="p-4 text-sm text-muted-foreground hidden md:table-cell">
+                    {item.license}
+                  </td>
+                  <td className="p-4 text-sm">{renderFipsStatus(item.fipsValidated)}</td>
+                </tr>
+                {isExpanded && (
+                  <tr className="bg-muted/10 border-b border-border" data-product-key={key}>
+                    <td colSpan={totalCols} className="p-0">
+                      <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-sm animate-fade-in">
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                            <Info size={14} /> Description
+                          </h4>
+                          <p className="text-muted-foreground mb-4">
+                            {item.pqcCapabilityDescription}
+                          </p>
+
+                          <EvidenceWarnings flags={item.evidenceFlags} />
+
+                          <h4 className="font-semibold text-foreground mb-2 mt-4">
+                            Capability Details
+                          </h4>
+                          <div className="space-y-2">
+                            <div className="grid grid-cols-[100px_1fr] sm:grid-cols-[120px_1fr] gap-2">
+                              <span className="text-muted-foreground">Platforms:</span>
+                              <span className="text-foreground">{item.primaryPlatforms}</span>
+                            </div>
+                            <div className="grid grid-cols-[100px_1fr] sm:grid-cols-[120px_1fr] gap-2">
+                              <span className="text-muted-foreground">Industries:</span>
+                              <span className="text-foreground">{item.targetIndustries}</span>
+                            </div>
+                            <div className="grid grid-cols-[100px_1fr] sm:grid-cols-[120px_1fr] gap-2">
+                              <span className="text-muted-foreground">Migration Priority:</span>
+                              <span
+                                className={`font-medium ${
+                                  item.pqcMigrationPriority === 'Critical'
+                                    ? 'text-status-error'
+                                    : item.pqcMigrationPriority === 'High'
+                                      ? 'text-status-warning'
+                                      : item.pqcMigrationPriority === 'Medium'
+                                        ? 'text-primary'
+                                        : 'text-muted-foreground'
+                                }`}
+                              >
+                                {item.pqcMigrationPriority}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="space-y-4">
+                          <div>
+                            <h4 className="font-semibold text-foreground mb-2">Metadata</h4>
+                            <div className="space-y-1 text-muted-foreground">
+                              <p>
+                                Released:{' '}
+                                <span className="text-foreground">{item.releaseDate}</span>
+                              </p>
+                              <p className="flex items-center gap-2 flex-wrap">
+                                <span>
+                                  Last Verified:{' '}
+                                  <span className="text-foreground">{item.lastVerifiedDate}</span>
+                                </span>
+                                <ValidationResultBadge result={item.validationResult} />
+                              </p>
+                              <p>Source Type: {item.sourceType}</p>
+                              {item.vendorId && vendorMap.has(item.vendorId) && (
+                                <p>
+                                  Vendor:{' '}
+                                  <a
+                                    href={vendorMap.get(item.vendorId)!.website}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-foreground hover:text-primary transition-colors"
+                                  >
+                                    {vendorMap.get(item.vendorId)!.vendorDisplayName}
+                                  </a>
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          {(() => {
+                            const certs = certsByProduct.get(item.softwareName)
+                            if (!certs || certs.length === 0) return null
+                            return (
+                              <div>
+                                <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                                  <Award size={14} /> PQC Certifications
+                                </h4>
+                                <div className="space-y-2">
+                                  {certs.map((cert) => {
+                                    const badgeClass =
+                                      cert.certType === 'FIPS 140-3'
+                                        ? 'bg-status-success text-status-success'
+                                        : cert.certType === 'ACVP'
+                                          ? 'bg-primary/10 text-primary border-primary/20'
+                                          : 'bg-status-warning text-status-warning'
+                                    const levelShort =
+                                      cert.certificationLevel
+                                        ?.split(',')[0]
+                                        ?.replace('FIPS 140-3 ', '')
+                                        ?.trim() || ''
+                                    return (
+                                      <a
+                                        key={cert.certId}
+                                        href={cert.certLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-2 text-xs group hover:bg-muted/30 rounded-md p-1.5 -mx-1.5 transition-colors"
+                                      >
+                                        <span
+                                          className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border whitespace-nowrap ${badgeClass}`}
+                                        >
+                                          {cert.certType === 'Common Criteria'
+                                            ? 'CC'
+                                            : cert.certType}
+                                        </span>
+                                        <span className="text-muted-foreground truncate">
+                                          {cert.certProduct.length > 40
+                                            ? cert.certProduct.slice(0, 40) + '...'
+                                            : cert.certProduct}
+                                        </span>
+                                        {cert.pqcAlgorithms &&
+                                          !cert.pqcAlgorithms.startsWith('Potentially') && (
+                                            <span className="text-foreground font-medium whitespace-nowrap">
+                                              {cert.pqcAlgorithms}
+                                            </span>
+                                          )}
+                                        {levelShort && (
+                                          <span className="text-muted-foreground whitespace-nowrap">
+                                            {levelShort}
+                                          </span>
+                                        )}
+                                        <ExternalLink
+                                          size={10}
+                                          className="text-muted-foreground/50 group-hover:text-primary shrink-0"
+                                        />
+                                      </a>
+                                    )
+                                  })}
+                                </div>
+                              </div>
+                            )
+                          })()}
+
+                          {item.vendorId &&
+                            (roadmapByVendorId?.get(item.vendorId) ||
+                              enrichmentByVendorId.get(item.vendorId)) && (
+                              <div>
+                                <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2 text-sm">
+                                  Vendor PQC Roadmap
+                                </h4>
+                                <VendorRoadmapPanel
+                                  roadmap={roadmapByVendorId?.get(item.vendorId)}
+                                  enrichment={enrichmentByVendorId.get(item.vendorId)}
+                                />
+                              </div>
+                            )}
+
+                          {(() => {
+                            const cpe = cpeByProduct.get(item.softwareName)
+                            const purl = purlByProduct.get(item.softwareName)
+                            const vendor = item.vendorId ? vendorMap.get(item.vendorId) : undefined
+                            const hasCpe = cpe && cpe.status !== 'not_found'
+                            const hasPurl = purl && purl.status !== 'not_found'
+                            const hasLei = vendor?.leiCode
+                            if (!hasCpe && !hasPurl && !hasLei) return null
+                            return (
+                              <div>
+                                <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                                  <Shield size={14} /> External References
+                                </h4>
+                                <div className="space-y-1.5">
+                                  {hasCpe && (
+                                    <a
+                                      href={cpe.nvdUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="flex items-center gap-2 text-xs group hover:bg-muted/30 rounded-md p-1.5 -mx-1.5 transition-colors"
+                                    >
+                                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border bg-muted/50 text-muted-foreground border-border whitespace-nowrap">
+                                        CPE
+                                      </span>
+                                      <span className="text-muted-foreground font-mono truncate">
+                                        {cpe.cpeVendor}/{cpe.cpeProduct}
+                                      </span>
+                                      <ExternalLink
+                                        size={10}
+                                        className="text-muted-foreground/50 group-hover:text-primary shrink-0"
+                                      />
+                                    </a>
+                                  )}
+                                  {hasPurl && (
+                                    <a
+                                      href={purl.registryUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="flex items-center gap-2 text-xs group hover:bg-muted/30 rounded-md p-1.5 -mx-1.5 transition-colors"
+                                    >
+                                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border bg-primary/10 text-primary border-primary/20 whitespace-nowrap">
+                                        {purl.purlType.toUpperCase()}
+                                      </span>
+                                      <span className="text-muted-foreground font-mono truncate">
+                                        {purl.purlName}
+                                      </span>
+                                      <ExternalLink
+                                        size={10}
+                                        className="text-muted-foreground/50 group-hover:text-primary shrink-0"
+                                      />
+                                    </a>
+                                  )}
+                                  {hasLei && vendor?.gleifUrl && (
+                                    <a
+                                      href={vendor.gleifUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="flex items-center gap-2 text-xs group hover:bg-muted/30 rounded-md p-1.5 -mx-1.5 transition-colors"
+                                    >
+                                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border bg-secondary/10 text-secondary border-secondary/20 whitespace-nowrap">
+                                        LEI
+                                      </span>
+                                      <span className="text-muted-foreground font-mono truncate">
+                                        {vendor.hqCountry && (
+                                          <>{vendor.hqCountry.slice(0, 2).toUpperCase()} · </>
+                                        )}
+                                        {vendor.leiCode!.slice(0, 8)}…
+                                      </span>
+                                      <ExternalLink
+                                        size={10}
+                                        className="text-muted-foreground/50 group-hover:text-primary shrink-0"
+                                      />
+                                    </a>
+                                  )}
+                                </div>
+                              </div>
+                            )
+                          })()}
+                        </div>
+                      </div>
+
+                      {/* Action Bar Footer */}
+                      <div className="p-4 px-6 bg-background/30 border-t border-border/50 flex flex-col sm:flex-row flex-wrap items-center justify-between gap-4">
+                        {/* Left-side links/tools */}
+                        <div className="flex flex-wrap items-center gap-4">
+                          {item.repositoryUrl && (
+                            <a
+                              href={item.repositoryUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 text-primary hover:text-primary/80 transition-colors text-xs font-medium bg-primary/5 px-2.5 py-1.5 rounded-md border border-primary/20"
+                            >
+                              <ExternalLink size={14} /> Repository / Download
+                            </a>
+                          )}
+                          {item.authoritativeSource && (
+                            <a
+                              href={item.authoritativeSource}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors text-xs font-medium bg-muted/40 px-2.5 py-1.5 rounded-md border border-border/50"
+                            >
+                              <ExternalLink size={12} /> Authoritative Source
+                            </a>
+                          )}
+                          {item.proofUrl && (
+                            <Button
+                              variant="ghost"
+                              onClick={() => setProofModal(item)}
+                              className="inline-flex items-center gap-1.5 text-primary hover:text-primary/80 transition-colors text-xs font-medium bg-primary/5 px-2.5 py-1.5 rounded-md border border-primary/20"
+                            >
+                              <ShieldCheck size={14} /> View Proof
+                              {item.proofPublicationDate && (
+                                <span className="text-muted-foreground ml-1">
+                                  ({item.proofPublicationDate})
+                                </span>
+                              )}
+                            </Button>
+                          )}
+                          {(getProductExtraction(item.softwareName) ||
+                            catalogEnrichments[item.softwareName]) && (
+                            <Button
+                              variant="ghost"
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setExtractionModal({ softwareName: item.softwareName })
+                              }}
+                              className="inline-flex items-center gap-1.5 text-secondary hover:text-secondary/80 transition-colors text-xs font-medium bg-secondary/5 px-2.5 py-1.5 rounded-md border border-secondary/20"
+                            >
+                              <Sparkles size={14} /> View Extraction
+                            </Button>
+                          )}
+                        </div>
+
+                        {/* Right-side main CTAs */}
+                        <div className="flex flex-wrap items-center gap-3">
+                          <UpdateProductButton
+                            updateUrl={buildProductUpdateUrl({
+                              productName: item.softwareName,
+                              categoryName: item.categoryName,
+                              currentPqcSupport: item.pqcSupport || 'Unknown',
+                              productDetails: [
+                                `**Version:** ${item.latestVersion || 'N/A'}`,
+                                `**FIPS:** ${item.fipsValidated || 'N/A'}`,
+                                `**Migration Priority:** ${item.pqcMigrationPriority || 'N/A'}`,
+                                item.pqcCapabilityDescription
+                                  ? `**Current Capabilities:** ${item.pqcCapabilityDescription}`
+                                  : '',
+                              ]
+                                .filter(Boolean)
+                                .join('\n'),
+                              pageUrl: `/migrate?q=${encodeURIComponent(item.softwareName)}`,
+                            })}
+                            resourceLabel={item.softwareName}
+                            variant="text"
+                          />
+                          <AskAssistantButton
+                            variant="text"
+                            label="Ask"
+                            question={`What PQC algorithms does ${item.softwareName} support${item.categoryName ? ` (${item.categoryName})` : ''}?${item.pqcCapabilityDescription ? ` Capabilities: ${item.pqcCapabilityDescription}` : ''}${item.fipsValidated && item.fipsValidated !== 'No' ? ` FIPS status: ${item.fipsValidated}.` : ''}`}
+                          />
+                          <div className="border-l border-border/50 pl-3 h-8 flex items-center">
+                            <ShareButton
+                              title={item.softwareName}
+                              text={`${item.softwareName} PQC migration status`}
+                              url={`${window.location.origin}/migrate?product=${encodeURIComponent(key)}&mode=table`}
+                              variant="icon"
+                            />
+                          </div>
+                        </div>
+                      </div>
                       <Button
                         variant="ghost"
                         type="button"
-                        aria-expanded={isExpanded}
-                        aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${item.softwareName}`}
+                        aria-label={`Collapse ${item.softwareName}`}
                         onClick={(e) => {
                           e.stopPropagation()
                           toggleExpand(key)
                         }}
-                        className="p-1 rounded text-muted-foreground hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                        className="mt-3 w-full py-2 text-xs text-muted-foreground hover:text-foreground border border-border/40 rounded-lg hover:bg-background/50 transition-colors flex items-center justify-center gap-1.5"
                       >
-                        {isExpanded ? (
-                          <ChevronDown size={16} aria-hidden="true" />
-                        ) : (
-                          <ChevronRight size={16} aria-hidden="true" />
-                        )}
+                        <ChevronUp size={14} />
+                        Collapse
                       </Button>
                     </td>
-                    <td className="p-4 font-medium text-foreground">
-                      <div className="flex items-center gap-3">
-                        {(() => {
-                          const layerIds = item.infrastructureLayer.split(',').map((l) => l.trim())
-                          const layer = LAYERS.find((l) => layerIds.includes(l.id))
-                          if (!layer) return null
-                          const Icon = layer.icon
-                          return (
-                            <div
-                              className={`p-1.5 rounded-md bg-muted/20 border ${layer.borderColor} ${layer.iconColor}`}
-                              aria-label={layerIds
-                                .map((id) => LAYERS.find((l) => l.id === id)?.label ?? id)
-                                .join(', ')}
-                            >
-                              <Icon size={16} aria-hidden="true" />
-                            </div>
-                          )
-                        })()}
-                        <div className="flex flex-col">
-                          <div className="flex items-center gap-2">
-                            <span>{item.softwareName}</span>
-                            {item.status && (
-                              <span
-                                className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold border ${
-                                  item.status === 'New'
-                                    ? 'bg-primary/10 text-primary border-primary/20'
-                                    : 'bg-status-warning/10 text-status-warning border-status-warning/20'
-                                }`}
-                              >
-                                {item.status}
-                              </span>
-                            )}
-                            {item.wip && (
-                              <span className="text-[10px] px-1.5 py-0.5 rounded-full font-bold border border-status-warning/40 bg-status-warning/10 text-status-warning">
-                                WIP
-                              </span>
-                            )}
-                            {(getProductExtraction(item.softwareName) ||
-                              catalogEnrichments[item.softwareName]) && (
-                              <span
-                                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20"
-                                title="AI-analyzed product with enriched extraction data"
-                              >
-                                <Sparkles size={10} aria-hidden="true" />
-                                Enriched
-                              </span>
-                            )}
-                            <TrustScoreBadge
-                              resourceType="migrate"
-                              resourceId={item.softwareName}
-                              size="sm"
-                            />
-                            {renderQuantumTech(item.quantumTech)}
-                            <CertBadges certs={certsByProduct.get(item.softwareName) || []} />
-                          </div>
-                          <span className="text-xs text-muted-foreground">
-                            {item.latestVersion}
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="p-4 text-sm text-muted-foreground">
-                      {item.infrastructureLayer
-                        .split(',')
-                        .map((id) => id.trim())
-                        .map((id) => LAYERS.find((l) => l.id === id)?.label ?? id)
-                        .join(', ')}
-                    </td>
-                    <td className="p-4 text-sm text-muted-foreground hidden md:table-cell">
-                      {item.categoryName}
-                    </td>
-                    <td className="p-4 text-sm">{renderPqcSupport(item.pqcSupport)}</td>
-                    <td className="p-4 text-sm text-muted-foreground hidden md:table-cell">
-                      {item.license}
-                    </td>
-                    <td className="p-4 text-sm">{renderFipsStatus(item.fipsValidated)}</td>
                   </tr>
-                  {isExpanded && (
-                    <tr className="bg-muted/10 border-b border-border" data-product-key={key}>
-                      <td colSpan={totalCols} className="p-0">
-                        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-sm animate-fade-in">
-                          <div>
-                            <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
-                              <Info size={14} /> Description
-                            </h4>
-                            <p className="text-muted-foreground mb-4">
-                              {item.pqcCapabilityDescription}
-                            </p>
-
-                            <EvidenceWarnings flags={item.evidenceFlags} />
-
-                            <h4 className="font-semibold text-foreground mb-2 mt-4">
-                              Capability Details
-                            </h4>
-                            <div className="space-y-2">
-                              <div className="grid grid-cols-[100px_1fr] sm:grid-cols-[120px_1fr] gap-2">
-                                <span className="text-muted-foreground">Platforms:</span>
-                                <span className="text-foreground">{item.primaryPlatforms}</span>
-                              </div>
-                              <div className="grid grid-cols-[100px_1fr] sm:grid-cols-[120px_1fr] gap-2">
-                                <span className="text-muted-foreground">Industries:</span>
-                                <span className="text-foreground">{item.targetIndustries}</span>
-                              </div>
-                              <div className="grid grid-cols-[100px_1fr] sm:grid-cols-[120px_1fr] gap-2">
-                                <span className="text-muted-foreground">Migration Priority:</span>
-                                <span
-                                  className={`font-medium ${
-                                    item.pqcMigrationPriority === 'Critical'
-                                      ? 'text-status-error'
-                                      : item.pqcMigrationPriority === 'High'
-                                        ? 'text-status-warning'
-                                        : item.pqcMigrationPriority === 'Medium'
-                                          ? 'text-primary'
-                                          : 'text-muted-foreground'
-                                  }`}
-                                >
-                                  {item.pqcMigrationPriority}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="space-y-4">
-                            <div>
-                              <h4 className="font-semibold text-foreground mb-2">Metadata</h4>
-                              <div className="space-y-1 text-muted-foreground">
-                                <p>
-                                  Released:{' '}
-                                  <span className="text-foreground">{item.releaseDate}</span>
-                                </p>
-                                <p className="flex items-center gap-2 flex-wrap">
-                                  <span>
-                                    Last Verified:{' '}
-                                    <span className="text-foreground">{item.lastVerifiedDate}</span>
-                                  </span>
-                                  <ValidationResultBadge result={item.validationResult} />
-                                </p>
-                                <p>Source Type: {item.sourceType}</p>
-                                {item.vendorId && vendorMap.has(item.vendorId) && (
-                                  <p>
-                                    Vendor:{' '}
-                                    <a
-                                      href={vendorMap.get(item.vendorId)!.website}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-foreground hover:text-primary transition-colors"
-                                    >
-                                      {vendorMap.get(item.vendorId)!.vendorDisplayName}
-                                    </a>
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-
-                            {(() => {
-                              const certs = certsByProduct.get(item.softwareName)
-                              if (!certs || certs.length === 0) return null
-                              return (
-                                <div>
-                                  <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
-                                    <Award size={14} /> PQC Certifications
-                                  </h4>
-                                  <div className="space-y-2">
-                                    {certs.map((cert) => {
-                                      const badgeClass =
-                                        cert.certType === 'FIPS 140-3'
-                                          ? 'bg-status-success text-status-success'
-                                          : cert.certType === 'ACVP'
-                                            ? 'bg-primary/10 text-primary border-primary/20'
-                                            : 'bg-status-warning text-status-warning'
-                                      const levelShort =
-                                        cert.certificationLevel
-                                          ?.split(',')[0]
-                                          ?.replace('FIPS 140-3 ', '')
-                                          ?.trim() || ''
-                                      return (
-                                        <a
-                                          key={cert.certId}
-                                          href={cert.certLink}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          className="flex items-center gap-2 text-xs group hover:bg-muted/30 rounded-md p-1.5 -mx-1.5 transition-colors"
-                                        >
-                                          <span
-                                            className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border whitespace-nowrap ${badgeClass}`}
-                                          >
-                                            {cert.certType === 'Common Criteria'
-                                              ? 'CC'
-                                              : cert.certType}
-                                          </span>
-                                          <span className="text-muted-foreground truncate">
-                                            {cert.certProduct.length > 40
-                                              ? cert.certProduct.slice(0, 40) + '...'
-                                              : cert.certProduct}
-                                          </span>
-                                          {cert.pqcAlgorithms &&
-                                            !cert.pqcAlgorithms.startsWith('Potentially') && (
-                                              <span className="text-foreground font-medium whitespace-nowrap">
-                                                {cert.pqcAlgorithms}
-                                              </span>
-                                            )}
-                                          {levelShort && (
-                                            <span className="text-muted-foreground whitespace-nowrap">
-                                              {levelShort}
-                                            </span>
-                                          )}
-                                          <ExternalLink
-                                            size={10}
-                                            className="text-muted-foreground/50 group-hover:text-primary shrink-0"
-                                          />
-                                        </a>
-                                      )
-                                    })}
-                                  </div>
-                                </div>
-                              )
-                            })()}
-
-                            {item.vendorId &&
-                              (roadmapByVendorId?.get(item.vendorId) ||
-                                enrichmentByVendorId.get(item.vendorId)) && (
-                                <div>
-                                  <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2 text-sm">
-                                    Vendor PQC Roadmap
-                                  </h4>
-                                  <VendorRoadmapPanel
-                                    roadmap={roadmapByVendorId?.get(item.vendorId)}
-                                    enrichment={enrichmentByVendorId.get(item.vendorId)}
-                                  />
-                                </div>
-                              )}
-
-                            {(() => {
-                              const cpe = cpeByProduct.get(item.softwareName)
-                              const purl = purlByProduct.get(item.softwareName)
-                              const vendor = item.vendorId
-                                ? vendorMap.get(item.vendorId)
-                                : undefined
-                              const hasCpe = cpe && cpe.status !== 'not_found'
-                              const hasPurl = purl && purl.status !== 'not_found'
-                              const hasLei = vendor?.leiCode
-                              if (!hasCpe && !hasPurl && !hasLei) return null
-                              return (
-                                <div>
-                                  <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
-                                    <Shield size={14} /> External References
-                                  </h4>
-                                  <div className="space-y-1.5">
-                                    {hasCpe && (
-                                      <a
-                                        href={cpe.nvdUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex items-center gap-2 text-xs group hover:bg-muted/30 rounded-md p-1.5 -mx-1.5 transition-colors"
-                                      >
-                                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border bg-muted/50 text-muted-foreground border-border whitespace-nowrap">
-                                          CPE
-                                        </span>
-                                        <span className="text-muted-foreground font-mono truncate">
-                                          {cpe.cpeVendor}/{cpe.cpeProduct}
-                                        </span>
-                                        <ExternalLink
-                                          size={10}
-                                          className="text-muted-foreground/50 group-hover:text-primary shrink-0"
-                                        />
-                                      </a>
-                                    )}
-                                    {hasPurl && (
-                                      <a
-                                        href={purl.registryUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex items-center gap-2 text-xs group hover:bg-muted/30 rounded-md p-1.5 -mx-1.5 transition-colors"
-                                      >
-                                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border bg-primary/10 text-primary border-primary/20 whitespace-nowrap">
-                                          {purl.purlType.toUpperCase()}
-                                        </span>
-                                        <span className="text-muted-foreground font-mono truncate">
-                                          {purl.purlName}
-                                        </span>
-                                        <ExternalLink
-                                          size={10}
-                                          className="text-muted-foreground/50 group-hover:text-primary shrink-0"
-                                        />
-                                      </a>
-                                    )}
-                                    {hasLei && vendor?.gleifUrl && (
-                                      <a
-                                        href={vendor.gleifUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex items-center gap-2 text-xs group hover:bg-muted/30 rounded-md p-1.5 -mx-1.5 transition-colors"
-                                      >
-                                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border bg-secondary/10 text-secondary border-secondary/20 whitespace-nowrap">
-                                          LEI
-                                        </span>
-                                        <span className="text-muted-foreground font-mono truncate">
-                                          {vendor.hqCountry && (
-                                            <>{vendor.hqCountry.slice(0, 2).toUpperCase()} · </>
-                                          )}
-                                          {vendor.leiCode!.slice(0, 8)}…
-                                        </span>
-                                        <ExternalLink
-                                          size={10}
-                                          className="text-muted-foreground/50 group-hover:text-primary shrink-0"
-                                        />
-                                      </a>
-                                    )}
-                                  </div>
-                                </div>
-                              )
-                            })()}
-                          </div>
-                        </div>
-
-                        {/* Action Bar Footer */}
-                        <div className="p-4 px-6 bg-background/30 border-t border-border/50 flex flex-col sm:flex-row flex-wrap items-center justify-between gap-4">
-                          {/* Left-side links/tools */}
-                          <div className="flex flex-wrap items-center gap-4">
-                            {item.repositoryUrl && (
-                              <a
-                                href={item.repositoryUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1.5 text-primary hover:text-primary/80 transition-colors text-xs font-medium bg-primary/5 px-2.5 py-1.5 rounded-md border border-primary/20"
-                              >
-                                <ExternalLink size={14} /> Repository / Download
-                              </a>
-                            )}
-                            {item.authoritativeSource && (
-                              <a
-                                href={item.authoritativeSource}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors text-xs font-medium bg-muted/40 px-2.5 py-1.5 rounded-md border border-border/50"
-                              >
-                                <ExternalLink size={12} /> Authoritative Source
-                              </a>
-                            )}
-                            {item.proofUrl && (
-                              <Button
-                                variant="ghost"
-                                onClick={() => setProofModal(item)}
-                                className="inline-flex items-center gap-1.5 text-primary hover:text-primary/80 transition-colors text-xs font-medium bg-primary/5 px-2.5 py-1.5 rounded-md border border-primary/20"
-                              >
-                                <ShieldCheck size={14} /> View Proof
-                                {item.proofPublicationDate && (
-                                  <span className="text-muted-foreground ml-1">
-                                    ({item.proofPublicationDate})
-                                  </span>
-                                )}
-                              </Button>
-                            )}
-                            {(getProductExtraction(item.softwareName) ||
-                              catalogEnrichments[item.softwareName]) && (
-                              <Button
-                                variant="ghost"
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  setExtractionModal({ softwareName: item.softwareName })
-                                }}
-                                className="inline-flex items-center gap-1.5 text-secondary hover:text-secondary/80 transition-colors text-xs font-medium bg-secondary/5 px-2.5 py-1.5 rounded-md border border-secondary/20"
-                              >
-                                <Sparkles size={14} /> View Extraction
-                              </Button>
-                            )}
-                          </div>
-
-                          {/* Right-side main CTAs */}
-                          <div className="flex flex-wrap items-center gap-3">
-                            <UpdateProductButton
-                              updateUrl={buildProductUpdateUrl({
-                                productName: item.softwareName,
-                                categoryName: item.categoryName,
-                                currentPqcSupport: item.pqcSupport || 'Unknown',
-                                productDetails: [
-                                  `**Version:** ${item.latestVersion || 'N/A'}`,
-                                  `**FIPS:** ${item.fipsValidated || 'N/A'}`,
-                                  `**Migration Priority:** ${item.pqcMigrationPriority || 'N/A'}`,
-                                  item.pqcCapabilityDescription
-                                    ? `**Current Capabilities:** ${item.pqcCapabilityDescription}`
-                                    : '',
-                                ]
-                                  .filter(Boolean)
-                                  .join('\n'),
-                                pageUrl: `/migrate?q=${encodeURIComponent(item.softwareName)}`,
-                              })}
-                              resourceLabel={item.softwareName}
-                              variant="text"
-                            />
-                            <AskAssistantButton
-                              variant="text"
-                              label="Ask"
-                              question={`What PQC algorithms does ${item.softwareName} support${item.categoryName ? ` (${item.categoryName})` : ''}?${item.pqcCapabilityDescription ? ` Capabilities: ${item.pqcCapabilityDescription}` : ''}${item.fipsValidated && item.fipsValidated !== 'No' ? ` FIPS status: ${item.fipsValidated}.` : ''}`}
-                            />
-                            <div className="border-l border-border/50 pl-3 h-8 flex items-center">
-                              <ShareButton
-                                title={item.softwareName}
-                                text={`${item.softwareName} PQC migration status`}
-                                url={`${window.location.origin}/migrate?product=${encodeURIComponent(key)}&mode=table`}
-                                variant="icon"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          type="button"
-                          aria-label={`Collapse ${item.softwareName}`}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            toggleExpand(key)
-                          }}
-                          className="mt-3 w-full py-2 text-xs text-muted-foreground hover:text-foreground border border-border/40 rounded-lg hover:bg-background/50 transition-colors flex items-center justify-center gap-1.5"
-                        >
-                          <ChevronUp size={14} />
-                          Collapse
-                        </Button>
-                      </td>
-                    </tr>
-                  )}
-                </React.Fragment>
-              )
-            })}
-            {paddingBottom > 0 && (
+                )}
+              </tbody>
+            )
+          })}
+          {paddingBottom > 0 && (
+            <tbody>
               <tr>
                 <td style={{ height: `${paddingBottom}px` }} colSpan={totalCols} />
               </tr>
-            )}
-          </tbody>
+            </tbody>
+          )}
         </table>
       </div>
       <ProductExtractionModal
