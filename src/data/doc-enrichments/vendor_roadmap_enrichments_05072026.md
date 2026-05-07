@@ -358,3 +358,91 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-127_Broadcom_Inc..html (96.6 KB)
 - **Extraction Timestamp**: 2026-05-07T02:32:40
+
+## VND-008 — Cisco Systems Inc.
+
+- **Vendor ID**: VND-008
+- **Vendor Name**: Cisco Systems Inc.
+- **Roadmap Title**: Cisco Secure Firewall: Post-Quantum Cryptography Roadmap
+- **Roadmap URL**: https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap
+- **Publish Date**: 2026-04-13
+- **Local File**: public/vendor-roadmaps/VND-008_Cisco_Systems_Inc..html
+- **CSV Coverage Notes**: Secure Firewall · IOS XE · IOS XR · Meraki · WebEx · AnyConnect
+- **PQC Algorithms Announced**: ML-KEM; ML-DSA; SLH-DSA
+- **Target Migration Dates**: ML-KEM GA late 2026; ML-DSA and SLH-DSA support in second half of 2027
+- **Products / Services Covered**: Secure Firewall Threat Defense (FTD); ASA
+- **Compliance Frameworks**: NIST FIPS 203; NIST FIPS 204; NIST FIPS 205; NSA; RFC 8784; RFC 9242; RFC 9370
+- **Hybrid Mode Support**: Yes, via RFC 9242 and RFC 9370 enabling hybrid key exchange with classical and post-quantum key agreement simultaneously
+- **Current GA Status**: Planned
+- **Customer Action Required**: Know where encryption lives; build upgrade paths into planning cycles; think about hardware now for PQC Secure Boot support
+- **Key Commitments & Quotes**: "Support arrives in Secure Firewall Threat Defense (FTD) 10.5 and ASA 9.25 , targeted for General Availability in late 2026."
+- **Coverage Verification**: MISMATCH, the document only covers Secure Firewall (FTD/ASA) and does not mention IOS XE, IOS XR, Meraki, WebEx, or AnyConnect.
+- **Extraction Quality**: HIGH
+- **Source Document**: VND-008_Cisco_Systems_Inc..html (82.4 KB)
+- **Extraction Timestamp**: 2026-05-07T07:23:48
+
+## VND-030 — PQShield Ltd.
+
+- **Vendor ID**: VND-030
+- **Vendor Name**: PQShield Ltd.
+- **Roadmap Title**: PQShield PQCryptoLib-SDK: ML-KEM and ML-DSA
+- **Roadmap URL**: https://pqshield.com/products/pqc-sdk/
+- **Publish Date**: 2025-01-01
+- **Local File**: public/vendor-roadmaps/VND-030_PQShield_Ltd..html
+- **CSV Coverage Notes**: PQSDK · PQCryptoLib-Core · PQMicroLib-Core · PQE2E Messaging SDK · hardware IP cores · FIPS 203/204/205
+- **PQC Algorithms Announced**: ML-KEM; ML-DSA
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: PQCryptoLib-SDK; PQCryptoLib-Core
+- **Compliance Frameworks**: FIPS 140-3; CAVP; CMVP
+- **Hybrid Mode Support**: None detected
+- **Current GA Status**: GA
+- **Customer Action Required**: Contact us for an evaluation; Complete the form below to download the Product Brief and arrange a Product Evaluation
+- **Key Commitments & Quotes**: "PQCryptoLib-SDK provides implementations of ML-KEM and ML-DSA."; "PQCryptoLib-SDK is PQShield’s plug-and-play software development kit"; "FIPS 140-3 CAVP/CMVP ready PQCryptoLib-Core library"
+- **Coverage Verification**: PARTIAL — The document confirms PQCryptoLib-SDK and PQCryptoLib-Core but does not mention PQMicroLib-Core, PQE2E Messaging SDK, hardware IP cores, or FIPS 203/204/205.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-030_PQShield_Ltd..html (61.0 KB)
+- **Extraction Timestamp**: 2026-05-07T07:25:58
+
+## VND-181 — Sectigo Ltd.
+
+- **Vendor ID**: VND-181
+- **Vendor Name**: Sectigo Ltd.
+- **Roadmap Title**: Sectigo Certificate Manager: Private PKI PQC Sandbox (ML-DSA)
+- **Roadmap URL**: https://www.sectigo.com/enterprise-solutions/certificate-manager/private-pqc
+- **Publish Date**: 2026-04-14
+- **Local File**: public/vendor-roadmaps/VND-181_Sectigo_Ltd..html
+- **CSV Coverage Notes**: Sectigo Certificate Manager · IoT Manager · Code Signing
+- **PQC Algorithms Announced**: ML-DSA
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: Sectigo Certificate Manager (SCM)
+- **Compliance Frameworks**: None detected
+- **Hybrid Mode Support**: Partial; mentions "hybrid certificates" as part of strategy definition, but the sandbox specifically leverages "supported ML-DSA algorithms" for private experimental certificates.
+- **Current GA Status**: Preview; described as a "sandbox," "experiment," and "experimental PQC certificates" for learning and evaluation.
+- **Customer Action Required**: Request access in SCM; Talk to us; Start your PQC journey with a free consultation.
+- **Key Commitments & Quotes**: "Private PQC with SCM is a core part of Sectigo’s PQC readiness approach"; "Sectigo operates the private PQC CA and HSMs that support NIST PQC keys"; "Designed for learning and evaluation, Private PQC helps teams build early operational insight"
+- **Coverage Verification**: MISMATCH; The document only discusses Sectigo Certificate Manager (SCM) and does not mention IoT Manager or Code Signing.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-181_Sectigo_Ltd..html (408.1 KB)
+- **Extraction Timestamp**: 2026-05-07T07:27:28
+
+## VND-057 — Cloudflare Inc.
+
+- **Vendor ID**: VND-057
+- **Vendor Name**: Cloudflare Inc.
+- **Roadmap Title**: Cloudflare Post-Quantum Roadmap
+- **Roadmap URL**: https://blog.cloudflare.com/post-quantum-roadmap/
+- **Publish Date**: 2024-09-09
+- **Local File**: public/vendor-roadmaps/VND-057_Cloudflare_Inc..html
+- **CSV Coverage Notes**: Cloudflare CDN · Zero Trust · Workers · Gateway · WARP — targeting 2029 full PQ
+- **PQC Algorithms Announced**: ML-KEM
+- **Target Migration Dates**: 2029 for full post-quantum security including authentication
+- **Products / Services Covered**: Cloudflare IPsec; Cloudflare One; Cloudflare products (general reference to entire product suite)
+- **Compliance Frameworks**: None detected
+- **Hybrid Mode Support**: Yes, via hybrid ML-KEM for Cloudflare IPsec
+- **Current GA Status**: GA (Cloudflare IPsec post-quantum encryption is generally available)
+- **Customer Action Required**: None detected (document states "you do not need to take any mitigating action")
+- **Key Commitments & Quotes**: "We now target 2029 to be fully post-quantum (PQ) secure including, crucially, post-quantum authentication."; "Cloudflare IPsec now has generally available support for post-quantum encryption via hybrid ML-KEM."; "every post-quantum upgrade we build will continue to be available to all customers, on every plan, at no additional cost"
+- **Coverage Verification**: PARTIAL, the document confirms the 2029 target and mentions Cloudflare One (WARP/Zero Trust) and IPsec, but does not explicitly list CDN, Workers, or Gateway in the roadmap section.
+- **Extraction Quality**: HIGH
+- **Source Document**: VND-057_Cloudflare_Inc..html (302.3 KB)
+- **Extraction Timestamp**: 2026-05-07T07:28:54

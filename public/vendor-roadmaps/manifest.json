@@ -1,52 +1,32 @@
 {
-  "generated": "2026-05-07T05:35:19.266Z",
+  "generated": "2026-05-07T12:23:06.671Z",
   "source": "src/data/migrate_vendor_roadmap_05072026.csv",
   "summary": {
-    "downloaded": 25,
-    "skipped": 0,
-    "failed": 5,
-    "persisted_skip": 0,
+    "downloaded": 7,
+    "skipped": 3,
+    "failed": 1,
+    "persisted_skip": 3,
     "no_url": 20
   },
   "entries": [
     {
-      "vendorId": "VND-001",
-      "vendorName": "Amazon Web Services Inc.",
-      "title": "AWS Post-Quantum Cryptography Migration Plan",
-      "url": "https://aws.amazon.com/security/post-quantum-cryptography/migrating-to-post-quantum-cryptography/",
-      "status": "downloaded",
-      "filename": "VND-001_Amazon_Web_Services_Inc..html",
-      "sizeBytes": 318559,
-      "contentType": "text/html;charset=utf-8"
-    },
-    {
-      "vendorId": "VND-002",
-      "vendorName": "Apple Inc.",
-      "title": "Apple PQ3: iMessage Post-Quantum Security",
-      "url": "https://security.apple.com/blog/imessage-pq3/",
-      "status": "downloaded",
-      "filename": "VND-002_Apple_Inc..html",
-      "sizeBytes": 106083,
-      "contentType": "text/html"
-    },
-    {
       "vendorId": "VND-008",
       "vendorName": "Cisco Systems Inc.",
-      "title": "Cisco Post-Quantum Cryptography Trust Center",
-      "url": "https://www.cisco.com/site/us/en/about/trust-center/post-quantum-cryptography.html",
+      "title": "Cisco Secure Firewall: Post-Quantum Cryptography Roadmap",
+      "url": "https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap",
       "status": "downloaded",
       "filename": "VND-008_Cisco_Systems_Inc..html",
-      "sizeBytes": 85353,
-      "contentType": "text/html;charset=utf-8"
+      "sizeBytes": 84412,
+      "contentType": "text/html; charset=UTF-8"
     },
     {
       "vendorId": "VND-012",
       "vendorName": "DigiCert Inc.",
-      "title": "DigiCert Post-Quantum Cryptography Solutions",
-      "url": "https://www.digicert.com/tls-ssl/post-quantum-cryptography",
+      "title": "DigiCert Post-Quantum Cryptography — Trust Lifecycle Manager",
+      "url": "https://www.digicert.com/post-quantum-cryptography",
       "status": "downloaded",
       "filename": "VND-012_DigiCert_Inc..html",
-      "sizeBytes": 1038,
+      "sizeBytes": 1031,
       "contentType": "text/html"
     },
     {
@@ -54,128 +34,36 @@
       "vendorName": "Entrust Corporation",
       "title": "Entrust Post-Quantum Cryptography Solutions",
       "url": "https://www.entrust.com/solutions/post-quantum-cryptography",
-      "status": "failed",
-      "reason": "forbidden",
-      "persistent": true
-    },
-    {
-      "vendorId": "VND-014",
-      "vendorName": "F5 Networks Inc.",
-      "title": "F5 Post-Quantum Cryptography Readiness",
-      "url": "https://www.f5.com/solutions/post-quantum-cryptography-readiness",
-      "status": "downloaded",
-      "filename": "VND-014_F5_Networks_Inc..html",
-      "sizeBytes": 1160505,
-      "contentType": "text/html; charset=utf-8"
+      "status": "skipped",
+      "reason": "persisted: forbidden"
     },
     {
       "vendorId": "VND-017",
       "vendorName": "Futurex Inc.",
-      "title": "Futurex: Post-Quantum Cryptography Security Guide",
-      "url": "https://www.futurex.com/blog/post-quantum-cryptography-pqc-security-guide",
+      "title": "Futurex CryptoHub: NIST PQC Standards Use Cases (FIPS 203/204/205)",
+      "url": "https://www.futurex.com/blog/new-nist-pqc-standards-use-cases",
       "status": "downloaded",
       "filename": "VND-017_Futurex_Inc..html",
-      "sizeBytes": 660547,
+      "sizeBytes": 618195,
       "contentType": "text/html; charset=UTF-8"
-    },
-    {
-      "vendorId": "VND-018",
-      "vendorName": "Google LLC",
-      "title": "Google Cloud Post-Quantum Cryptography",
-      "url": "https://cloud.google.com/security/resources/post-quantum-cryptography",
-      "status": "downloaded",
-      "filename": "VND-018_Google_LLC.html",
-      "sizeBytes": 2175162,
-      "contentType": "text/html; charset=utf-8"
-    },
-    {
-      "vendorId": "VND-019",
-      "vendorName": "IBM Corporation",
-      "title": "IBM Quantum-Safe Roadmap",
-      "url": "https://research.ibm.com/blog/quantum-safe-roadmap",
-      "status": "downloaded",
-      "filename": "VND-019_IBM_Corporation.html",
-      "sizeBytes": 86191,
-      "contentType": "text/html; charset=utf-8"
-    },
-    {
-      "vendorId": "VND-021",
-      "vendorName": "Infineon Technologies AG",
-      "title": "Infineon Post-Quantum Cryptography",
-      "url": "https://www.infineon.com/promo/postquantumcryptography",
-      "status": "downloaded",
-      "filename": "VND-021_Infineon_Technologies_AG.html",
-      "sizeBytes": 1490713,
-      "contentType": "text/html;charset=utf-8"
-    },
-    {
-      "vendorId": "VND-024",
-      "vendorName": "Keyfactor Inc.",
-      "title": "Keyfactor Post-Quantum Cryptography Lab",
-      "url": "https://www.keyfactor.com/post-quantum-cryptography-lab/",
-      "status": "downloaded",
-      "filename": "VND-024_Keyfactor_Inc..html",
-      "sizeBytes": 181686,
-      "contentType": "text/html; charset=UTF-8"
-    },
-    {
-      "vendorId": "VND-025",
-      "vendorName": "The Legion of the Bouncy Castle Inc.",
-      "title": "Bouncy Castle: NIST PQC Standards Support (v1.79+)",
-      "url": "https://www.bouncycastle.org/resources/latest-nist-pqc-standards-and-more-bouncy-castle-java-1-79/",
-      "status": "downloaded",
-      "filename": "VND-025_The_Legion_of_the_Bouncy_Castle_Inc..html",
-      "sizeBytes": 274733,
-      "contentType": "text/html; charset=UTF-8"
-    },
-    {
-      "vendorId": "VND-027",
-      "vendorName": "Microsoft Corporation",
-      "title": "Microsoft Quantum-Safe Security: Progress Towards Next-Generation Cryptography",
-      "url": "https://www.microsoft.com/en-us/security/blog/2025/08/20/quantum-safe-security-progress-towards-next-generation-cryptography/",
-      "status": "downloaded",
-      "filename": "VND-027_Microsoft_Corporation.html",
-      "sizeBytes": 321166,
-      "contentType": "text/html; charset=UTF-8"
-    },
-    {
-      "vendorId": "VND-028",
-      "vendorName": "NXP Semiconductors N.V.",
-      "title": "NXP: Prepare for the Quantum Breakthrough with PQC",
-      "url": "https://www.nxp.com/company/about-nxp/smarter-world-blog/BL-PREPARE-FOR-THE-QUANTUM",
-      "status": "downloaded",
-      "filename": "VND-028_NXP_Semiconductors_N.V..html",
-      "sizeBytes": 58407,
-      "contentType": "text/html; charset=utf-8"
     },
     {
       "vendorId": "VND-029",
       "vendorName": "Oracle Corporation",
       "title": "Oracle: Preparing for Post-Quantum Cryptography",
       "url": "https://blogs.oracle.com/security/post-quantum-cryptography",
-      "status": "failed",
-      "reason": "forbidden",
-      "persistent": true
+      "status": "skipped",
+      "reason": "persisted: forbidden"
     },
     {
       "vendorId": "VND-030",
       "vendorName": "PQShield Ltd.",
-      "title": "PQShield Industry Insights: PQC Solutions",
-      "url": "https://pqshield.com/industry-insights/",
+      "title": "PQShield PQCryptoLib-SDK: ML-KEM and ML-DSA",
+      "url": "https://pqshield.com/products/pqc-sdk/",
       "status": "downloaded",
       "filename": "VND-030_PQShield_Ltd..html",
-      "sizeBytes": 81553,
+      "sizeBytes": 62419,
       "contentType": "text/html; charset=UTF-8"
-    },
-    {
-      "vendorId": "VND-031",
-      "vendorName": "Palo Alto Networks Inc.",
-      "title": "Palo Alto Networks Post-Quantum Migration Planning",
-      "url": "https://docs.paloaltonetworks.com/network-security/quantum-security/administration/quantum-security-concepts/post-quantum-migration-planning-and-preparation",
-      "status": "downloaded",
-      "filename": "VND-031_Palo_Alto_Networks_Inc..html",
-      "sizeBytes": 299533,
-      "contentType": "text/html"
     },
     {
       "vendorId": "VND-032",
@@ -188,62 +76,13 @@
       "contentType": "text/html; charset=UTF-8"
     },
     {
-      "vendorId": "VND-035",
-      "vendorName": "Samsung Electronics Co. Ltd.",
-      "title": "Samsung Knox: The First Step to a Quantum-Safe Future",
-      "url": "https://news.samsung.com/global/the-first-step-to-a-quantum-safe-future-with-samsung-knox",
-      "status": "failed",
-      "reason": "network-error: The operation was aborted due to timeout",
-      "persistent": false
-    },
-    {
-      "vendorId": "VND-037",
-      "vendorName": "Securosys SA",
-      "title": "Securosys Post-Quantum Cryptography HSM",
-      "url": "https://www.securosys.com/en/hsm/post-quantum-cryptography",
-      "status": "downloaded",
-      "filename": "VND-037_Securosys_SA.html",
-      "sizeBytes": 280892,
-      "contentType": "text/html; charset=UTF-8"
-    },
-    {
-      "vendorId": "VND-041",
-      "vendorName": "Thales Group",
-      "title": "Thales Luna HSM: Quantum-Safe Encryption Roadmap",
-      "url": "https://cpl.thalesgroup.com/blog/encryption/luna-hsm-pqc-quantum-safe-encryption",
-      "status": "downloaded",
-      "filename": "VND-041_Thales_Group.html",
-      "sizeBytes": 117274,
-      "contentType": "text/html; charset=UTF-8"
-    },
-    {
-      "vendorId": "VND-042",
-      "vendorName": "Utimaco IS GmbH",
-      "title": "Utimaco Quantum Protect — PQC Application Package for GP HSM",
-      "url": "https://utimaco.com/data-protection/gp-hsm/application-package/quantum-protect",
-      "status": "downloaded",
-      "filename": "VND-042_Utimaco_IS_GmbH.html",
-      "sizeBytes": 289339,
-      "contentType": "text/html; charset=UTF-8"
-    },
-    {
-      "vendorId": "VND-045",
-      "vendorName": "wolfSSL Inc.",
-      "title": "wolfSSL Support for NIST PQC Standards",
-      "url": "https://www.wolfssl.com/support-for-the-official-post-quantum-standards-ml-kem-and-ml-dsa/",
-      "status": "downloaded",
-      "filename": "VND-045_wolfSSL_Inc..html",
-      "sizeBytes": 68301,
-      "contentType": "text/html; charset=UTF-8"
-    },
-    {
       "vendorId": "VND-057",
       "vendorName": "Cloudflare Inc.",
       "title": "Cloudflare Post-Quantum Roadmap",
       "url": "https://blog.cloudflare.com/post-quantum-roadmap/",
       "status": "downloaded",
       "filename": "VND-057_Cloudflare_Inc..html",
-      "sizeBytes": 309453,
+      "sizeBytes": 309529,
       "contentType": "text/html"
     },
     {
@@ -256,53 +95,22 @@
       "persistent": false
     },
     {
-      "vendorId": "VND-116",
-      "vendorName": "Signal Foundation",
-      "title": "Signal PQXDH: Post-Quantum Key Agreement",
-      "url": "https://signal.org/blog/pqxdh/",
-      "status": "downloaded",
-      "filename": "VND-116_Signal_Foundation.html",
-      "sizeBytes": 20188,
-      "contentType": "text/html; charset=utf-8"
-    },
-    {
-      "vendorId": "VND-127",
-      "vendorName": "Broadcom Inc.",
-      "title": "VMware Cloud Foundation Post-Quantum Readiness",
-      "url": "https://blogs.vmware.com/cloud-foundation/2026/04/28/post-quantum-readiness-on-vcf/",
-      "status": "downloaded",
-      "filename": "VND-127_Broadcom_Inc..html",
-      "sizeBytes": 98876,
-      "contentType": "text/html; charset=UTF-8"
-    },
-    {
       "vendorId": "VND-151",
       "vendorName": "Microchip Technology Inc.",
       "title": "Microchip Technology Post-Quantum Cryptography",
       "url": "https://www.microchip.com/en-us/solutions/technologies/embedded-security/post-quantum-cryptography",
-      "status": "failed",
-      "reason": "forbidden",
-      "persistent": true
-    },
-    {
-      "vendorId": "VND-168",
-      "vendorName": "Arqit Quantum Inc.",
-      "title": "Arqit Quantum-Safe Security Approach",
-      "url": "https://arqitgroup.com/company/our-approach",
-      "status": "downloaded",
-      "filename": "VND-168_Arqit_Quantum_Inc..html",
-      "sizeBytes": 92478,
-      "contentType": "text/html; charset=UTF-8"
+      "status": "skipped",
+      "reason": "persisted: forbidden"
     },
     {
       "vendorId": "VND-181",
       "vendorName": "Sectigo Ltd.",
-      "title": "Sectigo: Key Trends for 2025 — Post-Quantum Cryptography",
-      "url": "https://www.sectigo.com/resource-library/postquantum-cryptography-trends-2025",
+      "title": "Sectigo Certificate Manager: Private PKI PQC Sandbox (ML-DSA)",
+      "url": "https://www.sectigo.com/enterprise-solutions/certificate-manager/private-pqc",
       "status": "downloaded",
       "filename": "VND-181_Sectigo_Ltd..html",
-      "sizeBytes": 395124,
-      "contentType": "text/html; charset=utf-8"
+      "sizeBytes": 417858,
+      "contentType": "text/html;charset=utf-8"
     }
   ]
 }
