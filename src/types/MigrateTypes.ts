@@ -199,6 +199,19 @@ export interface VendorRoadmap {
   coverageNotes: string
 }
 
+export interface VendorRoadmapEnrichment {
+  vendorId: string
+  pqcAlgorithms: string[]
+  targetMigrationDates: string
+  productsCovered: string
+  complianceFrameworks: string[]
+  hybridModeSupport: string
+  currentGaStatus: string
+  customerActionRequired: string
+  keyQuotes: string[]
+  extractionQuality: 'HIGH' | 'MEDIUM' | 'LOW'
+}
+
 export interface VendorPartner {
   softwareName: string
   partnerVendorId: string
