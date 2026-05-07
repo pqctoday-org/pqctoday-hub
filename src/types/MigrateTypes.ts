@@ -24,6 +24,11 @@ export interface Vendor {
   leiEntityStatus?: string
   gleifUrl?: string
   leiLastVerifiedDate?: string
+  // Enrichment provenance (dataset 05062026+)
+  leiCoverageFlag?: string
+  websiteUrlQuality?: string
+  gleifUrlQuality?: string
+  dataQualityNotes?: string
 }
 
 export const CISA_CATEGORIES = [

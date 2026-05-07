@@ -23,15 +23,18 @@ export interface LibraryItem {
   protocolOrToolImpact: string
   toolchainSupport: string
   migrationUrgency: string
-  localFile?: string // e.g. "public/library/FIPS_203.pdf"
+  localFile?: string
   manualCategory?: string
-  moduleIds?: string[] // e.g. ['pki-workshop', 'email-signing']
-  miscInfo?: string // Informal context terms with no library referenceId (e.g. algorithm family names, generic standards)
+  moduleIds?: string[]
+  miscInfo?: string
   children?: LibraryItem[]
-  categories: string[] // Multi-category support
+  categories: string[]
   peerReviewed?: 'yes' | 'no' | 'partial'
   vettingBody?: string[]
   githubContributionUrl?: string
+  downloadUrlQuality?: string
+  trustedSourceIdStatus?: string
+  dataQualityNotes?: string
   status?: 'New' | 'Updated'
 }
 
@@ -156,6 +159,9 @@ interface RawLibraryRow {
   peer_reviewed: string
   vetting_body: string
   github_contribution_url?: string
+  download_url_quality?: string
+  trusted_source_id_status?: string
+  data_quality_notes?: string
 }
 
 function transformLibraryRow(row: RawLibraryRow): LibraryItem {
@@ -190,6 +196,9 @@ function transformLibraryRow(row: RawLibraryRow): LibraryItem {
     peerReviewed: (row.peer_reviewed?.toLowerCase() as LibraryItem['peerReviewed']) || undefined,
     vettingBody: row.vetting_body ? splitSemicolon(row.vetting_body) : undefined,
     githubContributionUrl: row.github_contribution_url?.trim() || undefined,
+    downloadUrlQuality: row.download_url_quality || undefined,
+    trustedSourceIdStatus: row.trusted_source_id_status || undefined,
+    dataQualityNotes: row.data_quality_notes || undefined,
   }
 
   // Multi-category Logic: Combine manual_category WITH auto-detected categories

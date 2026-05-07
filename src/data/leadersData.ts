@@ -31,10 +31,13 @@ interface RawLeaderRow {
   ImageUrl: string
   WebsiteUrl: string
   LinkedinUrl: string
+  KeyResourceUrls: string
   KeyResourceUrl: string
+  KeyResourceRefs: string
   trusted_source_id: string
   peer_reviewed: string
   vetting_body: string
+  data_quality_notes: string
 }
 
 const modules = import.meta.glob('./leaders_*.csv', {
@@ -63,7 +66,11 @@ const {
     imageUrl: row.ImageUrl?.includes('ui-avatars.com') ? undefined : row.ImageUrl,
     websiteUrl: row.WebsiteUrl,
     linkedinUrl: row.LinkedinUrl,
-    keyResourceUrl: row.KeyResourceUrl ? splitSemicolon(row.KeyResourceUrl) : undefined,
+    keyResourceUrl: row.KeyResourceUrls
+      ? splitSemicolon(row.KeyResourceUrls)
+      : row.KeyResourceUrl
+        ? splitSemicolon(row.KeyResourceUrl)
+        : undefined,
     peerReviewed: (row.peer_reviewed?.toLowerCase() as Leader['peerReviewed']) || undefined,
     vettingBody: row.vetting_body ? splitSemicolon(row.vetting_body) : undefined,
   }),

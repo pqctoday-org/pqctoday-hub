@@ -99,6 +99,9 @@ interface RawTimelineRow {
   local_file: string
   peer_reviewed: string
   vetting_body: string
+  source_url_quality: string
+  trusted_source_id_status: string
+  data_quality_notes: string
 }
 
 export function parseTimelineCSV(csvContent: string): CountryData[] {
@@ -165,6 +168,9 @@ export function parseTimelineCSV(csvContent: string): CountryData[] {
             .map((s: string) => s.trim())
             .filter(Boolean)
         : undefined,
+      sourceUrlQuality: row.source_url_quality || undefined,
+      trustedSourceIdStatus: row.trusted_source_id_status || undefined,
+      dataQualityNotes: row.data_quality_notes || undefined,
       // Populate denormalized fields
       orgName,
       orgFullName: row.OrgFullName || '',

@@ -8,6 +8,72 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **Dataset 05062026 promotion** — 23 enriched CSVs replace their predecessors
+  across all data modules. Every record now carries tier-classified provenance
+  (`trusted_source_id`, `trusted_source_id_status`), URL quality flags
+  (`*_url_quality`: `reachable_200` / `redirect_3xx` / `paywall_heuristic` /
+  etc.), ISO-formatted dates alongside human-readable labels, and
+  `data_quality_notes`. Key additions per module:
+  - **Leaders** — `KeyResourceUrls` is now plural (`;`-split multi-link) +
+    `KeyResourceRefs` mapping each URL to an authoritative source ID.
+  - **Algorithms transitions** — `Deprecation_Date_ISO` / `Standardization_Date_ISO`
+    added for machine sorting while display labels remain human-readable.
+  - **Algorithm reference** — `status_url_quality` flag; column names migrated to
+    snake_case; `signature_ciphertext_bytes` / `sign_encaps_cycles_relative` renamed
+    for schema consistency.
+  - **Vendors** — `lei_coverage_flag` + `website_url_quality` + `gleif_url_quality`
+    for LEI/GLEIF verification status.
+  - **Trusted sources** — new `trusted_source_xref` cross-reference table linking
+    source IDs to every CSV that cites them.
+  - **OpenSSL docs map** — extended from 2 columns (`command`, `doc_file`) to 6
+    (`+openssl_version`, `doc_url`, `pqc_relevant`, `date_stamp`); loader updated
+    accordingly.
+  - **Implementation attacks** — two new tables
+    (`pqc_implementation_attacks_05062026.csv` and
+    `algorithms_implementation_attacks_table_05062026.csv`) cataloguing per-algorithm
+    side-channel, fault-injection, RNG, secret-handling, API-misuse risk with IACR
+    citations and mitigation notes. Served by new `implementationAttacksData.ts`
+    loader + `ImplementationAttacks` type + Vitest unit tests.
+  - **URL validation gate** — 1 566 URLs probed (HEAD requests + browser-UA
+    pass-2 for 117 anti-bot URLs); 94 broken URLs patched in proposed CSVs
+    before promotion.
+  - **Reference document download** — 35 new documents added to
+    `public/library/`, `public/threats/`, and `public/timeline/` archives;
+    manifests and skip-lists updated.
+  - **`UrlQualityBadge` component** — semantic-token badge keyed off
+    `*_url_quality` enum values; used in leaders, library, threat, and vendor
+    views.
+- **Migrate — click-to-detail on product tiles** — clicking any `SoftwareCard`
+  in the grid opens the `ProductExtractionModal` with full enrichment data.
+  All internal interactive elements (bookmark, hide, compare, repo link,
+  UpdateProduct, Ask) stop propagation so inner actions still work.
+  (`SoftwareCard.tsx`, `SoftwareCardGrid.tsx`, `MigrateView.tsx`)
+- **Compliance — click-to-detail on landscape tiles** — clicking any framework
+  card in the Landscape tab opens `FrameworkDetailPopover` directly. Cards
+  gain `role="button"` + `tabIndex` + `onKeyDown` for full keyboard access.
+  (`ComplianceLandscape.tsx`, `LandscapeTab.tsx`, `ComplianceView.tsx`)
+- **Compliance detail pane — CSWP.39 maturity requirements** — when a
+  framework has linked library refs that map to CSWP.39 governance data, the
+  `FrameworkDetailPopover` now shows a "CSWP.39 Maturity Requirements" section
+  listing each requirement with pillar badge, tier, asset class, requirement
+  text, and evidence location. (`FrameworkDetailPopover.tsx`)
+
+### Fixed
+
+- **SourcesModal crash on new `source_type` values** — the groups initializer
+  only pre-declared three fixed keys; new values in the 05062026 authoritative
+  sources CSV caused a `Cannot read properties of undefined (reading 'push')`
+  crash. Fixed with a dynamic `if (!groups[key]) groups[key] = []` guard.
+  (`SourcesModal.tsx`)
+- **Algorithm transition dates displayed in ISO format** — `Deprecation_Date_ISO`
+  had priority over `Deprecation_Date_Label` in the loader, so "2030-01-01"
+  was shown instead of "2030 (Deprecated) / 2035 (Disallowed)". Priority swapped
+  so the human label always wins. (`algorithmsData.ts`)
+- **Golden-queries Recall@15 regression after corpus growth** — corpus grew from
+  9 929 to 10 068 chunks after promotion, pushing `assessment-guide` entries past
+  rank 15. Fixed by adding a `+0.15` `categoryBump` for the `assessment-guide`
+  category in the corpus generator. (`generate-rag-corpus.ts`)
+
 - **Business Center — `LearningFrameBanner` replaces WIP warning** — the
   "Work in progress" amber banner is replaced by a `LearningFrameBanner` that
   names the Command Center as a _Worked example_ organised around NIST CSWP.39

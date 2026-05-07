@@ -1,11 +1,11 @@
 {
-  "generated": "2026-03-12T21:45:23.985Z",
-  "source": "src/data/timeline_03122026.csv",
+  "generated": "2026-05-07T02:26:41.123Z",
+  "source": "/Users/ericamador/antigravity/pqctoday-priv/tasks/patch/proposed/timeline_proposed_05062026.csv",
   "summary": {
-    "downloaded": 4,
-    "skipped": 115,
-    "failed": 2,
-    "persisted_skip": 0
+    "downloaded": 23,
+    "skipped": 117,
+    "failed": 8,
+    "persisted_skip": 1
   },
   "entries": [
     {
@@ -31,7 +31,7 @@
     },
     {
       "label": "Global:Microsoft — Quantum Safe Program Launch",
-      "url": "https://www.microsoft.com/en-us/security/blog/",
+      "url": "https://www.microsoft.com/en-us/security/blog/2025/08/20/quantum-safe-security-progress-towards-next-generation-cryptography/",
       "status": "skipped",
       "reason": "already-exists",
       "file": "public/timeline/Global_Microsoft_Quantum_Safe_Program_Launch.html"
@@ -88,9 +88,9 @@
     {
       "label": "Australia:ASD — Initial PQC Planning Guide",
       "url": "https://www.cyber.gov.au/business-government/secure-design/planning-for-post-quantum-cryptography",
-      "status": "failed",
-      "reason": "network-error: The operation was aborted due to timeout",
-      "persistent": false
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Australia_ASD_Initial_PQC_Planning_Guide.html"
     },
     {
       "label": "Australia:ASD — ISM December 2024 Update",
@@ -100,11 +100,39 @@
       "file": "public/timeline/Australia_ASD_ISM_December_2024_Update.pdf"
     },
     {
+      "label": "Australia:ASD — ISM June 2025 Cryptography Guidelines Update",
+      "url": "https://www.cyber.gov.au/sites/default/files/2025-07/22.%20ISM%20-%20Guidelines%20for%20cryptography%20(June%202025).pdf",
+      "status": "failed",
+      "reason": "network-error: The operation was aborted due to timeout",
+      "persistent": false
+    },
+    {
+      "label": "Australia:ASD — ACSC Annual Cyber Threat Report 2024–25 — PQC as a",
+      "url": "https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics/annual-cyber-threat-report-2024-2025",
+      "status": "failed",
+      "reason": "network-error: The operation was aborted due to timeout",
+      "persistent": false
+    },
+    {
+      "label": "Australia:ASD — Commonwealth Cyber Security Posture in 2025",
+      "url": "https://www.cyber.gov.au/about-us/view-all-content/reports-and-statistics/the-commonwealth-cyber-security-posture-in-2025",
+      "status": "failed",
+      "reason": "network-error: The operation was aborted due to timeout",
+      "persistent": false
+    },
+    {
       "label": "International:BIS — Paper 158 Quantum Roadmap",
       "url": "https://www.bis.org/publ/bppdf/bispap158.htm",
       "status": "skipped",
       "reason": "already-exists",
       "file": "public/timeline/International_BIS_Paper_158_Quantum_Roadmap.html"
+    },
+    {
+      "label": "Australia:DISR — National Quantum Strategy",
+      "url": "https://www.industry.gov.au/publications/national-quantum-strategy",
+      "status": "failed",
+      "reason": "network-error: The operation was aborted due to timeout",
+      "persistent": false
     },
     {
       "label": "Canada:ISED — PQC Best Practices Published",
@@ -114,11 +142,12 @@
       "file": "public/timeline/Canada_ISED_PQC_Best_Practices_Published.pdf"
     },
     {
-      "label": "Canada:CCCS — PQC Migration Roadmap Published",
+      "label": "Canada:CCCS — CCCS PQC Migration Roadmap Published",
       "url": "https://www.cyber.gc.ca/en/guidance/roadmap-migration-post-quantum-cryptography-government-canada-itsm40001",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/Canada_CCCS_PQC_Migration_Roadmap_Published.html"
+      "status": "downloaded",
+      "file": "public/timeline/Canada_CCCS_CCCS_PQC_Migration_Roadmap_Published.html",
+      "sizeBytes": 145786,
+      "contentType": "text/html; charset=utf-8"
     },
     {
       "label": "Canada:TBS — SPIN Notice Published",
@@ -186,9 +215,10 @@
     {
       "label": "European Union:Europol — QSFF Call to Action",
       "url": "https://www.europol.europa.eu/publications-events/publications/quantum-safe-financial-forum-call-to-action",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/European_Union_Europol_QSFF_Call_to_Action.html"
+      "status": "downloaded",
+      "file": "public/timeline/European_Union_Europol_QSFF_Call_to_Action.html",
+      "sizeBytes": 39379,
+      "contentType": "text/html; charset=UTF-8"
     },
     {
       "label": "European Union:NIS CG — EU PQC Survey Launched",
@@ -296,11 +326,12 @@
       "file": "public/timeline/India_CERT-In_BOM_Guidelines_Expanded.pdf"
     },
     {
-      "label": "International:PQCC — PQC Migration Roadmap Published",
+      "label": "International:PQCC — PQCC PQC Migration Roadmap Published",
       "url": "https://pqcc.org/post-quantum-cryptography-migration-roadmap/",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/International_PQCC_PQC_Migration_Roadmap_Published.html"
+      "status": "downloaded",
+      "file": "public/timeline/International_PQCC_PQCC_PQC_Migration_Roadmap_Published.html",
+      "sizeBytes": 139393,
+      "contentType": "text/html; charset=UTF-8"
     },
     {
       "label": "Israel:INCD — National Cybersecurity Strategy 2025-2028",
@@ -311,7 +342,7 @@
     },
     {
       "label": "Israel:BOI — Banking PQC Directive",
-      "url": "https://www.boi.org.il/en/",
+      "url": "https://www.boi.org.il/en/economic-roles/supervision-and-regulation/letters/letter202501en",
       "status": "skipped",
       "reason": "already-exists",
       "file": "public/timeline/Israel_BOI_Banking_PQC_Directive.html"
@@ -389,16 +420,18 @@
     {
       "label": "United Kingdom:NCSC — PQC White Paper Updated",
       "url": "https://www.ncsc.gov.uk/whitepaper/next-steps-preparing-for-post-quantum-cryptography",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/United_Kingdom_NCSC_PQC_White_Paper_Updated.html"
+      "status": "downloaded",
+      "file": "public/timeline/United_Kingdom_NCSC_PQC_White_Paper_Updated.html",
+      "sizeBytes": 154797,
+      "contentType": "text/html; charset=UTF-8"
     },
     {
-      "label": "United Kingdom:NCSC — PQC Migration Roadmap Published",
+      "label": "United Kingdom:NCSC — NCSC PQC Migration Roadmap Published",
       "url": "https://www.ncsc.gov.uk/guidance/pqc-migration-timelines",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/United_Kingdom_NCSC_PQC_Migration_Roadmap_Published.html"
+      "status": "downloaded",
+      "file": "public/timeline/United_Kingdom_NCSC_NCSC_PQC_Migration_Roadmap_Published.html",
+      "sizeBytes": 171913,
+      "contentType": "text/html; charset=UTF-8"
     },
     {
       "label": "United Kingdom:CMORG — Financial Sector PQC Guidance",
@@ -583,11 +616,18 @@
       "file": "public/timeline/International_IETF_RFC_9794_PQC_Hybrid_Terminology.html"
     },
     {
-      "label": "International:PQCC — PQC Inventory Workbook Published",
-      "url": "https://pqcc.org/pqc-inventory-workbook/",
+      "label": "International:GRI — Quantum Threat Timeline Report 2025",
+      "url": "https://globalriskinstitute.org/publication/quantum-threat-timeline-report-2025b/",
       "status": "skipped",
       "reason": "already-exists",
-      "file": "public/timeline/International_PQCC_PQC_Inventory_Workbook_Published.html"
+      "file": "public/timeline/International_GRI_Quantum_Threat_Timeline_Report_2025.html"
+    },
+    {
+      "label": "United States:DoD — DoD PQC Migration Memorandum",
+      "url": "https://dodcio.defense.gov/Library/",
+      "status": "failed",
+      "reason": "forbidden",
+      "persistent": true
     },
     {
       "label": "Global:Quantinuum — Helios Quantum Computer Commercial Launch",
@@ -604,11 +644,12 @@
       "file": "public/timeline/United_States_Congress_National_Quantum_Initiative_Reauthorization_Act.html"
     },
     {
-      "label": "G7:G7 CEG — Financial Sector PQC Roadmap",
+      "label": "G7:G7 CEG — G7 Financial Sector PQC Roadmap",
       "url": "https://home.treasury.gov/news/press-releases/sb0355",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/G7_G7_CEG_Financial_Sector_PQC_Roadmap.html"
+      "status": "downloaded",
+      "file": "public/timeline/G7_G7_CEG_G7_Financial_Sector_PQC_Roadmap.html",
+      "sizeBytes": 113939,
+      "contentType": "text/html; charset=UTF-8"
     },
     {
       "label": "Global:Ethereum Foundation — Post-Quantum Security Top Priority",
@@ -695,11 +736,12 @@
       "file": "public/timeline/Japan_NCO_Government_PQC_Transition_Deadline.html"
     },
     {
-      "label": "Malaysia:NACSA — National PQC Migration",
+      "label": "Malaysia:NACSA — Malaysia National PQC Migration",
       "url": "https://pkic.org/2025/10/27/global-leaders-converge-in-kuala-lumpur-to-drive-quantum-safe-future-at-worlds-largest-post-quantum-cryptography-conference/",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/Malaysia_NACSA_National_PQC_Migration.html"
+      "status": "downloaded",
+      "file": "public/timeline/Malaysia_NACSA_Malaysia_National_PQC_Migration.html",
+      "sizeBytes": 67256,
+      "contentType": "text/html"
     },
     {
       "label": "United Arab Emirates:TII — NIST Additional Signatures Round 2 Contributions",
@@ -765,11 +807,12 @@
       "file": "public/timeline/Bahrain_NCSC_National_Quantum-Safe_Deployment.html"
     },
     {
-      "label": "Jordan:CBJ — Financial Sector PQC Roadmap",
+      "label": "Jordan:CBJ — Jordan Financial Sector PQC Roadmap",
       "url": "https://thequantuminsider.com/2026/01/05/central-bank-of-jordan-releases-road-map-to-prepare-for-quantum-transition/",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/Jordan_CBJ_Financial_Sector_PQC_Roadmap.html"
+      "status": "downloaded",
+      "file": "public/timeline/Jordan_CBJ_Jordan_Financial_Sector_PQC_Roadmap.html",
+      "sizeBytes": 267908,
+      "contentType": "text/html; charset=UTF-8"
     },
     {
       "label": "Global:Ethereum Foundation — Vitalik Buterin Publishes PQ Defense Roadmap",
@@ -809,9 +852,10 @@
     {
       "label": "European Union:EC — Cryptographic Inventory Mandate",
       "url": "https://digital-strategy.ec.europa.eu/en/library/recommendation-post-quantum-cryptography",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/European_Union_EC_Cryptographic_Inventory_Mandate.html"
+      "status": "downloaded",
+      "file": "public/timeline/European_Union_EC_Cryptographic_Inventory_Mandate.html",
+      "sizeBytes": 43363,
+      "contentType": "text/html; charset=UTF-8"
     },
     {
       "label": "United States:NIST — NIST SP 800-208 Published (LMS/XMSS)",
@@ -821,49 +865,199 @@
       "file": "public/timeline/United_States_NIST_NIST_SP_800-208_Published_LMS_XMSS_.html"
     },
     {
-      "label": "Global:OASIS — PKCS#11 v3.2 Committee Specification Draft Publish",
+      "label": "Global:OASIS — PKCS#11 v3.2 PQC Mechanisms Draft Published",
       "url": "https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/csd01/pkcs11-spec-v3.2-csd01.html",
       "status": "downloaded",
-      "file": "public/timeline/Global_OASIS_PKCS_11_v3.2_Committee_Specification_Draft_Published.html",
-      "sizeBytes": 4922757,
+      "file": "public/timeline/Global_OASIS_PKCS_11_v3.2_PQC_Mechanisms_Draft_Published.html",
+      "sizeBytes": 4925125,
       "contentType": "text/html"
     },
     {
       "label": "Global:CA/Browser Forum — Ballot SMC013 ML-DSA for S/MIME Adopted",
       "url": "https://cabforum.org/2025/07/02/ballot-smc-013/",
-      "status": "downloaded",
-      "file": "public/timeline/Global_CA_Browser_Forum_Ballot_SMC013_ML-DSA_for_S_MIME_Adopted.html",
-      "sizeBytes": 23895,
-      "contentType": "text/html; charset=utf-8"
-    },
-    {
-      "label": "Global:3GPP SA3 — TR 33.841 PQC Study Item Approved",
-      "url": "https://www.3gpp.org/ftp/Specs/archive/33_series/33.841/",
-      "status": "downloaded",
-      "file": "public/timeline/Global_3GPP_SA3_TR_33.841_PQC_Study_Item_Approved.html",
-      "sizeBytes": 29145,
-      "contentType": "text/html; charset=utf-8"
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Global_CA_Browser_Forum_Ballot_SMC013_ML-DSA_for_S_MIME_Adopted.html"
     },
     {
       "label": "Global:TCG — TPM 2.0 PQC Library Specification Draft",
       "url": "https://trustedcomputinggroup.org/resource/tpm-library-specification/",
+      "status": "skipped",
+      "reason": "persisted: forbidden"
+    },
+    {
+      "label": "United States:Google — Google PQC Migration 2029 Timeline",
+      "url": "https://blog.google/innovation-and-ai/technology/safety-security/cryptography-migration-timeline/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_Google_Google_PQC_Migration_2029_Timeline.html"
+    },
+    {
+      "label": "Canada:BTQ Technologies — Bitcoin Quantum Testnet Launch",
+      "url": "https://www.newswire.ca/news-releases/btq-technologies-launches-bitcoin-quantum-testnet-marking-17-years-since-bitcoin-s-genesis-block-with-first-quantum-safe-fork-887920063.html",
+      "status": "downloaded",
+      "file": "public/timeline/Canada_BTQ_Technologies_Bitcoin_Quantum_Testnet_Launch.html",
+      "sizeBytes": 231250,
+      "contentType": "text/html;charset=utf-8"
+    },
+    {
+      "label": "United States:Algorand Foundation — First Post-Quantum Mainnet Transaction",
+      "url": "https://algorand.co/technology/post-quantum",
+      "status": "downloaded",
+      "file": "public/timeline/United_States_Algorand_Foundation_First_Post-Quantum_Mainnet_Transaction.html",
+      "sizeBytes": 165674,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "label": "United States:Bitcoin Core — BIP-360 Pay-to-Merkle-Root Proposal",
+      "url": "https://bitcoinmagazine.com/news/bitcoin-advances-toward-quantum-resistance",
+      "status": "downloaded",
+      "file": "public/timeline/United_States_Bitcoin_Core_BIP-360_Pay-to-Merkle-Root_Proposal.html",
+      "sizeBytes": 383972,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "label": "United States:Ethereum Foundation — Strawmap PQC Roadmap Published",
+      "url": "https://www.kucoin.com/news/flash/ethereum-foundation-unveils-strawmap-roadmap-for-2026-2029",
+      "status": "downloaded",
+      "file": "public/timeline/United_States_Ethereum_Foundation_Strawmap_PQC_Roadmap_Published.html",
+      "sizeBytes": 234562,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "label": "France:IDEMIA — First PQC Hardware Accelerator Announced",
+      "url": "https://www.idemia.com/press-release/idemia-secure-transactions-announces-its-first-hardware-accelerator-designed-post-quantum-cryptography-2025-03-18",
+      "status": "downloaded",
+      "file": "public/timeline/France_IDEMIA_First_PQC_Hardware_Accelerator_Announced.html",
+      "sizeBytes": 95806,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "label": "Germany:Infineon — First CC EAL6 PQC Security Controller",
+      "url": "https://www.infineon.com/market-news/2025/INFCSS202510-004",
+      "status": "downloaded",
+      "file": "public/timeline/Germany_Infineon_First_CC_EAL6_PQC_Security_Controller.html",
+      "sizeBytes": 1399167,
+      "contentType": "text/html;charset=utf-8"
+    },
+    {
+      "label": "United States:Ciena — 1.6T Quantum-Safe Optical Encryption",
+      "url": "https://www.ciena.com/insights/blog/2026/1.6t-quantum-safe-encryption-protecting-critical-data-at-scale",
+      "status": "downloaded",
+      "file": "public/timeline/United_States_Ciena_1.6T_Quantum-Safe_Optical_Encryption.html",
+      "sizeBytes": 131562,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "label": "Germany:Adva — BSI-Approved 400G PQC Encryptor",
+      "url": "https://www.advasecurity.com/en/newsroom/press-releases/20250925-adva-network-security-scores-world-first-with-bsi-approved-400g-encryption-solution",
+      "status": "downloaded",
+      "file": "public/timeline/Germany_Adva_BSI-Approved_400G_PQC_Encryptor.html",
+      "sizeBytes": 49451,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "label": "United States:OpenSSL — OpenSSL 3.6.1 PQC Release",
+      "url": "https://openssl-library.org/post/2026-01-27-release-announcement/",
+      "status": "downloaded",
+      "file": "public/timeline/United_States_OpenSSL_OpenSSL_3.6.1_PQC_Release.html",
+      "sizeBytes": 45404,
+      "contentType": "text/html"
+    },
+    {
+      "label": "Global:FS-ISAC — FS-ISAC PQC Migration Timeline Position Paper Publ",
+      "url": "https://www.fsisac.com/hubfs/Knowledge/PQC/FS-ISAC-PQC-Timelines-White-Paper.pdf",
+      "status": "failed",
+      "reason": "http-404",
+      "persistent": false
+    },
+    {
+      "label": "Brazil:ITI — ICP-Brasil Mandates ML-DSA and ML-KEM Certificate ",
+      "url": "https://repositorio.iti.gov.br/instrucoes-normativas/IN2026_35_DOC_ICP_01.01_PQC.htm",
+      "status": "downloaded",
+      "file": "public/timeline/Brazil_ITI_ICP-Brasil_Mandates_ML-DSA_and_ML-KEM_Certificate_Standards.html",
+      "sizeBytes": 419893,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "label": "International:ITU-T — ITU-T X.1811 Quantum-Safe Security Guidelines for ",
+      "url": "https://www.itu.int/rec/T-REC-X.1811-202104-P",
+      "status": "skipped",
+      "reason": "generic-portal"
+    },
+    {
+      "label": "African Union:AUC — Malabo Convention Enters Into Force",
+      "url": "https://au.int/en/treaties/african-union-convention-cyber-security-and-personal-data-protection",
+      "status": "failed",
+      "reason": "network-error: fetch failed",
+      "persistent": false
+    },
+    {
+      "label": "International:GSMA — Mobile Network Operator PQC Transition Window",
+      "url": "https://www.gsma.com/solutions-and-impact/technologies/networks/ng116/",
       "status": "failed",
       "reason": "forbidden",
       "persistent": true
     },
     {
-      "label": "International:GRI — Quantum Threat Timeline Report 2025",
-      "url": "https://globalriskinstitute.org/publication/quantum-threat-timeline-report-2025b/",
+      "label": "China:ICCS — NGCC Financial-Sector PQC Migration Phase",
+      "url": "https://www.sca.gov.cn",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "label": "G7:G7 CEG — G7 Financial Sector Critical Systems PQC Transitio",
+      "url": "https://home.treasury.gov/system/files/136/G7-CYBER-EXPERT-GROUP-STATEMENT-PLANNING-OPPORTUNITIES-RISKS-QUANTUM-COMPUTING.pdf",
       "status": "downloaded",
-      "file": "public/timeline/International_GRI_Quantum_Threat_Timeline_Report_2025.html",
-      "sizeBytes": 223157,
+      "file": "public/timeline/G7_G7_CEG_G7_Financial_Sector_Critical_Systems_PQC_Transition.pdf",
+      "sizeBytes": 283430,
+      "contentType": "application/pdf"
+    },
+    {
+      "label": "Global:3GPP SA3 — 3GPP TR 33.841 PQC Study",
+      "url": "https://www.3gpp.org/specifications-groups/sa-plenary/sa3-security",
+      "status": "downloaded",
+      "file": "public/timeline/Global_3GPP_SA3_3GPP_TR_33.841_PQC_Study.html",
+      "sizeBytes": 136882,
       "contentType": "text/html; charset=utf-8"
     },
     {
-      "label": "Global:FS-ISAC — FS-ISAC PQC Migration Timeline Position Paper Published",
-      "url": "https://www.fsisac.com/hubfs/Knowledge/PQC/FS-ISAC-PQC-Timelines-White-Paper.pdf",
+      "label": "Global:TCG — TPM 2.0 v1.85 PQC Library Specification Draft",
+      "url": "https://trustedcomputinggroup.org/",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "label": "South Africa:IR — POPIA Enforcement Begins",
+      "url": "https://inforegulator.org.za",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "label": "Nigeria:NDPC — Nigeria Data Protection Act 2023 Enacted",
+      "url": "https://ndpc.gov.ng",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "label": "Kenya:ODPC — ODPC Guidance on Data Protection by Design",
+      "url": "https://www.odpc.go.ke",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "label": "Egypt:MCIT — Law 151/2020 Executive Regulations Issued",
+      "url": "https://mcit.gov.eg",
+      "status": "skipped",
+      "reason": "root-homepage"
+    },
+    {
+      "label": "Global:OpenSSL — OpenSSL 3.5.0 Native PQC Release",
+      "url": "https://www.openssl.org/news/openssl-3.5-notes.html",
       "status": "downloaded",
-      "file": "public/timeline/FS-ISAC_QSFF_PQC_Timeline_Position_Paper_2026.pdf"
+      "file": "public/timeline/Global_OpenSSL_OpenSSL_3.5.0_Native_PQC_Release.html",
+      "sizeBytes": 45881,
+      "contentType": "text/html"
     }
   ]
 }
