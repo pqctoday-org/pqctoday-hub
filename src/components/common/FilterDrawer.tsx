@@ -55,7 +55,7 @@ export const FilterDrawer: React.FC<FilterDrawerProps> = ({
           role="dialog"
           aria-modal="true"
           aria-label="Filter options"
-          className="fixed inset-0 z-50 flex"
+          className="fixed inset-0 z-[120] flex"
         >
           {/* Backdrop */}
           <div
