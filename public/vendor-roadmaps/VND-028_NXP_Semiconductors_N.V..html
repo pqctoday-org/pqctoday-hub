@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Prepare for the Quantum Breakthrough with Post-Quantum Cryptography | NXP Semiconductors</title>
+<!--grid-layout-->
+<!--ls:begin[stylesheet]-->
+ <meta http-equiv="X-UA-Compatible" content="IE=edge">
+ <meta name="description" content="Quantum-resistant security solutions protect critical infrastructure and automotive networks from quantum computing threats in a post-quantum world" /> 
+ <meta name="Keywords" content="Qubit,Quantum,technologies, security, quantum, PQC, qubits, AES256,SHA-3,Algorithms,Standards, QKD,RSA & ECC,symmetric-key,algorithms,laptops, distribution, under, investigation, quantum cryptography,quantum,cryptography,post-quantum cryptography,cryptographic,computers, ciphers, hash functions" /> 
+ <meta name="Created_Cms" content="2022-03-16T11:57:38Z" /> 
+ <meta name="Revised_Cms" content="2025-12-09T19:56:17Z" /> 
+ <meta property="twitter:site" name="twitter:site"  content="@NXP" />
+ <meta property="og:type" name="og:type"  content="article" />
+ <meta property="og:url" name="og:url"  content="www.nxp.com/company/blog/prepare-for-the-quantum-breakthrough-with-post-quantum-cryptography:BL-PREPARE-FOR-THE-QUANTUM" />
+ <meta property="og:locale" name="og:locale"  content="en_US" />
+ <meta property="twitter:card" name="twitter:card"  content="summary" />
+ <meta property="twitter:creator" name="twitter:creator"  content="@NXP" />
+ <meta property="twitter:description" name="twitter:description"  content="Quantum-resistant security solutions protect critical infrastructure and automotive networks from quantum computing threats in a post-quantum world" />
+ <meta property="twitter:title" name="twitter:title"  content="Prepare for the Quantum Breakthrough with Post-Quantum Cryptography" />
+ <meta property="twitter:Image" name="twitter:Image"  content="https://www.nxp.com/assets/images/en/blogs/POST-QUANTUM-CRYPTOGRAPHY-720x405.jpg" />
+ <meta property="og:description" name="og:description"  content="Quantum-resistant security solutions protect critical infrastructure and automotive networks from quantum computing threats in a post-quantum world" />
+ <meta property="og:title" name="og:title"  content="Prepare for the Quantum Breakthrough with Post-Quantum Cryptography" />
+ <meta property="og:image" name="og:image"  content="https://www.nxp.com/assets/images/en/blogs/POST-QUANTUM-CRYPTOGRAPHY-720x405.jpg" />
+ <meta name="templateType" content="blogs" /> 
+ <meta name="Asset_Type" content="Blog" /> 
+ <meta name="pageNodeId" content="" /> 
+ <meta name="Code" content="BL-PREPARE-FOR-THE-QUANTUM" /> 
+ <meta name="Asset Id" content="1647456929598719142088" /> 
+ <meta name="Title" content="Prepare for the Quantum Breakthrough with Post-Quantum Cryptography" /> 
+<script type="text/javascript">var domainlocale="en";</script><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BlogPosting","name":"Prepare for the Quantum Breakthrough with PostQuantum Cryptography","description":"Quantumresistant security solutions protect critical infrastructure and automotive networks from quantum computing threats in a postquantum world","image":"https://www.nxp.com/assets/images/en/blogs/POST-QUANTUM-CRYPTOGRAPHY-720x405.jpg","url":"https://www.nxp.com/company/about-nxp/smarter-world-blog/BL-PREPARE-FOR-THE-QUANTUM","keywords":["Qubit","Quantum","technologies","security","quantum","PQC","qubits","AES256","SHA3","Algorithms","Standards","QKD","RSA ECC","symmetrickey","algorithms","laptops","distribution","under","investigation","quantum cryptography","quantum","cryptography","postquantum cryptography","cryptographic","computers","ciphers","hash functions"],"headline":"Prepare for the Quantum Breakthrough with Post-Quantum Cryptography","mainEntityOfPage":"https://www.nxp.com/company/about-nxp/smarter-world-blog/BL-PREPARE-FOR-THE-QUANTUM","datePublished":"2022-03-22 12:57:00","dateModified":"2025-12-09 19:56:17","version":"1","author":{"@type":"Person","name":"Joppe W Bos Christine Cloostermans Joost Renes Tobias Schneider"},"publisher":{"@type":"Organization","name":"NXP","url":"https://www.nxp.com","logo":{"@type":"ImageObject","url":"https://www.nxp.com/assets/images/en/icons/NEWCO-SW-GEN-ICON.png"}},"subjectOf":[{"@type":"Article","url":"https://www.nxp.com/company/about-nxp/smarter-world-blog/BL-SESIP-SYSTEM","image":"https://www.nxp.com/assets/images/en/blogs/SESIP-SYSTEM-720x405.png","headline":"SESIP SystemLevel Security for IoT Applications","author":{"@type":"Person","name":"John Boggie"}},{"@type":"Article","url":"https://www.nxp.com/company/about-nxp/smarter-world-blog/BL-HOW-TO-MAKE-FIPS-140-SECURITY","image":"https://www.nxp.com/assets/images/en/blogs/HOW-TO-MAKE-FIPS-140-SECURITY-720x405.png","headline":"How to Make FIPS 140 Security Certification for IoT Devices Easy","author":{"@type":"Person","name":"Giuseppe Guagliardo"}},{"@type":"Article","url":"https://www.nxp.com/company/about-nxp/smarter-world-blog/BL-SESIP-RESILIENT-EDGE","image":"https://www.nxp.com/assets/images/en/blogs/SESIP-SYSTEM-720x405.png","headline":"Toward a More Resilient Edge","author":{"@type":"Person","name":"John Boggie"}}]}]}</script>
+<style type="text/css">
+          
+          .iw_container
+          {
+            max-width:800px !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+          }
+          .iw_stretch
+          {
+            min-width: 100% !important;
+          }
+        </style>
+<!--ls:end[stylesheet]-->
+<!--ls:begin[canonical]-->
+<!--ls:end[canonical]-->
+<!--ls:begin[script]-->
+<!--ls:end[script]-->
+<!--ls:begin[custom-meta-data]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<!--ls:end[custom-meta-data]-->
+<!--ls:begin[script]-->
+<script type="text/javascript" src="/lsds/resources/scripts/jquery-3.7.1.min.js" data-ocde-desktop_or_tablet_or_phone="show"></script>
+<!--ls:end[script]-->
+<!--ls:begin[script]--><script type="text/javascript" src="/lsds/resources/scripts/bootstrap.js" data-ocde-desktop_or_tablet_or_phone="show"></script>
+<!--ls:end[script]-->
+<!--ls:begin[script]--><script type="text/javascript" src="/lsds/resources/scripts/nxp-cms/framework-loader.js" data-ocde-desktop_or_tablet_or_phone="show"></script>
+<!--ls:end[script]-->
+<!--ls:begin[script]--><script type="text/javascript" src="/lsds/resources/scripts/analytics/webanalytics.js" data-ocde-desktop_or_tablet_or_phone="show"></script>
+<!--ls:end[script]-->
+<!--ls:begin[stylesheet]-->
+<link type="text/css" href="/lsds/resources/css/nxp-bootstrap.min.css" rel="stylesheet" data-ocde-desktop_or_tablet_or_phone="show">
+<!--ls:end[stylesheet]-->
+<!--ls:begin[stylesheet]-->
+<link type="text/css" href="/lsds/resources/css/nxp-variables.min.css" rel="stylesheet" data-ocde-desktop_or_tablet_or_phone="show">
+<!--ls:end[stylesheet]-->
+<!--ls:begin[stylesheet]-->
+<link type="text/css" href="/lsds/resources/css/nxp-icons.min.css" rel="stylesheet" data-ocde-desktop_or_tablet_or_phone="show">
+<!--ls:end[stylesheet]-->
+<!--ls:begin[stylesheet]-->
+<link type="text/css" href="/lsds/resources/css/nxp-fonts.min.css" rel="stylesheet" data-ocde-desktop_or_tablet_or_phone="show">
+<!--ls:end[stylesheet]-->
+<!--ls:begin[stylesheet]-->
+<link type="text/css" href="/lsds/resources/css/nxp-web.min.css" rel="stylesheet" data-ocde-desktop_or_tablet_or_phone="show">
+<!--ls:end[stylesheet]-->
+<!--ls:begin[stylesheet]-->
+<link type="text/css" href="/lsds/resources/css/nxp_containers_no_left_nav.min.css" rel="stylesheet" data-ocde-desktop_or_tablet_or_phone="show">
+<!--ls:end[stylesheet]-->
+<!--ls:begin[stylesheet]-->
+<link type="text/css" href="/lsds/resources/css/blogs-media.min.css" rel="stylesheet" data-ocde-desktop_or_tablet_or_phone="show">
+<!--ls:end[stylesheet]-->
+<link data-ocde-desktop_or_tablet_or_phone="show" rel="stylesheet" href="/resources/css/nxp_containers.css" type="text/css">
+<!--ls:begin[head-injection]-->
+<link rel="canonical" href="https://www.nxp.com/company/about-nxp/smarter-world-blog/BL-PREPARE-FOR-THE-QUANTUM"/>
+
+<link rel="alternate" hreflang="x-default" href="https://www.nxp.com/company/about-nxp/smarter-world-blog/BL-PREPARE-FOR-THE-QUANTUM"/>
+
+<link rel="alternate" hreflang="ja-JP" href="https://www.nxp.jp/company/about-nxp/smarter-world-blog/BL-PREPARE-FOR-THE-QUANTUM"/>
+
+<link rel="alternate" hreflang="zh-Hans-CN" href="https://www.nxp.com.cn/company/about-nxp/smarter-world-blog/BL-PREPARE-FOR-THE-QUANTUM"/>
+<script src="//assets.adobedtm.com/8f7434476eb5/c8113b1c7559/launch-6b3848c34eff.min.js" async></script><!--ls:end[head-injection]--><!--ls:begin[tracker-injection]--><!--ls:end[tracker-injection]--><!--ls:begin[script]--><!--ls:end[script]--><!--ls:begin[script]--><!--ls:end[script]-->
+<script>!function(){function o(n,i){if(n&&i)for(var r in i)i.hasOwnProperty(r)&&(void 0===n[r]?n[r]=i[r]:n[r].constructor===Object&&i[r].constructor===Object?o(n[r],i[r]):n[r]=i[r])}try{var n=decodeURIComponent("%7B%0A%22LOGN%22%3A%20%7B%0A%22storeConfig%22%3A%20true%0A%7D%2C%0A%22Early%22%3A%20%7B%0A%22enabled%22%3A%20true%0A%7D%0A%7D");if(n.length>0&&window.JSON&&"function"==typeof window.JSON.parse){var i=JSON.parse(n);void 0!==window.BOOMR_config?o(window.BOOMR_config,i):window.BOOMR_config=i}}catch(r){window.console&&"function"==typeof window.console.error&&console.error("mPulse: Could not parse configuration",r)}}();</script>
+                                <script>!function(a){var e="https://s.go-mpulse.net/boomerang/",t="addEventListener";if("False"=="True")a.BOOMR_config=a.BOOMR_config||{},a.BOOMR_config.PageParams=a.BOOMR_config.PageParams||{},a.BOOMR_config.PageParams.pci=!0,e="https://s2.go-mpulse.net/boomerang/";if(window.BOOMR_API_key="9A5SG-ZLHFG-266XZ-3SBXK-MAXXJ",function(){function n(e){a.BOOMR_onload=e&&e.timeStamp||(new Date).getTime()}if(!a.BOOMR||!a.BOOMR.version&&!a.BOOMR.snippetExecuted){a.BOOMR=a.BOOMR||{},a.BOOMR.snippetExecuted=!0;var i,_,o,r=document.createElement("iframe");if(a[t])a[t]("load",n,!1);else if(a.attachEvent)a.attachEvent("onload",n);r.src="javascript:void(0)",r.title="",r.role="presentation",(r.frameElement||r).style.cssText="width:0;height:0;border:0;display:none;",o=document.getElementsByTagName("script")[0],o.parentNode.insertBefore(r,o);try{_=r.contentWindow.document}catch(O){i=document.domain,r.src="javascript:var d=document.open();d.domain='"+i+"';void(0);",_=r.contentWindow.document}_.open()._l=function(){var a=this.createElement("script");if(i)this.domain=i;a.id="boomr-if-as",a.src=e+"9A5SG-ZLHFG-266XZ-3SBXK-MAXXJ",BOOMR_lstart=(new Date).getTime(),this.body.appendChild(a)},_.write("<bo"+'dy onload="document._l();">'),_.close()}}(),"".length>0)if(a&&"performance"in a&&a.performance&&"function"==typeof a.performance.setResourceTimingBufferSize)a.performance.setResourceTimingBufferSize();!function(){if(BOOMR=a.BOOMR||{},BOOMR.plugins=BOOMR.plugins||{},!BOOMR.plugins.AK){var e=""=="true"?1:0,t="",n="iz5sgiixhq3x22p4esva-f-7ad6febb1-clientnsv4-s.akamaihd.net",i="false"=="true"?2:1,_={"ak.v":"41","ak.cp":"1136550","ak.ai":parseInt("266333",10),"ak.ol":"0","ak.cr":26,"ak.ipv":4,"ak.proto":"http/1.1","ak.rid":"e3971e1","ak.r":47664,"ak.a2":e,"ak.m":"h","ak.n":"essl","ak.cport":50145,"ak.gh":"23.220.202.235","ak.quicv":"","ak.tlsv":"tls1.3","ak.0rtt":"","ak.0rtt.ed":"","ak.csrc":"-","ak.acc":"bbr","ak.t":"1778132138","ak.ak":"hOBiQwZUYzCg5VSAfCLimQ==kpJYm9dJK+/L8phWS+b0o+bs8Wu95pzRQaigSaSTSQ+EEWsNgLUm7mBMALe5dkYnaZV/dcEBDzlBK/E+7SYfp06tKkH3cgDeMSaIAhtp72rzGA/Pa1Q/A8V6Z7Ij+60osb0qSS3nkp4/wDh7yaz0ktYukpQup9rxl8eYZ70O0xpeSXWLa49kM55+cLJAe25KY50scbs3ygSHiMv/JlMBiLBjxpgzo61ny+Xj18NyoXM7ktcv06mRZEL74+X4fvMal07xn9mitoYCrBqGLCyO3aBSOABkKexoXDsCw5euXrcQQ4iE/AB+nEB2hdIUMKlAMPaIQW8Cfa7mBPz2uvgrOaivihs1fA03z/mMfWSSgN/TOVTpEFr/eQl0DJDZi63qDU74a8niXUIvO1mMJNfcwKovYnKaI3UHy1cd/YOW0JM=","ak.pv":"268","ak.dpoabenc":"","ak.tf":i};if(""!==t)_["ak.ruds"]=t;var o={i:!1,av:function(e){var t="http.initiator";if(e&&(!e[t]||"spa_hard"===e[t]))_["ak.feo"]=void 0!==a.aFeoApplied?1:0,BOOMR.addVar(_)},rv:function(){var a=["ak.cport","ak.cr","ak.csrc","ak.gh","ak.ipv","ak.m","ak.n","ak.ol","ak.proto","ak.quicv","ak.tlsv","ak.0rtt","ak.0rtt.ed","ak.r","ak.acc","ak.t","ak.tf"];BOOMR.removeVar(a)}};BOOMR.plugins.AK={akVars:_,akDNSPreFetchDomain:n,init:function(){if(!o.i){var a=BOOMR.subscribe;a("before_beacon",o.av,null,null),a("onbeacon",o.rv,null,null),o.i=!0}return this},is_complete:function(){return!0}}}}()}(window);</script></head>
+<body>
+<!--ls:begin[body]--><script type="text/javascript">
+	var s_site_platform = "normal";
+	var LANG_CD_LIST = "zh-Hans,ja,ko,cn,jp,kr";
+	var URL_DOMAIN = "www.nxp.com";
+	var URL_MAJOR_DOMAIN= "null";
+ var CACHE_URL_DOMAINS = ["cache.nxp.com", "www.nxp.com", "www.nxp.com"];
+var s_normal_site ="normal";
+	if(s_site_platform == s_normal_site) {
+		s_site_platform = "full";
+	}	var s_do_pagecall = true;
+		var s_searchQryTxt = "";
+	var s_searchResultCnt = "";
+		var s_searchFilter = "";
+			if(s_searchResultCnt == '' || s_searchResultCnt == "0"){
+		s_searchResultCnt = "zero";
+	}
+	var s_currentUrl = document.URL;
+	var searchLabel = null;
+	var code = null;
+	var type = null;
+	var nodeId = null;
+	var partnerId = null;
+	var partNumber = null;
+var partNumber1 = null;
+var packageId = null;
+var orderablePartNum = null;
+var yid = null;
+var pageLoadRule  = "";
+var pageEvents  = "";
+var sourceType  = "";
+var pageLocalTitle  = "Prepare for the Quantum Breakthrough with Post-Quantum Cryptography";
+	var  pageCategory = "Blog Post Page";
+	var summaryPageType = "";
+	var sourceId  = "";
+	isDTMEnabledFlag = isDTMEnabled(); 
+pageLoadRule = pageLoadRule == "" ? "General":pageLoadRule;s_currentUrl = getCleanPageURL();
+if(searchLabel != null) s_currentUrl = s_currentUrl +'?searchLabel=' + searchLabel;
+if(partnerId != null) s_currentUrl = s_currentUrl +'?partnerId=' + partnerId;
+if(partNumber != null) s_currentUrl = s_currentUrl +'?PART_NUMBER=' + partNumber;
+if(partNumber1 != null) s_currentUrl = s_currentUrl +'?partnumber=' + partNumber1;
+if(packageId != null) s_currentUrl = s_currentUrl +'?packageId=' + packageId;
+if(orderablePartNum != null) s_currentUrl = s_currentUrl +'?orderablePartNum=' + orderablePartNum;
+ digitalData.pageInfo.pageLoadRule=pageLoadRule;
+digitalData.pageInfo.pageName ="Blog:Prepare for the Quantum Breakthrough with Post-Quantum Cryptogr... | BL-PREPARE-FOR-THE-QUANTUM";
+digitalData.pageInfo.pageURLClean = s_currentUrl;
+digitalData.pageInfo.pageType ="Blogs";
+var eventPathing = "";
+var eVar57 = "";
+eventPathing = "D=pageName";
+if (typeof(eVar57) != "undefined" && eVar57.indexOf("Rich Media Component") != -1) {
+eventPathing = eVar57;
+}
+ digitalData.pageInfo.pageEventPathing = eventPathing;
+digitalData.pageInfo.summaryPageType ="Blog";
+digitalData.pageInfo.pageTemplateType ="Blog";
+digitalData.pageInfo.pageTab = "";
+digitalData.pageInfo.assetID = "1647456929598719142088";
+digitalData.pageInfo.securedAsset ="";
+digitalData.pageInfo.localTitle="Prepare for the Quantum Breakthrough with Post-Quantum Cryptography";
+digitalData.pageInfo.pageCodeID = "BL-PREPARE-FOR-THE-QUANTUM"
+digitalData.pageInfo.pageCategory = pageCategory;
+if(typeof getProdview == 'function'){
+	if(getProdview()){
+		if(digitalData.pageInfo.pageEvents == '')
+			digitalData.pageInfo.pageEvents = 'event44';
+		else
+			digitalData.pageInfo.pageEvents = digitalData.pageInfo.pageEvents + ',' + 'event44';
+	}
+}
+var s_contentFinder = '';
+if (typeof getContentFinding == 'function') {
+	    s_contentFinder  = getContentFinding(document.referrer, document.URL);
+	}
+digitalData.pageInfo.contentFinding = s_contentFinder;
+digitalData.userInfo = {};
+digitalData.siteInfo = {};
+digitalData.siteInfo.sitePlatform = s_site_platform;
+digitalData.siteInfo.lang = "en";
+if (typeof digitalData != 'undefined' && typeof digitalData.customEventInfo == 'undefined') {
+digitalData.customEventInfo = {};
+digitalData.customEventInfo.pageActionContentFinding = '';
+digitalData.customEventInfo.searchKeyword = '';
+digitalData.customEventInfo.searchResultCount = '';
+digitalData.customEventInfo.eventPathing = '';
+digitalData.customEventInfo.formName = '';
+digitalData.customEventInfo.uniquePageComponent = '';
+digitalData.customEventInfo.searchResultPageNumber = '';
+digitalData.customEventInfo.pageAction = '';
+digitalData.customEventInfo.pageSubaction = '';
+digitalData.customEventInfo.contentSubFinding = '';
+digitalData.customEventInfo.searchResultPosition = '';
+digitalData.customEventInfo.targetURL = '';
+digitalData.customEventInfo.events = {};
+digitalData.customEventInfo.searchFilterList = {};
+digitalData.customEventInfo.pageEventPathingdiv = '';
+digitalData.customEventInfo.pageActiondiv = '';
+digitalData.customEventInfo.pageSubactiondiv = '';
+digitalData.customEventInfo.targetURLdiv = '';
+digitalData.customEventInfo.searchResultPageNumberdiv = '';
+digitalData.customEventInfo.searchResultPositiondiv = '';
+digitalData.customEventInfo.assetIDdiv = '';
+ }
+if (typeof initiateWACookie == 'function') {
+						initiateWACookie();
+					}
+</script><input id="recordHistoryTime" type="hidden" name="recordHistroryTime" value="10"/>
+<input id="recordHistoryCommand" type="hidden" name="recordHistroryCommand" value="BROWSE_WEBPAGE"/>
+<input id="pageNodeId" type="hidden" name="pageNodeId" value="null"/>
+<input id="pageType" type="hidden" name="pageType" value=""/>
+<input id="recrdHistDwnlodComnd" type="hidden" name="recrdHistDwnlodComnd" value="DOWNLOAD"/>
+<input id="webActivityParentID" type="hidden" name="webActivityParentID" value="null"/>
+<input id="webActivityParentType" type="hidden" name="webActivityParentType" value="null"/>
+<input id="webActivityAssetType" type="hidden" name="webActivityParentType" value="webpage"/>
+<input id="recordActivityCommand" type="hidden" name="recordActivityCommand" value="RECORD_WEB_ACTIVITY"/>
+<input id="webActivityAssetID" type="hidden" name="webActivityAssetID" value="1647456929598719142088"/>
+<div class="iw_viewport-wrapper nxp-wrapper"><div class="container-fluid iw_section" id="sectionkdhlewtn"> 
+ <div class="row iw_row iw_stretch" id="rowkdhlewto"> 
+  <div class="iw_columns col-lg-12" id="colkdhlewtp"> 
+   <div class="iw_component" id="iw_comp1596645344938">
+     <!--ls:begin[component-1596645344938]--><style>#iw_comp1596645344938{}</style><noscript>
+    <div class="alert alert-warning alert-dismissible fade in text-center" role="alert">
+        For best experience this site requires Javascript to be enabled. To enable on your browser, follow our <a href="https://www.nxp.com/company/about-nxp/accessibility:ACCESSIBILITY" target="_blank" class='alert-link'>accessibility instructions</a>.<button class='close' type='button' data-dismiss='alert' aria-label='close'><span aria-hidden='true'>&times;</span></button>
+    </div>
+  </noscript>
+  <header class="loadnav">
+  <nav id="nxp-mobile-nav"> </nav>
+  
+  
+  <div class="site-header">
+  <div class="site-header-inner">
+  <div class="site-header-wrapper" >
+    <!-- logo -->
+    <div class="site-logo" id="site-logo">
+      <a class="dtmcustomrulelink" href="//www.nxp.com" data-dtmaction="Header: Logo Click"  data-content-finding ="Header"  data-content-finding ="Header" data-content-subfinding ="Header: Logo" title="NXP Semiconductor">
+        <!-- <img src="//www.nxp.com/resources/images/nxp-logo.svg" onerror="this.src=//www.nxp.com/assets/images/en/logos-internal/NXP_logo.png" alt="NXP logo"> -->
+        <svg id="nxp-logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 93 32" width="93" height="32">
+          <style type="text/css">
+            .nxpsvglogoN {
+              fill: #fca600;
+            }
+            .nxpsvglogoP {
+              fill: #69ca00;
+            }
+            .nxpsvglogoX {
+              fill: #0eafe0;
+            }
+          </style>
+          <title id="nxpLogoTitle">NXP</title>
+          <polyline class="nxpsvglogoN" points="26,0 26,19.3 9.7,0 0,0 0,32 9.7,32 9.7,12.7 26,32 35.7,16 26,0 "></polyline>
+          <path class="nxpsvglogoX" d="M53.4,32l-6.5-10.6L40.4,32H28.9l9.7-16L28.9,0h11.4l6.5,10.6L53.4,0h11.4l-9.7,16l9.7,16H53.4z"></path>
+          <path
+            class="nxpsvglogoP"
+            d="M81.6,0H67.8l-9.7,16l9.7,16l0,0v-7.1h16.3c6.8,0,8.9-5.5,8.9-10.2v-3.8C93,4.7,90.8,0,81.6,0 M84,12.9
+         c0,1.9-0.9,4.1-3.1,4.1h-13V7.9H80c2.9,0,4,1.2,4,3.4C84,11.3,84,12.9,84,12.9z"
+          ></path>
+        </svg>
+      </a>
+    </div>
+    <!-- Primary navigation -->
+    <div class="site-nav">
+    <div id="hamburger" class="navbar-toggle">
+      <span class="icon-bar top-bar"></span>
+      <span class="icon-bar middle-bar"></span>
+      <span class="icon-bar bottom-bar"></span>
+    </div>
+    <nav class="primary-nav dtmcustomrulelink" id="primaryNav" data-dtmaction="Header: Top Menu Click">
+      <a class="primary-nav-item productsmenu" data-dtmsubaction="Products" data-target="#productsMm"  data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Products</a>
+      <a class="primary-nav-item applicationsmenu" data-dtmsubaction="Applications" data-target="#applicationsMm" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Applications</a>
+      <a class="primary-nav-item design" data-dtmsubaction="Design" data-target="#designMm" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Design Center</a>
+      <a class="primary-nav-item trainingmenu" data-dtmsubaction="Support" data-target="#supportMm" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Support</a>
+      <a class="primary-nav-item aboutmenu" data-dtmsubaction="Company" data-target="#aboutMm" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Company</a>
+      <a class="primary-nav-item primary-nav-store store " data-content-finding="Header" data-dtmaction="Header: Store Button Click" role="button" href="https://www.nxp.com/pages/store:STORE">Store</a>
+    </nav>
+    </div>
+    <!-- Primary navigation END -->
+    <!-- Search -->
+    <div class="header-search" id="search-component">
+  
+    <div class="search-input" id="search-input">
+    <input type="text" id="parts" name="q" placeholder="Search..." tabindex="2" autocomplete="off" class="form-control" value="">
+    </div>
+  
+  
+    <!-- Primary navigation -->
+    </div>  
+    </div>
+    <!-- Secondary navigation -->
+    <ul class="secondary-nav">
+    <!-- DO NOT REMOVE || My NXP tab --> 
+    <li class="secondary-nav-item dropdown">
+        <div id="mynxp-component" >
+          <a class="secondary-nav-link mynxpmenu" data-target="#mynxpMm" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+            <span class='spin-icon icon-para-reset'></span>
+          </a>
+        </div>
+        </li>
+      <li class="secondary-nav-item dropdown">
+      <div id="language-component">
+        <a href="#" class="secondary-nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="icon-globe2"></span>Language&nbsp;<span class="icon-angle-down"></a>
+  
+        </div>
+      </li>
+      <li class="secondary-nav-item"><a class="secondary-nav-link dtmcustomrulelink" href="//store.nxp.com/webapp/ecommerce.show_cart.framework" data-dtmaction="Header: Cart Click" data-content-finding ="Header" data-content-subfinding="Header: Cart"><span class="icon-cart"></span><div class="row"><div class="visible-xs">Orders</div></div></a></li>
+      <li class="secondary-nav-item" style="display:none;">
+        <div id="login-block"><a class="secondary-nav-link dtmHeaderLogin" data-toggle="dropdown" href="#" id="login-dropdown">Sign In</a></div>
+      </li>
+  
+    </ul>
+  </div>
+  <div id='mobile-component'></div>
+  
+  <!-- megamenus -->
+  
+  <div class="megamenu">
+    
+  <!-- DO NOT REMOVE || My NXP tab -->       
+        <div class="megamenu-inner" id="mynxpMm">  
+        <!-- <p>My NXP mega menu</p>-->  
+        </div>
+     </div>
+  </div>
+  
+  
+  </header>
+  <!-- /MOBILE NAV START -->
+  <nav id="nxp-mobile-nav"></nav>
+  <!-- MOBILE NAV END --><!--ls:end[component-1596645344938]--> 
+   </div> 
+  </div> 
+ </div> 
+</div> 
+<div class="container-fluid iw_section" id="sectionkdhlewtr"> 
+ <div class="row iw_row iw_stretch" id="rowkdhlewts"> 
+  <div class="iw_columns col-lg-12" id="colkdhlewtt"> 
+   <div class="iw_component" id="iw_comp1596645344942">
+     <!--ls:begin[component-1596645344942]--><style>#iw_comp1596645344942{}</style><div class="bc-container clearfix"></div><script type="text/javascript">
+		$(document).ready(function(){
+		var nodeId = ""; 
+		if($('meta[name=pageNodeId]').length > 0){ nodeId = $('meta[name=pageNodeId]').attr('content'); } 
+		var pageCode = ""; 
+		if($('meta[name=Code]').length > 0){ pageCode = $('meta[name=Code]').attr('content'); } 
+		var authCookieData = getCookie("AuthCookie"); 
+		var SGCookieData = getCookie("SG");
+		if(NXP.isLoggedIn() && authCookieData != null && authCookieData.length > 0 && SGCookieData != null && SGCookieData.length > 0){
+		if(pageCode != 'REFDSGNHOME' && pageCode != 'PARTNERNET' && pageCode != 'DISTYNET' && nodeId != '' && pageCode != ''){
+		var nURL='/sp/data/breadcrumb?code='+pageCode+'&nodeId='+nodeId;
+		try{
+		$.ajax({ 
+		url: nURL, 
+		dataType: 'html', 
+		async: true,
+		processData: false,		
+		type: 'GET',
+		success: function(data){
+		if((data.indexOf("/security/public/login.LogoutController.sp") == -1) && (data.indexOf("bc-container") >= 0))
+			$( "div.bc-container" ).replaceWith(data);
+			$.fn.secureBreadcrumb();
+		},
+		error: function(xhr){
+			console.log("Error in breadcrumb ajax call ");
+		}, 
+		timeout: 60000 });
+		}catch(err){
+		console.log(err);
+		}}
+		}
+		});
+	</script><!--ls:end[component-1596645344942]--> 
+   </div> 
+  </div> 
+ </div> 
+</div> 
+<div class="container-fluid iw_section" id="sectionkdhlewtv"> 
+ <div class="row iw_row iw_stretch" id="rowkdhlewtw"> 
+  <div class="iw_columns col-lg-12" id="colkdhlewtx"> 
+   <div class="iw_component" id="iw_comp1596645344946">
+     <!--ls:begin[component-1596645344946]--><style>#iw_comp1596645344946{}</style><div class="nxp-wrapper">
+   <div class="page-title band">
+      <h1 class="title">Prepare for the Quantum Breakthrough with Post-Quantum Cryptography</h1>
+      <div id="createCollectionAlert" class="alert-flag"></div>
+      <div class="collectionEligible item-options-collections" asset-id="1647456929598719142088" asset-type="Blogs" asset-title="Prepare for the Quantum Breakthrough with Post-Quantum Cryptography" asset-lang="en" asset-section="Blog" asset-section-action="Page Title Section - Link Click" asset-category-option="NXP" asset-leaf-node="Blogs" asset-type-api="Blog"></div>
+      <ul class="metadata dtmcustomrulelink" data-dtmaction="Blog: View Author Link Click">
+         <li>March 22, 2022</li>
+         <li> by <a href="/company/about-nxp/smarter-world-blog:BLOGS?collection=Blogs&amp;start=0&amp;max=12&amp;parameters=Topics.applicationTax&amp;sorting=ModifiedDate.desc&amp;language=en&amp;keyword=Joppe W. Bos, Christine Cloostermans, Joost Renes, Tobias Schneider&amp;depth=1" data-dtmsubaction="Joppe W. Bos, Christine Cloostermans, Joost Renes, Tobias Schneider"> Joppe W. Bos, Christine Cloostermans, Joost Renes, Tobias Schneider </a></li>
+      </ul>
+   </div>
+</div><!--ls:end[component-1596645344946]--> 
+   </div> 
+  </div> 
+ </div> 
+</div> 
+<div class="container-fluid iw_section" id="sectionkdhlewtz"> 
+ <div class="row iw_row iw_stretch" id="rowkdhlewu0"> 
+  <div class="iw_columns col-lg-12" id="colkdhlewu1"> 
+   <div class="iw_component" id="iw_comp1596645344950">
+     <!--ls:begin[component-1596645344950]--><style>#iw_comp1596645344950{}</style><div class="image_frame scale-with-grid disabled">
+   <div class="image_wrapper">
+      <figure class="cover-image"><img width="1140" height="380" src="/assets/images/en/blogs/POST-QUANTUM-CRYPTOGRAPHY-1140x380.jpg" alt="placeholder" loading="lazy"></figure>
+   </div>
+</div><!--ls:end[component-1596645344950]--> 
+   </div> 
+  </div> 
+ </div> 
+</div> 
+<div class="container-fluid iw_section" id="sectionkdhlewu3"> 
+ <div class="row iw_row iw_stretch" id="rowkdhlewu4"> 
+  <div class="iw_columns col-lg-12" id="colkdhlewu5"> 
+   <div class="iw_component" id="iw_comp1596645344954">
+     <!--ls:begin[component-1596645344954]--><style>#iw_comp1596645344954{}</style><div class="row" style="padding-top:20px">
+   <div class="col-sm-2 col-md-1" data-widget="twitter">
+      <div class="social-nav is-vertical dtmcustomrulelink" data-dtmaction="Blog: Social Share"><span class="social-nav-label">Share</span><ul class="social-nav-list">
+            <li><a id="twitter18x" data-dtmsubaction="Twitter" class="social-nav-item"><span class="fnxp-x-twitter"></span><span class="sr-only">Twitter</span></a></li>
+            <li><a id="linkedIn18x" data-dtmsubaction="LinkedIn" class="social-nav-item"><span class="icon-linkedin"></span><span class="sr-only">LinkedIn</span></a></li>
+            <li><a id="facebook18x" data-dtmsubaction="Facebook" class="social-nav-item"><span class="icon-facebook"></span><span class="sr-only">Facebook</span></a></li>
+         </ul>
+      </div>
+   </div>
+   <div class="col-sm-10 col-md-9 col-md-offset-1 col-lg-7 col-lg-offset-2">
+      <div class="dtmcustomrulelink" data-dtmaction="Blog: Inline Line Click"><p>The prospect of quantum computers triggers a fundamental shift in computing and security principles. NXP security engineers and cryptographers are contributing to the NIST PQC standardization effort for the post-quantum cryptography transition as well as helping ensure that upcoming PQC standards take into account core requirements of embedded security.</p>
+<h2>The Quantum Threat, Qubit by Qubit</h2>
+<p>A quantum computer has little in common with everyday smart phones and laptops. It is a “computer” in the sense that, upon a given input, it delivers an output. However, the similarities stop there. As opposed to classical computers built as digital circuits, quantum computers make use of quantum-mechanical properties such as superposition and entanglement to manipulate quantum bits (so-called “qubits”) by quantum gates. A general-purpose quantum computer is able to perform complex calculations infeasible with today’s classical computers. A quantum computer can lead to breakthroughs by solving what’s unsolvable today. And the potential applications are far-reaching across highly complex GPS, metrology, pharmaceutical research, artificial intelligence, and many other applications.</p>
+<div class="alert alert-info" role="alert">
+  <p>
+    <strong>Get more insights. </strong>
+    Read more about NXP and
+    <a href="/applications/technologies/security/post-quantum-cryptography:POST-QUANTUM-CRYPTOGRAPHY" class="alert-link">post-quantum cryptography </a>
+    to get started.
+  </p>
+</div>
+<p>
+  Qubit by qubit, there has been a slow but steady progress — from the first experimental demonstration of a quantum algorithm working on
+  <a href="https://doi.org/10.1103%2FPhysRevLett.80.3408" target="_blank" class="cta">2 qubits</a>
+  &nbsp;in 1998, through
+  <a href="https://www.sciencedaily.com/releases/2006/05/060508164700.htm" target="_blank" class="cta">12 qubits</a>
+  &nbsp;in 2006, to Google’s
+  <a href="https://www.sciencedaily.com/releases/2006/05/060508164700.htm" target="_blank" class="cta">72-qubit</a>
+  &nbsp;quantum chip in 2018, leading to IBM’s
+  <a href="https://www.sciencedaily.com/releases/2006/05/060508164700.htm" target="_blank" class="cta">127-qubit</a>
+  &nbsp; quantum processor in 2021 — gaining computational power at an exponential rate.
+</p>
+<div class="img-responsive center-block pb1">
+  <img src="/assets/images/en/blogs/BL-PREPARE-FOR-THE-QUANTUM-1.jpg" />
+  <figcaption class="img-caption">Quantum computing milestones</figcaption>
+</div>
+<p>
+  One important milestone in quantum computing is so-called quantum supremacy: solving a problem that no classical computer can feasibly solve. Google
+  <a href="https://ai.googleblog.com/2019/10/quantum-supremacy-using-programmable.html" target="_blank" class="cta">claimed</a>&nbsp; to have achieved this in October 2019 by performing a series of operations in 200 seconds that would take a supercomputer about 10,000 years to complete on an array of 54 qubits. This claim was not without controversy; IBM
+  <a href="https://www.ibm.com/blogs/research/2019/10/on-quantum-supremacy/" target="_blank" class="cta">suggested</a>
+  &nbsp;that the computation on a classical computer could be done in 2.5 days instead. Nevertheless, current
+  <a href="https://eprint.iacr.org/2015/1075.pdf" target="_blank" class="cta">estimates</a>&nbsp; indicate that we will see quantum computations capable of solving real-world cryptographic problems in 10 to 15 years from now.
+</p>
+<p>
+  One cannot overestimate the threat potential of quantum computing to society at large to secure the Internet, devices and legal infrastructure based on the currently used cryptographic systems. As far back as 1994, Peter Shor
+  <a href="https://doi.org/10.1109%2Fsfcs.1994.365700" target="_blank" class="cta"> published</a>
+  &nbsp;a quantum algorithm that would undermine the security of the majority of public-key cryptographic systems used today (i.e.,
+  <a href="https://en.wikipedia.org/wiki/RSA_(cryptosystem)" target="_blank" class="cta">RSA</a>
+  &nbsp;and
+  <a href="https://en.wikipedia.org/wiki/Elliptic-curve_cryptography" target="_blank" class="cta">elliptic-curve cryptography</a>&nbsp;), while a
+  <a href="https://doi.org/10.1145%2F237814.237866" target="_blank" class="cta">quantum algorithm</a>
+  &nbsp;by Lov Grover in 1996 has significant effect on the security symmetric ciphers and hash functions (e.g.,
+  <a href="https://doi.org/10.6028/NIST.FIPS.197" target="_blank" class="cta">AES256</a>
+  &nbsp; and
+  <a href="https://doi.org/10.6028/NIST.FIPS.202" target="_blank" class="cta">SHA-3</a>
+  &nbsp;).
+</p>
+<p>Systems and solutions that could reasonably be regarded as secure today may be weakened or fully broken by the rise of large powerful quantum computers. This means that the currently used cryptographic keys or data encrypted today might be compromised whenever quantum computers become reality. Even if the threat of a quantum might still seem far away, it is important to start acting now to guarantee security in the future.</p>
+<h2>Post-Quantum Cryptography: Algorithms and Standards</h2>
+<p>
+  Cryptography provides the building blocks to security. With the increase of quantum computing capabilities, one should expect a quantum leap in progress to break current public-key cryptography within the coming decades. This prospect has led to widespread initiatives to develop new cryptographic algorithms, standards and migration paths to secure against the emerging threat quantum computing presents. These initiatives are often executed as collaborations between industry, academia and government entities such as the
+  <a href="https://www.nist.gov/" target="_blank" class="cta">USA’s National Institute of Standards and Technology</a>
+  &nbsp;(NIST) and the German
+  <a href="https://www.bsi.bund.de/EN/Home/home_node.html" target="_blank" class="cta">Federal Office for Information Security</a>
+  (BSI).
+</p>
+
+<p>
+  There are essentially two flavors of cryptographic mitigation approaches under investigation. The term “quantum cryptography” is often used to refer to the implementation of cryptographic protocols based on quantum-mechanical principles, and it is not necessarily referencing the use of a quantum computer. The best-known example is a technique called quantum key distribution (QKD), in which a provably secure link between two parties is established by an exchange of polarized quantum particles such as photons over a fiber optic link. This method has been used in applications since as early as
+  <a href="https://www.scientificamerican.com/article/swiss-test-quantum-cryptography/" target="_blank" class="cta">2007</a>,&nbsp;when it was used to establish secure links carrying voting results in the Swiss national election.
+</p>
+<p>
+  The second mitigation option is the collection of new cryptographic algorithms, standards and migration paths that can be used for classical computing hardware — collectively referred to as “post-quantum cryptography” (PQC) or quantum-safe cryptography — to secure against the emerging threat quantum computing presents. As opposed to QKD, it does not rely on quantum-mechanical principles and can be deployed on devices we already use today. Many of the commonly used symmetric-key primitives (e.g.,
+  <a href="https://doi.org/10.6028/NIST.FIPS.197" target="_blank" class="cta">AES256</a>
+  &nbsp; and
+  <a href="https://doi.org/10.6028/NIST.FIPS.202" target="_blank" class="cta">SHA-3</a>&nbsp;) are considered post-quantum secure after appropriate increase of the key or digest size, while popular public-key algorithms (e.g., RSA and ECC) will need to be replaced altogether. The search for replacement public-key post-quantum cryptographic standards was started in a competition format by NIST in
+  <a href="https://www.bsi.bund.de/EN/Home/home_node.html" target="_blank" class="cta">2016</a>
+  &nbsp;with its first winners being announced in late March 2022.
+</p>
+<div class="img-responsive center-block pb1">
+  <img src="/assets/images/en/blogs/BL-PREPARE-FOR-THE-QUANTUM-3.png" />
+  <figcaption class="img-caption">The evolution of standards-based post-quantum crypto</figcaption>
+</div>
+
+<p>
+  Migration to post-quantum public-key cryptographic primitives will be a practical challenge. NXP is addressing issues around the larger key sizes, key serialization re-using existing
+  <a href="https://www.usenix.org/system/files/sec22summer_bos.pdf" target="_blank" class="cta">hardware</a>,&nbsp;improving <a href="https://doi.org/10.46586/tches.v2021.i1.137-168" target="_blank" class="cta">performance</a>&nbsp; and finding better <a href="https://doi.org/10.46586/tches.v2021.i4.173-214" target="_blank" class="cta">security defenses</a>.&nbsp;Keep in mind that all past cryptographic transitions took significant amounts of time and effort — even for much simpler replacements. Preparing this transition now, as part of a larger crypto agility effort, will smooth the transition when the new PQC standard is announced.
+</p>
+<h2>At NXP, We Believe the Best Way to Predict the Future Is to Create It</h2>
+
+<p>
+  NXP security engineers and cryptographers are contributing to the NIST PQC standardization effort for the
+  <a href="/applications/technologies/security/post-quantum-cryptography:POST-QUANTUM-CRYPTOGRAPHY" data-dtmsubaction="PQC">PQC transition</a>
+  and help ensure that upcoming PQC standards take into account core requirements of embedded security such as physical secure implementations and resource limitations. NXP strives to ensure its products offer the long-term security protection. We are following premise that the best way to predict the future is to create it. A more detailed view of NXP on the emergence of post-quantum cryptography is published in our
+  <a href="/docs/en/white-paper/POSTQCRYPTOWP.pdf" target="_blank" data-dtmsubaction="whitepaper">whitepaper</a>
+  and
+  <a href="/design/design-center/training/TIP-POST-QUANTUM-CRYPTOGRAPHY-WHAT-YOU-NEED-TO" data-dtmsubaction="webinar">webinar</a>. Follow NXP in the next weeks and months ahead for regular updates on the recent and ongoing work done by the PQC team at NXP.
+</p>
+
+<h2>Authors</h2>
+<div class="media-flex-list">
+  <div class="media-flex-item">
+    <figure class="media-flex-media">
+      <img src="/assets/images/en/photography/JOPPE-BOS.jpg" alt=" Joppe W. Bos  " />
+    </figure>
+    <div class="media-flex-body">
+      <h3 class="media-flex-heading">Joppe W. Bos</h3>
+      <div class="media-flex-text">
+        <p>Joppe W. Bos is a senior principal cryptographer at the Competence Center Crypto & Security (CCC&S) in the CTO organization at NXP Semiconductors. Based in Belgium, he is the technical lead of the Post-Quantum Cryptography team, and has authored over 20 patents and 50 academic papers. He also serves as the Secretary of the International Association for Cryptologic Research (IACR) and the co-editor of the IACR Cryptology ePrint Archive.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="media-flex-list">
+  <div class="media-flex-item">
+    <figure class="media-flex-media">
+      <img src="/assets/images/en/photography/Christine-Cloostermans-400.jpg" alt="Christine Cloostermans " />
+    </figure>
+    <div class="media-flex-body">
+      <h3 class="media-flex-heading">Christine Cloostermans</h3>
+      <div class="media-flex-text">
+        <p>Christine Cloostermans is a senior cryptographer at Competence Center for Cryptography and Security (CCC&S) in the CTO organization at NXP Semiconductors. She acquired her doctorate from TU Eindhoven on topics related to lattice-based cryptography. Christine is a co-author on 10+ scientific publications, and has given many public presentations in the area of post-quantum cryptography. Beyond PQC, she is active in multiple standardization efforts, including IEC 62443 for the Industrial domain, ISO 18013 for the mobile driver’s license, and the Access Control Working Group of the Connectivity Standards Alliance.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="media-flex-list">
+  <div class="media-flex-item">
+    <figure class="media-flex-media">
+      <img src="/assets/images/en/photography/JoostRenes-400.jpg" alt="Joost Renes " />
+    </figure>
+    <div class="media-flex-body">
+      <h3 class="media-flex-heading">Joost Renes</h3>
+      <div class="media-flex-text">
+        <p>Joost Renes is a Senior Cryptographer at the Competence Center for Cryptography and Security (CCC&S) in the CTO organization at NXP Semiconductors. He holds a PhD in Cryptography from Radboud University in the Netherlands and is a developer of the NIST standardization proposal SIKE. He works towards solving the many challenges related to securely implementing post-quantum cryptography on resource-constrained systems, and integrating them into security-critical protocols.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="media-flex-list">
+  <div class="media-flex-item">
+    <figure class="media-flex-media">
+      <img src="/assets/images/en/photography/Tobias-Schneider-400.png" alt="Tobias Schneider " />
+    </figure>
+    <div class="media-flex-body">
+      <h3 class="media-flex-heading">Tobias Schneider</h3>
+      <div class="media-flex-text">
+        <p>Tobias Schneider is a senior cryptographer at the NXP Competence Center for Cryptography and Security (CCC&S) in the CTO organization at NXP Semiconductors. He is also a member of the Post-Quantum Cryptography team. He received his PhD in cryptography from Ruhr-Universität Bochum in 2017 and authored over 25 international publications. His research topics include the physical security of cryptographic implementations, in particular of post-quantum cryptography, and cyber resilience.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<br /></div>
+      <div class="row">
+         <div class="col-sm-6 dtmcustomrulelink" data-dtmaction="Blog: Tag Line Click">
+            <p class="metadata"><strong>Tags: </strong><a href="/company/about-nxp/smarter-world-blog:BLOGS?collection=Blogs&amp;start=0&amp;parameters=Topics.applicationTax&amp;language=en&amp;query=applicationTax%3E%3Ec1817_c1799" id="blog_tag_1">Safety</a>, <a href="/company/about-nxp/smarter-world-blog:BLOGS?collection=Blogs&amp;start=0&amp;parameters=Topics.applicationTax&amp;language=en&amp;query=applicationTax%3E%3Ec1817_c1818" id="blog_tag_2">Security</a>, <a href="/company/about-nxp/smarter-world-blog:BLOGS?collection=Blogs&amp;start=0&amp;parameters=Topics.applicationTax&amp;language=en&amp;query=applicationTax%3E%3Ec1817" id="blog_tag_3">Technologies</a></p>
+         </div>
+         <div class="col-sm-6">
+            <div class="social-nav is-horizontal dtmcustomrulelink" data-dtmaction="Blog: Social Share"><span class="social-nav-label">Share</span><ul class="social-nav-list">
+                  <li><a class="social-nav-item twitter18x" data-dtmsubaction="Twitter"><span class="fnxp-x-twitter"></span><span class="sr-only">Twitter</span></a></li>
+                  <li><a class="social-nav-item linkedIn18x" data-dtmsubaction="LinkedIn"><span class="icon-linkedin"></span><span class="sr-only">LinkedIn</span></a></li>
+                  <li><a class="social-nav-item facebook18x" data-dtmsubaction="Facebook"><span class="icon-facebook"></span><span class="sr-only">Facebook</span></a></li>
+               </ul>
+            </div>
+         </div>
+      </div>
+   </div>
+</div><!--ls:end[component-1596645344954]--> 
+   </div> 
+  </div> 
+ </div> 
+</div> 
+<div class="container-fluid iw_section" id="sectionkeljpamu"> 
+ <div class="row iw_row iw_stretch" id="rowkeljpamv"> 
+  <div class="iw_columns col-lg-12" id="colkeljpamw"> 
+   <div class="iw_component" id="iw_comp1599061117205">
+     <!--ls:begin[component-1599061117205]--><style>#iw_comp1599061117205{}</style><!--ls:end[component-1599061117205]--> 
+   </div> 
+   <div class="iw_component" id="iw_comp1655914083260">
+     <!--ls:begin[component-1655914083260]--><style>#iw_comp1655914083260{}</style><!--ls:end[component-1655914083260]--> 
+   </div> 
+   <div class="iw_component" id="iw_comp1655914083261">
+     <!--ls:begin[component-1655914083261]--><style>#iw_comp1655914083261{}</style><!--ls:end[component-1655914083261]--> 
+   </div> 
+   <div class="iw_component" id="iw_comp1655914083262">
+     <!--ls:begin[component-1655914083262]--><style>#iw_comp1655914083262{}</style><!--ls:end[component-1655914083262]--> 
+   </div> 
+   <div class="iw_component" id="iw_comp1655914083263">
+     <!--ls:begin[component-1655914083263]--><style>#iw_comp1655914083263{}</style><!--ls:end[component-1655914083263]--> 
+   </div> 
+  </div> 
+ </div> 
+</div> 
+<div class="container-fluid iw_section" id="sectionkeljpamq"> 
+ <div class="row iw_row iw_stretch" id="rowkeljpamr"> 
+  <div class="iw_columns col-lg-12" id="colkeljpams"> 
+   <div class="iw_component" id="iw_comp1599061117201">
+     <!--ls:begin[component-1599061117201]--><style>#iw_comp1599061117201{}</style><div class="key-topic band cool-grey-xxxlight">
+   <section class="section-lead is-secondary">
+      <div class="section-lead-header">
+         <h2 class="section-lead-title"> Related Articles </h2>
+      </div>
+   </section>
+   <section class="key-topic-list three">
+      <article class="key-topic-item">
+         <figure class="key-topic-img"><a href="/company/about-nxp/smarter-world-blog/BL-SESIP-SYSTEM"><img class="img-responsive" src="/assets/images/en/blogs/SESIP-SYSTEM-720x405.png?imwidth=360" alt="SESIP System-Level Security for IoT Applications" loading="lazy"></a></figure>
+         <section class="key-topic-content">
+            <h3 class="key-topic-title"><a href="/company/about-nxp/smarter-world-blog/BL-SESIP-SYSTEM" class="dtmcustomrulelink">SESIP System-Level Security for IoT Applications</a></h3>
+            <p class="metadata mbq2">May 27, 2021</p>
+            <p class="metadata"> by <a class="dtmcustomrulelink" data-dtmaction="Blog: View Author Link Click" href="/company/about-nxp/smarter-world-blog:BLOGS?collection=Blogs&amp;start=0&amp;max=12&amp;parameters=Topics.applicationTax&amp;sorting=ModifiedDate.desc&amp;language=en&amp;keyword=John Boggie&amp;depth=1" data-dtmsubaction="John Boggie">John Boggie</a></p>
+         </section>
+      </article>
+      <article class="key-topic-item">
+         <figure class="key-topic-img"><a href="/company/about-nxp/smarter-world-blog/BL-HOW-TO-MAKE-FIPS-140-SECURITY"><img class="img-responsive" src="/assets/images/en/blogs/HOW-TO-MAKE-FIPS-140-SECURITY-720x405.png?imwidth=360" alt="How to Make FIPS 140 Security Certification for IoT Devices Easy" loading="lazy"></a></figure>
+         <section class="key-topic-content">
+            <h3 class="key-topic-title"><a href="/company/about-nxp/smarter-world-blog/BL-HOW-TO-MAKE-FIPS-140-SECURITY" class="dtmcustomrulelink">How to Make FIPS 140 Security Certification for IoT Devices Easy</a></h3>
+            <p class="metadata mbq2">June 7, 2021</p>
+            <p class="metadata"> by <a class="dtmcustomrulelink" data-dtmaction="Blog: View Author Link Click" href="/company/about-nxp/smarter-world-blog:BLOGS?collection=Blogs&amp;start=0&amp;max=12&amp;parameters=Topics.applicationTax&amp;sorting=ModifiedDate.desc&amp;language=en&amp;keyword=Giuseppe Guagliardo&amp;depth=1" data-dtmsubaction="Giuseppe Guagliardo">Giuseppe Guagliardo</a></p>
+         </section>
+      </article>
+      <article class="key-topic-item">
+         <figure class="key-topic-img"><a href="/company/about-nxp/smarter-world-blog/BL-SESIP-RESILIENT-EDGE"><img class="img-responsive" src="/assets/images/en/blogs/SESIP-SYSTEM-720x405.png?imwidth=360" alt="Toward a More Resilient Edge" loading="lazy"></a></figure>
+         <section class="key-topic-content">
+            <h3 class="key-topic-title"><a href="/company/about-nxp/smarter-world-blog/BL-SESIP-RESILIENT-EDGE" class="dtmcustomrulelink">Toward a More Resilient Edge</a></h3>
+            <p class="metadata mbq2">March 5, 2021</p>
+            <p class="metadata"> by <a class="dtmcustomrulelink" data-dtmaction="Blog: View Author Link Click" href="/company/about-nxp/smarter-world-blog:BLOGS?collection=Blogs&amp;start=0&amp;max=12&amp;parameters=Topics.applicationTax&amp;sorting=ModifiedDate.desc&amp;language=en&amp;keyword=John Boggie&amp;depth=1" data-dtmsubaction="John Boggie">John Boggie</a></p>
+         </section>
+      </article>
+   </section>
+</div><!--ls:end[component-1599061117201]--> 
+   </div> 
+  </div> 
+ </div> 
+</div> 
+<div class="container-fluid iw_section" id="sectionkdhlewu7"> 
+ <div class="row iw_row iw_stretch" id="rowkdhlewu8"> 
+  <div class="iw_columns col-lg-12" id="colkdhlewu9"> 
+   <div class="iw_component" id="iw_comp1596645344958">
+     <!--ls:begin[component-1596645344958]--><style>#iw_comp1596645344958{}</style><footer class="loadnav">
+  <div class="footer-inner footer-en">
+    <div id="newsContainer"></div>
+    <figure class="footer-logo">
+      <a href="//www.nxp.com"
+        ><svg id="nxp-logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 93 32" width="93" height="32">
+          <style type="text/css">
+            .nxpsvglogoN {
+              fill: #fca600;
+            }
+            .nxpsvglogoP {
+              fill: #69ca00;
+            }
+            .nxpsvglogoX {
+              fill: #0eafe0;
+            }
+          </style>
+          <title id="nxpLogoTitle">NXP</title>
+          <polyline class="nxpsvglogoN" points="26,0 26,19.3 9.7,0 0,0 0,32 9.7,32 9.7,12.7 26,32 35.7,16 26,0 "></polyline>
+          <path class="nxpsvglogoX" d="M53.4,32l-6.5-10.6L40.4,32H28.9l9.7-16L28.9,0h11.4l6.5,10.6L53.4,0h11.4l-9.7,16l9.7,16H53.4z"></path>
+          <path
+            class="nxpsvglogoP"
+            d="M81.6,0H67.8l-9.7,16l9.7,16l0,0v-7.1h16.3c6.8,0,8.9-5.5,8.9-10.2v-3.8C93,4.7,90.8,0,81.6,0 M84,12.9
+             c0,1.9-0.9,4.1-3.1,4.1h-13V7.9H80c2.9,0,4,1.2,4,3.4C84,11.3,84,12.9,84,12.9z"
+          ></path></svg></a>
+    </figure>
+    <div class="row footer-row">
+      <div class="col-sm-9">
+        <ul class="footer-nav-primary dtmcustomrulelink" data-content-finding="Footer" data-content-subfinding="Footer: About NXP" data-dtmaction="Footer: About NXP Link Click">
+          <li>
+            <a data-dtmsubaction="About NXP" href="//www.nxp.com/company/our-company/about-nxp:ABOUT-NXP">About NXP</a>
+          </li>
+          <li>
+            <a data-dtmsubaction="Careers" href="//www.nxp.com/about/careers-at-nxp:CAREERS">Careers</a>
+          </li>
+          <li>
+            <a data-dtmsubaction="Investor Relations" href="//investors.nxp.com/">Investors</a>
+          </li>
+          <li>
+            <a data-dtmsubaction="Media Center" href="//media.nxp.com">Media</a>
+          </li>
+          <li>
+            <a data-dtmsubaction="Contact Us" href="//www.nxp.com/company/contact-us:CONTACTUS">Contact</a>
+          </li>
+          <li>
+            <a data-dtmsubaction="Subscribe" href="//contact.nxp.com/Subscription-Center">Subscribe</a>
+          </li>
+        </ul>
+      </div>
+      <div class="col-sm-3">
+        <ul class="footer-nav-social dtmcustomrulelink" data-content-finding="Footer" data-content-subfinding="Footer: Follow Us" data-dtmaction="Footer: Follow Us Icon Click">
+          <li>
+            <a data-dtmsubaction="Facebook" href="//facebook.com/NXPsemi">
+              <svg id="facebook" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <title id="facebookTitle">Facebook</title>
+                <path d="M30 15.0913C30 6.75456 23.2863 0 15 0C6.71371 0 0 6.75456 0 15.0913C0 22.6235 5.48528 28.8669 12.6562 30V19.4538H8.84577V15.0913H12.6562V11.7663C12.6562 7.98438 14.8942 5.89533 18.3218 5.89533C19.9633 5.89533 21.6798 6.18986 21.6798 6.18986V9.90183H19.7879C17.925 9.90183 17.3438 11.0653 17.3438 12.2586V15.0913H21.5038L20.8385 19.4538H17.3438V30C24.5147 28.8669 30 22.6235 30 15.0913Z" fill="#262626"></path>
+              </svg></a>
+          </li>
+          <li class="youtubeIcon">
+            <a href="//youtube.com/@NXPsemi" data-dtmsubaction="YouTube" rel="noopener noreferrer" target="_blank">
+              <svg id="YouTube" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <title id="wechatTitle">YouTube</title>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M15 30C23.2843 30 30 23.2843 30 15C30 6.71573 23.2843 0 15 0C6.71573 0 0 6.71573 0 15C0 23.2843 6.71573 30 15 30ZM23.0917 11.0484C22.9018 10.3327 22.3422 9.76909 21.6318 9.57781C20.344 9.23022 15.1802 9.23022 15.1802 9.23022C15.1802 9.23022 10.0164 9.23022 8.72859 9.57781C8.01812 9.76912 7.45857 10.3327 7.26865 11.0484C6.92359 12.3456 6.92359 15.0522 6.92359 15.0522C6.92359 15.0522 6.92359 17.7587 7.26865 19.0559C7.45857 19.7716 8.01812 20.3117 8.72859 20.503C10.0164 20.8506 15.1802 20.8506 15.1802 20.8506C15.1802 20.8506 20.344 20.8506 21.6318 20.503C22.3422 20.3117 22.9018 19.7716 23.0917 19.0559C23.4368 17.7587 23.4368 15.0522 23.4368 15.0522C23.4368 15.0522 23.4368 12.3456 23.0917 11.0484ZM13.4906 17.5086V12.594L17.8065 15.0513L13.4906 17.5086Z" fill="#262626"></path>
+              </svg>
+            </a>
+          </li>
+          <li>
+            <a data-dtmsubaction="Twitter" href="//twitter.com/NXP">
+              <svg id="X" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <title id="XTitle">X (formerly Twitter)</title>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M15 30C23.2843 30 30 23.2843 30 15C30 6.71573 23.2843 0 15 0C6.71573 0 0 6.71573 0 15C0 23.2843 6.71573 30 15 30ZM22.2534 8.07727H19.7392L15.6307 12.4887L12.0741 8.07727H6.92319L13.0553 15.5825L7.22979 21.8273H9.74395L14.2204 17.0148L18.1449 21.8273H23.1732L16.7958 13.921L22.2534 8.07727ZM20.2911 20.4523H18.8807L9.80527 9.39498H11.3383L20.2911 20.4523Z" fill="#262626"></path>
+              </svg></a>
+          </li>
+          <li>
+            <a data-dtmsubaction="LinkedIn" href="//linkedin.com/company/nxp-semiconductors">
+              <svg id="linkedin" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <title id="linkedinTitle">LinkedIn</title>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M15 30C23.2843 30 30 23.2843 30 15C30 6.71573 23.2843 0 15 0C6.71573 0 0 6.71573 0 15C0 23.2843 6.71573 30 15 30ZM8.24777 22.0528H11.3576V12.0028H8.24777V22.0528ZM8 8.80739C8 9.80533 8.80658 10.6319 9.801 10.6319C10.7951 10.6319 11.602 9.80533 11.602 8.80739C11.602 8.32804 11.4123 7.86832 11.0745 7.52937C10.7368 7.19042 10.2787 7 9.801 7C9.32335 7 8.86526 7.19042 8.5275 7.52937C8.18975 7.86832 8 8.32804 8 8.80739ZM19.8935 22.0528H22.9967H23V16.5322C23 13.8307 22.4214 11.7508 19.2741 11.7508C17.761 11.7508 16.7469 12.5841 16.3317 13.3737H16.2882V12.0028H13.3056V22.0528H16.4121V17.0765C16.4121 15.7661 16.6598 14.4994 18.2767 14.4994C19.8701 14.4994 19.8935 15.9946 19.8935 17.1605V22.0528Z" fill="#262626"></path>
+              </svg></a>
+          </li>
+
+        </ul>
+      </div>
+    </div>
+    <div class="row footer-row">
+      <div class="col-sm-7">
+        <ul class="footer-nav-legal dtmcustomrulelink" data-content-finding="Footer" data-content-subfinding="Footer: Privacy" data-dtmaction="Footer: Privacy Link Click">
+          <li>
+            <a data-dtmsubaction="Privacy" href="//www.nxp.com/about/privacy:PRIVACYPRACTICES">Privacy</a>
+          </li>
+          <li>
+            <a data-dtmsubaction="Terms of Use" href="//www.nxp.com/about/terms-of-use:TERMSOFUSE">Terms of Use</a>
+          </li>
+          <li>
+            <a data-dtmsubaction="Terms of Sale" href="//www.nxp.com/about/our-standard-terms-and-conditions-of-sale-counter-offer:TERMSCONDITIONSSALE">Terms of Sale</a>
+          </li>
+          <li>
+            <a data-dtmsubaction="Slavery and Human Trafficking Statement" href="//www.nxp.com/company/our-company/about-nxp/corporate-responsibility/social-responsibility/statement-on-slavery-and-human-trafficking:RESPECTING-HUMAN-RIGHTS">Slavery and Human Trafficking Statement</a>
+          </li>
+          <li>
+            <a data-dtmsubaction="Accessibility" href="//www.nxp.comnxp.com/company/our-company/about-nxp/accessibility:ACCESSIBILITY">Accessibility</a>
+          </li>
+        </ul>
+      </div>
+      <div class="col-sm-5">
+        <p class="footer-license">©2006-2020 NXP Semiconductors. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+<!--ls:end[component-1596645344958]--> 
+   </div> 
+  </div> 
+ </div> 
+</div></div><!--ls:end[body]--><!--ls:begin[page_track]--><!--ls:end[page_track]--><script data-ocde-desktop_or_tablet_or_phone="show" src="/resources/scripts/nxp-cms/global-bundle.js" type="text/javascript"></script><script>window.schema_highlighter={accountId: "NXPSemiconductors", outputCache: true}</script><script async src="https://cdn.schemaapp.com/javascript/highlight.js"></script></body>
+</html>

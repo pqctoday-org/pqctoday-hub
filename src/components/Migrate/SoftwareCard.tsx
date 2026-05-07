@@ -11,7 +11,8 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react'
-import type { SoftwareItem } from '../../types/MigrateTypes'
+import type { SoftwareItem, VendorRoadmap } from '../../types/MigrateTypes'
+import { VendorRoadmapLink } from './VendorRoadmapLink'
 import { LAYERS } from './InfrastructureStack'
 import { CertBadges, renderFipsStatus, renderPqcSupport, renderQuantumTech } from './migrateHelpers'
 import { certsByProduct } from '../../data/certificationXrefData'
@@ -32,6 +33,7 @@ interface SoftwareCardProps {
   onToggleCompare?: (key: string) => void
   maxCompareReached?: boolean
   onSelectDetail?: (item: SoftwareItem) => void
+  vendorRoadmap?: VendorRoadmap
 }
 
 const PRIORITY_COLORS: Record<string, string> = {
@@ -51,6 +53,7 @@ export const SoftwareCard = ({
   onToggleCompare,
   maxCompareReached,
   onSelectDetail,
+  vendorRoadmap,
 }: SoftwareCardProps) => {
   const { migrateBookmarks, toggleMigrateBookmark } = useBookmarkStore()
   const isBookmarked = migrateBookmarks.includes(item.softwareName)
@@ -240,6 +243,10 @@ export const SoftwareCard = ({
             <ExternalLink size={12} /> Repo
           </a>
         )}
+        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+        <span onClick={(e) => e.stopPropagation()}>
+          <VendorRoadmapLink roadmap={vendorRoadmap} size="sm" showLabel={false} />
+        </span>
         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
         <span onClick={(e) => e.stopPropagation()}>
           <UpdateProductButton
