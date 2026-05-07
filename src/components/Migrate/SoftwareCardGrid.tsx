@@ -14,6 +14,7 @@ interface SoftwareCardGridProps {
   compareProducts?: Set<string>
   onToggleCompare?: (key: string) => void
   maxCompareReached?: boolean
+  onSelectDetail?: (item: SoftwareItem) => void
 }
 
 const rowKey = (item: SoftwareItem) => item.productId
@@ -27,6 +28,7 @@ export const SoftwareCardGrid = ({
   compareProducts,
   onToggleCompare,
   maxCompareReached,
+  onSelectDetail,
 }: SoftwareCardGridProps) => {
   const visibleItems = useMemo(
     () => (hiddenProducts ? items.filter((item) => !hiddenProducts.has(rowKey(item))) : items),
@@ -51,6 +53,7 @@ export const SoftwareCardGrid = ({
             isCompared={compareProducts?.has(rowKey(item))}
             onToggleCompare={onToggleCompare}
             maxCompareReached={maxCompareReached}
+            onSelectDetail={onSelectDetail}
           />
         ))}
       </AnimatePresence>

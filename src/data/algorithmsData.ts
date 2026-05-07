@@ -18,21 +18,27 @@ export interface AlgorithmTransition {
     | 'Hybrid KEM with Access Control'
   deprecationDate: string
   standardizationDate: string
+  deprecationDateISO?: string
+  standardizationDateISO?: string
   region: string
   status: string
   statusUrl?: string
+  dataQualityNotes?: string
 }
 
 interface RawTransitionRow {
-  'Classical Algorithm': string
-  'Key Size': string
-  'PQC Replacement': string
+  classical_algorithm: string
+  key_size: string
+  pqc_replacement: string
   Function: string
-  'Deprecation Date': string
-  'Standardization Date': string
+  Deprecation_Date_Label: string
+  Standardization_Date_Label: string
   Region: string
   Status: string
-  'Status URL': string
+  status_url: string
+  Deprecation_Date_ISO: string
+  Standardization_Date_ISO: string
+  data_quality_notes: string
 }
 
 // Eager glob — data available synchronously at module load time
@@ -46,15 +52,18 @@ const { data, metadata } = loadLatestCSV<RawTransitionRow, AlgorithmTransition>(
   csvModules,
   /algorithms_transitions_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
   (row) => ({
-    classical: row['Classical Algorithm'],
-    keySize: row['Key Size'],
-    pqc: row['PQC Replacement'],
-    function: row['Function'] as AlgorithmTransition['function'],
-    deprecationDate: row['Deprecation Date'],
-    standardizationDate: row['Standardization Date'],
-    region: row['Region'] || '',
-    status: row['Status'] || '',
-    statusUrl: row['Status URL'] || undefined,
+    classical: row.classical_algorithm,
+    keySize: row.key_size,
+    pqc: row.pqc_replacement,
+    function: row.Function as AlgorithmTransition['function'],
+    deprecationDate: row.Deprecation_Date_Label || row.Deprecation_Date_ISO || '',
+    standardizationDate: row.Standardization_Date_Label || row.Standardization_Date_ISO || '',
+    deprecationDateISO: row.Deprecation_Date_ISO || undefined,
+    standardizationDateISO: row.Standardization_Date_ISO || undefined,
+    region: row.Region || '',
+    status: row.Status || '',
+    statusUrl: row.status_url || undefined,
+    dataQualityNotes: row.data_quality_notes || undefined,
   })
 )
 

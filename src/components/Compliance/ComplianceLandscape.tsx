@@ -297,11 +297,13 @@ function FrameworkCard({
   fw,
   maturityByRefId,
   onNavigateToCswp39,
+  onSelectDetail,
   highlighted,
 }: {
   fw: ComplianceFramework
   maturityByRefId?: Map<string, MaturityRequirement[]>
   onNavigateToCswp39?: (refId: string) => void
+  onSelectDetail?: (fw: ComplianceFramework) => void
   highlighted?: boolean
 }) {
   const [expanded, setExpanded] = useState(false)
@@ -325,7 +327,21 @@ function FrameworkCard({
     <div
       id={`fw-${fw.id}`}
       data-workshop-target={`compliance-framework-${fw.id}`}
-      className={`glass-panel p-4 space-y-3 flex flex-col scroll-mt-20 transition-shadow duration-300 ${highlighted ? 'ring-2 ring-primary shadow-glow' : ''}`}
+      className={`glass-panel p-4 space-y-3 flex flex-col scroll-mt-20 transition-shadow duration-300${onSelectDetail ? ' cursor-pointer' : ''} ${highlighted ? 'ring-2 ring-primary shadow-glow' : ''}`}
+      onClick={onSelectDetail ? () => onSelectDetail(fw) : undefined}
+      onKeyDown={
+        onSelectDetail
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                onSelectDetail(fw)
+              }
+            }
+          : undefined
+      }
+      role={onSelectDetail ? 'button' : undefined}
+      tabIndex={onSelectDetail ? 0 : undefined}
+      aria-label={onSelectDetail ? `View details for ${fw.label}` : undefined}
     >
       <div className="flex items-start gap-2">
         {fw.requiresPQC ? (
@@ -424,6 +440,7 @@ function FrameworkCard({
               href={fw.website}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
               className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-medium hover:bg-muted/80 hover:text-foreground transition-colors"
               title={`Official site: ${fw.website}`}
             >
@@ -436,7 +453,10 @@ function FrameworkCard({
               type="button"
               variant="ghost"
               size="sm"
-              onClick={() => onNavigateToCswp39(maturityRefId)}
+              onClick={(e) => {
+                e.stopPropagation()
+                onNavigateToCswp39(maturityRefId)
+              }}
               className="h-auto inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors border border-primary/20"
               title="View CSWP.39 governance requirements extracted from this framework"
             >
@@ -446,6 +466,7 @@ function FrameworkCard({
           {fw.libraryRefs.length > 0 && (
             <Link
               to={`/library?q=${encodeURIComponent(fw.libraryRefs.join(' '))}`}
+              onClick={(e) => e.stopPropagation()}
               className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-secondary/10 text-secondary font-medium hover:bg-secondary/20 transition-colors"
               title={`Library: ${fw.libraryRefs.join(', ')}`}
             >
@@ -467,6 +488,7 @@ function FrameworkCard({
               return (
                 <Link
                   to={href}
+                  onClick={(e) => e.stopPropagation()}
                   className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent font-medium hover:bg-accent/20 transition-colors"
                   title={label}
                 >
@@ -478,6 +500,7 @@ function FrameworkCard({
           {fw.enforcementBody && fw.bodyType === 'certification_body' && (
             <Link
               to={`/compliance?tab=records&q=${encodeURIComponent(fw.enforcementBody)}`}
+              onClick={(e) => e.stopPropagation()}
               className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-medium hover:bg-muted/80 hover:text-foreground transition-colors"
               title={`Cert records for ${fw.enforcementBody}`}
             >
@@ -489,11 +512,14 @@ function FrameworkCard({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setExpanded(!expanded)}
+              onClick={(e) => {
+                e.stopPropagation()
+                setExpanded(!expanded)
+              }}
               className="flex items-center gap-1 h-auto py-0 text-xs text-primary hover:text-primary/80 ml-auto"
             >
               {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-              {expanded ? 'Hide' : 'Details'}
+              {expanded ? 'Hide' : 'Notes'}
             </Button>
           )}
         </div>
@@ -772,6 +798,8 @@ interface ComplianceLandscapeProps {
   onViewModeChange?: (mode: ViewMode) => void
   /** When set, scroll to and ring-highlight this framework ID for 3 s */
   highlightFrameworkId?: string | null
+  /** Called when user clicks "Details →" on a framework card */
+  onSelectFramework?: (fw: ComplianceFramework) => void
 }
 
 export function ComplianceLandscape({
@@ -797,6 +825,7 @@ export function ComplianceLandscape({
   onSearchTextChange,
   onSortByChange,
   onViewModeChange,
+  onSelectFramework,
 }: ComplianceLandscapeProps = {}) {
   const sourceFrameworks = frameworksProp ?? complianceFrameworks
   const { selectedIndustries } = usePersonaStore()
@@ -1177,6 +1206,7 @@ export function ComplianceLandscape({
                 fw={fw}
                 maturityByRefId={maturityByRefId}
                 onNavigateToCswp39={onNavigateToCswp39}
+                onSelectDetail={onSelectFramework}
                 highlighted={highlightFrameworkId === fw.id}
               />
             ))}

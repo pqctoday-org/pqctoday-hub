@@ -43,6 +43,9 @@ import { StickyCompareBar } from './StickyCompareBar'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { CatalogSizeBanner } from './CatalogSizeBanner'
 import { MigrateContextStrip } from './MigrateContextStrip'
+import { ProductExtractionModal } from './ProductExtractionModal'
+import { getProductExtraction } from '../../data/productExtractionData'
+import { catalogEnrichments } from '../../data/catalogEnrichmentData'
 
 const LICENSE_FILTER_ITEMS = [
   { id: 'Open Source', label: 'Open Source' },
@@ -74,6 +77,7 @@ export const MigrateView: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const [filterText, setFilterText] = useState(() => searchParams.get('q') ?? '')
   const [inputValue, setInputValue] = useState(() => searchParams.get('q') ?? '')
+  const [detailProduct, setDetailProduct] = useState<SoftwareItem | null>(null)
 
   const [stepFilter, setStepFilter] = useState<{
     stepNumber: number
@@ -1514,6 +1518,7 @@ export const MigrateView: React.FC = () => {
                           compareProducts={compareSet}
                           onToggleCompare={handleToggleCompare}
                           maxCompareReached={maxCompareReached}
+                          onSelectDetail={setDetailProduct}
                         />
                       </div>
                     </>
@@ -1563,6 +1568,7 @@ export const MigrateView: React.FC = () => {
               compareProducts={compareSet}
               onToggleCompare={handleToggleCompare}
               maxCompareReached={maxCompareReached}
+              onSelectDetail={setDetailProduct}
             />
           </div>
         )}
@@ -1595,6 +1601,7 @@ export const MigrateView: React.FC = () => {
                   compareProducts={compareSet}
                   onToggleCompare={handleToggleCompare}
                   maxCompareReached={maxCompareReached}
+                  onSelectDetail={setDetailProduct}
                 />
               </div>
             </>
@@ -1617,6 +1624,19 @@ export const MigrateView: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Product detail modal — opened from card grid "Details" button */}
+      <ProductExtractionModal
+        isOpen={!!detailProduct}
+        onClose={() => setDetailProduct(null)}
+        softwareName={detailProduct?.softwareName ?? ''}
+        extraction={
+          detailProduct ? (getProductExtraction(detailProduct.softwareName) ?? null) : null
+        }
+        catalogEnrichment={
+          detailProduct ? (catalogEnrichments[detailProduct.softwareName] ?? null) : null
+        }
+      />
 
       {/* Sticky compare bar — fixed bottom, visible whenever ≥1 product is queued */}
       <StickyCompareBar

@@ -33,5 +33,30 @@
     "threatId": "TELCO-002",
     "reason": "forbidden",
     "date": "2026-02-27T06:42:06.714Z"
+  },
+  "https://media.defense.gov/2025/May/30/2003728741/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS.PDF": {
+    "threatId": "AERO-002",
+    "reason": "forbidden",
+    "date": "2026-05-07T02:24:09.116Z"
+  },
+  "https://dodcio.defense.gov/CMMC/": {
+    "threatId": "EDU-004",
+    "reason": "forbidden",
+    "date": "2026-05-07T02:25:18.529Z"
+  },
+  "https://railroads.dot.gov/elibrary/ptc-communications-cybersecurity-technology-review-and-concept-operations": {
+    "threatId": "RAIL-004",
+    "reason": "forbidden",
+    "date": "2026-05-07T02:25:20.291Z"
+  },
+  "https://etech.iec.ch/issue/2025-02/cyber-security-for-autonomous-vehicles": {
+    "threatId": "RAIL-005",
+    "reason": "forbidden",
+    "date": "2026-05-07T02:25:21.318Z"
+  },
+  "https://www.ferc.gov/dam-safety-and-inspections/security-program-hydropower-projects": {
+    "threatId": "WATER-005",
+    "reason": "forbidden",
+    "date": "2026-05-07T02:25:22.233Z"
   }
 }

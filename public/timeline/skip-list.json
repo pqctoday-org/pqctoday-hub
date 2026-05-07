@@ -83,5 +83,15 @@
     "note": "BSI/ANSSI block automated PDF access; file manually sourced from official publication mirror",
     "date": "2026-03-28T00:00:00.000Z",
     "resolved": "2026-03-28T00:00:00.000Z"
+  },
+  "https://dodcio.defense.gov/Library/": {
+    "label": "United States:DoD — DoD PQC Migration Memorandum",
+    "reason": "forbidden",
+    "date": "2026-05-07T02:28:50.858Z"
+  },
+  "https://www.gsma.com/solutions-and-impact/technologies/networks/ng116/": {
+    "label": "International:GSMA — Mobile Network Operator PQC Transition Window",
+    "reason": "forbidden",
+    "date": "2026-05-07T02:29:37.203Z"
   }
 }

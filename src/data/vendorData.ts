@@ -19,12 +19,15 @@ interface RawVendorRow {
   hq_country: string
   pqc_commitment: string
   last_verified_date: string
-  // GLEIF LEI columns (present in vendors_03312026.csv+; empty string in older files)
   lei_code?: string
   lei_legal_name?: string
   lei_entity_status?: string
   gleif_url?: string
   lei_last_verified_date?: string
+  lei_coverage_flag?: string
+  website_url_quality?: string
+  gleif_url_quality?: string
+  data_quality_notes?: string
 }
 
 const { data: allVendors, metadata } = loadLatestCSV<RawVendorRow, Omit<Vendor, 'productCount'>>(
@@ -45,6 +48,10 @@ const { data: allVendors, metadata } = loadLatestCSV<RawVendorRow, Omit<Vendor, 
     leiEntityStatus: row.lei_entity_status || undefined,
     gleifUrl: row.gleif_url || undefined,
     leiLastVerifiedDate: row.lei_last_verified_date || undefined,
+    leiCoverageFlag: row.lei_coverage_flag || undefined,
+    websiteUrlQuality: row.website_url_quality || undefined,
+    gleifUrlQuality: row.gleif_url_quality || undefined,
+    dataQualityNotes: row.data_quality_notes || undefined,
   })
 )
 

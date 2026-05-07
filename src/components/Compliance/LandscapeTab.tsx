@@ -41,6 +41,7 @@ interface Props {
   onViewModeChange: (mode: ViewMode) => void
   onNavigateToCswp39?: (refId: string) => void
   highlightFrameworkId?: string | null
+  onSelectFramework?: (fw: import('@/data/complianceData').ComplianceFramework) => void
 }
 
 export function LandscapeTab({ type, onTypeChange, onNavigateToCswp39, ...landscape }: Props) {

@@ -343,6 +343,7 @@ function MobileViewToggle({
     onSortByChange: (sort: FrameworkSortOption) => void
     onViewModeChange: (mode: ViewMode) => void
     highlightFrameworkId?: string | null
+    onSelectFramework?: (fw: import('@/data/complianceData').ComplianceFramework) => void
   }
   tableProps: React.ComponentProps<typeof ComplianceTable>
 }) {
@@ -511,6 +512,7 @@ function MobileViewToggle({
 
 export const ComplianceView = () => {
   useWorkflowPhaseTracker('comply')
+  const [selectedFramework, setSelectedFramework] = useState<ComplianceFramework | null>(null)
   const [searchParams, setSearchParams] = useSearchParams()
   const certParam = searchParams.get('cert') ?? undefined
   const evref = searchParams.get('evref') ?? undefined
@@ -1288,6 +1290,7 @@ export const ComplianceView = () => {
             onSortByChange: handleLsSortChange,
             onViewModeChange: handleLsViewChange,
             highlightFrameworkId,
+            onSelectFramework: setSelectedFramework,
           }}
           tableProps={{
             data: data,
@@ -1440,6 +1443,7 @@ export const ComplianceView = () => {
               onViewModeChange={handleLsViewChange}
               onNavigateToCswp39={handleNavigateToCswp39}
               highlightFrameworkId={highlightFrameworkId}
+              onSelectFramework={setSelectedFramework}
             />
           </TabsContent>
 
@@ -1494,6 +1498,11 @@ export const ComplianceView = () => {
           </TabsContent>
         </Tabs>
       </div>
+      <FrameworkDetailPopover
+        isOpen={!!selectedFramework}
+        onClose={() => setSelectedFramework(null)}
+        framework={selectedFramework}
+      />
     </div>
   )
 }
