@@ -446,3 +446,113 @@ source: public/vendor-roadmaps/
 - **Extraction Quality**: HIGH
 - **Source Document**: VND-057_Cloudflare_Inc..html (302.3 KB)
 - **Extraction Timestamp**: 2026-05-07T07:28:54
+
+## VND-059 — Venafi Inc.
+
+- **Vendor ID**: VND-059
+- **Vendor Name**: Venafi Inc.
+- **Roadmap Title**: Venafi/CyberArk: Experimental PQC Support (TLS + CodeSign Protect v24.3)
+- **Roadmap URL**: https://docs.venafi.com/Docs/24.3/TopNav/Content/CodeSigning/t-codesigning-pqc.php
+- **Publish Date**: 2024-10-01
+- **Local File**: public/vendor-roadmaps/VND-059_Venafi_Inc..html
+- **CSV Coverage Notes**: TLS Protect · CodeSign Protect · ML-DSA · SLH-DSA · Falcon (experimental v24.3+)
+- **PQC Algorithms Announced**: ML-DSA; SLH-DSA; Falcon
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: CodeSign Protect; TLS Protect; Trust Protection Platform
+- **Compliance Frameworks**: None detected
+- **Hybrid Mode Support**: None detected
+- **Current GA Status**: Experimental
+- **Customer Action Required**: Contact Venafi for activation instructions; set up self-signed CA template; create Key Pair environment template; create Key Pair environment; obtain grant; sync keystore; sign and verify using PQC keys
+- **Key Commitments & Quotes**: "Venafi is adding experimental support for post-quantum cryptographic algorithms in CodeSign Protect"; "This feature it is experimental and is intended to help you start planning for future PQC migration"; "Experimental PQC signing algorithms are only supported for code signing and verification"
+- **Coverage Verification**: CONSISTENT — The document explicitly lists ML-DSA, SLH-DSA, and Falcon as supported experimental algorithms in CodeSign Protect and TLS Protect for version 24.3.
+- **Extraction Quality**: HIGH
+- **Source Document**: VND-059_Venafi_Inc..html (47.3 KB)
+- **Extraction Timestamp**: 2026-05-07T08:31:10
+
+## VND-164 — Qualys Inc.
+
+- **Vendor ID**: VND-164
+- **Vendor Name**: Qualys Inc.
+- **Roadmap Title**: Qualys CertView: PQC Support Details (v4.7)
+- **Roadmap URL**: https://docs.qualys.com/en/certview/latest/assets_certificates/pqc_details.htm
+- **Publish Date**: 2025-01-01
+- **Local File**: public/vendor-roadmaps/VND-164_Qualys_Inc..html
+- **CSV Coverage Notes**: Qualys CertView v4.7 PQC scanning · KEM detection · VM/WAS/EASM/CertView
+- **PQC Algorithms Announced**: None detected
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: Qualys CertView; VM; WAS; EASM; VM_AUTH
+- **Compliance Frameworks**: None detected
+- **Hybrid Mode Support**: None detected
+- **Current GA Status**: GA
+- **Customer Action Required**: Include QID 38994 in your option profile for PQC support
+- **Key Commitments & Quotes**: "The PQC SUPPORT column indicates whether a certificate supports PQC key exchange algorithms"; "You must include QID 38994 in your option profile for PQC support"; "At least one PQC-supported key exchange algorithm was detected for the certificate"
+- **Coverage Verification**: CONSISTENT — The document explicitly confirms PQC scanning support for VM, WAS, EASM, and CertView, and details KEM algorithm detection capabilities.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-164_Qualys_Inc..html (56.4 KB)
+- **Extraction Timestamp**: 2026-05-07T08:32:54
+
+## VND-171 — DocuSign
+
+- **Vendor ID**: VND-171
+- **Vendor Name**: DocuSign
+- **Roadmap Title**: DocuSign: Post-Quantum Cryptography (DE)
+- **Roadmap URL**: https://www.docusign.com/de-de/blog/post-quanten-kryptografie
+- **Publish Date**: 2025-01-01
+- **Local File**: public/vendor-roadmaps/VND-171_DocuSign.html
+- **CSV Coverage Notes**: ML-DSA · ML-KEM · SLH-DSA · hybrid RSA+ML-DSA e-signature approach
+- **PQC Algorithms Announced**: ML-DSA
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: None detected
+- **Compliance Frameworks**: NIST; Europäische Kommission
+- **Hybrid Mode Support**: Yes; "Die Strategie von Docusign unterstützt hybride Kryptografie, die es sowohl traditionellen Algorithmen (wie RSA) als auch quantenresistenten Algorithmen (wie ML-DSA) ermöglicht, nebeneinander zu existieren."
+- **Current GA Status**: Planned
+- **Customer Action Required**: None detected
+- **Key Commitments & Quotes**: "bereitet sich Docusign auf die Post-Quanten-Ära vor, indem es massiv in Forschung und Entwicklung (F&E) investiert"; "unterstützt hybride Kryptografie, die es sowohl traditionellen Algorithmen (wie RSA) als auch quantenresistenten Algorithmen (wie ML-DSA) ermöglicht, nebeneinander zu existieren"; "entwickelt Docusign neue Sicherheitsfunktionen, die auf quantenresistenter Kryptografie und vertrauenswürdiger Zeitstempelung basieren"
+- **Coverage Verification**: MISMATCH; The document explicitly mentions ML-DSA and hybrid RSA+ML-DSA, but does not mention ML-KEM or SLH-DSA.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-171_DocuSign.html (483.5 KB)
+- **Extraction Timestamp**: 2026-05-07T08:33:37
+
+## VND-173 — GlobalSign Ltd.
+
+- **Vendor ID**: VND-173
+- **Vendor Name**: GlobalSign Ltd.
+- **Roadmap Title**: GlobalSign Post-Quantum Computing
+- **Roadmap URL**: https://www.globalsign.com/en/post-quantum-computing
+- **Publish Date**: 2025-01-01
+- **Local File**: public/vendor-roadmaps/VND-173_GlobalSign_Ltd..html
+- **CSV Coverage Notes**: ML-DSA-65 · Dilithium2 · Kyber/ML-KEM TLS · PKI/CA PQC transition
+- **PQC Algorithms Announced**: Dilithium3; ML-DSA-65; Kyber; Dilithium2
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: None detected
+- **Compliance Frameworks**: NIST; FIPS 203
+- **Hybrid Mode Support**: None detected
+- **Current GA Status**: Planned
+- **Customer Action Required**: Have an inventory of your certificates and keys; Identify and address any vulnerabilities; Develop a plan to replace vulnerable certificates and keys quickly; Maintain up-to-date ownership information; Automate management
+- **Key Commitments & Quotes**: "Our dedicated team is actively involved in PQC research and development, ensuring that your digital certificates remain secure in the face of emerging quantum threats."
+- **Coverage Verification**: CONSISTENT — The document explicitly mentions ML-DSA-65, Dilithium2, Kyber, and the transition of Root/Intermediate CAs and Leaf certificates.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-173_GlobalSign_Ltd..html (97.7 KB)
+- **Extraction Timestamp**: 2026-05-07T08:34:50
+
+## VND-016 — Fortinet Inc.
+
+- **Vendor ID**: VND-016
+- **Vendor Name**: Fortinet Inc.
+- **Roadmap Title**: Fortinet: Advances Quantum-Safe Security for FortiOS 7.6 (ML-KEM, BIKE, HQC, QKD)
+- **Roadmap URL**: https://www.fortinet.com/corporate/about-us/newsroom/press-releases/2025/fortinet-advances-quantum-safe-security-to-guard-against-emerging-quantum-threats
+- **Publish Date**: 2025-03-01
+- **Local File**: public/vendor-roadmaps/VND-016_Fortinet_Inc..html
+- **CSV Coverage Notes**: FortiOS 7.6 ML-KEM512/768/1024 · IPsec hybrid PQC · SSL VPN · FIPS ML-DSA/SLH-DSA/ML-KEM KATs
+- **PQC Algorithms Announced**: ML-KEM; BIKE; HQC
+- **Target Migration Dates**: None detected
+- **Products / Services Covered**: FortiOS 7.6; FortiGate NGFW; Fortinet Secure SD-WAN
+- **Compliance Frameworks**: None detected
+- **Hybrid Mode Support**: Yes; "stack algorithms for more robust protection"
+- **Current GA Status**: GA; "made cutting-edge, quantum-safe features available today"
+- **Customer Action Required**: None detected
+- **Key Commitments & Quotes**: "protect against quantum-computing threats to current encryption standards"; "safeguard their critical data and future-proof their infrastructures"; "confidently transition to post-quantum security"
+- **Coverage Verification**: PARTIAL; The document confirms FortiOS 7.6 and hybrid capabilities but does not explicitly list ML-KEM parameter sets, SSL VPN coverage, or FIPS KATs mentioned in the notes.
+- **Extraction Quality**: MEDIUM
+- **Source Document**: VND-016_Fortinet_Inc..html (261.1 KB)
+- **Extraction Timestamp**: 2026-05-07T08:38:06

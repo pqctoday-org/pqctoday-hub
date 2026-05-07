@@ -1,34 +1,14 @@
 {
-  "generated": "2026-05-07T12:23:06.671Z",
+  "generated": "2026-05-07T13:26:14.611Z",
   "source": "src/data/migrate_vendor_roadmap_05072026.csv",
   "summary": {
-    "downloaded": 7,
+    "downloaded": 8,
     "skipped": 3,
     "failed": 1,
     "persisted_skip": 3,
-    "no_url": 20
+    "no_url": 12
   },
   "entries": [
-    {
-      "vendorId": "VND-008",
-      "vendorName": "Cisco Systems Inc.",
-      "title": "Cisco Secure Firewall: Post-Quantum Cryptography Roadmap",
-      "url": "https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap",
-      "status": "downloaded",
-      "filename": "VND-008_Cisco_Systems_Inc..html",
-      "sizeBytes": 84412,
-      "contentType": "text/html; charset=UTF-8"
-    },
-    {
-      "vendorId": "VND-012",
-      "vendorName": "DigiCert Inc.",
-      "title": "DigiCert Post-Quantum Cryptography — Trust Lifecycle Manager",
-      "url": "https://www.digicert.com/post-quantum-cryptography",
-      "status": "downloaded",
-      "filename": "VND-012_DigiCert_Inc..html",
-      "sizeBytes": 1031,
-      "contentType": "text/html"
-    },
     {
       "vendorId": "VND-013",
       "vendorName": "Entrust Corporation",
@@ -38,14 +18,14 @@
       "reason": "persisted: forbidden"
     },
     {
-      "vendorId": "VND-017",
-      "vendorName": "Futurex Inc.",
-      "title": "Futurex CryptoHub: NIST PQC Standards Use Cases (FIPS 203/204/205)",
-      "url": "https://www.futurex.com/blog/new-nist-pqc-standards-use-cases",
+      "vendorId": "VND-016",
+      "vendorName": "Fortinet Inc.",
+      "title": "Fortinet Quantum Security Hub (FortiOS 7.6 ML-KEM)",
+      "url": "https://www.fortinet.com/resources/hubs/quantum-security",
       "status": "downloaded",
-      "filename": "VND-017_Futurex_Inc..html",
-      "sizeBytes": 618195,
-      "contentType": "text/html; charset=UTF-8"
+      "filename": "VND-016_Fortinet_Inc..html",
+      "sizeBytes": 327259,
+      "contentType": "text/html;charset=utf-8"
     },
     {
       "vendorId": "VND-029",
@@ -54,36 +34,6 @@
       "url": "https://blogs.oracle.com/security/post-quantum-cryptography",
       "status": "skipped",
       "reason": "persisted: forbidden"
-    },
-    {
-      "vendorId": "VND-030",
-      "vendorName": "PQShield Ltd.",
-      "title": "PQShield PQCryptoLib-SDK: ML-KEM and ML-DSA",
-      "url": "https://pqshield.com/products/pqc-sdk/",
-      "status": "downloaded",
-      "filename": "VND-030_PQShield_Ltd..html",
-      "sizeBytes": 62419,
-      "contentType": "text/html; charset=UTF-8"
-    },
-    {
-      "vendorId": "VND-032",
-      "vendorName": "Red Hat Inc.",
-      "title": "Red Hat Enterprise Linux Post-Quantum Cryptography",
-      "url": "https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux-10/post-quantum-cryptography",
-      "status": "downloaded",
-      "filename": "VND-032_Red_Hat_Inc..html",
-      "sizeBytes": 581320,
-      "contentType": "text/html; charset=UTF-8"
-    },
-    {
-      "vendorId": "VND-057",
-      "vendorName": "Cloudflare Inc.",
-      "title": "Cloudflare Post-Quantum Roadmap",
-      "url": "https://blog.cloudflare.com/post-quantum-roadmap/",
-      "status": "downloaded",
-      "filename": "VND-057_Cloudflare_Inc..html",
-      "sizeBytes": 309529,
-      "contentType": "text/html"
     },
     {
       "vendorId": "VND-058",
@@ -95,6 +45,26 @@
       "persistent": false
     },
     {
+      "vendorId": "VND-059",
+      "vendorName": "Venafi Inc.",
+      "title": "Venafi/CyberArk: Experimental PQC Support (TLS + CodeSign Protect v24.3)",
+      "url": "https://docs.venafi.com/Docs/24.3/TopNav/Content/CodeSigning/t-codesigning-pqc.php",
+      "status": "downloaded",
+      "filename": "VND-059_Venafi_Inc..html",
+      "sizeBytes": 48470,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "vendorId": "VND-060",
+      "vendorName": "Okta Inc.",
+      "title": "Okta Ventures: PQC as Strategic Focus Area",
+      "url": "https://www.okta.com/blog/customers-and-partners/okta-ventures-request-for-builders-five-key-focus-areas-in-identity-and-security/",
+      "status": "downloaded",
+      "filename": "VND-060_Okta_Inc..html",
+      "sizeBytes": 284263,
+      "contentType": "text/html;charset=utf-8"
+    },
+    {
       "vendorId": "VND-151",
       "vendorName": "Microchip Technology Inc.",
       "title": "Microchip Technology Post-Quantum Cryptography",
@@ -103,14 +73,54 @@
       "reason": "persisted: forbidden"
     },
     {
-      "vendorId": "VND-181",
-      "vendorName": "Sectigo Ltd.",
-      "title": "Sectigo Certificate Manager: Private PKI PQC Sandbox (ML-DSA)",
-      "url": "https://www.sectigo.com/enterprise-solutions/certificate-manager/private-pqc",
+      "vendorId": "VND-164",
+      "vendorName": "Qualys Inc.",
+      "title": "Qualys CertView: PQC Support Details (v4.7)",
+      "url": "https://docs.qualys.com/en/certview/latest/assets_certificates/pqc_details.htm",
       "status": "downloaded",
-      "filename": "VND-181_Sectigo_Ltd..html",
-      "sizeBytes": 417858,
+      "filename": "VND-164_Qualys_Inc..html",
+      "sizeBytes": 57729,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "vendorId": "VND-171",
+      "vendorName": "DocuSign",
+      "title": "DocuSign: Post-Quantum Cryptography (DE)",
+      "url": "https://www.docusign.com/de-de/blog/post-quanten-kryptografie",
+      "status": "downloaded",
+      "filename": "VND-171_DocuSign.html",
+      "sizeBytes": 495084,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "vendorId": "VND-173",
+      "vendorName": "GlobalSign Ltd.",
+      "title": "GlobalSign Post-Quantum Computing",
+      "url": "https://www.globalsign.com/en/post-quantum-computing",
+      "status": "downloaded",
+      "filename": "VND-173_GlobalSign_Ltd..html",
+      "sizeBytes": 100094,
+      "contentType": "text/html; charset=UTF-8"
+    },
+    {
+      "vendorId": "VND-178",
+      "vendorName": "Ping Identity Holdings Corp.",
+      "title": "Ping Identity: Addressing the Quantum Threat in US Federal Government",
+      "url": "https://www.pingidentity.com/en/resources/blog/post/quantum-threat-us-fed-gov.html",
+      "status": "downloaded",
+      "filename": "VND-178_Ping_Identity_Holdings_Corp..html",
+      "sizeBytes": 62908,
       "contentType": "text/html;charset=utf-8"
+    },
+    {
+      "vendorId": "VND-183",
+      "vendorName": "Splunk Inc. (Cisco)",
+      "title": "Splunk: Quantum-Safe Cryptography and Standards",
+      "url": "https://www.splunk.com/en_us/blog/learn/quantum-safe-cryptography-standards.html",
+      "status": "downloaded",
+      "filename": "VND-183_Splunk_Inc._Cisco_.html",
+      "sizeBytes": 29796,
+      "contentType": "text/html; charset=utf-8"
     }
   ]
 }
