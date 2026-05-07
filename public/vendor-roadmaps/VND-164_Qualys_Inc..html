@@ -1,0 +1,1380 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, user-scalable=yes"/>
+  <meta name="version" content="2020.0.0"/>
+  <link rel="StyleSheet" href="../template/styles/topic.min.css" type="text/css"/>
+  <link rel="StyleSheet" data-skin="true" type="text/css" href="../template/Orange/layout.css"/>
+  <link rel="StyleSheet" data-skin="true" href="../template/Orange/userstyles.css" type="text/css"/>
+  
+    <link rel="shortcut icon" type="image/png" href="../favicon-16x16.png"/>
+    
+  <script data-relpath=".." src="../template/scripts/csh-redirect.js" type="text/javascript"></script>
+<script data-relpath=".." src="../template/scripts/csh-redirect.js" type="text/javascript"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><meta name="robots" content=""/><meta name="viewport" content="width=device-width, initial-scale=0.9"/><script>//<![CDATA[
+(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MNLTS6');
+//]]></script><link rel="stylesheet" type="text/css" href="../assets/css/qualys-docstyle.css"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <meta name="generator" content="Adobe RoboHelp 2022"/>
+  <title>View PQC Support Details </title>
+  <meta name="topic-status" content="Draft"/>
+  
+<meta name="rh-version" content="2022.4.179"/></head>
+
+<body class="rh-BODY-wrapper">
+  <div class="cookie-widget-holder" id="cookie-status-widget-holder"></div>
+  <div class="RH-LAYOUT-HEADER-skip-content-container" id="skip-to-content"></div>
+  <header class="RH-LAYOUT-HEADER-container" role="banner">
+    <div class="RH-LAYOUT-HEADER-logo-box  ">
+      <div class="RH-LAYOUT-HEADER-logo" id="logo-holder"></div>
+      <div class="RH-LAYOUT-HEADER-title" id="topic-title-holder"></div>
+    </div>
+    <div class="RH-LAYOUT-HEADERMENU-container" id="header-menu"></div>
+    <div class="search-placeholder-class" id="search-with-help"></div>
+  </header>
+  <main role="main" class="RH-LAYOUT-BODY-container">
+    <div class="RH-LAYOUT-SEARCHRESULTS" id="rh-searchresults"></div>
+    <div class="RH-LAYOUT-LEFTPANEL-container" id="rh-leftpanel"></div>
+    <div class="rh-layout-BODY-main" id="rh-layout-main">
+      <div class="RH-LAYOUT-TOOLBAR-toolbar-box" id="rh-toolbar"></div>
+      <div class="rh-layout-BODY-body">
+        <div class="RH-LAYOUT-CENTERPANEL-container">
+          <div class="rh-layout-selectdetails" id="rh-selectdetails"></div>
+          <div class="RH-LAYOUT-CENTERPANEL-topic-box" id="rh-topic">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MNLTS6" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+  <!--Execute a function that will execute an image compare function for each element with the img-comp-overlay class:-->
+  <script>
+    //<![CDATA[
+    initComparisons();
+    //]]>
+  </script>
+  <script src="../assets/js/qualys-docstyle-js.js" type="text/javascript"></script>
+  <!--<div class="breadcrumbs" data-condition="Others:Online" data-type="breadcrumbs">
+    <ol style="padding: 0; margin: 0">
+      <li style="display: inline; padding-left: 0"><span class="breadcrumbs-home-prefix" style="color:#338ADE"></span> <a class="breadcrumbs-home" data-home="true" href="#" style="text-decoration: none; color: #338ADE"> <span class="breadcrumbs-home-displaytext"> <img alt="home icon for breadcrumbs" height="25" src="../skin-images/home-icon-breadcrumbs.png" width="25" /></span> </a> <span class="breadcrumbs-separator" data-type="separator" style="color:#1B1B1B"> &gt; </span></li>
+    </ol>
+  </div>-->
+  <div id="content">
+  <h1>View PQC Support Details</h1>
+  <p>Post-quantum cryptography (PQC) refers to cryptographic algorithms specifically designed to remain protected against potential attacks by quantum computers. The PQC replaces the public-key algorithms with new mathematical methods that are secure against attacks from quantum computers.</p>
+  <p>Once your host sites are resolved and scanned, the listed certificates display the PQC support status on the <strong>Monitored </strong>tab. You can also view the PQC-supported certificates on the <span class="bold">Assets </span>tab under the <span class="bold">Assets </span>and <span class="bold">Host Instances </span>tabs.</p>
+  <h3>Prerequisites</h3>
+  <p>You must include QID 38994 in your option profile for PQC support, as this QID r<span data-teams="true">eports whether the server supports the PQC key exchange algorithm.</span></p>
+  <h3>PQC Supported Status</h3>
+  <p>The <span class="bold">PQC SUPPORT</span> column indicates whether a certificate supports PQC key exchange algorithms, based on the scan results and the scan source used. The <span data-teams="true">PQC-supported scan sources include VM, Certificate View, WAS, EASM, and VM_AUTH scans.</span></p>
+  <p>The following statuses are displayed on the <span class="bold">PQC SUPPORT</span> column:</p>
+  <table border="1" cellpadding="1" cellspacing="1" class="Table" style="border-collapse: collapse;">
+    <colgroup>
+      <col/>
+      <col/>
+      <col/>
+    </colgroup>
+    <tbody>
+      <tr>
+        <th>Status</th>
+        <th>Status Icon</th>
+        <th>Description</th>
+      </tr>
+      <tr>
+        <td>Supported</td>
+        <td><img src="../images/assets/pqc_supported_icon.png"/></td>
+        <td>At least one PQC-supported key exchange algorithm was detected for the certificate. This indicates that the certificate supports post-cryptography based on the detected configuration.</td>
+      </tr>
+      <tr>
+        <td>Not Supported</td>
+        <td><img src="../images/assets/pqc_unsupported icon.png"/></td>
+        <td>The scan source supports PQC detection, but no PQC-supported key exchange algorithms were detected for the certificate. This indicates that the certificate does not currently support post‑quantum cryptography.</td>
+      </tr>
+      <tr>
+        <td>Not Applicable</td>
+        <td><img src="../images/assets/pqc_not_applicable_icon.png"/></td>
+        <td>PQC status is not available because the certificate was manually imported or the scan source used does not support PQC detection, such as agent‑based scans. As a result, the certificate cannot be evaluated for PQC support.</td>
+      </tr>
+      <tr>
+        <td>Partial Support</td>
+        <td><img src="../images/assets/pqc_partial_support_icon.png"/></td>
+        <td>Only some of the instances associated with the certificate use PQC‑supported key exchange algorithms. This indicates that the certificate supports post‑quantum cryptography in some deployments but not all.</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3>View PQC-supported Certificates on the Monitored tab</h3>
+  <p>You can view details such as the organization name, PQC support status, issuer information, PQC-supported algorithms used, host instances, and certificate paths for certificates discovered on your assets. </p>
+  <p>To view the details, go to the <span class="bold">Certificates tab </span>&gt; <span class="bold">Monitored.</span></p>
+  <p><img src="../images/assets/pqc_support_page.png"/></p>
+  <p>The PQC support status is displayed for each certificate. </p>
+  <p>The listed certificates indicate the statutes, specifying whether they are PQC-supported, unsupported, partially supported, not applicable, or support available for zero instances. With this, you can ensure the security of the data for the enlisted certificates.</p>
+  <p> Additionally, you can expand <img src="../images/assets/expand_icon.png"/> option to view the listed assets under that particular certificate. If a certificate has more than five associated assets, you can click <strong><span>View All</span></strong> to navigate to the <strong><span>Assets</span> </strong>tab and access the complete details.</p>
+  <p><img src="../images/assets/pqc_expand_certs.png"/></p>
+  <p>Similarly, you can view the details on the <span class="bold">Assets </span>tab under <span class="bold">Assets </span>and on the <span class="bold">Host Instances</span> tabs.</p>
+  <h3>View PQC-supported Assets on the Assets tab</h3>
+  <p>You can view details such as the asset name, PQC support status, supported OS, PQC-supported algorithms used, host instances, grades, and certificate paths for certificates discovered on your assets. </p>
+  <p>To view the details, go to the <span class="bold">Assets tab </span>&gt; <span class="bold">Assets.</span></p>
+  <p><img src="../images/assets/pqc_support_asset_page.png"/></p>
+  <p>The PQC support status is displayed for each asset.</p>
+  <h3>View PQC-supported Assets on the Host Instances tab</h3>
+  <p>You can view details such as the asset name, PQC support status, PQC-supported algorithms used, host instances, grades, and certificate paths for certificates discovered on your assets. </p>
+  <p>To view details, go to <span><strong><span class="bold">Certificates tab &gt; Monitored tab</span>. </strong>Click <span class="bold">View Details</span> in the Quick Actions menu for the selected certificate, then click <span class="bold">Hosts</span>.</span><span class="bold"></span></p>
+  <p><img src="../images/assets/pqc_support_hosts_page.png"/></p>
+  <p>The PQC support status is displayed for each asset.</p>
+  <h3>View Multiple PQC-supported KEM Algorithms on the Certificates and Assets tabs</h3>
+  <p>You can view multiple PQC-supported Key Encapsulation Mechanism (KEM) algorithms linked to the certificates and assets on the Assets and Certificates tabs. </p>
+  <p>To view the functionality, go to the <span><strong><span class="bold">Certificates </span></strong><span class="bold">tab </span><strong><span class="bold">&gt; Monitored sub tab</span></strong><strong>, </strong>and click <img src="../assets/images/expand_icon.png"/> icon to view associated assets. Click the plus icon in the KEM algorithm column to view the list of all the KEM algorithms for the associated asset.</span></p>
+  <p><span><strong></strong></span><img src="../images/assets/multiple_kem_algorithm_certificates_page.png"/></p>
+  <p>Similarly, you can view this functionality in the Assets Tab.</p>
+  <p>To view the functionality, go to the <span class="bold">Assets </span>tab &gt; <span class="bold">Assets </span>subtab, then click <img height="21" src="../assets/images/expand_icon.png" width="25"/> icon to view associated certificates. Click the plus icon in the KEM algorithm column to view the list of all the KEM algorithms for the associated certificate.</p>
+  <p><img src="../images/assets/multiple_kem_algorithm_assets_page.png"/></p>
+  <h3>View PQC-Supported Cipher Suites</h3>
+  <p>You can view the PQC support for <strong>Certificates </strong>and <strong>Assets </strong>tabs at a granular level for each cipher suite. </p>
+  <p>To view the details under the <strong>Certificates </strong>tab, go to the <span class="bold">Certificates</span> tab &gt; <span class="bold">Monitored</span> sub tab, and click <img height="21" src="../assets/images/expand_icon.png" width="25"/> icon of a certificate to view the associated assets. Click the <span class="bold">Grade</span> icon to access the grade summary. Under the grade summary, expand the Cipher Suite option to view the Cipher Suite details. </p>
+  <p class="image-scroll"><img src="../images/assets/cipher_suite_details_certificates_page.png"/></p>
+  <p>Here, in the Cipher Suite details, you can view the supported <span class="bold">Key Exchange Algorithms</span>, and <span class="bold">PQC Support</span>, indicating whether the cipher suite is PQC-supported (true or false), along with the other details such as <span class="bold">Cipher Suite Name</span>, <span class="bold">Category</span>, <span class="bold">Strength</span>, and <span class="bold">Forward Secrecy</span> support for each cipher suite (Yes or No), indicating whether the Cipher Suite provides forward secrecy, ensuring the session keys remain secure even if the private key is exposed.</p>
+  <p>Similarly, you can view the Cipher Suite details in the Assets tab.</p>
+  <p>Go to <span class="bold">Assets </span>tab &gt; <span class="bold">Assets </span>sub tab, click <img src="../assets/images/expand_icon.png"/> icon to view associated certificates. Click the <span class="bold">Grade</span> icon to access the summary. Under the grade summary, expand the Cipher Suite option to view the Cipher Suite details.</p>
+  <p class="image-scroll"><img src="../images/assets/cipher_suite_details_assets_page.png"/></p>
+  <p></p>
+
+</div>
+  <div data-condition="Others:Online" id="rightPane">
+    <ul id="headingList">
+    </ul>
+  </div>
+  <div id="related_links">
+    <ul id="link_list">
+    </ul>
+  </div>
+  <div class="footer-text">
+    <!-- Copyright text -->
+    <p class="copyright"> </p>
+    <table border="0" cellpadding="1" cellspacing="1" style="border-collapse:collapse; width:93%">
+      <colgroup>
+        <col style="width: 295px;"/>
+        <col style="width: 59px;"/>
+        <col style="width:33.33%"/>
+      </colgroup>
+      <tbody>
+        <tr>
+          <td style=""><span class="copyright">© <span data-field="date" data-format="YYYY">2026</span> Qualys, Inc. All rights reserved. <span class="copyright"><a href="https://www.qualys.com/company/privacy/" target="_blank">Privacy Policy</a>. </span></span></td>
+          
+          <td style=""><span class="copyright"></span></td>
+          <td style="text-align: right"><span class="copyright">Last updated: <span data-field="date" data-format="MMMM, YYYY">April, 2026</span></span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <!--[CDATA[
+    function FeedbackRecieved() {
+      var x = document.getElementById("popup2");
+      x.className = "open-popup2";
+      var y = document.getElementById("feedbackbar")
+      y.style.display = "none";
+      var z = document.getElementById("popup3")
+      z.style.display = "none";
+    }
+    function FeedbackRecievedThumbsDown() {
+      var x = document.getElementById("popup3");
+      x.className = "open-popup3";
+      var y = document.getElementById("feedbackbar")
+      y.style.display = "none";
+      var z = document.getElementById("popup2")
+      z.style.display = "none";
+    }
+    //]]-->
+
+</div>
+          <div class="RH-LAYOUT-BRS-container" id="rh-brs"></div>
+        </div>
+        <div class="RH-LAYOUT-RIGHTPANEL-container" id="rh-rightpanel"></div>
+      </div>
+    </div>
+  </main>
+  <footer role="contentinfo" class="RH-LAYOUT-FOOTER-container" id="rh-footer"></footer>
+  <script type="text/javascript">//<![CDATA[
+
+    gRootRelPath = ".."
+    gCommonRootRelPath = ".."
+    gTopicId = "1.3.0_3"
+  
+//]]></script>
+
+
+  <script src="../template/scripts/topicpage.js"></script>
+
+  <!-- ============================================================
+       CUSTOM ENHANCEMENTS — Image Zoom · Table Zoom · Mini TOC
+       Subscribe Button · Back to Top
+       ============================================================ -->
+  <style>/*<![CDATA[*/
+
+    /* ── 1. IMAGE ZOOM ─────────────────────────────────────────── */
+    #rh-main-content img,
+    .rh-BODY-wrapper .RH-LAYOUT-CENTERPANEL-topic-box img,
+    .rh-BODY-wrapper #rh-topic img {
+      cursor: zoom-in;
+    }
+
+    /* Full-screen backdrop */
+    .rh-img-zoom-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: rgba(0, 0, 0, 0.85);
+      overflow: hidden;
+    }
+    .rh-img-zoom-overlay.active { display: block; }
+
+    /* Clip viewport — JS moves the image inside here */
+    .rh-img-zoom-wrapper {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      cursor: grab;
+      user-select: none;
+    }
+    .rh-img-zoom-wrapper.dragging { cursor: grabbing; }
+
+    /* Image — positioned purely by JS transform, no CSS centering */
+    .rh-img-zoom-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-origin: 0 0;
+      user-select: none;
+      pointer-events: none;
+      will-change: transform;
+      /* Natural size — JS reads naturalWidth/naturalHeight to fit it */
+    }
+
+    /* Close button — top-right, always on top */
+    .rh-img-zoom-close {
+      position: fixed;
+      top: 16px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: #fff;
+      color: #111;
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 100001;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.55);
+      transition: background 0.15s;
+    }
+    .rh-img-zoom-close::before { content: '\00D7'; }
+    .rh-img-zoom-close:hover   { background: #f0f0f0; }
+
+    /* Hint pill */
+    .rh-img-zoom-hint {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.52);
+      color: #fff;
+      font-size: 11px;
+      padding: 5px 16px;
+      border-radius: 20px;
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 100001;
+      opacity: 1;
+      transition: opacity 0.5s;
+    }
+
+    /* ── 2. TABLE ZOOM ─────────────────────────────────────────── */
+    .rh-table-wrapper {
+      position: relative;
+    }
+
+    /* Hover trigger zone wraps the table */
+    .rh-table-hover-zone {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+      padding-top: 24px;
+      box-sizing: border-box;
+    }
+
+    /* Button sits in the padding area — above the table, left-aligned */
+    .rh-table-expand-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      font-size: 10px;
+      font-family: inherit;
+      color: #fff;
+      background: #4a89da;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      line-height: 1.5;
+      position: absolute;
+      top: 3px;
+      left: 0;
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-4px);
+      transition: opacity 0.18s ease, transform 0.18s ease, background 0.15s;
+      white-space: nowrap;
+      box-shadow: 0 1px 5px rgba(74,137,218,0.3);
+    }
+    .rh-table-expand-btn svg { flex-shrink: 0; width: 10px; height: 10px; }
+    .rh-table-expand-btn:hover { background: #3570be; }
+
+    /* Show button when hovering the zone */
+    .rh-table-hover-zone:hover .rh-table-expand-btn {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    /* Subtle table highlight on hover so user knows it's interactive */
+    .rh-table-hover-zone:hover > table {
+      outline: 2px solid rgba(74,137,218,0.25);
+      outline-offset: 2px;
+    }
+
+    #rh-table-lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 99998;
+      background: rgba(0,0,0,0.65);
+      align-items: flex-start;
+      justify-content: center;
+      padding: 40px 24px;
+      box-sizing: border-box;
+    }
+    #rh-table-lightbox.active { display: flex; }
+
+    #rh-table-lightbox-inner {
+      background: #fff;
+      border-radius: 6px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.35);
+      padding: 16px 16px 20px;
+      max-width: min(96vw, 1200px);
+      max-height: calc(100vh - 80px);
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: auto;
+      position: relative;
+      box-sizing: border-box;
+    }
+
+    #rh-table-lightbox-header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-bottom: 12px;
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 2;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #eef0f3;
+    }
+
+    .rh-table-collapse-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 14px;
+      font-size: 12px;
+      font-family: inherit;
+      color: #fff;
+      background: #4a89da;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .rh-table-collapse-btn:hover { background: #3570be; }
+
+    /* Table in lightbox exactly mirrors source table styles */
+    #rh-table-lightbox-content {
+      overflow-x: auto;
+    }
+    #rh-table-lightbox-content table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    /* ── 3. MINI TOC COLLAPSIBLE ───────────────────────────────── */
+    #rh-minitoc-toggle {
+      position: fixed;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 900;
+      width: 22px;
+      height: 64px;
+      background: #4a89da;
+      border-radius: 6px 0 0 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: -2px 0 8px rgba(0,0,0,0.15);
+      transition: background 0.2s, right 0.35s cubic-bezier(.4,0,.2,1);
+    }
+    #rh-minitoc-toggle:hover { background: #3570be; }
+
+    #rh-minitoc-toggle svg {
+      transition: transform 0.35s cubic-bezier(.4,0,.2,1);
+    }
+    .rh-minitoc-open #rh-minitoc-toggle {
+      right: 0;
+    }
+    .rh-minitoc-open #rh-minitoc-toggle svg {
+      transform: rotate(180deg);
+    }
+
+    /* Right panel slide behaviour */
+    .RH-LAYOUT-RIGHTPANEL-container {
+      transition: transform 0.35s cubic-bezier(.4,0,.2,1), opacity 0.3s ease;
+    }
+    .rh-minitoc-collapsed .RH-LAYOUT-RIGHTPANEL-container {
+      transform: translateX(calc(100% + 20px));
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Centre panel expand when mini toc hidden */
+    .rh-minitoc-collapsed .RH-LAYOUT-CENTERPANEL-container {
+      width: calc(100% - 0px) !important;
+      max-width: 100% !important;
+      transition: width 0.35s cubic-bezier(.4,0,.2,1);
+    }
+    .RH-LAYOUT-CENTERPANEL-container {
+      transition: width 0.35s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* Fix 2: Padding between mini TOC toggle handle and main content */
+    .rh-layout-BODY-body {
+      padding-right: 26px; /* room for the toggle tab handle */
+      box-sizing: border-box;
+    }
+
+    /* Fix 3: Back-to-top keeps clear of mini TOC panel */
+    #rh-back-to-top {
+      /* right is updated dynamically by JS; default avoids the mini-toc */
+      transition: opacity 0.25s ease, transform 0.25s ease, background 0.15s, right 0.35s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ── 4. SUBSCRIBE BUTTON ───────────────────────────────────── */
+    #rh-subscribe-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      min-width: 2.5rem;
+      padding: 0;
+      /* Rich gold gradient */
+      background: linear-gradient(145deg, #f5c518 0%, #e8a800 50%, #c98f00 100%);
+      color: #5a3a00;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-left: 6px;
+      flex-shrink: 0;
+      position: relative;
+      /* Warm golden glow */
+      box-shadow:
+        0 2px 8px rgba(232,168,0,0.55),
+        0 0 0 0 rgba(245,197,24,0);
+      transition:
+        transform 0.18s cubic-bezier(.34,1.56,.64,1),
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+      vertical-align: middle;
+      overflow: visible;
+    }
+
+    /* Pulsing ring — draws the eye */
+
+    #rh-subscribe-btn:hover {
+      background: linear-gradient(145deg, #ffd633 0%, #f5c518 50%, #e0a800 100%);
+      transform: translateY(-2px) scale(1.06);
+      box-shadow:
+        0 5px 18px rgba(232,168,0,0.65),
+        0 0 0 0 rgba(245,197,24,0);
+    }
+    #rh-subscribe-btn:active {
+      transform: translateY(0) scale(0.97);
+      box-shadow: 0 2px 6px rgba(232,168,0,0.45);
+    }
+
+    /* Bell SVG — dark amber so it pops on gold */
+    #rh-subscribe-btn svg {
+      width: 20px;
+      height: 20px;
+      color: #4a2800;
+      filter: drop-shadow(0 1px 0 rgba(255,255,255,0.4));
+      animation: rh-bell-ring 3.5s ease-in-out infinite;
+      transform-origin: 50% 0;
+      flex-shrink: 0;
+    }
+    @keyframes rh-bell-ring {
+      0%, 80%, 100% { transform: rotate(0deg);  }
+      83%           { transform: rotate(16deg);  }
+      87%           { transform: rotate(-14deg); }
+      91%           { transform: rotate(10deg);  }
+      95%           { transform: rotate(-6deg);  }
+    }
+
+    /* Shine sweep on hover */
+    #rh-subscribe-btn::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      top: calc(100% + 9px);
+      right: 0;
+      background: linear-gradient(135deg, #2c1a00, #1a1a1a);
+      color: #ffd966;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 5px 11px;
+      border-radius: 6px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 10000;
+      border: 1px solid rgba(245,197,24,0.3);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
+    #rh-subscribe-btn:hover::after {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── MOBILE RESPONSIVE ─────────────────────────────────────── */
+
+    /* Image zoom: full-screen on mobile, close btn repositioned */
+    @media (max-width: 768px) {
+      .rh-img-zoom-close {
+        top: 10px;
+        right: 10px;
+        width: 36px;
+        height: 36px;
+        font-size: 20px;
+      }
+      .rh-img-zoom-hint {
+        font-size: 10px;
+        padding: 4px 12px;
+        bottom: 12px;
+      }
+    }
+
+    /* Table zoom: full-screen modal, full-width on mobile */
+    @media (max-width: 768px) {
+      #rh-table-lightbox {
+        padding: 10px 8px;
+        align-items: center;
+      }
+      #rh-table-lightbox-inner {
+        max-width: 100%;
+        max-height: calc(100vh - 40px);
+        padding: 10px 10px 14px;
+        border-radius: 4px;
+      }
+      .rh-table-expand-btn {
+        font-size: 11px;
+        padding: 4px 10px;
+      }
+      .rh-table-collapse-btn {
+        font-size: 11px;
+        padding: 4px 10px;
+      }
+    }
+
+    /* Mini TOC: hide toggle on mobile (RoboHelp manages its own mobile panel) */
+    @media (max-width: 768px) {
+      #rh-minitoc-toggle {
+        display: none;
+      }
+      .rh-layout-BODY-body {
+        padding-right: 0 !important;
+      }
+      .rh-minitoc-collapsed .RH-LAYOUT-RIGHTPANEL-container,
+      .rh-minitoc-open .RH-LAYOUT-RIGHTPANEL-container {
+        transform: none !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+      }
+      .rh-minitoc-collapsed .RH-LAYOUT-CENTERPANEL-container {
+        width: 100% !important;
+      }
+    }
+
+    /* Back to top: smaller, always bottom-right on mobile */
+    @media (max-width: 768px) {
+      #rh-back-to-top {
+        width: 36px;
+        height: 36px;
+        bottom: 16px;
+        right: 16px !important; /* override JS positioning on mobile */
+        box-shadow: 0 2px 10px rgba(74,137,218,0.4);
+      }
+      #rh-back-to-top svg {
+        width: 15px;
+        height: 15px;
+      }
+    }
+
+    /* Subscribe btn: slightly smaller on mobile */
+    @media (max-width: 768px) {
+      #rh-subscribe-btn {
+        width: 2rem;
+        height: 2rem;
+        min-width: 2rem;
+        border-radius: 6px;
+        margin-left: 4px;
+      }
+      #rh-subscribe-btn svg {
+        width: 17px;
+        height: 17px;
+      }
+      /* Hide tooltip on touch */
+      #rh-subscribe-btn::after  { display: none; }
+    }
+    #rh-back-to-top {
+      position: fixed;
+      bottom: 28px;
+      right: 28px; /* JS overrides this when mini-toc is open */
+      z-index: 9999;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #4a89da;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 14px rgba(74,137,218,0.4);
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.25s ease, transform 0.25s ease, background 0.15s, right 0.35s cubic-bezier(.4,0,.2,1);
+      pointer-events: none;
+    }
+    #rh-back-to-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    #rh-back-to-top:hover {
+      background: #3570be;
+      box-shadow: 0 5px 18px rgba(74,137,218,0.5);
+    }
+    #rh-back-to-top:active { transform: scale(0.93); }
+
+    /* Ripple on click */
+    #rh-back-to-top::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      opacity: 0;
+      transform: scale(0.7);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    #rh-back-to-top:active::after {
+      opacity: 1;
+      transform: scale(1.6);
+    }
+  
+/*]]>*/</style>
+  <script src="../whxdata/layoutconfig.js"></script>
+  <script src="../whxdata/brsdata.js"></script>
+
+  
+    
+
+            
+
+  <!-- ── 2. TABLE LIGHTBOX overlay ──────────────────────────── -->
+  <div id="rh-table-lightbox" role="dialog" aria-modal="true" aria-label="Table viewer">
+    <div id="rh-table-lightbox-inner">
+      <div id="rh-table-lightbox-header">
+        <button class="rh-table-collapse-btn" id="rh-table-collapse-btn">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+          </svg>
+          Collapse Table
+        </button>
+      </div>
+      <div id="rh-table-lightbox-content"></div>
+    </div>
+  </div>
+
+  <!-- ── 3. MINI TOC TOGGLE handle ──────────────────────────── -->
+  <div id="rh-minitoc-toggle" title="Toggle Mini TOC" aria-label="Toggle Mini TOC">
+    <svg id="rh-minitoc-arrow" width="10" height="14" viewBox="0 0 10 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M7 2L2 7L7 12" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+  </div>
+
+  <!-- ── 5. BACK TO TOP button ───────────────────────────────── -->
+  <button id="rh-back-to-top" aria-label="Back to top" title="Back to top">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M9 14V4M4 9L9 4L14 9" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+  </button>
+
+  <script>//<![CDATA[
+
+  (function () {
+    'use strict';
+
+    /* ═════════════════════════════════════════════════════════════
+       FEATURE FLAGS — set to false to disable any feature
+    ═════════════════════════════════════════════════════════════ */
+    var RH_FEATURES = {
+      imageZoom    : true,   // Click image to open full-screen zoom viewer
+      tableZoom    : false,   // Hover table → Expand button → full-screen table
+      miniToc      : true,   // Collapsible Mini TOC panel on the right
+      subscribeBtn : false,   // Bell icon subscribe button next to search
+      backToTop    : true    // Floating back-to-top button
+    };
+    /* ═════════════════════════════════════════════════════════════ */
+
+    /* ─────────────────────────────────────────────────────────────
+       HELPERS
+    ─────────────────────────────────────────────────────────────*/
+    function ready(fn) {
+      if (document.readyState !== 'loading') { fn(); }
+      else { document.addEventListener('DOMContentLoaded', fn); }
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       1. IMAGE ZOOM  — focal scroll · drag pan · centre on zoom-out
+    ─────────────────────────────────────────────────────────────*/
+    function initImageZoom() {
+      var MAX_SCALE   = 8;
+      var ZOOM_FACTOR = 1.15;
+
+      var overlay, wrapper, img, closeBtn, hint, hintTimer;
+      var scale    = 1;      // current zoom level (1 = fit-to-screen)
+      var tx       = 0;      // image top-left X in viewport px
+      var ty       = 0;      // image top-left Y in viewport px
+      var fitW     = 0;      // rendered width  at scale=1
+      var fitH     = 0;      // rendered height at scale=1
+      var dragging = false;
+      var dragLastX = 0, dragLastY = 0;
+
+      /* ── Apply current tx/ty/scale to the img element ── */
+      function applyTransform() {
+        img.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
+      }
+
+      /* ── Compute fit dimensions and centre the image ── */
+      function centreImage() {
+        var vw = window.innerWidth;
+        var vh = window.innerHeight;
+        var iw = img.naturalWidth;
+        var ih = img.naturalHeight;
+        if (!iw || !ih) return;
+
+        // Fit inside viewport with 5% padding on each side
+        var maxW = vw * 0.90;
+        var maxH = vh * 0.90;
+        var ratio = Math.min(maxW / iw, maxH / ih, 1);
+        fitW = iw * ratio;
+        fitH = ih * ratio;
+
+        // Set the image's intrinsic display size once
+        img.style.width  = fitW + 'px';
+        img.style.height = fitH + 'px';
+
+        // Centre in viewport
+        tx = (vw - fitW) / 2;
+        ty = (vh - fitH) / 2;
+      }
+
+      /* ── Reset to fit-and-centre ── */
+      function resetView() {
+        scale = 1;
+        centreImage();
+        applyTransform();
+      }
+
+      /* ── Clamp so at least 20% of image stays visible ── */
+      function clampPan() {
+        var vw  = window.innerWidth;
+        var vh  = window.innerHeight;
+        var rw  = fitW * scale;
+        var rh  = fitH * scale;
+        var edgeX = Math.min(rw * 0.2, 60);
+        var edgeY = Math.min(rh * 0.2, 60);
+        tx = Math.max(edgeX - rw, Math.min(vw - edgeX, tx));
+        ty = Math.max(edgeY - rh, Math.min(vh - edgeY, ty));
+      }
+
+      /* ── Build DOM ── */
+      function buildLightbox() {
+        overlay  = document.createElement('div');
+        overlay.className = 'rh-img-zoom-overlay';
+
+        wrapper  = document.createElement('div');
+        wrapper.className = 'rh-img-zoom-wrapper';
+
+        img = document.createElement('img');
+        img.className = 'rh-img-zoom-img';
+
+        closeBtn = document.createElement('button');
+        closeBtn.className = 'rh-img-zoom-close';
+        closeBtn.setAttribute('aria-label', 'Close image');
+
+        hint = document.createElement('div');
+        hint.className = 'rh-img-zoom-hint';
+        hint.textContent = 'Scroll to zoom \u00b7 Drag to pan \u00b7 ESC to close';
+
+        wrapper.appendChild(img);
+        overlay.appendChild(wrapper);
+        overlay.appendChild(closeBtn);
+        overlay.appendChild(hint);
+        document.body.appendChild(overlay);
+
+        /* Close handlers */
+        closeBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          closeLightbox();
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && overlay.classList.contains('active')) closeLightbox();
+        });
+
+        /* ── Focal-point scroll zoom ── */
+        wrapper.addEventListener('wheel', function (e) {
+          e.preventDefault();
+
+          var prevScale = scale;
+          var zoomIn    = e.deltaY < 0;
+          var newScale  = zoomIn
+            ? Math.min(MAX_SCALE, scale * ZOOM_FACTOR)
+            : Math.max(1,         scale / ZOOM_FACTOR);
+
+          if (newScale === prevScale) return;
+
+          if (newScale <= 1) {
+            /* Fully zoomed out — snap back to centred */
+            scale = 1;
+            centreImage();
+          } else {
+            /* Keep the image pixel under the cursor stationary.
+               cursor in viewport:  (e.clientX, e.clientY)
+               image pixel under it: (e.clientX - tx) / prevScale
+               after scale change:  tx_new = e.clientX - imgPx * newScale  */
+            var imgPxX = (e.clientX - tx) / prevScale;
+            var imgPxY = (e.clientY - ty) / prevScale;
+            tx    = e.clientX - imgPxX * newScale;
+            ty    = e.clientY - imgPxY * newScale;
+            scale = newScale;
+            clampPan();
+          }
+
+          applyTransform();
+        }, { passive: false });
+
+        /* ── Mouse drag ── */
+        wrapper.addEventListener('mousedown', function (e) {
+          if (e.button !== 0) return;
+          dragging  = true;
+          dragLastX = e.clientX;
+          dragLastY = e.clientY;
+          wrapper.classList.add('dragging');
+          e.preventDefault();
+        });
+        document.addEventListener('mousemove', function (e) {
+          if (!dragging) return;
+          tx += e.clientX - dragLastX;
+          ty += e.clientY - dragLastY;
+          dragLastX = e.clientX;
+          dragLastY = e.clientY;
+          clampPan();
+          applyTransform();
+        });
+        document.addEventListener('mouseup', function () {
+          if (!dragging) return;
+          dragging = false;
+          wrapper.classList.remove('dragging');
+        });
+
+        /* ── Touch drag ── */
+        var tLastX = 0, tLastY = 0;
+        wrapper.addEventListener('touchstart', function (e) {
+          if (e.touches.length === 1) {
+            tLastX = e.touches[0].clientX;
+            tLastY = e.touches[0].clientY;
+          }
+        }, { passive: true });
+        wrapper.addEventListener('touchmove', function (e) {
+          if (e.touches.length === 1) {
+            e.preventDefault();
+            tx += e.touches[0].clientX - tLastX;
+            ty += e.touches[0].clientY - tLastY;
+            tLastX = e.touches[0].clientX;
+            tLastY = e.touches[0].clientY;
+            clampPan();
+            applyTransform();
+          }
+        }, { passive: false });
+
+        /* ── Pinch to zoom (touch) ── */
+        var pinchStartDist = 0;
+        var pinchStartScale = 1;
+        wrapper.addEventListener('touchstart', function (e) {
+          if (e.touches.length === 2) {
+            var dx = e.touches[0].clientX - e.touches[1].clientX;
+            var dy = e.touches[0].clientY - e.touches[1].clientY;
+            pinchStartDist  = Math.sqrt(dx * dx + dy * dy);
+            pinchStartScale = scale;
+          }
+        }, { passive: true });
+        wrapper.addEventListener('touchmove', function (e) {
+          if (e.touches.length === 2) {
+            e.preventDefault();
+            var dx   = e.touches[0].clientX - e.touches[1].clientX;
+            var dy   = e.touches[0].clientY - e.touches[1].clientY;
+            var dist = Math.sqrt(dx * dx + dy * dy);
+            var newScale = Math.min(MAX_SCALE, Math.max(1, pinchStartScale * (dist / pinchStartDist)));
+            // Zoom towards the midpoint of the two fingers
+            var midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+            var midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+            var prevScale = scale;
+            if (newScale <= 1) {
+              scale = 1;
+              centreImage();
+            } else {
+              var imgPxX = (midX - tx) / prevScale;
+              var imgPxY = (midY - ty) / prevScale;
+              tx    = midX - imgPxX * newScale;
+              ty    = midY - imgPxY * newScale;
+              scale = newScale;
+              clampPan();
+            }
+            applyTransform();
+          }
+        }, { passive: false });
+      }
+
+      /* ── Open ── */
+      function openLightbox(src, alt) {
+        if (!overlay) buildLightbox();
+
+        scale = 1;
+        tx = 0; ty = 0;
+        img.style.width  = '';
+        img.style.height = '';
+        img.alt = alt || '';
+        img.src = src;
+
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        function doReset() {
+          resetView();
+          applyTransform();
+        }
+
+        if (img.complete && img.naturalWidth) {
+          requestAnimationFrame(doReset);
+        } else {
+          img.onload = function () {
+            img.onload = null;
+            requestAnimationFrame(doReset);
+          };
+        }
+
+        hint.style.opacity = '1';
+        clearTimeout(hintTimer);
+        hintTimer = setTimeout(function () { hint.style.opacity = '0'; }, 3000);
+      }
+
+      /* ── Close ── */
+      function closeLightbox() {
+        if (!overlay) return;
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+        setTimeout(function () {
+          img.src = '';
+          img.style.width  = '';
+          img.style.height = '';
+          scale = 1; tx = 0; ty = 0;
+          applyTransform();
+        }, 300);
+      }
+
+      /* ── Delegate click on all topic images ── */
+      function attachImageListeners() {
+        var containers = [
+          document.getElementById('rh-main-content'),
+          document.querySelector('.rh-BODY-wrapper')
+        ];
+        containers.forEach(function (container) {
+          if (!container) return;
+          container.addEventListener('click', function (e) {
+            var t = e.target;
+            if (t.tagName === 'IMG' && !t.closest('.rh-img-zoom-overlay')) {
+              openLightbox(t.src, t.alt);
+            }
+          });
+        });
+      }
+
+      attachImageListeners();
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       2. TABLE ZOOM
+    ─────────────────────────────────────────────────────────────*/
+    function initTableZoom() {
+      var lightbox    = document.getElementById('rh-table-lightbox');
+      var content     = document.getElementById('rh-table-lightbox-content');
+      var collapseBtn = document.getElementById('rh-table-collapse-btn');
+
+      function closeLightbox() {
+        lightbox.classList.remove('active');
+        document.body.style.overflow = '';
+        content.innerHTML = '';
+      }
+
+      collapseBtn.addEventListener('click', closeLightbox);
+      lightbox.addEventListener('click', function (e) {
+        if (e.target === lightbox) closeLightbox();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && lightbox.classList.contains('active')) closeLightbox();
+      });
+
+      function addExpandButtons(root) {
+        var tables = (root || document).querySelectorAll(
+          '.RH-LAYOUT-CENTERPANEL-topic-box table, #rh-topic table'
+        );
+        tables.forEach(function (tbl) {
+          if (tbl.closest('#rh-table-lightbox') || tbl.dataset.rhTableBtn) return;
+          tbl.dataset.rhTableBtn = '1';
+
+          // Wrap table in a hover-zone div so the button can be positioned
+          // absolutely inside it and appear only on hover
+          var zone = document.createElement('div');
+          zone.className = 'rh-table-hover-zone';
+          tbl.parentNode.insertBefore(zone, tbl);
+          zone.appendChild(tbl);
+
+          var btn = document.createElement('button');
+          btn.className = 'rh-table-expand-btn';
+          btn.setAttribute('aria-label', 'Expand this table');
+          btn.innerHTML =
+            '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+            '<path d="M1 7v4h4M11 5V1H7M1 7L5.5 2.5M11 5L6.5 9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '</svg> Expand Table';
+
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            content.innerHTML = '';
+            var clone = tbl.cloneNode(true);
+            var srcEls   = tbl.querySelectorAll('*');
+            var cloneEls = clone.querySelectorAll('*');
+            srcEls.forEach(function (el, i) {
+              var cs = window.getComputedStyle(el);
+              var keep = ['border','border-collapse','border-spacing','border-color',
+                'border-width','border-style','background-color','color',
+                'font-family','font-size','font-weight','padding','text-align',
+                'vertical-align','white-space','min-width','width'];
+              keep.forEach(function (prop) {
+                try { cloneEls[i].style[prop] = cs.getPropertyValue(prop); } catch(ex){}
+              });
+            });
+            content.appendChild(clone);
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+          });
+
+          // Button goes inside the zone (overlays the table top-right)
+          zone.appendChild(btn);
+        });
+      }
+
+      function addExpandButtonsInIframe() {
+        var topicBox = document.getElementById('rh-topic');
+        if (!topicBox) return;
+        var iframe = topicBox.querySelector('iframe');
+        if (!iframe) return;
+        try {
+          var iDoc = iframe.contentDocument || iframe.contentWindow.document;
+          iDoc.querySelectorAll('table').forEach(function (tbl) {
+            if (tbl.dataset.rhTableBtn) return;
+            tbl.dataset.rhTableBtn = '1';
+
+            var btn = iDoc.createElement('button');
+            btn.style.cssText =
+              'display:inline-flex;align-items:center;gap:5px;margin:4px 0 6px;padding:4px 12px;' +
+              'font-size:12px;color:#4a89da;background:#f0f6ff;border:1px solid #c5d9f5;' +
+              'border-radius:4px;cursor:pointer;font-family:inherit;';
+            btn.textContent = '\u2922 Expand Table';
+            btn.addEventListener('click', function (e) {
+              e.stopPropagation();
+              content.innerHTML = '';
+              content.appendChild(tbl.cloneNode(true));
+              lightbox.classList.add('active');
+              document.body.style.overflow = 'hidden';
+            });
+            tbl.parentNode.insertBefore(btn, tbl);
+          });
+        } catch (e) { /* cross-origin */ }
+      }
+
+      addExpandButtons();
+      addExpandButtonsInIframe();
+
+      var topicBox = document.getElementById('rh-topic');
+      if (topicBox) {
+        new MutationObserver(function () {
+          addExpandButtons();
+          addExpandButtonsInIframe();
+        }).observe(topicBox, { childList: true, subtree: true });
+      }
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       3. MINI TOC COLLAPSIBLE
+    ─────────────────────────────────────────────────────────────*/
+    function initMiniTocToggle() {
+      var toggle      = document.getElementById('rh-minitoc-toggle');
+      var bodyWrapper = document.querySelector('.rh-BODY-wrapper') || document.body;
+      var rightPanel  = document.getElementById('rh-rightpanel');
+      var STORAGE_KEY = 'rh-minitoc-open';
+
+      // Default state: collapsed
+      var isOpen = sessionStorage.getItem(STORAGE_KEY) === 'true';
+
+      function applyState(open, animate) {
+        var bodyEl      = bodyWrapper;
+        var rightEl     = rightPanel;
+
+        if (!animate) {
+          bodyEl.style.transition = 'none';
+          if (rightEl) rightEl.style.transition = 'none';
+        }
+
+        if (open) {
+          bodyEl.classList.remove('rh-minitoc-collapsed');
+          bodyEl.classList.add('rh-minitoc-open');
+          toggle.setAttribute('title', 'Collapse Mini TOC');
+        } else {
+          bodyEl.classList.add('rh-minitoc-collapsed');
+          bodyEl.classList.remove('rh-minitoc-open');
+          toggle.setAttribute('title', 'Expand Mini TOC');
+        }
+
+        if (!animate) {
+          requestAnimationFrame(function () {
+            bodyEl.style.transition = '';
+            if (rightEl) rightEl.style.transition = '';
+          });
+        }
+
+        // Reposition the toggle tab
+        if (rightEl) {
+          var panelWidth = open ? (rightEl.offsetWidth || 256) : 0;
+          toggle.style.right = panelWidth + 'px';
+        }
+
+        sessionStorage.setItem(STORAGE_KEY, open ? 'true' : 'false');
+      }
+
+      toggle.addEventListener('click', function () {
+        isOpen = !isOpen;
+        applyState(isOpen, true);
+      });
+
+      applyState(isOpen, false);
+
+      // Re-position once RoboHelp renders the panel
+      if (rightPanel) {
+        new MutationObserver(function () { applyState(isOpen, false); })
+          .observe(rightPanel, { childList: true, subtree: false });
+      }
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       5. BACK TO TOP
+    ─────────────────────────────────────────────────────────────*/
+    function initBackToTop() {
+      var btn          = document.getElementById('rh-back-to-top');
+      var THRESHOLD    = 300;
+      var MARGIN       = 12; // px gap from the toggle handle / right edge
+
+      function getRightOffset() {
+        // When mini-toc is open, clear the right panel + toggle tab
+        var toggle     = document.getElementById('rh-minitoc-toggle');
+        var rightPanel = document.getElementById('rh-rightpanel');
+        var body       = document.querySelector('.rh-BODY-wrapper') || document.body;
+        var isOpen     = body.classList.contains('rh-minitoc-open');
+
+        if (isOpen && rightPanel) {
+          var panelW  = rightPanel.offsetWidth || 0;
+          var toggleW = toggle ? (toggle.offsetWidth || 22) : 22;
+          return panelW + toggleW + MARGIN;
+        }
+        // Collapsed: just clear the toggle tab
+        var toggleW = toggle ? (toggle.offsetWidth || 22) : 22;
+        return toggleW + MARGIN;
+      }
+
+      function updateRight() {
+        // On mobile the mini-toc toggle is hidden — keep button at fixed right
+        if (window.innerWidth <= 768) {
+          btn.style.right = '16px';
+          return;
+        }
+        btn.style.right = getRightOffset() + 'px';
+      }
+
+      function onScroll() {
+        var scrolled =
+          window.pageYOffset ||
+          document.documentElement.scrollTop ||
+          (document.querySelector('.rh-BODY-wrapper') || {}).scrollTop ||
+          0;
+        btn.classList.toggle('visible', scrolled > THRESHOLD);
+      }
+
+      var scrollTargets = [
+        window,
+        document.querySelector('.rh-BODY-wrapper'),
+        document.querySelector('#rh-layout-main'),
+        document.querySelector('.RH-LAYOUT-CENTERPANEL-container'),
+        document.documentElement
+      ].filter(Boolean);
+
+      scrollTargets.forEach(function (el) {
+        el.addEventListener('scroll', onScroll, { passive: true });
+      });
+
+      btn.addEventListener('click', function () {
+        scrollTargets.forEach(function (el) {
+          if (typeof el.scrollTo === 'function') {
+            el.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        });
+      });
+
+      // Keep right offset in sync with mini-toc state changes
+      var toggle = document.getElementById('rh-minitoc-toggle');
+      if (toggle) {
+        toggle.addEventListener('click', function () {
+          // Wait for the transition to start before measuring
+          setTimeout(updateRight, 50);
+        });
+      }
+
+      updateRight();
+      // Also recompute on resize
+      window.addEventListener('resize', updateRight, { passive: true });
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       4. SUBSCRIBE BUTTON
+    ─────────────────────────────────────────────────────────────*/
+    function initSubscribeButton() {
+      var SUBSCRIBE_URL     = 'https://your-subscription-page.example.com'; // ← UPDATE
+      var SUBSCRIBE_TOOLTIP = 'Click to subscribe for release updates';
+
+      function createBtn() {
+        var btn = document.createElement('button');
+        btn.id = 'rh-subscribe-btn';
+        btn.setAttribute('data-tooltip', SUBSCRIBE_TOOLTIP);
+        btn.setAttribute('aria-label', 'Subscribe for release updates');
+        btn.innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+          '<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4.472-5.791' +
+          'C13.265 4.797 13 4.17 13 3.5a1 1 0 00-2 0c0 .67-.265 1.297-.528 1.709A6.003 6.003 0 006 11' +
+          'v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"' +
+          ' stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+          '</svg>';
+        btn.addEventListener('click', function () {
+          window.open(SUBSCRIBE_URL, '_blank', 'noopener,noreferrer');
+        });
+        return btn;
+      }
+
+      function inject() {
+        // If button already exists and is still in the DOM, nothing to do
+        var existing = document.getElementById('rh-subscribe-btn');
+        if (existing && document.contains(existing)) return;
+
+        var searchContainer = document.getElementById('search-with-help') ||
+                              document.querySelector('.search-placeholder-class');
+
+        // Only inject once the search container has content rendered by RoboHelp
+        // (i.e. it is not empty — RoboHelp renders the search widget inside it)
+        if (searchContainer && searchContainer.children.length > 0) {
+          searchContainer.style.display    = 'flex';
+          searchContainer.style.alignItems = 'center';
+          searchContainer.appendChild(createBtn());
+          return;
+        }
+
+        // Fallback: search container exists but is still empty,
+        // or doesn't exist yet — wait for the observer to retry
+      }
+
+      // Watch the entire header permanently so we catch every re-render
+      // RoboHelp does during initialisation and topic navigation
+      var header = document.querySelector('.RH-LAYOUT-HEADER-container');
+      if (header) {
+        var obs = new MutationObserver(function () {
+          // Re-check on every DOM change inside the header
+          inject();
+        });
+        obs.observe(header, { childList: true, subtree: true });
+      }
+
+      // Also try immediately and after short delays to cover fast renders
+      inject();
+      setTimeout(inject, 300);
+      setTimeout(inject, 800);
+      setTimeout(inject, 1500);
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       INIT ALL
+    ─────────────────────────────────────────────────────────────*/
+    ready(function () {
+      if (RH_FEATURES.imageZoom)    initImageZoom();
+      if (RH_FEATURES.tableZoom)    initTableZoom();
+      if (RH_FEATURES.miniToc)      initMiniTocToggle();
+      if (RH_FEATURES.subscribeBtn) initSubscribeButton();
+      if (RH_FEATURES.backToTop)    initBackToTop();
+    });
+
+  }());
+  
+//]]></script>
+
+
+
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"db7569ea1eea4081a76d52d8cb99ff18","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body></html>

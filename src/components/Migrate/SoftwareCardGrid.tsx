@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo } from 'react'
 import { AnimatePresence } from 'framer-motion'
-import type { SoftwareItem } from '../../types/MigrateTypes'
+import type { SoftwareItem, VendorRoadmap } from '../../types/MigrateTypes'
 import { SoftwareCard } from './SoftwareCard'
 import { EmptyState } from '../ui/empty-state'
 
@@ -14,6 +14,8 @@ interface SoftwareCardGridProps {
   compareProducts?: Set<string>
   onToggleCompare?: (key: string) => void
   maxCompareReached?: boolean
+  onSelectDetail?: (item: SoftwareItem) => void
+  roadmapByVendorId?: Map<string, VendorRoadmap>
 }
 
 const rowKey = (item: SoftwareItem) => item.productId
@@ -27,6 +29,8 @@ export const SoftwareCardGrid = ({
   compareProducts,
   onToggleCompare,
   maxCompareReached,
+  onSelectDetail,
+  roadmapByVendorId,
 }: SoftwareCardGridProps) => {
   const visibleItems = useMemo(
     () => (hiddenProducts ? items.filter((item) => !hiddenProducts.has(rowKey(item))) : items),
@@ -51,6 +55,8 @@ export const SoftwareCardGrid = ({
             isCompared={compareProducts?.has(rowKey(item))}
             onToggleCompare={onToggleCompare}
             maxCompareReached={maxCompareReached}
+            onSelectDetail={onSelectDetail}
+            vendorRoadmap={item.vendorId ? roadmapByVendorId?.get(item.vendorId) : undefined}
           />
         ))}
       </AnimatePresence>

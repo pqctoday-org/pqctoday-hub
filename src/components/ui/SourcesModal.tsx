@@ -42,6 +42,7 @@ export const SourcesModal = ({ isOpen, onClose, viewType }: SourcesModalProps) =
     }
 
     sources.forEach((source) => {
+      if (!groups[source.sourceType]) groups[source.sourceType] = []
       groups[source.sourceType].push(source)
     })
 

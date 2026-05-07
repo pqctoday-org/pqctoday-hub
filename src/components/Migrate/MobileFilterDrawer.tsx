@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { Filter, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -65,64 +66,66 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
         )}
       </Button>
 
-      {/* Drawer Overlay */}
-      {isOpen && (
-        <div className="fixed inset-0 embed-backdrop z-50 flex flex-col justify-end">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-background/80 backdrop-blur-sm transition-opacity animate-in fade-in"
-            onClick={() => setIsOpen(false)}
-            role="presentation"
-          />
+      {/* Drawer — portaled to body so backdrop-filter on sticky toolbar doesn't trap it */}
+      {isOpen &&
+        createPortal(
+          <div className="fixed inset-0 embed-backdrop z-[120] flex flex-col justify-end">
+            {/* Backdrop */}
+            <div
+              className="absolute inset-0 bg-background/80 backdrop-blur-sm transition-opacity animate-in fade-in"
+              onClick={() => setIsOpen(false)}
+              role="presentation"
+            />
 
-          {/* Bottom Sheet */}
-          <div className="relative bg-card border-t border-border rounded-t-2xl shadow-2xl animate-in slide-in-from-bottom-full duration-300 max-h-[85vh] flex flex-col">
-            {/* Drawer Handle */}
-            <div className="w-full flex justify-center pt-3 pb-1">
-              <div className="w-12 h-1.5 bg-muted rounded-full" />
+            {/* Bottom Sheet */}
+            <div className="relative bg-card border-t border-border rounded-t-2xl shadow-2xl animate-in slide-in-from-bottom-full duration-300 max-h-[85vh] flex flex-col">
+              {/* Drawer Handle */}
+              <div className="w-full flex justify-center pt-3 pb-1">
+                <div className="w-12 h-1.5 bg-muted rounded-full" />
+              </div>
+
+              {/* Header */}
+              <div className="px-6 py-4 border-b border-border/50 flex items-center justify-between">
+                <h2 className="text-xl font-bold flex items-center gap-2">
+                  <Filter size={20} className="text-primary" />
+                  Refine Results
+                </h2>
+                <Button
+                  variant="ghost"
+                  onClick={() => setIsOpen(false)}
+                  className="p-2 rounded-full hover:bg-muted transition-colors"
+                  aria-label="Close filters"
+                >
+                  <X size={20} />
+                </Button>
+              </div>
+
+              {/* Scrollable Content */}
+              <div className="p-6 overflow-y-auto flex-1 flex flex-col gap-6">{filterContent}</div>
+
+              {/* Footer Actions */}
+              <div className="p-6 border-t border-border/50 bg-muted/20 flex gap-4">
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    onClearAll()
+                  }}
+                  className="flex-1 py-3 px-4 rounded-lg border border-border bg-background hover:bg-muted font-medium transition-colors"
+                >
+                  Clear All
+                </Button>
+                <Button
+                  variant="gradient"
+                  onClick={() => setIsOpen(false)}
+                  className="flex-1 py-3 px-4 rounded-lg font-bold hover:brightness-110 transition-all shadow-md shadow-primary/20"
+                >
+                  Apply Filters
+                </Button>
+              </div>
             </div>
-
-            {/* Header */}
-            <div className="px-6 py-4 border-b border-border/50 flex items-center justify-between">
-              <h2 className="text-xl font-bold flex items-center gap-2">
-                <Filter size={20} className="text-primary" />
-                Refine Results
-              </h2>
-              <Button
-                variant="ghost"
-                onClick={() => setIsOpen(false)}
-                className="p-2 rounded-full hover:bg-muted transition-colors"
-                aria-label="Close filters"
-              >
-                <X size={20} />
-              </Button>
-            </div>
-
-            {/* Scrollable Content */}
-            <div className="p-6 overflow-y-auto flex-1 flex flex-col gap-6">{filterContent}</div>
-
-            {/* Footer Actions */}
-            <div className="p-6 border-t border-border/50 bg-muted/20 flex gap-4">
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  onClearAll()
-                }}
-                className="flex-1 py-3 px-4 rounded-lg border border-border bg-background hover:bg-muted font-medium transition-colors"
-              >
-                Clear All
-              </Button>
-              <Button
-                variant="gradient"
-                onClick={() => setIsOpen(false)}
-                className="flex-1 py-3 px-4 rounded-lg font-bold hover:brightness-110 transition-all shadow-md shadow-primary/20"
-              >
-                Apply Filters
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </div>
   )
 }

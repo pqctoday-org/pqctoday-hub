@@ -51,28 +51,29 @@ export function isResearchNeeded(rawValue: string | undefined | null): boolean {
 }
 
 interface RawAlgorithmRow {
-  'Algorithm Family': string
-  Algorithm: string
-  'Cryptographic Family': string
-  'NIST Security Level': string
-  'AES Equivalent': string
-  'Public Key (bytes)': string
-  'Private Key (bytes)': string
-  'Signature/Ciphertext (bytes)': string
-  'Shared Secret (bytes)': string
-  'KeyGen (cycles relative)': string
-  'Sign/Encaps (cycles relative)': string
-  'Verify/Decaps (cycles relative)': string
-  'Stack RAM (bytes)': string
-  'Optimization Target': string
-  'FIPS Standard': string
-  'Use Case Notes': string
+  algorithm_family: string
+  algorithm: string
+  cryptographic_family: string
+  nist_security_level: string
+  aes_equivalent: string
+  public_key_bytes: string
+  private_key_bytes: string
+  signature_ciphertext_bytes: string
+  shared_secret_bytes: string
+  keygen_cycles_relative: string
+  sign_encaps_cycles_relative: string
+  verifydecaps_cycles_relative: string
+  stack_ram_bytes: string
+  optimization_target: string
+  fips_standard: string
+  use_case_notes: string
   trusted_source_id: string
   peer_reviewed: string
   vetting_body: string
-  Region: string
-  Status: string
-  'Status URL': string
+  region: string
+  status: string
+  status_url: string
+  status_url_quality: string
 }
 
 // Import CSV data dynamically (lazy glob)
@@ -115,43 +116,43 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
     /pqc_complete_algorithm_reference_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
     (row) => {
       const sizesUnknown =
-        isResearchNeeded(row['Public Key (bytes)']) ||
-        isResearchNeeded(row['Private Key (bytes)']) ||
-        isResearchNeeded(row['Signature/Ciphertext (bytes)'])
+        isResearchNeeded(row.public_key_bytes) ||
+        isResearchNeeded(row.private_key_bytes) ||
+        isResearchNeeded(row.signature_ciphertext_bytes)
       const perfUnknown =
-        isResearchNeeded(row['KeyGen (cycles relative)']) ||
-        isResearchNeeded(row['Sign/Encaps (cycles relative)']) ||
-        isResearchNeeded(row['Verify/Decaps (cycles relative)'])
+        isResearchNeeded(row.keygen_cycles_relative) ||
+        isResearchNeeded(row.sign_encaps_cycles_relative) ||
+        isResearchNeeded(row.verifydecaps_cycles_relative)
       const hasResearchGap =
         sizesUnknown ||
         perfUnknown ||
-        isResearchNeeded(row['NIST Security Level']) ||
-        isResearchNeeded(row['AES Equivalent']) ||
-        isResearchNeeded(row['Stack RAM (bytes)']) ||
-        isResearchNeeded(row['Optimization Target']) ||
-        isResearchNeeded(row['Shared Secret (bytes)'])
+        isResearchNeeded(row.nist_security_level) ||
+        isResearchNeeded(row.aes_equivalent) ||
+        isResearchNeeded(row.stack_ram_bytes) ||
+        isResearchNeeded(row.optimization_target) ||
+        isResearchNeeded(row.shared_secret_bytes)
 
       return {
-        family: row['Algorithm Family'],
-        name: row['Algorithm'],
-        cryptoFamily: row['Cryptographic Family'] || '',
-        securityLevel: parseIntOrNull(row['NIST Security Level']),
-        aesEquivalent: row['AES Equivalent'],
-        publicKeySize: parseInt(row['Public Key (bytes)'], 10) || 0,
-        privateKeySize: parseInt(row['Private Key (bytes)'], 10) || 0,
-        signatureCiphertextSize: parseIntOrNull(row['Signature/Ciphertext (bytes)']),
-        sharedSecretSize: parseIntOrNull(row['Shared Secret (bytes)']),
-        keyGenCycles: row['KeyGen (cycles relative)'],
-        signEncapsCycles: row['Sign/Encaps (cycles relative)'],
-        verifyDecapsCycles: row['Verify/Decaps (cycles relative)'],
-        stackRAM: parseInt((row['Stack RAM (bytes)'] || '0').replace(/[~,]/g, ''), 10) || 0,
-        optimizationTarget: row['Optimization Target'],
-        fipsStandard: row['FIPS Standard'],
-        useCaseNotes: row['Use Case Notes'] || '',
-        region: row['Region'] || '',
-        status: row['Status'] || '',
-        statusUrl: row['Status URL'] || undefined,
-        type: row['Algorithm Family'] as AlgorithmDetail['type'],
+        family: row.algorithm_family,
+        name: row.algorithm,
+        cryptoFamily: row.cryptographic_family || '',
+        securityLevel: parseIntOrNull(row.nist_security_level),
+        aesEquivalent: row.aes_equivalent,
+        publicKeySize: parseInt(row.public_key_bytes, 10) || 0,
+        privateKeySize: parseInt(row.private_key_bytes, 10) || 0,
+        signatureCiphertextSize: parseIntOrNull(row.signature_ciphertext_bytes),
+        sharedSecretSize: parseIntOrNull(row.shared_secret_bytes),
+        keyGenCycles: row.keygen_cycles_relative,
+        signEncapsCycles: row.sign_encaps_cycles_relative,
+        verifyDecapsCycles: row.verifydecaps_cycles_relative,
+        stackRAM: parseInt((row.stack_ram_bytes || '0').replace(/[~,]/g, ''), 10) || 0,
+        optimizationTarget: row.optimization_target,
+        fipsStandard: row.fips_standard,
+        useCaseNotes: row.use_case_notes || '',
+        region: row.region || '',
+        status: row.status || '',
+        statusUrl: row.status_url || undefined,
+        type: row.algorithm_family as AlgorithmDetail['type'],
         hasResearchGap,
         sizesUnknown,
         perfUnknown,

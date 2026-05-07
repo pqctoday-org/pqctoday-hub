@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Quantum-Safe Cryptography &#x26; Standards: QSC, PQC, QKD &#x26; More! | Splunk</title>
+    <link rel="canonical" href="https://www.splunk.com/en_us/blog/learn/quantum-safe-cryptography-standards.html">
+    <meta name="description" content="Quantum-safe cryptography sounds complicated. Expert Kirsty Paine defines quantum-safe cryptography, differentiates PQC &#x26; QKD, and talks NIST post-quantum process.">
+    <meta property="og:title" content="Quantum-Safe Cryptography &#x26; Standards: QSC, PQC, QKD &#x26; More! | Splunk">
+    <meta property="og:description" content="Quantum-safe cryptography sounds complicated. Expert Kirsty Paine defines quantum-safe cryptography, differentiates PQC &#x26; QKD, and talks NIST post-quantum process.">
+    <meta property="og:url" content="https://www.splunk.com/en_us/blog/learn/quantum-safe-cryptography-standards.html">
+    <meta property="og:image" content="https://www.splunk.com/content/dam/splunk-blogs/images/media_101942c199c2ca0db99aae9b858c198849a67607e.webp?width=1200&#x26;format=pjpg&#x26;optimize=medium">
+    <meta property="og:image:secure_url" content="https://www.splunk.com/content/dam/splunk-blogs/images/media_101942c199c2ca0db99aae9b858c198849a67607e.webp?width=1200&#x26;format=pjpg&#x26;optimize=medium">
+    <meta property="article:tag" content="SURGe">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Quantum-Safe Cryptography &#x26; Standards: QSC, PQC, QKD &#x26; More! | Splunk">
+    <meta name="twitter:description" content="Quantum-safe cryptography sounds complicated. Expert Kirsty Paine defines quantum-safe cryptography, differentiates PQC &#x26; QKD, and talks NIST post-quantum process.">
+    <meta name="twitter:image" content="https://www.splunk.com/content/dam/splunk-blogs/images/media_101942c199c2ca0db99aae9b858c198849a67607e.webp?width=1200&#x26;format=pjpg&#x26;optimize=medium">
+    <meta name="google-site-verification" content="FkgQj_Q2EMJDeZ-2L2s3ZUkxjg4IBuH3r22EhfJgsgw">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Splunk">
+    <meta name="msapplication-tileimage" content="/icons/mstile-144x144.png">
+    <meta name="msapplication-square70x70logo" content="/icons/mstile-70x70.png">
+    <meta name="msapplication-square150x150logo" content="/icons/mstile-150x150.png">
+    <meta name="msapplication-wide310x150logo" content="/icons/mstile-310x150.png">
+    <meta name="msapplication-square310x310logo" content="/icons/mstile-310x310.png">
+    <meta name="application-name" content="Splunk">
+    <meta name="msapplication-tilecolor" content="#FFFFFF">
+    <meta name="robots" content="index,follow">
+    <meta name="footer" content="/en_us/blog/fragments/footer">
+    <meta name="header" content="/en_us/blog/fragments/header">
+    <meta name="sub-nav" content="/en_us/blog/fragments/sub-nav">
+    <meta property="og:locale" content="en_US">
+    <meta name="template" content="Article">
+    <meta name="author" content="Kirsty Paine">
+    <meta name="author-url" content="/en_us/blog/author/kpaine">
+    <meta name="category" content="Learn">
+    <meta name="published" content="August 23, 2023">
+    <meta name="read-time" content="5 Minute Read">
+    <script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "url": "https://www.splunk.com/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "http://www.splunk.com/en_us/search.html?query={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="encoding" content="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <script nonce="Enr84O8nUyCiI6M+l6IWYN5B" src="/scripts/aem.js" type="module"></script>
+    <script nonce="Enr84O8nUyCiI6M+l6IWYN5B" src="/scripts/scripts.js" type="module"></script>
+    <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="apple-touch-icon-precomposed" sizes="57x57" href="/icons/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/icons/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/icons/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/icons/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon-precomposed" sizes="60x60" href="/icons/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon-precomposed" sizes="120x120" href="/icons/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon-precomposed" sizes="76x76" href="/icons/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="/icons/apple-touch-icon-152x152.png">
+    <link rel="icon" type="image/png" href="/icons/favicon-196x196.png" sizes="196x196">
+    <link rel="icon" type="image/png" href="/icons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="/icons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="/icons/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="/icons/favicon-128.png" sizes="128x128">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+  
+<script>(window.BOOMR_mq=window.BOOMR_mq||[]).push(["addVar",{"rua.upush":"false","rua.cpush":"true","rua.upre":"false","rua.cpre":"true","rua.uprl":"false","rua.cprl":"false","rua.cprf":"false","rua.trans":"SJ-5d52a097-0521-469a-ab9e-a4f6f10d9f10","rua.cook":"false","rua.ims":"false","rua.ufprl":"false","rua.cfprl":"false","rua.isuxp":"false","rua.texp":"norulematch","rua.ceh":"false","rua.ueh":"false","rua.ieh.st":"0"}]);</script>
+                                <script>!function(e){var n="https://s.go-mpulse.net/boomerang/";if("False"=="True")e.BOOMR_config=e.BOOMR_config||{},e.BOOMR_config.PageParams=e.BOOMR_config.PageParams||{},e.BOOMR_config.PageParams.pci=!0,n="https://s2.go-mpulse.net/boomerang/";if(window.BOOMR_API_key="M7Q82-FTRNS-TEZ4E-UCSZ2-NQJ9C",function(){function e(){if(!i){var e=document.createElement("script");e.id="boomr-scr-as",e.src=window.BOOMR.url,e.async=!0,o.parentNode.appendChild(e),i=!0}}function t(e){i=!0;var n,t,a,r,d=document,O=window;if(window.BOOMR.snippetMethod=e?"if":"i",t=function(e,n){var t=d.createElement("script");t.id=n||"boomr-if-as",t.src=window.BOOMR.url,BOOMR_lstart=(new Date).getTime(),e=e||d.body,e.appendChild(t)},!window.addEventListener&&window.attachEvent&&navigator.userAgent.match(/MSIE [67]\./))return window.BOOMR.snippetMethod="s",void t(o.parentNode,"boomr-async");a=document.createElement("IFRAME"),a.src="about:blank",a.title="",a.role="presentation",a.loading="eager",r=(a.frameElement||a).style,r.width=0,r.height=0,r.border=0,r.display="none",o.parentNode.appendChild(a);try{O=a.contentWindow,d=O.document.open()}catch(_){n=document.domain,a.src="javascript:var d=document.open();d.domain='"+n+"';void(0);",O=a.contentWindow,d=O.document.open()}if(n)d._boomrl=function(){this.domain=n,t()},d.write("<bo"+"dy onload='document._boomrl();'>");else if(O._boomrl=function(){t()},O.addEventListener)O.addEventListener("load",O._boomrl,!1);else if(O.attachEvent)O.attachEvent("onload",O._boomrl);d.close()}function a(e){window.BOOMR_onload=e&&e.timeStamp||(new Date).getTime()}if(!window.BOOMR||!window.BOOMR.version&&!window.BOOMR.snippetExecuted){window.BOOMR=window.BOOMR||{},window.BOOMR.snippetStart=(new Date).getTime(),window.BOOMR.snippetExecuted=!0,window.BOOMR.snippetVersion=12,window.BOOMR.url=n+"M7Q82-FTRNS-TEZ4E-UCSZ2-NQJ9C";var o=document.currentScript||document.getElementsByTagName("script")[0],i=!1,r=document.createElement("link");if(r.relList&&"function"==typeof r.relList.supports&&r.relList.supports("preload")&&"as"in r)window.BOOMR.snippetMethod="p",r.href=window.BOOMR.url,r.rel="preload",r.as="script",r.addEventListener("load",e),r.addEventListener("error",function(){t(!0)}),setTimeout(function(){if(!i)t(!0)},3e3),BOOMR_lstart=(new Date).getTime(),o.parentNode.appendChild(r);else t(!1);if(window.addEventListener)window.addEventListener("load",a,!1);else if(window.attachEvent)window.attachEvent("onload",a)}}(),"".length>0)if(e&&"performance"in e&&e.performance&&"function"==typeof e.performance.setResourceTimingBufferSize)e.performance.setResourceTimingBufferSize();!function(){if(BOOMR=e.BOOMR||{},BOOMR.plugins=BOOMR.plugins||{},!BOOMR.plugins.AK){var n="true"=="true"?1:0,t="",a="iz5sgiix3oqlg2p4smaa-f-0ac6c2bd2-clientnsv4-s.akamaihd.net",o="false"=="true"?2:1,i={"ak.v":"41","ak.cp":"640520","ak.ai":parseInt("418654",10),"ak.ol":"0","ak.cr":22,"ak.ipv":4,"ak.proto":"http/1.1","ak.rid":"4054a921","ak.r":50182,"ak.a2":n,"ak.m":"a","ak.n":"essl","ak.cport":56564,"ak.gh":"23.192.37.171","ak.quicv":"","ak.tlsv":"tls1.3","ak.0rtt":"","ak.0rtt.ed":"","ak.csrc":"-","ak.acc":"bbr","ak.t":"1778160384","ak.ak":"hOBiQwZUYzCg5VSAfCLimQ==2u8FBofnmoBbDMXly78b5c27J0e2sWB7vSDBv+7vwki6zxtWc9vF5JR/BFSmM19OB+nf3najWiUFEPS7ZH3F8wOfa1hOYdGF7TRGUeRxFOwajcdo6vfhzAVuKiOXWBDGLkGevZVytO+3+8uhdmk/on3fzTEWG+xiFibmIMzjxZeZ2MXNnGLkZ1idlDOGqu8V+U+6mq0hK2dru6iW/xdBGN7jDefEtTffdjPVg9+PTqOB3wuuB4mKwwicHqQDGqBO2wL8CG9DdgcvLEcPHHArilgLauFzci5I91dsX80JLeBaHo+bkxfC3szmyL0lXLONuyzohIUSWQpmJzSdaHommi5a/stHBQwRDEwXZdmZSBq6+LGaPc+zhe+HsgNl8VWNizKvusOaZE3APqt4uKjJyy6K+x1XxSN5Cxj3Qlck5lU=","ak.pv":"321","ak.dpoabenc":"","ak.tf":o};if(""!==t)i["ak.ruds"]=t;var r={i:!1,av:function(n){var t="http.initiator";if(n&&(!n[t]||"spa_hard"===n[t]))i["ak.feo"]=void 0!==e.aFeoApplied?1:0,BOOMR.addVar(i)},rv:function(){var e=["ak.cport","ak.cr","ak.csrc","ak.gh","ak.ipv","ak.m","ak.n","ak.ol","ak.proto","ak.quicv","ak.tlsv","ak.0rtt","ak.0rtt.ed","ak.r","ak.acc","ak.t","ak.tf"];BOOMR.removeVar(e)}};BOOMR.plugins.AK={akVars:i,akDNSPreFetchDomain:a,init:function(){if(!r.i){var e=BOOMR.subscribe;e("before_beacon",r.av,null,null),e("onbeacon",r.rv,null,null),r.i=!0}return this},is_complete:function(){return!0}}}}()}(window);</script></head>
+  <body>
+    <header></header>
+    <main>
+      <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0">Quantum-Safe Cryptography &amp;#x26; Standards: QSC, PQC, QKD &amp;#x26; More!</h1>
+      <a href="https://www.splunk.com/en_us/blog/learn.html" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0" class="article-hero-category">Learn</a> <time style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0" class="article-hero-date" datetime="August 23, 2023">August 23, 2023</time> <a href="/en_us/blog/author/kpaine.html" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0" class="article-hero-author">Kirsty Paine </a>
+      <div>
+        <p><strong>What is “quantum”, really?</strong><br><em>The emperor's new (quantum) clothes: cutting through the quantum hype</em></p>
+        <p>It’s hard to move in security circles today without hearing someone pontificating about “quantum”. Maybe you keep hearing how <a href="/en_us/blog/learn/cryptography.html">all cryptography</a> and security of the internet will be devastated by a quantum computer.</p>
+        <p>Believe me, I hate adding noise to an already blaring chorus — but when so much quantum <em>stuff</em> I hear is just wrong or fear-mongering, I truly feel a sense of duty to take out some of the hype and junk before someone acts on bad advice in good faith.</p>
+        <p>I know, there are about 100,000 blogs out there on quantum, so why is this one different? Mainly because I’m not going to retread old ground. Instead, I will provide clarity on the lesser-explained elements, arm you with some facts to challenge quantum hobbyists, and give you a solid grounding in quantum vocabulary and standards.</p>
+        <p>So if you’re interested, read on. I’ll never miss a chance to talk about quantum-safe cryptography and standards! After this, you should know:</p>
+        <ul>
+          <li>What we mean by "quantum-safe cryptography".</li>
+          <li>The differences between post-quantum cryptography (PQC) and quantum key distribution (QKD) — and why many pros prefer PQC.</li>
+          <li>The latest status of the NIST post-quantum cryptography process.</li>
+        </ul>
+        <h2 id="quantum-safe-cryptography-pqc-or-qkd">Quantum-safe cryptography: PQC or QKD?</h2>
+        <p>Quantum computing is an entire field unto itself, and not something we can define in simple terms. The good news is that we can define quantum-safe cryptography! QSC refers to <strong>algorithms that cannot be cracked or weakened by a quantum computer</strong> (QC).</p>
+        <p>Today, quantum-safe cryptography encompasses two types post-quantum cryptography and quantum key distribution. (For more on terminology and distinctions, do check out this excellent <a href="https://datatracker.ietf.org/doc/draft-ietf-pquip-pqt-hybrid-terminology/">proposed standard</a> on the subject.)</p>
+        <p>There’s one important distinction I have to make: When I talk about “quantum”, I’m almost surely talking about post-quantum cryptography (PQC). When other people talk about “quantum”, they sometimes mean quantum key distribution (QKD). So let’s clear up this point:</p>
+        <ul>
+          <li><strong>Post-quantum cryptography (PQC)</strong> is cryptography that isn’t weakened or completely broken by a quantum computer running <a href="https://en.wikipedia.org/wiki/Shor%27s_algorithm">Shor’s algorithm</a> or <a href="https://en.wikipedia.org/wiki/Grover%27s_algorithm">Grover’s algorithm</a>.</li>
+          <li><strong>In quantum key distribution (QKD),</strong> a key is shared on a physical wire or via satellite between two or more nodes/endpoints, and is secure “by the magic of quantum physics”. Concretely, this is because of superposition, i.e. that a quantum system can be in multiple states at the same time until it is measured. Loosely, this is secure because the key only collapses to a fixed state when observed, so if anyone steals it, they must have observed it, and you’ll know that happened because the key is now fixed.</li>
+        </ul>
+        <p>If that doesn’t make sense, don’t worry because I’m not going to discuss it further except to say…</p>
+        <h3 id="quantum-squads-choosing-pqc-or-qkd">Quantum squads: choosing PQC or QKD</h3>
+        <p>Quantum-safe cryptography (QSC) encompasses both PQC and QKD. So how do you know which one to choose — better yet, which squad <em>should you</em> support?</p>
+        <p>Like most technologists, I greatly favour PQC. Why? Well, the security aspects of PQC are better-researched. Importantly, we also have the infrastructure to support PQC today.</p>
+        <p>In contrast, QKD requires bespoke hardware. To be deployed at scale and in support of the traffic volume that the internet requires, QKD requires all kinds of new networks to be built, with lots and lots of relay nodes to tackle the geographic and distance limitations. And, even if we did have all that, QKD also <a href="/en_us/blog/learn/authentication-vs-authorization.html">can’t do authentication</a> — that’s a hard no from me.</p>
+        <p>So whilst QKD is pretty cool, it’s not suitable for many reasons, and I greatly prefer PQC. As for the rest of us…does everyone prefer PQC? Well, let’s look at standards.</p>
+        <p>
+          <picture>
+            <source type="image/webp" srcset="/content/dam/splunk-blogs/images/media_16d24a14a246b8952b5761c3f8063f23a6194d837.avif?width=2000&#x26;format=webply&#x26;optimize=medium" media="(min-width: 600px)">
+            <source type="image/webp" srcset="/content/dam/splunk-blogs/images/media_16d24a14a246b8952b5761c3f8063f23a6194d837.avif?width=750&#x26;format=webply&#x26;optimize=medium">
+            <source type="image/avif" srcset="/content/dam/splunk-blogs/images/media_16d24a14a246b8952b5761c3f8063f23a6194d837.avif?width=2000&#x26;format=avif&#x26;optimize=medium" media="(min-width: 600px)">
+            <img loading="lazy" alt="" src="/content/dam/splunk-blogs/images/media_16d24a14a246b8952b5761c3f8063f23a6194d837.avif?width=750&#x26;format=avif&#x26;optimize=medium" width="575" height="237">
+          </picture>
+        </p>
+        <h2 id="quantum-standards-and-making-mistakes">Quantum standards and making mistakes</h2>
+        <p>Luckily, whenever there are emerging and developing technologies like quantum cryptography, there are standards! The National Institute of Standards and Technology (NIST) has been creating standards for all sorts of technologies, including quantum-safe cryptography, for ages and ages.</p>
+        <p>Yes, NIST published <a href="https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-208.pdf">SP 800-208</a> in December 2019, aimed at the niche use case of long-lasting embedded systems that need occasional firmware updates. And, since June 2022, one key encapsulation mechanism and three signature algorithms have been standardised (as we’ll cover shortly).</p>
+        <p>However, these latter algorithms are still not implemented in protocol standards, or even de facto large libraries — wait until they are. If you do this yourself, you’re likely to make a mistake. This mistake very likely will:</p>
+        <ul>
+          <li>Increase your <a href="/en_us/blog/learn/asm-attack-surface-management.html">attack surface</a>.</li>
+          <li>Have far worse ramifications than <a href="/en_us/blog/learn/crqcs-cryptographically-relevant-quantum-computers.html">the (currently non-existent) quantum threat</a>.</li>
+        </ul>
+        <p>So, it’s crucial to wait for well-researched, international standards and implementations.</p>
+        <h2 id="quantum-safe-algorithms--the-latest-on-nists-post-quantum-process">Quantum-safe algorithms &#x26; the latest on NIST’s post-quantum process</h2>
+        <p>Since 2017, <a href="https://csrc.nist.gov/projects/post-quantum-cryptography">NIST has led a process</a> to solicit, evaluate, and standardise quantum-resistant public-key cryptographic algorithms.</p>
+        <p>A long-running joke is that the whole NIST post-quantum process was designed to keep cryptographers (like me!) in business. We had done pretty well with ubiquitous encryption, efficient and small <a href="/en_us/blog/learn/elliptic-curve-cryptography.html">elliptic curve key exchanges and signatures</a>, <a href="/en_us/blog/learn/aes-advanced-encryption-standard.html">AES</a> and SHA3. What was left to do?</p>
+        <p>Design against a theoretical quantum attack, of course!</p>
+        <p>Most quantum-safe schemes are based on 1 of 5 underlying hard problems (each class of hard problems is analogous to the difficulty of factoring a large modulus). Quantum-safe algorithms are grouped by these underlying hard problems, as follows:</p>
+        <ul>
+          <li><a href="https://en.wikipedia.org/wiki/Lattice-based_cryptography">Lattice-based</a></li>
+          <li><a href="https://en.wikipedia.org/wiki/Hash-based_cryptography">Hash-based</a></li>
+          <li><a href="https://en.wikipedia.org/wiki/Post-quantum_cryptography#Isogeny-based_cryptography">Isogeny-based</a></li>
+          <li><a href="https://en.wikipedia.org/wiki/Multivariate_cryptography">Multivariate-based</a></li>
+          <li><a href="https://en.wikipedia.org/wiki/Post-quantum_cryptography#Code-based_cryptography">Code-based</a></li>
+        </ul>
+        <p>So far, NIST has finalised four algorithms in its standardisation process:</p>
+        <ul>
+          <li><strong>CRYSTALS-Kyber,</strong> a lattice-based key encapsulation mechanism</li>
+          <li><strong>CRYSTALS-Dilithium,</strong> a lattice-based signature scheme</li>
+          <li><strong>FALCON,</strong> a lattice-based signature scheme</li>
+          <li><strong>SPHINCS+,</strong> a hash-based signature scheme</li>
+        </ul>
+        <p>The eagle-eyed among you will note that 3 of those 4 are all based on lattices, which limits your choice if you’re not a fan of lattices. (Thankfully, I am a fan.) But if you’re not, don’t fear! NIST put these algorithms. with different underlying hard problems, into a group for further research:</p>
+        <ul>
+          <li><strong>BIKE, HQC and Classic McEliece</strong>: all code-based KEMs/PKE schemes</li>
+          <li><strong>SIKE</strong>: isogeny-based key exchange</li>
+        </ul>
+        <p>This “further research” group turned out to be a great idea, because SIKE was broken shortly afterwards. This validates that these algorithms did require further study before being standardised.</p>
+        <h2 id="remember-wait-for-standards">Remember, wait for standards!</h2>
+        <p>Until standards and implementations are available, you could do <a href="/en_us/blog/learn/cyber-hygiene.html">some things that are good for both cybersecurity</a> and any potential quantum threat, such as:</p>
+        <ul>
+          <li>Auditing your systems.</li>
+          <li>Making an asset inventory.</li>
+          <li>Planning lifecycle management.</li>
+        </ul>
+        <p>This is good security practice anyway, and will be helpful, should you ever need to migrate to a post-quantum solution — once standards have been set, of course.</p>
+        <h2 id="a-nod-to-the-worlds-cryptographers">A nod to the world’s cryptographers</h2>
+        <p>There are people in this world who are legit cryptographers; that’s their job title, they live and breathe cryptography, devouring academic papers, research, implementations and number theory.</p>
+        <p>And then there are people who know what public-key cryptography is as it relates to certificates on the internet. Nothing wrong with that. Just remember that cryptography is a profession, like civil engineering, and the same way you wouldn’t build bridges if you have a passing interest in civil engineering, nor should you be advising on cryptography because <a href="/en_us/blog/learn/rsa-algorithm-cryptography.html">you can describe RSA</a>.</p>
+        <p>So, no matter how enthusiastic you or your staff are: <a href="https://www.vice.com/en/article/wnx8nq/why-you-dont-roll-your-own-crypto">don’t roll your own cryptography</a>, do use tested implementations, and always wait for standards that have been thoroughly researched.</p>
+        <p>In the meantime, here’s a superposition joke for you: Schrödinger’s cat walks into a bar, and doesn’t. (…And <em>that</em> is why no-one makes jokes about quantum physics. 😜)</p>
+        <h2 id="quantum-quiz-time">Quantum quiz time</h2>
+        <p>Test time! You should be able to tell me now:</p>
+        <ul>
+          <li>What quantum-safe cryptography means.</li>
+          <li>The differences between PQC and QKD.</li>
+          <li>What’s the latest with the NIST post-quantum cryptography process?</li>
+        </ul>
+        <div class="fragment">
+          <div>
+            <div><a href="/en_us/blog/fragments/disclaimer-with-divider">/en_us/blog/fragments/disclaimer-with-divider</a></div>
+          </div>
+        </div>
+        <div class="sidebar">
+          <div>
+            <div><a href="/en_us/blog/fragments/top-50-security-threats">/en_us/blog/fragments/top-50-security-threats</a></div>
+          </div>
+        </div>
+        <div class="section-metadata">
+          <div>
+            <div>Style</div>
+            <div>two-column</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="author-bio-list">
+          <div>
+            <div></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="article-list paginated mode-paginated" data-curated="article-index" data-article-list-ssr="true">
+          <div data-ssr-config="true" hidden>
+            <div>Title</div>
+            <div>Related Articles</div>
+          </div>
+          <div data-ssr-config="true" hidden>
+            <div>Filter</div>
+            <div>Category</div>
+          </div>
+          <div data-ssr-config="true" hidden>
+            <div>Blog Limit</div>
+            <div>3</div>
+          </div>
+          <div data-ssr-config="true" hidden>
+            <div>Category</div>
+            <div>learn</div>
+          </div>
+          <div data-ssr-config="true" hidden>
+            <div>Sort Category Shuffle Order</div>
+            <div>true</div>
+          </div>
+        <h3 class="article-list-title">Related Articles</h3><div class="article-list-grid"><div class="article-list-card"><div class="article-card-image"><picture><source media="(min-width: 900px)" type="image/webp" srcset="https://www.splunk.com/content/dam/splunk-blogs/images/media_187efa7bd4316b9fd75f15562ad1911c2fc1b75b1.avif?width=400&format=webp&optimize=medium"><source type="image/webp" srcset="https://www.splunk.com/content/dam/splunk-blogs/images/media_187efa7bd4316b9fd75f15562ad1911c2fc1b75b1.avif?width=300&format=webp&optimize=medium"><source media="(min-width: 900px)" srcset="https://www.splunk.com/content/dam/splunk-blogs/images/media_187efa7bd4316b9fd75f15562ad1911c2fc1b75b1.avif?width=400&format=avif&optimize=medium"><img loading="eager" alt="Insider Threats in Cybersecurity" src="https://www.splunk.com/content/dam/splunk-blogs/images/media_187efa7bd4316b9fd75f15562ad1911c2fc1b75b1/insider-threats-in-cybersecurity.avif?width=300&format=avif&optimize=medium"></picture></div><div class="article-card-content"><div class="article-card-meta"><a class="article-card-category" href="/en_us/blog/learn.html">Learn</a><div class="article-card-read-time">5 Minute Read</div></div><h3 class="article-card-title"><a href="/en_us/blog/learn/insider-threats.html">Insider Threats in Cybersecurity</a></h3><div class="article-card-description">Security anything isn't limited to outsiders. People on the inside can breach your security too. Read how in this guide to insider threats.</div></div></div><div class="article-list-card"><div class="article-card-image"><picture><source media="(min-width: 900px)" type="image/webp" srcset="https://www.splunk.com/content/dam/splunk-blogs/images/media_1f82a18ce8a90c5f6549bc9aa372c3a34356c2d0f.avif?width=400&format=webp&optimize=medium"><source type="image/webp" srcset="https://www.splunk.com/content/dam/splunk-blogs/images/media_1f82a18ce8a90c5f6549bc9aa372c3a34356c2d0f.avif?width=300&format=webp&optimize=medium"><source media="(min-width: 900px)" srcset="https://www.splunk.com/content/dam/splunk-blogs/images/media_1f82a18ce8a90c5f6549bc9aa372c3a34356c2d0f.avif?width=400&format=avif&optimize=medium"><img loading="lazy" alt="Sustainable Technology in 2026" src="https://www.splunk.com/content/dam/splunk-blogs/images/media_1f82a18ce8a90c5f6549bc9aa372c3a34356c2d0f/sustainable-technology-in-2026.avif?width=300&format=avif&optimize=medium"></picture></div><div class="article-card-content"><div class="article-card-meta"><a class="article-card-category" href="/en_us/blog/learn.html">Learn</a><div class="article-card-read-time">7 Minute Read</div></div><h3 class="article-card-title"><a href="/en_us/blog/learn/sustainable-technology.html">Sustainable Technology in 2026</a></h3><div class="article-card-description">Sustainable technology doesn’t get enough attention. Find out what sustainable IT means and how companies and individuals can use tech more sustainably.</div></div></div><div class="article-list-card"><div class="article-card-image"><picture><source media="(min-width: 900px)" type="image/webp" srcset="https://www.splunk.com/content/dam/splunk-blogs/images/media_1bddcd308942f8c954b774eb950223952a3bed489.webp?width=400&format=webp&optimize=medium"><source type="image/webp" srcset="https://www.splunk.com/content/dam/splunk-blogs/images/media_1bddcd308942f8c954b774eb950223952a3bed489.webp?width=300&format=webp&optimize=medium"><source media="(min-width: 900px)" srcset="https://www.splunk.com/content/dam/splunk-blogs/images/media_1bddcd308942f8c954b774eb950223952a3bed489.webp?width=400&format=webp&optimize=medium"><img loading="lazy" alt="RAG: Retrieval Augmented Generation, Explained" src="https://www.splunk.com/content/dam/splunk-blogs/images/media_1bddcd308942f8c954b774eb950223952a3bed489/rag-retrieval-augmented-generation-explained.webp?width=300&format=webp&optimize=medium"></picture></div><div class="article-card-content"><div class="article-card-meta"><a class="article-card-category" href="/en_us/blog/learn.html">Learn</a><div class="article-card-read-time">5 Minute Read</div></div><h3 class="article-card-title"><a href="/en_us/blog/learn/retrieval-augmented-generation-rag.html">RAG: Retrieval Augmented Generation, Explained</a></h3><div class="article-card-description">Want to automate and optimize the outputs from your language models? Retrieval augmented generation is a fundamental technique. Learn about it here.</div></div></div></div></div>
+      </div>
+      <div>
+        <div class="fragment">
+          <div>
+            <div><a href="/en_us/blog/fragments/about-splunk">/en_us/blog/fragments/about-splunk</a></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="fragment">
+          <div>
+            <div><a href="/en_us/blog/fragments/subscribe-footer">/en_us/blog/fragments/subscribe-footer</a></div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer></footer>
+  </body>
+</html>

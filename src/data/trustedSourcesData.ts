@@ -28,6 +28,8 @@ export interface TrustedSource {
   downloadStatus: 'Active' | 'Partial' | 'Blocked' | 'None'
   docCollection: string
   notes: string
+  primaryUrlQuality?: string
+  dateStamp?: string
 }
 
 export type ViewType =
@@ -61,6 +63,8 @@ interface RawTrustedSourceRow {
   download_status: string
   doc_collection: string
   notes: string
+  primary_url_quality: string
+  date_stamp: string
 }
 
 const modules = import.meta.glob('./trusted_sources_*.csv', {
@@ -94,6 +98,8 @@ const { data, metadata } = loadLatestCSV<RawTrustedSourceRow, TrustedSource>(
     downloadStatus: (row.download_status as TrustedSource['downloadStatus']) ?? 'None',
     docCollection: row.doc_collection ?? 'none',
     notes: row.notes ?? '',
+    primaryUrlQuality: row.primary_url_quality || undefined,
+    dateStamp: row.date_stamp || undefined,
   })
 )
 

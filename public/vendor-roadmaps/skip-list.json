@@ -1,0 +1,17 @@
+{
+  "https://www.entrust.com/solutions/post-quantum-cryptography": {
+    "vendorId": "VND-013",
+    "reason": "forbidden",
+    "date": "2026-05-07T05:35:23.921Z"
+  },
+  "https://blogs.oracle.com/security/post-quantum-cryptography": {
+    "vendorId": "VND-029",
+    "reason": "forbidden",
+    "date": "2026-05-07T05:35:39.273Z"
+  },
+  "https://www.microchip.com/en-us/solutions/technologies/embedded-security/post-quantum-cryptography": {
+    "vendorId": "VND-151",
+    "reason": "forbidden",
+    "date": "2026-05-07T05:36:25.683Z"
+  }
+}

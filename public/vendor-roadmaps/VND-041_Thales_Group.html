@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" prefix="og: https://ogp.me/ns#">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta charset="utf-8" />
+<meta name="description" content="Luna HSM v7.9 introduces NIST-approved PQC algorithms, delivering real-world quantum-safe encryption validated by Thales partners for production use." />
+<link rel="shortlink" href="https://cpl.thalesgroup.com/blog/encryption/luna-hsm-pqc-quantum-safe-encryption" />
+<link rel="canonical" href="https://cpl.thalesgroup.com/blog/encryption/luna-hsm-pqc-quantum-safe-encryption" />
+<meta property="og:site_name" content="Thales Cloud Security Products" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://cpl.thalesgroup.com/blog/encryption/luna-hsm-pqc-quantum-safe-encryption" />
+<meta property="og:title" content="Luna HSM v7.9 Delivers PQC Readiness at Scale | Thales" />
+<meta property="og:description" content="Luna HSM v7.9 introduces NIST-approved PQC algorithms, delivering real-world quantum-safe encryption validated by Thales partners for production use." />
+<meta property="og:image" content="https://cpl.thalesgroup.com/sites/default/files/content/blog/social/blog-luna-hsm-pqc-quantum-safe-encryption-og.webp" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@ThalesCloudSec" />
+<meta name="twitter:description" content="Luna HSM v7.9 introduces NIST-approved PQC algorithms, delivering real-world quantum-safe encryption validated by Thales partners for production use." />
+<meta name="twitter:title" content="Luna HSM v7.9 Delivers PQC Readiness at Scale | Thales" />
+<meta name="twitter:creator" content="@ThalesCloudSec" />
+<meta name="twitter:image" content="https://thalesgroup.widen.net/content/0oiadgoxwq/jpeg/EN-Social-Media-Illustration.jpeg?w=1200&amp;keep=c&amp;crop=yes&amp;quality=80&amp;x.portal_shortcode_generated=ujcpjems&amp;x.collection_sharename=hwdak8ra&amp;x.app=portals" />
+<meta name="Generator" content="Drupal 10 (https://www.drupal.org)" />
+<meta name="MobileOptimized" content="width" />
+<meta name="HandheldFriendly" content="true" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://cpl.thalesgroup.com/blog/encryption/luna-hsm-pqc-quantum-safe-encryption"
+  },
+  "headline": "Luna HSM v7.9 Delivers PQC Readiness at Scale",
+  "description": "Luna HSM v7.9 introduces NIST-approved PQC algorithms, delivering real-world quantum-safe encryption validated by Thales partners for production use.",
+  "image": "",
+  "author": {
+    "@type": "Person",
+    "name": "Blair Canavan",
+    "url": "https://cpl.thalesgroup.com/blog/author/bcanavan"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Thales Group",
+    "description": "The world relies on Thales to protect and secure access to your most sensitive data and software wherever it is created, shared, or stored. Whether building an encryption strategy, licensing software, providing trusted access to the cloud, or meeting compliance mandates, you can rely on Thales to secure your digital transformation.",
+    "url": "https://cpl.thalesgroup.com",
+    "logo": "https://cpl.thalesgroup.com/sites/default/files/content/footer/thaleslogo-white.png",
+    "sameAs": [
+      "https://www.twitter.com/ThalesCloudSec",
+      "https://www.linkedin.com/company/thalescloudsec",
+      "https://www.youtube.com/ThalesCloudSec"
+    ]
+  },
+  "datePublished": "2025-07-29",
+  "dateModified": "2025-07-29"
+}</script>
+<link rel="icon" href="/themes/thalesesecurity/favicon.ico" type="image/vnd.microsoft.icon" />
+<link rel="alternate" hreflang="en" href="https://cpl.thalesgroup.com/blog/encryption/luna-hsm-pqc-quantum-safe-encryption" />
+
+    <title>Luna HSM v7.9 Delivers PQC Readiness at Scale | Thales</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <link rel="stylesheet" media="all" href="/sites/default/files/css/css_-K1gpYRlEWygVWe0O6U2G7rmGSL0ydwNzduhzqMGwog.css?delta=0&amp;language=en&amp;theme=thalesesecurity&amp;include=eJx1jEEKwzAMBD_k1E8KiipsUVmCSKnR72t66iFlYQ8z7KJ1cjataH2LToMK_qCdZCGNHU0DWOm81zyg_VkK6-vezHSe2YqnB416gFOJDkK-gtfJkbWJHSCbR66fVt5M0-u3H8Oel9AH0HpMVA" />
+<link rel="stylesheet" media="all" href="/sites/default/files/css/css_kH8mAMRNhw4Z7Oc0Y2zDnqacMeI7z0BYIpAf7b8bA9w.css?delta=1&amp;language=en&amp;theme=thalesesecurity&amp;include=eJx1jEEKwzAMBD_k1E8KiipsUVmCSKnR72t66iFlYQ8z7KJ1cjataH2LToMK_qCdZCGNHU0DWOm81zyg_VkK6-vezHSe2YqnB416gFOJDkK-gtfJkbWJHSCbR66fVt5M0-u3H8Oel9AH0HpMVA" />
+
+      <link rel="stylesheet" media="all" href="/themes/thalesesecurity/templates/dist/styles/main.css"/>
+      
+        <script src="https://use.typekit.net/ftv0kux.js"></script>
+        <script>
+          try {
+            Typekit.load({async: true});
+          } catch (e) {}
+        </script>
+        <!-- Marketo UTM Persisting Script Prod -->
+        <script type="text/javascript" src="/themes/thalesesecurity/templates/assets/scripts/resource/utm-helper.js"></script>
+                <!-- Start VWO Async SmartCode For Prod -->
+        <link rel="preconnect" href="https://dev.visualwebsiteoptimizer.com" />
+        <script type='text/javascript' id='vwoCode' class="optanon-category-C0002">
+        window._vwo_code || (function() {
+        var account_id=1099864,
+        version=2.1,
+        settings_tolerance=2000,
+        hide_element='body',
+        hide_element_style = 'opacity:0 !important;filter:alpha(opacity=0) !important;background:none !important;transition:none !important;',
+        /* DO NOT EDIT BELOW THIS LINE */
+        f=false,w=window,d=document,v=d.querySelector('#vwoCode'),cK='_vwo_'+account_id+'_settings',cc={};try{var c=JSON.parse(localStorage.getItem('_vwo_'+account_id+'_config'));cc=c&&typeof c==='object'?c:{}}catch(e){}var stT=cc.stT==='session'?w.sessionStorage:w.localStorage;code={nonce:v&&v.nonce,library_tolerance:function(){return typeof library_tolerance!=='undefined'?library_tolerance:undefined},settings_tolerance:function(){return cc.sT||settings_tolerance},hide_element_style:function(){return'{'+(cc.hES||hide_element_style)+'}'},hide_element:function(){if(performance.getEntriesByName('first-contentful-paint')[0]){return''}return typeof cc.hE==='string'?cc.hE:hide_element},getVersion:function(){return version},finish:function(e){if(!f){f=true;var t=d.getElementById('_vis_opt_path_hides');if(t)t.parentNode.removeChild(t);if(e)(new Image).src='https://dev.visualwebsiteoptimizer.com/ee.gif?a='+account_id+e}},finished:function(){return f},addScript:function(e){var t=d.createElement('script');t.type='text/javascript';if(e.src){t.src=e.src}else{t.text=e.text}v&&t.setAttribute('nonce',v.nonce);d.getElementsByTagName('head')[0].appendChild(t)},load:function(e,t){var n=this.getSettings(),i=d.createElement('script'),r=this;t=t||{};if(n){i.textContent=n;d.getElementsByTagName('head')[0].appendChild(i);if(!w.VWO||VWO.caE){stT.removeItem(cK);r.load(e)}}else{var o=new XMLHttpRequest;o.open('GET',e,true);o.withCredentials=!t.dSC;o.responseType=t.responseType||'text';o.onload=function(){if(t.onloadCb){return t.onloadCb(o,e)}if(o.status===200||o.status===304){_vwo_code.addScript({text:o.responseText})}else{_vwo_code.finish('&e=loading_failure:'+e)}};o.onerror=function(){if(t.onerrorCb){return t.onerrorCb(e)}_vwo_code.finish('&e=loading_failure:'+e)};o.send()}},getSettings:function(){try{var e=stT.getItem(cK);if(!e){return}e=JSON.parse(e);if(Date.now()>e.e){stT.removeItem(cK);return}return e.s}catch(e){return}},init:function(){if(d.URL.indexOf('__vwo_disable__')>-1)return;var e=this.settings_tolerance();w._vwo_settings_timer=setTimeout(function(){_vwo_code.finish();stT.removeItem(cK)},e);var t;if(this.hide_element()!=='body'){t=d.createElement('style');var n=this.hide_element(),i=n?n+this.hide_element_style():'',r=d.getElementsByTagName('head')[0];t.setAttribute('id','_vis_opt_path_hides');v&&t.setAttribute('nonce',v.nonce);t.setAttribute('type','text/css');if(t.styleSheet)t.styleSheet.cssText=i;else t.appendChild(d.createTextNode(i));r.appendChild(t)}else{t=d.getElementsByTagName('head')[0];var i=d.createElement('div');i.style.cssText='z-index: 2147483647 !important;position: fixed !important;left: 0 !important;top: 0 !important;width: 100% !important;height: 100% !important;background: white !important;display: block !important;';i.setAttribute('id','_vis_opt_path_hides');i.classList.add('_vis_hide_layer');t.parentNode.insertBefore(i,t.nextSibling)}var o=window._vis_opt_url||d.URL,s='https://dev.visualwebsiteoptimizer.com/j.php?a='+account_id+'&u='+encodeURIComponent(o)+'&vn='+version;if(w.location.search.indexOf('_vwo_xhr')!==-1){this.addScript({src:s})}else{this.load(s+'&x=true')}}};w._vwo_code=code;code.init();})();
+        </script>
+        <!-- End VWO Async SmartCode For Prod -->
+        <!-- OneTrust Cookies Consent Notice Starts For Prod -->
+        <script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js"  type="text/javascript" charset="UTF-8" data-domain-script="50a833b9-3158-4f72-8927-19119e5def5d" ></script>
+        <script type="text/javascript">
+        function OptanonWrapper() { }
+        </script>
+        <!-- OneTrust Cookies Consent Notice Ends For Prod -->
+        
+        <script type="text/plain" async="" src="//www.googleadservices.com/pagead/conversion_async.js" class="optanon-category-C0004"></script>
+        <style></style>
+<style>.ssa-instance-dbe226b01f025f6a164d53faf4e88629.coh-ce-cpt_container-41cceb76 {  display: -webkit-box;  display: -webkit-flex;  display: -ms-flexbox;  display: flex;  -webkit-box-orient: vertical;  -webkit-box-direction: normal;  -webkit-flex-direction: column;      -ms-flex-direction: column;          flex-direction: column;    -webkit-box-pack: flex-start;    -webkit-justify-content: flex-start;        -ms-flex-pack: flex-start;            justify-content: flex-start;  width: -webkit-fill-available;  width: -moz-available;}@media (max-width: 1169px) {  .ssa-instance-dbe226b01f025f6a164d53faf4e88629.coh-ce-cpt_container-41cceb76 {    width: auto;  }}@media (max-width: 1023px) {  .ssa-instance-dbe226b01f025f6a164d53faf4e88629.coh-ce-cpt_container-41cceb76 {  }}@media (max-width: 767px) {  .ssa-instance-dbe226b01f025f6a164d53faf4e88629.coh-ce-cpt_container-41cceb76 {      }}.color-background.ssa-instance-dbe226b01f025f6a164d53faf4e88629.coh-ce-cpt_container-41cceb76 {}.gradient-background.ssa-instance-dbe226b01f025f6a164d53faf4e88629.coh-ce-cpt_container-41cceb76 {  background-image: -webkit-linear-gradient(300deg, rgb(36, 42, 117) 0%, rgb(2, 128, 207) 100%);  background-image: linear-gradient(150deg, rgb(36, 42, 117) 0%, rgb(2, 128, 207) 100%);  background-position: center;  background-size: cover;  background-repeat: no-repeat;  background-attachment: scroll;}.image-background.ssa-instance-dbe226b01f025f6a164d53faf4e88629.coh-ce-cpt_container-41cceb76 {  background-position: center;  background-size: cover;  background-repeat: no-repeat;  background-attachment: scroll;}</style>
+<style>.ssa-instance-7f63dc822d21d3ec8f5e0bbe59c797f2.coh-ce-cpt_ss_1_column_layout-5c0c446e {    height: auto;}.image-background.ssa-instance-7f63dc822d21d3ec8f5e0bbe59c797f2.coh-ce-cpt_ss_1_column_layout-5c0c446e {  background-position: center top;  background-size: cover;  background-repeat: no-repeat;  background-attachment: scroll;}@media (max-width: 1023px) {  .image-background.ssa-instance-7f63dc822d21d3ec8f5e0bbe59c797f2.coh-ce-cpt_ss_1_column_layout-5c0c446e {    background-position: center top;    background-size: cover;    background-repeat: no-repeat;    background-attachment: scroll;  }}@media (max-width: 767px) {  .image-background.ssa-instance-7f63dc822d21d3ec8f5e0bbe59c797f2.coh-ce-cpt_ss_1_column_layout-5c0c446e {    background-position: center top;    background-size: cover;    background-repeat: no-repeat;    background-attachment: scroll;  }}.gradient-background.ssa-instance-7f63dc822d21d3ec8f5e0bbe59c797f2.coh-ce-cpt_ss_1_column_layout-5c0c446e {  background-image: -webkit-linear-gradient(300deg, rgb(36, 42, 117) 0%, rgb(2, 128, 207) 100%);  background-image: linear-gradient(150deg, rgb(36, 42, 117) 0%, rgb(2, 128, 207) 100%);  background-position: center top;  background-size: cover;  background-repeat: no-repeat;  background-attachment: scroll;}.color-background.ssa-instance-7f63dc822d21d3ec8f5e0bbe59c797f2.coh-ce-cpt_ss_1_column_layout-5c0c446e {    background-color: rgba(0, 0, 0, 0);}.desktop-visibility.ssa-instance-7f63dc822d21d3ec8f5e0bbe59c797f2.coh-ce-cpt_ss_1_column_layout-5c0c446e {  display: block;}@media (max-width: 767px) {  .desktop-visibility.ssa-instance-7f63dc822d21d3ec8f5e0bbe59c797f2.coh-ce-cpt_ss_1_column_layout-5c0c446e {    display: none;  }}.default-visibility.ssa-instance-7f63dc822d21d3ec8f5e0bbe59c797f2.coh-ce-cpt_ss_1_column_layout-5c0c446e {  display: block;}@media (max-width: 767px) {  .default-visibility.ssa-instance-7f63dc822d21d3ec8f5e0bbe59c797f2.coh-ce-cpt_ss_1_column_layout-5c0c446e {    display: block;  }}.mobile-visibility.ssa-instance-7f63dc822d21d3ec8f5e0bbe59c797f2.coh-ce-cpt_ss_1_column_layout-5c0c446e {  display: none;}@media (max-width: 767px) {  .mobile-visibility.ssa-instance-7f63dc822d21d3ec8f5e0bbe59c797f2.coh-ce-cpt_ss_1_column_layout-5c0c446e {    display: block;  }}.ssa-instance-7f63dc822d21d3ec8f5e0bbe59c797f2.coh-ce-cpt_ss_1_column_layout-94121495 {    -webkit-box-pack: center;    -webkit-justify-content: center;        -ms-flex-pack: center;            justify-content: center;    min-height: auto;}@media (max-width: 1023px) {  .ssa-instance-7f63dc822d21d3ec8f5e0bbe59c797f2.coh-ce-cpt_ss_1_column_layout-94121495 {      min-height: auto;  }}@media (max-width: 767px) {  .ssa-instance-7f63dc822d21d3ec8f5e0bbe59c797f2.coh-ce-cpt_ss_1_column_layout-94121495 {      min-height: auto;  }}.ssa-instance-7f63dc822d21d3ec8f5e0bbe59c797f2.coh-ce-cpt_ss_1_column_layout-d99bb6d {  -webkit-box-orient: vertical;  -webkit-box-direction: normal;  -webkit-flex-direction: column;      -ms-flex-direction: column;          flex-direction: column;    -webkit-box-pack: flex-start;    -webkit-justify-content: flex-start;        -ms-flex-pack: flex-start;            justify-content: flex-start;  display: -webkit-box;  display: -webkit-flex;  display: -ms-flexbox;  display: flex;}@media (max-width: 1023px) {  .ssa-instance-7f63dc822d21d3ec8f5e0bbe59c797f2.coh-ce-cpt_ss_1_column_layout-d99bb6d {      -webkit-box-pack: flex-start;      -webkit-justify-content: flex-start;          -ms-flex-pack: flex-start;              justify-content: flex-start;  }}@media (max-width: 767px) {  .ssa-instance-7f63dc822d21d3ec8f5e0bbe59c797f2.coh-ce-cpt_ss_1_column_layout-d99bb6d {      -webkit-box-pack: flex-start;      -webkit-justify-content: flex-start;          -ms-flex-pack: flex-start;              justify-content: flex-start;  }}</style>
+<style>.ssa-instance-8da7e75f63272050235b343424d9927a.coh-ce-cpt_text-f526f279 {    -webkit-box-flex: 0;    -webkit-flex-grow: 0;        -ms-flex-positive: 0;            flex-grow: 0;}.border.ssa-instance-8da7e75f63272050235b343424d9927a.coh-ce-cpt_text-f526f279 {  border-width: 0.0625rem;  border-style: solid;}.max-width.ssa-instance-8da7e75f63272050235b343424d9927a.coh-ce-cpt_text-f526f279 {}.align-left.ssa-instance-8da7e75f63272050235b343424d9927a.coh-ce-cpt_text-f526f279 {  margin-right: auto;  margin-left: 0px;}.align-center.ssa-instance-8da7e75f63272050235b343424d9927a.coh-ce-cpt_text-f526f279 {  margin-right: auto;  margin-left: auto;}.align-right.ssa-instance-8da7e75f63272050235b343424d9927a.coh-ce-cpt_text-f526f279 {  margin-right: 0px;  margin-left: auto;}.full-width.ssa-instance-8da7e75f63272050235b343424d9927a.coh-ce-cpt_text-f526f279 {  width: 100%;}</style>
+<style>.ssa-instance-12b481f3ac857dae36e499187279a30b.coh-ce-cpt_image-4269d71b {    max-width: 1000px;  position: relative;}.align-center.ssa-instance-12b481f3ac857dae36e499187279a30b.coh-ce-cpt_image-4269d71b {  margin-right: auto;  margin-left: auto;}.align-left.ssa-instance-12b481f3ac857dae36e499187279a30b.coh-ce-cpt_image-4269d71b {  margin-right: auto;  margin-left: 0px;}.align-right.ssa-instance-12b481f3ac857dae36e499187279a30b.coh-ce-cpt_image-4269d71b {  margin-right: 0px;  margin-left: auto;}.ssa-instance-12b481f3ac857dae36e499187279a30b.coh-ce-cpt_image-4a7ca909 {  min-height: 1px;    max-width: 1000px;    width: 100%;}.fill-space-available.ssa-instance-12b481f3ac857dae36e499187279a30b.coh-ce-cpt_image-4a7ca909 {  -o-object-fit: cover;     object-fit: cover;  width: 100%;  display: -webkit-box;  display: -webkit-flex;  display: -ms-flexbox;  display: flex;  -webkit-box-orient: vertical;  -webkit-box-direction: normal;  -webkit-flex-direction: column;      -ms-flex-direction: column;          flex-direction: column;  -webkit-box-flex: 1;  -webkit-flex-grow: 1;      -ms-flex-positive: 1;          flex-grow: 1;}.drop-shadow-light.ssa-instance-12b481f3ac857dae36e499187279a30b.coh-ce-cpt_image-4a7ca909 {  -webkit-filter: drop-shadow(4px 7px 10px rgba(255, 255, 255, 0.35));          filter: drop-shadow(4px 7px 10px rgba(255, 255, 255, 0.35));}.drop-shadow-dark.ssa-instance-12b481f3ac857dae36e499187279a30b.coh-ce-cpt_image-4a7ca909 {  -webkit-filter: drop-shadow(4px 7px 10px rgba(0, 0, 0, 0.35));          filter: drop-shadow(4px 7px 10px rgba(0, 0, 0, 0.35));}.ssa-instance-12b481f3ac857dae36e499187279a30b.coh-ce-cpt_image-34774424 {  display: none;  text-align: left;}.caption-on.ssa-instance-12b481f3ac857dae36e499187279a30b.coh-ce-cpt_image-34774424 {  opacity: 0.75;  display: block;  padding: 10px;  font-size: 12px;  border-bottom-width: 1px;  border-bottom-style: solid;  border-bottom-color: rgb(191, 191, 191);  width: 100%;  position: absolute;}.caption-off.ssa-instance-12b481f3ac857dae36e499187279a30b.coh-ce-cpt_image-34774424 {  display: none;}</style>
+<style>.ssa-instance-46ee7455af4967ca1816d112681e09d2.coh-ce-cpt_text-f526f279 {    -webkit-box-flex: 0;    -webkit-flex-grow: 0;        -ms-flex-positive: 0;            flex-grow: 0;}.border.ssa-instance-46ee7455af4967ca1816d112681e09d2.coh-ce-cpt_text-f526f279 {  border-width: 0.0625rem;  border-style: solid;}.max-width.ssa-instance-46ee7455af4967ca1816d112681e09d2.coh-ce-cpt_text-f526f279 {}.align-left.ssa-instance-46ee7455af4967ca1816d112681e09d2.coh-ce-cpt_text-f526f279 {  margin-right: auto;  margin-left: 0px;}.align-center.ssa-instance-46ee7455af4967ca1816d112681e09d2.coh-ce-cpt_text-f526f279 {  margin-right: auto;  margin-left: auto;}.align-right.ssa-instance-46ee7455af4967ca1816d112681e09d2.coh-ce-cpt_text-f526f279 {  margin-right: 0px;  margin-left: auto;}.full-width.ssa-instance-46ee7455af4967ca1816d112681e09d2.coh-ce-cpt_text-f526f279 {  width: 100%;}</style>
+<style>.ssa-instance-48c99daa49a542f0d2dd947fa61d7ff7.coh-ce-cpt_ss_heading-d3df473f {  display: block;    color: rgba(37, 55, 70, 1);}.align-text-left.ssa-instance-48c99daa49a542f0d2dd947fa61d7ff7.coh-ce-cpt_ss_heading-d3df473f {  text-align: left;  margin-right: auto;  margin-left: 0px;}.align-text-center.ssa-instance-48c99daa49a542f0d2dd947fa61d7ff7.coh-ce-cpt_ss_heading-d3df473f {  text-align: center;  margin-right: auto;  margin-left: auto;}.align-text-right.ssa-instance-48c99daa49a542f0d2dd947fa61d7ff7.coh-ce-cpt_ss_heading-d3df473f {  text-align: right;  margin-right: 0px;  margin-left: auto;}.auto-width.ssa-instance-48c99daa49a542f0d2dd947fa61d7ff7.coh-ce-cpt_ss_heading-d3df473f {  width: auto;}.max-width.ssa-instance-48c99daa49a542f0d2dd947fa61d7ff7.coh-ce-cpt_ss_heading-d3df473f {}.full-width.ssa-instance-48c99daa49a542f0d2dd947fa61d7ff7.coh-ce-cpt_ss_heading-d3df473f {  width: 100%;}</style>
+<style>.ssa-instance-37d1e74067e9ddef55fca4ffc006dc78.coh-ce-cpt_text-f526f279 {    -webkit-box-flex: 0;    -webkit-flex-grow: 0;        -ms-flex-positive: 0;            flex-grow: 0;}.border.ssa-instance-37d1e74067e9ddef55fca4ffc006dc78.coh-ce-cpt_text-f526f279 {  border-width: 0.0625rem;  border-style: solid;}.max-width.ssa-instance-37d1e74067e9ddef55fca4ffc006dc78.coh-ce-cpt_text-f526f279 {}.align-left.ssa-instance-37d1e74067e9ddef55fca4ffc006dc78.coh-ce-cpt_text-f526f279 {  margin-right: auto;  margin-left: 0px;}.align-center.ssa-instance-37d1e74067e9ddef55fca4ffc006dc78.coh-ce-cpt_text-f526f279 {  margin-right: auto;  margin-left: auto;}.align-right.ssa-instance-37d1e74067e9ddef55fca4ffc006dc78.coh-ce-cpt_text-f526f279 {  margin-right: 0px;  margin-left: auto;}.full-width.ssa-instance-37d1e74067e9ddef55fca4ffc006dc78.coh-ce-cpt_text-f526f279 {  width: 100%;}</style>
+<style>.ssa-instance-4e1946170e5dbd1b072dc40cc5029422.coh-ce-cpt_ss_heading-d3df473f {  display: block;    color: rgba(37, 55, 70, 1);}.align-text-left.ssa-instance-4e1946170e5dbd1b072dc40cc5029422.coh-ce-cpt_ss_heading-d3df473f {  text-align: left;  margin-right: auto;  margin-left: 0px;}.align-text-center.ssa-instance-4e1946170e5dbd1b072dc40cc5029422.coh-ce-cpt_ss_heading-d3df473f {  text-align: center;  margin-right: auto;  margin-left: auto;}.align-text-right.ssa-instance-4e1946170e5dbd1b072dc40cc5029422.coh-ce-cpt_ss_heading-d3df473f {  text-align: right;  margin-right: 0px;  margin-left: auto;}.auto-width.ssa-instance-4e1946170e5dbd1b072dc40cc5029422.coh-ce-cpt_ss_heading-d3df473f {  width: auto;}.max-width.ssa-instance-4e1946170e5dbd1b072dc40cc5029422.coh-ce-cpt_ss_heading-d3df473f {}.full-width.ssa-instance-4e1946170e5dbd1b072dc40cc5029422.coh-ce-cpt_ss_heading-d3df473f {  width: 100%;}</style>
+<style>.ssa-instance-82657358df0520237cc5e84f54f13d1b.coh-ce-cpt_text-f526f279 {    -webkit-box-flex: 0;    -webkit-flex-grow: 0;        -ms-flex-positive: 0;            flex-grow: 0;}.border.ssa-instance-82657358df0520237cc5e84f54f13d1b.coh-ce-cpt_text-f526f279 {  border-width: 0.0625rem;  border-style: solid;}.max-width.ssa-instance-82657358df0520237cc5e84f54f13d1b.coh-ce-cpt_text-f526f279 {}.align-left.ssa-instance-82657358df0520237cc5e84f54f13d1b.coh-ce-cpt_text-f526f279 {  margin-right: auto;  margin-left: 0px;}.align-center.ssa-instance-82657358df0520237cc5e84f54f13d1b.coh-ce-cpt_text-f526f279 {  margin-right: auto;  margin-left: auto;}.align-right.ssa-instance-82657358df0520237cc5e84f54f13d1b.coh-ce-cpt_text-f526f279 {  margin-right: 0px;  margin-left: auto;}.full-width.ssa-instance-82657358df0520237cc5e84f54f13d1b.coh-ce-cpt_text-f526f279 {  width: 100%;}</style>
+<style>.ssa-instance-5524d8dc6672b608633d3aaed6805d82.coh-ce-cpt_ss_heading-d3df473f {  display: block;    color: rgba(37, 55, 70, 1);}.align-text-left.ssa-instance-5524d8dc6672b608633d3aaed6805d82.coh-ce-cpt_ss_heading-d3df473f {  text-align: left;  margin-right: auto;  margin-left: 0px;}.align-text-center.ssa-instance-5524d8dc6672b608633d3aaed6805d82.coh-ce-cpt_ss_heading-d3df473f {  text-align: center;  margin-right: auto;  margin-left: auto;}.align-text-right.ssa-instance-5524d8dc6672b608633d3aaed6805d82.coh-ce-cpt_ss_heading-d3df473f {  text-align: right;  margin-right: 0px;  margin-left: auto;}.auto-width.ssa-instance-5524d8dc6672b608633d3aaed6805d82.coh-ce-cpt_ss_heading-d3df473f {  width: auto;}.max-width.ssa-instance-5524d8dc6672b608633d3aaed6805d82.coh-ce-cpt_ss_heading-d3df473f {}.full-width.ssa-instance-5524d8dc6672b608633d3aaed6805d82.coh-ce-cpt_ss_heading-d3df473f {  width: 100%;}</style>
+<style>.ssa-instance-553a18506b68cdf84b269c2787533684.coh-ce-cpt_text-f526f279 {    -webkit-box-flex: 0;    -webkit-flex-grow: 0;        -ms-flex-positive: 0;            flex-grow: 0;}.border.ssa-instance-553a18506b68cdf84b269c2787533684.coh-ce-cpt_text-f526f279 {  border-width: 0.0625rem;  border-style: solid;}.max-width.ssa-instance-553a18506b68cdf84b269c2787533684.coh-ce-cpt_text-f526f279 {}.align-left.ssa-instance-553a18506b68cdf84b269c2787533684.coh-ce-cpt_text-f526f279 {  margin-right: auto;  margin-left: 0px;}.align-center.ssa-instance-553a18506b68cdf84b269c2787533684.coh-ce-cpt_text-f526f279 {  margin-right: auto;  margin-left: auto;}.align-right.ssa-instance-553a18506b68cdf84b269c2787533684.coh-ce-cpt_text-f526f279 {  margin-right: 0px;  margin-left: auto;}.full-width.ssa-instance-553a18506b68cdf84b269c2787533684.coh-ce-cpt_text-f526f279 {  width: 100%;}</style>
+<style></style>
+<style>.ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-be41bb13 {  background-image: none, -webkit-linear-gradient(300deg, rgb(36, 42, 117) 1%, rgb(2, 128, 207) 100%);  background-image: none, linear-gradient(150deg, rgb(36, 42, 117) 1%, rgb(2, 128, 207) 100%);  background-position: center, center;  background-size: cover, auto;  background-repeat: no-repeat, no-repeat;  background-origin: border-box;  background-clip: border-box;  background-attachment: scroll, scroll;    margin-top: 60px;  position: relative;}@media (max-width: 564px) {  .ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-be41bb13 {    background-image: -webkit-linear-gradient(300deg, rgb(36, 42, 117) 1%, rgb(2, 128, 207) 100%);    background-image: linear-gradient(150deg, rgb(36, 42, 117) 1%, rgb(2, 128, 207) 100%);    background-position: center, left top;    background-size: auto, auto;    background-repeat: no-repeat, no-repeat;    background-attachment: scroll, scroll;  }}@media (max-width: 564px) {  .mobile-background.ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-be41bb13 {    background-position: center;    background-size: cover;    background-repeat: no-repeat;    background-attachment: scroll;  }}.ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-9b625b7b {  -webkit-box-orient: horizontal;  -webkit-box-direction: normal;  -webkit-flex-direction: row;      -ms-flex-direction: row;          flex-direction: row;  -webkit-flex-wrap: wrap;      -ms-flex-wrap: wrap;          flex-wrap: wrap;  height: auto;}@media (max-width: 564px) {  .ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-9b625b7b {  }}.ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-8e140890 {    margin-top: auto;  margin-bottom: auto;  -webkit-box-orient: vertical;  -webkit-box-direction: normal;  -webkit-flex-direction: column;      -ms-flex-direction: column;          flex-direction: column;  -webkit-box-pack: center;  -webkit-justify-content: center;      -ms-flex-pack: center;          justify-content: center;  display: -webkit-box;  display: -webkit-flex;  display: -ms-flexbox;  display: flex;}@media (max-width: 564px) {  .ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-8e140890 {      text-align: center;  }}.ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-167552ea {  display: none;}.preheader-on.ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-167552ea {    color: rgba(0, 187, 221, 1);  display: block;  margin-bottom: 20px;}.preheader-off.ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-167552ea {  display: none;}.ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-4cc9908 {    max-width: 1000px;    color: rgba(255, 255, 255, 1);     display: block;   display: block;}.ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-54ac8cc0 {    max-width: 1200px;  margin-bottom: 40px;    color: rgba(255, 255, 255, 1);    display: block;}.ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-8c194902 {    display: None;}.ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-dfe395ce {  text-align: center;  margin-right: 0;  margin-bottom: 0;  margin-left: 20px;}@media (max-width: 564px) {  .ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-dfe395ce {    margin-right: 10px;    margin-bottom: 10px;    margin-left: 10px;  }}.ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-74ce9aba {    display: None;}.ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-ba1bf903 {  display: none;  margin: auto;}.image-on.ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-ba1bf903 {  margin-top: auto;  margin-bottom: auto;  display: block;}@media (max-width: 1023px) {  .image-on.ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-ba1bf903 {  }}.image-off.ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-ba1bf903 {  display: none;}.ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-e96be585 {  width: auto;  position: relative;}.drop-shadow-light.ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-e96be585 {  -webkit-filter: drop-shadow(4px 7px 10px rgba(255, 255, 255, 0.35));          filter: drop-shadow(4px 7px 10px rgba(255, 255, 255, 0.35));}.drop-shadow-dark.ssa-instance-82548897a85ced4c6e5693e8eccdd77d.coh-ce-cpt_ss_top_banner-e96be585 {  -webkit-filter: drop-shadow(4px 7px 10px rgba(0, 0, 0, 0.35));          filter: drop-shadow(4px 7px 10px rgba(0, 0, 0, 0.35));}</style>
+        <!-- Google Tag Manager -->
+        <script>
+          (function(w, d, s, l, i) {
+            w[l] = w[l] || [];
+            w[l].push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
+            var f = d.getElementsByTagName(s)[0],
+              j = d.createElement(s),
+              dl = l != 'dataLayer'
+                ? '&l=' + l
+                : '';
+            j.async = true;
+            j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+            f.parentNode.insertBefore(j, f);
+          })(window, document, 'script', 'dataLayer', 'GTM-WLTDBRV');
+        </script>
+        <!-- End Google Tag Manager -->
+        <!-- Bizible Script -->
+        <script type="text/plain" src="//cdn.bizible.com/scripts/bizible.js" async="" class="optanon-category-C0003"></script>
+        <!-- Bizible Script Ends Here -->
+                  <!-- Start of Async Drift Code -->
+          <script type="text/plain" class="optanon-category-C0003">
+            "use strict";
+            !function() {
+              var t = window.driftt = window.drift = window.driftt || [];
+              if (!t.init) {
+                if (t.invoked)
+                  return void(window.console && console.error && console.error("Drift snippet included twice."));
+                t.invoked = !0,
+                  t.methods = [
+                    "identify",
+                    "config",
+                    "track",
+                    "reset",
+                    "debug",
+                    "show",
+                    "ping",
+                    "page",
+                    "hide",
+                    "off",
+                    "on"
+                  ],
+                  t.factory = function(e) {
+                    return function() {
+                      var n = Array.prototype.slice.call(arguments);
+                      return n.unshift(e),
+                        t.push(n),
+                        t;
+                    };
+                  },
+                  t.methods.forEach(function(e) {
+                    t[e] = t.factory(e);
+                  }),
+                  t.load = function(t) {
+                    var e = 3e5,
+                      n = Math.ceil(new Date() / e) * e,
+                      o = document.createElement("script");
+                    o.type = "text/javascript",
+                      o.async = !0,
+                      o.crossorigin = "anonymous",
+                      o.src = "https://js.driftt.com/include/" + n + "/" + t + ".js";
+                    var i = document.getElementsByTagName("script")[0];
+                    i.parentNode.insertBefore(o, i);
+                  };
+              }
+            }();
+            drift.SNIPPET_VERSION = '0.3.1';
+            drift.load('st8vikni5sz6');
+          </script>
+          <!-- End of Async Drift Code -->
+                </head>
+<body class="node-48946 node-type-blog"  data-id="node/48946">
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+  <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WLTDBRV" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+<!-- End Google Tag Manager (noscript) -->
+<div class="hidden thales_nodeid">node/48946</div>
+<div id="loader"></div>
+<div class="default-en">
+  <div id="block-headerenglish">
+  
+    
+      
+            <div><!-- Header - English US -->
+<!-- 04-30-2026 GH SM -->
+<!-- 04-29-2026 GH AppsEc Resources -->
+<!-- 04-29-2026 GH Bad Bot -->
+<!-- 04-15-2026 GH HKMA Compliance -->
+<!-- 04-15-2026 GH SM Support -->
+<!-- 04-14-2026 GH Use Cases Section -->
+<header class="fixed-top en">
+<nav>
+<style type="text/css">
+.micro { font-size: 15px; margin: 0px 10px 5px; font-weight: 400; border-bottom: 1px solid #242a75; cursor: default;}
+.right-part img {width: 265px;}
+.btn-default::after {display: none;}
+.subfix {margin-top:12px !important;}
+.logo svg{width:100%;}
+.fullwidth { width: 100% !important} 
+.nolink {cursor: default;}
+header nav .nav-wrap .main-nav > ul > li { margin: 0 19px 0 0; }
+header nav .nav-wrap .main-nav > ul > li.developers > a:after { background-image: none;}
+header nav .nav-wrap .main-nav > ul > li .sub-menu ul li .sub-menu-inner .left-part .detail-menu { max-height: unset; height: 100% !important; }
+header nav .nav-wrap .main-nav > ul > li .sub-menu .col-seven .h4 { margin-bottom: 10px !important; }
+header nav .nav-wrap .main-nav ul.right li.contact{ padding: 0px 0px 12px 0px; margin-top: -5px;}
+header nav .nav-wrap .main-nav ul.right li.contact::after{ display: none;}
+header nav .nav-wrap .main-nav ul.right li.language-changer ul.language-dropdown{ top: 45px;}
+header nav .nav-wrap .main-nav ul.right li.search {margin: 0 0px 0 16px !important;}
+@media (min-width: 1200px) {header .logo {margin-top:-3px;}}
+@media (max-width: 1199px) and (min-width: 992px){header .logo {margin-top:0px;}}
+@media (max-width: 1091px) and (min-width: 992px){.main-nav > ul > li.developers { display: none !important;}}
+@media (max-width: 991px) {ul.col-three, .col-seven { height: 100% !important;}}
+@media (min-width: 992px) {ul.col-three { height: 460px;} .col-seven { min-height: 460px !important;} .solutions .col-seven { min-height: 600px !important;}}
+@media only screen and (max-width : 991px) {
+    body {padding-top: 61px;}
+    .sectionheader {display:none;}
+    .sub-menu {height: unset !important;}
+    header nav .nav-wrap .main-nav ul.right li.contact {padding: 20px;}
+}
+.btn-contact {
+	text-transform: initial;
+    font-size: 16px !important;
+    margin: 0;
+    padding: 10px 21px 10px 22px !important;
+    color: #ffffff !important;
+    background: -webkit-gradient(linear, left top, left bottom, from(#4eb2ca), to(#1f6ea9));
+    background: -webkit-linear-gradient(top, #4eb2ca 0%, #1f6ea9 100%);
+    background: -o-linear-gradient(top, #4eb2ca 0%, #1f6ea9 100%);
+    background: linear-gradient(to bottom, #4eb2ca 0%, #1f6ea9 100%);
+    border: 0;
+    outline: none;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500 !important;
+    min-width: 125px !important;
+    text-align: center !important;
+    -webkit-transition: all 0.3s ease-out;
+    -o-transition: all 0.3s ease-out;
+    transition: all 0.3s ease-out;
+}
+.btn-contact:after {
+	display: none;
+	width: 0px !important;
+}
+.btn-contact:before {
+	height: 0px !important;
+}
+</style>
+<div class="container">
+<div class="logo"><a href="/"><img src="/sites/default/files/content/thales-logo-building-a-future-we-can-all-trust.svg" alt="Thales logo | Building a Future We Can All Trust" style="width:180px; height:40px;"></a></div>
+
+<div class="secondary-nav">
+<div class="search"><img alt="Search" height="20" src="/themes/thalesesecurity/templates/dist/images/search.svg" width="20" /></div>
+
+<div class="hamburger">
+<div>&nbsp;</div>
+
+<div>&nbsp;</div>
+
+<div>&nbsp;</div>
+</div>
+</div>
+
+<div class="nav-wrap">
+<div class="main-nav">
+<ul class="left">
+	<li class="inner-nav products"><a href="/products">Products</a>
+
+	<div class="sub-menu fullwidth" style="height: 460px;">
+	<ul class="col-three" style="height: 460px;">
+		<li class="sectionheader"><span>Products</span></li>
+		<li class="overview"><a href="/products"><span>Products Overview</span></a></li>
+		<li class="has-menu inner-link"><a href="/data-security/ai-cybersecurity-solutions"><span>AI Security</span></a>
+		<div class="sub-menu-inner" style="left: 565px;">
+		<div class="col-seven" style="width: 695px;">
+
+	<div class="left-part">
+	<div class="h4">AI Security Fabric</div>
+	<p>Secure Agentic AI and LLM-powered applications with AI runtime security.</p>
+	<p><a class="link" href="/data-security/ai-cybersecurity-solutions">LEARN MORE ABOUT<br>AI CYBERSECURITY SOLUTIONS</a></p>
+	<p><a class="link" href="/contact-us">REQUEST A DEMO</a></p>
+			</div>
+
+		<div class="right-part">
+        <div class="image-wrap left-align"><img alt="2026 Data Threat Report" height="150" src="/sites/default/files/content/top_nav/DTR-2026-CTA-TopNav.webp" width="265" /></div>
+        <div class="h4">2026 Data Threat Report</div>	
+        <div class="h4">AI is the New Insider Threat</div>	
+        <p style="max-width: 290px;">Discover the 2026 Thales Data Threat Report —<br>your essential guide to the latest global data security trends, emerging tech risks, and actionable insights to strengthen enterprise-wide defenses and drive strategic security collaboration.</p>
+        <a class="link" href="/data-threat-report">Get Your Copy Today</a>
+		</div>
+		</div>
+		</div>
+		</li>
+		<li class="has-menu inner-link"><a href="/data-security"><span>Data Security</span></a>
+		<div class="sub-menu-inner" style="left: 565px;">
+		<div class="col-seven" style="width: 695px;">
+		<ul class="left-part">
+			<li class="sectionheader"><span>Data Security</span></li>
+			<li><a href="/encryption/data-security-platform">Data Security Platform</a></li>
+			<li><a href="/encryption/data-security-posture-management" style="letter-spacing: -.0086em;">Data Security Posture Management</a></li>
+			<li><a href="/encryption/data-discovery-and-classification">Data Discovery &amp; Classification</a></li>
+			<li class="has-menu detail-link"><a href="/encryption"><span>Data at Rest Encryption</span></a>
+			<div class="detail-menu" style="left: 305px; width: 390px;">
+			<ul class="detail-list">
+				<li class="sectionheader"><span>Data at Rest Encryption</span></li>
+				<li class="overview"><a href="/encryption">Data at Rest Encryption</a></li>
+				<li><a href="/encryption/transparent-encryption">Transparent Encryption</a></li>
+				<li><a href="/encryption/application-data-protection">Application Data Protection</a></li>
+				<li><a href="/encryption/tokenization">Tokenization</a></li>
+				<li><a href="/encryption/data-masking-solutions">Data Masking Solutions</a></li>
+				<li><a href="/encryption/ciphertrust-data-protection-gateway">Data Protection Gateway</a></li>
+				<li><a href="/encryption/database-protection">Database Protection</a></li>
+				<li><a href="/encryption/batch-data-transformation">Batch Data Transformation</a></li>
+				<li><a href="/encryption/ciphertrust-ransomware-protection">Ransomware Protection</a></li>
+				<li><a href="/encryption/ciphertrust-restful-data-protection">CipherTrust RESTful Data Protection</a></li>
+			</ul>
+			</div>
+			</li>
+			<li><a href="/encryption/key-management"><span>Key Management</span></a></li>
+			<li><a href="/encryption/ciphertrust-secrets-management">Secrets Management</a></li>
+			<li class="has-menu detail-link"><a href="/encryption/hardware-security-modules"><span>Hardware Security Modules</span></a>
+			<div class="detail-menu" style="left: 305px; width: 390px;">
+			<ul class="detail-list">
+				<li class="sectionheader"><span>Hardware Security Modules</span></li>
+				<li class="overview"><a href="/encryption/hardware-security-modules">Hardware Security Modules</a></li>
+				<li><a href="/encryption/hardware-security-modules/general-purpose-hsms">General Purpose HSMs</a></li>
+				<li><a href="/encryption/hardware-security-modules/payment-hsms">Payment HSMs</a></li>
+				<li><a href="/encryption/data-protection-on-demand/services/luna-cloud-hsm-services">Luna Cloud HSM Services</a></li>
+			</ul>
+			</div>
+			</li>
+			<li class="has-menu detail-link"><a href="/encryption/data-protection-on-demand"><span>Data Protection on Demand</span></a>
+			<div class="detail-menu" style="left: 305px; width: 390px;">
+			<ul class="detail-list">
+				<li class="sectionheader"><span>Data Protection on Demand</span></li>
+				<li class="overview"><a href="/encryption/data-protection-on-demand">Data Protection on Demand</a></li>
+				<li><a href="/encryption/data-protection-on-demand/services">Services</a></li>
+				<li><a href="/encryption/data-protection-on-demand/how-it-works">How it Works</a></li>
+				<li><a href="/encryption/data-protection-on-demand/cloud-managed-service-partners">Partners</a></li>
+				<li><a href="/encryption/data-protection-on-demand/pricing">Pricing</a></li>
+				<li><a href="/encryption/data-protection-on-demand/marketplace">Sign Up Now</a></li>
+			</ul>
+			</div>
+			</li>
+			<li><a href="/encryption/data-in-motion">Network Encryption</a></li>
+			<li><a href="https://www.imperva.com/products/data-security-fabric/?utm_source=thalescpl&utm_medium=menu&utm_campaign=thales-imperva-together" target="_blank">Risk Analytics & Monitoring</a></li>
+			<li><a href="/encryption/data-at-rest/sure-drop">Secure File Sharing</a></li>
+			<li><a href="/encryption/devsecops-security-solutions">DevSecOps</a></li>
+		</ul>
+
+		<div class="right-part">
+		<div class="image-wrap"><img loading="lazy" alt="Risk Management Strategies for Digital Processes with HSMs" height="150" src="/sites/default/files/content/top_nav/cta-hsm-anchor-trust-in-digital-world-white-paper.webp" width="265" /></div>
+
+		<div class="h4">Risk Management Strategies for Digital Processes with HSMs</div>
+
+		<p style="max-width: 290px;">Security architects are implementing comprehensive information risk management strategies that include integrated Hardware Security Modules (HSMs). Reduce risk and create a competitive advantage.</p>
+		<a class="link" href="/resources/encryption/hsm-anchor-trust-in-digital-world-white-paper">Get the White Paper</a></div>
+		</div>
+		</div>
+		</li>
+		
+		<li class="has-menu inner-link"><a href="https://www.imperva.com/products/application-security/?utm_source=thalescpl&utm_medium=menu&utm_campaign=thales-imperva-together" target="_blank"><span>Application Security</span></a>
+		<div class="sub-menu-inner" style="left: 565px;">
+		<div class="col-seven" style="width: 695px;">
+		<ul class="left-part">
+			<li class="sectionheader"><span>Application Security</span></li>
+			<li class="overview"><a href="https://www.imperva.com/products/application-security/?utm_source=thalescpl&utm_medium=menu&utm_campaign=thales-imperva-together" target="_blank"><span>Application Security Overview</span></a></li>
+			<li><a href="https://imperva.com/products/application-security/?utm_source=thalescpl&utm_medium=menu&utm_campaign=thales-imperva-together" target="_blank">Application Security Overview</a></li>
+			<li><a href="https://www.imperva.com/products/ai-application-security/" target="_blank">AI Application Security</a></li>
+			<li><a href="https://imperva.com/products/web-application-firewall-waf/?utm_source=thalescpl&utm_medium=menu&utm_campaign=thales-imperva-together" target="_blank">Web Application Firewall</a></li>
+			<li><a href="https://imperva.com/products/advanced-bot-protection-management/?utm_source=thalescpl&utm_medium=menu&utm_campaign=thales-imperva-together" target="_blank">Advanced Bot Protection</a></li>
+			<li><a href="https://imperva.com/products/api-security/?utm_source=thalescpl&utm_medium=menu&utm_campaign=thales-imperva-together" target="_blank">Unified API Security Platform</a></li>
+			<li><a href="https://imperva.com/products/ddos-protection-services/?utm_source=thalescpl&utm_medium=menu&utm_campaign=thales-imperva-together" target="_blank">DDoS Protection</a></li>
+			<li><a href="https://imperva.com/products/client-side-protection-csp/?utm_source=thalescpl&utm_medium=menu&utm_campaign=thales-imperva-together" target="_blank">Client-Side Protection</a></li><li><a href="https://imperva.com/products/account-takeover-protection/?utm_source=thalescpl&utm_medium=menu&utm_campaign=thales-imperva-together" target="_blank">Account Takeover Protection</a></li>
+			<li><a href="https://imperva.com/products/content-delivery-network-cdn/?utm_source=thalescpl&utm_medium=menu&utm_campaign=thales-imperva-together" target="_blank">Content Delivery Network</a></li>
+		</ul>
+
+		<div class="right-part">
+		<div class="image-wrap"><img loading="lazy" alt="2026 Thales Bad Bot Report" height="150" src="/sites/default/files/content/campaigns/badbot/BB-2026-CTA-TopNav.webp" width="265" /></div>
+
+		<div class="h4">2026 Thales Bad Bot Report</div>
+		<div class="h4">Bad Bots in the Agentic Age</div>	
+
+		<p style="max-width: 290px;">The 2026 Thales Bad Bot Report shows daily AI-enabled bot attacks jumped from 2 million<br>to 25 million in a single year. Read the report to learn more about security in the age of agentic AI.</p>
+		<a class="link" href="/resources/application-security/2026-bad-bot-report">Get your copy today</a>
+		</div>
+		</div>
+		</div>
+		</li>
+				
+		<li class="has-menu inner-link"><a href="/access-management"><span>Identity & Access Management</span> </a>
+		<div class="sub-menu-inner" style="left: 565px;">
+		<div class="col-seven" style="width: 695px;">
+		<ul class="left-part">
+			<li class="sectionheader"><span>Identity & Access Management</span></li>
+			<li class="has-menu detail-link"><a href="javascript:void(0)"><span>Identity Types</span> </a>
+                <div class="detail-menu" style="left: 305px; width: 390px;">
+                <ul class="detail-list">
+                    <li class="sectionheader"><span>Identity Types</span></li>
+                    <li><a href="/access-management/customer-identity">Customer Identity</a></li>
+					<li><a href="/access-management/workforce-identity"><span>Workforce Identity</span></a></li>
+					<li><a href="/access-management/b2b-identity">B2B Identity</a></li>
+					<li><a href="/access-management/gig-worker-identity">Gig Worker Identity</a></li>
+                </ul>
+                </div>
+			</li>
+			<li class="has-menu detail-link"><a href="javascript:void(0)"><span>Capabilities</span> </a>
+                <div class="detail-menu" style="left: 305px; width: 390px;">
+                <ul class="detail-list">
+                    <li class="sectionheader"><span>Capabilities</span></li>
+                    <li><a href="/access-management/adaptive-access-control">Adaptive Access Control</a></li>
+                    <li><a href="/access-management/byoi-social-login">BYOI & Social Login</a></li>
+                    <li><a href="/access-management/consent-preference-management">Consent & Preference Management</a></li>
+                    <li><a href="/access-management/delegated-user-management">Delegated User Management</a></li>
+                    <li><a href="/access-management/externalized-authorization">Externalized Authorization</a></li>
+		            <li><a href="/access-management/federated-identity">Federated Identity Management</a></li>
+                    <li><a href="/access-management/fraud-risk-management">Fraud & Risk Management</a></li>
+					<li><a href="/access-management/identity-verification">Identity Verification</a></li>
+					<li><a href="/access-management/multi-factor-authentication">Multi-Factor Authentication</a></li>
+					<li><a href="/access-management/risk-based-authentication">Risk-based Authentication</a></li>
+                    <li><a href="/access-management/single-sign-on">Single Sign-On (SSO)</a></li>
+					<li><a href="/access-management/strong-customer-authentication">Strong Customer Authentication</a></li>
+                    <li><a href="/access-management/user-journey-orchestration">User Journey Orchestration</a></li>
+				</ul>
+			</div>
+			</li>
+			<li class="has-menu detail-link"><a href="javascript:void(0)"><span>Product Types</span></a>
+			<div class="detail-menu" style="left: 305px; width: 390px;">
+			<ul class="detail-list">
+				<li class="sectionheader"><span>Product Types</span></li>
+	            <li><a href="/access-management/digital-banking">Digital Banking</a></li>
+				<li><a href="/access-management/eherkenning">eHerkenning</a></li>
+				<li><a href="/access-management/authenticators/fido-devices">FIDO Passkeys and Devices</a></li>
+				<li><a href="/access-management/on-prem-authentication-management">On-Prem Management Platforms</a></li>
+				<li><a href="/access-management/onewelcome-identity-platform">OneWelcome</a></li>
+				<li><a href="/access-management/authenticators/one-time-password-otp">OTP Authenticators</a></li>
+				<li><a href="/access-management/authenticators/mobilepass-otp-download">MobilePASS+</a></li>
+				<li><a href="/access-management/authenticators/passwordless-authentication">Passwordless Authentication</a></li>
+				<li><a href="/access-management/authenticators/pki-usb-authentication">PKI USB Tokens</a></li>
+				<li><a href="/access-management/safenet-trusted-access">SafeNet Trusted Access</a></li>
+				<li><a href="/access-management/authenticators/pki-smart-cards">Smart Cards</a></li>
+				<li><a href="/access-management/smart-card-readers">Smart Card Readers</a></li>
+				<li><a href="/access-management/authenticators/tokenless-authentication">Tokenless Authentication</a></li>
+			</ul>
+			</div>
+			</li>
+            <li><a href="/access-management/demo-request">Request a Demo</a></li>
+			<li><a href="/access-management/idaas-cloud-sso-free-trial"><span>Free Trial: SafeNet Trusted Access</span></a></li>
+        </ul>
+
+	<div class="right-part">
+	<div class="image-wrap left-align"><img alt="2026 Digital Trust Index" height="150" src="/sites/default/files/content/top_nav/2026-DTI-CTA-TopNav.webp" width="265" /></div>
+	<div class="h4">2026 Digital Trust Index</div>	
+	<div class="h4">Trust in the AI era</div>	
+	<p style="max-width: 290px;">Discover the 2026 Thales Digital Trust Index —<br>The most comprehensive study for IT Security Leaders on how Digital Experiences affect Trust across Consumers, Partners and Employees.</p>
+	<a class="link" href="/digital-trust-index">Get Your Copy Today</a></div>
+
+		</div>
+		</div>
+		</li>
+		<li class="has-menu inner-link"><a href="/software-monetization"><span>Software Monetization</span></a>
+		<div class="sub-menu-inner" style="left: 565px;">
+		<div class="col-seven" style="width: 695px;">
+		<ul class="left-part">
+			<li class="sectionheader"><span>Software Monetization</span></li>
+			<li class="overview"><a href="/software-monetization"><span>Software Monetization Overview</span></a></li>
+			<li><a href="/software-monetization/software-license-management">License Management</a></li>
+			<li><a href="/software-monetization/entitlement-management-solutions">Entitlement Management</a></li>
+			<li><a href="/software-monetization/rights-management-system-rms">Rights Management System</a></li>
+            <li><a href="/software-monetization/software-ip-protection">Software and IP protection</a></li>
+			<li><a href="/software-monetization/usage-intelligence">Software Usage Intelligence</a></li>
+			<li><a href="/software-monetization/all-products">All Software Monetization Products</a></li>
+			<li><a href="/software-monetization/sentinel-demo-tours"><span>Interactive Product Tours</span></a></li>
+			<li><a href="/software-monetization/sentinel-free-trial"><span>Request a Free Trial</span></a></li>
+			<li><a href="/software-monetization/sentinel-services-support"><span>Support and Services</span></a></li>
+		</ul>
+
+		<div class="right-part">
+		<div class="image-wrap left-align"><img loading="lazy" alt="How to Get Software Licensing Right The First Time" height="150" src="/sites/default/files/content/white-paper/cta/how-to-get-licensing-right-wp-cta.webp" width="265" /></div>
+
+		<div class="h4">How to Get Software Licensing Right&nbsp;The First Time</div>
+
+		<div class="h5">Navigate The Process of Licensing, Delivering, and Protecting Your Software</div>
+			
+		<p style="max-width: 290px;">Get the practical guide to software licensing the first time with comprehensive strategies that consider people, processes, and technology.</p>
+		<a class="link" href="/resources/software-monetization/how-to-get-licensing-right-white-paper">Get the White Paper</a></div>
+		</div>
+		</div>
+		</li>	
+	</ul>
+
+	<div class="col-seven">
+	<div class="left-part">
+	<div class="h4">How We Can Help</div>
+
+	<p>You can rely on Thales to help protect and secure access to your most sensitive data and software wherever it is created, shared or stored.</p>
+	</div>
+
+	<div class="right-part">
+	<div class="image-wrap left-align"><img alt="2026 Data Threat Report" height="150" src="/sites/default/files/content/top_nav/DTR-2026-CTA-TopNav.webp" width="265" /></div>
+	<div class="h4">2026 Data Threat Report</div>	
+	<div class="h4">AI is the New Insider Threat</div>	
+	<p style="max-width: 290px;">Discover the 2026 Thales Data Threat Report — your essential guide to the latest global data security trends, emerging tech risks, and actionable insights to strengthen enterprise-wide defenses and drive strategic security collaboration.</p>
+	<a class="link" href="/data-threat-report">Get Your Copy Today</a></div>
+
+	</div>
+	</div>
+	</li>
+	<li class="inner-nav solutions"><a href="/solutions">Solutions</a>
+	<div class="sub-menu fullwidth" style="height: 600px;">
+	<ul class="col-three" style="height: 600px;">
+		<li class="sectionheader"><span>Solutions</span></li>
+		<li class="overview"><a href="/solutions"><span>Solutions Overview</span></a></li>
+		<li class="has-menu inner-link"><a href="/solutions#use_case"><span>By Use Case</span> </a>
+		<div class="sub-menu-inner" style="left: 565px;">
+		<div class="col-seven" style="width: 695px;">
+		<ul class="left-part" style="max-height: 620px;">
+			<li class="sectionheader"><span>By Use Case</span></li>
+			<li class="has-menu detail-link"><a href="/data-security/ai-cybersecurity-solutions"><span>AI Security</span></a>
+			<div class="detail-menu" style="left: 305px; width: 390px;">
+			<ul class="detail-list">
+				<li class="sectionheader"><span>AI Security</span></li>
+				<li class="overview"><a href="/data-security/ai-cybersecurity-solutions">AI Security</a></li>
+				<li><a href="/data-security/ai-cybersecurity-solutions">AI Security Fabric</a></li>
+				<li><a href="/data-security/retrieval-augmented-generation-rag">RAG Data Security</a></li>
+				<li><a href="https://www.imperva.com/products/ai-application-security/" target="_blank">AI Application Security</a></li>
+			</ul>
+			</div>
+			</li>
+			<li><a href="/encryption/5g-security">5G Security</a></li>
+			<li><a href="https://imperva.com/products/application-security">Application Security</a></li>
+			<li><a href="/cloud-security">Cloud Data Security</a></li>
+			<li><a href="/encryption/blockchain">Blockchain Data Security</a></li>
+            <li><a href="/compliance/data-sovereignty">Data Sovereignty</a></li>
+			<li><a href="/encryption/data-security-posture-management" style="letter-spacing: -.0086em;">Data Security Posture Management</a></li>
+			<li><a href="/encryption/database-security">Database Security</a></li>
+			<li><a href="/encryption/devsecops-security-solutions">DevSecOps</a></li>
+			<li><a href="/encryption">Encryption</a></li>
+			<li><a href="/access-management">Identity & Access Management</a></li>
+			<li><a href="/encryption/key-management">Key Management</a></li>
+			<li class="has-menu detail-link"><a href="/encryption/post-quantum-crypto-agility"><span>Quantum</span></a>
+			<div class="detail-menu" style="left: 305px; width: 390px;">
+			<ul class="detail-list">
+				<li class="sectionheader" style="display:none;"><span>Quantum</span></li>
+				<li class="overview"><a href="/encryption/post-quantum-crypto-agility">Quantum</a></li>
+			</ul>
+            <div class="image-wrap left-align" style="margin-bottom: 15px;"><img loading="lazy" alt="Are You Post-Quantum Ready?" height="150" src="/sites/default/files/content/top_nav/Post-Quantum-Crypto-Agility-Tool-cta.webp" width="265" /></div>
+
+            <div class="h4">Are You Post-Quantum Ready?</div>
+
+            <p>Although post-quantum is projected to be a few years away, an enterprise must start planning today to be post-quantum ready. Take this free risk assessment to learn if your organization is at risk of a post-quantum breach.</p>
+            <a class="link" href="/encryption/post-quantum-crypto-agility-tool">TEST YOUR QUANTUM READINESS</a>
+				
+			</div>
+			</li>
+			<li><a href="/software-monetization">Software Monetization</a></li>
+		</ul>
+
+		<div class="right-part">
+		<div class="image-wrap left-align"><img loading="lazy" alt="The Rise in Unstructured Data and AI Security Risks" height="150" src="/sites/default/files/content/analyst_research/cta/The-Rise-in-Unstructured-Data-and-AI-Security-Risks-cta.webp" width="265" /></div>
+
+		<div class="h4">The Rise in Unstructured Data<br>and AI Security Risks</div>
+
+		<p style="max-width: 290px;">Discover The Rise in Unstructured Data and AI Security Risks — while 75% of organizations feel confident in their data security, 68% admit much of their unstructured data remains unprotected, revealing critical gaps in coverage and investment.</p>
+		<a class="link" href="/resources/data-security/unstructured-data-ai-security-risks-report">GET THE REPORT</a></div>
+		</div>
+		</div>
+		</li>
+		<li class="has-menu inner-link"><a href="/solutions#industry"><span>By Industry</span></a>
+		<div class="sub-menu-inner" style="left: 565px;">
+		<div class="col-seven" style="width: 695px;">
+		<ul class="left-part">
+			<li class="sectionheader"><span>By Industry</span></li>
+			<li><a href="/industry/connected-car-protection">Automotive </a></li>
+			<li><a href="/industry/critical-infrastructure-data-security">Critical Infrastructure</a></li>   
+            <li><a href="/industry/education-solutions">Education </a></li>
+			<li class="has-menu detail-link"><a href="/industry/government-data-security"><span>Government</span></a>
+			<div class="detail-menu" style="left: 305px; width: 390px;">
+			<ul class="detail-list">
+				<li class="sectionheader"><span>Government</span></li>
+				<li class="overview"><a href="/industry/government-data-security">Government </a></li>
+				<li><a href="/industry/government/federal-government-cyber-security">Federal Government </a></li>
+				<li><a href="/industry/government/state-local-government-data-security">State and Local Government </a></li>
+				<li><a href="/industry/government/law-enforcement-data-security">Law Enforcement </a></li>
+			</ul>
+			</div>
+			</li>
+			<li><a href="/industry/financial-data-security">Financial Services </a></li>
+			<li><a href="/industry/healthcare-data-security-solutions">Healthcare </a></li>
+			<li><a href="/industry/insurance-provider-data-security">Insurance Providers </a></li>
+			<li><a href="/industry/manufacturing-data-security">Manufacturing and Industrial</a></li>
+			<li><a href="/industry/media-and-entertainment-data-security">Media and Entertainment </a></li>
+			<li><a href="/industry/retail-data-security">Retail </a></li>
+			<li><a href="/industry/cloud-saas-provider-solutions">SaaS Providers and Consumers</a></li>
+			<li><a href="/industry/telecom-data-security-solutions">Telecommunications</a></li>
+			</ul>
+
+		<div class="right-part">
+		<div class="image-wrap"><img loading="lazy" alt="2026 Thales Bad Bot Report" height="150" src="/sites/default/files/content/campaigns/badbot/BB-2026-CTA-TopNav.webp" width="265" /></div>
+
+		<div class="h4">2026 Thales Bad Bot Report</div>
+		<div class="h4">Bad Bots in the Agentic Age</div>	
+
+		<p style="max-width: 290px;">The 2026 Thales Bad Bot Report finds 46% of account takeover attacks target Financial Services, while 20% of AI bot attacks target Retail websites. Check out the report for more key findings.</p>
+		<a class="link" href="/resources/application-security/2026-bad-bot-report">Get your copy today</a>
+		</div>
+
+		</div>
+		</div>
+		</li>
+		<li class="has-menu inner-link"><a href="/solutions#compliance"><span>By Compliance</span></a>
+		<div class="sub-menu-inner" style="left: 565px;">
+		<div class="col-seven" style="width: 695px;">
+		<ul class="left-part">
+			<li class="sectionheader"><span>By Compliance</span></li>
+			<li class="has-menu detail-link"><a href="/solutions#compliance"><span>Global</span></a>
+			<div class="detail-menu" style="left: 305px; width: 390px;">
+			<ul class="detail-list">
+				<li class="sectionheader"><span>Global</span></li>
+				<li><a href="/compliance/basel-compliance-solutions">Basel Compliance Solutions</a></li>
+				<li><a href="/compliance/data-breach-notifications-laws">Data Breach Notification Laws</a></li>
+				<li><a href="/compliance/data-sovereignty">Data Sovereignty </a></li>
+				<li><a href="/compliance/gdpr-compliance">GDPR </a></li>
+				<li><a href="/compliance/iso-277992016-compliance">ISO 27799:2016 Compliance </a></li>
+				<li><a href="/compliance/solutions-for-iso-iec-27001-2022-compliance">ISO/IEC 27001:2022 Compliance</a></li>
+				<li><a href="/compliance/isoiec-270022013-compliance">ISO/IEC 27002:2013 Compliance </a></li>
+				<li><a href="/compliance/pci-dss-compliance">PCI DSS </a></li>
+				<li><a href="/compliance/pci-hsm">PCI HSM </a></li>
+				<li><a href="/compliance/swift-csc-compliance">Swift CSC </a></li>
+				<li><a href="/compliance/fips-common-criteria-validations">Validations and Certifications </a></li>
+			</ul>
+			</div>
+			</li>
+			<li class="has-menu detail-link"><a href="/solutions#compliance"><span>Americas</span> </a>
+			<div class="detail-menu" style="left: 305px; width: 390px;">
+			<ul class="detail-list">
+				<li class="sectionheader"><span>Americas</span></li>
+				<li><a href="/compliance/americas/brazil-general-data-protection-law">Brazil - LGPD</a></li>
+				<li><a href="/compliance/americas/california-consumer-privacy-act-compliance-solutions-ccpa-compliance">CCPA (California Consumer Privacy Act) </a></li>
+				<li><a href="/compliance/cisa-zero-trust-compliance">CISA Zero Trust Maturity Model</a></li>	
+				<li><a href="/compliance/cjis-compliance">CJIS</a></li>
+				<li><a href="/compliance/cmmc-cybersecurity-compliance-solutions">Cybersecurity Maturity Model - CMMC</a></li>
+				<li><a href="/compliance/epcs-dea-fda-compliance">FDA/DEA - EPCS</a></li>
+				<li><a href="/compliance/americas/nist-800-53-fedramp/fedramp">FedRamp</a></li>
+				<li><a href="/compliance/americas/nist-800-53-fedramp/fisma">FISMA</a></li>
+				<li><a href="/compliance/americas/nist-800-53-fedramp/fips-199-and-fips-200">FIPS 199 and FIPS 200 </a></li>
+				<li><a href="/compliance/americas/fips-140-2">FIPS 140-2 </a></li>
+				<li><a href="/compliance/fips-140-3">FIPS 140-3 </a></li>
+				<li><a href="/compliance/glba-compliance">GLBA </a></li>
+				<li><a href="/compliance/hipaa-hitech-compliance">HIPAA </a></li>
+				<li><a href="/compliance/americas/mexico-data-protection-law">Mexico - Data Protection Law </a></li>
+				<li><a href="/compliance/americas/naic-insurance-data-security-model-law-compliance">NAIC Insurance Data Security Model Law Compliance </a></li>
+				<li><a href="/compliance/new-york-cybersecurity-regulation">New York State Cybersecurity Requirements for Financial Services Companies Compliance</a></li>
+				<li><a href="/compliance/credit-union-compliance-ncua">NCUA Regulatory Compliance </a></li>
+				<li><a href="/compliance/americas/nist-800-53-fedramp/nist-800-53-revision-4">NIST 800-53, Revision 4 </a></li>
+				<li><a href="/compliance/nist-csf-2-framework-solutions">NIST CSF 2.0</a></li>
+				<li><a href="/compliance/americas/pipeda-compliance">PIPEDA Compliance </a></li>
+				<li><a href="/compliance/americas/soc-2">SOC 2</a></li>
+				<li><a href="/compliance/sox-compliance-sarbanes-oxley">SOX </a></li>
+				<li><a href="/compliance/americas/secure-telephone-identity-revisited-stir-shaken">STIR/SHAKEN</a></li>
+			</ul>
+			</div>
+			</li>
+			<li class="has-menu detail-link"><a href="/solutions#compliance"><span>EMEA</span></a>
+			<div class="detail-menu" style="left: 305px; width: 390px;">
+			<ul class="detail-list">
+				<li class="sectionheader"><span>EMEA</span></li>
+				<li><a href="/compliance/emea/defcon-658">DEFCON 658</a></li>
+				<li><a href="/compliance/emea/data-security-compliance-dora-resilience-act">DORA</a></li>
+				<li><a href="/compliance/emea/saudi-arabia-essential-cybersecurity-controls-ecc">ECC</a></li>
+				<li><a href="/compliance/eidas">eIDAS</a></li>
+				<li><a href="/compliance/gdpr-compliance">GDPR</a></li>
+				<li><a href="/compliance/emea/nis2-directive-goal-enhance-cybersecurity-across-the-eu">NIS2</a></li>
+				<li><a href="/compliance/emea/psd2">PSD2</a></li>
+				<li><a href="/compliance/emea/schrems-ii">Schrems II</a></li>
+				<li><a href="/compliance/emea/south-africa-popi-act">South Africa POPI Act</a></li>
+			</ul>
+			</div>
+			</li>
+			<li class="has-menu detail-link"><a href="/solutions#compliance"><span>APAC</span></a>
+			<div class="detail-menu" style="left: 305px; width: 390px;">
+			<ul class="detail-list">
+				<li class="sectionheader"><span>APAC</span></li>
+				<li><a href="/compliance/apac/data-security-compliance-asic-market">Australia ASIC Market Integrity Rules</a></li>
+				<li><a href="/compliance/apac/australia-cps-234-information-security">Australia APRA CPS234</a></li>
+				<li><a href="/compliance/apac/australia-cryptography-guidelines-compliance">Australia Cryptography Guidelines</a></li>
+				<li><a href="/compliance/privacy-act-australia">Australia Privacy Amendment</a></li>
+				<li><a href="/compliance/apac/australia-soci-act-compliance">Australia SOCI Act</a></li>
+				<li><a href="/compliance/apac/bangladesh-data-security-compliance-guideline-ict-security">Bangladesh ICT Security Guideline</a></li>
+				<li><a href="/compliance/apac/personal-information-security-specification-cybersecurity-law-in-china">China Personal Information Security Specification</a></li>
+				<li><a href="/compliance/apac/hong-kong-critical-infrastructure-bill"><span>Hong Kong CI Bill</span></a></li>
+				<li><a href="/compliance/apac/hkma-cloud-adoption-compliance-guide"><span>Hong Kong Cloud Adoption Compliance</span></a></li>				
+				<li><a href="/compliance/apac/complying-with-hkma-digital-asset-guidelines">Hong Kong Digital Assets Guidelines</a></li>
+				<li><a href="/compliance/apac/hk-cloud-computing-security-guide">Hong Kong Practice Guide for Cloud Computing Security</a></li>
+				<li><a href="/compliance/apac/secure-tertiary-data-backup-guideline-hong-kong-compliance">Hong Kong Secure Tertiary Data Backup (STDB) Guideline</a></li>
+				<li><a href="/compliance/apac/virtual-asset-trading-platforms-operators">Hong Kong Virtual Asset Trading Platforms Operators Guideline</a></li>
+				<li><a href="/compliance/apac/india-cscrf-sebi-cybersecurity-compliance">India CSCRF by SEBI</a></li>
+				<li><a href="/compliance/apac/india-digital-personal-data-protection-act">India Digital Personal Data Protection Act</a></li>
+				<li><a href="/compliance/apac/framework-sebi-adoption-cloud-services">India Framework for Adoption of Cloud Services by SEBI</a></li>
+				<li><a href="/compliance/apac/data-security-compliance-for-indian-insurance-industry">India IRDAI ICS Guidelines</a></li>
+				<li><a href="/compliance/apac/data-security-compliance-it-outsourcing-india">India RBI Outsourcing of IT Services Directions</a></li>
+				<li><a href="/compliance/apac/indonesia-personal-data-protection-law">Indonesia Personal Data Protection Law</a></li>
+				<li><a href="/compliance/apac/data-security-compliance-japan-act-on-protection-of-personal-information">Japan Act on Protection of Personal Information</a></li>
+				<li><a href="/compliance/apac/fisc-security-guidelines-japan-financial-institutions">Japan FISC</a></li>
+				<li><a href="/compliance/apac/japan-my-number">Japan My Number Compliance</a></li>
+				<li><a href="/compliance/j-sox-compliance">J-Sox </a></li>
+				<li><a href="/compliance/apac/korea-personal-information-information-security-management-system-compliance">Korea Personal Information and Information Security Management System (ISMS-P)</a></li>
+				<li><a href="/compliance/apac/monetary-authority-of-singapore-guidance">Monetary Authority of Singapore</a></li>
+				<li><a href="/compliance/data-privacy-act-philippines">Philippines Data Privacy Act of 2012</a></li>
+				<li><a href="/compliance/apac/data-security-compliance-npc-circular-2023-06">Philippines NPC Circular 2023-06</a></li>
+				<li><a href="/compliance/apac/malaysia-bnm-risk-management-in-technology-rmit-policy">Risk Management in Technology (RMiT) Policy</a></li>
+				<li><a href="/compliance/apac/singapore-mas-advisory-on-quantum">Singapore MAS Advisory On Quantum</a></li>
+				<li><a href="/compliance/apac/recommendations-for-public-sector-data-security-singapore">Singapore Public Sector Data Security</a></li>
+				<li><a href="/compliance/apac/singapore-ccop-2-critical-information-infrastructure">Singapore CCoP2.0</a></li>
+				<li><a href="/compliance/apac/south-koreas-pipa">South Korea's PIPA</a></li>
+				<li><a href="/compliance/apac/bot-it-risk-management-guidelines-thailand">Thailand BOT - IT Risk Guidelines</a></li>
+				<li><a href="/compliance/apac/guidelines-supervision-management-it-risks-oic-thailand">Thailand OIC - IT Risk Guidelines</a></li>
+				<li><a href="/compliance/apac/guidelines-provision-it-systems-sec">Thailand SEC - IT Systems Guidelines</a></li>
+				<li><a href="/compliance/apac/uidais-aadhaar-number-regulation-compliance">UIDAI's Aadhaar Number Regulation Compliance</a></li>
+				<li><a href="/compliance/apac/data-security-compliance-vietnam-pdpd">Vietnam Personal Data Protection Decree</a></li>
+			</ul>
+			</div>
+			</li>
+		</ul>
+
+		<div class="right-part">
+		<div class="image-wrap left-align"><img loading="lazy" alt="Data Breach Notifications Map" height="150" src="/sites/default/files/content/top_nav/cta-compliance-map-global.webp" width="265" /></div>
+
+		<div class="h4">Protect Your Organization from Data Breach Notification Requirements</div>
+
+		<p>Data breach disclosure notification laws vary by jurisdiction, but almost universally include a "safe harbor" clause.</p>
+		<a class="link" href="/compliance/data-breach-notifications-laws">LEARN MORE</a></div>
+		</div>
+		</div>
+		</li>
+	</ul>
+
+	<div class="col-seven">
+	<div class="left-part">
+	<div class="h4">Solutions to Secure Your Digital Transformation</div>
+
+	<p>Whether it's securing the cloud, meeting compliance mandates or protecting software for the Internet of Things, organizations around the world rely on Thales to accelerate their digital transformation.</p>
+	</div>
+
+	<div class="right-part">
+	<div class="image-wrap left-align"><img alt="Implementing Strong Authentication for Office 365" height="150" src="/sites/default/files/content/top_nav/cta-office-365-strong-authentication-solution-brief.webp" width="265" /></div>
+
+	<div class="h4">Implementing Strong Authentication for Office 365</div>
+
+	<p>Mitigate the risk of unauthorized access and data breaches.</p>
+	<a class="link" href="/resources/access-management/office-365-strong-authentication-solution-brief">Learn More</a></div>
+	</div>
+	</div>
+	</li>
+	<li class="inner-nav partners"><a href="/partners/overview">Partners</a>
+	<div class="sub-menu">
+	<ul class="col-three" style="height: 460px;">
+		<li class="sectionheader"><span>Partners</span></li>
+		<li class="overview"><a href="/partners/overview"><span>Partners Overview</span></a></li>
+		<li><a href="/partners/partner-search"><span>Find a Partner</span></a></li>
+		<li><a href="/partners/overview"><span>Partners Overview</span></a></li>
+		<li><a href="/partners/reseller-partners"><span>Channel Partners</span></a></li>
+		<li><a href="/partners/managed-service-providers-partners"><span>Managed Service Providers</span></a></li>
+		<li><a href="/partners/oem-partners"><span>OEM Partners</span></a></li>
+		<li><a href="/partners/advisory-partners"><span>Advisory Partners</span></a></li>
+		<li><a href="/partners/technology-partners"><span>Technology Partners</span></a></li>
+		<li><a href="/partners/partner-login"><span>Partner Portal Login</span></a></li>
+	</ul>
+		
+	<div class="col-seven">
+	<div class="left-part">
+	<div class="h4">Thales Accelerate<br />
+	Partner Network</div>
+
+	<p>Thales Partner Ecosystem includes several programs that recognize, rewards, supports and collaborates to help accelerate your revenue and differentiate your business. Provide more value to your customers with Thales's Industry leading solutions. Learn more to determine which one is the best fit for you.</p>
+	<div class="image-wrap left-align"><img loading="lazy" alt="Thales Accelerate Partner Network" height="150" src="/sites/default/files/content/partners/2025-thales-accelerate-partner-network-logo.webp" width="265" /></div>
+	</div>
+
+	<div class="right-part">
+	<div class="image-wrap left-align"><img loading="lazy" alt="Thales Accelerate Partner Network" height="150" src="/sites/default/files/content/top_nav/accelerate-partner-network-value-proposition-brochure-cta.webp" width="265" /></div>
+
+	<p>The Thales Accelerate Partner Network provides the skills and expertise needed to accelerate results and secure business with Thales technologies.</p>
+	<a class="link" href="/resources/partners/accelerate-partner-network-value-proposition-brochure">Get the Brochure</a></div>
+	</div>
+	</div>
+	</li>
+	<li class="inner-nav resources"><a href="/resources">Resources</a>
+	<div class="sub-menu">
+	<ul class="col-three" style="height: 460px;">
+		<li><span>Area of Interest</span></li>
+		<li class="has-menu inner-link"><a href="/resources?aoi=data_security"><span>Data Security</span></a>
+		<div class="sub-menu-inner" style="left: 565px;">
+		<div class="col-seven" style="width: 695px;">
+		<ul class="left-part">
+			<li><span>Resource Type</span></li>
+			<li><a href="/resources?content=research_reports_white_papers&amp;aoi=data_security"><span>White Papers</span></a></li>
+			<li><a href="/resources?content=analyst_research&amp;aoi=data_security"><span>Analyst Research</span></a></li>
+			<li><a href="/resources?content=ebooks&amp;aoi=data_security"><span>eBooks</span></a></li>
+			<li><a href="/resources?content=case_studies&amp;aoi=data_security"><span>Case Studies</span></a></li>
+			<li><a href="/resources?content=infographics&amp;aoi=data_security"><span>Infographics</span></a></li>
+			<li><a href="/resources/webinars"><span>Webinars</span></a></li>
+			<li><a href="/data-security/ciphertrust-demo-tours"><span>Product Tours</span></a></li>
+			<li><a href="/resources?content=videos&amp;aoi=data_security"><span>Videos</span></a></li>
+			<li><a href="/enterprise-data-security-research-trends"><span>Security Research</span></a></li>
+			<li><a href="/podcasts/data-security-sessions"><span>Podcasts</span></a></li>
+			<li><a href="/video-series/talking-trust"><span>TalkingTrust Video Series</span></a></li>
+		</ul>
+
+		<div class="right-part">
+		<div class="image-wrap left-align"><img loading="lazy" alt="Gartner® Report: Market Guide for Data Security Platforms" height="150" src="/sites/default/files/content/top_nav/gartner-report-2024-market-guide-for-data-security-platforms-cta.webp" width="265" /></div>
+
+		<div class="h4">Gartner® Report: Market Guide for Data Security Platforms</div>
+
+		<p style="max-width: 290px;">Download the 2025 guide for Data Security Platforms, and learn how combining data security controls and fine-grained authorization leads to more efficient data security.</p>
+		<a class="link" href="/resources/encryption/gartner-report-market-guide-for-data-security-platforms">Get the Report</a></div>
+		</div>
+		</div>
+		</li>
+		
+		<li class="has-menu inner-link"><a href="https://www.imperva.com/resources/resource-library/" target="_blank"><span>Application Security</span></a>
+		<div class="sub-menu-inner" style="left: 565px;">
+		<div class="col-seven" style="width: 695px;">
+		<ul class="left-part">
+			<li><span>Resource Type</span></li>
+			<li><a href="https://www.imperva.com/resources/resource-library/" target="_blank"><span>Resource Library</span></a></li>
+			<li><a href="https://www.imperva.com/resources/customers/" target="_blank"><span>Case Studies</span></a></li>
+			<li><a href="https://www.imperva.com/demo-tours/" target="_blank"><span>Interactive Product Tours</span></a></li>
+			<li><a href="https://www.imperva.com/blog/" target="_blank"><span>Blog</span></a></li>
+			<li><a href="https://www.imperva.com/cyber-threat-index/threat-research/" target="_blank"><span>Threat Research</span></a></li>
+			<li><a href="https://www.imperva.com/learn/" target="_blank"><span>Learning Center</span></a></li>
+		</ul>
+
+		<div class="right-part">
+		<div class="image-wrap"><img loading="lazy" alt="2026 Thales Bad Bot Report" height="150" src="/sites/default/files/content/campaigns/badbot/BB-2026-CTA-TopNav.webp" width="265" /></div>
+
+		<div class="h4">2026 Thales Bad Bot Report</div>
+		<div class="h4">Bad Bots in the Agentic Age</div>	
+
+		<p style="max-width: 290px;">The 2026 Thales Bad Bot Report shows daily AI-enabled bot attacks jumped from 2 million to 25 million in a single year. Read the report to learn more about security in the age of agentic AI.</p>
+		<a class="link" href="/resources/application-security/2026-bad-bot-report">Get your copy today</a>
+		</div>
+		</div>
+		</div>
+		</li>
+
+		<li class="has-menu inner-link"><a href="/resources?aoi=access_management"><span>Identity & Access Management</span></a>
+		<div class="sub-menu-inner" style="left: 565px;">
+		<div class="col-seven" style="width: 695px;">
+		<ul class="left-part">
+			<li><span>Resource Type</span></li>
+			<li><a href="/resources?content=research_reports_white_papers&amp;aoi=access_management"><span>White Papers</span></a></li>
+			<li><a href="/resources?content=analyst_research&amp;aoi=access_management"><span>Analyst Research</span></a></li>
+			<li><a href="/resources?content=ebooks&amp;aoi=access_management"><span>eBooks</span></a></li>
+			<li><a href="/resources?content=case_studies&amp;aoi=access_management"><span>Case Studies</span></a></li>
+			<li><a href="/resources?content=infographics&amp;aoi=access_management"><span>Infographics</span></a></li>
+			<li><a href="/resources/webinars"><span>Webinars</span></a></li>
+			<li><a href="/resources?content=videos&amp;aoi=access_management"><span>Videos</span></a></li>
+			<li><a href="/enterprise-data-security-research-trends"><span>Security Research</span></a></li>
+			<li><a href="/podcasts/data-security-sessions"><span>Podcasts</span></a></li>
+            <li><a href="/iam360">Magazine</a></li>
+		</ul>
+
+	<div class="right-part">
+	<div class="image-wrap left-align"><img alt="2026 Digital Trust Index" height="150" src="/sites/default/files/content/top_nav/2026-DTI-CTA-TopNav.webp" width="265" /></div>
+	<div class="h4">2026 Digital Trust Index</div>	
+	<div class="h4">Trust in the AI era</div>	
+	<p style="max-width: 290px;">Discover the 2026 Thales Digital Trust Index — The most comprehensive study for IT Security Leaders on how Digital Experiences affect Trust across Consumers, Partners and Employees.</p>
+	<a class="link" href="/digital-trust-index">Get Your Copy Today</a></div>
+
+		</div>
+		</div>
+		</li>
+
+		<li class="has-menu inner-link"><a href="/resources?aoi=software_monetization"><span>Software Monetization</span></a>
+		<div class="sub-menu-inner" style="left: 565px;">
+		<div class="col-seven" style="width: 695px;">
+		<ul class="left-part">
+			<li><span>Resource Type</span></li>
+            <li><a href="/software-monetization/learning-hub">Learning Hub</a></li>
+            <li><a href="/blog?category=software_monetization">Blog</a></li>
+            <li><a href="https://docs.sentinel.thalesgroup.com/softwareandservices/home.htm" target="_blank">Documentation</a></li>
+			<li><a href="/software-monetization/sentinel-demo-tours"><span>Product Tours</span></a></li>
+			<li><a href="/resources?content=research_reports_white_papers&amp;aoi=software_monetization"><span>White Papers</span></a></li>
+			<li><a href="/resources?content=case_studies&amp;aoi=software_monetization"><span>Case Studies</span></a></li>
+			<li><a href="/resources?content=product_briefs&amp;aoi=software_monetization"><span>Product Briefs</span></a></li>
+			<li><a href="/resources?content=infographics&amp;aoi=software_monetization"><span>Infographics</span></a></li>
+			<li><a href="/resources/software-monetization/webinars"><span>Webinars</span></a></li>
+        </ul>
+
+		<div class="right-part">
+		<div class="image-wrap left-align"><img loading="lazy" alt="Software Licensing & Entitlement Management Buyer's Guide" height="150" src="/sites/default/files/content/ebooks/cta/software-licensing-entitlement-management-buyers-guide-eb-cta.webp" width="265" /></div>
+
+		<div class="h4">Software Licensing & Entitlement Management Buyer's Guide</div>
+
+		<p style="max-width: 290px;">Explore key criteria, evaluation questions, and best practices for choosing a software licensing and entitlement management platform that supports scale, security, and growth.</p>
+		<a class="link" href="/resources/software-monetization/software-licensing-entitlement-management-buyers-guide-ebook">Get the eBook</a></div>
+		</div>
+		</div>
+		</li>
+		<li><a href="/blog"><span>Blog</span></a></li>
+	</ul>
+
+	<div class="col-seven">
+	<div class="left-part">
+	<div class="h4">Explore Thales' comprehensive resources for cloud, protection and licensing best practices.</div>
+	</div>
+
+	<div class="right-part">
+	<div class="image-wrap left-align"><img loading="lazy" alt="Thales CPL Corporate Brochure" height="150" src="/sites/default/files/content/brochures/cta/Thales-CPL-corporate-brochure-cta.webp" width="265" /></div>
+
+	<div class="h4">A Global Leader in Data Security</div>
+
+	<p>Thales, together with Imperva, is a global leader in cybersecurity, helping the most trusted brands in the world protect their most critical applications, data, identities, and software anywhere at scale.</p>
+	<a class="link" href="/resources/identity-data-security/security-for-what-matters-most-brochure">GET THE BROCHURE</a></div>
+	</div>
+	</div>
+	</li>
+</ul>
+
+<ul class="right">
+	<li class="search"><a href="#"><img alt="Search" src="/themes/thalesesecurity/templates/dist/images/search.svg" /></a></li>
+	<li class="inner-nav support"><a href="/customer-support">Support</a>
+	<div class="sub-menu">
+	<ul class="col-three" style="height: 460px;">
+		<li class="overview"><a href="/customer-support">Customer Support</a></li>
+		<li class="has-menu inner-link"><a class="nolink" href="javascript:void(0)"><span>Software Monetization</span></a>
+		<div class="sub-menu-inner" style="left: 565px;">
+		<ul class="detail-list">
+			<li><a href="/software-monetization/sentinel-drivers">Drivers &amp; Downloads</a></li>
+			<li><a href="https://supportportal.thalesgroup.com/csm?id=kb_article_view&amp;sys_kb_id=fe4a46a5dbcf8010d6b31f3b4b9619a5&amp;sysparm_article=KB0021013" target="_blank">Product&nbsp;Announcements / Training</a></li>
+		</ul>
+		</div>
+		</li>
+		<li class="has-menu inner-link"><a class="nolink" href="javascript:void(0)"><span>Customers</span></a>
+		<div class="sub-menu-inner" style="left: 565px;">
+		<ul class="detail-list">
+			<li><a href="https://supportportal.thalesgroup.com/" target="_blank">Activate a Product / Support Portal</a></li>
+		</ul>
+		</div>
+		</li>
+		<li class="has-menu inner-link"><a class="nolink" href="javascript:void(0)"><span>Data Protection</span></a>
+		<div class="sub-menu-inner" style="left: 565px;">
+		<ul class="detail-list">
+			<li><a href="https://data-protection-updates.gemalto.com/" target="_blank">Product&nbsp;Announcements</a></li>
+			<li><a href="/services/training-services">Training Services</a></li>
+			<li><a href="/technical-training-calendar"><span>Technical Training Calendar</span></a></li>
+			<li><a href="/support/professional-services"><span>Professional Services </span></a></li>
+		</ul>
+		</div>
+		</li>
+                <li><a href="https://supportportal.thalesgroup.com/csm?id=kb_article_view&sys_kb_id=5c18186b478aa950128dca72e36d4391&sysparm_article=KB0027106">Security Updates</a></li>
+	</ul>
+	</div>
+	</li>
+	<li class="inner-nav about"><a href="/about-us">About</a>
+	<div class="sub-menu">
+	<ul class="col-three" style="height: 460px;">
+		<li class="overview"><a href="/about-us">About Us</a></li>
+		<li><a href="/leadership">Leadership</a></li>
+		<li><a href="/about-us/newsroom">Newsroom</a></li>
+		<li><a href="/about-us/in-the-news">News Coverage</a></li>
+		<li><a href="/events">Events</a></li>
+		<li><a href="/customers">Customers</a></li>
+		<li><a href="/industry-associations-and-standards-organizations">Industry Associations&nbsp;&amp; Standards Organizations</a></li>
+		<li><a href="/careers">Careers</a></li>
+		<li><a href="/about-us/thales-imperva">Thales + Imperva</a></li>
+	</ul>
+	</div>
+	</li>
+	<li class="inner-nav contact"><a class="btn-contact btn-blue" href="javascript:void(0)">Contact Us</a>
+	<div class="sub-menu subfix">
+	<ul class="col-three" style="height: 460px;">
+		<li><a href="/encryption/contact-us">Contact Data Security</a></li>
+		<li><a href="/access-management/contact-us">Contact Access Management</a></li>
+		<li><a href="/software-monetization/contact-us">Contact Software Monetization</a></li>
+	</ul>
+	</div>
+	</li>
+	<li class="language-changer"><span class="title">EN</span>
+	<div class="dropdown-group">
+	<ul class="language-dropdown" style="text-align:center;">
+		<li><a href="/en-gb" hreflang="en-gb">English (GB)</a></li>
+		<li><a href="/fr" hreflang="fr">Français</a></li>
+		<li><a href="/de" hreflang="de">Deutsch</a></li>
+		<li><a href="/it" hreflang="it">Italiano</a></li>
+		<li><a href="/es" hreflang="es">Español</a></li>
+		<li><a href="/pt-pt" hreflang="pt-pt">Português</a></li>
+		<li><a href="/ja" hreflang="ja">日本語</a></li>
+		<li><a href="/ko" hreflang="ko">한국어</a></li>
+	</ul>
+
+	<ul class="language-dropdown lite-language">
+		<li>
+		<p class="micro">Microsites</p>
+		</li>
+		<li><a href="/pl" hreflang="pl">Polskie</a></li>
+		<li><a href="/nl" hreflang="nl">Nederlands</a></li>
+        <li><a href="/zh-tw" hreflang="zh-tw">中文(繁體)</a></li>
+	</ul>
+	</div>
+	</li>
+</ul>
+</div>
+</div>
+</div>
+	
+</nav>
+</header>
+</div>
+      
+  </div>
+
+</div>
+
+  <div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
+    
+
+
+
+    <div>
+    <div id="block-removelanguagedropdown">
+  
+    
+      
+            <div><script type="text/javascript">
+   var langdrop = document.getElementsByClassName('language-changer')[0];
+   langdrop.remove();
+</script>
+<style>
+header nav .nav-wrap .main-nav > ul.right li.language-changer { display: none; }
+</style></div>
+      
+  </div>
+
+  </div>
+
+
+
+        
+      <div>
+    <div id="block-thalesesecurity-content">
+  
+    
+      
+
+
+    
+            <div>                                         <div class="coh-container ssa-component coh-component ssa-component-instance-f220ca9b-6796-4fc0-aef7-33266b7ca0a4 coh-component-instance-f220ca9b-6796-4fc0-aef7-33266b7ca0a4  ssa-instance-82548897a85ced4c6e5693e8eccdd77d coh-ce-cpt_ss_top_banner-be41bb13" >  <div class="coh-container  coh-ce-cpt_ss_top_banner-4eb5aa13" > </div>  <div class="coh-container coh-style-banner-home-level coh-ce-cpt_ss_top_banner-ed904996 coh-container-boxed" > <div class="coh-row coh-row-bleed-sm coh-row-visible-sm coh-row-xl coh-row-visible-xl" data-coh-row-match-heights="{&quot;xl&quot;:{&quot;target&quot;:&quot;none&quot;}}"> <div class="coh-row-inner coh-style-ss-banner-content-align-middle ssa-instance-82548897a85ced4c6e5693e8eccdd77d coh-ce-cpt_ss_top_banner-9b625b7b"> <div class="coh-column ssa-instance-82548897a85ced4c6e5693e8eccdd77d coh-ce-cpt_ss_top_banner-8e140890 coh-visible-sm coh-col-sm-12 coh-visible-xl coh-col-xl-12" > <h6 class="coh-heading preheader-on ssa-instance-82548897a85ced4c6e5693e8eccdd77d coh-ce-cpt_ss_top_banner-167552ea"  > THALES BLOG </h6> <h1 class="coh-heading  ssa-instance-82548897a85ced4c6e5693e8eccdd77d coh-ce-cpt_ss_top_banner-4cc9908"  > How to Become Quantum-Ready Today: Luna HSM v7.9 Delivers Real-World PQC, Validated by Thales PKI Technology Partners </h1>  <p class="coh-paragraph coh-style-heading-3-size ssa-instance-82548897a85ced4c6e5693e8eccdd77d coh-ce-cpt_ss_top_banner-54ac8cc0"  >July 29, 2025</p>  <div class="coh-wysiwyg ssa-instance-82548897a85ced4c6e5693e8eccdd77d coh-ce-cpt_ss_top_banner-8c194902"  >     </div>  <div class="coh-container buttons-off coh-ce-cpt_ss_top_banner-57a27166" >  <a href="" class="coh-link  coh-ce-cpt_ss_top_banner-95ae3c62"   aria-label >     </a>  <a href="" class="coh-link  ssa-instance-82548897a85ced4c6e5693e8eccdd77d coh-ce-cpt_ss_top_banner-dfe395ce"   aria-label >     </a> </div>  <div class="coh-wysiwyg ssa-instance-82548897a85ced4c6e5693e8eccdd77d coh-ce-cpt_ss_top_banner-74ce9aba"  >     </div> </div> <div class="coh-column image-off ssa-instance-82548897a85ced4c6e5693e8eccdd77d coh-ce-cpt_ss_top_banner-ba1bf903 coh-visible-sm coh-col-sm-12 coh-col-sm-push-0 coh-col-sm-pull-0 coh-col-sm-offset-0 coh-col-xl" >  <img class="coh-image  ssa-instance-82548897a85ced4c6e5693e8eccdd77d coh-ce-cpt_ss_top_banner-e96be585 coh-image-xl coh-image-align-centre-xl" src="" title alt /> </div> </div> </div> </div> </div> 
+ 
+</div>
+      
+
+
+
+
+  	<section class="content-detail">
+		<div class="container">
+			<div class="content">
+				
+            <div><div class="info">
+    <img loading="lazy" src="/sites/default/files/content/author/field_image/2022-12/blair-canavan.jpg" width="200" height="200" alt="Blair Canavan" />
+
+
+  <strong class="name">Blair Canavan | Director, Alliances – PQC Portfolio, Thales</strong>
+  <a href="/blog/author/bcanavan">More About This Author &gt;</a>
+</div></div>
+      
+			</div>
+		</div>
+		
+            <div>                      <div class="coh-container ssa-component coh-component ssa-component-instance-c7348eaa-d21c-4253-83bd-c6259fce45b0 coh-component-instance-c7348eaa-d21c-4253-83bd-c6259fce45b0 match-height     coh-style-ss-padding-bottom ssa-instance-dbe226b01f025f6a164d53faf4e88629 coh-ce-cpt_container-41cceb76 " >                                 <div class="coh-container ssa-component coh-component ssa-component-instance-39021ba0-9c31-4bb0-96f7-c9b90acca8c3 coh-component-instance-39021ba0-9c31-4bb0-96f7-c9b90acca8c3   color-background  coh-style-ss-fill-space-available  ssa-instance-7f63dc822d21d3ec8f5e0bbe59c797f2 coh-ce-cpt_ss_1_column_layout-5c0c446e coh-container-boxed" > <div class="coh-row coh-row-xl coh-row-visible-xl" data-coh-row-match-heights="[]"> <div class="coh-row-inner ssa-instance-7f63dc822d21d3ec8f5e0bbe59c797f2 coh-ce-cpt_ss_1_column_layout-94121495"> <div class="coh-column ssa-instance-7f63dc822d21d3ec8f5e0bbe59c797f2 coh-ce-cpt_ss_1_column_layout-d99bb6d coh-visible-ps coh-col-ps-12 coh-col-ps-push-0 coh-col-ps-pull-0 coh-visible-sm coh-col-sm-12 coh-col-sm-push- coh-col-sm-pull- coh-visible-xl coh-col-xl-12 coh-col-xl-push- coh-col-xl-pull-" >                 <div class="coh-wysiwyg ssa-component coh-component ssa-component-instance-34a88b47-7a4b-438a-8391-9193f85fcbcd coh-component-instance-34a88b47-7a4b-438a-8391-9193f85fcbcd        coh-style-margin-bottom-small full-width  ssa-instance-553a18506b68cdf84b269c2787533684 coh-ce-cpt_text-f526f279"  >    <p>Quantum computing is no longer a distant possibility; it is an emerging reality. With the increasing risk of Harvest-Now, Decrypt-Later (HNDL) attacks, the cryptographic landscape is on the brink of its most significant transformation in recent history. Quantum threats could potentially render current encryption methods obsolete, and organizations must take proactive measures to protect their data in preparation for a post-quantum future.<br><br>With the release of Luna HSM firmware v7.9, Thales delivers precisely what the industry needs to prepare: production-ready, NIST-approved post-quantum cryptography (PQC), that’s been tested across real-world environments and validated by an expansive Thales Luna HSM Technology Partner Ecosystem.</p> </div> 
+               <h3 class="coh-heading ssa-component coh-component ssa-component-instance-a13b05d3-ed82-434b-a727-11f26350c58d coh-component-instance-a13b05d3-ed82-434b-a727-11f26350c58d  align-text-left  full-width ssa-instance-5524d8dc6672b608633d3aaed6805d82 coh-ce-cpt_ss_heading-d3df473f"  > A Major Step Forward in PQC Integration </h3> 
+               <div class="coh-wysiwyg ssa-component coh-component ssa-component-instance-1576063a-eeab-4fd8-bc61-93c42c75ac88 coh-component-instance-1576063a-eeab-4fd8-bc61-93c42c75ac88        coh-style-margin-bottom-small full-width  ssa-instance-82657358df0520237cc5e84f54f13d1b coh-ce-cpt_text-f526f279"  >    <p>Unlike theoretical or experimental approaches, Luna HSM v7.9 offers native support for:</p><ul><li>ML-KEM (FIPS 203) and ML-DSA (FIPS 204) — fully integrated into firmware, eliminating the need for external functionality modules.</li><li>Hybrid PQC encryption for secure key synchronization, backup, and restore.</li><li>Post-quantum protection for TLS/SSL, key exchange, IoT, code signing, and database encryption, addressing vulnerabilities related to HNDL attacks.</li></ul><p>These capabilities enable organizations to future-proof and enhance their cryptographic infrastructure without compromising performance, functionality, standards compliance, or integration flexibility. For organizations planning their PQC transition, this release offers a production-ready, standards-based, and certified solution, with FIPS 140-3 Level 3 validation in progress – a critical step beyond experimental implementation.</p> </div> 
+               <h3 class="coh-heading ssa-component coh-component ssa-component-instance-a36cca33-ac8c-461e-b6a3-ed79def843ab coh-component-instance-a36cca33-ac8c-461e-b6a3-ed79def843ab  align-text-left  full-width ssa-instance-4e1946170e5dbd1b072dc40cc5029422 coh-ce-cpt_ss_heading-d3df473f"  > Partner-Driven Confidence: Validated in Real-World Environments </h3> 
+               <div class="coh-wysiwyg ssa-component coh-component ssa-component-instance-a9a91f32-1ef0-4626-8dc7-58028ae64537 coh-component-instance-a9a91f32-1ef0-4626-8dc7-58028ae64537        coh-style-margin-bottom-small full-width  ssa-instance-37d1e74067e9ddef55fca4ffc006dc78 coh-ce-cpt_text-f526f279"  >    <p>We thank our Thales Luna HSM technology partners and select customers for their valuable contributions in testing and validating this firmware across PKI platforms and applications, confirming its readiness for real-world HSM use cases. Thales collaborated closely with leading technology partners to validate PQC capabilities in PKI and key management environments. This testing confirms operational readiness across diverse use cases and platforms. Here’s what our partners have said:</p><p><a href="https://www.ascertia.com/" target="_blank"><em>Ascertia</em></a><em> — </em>With the release of&nbsp;Luna HSM v7.9 featuring NIST-approved algorithms embedded in firmware, Thales continues to set the standard for cryptographic security. Ascertia and Thales continue to work side by side on the ever-evolving PQC capabilities of products while industry standards continue to add PQC support for PKI, and digital signing solutions that our customers can rely on today and into the future.</p><p><a href="/partners/digicert-inc"><em>DigiCert</em></a><em> — </em>Tested quantum-safe certificate issuance, PKI and lifecycle management across TLS&nbsp;ecosystems. The latest version of Luna builds on DigiCert’s long-standing partnership and shared mission with Thales to future-proof digital trust. By enabling quantum-resistant protection today and supporting a smooth transition as NIST standards evolve, we’re helping customers strengthen defenses and prepare for the quantum era.</p><p><a href="https://evertrust.io/" target="_blank"><em>EVERTRUST</em></a> — We are committed to empowering organizations with sovereign control over their cryptographic keys and digital certificates, cornerstones of online security and digital trust in a post‑quantum era. After thoroughly testing Luna HSM v7.9, we’re proud to partner with Thales to deliver a robust, sovereign‑ready solution with native PQC algorithms, helping customers confidently and independently transition to quantum‑safe cryptography.</p><p><a href="https://garantir.io/services/public-key-infrastructure-pki/" target="_blank"><em>Garantir</em></a><em>— Luna</em> HSM v7.9 perfectly aligns with Garantir’s focus on security, compliance, and ease-of-use. Garantir’s cryptographic services such as CLM, PKI, and code signing will all benefit from Luna HSM’s native PQC support.</p><p><a href="https://www.keyfactor.com/post-quantum-cryptography-lab/" target="_blank"><em>Keyfactor</em></a><em>— </em>At Keyfactor, we’re committed to providing the tools and capabilities needed to establish and maintain&nbsp;digital trust in a post-quantum world. This is why we’re proud to partner with Thales and support Luna HSMs with native PQC algorithms to aid in the transition to quantum-safe cryptography.</p><p><em>“With Luna HSM v7.9, we’re not just embedding NIST-standardized PQC algorithms into our HSMs – we’re already taking it into production with the backing of a global partner ecosystem,” said Blair Canavan, Director of Alliances - PKI and PQC Portfolio of Partners at Thales. “Our Thales Accelerate Technology Partners have validated this release across diverse PKI platforms and use cases, giving customers a tested and trusted path to PQC adoption.”</em></p> </div> 
+               <h3 class="coh-heading ssa-component coh-component ssa-component-instance-c589c884-fb7a-4da6-83a1-d078492d7432 coh-component-instance-c589c884-fb7a-4da6-83a1-d078492d7432  align-text-left  full-width ssa-instance-48c99daa49a542f0d2dd947fa61d7ff7 coh-ce-cpt_ss_heading-d3df473f"  > Start Your Quantum-Safe Journey with Confidence </h3> 
+               <div class="coh-wysiwyg ssa-component coh-component ssa-component-instance-00d3d3cd-7ed2-406a-96ba-2634647b4786 coh-component-instance-00d3d3cd-7ed2-406a-96ba-2634647b4786        coh-style-margin-bottom-small full-width  ssa-instance-46ee7455af4967ca1816d112681e09d2 coh-ce-cpt_text-f526f279"  >    <p>Luna HSM v7.9 delivers a proactive defense: standards-based, quantum-safe cryptography built directly into the firmware, validated by a trusted ecosystem of partners. With the broadest partner ecosystem on the market, Luna HSM supports customers on their post-quantum cryptography (PQC) journey, providing a seamless path to quantum readiness—without compromise, without complexity.</p> </div> 
+                 <div class="coh-container ssa-component coh-component ssa-component-instance-c6d55c53-2be3-4921-bea8-a8cd0fbec05d coh-component-instance-c6d55c53-2be3-4921-bea8-a8cd0fbec05d coh-style-ss-margin-bottom align-center ssa-instance-12b481f3ac857dae36e499187279a30b coh-ce-cpt_image-4269d71b" >  <div class="coh-container  coh-ce-cpt_image-fca8d376" > </div>  <img class="coh-image  align-center  ssa-instance-12b481f3ac857dae36e499187279a30b coh-ce-cpt_image-4a7ca909 coh-image-responsive-xl" loading="lazy" data-src="/sites/default/files/content/blog/a-growing-quantum-partner-ecosystem_0.jpg" title="Quantum partner ecosystem" alt="Quantum partner ecosystem" />  <p class="coh-paragraph caption-off ssa-instance-12b481f3ac857dae36e499187279a30b coh-ce-cpt_image-34774424"  ></p> </div> 
+               <div class="coh-wysiwyg ssa-component coh-component ssa-component-instance-58af3dd5-b125-4404-8c63-1fd5b061ac8a coh-component-instance-58af3dd5-b125-4404-8c63-1fd5b061ac8a        coh-style-margin-bottom-small full-width  ssa-instance-8da7e75f63272050235b343424d9927a coh-ce-cpt_text-f526f279"  >    <p>This isn’t a theoretical roadmap. It’s a production-ready solution already validated across HSM use cases. Quantum threats are real, inevitable, and already shaping cybersecurity strategies worldwide. <strong>Luna HSM v7.9 is ready NOW</strong> to help you defend against them—so you can focus on protecting what matters most. <strong>Learn more about </strong><a href="https://data-protection-updates.gemalto.com/2025/06/27/luna-hsm-firmware-v7-9-release-nist-approved-pqc-algorithms-now-built-in/" target="_blank">Luna HSM v7.9</a><strong>, </strong><a href="/encryption/post-quantum-crypto-agility?utm_source=google&amp;utm_medium=cpc">Thales PQC-Ready solutions</a><strong>, and our </strong><a href="/partners/overview">Thales Technology Partners</a><strong>.</strong></p> </div> 
+   </div> </div> </div> </div> 
+   </div> 
+ 
+</div>
+      
+  </section>
+
+
+
+
+<section class="col-three-slider">
+  <div class="container">
+    <div class="slider-wrap">
+      <div class="title-wrap">
+        <h2>Related Articles</h2>
+      </div>
+      <div class="slider">
+        <div class="item">
+                      <div class="views-element-container"><div class="js-view-dom-id-f30661cd534fd3138abdd37dd5e760b33983651e0f12cdcf4c2c74e929325495">
+  
+  
+  
+
+  
+  
+  
+
+  <div class="row full-row">
+      <div class="col col-wrap">
+<a href="/blog/data-security/quantum-safe-doesnt-mean-secure-pqc-adoption-risks">
+              <div class="content">
+                <span><time datetime="2026-05-05T07:10:16+00:00">May 5, 2026</time>
+</span>
+                <h4>Quantum-Safe Doesn’t Mean Secure: Why PQC Alone Won’t Protect Your Data</h4>
+              </div>
+</a>
+            </div>
+      <div class="col col-wrap">
+<a href="/blog/data-security/why-database-security-must-go-beyond-perimeter-controls">
+              <div class="content">
+                <span><time datetime="2026-04-07T07:33:35+00:00">April 7, 2026</time>
+</span>
+                <h4>Why Database Security Must Go Beyond Perimeter Controls</h4>
+              </div>
+</a>
+            </div>
+      <div class="col col-wrap">
+<a href="">
+              <div class="content">
+                <span><time datetime="2026-03-19T06:12:32+00:00">March 19, 2026</time>
+</span>
+                <h4>Top Cybersecurity Risks Facing Insurers in the Age of AI and Cloud Transformation</h4>
+              </div>
+</a>
+            </div>
+      <div class="col col-wrap">
+<a href="/blog/cybersecurity/top-cybersecurity-risks-insurers-ai-cloud-transformation">
+              <div class="content">
+                <span><time datetime="2026-03-19T07:55:23+00:00">March 19, 2026</time>
+</span>
+                <h4>Top Cybersecurity Risks Facing Insurers in the Age of AI and Cloud Transformation</h4>
+              </div>
+</a>
+            </div>
+      <div class="col col-wrap">
+<a href="/blog/cybersecurity/dspm-multi-cloud-data-security-questions">
+              <div class="content">
+                <span><time datetime="2026-03-05T16:09:23+00:00">March 5, 2026</time>
+</span>
+                <h4>The Top 5 Questions: How DSPM Illuminates the Murky World of Multi-Cloud Data Security</h4>
+              </div>
+</a>
+            </div>
+      <div class="col col-wrap">
+<a href="/blog/data-security/cybersecurity-acronyms-2026">
+              <div class="content">
+                <span><time datetime="2026-02-05T08:07:00+00:00">February 5, 2026</time>
+</span>
+                <h4>Cyber Abbreviations You Need to Know</h4>
+              </div>
+</a>
+            </div>
+  </div>
+    
+
+  
+  
+
+  
+  
+</div>
+</div>
+
+                  </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  </div>
+<div id="block-rssfeedblogfooter">
+  
+    
+      
+            <div><section class="content-detail">
+<div class="container">
+<div class="content">
+<div class="text-center"><a class="btn-default" href="/blog/feed">Subscribe to our RSS Feed</a></div>
+</div>
+</div>
+</section>
+</div>
+      
+  </div>
+<div id="block-thalesblogbutton">
+  
+    
+      
+            <div><section class="newsletter">
+<div class="container">
+<div class="content">
+<div class="h2" style="font-size:29px;">Stay up to date with data security best practices and industry news</div>
+
+<div class="btn-default news-btn"><a href="/blog">Cyber Security &amp; Licensing Blog</a></div>
+</div>
+</div>
+</section>
+<style type="text/css">body .content-detail .content .info img, body .blog-article .content .info img { border: 0px !important; }
+</style>
+</div>
+      
+  </div>
+
+  </div>
+
+
+    
+  
+  
+  
+    <div>
+    <div id="block-footerenglish">
+  
+    
+      
+            <div><!-- English -->
+<!-- 03-18-2026 GH Partner Link + AI -->
+<!-- 04-17-2025 GH -->
+<footer>
+<div class="container">
+<div class="column-outer">
+<div class="logo-wrap" style="padding-top: 0px;"><a class="footer-logo" href="/"><img alt="Thales logo - white" height="36" src="/sites/default/files/content/footer/thales-logo-white.png" width="160" /></a>
+<p><span style="color:#007bff; font-size:18px; font-weight: 700;">cpl.thalesgroup.com</span></p>
+
+<p><a alt="LinkedIn" href="https://www.linkedin.com/company/thalescloudsec" style="margin-right: 10px;" target="_blank" title="LinkedIn"><svg id="linkedin" xmlns="http://www.w3.org/2000/svg" fill="#ffffff" viewBox="0 0 24 24" height="24" width="24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path></svg></a>
+		
+	<a alt="Twitter" href="https://www.twitter.com/ThalesCloudSec" style="margin-right: 10px;" target="_blank" title="Twitter"><svg id="twitterx" xmlns="http://www.w3.org/2000/svg" fill="#ffffff" viewBox="0 0 24 24" width="24" height="24"><path d="M18.9,1.2h3.7l-8,9.2L24,22.8h-7.4l-5.8-7.6l-6.6,7.6H0.5L9.1,13L0,1.2h7.6l5.2,6.9L18.9,1.2z M17.6,20.6h2L6.5,3.2H4.3 L17.6,20.6z"></path></svg></a>
+		
+	<a alt="YouTube" href="https://www.youtube.com/ThalesCloudSec" style="margin-right: 15px;" target="_blank" title="YouTube"><svg id="youtube" xmlns="http://www.w3.org/2000/svg" fill="#ffffff" viewBox="0 0 24 24" width="24" height="24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"></path></svg></a>
+		
+	<a alt="Thales Blog" href="/blog" style="margin-right: 13px;" title="Thales Blog"><svg id="thalesblog" xmlns="http://www.w3.org/2000/svg" fill="#ffffff" viewBox="0 0 100 70" width="24" height="24"><path d="M84.9,0H15.1C6.7,0,0,7.1,0,15.8v33.7c0,8.7,6.7,15.8,15.1,15.8h11.5v18.6c0,1,1.4,1.8,2.1,0.9c5.5-6.5,11-13,16.5-19.5
+	h39.7c8.3,0,15.1-7.1,15.1-15.8V15.8C100,7.1,93.3,0,84.9,0z"></path></svg></a>
+		
+	<a alt="Podcasts" href="/podcasts/data-security-sessions" title="Podcasts"><svg id="podcasts" xmlns="http://www.w3.org/2000/svg" fill="#ffffff" viewBox="0 0 130 130" width="24" height="24"><path d="M46.8,16.6c8.3,0,15.9,3.4,21.4,8.9c5.5,5.5,8.8,13,8.8,21.4c0,8-3.1,15.2-8.1,20.6c-0.5-2.8-1.3-5.4-2.3-7.6
+		c2.5-3.7,3.9-8.2,3.9-13c0-6.5-2.7-12.5-6.9-16.7s-10.2-6.9-16.7-6.9s-12.5,2.6-16.7,6.9s-6.9,10.2-6.9,16.7c0,5,1.5,9.6,4.2,13.4
+		c-1,2.2-1.8,4.7-2.4,7.5c-5.2-5.4-8.4-12.8-8.4-20.9c0-8.3,3.4-15.9,8.9-21.4C30.9,19.9,38.4,16.6,46.8,16.6L46.8,16.6z M30.8,66.9
+		c2.5-9.5,32.1-7.8,32.1-0.3C62.9,143.2,30.8,139.9,30.8,66.9L30.8,66.9z M46.9,32.8c7.1,0,12.8,5.7,12.8,12.8S54,58.4,46.9,58.4
+		s-12.8-5.7-12.8-12.8S39.9,32.8,46.9,32.8L46.9,32.8z M46.8,0c12.9,0,24.6,5.2,33.1,13.7c8.5,8.5,13.7,20.2,13.7,33.1
+		s-5.2,24.6-13.7,33.1c-3.3,3.3-7.1,6.1-11.3,8.3c0.3-2.3,0.6-4.7,0.8-7.2c0-0.3,0.1-0.6,0.1-1c2.1-1.4,4-3,5.8-4.8
+		C82.5,67.9,87,57.9,87,46.8s-4.5-21.2-11.8-28.5C68,11.1,57.9,6.6,46.8,6.6s-21.2,4.5-28.5,11.8C11.1,25.6,6.6,35.7,6.6,46.8
+		S11.1,68,18.3,75.2c1.8,1.8,3.8,3.5,6,4.9c0,0.5,0.1,0.9,0.1,1.4c0.2,2.3,0.5,4.6,0.8,6.8c-4.3-2.2-8.1-5.1-11.5-8.4
+		C5.2,71.4,0,59.7,0,46.8s5.2-24.6,13.7-33.1C22.2,5.2,33.9,0,46.8,0L46.8,0z"></path></svg></a>
+	</p>
+		
+<p style="color: #FFFFFF; padding-top:40px; margin:0px; font-weight: 400;">Visit our parent site at</p>
+<span style="color:#007bff; font-size:18px; font-weight: 700;"><a href="https://www.thalesgroup.com" target="_blank">www.thalesgroup.com</a></span></div>
+
+<div class="column-wrap">
+<ul class="col-six">
+	<li><span>Products</span>
+	<ul>
+		<li><a href="/data-security/ai-cybersecurity-solutions">AI Security</a></li>
+		<li><a href="/data-protection">Data Security</a></li>
+		<li><a href="https://www.imperva.com/products/application-security/?utm_source=thalescpl&utm_medium=menu&utm_campaign=thales-imperva-together" target="_blank">Application Security</a></li>
+		<li><a href="/access-management">Identity &amp; Access Management</a></li>
+		<li><a href="/software-monetization">Software Monetization</a></li>
+	</ul>
+	</li>
+</ul>
+<ul class="col-six">
+	<li><span>Solutions</span>
+	<ul>
+		<li><a href="/solutions#use_case">By Use Case</a></li>
+		<li><a href="/solutions#industry">By Industry</a></li>
+		<li><a href="/solutions#compliance">By Compliance</a></li>
+	</ul>
+	</li>
+</ul>
+<ul class="col-six">
+	<li><span>Partners</span>
+	<ul>
+		<li><a href="/partners/partner-search">Find a Partner</a></li>
+		<li><a href="/partners/overview">Become a Partner</a></li>
+		<li><a href="/partners/partner-login">Partner Portal Login</a></li>
+	</ul>
+	</li>
+</ul>
+<ul class="col-six">
+	<li><span>Resources</span>
+	<ul>
+		<li><a href="/resources">Resources Library</a></li>
+		<li><a href="/blog">Blog</a></li>
+		<li><a href="/podcasts/data-security-sessions">Podcasts</a></li>
+	</ul>
+	</li>
+</ul>
+<ul class="col-six">
+	<li><span>Support</span>
+	<ul>
+		<li><a href="/customer-support">Customer Support</a></li>
+		<li><a href="/services/training-services">Training Services</a></li>
+	</ul>
+	</li>
+</ul>
+<ul class="col-six">
+	<li><span>About</span>
+	<ul>
+		<li><a href="/contact-us">Contact Us</a></li>
+		<li><a href="/india-ewaste-program">India E-Waste Program</a></li>
+		<li><a href="/about-us/newsroom">Newsroom</a></li>
+		<li><a href="/careers">Careers</a></li>
+	</ul>
+	</li>
+</ul>
+<div class="newsletter-footer"><a class="btn-blue" href="/newsletter">SUBSCRIBE</a>Get the latest data protection and access management resources and insights delivered right to your inbox.</div>
+</div>
+</div>
+<div class="footer-bottom" style="padding-top:30px;">
+<div class="h6">Copyright © <script>var currentYear = new Date().getFullYear();document.write(currentYear);</script> Thales. All Rights Reserved</div>
+<ul>
+	<li>
+	<ul>
+		<li><a href="https://www.thalesgroup.com/en/privacy-notice" target="_blank">Privacy Policy</a></li>
+		<li>&nbsp;&nbsp;<a href="https://www.thalesgroup.com/en/terms-use" target="_blank">Disclaimer</a></li>
+		<li>&nbsp;&nbsp;<a href="/sitemap">Sitemap</a></li>
+		<li>&nbsp;&nbsp;<a href="https://www.thalesgroup.com/en/worldwide/cookies-thalesgroup" target="_blank">Cookie Policy</a></li>
+		<li id="TNC">&nbsp;&nbsp;<a href="/legal">Terms &amp; Conditions</a></li>
+		<li class="last-child" id="CCPA" style="display:none;">&nbsp;<a href="/about-us/california-consumer-privacy-act-compliance">Do Not Sell My Personal Information</a></li>
+	</ul>
+	</li>
+</ul>
+</div>
+</div>
+</footer>
+<style type="text/css">
+.newsletter-footer { float: right; color: #ccc; margin: 20px 20px 2px; width: 70%; font-size: 18px; border: 3px solid #00bbdd; padding: 20px; font-weight: 500; }
+.newsletter-footer a { float: right; min-width: 150px; margin: 20px 0 0 20px; font-size: 16px; }
+@media (min-width: 992px) { footer .column-wrap { width: calc(100% - 300px); }}
+@media (max-width : 768px) { 
+.newsletter-footer { margin: 10px 0px; width: 100%; }
+.newsletter-footer a { margin: 10px 20px; }}
+@media (max-width: 595px) { body .intro-with-image .wrapper .content {text-align: left !important;} }
+@media (max-width: 480px) {body section ul > li {text-align: left !important;}
+.newsletter-footer { margin: 10px 0px; width: 100%; font-size: 13px; padding: 15px; }
+.newsletter-footer a { min-width: 110px; margin: 0px 0px 0px 10px; font-size: 15px; }}
+@media (max-width: 767px) { body .content-detail .content { text-align: left; } }
+footer .footer-bottom ul li:nth-last-child(2)::after { width:0px; } 
+li.keeppipe:nth-last-child(2)::after { width:1px !important; }
+footer .column-wrap .col-six li { margin-bottom: 10px; font-weight: 600;}
+@media (min-width: 768px) {.cc-window.cc-banner { width: 400px; border-radius: 5px; bottom: 1em; left: 1em; display: block; }}
+.cc-banner .cc-btn:last-child { margin: 20px; }
+.cc-link { line-height: .1em; padding: 0; }
+</style>
+<script type="text/javascript"> 
+if(window.location.pathname === "/") { 
+    document.getElementById("CCPA").style.display = "inline-block"; 
+    document.getElementById("TNC").classList.add("keeppipe");
+    }  
+</script></div>
+      
+  </div>
+
+  </div>
+
+
+
+
+  </div>
+
+
+
+<div class="overlay-search">
+  <div class="search-overlay">
+    <div class="content-outer">
+      <div class="content-wrap">
+        <div class="search-box">
+          <form method="GET" action="/search">
+            <input type="text" class="search-input" name="search" placeholder="Let’s find what you’re looking for...">
+            <button type="submit" class="btn-default">Search</button>
+          </form>
+        </div>
+        <div class="search-link">
+          <a class="btn-blue" href="/partners/partner-search">Partners</a>
+          <a class="btn-blue" href="/resources">Resources</a>
+          <a class="btn-blue" href="/blog">Blogs</a>
+          <a class="btn-blue" href="/software-monetization/sentinel-drivers">Sentinel Drivers</a>
+        </div>
+        <div class="close"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="we-video-overlay">
+  <div class="video-overlay">
+    <div class="v-middle-inner">
+      <div class="v-middle">
+        <div class="video-container">
+          <iframe width="560" height="315" src="" frameborder="0"
+                  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen></iframe>
+          <div class="close-video">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","pathPrefix":"","currentPath":"node\/48946","currentPathIsAdmin":false,"isFront":false,"currentLanguage":"en"},"pluralDelimiter":"\u0003","suppressDeprecationErrors":true,"cohesion":{"currentAdminTheme":"claro","front_end_settings":{"global_js":{"matchHeight":1,"parallax_scrolling":1,"cohMatchHeights":1}},"google_map_api_key":"","google_map_api_key_geo":null,"animate_on_view_mobile":"DISABLED","add_animation_classes":"ENABLED","responsive_grid_settings":{"gridType":"desktop-first","columns":12,"breakpoints":{"xl":{"width":1476,"innerGutter":32,"outerGutter":128,"widthType":"fixed","previewColumns":12,"label":"Television","class":"coh-icon-television","iconHex":"F26C","boxedWidth":1220},"lg":{"width":1170,"innerGutter":32,"outerGutter":64,"widthType":"fluid","previewColumns":12,"label":"Desktop","class":"coh-icon-desktop","iconHex":"F108","boxedWidth":1042},"md":{"width":1024,"innerGutter":24,"outerGutter":48,"widthType":"fluid","previewColumns":12,"label":"Laptop","class":"coh-icon-laptop","iconHex":"F109","boxedWidth":928},"sm":{"width":768,"innerGutter":24,"outerGutter":48,"widthType":"fluid","previewColumns":6,"label":"Tablet","class":"coh-icon-tablet","iconHex":"F10A","boxedWidth":672},"ps":{"width":565,"innerGutter":24,"outerGutter":24,"widthType":"fluid","previewColumns":6,"label":"Mobile landscape","class":"coh-icon-mobile-landscape","iconHex":"E91E","boxedWidth":517},"xs":{"width":320,"innerGutter":24,"outerGutter":24,"widthType":"fluid","mobilePlaceholderWidth":320,"mobilePlaceholderType":"fluid","previewColumns":3,"label":"Mobile","class":"coh-icon-mobile","iconHex":"F10B","boxedWidth":272}}},"default_font_settings":[],"use_dx8":true,"sidebar_view_style":"thumbnails","log_dx8_error":false,"error_url":"\/cohesionapi\/logger\/jserrors","dx8_content_paths":[["settings","content"],["settings","content","text"],["settings","markerInfo","text"],["settings","title"],["markup","prefix"],["markup","suffix"],["markup","attributes",["value"]],["hideNoData","hideData"],["hideNoData","hideData","text"]]},"user":{"uid":0,"permissionsHash":"24b79fa867c063f914a1b7f6ddbae9ebb873ebbedfd81d645d038dfdf2e4d557"}}</script>
+<script src="/sites/default/files/js/js_VrR9PJs7mJQMiXgV32izlR1kszWAeAK8GvV4YoeKayE.js?scope=footer&amp;delta=0&amp;language=en&amp;theme=thalesesecurity&amp;include=eJx9jkEOwjAMBD_U0G9w4Q2Ra0xi4cSV46rweyJyQAJR-TY7kgc1U2OtMwkVqh6dyirg1E5cINGE_wXhej_aTfdwUwuospXaPmoSXUCi8GJg3M2-XMAxn4lT9iNzBQMReMSGptIL0oG8c73qPswJt-ZaIl3Z1WLvKuDzgGHAMODkGYRaP9yM_TkvoukHjmeh-fMd8T03AsP8AgTziwY"></script>
+
+  <script src="/themes/thalesesecurity/templates/dist/scripts/redesign.js"></script>
+<script type="text/javascript" src="/_Incapsula_Resource?SWJIYLWA=719d34d31c8e3a6e6fffd425f7e032f3&ns=1&cb=445123090" async></script></body>
+</html>

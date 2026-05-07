@@ -2,13 +2,14 @@
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import FocusLock from 'react-focus-lock'
-import { ShieldCheck, X, ExternalLink, BookOpen, Calendar, Globe } from 'lucide-react'
+import { ShieldCheck, X, ExternalLink, BookOpen, Calendar, Globe, ListChecks } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { ComplianceFramework } from '@/data/complianceData'
 import type { LibraryItem } from '@/data/libraryData'
 import type { TimelineEvent } from '@/types/timeline'
 import { libraryData } from '@/data/libraryData'
 import { timelineData } from '@/data/timelineData'
+import { maturityByRefId } from '@/data/maturityGovernanceData'
 
 interface FrameworkDetailPopoverProps {
   isOpen: boolean
@@ -60,6 +61,8 @@ export const FrameworkDetailPopover = ({
       framework.timelineRefs.includes(ev.title) ||
       framework.timelineRefs.includes(ev.sourceUrl ?? '')
   )
+
+  const linkedRequirements = framework.libraryRefs.flatMap((ref) => maturityByRefId.get(ref) ?? [])
 
   const content = (
     <>
@@ -192,6 +195,46 @@ export const FrameworkDetailPopover = ({
                       </li>
                     ))}
                   </ul>
+                </section>
+              )}
+
+              {linkedRequirements.length > 0 && (
+                <section>
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+                    <ListChecks size={12} aria-hidden="true" />
+                    CSWP.39 Maturity Requirements ({linkedRequirements.length})
+                  </h4>
+                  <div className="space-y-2">
+                    {linkedRequirements.map((req, i) => (
+                      <div
+                        key={`${req.refId}-${req.pillar}-${req.maturityLevel}-${i}`}
+                        className="border border-border rounded-lg p-3 space-y-1.5 bg-card text-xs"
+                      >
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-semibold capitalize">
+                            {req.pillar}
+                          </span>
+                          <span className="px-1.5 py-0.5 rounded bg-muted text-muted-foreground text-[10px] font-medium">
+                            Tier {req.maturityLevel}
+                          </span>
+                          {req.assetClass !== 'all' && (
+                            <span className="text-[10px] text-muted-foreground capitalize">
+                              {req.assetClass}
+                            </span>
+                          )}
+                          <span className="ml-auto text-[10px] text-muted-foreground/60">
+                            {req.confidence} confidence
+                          </span>
+                        </div>
+                        <p className="text-foreground/90 leading-relaxed">{req.requirement}</p>
+                        {req.evidenceLocation && (
+                          <p className="text-[10px] text-muted-foreground font-mono">
+                            {req.evidenceLocation}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </section>
               )}
 

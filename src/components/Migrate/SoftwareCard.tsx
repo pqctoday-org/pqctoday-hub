@@ -11,7 +11,8 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react'
-import type { SoftwareItem } from '../../types/MigrateTypes'
+import type { SoftwareItem, VendorRoadmap } from '../../types/MigrateTypes'
+import { VendorRoadmapLink } from './VendorRoadmapLink'
 import { LAYERS } from './InfrastructureStack'
 import { CertBadges, renderFipsStatus, renderPqcSupport, renderQuantumTech } from './migrateHelpers'
 import { certsByProduct } from '../../data/certificationXrefData'
@@ -31,6 +32,8 @@ interface SoftwareCardProps {
   isCompared?: boolean
   onToggleCompare?: (key: string) => void
   maxCompareReached?: boolean
+  onSelectDetail?: (item: SoftwareItem) => void
+  vendorRoadmap?: VendorRoadmap
 }
 
 const PRIORITY_COLORS: Record<string, string> = {
@@ -49,6 +52,8 @@ export const SoftwareCard = ({
   isCompared,
   onToggleCompare,
   maxCompareReached,
+  onSelectDetail,
+  vendorRoadmap,
 }: SoftwareCardProps) => {
   const { migrateBookmarks, toggleMigrateBookmark } = useBookmarkStore()
   const isBookmarked = migrateBookmarks.includes(item.softwareName)
@@ -66,7 +71,10 @@ export const SoftwareCard = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, delay: index * 0.03 }}
       data-workshop-target={`migrate-product-${item.productId}`}
-      className="glass-panel p-5 flex flex-col h-full hover:border-secondary/50 transition-colors bg-card/50 relative scroll-mt-20"
+      className={`glass-panel p-5 flex flex-col h-full hover:border-secondary/50 transition-colors bg-card/50 relative scroll-mt-20${onSelectDetail ? ' cursor-pointer' : ''}`}
+      onClick={onSelectDetail ? () => onSelectDetail(item) : undefined}
+      role={onSelectDetail ? 'button' : undefined}
+      aria-label={onSelectDetail ? `View details for ${item.softwareName}` : undefined}
     >
       {/* Top row: layer badge + status + hide */}
       <div className="flex items-center gap-2 mb-3">
@@ -108,7 +116,10 @@ export const SoftwareCard = ({
                 : `Bookmark ${item.softwareName}`
             }
             title={isBookmarked ? 'Remove bookmark' : 'Bookmark for quick access'}
-            onClick={() => toggleMigrateBookmark(item.softwareName)}
+            onClick={(e) => {
+              e.stopPropagation()
+              toggleMigrateBookmark(item.softwareName)
+            }}
             className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded transition-colors"
           >
             {isBookmarked ? (
@@ -123,7 +134,10 @@ export const SoftwareCard = ({
               type="button"
               aria-label="Hide this product"
               title="Hide this product"
-              onClick={() => onHide(key)}
+              onClick={(e) => {
+                e.stopPropagation()
+                onHide(key)
+              }}
               className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-colors"
             >
               <EyeOff size={14} />
@@ -170,7 +184,10 @@ export const SoftwareCard = ({
         <div className="md:hidden mt-3 mb-1">
           <Button
             variant="ghost"
-            onClick={() => setIsExpandedMobile(!isExpandedMobile)}
+            onClick={(e) => {
+              e.stopPropagation()
+              setIsExpandedMobile(!isExpandedMobile)
+            }}
             className="text-xs text-primary hover:text-primary/80 flex items-center gap-1 font-medium transition-colors"
           >
             {isExpandedMobile ? (
@@ -219,30 +236,41 @@ export const SoftwareCard = ({
             href={item.repositoryUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
             className="flex items-center gap-1 text-primary hover:text-primary/80 text-xs transition-colors"
             aria-label={`Open ${item.softwareName} repository`}
           >
             <ExternalLink size={12} /> Repo
           </a>
         )}
-        <UpdateProductButton
-          updateUrl={buildProductUpdateUrl({
-            productName: item.softwareName,
-            categoryName: item.categoryName,
-            currentPqcSupport: item.pqcSupport || 'Unknown',
-            productDetails: [
-              `**Version:** ${item.latestVersion || 'N/A'}`,
-              `**FIPS:** ${item.fipsValidated || 'N/A'}`,
-            ].join('\n'),
-            pageUrl: `/migrate?q=${encodeURIComponent(item.softwareName)}`,
-          })}
-          resourceLabel={item.softwareName}
-        />
-        <AskAssistantButton
-          variant="text"
-          label="Ask"
-          question={`What PQC algorithms does ${item.softwareName} support${item.categoryName ? ` (${item.categoryName})` : ''}?${item.pqcCapabilityDescription ? ` Capabilities: ${item.pqcCapabilityDescription}` : ''}${item.fipsValidated && item.fipsValidated !== 'No' ? ` FIPS status: ${item.fipsValidated}.` : ''}`}
-        />
+        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+        <span onClick={(e) => e.stopPropagation()}>
+          <VendorRoadmapLink roadmap={vendorRoadmap} size="sm" showLabel={false} />
+        </span>
+        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+        <span onClick={(e) => e.stopPropagation()}>
+          <UpdateProductButton
+            updateUrl={buildProductUpdateUrl({
+              productName: item.softwareName,
+              categoryName: item.categoryName,
+              currentPqcSupport: item.pqcSupport || 'Unknown',
+              productDetails: [
+                `**Version:** ${item.latestVersion || 'N/A'}`,
+                `**FIPS:** ${item.fipsValidated || 'N/A'}`,
+              ].join('\n'),
+              pageUrl: `/migrate?q=${encodeURIComponent(item.softwareName)}`,
+            })}
+            resourceLabel={item.softwareName}
+          />
+        </span>
+        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+        <span onClick={(e) => e.stopPropagation()}>
+          <AskAssistantButton
+            variant="text"
+            label="Ask"
+            question={`What PQC algorithms does ${item.softwareName} support${item.categoryName ? ` (${item.categoryName})` : ''}?${item.pqcCapabilityDescription ? ` Capabilities: ${item.pqcCapabilityDescription}` : ''}${item.fipsValidated && item.fipsValidated !== 'No' ? ` FIPS status: ${item.fipsValidated}.` : ''}`}
+          />
+        </span>
 
         {onToggleCompare && (
           <Button
@@ -257,7 +285,10 @@ export const SoftwareCard = ({
                   : 'Add to comparison'
             }
             disabled={maxCompareReached && !isCompared}
-            onClick={() => onToggleCompare(key)}
+            onClick={(e) => {
+              e.stopPropagation()
+              onToggleCompare(key)
+            }}
             className={`p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${
               isCompared
                 ? 'text-secondary bg-secondary/10'
@@ -273,7 +304,10 @@ export const SoftwareCard = ({
             type="button"
             aria-label={isSelected ? 'Remove from My Products' : 'Add to My Products'}
             title={isSelected ? 'Remove from My Products' : 'Add to My Products'}
-            onClick={() => onToggleSelect(key)}
+            onClick={(e) => {
+              e.stopPropagation()
+              onToggleSelect(key)
+            }}
             className={`ml-auto p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded transition-colors ${
               isSelected
                 ? 'text-primary hover:text-primary/80'
