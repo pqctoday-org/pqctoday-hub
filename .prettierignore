@@ -32,3 +32,5 @@ pure_errors.json
 
 # Captured reference docs (PDFs + scraped HTML, not for reformatting)
 pqc-references/**
+public/vendor-roadmaps/**
+public/library/**

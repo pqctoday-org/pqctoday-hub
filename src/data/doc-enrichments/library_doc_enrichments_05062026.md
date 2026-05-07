@@ -1,0 +1,1728 @@
+---
+generated: 2026-05-06
+collection: library
+documents_processed: 41
+enrichment_method: ollama-qwen3.6:27b
+---
+
+## NIST-IR-8547-IPD2
+
+- **Reference ID**: NIST-IR-8547-IPD2
+- **Title**: NIST IR 8547 IPD2 — Transition to Post-Quantum Cryptography Standards
+- **Authors**: NIST
+- **Publication Date**: 2026-04-12
+- **Last Updated**: 2026-04-12
+- **Document Status**: Initial Public Draft
+- **Main Topic**: NIST’s expected approach to transitioning from quantum-vulnerable cryptographic algorithms to post-quantum digital signature algorithms and key-establishment schemes.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: United States; NIST
+- **Leaders Contributions Mentioned**: Dustin Moody (NIST); Ray Perlner (NIST); Andrew Regenscheid (NIST); Angela Robinson (NIST); David Cooper (NIST)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: NIST is defining the transition approach from quantum-vulnerable to post-quantum standards; The report identifies existing vulnerable standards and the quantum-resistant standards for migration; The document aims to inform federal agencies, industry, and standards organizations on migration efforts and timelines; Public comments received will be used to revise the transition plan and feed into algorithm-specific guidance
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Policy Maker; Compliance Officer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Timeline; Migrate; Algorithms; pqc-governance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: NIST-IR-8547-IPD2.html (45,373 bytes, 5,382 extracted chars)
+- **Extraction Timestamp**: 2026-05-06T23:06:19
+
+---
+
+## FIPS-140-3-STANDARD
+
+- **Reference ID**: FIPS-140-3-STANDARD
+- **Title**: FIPS 140-3 — Security Requirements for Cryptographic Modules
+- **Authors**: NIST
+- **Publication Date**: 2019-03-22
+- **Last Updated**: 2019-03-22
+- **Document Status**: Active
+- **Main Topic**: None detected
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: None detected
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: None detected
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: None detected
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: FIPS-140-3-STANDARD.pdf (310,627 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-06T23:08:51
+
+---
+
+## CMVP-MGMT-MANUAL
+
+- **Reference ID**: CMVP-MGMT-MANUAL
+- **Title**: CMVP Management Manual
+- **Authors**: NIST CMVP
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Active
+- **Main Topic**: Management manual governing the lifecycle, laboratory conduct, certification issuance, and maintenance reporting of the NIST Cryptographic Module Validation Program.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States, Canada; Bodies: National Institute of Standards and Technology, Canadian Centre for CyberSecurity
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Cryptographic Module Validation Program, CST Laboratory
+- **Standardization Bodies**: National Institute of Standards and Technology, Canadian Centre for CyberSecurity
+- **Compliance Frameworks Referenced**: FIPS 140-2, International Traffic in Arms Regulations
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The CMVP is jointly managed by NIST and the Canadian Centre for CyberSecurity; CST laboratories must undergo accreditation including proficiency examinations and on-site assessments; Validation submissions are processed through a queue with specific deadlines and hold statuses; Flaw discovery and validation revocation processes are defined for maintaining security integrity; NIST cost recovery fees and payment policies apply to the validation program.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer, Security Architect, Operations
+- **Implementation Prerequisites**: Accredited CST Laboratory; NIST CMVP Fee payment; Validation Report Review
+- **Relevant PQC Today Features**: Compliance, Assess, migration-program, pqc-governance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: CST Proficiency Examination, Artifact Testing, Validation Report Review, ACVP/CAVP Test Tools
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: NIST Cost Recovery Fees; Extended Cost Recovery Fee
+- **Organizational Readiness**: None detected
+- **Source Document**: CMVP-MGMT-MANUAL.pdf (885,577 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-06T23:20:54
+
+---
+
+## NIST-SP-800-140A
+
+- **Reference ID**: NIST-SP-800-140A
+- **Title**: NIST SP 800-140A — CMVP Documentation Requirements
+- **Authors**: NIST
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Active
+- **Main Topic**: NIST SP 800-140A specifies US-specific CMVP documentation requirements that modify ISO/IEC 24759 for cryptographic module validation.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: NIST, CMVP, OMB, U.S. Department of Commerce
+- **Leaders Contributions Mentioned**: Kim Schaffer (Author); Wilbur L. Ross, Jr. (Secretary); Walter Copan (NIST Director)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Cryptographic Module Validation Program; Cryptographic and Security Testing Laboratory
+- **Standardization Bodies**: NIST; ISO/IEC; CMVP
+- **Compliance Frameworks Referenced**: FIPS 140-3; ISO/IEC 19790; ISO/IEC 24759; FISMA; OMB Circular A-130
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Vendors must provide documentation fulfilling minimum requirements specified by the validation authority; CMVP may modify, add, or delete Vendor Evidence and Test Evidence per ISO/IEC 19790 paragraph 5.2; This document modifies ISO/IEC 24759 Section 6.13 and ISO/IEC 19790 Annex A; Testing laboratories must verify vendor documentation against these modified requirements; The document applies to cryptographic modules undergoing independent verification schemes at Levels 1, 2, 3, and 4
+- **Security Levels & Parameters**: Levels 1, 2, 3, and 4
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Vendors; Testing Labs; CMVP; Compliance Officer
+- **Implementation Prerequisites**: ISO/IEC 19790:2012; ISO/IEC 24759:2017; FIPS 140-3
+- **Relevant PQC Today Features**: Compliance; Assess; Migrate
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Conformance testing; Independent verification scheme; Vendor Evidence; Test Evidence
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: NIST-SP-800-140A.pdf (288,126 bytes, 10,932 extracted chars)
+- **Extraction Timestamp**: 2026-05-06T23:26:10
+
+---
+
+## NIST-SP-800-140C
+
+- **Reference ID**: NIST-SP-800-140C
+- **Title**: NIST SP 800-140C — CMVP Approved Security Functions
+- **Authors**: NIST
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Active
+- **Main Topic**: This document specifies the Cryptographic Module Validation Program (CMVP) approved security functions and testing modifications for FIPS 140-3 modules, superseding previous ISO/IEC annexes.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: NIST, CMVP, Computer Security Division, Information Technology Laboratory, Office of Management and Budget, U.S. Department of Commerce, Canadian Centre for Cyber Security
+- **Leaders Contributions Mentioned**: Kim Schaffer (Author); Alexander Calis (Author of superseding publication); Wilbur L. Ross, Jr. (Secretary of Commerce); Walter Copan (NIST Director)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Cryptographic Module Validation Program; Cryptographic and Security Testing Laboratory
+- **Standardization Bodies**: NIST; ISO/IEC; IEEE Standards Association
+- **Compliance Frameworks Referenced**: FIPS 140-3; ISO/IEC 19790; ISO/IEC 24759; FISMA; OMB Circular A-130
+- **Classical Algorithms Referenced**: AES; TDEA; SKIPJACK; DSA; RSA; ECDSA; SHA-3; Triple-DES; HMAC
+- **Key Takeaways**: NIST SP 800-140C has been withdrawn and superseded by NIST SP 800-140Cr1; The document defines approved security functions for CMVP validation of cryptographic modules; It supersedes ISO/IEC 19790 Annex C and ISO/IEC 24759 paragraph 6.15; Approved functions include symmetric encryption (AES, TDEA, SKIPJACK), digital signatures (DSA, RSA, ECDSA), and hashing (SHA-3); Vendors and testing labs must use these specified methods for conformance demonstration
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Vendors; Testing Labs; CMVP; Compliance Officer; Security Architect
+- **Implementation Prerequisites**: FIPS 140-3 module; ISO/IEC 19790:2012; ISO/IEC 24759:2017
+- **Relevant PQC Today Features**: Compliance; Algorithms; Migrate
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Cryptographic Module Validation Program; conformance testing; vendor evidence; test evidence
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: NIST-SP-800-140C.pdf (609,598 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-06T23:31:32
+
+---
+
+## NIST-SP-800-140D
+
+- **Reference ID**: NIST-SP-800-140D
+- **Title**: NIST SP 800-140D — CMVP Approved SSP Generation and Establishment Methods
+- **Authors**: NIST
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Active
+- **Main Topic**: This document specifies the Cryptographic Module Validation Program (CMVP) approved sensitive security parameter generation and establishment methods, superseding ISO/IEC 19790 Annex D and ISO/IEC 24759 paragraph 6.16.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: National Institute of Standards and Technology, Cryptographic Module Validation Program, Computer Security Division, Information Technology Laboratory, Office of Management and Budget, U.S. Department of Commerce, Canadian Centre for Cyber Security
+- **Leaders Contributions Mentioned**: Kim Schaffer; Alexander Calis
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Cryptographic Module Validation Program; Cryptographic and Security Testing Laboratory
+- **Standardization Bodies**: National Institute of Standards and Technology; ISO/IEC
+- **Compliance Frameworks Referenced**: FIPS 140-3; Federal Information Security Modernization Act (FISMA); OMB Circular A-130; ISO/IEC 19790; ISO/IEC 24759
+- **Classical Algorithms Referenced**: DSA; RSA; ECDSA
+- **Key Takeaways**: CMVP approved sensitive security parameter generation and establishment methods supersede ISO/IEC 19790 Annex D and ISO/IEC 24759 paragraph 6.16; The document precludes the use of all other sensitive security parameter generation and establishment methods; Key establishment techniques are defined by referencing specific NIST Special Publications including FIPS 186-4, SP 800-56A, SP 800-56B, SP 800-108, SP 800-132, SP 800-135, and SP 800-56C; The publication is withdrawn and superseded by NIST SP 800-140Dr1
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Vendors; Testing labs; CMVP
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance; Algorithms; Migrate
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Cryptographic Module Validation Program; FIPS 140 testing; vendor evidence; vendor documentation
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: NIST-SP-800-140D.pdf (566,030 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-06T23:36:19
+
+---
+
+## NIST-SP-800-140E
+
+- **Reference ID**: NIST-SP-800-140E
+- **Title**: NIST SP 800-140E — CMVP Approved Authentication Mechanisms
+- **Authors**: NIST
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Active
+- **Main Topic**: NIST SP 800-140E specifies CMVP-approved authentication mechanisms for operators accessing FIPS 140-3 validated cryptographic modules, superseding ISO/IEC 19790 Annex E and ISO/IEC 24759 Section 6.17.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: NIST, CMVP, OMB, CCCS
+- **Leaders Contributions Mentioned**: Kim Schaffer (Author); Wilbur L. Ross, Jr. (Secretary of Commerce); Walter Copan (NIST Director)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Cryptographic Module Validation Program; Cryptographic and Security Testing Laboratory; Operating Environment
+- **Standardization Bodies**: NIST; ISO/IEC; CMVP
+- **Compliance Frameworks Referenced**: FIPS 140-3; FISMA; OMB Circular A-130; ISO/IEC 19790; ISO/IEC 24759; SP 800-63B
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: CMVP may supersede ISO/IEC 19790 Annex E and ISO/IEC 24759 paragraph 6.17 with its own list of approved authentication mechanisms; Vendors should use SP 800-63B as a framework for authentication requirements and provide justification if requirements cannot be met; Operator authentication acceptance must be performed by the module or the Operating Environment except at Level 1; Allowed authentication mechanisms vary by FIPS 140-3 security level, ranging from implicit at Level 1 to Multi-Factor Crypto Device at Level 4
+- **Security Levels & Parameters**: FIPS 140-3 Level 1; FIPS 140-3 Level 2; FIPS 140-3 Level 3; FIPS 140-3 Level 4
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Vendors; Testing Labs; CMVP; Compliance Officer; Security Architect
+- **Implementation Prerequisites**: FIPS 140-3 validated modules; SP 800-63B framework; Vendor documentation justification
+- **Relevant PQC Today Features**: Compliance; Assess; crypto-agility
+- **Implementation Attack Surface**: Automated attacks; Presentation Attack Detection; False Match Rate
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: CMVP Validation; Conformance testing; Vendor evidence review; Vendor documentation review
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: NIST-SP-800-140E.pdf (361,925 bytes, 12,996 extracted chars)
+- **Extraction Timestamp**: 2026-05-06T23:41:01
+
+---
+
+## NIST-SP-800-140F
+
+- **Reference ID**: NIST-SP-800-140F
+- **Title**: NIST SP 800-140F — CMVP Approved Non-Invasive Attack Mitigation Test Methods
+- **Authors**: NIST
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Active
+- **Main Topic**: NIST SP 800-140F specifies CMVP-approved non-invasive attack mitigation test metrics, superseding ISO/IEC 19790 Annex F and ISO/IEC 24759 paragraph 6.18.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: NIST, CMVP, CCCS, OMB
+- **Leaders Contributions Mentioned**: Kim Schaffer; Wilbur L. Ross, Jr.; Walter Copan
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Cryptographic Module
+- **Standardization Bodies**: NIST, ISO/IEC, CMVP
+- **Compliance Frameworks Referenced**: FIPS 140-3, FISMA, OMB Circular A-130, ISO/IEC 19790, ISO/IEC 24759
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: NIST SP 800-140F replaces ISO/IEC 19790 Annex F and ISO/IEC 24759 paragraph 6.18 for non-invasive attack mitigation testing; The CMVP may supersede these annexes in their entirety as a validation authority; No additional non-invasive attack mitigation test metric requirements are specified at this time; Vendors and testing labs must use the specified methods to demonstrate conformance for cryptographic module validation
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Vendors, Testing Labs, CMVP
+- **Implementation Prerequisites**: ISO/IEC 19790:2012; ISO/IEC 24759:2017; FIPS 140-3
+- **Relevant PQC Today Features**: Compliance, Assess, Testing & Validation Methods
+- **Implementation Attack Surface**: Non-invasive attack mitigation; side channels
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Non-invasive attack mitigation testing; conformance demonstration; vendor evidence; test evidence
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: NIST-SP-800-140F.pdf (304,182 bytes, 10,377 extracted chars)
+- **Extraction Timestamp**: 2026-05-06T23:46:59
+
+---
+
+## NIAP-CCEVS-POLICY
+
+- **Reference ID**: NIAP-CCEVS-POLICY
+- **Title**: NIAP CCEVS Policy Letter 26
+- **Authors**: NIAP
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Active
+- **Main Topic**: This policy clarifies the applicability of U.S. laws and directives to product acceptance into NIAP and inclusion on the NIAP Product Compliant List, specifically regarding supply chain legislation prohibitions.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: NIAP, NSA, Committee on National Security Systems
+- **Leaders Contributions Mentioned**: Mary L. Baish (Director, NIAP)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Common Criteria Evaluation and Validation Scheme (CCEVS)
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: NIAP reserves the right to refuse evaluation of products prohibited from use on National Security Systems by statute or directive; Vendors should contact NIAP prior to contracting for evaluation if affected by supply chain limitations; NIAP publications will be updated to reflect recent supply chain legislation and policies; The policy is effective immediately.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance; Supply Chain & Vendor Risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Recent legislation places limitations on acquisition of certain products; NIAP may refuse evaluation of prohibited products.
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: NIAP-CCEVS-POLICY.pdf (297,325 bytes, 2,841 extracted chars)
+- **Extraction Timestamp**: 2026-05-06T23:52:43
+
+---
+
+## NIAP-CCEVS-MANUAL
+
+- **Reference ID**: NIAP-CCEVS-MANUAL
+- **Title**: NIAP CCEVS Quality Manual (Scheme Publication #2)
+- **Authors**: NIAP
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Active
+- **Main Topic**: Operational quality manual detailing roles, procedures, evaluation workflows, and assurance maintenance for the NIAP Common Criteria Evaluation and Validation Scheme.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: National Information Assurance Partnership, National Institute of Standards and Technology, National Security Agency, Common Criteria Recognition Arrangement
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: National Institute of Standards and Technology, ISO, IEC
+- **Compliance Frameworks Referenced**: Common Criteria, ISO/IEC Guide 17065, Computer Security Act of 1987, FISMA
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: NIAP operates solely under NSA authority to validate IT product conformance to Common Criteria; Quality management includes internal audits, document control, and complaint/appeals processes; Common Criteria Testing Laboratories must be accredited by NVLAP and approved by NIAP; The scheme maintains a Product Compliant List and manages certificate issuance and withdrawal; Assurance continuity is maintained through specific guidance for maintenance and re-evaluation.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer, Security Architect, Operations
+- **Implementation Prerequisites**: Familiarity with Common Criteria, NIST, and ISO publications; Accreditation by National Voluntary Laboratory Accreditation Program for testing laboratories.
+- **Relevant PQC Today Features**: Compliance, Assess, migration-program, pqc-governance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Common Criteria Testing Laboratory evaluations, Proficiency Tests, Internal Audits
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Contractor selection criteria, Contractor assessment and monitoring, Sponsor validation
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Quality Manager responsibilities, Personnel qualifications, Training records, Management reviews
+- **Source Document**: NIAP-CCEVS-MANUAL.pdf (860,984 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-06T23:56:53
+
+---
+
+## CC-2022-PART1
+
+- **Reference ID**: CC-2022-PART1
+- **Title**: Common Criteria 2022 Part 1 — Introduction and General Model (R1)
+- **Authors**: Common Criteria Recognition Arrangement (CCRA)
+- **Publication Date**: 2022-11-01
+- **Last Updated**: Not specified
+- **Document Status**: Active
+- **Main Topic**: Introduction and general model for the Common Criteria for Information Technology Security Evaluation, Revision 1.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Common Criteria
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The document defines the general model for security evaluation including Target of Evaluation (TOE) boundaries and operational environments; It establishes core constructs such as Security Problem Definition (SPD), Security Objectives, and Security Requirements; It outlines the hierarchical structure of security components including classes, families, and elements; It specifies conformance types for Protection Profiles including strict, demonstrable, and exact conformance; It describes methods for specifying security requirements through iteration, assignment, selection, and refinement.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Compliance Officer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance; Assess
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: CC-2022-PART1.pdf (4,472,709 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T00:01:59
+
+---
+
+## CC-2022-PART2
+
+- **Reference ID**: CC-2022-PART2
+- **Title**: Common Criteria 2022 Part 2 — Security Functional Components (R1)
+- **Authors**: Common Criteria Recognition Arrangement (CCRA)
+- **Publication Date**: 2022-11-01
+- **Last Updated**: Not specified
+- **Document Status**: Active
+- **Main Topic**: The document is Part 2 of the Common Criteria for Information Technology Security Evaluation (CC:2022), providing a catalog of security functional components for constructing protection profiles and security targets.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Common Criteria
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The document defines a structured catalog of security functional components (SFRs) for IT security evaluation; It organizes requirements into classes such as Security Audit (FAU) and Communication (FCO); It specifies component leveling, management, and audit requirements for each family; It serves as a normative reference for constructing protection profiles and security targets; It establishes dependencies and behavioral expectations for security functional components.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Compliance Officer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance; Assess
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: CC-2022-PART2.pdf (3,159,872 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T00:07:07
+
+---
+
+## CC-2022-PART3
+
+- **Reference ID**: CC-2022-PART3
+- **Title**: Common Criteria 2022 Part 3 — Security Assurance Components (R1)
+- **Authors**: Common Criteria Recognition Arrangement (CCRA)
+- **Publication Date**: 2022-11-01
+- **Last Updated**: Not specified
+- **Document Status**: Active
+- **Main Topic**: The document defines security assurance components, classes, and families for the Common Criteria for Information Technology Security Evaluation.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Common Criteria
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The document establishes a structured assurance paradigm for evaluating IT security; It defines specific assurance classes such as APE, ACE, and ASE for Protection Profile and Security Target evaluations; It outlines the structure for assurance components including objectives, application notes, and dependencies; It provides a taxonomy for component levelling and consistency checks; It serves as a normative reference for defining Evaluation Assurance Levels (EALs).
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance; Assess
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: CC-2022-PART3.pdf (2,912,505 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T00:10:22
+
+---
+
+## CC-2022-CEM
+
+- **Reference ID**: CC-2022-CEM
+- **Title**: Common Evaluation Methodology (CEM) 2022 R1
+- **Authors**: Common Criteria Recognition Arrangement (CCRA)
+- **Publication Date**: 2022-11-01
+- **Last Updated**: Not specified
+- **Document Status**: Active
+- **Main Topic**: The document defines the Common Evaluation Methodology (CEM) 2022 Revision 1, providing the methodology evaluators apply when assessing conformance to protection profiles and security targets as a companion to CC:2022.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Common Criteria
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The CEM serves as a companion to CC:2022 parts 1–3 for evaluating conformance to protection profiles and security targets; Evaluators must follow specific sub-activities for Protection Profile (APE), Protection Profile Configuration (ACE), and Security Target (ASE) evaluations; The methodology includes detailed guidance on evaluation input, sub-activities, and output tasks including writing OR and ETR; Re-using evaluation results of certified Protection Profiles is addressed within the evaluation process; The document structures evaluation classes including Development (ADV) with sub-activities for architecture, functional specification, design, and formal models.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Compliance Officer; Researcher
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance; Assess
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: conformance testing
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: CC-2022-CEM.pdf (3,637,118 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T00:13:38
+
+---
+
+## BSI-BSZ-METHOD
+
+- **Reference ID**: BSI-BSZ-METHOD
+- **Title**: BSI BSZ — Accelerated Security Certification Evaluation Process (v2.1)
+- **Authors**: BSI
+- **Publication Date**: 2024-11-01
+- **Last Updated**: 2024-11-01
+- **Document Status**: Active
+- **Main Topic**: This document outlines the mandatory requirements, procedures, and tasks for the BSZ (Beschleunigte Sicherheitszertifizierung) accelerated security certification evaluation process, including preparation, evaluation, and certification phases.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Germany; Bodies: Federal Office for Information Security (BSI)
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: EN 17640 Fixed-time Cybersecurity Evaluation Methodology (FiT CEM)
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The BSZ evaluation process is divided into three phases comprising five steps: preparation/application, evaluation, and certification; ITSEFs must conclude contracts with manufacturers and the BSI certification body before starting; Applicants must provide a PGP key and valid AIS B documents for the evaluation; The process includes specific tasks for kick-off, evaluation, and final interview stages; Extended Follow-Up Evaluation is integrated into the process as of version 2.2
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; Security Architect; Operations
+- **Implementation Prerequisites**: Valid AIS B documents; Public PGP key of the BSI; Contract with manufacturer; Contract with ITSEF; Contract with BSI certification body
+- **Relevant PQC Today Features**: Compliance; Assess; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: BSI-BSZ-METHOD.pdf (533,485 bytes, 11,266 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T00:17:13
+
+---
+
+## HIPAA-45-CFR-164
+
+- **Reference ID**: HIPAA-45-CFR-164
+- **Title**: HIPAA Security Rule — 45 CFR Part 164
+- **Authors**: US HHS
+- **Publication Date**: 1996-08-21
+- **Last Updated**: 2024-01-01
+- **Document Status**: Active
+- **Main Topic**: The document outlines the HIPAA Security Rule (45 CFR Part 164), detailing administrative, physical, and technical safeguards for protecting electronic protected health information.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: Department of Health and Human Services
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: HIPAA Security Rule; 45 CFR Part 164
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Covered entities must implement administrative, physical, and technical safeguards to protect electronic protected health information; Hybrid entities must designate health care components and ensure they comply with security standards as if they were separate legal entities; Documentation of organizational designations must be retained for 6 years from creation or last effect; Business associates are subject to applicable standards and requirements regarding protected health information; Encryption is defined as an algorithmic process to transform data into a form with low probability of meaning assignment without a key.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance; Assess
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: HIPAA-45-CFR-164.pdf (692,866 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T00:20:33
+
+---
+
+## FERPA-34-CFR-99
+
+- **Reference ID**: FERPA-34-CFR-99
+- **Title**: FERPA — 34 CFR Part 99
+- **Authors**: US ED
+- **Publication Date**: 1974-08-21
+- **Last Updated**: 2024-01-01
+- **Document Status**: Active
+- **Main Topic**: The document outlines the regulations for the Family Educational Rights and Privacy Act (FERPA), detailing the rights of parents and students regarding education records and the conditions for disclosure.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: Department of Education, Office of the Secretary
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Educational agencies receiving federal funds must comply with FERPA privacy regulations; Parents and eligible students have the right to inspect and review education records; Prior consent is generally required for disclosing personally identifiable information from education records, with specific exceptions defined; Institutions must provide annual notification of privacy rights to parents and students; Biometric records are considered personally identifiable information under these regulations
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: FERPA-34-CFR-99.pdf (271,329 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T00:24:04
+
+---
+
+## COPPA-16-CFR-312
+
+- **Reference ID**: COPPA-16-CFR-312
+- **Title**: COPPA Rule — 16 CFR Part 312
+- **Authors**: US FTC
+- **Publication Date**: 1998-10-21
+- **Last Updated**: 2024-01-01
+- **Document Status**: Active
+- **Main Topic**: The document outlines the Children's Online Privacy Protection Rule (COPPA Rule) under 16 CFR Part 312, detailing regulations for the collection, use, and disclosure of personal information from children under 13.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: Federal Trade Commission
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Children's Online Privacy Protection Act of 1998; Federal Trade Commission Act
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Operators must provide clear notice and obtain verifiable parental consent before collecting personal information from children; Personal information includes persistent identifiers, biometric data, and geolocation information sufficient to identify street name and city; Operators must establish reasonable procedures to protect the confidentiality, security, and integrity of collected personal information; Mixed audience websites are not deemed directed to children regarding visitors not identified as under 13; Operators cannot condition a child's participation on the disclosure of more personal information than is reasonably necessary.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; Legal Counsel; Product Manager
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: COPPA-16-CFR-312.pdf (138,519 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T00:27:22
+
+---
+
+## FDA-21-CFR-11
+
+- **Reference ID**: FDA-21-CFR-11
+- **Title**: FDA 21 CFR Part 11 — Electronic Records; Electronic Signatures
+- **Authors**: US FDA
+- **Publication Date**: 1997-03-20
+- **Last Updated**: 2024-01-01
+- **Document Status**: Active
+- **Main Topic**: US FDA regulations defining criteria for trustworthy electronic records and signatures in regulated activities.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: Food and Drug Administration
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: 21 CFR Part 11
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Electronic records and signatures must meet specific criteria to be considered equivalent to paper records and handwritten signatures; Closed systems require validation, audit trails, and access controls to ensure record integrity and authenticity; Open systems require additional measures such as document encryption and digital signature standards to protect records from creation to receipt; Electronic signatures must be unique to an individual and linked to their respective records to prevent falsification; Organizations must verify individual identity before assigning electronic signatures and certify their legal binding equivalence.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer
+- **Implementation Prerequisites**: System validation; Secure, computer-generated, time-stamped audit trails; Authority checks for system access; Written policies for accountability; Identity verification procedures
+- **Relevant PQC Today Features**: Compliance, Assess, crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: System validation to ensure accuracy, reliability, and consistent intended performance
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: FDA-21-CFR-11.pdf (207,091 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T00:30:52
+
+---
+
+## HITECH-PL-111-5
+
+- **Reference ID**: HITECH-PL-111-5
+- **Title**: HITECH Act — Public Law 111-5 (ARRA Title XIII)
+- **Authors**: US Congress
+- **Publication Date**: 2009-02-17
+- **Last Updated**: Not specified
+- **Document Status**: Active
+- **Main Topic**: The document is the text of Public Law 111-5, the American Recovery and Reinvestment Act of 2009, detailing supplemental appropriations for various federal agencies and programs.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: Senate, House of Representatives, Department of Agriculture, Food and Drug Administration, Department of Defense, Department of Homeland Security, Department of Labor, Department of Health and Human Services, Department of Education, Department of Veterans Affairs, Department of Transportation, Department of Housing and Urban Development, Department of the Interior, Department of Energy, Department of Commerce, Department of Justice, Department of Financial Services, Rural Housing Service, Farm Service Agency, Natural Resources Conservation Service, Rural Utilities Service, Food and Nutrition Service
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The Act appropriates funds for job preservation, infrastructure investment, and economic recovery; It includes specific funding for health information technology and broadband infrastructure; It designates all appropriated amounts as emergency requirements; It establishes reporting deadlines for fund usage and obligations; It provides temporary increases in benefits for nutrition assistance programs
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: None detected
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: Appropriations include $24,000,000 for Agriculture Buildings; $22,500,000 for Office of Inspector General; $176,000,000 for Agricultural Research Service facilities; $50,000,000 for Farm Service Agency IT modernization; $290,000,000 for Watershed and Flood Prevention; $1,000,000,000 for rural housing direct loans; $10,472,000,000 for rural housing guaranteed loans; $2,500,000,000 for broadband loans and grants; $500,000,000 for WIC program
+- **Organizational Readiness**: None detected
+- **Source Document**: HITECH-PL-111-5.pdf (1,189,466 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T00:34:27
+
+---
+
+## MAS-CIRCULAR-IT-RISK
+
+- **Reference ID**: MAS-CIRCULAR-IT-RISK
+- **Title**: MAS Technology Risk Management Guidelines
+- **Authors**: MAS
+- **Publication Date**: 2021-01-18
+- **Last Updated**: Not specified
+- **Document Status**: Active
+- **Main Topic**: Technology risk management principles and best practices for financial institutions, including governance, resilience, cryptography, and security operations.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Monetary Authority of Singapore
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Cryptographic Key Management
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Establish sound technology risk governance with board oversight; Maintain cyber resilience through defense-in-depth; Implement robust IT project management and security-by-design; Ensure strong access control and cryptographic key management; Conduct regular cyber security assessments and penetration testing
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO, Compliance Officer, Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pqc-governance, pqc-risk-management, compliance-strategy
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Vulnerability Assessment; Penetration Testing; Cyber Exercises; Adversarial Attack Simulation Exercise
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Internet of Things security considerations
+- **Supply Chain & Vendor Risk**: Management of Third Party Services
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Board of Directors and Senior Management oversight; Appointment of CIO/CTO and CISO; Establishment of technology risk management strategy
+- **Source Document**: MAS-CIRCULAR-IT-RISK.pdf (592,631 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T00:36:43
+
+---
+
+## GSMA-NG116
+
+- **Reference ID**: GSMA-NG116
+- **Title**: GSMA NG.116 v2.0 — Generic Network Slice Template
+- **Authors**: GSMA
+- **Publication Date**: Not specified
+- **Last Updated**: Not specified
+- **Document Status**: Active
+- **Main Topic**: This document defines the Generic Network Slice Template (GST) and its attributes for characterizing 5G network slices, based on 3GPP Release 15 specifications.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Bodies: GSM Association, 3GPP
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: GSM Association, 3GPP
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Network slicing enables dedicated logical networks on shared 5G infrastructure; The Generic Network Slice Template provides a standardized list of attributes to characterize network slice types; Attributes include performance metrics like throughput, delay tolerance, and reliability; The document defines Network Slice Types (NESTs) with recommended minimum attribute sets; The scope is limited to describing GST attributes and NEST examples based on 3GPP Release 15
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Network Architect, Telecommunications Engineer, Standards Specialist
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: 5g-security
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: NB-IoT Support; LTE-M; Massive IoT
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: GSMA-NG116.pdf (1,412,064 bytes, 7,168 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T00:38:16
+
+---
+
+## ETSI-EN-303645
+
+- **Reference ID**: ETSI-EN-303645
+- **Title**: ETSI EN 303 645 v2.1.1 — Cyber Security for Consumer IoT
+- **Authors**: ETSI
+- **Publication Date**: 2020-06-01
+- **Last Updated**: Not specified
+- **Document Status**: Active
+- **Main Topic**: European baseline security requirements for consumer IoT devices, covering cyber security provisions and data protection.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Europe; Bodies: ETSI
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: ETSI
+- **Compliance Frameworks Referenced**: General Data Protection Regulation (GDPR)
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Consumer IoT devices must not use universal default passwords; Manufacturers must implement means to manage vulnerability reports; Software must be kept updated and integrity ensured; Sensitive security parameters must be securely stored; Personal data security and user data deletion capabilities are required
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect; Compliance Officer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: iot-ot-pqc; compliance-strategy
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Addresses security considerations specific to constrained devices such as window contact sensors, flood sensors, and energy switches
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: ETSI-EN-303645.pdf (887,793 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T00:39:38
+
+---
+
+## ZA-POPIA-TEXT
+
+- **Reference ID**: ZA-POPIA-TEXT
+- **Title**: South Africa Protection of Personal Information Act (POPIA, Act 4 of 2013)
+- **Authors**: Republic of South Africa
+- **Publication Date**: 2013-11-26
+- **Last Updated**: Not specified
+- **Document Status**: Active
+- **Main Topic**: The Protection of Personal Information Act 4 of 2013 of South Africa, establishing conditions for lawful processing of personal information and establishing an Information Regulator.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: South Africa; Bodies: Information Regulator, Parliament of the Republic of South Africa
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Protection of Personal Information Act 4 of 2013, Promotion of Access to Information Act 2000
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Organizations must implement security safeguards to ensure integrity and confidentiality of personal information; Responsible parties must notify the Information Regulator of security compromises; Processing of special personal information such as biometrics and health data requires specific authorizations; Data subjects have rights regarding access, correction, and objection to processing; Transborder flows of personal information are regulated to ensure adequate protection levels.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer, Legal Counsel, Data Protection Officer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance, Assess, pqc-governance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: Administrative fines and penalties for non-compliance; Civil remedies available for data subjects.
+- **Organizational Readiness**: Designation of an Information Officer; Establishment of security measures; Notification procedures for security compromises.
+- **Source Document**: ZA-POPIA-TEXT.pdf (237,928 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T00:41:11
+
+---
+
+## KE-DPA-TEXT
+
+- **Reference ID**: KE-DPA-TEXT
+- **Title**: Kenya Data Protection Act (No. 24 of 2019)
+- **Authors**: Republic of Kenya
+- **Publication Date**: 2019-11-08
+- **Last Updated**: Not specified
+- **Document Status**: Active
+- **Main Topic**: The Kenya Data Protection Act, 2019, which establishes the Office of the Data Protection Commissioner and regulates the processing of personal data.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Kenya; Bodies: Office of the Data Protection Commissioner, Public Service Commission, National Assembly, Parliament of Kenya
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Data controllers and processors must register with the Office of the Data Protection Commissioner; Personal data processing must adhere to specific principles and obligations including consent and breach notification; Sensitive personal data requires permitted grounds for processing; Transfers of personal data outside Kenya are subject to specific conditions and safeguards; The Data Commissioner has enforcement powers including investigation and administrative fines
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: KE-DPA-TEXT.pdf (422,508 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T00:42:58
+
+---
+
+## PCI-DSS-QRG
+
+- **Reference ID**: PCI-DSS-QRG
+- **Title**: PCI DSS Quick Reference Guide v3 (v4.0 overview)
+- **Authors**: PCI Security Standards Council
+- **Publication Date**: 2018-01-01
+- **Last Updated**: Not specified
+- **Document Status**: Active
+- **Main Topic**: A quick reference guide to the PCI Data Security Standard version 3.0 for merchants and entities involved in payment card processing.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States, Europe; Bodies: PCI Security Standards Council, American Express, Discover Financial Services, JCB International, MasterCard Worldwide, Visa Inc
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: PCI Security Standards Council
+- **Compliance Frameworks Referenced**: PCI DSS, PCI PTS, PCI PA-DSS, PCI P2PE
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Identify all locations of cardholder data and inventory IT assets to analyze vulnerabilities; Fix identified vulnerabilities and securely remove unnecessary cardholder data storage; Document assessment and remediation details and submit compliance reports to acquiring banks and card brands; Use standard security procedures and technologies to thwart theft of cardholder data; Adhere to the continuous process of Assess, Repair, and Report for PCI DSS compliance
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer, Security Architect, Merchant, Service Provider
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance, Assess, migration-program, pqc-governance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Vulnerability scans, Self-Assessment Questionnaire (SAQ), Report on Compliance (ROC)
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: More than 868 million records with sensitive information have been breached between January 2005 and June 2014
+- **Organizational Readiness**: None detected
+- **Source Document**: PCI-DSS-QRG.pdf (1,496,678 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T00:45:51
+
+---
+
+## TSA-SD-PIPELINE-2021-02F
+
+- **Reference ID**: TSA-SD-PIPELINE-2021-02F
+- **Title**: TSA Security Directive Pipeline-2021-02F
+- **Authors**: US TSA
+- **Publication Date**: 2025-07-01
+- **Last Updated**: Not specified
+- **Document Status**: Active
+- **Main Topic**: Renewal of TSA Security Directive Pipeline-2021-02F mandating cybersecurity mitigation actions, contingency planning, and testing for critical hazardous liquid and natural gas pipeline owners/operators.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: Transportation Security Administration, U.S. Department of Homeland Security, Cybersecurity and Infrastructure Security Agency, Office of Management and Budget, Transportation Security Oversight Board
+- **Leaders Contributions Mentioned**: Ha Nguyen McNeill (Acting Administrator, Transportation Security Administration)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: 49 U.S.C. 114(d), (f), (l) and (m); 49 CFR part 1520; 49 CFR part 1503; Presidential Policy Directive (PPD) 41; Implementing Recommendations of the 9/11 Commission Act of 2007
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Pipeline owners/operators must implement a TSA-approved Cybersecurity Implementation Plan; Owners/operators must maintain an up-to-date Cybersecurity Incident Response Plan; Owners/operators must submit annual updates and reports for their Cybersecurity Assessment Plan; Compliance is mandatory for TSA-designated critical pipeline systems and facilities; Information submitted to TSA is considered Sensitive Security Information (SSI)
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; Security Architect; Operations
+- **Implementation Prerequisites**: TSA-approved Cybersecurity Implementation Plan; Cybersecurity Incident Response Plan; Cybersecurity Assessment Plan; Written confirmation of receipt via email
+- **Relevant PQC Today Features**: Compliance; Assess; pqc-governance; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: TSA-SD-PIPELINE-2021-02F.pdf (1,245,427 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T00:48:49
+
+---
+
+## HKMA-FINTECH-BLUEPRINT-2026
+
+- **Reference ID**: HKMA-FINTECH-BLUEPRINT-2026
+- **Title**: HKMA Fintech Promotion Blueprint (Fintech 2030) — Feb 2026
+- **Authors**: HKMA
+- **Publication Date**: 2026-02-03
+- **Last Updated**: Not specified
+- **Document Status**: Active
+- **Main Topic**: The HKMA Fintech Promotion Blueprint outlines tactical measures to accelerate the adoption of sophisticated financial technologies, including AI, DLT, HPC, and quantum resilience, within Hong Kong's banking sector.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Hong Kong; Bodies: Hong Kong Monetary Authority (HKMA)
+- **Leaders Contributions Mentioned**: Arthur Yuen (Deputy Chief Executive, HKMA); Ms Carmen Chu (Executive Director (Banking Supervision), HKMA)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The HKMA is shifting focus from basic fintech adoption to deep integration of sophisticated technologies like AI, DLT, and HPC; A Quantum Preparedness Index has been launched to track sector readiness; Cyber resilience is a foundational capability requiring advanced cybersecurity embedding; The blueprint emphasizes ecosystem collaboration and talent development to support technological advancement; 95% of surveyed banks have already adopted fintech for end-to-end digitalisation.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Policy Maker; Compliance Officer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pqc-risk-management; pqc-governance; migration-program; Assess
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Tech Maturity Stock-take conducted in 2025; Quantum Preparedness Index launched for progress tracking
+- **Source Document**: HKMA-FINTECH-BLUEPRINT-2026.pdf (4,451,297 bytes, 10,773 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T00:53:20
+
+---
+
+## NY-DFS-23-NYCRR-500-A2
+
+- **Reference ID**: NY-DFS-23-NYCRR-500-A2
+- **Title**: NY DFS 23 NYCRR Part 500 — Cybersecurity Requirements (Amendment 2)
+- **Authors**: NY DFS
+- **Publication Date**: 2023-11-01
+- **Last Updated**: Not specified
+- **Document Status**: Active
+- **Main Topic**: New York Department of Financial Services Second Amendment to 23 NYCRR Part 500 establishing cybersecurity requirements for financial services companies.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: New York State; Bodies: New York State Department of Financial Services
+- **Leaders Contributions Mentioned**: Adrienne A. Harris, Superintendent of Financial Services, promulgated the Second Amendment to Part 500
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: 23 NYCRR Part 500
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Covered entities must maintain a cybersecurity program based on risk assessment to protect nonpublic information; Class A companies are required to conduct independent audits of their cybersecurity programs; Each covered entity must designate a Chief Information Security Officer (CISO) responsible for overseeing the cybersecurity program; Senior management must file an annual certification confirming compliance with the regulations; Cybersecurity policies must address specific areas including access controls, incident response, and vendor management
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; CISO; Senior Management
+- **Implementation Prerequisites**: Designation of a CISO; Annual certification by senior management; Risk assessment process; Written cybersecurity policy approved annually
+- **Relevant PQC Today Features**: Compliance; pqc-governance; vendor-risk; pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Independent audit; Penetration testing
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Third-party service provider management; Vendor risk assessment implied through third-party service provider definitions and oversight requirements
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Senior governing body oversight required; CISO designation required; Annual policy review and certification required
+- **Source Document**: NY-DFS-23-NYCRR-500-A2.pdf (695,600 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T00:58:35
+
+---
+
+## NIS2-DIRECTIVE-2022-2555
+
+- **Reference ID**: NIS2-DIRECTIVE-2022-2555
+- **Title**: Network and Information Security Directive 2 (NIS2)
+- **Authors**: European Parliament; Council of the EU
+- **Publication Date**: 2022-12-14
+- **Last Updated**: 2022-12-14
+- **Document Status**: In Force
+- **Main Topic**: EU Directive (EU) 2022/2555 (NIS2) establishing a high common level of cybersecurity across the Union, including risk-management measures and incident reporting for essential and important entities.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: Implemented by member states by Oct 2024
+- **Applicable Regions / Bodies**: Regions: European Union; Bodies: European Parliament, Council of the European Union, European Commission, European Central Bank, European Economic and Social Committee, Committee of the Regions, Cooperation Group, national computer security incident response teams (CSIRTs)
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Directive (EU) 2022/2555, Directive (EU) 2016/1148, Regulation (EU) No 910/2014, Directive (EU) 2018/1972, Regulation (EU) 2016/679, Directive 2002/58/EC, Commission Recommendation 2003/361/EC, Directive 97/67/EC
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Member States must implement NIS2 by October 2024 to ensure a high common level of cybersecurity; Entities must apply uniform size-cap criteria to determine scope for risk-management and reporting obligations; Divergences in national cybersecurity rules are being removed to prevent internal market fragmentation; Essential and important entities are required to implement cybersecurity risk-management measures and incident reporting; Public administration entities involved in national security or law enforcement may be exempt from certain obligations
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer, Policy Maker, CISO
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance, pqc-governance, pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: NIS2-DIRECTIVE-2022-2555.pdf (1,326,245 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T01:02:08
+
+---
+
+## DORA-REG-2022-2554
+
+- **Reference ID**: DORA-REG-2022-2554
+- **Title**: Digital Operational Resilience Act (DORA) — Regulation EU 2022/2554
+- **Authors**: European Parliament; Council of the EU
+- **Publication Date**: 2022-12-14
+- **Last Updated**: 2022-12-14
+- **Document Status**: In Force
+- **Main Topic**: Regulation (EU) 2022/2554 establishes a harmonized framework for digital operational resilience and ICT risk management for financial entities in the European Union.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: Applicable from Jan 2025
+- **Applicable Regions / Bodies**: Regions: European Union; Bodies: European Parliament, Council of the European Union, European Commission, European Central Bank, European Economic and Social Committee, European Systemic Risk Board, Basel Committee on Banking Supervision, Committee on Payments and Market Infrastructures, Financial Stability Board, Financial Stability Institute, G7, G20, European Banking Authority, European Insurance and Occupational Pensions Authority, European Securities and Markets Authority
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Regulation (EU) 2022/2554, Directive (EU) 2016/1148, Regulation (EC) No 1060/2009, Regulation (EU) No 648/2012, Regulation (EU) No 600/2014, Regulation (EU) No 909/2014, Regulation (EU) 2016/1011, Regulation (EU) No 1093/2010, Regulation (EU) No 1094/2010, Regulation (EU) No 1095/2010
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Financial entities must consolidate ICT risk management into a single coherent framework to address gaps in incident reporting and resilience testing; The regulation aims to harmonize digital operational resilience requirements across the EU to prevent competitive distortions and ensure market integrity; ICT third-party risk monitoring and digital operational resilience testing are explicitly targeted areas for regulatory strengthening; The regulation applies to approximately 22,000 Union financial entities to mitigate systemic cyber risks and interconnected vulnerabilities; Compliance with this regulation is required to ensure the stability of the financial system and protect investors and consumers from ICT disruptions.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer, Policy Maker, CISO
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance, pqc-governance, pqc-risk-management, migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: digital operational resilience testing
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: ICT third-party risk monitoring
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: DORA-REG-2022-2554.pdf (1,493,241 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T01:06:46
+
+---
+
+## GDPR-REG-2016-679
+
+- **Reference ID**: GDPR-REG-2016-679
+- **Title**: General Data Protection Regulation (GDPR) — Regulation EU 2016/679
+- **Authors**: European Parliament; Council of the EU
+- **Publication Date**: 2016-04-27
+- **Last Updated**: 2016-04-27
+- **Document Status**: In Force
+- **Main Topic**: Regulation (EU) 2016/679 establishing rules for the protection of natural persons regarding the processing of personal data and the free movement of such data within the European Union.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: European Union, Member States; Bodies: European Parliament, Council of the European Union, European Commission, European Economic and Social Committee, Committee of the Regions, supervisory authorities
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Regulation (EU) 2016/679, Directive 95/46/EC, Regulation (EC) No 45/2001, Directive (EU) 2016/680, Commission Recommendation 2003/361/EC
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Article 32 mandates appropriate technical measures including encryption to protect personal data; Protection must be technologically neutral and not depend on specific techniques used; Member States may incorporate elements of the Regulation into national law for coherence; Effective protection requires strengthening rights of data subjects and obligations of controllers and processors; Derogations exist for micro, small and medium-sized enterprises with fewer than 250 employees regarding record-keeping
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer, Policy Maker, CISO
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance, pqc-governance, data-asset-sensitivity
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: GDPR-REG-2016-679.pdf (982,296 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T01:12:36
+
+---
+
+## EIDAS-REG-910-2014
+
+- **Reference ID**: EIDAS-REG-910-2014
+- **Title**: eIDAS Regulation — Regulation EU 910/2014 (eIDAS 1.0)
+- **Authors**: European Parliament; Council of the EU
+- **Publication Date**: 2014-07-23
+- **Last Updated**: 2014-07-23
+- **Document Status**: Superseded
+- **Main Topic**: Regulation (EU) No 910/2014 establishes a legal framework for electronic identification and trust services for electronic transactions in the internal market.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: European Union; Bodies: European Parliament, Council of the European Union, European Commission
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Public key infrastructure
+- **Standardization Bodies**: ISO
+- **Compliance Frameworks Referenced**: Directive 1999/93/EC, Directive 2006/123/EC, Directive 2011/24/EU, Directive 95/46/EC
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Mutual recognition of electronic identification means facilitates cross-border provision of services in the internal market; Assurance levels (low, substantial, high) characterize the degree of confidence in electronic identification means; Member States should encourage the private sector to voluntarily use electronic identification means under notified schemes; Security of electronic identification schemes is key to trustworthy cross-border mutual recognition; Technical requirements for assurance levels should be technology-neutral.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Policy Maker, Compliance Officer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: digital-id, compliance-strategy, migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: EIDAS-REG-910-2014.pdf (1,049,892 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T01:17:22
+
+---
+
+## EU-CRA-REG-2024-2847
+
+- **Reference ID**: EU-CRA-REG-2024-2847
+- **Title**: EU Cyber Resilience Act (CRA) — Regulation EU 2024/2847
+- **Authors**: European Parliament; Council of the EU
+- **Publication Date**: 2024-10-23
+- **Last Updated**: 2024-10-23
+- **Document Status**: In Force
+- **Main Topic**: Regulation (EU) 2024/2847 establishes horizontal cybersecurity requirements for products with digital elements placed on the EU internal market.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: European Union, internal market, Member States; Bodies: European Parliament, Council of the European Union, European Commission, ENISA, European Economic and Social Committee, Committee of the Regions
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Regulation (EU) 2024/2847, Regulation (EU) No 168/2013, Regulation (EU) No 2019/1020, Directive (EU) 2020/1828, Regulation (EU) 2019/881, Directive (EU) 2022/2555, Commission Recommendation 2003/361/EC, Directives 2014/24/EU and 2014/25/EU
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Manufacturers must ensure products with digital elements meet essential cybersecurity requirements throughout their lifecycle; The regulation applies horizontally to all hardware and software with digital elements, including remote data processing solutions; Important and critical products undergo stricter conformity assessment procedures; Member States cannot impose additional cybersecurity requirements for market placement, though entities can set stricter procurement requirements; The regulation aims to harmonize the internal market and address widespread vulnerabilities and insufficient security updates.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer, Policy Maker, Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance, migration-program, pqc-governance, iot-ot-pqc, supply-chain-vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Cybersecurity must be taken into account throughout supply chains to make final products and components more secure; Manufacturers are responsible for securing products and their integrated remote data processing solutions.
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: EU-CRA-REG-2024-2847.pdf (1,782,351 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T01:22:11
+
+---
+
+## MICA-REG-2023-1114
+
+- **Reference ID**: MICA-REG-2023-1114
+- **Title**: Markets in Crypto-Assets Regulation (MiCA) — Regulation EU 2023/1114
+- **Authors**: European Parliament; Council of the EU
+- **Publication Date**: 2023-05-31
+- **Last Updated**: 2023-05-31
+- **Document Status**: In Force
+- **Main Topic**: EU Regulation (EU) 2023/1114 establishing a harmonized framework for markets in crypto-assets, including prudential and operational requirements for service providers and issuers.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: European Union; Bodies: European Parliament, Council of the European Union, European Commission, European Central Bank, European Economic and Social Committee, European Securities and Markets Authority (ESMA), European Banking Authority (EBA), Financial Stability Board, Basel Committee on Banking Supervision, Financial Action Task Force
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Regulation (EU) 2023/1114, Directive 2014/65/EU, Directive 2014/49/EU, Directive (EU) 2015/2366, Regulation (EU) 2017/2402, Directive 2009/110/EC, Regulation (EU) No 1093/2010, Regulation (EU) No 1095/2010, DORA
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Crypto-asset service providers must implement ICT security and cryptographic controls aligned with DORA; Issuers and providers must identify and disclose principal adverse impacts of consensus mechanisms on climate and environment; The regulation excludes unique and non-fungible crypto-assets from its scope; A harmonized Union framework is required to ensure legal certainty and prevent regulatory fragmentation for crypto-assets not covered by existing financial services legislation; ESMA and EBA are mandated to develop regulatory technical standards for sustainability indicators related to crypto-asset consensus mechanisms
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; Policy Maker; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance; digital-assets; pqc-governance; compliance-strategy
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: MICA-REG-2023-1114.pdf (1,628,600 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T01:26:55
+
+---
+
+## EU-REC-2024-1101
+
+- **Reference ID**: EU-REC-2024-1101
+- **Title**: EU Commission Recommendation on PQC — 2024/1101
+- **Authors**: European Commission
+- **Publication Date**: 2024-04-11
+- **Last Updated**: 2024-04-11
+- **Document Status**: Active
+- **Main Topic**: European Commission Recommendation establishing a coordinated implementation roadmap and timeline for the transition to Post-Quantum Cryptography in EU public sector and critical infrastructure.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Quantum computers capable of breaking today’s encryption; malicious use of quantum computers
+- **Migration Timeline Info**: Post-Quantum Cryptography Coordinated Implementation Roadmap available after two years following publication; assessment of effects maximum three years after publication
+- **Applicable Regions / Bodies**: Regions: European Union, Member States; Bodies: European Commission, NIS Cooperation Group, European Union Agency for Cybersecurity (ENISA), Europol, NATO
+- **Leaders Contributions Mentioned**: Thierry BRETON (Member of the Commission)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Digital infrastructures, public administration systems, critical infrastructures, digital networks and services
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Directive (EU) 2022/2555 (NIS 2 Directive), Regulation (EU) No 910/2014, Directive (EU) 2018/1972, Directive (EU) 2016/1148, Commission Implementing Decision (EU) 2017/179
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Member States must develop a comprehensive PQC adoption strategy with clear goals and milestones; A coordinated implementation roadmap should be established within two years to synchronize national transition plans; Hybrid schemes combining PQC with existing cryptography or QKD are recommended for deployment; Evaluation and selection of PQC algorithms should involve ENISA and cybersecurity experts to ensure harmonized EU standards
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid schemes combining Post-Quantum Cryptography with existing cryptographic approaches or with Quantum Key Distribution
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Policy Maker, Compliance Officer, Security Architect
+- **Implementation Prerequisites**: Establishment of a sub-group of the NIS Cooperation Group; appointment of expert representatives; cooperation with ENISA and national cybersecurity authorities
+- **Relevant PQC Today Features**: Timeline, Compliance, Migrate, pqc-governance, migration-program, qkd
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: Quantum Key Distribution
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Coordinated and synchronized transition; phased milestones; alignment of national plans with common roadmap
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Governance prerequisites; dedicated expert representatives; board-level reporting (Commission monitoring); change management scope (fundamental shift in algorithms, protocols, systems)
+- **Source Document**: EU-REC-2024-1101.pdf (483,347 bytes, 13,198 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T01:31:57
+
+---
+
+## Saudi-NCA-NCS1-2020
+
+- **Reference ID**: Saudi-NCA-NCS1-2020
+- **Title**: Saudi NCA — National Cryptographic Standards (NCS-1:2020)
+- **Authors**: Saudi NCA
+- **Publication Date**: 2020-01-01
+- **Last Updated**: 2020-01-01
+- **Document Status**: Active
+- **Main Topic**: Defines minimum acceptable cryptographic requirements, including symmetric/asymmetric primitives, schemes, protocols, and PKI standards for Saudi civilian and commercial entities.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Saudi Arabia; Bodies: National Cybersecurity Authority (NCA)
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: IP Security (IPsec); Transport Layer Security (TLS); Domain Name System Security (DNSSEC); Secure Shell (SSH); Bluetooth; Universal Mobile Telecommunications System (UMTS) / Long Term Evolution (LTE) / 5G; WPA (Wi-Fi Protected Access); Kerberos Protocol
+- **Infrastructure Layers**: Public Key Infrastructure (PKI); Key Lifecycle Management (KLM)
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: SNOW 2.0; SOSEMANUK; Advanced Encryption Standards (AES); Camellia; Serpent; RSA; Diffie-Hellman; Finite Field; Elliptic Curve Discrete Logarithm Problem based Algorithms (ECDLP); NIST P-256; NIST P-384; BrainpoolP256r1; BrainpoolP384r1; Curve25519; NIST P-521; Curve448; BrainpoolP512r1; Secure Hash Algorithm 2 (SHA-2); SHA2-384; SHA2-512/256; Secure Hash Algorithm 3 (SHA-3); SHA3-256; SHA3-384; SHAKE128; SHAKE256; SHA3-512
+- **Key Takeaways**: National entities must implement MODERATE (128-bit) or ADVANCED (256-bit) cryptographic strength levels based on data sensitivity; RSA and Diffie-Hellman are accepted for MODERATE level but not for ADVANCED level; Post-Quantum Cryptography considerations are included in appendices but no specific PQC algorithms are mandated in this version; Implementation must avoid vulnerabilities by carefully applying prescribed primitives, schemes, and key lifecycle management processes; The standard assumes the absence of quantum computing capabilities and is subject to periodic updates.
+- **Security Levels & Parameters**: MODERATE level targeting 128-bit security; ADVANCED level targeting 256-bit security; RSA at least 3072 bits; Diffie-Hellman at least 3072 bits; AES 128-bit, 192-bit, 256-bit; SNOW 2.0 128-bit, 256-bit; IV at least 128 bits
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; Security Architect; Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance; Algorithms; Assess; pqc-risk-management
+- **Implementation Attack Surface**: Side-channel Attacks; implementation-based vulnerabilities
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: Pseudo Random Number Generation (PRNG)
+- **Constrained Device & IoT Suitability**: Lightweight Crypto Algorithms
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: Saudi-NCA-NCS1-2020.pdf (1,120,163 bytes, 10,345 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T01:36:52
+
+---
+
+## US-TREASURY-FSRMP-2025
+
+- **Reference ID**: US-TREASURY-FSRMP-2025
+- **Title**: US Treasury Financial Services Sector Risk Management Plan (January 2025)
+- **Authors**: US Department of the Treasury
+- **Publication Date**: 2025-01-01
+- **Last Updated**: 2025-01-01
+- **Document Status**: Active
+- **Main Topic**: The U.S. Department of the Treasury's Financial Services Sector Risk Management Plan for January 2025, identifying quantum computing as an emerging technology risk and outlining coordinated government-industry response strategies.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Cryptographic risks from quantum computing
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: U.S. Department of the Treasury, Financial Services Sector Coordinating Council (FSSCC), U.S. Department of Homeland Security (DHS), Financial and Banking Information Infrastructure Committee (FBIIC), Group of Seven (G7) Cyber Experts Group (CEG), Board of Governors of the Federal Reserve System (FRB), Federal Deposit Insurance Corporation (FDIC), National Credit Union Administration (NCUA), Office of the Comptroller of the Currency (OCC), Consumer Financial Protection Bureau (CFPB), Federal Financial Institution Examination Council (FFIEC)
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Cloud services, information technology services, communications platforms, payments infrastructure, electronic large value transfer systems, automated clearinghouses (ACH), automated teller machines (ATM)
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: National Security Memorandum on Critical Infrastructure Security and Resilience (NSM-22), Strategic Guidance and National Priorities for U.S. Critical Infrastructure Security and Resilience (2024-2025)
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Quantum computing is identified as a priority emerging technology risk requiring sector-wide resilience initiatives; The G7 Cyber Experts Group is leading efforts to promote the adoption of quantum-resilient technologies in the financial sector; Public-private collaboration between Treasury, FSSCC, and FBIIC is central to managing cryptographic risks and enhancing incident response; Financial institutions must address risks associated with cloud concentration and supply chain dependencies alongside quantum threats; The plan aligns with national security directives from DHS and requires biennial submission of sector-specific risk management plans.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Policy Maker, CISO, Compliance Officer, Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pqc-risk-management, pqc-governance, migration-program, vendor-risk, compliance-strategy
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Supply chains pose risk because software and hardware enabling IT and communications platforms are critical to sector function
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Public and private sector partners meet regularly to plan and execute security and resilience projects; continuous assessment of sector progress is required to ensure activities are responsive to stakeholder needs
+- **Source Document**: US-TREASURY-FSRMP-2025.pdf (3,088,964 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T01:41:48
+
+---
+
+## CMMC-2.0-MODEL
+
+- **Reference ID**: CMMC-2.0-MODEL
+- **Title**: Cybersecurity Maturity Model Certification (CMMC) Model Overview v2.13
+- **Authors**: US DoD; DoD CIO
+- **Publication Date**: 2021-11-01
+- **Last Updated**: 2024-09-01
+- **Document Status**: Active
+- **Main Topic**: Overview of the Department of Defense Cybersecurity Maturity Model Certification (CMMC) Model Version 2.13, detailing its three-level framework for protecting Federal Contract Information and Controlled Unclassified Information.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: United States; Department of Defense; Office of the Under Secretary of Defense for Acquisition and Sustainment; DoD Chief Information Officer
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: PKI; Key Management
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: NIST SP 800-171 Rev 2; NIST SP 800-172; FAR 52.204-21; 32 CFR § 170
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: CMMC v2.13 establishes a three-level maturity framework (Foundational, Advanced, Expert) for defense contractors; Level 1 protects Federal Contract Information using FAR 52.204-21 requirements; Level 2 protects Controlled Unclassified Information using NIST SP 800-171 Rev 2 requirements; Level 3 enhances CUI protection using a subset of NIST SP 800-172 requirements with DoD-approved parameters; The model consists of 14 domains aligned with NIST SP 800-171 Security Requirement Families.
+- **Security Levels & Parameters**: CMMC Level 1; CMMC Level 2; CMMC Level 3
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer; Security Architect; Defense Contractor
+- **Implementation Prerequisites**: Compliance with FAR 52.204-21 for Level 1; Compliance with NIST SP 800-171 Rev 2 for Level 2; Compliance with NIST SP 800-172 subset for Level 3
+- **Relevant PQC Today Features**: Compliance; Assess; migration-program; pqc-governance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Defense Industrial Base sector; DoD supply chain; subcontractors; prime contractors
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: Malicious cyber activity cost the U.S. economy between $57 billion and $109 billion in 2016; Global cost of cybercrime was as high as $600 billion in 2017
+- **Organizational Readiness**: CMMC maturity levels; Implementation of cybersecurity requirements at three levels; Scoping assessments for enterprise networks or enclaves
+- **Source Document**: CMMC-2.0-MODEL.pdf (977,491 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T01:47:01
+
+---
+
+## UNECE-WP29-R155
+
+- **Reference ID**: UNECE-WP29-R155
+- **Title**: UN Regulation No. 155 — Cybersecurity and Cybersecurity Management Systems (CSMS)
+- **Authors**: UNECE WP.29
+- **Publication Date**: 2021-01-22
+- **Last Updated**: 2021-03-04
+- **Document Status**: Active
+- **Main Topic**: UN Regulation No. 155 establishes uniform provisions for the approval of vehicles regarding cybersecurity and the implementation of a Cyber Security Management System (CSMS).
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: None detected; Bodies: United Nations, UNECE WP.29, Approval Authorities, Technical Services
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: United Nations, UNECE WP.29
+- **Compliance Frameworks Referenced**: UN Regulation No. 155, 1958 Agreement
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Vehicle manufacturers must implement a systematic risk-based Cyber Security Management System (CSMS) to manage cyber threats; Type approval requires verification of risk assessments, mitigations, and testing by Approval Authorities or Technical Services; Documentation and data logs supporting cybersecurity measures must be retained for at least 10 years after production discontinuation; The regulation applies to vehicle categories M, N, O (with ECUs), and L6/L7 (with automated driving level 3+); Suppliers must provide sufficient information to demonstrate that supplier-related risks are identified and managed.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Compliance Officer, Security Architect, Policy Maker
+- **Implementation Prerequisites**: Cyber Security Management System (CSMS) implementation; Risk assessment documentation; Testing of security measures; Supply chain information verification
+- **Relevant PQC Today Features**: Compliance, Assess, pqc-governance, vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Document checks; Testing of vehicle type by sampling; Verification of security measures effectiveness
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Collect and verify information through the supply chain to demonstrate supplier-related risks are identified and managed; Suppliers must make available sufficient information for checks while treating it on a confidential basis if covered by intellectual property rights.
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Systematic risk-based approach defining organizational processes, responsibilities, and governance; Satisfactory arrangements and procedures to manage cybersecurity aspects; Board-level or organizational governance implied by CSMS definition.
+- **Source Document**: UNECE-WP29-R155.pdf (448,517 bytes, 14,882 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T01:52:00
+
+---
+
+## NZISM-V3-9
+
+- **Reference ID**: NZISM-V3-9
+- **Title**: New Zealand Information Security Manual (NZISM) v3.9 — November 2025
+- **Authors**: GCSB; New Zealand Government Communications Security Bureau
+- **Publication Date**: 2025-11-01
+- **Last Updated**: 2025-11-01
+- **Document Status**: Active
+- **Main Topic**: The New Zealand Information Security Manual (NZISM) v3.9 details mandatory and recommended security controls, classification systems, and accreditation processes for New Zealand Government information systems.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: New Zealand; Bodies: GCSB, Office of the Government Chief Digital Officer (GCDO)
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: PKI, Key Management
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: NZISM, Protective Security Requirements (PSR) INFOSEC2, NZ Government Security Classification System
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Baseline controls are mandatory for all government systems regardless of classification level; Agencies must use the latest version of the NZISM to ensure compliance; Accreditation Authority is typically the Agency Head or Director-General, except for GCSB-compartmented information where the Director-General of GCSB holds authority; Waivers are short-term acknowledgments of non-compliance requiring compensating controls, distinct from exceptions which are formal dispensations; Good practice controls are recommended but their use is based on agency risk assessment.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security personnel, security executives, security and information assurance practitioners, IT Security Managers, Departmental Security Officers, service providers
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: compliance-strategy, pqc-governance, data-asset-sensitivity
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: NZISM-V3-9.pdf (5,775,995 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T01:56:38
+
+---

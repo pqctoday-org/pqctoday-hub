@@ -1,0 +1,966 @@
+<!doctype html>
+<html lang="en-US" class="no-touch js ">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!--<link rel="profile" href="https://gmpg.org/xfn/11"> -->
+	
+	<meta name="blogsPostDate" content="2026-04-13 05:00:00"/><meta name="blogsPostTags" content="cisco-secure-firewall,nist-2,security-posture"/><meta name="blogsPostCat" content="Security"/><meta name="article:category" content="Security"/><meta name=priorityNarrativeList" content="None"/>
+<meta name="wordCount" content="1549" />
+<meta name="readTime" content="371" />
+	<meta name="author" content="Bill Spry,  " /><meta name="blogsPostAuthor" content="Bill Spry,  " /><meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+	<style>img:is([sizes="auto" i], [sizes^="auto," i]) { contain-intrinsic-size: 3000px 1500px }</style>
+	<script type="text/javascript" src="//www.cisco.com/c/dam/cdc/t/ctm-core.js"></script>
+
+
+	<!-- This site is optimized with the Yoast SEO Premium plugin v25.0 (Yoast SEO v25.0) - https://yoast.com/wordpress/plugins/seo/ -->
+	<title>Cisco Secure Firewall: Post Quantum Cryptography Roadmap</title>
+	<meta name="description" content="Cisco Secure Firewall’s post-quantum cryptography roadmap: what’s available today, what’s coming, and how to start planning." />
+	<link rel="canonical" href="https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap" />
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:type" content="article" />
+	<meta property="og:title" content="Preparing for Post-Quantum Cryptography: The Secure Firewall Roadmap" />
+	<meta property="og:description" content="Cisco Secure Firewall’s post-quantum cryptography roadmap: what’s available today, what’s coming, and how to start planning." />
+	<meta property="og:url" content="https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap" />
+	<meta property="og:site_name" content="Cisco Blogs" />
+	<meta property="article:published_time" content="2026-04-13T12:00:00+00:00" />
+	<meta property="article:modified_time" content="2026-04-14T15:00:38+00:00" />
+	<meta property="og:image" content="https://blogs.cisco.com/gcs/ciscoblogs/1/2026/04/post-quantum.jpeg" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta name="author" content="Bill Spry," />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:label1" content="Written by" />
+	<meta name="twitter:data1" content="Bill Spry" />
+	<meta name="twitter:label2" content="Est. reading time" />
+	<meta name="twitter:data2" content="8 minutes" />
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap#article","isPartOf":{"@id":"https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap"},"author":{"name":"Bill Spry","@id":"https://blogs.cisco.com/#/schema/person/80eee8807e41945fb7772eca4eca8569"},"headline":"Preparing for Post-Quantum Cryptography: The Secure Firewall Roadmap","datePublished":"2026-04-13T12:00:00+00:00","dateModified":"2026-04-14T15:00:38+00:00","mainEntityOfPage":{"@id":"https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap"},"wordCount":1780,"commentCount":0,"publisher":{"@id":"https://blogs.cisco.com/#organization"},"image":{"@id":"https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap#primaryimage"},"thumbnailUrl":"https://blogs.cisco.com/gcs/ciscoblogs/1/2025/02/FY25_cisco_security_data_center_blog_hero_v1.jpg","keywords":["Cisco Secure Firewall","NIST","Security Posture"],"articleSection":["Security"],"inLanguage":"en-US","potentialAction":[{"@type":"CommentAction","name":"Comment","target":["https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap#respond"]}]},{"@type":"WebPage","@id":"https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap","url":"https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap","name":"Cisco Secure Firewall: Post Quantum Cryptography Roadmap","isPartOf":{"@id":"https://blogs.cisco.com/#website"},"primaryImageOfPage":{"@id":"https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap#primaryimage"},"image":{"@id":"https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap#primaryimage"},"thumbnailUrl":"https://blogs.cisco.com/gcs/ciscoblogs/1/2025/02/FY25_cisco_security_data_center_blog_hero_v1.jpg","datePublished":"2026-04-13T12:00:00+00:00","dateModified":"2026-04-14T15:00:38+00:00","description":"Cisco Secure Firewall’s post-quantum cryptography roadmap: what’s available today, what’s coming, and how to start planning.","breadcrumb":{"@id":"https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap"]}]},{"@type":"ImageObject","inLanguage":"en-US","@id":"https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap#primaryimage","url":"https://blogs.cisco.com/gcs/ciscoblogs/1/2025/02/FY25_cisco_security_data_center_blog_hero_v1.jpg","contentUrl":"https://blogs.cisco.com/gcs/ciscoblogs/1/2025/02/FY25_cisco_security_data_center_blog_hero_v1.jpg","width":1201,"height":600},{"@type":"BreadcrumbList","@id":"https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Cisco Blogs","item":"https://blogs.cisco.com/"},{"@type":"ListItem","position":2,"name":"Security","item":"https://blogs.cisco.com/security"},{"@type":"ListItem","position":3,"name":"Preparing for Post-Quantum Cryptography: The Secure Firewall Roadmap"}]},{"@type":"WebSite","@id":"https://blogs.cisco.com/#website","url":"https://blogs.cisco.com/","name":"Cisco Blogs","description":"","publisher":{"@id":"https://blogs.cisco.com/#organization"},"potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://blogs.cisco.com/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"en-US"},{"@type":"Organization","@id":"https://blogs.cisco.com/#organization","name":"Cisco Systems","url":"https://blogs.cisco.com/","logo":{"@type":"ImageObject","inLanguage":"en-US","@id":"https://blogs.cisco.com/#/schema/logo/image/","url":"https://blogs.cisco.com/gcs/ciscoblogs/1/2020/10/Cisco_Logo_no_TM_Sky_Blue-RGB.png","contentUrl":"https://blogs.cisco.com/gcs/ciscoblogs/1/2020/10/Cisco_Logo_no_TM_Sky_Blue-RGB.png","width":912,"height":482,"caption":"Cisco Systems"},"image":{"@id":"https://blogs.cisco.com/#/schema/logo/image/"}},{"@type":"Person","@id":"https://blogs.cisco.com/#/schema/person/80eee8807e41945fb7772eca4eca8569","name":"Bill Spry","image":{"@type":"ImageObject","inLanguage":"en-US","@id":"https://blogs.cisco.com/#/schema/person/image/","url":"https://blogs.cisco.com/gcs/ciscoblogs/1/2026/03/08_52_42-150x150.jpg","contentUrl":"https://blogs.cisco.com/gcs/ciscoblogs/1/2026/03/08_52_42-150x150.jpg","caption":"Bill Spry"},"description":"Bill Spry is a TME Technical Leader within Cisco's Cloud and Network Security team, where he focuses on firewall threat capabilities, Talos integrations, and AI/ML features. Before joining the product side, he spent over four years as a Security Architect for Cisco's US Public Sector accounts and has more than 14 years of hands-on firewall and IPS experience as both a practitioner and a Sourcefire administrator. Outside of work, Bill runs a small record label that has released over 20 albums on vinyl and enjoys cooking and spending time with family in Cincinnati.","url":"https://blogs.cisco.com/author/bspry"}]}</script>
+	<!-- / Yoast SEO Premium plugin. -->
+
+
+<link rel='dns-prefetch' href='//www.cisco.com' />
+<link rel="alternate" type="application/rss+xml" title="Cisco Blogs &raquo; Feed" href="https://blogs.cisco.com/feed" />
+<link rel="alternate" type="application/rss+xml" title="Cisco Blogs &raquo; Comments Feed" href="https://blogs.cisco.com/comments/feed" />
+<link rel="alternate" type="application/rss+xml" title="Cisco Blogs &raquo; Preparing for Post-Quantum Cryptography: The Secure Firewall Roadmap Comments Feed" href="https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap/feed" />
+<script type="text/javascript">
+/* <![CDATA[ */
+window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/15.0.3\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/15.0.3\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/blogs.cisco.com\/wp-includes\/js\/wp-emoji-release.min.js?ver=6.7.1"}};
+/*! This file is auto-generated */
+!function(i,n){var o,s,e;function c(e){try{var t={supportTests:e,timestamp:(new Date).valueOf()};sessionStorage.setItem(o,JSON.stringify(t))}catch(e){}}function p(e,t,n){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);var t=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data),r=(e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(n,0,0),new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data));return t.every(function(e,t){return e===r[t]})}function u(e,t,n){switch(t){case"flag":return n(e,"\ud83c\udff3\ufe0f\u200d\u26a7\ufe0f","\ud83c\udff3\ufe0f\u200b\u26a7\ufe0f")?!1:!n(e,"\ud83c\uddfa\ud83c\uddf3","\ud83c\uddfa\u200b\ud83c\uddf3")&&!n(e,"\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc65\udb40\udc6e\udb40\udc67\udb40\udc7f","\ud83c\udff4\u200b\udb40\udc67\u200b\udb40\udc62\u200b\udb40\udc65\u200b\udb40\udc6e\u200b\udb40\udc67\u200b\udb40\udc7f");case"emoji":return!n(e,"\ud83d\udc26\u200d\u2b1b","\ud83d\udc26\u200b\u2b1b")}return!1}function f(e,t,n){var r="undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?new OffscreenCanvas(300,150):i.createElement("canvas"),a=r.getContext("2d",{willReadFrequently:!0}),o=(a.textBaseline="top",a.font="600 32px Arial",{});return e.forEach(function(e){o[e]=t(a,e,n)}),o}function t(e){var t=i.createElement("script");t.src=e,t.defer=!0,i.head.appendChild(t)}"undefined"!=typeof Promise&&(o="wpEmojiSettingsSupports",s=["flag","emoji"],n.supports={everything:!0,everythingExceptFlag:!0},e=new Promise(function(e){i.addEventListener("DOMContentLoaded",e,{once:!0})}),new Promise(function(t){var n=function(){try{var e=JSON.parse(sessionStorage.getItem(o));if("object"==typeof e&&"number"==typeof e.timestamp&&(new Date).valueOf()<e.timestamp+604800&&"object"==typeof e.supportTests)return e.supportTests}catch(e){}return null}();if(!n){if("undefined"!=typeof Worker&&"undefined"!=typeof OffscreenCanvas&&"undefined"!=typeof URL&&URL.createObjectURL&&"undefined"!=typeof Blob)try{var e="postMessage("+f.toString()+"("+[JSON.stringify(s),u.toString(),p.toString()].join(",")+"));",r=new Blob([e],{type:"text/javascript"}),a=new Worker(URL.createObjectURL(r),{name:"wpTestEmojiSupports"});return void(a.onmessage=function(e){c(n=e.data),a.terminate(),t(n)})}catch(e){}c(n=f(s,u,p))}t(n)}).then(function(e){for(var t in e)n.supports[t]=e[t],n.supports.everything=n.supports.everything&&n.supports[t],"flag"!==t&&(n.supports.everythingExceptFlag=n.supports.everythingExceptFlag&&n.supports[t]);n.supports.everythingExceptFlag=n.supports.everythingExceptFlag&&!n.supports.flag,n.DOMReady=!1,n.readyCallback=function(){n.DOMReady=!0}}).then(function(){return e}).then(function(){var e;n.supports.everything||(n.readyCallback(),(e=n.source||{}).concatemoji?t(e.concatemoji):e.wpemoji&&e.twemoji&&(t(e.twemoji),t(e.wpemoji)))}))}((window,document),window._wpemojiSettings);
+/* ]]> */
+</script>
+<style id='wp-emoji-styles-inline-css' type='text/css'>
+
+	img.wp-smiley, img.emoji {
+		display: inline !important;
+		border: none !important;
+		box-shadow: none !important;
+		height: 1em !important;
+		width: 1em !important;
+		margin: 0 0.07em !important;
+		vertical-align: -0.1em !important;
+		background: none !important;
+		padding: 0 !important;
+	}
+</style>
+<link rel='stylesheet' id='wp-block-library-css' href='https://blogs.cisco.com/wp-includes/css/dist/block-library/style.min.css?ver=6.7.1' type='text/css' media='all' />
+<style id='classic-theme-styles-inline-css' type='text/css'>
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+</style>
+<style id='global-styles-inline-css' type='text/css'>
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--color--cisco-midnight-blue: #0d274d;--wp--preset--color--cisco-ocean-blue: #1e4471;--wp--preset--color--cisco-sky-blue: #00bceb;--wp--preset--color--cisco-green: #6abf4b;--wp--preset--color--cisco-orange: #fbab18;--wp--preset--color--cisco-red: #e2231a;--wp--preset--color--dark-gray: #495057;--wp--preset--color--medium-gray: #9e9ea2;--wp--preset--color--light-gray: #ced4da;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgba(255, 255, 255, 1), 6px 6px rgba(0, 0, 0, 1);--wp--preset--shadow--crisp: 6px 6px 0px rgba(0, 0, 0, 1);}:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}
+:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}
+:root :where(.wp-block-pullquote){font-size: 1.5em;line-height: 1.6;}
+</style>
+<link rel='stylesheet' id='category-css-css' href='https://blogs.cisco.com/wp-content/plugins/cisco-category-page-enhancement/css/category-css.css?ver=1.1' type='text/css' media='all' />
+<link rel='stylesheet' id='multiauthor_custom_front_style-css' href='https://blogs.cisco.com/wp-content/plugins/cisco-multiple-authors/css/multiauthor.css?ver=1.2' type='text/css' media='all' />
+<link rel='stylesheet' id='tts_front_style-css' href='https://blogs.cisco.com/wp-content/plugins/cisco-text-to-speech/css/tts.css?ver=1.1.19' type='text/css' media='all' />
+<link rel='stylesheet' id='ppress-frontend-css' href='https://blogs.cisco.com/wp-content/plugins/wp-user-avatar/assets/css/frontend.min.css?ver=4.15.23' type='text/css' media='all' />
+<link rel='stylesheet' id='ppress-flatpickr-css' href='https://blogs.cisco.com/wp-content/plugins/wp-user-avatar/assets/flatpickr/flatpickr.min.css?ver=4.15.23' type='text/css' media='all' />
+<link rel='stylesheet' id='ppress-select2-css' href='https://blogs.cisco.com/wp-content/plugins/wp-user-avatar/assets/select2/select2.min.css?ver=6.7.1' type='text/css' media='all' />
+<link rel='stylesheet' id='parent-style-css' href='https://blogs.cisco.com/wp-content/themes/ciscowordpress/style.css?ver=6.7.1' type='text/css' media='all' />
+<link rel='stylesheet' id='child-style-css' href='https://blogs.cisco.com/wp-content/themes/ciscowordpress-child/style.css?ver=1.3.4' type='text/css' media='all' />
+<style id='child-style-inline-css' type='text/css'>
+@media only screen and (min-width: 930px) {
+	.single .author-section {
+		display: block;
+		width: 100%;
+	}
+	.single .author-section .auth-row.author-cards {
+		display: grid;
+		gap: 20px;
+		width: 100%;
+		box-sizing: border-box;
+	}
+	.single .author-section .auth-row.author-cards > .blog-row.author-bio {
+		float: none;
+		width: auto;
+		display: block;
+		margin: 0;
+		min-height: 0;
+		vertical-align: initial;
+	}
+	.single .author-section .auth-row.author-cards .author-bio-box {
+		width: 100% !important;
+		max-width: none;
+		margin-left: 0;
+		margin-right: 0;
+		box-sizing: border-box;
+	}
+	.single .author-section .auth-row.author-cards.author-cards--n-1 {
+		grid-template-columns: minmax(0, 1fr);
+		max-width: 50%;
+		width: 100%;
+		margin-left: 0;
+		margin-right: auto;
+	}
+	.single .author-section .auth-row.author-cards.author-cards--n-2 {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+	.single .author-section .auth-row.author-cards.author-cards--n-3 {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+	.single .author-section .auth-row.author-cards.author-cards--n-4 {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+	.single .author-section .auth-row.author-cards.author-cards--layout-3col {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+@media only screen and (max-width: 929px) {
+	.single .author-section .auth-row.author-cards {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 16px;
+		width: 100%;
+	}
+	.single .author-section .auth-row.author-cards > .blog-row.author-bio {
+		float: none;
+		width: auto;
+		display: block;
+		margin: 0;
+	}
+}
+</style>
+<link rel='stylesheet' id='child-style1-css' href='https://blogs.cisco.com/wp-content/themes/ciscowordpress-child/css/styles.css?ver=1.3.29' type='text/css' media='all' />
+<link rel='stylesheet' id='cisco-header-css' href='https://blogs.cisco.com/wp-content/themes/ciscowordpress-child/style-header-footer.css?ver=1.0.4' type='text/css' media='all' />
+<link rel='stylesheet' id='ciscowordpress-style-css' href='https://blogs.cisco.com/wp-content/themes/ciscowordpress-child/style.css?ver=6.7.1' type='text/css' media='all' />
+<link rel='stylesheet' id='cui-standard-css' href='https://www.cisco.com/web/fw/cisco-ui/1.3.5/dist/css/cui-standard.min.css?ver=6.7.1' type='text/css' media='all' />
+<style id='akismet-widget-style-inline-css' type='text/css'>
+
+			.a-stats {
+				--akismet-color-mid-green: #357b49;
+				--akismet-color-white: #fff;
+				--akismet-color-light-grey: #f6f7f7;
+
+				max-width: 350px;
+				width: auto;
+			}
+
+			.a-stats * {
+				all: unset;
+				box-sizing: border-box;
+			}
+
+			.a-stats strong {
+				font-weight: 600;
+			}
+
+			.a-stats a.a-stats__link,
+			.a-stats a.a-stats__link:visited,
+			.a-stats a.a-stats__link:active {
+				background: var(--akismet-color-mid-green);
+				border: none;
+				box-shadow: none;
+				border-radius: 8px;
+				color: var(--akismet-color-white);
+				cursor: pointer;
+				display: block;
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+				font-weight: 500;
+				padding: 12px;
+				text-align: center;
+				text-decoration: none;
+				transition: all 0.2s ease;
+			}
+
+			/* Extra specificity to deal with TwentyTwentyOne focus style */
+			.widget .a-stats a.a-stats__link:focus {
+				background: var(--akismet-color-mid-green);
+				color: var(--akismet-color-white);
+				text-decoration: none;
+			}
+
+			.a-stats a.a-stats__link:hover {
+				filter: brightness(110%);
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 0 2px rgba(0, 0, 0, 0.16);
+			}
+
+			.a-stats .count {
+				color: var(--akismet-color-white);
+				display: block;
+				font-size: 1.5em;
+				line-height: 1.4;
+				padding: 0 13px;
+				white-space: nowrap;
+			}
+		
+</style>
+<link rel='stylesheet' id='jquery-lazyloadxt-spinner-css-css' href='//blogs.cisco.com/wp-content/plugins/a3-lazy-load/assets/css/jquery.lazyloadxt.spinner.css?ver=6.7.1' type='text/css' media='all' />
+<link rel='stylesheet' id='gcs-blogs-css-css' href='https://blogs.cisco.com/gcs/ciscoblogs/css/blogs.css' type='text/css' media='all' />
+<script type="text/javascript" src="https://blogs.cisco.com/wp-content/plugins/cisco-multiple-authors/js/custom-multiauthor.js?ver=6.7.1" id="multiauthor_custom_js-js"></script>
+<script type="text/javascript" src="https://blogs.cisco.com/wp-content/plugins/cisco-text-to-speech/js/tts_auto.js?ver=1.1.18" id="tts_js-js"></script>
+<script type="text/javascript" src="https://blogs.cisco.com/wp-content/plugins/cisco-text-to-speech/js/replacements_global.js?ver=1.1.0" id="tts_replacement_js-js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js?ver=3.1.1" id="jquery-core-js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-migrate-3.1.0.min.js?ver=3.0.0" id="jquery-migrate-js"></script>
+<script type="text/javascript" src="https://blogs.cisco.com/wp-content/plugins/wp-user-avatar/assets/flatpickr/flatpickr.min.js?ver=4.15.23" id="ppress-flatpickr-js"></script>
+<script type="text/javascript" src="https://blogs.cisco.com/wp-content/plugins/wp-user-avatar/assets/select2/select2.min.js?ver=4.15.23" id="ppress-select2-js"></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://blogs.cisco.com/xmlrpc.php?rsd" />
+<meta name="generator" content="WordPress 6.7.1" />
+<link rel='shortlink' href='https://blogs.cisco.com/?p=489120' />
+<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://blogs.cisco.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fblogs.cisco.com%2Fsecurity%2Fpreparing-for-post-quantum-cryptography-the-secure-firewall-roadmap" />
+<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://blogs.cisco.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fblogs.cisco.com%2Fsecurity%2Fpreparing-for-post-quantum-cryptography-the-secure-firewall-roadmap&#038;format=xml" />
+<link rel="pingback" href="https://blogs.cisco.com/xmlrpc.php"><link rel="icon" href="https://blogs.cisco.com/gcs/ciscoblogs/1/2024/09/cropped-Cisco-logo-thumb-sky-blue-150x150.jpg" sizes="32x32" />
+<link rel="icon" href="https://blogs.cisco.com/gcs/ciscoblogs/1/2024/09/cropped-Cisco-logo-thumb-sky-blue-300x300.jpg" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://blogs.cisco.com/gcs/ciscoblogs/1/2024/09/cropped-Cisco-logo-thumb-sky-blue-300x300.jpg" />
+<meta name="msapplication-TileImage" content="https://blogs.cisco.com/gcs/ciscoblogs/1/2024/09/cropped-Cisco-logo-thumb-sky-blue-300x300.jpg" />
+</head>
+
+<body class="post-template-default single single-post postid-489120 single-format-standard no-sidebar">
+
+<div id="page" class="site">
+<cdc-template-micro lang="en" search-set-context="blogs">
+	<a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+
+	<header id="masthead" class="site-header">
+		<header class="main-header" data-name="Main_header" >
+        <div class="logo" data-name="Logo" >
+            <a href="https://blogs.cisco.com"><img src="https://blogs.cisco.com/wp-content/themes/ciscowordpress-child/svg/cisco_logo.svg" alt="Cisco Logo" /></a>
+        </div>
+        
+        <div class="brand-title" >
+            <a href="https://blogs.cisco.com">Cisco Blogs</a>
+        </div>
+        
+        <!-- Header Menu -->
+        <nav class="menu" data-name="Menu" id="main-menu"><div class="menu-item dropdown-menu-item" data-name="Executive Platform"><a href="https://blogs.cisco.com/news">Executive Platform</a></div>
+<div class="menu-item dropdown-menu-item" data-name="AI"><a href="https://blogs.cisco.com/ai">AI</a></div>
+<div class="menu-item dropdown-menu-item" data-name="Networking"><a href="https://blogs.cisco.com/networking">Networking</a></div>
+<div class="menu-item dropdown-menu-item" data-name="Data Center"><a href="https://blogs.cisco.com/datacenter">Data Center</a></div>
+<div class="menu-item dropdown-menu-item" data-name="Security"><a href="https://blogs.cisco.com/security">Security</a></div>
+<div class="menu-item dropdown-menu-item" data-name="More"><span>More <svg class="dropdown-icon" width="12" height="12" viewBox="0 0 12 12"><path d="M6 8L2 4L10 4L6 8Z" fill="currentColor"></path></svg></span>
+<ul id="menu-header-more" class="dropdown-menu">
+	<li id="menu-item-486267" class="dropdown-item submenu-item" tabindex="4" role="button"><a href="/industries">All Industries</a></li>
+	<li id="menu-item-486268" class="dropdown-item submenu-item" tabindex="4" role="button"><a href="/country-region">All Countries + Regions</a></li>
+	<li id="menu-item-486269" class="dropdown-item submenu-item" tabindex="4" role="button"><a href="https://blogs.cisco.com/insidervoices">Cisco Insider</a></li>
+	<li id="menu-item-486270" class="dropdown-item submenu-item" tabindex="4" role="button"><a href="https://blogs.cisco.com/cisco-on-cisco">Cisco on Cisco</a></li>
+	<li id="menu-item-486328" class="dropdown-item submenu-item" tabindex="4" role="button"><a href="/customerexperience">CX</a></li>
+	<li id="menu-item-486271" class="dropdown-item submenu-item" tabindex="4" role="button"><a href="https://blogs.cisco.com/developer">Developer</a></li>
+	<li id="menu-item-486272" class="dropdown-item submenu-item" tabindex="4" role="button"><a href="https://blogs.cisco.com/gov">High Tech Policy</a></li>
+	<li id="menu-item-486273" class="dropdown-item submenu-item" tabindex="4" role="button"><a href="https://blogs.cisco.com/industrial-iot">Industrial IoT</a></li>
+	<li id="menu-item-486274" class="dropdown-item submenu-item" tabindex="4" role="button"><a href="https://blogs.cisco.com/innovation">Innovation</a></li>
+	<li id="menu-item-486275" class="dropdown-item submenu-item" tabindex="4" role="button"><a href="https://blogs.cisco.com/learning">Learn with Cisco</a></li>
+	<li id="menu-item-486276" class="dropdown-item submenu-item" tabindex="4" role="button"><a href="https://blogs.cisco.com/our-corporate-purpose">Our Corporate Purpose</a></li>
+	<li id="menu-item-486277" class="dropdown-item submenu-item" tabindex="4" role="button"><a href="https://blogs.cisco.com/partner">Partner</a></li>
+	<li id="menu-item-486279" class="dropdown-item submenu-item" tabindex="4" role="button"><a href="https://blogs.cisco.com/sp">SP360: Service Provider</a></li>
+	<li id="menu-item-486278" class="dropdown-item submenu-item" tabindex="4" role="button"><a href="https://blogs.cisco.com/smb">SMB: Small and Medium Business</a></li>
+	<li id="menu-item-486280" class="dropdown-item submenu-item" tabindex="4" role="button"><a href="https://blogs.cisco.com/wearecisco">We Are Cisco</a></li>
+	<li id="menu-item-488201" class="dropdown-item submenu-item" tabindex="4" role="button"><a href="https://app.feedpress.com/e/mailverify?feed_id=CiscoBlogs">Subscribe to Cisco Blogs</a></li>
+</ul>
+</div>
+</nav>        
+        <div class="search-icon-container" data-name="search">
+            <svg class="search-icon desktop-only" width="24" height="24" viewBox="0 0 24 24" onclick="openSearch()">
+                <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            
+            <!-- Mobile Search Icon -->
+            <svg class="search-icon mobile-search-icon tablet-mobile-only" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            
+            <!-- Mobile/Tablet Menu -->
+            <div class="mobile-menu-container tablet-mobile-only" id="mobile-menu-toggle">
+                <svg class="menu-icon" width="24" height="24" viewBox="0 0 24 24" id="hamburger-icon">
+                    <path d="M4 18L20 18" stroke="#1b1c1d" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M4 12L20 12" stroke="#1b1c1d" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M4 6L20 6" stroke="#1b1c1d" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <svg class="menu-icon close-icon" width="24" height="24" viewBox="0 0 24 24" id="close-icon" style="display: none;">
+                    <path d="M18 6L6 18" stroke="#1b1c1d" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M6 6L18 18" stroke="#1b1c1d" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span class="menu-text">Menu</span>
+            </div>
+        </div>
+        
+    </header>
+
+    
+    <!--- search section --->
+    <section id="blog-masthead1">
+		<div id="search-sec">
+		<div id="srch-container">
+			<div id="srch-wrapper">
+				<form action="https://search.cisco.com/search" accept-charset="UTF-8" id="srch-form" name="srch-form" method="get" role="search" aria-label="Sitewide Search">
+					<div id="srch-inputs">
+						<label for="srch-phrase" name="search" id="srch-label">Search</label>
+						<input type="search" name="query" id="srch-phrase" placeholder="Search" value="" tabindex="2" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"  min = "3" maxlength="275" aria-describedby="screenreader-instruction" aria-owns="search-typeahead-list" aria-expanded="false" aria-autocomplete="both" aria-activedescendant="" required>
+						<input type="hidden" name="locale" id="srch-locale" value="enUS">
+						<input type="hidden" name="bizcontext" id="srch-context" value="blogs">
+						<input type="hidden" name="cat" value="">
+						<input type="hidden" name="mode" value="text">
+						<input type="hidden" name="clktyp" value="enter">
+						<input type="hidden" name="autosuggest" value="false">
+						<input type="hidden" name="istadisplayed" id="istadisplayed" value="false">
+						<input type="hidden" name="tareqid" id="tareqid" value="">
+						<input type="hidden" name="categoryvalue" id="categoryvalue" value="">
+					</div>
+					<div id="srch-btns">
+						<button value="Clear" type="button" id="srch-clear-btn" tabindex="3" aria-label="Remove search text" title="Remove search text" class="hidden">
+							<svg xmlns="http://www.w3.org/2000/svg" class="svg-x" width="36" height="36" viewBox="0 0 36 36" role="img"><g><use href="#svg-x"></use></g></svg>
+						</button>        
+						<button value="Search" type="submit" id="srch-btn" tabindex="5" title="Search" aria-label="Search">
+							<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" role="img" aria-labelledby="srch-btn-title">
+							<title id="srch-btn-title">Search</title>
+							<path d="M18.694 24.496a9.988 9.988 0 01-3.55.648c-5.524 0-10.002-4.477-10.001-10 0-5.524 4.477-10.002 10-10.001 5.524 0 10.001 4.477 10.001 10 0 2.721-1.177 5.256-2.94 7.06l7.92 7.92" stroke="#4d4c4c" stroke-width="2" fill="none" fill-rule="evenodd" stroke-linejoin="round"></path>
+						</svg>
+						</button>
+					</div>
+				</form>
+				<div id="srch-typeahead"></div>
+				<div id="srch-messages">
+					<div id="srch-error-message">
+						Voice Search is currently unavailable
+					</div>
+					<div id="srch-voice-message">
+						Powered by Google Web Speech API
+					</div>
+					<div id="srch-no-voice-message">
+						We didn't hear that. Try again.
+					</div>
+					<div id="srch-screenreader-instruction">When autocomplete results are available use up and down arrows to review and enter to select</div>
+					<div id="srch-screen-reader-text" aria-live="polite"></div>
+				</div>
+			</div>
+			<div id="srch-quicklinks">
+			<ul id="menu-search-menu" class="quichsearch"><li class="dropdown-item submenu-item"><a href="https://software.cisco.com/download/navigator.html" >Downloads</a></li><li class="dropdown-item submenu-item"><a href="https://www.cisco.com/site/us/en/learn/training-certifications/index.html" >Certifications</a></li><li class="dropdown-item submenu-item"><a href="https://www.cisco.com/c/en/us/solutions/design-zone.html" >Design Guides</a></li><li class="dropdown-item submenu-item"><a href="https://learninglocator.cloudapps.cisco.com/#/home" >Training</a></li><li class="dropdown-item submenu-item"><a href="https://community.cisco.com/" >Community</a></li><li class="dropdown-item submenu-item"><a href="https://www.cisco.com/c/en/us/about/careers.html" >Careers</a></li></ul>				
+			</div>
+		</div>
+		</div>
+
+         </section>
+	<!--- search Section end --->
+	<!-- Hero Section -->
+    <section class="hero-section" >          <div class="hero-background no-menu">
+            <img src="https://blogs.cisco.com/wp-content/themes/ciscowordpress-child/svg/search_background.svg" alt="" class="ellipse-bg" />
+        </div>
+       
+        <div class="hero-content no-menu">
+            <h1 class="hero-title">Cisco Blogs</h1>
+            <form action="/" method="get">
+            <div class="search-container" data-name="Search">
+                <div class="search-input">
+                    <button class="search-input-icon" type="button" aria-label="Search blogs">
+                        <svg width="24" height="24" viewBox="0 0 24 24">
+                            <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="#1B1C1D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                    <input type="text" placeholder="Search for blogs" name="search" value=""/>
+                </div>
+            </div>
+            </form>
+                    </div>
+    </section>
+    
+    <!-- Hero Section -->
+    	</header><!-- #masthead -->
+
+	<div id="content" class="site-content">
+	<div id="primary" class="content-area">
+		<main id="main" class="site-main">
+			<p id="breadcrumbs"><span><span><a href="https://blogs.cisco.com/">Cisco Blogs</a></span> / <span><a href="https://blogs.cisco.com/security">Security</a></span> / <span class="breadcrumb_last" aria-current="page">Preparing for Post-Quantum Cryptography: The Secure Firewall Roadmap</span></span></p>
+				<div class="blog-post-header">
+				</div>
+<article id="post-489120" class="post-489120 post type-post status-publish format-standard has-post-thumbnail hentry category-security tag-cisco-secure-firewall tag-nist-2 tag-security-posture">
+<div class="main-content">
+	<header class="entry-header">
+					<div class="entry-meta">
+				April 13, 2026				<a id="post-comments" href="https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap#respond">Leave a Comment</a>
+				<hr>
+			</div><!-- .entry-meta -->
+			</header><!-- .entry-header -->
+	<div class="blog-post-header">
+		<div class="thumbnail-avatar">
+			<div class="post-thumbnail" style="background-image:url(https://blogs.cisco.com/gcs/ciscoblogs/1/2025/02/FY25_cisco_security_data_center_blog_hero_v1-600x200.jpg);">				
+								<img src="https://blogs.cisco.com/gcs/ciscoblogs/1/2026/03/08_52_42-150x150.jpg" width="102" height="102" alt="Avatar" class="avatar avatar-102 wp-user-avatar wp-user-avatar-102 photo avatar-default">
+							</div>
+		</div>
+		<div class="blog-cat-post-author-container">
+			<a href=https://blogs.cisco.com/security><h5>Security</h5></a>
+			<h1 class="entry-title">Preparing for Post-Quantum Cryptography: The Secure Firewall Roadmap</h1><p class="wordcount"><span class="black">6 min read</span></p>			<p> <a href="https://blogs.cisco.com/author/bspry" title="Posts by Bill Spry" rel="author">Bill Spry</a>			</p>
+		</div>		
+	</div> <!-- .blog-post-header -->
+	<div class="entry-content">
+		
+<p>Nearly every&nbsp;piece of data that moves across your network and the internet at large is protected by encryption. Encryption works by using math problems that today’s computers simply&nbsp;can’t&nbsp;solve fast enough to crack.&nbsp;<strong>That’s&nbsp;about&nbsp;to change</strong>.</p>
+
+
+
+<p>Quantum computers are a new kind of machine. Without delving into physics, what matters is this: the encryption that takes today’s supercomputers millions of years to break will soon be breakable within hours. Already today,&nbsp;it’s&nbsp;thought that attacker groups and nation-state actors are capturing and stockpiling encrypted data, awaiting the moment when&nbsp;it&nbsp;can all be unlocked. Sensitive data crossing your network right now (financial records, intellectual property, system credentials) can be captured today and exposed tomorrow.</p>
+
+
+
+<p>The solution is a new&nbsp;class of&nbsp;encryption&nbsp;algorithms&nbsp;called&nbsp;<strong>post-quantum cryptography (PQC).&nbsp;</strong>PQC is built on different math problems that quantum computers&nbsp;can’t&nbsp;shortcut the way they can with today’s&nbsp;algorithms.&nbsp;NIST has&nbsp;finalized&nbsp;these algorithms as formal standards,&nbsp;and governments and industry are moving quickly to require their adoption.&nbsp;</p>
+
+
+
+<p>The&nbsp;<a href="https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/0/CSI_CNSA_2.0_FAQ_.PDF" target="_blank" rel="noreferrer noopener">NSA</a>&nbsp;is&nbsp;requiring&nbsp;all National Security Systems&nbsp;purchases made after January 2027&nbsp;to&nbsp;be&nbsp;future-proofed&nbsp;for these&nbsp;“quantum safe” standards.&nbsp;<a href="https://www.cyber.gov.au/business-government/secure-design/planning-for-post-quantum-cryptography" target="_blank" rel="noreferrer noopener">Australia</a>&nbsp;has set an aggressive 2030 migration target. The European Union published its own&nbsp;<a href="https://digital-strategy.ec.europa.eu/en/library/coordinated-implementation-roadmap-transition-post-quantum-cryptography" target="_blank" rel="noreferrer noopener">roadmap with phased deadlines</a>&nbsp;through 2035.&nbsp;Whether or not your organization is bound by these mandates, they will become de facto baselines for the entire world. The partners you connect with, the cyber insurance policies you carry, and the customers whose data you handle will all increasingly measure you by these standards.</p>
+
+
+
+<p>Cisco Secure Firewall&nbsp;uses encryption for many things: VPN tunnels, remote management, hardware-level trust, and inline decryption. For network&nbsp;administrators&nbsp;this raises a very practical question: what does this transition to post-quantum cryptography look like for our infrastructure? This post lays out where we are, where&nbsp;we’re&nbsp;headed, and what you should be thinking about today.</p>
+
+
+
+<h2 class="wp-block-heading has-cisco-green-color has-text-color has-link-color wp-elements-12a8f7e15e6929ceb12bc995a90f7b2d" id="h-the-nist-standards-that-matter-for-nbsp-firewall" style="font-style:normal;font-weight:400">The NIST standards that matter for&nbsp;firewall</h2>
+
+
+
+<p>NIST&#8217;s PQC standards define three algorithms, each designed to replace a specific class of classical&nbsp;cryptography. They also&nbsp;define stronger baselines of security for&nbsp;existing algorithms, which&nbsp;are&nbsp;already incorporated into Cisco Secure Firewall.</p>
+
+
+
+<div style="height:20px" aria-hidden="true" class="wp-block-spacer"></div>
+
+
+<div class="wp-block-image">
+<figure class="aligncenter size-large is-resized"><img loading="lazy" decoding="async" width="1024" height="670" src="//blogs.cisco.com/wp-content/plugins/a3-lazy-load/assets/images/lazy_placeholder.gif" data-lazy-type="image" data-src="https://blogs.cisco.com/gcs/ciscoblogs/1/2026/04/cisco_pqc_migration_table_v7.html-1024x670.webp" alt="Cisco PQC migration table" class="lazy lazy-hidden wp-image-489123" style="width:778px;height:auto"/><noscript><img loading="lazy" decoding="async" width="1024" height="670" src="https://blogs.cisco.com/gcs/ciscoblogs/1/2026/04/cisco_pqc_migration_table_v7.html-1024x670.webp" alt="Cisco PQC migration table" class="wp-image-489123" style="width:778px;height:auto"/></noscript></figure></div>
+
+
+<div style="height:20px" aria-hidden="true" class="wp-block-spacer"></div>
+
+
+
+<p><strong>ML-KEM (FIPS 203)</strong>&nbsp;protects the moment two devices agree on a shared secret, the handshake at the start of every encrypted session. Today that job is done by algorithms like ECDH, which quantum computers will break. ML-KEM is different, built on a fundamentally different type of math problem (lattice-based cryptography) that resists both classical and&nbsp;quantum safe&nbsp;attacks.&nbsp;Support arrives in&nbsp;Secure&nbsp;<strong>Firewall Threat Defense (FTD) 10.5&nbsp;and ASA 9.25</strong>, targeted for General&nbsp;Availability&nbsp;in&nbsp;late&nbsp;2026.</p>
+
+
+
+<p><strong>ML-DSA (FIPS 204)</strong>&nbsp;is&nbsp;how&nbsp;devices prove their identity and how&nbsp;software proves it&nbsp;hasn’t&nbsp;been tampered with. Every time your&nbsp;firewall&nbsp;authenticates a VPN peer or verifies&nbsp;a signed software image,&nbsp;it relies on digital signatures. Today&nbsp;we use RSA or ECDSA, both of which quantum computers will break. ML-DSA is&nbsp;the&nbsp;quantum-safe replacement, also built on lattice-based cryptography. Support&nbsp;is planned for&nbsp;<strong>FTD/ASA 11.0</strong>,&nbsp;in the&nbsp;second half of calendar year 2027.</p>
+
+
+
+<p><strong>SLH-DSA (FIPS 205)</strong>&nbsp;is&nbsp;cryptography’s way of&nbsp;“diversifying your investments.”&nbsp;ML-KEM and ML-DSA are both built on&nbsp;lattice-based cryptography.&nbsp;SLH-DSA is intentionally built differently, using a different hash-based math problem.&nbsp;Its signatures are&nbsp;larger, but&nbsp;since its technique is different, it provides a critical safeguard for networks in case&nbsp;the lattice-based math problem&nbsp;is ever weakened by future research.&nbsp;Support&nbsp;is planned for&nbsp;<strong>FTD/ASA 11.0</strong>.</p>
+
+
+
+<p>Cisco&#8217;s approach&nbsp;operates&nbsp;on two tracks:&nbsp;</p>
+
+
+
+<p><strong>Secure Communications:</strong>&nbsp;integrating PQC into the protocols that carry data &#8211; IPsec, TLS,&nbsp;SSH&nbsp;</p>
+
+
+
+<p><strong>Secure&nbsp;Products:</strong>&nbsp;securing the products themselves, ensuring the firewall&#8217;s own identity, software integrity, and boot chain are&nbsp;quantum-safe.&nbsp;</p>
+
+
+
+<p>Both tracks align to the NIST standards and are being delivered into the platform well in advance of compliance deadlines and well before quantum computers capable of breaking today&#8217;s encryption exist.&nbsp;</p>
+
+
+
+<h2 class="wp-block-heading has-cisco-green-color has-text-color has-link-color wp-elements-e0aa29080ea764d891561b065927f9d3" id="h-ipsec-building-the-bridge-today" style="font-style:normal;font-weight:400">IPsec: building the bridge today</h2>
+
+
+
+<p>For many organizations, IPsec VPN is the most immediate PQC concern — particularly for site-to-site tunnels protecting sensitive or classified data that could be subject to harvest-now-decrypt-later attacks. The good news is that Cisco&nbsp;hasn&#8217;t&nbsp;been waiting for the NIST algorithms to ship before providing transitional protections.</p>
+
+
+
+<p>Several critical RFCs are already supported on ASA and coming to FTD in 10.5:</p>
+
+
+
+<p><strong>RFC 8784</strong>&nbsp;(Mixing&nbsp;Preshared&nbsp;Keys in IKEv2) allows a post-quantum pre-shared key (PPK) to be mixed into the IKEv2 key derivation, adding quantum-resistant entropy to every session even before native PQC algorithms are deployed. This has been available on ASA since version 9.18.</p>
+
+
+
+<p><strong>RFC 9242</strong>&nbsp;(Intermediate Exchange in IKEv2) and&nbsp;<strong>RFC 9370</strong>&nbsp;(Multiple Key Exchanges in IKEv2) enable hybrid key exchange, where both a classical and a post-quantum key agreement are performed simultaneously. This approach is endorsed by&nbsp;<a href="https://csrc.nist.gov/News/2025/nist-publishes-sp-800-227" target="_blank" rel="noreferrer noopener">NIST</a>, the&nbsp;NSA, Germany&#8217;s&nbsp;<a href="https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Informationen-und-Empfehlungen/Quantentechnologien-und-Post-Quanten-Kryptografie/quantentechnologien-und-post-quanten-kryptografie_node.html" target="_blank" rel="noreferrer noopener">BSI</a>, and France&#8217;s&nbsp;<a href="https://messervices.cyber.gouv.fr/guides/en-follow-position-paper-post-quantum-cryptography" target="_blank" rel="noreferrer noopener">ANSSI</a>&nbsp;as the recommended transitional strategy — providing protection against both classical and quantum adversaries during the migration period.&nbsp;This has been available on ASA since version 9.19.</p>
+
+
+
+<p>Additionally, Cisco has developed the&nbsp;<a href="https://blogs.cisco.com/developer/how-post-quantum-cryptography-affects-security-and-encryption-algorithms" target="_blank" rel="noreferrer noopener"><strong>Secure Key Integration Protocol</strong></a><strong>&nbsp;(SKIP)</strong>, currently in RFC draft status, which enables&nbsp;devices to&nbsp;securely&nbsp;import&nbsp;distributed pre-shared keys&nbsp;from third-party providers / Quantum Key Distributed (QKD) devices.&nbsp;SKIP has seen wide adoption&nbsp;across other&nbsp;part&nbsp;of Cisco’s networking&nbsp;portfolio, and&nbsp;is a proven part of&nbsp;Cisco’s WAN and service provider infrastructure today. Bringing&nbsp;SKIP to Secure Firewall in FTD 10.5 and ASA 9.25&nbsp;extends that same framework, giving organizations a consistent quantum-safe key management solution&nbsp;for the network.</p>
+
+
+
+<p>These capabilities mean that organizations&nbsp;requiring&nbsp;quantum-resistant protections for IPsec&nbsp;can&nbsp;often begin the journey&nbsp;today,&nbsp;and&nbsp;complete the most important pieces with Cisco Secure Firewall’s next software release.</p>
+
+
+
+<h2 class="wp-block-heading has-cisco-green-color has-text-color has-link-color wp-elements-4263b245451c70e3a9181f0940c30820" id="h-tls-multiple-surfaces-multiple-timelines" style="font-style:normal;font-weight:400">TLS: multiple surfaces, multiple timelines</h2>
+
+
+
+<p>TLS touches the&nbsp;firewall&nbsp;in ways that go well beyond simple web browsing. Each use case has its own PQC considerations:</p>
+
+
+
+<p><strong>TLS decryption</strong>&nbsp;— the firewall&#8217;s ability to inspect encrypted traffic inline — gains PQC support in stages. TLS decryption with PQC&nbsp;algorithms&nbsp;is targeted for FTD 10.5. PQC metadata logging, providing&nbsp;visibility into PQC-negotiated sessions, is planned for FTD&nbsp;11.0,&nbsp;the same release planned to bring QUIC decryption with PQC support.</p>
+
+
+
+<p><strong>Remote Access VPN</strong>&nbsp;using TLS or DTLS is planned for ML-KEM and ML-DSA support in ASA/FTD 11.0, pending the outcome of RFC standards currently in draft. DTLS-based RAVPN depends on the availability of DTLSv1.3 in the underlying TLS library (OpenSSL), which does not yet have a confirmed timeline.</p>
+
+
+
+<p><strong>Management access</strong>&nbsp;<strong>and&nbsp;monitoring&nbsp;</strong>round out the TLS surface area. PQC support for TLS client features is planned for ASA/FTD 11.0, while&nbsp;management&nbsp;web server PQC support depends on underlying web server library readiness.</p>
+
+
+
+<h2 class="wp-block-heading has-cisco-green-color has-text-color has-link-color wp-elements-b139257ae561a5dbcf7658eaf80d2c0e" id="h-hardware-trust-anchors" style="font-style:normal;font-weight:400">Hardware trust anchors</h2>
+
+
+
+<p>Cryptography&nbsp;doesn&#8217;t&nbsp;start at the protocol layer — it starts at boot.&nbsp;Aligned with our&nbsp;<strong>Secure Products&nbsp;</strong>pillar for end-to-end&nbsp;protection,&nbsp;Cisco&nbsp;hardware uses Secure Boot to&nbsp;establish&nbsp;a chain of trust. This&nbsp;ensures&nbsp;only valid&nbsp;and&nbsp;signed software runs on the device. Transitioning Secure Boot to PQC-capable algorithms is essential to&nbsp;protect&nbsp;against&nbsp;supply-chain&nbsp;and firmware-level attacks in a post-quantum world.</p>
+
+
+
+<p>All future&nbsp;firewall&nbsp;platforms currently in development will ship with PQC-capable hardware Secure Boot at first customer shipment. Recently released platforms such as the Secure Firewall 1200 and 6100 series have the necessary hardware support and will receive PQC-enabled Secure Boot through future software updates. Platforms released prior to 2025 are being evaluated, but most are expected to lack the hardware prerequisites for PQC Secure&nbsp;Boot.</p>
+
+
+
+<h2 class="wp-block-heading has-cisco-green-color has-text-color has-link-color wp-elements-d23df92f5c36e2aed95f896af79222b0" id="h-what-this-means-for-planning-today" style="font-style:normal;font-weight:400">What this means for planning today</h2>
+
+
+
+<p>You&nbsp;don’t&nbsp;need to overhaul your network tomorrow. But you do need to start making deliberate choices&nbsp;now&nbsp;so&nbsp;you’re&nbsp;not left scrambling.&nbsp;Here’s&nbsp;where to start:</p>
+
+
+
+<p><strong>Know where your encryption lives.&nbsp;</strong>Understand where your firewalls rely on encryption: VPN tunnels, inline decryption, management access, logging,&nbsp;authentication. Each of these has its own path to post-quantum readiness, and you&nbsp;can’t&nbsp;plan a transition if you&nbsp;don’t&nbsp;know what needs transitioning.</p>
+
+
+
+<p><strong>Build the upgrade paths into your planning cycles.&nbsp;</strong>FTD 10.5 (and ASA 9.25), targeted for late 2026, introduces ML-KEM, allowing VPN tunnels to gain post-quantum resilience. FTD and ASA 11.0 complete the picture in 2027 with ML-DSA and SLH-DSA, along with broader coverage for inline traffic inspection.</p>
+
+
+
+<p>If&nbsp;you’re&nbsp;not familiar with these algorithm names,&nbsp;that’s&nbsp;OK. The most important thing is to know that the full suite of coverage is coming soon. Plan your upgrade windows accordingly.</p>
+
+
+
+<p><strong>Think about hardware now, not later.&nbsp;</strong>If&nbsp;you’re&nbsp;purchasing&nbsp;new&nbsp;firewall&nbsp;platforms, Cisco’s&nbsp;newest&nbsp;hardware&nbsp;will&nbsp;support PQC Secure Boot. If&nbsp;you’re&nbsp;running older platforms and concerned about this feature, start factoring a hardware refresh into your longer-term migration plans.</p>
+
+
+
+<p>The quantum threat&nbsp;isn’t&nbsp;theoretical, and the timelines&nbsp;aren’t&nbsp;distant. The standards are published, the algorithms are selected, and the roadmap is in motion. Cisco Secure Firewall is building post-quantum cryptography into every layer of the platform, so that when your organization is ready to make the transition, your&nbsp;firewall&nbsp;is ready too.</p>
+
+
+
+<p><br><em>Many of the products and features described herein remain in varying stages of development and will be offered on a when-and-if-available basis. The delivery timeline of these products and features is subject to change at the sole discretion of Cisco, and Cisco will have no liability for delay in the delivery or failure to deliver any of the products or features set forth in this document.</em></p>
+
+
+
+<div style="height:20px" aria-hidden="true" class="wp-block-spacer"></div>
+
+
+
+<hr class="wp-block-separator has-alpha-channel-opacity"/>
+
+
+
+<div style="height:20px" aria-hidden="true" class="wp-block-spacer"></div>
+
+
+
+<p class="has-text-align-center" id="block-a1b11bef-8542-478b-95c4-6b43d582001b"><em>We’d love to hear what you think! Ask a question and stay connected with Cisco Security on social media.</em></p>
+
+
+
+<p class="has-text-align-center"><strong><mark style="background-color:rgba(0, 0, 0, 0)" class="has-inline-color has-cisco-green-color">Cisco Security Social Media</mark></strong></p>
+
+
+
+<p class="has-text-align-center" id="block-85b5e58a-7e0a-4b88-a1bd-54a5f658e51f"><a href="https://www.linkedin.com/showcase/cisco-secure" target="_blank" rel="noreferrer noopener">LinkedIn</a><br><a href="https://www.facebook.com/ciscosecure/" target="_blank" rel="noreferrer noopener">Facebook</a><br><a href="https://www.instagram.com/Ciscosecurity/" target="_blank" rel="noreferrer noopener">Instagram</a></p>
+	</div><!-- .entry-content -->
+		<div class="author-section">
+	<div><h2>Authors</h2></div>
+	<div class="auth-row author-cards author-cards--n-1">
+	<div class="blog-row author-bio">
+		<div class="item-thirds-1 author-bio-box" >
+			<div class="author-image" >
+			<a href="https://blogs.cisco.com/author/bspry"><img src="https://blogs.cisco.com/gcs/ciscoblogs/1/2026/03/08_52_42-150x150.jpg" width="150" height="150" alt="Avatar" class="avatar avatar-150wp-user-avatar wp-user-avatar-150 alignnone photo avatar-default">
+			</a>
+			</div>
+			<div class="author-info">
+			<h3><a href="https://blogs.cisco.com/author/bspry">
+			  Bill Spry</a>
+			</h3>
+			  <h4 class="title">Technical Leader </h4>
+			  <h4>Cisco Cloud and Networking Security</h4>
+			  			</div>
+		</div><!--end author image and name-->
+	</div><!-- .author-bio -->
+		</div>
+	</div>
+	<footer class="entry-footer">
+			</footer><!-- .entry-footer -->
+</article>
+ <div id="tags-container">Tags: <a href="https://blogs.cisco.com/tag/cisco-secure-firewall" rel="tag">Cisco Secure Firewall</a> <a href="https://blogs.cisco.com/tag/nist-2" rel="tag">NIST</a> <a href="https://blogs.cisco.com/tag/security-posture" rel="tag">Security Posture</a> <hr id="comment-break-line"> </div> 
+<div id="comments" class="comments-area">
+
+		<div id="respond" class="comment-respond">
+		<h3 id="reply-title" class="comment-reply-title">Leave a Comment <small><a rel="nofollow" id="cancel-comment-reply-link" href="/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap#respond" style="display:none;">Cancel reply</a></small></h3><p class="must-log-in">You must be <a href="https://blogs.cisco.com/wp-author/?redirect_to=https%3A%2F%2Fblogs.cisco.com%2Fsecurity%2Fpreparing-for-post-quantum-cryptography-the-secure-firewall-roadmap">logged in</a> to post a comment.</p>	</div><!-- #respond -->
+	
+
+</div><!-- #comments -->
+
+
+		</main><!-- #main -->
+	</div><!-- #primary -->
+
+    <div class="blog-row cui cta"> 
+      <div class="item-halves-1">
+        <div class="cta-container">
+          <div class="cta-image">
+            <img src="https://blogs.cisco.com/gcs/ciscoblogs/1/2023/07/IL20230719143932-Cybersecurity-Expert-graphic-marquee-3-scaled-150x150.jpg">
+          </div> <!-- end CTA image -->
+          <div class="cta-description">
+            <h2>Cisco Cybersecurity Viewpoints</h2>
+            <p>Where security insights and innovation meet. Read the e-book, see the video, dive into the infographic and more...</p>
+			 <div class="btn--parent">
+				<button class="btn--primary1" onclick="window.location.href = 'https://www.cisco.com/c/m/en_us/products/security/cybersecurity-viewpoints.html?CCID=cc000160&OID=otrsc031293&DTID=oblgcdc000651';">
+					<!--<span class="buttontext"></span>-->
+					Get expert perspectives now				</button>
+			  </div> <!-- end CTA button -->
+          </div> <!-- end CTA description-->
+		  
+		  <!-- DS916 -->
+		 
+		  <!-- DS916 -->
+        </div> <!-- end CTA container -->
+      </div> <!--end item half-->
+
+      
+      <div class="item-halves-2">
+        <div class="cta-container">
+          <div class="cta-image">
+            <img src="https://blogs.cisco.com/gcs/1/2020/01/IL20200117171458-Screen-Shot-2020-01-17-at-12.13.39-PM-150x150.png">
+          </div> <!-- end CTA image -->
+          <div class="cta-description">
+            <h2>Why Cisco Security?</h2>
+            <p>Explore our Products &amp; Services</p>
+			 <div class="btn--parent">
+				<button class="btn--primary1" onclick="window.location.href = 'https://www.cisco.com/c/en/us/products/security/index.html';">
+					<!--<span class="buttontext"></span>-->
+					Learn More				</button>
+			  </div> <!-- end CTA button -->
+          </div> <!-- end CTA description-->
+		  
+		  <!-- DS916 -->
+		 
+		  <!-- DS916 -->
+        </div> <!-- end CTA container -->
+      </div> <!--end item half-->
+
+       </div><!--end of CTA row --> 
+		</div><!-- #content -->
+
+		
+		<!-- Open Social Footer -->
+		<!--<div id="social-footer" class="blog-row">
+			<ul class="social-footer-item item-full">
+				<h5> CONNECT WITH US </h5>
+				<ul id="social-icons-list">
+					<li> <a href="" target="_blank" rel=”noopener noreferrer” tabindex="0" alt="Go to Cisco's LinkedIn"></a></li>
+					<li> <a href="" target="_blank" rel=”noopener noreferrer” tabindex="0" alt="Go to Cisco's Twitter"></a></li>
+					<li> <a href="" target="_blank" rel=”noopener noreferrer” tabindex="0" alt="Go to Cisco's Facebook"></a></li>
+					<li> <a href="" target="_blank" rel=”noopener noreferrer” tabindex="0" alt= "Go to Cisco's Instagram"></a></li>
+					<li> <a href="" target="_blank" rel=”noopener noreferrer” tabindex="0" alt="Go to Cisco's Youtube"></a></li>
+				</ul>
+			</ul>
+		</div>-->
+		<!-- Close Social Footer -->
+
+	</cdc-template-micro> <!-- close cdc-template-->
+</div><!-- #page -->
+
+<script type="text/javascript" src="//www.cisco.com/c/dam/cdc/t/ctm.js"></script>
+
+	
+		<script>
+		  var TTS_autoplay_start = true;
+		</script>	
+		
+	<section class="cmp-tts">
+		<div class="cmp-tts-main">
+			<div data-app="ttsreader" class="tts-vertical" data-config-metrics-group="text-to-speech">
+				<div class="social-media-parent">
+					<div class="social-media-division hide_social_media"><div id="share_bar_desktop">
+	<div class="twitter">
+	<div class = "box">
+		<a class = "share" href="https://twitter.com/intent/tweet?url=https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap&text=Preparing for Post-Quantum Cryptography: The Secure Firewall Roadmap&via=ciscosecure" target='_blank' tabindex="18" data-config-metrics-group='social_shares' data-config-metrics-title='twitter_shares' data-config-metrics-item='twitter_shares'>  <img class="share_image" src="https://blogs.cisco.com/wp-content/plugins/cisco-text-to-speech//images/twitter-gray-tts.svg" alt="share on twitter"> <span class="social-media-text">X/Twitter </span></a>
+	</div>
+	</div>
+
+	<div class="facebook">
+	<div class = "box">
+		<a class = "share" href = "http://www.facebook.com/sharer/sharer.php?u=https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap&title=Preparing for Post-Quantum Cryptography: The Secure Firewall Roadmap" data-config-metrics-group='social_shares' data-config-metrics-title='facebook_shares' data-config-metrics-item='facebook_share' onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;" tabindex="18"><img class="share_image" src="https://blogs.cisco.com/wp-content/plugins/cisco-text-to-speech//images/facebook-gray-tts.svg" alt="share on facebook"><span class="social-media-text">Facebook</span></a>
+	</div>
+	</div>
+
+	<div class="linkedin">
+	<div class = "box">
+		<a class = "share" href = "https://www.linkedin.com/cws/share?url=https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap" data-title=" " data-config-metrics-group='social_shares' data-config-metrics-title='linkedin_shares' data-config-metrics-item='linkedin_share' onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;" tabindex="18"><img class="share_image" src="https://blogs.cisco.com/wp-content/plugins/cisco-text-to-speech//images/linkedin-gray-tts.svg" alt="share on linkedin"> <span class="social-media-text">LinkedIn</span></a>
+	</div>
+	</div>
+
+	<div class = "mail">
+	<div class = "box">
+		<a class="share" href="mailto:?subject=Cisco Blog: Preparing for Post-Quantum Cryptography: The Secure Firewall Roadmap&body=I saw this post on Cisco Blogs and thought you might like to read it.%0A%0APreparing for Post-Quantum Cryptography: The Secure Firewall Roadmap%0A%0Ahttps://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap%0A%0A****Disclaimer****%0A%0ACisco is not responsible for the content of this email, and its contents do not necessarily reflect Cisco’s views or opinions. Cisco has not verified the email address or name of the sender." tabindex="18"> <img class="share_image" src="https://blogs.cisco.com/wp-content/plugins/cisco-text-to-speech//images/email-gray-tts.svg"> <span class="social-media-text">E-mail</span></a>
+	</div>
+	</div>
+
+	<div class = "clear"></div>
+</div>
+</div>
+				</div>
+				<button class="btn btn--primary tts_play_button" data-action="activate" id="tts-read-aloud" tabindex="14" data-config-metrics-item="tts-read-aloud"><img class="tts_voice_image" src="https://blogs.cisco.com/wp-content/plugins/cisco-text-to-speech//images/voice.svg" >Read aloud</button>
+				<button class="btn btn--primary social_share_button" id="social-share" tabindex="17" data-config-metrics-item="social-share"><img class="tts_share_image" src="https://blogs.cisco.com/wp-content/plugins/cisco-text-to-speech//images/share.svg"> <span class="tts-aloud">Share </span>
+				</button>
+				<div class="tts-vertical-inner">
+				<div class="ttshid horizontal" data-type="playpanel"><span class="tts-close-button" tabindex="15">x</span><div class="controls mainbuttons"><button id="tts-prev" title="Back" tabindex="15"><span>&lt; Prev</span></button><button id="tts-play" title="Play" tabindex="15"><span>Play</span></button><button id="tts-next" title="Forward"  tabindex="15"><span>Next &gt;</span></button><button id="tts-pause" title="Pause/Resume" tabindex="15"><span>Pause</span></button><button id="tts-cancel" title="Stop" tabindex="15"><span>Stop</span></button><button id="tts-settings" title="Settings" tabindex="15"><span>Settings</span></button></div>
+				</div>
+				</div>
+				<div class="tts-panel ttshid" data-type="setpanel" >
+					<div style="width:100%;height:16px;">
+						<button style="float:right;" data-action="close" id="tts-close" tabindex="15">x</button>
+					</div>
+					<form>
+						<div class="controls-row">
+							<div class="cell1">
+							<label for="rate" class="ttscontrol">Rate</label>
+							</div>
+							<div class="cell2">
+							<input type="range" min="0.7" max="1.3" value="1" step="0.1" id="rate" class="ttscontrol" tabindex="16"></div>
+							<div class="cell3"><div class="ttscontrol rate-value">1</div>
+							</div>
+							<div class="clearfix"></div>
+						</div>
+						<div class="controls-row">
+							<div class="cell1">
+								<label for="pitch" class="ttscontrol">Pitch</label>
+							</div>
+							<div class="cell2"><input type="range" min="0" max="2" value="1" step="0.1" id="pitch" class="ttscontrol" tabindex="16"></div>
+							<div class="cell3">
+								<div class="ttscontrol pitch-value">1</div>
+							</div>
+							<div class="clearfix"></div>
+						</div>
+						<div class="selgroup">
+							<label for="tts-voice-sel" class="voice">Select a voice:<span class="icon-help-alt icon-size-16"></span></label>
+							<div class="tooltip">Voices are browser-dependent.<br>Tip: Chrome provides the most options.</div>
+							<select id="tts-voice-sel" name="tts-voice-sel" tabindex="16">
+								<option data-lang="en-US" data-name="Google US English">Google US English (en-US)</option>
+								<option data-lang="en-US" data-name="Microsoft David - English (United States)" selected="selected">Microsoft David - English (United States) (en-US) -- DEFAULT</option><option data-lang="en-US" data-name="Microsoft Mark - English (United States)">Microsoft Mark - English (United States) (en-US)</option>
+								<option data-lang="en-US" data-name="Microsoft Zira - English (United States)">Microsoft Zira - English (United States) (en-US)</option>
+							</select>
+						</div>
+						<div class="controls savereset">
+							<button id="tts-cancel" type="reset" title="Reset values" tabindex="16">Reset</button>
+							<button id="tts-save" type="submit" title="Save settings"tabindex="16">Save</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+<script>
+const currentWidth = window.innerWidth; 
+$('button#social-share,.social-media-parent .box').on('click', function () {
+	if ($('.social-media-division').hasClass('hide_social_media')) {
+		$('.social-media-division').removeClass('hide_social_media');
+		if(currentWidth <= 930){
+			TTS_runSpeakPauseResume();
+			//document.querySelector('.horizontal').classList.add('ttshid');
+			TTS_hidePlayer();
+		}
+		
+		
+	} else {
+		document.querySelector('.social-media-division').classList.add('hide_social_media');
+		if(currentWidth <= 930){
+			TTS_runSpeakPauseResume();
+		}
+	}
+	
+});
+
+var share_bar_desktop = document.querySelector('#share_bar_desktop');
+var socialshare = document.querySelector('#social-share');
+//var ttsverticalinner = document.querySelector('.tts-vertical-inner');
+
+share_bar_desktop.addEventListener('focusout', function(event) {
+	hide_socialshare();
+});
+
+socialshare.addEventListener('focusout', function(event) {
+	hide_socialshare();
+});
+/*ttsverticalinner.addEventListener('focusout', function(event) { //alert("hello");
+	if(!ttsverticalinner.contains(event.relatedTarget)){ 
+		document.querySelector('.horizontal').classList.add('ttshid');
+	}
+});*/
+function hide_socialshare(){	
+	if(!share_bar_desktop.contains(event.relatedTarget)){ 
+		document.querySelector('.social-media-division').classList.add('hide_social_media');
+		if(currentWidth <= 930){
+			TTS_runSpeakPauseResume();
+			
+			/*document.querySelector('.horizontal').classList.remove('ttshid');
+			document.querySelector('.horizontal').style.visibility = 'visible';
+			document.querySelector('.horizontal').style.transform = 'translateX(0px) translateY(40px)';*/	
+		}		
+	}
+}
+
+//for android mobile device
+var playBtn = document.getElementById('tts-read-aloud');
+
+playBtn.addEventListener("click", showHide);
+function showHide(){ 
+	var audioTag = document.getElementsByClassName('mainbuttons');
+	playBtn.disabled = true;
+	document.getElementById('tts-play').disabled = true;
+	document.getElementsByClassName('tts-vertical-inner')[0].style.boxShadow = '0px 4px 24px 0px rgba(0, 0, 0, 0.06)';
+	if(audioTag[0].style.transform == 'translateX(0px)'){
+		audioTag[0].style.transform = 'translateX(100%)';
+	}
+	else{
+		audioTag[0].style.visibility = 'visible';
+		audioTag[0].style.transform = 'translateX(0px)';
+		
+	}	
+	
+}
+$('button#tts-pause').on('click', function () {
+	document.getElementById('tts-play').disabled = false;
+	document.getElementById('tts-read-aloud').disabled = false;
+});
+</script>
+<style id='core-block-supports-inline-css' type='text/css'>
+.wp-elements-12a8f7e15e6929ceb12bc995a90f7b2d a:where(:not(.wp-element-button)){color:var(--wp--preset--color--cisco-green);}.wp-elements-e0aa29080ea764d891561b065927f9d3 a:where(:not(.wp-element-button)){color:var(--wp--preset--color--cisco-green);}.wp-elements-4263b245451c70e3a9181f0940c30820 a:where(:not(.wp-element-button)){color:var(--wp--preset--color--cisco-green);}.wp-elements-b139257ae561a5dbcf7658eaf80d2c0e a:where(:not(.wp-element-button)){color:var(--wp--preset--color--cisco-green);}.wp-elements-d23df92f5c36e2aed95f896af79222b0 a:where(:not(.wp-element-button)){color:var(--wp--preset--color--cisco-green);}
+</style>
+<script type="text/javascript" id="ppress-frontend-script-js-extra">
+/* <![CDATA[ */
+var pp_ajax_form = {"ajaxurl":"https:\/\/blogs.cisco.com\/wp-admin\/admin-ajax.php","confirm_delete":"Are you sure?","deleting_text":"Deleting...","deleting_error":"An error occurred. Please try again.","nonce":"8f5d57d859","disable_ajax_form":"false","is_checkout":"0","is_checkout_tax_enabled":"0","is_checkout_autoscroll_enabled":"true"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://blogs.cisco.com/wp-content/plugins/wp-user-avatar/assets/js/frontend.min.js?ver=4.15.23" id="ppress-frontend-script-js"></script>
+<script type="text/javascript" src="https://blogs.cisco.com/wp-content/themes/ciscowordpress-child/style-header-footer.js?ver=6.7.1" id="cisco-header-footer-js-js"></script>
+<script type="text/javascript" src="https://blogs.cisco.com/wp-content/themes/ciscowordpress-child/js/text-clamp.js?ver=1.0.2" id="cisco-text-clamp-js-js"></script>
+<script type="text/javascript" id="my-load-more-script-js-extra">
+/* <![CDATA[ */
+var my_load_more_params = {"ajaxurl":"https:\/\/blogs.cisco.com\/wp-admin\/admin-ajax.php","posts_per_page":"9","current_page":"1","max_pages":"0","nonce":"5f6d53fd43","post_type":"post"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://blogs.cisco.com/wp-content/themes/ciscowordpress-child/js/load-more.js?ver=1.0.3" id="my-load-more-script-js"></script>
+<script type="text/javascript" src="https://blogs.cisco.com/wp-content/themes/ciscowordpress/js/navigation.js?ver=20151215" id="ciscowordpress-navigation-js"></script>
+<script type="text/javascript" src="https://blogs.cisco.com/wp-content/themes/ciscowordpress/js/skip-link-focus-fix.js?ver=20151215" id="ciscowordpress-skip-link-focus-fix-js"></script>
+<script type="text/javascript" src="https://blogs.cisco.com/wp-includes/js/comment-reply.min.js?ver=6.7.1" id="comment-reply-js" async="async" data-wp-strategy="async"></script>
+<script type="text/javascript" id="jquery-lazyloadxt-js-extra">
+/* <![CDATA[ */
+var a3_lazyload_params = {"apply_images":"1","apply_videos":"1"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="//blogs.cisco.com/wp-content/plugins/a3-lazy-load/assets/js/jquery.lazyloadxt.extra.min.js?ver=2.7.3" id="jquery-lazyloadxt-js"></script>
+<script type="text/javascript" src="//blogs.cisco.com/wp-content/plugins/a3-lazy-load/assets/js/jquery.lazyloadxt.srcset.min.js?ver=2.7.3" id="jquery-lazyloadxt-srcset-js"></script>
+<script type="text/javascript" id="jquery-lazyloadxt-extend-js-extra">
+/* <![CDATA[ */
+var a3_lazyload_extend_params = {"edgeY":"0","horizontal_container_classnames":""};
+/* ]]> */
+</script>
+<script type="text/javascript" src="//blogs.cisco.com/wp-content/plugins/a3-lazy-load/assets/js/jquery.lazyloadxt.extend.js?ver=2.7.3" id="jquery-lazyloadxt-extend-js"></script>
+<script type="text/javascript" type="module" src="https://blogs.cisco.com/gcs/ciscoblogs/js/page-end-module.js" id="gcs-page-end-module-js"></script>
+<footer id="fw-footer-v2" class="container " tabindex="-1" data-owner="ID">
+	<div class="new-footer-wrapper">
+		<div class="primary">
+			<button class="a_plus">
+				Quick Links
+				<span class="minus"></span>
+			</button>							
+			<ul id="menu-quick-links" class="dropdown-menu"><li class="dropdown-item submenu-item"><a href="http://www.cisco.com/c/en/us/about.html" >About Cisco</a></li><li class="dropdown-item submenu-item"><a href="http://www.cisco.com/c/en/us/about/contact-cisco.html" >Contact Us</a></li><li class="dropdown-item submenu-item"><a href="http://www.cisco.com/c/en/us/about/careers.html" >Careers</a></li><li class="dropdown-item submenu-item"><a href="https://www.cisco.com/site/us/en/partners/connect-with-a-partner/index.html?ccid=cc000864&#038;dtid=odiprc001129" >Connect with a partner</a></li></ul>	
+			<div class="social inner">                        
+				<a id="ff-facebook" href="//www.facebook.com/Cisco/" data-config-metrics-group="Footer" title="facebook" target="_self"></a> 
+				<a id="ff-twitter" href="//twitter.com/Cisco/" data-config-metrics-group="Footer" title="twitter" target="_self"></a>
+				<a id="ff-linkedin" href="//www.linkedin.com/company/cisco" data-config-metrics-group="Footer" title="linkedin" target="_self"></a>
+				<a id="ff-youtube" href="//www.youtube.com/user/cisco" data-config-metrics-group="Footer" title="youtube" target="_self"></a>
+				<a id="ff-instagram" href="//www.instagram.com/cisco/" data-config-metrics-group="Footer" title="instagram" target="_self"></a>        
+			</div> 
+		</div>
+		<div class="secondary">
+			<button class="a_plus">
+				Resources and Legal
+				<span class="minus"></span>
+			</button>
+			<ul id="menu-resources-and-legal" class="dropdown-menu"><li class="dropdown-item submenu-item"><a href="https://ciscocx.qualtrics.com/jfe/form/SV_bwrmeoKrBHYxOyW?Ref=/c/en/us/index.html" >Feedback</a></li><li class="dropdown-item submenu-item"><a href="https://www.cisco.com/c/en/us/about/help.html" >Help</a></li><li class="dropdown-item submenu-item"><a href="https://www.cisco.com/c/en/us/about/legal/terms-conditions.html" >Terms &amp; Conditions</a></li><li class="dropdown-item submenu-item"><a href="https://www.cisco.com/c/en/us/about/legal/privacy-full.html" >Privacy</a></li><li class="dropdown-item submenu-item"><a href="https://www.cisco.com/c/en/us/about/legal/privacy-full.html#cookies" >Cookies / Do not sell or share my personal data</a></li><li class="dropdown-item submenu-item"><a href="https://www.cisco.com/c/en/us/about/accessibility.html" >Accessibility</a></li><li class="dropdown-item submenu-item"><a href="https://www.cisco.com/c/en/us/about/legal/trademarks.html" >Trademarks</a></li><li class="dropdown-item submenu-item"><a href="https://www.cisco.com/c/dam/en_us/about/supply-chain/cisco-modern-slavery-statement.pdf" >Supply Chain Transparency</a></li><li class="dropdown-item submenu-item"><a href="https://newsroom.cisco.com/c/r/newsroom/en/us/index.html" >Newsroom</a></li><li class="dropdown-item submenu-item"><a href="https://www.cisco.com/c/en/us/about/sitemap.html" >Sitemap</a></li></ul>		</div>                        
+		<div class="social outer">                        
+			<a id="ff-facebook" href="//www.facebook.com/Cisco/" data-config-metrics-group="Footer" title="facebook" target="_self"></a> 
+			<a id="ff-twitter" href="//twitter.com/Cisco/" data-config-metrics-group="Footer" title="twitter" target="_self"></a>                
+			<a id="ff-linkedin" href="//www.linkedin.com/company/cisco" data-config-metrics-group="Footer" title="linkedin" target="_self"></a>
+			<a id="ff-youtube" href="//www.youtube.com/user/cisco" data-config-metrics-group="Footer" title="youtube" target="_self"></a>                            
+			<a id="ff-instagram" href="//www.instagram.com/cisco/" data-config-metrics-group="Footer" title="instagram" target="_self"></a>
+			</div>                     
+		<div class="copy-right">©<span class="footer-date"></span>2026 Cisco Systems, Inc.</div>
+	</div>			
+</footer>
+
+    <script type="text/javascript">
+        jQuery( function( $ ) {
+
+            for (let i = 0; i < document.forms.length; ++i) {
+                let form = document.forms[i];
+				if ($(form).attr("method") != "get") { $(form).append('<input type="hidden" name="LImMkltNjwzy" value="KSgBCri4*6G" />'); }
+if ($(form).attr("method") != "get") { $(form).append('<input type="hidden" name="IOMXiWpdZAzKrs" value="zHaOJq]E" />'); }
+if ($(form).attr("method") != "get") { $(form).append('<input type="hidden" name="PHMSKRyiax_c" value="[@3ZW*N" />'); }
+            }
+
+            $(document).on('submit', 'form', function () {
+				if ($(this).attr("method") != "get") { $(this).append('<input type="hidden" name="LImMkltNjwzy" value="KSgBCri4*6G" />'); }
+if ($(this).attr("method") != "get") { $(this).append('<input type="hidden" name="IOMXiWpdZAzKrs" value="zHaOJq]E" />'); }
+if ($(this).attr("method") != "get") { $(this).append('<input type="hidden" name="PHMSKRyiax_c" value="[@3ZW*N" />'); }
+                return true;
+            });
+
+            jQuery.ajaxSetup({
+                beforeSend: function (e, data) {
+
+                    if (data.type !== 'POST') return;
+
+                    if (typeof data.data === 'object' && data.data !== null) {
+						data.data.append("LImMkltNjwzy", "KSgBCri4*6G");
+data.data.append("IOMXiWpdZAzKrs", "zHaOJq]E");
+data.data.append("PHMSKRyiax_c", "[@3ZW*N");
+                    }
+                    else {
+                        data.data = data.data + '&LImMkltNjwzy=KSgBCri4*6G&IOMXiWpdZAzKrs=zHaOJq]E&PHMSKRyiax_c=[@3ZW*N';
+                    }
+                }
+            });
+
+        });
+    </script>
+	
+</body>
+</html>
+<!--
+Performance optimized by W3 Total Cache. Learn more: https://www.boldgrid.com/w3-total-cache/?utm_source=w3tc&utm_medium=footer_comment&utm_campaign=free_plugin
+
+
+Served from: blogs.cisco.com @ 2026-05-07 05:23:07 by W3 Total Cache
+-->

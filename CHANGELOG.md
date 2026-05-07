@@ -4,10 +4,59 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [3.6.0] - 2026-05-07
 
 ### Added
 
+- **Dataset 05062026 promotion** — 23 enriched CSVs replace their predecessors
+  across all data modules. Every record now carries tier-classified provenance
+  (`trusted_source_id`, `trusted_source_id_status`), URL quality flags
+  (`*_url_quality`: `reachable_200` / `redirect_3xx` / `paywall_heuristic` /
+  etc.), ISO-formatted dates alongside human-readable labels, and
+  `data_quality_notes`. Key additions per module:
+  - **Leaders** — `KeyResourceUrls` is now plural (`;`-split multi-link) +
+    `KeyResourceRefs` mapping each URL to an authoritative source ID.
+  - **Algorithms transitions** — `Deprecation_Date_ISO` / `Standardization_Date_ISO`
+    added for machine sorting while display labels remain human-readable.
+  - **Algorithm reference** — `status_url_quality` flag; column names migrated to
+    snake_case; `signature_ciphertext_bytes` / `sign_encaps_cycles_relative` renamed
+    for schema consistency.
+  - **Vendors** — `lei_coverage_flag` + `website_url_quality` + `gleif_url_quality`
+    for LEI/GLEIF verification status.
+  - **Trusted sources** — new `trusted_source_xref` cross-reference table linking
+    source IDs to every CSV that cites them.
+  - **OpenSSL docs map** — extended from 2 columns (`command`, `doc_file`) to 6
+    (`+openssl_version`, `doc_url`, `pqc_relevant`, `date_stamp`); loader updated
+    accordingly.
+  - **Implementation attacks** — two new tables
+    (`pqc_implementation_attacks_05062026.csv` and
+    `algorithms_implementation_attacks_table_05062026.csv`) cataloguing per-algorithm
+    side-channel, fault-injection, RNG, secret-handling, API-misuse risk with IACR
+    citations and mitigation notes. Served by new `implementationAttacksData.ts`
+    loader + `ImplementationAttacks` type + Vitest unit tests.
+  - **URL validation gate** — 1 566 URLs probed (HEAD requests + browser-UA
+    pass-2 for 117 anti-bot URLs); 94 broken URLs patched in proposed CSVs
+    before promotion.
+  - **Reference document download** — 35 new documents added to
+    `public/library/`, `public/threats/`, and `public/timeline/` archives;
+    manifests and skip-lists updated.
+  - **`UrlQualityBadge` component** — semantic-token badge keyed off
+    `*_url_quality` enum values; used in leaders, library, threat, and vendor
+    views.
+- **Migrate — click-to-detail on product tiles** — clicking any `SoftwareCard`
+  in the grid opens the `ProductExtractionModal` with full enrichment data.
+  All internal interactive elements (bookmark, hide, compare, repo link,
+  UpdateProduct, Ask) stop propagation so inner actions still work.
+  (`SoftwareCard.tsx`, `SoftwareCardGrid.tsx`, `MigrateView.tsx`)
+- **Compliance — click-to-detail on landscape tiles** — clicking any framework
+  card in the Landscape tab opens `FrameworkDetailPopover` directly. Cards
+  gain `role="button"` + `tabIndex` + `onKeyDown` for full keyboard access.
+  (`ComplianceLandscape.tsx`, `LandscapeTab.tsx`, `ComplianceView.tsx`)
+- **Compliance detail pane — CSWP.39 maturity requirements** — when a
+  framework has linked library refs that map to CSWP.39 governance data, the
+  `FrameworkDetailPopover` now shows a "CSWP.39 Maturity Requirements" section
+  listing each requirement with pillar badge, tier, asset class, requirement
+  text, and evidence location. (`FrameworkDetailPopover.tsx`)
 - **Business Center — `LearningFrameBanner` replaces WIP warning** — the
   "Work in progress" amber banner is replaced by a `LearningFrameBanner` that
   names the Command Center as a _Worked example_ organised around NIST CSWP.39
@@ -47,8 +96,8 @@ All notable changes to this project will be documented in this file.
   backward-compatible: they resolve to the appropriate facet value on load. The
   CSWP.39 cross-walk jump sets the facet instead of swapping tabs.
   (`LandscapeTab.tsx`, `LandscapeTypeFacet.tsx`, `ComplianceView.tsx`)
-- **5 new learn module workshop steps** — each of the five modules below gains
-  one additional interactive workshop step:
+- **8 new learn module workshop steps** — interactive steps added across eight
+  modules, each with a colocated math/engine utility and unit tests where applicable:
   - **ArchQuantumImpact — Step 5 "Strangler Fig"** (`StranglerFigArchitect`):
     model gradual migration of a legacy monolithic service using a PQC API
     Gateway pattern.
@@ -64,9 +113,6 @@ All notable changes to this project will be documented in this file.
   - **NetworkSecurityPQC — Step 6 "Network Telemetry"**
     (`NetworkTelemetryAnalyzer`): analyze PQC certificate and handshake payload
     sizes against TCP `initcwnd` constraints and model fragmentation latency.
-- **3 new learn module workshop steps** — three additional modules each gain a
-  new interactive workshop step with a colocated math/engine utility and unit
-  tests:
   - **AISecurityPQC — Step 8 "VRAM Sizing Guide"** (`VRAMSizingCalculator`,
     `aiVramMath.ts`): model GPU VRAM overhead of terminating large PQC
     cryptographic payloads at high-concurrency LLM inference endpoints; supports
@@ -83,62 +129,12 @@ All notable changes to this project will be documented in this file.
     enforces Hybrid PQC TLS connections via `aws:tlsCipherSuites`; policy engine
     checks for a Deny statement, correct action coverage, and a `_PQ`
     cipher-suite condition.
-
-### Changed
-
-- **Learn modules — removed stale `content.ts` / `curious-summary-curious.md`
-  files** — 14 modules that completed migration to the `rag-summary.md` +
-  `index.tsx` pattern had their legacy `content.ts` and
-  `curious-summary-curious.md` stubs deleted: EnterpriseKeyMgmt,
-  FinancialLedgers, HardwareSecurityModules, HybridCerts, ICSScada,
-  IKEEnhancements, IdentityMgmtCerts, LogIntegrity, NetworkProtocols,
-  PKCS11PQC, QuantumCloud, QuantumKeyDistribution, QuantumSafeVPN, SecureBoot.
-
-- **Compliance For You tab — inline detail panes for resources** — clicking
-  a library doc, threat, timeline event, embedded framework event, or framework
-  card in the For You tab now opens the corresponding detail modal in place
-  instead of navigating away to `/library`, `/threats`, `/timeline`, or
-  `/compliance?framework=…`. Reuses the existing `LibraryDetailPopover`,
-  `ThreatDetailDialog`, and `TimelineDocumentDetailPopover` modals. Adds a new
-  `FrameworkDetailPopover` showing framework metadata + clickable cross-links
-  to referenced library docs and timeline events (each opens its own detail
-  modal, replacing the framework one). The user stays on the For You tab
-  throughout. Item components (`ThreatItem`, `LibraryDocItem`, `TimelineItem`,
-  `FrameworkItem`, plus embedded year/title rows inside `FrameworkDeadlineCard`)
-  accept an optional `onSelect` callback — when supplied they render as a
-  `<button>`; when absent they keep the existing `<Link>` navigation, so the
-  assessment report and command-center summary card are unaffected. Wired for
-  both executive (`ExecutiveTimelineView`) and non-executive
-  (`ApplicabilityPanel`) personas. (`ComplianceView.tsx`,
-  `ApplicabilityPanel.tsx`, `ExecutiveTimelineView.tsx`,
-  `FrameworkDeadlineCard.tsx`, `applicability/parts/items.tsx`,
-  `FrameworkDetailPopover.tsx`)
-- **Country-specific deadline timeline on For You tab** — the top
-  `DeadlineTimeline` bar now filters to the resolved country's frameworks
-  whenever the For You tab is active and shows a `[Country] deadlines` pill
-  next to the title; on every other tab it reverts to the consolidated
-  all-frameworks view. Country is resolved through `useApplicability` so the
-  URL filter (`?country=…`) wins, falling back to the user's assessment-store
-  profile. Optional `label` prop added to `DeadlineTimeline`.
-  (`ComplianceView.tsx`, `ComplianceLandscape.tsx`)
 - **`pqctoday-tpm` listed in About SBOM** — added to the Cryptography & PQC
   section alongside softhsmv3, with link to the public repo
   (`pqctoday-org/pqctoday-tpm`), BSD-3-Clause license, version v0.3.0, and
   description noting TCG V1.85 PQC support (ML-KEM-768 + ML-DSA-65 command
   codes 0x1a3–0x1aa, Emscripten WASM build, fork of swtpm + libtpms).
   (`SbomSection.tsx`)
-- **Command Center artifact pre-fill — full coverage across all 22
-  artifacts** — every artifact builder now opens with defaults derived
-  from the user's persona, assessment, and starred selections from
-  `/compliance`, `/threats`, `/migrate`, and `/timeline`, with a
-  `PreFilledBanner` listing the contributing source pages and a Clear
-  action. Foundation hook `useExecutiveModuleData` extended with
-  `myFrameworks` / `myProductIds` / `myProducts` / `myThreatIds` /
-  `myThreats` / `myTimelineCountries` / `myTimelineCountryData` so every
-  builder reads cross-page user data through one canonical hook.
-  (`useExecutiveModuleData.ts`, all 22 artifact builders under
-  `BusinessCenter/adapters/`, `BusinessCenter/tools/`, and
-  `PKILearning/modules/*/components/`)
 - **New `compliance-checklist` artifact builder** — net-new
   `ComplianceChecklistBuilderStandalone` builds one checklist section
   per starred framework on `/compliance`, pre-checks the
@@ -151,100 +147,70 @@ All notable changes to this project will be documented in this file.
   (`ComplianceChecklistBuilderStandalone.tsx`,
   `businessToolsRegistry.tsx`, `businessToolComponents.tsx`,
   `lib/cswp39StepMapping.ts`, `businessToolsRegistry.test.ts`)
-- **`crypto-vulnerability-watch` highlights tracked-algorithm CVEs** —
-  CVE rows whose summary mentions any algorithm in your bookmarked
-  `/threats` (matched against each threat's `cryptoAtRisk` field) now
-  render an amber `TRACKED` badge next to the CVE ID. The cross-page
-  link is no longer banner-only; bookmarking a threat for RSA-2048 on
-  `/threats` actively flags every RSA CVE in the watch table.
-  (`CryptoVulnerabilityWatch.tsx`)
-- **`policy-draft` rotation period seeded from `cryptoAgility`** — the
-  Maximum Key Rotation Period default now considers crypto agility
-  alongside data sensitivity: `hardcoded` → 2 years, `agile` + critical
-  data → 90 days. `cryptoAgility` is also surfaced in the seed banner.
-  (`PolicyTemplateGenerator.tsx`)
-- **`vendor-scorecard` opens roadmap dimension first for heavy
-  vendor-dependency** — when the assessment reports
-  `vendorDependency === 'heavy-vendor'` the PQC Roadmap dimension is
-  pre-expanded so reviewers see roadmap risk first; banner mentions the
-  source. (`VendorScorecardBuilder.tsx`)
-- **`contract-clause` shows "High vendor exposure" hint above the
-  editor** — when `vendorDependency` is `heavy-vendor` or `mixed` an
-  amber callout above the clause sections recommends tighter penalty
-  caps, audit-rights frequency, and termination triggers; banner
-  mentions the source. (`ContractClauseGenerator.tsx`)
-- **`supply-chain-matrix` filters industry threats to supply-chain
-  scope** — replaces the misleading "industry-specific supply-chain
-  threats" tally (which counted every industry threat) with a
-  keyword-filtered subset matching `/(supply-chain|vendor|third-party|`
-  `sbom|cbom|component|backdoor|firmware|hsm|library)/i` against threat
-  description, threatId, and `cryptoAtRisk`.
-  (`SupplyChainRiskMatrix.tsx`)
-- **Chat assistant Bloch-sphere icon** — the right-panel chat FAB now
-  shows the new `ChatBotFlow.gif` Bloch-sphere animation instead of the
-  generic Lucide `Bot` icon, and the FAB grew from 14×14 to 24×24 to
-  give the animation room to read. Supporting `<QubitIcon>` wrapper
-  added for reuse elsewhere in the app. (`RightPanelFAB.tsx`,
-  `ui/QubitIcon.tsx`, `public/ChatBotFlow.gif`)
-- **5 new FAQ entries** spanning algorithm selection, hash-based
-  signatures, hardware, regional timelines, and payments compliance:
-  "When should I use ML-KEM vs ML-DSA vs SLH-DSA?", "What are LMS and
-  XMSS, and how do they differ from SLH-DSA?", "What is the difference
-  between physical and logical qubits?", "What PQC timelines exist for
-  Japan, Singapore, and Australia?", "What does PCI DSS 4.0 require
-  for PQC?". (`FAQ/faqData.ts`)
-
-### Data
-
-- **May 4 data accuracy refresh** — full audit of all data sources against
-  trusted references. Changes users will see across the app:
-
-  **Timeline** — OpenSSL 3.5.0 (April 2025) added as the milestone when
-  ML-KEM, ML-DSA, and SLH-DSA first shipped natively in the world's most
-  widely used TLS library. NIST IR 8547 IPD2 (April 2026) added as a separate
-  event. IBM Kookaburra and IBM Quantum Advantage correctly reclassified as
-  forward-looking roadmap targets rather than completed milestones. One
-  unverified entry removed (NXP/PQShield pilot — cited source did not support
-  the claim). Source attribution improved across the full timeline.
-
-  **Threats** — Two new threats added: _AI-assisted cryptanalysis_ (emerging
-  ML models that accelerate lattice-reduction attacks, potentially reducing
-  security margins of ML-KEM-512 before a quantum computer exists) and _HSM
-  key-size incompatibility_ (ML-KEM and ML-DSA keys are far larger than RSA
-  keys — legacy HSM firmware buffer limits can block deployment). NIST IR 8547
-  migration guidance updated to reference the April 2026 IPD2 revision.
-
-  **Library** — OpenSSL 3.5.0 release notes added as a reference document.
-  NIST IR 8547 now links to the April 2026 IPD2 PDF. FIPS 203, 204, and 205
-  publication dates corrected (a data artifact had incorrectly set them to
-  April 2026). Seven IETF drafts annotated with current expiry/status. One
-  abandoned draft (NTRU Prime SSH, last updated 2022) removed.
-
-  **Migrate** — Android 16 PQC support correctly scoped to Chrome/WebView
-  TLS only (platform-level ML-DSA Keystore support is Android 17, which is
-  already a separate entry). Thales payShield 10K status changed to Unknown —
-  no public PQC roadmap exists for the payment HSM product line. FileVault
-  clarified as not a PQC migration target — AES-256-XTS disk encryption is
-  already quantum-resistant. Mavenir Cloud RAN flagged as simulation-only.
-  OpenSSL 3.5.0 added as a product entry. Hardware category labels
-  standardised across all entries.
-
-  **Algorithms** — HQC correctly shows "NIST Round 4 Selection" (not
-  "Candidate"). FN-DSA (Falcon) correctly shows "FIPS 206 (Draft)". KpqC
-  algorithms correctly show "KpqC Selected" for the Korean standard.
-
-  **Sources panel** — NSA, CISA, BSI, NCSC UK, ANSSI, and ENISA now appear
-  in the Sources panel on Timeline, Threats, and Library views (their flags
-  were previously left blank despite being primary data contributors).
-
-- **OpenSSL 3.5.0 enriched** — full AI-assisted enrichment added for the
-  new OpenSSL 3.5.0 library entry, covering TLS hybrid key exchange, FIPS
-  140-3 compliance context, implementation prerequisites, and known security
-  patches in the 3.5.x series.
-- **RAG search index regenerated** (9,867 chunks) to reflect all data updates.
+- **5 new FAQ entries** spanning algorithm selection, hash-based signatures,
+  hardware, regional timelines, and payments compliance: "When should I use
+  ML-KEM vs ML-DSA vs SLH-DSA?", "What are LMS and XMSS, and how do they
+  differ from SLH-DSA?", "What is the difference between physical and logical
+  qubits?", "What PQC timelines exist for Japan, Singapore, and Australia?",
+  "What does PCI DSS 4.0 require for PQC?". (`FAQ/faqData.ts`)
+- **Vendor PQC roadmap pipeline** — end-to-end pipeline from discovery to
+  in-app display:
+  - **CSV** (`migrate_vendor_roadmap_05072026.csv`): 50 vendors with
+    `roadmap_url`, `coverage_notes`, and `roadmap_title`; 32 have confirmed
+    public roadmap URLs covering AWS, Azure, Google, Apple, Cisco, Palo Alto,
+    CrowdStrike, Cloudflare, Okta, HashiCorp, IBM, and others.
+  - **Download script** (`scripts/download-vendor-roadmaps.js`): follows the
+    same pattern as `download-library.js`; downloads each roadmap page to
+    `public/vendor-roadmaps/{vendor_id}_{safe_name}.html`, writes
+    `manifest.json` + `skip-list.json`. 26 pages archived locally.
+    Added `download:vendor-roadmaps` and `download:vendor-roadmaps:dry` npm
+    scripts.
+  - **Enrichment** (`scripts/enrich-vendor-roadmaps-ollama.py`, gitignored):
+    feeds each downloaded page through `qwen3.6:27b` to extract PQC algorithms
+    announced, target migration dates, products/services covered, compliance
+    frameworks cited, hybrid mode support, GA status, customer action required,
+    and key commitment quotes. Outputs
+    `src/data/doc-enrichments/vendor_roadmap_enrichments_05072026.md`
+    (25 HIGH/MEDIUM entries).
+  - **Loader** (`src/data/vendorRoadmapEnrichmentData.ts`): `import.meta.glob`
+    auto-discovers all `vendor_roadmap_enrichments_*.md` files; parser extracts
+    structured fields and builds a `vendor_id → VendorRoadmapEnrichment` map.
+  - **UI** (`VendorRoadmapPanel.tsx`): rendered inside the `SoftwareTable`
+    expanded row when a vendor has a roadmap entry; shows PQC algorithms as
+    mono-font chips, target dates, hybrid mode support, compliance frameworks,
+    and the first key quote with a GA status chip (GA / Preview / Beta /
+    Planned). External link opens the source roadmap page.
+  - **Filter** (`MigrateView.tsx`): "Has PQC Roadmap" toggle in both desktop
+    `FilterDrawer` and mobile `MobileFilterDrawer` filter panels; active count
+    increments correctly.
 
 ### Fixed
 
+- **SourcesModal crash on new `source_type` values** — the groups initializer
+  only pre-declared three fixed keys; new values in the 05062026 authoritative
+  sources CSV caused a `Cannot read properties of undefined (reading 'push')`
+  crash. Fixed with a dynamic `if (!groups[key]) groups[key] = []` guard.
+  (`SourcesModal.tsx`)
+- **Algorithm transition dates displayed in ISO format** — `Deprecation_Date_ISO`
+  had priority over `Deprecation_Date_Label` in the loader, so "2030-01-01"
+  was shown instead of "2030 (Deprecated) / 2035 (Disallowed)". Priority swapped
+  so the human label always wins. (`algorithmsData.ts`)
+- **Golden-queries Recall@15 regression after corpus growth** — corpus grew from
+  9 929 to 10 068 chunks after promotion, pushing `assessment-guide` entries past
+  rank 15. Fixed by adding a `+0.15` `categoryBump` for the `assessment-guide`
+  category in the corpus generator. (`generate-rag-corpus.ts`)
+- **Migrate filter drawer clipped inside sticky toolbar** — `backdrop-blur` on
+  the sticky filter bar creates a CSS containing block that confined
+  `FilterDrawer` and `MobileFilterDrawer`'s `fixed inset-0` dialog to the
+  toolbar's 88 px bounding box instead of the full viewport. Fixed by wrapping
+  both drawers in `createPortal(…, document.body)`, the same escape hatch
+  already used by `FilterDropdown`. Raised z-index to `z-[120]` so the drawer
+  clears the DisclaimerModal (`z-[110]`) and other overlays.
+  (`FilterDrawer.tsx`, `MobileFilterDrawer.tsx`)
+- **"Has PQC Roadmap" toggle missing from desktop filter** — the toggle was
+  wired in the mobile `MobileFilterDrawer` `filterContent` but omitted from the
+  desktop `FilterDrawer` `filterContent`. Added the button to the Properties
+  section of the desktop filter panel. (`MigrateView.tsx`)
 - **Assess quick-mode step count corrected to 8** — `ModeSelector` description
   updated from "6 questions" to "8 questions" and time estimate from "~2 minutes"
   to "~3 minutes" to reflect the two additional steps (`Infra`, `Timeline`)
@@ -370,8 +336,142 @@ assessmentStatus]`: the hook re-seeds from persona whenever `industry` is empty,
   close any open drawer before calling `retrySelector`.
   (`ArtifactDrawer.tsx`, `useWorkshopOverlayStore.ts`)
 
+### Changed
+
+- **Learn modules — removed stale `content.ts` / `curious-summary-curious.md`
+  files** — 14 modules that completed migration to the `rag-summary.md` +
+  `index.tsx` pattern had their legacy `content.ts` and
+  `curious-summary-curious.md` stubs deleted: EnterpriseKeyMgmt,
+  FinancialLedgers, HardwareSecurityModules, HybridCerts, ICSScada,
+  IKEEnhancements, IdentityMgmtCerts, LogIntegrity, NetworkProtocols,
+  PKCS11PQC, QuantumCloud, QuantumKeyDistribution, QuantumSafeVPN, SecureBoot.
+- **Compliance For You tab — inline detail panes for resources** — clicking
+  a library doc, threat, timeline event, embedded framework event, or framework
+  card in the For You tab now opens the corresponding detail modal in place
+  instead of navigating away to `/library`, `/threats`, `/timeline`, or
+  `/compliance?framework=…`. Reuses the existing `LibraryDetailPopover`,
+  `ThreatDetailDialog`, and `TimelineDocumentDetailPopover` modals. Adds a new
+  `FrameworkDetailPopover` showing framework metadata + clickable cross-links
+  to referenced library docs and timeline events (each opens its own detail
+  modal, replacing the framework one). The user stays on the For You tab
+  throughout. Item components (`ThreatItem`, `LibraryDocItem`, `TimelineItem`,
+  `FrameworkItem`, plus embedded year/title rows inside `FrameworkDeadlineCard`)
+  accept an optional `onSelect` callback — when supplied they render as a
+  `<button>`; when absent they keep the existing `<Link>` navigation, so the
+  assessment report and command-center summary card are unaffected. Wired for
+  both executive (`ExecutiveTimelineView`) and non-executive
+  (`ApplicabilityPanel`) personas. (`ComplianceView.tsx`,
+  `ApplicabilityPanel.tsx`, `ExecutiveTimelineView.tsx`,
+  `FrameworkDeadlineCard.tsx`, `applicability/parts/items.tsx`,
+  `FrameworkDetailPopover.tsx`)
+- **Country-specific deadline timeline on For You tab** — the top
+  `DeadlineTimeline` bar now filters to the resolved country's frameworks
+  whenever the For You tab is active and shows a `[Country] deadlines` pill
+  next to the title; on every other tab it reverts to the consolidated
+  all-frameworks view. Country is resolved through `useApplicability` so the
+  URL filter (`?country=…`) wins, falling back to the user's assessment-store
+  profile. Optional `label` prop added to `DeadlineTimeline`.
+  (`ComplianceView.tsx`, `ComplianceLandscape.tsx`)
+- **Command Center artifact pre-fill — full coverage across all 22
+  artifacts** — every artifact builder now opens with defaults derived
+  from the user's persona, assessment, and starred selections from
+  `/compliance`, `/threats`, `/migrate`, and `/timeline`, with a
+  `PreFilledBanner` listing the contributing source pages and a Clear
+  action. Foundation hook `useExecutiveModuleData` extended with
+  `myFrameworks` / `myProductIds` / `myProducts` / `myThreatIds` /
+  `myThreats` / `myTimelineCountries` / `myTimelineCountryData` so every
+  builder reads cross-page user data through one canonical hook.
+  (`useExecutiveModuleData.ts`, all 22 artifact builders under
+  `BusinessCenter/adapters/`, `BusinessCenter/tools/`, and
+  `PKILearning/modules/*/components/`)
+- **`crypto-vulnerability-watch` highlights tracked-algorithm CVEs** —
+  CVE rows whose summary mentions any algorithm in your bookmarked
+  `/threats` (matched against each threat's `cryptoAtRisk` field) now
+  render an amber `TRACKED` badge next to the CVE ID. The cross-page
+  link is no longer banner-only; bookmarking a threat for RSA-2048 on
+  `/threats` actively flags every RSA CVE in the watch table.
+  (`CryptoVulnerabilityWatch.tsx`)
+- **`policy-draft` rotation period seeded from `cryptoAgility`** — the
+  Maximum Key Rotation Period default now considers crypto agility
+  alongside data sensitivity: `hardcoded` → 2 years, `agile` + critical
+  data → 90 days. `cryptoAgility` is also surfaced in the seed banner.
+  (`PolicyTemplateGenerator.tsx`)
+- **`vendor-scorecard` opens roadmap dimension first for heavy
+  vendor-dependency** — when the assessment reports
+  `vendorDependency === 'heavy-vendor'` the PQC Roadmap dimension is
+  pre-expanded so reviewers see roadmap risk first; banner mentions the
+  source. (`VendorScorecardBuilder.tsx`)
+- **`contract-clause` shows "High vendor exposure" hint above the
+  editor** — when `vendorDependency` is `heavy-vendor` or `mixed` an
+  amber callout above the clause sections recommends tighter penalty
+  caps, audit-rights frequency, and termination triggers; banner
+  mentions the source. (`ContractClauseGenerator.tsx`)
+- **`supply-chain-matrix` filters industry threats to supply-chain
+  scope** — replaces the misleading "industry-specific supply-chain
+  threats" tally (which counted every industry threat) with a
+  keyword-filtered subset matching `/(supply-chain|vendor|third-party|`
+  `sbom|cbom|component|backdoor|firmware|hsm|library)/i` against threat
+  description, threatId, and `cryptoAtRisk`.
+  (`SupplyChainRiskMatrix.tsx`)
+- **Chat assistant Bloch-sphere icon** — the right-panel chat FAB now
+  shows the new `ChatBotFlow.gif` Bloch-sphere animation instead of the
+  generic Lucide `Bot` icon, and the FAB grew from 14×14 to 24×24 to
+  give the animation room to read. Supporting `<QubitIcon>` wrapper
+  added for reuse elsewhere in the app. (`RightPanelFAB.tsx`,
+  `ui/QubitIcon.tsx`, `public/ChatBotFlow.gif`)
+
 ### Data
 
+- **May 4 data accuracy refresh** — full audit of all data sources against
+  trusted references. Changes users will see across the app:
+
+  **Timeline** — OpenSSL 3.5.0 (April 2025) added as the milestone when
+  ML-KEM, ML-DSA, and SLH-DSA first shipped natively in the world's most
+  widely used TLS library. NIST IR 8547 IPD2 (April 2026) added as a separate
+  event. IBM Kookaburra and IBM Quantum Advantage correctly reclassified as
+  forward-looking roadmap targets rather than completed milestones. One
+  unverified entry removed (NXP/PQShield pilot — cited source did not support
+  the claim). Source attribution improved across the full timeline.
+
+  **Threats** — Two new threats added: _AI-assisted cryptanalysis_ (emerging
+  ML models that accelerate lattice-reduction attacks, potentially reducing
+  security margins of ML-KEM-512 before a quantum computer exists) and _HSM
+  key-size incompatibility_ (ML-KEM and ML-DSA keys are far larger than RSA
+  keys — legacy HSM firmware buffer limits can block deployment). NIST IR 8547
+  migration guidance updated to reference the April 2026 IPD2 revision.
+
+  **Library** — OpenSSL 3.5.0 release notes added as a reference document.
+  NIST IR 8547 now links to the April 2026 IPD2 PDF. FIPS 203, 204, and 205
+  publication dates corrected (a data artifact had incorrectly set them to
+  April 2026). Seven IETF drafts annotated with current expiry/status. One
+  abandoned draft (NTRU Prime SSH, last updated 2022) removed.
+
+  **Migrate** — Android 16 PQC support correctly scoped to Chrome/WebView
+  TLS only (platform-level ML-DSA Keystore support is Android 17, which is
+  already a separate entry). Thales payShield 10K status changed to Unknown —
+  no public PQC roadmap exists for the payment HSM product line. FileVault
+  clarified as not a PQC migration target — AES-256-XTS disk encryption is
+  already quantum-resistant. Mavenir Cloud RAN flagged as simulation-only.
+  OpenSSL 3.5.0 added as a product entry. Hardware category labels
+  standardised across all entries.
+
+  **Algorithms** — HQC correctly shows "NIST Round 4 Selection" (not
+  "Candidate"). FN-DSA (Falcon) correctly shows "FIPS 206 (Draft)". KpqC
+  algorithms correctly show "KpqC Selected" for the Korean standard.
+
+  **Sources panel** — NSA, CISA, BSI, NCSC UK, ANSSI, and ENISA now appear
+  in the Sources panel on Timeline, Threats, and Library views (their flags
+  were previously left blank despite being primary data contributors).
+
+- **OpenSSL 3.5.0 enriched** — full AI-assisted enrichment added for the
+  new OpenSSL 3.5.0 library entry, covering TLS hybrid key exchange, FIPS
+  140-3 compliance context, implementation prerequisites, and known security
+  patches in the 3.5.x series.
+- **Vendor PQC roadmap data** — `migrate_vendor_roadmap_05072026.csv` covers
+  50 vendors; 26 roadmap pages downloaded to `public/vendor-roadmaps/`;
+  `vendor_roadmap_enrichments_05072026.md` contains 25 HIGH/MEDIUM extractions
+  via `qwen3.6:27b`, each capturing algorithms, migration dates, GA status,
+  compliance frameworks, and key commitment quotes.
 - **Learn module reference and product mappings curated** — a full 53-module
   gap audit was run against the library and product catalogs. Every module's
   mapped references and products were reviewed against the module's actual topic
@@ -400,13 +500,11 @@ assessmentStatus]`: the hook re-seeds from persona whenever `industry` is empty,
   import wired into the dashboard filter predicate. Corpus grows from 12,156
   to 12,209 chunks. (`src/data/module-topic-summaries.md`,
   `moduleTopicSummaries.ts`, `Dashboard.tsx`, `generate-rag-corpus.ts`)
-- **`rag-corpus.json` regenerated** — auto build artifact, content
-  unchanged (now persisted minified instead of pretty-printed).
+- **RAG search index regenerated** (12,209 chunks) to reflect all data updates.
 
 ### Internal
 
-- `npx tsc -b` clean; full vitest suite passes; `changelogParser` parses
-  this Unreleased block as `Added=1, Fixed=12, Data=1, Internal=1`.
+- `npx tsc -b` clean; full vitest suite passes.
 
 ## [3.5.64] - May 3, 2026
 

@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link class="user" href="https://www.vmware.com/content/dam/vmwaredesigns/scrapercontent/responsive.css" rel="stylesheet" type="text/css">
+  <link rel="shortcut icon" type="image/x-icon" href="https://blogs.vmware.com/cloud-foundation/wp-content/themes/vmware-blog-1.9.8/favicon.ico" />
+  <meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+	<style>img:is([sizes="auto" i], [sizes^="auto," i]) { contain-intrinsic-size: 3000px 1500px }</style>
+	
+	<!-- This site is optimized with the Yoast SEO Premium plugin v24.6 (Yoast SEO v24.7) - https://yoast.com/wordpress/plugins/seo/ -->
+	<title>Post-Quantum Readiness on VMware Cloud Foundation - VMware Cloud Foundation (VCF) Blog</title>
+	<meta name="description" content="Broadcom is preparing VMware Cloud Foundation for quantum readiness and is committed to adopting PQC-resistant algorithms and methods for VCF" />
+	<link rel="canonical" href="https://blogs.vmware.com/cloud-foundation/2026/04/28/post-quantum-readiness-on-vcf/" />
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:type" content="article" />
+	<meta property="og:title" content="Post-Quantum Readiness on VMware Cloud Foundation" />
+	<meta property="og:description" content="Broadcom is preparing VMware Cloud Foundation for quantum readiness and is committed to adopting PQC-resistant algorithms and methods for VCF" />
+	<meta property="og:url" content="https://blogs.vmware.com/cloud-foundation/2026/04/28/post-quantum-readiness-on-vcf/" />
+	<meta property="og:site_name" content="VMware Cloud Foundation (VCF) Blog" />
+	<meta property="article:published_time" content="2026-04-28T12:00:00+00:00" />
+	<meta property="og:image" content="https://blogs.vmware.com/cloud-foundation/wp-content/uploads/sites/75/2026/04/Featured-Image-1.jpg" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="952" />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta name="author" content="Paul Turner" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:creator" content="@vmwarevcf" />
+	<meta name="twitter:site" content="@vmwarevcf" />
+	<meta name="twitter:label1" content="Written by" />
+	<meta name="twitter:data1" content="Paul Turner" />
+	<meta name="twitter:label2" content="Est. reading time" />
+	<meta name="twitter:data2" content="12 minutes" />
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://blogs.vmware.com/cloud-foundation/2026/04/28/post-quantum-readiness-on-vcf/","url":"https://blogs.vmware.com/cloud-foundation/2026/04/28/post-quantum-readiness-on-vcf/","name":"Post-Quantum Readiness on VMware Cloud Foundation - VMware Cloud Foundation (VCF) Blog","isPartOf":{"@id":"https://blogs.vmware.com/cloud-foundation/#website"},"primaryImageOfPage":{"@id":"https://blogs.vmware.com/cloud-foundation/2026/04/28/post-quantum-readiness-on-vcf/#primaryimage"},"image":{"@id":"https://blogs.vmware.com/cloud-foundation/2026/04/28/post-quantum-readiness-on-vcf/#primaryimage"},"thumbnailUrl":"https://blogs.vmware.com/cloud-foundation/wp-content/uploads/sites/75/2026/04/Featured-Image-1.jpg","datePublished":"2026-04-28T12:00:00+00:00","author":{"@id":"https://blogs.vmware.com/cloud-foundation/#/schema/person/6ddf2cbcca335ddda05dc569a2920582"},"description":"Broadcom is preparing VMware Cloud Foundation for quantum readiness and is committed to adopting PQC-resistant algorithms and methods for VCF","breadcrumb":{"@id":"https://blogs.vmware.com/cloud-foundation/2026/04/28/post-quantum-readiness-on-vcf/#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https://blogs.vmware.com/cloud-foundation/2026/04/28/post-quantum-readiness-on-vcf/"]}]},{"@type":"ImageObject","inLanguage":"en-US","@id":"https://blogs.vmware.com/cloud-foundation/2026/04/28/post-quantum-readiness-on-vcf/#primaryimage","url":"https://blogs.vmware.com/cloud-foundation/wp-content/uploads/sites/75/2026/04/Featured-Image-1.jpg","contentUrl":"https://blogs.vmware.com/cloud-foundation/wp-content/uploads/sites/75/2026/04/Featured-Image-1.jpg","width":1200,"height":952,"caption":"Worldwide digital data security network infrastructure, data breach concept. Some elements of the image furnished by NASA."},{"@type":"BreadcrumbList","@id":"https://blogs.vmware.com/cloud-foundation/2026/04/28/post-quantum-readiness-on-vcf/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://blogs.vmware.com/cloud-foundation/"},{"@type":"ListItem","position":2,"name":"Post-Quantum Readiness on VMware Cloud Foundation"}]},{"@type":"WebSite","@id":"https://blogs.vmware.com/cloud-foundation/#website","url":"https://blogs.vmware.com/cloud-foundation/","name":"VMware Cloud Foundation (VCF) Blog","description":"The Private Cloud Platform","potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://blogs.vmware.com/cloud-foundation/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"en-US"},{"@type":"Person","@id":"https://blogs.vmware.com/cloud-foundation/#/schema/person/6ddf2cbcca335ddda05dc569a2920582","name":"Paul Turner","image":{"@type":"ImageObject","inLanguage":"en-US","@id":"https://blogs.vmware.com/cloud-foundation/#/schema/person/image/3cee91f14696af1373c025c0add46e69","url":"https://blogs.vmware.com/cloud-foundation/wp-content/uploads/sites/75/2026/04/cropped-Copy-of-Paul-Turner-46-96x96.png","contentUrl":"https://blogs.vmware.com/cloud-foundation/wp-content/uploads/sites/75/2026/04/cropped-Copy-of-Paul-Turner-46-96x96.png","caption":"Paul Turner"},"description":"Paul Turner, is the Chief Product Officer, VCF Division (leading the VMware Cloud Foundation and vSphere Foundation products). He is leading our next generation cloud infrastructure for all apps - VMs, Containers, and Private AI applications. Paul brings more than 25 years expertise in enterprise software product management and marketing - having held leadership roles at VMware, NetApp, Oracle, Cloudian, and Scality. Paul holds a computer science degree from Trinity College in Ireland. He lives in Los Altos, Silicon Valley with his wife Kristy and their children Conor and Aoife.","jobTitle":"Chief Product Officer","worksFor":"VCF Division, Broadcom","url":"https://blogs.vmware.com/cloud-foundation/author/pturner/"}]}</script>
+	<!-- / Yoast SEO Premium plugin. -->
+
+
+<link rel='dns-prefetch' href='//stats.wp.com' />
+<link rel='dns-prefetch' href='//cdn.parsely.com' />
+<script type="text/javascript">
+/* <![CDATA[ */
+window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/16.0.1\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/16.0.1\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/blogs.vmware.com\/cloud-foundation\/wp-includes\/js\/wp-emoji-release.min.js?ver=6.8.5"}};
+/*! This file is auto-generated */
+!function(s,n){var o,i,e;function c(e){try{var t={supportTests:e,timestamp:(new Date).valueOf()};sessionStorage.setItem(o,JSON.stringify(t))}catch(e){}}function p(e,t,n){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);var t=new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data),a=(e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(n,0,0),new Uint32Array(e.getImageData(0,0,e.canvas.width,e.canvas.height).data));return t.every(function(e,t){return e===a[t]})}function u(e,t){e.clearRect(0,0,e.canvas.width,e.canvas.height),e.fillText(t,0,0);for(var n=e.getImageData(16,16,1,1),a=0;a<n.data.length;a++)if(0!==n.data[a])return!1;return!0}function f(e,t,n,a){switch(t){case"flag":return n(e,"\ud83c\udff3\ufe0f\u200d\u26a7\ufe0f","\ud83c\udff3\ufe0f\u200b\u26a7\ufe0f")?!1:!n(e,"\ud83c\udde8\ud83c\uddf6","\ud83c\udde8\u200b\ud83c\uddf6")&&!n(e,"\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc65\udb40\udc6e\udb40\udc67\udb40\udc7f","\ud83c\udff4\u200b\udb40\udc67\u200b\udb40\udc62\u200b\udb40\udc65\u200b\udb40\udc6e\u200b\udb40\udc67\u200b\udb40\udc7f");case"emoji":return!a(e,"\ud83e\udedf")}return!1}function g(e,t,n,a){var r="undefined"!=typeof WorkerGlobalScope&&self instanceof WorkerGlobalScope?new OffscreenCanvas(300,150):s.createElement("canvas"),o=r.getContext("2d",{willReadFrequently:!0}),i=(o.textBaseline="top",o.font="600 32px Arial",{});return e.forEach(function(e){i[e]=t(o,e,n,a)}),i}function t(e){var t=s.createElement("script");t.src=e,t.defer=!0,s.head.appendChild(t)}"undefined"!=typeof Promise&&(o="wpEmojiSettingsSupports",i=["flag","emoji"],n.supports={everything:!0,everythingExceptFlag:!0},e=new Promise(function(e){s.addEventListener("DOMContentLoaded",e,{once:!0})}),new Promise(function(t){var n=function(){try{var e=JSON.parse(sessionStorage.getItem(o));if("object"==typeof e&&"number"==typeof e.timestamp&&(new Date).valueOf()<e.timestamp+604800&&"object"==typeof e.supportTests)return e.supportTests}catch(e){}return null}();if(!n){if("undefined"!=typeof Worker&&"undefined"!=typeof OffscreenCanvas&&"undefined"!=typeof URL&&URL.createObjectURL&&"undefined"!=typeof Blob)try{var e="postMessage("+g.toString()+"("+[JSON.stringify(i),f.toString(),p.toString(),u.toString()].join(",")+"));",a=new Blob([e],{type:"text/javascript"}),r=new Worker(URL.createObjectURL(a),{name:"wpTestEmojiSupports"});return void(r.onmessage=function(e){c(n=e.data),r.terminate(),t(n)})}catch(e){}c(n=g(i,f,p,u))}t(n)}).then(function(e){for(var t in e)n.supports[t]=e[t],n.supports.everything=n.supports.everything&&n.supports[t],"flag"!==t&&(n.supports.everythingExceptFlag=n.supports.everythingExceptFlag&&n.supports[t]);n.supports.everythingExceptFlag=n.supports.everythingExceptFlag&&!n.supports.flag,n.DOMReady=!1,n.readyCallback=function(){n.DOMReady=!0}}).then(function(){return e}).then(function(){var e;n.supports.everything||(n.readyCallback(),(e=n.source||{}).concatemoji?t(e.concatemoji):e.wpemoji&&e.twemoji&&(t(e.twemoji),t(e.wpemoji)))}))}((window,document),window._wpemojiSettings);
+/* ]]> */
+</script>
+<link rel='stylesheet' id='all-css-0' href='https://blogs.vmware.com/cloud-foundation/wp-content/plugins/crayon-syntax-highlighter/css/min/crayon.min.css?m=1771614139g' type='text/css' media='all' />
+<style id='wp-emoji-styles-inline-css'>
+
+	img.wp-smiley, img.emoji {
+		display: inline !important;
+		border: none !important;
+		box-shadow: none !important;
+		height: 1em !important;
+		width: 1em !important;
+		margin: 0 0.07em !important;
+		vertical-align: -0.1em !important;
+		background: none !important;
+		padding: 0 !important;
+	}
+</style>
+<link rel='stylesheet' id='all-css-2' href='https://blogs.vmware.com/cloud-foundation/wp-includes/css/dist/block-library/style.min.css?m=1774626878g' type='text/css' media='all' />
+<style id='classic-theme-styles-inline-css'>
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+</style>
+<link rel='stylesheet' id='all-css-4' href='https://blogs.vmware.com/cloud-foundation/wp-content/mu-plugins/jetpack-15.7/jetpack_vendor/automattic/jetpack-forms/dist/contact-form/css/jetpack-forms-layout.css?m=1778006007g' type='text/css' media='all' />
+<style id='co-authors-plus-coauthors-style-inline-css'>
+.wp-block-co-authors-plus-coauthors.is-layout-flow [class*=wp-block-co-authors-plus]{display:inline}
+
+</style>
+<style id='co-authors-plus-avatar-style-inline-css'>
+.wp-block-co-authors-plus-avatar :where(img){height:auto;max-width:100%;vertical-align:bottom}.wp-block-co-authors-plus-coauthors.is-layout-flow .wp-block-co-authors-plus-avatar :where(img){vertical-align:middle}.wp-block-co-authors-plus-avatar:is(.alignleft,.alignright){display:table}.wp-block-co-authors-plus-avatar.aligncenter{display:table;margin-inline:auto}
+
+</style>
+<style id='co-authors-plus-image-style-inline-css'>
+.wp-block-co-authors-plus-image{margin-bottom:0}.wp-block-co-authors-plus-image :where(img){height:auto;max-width:100%;vertical-align:bottom}.wp-block-co-authors-plus-coauthors.is-layout-flow .wp-block-co-authors-plus-image :where(img){vertical-align:middle}.wp-block-co-authors-plus-image:is(.alignfull,.alignwide) :where(img){width:100%}.wp-block-co-authors-plus-image:is(.alignleft,.alignright){display:table}.wp-block-co-authors-plus-image.aligncenter{display:table;margin-inline:auto}
+
+</style>
+<style id='wp-parsely-recommendations-style-inline-css'>
+.parsely-recommendations-list-title{font-size:1.2em}.parsely-recommendations-list{list-style:none;padding:unset}.parsely-recommendations-cardbody{overflow:hidden;padding:.8em;text-overflow:ellipsis;white-space:nowrap}.parsely-recommendations-cardmedia{padding:.8em .8em 0}
+
+</style>
+<link rel='stylesheet' id='all-css-16' href='https://blogs.vmware.com/cloud-foundation/_static/??-eJzTLy/QzcxLzilNSS3WzyrWz01NyUxMzUnNTc0rQeEU5CRWphbp5qSmJyZX6uVm5uklFxfr6OPTDpRD5sM02efaGpqbm5gZmVmYWwIARPsu9A==' type='text/css' media='all' />
+<style id='jetpack-sharing-buttons-style-inline-css'>
+.jetpack-sharing-buttons__services-list{display:flex;flex-direction:row;flex-wrap:wrap;gap:0;list-style-type:none;margin:5px;padding:0}.jetpack-sharing-buttons__services-list.has-small-icon-size{font-size:12px}.jetpack-sharing-buttons__services-list.has-normal-icon-size{font-size:16px}.jetpack-sharing-buttons__services-list.has-large-icon-size{font-size:24px}.jetpack-sharing-buttons__services-list.has-huge-icon-size{font-size:36px}@media print{.jetpack-sharing-buttons__services-list{display:none!important}}.editor-styles-wrapper .wp-block-jetpack-sharing-buttons{gap:0;padding-inline-start:0}ul.jetpack-sharing-buttons__services-list.has-background{padding:1.25em 2.375em}
+</style>
+<style id='global-styles-inline-css'>
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgba(255, 255, 255, 1), 6px 6px rgba(0, 0, 0, 1);--wp--preset--shadow--crisp: 6px 6px 0px rgba(0, 0, 0, 1);}:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+:where(.wp-block-post-template.is-layout-flex){gap: 1.25em;}:where(.wp-block-post-template.is-layout-grid){gap: 1.25em;}
+:where(.wp-block-columns.is-layout-flex){gap: 2em;}:where(.wp-block-columns.is-layout-grid){gap: 2em;}
+:root :where(.wp-block-pullquote){font-size: 1.5em;line-height: 1.6;}
+</style>
+<link rel='stylesheet' id='all-css-20' href='https://blogs.vmware.com/cloud-foundation/_static/??-eJyNUltSwzAMvBCKUh5N+WA4SsexlcTULyy5obfHlKQ/JTP86bXSaiWcE+gYhIJgcmW0gbEnEcqgndUnkAgyEwkqZhJGzYwsF0fcVPMB/8DHQJILC5z9rDKBL1fUeFwTm8jixHolBDX3WShfgEllPcFgXaWEMpEnRkODqqV3bXyBtdMHSVKV/u6l6VbneKZgYkZVJNYpYvWt7HcM9sU6gxUvKsga/EiL1eiphBN4ZQMkdXFRmc1Nrv6XFOUgk6srGUiRF/1yLMHUiEzF99x4G/69io+mVO2RS8862yQ2hpvXEwyVldgwQl9EYtjObDL3dGJgr7JAFWqKGWZrxvoAt8vfQZezLOfuXRxh17w2BzSWZfkWvMpG+8eDHszw/PTT5N2/7bru0Lb7tu2+AVxo9A8=' type='text/css' media='all' />
+<style id='crp-style-rounded-thumbs-inline-css'>
+
+			.crp_related.crp-rounded-thumbs a {
+				width: 150px;
+                height: 150px;
+				text-decoration: none;
+			}
+			.crp_related.crp-rounded-thumbs img {
+				max-width: 150px;
+				margin: auto;
+			}
+			.crp_related.crp-rounded-thumbs .crp_title {
+				width: 100%;
+			}
+			
+</style>
+<link rel='stylesheet' id='wp-add-custom-css-css' href='https://blogs.vmware.com/cloud-foundation?display_custom_css=css&#038;ver=6.8.5' media='all' />
+<script type="text/javascript" id="crayon_js-js-extra">
+/* <![CDATA[ */
+var CrayonSyntaxSettings = {"version":"_2.7.2_beta","is_admin":"0","ajaxurl":"https:\/\/blogs.vmware.com\/cloud-foundation\/wp-admin\/admin-ajax.php","prefix":"crayon-","setting":"crayon-setting","selected":"crayon-setting-selected","changed":"crayon-setting-changed","special":"crayon-setting-special","orig_value":"data-orig-value","debug":""};
+var CrayonSyntaxStrings = {"copy":"Press %s to Copy, %s to Paste","minimize":"Click To Expand Code"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://blogs.vmware.com/cloud-foundation/_static/??-eJx9jNEKwjAMRX/IrCiy6oP4KVJq6FradKaps39vBxN8GtxwIZxz1TKDJxvrE4sKPa+K3LYakqchlIPagyB5x0bwH7aZBEnUHKvzVJRl0zJBaSTmA5N3U+wnyOta9zZgbyITCtci8E6LYYRUV9c9fv/u3dPtqPV5PI0XfQ1fbKRReg==" ></script><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://blogs.vmware.com/cloud-foundation/xmlrpc.php?rsd" />
+<meta name="generator" content="WordPress 6.8.5" />
+<link rel='shortlink' href='https://blogs.vmware.com/cloud-foundation/?p=30685' />
+<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://blogs.vmware.com/cloud-foundation/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fblogs.vmware.com%2Fcloud-foundation%2F2026%2F04%2F28%2Fpost-quantum-readiness-on-vcf%2F" />
+<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://blogs.vmware.com/cloud-foundation/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fblogs.vmware.com%2Fcloud-foundation%2F2026%2F04%2F28%2Fpost-quantum-readiness-on-vcf%2F&#038;format=xml" />
+<script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js" type="text/javascript" charset="UTF-8" data-domain-script="8f4d3580-4337-499c-b909-13704811568b"></script>
+<script type="text/javascript">
+function OptanonWrapper() { }
+</script>
+
+
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-KFH48ZHP');</script>
+<!-- End Google Tag Manager -->	<style>img#wpstats{display:none}</style>
+		<script type="application/ld+json" class="wp-parsely-metadata">{"@context":"https:\/\/schema.org","@type":"NewsArticle","headline":"Post-Quantum Readiness on VMware Cloud Foundation","url":"http:\/\/blogs.vmware.com\/cloud-foundation\/2026\/04\/28\/post-quantum-readiness-on-vcf\/","mainEntityOfPage":{"@type":"WebPage","@id":"http:\/\/blogs.vmware.com\/cloud-foundation\/2026\/04\/28\/post-quantum-readiness-on-vcf\/"},"thumbnailUrl":"https:\/\/blogs.vmware.com\/cloud-foundation\/wp-content\/uploads\/sites\/75\/2026\/04\/Featured-Image-1.jpg?w=150&h=150&crop=1","image":{"@type":"ImageObject","url":"https:\/\/blogs.vmware.com\/cloud-foundation\/wp-content\/uploads\/sites\/75\/2026\/04\/Featured-Image-1.jpg"},"articleSection":"Home Page","author":[{"@type":"Person","name":"Paul Turner"}],"creator":["Paul Turner"],"publisher":{"@type":"Organization","name":"VMware Cloud Foundation (VCF) Blog","logo":""},"keywords":["cryptography","encryption","infrastructure security","security"],"dateCreated":"2026-04-28T12:00:00Z","datePublished":"2026-04-28T12:00:00Z","dateModified":"2026-04-28T12:00:00Z"}</script>      <script type="text/javascript">
+  (function() {
+    var didInit = false;
+    function initMunchkin() {
+      if(didInit === false) {
+        didInit = true;
+        // Add configuration settings to the init method
+        Munchkin.init('048-SZW-045');
+      }
+    }
+    var s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.async = true;
+    s.src = '//munchkin.marketo.net/munchkin.js';
+    s.onreadystatechange = function() {
+      if (this.readyState == 'complete' || this.readyState == 'loaded') {
+        initMunchkin();
+      }
+    };
+    s.onload = initMunchkin;
+    document.getElementsByTagName('head')[0].appendChild(s);
+  })();
+  </script>
+</head>
+  <body class="wp-singular post-template-default single single-post postid-30685 single-format-standard wp-theme-vmware-blog-198 jps-theme-vmware-blog-1.9.8 post-quantum-readiness-on-vcf sidebar-primary">
+    <!--[if IE]>
+      <div class="alert alert-warning">
+        You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.      </div>
+    <![endif]-->
+    <header class="banner">
+  <nav class="global-nav">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-md-10 col-lg-8 col-xl-9">
+        <div class="brand-links">
+                      <button class="hamburger mobile-trigger" type="button" aria-controls="primaryNavigation" aria-expanded="false" aria-label="Toggle menu">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span class="label">Menu</span>
+            </button>
+                    <a href="https://www.vmware.com/"><img src="//blogs.vmware.com/cloud-foundation/wp-content/themes/vmware-blog-1.9.8/dist/images/VMware-by-Broadcom-Logo_color.svg" alt="VMware" /></a>
+          <a class="name" href="https://blogs.vmware.com/cloud-foundation/">VMware Cloud Foundation (VCF) Blog</a>
+        </div>
+      </div>
+      <div class="col-md-2 col-lg-4 col-xl-3 text-right right-nav">
+        <div class="search-wrap">
+          <form class="search-form" method="get" action="https://blogs.vmware.com/cloud-foundation/">
+  <label class="sr-only" for="s">Search</label>
+  <input class="search-field" placeholder="Search" name="s" />
+  <input type="submit" value="Submit Search" class="search-submit btn">
+</form>
+<button class="search-btn mobile-trigger" type="button" aria-expanded="false" aria-label="Toggle search">
+    <span class="sr-only">Search</span>
+</button>        </div>
+        <button class="dots mobile-trigger" type="button" aria-controls="globalNavigation" aria-expanded="false" aria-label="Toggle menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <div class="links-wrap" id="globalNavigation">
+                        <ul class="links">
+                <li><a href="https://blogs.vmware.com/">VMware Blogs</a></li>
+                <li><a href="https://community.broadcom.com/vmware">Communities</a></li>
+              </ul>
+                                  <ul class="social-links d-lg-none">
+                              <li class="icon icon-rss">
+                  <a href="https://blogs.vmware.com/cloud-foundation/feed/" target="_rss" rel="noopener noreferrer">
+                    <span class="sr-only">RSS</span>
+                  </a>
+                </li>
+                              <li class="icon icon-twitter">
+                  <a href="https://twitter.com/vmwarevcf" target="_twitter" rel="noopener noreferrer">
+                    <span class="sr-only">Twitter</span>
+                  </a>
+                </li>
+                              <li class="icon icon-linkedin">
+                  <a href="https://www.linkedin.com/company/vmwarevcf/" target="_linkedin" rel="noopener noreferrer">
+                    <span class="sr-only">LinkedIn</span>
+                  </a>
+                </li>
+                              <li class="icon icon-youtube">
+                  <a href="https://www.youtube.com/channel/UCvZOZxcwtW6kMHhdGa8VrPA" target="_youtube" rel="noopener noreferrer">
+                    <span class="sr-only">YouTube</span>
+                  </a>
+                </li>
+                          </ul>
+                  </div>
+      </div>
+    </div>
+  </div>
+</nav>  <nav class="primary-nav" role="navigation">
+    <div class="container">
+        <div class="row">
+            <div id="primaryNavigation" class="col-12 col-lg-9 main-nav" aria-label="Main Menu">
+                <div class="gradient-mask-wrap">
+                    <div class="gradient-menu-wrap">
+                        <ul id="menu-main-menu" class="menu-top-nav" role="menubar"><li id="menu-item-6860" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-has-children menu-item-6860"><a href="https://blogs.vmware.com/cloud-foundation/products/" role="menuitem" aria-haspopup="true" aria-expanded="false">Products &amp; Services</a><button aria-expanded="false" aria-controls="submenu-6860" ><span class="sr-only">Toggle submenu</span></button><div class="gradient-mask"><div class="arrow"></div></div>
+<ul role="menu" class="sub-menu" id="submenu-6860">
+	<li id="menu-item-13751" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-13751"><a href="https://blogs.vmware.com/cloud-foundation/products/vsphere-foundation/" role="menuitem">VMware vSphere Foundation</a></li>
+	<li id="menu-item-27537" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-27537"><a href="https://blogs.vmware.com/cloud-foundation/products/vsphere-kubernetes-service/" role="menuitem">VMware vSphere Kubernetes Service (VKS)</a></li>
+	<li id="menu-item-30381" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-30381"><a href="https://blogs.vmware.com/cloud-foundation/products/vcf-edge/" role="menuitem">VCF Edge</a></li>
+	<li id="menu-item-13750" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-13750"><a href="https://blogs.vmware.com/cloud-foundation/products/vcf-private-ai-services/" role="menuitem">VCF Private AI Services</a></li>
+	<li id="menu-item-15047" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-15047"><a href="https://blogs.vmware.com/cloud-foundation/products/vmware-cloud-on-aws/" role="menuitem">VMware Cloud on AWS</a></li>
+	<li id="menu-item-30382" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-30382"><a href="https://blogs.vmware.com/cloud-foundation/vcf-advanced-services/" role="menuitem" aria-haspopup="true" aria-expanded="false">VCF Advanced Services</a><button aria-expanded="false" aria-controls="submenu-30382" ><span class="sr-only">Toggle submenu</span></button>
+	<ul role="menu" class="tertiary-menu" id="submenu-30382">
+		<li id="menu-item-30383" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-30383"><a href="https://blogs.vmware.com/cloud-foundation/vcf-advanced-services/vmware-advanced-cyber-compliance/" role="menuitem">VMware Advanced Cyber Compliance</a></li>
+		<li id="menu-item-20548" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-20548"><a href="https://blogs.vmware.com/cloud-foundation/technical/data-services-manager/" role="menuitem">Data Services Manager (DSM)</a></li>
+	</ul>
+</li>
+</ul>
+</li>
+<li id="menu-item-13746" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-13746"><a href="https://blogs.vmware.com/cloud-foundation/technical/" role="menuitem" aria-haspopup="true" aria-expanded="false">Technical/How-To</a><button aria-expanded="false" aria-controls="submenu-13746" ><span class="sr-only">Toggle submenu</span></button><div class="gradient-mask"><div class="arrow"></div></div>
+<ul role="menu" class="sub-menu" id="submenu-13746">
+	<li id="menu-item-13775" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-13775"><a href="https://blogs.vmware.com/cloud-foundation/technical/compute/" role="menuitem">VCF Compute (vSphere)</a></li>
+	<li id="menu-item-13777" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-13777"><a href="https://blogs.vmware.com/cloud-foundation/technical/storage/" role="menuitem">VCF Storage (vSAN)</a></li>
+	<li id="menu-item-13776" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-13776"><a href="https://blogs.vmware.com/cloud-foundation/technical/networking/" role="menuitem">VCF Networking (NSX)</a></li>
+	<li id="menu-item-13774" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-13774"><a href="https://blogs.vmware.com/cloud-foundation/technical/automation/" role="menuitem">VCF Automation</a></li>
+	<li id="menu-item-16564" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16564"><a href="https://blogs.vmware.com/cloud-foundation/products/vcf-operations/" role="menuitem">VCF Operations</a></li>
+	<li id="menu-item-14448" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-14448"><a href="https://blogs.vmware.com/cloud-foundation/technical/technical-private-ai/" role="menuitem">Private AI</a></li>
+	<li id="menu-item-14449" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-14449"><a href="https://blogs.vmware.com/cloud-foundation/technical/security-compliance/" role="menuitem">Security &amp; Compliance</a></li>
+	<li id="menu-item-13778" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-13778"><a href="https://blogs.vmware.com/cloud-foundation/technical/workloads/" role="menuitem">Workloads</a></li>
+	<li id="menu-item-15962" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-15962"><a href="https://blogs.vmware.com/cloud-foundation/products/vmware-validated-solutions/" role="menuitem">VMware Validated Solutions</a></li>
+	<li id="menu-item-18575" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-18575"><a href="https://blogs.vmware.com/cloud-foundation/technical/performance/" role="menuitem">VCF Performance</a></li>
+</ul>
+</li>
+<li id="menu-item-27466" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-27466"><a href="https://blogs.vmware.com/cloud-foundation/partners/vcsp/" role="menuitem" aria-haspopup="true" aria-expanded="false">Cloud Service Providers</a><button aria-expanded="false" aria-controls="submenu-27466" ><span class="sr-only">Toggle submenu</span></button><div class="gradient-mask"><div class="arrow"></div></div>
+<ul role="menu" class="sub-menu" id="submenu-27466">
+	<li id="menu-item-28205" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-28205"><a href="https://blogs.vmware.com/cloud-foundation/partners/vcsp/sovereign-cloud/" role="menuitem">Sovereign Cloud</a></li>
+</ul>
+</li>
+<li id="menu-item-17310" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-17310"><a href="https://blogs.vmware.com/cloud-foundation/professional-services/" role="menuitem">Professional Services</a><div class="gradient-mask"><div class="arrow"></div></div></li>
+</ul>                    </div>
+                    <div class="gradient-menu-mask"></div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-3">
+                                <ul class="social-links">
+                                        <li class="icon icon-rss">
+                        <a href="https://blogs.vmware.com/cloud-foundation/feed/" target="_rss" rel="noopener noreferrer">
+                            <span class="sr-only">RSS</span>
+                        </a>
+                    </li>
+                                        <li class="icon icon-twitter">
+                        <a href="https://twitter.com/vmwarevcf" target="_twitter" rel="noopener noreferrer">
+                            <span class="sr-only">Twitter</span>
+                        </a>
+                    </li>
+                                        <li class="icon icon-linkedin">
+                        <a href="https://www.linkedin.com/company/vmwarevcf/" target="_linkedin" rel="noopener noreferrer">
+                            <span class="sr-only">LinkedIn</span>
+                        </a>
+                    </li>
+                                        <li class="icon icon-youtube">
+                        <a href="https://www.youtube.com/channel/UCvZOZxcwtW6kMHhdGa8VrPA" target="_youtube" rel="noopener noreferrer">
+                            <span class="sr-only">YouTube</span>
+                        </a>
+                    </li>
+                                    </ul>
+                            </div>
+        </div>
+    </div>
+    <div class="gradient-bar">
+        <div class="container">
+            <div class="row">
+                <div class="col-9">
+                    <div class="gradient-mask"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+</header>
+    <div class="wrap" role="document">
+      <div class="content">
+        <main>
+          
+<div class="progress" style="display: none;">
+  <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+  <article class="background-off-white">
+    <div class="container background-white mb-4">
+      <div class="row">
+        <div class="col-12">
+          <header class="post-header">
+    <div class="post-header-inner">
+              <div class="post-featured-image">
+            <img src="https://blogs.vmware.com/cloud-foundation/wp-content/uploads/sites/75/2026/04/Featured-Image-1.jpg?w=576&h=324&crop=1"
+            alt="Worldwide digital data security network infrastructure, data breach concept. Some elements of the image furnished by NASA." class="img-fluid" />
+        </div>
+              <div class="post-headline">
+                            <a href="https://blogs.vmware.com/cloud-foundation/home-page/" class="category-label">Home Page</a>
+                            <a href="https://blogs.vmware.com/cloud-foundation/products/" class="category-label">Products &amp; Services</a>
+                            <a href="https://blogs.vmware.com/cloud-foundation/products/cloud-foundation/" class="category-label">VMware Cloud Foundation</a>
+                                    <h1 class="entry-title">Post-Quantum Readiness on VMware Cloud Foundation</h1>
+            <div class="entry-meta">
+                    <img class="avatar" src="//blogs.vmware.com/cloud-foundation/wp-content/uploads/sites/75/2026/04/cropped-Copy-of-Paul-Turner-46-30x30.png" alt=""/>
+                <div class="author-list">
+                                    <a href="https://blogs.vmware.com/cloud-foundation/author/pturner/" rel="author" class="author">Paul Turner</a>
+                            </div>
+                <time class="updated" datetime="2026-04-28" pubdate>April 28, 2026</time>
+            </div>        </div>
+    </div>
+    <div class="gradient-border"></div>
+</header>        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 col-lg-2">
+          <aside class="sharing d-none d-md-block">
+    <strong>Share on:</strong>
+    <ul class="social-links">
+        <li class="icon icon-twitter">
+        <a href="https://twitter.com/intent/tweet?url=https://blogs.vmware.com/cloud-foundation/2026/04/28/post-quantum-readiness-on-vcf/&text=Post-Quantum Readiness on VMware Cloud Foundation" 
+        target="_blank" rel="noopener noreferrer">
+            <span class="sr-only">Share on Twitter</span>
+        </a>
+        </li>
+        <li class="icon icon-linkedin">
+        <a href="https://www.linkedin.com/shareArticle?mini=true&url=https://blogs.vmware.com/cloud-foundation/2026/04/28/post-quantum-readiness-on-vcf/" 
+        target="_blank">
+            <span class="sr-only">Share on LinkedIn</span>
+        </a>
+        </li>
+        <li class="icon icon-fb">
+        <a href="https://www.facebook.com/sharer/sharer.php?u=https://blogs.vmware.com/cloud-foundation/2026/04/28/post-quantum-readiness-on-vcf/"
+        target="_blank">
+            <span class="sr-only">Share on Facebook</span>
+        </a>
+        </li>
+        <li class="icon icon-mail">
+        <a href="mailto:?subject=Post-Quantum Readiness on VMware Cloud Foundation&body=https://blogs.vmware.com/cloud-foundation/2026/04/28/post-quantum-readiness-on-vcf/" target="_blank">
+            <span class="sr-only">Email this post</span>
+        </a>
+        </li>
+    </ul>
+    </aside>        </div>
+        <div class="col-md-8">
+          <div class="entry-content" data-langdir="ltr">
+            <p>The algorithms that secure most digital communications today, such as RSA and elliptic curve cryptography, rely on math problems that traditional computers cannot solve in any reasonable amount of time, even with the computing advances of the last few decades. Quantum computers, however, work on fundamentally different principles. A traditional computer uses &#8220;bits&#8221; that hold a single value, either 0 or 1. A quantum computer uses &#8220;quantum bits&#8221; or &#8220;qubits&#8221; that exist in a combination of the 0 and 1 states at the same time, each with its own weight. Physicists call this a superposition, and it is profoundly non-intuitive, defying the logical world of defined states we&#8217;re accustomed to.</p>
+
+
+
+<p>Those non-intuitive properties can be used in productive ways, though. For example, qubits can be entangled with each other so that they behave as a linked group rather than as separate pieces. A quantum computer can work across potentially billions or hundreds of billions of such states at once, using a process called interference to cancel out wrong answers and reinforce the right ones. The net effect is that some problems that would take a traditional computer billions of years would become solvable in a much shorter window. This is welcome for many problems, like drug discovery and climate modeling, but unfortunately, it could pose a challenge for today&#8217;s cryptography. A quantum computer&#8217;s ability to manage many states efficiently also allows it to potentially break multi-bit encryption techniques like RSA-2048 or ECDSA in hours.</p>
+
+
+
+<p>Fortunately, the capabilities to break encryption are real, but not yet realized at useful scales. Today&#8217;s quantum computers are small, noisy, and error-prone, and the largest numbers anyone has factored on actual quantum hardware are still tiny compared to cryptographic key sizes. The engineering challenges of building a quantum computer capable of breaking real cryptography are significant, and that work is being pursued actively by researchers and governments around the world. Therefore, while the threat is credible, there is enough time to prepare a resilient solution before its arrival.</p>
+
+
+
+<h2 class="wp-block-heading" id="h-quantum-computers-and-post-quantum-cryptography"><strong>Quantum Computers and Post-Quantum Cryptography</strong></h2>
+
+
+
+<p>The specific danger to modern cryptography comes from quantum algorithms that solve problems traditional computers cannot. The most important is Shor&#8217;s algorithm, published in 1994. It targets the hard math problems behind RSA and elliptic curve cryptography, the backbone of public-key cryptography on the internet today. Those problems are effectively unsolvable with traditional computers at the key sizes we use, which is why current cryptography works. A sufficiently capable quantum computer running Shor&#8217;s algorithm would solve them quickly enough to break the confidentiality of TLS sessions, the integrity of code signatures, and the trust anchors of public key infrastructure.</p>
+
+
+
+<p>The question is when, not whether. Progress in quantum computing is accumulating, and the inertia of deployed systems means that by the time a capable quantum computer exists, the migration will already need to be well underway. This is especially true because adversaries can steal encrypted data today and decrypt it later once these capabilities emerge, an attack called &#8220;harvest-now, decrypt-later.&#8221; Data with a long confidentiality lifetime, whether medical records, trade secrets, or government communications, is already at risk from capture today.</p>
+
+
+
+<p>The response is Post-Quantum Cryptography, or PQC, which is a new generation of cryptographic methods and algorithms designed to be secure against both quantum computers and traditional ones. The US National Institute of Standards and Technology (NIST) has been driving the initiative to establish standards in this area in recent years, all in collaboration with international bodies including the European Telecommunications Standards Institute (ETSI), the International Organization for Standardization (ISO), and the Internet Engineering Task Force (IETF). In 2024, after several years of research, NIST issued its PQC standards, which are a principal set of encryption algorithms that they have vetted to be designed to withstand cyberattacks from a quantum computer. Additional algorithms are expected to be standardized through 2027, and NIST has a parallel track for selecting more signature schemes beyond that.</p>
+
+
+
+<p>Having standards in place is only the beginning. Actually adopting them touches software, hardware, and standards across the entire industry. Regulators across the world, including in the European Union, United Kingdom, and United States, have already established a phased roadmap, and migration deadlines for PQC.&nbsp;&nbsp;</p>
+
+
+
+<h2 class="wp-block-heading" id="h-where-vmware-cloud-foundation-stands-today"><strong>Where VMware Cloud Foundation Stands Today</strong></h2>
+
+
+
+<p>Before walking through what needs to change, it is worth noting what does not. Much of what happens inside <a href="https://www.vmware.com/products/cloud-infrastructure/vmware-cloud-foundation" target="_blank" rel="noreferrer noopener">VMware Cloud Foundation (VCF)</a> already uses cryptography that is less likely to be seriously threatened by quantum computers.</p>
+
+
+
+<p>The cryptography that is most at risk is public-key cryptography, the kind that lets two parties who have never met establish trust over a network. Every time a browser reaches a website it has never seen, or a phone connects to a corporate VPN, or a software update gets verified against a vendor&#8217;s signature, public-key cryptography is doing that work. This is what RSA, elliptic curve, and the NIST-standardized PQC algorithms address, and it is where the bulk of the migration work lives. But a lot of what secure systems actually do is protect bulk data once trust is established, and that work is done by symmetric cryptography, where both sides share the same secret key. AES for encryption and SHA for hashing are the two most common examples. Both are far less vulnerable to quantum attack than public-key cryptography, and at the key and output sizes VCF uses, they remain strong well into the foreseeable future.</p>
+
+
+
+<p>In practical terms, this means VCF already has a meaningful degree of quantum resistance built in. Features such as VMware vSAN data-at-rest encryption, VM encryption, and vMotion encryption all use AES with at least 256 bits. Hashing within the platform uses SHA-256 or stronger as the default. No immediate migration is required for any of this.</p>
+
+
+
+<p>The internal trust model of a VCF deployment also matters here. A lot of the public-key cryptography at risk from quantum computers is used to establish trust between parties that have never met and cannot verify each other directly. VCF operates differently. Trust within a deployment is anchored by your organization itself: administrators confirm cryptographic host fingerprints when adding hosts to a cluster, certificates are issued and managed by infrastructure the organization controls, and identities are verified against directories the organization owns. An attacker with a quantum computer still cannot substitute themselves into that chain without also compromising the administrative controls that anchor it. That does not make the public-key cryptography inside VCF irrelevant to the PQC migration, but it does mean the stakes of a compromise are different from an open-internet scenario where trust is established purely through math.</p>
+
+
+
+<p>Broadcom is not waiting for the full PQC standards to mature to start shipping post-quantum protection either. The<a href="https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/avi-load-balancer/avi-load-balancer/31-2/vmware-avi-load-balancer-configuration-guide/security/ssl-tls-profile/ssl-profile-templates/post-quantum-cryptography.html" target="_blank" rel="noreferrer noopener"> VMware Avi Load Balancer</a> already supports hybrid post-quantum key exchange in TLS, helping you protect your public-facing communications today. Other parts of VCF will gain PQC support on similar terms as upstream cryptographic libraries and higher-layer standards mature.</p>
+
+
+
+<h2 class="wp-block-heading" id="h-the-journey-to-a-pqc-ready-vcf"><strong>The Journey to a PQC-Ready VCF</strong></h2>
+
+
+
+<p><strong>Broadcom&#8217;s commitment:</strong> Broadcom is committed to adopting PQC-resistant algorithms and methods for VCF on the timelines mandated by the NSA through CNSA 2.0, with full transition to quantum-resistant algorithms required by 2035. NIST has set an aligned technical deadline in its IR 8547 transition plan, deprecating RSA-2048 and other quantum-vulnerable algorithms by 2030 and disallowing them by 2035. Reaching full PQC support in VCF depends on work happening outside of Broadcom: cryptographic libraries need to be updated and FIPS-certified, upstream software components that VCF depends on need to consume those libraries, and higher-layer standards for how PQC algorithms are used in certificates and protocols need to be finalized. Broadcom&#8217;s role in that transition is to prepare the VCF stack now so that post-quantum support can land as those upstream pieces become available.</p>
+
+
+
+<p><strong>Dependencies on libraries and standards:</strong> PQC implementation in VCF is gated by work that has to happen upstream before anything can be enabled in production. VCF is FIPS-compliant, which means PQC algorithms cannot be enabled until FIPS-certified implementations are available. NIST published final versions of ML-KEM, ML-DSA, and SLH-DSA in August 2024, and the major cryptography libraries have been moving quickly to adopt them. Recent releases of libraries such as OpenSSL and Bouncy Castle include implementations, and FIPS certification of those implementations is in progress. It will take additional time for certified versions to be broadly available, and longer still before they are consumed by software components that VCF depends on. Standards bodies are also still finalizing how the algorithms will be used at higher layers. FIPS 206, which will further standardize signature algorithms, is currently expected in late 2026 or early 2027. Other higher-layer standards, such as the X.509 certificate format for PQC keys and signatures, as well as standards for hybrid communications, are still working their way through their respective standards bodies. Migrating PKI to PQC is more than replacing signing algorithms; it reaches into certificate authority infrastructure, revocation systems, and the certificate lifecycle tooling that most organizations rely on for automation.</p>
+
+
+
+<p><strong>Work already underway inside VCF:</strong> Broadcom has shipped and is building specific capabilities that move VCF toward PQC readiness. We have shipped TLS Profiles for both the hypervisor and VMware vCenter, letting organizations easily set, apply, and audit pre-defined TLS configurations across their fleet. That capability is expanding as part of our vision for VCF. We are also building a Crypto Bill of Materials (CBOM) that maps the cryptographic algorithms in use across VCF and identifies which areas will be affected by PQC migration. And we are continuing to invest in certificate management, including automated rotation with minimal operational impact, work that benefits organizations today and carries forward directly into PQC certificate rollout.</p>
+
+
+
+<p><strong>Participation in standards bodies:</strong> Broadcom is actively participating in the industry bodies that will define how PQC lands across the ecosystem. That includes the Trusted Computing Group, which released TPM 2.0 v185 with ML-KEM and ML-DSA support in early 2026 and gives hardware vendors a foundation to build toward. It includes the UEFI Forum, which is still working through what PQC support looks like for Secure Boot and across the full firmware ecosystem, with broader guidance expected during 2026. And it includes the Confidential Computing Consortium, where trusted execution environments and attestation protocols also need to migrate to PQC algorithms. Being a member of these bodies means Broadcom is helping to shape how these solutions look and interoperate, not just waiting for them to emerge.</p>
+
+
+
+<p><strong>Data in transit:</strong> Hybrid TLS key exchange is the industry&#8217;s converged answer for protecting data in transit during the PQC transition. Hybrid schemes combine a conventional algorithm with a PQC algorithm, typically ML-KEM, so that the resulting session is secure against attackers using either traditional or quantum computers. An adversary recording today&#8217;s traffic would need to break both algorithms to decrypt it later. NIST recommends hybrid modes during the transition to PQC, and supporting hybrid key exchange in VCF is one of the first ways that PQC adoption will show up once the relevant libraries are available.</p>
+
+
+
+<p><strong>Digital signatures:</strong> Digital signatures are the harder half of the PQC migration. Signatures anchor trust at nearly every layer of a modern computing stack: Secure Boot verifies firmware and bootloaders at startup, Trusted Platform Modules (TPMs) provide hardware-rooted attestation, package managers and update services verify software before installation, and certificate authorities sign the certificates that underpin trusted communications. Each of these systems was designed around today&#8217;s signature algorithms, and each carries its own industry standards, hardware dependencies, and upgrade paths. The signature migration will play out across years as vendors, hardware platforms, and downstream software consume the standards.</p>
+
+
+
+<p><strong>Hybrid signing in VCF:</strong> Broadcom is preparing the VCF code signing and verification infrastructure to support multiple signatures over the same data, so code can be signed with both traditional and post-quantum signatures during the transition. This lets VCF verify code integrity whether the component doing the verification has migrated to PQC or not.</p>
+
+
+
+<p><strong>Crypto-agility as the larger goal:</strong> The PQC migration is also an opportunity to build something larger: lasting crypto-agility across VCF. NIST defines crypto-agility as the ability to replace cryptographic algorithms across protocols, applications, software, hardware, and infrastructure on a timeline driven by need rather than by platform constraints. Treating PQC as a one-time swap of one set of algorithms for another would leave us facing the same scramble the next time a cryptographic break, a new standard, or a regulatory shift demands change. The work underway to support PQC, both in upstream cryptographic libraries and in the VCF architecture itself, is designed to make future transitions easier. When the world discovers something new about cryptography, VCF will be able to adapt at a pace driven by the discovery, not by the platform.</p>
+
+
+
+<h2 class="wp-block-heading" id="h-the-bottom-line"><strong>The Bottom Line</strong></h2>
+
+
+
+<p>For the VCF platform itself, the defaults give you a head start. AES-256 is the default for symmetric encryption, SHA-256 or stronger is the default for hashing, and TLS 1.3, which PQC requires, is the default across the VCF stack. The VCF Security Configuration Guide and the DISA STIG readiness guides provide specific examples of how to audit these defaults and tighten them further for environments with higher assurance requirements. Beyond the platform, the steps that matter most are in your own environment. Inventory where cryptography lives across TLS configurations, certificates issued to workloads, hardware security modules, and code signing and artifact verification. Coordinate the platform, the workloads running on it, and any external services those workloads depend on, because that coordination is the part of the migration most organizations underestimate. Pay particular attention to long-lived signing keys used for firmware, code, and long-term archives, and plan the migration of those signing operations to PQC as the tooling becomes available. For data that must remain confidential beyond the quantum transition, hybrid transport encryption (once available) helps protect against harvest-now, decrypt-later attacks. And invest in crypto-agility wherever deployment lifecycles allow, so the next cryptographic change can land as a smooth upgrade. That work unfolds alongside a much bigger industry effort.</p>
+
+
+
+<p>Broadcom is actively preparing VCF for quantum readiness alongside the standards bodies, cryptographic library maintainers, and upstream software projects whose work on which VCF depends. The standards are still maturing, but the starting position is better than it might look: VCF&#8217;s symmetric cryptography is already strong, the internal trust model is anchored by your organization, and post-quantum support is already shipping where VCF meets the open internet. As the rest of the ecosystem catches up, you will receive the benefits as smooth upgrades rather than as a disruptive migration. Please reach out to your Technical Account Manager and account team if you have questions.</p>
+
+
+
+<p><strong>Further Reading</strong></p>
+
+
+
+<p>For readers who want to go deeper:</p>
+
+
+
+<ul class="wp-block-list">
+<li><a href="https://csrc.nist.gov/projects/post-quantum-cryptography" target="_blank" rel="noreferrer noopener"><strong>NIST Post-Quantum Cryptography project</strong></a>: Authoritative source for PQC standards, draft publications, and the ongoing signature on-ramp process.</li>
+
+
+
+<li><a href="https://en.wikipedia.org/wiki/Post-quantum_cryptography" target="_blank" rel="noreferrer noopener"><strong>Post-quantum cryptography (Wikipedia)</strong></a>: A neutral overview with sections on each family of underlying math, for readers who want more detail on how PQC algorithms actually work.</li>
+
+
+
+<li><a href="https://blog.cloudflare.com/tag/post-quantum/" target="_blank" rel="noreferrer noopener"><strong>Cloudflare Research post-quantum blog series</strong></a>: Ongoing engineering-focused posts covering TLS integration, real-world measurements, and practical migration experience.</li>
+
+
+
+<li><a href="https://arstechnica.com/security/2026/04/contrary-to-popular-superstition-aes-128-is-just-fine-in-a-post-quantum-world/" target="_blank" rel="noreferrer noopener"><strong>AES is Just Fine in a Post-Quantum World</strong></a>: “Contrary to popular mythology, AES 128 is perfectly fine in a post-quantum world.”</li>
+
+
+
+<li><a href="https://www.cisa.gov/topics/risk-management/quantum" target="_blank" rel="noreferrer noopener"><strong>CISA Post-Quantum Cryptography Initiative</strong></a>: US government guidance on migration planning, critical infrastructure considerations, and joint factsheets with NIST and NSA.</li>
+
+
+
+<li><a href="https://www.nccoe.nist.gov/crypto-agility-considerations-migrating-post-quantum-cryptographic-algorithms" target="_blank" rel="noreferrer noopener"><strong>NCCoE Migration to Post-Quantum Cryptography project</strong></a>: Covers discovery tools, cryptographic inventory practices, and interoperability testing, with contributions from industry collaborators.</li>
+
+
+
+<li><a href="https://media.defense.gov/2022/Sep/07/2003071836/-1/-1/0/CSI_CNSA_2.0_FAQ_.PDF" target="_blank" rel="noreferrer noopener"><strong>NSA Commercial National Security Algorithm Suite 2.0 FAQ</strong></a>: The federal post-quantum algorithm suite and transition deadlines for National Security Systems, including the 2035 full-adoption target.</li>
+</ul>
+
+
+
+<h2 class="wp-block-heading" id="h-resources"><strong>Resources</strong></h2>
+
+
+
+<ul class="wp-block-list">
+<li><a href="https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-0.html" target="_blank" rel="noreferrer noopener">VCF Technical Documentation</a></li>
+
+
+
+<li><a href="https://github.com/vmware/vcf-security-and-compliance-guidelines" target="_blank" rel="noreferrer noopener">VCF Security Resources</a></li>
+
+
+
+<li><a href="https://brcm.tech/vcf-scg" target="_blank" rel="noreferrer noopener">VCF Security Configuration Guide</a></li>
+
+
+
+<li><a href="https://github.com/vmware/dod-compliance-and-automation/tree/master/vcf/9.x" target="_blank" rel="noreferrer noopener">VCF 9.x STIG Readiness Guide</a></li>
+
+
+
+<li><a href="https://techdocs.broadcom.com/us/en/vmware-security-load-balancing/avi-load-balancer/avi-load-balancer/31-2/vmware-avi-load-balancer-configuration-guide/security/ssl-tls-profile/ssl-profile-templates/post-quantum-cryptography.html" target="_blank" rel="noreferrer noopener">VMware Avi Load Balancer PQC Support</a></li>
+</ul>
+
+
+
+<p><em>(Thank you to Devyani Pisolkar, Bob Plankers, Adam Hawley, Jesse Pool, Chip Childers, Yogi Bhasin, and Ali Emadi for their contributions to this post)</em></p>
+
+<div class="wp-block-group has-border-color" style="border-style:none;border-width:0px;margin-top:32px;margin-bottom:32px;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px"><div class="wp-block-group__inner-container is-layout-flow wp-block-group-is-layout-flow">
+	
+	<hr class="wp-block-separator has-alpha-channel-opacity is-style-wide" style="margin-bottom:24px"/>
+	
+
+	
+	<h3 class="wp-block-heading has-text-align-center" style="margin-top:4px;margin-bottom:10px">Discover more from VMware Cloud Foundation (VCF) Blog</h3>
+	
+
+	
+	<p class="has-text-align-center" style="margin-top:10px;margin-bottom:10px;font-size:15px">Subscribe to get the latest posts sent to your email.</p>
+	
+
+	
+	<div class="wp-block-group"><div class="wp-block-group__inner-container is-layout-constrained wp-container-core-group-is-layout-bcfe9290 wp-block-group-is-layout-constrained">
+			<div class="wp-block-jetpack-subscriptions__supports-newline wp-block-jetpack-subscriptions">
+		<div class="wp-block-jetpack-subscriptions__container is-not-subscriber">
+							<form
+					action="https://wordpress.com/email-subscriptions"
+					method="post"
+					accept-charset="utf-8"
+					data-blog="250957875"
+					data-post_access_level="everybody"
+					data-subscriber_email=""
+					id="subscribe-blog"
+				>
+					<div class="wp-block-jetpack-subscriptions__form-elements">
+												<p id="subscribe-email">
+							<label
+								id="subscribe-field-label"
+								for="subscribe-field"
+								class="screen-reader-text"
+							>
+								Type your email…							</label>
+							<input
+									required="required"
+									type="email"
+									name="email"
+									autocomplete="email"
+									class="no-border-radius"
+									style="font-size: 16px;padding: 15px 23px 15px 23px;border-radius: 0px;border-width: 1px;"
+									placeholder="Type your email…"
+									value=""
+									id="subscribe-field"
+									title="Please fill in this field."
+								/>						</p>
+												<p id="subscribe-submit"
+													>
+							<input type="hidden" name="action" value="subscribe"/>
+							<input type="hidden" name="blog_id" value="250957875"/>
+							<input type="hidden" name="source" value="https://blogs.vmware.com/cloud-foundation/2026/04/28/post-quantum-readiness-on-vcf/"/>
+							<input type="hidden" name="sub-type" value="subscribe-block"/>
+							<input type="hidden" name="app_source" value="subscribe-block-post-end"/>
+							<input type="hidden" name="redirect_fragment" value="subscribe-blog"/>
+							<input type="hidden" name="lang" value="en_US"/>
+							<input type="hidden" id="_wpnonce" name="_wpnonce" value="47db2690ea" /><input type="hidden" name="_wp_http_referer" value="/cloud-foundation/2026/04/28/post-quantum-readiness-on-vcf/" /><input type="hidden" name="post_id" value="30685"/>							<button type="submit"
+																	class="wp-block-button__link no-border-radius"
+																									style="font-size: 16px;padding: 15px 23px 15px 23px;margin: 0; margin-left: 10px;border-radius: 0px;border-width: 1px;"
+																name="jetpack_subscriptions_widget"
+							>
+								Subscribe							</button>
+						</p>
+					</div>
+				</form>
+								</div>
+	</div>
+	
+	</div></div>
+	
+</div></div>          </div>
+          <footer class="entry-footer">
+                    <div class="author-footer">
+              <div class="author-avatar">
+                  <a href="https://blogs.vmware.com/cloud-foundation/author/pturner/">
+                    <img src="//blogs.vmware.com/cloud-foundation/wp-content/uploads/sites/75/2026/04/cropped-Copy-of-Paul-Turner-46-70x70.png" class="rounded-circle img-fluid" alt="">
+                  </a>
+              </div>
+              <div class="author-details">
+                  <h4><a href="https://blogs.vmware.com/cloud-foundation/author/pturner/">Paul Turner</a></h4>
+                  <p>Paul Turner, is the Chief Product Officer, VCF Division (leading the VMware Cloud Foundation and vSphere Foundation products). He is leading our next generation cloud infrastructure for all apps -&hellip;</p>
+                                </div>
+            </div>
+                    </footer>
+        </div>
+      </div>
+    </div>
+      <div class="container background-white pl-4 pr-4 related-posts">
+    <div class="row">
+      <div class="col-12">
+        <h2 class="mt-4 mb-3">Related Articles</h2>
+      </div>
+    </div>
+    <div class="row">
+       
+        <div class="col-12 col-md-4 stacked-posts">
+        
+<article class="card post-30685 post type-post status-publish format-standard has-post-thumbnail hentry category-home-page category-products category-cloud-foundation tag-cryptography tag-encryption tag-infrastructure-security tag-security">
+  <div class="image-wrap">
+          <a href="https://blogs.vmware.com/cloud-foundation/2026/05/06/vcf-9-1-is-here-see-it-in-action/" title="VCF 9.1 Is Here. See It in Action.">
+        <picture>
+          <source media="(max-width: 768px)"
+            srcset="https://blogs.vmware.com/cloud-foundation/wp-content/uploads/sites/75/2026/05/VCF9.1-Blog.001.jpeg?w=576&h=324&crop=1">
+          <source media="(max-width: 992px)"
+           srcset="https://blogs.vmware.com/cloud-foundation/wp-content/uploads/sites/75/2026/05/VCF9.1-Blog.001.jpeg?w=752&h=423&crop=1">
+          <img src="https://blogs.vmware.com/cloud-foundation/wp-content/uploads/sites/75/2026/05/VCF9.1-Blog.001.jpeg?w=576&h=324&crop=1" 
+        alt="" class="" />
+        </picture>
+      </a>
+      </div>
+  <div class="content-wrap">
+    <div class="content-inner">
+                        <a href="https://blogs.vmware.com/cloud-foundation/home-page/" class="category-label">Home Page</a>
+                    <h2 class="title"><a href="https://blogs.vmware.com/cloud-foundation/2026/05/06/vcf-9-1-is-here-see-it-in-action/">VCF 9.1 Is Here. See It in Action.</a></h2>
+                  <div class="entry-meta">
+                    <img class="avatar" src="//blogs.vmware.com/cloud-foundation/wp-content/uploads/sites/75/2025/01/vmwarevcf_logo-30x30.jpg" alt=""/>
+                <div class="author-list">
+                                    <a href="https://blogs.vmware.com/cloud-foundation/author/vcfblogadmin/" rel="author" class="author">VCF Team</a>
+                            </div>
+                <time class="updated" datetime="2026-05-06" pubdate>May 6, 2026</time>
+            </div>    </div>
+  </div>
+</article>
+        </div>
+       
+        <div class="col-12 col-md-4 stacked-posts">
+        
+<article class="card post-30685 post type-post status-publish format-standard has-post-thumbnail hentry category-home-page category-products category-cloud-foundation tag-cryptography tag-encryption tag-infrastructure-security tag-security">
+  <div class="image-wrap">
+          <a href="https://blogs.vmware.com/cloud-foundation/2026/05/05/vcf-9-1-secure-cost-effective-private-cloud-platform-for-production-ai/" title="VCF 9.1: The Secure, Cost-Effective Private Cloud Platform for Production AI ">
+        <picture>
+          <source media="(max-width: 768px)"
+            srcset="https://blogs.vmware.com/cloud-foundation/wp-content/uploads/sites/75/2026/05/the-path-forward.jpg?w=576&h=324&crop=1">
+          <source media="(max-width: 992px)"
+           srcset="https://blogs.vmware.com/cloud-foundation/wp-content/uploads/sites/75/2026/05/the-path-forward.jpg?w=752&h=423&crop=1">
+          <img src="https://blogs.vmware.com/cloud-foundation/wp-content/uploads/sites/75/2026/05/the-path-forward.jpg?w=576&h=324&crop=1" 
+        alt="Stepping stones in sea as a symbol for the next step or the way forward" class="" />
+        </picture>
+      </a>
+      </div>
+  <div class="content-wrap">
+    <div class="content-inner">
+                        <a href="https://blogs.vmware.com/cloud-foundation/home-page/" class="category-label">Home Page</a>
+                    <h2 class="title"><a href="https://blogs.vmware.com/cloud-foundation/2026/05/05/vcf-9-1-secure-cost-effective-private-cloud-platform-for-production-ai/">VCF 9.1: The Secure, Cost-Effective Private Cloud Platform for Production AI </a></h2>
+                  <div class="entry-meta">
+                    <img class="avatar" src="//blogs.vmware.com/wp-content/uploads/sites/75/2024/07/816ECD4D-4899-4BBC-82D4-66054C47CD8E-scaled-30x30.jpg" alt=""/>
+                <div class="author-list">
+                                    <a href="https://blogs.vmware.com/cloud-foundation/author/sabinaanja/" rel="author" class="author">Sabina Anja</a>
+                            </div>
+                <time class="updated" datetime="2026-05-05" pubdate>May 5, 2026</time>
+            </div>    </div>
+  </div>
+</article>
+        </div>
+       
+        <div class="col-12 col-md-4 stacked-posts">
+        
+<article class="card post-30685 post type-post status-publish format-standard has-post-thumbnail hentry category-home-page category-products category-cloud-foundation tag-cryptography tag-encryption tag-infrastructure-security tag-security">
+  <div class="image-wrap">
+          <a href="https://blogs.vmware.com/cloud-foundation/2026/05/05/announcing-vcf-9-1-modern-private-cloud-built-for-efficiency-and-resilience/" title="Announcing VCF 9.1: Modern Private Cloud Built for Efficiency and Resilience">
+        <picture>
+          <source media="(max-width: 768px)"
+            srcset="https://blogs.vmware.com/cloud-foundation/wp-content/uploads/sites/75/2026/05/vcf91_thumbnail_pf.png?w=576&h=324&crop=1">
+          <source media="(max-width: 992px)"
+           srcset="https://blogs.vmware.com/cloud-foundation/wp-content/uploads/sites/75/2026/05/vcf91_thumbnail_pf.png?w=752&h=423&crop=1">
+          <img src="https://blogs.vmware.com/cloud-foundation/wp-content/uploads/sites/75/2026/05/vcf91_thumbnail_pf.png?w=576&h=324&crop=1" 
+        alt="Announcing VCF 9.1" class="" />
+        </picture>
+      </a>
+      </div>
+  <div class="content-wrap">
+    <div class="content-inner">
+                        <a href="https://blogs.vmware.com/cloud-foundation/products/cloud-foundation/" class="category-label">VMware Cloud Foundation</a>
+                    <h2 class="title"><a href="https://blogs.vmware.com/cloud-foundation/2026/05/05/announcing-vcf-9-1-modern-private-cloud-built-for-efficiency-and-resilience/">Announcing VCF 9.1: Modern Private Cloud Built for Efficiency and Resilience</a></h2>
+                  <div class="entry-meta">
+                    <img class="avatar" src="//blogs.vmware.com/wp-content/uploads/sites/75/2024/03/headshot-pete-30x30.png" alt=""/>
+                <div class="author-list">
+                                    <a href="https://blogs.vmware.com/cloud-foundation/author/pete_flecha/" rel="author" class="author">Pete Flecha</a>
+                            </div>
+                <time class="updated" datetime="2026-05-05" pubdate>May 5, 2026</time>
+            </div>    </div>
+  </div>
+</article>
+        </div>
+          </div>
+  </div>
+      </article>
+                </main><!-- /.main -->
+      </div><!-- /.content -->
+    </div><!-- /.wrap -->
+    <footer class="content-info">
+  <div id="page-footer"></div>
+</footer>
+<script type="speculationrules">
+{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"\/cloud-foundation\/*"},{"not":{"href_matches":["\/cloud-foundation\/wp-*.php","\/cloud-foundation\/wp-admin\/*","\/cloud-foundation\/wp-content\/uploads\/sites\/75\/*","\/cloud-foundation\/wp-content\/*","\/cloud-foundation\/wp-content\/plugins\/*","\/cloud-foundation\/wp-content\/themes\/vmware-blog-1.9.8\/*","\/cloud-foundation\/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
+</script>
+<div class="personalization_div_1" style="min-height: 1px;"></div><div class="personalization_div_2" style="min-height: 1px;"></div>		<div class="jetpack-instant-search__widget-area" style="display: none">
+							<div id="jetpack-search-filters-1" class="widget jetpack-filters widget_search">			<div id="jetpack-search-filters-1-wrapper" class="jetpack-instant-search-wrapper">
+		</div></div>					</div>
+						<div class="jetpack-subscribe-floating-button">
+						<div style="margin-right:20px;margin-left:20px;margin-top:20px;margin-bottom:20px;" class="wp-block-jetpack-subscriptions__supports-newline is-style-button wp-block-jetpack-subscriptions">
+		<div class="wp-block-jetpack-subscriptions__container is-not-subscriber">
+							<form
+					action="https://wordpress.com/email-subscriptions"
+					method="post"
+					accept-charset="utf-8"
+					data-blog="250957875"
+					data-post_access_level="everybody"
+					data-subscriber_email=""
+					id="subscribe-blog-2"
+				>
+					<div class="wp-block-jetpack-subscriptions__form-elements">
+												<p id="subscribe-submit"
+													>
+							<input type="hidden" name="action" value="subscribe"/>
+							<input type="hidden" name="blog_id" value="250957875"/>
+							<input type="hidden" name="source" value="https://blogs.vmware.com/cloud-foundation/2026/04/28/post-quantum-readiness-on-vcf/"/>
+							<input type="hidden" name="sub-type" value="subscribe-block"/>
+							<input type="hidden" name="app_source" value="subscribe-floating-button"/>
+							<input type="hidden" name="redirect_fragment" value="subscribe-blog-2"/>
+							<input type="hidden" name="lang" value="en_US"/>
+							<input type="hidden" id="_wpnonce" name="_wpnonce" value="47db2690ea" /><input type="hidden" name="_wp_http_referer" value="/cloud-foundation/2026/04/28/post-quantum-readiness-on-vcf/" /><input type="hidden" name="post_id" value="30685"/>							<button type="submit"
+																	class="wp-block-button__link no-border-radius"
+																									style="font-size: 16px;padding: 15px 23px 15px 23px;border-radius: 0px;border-width: 1px;"
+																name="jetpack_subscriptions_widget"
+							>
+								Subscribe							</button>
+						</p>
+					</div>
+				</form>
+								</div>
+	</div>
+					</div>
+			<style id='jetpack-block-subscriptions-inline-css'>
+.is-style-compact .is-not-subscriber .wp-block-button__link,.is-style-compact .is-not-subscriber .wp-block-jetpack-subscriptions__button{border-end-start-radius:0!important;border-start-start-radius:0!important;margin-inline-start:0!important}.is-style-compact .is-not-subscriber .components-text-control__input,.is-style-compact .is-not-subscriber p#subscribe-email input[type=email]{border-end-end-radius:0!important;border-start-end-radius:0!important}.is-style-compact:not(.wp-block-jetpack-subscriptions__use-newline) .components-text-control__input{border-inline-end-width:0!important}.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline .wp-block-jetpack-subscriptions__form-container{display:flex;flex-direction:column}.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline:not(.wp-block-jetpack-subscriptions__use-newline) .is-not-subscriber .wp-block-jetpack-subscriptions__form-elements{align-items:flex-start;display:flex}.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline:not(.wp-block-jetpack-subscriptions__use-newline) p#subscribe-submit{display:flex;justify-content:center}.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline .wp-block-jetpack-subscriptions__form .wp-block-jetpack-subscriptions__button,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline .wp-block-jetpack-subscriptions__form .wp-block-jetpack-subscriptions__textfield .components-text-control__input,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline .wp-block-jetpack-subscriptions__form button,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline .wp-block-jetpack-subscriptions__form input[type=email],.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline form .wp-block-jetpack-subscriptions__button,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline form .wp-block-jetpack-subscriptions__textfield .components-text-control__input,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline form button,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline form input[type=email]{box-sizing:border-box;cursor:pointer;line-height:1.3;min-width:auto!important;white-space:nowrap!important}.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline .wp-block-jetpack-subscriptions__form input[type=email]::placeholder,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline .wp-block-jetpack-subscriptions__form input[type=email]:disabled,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline form input[type=email]::placeholder,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline form input[type=email]:disabled{color:currentColor;opacity:.5}.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline .wp-block-jetpack-subscriptions__form .wp-block-jetpack-subscriptions__button,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline .wp-block-jetpack-subscriptions__form button,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline form .wp-block-jetpack-subscriptions__button,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline form button{border-color:#0000;border-style:solid}.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline .wp-block-jetpack-subscriptions__form .wp-block-jetpack-subscriptions__textfield,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline .wp-block-jetpack-subscriptions__form p#subscribe-email,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline form .wp-block-jetpack-subscriptions__textfield,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline form p#subscribe-email{background:#0000;flex-grow:1}.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline .wp-block-jetpack-subscriptions__form .wp-block-jetpack-subscriptions__textfield .components-base-control__field,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline .wp-block-jetpack-subscriptions__form .wp-block-jetpack-subscriptions__textfield .components-text-control__input,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline .wp-block-jetpack-subscriptions__form .wp-block-jetpack-subscriptions__textfield input[type=email],.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline .wp-block-jetpack-subscriptions__form p#subscribe-email .components-base-control__field,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline .wp-block-jetpack-subscriptions__form p#subscribe-email .components-text-control__input,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline .wp-block-jetpack-subscriptions__form p#subscribe-email input[type=email],.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline form .wp-block-jetpack-subscriptions__textfield .components-base-control__field,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline form .wp-block-jetpack-subscriptions__textfield .components-text-control__input,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline form .wp-block-jetpack-subscriptions__textfield input[type=email],.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline form p#subscribe-email .components-base-control__field,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline form p#subscribe-email .components-text-control__input,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline form p#subscribe-email input[type=email]{height:auto;margin:0;width:100%}.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline .wp-block-jetpack-subscriptions__form p#subscribe-email,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline .wp-block-jetpack-subscriptions__form p#subscribe-submit,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline form p#subscribe-email,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline form p#subscribe-submit{line-height:0;margin:0;padding:0}.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline.wp-block-jetpack-subscriptions__show-subs .wp-block-jetpack-subscriptions__subscount{font-size:16px;margin:8px 0;text-align:end}.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline.wp-block-jetpack-subscriptions__use-newline .wp-block-jetpack-subscriptions__form-elements{display:block}.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline.wp-block-jetpack-subscriptions__use-newline .wp-block-jetpack-subscriptions__button,.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline.wp-block-jetpack-subscriptions__use-newline button{display:inline-block;max-width:100%}.wp-block-jetpack-subscriptions.wp-block-jetpack-subscriptions__supports-newline.wp-block-jetpack-subscriptions__use-newline .wp-block-jetpack-subscriptions__subscount{text-align:start}#subscribe-submit.is-link{text-align:center;width:auto!important}#subscribe-submit.is-link a{margin-left:0!important;margin-top:0!important;width:auto!important}@keyframes jetpack-memberships_button__spinner-animation{to{transform:rotate(1turn)}}.jetpack-memberships-spinner{display:none;height:1em;margin:0 0 0 5px;width:1em}.jetpack-memberships-spinner svg{height:100%;margin-bottom:-2px;width:100%}.jetpack-memberships-spinner-rotating{animation:jetpack-memberships_button__spinner-animation .75s linear infinite;transform-origin:center}.is-loading .jetpack-memberships-spinner{display:inline-block}body.jetpack-memberships-modal-open{overflow:hidden}dialog.jetpack-memberships-modal{opacity:1}dialog.jetpack-memberships-modal,dialog.jetpack-memberships-modal iframe{background:#0000;border:0;bottom:0;box-shadow:none;height:100%;left:0;margin:0;padding:0;position:fixed;right:0;top:0;width:100%}dialog.jetpack-memberships-modal::backdrop{background-color:#000;opacity:.7;transition:opacity .2s ease-out}dialog.jetpack-memberships-modal.is-loading,dialog.jetpack-memberships-modal.is-loading::backdrop{opacity:0}
+</style>
+<style id='core-block-supports-inline-css'>
+.wp-container-core-group-is-layout-bcfe9290 > :where(:not(.alignleft):not(.alignright):not(.alignfull)){max-width:480px;margin-left:auto !important;margin-right:auto !important;}.wp-container-core-group-is-layout-bcfe9290 > .alignwide{max-width:480px;}.wp-container-core-group-is-layout-bcfe9290 .alignfull{max-width:none;}
+</style>
+<script type="text/javascript" id="jetpack-blocks-assets-base-url-js-before">
+/* <![CDATA[ */
+var Jetpack_Block_Assets_Base_Url="https://blogs.vmware.com/cloud-foundation/wp-content/mu-plugins/jetpack-15.7/_inc/blocks/";
+/* ]]> */
+</script>
+<script type="text/javascript" id="uwpqsfscript-js-extra">
+/* <![CDATA[ */
+var ajax = {"url":"https:\/\/blogs.vmware.com\/cloud-foundation\/wp-admin\/admin-ajax.php"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://blogs.vmware.com/cloud-foundation/_static/??/wp-content/plugins/ultimate-wp-query-search-filter/classes/scripts/uwpqsfscript.js,/wp-includes/js/dist/hooks.min.js?m=1774626878j" ></script><script type="text/javascript" src="https://blogs.vmware.com/cloud-foundation/wp-includes/js/dist/i18n.min.js?ver=5e580eb46a90c2b997e6" id="wp-i18n-js"></script>
+<script type="text/javascript" id="wp-i18n-js-after">
+/* <![CDATA[ */
+wp.i18n.setLocaleData( { 'text direction\u0004ltr': [ 'ltr' ] } );
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://blogs.vmware.com/cloud-foundation/wp-content/mu-plugins/jetpack-15.7/jetpack_vendor/automattic/jetpack-assets/build/i18n-loader.js?minify=true&amp;ver=5ba5dddc04be2306aaf0" id="wp-jp-i18n-loader-js"></script>
+<script type="text/javascript" id="wp-jp-i18n-loader-js-after">
+/* <![CDATA[ */
+wp.jpI18nLoader.state = {"baseUrl":"https://blogs.vmware.com/cloud-foundation/wp-content/languages/","locale":"en_US","domainMap":{"jetpack-account-protection":"plugins/jetpack","jetpack-admin-ui":"plugins/jetpack","jetpack-assets":"plugins/jetpack","jetpack-backup-pkg":"plugins/jetpack","jetpack-blaze":"plugins/jetpack","jetpack-block-delimiter":"plugins/jetpack","jetpack-boost-core":"plugins/jetpack","jetpack-boost-speed-score":"plugins/jetpack","jetpack-classic-theme-helper":"plugins/jetpack","jetpack-compat":"plugins/jetpack","jetpack-config":"plugins/jetpack","jetpack-connection":"plugins/jetpack","jetpack-explat":"plugins/jetpack","jetpack-external-connections":"plugins/jetpack","jetpack-external-media":"plugins/jetpack","jetpack-forms":"plugins/jetpack","jetpack-image-cdn":"plugins/jetpack","jetpack-import":"plugins/jetpack","jetpack-ip":"plugins/jetpack","jetpack-jitm":"plugins/jetpack","jetpack-jwt":"plugins/jetpack","jetpack-licensing":"plugins/jetpack","jetpack-masterbar":"plugins/jetpack","jetpack-my-jetpack":"plugins/jetpack","jetpack-newsletter":"plugins/jetpack","jetpack-password-checker":"plugins/jetpack","jetpack-paypal-payments":"plugins/jetpack","jetpack-plugins-installer":"plugins/jetpack","jetpack-post-list":"plugins/jetpack","jetpack-post-media":"plugins/jetpack","jetpack-protect-models":"plugins/jetpack","jetpack-protect-status":"plugins/jetpack","jetpack-publicize-pkg":"plugins/jetpack","jetpack-search-pkg":"plugins/jetpack","jetpack-stats":"plugins/jetpack","jetpack-stats-admin":"plugins/jetpack","jetpack-subscribers-dashboard":"plugins/jetpack","jetpack-sync":"plugins/jetpack","jetpack-videopress-pkg":"plugins/jetpack","jetpack-waf":"plugins/jetpack","jetpack-wp-build-polyfills":"plugins/jetpack","woocommerce-analytics":"plugins/jetpack"},"domainPaths":{"jetpack-account-protection":"jetpack_vendor/automattic/jetpack-account-protection/","jetpack-admin-ui":"jetpack_vendor/automattic/jetpack-admin-ui/","jetpack-assets":"jetpack_vendor/automattic/jetpack-assets/","jetpack-backup-pkg":"jetpack_vendor/automattic/jetpack-backup/","jetpack-blaze":"jetpack_vendor/automattic/jetpack-blaze/","jetpack-block-delimiter":"jetpack_vendor/automattic/block-delimiter/","jetpack-boost-core":"jetpack_vendor/automattic/jetpack-boost-core/","jetpack-boost-speed-score":"jetpack_vendor/automattic/jetpack-boost-speed-score/","jetpack-classic-theme-helper":"jetpack_vendor/automattic/jetpack-classic-theme-helper/","jetpack-compat":"jetpack_vendor/automattic/jetpack-compat/","jetpack-config":"jetpack_vendor/automattic/jetpack-config/","jetpack-connection":"jetpack_vendor/automattic/jetpack-connection/","jetpack-explat":"jetpack_vendor/automattic/jetpack-explat/","jetpack-external-connections":"jetpack_vendor/automattic/jetpack-external-connections/","jetpack-external-media":"jetpack_vendor/automattic/jetpack-external-media/","jetpack-forms":"jetpack_vendor/automattic/jetpack-forms/","jetpack-image-cdn":"jetpack_vendor/automattic/jetpack-image-cdn/","jetpack-import":"jetpack_vendor/automattic/jetpack-import/","jetpack-ip":"jetpack_vendor/automattic/jetpack-ip/","jetpack-jitm":"jetpack_vendor/automattic/jetpack-jitm/","jetpack-jwt":"jetpack_vendor/automattic/jetpack-jwt/","jetpack-licensing":"jetpack_vendor/automattic/jetpack-licensing/","jetpack-masterbar":"jetpack_vendor/automattic/jetpack-masterbar/","jetpack-my-jetpack":"jetpack_vendor/automattic/jetpack-my-jetpack/","jetpack-newsletter":"jetpack_vendor/automattic/jetpack-newsletter/","jetpack-password-checker":"jetpack_vendor/automattic/jetpack-password-checker/","jetpack-paypal-payments":"jetpack_vendor/automattic/jetpack-paypal-payments/","jetpack-plugins-installer":"jetpack_vendor/automattic/jetpack-plugins-installer/","jetpack-post-list":"jetpack_vendor/automattic/jetpack-post-list/","jetpack-post-media":"jetpack_vendor/automattic/jetpack-post-media/","jetpack-protect-models":"jetpack_vendor/automattic/jetpack-protect-models/","jetpack-protect-status":"jetpack_vendor/automattic/jetpack-protect-status/","jetpack-publicize-pkg":"jetpack_vendor/automattic/jetpack-publicize/","jetpack-search-pkg":"jetpack_vendor/automattic/jetpack-search/","jetpack-stats":"jetpack_vendor/automattic/jetpack-stats/","jetpack-stats-admin":"jetpack_vendor/automattic/jetpack-stats-admin/","jetpack-subscribers-dashboard":"jetpack_vendor/automattic/jetpack-subscribers-dashboard/","jetpack-sync":"jetpack_vendor/automattic/jetpack-sync/","jetpack-videopress-pkg":"jetpack_vendor/automattic/jetpack-videopress/","jetpack-waf":"jetpack_vendor/automattic/jetpack-waf/","jetpack-wp-build-polyfills":"jetpack_vendor/automattic/jetpack-wp-build-polyfills/","woocommerce-analytics":"jetpack_vendor/automattic/woocommerce-analytics/"}};
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://blogs.vmware.com/cloud-foundation/_static/??/wp-includes/js/dist/vendor/wp-polyfill.min.js,/wp-includes/js/dist/url.min.js?m=1774626878j" ></script><script type="text/javascript" id="jetpack-instant-search-js-before">
+/* <![CDATA[ */
+var JetpackInstantSearchOptions={"overlayOptions":{"colorTheme":"light","enableInfScroll":true,"enableFilteringOpensOverlay":true,"enablePostDate":true,"enableProductPrice":true,"enableSort":true,"highlightColor":"#FFC","overlayTrigger":"submit","resultFormat":"expanded","showPoweredBy":true,"defaultSort":"relevance","excludedPostTypes":[]},"homeUrl":"https://blogs.vmware.com/cloud-foundation","locale":"en-US","postsPerPage":10,"siteId":250957875,"postTypes":{"post":{"singular_name":"Post","name":"Posts"},"page":{"singular_name":"Page","name":"Pages"},"attachment":{"singular_name":"Media","name":"Media"}},"webpackPublicPath":"https://blogs.vmware.com/cloud-foundation/wp-content/mu-plugins/jetpack-15.7/jetpack_vendor/automattic/jetpack-search/build/instant-search/","isPhotonEnabled":false,"isFreePlan":false,"apiRoot":"https://blogs.vmware.com/cloud-foundation/wp-json/","apiNonce":"e24edd1928","isPrivateSite":false,"isWpcom":false,"hasOverlayWidgets":true,"widgets":[{"filters":[{"name":"Post Types","type":"post_type","count":5,"widget_id":"jetpack-search-filters-1","filter_id":"post_type_0"},{"name":"Categories","type":"taxonomy","taxonomy":"category","count":5,"widget_id":"jetpack-search-filters-1","filter_id":"taxonomy_1"},{"name":"Tags","type":"taxonomy","taxonomy":"post_tag","count":5,"widget_id":"jetpack-search-filters-1","filter_id":"taxonomy_2"},{"name":"Year","type":"date_histogram","count":5,"field":"post_date","interval":"year","widget_id":"jetpack-search-filters-1","filter_id":"date_histogram_3"}],"widget_id":"jetpack-search-filters-1"}],"widgetsOutsideOverlay":[],"hasNonSearchWidgets":false,"preventTrackingCookiesReset":false,"disableTracking":false};
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://blogs.vmware.com/cloud-foundation/wp-content/mu-plugins/jetpack-15.7/jetpack_vendor/automattic/jetpack-search/build/instant-search/jp-search.js?minify=false&amp;ver=904682e550fefbe1827b" id="jetpack-instant-search-js"></script>
+<script type="text/javascript" src="//stats.wp.com/w.js?ver=202619" id="jp-tracks-js"></script>
+<script type="text/javascript" id="wp-parsely-loader-js-before">
+/* <![CDATA[ */
+window.wpParselySiteId = 'vmware.com';
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://blogs.vmware.com/cloud-foundation/wp-content/mu-plugins/wp-parsely-3.23/build/loader.js?ver=ecf94842061bea03d54b" id="wp-parsely-loader-js"></script>
+<script type="text/javascript" data-parsely-site="vmware.com" src="https://cdn.parsely.com/keys/vmware.com/p.js?ver=3.23.1" id="parsely-cfg"></script>
+<script type="text/javascript" src="https://blogs.vmware.com/cloud-foundation/wp-content/themes/vmware-blog-1.9.8/dist/scripts/main-32b354a4f2.js?m=1771614147g" ></script><script type="text/javascript" id="jetpack-stats-js-before">
+/* <![CDATA[ */
+_stq = window._stq || [];
+_stq.push([ "view", {"v":"ext","blog":"250957875","post":"30685","tz":"-7","srv":"blogs.vmware.com","hp":"vip","j":"1:15.7"} ]);
+_stq.push([ "clickTrackerInit", "250957875", "30685" ]);
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://stats.wp.com/e-202619.js" id="jetpack-stats-js" defer="defer" data-wp-strategy="defer"></script>
+<script type="text/javascript" src="https://blogs.vmware.com/cloud-foundation/_static/??/wp-includes/js/dist/dom-ready.min.js,/wp-content/mu-plugins/jetpack-15.7/_inc/blocks/subscriptions/view.js?m=1778006007j" ></script>
+    <script src="https://www.vmware.com/bin/vmware/template/scrapercontent.us.js" type="text/javascript" charset="UTF-8"></script>
+    <script src="https://www.vmware.com/content/dam/vmwaredesigns/scrapercontent/responsive.js" type="text/javascript" charset="UTF-8"></script>
+  </body>
+</html>

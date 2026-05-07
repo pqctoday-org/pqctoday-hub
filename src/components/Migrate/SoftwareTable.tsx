@@ -54,6 +54,8 @@ import {
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { ShareButton } from '../ui/ShareButton'
 import { Button } from '@/components/ui/button'
+import { VendorRoadmapPanel } from './VendorRoadmapPanel'
+import { enrichmentByVendorId } from '../../data/vendorRoadmapEnrichmentData'
 
 function ValidationResultBadge({ result }: { result: SoftwareItem['validationResult'] }) {
   if (!result) return null
@@ -255,6 +257,8 @@ interface SoftwareTableProps {
   expandedIds?: Set<string>
   /** Callback when a row is toggled — required when expandedIds is controlled */
   onToggleExpand?: (id: string) => void
+  /** Vendor PQC roadmap lookup — vendor_id → VendorRoadmap */
+  roadmapByVendorId?: Map<string, import('../../types/MigrateTypes').VendorRoadmap>
 }
 
 type SortDirection = 'asc' | 'desc' | null
@@ -271,6 +275,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
   maxCompareReached,
   expandedIds: controlledExpandedIds,
   onToggleExpand,
+  roadmapByVendorId,
 }) => {
   const [localExpandedIds, setLocalExpandedIds] = useState<Set<string>>(new Set())
   const expandedIds = controlledExpandedIds ?? localExpandedIds
@@ -727,6 +732,20 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                                 </div>
                               )
                             })()}
+
+                            {item.vendorId &&
+                              (roadmapByVendorId?.get(item.vendorId) ||
+                                enrichmentByVendorId.get(item.vendorId)) && (
+                                <div>
+                                  <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2 text-sm">
+                                    Vendor PQC Roadmap
+                                  </h4>
+                                  <VendorRoadmapPanel
+                                    roadmap={roadmapByVendorId?.get(item.vendorId)}
+                                    enrichment={enrichmentByVendorId.get(item.vendorId)}
+                                  />
+                                </div>
+                              )}
 
                             {(() => {
                               const cpe = cpeByProduct.get(item.softwareName)

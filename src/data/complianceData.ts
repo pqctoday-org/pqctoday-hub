@@ -32,6 +32,7 @@ export interface ComplianceFramework {
   trustedSourceId?: string
   peerReviewed?: 'yes' | 'no' | 'partial'
   vettingBody?: string[]
+  websiteUrlQuality?: string
 }
 
 // ── CSV loading (versioned filename pattern) ────────────────────────────
@@ -53,6 +54,7 @@ interface RawComplianceRow {
   trusted_source_id: string
   peer_reviewed: string
   vetting_body: string
+  website_url_quality: string
 }
 
 const modules = import.meta.glob('./compliance_*.csv', {
@@ -148,6 +150,7 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     peerReviewed:
       (row.peer_reviewed?.toLowerCase() as ComplianceFramework['peerReviewed']) || undefined,
     vettingBody: row.vetting_body ? splitSemicolon(row.vetting_body) : undefined,
+    websiteUrlQuality: row.website_url_quality || undefined,
   }
 })
 

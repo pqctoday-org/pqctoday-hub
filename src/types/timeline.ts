@@ -25,6 +25,9 @@ export interface TimelineEvent {
   status?: string // e.g. "Completed", "In Progress", "New", "Updated"
   peerReviewed?: 'yes' | 'no' | 'partial'
   vettingBody?: string[]
+  sourceUrlQuality?: string
+  trustedSourceIdStatus?: string
+  dataQualityNotes?: string
 
   // Denormalized fields for convenient access
   orgName: string

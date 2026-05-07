@@ -24,6 +24,11 @@ export interface Vendor {
   leiEntityStatus?: string
   gleifUrl?: string
   leiLastVerifiedDate?: string
+  // Enrichment provenance (dataset 05062026+)
+  leiCoverageFlag?: string
+  websiteUrlQuality?: string
+  gleifUrlQuality?: string
+  dataQualityNotes?: string
 }
 
 export const CISA_CATEGORIES = [
@@ -181,6 +186,30 @@ export interface SaasXref {
   saasUrl: string
   deploymentModel: 'managed-service' | 'api-platform' | 'hybrid-cloud'
   lastVerifiedDate: string
+}
+
+export interface VendorRoadmap {
+  vendorId: string
+  vendorName: string
+  roadmapUrl: string
+  roadmapTitle: string
+  roadmapType: 'official_doc' | 'blog_post' | 'announcement' | 'whitepaper' | ''
+  publishDate: string
+  lastVerifiedDate: string
+  coverageNotes: string
+}
+
+export interface VendorRoadmapEnrichment {
+  vendorId: string
+  pqcAlgorithms: string[]
+  targetMigrationDates: string
+  productsCovered: string
+  complianceFrameworks: string[]
+  hybridModeSupport: string
+  currentGaStatus: string
+  customerActionRequired: string
+  keyQuotes: string[]
+  extractionQuality: 'HIGH' | 'MEDIUM' | 'LOW'
 }
 
 export interface VendorPartner {

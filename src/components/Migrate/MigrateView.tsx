@@ -21,6 +21,7 @@ import {
   Scale,
   BookmarkCheck,
   HelpCircle,
+  Map as MapIcon,
 } from 'lucide-react'
 
 import debounce from 'lodash/debounce'
@@ -43,6 +44,10 @@ import { StickyCompareBar } from './StickyCompareBar'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { CatalogSizeBanner } from './CatalogSizeBanner'
 import { MigrateContextStrip } from './MigrateContextStrip'
+import { ProductExtractionModal } from './ProductExtractionModal'
+import { getProductExtraction } from '../../data/productExtractionData'
+import { catalogEnrichments } from '../../data/catalogEnrichmentData'
+import { roadmapByVendorId } from '../../data/vendorRoadmapData'
 
 const LICENSE_FILTER_ITEMS = [
   { id: 'Open Source', label: 'Open Source' },
@@ -74,6 +79,7 @@ export const MigrateView: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const [filterText, setFilterText] = useState(() => searchParams.get('q') ?? '')
   const [inputValue, setInputValue] = useState(() => searchParams.get('q') ?? '')
+  const [detailProduct, setDetailProduct] = useState<SoftwareItem | null>(null)
 
   const [stepFilter, setStepFilter] = useState<{
     stepNumber: number
@@ -213,6 +219,7 @@ export const MigrateView: React.FC = () => {
     // In embed mode WIP items are always hidden — accuracy over completeness
     () => (isEmbedded ? 'hidden' : ((searchParams.get('wip') as WipFilter | null) ?? 'hidden'))
   )
+  const [hasRoadmapFilter, setHasRoadmapFilter] = useState(false)
   const [sortBy, setSortBy] = useState<MigrateSortOption>(
     () => (searchParams.get('sort') as MigrateSortOption | null) ?? 'name'
   )
@@ -695,6 +702,11 @@ export const MigrateView: React.FC = () => {
       // WIP filter
       if (wipFilter === 'hidden' && item.wip === true) return false
       if (wipFilter === 'only' && item.wip !== true) return false
+      // Roadmap filter — show only products whose vendor has a published roadmap
+      if (hasRoadmapFilter) {
+        const rm = roadmapByVendorId.get(item.vendorId ?? '')
+        if (!rm || !rm.roadmapUrl) return false
+      }
       // My Products filter
       if (showOnlyMyProducts && !myProductsSet.has(item.productId)) return false
       // Search filter
@@ -721,6 +733,7 @@ export const MigrateView: React.FC = () => {
     verificationFilter,
     licenseFilter,
     wipFilter,
+    hasRoadmapFilter,
     showOnlyMyProducts,
     myProductsSet,
   ])
@@ -963,6 +976,7 @@ export const MigrateView: React.FC = () => {
                   (verificationFilter !== 'All' ? 1 : 0) +
                   (licenseFilter !== 'All' ? 1 : 0) +
                   (wipFilter !== 'hidden' ? 1 : 0) +
+                  (hasRoadmapFilter ? 1 : 0) +
                   (hiddenSet.size > 0 ? 1 : 0) +
                   (sortBy !== 'pqcMigrationPriority' ? 1 : 0)
                 }
@@ -974,6 +988,7 @@ export const MigrateView: React.FC = () => {
                   setVerificationFilter('All')
                   setLicenseFilter('All')
                   setWipFilter('hidden')
+                  setHasRoadmapFilter(false)
                   setSortBy('pqcMigrationPriority')
                   if (hiddenSet.size > 0) restoreAll()
                   syncFiltersToUrl({
@@ -1108,6 +1123,19 @@ export const MigrateView: React.FC = () => {
                           {wipFilter === 'hidden' ? 'WIP hidden' : 'WIP'}
                         </Button>
                       )}
+                      <Button
+                        variant="ghost"
+                        onClick={() => setHasRoadmapFilter((v) => !v)}
+                        className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                          hasRoadmapFilter
+                            ? 'bg-primary/10 text-primary border-primary/40'
+                            : 'text-muted-foreground border-border hover:text-foreground hover:border-border/60'
+                        }`}
+                        aria-pressed={hasRoadmapFilter}
+                      >
+                        <MapIcon size={12} aria-hidden="true" />
+                        Has PQC Roadmap
+                      </Button>
                     </div>
 
                     <div className="space-y-3">
@@ -1199,6 +1227,7 @@ export const MigrateView: React.FC = () => {
                 (verificationFilter !== 'All' ? 1 : 0) +
                 (licenseFilter !== 'All' ? 1 : 0) +
                 (wipFilter !== 'hidden' ? 1 : 0) +
+                (hasRoadmapFilter ? 1 : 0) +
                 (sortBy !== 'pqcMigrationPriority' ? 1 : 0) +
                 (stepFilter ? 1 : 0)
               }
@@ -1208,6 +1237,7 @@ export const MigrateView: React.FC = () => {
                 setVerificationFilter('All')
                 setLicenseFilter('All')
                 setWipFilter('hidden')
+                setHasRoadmapFilter(false)
                 setSortBy('pqcMigrationPriority')
                 syncFiltersToUrl({
                   step: null,
@@ -1306,6 +1336,19 @@ export const MigrateView: React.FC = () => {
                         {wipFilter === 'hidden' ? 'WIP hidden' : 'WIP'}
                       </Button>
                     )}
+                    <Button
+                      variant="ghost"
+                      onClick={() => setHasRoadmapFilter((v) => !v)}
+                      className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                        hasRoadmapFilter
+                          ? 'bg-primary/10 text-primary border-primary/40'
+                          : 'text-muted-foreground border-border hover:text-foreground hover:border-border/60'
+                      }`}
+                      aria-pressed={hasRoadmapFilter}
+                    >
+                      <MapIcon size={12} aria-hidden="true" />
+                      Has PQC Roadmap
+                    </Button>
                   </div>
 
                   <div className="space-y-3">
@@ -1458,6 +1501,32 @@ export const MigrateView: React.FC = () => {
         }}
       />
 
+      {/* Vendor roadmap banner — shown when a single vendor is selected and they have a roadmap */}
+      {(() => {
+        if (vendorFilter === 'All') return null
+        const rm = roadmapByVendorId.get(vendorFilter)
+        if (!rm?.roadmapUrl) return null
+        return (
+          <div className="mx-0 mb-2 flex items-center gap-2 px-3 py-2 bg-primary/5 border border-primary/20 rounded-md text-sm">
+            <MapIcon size={14} className="text-primary shrink-0" aria-hidden="true" />
+            <span className="text-muted-foreground shrink-0">Vendor PQC Roadmap:</span>
+            <a
+              href={rm.roadmapUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:text-primary/80 transition-colors font-medium truncate"
+            >
+              {rm.roadmapTitle}
+            </a>
+            {rm.publishDate && (
+              <span className="text-muted-foreground/50 text-xs ml-auto shrink-0">
+                {rm.publishDate.slice(0, 7)}
+              </span>
+            )}
+          </div>
+        )
+      })()}
+
       {/* Content area — mode-specific rendering */}
       <div className="py-4">
         {/* Stack Mode: Accordion on Mobile, Expanded on Desktop */}
@@ -1503,6 +1572,7 @@ export const MigrateView: React.FC = () => {
                           maxCompareReached={maxCompareReached}
                           expandedIds={tableExpandedIds}
                           onToggleExpand={handleToggleTableExpand}
+                          roadmapByVendorId={roadmapByVendorId}
                         />
                       </div>
                       <div className="block md:hidden">
@@ -1514,6 +1584,8 @@ export const MigrateView: React.FC = () => {
                           compareProducts={compareSet}
                           onToggleCompare={handleToggleCompare}
                           maxCompareReached={maxCompareReached}
+                          onSelectDetail={setDetailProduct}
+                          roadmapByVendorId={roadmapByVendorId}
                         />
                       </div>
                     </>
@@ -1563,6 +1635,8 @@ export const MigrateView: React.FC = () => {
               compareProducts={compareSet}
               onToggleCompare={handleToggleCompare}
               maxCompareReached={maxCompareReached}
+              onSelectDetail={setDetailProduct}
+              roadmapByVendorId={roadmapByVendorId}
             />
           </div>
         )}
@@ -1584,6 +1658,7 @@ export const MigrateView: React.FC = () => {
                   onToggleExpand={handleToggleTableExpand}
                   onToggleCompare={handleToggleCompare}
                   maxCompareReached={maxCompareReached}
+                  roadmapByVendorId={roadmapByVendorId}
                 />
               </div>
               <div className="block md:hidden">
@@ -1595,6 +1670,8 @@ export const MigrateView: React.FC = () => {
                   compareProducts={compareSet}
                   onToggleCompare={handleToggleCompare}
                   maxCompareReached={maxCompareReached}
+                  onSelectDetail={setDetailProduct}
+                  roadmapByVendorId={roadmapByVendorId}
                 />
               </div>
             </>
@@ -1617,6 +1694,19 @@ export const MigrateView: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Product detail modal — opened from card grid "Details" button */}
+      <ProductExtractionModal
+        isOpen={!!detailProduct}
+        onClose={() => setDetailProduct(null)}
+        softwareName={detailProduct?.softwareName ?? ''}
+        extraction={
+          detailProduct ? (getProductExtraction(detailProduct.softwareName) ?? null) : null
+        }
+        catalogEnrichment={
+          detailProduct ? (catalogEnrichments[detailProduct.softwareName] ?? null) : null
+        }
+      />
 
       {/* Sticky compare bar — fixed bottom, visible whenever ≥1 product is queued */}
       <StickyCompareBar
