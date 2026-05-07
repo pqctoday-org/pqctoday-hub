@@ -1336,6 +1336,19 @@ export const MigrateView: React.FC = () => {
                         {wipFilter === 'hidden' ? 'WIP hidden' : 'WIP'}
                       </Button>
                     )}
+                    <Button
+                      variant="ghost"
+                      onClick={() => setHasRoadmapFilter((v) => !v)}
+                      className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                        hasRoadmapFilter
+                          ? 'bg-primary/10 text-primary border-primary/40'
+                          : 'text-muted-foreground border-border hover:text-foreground hover:border-border/60'
+                      }`}
+                      aria-pressed={hasRoadmapFilter}
+                    >
+                      <MapIcon size={12} aria-hidden="true" />
+                      Has PQC Roadmap
+                    </Button>
                   </div>
 
                   <div className="space-y-3">
