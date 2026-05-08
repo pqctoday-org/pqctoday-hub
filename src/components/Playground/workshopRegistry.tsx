@@ -49,6 +49,10 @@ export interface WorkshopTool {
   recommendedPersonas: PersonaId[]
   /** Tool is under active development — show WIP badge on card */
   wip?: boolean
+  /** true if any workshop step produces crypto output (key, sig, ciphertext) */
+  hasOutput?: boolean
+  /** correctness invariants for that output — required when hasOutput is true */
+  outputSpec?: string
   /** Open-source project powering this tool */
   opensourceTool?: { name: string; url: string }
 }
@@ -68,6 +72,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['slh-dsa', 'sphincs', 'fips 205', 'stateless', 'hash-based', 'sign', 'verify'],
     difficulty: 'advanced',
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    hasOutput: true,
+    outputSpec:
+      'ML-DSA/SLH-DSA signature (hex); verify step must return true under same key pair. Signature size varies by param set (7856–49856 bytes for SLH-DSA).',
   },
   {
     id: 'lms-hss',
@@ -82,6 +89,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['lms', 'hss', 'xmss', 'stateful', 'hash-based', 'fips 208'],
     difficulty: 'advanced',
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    hasOutput: true,
+    outputSpec:
+      'LMS/XMSS stateful signature (hex). Signature binds to one-time leaf; verification must succeed on unmodified message.',
   },
   {
     id: 'hybrid-encrypt',
@@ -96,6 +106,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['hybrid', 'kem', 'ecdh', 'hkdf', 'ml-kem', 'x25519', 'encryption', 'key agreement'],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    hasOutput: true,
+    outputSpec:
+      'ML-KEM-768 encapsulated key (1088 bytes) + shared secret (32 bytes hex); ECDH shared secret must equal both sides.',
   },
   {
     id: 'envelope-encrypt',
@@ -110,6 +123,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['envelope', 'kms', 'key wrap', 'ml-kem', 'aes', 'dek', 'kek'],
     difficulty: 'intermediate',
     recommendedPersonas: ['architect', 'researcher', 'ops'],
+    hasOutput: true,
+    outputSpec:
+      'AES-256-GCM wrapped DEK (base64) + ML-KEM ciphertext; unwrapped DEK must equal original DEK.',
   },
   {
     id: 'token-migration',
@@ -124,6 +140,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['token', 'migration', 'iam', 'ml-dsa', 'ecdsa', 'rsa', 'multi-algorithm', 'jwt'],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
+    hasOutput: true,
+    outputSpec:
+      'ML-DSA / ECDSA / RSA signature bytes (hex); each must verify under corresponding public key.',
   },
   {
     id: 'tee-channel',
@@ -152,6 +171,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['firmware', 'uefi', 'secure boot', 'ml-dsa', 'signing', 'verification'],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
+    hasOutput: true,
+    outputSpec:
+      'ML-DSA-87 signature over firmware image digest (hex, 4627 bytes); verify must return true against same ML-DSA-87 public key.',
   },
   {
     id: 'kdf-derivation',
@@ -178,6 +200,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'advanced',
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    hasOutput: true,
+    outputSpec:
+      'SP 800-108 derived key material (32 or 64 bytes hex); deterministic given same PRF, context, and label.',
   },
   {
     id: 'vpn-sim',
@@ -358,6 +383,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops', 'curious'],
+    hasOutput: true,
+    outputSpec:
+      'DER-encoded X.509 certificate chain; leaf cert must verify under root CA public key. CSR subject matches issued cert subject.',
   },
   {
     id: 'hybrid-certs',
@@ -373,6 +401,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['certificate', 'x509', 'composite', 'hybrid', 'pqc', 'openssl', 'der'],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
+    hasOutput: true,
+    outputSpec:
+      'DER-encoded hybrid X.509 certificate with composite public key; ML-DSA-65 signature must verify under PQC public key component.',
   },
   {
     id: 'merkle-proof',
@@ -492,6 +523,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'advanced',
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    hasOutput: true,
+    outputSpec:
+      'Concatenated/nested ML-DSA-65 + EC-Schnorr signature; each component must independently verify under respective public key.',
   },
 
   // ── Protocol Simulations ──────────────────────────────────────────────────
@@ -551,6 +585,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['bitcoin', 'secp256k1', 'ecdsa', 'transaction', 'utxo', 'sha256', 'ripemd160'],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'researcher'],
+    hasOutput: true,
+    outputSpec:
+      'secp256k1 keypair (compressed public key 33 bytes); ECDSA signature (DER) verifiable against public key.',
   },
   {
     id: 'solana-flow',
@@ -565,6 +602,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['solana', 'ed25519', 'eddsa', 'transaction', 'base58'],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'researcher'],
+    hasOutput: true,
+    outputSpec:
+      'Ed25519 keypair (public key 32 bytes); signature (64 bytes) must verify against message under same public key.',
   },
   {
     id: 'hd-wallet',
@@ -579,6 +619,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['hd wallet', 'bip39', 'bip32', 'mnemonic', 'derivation', 'pbkdf2', 'slip-0010'],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'researcher'],
+    hasOutput: true,
+    outputSpec:
+      'BIP39 mnemonic (12/24 words); BIP32 child keys deterministic from same mnemonic + derivation path.',
   },
 
   // ── OpenSSL Studio ────────────────────────────────────────────────────────
@@ -619,6 +662,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
+    hasOutput: true,
+    outputSpec:
+      'Output depends on command: keygen → PEM/DER key; sign → signature hex; KEM → encapsulated key + shared secret.',
   },
   {
     id: 'tls-simulator',

@@ -9,6 +9,7 @@ import { FlagButton } from '../ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { LEARN_SECTIONS, WORKSHOP_STEPS } from './moduleData'
 import { Button } from '@/components/ui/button'
+import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 
 export interface ModuleItem {
   id: string
@@ -182,6 +183,7 @@ export const ModuleCard = ({
       </div>
 
       <h3 className="text-xl font-bold mb-2">{module.title}</h3>
+      <ReviewedBadge domain="module" entityId={module.id} className="mb-2" />
 
       <p className="text-sm text-muted-foreground leading-relaxed mb-4 flex-grow line-clamp-2 md:line-clamp-none">
         {module.description}

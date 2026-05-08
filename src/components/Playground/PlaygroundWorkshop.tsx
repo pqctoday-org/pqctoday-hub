@@ -20,6 +20,7 @@ import { PageHeader } from '../common/PageHeader'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { EmptyState } from '../ui/empty-state'
+import { ReviewedBadge } from '../ui/ReviewedBadge'
 import { WORKSHOP_TOOLS, CATEGORIES, type ToolDifficulty } from './workshopRegistry'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
@@ -644,6 +645,7 @@ export const PlaygroundWorkshop = () => {
                                   </span>
                                 ))}
                               </div>
+                              <ReviewedBadge domain="tool" entityId={tool.pt_id} className="mt-2" />
                               {tool.opensourceTool && (
                                 <div className="mt-2 flex items-center gap-1 text-xs text-muted-foreground">
                                   <ExternalLink className="w-3 h-3 shrink-0" aria-hidden="true" />
