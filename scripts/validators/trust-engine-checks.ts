@@ -379,7 +379,14 @@ async function runCm1(): Promise<CheckResult> {
 
 // ── CM-2: Xwalk rationale_type validation ────────────────────────────────────
 
-const VALID_RATIONALE_TYPES = new Set(['technical_dependency', 'policy_reference', 'implementation_guidance', 'equivalence', 'specialization'])
+const VALID_RATIONALE_TYPES = new Set([
+  'technical_dependency',
+  'policy_reference',
+  'implementation_guidance',
+  'equivalence',
+  'specialization',
+  'timeline_anchor', // edge from a standard to its publication timeline event
+])
 
 async function runCm2(): Promise<CheckResult> {
   const files = await glob('src/data/concept_xwalks_*.csv', { cwd: REPO_ROOT })
@@ -447,7 +454,21 @@ async function runCm4(): Promise<CheckResult> {
 
   const libSrc = fs.readFileSync(libLatest, 'utf-8')
   const libParsed = Papa.parse<Record<string, string>>(libSrc, { header: true, skipEmptyLines: true })
-  const knownIds = new Set(libParsed.data.map((r) => r['reference_id']?.trim()).filter(Boolean))
+  const knownLibIds = new Set(libParsed.data.map((r) => r['reference_id']?.trim()).filter(Boolean))
+
+  // For timeline_anchor rows: to_concept resolves against timeline event titles
+  const timelineFiles = await glob('src/data/timeline_*.csv', { cwd: REPO_ROOT })
+  timelineFiles.sort()
+  const timelineLatest = timelineFiles.at(-1)
+  const knownTimelineTitles = new Set<string>()
+  if (timelineLatest) {
+    const tlSrc = fs.readFileSync(timelineLatest, 'utf-8')
+    const tlParsed = Papa.parse<Record<string, string>>(tlSrc, { header: true, skipEmptyLines: true })
+    for (const r of tlParsed.data) {
+      const title = r['title']?.trim() ?? r['Title']?.trim() ?? r['event_title']?.trim()
+      if (title) knownTimelineTitles.add(title)
+    }
+  }
 
   const xwalkSrc = fs.readFileSync(xwalkLatest, 'utf-8')
   const xwalkParsed = Papa.parse<Record<string, string>>(xwalkSrc, { header: true, skipEmptyLines: true })
@@ -455,14 +476,27 @@ async function runCm4(): Promise<CheckResult> {
   const findings: Finding[] = []
 
   for (const row of xwalkParsed.data) {
+    const isTimelineAnchor = (row['rationale_type'] ?? '').trim() === 'timeline_anchor'
     for (const field of ['from_concept', 'to_concept'] as const) {
       const concept = (row[field] ?? '').trim()
-      if (concept && !knownIds.has(concept)) {
-        findings.push({
-          csv: relPath, row: null, field,
-          value: row['xwalk_id'] ?? '',
-          message: `xwalk '${row['xwalk_id']}' ${field} '${concept}' does not match any library reference_id`,
-        })
+      if (!concept) continue
+      // timeline_anchor: to_concept resolves against timeline titles; from_concept against library
+      if (isTimelineAnchor && field === 'to_concept') {
+        if (!knownTimelineTitles.has(concept)) {
+          findings.push({
+            csv: relPath, row: null, field,
+            value: row['xwalk_id'] ?? '',
+            message: `xwalk '${row['xwalk_id']}' ${field} '${concept}' does not match any timeline event title`,
+          })
+        }
+      } else {
+        if (!knownLibIds.has(concept)) {
+          findings.push({
+            csv: relPath, row: null, field,
+            value: row['xwalk_id'] ?? '',
+            message: `xwalk '${row['xwalk_id']}' ${field} '${concept}' does not match any library reference_id`,
+          })
+        }
       }
     }
   }
