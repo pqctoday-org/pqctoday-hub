@@ -208,6 +208,8 @@ docs/pqctoday-investor*
 
 # All scripts (private — tooling, scrapers, extractors; data is pre-committed)
 scripts/
+# CI scripts are public — they run in GitHub Actions and must be tracked
+!scripts/ci/
 
 # Private CI workflows (compliance scraper runs locally, not in public CI)
 .github/workflows/update-compliance.yml
