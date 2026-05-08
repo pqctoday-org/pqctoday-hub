@@ -10,7 +10,7 @@ export interface TrustedSource {
     | 'Industry_Workgroup'
     | 'Academic'
     | 'Industry_Analyst'
-  trustTier: '1_Authoritative' | '2_Primary' | '3_Supporting' | '4_Supplementary'
+  trustTier: '1_Authoritative' | '2_Core' | '3_Supporting' | '4_Contextual'
   region: 'Americas' | 'EMEA' | 'APAC' | 'Global'
   primaryUrl: string
   description: string
