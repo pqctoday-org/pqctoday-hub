@@ -113,7 +113,14 @@ export function traverseXwalkPaths(
     const srcId = itemId(match.item)
     if (!srcId) continue
 
-    const sourceConf = TIER_CONFIDENCE[match.tier] ?? 50
+    // Library docs that directly match a profile are reliable traversal anchors
+    // even when their display tier is Advisory (50). Boost to 75 so that high-
+    // confidence xwalk edges (e.g. CSWP 39 → FIPS 203 intersects_with high)
+    // produce derivedConf ≥ 50 and pass persona thresholds.
+    const isLibrarySource = 'referenceId' in match.item
+    const sourceConf = isLibrarySource
+      ? Math.max(TIER_CONFIDENCE[match.tier] ?? 50, 75)
+      : (TIER_CONFIDENCE[match.tier] ?? 50)
     const srcLabel = itemLabel(match.item)
 
     for (const { edge, neighborId } of edgesFor(srcId, xwalkEdges, allowedRelationships)) {
