@@ -31,7 +31,7 @@ type RegulatorKey = `${string}::${string}`
 const MANUAL_REGULATORS: Record<RegulatorKey, string[]> = {
   // Australia — sector regulators not always in the compliance CSV
   'Australia::Government & Defense': ['ASD', 'Department of Defence'],
-  'Australia::Finance & Banking': ['APRA', 'ASIC', 'RBA'],
+  'Australia::Finance & Banking': ['APRA', 'ASIC', 'RBA', 'AUSTRAC', 'OAIC', 'ASD'],
   'Australia::Insurance': ['APRA'],
   'Australia::Telecommunications': ['ACMA', 'ASD'],
 
