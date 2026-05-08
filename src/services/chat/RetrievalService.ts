@@ -2,6 +2,8 @@
 import type MiniSearch from 'minisearch'
 import type { RAGChunk } from '@/types/ChatTypes'
 import { UnifiedSearchService } from '@/services/search/UnifiedSearchService'
+import { chunkToResource, trustTierMultiplier } from '@/services/search/chunkToResource'
+import { getTrustScore } from '@/data/trustScore'
 
 /**
  * Query intent — determines source boosting and diversity strategy.
@@ -820,6 +822,12 @@ class RetrievalService {
         if (chunk.source === 'module-curious') multiplier *= 1.5
         else if (chunk.source === 'module-content') multiplier *= 0.6
       }
+      // Trust-tier multiplier (T02 — trust-aware reranker, §14.3 of explainability doc).
+      // Resolves the chunk to a scored resource and nudges ranking by the resource's
+      // tier. Chunks with no scored resource get the unknown-tier default (0.95).
+      const ref = chunkToResource(chunk)
+      const tier = ref ? (getTrustScore(ref.resourceType, ref.resourceId)?.tier ?? null) : null
+      multiplier *= trustTierMultiplier(tier)
       return { ...r, boostedScore: r.score * multiplier }
     })
 
@@ -938,6 +946,83 @@ class RetrievalService {
   get isReady(): boolean {
     return this.index !== null
   }
+}
+
+// ── T10 — Trust-aware refusal helpers ────────────────────────────────────────
+// When the user asks an audit / regulatory / compliance-style question, the
+// assistant must not answer from a Low-tier chunk. These helpers let the
+// caller (useChatSend) detect that case and emit a deterministic refusal
+// instead of an LLM-generated response. See §14.3 step 3 of the explainability
+// doc.
+
+const AUDIT_QUERY_PATTERNS: RegExp[] = [
+  /\b(audit|auditor|auditing)\b/i,
+  /\b(regulator|regulatory|regulation|regulations)\b/i,
+  /\b(compliant|compliance|comply|complies)\b/i,
+  /\b(mandate|mandated|mandatory|required by law)\b/i,
+  /\b(must I|am I required|are we required|do we have to)\b/i,
+  /\bshall\b/i,
+]
+
+const AUDIT_INTENTS: ReadonlySet<QueryIntent> = new Set(['standard_query', 'country_query'])
+
+/**
+ * Does this query require Authoritative or High tier evidence to answer responsibly?
+ * Returns true for queries that look like compliance, audit, or regulatory questions.
+ */
+export function requiresAuthoritativeEvidence(query: string, intent?: QueryIntent): boolean {
+  const i = intent ?? classifyIntent(query)
+  if (AUDIT_INTENTS.has(i)) return true
+  return AUDIT_QUERY_PATTERNS.some((re) => re.test(query))
+}
+
+/**
+ * Best trust tier among the top N retrieved chunks. Returns 'unknown' if no
+ * chunk maps to a scored resource. Used by the refusal gate.
+ */
+export function topAvailableTier(
+  chunks: RAGChunk[],
+  n = 3
+): 'Authoritative' | 'High' | 'Moderate' | 'Low' | 'unknown' {
+  let best: 'Authoritative' | 'High' | 'Moderate' | 'Low' | 'unknown' = 'unknown'
+  const rank: Record<typeof best, number> = {
+    Authoritative: 4,
+    High: 3,
+    Moderate: 2,
+    Low: 1,
+    unknown: 0,
+  }
+  for (const chunk of chunks.slice(0, n)) {
+    const ref = chunkToResource(chunk)
+    if (!ref) continue
+    const score = getTrustScore(ref.resourceType, ref.resourceId)
+    const tier = score?.tier ?? 'unknown'
+    if (rank[tier] > rank[best]) best = tier
+  }
+  return best
+}
+
+/**
+ * If the query requires authoritative evidence and none of the top-3 chunks
+ * have Authoritative or High tier, return a deterministic refusal message.
+ * Otherwise return null.
+ */
+export function buildTrustRefusal(query: string, chunks: RAGChunk[]): string | null {
+  if (!requiresAuthoritativeEvidence(query)) return null
+  const top = topAvailableTier(chunks, 3)
+  if (top === 'Authoritative' || top === 'High') return null
+
+  const closest = chunks[0]
+  const closestNote = closest
+    ? ` The closest match is "${closest.title}" from \`${closest.source}\`.`
+    : ''
+  const tierNote =
+    top === 'unknown' ? ' (no scored source resolved)' : ` (best available tier: ${top})`
+  return [
+    `I don't have a sufficiently authoritative source for that question${tierNote}.`,
+    `For audit, regulatory, or compliance answers I require Authoritative or High tier evidence (per §14.3 of the trust-engine explainability doc).${closestNote}`,
+    `Try asking the same question with a specific standard ID (e.g. FIPS 203, NIST CSWP 39, CNSA 2.0) — I can answer those grounded in the cached source documents.`,
+  ].join('\n\n')
 }
 
 export const retrievalService = RetrievalService.getInstance()

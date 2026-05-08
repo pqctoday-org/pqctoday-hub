@@ -669,11 +669,43 @@ async function runCmT(): Promise<CheckResult[]> {
   ]
 }
 
+// ── CM-TS: Trust-tier vocabulary normalisation ───────────────────────────────
+
+const ALLOWED_TIERS = new Set(['1_Authoritative', '2_Core', '3_Supporting', '4_Contextual'])
+
+async function runCmTs(): Promise<CheckResult> {
+  const files = await glob('src/data/trusted_sources_*.csv', { cwd: REPO_ROOT })
+  files.sort()
+  const latest = files.at(-1)
+  if (!latest) return pass('CM-TS', 'Trusted-source trust_tier vocabulary normalised', 'src/data/trusted_sources_*.csv')
+
+  const raw = fs.readFileSync(path.join(REPO_ROOT, latest), 'utf-8')
+  const { data: rows } = Papa.parse<Record<string, string>>(raw, { header: true, skipEmptyLines: true })
+
+  const findings: Finding[] = []
+  for (const r of rows) {
+    const tier = (r['trust_tier'] ?? '').trim()
+    if (!tier || !ALLOWED_TIERS.has(tier)) {
+      findings.push({
+        csv: latest,
+        row: null,
+        field: 'trust_tier',
+        value: r['source_id'] ?? '',
+        message: `source_id="${r['source_id']}" has trust_tier="${tier}" — must be one of 1_Authoritative | 2_Core | 3_Supporting | 4_Contextual`,
+      })
+    }
+  }
+
+  return findings.length > 0
+    ? fail('CM-TS', 'Trusted-source trust_tier vocabulary normalised (4-value v2)', latest, findings)
+    : pass('CM-TS', 'Trusted-source trust_tier vocabulary normalised (4-value v2)', latest)
+}
+
 // ── Entry point ──────────────────────────────────────────────────────────────
 
 export async function runTrustEngineChecks(): Promise<CheckResult[]> {
-  const [cm1, cm2, cm3, cm4, cmE, cmCswp, cmG, cmT] = await Promise.all([
-    runCm1(), runCm2(), runCm3(), runCm4(), runCmE(), runCmCswp(), runCmG(), runCmT(),
+  const [cm1, cm2, cm3, cm4, cmE, cmCswp, cmG, cmT, cmTs] = await Promise.all([
+    runCm1(), runCm2(), runCm3(), runCm4(), runCmE(), runCmCswp(), runCmG(), runCmT(), runCmTs(),
   ])
-  return [runCmW(), runCmC(), runQaS(), runQaCswp(), cm1, cm2, cm3, cm4, cmE, cmCswp, cmG, ...cmT]
+  return [runCmW(), runCmC(), runQaS(), runQaCswp(), cm1, cm2, cm3, cm4, cmE, cmCswp, cmG, ...cmT, cmTs]
 }

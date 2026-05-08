@@ -1,0 +1,57 @@
+name: Trusted-Source Freshness Audit
+
+on:
+  schedule:
+    - cron: '0 9 * * 1' # Mondays at 09:00 UTC
+  workflow_dispatch:
+    inputs:
+      baseline:
+        description: 'Force baseline mode (overwrite stored hashes)'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run trusted-source freshness audit
+        id: audit
+        continue-on-error: true
+        run: |
+          FLAGS=""
+          if [ "${{ github.event.inputs.baseline }}" = "true" ]; then
+            FLAGS="--baseline"
+          fi
+          npx tsx scripts/audit-trusted-source-freshness.ts $FLAGS
+
+      - name: Open issue on drift
+        if: steps.audit.outcome == 'failure'
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: 'Trusted-source drift detected (week of ${{ github.run_id }})'
+          content-filepath: public/data/trusted-source-drift-report.md
+          labels: trusted-source:drift, trust-engine
+
+      - name: Commit updated baseline
+        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7
+        with:
+          commit_message: 'chore(trust-engine): refresh trusted-source hash baseline [skip ci]'
+          file_pattern: 'public/data/trusted-source-hashes.json public/data/trusted-source-drift-report.md'

@@ -1,0 +1,46 @@
+{
+  "generatedAt": "2026-05-08T18:02:55.454Z",
+  "entries": {
+    "cmu-cylab": {
+      "sourceId": "cmu-cylab",
+      "url": "https://www.cylab.cmu.edu/",
+      "sha256": "4336509a21db1d24d99cd26abc2aa09e4f0938c01e64f1bf9ea4ddf54f8c4c2a",
+      "contentLength": 38567,
+      "fetchedAt": "2026-05-08T18:02:56.566Z",
+      "status": "ok"
+    },
+    "uc-berkeley-bqic": {
+      "sourceId": "uc-berkeley-bqic",
+      "url": "https://bqic.berkeley.edu/",
+      "sha256": "d80e09fa4892cc6451d99187197249dcb58e6a2f29ef555b435463cef7a4dbf8",
+      "contentLength": 3215,
+      "fetchedAt": "2026-05-08T18:02:57.554Z",
+      "status": "ok"
+    },
+    "rub-crypto": {
+      "sourceId": "rub-crypto",
+      "url": "https://www.crypto.rub.de/",
+      "sha256": "",
+      "contentLength": 0,
+      "fetchedAt": "2026-05-08T18:02:58.595Z",
+      "status": "error",
+      "errorMessage": "fetch-error"
+    },
+    "mpi-sp": {
+      "sourceId": "mpi-sp",
+      "url": "https://www.mpi-sp.org/",
+      "sha256": "3a6b93bfa49f5849b66e4f3635e18e55df6925e219985e090f203ff12f714500",
+      "contentLength": 158812,
+      "fetchedAt": "2026-05-08T18:03:00.724Z",
+      "status": "ok"
+    },
+    "brno-ut": {
+      "sourceId": "brno-ut",
+      "url": "https://www.vut.cz/en/",
+      "sha256": "4fb86dd2915ed85069f68abeeef7afa7b11bf2d72dc60d35b837d3ad41a29e2c",
+      "contentLength": 80140,
+      "fetchedAt": "2026-05-08T18:03:02.555Z",
+      "status": "ok"
+    }
+  }
+}

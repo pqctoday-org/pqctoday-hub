@@ -2,7 +2,11 @@
 import { useRef, useCallback } from 'react'
 import { useChatStore } from '@/store/useChatStore'
 import { usePageContext } from '@/hooks/usePageContext'
-import { retrievalService, classifyIntent } from '@/services/chat/RetrievalService'
+import {
+  retrievalService,
+  classifyIntent,
+  buildTrustRefusal,
+} from '@/services/chat/RetrievalService'
 import { streamResponse as geminiStreamResponse } from '@/services/chat/GeminiService'
 import {
   streamResponse as localStreamResponse,
@@ -183,6 +187,25 @@ export function useChatSend() {
           if (whatsNewChunk) {
             chunks.unshift(whatsNewChunk)
           }
+        }
+
+        // T10 — Trust-aware refusal gate. For audit/regulatory queries with
+        // only Low-tier or unscored evidence, emit a deterministic refusal
+        // instead of calling the LLM. See §14.3 of trust-engine-explainability.
+        const refusal = buildTrustRefusal(trimmed, chunks)
+        if (refusal) {
+          const refusalMessage: ChatMessage = {
+            id: nextMsgId('assistant'),
+            role: 'assistant',
+            content: refusal,
+            timestamp: Date.now(),
+            sources: chunks.map((c) => c.id),
+            sourceRefs: [],
+            followUps: [],
+          }
+          addMessage(refusalMessage)
+          setLoading(false)
+          return
         }
 
         // Read latest messages from store (not closure) so that prior
