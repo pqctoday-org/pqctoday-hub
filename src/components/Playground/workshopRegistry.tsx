@@ -157,6 +157,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['tee', 'trusted execution', 'confidential', 'channel', 'attestation', 'hsm'],
     difficulty: 'advanced',
     recommendedPersonas: ['architect', 'researcher'],
+    hasOutput: true,
+    outputSpec:
+      'ML-DSA attestation signature (hex) over TEE measurement digest; ML-KEM-768 encapsulated session key (1088 bytes); AES-256 wrapped channel secret verifiable by recipient HSM.',
   },
   {
     id: 'firmware-signing',
@@ -232,6 +235,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'advanced',
     recommendedPersonas: ['developer', 'architect', 'ops', 'researcher'],
+    hasOutput: true,
+    outputSpec:
+      'IKEv2 SKEYSEED and child SA keys derived per RFC 7296 (prf+); ECDH shared secret (32 bytes hex); live C_* PKCS#11 call log with CK_RV return codes.',
   },
   {
     id: 'pqc-ssh-sim',
@@ -261,6 +267,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'advanced',
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    hasOutput: true,
+    outputSpec:
+      'SSH session ID (SHA-256, 32 bytes hex); ML-DSA-65 host key signature (3309 bytes hex); mlkem768x25519-sha256 shared secret (32 bytes hex); latency and wire-size comparison vs classical.',
   },
 
   // ── Entropy & Random ──────────────────────────────────────────────────────
@@ -430,6 +439,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'researcher', 'curious'],
+    hasOutput: true,
+    outputSpec:
+      'Merkle root hash (SHA-256, 32 bytes hex); inclusion proof as ordered sibling-hash array verifiable by recomputation to root; consistency proof between two tree sizes.',
   },
 
   {
@@ -456,6 +468,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'beginner',
     recommendedPersonas: ['architect', 'ops', 'executive'],
+    hasOutput: false,
   },
   {
     id: 'hsm-capacity',
@@ -493,6 +506,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'intermediate',
     recommendedPersonas: ['architect', 'ops', 'executive'],
+    hasOutput: false,
   },
   {
     id: 'hybrid-sigs',
@@ -695,6 +709,9 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
+    hasOutput: true,
+    outputSpec:
+      'Simulated TLS 1.3 handshake transcript; master secret and HKDF-derived traffic keys (hex); leaf certificate chain with PQC or hybrid signature verified against configured trust anchor.',
   },
   {
     id: 'tpm-playground',
