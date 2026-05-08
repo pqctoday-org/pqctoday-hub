@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react'
 import { GitMerge, Bot, Filter } from 'lucide-react'
 import { useRevisions, type RevisionEntry } from '@/hooks/useRevisions'
 import { Button } from '@/components/ui/button'
+import { BypassChip } from '@/components/ui/BypassChip'
 
 const ALL_DOMAINS = ['module', 'tool', 'library', 'compliance', 'migrate', 'threats', 'algorithms']
 
@@ -71,6 +72,7 @@ function FeedEntry({ r }: { r: RevisionEntry }) {
           <span className="text-sm font-medium text-foreground">{r.reviewer_display}</span>
           <span className="text-xs text-muted-foreground capitalize">{r.domain}</span>
           <span className="text-xs text-muted-foreground">{r.change_type.replace(/_/g, ' ')}</span>
+          <BypassChip revision={r} />
         </div>
         <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{r.scope_summary}</p>
         <div className="flex items-center gap-2 mt-1">

@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react'
 import { X, GitMerge, Bot, UserCheck } from 'lucide-react'
 import { byRecord, type RevisionEntry } from '@/hooks/useRevisions'
 import { Button } from '@/components/ui/button'
+import { BypassChip } from '@/components/ui/BypassChip'
 
 interface RevisionDrilldownPanelProps {
   domain: string
@@ -66,14 +67,27 @@ function RevisionRow({ r }: { r: RevisionEntry }) {
       </div>
       <div className="flex items-center gap-2 mt-1 ml-5">
         <ChangeTypeBadge type={r.change_type} />
-        <a
-          href={`https://github.com/pqctoday-org/pqctoday-hub/pull/${r.pr_number}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-0.5 text-xs text-primary hover:underline"
-        >
-          <GitMerge className="w-3 h-3" />#{r.pr_number}
-        </a>
+        <BypassChip revision={r} />
+        {r.pr_number > 0 ? (
+          <a
+            href={`https://github.com/pqctoday-org/pqctoday-hub/pull/${r.pr_number}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-0.5 text-xs text-primary hover:underline"
+          >
+            <GitMerge className="w-3 h-3" />#{r.pr_number}
+          </a>
+        ) : (
+          <a
+            href={`https://github.com/pqctoday-org/pqctoday-hub/commit/${r.merge_sha}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-0.5 text-xs text-primary hover:underline font-mono"
+          >
+            <GitMerge className="w-3 h-3" />
+            {r.merge_sha.slice(0, 7)}
+          </a>
+        )}
         {r.rows_affected !== null && (
           <span className="text-xs text-muted-foreground">{r.rows_affected} rows</span>
         )}
