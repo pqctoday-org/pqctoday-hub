@@ -4,6 +4,20 @@ test.describe('ASR Core Profile Onboarding (Assess -> Report -> BC)', () => {
   test('injects form state, generates a report, and enables business center adaptation', async ({
     page,
   }) => {
+    // Suppress the three blocking overlays: first-visit disclaimer, WhatsNew
+    // alertdialog, and the guided tour. Any of them intercepts pointer events.
+    await page.addInitScript(() => {
+      window.localStorage.setItem(
+        'pqc-disclaimer-storage',
+        JSON.stringify({ state: { acknowledgedMajorVersion: 99 }, version: 0 })
+      )
+      window.localStorage.setItem(
+        'pqc-version-storage',
+        JSON.stringify({ state: { lastSeenVersion: '99.0.0' }, version: 0 })
+      )
+      window.localStorage.setItem('pqc-tour-completed', 'true')
+    })
+
     // Phase 1: Action (Inject State)
     // We bypass 13 steps of UI clicking and inject a "complete" assessment form directly.
     await page.addInitScript(() => {

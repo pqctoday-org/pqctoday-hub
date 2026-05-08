@@ -4,6 +4,20 @@ test.describe('ASR Gamification & Telemetry Persistence', () => {
   test('bypasses UI to inject quiz state and validates gamification badge unlock', async ({
     page,
   }) => {
+    // Suppress the first-visit disclaimer + WhatsNew alertdialog + guided tour
+    // — all three are blocking overlays that intercept clicks on the quiz.
+    await page.addInitScript(() => {
+      window.localStorage.setItem(
+        'pqc-disclaimer-storage',
+        JSON.stringify({ state: { acknowledgedMajorVersion: 99 }, version: 0 })
+      )
+      window.localStorage.setItem(
+        'pqc-version-storage',
+        JSON.stringify({ state: { lastSeenVersion: '99.0.0' }, version: 0 })
+      )
+      window.localStorage.setItem('pqc-tour-completed', 'true')
+    })
+
     // Navigate straight to the quiz module
     await page.goto('/learn/quiz')
 
