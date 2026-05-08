@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo } from 'react'
-import { ShieldAlert, Calendar, BookOpen, Scale } from 'lucide-react'
-import { useApplicability } from '../../hooks/useApplicability'
+import { ShieldAlert, Calendar, BookOpen, Scale, Link2 } from 'lucide-react'
+import { useApplicabilityWithPaths } from '../../hooks/useApplicabilityWithPaths'
 import {
   TIER_META,
   TIER_ORDER,
@@ -14,6 +14,8 @@ import { ProfileEditor } from './parts/ProfileEditor'
 import { ProfileSummary } from './parts/ProfileSummary'
 import { TIER_STYLES } from './parts/tierStyles'
 import { FrameworkItem, ThreatItem, LibraryDocItem, TimelineItem } from './parts/items'
+import { TrustPathPopover } from '../Compliance/TrustPathPopover'
+import type { DerivedResult } from '../../utils/trustPathTraversal'
 import type { LibraryItem } from '../../data/libraryData'
 import type { ThreatData } from '../../data/threatsData'
 import type { TimelineEvent } from '../../types/timeline'
@@ -50,8 +52,17 @@ export function ApplicabilityPanel({
   onSelectTimeline,
   onSelectFramework,
 }: ApplicabilityPanelProps) {
-  const { profile, isEmpty, frameworks, library, threats, timeline, droppedCounts, lens } =
-    useApplicability(profileOverride)
+  const {
+    profile,
+    isEmpty,
+    frameworks,
+    library,
+    threats,
+    timeline,
+    droppedCounts,
+    lens,
+    derivedFrameworks,
+  } = useApplicabilityWithPaths(profileOverride)
 
   const isCompact = variant !== 'tab'
 
@@ -129,6 +140,9 @@ export function ApplicabilityPanel({
         // eslint-disable-next-line security/detect-object-injection
         sectionRenderers[id] ? sectionRenderers[id]() : null
       )}
+      {variant === 'tab' && derivedFrameworks.length > 0 && (
+        <DerivedSection results={derivedFrameworks} />
+      )}
     </div>
   )
 }
@@ -148,9 +162,7 @@ interface SectionProps<T> {
 function Section<T>({ icon, title, results, dropped, renderItem, compact }: SectionProps<T>) {
   const grouped = useMemo(() => groupByTier(results), [results])
   const total = results.length
-  const totalDropped = dropped
-    ? dropped.mandatory + dropped['cross-border'] + dropped.advisory + dropped.informational
-    : 0
+  const totalDropped = dropped ? TIER_ORDER.reduce((sum, t) => sum + (dropped[t] ?? 0), 0) : 0
 
   return (
     <section className="rounded-lg border border-border bg-card overflow-hidden">
@@ -201,6 +213,42 @@ function Section<T>({ icon, title, results, dropped, renderItem, compact }: Sect
           })}
         </div>
       )}
+    </section>
+  )
+}
+
+// ── Derived section ──────────────────────────────────────────────────────────
+
+function DerivedSection({ results }: { results: DerivedResult[] }) {
+  return (
+    <section className="rounded-lg border border-border bg-card overflow-hidden">
+      <header className="flex items-center justify-between gap-2 px-3 py-2 border-b border-border bg-muted/30">
+        <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+          <Link2 size={16} className="text-accent" />
+          Related via IR 8477
+        </div>
+        <span className="text-xs text-muted-foreground">
+          {results.length} standard{results.length !== 1 ? 's' : ''} — trust path derivations
+        </span>
+      </header>
+      <div className="divide-y divide-border">
+        {results.map((r) => (
+          <div key={r.standardId} className="px-3 py-2 flex items-center justify-between gap-2">
+            <div className="min-w-0 flex-1">
+              <span className="text-sm text-foreground font-medium truncate">{r.standardId}</span>
+              <span className="ml-2 text-xs text-muted-foreground font-mono">
+                {r.bestPath.relationshipType}
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5 shrink-0">
+              <span className="text-xs text-muted-foreground">
+                {r.bestPath.derivedConfidence}/100
+              </span>
+              <TrustPathPopover path={r.bestPath} standardLabel={r.standardId} />
+            </div>
+          </div>
+        ))}
+      </div>
     </section>
   )
 }

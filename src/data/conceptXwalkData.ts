@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import Papa from 'papaparse'
 import { loadLatestCSV } from './csvUtils'
 
 export type XwalkRelationshipType =
@@ -66,6 +65,8 @@ const VALID_RATIONALE_TYPES = new Set<string>([
   'specialization',
 ])
 
+const XWALK_REGEX = /concept_xwalks_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
+
 const modules = import.meta.glob('./concept_xwalks_*.csv', {
   query: '?raw',
   import: 'default',
@@ -95,15 +96,12 @@ function transformRow(row: RawXwalkRow): ConceptXwalkRecord | null {
 }
 
 function loadXwalkData(): ConceptXwalkRecord[] {
-  const csv = loadLatestCSV(modules)
-  if (!csv) return []
-
-  const result = Papa.parse<RawXwalkRow>(csv, {
-    header: true,
-    skipEmptyLines: true,
-  })
-
-  return result.data.map(transformRow).filter((r): r is ConceptXwalkRecord => r !== null)
+  const { data } = loadLatestCSV<RawXwalkRow, ConceptXwalkRecord>(
+    modules,
+    XWALK_REGEX,
+    transformRow
+  )
+  return data
 }
 
 export const conceptXwalkData: ConceptXwalkRecord[] = loadXwalkData()

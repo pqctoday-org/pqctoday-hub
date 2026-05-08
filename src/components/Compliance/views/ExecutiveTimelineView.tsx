@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo } from 'react'
-import { ShieldAlert, BookOpen, Calendar } from 'lucide-react'
-import { useApplicability } from '../../../hooks/useApplicability'
+import { ShieldAlert, BookOpen, Calendar, Link2 } from 'lucide-react'
+import { useApplicabilityWithPaths } from '../../../hooks/useApplicabilityWithPaths'
 import {
   groupByTier,
   linkTimelineToFrameworks,
@@ -13,6 +13,8 @@ import { ThreatItem, LibraryDocItem, TimelineItem } from '../../applicability/pa
 import { RegulatoryClock } from './parts/RegulatoryClock'
 import { FrameworkDeadlineCard } from './parts/FrameworkDeadlineCard'
 import { NextDecisionCard } from './parts/NextDecisionCard'
+import { TrustPathPopover } from '../TrustPathPopover'
+import type { DerivedResult } from '../../../utils/trustPathTraversal'
 import type { LibraryItem } from '../../../data/libraryData'
 import type { ThreatData } from '../../../data/threatsData'
 import type { TimelineEvent } from '../../../types/timeline'
@@ -49,8 +51,8 @@ export function ExecutiveTimelineView({
   onSelectTimeline,
   onSelectFramework,
 }: ExecutiveTimelineViewProps) {
-  const { profile, isEmpty, frameworks, library, threats, timeline } =
-    useApplicability(profileOverride)
+  const { profile, isEmpty, frameworks, library, threats, timeline, derivedFrameworks } =
+    useApplicabilityWithPaths(profileOverride)
 
   const grouped = useMemo(() => groupByTier(frameworks), [frameworks])
   const linkedTimeline = useMemo(
@@ -123,6 +125,8 @@ export function ExecutiveTimelineView({
             onSelectTimeline={onSelectTimeline}
             onSelectFramework={onSelectFramework}
           />
+
+          {derivedFrameworks.length > 0 && <ExecutiveDerivedSection results={derivedFrameworks} />}
 
           <div data-section-id="next-decision" className="scroll-mt-20">
             <NextDecisionCard />
@@ -238,6 +242,37 @@ function FrameworkSection({
           onSelectFramework={onSelectFramework}
         />
       ))}
+    </div>
+  )
+}
+
+function ExecutiveDerivedSection({ results }: { results: DerivedResult[] }) {
+  return (
+    <div data-section-id="frameworks-derived" className="space-y-2 scroll-mt-20">
+      <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground px-1 flex items-center gap-1.5">
+        <Link2 size={12} className="text-accent" />
+        Related via IR 8477 ({results.length})
+      </h3>
+      <div className="rounded-lg border border-border bg-card overflow-hidden">
+        <div className="divide-y divide-border">
+          {results.map((r) => (
+            <div key={r.standardId} className="px-3 py-2 flex items-center justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <span className="text-sm text-foreground font-medium truncate">{r.standardId}</span>
+                <span className="ml-2 text-xs text-muted-foreground font-mono">
+                  {r.bestPath.relationshipType}
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <span className="text-xs text-muted-foreground">
+                  {r.bestPath.derivedConfidence}/100
+                </span>
+                <TrustPathPopover path={r.bestPath} standardLabel={r.standardId} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }

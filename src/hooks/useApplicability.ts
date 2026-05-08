@@ -22,13 +22,14 @@ export interface UseApplicabilityResult extends LensedApplicable {
 }
 
 const EMPTY_DROPPED: Record<
-  'mandatory' | 'recognized' | 'cross-border' | 'advisory' | 'informational',
+  'mandatory' | 'recognized' | 'cross-border' | 'advisory' | 'derived' | 'informational',
   number
 > = {
   mandatory: 0,
   recognized: 0,
   'cross-border': 0,
   advisory: 0,
+  derived: 0,
   informational: 0,
 }
 
@@ -63,6 +64,12 @@ export function useApplicability(override?: Partial<UserProfile>): UseApplicabil
           sections: ['frameworks', 'threats', 'library', 'timeline'],
           tierCaps: {},
           framing: '',
+          trustPathConfig: {
+            allowedRelationships: [],
+            confidenceThreshold: 100,
+            maxDerivedResults: 0,
+            twoHopEnabled: false,
+          },
         },
       }
     }
