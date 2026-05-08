@@ -130,6 +130,43 @@ function isEuMember(profile: UserProfile): boolean {
 // strings. Returns an array of normalized country values (PQC overlay codes
 // may expand to multiple ISO codes).
 
+// Bidirectional ISO 3166-1 alpha-2 ↔ full-name map for the countries that
+// appear in our data CSVs. Needed because normalize-vocab-tags converts full
+// names to ISO codes in _r2 CSVs while the assessment store keeps full names.
+const ISO_TO_FULL: Record<string, string> = {
+  US: 'United States',
+  CA: 'Canada',
+  AU: 'Australia',
+  GB: 'United Kingdom',
+  DE: 'Germany',
+  FR: 'France',
+  NL: 'Netherlands',
+  JP: 'Japan',
+  SG: 'Singapore',
+  IL: 'Israel',
+  KR: 'South Korea',
+  IN: 'India',
+  BR: 'Brazil',
+  NZ: 'New Zealand',
+}
+const FULL_TO_ISO: Record<string, string> = Object.fromEntries(
+  Object.entries(ISO_TO_FULL).map(([k, v]) => [v, k])
+)
+
+/**
+ * Expand a CSV country token to all equivalent forms so the profile's full-
+ * name ('United States') can match a CSV row that stores the ISO code ('US'),
+ * or vice versa.
+ */
+function expandCountry(value: string): string[] {
+  const v = value.trim()
+  const full = ISO_TO_FULL[v]
+  if (full) return [v, full]
+  const iso = FULL_TO_ISO[v]
+  if (iso) return [v, iso]
+  return [v]
+}
+
 export function normalizeCountry(value: string): string[] {
   const v = value.trim()
   if (/^[A-Z]{2}$/.test(v)) return [v]
@@ -179,10 +216,15 @@ function classifyMatch(profile: UserProfile, fields: ItemFields): ClassifyResult
   const hasIndustry = !!industry && industry !== 'Other'
   const hasCountry = !!country && country !== 'Global'
 
-  // Country signals
+  // Country signals — expand both sides to handle ISO↔full-name mismatches
+  // (e.g. profile stores 'United States' but _r2 CSVs use 'US').
   const eu = isEuMember(profile)
+  const expandedProfileCountry = country ? expandCountry(country) : []
+  const expandedCsvCountries = countries.flatMap(expandCountry)
   const directCountryMatch =
-    hasCountry && (countries.includes(country!) || (eu && countries.includes('European Union')))
+    hasCountry &&
+    (expandedProfileCountry.some((c) => expandedCsvCountries.includes(c)) ||
+      (eu && countries.includes('European Union')))
   const regionCountries = regionCountriesFor(profile)
   const regionCountryMatch =
     !directCountryMatch && regionCountries !== null
