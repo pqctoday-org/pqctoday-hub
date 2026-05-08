@@ -50,14 +50,17 @@ export function FrameworkDeadlineCard({
             </span>
           )}
         </div>
-        <p className="text-xs text-muted-foreground mt-0.5">{fw.description}</p>
+        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{fw.description}</p>
         <p className="text-[10px] text-muted-foreground/80 mt-0.5 italic">{result.reason}</p>
       </div>
     </div>
   )
 
   return (
-    <div className="rounded-lg border border-border bg-card p-3 space-y-2" title={result.reason}>
+    <div
+      className="rounded-lg border border-border bg-card p-3 space-y-2 overflow-hidden"
+      title={result.reason}
+    >
       {onSelectFramework ? (
         <Button
           type="button"

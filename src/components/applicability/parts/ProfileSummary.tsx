@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { Globe, Building2 } from 'lucide-react'
+import { Globe } from 'lucide-react'
 import { useAssessmentFormStore } from '../../../store/useAssessmentFormStore'
 import { FilterDropdown } from '../../common/FilterDropdown'
 import type { UserProfile } from '../../../utils/applicabilityEngine'
@@ -75,9 +75,7 @@ export function ProfileSummary({ profile, editable }: { profile: UserProfile; ed
         selectedId={profile.industry ?? ''}
         onSelect={(id) => setIndustry(id)}
         defaultLabel="Any industry"
-        defaultIcon={<Building2 size={14} className="text-primary" />}
-        searchable={false}
-        className="h-7 text-sm font-medium px-2 border-0 bg-transparent hover:bg-muted"
+        size="sm"
       />
       <span className="text-muted-foreground">in</span>
       <FilterDropdown
@@ -85,9 +83,8 @@ export function ProfileSummary({ profile, editable }: { profile: UserProfile; ed
         selectedId={profile.country ?? ''}
         onSelect={(id) => setCountry(id)}
         defaultLabel="Global"
-        defaultIcon={<Globe size={14} className="text-primary" />}
+        size="sm"
         searchable
-        className="h-7 text-sm font-medium px-2 border-0 bg-transparent hover:bg-muted"
       />
     </div>
   )

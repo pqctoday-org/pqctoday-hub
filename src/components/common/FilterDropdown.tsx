@@ -22,6 +22,8 @@ interface FilterDropdownProps {
   opaque?: boolean
   noContainer?: boolean
   variant?: 'default' | 'ghost'
+  /** 'sm' renders a compact inline trigger (h-7, no icon, tighter padding) */
+  size?: 'default' | 'sm'
   // Multi-select mode — provide both props to enable
   multiSelectedIds?: string[]
   onMultiSelect?: (ids: string[]) => void
@@ -40,6 +42,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
   opaque = false,
   noContainer = false,
   variant = 'default',
+  size = 'default',
   multiSelectedIds,
   onMultiSelect,
   searchable,
@@ -357,25 +360,39 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
       aria-expanded={isOpen}
       aria-labelledby={labelId}
       className={clsx(
-        'flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full min-w-[80px] md:min-w-[120px] min-h-[44px] justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground overflow-hidden',
-        variant === 'default' ? 'bg-muted/30 hover:bg-muted/50' : 'hover:bg-muted/50'
+        'flex items-center gap-1 rounded-md transition-colors justify-between focus:outline-none focus-visible:ring-2 focus-visible:ring-primary text-foreground overflow-hidden',
+        size === 'sm'
+          ? 'h-7 px-2 py-0 text-sm font-medium min-w-0 w-auto bg-muted/40 hover:bg-muted/70'
+          : 'px-4 py-2 w-full min-w-[80px] md:min-w-[120px] min-h-[44px] gap-2 rounded-lg',
+        size !== 'sm' &&
+          (variant === 'default' ? 'bg-muted/30 hover:bg-muted/50' : 'hover:bg-muted/50')
       )}
     >
-      <span className="flex items-center gap-2 min-w-0">
-        <span
-          className="flex items-center justify-center w-6 shrink-0 font-bold"
-          aria-hidden="true"
-        >
-          {isMulti ? multiButtonIcon : isDefaultSelected ? defaultIcon : selectedItem?.icon}
+      {size !== 'sm' && (
+        <span className="flex items-center gap-2 min-w-0">
+          <span
+            className="flex items-center justify-center w-6 shrink-0 font-bold"
+            aria-hidden="true"
+          >
+            {isMulti ? multiButtonIcon : isDefaultSelected ? defaultIcon : selectedItem?.icon}
+          </span>
+          <span className="truncate max-w-[120px]">
+            {isMulti ? multiButtonLabel : isDefaultSelected ? defaultLabel : selectedItem?.label}
+          </span>
         </span>
-        <span className="truncate max-w-[120px]">
+      )}
+      {size === 'sm' && (
+        <span className="truncate max-w-[160px] text-foreground">
           {isMulti ? multiButtonLabel : isDefaultSelected ? defaultLabel : selectedItem?.label}
         </span>
-      </span>
+      )}
       <ChevronDown
-        size={16}
+        size={size === 'sm' ? 13 : 16}
         aria-hidden="true"
-        className={clsx('transition-transform', isOpen && 'rotate-180')}
+        className={clsx(
+          'shrink-0 transition-transform text-muted-foreground',
+          isOpen && 'rotate-180'
+        )}
       />
     </Button>
   )
