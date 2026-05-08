@@ -1,0 +1,2720 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>KEM-based Authentication for TLS 1.3</title>
+<meta content="Thom Wiggers" name="author">
+<meta content="Sofía Celi" name="author">
+<meta content="Peter Schwabe" name="author">
+<meta content="Douglas Stebila" name="author">
+<meta content="Nick Sullivan" name="author">
+<meta content="
+       This document gives a construction for a Key Encapsulation Mechanism (KEM)-based
+authentication mechanism in TLS 1.3. This proposal authenticates peers via a key
+exchange protocol, using their long-term (KEM) public keys. 
+    " name="description">
+<meta content="xml2rfc 3.28.1" name="generator">
+<meta content="Internet-Draft" name="keyword">
+<meta content="draft-celi-wiggers-tls-authkem-05" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.28.1
+    Python 3.9.21
+    ConfigArgParse 1.7
+    google-i18n-address 3.1.1
+    intervaltree 3.1.0
+    Jinja2 3.1.6
+    lxml 5.3.1
+    platformdirs 4.3.7
+    pycountry 24.6.1
+    PyYAML 6.0.2
+    requests 2.32.3
+    setuptools 58.1.0
+    wcwidth 0.2.13
+    weasyprint 65.0
+-->
+<link href="draft-celi-wiggers-tls-authkem-05.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">/*
+
+  NOTE: Changes at the bottom of this file overrides some earlier settings.
+
+  Once the style has stabilized and has been adopted as an official RFC style,
+  this can be consolidated so that style settings occur only in one place, but
+  for now the contents of this file consists first of the initial CSS work as
+  provided to the RFC Formatter (xml2rfc) work, followed by itemized and
+  commented changes found necessary during the development of the v3
+  formatters.
+
+*/
+
+/* fonts */
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans'); /* Sans-serif */
+@import url('https://fonts.googleapis.com/css?family=Noto+Serif'); /* Serif (print) */
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono'); /* Monospace */
+
+:root {
+  --font-sans: 'Noto Sans', Arial, Helvetica, sans-serif;
+  --font-serif: 'Noto Serif', 'Times', 'Times New Roman', serif;
+  --font-mono: 'Roboto Mono', Courier, 'Courier New', monospace;
+}
+
+@viewport {
+  zoom: 1.0;
+}
+@-ms-viewport {
+  width: extend-to-zoom;
+  zoom: 1.0;
+}
+/* general and mobile first */
+html {
+}
+body {
+  max-width: 90%;
+  margin: 1.5em auto;
+  color: #222;
+  background-color: #fff;
+  font-size: 14px;
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  scroll-behavior: smooth;
+  overflow-wrap: break-word;
+}
+.ears {
+  display: none;
+}
+
+/* headings */
+#title, h1, h2, h3, h4, h5, h6 {
+  margin: 1em 0 0.5em;
+  font-weight: bold;
+  line-height: 1.3;
+}
+#title {
+  clear: both;
+  border-bottom: 1px solid #ddd;
+  margin: 0 0 0.5em 0;
+  padding: 1em 0 0.5em;
+}
+.author {
+  padding-bottom: 4px;
+}
+h1 {
+  font-size: 26px;
+  margin: 1em 0;
+}
+h2 {
+  font-size: 22px;
+  margin-top: -20px;  /* provide offset for in-page anchors */
+  padding-top: 33px;
+}
+h3 {
+  font-size: 18px;
+  margin-top: -36px;  /* provide offset for in-page anchors */
+  padding-top: 42px;
+}
+h4 {
+  font-size: 16px;
+  margin-top: -36px;  /* provide offset for in-page anchors */
+  padding-top: 42px;
+}
+h5, h6 {
+  font-size: 14px;
+}
+#n-copyright-notice {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 1em;
+  margin-bottom: 1em;
+}
+/* general structure */
+p {
+  padding: 0;
+  margin: 0 0 1em 0;
+  text-align: left;
+}
+div, span {
+  position: relative;
+}
+div {
+  margin: 0;
+}
+.alignRight.art-text {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  padding: 1em 1em 0;
+  margin-bottom: 1.5em;
+}
+.alignRight.art-text pre {
+  padding: 0;
+}
+.alignRight {
+  margin: 1em 0;
+}
+.alignRight > *:first-child {
+  border: none;
+  margin: 0;
+  float: right;
+  clear: both;
+}
+.alignRight > *:nth-child(2) {
+  clear: both;
+  display: block;
+  border: none;
+}
+svg {
+  display: block;
+}
+svg[font-family~="serif" i], svg [font-family~="serif" i] {
+  font-family: var(--font-serif);
+}
+svg[font-family~="sans-serif" i], svg [font-family~="sans-serif" i] {
+  font-family: var(--font-sans);
+}
+svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
+  font-family: var(--font-mono);
+}
+.alignCenter.art-text {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  padding: 1em 1em 0;
+  margin-bottom: 1.5em;
+}
+.alignCenter.art-text pre {
+  padding: 0;
+}
+.alignCenter {
+  margin: 1em 0;
+}
+.alignCenter > *:first-child {
+  display: table;
+  border: none;
+  margin: 0 auto;
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 1em 2em;
+}
+ol ol, ul ul, ol ul, ul ol {
+  margin-left: 1em;
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+.ulCompact li {
+  margin: 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+}
+ul.empty li, .ulEmpty li {
+  margin-top: 0.5em;
+}
+ul.ulBare, li.ulBare {
+  margin-left: 0em !important;
+}
+ul.compact, .ulCompact,
+ol.compact, .olCompact {
+  line-height: 100%;
+  margin: 0 0 0 2em;
+}
+
+/* definition lists */
+dl {
+}
+dl > dt {
+  float: left;
+  margin-right: 1em;
+}
+/* 
+dl.nohang > dt {
+  float: none;
+}
+*/
+dl > dd {
+  margin-bottom: .8em;
+  min-height: 1.3em;
+}
+dl.compact > dd, .dlCompact > dd {
+  margin-bottom: 0em;
+}
+dl > dd > dl {
+  margin-top: 0.5em;
+  margin-bottom: 0em;
+}
+
+/* links */
+a {
+  text-decoration: none;
+}
+a[href] {
+  color: #22e; /* Arlen: WCAG 2019 */
+}
+a[href]:hover {
+  background-color: #f2f2f2;
+}
+figcaption a[href],
+a[href].selfRef {
+  color: #222;
+}
+/* XXX probably not this:
+a.selfRef:hover {
+  background-color: transparent;
+  cursor: default;
+} */
+
+/* Figures */
+tt, code, pre {
+  background-color: #f9f9f9;
+  font-family: var(--font-mono);
+}
+pre {
+  border: 1px solid #eee;
+  margin: 0;
+  padding: 1em;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0;
+}
+figure blockquote {
+  margin: 0.8em 0.4em 0.4em;
+}
+figcaption {
+  font-style: italic;
+  margin: 0 0 1em 0;
+}
+@media screen {
+  pre {
+    overflow-x: auto;
+    max-width: 100%;
+    max-width: calc(100% - 22px);
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 1.2em 2em;
+}
+blockquote {
+  background-color: #f9f9f9;
+  color: #111; /* Arlen: WCAG 2019 */
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  margin: 1em 0;
+}
+blockquote > *:last-child {
+  margin-bottom: 0;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+.xref {
+  overflow-wrap: normal;
+}
+
+/* tables */
+table {
+  width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+  border: 1px solid #eee;
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.5em 0.75em;
+}
+th {
+  text-align: left;
+  background-color: #e9e9e9;
+}
+tr:nth-child(2n+1) > td {
+  background-color: #f5f5f5;
+}
+table caption {
+  font-style: italic;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+table p {
+  /* XXX to avoid bottom margin on table row signifiers. If paragraphs should
+     be allowed within tables more generally, it would be far better to select on a class. */
+  margin: 0;
+}
+
+/* pilcrow */
+a.pilcrow {
+  color: #666; /* Arlen: AHDJ 2019 */
+  text-decoration: none;
+  visibility: hidden;
+  user-select: none;
+  -ms-user-select: none;
+  -o-user-select:none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+@media screen {
+  aside:hover > a.pilcrow,
+  p:hover > a.pilcrow,
+  blockquote:hover > a.pilcrow,
+  div:hover > a.pilcrow,
+  li:hover > a.pilcrow,
+  pre:hover > a.pilcrow {
+    visibility: visible;
+  }
+  a.pilcrow:hover {
+    background-color: transparent;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid #eee;
+}
+.bcp14 {
+  font-variant: small-caps;
+}
+
+.role {
+  font-variant: all-small-caps;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: 0.9em;
+}
+#identifiers dt {
+  width: 3em;
+  clear: left;
+}
+#identifiers dd {
+  float: left;
+  margin-bottom: 0;
+}
+/* Fix PDF info block run off issue */
+@media print {
+  #identifiers dd {
+    max-width: 100%;
+  }
+}
+#identifiers .authors .author {
+  display: inline-block;
+  margin-right: 1.5em;
+}
+#identifiers .authors .org {
+  font-style: italic;
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #666; /* Arlen: WCAG 2019 */
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+}
+.docInfo .prepared {
+  float: left;
+}
+.docInfo .prepared {
+  float: right;
+}
+
+/* table of contents */
+#toc  {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+}
+nav.toc ul {
+  margin: 0 0.5em 0 0;
+  padding: 0;
+  list-style: none;
+}
+nav.toc li {
+  line-height: 1.3em;
+  margin: 0.75em 0;
+  padding-left: 1.2em;
+  text-indent: -1.2em;
+}
+/* references */
+.references dt {
+  text-align: right;
+  font-weight: bold;
+  min-width: 7em;
+}
+.references dd {
+  margin-left: 8em;
+  overflow: auto;
+}
+
+.refInstance {
+  margin-bottom: 1.25em;
+}
+
+.refSubseries {
+  margin-bottom: 1.25em;
+}
+
+.references .ascii {
+  margin-bottom: 0.25em;
+}
+
+/* index */
+.index ul {
+  margin: 0 0 0 1em;
+  padding: 0;
+  list-style: none;
+}
+.index ul ul {
+  margin: 0;
+}
+.index li {
+  margin: 0;
+  text-indent: -2em;
+  padding-left: 2em;
+  padding-bottom: 5px;
+}
+.indexIndex {
+  margin: 0.5em 0 1em;
+}
+.index a {
+  font-weight: 700;
+}
+/* make the index two-column on all but the smallest screens */
+@media (min-width: 600px) {
+  .index ul {
+    -moz-column-count: 2;
+    -moz-column-gap: 20px;
+  }
+  .index ul ul {
+    -moz-column-count: 1;
+    -moz-column-gap: 0;
+  }
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  margin: 1em 0;
+}
+
+address.vcard .nameRole {
+  font-weight: 700;
+  margin-left: 0;
+}
+address.vcard .label {
+  font-family: var(--font-sans);
+  margin: 0.5em 0;
+}
+address.vcard .type {
+  display: none;
+}
+.alternative-contact {
+  margin: 1.5em 0 1em;
+}
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+
+/* temporary notes */
+.rfcEditorRemove::before {
+  position: absolute;
+  top: 0.2em;
+  right: 0.2em;
+  padding: 0.2em;
+  content: "The RFC Editor will remove this note";
+  color: #9e2a00; /* Arlen: WCAG 2019 */
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+}
+.rfcEditorRemove {
+  position: relative;
+  padding-top: 1.8em;
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+  border-radius: 3px;
+}
+.cref {
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+/* alternative layout for smaller screens */
+@media screen and (max-width: 1023px) {
+  body {
+    padding-top: 2em;
+  }
+  #title {
+    padding: 1em 0;
+  }
+  h1 {
+    font-size: 24px;
+  }
+  h2 {
+    font-size: 20px;
+    margin-top: -18px;  /* provide offset for in-page anchors */
+    padding-top: 38px;
+  }
+  #identifiers dd {
+    max-width: 60%;
+  }
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 0;
+    margin: 0;
+    background-color: inherit;
+    border-bottom: 1px solid #ccc;
+  }
+  #toc h2 {
+    margin: -1px 0 0 0;
+    padding: 4px 0 4px 6px;
+    padding-right: 1em;
+    min-width: 190px;
+    font-size: 1.1em;
+    text-align: right;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+  }
+  #toc h2::before { /* css hamburger */
+    float: right;
+    position: relative;
+    width: 1em;
+    height: 1px;
+    left: -164px;
+    margin: 6px 0 0 0;
+    background: white none repeat scroll 0 0;
+    box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+    content: "";
+  }
+  #toc nav {
+    display: none;
+    padding: 0.5em 1em 1em;
+    overflow: auto;
+    height: calc(100vh - 48px);
+    border-left: 1px solid #ddd;
+  }
+}
+
+/* alternative layout for wide screens */
+@media screen and (min-width: 1024px) {
+  body {
+    max-width: 724px;
+    margin: 42px auto;
+    padding-left: 1.5em;
+    padding-right: 29em;
+  }
+  #toc {
+    position: fixed;
+    top: 42px;
+    right: 42px;
+    width: 25%;
+    margin: 0;
+    padding: 0 1em;
+    z-index: 1;
+  }
+  #toc h2 {
+    border-top: none;
+    border-bottom: 1px solid #ddd;
+    font-size: 1em;
+    font-weight: normal;
+    margin: 0;
+    padding: 0.25em 1em 1em 0;
+  }
+  #toc nav {
+    display: block;
+    height: calc(90vh - 84px);
+    bottom: 0;
+    padding: 0.5em 0 0;
+    overflow: auto;
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc, #n-introduction {
+    page-break-before: always;
+  }
+  #toc {
+    border-top: none;
+    padding-top: 0;
+  }
+  figure, pre {
+    page-break-inside: avoid;
+  }
+  figure {
+    overflow: scroll;
+  }
+  .breakable pre {
+    break-inside: auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  h2+*, h3+*, h4+*, h5+*, h6+* {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+/* This is commented out here, as the string-set: doesn't
+   pass W3C validation currently */
+/*
+.ears thead .left {
+  string-set: ears-top-left content();
+}
+
+.ears thead .center {
+  string-set: ears-top-center content();
+}
+
+.ears thead .right {
+  string-set: ears-top-right content();
+}
+
+.ears tfoot .left {
+  string-set: ears-bottom-left content();
+}
+
+.ears tfoot .center {
+  string-set: ears-bottom-center content();
+}
+
+.ears tfoot .right {
+  string-set: ears-bottom-right content();
+}
+*/
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+  /* The following is commented out here, but set appropriately by in code, as
+     the content depends on the document */
+  /*
+  @top-left {
+    content: 'Internet-Draft';
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-left {
+    content: string(ears-top-left);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-center {
+    content: string(ears-top-center);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-right {
+    content: string(ears-top-right);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @bottom-left {
+    content: string(ears-bottom-left);
+    vertical-align: top;
+    border-top: solid 1px #ccc;
+  }
+  @bottom-center {
+    content: string(ears-bottom-center);
+    vertical-align: top;
+    border-top: solid 1px #ccc;
+  }
+  @bottom-right {
+      content: '[Page ' counter(page) ']';
+      vertical-align: top;
+      border-top: solid 1px #ccc;
+  }
+  */
+
+}
+
+/* Changes introduced to fix issues found during implementation */
+/* Make sure links are clickable even if overlapped by following H* */
+a {
+  z-index: 2;
+}
+/* Separate body from document info even without intervening H1 */
+section {
+  clear: both;
+}
+
+
+/* Top align author divs, to avoid names without organization dropping level with org names */
+.author {
+  vertical-align: top;
+}
+
+/* Leave room in document info to show Internet-Draft on one line */
+#identifiers dt {
+  width: 8em;
+}
+
+/* Don't waste quite as much whitespace between label and value in doc info */
+#identifiers dd {
+  margin-left: 1em;
+}
+
+/* Give floating toc a background color (needed when it's a div inside section */
+#toc {
+  background-color: white;
+}
+
+/* Make the collapsed ToC header render white on gray also when it's a link */
+@media screen and (max-width: 1023px) {
+  #toc h2 a,
+  #toc h2 a:link,
+  #toc h2 a:focus,
+  #toc h2 a:hover,
+  #toc a.toplink,
+  #toc a.toplink:hover {
+    color: white;
+    background-color: #444;
+    text-decoration: none;
+  }
+}
+
+/* Give the bottom of the ToC some whitespace */
+@media screen and (min-width: 1024px) {
+  #toc {
+    padding: 0 0 1em 1em;
+  }
+}
+
+/* Style section numbers with more space between number and title */
+.section-number {
+  padding-right: 0.5em;
+}
+
+/* prevent monospace from becoming overly large */
+tt, code, pre {
+  font-size: 95%;
+}
+
+/* Fix the height/width aspect for ascii art*/
+.sourcecode pre,
+.art-text pre {
+  line-height: 1.12;
+}
+
+
+/* Add styling for a link in the ToC that points to the top of the document */
+a.toplink {
+  float: right;
+  margin-right: 0.5em;
+}
+
+/* Fix the dl styling to match the RFC 7992 attributes */
+dl > dt,
+dl.dlParallel > dt {
+  float: left;
+  margin-right: 1em;
+}
+dl.dlNewline > dt {
+  float: none;
+}
+
+/* Provide styling for table cell text alignment */
+table td.text-left,
+table th.text-left {
+  text-align: left;
+}
+table td.text-center,
+table th.text-center {
+  text-align: center;
+}
+table td.text-right,
+table th.text-right {
+  text-align: right;
+}
+
+/* Make the alternative author contact information look less like just another
+   author, and group it closer with the primary author contact information */
+.alternative-contact {
+  margin: 0.5em 0 0.25em 0;
+}
+address .non-ascii {
+  margin: 0 0 0 2em;
+}
+
+/* With it being possible to set tables with alignment
+  left, center, and right, { width: 100%; } does not make sense */
+table {
+  width: auto;
+}
+
+/* Avoid reference text that sits in a block with very wide left margin,
+   because of a long floating dt label.*/
+.references dd {
+  overflow: visible;
+}
+
+/* Control caption placement */
+caption {
+  caption-side: bottom;
+}
+
+/* Limit the width of the author address vcard, so names in right-to-left
+   script don't end up on the other side of the page. */
+
+address.vcard {
+  max-width: 30em;
+  margin-right: auto;
+}
+
+/* For address alignment dependent on LTR or RTL scripts */
+address div.left {
+  text-align: left;
+}
+address div.right {
+  text-align: right;
+}
+
+/* Provide table alignment support.  We can't use the alignX classes above
+   since they do unwanted things with caption and other styling. */
+table.right {
+ margin-left: auto;
+ margin-right: 0;
+}
+table.center {
+ margin-left: auto;
+ margin-right: auto;
+}
+table.left {
+ margin-left: 0;
+ margin-right: auto;
+}
+
+/* Give the table caption label the same styling as the figcaption */
+caption a[href] {
+  color: #222;
+}
+
+@media print {
+  .toplink {
+    display: none;
+  }
+
+  /* avoid overwriting the top border line with the ToC header */
+  #toc {
+    padding-top: 1px;
+  }
+
+  /* Avoid page breaks inside dl and author address entries */
+  .vcard {
+    page-break-inside: avoid;
+  }
+
+}
+/* Tweak the bcp14 keyword presentation */
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+/* Tweak the invisible space above H* in order not to overlay links in text above */
+ h2 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 31px;
+ }
+ h3 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 24px;
+ }
+ h4 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 24px;
+ }
+/* Float artwork pilcrow to the right */
+@media screen {
+  .artwork a.pilcrow {
+    display: block;
+    line-height: 0.7;
+    margin-top: 0.15em;
+  }
+}
+/* Make pilcrows on dd visible */
+@media screen {
+  dd:hover > a.pilcrow {
+    visibility: visible;
+  }
+}
+/* Make the placement of figcaption match that of a table's caption
+   by removing the figure's added bottom margin */
+.alignLeft.art-text,
+.alignCenter.art-text,
+.alignRight.art-text {
+   margin-bottom: 0;
+}
+.alignLeft,
+.alignCenter,
+.alignRight {
+  margin: 1em 0 0 0;
+}
+/* In print, the pilcrow won't show on hover, so prevent it from taking up space,
+   possibly even requiring a new line */
+@media print {
+  a.pilcrow {
+    display: none;
+  }
+}
+/* Styling for the external metadata */
+div#external-metadata {
+  background-color: #eee;
+  padding: 0.5em;
+  margin-bottom: 0.5em;
+  display: none;
+}
+div#internal-metadata {
+  padding: 0.5em;                       /* to match the external-metadata padding */
+}
+/* Styling for title RFC Number */
+h1#rfcnum {
+  clear: both;
+  margin: 0 0 -1em;
+  padding: 1em 0 0 0;
+}
+/* Make .olPercent look the same as <ol><li> */
+dl.olPercent > dd {
+  margin-bottom: 0.25em;
+  min-height: initial;
+}
+/* Give aside some styling to set it apart */
+aside {
+  border-left: 1px solid #ddd;
+  margin: 1em 0 1em 2em;
+  padding: 0.2em 2em;
+}
+aside > dl,
+aside > ol,
+aside > ul,
+aside > table,
+aside > p {
+  margin-bottom: 0.5em;
+}
+/* Additional page break settings */
+@media print {
+  figcaption, table caption {
+    page-break-before: avoid;
+  }
+}
+/* Font size adjustments for print */
+@media print {
+  body  { font-size: 10pt;      line-height: normal; max-width: 96%; }
+  h1    { font-size: 1.72em;    padding-top: 1.5em; } /* 1*1.2*1.2*1.2 */
+  h2    { font-size: 1.44em;    padding-top: 1.5em; } /* 1*1.2*1.2 */
+  h3    { font-size: 1.2em;     padding-top: 1.5em; } /* 1*1.2 */
+  h4    { font-size: 1em;       padding-top: 1.5em; }
+  h5, h6 { font-size: 1em;      margin: initial; padding: 0.5em 0 0.3em; }
+}
+/* Sourcecode margin in print, when there's no pilcrow */
+@media print {
+  .artwork,
+  .artwork > pre,
+  .sourcecode {
+    margin-bottom: 1em;
+  }
+}
+/* Avoid narrow tables forcing too narrow table captions, which may render badly */
+table {
+  min-width: 20em;
+}
+/* ol type a */
+ol.type-a { list-style-type: lower-alpha; }
+ol.type-A { list-style-type: upper-alpha; }
+ol.type-i { list-style-type: lower-roman; }
+ol.type-I { list-style-type: upper-roman; }
+/* Apply the print table and row borders in general, on request from the RPC,
+and increase the contrast between border and odd row background slightly */
+table {
+  border: 1px solid #ddd;
+}
+td {
+  border-top: 1px solid #ddd;
+}
+tr {
+  break-inside: avoid;
+}
+tr:nth-child(2n+1) > td {
+  background-color: #f8f8f8;
+}
+/* Use style rules to govern display of the TOC. */
+@media screen and (max-width: 1023px) {
+  #toc nav { display: none; }
+  #toc.active nav { display: block; }
+}
+/* Add support for keepWithNext */
+.keepWithNext {
+  break-after: avoid-page;
+  break-after: avoid-page;
+}
+/* Add support for keepWithPrevious */
+.keepWithPrevious {
+  break-before: avoid-page;
+}
+/* Change the approach to avoiding breaks inside artwork etc. */
+figure, pre, table, .artwork, .sourcecode  {
+  break-before: auto;
+  break-after: auto;
+}
+/* Avoid breaks between <dt> and <dd> */
+dl {
+  break-before: auto;
+  break-inside: auto;
+}
+dt {
+  break-before: auto;
+  break-after: avoid-page;
+}
+dd {
+  break-before: avoid-page;
+  break-after: auto;
+  orphans: 3;
+  widows: 3
+}
+span.break, dd.break {
+  margin-bottom: 0;
+  min-height: 0;
+  break-before: auto;
+  break-inside: auto;
+  break-after: auto;
+}
+/* Undo break-before ToC */
+@media print {
+  #toc {
+    break-before: auto;
+  }
+}
+/* Text in compact lists should not get extra bottom margin space,
+   since that would makes the list not compact */
+ul.compact p, .ulCompact p,
+ol.compact p, .olCompact p {
+ margin: 0;
+}
+/* But the list as a whole needs the extra space at the end */
+section ul.compact,
+section .ulCompact,
+section ol.compact,
+section .olCompact {
+  margin-bottom: 1em;                    /* same as p not within ul.compact etc. */
+}
+/* The tt and code background above interferes with for instance table cell
+   backgrounds.  Changed to something a bit more selective. */
+tt, code {
+  background-color: transparent;
+}
+p tt, p code, li tt, li code, dt tt, dt code {
+  background-color: #f8f8f8;
+}
+/* Tweak the pre margin -- 0px doesn't come out well */
+pre {
+   margin-top: 0.5px;
+}
+/* Tweak the compact list text */
+ul.compact, .ulCompact,
+ol.compact, .olCompact,
+dl.compact, .dlCompact {
+  line-height: normal;
+}
+/* Don't add top margin for nested lists */
+li > ul, li > ol, li > dl,
+dd > ul, dd > ol, dd > dl,
+dl > dd > dl {
+  margin-top: initial;
+}
+/* Elements that should not be rendered on the same line as a <dt> */
+/* This should match the element list in writer.text.TextWriter.render_dl() */
+dd > div.artwork:first-child,
+dd > aside:first-child,
+dd > figure:first-child,
+dd > ol:first-child,
+dd > div.sourcecode:first-child,
+dd > table:first-child,
+dd > ul:first-child {
+  clear: left;
+}
+/* fix for weird browser behaviour when <dd/> is empty */
+dt+dd:empty::before{
+  content: "\00a0";
+}
+/* Make paragraph spacing inside <li> smaller than in body text, to fit better within the list */
+li > p {
+  margin-bottom: 0.5em
+}
+/* Don't let p margin spill out from inside list items */
+li > p:last-of-type:only-child {
+  margin-bottom: 0;
+}
+</style>
+<link href="rfc-local.css" rel="stylesheet" type="text/css">
+<script type="application/javascript">async function addMetadata(){try{const e=document.styleSheets[0].cssRules;for(let t=0;t<e.length;t++)if(/#identifiers/.exec(e[t].selectorText)){const a=e[t].cssText.replace("#identifiers","#external-updates");document.styleSheets[0].insertRule(a,document.styleSheets[0].cssRules.length)}}catch(e){console.log(e)}const e=document.getElementById("external-metadata");if(e)try{var t,a="",o=function(e){const t=document.getElementsByTagName("meta");for(let a=0;a<t.length;a++)if(t[a].getAttribute("name")===e)return t[a].getAttribute("content");return""}("rfc.number");if(o){t="https://www.rfc-editor.org/rfc/rfc"+o+".json";try{const e=await fetch(t);a=await e.json()}catch(e){t=document.URL.indexOf("html")>=0?document.URL.replace(/html$/,"json"):document.URL+".json";const o=await fetch(t);a=await o.json()}}if(!a)return;e.style.display="block";const s="",d="https://datatracker.ietf.org/doc",n="https://datatracker.ietf.org/ipr/search",c="https://www.rfc-editor.org/info",l=a.doc_id.toLowerCase(),i=a.doc_id.slice(0,3).toLowerCase(),f=a.doc_id.slice(3).replace(/^0+/,""),u={status:"Status",obsoletes:"Obsoletes",obsoleted_by:"Obsoleted By",updates:"Updates",updated_by:"Updated By",see_also:"See Also",errata_url:"Errata"};let h="<dl style='overflow:hidden' id='external-updates'>";["status","obsoletes","obsoleted_by","updates","updated_by","see_also","errata_url"].forEach(e=>{if("status"==e){a[e]=a[e].toLowerCase();var t=a[e].split(" "),o=t.length,w="",p=1;for(let e=0;e<o;e++)p<o?w=w+r(t[e])+" ":w+=r(t[e]),p++;a[e]=w}else if("obsoletes"==e||"obsoleted_by"==e||"updates"==e||"updated_by"==e){var g,m="",b=1;g=a[e].length;for(let t=0;t<g;t++)a[e][t]&&(a[e][t]=String(a[e][t]).toLowerCase(),m=b<g?m+"<a href='"+s+"/rfc/".concat(a[e][t])+"'>"+a[e][t].slice(3)+"</a>, ":m+"<a href='"+s+"/rfc/".concat(a[e][t])+"'>"+a[e][t].slice(3)+"</a>",b++);a[e]=m}else if("see_also"==e){var y,L="",C=1;y=a[e].length;for(let t=0;t<y;t++)if(a[e][t]){a[e][t]=String(a[e][t]);var _=a[e][t].slice(0,3),v=a[e][t].slice(3).replace(/^0+/,"");L=C<y?"RFC"!=_?L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+_+" "+v+"</a>, ":L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+v+"</a>, ":"RFC"!=_?L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+_+" "+v+"</a>":L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+v+"</a>",C++}a[e]=L}else if("errata_url"==e){var R="";R=a[e]?R+"<a href='"+a[e]+"'>Errata exist</a> | <a href='"+d+"/"+l+"'>Datatracker</a>| <a href='"+n+"/?"+i+"="+f+"&submit="+i+"'>IPR</a> | <a href='"+c+"/"+l+"'>Info page</a>":"<a href='"+d+"/"+l+"'>Datatracker</a> | <a href='"+n+"/?"+i+"="+f+"&submit="+i+"'>IPR</a> | <a href='"+c+"/"+l+"'>Info page</a>",a[e]=R}""!=a[e]?"Errata"==u[e]?h+=`<dt>More info:</dt><dd>${a[e]}</dd>`:h+=`<dt>${u[e]}:</dt><dd>${a[e]}</dd>`:"Errata"==u[e]&&(h+=`<dt>More info:</dt><dd>${a[e]}</dd>`)}),h+="</dl>",e.innerHTML=h}catch(e){console.log(e)}else console.log("Could not locate metadata <div> element");function r(e){return e.charAt(0).toUpperCase()+e.slice(1)}}window.removeEventListener("load",addMetadata),window.addEventListener("load",addMetadata);</script>
+</head>
+<body class="xml2rfc">
+<script src="metadata.min.js"></script>
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">AuthKEM</td>
+<td class="right">April 2025</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Wiggers, et al.</td>
+<td class="center">Expires 24 October 2025</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">TLS Working Group</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-celi-wiggers-tls-authkem-05</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2025-04-22" class="published">22 April 2025</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Informational</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2025-10-24">24 October 2025</time></dd>
+<dt class="label-authors">Authors:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">T. Wiggers</div>
+<div class="org">PQShield</div>
+</div>
+<div class="author">
+      <div class="author-name">S. Celi</div>
+<div class="org">Brave Software</div>
+</div>
+<div class="author">
+      <div class="author-name">P. Schwabe</div>
+<div class="org">Radboud University and MPI-SP</div>
+</div>
+<div class="author">
+      <div class="author-name">D. Stebila</div>
+<div class="org">University of Waterloo</div>
+</div>
+<div class="author">
+      <div class="author-name">N. Sullivan</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">KEM-based Authentication for TLS 1.3</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">This document gives a construction for a Key Encapsulation Mechanism (KEM)-based
+authentication mechanism in TLS 1.3. This proposal authenticates peers via a key
+exchange protocol, using their long-term (KEM) public keys.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+</section>
+<section class="note rfcEditorRemove" id="section-note.1">
+      <h2 id="name-about-this-document">
+<a href="#name-about-this-document" class="section-name selfRef">About This Document</a>
+      </h2>
+<p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">
+        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-celi-wiggers-tls-authkem/">https://datatracker.ietf.org/doc/draft-celi-wiggers-tls-authkem/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+<p id="section-note.1-3">
+        Discussion of this document takes place on the
+        tlswg Working Group mailing list (<span><a href="mailto:tls@ietf.org">mailto:tls@ietf.org</a></span>),
+        which is archived at <span><a href="https://mailarchive.ietf.org/arch/browse/tls/">https://mailarchive.ietf.org/arch/browse/tls/</a></span>.
+        Subscribe at <span><a href="https://www.ietf.org/mailman/listinfo/tls/">https://www.ietf.org/mailman/listinfo/tls/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+<p id="section-note.1-4">Source for this draft and an issue tracker can be found at
+        <span><a href="https://github.com/kemtls/draft-celi-wiggers-tls-authkem">https://github.com/kemtls/draft-celi-wiggers-tls-authkem</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 24 October 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2025 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-revision-history" class="internal xref">Revision history</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1.2.1">
+                    <p id="section-toc.1-1.1.2.1.2.1.1" class="keepWithNext"><a href="#section-1.1.1" class="auto internal xref">1.1.1</a>.  <a href="#name-revision-2" class="internal xref">Revision 2</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2">
+                <p id="section-toc.1-1.1.2.2.1" class="keepWithNext"><a href="#section-1.2" class="auto internal xref">1.2</a>.  <a href="#name-using-key-exchange-instead-" class="internal xref">Using key exchange instead of signatures for authentication</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.3">
+                <p id="section-toc.1-1.1.2.3.1"><a href="#section-1.3" class="auto internal xref">1.3</a>.  <a href="#name-evaluation-of-handshake-siz" class="internal xref">Evaluation of handshake sizes</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.4">
+                <p id="section-toc.1-1.1.2.4.1"><a href="#section-1.4" class="auto internal xref">1.4</a>.  <a href="#name-related-work" class="internal xref">Related work</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.4.2.1">
+                    <p id="section-toc.1-1.1.2.4.2.1.1"><a href="#section-1.4.1" class="auto internal xref">1.4.1</a>.  <a href="#name-optls" class="internal xref">OPTLS</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.4.2.2">
+                    <p id="section-toc.1-1.1.2.4.2.2.1"><a href="#section-1.4.2" class="auto internal xref">1.4.2</a>.  <a href="#name-compressing-certificates-an" class="internal xref">Compressing certificates and certificate chains</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.5">
+                <p id="section-toc.1-1.1.2.5.1"><a href="#section-1.5" class="auto internal xref">1.5</a>.  <a href="#name-organization" class="internal xref">Organization</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and definitions</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1">
+                <p id="section-toc.1-1.2.2.1.1"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-terminology" class="internal xref">Terminology</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.2">
+                <p id="section-toc.1-1.2.2.2.1"><a href="#section-2.2" class="auto internal xref">2.2</a>.  <a href="#name-key-encapsulation-mechanism" class="internal xref">Key Encapsulation Mechanisms</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-full-15-rtt-authkem-handsha" class="internal xref">Full 1.5-RTT AuthKEM Handshake Protocol</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
+                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-client-authentication" class="internal xref">Client authentication</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-relevant-handshake-messages" class="internal xref">Relevant handshake messages</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-overview-of-key-differences" class="internal xref">Overview of key differences with RFC8446 TLS 1.3</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4">
+                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-implicit-and-explicit-authe" class="internal xref">Implicit and explicit authentication</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.5">
+                <p id="section-toc.1-1.3.2.5.1"><a href="#section-3.5" class="auto internal xref">3.5</a>.  <a href="#name-authenticating-certificater" class="internal xref">Authenticating <code>CertificateRequest</code></a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-implementation" class="internal xref">Implementation</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-negotiation-of-authkem" class="internal xref">Negotiation of AuthKEM</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-protocol-messages" class="internal xref">Protocol messages</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3">
+                <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="auto internal xref">4.3</a>.  <a href="#name-cryptographic-computations" class="internal xref">Cryptographic computations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3.2.1">
+                    <p id="section-toc.1-1.4.2.3.2.1.1"><a href="#section-4.3.1" class="auto internal xref">4.3.1</a>.  <a href="#name-key-schedule-for-full-authk" class="internal xref">Key schedule for full AuthKEM handshakes</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3.2.2">
+                    <p id="section-toc.1-1.4.2.3.2.2.1"><a href="#section-4.3.2" class="auto internal xref">4.3.2</a>.  <a href="#name-computations-of-kem-shared-" class="internal xref">Computations of KEM shared secrets</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.3.2.3">
+                    <p id="section-toc.1-1.4.2.3.2.3.1"><a href="#section-4.3.3" class="auto internal xref">4.3.3</a>.  <a href="#name-explicit-authentication-mes" class="internal xref">Explicit Authentication Messages</a></p>
+</li>
+                </ul>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-implicit-authentication" class="internal xref">Implicit authentication</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
+                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-authentication-of-certifica" class="internal xref">Authentication of Certificate Request</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3">
+                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-other-security-consideratio" class="internal xref">Other security considerations</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-open-points-of-discussion" class="internal xref">Open points of discussion</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
+                <p id="section-toc.1-1.7.2.1.1"><a href="#appendix-A.1" class="auto internal xref">A.1</a>.  <a href="#name-authentication-concerns-for" class="internal xref">Authentication concerns for client authentication requests.</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
+                <p id="section-toc.1-1.7.2.2.1"><a href="#appendix-A.2" class="auto internal xref">A.2</a>.  <a href="#name-interaction-with-signing-ce" class="internal xref">Interaction with signing certificates</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-acknowledgements" class="internal xref">Acknowledgements</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#appendix-C" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="introduction">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-1-1"><strong>Note:</strong> This is a work-in-progress draft. We welcome discussion, feedback and
+contributions through the IETF TLS working group mailing list or directly on
+GitHub. Any code points indicated by this draft are for experiments only, and
+should not be expected to be stable.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">This document gives a construction for KEM-based authentication in TLS 1.3
+<span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>. Authentication happens via asymmetric cryptography by the usage of
+KEMs advertised as the long-term KEM public keys in the Certificate.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">TLS 1.3 is in essence a signed key exchange protocol (if using certificate-based
+authentication). Authentication in TLS 1.3 is achieved by signing the handshake
+transcript with digital signatures algorithms. KEM-based authentication provides
+authentication by deriving a shared secret that is encapsulated against the
+public key contained in the Certificate. Only the holder of the private key
+corresponding to the certificate's public key can derive the same shared secret
+and thus decrypt its peer's messages.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">This approach is appropriate for endpoints that have KEM public keys. Though
+this is currently rare, certificates can be issued with (EC)DH public keys as
+specified for instance in <span>[<a href="#RFC8410" class="cite xref">RFC8410</a>]</span>, or using a delegation mechanism, such as
+delegated credentials <span>[<a href="#I-D.ietf-tls-subcerts" class="cite xref">I-D.ietf-tls-subcerts</a>]</span>.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-5">In this proposal, we build on <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>. This standard currently only covers
+Diffie-Hellman based KEMs, but the first post-quantum algorithms have already
+been put forward <span>[<a href="#I-D.westerbaan-cfrg-hpke-xyber768d00" class="cite xref">I-D.westerbaan-cfrg-hpke-xyber768d00</a>]</span>. This proposal uses
+ML-KEM <span>[<a href="#FIPS203" class="cite xref">FIPS203</a>]</span> <span>[<a href="#I-D.cfrg-schwabe-kyber" class="cite xref">I-D.cfrg-schwabe-kyber</a>]</span>, the first selected algorithm for
+key exchange in the NIST post-quantum standardization project <span>[<a href="#NISTPQC" class="cite xref">NISTPQC</a>]</span>.
+<span>[<a href="#I-D.ietf-lamps-kyber-certificates" class="cite xref">I-D.ietf-lamps-kyber-certificates</a>]</span> describes how ML-KEM keys can be encoded
+in X.509 certificates.<a href="#section-1-5" class="pilcrow">¶</a></p>
+<div id="revision-history">
+<section id="section-1.1">
+        <h3 id="name-revision-history">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-revision-history" class="section-name selfRef">Revision history</a>
+        </h3>
+<p id="section-1.1-1"><strong>This section should be removed prior to publication of a final version of this
+document.</strong><a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1-2.1">
+            <p id="section-1.1-2.1.1">Revision draft-celi-wiggers-tls-authkem-05<a href="#section-1.1-2.1.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1-2.1.2.1">
+                <p id="section-1.1-2.1.2.1.1">Bumped version<a href="#section-1.1-2.1.2.1.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</li>
+          <li class="normal" id="section-1.1-2.2">
+            <p id="section-1.1-2.2.1">Revision draft-celi-wiggers-tls-authkem-04<a href="#section-1.1-2.2.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1-2.2.2.1">
+                <p id="section-1.1-2.2.2.1.1">Some updates to ML-KEM<a href="#section-1.1-2.2.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1-2.2.2.2">
+                <p id="section-1.1-2.2.2.2.1">Fixed some links<a href="#section-1.1-2.2.2.2.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</li>
+          <li class="normal" id="section-1.1-2.3">
+            <p id="section-1.1-2.3.1">Revision draft-celi-wiggers-tls-authkem-03<a href="#section-1.1-2.3.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1-2.3.2.1">
+                <p id="section-1.1-2.3.2.1.1">Assigned experimental code points<a href="#section-1.1-2.3.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1-2.3.2.2">
+                <p id="section-1.1-2.3.2.2.1">Re-worked HPKE computation<a href="#section-1.1-2.3.2.2.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</li>
+          <li class="normal" id="section-1.1-2.4">
+            <p id="section-1.1-2.4.1">Revision draft-celi-wiggers-tls-authkem-02<a href="#section-1.1-2.4.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1-2.4.2.1">
+                <p id="section-1.1-2.4.2.1.1">Split PSK mechanism off into <span>[<a href="#I-D.wiggers-tls-authkem-psk" class="cite xref">I-D.wiggers-tls-authkem-psk</a>]</span><a href="#section-1.1-2.4.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1-2.4.2.2">
+                <p id="section-1.1-2.4.2.2.1">Editing<a href="#section-1.1-2.4.2.2.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</li>
+          <li class="normal" id="section-1.1-2.5">
+            <p id="section-1.1-2.5.1">Revision draft-celi-wiggers-tls-authkem-01<a href="#section-1.1-2.5.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1-2.5.2.1">
+                <p id="section-1.1-2.5.2.1.1">Significant Editing<a href="#section-1.1-2.5.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-1.1-2.5.2.2">
+                <p id="section-1.1-2.5.2.2.1">Use HPKE context<a href="#section-1.1-2.5.2.2.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</li>
+          <li class="normal" id="section-1.1-2.6">
+            <p id="section-1.1-2.6.1">Revision draft-celi-wiggers-tls-authkem-00<a href="#section-1.1-2.6.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.1-2.6.2.1">
+                <p id="section-1.1-2.6.2.1.1">Initial version<a href="#section-1.1-2.6.2.1.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+</li>
+        </ul>
+<div id="revision-2">
+<section id="section-1.1.1">
+          <h4 id="name-revision-2">
+<a href="#section-1.1.1" class="section-number selfRef">1.1.1. </a><a href="#name-revision-2" class="section-name selfRef">Revision 2</a>
+        </h4>
+</section>
+</div>
+</section>
+</div>
+<div id="using-key-exchange-instead-of-signatures-for-authentication">
+<section id="section-1.2">
+        <h3 id="name-using-key-exchange-instead-">
+<a href="#section-1.2" class="section-number selfRef">1.2. </a><a href="#name-using-key-exchange-instead-" class="section-name selfRef">Using key exchange instead of signatures for authentication</a>
+        </h3>
+<p id="section-1.2-1">The elliptic-curve and finite-field-based key exchange and signature algorithms
+that are currently widely used are very similar in sizes for public keys,
+ciphertexts and signatures. As an example, RSA signatures are famously "just"
+RSA encryption backwards.<a href="#section-1.2-1" class="pilcrow">¶</a></p>
+<p id="section-1.2-2">This changes in the post-quantum setting. Post-quantum key exchange and
+signature algorithms have significant differences in implementation, performance
+characteristics, and key and signature sizes.<a href="#section-1.2-2" class="pilcrow">¶</a></p>
+<p id="section-1.2-3">This also leads to increases in code size: For example, implementing highly
+efficient polynomial multiplication for post-quantum key-encapsulation mechanism
+ML-KEM and signature scheme ML-DSA <span>[<a href="#FIPS204" class="cite xref">FIPS204</a>]</span> requires significantly
+different approaches, even though the algorithms are related <span>[<a href="#K22" class="cite xref">K22</a>]</span>.<a href="#section-1.2-3" class="pilcrow">¶</a></p>
+<p id="section-1.2-4">Using the protocol proposed in this draft allows to reduce the amount of data
+exchanged for handshake authentication. It also allows to re-use the
+implementation that is used for ephemeral key exchange for authentication, as
+KEM operations replace signing. This decreases the code size requirements, which
+is especially relevant to protected implementations. Finally, KEM operations may
+be more efficient than signing, which might especially affect embedded
+platforms.<a href="#section-1.2-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="evaluation-of-handshake-sizes">
+<section id="section-1.3">
+        <h3 id="name-evaluation-of-handshake-siz">
+<a href="#section-1.3" class="section-number selfRef">1.3. </a><a href="#name-evaluation-of-handshake-siz" class="section-name selfRef">Evaluation of handshake sizes</a>
+        </h3>
+<p id="section-1.3-1"><strong>Should be removed before publishing</strong><a href="#section-1.3-1" class="pilcrow">¶</a></p>
+<p id="section-1.3-2">In the following table, we compare the sizes of TLS 1.3- and AuthKEM-based
+handshakes. We give the transmission requirements for handshake authentication
+(public key + signature), and certificate chain (intermediate CA certificate
+public key and signature + root CA signature). For clarity, we are not listing
+post-quantum/traditional hybrid algorithms; we also omit mechanisms such as
+Certificate Transparency <span>[<a href="#RFC6962" class="cite xref">RFC6962</a>]</span> or OCSP stapling <span>[<a href="#RFC6960" class="cite xref">RFC6960</a>]</span>. We use
+ML-KEM-768 instead of the smaller ML-KEM-512 parameter set, as the former is
+currently used in experimental deployments. For signatures, we use Dilithium
+(standardized as ML-DSA), the "primary" algorithm selected by NIST for
+post-quantum signatures, as well as Falcon <span>[<a href="#FALCON" class="cite xref">FALCON</a>]</span>, the algorithm that offers
+smaller public key and signature sizes, but which NIST indicates can be used if
+the implementation requirements can be met.<a href="#section-1.3-2" class="pilcrow">¶</a></p>
+<span id="name-size-comparison-of-public-k"></span><table class="center" id="table-1">
+          <caption>
+<a href="#table-1" class="selfRef">Table 1</a>:
+<a href="#name-size-comparison-of-public-k" class="selfRef">Size comparison of public-key cryptography in TLS 1.3 and AuthKEM handshakes.</a>
+          </caption>
+<thead>
+            <tr>
+              <th class="text-left" rowspan="1" colspan="1">Handshake</th>
+              <th class="text-left" rowspan="1" colspan="1">HS auth algorithm</th>
+              <th class="text-left" rowspan="1" colspan="1">HS Auth bytes</th>
+              <th class="text-left" rowspan="1" colspan="1">Certificate chain bytes</th>
+              <th class="text-left" rowspan="1" colspan="1">Sum</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">TLS 1.3</td>
+              <td class="text-left" rowspan="1" colspan="1">RSA-2048</td>
+              <td class="text-left" rowspan="1" colspan="1">528</td>
+              <td class="text-left" rowspan="1" colspan="1">784  (RSA-2048)</td>
+              <td class="text-left" rowspan="1" colspan="1">1312</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">TLS 1.3</td>
+              <td class="text-left" rowspan="1" colspan="1">Dilithium-2</td>
+              <td class="text-left" rowspan="1" colspan="1">3732</td>
+              <td class="text-left" rowspan="1" colspan="1">6152 (Dilithium-2)</td>
+              <td class="text-left" rowspan="1" colspan="1">9884</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">TLS 1.3</td>
+              <td class="text-left" rowspan="1" colspan="1">Falcon-512</td>
+              <td class="text-left" rowspan="1" colspan="1">1563</td>
+              <td class="text-left" rowspan="1" colspan="1">2229 (Falcon-512)</td>
+              <td class="text-left" rowspan="1" colspan="1">3792</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">TLS 1.3</td>
+              <td class="text-left" rowspan="1" colspan="1">Dilithium-2</td>
+              <td class="text-left" rowspan="1" colspan="1">3732</td>
+              <td class="text-left" rowspan="1" colspan="1">2229 (Falcon-512)</td>
+              <td class="text-left" rowspan="1" colspan="1">5961</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">AuthKEM</td>
+              <td class="text-left" rowspan="1" colspan="1">Kyber-768</td>
+              <td class="text-left" rowspan="1" colspan="1">2272</td>
+              <td class="text-left" rowspan="1" colspan="1">6152 (Dilithium-2)</td>
+              <td class="text-left" rowspan="1" colspan="1">8424</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">AuthKEM</td>
+              <td class="text-left" rowspan="1" colspan="1">Kyber-768</td>
+              <td class="text-left" rowspan="1" colspan="1">2272</td>
+              <td class="text-left" rowspan="1" colspan="1">2229 (Falcon-512)</td>
+              <td class="text-left" rowspan="1" colspan="1">4564</td>
+            </tr>
+          </tbody>
+        </table>
+<p id="section-1.3-4">Note that although TLS 1.3 with Falcon-512 is the smallest instantiation,
+Falcon is very challenging to implement: signature generation requires (emulation of)
+64-bit floating point operations in constant time. It is also very difficult to
+protect against other side-channel attacks, as there are no known methods of
+masking Falcon. In light of these difficulties, use of Falcon-512 in online
+handshake signatures may not be wise.<a href="#section-1.3-4" class="pilcrow">¶</a></p>
+<p id="section-1.3-5">Using AuthKEM with Falcon-512 in the certificate chain remains an attractive
+option, however: the certificate issuance process, because it is mostly offline,
+could perhaps be set up in a way to protect the Falcon implementation against
+attacks. Falcon signature verification is fast and does not require
+floating-point arithmetic. Avoiding online usage of Falcon in TLS 1.3 requires
+two implementations of the signature verification routines, i.e., ML-DSA and
+Falcon, on top of the key exchange algorithm.<a href="#section-1.3-5" class="pilcrow">¶</a></p>
+<p id="section-1.3-6">In all examples, the size of the certificate chain still dominates the TLS
+handshake, especially if Certificate Transparency SCT statements are included,
+which is relevant in the context of the WebPKI. However, we believe that if
+proposals to reduce transmission sizes of the certificate chain in the WebPKI
+context are implemented, the space savings of AuthKEM naturally become
+relatively larger and more significant. We discuss this in
+<a href="#cert-compression" class="auto internal xref">Section 1.4.2</a>.<a href="#section-1.3-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="related-work">
+<section id="section-1.4">
+        <h3 id="name-related-work">
+<a href="#section-1.4" class="section-number selfRef">1.4. </a><a href="#name-related-work" class="section-name selfRef">Related work</a>
+        </h3>
+<div id="optls">
+<section id="section-1.4.1">
+          <h4 id="name-optls">
+<a href="#section-1.4.1" class="section-number selfRef">1.4.1. </a><a href="#name-optls" class="section-name selfRef">OPTLS</a>
+          </h4>
+<p id="section-1.4.1-1">This proposal draws inspiration from <span>[<a href="#I-D.ietf-tls-semistatic-dh" class="cite xref">I-D.ietf-tls-semistatic-dh</a>]</span>, which is
+in turn based on the OPTLS proposal for TLS 1.3 <span>[<a href="#KW16" class="cite xref">KW16</a>]</span>. However, these proposals
+require a non-interactive key exchange: they combine the client's public key
+with the server's long-term key. This imposes an extra requirement: the
+ephemeral and static keys MUST use the same algorithm, which this proposal does
+not require. Additionally, there are no post-quantum proposals for a
+non-interactive key exchange currently considered for standardization, while
+several KEMs are on the way.<a href="#section-1.4.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="cert-compression">
+<section id="section-1.4.2">
+          <h4 id="name-compressing-certificates-an">
+<a href="#section-1.4.2" class="section-number selfRef">1.4.2. </a><a href="#name-compressing-certificates-an" class="section-name selfRef">Compressing certificates and certificate chains</a>
+          </h4>
+<p id="section-1.4.2-1">AuthKEM reduces the amount of data required for authentication in TLS. In
+recognition of the large increase in handshake size that a naive adoption of
+post-quantum signatures would affect, several proposals have been put forward
+that aim to reduce the size of certificates in the TLS handshake. <span>[<a href="#RFC8879" class="cite xref">RFC8879</a>]</span>
+proposes a certificate compression mechanism based on compression algorithms,
+but this is not very helpful to reduce the size of high-entropy public keys and
+signatures. Proposals that offer more significant reductions of sizes of
+certificate chains, such as <span>[<a href="#I-D.jackson-tls-cert-abridge" class="cite xref">I-D.jackson-tls-cert-abridge</a>]</span>,
+<span>[<a href="#I-D.ietf-tls-ctls" class="cite xref">I-D.ietf-tls-ctls</a>]</span>, <span>[<a href="#I-D.kampanakis-tls-scas-latest" class="cite xref">I-D.kampanakis-tls-scas-latest</a>]</span>, and
+<span>[<a href="#I-D.davidben-tls-merkle-tree-certs" class="cite xref">I-D.davidben-tls-merkle-tree-certs</a>]</span> all mainly rely on some form of
+out-of-band distribution of intermediate certificates or other trust anchors in
+a way that requires a robust update mechanism. This makes these proposals mainly
+suitable for the WebPKI setting; although this is also the setting that has the
+largest number of certificates due to the inclusion of SCT statements
+<span>[<a href="#RFC6962" class="cite xref">RFC6962</a>]</span> and OSCP staples <span>[<a href="#RFC6960" class="cite xref">RFC6960</a>]</span>.<a href="#section-1.4.2-1" class="pilcrow">¶</a></p>
+<p id="section-1.4.2-2">AuthKEM complements these approaches in the WebPKI setting. On its own the gains
+that AuthKEM offers may be modest compared to the large sizes of certificate
+chains. But when combined with compression or certificate suppression mechanisms
+such as those proposed in the referenced drafts, the reduction in handshake size
+when replacing Dilithium-2 by Kyber-768 for handshake authentication becomes
+significant again.<a href="#section-1.4.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="organization">
+<section id="section-1.5">
+        <h3 id="name-organization">
+<a href="#section-1.5" class="section-number selfRef">1.5. </a><a href="#name-organization" class="section-name selfRef">Organization</a>
+        </h3>
+<p id="section-1.5-1">After a brief introduction to KEMs, we will introduce the AuthKEM authentication
+mechanism. For clarity, we discuss unilateral and mutual authentication
+separately. In the remainder of the draft, we will discuss the necessary
+implementation mechanics, such as code points, extensions, new protocol messages
+and the new key schedule. The draft concludes with ah extensive discussion of
+relevant security considerations.<a href="#section-1.5-1" class="pilcrow">¶</a></p>
+<p id="section-1.5-2">A related mechanism for KEM-based PSK-style handshakes is discussed in
+<span>[<a href="#I-D.wiggers-tls-authkem-psk" class="cite xref">I-D.wiggers-tls-authkem-psk</a>]</span>.<a href="#section-1.5-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="conventions-and-definitions">
+<section id="section-2">
+      <h2 id="name-conventions-and-definitions">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-conventions-and-definitions" class="section-name selfRef">Conventions and definitions</a>
+      </h2>
+<p id="section-2-1">The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
+"MAY", and "OPTIONAL" in this document are to be interpreted as
+described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
+appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<div id="terminology">
+<section id="section-2.1">
+        <h3 id="name-terminology">
+<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-terminology" class="section-name selfRef">Terminology</a>
+        </h3>
+<p id="section-2.1-1">The following terms are used as they are in <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span><a href="#section-2.1-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-2.1-2">
+          <dt id="section-2.1-2.1">client:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.1-2.2">
+            <p id="section-2.1-2.2.1">The endpoint initiating the TLS connection.<a href="#section-2.1-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.1-2.3">connection:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.1-2.4">
+            <p id="section-2.1-2.4.1">A transport-layer connection between two endpoints.<a href="#section-2.1-2.4.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.1-2.5">endpoint:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.1-2.6">
+            <p id="section-2.1-2.6.1">Either the client or server of the connection.<a href="#section-2.1-2.6.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.1-2.7">handshake:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.1-2.8">
+            <p id="section-2.1-2.8.1">An initial negotiation between client and server that establishes the
+parameters of their subsequent interactions within TLS.<a href="#section-2.1-2.8.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.1-2.9">peer:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.1-2.10">
+            <p id="section-2.1-2.10.1">An endpoint.  When discussing a particular endpoint, "peer" refers to the
+endpoint that is not the primary subject of discussion.<a href="#section-2.1-2.10.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.1-2.11">receiver:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.1-2.12">
+            <p id="section-2.1-2.12.1">An endpoint that is receiving records.<a href="#section-2.1-2.12.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.1-2.13">sender:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.1-2.14">
+            <p id="section-2.1-2.14.1">An endpoint that is transmitting records.<a href="#section-2.1-2.14.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.1-2.15">server:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.1-2.16">
+            <p id="section-2.1-2.16.1">The endpoint that responded to the initiation of the TLS connection. i.e. the
+peer of the client.<a href="#section-2.1-2.16.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="key-encapsulation-mechanisms">
+<section id="section-2.2">
+        <h3 id="name-key-encapsulation-mechanism">
+<a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-key-encapsulation-mechanism" class="section-name selfRef">Key Encapsulation Mechanisms</a>
+        </h3>
+<p id="section-2.2-1">As this proposal relies heavily on KEMs, which are not originally used by TLS,
+we will provide a brief overview of this primitive. Other cryptographic
+operations will be discussed later.<a href="#section-2.2-1" class="pilcrow">¶</a></p>
+<p id="section-2.2-2">A Key Encapsulation Mechanism (KEM) is a cryptographic primitive that defines
+the methods <code>Encapsulate</code> and <code>Decapsulate</code>. In this draft, we extend these
+operations with context separation strings, per HPKE <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>:<a href="#section-2.2-2" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlNewline" id="section-2.2-3">
+          <dt id="section-2.2-3.1">
+<code>Encapsulate(pkR, context_string)</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-3.2">
+            <p id="section-2.2-3.2.1">Takes a public key, and produces a shared secret and encapsulation.<a href="#section-2.2-3.2.1" class="pilcrow">¶</a></p>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.2-3.3">
+<code>Decapsulate(enc, skR, context_string)</code>:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-3.4">
+            <p id="section-2.2-3.4.1">Takes the encapsulation and the private key. Returns the shared secret.<a href="#section-2.2-3.4.1" class="pilcrow">¶</a></p>
+</dd>
+        <dd class="break"></dd>
+</dl>
+<p id="section-2.2-4">We implement these methods through the KEMs defined in <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span> to export
+shared secrets appropriate for using with the HKDF in TLS 1.3:<a href="#section-2.2-4" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-2.2-5">
+<pre>
+def Encapsulate(pk, context_string):
+  enc, ctx = HPKE.SetupBaseS(pk, "tls13 auth-kem")
+  ss = ctx.Export(context_string, HKDF.Length)
+  return (enc, ss)
+
+def Decapsulate(enc, sk, context_string):
+  return HPKE.SetupBaseR(enc, sk, "tls13 auth-kem")
+             .Export(context_string, HKDF.Length)
+</pre><a href="#section-2.2-5" class="pilcrow">¶</a>
+</div>
+<p id="section-2.2-6">Keys are generated and encoded for transmission following the conventions in
+<span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span>. The values of <code>context_string</code> are defined in
+<a href="#kem-computations" class="auto internal xref">Section 4.3.2</a>.<a href="#section-2.2-6" class="pilcrow">¶</a></p>
+<p id="section-2.2-7"><strong>Open question:</strong> Should we keep using HPKE, or just use "plain" KEMs, as in
+the original KEMTLS works? Please see the discussion at <a href="https://github.com/kemtls/draft-celi-wiggers-tls-authkem/issues/32">Issue
+#32</a>.<a href="#section-2.2-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="full-15-rtt-authkem-handshake-protocol">
+<section id="section-3">
+      <h2 id="name-full-15-rtt-authkem-handsha">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-full-15-rtt-authkem-handsha" class="section-name selfRef">Full 1.5-RTT AuthKEM Handshake Protocol</a>
+      </h2>
+<p id="section-3-1">Figure 1 below shows the basic KEM-authentication (AuthKEM) handshake, without
+client authentication:<a href="#section-3-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3-2">
+<pre>
+       Client                                     Server
+
+Key  ^ ClientHello
+Exch | + key_share
+     v + signature_algorithms
+                          --------&gt;
+                                             ServerHello  ^ Key
+                                             + key_share  v Exch
+                                   &lt;EncryptedExtensions&gt;
+                                           &lt;Certificate&gt;  ^
+       &lt;KEMEncapsulation&gt;  --------&gt;                      |
+       {Finished}          --------&gt;                      | Auth
+       [Application Data]  --------&gt;                      |
+                           &lt;--------          {Finished}  v
+
+       [Application Data]  &lt;-------&gt;  [Application Data]
+
+        +  Indicates noteworthy extensions sent in the
+           previously noted message.
+        &lt;&gt; Indicates messages protected using keys
+           derived from a [sender]_handshake_traffic_secret.
+        {} Indicates messages protected using keys
+           derived from a
+           [sender]_authenticated_handshake_traffic_secret.
+        [] Indicates messages protected using keys
+           derived from [sender]_application_traffic_secret_N.
+
+       Figure 1: Message Flow for KEM-Authentication (KEM-Auth)
+                 Handshake without client authentication.
+</pre><a href="#section-3-2" class="pilcrow">¶</a>
+</div>
+<p id="section-3-3">This basic handshake captures the core of AuthKEM. Instead of using a signature
+to authenticate the handshake, the client encapsulates a shared secret to the
+server's certificate public key. Only the server that holds the private key
+corresponding to the certificate public key can derive the same shared secret.
+This shared secret is mixed into the handshake's key schedule. The client does
+not have to wait for the server's <code>Finished</code> message before it can send data.
+The client knows that its message can only be decrypted if the server was able
+to derive the authentication shared secret encapsulated in the
+<code>KEMEncapsulation</code> message.<a href="#section-3-3" class="pilcrow">¶</a></p>
+<p id="section-3-4"><code>Finished</code> messages are sent as in TLS 1.3, and achieve full explicit
+authentication.<a href="#section-3-4" class="pilcrow">¶</a></p>
+<div id="client-authentication">
+<section id="section-3.1">
+        <h3 id="name-client-authentication">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-client-authentication" class="section-name selfRef">Client authentication</a>
+        </h3>
+<p id="section-3.1-1">For client authentication, the server sends the <code>CertificateRequest</code> message
+as in <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>. This message can not be authenticated in the AuthKEM
+handshake: we will discuss the implications below.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1-2">As in <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>, section 4.4.2, if and only if the client receives
+<code>CertificateRequest</code>, it MUST send a <code>Certificate</code> message. If the client
+has no suitable certificate, it MUST send a <code>Certificate</code> message containing
+no certificates. If the server is satisfied with the provided certificate, it
+MUST send back a <code>KEMEncapsulation</code> message, containing the encapsulation to
+the client's certificate. The resulting shared secret is mixed into the key
+schedule. This ensures any messages sent using keys derived from it are covered
+by the authentication.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
+<p id="section-3.1-3">The AuthKEM handshake with client authentication is given in Figure 2.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3.1-4">
+<pre>
+       Client                                     Server
+
+Key  ^ ClientHello
+Exch | + key_share
+     v + signature_algorithms
+                          --------&gt;
+                                             ServerHello  ^ Key
+                                             + key_share  v Exch
+                                   &lt;EncryptedExtensions&gt;  ^ Server
+                                    &lt;CertificateRequest&gt;  v Params
+                                           &lt;Certificate&gt;  ^
+     ^ &lt;KEMEncapsulation&gt;                                 |
+     | {Certificate}       --------&gt;                      |
+Auth |                     &lt;--------  {KEMEncapsulation}  | Auth
+     v {Finished}          --------&gt;                      |
+       [Application Data]  --------&gt;                      |
+                           &lt;-------           {Finished}  v
+
+       [Application Data]  &lt;-------&gt;  [Application Data]
+
+        +  Indicates noteworthy extensions sent in the
+           previously noted message.
+        &lt;&gt; Indicates messages protected using keys
+           derived from a [sender]_handshake_traffic_secret.
+        {} Indicates messages protected using keys
+           derived from a
+           [sender]_authenticated_handshake_traffic_secret.
+        [] Indicates messages protected using keys
+           derived from [sender]_application_traffic_secret_N.
+
+       Figure 2: Message Flow for KEM-Authentication (KEM-Auth)
+                 Handshake with client authentication.
+</pre><a href="#section-3.1-4" class="pilcrow">¶</a>
+</div>
+<p id="section-3.1-5">If the server is not satisfied with the client's certificates, it MAY, at its
+discretion, decide to continue or terminate the handshake. If it decides to
+continue, it MUST NOT send back a <code>KEMEncapsulation</code> message and the client
+and server MUST compute the encryption keys as in the server-only authenticated
+AuthKEM handshake. The <code>Certificate</code> remains included in the transcript. The
+client MUST NOT assume it has been authenticated.<a href="#section-3.1-5" class="pilcrow">¶</a></p>
+<p id="section-3.1-6">Unfortunately, AuthKEM client authentication requires an extra round-trip.
+Clients that know the server's long-term public KEM key MAY choose to use the
+abbreviated AuthKEM handshake and opportunistically send the client certificate
+as a 0-RTT-like message. This mechanism is discussed in
+<span>[<a href="#I-D.wiggers-tls-authkem-psk" class="cite xref">I-D.wiggers-tls-authkem-psk</a>]</span>.<a href="#section-3.1-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="relevant-handshake-messages">
+<section id="section-3.2">
+        <h3 id="name-relevant-handshake-messages">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-relevant-handshake-messages" class="section-name selfRef">Relevant handshake messages</a>
+        </h3>
+<p id="section-3.2-1">After the Key Exchange and Server Parameters phase of TLS 1.3 handshake, the
+client and server exchange implicitly authenticated messages. KEM-based
+authentication uses the same set of messages every time that certificate-based
+authentication is needed.  Specifically:<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3.2-2.1">
+            <p id="section-3.2-2.1.1"><code>Certificate</code>:  The certificate of the endpoint and any per-certificate
+extensions.  This message MUST be omitted by the client if the server did not
+send a <code>CertificateRequest</code> message (thus indicating that the client should
+not authenticate with a certificate). For AuthKEM, <code>Certificate</code> MUST include
+the long-term KEM public key. Certificates MUST be handled in accordance with
+<span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>, section 4.4.2.4.<a href="#section-3.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.2-2.2">
+            <p id="section-3.2-2.2.1"><code>KEMEncapsulation</code>: A key encapsulation against the certificate's long-term
+public key, which yields an implicitly authenticated shared secret.<a href="#section-3.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="overview-of-key-differences-with-rfc8446-tls-13">
+<section id="section-3.3">
+        <h3 id="name-overview-of-key-differences">
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-overview-of-key-differences" class="section-name selfRef">Overview of key differences with RFC8446 TLS 1.3</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="section-3.3-1.1">
+            <p id="section-3.3-1.1.1">New types of <code>signature_algorithms</code> for KEMs.<a href="#section-3.3-1.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.3-1.2">
+            <p id="section-3.3-1.2.1">Public keys in certificates are KEM algorithms.<a href="#section-3.3-1.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.3-1.3">
+            <p id="section-3.3-1.3.1">New handshake message <code>KEMEncapsulation</code>.<a href="#section-3.3-1.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.3-1.4">
+            <p id="section-3.3-1.4.1">The key schedule mixes in the shared secrets from the authentication.<a href="#section-3.3-1.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.3-1.5">
+            <p id="section-3.3-1.5.1">The <code>Certificate</code> is sent encrypted with a new handshake encryption key.<a href="#section-3.3-1.5.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.3-1.6">
+            <p id="section-3.3-1.6.1">The client sends <code>Finished</code> before the server.<a href="#section-3.3-1.6.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.3-1.7">
+            <p id="section-3.3-1.7.1">The client sends data before the server has sent <code>Finished</code>.<a href="#section-3.3-1.7.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="implicit-and-explicit-authentication">
+<section id="section-3.4">
+        <h3 id="name-implicit-and-explicit-authe">
+<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-implicit-and-explicit-authe" class="section-name selfRef">Implicit and explicit authentication</a>
+        </h3>
+<p id="section-3.4-1">The data that the client MAY transmit to the server before having received the
+server's <code>Finished</code> is encrypted using ciphersuites chosen based on the
+client's and server's advertised preferences in the <code>ClientHello</code> and
+<code>ServerHello</code> messages. The <code>ServerHello</code> message can however not be
+authenticated before the <code>Finished</code> message from the server is verified. The
+full implications of this are discussed in the Security Considerations section.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
+<p id="section-3.4-2">Upon receiving the client's authentication messages, the server responds with
+its <code>Finished</code> message, which achieves explicit authentication. Upon receiving
+the server's <code>Finished</code> message, the client achieves explicit authentication.
+Receiving this message retroactively confirms the server's cryptographic
+parameter choices.<a href="#section-3.4-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authenticating-certificaterequest">
+<section id="section-3.5">
+        <h3 id="name-authenticating-certificater">
+<a href="#section-3.5" class="section-number selfRef">3.5. </a><a href="#name-authenticating-certificater" class="section-name selfRef">Authenticating <code>CertificateRequest</code></a>
+        </h3>
+<p id="section-3.5-1">The <code>CertificateRequest</code> message can not be authenticated during the AuthKEM
+handshake; only after the <code>Finished</code> message from the server has been
+processed, it can be proven as authentic. The security implications of this are
+discussed later.<a href="#section-3.5-1" class="pilcrow">¶</a></p>
+<p id="section-3.5-2"><strong>This is discussed in <a href="https://github.com/kemtls/draft-celi-wiggers-tls-authkem/issues/16">GitHub issue
+#16</a>. We
+would welcome feedback there.</strong><a href="#section-3.5-2" class="pilcrow">¶</a></p>
+<p id="section-3.5-3">Clients MAY choose to only accept post-handshake authentication.<a href="#section-3.5-3" class="pilcrow">¶</a></p>
+<p id="section-3.5-4"><strong>TODO: Should they indicate this? TLS Flag?</strong><a href="#section-3.5-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="implementation">
+<section id="section-4">
+      <h2 id="name-implementation">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-implementation" class="section-name selfRef">Implementation</a>
+      </h2>
+<p id="section-4-1">In this section we will discuss the implementation details such as extensions
+and key schedule.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<div id="negotiation-of-authkem">
+<section id="section-4.1">
+        <h3 id="name-negotiation-of-authkem">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-negotiation-of-authkem" class="section-name selfRef">Negotiation of AuthKEM</a>
+        </h3>
+<p id="section-4.1-1">Clients will indicate support for this mode by negotiating it as if it were a
+signature scheme (part of the <code>signature_algorithms</code> extension). We thus add
+these new signature scheme values (even though, they are not signature schemes)
+for the KEMs defined in <span>[<a href="#RFC9180" class="cite xref">RFC9180</a>]</span> Section 7.1. Note that we will be only
+using their internal KEM's API defined there.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.1-2">
+<pre>
+enum {
+  dhkem_p256_sha256   =&gt; TBD,
+  dhkem_p384_sha384   =&gt; TBD,
+  dhkem_p521_sha512   =&gt; TBD,
+  dhkem_x25519_sha256 =&gt; 0xFE01,
+  dhkem_x448_sha512   =&gt; TBD,
+  kem_x25519kyber768  =&gt; TBD, /*draft-westerbaan-cfrg-hpke-xyber768d00*/
+}
+</pre><a href="#section-4.1-2" class="pilcrow">¶</a>
+</div>
+<p id="section-4.1-3"><strong>Please give feedback on which KEMs should be included</strong><a href="#section-4.1-3" class="pilcrow">¶</a></p>
+<p id="section-4.1-4">When present in the <code>signature_algorithms</code> extension, these values indicate
+AuthKEM support with the specified key exchange mode. These values MUST NOT
+appear in <code>signature_algorithms_cert</code>, as this extension specifies the signing
+algorithms by which certificates are signed.<a href="#section-4.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="protocol-messages">
+<section id="section-4.2">
+        <h3 id="name-protocol-messages">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-protocol-messages" class="section-name selfRef">Protocol messages</a>
+        </h3>
+<p id="section-4.2-1">The handshake protocol is used to negotiate the security parameters of a
+connection, as in TLS 1.3. It uses the same messages, expect for the addition of
+a <code>KEMEncapsulation</code> message and does not use the <code>CertificateVerify</code> one.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.2-2">
+<pre>
+enum {
+    ...
+    kem_encapsulation(30),
+    ...
+    (255)
+  } HandshakeType;
+
+struct {
+    HandshakeType msg_type;    /* handshake type */
+    uint24 length;             /* remaining bytes in message */
+    select (Handshake.msg_type) {
+        ...
+        case kem_encapsulation:     KEMEncapsulation;
+        ...
+    };
+} Handshake;
+</pre><a href="#section-4.2-2" class="pilcrow">¶</a>
+</div>
+<p id="section-4.2-3">Protocol messages MUST be sent in the order defined in Section 4. A peer which
+receives a handshake message in an unexpected order MUST abort the handshake
+with a "<code>unexpected_message</code>" alert.<a href="#section-4.2-3" class="pilcrow">¶</a></p>
+<p id="section-4.2-4">The <code>KEMEncapsulation</code> message is defined as follows:<a href="#section-4.2-4" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.2-5">
+<pre>
+struct {
+    opaque certificate_request_context&lt;0..2^8-1&gt;
+    opaque encapsulation&lt;0..2^16-1&gt;;
+} KEMEncapsulation;
+</pre><a href="#section-4.2-5" class="pilcrow">¶</a>
+</div>
+<p id="section-4.2-6">The encapsulation field is the result of a <code>Encapsulate</code> function. The
+<code>Encapsulate()</code> function will also result in a shared secret (<code>ssS</code> or <code>ssC</code>,
+depending on the peer) which is used to derive the <code>AHS</code> or <code>MS</code> secrets (See
+<a href="#key-schedule" class="auto internal xref">Section 4.3.1</a>).<a href="#section-4.2-6" class="pilcrow">¶</a></p>
+<p id="section-4.2-7">If the <code>KEMEncapsulation</code> message is sent by a server, the authentication
+algorithm MUST be one offered in the client's <code>signature_algorithms</code> extension.
+Otherwise, the server MUST terminate the handshake with an
+"<code>unsupported_certificate</code>" alert.<a href="#section-4.2-7" class="pilcrow">¶</a></p>
+<p id="section-4.2-8">If sent by a client, the authentication algorithm used in the signature MUST be
+one of those present in the <code>supported_signature_algorithms</code> field of the
+<code>signature_algorithms</code> extension in the <code>CertificateRequest</code> message.<a href="#section-4.2-8" class="pilcrow">¶</a></p>
+<p id="section-4.2-9">In addition, the authentication algorithm MUST be compatible with the key(s) in
+the sender's end-entity certificate.<a href="#section-4.2-9" class="pilcrow">¶</a></p>
+<p id="section-4.2-10">The receiver of a <code>KEMEncapsulation</code> message MUST perform the <code>Decapsulate()</code>
+operation by using the sent encapsulation and the private key of the public key
+advertised in the end-entity certificate sent. The <code>Decapsulate()</code> function will
+also result on a shared secret (<code>ssS</code> or <code>ssC</code>, depending on the Server or
+Client executing it respectively) which is used to derive the <code>AHS</code> or <code>MS</code>
+secrets.<a href="#section-4.2-10" class="pilcrow">¶</a></p>
+<p id="section-4.2-11"><code>certificate_request_context</code> is included to allow the recipient to identify the
+certificate against which the encapsulation was generated. It MUST be set to the
+value in the <code>Certificate</code> message to which the encapsulation was computed.<a href="#section-4.2-11" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="cryptographic-computations">
+<section id="section-4.3">
+        <h3 id="name-cryptographic-computations">
+<a href="#section-4.3" class="section-number selfRef">4.3. </a><a href="#name-cryptographic-computations" class="section-name selfRef">Cryptographic computations</a>
+        </h3>
+<p id="section-4.3-1">The AuthKEM handshake establishes three input secrets which are combined to
+create the actual working keying material, as detailed below. The key derivation
+process incorporates both the input secrets and the handshake transcript.  Note
+that because the handshake transcript includes the random values from the Hello
+messages, any given handshake will have different traffic secrets, even if the
+same input secrets are used.<a href="#section-4.3-1" class="pilcrow">¶</a></p>
+<div id="key-schedule">
+<section id="section-4.3.1">
+          <h4 id="name-key-schedule-for-full-authk">
+<a href="#section-4.3.1" class="section-number selfRef">4.3.1. </a><a href="#name-key-schedule-for-full-authk" class="section-name selfRef">Key schedule for full AuthKEM handshakes</a>
+          </h4>
+<p id="section-4.3.1-1">AuthKEM uses the same <code>HKDF-Extract</code> and <code>HKDF-Expand</code> functions as defined by
+TLS 1.3, in turn defined by <span>[<a href="#RFC5869" class="cite xref">RFC5869</a>]</span>.<a href="#section-4.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.3.1-2">Keys are derived from two input secrets using the <code>HKDF-Extract</code> and
+<code>Derive-Secret</code> functions.  The general pattern for adding a new secret is to
+use <code>HKDF-Extract</code> with the Salt being the current secret state and the Input
+Keying Material (IKM) being the new secret to be added.<a href="#section-4.3.1-2" class="pilcrow">¶</a></p>
+<p id="section-4.3.1-3">The notable differences are:<a href="#section-4.3.1-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.3.1-4.1">
+              <p id="section-4.3.1-4.1.1">The addition of the <code>Authenticated Handshake Secret</code> and a new set of
+handshake traffic encryption keys.<a href="#section-4.3.1-4.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-4.3.1-4.2">
+              <p id="section-4.3.1-4.2.1">The inclusion of the <code>SSs</code> and <code>SSc</code> (if present) shared secrets as IKM to
+<code>Authenticated Handshake Secret</code> and <code>Main Secret</code>, respectively.<a href="#section-4.3.1-4.2.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+<p id="section-4.3.1-5">The full key schedule proceeds as follows:<a href="#section-4.3.1-5" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.3.1-6">
+<pre>
+            0
+            |
+            v
+    PSK -&gt; HKDF-Extract = Early Secret
+            |
+            +--&gt; Derive-Secret(., "ext binder" | "res binder", "")
+            |                  = binder_key
+            |
+            +--&gt; Derive-Secret(., "c e traffic", ClientHello)
+            |                  = client_early_traffic_secret
+            |
+            +--&gt; Derive-Secret(., "e exp master", ClientHello)
+            |                  = early_exporter_master_secret
+            v
+            Derive-Secret(., "derived", "")
+            |
+            v
+(EC)DHE -&gt; HKDF-Extract = Handshake Secret
+            |
+            +--&gt; Derive-Secret(., "c hs traffic",
+            |                  ClientHello...ServerHello)
+            |                  = client_handshake_traffic_secret
+            |
+            +--&gt; Derive-Secret(., "s hs traffic",
+            |                  ClientHello...ServerHello)
+            |                  = server_handshake_traffic_secret
+            v
+            Derive-Secret(., "derived", "") = dHS
+            |
+            v
+    SSs -&gt; HKDF-Extract = Authenticated Handshake Secret
+            |
+            +--&gt; Derive-Secret(., "c ahs traffic",
+            |                  ClientHello...KEMEncapsulation)
+            |         = client_handshake_authenticated_traffic_secret
+            |
+            +--&gt; Derive-Secret(., "s ahs traffic",
+            |                  ClientHello...KEMEncapsulation)
+            |         = server_handshake_authenticated_traffic_secret
+            v
+            Derive-Secret(., "derived", "") = dAHS
+            |
+            v
+SSc||0 * -&gt; HKDF-Extract = Main Secret
+            |
+            +--&gt; Derive-Secret(., "c ap traffic",
+            |                  ClientHello...client Finished)
+            |                  = client_application_traffic_secret_0
+            |
+            +--&gt; Derive-Secret(., "s ap traffic",
+            |                  ClientHello...server Finished)
+            |                  = server_application_traffic_secret_0
+            |
+            +--&gt; Derive-Secret(., "exp master",
+            |                  ClientHello...server Finished)
+            |                  = exporter_master_secret
+            |
+            +--&gt; Derive-Secret(., "res master",
+                               ClientHello...server Finished)
+                               = resumption_master_secret
+
+*: if client authentication was requested, the `SSc` value should
+   be used. Otherwise, the `0` value is used.
+</pre><a href="#section-4.3.1-6" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="kem-computations">
+<section id="section-4.3.2">
+          <h4 id="name-computations-of-kem-shared-">
+<a href="#section-4.3.2" class="section-number selfRef">4.3.2. </a><a href="#name-computations-of-kem-shared-" class="section-name selfRef">Computations of KEM shared secrets</a>
+          </h4>
+<p id="section-4.3.2-1">The operations to compute <code>SSs</code> or <code>SSc</code> from the client are:<a href="#section-4.3.2-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.3.2-2">
+<pre>
+SSs, encapsulation &lt;- Encapsulate(public_key_server,
+                                  "server authentication")
+               SSc &lt;- Decapsulate(encapsulation, private_key_client,
+                                  "client authentication")
+</pre><a href="#section-4.3.2-2" class="pilcrow">¶</a>
+</div>
+<p id="section-4.3.2-3">The operations to compute <code>SSs</code> or <code>SSc</code> from the server are:<a href="#section-4.3.2-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.3.2-4">
+<pre>
+               SSs &lt;- Decapsulate(encapsulation, private_key_server
+                                  "server authentication")
+SSc, encapsulation &lt;- Encapsulate(public_key_client,
+                                  "client authentication")
+</pre><a href="#section-4.3.2-4" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="explicit-authentication-messages">
+<section id="section-4.3.3">
+          <h4 id="name-explicit-authentication-mes">
+<a href="#section-4.3.3" class="section-number selfRef">4.3.3. </a><a href="#name-explicit-authentication-mes" class="section-name selfRef">Explicit Authentication Messages</a>
+          </h4>
+<p id="section-4.3.3-1">AuthKEM upgrades implicit to explicit authentication through the <code>Finished</code>
+message. Note that in the full handshake, AuthKEM achieves explicit
+authentication only when the server sends the final <code>Finished</code> message (the
+client is only implicitly authenticated when they send their <code>Finished</code>
+message).<a href="#section-4.3.3-1" class="pilcrow">¶</a></p>
+<p id="section-4.3.3-2">Full downgrade resilience and forward secrecy is achieved once the AuthKEM
+handshake completes.<a href="#section-4.3.3-2" class="pilcrow">¶</a></p>
+<p id="section-4.3.3-3">The key used to compute the <code>Finished</code> message MUST be computed from the
+<code>MainSecret</code> using HKDF (instead of a key derived from HS as in <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>).
+Specifically:<a href="#section-4.3.3-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.3.3-4">
+<pre>
+server/client_finished_key =
+  HKDF-Expand-Label(MainSecret,
+                    server/client_label,
+                    "", Hash.length)
+server_label = "tls13 server finished"
+client_label = "tls13 client finished"
+</pre><a href="#section-4.3.3-4" class="pilcrow">¶</a>
+</div>
+<p id="section-4.3.3-5">The <code>verify_data</code> value is computed as follows. Note that instead of what is
+specified in <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>, we use the full transcript for both server and client
+Finished messages:<a href="#section-4.3.3-5" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.3.3-6">
+<pre>
+server/client_verify_data =
+      HMAC(server/client_finished_key,
+           Transcript-Hash(Handshake Context,
+                           Certificate*,
+                           KEMEncapsulation*,
+                           Finished**))
+
+*  Only included if present.
+** The party who last sends the finished message in terms of flights
+   includes the other party's Finished message.
+</pre><a href="#section-4.3.3-6" class="pilcrow">¶</a>
+</div>
+<p id="section-4.3.3-7">Any records following a <code>Finished</code> message MUST be encrypted under the
+appropriate application traffic key as described in <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>. In particular,
+this includes any alerts sent by the server in response to client
+<code>Certificate</code> and <code>KEMEncapsulation</code> messages.<a href="#section-4.3.3-7" class="pilcrow">¶</a></p>
+<p id="section-4.3.3-8">See <span>[<a href="#SSW20" class="cite xref">SSW20</a>]</span> for a full treatment of implicit and explicit authentication.<a href="#section-4.3.3-8" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="sec-considerations">
+<section id="section-5">
+      <h2 id="name-security-considerations">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<div id="implicit-authentication">
+<section id="section-5.1">
+        <h3 id="name-implicit-authentication">
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-implicit-authentication" class="section-name selfRef">Implicit authentication</a>
+        </h3>
+<p id="section-5.1-1">Because preserving a 1/1.5RTT handshake in KEM-Auth requires the client to send
+its request in the same flight when the <code>ServerHello</code> message is received, it
+can not yet have explicitly authenticated the server. However, through the
+inclusion of the key encapsulated to the server's long-term secret, only an
+authentic server should be able to decrypt these messages.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1-2">However, the client can not have received confirmation that the server's choices
+for symmetric encryption, as specified in the <code>ServerHello</code> message, were
+authentic. These are not authenticated until the <code>Finished</code> message from the
+server arrived. This may allow an adversary to downgrade the symmetric
+algorithms, but only to what the client is willing to accept. If such an attack
+occurs, the handshake will also never successfully complete and no data can be
+sent back.<a href="#section-5.1-2" class="pilcrow">¶</a></p>
+<p id="section-5.1-3">If the client trusts the symmetric algorithms advertised in its <code>ClientHello</code>
+message, this should not be a concern. A client MUST NOT accept any
+cryptographic parameters it does not include in its own <code>ClientHello</code> message.<a href="#section-5.1-3" class="pilcrow">¶</a></p>
+<p id="section-5.1-4">If client authentication is used, explicit authentication is reached before any
+application data, on either client or server side, is transmitted.<a href="#section-5.1-4" class="pilcrow">¶</a></p>
+<p id="section-5.1-5">Application Data MUST NOT be sent prior to sending the Finished message, except
+as specified in Section 2.3 of <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>.  Note that while the client MAY
+send Application Data prior to receiving the server's last explicit
+Authentication message, any data sent at that point is, being sent to an
+implicitly authenticated peer.<a href="#section-5.1-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authentication-of-certificate-request">
+<section id="section-5.2">
+        <h3 id="name-authentication-of-certifica">
+<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-authentication-of-certifica" class="section-name selfRef">Authentication of Certificate Request</a>
+        </h3>
+<p id="section-5.2-1">Due to the implicit authentication of the server's messages during the full
+AuthKEM handshake, the <code>CertificateRequest</code> message can not be authenticated
+before the client received <code>Finished</code>.<a href="#section-5.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.2-2">The key schedule guarantees that the server can not read the client's
+certificate message (as discussed above). An active adversary that maliciously
+inserts a <code>CertificateRequest</code> message will also result in a mismatch in
+transcript hashes, which will cause the handshake to fail.<a href="#section-5.2-2" class="pilcrow">¶</a></p>
+<p id="section-5.2-3">However, there may be side effects. The adversary might learn that the client
+has a certificate by observing the length of the messages sent. There may also
+be side effects, especially in situations where the client is prompted to e.g.
+approve use or unlock a certificate stored encrypted or on a smart card.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="other-security-considerations">
+<section id="section-5.3">
+        <h3 id="name-other-security-consideratio">
+<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-other-security-consideratio" class="section-name selfRef">Other security considerations</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="section-5.3-1.1">
+            <p id="section-5.3-1.1.1">Because the Main Secret is derived from both the ephemeral key exchange,
+as well as from the key exchanges completed for server and (optionally) client
+authentication, the MS secret always reflects the peers' views of the authentication
+status correctly. This is an improvement over TLS 1.3 for client authentication.<a href="#section-5.3-1.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.3-1.2">
+            <p id="section-5.3-1.2.1">The academic works proposing AuthKEM (KEMTLS) contains an in-depth technical
+discussion of and a proof of the security of the handshake protocol without
+client authentication <span>[<a href="#SSW20" class="cite xref">SSW20</a>]</span>, <span>[<a href="#Wig24" class="cite xref">Wig24</a>]</span>.<a href="#section-5.3-1.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.3-1.3">
+            <p id="section-5.3-1.3.1">The work proposing the variant protocol <span>[<a href="#SSW21" class="cite xref">SSW21</a>]</span>, <span>[<a href="#Wig24" class="cite xref">Wig24</a>]</span> with pre-distributed public
+keys (the abbreviated AuthKEM handshake) has a proof for both unilaterally and
+mutually authenticated handshakes.<a href="#section-5.3-1.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.3-1.4">
+            <p id="section-5.3-1.4.1">We have proofs of the security of KEMTLS and KEMTLS-PDK in Tamarin. <span>[<a href="#CHSW22" class="cite xref">CHSW22</a>]</span><a href="#section-5.3-1.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.3-1.5">
+            <p id="section-5.3-1.5.1">Application Data sent prior to receiving the server's last explicit
+authentication message (the Finished message) can be subject to a client
+certificate suite downgrade attack. Full downgrade resilience and forward
+secrecy is achieved once the handshake completes.<a href="#section-5.3-1.5.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.3-1.6">
+            <p id="section-5.3-1.6.1">The client's certificate is kept secret from active observers by the
+derivation of the <code>client_authenticated_handshake_secret</code>, which ensures that
+only the intended server can read the client's identity.<a href="#section-5.3-1.6.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-5.3-1.7">
+            <p id="section-5.3-1.7.1">If AuthKEM client authentication is used, the resulting shared secret is
+included in the key schedule. This ensures that both peers have a consistent
+view of the authentication status, unlike <span>[<a href="#RFC8446" class="cite xref">RFC8446</a>]</span>.<a href="#section-5.3-1.7.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+</section>
+</div>
+<div id="sec-combined-references">
+<section id="section-6">
+      <h2 id="name-references">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-references" class="section-name selfRef">References</a>
+      </h2>
+<div id="sec-normative-references">
+<section id="section-6.1">
+        <h3 id="name-normative-references">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
+<dl class="references">
+<dt id="I-D.ietf-lamps-kyber-certificates">[I-D.ietf-lamps-kyber-certificates]</dt>
+        <dd>
+<span class="refAuthor">Turner, S.</span>, <span class="refAuthor">Kampanakis, P.</span>, <span class="refAuthor">Massimo, J.</span>, and <span class="refAuthor">B. Westerbaan</span>, <span class="refTitle">"Internet X.509 Public Key Infrastructure - Algorithm Identifiers for the Module-Lattice-Based Key-Encapsulation Mechanism (ML-KEM)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-lamps-kyber-certificates-10</span>, <time datetime="2025-04-16" class="refDate">16 April 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-lamps-kyber-certificates-10">https://datatracker.ietf.org/doc/html/draft-ietf-lamps-kyber-certificates-10</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC2119">[RFC2119]</dt>
+        <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8174">[RFC8174]</dt>
+        <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8446">[RFC8446]</dt>
+        <dd>
+<span class="refAuthor">Rescorla, E.</span>, <span class="refTitle">"The Transport Layer Security (TLS) Protocol Version 1.3"</span>, <span class="seriesInfo">RFC 8446</span>, <span class="seriesInfo">DOI 10.17487/RFC8446</span>, <time datetime="2018-08" class="refDate">August 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8446">https://www.rfc-editor.org/rfc/rfc8446</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9180">[RFC9180]</dt>
+      <dd>
+<span class="refAuthor">Barnes, R.</span>, <span class="refAuthor">Bhargavan, K.</span>, <span class="refAuthor">Lipp, B.</span>, and <span class="refAuthor">C. Wood</span>, <span class="refTitle">"Hybrid Public Key Encryption"</span>, <span class="seriesInfo">RFC 9180</span>, <span class="seriesInfo">DOI 10.17487/RFC9180</span>, <time datetime="2022-02" class="refDate">February 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9180">https://www.rfc-editor.org/rfc/rfc9180</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-6.2">
+        <h3 id="name-informative-references">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="CHSW22">[CHSW22]</dt>
+        <dd>
+<span class="refAuthor">Celi, S.</span>, <span class="refAuthor">Hoyland, J.</span>, <span class="refAuthor">Stebila, D.</span>, and <span class="refAuthor">T. Wiggers</span>, <span class="refTitle">"A tale of two models: formal verification of KEMTLS in Tamarin"</span>, <span class="seriesInfo">ESORICS 2022 </span>, <span class="seriesInfo">DOI 10.1007/978-3-031-17143-7_4</span>, <span class="seriesInfo">IACR ePrint https://ia.cr/2022/1111</span>, <time datetime="2022-08" class="refDate">August 2022</time>, <span>&lt;<a href="https://doi.org/10.1007/978-3-031-17143-7_4">https://doi.org/10.1007/978-3-031-17143-7_4</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="FALCON">[FALCON]</dt>
+        <dd>
+<span class="refAuthor">Fouque, P.</span>, <span class="refAuthor">Hoffstein, J.</span>, <span class="refAuthor">Kirchner, P.</span>, <span class="refAuthor">Lyubashevsky, V.</span>, <span class="refAuthor">Pornin, T.</span>, <span class="refAuthor">Ricosset, T.</span>, <span class="refAuthor">Seiler, G.</span>, <span class="refAuthor">Whyte, W.</span>, and <span class="refAuthor">Z. Zhang</span>, <span class="refTitle">"Falcon"</span>, <time datetime="2021" class="refDate">2021</time>, <span>&lt;<a href="https://falcon-sign.info">https://falcon-sign.info</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="FIPS203">[FIPS203]</dt>
+        <dd>
+<span class="refAuthor">National Institute of Standards and Technology</span>, <span class="refTitle">"Module-Lattice-Based Key-Encapsulation Mechanism Standard"</span>, <span class="seriesInfo">DOI 10.6028/NIST.FIPS.203</span>, <span>n.d.</span>, <span>&lt;<a href="https://doi.org/10.6028/NIST.FIPS.203">https://doi.org/10.6028/NIST.FIPS.203</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="FIPS204">[FIPS204]</dt>
+        <dd>
+<span class="refAuthor">National Institute of Standards and Technology</span>, <span class="refTitle">"Module-Lattice-Based Digital Signature Standard"</span>, <span class="seriesInfo">DOI 10.6028/NIST.FIPS.203</span>, <span>n.d.</span>, <span>&lt;<a href="https://doi.org/10.6028/NIST.FIPS.203">https://doi.org/10.6028/NIST.FIPS.203</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.cfrg-schwabe-kyber">[I-D.cfrg-schwabe-kyber]</dt>
+        <dd>
+<span class="refAuthor">Schwabe, P.</span> and <span class="refAuthor">B. Westerbaan</span>, <span class="refTitle">"Kyber Post-Quantum KEM"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-cfrg-schwabe-kyber-04</span>, <time datetime="2024-01-02" class="refDate">2 January 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-cfrg-schwabe-kyber-04">https://datatracker.ietf.org/doc/html/draft-cfrg-schwabe-kyber-04</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.davidben-tls-merkle-tree-certs">[I-D.davidben-tls-merkle-tree-certs]</dt>
+        <dd>
+<span class="refAuthor">Benjamin, D.</span>, <span class="refAuthor">O'Brien, D.</span>, and <span class="refAuthor">B. Westerbaan</span>, <span class="refTitle">"Merkle Tree Certificates for TLS"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-davidben-tls-merkle-tree-certs-04</span>, <time datetime="2025-03-03" class="refDate">3 March 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-davidben-tls-merkle-tree-certs-04">https://datatracker.ietf.org/doc/html/draft-davidben-tls-merkle-tree-certs-04</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-tls-ctls">[I-D.ietf-tls-ctls]</dt>
+        <dd>
+<span class="refAuthor">Rescorla, E.</span>, <span class="refAuthor">Barnes, R.</span>, <span class="refAuthor">Tschofenig, H.</span>, and <span class="refAuthor">B. M. Schwartz</span>, <span class="refTitle">"Compact TLS 1.3"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-tls-ctls-10</span>, <time datetime="2024-04-17" class="refDate">17 April 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-tls-ctls-10">https://datatracker.ietf.org/doc/html/draft-ietf-tls-ctls-10</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-tls-semistatic-dh">[I-D.ietf-tls-semistatic-dh]</dt>
+        <dd>
+<span class="refAuthor">Rescorla, E.</span>, <span class="refAuthor">Sullivan, N.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Semi-Static Diffie-Hellman Key Establishment for TLS 1.3"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-tls-semistatic-dh-01</span>, <time datetime="2020-03-07" class="refDate">7 March 2020</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-tls-semistatic-dh-01">https://datatracker.ietf.org/doc/html/draft-ietf-tls-semistatic-dh-01</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-tls-subcerts">[I-D.ietf-tls-subcerts]</dt>
+        <dd>
+<span class="refAuthor">Barnes, R.</span>, <span class="refAuthor">Iyengar, S.</span>, <span class="refAuthor">Sullivan, N.</span>, and <span class="refAuthor">E. Rescorla</span>, <span class="refTitle">"Delegated Credentials for TLS and DTLS"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-tls-subcerts-15</span>, <time datetime="2022-06-30" class="refDate">30 June 2022</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-tls-subcerts-15">https://datatracker.ietf.org/doc/html/draft-ietf-tls-subcerts-15</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.jackson-tls-cert-abridge">[I-D.jackson-tls-cert-abridge]</dt>
+        <dd>
+<span class="refAuthor">Jackson, D.</span>, <span class="refTitle">"Abridged Compression for WebPKI Certificates"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-jackson-tls-cert-abridge-00</span>, <time datetime="2023-07-06" class="refDate">6 July 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-jackson-tls-cert-abridge-00">https://datatracker.ietf.org/doc/html/draft-jackson-tls-cert-abridge-00</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.kampanakis-tls-scas-latest">[I-D.kampanakis-tls-scas-latest]</dt>
+        <dd>
+<span class="refAuthor">Kampanakis, P.</span>, <span class="refAuthor">Bytheway, C.</span>, <span class="refAuthor">Westerbaan, B.</span>, and <span class="refAuthor">M. Thomson</span>, <span class="refTitle">"Suppressing CA Certificates in TLS 1.3"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-kampanakis-tls-scas-latest-03</span>, <time datetime="2023-01-05" class="refDate">5 January 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-kampanakis-tls-scas-latest-03">https://datatracker.ietf.org/doc/html/draft-kampanakis-tls-scas-latest-03</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.westerbaan-cfrg-hpke-xyber768d00">[I-D.westerbaan-cfrg-hpke-xyber768d00]</dt>
+        <dd>
+<span class="refAuthor">Westerbaan, B.</span> and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"X25519Kyber768Draft00 hybrid post-quantum KEM for HPKE"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-westerbaan-cfrg-hpke-xyber768d00-03</span>, <time datetime="2024-05-14" class="refDate">14 May 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-westerbaan-cfrg-hpke-xyber768d00-03">https://datatracker.ietf.org/doc/html/draft-westerbaan-cfrg-hpke-xyber768d00-03</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.wiggers-tls-authkem-psk">[I-D.wiggers-tls-authkem-psk]</dt>
+        <dd>
+<span class="refAuthor">Wiggers, T.</span>, <span class="refAuthor">Celi, S.</span>, <span class="refAuthor">Schwabe, P.</span>, <span class="refAuthor">Stebila, D.</span>, and <span class="refAuthor">N. Sullivan</span>, <span class="refTitle">"KEM-based pre-shared-key handshakes for TLS 1.3"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-wiggers-tls-authkem-psk-02</span>, <time datetime="2024-10-17" class="refDate">17 October 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-wiggers-tls-authkem-psk-02">https://datatracker.ietf.org/doc/html/draft-wiggers-tls-authkem-psk-02</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="K22">[K22]</dt>
+        <dd>
+<span class="refAuthor">Kannwischer, M. J.</span>, <span class="refTitle">"Polynomial Multiplication for Post-Quantum Cryptography"</span>, <span class="seriesInfo">Ph.D. thesis</span>, <time datetime="2022-04-22" class="refDate">22 April 2022</time>, <span>&lt;<a href="https://kannwischer.eu/thesis/">https://kannwischer.eu/thesis/</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="KW16">[KW16]</dt>
+        <dd>
+<span class="refAuthor">Krawczyk, H.</span> and <span class="refAuthor">H. Wee</span>, <span class="refTitle">"The OPTLS Protocol and TLS 1.3"</span>, <span class="seriesInfo">Proceedings of Euro S&amp;P 2016 </span>, <time datetime="2016" class="refDate">2016</time>, <span>&lt;<a href="https://ia.cr/2015/978">https://ia.cr/2015/978</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="NISTPQC">[NISTPQC]</dt>
+        <dd>
+<span class="refAuthor">NIST</span>, <span class="refTitle">"Post-Quantum Cryptography Standardization"</span>, <time datetime="2020" class="refDate">2020</time>. </dd>
+<dd class="break"></dd>
+<dt id="RFC5869">[RFC5869]</dt>
+        <dd>
+<span class="refAuthor">Krawczyk, H.</span> and <span class="refAuthor">P. Eronen</span>, <span class="refTitle">"HMAC-based Extract-and-Expand Key Derivation Function (HKDF)"</span>, <span class="seriesInfo">RFC 5869</span>, <span class="seriesInfo">DOI 10.17487/RFC5869</span>, <time datetime="2010-05" class="refDate">May 2010</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc5869">https://www.rfc-editor.org/rfc/rfc5869</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC6960">[RFC6960]</dt>
+        <dd>
+<span class="refAuthor">Santesson, S.</span>, <span class="refAuthor">Myers, M.</span>, <span class="refAuthor">Ankney, R.</span>, <span class="refAuthor">Malpani, A.</span>, <span class="refAuthor">Galperin, S.</span>, and <span class="refAuthor">C. Adams</span>, <span class="refTitle">"X.509 Internet Public Key Infrastructure Online Certificate Status Protocol - OCSP"</span>, <span class="seriesInfo">RFC 6960</span>, <span class="seriesInfo">DOI 10.17487/RFC6960</span>, <time datetime="2013-06" class="refDate">June 2013</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6960">https://www.rfc-editor.org/rfc/rfc6960</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC6962">[RFC6962]</dt>
+        <dd>
+<span class="refAuthor">Laurie, B.</span>, <span class="refAuthor">Langley, A.</span>, and <span class="refAuthor">E. Kasper</span>, <span class="refTitle">"Certificate Transparency"</span>, <span class="seriesInfo">RFC 6962</span>, <span class="seriesInfo">DOI 10.17487/RFC6962</span>, <time datetime="2013-06" class="refDate">June 2013</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6962">https://www.rfc-editor.org/rfc/rfc6962</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8410">[RFC8410]</dt>
+        <dd>
+<span class="refAuthor">Josefsson, S.</span> and <span class="refAuthor">J. Schaad</span>, <span class="refTitle">"Algorithm Identifiers for Ed25519, Ed448, X25519, and X448 for Use in the Internet X.509 Public Key Infrastructure"</span>, <span class="seriesInfo">RFC 8410</span>, <span class="seriesInfo">DOI 10.17487/RFC8410</span>, <time datetime="2018-08" class="refDate">August 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8410">https://www.rfc-editor.org/rfc/rfc8410</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8879">[RFC8879]</dt>
+        <dd>
+<span class="refAuthor">Ghedini, A.</span> and <span class="refAuthor">V. Vasiliev</span>, <span class="refTitle">"TLS Certificate Compression"</span>, <span class="seriesInfo">RFC 8879</span>, <span class="seriesInfo">DOI 10.17487/RFC8879</span>, <time datetime="2020-12" class="refDate">December 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8879">https://www.rfc-editor.org/rfc/rfc8879</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="SSW20">[SSW20]</dt>
+        <dd>
+<span class="refAuthor">Stebila, D.</span>, <span class="refAuthor">Schwabe, P.</span>, and <span class="refAuthor">T. Wiggers</span>, <span class="refTitle">"Post-Quantum TLS without Handshake Signatures"</span>, <span class="seriesInfo">ACM CCS 2020 </span>, <span class="seriesInfo">DOI 10.1145/3372297.3423350</span>, <span class="seriesInfo">IACR ePrint https://ia.cr/2020/534</span>, <time datetime="2020-11" class="refDate">November 2020</time>, <span>&lt;<a href="https://doi.org/10.1145/3372297.3423350">https://doi.org/10.1145/3372297.3423350</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="SSW21">[SSW21]</dt>
+        <dd>
+<span class="refAuthor">Stebila, D.</span>, <span class="refAuthor">Schwabe, P.</span>, and <span class="refAuthor">T. Wiggers</span>, <span class="refTitle">"More Efficient KEMTLS with Pre-Shared Keys"</span>, <span class="seriesInfo">ESORICS 2021 </span>, <span class="seriesInfo">DOI 10.1007/978-3-030-88418-5_1</span>, <span class="seriesInfo">IACR ePrint https://ia.cr/2021/779</span>, <time datetime="2021-05" class="refDate">May 2021</time>, <span>&lt;<a href="https://doi.org/10.1007/978-3-030-88418-5_1">https://doi.org/10.1007/978-3-030-88418-5_1</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="Wig24">[Wig24]</dt>
+      <dd>
+<span class="refAuthor">Wiggers, T.</span>, <span class="refTitle">"Post-Quantum TLS"</span>, <span class="seriesInfo">PhD thesis https://thomwiggers.nl/publication/thesis/</span>, <time datetime="2024-01-09" class="refDate">9 January 2024</time>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+</div>
+<div id="open-points-of-discussion">
+<section id="appendix-A">
+      <h2 id="name-open-points-of-discussion">
+<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-open-points-of-discussion" class="section-name selfRef">Open points of discussion</a>
+      </h2>
+<p id="appendix-A-1">The following are open points for discussion. The corresponding Github issues
+will be linked.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<div id="authentication-concerns-for-client-authentication-requests">
+<section id="appendix-A.1">
+        <h3 id="name-authentication-concerns-for">
+<a href="#appendix-A.1" class="section-number selfRef">A.1. </a><a href="#name-authentication-concerns-for" class="section-name selfRef">Authentication concerns for client authentication requests.</a>
+        </h3>
+<p id="appendix-A.1-1">Tracked by <a href="https://github.com/kemtls/draft-celi-wiggers-tls-authkem/issues/16">Issue
+#16</a>.<a href="#appendix-A.1-1" class="pilcrow">¶</a></p>
+<p id="appendix-A.1-2">The certificate request message from the server can not be authenticated by the
+AuthKEM mechanism. This is already somewhat discussed above and under security
+considerations. We might want to allow clients to refuse client auth for
+scenarios where this is a concern.<a href="#appendix-A.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="interaction-with-signing-certificates">
+<section id="appendix-A.2">
+        <h3 id="name-interaction-with-signing-ce">
+<a href="#appendix-A.2" class="section-number selfRef">A.2. </a><a href="#name-interaction-with-signing-ce" class="section-name selfRef">Interaction with signing certificates</a>
+        </h3>
+<p id="appendix-A.2-1">Tracked by <a href="https://github.com/kemtls/draft-celi-wiggers-tls-authkem/issues/20">Issue
+#20</a>.<a href="#appendix-A.2-1" class="pilcrow">¶</a></p>
+<p id="appendix-A.2-2">In the current state of the draft, we have not yet discussed combining
+traditional signature-based authentication with KEM-based authentication. One
+might imagine that the Client has a sigining certificate and the server has a
+KEM public key.<a href="#appendix-A.2-2" class="pilcrow">¶</a></p>
+<p id="appendix-A.2-3">In the current draft, clients MUST use a KEM certificate algorithm if the server
+negotiated AuthKEM.<a href="#appendix-A.2-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="acknowledgements">
+<section id="appendix-B">
+      <h2 id="name-acknowledgements">
+<a href="#name-acknowledgements" class="section-name selfRef">Acknowledgements</a>
+      </h2>
+<p id="appendix-B-1">Early versions of this work were supported by the European Research Council through Starting
+Grant No. 805031 (EPOQUE).<a href="#appendix-B-1" class="pilcrow">¶</a></p>
+<p id="appendix-B-2">Part of this work was supported by the NLNet NGI Assure theme fund project
+<a href="https://nlnet.nl/project/KEMTLS/">"Standardizing KEMTLS"</a><a href="#appendix-B-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-C">
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Thom Wiggers</span></div>
+<div dir="auto" class="left"><span class="org">PQShield</span></div>
+<div dir="auto" class="left"><span class="locality">Nijmegen</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:thom@thomwiggers.nl" class="email">thom@thomwiggers.nl</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Sofía Celi</span></div>
+<div dir="auto" class="left"><span class="org">Brave Software</span></div>
+<div dir="auto" class="left"><span class="locality">Lisbon</span></div>
+<div dir="auto" class="left"><span class="country-name">Portugal</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:cherenkov@riseup.net" class="email">cherenkov@riseup.net</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Peter Schwabe</span></div>
+<div dir="auto" class="left"><span class="org">Radboud University and MPI-SP</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:peter@cryptojedi.org" class="email">peter@cryptojedi.org</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Douglas Stebila</span></div>
+<div dir="auto" class="left"><span class="org">University of Waterloo</span></div>
+<div dir="auto" class="left">
+<span class="locality">Waterloo, ON</span>  </div>
+<div dir="auto" class="left"><span class="country-name">Canada</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:dstebila@uwaterloo.ca" class="email">dstebila@uwaterloo.ca</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Nick Sullivan</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:nicholas.sullivan+ietf@gmail.com" class="email">nicholas.sullivan+ietf@gmail.com</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9f8a603febb0bc3e',t:'MTc3ODI2MzM1Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
