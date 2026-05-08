@@ -1,3 +1,13 @@
 {
-  "reviewers": []
+  "reviewers": [
+    {
+      "reviewer_id": "ericamador",
+      "github_handle": "eramusa",
+      "display_name": "eramusa",
+      "name_public": false,
+      "active": true,
+      "domains": ["all"],
+      "added_date": "2026-05-08"
+    }
+  ]
 }
