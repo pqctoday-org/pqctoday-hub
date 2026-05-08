@@ -1,13 +1,48 @@
-# This file defines who owns the code in this repository.
-# GitHub uses this file to automatically request reviews from these owners
-# when a Pull Request is opened against a protected branch.
+# Trust Engine — domain routing
+# Teams must be created in pqctoday-org GitHub settings before this takes effect.
+# Required teams: library-smes, compliance-smes, migrate-smes, threats-smes,
+#   enrichment-reviewers, module-smes, tool-smes, editorial-board, crypto-engineering
 
-# Syntax:
-# pattern owner1 [owner2 ...]
+# Fallback — maintainer owns everything not matched below
+*                                                   @ericamador
 
-# Match all files
-*       @ericamador
+# Library & algorithm data
+src/data/library_*.csv                              @pqctoday-org/library-smes
+src/data/pqc_complete_algorithm_reference_*.csv     @pqctoday-org/library-smes
+src/data/trusted_sources_*.csv                      @pqctoday-org/library-smes
 
-# You can also define owners for specific directories or file types:
-# src/components/PKILearning/  @ericamador @security-team
-# *.md                         @ericamador @docs-team
+# Compliance & timeline data
+src/data/compliance_*.csv                           @pqctoday-org/compliance-smes
+src/data/timeline_*.csv                             @pqctoday-org/compliance-smes
+
+# Migrate & product catalog data
+src/data/pqc_product_catalog_*.csv                  @pqctoday-org/migrate-smes
+src/data/migrate_*.csv                              @pqctoday-org/migrate-smes
+src/data/algo_product_xref_*.csv                    @pqctoday-org/migrate-smes
+
+# Threats & assessment data
+src/data/quantum_threats_*.csv                      @pqctoday-org/threats-smes
+src/data/pqcassessment_*.csv                        @pqctoday-org/threats-smes
+
+# Enrichment & xwalk data
+src/data/pqc_maturity_governance_requirements_*.csv @pqctoday-org/enrichment-reviewers
+src/data/doc-enrichments/                           @pqctoday-org/enrichment-reviewers
+src/data/concept_xwalks_*.csv                       @pqctoday-org/library-smes @pqctoday-org/editorial-board
+
+# Learn module content
+src/components/PKILearning/modules/                 @pqctoday-org/module-smes
+src/components/PKILearning/moduleData.ts            @pqctoday-org/module-smes
+
+# Playground tool registry
+src/components/Playground/workshopRegistry.tsx      @pqctoday-org/tool-smes
+
+# WASM backends — highest-risk changes
+public/dist/                                        @pqctoday-org/editorial-board @pqctoday-org/crypto-engineering
+src/wasm/                                           @pqctoday-org/editorial-board @pqctoday-org/crypto-engineering
+
+# Controlled vocabulary & reviewer registry
+src/data/pqc-vocab-overlay.json                     @pqctoday-org/editorial-board
+public/data/reviewers.json                          @pqctoday-org/editorial-board
+
+# Offline approval attestations
+approvals/                                          @pqctoday-org/editorial-board

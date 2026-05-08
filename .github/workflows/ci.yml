@@ -44,3 +44,62 @@ jobs:
 
       - name: Test
         run: npm run test
+
+      - name: Extract PR labels
+        if: github.event_name == 'pull_request'
+        id: pr-labels
+        run: |
+          LABELS=$(echo '${{ toJson(github.event.pull_request.labels) }}' | jq -r '[.[].name] | join(",")')
+          echo "labels=$LABELS" >> $GITHUB_OUTPUT
+
+      - name: Post CSV diff comment
+        if: github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_LABELS: ${{ steps.pr-labels.outputs.labels }}
+        run: npx tsx scripts/ci/post-csv-diff.ts
+        continue-on-error: true
+
+  append-revision:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: checks
+    permissions:
+      contents: write
+      pull-requests: read
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          token: ${{ secrets.REVISION_TOKEN || secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Resolve merged PR number
+        id: pr-info
+        run: |
+          PR_NUMBER=$(gh pr list --state merged --base main --json number,mergeCommit \
+            --jq ".[] | select(.mergeCommit.oid == \"$GITHUB_SHA\") | .number" | head -1)
+          echo "pr_number=${PR_NUMBER:-0}" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Append revision entry
+        if: steps.pr-info.outputs.pr_number != '0'
+        env:
+          GITHUB_TOKEN: ${{ secrets.REVISION_TOKEN || secrets.GITHUB_TOKEN }}
+          GITHUB_PR_NUMBER: ${{ steps.pr-info.outputs.pr_number }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: npx tsx scripts/ci/append-revision.ts
