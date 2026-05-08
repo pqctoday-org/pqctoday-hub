@@ -28,6 +28,11 @@ export const TIER_STYLES: Record<ApplicabilityTier, { dot: string; chip: string;
       chip: 'bg-primary/10 text-primary border-primary/30',
       label: 'Advisory',
     },
+    derived: {
+      dot: 'bg-accent',
+      chip: 'bg-accent/10 text-accent border-accent/30',
+      label: 'Related via IR 8477',
+    },
     informational: {
       dot: 'bg-muted-foreground',
       chip: 'bg-muted/50 text-muted-foreground border-border',

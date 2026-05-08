@@ -13,6 +13,7 @@
  * center share the same logic via `useApplicability`.
  */
 import type { PersonaId } from '../data/learningPersonas'
+import type { XwalkRelationshipType } from '../data/conceptXwalkData'
 import type { LibraryItem } from '../data/libraryData'
 import type { ThreatData } from '../data/threatsData'
 import type { AllApplicable, ApplicabilityResult, ApplicabilityTier } from './applicabilityEngine'
@@ -31,6 +32,14 @@ export interface FlatCaps {
   industryEventsMax?: number
 }
 
+export interface PersonaTrustPathConfig {
+  allowedRelationships: XwalkRelationshipType[]
+  /** Suppress derived results below this 0-100 score. */
+  confidenceThreshold: number
+  maxDerivedResults: number
+  twoHopEnabled: boolean
+}
+
 export interface PersonaLens {
   /** Display order — sections not listed here are hidden. */
   sections: SectionId[]
@@ -42,12 +51,27 @@ export interface PersonaLens {
   flatCaps?: FlatCaps
   /** One-liner shown above the panel — frames *why* these items matter for this persona. */
   framing: string
+  /** IR 8477 trust path traversal config — controls derived-tier results. */
+  trustPathConfig: PersonaTrustPathConfig
 }
+
+const ALL_NON_RELATED: XwalkRelationshipType[] = [
+  'subset_of',
+  'superset_of',
+  'equivalent',
+  'intersects_with',
+]
 
 const DEFAULT_LENS: PersonaLens = {
   sections: ['frameworks', 'threats', 'library', 'timeline'],
   tierCaps: { mandatory: 10, recognized: 8, 'cross-border': 5, advisory: 5 },
   framing: 'Items that apply to your industry and country.',
+  trustPathConfig: {
+    allowedRelationships: ALL_NON_RELATED,
+    confidenceThreshold: 50,
+    maxDerivedResults: 10,
+    twoHopEnabled: false,
+  },
 }
 
 /**
@@ -62,6 +86,12 @@ const PERSONA_LENSES: Record<PersonaId, PersonaLens> = {
     libraryCategories: ['Government & Policy', 'Migration Guidance', 'International Frameworks'],
     framing:
       'Compliance obligations, sector threats, and deadlines that require action. Technical detail is downsampled — switch persona for full library coverage.',
+    trustPathConfig: {
+      allowedRelationships: ['subset_of', 'superset_of', 'equivalent'],
+      confidenceThreshold: 60,
+      maxDerivedResults: 5,
+      twoHopEnabled: false,
+    },
   },
   architect: {
     sections: ['library', 'frameworks', 'threats', 'timeline'],
@@ -76,6 +106,12 @@ const PERSONA_LENSES: Record<PersonaId, PersonaLens> = {
     ],
     framing:
       'Protocols, algorithm specs, and PKI standards relevant to your stack — followed by the compliance frameworks they implement against.',
+    trustPathConfig: {
+      allowedRelationships: ALL_NON_RELATED,
+      confidenceThreshold: 50,
+      maxDerivedResults: 12,
+      twoHopEnabled: false,
+    },
   },
   developer: {
     sections: ['library', 'frameworks', 'threats', 'timeline'],
@@ -89,23 +125,47 @@ const PERSONA_LENSES: Record<PersonaId, PersonaLens> = {
     ],
     framing:
       'Implementation specifications and protocol drafts you will encode against. Compliance shown for context.',
+    trustPathConfig: {
+      allowedRelationships: ALL_NON_RELATED,
+      confidenceThreshold: 45,
+      maxDerivedResults: 15,
+      twoHopEnabled: false,
+    },
   },
   researcher: {
     sections: ['library', 'timeline', 'frameworks', 'threats'],
     tierCaps: { mandatory: 20, recognized: 20, 'cross-border': 15, advisory: 20 },
     framing: 'Standards, drafts, and timeline events without persona-driven downsampling.',
+    trustPathConfig: {
+      allowedRelationships: ALL_NON_RELATED,
+      confidenceThreshold: 35,
+      maxDerivedResults: 25,
+      twoHopEnabled: true,
+    },
   },
   ops: {
     sections: ['frameworks', 'threats', 'library', 'timeline'],
     tierCaps: { mandatory: 10, recognized: 8, 'cross-border': 6, advisory: 5 },
     libraryCategories: ['Migration Guidance', 'PKI Certificate Management', 'Government & Policy'],
     framing: 'Migration playbooks and operational compliance items for your country and sector.',
+    trustPathConfig: {
+      allowedRelationships: ['intersects_with', 'subset_of', 'superset_of'],
+      confidenceThreshold: 50,
+      maxDerivedResults: 10,
+      twoHopEnabled: false,
+    },
   },
   curious: {
     sections: ['frameworks', 'threats', 'timeline', 'library'],
     tierCaps: { mandatory: 5, recognized: 3, 'cross-border': 3, advisory: 3 },
     flatCaps: { libraryMax: 3, threatsMax: 3, industryEventsMax: 3 },
     framing: 'A quick read on what applies to you — top items only.',
+    trustPathConfig: {
+      allowedRelationships: ['equivalent', 'subset_of'],
+      confidenceThreshold: 65,
+      maxDerivedResults: 3,
+      twoHopEnabled: false,
+    },
   },
 }
 
@@ -116,7 +176,14 @@ export function getLens(personaId: PersonaId | null): PersonaLens {
 }
 
 function emptyTierCounts(): Record<ApplicabilityTier, number> {
-  return { mandatory: 0, recognized: 0, 'cross-border': 0, advisory: 0, informational: 0 }
+  return {
+    mandatory: 0,
+    recognized: 0,
+    'cross-border': 0,
+    advisory: 0,
+    derived: 0,
+    informational: 0,
+  }
 }
 
 /** Cap a tier-grouped list to the lens's tierCaps. Returns the kept list and the total dropped count. */

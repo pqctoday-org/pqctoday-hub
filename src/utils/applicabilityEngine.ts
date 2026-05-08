@@ -37,6 +37,7 @@ const FLAT_TIMELINE_EVENTS: TimelineEvent[] = flattenTimeline(timelineData)
 import type { LibraryItem } from '../data/libraryData'
 import { libraryData } from '../data/libraryData'
 import type { Region } from '../store/usePersonaStore'
+import type { XwalkRelationshipType } from '../data/conceptXwalkData'
 import { EU_MEMBER_COUNTRIES } from './euCountries'
 import { REGION_COUNTRIES_MAP, INDUSTRY_TO_THREATS_MAP } from '../data/personaConfig'
 import { canonicalizeLibraryIndustry } from './industryNormalization'
@@ -55,13 +56,32 @@ export type ApplicabilityTier =
   | 'recognized'
   | 'cross-border'
   | 'advisory'
+  | 'derived'
   | 'informational'
+
+/** A single trust-path hop from a directly-matched standard to a derived one. */
+export interface TrustPath {
+  sourceStandardId: string
+  sourceStandardLabel: string
+  sourceTier: ApplicabilityTier
+  relationshipType: XwalkRelationshipType
+  /** 0–100 score from the xwalk edge's confidence label */
+  edgeConfidence: number
+  edgeEvidence: string
+  reviewerDisplay: string
+  reviewedDate: string
+  /** Propagated confidence: source_conf × rel_multiplier × (edge_conf / 100) */
+  derivedConfidence: number
+  hop: 1 | 2
+}
 
 export interface ApplicabilityResult<T> {
   item: T
   tier: ApplicabilityTier
   /** Human-readable reason — shown in panel chips/tooltips. */
   reason: string
+  /** Present only when tier === 'derived' — the IR 8477 trust path that produced this result. */
+  trustPath?: TrustPath
 }
 
 /** Normalized view of an item's applicability fields, abstracted across types. */
@@ -378,6 +398,7 @@ export const TIER_ORDER: ApplicabilityTier[] = [
   'recognized',
   'cross-border',
   'advisory',
+  'derived',
   'informational',
 ]
 
@@ -397,6 +418,10 @@ export const TIER_META: Record<ApplicabilityTier, { label: string; description: 
   advisory: {
     label: 'Advisory',
     description: 'Global or regional standard for your industry — recommended adoption',
+  },
+  derived: {
+    label: 'Related via IR 8477',
+    description: 'Semantically related standard — derived via a reviewed concept relationship',
   },
   informational: {
     label: 'Informational',
@@ -455,6 +480,7 @@ export function groupByTier<T>(
     recognized: [],
     'cross-border': [],
     advisory: [],
+    derived: [],
     informational: [],
   }
   for (const r of results) out[r.tier].push(r)
