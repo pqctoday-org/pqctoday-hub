@@ -17,12 +17,16 @@ export interface RevisionEntry {
   rows_affected: number | null
   module_id: string | null
   tool_id: string | null
+  /** Explicit list of affected record IDs — populated by append-revision.ts CI script. */
+  record_ids?: string[]
   reviewer_id: string
   reviewer_display: string
   approval_method: 'github' | 'offline'
   approved_via: string | null
+  proxy_github_handle: string | null
   authored_by_llm: boolean
   confidence_delta: number | null
+  sample_size?: number
 }
 
 // Module-scope cache — shared across all hook consumers in the same session
@@ -67,9 +71,44 @@ async function loadRevisions(): Promise<RevisionEntry[]> {
   return fetchPromise
 }
 
+// ── Pure filter helpers (usable outside React) ───────────────────────────────
+
+/** Filter revisions to a specific domain. */
+export function byDomain(revisions: RevisionEntry[], domain: string): RevisionEntry[] {
+  return revisions.filter((r) => r.domain === domain)
+}
+
+/**
+ * Filter revisions to a specific record within a domain.
+ * Uses `record_ids` array when present; falls back to scope_summary substring match.
+ * For module/tool domains, matches on `module_id`/`tool_id` fields.
+ */
+export function byRecord(
+  revisions: RevisionEntry[],
+  domain: string,
+  recordId: string
+): RevisionEntry[] {
+  return revisions.filter((r) => {
+    if (r.domain !== domain) return false
+    // Preferred: explicit record_ids array
+    if (r.record_ids && r.record_ids.length > 0) return r.record_ids.includes(recordId)
+    // Module / tool domain: dedicated ID fields
+    if (domain === 'module' && r.module_id) return r.module_id === recordId
+    if (domain === 'tool' && r.tool_id) return r.tool_id === recordId
+    // Fallback: substring match in scope_summary (brittle, but works until record_ids ships)
+    return r.scope_summary.includes(recordId)
+  })
+}
+
+// ── React hook ───────────────────────────────────────────────────────────────
+
 interface UseRevisionsResult {
   revisions: RevisionEntry[]
   isLoading: boolean
+  /** Convenience: filter by domain */
+  byDomain: (domain: string) => RevisionEntry[]
+  /** Convenience: filter by domain + record ID */
+  byRecord: (domain: string, recordId: string) => RevisionEntry[]
 }
 
 export function useRevisions(): UseRevisionsResult {
@@ -93,5 +132,10 @@ export function useRevisions(): UseRevisionsResult {
     }
   }, [])
 
-  return { revisions, isLoading }
+  return {
+    revisions,
+    isLoading,
+    byDomain: (domain: string) => byDomain(revisions, domain),
+    byRecord: (domain: string, recordId: string) => byRecord(revisions, domain, recordId),
+  }
 }

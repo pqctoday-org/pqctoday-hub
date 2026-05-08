@@ -1,12 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { CheckCircle, Circle } from 'lucide-react'
-import { useRevisions, type RevisionEntry } from '@/hooks/useRevisions'
+import { useRevisions, byRecord, type RevisionEntry } from '@/hooks/useRevisions'
+import { Button } from '@/components/ui/button'
 
 interface ReviewedBadgeProps {
-  domain: 'module' | 'tool'
-  /** moduleId for modules, pt_id for tools */
+  /** Any revision domain: 'module' | 'tool' for content; 'library' | 'compliance' | 'migrate' | 'threats' | 'algorithms' for data records */
+  domain: string
+  /** Entity or record ID (moduleId, pt_id, referenceId, threatId, softwareName, etc.) */
   entityId: string
+  /** When false, renders nothing if no revision found. Default true (shows "Unreviewed"). */
+  showUnreviewed?: boolean
   className?: string
+  /** When provided, badge is clickable and calls this handler */
+  onOpenDrilldown?: () => void
 }
 
 function formatMonth(isoTimestamp: string): string {
@@ -18,25 +24,22 @@ function formatMonth(isoTimestamp: string): string {
   }
 }
 
-function findLatestEntry(
-  revisions: RevisionEntry[],
-  domain: 'module' | 'tool',
-  entityId: string
-): RevisionEntry | null {
-  const matches = revisions.filter(
-    (r) => r.domain === domain && (r.module_id === entityId || r.tool_id === entityId)
-  )
-  return matches.length > 0 ? matches[0] : null // already sorted descending
-}
-
-export function ReviewedBadge({ domain, entityId, className = '' }: ReviewedBadgeProps) {
+export function ReviewedBadge({
+  domain,
+  entityId,
+  showUnreviewed = true,
+  className = '',
+  onOpenDrilldown,
+}: ReviewedBadgeProps) {
   const { revisions, isLoading } = useRevisions()
 
   if (isLoading) return null
 
-  const latest = findLatestEntry(revisions, domain, entityId)
+  const matches: RevisionEntry[] = byRecord(revisions, domain, entityId)
+  const latest = matches.length > 0 ? matches[0] : null
 
   if (!latest) {
+    if (!showUnreviewed) return null
     return (
       <span
         className={`inline-flex items-center gap-1 text-xs text-muted-foreground ${className}`}
@@ -48,13 +51,42 @@ export function ReviewedBadge({ domain, entityId, className = '' }: ReviewedBadg
     )
   }
 
+  const offlineSuffix =
+    latest.approval_method === 'offline' && latest.approved_via
+      ? ` · via ${latest.approved_via}`
+      : ''
+  const llmPrefix = latest.authored_by_llm ? 'LLM · ' : ''
+  const title = `Reviewed by ${latest.reviewer_display} via ${latest.approval_method}${offlineSuffix}`
+
+  const inner = (
+    <>
+      <CheckCircle className="w-3 h-3 shrink-0" aria-hidden="true" />
+      {llmPrefix}
+      {latest.reviewer_display} · {formatMonth(latest.merge_timestamp)}
+      {offlineSuffix}
+    </>
+  )
+
+  if (onOpenDrilldown) {
+    return (
+      <Button
+        variant="ghost"
+        size="sm"
+        className={`inline-flex items-center gap-1 h-auto p-0 text-xs text-status-success cursor-pointer hover:opacity-80 ${className}`}
+        title={title}
+        onClick={onOpenDrilldown}
+      >
+        {inner}
+      </Button>
+    )
+  }
+
   return (
     <span
       className={`inline-flex items-center gap-1 text-xs text-status-success ${className}`}
-      title={`Reviewed by ${latest.reviewer_display} via ${latest.approval_method}`}
+      title={title}
     >
-      <CheckCircle className="w-3 h-3 shrink-0" aria-hidden="true" />
-      {latest.reviewer_display} · {formatMonth(latest.merge_timestamp)}
+      {inner}
     </span>
   )
 }

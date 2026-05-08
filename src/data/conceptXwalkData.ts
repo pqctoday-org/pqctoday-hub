@@ -14,6 +14,7 @@ export type XwalkRationaleType =
   | 'implementation_guidance'
   | 'equivalence'
   | 'specialization'
+  | 'timeline_anchor'
 
 export type XwalkConfidenceLabel = 'high' | 'medium' | 'low'
 
@@ -63,6 +64,7 @@ const VALID_RATIONALE_TYPES = new Set<string>([
   'implementation_guidance',
   'equivalence',
   'specialization',
+  'timeline_anchor',
 ])
 
 const XWALK_REGEX = /concept_xwalks_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/

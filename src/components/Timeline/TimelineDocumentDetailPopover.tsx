@@ -8,6 +8,7 @@ import FocusLock from 'react-focus-lock'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
+import { TimelineEvidenceBadge } from './TimelineEvidenceBadge'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { DocumentAnalysis } from '../Library/DocumentAnalysis'
 import { TimelineAnalysisPanel } from './TimelineAnalysisPanel'
@@ -35,6 +36,16 @@ export interface TimelineDocumentRow {
   sourceUrl?: string
   sourceDate?: string
   status?: string
+  // Trust / evidence fields (FR-T-02)
+  peerReviewed?: 'yes' | 'no' | 'partial'
+  vettingBody?: string[]
+  sourceUrlQuality?: string
+  trustedSourceId?: string
+  trustedSourceIdStatus?: string
+  localFile?: string
+  confidenceScore?: number
+  dataQualityNotes?: string
+  complianceRefs?: string[]
 }
 
 interface TimelineDocumentDetailPopoverProps {
@@ -293,6 +304,48 @@ export const TimelineDocumentDetailPopover = ({
                       <BookOpen size={13} aria-hidden="true" />
                       Also in Library
                     </Link>
+                  )}
+                </div>
+              )}
+
+              {/* Source Evidence — FR-T-04 */}
+              {(row.confidenceScore !== undefined ||
+                row.trustedSourceIdStatus ||
+                row.dataQualityNotes) && (
+                <div className="glass-panel p-4 space-y-2">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                    Source Evidence
+                  </p>
+                  <TimelineEvidenceBadge
+                    confidenceScore={row.confidenceScore}
+                    trustedSourceIdStatus={row.trustedSourceIdStatus}
+                    localFile={row.localFile}
+                    compact={false}
+                  />
+                  {row.peerReviewed && (
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                      <span className="text-muted-foreground">Peer reviewed</span>
+                      <span className="text-foreground capitalize">{row.peerReviewed}</span>
+                      {row.vettingBody && row.vettingBody.length > 0 && (
+                        <>
+                          <span className="text-muted-foreground">Vetting body</span>
+                          <span className="text-foreground">{row.vettingBody.join(' / ')}</span>
+                        </>
+                      )}
+                      {row.sourceUrlQuality && (
+                        <>
+                          <span className="text-muted-foreground">Source quality</span>
+                          <span className="text-foreground">
+                            {row.sourceUrlQuality.replace(/_/g, ' ')}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  )}
+                  {row.dataQualityNotes && (
+                    <p className="text-xs text-muted-foreground italic border-t border-border pt-2">
+                      {row.dataQualityNotes}
+                    </p>
                   )}
                 </div>
               )}

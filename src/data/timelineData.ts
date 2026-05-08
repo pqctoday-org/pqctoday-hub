@@ -9,6 +9,7 @@ import type {
   TimelinePhase,
   GanttCountryData,
 } from '../types/timeline'
+import { complianceFrameworks } from './complianceData'
 
 // Re-export types for backward compatibility
 export type {
@@ -173,6 +174,10 @@ export function parseTimelineCSV(csvContent: string): CountryData[] {
       trustedSourceIdStatus: row.trusted_source_id_status || undefined,
       dataQualityNotes: row.data_quality_notes || undefined,
       confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
+      trustedSourceId: row.trusted_source_id || undefined,
+      localFile: row.local_file || undefined,
+      complianceRefs: [],
+      xwalkEdgeIds: [],
       // Populate denormalized fields
       orgName,
       orgFullName: row.OrgFullName || '',
@@ -315,6 +320,30 @@ try {
   // Fallback to empty array to prevent crash
   parsedData = []
 }
+
+// ─── complianceRefs post-pass ────────────────────────────────────────────────
+// Inverts compliance.timelineRefs → event.complianceRefs, so each event knows
+// which compliance frameworks cite it (no CSV change needed).
+function attachComplianceRefs(countries: CountryData[]): void {
+  const titleToIds = new Map<string, string[]>()
+  for (const fw of complianceFrameworks) {
+    for (const ref of fw.timelineRefs ?? []) {
+      const arr = titleToIds.get(ref) ?? []
+      arr.push(fw.id)
+      titleToIds.set(ref, arr)
+    }
+  }
+  for (const country of countries) {
+    for (const body of country.bodies) {
+      for (const event of body.events) {
+        const refs = titleToIds.get(event.title)
+        if (refs && refs.length > 0) event.complianceRefs = refs
+      }
+    }
+  }
+}
+
+attachComplianceRefs(parsedData)
 
 export const timelineData: CountryData[] = parsedData
 export const timelineMetadata = metadata

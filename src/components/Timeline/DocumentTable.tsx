@@ -49,19 +49,31 @@ export const DocumentTable = ({ data, title }: DocumentTableProps) => {
   })
 
   const rows: TimelineDocumentRow[] = data.flatMap((countryData) =>
-    countryData.phases.map((phase) => ({
-      countryName: countryData.country.countryName,
-      org: phase.events[0]?.orgName || countryData.country.bodies.map((b) => b.name).join(', '),
-      phase: phase.phase,
-      type: phase.type,
-      title: phase.title,
-      startYear: phase.startYear,
-      endYear: phase.endYear,
-      description: phase.description,
-      sourceUrl: phase.events[0]?.sourceUrl,
-      sourceDate: phase.events[0]?.sourceDate,
-      status: phase.status,
-    }))
+    countryData.phases.map((phase) => {
+      const ev = phase.events[0]
+      return {
+        countryName: countryData.country.countryName,
+        org: ev?.orgName || countryData.country.bodies.map((b) => b.name).join(', '),
+        phase: phase.phase,
+        type: phase.type,
+        title: phase.title,
+        startYear: phase.startYear,
+        endYear: phase.endYear,
+        description: phase.description,
+        sourceUrl: ev?.sourceUrl,
+        sourceDate: ev?.sourceDate,
+        status: phase.status,
+        peerReviewed: ev?.peerReviewed,
+        vettingBody: ev?.vettingBody,
+        sourceUrlQuality: ev?.sourceUrlQuality,
+        trustedSourceId: ev?.trustedSourceId,
+        trustedSourceIdStatus: ev?.trustedSourceIdStatus,
+        localFile: ev?.localFile,
+        confidenceScore: ev?.confidenceScore,
+        dataQualityNotes: ev?.dataQualityNotes,
+        complianceRefs: ev?.complianceRefs,
+      }
+    })
   )
 
   if (rows.length === 0)

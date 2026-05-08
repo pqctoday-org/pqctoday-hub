@@ -35,6 +35,8 @@ import {
 import { ErrorAlert } from '../ui/error-alert'
 import { EmptyState } from '../ui/empty-state'
 import { Button } from '@/components/ui/button'
+import { GeoFilter, useGeoFilter, matchesGeoFilter } from '../common/GeoFilter'
+import { SectorFilter, useSectorFilter, matchesSectorFilter } from '../common/SectorFilter'
 
 const URGENCY_ORDER: Record<string, number> = {
   Critical: 0,
@@ -238,6 +240,8 @@ export const LibraryView: React.FC = () => {
   const [lifecycleBucket, setLifecycleBucket] = useState<string>(
     () => searchParams.get('lifecycle') ?? 'All'
   )
+  const geoFilter = useGeoFilter()
+  const sectorFilter = useSectorFilter()
   const [showFilters, setShowFilters] = useState(false)
   const [highlightedDocId, setHighlightedDocId] = useState<string | null>(
     () => searchParams.get('doc') ?? null
@@ -528,6 +532,23 @@ export const LibraryView: React.FC = () => {
           return false
       }
 
+      // Geo filter (multi-select, URL param: geo[])
+      if (geoFilter.length > 0) {
+        const regionValues = item.regionScope
+          ? item.regionScope
+              .split(';')
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : []
+        if (!matchesGeoFilter(geoFilter, regionValues)) return false
+      }
+
+      // Sector filter (multi-select, URL param: sector[])
+      if (sectorFilter.length > 0) {
+        const industries = item.applicableIndustries ?? []
+        if (!matchesSectorFilter(sectorFilter, industries)) return false
+      }
+
       // My bookmarks filter
       if (showOnlyLibraryBookmarks && !libraryBookmarks.includes(item.referenceId)) return false
 
@@ -552,6 +573,8 @@ export const LibraryView: React.FC = () => {
     activeOrg,
     activeIndustry,
     activeRegion,
+    geoFilter,
+    sectorFilter,
     filterText,
     showOnlyLibraryBookmarks,
     libraryBookmarks,
@@ -894,6 +917,18 @@ export const LibraryView: React.FC = () => {
                 opaque
                 className="mb-0 w-full"
               />
+            </div>
+
+            <div className="flex-1 min-w-[160px]">
+              <span className="text-xs font-medium text-muted-foreground mb-1 block">
+                Geography
+              </span>
+              <GeoFilter options={[]} className="w-full" />
+            </div>
+
+            <div className="flex-1 min-w-[160px]">
+              <span className="text-xs font-medium text-muted-foreground mb-1 block">Sector</span>
+              <SectorFilter className="w-full" />
             </div>
 
             {/* Sort Dropdown for Mobile (Inside filters drawer) */}

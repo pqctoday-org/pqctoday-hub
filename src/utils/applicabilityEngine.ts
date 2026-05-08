@@ -42,6 +42,7 @@ import { EU_MEMBER_COUNTRIES } from './euCountries'
 import { REGION_COUNTRIES_MAP, INDUSTRY_TO_THREATS_MAP } from '../data/personaConfig'
 import { canonicalizeLibraryIndustry } from './industryNormalization'
 import { isDomesticRegulator, isFiveEyesAffinity, isEuLevelBody } from './regulatorMap'
+import pqcVocabOverlay from '../data/pqc-vocab-overlay.json'
 
 // ── Types ────────────────────────────────────────────────────────────────
 
@@ -122,6 +123,46 @@ function regionCountriesFor(profile: UserProfile): Set<string> | null {
 
 function isEuMember(profile: UserProfile): boolean {
   return profile.country ? EU_MEMBER_COUNTRIES.has(profile.country) : false
+}
+
+// ── Controlled-vocabulary normalization (FR-PF-01/FR-PF-02) ─────────────
+// Accepts ISO 3166-1 alpha-2 codes, PQC overlay codes, and legacy freeform
+// strings. Returns an array of normalized country values (PQC overlay codes
+// may expand to multiple ISO codes).
+
+export function normalizeCountry(value: string): string[] {
+  const v = value.trim()
+  if (/^[A-Z]{2}$/.test(v)) return [v]
+  if (v.startsWith('PQC-REGION-')) {
+    const overlay = (
+      pqcVocabOverlay.geography as Array<{ code: string; maps_to: string | string[] | null }>
+    ).find((g) => g.code === v)
+    if (overlay?.maps_to) {
+      return Array.isArray(overlay.maps_to) ? overlay.maps_to : [overlay.maps_to]
+    }
+  }
+  return [v]
+}
+
+const NAICS_2DIGIT_TO_FREEFORM: Record<string, string[]> = {
+  '52': ['Finance & Banking', 'Finance & Insurance', 'Banking', 'financial'],
+  '92': ['Government & Defense', 'Government', 'Defense', 'Public Administration'],
+  '54': ['Technology', 'Professional Services'],
+  '51': ['Technology', 'Information Technology', 'Software'],
+  '62': ['Healthcare', 'Life Sciences', 'Medical'],
+  '22': ['Energy & Utilities', 'Energy', 'Utilities'],
+  '48': ['Transportation', 'Logistics'],
+}
+
+export function normalizeIndustry(value: string): string[] {
+  const v = value.trim()
+  if (/^\d{2,6}$/.test(v)) return [v]
+  if (v.startsWith('PQC-SECTOR-')) return [v]
+  // Check if the freeform string can be mapped to a NAICS code
+  for (const [naics, aliases] of Object.entries(NAICS_2DIGIT_TO_FREEFORM)) {
+    if (aliases.some((a) => v.toLowerCase().includes(a.toLowerCase()))) return [naics, v]
+  }
+  return [v]
 }
 
 // ── Tier classifier ──────────────────────────────────────────────────────

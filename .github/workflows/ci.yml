@@ -42,6 +42,15 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Validate OSCAL output (optional)
+        run: |
+          if command -v oscal-cli &> /dev/null; then
+            oscal-cli validate public/data/pqctoday-oscal.json --as assessment-results
+          else
+            echo "OSCAL CLI not present — skipping schema validation"
+          fi
+        continue-on-error: true
+
       - name: Test
         run: npm run test
 

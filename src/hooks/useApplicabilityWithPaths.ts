@@ -36,8 +36,10 @@ export function useApplicabilityWithPaths(
     if (base.isEmpty) return []
     if (conceptXwalkData.length === 0) return []
     const lens = getLens(persona)
-    return traverseXwalkPaths(base.frameworks, conceptXwalkData, lens)
-  }, [base.isEmpty, base.frameworks, persona])
+    // Include library items as traversal sources so that library-anchored xwalk
+    // edges (e.g. NIST CSWP 39 → FIPS 203) fire when CSWP 39 appears in direct library results.
+    return traverseXwalkPaths([...base.frameworks, ...base.library], conceptXwalkData, lens)
+  }, [base.isEmpty, base.frameworks, base.library, persona])
 
   const allFrameworks = useMemo<ApplicabilityResult<ComplianceFramework>[]>(
     () => base.frameworks,
