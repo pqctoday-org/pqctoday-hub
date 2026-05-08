@@ -28,6 +28,8 @@ interface RawVendorRow {
   website_url_quality?: string
   gleif_url_quality?: string
   data_quality_notes?: string
+  trusted_source_id?: string
+  peer_reviewed?: string
 }
 
 const { data: allVendors, metadata } = loadLatestCSV<RawVendorRow, Omit<Vendor, 'productCount'>>(
@@ -52,6 +54,8 @@ const { data: allVendors, metadata } = loadLatestCSV<RawVendorRow, Omit<Vendor, 
     websiteUrlQuality: row.website_url_quality || undefined,
     gleifUrlQuality: row.gleif_url_quality || undefined,
     dataQualityNotes: row.data_quality_notes || undefined,
+    trustedSourceId: row.trusted_source_id || undefined,
+    peerReviewed: (row.peer_reviewed?.toLowerCase() as Vendor['peerReviewed']) || undefined,
   })
 )
 
