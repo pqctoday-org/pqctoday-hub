@@ -68,9 +68,9 @@ describe('conceptXwalkData', () => {
     const targets = ['FIPS 203', 'FIPS 204', 'FIPS 205']
     for (const target of targets) {
       const edge = conceptXwalkData.find(
-        (e) => e.fromConcept === 'NSA CNSA 2.0' && e.toConcept === target
+        (e) => e.fromConcept === 'CNSA 2.0' && e.toConcept === target
       )
-      expect(edge, `NSA CNSA 2.0 → ${target} missing`).toBeDefined()
+      expect(edge, `CNSA 2.0 → ${target} missing`).toBeDefined()
       expect(edge?.relationshipType).toBe('subset_of')
     }
   })
