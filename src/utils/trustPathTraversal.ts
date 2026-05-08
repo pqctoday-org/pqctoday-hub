@@ -65,19 +65,29 @@ function computeDerivedConfidence(
   return Math.round(sourceConf * mult * (edgeConf / 100))
 }
 
+/** Extract a secondary human-readable label from an item (e.g. compliance framework name). */
+function itemName(item: AnyItem): string | undefined {
+  if ('name' in item && typeof (item as { name: unknown }).name === 'string')
+    return (item as { name: string }).name
+  return undefined
+}
+
 function edgesFor(
   standardId: string,
   xwalkEdges: ConceptXwalkRecord[],
-  allowedRelationships: XwalkRelationshipType[]
+  allowedRelationships: XwalkRelationshipType[],
+  secondaryLabel?: string
 ): Array<{ edge: ConceptXwalkRecord; neighborId: string }> {
   const allowed = new Set<XwalkRelationshipType>(allowedRelationships)
+  const labels = new Set<string>([standardId])
+  if (secondaryLabel && secondaryLabel !== standardId) labels.add(secondaryLabel)
   const out: Array<{ edge: ConceptXwalkRecord; neighborId: string }> = []
   for (const edge of xwalkEdges) {
     if (!allowed.has(edge.relationshipType)) continue
     if (edge.relationshipType === 'not_related') continue
-    if (edge.fromConcept === standardId) {
+    if (labels.has(edge.fromConcept)) {
       out.push({ edge, neighborId: edge.toConcept })
-    } else if (edge.toConcept === standardId) {
+    } else if (labels.has(edge.toConcept)) {
       out.push({ edge, neighborId: edge.fromConcept })
     }
   }
@@ -122,8 +132,9 @@ export function traverseXwalkPaths(
       ? Math.max(TIER_CONFIDENCE[match.tier] ?? 50, 75)
       : (TIER_CONFIDENCE[match.tier] ?? 50)
     const srcLabel = itemLabel(match.item)
+    const srcName = itemName(match.item)
 
-    for (const { edge, neighborId } of edgesFor(srcId, xwalkEdges, allowedRelationships)) {
+    for (const { edge, neighborId } of edgesFor(srcId, xwalkEdges, allowedRelationships, srcName)) {
       if (seen.has(neighborId)) continue
       seen.add(neighborId)
 
