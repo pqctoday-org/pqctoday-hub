@@ -7,6 +7,7 @@ import type { ThreatData } from '../../../data/threatsData'
 import type { TimelineEvent } from '../../../types/timeline'
 import type { ApplicabilityResult, ApplicabilityTier } from '../../../utils/applicabilityEngine'
 import { TIER_STYLES } from './tierStyles'
+import { ReviewedBadge } from '../../ui/ReviewedBadge'
 import { Button } from '../../ui/button'
 
 /**
@@ -51,6 +52,7 @@ export function FrameworkItem({
           )}
         </div>
         {!compact && <p className="text-xs text-muted-foreground line-clamp-1">{fw.description}</p>}
+        {!compact && <ReviewedBadge domain="compliance" entityId={fw.id} showUnreviewed={false} />}
       </div>
     </>
   )

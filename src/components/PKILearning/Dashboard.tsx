@@ -34,6 +34,7 @@ import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useAssessmentResultStore } from '../../store/useAssessmentResultStore'
 import { inferRecommendedModules } from '../../utils/inferRecommendedModules'
 import { AssessmentRecommendationsBanner } from './AssessmentRecommendationsBanner'
+import { ContentUpdatesFeed } from '@/components/ui/ContentUpdatesFeed'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -1051,6 +1052,13 @@ const ModuleTracksGrid = ({
           </motion.div>
         </AnimatePresence>
       )}
+
+      <ContentUpdatesFeed
+        domain="module"
+        limit={5}
+        title="Module Content Updates"
+        defaultCollapsed={true}
+      />
     </div>
   )
 }

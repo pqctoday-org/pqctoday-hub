@@ -14,6 +14,8 @@ import {
 } from '../../data/timelineEnrichmentData'
 import type { TimelineDocumentRow } from './TimelineDocumentDetailPopover'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
+import { TimelineEvidenceBadge } from './TimelineEvidenceBadge'
+import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { Button } from '@/components/ui/button'
 
 interface TimelineDocumentCardProps {
@@ -93,7 +95,20 @@ export const TimelineDocumentCard = ({
             Enriched
           </span>
         )}
+        <ReviewedBadge domain="timeline" entityId={row.title} showUnreviewed={false} />
       </div>
+
+      {/* Evidence badge row — FR-T-03 */}
+      {(row.confidenceScore !== undefined || row.trustedSourceIdStatus) && (
+        <div className="mb-2">
+          <TimelineEvidenceBadge
+            confidenceScore={row.confidenceScore}
+            trustedSourceIdStatus={row.trustedSourceIdStatus}
+            localFile={row.localFile}
+            compact
+          />
+        </div>
+      )}
 
       {/* Period */}
       <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">

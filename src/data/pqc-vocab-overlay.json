@@ -1,6 +1,84 @@
 {
-  "version": "1.0",
+  "version": "1.1",
+  "last_updated": "2026-05-07",
   "description": "PQC-specific overlay codes that supplement NAICS 2022 sector codes and ISO 3166 country codes in Trust Engine applicability filtering",
+  "geography": [
+    {
+      "code": "PQC-REGION-FIVEEYES",
+      "label": "Five Eyes Alliance",
+      "maps_to": ["US", "GB", "AU", "CA", "NZ"],
+      "rationale": "Used for standards with Five Eyes joint guidance (e.g., CNSA 2.0 applicability)"
+    },
+    {
+      "code": "PQC-REGION-EU",
+      "label": "European Union",
+      "maps_to": "EU",
+      "rationale": "ISO 3166-1 does not assign EU as a country code; used for EU-level directives"
+    },
+    {
+      "code": "PQC-REGION-GLOBAL",
+      "label": "Global / International",
+      "maps_to": null,
+      "rationale": "Standards with no geographic restriction (IETF RFCs, ISO standards)"
+    }
+  ],
+  "sectors": [
+    {
+      "code": "PQC-SECTOR-HSM-VENDOR",
+      "label": "HSM / Cryptographic Hardware Vendor",
+      "maps_to": "334413",
+      "rationale": "NAICS 334413 covers semiconductors but not dedicated HSM vendors"
+    },
+    {
+      "code": "PQC-SECTOR-CLOUD-KMS",
+      "label": "Cloud Key Management Service Provider",
+      "maps_to": "518210",
+      "rationale": "NAICS 518210 (Data Processing / Hosting) is the closest standard code"
+    },
+    {
+      "code": "PQC-SECTOR-PQCLIB-VENDOR",
+      "label": "PQC Library / SDK Vendor",
+      "maps_to": "511210",
+      "rationale": "NAICS 511210 (Software Publishers) as nearest analogue"
+    }
+  ],
+  "roles": [
+    {
+      "code": "PQC-ROLE-CISO",
+      "label": "CISO / Security Executive",
+      "maps_to": "SP-MGT-001",
+      "persona_alias": "executive",
+      "rationale": "NICE SP-MGT-001 (Security Manager) is closest; CISO role is more senior"
+    },
+    {
+      "code": "PQC-ROLE-CRYPTOENGINEER",
+      "label": "Cryptographic Engineer",
+      "maps_to": "SP-DEV-002",
+      "persona_alias": "developer",
+      "rationale": "NICE SP-DEV-002 (Software Developer) with cryptography specialization"
+    },
+    {
+      "code": "PQC-ROLE-SYSARCH",
+      "label": "Security Architect",
+      "maps_to": "SP-ARC-002",
+      "persona_alias": "architect",
+      "rationale": "NICE SP-ARC-002 (Security Architect) direct match"
+    },
+    {
+      "code": "PQC-ROLE-RESEARCHER",
+      "label": "Cryptography Researcher",
+      "maps_to": "SP-RSK-001",
+      "persona_alias": "researcher",
+      "rationale": "NICE SP-RSK-001 (Authoritative Knowledgeable Specialist) closest match"
+    },
+    {
+      "code": "PQC-ROLE-OPSEC",
+      "label": "Security Operations",
+      "maps_to": "PR-OPS-001",
+      "persona_alias": "ops",
+      "rationale": "NICE PR-OPS-001 (Cyber Operator) closest match for ops persona"
+    }
+  ],
   "codes": [
     {
       "code": "PQC-GOV-CRYPT",

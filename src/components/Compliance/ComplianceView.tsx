@@ -59,6 +59,10 @@ import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore
 import { useHistoryStore } from '@/store/useHistoryStore'
 import { type ViewMode } from '@/components/Library/ViewToggle'
 import debounce from 'lodash/debounce'
+import { GeoFilter, useGeoFilter } from '../common/GeoFilter'
+import { SectorFilter, useSectorFilter } from '../common/SectorFilter'
+import { RoleFilter } from '../common/RoleFilter'
+import { normalizeCountry, normalizeIndustry } from '@/utils/applicabilityEngine'
 
 // Maps industry → recommended top-level section + sub-hint
 const INDUSTRY_COMPLIANCE_HINT: Record<
@@ -254,9 +258,21 @@ function ForYouSection({
   landscapeProps: { countryFilter: string; industryFilter: string }
 }) {
   const persona = usePersonaStore((s) => s.selectedPersona)
+  const geoFilter = useGeoFilter()
+  const sectorFilter = useSectorFilter()
+
+  // Resolve geo/sector URL params to single-value profile overrides.
+  // Explicit lsCountry/lsIndustry (from the landscape picker) take precedence;
+  // geo/sector dropdowns kick in only when the landscape picker is at "All".
+  const geoCountry =
+    geoFilter.length > 0 ? (normalizeCountry(geoFilter[0])[0] ?? undefined) : undefined
+  const sectorIndustry =
+    sectorFilter.length > 0 ? (normalizeIndustry(sectorFilter[0])[0] ?? undefined) : undefined
+
   const profileOverride = {
-    country: landscapeProps.countryFilter !== 'All' ? landscapeProps.countryFilter : undefined,
-    industry: landscapeProps.industryFilter !== 'All' ? landscapeProps.industryFilter : undefined,
+    country: landscapeProps.countryFilter !== 'All' ? landscapeProps.countryFilter : geoCountry,
+    industry:
+      landscapeProps.industryFilter !== 'All' ? landscapeProps.industryFilter : sectorIndustry,
   }
 
   const [selectedLibrary, setSelectedLibrary] = useState<LibraryItem | null>(null)
@@ -461,7 +477,16 @@ function MobileViewToggle({
           onSwitchTab={switchLandscapeTab}
         />
       )}
-      {section === 'foryou' && <ForYouSection landscapeProps={landscapeProps} />}
+      {section === 'foryou' && (
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            <GeoFilter options={[]} />
+            <SectorFilter />
+            <RoleFilter syncWithPersona />
+          </div>
+          <ForYouSection landscapeProps={landscapeProps} />
+        </div>
+      )}
       {section === 'standards' && (
         <ComplianceLandscape
           frameworks={standardsFrameworks}
@@ -1397,6 +1422,11 @@ export const ComplianceView = () => {
               learnLabel="Take the full assessment"
               learnTo="/assess"
             />
+            <div className="flex flex-wrap gap-2">
+              <GeoFilter options={[]} />
+              <SectorFilter />
+              <RoleFilter syncWithPersona />
+            </div>
             <ForYouSection
               landscapeProps={{
                 countryFilter: lsCountry,

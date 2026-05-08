@@ -21,6 +21,7 @@ import { UpdateProductButton } from '../ui/UpdateProductButton'
 import { buildProductUpdateUrl } from '@/utils/endorsement'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
+import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { Button } from '@/components/ui/button'
 
 interface SoftwareCardProps {
@@ -160,6 +161,7 @@ export const SoftwareCard = ({
         <div className="flex flex-wrap items-center gap-2">
           {/* Always visible on mobile and desktop */}
           <TrustScoreBadge resourceType="migrate" resourceId={item.softwareName} size="sm" />
+          <ReviewedBadge domain="migrate" entityId={item.softwareName} showUnreviewed={false} />
           {renderPqcSupport(item.pqcSupport)}
 
           {/* Progressively Disclosed on Mobile */}

@@ -24,6 +24,7 @@ import { logEvent } from '../../utils/analytics'
 import { MobileAlgorithmList } from './MobileAlgorithmList'
 import { AlgorithmImplementationsModal } from './AlgorithmImplementationsModal'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
+import { ReviewedBadge } from '../ui/ReviewedBadge'
 
 type SortColumn = 'function' | 'classical' | 'pqc' | 'deprecation' | 'region' | 'status'
 type SortDirection = 'asc' | 'desc' | null
@@ -565,6 +566,11 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                               </Button>
                             </div>
                             <AlgoCtaStrip algoName={pqcName} />
+                            <ReviewedBadge
+                              domain="algorithms"
+                              entityId={pqcName}
+                              showUnreviewed={false}
+                            />
                           </div>
                         </td>
                         <td className="px-4 py-3" style={{ width: `${columnWidths.region}px` }}>

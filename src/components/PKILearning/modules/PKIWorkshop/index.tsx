@@ -14,6 +14,7 @@ import {
   GitBranch,
   Globe,
   BarChart2,
+  ChevronDown,
 } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
@@ -36,35 +37,122 @@ import { CertCapacityCalculator } from './CertCapacityCalculator'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 import { Button } from '@/components/ui/button'
 
+const ARTIFACT_GROUPS = [
+  {
+    key: 'csrs' as const,
+    label: 'CSRs',
+    Icon: FileKey,
+    colorClass: 'text-primary',
+    bgClass: 'bg-primary/10',
+  },
+  {
+    key: 'keys' as const,
+    label: 'Keys',
+    Icon: ShieldCheck,
+    colorClass: 'text-accent',
+    bgClass: 'bg-accent/10',
+  },
+  {
+    key: 'certs' as const,
+    label: 'Certs',
+    Icon: Key,
+    colorClass: 'text-status-success',
+    bgClass: 'bg-status-success/10',
+  },
+]
+
 const ArtifactSummaryStrip: React.FC = () => {
   const { artifacts } = useModuleStore()
+  const [expanded, setExpanded] = useState(false)
 
-  const chips = [
-    ...artifacts.csrs.map((c) => ({ icon: FileKey, label: `CSR ${c.name}`, algo: '' })),
-    ...artifacts.keys.map((k) => ({
-      icon: ShieldCheck,
-      label: `CA Key ${k.name}`,
-      algo: k.algorithm,
-    })),
-    ...artifacts.certificates.map((c) => ({ icon: Key, label: `Cert ${c.name}`, algo: '' })),
+  const csrs = artifacts.csrs
+  const keys = artifacts.keys
+  const certs = artifacts.certificates
+  const total = csrs.length + keys.length + certs.length
+
+  if (total === 0) return null
+
+  const groups = [
+    {
+      ...ARTIFACT_GROUPS[0],
+      items: csrs.map((c) => ({ id: c.id, name: c.name, detail: '' })),
+    },
+    {
+      ...ARTIFACT_GROUPS[1],
+      items: keys.map((k) => ({ id: k.id, name: k.name, detail: k.algorithm })),
+    },
+    {
+      ...ARTIFACT_GROUPS[2],
+      items: certs.map((c) => ({ id: c.id, name: c.name, detail: '' })),
+    },
   ]
 
-  if (chips.length === 0) return null
-
   return (
-    <div className="mb-4 flex flex-wrap gap-2 rounded-lg bg-muted/40 p-2 border border-border">
-      {chips.map((chip, i) => (
-        <div
-          key={i}
-          className="flex items-center gap-1.5 rounded-full bg-background px-2.5 py-1 text-xs border border-border shadow-sm"
-        >
-          <chip.icon size={12} className="text-muted-foreground" />
-          <span className="font-medium text-foreground max-w-[120px] truncate" title={chip.label}>
-            {chip.label}
+    <div className="mb-4 rounded-lg border border-border bg-muted/30 overflow-hidden">
+      {/* Summary bar — always visible */}
+      <Button
+        variant="ghost"
+        onClick={() => setExpanded((v) => !v)}
+        className="w-full flex items-center justify-between px-3 py-2 hover:bg-muted/50 transition-colors text-left h-auto rounded-none"
+        aria-expanded={expanded}
+      >
+        <div className="flex items-center gap-1 flex-wrap">
+          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide mr-2">
+            Session Artifacts
           </span>
-          <span className="text-muted-foreground ml-1">· {chip.algo}</span>
+          {groups.map((g) => (
+            <div
+              key={g.label}
+              className={`flex items-center gap-1 rounded-full px-2 py-0.5 ${g.bgClass}`}
+            >
+              <g.Icon size={11} className={g.colorClass} />
+              <span className={`text-xs font-bold ${g.colorClass}`}>{g.items.length}</span>
+              <span className="text-xs text-muted-foreground">{g.label}</span>
+            </div>
+          ))}
         </div>
-      ))}
+        <ChevronDown
+          size={14}
+          className={`text-muted-foreground transition-transform shrink-0 ml-2 ${expanded ? 'rotate-180' : ''}`}
+        />
+      </Button>
+
+      {/* Expanded grouped panel */}
+      {expanded && (
+        <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-border border-t border-border">
+          {groups.map((g) => (
+            <div key={g.label} className="p-3">
+              <div className="flex items-center gap-1.5 mb-2">
+                <g.Icon size={12} className={g.colorClass} />
+                <span className="text-xs font-semibold text-foreground">{g.label}</span>
+                <span className="text-xs text-muted-foreground ml-auto">{g.items.length}</span>
+              </div>
+              {g.items.length === 0 ? (
+                <p className="text-xs text-muted-foreground/50 italic">None yet</p>
+              ) : (
+                <div className="space-y-1 max-h-28 overflow-y-auto pr-1">
+                  {g.items.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center gap-1.5 min-w-0"
+                      title={item.name}
+                    >
+                      <span className="text-xs font-mono text-foreground/80 truncate">
+                        {item.name}
+                      </span>
+                      {item.detail && (
+                        <span className="text-xs text-muted-foreground/60 shrink-0">
+                          · {item.detail}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

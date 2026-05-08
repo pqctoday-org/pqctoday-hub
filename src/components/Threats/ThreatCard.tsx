@@ -4,6 +4,7 @@ import { getIndustryIcon } from './threatsHelper'
 import type { ThreatItem } from '../../data/threatsData'
 import { StatusBadge } from '../common/StatusBadge'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
+import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
@@ -88,6 +89,7 @@ export const ThreatCard = ({ item, index = 0, onClick, dimmed = false }: ThreatC
           {item.threatId}
         </h3>
         <TrustScoreBadge resourceType="threats" resourceId={item.threatId} size="sm" />
+        <ReviewedBadge domain="threats" entityId={item.threatId} showUnreviewed={false} />
       </div>
 
       <p className="text-xs text-muted-foreground mb-4 line-clamp-3 leading-relaxed min-h-[4.5em]">

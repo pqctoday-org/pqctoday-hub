@@ -145,6 +145,16 @@ const PatentsView = lazyWithRetry(() =>
     default: module.PatentsView,
   }))
 )
+const RevisionsView = lazyWithRetry(() =>
+  import('./components/Revisions/RevisionsView').then((module) => ({
+    default: module.RevisionsView,
+  }))
+)
+const AgilityView = lazyWithRetry(() =>
+  import('./components/Agility/AgilityView').then((module) => ({
+    default: module.AgilityView,
+  }))
+)
 
 // Helper component to log page views on route change
 function AnalyticsTracker() {
@@ -347,6 +357,22 @@ function App() {
         element={
           <ErrorBoundary>
             <PatentsView />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="revisions"
+        element={
+          <ErrorBoundary>
+            <RevisionsView />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="agility"
+        element={
+          <ErrorBoundary>
+            <AgilityView />
           </ErrorBoundary>
         }
       />

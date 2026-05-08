@@ -30,6 +30,14 @@ export interface TimelineEvent {
   dataQualityNotes?: string
   confidenceScore?: number
 
+  // New fields — populated from CSV columns (FR-T-02)
+  trustedSourceId?: string
+  localFile?: string
+
+  // Derived fields — populated at load time, not from CSV (FR-T-05)
+  complianceRefs?: string[]
+  xwalkEdgeIds?: string[]
+
   // Denormalized fields for convenient access
   orgName: string
   orgFullName: string

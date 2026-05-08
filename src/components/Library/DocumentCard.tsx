@@ -24,6 +24,7 @@ import { FlagButton } from '../ui/FlagButton'
 import { buildLibraryEndorsementUrl, buildLibraryFlagUrl } from './libraryEndorsement'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
+import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { DocumentAnalysis } from './DocumentAnalysis'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
@@ -145,6 +146,7 @@ export const DocumentCard = ({
 
       <div className="flex items-center gap-2 mb-3 flex-wrap">
         <TrustScoreBadge resourceType="library" resourceId={item.referenceId} size="sm" />
+        <ReviewedBadge domain="library" entityId={item.referenceId} showUnreviewed={false} />
         <span
           className={clsx(
             'inline-flex self-start items-center px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider',
