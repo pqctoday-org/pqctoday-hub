@@ -273,6 +273,11 @@ function classifyMatch(profile: UserProfile, fields: ItemFields): ClassifyResult
     }
   }
   if (directCountryMatch) {
+    // Suppress industry-specific domestic standards that explicitly target a
+    // different sector (e.g. HIPAA for a Finance profile). Only surface as
+    // cross-border when the item is industry-universal so the user gets
+    // contextual country-level coverage without irrelevant sector noise.
+    if (!industryUniversal) return null
     return {
       tier: 'cross-border',
       reason: hasIndustry ? `${country} match (different industry focus)` : `${country} match`,
