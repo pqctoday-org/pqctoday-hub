@@ -37,7 +37,9 @@
     "video:finalize": "tsx scripts/finalize-video.ts",
     "build:workshop-manifest": "tsx scripts/build-workshop-manifest.ts",
     "download:vendor-roadmaps": "node scripts/download-vendor-roadmaps.js",
-    "download:vendor-roadmaps:dry": "node scripts/download-vendor-roadmaps.js --dry-run"
+    "download:vendor-roadmaps:dry": "node scripts/download-vendor-roadmaps.js --dry-run",
+    "generate-cbom": "tsx scripts/generate-cbom.ts",
+    "generate-cbom:dry": "tsx scripts/generate-cbom.ts --dry-run"
   },
   "overrides": {
     "serialize-javascript": ">=7.0.3",

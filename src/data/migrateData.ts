@@ -49,6 +49,8 @@ interface RawSoftwareItem {
   quantum_tech?: string
   wip?: string
   github_contribution_url?: string
+  confidence_score?: string
+  cswp39_tags?: string
 }
 
 function deriveCisaCategory(categoryName: string, layer: string): string {
@@ -173,6 +175,13 @@ const {
     quantumTech: (row.quantum_tech as SoftwareItem['quantumTech']) || undefined,
     wip: row.wip === 'true',
     githubContributionUrl: row.github_contribution_url?.trim() || undefined,
+    confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
+    cswp39Tags: row.cswp39_tags
+      ? row.cswp39_tags
+          .split(';')
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : undefined,
   }),
   true // withPrevious for status badges
 )

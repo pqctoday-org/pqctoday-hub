@@ -1,0 +1,64 @@
+{
+  "version": "1.0",
+  "description": "PQC-specific overlay codes that supplement NAICS 2022 sector codes and ISO 3166 country codes in Trust Engine applicability filtering",
+  "codes": [
+    {
+      "code": "PQC-GOV-CRYPT",
+      "label": "Government Cryptographic Infrastructure",
+      "description": "Applies to government agencies and their contractors that manage classified or sensitive-but-unclassified cryptographic infrastructure subject to national PQC transition mandates (e.g., NSM-10, CNSA 2.0, BSI TR-02102).",
+      "naics_superset": ["921110", "921120", "921130", "921140", "921150", "928110", "928120"],
+      "iso3166_superset": ["US", "GB", "CA", "AU", "NZ", "DE", "FR"],
+      "cswp39_relevant": true
+    },
+    {
+      "code": "PQC-CRITICAL-INFRA",
+      "label": "Critical Infrastructure Operator",
+      "description": "Applies to operators of critical infrastructure sectors (energy, water, transportation, communications, financial) that are subject to sector-specific PQC migration guidance from CISA, ENISA, or equivalent bodies.",
+      "naics_superset": [
+        "221100",
+        "221200",
+        "237110",
+        "237120",
+        "486000",
+        "517000",
+        "522000",
+        "523000",
+        "524000",
+        "561621"
+      ],
+      "iso3166_superset": null,
+      "cswp39_relevant": true
+    },
+    {
+      "code": "PQC-IOT-MFGR",
+      "label": "IoT and Embedded Systems Manufacturer",
+      "description": "Applies to manufacturers of IoT devices, embedded systems, and connected hardware where constrained compute environments limit PQC algorithm choices and long device lifetimes create harvest-now-decrypt-later exposure.",
+      "naics_superset": [
+        "334111",
+        "334112",
+        "334118",
+        "334210",
+        "334220",
+        "334290",
+        "334412",
+        "334413",
+        "334414",
+        "334415",
+        "334416",
+        "334417",
+        "334418",
+        "334419"
+      ],
+      "iso3166_superset": null,
+      "cswp39_relevant": false
+    },
+    {
+      "code": "PQC-FINANCE-SETTLE",
+      "label": "Financial Settlement and Clearing",
+      "description": "Applies to financial market infrastructure (exchanges, CCPs, CSDs, payment systems) where long-term data integrity requirements and regulatory oversight create heightened PQC migration urgency.",
+      "naics_superset": ["523210", "523220", "523910", "522320", "522390"],
+      "iso3166_superset": null,
+      "cswp39_relevant": true
+    }
+  ]
+}

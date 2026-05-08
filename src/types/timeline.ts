@@ -28,6 +28,7 @@ export interface TimelineEvent {
   sourceUrlQuality?: string
   trustedSourceIdStatus?: string
   dataQualityNotes?: string
+  confidenceScore?: number
 
   // Denormalized fields for convenient access
   orgName: string
