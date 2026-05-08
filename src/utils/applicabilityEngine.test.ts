@@ -125,15 +125,17 @@ describe('applicableFrameworks — tier classification', () => {
     expect(result?.reason).not.toMatch(/Five Eyes/)
   })
 
-  it('classifies country match + different industry as Cross-border (regardless of body)', () => {
+  it('suppresses same-country single-industry standard for wrong sector (no cross-border noise)', () => {
+    // APRA CPS 234 is Australian Finance. An AU Government user should NOT see it —
+    // same-country, industry-specific, wrong sector is suppressed to reduce noise.
     const fw = makeFramework({
       id: 'APRA-CPS-234',
       countries: ['Australia'],
       industries: ['Finance & Banking'],
-      enforcementBody: 'APRA', // domestic for Finance, but user is Gov
+      enforcementBody: 'APRA',
     })
-    const [result] = applicableFrameworks(auGovProfile, [fw])
-    expect(result?.tier).toBe('cross-border')
+    const results = applicableFrameworks(auGovProfile, [fw])
+    expect(results).toHaveLength(0)
   })
 
   it('classifies global standard for matching industry as Advisory', () => {
@@ -256,6 +258,8 @@ describe('groupByTier', () => {
       industries: ['Government & Defense'],
       enforcementBody: 'ASD',
     })
+    // Same-country, single-industry item for a different sector is now suppressed
+    // (not emitted as cross-border) to avoid noise — e.g. HIPAA for a Finance profile.
     const fw2 = makeFramework({
       countries: ['Australia'],
       industries: ['Finance & Banking'],
@@ -265,7 +269,7 @@ describe('groupByTier', () => {
     const results = applicableFrameworks(profile, [fw1, fw2])
     const grouped = groupByTier(results)
     expect(grouped.mandatory).toHaveLength(1)
-    expect(grouped['cross-border']).toHaveLength(1)
+    expect(grouped['cross-border']).toHaveLength(0)
     expect(grouped.recognized).toEqual([])
     expect(grouped.advisory).toEqual([])
     expect(grouped.informational).toEqual([])
