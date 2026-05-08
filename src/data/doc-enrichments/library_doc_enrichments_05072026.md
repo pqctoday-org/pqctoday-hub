@@ -592,3 +592,297 @@ enrichment_method: ollama-qwen3.6:27b
 - **Extraction Timestamp**: 2026-05-07T23:53:18
 
 ---
+
+## EFF-Encryption-Y2K-Moment-2026
+
+- **Reference ID**: EFF-Encryption-Y2K-Moment-2026
+- **Title**: Yikes, Encryption's Y2K Moment Is Coming Years Early
+- **Authors**: Electronic Frontier Foundation (EFF)
+- **Publication Date**: 2026-04-09
+- **Last Updated**: 2026-04-09
+- **Document Status**: Released
+- **Main Topic**: The document analyzes the accelerated timeline for post-quantum cryptography migration, comparing it to the Y2K crisis and urging immediate action from engineers and users to mitigate store-now-decrypt-later and authentication attacks.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Store-now-decrypt-later attacks; authentication attacks on forged signatures; malware insertion via fake authentication
+- **Migration Timeline Info**: Google moved up its estimated deadline for quantum preparedness in cryptography to 2029; NIST finalized the standards for post-quantum cryptographic algorithms back in 2024
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Erica Portnoy (Author of the analysis)
+- **PQC Products Mentioned**: NGINX; Ubuntu; Signal; iMessage; Chromebooks
+- **Protocols Covered**: HTTPS; End-to-End Encryption
+- **Infrastructure Layers**: Trusted execution environments (TEEs); Cloud processing; Disk encryption; Root of trust
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: SHA-1; Symmetric encryption
+- **Key Takeaways**: Upgrade key agreement systems immediately to mitigate store-now-decrypt-later attacks; Prepare for authentication attacks on forged signatures as deadlines approach; Users should verify if their messaging apps and websites support post-quantum cryptography; Avoid AI features in encrypted chats that might leak content due to reduced security in TEEs; Check for post-quantum support in new hardware purchases, especially root of trust capabilities
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: Up to about 4 in 10 websites currently support a post-quantum key exchange; Larger signatures require reworking HTTPS private key discovery
+- **Target Audience**: Engineer; User; Policy Maker
+- **Implementation Prerequisites**: NGINX version 26.04 on Ubuntu for key agreement upgrades; Timely application of software updates
+- **Relevant PQC Today Features**: Timeline; Threats; Migrate; pqc-risk-management; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Hardware with hard-coded certificates will probably be the last to update; Point of Sale systems were late adopters during SHA-1 deprecation
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Some technologies like TEEs may not make it in time due to slower speed of hardware deployments; Not every cryptographically-capable device will be ready by the new deadline
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Less organizational readiness than expected; Governments and large companies need to act quickly; Older devices vulnerable to other attacks may be left behind
+- **Source Document**: EFF-Encryption-Y2K-Moment-2026.html (67,026 bytes, 13,952 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T23:54:49
+
+---
+
+## ACS-Google-Cloudflare-PQC-2029
+
+- **Reference ID**: ACS-Google-Cloudflare-PQC-2029
+- **Title**: Google, Cloudflare Want Post-Quantum Cryptography by 2029
+- **Authors**: ACS (Australian Computer Society)
+- **Publication Date**: 2026-01-01
+- **Last Updated**: 2026-01-01
+- **Document Status**: Released
+- **Main Topic**: Google and Cloudflare have accelerated their post-quantum cryptography migration deadlines to 2029 due to faster-than-expected quantum hardware progress and harvest-now-decrypt-later risks.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Cryptographically Relevant Quantum Computers (CRQC); Harvest Now Decrypt Later (store now, decrypt later)
+- **Migration Timeline Info**: Google and Cloudflare set internal PQC migration deadlines to 2029; previously estimated mid-2030s
+- **Applicable Regions / Bodies**: United States; Australia
+- **Leaders Contributions Mentioned**: Sundar Pichai (Google CEO); Leonard Bernardone (Author); Richard Marles (Australia’s Minister for Defence); Bas Westerbaan (Cloudflare researcher)
+- **PQC Products Mentioned**: Android 17
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Authentication services; APIs; Blockchain technologies
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: P-256; Elliptic Curve Cryptography (ECC); ECDLP-256
+- **Key Takeaways**: Organizations should accelerate PQC migration timelines to 2029 or earlier due to rapid quantum hardware advancements; Prioritize PQC migration for authentication services and critical infrastructure; Implement protections against harvest-now-decrypt-later attacks by adopting quantum-safe algorithms immediately; Monitor quantum research developments closely as progress may become less public; Verify vulnerabilities using zero-knowledge proofs to avoid exposing attack roadmaps to bad actors
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: P-256 could be broken with 10,000 quantum bits; ECDLP-256 could be cracked in a few minutes using 20 times less physical quantum bits than previously thought
+- **Target Audience**: CISO; Security Architect; Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Timeline; Threats; pqc-risk-management; migration-program; digital-assets
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Multi-year migration; Phased rollout (Android 17 beta then general availability)
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: ACS-Google-Cloudflare-PQC-2029.html (32,561 bytes, 6,761 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T23:56:45
+
+---
+
+## QuantumInsider-QuantumXChange-PhioTX-2026
+
+- **Reference ID**: QuantumInsider-QuantumXChange-PhioTX-2026
+- **Title**: Quantum XChange Launches Phio TX Management Console
+- **Authors**: Quantum XChange (via The Quantum Insider)
+- **Publication Date**: 2026-04-08
+- **Last Updated**: 2026-04-08
+- **Document Status**: Released
+- **Main Topic**: Quantum XChange launches the Phio TX Centralized Management Console to enable enterprise-scale management of quantum-safe key delivery and cryptographic governance.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Harvest Now, Decrypt Later (HNDL); AI-enabled and quantum-driven threats
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Eddy Zervigon, CEO of Quantum XChange, stated that the future of encryption is an architecture problem and that the console provides centralized command and control for crypto-agility; Mohib Ur Rehman, author, wrote the article
+- **PQC Products Mentioned**: Phio TX; Phio TX Centralized Management Console (CMC)
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Key Management; Network Layer; Cryptographic Centers of Excellence (CCoE)
+- **Standardization Bodies**: NIST; Gartner
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Establish a Cryptographic Center of Excellence (CCoE) to inventory and govern cryptographic assets; Use centralized management consoles to operationalize crypto-agility without rip-and-replace infrastructure; Separate key generation and delivery from data to protect data-in-motion during PQC transition; Continuously monitor and update cryptographic controls to address Harvest Now, Decrypt Later threats
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Crypto-agility; Hybrid classical/PQC environments; Seamless migration to post-quantum cryptography
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; CIO; Compliance Officer; Security Architect
+- **Implementation Prerequisites**: Existing SIEM and monitoring tools (for Syslog integration); Phio TX appliances
+- **Relevant PQC Today Features**: crypto-agility; pqc-governance; migration-program; pqc-risk-management; vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: Cryptographic inventory management; Node Discovery & Registration; Comprehensive Monitoring of key delivery status
+- **Testing & Validation Methods**: Preview and validate configuration files before deployment
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: No rip-and-replace of existing infrastructure required; Centralized oversight for continuous adaptation; Automated peer discovery to accelerate time to value
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Establish a Cryptographic Center of Excellence (CCoE); Institutionalize cryptographic governance; Centralized policy control and administrative control
+- **Source Document**: QuantumInsider-QuantumXChange-PhioTX-2026.html (267,691 bytes, 10,847 extracted chars)
+- **Extraction Timestamp**: 2026-05-07T23:58:20
+
+---
+
+## Cloudflare-PostQuantum-Roadmap-2026
+
+- **Reference ID**: Cloudflare-PostQuantum-Roadmap-2026
+- **Title**: Cloudflare's Post-Quantum Roadmap
+- **Authors**: Cloudflare
+- **Publication Date**: 2026-04-07
+- **Last Updated**: 2026-04-30
+- **Document Status**: Released
+- **Main Topic**: Cloudflare's accelerated post-quantum roadmap targeting full security including authentication by 2029, driven by recent breakthroughs in quantum computing capabilities.
+- **PQC Algorithms Covered**: ML-KEM, ML-DSA
+- **Quantum Threats Addressed**: Harvest-now/decrypt-later attacks, Q-Day, quantum-forged keys, downgrade attacks, moonshot attacks
+- **Migration Timeline Info**: 2019: began preparing post-quantum migration; 2022: enabled post-quantum encryption for all websites and APIs; 2029: target for full post-quantum security including authentication; 2030: potential earliest Q-Day concern
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Bas Westerbaan (author); Scott Aaronson (quantum computer scientist warning about unpublished estimates); Sophie Schmieg (Google, compared scenario to Enigma cryptanalysis); Sharon Goldberg (co-author of related IPsec post); Amos Paul (co-author of related IPsec post)
+- **PQC Products Mentioned**: Cloudflare One
+- **Protocols Covered**: TLS, IPsec, HTTPS, OAuth
+- **Infrastructure Layers**: PKI, certificate transparency, root certificates, API auth keys, code-signing certs
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA-2048, P-256, elliptic curve cryptography, Shor’s algorithm
+- **Key Takeaways**: Prioritize upgrading long-lived keys and authentication systems over encryption due to imminent Q-Day risks; Disable support for quantum-vulnerable cryptography to prevent downgrade attacks; Assess critical third-party vendors and dependencies early as migration will take years; Governments should assign a lead agency to coordinate migration and promote international standards; Make post-quantum support a requirement for any procurement
+- **Security Levels & Parameters**: 10,000 qubits (for breaking P-256 on neutral atom computer); 3-4 physical neutral atom qubits per logical qubit; 1000 physical qubits per logical qubit (superconducting)
+- **Hybrid & Transition Approaches**: X25519MLKEM768 hybrid in TLS, hybrid ML-KEM for IPsec, PQ HSTS, certificate transparency
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO, Security Architect, Policy Maker, Compliance Officer
+- **Implementation Prerequisites**: Rotating secrets such as passwords and access tokens; disabling quantum-vulnerable cryptography; upgrading browsers, applications, and origins; third-party validation and fraud monitoring
+- **Relevant PQC Today Features**: Timeline, Threats, Migrate, vendor-risk, migration-program, pqc-risk-management
+- **Implementation Attack Surface**: Downgrade attacks, harvest-now/decrypt-later attacks, impersonation via forged credentials, remote code execution via compromised update mechanisms
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Interoperability testing (confirmed with Cisco and Fortinet for IPsec)
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Deep dependency chains; third-party vendors; critical business dependencies like financial services and utilities; procurement risk
+- **Deployment & Migration Complexity**: Phased deployment; long dependency chain for authentication; years not months for full migration; backward compatibility challenges with legacy clients; need to disable vulnerable crypto
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Urgency required; coordination by lead agency for governments; proactive steps by Cloudflare; no action needed for Cloudflare customers regarding their services
+- **Source Document**: Cloudflare-PostQuantum-Roadmap-2026.html (323,779 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-08T00:00:06
+
+---
+
+## QCReport-QSE-Enterprise-PQC-Platform-2026
+
+- **Reference ID**: QCReport-QSE-Enterprise-PQC-Platform-2026
+- **Title**: QSE Launches Enterprise Post-Quantum Migration Platform with QPA v2 Release
+- **Authors**: QSE (via Quantum Computing Report)
+- **Publication Date**: 2026-04-07
+- **Last Updated**: 2026-04-07
+- **Document Status**: Released
+- **Main Topic**: QSE launches QPA v2, an enterprise post-quantum migration platform that automates cryptographic inventory, risk scoring, and migration orchestration.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Harvest now, decrypt later
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Canada; Bodies: Municipal Information Systems Association (MISA), Canadian Association of Defence and Security Industries (CADSI)
+- **Leaders Contributions Mentioned**: Ted Carefoot (QSE CEO) underscored the necessity of early risk evaluation for public-sector entities
+- **PQC Products Mentioned**: QPA v2, qREK, QAuth
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: PKI, Key Management, Key Infrastructure, Identity and Authentication, Decentralized Encrypted Storage
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Organizations should automate cryptographic inventory discovery to replace manual assessment processes; Phased PQC rollout is enabled by integrating with existing PKI and key management systems without infrastructure replacement; Early risk evaluation is critical for public-sector entities to secure sensitive data before quantum computing capabilities mature; Executive dashboards provide real-time visibility into risk levels and migration progress for internal decision-making
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Phased PQC rollout
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO, Security Architect, Compliance Officer
+- **Implementation Prerequisites**: Existing PKI integration; Existing key management systems integration
+- **Relevant PQC Today Features**: Migrate, Assess, pqc-risk-management, pqc-governance, migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: Automated cryptographic inventory discovery; Integrated inventory analysis for software, hardware, and cryptographic components
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: Quantum-delivered entropy
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Phased rollout; Migration orchestration; Standardized method for prioritizing risk
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Governance design; Budgeting; Timeline development; AI-enhanced assessment of cryptographic posture and compliance readiness
+- **Source Document**: QCReport-QSE-Enterprise-PQC-Platform-2026.html (119,393 bytes, 5,968 extracted chars)
+- **Extraction Timestamp**: 2026-05-08T00:02:27
+
+---
+
+## YahooFinance-Quantum-Ready-2030-2026
+
+- **Reference ID**: YahooFinance-Quantum-Ready-2030-2026
+- **Title**: Researchers Say Quantum Computers Could, in Theory, Be Ready by 2030
+- **Authors**: Yahoo Finance
+- **Publication Date**: 2026-03-02
+- **Last Updated**: 2026-03-02
+- **Document Status**: Released
+- **Main Topic**: Research suggests a new hybrid quantum algorithm (JVG) could break RSA and ECC encryption with fewer than 5,000 qubits, compressing the threat timeline and accelerating the need for post-quantum cryptography adoption.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Shor's algorithm; integer factorization; quantum-assisted code-breaking; Harvest Now Decrypt Later (implied by "encrypted archives... could become readable later if captured today")
+- **Migration Timeline Info**: 2030 mentioned as an upper-bound credible threat date in description; JVG algorithm suggests timeline compression requiring immediate action; no specific regulatory milestones stated in text body
+- **Applicable Regions / Bodies**: United States (implied by Austin, Texas location and US market context); Advanced Quantum Technologies Institute (AQTI)
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: PKI (implied by certificate systems); legacy systems; software supply chains
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; ECC; Shor's algorithm
+- **Key Takeaways**: Transition to post-quantum cryptography must accelerate due to reduced quantum resource requirements; Organizations should prioritize systems protecting long-retention information; Crypto-agility is the fastest path to safety for telecom and enterprise networks; Contractors and subcontractors must be secured to prevent weak links in government and financial systems
+- **Security Levels & Parameters**: Less than 5,000 qubits required to break RSA and ECC; thousand-fold less quantum computer resources than previous estimates
+- **Hybrid & Transition Approaches**: Crypto-agility; hybrid method (JVG algorithm shifts heavy lifting to classical computers); early deployment of quantum-resistant standards
+- **Performance & Size Considerations**: Less than 5,000 qubits; thousand-fold less quantum computer resources (qubits and quantum gates)
+- **Target Audience**: CISO; Security Architect; Policy Maker; Government Agencies; Financial Institutions; Telecommunications Operators
+- **Implementation Prerequisites**: Crypto-agility capability; inventory of long-retention information systems; vendor and subcontractor security assessments
+- **Relevant PQC Today Features**: Threats; Migration-program; Crypto-agility; Pqc-risk-management; Vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Contractors and subcontractors as weakest links; software supply chains; long upgrade cycles for telecom equipment
+- **Deployment & Migration Complexity**: Upgrading cryptography is slow and expensive; tangled across legacy systems, vendors, and long-lived devices; long upgrade cycles for telecom and satellite operators
+- **Financial & Business Impact**: Loss of trust in commerce systems; fraud and identity takeover risks; cost of upgrading cryptography
+- **Organizational Readiness**: Immediate planning challenge for government agencies; need to prioritize long-retention information; ensuring contractors are not the weakest link
+- **Source Document**: YahooFinance-Quantum-Ready-2030-2026.html (2,149,259 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-08T00:03:56
+
+---
+
+## QuantumInsider-25-Companies-PQC-2026
+
+- **Reference ID**: QuantumInsider-25-Companies-PQC-2026
+- **Title**: 25 Companies Building the Quantum Cryptography and Communications Markets
+- **Authors**: The Quantum Insider
+- **Publication Date**: 2026-03-25
+- **Last Updated**: 2026-03-25
+- **Document Status**: Released
+- **Main Topic**: A 2026 market landscape analysis of 25 companies involved in post-quantum cryptography software, quantum key distribution hardware, and quantum-safe migration services.
+- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, HQC, CRYSTALS-Kyber, CRYSTALS-Dilithium, SPHINCS+
+- **Quantum Threats Addressed**: Cryptographically relevant quantum computers (CRQCs), harvest now, decrypt later
+- **Migration Timeline Info**: NIST PQC standards finalized August 2024; HQC selected March 2025; Canada federal PQC migration plans due April 2026; Canada critical systems prioritization by 2031; Canada full migration completion by 2035; CRQC possible within 10 years, likely within 15 years
+- **Applicable Regions / Bodies**: United States, Canada, European Union, China, India, Japan, United Kingdom, France, Finland, Australia; National Institute of Standards and Technology (NIST), NSA, Global Risk Institute
+- **Leaders Contributions Mentioned**: Michele Mosca (founder of evolutionQ); Mohib Ur Rehman (author)
+- **PQC Products Mentioned**: CryptoNext Security PQC libraries and migration tools, DigiCert PQC-ready digital certificates, Fortanix confidential computing with PQC integration, ISARA Corporation PQC solutions, Keyfactor crypto-agility platforms, Palo Alto Networks security platforms with PQC, Post-Quantum VPN and identity verification system, PQShield hardware and software PQC IP, Quantum Xchange key distribution platform, Sectigo PQC-ready digital certificates, Encryption Consulting CBOM, evolutionQ advisory and risk assessment, IBM quantum-safe transformation services, SandboxAQ AQtive Guard, QuSecure quantum-safe orchestration platform, Arqit Encryption Intelligence and NetworkSecure, American Binary post-quantum enterprise VPN, Crypto Quantique quantum-driven IoT security, ID Quantique QKD systems and quantum random number generators, KETS Quantum Security chip-scale QKD systems, QuantumCTek QKD infrastructure, QNu Labs QKD systems, Toshiba QKD programs, 01 Quantum IronCAP PQC technology, Crypto4A quantum-safe hardware security modules, Quantum Dice quantum random number generators, QuintessenceLabs key management, Qrypt encryption key generation, Xiphera PQC IP cores, Thales HSMs with PQC support, Cisco quantum-safe networking features, Entrust PQC-ready certificate authority solutions, Utimaco quantum-safe HSMs, Kyndryl quantum-safe managed services
+- **Protocols Covered**: TLS, VPN, IPsec (implied by VPN context but not explicitly named as protocol spec, only "VPN" mentioned), CNSA 2.0 (referenced as requirements for protocol)
+- **Infrastructure Layers**: PKI, Key Management, HSM, Cloud KMS, Certificate Authority, Cryptographic Bill of Materials (CBOM), Operational Technology (OT), Embedded Devices, Network Infrastructure
+- **Standardization Bodies**: National Institute of Standards and Technology (NIST)
+- **Compliance Frameworks Referenced**: FIPS 203, FIPS 204, FIPS 205, CNSA 2.0
+- **Classical Algorithms Referenced**: RSA, ECC
+- **Key Takeaways**: Organizations should adopt a dual approach using PQC for broad deployment and QKD for high-security use cases; Start with PQC migration as it requires no new hardware while evaluating QKD for sensitive links; Government mandates in the US and Canada are accelerating enterprise migration timelines; A layered strategy combining PQC and QKD is recommended by most experts; Cryptographic inventory and risk assessment are critical first steps for migration
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid approaches combining PQC and QKD, layered strategies, crypto-agility, dual-stack deployment (implied by "dual approach"), composite certificates (implied by "PQC-ready digital certificates" but not explicitly termed composite), migration path from software PQC to hardware QKD
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO, Security Architect, Compliance Officer, Procurement Officer, Policy Maker
+- **Implementation Prerequisites**: Cryptographic inventory, risk assessment, migration planning, vendor selection, existing classical hardware (for PQC), specialized optical hardware (for QKD)
+- **Relevant PQC Today Features**: vendor-risk, migration-program, pqc-risk-management, qkd, crypto-agility, compliance-strategy, iot-ot-pqc
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: CBOM (Cryptographic Bill of Materials), cryptographic asset discovery, inventory of cryptographic assets, crypto-agility scanning
+- **Testing & Validation Methods**: Blueprint 7 validation, formal validation of cryptographic network protocol
+- **QKD Protocols & Quantum Networking**: Quantum key distribution (QKD), quantum networking, point-to-point connections, metropolitan networks, long-distance QKD over existing fiber, trusted nodes (implied by network architecture), quantum repeaters (not explicitly mentioned, but "long-distance" implies need), ETSI QKD series (not mentioned)
+- **QRNG & Entropy Sources**: Quantum random number generators, quantum tunneling effects for entropy generation, high-entropy randomness, true random number generation
+- **Constrained Device & IoT Suitability**: IoT security, embedded devices, chip-scale QKD systems, FPGA and ASIC hardware integration, OT equipment with long lifecycles
+- **Supply Chain & Vendor Risk**: Vendor landscape reference, procurement risk, third-party library trust (implied by "open-source vs proprietary" not explicitly stated, but "vendor selection" is), dependency chains (implied by "supply chains"), lock-in (not explicitly stated)
+- **Deployment & Migration Complexity**: Phased rollout (implied by timelines), backward compatibility (implied by "migration path"), effort estimation (not explicitly stated), breaking changes (not explicitly stated), rollback procedures (not explicitly stated)
+- **Financial & Business Impact**: PQShield raised over $63 million; SandboxAQ raised over $1 billion; government spending mandates (implied by "government mandates")
+- **Organizational Readiness**: Governance prerequisites (implied by "government mandates"), dedicated crypto team required (implied by "lack in-house cryptographic expertise"), board-level reporting (not explicitly stated), change management scope (implied by "migration strategy"), estimated planning horizon (6-12 months not stated, but 2026-2035 timelines given), maturity assessment level (implied by "varying levels of delivery maturity")
+- **Source Document**: QuantumInsider-25-Companies-PQC-2026.html (291,036 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-08T00:05:58
+
+---
