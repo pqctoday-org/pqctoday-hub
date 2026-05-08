@@ -1,0 +1,2127 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Greek,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>Signature Authentication in the Internet Key Exchange Version 2 (IKEv2) using PQC</title>
+<meta content="Tirumaleswar Reddy" name="author">
+<meta content="Valery Smyslov" name="author">
+<meta content="Scott Fluhrer" name="author">
+<meta content="
+       Signature-based authentication methods are utilized in IKEv2  . The current version of the Internet Key Exchange Version 2 (IKEv2) protocol supports traditional digital signatures. 
+       This document specifies a generic mechanism for integrating post-quantum cryptographic (PQC) digital signature algorithms into the IKEv2 protocol. The approach allows for seamless inclusion of any PQC signature scheme within the existing authentication framework of IKEv2. Additionally, it outlines how Module-Lattice-Based Digital Signatures (ML-DSA) and Stateless Hash-Based Digital Signatures (SLH-DSA), can be employed as authentication methods within the IKEv2 protocol, as they have been standardized by NIST. 
+    " name="description">
+<meta content="xml2rfc 3.30.2" name="generator">
+<meta content="PQC" name="keyword">
+<meta content="IKEv2" name="keyword">
+<meta content="Digital Signature" name="keyword">
+<meta content="ML-DSA" name="keyword">
+<meta content="SLH-DSA" name="keyword">
+<meta content="draft-ietf-ipsecme-ikev2-pqc-auth-06" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.30.2
+    Python 3.12.11
+    ConfigArgParse 1.7.1
+    google-i18n-address 3.1.1
+    intervaltree 3.1.0
+    Jinja2 3.1.6
+    lxml 6.0.1
+    platformdirs 4.4.0
+    pycountry 24.6.1
+    PyYAML 6.0.2
+    requests 2.32.5
+    setuptools 80.9.0
+    wcwidth 0.2.13
+    weasyprint 66.0
+-->
+<link href="draft-ietf-ipsecme-ikev2-pqc-auth-06.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">/*
+
+  NOTE: Changes at the bottom of this file overrides some earlier settings.
+
+  Once the style has stabilized and has been adopted as an official RFC style,
+  this can be consolidated so that style settings occur only in one place, but
+  for now the contents of this file consists first of the initial CSS work as
+  provided to the RFC Formatter (xml2rfc) work, followed by itemized and
+  commented changes found necessary during the development of the v3
+  formatters.
+
+*/
+
+/* fonts */
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans'); /* Sans-serif */
+@import url('https://fonts.googleapis.com/css?family=Noto+Serif'); /* Serif (print) */
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono'); /* Monospace */
+
+:root {
+  --font-sans: 'Noto Sans', Arial, Helvetica, sans-serif;
+  --font-serif: 'Noto Serif', 'Times', 'Times New Roman', serif;
+  --font-mono: 'Roboto Mono', Courier, 'Courier New', monospace;
+}
+
+@viewport {
+  zoom: 1.0;
+}
+@-ms-viewport {
+  width: extend-to-zoom;
+  zoom: 1.0;
+}
+/* general and mobile first */
+html {
+}
+body {
+  max-width: 90%;
+  margin: 1.5em auto;
+  color: #222;
+  background-color: #fff;
+  font-size: 14px;
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  scroll-behavior: smooth;
+  overflow-wrap: break-word;
+}
+.ears {
+  display: none;
+}
+
+/* headings */
+#title, h1, h2, h3, h4, h5, h6 {
+  margin: 1em 0 0.5em;
+  font-weight: bold;
+  line-height: 1.3;
+}
+#title {
+  clear: both;
+  border-bottom: 1px solid #ddd;
+  margin: 0 0 0.5em 0;
+  padding: 1em 0 0.5em;
+}
+.author {
+  padding-bottom: 4px;
+}
+h1 {
+  font-size: 26px;
+  margin: 1em 0;
+}
+h2 {
+  font-size: 22px;
+  margin-top: -20px;  /* provide offset for in-page anchors */
+  padding-top: 33px;
+}
+h3 {
+  font-size: 18px;
+  margin-top: -36px;  /* provide offset for in-page anchors */
+  padding-top: 42px;
+}
+h4 {
+  font-size: 16px;
+  margin-top: -36px;  /* provide offset for in-page anchors */
+  padding-top: 42px;
+}
+h5, h6 {
+  font-size: 14px;
+}
+#n-copyright-notice {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 1em;
+  margin-bottom: 1em;
+}
+/* general structure */
+p {
+  padding: 0;
+  margin: 0 0 1em 0;
+  text-align: left;
+}
+div, span {
+  position: relative;
+}
+div {
+  margin: 0;
+}
+.alignRight.art-text {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  padding: 1em 1em 0;
+  margin-bottom: 1.5em;
+}
+.alignRight.art-text pre {
+  padding: 0;
+}
+.alignRight {
+  margin: 1em 0;
+}
+.alignRight > *:first-child {
+  border: none;
+  margin: 0;
+  float: right;
+  clear: both;
+}
+.alignRight > *:nth-child(2) {
+  clear: both;
+  display: block;
+  border: none;
+}
+svg {
+  display: block;
+}
+@media print {
+  svg {
+    max-height: 850px;
+    max-width: 660px;
+  }
+}
+svg[font-family~="serif" i], svg [font-family~="serif" i] {
+  font-family: var(--font-serif);
+}
+svg[font-family~="sans-serif" i], svg [font-family~="sans-serif" i] {
+  font-family: var(--font-sans);
+}
+svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
+  font-family: var(--font-mono);
+}
+.alignCenter.art-text {
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  padding: 1em 1em 0;
+  margin-bottom: 1.5em;
+}
+.alignCenter.art-text pre {
+  padding: 0;
+}
+.alignCenter {
+  margin: 1em 0;
+}
+.alignCenter > *:first-child {
+  display: table;
+  border: none;
+  margin: 0 auto;
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 1em 2em;
+}
+ol ol, ul ul, ol ul, ul ol {
+  margin-left: 1em;
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+.ulCompact li {
+  margin: 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+}
+ul.empty li, .ulEmpty li {
+  margin-top: 0.5em;
+}
+ul.ulBare, li.ulBare {
+  margin-left: 0em !important;
+}
+ul.compact, .ulCompact,
+ol.compact, .olCompact {
+  line-height: 100%;
+  margin: 0 0 0 2em;
+}
+
+/* definition lists */
+dl {
+}
+dl > dt {
+  float: left;
+  margin-right: 1em;
+}
+/* 
+dl.nohang > dt {
+  float: none;
+}
+*/
+dl > dd {
+  margin-bottom: .8em;
+  min-height: 1.3em;
+}
+dl.compact > dd, .dlCompact > dd {
+  margin-bottom: 0em;
+}
+dl > dd > dl {
+  margin-top: 0.5em;
+  margin-bottom: 0em;
+}
+
+/* links */
+a {
+  text-decoration: none;
+}
+a[href] {
+  color: #22e; /* Arlen: WCAG 2019 */
+}
+a[href]:hover {
+  background-color: #f2f2f2;
+}
+figcaption a[href],
+a[href].selfRef {
+  color: #222;
+}
+/* XXX probably not this:
+a.selfRef:hover {
+  background-color: transparent;
+  cursor: default;
+} */
+
+/* Figures */
+tt, code, pre {
+  background-color: #f9f9f9;
+  font-family: var(--font-mono);
+}
+pre {
+  border: 1px solid #eee;
+  margin: 0;
+  padding: 1em;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0;
+}
+figure blockquote {
+  margin: 0.8em 0.4em 0.4em;
+}
+figcaption {
+  font-style: italic;
+  margin: 0 0 1em 0;
+}
+@media screen {
+  pre {
+    overflow-x: auto;
+    max-width: 100%;
+    max-width: calc(100% - 22px);
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 1.2em 2em;
+}
+blockquote {
+  background-color: #f9f9f9;
+  color: #111; /* Arlen: WCAG 2019 */
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  margin: 1em 0;
+}
+blockquote > *:last-child {
+  margin-bottom: 0;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+.xref {
+  overflow-wrap: normal;
+}
+
+/* tables */
+table {
+  width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+  border: 1px solid #eee;
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.5em 0.75em;
+}
+th {
+  text-align: left;
+  background-color: #e9e9e9;
+}
+tr:nth-child(2n+1) > td {
+  background-color: #f5f5f5;
+}
+table caption {
+  font-style: italic;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+table p {
+  /* XXX to avoid bottom margin on table row signifiers. If paragraphs should
+     be allowed within tables more generally, it would be far better to select on a class. */
+  margin: 0;
+}
+
+/* pilcrow */
+a.pilcrow {
+  color: #666; /* Arlen: AHDJ 2019 */
+  text-decoration: none;
+  visibility: hidden;
+  user-select: none;
+  -ms-user-select: none;
+  -o-user-select:none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+@media screen {
+  aside:hover > a.pilcrow,
+  p:hover > a.pilcrow,
+  blockquote:hover > a.pilcrow,
+  div:hover > a.pilcrow,
+  li:hover > a.pilcrow,
+  pre:hover > a.pilcrow {
+    visibility: visible;
+  }
+  a.pilcrow:hover {
+    background-color: transparent;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid #eee;
+}
+.bcp14 {
+  font-variant: small-caps;
+}
+
+.role {
+  font-variant: all-small-caps;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: 0.9em;
+}
+#identifiers dt {
+  width: 3em;
+  clear: left;
+}
+#identifiers dd {
+  float: left;
+  margin-bottom: 0;
+}
+/* Fix PDF info block run off issue */
+@media print {
+  #identifiers dd {
+    max-width: 100%;
+  }
+}
+#identifiers .authors .author {
+  display: inline-block;
+  margin-right: 1.5em;
+}
+#identifiers .authors .org {
+  font-style: italic;
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #666; /* Arlen: WCAG 2019 */
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+}
+.docInfo .prepared {
+  float: left;
+}
+.docInfo .prepared {
+  float: right;
+}
+
+/* table of contents */
+#toc  {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+}
+nav.toc ul {
+  margin: 0 0.5em 0 0;
+  padding: 0;
+  list-style: none;
+}
+nav.toc li {
+  line-height: 1.3em;
+  margin: 0.75em 0;
+  padding-left: 1.2em;
+  text-indent: -1.2em;
+}
+/* references */
+.references dt {
+  text-align: right;
+  font-weight: bold;
+  min-width: 7em;
+}
+.references dd {
+  margin-left: 8em;
+  overflow: auto;
+}
+
+.refInstance {
+  margin-bottom: 1.25em;
+}
+
+.refSubseries {
+  margin-bottom: 1.25em;
+}
+
+.references .ascii {
+  margin-bottom: 0.25em;
+}
+
+/* index */
+.index ul {
+  margin: 0 0 0 1em;
+  padding: 0;
+  list-style: none;
+}
+.index ul ul {
+  margin: 0;
+}
+.index li {
+  margin: 0;
+  text-indent: -2em;
+  padding-left: 2em;
+  padding-bottom: 5px;
+}
+.indexIndex {
+  margin: 0.5em 0 1em;
+}
+.index a {
+  font-weight: 700;
+}
+/* make the index two-column on all but the smallest screens */
+@media (min-width: 600px) {
+  .index ul {
+    -moz-column-count: 2;
+    -moz-column-gap: 20px;
+  }
+  .index ul ul {
+    -moz-column-count: 1;
+    -moz-column-gap: 0;
+  }
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  margin: 1em 0;
+}
+
+address.vcard .nameRole {
+  font-weight: 700;
+  margin-left: 0;
+}
+address.vcard .label {
+  font-family: var(--font-sans);
+  margin: 0.5em 0;
+}
+address.vcard .type {
+  display: none;
+}
+.alternative-contact {
+  margin: 1.5em 0 1em;
+}
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+
+/* temporary notes */
+.rfcEditorRemove::before {
+  position: absolute;
+  top: 0.2em;
+  right: 0.2em;
+  padding: 0.2em;
+  content: "The RFC Editor will remove this note";
+  color: #9e2a00; /* Arlen: WCAG 2019 */
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+}
+.rfcEditorRemove {
+  position: relative;
+  padding-top: 1.8em;
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+  border-radius: 3px;
+}
+.cref {
+  background-color: #ffd; /* Arlen: WCAG 2019 */
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+/* alternative layout for smaller screens */
+@media screen and (max-width: 1023px) {
+  body {
+    padding-top: 2em;
+  }
+  #title {
+    padding: 1em 0;
+  }
+  h1 {
+    font-size: 24px;
+  }
+  h2 {
+    font-size: 20px;
+    margin-top: -18px;  /* provide offset for in-page anchors */
+    padding-top: 38px;
+  }
+  #identifiers dd {
+    max-width: 60%;
+  }
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 0;
+    margin: 0;
+    background-color: inherit;
+    border-bottom: 1px solid #ccc;
+  }
+  #toc h2 {
+    margin: -1px 0 0 0;
+    padding: 4px 0 4px 6px;
+    padding-right: 1em;
+    min-width: 190px;
+    font-size: 1.1em;
+    text-align: right;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+  }
+  #toc h2::before { /* css hamburger */
+    float: right;
+    position: relative;
+    width: 1em;
+    height: 1px;
+    left: -164px;
+    margin: 6px 0 0 0;
+    background: white none repeat scroll 0 0;
+    box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+    content: "";
+  }
+  #toc nav {
+    display: none;
+    padding: 0.5em 1em 1em;
+    overflow: auto;
+    height: calc(100vh - 48px);
+    border-left: 1px solid #ddd;
+  }
+}
+
+/* alternative layout for wide screens */
+@media screen and (min-width: 1024px) {
+  body {
+    max-width: 724px;
+    margin: 42px auto;
+    padding-left: 1.5em;
+    padding-right: 29em;
+  }
+  #toc {
+    position: fixed;
+    top: 42px;
+    right: 42px;
+    width: 25%;
+    margin: 0;
+    padding: 0 1em;
+    z-index: 1;
+  }
+  #toc h2 {
+    border-top: none;
+    border-bottom: 1px solid #ddd;
+    font-size: 1em;
+    font-weight: normal;
+    margin: 0;
+    padding: 0.25em 1em 1em 0;
+  }
+  #toc nav {
+    display: block;
+    height: calc(90vh - 84px);
+    bottom: 0;
+    padding: 0.5em 0 0;
+    overflow: auto;
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc, #n-introduction {
+    page-break-before: always;
+  }
+  #toc {
+    border-top: none;
+    padding-top: 0;
+  }
+  figure, pre {
+    page-break-inside: avoid;
+  }
+  figure {
+    overflow: scroll;
+  }
+  .breakable pre {
+    break-inside: auto;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  h2+*, h3+*, h4+*, h5+*, h6+* {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+/* This is commented out here, as the string-set: doesn't
+   pass W3C validation currently */
+/*
+.ears thead .left {
+  string-set: ears-top-left content();
+}
+
+.ears thead .center {
+  string-set: ears-top-center content();
+}
+
+.ears thead .right {
+  string-set: ears-top-right content();
+}
+
+.ears tfoot .left {
+  string-set: ears-bottom-left content();
+}
+
+.ears tfoot .center {
+  string-set: ears-bottom-center content();
+}
+
+.ears tfoot .right {
+  string-set: ears-bottom-right content();
+}
+*/
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+  /* The following is commented out here, but set appropriately by in code, as
+     the content depends on the document */
+  /*
+  @top-left {
+    content: 'Internet-Draft';
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-left {
+    content: string(ears-top-left);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-center {
+    content: string(ears-top-center);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @top-right {
+    content: string(ears-top-right);
+    vertical-align: bottom;
+    border-bottom: solid 1px #ccc;
+  }
+  @bottom-left {
+    content: string(ears-bottom-left);
+    vertical-align: top;
+    border-top: solid 1px #ccc;
+  }
+  @bottom-center {
+    content: string(ears-bottom-center);
+    vertical-align: top;
+    border-top: solid 1px #ccc;
+  }
+  @bottom-right {
+      content: '[Page ' counter(page) ']';
+      vertical-align: top;
+      border-top: solid 1px #ccc;
+  }
+  */
+
+}
+
+/* Changes introduced to fix issues found during implementation */
+/* Make sure links are clickable even if overlapped by following H* */
+a {
+  z-index: 2;
+}
+/* Separate body from document info even without intervening H1 */
+section {
+  clear: both;
+}
+
+
+/* Top align author divs, to avoid names without organization dropping level with org names */
+.author {
+  vertical-align: top;
+}
+
+/* Leave room in document info to show Internet-Draft on one line */
+#identifiers dt {
+  width: 8em;
+}
+
+/* Don't waste quite as much whitespace between label and value in doc info */
+#identifiers dd {
+  margin-left: 1em;
+}
+
+/* Give floating toc a background color (needed when it's a div inside section */
+#toc {
+  background-color: white;
+}
+
+/* Make the collapsed ToC header render white on gray also when it's a link */
+@media screen and (max-width: 1023px) {
+  #toc h2 a,
+  #toc h2 a:link,
+  #toc h2 a:focus,
+  #toc h2 a:hover,
+  #toc a.toplink,
+  #toc a.toplink:hover {
+    color: white;
+    background-color: #444;
+    text-decoration: none;
+  }
+}
+
+/* Give the bottom of the ToC some whitespace */
+@media screen and (min-width: 1024px) {
+  #toc {
+    padding: 0 0 1em 1em;
+  }
+}
+
+/* Style section numbers with more space between number and title */
+.section-number {
+  padding-right: 0.5em;
+}
+
+/* prevent monospace from becoming overly large */
+tt, code, pre {
+  font-size: 95%;
+}
+
+/* Fix the height/width aspect for ascii art*/
+.sourcecode pre,
+.art-text pre {
+  line-height: 1.12;
+}
+
+
+/* Add styling for a link in the ToC that points to the top of the document */
+a.toplink {
+  float: right;
+  margin-right: 0.5em;
+}
+
+/* Fix the dl styling to match the RFC 7992 attributes */
+dl > dt,
+dl.dlParallel > dt {
+  float: left;
+  margin-right: 1em;
+}
+dl.dlNewline > dt {
+  float: none;
+}
+
+/* Provide styling for table cell text alignment */
+table td.text-left,
+table th.text-left {
+  text-align: left;
+}
+table td.text-center,
+table th.text-center {
+  text-align: center;
+}
+table td.text-right,
+table th.text-right {
+  text-align: right;
+}
+
+/* Make the alternative author contact information look less like just another
+   author, and group it closer with the primary author contact information */
+.alternative-contact {
+  margin: 0.5em 0 0.25em 0;
+}
+address .non-ascii {
+  margin: 0 0 0 2em;
+}
+
+/* With it being possible to set tables with alignment
+  left, center, and right, { width: 100%; } does not make sense */
+table {
+  width: auto;
+}
+
+/* Avoid reference text that sits in a block with very wide left margin,
+   because of a long floating dt label.*/
+.references dd {
+  overflow: visible;
+}
+
+/* Control caption placement */
+caption {
+  caption-side: bottom;
+}
+
+/* Limit the width of the author address vcard, so names in right-to-left
+   script don't end up on the other side of the page. */
+
+address.vcard {
+  max-width: 30em;
+  margin-right: auto;
+}
+
+/* For address alignment dependent on LTR or RTL scripts */
+address div.left {
+  text-align: left;
+}
+address div.right {
+  text-align: right;
+}
+
+/* Provide table alignment support.  We can't use the alignX classes above
+   since they do unwanted things with caption and other styling. */
+table.right {
+ margin-left: auto;
+ margin-right: 0;
+}
+table.center {
+ margin-left: auto;
+ margin-right: auto;
+}
+table.left {
+ margin-left: 0;
+ margin-right: auto;
+}
+
+/* Give the table caption label the same styling as the figcaption */
+caption a[href] {
+  color: #222;
+}
+
+@media print {
+  .toplink {
+    display: none;
+  }
+
+  /* avoid overwriting the top border line with the ToC header */
+  #toc {
+    padding-top: 1px;
+  }
+
+  /* Avoid page breaks inside dl and author address entries */
+  .vcard {
+    page-break-inside: avoid;
+  }
+
+}
+/* Tweak the bcp14 keyword presentation */
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+/* Tweak the invisible space above H* in order not to overlay links in text above */
+ h2 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 31px;
+ }
+ h3 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 24px;
+ }
+ h4 {
+  margin-top: -18px;  /* provide offset for in-page anchors */
+  padding-top: 24px;
+ }
+/* Float artwork pilcrow to the right */
+@media screen {
+  .artwork a.pilcrow {
+    display: block;
+    line-height: 0.7;
+    margin-top: 0.15em;
+  }
+}
+/* Make pilcrows on dd visible */
+@media screen {
+  dd:hover > a.pilcrow {
+    visibility: visible;
+  }
+}
+/* Make the placement of figcaption match that of a table's caption
+   by removing the figure's added bottom margin */
+.alignLeft.art-text,
+.alignCenter.art-text,
+.alignRight.art-text {
+   margin-bottom: 0;
+}
+.alignLeft,
+.alignCenter,
+.alignRight {
+  margin: 1em 0 0 0;
+}
+/* In print, the pilcrow won't show on hover, so prevent it from taking up space,
+   possibly even requiring a new line */
+@media print {
+  a.pilcrow {
+    display: none;
+  }
+}
+/* Styling for the external metadata */
+div#external-metadata {
+  background-color: #eee;
+  padding: 0.5em;
+  margin-bottom: 0.5em;
+  display: none;
+}
+div#internal-metadata {
+  padding: 0.5em;                       /* to match the external-metadata padding */
+}
+/* Styling for title RFC Number */
+h1#rfcnum {
+  clear: both;
+  margin: 0 0 -1em;
+  padding: 1em 0 0 0;
+}
+/* Make .olPercent look the same as <ol><li> */
+dl.olPercent > dd {
+  margin-bottom: 0.25em;
+  min-height: initial;
+}
+/* Give aside some styling to set it apart */
+aside {
+  border-left: 1px solid #ddd;
+  margin: 1em 0 1em 2em;
+  padding: 0.2em 2em;
+}
+aside > dl,
+aside > ol,
+aside > ul,
+aside > table,
+aside > p {
+  margin-bottom: 0.5em;
+}
+/* Additional page break settings */
+@media print {
+  figcaption, table caption {
+    page-break-before: avoid;
+  }
+}
+/* Font size adjustments for print */
+@media print {
+  body  { font-size: 10pt;      line-height: normal; max-width: 96%; }
+  h1    { font-size: 1.72em;    padding-top: 1.5em; } /* 1*1.2*1.2*1.2 */
+  h2    { font-size: 1.44em;    padding-top: 1.5em; } /* 1*1.2*1.2 */
+  h3    { font-size: 1.2em;     padding-top: 1.5em; } /* 1*1.2 */
+  h4    { font-size: 1em;       padding-top: 1.5em; }
+  h5, h6 { font-size: 1em;      margin: initial; padding: 0.5em 0 0.3em; }
+}
+/* Sourcecode margin in print, when there's no pilcrow */
+@media print {
+  .artwork,
+  .artwork > pre,
+  .sourcecode {
+    margin-bottom: 1em;
+  }
+}
+/* Avoid narrow tables forcing too narrow table captions, which may render badly */
+table {
+  min-width: 20em;
+}
+/* ol type a */
+ol.type-a { list-style-type: lower-alpha; }
+ol.type-A { list-style-type: upper-alpha; }
+ol.type-i { list-style-type: lower-roman; }
+ol.type-I { list-style-type: upper-roman; }
+/* Apply the print table and row borders in general, on request from the RPC,
+and increase the contrast between border and odd row background slightly */
+table {
+  border: 1px solid #ddd;
+}
+td {
+  border-top: 1px solid #ddd;
+}
+tr {
+  break-inside: avoid;
+}
+tr:nth-child(2n+1) > td {
+  background-color: #f8f8f8;
+}
+/* Use style rules to govern display of the TOC. */
+@media screen and (max-width: 1023px) {
+  #toc nav { display: none; }
+  #toc.active nav { display: block; }
+}
+/* Add support for keepWithNext */
+.keepWithNext {
+  break-after: avoid-page;
+  break-after: avoid-page;
+}
+/* Add support for keepWithPrevious */
+.keepWithPrevious {
+  break-before: avoid-page;
+}
+/* Change the approach to avoiding breaks inside artwork etc. */
+figure, pre, table, .artwork, .sourcecode  {
+  break-before: auto;
+  break-after: auto;
+}
+/* Avoid breaks between <dt> and <dd> */
+dl {
+  break-before: auto;
+  break-inside: auto;
+}
+dt {
+  break-before: auto;
+  break-after: avoid-page;
+}
+dd {
+  break-before: avoid-page;
+  break-after: auto;
+  orphans: 3;
+  widows: 3
+}
+span.break, dd.break {
+  margin-bottom: 0;
+  min-height: 0;
+  break-before: auto;
+  break-inside: auto;
+  break-after: auto;
+}
+/* Undo break-before ToC */
+@media print {
+  #toc {
+    break-before: auto;
+  }
+}
+/* Text in compact lists should not get extra bottom margin space,
+   since that would makes the list not compact */
+ul.compact p, .ulCompact p,
+ol.compact p, .olCompact p {
+ margin: 0;
+}
+/* But the list as a whole needs the extra space at the end */
+section ul.compact,
+section .ulCompact,
+section ol.compact,
+section .olCompact {
+  margin-bottom: 1em;                    /* same as p not within ul.compact etc. */
+}
+/* The tt and code background above interferes with for instance table cell
+   backgrounds.  Changed to something a bit more selective. */
+tt, code {
+  background-color: transparent;
+}
+p tt, p code, li tt, li code, dt tt, dt code {
+  background-color: #f8f8f8;
+}
+/* Tweak the pre margin -- 0px doesn't come out well */
+pre {
+   margin-top: 0.5px;
+}
+/* Tweak the compact list text */
+ul.compact, .ulCompact,
+ol.compact, .olCompact,
+dl.compact, .dlCompact {
+  line-height: normal;
+}
+/* Don't add top margin for nested lists */
+li > ul, li > ol, li > dl,
+dd > ul, dd > ol, dd > dl,
+dl > dd > dl {
+  margin-top: initial;
+}
+/* Elements that should not be rendered on the same line as a <dt> */
+/* This should match the element list in writer.text.TextWriter.render_dl() */
+dd > div.artwork:first-child,
+dd > aside:first-child,
+dd > blockquote:first-child,
+dd > figure:first-child,
+dd > ol:first-child,
+dd > div.sourcecode:first-child,
+dd > table:first-child,
+dd > ul:first-child {
+  clear: left;
+}
+/* fix for weird browser behaviour when <dd/> is empty */
+dt+dd:empty::before{
+  content: "\00a0";
+}
+/* Make paragraph spacing inside <li> smaller than in body text, to fit better within the list */
+li > p {
+  margin-bottom: 0.5em
+}
+/* Don't let p margin spill out from inside list items */
+li > p:last-of-type:only-child {
+  margin-bottom: 0;
+}
+</style>
+<link href="rfc-local.css" rel="stylesheet" type="text/css">
+<script type="application/javascript">async function addMetadata(){try{const e=document.styleSheets[0].cssRules;for(let t=0;t<e.length;t++)if(/#identifiers/.exec(e[t].selectorText)){const a=e[t].cssText.replace("#identifiers","#external-updates");document.styleSheets[0].insertRule(a,document.styleSheets[0].cssRules.length)}}catch(e){console.log(e)}const e=document.getElementById("external-metadata");if(e)try{var t,a="",o=function(e){const t=document.getElementsByTagName("meta");for(let a=0;a<t.length;a++)if(t[a].getAttribute("name")===e)return t[a].getAttribute("content");return""}("rfc.number");if(o){t="https://www.rfc-editor.org/rfc/rfc"+o+".json";try{const e=await fetch(t);a=await e.json()}catch(e){t=document.URL.indexOf("html")>=0?document.URL.replace(/html$/,"json"):document.URL+".json";const o=await fetch(t);a=await o.json()}}if(!a)return;e.style.display="block";const s="",d="https://datatracker.ietf.org/doc",n="https://datatracker.ietf.org/ipr/search",c="https://www.rfc-editor.org/info",l=a.doc_id.toLowerCase(),i=a.doc_id.slice(0,3).toLowerCase(),f=a.doc_id.slice(3).replace(/^0+/,""),u={status:"Status",obsoletes:"Obsoletes",obsoleted_by:"Obsoleted By",updates:"Updates",updated_by:"Updated By",see_also:"See Also",errata_url:"Errata"};let h="<dl style='overflow:hidden' id='external-updates'>";["status","obsoletes","obsoleted_by","updates","updated_by","see_also","errata_url"].forEach(e=>{if("status"==e){a[e]=a[e].toLowerCase();var t=a[e].split(" "),o=t.length,w="",p=1;for(let e=0;e<o;e++)p<o?w=w+r(t[e])+" ":w+=r(t[e]),p++;a[e]=w}else if("obsoletes"==e||"obsoleted_by"==e||"updates"==e||"updated_by"==e){var g,m="",b=1;g=a[e].length;for(let t=0;t<g;t++)a[e][t]&&(a[e][t]=String(a[e][t]).toLowerCase(),m=b<g?m+"<a href='"+s+"/rfc/".concat(a[e][t])+"'>"+a[e][t].slice(3)+"</a>, ":m+"<a href='"+s+"/rfc/".concat(a[e][t])+"'>"+a[e][t].slice(3)+"</a>",b++);a[e]=m}else if("see_also"==e){var y,L="",C=1;y=a[e].length;for(let t=0;t<y;t++)if(a[e][t]){a[e][t]=String(a[e][t]);var _=a[e][t].slice(0,3),v=a[e][t].slice(3).replace(/^0+/,"");L=C<y?"RFC"!=_?L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+_+" "+v+"</a>, ":L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+v+"</a>, ":"RFC"!=_?L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+_+" "+v+"</a>":L+"<a href='"+s+"/info/"+_.toLowerCase().concat(v.toLowerCase())+"'>"+v+"</a>",C++}a[e]=L}else if("errata_url"==e){var R="";R=a[e]?R+"<a href='"+a[e]+"'>Errata exist</a> | <a href='"+d+"/"+l+"'>Datatracker</a>| <a href='"+n+"/?"+i+"="+f+"&submit="+i+"'>IPR</a> | <a href='"+c+"/"+l+"'>Info page</a>":"<a href='"+d+"/"+l+"'>Datatracker</a> | <a href='"+n+"/?"+i+"="+f+"&submit="+i+"'>IPR</a> | <a href='"+c+"/"+l+"'>Info page</a>",a[e]=R}""!=a[e]?"Errata"==u[e]?h+=`<dt>More info:</dt><dd>${a[e]}</dd>`:h+=`<dt>${u[e]}:</dt><dd>${a[e]}</dd>`:"Errata"==u[e]&&(h+=`<dt>More info:</dt><dd>${a[e]}</dd>`)}),h+="</dl>",e.innerHTML=h}catch(e){console.log(e)}else console.log("Could not locate metadata <div> element");function r(e){return e.charAt(0).toUpperCase()+e.slice(1)}}window.removeEventListener("load",addMetadata),window.addEventListener("load",addMetadata);</script>
+</head>
+<body class="xml2rfc">
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">PQC Authentication in IKEv2</td>
+<td class="right">October 2025</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Reddy, et al.</td>
+<td class="center">Expires 23 April 2026</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">ipsecme</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-ietf-ipsecme-ikev2-pqc-auth-06</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2025-10-20" class="published">20 October 2025</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Standards Track</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2026-04-23">23 April 2026</time></dd>
+<dt class="label-authors">Authors:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">T. Reddy</div>
+<div class="org">Nokia</div>
+</div>
+<div class="author">
+      <div class="author-name">V. Smyslov</div>
+<div class="org">ELVIS-PLUS</div>
+</div>
+<div class="author">
+      <div class="author-name">S. Fluhrer</div>
+<div class="org">Cisco Systems</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">Signature Authentication in the Internet Key Exchange Version 2 (IKEv2) using PQC</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">Signature-based authentication methods are utilized in IKEv2 <span>[<a href="#RFC7296" class="cite xref">RFC7296</a>]</span>. The current version of the Internet Key Exchange Version 2 (IKEv2) protocol supports traditional digital signatures.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-2">This document specifies a generic mechanism for integrating post-quantum cryptographic (PQC) digital signature algorithms into the IKEv2 protocol. The approach allows for seamless inclusion of any PQC signature scheme within the existing authentication framework of IKEv2. Additionally, it outlines how Module-Lattice-Based Digital Signatures (ML-DSA) and Stateless Hash-Based Digital Signatures (SLH-DSA), can be employed as authentication methods within the IKEv2 protocol, as they have been standardized by NIST.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
+</section>
+<section class="note rfcEditorRemove" id="section-note.1">
+      <h2 id="name-about-this-document">
+<a href="#name-about-this-document" class="section-name selfRef">About This Document</a>
+      </h2>
+<p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">
+        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-ietf-ipsecme-ikev2-pqc/">https://datatracker.ietf.org/doc/draft-ietf-ipsecme-ikev2-pqc/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+<p id="section-note.1-3">
+        Discussion of this document takes place on the
+        ipsecme Working Group mailing list (<span><a href="mailto:ipsecme@ietf.org">mailto:ipsecme@ietf.org</a></span>),
+        which is archived at <span><a href="https://mailarchive.ietf.org/arch/browse/ipsec/">https://mailarchive.ietf.org/arch/browse/ipsec/</a></span>.
+        Subscribe at <span><a href="https://www.ietf.org/mailman/listinfo/ipsecme/">https://www.ietf.org/mailman/listinfo/ipsecme/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 23 April 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2025 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-conventions-and-definitions" class="internal xref">Conventions and Definitions</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-general-framework-for-pqc-a" class="internal xref">General Framework for PQC Authentication in IKEv2</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
+                <p id="section-toc.1-1.3.2.1.1" class="keepWithNext"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-specifying-pqc-signature-al" class="internal xref">Specifying PQC Signature Algorithms</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-signature-generation-and-ve" class="internal xref">Signature Generation and Verification</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2.2.1">
+                    <p id="section-toc.1-1.3.2.2.2.1.1"><a href="#section-3.2.1" class="auto internal xref">3.2.1</a>.  <a href="#name-handling-pqc-signatures-in-" class="internal xref">Handling PQC Signatures in IKEv2</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-mechanisms-for-signaling-su" class="internal xref">Mechanisms for Signaling Supported Key Pair Types</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-specifying-ml-dsa-within-ik" class="internal xref">Specifying ML-DSA within IKEv2</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-specifying-slh-dsa-within-i" class="internal xref">Specifying SLH-DSA within IKEv2</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-implementation-alternatives" class="internal xref">Implementation Alternatives for ML-DSA</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-use-of-ml-dsa-and-slh-dsa" class="internal xref">Use of ML-DSA and SLH-DSA</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref"></a><a href="#name-acknowledgements" class="internal xref">Acknowledgements</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref"></a><a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.1">
+                <p id="section-toc.1-1.10.2.1.1"><a href="#section-10.1" class="auto internal xref"></a><a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.2">
+                <p id="section-toc.1-1.10.2.2.1"><a href="#section-10.2" class="auto internal xref"></a><a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-discussion-of-ml-dsa-and-sl" class="internal xref">Discussion of ML-DSA and SLH-DSA and Prehashing</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#appendix-B" class="auto internal xref">Appendix B</a>.  <a href="#name-asn1-objects" class="internal xref">ASN.1 Objects</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.1">
+                <p id="section-toc.1-1.12.2.1.1"><a href="#appendix-B.1" class="auto internal xref">B.1</a>.  <a href="#name-ml-dsa-44" class="internal xref">ML-DSA-44</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.2">
+                <p id="section-toc.1-1.12.2.2.1"><a href="#appendix-B.2" class="auto internal xref">B.2</a>.  <a href="#name-ml-dsa-65" class="internal xref">ML-DSA-65</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.3">
+                <p id="section-toc.1-1.12.2.3.1"><a href="#appendix-B.3" class="auto internal xref">B.3</a>.  <a href="#name-ml-dsa-87" class="internal xref">ML-DSA-87</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.4">
+                <p id="section-toc.1-1.12.2.4.1"><a href="#appendix-B.4" class="auto internal xref">B.4</a>.  <a href="#name-slh-dsa-128s-sha2" class="internal xref">SLH-DSA-128S-SHA2</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.5">
+                <p id="section-toc.1-1.12.2.5.1"><a href="#appendix-B.5" class="auto internal xref">B.5</a>.  <a href="#name-slh-dsa-128f-sha2" class="internal xref">SLH-DSA-128F-SHA2</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.6">
+                <p id="section-toc.1-1.12.2.6.1"><a href="#appendix-B.6" class="auto internal xref">B.6</a>.  <a href="#name-slh-dsa-192s-sha2" class="internal xref">SLH-DSA-192S-SHA2</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.7">
+                <p id="section-toc.1-1.12.2.7.1"><a href="#appendix-B.7" class="auto internal xref">B.7</a>.  <a href="#name-slh-dsa-192f-sha2" class="internal xref">SLH-DSA-192F-SHA2</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.8">
+                <p id="section-toc.1-1.12.2.8.1"><a href="#appendix-B.8" class="auto internal xref">B.8</a>.  <a href="#name-slh-dsa-256s-sha2" class="internal xref">SLH-DSA-256S-SHA2</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.9">
+                <p id="section-toc.1-1.12.2.9.1"><a href="#appendix-B.9" class="auto internal xref">B.9</a>.  <a href="#name-slh-dsa-256f-sha2" class="internal xref">SLH-DSA-256F-SHA2</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.10">
+                <p id="section-toc.1-1.12.2.10.1"><a href="#appendix-B.10" class="auto internal xref">B.10</a>. <a href="#name-slh-dsa-128s-shake" class="internal xref">SLH-DSA-128S-SHAKE</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.11">
+                <p id="section-toc.1-1.12.2.11.1"><a href="#appendix-B.11" class="auto internal xref">B.11</a>. <a href="#name-slh-dsa-128f-shake" class="internal xref">SLH-DSA-128F-SHAKE</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.12">
+                <p id="section-toc.1-1.12.2.12.1"><a href="#appendix-B.12" class="auto internal xref">B.12</a>. <a href="#name-slh-dsa-192s-shake" class="internal xref">SLH-DSA-192S-SHAKE</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.13">
+                <p id="section-toc.1-1.12.2.13.1"><a href="#appendix-B.13" class="auto internal xref">B.13</a>. <a href="#name-slh-dsa-192f-shake" class="internal xref">SLH-DSA-192F-SHAKE</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.14">
+                <p id="section-toc.1-1.12.2.14.1"><a href="#appendix-B.14" class="auto internal xref">B.14</a>. <a href="#name-slh-dsa-256s-shake" class="internal xref">SLH-DSA-256S-SHAKE</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.15">
+                <p id="section-toc.1-1.12.2.15.1"><a href="#appendix-B.15" class="auto internal xref">B.15</a>. <a href="#name-slh-dsa-256f-shake" class="internal xref">SLH-DSA-256F-SHAKE</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#appendix-C" class="auto internal xref"></a><a href="#name-authors-addresses" class="internal xref">Authors' Addresses</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="introduction">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-1-1">The Internet Key Exchange, or IKEv2 <span>[<a href="#RFC7296" class="cite xref">RFC7296</a>]</span>, is a key agreement and security negotiation protocol; it is used for key establishment in IPsec. In the IKE_AUTH exchange, the initiator and responder independently select and use their preferred authentication method, which may differ between peers. The most common authentication method is digital signatures using asymmetric cryptography.  Currently, traditional digital signatures are defined for use within IKE_AUTH: RSA signatures, Elliptic Curve Digital Signature Algorithm (ECDSA) <span>[<a href="#RFC4754" class="cite xref">RFC4754</a>]</span>,
+and Edwards-curve Digital Signature Algorithm (EdDSA) <span>[<a href="#RFC8420" class="cite xref">RFC8420</a>]</span>.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-2">The existence of a Cryptographically Relevant Quantum Computer (CRQC) would render traditional asymmetric algorithms obsolete and insecure. This is because the assumptions about the intractability of the mathematical problems these algorithms rely on, which offer confident levels of security today, no longer apply in the existence of a CRQC. Consequently, there is a requirement to update protocols and infrastructure to use post-quantum algorithms. Post-quantum algorithms are asymmetric algorithms designed to be secure against CRQCs as well as classical computers. The traditional cryptographic primitives that need to be replaced by PQC algorithms are discussed in <span>[<a href="#I-D.ietf-pquip-pqc-engineers" class="cite xref">I-D.ietf-pquip-pqc-engineers</a>]</span>.<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">This document defines a general approach to incorporating PQC digital signature algorithms into IKEv2 while maintaining interoperability and backward compatibility, as it does not change the IKEv2 protocol but adds negotiable PQC signature algorithms. Additionally, it outlines how Module-Lattice-Based Digital Signatures (ML-DSA) <span>[<a href="#FIPS204" class="cite xref">FIPS204</a>]</span> and Stateless Hash-Based Digital Signatures (SLH-DSA) <span>[<a href="#FIPS205" class="cite xref">FIPS205</a>]</span> can be employed as authentication methods within IKEv2, as they have been standardized the US National Institute of Standards and Technology (NIST) PQC project.<a href="#section-1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="conventions-and-definitions">
+<section id="section-2">
+      <h2 id="name-conventions-and-definitions">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-conventions-and-definitions" class="section-name selfRef">Conventions and Definitions</a>
+      </h2>
+<p id="section-2-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
+"<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
+described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
+appear in all capitals, as shown here.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<p id="section-2-2">This document uses terms defined in <span>[<a href="#I-D.ietf-pquip-pqt-hybrid-terminology" class="cite xref">I-D.ietf-pquip-pqt-hybrid-terminology</a>]</span>. For the purposes of this document, it is helpful to be able to divide cryptographic algorithms
+into two classes:<a href="#section-2-2" class="pilcrow">¶</a></p>
+<p id="section-2-3">"Asymmetric Traditional Cryptographic Algorithm": An asymmetric cryptographic algorithm based on integer factorisation, finite field discrete logarithms, elliptic curve discrete logarithms, or related mathematical problems.<a href="#section-2-3" class="pilcrow">¶</a></p>
+<p id="section-2-4">"Post-Quantum Algorithm": An asymmetric cryptographic algorithm that is believed to be secure against attacks using quantum computers as well as classical computers. Post-quantum algorithms can also be called quantum-resistant or quantum-safe algorithms. Examples of quantum-resistant digital signature schemes include ML-DSA and SLH-DSA.<a href="#section-2-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="general-framework-for-pqc-authentication-in-ikev2">
+<section id="section-3">
+      <h2 id="name-general-framework-for-pqc-a">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-general-framework-for-pqc-a" class="section-name selfRef">General Framework for PQC Authentication in IKEv2</a>
+      </h2>
+<p id="section-3-1">IKEv2 authentication commonly relies on digital signatures to verify the identity of communicating peers. The mechanism described in this document enables the use of any PQC digital signature algorithm without modifying core IKEv2 operations.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<div id="specifying-pqc-signature-algorithms">
+<section id="section-3.1">
+        <h3 id="name-specifying-pqc-signature-al">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-specifying-pqc-signature-al" class="section-name selfRef">Specifying PQC Signature Algorithms</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="section-3.1-1.1">
+            <p id="section-3.1-1.1.1">IKEv2 can use arbitrary signature algorithms as described in <span>[<a href="#RFC7427" class="cite xref">RFC7427</a>]</span>, where the "Digital Signature" authentication method supersedes previously defined signature authentication methods. Any PQC digital signature algorithm can be incorporated using the "Signature Algorithm" field in authentication payloads, as defined in <span>[<a href="#RFC7427" class="cite xref">RFC7427</a>]</span>.<a href="#section-3.1-1.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.1-1.2">
+            <p id="section-3.1-1.2.1">DER encoded AlgorithmIdentifier ASN.1 objects will be used to uniquely identify PQC signature algorithm scheme and the parameter set associated with it.<a href="#section-3.1-1.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="sig">
+<section id="section-3.2">
+        <h3 id="name-signature-generation-and-ve">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-signature-generation-and-ve" class="section-name selfRef">Signature Generation and Verification</a>
+        </h3>
+<p id="section-3.2-1">PQC signatures may be generated in either deterministic or hedged modes. The terms deterministic and hedged  used in this document are in accordance with <span>[<a href="#FIPS204" class="cite xref">FIPS204</a>]</span> and <span>[<a href="#FIPS205" class="cite xref">FIPS205</a>]</span>, which define the ML-DSA and SLH-DSA algorithms. Future PQC signature algorithms may adopt different nomenclature, but will be expected to follow the same principles.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.2-2">In the deterministic mode, the signature is derived entirely from the message and the signer’s private key, without introducing fresh randomness at signing time. While this eliminates reliance on an external random number generator (RNG), it increases susceptibility to side-channel attacks, particularly fault injection attacks.<a href="#section-3.2-2" class="pilcrow">¶</a></p>
+<p id="section-3.2-3">The hedged mode provides some resistance against this risk by including precomputed randomness in the signer's private key and incorporating fresh randomness generated at signing time.
+This foils some side channel attack approaches, while adding no additional strength against others.
+If protection against side-channel attacks are required, an ML-DSA implementation that implements side-channel resistance should be used.<a href="#section-3.2-3" class="pilcrow">¶</a></p>
+<p id="section-3.2-4">In the context of signature-based authentication in IKEv2, the data used for generating a digital signature is unique for each session, as it includes session-specific information such as nonces. PQC signature algorithms can leverage the hedged variant within IKEv2 to enhance security against side-channel attacks. The choice between deterministic and hedged signing modes does not impact interoperability because the verification process remains the same for both variants.<a href="#section-3.2-4" class="pilcrow">¶</a></p>
+<p id="section-3.2-5">If the PQC signature algorithm uses a 'context' input parameter, it <span class="bcp14">MUST</span> be set to an empty string.<a href="#section-3.2-5" class="pilcrow">¶</a></p>
+<p id="section-3.2-6">Certain digital signature algorithms support two modes: "pure" mode and "pre-hash" mode. For example, ML-DSA and
+SLH-DSA support both modes. In pure mode, the content is signed directly along with some domain separation
+information. In contrast, pre-hash mode involves signing a digest of the message. This document specifies the use
+of pure mode for signature-based authentication in IKEv2, where the message is signed directly along with domain separation information. The data used for authentication in IKEv2, as described in Section 2.15 of <span>[<a href="#RFC7296" class="cite xref">RFC7296</a>]</span>, consists of elements such as nonces, SPIs, and initial exchange messages (messages preceding IKE_AUTH), which are typically within device memory constraints. While pre-hash mode can help in scenarios with memory constraints, the IKEv2 authentication data is generally small, and combined with other practical challenges (discussed in <a href="#design" class="auto internal xref">Appendix A</a>), this document only specifies pure mode.<a href="#section-3.2-6" class="pilcrow">¶</a></p>
+<div id="handsig">
+<section id="section-3.2.1">
+          <h4 id="name-handling-pqc-signatures-in-">
+<a href="#section-3.2.1" class="section-number selfRef">3.2.1. </a><a href="#name-handling-pqc-signatures-in-" class="section-name selfRef">Handling PQC Signatures in IKEv2</a>
+          </h4>
+<p id="section-3.2.1-1">As specified in <span>[<a href="#RFC7427" class="cite xref">RFC7427</a>]</span>, both the initiator and responder <span class="bcp14">MUST</span> send the SIGNATURE_HASH_ALGORITHMS notify payload in the IKE_SA_INIT exchange to indicate the set of hash algorithms they support for signature generation and verification. The SIGNATURE_HASH_ALGORITHMS notify payload contains a list of 2-octet hash algorithm identifiers, defined in the IANA "IKEv2 Hash Algorithms" registry.<a href="#section-3.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.2.1-2">For PQC signature algorithms that inherently operate directly on the raw message without hashing, such as ML-DSA and SLH-DSA, only the 'Identity' hash function is applicable. The 'Identity' hash function (value 5) is defined in Section 2 of <span>[<a href="#RFC8420" class="cite xref">RFC8420</a>]</span> and indicates that the input message is used as-is, without any hash function applied. Therefore, implementations supporting such PQC signature algorithms <span class="bcp14">MUST</span> include the 'Identity' hash (5) in the SIGNATURE_HASH_ALGORITHMS notify. Furthermore, PQC signature algorithms requiring the 'Identity' hash <span class="bcp14">MUST NOT</span> be used with a peer that has not indicated support for the Identity hash in its notify payload.<a href="#section-3.2.1-2" class="pilcrow">¶</a></p>
+<p id="section-3.2.1-3">For additional background on design alternatives that were considered and the rationale for adopting the <span>[<a href="#RFC8420" class="cite xref">RFC8420</a>]</span> approach as the cleanest and most secure method, see <a href="#design" class="auto internal xref">Appendix A</a>.<a href="#section-3.2.1-3" class="pilcrow">¶</a></p>
+<p id="section-3.2.1-4">When generating a signature with a PQC signature algorithm, the IKEv2 implementation takes the InitiatorSignedOctets string or the ResponderSignedOctets string (as appropriate), logically sends it to the identity hash (which leaves it unchanged), and then passes it into the PQC signer as the message to be signed (with empty context string, if applicable). The resulting signature is placed into the Signature Value field of the Authentication Payload.<a href="#section-3.2.1-4" class="pilcrow">¶</a></p>
+<p id="section-3.2.1-5">When verifying a signature with a PQC signature algorithm, the IKEv2 implementation takes the InitiatorSignedOctets string or the ResponderSignedOctets string (as appropriate), logically sends it to the identity hash (which leaves it unchanged), and then passes it into the PQC signature verifier as the message to be verified (with empty context string, if applicable).<a href="#section-3.2.1-5" class="pilcrow">¶</a></p>
+<p id="section-3.2.1-6">IKEv2 peers supporting the PQC authentication mechanism defined in this specification <span class="bcp14">SHOULD</span> implement IKEv2 message fragmentation as specified in <span>[<a href="#RFC7383" class="cite xref">RFC7383</a>]</span>, unless IKEv2 runs over a reliable transport (e.g., <span>[<a href="#RFC9329" class="cite xref">RFC9329</a>]</span>) or the underlying network is known to support sufficiently large MTUs without fragmentation issues, since PQC public keys and signatures can be significantly larger than those used in traditional algorithms. 
+For example, ML-DSA-44 requires a public key of 1,312 bytes and a signature of 2,420 bytes, while even the smallest SLH-DSA signature is around 7,856 bytes. As guidance, IKEv2 peers should assume a minimum PMTU of 1280 bytes for IPv6 (per <span>[<a href="#RFC8200" class="cite xref">RFC8200</a>]</span>) and, where legacy IPv4 networks are a consideration, an effective MTU of 576 bytes for IPv4 (per <span>[<a href="#RFC1122" class="cite xref">RFC1122</a>]</span>).<a href="#section-3.2.1-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="mechanisms-for-signaling-supported-key-pair-types">
+<section id="section-3.3">
+        <h3 id="name-mechanisms-for-signaling-su">
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-mechanisms-for-signaling-su" class="section-name selfRef">Mechanisms for Signaling Supported Key Pair Types</a>
+        </h3>
+<p id="section-3.3-1">The following mechanisms can be used by peers to signal the types of digital signature algorithms and parameters they support:<a href="#section-3.3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3.3-2.1">
+            <p id="section-3.3-2.1.1">Certificate Request Payload: One method to ascertain that the key pair type the initiator wants the responder
+to use is through a Certificate Request payload (defined in Section 3.7 of <span>[<a href="#RFC7296" class="cite xref">RFC7296</a>]</span>) sent by the initiator. For example, the initiator can specify that it trusts certificates issued by a certificate authority (CA) that signs with a particular post-quantum cryptographic (PQC) signature algorithm. This implies that the initiator can process signatures generated using that algorithm, thereby allowing the responder to authenticate itself using a key pair associated with the specified PQC signature scheme.<a href="#section-3.3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-3.3-2.2">
+            <p id="section-3.3-2.2.1">Authentication Method Announcement: Another method is to utilize <span>[<a href="#RFC9593" class="cite xref">RFC9593</a>]</span>,   <br>
+which enables peers to declare their supported authentication methods. This improves interoperability when IKEv2 peers are configured with multiple credential types of different type to authenticate each other. The responder includes a SUPPORTED_AUTH_METHODS notification in the IKE_SA_INIT response message, listing the  signature scheme(s) it supports under the Digital Signature authentication method. The initiator includes the SUPPORTED_AUTH_METHODS notification in either the IKE_AUTH request message or in the IKE_INTERMEDIATE request. This notification lists the digital signature scheme(s) supported by the initiator, ordered by preference.<a href="#section-3.3-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+<p id="section-3.3-3">In traditional IKEv2 deployments, peers often implicitly know the signature algorithms in use based on pre-configured certificates, trusted CAs, and IKEv2 policies. However, cryptographic agility, the ability to negotiate and use different cryptographic algorithms is gaining increased attention for ensuring long-term security and interoperability. This requirement becomes even more relevant with the introduction of PQC algorithms, where multiple signature algorithms with varying security levels and performance characteristics may need to be supported over time.<a href="#section-3.3-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="ml-dsa">
+<section id="section-4">
+      <h2 id="name-specifying-ml-dsa-within-ik">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-specifying-ml-dsa-within-ik" class="section-name selfRef">Specifying ML-DSA within IKEv2</a>
+      </h2>
+<p id="section-4-1">ML-DSA <span>[<a href="#FIPS204" class="cite xref">FIPS204</a>]</span> is a digital signature algorithm based on the hardness lattice problems over module lattices (i.e., the Module Learning with Errors problem (MLWE)). The design of the algorithm is based on the "Fiat-Shamir with Aborts" <span>[<a href="#Lyu09" class="cite xref">Lyu09</a>]</span> framework introduced by Lyubashevsky that leverages rejection sampling to render lattice- based FS schemes compact and secure. ML-DSA uses a uniform distribution over small integers for computing coefficients in error vectors, which simplifies implementation compared to schemes requiring discrete Gaussian sampling.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<p id="section-4-2">ML-DSA is instantiated with three parameter sets for the security categories 2, 3, and 5 (see Table 2 in Section 10 of <span>[<a href="#I-D.ietf-pquip-pqc-engineers" class="cite xref">I-D.ietf-pquip-pqc-engineers</a>]</span>). Security properties of ML-DSA are discussed in Section 9 of <span>[<a href="#I-D.ietf-lamps-dilithium-certificates" class="cite xref">I-D.ietf-lamps-dilithium-certificates</a>]</span>. This document specifies the use of the ML-DSA algorithm in IKEv2 at three security levels: ML-DSA-44, ML-DSA-65, and ML-DSA-87. The DER encodings of the AlgorithmIdentifier objects for ML-DSA-44, ML-DSA-65, and ML-DSA-87 are listed in <a href="#ASN" class="auto internal xref">Appendix B</a>.<a href="#section-4-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="slh-dsa">
+<section id="section-5">
+      <h2 id="name-specifying-slh-dsa-within-i">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-specifying-slh-dsa-within-i" class="section-name selfRef">Specifying SLH-DSA within IKEv2</a>
+      </h2>
+<p id="section-5-1">SLH-DSA <span>[<a href="#FIPS205" class="cite xref">FIPS205</a>]</span> utilizes the concept of stateless hash-based signatures. In contrast to stateful signature algorithms such as XMSS <span>[<a href="#RFC8391" class="cite xref">RFC8391</a>]</span> or HSS/LMS <span>[<a href="#RFC8554" class="cite xref">RFC8554</a>]</span>, SLH-DSA eliminates the need for maintaining state information during the signing process. SLH-DSA is designed to sign up to 2^64 messages and it offers three security levels. The parameters for security levels 1, 3, and 5 were chosen to provide AES-128, AES-192, and AES-256 bits of security respectively (see Table 2 in Section 10 of <span>[<a href="#I-D.ietf-pquip-pqc-engineers" class="cite xref">I-D.ietf-pquip-pqc-engineers</a>]</span>). This document specifies the use of the SLH-DSA algorithm in IKEv2 at each level.<a href="#section-5-1" class="pilcrow">¶</a></p>
+<p id="section-5-2">Each security level (1, 3, and 5) defines two variants of the algorithm: a small (S) version and a fast (F) version. The small version prioritizes smaller signature sizes, making them suitable for resource-constrained  IoT devices. Conversely, the fast version prioritizes speed over signature size, minimizing the time required to generate signatures. However, signature verification with the small version is faster than with the fast version. For hash function selection, the algorithm uses SHA-256 (<span>[<a href="#FIPS180" class="cite xref">FIPS180</a>]</span>) for security level 1 and both SHA-256 and SHA-512 (<span>[<a href="#FIPS180" class="cite xref">FIPS180</a>]</span>) for security levels 3 and 5. Alternatively, SHAKE256 (<span>[<a href="#FIPS202" class="cite xref">FIPS202</a>]</span>) can be used across all security levels. Those hash function selections are internal to SLH-DSA implementations, and are not to be confused with those in the SIGNATURE_HASH_ALGORITHMS notification payload.<a href="#section-5-2" class="pilcrow">¶</a></p>
+<p id="section-5-3">ML-DSA outperforms SLH-DSA in both signature generation and validation time, as well as signature size. SLH-DSA, in contrast, offers smaller key sizes but larger signature sizes.<a href="#section-5-3" class="pilcrow">¶</a></p>
+<p id="section-5-4">The following combinations are defined in SLH-DSA <span>[<a href="#FIPS205" class="cite xref">FIPS205</a>]</span>:<a href="#section-5-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-5-5.1">
+          <p id="section-5-5.1.1">SLH-DSA-128S-SHA2<a href="#section-5-5.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-5.2">
+          <p id="section-5-5.2.1">SLH-DSA-128F-SHA2<a href="#section-5-5.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-5.3">
+          <p id="section-5-5.3.1">SLH-DSA-192S-SHA2<a href="#section-5-5.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-5.4">
+          <p id="section-5-5.4.1">SLH-DSA-192F-SHA2<a href="#section-5-5.4.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-5.5">
+          <p id="section-5-5.5.1">SLH-DSA-256S-SHA2<a href="#section-5-5.5.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-5.6">
+          <p id="section-5-5.6.1">SLH-DSA-256F-SHA2<a href="#section-5-5.6.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-5.7">
+          <p id="section-5-5.7.1">SLH-DSA-128S-SHAKE<a href="#section-5-5.7.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-5.8">
+          <p id="section-5-5.8.1">SLH-DSA-128F-SHAKE<a href="#section-5-5.8.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-5.9">
+          <p id="section-5-5.9.1">SLH-DSA-192S-SHAKE<a href="#section-5-5.9.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-5.10">
+          <p id="section-5-5.10.1">SLH-DSA-192F-SHAKE<a href="#section-5-5.10.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-5.11">
+          <p id="section-5-5.11.1">SLH-DSA-256S-SHAKE<a href="#section-5-5.11.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="section-5-5.12">
+          <p id="section-5-5.12.1">SLH-DSA-256F-SHAKE<a href="#section-5-5.12.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+<p id="section-5-6">SLH-DSA does not introduce a new hardness assumption beyond those inherent to the underlying hash functions. It builds upon established foundations in cryptography, making it a reliable and robust digital signature scheme in the face of a CRQC. While attacks on lattice-based schemes like ML-DSA are currently hypothetical at the time of writing this document, such attacks, if realized, could compromise their security. SLH-DSA would remain unaffected by these attacks due to its distinct mathematical foundations. This ensures the continued security of systems and protocols that utilize SLH-DSA for digital signatures.<a href="#section-5-6" class="pilcrow">¶</a></p>
+<p id="section-5-7">The DER encodings of the AlgorithmIdentifier objects for each SLH-DSA variant are listed in <a href="#ASN" class="auto internal xref">Appendix B</a>.<a href="#section-5-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="implementation-alternatives-for-ml-dsa">
+<section id="section-6">
+      <h2 id="name-implementation-alternatives">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-implementation-alternatives" class="section-name selfRef">Implementation Alternatives for ML-DSA</a>
+      </h2>
+<p id="section-6-1">With ML-DSA, there are two different approaches to implementing the signature process.
+The first one is to simply hand the SignedOctets string to the cryptographic library to generate the full signature; this works for SLH-DSA as well.<a href="#section-6-1" class="pilcrow">¶</a></p>
+<p id="section-6-2">The second approach involves using the Externalμ-ML-DSA API defined in <span>[<a href="#FIPS204" class="cite xref">FIPS204</a>]</span>. In this method, the implementation calls the External μ pre-hashing mode with the SignedOctets string and the ML-DSA public key, which externalizes the message pre-hashing originally performed inside the signing operation (see Appendix D of <span>[<a href="#I-D.ietf-lamps-dilithium-certificates" class="cite xref">I-D.ietf-lamps-dilithium-certificates</a>]</span>). This hash is then passed to the cryptographic library to execute the Externalμ-ML-DSA.Sign API, which uses the hash and the ML-DSA private key to produce the signature. This document specifies only the use of ML-DSA's External μ mode, and not HashML-DSA.<a href="#section-6-2" class="pilcrow">¶</a></p>
+<p id="section-6-3">Both approaches are considered "pure" mode and produce the same ML-DSA signature and are fully interoperable. The choice between them depends on implementation preferences, such as whether the External μ pre-hashing step is handled internally by the cryptographic module or performed explicitly by the IKEv2 implementation.<a href="#section-6-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="use-of-ml-dsa-and-slh-dsa">
+<section id="section-7">
+      <h2 id="name-use-of-ml-dsa-and-slh-dsa">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-use-of-ml-dsa-and-slh-dsa" class="section-name selfRef">Use of ML-DSA and SLH-DSA</a>
+      </h2>
+<p id="section-7-1">Both ML-DSA and SLH-DSA offer deterministic and hedged signing modes. By default, ML-DSA uses a hedged approach, where the random value rnd is a 256-bit string generated by an Random Bit Generator (RBG). The signature generation function utilizes this randomness along with the private key and the preprocessed message.
+In the deterministic variant, rnd is instead set to a constant 256-bit zero string. Similarly, SLH-DSA can operate in either deterministic or hedged mode. The mode is determined by the value of opt_rand, when opt_rand is set to a fixed value (e.g., the public seed from the public key), SLH-DSA generates deterministic signatures, ensuring that signing the same message twice produces the same signature. In hedged mode, opt_rand is a fresh random value, introducing additional entropy to enhance security and mitigate potential side-channel risks.<a href="#section-7-1" class="pilcrow">¶</a></p>
+<p id="section-7-2">IKEv2 peers can use either the hedged or deterministic variants of ML-DSA and SLH-DSA for authentication in IKEv2, with a preference for using the hedged mode (<a href="#sig" class="auto internal xref">Section 3.2</a>).<a href="#section-7-2" class="pilcrow">¶</a></p>
+<p id="section-7-3">The three security levels of ML-DSA are identified via AlgorithmIdentifier ASN.1 objects, as specified in NIST <span>[<a href="#CSOR" class="cite xref">CSOR</a>]</span> and referenced in <span>[<a href="#I-D.ietf-lamps-dilithium-certificates" class="cite xref">I-D.ietf-lamps-dilithium-certificates</a>]</span>. <span>[<a href="#FIPS204" class="cite xref">FIPS204</a>]</span> defines both a pure and a pre-hash variant of ML-DSA, but <span>[<a href="#I-D.ietf-lamps-dilithium-certificates" class="cite xref">I-D.ietf-lamps-dilithium-certificates</a>]</span> specifies only the pure variant.<a href="#section-7-3" class="pilcrow">¶</a></p>
+<p id="section-7-4">The different combinations of SLH-DSA are identified via AlgorithmIdentifier ASN.1 objects, as specified in NIST <span>[<a href="#CSOR" class="cite xref">CSOR</a>]</span> and referenced in <span>[<a href="#I-D.ietf-lamps-x509-slhdsa" class="cite xref">I-D.ietf-lamps-x509-slhdsa</a>]</span>. <span>[<a href="#FIPS205" class="cite xref">FIPS205</a>]</span> defines two signature modes: pure mode and pre-hash mode. <span>[<a href="#I-D.ietf-lamps-x509-slhdsa" class="cite xref">I-D.ietf-lamps-x509-slhdsa</a>]</span> specifies the use of both Pure SLH-DSA and HashSLH-DSA in Public Key Infrastructure X.509 (PKIX) certificates and Certificate Revocation Lists (CRLs).<a href="#section-7-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-8">
+      <h2 id="name-security-considerations">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-8-1">PQC signature algorithms are generally modeled to achieve strong unforgeability under adaptive chosen-message attacks (SUF-CMA; see Section 10.1.1 of <span>[<a href="#I-D.ietf-pquip-pqc-engineers" class="cite xref">I-D.ietf-pquip-pqc-engineers</a>]</span>). For example, ML-DSA provides SUF-CMA security. However, some algorithms, such as SLH-DSA, achieve existential unforgeability under chosen-message attacks (EUF-CMA; see Section 10.1.1 of <span>[<a href="#I-D.ietf-pquip-pqc-engineers" class="cite xref">I-D.ietf-pquip-pqc-engineers</a>]</span>). This distinction does not impact IKEv2, as the signed data in each session is unique due to the inclusion of nonces. Consequently, the oracle-based forgery attack scenarios in the EUF-CMA model do not arise in IKEv2.<a href="#section-8-1" class="pilcrow">¶</a></p>
+<p id="section-8-2">Different PQC signature schemes are designed to provide security levels comparable to well-established cryptographic primitives. For example, some schemes align with the NIST post-quantum security categories (Categories 1 through 5) as discussed in <span>[<a href="#FIPS204" class="cite xref">FIPS204</a>]</span> and <span>[<a href="#FIPS205" class="cite xref">FIPS205</a>]</span>. These categories specify target security strengths that correspond approximately to exhaustive key-search resistance for AES-128, AES-192, and AES-256, and collision-search resistance for SHA-256, SHA-384, and SHA-512. The choice of a PQC signature algorithm should be guided by the desired security level and performance requirements.<a href="#section-8-2" class="pilcrow">¶</a></p>
+<p id="section-8-3">ML-DSA-44, ML-DSA-65, and ML-DSA-87 are designed to offer security comparable with the SHA-256/SHA3-256, AES-192, and AES-256 respectively. Similarly, SLH-DSA-128{S,F}-{SHA2,SHAKE}, SLH-DSA-192{S,F}-{SHA2,SHAKE}, and SLH-DSA-256{S,F}-{SHA2,SHAKE} are designed to offer security comparable with the AES-128, AES-192, and AES-256 respectively.<a href="#section-8-3" class="pilcrow">¶</a></p>
+<p id="section-8-4">The Security Considerations section of <span>[<a href="#I-D.ietf-lamps-dilithium-certificates" class="cite xref">I-D.ietf-lamps-dilithium-certificates</a>]</span> and <span>[<a href="#I-D.ietf-lamps-x509-slhdsa" class="cite xref">I-D.ietf-lamps-x509-slhdsa</a>]</span> apply to this specification as well.<a href="#section-8-4" class="pilcrow">¶</a></p>
+<p id="section-8-5">SLH-DSA keys are limited to 2^64 signatures. This upper bound is so large that even a IKEv2 server establishing IKEv2 sessions at an extremely high rate could not realistically reach it (at 10 billion signatures per second, it would still take over 58 years). The limit is therefore of theoretical interest only, but implementations may still track signature usage as a precautionary security measure. ML-DSA does not have a built-in signature limit, allowing for an arbitrary number of signatures to be made with the same key.<a href="#section-8-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="acknowledgements">
+<section id="section-9">
+      <h2 id="name-acknowledgements">
+<a href="#name-acknowledgements" class="section-name selfRef">Acknowledgements</a>
+      </h2>
+<p id="section-9-1">Thanks to Stefaan De Cnodder, Loganaden Velvindron, Paul Wouters, Andreas Steffen, Dan Wing, Wang Guilin, Rebecca Guthrie, Jonathan Hammell, John Mattsson and Daniel Van Geest for the discussion and comments.<a href="#section-9-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sec-combined-references">
+<section id="section-10">
+      <h2 id="name-references">
+<a href="#name-references" class="section-name selfRef">References</a>
+      </h2>
+<div id="sec-normative-references">
+<section id="section-10.1">
+        <h3 id="name-normative-references">
+<a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
+<dl class="references">
+<dt id="CSOR">[CSOR]</dt>
+        <dd>
+<span class="refAuthor">NIST</span>, <span class="refTitle">"Computer Security Objects Register"</span>, <time datetime="2024-08-20" class="refDate">20 August 2024</time>, <span>&lt;<a href="https://csrc.nist.gov/projects/computer-security-objects-register/algorithm-registration">https://csrc.nist.gov/projects/computer-security-objects-register/algorithm-registration</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC2119">[RFC2119]</dt>
+        <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC4754">[RFC4754]</dt>
+        <dd>
+<span class="refAuthor">Fu, D.</span> and <span class="refAuthor">J. Solinas</span>, <span class="refTitle">"IKE and IKEv2 Authentication Using the Elliptic Curve Digital Signature Algorithm (ECDSA)"</span>, <span class="seriesInfo">RFC 4754</span>, <span class="seriesInfo">DOI 10.17487/RFC4754</span>, <time datetime="2007-01" class="refDate">January 2007</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc4754">https://www.rfc-editor.org/rfc/rfc4754</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7296">[RFC7296]</dt>
+        <dd>
+<span class="refAuthor">Kaufman, C.</span>, <span class="refAuthor">Hoffman, P.</span>, <span class="refAuthor">Nir, Y.</span>, <span class="refAuthor">Eronen, P.</span>, and <span class="refAuthor">T. Kivinen</span>, <span class="refTitle">"Internet Key Exchange Protocol Version 2 (IKEv2)"</span>, <span class="seriesInfo">STD 79</span>, <span class="seriesInfo">RFC 7296</span>, <span class="seriesInfo">DOI 10.17487/RFC7296</span>, <time datetime="2014-10" class="refDate">October 2014</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7296">https://www.rfc-editor.org/rfc/rfc7296</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7383">[RFC7383]</dt>
+        <dd>
+<span class="refAuthor">Smyslov, V.</span>, <span class="refTitle">"Internet Key Exchange Protocol Version 2 (IKEv2) Message Fragmentation"</span>, <span class="seriesInfo">RFC 7383</span>, <span class="seriesInfo">DOI 10.17487/RFC7383</span>, <time datetime="2014-11" class="refDate">November 2014</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7383">https://www.rfc-editor.org/rfc/rfc7383</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7427">[RFC7427]</dt>
+        <dd>
+<span class="refAuthor">Kivinen, T.</span> and <span class="refAuthor">J. Snyder</span>, <span class="refTitle">"Signature Authentication in the Internet Key Exchange Version 2 (IKEv2)"</span>, <span class="seriesInfo">RFC 7427</span>, <span class="seriesInfo">DOI 10.17487/RFC7427</span>, <time datetime="2015-01" class="refDate">January 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7427">https://www.rfc-editor.org/rfc/rfc7427</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8174">[RFC8174]</dt>
+        <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8420">[RFC8420]</dt>
+        <dd>
+<span class="refAuthor">Nir, Y.</span>, <span class="refTitle">"Using the Edwards-Curve Digital Signature Algorithm (EdDSA) in the Internet Key Exchange Protocol Version 2 (IKEv2)"</span>, <span class="seriesInfo">RFC 8420</span>, <span class="seriesInfo">DOI 10.17487/RFC8420</span>, <time datetime="2018-08" class="refDate">August 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8420">https://www.rfc-editor.org/rfc/rfc8420</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9593">[RFC9593]</dt>
+      <dd>
+<span class="refAuthor">Smyslov, V.</span>, <span class="refTitle">"Announcing Supported Authentication Methods in the Internet Key Exchange Protocol Version 2 (IKEv2)"</span>, <span class="seriesInfo">RFC 9593</span>, <span class="seriesInfo">DOI 10.17487/RFC9593</span>, <time datetime="2024-07" class="refDate">July 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9593">https://www.rfc-editor.org/rfc/rfc9593</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-10.2">
+        <h3 id="name-informative-references">
+<a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="FIPS180">[FIPS180]</dt>
+        <dd>
+<span class="refTitle">"NIST, Secure Hash Standard (SHS), FIPS PUB 180-4, August 2015"</span>, <span>&lt;<a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf">https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="FIPS202">[FIPS202]</dt>
+        <dd>
+<span class="refTitle">"NIST, SHA-3 Standard: Permutation-Based Hash and Extendable-Output Functions, FIPS PUB 202, August 2015."</span>, <span>&lt;<a href="https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.202.pdf">https://nvlpubs.nist.gov/nistpubs/fips/nist.fips.202.pdf</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="FIPS204">[FIPS204]</dt>
+        <dd>
+<span class="refTitle">"FIPS 204: Module-Lattice-Based Digital Signature Standard"</span>, <span>&lt;<a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf">https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.204.pdf</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="FIPS205">[FIPS205]</dt>
+        <dd>
+<span class="refTitle">"FIPS 205: Stateless Hash-Based Digital Signature Standard"</span>, <span>&lt;<a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.205.pdf">https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.205.pdf</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-lamps-dilithium-certificates">[I-D.ietf-lamps-dilithium-certificates]</dt>
+        <dd>
+<span class="refAuthor">Massimo, J.</span>, <span class="refAuthor">Kampanakis, P.</span>, <span class="refAuthor">Turner, S.</span>, and <span class="refAuthor">B. Westerbaan</span>, <span class="refTitle">"Internet X.509 Public Key Infrastructure - Algorithm Identifiers for the Module-Lattice-Based Digital Signature Algorithm (ML-DSA)"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-lamps-dilithium-certificates-13</span>, <time datetime="2025-09-30" class="refDate">30 September 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-lamps-dilithium-certificates-13">https://datatracker.ietf.org/doc/html/draft-ietf-lamps-dilithium-certificates-13</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-lamps-x509-slhdsa">[I-D.ietf-lamps-x509-slhdsa]</dt>
+        <dd>
+<span class="refAuthor">Bashiri, K.</span>, <span class="refAuthor">Fluhrer, S.</span>, <span class="refAuthor">Gazdag, S.</span>, <span class="refAuthor">Van Geest, D.</span>, and <span class="refAuthor">S. Kousidis</span>, <span class="refTitle">"Internet X.509 Public Key Infrastructure: Algorithm Identifiers for SLH-DSA"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-lamps-x509-slhdsa-09</span>, <time datetime="2025-06-30" class="refDate">30 June 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-lamps-x509-slhdsa-09">https://datatracker.ietf.org/doc/html/draft-ietf-lamps-x509-slhdsa-09</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-pquip-pqc-engineers">[I-D.ietf-pquip-pqc-engineers]</dt>
+        <dd>
+<span class="refAuthor">Banerjee, A.</span>, <span class="refAuthor">Reddy.K, T.</span>, <span class="refAuthor">Schoinianakis, D.</span>, <span class="refAuthor">Hollebeek, T.</span>, and <span class="refAuthor">M. Ounsworth</span>, <span class="refTitle">"Post-Quantum Cryptography for Engineers"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-pquip-pqc-engineers-14</span>, <time datetime="2025-08-25" class="refDate">25 August 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-pquip-pqc-engineers-14">https://datatracker.ietf.org/doc/html/draft-ietf-pquip-pqc-engineers-14</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="I-D.ietf-pquip-pqt-hybrid-terminology">[I-D.ietf-pquip-pqt-hybrid-terminology]</dt>
+        <dd>
+<span class="refAuthor">D, F.</span>, <span class="refAuthor">P, M.</span>, and <span class="refAuthor">B. Hale</span>, <span class="refTitle">"Terminology for Post-Quantum Traditional Hybrid Schemes"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-pquip-pqt-hybrid-terminology-06</span>, <time datetime="2025-01-10" class="refDate">10 January 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-pquip-pqt-hybrid-terminology-06">https://datatracker.ietf.org/doc/html/draft-ietf-pquip-pqt-hybrid-terminology-06</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="Lyu09">[Lyu09]</dt>
+        <dd>
+<span class="refTitle">"V. Lyubashevsky, “Fiat-Shamir With Aborts: Applications to Lattice and Factoring-Based Signatures“, ASIACRYPT 2009"</span>, <span>&lt;<a href="https://www.iacr.org/archive/asiacrypt2009/59120596/59120596.pdf">https://www.iacr.org/archive/asiacrypt2009/59120596/59120596.pdf</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC1122">[RFC1122]</dt>
+        <dd>
+<span class="refAuthor">Braden, R., Ed.</span>, <span class="refTitle">"Requirements for Internet Hosts - Communication Layers"</span>, <span class="seriesInfo">STD 3</span>, <span class="seriesInfo">RFC 1122</span>, <span class="seriesInfo">DOI 10.17487/RFC1122</span>, <time datetime="1989-10" class="refDate">October 1989</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc1122">https://www.rfc-editor.org/rfc/rfc1122</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8200">[RFC8200]</dt>
+        <dd>
+<span class="refAuthor">Deering, S.</span> and <span class="refAuthor">R. Hinden</span>, <span class="refTitle">"Internet Protocol, Version 6 (IPv6) Specification"</span>, <span class="seriesInfo">STD 86</span>, <span class="seriesInfo">RFC 8200</span>, <span class="seriesInfo">DOI 10.17487/RFC8200</span>, <time datetime="2017-07" class="refDate">July 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8200">https://www.rfc-editor.org/rfc/rfc8200</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8391">[RFC8391]</dt>
+        <dd>
+<span class="refAuthor">Huelsing, A.</span>, <span class="refAuthor">Butin, D.</span>, <span class="refAuthor">Gazdag, S.</span>, <span class="refAuthor">Rijneveld, J.</span>, and <span class="refAuthor">A. Mohaisen</span>, <span class="refTitle">"XMSS: eXtended Merkle Signature Scheme"</span>, <span class="seriesInfo">RFC 8391</span>, <span class="seriesInfo">DOI 10.17487/RFC8391</span>, <time datetime="2018-05" class="refDate">May 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8391">https://www.rfc-editor.org/rfc/rfc8391</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8554">[RFC8554]</dt>
+        <dd>
+<span class="refAuthor">McGrew, D.</span>, <span class="refAuthor">Curcio, M.</span>, and <span class="refAuthor">S. Fluhrer</span>, <span class="refTitle">"Leighton-Micali Hash-Based Signatures"</span>, <span class="seriesInfo">RFC 8554</span>, <span class="seriesInfo">DOI 10.17487/RFC8554</span>, <time datetime="2019-04" class="refDate">April 2019</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8554">https://www.rfc-editor.org/rfc/rfc8554</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9329">[RFC9329]</dt>
+      <dd>
+<span class="refAuthor">Pauly, T.</span> and <span class="refAuthor">V. Smyslov</span>, <span class="refTitle">"TCP Encapsulation of Internet Key Exchange Protocol (IKE) and IPsec Packets"</span>, <span class="seriesInfo">RFC 9329</span>, <span class="seriesInfo">DOI 10.17487/RFC9329</span>, <time datetime="2022-11" class="refDate">November 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9329">https://www.rfc-editor.org/rfc/rfc9329</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+</div>
+<div id="design">
+<section id="appendix-A">
+      <h2 id="name-discussion-of-ml-dsa-and-sl">
+<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-discussion-of-ml-dsa-and-sl" class="section-name selfRef">Discussion of ML-DSA and SLH-DSA and Prehashing</a>
+      </h2>
+<p id="appendix-A-1">This section discusses various approaches for integrating ML-DSA and SLH-DSA into IKEv2 other than those proposed above.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+<p id="appendix-A-2">The signature architecture within IKE was designed around RSA (and later extended to ECDSA).
+In this architecture, the actual message (the SignedOctets) are first hashed (using a hash that the verifier has indicated support for), and then passed for the remaining part of the signature generation processing.
+That is, it is designed for signature algorithms that first apply a hash function to the message and then perform processing on that hash. Neither ML-DSA nor SLH-DSA fits cleanly into this architecture.<a href="#appendix-A-2" class="pilcrow">¶</a></p>
+<p id="appendix-A-3">We see three ways to address this mismatch.<a href="#appendix-A-3" class="pilcrow">¶</a></p>
+<p id="appendix-A-4">The first consideration is that both ML-DSA and SLH-DSA provide prehashed parameter sets, which are designed to sign messages that have already been hashed by an external source. At first glance, this might seem like an ideal solution. However, several practical challenges arise:<a href="#appendix-A-4" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="appendix-A-5">
+<li id="appendix-A-5.1">
+          <p id="appendix-A-5.1.1">The prehashed versions of ML-DSA and SLH-DSA appear to be rarely used, making it likely that support for them in cryptographic libraries is limited or unavailable.<a href="#appendix-A-5.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="appendix-A-5.2">
+          <p id="appendix-A-5.2.1">The public keys for the prehashed variants use different OIDs, which means that certificates for IKEv2 would differ from those used in other protocols. This not only complicates certificate management but also adds protocol complexity if a peer needs to support both pure and prehashed variants. Additionally, some certificate authorities (CAs) may not support issuing certificates for prehashed ML-DSA or SLH-DSA due to their limited adoption.<a href="#appendix-A-5.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li id="appendix-A-5.3">
+          <p id="appendix-A-5.3.1">Some users have explicitly indicated a preference not to use the prehashed parameter sets.<a href="#appendix-A-5.3.1" class="pilcrow">¶</a></p>
+</li>
+      </ol>
+<p id="appendix-A-6">The second is to note that, while IKEv2 normally follows the 'hash and then sign' paradigm, it doesn't always.
+EdDSA has a similar constraint on not working cleanly with the standard 'hash and then sign' paradigm, and so the existing <span>[<a href="#RFC8420" class="cite xref">RFC8420</a>]</span> provides an alternative method, which ML-DSA would cleanly fit into.
+We could certainly adopt this same strategy; our concern would be that it might be more difficult for IKEv2 implementors which do not already have support for EdDSA.<a href="#appendix-A-6" class="pilcrow">¶</a></p>
+<p id="appendix-A-7">The third way is what we can refer to as 'fake prehashing'; IKEv2 would generate the hash as specified by the pre-hash modes in <span>[<a href="#FIPS204" class="cite xref">FIPS204</a>]</span> and <span>[<a href="#FIPS205" class="cite xref">FIPS205</a>]</span>, but instead of running ML-DSA or SLH-DSA in prehash mode, the hash is signed as if it were the unhashed message, as is done in pure mode.
+This is a violation of the spirit, if not the letter of FIPS 204, 205. 
+However, it is secure (assuming the hash function is strong), and fits in cleanly with both the existing IKEv2 architecture, and what crypto libraries provide. 
+Additionally, for SLH-DSA, this means that we're now dependent on collision resistance (while the rest of the SLH-DSA architecture was carefully designed not to be).<a href="#appendix-A-7" class="pilcrow">¶</a></p>
+<p id="appendix-A-8">After analysis, the IPsecME working group selected the approach defined in <span>[<a href="#RFC8420" class="cite xref">RFC8420</a>]</span>, the second method discussed above as the most cryptographically secure way to integrate PQC algorithms into IKEv2. The details are specified in <a href="#handsig" class="auto internal xref">Section 3.2.1</a>.<a href="#appendix-A-8" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="ASN">
+<section id="appendix-B">
+      <h2 id="name-asn1-objects">
+<a href="#appendix-B" class="section-number selfRef">Appendix B. </a><a href="#name-asn1-objects" class="section-name selfRef">ASN.1 Objects</a>
+      </h2>
+<p id="appendix-B-1">This section lists ASN.1 objects for algorithms mentioned in the document in binary form.<br>
+This section is not normative, and these values should only be used as
+examples. If the ASN.1 object listed in this section and the ASN.1
+object specified by the algorithm differ, then the algorithm
+specification must be used.<a href="#appendix-B-1" class="pilcrow">¶</a></p>
+<div id="ml-dsa-44">
+<section id="appendix-B.1">
+        <h3 id="name-ml-dsa-44">
+<a href="#appendix-B.1" class="section-number selfRef">B.1. </a><a href="#name-ml-dsa-44" class="section-name selfRef">ML-DSA-44</a>
+        </h3>
+<p id="appendix-B.1-1">id-ml-dsa-44 OBJECT IDENTIFIER ::= { joint-iso-itu-t(2)
+country(16) us(840) organization(1) gov(101) csor(3)
+nistAlgorithm(4) sigAlgs(3) id-ml-dsa-44(17) }<a href="#appendix-B.1-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.1-2">Parameters are absent.<a href="#appendix-B.1-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-B.1-3">
+<pre>
+Name = id-ml-dsa-44, oid = 2.16.840.1.101.3.4.3.17
+Length = 13
+0000: 300b 0609 6086 4801 6503 0403 11
+</pre><a href="#appendix-B.1-3" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="ml-dsa-65">
+<section id="appendix-B.2">
+        <h3 id="name-ml-dsa-65">
+<a href="#appendix-B.2" class="section-number selfRef">B.2. </a><a href="#name-ml-dsa-65" class="section-name selfRef">ML-DSA-65</a>
+        </h3>
+<p id="appendix-B.2-1">id-ml-dsa-65 OBJECT IDENTIFIER ::= { joint-iso-itu-t(2)
+country(16) us(840) organization(1) gov(101) csor(3)
+nistAlgorithm(4) sigAlgs(3) id-ml-dsa-65(18) }<a href="#appendix-B.2-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.2-2">Parameters are absent.<a href="#appendix-B.2-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-B.2-3">
+<pre>
+Name = id-ml-dsa-65, oid = 2.16.840.1.101.3.4.3.18
+Length = 13
+0000: 300b 0609 6086 4801 6503 0403 12
+</pre><a href="#appendix-B.2-3" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="ml-dsa-87">
+<section id="appendix-B.3">
+        <h3 id="name-ml-dsa-87">
+<a href="#appendix-B.3" class="section-number selfRef">B.3. </a><a href="#name-ml-dsa-87" class="section-name selfRef">ML-DSA-87</a>
+        </h3>
+<p id="appendix-B.3-1">id-ml-dsa-87 OBJECT IDENTIFIER ::= { joint-iso-itu-t(2)
+country(16) us(840) organization(1) gov(101) csor(3)
+nistAlgorithm(4) sigAlgs(3) id-ml-dsa-87(19) }<a href="#appendix-B.3-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.3-2">Parameters are absent.<a href="#appendix-B.3-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-B.3-3">
+<pre>
+Name = id-ml-dsa-87, oid = 2.16.840.1.101.3.4.3.19
+Length = 13
+0000: 300b 0609 6086 4801 6503 0403 13
+</pre><a href="#appendix-B.3-3" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="slh-dsa-128s-sha2">
+<section id="appendix-B.4">
+        <h3 id="name-slh-dsa-128s-sha2">
+<a href="#appendix-B.4" class="section-number selfRef">B.4. </a><a href="#name-slh-dsa-128s-sha2" class="section-name selfRef">SLH-DSA-128S-SHA2</a>
+        </h3>
+<p id="appendix-B.4-1">id-slh-dsa-sha2-128s OBJECT IDENTIFIER ::= { joint-iso-itu-t(2)
+country(16) us(840) organization(1) gov(101) csor(3)
+nistAlgorithm(4) sigAlgs(3) id-slh-dsa-sha2-128s(20) }<a href="#appendix-B.4-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.4-2">Parameters are absent.<a href="#appendix-B.4-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-B.4-3">
+<pre>
+Name = id-slh-dsa-sha2-128s, oid = 2.16.840.1.101.3.4.3.20
+Length = 13
+0000: 300b 0609 6086 4801 6503 0403 14
+</pre><a href="#appendix-B.4-3" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="slh-dsa-128f-sha2">
+<section id="appendix-B.5">
+        <h3 id="name-slh-dsa-128f-sha2">
+<a href="#appendix-B.5" class="section-number selfRef">B.5. </a><a href="#name-slh-dsa-128f-sha2" class="section-name selfRef">SLH-DSA-128F-SHA2</a>
+        </h3>
+<p id="appendix-B.5-1">id-slh-dsa-sha2-128f OBJECT IDENTIFIER ::= { joint-iso-itu-t(2)
+country(16) us(840) organization(1) gov(101) csor(3)
+nistAlgorithm(4) sigAlgs(3) id-slh-dsa-sha2-128f(21) }<a href="#appendix-B.5-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.5-2">Parameters are absent.<a href="#appendix-B.5-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-B.5-3">
+<pre>
+Name = id-slh-dsa-sha2-128f, oid = 2.16.840.1.101.3.4.3.21
+Length = 13
+0000: 300b 0609 6086 4801 6503 0403 15
+</pre><a href="#appendix-B.5-3" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="slh-dsa-192s-sha2">
+<section id="appendix-B.6">
+        <h3 id="name-slh-dsa-192s-sha2">
+<a href="#appendix-B.6" class="section-number selfRef">B.6. </a><a href="#name-slh-dsa-192s-sha2" class="section-name selfRef">SLH-DSA-192S-SHA2</a>
+        </h3>
+<p id="appendix-B.6-1">id-slh-dsa-sha2-192s OBJECT IDENTIFIER ::= { joint-iso-itu-t(2)
+country(16) us(840) organization(1) gov(101) csor(3)
+nistAlgorithm(4) sigAlgs(3) id-slh-dsa-sha2-192s(22) }<a href="#appendix-B.6-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.6-2">Parameters are absent.<a href="#appendix-B.6-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-B.6-3">
+<pre>
+Name = id-slh-dsa-sha2-192s, oid = 2.16.840.1.101.3.4.3.22
+Length = 13
+0000: 300b 0609 6086 4801 6503 0403 16
+</pre><a href="#appendix-B.6-3" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="slh-dsa-192f-sha2">
+<section id="appendix-B.7">
+        <h3 id="name-slh-dsa-192f-sha2">
+<a href="#appendix-B.7" class="section-number selfRef">B.7. </a><a href="#name-slh-dsa-192f-sha2" class="section-name selfRef">SLH-DSA-192F-SHA2</a>
+        </h3>
+<p id="appendix-B.7-1">id-slh-dsa-sha2-192f OBJECT IDENTIFIER ::= { joint-iso-itu-t(2)
+country(16) us(840) organization(1) gov(101) csor(3)
+nistAlgorithm(4) sigAlgs(3) id-slh-dsa-sha2-192f(23) }<a href="#appendix-B.7-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.7-2">Parameters are absent.<a href="#appendix-B.7-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-B.7-3">
+<pre>
+Name = id-slh-dsa-sha2-192f, oid = 2.16.840.1.101.3.4.3.23
+Length = 13
+0000: 300b 0609 6086 4801 6503 0403 17
+</pre><a href="#appendix-B.7-3" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="slh-dsa-256s-sha2">
+<section id="appendix-B.8">
+        <h3 id="name-slh-dsa-256s-sha2">
+<a href="#appendix-B.8" class="section-number selfRef">B.8. </a><a href="#name-slh-dsa-256s-sha2" class="section-name selfRef">SLH-DSA-256S-SHA2</a>
+        </h3>
+<p id="appendix-B.8-1">id-slh-dsa-sha2-256s OBJECT IDENTIFIER ::= { joint-iso-itu-t(2)
+country(16) us(840) organization(1) gov(101) csor(3)
+nistAlgorithm(4) sigAlgs(3) id-slh-dsa-sha2-256s(24) }<a href="#appendix-B.8-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.8-2">Parameters are absent.<a href="#appendix-B.8-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-B.8-3">
+<pre>
+Name = id-slh-dsa-sha2-256s, oid = 2.16.840.1.101.3.4.3.24
+Length = 13
+0000: 300b 0609 6086 4801 6503 0403 18
+</pre><a href="#appendix-B.8-3" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="slh-dsa-256f-sha2">
+<section id="appendix-B.9">
+        <h3 id="name-slh-dsa-256f-sha2">
+<a href="#appendix-B.9" class="section-number selfRef">B.9. </a><a href="#name-slh-dsa-256f-sha2" class="section-name selfRef">SLH-DSA-256F-SHA2</a>
+        </h3>
+<p id="appendix-B.9-1">id-slh-dsa-sha2-256f OBJECT IDENTIFIER ::= { joint-iso-itu-t(2)
+country(16) us(840) organization(1) gov(101) csor(3)
+nistAlgorithm(4) sigAlgs(3) id-slh-dsa-sha2-256f(25) }<a href="#appendix-B.9-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.9-2">Parameters are absent.<a href="#appendix-B.9-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-B.9-3">
+<pre>
+Name = id-slh-dsa-sha2-256f, oid = 2.16.840.1.101.3.4.3.25
+Length = 13
+0000: 300b 0609 6086 4801 6503 0403 19
+</pre><a href="#appendix-B.9-3" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="slh-dsa-128s-shake">
+<section id="appendix-B.10">
+        <h3 id="name-slh-dsa-128s-shake">
+<a href="#appendix-B.10" class="section-number selfRef">B.10. </a><a href="#name-slh-dsa-128s-shake" class="section-name selfRef">SLH-DSA-128S-SHAKE</a>
+        </h3>
+<p id="appendix-B.10-1">id-slh-dsa-shake-128s OBJECT IDENTIFIER ::= { joint-iso-itu-t(2)
+country(16) us(840) organization(1) gov(101) csor(3)
+nistAlgorithm(4) sigAlgs(3) id-slh-dsa-shake-128s(26) }<a href="#appendix-B.10-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.10-2">Parameters are absent.<a href="#appendix-B.10-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-B.10-3">
+<pre>
+Name = id-slh-dsa-shake-128s, oid = 2.16.840.1.101.3.4.3.26
+Length = 13
+0000: 300b 0609 6086 4801 6503 0403 1a
+</pre><a href="#appendix-B.10-3" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="slh-dsa-128f-shake">
+<section id="appendix-B.11">
+        <h3 id="name-slh-dsa-128f-shake">
+<a href="#appendix-B.11" class="section-number selfRef">B.11. </a><a href="#name-slh-dsa-128f-shake" class="section-name selfRef">SLH-DSA-128F-SHAKE</a>
+        </h3>
+<p id="appendix-B.11-1">id-slh-dsa-shake-128f OBJECT IDENTIFIER ::= { joint-iso-itu-t(2)
+country(16) us(840) organization(1) gov(101) csor(3)
+nistAlgorithm(4) sigAlgs(3) id-slh-dsa-shake-128f(27) }<a href="#appendix-B.11-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.11-2">Parameters are absent.<a href="#appendix-B.11-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-B.11-3">
+<pre>
+Name = id-slh-dsa-shake-128f, oid = 2.16.840.1.101.3.4.3.27
+Length = 13
+0000: 300b 0609 6086 4801 6503 0403 1b
+</pre><a href="#appendix-B.11-3" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="slh-dsa-192s-shake">
+<section id="appendix-B.12">
+        <h3 id="name-slh-dsa-192s-shake">
+<a href="#appendix-B.12" class="section-number selfRef">B.12. </a><a href="#name-slh-dsa-192s-shake" class="section-name selfRef">SLH-DSA-192S-SHAKE</a>
+        </h3>
+<p id="appendix-B.12-1">id-slh-dsa-shake-192s OBJECT IDENTIFIER ::= { joint-iso-itu-t(2)
+country(16) us(840) organization(1) gov(101) csor(3)
+nistAlgorithm(4) sigAlgs(3) id-slh-dsa-shake-192s(28) }<a href="#appendix-B.12-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.12-2">Parameters are absent.<a href="#appendix-B.12-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-B.12-3">
+<pre>
+Name = id-slh-dsa-shake-192s, oid = 2.16.840.1.101.3.4.3.28
+Length = 13
+0000: 300b 0609 6086 4801 6503 0403 1c
+</pre><a href="#appendix-B.12-3" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="slh-dsa-192f-shake">
+<section id="appendix-B.13">
+        <h3 id="name-slh-dsa-192f-shake">
+<a href="#appendix-B.13" class="section-number selfRef">B.13. </a><a href="#name-slh-dsa-192f-shake" class="section-name selfRef">SLH-DSA-192F-SHAKE</a>
+        </h3>
+<p id="appendix-B.13-1">id-slh-dsa-shake-192f OBJECT IDENTIFIER ::= { joint-iso-itu-t(2)
+country(16) us(840) organization(1) gov(101) csor(3)
+nistAlgorithm(4) sigAlgs(3) id-slh-dsa-shake-192f(29) }<a href="#appendix-B.13-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.13-2">Parameters are absent.<a href="#appendix-B.13-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-B.13-3">
+<pre>
+Name = id-slh-dsa-shake-192f, oid = 2.16.840.1.101.3.4.3.29
+Length = 13
+0000: 300b 0609 6086 4801 6503 0403 1d
+</pre><a href="#appendix-B.13-3" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="slh-dsa-256s-shake">
+<section id="appendix-B.14">
+        <h3 id="name-slh-dsa-256s-shake">
+<a href="#appendix-B.14" class="section-number selfRef">B.14. </a><a href="#name-slh-dsa-256s-shake" class="section-name selfRef">SLH-DSA-256S-SHAKE</a>
+        </h3>
+<p id="appendix-B.14-1">id-slh-dsa-shake-256s OBJECT IDENTIFIER ::= { joint-iso-itu-t(2)
+country(16) us(840) organization(1) gov(101) csor(3)
+nistAlgorithm(4) sigAlgs(3) id-slh-dsa-shake-256s(30) }<a href="#appendix-B.14-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.14-2">Parameters are absent.<a href="#appendix-B.14-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-B.14-3">
+<pre>
+Name = id-slh-dsa-shake-256s, oid = 2.16.840.1.101.3.4.3.30
+Length = 13
+0000: 300b 0609 6086 4801 6503 0403 1e
+</pre><a href="#appendix-B.14-3" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="slh-dsa-256f-shake">
+<section id="appendix-B.15">
+        <h3 id="name-slh-dsa-256f-shake">
+<a href="#appendix-B.15" class="section-number selfRef">B.15. </a><a href="#name-slh-dsa-256f-shake" class="section-name selfRef">SLH-DSA-256F-SHAKE</a>
+        </h3>
+<p id="appendix-B.15-1">id-slh-dsa-shake-256f OBJECT IDENTIFIER ::= { joint-iso-itu-t(2)
+country(16) us(840) organization(1) gov(101) csor(3)
+nistAlgorithm(4) sigAlgs(3) id-slh-dsa-shake-256f(31) }<a href="#appendix-B.15-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.15-2">Parameters are absent.<a href="#appendix-B.15-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-B.15-3">
+<pre>
+Name = id-slh-dsa-shake-256f, oid = 2.16.840.1.101.3.4.3.31
+Length = 13
+0000: 300b 0609 6086 4801 6503 0403 1f
+</pre><a href="#appendix-B.15-3" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-C">
+      <h2 id="name-authors-addresses">
+<a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Tirumaleswar Reddy</span></div>
+<div dir="auto" class="left"><span class="org">Nokia</span></div>
+<div dir="auto" class="left">
+<span class="locality">Bangalore</span> </div>
+<div dir="auto" class="left"><span class="region">Karnataka</span></div>
+<div dir="auto" class="left"><span class="country-name">India</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:kondtir@gmail.com" class="email">kondtir@gmail.com</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Valery Smyslov</span></div>
+<div dir="auto" class="left"><span class="org">ELVIS-PLUS</span></div>
+<div dir="auto" class="left"><span class="country-name">Russian Federation</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:svan@elvis.ru" class="email">svan@elvis.ru</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Scott Fluhrer</span></div>
+<div dir="auto" class="left"><span class="org">Cisco Systems</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:sfluhrer@cisco.com" class="email">sfluhrer@cisco.com</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9f8a603ebb6cb079',t:'MTc3ODI2MzM1Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
