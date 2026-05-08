@@ -147,8 +147,11 @@ def extract_text_from_pdf(pdf_path: Path, max_lines: int = 400) -> str:
     import shutil
     cmd = shutil.which('pdftotext') or '/opt/homebrew/bin/pdftotext'
     try:
+        # -l 50 (was -l 15): the [:12000] char cap below is the real ceiling.
+        # 15 pages was missing later-page content for spec docs whose substance
+        # lives in appendices (e.g. NIST IR 8477 catalog tables on pages 16-30).
         result = subprocess.run(
-            [cmd, '-l', '15', str(pdf_path), '-'],
+            [cmd, '-l', '50', str(pdf_path), '-'],
             capture_output=True, text=True, timeout=30,
         )
         if result.returncode == 0:
