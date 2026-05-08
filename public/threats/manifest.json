@@ -13,7 +13,9 @@
       "title": "RTCA DO-326A / DO-356A Airworthiness Security",
       "url": "https://www.rtca.org/wp-content/uploads/2020/02/DO-326A-Airworthiness-Security-Process-Specification.html",
       "status": "cached",
-      "file": "public/threats/AERO-001.html"
+      "file": "public/threats/AERO-001.html",
+      "sha256": "f9b2fd9fe68e497d9546287e55be18c20dc3be2f097ed68a5670ca79f291c5fb",
+      "sizeBytes": 118286
     },
     {
       "threatId": "AERO-002",
@@ -28,14 +30,18 @@
       "title": "ICAO Assembly Resolution A41-19",
       "url": "https://www.icao.int/events/a41/resolutions",
       "status": "cached",
-      "file": "public/threats/AERO-003.html"
+      "file": "public/threats/AERO-003.html",
+      "sha256": "01a7df905ccf4db4940d386fe8028665a27be9f6bf4cd06e00b11a83d2aa4b8e",
+      "sizeBytes": 81344
     },
     {
       "threatId": "AUTO-001",
       "title": "ISO/SAE 21434 Road Vehicle Cybersecurity",
       "url": "https://www.iso.org/standard/70918.html",
       "status": "cached",
-      "file": "public/threats/AUTO-001.html"
+      "file": "public/threats/AUTO-001.html",
+      "sha256": "2750ce57e58f9a2c636bf11b73fffd9ee87d8690b10198f4cec4e5baa6cdfa2d",
+      "sizeBytes": 78891
     },
     {
       "threatId": "AUTO-002",
@@ -44,7 +50,8 @@
       "status": "downloaded",
       "file": "public/threats/AUTO-002.html",
       "sizeBytes": 15025,
-      "contentType": "text/html"
+      "contentType": "text/html",
+      "sha256": "455934feeb47d9ce7e7e6a069b005ae679492a24f1e8e2fd69bb529317391287"
     },
     {
       "threatId": "AUTO-003",
@@ -58,126 +65,162 @@
       "title": "ISO/SAE 21434 Road Vehicle Cybersecurity",
       "url": "https://www.iso.org/standard/70918.html",
       "status": "cached",
-      "file": "public/threats/AUTO-004.html"
+      "file": "public/threats/AUTO-004.html",
+      "sha256": "2750ce57e58f9a2c636bf11b73fffd9ee87d8690b10198f4cec4e5baa6cdfa2d",
+      "sizeBytes": 78891
     },
     {
       "threatId": "CLOUD-001",
       "title": "Cloud Security Alliance Quantum-Safe Guidelines",
       "url": "https://cloudsecurityalliance.org/research/working-groups/quantum-safe-security",
       "status": "cached",
-      "file": "public/threats/CLOUD-001.html"
+      "file": "public/threats/CLOUD-001.html",
+      "sha256": "e597a904c369afcb4b4990e4984bbb24561b7644e91ce038ea8c81d67de71553",
+      "sizeBytes": 80636
     },
     {
       "threatId": "CLOUD-002",
       "title": "Cloud Security Alliance Quantum-Safe Security",
       "url": "https://cloudsecurityalliance.org/research/working-groups/quantum-safe-security",
       "status": "cached",
-      "file": "public/threats/CLOUD-002.html"
+      "file": "public/threats/CLOUD-002.html",
+      "sha256": "0c8526448311fcc9306171f297b8673c829239032ba486c086e57b28828f3a0f",
+      "sizeBytes": 80636
     },
     {
       "threatId": "CLOUD-003",
       "title": "NIST IR 8547 / NIST SP 800-210",
       "url": "https://csrc.nist.gov/pubs/ir/8547/ipd",
       "status": "cached",
-      "file": "public/threats/CLOUD-003.html"
+      "file": "public/threats/CLOUD-003.html",
+      "sha256": "fc96342e02dd8dce809ea57e9d33939aaf29b02ae7e2f77ca4e110063334198c",
+      "sizeBytes": 45265
     },
     {
       "threatId": "CLOUD-004",
       "title": "NIST SP 800-210 Cloud Access Control",
       "url": "https://csrc.nist.gov/pubs/sp/800/210/final",
       "status": "cached",
-      "file": "public/threats/CLOUD-004.html"
+      "file": "public/threats/CLOUD-004.html",
+      "sha256": "6a3fdb50238e15831d41e055646d664bf454083b2a0b2847328ce946040f4944",
+      "sizeBytes": 45912
     },
     {
       "threatId": "CROSS-001",
       "title": "IBM Institute for Business Value — Secure the Post-Quantum Future 2025",
       "url": "https://www.ibm.com/thought-leadership/institute-business-value/en-us/report/2025-quantum-safe-readiness",
       "status": "cached",
-      "file": "public/threats/CROSS-001.html"
+      "file": "public/threats/CROSS-001.html",
+      "sha256": "b68f6c9f9327c4f409d608d52ec55aa8f1fec688e314789c7fc1ac91521ef485",
+      "sizeBytes": 525032
     },
     {
       "threatId": "CROSS-002",
       "title": "NIST IR 8547 Transition to Post-Quantum Cryptography Standards",
       "url": "https://csrc.nist.gov/pubs/ir/8547/ipd",
       "status": "cached",
-      "file": "public/threats/CROSS-002.html"
+      "file": "public/threats/CROSS-002.html",
+      "sha256": "b277a90e1af99c5efa20cd008083def91ebdddb01da148cafa69c46f32a1585f",
+      "sizeBytes": 45265
     },
     {
       "threatId": "CROSS-003",
       "title": "IBM Institute for Business Value — Secure the Post-Quantum Future 2025",
       "url": "https://www.ibm.com/thought-leadership/institute-business-value/en-us/report/2025-quantum-safe-readiness",
       "status": "cached",
-      "file": "public/threats/CROSS-003.html"
+      "file": "public/threats/CROSS-003.html",
+      "sha256": "349e047d3909faf1db513e9eecaf304eb1233b575158667bda2597c883467f69",
+      "sizeBytes": 525032
     },
     {
       "threatId": "CROSS-004",
       "title": "Global Risk Institute Quantum Threat Timeline 2025",
       "url": "https://globalriskinstitute.org/publication/quantum-threat-timeline-report-2025b/",
       "status": "cached",
-      "file": "public/threats/CROSS-004.html"
+      "file": "public/threats/CROSS-004.html",
+      "sha256": "52875cf1d3febc7a2d9ff95d7a7a07b970b8b370508760e2bf7484c9e92c9e24",
+      "sizeBytes": 222042
     },
     {
       "threatId": "CROSS-005",
       "title": "NIST FIPS 206 FN-DSA Status",
       "url": "https://csrc.nist.gov/projects/pqc-dig-sig",
       "status": "cached",
-      "file": "public/threats/CROSS-005.html"
+      "file": "public/threats/CROSS-005.html",
+      "sha256": "bfa25240aaa6c4bd70837c2111c4e5d87985b07fe69e109bc2f24fe7b14de62e",
+      "sizeBytes": 37044
     },
     {
       "threatId": "CROSS-006",
       "title": "NIST Post-Quantum Cryptography Standardization",
       "url": "https://www.nist.gov/news-events/news/2025/03/nist-selects-hqc-fifth-algorithm-post-quantum-encryption",
       "status": "cached",
-      "file": "public/threats/CROSS-006.html"
+      "file": "public/threats/CROSS-006.html",
+      "sha256": "95b54333a5174cba23264b0898fb13dc68630d68ea29843f422bcfb94e35156c",
+      "sizeBytes": 93652
     },
     {
       "threatId": "CROSS-007",
       "title": "European Commission Digital Strategy — PQC Roadmap",
       "url": "https://digital-strategy.ec.europa.eu/en/news/eu-reinforces-its-cybersecurity-post-quantum-cryptography",
       "status": "cached",
-      "file": "public/threats/CROSS-007.html"
+      "file": "public/threats/CROSS-007.html",
+      "sha256": "c19fa36f4ecbedcd27ccb058ed29cb9a9c2d0c7c764be55fee3a7f1c66041294",
+      "sizeBytes": 47886
     },
     {
       "threatId": "CROSS-008",
       "title": "NIST SP 800-227 Recommendations for KEMs",
       "url": "https://csrc.nist.gov/pubs/sp/800/227/final",
       "status": "cached",
-      "file": "public/threats/CROSS-008.html"
+      "file": "public/threats/CROSS-008.html",
+      "sha256": "5ea5c72f5d6eca3115f4c5e54adf2cabbb6b4f53c6558f77d273c6490bf985b6",
+      "sizeBytes": 44194
     },
     {
       "threatId": "CRYPTO-001",
       "title": "Federal Reserve HNDL Paper",
       "url": "https://www.federalreserve.gov/econres/feds/harvest-now-decrypt-later-examining-post-quantum-cryptography-and-the-data-privacy-risks-for-distributed-ledger-networks.htm",
       "status": "cached",
-      "file": "public/threats/CRYPTO-001.html"
+      "file": "public/threats/CRYPTO-001.html",
+      "sha256": "1fb9275039a963e2bb08e5da4e1f5f030fc533393e2c03ee0282919682f85f5f",
+      "sizeBytes": 87943
     },
     {
       "threatId": "CRYPTO-002",
       "title": "Ethereum Foundation PQC Program",
       "url": "https://ethereum.org/en/roadmap/future-proofing/",
       "status": "cached",
-      "file": "public/threats/CRYPTO-002.html"
+      "file": "public/threats/CRYPTO-002.html",
+      "sha256": "383cdc91cf7dee1ca37e1e6a5e2b7d6c1c7996ad5a5a7896ce23b43ba6195ab8",
+      "sizeBytes": 546931
     },
     {
       "threatId": "CRYPTO-003",
       "title": "Federal Reserve Board FEDS Paper September 2025",
       "url": "https://www.federalreserve.gov/econres/feds/harvest-now-decrypt-later-examining-post-quantum-cryptography-and-the-data-privacy-risks-for-distributed-ledger-networks.htm",
       "status": "cached",
-      "file": "public/threats/CRYPTO-003.html"
+      "file": "public/threats/CRYPTO-003.html",
+      "sha256": "64a51b862bb62ec0dcc5d137808ffeda540e9ce55dc9faa6fbfa645aecc14857",
+      "sizeBytes": 87943
     },
     {
       "threatId": "CRYPTO-004",
       "title": "Cryptocurrency Security Standard (CCSS)",
       "url": "https://cryptoconsortium.org/standards-2/",
       "status": "cached",
-      "file": "public/threats/CRYPTO-004.html"
+      "file": "public/threats/CRYPTO-004.html",
+      "sha256": "381e27a6561d55b90cf6345203b6faadee3e17f7abcb02ffecdca6210b75daad",
+      "sizeBytes": 211152
     },
     {
       "threatId": "ENERGY-001",
       "title": "IEC 62351 Power Systems Security Standards",
       "url": "https://webstore.iec.ch/publication/6912",
       "status": "cached",
-      "file": "public/threats/ENERGY-001.html"
+      "file": "public/threats/ENERGY-001.html",
+      "sha256": "85f85e123b014121a6aecfd2421c9c181c521f94ccc1905f5b6099f03e13faa9",
+      "sizeBytes": 427968
     },
     {
       "threatId": "ENERGY-002",
@@ -199,42 +242,54 @@
       "title": "IEC 62443 Industrial Automation Security",
       "url": "https://www.isa.org/standards-and-publications/isa-standards/isa-iec-62443-series-of-standards",
       "status": "cached",
-      "file": "public/threats/ENERGY-004.html"
+      "file": "public/threats/ENERGY-004.html",
+      "sha256": "7320211d77215f44bb5645f4dd8b07508f33154486d1c52f38b460f2576a7cbf",
+      "sizeBytes": 93074
     },
     {
       "threatId": "FIN-001",
       "title": "Bank for International Settlements Project Leap Phase 2",
       "url": "https://www.bis.org/publ/othp107.htm",
       "status": "cached",
-      "file": "public/threats/FIN-001.html"
+      "file": "public/threats/FIN-001.html",
+      "sha256": "dda9712d824ab3e1a7eb745785e76561801d4ff01b4cb3ebad86541fe5d88562",
+      "sizeBytes": 26352
     },
     {
       "threatId": "FIN-002",
       "title": "Federal Reserve Board FEDS Paper September 2025",
       "url": "https://www.federalreserve.gov/econres/feds/harvest-now-decrypt-later-examining-post-quantum-cryptography-and-the-data-privacy-risks-for-distributed-ledger-networks.htm",
       "status": "cached",
-      "file": "public/threats/FIN-002.html"
+      "file": "public/threats/FIN-002.html",
+      "sha256": "1647ade385b57366498c883702bfd7516b7ac84b5eb4955079a5cdad01554d4a",
+      "sizeBytes": 87943
     },
     {
       "threatId": "FIN-003",
       "title": "G7 Cyber Expert Group Statement (U.S. Treasury)",
       "url": "https://home.treasury.gov/news/press-releases/sb0355",
       "status": "cached",
-      "file": "public/threats/FIN-003.html"
+      "file": "public/threats/FIN-003.html",
+      "sha256": "c8309b06a5a7195cc298a529faad2a16d70c29a7f364df5079a482089361ba5a",
+      "sizeBytes": 110427
     },
     {
       "threatId": "FIN-004",
       "title": "NIST SP 800-227 KEM Recommendations",
       "url": "https://csrc.nist.gov/pubs/sp/800/227/final",
       "status": "cached",
-      "file": "public/threats/FIN-004.html"
+      "file": "public/threats/FIN-004.html",
+      "sha256": "cae311fddc2b3133e7ea4a1f6001d00b69636a73b107b8619e0ed78d0e2855ef",
+      "sizeBytes": 44194
     },
     {
       "threatId": "FIN-005",
       "title": "FS-ISAC — The Timeline for Post Quantum Cryptographic Migration",
       "url": "https://www.fsisac.com/newsroom/fs-isac-urges-global-coordination-for-migration-to-post-quantum-cryptography-in-financial-services",
       "status": "cached",
-      "file": "public/threats/FIN-005.html"
+      "file": "public/threats/FIN-005.html",
+      "sha256": "e4344a1a39d6e08dcdf816254edf8beb25291df4b1493c58db09ab5695f84f73",
+      "sizeBytes": 49468
     },
     {
       "threatId": "AUS-FIN-001",
@@ -251,7 +306,8 @@
       "status": "downloaded",
       "file": "public/threats/AUS-FIN-002.html",
       "sizeBytes": 36772,
-      "contentType": "text/html; charset=UTF-8"
+      "contentType": "text/html; charset=UTF-8",
+      "sha256": "6c70d254c08d6240e0ba9c2c3c740bc462d35e3b1d7113070704404450b07e91"
     },
     {
       "threatId": "GOV-001",
@@ -272,14 +328,18 @@
       "title": "CISA Product Categories for PQC Technologies",
       "url": "https://www.cisa.gov/resources-tools/resources/product-categories-technologies-use-post-quantum-cryptography-standards",
       "status": "cached",
-      "file": "public/threats/GOV-003.html"
+      "file": "public/threats/GOV-003.html",
+      "sha256": "0bb1a0752b469c0096b32cf3e77e0ec0ac088bfcd33430835c49fd1cf1c3dc9a",
+      "sizeBytes": 71975
     },
     {
       "threatId": "GOV-004",
       "title": "Federal PKI Policy Authority",
       "url": "https://www.idmanagement.gov/fpki/",
       "status": "cached",
-      "file": "public/threats/GOV-004.html"
+      "file": "public/threats/GOV-004.html",
+      "sha256": "7b65eb01152b2d7a28c49be3b64c353335d168981e167e59f822b8e0ae7a09ce",
+      "sizeBytes": 154412
     },
     {
       "threatId": "GOV-005",
@@ -316,210 +376,270 @@
       "title": "Thales 2025 Data Threat Report Healthcare Edition",
       "url": "https://cpl.thalesgroup.com/healthcare-lifesciences-data-threat-report",
       "status": "cached",
-      "file": "public/threats/HLTH-002.html"
+      "file": "public/threats/HLTH-002.html",
+      "sha256": "6d4b31fa87be9f3c68ef1f70223acc72463e83d8ed71522daae997ab56686b82",
+      "sizeBytes": 245950
     },
     {
       "threatId": "HLTH-003",
       "title": "FDA Premarket Cybersecurity Guidance 2023",
       "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/cybersecurity-medical-devices-quality-system-considerations-and-content-premarket-submissions",
       "status": "cached",
-      "file": "public/threats/HLTH-003.html"
+      "file": "public/threats/HLTH-003.html",
+      "sha256": "af472db5f74954f52afb664d38401d618eb9da6e8f0198711364b4486cf37fe9",
+      "sizeBytes": 36112
     },
     {
       "threatId": "HLTH-004",
       "title": "FDA Cybersecurity for Medical Devices",
       "url": "https://www.fda.gov/medical-devices/digital-health-center-excellence/cybersecurity",
       "status": "cached",
-      "file": "public/threats/HLTH-004.html"
+      "file": "public/threats/HLTH-004.html",
+      "sha256": "3647266977964770ed1fb7eeb84f22d98bfd8f5baf157e33e970c0b5a981f07d",
+      "sizeBytes": 96732
     },
     {
       "threatId": "HLTH-005",
       "title": "FDA Drug Supply Chain Security Act (DSCSA)",
       "url": "https://www.fda.gov/drugs/drug-supply-chain-integrity/drug-supply-chain-security-act-dscsa",
       "status": "cached",
-      "file": "public/threats/HLTH-005.html"
+      "file": "public/threats/HLTH-005.html",
+      "sha256": "2a8ea75f9533d903f322715ce24180ece4851451c2917e2d44a674aa340506f1",
+      "sizeBytes": 46769
     },
     {
       "threatId": "INS-001",
       "title": "NAIC Insurance Data Security Model Law (MDL-668)",
       "url": "https://content.naic.org/sites/default/files/model-law-668.pdf",
       "status": "cached",
-      "file": "public/threats/INS-001.pdf"
+      "file": "public/threats/INS-001.pdf",
+      "sha256": "761e268abebbe55d4612b406d1ea1cfcba23b86264da2255ef15134da601e45f",
+      "sizeBytes": 238211
     },
     {
       "threatId": "INS-002",
       "title": "NY DFS Cybersecurity Regulation (23 NYCRR 500)",
       "url": "https://www.dfs.ny.gov/industry_guidance/cybersecurity",
       "status": "cached",
-      "file": "public/threats/INS-002.html"
+      "file": "public/threats/INS-002.html",
+      "sha256": "e6b245f8803a76d134d7b538004f9ac08138a9819be6a392e7b9585120fdfab1",
+      "sizeBytes": 205091
     },
     {
       "threatId": "INS-003",
       "title": "Geneva Association Systemic Cyber Risk Research",
       "url": "https://www.genevaassociation.org/research-topics/cyber",
       "status": "cached",
-      "file": "public/threats/INS-003.html"
+      "file": "public/threats/INS-003.html",
+      "sha256": "32d62f347907f282c990c1cccdcc6a8c3f722f39a7980311315aad5c2bab0649",
+      "sizeBytes": 94037
     },
     {
       "threatId": "IOT-001",
       "title": "Forescout Device Risk Research",
       "url": "https://www.forescout.com/research-labs/",
       "status": "cached",
-      "file": "public/threats/IOT-001.html"
+      "file": "public/threats/IOT-001.html",
+      "sha256": "4903ff1c75895ebab871b6fd5652ffb8db1b0c8b9e68d0c120c2fe9c5790fcb7",
+      "sizeBytes": 346532
     },
     {
       "threatId": "IOT-002",
       "title": "IEC 62443 Industrial Automation Security",
       "url": "https://www.isa.org/standards-and-publications/isa-standards/isa-iec-62443-series-of-standards",
       "status": "cached",
-      "file": "public/threats/IOT-002.html"
+      "file": "public/threats/IOT-002.html",
+      "sha256": "7320211d77215f44bb5645f4dd8b07508f33154486d1c52f38b460f2576a7cbf",
+      "sizeBytes": 93074
     },
     {
       "threatId": "IOT-003",
       "title": "IETF SUIT Working Group (RFC 9019)",
       "url": "https://datatracker.ietf.org/wg/suit/",
       "status": "cached",
-      "file": "public/threats/IOT-003.html"
+      "file": "public/threats/IOT-003.html",
+      "sha256": "4e80bf182bfd449a2698c2b5220cfbf8d82145dbe13f7dde74795097f8cc4e90",
+      "sizeBytes": 64170
     },
     {
       "threatId": "IOT-004",
       "title": "ISO/IEC 30182 Smart City Concept Model",
       "url": "https://www.iso.org/standard/53302.html",
       "status": "cached",
-      "file": "public/threats/IOT-004.html"
+      "file": "public/threats/IOT-004.html",
+      "sha256": "c8c553cba5b71e6756a216ef0c7a64df9217b8482757502722721d2d7dd12a4f",
+      "sizeBytes": 67922
     },
     {
       "threatId": "IT-001",
       "title": "OpenSSL PQC Integration",
       "url": "https://openssl-library.org/post/2025-04-08-openssl-35-final-release/",
       "status": "cached",
-      "file": "public/threats/IT-001.html"
+      "file": "public/threats/IT-001.html",
+      "sha256": "094400bea42faf74ea9bc84c0210207809ed1a1c39612d6dde4c6c567810b3d7",
+      "sizeBytes": 33749
     },
     {
       "threatId": "IT-002",
       "title": "CA/Browser Forum PKI Standards",
       "url": "https://cabforum.org/working-groups/server/baseline-requirements/documents/",
       "status": "cached",
-      "file": "public/threats/IT-002.html"
+      "file": "public/threats/IT-002.html",
+      "sha256": "7c732a6b644af6196b90d919dbb7eaa9a225a7eb47996bd80e18d7a1f3357adb",
+      "sizeBytes": 43442
     },
     {
       "threatId": "IT-003",
       "title": "NIST FIPS 203/204/205 Post-Quantum Cryptography Standards",
       "url": "https://csrc.nist.gov/projects/post-quantum-cryptography",
       "status": "cached",
-      "file": "public/threats/IT-003.html"
+      "file": "public/threats/IT-003.html",
+      "sha256": "2043e92bec8332d32faf422804386cd28c3872309612a470a8d516a98a26d9bc",
+      "sizeBytes": 61302
     },
     {
       "threatId": "IT-004",
       "title": "SLSA Supply Chain Security Framework (OpenSSF)",
       "url": "https://slsa.dev/spec/v1.0/",
       "status": "cached",
-      "file": "public/threats/IT-004.html"
+      "file": "public/threats/IT-004.html",
+      "sha256": "45e1b4d606e365803e51a6a46618ea6800ec7bf7e7ae2de29ef4194a88e02716",
+      "sizeBytes": 16583
     },
     {
       "threatId": "IT-005",
       "title": "FIDO Alliance PQC Roadmap",
       "url": "https://fidoalliance.org/white-paper-addressing-fido-alliances-technologies-in-post-quantum-world/",
       "status": "cached",
-      "file": "public/threats/IT-005.html"
+      "file": "public/threats/IT-005.html",
+      "sha256": "c51ba5faae5f0dd7e459449a8ca450bb1898a7f5d9ee62d7ab4f3833ff8c6478",
+      "sizeBytes": 258018
     },
     {
       "threatId": "LEG-001",
       "title": "EU Regulation 910/2014 (eIDAS)",
       "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32014R0910",
       "status": "cached",
-      "file": "public/threats/LEG-001.html"
+      "file": "public/threats/LEG-001.html",
+      "sha256": "b16acd783b17e8f85897500d9b4d9df5808a7e3c504cc79c5d383ac17747ed5c",
+      "sizeBytes": 613920
     },
     {
       "threatId": "LEG-002",
       "title": "EU Regulation 2024/1183 (eIDAS 2.0)",
       "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1183",
       "status": "cached",
-      "file": "public/threats/LEG-002.html"
+      "file": "public/threats/LEG-002.html",
+      "sha256": "3c7462d91a807b732407e16f037182eb397dc9303001cef0405ba1b7e34093d5",
+      "sizeBytes": 835982
     },
     {
       "threatId": "LEG-003",
       "title": "ETSI EN 319 422 Qualified Timestamp Policy",
       "url": "https://www.etsi.org/deliver/etsi_en/319400_319499/319422/01.01.01_60/en_319422v010101p.pdf",
       "status": "cached",
-      "file": "public/threats/LEG-003.pdf"
+      "file": "public/threats/LEG-003.pdf",
+      "sha256": "b8dce6e415c906877ce36fd3d91b41e0543eda332f400cb444116ec760b5a4bf",
+      "sizeBytes": 70119
     },
     {
       "threatId": "LEG-004",
       "title": "NIST SP 800-86 Guide to Integrating Forensic Techniques",
       "url": "https://csrc.nist.gov/pubs/sp/800/86/final",
       "status": "cached",
-      "file": "public/threats/LEG-004.html"
+      "file": "public/threats/LEG-004.html",
+      "sha256": "eae6392e14d9a08c89aa50aa85158cac3af99578d6abc4295960a501b3a95f50",
+      "sizeBytes": 45973
     },
     {
       "threatId": "MEDIA-001",
       "title": "AACS Licensing Administrator Specifications",
       "url": "https://aacsla.com/aacs-specifications/",
       "status": "cached",
-      "file": "public/threats/MEDIA-001.html"
+      "file": "public/threats/MEDIA-001.html",
+      "sha256": "f95aeea9b8ea66b9d5af320fad0f46427f13b90c6aeea9a6d92f8eb6aed5a39e",
+      "sizeBytes": 33942
     },
     {
       "threatId": "MEDIA-002",
       "title": "AACS / Content Protection Standards",
       "url": "https://aacsla.com/aacs-specifications/",
       "status": "cached",
-      "file": "public/threats/MEDIA-002.html"
+      "file": "public/threats/MEDIA-002.html",
+      "sha256": "f95aeea9b8ea66b9d5af320fad0f46427f13b90c6aeea9a6d92f8eb6aed5a39e",
+      "sizeBytes": 33942
     },
     {
       "threatId": "MEDIA-003",
       "title": "DVB Project — Conditional Access System Standards",
       "url": "https://dvb.org/solutions/security/",
       "status": "cached",
-      "file": "public/threats/MEDIA-003.html"
+      "file": "public/threats/MEDIA-003.html",
+      "sha256": "6753867a4e35a0fcb3b64e23a61edfedc014c2658e8111853bfdee6fd36bd6e0",
+      "sizeBytes": 91247
     },
     {
       "threatId": "PCI-001",
       "title": "EMVCo Book 2 Security and Key Management",
       "url": "https://www.emvco.com/specifications/",
       "status": "cached",
-      "file": "public/threats/PCI-001.html"
+      "file": "public/threats/PCI-001.html",
+      "sha256": "2debc49f297b965306a19f797489cdb1eefbe708c641ff9063148778f44e174f",
+      "sizeBytes": 176409
     },
     {
       "threatId": "PCI-002",
       "title": "PCI Security Standards Council DSS 4.0.1",
       "url": "https://www.pcisecuritystandards.org/document_library/",
       "status": "cached",
-      "file": "public/threats/PCI-002.html"
+      "file": "public/threats/PCI-002.html",
+      "sha256": "2a58bb79ab7b401808761e440c6c1b8d7f020b9172223e1c57d9fad0b999644b",
+      "sizeBytes": 394999
     },
     {
       "threatId": "PCI-003",
       "title": "PCI PIN Security Requirements",
       "url": "https://www.pcisecuritystandards.org/document_library/",
       "status": "cached",
-      "file": "public/threats/PCI-003.html"
+      "file": "public/threats/PCI-003.html",
+      "sha256": "2a58bb79ab7b401808761e440c6c1b8d7f020b9172223e1c57d9fad0b999644b",
+      "sizeBytes": 394999
     },
     {
       "threatId": "RAIL-001",
       "title": "EN 50159 Railway Communication Security / ERA",
       "url": "https://www.era.europa.eu/domains/infrastructure/european-rail-traffic-management-system-ertms_en",
       "status": "cached",
-      "file": "public/threats/RAIL-001.html"
+      "file": "public/threats/RAIL-001.html",
+      "sha256": "d64ea0e339e6d81d43c6db41e087debbd4f2aa50b875ea8574d06afe8f488d2c",
+      "sizeBytes": 60840
     },
     {
       "threatId": "RAIL-002",
       "title": "ISO/IEC 14443 Contactless Card Standards",
       "url": "https://www.iso.org/standard/73598.html",
       "status": "cached",
-      "file": "public/threats/RAIL-002.html"
+      "file": "public/threats/RAIL-002.html",
+      "sha256": "426f85515f242b1159204f2e4c8d21f6e2ca502b7737f3b87abae303602530d0",
+      "sizeBytes": 79453
     },
     {
       "threatId": "RETAIL-001",
       "title": "PCI Security Standards Council",
       "url": "https://www.pcisecuritystandards.org/document_library/",
       "status": "cached",
-      "file": "public/threats/RETAIL-001.html"
+      "file": "public/threats/RETAIL-001.html",
+      "sha256": "2a58bb79ab7b401808761e440c6c1b8d7f020b9172223e1c57d9fad0b999644b",
+      "sizeBytes": 394999
     },
     {
       "threatId": "RETAIL-002",
       "title": "NIST Cybersecurity Framework",
       "url": "https://www.nist.gov/cyberframework",
       "status": "cached",
-      "file": "public/threats/RETAIL-002.html"
+      "file": "public/threats/RETAIL-002.html",
+      "sha256": "4b48640831d0f7214f210494855460f25575663126c6d39c1a9a52ce0764995e",
+      "sizeBytes": 88726
     },
     {
       "threatId": "RETAIL-003",
@@ -533,21 +653,27 @@
       "title": "IMO Maritime Cyber Risk Management Guidelines",
       "url": "https://www.imo.org/en/OurWork/Security/Pages/Cyber-security.aspx",
       "status": "cached",
-      "file": "public/threats/SUPPLY-001.html"
+      "file": "public/threats/SUPPLY-001.html",
+      "sha256": "4a91d38942e5e625a33153d4b4aadc2fd4e4a93432209e6e91bbe7d2fabbf977",
+      "sizeBytes": 57115
     },
     {
       "threatId": "SUPPLY-002",
       "title": "DCSA Electronic Bill of Lading Standards",
       "url": "https://dcsa.org/standards/bill-of-lading",
       "status": "cached",
-      "file": "public/threats/SUPPLY-002.html"
+      "file": "public/threats/SUPPLY-002.html",
+      "sha256": "28cb8b2da9b49cdc4eebd9e4a99901f985ec1fe2873fddc66a46f5b9db599e7a",
+      "sizeBytes": 294609
     },
     {
       "threatId": "SUPPLY-003",
       "title": "WCO SAFE Framework of Standards",
       "url": "https://www.wcoomd.org/en/topics/facilitation/instrument-and-tools/frameworks-of-standards/safe_package.aspx",
       "status": "cached",
-      "file": "public/threats/SUPPLY-003.html"
+      "file": "public/threats/SUPPLY-003.html",
+      "sha256": "994c92ca5cfe8830b2d1f5c7b336b404b79ea8cc6faf6ed377b041e6cfe245e3",
+      "sizeBytes": 63051
     },
     {
       "threatId": "TELCO-001",
@@ -568,7 +694,9 @@
       "title": "3GPP TS 33.501 5G Security Architecture",
       "url": "https://www.3gpp.org/specifications-technologies/specifications-by-series",
       "status": "cached",
-      "file": "public/threats/TELCO-003.html"
+      "file": "public/threats/TELCO-003.html",
+      "sha256": "8d653ca58858d3d6ae5593be6f4a2566b785dc8c54dc8769c83253725b356c54",
+      "sizeBytes": 202108
     },
     {
       "threatId": "TELCO-004",
@@ -582,7 +710,9 @@
       "title": "ETSI ISG Quantum-Safe Cryptography / 3GPP",
       "url": "https://www.etsi.org/technologies/quantum-safe-cryptography",
       "status": "cached",
-      "file": "public/threats/TELCO-005.html"
+      "file": "public/threats/TELCO-005.html",
+      "sha256": "fdf98ecbf2f6d391108adab644a49aa5042c24b4e227603510d20eb2488572b2",
+      "sizeBytes": 25184
     },
     {
       "threatId": "WATER-001",
@@ -597,28 +727,36 @@
       "title": "AWWA Cybersecurity Guidance for Water Utilities",
       "url": "https://www.awwa.org/resource/cybersecurity-guidance/",
       "status": "cached",
-      "file": "public/threats/WATER-002.html"
+      "file": "public/threats/WATER-002.html",
+      "sha256": "a7055c8a492bec15a3a2e858a403bda50663888ee5a68dbf70e0bf4b7ee1772d",
+      "sizeBytes": 494255
     },
     {
       "threatId": "EDU-001",
       "title": "FERPA / US Department of Education",
       "url": "https://studentprivacy.ed.gov/ferpa",
       "status": "cached",
-      "file": "public/threats/EDU-001.html"
+      "file": "public/threats/EDU-001.html",
+      "sha256": "2eb6e519f097236d35334b3d962efb213165dd65a234bf7d856245b75e6c1fb8",
+      "sizeBytes": 134852
     },
     {
       "threatId": "EDU-002",
       "title": "Internet2 InCommon Federation / Jisc Trust and Identity",
       "url": "https://incommon.org/",
       "status": "cached",
-      "file": "public/threats/EDU-002.html"
+      "file": "public/threats/EDU-002.html",
+      "sha256": "594a12e67935106f5307f1f316bf19151bc6ecdf441d5f1ce05f8427bed1b034",
+      "sizeBytes": 153248
     },
     {
       "threatId": "EDU-003",
       "title": "W3C Verifiable Credentials Data Model 2.0",
       "url": "https://www.w3.org/TR/vc-data-model-2.0/",
       "status": "cached",
-      "file": "public/threats/EDU-003.html"
+      "file": "public/threats/EDU-003.html",
+      "sha256": "f7797487776f892734c3390debdbf4b90150ad1dbb079c871eff89e6690a7cb6",
+      "sizeBytes": 327555
     },
     {
       "threatId": "EDU-004",
@@ -633,21 +771,27 @@
       "title": "Check Point Research / Higher Ed Dive",
       "url": "https://deepstrike.io/blog/data-breaches-education-2025",
       "status": "cached",
-      "file": "public/threats/EDU-005.html"
+      "file": "public/threats/EDU-005.html",
+      "sha256": "1f595a304a039ab91f1fc3b89c943d7c0d4539096fcb7ceb118644fd12f33b5b",
+      "sizeBytes": 324626
     },
     {
       "threatId": "CROSS-009",
       "title": "IETF DNSSEC PQC Strategy / Verisign Research",
       "url": "https://datatracker.ietf.org/doc/draft-sheth-pqc-dnssec-strategy/",
       "status": "cached",
-      "file": "public/threats/CROSS-009.html"
+      "file": "public/threats/CROSS-009.html",
+      "sha256": "f44c04804378e63dd8ffdbca65e2f1c329ec438cb70bb98e9ba3a0f684603acc",
+      "sizeBytes": 54916
     },
     {
       "threatId": "CROSS-010",
       "title": "APNIC / RIPE Labs RPKI Research",
       "url": "https://blog.apnic.net/2025/07/22/how-can-rpki-can-be-made-quantum-safe/",
       "status": "cached",
-      "file": "public/threats/CROSS-010.html"
+      "file": "public/threats/CROSS-010.html",
+      "sha256": "fd2a4e4b640fa83e9035a969f3fd8383ac068bee33c08aa9c8be672543a439c4",
+      "sizeBytes": 356205
     },
     {
       "threatId": "CROSS-011",
@@ -656,28 +800,35 @@
       "status": "downloaded",
       "file": "public/threats/CROSS-011.html",
       "sizeBytes": 177398,
-      "contentType": "text/html; charset=UTF-8"
+      "contentType": "text/html; charset=UTF-8",
+      "sha256": "1d35eee25df6e7b06f49677f1cad8915d1406eeffc754164c654892bf1425960"
     },
     {
       "threatId": "CROSS-012",
       "title": "Sigstore / OpenSSF Supply Chain Security",
       "url": "https://docs.sigstore.dev/cosign/signing/signing_with_containers/",
       "status": "cached",
-      "file": "public/threats/CROSS-012.html"
+      "file": "public/threats/CROSS-012.html",
+      "sha256": "10b5bcc180dcdf59c4169b75d293f45e64832ade603041becb21d2f43e626dde",
+      "sizeBytes": 77551
     },
     {
       "threatId": "CROSS-013",
       "title": "NIST SP 800-90B / Quantinuum Quantum Origin",
       "url": "https://www.quantinuum.com/press-releases/quantinuums-quantum-origin-becomes-first-software-quantum-random-number-generator-to-achieve-nist-validation",
       "status": "cached",
-      "file": "public/threats/CROSS-013.html"
+      "file": "public/threats/CROSS-013.html",
+      "sha256": "f6c1100cc359fdf6089d5a6a876d739a854d06aa66a88241c8db1787dd3974f0",
+      "sizeBytes": 162905
     },
     {
       "threatId": "RAIL-003",
       "title": "UIC / ETSI FRMCS Specification",
       "url": "https://www.globalrailwayreview.com/news/233331/frmcs-migration-rail-cyber-security/",
       "status": "cached",
-      "file": "public/threats/RAIL-003.html"
+      "file": "public/threats/RAIL-003.html",
+      "sha256": "326c33db1d5549d16eb8ddeb7b579011015f3b2ecb713bf9bca4c7739adf0c28",
+      "sizeBytes": 169177
     },
     {
       "threatId": "RAIL-004",
@@ -708,21 +859,27 @@
       "title": "EPA Cybersecurity for Water Sector (August 2024)",
       "url": "https://www.epa.gov/cyberwater/epa-cybersecurity-water-sector",
       "status": "cached",
-      "file": "public/threats/WATER-003.html"
+      "file": "public/threats/WATER-003.html",
+      "sha256": "05bcfc83b947c9def888ddf36a685aa868be12ef364d72e1a415c2956006dde8",
+      "sizeBytes": 58737
     },
     {
       "threatId": "WATER-004",
       "title": "NIST NCCoE Water/Wastewater Cybersecurity Project",
       "url": "https://www.nccoe.nist.gov/sites/default/files/2023-06/securing-water-and-wastewater-utilities-project-description-final.pdf",
       "status": "cached",
-      "file": "public/threats/WATER-004.html"
+      "file": "public/threats/WATER-004.html",
+      "sha256": "87538d72ba40a0283c094c4a8fd09c39bfcc440df524f8d32f5eade0a0b081dc",
+      "sizeBytes": 1178202
     },
     {
       "threatId": "CI-001",
       "title": "CISA Post-Quantum Cryptography Initiative / PPD-21",
       "url": "https://www.cisa.gov/quantum",
       "status": "cached",
-      "file": "public/threats/CI-001.html"
+      "file": "public/threats/CI-001.html",
+      "sha256": "b56cee3cfb98bad2bd997842c0f41e2d1fec291c8023e05014153c7d289157f3",
+      "sizeBytes": 70114
     },
     {
       "threatId": "CI-002",
@@ -731,14 +888,17 @@
       "status": "downloaded",
       "file": "public/threats/CI-002.html",
       "sizeBytes": 53992,
-      "contentType": "text/html; charset=UTF-8"
+      "contentType": "text/html; charset=UTF-8",
+      "sha256": "175bf7d77c4fe2cc5e6bae81037a5e54c2dc5c458ae58de324f285a85050a7bd"
     },
     {
       "threatId": "CI-003",
       "title": "NIST SP 800-82 / IEC 62351 / ISA/IEC 62443",
       "url": "https://www.nist.gov/publications/guide-operational-technology-ot-security",
       "status": "cached",
-      "file": "public/threats/CI-003.html"
+      "file": "public/threats/CI-003.html",
+      "sha256": "2d870e46260cb460e64068f53b8023ab190aeba516e703ebcb05e2e253c33ccc",
+      "sizeBytes": 82551
     },
     {
       "threatId": "CROSS-014",
@@ -747,7 +907,8 @@
       "status": "downloaded",
       "file": "public/threats/CROSS-014.pdf",
       "sizeBytes": 2637856,
-      "contentType": "application/pdf"
+      "contentType": "application/pdf",
+      "sha256": "e0160e649c1f6ee817e88fa1b95df168a12060e4eff7dd7cba8e16df9d1183bc"
     },
     {
       "threatId": "CROSS-015",
@@ -756,7 +917,8 @@
       "status": "downloaded",
       "file": "public/threats/CROSS-015.html",
       "sizeBytes": 49925,
-      "contentType": "text/html; charset=utf-8"
+      "contentType": "text/html; charset=utf-8",
+      "sha256": "84cc5b5fa881d27fa9e352724401258f9ab5681781246131454f002298dd199c"
     },
     {
       "threatId": "CROSS-016",
@@ -765,7 +927,8 @@
       "status": "downloaded",
       "file": "public/threats/CROSS-016.html",
       "sizeBytes": 41344,
-      "contentType": "text/html; charset=utf-8"
+      "contentType": "text/html; charset=utf-8",
+      "sha256": "a1a014a75012e23186541779d5749eb67d89bd83b74daf9c38f7295b2dab079a"
     },
     {
       "threatId": "CROSS-017",
@@ -774,7 +937,8 @@
       "status": "downloaded",
       "file": "public/threats/CROSS-017.pdf",
       "sizeBytes": 2588488,
-      "contentType": "application/pdf"
+      "contentType": "application/pdf",
+      "sha256": "32de23bcde7b2582a06c38a38f8bf5bc7e1388334868fdf3855d98da2f4437ee"
     },
     {
       "threatId": "CROSS-018",
@@ -783,7 +947,8 @@
       "status": "downloaded",
       "file": "public/threats/CROSS-018.html",
       "sizeBytes": 49925,
-      "contentType": "text/html; charset=utf-8"
+      "contentType": "text/html; charset=utf-8",
+      "sha256": "06be84eddd75ef4b87a74a90efc4d5b0afc120263e99a2b937da2972017962c1"
     },
     {
       "threatId": "HSM-001",
@@ -792,7 +957,8 @@
       "status": "downloaded",
       "file": "public/threats/HSM-001.html",
       "sizeBytes": 49443,
-      "contentType": "text/html; charset=utf-8"
+      "contentType": "text/html; charset=utf-8",
+      "sha256": "05bd1271a30b72ddb43c5fbc5c30d0760e510c6e601795b660e40d756bdd192c"
     },
     {
       "threatId": "IOT-005",
@@ -801,7 +967,8 @@
       "status": "downloaded",
       "file": "public/threats/IOT-005.pdf",
       "sizeBytes": 1194488,
-      "contentType": "application/pdf"
+      "contentType": "application/pdf",
+      "sha256": "1be9bb9a5fef3665ee8b258babe54b8e500d667fcfbbcc99710fe6077c6bad27"
     },
     {
       "threatId": "AUS-TEL-001",
