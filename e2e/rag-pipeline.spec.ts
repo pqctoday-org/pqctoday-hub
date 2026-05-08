@@ -30,19 +30,17 @@ test.describe('ASR Copilot RAG Agent Pipeline', () => {
       window.localStorage.setItem(
         'pqc-right-panel',
         JSON.stringify({
-          state: { isOpen: true, activeTab: 'chat', isMinimized: false },
-          version: 2,
+          // Only `activeTab` is partialized by the store; `isOpen` is not persisted.
+          // Match the live store version so no migrate runs.
+          state: { activeTab: 'chat' },
+          version: 5,
         })
       )
-    })
-
-    // Intercept RAG Corpus so RetrievalService can initialize and not timeout
-    await page.route('**/data/rag-corpus.json', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ chunks: [], generatedAt: new Date().toISOString() }),
-      })
+      // Suppress the WhatsNew toast (z-100 alertdialog can intercept clicks).
+      window.localStorage.setItem(
+        'pqc-version-storage',
+        JSON.stringify({ state: { lastSeenVersion: '99.99.99' }, version: 0 })
+      )
     })
 
     // Intercept RAG Corpus so RetrievalService can initialize and not timeout
@@ -95,6 +93,11 @@ test.describe('ASR Copilot RAG Agent Pipeline', () => {
       undefined,
       { timeout: 10000 }
     )
+    // The seeded `activeTab: 'chat'` does NOT open the panel — `isOpen` isn't
+    // persisted by `useRightPanelStore.partialize`. Calling toggle('chat') with
+    // tab matching activeTab while isOpen=false correctly OPENS the panel
+    // (the toggle's else-branch). Calling it after the panel is already open
+    // would CLOSE it — that was the prior bug here.
     await page.evaluate(() => {
       ;(window as unknown as E2eWindow).__e2e_toggle_panel?.('chat')
     })
