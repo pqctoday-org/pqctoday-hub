@@ -1,0 +1,14 @@
+# Verify trust-engine artifact signatures before pushing.
+# Each artifact is verified only if its .sig file exists, so the hook is
+# safe in early-bootstrap states (e.g. before CI has signed a new artifact).
+# Bypass with `git push --no-verify` if you intentionally rotated keys and
+# the new signatures haven't landed in CI yet.
+set -e
+
+if [ -f public/data/revisions.jsonl.sig ]; then
+  npx tsx scripts/attestation/verify-revisions.ts
+fi
+
+if [ -f public/data/rag-corpus.json.sig ]; then
+  npx tsx scripts/attestation/verify-rag-corpus.ts
+fi
