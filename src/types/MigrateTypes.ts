@@ -29,6 +29,9 @@ export interface Vendor {
   websiteUrlQuality?: string
   gleifUrlQuality?: string
   dataQualityNotes?: string
+  // Trust Engine attribution (T06 — added 2026-05-08)
+  trustedSourceId?: string
+  peerReviewed?: 'yes' | 'no' | 'partial'
 }
 
 export const CISA_CATEGORIES = [

@@ -701,11 +701,92 @@ async function runCmTs(): Promise<CheckResult> {
     : pass('CM-TS', 'Trusted-source trust_tier vocabulary normalised (4-value v2)', latest)
 }
 
+// ── CM-AT: Migrate / Vendors / Leaders attribution coverage ─────────────────
+// T06 of the Trust Engine implementation plan.
+//
+// WARNING for any existing row that lacks `trusted_source_id` (data debt
+// baseline). ERROR for rows whose `last_verified_date` is on/after the cutoff
+// (≥ 2026-05-08) and still lack the field — this stops the gap from growing.
+
+const CM_AT_CUTOFF = '2026-05-08'
+
+interface AttrTarget {
+  domain: string
+  csvGlob: string
+  idCol: string
+  dateCol?: string
+}
+
+const CM_AT_TARGETS: AttrTarget[] = [
+  { domain: 'vendors', csvGlob: 'src/data/vendors_*.csv', idCol: 'vendor_id', dateCol: 'last_verified_date' },
+  { domain: 'leaders', csvGlob: 'src/data/leaders_*.csv', idCol: 'Name' },
+  { domain: 'migrate', csvGlob: 'src/data/pqc_product_catalog_*.csv', idCol: 'product_id', dateCol: 'last_verified_date' },
+]
+
+async function runCmAt(): Promise<CheckResult[]> {
+  const results: CheckResult[] = []
+
+  for (const t of CM_AT_TARGETS) {
+    const matches = await glob(t.csvGlob, { cwd: REPO_ROOT })
+    matches.sort()
+    const latest = matches.at(-1)
+    if (!latest) {
+      results.push(pass(`CM-AT-${t.domain}`, `Attribution coverage — ${t.domain}`, t.csvGlob))
+      continue
+    }
+    const raw = fs.readFileSync(path.join(REPO_ROOT, latest), 'utf-8')
+    const { data: rows } = Papa.parse<Record<string, string>>(raw, { header: true, skipEmptyLines: true })
+
+    const warnFindings: Finding[] = []
+    const errorFindings: Finding[] = []
+
+    for (const r of rows) {
+      const tsi = (r['trusted_source_id'] ?? '').trim()
+      if (tsi) continue
+      const id = (r[t.idCol] ?? '').trim() || '<no-id>'
+      const date = t.dateCol ? (r[t.dateCol] ?? '').trim() : ''
+      const finding: Finding = {
+        csv: latest,
+        row: null,
+        field: 'trusted_source_id',
+        value: id,
+        message: `${t.domain} "${id}" lacks trusted_source_id` + (date ? ` (last_verified_date=${date})` : ''),
+      }
+      if (date && date >= CM_AT_CUTOFF) errorFindings.push(finding)
+      else warnFindings.push(finding)
+    }
+
+    if (errorFindings.length > 0) {
+      results.push(
+        fail(
+          `CM-AT-${t.domain}`,
+          `${t.domain}: trusted_source_id required for rows last_verified_date >= ${CM_AT_CUTOFF}`,
+          latest,
+          errorFindings
+        )
+      )
+    } else if (warnFindings.length > 0) {
+      results.push(
+        fail(
+          `CM-AT-${t.domain}`,
+          `${t.domain}: existing rows missing trusted_source_id (data debt; cutoff for new rows: ${CM_AT_CUTOFF})`,
+          latest,
+          warnFindings,
+          'WARNING'
+        )
+      )
+    } else {
+      results.push(pass(`CM-AT-${t.domain}`, `${t.domain}: trusted_source_id coverage complete`, latest))
+    }
+  }
+  return results
+}
+
 // ── Entry point ──────────────────────────────────────────────────────────────
 
 export async function runTrustEngineChecks(): Promise<CheckResult[]> {
-  const [cm1, cm2, cm3, cm4, cmE, cmCswp, cmG, cmT, cmTs] = await Promise.all([
-    runCm1(), runCm2(), runCm3(), runCm4(), runCmE(), runCmCswp(), runCmG(), runCmT(), runCmTs(),
+  const [cm1, cm2, cm3, cm4, cmE, cmCswp, cmG, cmT, cmTs, cmAt] = await Promise.all([
+    runCm1(), runCm2(), runCm3(), runCm4(), runCmE(), runCmCswp(), runCmG(), runCmT(), runCmTs(), runCmAt(),
   ])
-  return [runCmW(), runCmC(), runQaS(), runQaCswp(), cm1, cm2, cm3, cm4, cmE, cmCswp, cmG, ...cmT, cmTs]
+  return [runCmW(), runCmC(), runQaS(), runQaCswp(), cm1, cm2, cm3, cm4, cmE, cmCswp, cmG, ...cmT, cmTs, ...cmAt]
 }
