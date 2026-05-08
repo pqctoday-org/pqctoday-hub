@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import { useApplicability } from './useApplicability'
 import { usePersonaStore } from '../store/usePersonaStore'
 import { getLens } from '../utils/applicabilityLens'
+import { allApplicable } from '../utils/applicabilityEngine'
 import { conceptXwalkData } from '../data/conceptXwalkData'
 import { traverseXwalkPaths, type DerivedResult } from '../utils/trustPathTraversal'
 import type { UserProfile, ApplicabilityResult } from '../utils/applicabilityEngine'
@@ -36,10 +37,12 @@ export function useApplicabilityWithPaths(
     if (base.isEmpty) return []
     if (conceptXwalkData.length === 0) return []
     const lens = getLens(persona)
-    // Include library items as traversal sources so that library-anchored xwalk
-    // edges (e.g. NIST CSWP 39 → FIPS 203) fire when CSWP 39 appears in direct library results.
-    return traverseXwalkPaths([...base.frameworks, ...base.library], conceptXwalkData, lens)
-  }, [base.isEmpty, base.frameworks, base.library, persona])
+    // Use the uncapped engine output as traversal sources — the persona lens caps
+    // what's DISPLAYED but must not limit which standards seed the trust path graph.
+    // Library items (NIST CSWP 39, FIPS 203, etc.) are the primary xwalk anchors.
+    const uncapped = allApplicable(base.profile)
+    return traverseXwalkPaths([...base.frameworks, ...uncapped.library], conceptXwalkData, lens)
+  }, [base.isEmpty, base.frameworks, base.profile, persona])
 
   const allFrameworks = useMemo<ApplicabilityResult<ComplianceFramework>[]>(
     () => base.frameworks,

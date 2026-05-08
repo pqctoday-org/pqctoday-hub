@@ -74,14 +74,25 @@ function FeedEntry({ r }: { r: RevisionEntry }) {
         </div>
         <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{r.scope_summary}</p>
         <div className="flex items-center gap-2 mt-1">
-          <a
-            href={`https://github.com/pqctoday-org/pqctoday-hub/pull/${r.pr_number}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-primary hover:underline"
-          >
-            PR #{r.pr_number}
-          </a>
+          {r.pr_number > 0 ? (
+            <a
+              href={`https://github.com/pqctoday-org/pqctoday-hub/pull/${r.pr_number}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-primary hover:underline"
+            >
+              PR #{r.pr_number}
+            </a>
+          ) : (
+            <a
+              href={`https://github.com/pqctoday-org/pqctoday-hub/commit/${r.merge_sha}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-primary hover:underline font-mono"
+            >
+              {r.merge_sha.slice(0, 7)}
+            </a>
+          )}
           {offlineSuffix && <span className="text-xs text-muted-foreground">{offlineSuffix}</span>}
         </div>
       </div>
