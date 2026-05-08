@@ -112,8 +112,9 @@ pqc_today_clean_icons.html
 *_certs.txt
 all_certs.txt
 generated_certs.txt
-# Trust Engine attestation public key (T12) — explicitly allowed; it's a public artefact
-!public/data/attestation/maintainer-public.key
+# Trust Engine attestation public keys (T12) — explicitly allowed; they're public artefacts
+# Covers maintainer-public.key plus any dev-* / archived-* / kid-named public keys
+!public/data/attestation/*.key
 pqc_certs_output.txt
 regen_*.sh
 
