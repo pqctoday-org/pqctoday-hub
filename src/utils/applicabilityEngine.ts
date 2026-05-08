@@ -221,15 +221,14 @@ function classifyMatch(profile: UserProfile, fields: ItemFields): ClassifyResult
   const eu = isEuMember(profile)
   const expandedProfileCountry = country ? expandCountry(country) : []
   const expandedCsvCountries = countries.flatMap(expandCountry)
+  const isEuCsvEntry = countries.some((c) => c === 'European Union' || c === 'PQC-REGION-EU')
   const directCountryMatch =
     hasCountry &&
-    (expandedProfileCountry.some((c) => expandedCsvCountries.includes(c)) ||
-      (eu && countries.includes('European Union')))
+    (expandedProfileCountry.some((c) => expandedCsvCountries.includes(c)) || (eu && isEuCsvEntry))
   const regionCountries = regionCountriesFor(profile)
   const regionCountryMatch =
     !directCountryMatch && regionCountries !== null
-      ? countries.some((c) => regionCountries.has(c)) ||
-        (region === 'eu' && countries.includes('European Union'))
+      ? countries.some((c) => regionCountries.has(c)) || (region === 'eu' && isEuCsvEntry)
       : false
 
   // Industry signals — direct match only counts when the item has at least one
