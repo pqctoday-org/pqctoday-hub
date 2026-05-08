@@ -62,6 +62,40 @@ jobs:
         run: npx tsx scripts/ci/post-csv-diff.ts
         continue-on-error: true
 
+      - name: Detect WASM backend changes
+        if: github.event_name == 'pull_request'
+        id: wasm-detect
+        run: |
+          CHANGED=$(git diff --name-only origin/main...HEAD)
+          if echo "$CHANGED" | grep -qE '^(public/dist/|src/wasm/)'; then
+            echo "wasm_changed=true" >> $GITHUB_OUTPUT
+          fi
+          if echo "$CHANGED" | grep -q 'package.json'; then
+            if git diff origin/main...HEAD -- package.json | grep -qE '@oqs/liboqs-js|@pqctoday/softhsm-wasm'; then
+              echo "wasm_changed=true" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Apply WASM label
+        if: github.event_name == 'pull_request' && steps.wasm-detect.outputs.wasm_changed == 'true'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['tool:wasm-backend']
+            })
+
+      - name: Check tool version bumps
+        if: github.event_name == 'pull_request'
+        run: npx tsx scripts/ci/check-tool-version-bump.ts
+
+      - name: Check module version bumps
+        if: github.event_name == 'pull_request'
+        run: npx tsx scripts/ci/check-module-version-bump.ts
+
   append-revision:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
