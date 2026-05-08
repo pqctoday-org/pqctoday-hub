@@ -980,23 +980,22 @@ export function requiresAuthoritativeEvidence(query: string, intent?: QueryInten
  * Best trust tier among the top N retrieved chunks. Returns 'unknown' if no
  * chunk maps to a scored resource. Used by the refusal gate.
  */
-export function topAvailableTier(
-  chunks: RAGChunk[],
-  n = 3
-): 'Authoritative' | 'High' | 'Moderate' | 'Low' | 'unknown' {
-  let best: 'Authoritative' | 'High' | 'Moderate' | 'Low' | 'unknown' = 'unknown'
-  const rank: Record<typeof best, number> = {
+type TierLabel = 'Authoritative' | 'High' | 'Moderate' | 'Low' | 'unknown'
+
+export function topAvailableTier(chunks: RAGChunk[], n = 3): TierLabel {
+  const rank: Record<TierLabel, number> = {
     Authoritative: 4,
     High: 3,
     Moderate: 2,
     Low: 1,
     unknown: 0,
   }
+  let best: TierLabel = 'unknown'
   for (const chunk of chunks.slice(0, n)) {
     const ref = chunkToResource(chunk)
     if (!ref) continue
     const score = getTrustScore(ref.resourceType, ref.resourceId)
-    const tier = score?.tier ?? 'unknown'
+    const tier: TierLabel = score?.tier ?? 'unknown'
     if (rank[tier] > rank[best]) best = tier
   }
   return best
