@@ -35,6 +35,7 @@ export interface LibraryItem {
   downloadUrlQuality?: string
   trustedSourceIdStatus?: string
   dataQualityNotes?: string
+  confidenceScore?: number
   status?: 'New' | 'Updated'
 }
 
@@ -162,6 +163,7 @@ interface RawLibraryRow {
   download_url_quality?: string
   trusted_source_id_status?: string
   data_quality_notes?: string
+  confidence_score?: string
 }
 
 function transformLibraryRow(row: RawLibraryRow): LibraryItem {
@@ -199,6 +201,7 @@ function transformLibraryRow(row: RawLibraryRow): LibraryItem {
     downloadUrlQuality: row.download_url_quality || undefined,
     trustedSourceIdStatus: row.trusted_source_id_status || undefined,
     dataQualityNotes: row.data_quality_notes || undefined,
+    confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
   }
 
   // Multi-category Logic: Combine manual_category WITH auto-detected categories

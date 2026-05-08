@@ -96,6 +96,8 @@ export interface SoftwareItem {
   quantumTech?: 'QKD' | 'QRNG' | 'QKD,QRNG'
   wip?: boolean
   githubContributionUrl?: string
+  confidenceScore?: number
+  cswp39Tags?: string[]
   status?: 'New' | 'Updated' | 'Deleted'
 }
 

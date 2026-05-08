@@ -19,6 +19,8 @@ export interface ThreatData {
   sourceUrlQuality?: string
   trustedSourceIdStatus?: string
   dataQualityNotes?: string
+  confidenceScore?: number
+  applicableIndustriesNormalized?: string[]
   status?: 'New' | 'Updated'
 }
 
@@ -42,6 +44,8 @@ interface RawThreatRow {
   source_url_quality: string
   trusted_source_id_status: string
   data_quality_notes: string
+  confidence_score?: string
+  applicable_industries_normalized?: string
 }
 
 const modules = import.meta.glob('./quantum_threats_hsm_industries_*.csv', {
@@ -73,6 +77,13 @@ function transformThreat(row: RawThreatRow): ThreatData {
     sourceUrlQuality: row.source_url_quality || undefined,
     trustedSourceIdStatus: row.trusted_source_id_status || undefined,
     dataQualityNotes: row.data_quality_notes || undefined,
+    confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
+    applicableIndustriesNormalized: row.applicable_industries_normalized
+      ? row.applicable_industries_normalized
+          .split(';')
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : undefined,
   }
 }
 

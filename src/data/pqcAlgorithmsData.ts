@@ -39,6 +39,7 @@ export interface AlgorithmDetail {
   sizesUnknown: boolean
   /** True when the cycle/perf strings contain "Research needed". */
   perfUnknown: boolean
+  confidenceScore?: number
 }
 
 /**
@@ -74,6 +75,7 @@ interface RawAlgorithmRow {
   status: string
   status_url: string
   status_url_quality: string
+  confidence_score?: string
 }
 
 // Import CSV data dynamically (lazy glob)
@@ -156,6 +158,7 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
         hasResearchGap,
         sizesUnknown,
         perfUnknown,
+        confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
       }
     }
   )
