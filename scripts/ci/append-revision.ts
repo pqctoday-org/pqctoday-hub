@@ -25,6 +25,13 @@
 import fs from 'fs'
 import path from 'path'
 import { execSync } from 'child_process'
+import Papa from 'papaparse'
+import {
+  computeFieldChanges,
+  DOMAIN_TO_PK_COLUMN,
+  DOMAIN_TO_CSV_PREFIX,
+  type FieldChange,
+} from './computeFieldChanges'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -67,6 +74,10 @@ interface RevisionEntry {
   module_id: string | null
   tool_id: string | null
   sample_size: number | null
+  /** Affected record IDs — populated by computeFieldChanges when applicable. */
+  record_ids?: string[]
+  /** Per-cell before/after diff — see scripts/ci/computeFieldChanges.ts */
+  field_changes?: FieldChange[]
   reviewer_id: string
   reviewer_display: string
   approval_method: 'github' | 'offline'
@@ -189,6 +200,96 @@ function resolveOfflineReviewer(
 }
 
 // ---------------------------------------------------------------------------
+// Field-change detection — opportunistic, gracefully no-ops on failure
+// ---------------------------------------------------------------------------
+
+/**
+ * Locate the before/after CSVs for a `data:*` revision and compute per-cell
+ * field changes. Best-effort: returns null when:
+ *   - domain is not a tracked CSV (module / tool / vocab / schema changes)
+ *   - no CSV with the domain's prefix changed in this PR
+ *   - the previous-version file can't be located in git history
+ *
+ * Used by main() to populate `field_changes` on the revision entry.
+ */
+function detectFieldChanges(
+  domain: string,
+  sha: string
+): { recordIds: string[]; changes: FieldChange[] } | null {
+  const pkCol = DOMAIN_TO_PK_COLUMN[domain]
+  const prefix = DOMAIN_TO_CSV_PREFIX[domain]
+  if (!pkCol || !prefix) return null
+
+  // Find changed CSVs in this commit
+  let changed: string[] = []
+  try {
+    const out = execSync(`git show --name-only --format='' ${sha}`, {
+      encoding: 'utf-8',
+    })
+    changed = out
+      .trim()
+      .split('\n')
+      .filter((p) => p.startsWith('src/data/') && p.endsWith('.csv'))
+  } catch {
+    return null
+  }
+
+  // Newly-added CSV with our domain prefix is the "after"; the previous
+  // dated file with the same prefix on the parent commit is the "before".
+  const newCsv = changed.find((p) => path.basename(p).startsWith(prefix))
+  if (!newCsv) return null
+
+  // Read the new file from disk (post-merge state)
+  let afterRaw: string
+  try {
+    afterRaw = fs.readFileSync(newCsv, 'utf-8')
+  } catch {
+    return null
+  }
+
+  // Find the previous-version file by listing the directory at the parent commit
+  let parentFiles: string[] = []
+  try {
+    const out = execSync(`git ls-tree --name-only ${sha}^ src/data`, {
+      encoding: 'utf-8',
+    })
+    parentFiles = out
+      .trim()
+      .split('\n')
+      .filter((p) => path.basename(p).startsWith(prefix))
+      .sort()
+  } catch {
+    return null
+  }
+  const prevName = parentFiles.length > 0 ? parentFiles[parentFiles.length - 1] : null
+  if (!prevName) return null
+
+  // Parent commit's content of that file
+  let beforeRaw = ''
+  try {
+    beforeRaw = execSync(`git show ${sha}^:${path.join('src/data', prevName)}`, {
+      encoding: 'utf-8',
+    })
+  } catch {
+    return null
+  }
+
+  const before = Papa.parse<Record<string, string>>(beforeRaw, {
+    header: true,
+    skipEmptyLines: true,
+  }).data
+  const after = Papa.parse<Record<string, string>>(afterRaw, {
+    header: true,
+    skipEmptyLines: true,
+  }).data
+
+  const changes = computeFieldChanges(before, after, pkCol, { maxChanges: 500 })
+  const recordIds = Array.from(new Set(changes.map((c) => c.record_id)))
+  if (changes.length === 0) return null
+  return { recordIds, changes }
+}
+
+// ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 
@@ -260,6 +361,24 @@ async function main() {
   const reviewer = resolvedResult?.reviewer
   const mergeTimestamp = new Date().toISOString()
 
+  // Best-effort per-cell diff for data:* revisions. Failure is silent.
+  let fieldChanges: FieldChange[] | undefined
+  let recordIds: string[] | undefined
+  try {
+    const detected = detectFieldChanges(domain, sha)
+    if (detected) {
+      fieldChanges = detected.changes
+      recordIds = detected.recordIds
+      console.log(
+        `[append-revision] Computed ${fieldChanges.length} field-change(s) across ${recordIds.length} record(s)`
+      )
+    }
+  } catch (e) {
+    console.warn(
+      `[append-revision] Field-change detection failed (continuing without diff): ${String(e).slice(0, 200)}`
+    )
+  }
+
   // Build the base revision entry
   const entry: RevisionEntry = {
     pr_number: prNumber,
@@ -268,10 +387,12 @@ async function main() {
     change_type: changeType,
     domain,
     scope_summary: scopeSummary.slice(0, 120),
-    rows_affected: null,
+    rows_affected: recordIds?.length ?? null,
     module_id: null,
     tool_id: null,
     sample_size: null,
+    ...(recordIds ? { record_ids: recordIds } : {}),
+    ...(fieldChanges ? { field_changes: fieldChanges } : {}),
     reviewer_id: reviewer?.reviewer_id ?? 'unresolved',
     reviewer_display: reviewer?.display_name ?? 'Unresolved',
     approval_method: githubResult ? 'github' : 'offline',

@@ -7,6 +7,20 @@
 
 import { useState, useEffect } from 'react'
 
+/**
+ * Per-record field-level change. Optional — populated for record-scoped revisions
+ * (manual_data_correction, xref_edge_change). Bulk enrichment batches typically
+ * carry no field_changes. Existing revisions predating this field have no entry.
+ */
+export interface FieldChange {
+  /** Record ID — should appear in the parent revision's `record_ids` array. */
+  record_id: string
+  /** CSV column name. List-typed columns (LIST_COLUMNS in utils/listDiff) render token-by-token. */
+  field: string
+  before: string | null
+  after: string | null
+}
+
 export interface RevisionEntry {
   pr_number: number
   merge_sha: string
@@ -19,6 +33,8 @@ export interface RevisionEntry {
   tool_id: string | null
   /** Explicit list of affected record IDs — populated by append-revision.ts CI script. */
   record_ids?: string[]
+  /** Per-cell before/after diff for record-scoped changes. Optional. */
+  field_changes?: FieldChange[]
   reviewer_id: string
   reviewer_display: string
   approval_method: 'github' | 'offline'

@@ -287,7 +287,7 @@ export const RACIBuilder: React.FC = () => {
         title="RACI Matrix Export"
         exportData={exportMarkdown}
         filename="pqc-raci-matrix"
-        formats={['markdown']}
+        formats={['markdown', 'pdf']}
         onExport={handleExport}
       >
         <p className="text-sm text-muted-foreground">Export your RACI matrix as Markdown.</p>

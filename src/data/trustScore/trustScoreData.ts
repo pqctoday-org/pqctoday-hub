@@ -20,6 +20,7 @@ import { algorithmsData } from '../algorithmsData'
 import { timelineData } from '../timelineData'
 import { libraryData } from '../libraryData'
 import { parseEnrichmentMarkdown, type EnrichmentLookup } from '../libraryEnrichmentData'
+import { buildCommunitySignalsMap } from '../communitySignalsData'
 
 // ---------------------------------------------------------------------------
 // Enrichment dimension counting
@@ -239,6 +240,7 @@ function buildScoringContext(): ScoringContext {
     libraryDependencies: libraryDeps,
     threatModuleRefs,
     demonstrableAlgorithms: DEMONSTRABLE_ALGORITHMS,
+    communitySignals: buildCommunitySignalsMap(),
   }
 }
 

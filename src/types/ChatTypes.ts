@@ -16,6 +16,13 @@ export interface ChatSourceRef {
   title: string
   source: string
   deepLink?: string
+  /**
+   * Trust tier inherited from the underlying record's eight-dimension score
+   * (§14.3 step 4 of trust-engine-explainability). Optional — populated by
+   * useChatSend.ts when the chunk resolves to a scored resource via
+   * chunkToResource(). When undefined, the citation renders without a chip.
+   */
+  trustTier?: 'Authoritative' | 'High' | 'Moderate' | 'Low'
 }
 
 export interface ChatMessage {

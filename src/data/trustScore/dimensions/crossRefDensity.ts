@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import type { DimensionResult, ScoringContext } from '../types'
+import type { DimensionResult, ScoringContext, ScoredResourceType } from '../types'
 
 const HEURISTIC_METHODS = new Set(['inferred', 'category-inferred'])
 
@@ -76,7 +76,45 @@ function tierDiversityMultiplier(tierCount: number): number {
   return 1.0
 }
 
-export function scoreCrossRefDensity(resourceId: string, ctx: ScoringContext): DimensionResult {
+/**
+ * Community-corroboration sub-signal — additive bonus for GitHub Discussions
+ * endorsements (the public peer-review surface; see §5.5 of
+ * trust-engine-explainability). Conservative bands:
+ *
+ *   0 endorsements  → +0
+ *   1 endorsement   → +0  (single anonymous click is not enough signal)
+ *   2 endorsements  → +3
+ *   3-4             → +5
+ *   5+              → +8
+ *
+ * Flags do NOT subtract from the trust score — they trigger a separate
+ * validator finding (§16.3 #12 follow-up) so the audit trail stays linear.
+ * Cap is intentionally low: a record can't ride community endorsements past
+ * its actual evidence. Final score is still clamped to ≤100.
+ */
+function communityBonus(endorsements: number): number {
+  if (endorsements >= 5) return 8
+  if (endorsements >= 3) return 5
+  if (endorsements >= 2) return 3
+  return 0
+}
+
+/** Trust-score key uses lowercase resourceType; community-signals map mirrors it. */
+const RESOURCE_TYPE_TO_SIGNAL_KEY: Record<ScoredResourceType, string> = {
+  library: 'library',
+  timeline: 'timeline',
+  compliance: 'compliance',
+  migrate: 'pqc-tool',
+  threats: 'threat',
+  leaders: 'leader',
+  algorithm: 'algorithm',
+}
+
+export function scoreCrossRefDensity(
+  resourceId: string,
+  ctx: ScoringContext,
+  resourceType?: ScoredResourceType
+): DimensionResult {
   const { verified, heuristic, tiers } = countRefs(resourceId, ctx)
   // Heuristic refs count as half-weight: a category-inferred match is weaker
   // evidence than a direct/mapped one.
@@ -91,7 +129,14 @@ export function scoreCrossRefDensity(resourceId: string, ctx: ScoringContext): D
   else baseScore = 10
 
   const diversity = tierDiversityMultiplier(tiers.size)
-  const score = Math.min(100, Math.round(baseScore * diversity))
+  // Community-corroboration sub-signal lookup — only when resourceType is known.
+  let endorsements = 0
+  if (resourceType) {
+    const signalKey = `${RESOURCE_TYPE_TO_SIGNAL_KEY[resourceType]}:${resourceId}`
+    endorsements = ctx.communitySignals.get(signalKey)?.endorsements ?? 0
+  }
+  const bonus = communityBonus(endorsements)
+  const score = Math.min(100, Math.round(baseScore * diversity) + bonus)
 
   let rationale: string
   if (total === 0) rationale = 'No cross-references'
@@ -102,6 +147,9 @@ export function scoreCrossRefDensity(resourceId: string, ctx: ScoringContext): D
 
   if (tiers.size >= 2) {
     rationale += ` — cited across ${tiers.size} trust tiers (×${diversity.toFixed(2)} diversity bonus)`
+  }
+  if (bonus > 0) {
+    rationale += ` — ${endorsements} community endorsement(s) (+${bonus})`
   }
 
   return { rawScore: score, rationale }

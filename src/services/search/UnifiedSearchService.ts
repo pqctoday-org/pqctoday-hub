@@ -181,6 +181,17 @@ export class UnifiedSearchService {
     if (baseName !== titleLower) pushAlias(baseName)
     const noHyphens = titleLower.replace(/-/g, ' ')
     if (noHyphens !== titleLower) pushAlias(noHyphens)
+    // For algorithm chunks like "SLH-DSA-SHA2-128s", also index under the
+    // 2-component family name "slh-dsa" so Phase 1 entity lookup can find them.
+    if (chunk.source === 'algorithms') {
+      const parts = titleLower.split('-')
+      if (parts.length >= 3) {
+        const root2 = parts.slice(0, 2).join('-')
+        if (root2 !== titleLower && root2 !== baseName && root2.length > 3) {
+          pushAlias(root2)
+        }
+      }
+    }
 
     const m = chunk.metadata
     if (!m) return

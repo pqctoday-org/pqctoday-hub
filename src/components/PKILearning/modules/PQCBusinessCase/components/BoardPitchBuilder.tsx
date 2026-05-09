@@ -108,7 +108,7 @@ export const BoardPitchBuilder: React.FC = () => {
         onExport={handleExport}
         exportFilename={variant.filename}
         renderPreview={renderPreviewBound}
-        exportFormats={['markdown', 'pptx']}
+        exportFormats={['markdown', 'pdf', 'pptx']}
       />
     </div>
   )

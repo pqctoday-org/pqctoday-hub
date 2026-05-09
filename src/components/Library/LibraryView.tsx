@@ -20,6 +20,7 @@ import type { SortOption } from './SortControl'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { Search, FileSearch, BookOpen, SlidersHorizontal, X, BookmarkCheck } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
+import { ContentUpdatesFeed } from '@/components/ui/ContentUpdatesFeed'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { LIBRARY_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import debounce from 'lodash/debounce'
@@ -728,6 +729,8 @@ export const LibraryView: React.FC = () => {
 
       {/* Zone 1: Activity Feed */}
       <ActivityFeed items={activityItems} onSelect={openDetail} />
+
+      <ContentUpdatesFeed domain="library" limit={5} title="Recent Library Revisions" />
 
       {/* Category pills (desktop) */}
       <CategorySidebar

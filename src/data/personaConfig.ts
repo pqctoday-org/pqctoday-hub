@@ -18,6 +18,8 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/library',
     '/leaders',
     '/patents',
+    '/agility',
+    '/revisions',
   ],
   developer: [
     '/migrate',
@@ -29,6 +31,8 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/playground',
     '/openssl',
     '/patents',
+    '/agility',
+    '/revisions',
   ],
   architect: [
     '/migrate',
@@ -41,6 +45,8 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/playground',
     '/leaders',
     '/patents',
+    '/agility',
+    '/revisions',
   ],
   researcher: null,
   ops: [
@@ -52,8 +58,10 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/library',
     '/playground',
     '/openssl',
+    '/agility',
+    '/revisions',
   ],
-  curious: ['/explore', '/compliance', '/assess', '/report', '/library', '/leaders'],
+  curious: ['/explore', '/compliance', '/assess', '/report', '/library', '/leaders', '/revisions'],
 }
 
 /**

@@ -16,7 +16,7 @@ const DIMENSIONS = [
     name: 'Peer Review',
     weight: '20%',
     description:
-      'Whether the resource has undergone formal peer review. FIPS standards, RFCs, and ISO publications score highest. Partial review (e.g., drafts under public comment) scores moderately. This field is populated via GitHub Discussions community vetting and editorial review.',
+      'Whether the resource has undergone formal peer review. FIPS standards, RFCs, and ISO publications score highest. Partial review (e.g., drafts under public comment) scores moderately. Reads the peerReviewed CSV field plus a document-type modifier. (Note: community endorsements via GitHub Discussions feed Cross-Reference Density, not this dimension.)',
   },
   {
     name: 'Organizational Vetting',
@@ -46,7 +46,7 @@ const DIMENSIONS = [
     name: 'Cross-Reference Density',
     weight: '5%',
     description:
-      'How many other resources in the platform reference or are referenced by this resource. Higher interconnectedness indicates broader validation. 7+ cross-references scores 100.',
+      'How many other resources in the platform reference or are referenced by this resource. Baseline: 7+ cross-references scores 100. Two extra signals layer on top: a tier-diversity bonus (×1.05 when citations span two trust tiers, ×1.10 for three or more — independence beats redundancy), and a community-corroboration bonus (+3/+5/+8 for 2/3-4/5+ GitHub Discussions endorsements on the same record). Final score is capped at 100.',
   },
   {
     name: 'Enrichment Completeness',
@@ -177,8 +177,9 @@ export function TrustScoreMethodologySection() {
               {/* Transparency note */}
               <p className="text-xs text-muted-foreground/70">
                 All trust scores are computed client-side from open data. The methodology and source
-                code are fully open. The peer review dimension is populated through community
-                vetting via GitHub Discussions.
+                code are fully open. Community endorsements via GitHub Discussions feed
+                Cross-Reference Density (community-corroboration sub-signal); the Peer Review
+                dimension reads the CSV peerReviewed field.
               </p>
             </div>
           </motion.div>

@@ -22,6 +22,7 @@ import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { EmptyState } from '../ui/empty-state'
 import { FilterDropdown } from '../common/FilterDropdown'
+import { RoleFilter } from '../common/RoleFilter'
 import { MODULE_TOPIC_SUMMARIES } from '../../data/moduleTopicSummaries'
 import { ModuleCard } from './ModuleCard'
 import { LearnViewToggle, type LearnViewMode } from './LearnViewToggle'
@@ -898,6 +899,9 @@ const ModuleTracksGrid = ({
           onPersonaChange={handlePersonaFilterChange}
           onClear={clearFilters}
         />
+
+        {/* Role filter — NICE / PQC overlay codes; syncs two-way with persona store */}
+        <RoleFilter syncWithPersona className="shrink-0" />
 
         {/* My Modules filter toggle */}
         {myLearnModules.length > 0 && (
