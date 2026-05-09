@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useCallback, useEffect, useRef, Suspense } from 'react'
+import { useState, useCallback, useEffect, Suspense } from 'react'
 import { X, Download, Pencil, Eye, FileDown, Maximize2, Minimize2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { MarkdownView } from '@/components/ui/MarkdownView'
-import { htmlToPdf } from '@/utils/exportPdf'
+import { markdownToPdf } from '@/services/export/pdfExport'
 import { useModuleStore } from '@/store/useModuleStore'
 import type {
   ExecutiveDocument,
@@ -97,16 +97,17 @@ export function ArtifactDrawer({
     URL.revokeObjectURL(url)
   }, [document])
 
-  // Ref to the rendered <MarkdownView> so the PDF export captures the same
-  // visual layout the user sees, not the raw markdown source.
-  const markdownRef = useRef<HTMLDivElement>(null)
+  // PDF is generated directly from the artifact's markdown source via the
+  // unified vector pipeline (markdownToPdf), not from the rendered DOM. This
+  // produces selectable text, repeating table headers across page breaks,
+  // and identical output regardless of theme/dark-mode at capture time.
   const [isExportingPdf, setIsExportingPdf] = useState(false)
 
   const handleExportPdf = useCallback(async () => {
-    if (!document || !markdownRef.current) return
+    if (!document) return
     setIsExportingPdf(true)
     try {
-      await htmlToPdf(markdownRef.current, { filename: document.title })
+      await markdownToPdf(document.data, document.title, document.title)
     } finally {
       setIsExportingPdf(false)
     }
@@ -244,7 +245,7 @@ export function ArtifactDrawer({
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-5">
           {mode === 'view' && document ? (
-            <div ref={markdownRef} className="bg-background">
+            <div className="bg-background">
               <MarkdownView content={document.data} />
             </div>
           ) : BuilderComponent ? (

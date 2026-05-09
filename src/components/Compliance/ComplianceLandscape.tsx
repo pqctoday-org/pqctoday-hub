@@ -353,6 +353,20 @@ function FrameworkCard({
           <h4 className="font-semibold text-foreground text-sm leading-tight">{fw.label}</h4>
           <div className="flex items-center gap-2 flex-wrap">
             <TrustScoreBadge resourceType="compliance" resourceId={fw.id} size="sm" />
+            {fw.confidenceScore !== undefined && (
+              <span
+                className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${
+                  fw.confidenceScore >= 70
+                    ? 'bg-status-success/10 text-status-success border-status-success/30'
+                    : fw.confidenceScore >= 40
+                      ? 'bg-status-warning/10 text-status-warning border-status-warning/30'
+                      : 'bg-status-error/10 text-status-error border-status-error/30'
+                }`}
+                title={`Data confidence: ${fw.confidenceScore}/100`}
+              >
+                {fw.confidenceScore}%
+              </span>
+            )}
             {fw.bodyType === 'industry_alliance' && (
               <span
                 className="text-[10px] px-1.5 py-0.5 rounded bg-secondary/10 text-secondary font-semibold"
@@ -428,6 +442,20 @@ function FrameworkCard({
             >
               <Factory size={8} />
               <span className="hidden sm:inline">{industryChip(ind)}</span>
+            </span>
+          ))}
+        </div>
+      )}
+
+      {fw.cswp39Tags && fw.cswp39Tags.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {fw.cswp39Tags.map((tag) => (
+            <span
+              key={tag}
+              title={`NIST CSWP 39 consideration: ${tag}`}
+              className="inline-flex items-center text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent font-medium border border-accent/20"
+            >
+              {tag.replace('cswp39:', '')}
             </span>
           ))}
         </div>

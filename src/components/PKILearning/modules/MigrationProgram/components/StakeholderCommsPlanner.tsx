@@ -315,6 +315,7 @@ export const StakeholderCommsPlanner: React.FC = () => {
         sections={sections}
         onExport={handleExport}
         exportFilename="pqc-stakeholder-comms"
+        exportFormats={['markdown', 'pdf']}
         renderPreview={renderCommsPreview}
       />
     </div>

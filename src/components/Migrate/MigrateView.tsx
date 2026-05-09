@@ -11,6 +11,7 @@ import { FilterDrawer } from '../common/FilterDrawer'
 import { MigrateViewToggle } from './MigrateViewToggle'
 import { MigrateSortControl, type MigrateSortOption } from './MigrateSortControl'
 import { FilterDropdown } from '../common/FilterDropdown'
+import { SectorFilter, useSectorFilter, matchesSectorFilter } from '../common/SectorFilter'
 import {
   Search,
   X,
@@ -100,6 +101,7 @@ export const MigrateView: React.FC = () => {
   const [industryFilter, setIndustryFilter] = useState<string | null>(
     () => searchParams.get('industry') ?? null
   )
+  const sectorFilter = useSectorFilter()
 
   // Persisted store: hidden products + active layer/sub-category + view mode
   const {
@@ -469,6 +471,12 @@ export const MigrateView: React.FC = () => {
             const q = industryFilter.toLowerCase()
             if (!item.targetIndustries?.toLowerCase().includes(q)) return false
           }
+          // Sector filter (from ?sector= URL param — NAICS / PQC overlay codes)
+          if (
+            sectorFilter.length > 0 &&
+            !matchesSectorFilter(sectorFilter, item.targetIndustries ?? '')
+          )
+            return false
           // Vendor filter
           if (vendorFilter !== 'All' && item.vendorId !== vendorFilter) return false
           // Verification status filter
@@ -507,6 +515,7 @@ export const MigrateView: React.FC = () => {
     stepFilter,
     filterText,
     industryFilter,
+    sectorFilter,
     vendorFilter,
     verificationFilter,
     licenseFilter,
@@ -675,6 +684,12 @@ export const MigrateView: React.FC = () => {
         const q = industryFilter.toLowerCase()
         if (!item.targetIndustries?.toLowerCase().includes(q)) return false
       }
+      // Sector filter (from ?sector= URL param — NAICS / PQC overlay codes)
+      if (
+        sectorFilter.length > 0 &&
+        !matchesSectorFilter(sectorFilter, item.targetIndustries ?? '')
+      )
+        return false
       // Layer filter (from dropdown in flat modes)
       if (effectiveLayer !== 'All') {
         if (effectiveViewMode === 'cisaStack') {
@@ -726,6 +741,7 @@ export const MigrateView: React.FC = () => {
   }, [
     stepFilter,
     industryFilter,
+    sectorFilter,
     effectiveLayer,
     flatCategoryFilter,
     filterText,
@@ -1219,6 +1235,9 @@ export const MigrateView: React.FC = () => {
                 />
               </div>
             )}
+
+            {/* Sector filter — NAICS / PQC overlay multi-select */}
+            <SectorFilter />
 
             {/* Secondary filters drawer */}
             <FilterDrawer

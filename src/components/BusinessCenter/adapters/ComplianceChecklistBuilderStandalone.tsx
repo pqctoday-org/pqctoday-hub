@@ -266,6 +266,7 @@ export const ComplianceChecklistBuilderStandalone: React.FC = () => {
         sections={sections}
         onExport={handleExport}
         exportFilename="pqc-compliance-checklist"
+        exportFormats={['markdown', 'pdf']}
         renderPreview={previewRenderer}
       />
     </div>

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useCallback, useMemo, useRef } from 'react'
-import { Eye, Edit3 } from 'lucide-react'
+import { Eye, Edit3, Save, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -46,6 +46,7 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
   exportFormats = ['markdown'],
 }) => {
   const [mode, setMode] = useState<'edit' | 'preview'>('edit')
+  const [savedFlash, setSavedFlash] = useState(false)
   const [formData, setFormData] = useState<Record<string, Record<string, string | string[]>>>(
     () => {
       const initial: Record<string, Record<string, string | string[]>> = {}
@@ -87,9 +88,13 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
 
   const exportedRef = useRef(false)
 
-  // Reset the save guard when switching back to edit mode
+  // Reset the save guard when switching back to edit mode so the user can
+  // re-save after making changes.
   const handleSetMode = useCallback((m: 'edit' | 'preview') => {
-    if (m === 'edit') exportedRef.current = false
+    if (m === 'edit') {
+      exportedRef.current = false
+      setSavedFlash(false)
+    }
     setMode(m)
   }, [])
 
@@ -99,6 +104,15 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
       onExport(formData)
     }
   }, [onExport, formData])
+
+  // Explicit "Save to Command Center" — independent of which export-format
+  // button (markdown, pdf, …) the user clicks. Idempotent within a single
+  // form-edit session via `exportedRef`.
+  const handleSaveClick = useCallback(() => {
+    handleExport()
+    setSavedFlash(true)
+    setTimeout(() => setSavedFlash(false), 2000)
+  }, [handleExport])
 
   const exportMarkdown = useMemo(() => {
     if (renderPreview) return renderPreview(formData)
@@ -130,7 +144,7 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 flex-wrap">
         <Button
           variant={mode === 'edit' ? 'secondary' : 'ghost'}
           size="sm"
@@ -147,6 +161,18 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
           <Eye size={14} />
           <span className="ml-1.5">Preview</span>
         </Button>
+        {onExport && (
+          <Button
+            variant="gradient"
+            size="sm"
+            onClick={handleSaveClick}
+            className="ml-auto"
+            data-workshop-target="artifact-builder-save"
+          >
+            {savedFlash ? <Check size={14} /> : <Save size={14} />}
+            <span className="ml-1.5">{savedFlash ? 'Saved' : 'Save to Command Center'}</span>
+          </Button>
+        )}
       </div>
 
       {mode === 'edit' ? (

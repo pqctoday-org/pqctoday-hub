@@ -135,6 +135,16 @@ const TermsView = lazyWithRetry(() =>
     default: module.TermsView,
   }))
 )
+const EditorialIndependenceView = lazyWithRetry(() =>
+  import('./components/Editorial/EditorialIndependenceView').then((module) => ({
+    default: module.EditorialIndependenceView,
+  }))
+)
+const SponsorView = lazyWithRetry(() =>
+  import('./components/Sponsor/SponsorView').then((module) => ({
+    default: module.SponsorView,
+  }))
+)
 const ExploreView = lazyWithRetry(() =>
   import('./components/Explore/ExploreView').then((module) => ({
     default: module.ExploreView,
@@ -341,6 +351,22 @@ function App() {
         element={
           <ErrorBoundary>
             <TermsView />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="editorial-independence"
+        element={
+          <ErrorBoundary>
+            <EditorialIndependenceView />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="sponsor"
+        element={
+          <ErrorBoundary>
+            <SponsorView />
           </ErrorBoundary>
         }
       />

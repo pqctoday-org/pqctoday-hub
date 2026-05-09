@@ -22,6 +22,20 @@ import { buildWhatsNewRAGChunk } from '@/utils/dataFingerprint'
 import { useVersionStore } from '@/store/useVersionStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import type { PersonaId } from '@/data/learningPersonas'
+import { chunkToResource } from '@/services/search/chunkToResource'
+import { getTrustScore } from '@/data/trustScore/trustScoreData'
+import type { RAGChunk } from '@/types/ChatTypes'
+
+/**
+ * Resolve a RAG chunk's trust tier for inline citation chips (§14.3 step 4).
+ * Returns undefined when the chunk doesn't resolve to a scored resource —
+ * the citation then renders without a chip rather than showing a misleading tier.
+ */
+function tierForChunk(c: RAGChunk): ChatSourceRef['trustTier'] {
+  const ref = chunkToResource(c)
+  if (!ref) return undefined
+  return getTrustScore(ref.resourceType, ref.resourceId)?.tier
+}
 
 const STREAM_TIMEOUT_MS = 60_000
 const LOCAL_STREAM_TIMEOUT_MS = 120_000 // Local models may be slower
@@ -251,6 +265,7 @@ export function useChatSend() {
                     ? (c.metadata?.collection ?? 'document')
                     : c.source,
                 deepLink: c.deepLink,
+                trustTier: tierForChunk(c),
               }
             }
             continue
@@ -263,6 +278,7 @@ export function useChatSend() {
                 ? (c.metadata?.collection ?? 'document')
                 : c.source,
             deepLink: c.deepLink,
+            trustTier: tierForChunk(c),
           })
         }
 

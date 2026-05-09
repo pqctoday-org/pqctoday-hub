@@ -80,10 +80,8 @@ export function LandscapeTab({ type, onTypeChange, onNavigateToCswp39, ...landsc
       <ComplianceLandscape
         frameworks={frameworks}
         showDeadlineTimeline={false}
-        // Only the regulations slice carries CSWP.39 maturity links today —
-        // matches the legacy "compliance" tab behaviour.
-        maturityByRefId={type === 'regulations' ? maturityByRefId : undefined}
-        onNavigateToCswp39={type === 'regulations' ? onNavigateToCswp39 : undefined}
+        maturityByRefId={maturityByRefId}
+        onNavigateToCswp39={onNavigateToCswp39}
         {...landscape}
       />
     </div>

@@ -596,7 +596,7 @@ export const VendorScorecardBuilder: React.FC = () => {
         title="Vendor PQC Readiness — Export"
         exportData={exportMarkdown}
         filename="vendor-pqc-scorecard"
-        formats={['markdown']}
+        formats={['markdown', 'pdf']}
       >
         <p className="text-sm text-muted-foreground">
           Export the scorecard above as a shareable document. Includes observability tooling notes.

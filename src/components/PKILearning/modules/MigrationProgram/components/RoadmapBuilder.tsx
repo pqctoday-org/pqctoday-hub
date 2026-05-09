@@ -367,7 +367,7 @@ export const RoadmapBuilder: React.FC = () => {
         title="Roadmap Export"
         exportData={exportMarkdown}
         filename="pqc-migration-roadmap"
-        formats={['markdown']}
+        formats={['markdown', 'pdf']}
         onExport={handleExport}
       >
         <p className="text-sm text-muted-foreground">

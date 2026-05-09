@@ -1,8 +1,16 @@
-name: Sign revisions.jsonl
+name: Sign trust-engine artifacts
 
-# Runs after revisions.jsonl is appended on merge (by ci.yml's append-revision step).
-# Signs the updated file with the maintainer ML-DSA-65 attestation key and commits
-# the detached signature back to main.
+# Runs after trust-engine artifacts are updated on main and signs them with the
+# maintainer ML-DSA-65 attestation key, committing the detached signatures back.
+#
+# Covered artifacts (single source of truth: scripts/attestation/artifacts.ts):
+#   - public/data/revisions.jsonl                         (CI append on merge)
+#   - public/data/rag-corpus.json                         (build-time regen)
+#   - public/data/pqctoday-oscal.json                     (combined, from build)
+#   - public/data/pqctoday-oscal-governance.json          (governance subset)
+#   - public/data/pqctoday-oscal-full.json                (full inventory)
+#   - public/data/pqctoday-oscal-assessment-plan.json     (assessment-plan companion)
+#   - public/data/pqctoday-cbom.json                      (release tags only; optional)
 #
 # Required secret:
 #   ATTESTATION_PRIVATE_KEY_B64 — base64 of the JSON private-key file produced by
@@ -16,6 +24,12 @@ on:
     branches: [main]
     paths:
       - 'public/data/revisions.jsonl'
+      - 'public/data/rag-corpus.json'
+      - 'public/data/pqctoday-oscal.json'
+      - 'public/data/pqctoday-oscal-governance.json'
+      - 'public/data/pqctoday-oscal-full.json'
+      - 'public/data/pqctoday-oscal-assessment-plan.json'
+      - 'public/data/pqctoday-cbom.json'
   workflow_dispatch:
 
 permissions:
@@ -42,7 +56,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Sign revisions.jsonl
+      - name: Sign all trust-engine artifacts
         env:
           ATTESTATION_PRIVATE_KEY_B64: ${{ secrets.ATTESTATION_PRIVATE_KEY_B64 }}
         run: |
@@ -50,18 +64,18 @@ jobs:
             echo "::warning::ATTESTATION_PRIVATE_KEY_B64 secret not set — skipping signing"
             exit 0
           fi
-          npx tsx scripts/attestation/sign-revisions.ts
+          npm run trust-engine:sign
 
-      - name: Verify signature locally before commit
+      - name: Verify all signatures
         run: |
           if [ -f public/data/revisions.jsonl.sig ]; then
-            npx tsx scripts/attestation/verify-revisions.ts
+            npm run trust-engine:verify
           else
-            echo "No signature produced; nothing to verify."
+            echo "No signatures produced; nothing to verify."
           fi
 
-      - name: Commit signature
+      - name: Commit signatures
         uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7
         with:
-          commit_message: 'chore(trust-engine): sign revisions.jsonl [skip ci]'
-          file_pattern: 'public/data/revisions.jsonl.sig'
+          commit_message: 'chore(trust-engine): sign trust-engine artifacts [skip ci]'
+          file_pattern: 'public/data/*.sig'

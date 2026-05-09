@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useCallback, useMemo } from 'react'
-import { Wrench, ChevronDown, ChevronRight, Copy, Check, Save } from 'lucide-react'
+import { Wrench, ChevronDown, ChevronRight, Copy, Check, Save, FileType2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { markdownToPdf } from '@/services/export/pdfExport'
 import { cn } from '@/lib/utils'
 
 export interface ChecklistItem {
@@ -92,6 +93,11 @@ export const OpsChecklist: React.FC<OpsChecklistProps> = ({
     setTimeout(() => setSaved(false), 2000)
   }, [onSave, buildMarkdown, checkedItems])
 
+  const handleDownloadPdf = useCallback(async () => {
+    const filename = title.replace(/[^A-Za-z0-9-_ ]/g, '').trim() || 'checklist'
+    await markdownToPdf(buildMarkdown(), filename, title)
+  }, [buildMarkdown, title])
+
   return (
     <div
       className={cn(
@@ -121,6 +127,10 @@ export const OpsChecklist: React.FC<OpsChecklistProps> = ({
           <Button variant="outline" size="sm" onClick={handleCopyMarkdown}>
             {copied ? <Check size={14} /> : <Copy size={14} />}
             <span className="ml-1.5">{copied ? 'Copied' : 'Copy'}</span>
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleDownloadPdf}>
+            <FileType2 size={14} />
+            <span className="ml-1.5">.pdf</span>
           </Button>
           {onSave && (
             <Button variant="outline" size="sm" onClick={handleSave}>

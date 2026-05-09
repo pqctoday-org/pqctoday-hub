@@ -45,6 +45,7 @@ import { useApplicability } from '@/hooks/useApplicability'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { logComplianceFilter } from '../../utils/analytics'
 import { PageHeader } from '../common/PageHeader'
+import { ContentUpdatesFeed } from '@/components/ui/ContentUpdatesFeed'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { COMPLIANCE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { usePersonaStore } from '../../store/usePersonaStore'
@@ -1198,6 +1199,8 @@ export const ComplianceView = () => {
 
       <LearningFrameBanner />
       <GlossaryStrip />
+
+      <ContentUpdatesFeed domain="compliance" limit={5} title="Recent Compliance Revisions" />
 
       {exportError && (
         <div

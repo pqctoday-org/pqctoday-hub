@@ -1,0 +1,74 @@
+name: Classify PR change-type (FR-D-06)
+
+# Reads the PR's changed files + existing labels, runs the trust-engine
+# classifier (scripts/ci/classifyPr.ts), and:
+#   1. Posts/updates a sticky PR comment with the inferred classification.
+#   2. Auto-applies the inferred label when the classification is unambiguous
+#      (single label, no unclassified files).
+#
+# Closes FR-D-06 of the trust-engine PRD. The downstream consumer is
+# `append-revision.ts`, which reads PR labels to decide change_type/domain.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Collect PR metadata
+        id: meta
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Changed-file list — JSON array
+          CHANGED=$(gh pr diff ${{ github.event.pull_request.number }} --name-only \
+            | jq -R . | jq -sc .)
+          echo "changed_files=$CHANGED" >> "$GITHUB_OUTPUT"
+          # Existing labels — JSON array of names
+          LABELS=$(gh pr view ${{ github.event.pull_request.number }} \
+            --json labels --jq '[.labels[].name]')
+          echo "labels=$LABELS" >> "$GITHUB_OUTPUT"
+
+      - name: Run classifier
+        id: classify
+        env:
+          CHANGED_FILES_JSON: ${{ steps.meta.outputs.changed_files }}
+          PR_LABELS_JSON: ${{ steps.meta.outputs.labels }}
+        run: |
+          npx tsx scripts/ci/classify-pr-cli.ts
+
+      - name: Post or update sticky comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: trust-engine-change-classifier
+          message: ${{ steps.classify.outputs.comment }}
+
+      - name: Auto-apply unambiguous label
+        if: steps.classify.outputs.unambiguous == 'true' && steps.classify.outputs.inferred_labels != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr edit ${{ github.event.pull_request.number }} \
+            --add-label "${{ steps.classify.outputs.inferred_labels }}"

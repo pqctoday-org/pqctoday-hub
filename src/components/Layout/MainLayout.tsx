@@ -25,6 +25,8 @@ import {
   Search,
   ScrollText,
   UserCog,
+  GitMerge,
+  Layers,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { WhatsNewModal } from '../ui/WhatsNewModal'
@@ -174,6 +176,24 @@ export const MainLayout = () => {
       hiddenOnMobile: true,
       mobileMore: true,
       moreOrder: 8,
+    },
+    {
+      path: '/agility',
+      label: 'Agility',
+      icon: Layers,
+      section: 'journey',
+      hiddenOnMobile: true,
+      mobileMore: true,
+      moreOrder: 6,
+    },
+    {
+      path: '/revisions',
+      label: 'Revisions',
+      icon: GitMerge,
+      section: 'current',
+      hiddenOnMobile: true,
+      mobileMore: true,
+      moreOrder: 10,
     },
     {
       path: '/about',
@@ -538,6 +558,17 @@ export const MainLayout = () => {
             © 2025 PQC Today. Data sourced from the public internet resources.{' '}
             <Link to="/terms" className="underline hover:text-foreground transition-colors">
               Terms of Service
+            </Link>
+            {' · '}
+            <Link
+              to="/editorial-independence"
+              className="underline hover:text-foreground transition-colors"
+            >
+              Editorial Independence
+            </Link>
+            {' · '}
+            <Link to="/sponsor" className="underline hover:text-foreground transition-colors">
+              Sponsor
             </Link>
           </p>
           <p className="mt-1 text-xs text-muted-foreground">

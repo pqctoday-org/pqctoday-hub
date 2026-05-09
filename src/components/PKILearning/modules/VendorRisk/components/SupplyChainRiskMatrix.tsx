@@ -681,7 +681,7 @@ export const SupplyChainRiskMatrix: React.FC = () => {
         title="Supply Chain Risk Matrix — Export"
         exportData={exportMarkdown}
         filename="supply-chain-risk-matrix"
-        formats={['markdown']}
+        formats={['markdown', 'pdf']}
         onExport={handleExport}
       >
         <p className="text-sm text-muted-foreground">
