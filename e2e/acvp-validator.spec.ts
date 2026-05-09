@@ -1,14 +1,8 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
-  test.setTimeout(90000) // WASM load + ACVP exhaustive keys can take a while
-  // FIXME: depends on HSM phase advancing to 'session_open', which requires
-  // either UI interaction (init button) or a new __e2e_hsm_autoinit hook in
-  // HsmContext. The runTests() guard at HsmAcvpTesting.tsx:180 returns early
-  // if phase !== 'session_open', so the dispatched `e2e:trigger_acvp` event
-  // and the disabled "Execute ACVP Tests" button both no-op.
-  // Tracked as a pre-existing pre-T16 failure; needs an HsmContext hook.
-  test.fixme('validates ML-KEM and ML-DSA via direct ACVP execution trigger', async ({ page }) => {
+  test.setTimeout(120000) // WASM load + autoInit + ACVP exhaustive keys
+  test('validates ML-KEM and ML-DSA via direct ACVP execution trigger', async ({ page }) => {
     // Navigate to the playground sandbox route where ACVP testing mounts.
     // The HsmPlayground mounts the ACVP components.
     // We pass ?tab=acvp to ensure autoInit() triggers on mount for the test.
@@ -26,6 +20,25 @@ test.describe('ASR ACVP Cryptographic Algorithm Verification', () => {
 
     // Make sure the component is loaded before dispatching events
     await page.waitForSelector('text="SoftHSMv3 FIPS Validation Mode (ACVP)"', { timeout: 15000 })
+
+    // Advance HSM phase to 'session_open' via the e2e hook in HsmContext.
+    // The runTests() guard at HsmAcvpTesting.tsx returns early unless the
+    // session is open, so dispatching `e2e:trigger_acvp` would no-op without
+    // this. Wait for the hook to register first.
+    await page.waitForFunction(
+      () =>
+        typeof (window as unknown as { __e2e_hsm_autoinit?: unknown }).__e2e_hsm_autoinit ===
+        'function',
+      undefined,
+      { timeout: 10000 }
+    )
+    const ok = await page.evaluate(async () => {
+      const fn = (
+        window as unknown as { __e2e_hsm_autoinit?: (engine?: string) => Promise<boolean> }
+      ).__e2e_hsm_autoinit
+      return fn ? await fn('rust') : false
+    })
+    expect(ok, 'HSM autoInit failed').toBeTruthy()
 
     // Action: Programmatic State Dispatch
     // We dispatch custom E2E event periodically until the results state changes
