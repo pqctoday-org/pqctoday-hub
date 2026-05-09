@@ -71,6 +71,8 @@ OLLAMA_BASE = 'http://localhost:11434'
 DEFAULT_MODEL = 'qwen3.6:27b'
 
 TODAY = datetime.now().strftime('%m%d%Y')
+DEFAULT_MAX_CHARS = 12000
+_CURRENT_MAX_CHARS = DEFAULT_MAX_CHARS
 
 # ---------------------------------------------------------------------------
 # IR 8477 constants
@@ -132,7 +134,9 @@ class HTMLTextExtractor(HTMLParser):
         return '\n'.join(lines)
 
 
-def extract_text_from_html(html_path: Path, max_chars: int = 12000) -> str:
+def extract_text_from_html(html_path: Path, max_chars: int = 0) -> str:
+    if max_chars <= 0:
+        max_chars = _CURRENT_MAX_CHARS
     try:
         with open(html_path, 'r', encoding='utf-8', errors='ignore') as f:
             parser = HTMLTextExtractor()
@@ -156,7 +160,7 @@ def extract_text_from_pdf(pdf_path: Path, max_lines: int = 400) -> str:
         )
         if result.returncode == 0:
             lines = result.stdout.strip().split('\n')[:max_lines]
-            return '\n'.join(lines)[:12000]
+            return '\n'.join(lines)[:_CURRENT_MAX_CHARS]
     except FileNotFoundError:
         pass
     except Exception as e:
@@ -494,14 +498,21 @@ def build_known_ids_sample(library_records: list[dict], limit: int = 200) -> str
 
 
 def run_extraction(args: argparse.Namespace) -> None:
+    global _CURRENT_MAX_CHARS
+    _CURRENT_MAX_CHARS = args.max_chars
+
     library_records = load_library_records()
     existing_pairs = load_existing_xwalk_pairs()
 
-    out_path = OUTPUT_DIR / f'concept_xwalk_candidates_{TODAY}.csv'
+    if args.output:
+        out_path = Path(args.output)
+    else:
+        out_path = OUTPUT_DIR / f'concept_xwalk_candidates_{TODAY}.csv'
     if args.append and out_path.exists():
         print(f'Appending to existing candidate file: {out_path.name}')
     else:
         print(f'Writing candidates to: {out_path.name}')
+    print(f'Max chars per doc: {_CURRENT_MAX_CHARS}')
 
     candidate_pairs = load_candidate_pairs(out_path) if args.skip_existing else set()
     processed_sources = load_processed_sources(out_path) if args.skip_existing else set()
@@ -526,6 +537,11 @@ def run_extraction(args: argparse.Namespace) -> None:
         before = len(eligible)
         eligible = [r for r in eligible if r['reference_id'] not in processed_sources]
         print(f'Skipped {before - len(eligible)} already-processed sources')
+
+    # Apply --start-index (shard offset) before --limit
+    if args.start_index > 0:
+        eligible = eligible[args.start_index:]
+        print(f'Shard: skipping first {args.start_index} docs')
 
     # Apply --limit
     if args.limit > 0:
@@ -676,6 +692,12 @@ def main() -> None:
                         help='Append to existing candidate file instead of overwriting')
     parser.add_argument('--from-id', type=str, default='',
                         help='Comma-separated reference_ids to process (bypass limit)')
+    parser.add_argument('--start-index', type=int, default=0,
+                        help='Skip the first N eligible docs (0-based; for parallel sharding)')
+    parser.add_argument('--output', type=str, default='',
+                        help='Override output CSV path (default: src/data/concept_xwalk_candidates_TODAY.csv)')
+    parser.add_argument('--max-chars', type=int, default=DEFAULT_MAX_CHARS,
+                        help=f'Max chars extracted from each source doc (default: {DEFAULT_MAX_CHARS})')
     parser.add_argument('--model', type=str, default=DEFAULT_MODEL,
                         help=f'Ollama model (default: {DEFAULT_MODEL})')
     parser.add_argument('--verbose', action='store_true',
