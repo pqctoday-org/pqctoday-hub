@@ -4,6 +4,156 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.7.0] - 2026-05-09
+
+### Added
+
+#### Trust Engine — Plans 08–12 (IR 8477 trust paths, claims evidence, UI trust layer, persona filtering, OSCAL)
+
+- **Trust path traversal** (`src/utils/trustPathTraversal.ts`) — graph walk over
+  `concept_xwalks_*.csv` IR 8477 edges, producing `DerivedResult[]` with
+  per-hop `TrustPath` objects. Confidence propagation formula:
+  `sourceTierScore × relationshipMultiplier × (edgeConfidence / 100)`.
+  Traversal is persona-aware: relationship-type allowlists, per-persona
+  confidence thresholds, max derived-result caps, and optional 2-hop for
+  researcher persona. `not_related` edges are always excluded.
+
+- **`useApplicabilityWithPaths` hook** (`src/hooks/useApplicabilityWithPaths.ts`)
+  — wraps the existing `useApplicability` hook, calls `traverseXwalkPaths`,
+  and returns `{ directResults, derivedResults }`. Consumed by
+  `ApplicabilityPanel` and `ExecutiveTimelineView`, replacing the bare
+  `useApplicability` call.
+
+- **`TrustPathPopover` component** (`src/components/Compliance/TrustPathPopover.tsx`)
+  — "Why shown?" ghost-icon trigger that opens a `.glass-panel` popover
+  displaying source standard → relationship type → derived standard, evidence
+  quote, reviewer, review date, and colour-coded confidence score
+  (`text-status-success` ≥70, `text-status-warning` 40–69,
+  `text-status-error` <40). Wired into `ApplicabilityPanel` and
+  `ExecutiveTimelineView` derived-result sections.
+
+- **`derived` tier in `ApplicabilityTier`** — sixth tier appended after
+  `advisory`; renders after direct-match tiers in all persona lenses.
+  `ApplicabilityResult` gains an optional `trustPath?: TrustPath` field.
+
+- **Per-persona `trustPathConfig`** in `applicabilityLens.ts` — each persona
+  lens declares `allowedRelationships`, `confidenceThreshold`,
+  `maxDerivedResults`, and `twoHopEnabled`. Executive: subset_of /
+  superset_of / equivalent only, cap 5. Developer/architect/ops: all
+  relationship types, varying caps. Researcher: all types, 2-hop, cap 25.
+
+- **Timeline claims evidence** (`src/components/Timeline/TimelineEvidenceBadge.tsx`,
+  `scripts/backfill-timeline-confidence.ts`) — evidence badge on timeline
+  events surfacing the `confidence_score` from the timeline CSV.
+  `confidence_score` column added to `timeline_05092026.csv`. Badge uses
+  status-colour tokens (green ≥80, amber 50–79, red <50).
+
+- **UI trust layer — revision signals** (`src/components/ui/CitationTierChip.tsx`,
+  `RevisionDrilldownPanel.tsx`, `ReviewedBadge.tsx`, `GlobalRevisionsFeed.tsx`,
+  `ContentUpdatesFeed.tsx`, `src/hooks/useRevisions.ts`) — per-record
+  `CitationTierChip` shows authoritative / core / supporting / contextual tier
+  from `trusted_source_id`. `ReviewedBadge` surfaces latest reviewer +
+  verified date from `revisions.jsonl`. `RevisionDrilldownPanel` shows full
+  revision history for a resource. `GlobalRevisionsFeed` and
+  `ContentUpdatesFeed` list recent changes site-wide. `/revisions` route
+  registered in `App.tsx`.
+
+- **Vocab normalization — Plan 11** (`src/data/pqc-vocab-overlay.json`,
+  `scripts/normalize-vocab-tags.py`) — deterministic ISO 3166-1 alpha-2 /
+  NAICS 2-digit / NICE role-code normalization. `countries` and `industries`
+  columns in `compliance_05092026.csv` fully normalized to controlled
+  vocabulary. `region_scope` in `library_05092026_r2.csv` normalized.
+  `applicable_roles` in 79 `module-qa/*.csv` files normalized to
+  `PQC-ROLE-*` codes. `pqc-vocab-overlay.json` documents all PQC-specific
+  overlay codes (`PQC-REGION-*`, `PQC-SECTOR-*`, `PQC-ROLE-*`).
+
+- **Faceted filter components** (`src/components/common/GeoFilter.tsx`,
+  `SectorFilter.tsx`, `RoleFilter.tsx`) — ISO 3166 country multi-select,
+  NAICS group multi-select, and NICE work-role filter. All URL-persisted.
+  Wired into Library, Compliance, Migrate, and Learn views.
+
+- **OSCAL assessment-results export** (`scripts/generate-oscal.ts`,
+  `public/data/pqctoday-oscal.json`, `public/data/pqctoday-cbom.json`) —
+  generates SP 800-53A assessment-results OSCAL JSON from compliance CSV
+  and xwalk edges; generates a CycloneDX CBOM (Cryptography Bill of
+  Materials) from the algorithm and migrate CSVs. Both artifacts are
+  served at `/data/pqctoday-oscal.json` and `/data/pqctoday-cbom.json`.
+
+- **CM-G and CM-E validator gates** in `scripts/validators/trust-engine-checks.ts`
+  — CM-G checks that ≥80% of compliance/library records carry controlled-vocab
+  `countries`/`industries` tags; CM-E checks that ≥80% carry a
+  `confidence_score`. Both gate on Plan 11 normalization state and emit
+  WARNING until DS17 promotes them to ERROR.
+
+#### Data self-containment — Phase 1 foundations (DS01–DS04, DS09–DS13, DS18–DS20)
+
+- **Status-column schema** (DS01) — `csv-status-schema.md` (in priv) defines
+  the `status` / `deprecated_at` / `deprecated_reason` column trio. Default
+  `active`; backwards-compatible: rows without the column treated as active.
+  Rows are never deleted — obsolete rows are marked `status='deprecated'`.
+
+- **`loaderUtils.ts`** (DS02, `src/data/loaderUtils.ts`) — three shared
+  helpers: `filterActive<T>(rows)` (production view, drops deprecated),
+  `partitionByStatus<T>(rows)` (audit view, returns both buckets),
+  `isDeprecated(row)` (convenience check). Demonstrated in `vendorData.ts`
+  (Vendor type gains `status`, `deprecatedAt`, `deprecatedReason`). Other
+  13 loaders pick up the pattern during DS14 per-family backfill.
+
+- **CM-SC + CM-SC-MD validators** (DS03) — `self-containment-checks.ts`
+  detects records present in an older CSV version but absent from the latest
+  (638 CSV-row findings, 632 MD-file findings — all WARNING until DS17).
+  CM-STATUS validates that any row with a `status` column uses only
+  `active` / `deprecated` values.
+
+- **CM-VT-\* vocab-tag validators** (DS19) — six checks: CM-VT-COUNTRIES,
+  CM-VT-INDUSTRIES, CM-VT-REGION-SCOPE, CM-VT-THREAT-INDUSTRY, CM-VT-ROLES,
+  CM-STATUS. All wired into `validate-data-integrity.ts`. Current baseline:
+  countries/industries/threat-industry pass; region-scope 2 G7 findings;
+  roles 232 `legal` alias findings.
+
+- **CM-ORPHAN trust-path pre-flight** (DS20) — walks every CSV family with
+  status+deprecated columns and a `trusted_source_id` column; flags rows
+  whose `trusted_source_id` doesn't resolve to an active trusted source.
+  Severity ERROR if orphan rate >10%, else WARNING. Currently passes.
+
+- **`promote-cowork.ts` deletion audit** (DS09) — script refuses to silently
+  drop records present in production but absent from the cowork directory
+  unless `--force-drop` is passed explicitly; guides SMEs toward
+  `status='deprecated'` instead.
+
+- **`backfill-csv-self-containment.py`** (DS13) — generic dry-run + write
+  backfill tool; per-record manifest support; `--deprecate-restored`
+  bulk-mark; ID-column hints for 27 CSV families. Post-run re-normalize
+  hook via `run_normalizers()` (DS18).
+
+#### IR 8477 xwalk — r1 (916 edges)
+
+- **`concept_xwalks_05092026_r1.csv`** — 916 SME-reviewed edges (864
+  `intersects_with`, 21 `subset_of`, 14 `superset_of`, 13 `equivalent`);
+  5 `not_related` edges removed from earlier draft. Confidence: 373 high,
+  126 medium, 21 low. Covers CSWP 39 → FIPS 203/204/205, SP 800-131A,
+  RFC 9629, and broad inter-algorithm relationships across the full PQC
+  corpus.
+
+### Fixed
+
+- **SLH-DSA recall regression in golden-queries** — corpus growth to 10 360
+  chunks diluted SLH-DSA IDF scores; `algo-slh-dsa-*` chunks were never
+  indexed under the `"slh-dsa"` entity key because the baseName regex
+  (`/-\d+.*$/`) stripped `-128s` leaving `"slh-dsa-sha2"`. Two fixes:
+  (1) `UnifiedSearchService.indexEntity()` now pushes a 2-component root
+  alias (`"slh-dsa"`) for all algorithm source chunks with ≥3 hyphen
+  components; (2) `RetrievalService.search()` adds an algorithm-family
+  guarantee for `comparison` intent queries — ensures at least one
+  `algo-{family}` chunk per explicitly named family reaches the context
+  window, mirroring the existing library and timeline guarantees.
+
+- **`useChatSend` test failures after trust-engine refusal gate** —
+  `buildTrustRefusal` added to `useChatSend.ts` in Plan 10 was absent from
+  the Vitest `@/services/chat/RetrievalService` mock, causing a
+  `TypeError` before streaming that made 6 tests fail silently. Mock
+  updated: `buildTrustRefusal: vi.fn().mockReturnValue(null)`.
+
 ## [3.6.0] - 2026-05-07
 
 ### Added
