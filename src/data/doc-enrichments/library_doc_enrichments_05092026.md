@@ -12343,3 +12343,46 @@ enrichment_method: ollama-qwen3.6:27b
 - **Extraction Timestamp**: 2026-05-09T16:39:10
 
 ---
+
+## ETSI-TR-103-967
+
+- **Reference ID**: ETSI-TR-103-967
+- **Title**: Impact of Quantum Computing on Symmetric Cryptography
+- **Authors**: ETSI TC CYBER WG QSC
+- **Publication Date**: 2025-01-01
+- **Last Updated**: 2025-01-01
+- **Document Status**: Published
+- **Main Topic**: Updated analysis of the impact of quantum computing on symmetric cryptography including block ciphers, stream ciphers, hash functions, and MACs.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Grover's algorithm; Quantum collision finding; BHT algorithm; CNS algorithm; Simon's algorithm
+- **Migration Timeline Info**: Years mentioned: 2020, 2021, 2022, 2023, 2024, 2025
+- **Applicable Regions / Bodies**: Regions: United States, France, International, Bodies: NIST
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: Signal
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: 5G
+- **Standardization Bodies**: ETSI
+- **Compliance Frameworks Referenced**: FIPS 186 (DSS), NIST IR 8413 (FIPS 203/204/205 Background)
+- **Classical Algorithms Referenced**: AES; SHA-2; SHA-3
+- **Key Takeaways**: Grover's algorithm impacts symmetric algorithms by reducing effective security strength; Logical and physical costs for AES key recovery are analyzed using surface code assumptions; Quantum collision finding algorithms like BHT and CNS pose threats to hash functions; Simon's algorithm is discussed as another quantum threat vector; The document provides an overview of quantum error correction requirements for these attacks.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, Researcher, Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Threats, Algorithms, Assess
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: migration efforts should be focused on asymmetric cryptography
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: ETSI-TR-103-967.pdf (349,646 bytes, 11,317 extracted chars)
+- **Extraction Timestamp**: 2026-05-09T16:40:19
+
+---
