@@ -1,5 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react'
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import type { Pkcs11LogEntry } from '../../../wasm/softhsm'
 import {
@@ -235,6 +243,17 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     },
     [engineMode, addHsmLog]
   )
+
+  // E2E test hook: exposes autoInit on window so Playwright can advance the
+  // HSM phase to 'session_open' without driving the UI. Used by
+  // e2e/acvp-validator.spec.ts (the runTests() guard at HsmAcvpTesting.tsx
+  // returns early unless phase === 'session_open').
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // @ts-expect-error e2e hook augmenting global window
+      window.__e2e_hsm_autoinit = autoInit
+    }
+  }, [autoInit])
 
   const value = useMemo<HsmContextValue>(
     () => ({
