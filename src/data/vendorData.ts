@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { Vendor } from '../types/MigrateTypes'
 import { loadLatestCSV } from './csvUtils'
+import { filterActive } from './loaderUtils'
 
 // Glob import to find all matching vendor CSV files
 const modules = import.meta.glob('./vendors_*.csv', {
@@ -30,6 +31,10 @@ interface RawVendorRow {
   data_quality_notes?: string
   trusted_source_id?: string
   peer_reviewed?: string
+  // DS01 status-column schema (added by DS14 backfill)
+  status?: string
+  deprecated_at?: string
+  deprecated_reason?: string
 }
 
 const { data: allVendors, metadata } = loadLatestCSV<RawVendorRow, Omit<Vendor, 'productCount'>>(
@@ -56,11 +61,19 @@ const { data: allVendors, metadata } = loadLatestCSV<RawVendorRow, Omit<Vendor, 
     dataQualityNotes: row.data_quality_notes || undefined,
     trustedSourceId: row.trusted_source_id || undefined,
     peerReviewed: (row.peer_reviewed?.toLowerCase() as Vendor['peerReviewed']) || undefined,
+    // DS01 status-column schema — null/undefined means pre-DS01 row (treated as active)
+    status: row.status as 'active' | 'deprecated' | 'obsolete' | undefined,
+    deprecatedAt: row.deprecated_at || undefined,
+    deprecatedReason: row.deprecated_reason || undefined,
   })
 )
 
-/** Vendor lookup map: vendorId → Vendor */
-export const vendorMap: Map<string, Vendor> = allVendors.reduce((map, vendor) => {
+// DS02: filter out deprecated/obsolete rows by default. Cross-ref resolvers
+// or audit views can import { partitionByStatus } and access both sets.
+const activeVendors = filterActive(allVendors)
+
+/** Vendor lookup map: vendorId → Vendor (active only) */
+export const vendorMap: Map<string, Vendor> = activeVendors.reduce((map, vendor) => {
   map.set(vendor.vendorId, { ...vendor, productCount: 0 })
   return map
 }, new Map<string, Vendor>())
