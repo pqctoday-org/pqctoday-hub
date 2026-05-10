@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { PatentItem } from '@/types/PatentTypes'
 import { logPatentSearch, logPatentView } from '@/utils/analytics'
+import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -167,12 +168,19 @@ export function PatentSearchPanel({ patents, onSelectPatent }: PatentSearchPanel
     }
   }, [debouncedQuery])
 
+  // Phase 3 — semantic supplement layered on top of MiniSearch.
+  // MiniSearch (fuzzy + prefix) remains the floor; semantic hits are
+  // unioned in so claim-language queries ("formally verified
+  // post-quantum key exchange") surface relevant prior art whose
+  // wording differs from the user's phrasing.
+  const semantic = useSemanticSearch('patents', debouncedQuery, { limit: 30 })
+
   // Search
   const results = useMemo<PatentSearchResult[]>(() => {
     const q = debouncedQuery.trim()
     if (!q || q.length < 2) return []
     const raw = index.search(q).slice(0, 30)
-    return raw
+    const lexical = raw
       .map((r) => {
         const patent = patentMap.get(r.id as string)
         if (!patent) return null
@@ -183,7 +191,23 @@ export function PatentSearchPanel({ patents, onSelectPatent }: PatentSearchPanel
         } satisfies PatentSearchResult
       })
       .filter(Boolean) as PatentSearchResult[]
-  }, [debouncedQuery, index, patentMap])
+
+    // Append semantic-only hits the lexical pass missed.
+    if (semantic.mode !== 'semantic' || semantic.hits.length === 0) return lexical
+    const seen = new Set(lexical.map((r) => r.patent.patentNumber))
+    const semanticOnly: PatentSearchResult[] = []
+    for (const hit of semantic.hits) {
+      if (seen.has(hit.id)) continue
+      const patent = patentMap.get(hit.id)
+      if (!patent) continue
+      semanticOnly.push({
+        patent,
+        score: hit.score,
+        matchedFields: ['semantic'],
+      })
+    }
+    return [...lexical, ...semanticOnly].slice(0, 30)
+  }, [debouncedQuery, index, patentMap, semantic.mode, semantic.hits])
 
   const showEmpty = debouncedQuery.trim().length >= 2 && results.length === 0 && !isBuilding
   const showResults = results.length > 0
