@@ -5,9 +5,20 @@
  *
  * Offline generator. Clusters Authoritative-tier chunks (library /
  * compliance / timeline with a populated `metadata.trustedSourceId`) by
- * topic via k-means, then within each cluster surfaces pairs whose
- * authors disagree — semantically distant claims from different
- * trusted sources on the same topic.
+ * topic via k-means, then within each cluster surfaces *cross-source
+ * candidate pairs* — chunks from different trusted sources whose
+ * embeddings sit in the same topic cluster but diverge linguistically
+ * (cosine below threshold).
+ *
+ * IMPORTANT: cross-source ≠ contradiction. The algorithm has no way to
+ * distinguish "two agencies disagree on the technical substance" from
+ * "two agencies publish jurisdiction-local guidance covering the same
+ * topic" (e.g. ANSSI/FR vs NSA/US issuing region-specific PQC mandates
+ * that happen to align on substance). Both produce cross-source pairs.
+ *
+ * The output is therefore a *candidate queue for SME review*, not a
+ * list of declared contradictions. SMEs decide which pairs back a real
+ * counter-claim and which are jurisdictional duplication.
  *
  * Algorithm (matches plan §2.2 with one simplification — the trusted
  * source is read from chunk metadata, no xref CSV load needed):
