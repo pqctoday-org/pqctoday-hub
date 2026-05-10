@@ -42,6 +42,8 @@
     "generate-cbom:dry": "tsx scripts/generate-cbom.ts --dry-run",
     "generate-oscal": "tsx scripts/generate-oscal.ts",
     "generate-oscal:dry": "tsx scripts/generate-oscal.ts --dry-run",
+    "generate-embeddings": "tsx scripts/build-embedding-index.ts",
+    "generate-embeddings:dry": "tsx scripts/build-embedding-index.ts --dry-run",
     "normalize-vocab": "tsx scripts/ci/normalize-vocab-tags.ts",
     "normalize-vocab:dry": "tsx scripts/ci/normalize-vocab-tags.ts --dry-run",
     "trust-engine:sign": "tsx scripts/attestation/sign-all.ts",
@@ -62,6 +64,7 @@
     "uuid": "^14.0.0"
   },
   "dependencies": {
+    "@huggingface/transformers": "^4.2.0",
     "@mlc-ai/web-llm": "^0.2.81",
     "@noble/curves": "^2.0.1",
     "@noble/hashes": "^2.0.1",

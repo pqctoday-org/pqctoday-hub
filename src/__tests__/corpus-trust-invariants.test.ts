@@ -17,6 +17,7 @@
  */
 import { describe, it, expect } from 'vitest'
 import fs from 'fs'
+import { createHash } from 'node:crypto'
 import path from 'path'
 
 import { chunkToResource } from '@/services/search/chunkToResource'
@@ -250,6 +251,63 @@ describe('corpus trust invariants — PROV chain (C4)', () => {
       failures.length,
       `source_doc references ${failures.length} missing files (allowed ${MAX_MISSING_SOURCE_DOCS}); first 5:\n${failures.slice(0, 5).join('\n')}`
     ).toBeLessThanOrEqual(MAX_MISSING_SOURCE_DOCS)
+  })
+})
+
+describe('corpus trust invariants — embedding coverage (T16)', () => {
+  // Local-only build per embedding-optimization.md §6.1: this test runs in
+  // CI but reads the committed artifact rather than regenerating it. If the
+  // artifact doesn't exist yet (e.g. on a feature branch before the first
+  // generate-embeddings run), the assertions self-skip so the gate becomes
+  // active automatically when the artifact lands.
+
+  const META_PATH = path.join(REPO_ROOT, 'public/data/embeddings-meta.json')
+  const BIN_PATH = path.join(REPO_ROOT, 'public/data/embeddings.bin')
+
+  function loadMetaOrSkip(): {
+    byteOffsets: Record<string, number>
+    chunkCount: number
+    dimensions: number
+    corpusHash: string
+  } | null {
+    if (!fs.existsSync(META_PATH)) return null
+    try {
+      return JSON.parse(fs.readFileSync(META_PATH, 'utf8'))
+    } catch {
+      return null
+    }
+  }
+
+  it('every corpus chunk has an entry in embeddings-meta.json byteOffsets', () => {
+    const meta = loadMetaOrSkip()
+    if (!meta) return // artifact not yet generated; skip
+    const corpus = loadCorpus()
+    const missing: string[] = []
+    for (const chunk of corpus) {
+      if (meta.byteOffsets[chunk.id] === undefined) {
+        if (missing.length < 5) missing.push(chunk.id)
+      }
+    }
+    expect(
+      missing,
+      `${missing.length}+ corpus chunks have no embedding entry; first 5:\n${missing.join('\n')}`
+    ).toEqual([])
+  })
+
+  it('embeddings.bin length matches meta.chunkCount × dimensions × 4 bytes', () => {
+    const meta = loadMetaOrSkip()
+    if (!meta || !fs.existsSync(BIN_PATH)) return // artifact not yet generated; skip
+    const expected = meta.chunkCount * meta.dimensions * 4
+    const actual = fs.statSync(BIN_PATH).size
+    expect(actual).toBe(expected)
+  })
+
+  it('embeddings-meta corpusHash matches current rag-corpus.json sha256', () => {
+    const meta = loadMetaOrSkip()
+    if (!meta) return
+    const corpusBuf = fs.readFileSync(path.join(REPO_ROOT, 'public/data/rag-corpus.json'))
+    const actualHash = createHash('sha256').update(corpusBuf).digest('hex')
+    expect(meta.corpusHash).toBe(actualHash)
   })
 })
 
