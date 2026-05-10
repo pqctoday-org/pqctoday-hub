@@ -23069,3 +23069,381 @@ enrichment_method: ollama-qwen3.6:27b
 - **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
 
 ---
+
+## draft-ietf-pquip-pqt-hybrid-terminology
+
+- **Reference ID**: draft-ietf-pquip-pqt-hybrid-terminology
+- **Title**: draft-ietf-pquip-pqt-hybrid-terminology
+- **Authors**: IETF
+- **Publication Date**: 2025-06-13
+- **Last Updated**: 2025-06-13
+- **Document Status**: Active
+- **Main Topic**: This document defines terminology for post-quantum traditional hybrid schemes to ensure consistency and clarity across different protocols, standards, and organizations.
+- **PQC Algorithms Covered**: ML-KEM, ML-DSA
+- **Quantum Threats Addressed**: Shor's Algorithm, Cryptographically Relevant Quantum Computer (CRQC)
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Flo Driscoll, Michael Parsons, Britta Hale
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: Internet Engineering Task Force (IETF), National Institute of Standards and Technology (NIST), European Telecommunications Standards Institute (ETSI)
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA, Elliptic Curve Diffie-Hellman (ECDH)
+- **Key Takeaways**: Hybrid schemes combine post-quantum and traditional algorithms to mitigate risks during transition or as a general solution; The term hybrid is well-established in the PQC community despite potential overloading with encryption scheme terminology; Traditional algorithms are defined as those based on integer factorization, finite-field discrete logarithms, or elliptic-curve discrete logarithms; Post-quantum algorithms are designed to be secure against adversaries with access to a Cryptographically Relevant Quantum Computer (CRQC)
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Post-Quantum Traditional (PQ/T) hybrid scheme, multi-algorithm scheme, single-algorithm scheme
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, Developer, Researcher
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: hybrid-crypto, Algorithms, Threats, migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: draft-ietf-pquip-pqt-hybrid-terminology.html (76,501 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-10T13:49:22
+
+---
+
+## draft-ietf-tls-semistatic-dh
+
+- **Reference ID**: draft-ietf-tls-semistatic-dh
+- **Title**: draft-ietf-tls-semistatic-dh
+- **Authors**: IETF
+- **Publication Date**: 2020-09-08
+- **Last Updated**: 2020-09-08
+- **Document Status**: Active
+- **Main Topic**: This document describes a mode of TLS 1.3 in which one or both endpoints have a certified Diffie-Hellman key used to authenticate the exchange.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Eric Rescorla; Nick Sullivan; Christopher A. Wood
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS 1.3; SIGMA
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: Diffie-Hellman
+- **Key Takeaways**: TLS 1.3 currently uses a signed Diffie-Hellman exchange modelled after SIGMA; This design suits endpoints with certified signing keys; The document proposes a mode where endpoints use certified DH keys for authentication; The draft status is expired and no longer active
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: tls-basics; crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: draft-ietf-tls-semistatic-dh.html (43,827 bytes, 3,150 extracted chars)
+- **Extraction Timestamp**: 2026-05-10T13:52:09
+
+---
+
+## RFC-9146
+
+- **Reference ID**: RFC-9146
+- **Title**: RFC 9146
+- **Authors**: IETF
+- **Publication Date**: 2022-03-18
+- **Last Updated**: 2022-03-18
+- **Document Status**: Active
+- **Main Topic**: This document specifies the Connection ID (CID) construct for the Datagram Transport Layer Security (DTLS) protocol version 1.2 to assist in selecting security associations when IP addresses or ports change.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: E. Rescorla (Editor, Mozilla); H. Tschofenig (Editor, Arm Limited); T. Fossati (Arm Limited); A. Kraus (Bosch.IO GmbH)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: DTLS 1.2, TLS 1.3
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: Internet Engineering Task Force (IETF), Internet Engineering Steering Group (IESG)
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: Block Ciphers, AEAD Ciphers, Message Authentication Code (MAC)
+- **Key Takeaways**: The CID construct allows DTLS 1.2 sessions to persist despite NAT rebinding or IP/port changes by using an identifier in the record layer header; The specification introduces a new ciphertext record format that includes content type encryption and record layer padding to obfuscate plaintext length; Implementations must negotiate CID usage via the connection_id extension and handle variable-length CIDs by ensuring self-delineating values if lengths vary; The MAC calculation is modified for records carrying a CID to separate them from standard DTLS records, using a specific sequence number placeholder and content type; Plaintext records remain unchanged and do not utilize the new CID-enhanced format or content type.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: CID length up to 2^8-1 bytes; DTLSInnerPlaintext length must not exceed 2^14 bytes
+- **Target Audience**: Developer, Security Architect
+- **Implementation Prerequisites**: Familiarity with DTLS 1.2 [RFC6347]; Support for TLS 1.3 presentation language [RFC8446]; Ability to handle variable-length CIDs or fixed-length compile-time constants
+- **Relevant PQC Today Features**: tls-basics, iot-ot-pqc
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Addresses Internet of Things (IoT) devices entering extended sleep periods to increase battery lifetime
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Updates RFC 6347; Requires negotiation of connection_id extension; No dedicated CID update message for mid-session changes in DTLS 1.2
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: RFC-9146.html (85,690 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-10T13:55:03
+
+---
+
+## RFC-7924
+
+- **Reference ID**: RFC-7924
+- **Title**: RFC 7924
+- **Authors**: IETF
+- **Publication Date**: 2018-12-20
+- **Last Updated**: 2018-12-20
+- **Document Status**: Active
+- **Main Topic**: Defines a TLS extension allowing clients to inform servers of cached certificate and CA information to reduce handshake size.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: S. Santesson; H. Tschofenig
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: Transport Layer Security (TLS); Datagram Transport Layer Security (DTLS)
+- **Infrastructure Layers**: PKI
+- **Standardization Bodies**: Internet Engineering Task Force (IETF); Internet Engineering Steering Group (IESG)
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: SHA-256
+- **Key Takeaways**: The extension reduces TLS handshake size by omitting static information like server certificates and CA lists; It is particularly beneficial for low bandwidth and lossy radio environments such as IoT devices using IEEE 802.15.4 or Bluetooth Low Energy; Clients send fingerprints of cached data to allow servers to verify if cached information is current; New hash algorithms for this extension must have collision resistance no worse than SHA-256; The extension is compatible with raw public key extensions defined in RFC 7250
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: Server software must implement the cached_info extension; Policy must allow the use of the extension; Server must be able to select appropriate certificate or SubjectPublicKeyInfo from received hash value
+- **Relevant PQC Today Features**: tls-basics; iot-ot-pqc; crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Suitable for devices connected to networks with low bandwidth and lossy radio technology; Applicable to Internet of Things environments using IEEE 802.15.4, Bluetooth Low Energy, or low power wide area networks
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: RFC-7924.html (50,667 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-10T13:58:48
+
+---
+
+## RFC-8478
+
+- **Reference ID**: RFC-8478
+- **Title**: RFC 8478
+- **Authors**: IETF
+- **Publication Date**: 2019-07-19
+- **Last Updated**: 2019-07-19
+- **Document Status**: Active
+- **Main Topic**: This document defines the Zstandard data compression mechanism and registers the application/zstd media type for MIME transport.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Y. Collet; M. Kucherawy
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: MIME
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: Internet Engineering Task Force (IETF); Internet Engineering Steering Group (IESG)
+- **Compliance Frameworks Referenced**: BCP 78
+- **Classical Algorithms Referenced**: xxHash-64; XXH64
+- **Key Takeaways**: Zstandard is a lossless data compression mechanism independent of CPU type and operating system; The document registers the application/zstd media type for transporting compressed content via MIME; Compliant decompressors must handle at least one working set of parameters and produce non-ambiguous error codes for unsupported parameters; The format supports streaming operations and optional xxHash-64 checksums for data corruption detection
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: Magic_Number 4 bytes; Frame_Header 2-14 bytes; Content_Checksum 0-4 bytes
+- **Target Audience**: Developer
+- **Implementation Prerequisites**: Basic background in programming at the level of bits and other primitive data representations
+- **Relevant PQC Today Features**: None detected
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: RFC-8478.html (134,333 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-10T14:02:23
+
+---
+
+## RFC-8447
+
+- **Reference ID**: RFC-8447
+- **Title**: RFC 8447
+- **Authors**: IETF
+- **Publication Date**: 2020-03-10
+- **Last Updated**: 2020-03-10
+- **Document Status**: Active
+- **Main Topic**: This document describes changes to TLS and DTLS IANA registries, including adding notes, changing registration policies, and aligning with RFC 8126, motivated by the TLS 1.3 development process.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: J. Salowey; S. Turner
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS; DTLS; TLS 1.3
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IETF; IANA; IESG
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: IANA registries for TLS and DTLS have been updated to align with RFC 8126 terminology and registration policies; A "Recommended" column has been added to many TLS registries to indicate parameters generally recommended for implementation support; The registration policy for TLS ExtensionType Values has changed to Specification Required with a reserved range for Private Use; Registry names have been prepended with "TLS" for consistency across related registries
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect; Standards Engineer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: tls-basics; crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: RFC-8447.html (66,002 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-10T14:05:51
+
+---
+
+## RFC-8126
+
+- **Reference ID**: RFC-8126
+- **Title**: RFC 8126
+- **Authors**: IETF
+- **Publication Date**: 2019-07-05
+- **Last Updated**: 2019-07-05
+- **Document Status**: Active
+- **Main Topic**: Guidelines for writing IANA Considerations sections in RFCs to ensure clear documentation for registry management and value assignments.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: M. Cotton, B. Leiba, T. Narten
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: IP, MIME
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IETF, IANA, IESG
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Place all IANA action instructions in a dedicated IANA Considerations section; Keep technical documentation separate from IANA instructions; Specify clear registration policies and change control for new registries; Use designated experts for reviews when required by policy; Consult document shepherds or Area Directors for registration issues
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer, Security Architect, Compliance Officer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: compliance-strategy, migration-program, pqc-governance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: RFC-8126.html (147,605 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-10T14:09:05
+
+---
+
+## RFC-7159
+
+- **Reference ID**: RFC-7159
+- **Title**: RFC 7159
+- **Authors**: IETF
+- **Publication Date**: 2020-01-21
+- **Last Updated**: 2020-01-21
+- **Document Status**: Active
+- **Main Topic**: This document defines the JavaScript Object Notation (JSON) data interchange format, removing inconsistencies with previous specifications and providing interoperability guidance.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: T. Bray (Editor)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: Internet Engineering Task Force (IETF); Internet Engineering Steering Group (IESG)
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: JSON is a lightweight, text-based, language-independent data interchange format derived from ECMAScript; Implementations should ensure object member names are unique to guarantee interoperability; Software should not depend on the ordering of object members as parsers may differ; Numeric values should stay within IEEE 754-2008 binary64 range to avoid interoperability issues; Leading zeros are not allowed in JSON numbers.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: None detected
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: RFC-7159.html (43,144 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-10T14:12:38
+
+---
+
+## draft-ietf-lamps-dilithium-certificates
+
+- **Reference ID**: draft-ietf-lamps-dilithium-certificates
+- **Title**: draft-ietf-lamps-dilithium-certificates
+- **Authors**: IETF
+- **Publication Date**: 2025-10-30
+- **Last Updated**: 2025-10-30
+- **Document Status**: Active
+- **Main Topic**: This document specifies the conventions and algorithm identifiers for using the Module-Lattice-Based Digital Signature Algorithm (ML-DSA) in Internet X.509 certificates and Certificate Revocation Lists.
+- **PQC Algorithms Covered**: ML-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: X.509
+- **Infrastructure Layers**: PKI
+- **Standardization Bodies**: IETF, NIST
+- **Compliance Frameworks Referenced**: FIPS 204
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Conforming CA implementations must use specific NIST-registered OIDs for ML-DSA signatures in certificates and CRLs; The parameters component for ML-DSA algorithm identifiers must be absent; Only the pure variant of ML-DSA is specified, excluding the pre-hash variant; ML-DSA public keys are encoded as raw byte strings within the subjectPublicKey BIT STRING field; The seed format is recommended for encoding ML-DSA private keys outside of an Asymmetric Key Package.
+- **Security Levels & Parameters**: ML-DSA-44, ML-DSA-65, ML-DSA-87, NIST PQC security categories 2, 3, and 5
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: ML-DSA-44 public key size 1312 bytes; ML-DSA-65 public key size 1952 bytes; ML-DSA-87 public key size 2592 bytes
+- **Target Audience**: Security Architect, Developer, Compliance Officer
+- **Implementation Prerequisites**: Support for ASN.1 DER encoding; Recognition of specific ML-DSA OIDs by client implementations
+- **Relevant PQC Today Features**: Algorithms, pki-workshop, compliance-strategy, migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Private Key Consistency Testing
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: draft-ietf-lamps-dilithium-certificates.html (266,017 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-10T14:16:11
+
+---

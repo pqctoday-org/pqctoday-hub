@@ -173,7 +173,7 @@ export const EmbedLayout = () => {
     algorithms: { label: 'Algorithms', icon: Shield, basePath: '/algorithms' },
     library: { label: 'Library', icon: BookOpen, basePath: '/library' },
     threats: { label: 'Threats', icon: AlertTriangle, basePath: '/threats' },
-    leaders: { label: 'Leaders', icon: Users, basePath: '/leaders' },
+    leaders: { label: 'Community', icon: Users, basePath: '/leaders' },
     compliance: { label: 'Compliance', icon: ClipboardCheck, basePath: '/compliance' },
     assess: { label: 'Assess', icon: ClipboardCheck, basePath: '/assess' },
     migrate: { label: 'Migrate', icon: ArrowRightLeft, basePath: '/migrate' },

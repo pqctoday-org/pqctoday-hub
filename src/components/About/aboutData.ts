@@ -112,8 +112,8 @@ export const DISCUSSIONS = [
   {
     number: 116,
     icon: Trophy,
-    label: 'Leaders',
-    description: 'I consent to be added as a PQC leader',
+    label: 'Community',
+    description: 'I consent to be listed in the PQC Community',
     url: 'https://github.com/pqctoday-org/pqctoday-hub/discussions/new?category=i-consent-to-be-added-as-a-pqc-leader',
   },
   {

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
+import clsx from 'clsx'
 import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -24,7 +25,6 @@ import { EmptyState } from '../ui/empty-state'
 import { CountryFlag } from '../common/CountryFlag'
 import { LeaderCard } from './LeaderCard'
 import { LeadersTable } from './LeadersTable'
-import { LeaderDetailPopover } from './LeaderDetailPopover'
 import { LeaderCategorySidebar, LEADER_CATEGORIES } from './LeaderCategorySidebar'
 import { FLAG_CODE_MAP, LEADERS_REGION_COUNTRIES } from './leadersConstants'
 import { LeadersViewToggle } from './LeadersViewToggle'
@@ -166,7 +166,7 @@ export const LeadersGrid = () => {
   const [sortBy, setSortBy] = useState<LeaderSortOption>(
     () => (searchParams.get('sort') as LeaderSortOption | null) ?? 'name'
   )
-  const [selectedLeader, setSelectedLeader] = useState<Leader | null>(null)
+  const [expandedLeaderId, setExpandedLeaderId] = useState<string | null>(null)
   const [isConsentModalOpen, setIsConsentModalOpen] = useState(false)
   const [isRemovalModalOpen, setIsRemovalModalOpen] = useState(false)
   const gridRef = useRef<HTMLDivElement>(null)
@@ -223,7 +223,7 @@ export const LeadersGrid = () => {
           setSearchQuery('')
         } else {
           // Leader doesn't exist in database at all
-          setNotFoundMessage(`"${highlightedLeader}" was not found in the leaders database.`)
+          setNotFoundMessage(`"${highlightedLeader}" was not found in the Community list.`)
           setHighlightedLeader(null)
           setTimeout(() => setNotFoundMessage(null), 4000)
         }
@@ -391,46 +391,48 @@ export const LeadersGrid = () => {
     logEvent('Leaders', 'Filter Category', category)
   }
 
-  const openDetail = (leader: Leader) => setSelectedLeader(leader)
+  const toggleDetail = (leader: Leader) =>
+    setExpandedLeaderId((prev) => (prev === leader.id ? null : leader.id))
+  const closeDetail = () => setExpandedLeaderId(null)
 
   return (
     <div className="space-y-6">
       <PageHeader
         icon={Users}
         pageId="leaders"
-        title="Transformation Leaders"
-        description="Visionaries and organizations driving the global transition to Post-Quantum Cryptography."
+        title="Community"
+        description="People contributing to the advances of post-quantum cryptography."
         dataSource={
           leadersMetadata
             ? `${leadersMetadata.filename} • Updated: ${leadersMetadata.lastUpdate.toLocaleDateString()}`
             : undefined
         }
         viewType="Leaders"
-        shareTitle="PQC Industry Leaders — Organizations Driving Post-Quantum Adoption"
-        shareText="Meet the visionaries and organizations driving the global transition to post-quantum cryptography."
+        shareTitle="PQC Community — People Contributing to the Advances of Post-Quantum Cryptography"
+        shareText="Meet the people contributing to the advances of post-quantum cryptography."
         onExport={handleExportCsv}
         endorseUrl={buildEndorsementUrl({
           category: 'leader-endorsement',
-          title: 'Endorse: PQC Transformation Leaders',
+          title: 'Endorse: PQC Community',
           resourceType: 'Leaders Page',
-          resourceId: 'Transformation Leaders',
+          resourceId: 'PQC Community',
           resourceDetails:
-            '**Page:** Transformation Leaders — Visionaries and organizations driving the global transition to Post-Quantum Cryptography.',
+            '**Page:** PQC Community — People contributing to the advances of post-quantum cryptography.',
           pageUrl: '/leaders',
         })}
-        endorseLabel="Leaders Page"
-        endorseResourceType="Leaders"
+        endorseLabel="Community Page"
+        endorseResourceType="Community"
         flagUrl={buildFlagUrl({
           category: 'leader-endorsement',
-          title: 'Flag: PQC Transformation Leaders',
+          title: 'Flag: PQC Community',
           resourceType: 'Leaders Page',
-          resourceId: 'Transformation Leaders',
+          resourceId: 'PQC Community',
           resourceDetails:
-            '**Page:** Transformation Leaders — Visionaries and organizations driving the global transition to Post-Quantum Cryptography.',
+            '**Page:** PQC Community — People contributing to the advances of post-quantum cryptography.',
           pageUrl: '/leaders',
         })}
-        flagLabel="Leaders Page"
-        flagResourceType="Leaders"
+        flagLabel="Community Page"
+        flagResourceType="Community"
       />
 
       {/* Curious user intro context */}
@@ -440,9 +442,10 @@ export const LeadersGrid = () => {
           <div className="space-y-0.5">
             <span className="font-semibold text-foreground">Who are these people?</span>
             <p className="text-muted-foreground text-xs">
-              These are the researchers, executives, and organizations leading the global transition
-              to quantum-safe cryptography. They set standards, build products, and shape government
-              policy. Use the filters above to explore by region, sector, or category.
+              These are the researchers, engineers, and policymakers contributing to the advances of
+              post-quantum cryptography — authoring algorithms and standards, shipping
+              implementations, and shaping government policy. Use the filters above to explore by
+              region, sector, or category.
             </p>
           </div>
         </div>
@@ -458,7 +461,7 @@ export const LeadersGrid = () => {
           }}
           className="gap-2 text-sm"
         >
-          <Award size={16} className="text-primary" />I consent to be added as a PQC Leader
+          <Award size={16} className="text-primary" />I consent to be listed in the PQC Community
         </Button>
         <Button
           variant="ghost"
@@ -553,12 +556,12 @@ export const LeadersGrid = () => {
               aria-hidden="true"
             />
             <label htmlFor="leader-search" className="sr-only">
-              Search leaders by name or title
+              Search community by name or title
             </label>
             <input
               id="leader-search"
               type="text"
-              placeholder="Search leaders..."
+              placeholder="Search community..."
               value={searchQuery}
               onChange={(e) => {
                 const q = e.target.value
@@ -620,7 +623,7 @@ export const LeadersGrid = () => {
       {/* Results count + active filter badge */}
       <div className="flex items-center gap-2 flex-wrap">
         <p className="text-xs text-muted-foreground">
-          {filteredLeaders.length} leader{filteredLeaders.length !== 1 ? 's' : ''}
+          {filteredLeaders.length} {filteredLeaders.length === 1 ? 'person' : 'people'}
           {activeCategory !== 'All' && ` in ${activeCategory}`}
         </p>
         {activeFilterCount > 0 && (
@@ -659,7 +662,7 @@ export const LeadersGrid = () => {
       {filteredLeaders.length === 0 && (
         <EmptyState
           icon={<Users size={32} />}
-          title="No leaders found"
+          title="No people found"
           description="Try adjusting the category, sector, region, country, or search query."
         />
       )}
@@ -683,16 +686,17 @@ export const LeadersGrid = () => {
                       <div
                         key={leader.id}
                         id={`leader-${leader.name.replace(/\\s+/g, '-')}`}
-                        className={
-                          highlightedLeader === leader.name
-                            ? 'ring-2 ring-primary/60 rounded-xl transition-all duration-500'
-                            : ''
-                        }
+                        className={clsx(
+                          highlightedLeader === leader.name &&
+                            'ring-2 ring-primary/60 rounded-xl transition-all duration-500'
+                        )}
                       >
                         <LeaderCard
                           leader={leader}
-                          onClick={() => openDetail(leader)}
+                          onClick={() => toggleDetail(leader)}
                           isIndustryMatch={industryRelevant.has(leader.id)}
+                          isExpanded={expandedLeaderId === leader.id}
+                          onCloseExpanded={closeDetail}
                         />
                       </div>
                     ))}
@@ -710,16 +714,17 @@ export const LeadersGrid = () => {
             <div
               key={leader.id}
               id={`leader-${leader.name.replace(/\\s+/g, '-')}`}
-              className={
-                highlightedLeader === leader.name
-                  ? 'ring-2 ring-primary/60 rounded-xl transition-all duration-500'
-                  : ''
-              }
+              className={clsx(
+                highlightedLeader === leader.name &&
+                  'ring-2 ring-primary/60 rounded-xl transition-all duration-500'
+              )}
             >
               <LeaderCard
                 leader={leader}
-                onClick={() => openDetail(leader)}
+                onClick={() => toggleDetail(leader)}
                 isIndustryMatch={industryRelevant.has(leader.id)}
+                isExpanded={expandedLeaderId === leader.id}
+                onCloseExpanded={closeDetail}
               />
             </div>
           ))}
@@ -727,7 +732,12 @@ export const LeadersGrid = () => {
       ) : filteredLeaders.length > 0 ? (
         <>
           <div className="hidden md:block">
-            <LeadersTable data={filteredLeaders} onViewDetails={openDetail} />
+            <LeadersTable
+              data={filteredLeaders}
+              expandedLeaderId={expandedLeaderId}
+              onToggleDetails={toggleDetail}
+              onCloseDetails={closeDetail}
+            />
           </div>
           {/* Mobile fallback to cards */}
           <div ref={gridRef} className="md:hidden grid grid-cols-1 gap-4">
@@ -735,29 +745,23 @@ export const LeadersGrid = () => {
               <div
                 key={leader.id}
                 id={`leader-${leader.name.replace(/\\s+/g, '-')}`}
-                className={
-                  highlightedLeader === leader.name
-                    ? 'ring-2 ring-primary/60 rounded-xl transition-all duration-500'
-                    : ''
-                }
+                className={clsx(
+                  highlightedLeader === leader.name &&
+                    'ring-2 ring-primary/60 rounded-xl transition-all duration-500'
+                )}
               >
                 <LeaderCard
                   leader={leader}
-                  onClick={() => openDetail(leader)}
+                  onClick={() => toggleDetail(leader)}
                   isIndustryMatch={industryRelevant.has(leader.id)}
+                  isExpanded={expandedLeaderId === leader.id}
+                  onCloseExpanded={closeDetail}
                 />
               </div>
             ))}
           </div>
         </>
       ) : null}
-
-      {/* Detail Popover */}
-      <LeaderDetailPopover
-        isOpen={!!selectedLeader}
-        onClose={() => setSelectedLeader(null)}
-        leader={selectedLeader}
-      />
 
       {/* Leader Consent Modal */}
       <LeaderConsentModal
