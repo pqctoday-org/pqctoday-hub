@@ -994,6 +994,8 @@ function processMigrateSoftware(): RAGChunk[] {
     const r = records[i]
     const name = sanitize(r.software_name)
     if (!name) continue
+    const rowStatus = sanitize(r.status)?.toLowerCase()
+    if (rowStatus === 'deprecated' || rowStatus === 'obsolete') continue
 
     const content = [
       `Software: ${name}`,

@@ -54,6 +54,10 @@ jobs:
       - name: Test
         run: npm run test
 
+      - name: Validate data integrity (DS17)
+        run: DS_SEVERITY=ERROR npx tsx scripts/validate-data-integrity.ts
+        continue-on-error: true
+
       - name: Extract PR labels
         if: github.event_name == 'pull_request'
         id: pr-labels
