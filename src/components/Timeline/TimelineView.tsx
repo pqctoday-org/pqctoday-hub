@@ -26,6 +26,7 @@ import { TIMELINE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { Button } from '@/components/ui/button'
+import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 
 const REGION_LABELS: Record<string, string> = {
   americas: 'Americas',
@@ -169,15 +170,31 @@ export const TimelineView = () => {
     return transformToGanttData(filteredCountries)
   }, [tierFilter])
 
+  // Phase 3 — semantic supplement. Timeline chunks are titled like
+  // "South Korea — KpqC Competition Results"; semantic hits return
+  // those titles. We include a country in the filtered set if any
+  // semantic hit title contains the country's name (substring), so
+  // queries like "Asia-Pacific PQC mandates" surface JP/KR/IN rows
+  // even when the country name isn't typed.
+  const semantic = useSemanticSearch('timeline', searchText, { limit: 50 })
+  const semanticTitlesLc = useMemo(
+    () => (semantic.mode === 'semantic' ? semantic.hits.map((h) => h.id.toLowerCase()) : null),
+    [semantic.mode, semantic.hits]
+  )
+
   // Mobile: filter ganttData to the selected region/country (mirrors desktop Gantt behaviour)
   const mobileGanttData = useMemo(() => {
     let result = ganttData
     if (searchText) {
-      result = result.filter(
-        (d) =>
-          d.country.countryName.toLowerCase().includes(searchText.toLowerCase()) ||
-          d.country.bodies.some((b) => b.name.toLowerCase().includes(searchText.toLowerCase()))
-      )
+      const q = searchText.toLowerCase()
+      result = result.filter((d) => {
+        const nameLc = d.country.countryName.toLowerCase()
+        const lexicalMatch =
+          nameLc.includes(q) || d.country.bodies.some((b) => b.name.toLowerCase().includes(q))
+        if (lexicalMatch) return true
+        if (semanticTitlesLc && semanticTitlesLc.some((t) => t.includes(nameLc))) return true
+        return false
+      })
     }
     if (regionFilter !== 'All' && regionFilter !== 'global') {
       const allowed = new Set(
@@ -189,7 +206,7 @@ export const TimelineView = () => {
       result = result.filter((d) => d.country.countryName === countryFilter)
     }
     return result
-  }, [ganttData, regionFilter, countryFilter, searchText])
+  }, [ganttData, regionFilter, countryFilter, searchText, semanticTitlesLc])
 
   const [countryCopied, setCountryCopied] = useState(false)
 
