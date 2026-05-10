@@ -30,6 +30,7 @@ import { ALGORITHM_CSV_COLUMNS } from '../../utils/csvExportConfigs'
 import { AlgorithmInfoModal } from './AlgorithmInfoModal'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { Button } from '../ui/button'
+import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 
 const MAX_COMPARE = 6 // allows up to 3 classical+PQC pairs from the transition tab
 
@@ -351,6 +352,16 @@ export function AlgorithmsView() {
     [filterStatus]
   )
 
+  // Phase 3 — semantic supplement. Queries like "what replaces my ECC?"
+  // surface ECDH/ECDSA transitions and PQC replacements without the
+  // user needing to know the term "elliptic-curve".
+  const semantic = useSemanticSearch('algorithms', searchQuery, { limit: 30 })
+  const semanticAlgoNameSet = useMemo(
+    () =>
+      semantic.mode === 'semantic' ? new Set(semantic.hits.map((h) => h.id.toLowerCase())) : null,
+    [semantic.mode, semantic.hits]
+  )
+
   // --- Filtered data (Detailed Comparison) ---
   const filteredAlgorithms = useMemo(() => {
     return algorithmData.filter((algo) => {
@@ -365,13 +376,15 @@ export function AlgorithmsView() {
       if (!matchesStatusFilter(algo.status)) return false
       if (searchQuery) {
         const q = searchQuery.toLowerCase()
-        if (
-          !algo.name.toLowerCase().includes(q) &&
-          !algo.family.toLowerCase().includes(q) &&
-          !algo.cryptoFamily.toLowerCase().includes(q) &&
-          !algo.fipsStandard.toLowerCase().includes(q)
-        )
+        const lexicalMatch =
+          algo.name.toLowerCase().includes(q) ||
+          algo.family.toLowerCase().includes(q) ||
+          algo.cryptoFamily.toLowerCase().includes(q) ||
+          algo.fipsStandard.toLowerCase().includes(q)
+        if (!lexicalMatch) {
+          if (semanticAlgoNameSet && semanticAlgoNameSet.has(algo.name.toLowerCase())) return true
           return false
+        }
       }
       return true
     })
@@ -383,6 +396,7 @@ export function AlgorithmsView() {
     filterRegion,
     matchesStatusFilter,
     searchQuery,
+    semanticAlgoNameSet,
   ])
 
   // --- Filtered data (Transition Guide) ---
@@ -400,7 +414,15 @@ export function AlgorithmsView() {
       if (!matchesStatusFilter(t.status)) return false
       if (searchQuery) {
         const q = searchQuery.toLowerCase()
-        if (!t.classical.toLowerCase().includes(q) && !t.pqc.toLowerCase().includes(q)) return false
+        const lexicalMatch =
+          t.classical.toLowerCase().includes(q) || t.pqc.toLowerCase().includes(q)
+        if (!lexicalMatch) {
+          // Transition rows aren't in the embeddings index directly; we
+          // accept them when the PQC algorithm name appears in the
+          // semantic hit set (which IS encoded for the algorithms collection).
+          if (semanticAlgoNameSet && semanticAlgoNameSet.has(t.pqc.toLowerCase())) return true
+          return false
+        }
       }
       return true
     })
@@ -411,6 +433,7 @@ export function AlgorithmsView() {
     filterRegion,
     matchesStatusFilter,
     searchQuery,
+    semanticAlgoNameSet,
   ])
 
   // --- Available security levels ---
