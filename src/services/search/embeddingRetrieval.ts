@@ -225,3 +225,26 @@ export function injectTestRuntime(rt: {
 export function isEmbeddingRuntimeReady(): boolean {
   return cachedRuntime !== null
 }
+
+/**
+ * Phase 2.2 — direct read-only access to a chunk's pre-encoded vector.
+ * Returns a `Float32Array` view into the shared buffer (no copy). Used by
+ * clustering / pair-wise validators that walk many vectors per iteration
+ * and can't afford an async hop per access. Caller must NOT mutate.
+ *
+ * Throws if the runtime is not initialized — callers should check
+ * `isEmbeddingRuntimeReady()` first.
+ */
+export function getChunkVector(chunkId: string): Float32Array | null {
+  if (!cachedRuntime) throw new Error('embedding runtime not initialized')
+  const offset = cachedRuntime.meta.byteOffsets[chunkId]
+  if (offset === undefined) return null
+  const start = offset / 4
+  return cachedRuntime.vectors.subarray(start, start + cachedRuntime.meta.dimensions)
+}
+
+/** Phase 2.2 — vector dimensions of the loaded runtime (for k-means init). */
+export function getEmbeddingDimensions(): number {
+  if (!cachedRuntime) throw new Error('embedding runtime not initialized')
+  return cachedRuntime.meta.dimensions
+}
