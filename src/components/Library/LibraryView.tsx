@@ -38,6 +38,11 @@ import { EmptyState } from '../ui/empty-state'
 import { Button } from '@/components/ui/button'
 import { GeoFilter, useGeoFilter, matchesGeoFilter } from '../common/GeoFilter'
 import { SectorFilter, useSectorFilter, matchesSectorFilter } from '../common/SectorFilter'
+import {
+  TrustTierFilter,
+  useTrustTierFilter,
+  matchesTrustTierFilter,
+} from '../common/TrustTierFilter'
 
 const URGENCY_ORDER: Record<string, number> = {
   Critical: 0,
@@ -243,6 +248,7 @@ export const LibraryView: React.FC = () => {
   )
   const geoFilter = useGeoFilter()
   const sectorFilter = useSectorFilter()
+  const tierFilter = useTrustTierFilter()
   const [showFilters, setShowFilters] = useState(false)
   const [highlightedDocId, setHighlightedDocId] = useState<string | null>(
     () => searchParams.get('doc') ?? null
@@ -550,6 +556,9 @@ export const LibraryView: React.FC = () => {
         if (!matchesSectorFilter(sectorFilter, industries)) return false
       }
 
+      // Trust tier filter (multi-select, URL param: tier)
+      if (!matchesTrustTierFilter(tierFilter, 'library', item.referenceId)) return false
+
       // My bookmarks filter
       if (showOnlyLibraryBookmarks && !libraryBookmarks.includes(item.referenceId)) return false
 
@@ -581,6 +590,7 @@ export const LibraryView: React.FC = () => {
     libraryBookmarks,
     cswp39Only,
     lifecycleBucket,
+    tierFilter,
   ])
 
   // Persona-preferred categories for secondary sort boost
@@ -932,6 +942,13 @@ export const LibraryView: React.FC = () => {
             <div className="flex-1 min-w-[160px]">
               <span className="text-xs font-medium text-muted-foreground mb-1 block">Sector</span>
               <SectorFilter className="w-full" />
+            </div>
+
+            <div className="flex-1 min-w-[160px]">
+              <span className="text-xs font-medium text-muted-foreground mb-1 block">
+                Trust tier
+              </span>
+              <TrustTierFilter className="w-full" />
             </div>
 
             {/* Sort Dropdown for Mobile (Inside filters drawer) */}
