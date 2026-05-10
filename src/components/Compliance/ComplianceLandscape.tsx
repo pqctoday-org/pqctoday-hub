@@ -36,6 +36,7 @@ import { ViewToggle, type ViewMode } from '@/components/Library/ViewToggle'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { resolveTimelineRef } from '@/utils/timelineResolver'
+import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 
 // ── Deadline helpers ────────────────────────────────────────────────────
 
@@ -883,6 +884,16 @@ export function ComplianceLandscape({
   const sortBy = sortByProp ?? localSort
   const viewMode = viewModeProp ?? localView
 
+  // Phase 3 — semantic supplement. Queries like "banking sector
+  // cryptographic resilience" surface DORA, PCI-DSS, MAS without
+  // requiring the user to recall the framework name.
+  const semantic = useSemanticSearch('compliance', searchFilterText, { limit: 30 })
+  const semanticIdSet = useMemo(
+    () =>
+      semantic.mode === 'semantic' ? new Set(semantic.hits.map((h) => h.id.toLowerCase())) : null,
+    [semantic.mode, semantic.hits]
+  )
+
   const setOrgFilter = onOrgFilterChange ?? setLocalOrg
   const setIndustryFilter = onIndustryFilterChange ?? setLocalIndustry
   const setRegionFilter = onRegionFilterChange ?? setLocalRegion
@@ -989,12 +1000,17 @@ export function ComplianceLandscape({
     }
     if (searchFilterText.trim()) {
       const q = searchFilterText.toLowerCase()
-      result = result.filter(
-        (fw) =>
+      result = result.filter((fw) => {
+        const lexicalMatch =
           fw.label.toLowerCase().includes(q) ||
           fw.description.toLowerCase().includes(q) ||
           fw.enforcementBody.toLowerCase().includes(q)
-      )
+        if (lexicalMatch) return true
+        // Semantic supplement — chunkToResource maps compliance chunks
+        // by metadata.id. Framework `fw.id` is the same key.
+        if (semanticIdSet && semanticIdSet.has(fw.id.toLowerCase())) return true
+        return false
+      })
     }
     if (showOnlyMine) {
       result = result.filter((fw) => myFrameworks.includes(fw.id))
@@ -1009,6 +1025,7 @@ export function ComplianceLandscape({
     countryFilter,
     deadlineFilter,
     searchFilterText,
+    semanticIdSet,
     sortBy,
     showOnlyMine,
     myFrameworks,
