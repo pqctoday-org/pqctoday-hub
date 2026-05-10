@@ -499,6 +499,9 @@ export const MigrateView: React.FC = () => {
           if (wipFilter === 'only' && item.wip !== true) return false
           // My Products filter
           if (showOnlyMyProducts && !myProductsSet.has(item.productId)) return false
+          // Trust tier filter (multi-select, URL param: tier) — keeps per-layer
+          // counts consistent with the main allFilteredProducts view.
+          if (!matchesTrustTierFilter(tierFilter, 'migrate', item.softwareName)) return false
           // Search filter
           if (filterText) {
             const q = filterText.toLowerCase()
@@ -530,6 +533,7 @@ export const MigrateView: React.FC = () => {
     activePartitions,
     showOnlyMyProducts,
     myProductsSet,
+    tierFilter,
   ])
 
   // Layer product counts (for badges on collapsed layer rows)

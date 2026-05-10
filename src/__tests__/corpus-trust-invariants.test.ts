@@ -90,12 +90,19 @@ const TIER_NOT_APPLICABLE: ReadonlySet<string> = new Set([
 const TIER_RESOLUTION_GAPS: Record<string, number> = {
   // After 2026-05-10 fixes:
   //   - generate-rag-corpus.ts skips deprecated leaders (matches loader)
-  //   - trustScoreData.ts maps `${country} — ${title}` alias for timeline
+  //   - trustScoreData.ts maps `${country} — ${title}`,
+  //     `${country}:${body} — ${title}`, `United States` un-rename aliases
+  //     for timeline; hyphenated variant alias for algorithms
   //   - chunkToResource.ts routes document-enrichment by metadata.collection
-  // Composite reduction: 1316 → 111 orphans (92%).
-  timeline: 13,
-  algorithms: 66,
-  'document-enrichment': 32,
+  // Composite reduction: 1316 → 83 orphans (94%).
+  // Residuals:
+  //   - algorithms: 64 variants missing from algorithms_transitions CSV
+  //     (BIKE-*, SLH-DSA-*f, Classic-McEliece-348864/8192128) — data gap
+  //   - document-enrichment: 19 enrichment refIds truncated relative to
+  //     timeline event titles — fix upstream in enrichment generator
+  timeline: 0,
+  algorithms: 64,
+  'document-enrichment': 19,
 }
 
 /**
@@ -110,7 +117,7 @@ const MAX_DOC_WITHOUT_PASSAGES = 431
 /** Pinned count of CSV files referenced in prov.was_derived_from but missing on disk. */
 const MAX_MISSING_CSVS = 1
 /** Pinned count of local source_doc paths missing on disk. */
-const MAX_MISSING_SOURCE_DOCS = 15
+const MAX_MISSING_SOURCE_DOCS = 0
 
 describe('corpus trust invariants — tier coverage (C3)', () => {
   const corpus = loadCorpus()
