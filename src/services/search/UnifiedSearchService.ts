@@ -2,6 +2,9 @@
 import MiniSearch from 'minisearch'
 import localforage from 'localforage'
 import type { RAGChunk } from '@/types/ChatTypes'
+import { chunkToResource, trustTierMultiplier } from './chunkToResource'
+import { getTrustScore } from '@/data/trustScore'
+import type { TrustTier } from '@/data/trustScore'
 
 /**
  * UnifiedSearchService — single MiniSearch instance + entityIndex + corpus map
@@ -282,31 +285,61 @@ export class UnifiedSearchService {
   }
 
   /**
-   * Palette search — simple ranked results for ⌘K. No re-ranking, no
-   * diversity caps; the palette UI groups by source itself.
+   * Palette search — simple ranked results for ⌘K.
+   *
+   * Tier-aware re-ranking (§14.3 step 2 of trust-engine-explainability):
+   * every result's MiniSearch score is multiplied by the trust-tier
+   * multiplier of its underlying scored resource (×1.20 / ×1.10 / ×1.00 /
+   * ×0.80, default ×0.95). Results are then resorted by the boosted score
+   * so a Tier-1 NIST source outranks an unattributed chunk on the same
+   * query, matching the chat retrieval path's behavior.
+   *
+   * `opts.authoritativeOnly` (§14.3 step 5) hard-filters to Authoritative
+   * and High tiers — the user-facing "Authoritative only" toggle.
    */
-  searchPalette(query: string, opts?: { limit?: number; sources?: string[] }): PaletteResult[] {
+  searchPalette(
+    query: string,
+    opts?: { limit?: number; sources?: string[]; authoritativeOnly?: boolean }
+  ): PaletteResult[] {
     if (!this._index) return []
     const raw = this._index.search(query)
-    const sliced = raw.slice(0, opts?.limit ?? 50)
-    const results = sliced.map((r) => {
+    const rescored = raw.map((r) => {
       const chunk = this._corpusById.get(r.id)
-      return {
-        id: r.id,
-        source: chunk?.source ?? '',
-        title: chunk?.title ?? '',
-        content: chunk?.content ?? '',
-        category: chunk?.category,
-        deepLink: chunk?.deepLink,
-        priority: chunk?.priority,
-        metadata: chunk?.metadata as Record<string, unknown> | undefined,
-        score: r.score,
-        match: r.match as Record<string, string[]>,
-      }
+      const tier = chunk ? this.resolveTier(chunk) : null
+      const multiplier = trustTierMultiplier(tier)
+      return { r, chunk, tier, score: r.score * multiplier }
     })
+    rescored.sort((a, b) => b.score - a.score)
+    const sliced = rescored.slice(0, opts?.limit ?? 50)
+    let results = sliced.map(({ r, chunk, score }) => ({
+      id: r.id,
+      source: chunk?.source ?? '',
+      title: chunk?.title ?? '',
+      content: chunk?.content ?? '',
+      category: chunk?.category,
+      deepLink: chunk?.deepLink,
+      priority: chunk?.priority,
+      metadata: chunk?.metadata as Record<string, unknown> | undefined,
+      score,
+      match: r.match as Record<string, string[]>,
+    }))
     if (opts?.sources && opts.sources.length > 0) {
-      return results.filter((r) => opts.sources!.includes(r.source))
+      results = results.filter((r) => opts.sources!.includes(r.source))
+    }
+    if (opts?.authoritativeOnly) {
+      const allowed = new Set<TrustTier>(['Authoritative', 'High'])
+      results = results.filter((r) => {
+        const chunk = this._corpusById.get(r.id)
+        const tier = chunk ? this.resolveTier(chunk) : null
+        return tier !== null && allowed.has(tier)
+      })
     }
     return results
+  }
+
+  private resolveTier(chunk: RAGChunk): TrustTier | null {
+    const ref = chunkToResource(chunk)
+    if (!ref) return null
+    return getTrustScore(ref.resourceType, ref.resourceId)?.tier ?? null
   }
 }

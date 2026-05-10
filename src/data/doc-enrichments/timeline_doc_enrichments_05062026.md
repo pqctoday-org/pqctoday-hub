@@ -5,9 +5,9 @@ documents_processed: 18
 enrichment_method: ollama-qwen3.6:27b
 ---
 
-## Brazil:ITI — ICP-Brasil Mandates ML-DSA and ML-KEM Certificate
+## Brazil:ITI — ICP-Brasil Mandates ML-DSA and ML-KEM Certificate Standards
 
-- **Reference ID**: Brazil:ITI — ICP-Brasil Mandates ML-DSA and ML-KEM Certificate
+- **Reference ID**: Brazil:ITI — ICP-Brasil Mandates ML-DSA and ML-KEM Certificate Standards
 - **Title**: ICP-Brasil Mandates ML-DSA and ML-KEM Certificate
 - **Authors**: See document
 - **Publication Date**: Not specified
@@ -59,9 +59,9 @@ enrichment_method: ollama-qwen3.6:27b
 
 ---
 
-## G7:G7 CEG — G7 Financial Sector Critical Systems PQC Transitio
+## G7:G7 CEG — G7 Financial Sector Critical Systems PQC Transition
 
-- **Reference ID**: G7:G7 CEG — G7 Financial Sector Critical Systems PQC Transitio
+- **Reference ID**: G7:G7 CEG — G7 Financial Sector Critical Systems PQC Transition
 - **Title**: G7 Financial Sector Critical Systems PQC Transitio
 - **Authors**: See document
 - **Publication Date**: Not specified
