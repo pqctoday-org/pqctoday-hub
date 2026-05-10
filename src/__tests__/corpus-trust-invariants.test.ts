@@ -101,7 +101,7 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //   - document-enrichment: 19 enrichment refIds truncated relative to
   //     timeline event titles — fix upstream in enrichment generator
   timeline: 0,
-  algorithms: 64,
+  algorithms: 49,
   'document-enrichment': 19,
 }
 

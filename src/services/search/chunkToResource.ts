@@ -41,8 +41,16 @@ export function chunkToResource(chunk: RAGChunk): ResourceRef | null {
     }
     case 'leaders':
       return { resourceType: 'leaders', resourceId: chunk.title }
-    case 'algorithms':
+    case 'algorithms': {
+      // Classical / deprecated algorithms are not subjects of trust evaluation
+      // — they appear in the algorithms corpus because they're the source of
+      // PQC migration (the "what replaces what" CSV), but trustScoreData.ts
+      // only scores PQC replacements. Returning null here avoids spurious
+      // tier-resolution orphans for RSA/ECDH/ECDSA/Ed25519/etc.
+      const family = metaString(chunk, 'family') ?? ''
+      if (family === 'Classical KEM' || family === 'Classical Sig') return null
       return { resourceType: 'algorithm', resourceId: chunk.title }
+    }
     case 'document-enrichment': {
       const refId = metaString(chunk, 'refId')
       if (!refId) return null
