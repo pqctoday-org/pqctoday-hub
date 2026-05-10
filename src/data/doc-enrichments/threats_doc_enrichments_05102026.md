@@ -219,7 +219,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Compliance Officer; Security Architect; Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms; Compliance; Migrate; pqc-governance; key-management
+- **Relevant PQC Today Features**: Algorithms; Compliance; Migrate; pqc-governance; kms-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Knowing what systems, libraries, and applications employ the algorithm to be replaced
 - **Testing & Validation Methods**: Post-implementation evaluation; FIPS 140-3 validated cryptographic module
@@ -407,7 +407,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Researcher; Security Architect; Compliance Officer
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms; Standards; Threats; Migrate
+- **Relevant PQC Today Features**: Algorithms; Threats; Migrate
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -877,7 +877,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; Compliance Officer; Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: compliance-strategy, cloud-security, access-control
+- **Relevant PQC Today Features**: compliance-strategy
 - **Source Document**: CLOUD-004.html (45,912 bytes, 5,121 extracted chars)
 - **Extraction Timestamp**: 2026-05-10T00:35:26
 - **Implementation Attack Surface**: None detected
@@ -1723,7 +1723,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Developer, Researcher
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms; Compliance; Migrate; pqc-101; key-management
+- **Relevant PQC Today Features**: Algorithms; Compliance; Migrate; pqc-101; kms-pqc
 - **Source Document**: FIN-004.html (44,194 bytes, 4,431 extracted chars)
 - **Extraction Timestamp**: 2026-05-10T00:45:58
 - **Implementation Attack Surface**: None detected
@@ -2569,7 +2569,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer; Security Architect; Compliance Officer; Infrastructure Provider
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: code-signing, threats, supply-chain-security, crypto-agility, pki-workshop
+- **Relevant PQC Today Features**: code-signing, threats, crypto-agility, pki-workshop
 - **Source Document**: IT-004.html (16,583 bytes, 1,499 extracted chars)
 - **Extraction Timestamp**: 2026-05-10T00:59:22
 - **Implementation Attack Surface**: None detected

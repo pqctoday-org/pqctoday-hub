@@ -691,7 +691,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Researcher; Security Architect; Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms; Standardization; Timeline; Assess; Migration-program
+- **Relevant PQC Today Features**: Algorithms; Timeline; Assess; Migration-program
 - **Phase Classification Rationale**: The document describes a competition held by CACR to select promising algorithms, which is a precursor to standardization efforts. It explicitly mentions China's likely eagerness to standardize developments according to global standards like ISO.
 - **Regulatory Mandate Level**: Voluntary
 - **Sector / Industry Applicability**: Technology; Academic; All Sectors
@@ -1406,7 +1406,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Compliance Officer; Security Architect; CISO
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: pqc-risk-management; compliance-strategy; migration-program; threats; banking-system-preparedness
+- **Relevant PQC Today Features**: pqc-risk-management; compliance-strategy; migration-program; threats
 - **Phase Classification Rationale**: The document is titled "Directive Letter" and explicitly requires financial institutions to manage risks, indicating a regulatory mandate rather than guidance.
 - **Regulatory Mandate Level**: Mandatory (legally required, directive/mandate language)
 - **Sector / Industry Applicability**: Banking; Finance
@@ -3166,7 +3166,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: reduced signature sizes
 - **Target Audience**: Researcher; Security Architect; Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms; Leaders; Standardization; Timeline; Threats
+- **Relevant PQC Today Features**: Algorithms; Leaders; Timeline; Threats
 - **Phase Classification Rationale**: The document explicitly states researchers contributed to schemes advancing to "Round 2 of the National Institute of Standards and Technology (NIST) Post-Quantum Cryptography (PQC) Standardization," indicating an active standardization phase.
 - **Regulatory Mandate Level**: Informational
 - **Sector / Industry Applicability**: Technology; Academic
@@ -3221,7 +3221,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Policy Maker; Researcher
 - **Implementation Prerequisites**: Quantum devices installed at each site; three-node QKD deployment connecting locations within ADGM jurisdiction
-- **Relevant PQC Today Features**: qkd; digital-assets; finance; leaders; migration-program; pqc-business-case
+- **Relevant PQC Today Features**: qkd; digital-assets; leaders; migration-program; pqc-business-case
 - **Phase Classification Rationale**: The document describes a "testbed" and "living lab" launched to explore ways to transfer ultra-secure data and test use cases in a commercial setting, indicating a Proof of Concept phase.
 - **Regulatory Mandate Level**: Voluntary
 - **Sector / Industry Applicability**: Finance; Banking; Technology; Government
@@ -3386,7 +3386,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Compliance Officer; Security Architect; Policy Maker; Legal Counsel
 - **Implementation Prerequisites**: Obtain NCA license for cybersecurity activities; Maintain comprehensive records with clear audit trails; Familiarize with NCA Standards
-- **Relevant PQC Today Features**: Compliance; Regulatory Mandate; Governance; Risk Management; Audit Trail
+- **Relevant PQC Today Features**: Compliance; pqc-governance; pqc-risk-management
 - **Phase Classification Rationale**: The document describes the "December 2024 National Cybersecurity Authority Regulations" which establish a regulatory framework granting the NCA authority to enforce compliance and impose penalties, marking a shift from guidance to legal enforcement.
 - **Regulatory Mandate Level**: Mandatory (legally required, directive/mandate language)
 - **Sector / Industry Applicability**: Technology; Critical Infrastructure; All Sectors
@@ -4486,7 +4486,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: OpenSSL 3.6.1
-- **Relevant PQC Today Features**: Algorithms; OpenSSL Studio; Migrate; Compliance
+- **Relevant PQC Today Features**: Algorithms; OpenSSL; Migrate; Compliance
 - **Phase Classification Rationale**: The document describes the release of a specific version of a cryptographic library (OpenSSL) with native support for standardized PQC algorithms, marking a transition from research to available implementation tools.
 - **Regulatory Mandate Level**: Informational
 - **Sector / Industry Applicability**: All Sectors
@@ -12865,7 +12865,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; Migration
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; migration-program
 - **Phase Classification Rationale**: None detected
 - **Regulatory Mandate Level**: Mandatory
 - **Sector / Industry Applicability**: Technology; Government; Defense
@@ -12919,7 +12919,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; Migration
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; migration-program
 - **Phase Classification Rationale**: None detected
 - **Regulatory Mandate Level**: Mandatory
 - **Sector / Industry Applicability**: Technology; Government; All Sectors
@@ -12973,7 +12973,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; Migration
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; migration-program
 - **Phase Classification Rationale**: This document represents a Policy phase event as it is an official NSA advisory releasing future quantum-resistant algorithm requirements specifically for National Security Systems. It establishes the regulatory framework and mandates for transitioning to QR algorithms within US government networks.
 - **Regulatory Mandate Level**: Mandatory
 - **Sector / Industry Applicability**: Government; Defense
@@ -13028,7 +13028,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; Migration
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; migration-program
 - **Phase Classification Rationale**: The document title explicitly states a "Complete transition," indicating the finalization of a mandated deadline rather than an ongoing process. This represents the endpoint where all National Security Systems must have fully adopted CNSA 2.0 algorithms.
 - **Regulatory Mandate Level**: Mandatory
 - **Sector / Industry Applicability**: Government; Defense
@@ -13082,7 +13082,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; Migration
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; migration-program
 - **Phase Classification Rationale**: The document title explicitly describes the migration of large PKI systems to CNSA 2.0 algorithms, indicating a transition phase event. No further details are available in the provided text to elaborate on the rationale.
 - **Regulatory Mandate Level**: None detected
 - **Sector / Industry Applicability**: None detected
@@ -13136,7 +13136,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; Migration
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; migration-program
 - **Phase Classification Rationale**: The document explicitly sets a 2027 deadline for operating systems to support and prefer CNSA 2.0, marking a definitive migration target. This represents the transition from classical cryptographic standards to post-quantum compliant suites within system infrastructure.
 - **Regulatory Mandate Level**: Mandatory
 - **Sector / Industry Applicability**: Technology; Government
@@ -13190,7 +13190,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; Migration
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; migration-program
 - **Phase Classification Rationale**: The document explicitly instructs to begin transitioning immediately and sets a target date for supporting CNSA 2.0, indicating an active migration phase.
 - **Regulatory Mandate Level**: Mandatory
 - **Sector / Industry Applicability**: Technology; All Sectors
@@ -13244,7 +13244,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; Migration
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; migration-program
 - **Phase Classification Rationale**: The document explicitly sets a 2026 deadline for supporting and preferring CNSA 2.0 in traditional networking equipment, marking a concrete migration target. This represents the transition from classical cryptography to post-quantum compliant standards within network infrastructure.
 - **Regulatory Mandate Level**: Mandatory
 - **Sector / Industry Applicability**: Telecommunications; Technology; Critical Infrastructure
@@ -13298,7 +13298,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; Migration
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; migration-program
 - **Phase Classification Rationale**: The document explicitly outlines a transition requirement to support and prefer CNSA 2.0 by 2025, indicating an active migration phase from legacy cryptographic standards.
 - **Regulatory Mandate Level**: Mandatory
 - **Sector / Industry Applicability**: Technology; All Sectors
