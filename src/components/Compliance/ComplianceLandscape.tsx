@@ -1250,8 +1250,25 @@ export function ComplianceLandscape({
       {/* Content */}
       {viewMode === 'cards' ? (
         displayedFrameworks.length === 0 ? (
-          <div className="glass-panel p-8 text-center text-muted-foreground">
-            No entries match the selected filters. Try broadening your selection.
+          <div className="glass-panel p-8 text-center text-muted-foreground space-y-1">
+            <p>No entries match the selected filters.</p>
+            {searchFilterText.trim() && semantic.loading && (
+              <p className="text-xs text-muted-foreground/80">
+                Semantic search is still loading — results may refine in a moment.
+              </p>
+            )}
+            {searchFilterText.trim() && !semantic.loading && semantic.mode === 'semantic' && (
+              <p className="text-xs text-muted-foreground/80">
+                No direct or semantically related framework found. Try broadening your filters or
+                rephrasing the query.
+              </p>
+            )}
+            {searchFilterText.trim() && semantic.mode === 'lexical' && (
+              <p className="text-xs text-muted-foreground/80">
+                Try broadening your filters or different keywords.
+              </p>
+            )}
+            {!searchFilterText.trim() && <p className="text-xs">Try broadening your selection.</p>}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
