@@ -42,6 +42,7 @@ import { IndustryStack } from './IndustryStack'
 
 import { ThreatDetailDialog } from './ThreatDetailDialog'
 import { MobileThreatsList } from './MobileThreatsList'
+import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 
 // Threat Detail Dialog Component - Moved outside to ./ThreatDetailDialog.tsx
 
@@ -228,6 +229,15 @@ export const ThreatsDashboard: React.FC = () => {
     }
   }
 
+  // Phase 3 — semantic supplement. Queries like "email tampering risk"
+  // surface relevant threats regardless of source vocabulary.
+  const semantic = useSemanticSearch('threats', searchQuery, { limit: 30 })
+  const semanticIdSet = useMemo(
+    () =>
+      semantic.mode === 'semantic' ? new Set(semantic.hits.map((h) => h.id.toLowerCase())) : null,
+    [semantic.mode, semantic.hits]
+  )
+
   const filteredAndSortedData = useMemo(() => {
     let data = [...threatsData]
 
@@ -241,17 +251,20 @@ export const ThreatsDashboard: React.FC = () => {
       data = data.filter((item) => item.criticality === selectedCriticality)
     }
 
-    // Filter by Search Query
+    // Filter by Search Query — lexical floor + semantic supplement
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
-      data = data.filter(
-        (item) =>
+      data = data.filter((item) => {
+        const lexicalMatch =
           item.threatId.toLowerCase().includes(query) ||
           item.description.toLowerCase().includes(query) ||
           item.industry.toLowerCase().includes(query) ||
           item.cryptoAtRisk.toLowerCase().includes(query) ||
           item.pqcReplacement.toLowerCase().includes(query)
-      )
+        if (lexicalMatch) return true
+        if (semanticIdSet && semanticIdSet.has(item.threatId.toLowerCase())) return true
+        return false
+      })
     }
 
     // Sort
@@ -308,6 +321,7 @@ export const ThreatsDashboard: React.FC = () => {
     selectedIndustries,
     selectedCriticality,
     searchQuery,
+    semanticIdSet,
     sortField,
     sortDirection,
     showOnlyThreats,
