@@ -1108,6 +1108,9 @@ async function runCmXwalk(): Promise<CheckResult[]> {
   const seenTuples = new Map<string, string>() // tuple → first xwalk_id seen
 
   for (const row of rows) {
+    const rowStatus = (row['status'] ?? '').trim().toLowerCase()
+    if (rowStatus === 'deprecated' || rowStatus === 'obsolete') continue
+
     const xid = (row['xwalk_id'] ?? '').trim() || '<no-id>'
     const from = (row['from_concept'] ?? '').trim()
     const to = (row['to_concept'] ?? '').trim()
