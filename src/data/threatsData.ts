@@ -46,6 +46,9 @@ interface RawThreatRow {
   data_quality_notes: string
   confidence_score?: string
   applicable_industries_normalized?: string
+  status?: string
+  deprecated_at?: string
+  deprecated_reason?: string
 }
 
 const modules = import.meta.glob('./quantum_threats_hsm_industries_*.csv', {
@@ -54,7 +57,8 @@ const modules = import.meta.glob('./quantum_threats_hsm_industries_*.csv', {
   eager: true,
 })
 
-function transformThreat(row: RawThreatRow): ThreatData {
+function transformThreat(row: RawThreatRow): ThreatData | null {
+  if (row.status === 'deprecated' || row.status === 'obsolete') return null
   const pct = parseIntSafe(row.accuracy_pct)
   return {
     industry: row.industry || '',
@@ -120,5 +124,5 @@ export function parseThreatsCSV(csvContent: string): ThreatData[] {
     header: true,
     skipEmptyLines: true,
   })
-  return (data as RawThreatRow[]).map(transformThreat)
+  return (data as RawThreatRow[]).map(transformThreat).filter((r): r is ThreatData => r !== null)
 }

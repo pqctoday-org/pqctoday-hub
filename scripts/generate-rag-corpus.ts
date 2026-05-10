@@ -864,6 +864,9 @@ function processThreats(): RAGChunk[] {
   for (let i = 1; i < rows.length; i++) {
     const row = rows[i]
     if (row.length < 7) continue
+    // Skip deprecated/obsolete rows (status col = index 19)
+    const rowStatus = row[19]?.trim().toLowerCase()
+    if (rowStatus === 'deprecated' || rowStatus === 'obsolete') continue
 
     const [
       industry,
