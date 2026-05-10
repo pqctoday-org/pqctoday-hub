@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo, useCallback } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import {
   Search,
   Play,
@@ -293,6 +293,7 @@ const HeroCard = ({
 // ---------------------------------------------------------------------------
 
 export const PlaygroundWorkshop = () => {
+  const navigate = useNavigate()
   const isEmbedded = useIsEmbedded()
   const [searchParams, setSearchParams] = useSearchParams()
   const [searchQuery, setSearchQuery] = useState('')
@@ -645,7 +646,29 @@ export const PlaygroundWorkshop = () => {
                                   </span>
                                 ))}
                               </div>
-                              <ReviewedBadge domain="tool" entityId={tool.pt_id} className="mt-2" />
+                              {/* div wraps the badge to intercept clicks (the badge itself is the focusable target).
+                                  Same pattern as ModuleCard; the inner Badge handles its own keyboard interaction. */}
+                              {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+                              <div
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                  e.stopPropagation()
+                                  navigate(
+                                    `/revisions?domain=tool&entity=${encodeURIComponent(tool.pt_id)}`
+                                  )
+                                }}
+                              >
+                                <ReviewedBadge
+                                  domain="tool"
+                                  entityId={tool.pt_id}
+                                  className="mt-2"
+                                  onOpenDrilldown={() =>
+                                    navigate(
+                                      `/revisions?domain=tool&entity=${encodeURIComponent(tool.pt_id)}`
+                                    )
+                                  }
+                                />
+                              </div>
                               {tool.opensourceTool && (
                                 <div className="mt-2 flex items-center gap-1 text-xs text-muted-foreground">
                                   <ExternalLink className="w-3 h-3 shrink-0" aria-hidden="true" />
