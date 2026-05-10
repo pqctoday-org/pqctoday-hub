@@ -292,6 +292,17 @@ function computeAllScores(): Map<string, TrustScore> {
         // chunkToResource() lookups resolve. Matches generate-rag-corpus.ts
         // processTimeline title format.
         scores.set(`timeline:${country.countryName} — ${title}`, computed)
+        // Doc-enrichment chunks use `${country}:${org} — ${title}` as refId
+        // (see processDocumentEnrichments). Map that too.
+        scores.set(`timeline:${country.countryName}:${body.name} — ${title}`, computed)
+        // The loader renames `United States` → `United States (CNSA)` for
+        // NSA-orged events (see timelineData.ts §120-128) to separate the
+        // Gantt lane. The corpus emits chunks with the ORIGINAL CSV country
+        // name (`United States`), so register the un-renamed alias too.
+        if (country.countryName === 'United States (CNSA)') {
+          scores.set(`timeline:United States — ${title}`, computed)
+          scores.set(`timeline:United States:${body.name} — ${title}`, computed)
+        }
       }
     }
   }
@@ -395,6 +406,13 @@ function computeAllScores(): Map<string, TrustScore> {
     // Also map the full name with parenthetical for any UI lookups
     if (cleanName !== a.pqc) {
       scores.set(`algorithm:${a.pqc}`, scores.get(`algorithm:${cleanName}`)!)
+    }
+    // Corpus emits variant titles with hyphen separators (e.g.,
+    // `Classic-McEliece-348864`), but the transitions CSV uses spaces
+    // (`Classic McEliece 460896`). Register a hyphenated alias.
+    const hyphenated = cleanName.replace(/\s+/g, '-')
+    if (hyphenated !== cleanName) {
+      scores.set(`algorithm:${hyphenated}`, scores.get(`algorithm:${cleanName}`)!)
     }
   }
 
