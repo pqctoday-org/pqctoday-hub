@@ -154,6 +154,41 @@ export async function cosineSearch(
 }
 
 /**
+ * Phase 2.4 — Cosine search using an existing chunk's *pre-encoded* vector
+ * as the query. Avoids the ~50 ms transformer-encode cost per query, which
+ * lets validators sweep the corpus in seconds rather than minutes.
+ *
+ * Returns top-K hits from the candidate pool (or whole corpus). The source
+ * chunk is excluded from its own results.
+ */
+export async function cosineSearchByChunkId(
+  chunkId: string,
+  opts: { k?: number; candidateIds?: string[] } = {}
+): Promise<CosineHit[]> {
+  await initEmbeddingRuntime()
+  if (!cachedRuntime) return []
+  const { vectors, meta } = cachedRuntime
+  const offset = meta.byteOffsets[chunkId]
+  if (offset === undefined) return []
+  const dims = meta.dimensions
+  const query = vectors.subarray(offset / 4, offset / 4 + dims)
+  const k = opts.k ?? 10
+
+  const ids = opts.candidateIds ?? Object.keys(meta.byteOffsets)
+  const hits: CosineHit[] = []
+  for (const id of ids) {
+    if (id === chunkId) continue
+    const cOff = meta.byteOffsets[id]
+    if (cOff === undefined) continue
+    const start = cOff / 4
+    const chunkVec = vectors.subarray(start, start + dims)
+    hits.push({ chunkId: id, score: cosineSimilarity(query, chunkVec) })
+  }
+  hits.sort((a, b) => b.score - a.score)
+  return hits.slice(0, k)
+}
+
+/**
  * Select the K source passages most semantically aligned with a claim.
  * Used by the corpus generator at build time to populate
  * `chunk.prov.source_passages`, and at runtime by RetrievalService to

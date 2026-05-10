@@ -34,6 +34,7 @@ import { runSourceDocumentQualityChecks } from './validators/source-document-qua
 import { runEnrichmentAccuracyChecks } from './validators/enrichment-accuracy-checks.js'
 import { runTrustEngineChecks } from './validators/trust-engine-checks.js'
 import { runMissingReferenceChecks } from './validators/missing-reference-checks.js'
+import { runQASemanticChecks } from './validators/qa-semantic-checks.js'
 import {
   runSelfContainmentChecks,
   runStatusColumnChecks,
@@ -128,6 +129,14 @@ try {
   }
   const missingRefResults = await runMissingReferenceChecks({ withCandidates })
   allResults.push(missingRefResults)
+
+  // 7d.5. QA-F semantic validators (Phase 2.4 / T20) — F7..F12.
+  // Reuses the embedding runtime preloaded above for MR-1 when --with-candidates
+  // is set; semantic checks (F7, F10) self-skip if runtime isn't loaded.
+  if (withCandidates) {
+    const qaSemanticResults = await runQASemanticChecks()
+    allResults.push(...qaSemanticResults)
+  }
 
   // 7e. Self-containment + vocab + status checks (DS03 + DS19) — data-self-containment plan
   allResults.push(...runSelfContainmentChecks())
