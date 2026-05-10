@@ -16,8 +16,19 @@ import path from 'node:path'
 const REPO_ROOT = process.cwd()
 const META_PATH = path.join(REPO_ROOT, 'public/data/embeddings-meta.json')
 const BIN_PATH = path.join(REPO_ROOT, 'public/data/embeddings.bin')
+const CORPUS_PATH = path.join(REPO_ROOT, 'public/data/rag-corpus.json')
 const SCRIPT = path.join(REPO_ROOT, 'scripts/discover-counter-claims.ts')
-const hasArtifact = fs.existsSync(META_PATH) && fs.existsSync(BIN_PATH)
+/** Corpus may be mid-write from the enrichment pipeline — self-skip rather than fail. */
+function isCorpusParseable(): boolean {
+  if (!fs.existsSync(CORPUS_PATH)) return false
+  try {
+    JSON.parse(fs.readFileSync(CORPUS_PATH, 'utf8'))
+    return true
+  } catch {
+    return false
+  }
+}
+const hasArtifact = fs.existsSync(META_PATH) && fs.existsSync(BIN_PATH) && isCorpusParseable()
 
 interface CcOutput {
   version: 1

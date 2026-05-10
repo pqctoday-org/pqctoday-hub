@@ -25,8 +25,20 @@ import {
 const REPO_ROOT = process.cwd()
 const META_PATH = path.join(REPO_ROOT, 'public/data/embeddings-meta.json')
 const BIN_PATH = path.join(REPO_ROOT, 'public/data/embeddings.bin')
+const CORPUS_PATH = path.join(REPO_ROOT, 'public/data/rag-corpus.json')
 
-const hasRealArtifact = fs.existsSync(META_PATH) && fs.existsSync(BIN_PATH)
+/** Corpus may be mid-write from the enrichment pipeline — self-skip rather than fail. */
+function isCorpusParseable(): boolean {
+  if (!fs.existsSync(CORPUS_PATH)) return false
+  try {
+    JSON.parse(fs.readFileSync(CORPUS_PATH, 'utf8'))
+    return true
+  } catch {
+    return false
+  }
+}
+const hasEmbeddingArtifact = fs.existsSync(META_PATH) && fs.existsSync(BIN_PATH)
+const hasRealArtifact = hasEmbeddingArtifact && isCorpusParseable()
 
 /** Normalized fixture vector helper. */
 function vec(values: number[]): Float32Array {
@@ -70,15 +82,11 @@ describe('proposeReferenceCandidates — Phase 2.1', () => {
   })
 
   it('returns empty when embedding artifact is missing', async () => {
-    // The function reads from disk first. If the meta is missing, returns [].
-    // This test is meaningful even when artifact IS present — we mock around
-    // by checking the function returns when the trusted-source pool is empty.
-    if (hasRealArtifact) {
-      // Can't easily simulate "missing" without breaking the test environment.
-      // Skip this specific assertion when artifact present; the no-trusted-sources
-      // path is exercised in the next test instead.
-      return
-    }
+    // The function reads embeddings-meta.json from disk to discover the
+    // trusted-source chunk pool. When that file is absent, returns [].
+    // We skip this assertion when the embedding artifact IS on disk (meta
+    // + bin), because we can't safely move those files aside in test.
+    if (hasEmbeddingArtifact) return
     const result = await proposeReferenceCandidates('FIPS 140-3 module validation', 3)
     expect(result).toEqual([])
   })

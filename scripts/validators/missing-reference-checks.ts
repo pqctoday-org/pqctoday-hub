@@ -132,13 +132,17 @@ export async function proposeReferenceCandidates(
   if (trustedSourceIds.length === 0) return []
 
   // Load corpus titles for human-readable labels (best-effort; falls back
-  // to chunk ID if corpus is missing).
+  // to chunk ID if corpus is missing or mid-write from enrichment).
   const corpusPath = path.join(REPO_ROOT, 'public/data/rag-corpus.json')
   const titles: Record<string, string> = {}
   if (fs.existsSync(corpusPath)) {
-    const parsed = JSON.parse(fs.readFileSync(corpusPath, 'utf8'))
-    const chunks = (parsed.chunks ?? parsed) as Array<{ id: string; title: string }>
-    for (const c of chunks) titles[c.id] = c.title
+    try {
+      const parsed = JSON.parse(fs.readFileSync(corpusPath, 'utf8'))
+      const chunks = (parsed.chunks ?? parsed) as Array<{ id: string; title: string }>
+      for (const c of chunks) titles[c.id] = c.title
+    } catch {
+      // Corpus is being rewritten (enrichment pipeline) — labels fall back to chunk IDs.
+    }
   }
 
   const hits = await cosineSearch(claimText, { candidateIds: trustedSourceIds, k })

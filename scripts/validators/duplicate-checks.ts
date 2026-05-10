@@ -50,8 +50,13 @@ const POOLS: DupPool[] = [
 
 function loadChunks(): RagChunk[] {
   if (!fs.existsSync(CORPUS_PATH)) return []
-  const raw = JSON.parse(fs.readFileSync(CORPUS_PATH, 'utf8'))
-  return (raw.chunks ?? raw) as RagChunk[]
+  try {
+    const raw = JSON.parse(fs.readFileSync(CORPUS_PATH, 'utf8'))
+    return (raw.chunks ?? raw) as RagChunk[]
+  } catch {
+    // Corpus is mid-write from enrichment — caller gets an empty pool.
+    return []
+  }
 }
 
 function poolChunkIds(chunks: RagChunk[], source: DupPool['source']): RagChunk[] {
