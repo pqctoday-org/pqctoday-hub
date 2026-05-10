@@ -115,7 +115,7 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
 const MAX_DOC_WITHOUT_PASSAGES = 431
 
 /** Pinned count of CSV files referenced in prov.was_derived_from but missing on disk. */
-const MAX_MISSING_CSVS = 1
+const MAX_MISSING_CSVS = 0
 /** Pinned count of local source_doc paths missing on disk. */
 const MAX_MISSING_SOURCE_DOCS = 0
 
@@ -223,6 +223,9 @@ describe('corpus trust invariants — PROV chain (C4)', () => {
       const candidates = [
         path.join(REPO_ROOT, 'src', 'data', file),
         path.join(REPO_ROOT, 'src', 'data', 'archive', file),
+        // Module Q&A CSVs live in their own subdirectory and are referenced
+        // by the corpus generator from there (see scripts/generate-rag-corpus.ts).
+        path.join(REPO_ROOT, 'src', 'data', 'module-qa', file),
       ]
       if (!candidates.some((p) => fs.existsSync(p))) missing.push(file)
     }
