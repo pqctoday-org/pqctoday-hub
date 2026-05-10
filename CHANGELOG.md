@@ -4,6 +4,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.9.0] - 2026-05-10
+
+### Changed — Community rebrand + Leaders UX
+
+- **Renamed "Leaders" → "Community"** across all UI surfaces: main nav, embed layout, breadcrumb, route presets, and About page discussions panel
+
+- **Inline leader detail** — replaced detached modal popover (`LeaderDetailPopover`) with inline expand/collapse using a new `LeaderDetailSection` component. Both card view and table view share the same expansion pattern (`expandedLeaderId` state, `ChevronDown`/`ChevronUp` toggle, `aria-expanded` attribute)
+
+- **Status-column support in leaders loader** — `leadersData.ts` now filters rows where `status !== 'active'`, consistent with the DS-series self-containment schema. New leaders CSV: `leaders_05102026.csv`
+
+### Added — Data quality & enrichment
+
+- **Library enrichment** — 9 additional entries enriched via Ollama (now 571/787 total, 72.6% coverage)
+
+- **Warning batch fixes** — validator warnings reduced 31 → 21 across 6 checks:
+  - **CM-T-01** — added `trusted_source_id` to 2 completed timeline events (`cisa-pqc-products`, `pki-consortium`)
+  - **GC-3** — algorithm canonicalization: added ECC→Classical, Hybrid Auth/Framework→Hybrid PQC, SSH/PSK/all-transition to skip list
+  - **N23-E** — fixed 41 invalid `Relevant PQC Today Features` tokens across library/timeline/threats enrichments
+  - **CM-ORPHAN** — added 5 missing trusted sources (McKinsey, Ponemon, AppViewX, Gartner, Venafi)
+  - **N22** — cleared `local_file` for 6 files that fail quality checks (EU HTML stubs, APRA/OpenSSL/ref-joseph library entries, AUTO-002 threat)
+  - **MR-1** — added `related_standards` citation column to compliance/timeline/threats CSVs; 64 rows populated
+
+- **Trust engine sync** — regenerated `trusted_sources_05102026.csv` (275 sources, 467 docs) and `trusted_source_xref_05102026.csv` (2163 rows) after IETF library downloads. Algorithm rows from prior xref carried forward.
+
 ## [3.8.0] - 2026-05-10
 
 ### Added — Data Self-Containment (DS01–DS22)

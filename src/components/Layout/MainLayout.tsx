@@ -159,7 +159,7 @@ export const MainLayout = () => {
     { path: '/library', label: 'Library', icon: BookOpen, section: 'current' },
     {
       path: '/leaders',
-      label: 'Leaders',
+      label: 'Community',
       icon: Users,
       section: 'current',
       hiddenOnMobile: true,

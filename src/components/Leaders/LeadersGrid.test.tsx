@@ -111,8 +111,8 @@ describe('LeadersGrid', () => {
 
   it('renders the header and description', () => {
     render(<LeadersGrid />)
-    expect(screen.getByText('Transformation Leaders')).toBeInTheDocument()
-    expect(screen.getAllByText(/Visionaries and organizations/)[0]).toBeInTheDocument()
+    expect(screen.getByText('Community')).toBeInTheDocument()
+    expect(screen.getAllByText(/People contributing to the advances/)[0]).toBeInTheDocument()
   })
 
   it('renders a grid of leaders', () => {
@@ -133,8 +133,8 @@ describe('LeadersGrid', () => {
     expect(screen.getByText('"Leading PQC research."')).toBeInTheDocument()
     expect(screen.getByText('Private Sector')).toBeInTheDocument()
 
-    // Social links moved to detail popover — verify Info button exists
-    expect(screen.getAllByLabelText(/View details for/)).toBeTruthy()
+    // Details now shown via inline collapsible — verify expand toggle exists
+    expect(screen.getAllByLabelText(/Expand details for/).length).toBeGreaterThan(0)
   })
 
   it('renders fallback icon when no image url provided', () => {
@@ -185,7 +185,7 @@ describe('LeadersGrid', () => {
     expect(screen.getAllByRole('article')).toHaveLength(3)
 
     // Search for "Scientist" (matches Alice)
-    const searchInput = screen.getByPlaceholderText('Search leaders...')
+    const searchInput = screen.getByPlaceholderText('Search community...')
     fireEvent.change(searchInput, { target: { value: 'Scientist' } })
 
     expect(screen.getAllByRole('article')).toHaveLength(1)
@@ -197,7 +197,7 @@ describe('LeadersGrid', () => {
     render(<LeadersGrid />)
 
     // Search for "ncsc" (matches Bob's org)
-    const searchInput = screen.getByPlaceholderText('Search leaders...')
+    const searchInput = screen.getByPlaceholderText('Search community...')
     fireEvent.change(searchInput, { target: { value: 'ncsc' } })
 
     expect(screen.getAllByRole('article')).toHaveLength(1)
@@ -216,7 +216,7 @@ describe('LeadersGrid', () => {
     expect(screen.getAllByRole('article')).toHaveLength(1)
 
     // Search for something that matches Alice
-    const searchInput = screen.getByPlaceholderText('Search leaders...')
+    const searchInput = screen.getByPlaceholderText('Search community...')
     fireEvent.change(searchInput, { target: { value: 'Quant' } })
     expect(screen.getAllByRole('article')).toHaveLength(1)
     expect(screen.getByText('Alice Quant')).toBeInTheDocument()
@@ -256,7 +256,7 @@ describe('LeadersGrid', () => {
     expect(screen.getAllByRole('article')).toHaveLength(1)
 
     // Search for "Securing" (matches Bob's bio)
-    const searchInput = screen.getByPlaceholderText('Search leaders...')
+    const searchInput = screen.getByPlaceholderText('Search community...')
     fireEvent.change(searchInput, { target: { value: 'Securing' } })
     expect(screen.getAllByRole('article')).toHaveLength(1)
     expect(screen.getByText('Bob Cyber')).toBeInTheDocument()

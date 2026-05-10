@@ -66,7 +66,7 @@ const DISCUSSION_NEW_URL = (() => {
   const base = 'https://github.com/pqctoday-org/pqctoday-hub/discussions/new'
   const params = new URLSearchParams({
     category: 'i-consent-to-be-added-as-a-pqc-leader',
-    title: 'I consent to be added as a PQC Leader',
+    title: 'I consent to be listed in the PQC Community',
     body: LEADER_TEMPLATE,
   })
   return `${base}?${params.toString()}`
@@ -116,7 +116,7 @@ export function LeaderConsentModal({ isOpen, onClose }: LeaderConsentModalProps)
                   <Award size={20} className="text-primary" />
                 </div>
                 <h2 id="leader-consent-title" className="text-lg font-bold text-foreground">
-                  I Consent to Be Added as a PQC Leader
+                  I Consent to Be Listed in the PQC Community
                 </h2>
               </div>
               <Button
@@ -132,14 +132,14 @@ export function LeaderConsentModal({ isOpen, onClose }: LeaderConsentModalProps)
             {/* Scrollable content */}
             <div className="overflow-y-auto flex-1 px-6 py-5 space-y-5">
               <p className="text-sm text-muted-foreground leading-relaxed">
-                We feature individuals and organizations who are actively driving the post-quantum
-                cryptography transition. Leaders are included{' '}
+                We feature people contributing to the advances of post-quantum cryptography.
+                Community members are listed{' '}
                 <span className="font-medium text-foreground">only with written consent</span>.
               </p>
 
               <div>
                 <p className="text-sm font-medium text-foreground mb-3">
-                  You qualify as a PQC leader if you are:
+                  You qualify for the PQC Community list if you are:
                 </p>
                 <div className="space-y-3">
                   {LEADER_CRITERIA.map((c) => (
@@ -157,7 +157,7 @@ export function LeaderConsentModal({ isOpen, onClose }: LeaderConsentModalProps)
               {/* Copyable template */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-medium text-foreground">Your Leader Profile</p>
+                  <p className="text-sm font-medium text-foreground">Your Community Profile</p>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -199,7 +199,7 @@ export function LeaderConsentModal({ isOpen, onClose }: LeaderConsentModalProps)
                       GitHub Discussions &mdash; I Consent to Be Added
                     </span>
                     <p className="text-xs text-muted-foreground">
-                      Post your leader profile for community review
+                      Post your Community profile for review
                     </p>
                   </div>
                   <ExternalLink
@@ -231,8 +231,8 @@ export function LeaderConsentModal({ isOpen, onClose }: LeaderConsentModalProps)
 
               <div className="rounded-lg border border-border bg-muted/10 px-4 py-3">
                 <p className="text-xs text-muted-foreground text-center leading-relaxed">
-                  By requesting to be listed, you provide written consent to be referenced as a PQC
-                  leader on this platform.
+                  By requesting to be listed, you provide written consent to be referenced in the
+                  PQC Community on this platform.
                 </p>
               </div>
             </div>
