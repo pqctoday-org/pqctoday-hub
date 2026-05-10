@@ -25,8 +25,6 @@ import {
   Search,
   ScrollText,
   UserCog,
-  GitMerge,
-  Layers,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { WhatsNewModal } from '../ui/WhatsNewModal'
@@ -176,24 +174,6 @@ export const MainLayout = () => {
       hiddenOnMobile: true,
       mobileMore: true,
       moreOrder: 8,
-    },
-    {
-      path: '/agility',
-      label: 'Agility',
-      icon: Layers,
-      section: 'journey',
-      hiddenOnMobile: true,
-      mobileMore: true,
-      moreOrder: 6,
-    },
-    {
-      path: '/revisions',
-      label: 'Revisions',
-      icon: GitMerge,
-      section: 'current',
-      hiddenOnMobile: true,
-      mobileMore: true,
-      moreOrder: 10,
     },
     {
       path: '/about',

@@ -160,11 +160,6 @@ const RevisionsView = lazyWithRetry(() =>
     default: module.RevisionsView,
   }))
 )
-const AgilityView = lazyWithRetry(() =>
-  import('./components/Agility/AgilityView').then((module) => ({
-    default: module.AgilityView,
-  }))
-)
 
 // Helper component to log page views on route change
 function AnalyticsTracker() {
@@ -391,14 +386,6 @@ function App() {
         element={
           <ErrorBoundary>
             <RevisionsView />
-          </ErrorBoundary>
-        }
-      />
-      <Route
-        path="agility"
-        element={
-          <ErrorBoundary>
-            <AgilityView />
           </ErrorBoundary>
         }
       />

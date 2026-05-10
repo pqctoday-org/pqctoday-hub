@@ -2,9 +2,59 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
-import { ShieldCheck, Stamp, Flag, ChevronDown } from 'lucide-react'
+import { ShieldCheck, Stamp, Flag, ChevronDown, GitMerge } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { TrustScoreMethodologySection } from './TrustScoreMethodologySection'
+import { GlobalRevisionsFeed } from '@/components/ui/GlobalRevisionsFeed'
+
+function RevisionAuditCollapsible() {
+  const [isOpen, setIsOpen] = useState(false)
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.35 }}
+      className="glass-panel p-4 md:p-6"
+    >
+      <Button
+        variant="ghost"
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-3 w-full text-left cursor-pointer"
+      >
+        <GitMerge className="text-primary shrink-0" size={24} />
+        <div className="flex-1">
+          <h2 className="text-xl font-semibold">Content Audit Trail</h2>
+          <p className="text-xs text-muted-foreground">
+            Every reviewed data update, linked to its affected modules and sources
+          </p>
+        </div>
+        <ChevronDown
+          size={20}
+          className={clsx(
+            'text-muted-foreground transition-transform duration-200 shrink-0',
+            isOpen && 'rotate-180'
+          )}
+        />
+      </Button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="pt-4">
+              <GlobalRevisionsFeed pageSize={10} />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  )
+}
 
 /**
  * TrustEngineSection — user-facing explanation of the Trust Engine.
@@ -153,6 +203,11 @@ export function TrustEngineSection() {
               {/* Nested methodology — full dimension table + formula for power users */}
               <div className="mt-6">
                 <TrustScoreMethodologySection />
+              </div>
+
+              {/* Content revision audit — collapsible, same pattern as TrustScoreMethodologySection */}
+              <div className="mt-6">
+                <RevisionAuditCollapsible />
               </div>
             </div>
           </motion.div>

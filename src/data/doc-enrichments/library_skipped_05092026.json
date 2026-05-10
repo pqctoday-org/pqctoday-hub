@@ -1,0 +1,17 @@
+{
+  "generated": "2026-05-09",
+  "collection": "library",
+  "skipped_count": 2,
+  "entries": [
+    {
+      "ref_id": "APRA-CPS-234",
+      "file": "APRA-CPS-234.html",
+      "reason": "Error page detected: \"page not found\" found in first 500 chars"
+    },
+    {
+      "ref_id": "OpenSSL-3x-Docs",
+      "file": "OpenSSL-3x-Docs.html",
+      "reason": "Extracted text too short (38 chars) \u2014 likely empty or corrupt source"
+    }
+  ]
+}
