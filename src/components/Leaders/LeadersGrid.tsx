@@ -38,6 +38,7 @@ import { LEADERS_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { LeaderConsentModal } from './LeaderConsentModal'
 import { LeaderRemovalModal } from './LeaderRemovalModal'
 import { Button } from '../ui/button'
+import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 
 type FilterKey = 'region' | 'country' | 'sector' | 'category' | 'layer'
 
@@ -302,6 +303,16 @@ export const LeadersGrid = () => {
 
   const totalHasUpdates = leadersData.some((l) => l.status === 'New' || l.status === 'Updated')
 
+  // Phase 3 — semantic supplement. Queries like "academic lattice
+  // researchers" or "EU regulatory leaders" surface relevant profiles
+  // without requiring exact name/org keywords.
+  const semantic = useSemanticSearch('leaders', searchQuery, { limit: 30 })
+  const semanticNameSet = useMemo(
+    () =>
+      semantic.mode === 'semantic' ? new Set(semantic.hits.map((h) => h.id.toLowerCase())) : null,
+    [semantic.mode, semantic.hits]
+  )
+
   // Filter leaders
   const filteredLeaders = useMemo(() => {
     let result = leadersData
@@ -325,21 +336,32 @@ export const LeadersGrid = () => {
       result = result.filter((l) => l.type === selectedSector)
     }
 
-    // Search filter
+    // Search filter — lexical floor + semantic supplement.
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase()
-      result = result.filter(
-        (l) =>
+      result = result.filter((l) => {
+        const lexicalMatch =
           l.name.toLowerCase().includes(q) ||
           l.title.toLowerCase().includes(q) ||
           l.organizations.some((o) => o.toLowerCase().includes(q)) ||
           l.bio.toLowerCase().includes(q) ||
           l.category.toLowerCase().includes(q)
-      )
+        if (lexicalMatch) return true
+        // Leaders chunkToResource maps to chunk.title (the leader's name).
+        if (semanticNameSet && semanticNameSet.has(l.name.toLowerCase())) return true
+        return false
+      })
     }
 
     return result
-  }, [selectedRegion, selectedCountry, selectedSector, activeCategory, searchQuery])
+  }, [
+    selectedRegion,
+    selectedCountry,
+    selectedSector,
+    activeCategory,
+    searchQuery,
+    semanticNameSet,
+  ])
 
   // Industry relevance — leaders whose bio/organizations match selected industries
   const industryRelevant = useMemo(() => {
