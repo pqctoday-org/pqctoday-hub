@@ -4,6 +4,36 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.10.0] - 2026-05-10
+
+### Added — Trust-engine acceptance layer
+
+- **TrustTierFilter component** (`?tier=` URL param, multi-select) wired into Library, Migrate, Compliance, Threats, and Timeline. Records tab on Compliance honours the filter via a source→framework-id mapping. Per-layer counts on Migrate and the 4 Landscape memos on Compliance are tier-consistent.
+- **CitationTierChip** rendered next to every chat citation in `ChatMessage.tsx` — closes §14.3 step 4 of trust-engine-explainability. Chip aria-label reflects the engine's tier exactly.
+- **⌘K palette tier-aware ranking + "Authoritative only" toggle** — `UnifiedSearchService.searchPalette()` applies the same trust-tier multiplier (×1.20 / ×1.10 / ×1.00 / ×0.80, default ×0.95) as the chat retrieval path. Persistent toggle in `CommandPalette` filters to Authoritative + High tiers; preference saved in localStorage. Closes §14.3 step 5.
+- **TimelineEvidenceBadge freshness pill** — derives a `current` / `stale` / `critical` state from `sourceDate` (≤365d / ≤730d / >730d). Rendered in both compact (card) and full (popover) modes.
+- **Corpus invariant CI gate** — new `src/__tests__/corpus-trust-invariants.test.ts` (7 tests) pins C3 tier coverage, C4 W3C PROV-DM chain integrity, and C5 freshness across the ~10,800-chunk corpus. Monotone-decreasing thresholds; regressions fail closed.
+- **C1–C10 acceptance contract** — 79 new Vitest tests across `contract.test.ts`, `chunkToResource.contract.test.ts`, `RetrievalService.tier.test.ts`, `RetrievalService.tierOrdering.test.ts`, `UnifiedSearchService.singleton.test.ts`, `UnifiedSearchService.tierPalette.test.ts`, `CitationTierChip.binding.test.tsx`, `TrustTierFilter.test.tsx`, `TimelineEvidenceBadge.test.tsx`.
+- **4 Playwright E2E specs** validated locally under `--project=chromium`: `trust-tier-filter.spec.ts` (5 views), `timeline-freshness-badge.spec.ts`, `cmdk-trust-order.spec.ts`, `chat-citation-tier.spec.ts`.
+
+### Fixed — Trust-engine integrity
+
+- **Tier-resolution orphans 1,316 → 13 (99%)**. Root causes diagnosed and patched:
+  - `generate-rag-corpus.ts` `processLeaders` now skips deprecated rows (matches loader's `filterActive`). Closes 1 leader orphan.
+  - `trustScoreData.ts` registers alternate keys for `${country} — ${title}`, `${country}:${body} — ${title}`, and the `United States` un-rename for NSA-orged events. Closes 235 timeline + most doc-enrichment orphans.
+  - `chunkToResource.ts` routes `document-enrichment` chunks by `metadata.collection` (library / timeline / threats / catalog) instead of always mapping to library. Closes 982 doc-enrichment orphans.
+  - `chunkToResource.ts` returns null for classical-family algorithm chunks (RSA, ECDH, ECDSA, Ed25519/Ed448, etc.) — these are migration sources, not trust subjects. Closes 15 algorithm orphans.
+  - New `algorithms_transitions_05102026.csv` adds 49 missing PQC variants (BIKE, SLH-DSA fast variants, more Classic-McEliece, SMAUG-T, NTRU+, Aigis, HAETAE, AIMer, MAYO, HAWK, LMS/XMSS, ML-DSA hybrids). Closes 49 algorithm orphans.
+- **`scripts/download-timeline.js` `title.slice(0, 50)` removed** — the hard 50-char truncation propagated truncated event titles into manifest labels → enrichment refIds → corpus chunks, orphaning 19 doc-enrichment chunks. One-shot script patched 6 existing entries; 13 remain (stale title renames awaiting next enrichment cycle).
+- **Trusted-source xref dedup** — new `trusted_source_xref_05102026_r1.csv` removes 3 duplicate `(resource_type, resource_id, source_id)` tuples (2× direct+mapped pairs + 1× pure dup) that were inflating `densityBonus` in the `sourceCredibility` dimension. Resolves the `trustedSourceXrefData.test.ts` failure from `d58aaecc`.
+- **Corpus invariant test paths** — added `src/data/module-qa/` to the CSV-existence search so `module_qa_combined_*.csv` references resolve. `MAX_MISSING_CSVS` 1 → 0.
+- **`download-library.js` re-run** — fetched 3 cached docs that closed the gap in `chunk.prov.source_doc` resolution. `MAX_MISSING_SOURCE_DOCS` 15 → 0.
+
+### Changed
+
+- **`MAX_DOC_WITHOUT_PASSAGES` 420 → 431** — IETF library backfill (`5567577e`) added 11 docs with `localFile` set but no extracted passages yet. Threshold is monotone-decreasing; next enrichment run reduces it.
+- **`eslint.config.js`** — extended node-files glob to include `scripts/**/*.{js,cjs,mjs,ts}` so tooling scripts lint cleanly without per-file env directives.
+
 ## [3.9.0] - 2026-05-10
 
 ### Changed — Community rebrand + Leaders UX
