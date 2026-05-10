@@ -1710,9 +1710,9 @@ enrichment_method: ollama-qwen3.6:27b
 
 ---
 
-## Singapore:CSA/GovTech/IMDA — Quantum-Safe Handbook and Quantum Readiness Index
+## Singapore:CSA/GovTech/IMDA — Quantum-Safe Handbook and Quantum Readiness Index Released
 
-- **Reference ID**: Singapore:CSA/GovTech/IMDA — Quantum-Safe Handbook and Quantum Readiness Index
+- **Reference ID**: Singapore:CSA/GovTech/IMDA — Quantum-Safe Handbook and Quantum Readiness Index Released
 - **Title**: Quantum-Safe Handbook and Quantum Readiness Index
 - **Authors**: See document
 - **Publication Date**: Not specified
@@ -2865,9 +2865,9 @@ enrichment_method: ollama-qwen3.6:27b
 
 ---
 
-## Hong Kong:HKMA — Fintech Promotion Blueprint: Quantum Preparedness
+## Hong Kong:HKMA — Fintech Promotion Blueprint: Quantum Preparedness Index
 
-- **Reference ID**: Hong Kong:HKMA — Fintech Promotion Blueprint: Quantum Preparedness
+- **Reference ID**: Hong Kong:HKMA — Fintech Promotion Blueprint: Quantum Preparedness Index
 - **Title**: Fintech Promotion Blueprint: Quantum Preparedness
 - **Authors**: See document
 - **Publication Date**: Not specified
@@ -3745,9 +3745,9 @@ enrichment_method: ollama-qwen3.6:27b
 
 ---
 
-## Germany:BSI — Full PQC Transition — Standalone Algorithms Requir
+## Germany:BSI — Full PQC Transition — Standalone Algorithms Required
 
-- **Reference ID**: Germany:BSI — Full PQC Transition — Standalone Algorithms Requir
+- **Reference ID**: Germany:BSI — Full PQC Transition — Standalone Algorithms Required
 - **Title**: Full PQC Transition — Standalone Algorithms Requir
 - **Authors**: See document
 - **Publication Date**: Not specified
@@ -4515,9 +4515,9 @@ enrichment_method: ollama-qwen3.6:27b
 
 ---
 
-## Brazil:ITI — ICP-Brasil Mandates ML-DSA and ML-KEM Certificate
+## Brazil:ITI — ICP-Brasil Mandates ML-DSA and ML-KEM Certificate Standards
 
-- **Reference ID**: Brazil:ITI — ICP-Brasil Mandates ML-DSA and ML-KEM Certificate
+- **Reference ID**: Brazil:ITI — ICP-Brasil Mandates ML-DSA and ML-KEM Certificate Standards
 - **Title**: ICP-Brasil Mandates ML-DSA and ML-KEM Certificate
 - **Authors**: See document
 - **Publication Date**: Not specified
@@ -4570,9 +4570,9 @@ enrichment_method: ollama-qwen3.6:27b
 
 ---
 
-## G7:G7 CEG — G7 Financial Sector Critical Systems PQC Transitio
+## G7:G7 CEG — G7 Financial Sector Critical Systems PQC Transition
 
-- **Reference ID**: G7:G7 CEG — G7 Financial Sector Critical Systems PQC Transitio
+- **Reference ID**: G7:G7 CEG — G7 Financial Sector Critical Systems PQC Transition
 - **Title**: G7 Financial Sector Critical Systems PQC Transitio
 - **Authors**: See document
 - **Publication Date**: Not specified
@@ -10826,9 +10826,9 @@ enrichment_method: ollama-qwen3.6:27b
 
 ---
 
-## Malaysia:NACSA — National PQC Migration
+## Malaysia:NACSA — National PQC Migration Plan Published
 
-- **Reference ID**: Malaysia:NACSA — National PQC Migration
+- **Reference ID**: Malaysia:NACSA — National PQC Migration Plan Published
 - **Title**: Malaysia:NACSA — National PQC Migration
 - **Authors**: National Cyber Security Agency of Malaysia
 - **Publication Date**: 2025-10-28
