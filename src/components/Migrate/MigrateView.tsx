@@ -43,6 +43,7 @@ import { useHistoryStore } from '@/store/useHistoryStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONA_MIGRATE_LAYERS } from '@/data/personaConfig'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
+import { SemanticSearchHint } from '@/components/common/SemanticSearchHint'
 import { Button } from '../ui/button'
 import { ErrorAlert } from '../ui/error-alert'
 import { EmptyState } from '../ui/empty-state'
@@ -1519,10 +1520,19 @@ export const MigrateView: React.FC = () => {
 
           const visibleCount = isStackMode ? stackFilteredCount : flatVisibleCount
           return (
-            <p className="text-xs text-muted-foreground">
-              {visibleCount} product{visibleCount !== 1 ? 's' : ''}
-              {layerLabel && ` in ${layerLabel}`}
-            </p>
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground">
+                {visibleCount} product{visibleCount !== 1 ? 's' : ''}
+                {layerLabel && ` in ${layerLabel}`}
+              </p>
+              <SemanticSearchHint
+                mode={semantic.mode}
+                loading={semantic.loading}
+                query={filterText}
+                semanticHitCount={semantic.hits.length}
+                noun="related products"
+              />
+            </div>
           )
         })()}
 

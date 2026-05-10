@@ -44,6 +44,7 @@ import {
   matchesTrustTierFilter,
 } from '../common/TrustTierFilter'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
+import { SemanticSearchHint } from '@/components/common/SemanticSearchHint'
 
 const URGENCY_ORDER: Record<string, number> = {
   Critical: 0,
@@ -1081,10 +1082,19 @@ export const LibraryView: React.FC = () => {
       )}
 
       {/* Results count */}
-      <p className="text-xs text-muted-foreground">
-        {filteredItems.length} document{filteredItems.length !== 1 ? 's' : ''}
-        {activeCategory !== 'All' && ` in ${activeCategory}`}
-      </p>
+      <div className="space-y-1">
+        <p className="text-xs text-muted-foreground">
+          {filteredItems.length} document{filteredItems.length !== 1 ? 's' : ''}
+          {activeCategory !== 'All' && ` in ${activeCategory}`}
+        </p>
+        <SemanticSearchHint
+          mode={semantic.mode}
+          loading={semantic.loading}
+          query={filterText}
+          semanticHitCount={semantic.hits.length}
+          noun="related documents"
+        />
+      </div>
 
       {/* Content area */}
       {viewMode === 'cards' ? (

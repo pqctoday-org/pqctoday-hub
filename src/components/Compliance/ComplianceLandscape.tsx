@@ -37,6 +37,7 @@ import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { resolveTimelineRef } from '@/utils/timelineResolver'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
+import { SemanticSearchHint } from '@/components/common/SemanticSearchHint'
 
 // ── Deadline helpers ────────────────────────────────────────────────────
 
@@ -1236,6 +1237,15 @@ export function ComplianceLandscape({
           </Button>
         )}
       </div>
+
+      {/* Semantic search hint — surfaces when embedding-driven matches augment the lexical filter */}
+      <SemanticSearchHint
+        mode={semantic.mode}
+        loading={semantic.loading}
+        query={searchFilterText}
+        semanticHitCount={semantic.hits.length}
+        noun="related frameworks"
+      />
 
       {/* Content */}
       {viewMode === 'cards' ? (

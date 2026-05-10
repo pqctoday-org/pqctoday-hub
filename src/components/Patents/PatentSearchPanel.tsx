@@ -192,9 +192,16 @@ export function PatentSearchPanel({ patents, onSelectPatent }: PatentSearchPanel
       })
       .filter(Boolean) as PatentSearchResult[]
 
-    // Append semantic-only hits the lexical pass missed.
+    // Interleave semantic-only hits by relevance. MiniSearch scores can
+    // be tens or hundreds; cosine is in [0, 1]. Normalize each lexical
+    // score against the lexical max so both inputs share a [0, 1] scale,
+    // then merge-sort by descending score. A high-cosine semantic-only
+    // result (~0.9) will outrank a weak fuzzy lexical match (normalized
+    // ~0.2) and bubble up where it belongs.
     if (semantic.mode !== 'semantic' || semantic.hits.length === 0) return lexical
     const seen = new Set(lexical.map((r) => r.patent.patentNumber))
+    const lexicalMax = Math.max(1e-6, ...lexical.map((r) => r.score))
+    const normLexical = lexical.map((r) => ({ ...r, score: r.score / lexicalMax }))
     const semanticOnly: PatentSearchResult[] = []
     for (const hit of semantic.hits) {
       if (seen.has(hit.id)) continue
@@ -206,7 +213,9 @@ export function PatentSearchPanel({ patents, onSelectPatent }: PatentSearchPanel
         matchedFields: ['semantic'],
       })
     }
-    return [...lexical, ...semanticOnly].slice(0, 30)
+    const merged = [...normLexical, ...semanticOnly]
+    merged.sort((a, b) => b.score - a.score)
+    return merged.slice(0, 30)
   }, [debouncedQuery, index, patentMap, semantic.mode, semantic.hits])
 
   const showEmpty = debouncedQuery.trim().length >= 2 && results.length === 0 && !isBuilding
