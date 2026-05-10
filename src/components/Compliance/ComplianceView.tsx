@@ -555,6 +555,9 @@ export const ComplianceView = () => {
   useWorkflowPhaseTracker('comply')
   const [selectedFramework, setSelectedFramework] = useState<ComplianceFramework | null>(null)
   const [searchParams, setSearchParams] = useSearchParams()
+  // Trust-tier filter (URL ?tier=) — feeds both the Landscape memos via
+  // MobileViewToggle props AND the Records ComplianceTable directly.
+  const tierFilter = useTrustTierFilter()
   const certParam = searchParams.get('cert') ?? undefined
   const evref = searchParams.get('evref') ?? undefined
   const { data, loading, refresh, lastUpdated, enrichRecord } = useComplianceRefresh()
@@ -1519,6 +1522,7 @@ export const ComplianceView = () => {
               pqcFilters={recPqc}
               categoryFilters={recCat}
               sourceFilters={recSrc}
+              tierFilters={tierFilter}
               vendorFilters={recVendor}
               sortColumn={recSortCol}
               sortDirection={recSortDir}
