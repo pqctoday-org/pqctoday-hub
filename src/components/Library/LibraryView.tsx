@@ -731,7 +731,13 @@ export const LibraryView: React.FC = () => {
               <EmptyState
                 icon={<FileSearch size={32} />}
                 title="No documents found"
-                description="Try adjusting your search or filter criteria."
+                description={
+                  filterText.trim() && semantic.loading
+                    ? 'Semantic search is still loading — results may refine in a moment.'
+                    : filterText.trim() && semantic.mode === 'semantic'
+                      ? 'No direct or semantically related documents found. Try different keywords or relax filters.'
+                      : 'Try adjusting your search or filter criteria.'
+                }
               />
             )}
           </div>

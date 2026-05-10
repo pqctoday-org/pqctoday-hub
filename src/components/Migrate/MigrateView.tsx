@@ -1746,6 +1746,13 @@ export const MigrateView: React.FC = () => {
               <EmptyState
                 icon={<PackageSearch size={32} />}
                 title="No products match the current filters."
+                description={
+                  filterText.trim() && semantic.loading
+                    ? 'Semantic search is still loading — results may refine in a moment.'
+                    : filterText.trim() && semantic.mode === 'semantic'
+                      ? 'No direct or semantically related product found. Try different keywords or relax filters.'
+                      : undefined
+                }
               />
             </div>
           ))}
