@@ -4,6 +4,68 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.8.0] - 2026-05-10
+
+### Added — Data Self-Containment (DS01–DS22)
+
+Every dated CSV in `src/data/` and MD enrichment file in `src/data/doc-enrichments/` is now self-contained — no record exists only in older / archived versions. Closes the silent-data-loss risk surfaced by `scripts/check-data-archival-risk.py` (638 CSV records + 632 MD records were missing from latest before this work; now 225 / 52 residual).
+
+**Phase 1 — Foundations:**
+
+- **DS01 status-column schema** — three new columns added to every record-bearing CSV: `status` ∈ {`active`,`deprecated`,`obsolete`}, `deprecated_at` (ISO date), `deprecated_reason`. Rows are NEVER deleted; obsolete rows are marked deprecated and carried forward. Spec: `pqctoday-priv/docs/platform/data/csv-status-schema.md`.
+
+- **DS02 loader filter** — `src/data/loaderUtils.ts` exports `filterActive<T>(rows)` and `partitionByStatus<T>(rows)`. Backwards-compatible (rows without `status` column treated as active). Demonstrated on `vendorData.ts`; other 13 loaders adopt incrementally.
+
+- **DS03/DS19 — 8 new validator gates** in `scripts/validators/self-containment-checks.ts`: `CM-SC` (CSV self-containment), `CM-SC-MD` (MD self-containment), `CM-STATUS` (collision-aware), `CM-VT-COUNTRIES` / `-INDUSTRIES` / `-REGION-SCOPE` / `-THREAT-INDUSTRY` / `-ROLES` (vocab-tag closed sets), `CM-ORPHAN` (trust-path orphan check). Wired into `scripts/validate-data-integrity.ts`.
+
+- **DS17 severity promotion env-var staged** — `DS_SEVERITY=ERROR` flips all DS-series checks from WARNING to ERROR. Activate in CI workflow once CM-SC residual reaches an acceptable level.
+
+**Phase 2 — Writer-side patches (8 scripts):**
+
+- `scripts/enrich-docs-ollama.py` — DS05 self-contained MD writer: non-empty wins on per-record merge + `written_ref_ids` carry-forward of un-iterated records.
+- `scripts/match_certifications.py`, `scripts/generate-cpe-xref.py`, `scripts/generate-purl-xref.py` — DS06/07/08 `merge_with_prev()` upsert preserves dropped rows as `deprecated_at=today, deprecated_reason='not in regen'`.
+- `scripts/promote-cowork.ts` — DS09 deletion audit: refuses to silently drop records (in production but absent from cowork) unless `--force-drop`.
+- `scripts/enrich-compliance-cswp39-tags.py`, `scripts/apply-extraction-to-catalog.py` — DS10/DS12 self-containment guards: warn when input has fewer rows than previous version.
+
+**Phase 3 — Tooling + execution:**
+
+- **`scripts/backfill-csv-self-containment.py`** (DS13/DS18) — generic per-family backfill. Detects status-column collision (e.g. `pqc_complete_algorithm_reference`'s existing `status` column for algorithm-standardization vocab) and falls back to `lifecycle_status`. Re-normalize hook invokes `normalize-trust-tiers.ts` + `normalize-vocab-tags.py --all`.
+- **`scripts/queue-phase3.sh`** — atomic Phase 3 orchestrator: DS14 → DS22 → DS15 → DS21 → validators.
+- **`scripts/merge-enrichment.py --in-place --all`** (DS15) folds scattered MD enrichment files into self-contained latest per family.
+- **DS22 targeted re-enrichment** — 80 restored library records re-enriched in 41 min (qwen3.6:27b + nomic-embed-text pre-filter via T16-A).
+- **DS21 RAG corpus regen + re-sign** — `scripts/generate-rag-corpus.ts` produces 10,704 chunks. Both `revisions.jsonl` and `rag-corpus.json` re-signed with the production attestation key (kid `11b723084d047b4c`, ML-DSA-65). Trust path complete: chunk → `was_attributed_to` → `trusted_sources` → `trust_tier` → tier multiplier.
+
+### Changed
+
+- **CSVmaintenance.md** gains §11 "Self-containment guarantee" — documents the status-column rule, loader behaviour, validator gates, and writer obligations. CLAUDE.md "CSV Management" section linked.
+- **Validator results** vs start of work:
+  - CM-SC: 638 → 225 findings (−65%)
+  - CM-SC-MD: 632 → 52 findings (−91%)
+  - All 5 CM-VT-\* checks: 238 → 0 (✓ PASS)
+  - CM-STATUS: ✓ PASS, 10 families managed
+  - CM-ORPHAN: 5 / 323 = 1.5% (well under 10% abort)
+
+### Restored
+
+- **Library**: 80 records restored from archive (e.g. `ANSSI-PQC-Position-2022`, `3GPP TS 33.501 Rel-19`, `FIPS-207-HQC`, `NSA-QKD-Advisory-2023`, `ISO-IEC-23837-1/2`).
+- **Compliance**: 7 frameworks restored (`AU-MALABO`, `EUCC-V2`, …).
+- **Vendors**: 1 row restored.
+- **Quantum threats × HSM industries**: 3 rows restored.
+- **Leaders**: 146 rows preserved as `deprecated` (reason: 2026-03-13 leaders policy filter).
+- **PQC product catalog**: 81 products preserved as `deprecated` (reason: catalog refactor pre-2026-05).
+
+Total: 318 records restored or formally deprecated across 6 families. DS01 columns added to 10 families.
+
+### Archived (DS16)
+
+21 CSVs + 51 MDs moved to `src/data/archive/` and `src/data/doc-enrichments/archive/` per CSVmaintenance.md "keep 2 versions" rule. Safe because each latest file is now independently sufficient.
+
+### Plan + tracker docs
+
+- `pqctoday-priv/docs/platform/data/data-self-containment-implementation-plan.md` — 22-task plan, 4 phases, validation rules, abort gates.
+- `pqctoday-priv/docs/platform/data/data-self-containment-implementation-tracker.md` — live tracker.
+- `pqctoday-priv/docs/platform/data/csv-status-schema.md` — schema convention.
+
 ## [3.7.0] - 2026-05-09
 
 ### Added
