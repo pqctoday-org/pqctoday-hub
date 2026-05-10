@@ -17,8 +17,19 @@ const REPO_ROOT = process.cwd()
 const CORPUS_PATH = path.join(REPO_ROOT, 'public/data/rag-corpus.json')
 const META_PATH = path.join(REPO_ROOT, 'public/data/embeddings-meta.json')
 const BIN_PATH = path.join(REPO_ROOT, 'public/data/embeddings.bin')
-const hasArtifact = fs.existsSync(META_PATH) && fs.existsSync(BIN_PATH)
 const hasCorpus = fs.existsSync(CORPUS_PATH)
+/** Corpus may be mid-write from the enrichment pipeline — self-skip rather than fail. */
+function isCorpusParseable(): boolean {
+  if (!hasCorpus) return false
+  try {
+    JSON.parse(fs.readFileSync(CORPUS_PATH, 'utf8'))
+    return true
+  } catch {
+    return false
+  }
+}
+const hasArtifact =
+  hasCorpus && fs.existsSync(META_PATH) && fs.existsSync(BIN_PATH) && isCorpusParseable()
 const TMP_BACKUP = `${CORPUS_PATH}.dup-test-backup`
 
 function writeCorpus(chunks: object[]) {
