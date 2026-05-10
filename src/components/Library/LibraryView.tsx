@@ -43,6 +43,7 @@ import {
   useTrustTierFilter,
   matchesTrustTierFilter,
 } from '../common/TrustTierFilter'
+import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 
 const URGENCY_ORDER: Record<string, number> = {
   Critical: 0,
@@ -488,6 +489,18 @@ export const LibraryView: React.FC = () => {
 
   const totalHasUpdates = activityItems.length > 0
 
+  // Phase 3 — semantic search supplement. The hook returns ranked
+  // referenceIds when the embedding runtime is ready. The lexical
+  // filter below remains the floor; matching referenceIds are
+  // unioned in so paraphrase/synonym queries surface relevant docs
+  // (e.g. "long-term confidentiality" → HNDL records).
+  const semantic = useSemanticSearch('library', filterText, { limit: 30 })
+  const semanticIdSet = useMemo(
+    () =>
+      semantic.mode === 'semantic' ? new Set(semantic.hits.map((h) => h.id.toLowerCase())) : null,
+    [semantic.mode, semantic.hits]
+  )
+
   // Filtered items (shared between card and table views)
   const filteredItems = useMemo(() => {
     return libraryData.filter((item) => {
@@ -568,15 +581,21 @@ export const LibraryView: React.FC = () => {
       // Lifecycle status bucket filter
       if (lifecycleBucket !== 'All' && item.documentStatusBucket !== lifecycleBucket) return false
 
-      // Search filter
+      // Search filter — lexical floor + semantic supplement.
       if (!filterText) return true
       const searchLower = filterText.toLowerCase()
-      return (
+      const lexicalMatch =
         item.documentTitle.toLowerCase().includes(searchLower) ||
         item.referenceId.toLowerCase().includes(searchLower) ||
         item.shortDescription?.toLowerCase().includes(searchLower) ||
         item.categories?.some((cat) => cat.toLowerCase().includes(searchLower))
-      )
+      if (lexicalMatch) return true
+      // Semantic union — only kicks in when the embedding runtime is
+      // ready and produced ranked hits for this query.
+      if (semanticIdSet && semanticIdSet.has(item.referenceId.toLowerCase())) {
+        return true
+      }
+      return false
     })
   }, [
     activeCategory,
@@ -586,6 +605,7 @@ export const LibraryView: React.FC = () => {
     geoFilter,
     sectorFilter,
     filterText,
+    semanticIdSet,
     showOnlyLibraryBookmarks,
     libraryBookmarks,
     cswp39Only,
