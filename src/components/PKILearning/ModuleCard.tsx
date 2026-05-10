@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import { BookOpen, CheckCircle, Circle, Clock, Wrench, CheckSquare, Square } from 'lucide-react'
 import { useModuleStore } from '../../store/useModuleStore'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
@@ -32,6 +33,7 @@ export const ModuleCard = ({
   isRelevant?: boolean
   isAboveLevel?: boolean
 }) => {
+  const navigate = useNavigate()
   const { modules } = useModuleStore()
   const isBookmarked = useBookmarkStore((s) => s.myLearnModules.includes(module.id))
   const toggleMyLearnModule = useBookmarkStore((s) => s.toggleMyLearnModule)
@@ -183,7 +185,19 @@ export const ModuleCard = ({
       </div>
 
       <h3 className="text-xl font-bold mb-2">{module.title}</h3>
-      <ReviewedBadge domain="module" entityId={module.id} className="mb-2" />
+      {/* onClick is a non-interactive stopPropagation guard so the inner badge's
+          own button handles its own click without bubbling to the card. */}
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+      <div onClick={(e) => e.stopPropagation()}>
+        <ReviewedBadge
+          domain="module"
+          entityId={module.id}
+          className="mb-2"
+          onOpenDrilldown={() =>
+            navigate(`/revisions?domain=module&entity=${encodeURIComponent(module.id)}`)
+          }
+        />
+      </div>
 
       <p className="text-sm text-muted-foreground leading-relaxed mb-4 flex-grow line-clamp-2 md:line-clamp-none">
         {module.description}
