@@ -23,6 +23,11 @@ import {
   Layers,
 } from 'lucide-react'
 import { CSWP39Explorer } from './CSWP39Explorer'
+import {
+  TrustTierFilter,
+  useTrustTierFilter,
+  matchesTrustTierFilter,
+} from '../common/TrustTierFilter'
 import { MoreTabsMenu } from './MoreTabsMenu'
 import { ApplicabilityPanel } from '../applicability/ApplicabilityPanel'
 import { LearningFrameBanner } from './LearningFrameBanner'
@@ -370,24 +375,34 @@ function MobileViewToggle({
   // Industry alliances (PQC-COALITION, PQCA, QED-C) are surfaced alongside
   // standardization bodies — they're standardization-adjacent organisations that
   // produce reference implementations, policy guidance, and migration tooling.
+  const tierFilter = useTrustTierFilter()
+  const tierFilteredFrameworks = useMemo(
+    () =>
+      tierFilter.length === 0
+        ? complianceFrameworks
+        : complianceFrameworks.filter((f) =>
+            matchesTrustTierFilter(tierFilter, 'compliance', f.id)
+          ),
+    [tierFilter]
+  )
   const standardsFrameworks = useMemo(
     () =>
-      complianceFrameworks.filter(
+      tierFilteredFrameworks.filter(
         (f) => f.bodyType === 'standardization_body' || f.bodyType === 'industry_alliance'
       ),
-    []
+    [tierFilteredFrameworks]
   )
   const technicalStandards = useMemo(
-    () => complianceFrameworks.filter((f) => f.bodyType === 'technical_standard'),
-    []
+    () => tierFilteredFrameworks.filter((f) => f.bodyType === 'technical_standard'),
+    [tierFilteredFrameworks]
   )
   const certificationFrameworks = useMemo(
-    () => complianceFrameworks.filter((f) => f.bodyType === 'certification_body'),
-    []
+    () => tierFilteredFrameworks.filter((f) => f.bodyType === 'certification_body'),
+    [tierFilteredFrameworks]
   )
   const complianceOnlyFrameworks = useMemo(
-    () => complianceFrameworks.filter((f) => f.bodyType === 'compliance_framework'),
-    []
+    () => tierFilteredFrameworks.filter((f) => f.bodyType === 'compliance_framework'),
+    [tierFilteredFrameworks]
   )
 
   const landscapeTabFrameworks = useMemo(
@@ -1414,6 +1429,9 @@ export const ComplianceView = () => {
                 tabs (Standardization Bodies / Certification Schemes) collapsed
                 into the Landscape facet. */}
             <MoreTabsMenu activeTab={activeTab} onSelect={(tab) => handleTabChange(tab)} />
+            <div className="ml-auto pr-2">
+              <TrustTierFilter />
+            </div>
           </TabsList>
 
           {/* ── Tab: For You — applies user profile across all content ── */}

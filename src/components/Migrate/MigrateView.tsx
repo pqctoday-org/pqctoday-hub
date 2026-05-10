@@ -13,6 +13,11 @@ import { MigrateSortControl, type MigrateSortOption } from './MigrateSortControl
 import { FilterDropdown } from '../common/FilterDropdown'
 import { SectorFilter, useSectorFilter, matchesSectorFilter } from '../common/SectorFilter'
 import {
+  TrustTierFilter,
+  useTrustTierFilter,
+  matchesTrustTierFilter,
+} from '../common/TrustTierFilter'
+import {
   Search,
   X,
   PackageSearch,
@@ -102,6 +107,7 @@ export const MigrateView: React.FC = () => {
     () => searchParams.get('industry') ?? null
   )
   const sectorFilter = useSectorFilter()
+  const tierFilter = useTrustTierFilter()
 
   // Persisted store: hidden products + active layer/sub-category + view mode
   const {
@@ -690,6 +696,8 @@ export const MigrateView: React.FC = () => {
         !matchesSectorFilter(sectorFilter, item.targetIndustries ?? '')
       )
         return false
+      // Trust tier filter (multi-select, URL param: tier)
+      if (!matchesTrustTierFilter(tierFilter, 'migrate', item.softwareName)) return false
       // Layer filter (from dropdown in flat modes)
       if (effectiveLayer !== 'All') {
         if (effectiveViewMode === 'cisaStack') {
@@ -752,6 +760,7 @@ export const MigrateView: React.FC = () => {
     hasRoadmapFilter,
     showOnlyMyProducts,
     myProductsSet,
+    tierFilter,
   ])
 
   // PQC stats for all filtered products
@@ -1113,6 +1122,7 @@ export const MigrateView: React.FC = () => {
                         }}
                         defaultLabel="All Licenses"
                       />
+                      <TrustTierFilter />
                       {!isEmbedded && (
                         <Button
                           variant="ghost"

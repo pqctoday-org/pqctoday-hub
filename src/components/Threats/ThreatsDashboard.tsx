@@ -16,6 +16,11 @@ import { threatsData, threatsMetadata } from '../../data/threatsData'
 import type { ThreatItem } from '../../data/threatsData'
 import { AnimatePresence } from 'framer-motion'
 import { FilterDropdown } from '../common/FilterDropdown'
+import {
+  TrustTierFilter,
+  useTrustTierFilter,
+  matchesTrustTierFilter,
+} from '../common/TrustTierFilter'
 import { logEvent } from '../../utils/analytics'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
@@ -83,6 +88,7 @@ export const ThreatsDashboard: React.FC = () => {
     return null
   })
   const [showMobileFilters, setShowMobileFilters] = useState(false)
+  const tierFilter = useTrustTierFilter()
   const [viewMode, setViewMode] = useState<ThreatsViewMode>(
     () => (searchParams.get('mode') as ThreatsViewMode | null) ?? 'table'
   )
@@ -292,6 +298,11 @@ export const ThreatsDashboard: React.FC = () => {
       data = data.filter((item) => myThreats.includes(item.threatId))
     }
 
+    // Trust tier filter (multi-select, URL param: tier)
+    if (tierFilter.length > 0) {
+      data = data.filter((item) => matchesTrustTierFilter(tierFilter, 'threats', item.threatId))
+    }
+
     return data
   }, [
     selectedIndustries,
@@ -301,6 +312,7 @@ export const ThreatsDashboard: React.FC = () => {
     sortDirection,
     showOnlyThreats,
     myThreats,
+    tierFilter,
   ])
 
   // When a persona is set but no explicit industry filter is active, compute the persona's
@@ -447,6 +459,9 @@ export const ThreatsDashboard: React.FC = () => {
                 className="mb-0 w-full"
                 noContainer
               />
+            </div>
+            <div className="flex-1 w-full md:min-w-[120px]">
+              <TrustTierFilter className="mb-0 w-full" />
             </div>
           </div>
 

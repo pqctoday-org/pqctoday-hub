@@ -16,6 +16,11 @@ import { CountryFlag } from '../common/CountryFlag'
 import { PageHeader } from '../common/PageHeader'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { FilterDropdown } from '../common/FilterDropdown'
+import {
+  TrustTierFilter,
+  useTrustTierFilter,
+  matchesTrustTierFilter,
+} from '../common/TrustTierFilter'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { TIMELINE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
@@ -27,6 +32,29 @@ const REGION_LABELS: Record<string, string> = {
   eu: 'EU',
   apac: 'APAC',
   global: 'Global',
+}
+
+// Map common short-form country codes/names (used by deep links from other
+// pages) to the canonical timeline `countryName` values.
+const COUNTRY_ALIASES: Record<string, string> = {
+  UK: 'United Kingdom',
+  GB: 'United Kingdom',
+  USA: 'United States',
+  US: 'United States',
+  UAE: 'United Arab Emirates',
+  PRC: 'China',
+  ROK: 'South Korea',
+  Korea: 'South Korea',
+}
+
+function resolveCountryParam(param: string | null, knownCountries: string[]): string {
+  if (!param) return 'All'
+  if (knownCountries.includes(param)) return param
+  const aliased = COUNTRY_ALIASES[param]
+  if (aliased && knownCountries.includes(aliased)) return aliased
+  // Case-insensitive fallback
+  const ci = knownCountries.find((c) => c.toLowerCase() === param.toLowerCase())
+  return ci ?? 'All'
 }
 
 const TIMELINE_PERSONA_HINTS: Record<string, string> = {
@@ -56,13 +84,10 @@ export const TimelineView = () => {
     return searchParams.get('region') ?? usePersonaStore.getState().selectedRegion ?? 'All'
   })
 
-  // Country filter — preset from URL ?country= param if present
+  // Country filter — preset from URL ?country= param if present (with alias resolution)
   const [countryFilter, setCountryFilter] = useState<string>(() => {
-    const countryParam = searchParams.get('country')
-    if (countryParam && timelineData?.some((d) => d.countryName === countryParam)) {
-      return countryParam
-    }
-    return 'All'
+    const known = timelineData?.map((d) => d.countryName) ?? []
+    return resolveCountryParam(searchParams.get('country'), known)
   })
 
   const [searchText, setSearchText] = useState<string>(searchParams.get('q') ?? '')
@@ -111,7 +136,8 @@ export const TimelineView = () => {
   // Sync ?region= and ?country= params on same-route navigations (e.g. chatbot deep links).
   // Functional setters prevent cascade loops.
   useEffect(() => {
-    const nextCountry = searchParams.get('country') ?? 'All'
+    const known = timelineData?.map((d) => d.countryName) ?? []
+    const nextCountry = resolveCountryParam(searchParams.get('country'), known)
     const nextRegion = searchParams.get('region') ?? 'All'
     const nextQ = searchParams.get('q') ?? ''
     // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync is the purpose of this effect
@@ -120,11 +146,28 @@ export const TimelineView = () => {
     if (searchText !== nextQ) setSearchText(nextQ)
   }, [searchParams])
 
+  const tierFilter = useTrustTierFilter()
+
   // Always call hooks first (React rules)
   const ganttData = useMemo(() => {
     if (!timelineData || timelineData.length === 0) return []
-    return transformToGanttData(timelineData)
-  }, [])
+    if (tierFilter.length === 0) return transformToGanttData(timelineData)
+    // Filter events at the leaf level: each TimelineEvent is scored by its title.
+    const filteredCountries = timelineData
+      .map((country) => ({
+        ...country,
+        bodies: country.bodies
+          .map((body) => ({
+            ...body,
+            events: body.events.filter((event) =>
+              matchesTrustTierFilter(tierFilter, 'timeline', event.title)
+            ),
+          }))
+          .filter((body) => body.events.length > 0),
+      }))
+      .filter((country) => country.bodies.length > 0)
+    return transformToGanttData(filteredCountries)
+  }, [tierFilter])
 
   // Mobile: filter ganttData to the selected region/country (mirrors desktop Gantt behaviour)
   const mobileGanttData = useMemo(() => {
@@ -358,6 +401,9 @@ export const TimelineView = () => {
                 opaque
                 className="mb-0 w-full"
               />
+            </div>
+            <div className="flex-1 min-w-0">
+              <TrustTierFilter className="mb-0 w-full" />
             </div>
             {countryFilter !== 'All' && (
               <Button
