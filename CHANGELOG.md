@@ -4,6 +4,48 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.11.0] - 2026-05-10
+
+### Added — Phase 2: embedding-driven trust-engine data-quality validators
+
+Five offline validators / generators that consume the Phase 1 embedding index (`embeddings.bin`) and surface data-quality candidates for SME review. All ship as WARNING/INFO (CI gate unchanged). Outputs are JSON files designed for the admin-portal review queues; no auto-writes to CSVs.
+
+- **MR-1 candidate suggestions (Phase 2.1)** — `scripts/validators/missing-reference-checks.ts` extends the existing missing-reference detector with `proposeReferenceCandidates(claimText, k=3)`, ranking trusted-source chunks by cosine. New `--with-candidates` flag on `scripts/validate-data-integrity.ts`. Each finding gains a `candidates: Array<{id, score, label}>` field.
+- **`scripts/propose-xref-edges.ts` (Phase 2.5)** — proposes new `(resource_type, resource_id, source_id)` rows for `trusted_source_xref` by cosine over resource × trusted-source chunks. Defaults: threshold 0.75, max-existing 3, top-K 5. Local-only (CI hard-fail). Writes `/tmp/xref-candidates.json`. 449 candidates from 2,675 resources on current corpus.
+- **`scripts/validators/qa-semantic-checks.ts` (Phase 2.4 / T20)** — six semantic checks over `document-enrichment` chunks: QA-F7 main-topic grounding, QA-F8 PQC algo mention, QA-F9 threats↔timeline coupling, QA-F10 Tier-1 corroboration, QA-F11 std-bodies vocab, QA-F12 compliance-framework vocab. Pre-encoded vector reuse via new `cosineSearchByChunkId` — full sweep over 1,611 enrichment chunks in ~0.7s.
+- **`scripts/validators/duplicate-checks.ts` (Phase 2.3 / DUP-1)** — pair-wise semantic-duplicate detection within library / migrate / timeline. Per-CSV thresholds (0.92 / 0.90 / 0.88). 300 candidate pairs in ~0.94s on current corpus. Same-refId chunks auto-excluded (multi-chunk records aren't duplicates).
+- **`scripts/discover-counter-claims.ts` (Phase 2.2)** — spherical k-means clustering of Authoritative-tier chunks + cross-source pair extraction. Deterministic seed. 335 candidate pairs at default k=50/threshold=0.6 in ~0.24s. Output explicitly framed as "candidates for SME review" — many pairs are jurisdictional peers (e.g. NSA/US vs ANSSI/FR), not contradictions.
+
+### Added — Phase 3: user-facing semantic search
+
+Single shared React hook (`useSemanticSearch`) wired into 9 user-facing search surfaces. Pattern: lexical filter stays as the floor; semantic hits are unioned in when the embedding runtime is ready. Sort order preserved; no behavioral regression when runtime unavailable.
+
+- **`src/services/search/useSemanticSearch.ts`** — modes `semantic` / `lexical` / `idle` / `loading`. 250 ms debounce. Reuses chunk pool from `UnifiedSearchService` (no duplicate corpus fetch). Lazy `initEmbeddingRuntime()` on first non-empty query. 7 unit tests.
+- **8 pages wired** — Library, Patents, Migrate, Compliance Landscape, Threats, Timeline, Leaders, Algorithms (both filteredAlgorithms and filteredTransitions). Each page commit includes lexical-floor preservation and existing-test regression check.
+- **Assessment (Step 5 Compliance)** — opt-in "Describe your context" disclosure with a free-text textarea. Top-5 framework suggestions ranked by cosine, filtered to those not already shown in the tier groups. One-click add via existing `toggleCompliance` API.
+- **`SemanticSearchHint` common component** — small "✨ Expanded with semantically related matches" affordance above results, plus a "Loading semantic search…" transient. Wired into Library / Migrate / Compliance.
+- **Patents score interleave** — semantic and lexical hits merged by normalized score (lexical scores divided by lexical max → [0,1]; cosine in [0,1] directly). High-cosine semantic-only hits no longer get appended to the bottom of the list.
+- **Empty-state copy upgrade** — Library / Migrate / Compliance empty-states now mention "semantic search is still loading…" while warming up, and "no direct or semantically related X found" once the runtime ran and produced nothing.
+
+### Added — Phase 3 infrastructure
+
+- **`src/services/search/embeddingRetrieval.ts`** new exports — `cosineSearchByChunkId(chunkId, opts)` (reuses pre-encoded vectors; ~120k FLOPs per call), `getChunkVector(chunkId)` (read-only Float32Array view), `getEmbeddingDimensions()`. Enables the pair-wise / clustering validators above.
+
+### Added — Phase 2 measurement
+
+- **`reports/trust-tier-snapshot.json`** + `src/data/trustScore/__tests__/measure-tier-distribution.test.ts` — pre-SME-triage baseline of the trust-tier distribution (47 Authoritative / 446 High / 786 Moderate / 2,035 Low; total 3,314). Re-run via `npx vitest run …measure-tier-distribution.test.ts` after admin-portal queue approvals merge into CSVs to quantify the roadmap's "5–8% records move up one tier" claim.
+
+### Fixed — Phase 2 robustness
+
+- **Graceful corpus mid-write fallback** — three validators (`missing-reference-checks`, `qa-semantic-checks`, `duplicate-checks`) and five test files (`useSemanticSearch`, `missing-reference`, `qa-semantic`, `duplicate`, `propose-xref-edges`, `discover-counter-claims` — the latter two with `isCorpusParseable()` gate) wrap `JSON.parse(rag-corpus.json)` in try/catch. When the enrichment pipeline is mid-write, validators self-skip with empty findings instead of crashing.
+- **Phase 2.2 jurisdiction clarification** — cross-source candidate pairs are NOT contradictions. The NSA↔ANSSI test assertion was replaced with a structural diversity check (≥10 distinct source-pair combinations). The script's docstring now states explicitly that the output is a candidate queue for SME review, not declared contradictions, since the algorithm can't distinguish stance disagreement from region-scoped guidance.
+
+### Notes — Genuinely deferred
+
+- **Phase 2.4 QA-F7..F12 ERROR-severity promotion** waits on two enrichment cycles + a 30-finding precision sample reviewed by an SME. Currently all six checks ship as WARNING/INFO. Promotion plan documented inline in `qa-semantic-checks.ts`.
+- **Post-triage tier snapshot** — the "after" half of the 5–8% measurement can only run once SMEs merge approvals via the admin-portal queues (separate repo, separate PR).
+- **Browser smoke test of all 9 Phase 3 pages** — `npm run dev` + manual paraphrase queries per page from the roadmap §5.2 table. Hooks are framework-tested but the UX experience needs a live page check.
+
 ## [3.10.0] - 2026-05-10
 
 ### Added — Trust-engine acceptance layer
