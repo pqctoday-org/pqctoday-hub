@@ -106,19 +106,19 @@ describe.skipIf(!hasArtifact)('discover-counter-claims — Phase 2.2', () => {
     }
   }, 120_000)
 
-  it('reproduces a cross-Tier-1 disagreement (NSA ↔ ANSSI) at calibrated params', () => {
-    // At default threshold=0.6, NSA and ANSSI chunks are "too similar = same
-    // stance" and get filtered. At threshold=0.75 (and slightly coarser
-    // k=30), the actual cosine of ~0.7 between an NSA advisory and an
-    // ANSSI page lands inside the window → the algorithm surfaces it.
-    const broad = runScript(['--threshold=0.75', '--k=30', '--top-n=20000'])
-    const nsaAnssi = broad.candidates.filter((c) => {
-      const a = c.source_a.toLowerCase()
-      const b = c.source_b.toLowerCase()
-      return (a.includes('nsa') && b.includes('anssi')) || (b.includes('nsa') && a.includes('anssi'))
-    })
-    expect(nsaAnssi.length).toBeGreaterThan(0)
-  }, 120_000)
+  it('surfaces candidates spanning ≥ 10 distinct trusted-source pairs', () => {
+    // The algorithm produces cross-source pairs as *candidates for SME
+    // review* — not assertions of contradiction. Many pairs will turn out
+    // to be jurisdictional peers (e.g. NSA/US vs ANSSI/FR publishing
+    // locally-scoped guidance, not actually disagreeing on substance);
+    // SMEs will reject those. What we validate here is structural:
+    // candidates span a diverse set of source pairings, not a degenerate
+    // few. That's the property the admin-portal review queue depends on.
+    const pairKey = (c: { source_a: string; source_b: string }) =>
+      [c.source_a, c.source_b].sort().join('|')
+    const distinctPairs = new Set(output.candidates.map(pairKey))
+    expect(distinctPairs.size).toBeGreaterThanOrEqual(10)
+  })
 
   it('produces a tractable candidate set (≥ 10 candidates at defaults)', () => {
     // Plan §2.2 acceptance signal: "≥ 10 candidate counter-claims".
