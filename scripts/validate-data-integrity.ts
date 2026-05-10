@@ -35,6 +35,7 @@ import { runEnrichmentAccuracyChecks } from './validators/enrichment-accuracy-ch
 import { runTrustEngineChecks } from './validators/trust-engine-checks.js'
 import { runMissingReferenceChecks } from './validators/missing-reference-checks.js'
 import { runQASemanticChecks } from './validators/qa-semantic-checks.js'
+import { runDuplicateChecks } from './validators/duplicate-checks.js'
 import {
   runSelfContainmentChecks,
   runStatusColumnChecks,
@@ -136,6 +137,10 @@ try {
   if (withCandidates) {
     const qaSemanticResults = await runQASemanticChecks()
     allResults.push(...qaSemanticResults)
+
+    // 7d.6. Pair-wise semantic duplicate detection (Phase 2.3 / DUP-1).
+    const duplicateResults = await runDuplicateChecks()
+    allResults.push(...duplicateResults)
   }
 
   // 7e. Self-containment + vocab + status checks (DS03 + DS19) — data-self-containment plan
