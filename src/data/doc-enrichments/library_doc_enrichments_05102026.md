@@ -2022,7 +2022,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: 78 byte structure for extended keys; 111 character Base58-encoded string; 32 bytes chain code; 33 bytes public or private key data
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: secp256k1 elliptic curve parameters; HMAC-SHA512 function per RFC 4231; SHA256 and RIPEMD160 for hashing; Base58 encoding support
-- **Relevant PQC Today Features**: digital-assets, key-management, entropy-randomness
+- **Relevant PQC Today Features**: digital-assets, kms-pqc, entropy-randomness
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: test vectors
@@ -2186,7 +2186,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: Address gap limit set to 20; Purpose constant set to 44 (0x8000002C)
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: BIP32 algorithm implementation; BIP43 purpose scheme support; Transaction history scanning capability for account discovery
-- **Relevant PQC Today Features**: digital-assets, key-management, crypto-agility
+- **Relevant PQC Today Features**: digital-assets, kms-pqc, crypto-agility
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -2678,7 +2678,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: Custody wallet withdrawal SLA within 24 hours; Go Account withdrawals typically complete within a few hours; MPC can have lower transaction costs by broadcasting a single combined signature.
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: BitGo Offline Vault Console (OVC); Video ID verification for custody wallets; Secure subnet for Advanced Wallets
-- **Relevant PQC Today Features**: digital-assets, key-management, hsm-pqc
+- **Relevant PQC Today Features**: digital-assets, kms-pqc, hsm-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -5630,7 +5630,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect, Researcher, Developer
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: qkd, security-proofs, quantum-threats, compliance-strategy
+- **Relevant PQC Today Features**: qkd, quantum-threats, compliance-strategy
 - **Implementation Attack Surface**: side channels
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: security evaluation, security proof framework, error estimation, privacy amplification verification
@@ -6409,7 +6409,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Compliance Officer, Policy Maker, Security Architect
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Compliance, migration-program, pqc-governance, iot-ot-pqc, supply-chain-vendor-risk
+- **Relevant PQC Today Features**: Compliance, migration-program, pqc-governance, iot-ot-pqc, vendor-risk
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -6819,7 +6819,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: One Ether equals 10^18 Wei; Subdenominations include Gwei (10^9), Szabo (10^12), and Finney (10^15)
 - **Target Audience**: Developer; Researcher; Security Architect
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: digital-assets, blockchain-paradigm, classical-crypto, state-machine
+- **Relevant PQC Today Features**: digital-assets
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Keccak-256, ECDSA
 - **Testing & Validation Methods**: None detected
@@ -8992,7 +8992,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations; Policy Maker.
 - **Implementation Prerequisites**: Cryptography inventory; standardized list of components, libraries, and dependencies; quantum-proofed software repository.
-- **Relevant PQC Today Features**: Assess; Migrate; Algorithms; Supply Chain & Vendor Risk; CBOM.
+- **Relevant PQC Today Features**: Assess; Migrate; Algorithms; vendor-risk
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Cryptography Bill of Materials (CBOM); passive or active scanning of IT environment; deep scan for root cause; cryptography inventory prioritization.
 - **Testing & Validation Methods**: End-to-end validation of automatically inspecting live essential business applications.
@@ -12108,7 +12108,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Compliance Officer; Policy Maker
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Compliance; Supply Chain & Vendor Risk
+- **Relevant PQC Today Features**: Compliance; vendor-risk
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -13953,7 +13953,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Vendors, Testing Labs, CMVP
 - **Implementation Prerequisites**: ISO/IEC 19790:2012; ISO/IEC 24759:2017; FIPS 140-3
-- **Relevant PQC Today Features**: Compliance, Assess, Testing & Validation Methods
+- **Relevant PQC Today Features**: Compliance, Assess, pqc-testing-validation
 - **Implementation Attack Surface**: Non-invasive attack mitigation; side channels
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Non-invasive attack mitigation testing; conformance demonstration; vendor evidence; test evidence
@@ -14650,7 +14650,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Security Architect; Developer; Researcher
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: digital-id, protocols, migration-program, pqc-risk-management, compliance-strategy
+- **Relevant PQC Today Features**: digital-id, migration-program, pqc-risk-management, compliance-strategy
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -14937,7 +14937,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Compliance Officer, Policy Maker, Operations
 - **Implementation Prerequisites**: Adoption of appropriate measures to protect computer systems; Compliance with statutory obligations under Cap. 653.
-- **Relevant PQC Today Features**: Compliance, Migration-program, pqc-governance, critical-infrastructure
+- **Relevant PQC Today Features**: Compliance, Migration-program, pqc-governance
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -16208,7 +16208,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: Developer; Security Architect; System Administrator; Technically adept users
 - **Implementation Prerequisites**: Familiarity with Internet Protocol (IP); Knowledge of related networking technology; Understanding of general information system security terms and concepts
-- **Relevant PQC Today Features**: vpn-ssh-pqc, crypto-agility, algorithms, protocols
+- **Relevant PQC Today Features**: vpn-ssh-pqc, crypto-agility, algorithms
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: conformance testing
@@ -18709,7 +18709,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Policy Maker
 - **Implementation Prerequisites**: Cryptographic inventory of homegrown developed software, purchased software, devices, and supporting infrastructure; vendor PQC migration plans and timelines
-- **Relevant PQC Today Features**: crypto-agility; harvest now decrypt later; vendor-risk; pqc-risk-management; migration-program
+- **Relevant PQC Today Features**: crypto-agility; vendor-risk; pqc-risk-management; migration-program
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Cryptographic inventory of homegrown developed software, purchased software, devices, and supporting infrastructure
 - **Testing & Validation Methods**: None detected
@@ -19775,7 +19775,7 @@ enrichment_method: ollama-qwen3.6:27b
 - **Performance & Size Considerations**: None detected
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
 - **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; Migration
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; migration-program
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
