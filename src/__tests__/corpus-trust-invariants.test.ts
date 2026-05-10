@@ -88,10 +88,14 @@ const TIER_NOT_APPLICABLE: ReadonlySet<string> = new Set([
  * Only DECREASE these values; never increase without a follow-up issue.
  */
 const TIER_RESOLUTION_GAPS: Record<string, number> = {
-  timeline: 235,
+  // After 2026-05-10 fixes:
+  //   - generate-rag-corpus.ts skips deprecated leaders (matches loader)
+  //   - trustScoreData.ts maps `${country} — ${title}` alias for timeline
+  //   - chunkToResource.ts routes document-enrichment by metadata.collection
+  // Composite reduction: 1316 → 111 orphans (92%).
+  timeline: 13,
   algorithms: 66,
-  leaders: 1,
-  'document-enrichment': 1014,
+  'document-enrichment': 32,
 }
 
 /**

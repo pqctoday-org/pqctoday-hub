@@ -1080,6 +1080,12 @@ function processLeaders(): RAGChunk[] {
     const row = rows[i]
     if (row.length < 7) continue
 
+    // Skip deprecated/obsolete leaders (status col = index 16). Matches the
+    // loader's filterActive behavior in leadersData.ts, so chunks stay in sync
+    // with trustScoreData.ts (no orphan leader chunks per C3 invariant).
+    const rowStatus = (row[16] ?? '').trim().toLowerCase()
+    if (rowStatus === 'deprecated' || rowStatus === 'obsolete') continue
+
     const [name, country, role, organizations, type, category, contribution] = row
 
     const content = [
