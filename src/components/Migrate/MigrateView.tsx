@@ -42,6 +42,7 @@ import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
 import { useHistoryStore } from '@/store/useHistoryStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONA_MIGRATE_LAYERS } from '@/data/personaConfig'
+import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { Button } from '../ui/button'
 import { ErrorAlert } from '../ui/error-alert'
 import { EmptyState } from '../ui/empty-state'
@@ -455,6 +456,18 @@ export const MigrateView: React.FC = () => {
     debouncedSetFilter(e.target.value)
   }
 
+  // Phase 3 — semantic supplement. The hook returns ranked
+  // softwareNames (chunk.title for migrate) when the embedding
+  // runtime is ready. Queries like "VPN with quantum-safe IKE"
+  // surface strongSwan / Cisco PQC IPsec without requiring the
+  // user to know the exact product name.
+  const semantic = useSemanticSearch('migrate', filterText, { limit: 40 })
+  const semanticNameSet = useMemo(
+    () =>
+      semantic.mode === 'semantic' ? new Set(semantic.hits.map((h) => h.id.toLowerCase())) : null,
+    [semantic.mode, semantic.hits]
+  )
+
   // Per-layer data: products scoped by global filters (search, step)
   const perLayerData = useMemo(() => {
     return activePartitions.reduce(
@@ -502,17 +515,21 @@ export const MigrateView: React.FC = () => {
           // Trust tier filter (multi-select, URL param: tier) — keeps per-layer
           // counts consistent with the main allFilteredProducts view.
           if (!matchesTrustTierFilter(tierFilter, 'migrate', item.softwareName)) return false
-          // Search filter
+          // Search filter — lexical floor + semantic supplement.
           if (filterText) {
             const q = filterText.toLowerCase()
-            return (
+            const lexicalMatch =
               item.softwareName.toLowerCase().includes(q) ||
               item.pqcCapabilityDescription?.toLowerCase().includes(q) ||
               item.pqcSupport?.toLowerCase().includes(q) ||
               item.productBrief?.toLowerCase().includes(q) ||
               item.categoryName?.toLowerCase().includes(q) ||
               item.license?.toLowerCase().includes(q)
-            )
+            if (lexicalMatch) return true
+            if (semanticNameSet && semanticNameSet.has(item.softwareName.toLowerCase())) {
+              return true
+            }
+            return false
           }
           return true
         })
@@ -534,6 +551,7 @@ export const MigrateView: React.FC = () => {
     showOnlyMyProducts,
     myProductsSet,
     tierFilter,
+    semanticNameSet,
   ])
 
   // Layer product counts (for badges on collapsed layer rows)
@@ -736,17 +754,21 @@ export const MigrateView: React.FC = () => {
       }
       // My Products filter
       if (showOnlyMyProducts && !myProductsSet.has(item.productId)) return false
-      // Search filter
+      // Search filter — lexical floor + semantic supplement.
       if (filterText) {
         const q = filterText.toLowerCase()
-        return (
+        const lexicalMatch =
           item.softwareName.toLowerCase().includes(q) ||
           item.pqcCapabilityDescription?.toLowerCase().includes(q) ||
           item.pqcSupport?.toLowerCase().includes(q) ||
           item.productBrief?.toLowerCase().includes(q) ||
           item.categoryName?.toLowerCase().includes(q) ||
           item.license?.toLowerCase().includes(q)
-        )
+        if (lexicalMatch) return true
+        if (semanticNameSet && semanticNameSet.has(item.softwareName.toLowerCase())) {
+          return true
+        }
+        return false
       }
       return true
     })
@@ -757,6 +779,7 @@ export const MigrateView: React.FC = () => {
     effectiveLayer,
     flatCategoryFilter,
     filterText,
+    semanticNameSet,
     vendorFilter,
     verificationFilter,
     licenseFilter,
