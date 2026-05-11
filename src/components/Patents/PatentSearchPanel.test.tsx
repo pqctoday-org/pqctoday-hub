@@ -79,7 +79,7 @@ describe('PatentSearchPanel — Phase 3 semantic search', () => {
       loading: false,
     })
     const patents = [samplePatent('US11000001', 'Lattice KEM Method')]
-    render(<PatentSearchPanel patents={patents} onSelect={() => undefined} />)
+    render(<PatentSearchPanel patents={patents} onSelectPatent={() => undefined} />)
     const calls = vi.mocked(useSemanticSearchModule.useSemanticSearch).mock.calls
     expect(calls.length).toBeGreaterThan(0)
     expect(calls[0][0]).toBe('patents')
@@ -93,7 +93,7 @@ describe('PatentSearchPanel — Phase 3 semantic search', () => {
       loading: false,
     })
     const patents = [samplePatent('US11000001', 'Lattice KEM Method')]
-    render(<PatentSearchPanel patents={patents} onSelect={() => undefined} />)
+    render(<PatentSearchPanel patents={patents} onSelectPatent={() => undefined} />)
     const input = screen.getByRole('textbox')
     fireEvent.change(input, { target: { value: 'paraphrase' } })
     // Component debounces 250ms via setTimeout; flush in act so the
