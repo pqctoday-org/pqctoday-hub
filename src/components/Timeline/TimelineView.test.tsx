@@ -1,8 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { TimelineView } from './TimelineView'
 import '@testing-library/jest-dom'
+import * as useSemanticSearchModule from '@/services/search/useSemanticSearch'
+
+vi.mock('@/services/search/useSemanticSearch', async () => {
+  const actual = await vi.importActual<typeof useSemanticSearchModule>(
+    '@/services/search/useSemanticSearch'
+  )
+  return {
+    ...actual,
+    useSemanticSearch: vi.fn(() => ({ hits: [], mode: 'idle' as const, loading: false })),
+  }
+})
 
 // Mock react-router-dom — component uses useSearchParams for deep linking.
 // Stable reference prevents useEffect([searchParams]) from firing on every render.
@@ -199,6 +210,35 @@ describe('TimelineView', () => {
       render(<TimelineView />)
       const legendContainer = screen.getByTestId('timeline-legend-container')
       expect(legendContainer).toHaveClass('mt-8')
+    })
+  })
+
+  describe('Phase 3 — semantic search supplement', () => {
+    it('invokes the semantic-search hook with the timeline collection', () => {
+      vi.mocked(useSemanticSearchModule.useSemanticSearch).mockReturnValue({
+        hits: [],
+        mode: 'idle',
+        loading: false,
+      })
+      render(<TimelineView />)
+      const calls = vi.mocked(useSemanticSearchModule.useSemanticSearch).mock.calls
+      expect(calls[0][0]).toBe('timeline')
+    })
+
+    it('passes the current query into the hook as the user types', () => {
+      vi.mocked(useSemanticSearchModule.useSemanticSearch).mockReturnValue({
+        hits: [],
+        mode: 'idle',
+        loading: false,
+      })
+      render(<TimelineView />)
+      const inputs = screen.getAllByRole('textbox')
+      // Find the search input by placeholder if present, else use first textbox.
+      const searchInput = inputs[0]
+      fireEvent.change(searchInput, { target: { value: 'asia-pacific mandates' } })
+      const calls = vi.mocked(useSemanticSearchModule.useSemanticSearch).mock.calls
+      const lastCall = calls[calls.length - 1]
+      expect(lastCall[1]).toBe('asia-pacific mandates')
     })
   })
 })

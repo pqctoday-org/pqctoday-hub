@@ -4,6 +4,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.12.0] - 2026-05-10
+
+### Added — Library enrichment completion + RAG corpus rebuild
+
+- **Library enrichment complete** — 155 documents enriched in this run using T16A embedding prefilter (`nomic-embed-text`). Coverage: 726/787 (92.2%), up from 571/787 (72.6%). Avg 10.1/28 dimensions; PQC-dense tail (composite KEM/sig specs, TLS ML-KEM, XMSS/LMS, IKEv2 PQC drafts) averaged 15/28.
+
+- **RAG corpus rebuilt** — 10,844 chunks (+216 vs previous build). Document Enrichments source: 1,611 chunks.
+
 ## [3.11.0] - 2026-05-10
 
 ### Added — Phase 2: embedding-driven trust-engine data-quality validators
