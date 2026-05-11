@@ -16,6 +16,8 @@ import { complianceFrameworks } from '../complianceData'
 import { threatsData } from '../threatsData'
 import { leadersData } from '../leadersData'
 import { softwareData } from '../migrateData'
+import { certsByProduct } from '../certificationXrefData'
+import { algorithmTrustByName } from '../algorithmTrustData'
 import { algorithmsData } from '../algorithmsData'
 import { timelineData } from '../timelineData'
 import { libraryData } from '../libraryData'
@@ -319,12 +321,31 @@ function computeAllScores(): Map<string, TrustScore> {
   // Migrate products
   for (const item of softwareData ?? []) {
     const key = `migrate:${item.softwareName}`
+    // Derive vetting/peer-review signals from FIPS validation + certification xref.
+    // Government cryptographic validation (FIPS CMVP, ACVP, Common Criteria) is a
+    // formal peer-review process, so a product with any such certificate counts as
+    // peer-reviewed and inherits the certifying body as a vetting org.
+    const certs = certsByProduct.get(item.softwareName) ?? []
+    const derivedVetting = new Set<string>(item.vettingBody ?? [])
+    if (item.fipsValidated === 'yes') derivedVetting.add('NIST')
+    for (const cert of certs) {
+      if (cert.certType === 'FIPS' || cert.certType === 'ACVP') derivedVetting.add('NIST')
+      else if (cert.certType === 'CC') derivedVetting.add('Common Criteria')
+    }
+    const hasGovValidation = item.fipsValidated === 'yes' || certs.length > 0
+    const derivedPeerReviewed = item.peerReviewed ?? (hasGovValidation ? 'yes' : undefined)
+    const latestCertDate = certs
+      .map((c) => c.certDate)
+      .filter(Boolean)
+      .sort()
+      .at(-1)
     score('migrate', item.softwareName, {
-      peerReviewed: item.peerReviewed,
-      vettingBody: item.vettingBody,
+      peerReviewed: derivedPeerReviewed,
+      vettingBody: Array.from(derivedVetting),
       localFile: undefined, // Products have docs in public/products/
       pqcSupport: item.pqcSupport,
       lastVerifiedDate: item.lastVerifiedDate,
+      lastUpdateDate: latestCertDate,
       releaseDate: item.releaseDate,
     })
     // Apply evidence-flag penalty — each flag reduces composite score by 5 points
@@ -397,9 +418,16 @@ function computeAllScores(): Map<string, TrustScore> {
   // Algorithms — strip parenthetical suffix to match xref IDs (e.g., "ML-DSA-44 (NIST Level 2)" → "ML-DSA-44")
   for (const a of algorithmsData ?? []) {
     const cleanName = a.pqc.replace(/\s*\([^)]*\)\s*$/, '')
+    // Look up trust-relevant fields (peer_reviewed, vetting_body, fips_standard)
+    // from the algorithm reference CSV; the transitions CSV alone has no such
+    // signals, so without this join every algorithm scored Low.
+    const trust = algorithmTrustByName.get(cleanName)
+    const derivedVetting = new Set<string>(trust?.vettingBody ?? [])
+    // FIPS-standardised algorithms (FIPS 203/204/205, SP 800-208) imply NIST vetting.
+    if (trust?.fipsStandard) derivedVetting.add('NIST')
     score('algorithm', cleanName, {
-      peerReviewed: undefined,
-      vettingBody: undefined,
+      peerReviewed: trust?.peerReviewed,
+      vettingBody: derivedVetting.size > 0 ? Array.from(derivedVetting) : undefined,
       algorithmFamily: cleanName,
       lastUpdateDate: a.standardizationDate,
     })
