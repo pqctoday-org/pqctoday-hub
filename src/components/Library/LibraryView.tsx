@@ -20,6 +20,7 @@ import type { SortOption } from './SortControl'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { Search, FileSearch, BookOpen, SlidersHorizontal, X, BookmarkCheck } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
+import { ContentUpdatesFeed } from '@/components/ui/ContentUpdatesFeed'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { LIBRARY_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import debounce from 'lodash/debounce'
@@ -37,6 +38,13 @@ import { EmptyState } from '../ui/empty-state'
 import { Button } from '@/components/ui/button'
 import { GeoFilter, useGeoFilter, matchesGeoFilter } from '../common/GeoFilter'
 import { SectorFilter, useSectorFilter, matchesSectorFilter } from '../common/SectorFilter'
+import {
+  TrustTierFilter,
+  useTrustTierFilter,
+  matchesTrustTierFilter,
+} from '../common/TrustTierFilter'
+import { useSemanticSearch } from '@/services/search/useSemanticSearch'
+import { SemanticSearchHint } from '@/components/common/SemanticSearchHint'
 
 const URGENCY_ORDER: Record<string, number> = {
   Critical: 0,
@@ -242,6 +250,7 @@ export const LibraryView: React.FC = () => {
   )
   const geoFilter = useGeoFilter()
   const sectorFilter = useSectorFilter()
+  const tierFilter = useTrustTierFilter()
   const [showFilters, setShowFilters] = useState(false)
   const [highlightedDocId, setHighlightedDocId] = useState<string | null>(
     () => searchParams.get('doc') ?? null
@@ -481,6 +490,18 @@ export const LibraryView: React.FC = () => {
 
   const totalHasUpdates = activityItems.length > 0
 
+  // Phase 3 — semantic search supplement. The hook returns ranked
+  // referenceIds when the embedding runtime is ready. The lexical
+  // filter below remains the floor; matching referenceIds are
+  // unioned in so paraphrase/synonym queries surface relevant docs
+  // (e.g. "long-term confidentiality" → HNDL records).
+  const semantic = useSemanticSearch('library', filterText, { limit: 30 })
+  const semanticIdSet = useMemo(
+    () =>
+      semantic.mode === 'semantic' ? new Set(semantic.hits.map((h) => h.id.toLowerCase())) : null,
+    [semantic.mode, semantic.hits]
+  )
+
   // Filtered items (shared between card and table views)
   const filteredItems = useMemo(() => {
     return libraryData.filter((item) => {
@@ -549,6 +570,9 @@ export const LibraryView: React.FC = () => {
         if (!matchesSectorFilter(sectorFilter, industries)) return false
       }
 
+      // Trust tier filter (multi-select, URL param: tier)
+      if (!matchesTrustTierFilter(tierFilter, 'library', item.referenceId)) return false
+
       // My bookmarks filter
       if (showOnlyLibraryBookmarks && !libraryBookmarks.includes(item.referenceId)) return false
 
@@ -558,15 +582,21 @@ export const LibraryView: React.FC = () => {
       // Lifecycle status bucket filter
       if (lifecycleBucket !== 'All' && item.documentStatusBucket !== lifecycleBucket) return false
 
-      // Search filter
+      // Search filter — lexical floor + semantic supplement.
       if (!filterText) return true
       const searchLower = filterText.toLowerCase()
-      return (
+      const lexicalMatch =
         item.documentTitle.toLowerCase().includes(searchLower) ||
         item.referenceId.toLowerCase().includes(searchLower) ||
         item.shortDescription?.toLowerCase().includes(searchLower) ||
         item.categories?.some((cat) => cat.toLowerCase().includes(searchLower))
-      )
+      if (lexicalMatch) return true
+      // Semantic union — only kicks in when the embedding runtime is
+      // ready and produced ranked hits for this query.
+      if (semanticIdSet && semanticIdSet.has(item.referenceId.toLowerCase())) {
+        return true
+      }
+      return false
     })
   }, [
     activeCategory,
@@ -576,10 +606,12 @@ export const LibraryView: React.FC = () => {
     geoFilter,
     sectorFilter,
     filterText,
+    semanticIdSet,
     showOnlyLibraryBookmarks,
     libraryBookmarks,
     cswp39Only,
     lifecycleBucket,
+    tierFilter,
   ])
 
   // Persona-preferred categories for secondary sort boost
@@ -699,7 +731,13 @@ export const LibraryView: React.FC = () => {
               <EmptyState
                 icon={<FileSearch size={32} />}
                 title="No documents found"
-                description="Try adjusting your search or filter criteria."
+                description={
+                  filterText.trim() && semantic.loading
+                    ? 'Semantic search is still loading — results may refine in a moment.'
+                    : filterText.trim() && semantic.mode === 'semantic'
+                      ? 'No direct or semantically related documents found. Try different keywords or relax filters.'
+                      : 'Try adjusting your search or filter criteria.'
+                }
               />
             )}
           </div>
@@ -728,6 +766,8 @@ export const LibraryView: React.FC = () => {
 
       {/* Zone 1: Activity Feed */}
       <ActivityFeed items={activityItems} onSelect={openDetail} />
+
+      <ContentUpdatesFeed domain="library" limit={5} title="Recent Library Revisions" />
 
       {/* Category pills (desktop) */}
       <CategorySidebar
@@ -931,6 +971,13 @@ export const LibraryView: React.FC = () => {
               <SectorFilter className="w-full" />
             </div>
 
+            <div className="flex-1 min-w-[160px]">
+              <span className="text-xs font-medium text-muted-foreground mb-1 block">
+                Trust tier
+              </span>
+              <TrustTierFilter className="w-full" />
+            </div>
+
             {/* Sort Dropdown for Mobile (Inside filters drawer) */}
             {viewMode === 'cards' && (
               <div className="flex-1 min-w-[160px] sm:hidden">
@@ -1041,10 +1088,19 @@ export const LibraryView: React.FC = () => {
       )}
 
       {/* Results count */}
-      <p className="text-xs text-muted-foreground">
-        {filteredItems.length} document{filteredItems.length !== 1 ? 's' : ''}
-        {activeCategory !== 'All' && ` in ${activeCategory}`}
-      </p>
+      <div className="space-y-1">
+        <p className="text-xs text-muted-foreground">
+          {filteredItems.length} document{filteredItems.length !== 1 ? 's' : ''}
+          {activeCategory !== 'All' && ` in ${activeCategory}`}
+        </p>
+        <SemanticSearchHint
+          mode={semantic.mode}
+          loading={semantic.loading}
+          query={filterText}
+          semanticHitCount={semantic.hits.length}
+          noun="related documents"
+        />
+      </div>
 
       {/* Content area */}
       {viewMode === 'cards' ? (

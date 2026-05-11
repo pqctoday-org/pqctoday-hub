@@ -39,7 +39,9 @@ function getOutputPath(latestPath: string): string {
   const base = path.basename(latestPath)
   // Replace date portion (MMDDYYYY) with 05072026
   const newBase = base.replace(/\d{8}(\.csv)$/, '05072026$1')
-  return newBase === base ? path.join(dir, base.replace('.csv', '_05072026.csv')) : path.join(dir, newBase)
+  return newBase === base
+    ? path.join(dir, base.replace('.csv', '_05072026.csv'))
+    : path.join(dir, newBase)
 }
 
 async function main() {
@@ -55,7 +57,7 @@ async function main() {
   const outPath = getOutputPath(latestPath)
 
   if (outPath === latestPath) {
-    console.log('Source is already today\'s version — no new file needed.')
+    console.log("Source is already today's version — no new file needed.")
     process.exit(0)
   }
 
@@ -87,4 +89,7 @@ async function main() {
   }
 }
 
-main().catch((e) => { console.error(e); process.exit(1) })
+main().catch((e) => {
+  console.error(e)
+  process.exit(1)
+})

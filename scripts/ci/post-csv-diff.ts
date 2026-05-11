@@ -53,7 +53,7 @@ function githubPost(endpoint: string, token: string, body: unknown): unknown {
       `-H "Accept: application/vnd.github+json" ` +
       `-H "Content-Type: application/json" ` +
       `-d '${payload.replace(/'/g, "'\\''")}' ` +
-      `"https://api.github.com/${endpoint}"`,
+      `"https://api.github.com/${endpoint}"`
   ).toString()
   return JSON.parse(result)
 }
@@ -65,7 +65,7 @@ function githubPatch(endpoint: string, token: string, body: unknown): unknown {
       `-H "Accept: application/vnd.github+json" ` +
       `-H "Content-Type: application/json" ` +
       `-d '${payload.replace(/'/g, "'\\''")}' ` +
-      `"https://api.github.com/${endpoint}"`,
+      `"https://api.github.com/${endpoint}"`
   ).toString()
   return JSON.parse(result)
 }
@@ -74,7 +74,7 @@ function githubApiGet(endpoint: string, token: string): unknown {
   const result = execSync(
     `curl -s -H "Authorization: Bearer ${token}" ` +
       `-H "Accept: application/vnd.github+json" ` +
-      `"https://api.github.com/${endpoint}"`,
+      `"https://api.github.com/${endpoint}"`
   ).toString()
   return JSON.parse(result)
 }
@@ -159,11 +159,7 @@ function formatManualDiff(csvFile: string, rows: DiffRow[], headers: string[]): 
   return `**${csvFile}**\n\n${colHeader}\n${colSep}\n${body}${suffix}\n`
 }
 
-function formatEnrichmentSummary(
-  csvFile: string,
-  rows: DiffRow[],
-  labels: string[],
-): string {
+function formatEnrichmentSummary(csvFile: string, rows: DiffRow[], labels: string[]): string {
   const added = rows.filter((r) => r.action === '+').length
   const modified = rows.filter((r) => r.action === '!').length
   const model = labels.includes('bot:llm-authored') ? 'qwen3.6:27b' : 'unknown'
@@ -237,7 +233,7 @@ async function main() {
         'enrichment',
         'xref',
         'schema:change',
-      ].includes(l),
+      ].includes(l)
     ) ?? 'data:library'
 
   // Find touched CSV files
@@ -303,7 +299,7 @@ async function main() {
   // Find existing bot comment to update in place
   const existingComments = githubApiGet(
     `repos/${repo}/issues/${prNumber}/comments?per_page=100`,
-    token,
+    token
   ) as Array<{ id: number; body: string }>
 
   const existingComment = existingComments.find?.((c) => c.body?.includes(BOT_COMMENT_MARKER))

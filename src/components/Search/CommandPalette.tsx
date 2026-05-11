@@ -68,6 +68,16 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const [error, setError] = useState<string | null>(null)
   const [activeIdx, setActiveIdx] = useState(0)
   const [showAdvanced, setShowAdvanced] = useState(false)
+  // §14.3 step 5 — restrict results to Authoritative + High tiers when on.
+  // Persists across the session via localStorage so a compliance officer's
+  // preference isn't lost on each open/close.
+  const [authoritativeOnly, setAuthoritativeOnly] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('pqc-cmdk-authoritative-only') === '1'
+    } catch {
+      return false
+    }
+  })
   const inputRef = useRef<HTMLInputElement>(null)
   const activeItemRef = useRef<HTMLButtonElement>(null)
 
@@ -102,7 +112,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     setLoading(true)
     setError(null)
 
-    searchIndex(query, { limit: 60 })
+    searchIndex(query, { limit: 60, authoritativeOnly })
       .then((raw) => {
         if (cancelled) return
         const filtered =
@@ -122,7 +132,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     return () => {
       cancelled = true
     }
-  }, [query, curiousLocked, showAdvanced])
+  }, [query, curiousLocked, showAdvanced, authoritativeOnly])
 
   // Flat list of all result items for keyboard nav
   const flatItems = useMemo(() => results, [results])
@@ -382,6 +392,24 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                       {showAdvanced ? 'Hide advanced' : 'Include advanced'}
                     </Button>
                   )}
+                  <Button
+                    variant="link"
+                    size="sm"
+                    onClick={() => {
+                      const next = !authoritativeOnly
+                      setAuthoritativeOnly(next)
+                      try {
+                        localStorage.setItem('pqc-cmdk-authoritative-only', next ? '1' : '0')
+                      } catch {
+                        // non-critical
+                      }
+                    }}
+                    aria-pressed={authoritativeOnly}
+                    className={`h-auto p-0 ${authoritativeOnly ? 'text-status-success' : 'text-muted-foreground'}`}
+                    title="Restrict results to Authoritative + High trust tiers"
+                  >
+                    {authoritativeOnly ? '✓ Authoritative only' : 'Authoritative only'}
+                  </Button>
                   {results.length > 0 && (
                     <span className="ml-auto">
                       {results.length} result{results.length !== 1 ? 's' : ''}

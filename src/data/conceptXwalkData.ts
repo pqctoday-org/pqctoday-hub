@@ -42,6 +42,7 @@ interface RawXwalkRow {
   verified_date: string
   verified_by: string
   confidence: string
+  status?: string
 }
 
 const LABEL_TO_SCORE: Record<XwalkConfidenceLabel, number> = {
@@ -77,6 +78,8 @@ const modules = import.meta.glob('./concept_xwalks_*.csv', {
 
 function transformRow(row: RawXwalkRow): ConceptXwalkRecord | null {
   if (!row.xwalk_id || !row.from_concept || !row.to_concept) return null
+  const rowStatus = row.status?.trim().toLowerCase()
+  if (rowStatus === 'deprecated' || rowStatus === 'obsolete') return null
   if (!VALID_RELATIONSHIP_TYPES.has(row.relationship_type)) return null
   if (!VALID_RATIONALE_TYPES.has(row.rationale_type)) return null
 

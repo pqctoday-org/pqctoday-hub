@@ -159,7 +159,7 @@ export const MainLayout = () => {
     { path: '/library', label: 'Library', icon: BookOpen, section: 'current' },
     {
       path: '/leaders',
-      label: 'Leaders',
+      label: 'Community',
       icon: Users,
       section: 'current',
       hiddenOnMobile: true,
@@ -538,6 +538,17 @@ export const MainLayout = () => {
             © 2025 PQC Today. Data sourced from the public internet resources.{' '}
             <Link to="/terms" className="underline hover:text-foreground transition-colors">
               Terms of Service
+            </Link>
+            {' · '}
+            <Link
+              to="/editorial-independence"
+              className="underline hover:text-foreground transition-colors"
+            >
+              Editorial Independence
+            </Link>
+            {' · '}
+            <Link to="/sponsor" className="underline hover:text-foreground transition-colors">
+              Sponsor
             </Link>
           </p>
           <p className="mt-1 text-xs text-muted-foreground">

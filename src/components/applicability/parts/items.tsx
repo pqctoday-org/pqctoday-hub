@@ -37,7 +37,7 @@ export function FrameworkItem({
   onSelect?: (item: ComplianceFramework) => void
 }) {
   const fw = result.item
-  const cls = 'flex items-start gap-2 py-1 px-2 -mx-2 rounded hover:bg-muted/40 transition-colors'
+  const cls = 'flex items-start gap-2 py-1 px-2 rounded hover:bg-muted/40 transition-colors'
   const content = (
     <>
       <ShieldCheck size={14} className="text-primary mt-0.5 shrink-0" aria-hidden="true" />
@@ -87,7 +87,7 @@ export function ThreatItem({
   onSelect?: (item: ThreatData) => void
 }) {
   const t = result.item
-  const cls = 'flex items-start gap-2 py-1 px-2 -mx-2 rounded hover:bg-muted/40 transition-colors'
+  const cls = 'flex items-start gap-2 py-1 px-2 rounded hover:bg-muted/40 transition-colors'
   const content = (
     <>
       <AlertTriangle size={14} className="text-status-warning mt-0.5 shrink-0" aria-hidden="true" />
@@ -106,7 +106,7 @@ export function ThreatItem({
         type="button"
         variant="ghost"
         onClick={() => onSelect(t)}
-        className={`${cls} h-auto`}
+        className={`${cls} h-auto w-full text-left`}
         title={result.reason}
       >
         {content}
@@ -131,7 +131,7 @@ export function LibraryDocItem({
   onSelect?: (item: LibraryItem) => void
 }) {
   const doc = result.item
-  const cls = 'flex items-start gap-2 py-1 px-2 -mx-2 rounded hover:bg-muted/40 transition-colors'
+  const cls = 'flex items-start gap-2 py-1 px-2 rounded hover:bg-muted/40 transition-colors'
   const content = (
     <>
       <BookOpen size={14} className="text-secondary mt-0.5 shrink-0" aria-hidden="true" />
@@ -153,7 +153,7 @@ export function LibraryDocItem({
         type="button"
         variant="ghost"
         onClick={() => onSelect(doc)}
-        className={`${cls} h-auto`}
+        className={`${cls} h-auto w-full text-left`}
         title={result.reason}
       >
         {content}
@@ -178,7 +178,7 @@ export function TimelineItem({
   onSelect?: (item: TimelineEvent) => void
 }) {
   const ev = result.item
-  const cls = 'flex items-start gap-2 py-1 px-2 -mx-2 rounded hover:bg-muted/40 transition-colors'
+  const cls = 'flex items-start gap-2 py-1 px-2 rounded hover:bg-muted/40 transition-colors'
   const content = (
     <>
       <Calendar size={14} className="text-status-info mt-0.5 shrink-0" aria-hidden="true" />
@@ -202,7 +202,7 @@ export function TimelineItem({
         type="button"
         variant="ghost"
         onClick={() => onSelect(ev)}
-        className={`${cls} h-auto`}
+        className={`${cls} h-auto w-full text-left`}
         title={result.reason}
       >
         {content}

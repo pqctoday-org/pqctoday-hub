@@ -32,6 +32,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: PKI Administrator; Security Architect; Developer
 - **Implementation Prerequisites**: Khatim PKI Server v5.0; OpenSSL client tool; PostMan or business application for certification requests; Key Vault access for generating Dilithium key pairs
 - **Relevant PQC Today Features**: Algorithms, pki-workshop, code-signing, hsm-pqc, migration-program
+- **Source Document**: Codegic_Khatim_PKI_Server.html (274,616 bytes, 10,763 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T06:50:56
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -43,8 +45,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: PKI administrators empowered to start future-proofing security infrastructure; organizations can proactively adapt to emerging quantum-resilient security landscape; users equipped with tools to experiment and understand PQC technology firsthand
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Codegic_Khatim_PKI_Server.html (274,616 bytes, 10,763 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T06:50:56
 
 ---
 
@@ -75,6 +75,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Compliance Officer, CISO, Operations
 - **Implementation Prerequisites**: Create an issue or pull request on GitHub to contribute; Verify vendor information directly for freshness; Check specific product versions (e.g., Khatim 5.0, Bouncy Castle Java 1.79+); Ensure FIPS 140-3 validation where required
 - **Relevant PQC Today Features**: Algorithms, Migrate, Assess, crypto-agility, pki-workshop, hsm-pqc, tls-basics, stateful-signatures, vendor-risk
+- **Source Document**: CZERTAINLY_repo.html (296,097 bytes, 7,727 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T06:52:01
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Cryptosense Analyzer reports, CBOM documents, certificate inventory, key material audit
 - **Testing & Validation Methods**: None detected
@@ -86,8 +88,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: CZERTAINLY_repo.html (296,097 bytes, 7,727 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T06:52:01
 
 ---
 
@@ -118,6 +118,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer, Developer, Operations
 - **Implementation Prerequisites**: Existing PKIs and public CAs; HSMs and cloud key vaults; Identity and access management (directories, IAM, IdPs); ITSM tools; MDM/EMM; EDR; NAC; Cloud providers; Kubernetes; CI/CD pipelines
 - **Relevant PQC Today Features**: crypto-agility, pki-workshop, compliance-strategy, migration-program, pqc-governance
+- **Source Document**: EVERTRUST_STREAM.html (75,423 bytes, 3,890 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T06:52:41
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: certificate inventory, key material audit
 - **Testing & Validation Methods**: None detected
@@ -129,8 +131,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites, reduced IT footprint
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: EVERTRUST_STREAM.html (75,423 bytes, 3,890 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T06:52:41
 
 ---
 
@@ -171,9 +171,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: deployment on-premises, in the cloud, or in hybrid environments; supports AWS, Azure, Google Cloud; horizontal scaling; high availability mechanisms
 - **Financial & Business Impact**: cost effective by relieving operations teams from manual tasks; prevents certificate outages to maintain security and compliance
 - **Organizational Readiness**: governance suite implementation; smart metrics and dashboarding for decision making; automated compliance reporting for GDPR, SOX, HIPAA
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: EVERTRUST_HORIZON.html (90,795 bytes, 5,830 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T06:53:13
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -204,6 +204,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-id, pki-workshop, hsm-pqc, hybrid-crypto, crypto-agility
+- **Source Document**: Eviden_IDnomic_PKI.html (111,257 bytes, 11,472 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T06:53:54
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: certificate inventory, key material audit
 - **Testing & Validation Methods**: Common Criteria EAL 4+ certification
@@ -215,8 +217,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites, change management scope
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Eviden_IDnomic_PKI.html (111,257 bytes, 11,472 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T06:53:54
 
 ---
 
@@ -247,6 +247,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; CISO; Compliance Officer; Researcher
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: crypto-agility; email-signing; pki-workshop; tls-basics; hsm-pqc
+- **Source Document**: MTG_AG_CARA.html (90,583 bytes, 13,039 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T06:54:43
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: certificate inventory, key material audit, complete overview of the status and deployment locations of all certificates
 - **Testing & Validation Methods**: None detected
@@ -258,8 +260,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites (BSI TR-03145), dedicated crypto team required (internal team or managed service), change management scope (role and permission management, compliance policies), estimated planning horizon (None detected), maturity assessment level (None detected)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: MTG_AG_CARA.html (90,583 bytes, 13,039 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T06:54:43
 
 ---
 
@@ -290,6 +290,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Compliance Officer, Operations
 - **Implementation Prerequisites**: Existing Microsoft PKI (AD CS) or Active Directory; HSM support for vendor-independent solutions; Target systems must support certificates for distribution and usage.
 - **Relevant PQC Today Features**: pki-workshop, hsm-pqc, crypto-agility, algorithms, migration-program
+- **Source Document**: MTG_AG_CLM.html (47,857 bytes, 3,600 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T06:55:44
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Find All Your Certificates; Certificate Lifecycle Manager; SBOMs
 - **Testing & Validation Methods**: compatibility test session; interoperability testing (implied by client compatibility lists); laboratory testing
@@ -301,8 +303,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites (implied by Roles & Permissions, Policies); change management scope (implied by Migration guides); maturity assessment level (None detected)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: MTG_AG_CLM.html (47,857 bytes, 3,600 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T06:55:44
 
 ---
 
@@ -333,6 +333,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Developer, Operations
 - **Implementation Prerequisites**: Utimaco HSM or Securosys Primus PQC HSM hardware; installation of MTG special PQC modules; access to secure testing environment at cloud.securosys.com
 - **Relevant PQC Today Features**: hsm-pqc, kms-pqc, stateful-signatures, hybrid-crypto, iot-ot-pqc
+- **Source Document**: MTG_AG_KMS.html (134,360 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T06:56:27
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Cryptographic Objects table search and filtering; wildcard name search; exact name search; count of Cryptographic Objects matching applied filters; state management of linked cryptographic objects
 - **Testing & Validation Methods**: KMIP profile test cases; Draft of KMIP 3.0 specification conformance; Test button for email server; Test button for SMNP server
@@ -344,8 +346,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Targeted audience of system administrators; MTG-SupportCenter contact channel
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: MTG_AG_KMS.html (134,360 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T06:56:27
 
 ---
 
@@ -376,6 +376,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: pki-workshop, digital-id, iot-ot-pqc, compliance-strategy, pqc-risk-management
+- **Source Document**: Nexus_Group_Certificate_Manager.html (135,027 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T06:57:44
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: ROCA scanner command-line tool in Certificate Manager; Search for certificates in Certificate Manager; View and verify certificates in Certificate Manager; List slot contents
 - **Testing & Validation Methods**: Common Criteria certification for Certificate Manager; CM requirements and interoperability; Interoperability testing implied by "Requirements and interoperability" sections
@@ -387,8 +389,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: GDPR considerations for CM; Officer profile tasks in Certificate Manager; Constraints and roles for officers in Certificate Manager
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Nexus_Group_Certificate_Manager.html (135,027 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T06:57:44
 
 ---
 
@@ -419,6 +419,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: Java 11+; Tomcat 10 or 11; JDBC drivers; Bouncy Castle jars (LTS or FIPS variants); HSM devices supporting PKCS#11
 - **Relevant PQC Today Features**: Algorithms, pki-workshop, hsm-pqc, hybrid-crypto, migration-program
+- **Source Document**: XiPKI.md (10,633 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-04-16T06:58:44
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -429,10 +431,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: XiPKI.md (10,633 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-04-16T06:58:44
 
 ---
 
@@ -463,6 +462,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer, Operations
 - **Implementation Prerequisites**: Integration of algorithms from CryptoNext Security; availability of Trustway Proteccio HSM upgrade in Q4 2023
 - **Relevant PQC Today Features**: hsm-pqc, hybrid-crypto, migration-program, digital-id, algorithms
+- **Source Document**: Eviden_Trustway_Proteccio_NetHSM.html (147,396 bytes, 9,979 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T06:59:04
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Common criteria EAL4+ certification; ANSSI QR (Enhanced Qualification); PKIC PQCCM verified
@@ -474,8 +475,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Prepare today for tomorrow's challenges; Get free access to Eviden’s virtual HSMaaS and test Post-Quantum Security live
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Eviden_Trustway_Proteccio_NetHSM.html (147,396 bytes, 9,979 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T06:59:04
 
 ---
 
@@ -516,9 +515,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: crypto-agile in-field upgrade; no HSM exchange needed; seamless transition to quantum-security; simulate your migration; free simulator for evaluation, development, and integration testing before deployment
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Post Quantum Cryptography Readiness; secure transition into the quantum era
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Utimaco_uTrust_HSM.html (289,564 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T06:59:55
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -549,6 +548,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Hardware Engineer
 - **Implementation Prerequisites**: AMD (Xilinx), Intel (Altera), or Microchip (Microsemi) device; AMBA AXI interfaces; ANSI C drivers; encrypted netlist for one device family
 - **Relevant PQC Today Features**: Algorithms, Compliance, digital-id, entropy-randomness, hsm-pqc
+- **Source Document**: BERTEN_MLDS-B235.html (125,724 bytes, 7,274 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:00:53
 - **Implementation Attack Surface**: Side-Channel Attacks (SCA), timing attacks, Simple Power Analysis (SPA)
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 204 compliance, FIPS 140-3 compliance, Simulation Model
@@ -560,8 +561,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: BERTEN_MLDS-B235.html (125,724 bytes, 7,274 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:00:53
 
 ---
 
@@ -592,6 +591,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Hardware Engineer
 - **Implementation Prerequisites**: AMD (Xilinx), Intel (Altera), or Microchip (Microsemi) device; AMBA AXI interfaces; ANSI C drivers
 - **Relevant PQC Today Features**: Algorithms, Compliance, Migrate, Assess, iot-ot-pqc
+- **Source Document**: BERTEN_MLKE-B135.html (125,724 bytes, 7,274 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:01:46
 - **Implementation Attack Surface**: Side-Channel Attacks (SCA), timing attacks, Simple Power Analysis (SPA)
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 204 compliance, FIPS 140-3 compliance, Simulation Model
@@ -603,8 +604,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: BERTEN_MLKE-B135.html (125,724 bytes, 7,274 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:01:46
 
 ---
 
@@ -635,6 +634,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Operations
 - **Implementation Prerequisites**: AMBA hardware interfaces; FPGA-based reference design for evaluation
 - **Relevant PQC Today Features**: Algorithms, Leaders, Migrate, iot-ot-pqc
+- **Source Document**: CAST_KiviPQC-KEM.html (199,697 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:02:40
 - **Implementation Attack Surface**: Protection against timing-based side channel attacks; minimal attack surface
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Self-checking HDL testbench; sample simulation scripts
@@ -646,8 +647,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: CAST_KiviPQC-KEM.html (199,697 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:02:40
 
 ---
 
@@ -678,6 +677,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Embedded Systems Engineer
 - **Implementation Prerequisites**: TRNG1 core for true random number generation if not included internally
 - **Relevant PQC Today Features**: Algorithms, Leaders, entropy-randomness, iot-ot-pqc
+- **Source Document**: IP_Cores_PQC1.html (56,456 bytes, 4,012 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:03:57
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Verilog test bench, self-checking test bench, test vectors, expected results
@@ -689,8 +690,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: IP_Cores_PQC1.html (56,456 bytes, 4,012 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:03:57
 
 ---
 
@@ -721,6 +720,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Algorithms, Compliance, hsm-pqc, iot-ot-pqc
+- **Source Document**: Secure-IC_Securyzr.html (204,378 bytes, 12,179 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:04:39
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Pre-Silicon Verification (HW), Post-Silicon Evaluation (Device), Security Risk Assessment (SW), Security Evaluation as a Service, Support to Security Certification & Compliance
@@ -732,8 +733,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Secure-IC_Securyzr.html (204,378 bytes, 12,179 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:04:39
 
 ---
 
@@ -764,6 +763,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Developer, Compliance Officer, Policy Maker
 - **Implementation Prerequisites**: Cryptographic inventory; functional and stress testing; integration into IT infrastructure; design phase incorporation for long-lifespan products
 - **Relevant PQC Today Features**: Threats, Compliance, Migrate, Assess, Algorithms, crypto-agility, stateful-signatures, iot-ot-pqc
+- **Source Document**: CryptoNext_Quantum-Safe_Library.html (129,702 bytes, 9,253 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:05:29
 - **Implementation Attack Surface**: timing attacks, side-channel attacks, pre- and post-compilation timing attacks, masking
 - **Cryptographic Discovery & Inventory**: cryptographic assets discovery, map every cryptographic asset, eliminate blind spots, inventory your cryptography, manage cryptographic gaps, CryptoNext COMPASS Discovery
 - **Testing & Validation Methods**: NIST CAVP program validation, functional testing, stress testing, test the impacts of PQC, evaluate impacts on systems
@@ -775,8 +776,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites via CryptoNext Captain, dedicated technical teams for testing, board-level reporting implied by strategic imperative, change management scope via crypto-agile governance, estimated planning horizon of at least a decade
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: CryptoNext_Quantum-Safe_Library.html (129,702 bytes, 9,253 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:05:29
 
 ---
 
@@ -807,6 +806,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Researcher
 - **Implementation Prerequisites**: C90 compiler; Assembly support; Rust environment; AVX2 hardware for specific optimizations; hax toolchain for formal verification
 - **Relevant PQC Today Features**: Algorithms; code-signing; iot-ot-pqc; stateful-signatures
+- **Source Document**: PQ_Code_Package.html (289,519 bytes, 6,958 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:06:25
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: formal verification, panic freedom, correctness, secret independence
@@ -818,8 +819,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: PQ_Code_Package.html (289,519 bytes, 6,958 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:06:25
 
 ---
 
@@ -850,6 +849,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer, Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: crypto-agility, kms-pqc, hsm-pqc, compliance-strategy, migration-program
+- **Source Document**: Cryptomathic_CrystalKey_360.html (238,521 bytes, 12,589 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:07:03
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: centralized enforcement of key policies, audit-log key management processes, complete control of cryptographic hardware and logging
 - **Testing & Validation Methods**: None detected
@@ -861,8 +862,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: huge financial and reputational damage risk from non-compliance, cost savings on HSM operations, operational efficiencies, compliance with GDPR and PCI DSS
 - **Organizational Readiness**: governance prerequisites via centralized policy enforcement, clear roles and responsibilities for keys, ability to demonstrate compliance with security standards, support for multi-cloud and hybrid infrastructure
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Cryptomathic_CrystalKey_360.html (238,521 bytes, 12,589 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:07:03
 
 ---
 
@@ -895,7 +894,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Relevant PQC Today Features**: pki-workshop, algorithms, migration-program, code-signing, hsm-pqc
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
-- **Testing & Validation Methods**: None detected
+- **Testing & Validation Methods**: OCSP Transaction logs; Timestamp Transaction logs; signing engine transaction logs; OpenSSL client tool testing
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
 - **Constrained Device & IoT Suitability**: None detected
@@ -903,9 +902,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: migration process expected to take years; extensive updates to software and hardware infrastructures required; experimental support for PQC algorithms; Windows OS currently doesn't support PQC algorithms hence certificates can't be verified; phased rollout via CA Certificates, CRLs, OCSP Responses, Timestamp Responses, End Entity Certificates, and PKCS#1 Signatures
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: PKI administrators empowered to start future-proofing security infrastructure; organizations can proactively adapt to emerging quantum-resilient security landscape; users equipped with tools to experiment and understand PQC technology firsthand
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Codegic_Khatim_Sign_Server.html (274,616 bytes, 10,763 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T07:08:00
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -936,6 +935,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Operations; C-Level
 - **Implementation Prerequisites**: essendi pki requires a separate license as it is not included in the base license
 - **Relevant PQC Today Features**: Assess; Migrate; pki-workshop; crypto-agility
+- **Source Document**: essendi_xc.html (90,681 bytes, 10,639 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:08:55
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Certificate Discovery with essendi cd; Certificates on devices with essendi da; certificate scanning solution essendi cd; automatic and simple management of digital certificates; transparency; prevent disruptions due to expired or incorrectly issued certificates
 - **Testing & Validation Methods**: PKIC PQCCM verified; Software testing; professional software testing
@@ -947,8 +948,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Certificate management for C-level; relieve the IT security department; governance prerequisites not explicitly stated; dedicated crypto team not explicitly stated; change management scope implied through automation and migration tools
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: essendi_xc.html (90,681 bytes, 10,639 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:08:55
 
 ---
 
@@ -979,6 +978,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, CISO, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-assets; Algorithms; Threats; Timeline; Leaders
+- **Source Document**: BTQ_Bitcoin_Quantum.html (157,155 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:09:58
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -990,8 +991,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: USD $15 million development agreement with ICTK, €2 million QPerfect financing, C$20.9 million year-end cash balance, regulatory mandates for digital assets and stablecoins, breach cost risks from poor key management
 - **Organizational Readiness**: leadership roles within QuINSA, chairing the Quantum Communications Working Group, alignment with regulatory and standards frameworks, institutional investor engagement, engineering hires targeting May 2026
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: BTQ_Bitcoin_Quantum.html (157,155 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:09:58
 
 ---
 
@@ -1022,6 +1021,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Policy Maker, CISO
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-assets; Assess; Algorithms; Threats; Leaders
+- **Source Document**: Project_Eleven_Solana_PQC.html (113,154 bytes, 4,481 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:11:08
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -1033,8 +1034,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: $20 million Series A funding round, $6 million seed round in 2025, values the company at $120 million, secure trillions of dollars in blockchain-based assets
 - **Organizational Readiness**: Nic Carter joining Project Eleven’s board of directors, Alex Pruden (CEO), Conor Deegan (VP of Engineering)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Project_Eleven_Solana_PQC.html (113,154 bytes, 4,481 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:11:08
 
 ---
 
@@ -1065,6 +1064,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer, Policy Maker, Researcher
 - **Implementation Prerequisites**: Development kits available to customers; custom firmware support; hybrid cryptography migration planning
 - **Relevant PQC Today Features**: Algorithms, Threats, Compliance, Migrate, Leaders, iot-ot-pqc
+- **Source Document**: SEALSQ_Quantum_Shield.html (99,921 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:11:50
 - **Implementation Attack Surface**: side-channel resistance, tamper protection
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Common Criteria EAL5+, FIPS 140-3, security validation by SERMA Security Evaluation Laboratory, testing and validating advanced semiconductor solutions by Granite River Labs
@@ -1076,8 +1077,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: SEALSQ_Quantum_Shield.html (99,921 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:11:50
 
 ---
 
@@ -1108,6 +1107,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Policy Maker
 - **Implementation Prerequisites**: FIPS 140-3 module; Hardware-based plug-and-play deployment; No software rewrites required; No PKI dependencies
 - **Relevant PQC Today Features**: Compliance; Algorithms; Leaders; Migrate; pqc-business-case
+- **Source Document**: Forward_Edge-AI_Isidore_Quantum.html (420,996 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:12:59
 - **Implementation Attack Surface**: side-channel attacks, quantum algorithms tearing through key exchanges, physical leakage, machine-intelligent adversaries
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: validated per NIST SP 800-90 A/B/C and BSI AIS-31, proven through testing with the U.S. Space Force, NASA, and defense partners, validated in 23+ pilots
@@ -1119,8 +1120,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: $500B global economic value derived from satellite-based communications, Harvest Now Decrypt Later campaigns capturing encrypted data for future weaponization
 - **Organizational Readiness**: zero-trust architecture, autonomous key management eliminating PKI and operator overhead, no certificates or manual loaders required, Cassian™ for policy governance
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Forward_Edge-AI_Isidore_Quantum.html (420,996 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:12:59
 
 ---
 
@@ -1151,6 +1150,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Network Security Administrator; Board Members; Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: crypto-agility; compliance-strategy; migration-program; pqc-risk-management; tls-basics
+- **Source Document**: QuSecure_QuProtect_R3.html (529,644 bytes, 12,397 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:14:21
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: QuProtect Recon delivers a live, automated inventory of every cryptographic asset across your network; uncover vulnerabilities; eliminate blind spots
 - **Testing & Validation Methods**: None detected
@@ -1162,8 +1163,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: greenfield partner revenue and services growth; Post-Quantum Cryptography Is an Operational and Revenue Strategy for Telecom
 - **Organizational Readiness**: QuProtect R3 Platform See your vulnerabilities. Secure your systems. Showcase your compliance; accelerate quantum readiness; total control over the cryptographic protocol your systems rely on
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: QuSecure_QuProtect_R3.html (529,644 bytes, 12,397 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:14:21
 
 ---
 
@@ -1194,6 +1193,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Policy Maker
 - **Implementation Prerequisites**: Automated cryptographic discovery and inventory (ACDI); foundational understanding of cryptographic footprint
 - **Relevant PQC Today Features**: Assess; Migrate; Threats; Timeline; Leaders
+- **Source Document**: SandboxAQ_AQtive_Guard.html (19,937 bytes, 1,531 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:15:19
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: automated cryptographic asset discovery, centralized database, cross-referencing to enhance triage and prioritization
 - **Testing & Validation Methods**: None detected
@@ -1205,8 +1206,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Powers DoD quantum readiness, cryptographic agility, future-proof cybersecurity
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: SandboxAQ_AQtive_Guard.html (19,937 bytes, 1,531 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:15:19
 
 ---
 
@@ -1237,6 +1236,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Compliance Officer, Security Architect, Federal Agency Procurement
 - **Implementation Prerequisites**: Cryptographic module submission to CMVP; validation by accredited CSTLs; adherence to SP 800-140Br1 formatted submissions
 - **Relevant PQC Today Features**: Compliance, Migrate, Assess, entropy-randomness
+- **Source Document**: 01_Quantum_IronCAP.html (66,199 bytes, 9,212 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:15:48
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Cryptographic Module Validation Program, FIPS 140-3, FIPS 140-2, SP 800-140Br1 formatted submissions, automated processing of validation submissions, Cryptographic and Security Testing Laboratories (CSTLs), NVLAP accreditation
@@ -1248,8 +1249,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: 01_Quantum_IronCAP.html (66,199 bytes, 9,212 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:15:48
 
 ---
 
@@ -1280,6 +1279,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Compliance Officer; Security Architect; Developer
 - **Implementation Prerequisites**: Microsoft Windows 10 Professional (64-bit); .NET 4.5.2 framework; FIPS mode operation
 - **Relevant PQC Today Features**: Compliance; Algorithms; Migrate
+- **Source Document**: Bouncy_Castle_C\_\_.NET_repo.md (4,227 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-04-16T07:16:44
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -1290,10 +1291,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Bouncy_Castle_C\_\_.NET_repo.md (4,227 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-04-16T07:16:44
 
 ---
 
@@ -1324,6 +1322,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Compliance Officer; Security Architect; Developer
 - **Implementation Prerequisites**: Java SE Runtime Environment v8 (1.8); Java SE Runtime Environment v11 (11); Java SE Runtime Environment v17 (17); Java SE Runtime Environment v21 (21); Ubuntu 22.04 LTS; Intel NUC 11 Pro with 11th Gen Intel Core i7
 - **Relevant PQC Today Features**: Compliance; Algorithms; stateful-signatures
+- **Source Document**: Bouncy_Castle_Java.html (78,101 bytes, 6,241 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:17:04
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-3 validation, Interim Validation, Cryptographic Module Validation Program (CMVP)
@@ -1335,8 +1335,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: FIPS 140-3 Level 1 compliance, Interim Validation status, Sunset Date 1/16/2027
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Bouncy_Castle_Java.html (78,101 bytes, 6,241 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:17:04
 
 ---
 
@@ -1367,6 +1365,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: Bouncy Castle Java 1.79; testing environment for draft standards; migration planning resources
 - **Relevant PQC Today Features**: Algorithms; Migrate; hybrid-crypto; pki-workshop; email-signing
+- **Source Document**: Bouncy_Castle_Java_LTS.html (274,779 bytes, 4,613 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:17:58
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: testing and migration planning
@@ -1378,8 +1378,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Bouncy_Castle_Java_LTS.html (274,779 bytes, 4,613 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:17:58
 
 ---
 
@@ -1410,6 +1408,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: OpenSSL 3.6.1; OpenSSL 3.5.5; OpenSSL 3.4.4; OpenSSL 3.3.6; OpenSSL 3.0.19; OpenSSL 1.1.1ze; OpenSSL 1.0.2zn
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, tls-basics, migration-program
+- **Source Document**: OpenSSL.html (45,400 bytes, 7,399 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:18:32
 - **Implementation Attack Surface**: stack buffer overflow, NULL dereference, heap out-of-bounds write, excessive memory allocation, unauthenticated/unencrypted trailing bytes, missing ASN1_TYPE validation, type confusion, improper parameter validation, silent input truncation
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -1421,8 +1421,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: OpenSSL.html (45,400 bytes, 7,399 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:18:32
 
 ---
 
@@ -1453,6 +1451,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, kms-pqc, crypto-agility
+- **Source Document**: Google_Tink.html (85,495 bytes, 4,564 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:19:26
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -1464,8 +1464,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Google_Tink.html (85,495 bytes, 4,564 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:19:26
 
 ---
 
@@ -1506,7 +1504,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Botan_repo.md (6,925 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-16T07:19:57
@@ -1540,6 +1537,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Compliance Officer, Security Architect, Developer
 - **Implementation Prerequisites**: FIPS 140-3 validated module; Installation and configuration as specified in Section 11.1 of the Security Policy; Specific OS versions including AlmaLinux 9, Android 13, Debian 11, FreeBSD 13, iOS 16, iPadOS 16, macOS 13, Oracle Solaris 11.4, Red Hat Enterprise Linux 9, Rocky Linux 9, SUSE Linux Enterprise Server 15, Ubuntu 22.04, Windows 10, Windows 11, Windows Server 2019, Windows Server 2022
 - **Relevant PQC Today Features**: Compliance, Algorithms, hybrid-crypto, tls-basics, openssl
+- **Source Document**: SafeLogic_CryptoComply.html (112,723 bytes, 10,590 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:20:17
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-3 validation, Leidos Accredited Testing & Evaluation (AT&E) Lab
@@ -1551,8 +1550,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Federal Agencies procurement restrictions, Interim validation caveat
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: SafeLogic_CryptoComply.html (112,723 bytes, 10,590 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:20:17
 
 ---
 
@@ -1583,6 +1580,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Compliance Officer
 - **Implementation Prerequisites**: SAP NetWeaver ABAP system; TLS 1.3 enabled; SAP note 2180024 configuration steps; FIPS crypto kernel module
 - **Relevant PQC Today Features**: Algorithms; Compliance; Hybrid-crypto; tls-basics; migration-program
+- **Source Document**: SAP_Cryptographic_Library.html (227,560 bytes, 8,550 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:21:26
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-3 validation of cryptographic modules; Certificate #5093 from NIST
@@ -1594,8 +1593,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: FIPS certification required by US public sector agencies, healthcare, and financial industries
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: SAP_Cryptographic_Library.html (227,560 bytes, 8,550 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:21:26
 
 ---
 
@@ -1626,6 +1623,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Compliance Officer; CISO; Policy Maker
 - **Implementation Prerequisites**: cryptographic inventory; risk assessment; adoption of validated hybrid solutions; FIPS-140-3 module
 - **Relevant PQC Today Features**: Compliance; Migrate; Assess; Algorithms; Leaders; pki-workshop; hsm-pqc; migration-program; pqc-risk-management
+- **Source Document**: PQShield_PQSDK.html (59,562 bytes, 8,028 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:22:14
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: cryptographic inventory
 - **Testing & Validation Methods**: CAVP (Cryptographic Algorithm Validation Program), Cryptographic Module Verification Program (CMVP)
@@ -1637,8 +1636,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: cryptographic inventory and risk assessment, adoption of validated hybrid solutions
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: PQShield_PQSDK.html (59,562 bytes, 8,028 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:22:14
 
 ---
 
@@ -1669,6 +1666,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Compliance Officer
 - **Implementation Prerequisites**: Go 1.24 or later; GOFIPS140=v1.0.0 environment variable; fips140=on GODEBUG option; validated Operating Environment from Geomys list
 - **Relevant PQC Today Features**: Compliance; Algorithms; Hybrid-crypto; tls-basics; entropy-randomness
+- **Source Document**: Go_stdlib_crypto_mlkem.html (83,460 bytes, 12,349 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:22:54
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: derandomized encapsulation provided by crypto/mlkem/mlkemtest package
@@ -1680,8 +1679,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Go_stdlib_crypto_mlkem.html (83,460 bytes, 12,349 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:22:54
 
 ---
 
@@ -1712,6 +1709,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: Rust version 0.2.3; Minimum Supported Rust Version (MSRV) policy applies
 - **Relevant PQC Today Features**: Algorithms, pqc-101, code-signing, tls-basics
+- **Source Document**: RustCrypto_ml-kem.html (30,924 bytes, 5,664 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:23:52
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -1723,8 +1722,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: RustCrypto_ml-kem.html (30,924 bytes, 5,664 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:23:52
 
 ---
 
@@ -1755,6 +1752,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: Rust language; no_std environment support for bare-metal or WebAssembly
 - **Relevant PQC Today Features**: Algorithms, code-signing, stateful-signatures, merkle-tree-certs, iot-ot-pqc
+- **Source Document**: RustCrypto_ml-dsa.html (28,771 bytes, 3,288 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:24:31
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: proptest, criterion
@@ -1766,8 +1765,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: RustCrypto_ml-dsa.html (28,771 bytes, 3,288 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:24:31
 
 ---
 
@@ -1798,6 +1795,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer
 - **Implementation Prerequisites**: Rust 1.75+
 - **Relevant PQC Today Features**: Algorithms, stateful-signatures, code-signing
+- **Source Document**: RustCrypto_slh-dsa.html (33,074 bytes, 5,052 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:25:01
 - **Implementation Attack Surface**: stack space limitations due to signature and intermediate value allocation; lack of independent security audit
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: proptest, quickcheck, criterion
@@ -1809,8 +1808,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: RustCrypto_slh-dsa.html (33,074 bytes, 5,052 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:25:01
 
 ---
 
@@ -1841,6 +1838,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Researcher
 - **Implementation Prerequisites**: Rust; C implementations from PQClean; Python for generate-implementations.py script; implementations.yaml configuration file
 - **Relevant PQC Today Features**: Algorithms, Migrate, Assess
+- **Source Document**: pqcrypto.html (3,197 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-04-16T07:25:49
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -1851,10 +1850,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: pqcrypto.html (3,197 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-04-16T07:25:49
 
 ---
 
@@ -1885,6 +1881,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Researcher
 - **Implementation Prerequisites**: liboqs C library; Cargo.toml dependency oqs = "0.10.1"; RUST_MIN_STACK environment variable for large stack algorithms; OQS_RAND API for random-number generator configuration
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, crypto-agility, pqc-101
+- **Source Document**: liboqs-rust\__oqs_crate_.html (3,192 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-04-16T07:26:09
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -1895,10 +1893,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: liboqs-rust\__oqs_crate_.html (3,192 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-04-16T07:26:09
 
 ---
 
@@ -1929,6 +1924,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: C90 compiler; make; gcc; python3; git; CBMC (optional for verification); HOL-Light (optional for verification)
 - **Relevant PQC Today Features**: Algorithms; Migrate; Assess; code-signing; tls-basics
+- **Source Document**: mlkem-native.html (415,396 bytes, 14,231 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:26:29
 - **Implementation Attack Surface**: timing side channels, secret-dependent control flow, memory access patterns, variable-latency instructions, memory overflow, integer overflow, KyberSlash, clangover
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: ACVP test vectors, Wycheproof test vectors, formal verification using CBMC and HOL-Light, constant-time testing with valgrind, speed benchmarks, stack usage analysis, binary size measurement
@@ -1940,8 +1937,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: mlkem-native.html (415,396 bytes, 14,231 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:26:29
 
 ---
 
@@ -1972,6 +1967,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Compliance Officer
 - **Implementation Prerequisites**: POSIX User Space; Linux Kernel; EFI Environment; Windows User Space; x86_64; ARMv7; ARMv8; RISCV64
 - **Relevant PQC Today Features**: Algorithms, Compliance, Migrate, code-signing, secure-boot
+- **Source Document**: leancrypto.html (34,751 bytes, 3,321 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:27:43
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: NIST ACVP framework, ACVP Parser, CAVP Certificates
@@ -1983,8 +1980,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: leancrypto.html (34,751 bytes, 3,321 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:27:43
 
 ---
 
@@ -2015,6 +2010,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Developer, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: hybrid-crypto; algorithms; leaders; compliance-strategy; threats
+- **Source Document**: Cosmian_covercrypt.html (294,252 bytes, 9,862 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:28:19
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -2026,8 +2023,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites (ANSSI and BSI joint statement), dedicated crypto team required (IT departments define access), change management scope (dynamic access policy management, user revocation)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Cosmian_covercrypt.html (294,252 bytes, 9,862 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:28:19
 
 ---
 
@@ -2058,6 +2053,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Researcher
 - **Implementation Prerequisites**: arm-none-eabi toolchain; Python >= 3.8; pyserial module; stlink; OpenOCD version 0.12; QEMU >= 5.2; chipwhisperer module (for cw308t-stm32f3); libusb-1.0.0-dev
 - **Relevant PQC Today Features**: Algorithms, iot-ot-pqc, code-signing, stateful-signatures, entropy-randomness
+- **Source Document**: pqm4.html (491,643 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:29:05
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: algorithm enumeration, deprecated cipher detection
 - **Testing & Validation Methods**: automated functional testing, automated generation of test vectors, comparison against output of a reference implementation, automated benchmarking for speed stack usage and code-size, automated profiling of cycles spent in symmetric primitives, cross-check different implementations using deterministic random number generator
@@ -2069,8 +2066,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: pqm4.html (491,643 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:29:05
 
 ---
 
@@ -2101,6 +2096,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: AVX2 instructions; Intel Core i7-11850H CPU; C language implementation
 - **Relevant PQC Today Features**: Algorithms, Migrate, pqc-101
+- **Source Document**: HQC_Algorithm.html (3,351 bytes, 866 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:30:25
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -2112,8 +2109,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: HQC_Algorithm.html (3,351 bytes, 866 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:30:25
 
 ---
 
@@ -2144,6 +2139,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: Rust; citadel_io ^0.13.0; citadel_types ^0.13.0; generic-array ^0.14.6; zeroize ^1.5.7; serde ^1.0.152
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, crypto-agility, stateful-signatures
+- **Source Document**: citadel_pqcrypto.html (3,205 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-04-16T07:30:48
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -2154,10 +2151,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: citadel_pqcrypto.html (3,205 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-04-16T07:30:48
 
 ---
 
@@ -2188,6 +2182,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, IT administrator, Security professional, Security Architect
 - **Implementation Prerequisites**: Windows Server 2025; Windows 11 clients (24H2, 25H2); .NET 10; SymCrypt-OpenSSL version 1.9.0 for TLS 1.3 hybrid key exchange
 - **Relevant PQC Today Features**: Algorithms, Timeline, hybrid-crypto, crypto-agility, tls-basics
+- **Source Document**: Microsoft_SymCrypt.html (344,413 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:31:08
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: enterprise-wide inventory to assess and prioritize cryptographic asset risks
 - **Testing & Validation Methods**: testing of an experimental PQC-protected VPN tunnel, verified versions of PQC algorithms
@@ -2199,8 +2195,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Microsoft Quantum Safe Program (QSP), QSP leadership team with representatives across all major business groups, research and engineering divisions, and functions
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Microsoft_SymCrypt.html (344,413 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:31:08
 
 ---
 
@@ -2231,6 +2225,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Compliance Officer; Researcher
 - **Implementation Prerequisites**: AWS-LC FIPS 3.0 module; s2n-tls library; enable X25519MLKEM768 or SecP256r1MLKEM768 curves; Intel 3rd Gen Xeon for AVX512 IFMA instructions
 - **Relevant PQC Today Features**: Compliance, Algorithms, hybrid-crypto, tls-basics, kms-pqc
+- **Source Document**: AWS-LC.html (1,054,738 bytes, 13,425 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:32:06
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: formal verification, functional correctness, FIPS 140-3 validation, NIST Cryptographic Module Validation Program (CMVP)
@@ -2242,8 +2238,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: FedRAMP, FISMA, HIPAA compliance frameworks, Commercial National Security Algorithm Suite (CNSA) 2.0 adherence
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: AWS-LC.html (1,054,738 bytes, 13,425 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:32:06
 
 ---
 
@@ -2274,6 +2268,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Researcher
 - **Implementation Prerequisites**: NVIDIA H100 SXM5 GPU; NVIDIA cuPQC SDK download
 - **Relevant PQC Today Features**: Algorithms; Leaders; Threats; crypto-agility; tls-basics
+- **Source Document**: Nvidia_cuPQC.html (29,593 bytes, 5,921 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:33:11
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -2285,8 +2281,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Nvidia_cuPQC.html (29,593 bytes, 5,921 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:33:11
 
 ---
 
@@ -2317,6 +2311,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Network Engineer; Security Architect; Developer
 - **Implementation Prerequisites**: Cisco IOS XE Release 17.12.1a or 17.11.1a; Supported platforms including Cisco 1000 Series, Catalyst 8000V, Catalyst 8500/8300, ASR 1000; Key source must send key format in hex when using SKIP
 - **Relevant PQC Today Features**: vpn-ssh-pqc, algorithms, compliance, migrate, pki-workshop
+- **Source Document**: Cisco_IOS_XE_PQC.html (83,599 bytes, 2,868 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:33:48
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -2328,8 +2324,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Cisco_IOS_XE_PQC.html (83,599 bytes, 2,868 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:33:48
 
 ---
 
@@ -2360,6 +2354,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Developer, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Timeline, Threats, Algorithms, hybrid-crypto, migration-program
+- **Source Document**: Google_ALTS.html (158,402 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:34:14
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: BoringCrypto validated to FIPS 140-3 level 1
@@ -2371,8 +2367,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Target audience includes CISOs and security operations teams; assumes basic understanding of encryption and cryptographic primitives
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Google_ALTS.html (158,402 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:34:14
 
 ---
 
@@ -2403,19 +2397,19 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Researcher, Policy Maker
 - **Implementation Prerequisites**: iOS 17.4 or later; iPadOS 17.4 or later; macOS 14.4 or later; watchOS 10.4 or later
 - **Relevant PQC Today Features**: Algorithms, Threats, Hybrid-crypto, Migration-program, Crypto-agility
-- **Implementation Attack Surface**: None detected
+- **Implementation Attack Surface**: Key compromise; Harvest Now, Decrypt Later attacks on stored encrypted data
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: formal verification, symbolic evaluation, game-based proofs, reductionist security methodology, machine-checked proofs using Tamarin prover, independent assessment of source code
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
+- **Constrained Device & IoT Suitability**: watchOS 10.4 support; limited connectivity scenarios considered in rekeying design
 - **Supply Chain & Vendor Risk**: None detected
 - **Deployment & Migration Complexity**: phased rollout, backward-compatible updates, automatic ramping up to post-quantum encryption protocol, replacement of existing protocol within supported conversations
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Apple_PQ3\_\_\_CoreCrypto.html (106,083 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T07:35:08
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -2446,6 +2440,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Compliance Officer, Operations
 - **Implementation Prerequisites**: Entrust nShield HSM firmware v13.8.0+; PKCS#11 interface; PQSDK C API for LMS/HSS/XMSS
 - **Relevant PQC Today Features**: hsm-pqc, algorithms, compliance, leaders, stateful-signatures
+- **Source Document**: Entrust_nShield.html (103,709 bytes, 7,932 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:36:02
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: NIST Cryptographic Algorithm Validation Program (CAVP), FIPS 140-3 Level 3 validation, Cryptographic Module Validation Program (CMVP)
@@ -2457,8 +2453,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: NIST validation, production-ready cryptographic solutions, secure sensitive data against looming threats of quantum computing, maintain compliance
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Entrust_nShield.html (103,709 bytes, 7,932 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:36:02
 
 ---
 
@@ -2489,6 +2483,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; CISO; Compliance Officer; Developer
 - **Implementation Prerequisites**: Luna HSM firmware v7.9+; Software v7.9.1 or FW v7.9.2 for specific features
 - **Relevant PQC Today Features**: hsm-pqc, hybrid-crypto, code-signing, iot-ot-pqc, tls-basics
+- **Source Document**: Thales_Luna_HSM.html (118,673 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:36:47
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: crypto resource partitioning, reporting and monitoring
 - **Testing & Validation Methods**: product verification testing, real-world application testing, FIPS 140-3 Level 3 validated
@@ -2500,8 +2496,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: post-quantum ready, free risk assessment, planning today to be post-quantum ready
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Thales_Luna_HSM.html (118,673 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:36:47
 
 ---
 
@@ -2532,6 +2526,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer, Policy Maker
 - **Implementation Prerequisites**: Go programming language maturity for hybrid schemes; cryptographic inventory; zero trust security policies; PQC readiness program/task force
 - **Relevant PQC Today Features**: Threats, Migrate, Assess, Algorithms, crypto-agility, pqc-governance, migration-program
+- **Source Document**: HashiCorp_Vault.html (94,231 bytes, 4,305 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:37:43
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Scan for embedded secrets
 - **Testing & Validation Methods**: None detected
@@ -2543,8 +2539,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: HashiCorp_Vault.html (94,231 bytes, 4,305 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:37:43
 
 ---
 
@@ -2575,6 +2569,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer, Policy Maker, Developer
 - **Implementation Prerequisites**: Unified cryptographic security platform; Complete inventory of cryptographic assets including algorithms protocols libraries keys and dependencies; Updated security policies including PQC adoption; Procurement policies embedding PQC requirements; Training for developers and security teams on PQC algorithms and key management
 - **Relevant PQC Today Features**: Threats, Compliance, Migrate, Assess, Algorithms, Hybrid-crypto, Crypto-agility, Hsm-pqc, Migration-program, Pqc-governance
+- **Source Document**: Entrust_KeyControl.html (114,718 bytes, 11,333 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:38:10
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: complete inventory of all cryptographic assets including algorithms, protocols, libraries, keys, and dependencies such as APIs and third-party integrations; unified cryptographic security platform to keep inventory current
 - **Testing & Validation Methods**: controlled pilots in non-critical environments to validate PQC algorithm performance and interoperability; red teaming to simulate quantum breach scenarios and test incident response against HNDL attacks
@@ -2586,8 +2582,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: assign PQC program ownership and accountability with authority to coordinate cross-functionally; train developers and security teams on PQC algorithms, key management, and migration pitfalls; commit to ongoing quantum resistance training and awareness across the organization
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Entrust_KeyControl.html (114,718 bytes, 11,333 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:38:10
 
 ---
 
@@ -2618,6 +2612,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Compliance Officer; Operations; Developer
 - **Implementation Prerequisites**: KMIP, IPP or REST-compatible devices; HSM; Oracle TDE databases; Web-based GUI; Supported hardware and operating systems per support matrix
 - **Relevant PQC Today Features**: crypto-agility; kms-pqc; hsm-pqc; compliance
+- **Source Document**: IBM_Guardium_Key_Lifecycle_Manager.html (177,225 bytes, 6,852 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:39:13
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Certificate Vision dashboard, digital certificate status assessment, expiration date tracking, key material audit via centralized management
 - **Testing & Validation Methods**: None detected
@@ -2629,8 +2625,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Cost of a Data Breach Report reference, reduced key management costs through automation, 97% of organizations with AI-related data breaches lacked proper access controls
 - **Organizational Readiness**: Role-based access control for administrative accounts, compliance with PCI DSS, Sarbanes-Oxley, and HIPAA, centralized key management governance
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: IBM_Guardium_Key_Lifecycle_Manager.html (177,225 bytes, 6,852 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:39:13
 
 ---
 
@@ -2704,6 +2698,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Compliance Officer
 - **Implementation Prerequisites**: u.trust General Purpose HSM Se-Series; PKCS #11 interface support; Firmware module for in-field upgrade
 - **Relevant PQC Today Features**: hsm-pqc, crypto-agility, stateful-signatures, algorithms, assess
+- **Source Document**: Utimaco_ESKM.html (285,711 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:40:25
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: comprehensive audit trails; unified access and management of all cryptographic keys; single pane of glass for key inventory
 - **Testing & Validation Methods**: None detected
@@ -2715,8 +2711,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: centralized administration; reliable policy controls; comprehensive audit trails; unified enterprise key management
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Utimaco_ESKM.html (285,711 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:40:25
 
 ---
 
@@ -2747,6 +2741,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Operations, Compliance Officer
 - **Implementation Prerequisites**: EJBCA 9.1+ or SignServer 6.0+; HSM model and firmware version supporting selected algorithms; Externalμ-ML-DSA support for large CRLs; CRMF or CMP for KEM key proof of possession
 - **Relevant PQC Today Features**: Algorithms, Migrate, hsm-pqc, pki-workshop, hybrid-crypto
+- **Source Document**: Keyfactor_EJBCA.html (84,799 bytes, 8,490 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:41:25
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Cryptographic Discovery
 - **Testing & Validation Methods**: interoperability testing, production scale testing
@@ -2758,8 +2754,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Post-Quantum Cryptography (PQC) Readiness
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Keyfactor_EJBCA.html (84,799 bytes, 8,490 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:41:25
 
 ---
 
@@ -2790,6 +2784,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: Trust Protection Platform version 24.1 or later; Activation instructions from Venafi; Self-signed CA template with Digital Signature and Code Signing key usage; Key Pair environment template configured for PQC algorithms; Software key storage location; PKCS#11 support in non-Venafi applications.
 - **Relevant PQC Today Features**: code-signing, tls-basics, hsm-pqc, pki-workshop, crypto-agility
+- **Source Document**: Venafi_Trust_Protection_Platform.html (48,470 bytes, 7,668 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:42:12
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: certificate inventory, key material audit
 - **Testing & Validation Methods**: interoperability testing
@@ -2801,8 +2797,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites, change management scope, estimated planning horizon
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Venafi_Trust_Protection_Platform.html (48,470 bytes, 7,668 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:42:12
 
 ---
 
@@ -2833,6 +2827,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: AWS SDK for Java v2 version 2.30.22 or greater; rustls package with prefer-post-quantum feature flag; AwsCrtAsyncHttpClient configuration with postQuantumTlsEnabled(true); Linux-based platforms for AWS Common Runtime HTTP client
 - **Relevant PQC Today Features**: tls-basics, hybrid-crypto, kms-pqc, migration-program, pqc-risk-management
+- **Source Document**: AWS_s2n-tls.html (1,058,919 bytes, 14,426 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:42:52
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-3 validation, benchmarks on example workloads, performance measurements using AWS SDK for Java v2
@@ -2844,8 +2840,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: customers must update TLS clients and SDKs to offer ML-KEM, security team or IT administrators may need to update firewalls to unblock new TLS algorithms
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: AWS_s2n-tls.html (1,058,919 bytes, 14,426 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:42:52
 
 ---
 
@@ -2876,6 +2870,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: TLS 1.3 support; BoringSSL library; nginx configuration with ssl_ecdh_curve X25519Kyber768Draft00:X25519; server cipher preference enabled; rustls version 0.21.7 or later for HelloRetryRequest support
 - **Relevant PQC Today Features**: tls-basics, hybrid-crypto, migration-program, pqc-risk-management, algorithms
+- **Source Document**: BoringSSL.html (9,989 bytes, 2,874 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:44:05
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: fuzzing
@@ -2887,8 +2883,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: BoringSSL.html (9,989 bytes, 2,874 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:44:05
 
 ---
 
@@ -2919,6 +2913,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Operations, Compliance Officer
 - **Implementation Prerequisites**: Install crypto-policies-pq-preview and crypto-policies-scripts packages; switch system-wide cryptographic policy to DEFAULT:TEST-PQ; install oqsprovider package for ML-DSA in OpenSSL; use TLS 1.3 connections
 - **Relevant PQC Today Features**: Algorithms, Threats, Migrate, hybrid-crypto, tls-basics, vpn-ssh-pqc, pki-workshop
+- **Source Document**: GnuTLS.html (638,944 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:44:35
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -2930,8 +2926,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: GnuTLS.html (638,944 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:44:35
 
 ---
 
@@ -2962,6 +2956,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Decision-maker; Researcher; Compliance Officer
 - **Implementation Prerequisites**: Cryptographic inventory of systems using RSA, ECC, DH; Risk assessments; Planning for transition by 2035
 - **Relevant PQC Today Features**: Timeline; Threats; Compliance; Migrate; Assess; Algorithms; Leaders
+- **Source Document**: LibreSSL.html (138,784 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:45:30
 - **Implementation Attack Surface**: implementation security, performance trade-offs
 - **Cryptographic Discovery & Inventory**: inventory of cryptographic systems, identify where they use public-key algorithms vulnerable to quantum attack (RSA, ECC, DH)
 - **Testing & Validation Methods**: None detected
@@ -2973,8 +2969,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites, dedicated crypto team required, change management scope, estimated planning horizon (by 2035), maturity assessment level
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: LibreSSL.html (138,784 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:45:30
 
 ---
 
@@ -3005,6 +2999,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; CISO
 - **Implementation Prerequisites**: rustls-aws-lc-rs provider required for PQC support; experimental crate implementation
 - **Relevant PQC Today Features**: tls-basics; hybrid-crypto; algorithms; pqc-risk-management; migration-program
+- **Source Document**: rustls.html (13,305 bytes, 3,652 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:46:35
 - **Implementation Attack Surface**: memory safety failures; no unsafe code in core library
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: performance benchmarking system
@@ -3016,8 +3012,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: proactive preparation for upcoming threats; responsible timeline adoption
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: rustls.html (13,305 bytes, 3,652 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:46:35
 
 ---
 
@@ -3048,6 +3042,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: Download wolfSSL library; configure to enable Dilithium and Kyber; run benchmarks
 - **Relevant PQC Today Features**: Algorithms, stateful-signatures, iot-ot-pqc, code-signing, hsm-pqc
+- **Source Document**: wolfSSL.html (91,379 bytes, 7,236 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:47:09
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: ACVP and CMVP certification of our post-quantum algorithms; wolfSSL and Crypto4A interoperability between wolfBoot and QXEdget Using LMS demo project; wolfSSL and AWS interoperability between wolfSSH and AWS Transfer Family using ML-KEM and ECDH hybrid scheme
@@ -3059,8 +3055,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: NIST’s (National Institute of Standards and Technology) NCCoE (National Cybersecurity Center of Excellence) Migration to Post-Quantum Cryptography Project; wolfSSL Post-Quantum Products in Production ExpressVPN’s Lightway Protocol using (D)TLS 1.3 with Post-Quantum Algorithms Protecting Millions of Devices
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: wolfSSL.html (91,379 bytes, 7,236 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:47:09
 
 ---
 
@@ -3091,6 +3085,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; CISO; Compliance Officer; Operations
 - **Implementation Prerequisites**: Kubernetes clusters; Helm charts; Microsoft SQL Server; Access to docs.keyfactor.com
 - **Relevant PQC Today Features**: code-signing; hybrid-crypto; pki-workshop; migration-program; crypto-agility
+- **Source Document**: SignServer.html (148,516 bytes, 10,121 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:48:33
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Cryptographic Discovery & Inventory, certificate inventory, key material audit
 - **Testing & Validation Methods**: PQC Lab, safe sandbox environment, testing support for new hybrid certificates
@@ -3102,8 +3098,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: quantum-ready, crypto-agility, governance prerequisites, change management scope
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: SignServer.html (148,516 bytes, 10,121 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:48:33
 
 ---
 
@@ -3144,7 +3138,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: strongSwan_repo.md (21,911 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-16T07:49:22
@@ -3178,6 +3171,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Researcher
 - **Implementation Prerequisites**: Latest versions of Signal client applications; both sides of the chat must use latest Signal software for PQXDH activation
 - **Relevant PQC Today Features**: hybrid-crypto, quantum-threats, Algorithms, Migrate, pqc-risk-management
+- **Source Document**: Signal.html (10,792 bytes, 3,255 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:49:43
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -3189,8 +3184,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Signal.html (10,792 bytes, 3,255 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:49:43
 
 ---
 
@@ -3221,6 +3214,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: OpenSSH 9.0+ for sntrup761x25519-sha512; OpenSSH 9.9+ for mlkem768x25519-sha256; Check KexAlgorithms configuration; ssh_config(5) for WarnWeakCrypto
 - **Relevant PQC Today Features**: vpn-ssh-pqc, hybrid-crypto, quantum-threats, Algorithms, Migrate
+- **Source Document**: OpenSSH.html (7,792 bytes, 6,484 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:50:12
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -3232,8 +3227,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites, dedicated crypto team required, board-level reporting, change management scope, estimated planning horizon (6-12 months), maturity assessment level; estimates for cryptographically-relevant quantum computer arrival range from 5-20 years with mid-2030s expectation; urgency to retire classical signature keys in advance of quantum computers becoming a reality
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: OpenSSH.html (7,792 bytes, 6,484 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:50:12
 
 ---
 
@@ -3264,6 +3257,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: Download wolfSSH from https://github.com/wolfSSL/wolfssh
 - **Relevant PQC Today Features**: Algorithms; hybrid-crypto; vpn-ssh-pqc; Leaders
+- **Source Document**: wolfSSH.html (68,791 bytes, 3,887 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:51:07
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: NIST NCCoE interoperability tests; tested against AWS implementation of SSH and OQS's fork of openSSH
@@ -3275,8 +3270,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: wolfSSH.html (68,791 bytes, 3,887 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:51:07
 
 ---
 
@@ -3317,7 +3310,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: liboqs_repo.md (23,806 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-16T07:51:41
@@ -3351,6 +3343,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: OpenSSL 3.0 or greater; liboqs installed; CMake tooling; specific OpenSSL versions for full TLS signature support (3.2+) and native PQC algorithm handling (3.5+); KEM encoding/decoding support for OpenSSL 3.4+ testing
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, tls-basics, pki-workshop, crypto-agility
+- **Source Document**: oqs-provider.html (429,453 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:52:01
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: algorithm enumeration via openssl list -signature-algorithms -provider oqsprovider and openssl list -kem-algorithms -provider oqsprovider; SBOM available in sbom.cdx.json
 - **Testing & Validation Methods**: interoperability testing documented in ALGORITHMS.md; regression testing via scripts/runtests.sh; performance testing via openssl speed command (limited support in 3.0.2); conformance testing via KAT vectors implied by liboqs dependency
@@ -3362,8 +3356,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: oqs-provider.html (429,453 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:52:01
 
 ---
 
@@ -3394,6 +3386,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: Python environment; pip package manager; Docker (optional); AWS Lambda support for API deployment
 - **Relevant PQC Today Features**: tls-basics, Assess, code-signing
+- **Source Document**: SSLyze.html (301,733 bytes, 7,991 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:53:24
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: certificate inventory, deprecated cipher detection, algorithm enumeration
 - **Testing & Validation Methods**: conformance testing against Mozilla's recommended TLS configurations
@@ -3405,8 +3399,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: SSLyze.html (301,733 bytes, 7,991 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:53:24
 
 ---
 
@@ -3437,6 +3429,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Compliance Officer
 - **Implementation Prerequisites**: OpenSSL 3.6.0; testssl.sh version 3.3dev
 - **Relevant PQC Today Features**: Assess, Algorithms, tls-basics, hybrid-crypto
+- **Source Document**: testssl.sh.md (11,143 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-04-16T07:54:05
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -3447,10 +3441,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: testssl.sh.md (11,143 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-04-16T07:54:05
 
 ---
 
@@ -3481,6 +3472,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Developer, Security Architect, Compliance Officer
 - **Implementation Prerequisites**: continuous integration/continuous delivery integration; cryptographic inventory; visibility into cryptography during development and production
 - **Relevant PQC Today Features**: Assess, Migrate, Leaders, pqc-risk-management, migration-program
+- **Source Document**: Cryptosense_Analyzer.html (108,871 bytes, 5,699 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:54:25
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: cryptography management software, full visibility into cryptography during development, full inventory in production, Analyzer Platform analyzes applications to assess how they are using cryptography, finding and remediating dangerous vulnerabilities
 - **Testing & Validation Methods**: None detected
@@ -3492,8 +3485,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: $4.8 million funding round in May 2021, handles 70% of all interbank messages, European Union backend of the world’s largest automatic teller machine provider, 45% of all U.S. credit card transactions
 - **Organizational Readiness**: providing CISOs with a single, 360-degree view of how encryption is used throughout the enterprise, cryptography management at the speed of DevOps
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Cryptosense_Analyzer.html (108,871 bytes, 5,699 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:54:25
 
 ---
 
@@ -3524,6 +3515,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, CISO, Compliance Officer, Operations
 - **Implementation Prerequisites**: MISRA-C compliant code; OpenSSL / NSS; modified OpenSSL, NSS and Firefox builds for testing; developer tools; validation harnesses
 - **Relevant PQC Today Features**: Migrate, Assess, Algorithms, hybrid-crypto, crypto-agility, iot-ot-pqc
+- **Source Document**: ISARA_Radiate.html (52,898 bytes, 8,425 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:55:17
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: ISARA Advance® Cryptographic Inventory and Risk Assessment Tool; Crypto agility using interoperable certificates
 - **Testing & Validation Methods**: Performance & Compatibility Validation; Validate performance against defined requirements; test optional hybrid certificates for PQC migration; Access to Validation Tools; Use of modified OpenSSL, NSS and Firefox builds for testing performance, compatibility and interoperability
@@ -3535,8 +3528,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Compliance with standards and regulations like DORA, GDPR, PCI DSS; CNSA 2.0 requirements; CISA initiatives; PQC mandates from government authorities and regulators
 - **Organizational Readiness**: Quantum readiness is no longer optional; Customers, regulators, and good business sense demand it; PQC Transitions Take Years, Not Months; The algorithm integration, testing, and production deployments cannot be safely rushed; Expert support that helps your teams deploy PQC correctly
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: ISARA_Radiate.html (52,898 bytes, 8,425 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:55:17
 
 ---
 
@@ -3567,6 +3558,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Compliance Officer
 - **Implementation Prerequisites**: wolfBoot 2.5.0; wolfCrypt with LMS/HSS support; HSM for key generation and signing
 - **Relevant PQC Today Features**: stateful-signatures, hsm-pqc, code-signing, compliance-strategy, migration-program
+- **Source Document**: wolfBoot.html (70,128 bytes, 4,273 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:56:23
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: interoperability testing with Crypto4A's QxEdge HSM; live demo at ICMC 2023
@@ -3578,8 +3571,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites include CNSA 2.0 compliance and NIST SP 800-208 recommendations
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: wolfBoot.html (70,128 bytes, 4,273 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:56:23
 
 ---
 
@@ -3620,9 +3611,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: Upgrading to the latest Windows Server version is quicker and easier than ever; Download comparison guide; Upgrade now; Try it free
 - **Financial & Business Impact**: $20 billion investment in cybersecurity over five years; 10% Saved through optimization; 15% Initial savings with Windows Server on Azure
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Windows_Server_2025.html (198,834 bytes, 7,808 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T07:57:06
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -3653,6 +3644,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: Chrome 131+; Android 17 for native PQC
 - **Relevant PQC Today Features**: Timeline, Algorithms, Hybrid-crypto, tls-basics
+- **Source Document**: Android_16.html (139,473 bytes, 1,974 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:57:45
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -3664,8 +3657,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Android_16.html (139,473 bytes, 1,974 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:57:45
 
 ---
 
@@ -3696,6 +3687,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, CISO
 - **Implementation Prerequisites**: iOS 26, iPadOS 26, macOS 26, tvOS 26, or watchOS 26; supporting servers for quantum encryption connectivity; Apple CryptoKit framework integration
 - **Relevant PQC Today Features**: hybrid-crypto, tls-basics, vpn-ssh-pqc, algorithms, migration-program
+- **Source Document**: iOS_26\_\_\_macOS_26.html (290,299 bytes, 11,666 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:58:14
 - **Implementation Attack Surface**: side-channel attacks exploiting CPU signals during algorithm execution
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -3707,8 +3700,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: iOS_26\_\_\_macOS_26.html (290,299 bytes, 11,666 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:58:14
 
 ---
 
@@ -3739,6 +3730,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Operations
 - **Implementation Prerequisites**: Request PQC signature from support portal; Confirm image SHA-512 hash; Retrieve public key from certificate; Validate signature with chosen verifier
 - **Relevant PQC Today Features**: code-signing, algorithms, compliance-strategy, vendor-risk
+- **Source Document**: Juniper_Junos_OS.html (10,320 bytes, 1,014 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:59:00
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -3750,8 +3743,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Juniper_Junos_OS.html (10,320 bytes, 1,014 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:59:00
 
 ---
 
@@ -3782,6 +3773,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Compliance Officer, Operations
 - **Implementation Prerequisites**: PAN-OS 12.1; TLSv1.3 support; SSL/TLS service profiles configuration
 - **Relevant PQC Today Features**: tls-basics, hybrid-crypto, algorithms, compliance, migration-program
+- **Source Document**: Palo_Alto_PAN-OS.html (221,840 bytes, 3,664 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:59:28
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: interoperability testing
@@ -3793,8 +3786,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: proactive response required against Harvest Now, Decrypt Later strategy
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Palo_Alto_PAN-OS.html (221,840 bytes, 3,664 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:59:28
 
 ---
 
@@ -3825,6 +3816,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Network Engineer
 - **Implementation Prerequisites**: FortiOS 7.6.1+
 - **Relevant PQC Today Features**: Algorithms, vpn-ssh-pqc, hybrid-crypto
+- **Source Document**: Fortinet_FortiOS.html (1,488,596 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T07:59:57
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -3836,8 +3829,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Fortinet_FortiOS.html (1,488,596 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T07:59:57
 
 ---
 
@@ -3868,6 +3859,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Developer, Compliance Officer
 - **Implementation Prerequisites**: Check Point R82 software release; API integration for ML-KEM flavors; support for RFC 9242 and RFC 9370 in IKEv2 setups
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, vpn-ssh-pqc, Compliance, Threats
+- **Source Document**: Check_Point_Quantum.html (121,843 bytes, 13,543 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:01:03
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -3879,8 +3872,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Check_Point_Quantum.html (121,843 bytes, 13,543 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:01:03
 
 ---
 
@@ -3911,6 +3902,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; CISO; Compliance Officer
 - **Implementation Prerequisites**: Support for C/C++, Rust, Python, or Go; MacOS or Linux operating systems; OpenSSL, BoringSSL, or libOQS libraries
 - **Relevant PQC Today Features**: crypto-agility; hybrid-crypto; algorithms; leaders; tls-basics
+- **Source Document**: SandboxAQ_Sandwich.html (22,500 bytes, 6,090 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:01:52
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: discovery and remediation of encryption vulnerabilities; SandboxAQ Security Suite handles discovery
 - **Testing & Validation Methods**: None detected
@@ -3922,8 +3915,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites via audit teams to verify cryptography is used according to policy; organizations of all sizes; enterprises need observability and control over encryption management
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: SandboxAQ_Sandwich.html (22,500 bytes, 6,090 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:01:52
 
 ---
 
@@ -3964,7 +3955,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Cloudflare_CIRCL.md (8,673 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-16T08:02:33
@@ -3998,6 +3988,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Operations; User
 - **Implementation Prerequisites**: Mullvad desktop app version 2023.3 or later; Windows, macOS, or Linux operating system
 - **Relevant PQC Today Features**: vpn-ssh-pqc; Algorithms; Threats; Migrate
+- **Source Document**: Mullvad_VPN_App.html (37,670 bytes, 2,894 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:02:53
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -4009,8 +4001,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Mullvad_VPN_App.html (37,670 bytes, 2,894 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:02:53
 
 ---
 
@@ -4041,6 +4031,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, CISO, Compliance Officer, Researcher
 - **Implementation Prerequisites**: Latest version of ExpressVPN apps for Android, iOS, Linux, Mac, and Windows; wolfSSL integration with liboqs; Lightway protocol enabled (Automatic or UDP/TCP)
 - **Relevant PQC Today Features**: Threats, Algorithms, Hybrid-crypto, vpn-ssh-pqc, Leaders
+- **Source Document**: ExpressVPN_Lightway.html (351,569 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:03:22
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Building a cryptographic asset inventory, identifying cryptographic systems exposed to quantum threats, mapping algorithms, keys, certificates, and devices
 - **Testing & Validation Methods**: Testing PQC tools in controlled environments, uncovering hardware, software, or performance issues, hands-on experimentation with cryptographic libraries like liboqs
@@ -4052,8 +4044,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Reputational damage, regulatory penalties, national security risks from "harvest now, decrypt later" tactics
 - **Organizational Readiness**: Aligning governance and policy with NIST and ISO standards, defining internal rules for algorithm choice and key management, collaboration between IT, security, compliance, and leadership teams, targeted training for engineering and security teams
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: ExpressVPN_Lightway.html (351,569 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:03:22
 
 ---
 
@@ -4084,6 +4074,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Compliance Officer, Policy Maker, Researcher
 - **Implementation Prerequisites**: Update to the latest version of Tuta apps; German-based servers for private key storage; password derived keys using Argon2
 - **Relevant PQC Today Features**: email-signing; hybrid-crypto; threats; migration-program; algorithms
+- **Source Document**: Tuta_Mail.html (125,910 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:04:30
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: formal verification
@@ -4095,8 +4087,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Tuta_Mail.html (125,910 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:04:30
 
 ---
 
@@ -4127,6 +4117,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations; Policy Maker
 - **Implementation Prerequisites**: ServiceNow Vulnerability Response Module; Integration with InfoSec Global (now Keyfactor); Cryptographic inventory capability
 - **Relevant PQC Today Features**: Assess; Migrate; crypto-agility; pqc-risk-management; migration-program
+- **Source Document**: Keyfactor_AgileSec_Analytics.html (144,887 bytes, 9,943 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:05:24
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Automated cryptographic discovery and inventory, centralized discovery of cryptographic assets, inventorying cryptographic assets, vulnerability detection, compliance reporting, post-quantum readiness assessments, continuous monitoring, risk assessment, policy enforcement
 - **Testing & Validation Methods**: None detected
@@ -4138,8 +4130,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: board-level reporting, governance prerequisites (Governance, Risk, and Compliance integration), change management scope (orchestration and playbooks), maturity assessment level (post-quantum readiness assessments)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Keyfactor_AgileSec_Analytics.html (144,887 bytes, 9,943 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:05:24
 
 ---
 
@@ -4170,6 +4160,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; CISO; Compliance Officer; Developer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: hsm-pqc; algorithms; compliance; migrate; pki-workshop
+- **Source Document**: Futurex_CryptoHub.html (1,813 bytes, 1,302 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:06:18
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-2 Level 3 validated; PCI HSM validated; PCI PTS certified
@@ -4181,8 +4173,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Futurex_CryptoHub.html (1,813 bytes, 1,302 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:06:18
 
 ---
 
@@ -4213,6 +4203,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Assess; Migrate; pqc-risk-management; migration-program; compliance-strategy
+- **Source Document**: Arqit_Encryption_Intelligence.html (32,393 bytes, 7,573 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:06:49
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: complete cryptographic inventory, continuous discovery, risk prioritisation, uncover obsolete or weak encryption, expose hidden encryption risks, legacy algorithms and deprecated protocols detection
 - **Testing & Validation Methods**: None detected
@@ -4224,8 +4216,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: UK National Cyber Security Centre (NCSC) Post-Quantum Cryptography Pilot participant, Assured Cyber Security Consultancy Scheme, cryptographic discovery and inventory as first practical step towards post-quantum readiness
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Arqit_Encryption_Intelligence.html (32,393 bytes, 7,573 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:06:49
 
 ---
 
@@ -4256,6 +4246,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, CISO, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Threats, Algorithms, Compliance, iot-ot-pqc, pqc-risk-management
+- **Source Document**: Samsung_S3SSE2A_eSE.html (212 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-04-16T08:07:36
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -4266,10 +4258,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Samsung_S3SSE2A_eSE.html (212 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-04-16T08:07:36
 
 ---
 
@@ -4300,6 +4289,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Compliance Officer, CISO
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: hsm-pqc; compliance-strategy; migration-program; pqc-risk-management; crypto-agility
+- **Source Document**: Thales_payShield_10K.html (111,473 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:07:57
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -4311,8 +4302,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Reduce your costs; simplify your ongoing operations; Thales Ranked #1 in ABI Research’s Payment HSM Competitive Ranking
 - **Organizational Readiness**: Crypto-agile architecture positions for future PQC firmware updates; Are You Post-Quantum Ready?; Take this free risk assessment to learn if your organization is at risk of a post-quantum breach
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Thales_payShield_10K.html (111,473 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:07:57
 
 ---
 
@@ -4343,6 +4332,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer, Risk Manager, Operations, Policy Maker
 - **Implementation Prerequisites**: Cryptographic inventory; central cryptographic policy; key lifecycle management system; standardized APIs or gateway patterns; vendor due diligence on crypto-agility; hybrid pilot environments
 - **Relevant PQC Today Features**: timeline, compliance-strategy, migration-program, pqc-risk-management, pqc-governance, hybrid-crypto, crypto-agility, kms-pqc, hsm-pqc, vendor-risk
+- **Source Document**: Cryptomathic_CKMS.html (193,592 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:08:55
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: cryptographic inventory, bill of materials for crypto, key ownership and lifecycle mapped per system and domain, list of unmanaged keystores and embedded-crypto hotspots, prioritized list of systems handling long-lived or high-value data, continuous discovery and drift detection for cryptographic usage
 - **Testing & Validation Methods**: pilot results with performance and operational data, runbooks for deploy, rotate, and rollback of cryptographic changes, interoperability testing, regression testing via change rehearsals
@@ -4354,8 +4345,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites including named owner and cross-functional steering group, board-level reporting for PQC as enterprise risk, change management scope via cryptographic change process, estimated planning horizon aligned with end of 2026 start-transition milestone and end of 2030 critical infrastructure deadline
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Cryptomathic_CKMS.html (193,592 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:08:55
 
 ---
 
@@ -4386,6 +4375,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, CISO, Compliance Officer, Researcher
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: hsm-pqc, hybrid-crypto, tls-basics, stateful-signatures, algorithms
+- **Source Document**: Securosys_Primus_HSM.html (263,604 bytes, 8,578 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:10:11
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: CloudHSM Sandbox (SBX) Service, dedicated test environment, risk-free setup, PQC migration strategies testing
@@ -4397,8 +4388,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Securosys_Primus_HSM.html (263,604 bytes, 8,578 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:10:11
 
 ---
 
@@ -4439,9 +4428,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: Beta firmware supports hardware-accelerated PQC; PQC firmware updates expected as NIST standards mature
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Marvell_LiquidSecurity_2.html (1,347 bytes, 1,014 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T08:10:54
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -4472,6 +4461,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; CISO; Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: kms-pqc, hsm-pqc, algorithms, threats, code-signing
+- **Source Document**: Google_Cloud_HSM.html (536,937 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:11:21
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -4483,8 +4474,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Google_Cloud_HSM.html (536,937 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:11:21
 
 ---
 
@@ -4515,6 +4504,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Policy Maker
 - **Implementation Prerequisites**: Complete cryptographic inventories of assets and technology; mapping to sensitive data; developing and executing a post-quantum cryptography migration strategy
 - **Relevant PQC Today Features**: Threats, Migrate, Assess, Algorithms, Leaders
+- **Source Document**: Entrust_PKI.html (107,958 bytes, 8,635 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:12:16
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: complete cryptographic inventories of assets and technology, mapping this to sensitive data
 - **Testing & Validation Methods**: None detected
@@ -4526,8 +4517,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: 61% of CISOs report that they are planning to migrate to PQC within the next five years, 70% in the U.S., self-assessment
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Entrust_PKI.html (107,958 bytes, 8,635 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:12:16
 
 ---
 
@@ -4558,6 +4547,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Operations
 - **Implementation Prerequisites**: Windows Server 2016; Windows Server 2019; Windows Server 2022; Windows Server 2025; Active Directory group policies; hardware-based TPM
 - **Relevant PQC Today Features**: pki-workshop, tls-basics, vpn-ssh-pqc, email-signing, digital-id
+- **Source Document**: Microsoft_AD_CS.html (32,836 bytes, 1,664 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:13:07
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -4569,8 +4560,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Microsoft_AD_CS.html (32,836 bytes, 1,664 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:13:07
 
 ---
 
@@ -4601,6 +4590,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; CISO; Compliance Officer
 - **Implementation Prerequisites**: step-ca v0.28.3+; step-cli v0.28.6+; GODEBUG=tlsmlkem=1 environment variable; TLS client support for X25519MLKEM768; Go 1.24 update planned for August 2025
 - **Relevant PQC Today Features**: hybrid-crypto; tls-basics; pki-workshop; migration-program; pqc-risk-management
+- **Source Document**: smallstep_Certificate_Authority.html (216,190 bytes, 8,294 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:13:31
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: certificate inventory, key material audit
 - **Testing & Validation Methods**: None detected
@@ -4612,8 +4603,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites, change management scope
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: smallstep_Certificate_Authority.html (216,190 bytes, 8,294 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:13:31
 
 ---
 
@@ -4654,7 +4643,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: migration to PQ Code Package; archiving July 2026
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: PQClean.md (12,350 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-16T08:14:10
@@ -4688,6 +4676,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Researcher; Security Architect
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Algorithms; Leaders; pqc-101; code-signing; digital-id
+- **Source Document**: CRYSTALS_Reference_Implementations.html (10,073 bytes, 3,932 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:14:30
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: algorithm correctness validation
@@ -4699,8 +4689,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: CRYSTALS_Reference_Implementations.html (10,073 bytes, 3,932 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:14:30
 
 ---
 
@@ -4731,6 +4719,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Developer; Compliance Officer; Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Assess; Migrate; Algorithms; crypto-agility; tls-basics
+- **Source Document**: IBM_Quantum_Safe_Toolkit.html (146,703 bytes, 6,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:15:02
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: cryptography bill of materials (CBOM), discovering cryptography, analyzing vulnerabilities, IBM Quantum Safe Explorer, IBM Guardium Quantum Safe
 - **Testing & Validation Methods**: None detected
@@ -4742,8 +4732,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites via defining policies based on security regulations, dedicated crypto team implied by IBM Consulting services, change management scope via transformation services, maturity assessment via industry readiness and roadmap tracking
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: IBM_Quantum_Safe_Toolkit.html (146,703 bytes, 6,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:15:02
 
 ---
 
@@ -4774,6 +4762,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer
 - **Implementation Prerequisites**: Java; JCA APIs
 - **Relevant PQC Today Features**: api-security-jwt, algorithms, pqc-risk-management
+- **Source Document**: jose4j.html (16,675 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-04-16T08:15:45
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -4784,10 +4774,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: Blocked by IETF PQC JOSE specification
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: jose4j.html (16,675 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-04-16T08:15:45
 
 ---
 
@@ -4818,6 +4805,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: Java 8; GSon library replacement via JSON SPI
 - **Relevant PQC Today Features**: Algorithms, api-security-jwt, hsm-pqc, kms-pqc
+- **Source Document**: Nimbus_JOSE_JWT.html (127,951 bytes, 11,947 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:16:04
 - **Implementation Attack Surface**: Padding Oracle and integer overflow vulnerabilities in AES/CBC/HMAC decryption; invalid curve vulnerabilities in JOSE implementations; StackOverflowError issues when parsing specially crafted JSON input; DoS vulnerability in the PBKDF2 decrypter
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Project Wycheproof for reporting Padding Oracle and integer overflow vulnerabilities; security related reviews, improvements and suggestions by Juraj Somorovsky; investigation of invalid curve vulnerabilities by Antonio Sanso
@@ -4829,8 +4818,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Nimbus_JOSE_JWT.html (127,951 bytes, 11,947 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:16:04
 
 ---
 
@@ -4861,6 +4848,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer
 - **Implementation Prerequisites**: Node.js runtime; node-jws library dependency
 - **Relevant PQC Today Features**: api-security-jwt, algorithms, tls-basics
+- **Source Document**: jsonwebtoken\__auth0_.html (449,959 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:17:21
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -4872,8 +4861,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: jsonwebtoken\__auth0_.html (449,959 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:17:21
 
 ---
 
@@ -4904,6 +4891,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: Golang 1.24; Go 1.25 with GOEXPERIMENT=jsonv2 for Version 5
 - **Relevant PQC Today Features**: api-security-jwt, algorithms, migration-program
+- **Source Document**: go-jose_v4.html (357,425 bytes, 7,850 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:18:19
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -4915,8 +4904,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: go-jose_v4.html (357,425 bytes, 7,850 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:18:19
 
 ---
 
@@ -4947,6 +4934,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: Java applications; Spring Initializr for project bootstrap
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Spring_Security_OAuth2.html (386,296 bytes, 3,897 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:18:58
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -4958,8 +4947,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Spring_Security_OAuth2.html (386,296 bytes, 3,897 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:18:58
 
 ---
 
@@ -4990,6 +4977,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Compliance Officer, Policy Maker, System Integrator
 - **Implementation Prerequisites**: FIPS 140-3 CMVP Level 3 or 4 certification (not yet available for PQC); Two-factor authentication mechanism; Hardware accelerators for optimization; State backup mechanisms for stateful signatures.
 - **Relevant PQC Today Features**: crypto-agility, hybrid-crypto, code-signing, iot-ot-pqc, stateful-signatures
+- **Source Document**: coreboot.html (67,816 bytes, 11,651 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:19:24
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -5001,8 +4990,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: coreboot.html (67,816 bytes, 11,651 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:19:24
 
 ---
 
@@ -5033,6 +5020,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: GCC or Clang compilers; GitLab CI / U-Boot runner container; Buildman build tool; Device Tree Overlays support
 - **Relevant PQC Today Features**: iot-ot-pqc, code-signing, entropy-randomness
+- **Source Document**: U-Boot.html (27,743 bytes, 4,370 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:20:19
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Testing, regression testing
@@ -5044,8 +5033,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: U-Boot.html (27,743 bytes, 4,370 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:20:19
 
 ---
 
@@ -5076,6 +5063,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Researcher, Operations
 - **Implementation Prerequisites**: Linux kernel support for extended file attributes; File system compatibility (BTRFS, bcachefs, ext4); IMA policy configuration with appraise_type=imasig; Exclusion of /var/log from appraisal
 - **Relevant PQC Today Features**: Algorithms, stateful-signatures, code-signing, Assess, migration-program
+- **Source Document**: Linux_IMA_EVM.html (153,898 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:20:54
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: IMA Measurement List, runtime measurement list, file hashes in system audit logs
 - **Testing & Validation Methods**: Linux Test Project (LTP) test programs, ima_boot_aggregate, ima_measure, re-calculating boot aggregate, validating PCR aggregate value
@@ -5087,8 +5076,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Linux_IMA_EVM.html (153,898 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:20:54
 
 ---
 
@@ -5119,6 +5106,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: ARM*Trusted_Firmware\_\_TF-A*.html (68,479 bytes, 1,405 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:22:16
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: TF-A Testing, TF-A-tests project documentation
@@ -5130,8 +5119,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: ARM*Trusted_Firmware\_\_TF-A*.html (68,479 bytes, 1,405 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:22:16
 
 ---
 
@@ -5162,6 +5149,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Researcher
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Algorithms, Migrate, code-signing
+- **Source Document**: VeraCrypt.html (255,031 bytes, 4,112 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:22:45
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -5173,8 +5162,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: VeraCrypt.html (255,031 bytes, 4,112 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:22:45
 
 ---
 
@@ -5210,14 +5197,14 @@ enrichment_method: ollama-qwen3.5:27b
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
+- **Constrained Device & IoT Suitability**: Modern Standby; HSTI security requirements; Battery operation considerations for encryption delays
 - **Supply Chain & Vendor Risk**: None detected
 - **Deployment & Migration Complexity**: migration from Legacy/CSM to native UEFI required for TPM 2.0; use mbr2gpt.exe tool before changing BIOS mode; decryption required before applying new encryption method or cipher strength; phased rollout via Windows versions (Windows 11, Windows 10, Windows Server 2016-2025)
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: intended for IT professionals and device administrators; requires Trusted Computing Group (TCG)-compliant BIOS or UEFI firmware; policy settings must be enabled for recovery key backup to Microsoft Entra ID or Active Directory Domain Services
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: BitLocker\__Windows_.html (63,810 bytes, 12,403 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T08:23:14
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -5258,9 +5245,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: FileVault\__macOS_.html (313,927 bytes, 9,813 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T08:24:11
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -5291,6 +5278,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: Install a Queryable Encryption Compatible Driver and Dependencies; Install and Configure a Query Analysis Component; Use third-party application performance monitoring tools for encrypted collections.
 - **Relevant PQC Today Features**: data-asset-sensitivity, kms-pqc
+- **Source Document**: MongoDB_Queryable_Encryption.html (500,005 bytes, 10,486 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:24:50
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -5302,8 +5291,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: MongoDB_Queryable_Encryption.html (500,005 bytes, 10,486 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:24:50
 
 ---
 
@@ -5334,6 +5321,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Developer, Compliance Officer, Policy Maker
 - **Implementation Prerequisites**: Enterprise-wide inventory to assess cryptographic asset risks; Windows Insiders or Linux environment for PQC capabilities preview; SymCrypt library integration
 - **Relevant PQC Today Features**: Timeline, Threats, Compliance, Migrate, Assess, Algorithms, Leaders, hybrid-crypto, crypto-agility
+- **Source Document**: SQL_Server_TDE_Always_Encrypted.html (79,568 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:25:29
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: certificate inventory, key material audit
 - **Testing & Validation Methods**: None detected
@@ -5345,8 +5334,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: SQL_Server_TDE_Always_Encrypted.html (79,568 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:25:29
 
 ---
 
@@ -5377,6 +5364,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Database Administrator
 - **Implementation Prerequisites**: OpenSSL support selected when PostgreSQL was built; zlib support required for compression options
 - **Relevant PQC Today Features**: Algorithms, Assess, crypto-agility
+- **Source Document**: PostgreSQL_pgcrypto.html (68,763 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:26:21
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -5388,8 +5377,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: PostgreSQL_pgcrypto.html (68,763 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:26:21
 
 ---
 
@@ -5430,9 +5417,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: MySQL_Enterprise_Encryption.html (84,621 bytes, 8,669 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T08:27:19
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -5463,6 +5450,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Operations
 - **Implementation Prerequisites**: Go 1.24+; Mutual authentication certificates signed by a common CA; Private key/public certificate pair for nodes and clients
 - **Relevant PQC Today Features**: tls-basics; pki-workshop; hybrid-crypto; algorithms
+- **Source Document**: CockroachDB_Encryption.html (433,358 bytes, 8,277 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:27:54
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: encryption status report, active store key information, active data key information, fraction of files/bytes encrypted, key file size enumeration
 - **Testing & Validation Methods**: None detected
@@ -5474,8 +5463,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: CockroachDB_Encryption.html (433,358 bytes, 8,277 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:27:54
 
 ---
 
@@ -5506,6 +5493,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Researcher
 - **Implementation Prerequisites**: OpenPGP standard extension; support for lattice-based algorithms; ability to re-encrypt messages symmetrically
 - **Relevant PQC Today Features**: email-signing, hybrid-crypto, Algorithms, Threats, Leaders
+- **Source Document**: Proton_Mail.html (159,107 bytes, 14,657 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:28:39
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: peer review, stress test, public analysis and scrutiny
@@ -5517,8 +5506,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: collaboration with cryptographers from German Federal Office of Information Security (BSI), transparency and peer review as core values, draft standard publication for community analysis
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Proton_Mail.html (159,107 bytes, 14,657 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:28:39
 
 ---
 
@@ -5549,6 +5536,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: libgcrypt support for Classic McEliece; infrastructure capable of handling large key sizes
 - **Relevant PQC Today Features**: email-signing, pki-workshop, algorithms, stateful-signatures
+- **Source Document**: GnuPG.html (4,778 bytes, 2,291 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:29:39
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -5560,8 +5549,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: GnuPG.html (4,778 bytes, 2,291 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:29:39
 
 ---
 
@@ -5602,9 +5589,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: PQC dependent on ETSI PAdES and CA ecosystem readiness
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Adobe_Acrobat_Sign.html (32,063 bytes, 5,837 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T08:30:11
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -5635,6 +5622,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Compliance Officer, CISO
 - **Implementation Prerequisites**: Inventory of certificates and keys; identification of vulnerabilities; plan to replace vulnerable certificates and keys; up-to-date ownership information; automation of management
 - **Relevant PQC Today Features**: Algorithms, crypto-agility, pki-workshop, tls-basics, migration-program
+- **Source Document**: GlobalSign_Digital_Signing_Service.html (109,068 bytes, 8,800 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:30:46
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -5646,8 +5635,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: GlobalSign_Digital_Signing_Service.html (109,068 bytes, 8,800 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:30:46
 
 ---
 
@@ -5678,6 +5665,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Compliance Officer, Researcher
 - **Implementation Prerequisites**: Go 1.25 for SLH-DSA support; Go 1.26 for ML-DSA support; sigstore-go signing Keypair interface implementation; cloud provider KMS offering support
 - **Relevant PQC Today Features**: Timeline, Compliance, Migrate, Algorithms, crypto-agility
+- **Source Document**: sigstore_cosign.html (12,129 bytes, 7,037 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:31:24
 - **Implementation Attack Surface**: stateful hash-based signature schemes which makes safe implementation very difficult; signature stripping attacks
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -5689,8 +5678,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites; dedicated crypto team required; board-level reporting; change management scope; estimated planning horizon (6-12 months); maturity assessment level
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: sigstore_cosign.html (12,129 bytes, 7,037 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:31:24
 
 ---
 
@@ -5721,6 +5708,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: Windows Software Development Kit (SDK); Windows SDK builds 20236 and later require specifying digest algorithm options; PFX files may require password specification via /p option
 - **Relevant PQC Today Features**: code-signing, pki-workshop, tls-basics
+- **Source Document**: Microsoft_SignTool.html (71,635 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:32:08
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: certificate inventory, algorithm enumeration
 - **Testing & Validation Methods**: None detected
@@ -5732,8 +5721,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Microsoft_SignTool.html (71,635 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:32:08
 
 ---
 
@@ -5764,6 +5751,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: iOS 26 or macOS Tahoe; inventory of current cryptography usage; migration from Secure Transport to URLSession or Network.framework; server-side TLS library upgrades
 - **Relevant PQC Today Features**: Threats, Migrate, Algorithms, tls-basics, code-signing
+- **Source Document**: Apple_codesign.html (3,333 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-04-16T08:33:00
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -5774,10 +5763,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: code signing infrastructure not yet updated for PQC
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Apple_codesign.html (3,333 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-04-16T08:33:00
 
 ---
 
@@ -5808,6 +5794,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Researcher
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: code-signing, supply-chain, security
+- **Source Document**: Notary_Project.html (301,075 bytes, 6,709 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:33:18
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: fuzzing; security audit report in 2023 covering notation, notation-go, and notation-core-go repositories
@@ -5819,8 +5807,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Notary_Project.html (301,075 bytes, 6,709 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:33:18
 
 ---
 
@@ -5851,6 +5837,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: GnuPG version 2.5.17 or later; Gpg4win version 5.0.2 or later; Libgcrypt 1.12 for FIPS support interfaces
 - **Relevant PQC Today Features**: code-signing, email-signing, algorithms, migration-program
+- **Source Document**: GPG_Code_Signing.html (20,312 bytes, 9,762 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:33:55
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: regression testing; public testing releases
@@ -5862,8 +5850,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: production use readiness; dedicated crypto team required (implied by security advisory response); change management scope (update as soon as possible)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: GPG_Code_Signing.html (20,312 bytes, 9,762 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:33:55
 
 ---
 
@@ -5904,9 +5890,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: hybrid PQC TLS for API calls
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: AWS*KMS\_\_Cloud_Gateway*.html (221,908 bytes, 3,069 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T08:34:53
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -5937,6 +5923,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, CISO
 - **Implementation Prerequisites**: Deep cryptographic expertise for direct KEM use; adoption of HPKE standard via Tink library; account for larger payloads in resource-constrained environments
 - **Relevant PQC Today Features**: kms-pqc, hsm-pqc, hybrid-crypto, algorithms, threats
+- **Source Document**: Google*Cloud_KMS\_\_Cloud_Gateway*.html (2,112,301 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:35:20
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-2 Level 3 validated HSMs; Statement attestation with HSM
@@ -5948,8 +5936,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Cloud KMS: active key versions $0.06 per month; Cloud KMS: key use operations $0.03 per 10,000 operations; Cloud HSM: key versions (AES256, RSA2048) $1.00 per month; Cloud HSM: key versions (RSA 3072, RSA 4096) $2.50 per month (0–2,000), $1.00 per month (2,001+); Cloud HSM: key versions (EC P256, EC P384) $2.50 per month (0–2,000), $1.00 per month (2,001+); Cloud EKM: key versions $3.00 per month; Cloud EKM: key use operations $0.03 per 10,000 operations
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Google*Cloud_KMS\_\_Cloud_Gateway*.html (2,112,301 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:35:20
 
 ---
 
@@ -5980,6 +5966,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Developer, Compliance Officer
 - **Implementation Prerequisites**: Cryptographic inventory; visibility into encryption keys and data services; vendor timeline assessment; maintenance windows for testing
 - **Relevant PQC Today Features**: Assess, Migrate, Algorithms, crypto-agility, code-signing, tls-basics, kms-pqc, hsm-pqc
+- **Source Document**: Fortanix_Data_Security_Manager.html (247,970 bytes, 8,478 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:36:40
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Discover and assess your cryptographic security posture across your environments to prioritize and remediate quantum risks
 - **Testing & Validation Methods**: FIPS 140-2 L3 validated
@@ -5991,8 +5979,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: avoid paying millions in data loss or regulatory fines
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Fortanix_Data_Security_Manager.html (247,970 bytes, 8,478 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:36:40
 
 ---
 
@@ -6023,6 +6009,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Compliance Officer, Developer, Operations
 - **Implementation Prerequisites**: Thales Luna HSMs firmware 7.9+; CipherTrust Manager v2.21.0; Google Chrome supporting ML-KEM cipher; AWS KMS imported keys
 - **Relevant PQC Today Features**: Threats, Algorithms, Migrate, tls-basics, vpn-ssh-pqc, email-signing, kms-pqc, hsm-pqc
+- **Source Document**: Thales_CipherTrust_Manager.html (117,236 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:37:24
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: discover and classify sensitive data; key lifecycle tasks including generation, rotation, destruction, import and export; robust auditing and reporting
 - **Testing & Validation Methods**: None detected
@@ -6034,8 +6022,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Total Economic Impact™ of Thales CipherTrust Data Security Platform; Cost Savings and Business Benefits Enabled by the CipherTrust Data Security Platform
 - **Organizational Readiness**: Are You Post-Quantum Ready?; free risk assessment to learn if your organization is at risk of a post-quantum breach; start planning today to be post-quantum ready
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Thales_CipherTrust_Manager.html (117,236 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:37:24
 
 ---
 
@@ -6066,6 +6052,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: OpenSSL 3.5+ or liboqs and oqs-provider installed; NGINX compiled with compatible OpenSSL version; OPENSSL_CONF environment variable set for OQS provider; build tools (cmake, ninja-build, git) for manual compilation
 - **Relevant PQC Today Features**: tls-basics; hybrid-crypto; migration-program; pqc-risk-management; openssl-studio
+- **Source Document**: Nginx.html (110,934 bytes, 10,364 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:38:25
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: OpenSSL version verification via nginx -V command; PQC-safe cipher validation using openssl s_client CLI test
 - **Testing & Validation Methods**: OpenSSL CLI test with hybrid PQC cipher groups (X25519MLKEM768); NGINX configuration syntax test (nginx -t) with OQS-Provider environment variable
@@ -6077,8 +6065,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Requirement to update Linux distributions or manually compile liboqs and oqs-provider; need to set OPENSSL_CONF environment variable in Systemd, Docker, or Kubernetes management tools
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Nginx.html (110,934 bytes, 10,364 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:38:25
 
 ---
 
@@ -6119,7 +6105,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Apache_HTTP_Server_repo.md (4,921 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-16T08:39:35
@@ -6153,6 +6138,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: BoringSSL-OQS main-with-bazel branch; siphash.h file addition; disable jwt-auth; disable QUIC
 - **Relevant PQC Today Features**: tls-basics, hybrid-crypto, crypto-agility, pki-workshop, code-signing
+- **Source Document**: Envoy_Proxy.html (297,197 bytes, 6,721 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:39:55
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -6164,8 +6151,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Envoy_Proxy.html (297,197 bytes, 6,721 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:39:55
 
 ---
 
@@ -6196,6 +6181,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: Node.js v24.7.0; crypto module; WebCrypto API (globalThis.crypto.subtle)
 - **Relevant PQC Today Features**: Algorithms, Migrate, tls-basics, code-signing, api-security-jwt
+- **Source Document**: Node.js_repo.md (42,782 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-04-16T08:40:31
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -6206,10 +6193,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: PQC support blocked pending OpenSSL dependency update
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Node.js_repo.md (42,782 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-04-16T08:40:31
 
 ---
 
@@ -6240,6 +6224,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Developer; Compliance Officer
 - **Implementation Prerequisites**: F5 BIG-IP v17.5.1; Enable TLS 1.3; Test hybrid PQC in development environments
 - **Relevant PQC Today Features**: Threats, Compliance, Migrate, Algorithms, Hybrid-crypto
+- **Source Document**: F5_BIG-IP.html (368,440 bytes, 12,596 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:40:52
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: test hybrid PQC in development; interoperability testing implied by compatibility with today's browsers and clients
@@ -6251,8 +6237,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites implied by CISA and NIST recommendations; change management scope involving partners and periodic reviews; estimated planning horizon not specified; maturity assessment level not specified
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: F5_BIG-IP.html (368,440 bytes, 12,596 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:40:52
 
 ---
 
@@ -6283,6 +6267,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: OpenSSL 3.5.0; QuicTLS update required
 - **Relevant PQC Today Features**: Algorithms, tls-basics, hybrid-crypto, migration-program
+- **Source Document**: HAProxy.html (263,728 bytes, 4,430 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:41:46
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -6294,8 +6280,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: HAProxy.html (263,728 bytes, 4,430 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:41:46
 
 ---
 
@@ -6326,6 +6310,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, CISO, Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-id, api-security-jwt
+- **Source Document**: Okta_Integration_Network.html (424,182 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:42:16
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -6337,8 +6323,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Okta_Integration_Network.html (424,182 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:42:16
 
 ---
 
@@ -6369,6 +6353,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Platform Teams, Executives, Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: api-security-jwt
+- **Source Document**: Kong_API_Gateway.html (483,781 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:43:03
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -6380,8 +6366,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Kong_API_Gateway.html (483,781 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:43:03
 
 ---
 
@@ -6412,6 +6396,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Operations
 - **Implementation Prerequisites**: Update existing ALB HTTPS listeners or NLB TLS listeners to use a PQ-TLS security policy; Select a PQ-TLS policy when creating new listeners via AWS Management Console, CLI, API or SDK
 - **Relevant PQC Today Features**: tls-basics, hybrid-crypto, quantum-threats, migration-program
+- **Source Document**: AWS*Application_Load_Balancer\_\_ALB*.html (281,518 bytes, 14,980 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:43:56
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -6423,8 +6409,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: AWS*Application_Load_Balancer\_\_ALB*.html (281,518 bytes, 14,980 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:43:56
 
 ---
 
@@ -6465,9 +6449,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: Default for Firefox 132+ (Desktop) and Firefox 145+ (Android); Default for Chrome 131+; Default for Safari 26+; System-wide support in iOS 26, macOS Tahoe 26; Default for Edge 131+; Default for recent Opera and Brave; Default for Tor Browser 15.0+; Default for Go 1.24+; Default for OpenSSL 3.5.0+; Default for Node 24.5.0+ and 22.20.0+ (backported); Configurable with curvePreferences in 3.5.0-rc.1+
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Cloudflare_Edge_Network.html (229,111 bytes, 6,742 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T08:44:47
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -6498,6 +6482,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, DevOps Engineer, CISO
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: JFrog_Artifactory.html (369,975 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:45:41
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -6509,8 +6495,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Governance prerequisites; Security policy and promotion gating; Attestation and evidence capture; Project-based resource management
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: JFrog_Artifactory.html (369,975 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:45:41
 
 ---
 
@@ -6541,6 +6525,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; DevOps; Security Architect; Operations; CISO
 - **Implementation Prerequisites**: Integration with CI/CD pipelines; Support for major package ecosystems including Maven, npm, Docker, Hugging Face, PyPI; Role-based access control configuration; TLS encryption setup; SAML/SSO support
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Sonatype_Nexus.html (263,932 bytes, 14,249 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:46:35
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -6552,8 +6538,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites, change management scope, maturity assessment level, enterprise-scale operations, single source of truth, audit trail, role-based access control, SAML/SSO support
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Sonatype_Nexus.html (263,932 bytes, 14,249 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:46:35
 
 ---
 
@@ -6594,9 +6578,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: PQC adoption awaits broader standardization; eliminate vault sprawl and avoid changing developer workflows; SaaS based secrets management powered by CyberArk's Identity Security Platform; self-hosted solution to securely authenticate, centrally control and audit how applications use secrets
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: CyberArk_Conjur_doc1.html (277,870 bytes, 8,341 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T08:47:33
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -6627,6 +6611,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Compliance Officer; CISO
 - **Implementation Prerequisites**: Cryptographic inventory; PKI upgrade path to Keyfactor Command 25.1 or later
 - **Relevant PQC Today Features**: Assess; Migrate; Algorithms; Playground; crypto-agility
+- **Source Document**: Keyfactor_Command.html (207,463 bytes, 8,670 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:48:15
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Cryptographic Discovery & Inventory, certificate inventory, key and certificate stores, real-time visibility into public and private CAs, network endpoints, proactive visibility and continuous monitoring of every certificate, including post-quantum (PQ) and hybrid certificates, discover unknown certificates and keys, identify and remediate non-compliant and weak identities
 - **Testing & Validation Methods**: None detected
@@ -6638,8 +6624,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: FORRESTER TEI STUDY, Faster renewals and 95% fewer outages, stop certificate outages, eliminate the risk of disruptive certificate outages
 - **Organizational Readiness**: centralized governance, role-based permissions, user-based access controls, define workflows for enrollment and revocation, require approvals, complete logging of all certificate and configuration changes, internal and external audits
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Keyfactor_Command.html (207,463 bytes, 8,670 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:48:15
 
 ---
 
@@ -6670,6 +6654,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Developer, Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: quantum-threats, pki-workshop, code-signing, api-security-jwt, digital-id
+- **Source Document**: Venafi_TLS_Protect.html (262,027 bytes, 6,327 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:49:16
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: quantum-readiness discovery, certificate lifecycle management, undiscovered machine identity detection
 - **Testing & Validation Methods**: None detected
@@ -6681,8 +6667,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: $315,000 for hardware, $372,500 for management resources, security incidents involving compromised TLS/SSL certificates
 - **Organizational Readiness**: CISOs and IT leaders, cohesive approach to protect digital credentials, audit and compliance
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Venafi_TLS_Protect.html (262,027 bytes, 6,327 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:49:16
 
 ---
 
@@ -6713,6 +6697,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: IT and security leaders, developers, engineers, CISO, Security Architect, Compliance Officer
 - **Implementation Prerequisites**: Registration for the AppViewX PQC Test Center; ability to set up a hosted Quantum-Safe PKI; integration with DigiCert, Entrust, or Sectigo CAs
 - **Relevant PQC Today Features**: Assess, Migrate, Algorithms, crypto-agility, code-signing, pki-workshop
+- **Source Document**: AppViewX*CERT*.html (97,973 bytes, 10,172 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:49:56
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: complete certificate discovery and inventory, full certificate lifecycle automation, total certificate control across the enterprise
 - **Testing & Validation Methods**: generate and test Quantum-Safe certificates, testing PQC readiness, test compatibility in their environment
@@ -6724,8 +6710,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: assess their PQC readiness, achieve PQC resiliency, prepare for potentially catastrophic risks in the future
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: AppViewX*CERT*.html (97,973 bytes, 10,172 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:49:56
 
 ---
 
@@ -6756,6 +6740,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Developer, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-id, api-security-jwt, vendor-risk
+- **Source Document**: Okta_Workforce_Identity.html (379,220 bytes, 13,650 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:50:47
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -6767,8 +6753,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Okta_Workforce_Identity.html (379,220 bytes, 13,650 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:50:47
 
 ---
 
@@ -6799,6 +6783,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: hybrid-crypto; tls-basics; digital-id; migration-program; pqc-risk-management
+- **Source Document**: Keycloak.html (534,215 bytes, 7,600 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:51:31
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -6810,8 +6796,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Keycloak.html (534,215 bytes, 7,600 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:51:31
 
 ---
 
@@ -6852,9 +6836,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: hybrid IT environments; phased rollout via rapid configuration and deployment; backward compatibility across legacy or proprietary systems and open standards like SAML, OAuth and OIDC
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: centralized authentication authority as foundation for digital transformation strategy; governance prerequisites via policy-driven adaptive authentication; change management scope covering workforce, customers, and partners
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Ping_Identity_PingFederate_doc1.html (862,044 bytes, 7,170 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T08:52:12
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -6895,9 +6879,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: migration strategies; move from pilots to repeatable deployment; multi-year transformation programs; prioritized migration backlog; hybridisation capabilities; preserving existing integrations and processes; phased rollout (assess, plan, test, migrate)
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites via NCCoE collaboration; dedicated crypto team required via consultancy teams support; change management scope via ecosystem partner support; estimated planning horizon by 2030 for critical systems and no later than 2035 for broader infrastructures
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Thales_CipherTrust_Data_Security_Platform_doc1.pdf (7,185,747 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T08:52:51
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -6928,6 +6912,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer, Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: compliance-strategy, data-asset-sensitivity
+- **Source Document**: IBM_Security_Guardium_Data_Protection.html (219,025 bytes, 6,169 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:54:10
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: discover and classify data; manage certificates; monitor access; enforce least privileges
 - **Testing & Validation Methods**: None detected
@@ -6939,8 +6925,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: 406% ROI; USD 5.86 million benefits over 3 years; 70% reduction in time spent on auditing; 25% of data security analysts' time saved
 - **Organizational Readiness**: continuous audit workflows; ready-to-use templates; customizable policies; SOC teams efficacy improvement
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: IBM_Security_Guardium_Data_Protection.html (219,025 bytes, 6,169 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:54:10
 
 ---
 
@@ -6971,6 +6955,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Policy Maker; Developer
 - **Implementation Prerequisites**: Adoption of post-quantum encryption algorithms; implementation of data-centric security frameworks like Trusted Data Format (TDF); update of existing systems to support new protocols without disruption
 - **Relevant PQC Today Features**: Threats, Compliance, Migrate, crypto-agility, pqc-business-case
+- **Source Document**: Virtru_Data_Protection.html (141,332 bytes, 14,193 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:54:50
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -6982,8 +6968,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: massive breaches leading to financial losses and legal liabilities; damage to consumer trust and brand reputation; 100% increase in delivery rate for a broker-dealer complying with SEC regulations
 - **Organizational Readiness**: organizations must update encryption methods and ensure new protocols can be implemented without disrupting operations; need for pliable and forward-thinking data protection strategies; preparation horizon of 5, 10 or 20 years until Q Day
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Virtru_Data_Protection.html (141,332 bytes, 14,193 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:54:50
 
 ---
 
@@ -7014,6 +6998,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, CISO
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-id, api-security-jwt
+- **Source Document**: Auth0\__Okta_Customer_Identity_.html (376,273 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:55:49
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -7025,8 +7011,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Auth0\__Okta_Customer_Identity_.html (376,273 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:55:49
 
 ---
 
@@ -7067,9 +7051,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: lift and shift of virtual machines; migrate applications without any modifications; seamless and trouble-free experience
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Intel*TDX\_\_Trust_Domain_Extensions*.html (168,079 bytes, 7,759 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T08:56:37
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -7100,6 +7084,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Operations
 - **Implementation Prerequisites**: Enablement in guest operating system and hypervisor; System BIOS enablement for TSME; AMD EPYC server CPUs (7001 through 9005 generations); SEV Firmware versions specific to CPU family
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: AMD*SEV-SNP\_\_Secure_Encrypted_Virtualization*.html (166,154 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:57:11
 - **Implementation Attack Surface**: side channel attacks, data replay, memory re-mapping, malicious modifications to a CPU register state, traffic interception or masquerading on the PCIe fabric
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -7111,8 +7097,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: AMD*SEV-SNP\_\_Secure_Encrypted_Virtualization*.html (166,154 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:57:11
 
 ---
 
@@ -7143,6 +7127,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Researcher
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: ARM*Confidential_Compute_Architecture\_\_CCA*.html (245,542 bytes, 10,854 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T08:58:17
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -7154,8 +7140,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: ARM*Confidential_Compute_Architecture\_\_CCA*.html (245,542 bytes, 10,854 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T08:58:17
 
 ---
 
@@ -7196,9 +7180,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: Hybrid KEM combining ML-KEM-768 with X25519; Rotate keys; Re-encrypt data; Update external key reference; Create and manage tags; Enable and disable a key version; Destroy and restore a key version
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Separation of duties; Manage IAM roles; Use Organization Policy Contraints; Create custom organization policy constraints for Cloud KMS
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Google_Cloud_KMS.html (162,897 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T08:59:01
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -7239,9 +7223,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: AWS_KMS.html (221,908 bytes, 3,069 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T09:00:10
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -7282,9 +7266,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: scheduled per Microsoft 2029 CNSA 2.0 quantum-safe roadmap; PQC in SymCrypt but not yet exposed as Key Vault key types
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Azure_Key_Vault.html (255,950 bytes, 9,990 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T09:00:36
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -7315,6 +7299,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; CISO; Compliance Officer
 - **Implementation Prerequisites**: Luna FW v7.9 PQC; FIPS 140-2 Level 3 certified hardware
 - **Relevant PQC Today Features**: hsm-pqc, algorithms, compliance, migrate, pqc-risk-management
+- **Source Document**: Thales*Luna_Cloud_HSM\_\_DPoD*.html (110,339 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:01:18
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-2 Level 3 validated hardware; No DPoD-specific ACVP cert
@@ -7326,8 +7312,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Free risk assessment to learn if organization is at risk of a post-quantum breach; enterprise must start planning today to be post-quantum ready
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Thales*Luna_Cloud_HSM\_\_DPoD*.html (110,339 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:01:18
 
 ---
 
@@ -7358,6 +7342,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, CISO, Compliance Officer, Operations
 - **Implementation Prerequisites**: Update web browsers and clients; update resource configuration to PQ-enabled TLS policy; use IAM resource control policies; cryptographic inventory; pre-provisioned post-quantum PKI roots
 - **Relevant PQC Today Features**: hybrid-crypto; crypto-agility; tls-basics; kms-pqc; code-signing; migration-program; pki-workshop
+- **Source Document**: AWS_CloudHSM.html (220,265 bytes, 2,811 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:02:18
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-2 Level 3 validation
@@ -7369,8 +7355,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Pay by the hour; control your costs by adding and removing HSMs from your cluster
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: AWS_CloudHSM.html (220,265 bytes, 2,811 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:02:18
 
 ---
 
@@ -7401,6 +7385,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; CISO; Operations; Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: entropy-randomness; qkd; hsm-pqc; kms-pqc; vendor-risk
+- **Source Document**: ID_Quantique_Quantis_QRNG.html (380,405 bytes, 9,541 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:02:47
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: NIST SP800-22, SP800-90B, Dieharder statistical tests, AIS31 validated product versions, BSI test procedure by French ANSSI, English CTL, Swiss METAS
@@ -7412,8 +7398,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: ID_Quantique_Quantis_QRNG.html (380,405 bytes, 9,541 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:02:47
 
 ---
 
@@ -7454,9 +7438,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: zero code changes; no extra hardware; no cloud connection required; deploy anywhere
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Quantinuum_Quantum_Origin.html (167,950 bytes, 7,933 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T09:03:40
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -7497,9 +7481,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: PCIe Gen 2 card module integration, rackmount appliance installation, KMIP compatibility with existing security platforms, hot-swappable power supplies and hard drives
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: QuintessenceLabs_qStream.pdf (341,566 bytes, 5,475 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T09:04:17
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -7530,6 +7514,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Operations; CISO; Policy Maker
 - **Implementation Prerequisites**: Standard optical fiber; ITU recommendation for Dense-Wavelength-Division-Multiplexing (DWDM); QKD-ready interface in encryption appliances (OSI Layer 1/2/3 and MPLS)
 - **Relevant PQC Today Features**: qkd, entropy-randomness, kms-pqc, hsm-pqc, 5g-security
+- **Source Document**: ID_Quantique_Cerberis_XGR_QKD.html (375,214 bytes, 10,180 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:05:05
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -7541,8 +7527,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: tailored training, product customization, quantum risk assessment, leadership team, 20 years of innovation, ISO 14001 Certification
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: ID_Quantique_Cerberis_XGR_QKD.html (375,214 bytes, 10,180 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:05:05
 
 ---
 
@@ -7573,6 +7557,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Operations; Policy Maker
 - **Implementation Prerequisites**: Optical fibre network; dedicated fibre or existing deployed fibre with wavelength division multiplexing (WDM); Toshiba QKD system deployment
 - **Relevant PQC Today Features**: qkd, threats, hybrid-crypto, migration-program, pqc-business-case
+- **Source Document**: Toshiba_QKD_System.html (100,099 bytes, 7,019 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:06:01
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -7584,8 +7570,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: cost optimization, efficiency optimization, reducing cost and time of physical transport for genome data
 - **Organizational Readiness**: QKD network design and construction consulting, on-site installation and training, large-scale quantum-safe communication practicality
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Toshiba_QKD_System.html (100,099 bytes, 7,019 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:06:01
 
 ---
 
@@ -7616,6 +7600,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Compliance Officer, Operations
 - **Implementation Prerequisites**: FPGA-based hardware; field-upgradeable firmware; cryptographic inventory; identification of quantum-vulnerable cryptography
 - **Relevant PQC Today Features**: crypto-agility, qkd, 5g-security, hsm-pqc, hybrid-crypto
+- **Source Document**: Thales*High_Speed_Encryptor\_\_HSE*.html (102,301 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:06:48
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -7627,8 +7613,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: post-quantum ready risk assessment
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Thales*High_Speed_Encryptor\_\_HSE*.html (102,301 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:06:48
 
 ---
 
@@ -7659,6 +7643,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Operations, Compliance Officer, Policy Maker
 - **Implementation Prerequisites**: Senetas CM7 Network Manager (CM7); FIPS 140-3 Level 1 certified module; Cryptographic SDK (CSDK) for custom ciphers; External Key Servers (CipherTrust) optional
 - **Relevant PQC Today Features**: crypto-agility, hybrid-crypto, qkd, iot-ot-pqc, compliance
+- **Source Document**: Senetas_CN7000_Series.html (190,516 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:07:37
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Central configuration and management with Senetas CM7 Network Manager (CM7); Supports Syslog, NTP, SNMPv1 read only monitoring; Alarm, event and audit logs
 - **Testing & Validation Methods**: FIPS 140-3 Level 1 certified; MIL-STD-810G compliance for shock and vibration
@@ -7670,8 +7656,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Central configuration and management with Senetas CM7 Network Manager (CM7); Supports local and remote access; Designed for military and industrial uses
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Senetas_CN7000_Series.html (190,516 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:07:37
 
 ---
 
@@ -7702,6 +7686,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; CISO; Operations; Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Threats, Migrate, Algorithms, hybrid-crypto, crypto-agility
+- **Source Document**: Adva_Network_Security_FSP_3000_S-Flex.html (49,455 bytes, 5,312 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:09:02
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: BSI approval, VS-NfD accreditation, EU/NATO-restricted data communication certification
@@ -7713,8 +7699,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: European Commission coordination mandate for PQC transition, board-level debate on post-quantum policy
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Adva_Network_Security_FSP_3000_S-Flex.html (49,455 bytes, 5,312 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:09:02
 
 ---
 
@@ -7745,6 +7729,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Network Operator, Compliance Officer, Policy Maker
 - **Implementation Prerequisites**: Waveserver platform deployment; ETSI-standard API for QKD interworking; software upgrade path for WaveLogic 5e 800G
 - **Relevant PQC Today Features**: qkd, hybrid-crypto, crypto-agility, compliance-strategy, pqc-business-case
+- **Source Document**: Ciena_WaveLogic_6_Extreme.html (130,345 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:09:40
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: crypto agility, algorithm enumeration (implied via support for current and post-quantum algorithms simultaneously), key material audit (implied via fast key rotation every second)
 - **Testing & Validation Methods**: third-party certifications, NIST-certified PQC algorithms, FIPS 140-3 Level 2 certification
@@ -7756,8 +7742,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Ciena_WaveLogic_6_Extreme.html (130,345 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:09:40
 
 ---
 
@@ -7798,7 +7782,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: EJBCA_repo.md (6,338 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-16T09:10:43
@@ -7832,6 +7815,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer, Developer
 - **Implementation Prerequisites**: Cryptographic inventory of IT assets and source code binaries; integration with IBM Concert for compliance dashboards
 - **Relevant PQC Today Features**: crypto-agility, pqc-risk-management, migration-program, compliance-strategy, data-asset-sensitivity
+- **Source Document**: IBM_Guardium_Quantum_Safe.html (209,371 bytes, 5,473 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:11:03
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Automated CBOM generation, quantum-vulnerable algorithm detection, discover and inventory cryptographic objects and IT assets, detect unknown or shadow cryptography, map dependencies ownership and usage, certificate and key lifecycle management
 - **Testing & Validation Methods**: None detected
@@ -7843,8 +7828,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Cost of a Data Breach report, 97% of organizations that had an AI-related data breach lacked proper access controls
 - **Organizational Readiness**: achieve crypto-agility, prepare for PQC readiness, alignment with evolving compliance standards, generate audit-ready reports, proactive flexible powerful and fast cryptographic infrastructure
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: IBM_Guardium_Quantum_Safe.html (209,371 bytes, 5,473 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:11:03
 
 ---
 
@@ -7885,7 +7868,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Google_Chrome.html (3,247 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-16T09:11:48
@@ -7919,6 +7901,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Operations, Compliance Officer
 - **Implementation Prerequisites**: Microsoft Edge version 147 or later; Vendor fixes for devices that do not implement TLS correctly
 - **Relevant PQC Today Features**: tls-basics, hybrid-crypto, migration-program, pqc-risk-management
+- **Source Document**: Microsoft_Edge.html (81,739 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:12:08
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -7930,8 +7914,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Microsoft_Edge.html (81,739 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:12:08
 
 ---
 
@@ -7962,6 +7944,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Researcher
 - **Implementation Prerequisites**: Firefox 132+ for Desktop ML-KEM; Firefox 145+ for Android ML-KEM and Certificate Transparency; Firefox 146+ for WebRTC ML-KEM and compressed elliptic curve points
 - **Relevant PQC Today Features**: Algorithms; hybrid-crypto; tls-basics; digital-id
+- **Source Document**: Mozilla_Firefox.html (229,111 bytes, 6,742 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:13:00
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -7973,8 +7957,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Mozilla_Firefox.html (229,111 bytes, 6,742 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:13:00
 
 ---
 
@@ -8015,9 +7997,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Apple_Safari.html (96,950 bytes, 6,347 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T09:14:00
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -8048,6 +8030,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Compliance Officer; Operations
 - **Implementation Prerequisites**: QxOS 5 firmware; QASM cryptographic core
 - **Relevant PQC Today Features**: hsm-pqc; compliance; algorithms; stateful-signatures
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: Crypto4A_QxHSM.html (129,340 bytes, 5,307 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:14:31
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-2 level 3+ validated, pending 140-3 level 3 (MIP), NIST SP800-90B feedback, NIST SP800-90A compliant HASH-DRBG
@@ -8058,9 +8043,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: crypto-agility, seamless adapt to new algorithms without costly redesigns, migrate to new platforms safely and securely, deploy seamlessly across on-premises, hybrid, or cloud environments
 - **Financial & Business Impact**: Lower Total Cost of Ownership (TCO), Over 60% rack space savings vs. traditional network-attached HSMs, transparent pricing, longer product life cycle
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Crypto4A_QxHSM.html (129,340 bytes, 5,307 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:14:31
 
 ---
 
@@ -8101,9 +8083,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: smooth migration path from CloudHSM to on-prem HSM solutions; transfer key material securely between cloud and on-prem HSMs; hybrid environment support; no setup or evaluation required for activation
 - **Financial & Business Impact**: competitive and flexible pricing options without initial costs or tied-up capital; eliminates need for upfront infrastructure investments; excellent price-performance ratio via shared environment
 - **Organizational Readiness**: managed service automates hardware provisioning, software patching, and secure key management; delegates evaluation, setup, maintenance, and updates to security experts; 24/7 support with comprehensive maintenance services
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Securosys_CloudHSM.html (641,370 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T09:15:23
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -8134,6 +8116,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, CISO, Compliance Officer
 - **Implementation Prerequisites**: Terraform provider for automated deployment; Kubernetes for Elastic WAF deployment
 - **Relevant PQC Today Features**: compliance-strategy, api-security-jwt, vendor-risk
+- **Source Document**: Imperva_WAF.html (337,811 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:16:25
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -8145,8 +8129,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Imperva_WAF.html (337,811 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:16:25
 
 ---
 
@@ -8187,9 +8169,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: migration phase (assess/plan/test/migrate/launch), breaking changes, backward compatibility, phased rollout
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites, change management scope, estimated planning horizon
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Venafi_CodeSign_Protect.html (48,470 bytes, 7,668 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T09:17:18
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -8230,9 +8212,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: technology preview status, hybrid signatures for transition period, backward compatibility with RPMv4, breaking changes in RHEL 10.1, phased rollout via separate signing server
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: compliance requirements, developer and vendor adoption, workflow integration steps
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: RPM*Signing\_\_rpm-sign*.html (168,918 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T09:17:59
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -8263,6 +8245,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Developer, Compliance Officer
 - **Implementation Prerequisites**: HSM-protected keys; native support for familiar tools; centralized service layer
 - **Relevant PQC Today Features**: code-signing, compliance-strategy, migration-program, hsm-pqc, pki-workshop
+- **Source Document**: Garantir_GaraTrust.html (461,793 bytes, 9,964 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:19:03
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Audit Current Systems; assess current code signing process; identify where updates are needed; determine if HSMs and key management systems can support new algorithms
 - **Testing & Validation Methods**: Monitor and Validate; testing and validation in a controlled environment; ensure software updates and firmware can be validated correctly with new signatures
@@ -8274,8 +8258,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites (compliance with CNSA 2.0); dedicated crypto team required (product security leader, DevOps engineer, cryptography architect, compliance officer); change management scope (fundamentally changing how we approach digital trust); estimated planning horizon (begin planning now to ensure smooth transition)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Garantir_GaraTrust.html (461,793 bytes, 9,964 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:19:03
 
 ---
 
@@ -8306,6 +8288,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: JDK 24 or later; Bouncy Castle JCE provider as alternative
 - **Relevant PQC Today Features**: Algorithms, Timeline, code-signing, hybrid-crypto
+- **Source Document**: Java*jarsigner\_\_JDK*.html (23,010 bytes, 10,602 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:20:05
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Known Answer Tests (KATs) generated by NIST's Cryptographic Algorithm Validation Program service; ML-DSA tests from Project Wycheproof; Interoperation tests with implementations from other vendors including liboqs; Unit tests for edge cases, boundary values, and unsupported operations
@@ -8317,8 +8301,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Java*jarsigner\_\_JDK*.html (23,010 bytes, 10,602 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:20:05
 
 ---
 
@@ -8349,6 +8331,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: iot-ot-pqc; stateful-signatures; timeline; algorithms
+- **Source Document**: Mbed_TLS.html (10,811 bytes, 3,498 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:21:05
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: PSA Client-Server Testing, fuzzing (implied by security vulnerability processes), regression testing (implied by CI Optimization)
@@ -8360,8 +8344,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Mbed TLS or PSA Crypto mailing lists for collaboration, External Trusted Reviewers, Security Advisories
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Mbed_TLS.html (10,811 bytes, 3,498 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:21:05
 
 ---
 
@@ -8392,6 +8374,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Researcher
 - **Implementation Prerequisites**: Mozilla Firefox 124+; NSS library; PKCS #11 support; Rust programming language; OpenSSL functionality for Cryptoki API base
 - **Relevant PQC Today Features**: tls-basics, hybrid-crypto, crypto-agility, Algorithms, Migrate
+- **Source Document**: NSS\__Mozilla_.html (18,924 bytes, 2,788 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:21:51
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: CAVP certified; formally verified PQC (Cryspen)
@@ -8403,8 +8387,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: NSS\__Mozilla_.html (18,924 bytes, 2,788 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:21:51
 
 ---
 
@@ -8435,6 +8417,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: .NET 10; Windows CNG on Windows; OpenSSL 3.5+ on Linux
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, code-signing, api-security-jwt
+- **Source Document**: .NET_System.Security.Cryptography.html (303,756 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:22:21
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -8446,8 +8430,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: .NET_System.Security.Cryptography.html (303,756 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:22:21
 
 ---
 
@@ -8478,6 +8460,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; CISO; Compliance Officer
 - **Implementation Prerequisites**: Luna HSM firmware v7.9; Thales PKI Technology Partners ecosystem validation
 - **Relevant PQC Today Features**: hsm-pqc, hybrid-crypto, tls-basics, code-signing, iot-ot-pqc
+- **Source Document**: Thales_Luna_T-Series_HSM.html (146,192 bytes, 9,343 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:23:19
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -8489,8 +8473,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Commercial National Security Algorithm Suite 2.0 (CNSA 2.0) requirements; U.S. Federal policies
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Thales_Luna_T-Series_HSM.html (146,192 bytes, 9,343 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:23:19
 
 ---
 
@@ -8521,6 +8503,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Compliance Officer; Operations
 - **Implementation Prerequisites**: CipherTrust Manager version 2.21.0; Physical Appliances: k160, k470, & k570; Virtual Appliances: k170v & k470v
 - **Relevant PQC Today Features**: hybrid-crypto; tls-basics; vpn-ssh-pqc; kms-pqc; hsm-pqc
+- **Source Document**: Thales_CipherTrust_Cloud_Key_Manager.html (121,865 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:24:02
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -8532,8 +8516,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites not explicitly stated but compliance mandates mentioned; dedicated crypto team required not explicitly stated; board-level reporting not explicitly stated; change management scope implied by digital transformation; estimated planning horizon: post-quantum is projected to be a few years away; maturity assessment level: free risk assessment to learn if your organization is at risk of a post-quantum breach
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Thales_CipherTrust_Cloud_Key_Manager.html (121,865 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:24:02
 
 ---
 
@@ -8574,9 +8556,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: rewrap operation to upgrade encrypted data without revealing plaintext; key rotation guidance based on NIST publication 800-38D; convergent encryption version upgrades via rotate operation; backward compatibility via key rings for decryption of old versions
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: operator responsibility for encryption/decryption burden; ACLs to restrict key management vs application access; experimental features not recommended for production environments
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: HashiCorp_Vault_Transit.html (311,901 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T09:25:07
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -8617,9 +8599,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Windows_11.html (49,645 bytes, 2,646 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T09:26:19
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -8650,6 +8632,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: compliance
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: Ubuntu_24.04_LTS.html (140,933 bytes, 13,567 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:26:44
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -8660,9 +8645,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: migration phase (assess/plan/test/migrate/launch), effort estimation, phased rollout
 - **Financial & Business Impact**: operational cost savings, breach cost baselines, compliance penalties, ROI projections, budget requirements
 - **Organizational Readiness**: governance prerequisites, dedicated crypto team required, board-level reporting, change management scope, estimated planning horizon, maturity assessment level
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Ubuntu_24.04_LTS.html (140,933 bytes, 13,567 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:26:44
 
 ---
 
@@ -8693,6 +8675,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Compliance Officer, Operations
 - **Implementation Prerequisites**: OpenSSL 3.5; Updated NSS library; Opt-in to post-quantum cryptography crypto policies; RHEL 9.7 environment
 - **Relevant PQC Today Features**: hybrid-crypto, compliance-strategy, migration-program, tls-basics, vpn-ssh-pqc
+- **Source Document**: Red_Hat_Enterprise_Linux_9.html (363,443 bytes, 12,240 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:27:37
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -8704,8 +8688,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Red_Hat_Enterprise_Linux_9.html (363,443 bytes, 12,240 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:27:37
 
 ---
 
@@ -8736,6 +8718,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Researcher
 - **Implementation Prerequisites**: Fedora 39, 40, or Rawhide; OpenSSL and NSS libraries; liboqs and oqsprovider integration; manual key generation steps for container testing
 - **Relevant PQC Today Features**: Playground, Algorithms, hybrid-crypto, tls-basics, code-signing
+- **Source Document**: Fedora_Linux.html (586,745 bytes, 12,331 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:28:25
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: interoperability testing, OpenSSL integration tests
@@ -8747,8 +8731,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: QUBIP consortium participation, Red Hat teams active maintenance, community platform for testing, upstream development involvement
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Fedora_Linux.html (586,745 bytes, 12,331 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:28:25
 
 ---
 
@@ -8779,6 +8761,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Operations, Researcher
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Algorithms, Compliance, Migrate, pqc-101
+- **Source Document**: Debian*12\_\_Bookworm*.html (8,814 bytes, 2,443 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:29:14
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -8790,8 +8774,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Debian*12\_\_Bookworm*.html (8,814 bytes, 2,443 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:29:14
 
 ---
 
@@ -8822,6 +8804,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Network Engineer, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: 5g-security, hybrid-crypto, qkd, Algorithms, Timeline
+- **Source Document**: Ericsson_Quantum-Safe_5G.html (296,301 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:30:00
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -8833,8 +8817,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Ericsson_Quantum-Safe_5G.html (296,301 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:30:00
 
 ---
 
@@ -8865,6 +8847,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Policy Maker, Operations
 - **Implementation Prerequisites**: Certified hardware root of trust; Secure key generation; Crypto-agility designed for long-term resilience; Interoperability testing on Kirq platform
 - **Relevant PQC Today Features**: qkd, crypto-agility, 5g-security, migration-program, pqc-risk-management
+- **Source Document**: Nokia_Quantum-Safe_Networks.html (192,752 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:31:11
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: crypto-agility scanning, algorithm enumeration, key material audit
 - **Testing & Validation Methods**: interoperability testing, conformance testing, regression testing
@@ -8876,8 +8860,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: $360 million National Quantum Strategy, $334 million Canadian Quantum Champions Program, $23 million per company funding, breach cost baselines (bank accounts, health profiles), compliance penalties (Government of Canada IT systems by 2035)
 - **Organizational Readiness**: governance prerequisites, dedicated crypto team required, board-level reporting, change management scope, estimated planning horizon (6-12 months), maturity assessment level
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Nokia_Quantum-Safe_Networks.html (192,752 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:31:11
 
 ---
 
@@ -8908,6 +8890,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Policy Maker; Government & Public Sector; Financial Platforms; Currency Technology
 - **Implementation Prerequisites**: Establish PQC migration strategy now; inventory sensitive data vulnerable to "store now, decrypt later" attacks; prepare for NIST standardization finalization
 - **Relevant PQC Today Features**: Threats; Migrate; Algorithms; Compliance; digital-id; iot-ot-pqc; digital-assets
+- **Source Document**: G_D_Quantum-Safe_SIM_Platform.html (121,503 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:32:18
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -8919,8 +8903,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: PQC migration strategy establishment, proactive steps today, preparation for quantum-safe future
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: G_D_Quantum-Safe_SIM_Platform.html (121,503 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:32:18
 
 ---
 
@@ -8951,6 +8933,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; CISO; Developer; Policy Maker
 - **Implementation Prerequisites**: Galaxy S25 series device; One UI 7 operating system; S3SSE2A embedded Secure Element with dual PQC hardware accelerators
 - **Relevant PQC Today Features**: Threats, Algorithms, Migrate, iot-ot-pqc, data-asset-sensitivity
+- **Source Document**: Samsung_Knox_Quantum-Safe.html (150,068 bytes, 7,138 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:33:13
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -8962,8 +8946,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Samsung_Knox_Quantum-Safe.html (150,068 bytes, 7,138 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:33:13
 
 ---
 
@@ -8994,6 +8976,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Developer, Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Algorithms, Leaders, hsm-pqc, crypto-agility, iot-ot-pqc
+- **Source Document**: IDEMIA_PQC_Secure_Element.html (95,496 bytes, 9,813 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:33:52
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -9005,8 +8989,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: IDEMIA_PQC_Secure_Element.html (95,496 bytes, 9,813 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:33:52
 
 ---
 
@@ -9037,6 +9019,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Developer, Policy Maker
 - **Implementation Prerequisites**: Flexible architecture for secure elements; resistance to side-channel and fault injection attacks; adaptation of protocols and devices
 - **Relevant PQC Today Features**: crypto-agility, digital-id, 5g-security, iot-ot-pqc, hybrid-crypto
+- **Source Document**: IDEMIA_Digital_Identity_Platform.html (130,834 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:34:36
 - **Implementation Attack Surface**: side-channel attacks, fault injection attacks
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -9048,8 +9032,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: IDEMIA_Digital_Identity_Platform.html (130,834 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:34:36
 
 ---
 
@@ -9080,6 +9062,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Policy Maker, Developer
 - **Implementation Prerequisites**: Contact Procivis directly to access quantum-safe technology; integration of modular open-source platform
 - **Relevant PQC Today Features**: digital-id, Algorithms, Threats, Compliance, Leaders
+- **Source Document**: Procivis_One.html (353,666 bytes, 13,229 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:35:29
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: interoperability testing; NIST Cryptographic Module Validation Program (CMVP) certification planning
@@ -9091,8 +9075,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Procivis_One.html (353,666 bytes, 13,229 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:35:29
 
 ---
 
@@ -9123,6 +9105,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, CISO, Compliance Officer, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-id, compliance-strategy, api-security-jwt
+- **Source Document**: walt.id.html (304,510 bytes, 4,433 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:36:23
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -9134,8 +9118,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Compliance with global standards (W3C, ISO, OIDF, IETF) and regulations (eIDAS2, GDPR); enterprise-ready with support, SLAs, and training available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: walt.id.html (304,510 bytes, 4,433 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:36:23
 
 ---
 
@@ -9176,9 +9158,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: phased transition strategy built on a modular framework, hybrid approach combining classical and quantum-resistant algorithms as an interim step, direct shift to full PQC, early adoption by 2029, transition completion by 2033
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Microsoft Quantum Safe Program (QSP), QSP leadership team with representatives across all major business groups, research and engineering divisions, and functions
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Microsoft_Entra_Verified_ID.html (291,860 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T09:37:01
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -9209,6 +9191,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Policy Maker, Security Architect, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-id, compliance-strategy, migration-program
+- **Source Document**: SpruceID.html (479,641 bytes, 8,524 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:37:58
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -9220,8 +9204,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites via NIST and statewide privacy guidelines, compliance as an outcome
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: SpruceID.html (479,641 bytes, 8,524 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:37:58
 
 ---
 
@@ -9252,6 +9234,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Researcher
 - **Implementation Prerequisites**: OpenMLS; Native Rust cryptographic libraries; Standardized NIST algorithms (ML-KEM and ML-DSA)
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, crypto-agility, pqc-governance, migration-program
+- **Source Document**: Wire.html (75,520 bytes, 12,865 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:38:37
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: interoperability testing
@@ -9263,8 +9247,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites for NIS2 compliance and GDPR, change management scope for enterprise scale collaboration
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Wire.html (75,520 bytes, 12,865 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:38:37
 
 ---
 
@@ -9305,9 +9287,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: backward compatibility, breaking changes
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Element\__Matrix_Protocol_.html (69,926 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T09:39:25
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -9338,6 +9320,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, CISO
 - **Implementation Prerequisites**: JDK 24+; Oracle OpenSSL FIPS Provider
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, tls-basics, compliance-strategy
+- **Source Document**: Oracle_AI_Database_26ai.html (69,849 bytes, 10,958 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:40:18
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -9349,8 +9333,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Reduces complexity, risk, and cost; lowers TCO; reduces maintenance; stock exchange-grade security and scale
 - **Organizational Readiness**: 96% of Fortune 100 businesses run critical workloads on Oracle AI Database; includes largest banks, retailers, telecoms, and governments
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Oracle_AI_Database_26ai.html (69,849 bytes, 10,958 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:40:18
 
 ---
 
@@ -9391,9 +9373,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: phased transition strategy, modular framework, hybrid approach combining classical and quantum-resistant algorithms, early adoption by 2029, full transition by 2033, crypto-agility
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Microsoft Quantum Safe Program (QSP), QSP leadership team with representatives across business groups, governance prerequisites aligned with US government requirements and CNSA 2.0 deadlines
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Microsoft_Entra_ID.html (291,860 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T09:41:10
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -9424,6 +9406,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Compliance Officer, Security Architect, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-id, compliance-strategy, crypto-agility, Algorithms
+- **Source Document**: Thales_MultiApp_5.2_Premium_PQC.html (22,267 bytes, 1,376 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:42:08
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: CC EAL6+ certified
@@ -9435,8 +9419,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Thales_MultiApp_5.2_Premium_PQC.html (22,267 bytes, 1,376 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:42:08
 
 ---
 
@@ -9467,6 +9449,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: vendor-risk, iot-ot-pqc
+- **Source Document**: Infineon_TEGRION_SLC27_PQC.html (1,384,392 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:42:32
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: CC EAL6 certified
@@ -9478,8 +9462,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Infineon_TEGRION_SLC27_PQC.html (1,384,392 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:42:32
 
 ---
 
@@ -9520,9 +9502,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: PQC firmware signatures planned, large interoperability with existing Smart Card infrastructures
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: NXP_JCOP_4.5_P71D600.html (41,311 bytes, 3,431 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T09:43:34
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -9553,6 +9535,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer
 - **Implementation Prerequisites**: Python; pip package manager
 - **Relevant PQC Today Features**: api-security-jwt
+- **Source Document**: PyJWT.html (305,687 bytes, 5,146 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:44:11
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: tox, regression testing
@@ -9564,8 +9548,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: PyJWT.html (305,687 bytes, 5,146 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:44:11
 
 ---
 
@@ -9596,6 +9578,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: Libreswan release 3.23 or later; IKEv2 protocol usage; secrets file configuration (e.g., /etc/ipsec.secrets)
 - **Relevant PQC Today Features**: vpn-ssh-pqc, hybrid-crypto, crypto-agility, pqc-risk-management
+- **Source Document**: Libreswan.html (606,814 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:44:44
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: New test cases added in ikev2-ppk-\* folders; interoperability testing with OpenBSD mentioned in project list
@@ -9607,8 +9591,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Libreswan.html (606,814 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:44:44
 
 ---
 
@@ -9639,6 +9621,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: Botan 2.0.0 or OpenSSL 1.0.0; GNU Autotools (Autoconf, Automake, Libtool); pkg-config; CppUnit for unit tests; SQLite3 >= 3.4.2 if building migration tool or database object store; libp11-kit-dev for PKCS#11 module installation
 - **Relevant PQC Today Features**: hsm-pqc; Algorithms; Migrate; crypto-agility
+- **Source Document**: SoftHSM2.html (349,228 bytes, 9,395 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:45:47
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: unit tests, CppUnit
@@ -9650,8 +9634,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: SoftHSM2.html (349,228 bytes, 9,395 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:45:47
 
 ---
 
@@ -9682,6 +9664,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: C language environment; Makefile build system
 - **Relevant PQC Today Features**: stateful-signatures, Algorithms, Compliance, Migrate
+- **Source Document**: hash-sigs.html (389,192 bytes, 5,726 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:46:34
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: ACVP; test vectors (test_testvector.c); conformance testing (RFC 8554)
@@ -9693,8 +9677,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: hash-sigs.html (389,192 bytes, 5,726 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:46:34
 
 ---
 
@@ -9725,6 +9707,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Researcher; Security Architect
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: stateful-signatures; merkle-tree-certs; algorithms; pqc-101
+- **Source Document**: xmss-reference.html (245,387 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:47:10
 - **Implementation Attack Surface**: naturally resists side-channel attacks
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: interoperability between implementations; reference code
@@ -9736,8 +9720,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: xmss-reference.html (245,387 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:47:10
 
 ---
 
@@ -9768,6 +9750,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Policy Maker, Security Architect
 - **Implementation Prerequisites**: Access to EUDI Wallet DevHub; Knowledge of Kotlin, Java, Python, or Swift for specific library implementations
 - **Relevant PQC Today Features**: digital-id, api-security-jwt, pki-workshop
+- **Source Document**: EUDI_Reference_Wallet.html (298,329 bytes, 9,973 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:48:08
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -9779,8 +9763,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: European Commission adoption of Recommendation on 3 June 2021; eIDAS Expert Group involvement; coordination with public and private sector parties; requirement for common standards and technical specifications
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: EUDI_Reference_Wallet.html (298,329 bytes, 9,973 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:48:08
 
 ---
 
@@ -9811,6 +9793,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Compliance Officer, CISO
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-id, compliance-strategy, migration-program
+- **Source Document**: Sphereon_SSI_SDK.html (370,394 bytes, 14,762 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:49:04
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: jest coverage; yarn test:watch; regression testing via Lerna multi-package management
@@ -9822,8 +9806,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Sphereon_SSI_SDK.html (370,394 bytes, 14,762 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:49:04
 
 ---
 
@@ -9854,6 +9836,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: Docker; Poetry for dependency management; API key for admin interface protection or deliberate insecure mode configuration
 - **Relevant PQC Today Features**: digital-id, iot-ot-pqc, api-security-jwt
+- **Source Document**: Hyperledger*Aries\_\_ACA-Py*.html (79,520 bytes, 4,155 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:50:06
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Aries Agent Test Harness
@@ -9865,8 +9849,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Hyperledger*Aries\_\_ACA-Py*.html (79,520 bytes, 4,155 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:50:06
 
 ---
 
@@ -9897,6 +9879,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Policy Maker
 - **Implementation Prerequisites**: TypeScript; React-Native; Terraform; NATS Server
 - **Relevant PQC Today Features**: digital-id
+- **Source Document**: CREDEBL.html (81,099 bytes, 3,800 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:50:37
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -9908,8 +9892,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites; roadmap; ecosystem partner engagement
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: CREDEBL.html (81,099 bytes, 3,800 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:50:37
 
 ---
 
@@ -9940,6 +9922,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Compliance Officer; Operations
 - **Implementation Prerequisites**: Existing IAM and data systems; OAuth2 authorization servers; External attribute providers
 - **Relevant PQC Today Features**: digital-id; api-security-jwt; compliance-strategy; migration-program
+- **Source Document**: Paradym\__Animo_Solutions_.html (133,753 bytes, 5,702 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:51:07
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -9951,8 +9935,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites (trust management, trusted entities, DIDs, X.509 certificates, EUDI Lists of Trusted Entities); change management scope (integration with existing IAM and data systems); maturity assessment level (production-ready from day one)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Paradym\__Animo_Solutions_.html (133,753 bytes, 5,702 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:51:07
 
 ---
 
@@ -9993,9 +9975,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: Lift-and-shift your apps, minimal changes, improved latency, PKCS#11, OpenSSL, JCE, document and code signing, Apache/Nginx SSL Offload, Microsoft SQL Server, Oracle TDS, Active Directory Certificates on Azure VMs
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Azure*Dedicated_HSM\_\_Marvell_LiquidSecurity*.html (241,338 bytes, 9,791 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T09:51:49
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -10026,6 +10008,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, CISO, Compliance Officer
 - **Implementation Prerequisites**: u.trust General Purpose HSM Se-Series; PKCS #11 integration
 - **Relevant PQC Today Features**: hsm-pqc, algorithms, timeline, stateful-signatures, playground
+- **Source Document**: IBM*Cloud_HSM\_\_Utimaco*.html (2,153,999 bytes, 2,475 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:52:34
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-2 Level 3 validated
@@ -10037,8 +10021,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: IBM*Cloud_HSM\_\_Utimaco*.html (2,153,999 bytes, 2,475 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:52:34
 
 ---
 
@@ -10069,6 +10051,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: stateful-signatures, iot-ot-pqc, hsm-pqc
+- **Source Document**: Infineon_OPTIGA_TPM_SLB_9672.html (1,497,652 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:53:02
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: CC EAL4+
@@ -10080,8 +10064,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Infineon_OPTIGA_TPM_SLB_9672.html (1,497,652 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:53:02
 
 ---
 
@@ -10122,9 +10104,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: PQC requires firmware update; no public roadmap published
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Intel*Platform_Trust_Technology\_\_PTT*.html (135,872 bytes, 3,513 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T09:54:07
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -10155,6 +10137,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Compliance Officer; Operations
 - **Implementation Prerequisites**: PKCS#11 support; YubiHSM KSP; native libraries; USB-A or USB-C port; Open source SDK
 - **Relevant PQC Today Features**: hsm-pqc, code-signing, iot-ot-pqc, pki-workshop, compliance-strategy
+- **Source Document**: Yubico_YubiHSM_2.html (378,027 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:54:35
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-2 L3
@@ -10166,8 +10150,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Cost-effective HSM solution; $650 USD
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Yubico_YubiHSM_2.html (378,027 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:54:35
 
 ---
 
@@ -10198,6 +10180,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Hardware Engineer, Researcher
 - **Implementation Prerequisites**: Access to OpenTitan GitHub repository; Review of documentation and onboarding materials; Commercial partner selection or self-manufacturing capability
 - **Relevant PQC Today Features**: Algorithms, Leaders, stateful-signatures, iot-ot-pqc, code-signing
+- **Source Document**: Google_OpenTitan.html (184,876 bytes, 9,496 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:55:32
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: commercial-grade design verification, top-level testing, functional and code coverage above 90%, 40k+ tests running nightly, regression testing
@@ -10209,8 +10193,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: cross-organizational collaboration, shared maintenance burdens, high levels of academic research engagement, onboarding materials for new developers
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Google_OpenTitan.html (184,876 bytes, 9,496 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:55:32
 
 ---
 
@@ -10241,6 +10223,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: Python version for CI scripts; Git with submodule support; Visual Studio or GCC toolchain; BSD-2-Clause Plus Patent License compliance
 - **Relevant PQC Today Features**: code-signing, tls-basics, crypto-agility
+- **Source Document**: TianoCore*EDK2\_\_UEFI_Firmware*.html (527,053 bytes, 12,932 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:56:32
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: CI Build Status, Code Coverage, UnitTestFrameworkPkg, GoogleTestLib, CmockaLib
@@ -10252,8 +10236,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: TianoCore*EDK2\_\_UEFI_Firmware*.html (527,053 bytes, 12,932 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:56:32
 
 ---
 
@@ -10284,6 +10266,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Researcher
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: ARM_TrustZone.html (236,753 bytes, 9,859 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:57:31
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -10295,8 +10279,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: ARM_TrustZone.html (236,753 bytes, 9,859 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:57:31
 
 ---
 
@@ -10337,7 +10319,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: hardware replacement required
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Microchip_ATECC608B_repo.md (8,898 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-16T09:58:10
@@ -10371,6 +10352,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Researcher
 - **Implementation Prerequisites**: Android 17; KeyPairGenerator API; Trusted Execution Environment (TEE) support
 - **Relevant PQC Today Features**: Timeline, Threats, Algorithms, code-signing, iot-ot-pqc
+- **Source Document**: Qualcomm_Snapdragon_Trusted_Execution_Environment.html (8,748 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-04-16T09:58:32
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -10381,10 +10364,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: PQC planned under CNSA 2.0 alignment
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Qualcomm_Snapdragon_Trusted_Execution_Environment.html (8,748 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-04-16T09:58:32
 
 ---
 
@@ -10415,6 +10395,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Linux_LUKS\_\_\_dm-crypt.html (50,127 bytes, 335 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:58:56
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -10426,8 +10408,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Linux_LUKS\_\_\_dm-crypt.html (50,127 bytes, 335 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:58:56
 
 ---
 
@@ -10458,6 +10438,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Safety Engineer; Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: iot-ot-pqc; compliance-strategy; migration-program
+- **Source Document**: Wind_River_VxWorks.html (295,052 bytes, 11,384 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T09:59:19
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: automated testing, simulation, quality assurance via Intel Simics and Virtual Lab
@@ -10469,8 +10451,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: cost-effective safety certification, reduced certification risks, cost-effective development of complex systems
 - **Organizational Readiness**: governance prerequisites (DO-178C / EUROCAE ED-12C, IEC 61508, IEC 62304, ISO 26262), dedicated crypto team required via Wind River Services and Knowledge Certification Program, change management scope via secure development lifecycle
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Wind_River_VxWorks.html (295,052 bytes, 11,384 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T09:59:19
 
 ---
 
@@ -10501,6 +10481,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: MbedTLS v3.5.1; WolfSSL v5.6.4; 40+ MCU architectures; 15+ toolchains
 - **Relevant PQC Today Features**: iot-ot-pqc
+- **Source Document**: FreeRTOS.html (1,210,176 bytes, 5,228 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:00:20
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -10512,8 +10494,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: FreeRTOS.html (1,210,176 bytes, 5,228 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:00:20
 
 ---
 
@@ -10554,9 +10534,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: Phased rollout via distro updates (Debian 12 to 13, Ubuntu 24.04 to 26.04); Helm chart image tag updates for Kubernetes; OpenSSL 3.0.x limitations requiring OQS-provider workaround for TLS 1.3 server authentication
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Requirement to update Linux distributions or install build tools (build-essential, git, cmake, ninja-build); setting OPENSSL_CONF environment variable in Systemd, Docker, and Kubernetes
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Alpine_Linux_doc1.html (110,964 bytes, 10,364 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T10:01:01
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -10587,6 +10567,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: OpenSSL 3.5+; OpenSSH 10+; FreeBSD 15.0-RELEASE amd64; Enable pkgbase repository via /usr/local/etc/pkg/repos/FreeBSD-base.conf
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, vpn-ssh-pqc, tls-basics, OpenSSL Studio
+- **Source Document**: FreeBSD.html (98,609 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:02:09
 - **Implementation Attack Surface**: keystroke timing leakage mitigated via automatic padding in OpenSSH 10; TOCTOU race condition in jail operations resolved via file descriptor-based operations
 - **Cryptographic Discovery & Inventory**: algorithm enumeration via `openssl list -kem-algorithms`; base system package inventory via `pkg query -a '%n' | grep '^FreeBSD-'`
 - **Testing & Validation Methods**: signature verification using `openssl pkeyutl -verify`; version confirmation via `openssl version`, `zfs version`, and `ssh -V`
@@ -10598,8 +10580,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: quantum-safe by default configuration requiring no opt-in for OpenSSH 10; granular base management via `pkg` replacing monolithic updates
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: FreeBSD.html (98,609 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:02:09
 
 ---
 
@@ -10630,6 +10610,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Operations
 - **Implementation Prerequisites**: OpenSSL 3.5+; openSUSE Leap 16
 - **Relevant PQC Today Features**: openssl-studio, migration-program, tls-basics
+- **Source Document**: openSUSE_Leap.html (60,141 bytes, 2,195 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:03:37
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -10641,8 +10623,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: openSUSE_Leap.html (60,141 bytes, 2,195 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:03:37
 
 ---
 
@@ -10673,6 +10653,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Operations; Security Architect
 - **Implementation Prerequisites**: OpenSSL 3.5; Rocky Linux 10; RISC-V architecture support for RL10
 - **Relevant PQC Today Features**: Migrate, Algorithms, OpenSSL Studio, migration-program
+- **Source Document**: Rocky_Linux.html (371,011 bytes, 3,841 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:04:01
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -10684,8 +10666,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: No cost for production-ready enterprise Linux; 10-year support lifecycle at no cost
 - **Organizational Readiness**: Community supported with long-term commitments; sponsors and partners invested; infrastructure lead and community lead roles identified
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Rocky_Linux.html (371,011 bytes, 3,841 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:04:01
 
 ---
 
@@ -10716,6 +10696,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: OpenSSL 3.5; CentOS Stream 10
 - **Relevant PQC Today Features**: Algorithms, OpenSSL Studio, Migrate
+- **Source Document**: CentOS_Stream.html (13,013 bytes, 877 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:04:39
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -10727,8 +10709,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: CentOS_Stream.html (13,013 bytes, 877 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:04:39
 
 ---
 
@@ -10759,6 +10739,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, CISO, Compliance Officer
 - **Implementation Prerequisites**: Chrome version 131; PostQuantumKeyAgreementEnabled flag; enterprise policy configuration; YubiKey firmware f5.7 or YubiHSM 2.4 for Infineon library deprecation
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, tls-basics, migration-program, pqc-risk-management
+- **Source Document**: ChromeOS.html (164,078 bytes, 9,393 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:05:01
 - **Implementation Attack Surface**: electromagnetic side-channel, physical possession of secure element, EUCLEAK (CVE-2024-45678)
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Common Criteria certification evaluations
@@ -10770,8 +10752,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: complex planning required for transition to post-quantum cryptography
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: ChromeOS.html (164,078 bytes, 9,393 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:05:01
 
 ---
 
@@ -10802,6 +10782,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: OpenSSL 3.5+
 - **Relevant PQC Today Features**: openssl-studio, algorithms, migration-program
+- **Source Document**: NixOS.html (53,422 bytes, 1,692 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:06:02
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -10813,8 +10795,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: NixOS.html (53,422 bytes, 1,692 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:06:02
 
 ---
 
@@ -10845,6 +10825,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, CISO, Operations
 - **Implementation Prerequisites**: OpenSSL 3.5; SUSE Linux Enterprise Server 16
 - **Relevant PQC Today Features**: OpenSSL Studio, Migrate, Compliance, pqc-business-case
+- **Source Document**: SUSE*Linux_Enterprise_Server\_\_SLES*.html (172,882 bytes, 10,209 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:06:27
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Common Criteria EAL4+; reproducible builds
@@ -10856,8 +10838,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: 317% ROI; Annual benefits worth $4 million; 3-year cost savings vs. free Linux
 - **Organizational Readiness**: digital sovereignty goals; AI-driven modernization; long-term strategy execution; SUSE Training; certification paths
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: SUSE*Linux_Enterprise_Server\_\_SLES*.html (172,882 bytes, 10,209 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:06:27
 
 ---
 
@@ -10888,6 +10868,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Operations; Security Architect
 - **Implementation Prerequisites**: OpenSSL 3.6.2; glibc; ca-certificates
 - **Relevant PQC Today Features**: openssl, tls-basics, migration-program, pqc-risk-management
+- **Source Document**: Arch_Linux.html (105,105 bytes, 11,366 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:07:18
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -10899,8 +10881,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Arch_Linux.html (105,105 bytes, 11,366 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:07:18
 
 ---
 
@@ -10931,6 +10911,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer, IT Admin
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: compliance-strategy, vendor-risk, pqc-governance
+- **Source Document**: Delinea_Secret_Server.html (199,180 bytes, 10,250 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:08:16
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Comprehensive discovery; Identify and inventory all privileged accounts across your environment automatically
 - **Testing & Validation Methods**: None detected
@@ -10942,8 +10924,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Key Economic Impact Report; From mitigating data breach risks to enhancing compliance, these organizations share how Delinea’s Privileged Access Management (PAM) solutions addressed their pain points and delivered both financial and operational returns
 - **Organizational Readiness**: Identity Security Maturity Model; Reduce risk by seamlessly identifying , securing, monitoring and managing privileged account access with a full audit trail for fast proof of compliance
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Delinea_Secret_Server.html (199,180 bytes, 10,250 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:08:16
 
 ---
 
@@ -10974,6 +10954,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: IT Leaders; Security Engineers; CISO; Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: JumpCloud_Directory_Platform.html (321,467 bytes, 7,388 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:09:04
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -10985,8 +10967,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: JumpCloud_Directory_Platform.html (321,467 bytes, 7,388 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:09:04
 
 ---
 
@@ -11017,6 +10997,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Compliance Officer; CISO; Operations
 - **Implementation Prerequisites**: Go 1.24+; Teleport v17+
 - **Relevant PQC Today Features**: compliance-strategy, migration-program, tls-basics, vpn-ssh-pqc, digital-id
+- **Source Document**: Teleport_Access_Platform.html (438,343 bytes, 11,895 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:09:37
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: certificate inventory; key material audit
 - **Testing & Validation Methods**: None detected
@@ -11028,8 +11010,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites; change management scope
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Teleport_Access_Platform.html (438,343 bytes, 11,895 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:09:37
 
 ---
 
@@ -11060,6 +11040,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: Go 1.24+
 - **Relevant PQC Today Features**: Algorithms; hybrid-crypto; vpn-ssh-pqc; migration-program
+- **Source Document**: HashiCorp_Boundary.html (90,437 bytes, 3,530 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:10:21
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -11071,8 +11053,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: HashiCorp_Boundary.html (90,437 bytes, 3,530 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:10:21
 
 ---
 
@@ -11103,6 +11083,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Operations; CISO
 - **Implementation Prerequisites**: Modern web browser supporting post-quantum key agreement (Chrome, Edge, or Firefox); Cloudflare One Appliance version 2026.2.0 or later for IPsec control plane protection; third-party origin server support for post-quantum key agreement for SWG inspection
 - **Relevant PQC Today Features**: hybrid-crypto; tls-basics; vpn-ssh-pqc; pqc-risk-management; migration-program
+- **Source Document**: Cloudflare_Zero_Trust.html (400,941 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:10:49
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -11114,8 +11096,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: ~$5.2 M in connectivity-related savings; 35% time savings on security and IT management; 90% reduction in VPN-related IT tickets; ~2x Legacy vendor costs avoided; $5.2M in connectivity-related savings
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Cloudflare_Zero_Trust.html (400,941 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:10:49
 
 ---
 
@@ -11146,6 +11126,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Developer; Operations
 - **Implementation Prerequisites**: Access to Zscaler Admin Portal; configuration of NSS or Cloud NSS feed for web logs; ingestion via API into a SIEM or data manipulation tool
 - **Relevant PQC Today Features**: Assess; Algorithms; hybrid-crypto; tls-basics; pqc-risk-management
+- **Source Document**: Zscaler_Zero_Trust_Exchange.html (676,259 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:12:10
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Inventory crypto
 - **Testing & Validation Methods**: None detected
@@ -11157,8 +11139,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Prepare for quantum threats; safeguard critical data; protect privacy; maintain trust in digital systems
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Zscaler_Zero_Trust_Exchange.html (676,259 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:12:10
 
 ---
 
@@ -11189,6 +11169,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, CISO, Operations, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Splunk_Enterprise.html (295,067 bytes, 8,411 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:13:02
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: cryptographic inventory dashboards
 - **Testing & Validation Methods**: None detected
@@ -11200,8 +11182,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Splunk_Enterprise.html (295,067 bytes, 8,411 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:13:02
 
 ---
 
@@ -11232,6 +11212,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations; CISO
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Elastic*Stack\_\_ELK*.html (525,629 bytes, 5,226 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:13:37
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: TLS/cipher analytics; certificate inventory (implied via SIEM monitoring layer context)
 - **Testing & Validation Methods**: None detected
@@ -11243,8 +11225,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites (Trust center, Ethics & Compliance); change management scope (upgrading best practices); maturity assessment level (Elasticsearch Engineer training)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Elastic*Stack\_\_ELK*.html (525,629 bytes, 5,226 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:13:37
 
 ---
 
@@ -11275,6 +11255,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Suricata_IDS_IPS.html (65,795 bytes, 1,996 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:14:16
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: detection rules for ML-KEM hybrid TLS handshakes in network traffic; monitor enterprise PQC migration
 - **Testing & Validation Methods**: None detected
@@ -11286,8 +11268,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Used by SOCs to monitor enterprise PQC migration
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Suricata_IDS_IPS.html (65,795 bytes, 1,996 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:14:16
 
 ---
 
@@ -11318,6 +11298,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Analyst, Developer, Researcher
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Zeek_Network_Analysis_Framework.html (168,024 bytes, 3,695 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:14:44
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: detect ML-KEM hybrid cipher suites in TLS handshakes; monitors enterprise PQC migration progress
 - **Testing & Validation Methods**: None detected
@@ -11329,8 +11311,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Zeek_Network_Analysis_Framework.html (168,024 bytes, 3,695 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:14:44
 
 ---
 
@@ -11361,6 +11341,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Compliance Officer; Operations; Researcher
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Assess; Compliance; Vulnerability assessment
+- **Source Document**: Tenable_Nessus_Professional.html (242,266 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:15:14
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: TLS/cipher suite assessment plugins, cryptographic inventory, asset inventory, vulnerability scoring with CVSS v4, EPSS and VPR, configuration, compliance and security audits
 - **Testing & Validation Methods**: vulnerability assessments, zero-day research, live results, pre-built policies and templates, customizable reporting
@@ -11372,8 +11354,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Nessus Professional 1 Year - $4,790, 2 Years - $9,330.95, 3 Years - $13,637.54, Advanced Support - $400
 - **Organizational Readiness**: Exposure Management Leadership Council, cybersecurity education programs faculty and students, SMB security admins, network pen testers, consultants
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Tenable_Nessus_Professional.html (242,266 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:15:14
 
 ---
 
@@ -11404,6 +11384,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; CISO; Compliance Officer; Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: compliance-strategy; pqc-risk-management; vendor-risk
+- **Source Document**: Rapid7_InsightVM.html (504,631 bytes, 7,335 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:16:19
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: TLS/cert assessment across enterprise endpoints; Maps cryptographic dependencies for PQC migration planning; Unified vulnerability database; Dynamic asset discovery
 - **Testing & Validation Methods**: None detected
@@ -11415,8 +11397,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Quantum readiness dashboard; Compliance with confidence against benchmarks like CIS, PCI DSS, and HIPAA; Customizable compliance reports at the organization, team, and individual level
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Rapid7_InsightVM.html (504,631 bytes, 7,335 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:16:19
 
 ---
 
@@ -11447,6 +11427,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: vendor-risk; compliance-strategy; pqc-risk-management
+- **Source Document**: Qualys_Cloud_Platform.html (126,982 bytes, 6,143 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:16:59
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Certificate Inventory, Assessments, & Renewal; Cloud, Container, and Mobile Inventory; Runtime Software Composition Analysis
 - **Testing & Validation Methods**: None detected
@@ -11458,8 +11440,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: cost reduction in savings of labor dollars; Reduce critical vulnerabilities by up to 85%; Eliminate Risk 60% faster; reduce MTTR by up to 60%
 - **Organizational Readiness**: Communicate risk precisely across different teams, business units and geographic locations; Share the “State of the Union” with Executives; Meet your targeted SLAs for vulnerabilities
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Qualys_Cloud_Platform.html (126,982 bytes, 6,143 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:16:59
 
 ---
 
@@ -11490,6 +11470,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Compliance Officer
 - **Implementation Prerequisites**: OpenSSL 3.5; AWS CLI; FIPS-140-3 Level 3 certified HSMs; pre-processing for messages larger than 4096 bytes
 - **Relevant PQC Today Features**: kms-pqc, hsm-pqc, code-signing, api-security-jwt, algorithms
+- **Source Document**: AWS*Identity_and_Access_Management\_\_IAM*.html (231,727 bytes, 3,606 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:17:49
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -11501,8 +11483,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: AWS*Identity_and_Access_Management\_\_IAM*.html (231,727 bytes, 3,606 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:17:49
 
 ---
 
@@ -11533,6 +11513,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Operations, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: vendor-risk, pqc-governance, compliance-strategy
+- **Source Document**: CrowdStrike_Falcon.html (236,365 bytes, 8,146 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:18:14
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Falcon Exposure Management provides cryptographic inventory for PQC migration planning
 - **Testing & Validation Methods**: None detected
@@ -11544,8 +11526,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: 273% ROI, payback in under six months
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: CrowdStrike_Falcon.html (236,365 bytes, 8,146 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:18:14
 
 ---
 
@@ -11576,6 +11556,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Palo_Alto_Cortex_XDR.html (560,358 bytes, 9,748 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:18:56
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Cryptographic exposure detection in Cortex XSIAM
 - **Testing & Validation Methods**: None detected
@@ -11587,8 +11569,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Palo_Alto_Cortex_XDR.html (560,358 bytes, 9,748 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:18:56
 
 ---
 
@@ -11619,6 +11599,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, IT Leaders, Policy Maker
 - **Implementation Prerequisites**: NetScaler version 14.1.51
 - **Relevant PQC Today Features**: Threats, Migrate, Algorithms, hybrid-crypto, tls-basics
+- **Source Document**: Citrix_Virtual_Apps_and_Desktops.html (171,350 bytes, 6,821 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:19:36
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -11630,8 +11612,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Organizations with on-premises deployments can save 70% over 3 years with DaaS; Citrix customers save $98 per user, per year, by adopting an all-in-one DaaS solution
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Citrix_Virtual_Apps_and_Desktops.html (171,350 bytes, 6,821 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:19:36
 
 ---
 
@@ -11672,9 +11652,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: PQC migration requires UAG gateway ML-KEM and Blast Extreme protocol upgrade
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: VMware_Horizon.html (563,770 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T10:20:16
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -11705,6 +11685,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Operations; Security Architect
 - **Implementation Prerequisites**: Web browser with HTML5 support; Server installation of Apache Guacamole
 - **Relevant PQC Today Features**: vpn-ssh-pqc
+- **Source Document**: Apache_Guacamole.html (13,693 bytes, 2,432 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:21:03
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -11716,8 +11698,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Apache_Guacamole.html (13,693 bytes, 2,432 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:21:03
 
 ---
 
@@ -11758,9 +11738,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: ML-KEM hybrid SSH on roadmap for enterprise/government transition; experimental PQC KEX (sntrup761x25519) in development; uninstalling 0.78 by hand recommended before installing 0.79 due to installer scope changes
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: PuTTY.html (6,421 bytes, 4,463 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T10:21:32
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -11791,6 +11771,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer
 - **Implementation Prerequisites**: cryptography library; C and Rust extensions or precompiled options
 - **Relevant PQC Today Features**: vpn-ssh-pqc, code-signing
+- **Source Document**: Paramiko\__Python_SSH_.html (298,633 bytes, 5,692 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:22:17
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -11802,8 +11784,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Paramiko\__Python_SSH_.html (298,633 bytes, 5,692 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:22:17
 
 ---
 
@@ -11834,6 +11814,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Researcher
 - **Implementation Prerequisites**: OpenSSH version 10.2; working C compiler; standard library and headers; libcrypto from LibreSSL or OpenSSL; zlib for transport compression; libfido2 for FIDO security token support; large stack provision (LDFLAGS="-Wl,--stack,20000000") for McEliece algorithms.
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, vpn-ssh-pqc, crypto-agility, migration-program
+- **Source Document**: AsyncSSH.html (589,042 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:22:49
 - **Implementation Attack Surface**: large stack usage causing failures on threads or in constrained environments; McEliece requires large stack provision (LDFLAGS="-Wl,--stack,20000000")
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: interoperability testing; regression testing; cygwin-based testing
@@ -11845,8 +11827,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: wait on deploying until further guidance from standards community; rely on NIST standardization project outcomes; use hybrid cryptography for deployment prior to standardization conclusion
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: AsyncSSH.html (589,042 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:22:49
 
 ---
 
@@ -11877,6 +11857,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Operations
 - **Implementation Prerequisites**: Windows Server 2025/2022/2019/2016; Windows 10/11; Remote Desktop Connection app; Client access licenses
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Microsoft*Remote_Desktop_Services\_\_RDS*.html (36,347 bytes, 1,963 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:24:09
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -11888,8 +11870,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Microsoft*Remote_Desktop_Services\_\_RDS*.html (36,347 bytes, 1,963 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:24:09
 
 ---
 
@@ -11920,6 +11900,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: Source code from GitHub; cmake extras packages; Oinkcode for rule subscription
 - **Relevant PQC Today Features**: pqc-101; tls-basics; openssl-studio
+- **Source Document**: Snort_IDS_IPS.html (29,176 bytes, 5,489 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:24:38
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: QAed by Cisco Talos
@@ -11931,8 +11913,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Snort_IDS_IPS.html (29,176 bytes, 5,489 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:24:38
 
 ---
 
@@ -11963,6 +11943,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; CISO; Network Operator; Policy Maker
 - **Implementation Prerequisites**: Cisco ASA 9.22 or 9.24; ASDM, CLI, FDM, or FMC access; PQC pre-shared keys for IKEv2
 - **Relevant PQC Today Features**: Threats; Migrate; Assess; Algorithms; vpn-ssh-pqc
+- **Source Document**: Cisco*ASA\_\_Adaptive_Security_Appliance*.html (120,783 bytes, 11,949 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:25:17
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -11974,8 +11956,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Cisco*ASA\_\_Adaptive_Security_Appliance*.html (120,783 bytes, 11,949 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:25:17
 
 ---
 
@@ -12006,6 +11986,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Network Engineer; CISO; Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: vendor-risk, migration-program, pqc-business-case, iot-ot-pqc
+- **Source Document**: Cisco*Meraki_MX\_\_Cloud-Managed_Firewall*.html (110,048 bytes, 6,158 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:26:17
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -12017,8 +11999,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Cisco*Meraki_MX\_\_Cloud-Managed_Firewall*.html (110,048 bytes, 6,158 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:26:17
 
 ---
 
@@ -12049,6 +12029,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Operations
 - **Implementation Prerequisites**: FortiOS 7.6.x or later; FortiOS 8.0 for management and SSL inspection support
 - **Relevant PQC Today Features**: Algorithms, Migrate, Timeline, vendor-risk, vpn-ssh-pqc
+- **Source Document**: Fortinet*FortiGate\_\_FortiOS*.html (638,372 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:26:52
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -12060,8 +12042,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Fortinet*FortiGate\_\_FortiOS*.html (638,372 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:26:52
 
 ---
 
@@ -12092,6 +12072,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Researcher, Policy Maker
 - **Implementation Prerequisites**: IANA Registry Expert Review codepoint assignments; Third-party open-source implementations for EDK II; Increased initial congestion window values; Packet pacing adjustments in QUIC
 - **Relevant PQC Today Features**: Algorithms, crypto-agility, tls-basics, vpn-ssh-pqc, digital-id, stateful-signatures, code-signing
+- **Source Document**: Arista*EOS\_\_Extensible_Operating_System*.html (3,101 bytes, 221 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:27:46
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -12103,8 +12085,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Arista*EOS\_\_Extensible_Operating_System*.html (3,101 bytes, 221 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:27:46
 
 ---
 
@@ -12135,6 +12115,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Network Administrator, Developer, Security Architect
 - **Implementation Prerequisites**: Linux kernel; MikroTik hardware or x86 PC; ISO image for installation; License key from MikroTik Account server
 - **Relevant PQC Today Features**: vpn-ssh-pqc, iot-ot-pqc
+- **Source Document**: MikroTik_RouterOS.html (224,584 bytes, 4,326 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:28:07
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -12146,8 +12128,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: MikroTik_RouterOS.html (224,584 bytes, 4,326 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:28:07
 
 ---
 
@@ -12178,6 +12158,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Operations
 - **Implementation Prerequisites**: Modern JavaScript features; Disable JShelter or similar plugins
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: OpenWrt.html (4,351 bytes, 1,217 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:28:42
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -12189,8 +12171,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: OpenWrt.html (4,351 bytes, 1,217 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:28:42
 
 ---
 
@@ -12221,6 +12201,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Network Engineer, Security Architect, IT Administrator
 - **Implementation Prerequisites**: OpenSSL 3.5+; LibreSSL update path
 - **Relevant PQC Today Features**: openssl-studio, migration-program, vendor-risk
+- **Source Document**: pfSense_Community_Edition.html (26,549 bytes, 3,778 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:29:08
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -12232,8 +12214,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Cloud pricing starting at $0.08/hr
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: pfSense_Community_Edition.html (26,549 bytes, 3,778 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:29:08
 
 ---
 
@@ -12264,6 +12244,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Operations; Policy Maker
 - **Implementation Prerequisites**: LibreSSL 4.0+
 - **Relevant PQC Today Features**: Algorithms, OpenSSL Studio, vpn-ssh-pqc
+- **Source Document**: OPNsense.html (53,013 bytes, 6,757 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:29:40
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Community testing helps us update software swiftly and develop our roadmap efficiently
@@ -12275,8 +12257,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: The paid version unlocks premium features and advanced tools, providing a selective upgrade path with extra commercial benefits; Purchasing the paid version also supports the project
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: OPNsense.html (53,013 bytes, 6,757 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:29:40
 
 ---
 
@@ -12317,9 +12297,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: Critical PQC migration point for enterprise TLS termination; ML-KEM hybrid TLS via OpenSSL 3.x + liboqs-provider in R32+
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: NGINX_Plus.html (410,308 bytes, 6,674 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T10:30:29
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -12350,6 +12330,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; DevOps Engineer; Operations
 - **Implementation Prerequisites**: Go 1.24+; Traefik v3.3+
 - **Relevant PQC Today Features**: Migrate; Algorithms; hybrid-crypto; tls-basics; api-security-jwt
+- **Source Document**: Traefik.html (169,137 bytes, 9,063 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:31:02
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -12361,8 +12343,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Traefik.html (169,137 bytes, 9,063 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:31:02
 
 ---
 
@@ -12403,9 +12383,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: Full PQC migration is a multi-layer dependency chain; API server TLS, etcd TLS, and service mesh mTLS all require upgrade
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Kubernetes.html (48,208 bytes, 4,288 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T10:31:48
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -12436,6 +12416,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: Kubernetes environment; Envoy service proxy (optional for Layer 7); Zero-trust tunnel support (optional for Layer 4)
 - **Relevant PQC Today Features**: tls-basics, api-security-jwt, migration-program
+- **Source Document**: Istio_Service_Mesh.html (31,894 bytes, 2,045 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:32:29
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -12447,8 +12429,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Istio_Service_Mesh.html (31,894 bytes, 2,045 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:32:29
 
 ---
 
@@ -12489,7 +12469,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: Simpler migration path than Istio/Envoy; Rust stack tracks PQC faster than C++ BoringSSL
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Linkerd_repo.md (5,335 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-16T10:32:55
@@ -12523,6 +12502,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: Go 1.24+; Consul binary or source compilation; Service definitions for registration
 - **Relevant PQC Today Features**: tls-basics, api-security-jwt, migration-program, code-signing, iot-ot-pqc
+- **Source Document**: HashiCorp*Consul_Connect\_\_Service_Mesh*.html (219,027 bytes, 4,362 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:33:17
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -12534,8 +12515,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: HashiCorp*Consul_Connect\_\_Service_Mesh*.html (219,027 bytes, 4,362 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:33:17
 
 ---
 
@@ -12576,7 +12555,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: enterprise and consumer VPN migration; 2026 target for OpenVPN Cloud
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: OpenVPN_repo.md (2,475 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-16T10:33:47
@@ -12610,6 +12588,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Researcher
 - **Implementation Prerequisites**: Linux operating system (Ubuntu, Debian, Arch Linux); WireGuard VPN software; OpenSSL for TLS integration
 - **Relevant PQC Today Features**: vpn-ssh-pqc; hybrid-crypto; crypto-agility; algorithms; pqc-101
+- **Source Document**: WireGuard.html (88,778 bytes, 6,352 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:34:09
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Penetration Test 2024, Proverif
@@ -12621,8 +12601,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Funded through NLNet with financial support from the European Commission's NGI Assure program and ProtoType Fund of the Open Knowledge Foundation Germany, financed by the Federal Ministry of Education and Research (BMBF)
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: WireGuard.html (88,778 bytes, 6,352 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:34:09
 
 ---
 
@@ -12653,6 +12631,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, CISO, Compliance Officer, Researcher
 - **Implementation Prerequisites**: Simultaneous client and headend (ASA/FTD) upgrade for Cisco Secure Client; NGFW firmware or software updates to support new cryptographic algorithms; hardware upgrades or optimizations for NGFWs to handle increased computational load
 - **Relevant PQC Today Features**: Threats, Compliance, Migrate, Algorithms, hybrid-crypto, crypto-agility, tls-basics, vpn-ssh-pqc
+- **Source Document**: Cisco*Secure_Client\_\_AnyConnect*.html (95,625 bytes, 3,537 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:34:56
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -12664,8 +12644,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Cisco*Secure_Client\_\_AnyConnect*.html (95,625 bytes, 3,537 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:34:56
 
 ---
 
@@ -12696,6 +12674,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
 - **Implementation Prerequisites**: Integration with existing SIEM, load balancers, EDR, and AVM tools; synchronization with CMDB and asset management platforms; hardware and OS capabilities to support post-quantum algorithms
 - **Relevant PQC Today Features**: Assess; Migrate; Threats; Compliance; pqc-governance; iot-ot-pqc
+- **Source Document**: Palo_Alto_GlobalProtect.html (782,536 bytes, 3,940 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:35:26
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -12707,8 +12687,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Palo_Alto_GlobalProtect.html (782,536 bytes, 3,940 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:35:26
 
 ---
 
@@ -12739,6 +12717,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Researcher, Developer, Policy Maker
 - **Implementation Prerequisites**: x86 platform for simulations; standardized quantum-safe protocols; evaluation of computational efficiency and impact on protocols
 - **Relevant PQC Today Features**: 5g-security, hybrid-crypto, Algorithms, Threats, Migrate
+- **Source Document**: Samsung_Networks_5G_Core.html (63,181 bytes, 13,646 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:35:52
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: simulations on x86 platform; performance assessment of primary authentication procedure
@@ -12750,8 +12730,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: collaboration among industry, government, and standardization bodies; inevitable investment for future telecommunications
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Samsung_Networks_5G_Core.html (63,181 bytes, 13,646 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:35:52
 
 ---
 
@@ -12782,7 +12760,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Researcher; Network Engineer; Policy Maker
 - **Implementation Prerequisites**: Simulation environment for modeling UE registration/deregistration; TLS implementation supporting hybrid ciphersuites
 - **Relevant PQC Today Features**: 5g-security, tls-basics, hybrid-crypto, algorithms, threats
-- **Implementation Attack Surface**: None detected
+- **Implementation Attack Surface**: Misconfiguration; expanded trust relationships; interface exposure; software vulnerabilities in virtualized network functions
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: simulation environment, performance benchmarks
 - **QKD Protocols & Quantum Networking**: None detected
@@ -12791,10 +12769,10 @@ enrichment_method: ollama-qwen3.5:27b
 - **Supply Chain & Vendor Risk**: None detected
 - **Deployment & Migration Complexity**: hybridized versions of post-quantum algorithms, phased rollout via 3GPP Rel-20/21 roadmap, Kubernetes/service mesh inheritance, virtualized network functions software updates
 - **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Organizational Readiness**: Need to integrate PQC within a comprehensive and systematically engineered security framework
 - **Source Document**: Mavenir_Cloud_RAN.pdf (801,143 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T10:36:47
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -12825,6 +12803,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Researcher; Policy Maker; Developer
 - **Implementation Prerequisites**: Simulation environment modeling registration and deregistration of user equipments; TLS implementation supporting hybrid schemes
 - **Relevant PQC Today Features**: 5g-security, tls-basics, hybrid-crypto, Algorithms, Threats
+- **Source Document**: NEC_5G_Core.html (100,611 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:37:43
 - **Implementation Attack Surface**: software vulnerabilities, misconfiguration, expanded trust relationships, interface exposure, harvest now decrypt later attacks
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: simulation environment, modeling registration and deregistration of user equipments, measuring bandwidth consumption and latency
@@ -12836,8 +12816,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: compliance with evolving regulatory and industry requirements, security certifications, comprehensive and systematically engineered security framework
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: NEC_5G_Core.html (100,611 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:37:43
 
 ---
 
@@ -12868,6 +12846,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Operations, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: 5g-security, migration-program, pqc-business-case
+- **Source Document**: Rakuten*Symphony\_\_Symworld*.html (115,096 bytes, 6,405 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:38:42
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -12879,8 +12859,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Rakuten*Symphony\_\_Symworld*.html (115,096 bytes, 6,405 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:38:42
 
 ---
 
@@ -12911,6 +12889,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: OpenSSL 3.5+; cmake preset release; ATS version 10+ or 9.2.x
 - **Relevant PQC Today Features**: openssl-studio, tls-basics, migration-program, pqc-risk-management
+- **Source Document**: Apache_Traffic_Server.html (30,988 bytes, 3,554 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:39:15
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -12922,8 +12902,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Apache_Traffic_Server.html (30,988 bytes, 3,554 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:39:15
 
 ---
 
@@ -12954,6 +12932,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: Python 2.7 or Python 3.7 and newer; PyPy support; GMP installation for faster public key operations in Unix; Virtualenv recommended if replacing PyCrypto
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, code-signing
+- **Source Document**: PyCryptodome.html (291,532 bytes, 7,055 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:39:45
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: test_vectors
@@ -12965,8 +12945,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: PyCryptodome.html (291,532 bytes, 7,055 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:39:45
 
 ---
 
@@ -13007,7 +12985,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: migration to OpenSSL 3.x + liboqs-provider required for C++ applications using Crypto++ for KEX/signatures
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Crypto\_**\_cryptopp**repo.md (24,958 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-16T10:40:31
@@ -13041,6 +13018,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: OpenSSL 3.5+; libgcrypt; libfido2; mbedTLS
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, vpn-ssh-pqc, code-signing
+- **Source Document**: libssh.html (86,465 bytes, 4,580 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:40:51
 - **Implementation Attack Surface**: CVE-2025-14821, CVE-2026-0964, CVE-2026-0965, CVE-2026-0966, CVE-2026-0967, CVE-2026-0968, libssh-2026-sftp-extensions
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -13052,8 +13031,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: libssh.html (86,465 bytes, 4,580 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:40:51
 
 ---
 
@@ -13084,6 +13061,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: Java 24+ for PQC support; Apache Tomcat Migration Tool for Jakarta EE for application conversion
 - **Relevant PQC Today Features**: Migrate; Algorithms; tls-basics; migration-program
+- **Source Document**: Apache_Tomcat.html (17,314 bytes, 8,411 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:41:36
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -13095,8 +13074,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Apache_Tomcat.html (17,314 bytes, 8,411 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:41:36
 
 ---
 
@@ -13127,6 +13104,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Operations
 - **Implementation Prerequisites**: JDK 24+ for ML-KEM/ML-DSA support
 - **Relevant PQC Today Features**: Algorithms; Migrate; pqc-101
+- **Source Document**: Eclipse_Jetty.html (12,480 bytes, 4,661 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:42:24
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -13138,8 +13117,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Eclipse_Jetty.html (12,480 bytes, 4,661 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:42:24
 
 ---
 
@@ -13170,6 +13147,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: JDK 24+ for ML-KEM/ML-DSA support; Maven repository configuration including https://repository.jboss.org/nexus/content/groups/public-jboss/ for WildFly 38 artifacts
 - **Relevant PQC Today Features**: Algorithms; Migrate; tls-basics
+- **Source Document**: WildFly\__JBoss_.html (20,190 bytes, 6,512 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:43:10
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: community to test and provide feedback on the latest changes
@@ -13181,8 +13160,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: community-focused development process
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: WildFly\__JBoss_.html (20,190 bytes, 6,512 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:43:10
 
 ---
 
@@ -13213,6 +13190,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; CISO; Operations
 - **Implementation Prerequisites**: JDK version 24 or higher for ML-KEM/ML-DSA support
 - **Relevant PQC Today Features**: Algorithms; Migrate; Compliance
+- **Source Document**: Payara_Server.html (113,400 bytes, 7,464 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:43:49
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -13224,8 +13203,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: 75%+ Savings vs. Oracle Weblogic; increase the number of users that we serve by 4 times; Trusted by Fortune 500 Innovators
 - **Organizational Readiness**: Platform Engineering approach; role-based access control; centralized management; standardized tools and workflows; accelerated delivery; reduced security and compliance risks
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Payara_Server.html (113,400 bytes, 7,464 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:43:49
 
 ---
 
@@ -13256,6 +13233,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, DevOps Engineer, Security Architect
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: GitHub_Actions.html (304,820 bytes, 6,633 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:44:39
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -13267,8 +13246,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: GitHub_Actions.html (304,820 bytes, 6,633 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:44:39
 
 ---
 
@@ -13299,6 +13276,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations; CISO
 - **Implementation Prerequisites**: Go 1.24+
 - **Relevant PQC Today Features**: tls-basics, migration-program, code-signing
+- **Source Document**: GitLab_CI_CD.html (22,591 bytes, 5,411 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:45:12
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -13310,8 +13289,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: GitLab_CI_CD.html (22,591 bytes, 5,411 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:45:12
 
 ---
 
@@ -13342,6 +13319,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: Java 24+; JDK
 - **Relevant PQC Today Features**: Algorithms, Migrate, Leaders
+- **Source Document**: Jenkins.html (10,882 bytes, 2,937 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:45:47
 - **Implementation Attack Surface**: Stored XSS vulnerability in node offline cause description; Build information disclosure vulnerability through Run Parameter
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Jenkins Bug Bounty Program
@@ -13353,8 +13332,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Jenkins Security Team; Contributions from Muhammed Niazy, Elie Metahri, Suman Roy
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Jenkins.html (10,882 bytes, 2,937 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:45:47
 
 ---
 
@@ -13385,6 +13362,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations, CISO
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Azure_DevOps.html (312,950 bytes, 13,042 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:46:27
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -13396,8 +13375,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Azure_DevOps.html (312,950 bytes, 13,042 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:46:27
 
 ---
 
@@ -13428,6 +13405,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Platform engineers; Security engineers; Engineering managers; Business leaders
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: compliance-strategy; migration-program; vendor-risk
+- **Source Document**: CircleCI.html (514,964 bytes, 12,039 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:47:15
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: cryptographic inventory, automating a complete inventory of cryptographic assets, identifying where they're used, their properties and vulnerabilities, spotting outdated or non-compliant assets
 - **Testing & Validation Methods**: None detected
@@ -13439,8 +13418,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: business resiliency, lower long-term costs, client confidence, trust posture, leadership strengthening, remediate existing unidentified cryptography risks
 - **Organizational Readiness**: governance prerequisites (Group of seven financial regulators, United Kingdom, Canada, United States, European Union), dedicated crypto team required (Cryptography Subject Matter Expert, Quantum Communications and Networking Lead), board-level reporting (strategic asset), change management scope (proactive harnessing of emerging technologies), estimated planning horizon (mid to late 2030s)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: CircleCI.html (514,964 bytes, 12,039 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:47:15
 
 ---
 
@@ -13471,6 +13448,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-id; api-security-jwt
+- **Source Document**: OAuth_2.0**\_OpenID_Connect**OIDC\_.html (12,946 bytes, 4,051 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:48:20
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -13482,8 +13461,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: OAuth_2.0**\_OpenID_Connect**OIDC\_.html (12,946 bytes, 4,051 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:48:20
 
 ---
 
@@ -13514,6 +13491,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-id, compliance-strategy, migration-program
+- **Source Document**: SAML_2.0.html (34,302 bytes, 5,186 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:48:55
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -13525,8 +13504,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: SAML_2.0.html (34,302 bytes, 5,186 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:48:55
 
 ---
 
@@ -13557,6 +13534,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Operations
 - **Implementation Prerequisites**: OpenSSL 3.5+
 - **Relevant PQC Today Features**: tls-basics, openssl-studio
+- **Source Document**: PostgreSQL.html (23,423 bytes, 5,015 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:49:25
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: regression testing
@@ -13568,8 +13547,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: PostgreSQL.html (23,423 bytes, 5,015 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:49:25
 
 ---
 
@@ -13610,7 +13587,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: migration requires Enterprise keyring plugin or KMS integration upgrade
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: MySQL_Community_Server_repo.md (1,011 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-16T10:49:59
@@ -13644,6 +13620,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: OpenSSL 3.5+
 - **Relevant PQC Today Features**: tls-basics, openssl-studio, migration-program
+- **Source Document**: Redis.html (865,772 bytes, 4,628 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:50:18
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -13655,8 +13633,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Redis.html (865,772 bytes, 4,628 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:50:18
 
 ---
 
@@ -13687,6 +13663,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: OpenSSL 3.5+
 - **Relevant PQC Today Features**: tls-basics, openssl-studio, algorithms
+- **Source Document**: MariaDB_Server.html (126,557 bytes, 7,117 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:50:47
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -13698,8 +13676,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: MariaDB_Server.html (126,557 bytes, 7,117 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:50:47
 
 ---
 
@@ -13730,6 +13706,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Developer, Compliance Officer, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-assets
+- **Source Document**: Fireblocks.html (497,523 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:51:29
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -13741,8 +13719,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Governance prerequisites via Policy & governance module; change management scope implied by transition from single point of compromise to decentralized key shares
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Fireblocks.html (497,523 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:51:29
 
 ---
 
@@ -13773,6 +13749,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Researcher; Policy Maker
 - **Implementation Prerequisites**: FIPS 140-2 and 140-3 certified HSMs; Secure hardware; Remote attestations; Tamper-proof logs
 - **Relevant PQC Today Features**: digital-assets, hsm-pqc, crypto-agility, algorithms, leaders
+- **Source Document**: DFNS.html (335,950 bytes, 13,347 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:52:24
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-2 Level 4 certification; PKCS#11 standard interface conformance
@@ -13784,8 +13762,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Regulatory requirements driving control over key management; national laws and internal IT policies; compliance perimeter adherence; unified governance across MPC and HSM infrastructure; audit trails and logging preservation
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: DFNS.html (335,950 bytes, 13,347 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:52:24
 
 ---
 
@@ -13816,6 +13792,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-assets; compliance-strategy; vendor-risk
+- **Source Document**: Taurus_SA.html (455,382 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:53:26
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: ISO 27001, ISAE 3402 Type II
@@ -13827,8 +13805,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Total assets valuation USD 71’272.14; digital asset space expected to encompass trillions of dollars
 - **Organizational Readiness**: FINMA regulated, DORA compliant, ISO 27001 certified, ISAE 3402 Type II certified, granular governance rules
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Taurus_SA.html (455,382 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:53:26
 
 ---
 
@@ -13859,6 +13835,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer, Institutions, Asset Managers, Banks, Exchanges
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-assets, vendor-risk, compliance-strategy
+- **Source Document**: BitGo.html (146,079 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:54:28
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: third-party security experts, open-sourced peer reviewed code, pressure testing
@@ -13870,8 +13848,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: lower transaction fees, decrease fees for several coins and tokens
 - **Organizational Readiness**: regulated qualified custodian, auditable data, accountability ledgers
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: BitGo.html (146,079 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:54:28
 
 ---
 
@@ -13902,6 +13878,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Financial institutions; Asset managers; ETF issuers; Wealth managers; Corporations; Investors; Hedge funds; VC firms; Public sector; Governments; Protocols
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-assets; compliance-strategy; vendor-risk
+- **Source Document**: Anchorage_Digital.html (109,622 bytes, 8,753 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:55:24
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: SOC 1 and SOC 2 Type II report; automated outlier detection; behavioral analytics
@@ -13913,8 +13891,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: qualified custodian status; stringent compliance requirements; federal oversight; routine audits
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Anchorage_Digital.html (109,622 bytes, 8,753 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:55:24
 
 ---
 
@@ -13955,9 +13931,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: updating Bitcoin address handling, enhancing internal key management, advancing research on post-quantum signature schemes, network upgrades, coin migrations
 - **Financial & Business Impact**: Jefferies strategist Christopher Wood removed Bitcoin from Greed & Fear model portfolio citing existential risk, BlackRock and UBS CEO Sergio Ermotti warn of risk to millions of BTC, Coinbase research indicates 20% to 50% of Bitcoin supply could be vulnerable to long-range quantum attacks
 - **Organizational Readiness**: Independent Advisory Board on Quantum Computing and Blockchain formed with Scott Aaronson, Dan Boneh, Justin Drake, Yehuda Lindell; first position paper expected early next year laying out roadmap for quantum resilience
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Coinbase_Custody.html (383,018 bytes, 6,842 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T10:56:07
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -13988,6 +13964,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Institutional Investors, Hedge Funds, Trading Firms, Exchanges, ETP Providers, Venture Capital Funds, Miners
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-assets
+- **Source Document**: Copper.co.html (131,521 bytes, 6,583 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:56:54
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -13999,8 +13977,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: $500m Specie market-based insurance; Crypto Crime policy
 - **Organizational Readiness**: role-based control framework; granular control over operations; user-specific transaction amounts and time limits; flexible approval workflows
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Copper.co.html (131,521 bytes, 6,583 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:56:54
 
 ---
 
@@ -14031,6 +14007,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations; Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-assets; hsm-pqc; compliance-strategy; vendor-risk
+- **Source Document**: Ledger_Enterprise.html (205,806 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:57:33
 - **Implementation Attack Surface**: side-channel attacks on fixed-key AES implementations; vulnerabilities in MPC implementation of fixed-key block ciphers; rogue transaction display attacks targeting endpoints; synchronous attacks on multiple unsecured endpoints
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: penetration testing; security certifications (Common Criteria, FIPS, CSPN); peer review of security proofs; standardisation initiatives assessment
@@ -14042,8 +14020,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: catastrophic consequences from implementing unready technology as security backbone; instantaneous and irrevocable loss of funds due to security breaches; operational risks for institutions using current MPC forms
 - **Organizational Readiness**: need for secure execution environments for governance rules; requirement for dedicated secure hardware for key generation and storage; limitation of complex governance schemes in MPC-only solutions; necessity of regular business processes for key dissemination and revocation
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Ledger_Enterprise.html (205,806 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:57:33
 
 ---
 
@@ -14074,6 +14050,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Compliance Officer, Security Architect, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-assets, compliance-strategy, pqc-governance, vendor-risk, hsm-pqc
+- **Source Document**: Zodia_Custody.html (148,700 bytes, 12,737 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:58:50
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: SOC 1 Type II accreditation; SOC 2 Type I accreditation; ISO 27001:2022 accreditation
@@ -14085,8 +14063,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Leading digital asset crime and cyber policies; insolvency remote structures; TCSP License in Hong Kong
 - **Organizational Readiness**: Client-controlled entitlement workflows; bank-grade control standards; institution-level governance; user permissions and approval chains configuration
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Zodia_Custody.html (148,700 bytes, 12,737 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:58:50
 
 ---
 
@@ -14117,6 +14093,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Policy Maker; Researcher
 - **Implementation Prerequisites**: Preparation at BIP level; preparation at software level; preparation at infrastructure level; preparation at user-transition level
 - **Relevant PQC Today Features**: digital-assets; merkle-tree-certs; migration-program; pqc-risk-management; stateful-signatures
+- **Source Document**: Bitcoin_Core.html (24,347 bytes, 3,635 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T10:59:40
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -14128,8 +14106,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: US federal government mandate to phase out ECDSA by 2035
 - **Organizational Readiness**: planning horizon of several years for effective transition
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Bitcoin_Core.html (24,347 bytes, 3,635 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T10:59:40
 
 ---
 
@@ -14160,6 +14136,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Researcher, Security Architect
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Timeline, digital-assets
+- **Source Document**: Ethereum\__Geth_.html (596,379 bytes, 7,809 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:00:11
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -14171,8 +14149,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: $2M PQC research fund allocated for quantum-safe consensus and wallets.
 - **Organizational Readiness**: 4-year Strawmap defined for quantum-safe consensus and wallets; community-driven development requiring participation via forums (ethresear.ch, Ethereum Magicians) and Ethereum Improvement Proposals.
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Ethereum\__Geth_.html (596,379 bytes, 7,809 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:00:11
 
 ---
 
@@ -14203,6 +14179,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Threats; Algorithms; digital-assets; stateful-signatures
+- **Source Document**: Solana.html (280,698 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:00:58
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -14214,8 +14192,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Solana.html (280,698 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:00:58
 
 ---
 
@@ -14256,7 +14232,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Hyperledger_Fabric_repo.md (4,974 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-16T11:02:00
@@ -14290,6 +14265,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: JDK 24+
 - **Relevant PQC Today Features**: Algorithms, Migrate, digital-assets
+- **Source Document**: Hyperledger_Besu.html (90,704 bytes, 3,971 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:02:20
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -14301,8 +14278,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Hyperledger_Besu.html (90,704 bytes, 3,971 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:02:20
 
 ---
 
@@ -14333,6 +14308,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: R3_Corda.html (151,241 bytes, 885 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:02:47
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -14344,8 +14321,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: R3_Corda.html (151,241 bytes, 885 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:02:47
 
 ---
 
@@ -14376,6 +14351,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, User, Miner, Policy Maker
 - **Implementation Prerequisites**: Windows, OSX, Linux for desktop wallet; Android and iOS for mobile wallet; Ledger Nano X/S+ hardware wallet support; Docker for running QRL Node
 - **Relevant PQC Today Features**: digital-assets, stateful-signatures, algorithms, hybrid-crypto, code-signing
+- **Source Document**: QRL.html (68,018 bytes, 8,402 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:03:09
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: third-party audits from red4sec and x41 D-sec; Halborn Audit Validates QRL's Post-Quantum Cryptography Library; all 13 findings rated Informational
@@ -14387,8 +14364,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: enterprise-grade solution; industrial implementation; open development architecture; rich API experience for developers
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: QRL.html (68,018 bytes, 8,402 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:03:09
 
 ---
 
@@ -14419,6 +14394,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Researcher
 - **Implementation Prerequisites**: AVM v12 or higher; Logic Signature feature; command-line tools for key generation, address derivation, and transaction signing; deterministic signing mode with constant-time coding practices
 - **Relevant PQC Today Features**: Algorithms; Threats; digital-assets; Leaders; migration-program
+- **Source Document**: Algorand.html (166,707 bytes, 13,110 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:04:02
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -14430,8 +14407,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Algorand.html (166,707 bytes, 13,110 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:04:02
 
 ---
 
@@ -14462,6 +14437,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Timeline, Threats, Leaders, digital-assets, migration-program
+- **Source Document**: Cardano.html (281,392 bytes, 5,891 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:04:53
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: formal verification; peer-reviewed science; Software Readiness Levels (SRLs); security proofs
@@ -14473,8 +14450,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Software Readiness Levels (SRLs); evidence-based methodology; peer-reviewed science; formal specification
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Cardano.html (281,392 bytes, 5,891 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:04:53
 
 ---
 
@@ -14505,6 +14480,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-id, hybrid-crypto, Algorithms, crypto-agility
+- **Source Document**: IOTA.html (45,951 bytes, 7,165 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:05:30
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -14516,8 +14493,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: IOTA.html (45,951 bytes, 7,165 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:05:30
 
 ---
 
@@ -14548,6 +14523,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: None detected
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: Polkadot_Substrate.html (125,490 bytes, 4,991 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:06:10
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Unit Test Pallets; Benchmark a Custom Pallet; Test Your Runtime
@@ -14558,9 +14536,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: Maintain and Upgrade Your Parachain; Runtime Upgrades; Storage Migrations; Coretime Renewal; Unlock Parachains
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Polkadot_Substrate.html (125,490 bytes, 4,991 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:06:10
 
 ---
 
@@ -14591,6 +14566,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Researcher
 - **Implementation Prerequisites**: CosmosSDK version v0.47.15; Prometheus + Grafana for monitoring; multiple nodes with identical hardware configuration; custom stress testing scripts or tm-bench.
 - **Relevant PQC Today Features**: Algorithms; Migrate; digital-assets; code-signing; migration-program
+- **Source Document**: Cosmos_Tendermint.html (288,657 bytes, 11,170 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:06:43
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: code review, benchmarking, stress testing, memory leak detection, abnormal recovery capability, continuous transactions test
@@ -14602,8 +14579,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: 5000 DORA bounty reward, 15000 $DORA bounty reward
 - **Organizational Readiness**: community-driven integration, dedicated crypto team required
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Cosmos_Tendermint.html (288,657 bytes, 11,170 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:06:43
 
 ---
 
@@ -14634,6 +14609,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Policy Maker, Operations
 - **Implementation Prerequisites**: Feature flags to coordinate rollout; infrastructure adjustments for validators, indexers, wallets, and developer tools
 - **Relevant PQC Today Features**: digital-assets, stateful-signatures, migration-program, pqc-risk-management, algorithms
+- **Source Document**: Aptos.html (138,539 bytes, 5,847 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:07:31
 - **Implementation Attack Surface**: floating-point arithmetic error-proneness in Falcon implementations; memory safety failures avoided by using hash-based schemes over exotic mathematics
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -14645,8 +14622,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: on-chain governance required for activation; ecosystem participants need time to adjust infrastructure; conservative preparation timeline before mid-2030s threat horizon
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Aptos.html (138,539 bytes, 5,847 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:07:31
 
 ---
 
@@ -14677,6 +14652,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: C-Chain precompiles for PQC verification; Subnet Modularity setup
 - **Relevant PQC Today Features**: hybrid-crypto; migration-program; digital-assets; algorithms
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: Avalanche.html (24,901 bytes, 2,159 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:08:15
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: technical review process, benchmarks
@@ -14687,9 +14665,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: staged migration path, phased rollout via Subnet Modularity, hybrid signature model for backward compatibility
 - **Financial & Business Impact**: gas economics, CPU validation costs
 - **Organizational Readiness**: strategic roadmap, technical review process
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Avalanche.html (24,901 bytes, 2,159 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:08:15
 
 ---
 
@@ -14720,6 +14695,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Researcher
 - **Implementation Prerequisites**: OpenSSL 3; oqs-provider library; cryptographic agility architecture
 - **Relevant PQC Today Features**: crypto-agility; tls-basics; migration-program; quantum-threats; algorithms; data-asset-sensitivity
+- **Source Document**: Sui.html (51,336 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:08:42
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -14731,8 +14708,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: multi-year journey, careful balance between security efficiency and practical deployment considerations
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Sui.html (51,336 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:08:42
 
 ---
 
@@ -14763,6 +14738,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Operations
 - **Implementation Prerequisites**: TLS 1.3 required for PQC KEM; OpenSSL 3.5 or oqsprovider 0.10.0; FIPS disabled; Intel QAT disabled; key conversion command for MLDSA keys generated with OpenSSL 3.5
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, tls-basics, hsm-pqc, pki-workshop
+- **Source Document**: Broadcom*Avi\_\_NSX_ALB*.html (55,798 bytes, 6,215 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:09:45
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -14774,8 +14751,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Broadcom*Avi\_\_NSX_ALB*.html (55,798 bytes, 6,215 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:09:45
 
 ---
 
@@ -14806,6 +14781,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Operations, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: iot-ot-pqc
+- **Source Document**: Claroty_Platform.html (195,124 bytes, 11,664 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:10:30
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Asset Inventory, Exposure Management, Vulnerability Disclosure Dashboard
 - **Testing & Validation Methods**: None detected
@@ -14817,8 +14794,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Lower the Total Cost of Ownership, Reduced risk, Quickest time to value, Low cost of ownership
 - **Organizational Readiness**: Cyber Resilience, Operational Resilience, Compliance guidelines, Governance prerequisites not explicitly stated but "Compliance" and "Regulations" mentioned
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Claroty_Platform.html (195,124 bytes, 11,664 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:10:30
 
 ---
 
@@ -14859,9 +14834,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: Flexible Monitoring; Sensor and Virtual Appliances; Active Collection with Dragos Agent; Containerized Traffic Forwarding; Data and Project File Import; "Do No Harm" monitoring approach; Purdue Model Levels 1, 2, 3, & 3.5 coverage
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: OT Watch Complete for staffing constraints; dedicated professional services; technical account managers; experienced OT incident responders; consultants for architecture assessment
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Dragos_Platform.pdf (3,382,990 bytes, 10,380 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T11:11:32
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -14892,6 +14867,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Operations; Compliance Officer; CISO
 - **Implementation Prerequisites**: Mirrored network ports or taps; On-prem Nozomi Central Management Console or Nozomi Vantage cloud platform; Hardware appliances, virtual machines, embedded devices, or containers
 - **Relevant PQC Today Features**: iot-ot-pqc; compliance-strategy; data-asset-sensitivity
+- **Source Document**: Nozomi_Networks_Guardian.html (74,645 bytes, 6,930 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:12:30
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: cryptographic discovery, asset inventory management, up-to-date asset inventory, device type, firmware version, serial number
 - **Testing & Validation Methods**: None detected
@@ -14903,8 +14880,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites: None detected, dedicated crypto team required: None detected, board-level reporting: None detected, change management scope: None detected, estimated planning horizon: None detected, maturity assessment level: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Nozomi_Networks_Guardian.html (74,645 bytes, 6,930 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:12:30
 
 ---
 
@@ -14935,6 +14910,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Operations
 - **Implementation Prerequisites**: FortiOS 7.6+; FortiGate NGFW or Fortinet Secure SD-WAN customers
 - **Relevant PQC Today Features**: Algorithms, Threats, qkd, Migrate, vendor-risk
+- **Source Document**: Fortinet_FortiGate-Rugged.html (265,093 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:13:15
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -14946,8 +14923,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Fortinet_FortiGate-Rugged.html (265,093 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:13:15
 
 ---
 
@@ -14987,10 +14962,10 @@ enrichment_method: ollama-qwen3.5:27b
 - **Supply Chain & Vendor Risk**: vendor PQC roadmap maturity
 - **Deployment & Migration Complexity**: backward compatibility
 - **Financial & Business Impact**: None detected
-- **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Organizational Readiness**: Holistic state-of-the-art industrial security concept required; Continuous maintenance of security concept
 - **Source Document**: Siemens_SINEMA_Remote_Connect.html (128,599 bytes, 2,442 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T11:14:06
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -15021,6 +14996,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, CISO, Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Protect_AI_Guardian.html (114,220 bytes, 6,520 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:14:31
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: cryptographic integrity checks, model scanning, provenance verification, verified sources, security findings, audit trail of all evaluations
 - **Testing & Validation Methods**: Automated Red Teaming Scans, red teaming, bug bounty platform for AI/ML, huntr, MLSecOps Community
@@ -15032,8 +15009,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance aligned with specific security requirements and risk tolerance, flexible granular policies, configurable customizable policies, first- and third-party models, comprehensive audit trail
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Protect_AI_Guardian.html (114,220 bytes, 6,520 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:14:31
 
 ---
 
@@ -15064,6 +15039,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Application Developers, AI Leaders, Financial Services, Technology, US Federal Government
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: HiddenLayer_Model_Scanner.html (262,494 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:15:20
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: AI Discovery, See Every Model and Every AI Workflow, Scan and Harden Any Model, living inventory of AI across your environment including shadow AI
 - **Testing & Validation Methods**: AI Attack Simulation, Red Teaming, capture-the-flag challenges at Black Hat and DEF CON, internal research team developing new attack techniques, adversarial simulations
@@ -15075,8 +15052,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance and AI security posture, organization wide visibility, consistent governance rules, classify risk, monitor posture, align AI adoption with visibility compliance and accountability
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: HiddenLayer_Model_Scanner.html (262,494 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:15:20
 
 ---
 
@@ -15107,6 +15082,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer, Data Science
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: vendor-risk, compliance-strategy, pqc-governance
+- **Source Document**: Cranium_AI_Security_Platform.html (142,886 bytes, 4,692 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:16:23
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: AI models across your enterprise; system-of-record for AI stack: models, data, infra, and vendors
 - **Testing & Validation Methods**: Stress-test models; simulate real-world threats; surface vulnerabilities
@@ -15118,8 +15095,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: AI governance; shared governance with peers, partners, and regulators; compliance posture evaluation
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Cranium_AI_Security_Platform.html (142,886 bytes, 4,692 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:16:23
 
 ---
 
@@ -15150,6 +15125,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, CISO, Compliance Officer
 - **Implementation Prerequisites**: API-first architecture; Cloud-native deployment; Enterprise integrations
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Lakera_Guard.html (131,988 bytes, 7,885 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:17:03
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -15161,8 +15138,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Lakera_Guard.html (131,988 bytes, 7,885 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:17:03
 
 ---
 
@@ -15193,6 +15168,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; CISO; Operations; Policy Maker
 - **Implementation Prerequisites**: Existing quantum key exchange devices from vendors like ID Quantique or Toshiba; Fiber infrastructure; Cloud access for BasejumpSIM simulation
 - **Relevant PQC Today Features**: qkd, vendor-risk, pqc-business-case, migration-program, pqc-governance
+- **Source Document**: evolutionQ_BasejumpQDN.html (34,515 bytes, 5,172 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:17:38
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: BasejumpSIM simulation, network topology modeling, traffic scenario testing, demonstration network building
@@ -15204,8 +15181,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: reduction of hardware costs, minimization of paired devices, avoidance of major capital costs for demonstration networks, cost savings as technologies mature
 - **Organizational Readiness**: Quantum Risk Assessment service, Quantum Roadmap & Strategy service, Executive Workshop on quantum computing and threats
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: evolutionQ_BasejumpQDN.html (34,515 bytes, 5,172 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:17:38
 
 ---
 
@@ -15236,6 +15211,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; CISO; Compliance Officer; Operations
 - **Implementation Prerequisites**: No replacement of network equipment required; existing infrastructure integration; tailored solution development
 - **Relevant PQC Today Features**: hybrid-crypto; crypto-agility; qkd; pqc-risk-management; migration-program
+- **Source Document**: evolutionQ_BasejumpSKI.html (32,858 bytes, 4,539 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:18:24
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -15247,8 +15224,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: cost-effective protection of data in transit, long-term security
 - **Organizational Readiness**: Quantum Risk Assessment, Quantum Briefing - Executive Workshop, Quantum Roadmap & Strategy
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: evolutionQ_BasejumpSKI.html (32,858 bytes, 4,539 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:18:24
 
 ---
 
@@ -15279,6 +15254,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; CISO; Operations
 - **Implementation Prerequisites**: Drop in a container or SDK; No dedicated hardware requirements
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Qrypt_BLAST_SDK.html (264,676 bytes, 5,830 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:18:58
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -15290,8 +15267,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Reduce crypto-agility costs and risk; eliminate reinvest and redeploy cycle; protect data value beyond algorithm failure
 - **Organizational Readiness**: Exceed Federal NIST Mandates; leverage existing investments
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Qrypt_BLAST_SDK.html (264,676 bytes, 5,830 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:18:58
 
 ---
 
@@ -15322,6 +15297,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Compliance Officer; Infrastructure Lead; CISO; DevSecOps; IoT system integrator
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Assess; Migrate; Algorithms; Compliance; crypto-agility; hybrid-crypto; pqc-risk-management; iot-ot-pqc
+- **Source Document**: ISARA_Advance.html (42,100 bytes, 6,904 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:19:40
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: agentless-first discovery across networks, servers, databases, code, CMDBs, KMSs; catalog and monitor cryptographic assets and primitives including algorithms, protocols, devices, certificates, and keys; surfaces hidden dependencies; crypto inventory lifecycle management; algorithm risk profiling
 - **Testing & Validation Methods**: architecture validation; compliance alignment (NIST PQC); continuous posture intelligence
@@ -15333,8 +15310,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: financial impact from quantum decryption; compliance gaps; lost trust; financial services detect algorithm risk and prove compliance; government spending mandates under NSM-10 and OMB M-23-02
 - **Organizational Readiness**: 55% of organizations have not taken any steps to prepare for the arrival of quantum computers; tools built for cryptographic engineers, infrastructure leads, and security architects; dedicated crypto team required implied by target audience; governance prerequisites via compliance alignment
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: ISARA_Advance.html (42,100 bytes, 6,904 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:19:40
 
 ---
 
@@ -15365,6 +15340,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, DevOps Engineer, Compliance Officer
 - **Implementation Prerequisites**: OpenSSL 3.x; updated cryptographic libraries; modernized DevOps pipelines; compatible K8s controllers; HSM resources supporting PQC; updated edge devices
 - **Relevant PQC Today Features**: hybrid-crypto, tls-basics, migration-program, pqc-risk-management, iot-ot-pqc
+- **Source Document**: Let_s_Encrypt.html (209,927 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:20:36
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: certificate inventory, key material audit, algorithm enumeration, deprecated cipher detection
 - **Testing & Validation Methods**: conformance testing, interoperability testing, regression testing
@@ -15376,8 +15353,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites, dedicated crypto team required, board-level reporting, change management scope, estimated planning horizon (6-12 months), maturity assessment level
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Let_s_Encrypt.html (209,927 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:20:36
 
 ---
 
@@ -15408,6 +15383,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: hybrid-crypto; Algorithms; Migrate
+- **Source Document**: 1Password.html (249,533 bytes, 1,955 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:21:45
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -15419,8 +15396,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: 1Password.html (249,533 bytes, 1,955 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:21:45
 
 ---
 
@@ -15451,6 +15426,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, CISO, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-id, vendor-risk, compliance-strategy
+- **Source Document**: Bitwarden.html (1,243,084 bytes, 7,807 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:22:12
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Access Intelligence to uncover shadow IT and identify applications being used in your organization
 - **Testing & Validation Methods**: Third party audited, community-reviewed, Open Source Security Summit
@@ -15462,8 +15439,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Pricing shown in USD based on annual subscription ($4 per month per user for Teams, $6 per month per user for Enterprise), reduce cybersecurity risk, boost productivity
 - **Organizational Readiness**: Centralized administration with access controls and policies, directory integration, SSO integration, SCIM automation, Access Intelligence risk remediation
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Bitwarden.html (1,243,084 bytes, 7,807 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:22:12
 
 ---
 
@@ -15504,9 +15479,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: migrating to Google Workspace; replacing a legacy email provider with Gmail; rolling out Workspace to our hotel network
 - **Financial & Business Impact**: freed up our IT team's valuable time and budget to invest in other areas since we no longer need a separate email security solution
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Gmail\_\_\_Google_Workspace.html (339,085 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T11:23:02
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -15537,6 +15512,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, User
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Algorithms, Threats, Migrate
+- **Source Document**: Telegram.html (17,438 bytes, 8,518 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:23:53
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: deprecated cipher detection (MTProto v1.0 is deprecated and is currently being phased out)
 - **Testing & Validation Methods**: None detected
@@ -15548,8 +15525,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Telegram.html (17,438 bytes, 8,518 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:23:53
 
 ---
 
@@ -15590,9 +15565,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: No PQC roadmap published; Signal's PQXDH has not been deployed in WhatsApp
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: WhatsApp.html (292,618 bytes, 5,326 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T11:24:37
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -15623,6 +15598,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Network Equipment Manufacturers, Network Operators, Research Institutes, Compliance Officer
 - **Implementation Prerequisites**: Commercial-off-the-shelf (COTS) servers; cloud platforms
 - **Relevant PQC Today Features**: Threats, Migrate, Assess, Algorithms, hybrid-crypto, vpn-ssh-pqc
+- **Source Document**: VIAVI_TeraVM_Security_Test.html (502,428 bytes, 14,483 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:25:10
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: performance testing, emulation of large-scale user endpoint traffic applications, measuring individual traffic flow performance across multiple quality vectors, benchmarking of enterprise devices, content delivery networks and endpoints, testing security compliance, testing performance impacts of security layers
@@ -15634,8 +15611,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: U.S. federal government mandate for migration of public-key cryptographic systems
 - **Organizational Readiness**: preparation for a quantum-safe future by governments, military, enterprises and mobile operators
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: VIAVI_TeraVM_Security_Test.html (502,428 bytes, 14,483 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:25:10
 
 ---
 
@@ -15676,9 +15651,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: PQC detection capabilities in development as hybrid algorithms roll out in enterprise networks
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: VIAVI_Observer_Analyzer.html (481,328 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T11:26:11
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -15709,6 +15684,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Compliance Officer; Researcher
 - **Implementation Prerequisites**: Cloud-native network security test platform; BreakingPoint System integration via ATI-2025-15 application; Embedded Security Testbench setup
 - **Relevant PQC Today Features**: hybrid-crypto; tls-basics; iot-ot-pqc; compliance-strategy; pqc-risk-management
+- **Source Document**: Keysight_CyPerf.html (612,012 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:27:00
 - **Implementation Attack Surface**: side channels (power, timing, EM), fault injection, key-dependent leakage, fault-based key recovery
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Side-Channel Analysis (SCA), Fault Injection (FI), classical TVLA, validation from design to deployment
@@ -15720,8 +15697,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: government and high-assurance contracts requiring quantum-safe roadmaps or concrete PQC adoption plans, emerging standards and certifications such as Common Criteria and EUCC, regulatory requirements across payments, automotive, and critical infrastructure
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Keysight_CyPerf.html (612,012 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:27:00
 
 ---
 
@@ -15752,6 +15727,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Compliance Officer, Researcher
 - **Implementation Prerequisites**: PXI-based DS1050A testbench; Crypto 3 modular framework
 - **Relevant PQC Today Features**: Threats, Algorithms, Assess, Leaders, vendor-risk
+- **Source Document**: Keysight_Inspector.html (551,264 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:28:03
 - **Implementation Attack Surface**: side-channel (power/EM leakage), fault injection
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: pre-silicon analysis, post-silicon analysis, hardware code simulation, TVLA generator
@@ -15763,8 +15740,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: CMVP certification preparation, government institutions verification, security test lab verification
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Keysight_Inspector.html (551,264 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:28:03
 
 ---
 
@@ -15795,6 +15770,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
 - **Implementation Prerequisites**: Network TAP or SPAN port access; standard APIs and formats for integration; CBOM format adoption
 - **Relevant PQC Today Features**: Assess; Migrate; crypto-agility; compliance-strategy; migration-program
+- **Source Document**: CryptoNext_COMPASS_Network_Probe.html (125,906 bytes, 9,507 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:28:56
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: CBOM, algorithm enumeration, certificate inventory, crypto-agility scanning, cryptographic asset mapping, identification of protocols and libraries
 - **Testing & Validation Methods**: NIST CAVP certification, PQC Evaluation Toolbox, custom prototypes, simulation of post-quantum impact
@@ -15806,8 +15783,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites (unified policies, audit-ready status), regulatory requirements (EU Commission roadmap by end of 2026), multi-user management roles (administrator, cryptography manager, user)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: CryptoNext_COMPASS_Network_Probe.html (125,906 bytes, 9,507 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:28:56
 
 ---
 
@@ -15838,6 +15813,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: System administrators; infosec practitioners; Developer
 - **Implementation Prerequisites**: Rust environment for building from source; Cargo package manager; Linux, macOS, or Windows operating system
 - **Relevant PQC Today Features**: Assess; Algorithms; Migrate; tls-basics; vpn-ssh-pqc
+- **Source Document**: pqcscan.html (292,883 bytes, 8,101 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:29:49
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: algorithm enumeration, deprecated cipher detection, PQC OIDs identification, hybrid key exchange detection, quantum-vulnerable configurations identification
 - **Testing & Validation Methods**: None detected
@@ -15849,8 +15826,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites (USA, EU, UK deadlines 2030-2035), maturity assessment level (identifying assets not supporting PQC yet)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: pqcscan.html (292,883 bytes, 8,101 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:29:49
 
 ---
 
@@ -15881,6 +15856,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Compliance Officer, Operations
 - **Implementation Prerequisites**: CMake 3.16+; libpcap-dev; nDPI 4.11+; AF_PACKET TPACKET_V3 support; sudo or cap_net_raw/cap_net_admin capabilities
 - **Relevant PQC Today Features**: Assess, Algorithms, hybrid-crypto, vpn-ssh-pqc, tls-basics
+- **Source Document**: pqc-flow.html (564,898 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:30:39
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: algorithm enumeration, certificate inventory, deprecated cipher detection, TLS certificate inventory, SSH audit
 - **Testing & Validation Methods**: unit tested, regression testing, mock data testing, validation on real-world traffic
@@ -15892,8 +15869,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: quantum readiness posture, organization-wide quantum readiness visibility, compliance monitoring
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: pqc-flow.html (564,898 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:30:39
 
 ---
 
@@ -15924,6 +15899,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Researcher, Developer
 - **Implementation Prerequisites**: x86 Linux Machines using a Debian-based operating system; ARM Linux devices using a 64-bit Debian-based Operating System; Liboqs Version 0.15.0; OQS-Provider Version 0.11.0; OpenSSL Version 3.6.1
 - **Relevant PQC Today Features**: Algorithms, Assess, tls-basics, hybrid-crypto, code-signing
+- **Source Document**: PQC-LEO.html (370,433 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:31:48
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: automated computational performance testing, TLS handshake performance testing, cryptographic operation benchmarking, interoperability testing across physical or virtual networks, regression testing via multiple test runs
@@ -15935,8 +15912,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: researchers and developers, automated setup scripts, system detection, installation modes for computational or TLS testing
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: PQC-LEO.html (370,433 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:31:48
 
 ---
 
@@ -15967,6 +15942,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Compliance Officer, CISO, Developer, Operations, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Assess, Algorithms, Compliance, Migrate, Threats, crypto-agility, tls-basics, vpn-ssh-pqc, pki-workshop, hsm-pqc, 5g-security, digital-id, iot-ot-pqc, qkd, code-signing, vendor-risk, pqc-risk-management
+- **Source Document**: Q-CORE_Q-Scanner.html (131,501 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:32:53
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Q-SCANNER (TLS/PQC vulnerability scanner, 9 scan areas, 117 tests), Q-ASSET (IT asset discovery and inventory, auto-detect endpoints, services, certificates, keys), Q-CERT (X.509 certificate lifecycle management), Q-KPQC-CBOM (KpqC Cryptographic Bill of Materials)
 - **Testing & Validation Methods**: Q-BENCH (CIS Benchmark automated assessment), Q-KPQC-BENCHMARK (KpqC algorithm benchmarking, 500-run performance testing), Q-SIMULATE (Attack simulation platform, quantum attack scenarios, red team exercises)
@@ -15978,8 +15955,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Pokuta za nesplnění: až 250 mil. Kč nebo 2 % z obratu (Penalty for non-compliance: up to 250 million CZK or 2% of turnover), Q-RISK (Quantitative risk assessment, FAIR methodology, loss exposure modeling)
 - **Organizational Readiness**: Q-CRA (EU Cyber Resilience Act compliance dashboard, automated reports, gap analysis, NIS2 mapping), Q-POLICY (Auto-generate security policies from scan results and regulatory requirements), Q-REPORT (Executive reporting engine, board-ready security posture reports), Q-ACADEMY (PQC education platform, certification)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Q-CORE_Q-Scanner.html (131,501 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:32:53
 
 ---
 
@@ -16010,6 +15985,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Compliance Officer, CISO
 - **Implementation Prerequisites**: Linux, Windows or Mac OS; C compiler; OpenSSL integration via provider
 - **Relevant PQC Today Features**: Compliance, Migrate, Algorithms, hybrid-crypto, crypto-agility
+- **Source Document**: PQCryptoLib-Core.html (61,074 bytes, 4,169 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:34:43
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: ACVP, CAVP, CMVP, functional and security validation
@@ -16021,8 +15998,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: PQCryptoLib-Core.html (61,074 bytes, 4,169 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:34:43
 
 ---
 
@@ -16053,6 +16028,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, System Integrator
 - **Implementation Prerequisites**: C compiler; ARM or RISC-V microcontrollers; bare metal or real time operating systems; option to include DPA protection
 - **Relevant PQC Today Features**: iot-ot-pqc, tls-basics, code-signing, stateful-signatures, algorithms
+- **Source Document**: PQMicroLib-Core.html (61,573 bytes, 4,118 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:35:16
 - **Implementation Attack Surface**: side-channel (timing, DPA, template attacks, deep learning attacks), memory safety failures (buffer overflows)
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: CAVP validated (A3011), FIPS 140-3 CMVP in process, extensive functional and security validation
@@ -16064,8 +16041,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: PQMicroLib-Core.html (61,573 bytes, 4,118 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:35:16
 
 ---
 
@@ -16096,6 +16071,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Compliance Officer, Researcher
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Algorithms; Compliance; Migrate; pqc-101; tls-basics
+- **Source Document**: Crucible.html (353,788 bytes, 14,654 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:35:55
 - **Implementation Attack Surface**: timing consistency; dead bounds checks; encapsulation key modulus bypass; missing implicit rejection; FO re-encryption bypass; wrong-length key/ciphertext acceptance; signature malleability; z-norm bound bypass; malformed hint acceptance; non-determinism; floating-point arithmetic violations
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: conformance testing; NIST Known Answer Tests; formal verification; targeted tests for bug classes; deterministic signing divergence; byte-for-byte comparison against reference implementation; black-box keygen/encaps/decaps correctness; round-trip failures; robustness testing with malformed inputs
@@ -16107,8 +16084,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: cryptographic library vendors; essential for validating implementation correctness; real-world audit findings motivation
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Crucible.html (353,788 bytes, 14,654 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:35:55
 
 ---
 
@@ -16139,6 +16114,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, CISO
 - **Implementation Prerequisites**: AWS account; Integration with developer frameworks such as AWS Amplify, React, Next.js, Angular, Vue, Flutter, Java, .NET, C++, PHP, Python, Golang, Ruby, iOS (Swift), or Android
 - **Relevant PQC Today Features**: digital-id, api-security-jwt
+- **Source Document**: Amazon_Cognito.html (246,453 bytes, 5,364 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:37:12
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -16150,8 +16127,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Amazon_Cognito.html (246,453 bytes, 5,364 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:37:12
 
 ---
 
@@ -16182,6 +16157,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-id
+- **Source Document**: Microsoft_Entra_External_ID.html (30,220 bytes, 1,880 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:37:41
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -16193,8 +16170,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Microsoft_Entra_External_ID.html (30,220 bytes, 1,880 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:37:41
 
 ---
 
@@ -16225,6 +16200,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, CISO, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-id, api-security-jwt, vendor-risk
+- **Source Document**: FusionAuth.html (148,629 bytes, 8,447 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:38:05
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -16236,8 +16213,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Predictable pricing with no surprises or growth penalties; No unpredictable pricing; Scale users, regions, and workloads without re-architecting for security, compliance, and control
 - **Organizational Readiness**: Self-hosted customers must independently plan TLS and JWT signing PQC migration; Full control over how identity is deployed, integrated, and scaled; Data sovereignty and compliance deployment capabilities
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: FusionAuth.html (148,629 bytes, 8,447 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:38:05
 
 ---
 
@@ -16268,6 +16243,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Operations; Policy Maker
 - **Implementation Prerequisites**: FPGA or ASIC implementation; vendor agnostic integration
 - **Relevant PQC Today Features**: Algorithms; hybrid-crypto; Threats; Compliance; Migrate
+- **Source Document**: Xiphera_PQC_IP_Cores.html (43,764 bytes, 3,500 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:38:54
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Cryptographic Algorithm Validation Program (CAVP)
@@ -16279,8 +16256,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Xiphera_PQC_IP_Cores.html (43,764 bytes, 3,500 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:38:54
 
 ---
 
@@ -16311,6 +16286,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Compliance Officer; IC Designer
 - **Implementation Prerequisites**: Standard CMOS process; Verification on TSMC, GF, UMC fabs; Bulk CMOS, FDSOI, FinFET process technologies
 - **Relevant PQC Today Features**: entropy-randomness; digital-id; iot-ot-pqc; hsm-pqc
+- **Source Document**: Crypto_Quantique_QDID_Platform.html (247,975 bytes, 5,102 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:39:23
 - **Implementation Attack Surface**: side-channel attacks on memory, secret leakage through countermeasures and attack detection schemes, traditional side-channel attacks, fault injection detection
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: NIST SP 800-22 randomness, NIST SP 800-90B entropy, voltage tests, temperature tests, device ageing tests, environmental operating data testing
@@ -16322,8 +16299,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: reducing the cost and complication of HSMs
 - **Organizational Readiness**: PSA Level 2 Ready, CC EAL4+ compliant
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Crypto_Quantique_QDID_Platform.html (247,975 bytes, 5,102 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:39:23
 
 ---
 
@@ -16354,6 +16329,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, CISO, Compliance Officer, Operations, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: iot-ot-pqc; migration-program; pqc-risk-management; digital-id; code-signing
+- **Source Document**: Kudelski_IoT_Security_Platform.html (67,428 bytes, 8,939 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:40:14
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -16365,8 +16342,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Kudelski_IoT_Security_Platform.html (67,428 bytes, 8,939 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:40:14
 
 ---
 
@@ -16397,6 +16372,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Network Engineer; System Administrator; Developer; Security Architect
 - **Implementation Prerequisites**: Operating systems: Ubuntu, CentOS/Fedora, Debian; Container runtime: Docker; Verification tool: PGP/GPG; Account creation for GitLab issue reporting
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: ISC_BIND_9.21_repo.html (45,367 bytes, 307 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:41:01
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: field study, experimental testing
@@ -16408,8 +16385,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: ISC_BIND_9.21_repo.html (45,367 bytes, 307 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:41:01
 
 ---
 
@@ -16440,6 +16415,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; CISO; Compliance Officer; Operations
 - **Implementation Prerequisites**: Cisco IOS XE, XR, or Nexus NX-OS operating systems supporting containers; Cisco Catalyst 8000v, NCS 540, or Nexus switches with containers
 - **Relevant PQC Today Features**: crypto-agility; kms-pqc; migration-program; compliance-strategy; pqc-risk-management
+- **Source Document**: Cisco_IOS_XR.html (308,501 bytes, 5,177 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:41:26
 - **Implementation Attack Surface**: harvest now, decrypt later (HNDL); man-in-the-middle attack scenarios; data leakage due to weakly configured external SKIP calls
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: NIST certification for FIPS 140-3 cryptographic module standard; FIPS 203 validation
@@ -16451,8 +16428,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: establish a cryptographic center of excellence; crypto-agility; practical path to quantum readiness
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Cisco_IOS_XR.html (308,501 bytes, 5,177 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:41:26
 
 ---
 
@@ -16483,6 +16458,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Network Administrator, Policy Maker
 - **Implementation Prerequisites**: Comprehensive cryptographic inventory; updating key transport protocols like TLS, IKEv2, and SSH; hardware-anchored roots of trust
 - **Relevant PQC Today Features**: Threats, Algorithms, Migrate, Assess, hybrid-crypto, crypto-agility, tls-basics, vpn-ssh-pqc
+- **Source Document**: Cisco_Catalyst_Center.html (117,356 bytes, 6,698 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:42:07
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -16494,8 +16471,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: save more than 4,000 megawatt hours of energy annually; reducing our carbon footprint and cutting energy costs by over €300,000 each year
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Cisco_Catalyst_Center.html (117,356 bytes, 6,698 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:42:07
 
 ---
 
@@ -16526,6 +16501,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Network Administrator, CISO
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: digital-id, iot-ot-pqc, vendor-risk
+- **Source Document**: Cisco*Identity_Services_Engine\_\_ISE*.html (112,231 bytes, 5,771 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:42:50
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -16537,8 +16514,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Cisco*Identity_Services_Engine\_\_ISE*.html (112,231 bytes, 5,771 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:42:50
 
 ---
 
@@ -16569,6 +16544,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Platform Engineer; IT Operations; Business Leaders
 - **Implementation Prerequisites**: Kubernetes v1.33; Go 1.24; Red Hat OpenShift 4.20
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, migration-program, tls-basics
+- **Source Document**: Red_Hat_OpenShift.html (950,725 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:43:20
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -16580,8 +16557,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: CNSA 2.0 compliance; dedicated support free teams to focus on innovative work; governance via Red Hat OpenShift operators and automated management capabilities
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Red_Hat_OpenShift.html (950,725 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:43:20
 
 ---
 
@@ -16612,6 +16587,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, IT Manager, Compliance Officer
 - **Implementation Prerequisites**: Low-code/no-code deployment options; Integration with Microsoft Active Directory and Azure Active Directory; Support for SAML applications like Office 365, Salesforce (SDFC), and WebEx.
 - **Relevant PQC Today Features**: digital-id, tls-basics, pki-workshop, hsm-pqc, api-security-jwt
+- **Source Document**: Entrust*Identity_as_a_Service\_\_IDaaS*.html (218,642 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:44:16
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -16623,8 +16600,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Entrust*Identity_as_a_Service\_\_IDaaS*.html (218,642 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:44:16
 
 ---
 
@@ -16655,6 +16630,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Compliance Officer, CISO, Operations
 - **Implementation Prerequisites**: QASM hardware cryptographic core; v5.0 firmware; FIPS 140-3 Level 3 certification module; crypto-agile FPGA-based design
 - **Relevant PQC Today Features**: hsm-pqc, compliance-strategy, migration-program, algorithms, crypto-agility
+- **Source Document**: Crypto4A_QxEDGE.html (128,871 bytes, 5,307 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:45:07
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-2 level 3+ validated, pending 140-3 level 3 (MIP)
@@ -16666,8 +16643,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Lower Total Cost of Ownership (TCO), measurable cost savings, operational efficiency, transparent pricing model, longer product life cycle
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Crypto4A_QxEDGE.html (128,871 bytes, 5,307 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:45:07
 
 ---
 
@@ -16708,9 +16683,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Fortinet_FortiManager.html (507,335 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T11:45:53
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -16751,9 +16726,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: phased rollout; backward compatibility; rollback procedures
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites; change management scope
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Fortinet_FortiAuthenticator_doc1.pdf (3,337,604 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T11:46:40
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -16784,6 +16759,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Compliance Officer, Operations, Policy Maker
 - **Implementation Prerequisites**: z/OS V2.5+; IBM Crypto Express 8S adapter; IBM Z hardware (z16+); cryptographic inventory; risk assessment
 - **Relevant PQC Today Features**: Assess, Migrate, Algorithms, crypto-agility, hybrid-crypto, hsm-pqc, kms-pqc
+- **Source Document**: IBM*z_OS_Cryptographic_Services\_\_ICSF*.html (77,159 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-04-16T11:47:33
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -16794,10 +16771,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: IBM*z_OS_Cryptographic_Services\_\_ICSF*.html (77,159 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-04-16T11:47:33
 
 ---
 
@@ -16828,6 +16802,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, CISO, Operations, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: IBM_Db2.html (209,013 bytes, 7,883 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:47:54
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -16839,8 +16815,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: cutting annual infrastructure costs by 4x; 7-figure cost reduction; up to 30% performance improvement; 1000% increase in sales volumes
 - **Organizational Readiness**: built-in governance; human-in-the-loop autonomous operation; maintaining transparency and control across production environments; integrated policy controls
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: IBM_Db2.html (209,013 bytes, 7,883 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:47:54
 
 ---
 
@@ -16871,6 +16845,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Operations, Security Architect
 - **Implementation Prerequisites**: IBM MQ version 8.0.425 or higher; CMS keystore without Post Quantum Cryptography protection for IBM i compatibility
 - **Relevant PQC Today Features**: Algorithms, Migrate, tls-basics, pki-workshop
+- **Source Document**: IBM_MQ.html (223,271 bytes, 5,313 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:48:41
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -16882,8 +16858,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: IBM_MQ.html (223,271 bytes, 5,313 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:48:41
 
 ---
 
@@ -16914,6 +16888,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
 - **Implementation Prerequisites**: Existing network infrastructure as sensors; Integration with SIEM, EDR, AVM tools, CMDB, and asset management platforms; Hardware and OS capabilities to support post-quantum algorithms
 - **Relevant PQC Today Features**: Threats; Migrate; Assess; Algorithms; Compliance; pqc-risk-management; migration-program; pqc-governance; iot-ot-pqc
+- **Source Document**: Palo_Alto_Prisma_SASE.html (540,394 bytes, 9,824 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:49:15
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -16925,8 +16901,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Palo_Alto_Prisma_SASE.html (540,394 bytes, 9,824 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:49:15
 
 ---
 
@@ -16957,6 +16931,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Compliance Officer, Operations
 - **Implementation Prerequisites**: APIs; AD integration; MDM connectors
 - **Relevant PQC Today Features**: pki-workshop, digital-id, iot-ot-pqc, code-signing, email-signing
+- **Source Document**: GlobalSign_Atlas_CLM.html (99,848 bytes, 8,898 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:49:56
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Atlas Discovery; certificate inventory; key material audit
 - **Testing & Validation Methods**: None detected
@@ -16968,8 +16944,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Long term cost savings; avoid compliance penalties; costs associated with violation-based remediation; lost revenue from downtime and outages
 - **Organizational Readiness**: Atlas - Digital Identity Platform; governance prerequisites; change management scope; estimated planning horizon
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: GlobalSign_Atlas_CLM.html (99,848 bytes, 8,898 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:49:56
 
 ---
 
@@ -17000,6 +16974,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations; Policy Maker
 - **Implementation Prerequisites**: Comprehensive discovery tools for cryptographic inventory; Risk assessment capabilities; Proof of Concept for a private CA; Integration with existing systems
 - **Relevant PQC Today Features**: Assess; Migrate; Threats; Hybrid-crypto; Crypto-agility; Hsm-pqc; Pki-workshop; Code-signing; Iot-ot-pqc
+- **Source Document**: Sectigo*Certificate_Manager\_\_SCM*.html (355,047 bytes, 3,049 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:50:46
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: certificate inventory, discovery of all public certificates, full visibility over all your digital certificates
 - **Testing & Validation Methods**: None detected
@@ -17011,8 +16987,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites (built for scale, control, and visibility), change management scope (modernize and orchestrate digital trust), maturity assessment level (SCM Pro ideal for smaller organizations; SCM Enterprise built for scale)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Sectigo*Certificate_Manager\_\_SCM*.html (355,047 bytes, 3,049 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:50:46
 
 ---
 
@@ -17043,6 +17017,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Operations
 - **Implementation Prerequisites**: OpenSSL 3.5; CLI configuration for server policies and server pool connections
 - **Relevant PQC Today Features**: Algorithms, Hybrid-crypto, tls-basics, vendor-risk
+- **Source Document**: Fortinet_FortiWeb.html (968,507 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:51:25
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -17054,8 +17030,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Fortinet_FortiWeb.html (968,507 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:51:25
 
 ---
 
@@ -17086,6 +17060,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Compliance Officer; CISO
 - **Implementation Prerequisites**: Client firmware integration; RISC-V-based secure hardware platform; customizable firmware
 - **Relevant PQC Today Features**: Algorithms; Compliance; Migrate; iot-ot-pqc; hsm-pqc
+- **Source Document**: SEALSQ_QS7001.html (83,774 bytes, 9,752 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:52:25
 - **Implementation Attack Surface**: physical attack protection, tamper-resistant security
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: cryptographic toolbox validation, Common Criteria EAL5+ certification process, formal Common Criteria EAL5+ standards alignment
@@ -17097,8 +17073,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: cost efficiency through reduced time-to-market, regulatory compliance with EU Cyber Resilience Act (CRA)
 - **Organizational Readiness**: Common Criteria EAL5+ certification process, secure-by-design hardware requirements, TPM 2.0 compliance targets
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: SEALSQ_QS7001.html (83,774 bytes, 9,752 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:52:25
 
 ---
 
@@ -17139,9 +17113,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Microchip_PolarFire.html (688,456 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T11:53:22
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -17172,6 +17146,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; CISO; Compliance Officer; Operations; Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Threats, Compliance, Migrate, Assess, Algorithms, crypto-agility, iot-ot-pqc
+- **Source Document**: PQShield_Core.html (61,546 bytes, 4,247 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:54:20
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: CAVP/CMVP compliance paths, extensive functional and security validation
@@ -17183,8 +17159,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: PQShield_Core.html (61,546 bytes, 4,247 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:54:20
 
 ---
 
@@ -17215,6 +17189,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer, Developer
 - **Implementation Prerequisites**: Cryptographic inventory of IT assets and objects; detection of unknown or shadow cryptography; mapping of dependencies, ownership, and usage
 - **Relevant PQC Today Features**: crypto-agility, Assess, Migrate, Threats, pqc-risk-management
+- **Source Document**: IBM_Guardium_Safe.html (218,020 bytes, 5,474 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:54:52
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Discover and inventory cryptographic objects and IT assets; Detect unknown or shadow cryptography; Map dependencies, ownership and usage; Identify cryptographically relevant artifacts in supported languages across all environments and applications
 - **Testing & Validation Methods**: Assess the efficiency and feasibility of PQC algorithms; tests remediation patterns while evaluating algorithm performance in real-world conditions
@@ -17226,8 +17202,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Cost of a Data Breach report; 97% of organizations that had an AI-related data breach lacked proper access controls
 - **Organizational Readiness**: Assess post-quantum cryptography risk; Flag outdated or vulnerable algorithms; Generate audit-ready reports; Ensure alignment with evolving compliance standards; proactive, flexible, powerful and fast cryptographic infrastructure
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: IBM_Guardium_Safe.html (218,020 bytes, 5,474 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:54:52
 
 ---
 
@@ -17268,9 +17242,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: migration phase (assess/plan/test/migrate/launch); breaking changes; backward compatibility; rollback procedures; effort estimation; phased rollout
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Ubuntu_26.04_LTS.html (141,067 bytes, 13,603 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T11:55:39
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -17311,9 +17285,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: supports applet updates in the field; update the EdgeLock SE051’s IoT applet with various items including updates for security maintenance in the field, applet upgrades or deploy newly developed applets post-shipment; Moving from EdgeLock SE050 to EdgeLock SE051; easy integration with different MCUs and MPUs simplifying design-in and reducing time-to-market
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: IEC62443-4-1 certified secure process with maturity level 3; contact your local NXP representative for proprietary applet development
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: NXP_SE051_Secure_Element.html (540,131 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T11:56:31
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -17354,9 +17328,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: firmware updates authenticated by LMS signature, field firmware upgrades for ML-KEM and ML-DSA support, backward compatibility via existing products supporting additional algorithms
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: STMicroelectronics_ST33KTPM.html (94,607 bytes, 3,144 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T11:58:09
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -17397,9 +17371,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: smooth transition to post-quantum solutions; effortless supporting service providers in their post-quantum migrations; seamless user experience; maintaining the current user experience
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: holistic approach to security; accompanying customers in their post-quantum migration; agile solution
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: IDEMIA_PQC_Accelerator.html (95,656 bytes, 9,821 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T11:58:54
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -17430,6 +17404,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; CISO; Compliance Officer; Operations
 - **Implementation Prerequisites**: Public key infrastructure environment; standardized key-delivery API for QKD deployments
 - **Relevant PQC Today Features**: hybrid-crypto; crypto-agility; qkd; compliance; threats
+- **Source Document**: Adva_FSP_3000_S-Flex.html (49,455 bytes, 5,312 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T11:59:40
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: BSI approval
@@ -17441,8 +17417,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Adva_FSP_3000_S-Flex.html (49,455 bytes, 5,312 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T11:59:40
 
 ---
 
@@ -17473,6 +17447,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Compliance Officer; Administrator; Researcher
 - **Implementation Prerequisites**: Hardware version 4.1; Firmware version spss.a1.1.5_00039; SP_FIPS_ENABLE fuse must be blown; Snapdragon 8cx Gen 3 Mobile Compute Platform SoC
 - **Relevant PQC Today Features**: Compliance, hsm-pqc, entropy-randomness
+- **Source Document**: Qualcomm_Snapdragon_SPU.html (8,751 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-04-16T12:00:12
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -17483,10 +17459,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Qualcomm_Snapdragon_SPU.html (8,751 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-04-16T12:00:12
 
 ---
 
@@ -17517,6 +17490,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Compliance Officer; CISO; Operations
 - **Implementation Prerequisites**: TAP installation for passive probe deployment; standard APIs and formats for integration; CBOM format adoption
 - **Relevant PQC Today Features**: Assess; Migrate; crypto-agility; compliance-strategy; migration-program
+- **Source Document**: CryptoNext_COMPASS_Probe.html (133,193 bytes, 9,469 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:00:32
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: CBOM, cryptographic assets inventory, algorithm enumeration, protocol detection (TLS, SSH, ISAKMP), certificate inventory, crypto-agility scanning
 - **Testing & Validation Methods**: PQC Evaluation Toolbox, custom prototypes, simulation of post-quantum impact, NIST CAVP certification
@@ -17528,8 +17503,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites (crypto-agile governance), dedicated roles (administrator, cryptography manager), planning horizon (by end of 2026 for EU organizations)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: CryptoNext_COMPASS_Probe.html (133,193 bytes, 9,469 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:00:32
 
 ---
 
@@ -17560,6 +17533,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Business Leader
 - **Implementation Prerequisites**: NetScaler version 13.1 hardware appliances; NetScaler version 13.1 virtual appliances (Coordination phase); Non-production environments for validation
 - **Relevant PQC Today Features**: Timeline, Threats, Compliance, Migrate, Algorithms, Leaders, hybrid-crypto
+- **Source Document**: Citrix_CVAD.html (173,131 bytes, 6,727 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:01:23
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -17571,8 +17546,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Organizations with on-premises deployments can save 70% over 3 years with DaaS; Citrix customers save $98 per user, per year, by adopting an all-in-one DaaS solution
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Citrix_CVAD.html (173,131 bytes, 6,727 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:01:23
 
 ---
 
@@ -17603,6 +17576,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, IT administrator, Security professional, Security Architect
 - **Implementation Prerequisites**: Windows Server 2025; Windows 11 clients (24H2, 25H2); .NET 10; updates to Cryptography API: Next Generation (CNG) libraries
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, crypto-agility, tls-basics, pki-workshop
+- **Source Document**: Microsoft_RDS.html (36,831 bytes, 1,987 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:01:59
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -17614,8 +17589,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Microsoft_RDS.html (36,831 bytes, 1,987 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:01:59
 
 ---
 
@@ -17646,6 +17619,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, CISO, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: hybrid-crypto, tls-basics, quantum-threats, algorithms, migration-program
+- **Source Document**: Zscaler_ZTE.html (253,657 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:02:22
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -17657,8 +17632,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Understanding the new paradigm is essential for security and networking practitioners to secure today's data against future quantum-based attacks
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Zscaler_ZTE.html (253,657 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:02:22
 
 ---
 
@@ -17699,9 +17672,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: Phased Release Cloudlet; last-match-win approach; disable PQC Client to Edge if high latency or increased error rate observed; TLS 1.3 enabled in deployment settings required; applies only to Enhanced TLS hostnames
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Akamai_Edge.html (620,459 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T12:03:23
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -17742,9 +17715,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: JetBrains_TeamCity_2026.1.html (7,482 bytes, 921 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T12:04:10
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -17775,6 +17748,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer, Developer, Policy Maker
 - **Implementation Prerequisites**: Unified inventory of cryptographic assets; crypto-agile processes; secure processors or secure elements; secure boot and authenticated firmware update mechanisms; SBOM practices; PKI for device identities
 - **Relevant PQC Today Features**: Timeline, Threats, Compliance, Migrate, Assess, Leaders, Playground, crypto-agility, iot-ot-pqc, digital-id
+- **Source Document**: Keyfactor_2026_Trends.html (156,366 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:04:33
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: cryptographic asset mapping, inventorying all cryptographic assets and dependencies, unified inventory of cryptographic assets algorithms and dependencies, certificate landscape visibility, SBOM (Software Bill of Material) to track vulnerabilities and document dependencies
 - **Testing & Validation Methods**: None detected
@@ -17786,8 +17761,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: hefty fines for non-compliance with Cyber Resilience Act (CRA), greater cost risk and pressure once migration becomes mandatory, operational savings of lifecycle automation, breach cost baselines not explicitly stated, compliance penalties not quantified beyond "hefty fines", ROI projections not explicitly stated, budget requirements not explicitly stated, government spending mandates not explicitly stated
 - **Organizational Readiness**: lack of skilled personnel (40%), competing priorities (40%), unclear industry standards (39%), governance prerequisites via "centralize governance to eliminate ownership gaps and blind spots", dedicated crypto team required implied by "assign ownership", board-level reporting not explicitly stated, change management scope via "crypto-agile processes that support rapid algorithm transitions", estimated planning horizon not explicitly quantified but "14 to 20 months from ideation to market introduction" for products, maturity assessment level implied by "quantum readiness needs cryptographic visibility"
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Keyfactor_2026_Trends.html (156,366 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:04:33
 
 ---
 
@@ -17818,6 +17791,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, DevSecOps teams, Compliance Officer, Developer
 - **Implementation Prerequisites**: AVX ONE CLM platform; CI/CD pipeline integration (GitHub, GitLab, Jenkins, Azure DevOps); deployment model selection (On-Prem, SaaS, Managed Kubernetes)
 - **Relevant PQC Today Features**: Assess, Migrate, Algorithms, crypto-agility, pqc-risk-management, code-signing
+- **Source Document**: AppViewX_Spring_2026.html (106,546 bytes, 14,186 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:06:14
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: agentless discovery, insight into certificates and cipher usage, cryptographic posture assessment, certificate inventory, key material audit
 - **Testing & Validation Methods**: post-push validation, domain control validation (DCV), automated retries, reliability controls
@@ -17829,8 +17804,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: operational overhead reduction, resource costs reduction, outage prevention, compliance penalties (implied via 47-day mandate), budget requirements (not explicitly stated)
 - **Organizational Readiness**: crypto-agility, governance prerequisites (Policy Engine enhancements), change management scope (phased path), maturity assessment level (Crypto Resilience Scorecards), planning horizon (Spring 2026 Release)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: AppViewX_Spring_2026.html (106,546 bytes, 14,186 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:06:14
 
 ---
 
@@ -17861,6 +17834,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Policy Maker; MSPs
 - **Implementation Prerequisites**: Cryptographic inventory assessment; Budget allocation for PQC migration; Adoption of Certificate Lifecycle Management (CLM) tools
 - **Relevant PQC Today Features**: Timeline; Migrate; Assess; crypto-agility; code-signing
+- **Source Document**: Sectigo_2026_Predictions.html (407,136 bytes, 10,420 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:07:19
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: assessing and building cryptographic inventories, cryptographic discovery
 - **Testing & Validation Methods**: None detected
@@ -17872,8 +17847,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: 90% of organizations allocated budgets, revenue opportunity for MSPs, cost of inaction (risk and money)
 - **Organizational Readiness**: crypto-agility, proactive action, strategic element of enterprise identity and access management (IAM), dedicated crypto team required (implied via skilled IT teams vs smaller businesses), planning horizon (2024 wake up, 2025 getting wise, 2026 execution)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Sectigo_2026_Predictions.html (407,136 bytes, 10,420 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:07:19
 
 ---
 
@@ -17904,6 +17877,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Policy Maker; Operations
 - **Implementation Prerequisites**: Cryptographic inventory; PQ readiness assessments; access to Entrust experts; adoption of NIST standardized PQC algorithms
 - **Relevant PQC Today Features**: Assess; Migrate; hybrid-crypto; crypto-agility; hsm-pqc; pki-workshop; pqc-governance; pqc-business-case
+- **Source Document**: Entrust_Cryptographic_Platform.html (50,762 bytes, 3,115 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:08:19
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: discovery, certificate life-cycle management
 - **Testing & Validation Methods**: None detected
@@ -17915,8 +17890,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance, risk and compliance infrastructure, regulatory pressure, crypto-agility
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Entrust_Cryptographic_Platform.html (50,762 bytes, 3,115 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:08:19
 
 ---
 
@@ -17947,7 +17920,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Researcher
 - **Implementation Prerequisites**: Support for TLS 1.3; ability to cache peer commitments; validation of signature_algorithm against certificate
 - **Relevant PQC Today Features**: tls-basics, hybrid-crypto, crypto-agility, migration-program, pqc-risk-management
-- **Implementation Attack Surface**: None detected
+- **Implementation Attack Surface**: Rollback attack, MitM attacks, stripping of PQC or composite certificates
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
@@ -17957,9 +17930,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: gradual migration phase; coexistence of traditional and PQC certificates; rollback procedures via cached commitment enforcement; backward compatibility with legacy clients; phased rollout driven by legacy client base size
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Venafi_TLS_PQC_Continuity.html (58,878 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T12:08:47
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -17995,14 +17968,14 @@ enrichment_method: ollama-qwen3.5:27b
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
+- **Constrained Device & IoT Suitability**: Small Language Models (SLMs) running at the edge
 - **Supply Chain & Vendor Risk**: vendor consolidation, consolidation of security vendors, third-party library trust (implied via MSP role and vendor partnerships), procurement risk (simplify procurement)
 - **Deployment & Migration Complexity**: migration phase (assess/plan/test/migrate/launch) described as assessing and building cryptographic inventories, pilot PQC rollouts, actively implementing cryptographic discovery, crypto-agility, shorter certificate lifespans, 6-month SSL certificates, October 1, 2026 deadline
 - **Financial & Business Impact**: 90% of organizations allocated budgets, revenue opportunity for MSPs, cost of inaction (risk and money)
 - **Organizational Readiness**: crypto-agility required, dedicated teams implied via skilled IT teams vs smaller businesses, planning horizon (2024 wake up, 2025 getting wise, 2026 execution), governance needs for passkeys
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Sectigo_Cert_Manager_2026.html (407,136 bytes, 10,420 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T12:09:44
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -18033,6 +18006,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Hardware Engineer
 - **Implementation Prerequisites**: FPGA or ASIC platform; Bus interface configuration
 - **Relevant PQC Today Features**: Algorithms; hsm-pqc; iot-ot-pqc; vendor-risk; pqc-business-case
+- **Source Document**: Xiphera_XIP6110B.html (43,764 bytes, 3,500 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:10:43
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Cryptographic Algorithm Validation Program (CAVP)
@@ -18044,8 +18019,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Xiphera_XIP6110B.html (43,764 bytes, 3,500 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:10:43
 
 ---
 
@@ -18076,6 +18049,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Operations, CISO
 - **Implementation Prerequisites**: Terraform; Ansible; Prometheus; Grafana; Kubernetes; HashiCorp NIA with Consul
 - **Relevant PQC Today Features**: tls-basics, hybrid-crypto, vendor-risk, migration-program, api-security-jwt
+- **Source Document**: A10_Networks_Thunder_ADC.html (797,803 bytes, 8,188 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:11:11
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -18087,8 +18062,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: A10_Networks_Thunder_ADC.html (797,803 bytes, 8,188 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:11:11
 
 ---
 
@@ -18119,6 +18092,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Operations
 - **Implementation Prerequisites**: Enhanced SSL Profile; NetScaler appliance with ADC 14.1 or later; CLI or GUI access to Traffic Management > SSL > SSL Profiles
 - **Relevant PQC Today Features**: hybrid-crypto, tls-basics, algorithms, compliance-strategy, migration-program
+- **Source Document**: Citrix*ADC\_\_NetScaler*.html (96,712 bytes, 10,991 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:11:45
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -18130,8 +18105,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Citrix*ADC\_\_NetScaler*.html (96,712 bytes, 10,991 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:11:45
 
 ---
 
@@ -18162,6 +18135,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: Python 3; Windows, macOS, or Ubuntu Linux operating systems; X.509 smart cards for PIV/CAC authentication
 - **Relevant PQC Today Features**: vpn-ssh-pqc, pki-workshop, compliance
+- **Source Document**: VanDyke_SecureCRT_10.x.html (39,214 bytes, 7,965 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:12:32
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -18173,8 +18148,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: VanDyke_SecureCRT_10.x.html (39,214 bytes, 7,965 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:12:32
 
 ---
 
@@ -18205,6 +18178,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: pki-workshop
+- **Source Document**: Dogtag_Certificate_System.html (20,460 bytes, 3,128 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:13:07
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: certificate inventory; key archival
 - **Testing & Validation Methods**: None detected
@@ -18216,8 +18191,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: enterprise-class; organizational authentication and policies
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Dogtag_Certificate_System.html (20,460 bytes, 3,128 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:13:07
 
 ---
 
@@ -18248,6 +18221,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Operations, Policy Maker
 - **Implementation Prerequisites**: Identify and fix potential vulnerabilities; Classify cryptographic algorithms as quantum resistant or quantum vulnerable; Remediate those deemed quantum vulnerable; Manage internal and external dependencies
 - **Relevant PQC Today Features**: Threats, Algorithms, Leaders, Migrate, Assess
+- **Source Document**: IBM_z_VSE.html (137,720 bytes, 1,574 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:13:36
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -18259,8 +18234,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: 30% savings on select IBM products; limited-time offers; flexible payment plans; subscription renewal at current price
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: IBM_z_VSE.html (137,720 bytes, 1,574 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:13:36
 
 ---
 
@@ -18291,6 +18264,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Operations, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: quantum-threats, pqc-business-case, migration-program
+- **Source Document**: Unisys_ClearPath_Forward.html (172,010 bytes, 12,597 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:14:01
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -18302,8 +18277,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: 50x growth, revenue increase, maximize ROI, cost efficiency, profitability
 - **Organizational Readiness**: governance prerequisites not detected, dedicated crypto team required not detected, board-level reporting not detected, change management scope not detected, estimated planning horizon not detected, maturity assessment level not detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Unisys_ClearPath_Forward.html (172,010 bytes, 12,597 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:14:01
 
 ---
 
@@ -18344,9 +18317,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: supports applet updates in the field; update the EdgeLock SE051’s IoT applet with various items including updates for security maintenance in the field; applet upgrades or deploy newly developed applets post-shipment; Moving from EdgeLock ™ SE050 to EdgeLock SE051
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: IEC62443-4-1 certified secure process with maturity level 3; contact your local NXP representative for proprietary applet development
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: NXP_EdgeLock_SE051H.html (540,131 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T12:14:51
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -18387,9 +18360,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: CNSA2.0 approved Post-Quantum Cryptography (PQC), full suite of CNSA2.0 prescribed PQC algorithm support, future-proofing your security infrastructure, Intel PFR 4.0 compliance, system firmware attestation and recovery from corruption
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Lattice_MachXO5-NX.html (628,710 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T12:16:28
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -18420,6 +18393,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: AMD Versal Gen 2 Adaptive SoC; Vivado Design Suite; Vitis Software Platform
 - **Relevant PQC Today Features**: Compliance, Algorithms, iot-ot-pqc
+- **Source Document**: AMD_Versal_Adaptive_SoC.html (237,336 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:17:45
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -18431,8 +18406,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: AMD_Versal_Adaptive_SoC.html (237,336 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:17:45
 
 ---
 
@@ -18463,6 +18436,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, CISO, Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: IBM_Storage_Scale_5.2.pdf (6,911,492 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:18:36
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -18474,8 +18449,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: IBM_Storage_Scale_5.2.pdf (6,911,492 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:18:36
 
 ---
 
@@ -18516,9 +18489,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: NetApp_ONTAP_9.16.html (179,354 bytes, 9,748 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T12:19:50
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -18559,9 +18532,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: Non-disruptive upgrades, non-disruptive disaster recovery testing, seamless data mobility, zero RPO and RTO failover
 - **Financial & Business Impact**: GDPR compliance, ransomware remediation cost avoidance, lower costs for backup operations
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Pure_Storage_Purity\_\_FA_6.6.pdf (151,369 bytes, 11,837 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T12:20:28
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -18592,6 +18565,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: General Consumer; Business Buyer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Dell_PowerStore_OS_4.0.html (717,183 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:21:17
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -18603,8 +18578,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: 5:1 data reduction guarantee; 54% lower energy costs; up to 30% faster workloads; cost-effective data in-place upgrades
 - **Organizational Readiness**: AI-driven simplicity for streamlined operations; automated workflows; integrated cloud backup; self-optimizing storage
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Dell_PowerStore_OS_4.0.html (717,183 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:21:17
 
 ---
 
@@ -18645,9 +18618,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: HPE_Alletra_MP.html (303,319 bytes, 10,068 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T12:22:14
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -18688,9 +18661,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: conversion of existing Windows-based backup server to software appliance, upgrade to Veeam Backup & Replication v13 required before conversion, active/passive backup server cluster configuration, passwordless management connection via certificate thumbprints, certificate-based authentication for subsequent connections
 - **Financial & Business Impact**: significantly reduced operational costs, low-cost all-in-one backup appliance, high cost and complexity of support cases for non-Enterprise grade hardware
 - **Organizational Readiness**: Enhanced Role-Based Access Control (RBAC), Single Sign On (SSO), dedicated Security Officer role required for Zero Trust operations, approval workflow for sensitive host management operations
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Veeam_Data_Platform_v13.pdf (843,178 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T12:22:52
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -18721,6 +18694,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Operations, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: data-asset-sensitivity, compliance-strategy, migration-program
+- **Source Document**: Commvault_Cloud.html (143,364 bytes, 8,316 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:24:03
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Data Discovery, Classification, Data access governance, Remediation and redaction of sensitive data, Find and classify sensitive data across data, apps, and identities
 - **Testing & Validation Methods**: VALIDATE & IMPROVE, Continuously prove recoverability, On-demand cleanrooms for testing and forensics
@@ -18732,8 +18707,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: The Readiverse Essential intelligence organizations need to get ready and stay ready, CxO Exchange, Executive Briefings, Governance prerequisites not explicitly detailed
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Commvault_Cloud.html (143,364 bytes, 8,316 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:24:03
 
 ---
 
@@ -18764,6 +18737,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Operations, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: compliance-strategy, migration-program, pqc-risk-management
+- **Source Document**: Veritas_NetBackup_10.5.html (219,406 bytes, 10,539 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:24:52
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -18775,8 +18750,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Veritas_NetBackup_10.5.html (219,406 bytes, 10,539 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:24:52
 
 ---
 
@@ -18807,7 +18780,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Compliance Officer, Developer
 - **Implementation Prerequisites**: Outbound network connectivity to Rubrik Security Cloud services; SAML 2.0-enabled Identity Provider for SSO integration; Mobile authentication applications for MFA (Microsoft, Google, Okta); Edge firewall configuration for IP allowlisting
 - **Relevant PQC Today Features**: tls-basics, api-security-jwt, data-asset-sensitivity, vendor-risk, compliance-strategy
-- **Implementation Attack Surface**: None detected
+- **Implementation Attack Surface**: Cross-site scripting (XSS), SQL injection (SQLi), DDoS attacks
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: static code analysis, vulnerability scanning, penetration testing, system scale and stress tests, regression testing via continuous integration
 - **QKD Protocols & Quantum Networking**: None detected
@@ -18817,9 +18790,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: phased product rollout, continuous customer feedback, break-glass mode for local workloads during internet outages
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: dedicated in-house product security team, annual incident response plan testing, role-based access control governance
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Rubrik_Security_Cloud.pdf (367,897 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T12:25:30
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -18860,9 +18833,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: Manual enablement required for node-to-node encryption when upgrading from earlier versions to 7.1.1; phased rollout implied by version history and upgrade paths
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Secure cluster administration; granular role-based access control; multifactor authentication integration; continuous security monitoring; compliance standards and certifications
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Cohesity_DataCloud.pdf (1,526,931 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T12:26:27
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -18893,6 +18866,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, CISO, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: crypto-agility, qkd, entropy-randomness, kms-pqc, hybrid-crypto
+- **Source Document**: QuintessenceLabs_qSOC.html (160,280 bytes, 6,879 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:27:24
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Common Criteria Certified; NIST 800-90B Certified as a true random entropy source
@@ -18904,8 +18879,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: QuintessenceLabs_qSOC.html (160,280 bytes, 6,879 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:27:24
 
 ---
 
@@ -18936,6 +18909,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CIO or IT Executive, CISO or InfoSec Executive, IT Ops Leader or Manager
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Zerto_11.0.html (269,132 bytes, 8,468 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:28:13
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -18947,8 +18922,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Zerto_11.0.html (269,132 bytes, 8,468 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:28:13
 
 ---
 
@@ -18979,6 +18952,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer, IT Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: compliance-strategy, data-asset-sensitivity, vendor-risk
+- **Source Document**: Druva_Data_Resiliency_Cloud.html (193,528 bytes, 10,954 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:28:48
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -18990,8 +18965,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: 40% Lower TCO; $10M Data Resilience Guarantee; 224% ROI; $100K annual savings for VMware and Windows data; 5x storage savings across clouds
 - **Organizational Readiness**: Cyber Resilience Maturity Model; Druva Cyber Resilience Assessment
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Druva_Data_Resiliency_Cloud.html (193,528 bytes, 10,954 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:28:48
 
 ---
 
@@ -19022,6 +18995,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Operations, Developer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: compliance-strategy, data-asset-sensitivity, vendor-risk
+- **Source Document**: Scality_RING9.html (347,962 bytes, 9,084 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:29:37
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -19033,8 +19008,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Save 50 to 70% TCO vs. alternative solutions; cloud-style economics without hidden fees; reduced cost of cloud storage
 - **Organizational Readiness**: One admin can manage petabytes of data; intuitive UI; scalable across servers, sites, clouds, file and object data
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Scality_RING9.html (347,962 bytes, 9,084 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:29:37
 
 ---
 
@@ -19075,9 +19048,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: PQC adoption timelines; AWS migration strategy; Workstream 1: Inventorying existing use cases; Workstream 2: Confidentiality (need for long-term confidentiality); Workstream 3: Use cases with long-lived roots of trust (hard/costly to upgrade); Workstream 4: All other use cases; Continuous integration & deployment pipelines; Deployment timeline; Breaking changes implied by Disallowed ECC, RSA, FF
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Shared-responsibility model as part of a migration plan; Continuous integration & deployment pipelines as part of agility and best practices
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Amazon*Web_Services\_\_AWS*.pdf (1,288,602 bytes, 5,576 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T12:30:25
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -19118,9 +19091,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: phased transition strategy built on a modular framework, hybrid approach combining classical and quantum-resistant algorithms as an interim step, direct shift to full PQC, early adoption by 2029, complete transition by 2033
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Microsoft Quantum Safe Program (QSP), QSP leadership team with representatives across all major business groups, research and engineering divisions, and functions, governance prerequisites, change management scope
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Microsoft_Azure.html (290,454 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T12:31:19
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -19161,7 +19134,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: VMware_ESXi_9.0.html (5,247 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-16T12:32:17
@@ -19195,6 +19167,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; IT Professional; Security Architect; Operations
 - **Implementation Prerequisites**: Windows Server 2016 or later; Windows 10 or later; Azure Local 2311.2 or later; TPM 2.0 support for shielded VMs; UEFI firmware for Generation 2 VMs
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Microsoft_Hyper-V.html (67,006 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:32:37
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -19206,8 +19180,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Microsoft_Hyper-V.html (67,006 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:32:37
 
 ---
 
@@ -19238,6 +19210,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Operations, CISO
 - **Implementation Prerequisites**: Nutanix Cloud Infrastructure (NCI) software license; Nutanix Prism HTML5-based web console; Nutanix Move tool for migration from VMware ESXi, Microsoft Hyper-V, or public clouds
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Nutanix_AHV.html (248,426 bytes, 13,999 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:33:20
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -19249,8 +19223,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Lower operational costs; license-free virtualization; reduced need for specialized IT staff; cost control; no hidden costs; no costly shelf-ware
 - **Organizational Readiness**: Unified management via Nutanix Prism; simplified day-to-day administration; automated workflows; self-service capabilities; governance and compliance reporting
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Nutanix_AHV.html (248,426 bytes, 13,999 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:33:20
 
 ---
 
@@ -19281,6 +19253,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: Go 1.24+; Docker Engine 28.0
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, migration-program
+- **Source Document**: Docker_Engine_28.0.html (493,090 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:34:20
 - **Implementation Attack Surface**: authorization bypass in AuthZ plugins; flaw in docker plugin install
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -19292,8 +19266,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Organization administration; Company administration overview; Manage organization members; Manage company members; Single sign-on; SCIM; Group mapping; Enforce Roles and permissions
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Docker_Engine_28.0.html (493,090 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:34:20
 
 ---
 
@@ -19334,9 +19306,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: Migrate and modernize applications; Lift and shift on-premises applications to Amazon EKS; build and scale microservices-based applications for enhanced fault tolerance and extensibility
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Amazon_EKS.html (239,282 bytes, 4,439 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T12:35:20
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -19367,6 +19339,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Developer, Policy Maker
 - **Implementation Prerequisites**: Kubernetes v1.33; Go 1.24; Android 17; BoringSSL with ML-KEM support
 - **Relevant PQC Today Features**: Timeline, Threats, Algorithms, hybrid-crypto, crypto-agility, tls-basics, kms-pqc
+- **Source Document**: Google_GKE.html (2,013,952 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:35:49
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -19378,8 +19352,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: GKE free tier provides $74.40 in monthly credits; Cluster management fee is $0.10 per cluster per hour; Rembrand cut training costs by 50%; Moloco gets 10x faster model training times; HubX reduces latency by up to 66%; Signify scaled infrastructure to support a 1,150% increase in transactions
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Google_GKE.html (2,013,952 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:35:49
 
 ---
 
@@ -19410,6 +19382,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: Kubernetes v1.33; Go 1.24
 - **Relevant PQC Today Features**: Migrate, Algorithms, compliance-strategy
+- **Source Document**: Azure_AKS.html (433,923 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:36:45
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -19421,8 +19395,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Azure_AKS.html (433,923 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:36:45
 
 ---
 
@@ -19453,6 +19425,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, CISO
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Timeline; Threats; Algorithms; tls-basics; hybrid-crypto
+- **Source Document**: Fastly_Edge_Cloud.html (258,048 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:37:38
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -19464,8 +19438,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Fastly_Edge_Cloud.html (258,048 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:37:38
 
 ---
 
@@ -19496,6 +19468,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: tls-basics, hybrid-crypto, compliance-strategy, migration-program
+- **Source Document**: Amazon_CloudFront.html (1,970,863 bytes, 6,467 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:38:25
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -19507,8 +19481,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: There are no additional charges for using PQC or the TLS1.3_2025 policy
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Amazon_CloudFront.html (1,970,863 bytes, 6,467 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:38:25
 
 ---
 
@@ -19539,6 +19511,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Developer, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Timeline, Threats, Algorithms, hybrid-crypto, crypto-agility, tls-basics, kms-pqc
+- **Source Document**: Google_Cloud_CDN.html (223,633 bytes, 331 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:39:05
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -19550,8 +19524,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Google_Cloud_CDN.html (223,633 bytes, 331 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:39:05
 
 ---
 
@@ -19582,6 +19554,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: Access to Vultr Console or API; Kubernetes or Slurm for cluster management; No upfront hardware costs required
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Vultr_Cloud_GPU.html (84,911 bytes, 2,019 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:39:26
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -19593,8 +19567,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Vultr_Cloud_GPU.html (84,911 bytes, 2,019 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:39:26
 
 ---
 
@@ -19635,9 +19607,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Zoom_Compliance_2026.html (382,097 bytes, 12,309 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T12:39:49
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -19668,6 +19640,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Developer; Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: pqc-101; quantum-threats; vendor-risk
+- **Source Document**: Cisco_Webex.html (121,460 bytes, 7,102 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:40:30
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -19679,8 +19653,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Cisco_Webex.html (121,460 bytes, 7,102 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:40:30
 
 ---
 
@@ -19711,6 +19683,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer, Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: vendor-risk, pqc-risk-management, email-signing
+- **Source Document**: Mimecast_Cloud_Integrated.html (165,315 bytes, 14,791 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:41:05
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -19722,8 +19696,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Mimecast_Cloud_Integrated.html (165,315 bytes, 14,791 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:41:05
 
 ---
 
@@ -19754,6 +19726,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: vendor-risk, pqc-risk-management, email-signing
+- **Source Document**: Proofpoint_Aegis.html (213,488 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:41:53
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -19765,8 +19739,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: $1 M average cost of a data breach; $1 M on average in reduced risk exposure; $1 M saved by optimizing IT; 75% improvement in workforce efficiencies
 - **Organizational Readiness**: unified detection and response workflow; streamlining security operations; minimizing triage-worthy alerts; coaching at-risk employees
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Proofpoint_Aegis.html (213,488 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:41:53
 
 ---
 
@@ -19797,6 +19769,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; CISO; Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: email-signing
+- **Source Document**: Barracuda_Email_Protection.html (262,747 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:42:48
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -19808,8 +19782,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Average cost of a Business Email Compromise (BEC) attack per organization is $134,952; severe penalties for non-compliance with retention and e-discovery requirements.
 - **Organizational Readiness**: No extra IT resources or specialized cybersecurity expertise required; 24/7 human support available; solutions tailored to specific industries including Manufacturing, Retail, Education, Healthcare, Financial Services, and State and Local Government.
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Barracuda_Email_Protection.html (262,747 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:42:48
 
 ---
 
@@ -19850,9 +19822,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: OpenText_Content_Cloud.html (358,321 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T12:43:49
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -19883,6 +19855,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Compliance Officer, Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: compliance-strategy, data-asset-sensitivity
+- **Source Document**: Hyland_OnBase.html (150,830 bytes, 8,082 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:44:35
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -19894,8 +19868,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Hyland_OnBase.html (150,830 bytes, 8,082 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:44:35
 
 ---
 
@@ -19926,6 +19898,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: data-asset-sensitivity, compliance-strategy
+- **Source Document**: Forcepoint_DLP.html (743,097 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:45:07
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -19937,8 +19911,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Identify and Assess: Identify where your sensitive data resides and how it flows, Classify Data: Use automated tools to label data based on sensitivity and compliance needs, Establish Policies: Define clear rules for how data can be accessed, shared and stored, Centralize Oversight: Avoid fragmented DLP efforts by unifying policy management across departments, Train Employees: Educate users on data handling best practices and reinforce with real-time coaching
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Forcepoint_DLP.html (743,097 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:45:07
 
 ---
 
@@ -19977,11 +19949,11 @@ enrichment_method: ollama-qwen3.5:27b
 - **Constrained Device & IoT Suitability**: None detected
 - **Supply Chain & Vendor Risk**: None detected
 - **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
+- **Financial & Business Impact**: Unified platform approach reduces overheads and improves operational efficiency; Netskope BVS quantifies financial and strategic impact of SASE transformation.
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Netskope_Intelligent_DLP.html (1,277,710 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T12:46:12
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -20012,6 +19984,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Threats, Migrate, Algorithms, hybrid-crypto, pqc-business-case
+- **Source Document**: Broadcom_Symantec_DLP.html (48,172 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-04-16T12:46:58
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -20022,10 +19996,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Broadcom_Symantec_DLP.html (48,172 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-04-16T12:46:58
 
 ---
 
@@ -20056,6 +20027,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Operations; Compliance Officer
 - **Implementation Prerequisites**: Client-deployed software and server software required; API-driven automations for P2P solutions; integration with Cloud Object Storage or on-premises infrastructure
 - **Relevant PQC Today Features**: compliance-strategy, migration-program, vendor-risk
+- **Source Document**: IBM_Aspera.html (221,060 bytes, 4,956 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:47:18
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -20067,8 +20040,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Save 30% on your first annual subscription; Offer ends 15 April 2026; low-cost platform; 5x faster data transfer; accelerate your data transfers by up to 100x
 - **Organizational Readiness**: Enterprise-ready file transfer; Meet strict regulatory and data protection requirements; enterprise-grade security; detailed auditing and policy-based controls; HIPAA-compliant files
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: IBM_Aspera.html (221,060 bytes, 4,956 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:47:18
 
 ---
 
@@ -20099,6 +20070,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Operations, CISO
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: tls-basics, migration-program, vendor-risk
+- **Source Document**: Signiant_Media_Shuttle.html (260,811 bytes, 10,330 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:47:59
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -20110,8 +20083,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Signiant_Media_Shuttle.html (260,811 bytes, 10,330 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:47:59
 
 ---
 
@@ -20152,9 +20123,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: multiyear transformation, phased transition strategy, modular framework, hybrid approach combining classical and quantum-resistant algorithms, direct shift to full PQC, early adoption by 2029, completion of transition by 2033, three key phases (Foundational security components, Core infrastructure services, All services and endpoints)
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Microsoft Quantum Safe Program (QSP), QSP leadership team with representatives across all major business groups, research and engineering divisions, and functions, governance by QSP leadership team
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Microsoft_Defender_for_Endpoint.html (290,454 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T12:48:37
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -20185,6 +20156,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Operations, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Broadcom_Symantec_SES.html (48,223 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-04-16T12:49:38
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -20195,10 +20168,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Broadcom_Symantec_SES.html (48,223 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-04-16T12:49:38
 
 ---
 
@@ -20229,6 +20199,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, IT Operations Manager, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: VMware_Workspace_ONE.html (508,723 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:49:58
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -20240,8 +20212,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: better value than other solutions on the market; more comprehensive and cost-effective
 - **Organizational Readiness**: multi-tenant architecture for scalable management; role-based access control; granular controls for global deployment; centralized management across all endpoints
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: VMware_Workspace_ONE.html (508,723 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:49:58
 
 ---
 
@@ -20272,6 +20242,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Operations, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Microsoft_Intune.html (212,952 bytes, 13,210 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:50:51
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -20283,8 +20255,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Total Economic Impact study by Forrester Consulting; cost savings from consolidating vendors; improved productivity and lower security risk
 - **Organizational Readiness**: Zero Trust approach required; AI-driven insights for IT and security teams; unified endpoint management across Windows, Android, macOS, iOS, and Linux
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Microsoft_Intune.html (212,952 bytes, 13,210 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:50:51
 
 ---
 
@@ -20320,14 +20290,14 @@ enrichment_method: ollama-qwen3.5:27b
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
-- **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
-- **Deployment & Migration Complexity**: None detected
-- **Financial & Business Impact**: None detected
+- **Constrained Device & IoT Suitability**: Supports rugged mobile devices and wearables; supports VR/XR devices
+- **Supply Chain & Vendor Risk**: Manages devices for supply chain workers to ensure they are updated and in good operating condition
+- **Deployment & Migration Complexity**: Simple onboarding and provisioning process over the air; automated device enrollment services available
+- **Financial & Business Impact**: Reduce the complexity and cost of endpoint management; increase productivity and help reduce operational costs
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Ivanti_Neurons_for_MDM.html (39,733 bytes, 4,095 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T12:51:38
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -20358,6 +20328,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Operations, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Jamf_Pro.html (121,210 bytes, 7,044 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:52:05
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -20369,8 +20341,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Jamf_Pro.html (121,210 bytes, 7,044 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:52:05
 
 ---
 
@@ -20401,6 +20371,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Operations, CISO, Developer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: iot-ot-pqc, digital-id, vendor-risk
+- **Source Document**: SOTI_MobiControl.html (119,844 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:52:38
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -20412,8 +20384,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: 10X or more ROI, minimize device downtime, boost worker productivity, optimize performance, maximize mobility investment
 - **Organizational Readiness**: SOTI University, SOTI Professional Services, SOTI Premium Service & SOTI Enterprise Service, single IT person to manage over 100,000 Android devices
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: SOTI_MobiControl.html (119,844 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:52:38
 
 ---
 
@@ -20444,6 +20414,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Leadership, Security Operations, CISO
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Recorded_Future.html (27,447 bytes, 3,313 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:53:50
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -20455,8 +20427,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: 76% of enterprises use threat intelligence to inform strategic decisions each week; maximizing ROI mentioned but no specific financial figures provided
 - **Organizational Readiness**: maturity stage assessment available via free assessment tool; program leveling up steps recommended
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Recorded_Future.html (27,447 bytes, 3,313 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:53:50
 
 ---
 
@@ -20487,6 +20457,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: pqc-risk-management, vendor-risk, compliance-strategy
+- **Source Document**: Mandiant\__Google_Cloud_.html (223,628 bytes, 331 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:54:20
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -20498,8 +20470,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Mandiant\__Google_Cloud_.html (223,628 bytes, 331 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:54:20
 
 ---
 
@@ -20530,6 +20500,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Analyst, Executive Leaders, SOC Managers, Threat Intel Leaders, Analysts, Researchers, Engineers
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: vendor-risk, data-asset-sensitivity, digital-assets
+- **Source Document**: Cyberint\__Check_Point_.html (90,477 bytes, 4,013 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:54:41
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -20541,8 +20513,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Cyberint\__Check_Point_.html (90,477 bytes, 4,013 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:54:41
 
 ---
 
@@ -20573,6 +20543,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, CISO
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: GitHub_Copilot_Security.html (201,375 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:55:08
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -20584,8 +20556,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites, centralized policy, ruleset framework, organization-wide application of policies
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: GitHub_Copilot_Security.html (201,375 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:55:08
 
 ---
 
@@ -20616,6 +20586,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Developer, Security Architect, Compliance Officer, Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Veracode_Platform.html (465,531 bytes, 10,072 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:56:00
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -20627,8 +20599,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: CISO and C-Level Executives; CRO Head of AppSec; Developers; Security Teams; Governance prerequisites implied by "Sustainability & Governance" section
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Veracode_Platform.html (465,531 bytes, 10,072 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:56:00
 
 ---
 
@@ -20659,6 +20629,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Developer, Compliance Officer, Operations
 - **Implementation Prerequisites**: Integration with existing IDEs, SCMs, CI/CD pipelines, ticketing systems, and AI-native coding environments; No requirement to change how teams build software as the tool operates inline.
 - **Relevant PQC Today Features**: api-security-jwt, vendor-risk, code-signing, migration-program, pqc-governance
+- **Source Document**: Checkmarx_One.html (1,039,981 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:56:46
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -20670,8 +20642,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Checkmarx_One.html (1,039,981 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:56:46
 
 ---
 
@@ -20702,6 +20672,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: Desktop version 2.17.9 or later; Android version 3.93.1835 or later; iOS version 3.9.4 or later; Log out and log back in to the app; Select WireGuard protocol
 - **Relevant PQC Today Features**: Threats; Algorithms; hybrid-crypto; vpn-ssh-pqc
+- **Source Document**: Windscribe.html (56,257 bytes, 4,336 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:57:33
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: validated with Wireshark
@@ -20713,8 +20685,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Windscribe.html (56,257 bytes, 4,336 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:57:33
 
 ---
 
@@ -20745,6 +20715,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Consumer VPN Users; Security Architect
 - **Implementation Prerequisites**: NordLynx protocol; Toggle switch enabled under Connections in Settings
 - **Relevant PQC Today Features**: vpn-ssh-pqc; migration-program; pqc-business-case; timeline; leaders
+- **Source Document**: NordVPN.html (330,285 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:58:10
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: performance data collection, connection speed impact analysis, latency metrics collection
@@ -20756,8 +20728,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: NordVPN.html (330,285 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:58:10
 
 ---
 
@@ -20788,6 +20758,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Policy Maker; Researcher
 - **Implementation Prerequisites**: macOS; Linux; Android; iOS; Windows
 - **Relevant PQC Today Features**: Threats, Assess, Algorithms, Leaders, hybrid-crypto, vpn-ssh-pqc
+- **Source Document**: Surfshark.html (59,459 bytes, 6,096 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T12:59:10
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Surfshark selected the most popular apps in banking, shopping, social media, and messaging categories to assess their adoption of PQC; analyzed a total of 40 commonly used apps across social media (9), messaging (11), banking (10), and shopping (10) categories
 - **Testing & Validation Methods**: None detected
@@ -20799,8 +20771,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: This may lead to major financial losses both for the individual and the bank
 - **Organizational Readiness**: stay informed with the latest news, pursue continuous education, and adopt quantum-resistant technologies as soon as possible
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Surfshark.html (59,459 bytes, 6,096 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T12:59:10
 
 ---
 
@@ -20831,6 +20801,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; CISO; Policy Maker; Researcher
 - **Implementation Prerequisites**: Underlying libraries like BoringSSL or OpenSSL with PQC providers; specific browser version ranges for Edge and Firefox support
 - **Relevant PQC Today Features**: Timeline; Threats; Compliance; Migrate; Algorithms
+- **Source Document**: Brave_Browser.html (229,111 bytes, 6,742 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:00:04
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -20842,8 +20814,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Brave_Browser.html (229,111 bytes, 6,742 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:00:04
 
 ---
 
@@ -20874,6 +20844,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Researcher
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Assess; Algorithms; Threats
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: Tor_Browser.html (246,691 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-04-16T13:01:05
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -20884,10 +20857,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Tor_Browser.html (246,691 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-04-16T13:01:05
 
 ---
 
@@ -20918,6 +20887,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: General Consumer; Privacy-Conscious User
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: DuckDuckGo_Browser.html (307,215 bytes, 13,452 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:01:25
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -20929,8 +20900,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: DuckDuckGo_Browser.html (307,215 bytes, 13,452 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:01:25
 
 ---
 
@@ -20967,13 +20936,13 @@ enrichment_method: ollama-qwen3.5:27b
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
 - **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
+- **Supply Chain & Vendor Risk**: Third-party integration supported via open APIs; reliance on consulting or professional services reduced
 - **Deployment & Migration Complexity**: incremental modernization, migrating systems incrementally, modular components, composable technology ecosystem, upgrade or replace without disruption, phased rollout
 - **Financial & Business Impact**: Lower TCO, reduce expenses and complexity, mitigate talent scarcity, cost-efficient technology ecosystem, lower operating costs
 - **Organizational Readiness**: governance prerequisites not explicitly stated, change management scope implied via "combining the right people, processes and technology", maturity assessment level not explicitly stated
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: FIS_Modern_Banking.html (400,621 bytes, 12,647 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T13:02:12
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -21004,6 +20973,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Compliance Officer, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: vendor-risk, compliance-strategy, migration-program
+- **Source Document**: General_Dynamics_Mission.html (158,000 bytes, 7,696 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:02:59
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -21015,8 +20986,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: General_Dynamics_Mission.html (158,000 bytes, 7,696 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:02:59
 
 ---
 
@@ -21047,6 +21016,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Compliance Officer; Auditor; Security Architect; Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: compliance-strategy, audit-risk-assessment, digital-assets
+- **Source Document**: SOC*2\_\_Quantum_Trust_Criteria*.html (240,576 bytes, 1,093 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:03:33
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -21058,8 +21029,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: SOC*2\_\_Quantum_Trust_Criteria*.html (240,576 bytes, 1,093 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:03:33
 
 ---
 
@@ -21100,9 +21069,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: HIPAA\__Quantum_Security_Rule_.html (147,953 bytes, 4,529 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T13:03:55
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -21133,6 +21102,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: Linux operating system for CLI usage; macOS app update required to remove IKEv2 support
 - **Relevant PQC Today Features**: vpn-ssh-pqc, migration-program, pqc-risk-management
+- **Source Document**: Proton_VPN.html (161,714 bytes, 12,535 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:04:24
 - **Implementation Attack Surface**: man-in-the-middle (MITM) attacks, brute-force attacks, password-equivalent information leakage
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: independent security audits, Bug Bounty program
@@ -21144,8 +21115,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Bug Bounty awards up to $100,000
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Proton_VPN.html (161,714 bytes, 12,535 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:04:24
 
 ---
 
@@ -21176,6 +21145,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations, CISO
 - **Implementation Prerequisites**: Go 1.24+
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, tls-basics, kms-pqc
+- **Source Document**: MinIO_Enterprise.html (461,638 bytes, 10,370 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:05:20
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: certificate inventory, key material audit
 - **Testing & Validation Methods**: None detected
@@ -21187,8 +21158,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: MinIO_Enterprise.html (461,638 bytes, 10,370 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:05:20
 
 ---
 
@@ -21219,6 +21188,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Compliance Officer; CISO; Developer
 - **Implementation Prerequisites**: PCI PTS HSM v3 certification; crypto-agile architecture support
 - **Relevant PQC Today Features**: hsm-pqc; compliance-strategy; migration-program; algorithms; crypto-agility
+- **Source Document**: Futurex_Vectera_Plus.html (616,839 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:06:07
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -21230,8 +21201,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Futurex Wins 2025 Overall Encryption Solution Provider of the Year - CyberSecurity Breakthrough Award; Best Places to Work for nine consecutive years; 7 out of the top 10 banks in the world trust Futurex encryption solutions
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Futurex_Vectera_Plus.html (616,839 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:06:07
 
 ---
 
@@ -21272,9 +21241,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: Phase 1 Architectural Readiness, Phase 2 Roll Out, Secure by Design, crypto key inventory, libraries, enabling customer workload security, sharing lessons learned, phased rollout from architectural readiness to rollout
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Technical foundations and governance for future crypto migrations, extending technical guidance to organizational strategies, Quantum-Safe Security Governance with the Cloud Controls Matrix
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Google*Cloud_Platform\_\_GCP*.pdf (1,874,343 bytes, 5,599 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T13:07:12
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -21315,9 +21284,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: Phase 1: Discovery; Phase 2: Planning; Phase 3: Execution; Phase 4: Futureproofing; Establish milestones for replacing legacy algorithms with PQC; Establish pilot programs and long-term adaption goals; Check dual-algorithm compatibility (e.g., classic + PQC algorithms); Futurex HSMs enable seamless migration with hybrid encryption; Use unified platforms like Futurex CryptoHub for centralized management during transitions
 - **Financial & Business Impact**: Identify deadlines and penalties for quantum-safe non-compliance; Align cryptographic use with standards such as PCI, GDPR, and HIPAA
 - **Organizational Readiness**: Form a Governance and Response Team to assess vulnerabilities; Assign IT and compliance team leaders to oversee implementation; Create a protocol for continuous review of quantum threats and PQC readiness; Train Internal Teams on PQC Best Practices; Engage with Trusted Encryption Experts for PQC Implementation
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Futurex_Cloud.pdf (1,974,958 bytes, 4,441 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T13:08:01
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -21354,13 +21323,13 @@ enrichment_method: ollama-qwen3.5:27b
 - **QKD Protocols & Quantum Networking**: None detected
 - **QRNG & Entropy Sources**: None detected
 - **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: None detected
+- **Supply Chain & Vendor Risk**: Third-party partners combine user information with data collected from their own services; Multiple third-party providers including Google, Stripe, and Cloudflare are listed as data collectors.
 - **Deployment & Migration Complexity**: PQC readiness planning, certificate lifecycle management
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: PQC readiness planning
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Sectigo_Certificate_Manager.html (1,267,150 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T13:09:03
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -21401,9 +21370,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: concept study status; long execution times for algorithms with many parameter sets; blocking of user interface during execution
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Bouncy_Castle_C**\_**Java.html (294,972 bytes, 7,588 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T13:09:55
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -21444,9 +21413,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: phased approach, Phase one: Akamai-to-origin, Phase two: Client-to-Akamai, Phase three: Akamai-to-Akamai, HelloRetryRequest, backward compatibility, limited availability, general availability release on October 31, 2025
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Cryptography Group, Architecture Group, Open Source Working Group, Chief Information Security Architect
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Akamai_Connected_Cloud.html (427,792 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T13:10:48
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -21487,9 +21456,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: ML-KEM hybrid IKEv2 planned for Junos 2026, upgrade from Release 21.2 and prior requires no-validate option, PQC signatures provide additional security beyond existing legacy signatures
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Juniper active in ETSI QKD and NIST PQC working groups
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Juniper_SRX_Series_Firewalls.pdf (870,046 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T13:11:52
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -21520,6 +21489,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Compliance Officer
 - **Implementation Prerequisites**: u.trust General Purpose HSM Se-Series; PKCS #11 integration; Vendor Defined Mechanisms support
 - **Relevant PQC Today Features**: hsm-pqc, crypto-agility, stateful-signatures, algorithms, migration-program
+- **Source Document**: Utimaco_SecurityServer.html (353,005 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:13:05
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: free, fully functional simulator of Quantum Protect; test how the algorithms serve their use cases
@@ -21531,8 +21502,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: organizations need to plan their migration to Post Quantum Cryptography now; timeline of 2030 for implementation; Frost & Sullivan’s 2024 Global Competitive Strategy Leadership Award in the Post-Quantum Cryptography industry
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Utimaco_SecurityServer.html (353,005 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:13:05
 
 ---
 
@@ -21563,6 +21532,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Policy Maker; Researcher
 - **Implementation Prerequisites**: Cryptographic inventory of systems using encryption or digital signatures; Vendor roadmap queries for hybrid PQC support; HSM upgrades supporting lattice-based primitives and QRNGs; Staff training on migration impacts; Incident response plan updates for archive compromise
 - **Relevant PQC Today Features**: Threats; Compliance; Migrate; Assess; Algorithms; Hybrid-crypto; Crypto-agility; PKI-workshop; HSM-pqc; Data-asset-sensitivity; Digital-id; Vendor-risk; Migration-program; PQC-risk-management; Code-signing
+- **Source Document**: Ascertia_ADSS_PKI_Server.html (58,362 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:14:12
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Audit your crypto landscape, Identify every system using encryption or digital signatures, Map out vendor dependencies, Assess archives
 - **Testing & Validation Methods**: NIST validation programme for conformance, FIPS 140-3 compliance with PQC, Periodic revalidation of archived documents
@@ -21574,8 +21545,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites, Staff training and governance, Update security policies to include quantum threat modelling, PQC timelines, estimated planning horizon (10 – 15 years)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Ascertia_ADSS_PKI_Server.html (58,362 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:14:12
 
 ---
 
@@ -21606,6 +21575,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Compliance Officer, CISO, Developer
 - **Implementation Prerequisites**: PKCS#11 library; OpenSSL; JCA/JCE; Microsoft CSP and KSP; CMAPI interface; TCP/IP network infrastructure; Linux Container Framework
 - **Relevant PQC Today Features**: hsm-pqc, compliance, hybrid-crypto, digital-id, algorithms
+- **Source Document**: I4P_Trident_HSM.html (284,514 bytes, 10,436 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:15:16
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Common Criteria EAL 4+ certification, Protection Profile for Cryptographic Module for Trust Services (EN 419221-5), Protection Profile for QSCD for Server Signing (EN 419241-2)
@@ -21617,8 +21588,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: global average data breach cost reached $4.88M in 2024
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: I4P_Trident_HSM.html (284,514 bytes, 10,436 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:15:16
 
 ---
 
@@ -21649,6 +21618,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: BSAFE Crypto Module for C; Dell BSAFE product download request process
 - **Relevant PQC Today Features**: Algorithms, Compliance, Migrate, stateful-signatures
+- **Source Document**: Dell_BSAFE_Crypto_Module_for_C.html (178,075 bytes, 4,321 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:16:13
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-3 validated, PKIC PQCCM verified
@@ -21660,8 +21631,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Dell_BSAFE_Crypto_Module_for_C.html (178,075 bytes, 4,321 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:16:13
 
 ---
 
@@ -21692,6 +21661,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Compliance Officer
 - **Implementation Prerequisites**: Java environment; FIPS 140-3 validated module (pending validation)
 - **Relevant PQC Today Features**: Algorithms; Compliance; Migrate; stateful-signatures
+- **Source Document**: Dell_BSAFE_Crypto-J.html (166,282 bytes, 3,737 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:16:45
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-3 validation, NIST / CMVP Module In Process List
@@ -21703,8 +21674,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Dell_BSAFE_Crypto-J.html (166,282 bytes, 3,737 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:16:45
 
 ---
 
@@ -21735,6 +21704,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, IoT Engineer
 - **Implementation Prerequisites**: CMake projects; TPM 2.0 hardware; OpenSSL shim compatibility; NanoCrypto external entropy injection
 - **Relevant PQC Today Features**: Algorithms, iot-ot-pqc, tls-basics, vpn-ssh-pqc, pki-workshop
+- **Source Document**: DigiCert_TrustCore_SDK.html (116,264 bytes, 7,602 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:17:18
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -21746,8 +21717,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: DigiCert_TrustCore_SDK.html (116,264 bytes, 7,602 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:17:18
 
 ---
 
@@ -21778,6 +21747,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Developer, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Algorithms, Migrate, crypto-agility, compliance-strategy, api-security-jwt
+- **Source Document**: ANKATech_ANKASecure.html (215,789 bytes, 5,092 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:17:57
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Crypto-agility (Adaptable algorithms); Comprehensive key management (Centralized and secure)
 - **Testing & Validation Methods**: PKIC PQCCM verified; Validated as a proven platform for post-quantum cryptography
@@ -21789,8 +21760,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Leading organizations in finance, healthcare, defense, e-commerce, and tech infrastructure trust ANKASecure© software to secure their sensitive data against quantum threats
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: ANKATech_ANKASecure.html (215,789 bytes, 5,092 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:17:57
 
 ---
 
@@ -21821,6 +21790,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Compliance Officer, Operations, Policy Maker
 - **Implementation Prerequisites**: TLS 1.3 stack enabled; OpenSSL with OQS provider; FIPS 140-3 certified crypto SDK; TPM or secure element supporting ML-DSA; Reliable OTA update system; SBOM including PQC libraries
 - **Relevant PQC Today Features**: iot-ot-pqc, hybrid-crypto, crypto-agility, tls-basics, pki-workshop
+- **Source Document**: DigiCert_Device_Trust_Manager.html (50,457 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:18:39
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Software Bill of Materials (SBOMs), Crypto Bill of Materials (CBOM), Hardware Bill of Materials (HBOM), certificate inventory, key material audit
 - **Testing & Validation Methods**: FIPS 140-3 certification, interoperability testing, regression testing, PQC playground testing
@@ -21832,8 +21803,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites, dedicated crypto team required, change management scope, estimated planning horizon (before 2030), maturity assessment level
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: DigiCert_Device_Trust_Manager.html (50,457 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:18:39
 
 ---
 
@@ -21864,6 +21833,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Developer, Security Architect, Compliance Officer, Government & Procurement, Operations
 - **Implementation Prerequisites**: API key for authentication; JSON payload with algorithm and deployment parameters; Optional source code handover (Python, C, Jasmin) for isolated deployments; Cryptographic inventory via CipherScout
 - **Relevant PQC Today Features**: Algorithms, Compliance, Migrate, Assess, crypto-agility, hybrid-crypto, tls-basics, iot-ot-pqc, pqc-risk-management, migration-program
+- **Source Document**: ExeQuantum.html (60,084 bytes, 7,505 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:19:52
 - **Implementation Attack Surface**: timing side-channels, constant-time execution vulnerabilities, Clang timing vulnerability in ML-KEM reference code
 - **Cryptographic Discovery & Inventory**: CipherScout Cryptographic Discovery & Inventory, full cryptographic inventory across various attack surfaces
 - **Testing & Validation Methods**: formal verification, Jasmin language proof at assembly level, regression testing avoidance via configuration updates
@@ -21875,8 +21846,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: board-level evidence of quantum risk management, audit-ready evidence at every stage, CISO cryptographic risk solved, 2030 PQC mandates alignment
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: ExeQuantum.html (60,084 bytes, 7,505 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:19:52
 
 ---
 
@@ -21907,6 +21876,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Researcher
 - **Implementation Prerequisites**: Node.js or browser environment; polyfill for getRandomValues required for React Native; npm or deno package manager
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, entropy-randomness, stateful-signatures, code-signing
+- **Source Document**: noble-post-quantum.html (400,042 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:20:44
 - **Implementation Attack Surface**: side-channel attacks, timing attacks, MITM attacks due to lack of ciphertext verification, probabilistic reliance on CSPRNG quality
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: KAT vectors (Round 3), self-audit, npm test, fast-check for test generation, regression testing via CI
@@ -21918,8 +21889,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: noble-post-quantum.html (400,042 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:20:44
 
 ---
 
@@ -21950,6 +21919,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Researcher, Security Architect
 - **Implementation Prerequisites**: C function implementation; api.h file definition; GMP bigint library; Crypto++ library; OpenSSL; Sphlib
 - **Relevant PQC Today Features**: Algorithms, Assess, Playground, entropy-randomness, code-signing
+- **Source Document**: SUPERCOP.html (39,610 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:22:06
 - **Implementation Attack Surface**: timing attacks, CacheBleed, variable-time software, global variables, dynamic memory allocation, entropy attacks, batch attacks, subfield-logarithm attack against ideal lattices, ROCA attack, Minerva attack, Bleichenbacher attack, BKW attack, Hertzbleed
 - **Cryptographic Discovery & Inventory**: algorithm enumeration (2202 implementations of 602 cryptographic primitives), deprecated cipher detection (MD5), key material audit (designers and implementors files)
 - **Testing & Validation Methods**: benchmarking, performance evaluation, manual verification, formal verification (HaCl\*, gfverif), regression testing (SUPERCOP interface consistency)
@@ -21961,8 +21932,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: SUPERCOP.html (39,610 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:22:06
 
 ---
 
@@ -21993,6 +21962,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Defense Sector; Enterprise
 - **Implementation Prerequisites**: Oracle Cloud Infrastructure account; OCI endpoint installation; minimal training required for single-click initiation
 - **Relevant PQC Today Features**: Threats, Compliance, Migrate, Algorithms, Leaders, vpn-ssh-pqc, pqc-business-case
+- **Source Document**: American_Binary_Ambit_Client.html (218,091 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:23:28
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -22004,8 +21975,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: CNSA 2.0 compliance requirements, defense and intelligence sector alignment, CMMC acceleration via OCI Core Landing Zone, SCCA compliance via Oracle Cloud Native SCCA Landing Zone framework
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: American_Binary_Ambit_Client.html (218,091 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:23:28
 
 ---
 
@@ -22036,6 +22005,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; CISO; Compliance Officer; Operations
 - **Implementation Prerequisites**: Conduct stress test before migration; Gradually migrate business to GVSM PQC version; Properly manage signature key state for LMS and XMSS
 - **Relevant PQC Today Features**: hsm-pqc, algorithms, threats, pki-workshop, iot-ot-pqc
+- **Source Document**: Alibaba_Cloud_GVSM.html (23,812 bytes, 6,491 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:24:25
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: stress test
@@ -22047,8 +22018,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Alibaba_Cloud_GVSM.html (23,812 bytes, 6,491 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:24:25
 
 ---
 
@@ -22079,6 +22048,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: docker compose; Chrome browser; Cloudflare's fork of Go (CFGo); Caddy reverse proxy
 - **Relevant PQC Today Features**: tls-basics, hybrid-crypto, code-signing, migration-program
+- **Source Document**: Caddy_Server.html (42,354 bytes, 6,637 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:25:01
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -22090,8 +22061,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Caddy_Server.html (42,354 bytes, 6,637 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:25:01
 
 ---
 
@@ -22122,6 +22091,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: Connect to DNS server through AdGuard apps; Use Nightly builds for Windows v8.0.0, Android v4.14, or Mac v2.18.0.2090; Verify status on test page showing PQC: enabled
 - **Relevant PQC Today Features**: hybrid-crypto; tls-basics; vpn-ssh-pqc; algorithms
+- **Source Document**: AdGuard_DNS.html (173,382 bytes, 7,217 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:25:44
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -22133,8 +22104,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: AdGuard_DNS.html (173,382 bytes, 7,217 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:25:44
 
 ---
 
@@ -22165,6 +22134,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Policy Maker
 - **Implementation Prerequisites**: upgrade to the latest release; no configuration changes or user action required
 - **Relevant PQC Today Features**: Threats, Algorithms, Hybrid-crypto, Crypto-agility, Compliance
+- **Source Document**: Keeper_Security.html (216,478 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:26:30
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: crypto-agile enabling rapid updates to cryptographic protocols
 - **Testing & Validation Methods**: None detected
@@ -22176,8 +22147,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Keeper_Security.html (216,478 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:26:30
 
 ---
 
@@ -22208,6 +22177,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; CISO
 - **Implementation Prerequisites**: WebAssembly support in browsers; Manifest V3 compatibility for Web extensions; Node.js or browser packages
 - **Relevant PQC Today Features**: hybrid-crypto; Algorithms; Playground; Migrate; pqc-101
+- **Source Document**: Dashlane.html (346,349 bytes, 7,969 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:27:19
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: benchmarking, testing in real-world conditions via pqc.js playground
@@ -22219,8 +22190,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: investigation period of three months, planning for use of quantum resistant cryptography, alignment with White House National Security Memorandum timelines
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Dashlane.html (346,349 bytes, 7,969 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:27:19
 
 ---
 
@@ -22251,6 +22220,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer, Operations, Policy Maker
 - **Implementation Prerequisites**: SaaS, private cloud, or on-premise deployment; OTP-based onboarding; Android, iOS, and web clients; Playstore or Apple store availability
 - **Relevant PQC Today Features**: Threats, Compliance, Migrate, Algorithms, hybrid-crypto, qkd
+- **Source Document**: QVerse.html (132,823 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:28:03
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -22262,8 +22233,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: tiered subscription model, per-user or per-group pricing, Volume licensing, regulatory bundle options, one-time setup fee for custom integrations
 - **Organizational Readiness**: Advanced admin controls, granular messaging, DLP, remote-wipe, consent-based messaging sharing, containerised security, data residency compliance, audit logs, session tracking
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: QVerse.html (132,823 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:28:03
 
 ---
 
@@ -22294,6 +22263,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Compliance Officer, Operations
 - **Implementation Prerequisites**: Enable TransferSecurityPolicy-2025-03 or TransferSecurityPolicy-FIPS-2025-03 in SFTP endpoint; build OQS OpenSSH or wolfSSH with liboqs; use PEM-encoded or DER-encoded private keys for authentication
 - **Relevant PQC Today Features**: hybrid-crypto, vpn-ssh-pqc, algorithms, compliance, migrate
+- **Source Document**: AWS_Transfer_Family.html (1,064,735 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:29:08
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: interoperability testing between Transfer Family and OQS OpenSSH/wolfSSH; packet captures using Wireshark to confirm negotiated key exchange methods; client output verification for algorithm negotiation
@@ -22305,8 +22276,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: alignment with Quantum Computing Cybersecurity Preparedness Act, NSM-8, NSM-10, and CNSA 2.0 requirements; need for FIPS compliance via specific security policies; preparation for harvest-now-decrypt-later threats
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: AWS_Transfer_Family.html (1,064,735 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:29:08
 
 ---
 
@@ -22337,6 +22306,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Compliance Officer; Operations
 - **Implementation Prerequisites**: Windows versions from XP SP3 to Windows Server 2025; Bitvise SSH Server version 9.51 and newer for current cryptographic implementations; FIPS mode requires specific Windows built-in cryptography or Crypto++ 5.3.0 on legacy systems
 - **Relevant PQC Today Features**: vpn-ssh-pqc; hybrid-crypto; compliance; algorithms; migrate
+- **Source Document**: Bitvise_SSH_Server.html (34,893 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:30:26
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140 validation; NIST validated certificates #2937, #2606, #2357, #1892; historical certificate #819
@@ -22348,8 +22319,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Compliance with PCI, HIPAA, or FIPS 140 validation requirements; Delegated administration for limited access to SSH Server settings; Windows group-based configurability
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Bitvise_SSH_Server.html (34,893 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:30:26
 
 ---
 
@@ -22380,6 +22349,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Compliance Officer; Operations
 - **Implementation Prerequisites**: AWS CLI access; Amazon CloudWatch for monitoring; existing REST API or custom domain name configuration
 - **Relevant PQC Today Features**: tls-basics; compliance-strategy; migration-program; api-security-jwt
+- **Source Document**: AWS_API_Gateway_PQC.html (1,050,607 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:31:37
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: monitoring TLS usage and policy migrations using access logs variables $context.tlsVersion and $context.cipherSuite to identify legacy consumers and validate client readiness
 - **Testing & Validation Methods**: validating client behavior using access logs and performance metrics in Amazon CloudWatch before enabling STRICT mode; confirming clients can connect with BASIC mode as expected
@@ -22391,8 +22362,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: aligning APIs with evolving security and compliance expectations such as PCI DSS, Open Banking, and FIPS; standardizing TLS configuration across API Gateway infrastructure without adding operational complexity
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: AWS_API_Gateway_PQC.html (1,050,607 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:31:37
 
 ---
 
@@ -22423,6 +22392,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Compliance Officer, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Algorithms; Leaders; pki-workshop; iot-ot-pqc; compliance-strategy
+- **Source Document**: AUTOCRYPT_PKI-Vehicles.html (166,909 bytes, 8,038 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:32:40
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -22434,8 +22405,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: AUTOCRYPT_PKI-Vehicles.html (166,909 bytes, 8,038 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:32:40
 
 ---
 
@@ -22466,6 +22435,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Policy Maker, Researcher
 - **Implementation Prerequisites**: Integration of SEALSQ Post-Quantum Chips; WISeKey trusted Root of Trust; Hedera Decentralized Ledger Technology (DLT)
 - **Relevant PQC Today Features**: iot-ot-pqc, digital-assets, migration-program, pqc-business-case, leaders
+- **Source Document**: WISeSat_PQC_Constellation.html (140,667 bytes, 12,272 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:33:18
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -22477,8 +22448,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: WISeKey commitment to pioneering resilient cybersecurity infrastructure, Carlos Moreira Founder and CEO of WISeKey emphasized importance of initiative, WISeSat established as part of WISeKey broader strategy
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: WISeSat_PQC_Constellation.html (140,667 bytes, 12,272 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:33:18
 
 ---
 
@@ -22509,6 +22478,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Compliance Officer, Operations
 - **Implementation Prerequisites**: FIPS 140-2/3 certified hardware; Common Criteria EAL5+ certification; ISO 26262 compliance for automotive applications
 - **Relevant PQC Today Features**: Algorithms, Threats, Compliance, iot-ot-pqc, hsm-pqc
+- **Source Document**: SEALSQ_QVault_TPM.html (83,841 bytes, 11,107 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:34:19
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-2/3, Common Criteria EAL5+
@@ -22520,8 +22491,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: SEALSQ_QVault_TPM.html (83,841 bytes, 11,107 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:34:19
 
 ---
 
@@ -22552,6 +22521,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: TPM supporting v1.85 specification; wolfTPM source code with unit tests
 - **Relevant PQC Today Features**: Algorithms, hsm-pqc, migration-program, iot-ot-pqc
+- **Source Document**: wolfTPM_PQC.html (70,919 bytes, 4,622 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:35:10
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: unit tests, test*wolfTPM2_MLDSA*_, test*wolfTPM2_MLKEM*_
@@ -22563,8 +22534,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: hardware upgrade to TPM supporting v1.85 specification required, implementation guidance via unit tests in source code
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: wolfTPM_PQC.html (70,919 bytes, 4,622 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:35:10
 
 ---
 
@@ -22595,6 +22564,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Compliance Officer; CISO
 - **Implementation Prerequisites**: FIPS 140-3 Level 3 HSM module
 - **Relevant PQC Today Features**: hsm-pqc; compliance; kms-pqc
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: Crypto4A_QxVault.html (54,646 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-04-16T13:35:52
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -22605,10 +22577,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Crypto4A_QxVault.html (54,646 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-04-16T13:35:52
 
 ---
 
@@ -22639,6 +22607,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Hardware Designer
 - **Implementation Prerequisites**: FPGA or ASIC hardware platform; evaluation access starting January 2023
 - **Relevant PQC Today Features**: Algorithms, Threats, Hybrid-crypto, HSM-pqc, Iot-ot-pqc
+- **Source Document**: Xiphera_xQlave.html (254,165 bytes, 9,888 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:36:12
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: CAVP-Validated Post-Quantum Cryptography
@@ -22650,8 +22620,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: national security entities (for example, American NSA and French ANSSI) recommend systems designed and deployed today to have the capability to be upgraded with quantum-secure cryptography
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Xiphera_xQlave.html (254,165 bytes, 9,888 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:36:12
 
 ---
 
@@ -22682,6 +22650,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Compliance Officer, Operations
 - **Implementation Prerequisites**: Identifying critical systems requiring strong cryptographic primitives; Assessing current security measures; Developing a roadmap for integrating PQC solutions; Ensuring necessary hardware and software support is in place
 - **Relevant PQC Today Features**: Threats, Compliance, Migrate, Leaders, code-signing
+- **Source Document**: HPE_ProLiant_Gen12.html (503,446 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:37:02
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: evaluating current cryptographic implementations; identifying critical systems requiring strong cryptographic primitives
 - **Testing & Validation Methods**: None detected
@@ -22693,8 +22663,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: assessing current security measures; prioritizing systems that handle sensitive data; incorporating flexible and scalable cryptographic solutions; governance via CNSA 2.0 guidelines alignment
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: HPE_ProLiant_Gen12.html (503,446 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:37:02
 
 ---
 
@@ -22725,6 +22693,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Compliance Officer; Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: pki-workshop; code-signing; digital-id; algorithms; threats
+- **Source Document**: AWS_Private_CA_PQC.html (182,750 bytes, 2,662 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:38:01
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: test ML-DSA in your environment
@@ -22736,8 +22706,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: AWS_Private_CA_PQC.html (182,750 bytes, 2,662 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:38:01
 
 ---
 
@@ -22768,6 +22736,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Operations; Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Assess; Migrate; Algorithms; crypto-agility; pqc-risk-management
+- **Source Document**: Fortanix_PQC_Central.html (211,340 bytes, 10,098 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:38:29
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Scanning systems and services for cryptographic usage, mapping dependencies, cataloging assets using quantum-vulnerable algorithms, identifying vulnerable keys, calculating a cryptographic readiness score
 - **Testing & Validation Methods**: None detected
@@ -22779,8 +22749,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: EU Member States' roadmap and timeline to advance beginning the transition to post-quantum cryptography by the end of 2026, U.S. mandates and international timelines
 - **Organizational Readiness**: Develop a deep understanding of your cryptographic landscape, architect with intent, prioritized list to guide PQC migration planning, centralized dashboard for tracking readiness
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Fortanix_PQC_Central.html (211,340 bytes, 10,098 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:38:29
 
 ---
 
@@ -22811,6 +22779,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; IT Operations; DevOps; Compliance Officer
 - **Implementation Prerequisites**: Integration with major security and IT tools; Support for Entrust nShield and third-party HSMs; Open APIs for customization
 - **Relevant PQC Today Features**: pqc-risk-management, migration-program, hsm-pqc, pki-workshop, crypto-agility
+- **Source Document**: Entrust_Cryptographic_Security_Platform.html (265,768 bytes, 10,454 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:39:22
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: centralized inventory, monitor cryptographic assets, audit changes, receive alerts, comprehensive visibility across the entire cryptographic estate
 - **Testing & Validation Methods**: None detected
@@ -22822,8 +22792,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites (enforce policy), dedicated crypto team required (security leaders, IT, and development organizations), change management scope (simplify deployment of cryptographic solutions)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Entrust_Cryptographic_Security_Platform.html (265,768 bytes, 10,454 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:39:22
 
 ---
 
@@ -22854,6 +22822,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; SecOps; NetOps; Security Architect; Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: crypto-agility; hybrid-crypto; tls-basics; vpn-ssh-pqc; pqc-risk-management
+- **Source Document**: F5_ADSP_PQC.html (297,578 bytes, 13,083 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:40:13
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: API discovery, out-of-band discovery across multiple data planes (BIG-IP, NGINX, Kong, Apigee), automated vulnerability detection, certificate inventory implied via SSL / TLS orchestration
 - **Testing & Validation Methods**: Third-party testing, automated penetration testing, F5 AI Red Team, validated runtime guardrails, conformance to NIST-approved PQC algorithms
@@ -22865,8 +22835,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites (unified governance for human, bot, and AI agent interactions), change management scope (reducing operational overhead, eliminating repetitive tasks), maturity assessment level (post-quantum readiness)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: F5_ADSP_PQC.html (297,578 bytes, 13,083 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:40:13
 
 ---
 
@@ -22897,6 +22865,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Federal Operations; Defense Sector Leaders
 - **Implementation Prerequisites**: No code changes required; no system downtime required; no redeployment required; AWS marketplace or direct outreach to QuSecure, Accenture, Dell, Cisco, or Carahsoft
 - **Relevant PQC Today Features**: crypto-agility, migration-program, pqc-risk-management, 5g-security, vendor-risk
+- **Source Document**: QuSecure_QuProtect_Tactical.html (528,956 bytes, 11,266 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:41:17
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Continuous Cryptographic Inventory (CCI), live automated inventory of every cryptographic asset, non-compliant algorithm detection, uncover vulnerabilities, eliminate blind spots
 - **Testing & Validation Methods**: None detected
@@ -22908,8 +22878,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: $100 billion budget (Endless Frontiers Act), greenfield partner revenue and services growth
 - **Organizational Readiness**: CISO Road Mapping Workshop, PQC Migration planning, Zero Trust Network Access (ZTNA) migration effort
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: QuSecure_QuProtect_Tactical.html (528,956 bytes, 11,266 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:41:17
 
 ---
 
@@ -22940,6 +22908,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, CISO, Policy Maker
 - **Implementation Prerequisites**: Configuration-driven tools to abstract cryptographic choices; migration away from tightly coupled code and infrastructure
 - **Relevant PQC Today Features**: crypto-agility, threats, migrate, pqc-risk-management, pqc-business-case
+- **Source Document**: IronCore_Labs_SaaS_Shield.html (82,207 bytes, 8,320 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:42:13
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -22951,8 +22921,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites, dedicated crypto team required, board-level reporting, change management scope, estimated planning horizon (6-12 months), maturity assessment level; National Security Memorandum instructing federal agencies to modernize encryption protocols; NIST Post-Quantum Cryptography competition; crypto-agile organization definition
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: IronCore_Labs_SaaS_Shield.html (82,207 bytes, 8,320 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:42:13
 
 ---
 
@@ -22983,6 +22951,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Policy Maker; Operations
 - **Implementation Prerequisites**: Evaluation of expected time frames for devices and systems; Plan for post quantum cryptography migration in operations
 - **Relevant PQC Today Features**: qkd, entropy-randomness, hybrid-crypto, pqc-risk-management, iot-ot-pqc
+- **Source Document**: QNu_Labs_QShield.html (89,884 bytes, 6,164 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:43:00
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -22994,8 +22964,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: security and risk management leaders, identity and access management, blockchain, operational technology, governance prerequisites (implied by "plan for post quantum cryptography migration"), maturity assessment level (implied by "Quantum Readiness in Cybersecurity" survey)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: QNu_Labs_QShield.html (89,884 bytes, 6,164 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:43:00
 
 ---
 
@@ -23026,6 +22994,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Operations; Policy Maker
 - **Implementation Prerequisites**: PacketLight firmware supporting IDQ Clarion KX; Existing fiber optic telecommunication infrastructure
 - **Relevant PQC Today Features**: qkd, hybrid-crypto, migration-program, vendor-risk, pqc-business-case
+- **Source Document**: PacketLight_PQC_Optical_Encryption.html (81,998 bytes, 7,487 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:43:51
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Rigorous testing protocols
@@ -23037,8 +23007,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: reduce CAPEX and OPEX
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: PacketLight_PQC_Optical_Encryption.html (81,998 bytes, 7,487 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:43:51
 
 ---
 
@@ -23069,6 +23037,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Compliance Officer
 - **Implementation Prerequisites**: Application depends on a version of AWS SDK or browser that supports PQ-TLS
 - **Relevant PQC Today Features**: tls-basics; hybrid-crypto; kms-pqc; api-security-jwt; pqc-risk-management
+- **Source Document**: AWS_Payments_Cryptography_PQC.html (183,037 bytes, 2,523 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:44:33
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: tlsDetails for the corresponding CloudTrail event
 - **Testing & Validation Methods**: validate that ML-KEM was used to secure the TLS session
@@ -23080,8 +23050,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: no added cost
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: AWS_Payments_Cryptography_PQC.html (183,037 bytes, 2,523 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:44:33
 
 ---
 
@@ -23112,6 +23080,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, CISO, Policy Maker
 - **Implementation Prerequisites**: ESP32 chips; MQTT traffic environment
 - **Relevant PQC Today Features**: iot-ot-pqc; hybrid-crypto; migration-program; timeline; compliance-strategy
+- **Source Document**: Inturai_PQ_Station_ESP32.html (218,047 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:45:05
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: encryption tested using only PQC and combining PQC with traditional security; performance testing showing low delay and minimal power impact
@@ -23123,8 +23093,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: global ESP32 module market size valued at approximately $2.1 billion in 2023 projected to reach $4.6 billion by 2032; one-time fee of CAD$20,000 paid to Hillside Media & Consulting Inc.; one-time fee of USD$3,500 paid to Capital Growth Media FZCO
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Inturai_PQ_Station_ESP32.html (218,047 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:45:05
 
 ---
 
@@ -23155,6 +23123,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Policy Maker, Defence Operations
 - **Implementation Prerequisites**: Secure radio systems; contested electromagnetic conditions adaptation; government-grade radio communications experience
 - **Relevant PQC Today Features**: Threats, Algorithms, Leaders, hybrid-crypto, crypto-agility
+- **Source Document**: STV_Post-Quantum_Secure_Drones.html (266,781 bytes, 11,797 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:46:21
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: successful testing, trialled at STV’s weapons testing facility in the Czech Republic, additional field validation on systems already operating in active theatres
@@ -23166,8 +23136,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: NCSA 2.0 compliant hybrid PQC performance, crypto agility since 2009, IETF hybrid quantum-safe VPN protocol
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: STV_Post-Quantum_Secure_Drones.html (266,781 bytes, 11,797 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:46:21
 
 ---
 
@@ -23198,6 +23166,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: Kubernetes cluster with Cilium agents; SPIRE server and agents deployment; Envoy proxy configuration for SDS; X.509 certificate support in service mesh
 - **Relevant PQC Today Features**: tls-basics, algorithms, migration-program, threats, pki-workshop
+- **Source Document**: Cilium_Service_Mesh_PQC.html (139,938 bytes, 8,364 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:47:18
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -23209,8 +23179,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Cilium_Service_Mesh_PQC.html (139,938 bytes, 8,364 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:47:18
 
 ---
 
@@ -23241,6 +23209,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Web Hosting Customers; Security Architect; CISO
 - **Implementation Prerequisites**: Partnership with Quandela; Acquisition of full-stack quantum computer; Patented SSL certificate generation process
 - **Relevant PQC Today Features**: entropy-randomness, tls-basics, pki-workshop, leaders, timeline
+- **Source Document**: OVHcloud_QRNG_SSL.html (128,885 bytes, 5,715 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:48:04
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -23252,8 +23222,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: no additional cost, no extra cost, world first innovation
 - **Organizational Readiness**: one year of R&D, collaboration with French quantum computing startup Quandela, acquisition of full-stack quantum computer
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: OVHcloud_QRNG_SSL.html (128,885 bytes, 5,715 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:48:04
 
 ---
 
@@ -23284,6 +23252,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Algorithms; Threats; Leaders; Migrate; pqc-business-case
+- **Source Document**: Threema_PQC.html (151,371 bytes, 5,339 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:48:46
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -23295,8 +23265,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Collaboration with IBM Research; preparation for future threat scenarios; strengthening security standards
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Threema_PQC.html (151,371 bytes, 5,339 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:48:46
 
 ---
 
@@ -23327,6 +23295,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Privacy Advocate, Researcher
 - **Implementation Prerequisites**: SimpleX Chat v5.6 beta or later; Single device usage per profile required for break-in recovery; Secondary communication channel required for two-factor key exchange
 - **Relevant PQC Today Features**: Threats, Algorithms, Hybrid-crypto, Leaders, pqc-101
+- **Source Document**: SimpleX_Chat_PQC.html (89,515 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:49:22
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -23338,8 +23308,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: SimpleX_Chat_PQC.html (89,515 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:49:22
 
 ---
 
@@ -23370,6 +23338,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Researcher; Policy Maker
 - **Implementation Prerequisites**: libsession shared library; Config Messages mechanism for data synchronization
 - **Relevant PQC Today Features**: Threats; Algorithms; Migrate; hybrid-crypto; crypto-agility
+- **Source Document**: Session_Protocol_V2_PQC.html (190,166 bytes, 13,263 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:50:18
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -23381,8 +23351,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Session_Protocol_V2_PQC.html (190,166 bytes, 13,263 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:50:18
 
 ---
 
@@ -23413,6 +23381,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Researcher
 - **Implementation Prerequisites**: botan library; OpenPGP.js; GopenPGP
 - **Relevant PQC Today Features**: email-signing, hybrid-crypto, algorithms, stateful-signatures
+- **Source Document**: Thunderbird*PQC\_\_OpenPGP*.pdf (899,905 bytes, 3,386 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:51:08
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -23424,8 +23394,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Thunderbird*PQC\_\_OpenPGP*.pdf (899,905 bytes, 3,386 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:51:08
 
 ---
 
@@ -23456,6 +23424,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Algorithms, Migrate, Assess, pqc-governance
+- **Source Document**: NIST_SP_800-227_PQC_Guidance.html (35,940 bytes, 3,445 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:51:41
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -23467,8 +23437,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: NIST_SP_800-227_PQC_Guidance.html (35,940 bytes, 3,445 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:51:41
 
 ---
 
@@ -23499,6 +23467,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Policy Maker
 - **Implementation Prerequisites**: cryptographic inventory; supply chain assessment; vendor engagement
 - **Relevant PQC Today Features**: migration-program, pqc-risk-management, vendor-risk, compliance-strategy, data-asset-sensitivity
+- **Source Document**: CISA_PQC_Migration_Framework.html (50,299 bytes, 3,250 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:52:08
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: prepare a useful cryptographic inventory
 - **Testing & Validation Methods**: None detected
@@ -23510,8 +23480,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: inform organizations, especially those that support critical infrastructure
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: CISA_PQC_Migration_Framework.html (50,299 bytes, 3,250 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:52:08
 
 ---
 
@@ -23542,6 +23510,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, CISO
 - **Implementation Prerequisites**: Java 24 (Oracle JDK 24); Oracle Cloud Infrastructure (OCI) for optimized deployment; Feature enablement required at build time for JEP 493
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, tls-basics, migration-program, pqc-risk-management
+- **Source Document**: Java_24_PQC_Runtime.html (62,771 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:52:38
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -23553,8 +23523,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: cost savings; optimized cost-performance; contain costs; accelerate their business growth
 - **Organizational Readiness**: post-quantum readiness; Java SE Subscription Enterprise Performance Pack; triage support for the entire Java portfolio; Oracle GraalVM entitlement
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Java_24_PQC_Runtime.html (62,771 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:52:38
 
 ---
 
@@ -23585,6 +23553,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer
 - **Implementation Prerequisites**: CPython 3.14; disable ad blockers; check network connection
 - **Relevant PQC Today Features**: pqc-101; Algorithms
+- **Source Document**: pqcrypto_Python_Library.html (3,101 bytes, 221 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:53:39
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -23596,8 +23566,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: pqcrypto_Python_Library.html (3,101 bytes, 221 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:53:39
 
 ---
 
@@ -23628,6 +23596,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; IT Teams
 - **Implementation Prerequisites**: iOS 26, macOS 26, and iPadOS 26 devices; OpenSSL 3.5.0; Apple's quantum-secure TLS 1.3 APIs
 - **Relevant PQC Today Features**: Threats; Algorithms; Hybrid-crypto; Compliance; Migrate
+- **Source Document**: Applivery_UEM_PQC.html (399,627 bytes, 13,729 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:54:00
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -23639,8 +23609,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: proactive compliance with NIST, UK NCSC, and EU cybersecurity directives, alignment with global standards bodies, strategic resilience against Harvest Now Decrypt Later threats
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Applivery_UEM_PQC.html (399,627 bytes, 13,729 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:54:00
 
 ---
 
@@ -23671,6 +23639,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Technical users, Developer
 - **Implementation Prerequisites**: Firefox v134.0; Google Chrome v132.0; Web Developer Tools or Developer Tools enabled
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, tls-basics, Assess
+- **Source Document**: Opera_Browser_PQC.html (80,694 bytes, 4,677 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:54:51
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: algorithm enumeration via browser developer tools (Firefox v134.0, Chrome v132.0) to identify Key Exchange Group strings containing "mlkem"
 - **Testing & Validation Methods**: testing PQC support using https://pq.cloudflareresearch.com/ and verifying "post-quantum secure" status in browser developer tools
@@ -23682,8 +23652,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Opera_Browser_PQC.html (80,694 bytes, 4,677 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:54:51
 
 ---
 
@@ -23714,6 +23682,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Privacy-conscious consumers, Small business owners, Compliance Officer
 - **Implementation Prerequisites**: iOS or Android mobile app; GitHub access for code verification
 - **Relevant PQC Today Features**: compliance-strategy, pqc-business-case, data-asset-sensitivity
+- **Source Document**: Internxt_Drive_PQC.html (320,457 bytes, 6,797 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:55:35
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: independent security audit
@@ -23725,8 +23695,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: GDPR-compliant synchronization
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Internxt_Drive_PQC.html (320,457 bytes, 6,797 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:55:35
 
 ---
 
@@ -23757,6 +23725,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Researcher
 - **Implementation Prerequisites**: Algorand Virtual Machine (AVM); TEAL language support; AlgoKit CLI tools; NodeKit for running nodes
 - **Relevant PQC Today Features**: Algorithms; digital-assets; stateful-signatures; code-signing
+- **Source Document**: Algorand_FALCON_Mainnet.html (314,736 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:56:07
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -23768,8 +23738,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Algorand_FALCON_Mainnet.html (314,736 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:56:07
 
 ---
 
@@ -23800,6 +23768,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; Operations
 - **Implementation Prerequisites**: OpenSSL 3.5
 - **Relevant PQC Today Features**: tls-basics, hybrid-crypto, crypto-agility, api-security-jwt
+- **Source Document**: NGINX_Plus_R33_PQC.html (414,160 bytes, 6,793 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:56:56
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -23811,8 +23781,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: NGINX_Plus_R33_PQC.html (414,160 bytes, 6,793 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:56:56
 
 ---
 
@@ -23843,6 +23811,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Enterprise; Validator; Node provider; CISO
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Algorithms; digital-assets; code-signing; migration-program; pqc-risk-management
+- **Source Document**: QAN_XLINK_PQC.html (209,195 bytes, 7,032 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:57:29
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Hacken Audit, Security Audit
@@ -23854,8 +23824,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: $15M VC agreement, Market cap (in USD) $21M
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: QAN_XLINK_PQC.html (209,195 bytes, 7,032 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:57:29
 
 ---
 
@@ -23886,6 +23854,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Developer, Product Manager, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: iot-ot-pqc, entropy-randomness, qkd, crypto-agility, pqc-business-case
+- **Source Document**: Quantropi_QiSpace_STM32.html (242,901 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:58:09
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: crypto agility to support a range of available PQC standards
 - **Testing & Validation Methods**: None detected
@@ -23897,8 +23867,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: minimize the monetary and reputational risks associated with rampant data and security breaches, Y2Q countdown, governments are mandating action
 - **Organizational Readiness**: Systematic preparation is urgent, non-optional, readying your organization to deliver on its business promise, mission-critical
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Quantropi_QiSpace_STM32.html (242,901 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:58:09
 
 ---
 
@@ -23929,6 +23897,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Operations, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: data-asset-sensitivity, migration-program, pqc-business-case
+- **Source Document**: LTO-10_PQC-Ready_Tape.html (181,707 bytes, 3,374 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:59:14
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: compatibility testing
@@ -23940,8 +23910,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: LTO-10_PQC-Ready_Tape.html (181,707 bytes, 3,374 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:59:14
 
 ---
 
@@ -23972,6 +23940,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; CISO
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: 5g-security; vendor-risk; migration-program
+- **Source Document**: Arqit_6WIND_Telco_PQC.html (108,478 bytes, 1,500 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T13:59:54
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -23983,8 +23953,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Arqit_6WIND_Telco_PQC.html (108,478 bytes, 1,500 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T13:59:54
 
 ---
 
@@ -24015,6 +23983,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Management; Compliance Officer
 - **Implementation Prerequisites**: Customer workshops for awareness and prioritization; Analysis of current standardization activities; Resource analysis of deployed ECUs against benchmarks; Analysis of adjacent IT systems (PKI, backend)
 - **Relevant PQC Today Features**: Threats; Compliance; Migrate; Assess; pki-workshop
+- **Source Document**: ESCRYPT_Automotive_PQC_Solutions.html (104,075 bytes, 6,928 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:00:17
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: analysis of current standardization activities, analyze specific systems that use asymmetric cryptography, analysis of adjacent IT systems (for example PKI, backend)
 - **Testing & Validation Methods**: compare resources of deployed ECUs with available benchmarks
@@ -24026,8 +23996,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: customer workshops that aim to raise awareness, specific recommendations on points of action and prioritization, help you establish a timeline
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: ESCRYPT_Automotive_PQC_Solutions.html (104,075 bytes, 6,928 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:00:17
 
 ---
 
@@ -24058,6 +24026,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Compliance Officer, Policy Maker
 - **Implementation Prerequisites**: Smart cards supporting hybrid methodology; private certificate authority with hybrid certificate issuance functionality; ML-DSA firmware for smart cards
 - **Relevant PQC Today Features**: hybrid-crypto, pki-workshop, digital-id, migration-program, pqc-risk-management
+- **Source Document**: TOPPAN_SecureBridge_HPKI_PQC.html (36,152 bytes, 9,855 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:01:04
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: ISARA Advance® Cryptographic Inventory and Risk Assessment Tool
 - **Testing & Validation Methods**: pilot testing, user authentication confirmation, interoperability testing between hybrid and current public-key cryptography systems
@@ -24069,8 +24039,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Council for Science, Technology and Innovation (CSTI) Cross-ministerial Strategic Innovation Promotion Program (SIP), planning horizon targeting 2025 and 2030
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: TOPPAN_SecureBridge_HPKI_PQC.html (36,152 bytes, 9,855 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:01:04
 
 ---
 
@@ -24101,6 +24069,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Policy Maker; Researcher; Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Threats, digital-id, migration-program, pqc-risk-management, crypto-agility
+- **Source Document**: Spherity_CARO_Pharma_PQC.html (380,550 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:01:59
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -24112,8 +24082,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: $12.8 trillion economic damage from nationwide blackout
 - **Organizational Readiness**: governance prerequisites, dedicated crypto team required, board-level reporting, change management scope, estimated planning horizon (6-12 months), maturity assessment level
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Spherity_CARO_Pharma_PQC.html (380,550 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:01:59
 
 ---
 
@@ -24144,6 +24112,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Operations, Compliance Officer, Developer
 - **Implementation Prerequisites**: Linux operating system (Ubuntu, Redhat, Oracle Linux); ethernet networking; API integration for legacy OT systems
 - **Relevant PQC Today Features**: iot-ot-pqc, hybrid-crypto, crypto-agility, compliance-strategy, migration-program
+- **Source Document**: Patero_PQC_Gateway.html (205,160 bytes, 7,003 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:02:55
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: PanoQor for scanning and inventory of environments
 - **Testing & Validation Methods**: FIPS 203, third-party tests and certifications, attack simulations for classical and quantum threat models, simple and advanced simulations
@@ -24155,8 +24125,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Capex perpetual licenses, opex per cpu core licensing options
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Patero_PQC_Gateway.html (205,160 bytes, 7,003 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:02:55
 
 ---
 
@@ -24187,6 +24155,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Policy Maker; Operations
 - **Implementation Prerequisites**: Manufacturing process integration for electric and gas metering devices; offline, distributed, or cloud-native PKI deployment models
 - **Relevant PQC Today Features**: pki-workshop; iot-ot-pqc; migration-program; vendor-risk; pqc-business-case
+- **Source Document**: Landis_Gyr_SEALSQ_Smart_Grid_PKI.html (110,450 bytes, 10,114 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:03:41
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -24198,8 +24168,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Todd Wiedman, Chief Security Officer at Landis+Gyr; Gweltas Radenac, IoT Business Line Director for SEALSQ; meeting stringent cybersecurity standards on every market; evolving security strategy to meet utility customer needs
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Landis_Gyr_SEALSQ_Smart_Grid_PKI.html (110,450 bytes, 10,114 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:03:41
 
 ---
 
@@ -24230,6 +24198,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: OpenSSH 9.0 or newer for automatic adoption; SSH client support for sntrup761x25519-sha512@openssh.com or sntrup761x25519-sha512
 - **Relevant PQC Today Features**: vpn-ssh-pqc, hybrid-crypto, crypto-agility, Algorithms, Threats
+- **Source Document**: GitHub_SSH_PQC.html (176,956 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:04:42
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: algorithm enumeration via `ssh -Q kex` command to list supported key exchange algorithms
 - **Testing & Validation Methods**: interoperability testing by verifying SSH client support for `sntrup761x25519-sha512` and fallback behavior on older clients
@@ -24241,8 +24211,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: requirement to upgrade SSH clients to OpenSSH 9.0 or newer to achieve post-quantum security benefits; awareness of regional restrictions (US vs non-US) for algorithm availability
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: GitHub_SSH_PQC.html (176,956 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:04:42
 
 ---
 
@@ -24273,6 +24241,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Researcher, Operations
 - **Implementation Prerequisites**: CoreDNS plugin architecture; Go programming language environment; Kubernetes clusters; x86-64-v3 hardware for optimal performance; liboqs integration for some implementations
 - **Relevant PQC Today Features**: Algorithms, Migrate, Assess, Performance, Migration-program
+- **Source Document**: CoreDNS_PQC_DNSSEC.html (93,839 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:05:47
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: benchmark, performance evaluation, empirical performance data, comparative analysis, controlled testing environments
@@ -24284,8 +24254,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites, dedicated crypto team required, board-level reporting, change management scope, estimated planning horizon (6-12 months), maturity assessment level
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: CoreDNS_PQC_DNSSEC.html (93,839 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:05:47
 
 ---
 
@@ -24316,6 +24284,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer
 - **Implementation Prerequisites**: Integration with Nomidio for biometric authentication; Integration with Quorum for approval-as-a-service; Enterprise infrastructure for centralized management.
 - **Relevant PQC Today Features**: Algorithms, digital-id, vendor-risk, pqc-business-case
+- **Source Document**: PQChat_Quantum-Safe_Messaging.html (16,654 bytes, 3,229 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:06:57
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -24327,8 +24297,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: board-level reporting; C-suite communications; defence and intelligence organisations
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: PQChat_Quantum-Safe_Messaging.html (16,654 bytes, 3,229 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:06:57
 
 ---
 
@@ -24359,6 +24327,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Compliance Officer; Security Architect; Policy Maker
 - **Implementation Prerequisites**: Integration with DocuSign App Center; Access to DocuSign Maestro workflow automation tool
 - **Relevant PQC Today Features**: Compliance; digital-assets; vendor-risk; pqc-business-case; migration-program
+- **Source Document**: TrustCloud_Quantum_Vault.html (59,380 bytes, 5,730 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:07:26
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -24370,8 +24340,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: compliance with U.S. NIST and HIPAA regulations; European eIDAS standards; international ISO certifications; Qualified Trust Service Providers (QTSP) status
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: TrustCloud_Quantum_Vault.html (59,380 bytes, 5,730 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:07:26
 
 ---
 
@@ -24402,6 +24370,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer, Operations
 - **Implementation Prerequisites**: Self-hosted infrastructure; Kubernetes; Docker Swarm; Virtual Machines (VMs); S3 storage; databases; email services; logging tools
 - **Relevant PQC Today Features**: Threats, Compliance, Migrate, Algorithms, digital-id
+- **Source Document**: SignQuantum_PQC_E-Signature.html (132,608 bytes, 10,597 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:08:02
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -24413,8 +24383,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: costly legal disputes; financial losses; manufacturing and supply disruptions; GDPR compliance
 - **Organizational Readiness**: governance prerequisites; change management scope; dedicated crypto team required
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: SignQuantum_PQC_E-Signature.html (132,608 bytes, 10,597 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:08:02
 
 ---
 
@@ -24445,6 +24413,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; CISO; Operations
 - **Implementation Prerequisites**: Upgraded internal key management service to support post-quantum key formats; Authenticated TLS channel for device-service communication; Ephemeral key pair generation on user devices
 - **Relevant PQC Today Features**: hybrid-crypto, tls-basics, kms-pqc, data-asset-sensitivity, migration-program
+- **Source Document**: TikTok_PQC_Data_Protection.html (436,171 bytes, 7,857 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:08:48
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -24456,8 +24426,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: TikTok_PQC_Data_Protection.html (436,171 bytes, 7,857 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:08:48
 
 ---
 
@@ -24488,6 +24456,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, System Architect
 - **Implementation Prerequisites**: MPLAB X Integrated Development Environment (IDE); Zephyr; MEC1753-240 MECC (EV48H83A) development board
 - **Relevant PQC Today Features**: Compliance, Algorithms, Leaders, iot-ot-pqc, stateful-signatures
+- **Source Document**: Microchip_MEC175xB_PQC_Controllers.html (32,688 bytes, 6,105 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:09:26
 - **Implementation Attack Surface**: immutable hardware to block attack paths possible on software implementations; Memory Protection Unit (MPU)
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -24499,8 +24469,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: National Security Agency (NSA) urging markets to become post-quantum ready within the next two years; Commercial National Security Algorithm Suite 2.0 (CNSA 2.0); system architects meeting evolving security demands
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Microchip_MEC175xB_PQC_Controllers.html (32,688 bytes, 6,105 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:09:26
 
 ---
 
@@ -24531,6 +24499,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Hardware Engineer
 - **Implementation Prerequisites**: ASIC, SoC or FPGA integration environment; Verilog RTL for synthesis and simulation; Standard EDA tool flow scripts; Driver Development Kit
 - **Relevant PQC Today Features**: Algorithms, Compliance, hsm-pqc, entropy-randomness, stateful-signatures
+- **Source Document**: Rambus_QSE_IP.html (259,358 bytes, 8,019 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:10:14
 - **Implementation Attack Surface**: differential power analysis (DPA) attacks; DPA & FIA Countermeasures
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: NIST CAVP; Verification test bench and test vectors
@@ -24542,8 +24512,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Rambus_QSE_IP.html (259,358 bytes, 8,019 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:10:14
 
 ---
 
@@ -24574,6 +24542,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Compliance Officer, Operations, Policy Maker
 - **Implementation Prerequisites**: TCG TPM 2.0-compliant platform; Windows 10/11 or Linux with tpm2-tss; UEFI Firmware EDK2/coreboot/AMI BIOS; LPC Bus or SPI interface up to 33 MHz; 3.3V ± 5% supply voltage
 - **Relevant PQC Today Features**: Compliance, Migrate, Algorithms, hybrid-crypto, iot-ot-pqc
+- **Source Document**: Dyber_QuantaTPM.html (50,423 bytes, 6,904 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:11:00
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-3 Level 2 validation in process; Common Criteria EAL4+ pathway planned; TCG TPM 2.0 PC Client Platform TPM Profile full compliance target
@@ -24585,8 +24555,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: CNSA 2.0 mandates require PQC by 2030; Federal Agencies Must Buy PQC-Capable Products (Jan 2026); CNSA 2.0 Acquisition Deadline: Jan 1, 2027
 - **Organizational Readiness**: Contact us for OEM partnership opportunities and early access; Pilot Program Now Accepting Applications
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Dyber_QuantaTPM.html (50,423 bytes, 6,904 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:11:00
 
 ---
 
@@ -24617,6 +24585,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Researcher
 - **Implementation Prerequisites**: C programming language; Rust programming language; RISC-V processors; FPGA or ASIC hardware platforms
 - **Relevant PQC Today Features**: Algorithms, Compliance, Leaders, iot-ot-pqc, hsm-pqc
+- **Source Document**: PQSecure_Technologies_HW_IP.html (74,239 bytes, 2,915 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:12:08
 - **Implementation Attack Surface**: side-channel (power, timing, EM leakage)
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: NIST CAVP / ACVP-Certified Implementations
@@ -24628,8 +24598,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: PQSecure_Technologies_HW_IP.html (74,239 bytes, 2,915 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:12:08
 
 ---
 
@@ -24660,6 +24628,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: NVIDIA GPU architectures from Jetson edge devices to data center GPUs; Link-time optimization for kernel selection
 - **Relevant PQC Today Features**: Algorithms, merkle-tree-certs, code-signing, tls-basics, vpn-ssh-pqc
+- **Source Document**: NVIDIA_cuPQC_SDK.html (29,920 bytes, 5,921 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:12:38
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -24671,8 +24641,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: NVIDIA_cuPQC_SDK.html (29,920 bytes, 5,921 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:12:38
 
 ---
 
@@ -24703,6 +24671,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Systems Integrators; OEMs; Property Owners and Managers; Building Controls; Security Architect
 - **Implementation Prerequisites**: Intel Cyclone V SoC FPGAs; Intel MAX 10 FPGAs; Renesas RA MCUs
 - **Relevant PQC Today Features**: iot-ot-pqc, vendor-risk, migration-program, pqc-business-case
+- **Source Document**: Renesas_Veridify_PQC_for_RA_MCUs.html (210,246 bytes, 11,938 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:13:13
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -24714,8 +24684,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Renesas_Veridify_PQC_for_RA_MCUs.html (210,246 bytes, 11,938 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:13:13
 
 ---
 
@@ -24746,6 +24714,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: OpenSSL backend; sequoia-openpgp version 2.2.0-pqc.1; sq version 1.4.0-pqc.1; RFC 9580 profile; cargo build with crypto-openssl feature
 - **Relevant PQC Today Features**: Algorithms, Hybrid-crypto, Code-signing, Email-signing, Migration-program
+- **Source Document**: Sequoia-PGP_PQC.html (27,090 bytes, 14,942 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:14:11
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -24757,8 +24727,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: government requirements for post-quantum tools; Red Hat implementation of dual signing keys; need for latest software installation to utilize post-quantum security
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Sequoia-PGP_PQC.html (27,090 bytes, 14,942 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:14:11
 
 ---
 
@@ -24789,6 +24757,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: SCP or SFTP file protocol selection; Kerberos V5 credentials for GSSAPI authentication
 - **Relevant PQC Today Features**: Algorithms, hybrid-crypto, vpn-ssh-pqc
+- **Source Document**: WinSCP_PQC_File_Transfer.html (36,658 bytes, 10,055 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:15:32
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -24800,8 +24770,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: WinSCP_PQC_File_Transfer.html (36,658 bytes, 10,055 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:15:32
 
 ---
 
@@ -24832,6 +24800,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: OpenSSL 3.5+; wolfSSL
 - **Relevant PQC Today Features**: Algorithms, Threats, Compliance, Migrate, hybrid-crypto
+- **Source Document**: curl_PQC.html (67,679 bytes, 3,709 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:16:18
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -24843,8 +24813,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: curl_PQC.html (67,679 bytes, 3,709 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:16:18
 
 ---
 
@@ -24875,6 +24843,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Developer, Compliance Officer
 - **Implementation Prerequisites**: TLS 1.3 enabled on Dedicated clusters; AWS or GCP environments for existing AES 256 compliance; OCT-HSM support investigation for Azure
 - **Relevant PQC Today Features**: Timeline; Threats; Compliance; Algorithms; Hybrid-crypto; Crypto-agility; Tls-basics; Hsm-pqc
+- **Source Document**: Confluent_Cloud_Kafka_PQC.html (213,484 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:16:53
 - **Implementation Attack Surface**: harvest now, decrypt later (HNDL) threat; storing encrypted transit data to find private session keys with future quantum computers
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -24886,8 +24856,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: planning horizon (April 14, 2030 deadline set by Quantum-Safe Working Group of the Cloud Security Alliance); governance prerequisites (aligning with NIST FIPS 203, 204, and 205)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Confluent_Cloud_Kafka_PQC.html (213,484 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:16:53
 
 ---
 
@@ -24918,6 +24886,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Developer, Compliance Officer, Operations
 - **Implementation Prerequisites**: Upgrade OpenSSH server to latest version; regenerate new key pairs using PQC compliant signature algorithm; evaluate specific use cases for symmetric encryption and hashing; create inventory of systems requiring migration
 - **Relevant PQC Today Features**: Threats, Migrate, Assess, Algorithms, Compliance, tls-basics, vpn-ssh-pqc, pqc-risk-management
+- **Source Document**: Wiz_Cloud_Security_PQC.html (320,496 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:17:58
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: Automated Cryptography Discovery and Inventory (ACDI), Cryptographic Bill of Materials (CBOM), Cloud services cryptographic Bill of Materials, TLS Termination identification, Key Management audit, Secret Scanning for SSH private keys and TLS certificates, Host Configuration Auditing for SSH configs and system-wide crypto policies
 - **Testing & Validation Methods**: None detected
@@ -24929,8 +24899,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Wiz for Post-Quantum Cryptography Security Framework, annual inventories of systems that must be migrated, migration plan development, inventory completion deadlines (2028 for UK NCSC, 2030 for Australia/EU critical infrastructure, 2035 for US federal government/UK/Japan/Canada full transition)
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Wiz_Cloud_Security_PQC.html (320,496 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:17:58
 
 ---
 
@@ -24961,6 +24929,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Operations
 - **Implementation Prerequisites**: Open Quantum Safe provider integration; NetBackup 11.0 installation or upgrade
 - **Relevant PQC Today Features**: tls-basics, hybrid-crypto, migration-program, vendor-risk
+- **Source Document**: Veritas_NetBackup_11_PQC.html (222,872 bytes, 7,884 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:19:10
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -24972,8 +24942,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Veritas_NetBackup_11_PQC.html (222,872 bytes, 7,884 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:19:10
 
 ---
 
@@ -25004,6 +24972,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; CISO; Policy Maker; Researcher
 - **Implementation Prerequisites**: Careful study of protocols; optimization of algorithms to reduce performance impact
 - **Relevant PQC Today Features**: Threats; Migrate; Algorithms; hybrid-crypto; tls-basics
+- **Source Document**: Huawei_PQC_Network_Security.html (216,625 bytes, 11,889 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:19:47
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -25015,8 +24985,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: funding of billions of dollars for research
 - **Organizational Readiness**: dedicated crypto team required; estimated planning horizon (6-12 months); maturity assessment level
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Huawei_PQC_Network_Security.html (216,625 bytes, 11,889 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:19:47
 
 ---
 
@@ -25047,6 +25015,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Policy Maker, Researcher
 - **Implementation Prerequisites**: Open optical transponder implementation; disaggregation of encryption processing from network operating system (NOS); Elastic Key Control technology integration
 - **Relevant PQC Today Features**: crypto-agility, hybrid-crypto, migration-program, pqc-risk-management, 5g-security
+- **Source Document**: NTT_PQC_Secure_Transport.html (123,148 bytes, 13,473 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:20:35
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -25058,8 +25028,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: NTT_PQC_Secure_Transport.html (123,148 bytes, 13,473 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:20:35
 
 ---
 
@@ -25090,6 +25058,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; CISO; Developer; Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Samsung_SDS_S-CAPE_PQC_Platform.html (26,631 bytes, 4,189 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:21:24
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: S-CAPE automatically identifies and monitors cryptography systems with quantum vulnerability within IT systems; NIST SP 1800-38B Cryptographic Discovery
 - **Testing & Validation Methods**: Security analysis by KAIST (Crypt Lab); Testing Draft Standards (NIST SP 1800-38C)
@@ -25101,8 +25071,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Master plan for the Nationwide Migration to PQC project unveiled by the National Intelligence Service (NIS) and Ministry of Science and ICT; Young-june Gwon, Executive Vice President and Leader of Technology Research
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Samsung_SDS_S-CAPE_PQC_Platform.html (26,631 bytes, 4,189 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:21:24
 
 ---
 
@@ -25133,6 +25101,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Policy Maker, Researcher, Operations
 - **Implementation Prerequisites**: Existing fibre carrying network traffic for multiplexing; C-DOT Collaborative Research Policy (CCRP-2022) for engagement and funding terms.
 - **Relevant PQC Today Features**: qkd, hybrid-crypto, 5g-security, iot-ot-pqc, migration-program
+- **Source Document**: C-DOT_Quantum_CEM_Encryptor.html (57,025 bytes, 14,357 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:22:14
 - **Implementation Attack Surface**: detector-side channel attacks exploiting imperfections in commercially available single-photon detectors
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -25144,8 +25114,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: India's digital economy targeted to reach USD 1 trillion by 2025, funding up to Rs 10 crores approved by Consortium Panel, funding up to Rs 20 crore approved by Collaborative Research Screening Committee, proposals beyond Rs. 20 crores forwarded to C-DOT Steering committee
 - **Organizational Readiness**: Quantum Communication Technology Advisory Board (TAB) consisting of experts from industry and academia, Consortiums formed under India Quantum Alliance with members from industry and academic bodies, four-stage process for project engagement and fund approval
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: C-DOT_Quantum_CEM_Encryptor.html (57,025 bytes, 14,357 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:22:14
 
 ---
 
@@ -25176,6 +25144,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Enterprise Decision Makers, Policy Maker
 - **Implementation Prerequisites**: Integration of Palo Alto Networks and Fortinet solutions; deployment of ID Quantique Clarion KX platform; utilization of Cisco routing platforms, Fortinet firewalls, and Nokia optical devices
 - **Relevant PQC Today Features**: qkd, hybrid-crypto, vendor-risk, migration-program, pqc-business-case
+- **Source Document**: Singtel_Quantum-Safe_Network.html (62,009 bytes, 7,802 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:23:33
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -25187,8 +25157,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: cost-effective solution, secure business-critical data, protect enterprises against cyber attacks
 - **Organizational Readiness**: Infocomm Media Development Authority appointment, enterprise needs, industrial and government use cases, dedicated crypto team required
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Singtel_Quantum-Safe_Network.html (62,009 bytes, 7,802 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:23:33
 
 ---
 
@@ -25219,6 +25187,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Policy Maker
 - **Implementation Prerequisites**: Commercial Toshiba QKD systems; Software upgrade option for already deployed systems
 - **Relevant PQC Today Features**: qkd, hybrid-crypto, crypto-agility, algorithms, leaders
+- **Source Document**: Toshiba_Integrated_PQC-QKD_Platform.html (119,175 bytes, 5,878 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:24:18
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: stringent testing
@@ -25230,8 +25200,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: 3.3 trillion yen annual sales, 105,000 employees
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Toshiba_Integrated_PQC-QKD_Platform.html (119,175 bytes, 5,878 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:24:18
 
 ---
 
@@ -25262,6 +25230,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: hsm-pqc, compliance-strategy, hybrid-crypto
+- **Source Document**: Eviden_PQC_HSMaaS.html (51,629 bytes, 6,286 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:24:57
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: ANSSI Highest Security Qualification (reinforced qualification)
@@ -25273,8 +25243,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Eviden_PQC_HSMaaS.html (51,629 bytes, 6,286 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:24:57
 
 ---
 
@@ -25305,6 +25273,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Enterprise Customers, Public Sector
 - **Implementation Prerequisites**: Cisco 8000 Series Secure Routers; managed service deployment; software feature integration into SD-WAN
 - **Relevant PQC Today Features**: Threats, Migrate, crypto-agility, vendor-risk, pqc-business-case
+- **Source Document**: Orange_Business_PQC_WAN.html (202,776 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:25:31
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -25316,8 +25286,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Standards-aligned approach to quantum-safe networking; emphasis on embedding post-quantum security early rather than as a later upgrade; focus on maintaining customer trust and protecting operations
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Orange_Business_PQC_WAN.html (202,776 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:25:31
 
 ---
 
@@ -25348,6 +25316,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Compliance Officer; Policy Maker; Operations
 - **Implementation Prerequisites**: BSI-approved devices; SINA security operating system; hardware-based cryptography; electromagnetically shielded devices
 - **Relevant PQC Today Features**: Threats; Compliance; Migrate; vendor-risk; pqc-business-case
+- **Source Document**: Secunet_SINA_PQC_Components.html (701,367 bytes, 9,818 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:26:31
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -25359,8 +25329,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Centralized administration of all-in-one solution; compliance with German classified information directive (VSA); support for classification levels from RESTRICTED to SECRET; over 250,000 active devices in daily use
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Secunet_SINA_PQC_Components.html (701,367 bytes, 9,818 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:26:31
 
 ---
 
@@ -25391,6 +25359,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Compliance Officer, Policy Maker
 - **Implementation Prerequisites**: BSI approval up to German classification level Restricted; quantum-resistant key exchange; quantum-resistant software updates
 - **Relevant PQC Today Features**: Threats, Compliance, Migrate, vpn-ssh-pqc, pqc-risk-management
+- **Source Document**: Genua_Quantum-Resistant_VPN.html (127,660 bytes, 12,144 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:27:24
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: BSI approval, German classification level "Restricted", NATO RESTRICTED, RESTREINT UE/EU RESTRICTED
@@ -25402,8 +25372,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: risk managers should assume significant likelihood of quantum attackers from beginning to middle of 2030s, coordination with responsible authorities, PQC migration strategy
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Genua_Quantum-Resistant_VPN.html (127,660 bytes, 12,144 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:27:24
 
 ---
 
@@ -25434,6 +25402,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Policy Maker, Government Official, CISO
 - **Implementation Prerequisites**: Specialized chips produced by Infineon with new design supporting PQC; participation in government-funded projects like Aquorypt and Quoryptan
 - **Relevant PQC Today Features**: digital-id, hybrid-crypto, migration-program, pqc-risk-management, hsm-pqc
+- **Source Document**: Giesecke_Devrient_PQC_ID_Card.html (92,911 bytes, 9,874 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:28:20
 - **Implementation Attack Surface**: side-channel-resistant software implementation
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -25445,8 +25415,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: EU roadmap calls for PQC adoption in critical and high-risk applications by 2030, governments must be ready to issue quantum-secure ID cards by 2030
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Giesecke_Devrient_PQC_ID_Card.html (92,911 bytes, 9,874 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:28:20
 
 ---
 
@@ -25477,6 +25445,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Policy Maker
 - **Implementation Prerequisites**: Incorporate quantum-resistant cryptography in next print purchasing decision; align with US government 2027 migration timeline for National Security Systems
 - **Relevant PQC Today Features**: Threats; Compliance; Migrate; stateful-signatures; code-signing
+- **Source Document**: HP_Enterprise_Printers_PQC.html (254,546 bytes, 8,247 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:29:14
 - **Implementation Attack Surface**: malicious firmware updates, stealthy persistent and total control of the device, data breaches
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -25488,8 +25458,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: unified fleet-wide approach to security strategies, Zero Trust Print Architecture TM, integration with existing Zero Trust Network Architectures
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: HP_Enterprise_Printers_PQC.html (254,546 bytes, 8,247 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:29:14
 
 ---
 
@@ -25520,6 +25488,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Operations
 - **Implementation Prerequisites**: OpenSSL 3 provider; liboqs library; modified PowerDNS DNSSECKeeper; modified BIND 9
 - **Relevant PQC Today Features**: Algorithms; Playground; stateful-signatures; tls-basics
+- **Source Document**: PowerDNS_PQC_DNSSEC.html (72,840 bytes, 13,709 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:30:07
 - **Implementation Attack Surface**: insecure reuse of state in stateful hash-based signatures; nonce reuse risks implied by state tracking requirements
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: interoperability testing across RIPE ATLAS network; performance impact evaluation; deliverability testing with varying transport (UDP/TCP) and DO bit settings; pre-filtering of probe-resolver combinations
@@ -25531,8 +25501,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: PowerDNS_PQC_DNSSEC.html (72,840 bytes, 13,709 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:30:07
 
 ---
 
@@ -25563,6 +25531,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Operations
 - **Implementation Prerequisites**: Docker installed; Custom nginx.conf file; Server key and certificate files; CA certificate for validation
 - **Relevant PQC Today Features**: tls-basics, hybrid-crypto, pki-workshop, openssl-studio
+- **Source Document**: OQS*Docker_Images**nginx**curl\_\_haproxy*.html (387,524 bytes, 10,155 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:31:10
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: certificate inventory, key material audit
 - **Testing & Validation Methods**: interoperability testing
@@ -25574,8 +25544,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: OQS*Docker_Images**nginx**curl\_\_haproxy*.html (387,524 bytes, 10,155 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:31:10
 
 ---
 
@@ -25606,6 +25574,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, CISO, Compliance Officer, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: hybrid-crypto, migration-program, pqc-risk-management, compliance-strategy, algorithms
+- **Source Document**: ETSI_TS_104_105_Hybrid_PQC_Standard.html (22,901 bytes, 4,527 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:31:56
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -25617,8 +25587,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: competitive advantage on the market; sustainable economy
 - **Organizational Readiness**: Organizations need to start using quantum-resistant encryption today; safeguard sensitive information from malicious actors; ensure compliance with evolving standards
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: ETSI_TS_104_105_Hybrid_PQC_Standard.html (22,901 bytes, 4,527 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:31:56
 
 ---
 
@@ -25649,6 +25617,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Policy Maker, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Threats, Migrate, Algorithms, hybrid-crypto, crypto-agility, qkd
+- **Source Document**: BSI_PQC_Recommendations.html (60,969 bytes, 6,565 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:32:31
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -25660,8 +25630,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: risk management preparations; industry, critical infrastructure providers and public administration urged to start transition; joint-statement on Post-Quantum Cryptography
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: BSI_PQC_Recommendations.html (60,969 bytes, 6,565 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:32:31
 
 ---
 
@@ -25692,6 +25660,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: System owners, Risk owners, Security Architect, Compliance Officer, Policy Maker
 - **Implementation Prerequisites**: Financial planning for system updates; Inventory of bespoke IT or operational technology; State management capability for LMS and XMSS; Use of RFC-based protocol implementations
 - **Relevant PQC Today Features**: Threats, Algorithms, Migrate, hybrid-crypto, stateful-signatures
+- **Source Document**: NCSC_UK_PQC_Migration_Timelines.html (154,371 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:33:17
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -25703,8 +25673,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: financial planning for updating systems to use PQC
 - **Organizational Readiness**: system and risk owners in commercial enterprises, public sector organisations and critical national infrastructure, governance for boards, long-term cryptographic protection planning
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: NCSC_UK_PQC_Migration_Timelines.html (154,371 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:33:17
 
 ---
 
@@ -25735,6 +25703,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Policy Maker, Researcher, Security Architect
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Timeline, Algorithms, Leaders, stateful-signatures
+- **Source Document**: KpqC_Korean_PQC_Standards.html (136,690 bytes, 2,741 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:34:15
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -25746,8 +25716,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: KpqC_Korean_PQC_Standards.html (136,690 bytes, 2,741 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:34:15
 
 ---
 
@@ -25778,6 +25746,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Compliance Officer, Developer
 - **Implementation Prerequisites**: Microsoft Windows operating system; integration with smartcards or hardware security modules; validated cryptographic modules from partners like PQShield and Feitian Technologies
 - **Relevant PQC Today Features**: crypto-agility, hybrid-crypto, hsm-pqc, qkd, stateful-signatures
+- **Source Document**: pQCee_CNG_Provider.html (1,206,996 bytes, 6,325 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:34:42
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-3-certified implementations, validated cryptographic modules
@@ -25789,8 +25759,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites via region-specific requirements (Malaysia, South Korea, China), global standards adoption, compliance risk reduction
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: pQCee_CNG_Provider.html (1,206,996 bytes, 6,325 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:34:42
 
 ---
 
@@ -25821,6 +25789,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Operations, Policy Maker
 - **Implementation Prerequisites**: Integration into ICS with minimal disruption; deployment in electric utility control centers and substations
 - **Relevant PQC Today Features**: iot-ot-pqc, threats, migration-program, pqc-business-case, vendor-risk
+- **Source Document**: Quantum_Bridge_DSKE.html (127,132 bytes, 3,590 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:35:23
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -25832,8 +25802,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: life-threatening effects, economically devastating effects, Canadian ingenuity, privacy and security of Canadians
 - **Organizational Readiness**: Industrial Control Systems (ICS), critical infrastructure systems, electric utility operator, zero trust architecture
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Quantum_Bridge_DSKE.html (127,132 bytes, 3,590 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:35:23
 
 ---
 
@@ -25864,6 +25832,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Policy Maker
 - **Implementation Prerequisites**: Existing Cisco routers; SD-WAN environments
 - **Relevant PQC Today Features**: crypto-agility, compliance-strategy, migration-program, pqc-risk-management, qkd
+- **Source Document**: Quantum_Xchange_Platform.html (321,715 bytes, 2,130 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:36:00
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: NIST CAVP Certificate #6060, NIST CMVP Certificate #4850
@@ -25875,8 +25845,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Quantum_Xchange_Platform.html (321,715 bytes, 2,130 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:36:00
 
 ---
 
@@ -25907,6 +25875,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; CISO; Compliance Officer; Operations; Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: entropy-randomness, digital-assets, hsm-pqc, iot-ot-pqc, hybrid-crypto
+- **Source Document**: Quantum_eMotion_Sentry-Q.html (312,424 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:36:30
 - **Implementation Attack Surface**: Resistant to prediction, modeling, and side channel attacks; tamper-proof key storage; hardware rooted trust; neutralizing compromised states; eliminating privilege escalation risks
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Continuous self test of QRNG; benchmarking simulations using IBM Quantum System One; validated by ÉTS Montréal and Institut Quantique; peer reviewed study; NIST (FIPS 140-3) certification in progress
@@ -25918,8 +25888,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: $450B estimated global cost of cybercrime by 2030 due to quantum vulnerable systems; reduced risk of monetary loss by up to 98% compared to traditional HD wallets; first commercial cash-flow milestone for Qastle
 - **Organizational Readiness**: ISO 27001 Certified; NIST (FIPS 140-3) certification in progress; governance prerequisites not explicitly stated but compliance with rigorous standards mentioned; no dedicated crypto team requirements specified
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Quantum_eMotion_Sentry-Q.html (312,424 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:36:30
 
 ---
 
@@ -25950,6 +25918,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Compliance Officer, Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Compliance, Algorithms, Leaders, iot-ot-pqc, vendor-risk
+- **Source Document**: Infineon_TEGRION_SLI22_Automotive.html (172,870 bytes, 4,847 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:37:57
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Common Criteria EAL6+ certification, German Federal Office for Information Security (BSI) certification
@@ -25961,8 +25931,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Infineon_TEGRION_SLI22_Automotive.html (172,870 bytes, 4,847 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:37:57
 
 ---
 
@@ -25993,6 +25961,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: iot-ot-pqc, vendor-risk, pqc-business-case
+- **Source Document**: Infineon_AURIX_TC49_PQC.html (1,455,651 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:38:37
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -26004,8 +25974,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Infineon_AURIX_TC49_PQC.html (1,455,651 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:38:37
 
 ---
 
@@ -26036,6 +26004,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Operations, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: 5g-security, iot-ot-pqc, pki-workshop, quantum-threats, vendor-risk
+- **Source Document**: Nokia_Quantum-Safe_Railways.html (245,658 bytes, 12,560 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:39:41
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: NetGuard Certificate Lifecycle Manager automates all processes of public keys and certificates in a centralized, secure and cost-effective way
 - **Testing & Validation Methods**: None detected
@@ -26047,8 +26017,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: numerous railways have been hit by costly and disruptive cyberattacks; protect against reputation and financial damages with an automated and predictive defense-in-depth strategy
 - **Organizational Readiness**: Streamlining regulatory compliance reporting; meeting legal, regulatory and compliance requirements through more effective information security and data privacy
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Nokia_Quantum-Safe_Railways.html (245,658 bytes, 12,560 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:39:41
 
 ---
 
@@ -26079,6 +26047,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; CISO; Defense Operations; Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: compliance-strategy; migration-program; iot-ot-pqc; kms-pqc; crypto-agility
+- **Source Document**: Arqit_QuantumCloud.html (85,062 bytes, 5,308 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:40:32
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: validated by leading cyber security institutions; meets NCSC recommendations; aligns with NSA guidance; CSfC Symmetric Key Management Requirements Annex
@@ -26090,8 +26060,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: reduces operational overhead; removes cost associated with use of hardware encryption devices; eliminates expensive rekeying processes
 - **Organizational Readiness**: meets NCSC recommendations; aligns with NSA guidance; accreditable solution; supports zero-trust model; enables secure digital operational concepts in the defence sector
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Arqit_QuantumCloud.html (85,062 bytes, 5,308 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:40:32
 
 ---
 
@@ -26122,6 +26090,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Policy Maker, Operations
 - **Implementation Prerequisites**: modifying numerous system components to ensure compatibility with updated cryptographic libraries; inventory; pilots; governance; competence development
 - **Relevant PQC Today Features**: migration-program, pqc-governance, crypto-agility, digital-assets, pqc-risk-management
+- **Source Document**: BIS_Project_Leap_PQC.html (26,352 bytes, 2,177 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:41:20
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: inventory
 - **Testing & Validation Methods**: interoperability testing, pilots
@@ -26133,8 +26103,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: resource allocation, high-stakes process, financial ecosystem
 - **Organizational Readiness**: governance, competence development, awareness, timely preparations, collaboration across institutions
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: BIS_Project_Leap_PQC.html (26,352 bytes, 2,177 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:41:20
 
 ---
 
@@ -26165,6 +26133,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Threats, Compliance, Algorithms, Leaders, crypto-agility
+- **Source Document**: NetSfere_PQC_Messaging.html (42,888 bytes, 7,907 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:41:48
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -26176,8 +26146,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites including GDPR, HIPAA, SOC2, Sarbanes-Oxley, ISO 27001 compliance; need for a security architecture that can securely operate in a post-quantum world
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: NetSfere_PQC_Messaging.html (42,888 bytes, 7,907 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:41:48
 
 ---
 
@@ -26208,6 +26176,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Compliance Officer; Government Agencies; Defense Contractors; Enterprise Administrators
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Threats, Compliance, Migrate, pqc-risk-management, vendor-risk
+- **Source Document**: Cellcrypt_PQC_Communications.html (79,764 bytes, 5,644 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:42:30
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Common Criteria Evaluation Assurance Level 4+, FIPS 140-3 Level 2 CAVP, CMVP - Crypto Module Certified
@@ -26219,8 +26189,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Cellcrypt Enterprise From USD 10.00 per month, per user; Cellcrypt Government From USD 120.00 annually, per user; Cellcrypt On-Premises Custom pricing
 - **Organizational Readiness**: Centralised Team Administration; Admin Console for users, policies, and security configurations; designed for organisations that can't afford to compromise on security
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Cellcrypt_PQC_Communications.html (79,764 bytes, 5,644 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:42:30
 
 ---
 
@@ -26251,6 +26219,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Developer; CISO; Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Threats; Migrate; Algorithms; Leaders; hybrid-crypto
+- **Source Document**: PQShield_PQE2E_Messaging_SDK.html (59,212 bytes, 7,344 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:43:18
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -26262,8 +26232,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: PQShield_PQE2E_Messaging_SDK.html (59,212 bytes, 7,344 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:43:18
 
 ---
 
@@ -26294,6 +26262,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: None detected
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: Kiteworks_PQC_File_Sharing.html (300,605 bytes, 10,365 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:43:51
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-3 validated cryptography
@@ -26305,8 +26275,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Kiteworks_PQC_File_Sharing.html (300,605 bytes, 10,365 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:43:51
 
 ---
 
@@ -26337,6 +26305,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Researcher, Policy Maker, Operations
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: pqc-101, migration-program, data-asset-sensitivity
+- **Source Document**: CryptPad_PQC_Collaboration.html (253,686 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:44:32
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -26348,8 +26318,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: free plan; 1 GB free storage; non-profit; no money-making
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: CryptPad_PQC_Collaboration.html (253,686 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:44:32
 
 ---
 
@@ -26380,6 +26348,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Researcher, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Algorithms, Leaders, qkd, hybrid-crypto, iot-ot-pqc
+- **Source Document**: TII*PQC_Library\_\_UAE*.html (54,708 bytes, 3,211 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:45:28
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -26391,8 +26361,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: TII*PQC_Library\_\_UAE*.html (54,708 bytes, 3,211 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:45:28
 
 ---
 
@@ -26423,6 +26391,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; CISO; Policy Maker; Financial Institutions
 - **Implementation Prerequisites**: Solidity contracts for EVM compatibility; access to QSafe Wallet or QRN Faucet for testing; integration with 70+ major chains including BTC, Ethereum, Solana
 - **Relevant PQC Today Features**: digital-assets; stateful-signatures; algorithms; threats; timeline; leaders
+- **Source Document**: Quranium_PQC_Blockchain.html (432,328 bytes, 9,648 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:45:56
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Certik Audit complete
@@ -26434,8 +26404,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Future-proofing the next $10 Trillion of digital assets; Regulated assets (securities, health data, IP) must remain valid 10–30+ years
 - **Organizational Readiness**: Assembled Core Team specializing in post-quantum blockchain security; Established our headquarters in Switzerland; Winner of DMCC Best Web3 Startup of 2024
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Quranium_PQC_Blockchain.html (432,328 bytes, 9,648 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:45:56
 
 ---
 
@@ -26466,6 +26434,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO; Security Architect; Policy Maker; Operations
 - **Implementation Prerequisites**: FPGA-based infrastructure; NIST-compliant hardware cores; milestone-based investment process; definitive agreements; due diligence completion
 - **Relevant PQC Today Features**: Threats, Compliance, Migrate, Algorithms, Leaders, pqc-business-case, migration-program
+- **Source Document**: Enquantum_PQC_Accelerator.html (72,850 bytes, 14,750 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:46:57
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -26477,8 +26447,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: market for PQC expected to reach $2.84 Billion by 2030; secured promissory note payable within 60 days; milestone-based funding mechanics; acquisition of controlling interest in Enquantum Ltd.; non-binding term sheet
 - **Organizational Readiness**: transition toward post-quantum cryptography driving urgency across governments, enterprises, and hyperscale operators; PQC has to be in place long before current cyber security infrastructure is challenged; organizations will have no alternative but to upgrade; hardware-accelerated quantum-resilient security needed for data centers, financial institutions, AI infrastructure providers, and government networks
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Enquantum_PQC_Accelerator.html (72,850 bytes, 14,750 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:46:57
 
 ---
 
@@ -26509,6 +26477,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Researcher; Policy Maker; Student
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Leaders, qkd
+- **Source Document**: SA_QuTI_Quantum_Communications.html (52,759 bytes, 3,893 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:48:09
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -26520,8 +26490,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: ZAR142M funded quantum communications and cryptography research for Africa; Department of Science, Technology, and Innovation (DSTI) funding
 - **Organizational Readiness**: SA QuTI consortium of five universities; three main centres and two emerging centres; human capital development focus; Emerging Leaders program established
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: SA_QuTI_Quantum_Communications.html (52,759 bytes, 3,893 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:48:09
 
 ---
 
@@ -26552,6 +26520,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Policymaker; Researcher; Industry Leader; Investor; Student
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Leaders, pqc-governance, migration-program, pqc-business-case
+- **Source Document**: Africa_Quantum_Consortium_PQC.html (80,408 bytes, 7,189 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:48:41
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -26563,8 +26533,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Africa_Quantum_Consortium_PQC.html (80,408 bytes, 7,189 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:48:41
 
 ---
 
@@ -26595,6 +26563,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Policy Maker, Compliance Officer, Security Architect
 - **Implementation Prerequisites**: Cryptographic inventory; PQC planning; Standards-based PQC adoption; Quantum risk management plans
 - **Relevant PQC Today Features**: Timeline, Algorithms, Compliance, Migrate, Assess
+- **Source Document**: GSMA_PQ_Telco_Task_Force.html (137,921 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:49:14
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: cryptographic discovery, maintain inventory of data systems and cryptography, create cryptographic inventory, algorithm enumeration, key material audit
 - **Testing & Validation Methods**: None detected
@@ -26606,8 +26576,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites via national strategy and coordinated roadmap, dedicated crypto team implied by cryptographic inventory requirements, change management scope via transition plans, estimated planning horizon (Start planning to 2030 or 2035), maturity assessment level via Quantum Preparedness Index and Quantum Readiness Index
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: GSMA_PQ_Telco_Task_Force.html (137,921 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:49:14
 
 ---
 
@@ -26638,6 +26606,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: None detected
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: Vox_Messenger_PQC.html (5,718 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-04-16T14:50:32
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -26648,10 +26619,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Vox_Messenger_PQC.html (5,718 bytes, no text extracted)
-- **Extraction Timestamp**: 2026-04-16T14:50:32
 
 ---
 
@@ -26682,6 +26649,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Policy Maker, Defense Sector Executives
 - **Implementation Prerequisites**: NIST CAVP validated implementation; Common Criteria EAL4+ certification with ALC_FLR.3; FIPS 140-2 Level 3 physical security
 - **Relevant PQC Today Features**: Threats, Compliance, Migrate, Algorithms, hsm-pqc, crypto-agility
+- **Source Document**: Kryptus_kNET_HSM_PQC.html (82,303 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:50:52
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: NIST CAVP Validation for PQC, Common Criteria EAL4+, FIPS 140-2 Level 3, ALC_FLR.3 flaw correction process
@@ -26693,8 +26662,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: National security imperative, strategic planning for public and defense sectors, governance mandates from CISA, NSM-10, and NSA, root of trust establishment
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Kryptus_kNET_HSM_PQC.html (82,303 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:50:52
 
 ---
 
@@ -26725,6 +26692,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Policy Maker
 - **Implementation Prerequisites**: Scientific training for IT team and employee base; Collaboration with educational institutions like Universidade de São Paulo
 - **Relevant PQC Today Features**: Assess, Migrate, Leaders, pqc-business-case, migration-program
+- **Source Document**: Bradesco_IBM_Quantum_Safe.html (53,041 bytes, 5,557 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:51:56
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: IBM Quantum Safe Explorer, Inventário de Materiais Criptográficos (CBOM), varrer e localizar ativos criptográficos, pendências e vulnerabilidades, identificar potenciais algoritmos criptográficos vulneráveis
 - **Testing & Validation Methods**: None detected
@@ -26736,8 +26705,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: treinamento científico para o time de TI e base de funcionários, colaboração com Universidade de São Paulo, preparação é prioridade
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Bradesco_IBM_Quantum_Safe.html (53,041 bytes, 5,557 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:51:56
 
 ---
 
@@ -26768,6 +26735,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, Policy Maker, Researcher
 - **Implementation Prerequisites**: ICP-Brazil certificates; TLS 1.2 or above; HTTP 1.1; XMLDSig standard; ISO 20.022 standard; DNS TTL definitions compliance
 - **Relevant PQC Today Features**: Algorithms, crypto-agility, tls-basics, digital-id, pqc-risk-management
+- **Source Document**: FENASBAC_Pix_PQC_Research.pdf (871,654 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:52:41
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: performance tests, benchmark against standard message traffic from Pix, comparison between current Pix performance and PQC scenario
@@ -26779,8 +26748,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: support from Microsoft Brazil and technology team of CBB, joint deliberation with Pix development team
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: FENASBAC_Pix_PQC_Research.pdf (871,654 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:52:41
 
 ---
 
@@ -26811,6 +26778,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: qkd, data-asset-sensitivity, leaders, compliance-strategy
+- **Source Document**: Sequre*Quantum\_\_Chile*.html (137,167 bytes, 1,534 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:53:42
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -26822,8 +26791,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: critical infrastructure for the country; digital trust in key sectors like healthcare
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Sequre*Quantum\_\_Chile*.html (137,167 bytes, 1,534 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:53:42
 
 ---
 
@@ -26854,6 +26821,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Policy Maker, Researcher, Security Architect
 - **Implementation Prerequisites**: Institutional funding for public research; project-specific grants via ANID; public procurement mechanisms; public-private partnerships; challenge funds; dedicated PhD scholarships; expansion of cryogenic and photonic laboratory capacity
 - **Relevant PQC Today Features**: pqc-governance, migration-program, timeline, leaders, compliance-strategy
+- **Source Document**: Chile_National_Quantum_Strategy.html (112,756 bytes, 4,385 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:54:08
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: national testbeds for post-quantum cryptography (PQC)
@@ -26865,8 +26834,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: institutional funding for public research; project-specific grants via ANID (National Research and Development Agency); challenge funds to de-risk commercial pilots
 - **Organizational Readiness**: anticipatory governance principles; unified regulatory framework for quantum-secure communications; training of advanced human capital through dedicated PhD scholarships; expansion of cryogenic and photonic laboratory capacity
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Chile_National_Quantum_Strategy.html (112,756 bytes, 4,385 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:54:08
 
 ---
 
@@ -26897,6 +26864,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Policy Maker, Researcher
 - **Implementation Prerequisites**: Adoption of cryptographic agility approach; implementation of Autonomous Network Journey (ANJ) programme; integration of Artificial Intelligence-driven analytics
 - **Relevant PQC Today Features**: crypto-agility, pqc-governance, 5g-security, migration-program, quantum-threats
+- **Source Document**: Telefonica_Quantum_Centre.html (274,163 bytes, 11,522 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:54:52
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: crypto-agility scanning, certificate inventory, key material audit
 - **Testing & Validation Methods**: None detected
@@ -26908,8 +26877,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Centre of Excellence for quantum technologies, internal governance model, dedicated crypto team required, change management scope
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Telefonica_Quantum_Centre.html (274,163 bytes, 11,522 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:54:52
 
 ---
 
@@ -26940,6 +26907,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Policy Maker, Researcher, Security Architect
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Leaders, qkd, pqc-governance, migration-program, pqc-business-case
+- **Source Document**: STC_Quantum-Safe_Framework.html (274,956 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:55:38
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -26951,8 +26920,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance consortium of key stakeholders from government, industry, and academia; National Quantum Agenda; Vision 2030 framework
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: STC_Quantum-Safe_Framework.html (274,956 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:55:38
 
 ---
 
@@ -26983,6 +26950,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Policy Maker, Infrastructure Provider
 - **Implementation Prerequisites**: Symmetric encryption mechanisms; physically secured operations center; Security Management System (SMS) for key governance
 - **Relevant PQC Today Features**: Threats, Leaders, Migrate, pqc-governance, 5g-security
+- **Source Document**: E\_\_Nokia_Quantum-Safe_Network.html (214,841 bytes, 5,990 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:56:28
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -26994,8 +26963,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites via Security Management System (SMS) for key governance; dedicated operations center managed by SMS; long-term commitment to secure infrastructure
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: E\_\_Nokia_Quantum-Safe_Network.html (214,841 bytes, 5,990 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:56:28
 
 ---
 
@@ -27026,6 +26993,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Researcher; Policy Maker; Security Architect
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: qkd, entropy-randomness, digital-id, quantum-threats, migration-program
+- **Source Document**: TUBITAK*BILGEM_PQC\_\_Turkey*.html (644,709 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:57:06
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -27037,8 +27006,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: TUBITAK*BILGEM_PQC\_\_Turkey*.html (644,709 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:57:06
 
 ---
 
@@ -27069,6 +27036,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: 5g-security; vpn-ssh-pqc; Leaders; Threats; Migrate
+- **Source Document**: Turkcell_Nokia_Quantum-Safe_IPsec.html (412,399 bytes, 8,309 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:57:53
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -27080,8 +27049,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Turkcell_Nokia_Quantum-Safe_IPsec.html (412,399 bytes, 8,309 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:57:53
 
 ---
 
@@ -27112,6 +27079,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Researcher, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Leaders, Algorithms, qkd
+- **Source Document**: Qatar_QC2_Quantum_Center.html (56,129 bytes, 3,082 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:58:31
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -27123,8 +27092,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: $10M defense-funded PQC and quantum AI lab
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Qatar_QC2_Quantum_Center.html (56,129 bytes, 3,082 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:58:31
 
 ---
 
@@ -27155,6 +27122,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Researcher, Developer, Policy Maker
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Leaders, Algorithms, pqc-101
+- **Source Document**: Quantum*Leap_Africa\_\_AIMS*.html (99,836 bytes, 1,606 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:58:58
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -27166,8 +27135,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Quantum*Leap_Africa\_\_AIMS*.html (99,836 bytes, 1,606 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:58:58
 
 ---
 
@@ -27198,6 +27165,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Policy Maker; CISO; Researcher
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: hybrid-crypto; qkd; threats; migration-program; pqc-business-case
+- **Source Document**: QuantumCTek_PQC_Chip.html (267,295 bytes, 11,197 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T14:59:21
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: multiple field tests
@@ -27209,8 +27178,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: QuantumCTek_PQC_Chip.html (267,295 bytes, 11,197 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T14:59:21
 
 ---
 
@@ -27241,6 +27208,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: None detected
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
+- **Source Document**: China_Telecom_Quantum_Group.html (23,418 bytes, 9,591 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:00:09
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -27252,8 +27221,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: China_Telecom_Quantum_Group.html (23,418 bytes, 9,591 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:00:09
 
 ---
 
@@ -27284,6 +27251,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Policy Maker, Security Architect, Researcher
 - **Implementation Prerequisites**: upgrades to software, hardware, and communication protocols; government investment; large-scale deployment across critical infrastructure
 - **Relevant PQC Today Features**: Timeline, Threats, Algorithms, Leaders, migration-program
+- **Source Document**: China*PQC_National_Standards\_\_ICCS*.html (264,207 bytes, 10,488 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:01:58
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -27295,8 +27264,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: China*PQC_National_Standards\_\_ICCS*.html (264,207 bytes, 10,488 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:01:58
 
 ---
 
@@ -27327,6 +27294,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, Developer, CISO, Operations
 - **Implementation Prerequisites**: Edge Safe™ secure element embedded in IoT devices; Secure Activate Service™ platform for certificate management
 - **Relevant PQC Today Features**: iot-ot-pqc, hybrid-crypto, crypto-agility, digital-id, pki-workshop
+- **Source Document**: Toppan_PQC_CARD.html (57,126 bytes, 9,760 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:02:44
 - **Implementation Attack Surface**: harvest attacks targeting encryption keys and certificates; unauthorized data extraction via disassembly or analysis of secure elements
 - **Cryptographic Discovery & Inventory**: hybrid certificate issuance and management supporting current digital certificates, PQC certificates, and hybrid certificates; continued use of existing crypto-assets
 - **Testing & Validation Methods**: testing of network environments for PQC-compatible smart card systems
@@ -27338,8 +27307,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: crypto-agility to allow secure and concurrent use of conventional and next-generation cryptographies; infrastructure support for continued use of IoT services in the quantum computing age
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Toppan_PQC_CARD.html (57,126 bytes, 9,760 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:02:44
 
 ---
 
@@ -27370,6 +27337,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Researcher, Security Architect, Developer, Policy Maker
 - **Implementation Prerequisites**: Access to Fujitsu Hybrid Quantum Computing Platform; Use of OSS Quantum Cloud Platform; Utilization of Open Quantum Toolchain for Operators & Users
 - **Relevant PQC Today Features**: Timeline, Leaders, Algorithms, quantum-threats, hybrid-crypto
+- **Source Document**: Fujitsu_PQC_Networks.html (163,197 bytes, 9,507 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:03:41
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -27381,8 +27350,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: Fujitsu $100,000 Quantum Simulator Challenge 2025-26
 - **Organizational Readiness**: dedicated crypto team required, joint research with leading companies across various industries
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Fujitsu_PQC_Networks.html (163,197 bytes, 9,507 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:03:41
 
 ---
 
@@ -27413,6 +27380,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Policy Maker, Security Architect, Researcher, CISO
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Timeline, Threats, Leaders, Algorithms, migration-program
+- **Source Document**: NEDO_PQShield_Japan_PQC_Program.html (73,333 bytes, 9,124 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:04:26
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -27424,8 +27393,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: collaboration between governments, universities and the private sector; dedicated team led by Dr Shuichi Katsumata; expansion of local team
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: NEDO_PQShield_Japan_PQC_Program.html (73,333 bytes, 9,124 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:04:26
 
 ---
 
@@ -27456,6 +27423,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect, CISO, Developer, Compliance Officer, OEMs
 - **Implementation Prerequisites**: TSMC 22nm process; CHERI ISA V9 implementation; FIPS 140-3 standards design
 - **Relevant PQC Today Features**: Algorithms, Compliance, Leaders, iot-ot-pqc, hsm-pqc
+- **Source Document**: SECQAI*Q-Locked_TPM\_\_Taiwan_TSMC*.html (103,940 bytes, 5,290 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:05:12
 - **Implementation Attack Surface**: memory safety failures; 70% of CVEs related to memory safety issues
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: FIPS 140-3 standards; NIST standards (FIPS 203, 204 and 205)
@@ -27467,8 +27436,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: DIANA organisation acceleration cohort; 44 companies chosen in 2023; collaboration with large OEM partners
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: SECQAI*Q-Locked_TPM\_\_Taiwan_TSMC*.html (103,940 bytes, 5,290 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:05:12
 
 ---
 
@@ -27499,6 +27466,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Researcher, Policy Maker, Security Architect, Developer, Compliance Officer
 - **Implementation Prerequisites**: Raspberry Pi 2 (Arm Cortex-A7); Arm Cortex-M4 microprocessor; AVX2 architecture
 - **Relevant PQC Today Features**: Algorithms, Leaders, Migration-program, Assess, iot-ot-pqc
+- **Source Document**: Taiwan_QSMC_Migration_Center.html (957,233 bytes, 6,184 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:05:59
 - **Implementation Attack Surface**: timing vulnerabilities in Kyber implementations (KyberSlash1, KyberSlash2), secret-dependent division timings
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -27510,8 +27479,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: R&D investment opportunities, funding support for research projects, commercialization platforms, market promotion
 - **Organizational Readiness**: establishment of professional talent pool, collaboration with domestic and international research institutions, dedicated teams (Information Security, Digital Identity, Financial Industry Application, Offensive and Defensive Intelligence), 5-year planning horizon
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Taiwan_QSMC_Migration_Center.html (957,233 bytes, 6,184 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:05:59
 
 ---
 
@@ -27542,6 +27509,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Policy Maker, Security Architect, CISO, Researcher, Compliance Officer
 - **Implementation Prerequisites**: Registration for PQC Special Interest Group via https://bit.ly/PQC-SIG; participation in awareness sessions and webinars; collaboration with industry partners and academia
 - **Relevant PQC Today Features**: Timeline, Threats, Compliance, Migrate, Assess, pqc-governance, migration-program, pqc-risk-management
+- **Source Document**: Malaysia_NACSA_PQC_Roadmap.html (1,174,227 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:06:46
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -27553,8 +27522,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: Special Interest Group on Post-Quantum, awareness sessions, webinars, seminars, government/academia/industry/public participation, National Critical Information Infrastructure (NCII) sector engagement
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Malaysia_NACSA_PQC_Roadmap.html (1,174,227 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:06:46
 
 ---
 
@@ -27585,6 +27552,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Policy Maker, Security Architect, Government Agency, Compliance Officer
 - **Implementation Prerequisites**: Conducting a cryptographic inventory of existing systems; creating detailed transition plans with clear timelines and priorities; mapping system architecture and analyzing data flows
 - **Relevant PQC Today Features**: Timeline, Threats, Compliance, Migrate, Assess, digital-id, migration-program, pqc-governance
+- **Source Document**: Cybernetica_PQC_Estonia.html (80,870 bytes, 10,170 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:07:39
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: conducting a cryptographic inventory of existing systems; mapping the register's architecture; analysing data flows; examining cryptographic components in the context of quantum threats
 - **Testing & Validation Methods**: None detected
@@ -27596,8 +27565,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: governance prerequisites; dedicated crypto team required; change management scope; estimated planning horizon (6-12 months); maturity assessment level
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Cybernetica_PQC_Estonia.html (80,870 bytes, 10,170 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:07:39
 
 ---
 
@@ -27628,6 +27595,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Public administration; Industry partners; Researchers; Small and medium-sized companies
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: qkd, migration-program, pqc-governance, infrastructure
+- **Source Document**: CZQCI_Czech_Quantum_Infrastructure.html (39,730 bytes, 3,278 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:08:28
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: validate relevant technologies and their integration into existing telecommunication networks; test real quantum communication through a test connection to the test backbone network
@@ -27639,8 +27608,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: CZK 65M budget; Funded by the European Union's Digital Europe programme under the grant agreement No. 101091684 and the National Recovery Plan
 - **Organizational Readiness**: CyberSecurityHub cz is the coordinator of the consortium; consortium consists of Czech Technical University in Prague, CESNET z.s.p.o., Institute of Scientific Instruments of the Czech Academy of Sciences, Palacký University Olomouc, VSB – Technical University of Ostrava and Brno University of Technology; Education in the field of quantum security of data transmission
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: CZQCI_Czech_Quantum_Infrastructure.html (39,730 bytes, 3,278 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:08:28
 
 ---
 
@@ -27671,6 +27638,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Policy Maker, Security Architect, Researcher, Operations
 - **Implementation Prerequisites**: existing fibre-optic infrastructure; involvement of Ministry of Science and Higher Education for co-funding; coordination with national research and academic computer networks
 - **Relevant PQC Today Features**: qkd, 5g-security, migration-program, pqc-governance, timeline
+- **Source Document**: PIONIER-Q_Poland_QCI.html (242,475 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:09:15
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: test results summarized during March meeting with European Commission
@@ -27682,8 +27651,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: total budget allocated to PCSS amounts to EUR 16 million, PIONIER-Q-SAT EUR 850,000, QCI-AT-CZ-PL EUR 3.4 million, QCI-SK-CZ-PL EUR 4.6 million, QCI.dk-CB EUR 3.9 million, Quant-GPlCz EUR 3.4 million, overall project budgets EUR 4.9 million each for PIONIER-Q-SAT and others, EUR 8 million for Quant-GPlCz, grant exceeding 13 million PLN from Ministry of Science and Higher Education
 - **Organizational Readiness**: PCSS acts as coordinator or partner in international consortia, national partners include Koszalin University of Technology, Opole University, Silesian University of Technology, NASK, ICM at University of Warsaw, OPI PIB, project implementation by European Health and Digital Executive Agency (HaDEA) with national co-funding
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: PIONIER-Q_Poland_QCI.html (242,475 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:09:15
 
 ---
 
@@ -27714,6 +27681,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Policy Maker, Researcher, Security Architect, CISO
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: pqc-business-case, qkd, migration-program, pqc-governance, Leaders
+- **Source Document**: Spain_Quantum_Strategy_EUR_808M.html (57,115 bytes, 10,327 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:10:44
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -27725,8 +27694,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: €808 million estimated budget, €1.5 billion total investment potential, €10 million Quantum Communications Hub investment, $173 billion global market value by 2040, ERDF funds, Recovery, Transformation and Resilience Plan
 - **Organizational Readiness**: Council of Ministers approval, inter-ministerially coordinated initiatives, seven priorities including capacity building and talent, roundtables with quantum technology ecosystem
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Spain_Quantum_Strategy_EUR_808M.html (57,115 bytes, 10,327 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:10:44
 
 ---
 
@@ -27757,6 +27724,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Researcher, Policy Maker, Security Architect
 - **Implementation Prerequisites**: Cloud native technologies; digital twin for QKD networks; fibre optic infrastructure
 - **Relevant PQC Today Features**: qkd, hybrid-crypto, 5g-security, migration-program, pqc-governance
+- **Source Document**: MadQuantum-CM\__Spain_.html (94,299 bytes, 10,919 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:11:34
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: digital twin evaluation, experimental validation on hybrid PQC/QKD multi-domain testbed
@@ -27768,8 +27737,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: EUR 73M total investment, EUR 16 million euros regional government investment, NextGenerationEU funds, Recovery Transformation and Resilience Plan (PRTR) funding
 - **Organizational Readiness**: training of specialised researchers, collaboration between academia and industry, synergy between ecosystem players
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: MadQuantum-CM\__Spain_.html (94,299 bytes, 10,919 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:11:34
 
 ---
 
@@ -27800,6 +27767,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: CISO, Security Architect, Developer, Policy Maker
 - **Implementation Prerequisites**: SSE4.1, SSE2 and MMX command sets; PQC library or SDK integration; replacement of smart card crystals and mobile phones; server ciphers and operating systems upgrades
 - **Relevant PQC Today Features**: Timeline, Threats, Compliance, Migrate, Algorithms, Leaders, tls-basics, vpn-ssh-pqc, pki-workshop, digital-assets
+- **Source Document**: QApp*PQC_TLS_Gateway\_\_Russia*.html (82,157 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:12:35
 - **Implementation Attack Surface**: side-channel attacks (electrical energy absorption, electromagnetic waves, acoustic waves, instruction execution timing differences), Stern protocol modification with masked secret key computation
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: pilot project testing of TLS gateway, reverse proxy tunneling tests, protection of clearing and transactional reports, encrypted backup transfer between data centers, offline Bluetooth payment operability checks
@@ -27811,8 +27780,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: innovation department leadership involvement (NSPK), joint pilot projects between NSPK and Gazprombank, Moscow Exchange innovation laboratory engagement, technical committee TK-26 standardization efforts
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: QApp*PQC_TLS_Gateway\_\_Russia*.html (82,157 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:12:35
 
 ---
 
@@ -27843,6 +27810,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Policy Maker, Researcher, Security Architect
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Leaders, qkd, quantum-threats, migration-program, pqc-governance
+- **Source Document**: Kryptonite*Shipovnik_PQC_Signature\_\_Russia*.html (391,159 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:13:48
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -27854,8 +27823,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: over 2 billion rubles (~€30 million) in funding, $790 million investment for quantum computing R&D
 - **Organizational Readiness**: National Quantum Laboratory (NQL), Russian Quantum Center (RQC), Rosatom, Russian Railways (RZhD), Rostec, National Technology Initiative (NTI), Digital Economy National Program
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Kryptonite*Shipovnik_PQC_Signature\_\_Russia*.html (391,159 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:13:48
 
 ---
 
@@ -27896,9 +27863,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: guides the transition to post-quantum security
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: PQC Readiness Profile, Post-Quantum Cryptography Readiness
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: CyberZero_Quantanaut_doc1.html (84,731 bytes, 3,177 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T15:14:45
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -27939,9 +27906,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: deterministic and randomized modes, offline signing capability for randomized version, parameter flexibility across security levels
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: HAETAE_Reference_Implementation.pdf (554,995 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T15:15:17
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -27982,9 +27949,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: NTRU\_\_Reference_Implementation.pdf (478,947 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T15:16:21
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -28015,7 +27982,7 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Researcher; Security Architect; Developer
 - **Implementation Prerequisites**: C language; AVX2 instructions; Number theory transform (NTT); 64-bit Ubuntu 14.4 LTS; Intel Core-i7 4790 CPU
 - **Relevant PQC Today Features**: Algorithms; Performance; Migration; Assess
-- **Implementation Attack Surface**: None detected
+- **Implementation Attack Surface**: Decryption failure probability; Side-channel attacks not explicitly detailed but AVX2 optimization mentioned
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: comprehensive and thorough analysis of several parameter choices; adapting best known attacks and their variants; implementation comparison with counterparts; measurement of averaged CPU cycles on 64-bit Ubuntu 14.4 LTS ThinkCenter desktop
 - **QKD Protocols & Quantum Networking**: None detected
@@ -28025,9 +27992,9 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: migration to PQC announced by NSA in 2015; NIST standardization process initiated in 2016; replacing currently deployed public-key cryptosystems with lattice-based ones
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Aigis_Reference_Implementation.pdf (513,248 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-16T15:17:24
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 
 ---
 
@@ -28058,6 +28025,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Researcher
 - **Implementation Prerequisites**: CMake version 3.10 or later; C99-compatible compiler; Valgrind for dynamic testing; Clang static analyzer version 10 or later
 - **Relevant PQC Today Features**: Algorithms, Timeline, pqc-101
+- **Source Document**: MAYO_Reference_Implementation.html (329,752 bytes, 11,023 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:18:35
 - **Implementation Attack Surface**: constant-time behavior testing, AddressSanitizer memory error detector, MemorySanitizer detector for uninitialized reads, LeakSanitizer for run-time memory leak detection, UndefinedBehaviorSanitizer for undefined behavior detection
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Known Answer Tests (KAT), self-tests (key-generation, signing and verifying), dynamic testing with Valgrind, static analysis with Clang static analyzer, benchmarking suites
@@ -28069,8 +28038,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: MAYO_Reference_Implementation.html (329,752 bytes, 11,023 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:18:35
 
 ---
 
@@ -28101,6 +28068,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect, Compliance Officer
 - **Implementation Prerequisites**: Java 2.1.1 or 2.0.0 for FIPS; C# 1.0.2 or 1.0.1 for FIPS; Bouncy Castle Java LTS; Bouncy Castle C# .NET FIPS
 - **Relevant PQC Today Features**: Algorithms, Compliance, Migrate, hybrid-crypto, stateful-signatures
+- **Source Document**: Bouncy_Castle.html (311,681 bytes, 10,937 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:19:41
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Cryptographic Module Validation Program (CMVP) Certificate #4943, Cryptographic Module Validation Program (CMVP) Certificate #4743, Cryptographic Module Validation Program (CMVP) Certificate #4616, Cryptographic Module Validation Program (CMVP) Certificate #3514, Cryptographic Module Validation Program (CMVP) Certificate #3152, Cryptographic Module Validation Program (CMVP) Certificate #2768, Cryptographic Module Validation Program (CMVP) Certificate #4416, Cryptographic Module Validation Program (CMVP) Certificate #2792
@@ -28112,8 +28081,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: Bouncy_Castle.html (311,681 bytes, 10,937 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:19:41
 
 ---
 
@@ -28144,6 +28111,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: CMake 3.20.2 or later; Python 3.8 or later; Perl; C99 toolchain; Doxygen 1.8.14 or later for documentation; Git submodules initialization
 - **Relevant PQC Today Features**: Algorithms, tls-basics, iot-ot-pqc
+- **Source Document**: mbedTLS.html (395,171 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:21:01
 - **Implementation Attack Surface**: AddressSanitizer, LeakSanitizer, UndefinedSanitizer, MemorySanitizer, ThreadSanitizer
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: interoperability testing, regression testing, fuzzing (via ASan/MemSan/TSan), test suites with generated data files
@@ -28155,8 +28124,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: mbedTLS.html (395,171 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:21:01
 
 ---
 
@@ -28187,6 +28154,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: Rust programming language; Minimum Supported Rust Version (MSRV) policy applies
 - **Relevant PQC Today Features**: Algorithms, Migrate, Compliance, pqc-101
+- **Source Document**: RustCrypto_ML-KEM.html (30,924 bytes, 5,664 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:22:04
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
@@ -28198,8 +28167,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: RustCrypto_ML-KEM.html (30,924 bytes, 5,664 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:22:04
 
 ---
 
@@ -28230,6 +28197,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: Rust programming language; no_std environment support for bare-metal or WebAssembly
 - **Relevant PQC Today Features**: Algorithms, stateful-signatures, merkle-tree-certs
+- **Source Document**: RustCrypto_ML-DSA.html (28,771 bytes, 3,288 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:22:51
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: proptest, criterion
@@ -28241,8 +28210,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: RustCrypto_ML-DSA.html (28,771 bytes, 3,288 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:22:51
 
 ---
 
@@ -28273,6 +28240,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: Rust programming environment; Cargo package manager
 - **Relevant PQC Today Features**: Algorithms, stateful-signatures, code-signing
+- **Source Document**: RustCrypto_SLH-DSA.html (33,074 bytes, 5,052 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:23:21
 - **Implementation Attack Surface**: stack space limitations due to signature and intermediate value allocation; lack of independent security audit
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: proptest, quickcheck, criterion
@@ -28284,8 +28253,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: RustCrypto_SLH-DSA.html (33,074 bytes, 5,052 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:23:21
 
 ---
 
@@ -28316,6 +28283,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect; Researcher
 - **Implementation Prerequisites**: Systems must prevent reuse of secret key states; APIs must handle dynamic secret key state updates
 - **Relevant PQC Today Features**: stateful-signatures; algorithms; merkle-tree-certs; pqc-101; quantum-threats
+- **Source Document**: hbs-lms.html (218,791 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:24:09
 - **Implementation Attack Surface**: naturally resistant to side-channel attacks; stateful signature algorithm requiring prevention of secret key state reuse to avoid forgery
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: Appendix F Test Cases; interoperability between implementations ensured by sufficient detail
@@ -28327,8 +28296,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: developers must take care of specific restrictions regarding stateful schemes; requires careful handling of secret keys to prevent reuse
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: hbs-lms.html (218,791 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:24:09
 
 ---
 
@@ -28359,6 +28326,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer, Security Architect
 - **Implementation Prerequisites**: npm install @noble/curves; deno add jsr:@noble/curves; polyfill for getRandomValues for React Native
 - **Relevant PQC Today Features**: Migrate, Algorithms, code-signing, api-security-jwt, digital-assets
+- **Source Document**: \_noble_curves.html (772,794 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:25:24
 - **Implementation Attack Surface**: fault attacks, deterministic signatures vulnerability, nonce reuse prevention via hedged mode with extraEntropy
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: wycheproof tests, fuzzing, cross-library tests, conformance to RFC 6979, RFC 8032, BIP 340, RFC 7748, FIPS 186-5
@@ -28370,8 +28339,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: \_noble_curves.html (772,794 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:25:24
 
 ---
 
@@ -28402,6 +28369,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Developer; Security Architect
 - **Implementation Prerequisites**: npm or deno package manager; polyfill for getRandomValues for React Native; manual maxmem adjustment for Scrypt N > 2^20
 - **Relevant PQC Today Features**: Algorithms; Assess; code-signing; entropy-randomness; migration-program
+- **Source Document**: \_noble_hashes.html (543,131 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:26:46
 - **Implementation Attack Surface**: DoS tests, memory safety via maxmem limits in Scrypt and Argon2, no unrolled loops to reduce source code size
 - **Cryptographic Discovery & Inventory**: Algorithm enumeration of SHA2, SHA3, BLAKE1, BLAKE2, BLAKE3, legacy hashes (SHA1, MD5, RIPEMD160), MACs (HMAC, KMAC), KDFs (HKDF, PBKDF2, Scrypt, Argon2)
 - **Testing & Validation Methods**: ACVP tests, fuzzing, chained/sliding window tests, conformance to RFC 4634, FIPS-202, RFC 9861, RFC 7693, RFC 3174, RFC 1321, RFC 2286, RFC 2104, RFC 5869, RFC 2898, RFC 7914, RFC 9106
@@ -28413,8 +28382,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: \_noble_hashes.html (543,131 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:26:46
 
 ---
 
@@ -28445,6 +28412,8 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: Security Architect; Researcher; Policy Maker; CISO
 - **Implementation Prerequisites**: Open-source simulation pipeline; Encrypted Client Hello configuration; SSH RekeyLimit configuration; Larger key exchange parameters
 - **Relevant PQC Today Features**: Threats, Assess, Migrate, tls-basics, vpn-ssh-pqc, pqc-risk-management, hybrid-crypto
+- **Source Document**: HNDL*Simulator\_\_hndl-dev*.html (318,007 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-16T15:28:30
 - **Implementation Attack Surface**: None detected
 - **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: open-source simulation pipeline, formal verification of hybrid protocol transitions, computational proof in the multi-stage key exchange model, symbolic analysis
@@ -28456,7 +28425,453 @@ enrichment_method: ollama-qwen3.5:27b
 - **Financial & Business Impact**: storage economics, per-session storage model, protocol overhead ratio, adversary cost quantification, surveillance economics, storage inflation costs, quantum workload costs
 - **Organizational Readiness**: None detected
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
-- **Source Document**: HNDL*Simulator\_\_hndl-dev*.html (318,007 bytes, 15,000 extracted chars)
-- **Extraction Timestamp**: 2026-04-16T15:28:30
+
+---
+
+## IBM LinuxONE PQC
+
+- **Reference ID**: IBM LinuxONE PQC
+- **Title**: IBM LinuxONE PQC
+- **Authors**: Enterprise Server Platforms
+- **Publication Date**: 2025
+- **Last Updated**: 2026-03-31
+- **Document Status**: Verified
+- **Main Topic**: IBM LinuxONE is a family of enterprise-grade Linux servers featuring quantum-safe technologies and on-chip accelerators for pervasive encryption.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: IBM LinuxONE; Unified Key Orchestrator for Containers
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Key Management; HSM
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: IBM LinuxONE servers integrate quantum-safe technologies via on-chip accelerators; Unified Key Orchestrator provides centralized hardware-backed encryption key management for containers; The platform supports confidential computing and end-to-end data protection for AI applications; Resource-efficient design optimizes power usage to reduce operational costs.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, CISO, Operations
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: hsm-pqc, kms-pqc, vendor-risk, pqc-business-case
+- **Source Document**: IBM_LinuxONE_PQC.html (164,395 bytes, 3,935 extracted chars)
+- **Extraction Timestamp**: 2026-04-13T23:17:43
+
+---
+
+## QRL 2.0 (Quantum Resistant Ledger)
+
+- **Reference ID**: QRL 2.0 (Quantum Resistant Ledger)
+- **Title**: QRL 2.0 (Quantum Resistant Ledger)
+- **Authors**: Blockchain & DLT
+- **Publication Date**: 2024
+- **Last Updated**: 2026-03-31
+- **Document Status**: Verified
+- **Main Topic**: The document serves as a central documentation hub for the Quantum Resistant Ledger (QRL), covering usage, development, and API integration for its quantum-resistant blockchain.
+- **PQC Algorithms Covered**: XMSS; ML-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: ML-DSA migration planned
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: QRL Wallet; QRL Core Library; QRLLIB; QrandomX; QRL Node; QRL Helpers API; QRL API; WalletD Rest Proxy; Zeus Proxy; test-zond
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: QRL is a purpose-built quantum-resistant blockchain using XMSS signatures since mainnet; ML-DSA migration is planned for the future; documentation covers three main categories: Use, Build, and API; developers can access tools like QRLLIB and QrandomX for building on the project; a test network named test-zond offers Proof-of-Stake with EVM smart contracts.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; User; Researcher
+- **Implementation Prerequisites**: Docker nodes; QRL Core Library; QrandomX RandomX Library
+- **Relevant PQC Today Features**: stateful-signatures; digital-assets; algorithms; migration-program
+- **Source Document**: QRL*2_0\_\_Quantum_Resistant_Ledger*.html (30,815 bytes, 2,447 extracted chars)
+- **Extraction Timestamp**: 2026-04-13T23:18:42
+
+---
+
+## Hitachi DoMobile
+
+- **Reference ID**: Hitachi DoMobile
+- **Title**: Hitachi DoMobile
+- **Authors**: Remote Access and VDI Software
+- **Publication Date**: 2026-01-15
+- **Last Updated**: 2026-03-31
+- **Document Status**: Verified
+- **Main Topic**: Hitachi Solutions Create Ltd. and 01 Quantum Inc. announce the launch of DoMobile Ver.5, a remote access system in Japan enhanced with FIPS 203 (ML-KEM) post-quantum cryptography.
+- **PQC Algorithms Covered**: ML-KEM
+- **Quantum Threats Addressed**: Harvest Now, Decrypt Later attacks; Q-Day
+- **Migration Timeline Info**: Launch date: January 15, 2026; First in Japan to offer PQC functionality in remote access software
+- **Applicable Regions / Bodies**: Regions: Japan; Bodies: Financial Services Agency
+- **Leaders Contributions Mentioned**: Yusaku Kurata (Executive Officer, Business Division Manager at HSC); Andrew Cheung (CEO of 01 Quantum)
+- **PQC Products Mentioned**: DoMobile Ver.5; IronCAP
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Remote access infrastructure; Public key cryptography framework
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: FIPS 203
+- **Classical Algorithms Referenced**: RSA; ECC
+- **Key Takeaways**: DoMobile Ver.5 is the first remote access software in Japan to integrate PQC as of January 15, 2026; The system uses NIST-standardized FIPS 203 (ML-KEM) algorithms to protect against Harvest Now, Decrypt Later attacks; Existing customers can upgrade to PQC-enhanced security with no additional cost or optional contracts required; Financial regulators are urging institutions to transition to PQC to safeguard long-term confidentiality of sensitive data
+- **Security Levels & Parameters**: FIPS 203; ML-KEM
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Compliance Officer; Operations
+- **Implementation Prerequisites**: Apply the latest update to existing DoMobile installations; No optional contracts required
+- **Relevant PQC Today Features**: Threats, Compliance, Migrate, Algorithms, Leaders
+- **Source Document**: Hitachi_DoMobile.html (222,014 bytes, 11,795 extracted chars)
+- **Extraction Timestamp**: 2026-04-12T15:48:47
+
+---
+
+## DigiCert SigningHub
+
+- **Reference ID**: DigiCert SigningHub
+- **Title**: DigiCert SigningHub
+- **Authors**: Digital Signature Software
+- **Publication Date**: 2025
+- **Last Updated**: 2026-03-31
+- **Document Status**: Verified
+- **Main Topic**: The document outlines DigiCert's strategic approach and platform capabilities for preparing organizations to migrate to post-quantum cryptography through planning, piloting, and lifecycle management.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Quantum breaks today's encryption; quantum threat
+- **Migration Timeline Info**: 2026 is the year to move from planning to execution
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: DigiCert ONE Platform; Trust Lifecycle Manager; Device Trust Manager; TrustCore SDK; Software Trust Manager; Document Trust Manager; DigiCert Labs
+- **Protocols Covered**: TLS/SSL; mTLS; DNS
+- **Infrastructure Layers**: PKI; Key Management; IoT ecosystems; Embedded applications; Code signing; Digital signatures
+- **Standardization Bodies**: NIST; ENISA
+- **Compliance Frameworks Referenced**: CNSA 2.0; eIDAS /PKIo
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Start with a pilot to define post-quantum strategy and assess integration complexity; Build visibility into where cryptography lives and create a cryptographic bill of materials; Develop a repeatable playbook for deploying quantum-safe systems; Secure executive support and budget in 2026 to move from planning to execution; Leverage DigiCert Labs for free quantum-safe certificates to simulate real-world scenarios
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Crypto-agile; cryptographic agility; migration strategies; pilot environments
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Developer; Compliance Officer; Policy Maker
+- **Implementation Prerequisites**: Cryptographic bill of materials; pilot environment; executive support and budget; vendor alignment
+- **Relevant PQC Today Features**: migration-program, crypto-agility, code-signing, iot-ot-pqc, digital-id
+- **Source Document**: DigiCert_SigningHub.html (211,122 bytes, 13,469 extracted chars)
+- **Extraction Timestamp**: 2026-04-12T17:53:46
+
+---
+
+## DigiCert Software Trust Manager
+
+- **Reference ID**: DigiCert Software Trust Manager
+- **Title**: DigiCert Software Trust Manager
+- **Authors**: Code Signing and Software Integrity
+- **Publication Date**: 2025-07
+- **Last Updated**: 2026-03-31
+- **Document Status**: Verified
+- **Main Topic**: DigiCert Trust Lifecycle Manager enables issuance and management of private PQC certificates using ML-DSA and SLH-DSA algorithms.
+- **PQC Algorithms Covered**: ML-DSA, SLH-DSA, ML-KEM, Falcon
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: DigiCert Trust Lifecycle Manager, DigiCert Private CA, DigiCert LABS
+- **Protocols Covered**: EST, SCEP, ACME, CMPv2, REST API
+- **Infrastructure Layers**: PKI
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Use Trust Lifecycle Manager to issue and manage private PQC certificates; Falcon and Composite PQC certificates are currently experimental and not supported by DigiCert Private CA; Network scans are required to discover existing PQC certificates for management; Public CA certificates with PQC algorithms are not currently issued by CertCentral.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Composite PQC certificates mentioned as experimental and unsupported
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, Developer, Operations
+- **Implementation Prerequisites**: Set up network scans to discover existing PQC certificates; Use DigiCert Trust Lifecycle Manager for issuance and management
+- **Relevant PQC Today Features**: Algorithms, Migrate, pki-workshop, stateful-signatures
+- **Source Document**: DigiCert_Software_Trust_Manager.html (16,381 bytes, 968 extracted chars)
+- **Extraction Timestamp**: 2026-04-12T18:02:10
+
+---
+
+## DigiCert CertCentral
+
+- **Reference ID**: DigiCert CertCentral
+- **Title**: DigiCert CertCentral
+- **Authors**: Certificate Lifecycle Management
+- **Publication Date**: 2025
+- **Last Updated**: 2026-03-31
+- **Document Status**: Verified
+- **Main Topic**: DigiCert promotes cryptographic agility and lifecycle automation tools to help enterprises prepare for Post-Quantum Cryptography adoption between 2025 and 2026.
+- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA
+- **Quantum Threats Addressed**: Quantum computers cracking current encryption algorithms in months or hours; quadrillion years required for classical computers to crack 2048-bit encryption
+- **Migration Timeline Info**: Early enterprise pilots and PQC Labs adoption expected between 2025-2026; transition process spans many years
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: DigiCert Trust Lifecycle Manager, DigiCert LABS, DigiCert ONE Platform, TrustCore SDK
+- **Protocols Covered**: TLS, SSL, HTTPS, mTLS
+- **Infrastructure Layers**: PKI, Certificate Lifecycle Management, IoT & Connected Devices, Cloud Web Application Firewall (WAF)
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: 2048-bit encryption
+- **Key Takeaways**: Organizations must immediately develop the ability to continuously discover and manage certificates at-scale; The transition to quantum-safe posture requires crypto-agility and migration to approved post-quantum algorithms; Inventorying cryptography use across the enterprise is a multi-year process; Quantum readiness requires time, planning, and resources before stable quantum computers are realized
+- **Security Levels & Parameters**: 2048-bit encryption
+- **Hybrid & Transition Approaches**: Crypto-agility, certificate lifecycle management, migration to approved post-quantum algorithms
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO, Security Architect, Developer, Compliance Officer
+- **Implementation Prerequisites**: Inventory organization's use of cryptography; Create post-quantum roadmaps for each use case; Develop ability to continuously discover and manage certificates at-scale
+- **Relevant PQC Today Features**: crypto-agility, Algorithms, Timeline, Migrate, Assess
+- **Source Document**: DigiCert_CertCentral.html (191,752 bytes, 12,776 extracted chars)
+- **Extraction Timestamp**: 2026-04-12T21:58:27
+
+---
+
+## DigiCert ONE
+
+- **Reference ID**: DigiCert ONE
+- **Title**: DigiCert ONE
+- **Authors**: Certificate Lifecycle Management
+- **Publication Date**: 2025
+- **Last Updated**: 2026-03-31
+- **Document Status**: Verified
+- **Main Topic**: Instructions for issuing and managing ML-DSA post-quantum certificates using DigiCert Trust Lifecycle Manager.
+- **PQC Algorithms Covered**: ML-DSA, ML-KEM, SLH-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: DigiCert ONE, DigiCert Trust Lifecycle Manager, DigiCert Private CA
+- **Protocols Covered**: EST, REST API, X.509, PKCS#7
+- **Infrastructure Layers**: PKI, Cloud key escrow
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: DigiCert supports ML-DSA certificate issuance via Trust Lifecycle Manager; Three specific ML-DSA key sizes (44, 65, 87) are available for enrollment; OpenSSL version 3.5.0 or later is required to generate test CSRs and private keys; Cloud key escrow is supported for ML-DSA certificates when using the REST API enrollment method with compatible templates
+- **Security Levels & Parameters**: MLDSA-44, MLDSA-65, MLDSA-87
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer, Security Architect, Operations
+- **Implementation Prerequisites**: OpenSSL version 3.5.0 or later; at least one private issuing CA available in DigiCert Private CA; DigiCert Trust Lifecycle Manager access
+- **Relevant PQC Today Features**: Algorithms, pki-workshop, crypto-agility, email-signing, code-signing
+- **Source Document**: DigiCert_ONE.html (33,747 bytes, 6,346 extracted chars)
+- **Extraction Timestamp**: 2026-04-12T21:59:55
+
+---
+
+## Oracle Linux 9.7
+
+- **Reference ID**: Oracle Linux 9.7
+- **Title**: Oracle Linux 9.7
+- **Authors**: Operating Systems
+- **Publication Date**: 2025
+- **Last Updated**: 2026-03-31
+- **Document Status**: Verified
+- **Main Topic**: Oracle Linux 9.7 introduces hybrid post-quantum cryptography support via system-wide crypto-policies and updated OpenSSL, alongside refreshed kernels and developer tooling.
+- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Bobby Borisov: editor-in-chief at Linuxiac and author of the article
+- **PQC Products Mentioned**: OpenSSL, Oracle Linux 9.7
+- **Protocols Covered**: QUIC, WireGuard
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: SCAP Security Guide
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Oracle Linux 9.7 prioritizes hybrid ML-KEM and pure ML-DSA in system-wide crypto-policies; OpenSSL has been updated to include ML-KEM, ML-DSA, and SLH-DSA support; The release includes QUIC transport support to improve performance for latency-sensitive applications; Upgrading from Oracle Linux 9.6 is performed via sudo dnf update while older systems use the Leapp utility
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid post-quantum cryptography, hybrid ML-KEM
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer, Security Architect, Operations
+- **Implementation Prerequisites**: Oracle Linux 9.6 or older systems requiring Leapp utility; OpenSSL with PQC support; UEK 8.1 or RHCK 5.14 kernels
+- **Relevant PQC Today Features**: Algorithms, hybrid-crypto, tls-basics, vpn-ssh-pqc, openssl-studio
+- **Source Document**: Oracle_Linux_9_7.html (170,250 bytes, 4,800 extracted chars)
+- **Extraction Timestamp**: 2026-04-13T00:44:35
+
+---
+
+## .NET 10 PQC
+
+- **Reference ID**: .NET 10 PQC
+- **Title**: .NET 10 PQC
+- **Authors**: Cryptographic Libraries
+- **Publication Date**: 2025
+- **Last Updated**: 2026-03-31
+- **Document Status**: Verified
+- **Main Topic**: .NET 10 introduces native Post-Quantum Cryptography support via new algorithm classes in System.Security.Cryptography and Windows CNG API, replacing the legacy AsymmetricAlgorithm pattern.
+- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, Composite ML-DSA
+- **Quantum Threats Addressed**: cryptographically-relevant quantum computer (CRQC), Harvest now, decrypt later
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Jeremy Barton: Principal Software Engineer describing the design and implementation of PQC in .NET 10
+- **PQC Products Mentioned**: .NET 10, System.Security.Cryptography namespace, Windows CNG API
+- **Protocols Covered**: X.509 Public Key Infrastructure
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: NIST, IETF
+- **Compliance Frameworks Referenced**: NIST FIPS 203, NIST FIPS 204, NIST FIPS 205
+- **Classical Algorithms Referenced**: AES, SHA-2, SHA-3, ECC, EC-DSA, EC-Diffie-Hellman, RSA, DSA
+- **Key Takeaways**: Transition to PQC is necessary before cryptographically-relevant quantum computers exist due to harvest now decrypt later threats; .NET 10 abandons the AsymmetricAlgorithm base class for PQC due to incompatible KeySize semantics; New algorithm classes use Span-based methods with fixed buffer sizes defined by FIPS specifications; ML-KEM replaces RSA Key Transport and EC-Diffie-Hellman Key Agreement while ML-DSA and SLH-DSA replace RSA and EC-DSA signatures
+- **Security Levels & Parameters**: ML-DSA-44, ML-DSA-65, ML-DSA-87
+- **Hybrid & Transition Approaches**: Composite ML-DSA for use in X.509 Public Key Infrastructure
+- **Performance & Size Considerations**: ML-DSA-44 Private Key 2560 bytes; ML-DSA-44 Public Key 1312 bytes; ML-DSA-44 Signature 2420 bytes; ML-DSA-65 Private Key 4032 bytes; ML-DSA-65 Public Key 1952 bytes; ML-DSA-65 Signature 3309 bytes; ML-DSA-87 Private Key 4896 bytes; ML-DSA-87 Public Key 2592 bytes; ML-DSA-87 Signature 4627 bytes
+- **Target Audience**: Developer, Security Architect
+- **Implementation Prerequisites**: .NET 10; Windows CNG API support for PQC algorithms
+- **Relevant PQC Today Features**: Algorithms, Migrate, crypto-agility, pki-workshop, tls-basics
+- **Source Document**: \_NET_10_PQC.html (300,546 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-13T00:47:15
+
+---
+
+## Hyperledger Fabric 3.0 PQC
+
+- **Reference ID**: Hyperledger Fabric 3.0 PQC
+- **Title**: Hyperledger Fabric 3.0 PQC
+- **Authors**: Blockchain & DLT
+- **Publication Date**: 2025
+- **Last Updated**: 2026-03-31
+- **Document Status**: Verified
+- **Main Topic**: Hyperledger Fabric 3.0 introduces cryptographic agility and modular architecture to support post-quantum cryptography on its roadmap for enterprise blockchain solutions.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Abhinav Prakash: shares experience on Hyperledger Fabric Private Chaincode and CC-Tools for privacy-sensitive applications
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: ARMA Byzantine Fault Tolerant (BFT) consensus protocol
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Hyperledger Fabric 3.0 supports pluggable crypto to enable cryptographic agility; Fabric-x offers ultra-scalability exceeding 100,000 TPS for regulated digital assets; The architecture allows interchangeable components including consensus and membership services; Two distinct implementations exist: classic Fabric for general enterprise use and Fabric-x for high-throughput digital asset settlement
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: cryptographic agility
+- **Performance & Size Considerations**: Exceeding 100,000 transactions per second (TPS)
+- **Target Audience**: Developer; Security Architect; Operations; Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: crypto-agility, digital-assets, migration-program
+- **Source Document**: Hyperledger_Fabric_3_0_PQC.html (92,456 bytes, 5,266 extracted chars)
+- **Extraction Timestamp**: 2026-04-13T01:14:36
+
+---
+
+## ASUSTOR ADM 5.1 PQC
+
+- **Reference ID**: ASUSTOR ADM 5.1 PQC
+- **Title**: ASUSTOR ADM 5.1 PQC
+- **Authors**: Storage & Backup
+- **Publication Date**: 2025
+- **Last Updated**: 2026-03-31
+- **Document Status**: Verified
+- **Main Topic**: ASUSTOR ADM 5.1 NAS operating system introduces Kyber/ML-KEM TLS support for the management interface targeting SOHO and SMB users.
+- **PQC Algorithms Covered**: Kyber, ML-KEM
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: ASUSTOR ADM 5.1
+- **Protocols Covered**: TLS
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: ASUSTOR ADM 5.1 integrates Kyber/ML-KEM for TLS management security; The update targets SOHO and SMB quantum readiness; Management interface protection is the primary scope of this PQC implementation
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Small & Medium Business, Home users, Content Creators
+- **Implementation Prerequisites**: ASUSTOR ADM 5.1 operating system
+- **Relevant PQC Today Features**: tls-basics, algorithms, vendor-risk, migration-program
+- **Source Document**: ASUSTOR_ADM_5_1_PQC.html (368,768 bytes, 6,345 extracted chars)
+- **Extraction Timestamp**: 2026-04-13T01:20:18
+
+---
+
+## NXP i.MX 94 PQC Processor
+
+- **Reference ID**: NXP i.MX 94 PQC Processor
+- **Title**: NXP i.MX 94 PQC Processor
+- **Authors**: Hardware Security and Semiconductors
+- **Publication Date**: 2024
+- **Last Updated**: 2026-04-01
+- **Document Status**: Verified
+- **Main Topic**: NXP Semiconductors announces the i.MX 94 family of applications processors as the first to integrate post-quantum cryptography with EdgeLock Secure Enclave for industrial and automotive edge security.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: quantum compute attacks; cyber threats
+- **Migration Timeline Info**: Sampling expected in Q1 2025
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Charles Dachs, Senior Vice President and General Manager of Industrial and IoT at NXP
+- **PQC Products Mentioned**: i.MX 94 family; EdgeLock Secure Enclave (Advanced Profile); EdgeLock Accelerator (Prime); EdgeLock 2GO; eIQ Neutron Neural Processing Unit (NPU)
+- **Protocols Covered**: OPC-UA FX; OPC-UA PubSub; Profinet; EtherCAT; CC-Link; Ethernet time-sensitive networking (TSN)
+- **Infrastructure Layers**: secure boot; secure debug; secure update; key management; network virtualization; software-defined networking
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: IEC61508 SIL2; ISO26262 ASIL-B
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: NXP i.MX 94 is the first applications processor family to integrate post-quantum cryptography; The processor supports secure boot, OTA, and V2X via EdgeLock Secure Enclave; Integrated eIQ Neutron NPU provides 0.5 TOPS for AI-assisted cybersecurity; The family ensures compliance with IEC61508 SIL2 and ISO26262 ASIL-B safety standards; Sampling is scheduled to begin in Q1 2025
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: 0.5 TOPS machine learning performance; 5G speeds for secure communications
+- **Target Audience**: Security Architect; Developer; Industrial Automation Engineer; Automotive Telematics Engineer
+- **Implementation Prerequisites**: NXP PF9455 PMIC; IW612 tri-radio solution
+- **Relevant PQC Today Features**: iot-ot-pqc, 5g-security, code-signing, vendor-risk, pqc-business-case
+- **Source Document**: NXP_i_MX_94_PQC_Processor.html (139,598 bytes, 10,615 extracted chars)
+- **Extraction Timestamp**: 2026-04-13T01:22:01
+
+---
+
+## NXP OrangeBox 2.0 PQC
+
+- **Reference ID**: NXP OrangeBox 2.0 PQC
+- **Title**: NXP OrangeBox 2.0 PQC
+- **Authors**: Hardware Security and Semiconductors
+- **Publication Date**: 2025
+- **Last Updated**: 2026-04-01
+- **Document Status**: Verified
+- **Main Topic**: NXP Semiconductors announces the OrangeBox 2.0 connectivity domain controller featuring on-device AI and post-quantum cryptography for software-defined vehicles.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Large-scale quantum computers capable of rapidly factorizing large numbers; defeating existing common public-key cryptosystems
+- **Migration Timeline Info**: Availability expected in the second half of the year
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Dan Loop (NXP) explained the original OrangeBox platform and its role in reducing cyber-attack surfaces
+- **PQC Products Mentioned**: NXP OrangeBox 2.0; NXP i.MX 94; NXP AW693; NXP SAF9100
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Secure enclave
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: On-device AI can detect anomalous communication patterns to identify unknown cyberthreats; Post-quantum cryptographic algorithms are integrated into a secure enclave to withstand future quantum attacks; The platform consolidates wireless connectivity to reduce cyber-attack surfaces; Machine learning accelerators enable predictive maintenance and fleet management features
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: 2.5-gigabit-Ethernet switch; Cortex-A55 cores up to 1.7GHz; Cortex-M7 cores up to 800MHz; Cortex-M33 cores at 333MHz and 300MHz
+- **Target Audience**: Security Architect, Developer, Automotive Engineer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: iot-ot-pqc, Threats, Algorithms, Leaders, hybrid-crypto
+- **Source Document**: NXP_OrangeBox_2_0_PQC.html (80,192 bytes, 3,535 extracted chars)
+- **Extraction Timestamp**: 2026-04-13T01:23:28
+
+---
+
+## Postfix 3.10 PQC
+
+- **Reference ID**: Postfix 3.10 PQC
+- **Title**: Postfix 3.10 PQC
+- **Authors**: Email Encryption Software
+- **Publication Date**: 2025
+- **Last Updated**: 2026-04-01
+- **Document Status**: Verified
+- **Main Topic**: Postfix 3.10.0 stable release introduces forward compatibility for post-quantum cryptography via OpenSSL 3.5 integration and updates to TLS support.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: OpenSSL 3.5; TLSRPT library
+- **Protocols Covered**: TLS; SMTP; DANE; MTA-STS; TLSRPT
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Postfix 3.10 enables PQC support by allowing empty values for tls_eecdh_auto_curves and tls_ffdhe_auto_groups to delegate algorithm selection to OpenSSL; The release adds support for RFC 8689 TLS-Required: no header to allow message delivery when preferred TLS policies cannot be enforced; Postfix 3.10 integrates with the TLSRPT protocol for publishing DNS policies requesting daily SMTP-over-TLS connection reports; Users must perform a postfix reload or restart after upgrading due to internal delivery agent protocol changes
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Forward compatibility support for OpenSSL 3.5 post-quantum cryptography
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Operations; Security Architect
+- **Implementation Prerequisites**: OpenSSL 3.5; postfix reload or restart after upgrade
+- **Relevant PQC Today Features**: tls-basics, email-signing, crypto-agility, openssl-studio
+- **Source Document**: Postfix_3_10_PQC.html (5,042 bytes, 3,603 extracted chars)
+- **Extraction Timestamp**: 2026-04-13T01:33:52
 
 ---

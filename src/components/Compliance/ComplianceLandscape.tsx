@@ -31,11 +31,14 @@ import {
 } from '@/data/complianceData'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { NAICS_LABELS } from '@/components/common/SectorFilter'
 import { CountryFlag } from '@/components/common/CountryFlag'
 import { ViewToggle, type ViewMode } from '@/components/Library/ViewToggle'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { resolveTimelineRef } from '@/utils/timelineResolver'
+import { useSemanticSearch } from '@/services/search/useSemanticSearch'
+import { SemanticSearchHint } from '@/components/common/SemanticSearchHint'
 
 // ── Deadline helpers ────────────────────────────────────────────────────
 
@@ -353,6 +356,20 @@ function FrameworkCard({
           <h4 className="font-semibold text-foreground text-sm leading-tight">{fw.label}</h4>
           <div className="flex items-center gap-2 flex-wrap">
             <TrustScoreBadge resourceType="compliance" resourceId={fw.id} size="sm" />
+            {fw.confidenceScore !== undefined && (
+              <span
+                className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${
+                  fw.confidenceScore >= 70
+                    ? 'bg-status-success/10 text-status-success border-status-success/30'
+                    : fw.confidenceScore >= 40
+                      ? 'bg-status-warning/10 text-status-warning border-status-warning/30'
+                      : 'bg-status-error/10 text-status-error border-status-error/30'
+                }`}
+                title={`Data confidence: ${fw.confidenceScore}/100`}
+              >
+                {fw.confidenceScore}%
+              </span>
+            )}
             {fw.bodyType === 'industry_alliance' && (
               <span
                 className="text-[10px] px-1.5 py-0.5 rounded bg-secondary/10 text-secondary font-semibold"
@@ -428,6 +445,20 @@ function FrameworkCard({
             >
               <Factory size={8} />
               <span className="hidden sm:inline">{industryChip(ind)}</span>
+            </span>
+          ))}
+        </div>
+      )}
+
+      {fw.cswp39Tags && fw.cswp39Tags.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {fw.cswp39Tags.map((tag) => (
+            <span
+              key={tag}
+              title={`NIST CSWP 39 consideration: ${tag}`}
+              className="inline-flex items-center text-[10px] px-1.5 py-0.5 rounded bg-accent/10 text-accent font-medium border border-accent/20"
+            >
+              {tag.replace('cswp39:', '')}
             </span>
           ))}
         </div>
@@ -855,6 +886,16 @@ export function ComplianceLandscape({
   const sortBy = sortByProp ?? localSort
   const viewMode = viewModeProp ?? localView
 
+  // Phase 3 — semantic supplement. Queries like "banking sector
+  // cryptographic resilience" surface DORA, PCI-DSS, MAS without
+  // requiring the user to recall the framework name.
+  const semantic = useSemanticSearch('compliance', searchFilterText, { limit: 30 })
+  const semanticIdSet = useMemo(
+    () =>
+      semantic.mode === 'semantic' ? new Set(semantic.hits.map((h) => h.id.toLowerCase())) : null,
+    [semantic.mode, semantic.hits]
+  )
+
   const setOrgFilter = onOrgFilterChange ?? setLocalOrg
   const setIndustryFilter = onIndustryFilterChange ?? setLocalIndustry
   const setRegionFilter = onRegionFilterChange ?? setLocalRegion
@@ -877,19 +918,34 @@ export function ComplianceLandscape({
     ]
   }, [])
 
-  // Industry options — derived from full dataset (union of fw.industries)
-  // rather than a hardcoded list, so new industries in the CSV appear
-  // automatically and are filterable on every tab.
+  // Industry options — derived from full dataset (union of fw.industries),
+  // which in this CSV are NAICS 2-digit sector codes (e.g. "52", "92"). We
+  // render the human-readable label via NAICS_LABELS and fall back to the
+  // raw code only when no label is registered, so users never see bare
+  // numbers in the dropdown. If the active industryFilter isn't in the
+  // vocabulary (e.g. seeded from a cross-page persona/URL using a different
+  // taxonomy like "Finance & Banking"), include it anyway so the dropdown
+  // surfaces the active value instead of falling back to "Industry".
   const industryItems = useMemo(() => {
     const inds = new Set<string>()
     for (const fw of complianceFrameworks) {
       for (const i of fw.industries) inds.add(i)
     }
+    if (industryFilter !== 'All' && !inds.has(industryFilter)) {
+      inds.add(industryFilter)
+    }
+    const labelFor = (code: string) => {
+      // eslint-disable-next-line security/detect-object-injection
+      const label = NAICS_LABELS[code]
+      return label ? `${label} (${code})` : code
+    }
     return [
       { id: 'All', label: 'All Industries' },
-      ...[...inds].sort().map((i) => ({ id: i, label: i })),
+      ...[...inds]
+        .sort((a, b) => labelFor(a).localeCompare(labelFor(b)))
+        .map((i) => ({ id: i, label: labelFor(i) })),
     ]
-  }, [])
+  }, [industryFilter])
 
   // Region options — derived from full dataset with per-region counts so the
   // facet always lists every populated region (e.g. Africa) regardless of the
@@ -961,12 +1017,17 @@ export function ComplianceLandscape({
     }
     if (searchFilterText.trim()) {
       const q = searchFilterText.toLowerCase()
-      result = result.filter(
-        (fw) =>
+      result = result.filter((fw) => {
+        const lexicalMatch =
           fw.label.toLowerCase().includes(q) ||
           fw.description.toLowerCase().includes(q) ||
           fw.enforcementBody.toLowerCase().includes(q)
-      )
+        if (lexicalMatch) return true
+        // Semantic supplement — chunkToResource maps compliance chunks
+        // by metadata.id. Framework `fw.id` is the same key.
+        if (semanticIdSet && semanticIdSet.has(fw.id.toLowerCase())) return true
+        return false
+      })
     }
     if (showOnlyMine) {
       result = result.filter((fw) => myFrameworks.includes(fw.id))
@@ -981,6 +1042,7 @@ export function ComplianceLandscape({
     countryFilter,
     deadlineFilter,
     searchFilterText,
+    semanticIdSet,
     sortBy,
     showOnlyMine,
     myFrameworks,
@@ -1192,11 +1254,37 @@ export function ComplianceLandscape({
         )}
       </div>
 
+      {/* Semantic search hint — surfaces when embedding-driven matches augment the lexical filter */}
+      <SemanticSearchHint
+        mode={semantic.mode}
+        loading={semantic.loading}
+        query={searchFilterText}
+        semanticHitCount={semantic.hits.length}
+        noun="related frameworks"
+      />
+
       {/* Content */}
       {viewMode === 'cards' ? (
         displayedFrameworks.length === 0 ? (
-          <div className="glass-panel p-8 text-center text-muted-foreground">
-            No entries match the selected filters. Try broadening your selection.
+          <div className="glass-panel p-8 text-center text-muted-foreground space-y-1">
+            <p>No entries match the selected filters.</p>
+            {searchFilterText.trim() && semantic.loading && (
+              <p className="text-xs text-muted-foreground/80">
+                Semantic search is still loading — results may refine in a moment.
+              </p>
+            )}
+            {searchFilterText.trim() && !semantic.loading && semantic.mode === 'semantic' && (
+              <p className="text-xs text-muted-foreground/80">
+                No direct or semantically related framework found. Try broadening your filters or
+                rephrasing the query.
+              </p>
+            )}
+            {searchFilterText.trim() && semantic.mode === 'lexical' && (
+              <p className="text-xs text-muted-foreground/80">
+                Try broadening your filters or different keywords.
+              </p>
+            )}
+            {!searchFilterText.trim() && <p className="text-xs">Try broadening your selection.</p>}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">

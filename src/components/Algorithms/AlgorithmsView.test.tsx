@@ -1,9 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { AlgorithmsView } from './AlgorithmsView'
 import '@testing-library/jest-dom'
+import * as useSemanticSearchModule from '@/services/search/useSemanticSearch'
+
+vi.mock('@/services/search/useSemanticSearch', async () => {
+  const actual = await vi.importActual<typeof useSemanticSearchModule>(
+    '@/services/search/useSemanticSearch'
+  )
+  return {
+    ...actual,
+    useSemanticSearch: vi.fn(() => ({ hits: [], mode: 'idle' as const, loading: false })),
+  }
+})
 
 // Mock child components
 vi.mock('./AlgorithmComparison', () => ({
@@ -38,53 +49,23 @@ describe('AlgorithmsView', () => {
       global.innerHeight = 768
     })
 
-    it('renders the main heading', async () => {
+    it('renders heading, description, metadata, tab strip, and default view', async () => {
+      // Consolidated: previously five separate desktop tests each paying the
+      // full AlgorithmsView mount cost to assert one static-content node.
+      // Single mount + all assertions catches mount-doesn't-crash + every
+      // header/tab/default-view check at once.
       render(
         <MemoryRouter>
           <AlgorithmsView />
         </MemoryRouter>
       )
       expect(screen.getByText(/Post-Quantum Cryptography Algorithms/i)).toBeInTheDocument()
-      await screen.findByTestId('algorithm-comparison')
-    })
-
-    it('renders the description', async () => {
-      render(
-        <MemoryRouter>
-          <AlgorithmsView />
-        </MemoryRouter>
-      )
       expect(
         screen.getAllByText(/Migration from classical to post-quantum/i)[0]
       ).toBeInTheDocument()
-      await screen.findByTestId('algorithm-comparison')
-    })
-
-    it('displays metadata', async () => {
-      render(
-        <MemoryRouter>
-          <AlgorithmsView />
-        </MemoryRouter>
-      )
       expect(await screen.findByText(/Data Sources:/i)).toBeInTheDocument()
-    })
-
-    it('renders view tabs', async () => {
-      render(
-        <MemoryRouter>
-          <AlgorithmsView />
-        </MemoryRouter>
-      )
       expect(await screen.findByText('Transition Guide')).toBeInTheDocument()
       expect(await screen.findByText('Detailed Comparison')).toBeInTheDocument()
-    })
-
-    it('shows transition view by default', async () => {
-      render(
-        <MemoryRouter>
-          <AlgorithmsView />
-        </MemoryRouter>
-      )
       expect(await screen.findByTestId('algorithm-comparison')).toBeInTheDocument()
     })
 
@@ -117,31 +98,18 @@ describe('AlgorithmsView', () => {
       global.innerHeight = 667
     })
 
-    it('renders on mobile', async () => {
+    it('renders heading, tab strip, and default view on mobile breakpoint', async () => {
+      // Consolidated: previously three separate mobile tests each paying the
+      // full AlgorithmsView mount cost. Same pattern as the desktop test
+      // above; the value of the describe block is the `innerWidth=375`
+      // setup, not the per-element assertions which duplicate desktop's.
       render(
         <MemoryRouter>
           <AlgorithmsView />
         </MemoryRouter>
       )
       expect(screen.getByText(/Post-Quantum Cryptography Algorithms/i)).toBeInTheDocument()
-      await screen.findByTestId('algorithm-comparison')
-    })
-
-    it('renders tabs on mobile', async () => {
-      render(
-        <MemoryRouter>
-          <AlgorithmsView />
-        </MemoryRouter>
-      )
       expect(await screen.findByText('Transition Guide')).toBeInTheDocument()
-    })
-
-    it('shows default view on mobile', async () => {
-      render(
-        <MemoryRouter>
-          <AlgorithmsView />
-        </MemoryRouter>
-      )
       expect(await screen.findByTestId('algorithm-comparison')).toBeInTheDocument()
     })
   })
@@ -179,6 +147,52 @@ describe('AlgorithmsView', () => {
       const mainDiv = container.firstChild as HTMLElement
       expect(mainDiv).toBeInTheDocument()
       await screen.findByTestId('algorithm-comparison')
+    })
+  })
+
+  describe('Phase 3 — semantic search supplement', () => {
+    it('renders without crashing when semantic runtime is unavailable', async () => {
+      vi.mocked(useSemanticSearchModule.useSemanticSearch).mockReturnValue({
+        hits: [],
+        mode: 'lexical',
+        loading: false,
+      })
+      render(
+        <MemoryRouter>
+          <AlgorithmsView />
+        </MemoryRouter>
+      )
+      // The hook should have been called for the 'algorithms' collection.
+      // (We can't assert hits show because loader mocks return empty data;
+      // the contract being verified here is "wire-up doesn't crash and the
+      // hook is invoked with the correct collection name".)
+      await screen.findByTestId('algorithm-comparison')
+      expect(useSemanticSearchModule.useSemanticSearch).toHaveBeenCalled()
+      const calls = vi.mocked(useSemanticSearchModule.useSemanticSearch).mock.calls
+      // First positional arg should be the collection.
+      expect(calls[0][0]).toBe('algorithms')
+    })
+
+    it('invokes the hook with the current query as it changes', async () => {
+      vi.mocked(useSemanticSearchModule.useSemanticSearch).mockReturnValue({
+        hits: [],
+        mode: 'idle',
+        loading: false,
+      })
+      render(
+        <MemoryRouter>
+          <AlgorithmsView />
+        </MemoryRouter>
+      )
+      await screen.findByTestId('algorithm-comparison')
+      const searchInput = screen.getByPlaceholderText(/Search/i)
+      fireEvent.change(searchInput, { target: { value: 'what replaces ECC' } })
+      await waitFor(() => {
+        const lastCall = vi
+          .mocked(useSemanticSearchModule.useSemanticSearch)
+          .mock.calls.slice(-1)[0]
+        expect(lastCall[1]).toBe('what replaces ECC')
+      })
     })
   })
 })

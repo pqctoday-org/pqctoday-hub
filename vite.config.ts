@@ -72,7 +72,7 @@ export default defineConfig({
       ],
       injectManifest: {
         globPatterns: ['**/*.{js,css,html,svg,png,wasm,json}'],
-        maximumFileSizeToCacheInBytes: 20 * 1024 * 1024, // 20 MB — accommodate WASM files + large bundles
+        maximumFileSizeToCacheInBytes: 32 * 1024 * 1024, // 32 MB — accommodates the @huggingface/transformers ONNX Runtime SIMD WASM (~23.6 MB) loaded by the embedding-driven semantic-search pipeline, plus the existing softhsm/liboqs WASM bundles, with headroom for future growth.
       },
       manifest: {
         name: 'PQC Today',

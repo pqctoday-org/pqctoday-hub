@@ -89,6 +89,11 @@ const ComplianceView = lazyWithRetry(() =>
     default: module.ComplianceView,
   }))
 )
+const AgilityView = lazyWithRetry(() =>
+  import('./components/Agility/AgilityView').then((module) => ({
+    default: module.AgilityView,
+  }))
+)
 const ChangelogView = lazyWithRetry(() =>
   import('./components/Changelog/ChangelogView').then((module) => ({
     default: module.ChangelogView,
@@ -135,6 +140,16 @@ const TermsView = lazyWithRetry(() =>
     default: module.TermsView,
   }))
 )
+const EditorialIndependenceView = lazyWithRetry(() =>
+  import('./components/Editorial/EditorialIndependenceView').then((module) => ({
+    default: module.EditorialIndependenceView,
+  }))
+)
+const SponsorView = lazyWithRetry(() =>
+  import('./components/Sponsor/SponsorView').then((module) => ({
+    default: module.SponsorView,
+  }))
+)
 const ExploreView = lazyWithRetry(() =>
   import('./components/Explore/ExploreView').then((module) => ({
     default: module.ExploreView,
@@ -148,11 +163,6 @@ const PatentsView = lazyWithRetry(() =>
 const RevisionsView = lazyWithRetry(() =>
   import('./components/Revisions/RevisionsView').then((module) => ({
     default: module.RevisionsView,
-  }))
-)
-const AgilityView = lazyWithRetry(() =>
-  import('./components/Agility/AgilityView').then((module) => ({
-    default: module.AgilityView,
   }))
 )
 
@@ -277,6 +287,14 @@ function App() {
         }
       />
       <Route
+        path="agility"
+        element={
+          <ErrorBoundary>
+            <AgilityView />
+          </ErrorBoundary>
+        }
+      />
+      <Route
         path="changelog"
         element={
           <ErrorBoundary>
@@ -345,6 +363,22 @@ function App() {
         }
       />
       <Route
+        path="editorial-independence"
+        element={
+          <ErrorBoundary>
+            <EditorialIndependenceView />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="sponsor"
+        element={
+          <ErrorBoundary>
+            <SponsorView />
+          </ErrorBoundary>
+        }
+      />
+      <Route
         path="explore"
         element={
           <ErrorBoundary>
@@ -365,14 +399,6 @@ function App() {
         element={
           <ErrorBoundary>
             <RevisionsView />
-          </ErrorBoundary>
-        }
-      />
-      <Route
-        path="agility"
-        element={
-          <ErrorBoundary>
-            <AgilityView />
           </ErrorBoundary>
         }
       />

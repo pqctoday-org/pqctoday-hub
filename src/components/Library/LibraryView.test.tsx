@@ -4,6 +4,20 @@ import { render, screen, fireEvent, act } from '@testing-library/react'
 import { LibraryView } from './LibraryView'
 import '@testing-library/jest-dom'
 import { Button } from '@/components/ui/button'
+import * as useSemanticSearchModule from '@/services/search/useSemanticSearch'
+
+// Mock the semantic-search hook so per-test we can simulate runtime
+// states (idle / lexical fallback / semantic-with-hits) without
+// loading the embedding model.
+vi.mock('@/services/search/useSemanticSearch', async () => {
+  const actual = await vi.importActual<typeof useSemanticSearchModule>(
+    '@/services/search/useSemanticSearch'
+  )
+  return {
+    ...actual,
+    useSemanticSearch: vi.fn(() => ({ hits: [], mode: 'idle' as const, loading: false })),
+  }
+})
 
 // Mock react-router-dom — component uses useSearchParams for deep linking.
 // Use a stable reference so the useEffect([searchParams]) dep doesn't fire on every render.
@@ -289,6 +303,75 @@ describe('LibraryView', () => {
       // eslint-disable-next-line testing-library/no-node-access
       const mainDiv = container.firstChild as HTMLElement
       expect(mainDiv).toHaveClass('space-y-6')
+    })
+  })
+
+  describe('Phase 3 — semantic search supplement', () => {
+    it('falls back to pure lexical when the runtime is not ready', async () => {
+      vi.mocked(useSemanticSearchModule.useSemanticSearch).mockReturnValue({
+        hits: [],
+        mode: 'lexical',
+        loading: false,
+      })
+      vi.useFakeTimers()
+      render(<LibraryView />)
+      const input = screen.getByPlaceholderText('Search standards and drafts...')
+      // 'wibble' doesn't lexically match any of the 3 fixture items.
+      fireEvent.change(input, { target: { value: 'wibble' } })
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(250)
+      })
+      expect(screen.getByText(/0 documents/)).toBeInTheDocument()
+      vi.useRealTimers()
+    })
+
+    it('includes semantic-only items in the result set via union', async () => {
+      // FIPS-203 (ML-KEM Standard) does not lexically match 'paraphrase-only'.
+      // Mock the hook to claim it as a top semantic hit anyway.
+      vi.mocked(useSemanticSearchModule.useSemanticSearch).mockReturnValue({
+        hits: [{ id: 'FIPS-203', score: 0.91 }],
+        mode: 'semantic',
+        loading: false,
+      })
+      vi.useFakeTimers()
+      render(<LibraryView />)
+      const input = screen.getByPlaceholderText('Search standards and drafts...')
+      fireEvent.change(input, { target: { value: 'paraphrase-only' } })
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(250)
+      })
+      // Semantic-only item should appear in the rendered list.
+      expect(screen.getAllByText('FIPS-203').length).toBeGreaterThan(0)
+      // Result count includes the semantic-only item.
+      expect(screen.getByText(/1 document(?!s)/)).toBeInTheDocument()
+      vi.useRealTimers()
+    })
+
+    it('renders the semantic-search hint when mode is semantic with hits', async () => {
+      vi.mocked(useSemanticSearchModule.useSemanticSearch).mockReturnValue({
+        hits: [{ id: 'FIPS-203', score: 0.91 }],
+        mode: 'semantic',
+        loading: false,
+      })
+      vi.useFakeTimers()
+      render(<LibraryView />)
+      const input = screen.getByPlaceholderText('Search standards and drafts...')
+      fireEvent.change(input, { target: { value: 'paraphrase' } })
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(250)
+      })
+      expect(screen.getByText(/Expanded with semantically/i)).toBeInTheDocument()
+      vi.useRealTimers()
+    })
+
+    it('does not render the hint when query is empty even if mode is semantic', () => {
+      vi.mocked(useSemanticSearchModule.useSemanticSearch).mockReturnValue({
+        hits: [],
+        mode: 'idle',
+        loading: false,
+      })
+      render(<LibraryView />)
+      expect(screen.queryByText(/Expanded with semantically/i)).not.toBeInTheDocument()
     })
   })
 })

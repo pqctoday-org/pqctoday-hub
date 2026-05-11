@@ -217,7 +217,7 @@ export const CuriousSummaryBanner = ({
                 aria-label="View infographic full size"
               >
                 <img
-                  src={`${imgSrc}?v=conversational_v2`}
+                  src={`${imgSrc}?v=pqcstd_v3`}
                   alt={altText}
                   loading="lazy"
                   onError={handleImgError}
@@ -264,7 +264,7 @@ export const CuriousSummaryBanner = ({
                 aria-label="View infographic full size"
               >
                 <img
-                  src={`${imgSrc}?v=conversational_v2`}
+                  src={`${imgSrc}?v=pqcstd_v3`}
                   alt={altText}
                   loading="lazy"
                   onError={handleImgError}
@@ -319,7 +319,7 @@ export const CuriousSummaryBanner = ({
             tabIndex={-1}
           />
           <img
-            src={`${imgSrc}?v=conversational_v2`}
+            src={`${imgSrc}?v=pqcstd_v3`}
             alt={altText}
             className="relative z-10 max-w-full max-h-[90vh] object-contain rounded-md select-none"
             style={{ touchAction: 'pinch-zoom' }}

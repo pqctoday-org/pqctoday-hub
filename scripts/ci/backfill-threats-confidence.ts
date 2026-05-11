@@ -31,20 +31,26 @@ async function main() {
   const files = await glob('quantum_threats_hsm_industries_*.csv', { cwd: DATA_DIR })
   files.sort()
   const latest = files.at(-1)
-  if (!latest) { console.error('No threats CSV found'); process.exit(1) }
+  if (!latest) {
+    console.error('No threats CSV found')
+    process.exit(1)
+  }
 
   const latestPath = path.join(DATA_DIR, latest)
   const outName = latest.replace(/\d{8}\.csv$/, '05072026.csv')
   const outPath = path.join(DATA_DIR, outName)
 
   if (outPath === latestPath) {
-    console.log('Source is already today\'s version — no new file needed.')
+    console.log("Source is already today's version — no new file needed.")
     process.exit(0)
   }
 
   const raw = fs.readFileSync(latestPath, 'utf8')
   const parsed = Papa.parse<Record<string, string>>(raw, { header: true, skipEmptyLines: true })
-  if (parsed.errors.length > 0) { console.error('Parse errors:', parsed.errors); process.exit(1) }
+  if (parsed.errors.length > 0) {
+    console.error('Parse errors:', parsed.errors)
+    process.exit(1)
+  }
 
   const headers = parsed.meta.fields ?? []
   const hasConfidence = headers.includes('confidence_score')
@@ -69,4 +75,7 @@ async function main() {
   }
 }
 
-main().catch((e) => { console.error(e); process.exit(1) })
+main().catch((e) => {
+  console.error(e)
+  process.exit(1)
+})

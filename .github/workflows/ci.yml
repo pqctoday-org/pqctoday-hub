@@ -14,9 +14,27 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # Token permissions for downstream steps. GitHub's default GITHUB_TOKEN is
+    # read-only since 2023; these grants are needed for:
+    #   - "Apply WASM label"      uses actions/github-script to add a PR label
+    #                              (`issues:write` covers PR labels — labels live
+    #                              on the issues endpoint).
+    #   - "Post CSV diff comment" posts a sticky review comment on the PR
+    #                              (`pull-requests:write`).
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          # Full history so later steps that diff against origin/main work.
+          # The "Detect WASM backend changes" + "Post CSV diff comment" steps
+          # both run `git diff --name-only origin/main...HEAD`, which fails
+          # with "ambiguous argument" on the default shallow (fetch-depth: 1)
+          # checkout because origin/main is never fetched.
+          fetch-depth: 0
 
       - name: Use Node.js 20
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
@@ -53,6 +71,10 @@ jobs:
 
       - name: Test
         run: npm run test
+
+      - name: Validate data integrity (DS17)
+        run: DS_SEVERITY=ERROR npx tsx scripts/validate-data-integrity.ts
+        continue-on-error: true
 
       - name: Extract PR labels
         if: github.event_name == 'pull_request'

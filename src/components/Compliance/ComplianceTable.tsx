@@ -15,7 +15,7 @@ import {
   LockKeyhole,
   Info,
 } from 'lucide-react'
-import type { ComplianceRecord } from './types'
+import type { ComplianceRecord, ComplianceSource } from './types'
 import { getMigrateCategory, type MigrateCategoryRef } from './migrateCategories'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
@@ -24,6 +24,22 @@ import Papa from 'papaparse'
 import { ComplianceDetailPopover } from './ComplianceDetailPopover'
 import { complianceFrameworks } from '@/data/complianceData'
 import { MobileFilterDrawer } from '../Migrate/MobileFilterDrawer'
+import { matchesTrustTierFilter } from '../common/TrustTierFilter'
+import type { TrustTier } from '@/data/trustScore'
+
+/**
+ * Maps a live cert record's `source` to the framework ID used to look up
+ * trust scores. Records whose source has no corresponding scored framework
+ * (e.g. 'Other') return null and are excluded when a tier filter is active.
+ */
+const SOURCE_TO_FRAMEWORK_ID: Record<ComplianceSource, string | null> = {
+  NIST: 'NIST',
+  'Common Criteria': 'COMMON-CRITERIA',
+  'BSI Germany': 'BSI',
+  ANSSI: 'ANSSI',
+  ENISA: 'ENISA',
+  Other: null,
+}
 
 interface ComplianceTableProps {
   data: ComplianceRecord[]
@@ -40,6 +56,9 @@ interface ComplianceTableProps {
   pqcFilters?: string[]
   categoryFilters?: string[]
   sourceFilters?: string[]
+  /** Active trust-tier filter from ?tier= URL param. Filters out records whose
+   *  source maps to a framework not in the selected tier set. */
+  tierFilters?: TrustTier[]
   vendorFilters?: string[]
   sortColumn?: SortColumn
   sortDirection?: SortDirection
@@ -288,6 +307,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   pqcFilters: pqcFiltersProp,
   categoryFilters: categoryFiltersProp,
   sourceFilters: sourceFiltersProp,
+  tierFilters: tierFiltersProp,
   vendorFilters: vendorFiltersProp,
   migrateCatFilters: migrateCatFiltersProp,
   sortColumn: sortColumnProp,
@@ -516,6 +536,17 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
       const matchesSource =
         activeFilters.source.length === 0 || activeFilters.source.includes(record.source)
 
+      // Trust tier filter — derives a record's tier from its source's
+      // corresponding compliance framework entry.
+      const matchesTier =
+        !tierFiltersProp || tierFiltersProp.length === 0
+          ? true
+          : (() => {
+              const frameworkId = SOURCE_TO_FRAMEWORK_ID[record.source]
+              if (!frameworkId) return false
+              return matchesTrustTierFilter(tierFiltersProp, 'compliance', frameworkId)
+            })()
+
       // Vendor Filter Logic
       const matchesVendor =
         activeFilters.vendor.length === 0 ||
@@ -544,6 +575,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
         matchesPQC &&
         matchesCategory &&
         matchesSource &&
+        matchesTier &&
         matchesVendor &&
         matchesVendorSearch &&
         matchesMigrateCat &&
@@ -579,7 +611,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
     })
 
     return processed
-  }, [data, activeFilters, sortColumn, sortDirection, certType])
+  }, [data, activeFilters, sortColumn, sortDirection, certType, tierFiltersProp])
 
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE

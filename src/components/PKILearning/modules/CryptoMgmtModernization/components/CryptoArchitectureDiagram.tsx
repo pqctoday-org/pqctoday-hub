@@ -12,10 +12,11 @@
  * the same flow as RiskRegisterBuilder etc.
  */
 import React, { useCallback, useMemo, useState } from 'react'
-import { Plus, Trash2, Save, Copy, Check, Network } from 'lucide-react'
+import { Plus, Trash2, Save, Copy, Check, Network, FileType2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useModuleStore } from '@/store/useModuleStore'
+import { markdownToPdf } from '@/services/export/pdfExport'
 import { useAssessmentSnapshot } from '@/hooks/assessment/useAssessmentSnapshot'
 import { useAlgorithmTransitionsForAssessment } from '@/hooks/useAlgorithmTransitionsForAssessment'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
@@ -244,6 +245,10 @@ export const CryptoArchitectureDiagram: React.FC = () => {
     setTimeout(() => setCopied(false), 2000)
   }, [markdown])
 
+  const handleDownloadPdf = useCallback(async () => {
+    await markdownToPdf(markdown, 'crypto-architecture', 'Crypto Architecture (CSWP.39 §5.4)')
+  }, [markdown])
+
   return (
     <div className="space-y-6">
       <div className="flex items-start gap-3">
@@ -392,6 +397,10 @@ export const CryptoArchitectureDiagram: React.FC = () => {
               Copy markdown
             </>
           )}
+        </Button>
+        <Button variant="outline" onClick={handleDownloadPdf}>
+          <FileType2 size={14} className="mr-1.5" />
+          Download PDF
         </Button>
         {savedAt && (
           <span className="text-xs text-muted-foreground">

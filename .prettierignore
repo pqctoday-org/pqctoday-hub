@@ -34,3 +34,10 @@ pure_errors.json
 pqc-references/**
 public/vendor-roadmaps/**
 public/library/**
+
+# RAG corpus + embedding metadata are generator-emitted artefacts whose
+# byte content is signed and content-hashed by the trust-engine pipeline.
+# Reformatting them changes sha256 and breaks the corpusHash invariant
+# verified by src/__tests__/corpus-trust-invariants.test.ts.
+public/data/rag-corpus.json
+public/data/embeddings-meta.json

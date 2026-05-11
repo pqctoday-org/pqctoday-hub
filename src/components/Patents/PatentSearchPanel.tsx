@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { PatentItem } from '@/types/PatentTypes'
 import { logPatentSearch, logPatentView } from '@/utils/analytics'
+import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -167,12 +168,19 @@ export function PatentSearchPanel({ patents, onSelectPatent }: PatentSearchPanel
     }
   }, [debouncedQuery])
 
+  // Phase 3 — semantic supplement layered on top of MiniSearch.
+  // MiniSearch (fuzzy + prefix) remains the floor; semantic hits are
+  // unioned in so claim-language queries ("formally verified
+  // post-quantum key exchange") surface relevant prior art whose
+  // wording differs from the user's phrasing.
+  const semantic = useSemanticSearch('patents', debouncedQuery, { limit: 30 })
+
   // Search
   const results = useMemo<PatentSearchResult[]>(() => {
     const q = debouncedQuery.trim()
     if (!q || q.length < 2) return []
     const raw = index.search(q).slice(0, 30)
-    return raw
+    const lexical = raw
       .map((r) => {
         const patent = patentMap.get(r.id as string)
         if (!patent) return null
@@ -183,7 +191,32 @@ export function PatentSearchPanel({ patents, onSelectPatent }: PatentSearchPanel
         } satisfies PatentSearchResult
       })
       .filter(Boolean) as PatentSearchResult[]
-  }, [debouncedQuery, index, patentMap])
+
+    // Interleave semantic-only hits by relevance. MiniSearch scores can
+    // be tens or hundreds; cosine is in [0, 1]. Normalize each lexical
+    // score against the lexical max so both inputs share a [0, 1] scale,
+    // then merge-sort by descending score. A high-cosine semantic-only
+    // result (~0.9) will outrank a weak fuzzy lexical match (normalized
+    // ~0.2) and bubble up where it belongs.
+    if (semantic.mode !== 'semantic' || semantic.hits.length === 0) return lexical
+    const seen = new Set(lexical.map((r) => r.patent.patentNumber))
+    const lexicalMax = Math.max(1e-6, ...lexical.map((r) => r.score))
+    const normLexical = lexical.map((r) => ({ ...r, score: r.score / lexicalMax }))
+    const semanticOnly: PatentSearchResult[] = []
+    for (const hit of semantic.hits) {
+      if (seen.has(hit.id)) continue
+      const patent = patentMap.get(hit.id)
+      if (!patent) continue
+      semanticOnly.push({
+        patent,
+        score: hit.score,
+        matchedFields: ['semantic'],
+      })
+    }
+    const merged = [...normLexical, ...semanticOnly]
+    merged.sort((a, b) => b.score - a.score)
+    return merged.slice(0, 30)
+  }, [debouncedQuery, index, patentMap, semantic.mode, semantic.hits])
 
   const showEmpty = debouncedQuery.trim().length >= 2 && results.length === 0 && !isBuilding
   const showResults = results.length > 0

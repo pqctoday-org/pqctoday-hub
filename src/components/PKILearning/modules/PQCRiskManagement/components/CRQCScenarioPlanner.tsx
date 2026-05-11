@@ -551,7 +551,7 @@ export const CRQCScenarioPlanner: React.FC = () => {
         title="CRQC Scenario — Export"
         exportData={exportMarkdown}
         filename="crqc-scenario-analysis"
-        formats={['markdown']}
+        formats={['markdown', 'pdf']}
         onExport={handleExport}
       >
         <p className="text-sm text-muted-foreground">

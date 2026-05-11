@@ -320,6 +320,7 @@ export const TimelineDocumentDetailPopover = ({
                     confidenceScore={row.confidenceScore}
                     trustedSourceIdStatus={row.trustedSourceIdStatus}
                     localFile={row.localFile}
+                    lastVerifiedDate={row.sourceDate}
                     compact={false}
                   />
                   {row.peerReviewed && (

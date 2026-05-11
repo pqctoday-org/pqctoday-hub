@@ -2,7 +2,16 @@
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import FocusLock from 'react-focus-lock'
-import { ShieldCheck, X, ExternalLink, BookOpen, Calendar, Globe, ListChecks } from 'lucide-react'
+import {
+  ShieldCheck,
+  X,
+  ExternalLink,
+  BookOpen,
+  Calendar,
+  Globe,
+  ListChecks,
+  Tag,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { ComplianceFramework } from '@/data/complianceData'
 import type { LibraryItem } from '@/data/libraryData'
@@ -89,6 +98,20 @@ export const FrameworkDetailPopover = ({
                   {framework.deadline && (
                     <span className="text-[10px] text-status-error">{framework.deadline}</span>
                   )}
+                  {framework.confidenceScore !== undefined && (
+                    <span
+                      className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${
+                        framework.confidenceScore >= 70
+                          ? 'bg-status-success/10 text-status-success border-status-success/30'
+                          : framework.confidenceScore >= 40
+                            ? 'bg-status-warning/10 text-status-warning border-status-warning/30'
+                            : 'bg-status-error/10 text-status-error border-status-error/30'
+                      }`}
+                      title={`Data confidence: ${framework.confidenceScore}/100`}
+                    >
+                      {framework.confidenceScore}% confidence
+                    </span>
+                  )}
                 </div>
                 <h3
                   id="framework-popover-title"
@@ -118,6 +141,26 @@ export const FrameworkDetailPopover = ({
                   <p className="text-xs text-muted-foreground mt-2">{framework.notes}</p>
                 )}
               </section>
+
+              {framework.cswp39Tags && framework.cswp39Tags.length > 0 && (
+                <section>
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+                    <Tag size={12} aria-hidden="true" />
+                    CSWP 39 Considerations
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {framework.cswp39Tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="inline-flex items-center text-xs px-2 py-1 rounded bg-accent/10 text-accent font-medium border border-accent/20"
+                        title={`NIST CSWP 39 consideration: ${tag}`}
+                      >
+                        {tag.replace('cswp39:', '')}
+                      </span>
+                    ))}
+                  </div>
+                </section>
+              )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 {framework.countries.length > 0 && (

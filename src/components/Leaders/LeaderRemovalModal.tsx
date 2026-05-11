@@ -17,7 +17,7 @@ const DISCUSSION_NEW_URL = (() => {
   const base = 'https://github.com/pqctoday-org/pqctoday-hub/discussions/new'
   const params = new URLSearchParams({
     category: 'i-consent-to-be-added-as-a-pqc-leader',
-    title: 'Request removal as a PQC Leader',
+    title: 'Request removal from the PQC Community',
     body: REMOVAL_TEMPLATE,
   })
   return `${base}?${params.toString()}`
@@ -97,10 +97,10 @@ export function LeaderRemovalModal({ isOpen, onClose }: LeaderRemovalModalProps)
                   <MessageSquare size={18} className="text-primary shrink-0" />
                   <div className="flex-1 min-w-0">
                     <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
-                      GitHub Discussions &mdash; Leaders
+                      GitHub Discussions &mdash; Community
                     </span>
                     <p className="text-xs text-muted-foreground">
-                      Post a removal request in the Leaders category
+                      Post a removal request in the Community category
                     </p>
                   </div>
                   <ExternalLink

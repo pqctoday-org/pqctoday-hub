@@ -59,7 +59,7 @@ const SCORERS: Record<TrustDimension, DimensionScorer> = {
       lastUpdateDate: fields.lastUpdateDate,
       releaseDate: fields.releaseDate,
     }),
-  crossRefDensity: (resourceId, _rt, _f, ctx) => scoreCrossRefDensity(resourceId, ctx),
+  crossRefDensity: (resourceId, rt, _f, ctx) => scoreCrossRefDensity(resourceId, ctx, rt),
   enrichmentCompleteness: (resourceId, rt, _f, ctx) =>
     scoreEnrichmentCompleteness(resourceId, rt, ctx),
 }

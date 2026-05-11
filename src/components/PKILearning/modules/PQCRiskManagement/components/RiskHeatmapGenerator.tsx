@@ -945,7 +945,7 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
         title="Risk Treatment Plan"
         exportData={exportMarkdown}
         filename="quantum-risk-treatment-plan"
-        formats={['markdown']}
+        formats={['markdown', 'pdf']}
         onExport={handleSaveToPortfolio}
       >
         <p className="text-xs text-muted-foreground">

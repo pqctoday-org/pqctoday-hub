@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useRef } from 'react'
 import { X, GitMerge, Bot, UserCheck } from 'lucide-react'
-import { byRecord, type RevisionEntry } from '@/hooks/useRevisions'
+import { byRecord, type RevisionEntry, type FieldChange } from '@/hooks/useRevisions'
 import { Button } from '@/components/ui/button'
 import { BypassChip } from '@/components/ui/BypassChip'
+import { diffList, isListColumn } from '@/utils/listDiff'
 
 interface RevisionDrilldownPanelProps {
   domain: string
@@ -40,7 +41,75 @@ function ChangeTypeBadge({ type }: { type: string }) {
   )
 }
 
-function RevisionRow({ r }: { r: RevisionEntry }) {
+function ListDiffPills({ before, after }: { before: string | null; after: string | null }) {
+  const d = diffList(before, after)
+  if (d.ordered.length === 0) {
+    return <span className="text-xs text-muted-foreground italic">(empty)</span>
+  }
+  return (
+    <div className="flex flex-wrap gap-1">
+      {d.ordered.map((tok, i) => {
+        const cls =
+          tok.status === 'added'
+            ? 'bg-status-success/15 text-status-success border-status-success/30'
+            : tok.status === 'removed'
+              ? 'bg-status-error/10 text-status-error border-status-error/30 line-through'
+              : 'bg-muted text-muted-foreground border-border'
+        const prefix = tok.status === 'added' ? '+ ' : tok.status === 'removed' ? '− ' : ''
+        return (
+          <span
+            key={`${tok.status}-${tok.token}-${i}`}
+            className={`text-xs font-mono px-1.5 py-0.5 rounded border ${cls}`}
+            title={`${tok.status}: ${tok.token}`}
+          >
+            {prefix}
+            {tok.token}
+          </span>
+        )
+      })}
+    </div>
+  )
+}
+
+function ScalarDiff({ before, after }: { before: string | null; after: string | null }) {
+  const beforeStr = (before ?? '').trim()
+  const afterStr = (after ?? '').trim()
+  return (
+    <div className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5 text-xs">
+      <span className="text-status-error font-mono shrink-0">before</span>
+      <span className="font-mono text-foreground/80 break-all">
+        {beforeStr || <em className="text-muted-foreground">∅</em>}
+      </span>
+      <span className="text-status-success font-mono shrink-0">after</span>
+      <span className="font-mono text-foreground break-all">
+        {afterStr || <em className="text-muted-foreground">∅</em>}
+      </span>
+    </div>
+  )
+}
+
+function FieldChangeRow({ change }: { change: FieldChange }) {
+  return (
+    <div className="py-1.5 first:pt-0 last:pb-0 border-t border-border/50 first:border-t-0">
+      <div className="flex items-baseline gap-2">
+        <code className="text-xs font-mono text-accent shrink-0">{change.field}</code>
+        {change.record_id && (
+          <span className="text-xs text-muted-foreground truncate">{change.record_id}</span>
+        )}
+      </div>
+      <div className="mt-1">
+        {isListColumn(change.field) ? (
+          <ListDiffPills before={change.before} after={change.after} />
+        ) : (
+          <ScalarDiff before={change.before} after={change.after} />
+        )}
+      </div>
+    </div>
+  )
+}
+
+function RevisionRow({ r, entityId }: { r: RevisionEntry; entityId: string }) {
+  const recordChanges = r.field_changes?.filter((c) => c.record_id === entityId) ?? []
   const offlineSuffix =
     r.approval_method === 'offline' && r.approved_via ? ` via ${r.approved_via}` : ''
 
@@ -103,6 +172,16 @@ function RevisionRow({ r }: { r: RevisionEntry }) {
       {r.scope_summary && (
         <p className="text-xs text-muted-foreground ml-5 mt-0.5 line-clamp-2">{r.scope_summary}</p>
       )}
+      {recordChanges.length > 0 && (
+        <div className="ml-5 mt-2 p-2 rounded border border-border bg-muted/20 space-y-1">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            {recordChanges.length} field change{recordChanges.length !== 1 ? 's' : ''}
+          </p>
+          {recordChanges.map((c, i) => (
+            <FieldChangeRow key={`${c.record_id}-${c.field}-${i}`} change={c} />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
@@ -160,7 +239,7 @@ export function RevisionDrilldownPanel({
                 {matches.length} revision{matches.length !== 1 ? 's' : ''} · sorted newest first
               </p>
               {matches.map((r, i) => (
-                <RevisionRow key={`${r.pr_number}-${i}`} r={r} />
+                <RevisionRow key={`${r.pr_number}-${i}`} r={r} entityId={entityId} />
               ))}
             </>
           )}

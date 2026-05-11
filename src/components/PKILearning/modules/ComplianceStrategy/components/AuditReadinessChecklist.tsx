@@ -611,6 +611,7 @@ export const AuditReadinessChecklist: React.FC = () => {
         sections={sections}
         onExport={handleExport}
         exportFilename="pqc-audit-readiness-checklist"
+        exportFormats={['markdown', 'pdf']}
         renderPreview={previewRenderer}
       />
 

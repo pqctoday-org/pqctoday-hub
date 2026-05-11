@@ -1,6 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useCallback } from 'react'
-import { Download, Copy, Printer, Check, Presentation, FileText, FileType2 } from 'lucide-react'
+import {
+  Download,
+  Copy,
+  Printer,
+  Check,
+  Presentation,
+  FileText,
+  FileType2,
+  Save,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { markdownToPptx } from '@/services/export/pptxExport'
 import { markdownToDocx } from '@/services/export/docxExport'
@@ -26,13 +35,16 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
   onExport,
 }) => {
   const [copied, setCopied] = React.useState(false)
+  const [savedFlash, setSavedFlash] = React.useState(false)
   const savedRef = React.useRef(false)
   const lastSavedDataRef = React.useRef<string>('')
 
-  // Reset savedRef when exportData changes so re-export saves updated content
+  // Reset savedRef when exportData changes so re-export saves updated content.
+  // Also clear the visual "Saved" pip so the user sees Save is available again.
   React.useEffect(() => {
     if (exportData !== lastSavedDataRef.current) {
       savedRef.current = false
+      setSavedFlash(false)
     }
   }, [exportData])
 
@@ -43,6 +55,12 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
       onExport()
     }
   }, [onExport, exportData])
+
+  const handleSaveClick = useCallback(() => {
+    triggerSave()
+    setSavedFlash(true)
+    setTimeout(() => setSavedFlash(false), 2000)
+  }, [triggerSave])
 
   const handleCopy = useCallback(async () => {
     await navigator.clipboard.writeText(exportData)
@@ -97,6 +115,17 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <h3 className="text-lg font-semibold text-foreground">{title}</h3>
         <div className="flex items-center gap-2 flex-wrap">
+          {onExport && (
+            <Button
+              variant="gradient"
+              size="sm"
+              onClick={handleSaveClick}
+              data-workshop-target="executive-artifact-save"
+            >
+              {savedFlash ? <Check size={14} /> : <Save size={14} />}
+              <span className="ml-1.5">{savedFlash ? 'Saved' : 'Save'}</span>
+            </Button>
+          )}
           <Button variant="outline" size="sm" onClick={handleCopy}>
             {copied ? <Check size={14} /> : <Copy size={14} />}
             <span className="ml-1.5">{copied ? 'Copied' : 'Copy'}</span>

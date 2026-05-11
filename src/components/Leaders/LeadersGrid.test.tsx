@@ -5,6 +5,17 @@ import { LeadersGrid } from './LeadersGrid'
 import type { Leader } from '../../data/leadersData'
 import '@testing-library/jest-dom'
 import { Button } from '@/components/ui/button'
+import * as useSemanticSearchModule from '@/services/search/useSemanticSearch'
+
+vi.mock('@/services/search/useSemanticSearch', async () => {
+  const actual = await vi.importActual<typeof useSemanticSearchModule>(
+    '@/services/search/useSemanticSearch'
+  )
+  return {
+    ...actual,
+    useSemanticSearch: vi.fn(() => ({ hits: [], mode: 'idle' as const, loading: false })),
+  }
+})
 
 // Mock react-router-dom — component uses useSearchParams for deep linking.
 // Stable reference prevents useEffect([searchParams]) from firing on every render.
@@ -109,32 +120,31 @@ describe('LeadersGrid', () => {
     vi.clearAllMocks()
   })
 
-  it('renders the header and description', () => {
+  it('renders header, leader cards, and per-card details from the mock fixture', () => {
+    // Consolidated: previously three separate tests each paying the full
+    // LeadersGrid mount cost to assert different parts of the same render
+    // pass. Single mount + every assertion below catches mount-doesn't-
+    // crash + grid count + per-card content + the expand-toggle a11y label.
     render(<LeadersGrid />)
-    expect(screen.getByText('Transformation Leaders')).toBeInTheDocument()
-    expect(screen.getAllByText(/Visionaries and organizations/)[0]).toBeInTheDocument()
-  })
 
-  it('renders a grid of leaders', () => {
-    render(<LeadersGrid />)
+    // Header
+    expect(screen.getByText('Community')).toBeInTheDocument()
+    expect(screen.getAllByText(/People contributing to the advances/)[0]).toBeInTheDocument()
+
+    // Grid cardinality + identity
     const articles = screen.getAllByRole('article')
     expect(articles).toHaveLength(3)
-
     expect(screen.getByText('Alice Quant')).toBeInTheDocument()
     expect(screen.getByText('Bob Cyber')).toBeInTheDocument()
-  })
 
-  it('displays leader details correctly', () => {
-    render(<LeadersGrid />)
-
-    // Alice details
+    // Per-card content (Alice)
     expect(screen.getByText('Chief Scientist')).toBeInTheDocument()
     expect(screen.getByText('Quantum Corp')).toBeInTheDocument()
     expect(screen.getByText('"Leading PQC research."')).toBeInTheDocument()
     expect(screen.getByText('Private Sector')).toBeInTheDocument()
 
-    // Social links moved to detail popover — verify Info button exists
-    expect(screen.getAllByLabelText(/View details for/)).toBeTruthy()
+    // Inline-collapsible toggle exists for each card
+    expect(screen.getAllByLabelText(/Expand details for/).length).toBeGreaterThan(0)
   })
 
   it('renders fallback icon when no image url provided', () => {
@@ -185,7 +195,7 @@ describe('LeadersGrid', () => {
     expect(screen.getAllByRole('article')).toHaveLength(3)
 
     // Search for "Scientist" (matches Alice)
-    const searchInput = screen.getByPlaceholderText('Search leaders...')
+    const searchInput = screen.getByPlaceholderText('Search community...')
     fireEvent.change(searchInput, { target: { value: 'Scientist' } })
 
     expect(screen.getAllByRole('article')).toHaveLength(1)
@@ -197,7 +207,7 @@ describe('LeadersGrid', () => {
     render(<LeadersGrid />)
 
     // Search for "ncsc" (matches Bob's org)
-    const searchInput = screen.getByPlaceholderText('Search leaders...')
+    const searchInput = screen.getByPlaceholderText('Search community...')
     fireEvent.change(searchInput, { target: { value: 'ncsc' } })
 
     expect(screen.getAllByRole('article')).toHaveLength(1)
@@ -216,7 +226,7 @@ describe('LeadersGrid', () => {
     expect(screen.getAllByRole('article')).toHaveLength(1)
 
     // Search for something that matches Alice
-    const searchInput = screen.getByPlaceholderText('Search leaders...')
+    const searchInput = screen.getByPlaceholderText('Search community...')
     fireEvent.change(searchInput, { target: { value: 'Quant' } })
     expect(screen.getAllByRole('article')).toHaveLength(1)
     expect(screen.getByText('Alice Quant')).toBeInTheDocument()
@@ -256,7 +266,7 @@ describe('LeadersGrid', () => {
     expect(screen.getAllByRole('article')).toHaveLength(1)
 
     // Search for "Securing" (matches Bob's bio)
-    const searchInput = screen.getByPlaceholderText('Search leaders...')
+    const searchInput = screen.getByPlaceholderText('Search community...')
     fireEvent.change(searchInput, { target: { value: 'Securing' } })
     expect(screen.getAllByRole('article')).toHaveLength(1)
     expect(screen.getByText('Bob Cyber')).toBeInTheDocument()
@@ -264,5 +274,33 @@ describe('LeadersGrid', () => {
     // Search for "Quantum" (Alice, but filtered out by Sector/Country)
     fireEvent.change(searchInput, { target: { value: 'Quantum' } })
     expect(screen.queryByRole('article')).not.toBeInTheDocument()
+  })
+
+  describe('Phase 3 — semantic search supplement', () => {
+    it('falls back to pure lexical when the runtime is not ready', () => {
+      vi.mocked(useSemanticSearchModule.useSemanticSearch).mockReturnValue({
+        hits: [],
+        mode: 'lexical',
+        loading: false,
+      })
+      render(<LeadersGrid />)
+      const searchInput = screen.getByPlaceholderText(/Search/i)
+      fireEvent.change(searchInput, { target: { value: 'NonExistentTermXYZ' } })
+      expect(screen.queryByRole('article')).not.toBeInTheDocument()
+    })
+
+    it('includes a semantic-only leader in the result set via union', () => {
+      // 'Alice Quant' doesn't match 'paraphrase-only' lexically.
+      // chunkToResource maps Leaders chunks via chunk.title (the leader's name).
+      vi.mocked(useSemanticSearchModule.useSemanticSearch).mockReturnValue({
+        hits: [{ id: 'Alice Quant', score: 0.9 }],
+        mode: 'semantic',
+        loading: false,
+      })
+      render(<LeadersGrid />)
+      const searchInput = screen.getByPlaceholderText(/Search/i)
+      fireEvent.change(searchInput, { target: { value: 'paraphrase-only' } })
+      expect(screen.getByText('Alice Quant')).toBeInTheDocument()
+    })
   })
 })

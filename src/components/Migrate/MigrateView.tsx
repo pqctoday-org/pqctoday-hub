@@ -11,6 +11,12 @@ import { FilterDrawer } from '../common/FilterDrawer'
 import { MigrateViewToggle } from './MigrateViewToggle'
 import { MigrateSortControl, type MigrateSortOption } from './MigrateSortControl'
 import { FilterDropdown } from '../common/FilterDropdown'
+import { SectorFilter, useSectorFilter, matchesSectorFilter } from '../common/SectorFilter'
+import {
+  TrustTierFilter,
+  useTrustTierFilter,
+  matchesTrustTierFilter,
+} from '../common/TrustTierFilter'
 import {
   Search,
   X,
@@ -36,6 +42,8 @@ import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
 import { useHistoryStore } from '@/store/useHistoryStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONA_MIGRATE_LAYERS } from '@/data/personaConfig'
+import { useSemanticSearch } from '@/services/search/useSemanticSearch'
+import { SemanticSearchHint } from '@/components/common/SemanticSearchHint'
 import { Button } from '../ui/button'
 import { ErrorAlert } from '../ui/error-alert'
 import { EmptyState } from '../ui/empty-state'
@@ -100,6 +108,8 @@ export const MigrateView: React.FC = () => {
   const [industryFilter, setIndustryFilter] = useState<string | null>(
     () => searchParams.get('industry') ?? null
   )
+  const sectorFilter = useSectorFilter()
+  const tierFilter = useTrustTierFilter()
 
   // Persisted store: hidden products + active layer/sub-category + view mode
   const {
@@ -447,6 +457,18 @@ export const MigrateView: React.FC = () => {
     debouncedSetFilter(e.target.value)
   }
 
+  // Phase 3 — semantic supplement. The hook returns ranked
+  // softwareNames (chunk.title for migrate) when the embedding
+  // runtime is ready. Queries like "VPN with quantum-safe IKE"
+  // surface strongSwan / Cisco PQC IPsec without requiring the
+  // user to know the exact product name.
+  const semantic = useSemanticSearch('migrate', filterText, { limit: 40 })
+  const semanticNameSet = useMemo(
+    () =>
+      semantic.mode === 'semantic' ? new Set(semantic.hits.map((h) => h.id.toLowerCase())) : null,
+    [semantic.mode, semantic.hits]
+  )
+
   // Per-layer data: products scoped by global filters (search, step)
   const perLayerData = useMemo(() => {
     return activePartitions.reduce(
@@ -469,6 +491,12 @@ export const MigrateView: React.FC = () => {
             const q = industryFilter.toLowerCase()
             if (!item.targetIndustries?.toLowerCase().includes(q)) return false
           }
+          // Sector filter (from ?sector= URL param — NAICS / PQC overlay codes)
+          if (
+            sectorFilter.length > 0 &&
+            !matchesSectorFilter(sectorFilter, item.targetIndustries ?? '')
+          )
+            return false
           // Vendor filter
           if (vendorFilter !== 'All' && item.vendorId !== vendorFilter) return false
           // Verification status filter
@@ -485,17 +513,24 @@ export const MigrateView: React.FC = () => {
           if (wipFilter === 'only' && item.wip !== true) return false
           // My Products filter
           if (showOnlyMyProducts && !myProductsSet.has(item.productId)) return false
-          // Search filter
+          // Trust tier filter (multi-select, URL param: tier) — keeps per-layer
+          // counts consistent with the main allFilteredProducts view.
+          if (!matchesTrustTierFilter(tierFilter, 'migrate', item.softwareName)) return false
+          // Search filter — lexical floor + semantic supplement.
           if (filterText) {
             const q = filterText.toLowerCase()
-            return (
+            const lexicalMatch =
               item.softwareName.toLowerCase().includes(q) ||
               item.pqcCapabilityDescription?.toLowerCase().includes(q) ||
               item.pqcSupport?.toLowerCase().includes(q) ||
               item.productBrief?.toLowerCase().includes(q) ||
               item.categoryName?.toLowerCase().includes(q) ||
               item.license?.toLowerCase().includes(q)
-            )
+            if (lexicalMatch) return true
+            if (semanticNameSet && semanticNameSet.has(item.softwareName.toLowerCase())) {
+              return true
+            }
+            return false
           }
           return true
         })
@@ -507,6 +542,7 @@ export const MigrateView: React.FC = () => {
     stepFilter,
     filterText,
     industryFilter,
+    sectorFilter,
     vendorFilter,
     verificationFilter,
     licenseFilter,
@@ -515,6 +551,8 @@ export const MigrateView: React.FC = () => {
     activePartitions,
     showOnlyMyProducts,
     myProductsSet,
+    tierFilter,
+    semanticNameSet,
   ])
 
   // Layer product counts (for badges on collapsed layer rows)
@@ -675,6 +713,14 @@ export const MigrateView: React.FC = () => {
         const q = industryFilter.toLowerCase()
         if (!item.targetIndustries?.toLowerCase().includes(q)) return false
       }
+      // Sector filter (from ?sector= URL param — NAICS / PQC overlay codes)
+      if (
+        sectorFilter.length > 0 &&
+        !matchesSectorFilter(sectorFilter, item.targetIndustries ?? '')
+      )
+        return false
+      // Trust tier filter (multi-select, URL param: tier)
+      if (!matchesTrustTierFilter(tierFilter, 'migrate', item.softwareName)) return false
       // Layer filter (from dropdown in flat modes)
       if (effectiveLayer !== 'All') {
         if (effectiveViewMode === 'cisaStack') {
@@ -709,26 +755,32 @@ export const MigrateView: React.FC = () => {
       }
       // My Products filter
       if (showOnlyMyProducts && !myProductsSet.has(item.productId)) return false
-      // Search filter
+      // Search filter — lexical floor + semantic supplement.
       if (filterText) {
         const q = filterText.toLowerCase()
-        return (
+        const lexicalMatch =
           item.softwareName.toLowerCase().includes(q) ||
           item.pqcCapabilityDescription?.toLowerCase().includes(q) ||
           item.pqcSupport?.toLowerCase().includes(q) ||
           item.productBrief?.toLowerCase().includes(q) ||
           item.categoryName?.toLowerCase().includes(q) ||
           item.license?.toLowerCase().includes(q)
-        )
+        if (lexicalMatch) return true
+        if (semanticNameSet && semanticNameSet.has(item.softwareName.toLowerCase())) {
+          return true
+        }
+        return false
       }
       return true
     })
   }, [
     stepFilter,
     industryFilter,
+    sectorFilter,
     effectiveLayer,
     flatCategoryFilter,
     filterText,
+    semanticNameSet,
     vendorFilter,
     verificationFilter,
     licenseFilter,
@@ -736,6 +788,7 @@ export const MigrateView: React.FC = () => {
     hasRoadmapFilter,
     showOnlyMyProducts,
     myProductsSet,
+    tierFilter,
   ])
 
   // PQC stats for all filtered products
@@ -1097,6 +1150,7 @@ export const MigrateView: React.FC = () => {
                         }}
                         defaultLabel="All Licenses"
                       />
+                      <TrustTierFilter />
                       {!isEmbedded && (
                         <Button
                           variant="ghost"
@@ -1219,6 +1273,9 @@ export const MigrateView: React.FC = () => {
                 />
               </div>
             )}
+
+            {/* Sector filter — NAICS / PQC overlay multi-select */}
+            <SectorFilter />
 
             {/* Secondary filters drawer */}
             <FilterDrawer
@@ -1463,10 +1520,19 @@ export const MigrateView: React.FC = () => {
 
           const visibleCount = isStackMode ? stackFilteredCount : flatVisibleCount
           return (
-            <p className="text-xs text-muted-foreground">
-              {visibleCount} product{visibleCount !== 1 ? 's' : ''}
-              {layerLabel && ` in ${layerLabel}`}
-            </p>
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground">
+                {visibleCount} product{visibleCount !== 1 ? 's' : ''}
+                {layerLabel && ` in ${layerLabel}`}
+              </p>
+              <SemanticSearchHint
+                mode={semantic.mode}
+                loading={semantic.loading}
+                query={filterText}
+                semanticHitCount={semantic.hits.length}
+                noun="related products"
+              />
+            </div>
           )
         })()}
 
@@ -1680,6 +1746,13 @@ export const MigrateView: React.FC = () => {
               <EmptyState
                 icon={<PackageSearch size={32} />}
                 title="No products match the current filters."
+                description={
+                  filterText.trim() && semantic.loading
+                    ? 'Semantic search is still loading — results may refine in a moment.'
+                    : filterText.trim() && semantic.mode === 'semantic'
+                      ? 'No direct or semantically related product found. Try different keywords or relax filters.'
+                      : undefined
+                }
               />
             </div>
           ))}

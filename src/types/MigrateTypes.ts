@@ -32,6 +32,10 @@ export interface Vendor {
   // Trust Engine attribution (T06 — added 2026-05-08)
   trustedSourceId?: string
   peerReviewed?: 'yes' | 'no' | 'partial'
+  // DS01 status-column schema (added 2026-05-09; see csv-status-schema.md)
+  status?: 'active' | 'deprecated' | 'obsolete'
+  deprecatedAt?: string
+  deprecatedReason?: string
 }
 
 export const CISA_CATEGORIES = [

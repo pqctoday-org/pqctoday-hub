@@ -1,6 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useMemo, useEffect, useCallback } from 'react'
-import { ArrowRight, Info, ShieldCheck, ShieldAlert, Clock, Import } from 'lucide-react'
+import { useMemo, useEffect, useCallback, useState } from 'react'
+import {
+  ArrowRight,
+  Info,
+  ShieldCheck,
+  ShieldAlert,
+  Clock,
+  Import,
+  Sparkles,
+  ChevronDown,
+  ChevronUp,
+  Plus,
+} from 'lucide-react'
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
 
@@ -18,6 +29,7 @@ import {
 import { TIER_STYLES } from '../../applicability/parts/tierStyles'
 import { Button } from '../../ui/button'
 import { PersonaHint } from './PersonaHint'
+import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 
 // Tiers shown in the assess step — informational omitted (too noisy for selection).
 const TIER_ORDER: ApplicabilityTier[] = ['mandatory', 'recognized', 'cross-border', 'advisory']
@@ -112,6 +124,31 @@ const Step5Compliance = () => {
     },
     [complianceUnknown, importComplianceSelection, myFrameworks, complianceRequirements]
   )
+
+  // Phase 3 — free-text business-context rescue. When the structured
+  // industry/country/region inputs don't surface a framework the user
+  // knows applies (niche or regional), they describe their context in
+  // plain language. Semantic search ranks every compliance framework
+  // by similarity, and we show the top-5 that aren't already visible
+  // in the tier groups above. One-click adds them to the selection.
+  const [contextOpen, setContextOpen] = useState(false)
+  const [contextText, setContextText] = useState('')
+  const semanticContext = useSemanticSearch('compliance', contextText, { limit: 20 })
+  const contextSuggestions = useMemo(() => {
+    if (semanticContext.mode !== 'semantic' || semanticContext.hits.length === 0) return []
+    // Build a lookup once: id (lowercased) → framework.
+    const fwById = new Map(complianceFrameworks.map((fw) => [fw.id.toLowerCase(), fw]))
+    const out: { fw: ComplianceFramework; score: number }[] = []
+    for (const hit of semanticContext.hits) {
+      const fw = fwById.get(hit.id.toLowerCase())
+      if (!fw) continue
+      // Skip frameworks already visible in the tier groups.
+      if (filteredFrameworkIds.has(fw.id)) continue
+      out.push({ fw, score: hit.score })
+      if (out.length >= 5) break
+    }
+    return out
+  }, [semanticContext.mode, semanticContext.hits, filteredFrameworkIds])
 
   return (
     <div className="space-y-4">
@@ -279,6 +316,92 @@ const Step5Compliance = () => {
             </div>
           )
         })}
+
+        {/* Free-text business-context disclosure (Phase 3) */}
+        <div className="glass-panel p-3">
+          <Button
+            variant="ghost"
+            onClick={() => setContextOpen((v) => !v)}
+            className="w-full flex items-center gap-2 justify-start text-sm font-medium text-foreground hover:bg-transparent px-0"
+            aria-expanded={contextOpen}
+          >
+            <Sparkles size={14} className="text-primary shrink-0" />
+            Don&apos;t see your framework? Describe your context
+            {contextOpen ? (
+              <ChevronUp size={14} className="ml-auto text-muted-foreground" />
+            ) : (
+              <ChevronDown size={14} className="ml-auto text-muted-foreground" />
+            )}
+          </Button>
+          {contextOpen && (
+            <div className="mt-3 space-y-3">
+              <p className="text-xs text-muted-foreground">
+                In plain language, describe your business, products, or jurisdictional context.
+                We&apos;ll surface frameworks beyond what the structured filters above show.
+              </p>
+              <textarea
+                value={contextText}
+                onChange={(e) => setContextText(e.target.value)}
+                placeholder="e.g. Brazilian fintech offering instant-payment APIs with PIX integration"
+                rows={3}
+                className="w-full px-3 py-2 text-sm bg-background border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
+              />
+              {semanticContext.loading && (
+                <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                  <Sparkles size={10} className="animate-pulse text-primary/60" />
+                  Loading semantic search…
+                </p>
+              )}
+              {semanticContext.mode === 'lexical' && contextText.trim() && (
+                <p className="text-xs text-muted-foreground">
+                  Semantic search unavailable in this session — type a framework name in the page
+                  above instead.
+                </p>
+              )}
+              {contextSuggestions.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold text-foreground">
+                    Suggested frameworks ({contextSuggestions.length})
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {contextSuggestions.map(({ fw, score }) => {
+                      const selected = isSelected(fw)
+                      return (
+                        <Button
+                          key={fw.id}
+                          variant="ghost"
+                          onClick={() => handleToggle(fw)}
+                          className={clsx(
+                            'text-xs h-auto px-2.5 py-1.5 border flex items-center gap-1.5',
+                            selected
+                              ? 'border-primary bg-primary/10 text-primary'
+                              : 'border-border text-foreground hover:border-primary/40 hover:bg-primary/5'
+                          )}
+                          title={`Cosine similarity ${score.toFixed(2)} — click to ${selected ? 'remove' : 'add'} to your selection`}
+                        >
+                          {!selected && <Plus size={10} />}
+                          <span>{fw.label}</span>
+                          <span className="text-[10px] text-muted-foreground">
+                            {Math.round(score * 100)}%
+                          </span>
+                        </Button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+              {contextText.trim().length > 0 &&
+                !semanticContext.loading &&
+                semanticContext.mode === 'semantic' &&
+                contextSuggestions.length === 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    No additional frameworks matched — your structured filters above already cover
+                    the strongest candidates.
+                  </p>
+                )}
+            </div>
+          )}
+        </div>
 
         <div className="flex items-center justify-between">
           <p className="text-xs text-muted-foreground">

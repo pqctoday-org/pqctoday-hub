@@ -16,10 +16,13 @@ import { complianceFrameworks } from '../complianceData'
 import { threatsData } from '../threatsData'
 import { leadersData } from '../leadersData'
 import { softwareData } from '../migrateData'
+import { certsByProduct } from '../certificationXrefData'
+import { algorithmTrustByName } from '../algorithmTrustData'
 import { algorithmsData } from '../algorithmsData'
 import { timelineData } from '../timelineData'
 import { libraryData } from '../libraryData'
 import { parseEnrichmentMarkdown, type EnrichmentLookup } from '../libraryEnrichmentData'
+import { buildCommunitySignalsMap } from '../communitySignalsData'
 
 // ---------------------------------------------------------------------------
 // Enrichment dimension counting
@@ -239,6 +242,7 @@ function buildScoringContext(): ScoringContext {
     libraryDependencies: libraryDeps,
     threatModuleRefs,
     demonstrableAlgorithms: DEMONSTRABLE_ALGORITHMS,
+    communitySignals: buildCommunitySignalsMap(),
   }
 }
 
@@ -286,6 +290,21 @@ function computeAllScores(): Map<string, TrustScore> {
         const computed = scores.get(`timeline:${title}`)!
         scores.set(`timeline:${enrichmentKey}`, computed)
         scores.set(`timeline:${compositeId}`, computed)
+        // Corpus chunks use `${country} — ${title}` as title; map that too so
+        // chunkToResource() lookups resolve. Matches generate-rag-corpus.ts
+        // processTimeline title format.
+        scores.set(`timeline:${country.countryName} — ${title}`, computed)
+        // Doc-enrichment chunks use `${country}:${org} — ${title}` as refId
+        // (see processDocumentEnrichments). Map that too.
+        scores.set(`timeline:${country.countryName}:${body.name} — ${title}`, computed)
+        // The loader renames `United States` → `United States (CNSA)` for
+        // NSA-orged events (see timelineData.ts §120-128) to separate the
+        // Gantt lane. The corpus emits chunks with the ORIGINAL CSV country
+        // name (`United States`), so register the un-renamed alias too.
+        if (country.countryName === 'United States (CNSA)') {
+          scores.set(`timeline:United States — ${title}`, computed)
+          scores.set(`timeline:United States:${body.name} — ${title}`, computed)
+        }
       }
     }
   }
@@ -302,12 +321,32 @@ function computeAllScores(): Map<string, TrustScore> {
   // Migrate products
   for (const item of softwareData ?? []) {
     const key = `migrate:${item.softwareName}`
+    // Derive vetting/peer-review signals from FIPS validation + certification xref.
+    // Government cryptographic validation (FIPS CMVP, ACVP, Common Criteria) is a
+    // formal peer-review process, so a product with any such certificate counts as
+    // peer-reviewed and inherits the certifying body as a vetting org.
+    const certs = certsByProduct.get(item.softwareName) ?? []
+    const derivedVetting = new Set<string>(item.vettingBody ?? [])
+    if (item.fipsValidated === 'yes') derivedVetting.add('NIST')
+    for (const cert of certs) {
+      if (cert.certType === 'FIPS 140-3' || cert.certType === 'ACVP') derivedVetting.add('NIST')
+      else if (cert.certType === 'Common Criteria') derivedVetting.add('Common Criteria')
+      else if (cert.certType === 'PSA Certified') derivedVetting.add('PSA Certified')
+    }
+    const hasGovValidation = item.fipsValidated === 'yes' || certs.length > 0
+    const derivedPeerReviewed = item.peerReviewed ?? (hasGovValidation ? 'yes' : undefined)
+    const latestCertDate = certs
+      .map((c) => c.certDate)
+      .filter(Boolean)
+      .sort()
+      .at(-1)
     score('migrate', item.softwareName, {
-      peerReviewed: item.peerReviewed,
-      vettingBody: item.vettingBody,
+      peerReviewed: derivedPeerReviewed,
+      vettingBody: Array.from(derivedVetting),
       localFile: undefined, // Products have docs in public/products/
       pqcSupport: item.pqcSupport,
       lastVerifiedDate: item.lastVerifiedDate,
+      lastUpdateDate: latestCertDate,
       releaseDate: item.releaseDate,
     })
     // Apply evidence-flag penalty — each flag reduces composite score by 5 points
@@ -346,8 +385,12 @@ function computeAllScores(): Map<string, TrustScore> {
         ? l.organizations.slice(0, 1)
         : undefined
 
-    // Use keyResourceUrl to boost: inherit peer review and vetting from authored docs
-    const docRefs = l.keyResourceUrl ?? []
+    // Inherit peer-review + vetting from authored library docs. Use
+    // `keyResourceRefs` (library reference IDs) for the lookup, NOT
+    // `keyResourceUrl` (raw URLs) — URLs never match `referenceId` keys
+    // in the library map, so the previous code returned no inheritance
+    // and every leader fell back to its (mostly empty) own peerReviewed.
+    const docRefs = l.keyResourceRefs ?? []
     let bestPeerReview = l.peerReviewed
     const docVettingBodies = new Set<string>(inferredVetting ?? [])
 
@@ -367,7 +410,7 @@ function computeAllScores(): Map<string, TrustScore> {
       vettingBody: docVettingBodies.size > 0 ? [...docVettingBodies] : undefined,
     })
 
-    // Inject keyResourceUrl refs into the cross-reference context so density picks them up
+    // Inject keyResourceRefs into the cross-reference context so density picks them up
     if (docRefs.length > 0) {
       const existing = ctx.xrefsByResource.get(l.name) ?? []
       for (const refId of docRefs) {
@@ -380,15 +423,29 @@ function computeAllScores(): Map<string, TrustScore> {
   // Algorithms — strip parenthetical suffix to match xref IDs (e.g., "ML-DSA-44 (NIST Level 2)" → "ML-DSA-44")
   for (const a of algorithmsData ?? []) {
     const cleanName = a.pqc.replace(/\s*\([^)]*\)\s*$/, '')
+    // Look up trust-relevant fields (peer_reviewed, vetting_body, fips_standard)
+    // from the algorithm reference CSV; the transitions CSV alone has no such
+    // signals, so without this join every algorithm scored Low.
+    const trust = algorithmTrustByName.get(cleanName)
+    const derivedVetting = new Set<string>(trust?.vettingBody ?? [])
+    // FIPS-standardised algorithms (FIPS 203/204/205, SP 800-208) imply NIST vetting.
+    if (trust?.fipsStandard) derivedVetting.add('NIST')
     score('algorithm', cleanName, {
-      peerReviewed: undefined,
-      vettingBody: undefined,
+      peerReviewed: trust?.peerReviewed,
+      vettingBody: derivedVetting.size > 0 ? Array.from(derivedVetting) : undefined,
       algorithmFamily: cleanName,
       lastUpdateDate: a.standardizationDate,
     })
     // Also map the full name with parenthetical for any UI lookups
     if (cleanName !== a.pqc) {
       scores.set(`algorithm:${a.pqc}`, scores.get(`algorithm:${cleanName}`)!)
+    }
+    // Corpus emits variant titles with hyphen separators (e.g.,
+    // `Classic-McEliece-348864`), but the transitions CSV uses spaces
+    // (`Classic McEliece 460896`). Register a hyphenated alias.
+    const hyphenated = cleanName.replace(/\s+/g, '-')
+    if (hyphenated !== cleanName) {
+      scores.set(`algorithm:${hyphenated}`, scores.get(`algorithm:${cleanName}`)!)
     }
   }
 

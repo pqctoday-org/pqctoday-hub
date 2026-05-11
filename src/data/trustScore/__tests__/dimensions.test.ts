@@ -23,6 +23,7 @@ function emptyContext(): ScoringContext {
     libraryDependencies: new Map(),
     threatModuleRefs: new Map(),
     demonstrableAlgorithms: new Set(['mlkem768', 'mldsa65']),
+    communitySignals: new Map(),
   }
 }
 

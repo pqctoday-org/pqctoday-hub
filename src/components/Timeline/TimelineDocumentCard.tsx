@@ -98,13 +98,14 @@ export const TimelineDocumentCard = ({
         <ReviewedBadge domain="timeline" entityId={row.title} showUnreviewed={false} />
       </div>
 
-      {/* Evidence badge row — FR-T-03 */}
-      {(row.confidenceScore !== undefined || row.trustedSourceIdStatus) && (
+      {/* Evidence badge row — FR-T-03 + C9 freshness */}
+      {(row.confidenceScore !== undefined || row.trustedSourceIdStatus || row.sourceDate) && (
         <div className="mb-2">
           <TimelineEvidenceBadge
             confidenceScore={row.confidenceScore}
             trustedSourceIdStatus={row.trustedSourceIdStatus}
             localFile={row.localFile}
+            lastVerifiedDate={row.sourceDate}
             compact
           />
         </div>

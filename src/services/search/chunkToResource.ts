@@ -41,9 +41,37 @@ export function chunkToResource(chunk: RAGChunk): ResourceRef | null {
     }
     case 'leaders':
       return { resourceType: 'leaders', resourceId: chunk.title }
-    case 'algorithms':
+    case 'algorithms': {
+      // Classical / deprecated algorithms are not subjects of trust evaluation
+      // — they appear in the algorithms corpus because they're the source of
+      // PQC migration (the "what replaces what" CSV), but trustScoreData.ts
+      // only scores PQC replacements. Returning null here avoids spurious
+      // tier-resolution orphans for RSA/ECDH/ECDSA/Ed25519/etc.
+      const family = metaString(chunk, 'family') ?? ''
+      if (family === 'Classical KEM' || family === 'Classical Sig') return null
       return { resourceType: 'algorithm', resourceId: chunk.title }
-    case 'document-enrichment':
+    }
+    case 'document-enrichment': {
+      const refId = metaString(chunk, 'refId')
+      if (!refId) return null
+      // metadata.collection records which dataset the refId belongs to
+      // (library / timeline / threats / catalog), set by
+      // scripts/generate-rag-corpus.ts processDocumentEnrichments.
+      // Without this, timeline/threats/catalog enrichments orphan against
+      // library trust scores.
+      const collection = metaString(chunk, 'collection')
+      switch (collection) {
+        case 'timeline':
+          return { resourceType: 'timeline', resourceId: refId }
+        case 'threats':
+          return { resourceType: 'threats', resourceId: refId }
+        case 'catalog':
+          return { resourceType: 'migrate', resourceId: refId }
+        case 'library':
+        default:
+          return { resourceType: 'library', resourceId: refId }
+      }
+    }
     case 'governance-maturity': {
       const refId = metaString(chunk, 'refId')
       if (!refId) return null

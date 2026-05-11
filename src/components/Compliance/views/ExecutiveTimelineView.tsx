@@ -142,9 +142,9 @@ export function ExecutiveTimelineView({
             count={threats.length}
             empty="No country-tagged threats matched."
           >
-            <ul className="space-y-1">
+            <ul className="space-y-1 min-w-0">
               {threats.map((r, i) => (
-                <li key={i}>
+                <li key={i} className="min-w-0">
                   <ThreatItem result={r} onSelect={onSelectThreat} />
                 </li>
               ))}
@@ -158,9 +158,9 @@ export function ExecutiveTimelineView({
             count={library.length}
             empty="No library docs matched the executive lens."
           >
-            <ul className="space-y-1">
+            <ul className="space-y-1 min-w-0">
               {library.map((r, i) => (
-                <li key={i}>
+                <li key={i} className="min-w-0">
                   <LibraryDocItem result={r} onSelect={onSelectLibrary} />
                 </li>
               ))}
@@ -174,9 +174,9 @@ export function ExecutiveTimelineView({
             count={industryEvents.length}
             empty="No cross-framework events surfaced."
           >
-            <ul className="space-y-1">
+            <ul className="space-y-1 min-w-0">
               {industryEvents.map((r, i) => (
-                <li key={i}>
+                <li key={i} className="min-w-0">
                   <TimelineItem result={r} onSelect={onSelectTimeline} />
                 </li>
               ))}
@@ -295,16 +295,16 @@ function SidebarSection({
   return (
     <section
       data-section-id={sectionId}
-      className="rounded-lg border border-border bg-card overflow-hidden scroll-mt-20"
+      className="rounded-lg border border-border bg-card scroll-mt-20"
     >
-      <header className="flex items-center justify-between gap-2 px-3 py-2 border-b border-border bg-muted/30">
+      <header className="flex items-center justify-between gap-2 px-3 py-2 border-b border-border bg-muted/30 rounded-t-lg">
         <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
           {icon}
           {title}
         </div>
         <span className="text-xs text-muted-foreground">{count}</span>
       </header>
-      <div className="px-3 py-2">
+      <div className="px-3 py-2 min-w-0">
         {count === 0 ? <p className="text-xs text-muted-foreground">{empty}</p> : children}
       </div>
     </section>

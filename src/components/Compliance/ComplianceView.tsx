@@ -23,6 +23,11 @@ import {
   Layers,
 } from 'lucide-react'
 import { CSWP39Explorer } from './CSWP39Explorer'
+import {
+  TrustTierFilter,
+  useTrustTierFilter,
+  matchesTrustTierFilter,
+} from '../common/TrustTierFilter'
 import { MoreTabsMenu } from './MoreTabsMenu'
 import { ApplicabilityPanel } from '../applicability/ApplicabilityPanel'
 import { LearningFrameBanner } from './LearningFrameBanner'
@@ -45,6 +50,7 @@ import { useApplicability } from '@/hooks/useApplicability'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { logComplianceFilter } from '../../utils/analytics'
 import { PageHeader } from '../common/PageHeader'
+import { ContentUpdatesFeed } from '@/components/ui/ContentUpdatesFeed'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { COMPLIANCE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { usePersonaStore } from '../../store/usePersonaStore'
@@ -60,7 +66,7 @@ import { useHistoryStore } from '@/store/useHistoryStore'
 import { type ViewMode } from '@/components/Library/ViewToggle'
 import debounce from 'lodash/debounce'
 import { GeoFilter, useGeoFilter } from '../common/GeoFilter'
-import { SectorFilter, useSectorFilter } from '../common/SectorFilter'
+import { SectorFilter, useSectorFilter, resolveToNaics } from '../common/SectorFilter'
 import { RoleFilter } from '../common/RoleFilter'
 import { normalizeCountry, normalizeIndustry } from '@/utils/applicabilityEngine'
 
@@ -369,24 +375,34 @@ function MobileViewToggle({
   // Industry alliances (PQC-COALITION, PQCA, QED-C) are surfaced alongside
   // standardization bodies — they're standardization-adjacent organisations that
   // produce reference implementations, policy guidance, and migration tooling.
+  const tierFilter = useTrustTierFilter()
+  const tierFilteredFrameworks = useMemo(
+    () =>
+      tierFilter.length === 0
+        ? complianceFrameworks
+        : complianceFrameworks.filter((f) =>
+            matchesTrustTierFilter(tierFilter, 'compliance', f.id)
+          ),
+    [tierFilter]
+  )
   const standardsFrameworks = useMemo(
     () =>
-      complianceFrameworks.filter(
+      tierFilteredFrameworks.filter(
         (f) => f.bodyType === 'standardization_body' || f.bodyType === 'industry_alliance'
       ),
-    []
+    [tierFilteredFrameworks]
   )
   const technicalStandards = useMemo(
-    () => complianceFrameworks.filter((f) => f.bodyType === 'technical_standard'),
-    []
+    () => tierFilteredFrameworks.filter((f) => f.bodyType === 'technical_standard'),
+    [tierFilteredFrameworks]
   )
   const certificationFrameworks = useMemo(
-    () => complianceFrameworks.filter((f) => f.bodyType === 'certification_body'),
-    []
+    () => tierFilteredFrameworks.filter((f) => f.bodyType === 'certification_body'),
+    [tierFilteredFrameworks]
   )
   const complianceOnlyFrameworks = useMemo(
-    () => complianceFrameworks.filter((f) => f.bodyType === 'compliance_framework'),
-    []
+    () => tierFilteredFrameworks.filter((f) => f.bodyType === 'compliance_framework'),
+    [tierFilteredFrameworks]
   )
 
   const landscapeTabFrameworks = useMemo(
@@ -539,6 +555,9 @@ export const ComplianceView = () => {
   useWorkflowPhaseTracker('comply')
   const [selectedFramework, setSelectedFramework] = useState<ComplianceFramework | null>(null)
   const [searchParams, setSearchParams] = useSearchParams()
+  // Trust-tier filter (URL ?tier=) — feeds both the Landscape memos via
+  // MobileViewToggle props AND the Records ComplianceTable directly.
+  const tierFilter = useTrustTierFilter()
   const certParam = searchParams.get('cert') ?? undefined
   const evref = searchParams.get('evref') ?? undefined
   const { data, loading, refresh, lastUpdated, enrichRecord } = useComplianceRefresh()
@@ -662,10 +681,15 @@ export const ComplianceView = () => {
   const [lsIndustry, setLsIndustry] = useState(
     // ?industry= is the canonical alias; ?ind= is the legacy param kept for back-compat
     // Only pre-select an industry when exactly one is active (cert restricts to single industry).
+    // Compliance data stores industries as NAICS 2-digit codes, while cross-page sources (URL,
+    // persona store) may carry freeform names like "Finance & Banking". Resolve to a NAICS code
+    // when possible so the filter actually matches CSV rows.
     () =>
-      searchParams.get('industry') ??
-      searchParams.get('ind') ??
-      (selectedIndustries.length === 1 ? selectedIndustries[0] : 'All')
+      resolveToNaics(
+        searchParams.get('industry') ??
+          searchParams.get('ind') ??
+          (selectedIndustries.length === 1 ? selectedIndustries[0] : 'All')
+      )
   )
   const [lsRegion, setLsRegion] = useState<RegionBloc | 'All'>(
     () => (searchParams.get('region') as RegionBloc | null) ?? 'All'
@@ -881,8 +905,9 @@ export const ComplianceView = () => {
 
     if (isLandscapeTab(tab) || tab === 'foryou') {
       const nextOrg = searchParams.get('org') ?? 'All'
-      const nextInd =
+      const nextInd = resolveToNaics(
         searchParams.get('ind') ?? (selectedIndustries.length === 1 ? selectedIndustries[0] : 'All')
+      )
       const nextRegion = (searchParams.get('region') as RegionBloc | null) ?? 'All'
       const nextCountry = searchParams.get('country') ?? 'All'
       const nextPhase = (searchParams.get('phase') as DeadlinePhase | null) ?? 'All'
@@ -1199,6 +1224,8 @@ export const ComplianceView = () => {
       <LearningFrameBanner />
       <GlossaryStrip />
 
+      <ContentUpdatesFeed domain="compliance" limit={5} title="Recent Compliance Revisions" />
+
       {exportError && (
         <div
           role="alert"
@@ -1411,6 +1438,9 @@ export const ComplianceView = () => {
                 tabs (Standardization Bodies / Certification Schemes) collapsed
                 into the Landscape facet. */}
             <MoreTabsMenu activeTab={activeTab} onSelect={(tab) => handleTabChange(tab)} />
+            <div className="ml-auto pr-2">
+              <TrustTierFilter />
+            </div>
           </TabsList>
 
           {/* ── Tab: For You — applies user profile across all content ── */}
@@ -1498,6 +1528,7 @@ export const ComplianceView = () => {
               pqcFilters={recPqc}
               categoryFilters={recCat}
               sourceFilters={recSrc}
+              tierFilters={tierFilter}
               vendorFilters={recVendor}
               sortColumn={recSortCol}
               sortDirection={recSortDir}

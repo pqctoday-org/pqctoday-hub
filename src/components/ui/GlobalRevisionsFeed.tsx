@@ -1,9 +1,22 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo, useState } from 'react'
 import { GitMerge, Bot, Filter } from 'lucide-react'
-import { useRevisions, type RevisionEntry } from '@/hooks/useRevisions'
+import { useNavigate } from 'react-router-dom'
+import { useRevisions, byRecord, type RevisionEntry } from '@/hooks/useRevisions'
 import { Button } from '@/components/ui/button'
 import { BypassChip } from '@/components/ui/BypassChip'
+import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
+import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
+import { conceptXwalkData } from '@/data/conceptXwalkData'
+
+// Label lookup: pt_id / moduleId / xwalkId → human-readable name. Built once at module load.
+const ENTITY_LABELS: Map<string, string> = (() => {
+  const m = new Map<string, string>()
+  for (const t of WORKSHOP_TOOLS) m.set(t.pt_id, t.name)
+  for (const [id, mod] of Object.entries(MODULE_CATALOG)) m.set(id, mod.title)
+  for (const x of conceptXwalkData) m.set(x.xwalkId, `${x.fromConcept} → ${x.toConcept}`)
+  return m
+})()
 
 const ALL_DOMAINS = ['module', 'tool', 'library', 'compliance', 'migrate', 'threats', 'algorithms']
 
@@ -13,6 +26,10 @@ interface GlobalRevisionsFeedProps {
   /** Maximum entries to show before "load more" */
   pageSize?: number
   className?: string
+  /** When set, show only revisions for this entity */
+  entityFilter?: string
+  /** Domain for entityFilter */
+  domainFilter?: string
 }
 
 function formatRelative(iso: string): string {
@@ -54,6 +71,65 @@ function DomainChip({
   )
 }
 
+const CHIP_COLORS: Record<string, string> = {
+  module: 'bg-accent/10 text-accent border-accent/30',
+  tool: 'bg-primary/10 text-primary border-primary/30',
+  library: 'bg-secondary/10 text-secondary border-secondary/30',
+  compliance: 'bg-status-warning/10 text-status-warning border-status-warning/30',
+  threats: 'bg-status-error/10 text-status-error border-status-error/30',
+}
+
+function EntityChips({ ids, domain }: { ids: string[]; domain: string }) {
+  const navigate = useNavigate()
+  const [expanded, setExpanded] = useState(false)
+  const visible = expanded ? ids : ids.slice(0, 6)
+  const overflow = ids.length - 6
+  const cls = CHIP_COLORS[domain] ?? 'bg-muted text-muted-foreground border-border'
+
+  return (
+    <div className="flex flex-wrap gap-1 mt-1.5">
+      {visible.map((id) => {
+        const label = ENTITY_LABELS.get(id)
+        return (
+          <div key={id} className="relative group">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation()
+                navigate(`/revisions?domain=${domain}&entity=${encodeURIComponent(id)}`)
+              }}
+              className={`h-auto text-[10px] px-1.5 py-0.5 rounded border font-mono hover:opacity-80 transition-opacity ${cls}`}
+            >
+              {id}
+            </Button>
+            {label && (
+              <div className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-1 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="w-max max-w-[220px] px-2 py-1 rounded bg-card border border-border text-[10px] text-foreground shadow-lg text-center leading-tight">
+                  {label}
+                </div>
+              </div>
+            )}
+          </div>
+        )
+      })}
+      {!expanded && overflow > 0 && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation()
+            setExpanded(true)
+          }}
+          className="h-auto text-[10px] px-1.5 py-0.5 rounded border border-border text-muted-foreground hover:text-foreground"
+        >
+          +{overflow} more
+        </Button>
+      )}
+    </div>
+  )
+}
+
 function FeedEntry({ r }: { r: RevisionEntry }) {
   const offlineSuffix =
     r.approval_method === 'offline' && r.approved_via ? ` · via ${r.approved_via}` : ''
@@ -75,6 +151,9 @@ function FeedEntry({ r }: { r: RevisionEntry }) {
           <BypassChip revision={r} />
         </div>
         <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{r.scope_summary}</p>
+        {r.record_ids && r.record_ids.length > 0 && (
+          <EntityChips ids={r.record_ids} domain={r.domain} />
+        )}
         <div className="flex items-center gap-2 mt-1">
           {r.pr_number > 0 ? (
             <a
@@ -85,7 +164,7 @@ function FeedEntry({ r }: { r: RevisionEntry }) {
             >
               PR #{r.pr_number}
             </a>
-          ) : (
+          ) : r.merge_sha && r.merge_sha !== 'baseline' ? (
             <a
               href={`https://github.com/pqctoday-org/pqctoday-hub/commit/${r.merge_sha}`}
               target="_blank"
@@ -94,7 +173,7 @@ function FeedEntry({ r }: { r: RevisionEntry }) {
             >
               {r.merge_sha.slice(0, 7)}
             </a>
-          )}
+          ) : null}
           {offlineSuffix && <span className="text-xs text-muted-foreground">{offlineSuffix}</span>}
         </div>
       </div>
@@ -109,16 +188,25 @@ export function GlobalRevisionsFeed({
   domains,
   pageSize = 20,
   className = '',
+  entityFilter,
+  domainFilter,
 }: GlobalRevisionsFeedProps) {
+  const navigate = useNavigate()
   const { revisions, isLoading } = useRevisions()
   const availableDomains = domains ?? ALL_DOMAINS
   const [activeDomains, setActiveDomains] = useState<Set<string>>(new Set(availableDomains))
   const [page, setPage] = useState(1)
 
   const filtered = useMemo(() => {
-    if (activeDomains.size === 0) return revisions
-    return revisions.filter((r) => activeDomains.has(r.domain))
-  }, [revisions, activeDomains])
+    if (entityFilter) {
+      return byRecord(revisions, domainFilter ?? '', entityFilter).filter(
+        (r) => r.merge_sha !== 'baseline'
+      )
+    }
+    return revisions.filter(
+      (r) => r.merge_sha !== 'baseline' && (activeDomains.size === 0 || activeDomains.has(r.domain))
+    )
+  }, [revisions, activeDomains, entityFilter, domainFilter])
 
   const visible = filtered.slice(0, page * pageSize)
   const hasMore = visible.length < filtered.length
@@ -149,18 +237,36 @@ export function GlobalRevisionsFeed({
 
   return (
     <div className={`space-y-3 ${className}`}>
-      {availableDomains.length > 1 && (
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <Filter className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-          {availableDomains.map((d) => (
-            <DomainChip
-              key={d}
-              domain={d}
-              active={activeDomains.has(d)}
-              onClick={() => toggleDomain(d)}
-            />
-          ))}
+      {entityFilter ? (
+        <div className="flex items-center gap-2 text-sm">
+          <Button
+            variant="link"
+            size="sm"
+            onClick={() => navigate('/revisions')}
+            className="h-auto p-0 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            ← All revisions
+          </Button>
+          <span className="text-muted-foreground">/</span>
+          <span className="font-mono text-foreground">{entityFilter}</span>
+          {domainFilter && (
+            <span className="text-xs text-muted-foreground capitalize">({domainFilter})</span>
+          )}
         </div>
+      ) : (
+        availableDomains.length > 1 && (
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <Filter className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+            {availableDomains.map((d) => (
+              <DomainChip
+                key={d}
+                domain={d}
+                active={activeDomains.has(d)}
+                onClick={() => toggleDomain(d)}
+              />
+            ))}
+          </div>
+        )
       )}
 
       {visible.length === 0 ? (

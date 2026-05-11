@@ -903,6 +903,33 @@ class RetrievalService {
       }
     }
 
+    // Algorithm family guarantee for comparison queries: when the query explicitly
+    // names a PQC algorithm family (e.g. "SLH-DSA"), ensure at least one
+    // algorithms-source chunk for that family appears in the results. Without this,
+    // IDF dilution from many doc-enrichment/QA chunks can push algo chunks out of
+    // the top-15 once the corpus exceeds ~10k chunks.
+    if (intent === 'comparison') {
+      const ALGO_FAMILIES = /\b(ml-kem|ml-dsa|slh-dsa|fn-dsa|lms|hss|bike|hqc|frodokem|falcon)\b/gi
+      const namedFamilies = [...new Set([...queryLower.matchAll(ALGO_FAMILIES)].map((m) => m[1]))]
+      for (const family of namedFamilies) {
+        const hasFamily = selected.some(
+          (c) => c.source === 'algorithms' && c.id.startsWith(`algo-${family}`)
+        )
+        if (!hasFamily) {
+          for (const [id, chunk] of this.corpusById) {
+            if (chunk.source === 'algorithms' && id.startsWith(`algo-${family}`)) {
+              if (selected.length >= effectiveLimit) {
+                const removed = selected.pop()!
+                selectedIds.delete(removed.id)
+              }
+              addChunk(id)
+              break
+            }
+          }
+        }
+      }
+    }
+
     // Timeline guarantee for country_query: surface at least one timeline event
     // in the top 5 so country-scoped queries land on the timeline page even when
     // a referenced document (library / gov-maturity / doc-enrichment) wins the

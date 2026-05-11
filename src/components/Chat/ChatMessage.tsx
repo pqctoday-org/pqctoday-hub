@@ -19,6 +19,7 @@ import { Button } from '../ui/button'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { generateFollowUps } from './generateFollowUps'
 import type { ChatSourceRef } from '@/types/ChatTypes'
+import { CitationTierChip } from '@/components/ui/CitationTierChip'
 
 interface ChatMessageProps {
   sender: 'user' | 'assistant'
@@ -319,6 +320,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
                 {sourceRefs.map((ref, i) => (
                   <li key={i} className="text-xs text-muted-foreground flex items-start gap-1">
                     <span className="text-muted-foreground/50 shrink-0">·</span>
+                    <CitationTierChip tier={ref.trustTier} className="mt-0.5" />
                     {ref.deepLink ? (
                       <a
                         href={ref.deepLink}

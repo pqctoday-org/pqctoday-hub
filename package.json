@@ -1,7 +1,7 @@
 {
   "name": "pqctoday-hub",
   "private": true,
-  "version": "3.5.64",
+  "version": "3.12.0",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -18,7 +18,7 @@
   "scripts": {
     "predev": "cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && (test -f public/wasm/softhsm.wasm || cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/)",
     "dev": "vite",
-    "build": "npm run build:sdk && cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && (test -f public/wasm/softhsm.wasm || cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/) && npm run generate-oscal && tsc -b && vite build && cp dist/index.html dist/404.html",
+    "build": "npm run build:sdk && cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && (test -f public/wasm/softhsm.wasm || cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/) && npm run generate-oscal && npm run generate-cbom && tsc -b && vite build && cp dist/index.html dist/404.html",
     "build:sdk": "npx esbuild src/embed/sdk.ts --bundle --outfile=public/embed/sdk.js --format=esm --target=es2020 --minify",
     "lint": "eslint --no-error-on-unmatched-pattern src e2e *.ts *.js *.cjs",
     "preview": "vite preview",
@@ -42,14 +42,29 @@
     "generate-cbom:dry": "tsx scripts/generate-cbom.ts --dry-run",
     "generate-oscal": "tsx scripts/generate-oscal.ts",
     "generate-oscal:dry": "tsx scripts/generate-oscal.ts --dry-run",
+    "generate-embeddings": "tsx scripts/build-embedding-index.ts",
+    "generate-embeddings:dry": "tsx scripts/build-embedding-index.ts --dry-run",
     "normalize-vocab": "tsx scripts/ci/normalize-vocab-tags.ts",
-    "normalize-vocab:dry": "tsx scripts/ci/normalize-vocab-tags.ts --dry-run"
+    "normalize-vocab:dry": "tsx scripts/ci/normalize-vocab-tags.ts --dry-run",
+    "trust-engine:sign": "tsx scripts/attestation/sign-all.ts",
+    "trust-engine:verify": "tsx scripts/attestation/verify-all.ts",
+    "trust-engine:sign-revisions": "tsx scripts/attestation/sign-revisions.ts",
+    "trust-engine:verify-revisions": "tsx scripts/attestation/verify-revisions.ts",
+    "trust-engine:keygen": "tsx scripts/attestation/generate-attestation-key.ts",
+    "trust-engine:bundle": "tsx scripts/attestation/bundle-evidence.ts",
+    "fetch-community-signals": "tsx scripts/fetch-community-signals.ts",
+    "fetch-community-signals:dry": "tsx scripts/fetch-community-signals.ts --dry-run",
+    "merge-xwalk": "tsx scripts/merge-xwalk-candidates.ts",
+    "merge-xwalk:dry": "tsx scripts/merge-xwalk-candidates.ts --dry-run",
+    "extract-library-stubs": "tsx scripts/extract-library-stubs.ts",
+    "extract-library-stubs:dry": "tsx scripts/extract-library-stubs.ts --dry-run"
   },
   "overrides": {
     "serialize-javascript": ">=7.0.3",
     "uuid": "^14.0.0"
   },
   "dependencies": {
+    "@huggingface/transformers": "^4.2.0",
     "@mlc-ai/web-llm": "^0.2.81",
     "@noble/curves": "^2.0.1",
     "@noble/hashes": "^2.0.1",
@@ -76,8 +91,8 @@
     "ed25519-hd-key": "^1.3.0",
     "file-saver": "^2.0.5",
     "framer-motion": "^12.27.5",
-    "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.7",
     "jszip": "^3.10.1",
     "localforage": "^1.10.0",
     "lucide-react": "^1.14.0",

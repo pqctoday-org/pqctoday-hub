@@ -5,7 +5,40 @@ interface TimelineEvidenceBadgeProps {
   confidenceScore?: number
   trustedSourceIdStatus?: string
   localFile?: string
+  /**
+   * ISO date used to compute freshness state (C9). When set, renders a
+   * `current` (≤365d), `stale` (≤730d), or `critical` (>730d) pill alongside
+   * the tier and confidence chips.
+   */
+  lastVerifiedDate?: string
   compact?: boolean
+}
+
+export type FreshnessState = 'current' | 'stale' | 'critical'
+
+export function computeFreshnessState(
+  isoDate: string | undefined,
+  now: number = Date.now()
+): FreshnessState | null {
+  if (!isoDate) return null
+  const ts = Date.parse(isoDate)
+  if (!Number.isFinite(ts)) return null
+  const days = Math.floor((now - ts) / (1000 * 60 * 60 * 24))
+  if (days <= 365) return 'current'
+  if (days <= 730) return 'stale'
+  return 'critical'
+}
+
+const FRESHNESS_CLS: Record<FreshnessState, string> = {
+  current: 'bg-status-success/10 text-status-success border-status-success/30',
+  stale: 'bg-status-warning/10 text-status-warning border-status-warning/30',
+  critical: 'bg-status-error/10 text-status-error border-status-error/30',
+}
+
+const FRESHNESS_LABEL: Record<FreshnessState, string> = {
+  current: 'Current',
+  stale: 'Stale',
+  critical: 'Critical',
 }
 
 function tierLabel(status: string | undefined): { text: string; cls: string } {
@@ -35,9 +68,11 @@ export function TimelineEvidenceBadge({
   confidenceScore,
   trustedSourceIdStatus,
   localFile,
+  lastVerifiedDate,
   compact = false,
 }: TimelineEvidenceBadgeProps) {
-  if (!trustedSourceIdStatus && confidenceScore === undefined) return null
+  const freshness = computeFreshnessState(lastVerifiedDate)
+  if (!trustedSourceIdStatus && confidenceScore === undefined && !freshness) return null
 
   const tier = tierLabel(trustedSourceIdStatus)
   const docHref = localFile ? `/${localFile.replace(/^public\//, '')}` : undefined
@@ -50,6 +85,16 @@ export function TimelineEvidenceBadge({
         >
           {tier.text}
         </span>
+        {freshness && (
+          <span
+            data-testid="timeline-freshness-badge"
+            data-freshness={freshness}
+            aria-label={`Source freshness: ${FRESHNESS_LABEL[freshness]}`}
+            className={`inline-flex items-center px-1.5 py-0.5 rounded border text-[10px] font-medium ${FRESHNESS_CLS[freshness]}`}
+          >
+            {FRESHNESS_LABEL[freshness]}
+          </span>
+        )}
         {confidenceScore !== undefined && (
           <span className={`text-[10px] font-mono tabular-nums ${scoreColor(confidenceScore)}`}>
             {confidenceScore}/100
@@ -79,6 +124,16 @@ export function TimelineEvidenceBadge({
         >
           {tier.text}
         </span>
+        {freshness && (
+          <span
+            data-testid="timeline-freshness-badge"
+            data-freshness={freshness}
+            aria-label={`Source freshness: ${FRESHNESS_LABEL[freshness]}`}
+            className={`inline-flex items-center px-2 py-0.5 rounded border text-xs font-medium ${FRESHNESS_CLS[freshness]}`}
+          >
+            {FRESHNESS_LABEL[freshness]}
+          </span>
+        )}
         {confidenceScore !== undefined && (
           <span className={`text-xs font-mono tabular-nums ${scoreColor(confidenceScore)}`}>
             confidence: {confidenceScore} / 100
