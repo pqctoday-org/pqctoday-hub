@@ -9,14 +9,18 @@ import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { conceptXwalkData } from '@/data/conceptXwalkData'
 
-// Label lookup: pt_id / moduleId / xwalkId → human-readable name. Built once at module load.
-const ENTITY_LABELS: Map<string, string> = (() => {
+// Label lookup: pt_id / moduleId / xwalkId → human-readable name. Built lazily to avoid circular dependency crashes.
+let entityLabelsCache: Map<string, string> | null = null
+function getEntityLabels(): Map<string, string> {
+  if (entityLabelsCache) return entityLabelsCache
   const m = new Map<string, string>()
-  for (const t of WORKSHOP_TOOLS) m.set(t.pt_id, t.name)
-  for (const [id, mod] of Object.entries(MODULE_CATALOG)) m.set(id, mod.title)
-  for (const x of conceptXwalkData) m.set(x.xwalkId, `${x.fromConcept} → ${x.toConcept}`)
+  if (WORKSHOP_TOOLS) for (const t of WORKSHOP_TOOLS) m.set(t.pt_id, t.name)
+  if (MODULE_CATALOG) for (const [id, mod] of Object.entries(MODULE_CATALOG)) m.set(id, mod.title)
+  if (conceptXwalkData)
+    for (const x of conceptXwalkData) m.set(x.xwalkId, `${x.fromConcept} → ${x.toConcept}`)
+  entityLabelsCache = m
   return m
-})()
+}
 
 const ALL_DOMAINS = ['module', 'tool', 'library', 'compliance', 'migrate', 'threats', 'algorithms']
 
@@ -89,7 +93,7 @@ function EntityChips({ ids, domain }: { ids: string[]; domain: string }) {
   return (
     <div className="flex flex-wrap gap-1 mt-1.5">
       {visible.map((id) => {
-        const label = ENTITY_LABELS.get(id)
+        const label = getEntityLabels().get(id)
         return (
           <div key={id} className="relative group">
             <Button
