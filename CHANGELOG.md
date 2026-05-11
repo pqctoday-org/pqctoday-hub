@@ -41,6 +41,12 @@ All notable changes to this project will be documented in this file.
 
 Plans 01 (learn-module gates) and 02 (workshop-tool outputSpec) were previously listed as 🟡 in the in-session status doc but on inspection are already complete: `scripts/ci/check-module-version-bump.ts` + `scripts/ci/check-tool-version-bump.ts` exist and are wired into `.github/workflows/ci.yml`; `scripts/validators/trust-engine-checks.ts` implements CM-W, CM-C, QA-S, QA-CSWP validators; CM-W currently passes (0 findings — no tool with `hasOutput: true` is missing `outputSpec`, no crypto-category tool is missing `hasOutput`); CM-C and QA-S emit operational WARNINGs (38 stale modules, 707 Q&A rows without citations) that are the intended SME-review queue, not implementation gaps. **All 13 sub-plans of the trust-engine roadmap are now ✅ code-complete on this branch.**
 
+### Fixed — Compliance industry filter + landscape trust-tier facet
+
+- **NAICS industry-code labels in compliance dropdown** — `ComplianceLandscape.tsx`'s industry dropdown rendered bare NAICS 2-digit codes ("52", "92") from the compliance CSV's `industries` column. `SectorFilter.tsx` now exports a `NAICS_LABELS` lookup ("52" → "Finance & Insurance"), and the landscape dropdown renders `"Finance & Insurance (52)"`. Out-of-vocab active filter values (e.g. seeded from a cross-page persona using freeform names) are surfaced anyway so the dropdown reflects the actual filter state rather than silently falling back to "All Industries".
+- **Cross-page industry filter resolves to NAICS** — `ComplianceView.tsx` initialised `?industry=` and persona-store industry values directly into local filter state. When the source taxonomy was freeform ("Finance & Banking") and the target CSV was NAICS-coded ("52"), the filter never matched and the view appeared empty. Added `resolveToNaics()` helper to `SectorFilter.tsx`, which maps known aliases via the existing `INDUSTRY_TO_NAICS` table and returns the input unchanged when no alias exists. Two `useState` initialisers and one tab-switch effect now route through it.
+- **Trust-tier filter on landscape facets** — `LandscapeTab.tsx` now consumes `useTrustTierFilter` and applies `matchesTrustTierFilter` before partitioning frameworks into bodies / standards / certifications / regulations slices. Per-facet counts now reflect the active tier selection, matching the behaviour the trust-tier filter already had on other pages.
+
 ## [3.11.0] - 2026-05-10
 
 ### Added — Phase 2: embedding-driven trust-engine data-quality validators

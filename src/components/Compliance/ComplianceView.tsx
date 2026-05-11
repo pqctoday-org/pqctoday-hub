@@ -66,7 +66,7 @@ import { useHistoryStore } from '@/store/useHistoryStore'
 import { type ViewMode } from '@/components/Library/ViewToggle'
 import debounce from 'lodash/debounce'
 import { GeoFilter, useGeoFilter } from '../common/GeoFilter'
-import { SectorFilter, useSectorFilter } from '../common/SectorFilter'
+import { SectorFilter, useSectorFilter, resolveToNaics } from '../common/SectorFilter'
 import { RoleFilter } from '../common/RoleFilter'
 import { normalizeCountry, normalizeIndustry } from '@/utils/applicabilityEngine'
 
@@ -681,10 +681,15 @@ export const ComplianceView = () => {
   const [lsIndustry, setLsIndustry] = useState(
     // ?industry= is the canonical alias; ?ind= is the legacy param kept for back-compat
     // Only pre-select an industry when exactly one is active (cert restricts to single industry).
+    // Compliance data stores industries as NAICS 2-digit codes, while cross-page sources (URL,
+    // persona store) may carry freeform names like "Finance & Banking". Resolve to a NAICS code
+    // when possible so the filter actually matches CSV rows.
     () =>
-      searchParams.get('industry') ??
-      searchParams.get('ind') ??
-      (selectedIndustries.length === 1 ? selectedIndustries[0] : 'All')
+      resolveToNaics(
+        searchParams.get('industry') ??
+          searchParams.get('ind') ??
+          (selectedIndustries.length === 1 ? selectedIndustries[0] : 'All')
+      )
   )
   const [lsRegion, setLsRegion] = useState<RegionBloc | 'All'>(
     () => (searchParams.get('region') as RegionBloc | null) ?? 'All'
@@ -900,8 +905,9 @@ export const ComplianceView = () => {
 
     if (isLandscapeTab(tab) || tab === 'foryou') {
       const nextOrg = searchParams.get('org') ?? 'All'
-      const nextInd =
+      const nextInd = resolveToNaics(
         searchParams.get('ind') ?? (selectedIndustries.length === 1 ? selectedIndustries[0] : 'All')
+      )
       const nextRegion = (searchParams.get('region') as RegionBloc | null) ?? 'All'
       const nextCountry = searchParams.get('country') ?? 'All'
       const nextPhase = (searchParams.get('phase') as DeadlinePhase | null) ?? 'All'
