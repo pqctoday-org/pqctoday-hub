@@ -12,6 +12,20 @@ All notable changes to this project will be documented in this file.
 
 - **RAG corpus rebuilt** — 10,844 chunks (+216 vs previous build). Document Enrichments source: 1,611 chunks.
 
+### Added — Plan 07 PROV-DM completion + embedding refresh (late 3.12.0)
+
+- **PROV-DM populated on every RAG chunk** — all 10,845 chunks in `public/data/rag-corpus.json` now carry the full PROV-DM record (`entity_id`, `was_generated_by`, `was_attributed_to`, `was_derived_from`, `source_doc`, `source_passages`). Closes Plan 07's FR-D-02 PROV-DM gap from the trust-engine sub-plans; only the `/agility` maturity-dashboard route remains as Partial for Plan 07. Net chunk delta: +1 (`changelog-3.12.0`).
+- **Embedding index rebuilt against PROV-DM corpus** — `embeddings.bin` (15.9 MB) + `embeddings-meta.json` regenerated for the 10,845-chunk corpus. `corpusHash` now matches; `corpus-trust-invariants` (10 tests) green.
+
+### Fixed
+
+- **`scripts/generate-rag-corpus.ts` import-guard** — `main()` was called unconditionally at module top-level (line 4130), so any test importing pure helpers from the module (e.g. `generate-rag-corpus.test.ts` exercising `sanitize` / `encodeParam` / `extractTextFromTSX`) silently rewrote `public/data/rag-corpus.json` as a side effect during test runs. Wrapped in `if (import.meta.url === \`file://${process.argv[1]}\`)`so the generator only runs when invoked directly. Sibling scripts`fetch-community-signals.ts`and`attestation/sign-all.ts` already had the guard.
+- **`TrustPathPopover` viewport clipping** — "Why shown?" popover on derived compliance standards now renders via React portal with viewport-aware fixed positioning (flips above/below based on available space, clamps horizontally to viewport). Fixes ancestor `overflow-clip` cutoff on `MainLayout`'s root shell.
+
+### Chore
+
+- **Trust-tier snapshot refreshed** — `reports/trust-tier-snapshot.json` updated by the `measure-tier-distribution` test; distribution unchanged from the v3.11.0 baseline (47 Authoritative / 446 High / 786 Moderate / 2,035 Low).
+
 ## [3.11.0] - 2026-05-10
 
 ### Added — Phase 2: embedding-driven trust-engine data-quality validators
