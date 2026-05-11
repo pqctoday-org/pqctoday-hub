@@ -6,46 +6,58 @@ All notable changes to this project will be documented in this file.
 
 ## [3.12.0] - 2026-05-10
 
-### Added — Library enrichment completion + RAG corpus rebuild
+### Highlights
 
-- **Library enrichment complete** — 155 documents enriched in this run using T16A embedding prefilter (`nomic-embed-text`). Coverage: 726/787 (92.2%), up from 571/787 (72.6%). Avg 10.1/28 dimensions; PQC-dense tail (composite KEM/sig specs, TLS ML-KEM, XMSS/LMS, IKEv2 PQC drafts) averaged 15/28.
+- **Trust badges are now meaningful across the whole site.** Three independent bugs in the trust-tier scoring code were quietly forcing every product, every algorithm, and most leaders into the "Low" tier regardless of their actual evidence. After this release, **319 records (15.7% of the corpus) move out of "Low"**, and many now show "Authoritative" or "High" reflecting their real-world FIPS / Common Criteria / peer-reviewed status.
+- **New `/agility` dashboard** — view your organisation's cryptographic-agility maturity on the NIST CSWP 39 model (4 levels × 5 pillars: inventory, governance, lifecycle, observability, assurance).
+- **Citations now show provenance.** Every chunk in the chat/search corpus carries metadata describing where it came from, when it was generated, by whom, and which source document it was derived from.
+- **Library research coverage jumped from 73% → 92%** after a full enrichment re-bake of 155 documents.
+- **Cross-page industry filter actually works now** — selecting "Finance & Banking" on the home page no longer leaves the Compliance view empty because of a hidden taxonomy mismatch.
+- **The trust-engine roadmap is complete.** All 13 sub-plans (review gates, persona filtering, OSCAL export, maturity dashboard, etc.) are now ✅.
 
-- **RAG corpus rebuilt** — 10,844 chunks (+216 vs previous build). Document Enrichments source: 1,611 chunks.
+### Trust scores
 
-### Added — Plan 07 PROV-DM completion + embedding refresh (late 3.12.0)
+- **Products** previously all scored "Low" — the engine wasn't reading the FIPS / CC / ACVP certificate evidence that the product catalog already carried. Tier distribution: **0 / 0 / 0 / 825** → **1 / 43 / 140 / 641** Authoritative / High / Moderate / Low (184 products lifted; 22% of the catalog).
+- **Algorithms** previously all scored "Low" — the engine wasn't reading peer-review / vetting / FIPS-standard signals from the algorithm reference data. Tier distribution: **0 / 0 / 0 / 163** → **0 / 82 / 30 / 51** (112 algorithms lifted; 69%). The 82 "High" records are the FIPS-standardised PQC algorithms — ML-KEM, ML-DSA, SLH-DSA, LMS, XMSS, etc.
+- **Leaders** previously had no records in the "Authoritative" or "High" tiers. A field-name bug was silently failing the inheritance from each leader's authored library documents. After the fix, **31 Authoritative / 30 High / 55 Moderate / 224 Low** (was 0 / 0 / 93 / 247) — 61 leaders gained Authoritative or High status from their now-correct connection to peer-reviewed publications.
+- **Overall corpus:** 47 / 446 / 786 / **2,035** → **79 / 601 / 918 / 1,716** Authoritative / High / Moderate / Low.
 
-- **PROV-DM populated on every RAG chunk** — all 10,845 chunks in `public/data/rag-corpus.json` now carry the full PROV-DM record (`entity_id`, `was_generated_by`, `was_attributed_to`, `was_derived_from`, `source_doc`, `source_passages`). Closes Plan 07's FR-D-02 PROV-DM gap from the trust-engine sub-plans; only the `/agility` maturity-dashboard route remains as Partial for Plan 07. Net chunk delta: +1 (`changelog-3.12.0`).
-- **Embedding index rebuilt against PROV-DM corpus** — `embeddings.bin` (15.9 MB) + `embeddings-meta.json` regenerated for the 10,845-chunk corpus. `corpusHash` now matches; `corpus-trust-invariants` (10 tests) green.
+_Internal detail: fixes live in `src/data/trustScore/trustScoreData.ts`. Products inherit vetting bodies from `certificationXrefData.ts`. Algorithms read a new `src/data/algorithmTrustData.ts` sync loader. Leaders use a new `keyResourceRefs?: string[]` field on the `Leader` type to look up library `referenceId`s (the existing `keyResourceUrl` field holds URLs and was being used by accident as a lookup key). A parallel bug in `LibraryDetailPopover.tsx`'s reverse-lookup is fixed the same way._
+
+### New: `/agility` maturity dashboard
+
+- New top-level route rendering the NIST CSWP 39 Cryptographic-Agility Maturity grid — 4 levels (Partial → Risk-Informed → Repeatable → Adaptive) across 5 pillars (inventory, governance, lifecycle, observability, assurance).
+- KPI bar above the grid shows grid coverage %, mean confidence, and source-record count so you can see at a glance how complete the extraction is.
+- Empty-state copy points operators at the enrichment script when the CSWP 39 slice has no rows.
+
+_Internal detail: `src/components/Agility/AgilityView.tsx` reuses the existing `MaturityEvidenceGrid` component over a CSWP-39-filtered slice of `maturityRequirements`. Route registered in `src/App.tsx` as a lazy-loaded child of `MainLayout`._
+
+### Library, search & citations
+
+- 155 documents fully re-enriched against the latest dimension model — library coverage **92% (726/787)** up from 73% (571/787). PQC-dense documents (KEM/signature specs, TLS ML-KEM, XMSS/LMS, IKEv2 PQC drafts) averaged 15 of 28 dimensions populated.
+- RAG search corpus rebuilt — **10,845 chunks**, +217 versus the previous build. Document-enrichment chunks are 1,611 of the total.
+- Every chunk now ships with full PROV-DM provenance metadata (`entity_id`, `was_generated_by`, `was_attributed_to`, `was_derived_from`, `source_doc`, `source_passages`) so chat and search citations can show exactly where an answer came from.
+- Embedding index (15.9 MB) rebuilt against the new corpus; `corpusHash` invariant restored and verified by `corpus-trust-invariants.test.ts` (10 tests, all green).
+
+### Compliance & industry filtering
+
+- The industry filter dropdown on **Compliance** now shows human-readable labels — `"Finance & Insurance (52)"` instead of bare `"52"`. Out-of-vocab values seeded from cross-page state still surface so you can see exactly what the active filter is.
+- Cross-page industry filter actually matches now. URL parameters and persona-store values like `"Finance & Banking"` are auto-resolved to the matching NAICS code (`"52"`) before filtering, so navigating from a persona-aware page into Compliance no longer mysteriously empties the view.
+- Trust-tier filter on **Compliance → Landscape** now applies to the facet partitioning — selecting "Authoritative" correctly filters per-facet counts for bodies / standards / certifications / regulations.
+
+_Internal detail: `SectorFilter.tsx` exports `NAICS_LABELS` and a `resolveToNaics()` helper backed by the existing `INDUSTRY_TO_NAICS` alias table. `ComplianceView.tsx` routes two `useState` initialisers and one tab-switch effect through it. `LandscapeTab.tsx` consumes `useTrustTierFilter` + `matchesTrustTierFilter` before partitioning frameworks._
 
 ### Fixed
 
-- **`scripts/generate-rag-corpus.ts` import-guard** — `main()` was called unconditionally at module top-level (line 4130), so any test importing pure helpers from the module (e.g. `generate-rag-corpus.test.ts` exercising `sanitize` / `encodeParam` / `extractTextFromTSX`) silently rewrote `public/data/rag-corpus.json` as a side effect during test runs. Wrapped in `if (import.meta.url === \`file://${process.argv[1]}\`)`so the generator only runs when invoked directly. Sibling scripts`fetch-community-signals.ts`and`attestation/sign-all.ts` already had the guard.
-- **`TrustPathPopover` viewport clipping** — "Why shown?" popover on derived compliance standards now renders via React portal with viewport-aware fixed positioning (flips above/below based on available space, clamps horizontally to viewport). Fixes ancestor `overflow-clip` cutoff on `MainLayout`'s root shell.
+- The **"Why shown?" popover** on derived compliance standards no longer gets clipped by the page shell. Renders via React portal with viewport-aware positioning (flips above/below the trigger based on available space, clamps horizontally to viewport).
+- **Test runs no longer silently corrupt the RAG corpus.** `scripts/generate-rag-corpus.ts` called `main()` at module top level, so anything that imported its helper functions (including the unit test for `sanitize` and friends) silently rewrote `public/data/rag-corpus.json` as a side effect. Wrapped in the standard `if (import.meta.url === ...)` guard.
+- **The RAG corpus and its embedding sidecar now stay byte-stable through commits.** Prettier's pre-commit hook had been reformatting `public/data/rag-corpus.json` from minified to pretty-printed, which changed the file's `sha256` hash and broke the `corpusHash` invariant verified by `corpus-trust-invariants.test.ts`. The corpus and `embeddings-meta.json` are now in `.prettierignore`.
 
-### Chore
+### Behind the scenes
 
-- **Trust-tier snapshot refreshed** — `reports/trust-tier-snapshot.json` updated by the `measure-tier-distribution` test; distribution unchanged from the v3.11.0 baseline (47 Authoritative / 446 High / 786 Moderate / 2,035 Low).
-
-### Fixed — Migrate + Algorithm trust-tier resolution
-
-- **Migrate products now inherit credibility from FIPS/CC/ACVP certifications** — `src/data/trustScore/trustScoreData.ts` was scoring all 825 migrate records as Low because it passed only the (mostly empty) `peerReviewed` and `vettingBody` CSV fields to the scoring engine, ignoring `fips_validated` and the `migrate_certification_xref` join. The migrate branch now derives a synthetic vetting body (`"NIST"` for FIPS/ACVP certs, `"Common Criteria"` for CC certs), treats government cryptographic validation as formal peer review, and propagates the most recent `cert_date` as `lastUpdateDate` for temporal freshness. Post-fix migrate tier distribution: **1 Authoritative / 43 High / 140 Moderate / 641 Low** (was 0/0/0/825) — 184 records (22%) moved out of Low.
-- **Algorithm trust-tier resolution** — `src/data/trustScore/trustScoreData.ts` now reads peer-review / vetting-body / FIPS-standard signals from `pqc_complete_algorithm_reference_*.csv` via a new synchronous loader `src/data/algorithmTrustData.ts`. Previously the algorithm branch passed `undefined` for these fields, so all 163 records scored Low despite the rich CSV data. Post-fix algorithm tier distribution: **82 High / 30 Moderate / 51 Low** (was 0/0/163) — 112 records (69%) moved out of Low; the 82 High records are FIPS-standardised algorithms (FIPS 203/204/205, SP 800-208) with NIST vetting. Compliance, threats, library, timeline, leaders tiers unchanged. Overall snapshot: 47/446/786/2035 → 48/571/956/1739 (-296 records lifted out of Low).
-- **`public/data/rag-corpus.json` + `embeddings-meta.json` added to `.prettierignore`** — these are generator-emitted, content-hashed artefacts. Pre-commit prettier-reformatting them broke the `corpusHash` invariant verified by `corpus-trust-invariants.test.ts`: commit `b8ee4c70` inadvertently shipped a corpus whose sha256 didn't match its embedding-meta sidecar (corpus was reformatted from minified 16.5 MB → pretty-printed 18.8 MB by the pre-commit hook, but the embeddings were built against the unformatted version). Rebuilt embeddings against the canonical (committed, prettier-untouched) corpus to restore the invariant.
-- **Leaders trust-tier resolution** — the leaders trust-score branch in `src/data/trustScore/trustScoreData.ts` had been calling `libraryPeerReview.get(refId)` with the wrong field: `l.keyResourceUrl` contains raw HTTP URLs (e.g. `https://csrc.nist.gov/…`) while the library map is keyed by `referenceId` (e.g. `FIPS-203`), so the lookup always failed and every leader fell back to its own (mostly empty) peer-review status. Added a dedicated `keyResourceRefs?: string[]` field to the `Leader` type, populated from the CSV's `KeyResourceRefs` column, and switched the trust-score inheritance to use it. The same parallel bug in `LibraryDetailPopover.tsx`'s "Pass 1 reverse lookup" (line 120) is fixed the same way. Post-fix leaders tier distribution: **31 Authoritative / 30 High / 55 Moderate / 224 Low** (was 0/0/93/247) — 61 records (18%) gained Authoritative or High status from now-correct inheritance from peer-reviewed library docs. Overall snapshot: 48/571/956/1739 → **79/601/918/1716**.
-
-### Added — Plan 07 `/agility` maturity dashboard
-
-- **`/agility` route** — new top-level route rendering the NIST CSWP 39 Cryptographic-Agility Maturity grid (4 levels × 5 pillars). `src/components/Agility/AgilityView.tsx` reuses the existing `MaturityEvidenceGrid` over a CSWP-39-filtered slice of `maturityRequirements`, plus a three-cell KPI bar (grid coverage %, mean confidence, source records). Empty-state copy points operators at the enrichment script when the slice is empty. Closes the last remaining 🟡 gap in Plan 07 of the trust-engine sub-plans.
-
-### Status — Trust-Engine sub-plans 13/13 ✅
-
-Plans 01 (learn-module gates) and 02 (workshop-tool outputSpec) were previously listed as 🟡 in the in-session status doc but on inspection are already complete: `scripts/ci/check-module-version-bump.ts` + `scripts/ci/check-tool-version-bump.ts` exist and are wired into `.github/workflows/ci.yml`; `scripts/validators/trust-engine-checks.ts` implements CM-W, CM-C, QA-S, QA-CSWP validators; CM-W currently passes (0 findings — no tool with `hasOutput: true` is missing `outputSpec`, no crypto-category tool is missing `hasOutput`); CM-C and QA-S emit operational WARNINGs (38 stale modules, 707 Q&A rows without citations) that are the intended SME-review queue, not implementation gaps. **All 13 sub-plans of the trust-engine roadmap are now ✅ code-complete on this branch.**
-
-### Fixed — Compliance industry filter + landscape trust-tier facet
-
-- **NAICS industry-code labels in compliance dropdown** — `ComplianceLandscape.tsx`'s industry dropdown rendered bare NAICS 2-digit codes ("52", "92") from the compliance CSV's `industries` column. `SectorFilter.tsx` now exports a `NAICS_LABELS` lookup ("52" → "Finance & Insurance"), and the landscape dropdown renders `"Finance & Insurance (52)"`. Out-of-vocab active filter values (e.g. seeded from a cross-page persona using freeform names) are surfaced anyway so the dropdown reflects the actual filter state rather than silently falling back to "All Industries".
-- **Cross-page industry filter resolves to NAICS** — `ComplianceView.tsx` initialised `?industry=` and persona-store industry values directly into local filter state. When the source taxonomy was freeform ("Finance & Banking") and the target CSV was NAICS-coded ("52"), the filter never matched and the view appeared empty. Added `resolveToNaics()` helper to `SectorFilter.tsx`, which maps known aliases via the existing `INDUSTRY_TO_NAICS` table and returns the input unchanged when no alias exists. Two `useState` initialisers and one tab-switch effect now route through it.
-- **Trust-tier filter on landscape facets** — `LandscapeTab.tsx` now consumes `useTrustTierFilter` and applies `matchesTrustTierFilter` before partitioning frameworks into bodies / standards / certifications / regulations slices. Per-facet counts now reflect the active tier selection, matching the behaviour the trust-tier filter already had on other pages.
+- The **trust-engine implementation roadmap is now 13 / 13 ✅** — all sub-plans complete on this branch: foundation, learn-module + workshop-tool review gates, library + algorithms + compliance + timeline + migrate + threats + assessment + leaders data domains, enrichment pipeline + PROV-DM, Compliance-For-You trust paths, timeline-claims evidence layer, UI trust layer, persona filtering, OSCAL export, and the new `/agility` maturity dashboard.
+- The CSWP 39 + Q&A citation validators (`CM-W`, `CM-C`, `QA-S`, `QA-CSWP`) are operational. They currently surface **38 modules** with stale `lastReviewed` dates and **707 Q&A rows** missing citation references — these are the SME-review queue the validators were designed to produce, not bugs to fix in code.
+- Trust-tier baseline snapshot captured at `reports/trust-tier-snapshot.json` for ongoing measurement; re-run via `npx vitest run …measure-tier-distribution.test.ts` whenever data changes meaningfully.
 
 ## [3.11.0] - 2026-05-10
 
