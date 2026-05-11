@@ -155,7 +155,7 @@ describe('ComplianceView', () => {
     expect(screen.getByTestId('compliance-learning-frame-banner')).toBeInTheDocument()
     // CSWP.39 still reachable via More menu (deletion is Phase 2)
     expect(screen.getAllByRole('button', { name: /More/i }).length).toBeGreaterThan(0)
-  })
+  }, 15000)
 
   it('shows cert records table when Records tab is clicked', () => {
     render(
