@@ -109,6 +109,11 @@ describe('ComplianceView', () => {
   // doesn't-crash is implicitly verified by every interaction test below.
 
   it('shows cert records table when Records tab is clicked', () => {
+    // 15s timeout: mounting ComplianceView pulls in maturityGovernanceData +
+    // complianceData + the RAG-corpus init chain, which routinely exceeds
+    // Vitest's 5s default on GitHub-hosted runners (Ubuntu 2 CPU). Kept this
+    // test (vs the two render-only ones deleted above) because it's the only
+    // file in this suite that exercises a real interaction (fireEvent.click).
     render(
       <MemoryRouter>
         <ComplianceView />
@@ -118,5 +123,5 @@ describe('ComplianceView', () => {
     const recordsButtons = screen.getAllByRole('button', { name: /^Records$/i })
     fireEvent.click(recordsButtons[0])
     expect(recordsButtons[0]).toBeInTheDocument()
-  })
+  }, 15000)
 })
