@@ -56,9 +56,9 @@ export const MIGRATION_REFERENCES: MigrationReference[] = [
     type: 'Industry',
   },
   {
-    name: 'PQC Capabilities Matrix',
+    name: 'PQC Capabilities Matrix (PQCCM)',
     organization: 'PKI Consortium',
-    url: 'https://pkic.org/post-quantum-cryptography/',
+    url: 'https://pkic.org/wg/pqc/pqccm/',
     description: 'PQC capabilities matrix for the PKI ecosystem',
     type: 'Industry',
   },
