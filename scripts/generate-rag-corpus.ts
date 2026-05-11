@@ -4127,4 +4127,6 @@ async function main() {
   console.log(`   Output: ${OUTPUT_FILE}`)
 }
 
-main()
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main()
+}
