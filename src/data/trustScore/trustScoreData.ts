@@ -384,8 +384,12 @@ function computeAllScores(): Map<string, TrustScore> {
         ? l.organizations.slice(0, 1)
         : undefined
 
-    // Use keyResourceUrl to boost: inherit peer review and vetting from authored docs
-    const docRefs = l.keyResourceUrl ?? []
+    // Inherit peer-review + vetting from authored library docs. Use
+    // `keyResourceRefs` (library reference IDs) for the lookup, NOT
+    // `keyResourceUrl` (raw URLs) — URLs never match `referenceId` keys
+    // in the library map, so the previous code returned no inheritance
+    // and every leader fell back to its (mostly empty) own peerReviewed.
+    const docRefs = l.keyResourceRefs ?? []
     let bestPeerReview = l.peerReviewed
     const docVettingBodies = new Set<string>(inferredVetting ?? [])
 
@@ -405,7 +409,7 @@ function computeAllScores(): Map<string, TrustScore> {
       vettingBody: docVettingBodies.size > 0 ? [...docVettingBodies] : undefined,
     })
 
-    // Inject keyResourceUrl refs into the cross-reference context so density picks them up
+    // Inject keyResourceRefs into the cross-reference context so density picks them up
     if (docRefs.length > 0) {
       const existing = ctx.xrefsByResource.get(l.name) ?? []
       for (const refId of docRefs) {
