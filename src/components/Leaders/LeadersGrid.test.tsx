@@ -5,6 +5,17 @@ import { LeadersGrid } from './LeadersGrid'
 import type { Leader } from '../../data/leadersData'
 import '@testing-library/jest-dom'
 import { Button } from '@/components/ui/button'
+import * as useSemanticSearchModule from '@/services/search/useSemanticSearch'
+
+vi.mock('@/services/search/useSemanticSearch', async () => {
+  const actual = await vi.importActual<typeof useSemanticSearchModule>(
+    '@/services/search/useSemanticSearch'
+  )
+  return {
+    ...actual,
+    useSemanticSearch: vi.fn(() => ({ hits: [], mode: 'idle' as const, loading: false })),
+  }
+})
 
 // Mock react-router-dom — component uses useSearchParams for deep linking.
 // Stable reference prevents useEffect([searchParams]) from firing on every render.
@@ -264,5 +275,33 @@ describe('LeadersGrid', () => {
     // Search for "Quantum" (Alice, but filtered out by Sector/Country)
     fireEvent.change(searchInput, { target: { value: 'Quantum' } })
     expect(screen.queryByRole('article')).not.toBeInTheDocument()
+  })
+
+  describe('Phase 3 — semantic search supplement', () => {
+    it('falls back to pure lexical when the runtime is not ready', () => {
+      vi.mocked(useSemanticSearchModule.useSemanticSearch).mockReturnValue({
+        hits: [],
+        mode: 'lexical',
+        loading: false,
+      })
+      render(<LeadersGrid />)
+      const searchInput = screen.getByPlaceholderText(/Search/i)
+      fireEvent.change(searchInput, { target: { value: 'NonExistentTermXYZ' } })
+      expect(screen.queryByRole('article')).not.toBeInTheDocument()
+    })
+
+    it('includes a semantic-only leader in the result set via union', () => {
+      // 'Alice Quant' doesn't match 'paraphrase-only' lexically.
+      // chunkToResource maps Leaders chunks via chunk.title (the leader's name).
+      vi.mocked(useSemanticSearchModule.useSemanticSearch).mockReturnValue({
+        hits: [{ id: 'Alice Quant', score: 0.9 }],
+        mode: 'semantic',
+        loading: false,
+      })
+      render(<LeadersGrid />)
+      const searchInput = screen.getByPlaceholderText(/Search/i)
+      fireEvent.change(searchInput, { target: { value: 'paraphrase-only' } })
+      expect(screen.getByText('Alice Quant')).toBeInTheDocument()
+    })
   })
 })
