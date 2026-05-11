@@ -210,9 +210,16 @@ docs/design-document*
 docs/pqctoday-investor*
 
 # All scripts (private — tooling, scrapers, extractors; data is pre-committed)
-scripts/
+# Note: `scripts/*` (not `scripts/`) so per-file re-include rules below work.
+# Git refuses to un-ignore files inside a fully-ignored directory.
+scripts/*
 # CI scripts are public — they run in GitHub Actions and must be tracked
 !scripts/ci/
+# Build-pipeline generators are public — `npm run build` invokes them to
+# produce OSCAL + CBOM JSON from committed CSV data. Reading public input,
+# emitting public output: nothing private to protect.
+!scripts/generate-oscal.ts
+!scripts/generate-cbom.ts
 
 # Private CI workflows (compliance scraper runs locally, not in public CI)
 .github/workflows/update-compliance.yml
