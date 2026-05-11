@@ -35,6 +35,8 @@ export interface ComplianceFramework {
   websiteUrlQuality?: string
   confidenceScore?: number
   cswp39Tags?: string[]
+  /** NAICS 2-digit sector codes — machine-readable counterpart to industries */
+  naicsCodes?: string[]
 }
 
 // ── CSV loading (versioned filename pattern) ────────────────────────────
@@ -59,6 +61,7 @@ interface RawComplianceRow {
   website_url_quality: string
   confidence_score?: string
   cswp39_tags?: string
+  naics_codes?: string
 }
 
 const modules = import.meta.glob('./compliance_*.csv', {
@@ -157,6 +160,7 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     websiteUrlQuality: row.website_url_quality || undefined,
     confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
     cswp39Tags: row.cswp39_tags ? splitSemicolon(row.cswp39_tags) : undefined,
+    naicsCodes: row.naics_codes ? splitSemicolon(row.naics_codes) : undefined,
   }
 })
 

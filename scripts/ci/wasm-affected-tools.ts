@@ -76,10 +76,7 @@ if (!packageAlgos) {
   process.exit(1)
 }
 
-const registryPath = path.resolve(
-  process.cwd(),
-  'src/components/Playground/workshopRegistry.tsx'
-)
+const registryPath = path.resolve(process.cwd(), 'src/components/Playground/workshopRegistry.tsx')
 
 if (!fs.existsSync(registryPath)) {
   console.error(`workshopRegistry.tsx not found at ${registryPath}`)

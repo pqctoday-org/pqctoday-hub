@@ -817,7 +817,7 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
           title="Timeline Export"
           exportData={exportMarkdown}
           filename="compliance-timeline"
-          formats={['markdown', 'csv']}
+          formats={['markdown', 'csv', 'pdf']}
           onExport={handleSaveToDocuments}
         >
           <p className="text-sm text-muted-foreground">

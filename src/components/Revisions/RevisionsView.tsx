@@ -1,8 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { GitMerge } from 'lucide-react'
+import { useSearchParams } from 'react-router-dom'
 import { GlobalRevisionsFeed } from '@/components/ui/GlobalRevisionsFeed'
 
 export function RevisionsView() {
+  const [searchParams] = useSearchParams()
+  const entityFilter = searchParams.get('entity') ?? undefined
+  const domainFilter = searchParams.get('domain') ?? undefined
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
       <header className="space-y-1">
@@ -17,7 +22,11 @@ export function RevisionsView() {
       </header>
 
       <div className="glass-panel p-4">
-        <GlobalRevisionsFeed pageSize={25} />
+        <GlobalRevisionsFeed
+          pageSize={25}
+          entityFilter={entityFilter}
+          domainFilter={domainFilter}
+        />
       </div>
     </div>
   )

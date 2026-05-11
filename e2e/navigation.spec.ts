@@ -3,6 +3,18 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Navigation', () => {
   test.beforeEach(async ({ page }) => {
+    // Suppress the three blocking overlays before any navigation.
+    await page.addInitScript(() => {
+      window.localStorage.setItem(
+        'pqc-disclaimer-storage',
+        JSON.stringify({ state: { acknowledgedMajorVersion: 99 }, version: 0 })
+      )
+      window.localStorage.setItem(
+        'pqc-version-storage',
+        JSON.stringify({ state: { lastSeenVersion: '99.0.0' }, version: 0 })
+      )
+      window.localStorage.setItem('pqc-tour-completed', 'true')
+    })
     await page.goto('/')
   })
 
@@ -23,6 +35,10 @@ test.describe('Navigation', () => {
   test('should navigate to Migrate page when clicking the link', async ({ page }) => {
     await page.getByRole('link', { name: 'Migrate view' }).click()
     await expect(page).toHaveURL(/\/migrate/)
-    await expect(page.getByRole('heading', { name: 'PQC Migration Guide' })).toBeVisible()
+    // Migrate is lazy-loaded and pulls software-catalog + cert-xref CSVs;
+    // the default 5s expect timeout is too tight under parallel-shard load.
+    await expect(page.getByRole('heading', { name: 'PQC Migration Guide' })).toBeVisible({
+      timeout: 15000,
+    })
   })
 })

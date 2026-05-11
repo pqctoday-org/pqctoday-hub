@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useMemo } from 'react'
-import { ArrowUpDown, ArrowUp, ArrowDown, Info, User } from 'lucide-react'
+import { Fragment, useState, useMemo } from 'react'
+import { AnimatePresence } from 'framer-motion'
+import { ArrowUpDown, ArrowUp, ArrowDown, ChevronDown, ChevronUp, User } from 'lucide-react'
 import type { Leader } from '../../data/leadersData'
 import { CountryFlag } from '../common/CountryFlag'
 import { StatusBadge } from '../common/StatusBadge'
@@ -10,16 +11,24 @@ import { buildEndorsementUrl, buildFlagUrl } from '../../utils/endorsement'
 import { FLAG_CODE_MAP } from './leadersConstants'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
+import { LeaderDetailSection } from './LeaderDetailSection'
 
 type SortKey = 'name' | 'title' | 'organization' | 'country' | 'type'
 type SortDirection = 'asc' | 'desc'
 
 interface LeadersTableProps {
   data: Leader[]
-  onViewDetails: (leader: Leader) => void
+  expandedLeaderId: string | null
+  onToggleDetails: (leader: Leader) => void
+  onCloseDetails: () => void
 }
 
-export const LeadersTable = ({ data, onViewDetails }: LeadersTableProps) => {
+export const LeadersTable = ({
+  data,
+  expandedLeaderId,
+  onToggleDetails,
+  onCloseDetails,
+}: LeadersTableProps) => {
   const [sortKey, setSortKey] = useState<SortKey>('name')
   const [sortDir, setSortDir] = useState<SortDirection>('asc')
 
@@ -114,7 +123,22 @@ export const LeadersTable = ({ data, onViewDetails }: LeadersTableProps) => {
           </thead>
           <tbody>
             {sortedData.map((leader) => (
-              <LeaderRow key={leader.id} leader={leader} onViewDetails={onViewDetails} />
+              <Fragment key={leader.id}>
+                <LeaderRow
+                  leader={leader}
+                  onToggleDetails={onToggleDetails}
+                  isExpanded={expandedLeaderId === leader.id}
+                />
+                <AnimatePresence>
+                  {expandedLeaderId === leader.id && (
+                    <tr className="bg-muted/10">
+                      <td colSpan={7} className="p-3">
+                        <LeaderDetailSection leader={leader} onClose={onCloseDetails} />
+                      </td>
+                    </tr>
+                  )}
+                </AnimatePresence>
+              </Fragment>
             ))}
           </tbody>
         </table>
@@ -125,10 +149,12 @@ export const LeadersTable = ({ data, onViewDetails }: LeadersTableProps) => {
 
 const LeaderRow = ({
   leader,
-  onViewDetails,
+  onToggleDetails,
+  isExpanded,
 }: {
   leader: Leader
-  onViewDetails: (leader: Leader) => void
+  onToggleDetails: (leader: Leader) => void
+  isExpanded: boolean
 }) => {
   const [imgError, setImgError] = useState(false)
   const flagCode = FLAG_CODE_MAP[leader.country] ?? 'un'
@@ -242,11 +268,12 @@ const LeaderRow = ({
       <td className="px-3 py-3 text-right">
         <Button
           variant="ghost"
-          onClick={() => onViewDetails(leader)}
+          onClick={() => onToggleDetails(leader)}
           className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg hover:bg-muted/50 text-muted-foreground hover:text-primary transition-colors"
-          aria-label={`View details for ${leader.name}`}
+          aria-label={`${isExpanded ? 'Collapse' : 'Expand'} details for ${leader.name}`}
+          aria-expanded={isExpanded}
         >
-          <Info size={16} />
+          {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         </Button>
       </td>
     </tr>

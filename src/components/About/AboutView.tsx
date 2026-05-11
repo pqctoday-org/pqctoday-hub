@@ -3,6 +3,7 @@ import React from 'react'
 import { ReleaseNotesSection } from './sections/ReleaseNotesSection'
 import { VisionSection } from './sections/VisionSection'
 import { TransparencySection } from './sections/TransparencySection'
+import { TrustEngineSection } from './sections/TrustEngineSection'
 import { CloudSyncPrivacySection } from './sections/CloudSyncPrivacySection'
 import { CommunitySection } from './sections/CommunitySection'
 import { DataFoundationSection } from './sections/DataFoundationSection'
@@ -29,6 +30,9 @@ export function AboutView() {
       </AboutSection>
       <AboutSection slug="transparency">
         <TransparencySection />
+      </AboutSection>
+      <AboutSection slug="trust-engine">
+        <TrustEngineSection />
       </AboutSection>
       {/* Cloud sync, community, embedding docs, and appearance are standalone-only */}
       {!isEmbedded && (

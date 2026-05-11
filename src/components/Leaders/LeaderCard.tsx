@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { User, Building2, Briefcase, Info } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { User, Building2, Briefcase, ChevronDown, ChevronUp } from 'lucide-react'
 import type { Leader } from '../../data/leadersData'
 import clsx from 'clsx'
 import { StatusBadge } from '../common/StatusBadge'
@@ -12,14 +12,23 @@ import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { CountryFlag } from '../common/CountryFlag'
 import { FLAG_CODE_MAP } from './leadersConstants'
 import { Button } from '@/components/ui/button'
+import { LeaderDetailSection } from './LeaderDetailSection'
 
 interface LeaderCardProps {
   leader: Leader
   onClick?: () => void
   isIndustryMatch?: boolean
+  isExpanded?: boolean
+  onCloseExpanded?: () => void
 }
 
-export const LeaderCard = ({ leader, onClick, isIndustryMatch }: LeaderCardProps) => {
+export const LeaderCard = ({
+  leader,
+  onClick,
+  isIndustryMatch,
+  isExpanded,
+  onCloseExpanded,
+}: LeaderCardProps) => {
   const [hasError, setHasError] = useState(false)
 
   return (
@@ -27,7 +36,10 @@ export const LeaderCard = ({ leader, onClick, isIndustryMatch }: LeaderCardProps
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.2 }}
-      className="glass-panel p-6 flex flex-col h-full hover:border-secondary/50 transition-colors bg-card/50"
+      className={clsx(
+        'glass-panel p-6 flex flex-col h-full hover:border-secondary/50 transition-colors bg-card/50',
+        isExpanded && 'border-primary/60 ring-1 ring-primary/30'
+      )}
     >
       <div className="flex items-start justify-between mb-4">
         <div className="relative">
@@ -88,15 +100,21 @@ export const LeaderCard = ({ leader, onClick, isIndustryMatch }: LeaderCardProps
         "{leader.bio}"
       </p>
 
-      <div className="flex flex-wrap items-center justify-end gap-y-2 gap-x-1 mt-auto pt-2 border-t border-border">
+      <div
+        className={clsx(
+          'flex flex-wrap items-center justify-end gap-y-2 gap-x-1 pt-2 border-t border-border',
+          !isExpanded && 'mt-auto'
+        )}
+      >
         {onClick && (
           <Button
             variant="ghost"
             onClick={onClick}
             className="p-1.5 rounded-lg hover:bg-muted/50 text-muted-foreground hover:text-primary transition-colors"
-            aria-label={`View details for ${leader.name}`}
+            aria-label={`${isExpanded ? 'Collapse' : 'Expand'} details for ${leader.name}`}
+            aria-expanded={!!isExpanded}
           >
-            <Info size={16} />
+            {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           </Button>
         )}
         <EndorseButton
@@ -141,6 +159,12 @@ export const LeaderCard = ({ leader, onClick, isIndustryMatch }: LeaderCardProps
           question={`What is ${leader.name}'s role in post-quantum cryptography? They are ${leader.title} at ${leader.organizations.join(' and ')}${leader.bio ? `. Background: ${leader.bio}` : ''}`}
         />
       </div>
+
+      <AnimatePresence initial={false}>
+        {isExpanded && onCloseExpanded && (
+          <LeaderDetailSection leader={leader} onClose={onCloseExpanded} />
+        )}
+      </AnimatePresence>
     </motion.article>
   )
 }

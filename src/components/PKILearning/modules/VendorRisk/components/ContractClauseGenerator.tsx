@@ -434,6 +434,7 @@ export const ContractClauseGenerator: React.FC = () => {
         sections={CONTRACT_SECTIONS}
         onExport={handleExport}
         exportFilename="pqc-vendor-contract"
+        exportFormats={['markdown', 'pdf']}
         renderPreview={renderContractPreview}
       />
     </div>

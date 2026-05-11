@@ -10,7 +10,7 @@ const ROUTE_NAMES: Record<string, string> = {
   playground: 'Playground',
   openssl: 'OpenSSL Lab',
   threats: 'Threats',
-  leaders: 'Leaders',
+  leaders: 'Community',
   compliance: 'Compliance',
   changelog: 'Changelog',
   migrate: 'Migrate',

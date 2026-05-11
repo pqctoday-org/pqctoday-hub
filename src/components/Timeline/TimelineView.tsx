@@ -16,17 +16,46 @@ import { CountryFlag } from '../common/CountryFlag'
 import { PageHeader } from '../common/PageHeader'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { FilterDropdown } from '../common/FilterDropdown'
+import {
+  TrustTierFilter,
+  useTrustTierFilter,
+  matchesTrustTierFilter,
+} from '../common/TrustTierFilter'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { TIMELINE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { Button } from '@/components/ui/button'
+import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 
 const REGION_LABELS: Record<string, string> = {
   americas: 'Americas',
   eu: 'EU',
   apac: 'APAC',
   global: 'Global',
+}
+
+// Map common short-form country codes/names (used by deep links from other
+// pages) to the canonical timeline `countryName` values.
+const COUNTRY_ALIASES: Record<string, string> = {
+  UK: 'United Kingdom',
+  GB: 'United Kingdom',
+  USA: 'United States',
+  US: 'United States',
+  UAE: 'United Arab Emirates',
+  PRC: 'China',
+  ROK: 'South Korea',
+  Korea: 'South Korea',
+}
+
+function resolveCountryParam(param: string | null, knownCountries: string[]): string {
+  if (!param) return 'All'
+  if (knownCountries.includes(param)) return param
+  const aliased = COUNTRY_ALIASES[param]
+  if (aliased && knownCountries.includes(aliased)) return aliased
+  // Case-insensitive fallback
+  const ci = knownCountries.find((c) => c.toLowerCase() === param.toLowerCase())
+  return ci ?? 'All'
 }
 
 const TIMELINE_PERSONA_HINTS: Record<string, string> = {
@@ -56,13 +85,10 @@ export const TimelineView = () => {
     return searchParams.get('region') ?? usePersonaStore.getState().selectedRegion ?? 'All'
   })
 
-  // Country filter — preset from URL ?country= param if present
+  // Country filter — preset from URL ?country= param if present (with alias resolution)
   const [countryFilter, setCountryFilter] = useState<string>(() => {
-    const countryParam = searchParams.get('country')
-    if (countryParam && timelineData?.some((d) => d.countryName === countryParam)) {
-      return countryParam
-    }
-    return 'All'
+    const known = timelineData?.map((d) => d.countryName) ?? []
+    return resolveCountryParam(searchParams.get('country'), known)
   })
 
   const [searchText, setSearchText] = useState<string>(searchParams.get('q') ?? '')
@@ -111,7 +137,8 @@ export const TimelineView = () => {
   // Sync ?region= and ?country= params on same-route navigations (e.g. chatbot deep links).
   // Functional setters prevent cascade loops.
   useEffect(() => {
-    const nextCountry = searchParams.get('country') ?? 'All'
+    const known = timelineData?.map((d) => d.countryName) ?? []
+    const nextCountry = resolveCountryParam(searchParams.get('country'), known)
     const nextRegion = searchParams.get('region') ?? 'All'
     const nextQ = searchParams.get('q') ?? ''
     // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync is the purpose of this effect
@@ -120,21 +147,54 @@ export const TimelineView = () => {
     if (searchText !== nextQ) setSearchText(nextQ)
   }, [searchParams])
 
+  const tierFilter = useTrustTierFilter()
+
   // Always call hooks first (React rules)
   const ganttData = useMemo(() => {
     if (!timelineData || timelineData.length === 0) return []
-    return transformToGanttData(timelineData)
-  }, [])
+    if (tierFilter.length === 0) return transformToGanttData(timelineData)
+    // Filter events at the leaf level: each TimelineEvent is scored by its title.
+    const filteredCountries = timelineData
+      .map((country) => ({
+        ...country,
+        bodies: country.bodies
+          .map((body) => ({
+            ...body,
+            events: body.events.filter((event) =>
+              matchesTrustTierFilter(tierFilter, 'timeline', event.title)
+            ),
+          }))
+          .filter((body) => body.events.length > 0),
+      }))
+      .filter((country) => country.bodies.length > 0)
+    return transformToGanttData(filteredCountries)
+  }, [tierFilter])
+
+  // Phase 3 — semantic supplement. Timeline chunks are titled like
+  // "South Korea — KpqC Competition Results"; semantic hits return
+  // those titles. We include a country in the filtered set if any
+  // semantic hit title contains the country's name (substring), so
+  // queries like "Asia-Pacific PQC mandates" surface JP/KR/IN rows
+  // even when the country name isn't typed.
+  const semantic = useSemanticSearch('timeline', searchText, { limit: 50 })
+  const semanticTitlesLc = useMemo(
+    () => (semantic.mode === 'semantic' ? semantic.hits.map((h) => h.id.toLowerCase()) : null),
+    [semantic.mode, semantic.hits]
+  )
 
   // Mobile: filter ganttData to the selected region/country (mirrors desktop Gantt behaviour)
   const mobileGanttData = useMemo(() => {
     let result = ganttData
     if (searchText) {
-      result = result.filter(
-        (d) =>
-          d.country.countryName.toLowerCase().includes(searchText.toLowerCase()) ||
-          d.country.bodies.some((b) => b.name.toLowerCase().includes(searchText.toLowerCase()))
-      )
+      const q = searchText.toLowerCase()
+      result = result.filter((d) => {
+        const nameLc = d.country.countryName.toLowerCase()
+        const lexicalMatch =
+          nameLc.includes(q) || d.country.bodies.some((b) => b.name.toLowerCase().includes(q))
+        if (lexicalMatch) return true
+        if (semanticTitlesLc && semanticTitlesLc.some((t) => t.includes(nameLc))) return true
+        return false
+      })
     }
     if (regionFilter !== 'All' && regionFilter !== 'global') {
       const allowed = new Set(
@@ -146,7 +206,7 @@ export const TimelineView = () => {
       result = result.filter((d) => d.country.countryName === countryFilter)
     }
     return result
-  }, [ganttData, regionFilter, countryFilter, searchText])
+  }, [ganttData, regionFilter, countryFilter, searchText, semanticTitlesLc])
 
   const [countryCopied, setCountryCopied] = useState(false)
 
@@ -358,6 +418,9 @@ export const TimelineView = () => {
                 opaque
                 className="mb-0 w-full"
               />
+            </div>
+            <div className="flex-1 min-w-0">
+              <TrustTierFilter className="mb-0 w-full" />
             </div>
             {countryFilter !== 'All' && (
               <Button

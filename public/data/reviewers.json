@@ -8,6 +8,61 @@
       "active": true,
       "domains": ["all"],
       "added_date": "2026-05-08"
+    },
+    {
+      "reviewer_id": "pending-compliance-1",
+      "github_handle": null,
+      "display_name": "TBD — Compliance SME",
+      "name_public": false,
+      "active": false,
+      "domains": ["compliance"],
+      "status": "recruiting",
+      "target_date": "2026-08-07"
+    },
+    {
+      "reviewer_id": "pending-library-1",
+      "github_handle": null,
+      "display_name": "TBD — Standards / Library SME",
+      "name_public": false,
+      "active": false,
+      "domains": ["library"],
+      "status": "recruiting",
+      "target_date": "2026-08-07"
+    },
+    {
+      "reviewer_id": "pending-threats-1",
+      "github_handle": null,
+      "display_name": "TBD — Threat Intelligence SME",
+      "name_public": false,
+      "active": false,
+      "domains": ["threats"],
+      "status": "recruiting",
+      "target_date": "2026-08-07"
+    },
+    {
+      "reviewer_id": "pending-migrate-1",
+      "github_handle": null,
+      "display_name": "TBD — Migration / Product SME",
+      "name_public": false,
+      "active": false,
+      "domains": ["migrate"],
+      "status": "recruiting",
+      "target_date": "2026-08-07"
+    },
+    {
+      "reviewer_id": "pending-algo-1",
+      "github_handle": null,
+      "display_name": "TBD — Algorithm / Cryptography SME",
+      "name_public": false,
+      "active": false,
+      "domains": ["module", "library"],
+      "status": "recruiting",
+      "target_date": "2026-08-07"
     }
-  ]
+  ],
+  "_meta": {
+    "target_active_reviewers": 6,
+    "target_date": "2026-08-07",
+    "note": "T11: Reviewer bench outreach — recruit domain SMEs to co-review content updates"
+  }
 }

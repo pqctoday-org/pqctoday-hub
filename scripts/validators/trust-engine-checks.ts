@@ -665,7 +665,7 @@ async function runCmT(): Promise<CheckResult[]> {
   return [
     f01.length > 0 ? fail('CM-T-01', 'Timeline trusted_source_id on completed/in-progress events', latestTimeline, f01, 'WARNING') : pass('CM-T-01', 'Timeline trusted_source_id on completed/in-progress events', latestTimeline),
     f02.length > 0 ? fail('CM-T-02', 'Timeline trusted_source_id resolves in trusted_sources CSV', latestTimeline, f02) : pass('CM-T-02', 'Timeline trusted_source_id resolves in trusted_sources CSV', latestTimeline),
-    f03.length > 0 ? fail('CM-T-03', 'Timeline local_file exists in public/timeline/', latestTimeline, f03, 'WARNING') : pass('CM-T-03', 'Timeline local_file exists in public/timeline/', latestTimeline),
+    f03.length > 0 ? fail('CM-T-03', 'Timeline local_file exists in public/timeline/', latestTimeline, f03) : pass('CM-T-03', 'Timeline local_file exists in public/timeline/', latestTimeline),
   ]
 }
 
@@ -782,11 +782,467 @@ async function runCmAt(): Promise<CheckResult[]> {
   return results
 }
 
+// ── CM-F: Per-row freshness (last_verified_date staleness) ─────────────────
+//
+// Complements N16 (file-level mtime). N16 catches "the CSV hasn't been touched";
+// CM-F catches "the CSV is fresh but individual rows haven't been re-verified
+// in a long time". Two buckets:
+//   age <= CM_F_WARN_DAYS              → PASS
+//   CM_F_WARN_DAYS < age <= CM_F_ERROR_DAYS  → WARNING
+//   age > CM_F_ERROR_DAYS              → ERROR
+//   missing/unparseable date           → WARNING (data debt)
+
+export const CM_F_WARN_DAYS = 365
+export const CM_F_ERROR_DAYS = 540
+
+export interface FreshnessBucket {
+  pass: number
+  warn: number
+  error: number
+  missing: number
+}
+
+export function classifyFreshness(
+  dateStr: string,
+  now: Date,
+  warnDays = CM_F_WARN_DAYS,
+  errorDays = CM_F_ERROR_DAYS
+): 'pass' | 'warn' | 'error' | 'missing' {
+  const trimmed = (dateStr ?? '').trim().slice(0, 10)
+  const parts = trimmed.split('-').map(Number)
+  if (parts.length !== 3 || parts.some(Number.isNaN)) return 'missing'
+  const [y, m, day] = parts
+  if (m < 1 || m > 12 || day < 1 || day > 31) return 'missing'
+  const d = new Date(y, m - 1, day)
+  if (
+    Number.isNaN(d.getTime()) ||
+    d.getFullYear() !== y ||
+    d.getMonth() !== m - 1 ||
+    d.getDate() !== day
+  ) {
+    return 'missing'
+  }
+  const ageDays = Math.floor((now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24))
+  if (ageDays > errorDays) return 'error'
+  if (ageDays > warnDays) return 'warn'
+  return 'pass'
+}
+
+interface FreshnessTarget {
+  id: string
+  csvGlob: string
+  dateCol: string
+  idCol: string
+  /** When true, "error" bucket is downgraded to "warn". Use for proxy-date columns
+   * where age past the ERROR threshold doesn't necessarily mean the row is wrong
+   * (e.g. timeline's `SourceDate` is the source-doc publication date, not a true
+   * re-verification timestamp). */
+  warnOnly?: boolean
+}
+
+const CM_F_TARGETS: FreshnessTarget[] = [
+  {
+    id: 'CM-F-trusted-sources',
+    csvGlob: 'src/data/trusted_sources_*.csv',
+    dateCol: 'last_verified_date',
+    idCol: 'source_id',
+  },
+  {
+    id: 'CM-F-timeline',
+    csvGlob: 'src/data/timeline_*.csv',
+    dateCol: 'SourceDate',
+    idCol: 'Title',
+    warnOnly: true, // SourceDate is a proxy; don't break CI on stale source docs
+  },
+]
+
+async function runCmF(): Promise<CheckResult[]> {
+  const now = new Date()
+  const results: CheckResult[] = []
+
+  for (const t of CM_F_TARGETS) {
+    const matches = await glob(t.csvGlob, { cwd: REPO_ROOT })
+    matches.sort()
+    const latest = matches.at(-1)
+    if (!latest) {
+      results.push(pass(t.id, `Per-row freshness — ${t.id}`, t.csvGlob))
+      continue
+    }
+    const raw = fs.readFileSync(path.join(REPO_ROOT, latest), 'utf-8')
+    const { data: rows } = Papa.parse<Record<string, string>>(raw, {
+      header: true,
+      skipEmptyLines: true,
+    })
+
+    const errorFindings: Finding[] = []
+    const warnFindings: Finding[] = []
+
+    for (const r of rows) {
+      const dateRaw = r[t.dateCol] ?? ''
+      const id = (r[t.idCol] ?? '').trim() || '<no-id>'
+      const rawBucket = classifyFreshness(dateRaw, now)
+      if (rawBucket === 'pass') continue
+      const bucket = t.warnOnly && rawBucket === 'error' ? 'warn' : rawBucket
+      const finding: Finding = {
+        csv: latest,
+        row: null,
+        field: t.dateCol,
+        value: id,
+        message:
+          rawBucket === 'missing'
+            ? `${t.id}: "${id}" has empty/unparseable ${t.dateCol}`
+            : rawBucket === 'error'
+              ? `${t.id}: "${id}" ${t.dateCol}=${dateRaw.trim().slice(0, 10)} is older than ${CM_F_ERROR_DAYS} days`
+              : `${t.id}: "${id}" ${t.dateCol}=${dateRaw.trim().slice(0, 10)} is older than ${CM_F_WARN_DAYS} days`,
+      }
+      if (bucket === 'error') errorFindings.push(finding)
+      else warnFindings.push(finding)
+    }
+
+    if (errorFindings.length > 0) {
+      results.push(
+        fail(
+          t.id,
+          `${t.id}: rows older than ${CM_F_ERROR_DAYS} days require re-verification`,
+          latest,
+          [...errorFindings, ...warnFindings],
+          'ERROR'
+        )
+      )
+    } else if (warnFindings.length > 0) {
+      results.push(
+        fail(
+          t.id,
+          `${t.id}: rows older than ${CM_F_WARN_DAYS} days or missing date (data debt)`,
+          latest,
+          warnFindings,
+          'WARNING'
+        )
+      )
+    } else {
+      results.push(pass(t.id, `${t.id}: all rows verified within ${CM_F_WARN_DAYS} days`, latest))
+    }
+  }
+
+  return results
+}
+
+// ── CM-Flag: Community-flagged records (§5.5 follow-up) ────────────────────
+//
+// Reads `public/data/community-signals.json` (aggregated by
+// scripts/fetch-community-signals.ts) and raises a WARNING for any record
+// with at least one open community flag. The aggregator already maps each
+// flag to a `(resourceType, resourceId)` pair; this check just surfaces them
+// in CI so a subsequent PR touching the record sees the open concern.
+//
+// Severity is intentionally WARNING (not ERROR): a flag is signal, not
+// proof. A maintainer reviewing the linked Discussion decides whether to
+// fix the data, dismiss the flag, or escalate. Once the underlying issue
+// is resolved, the Discussion can be marked resolved and the next aggregator
+// run drops the flag count.
+
+interface CommunitySignalsPayload {
+  generated_at?: string
+  signals?: Record<string, { endorsements: number; flags: number; discussion_numbers: number[] }>
+}
+
+export function runCmFlag(): CheckResult {
+  const signalsPath = path.join(REPO_ROOT, 'public/data/community-signals.json')
+  if (!fs.existsSync(signalsPath)) {
+    return pass('CM-Flag', 'Community flag surfacing (no signals file)', 'public/data/community-signals.json')
+  }
+  let payload: CommunitySignalsPayload
+  try {
+    payload = JSON.parse(fs.readFileSync(signalsPath, 'utf-8')) as CommunitySignalsPayload
+  } catch {
+    return fail(
+      'CM-Flag',
+      'Community signals file is unparseable',
+      'public/data/community-signals.json',
+      [
+        {
+          csv: 'public/data/community-signals.json',
+          row: null,
+          field: 'signals',
+          value: '',
+          message: 'JSON parse failed',
+        },
+      ],
+      'WARNING'
+    )
+  }
+  const signals = payload.signals ?? {}
+  const findings: Finding[] = []
+  for (const [key, sig] of Object.entries(signals)) {
+    if (!sig || sig.flags <= 0) continue
+    findings.push({
+      csv: 'public/data/community-signals.json',
+      row: null,
+      field: 'flags',
+      value: key,
+      message: `${key} has ${sig.flags} open community flag(s) — Discussions: ${sig.discussion_numbers.slice(0, 5).join(', ')}${sig.discussion_numbers.length > 5 ? ', …' : ''}`,
+    })
+  }
+  if (findings.length === 0) {
+    return pass('CM-Flag', 'No open community flags', 'public/data/community-signals.json')
+  }
+  return fail(
+    'CM-Flag',
+    `${findings.length} record(s) have open community flag(s) — review GitHub Discussions before merging changes`,
+    'public/data/community-signals.json',
+    findings,
+    'WARNING'
+  )
+}
+
+// ── CM-Xwalk: Production xwalk integrity (3b of merge-prep flow) ────────────
+//
+// Runs against `src/data/concept_xwalks_*.csv` (latest dated). Catches drift
+// that the merge-xwalk-candidates tool already filters on incoming candidates
+// but doesn't enforce post-merge:
+//
+//   CM-Xwalk-VOCAB     — relationship_type / rationale_type / confidence within closed sets
+//   CM-Xwalk-FROM      — every from_concept resolves to a known library / compliance / timeline ID
+//   CM-Xwalk-TO        — every to_concept resolves
+//   CM-Xwalk-EVIDENCE  — evidence field non-empty and ≥40 chars
+//   CM-Xwalk-DUPLICATE — no two rows share the same (from, to, relationship_type) tuple
+//
+// All findings are ERROR severity — production xwalk drift is a real bug.
+
+const XWALK_VOCAB_REL = new Set(['subset_of', 'superset_of', 'equivalent', 'intersects_with', 'not_related'])
+const XWALK_VOCAB_RATIONALE = new Set([
+  'technical_dependency',
+  'policy_reference',
+  'implementation_guidance',
+  'equivalence',
+  'specialization',
+  'timeline_anchor',
+])
+const XWALK_VOCAB_CONFIDENCE = new Set(['high', 'medium', 'low'])
+
+/**
+ * Latest dated CSV per domain. Filters out non-canonical files
+ * (e.g. `library_stubs_*` review artifacts) that would otherwise
+ * be picked as "latest" by alphabetical glob order.
+ */
+const DATED_CSV_RE = /^[a-z_]+_\d{8}(?:_r\d+)?\.csv$/i
+
+async function buildKnownConceptIds(): Promise<Set<string>> {
+  const known = new Set<string>()
+  for (const [pattern, idCol, titleCol] of [
+    ['src/data/library_*.csv', 'reference_id', 'document_title'],
+    ['src/data/compliance_*.csv', 'id', 'label'],
+    ['src/data/timeline_*.csv', 'Title', undefined],
+  ] as const) {
+    const all = await glob(pattern, { cwd: REPO_ROOT })
+    const matches = all.filter((p) => DATED_CSV_RE.test(path.basename(p)))
+    if (matches.length === 0) continue
+    matches.sort()
+    const latest = matches[matches.length - 1]
+    const raw = fs.readFileSync(path.join(REPO_ROOT, latest), 'utf-8')
+    const { data } = Papa.parse<Record<string, string>>(raw, { header: true, skipEmptyLines: true })
+    for (const r of data) {
+      const id = (r[idCol] ?? '').trim()
+      if (id) known.add(id)
+      if (titleCol) {
+        const t = (r[titleCol] ?? '').trim()
+        if (t) known.add(t)
+      }
+    }
+  }
+  return known
+}
+
+/**
+ * Same normalisation as scripts/mergeXwalkCandidates.ts. Inlined to avoid a
+ * cross-package import from validators/. Pure-format orphan mismatches
+ * (e.g. "NIST CSWP 39" vs "NIST-CSWP-39") collapse to the same key.
+ */
+function normalizeConceptId(s: string): string {
+  let cleaned = (s ?? '').trim()
+  cleaned = cleaned.replace(/^IETF\s+/i, '')
+  cleaned = cleaned.replace(/^FIPS\s+PUB\s+/i, 'FIPS ')
+  return cleaned.toLowerCase().replace(/[\s_\-./]+/g, '')
+}
+
+async function runCmXwalk(): Promise<CheckResult[]> {
+  const matches = await glob('src/data/concept_xwalks_*.csv', { cwd: REPO_ROOT })
+  if (matches.length === 0) {
+    return [pass('CM-Xwalk', 'No production xwalk CSV found', 'src/data/concept_xwalks_*.csv')]
+  }
+  matches.sort()
+  const latest = matches[matches.length - 1]
+  const relPath = latest
+  const raw = fs.readFileSync(path.join(REPO_ROOT, latest), 'utf-8')
+  const { data: rows } = Papa.parse<Record<string, string>>(raw, {
+    header: true,
+    skipEmptyLines: true,
+  })
+
+  const known = await buildKnownConceptIds()
+
+  // Build normalised-known map for fuzzy fallback. Collisions excluded —
+  // when two distinct known IDs flatten to the same key, neither is
+  // exposed to fallback (fail-closed, same policy as the merge tool).
+  const normalisedTentative = new Map<string, string[]>()
+  for (const id of known) {
+    const k = normalizeConceptId(id)
+    if (!k) continue
+    const arr = normalisedTentative.get(k) ?? []
+    arr.push(id)
+    normalisedTentative.set(k, arr)
+  }
+  const normalisedKnown = new Map<string, string>()
+  for (const [k, ids] of normalisedTentative) {
+    if (ids.length === 1) normalisedKnown.set(k, ids[0])
+  }
+
+  const vocabFindings: Finding[] = []
+  const fromHardFindings: Finding[] = []
+  const fromSoftFindings: Finding[] = []
+  const toHardFindings: Finding[] = []
+  const toSoftFindings: Finding[] = []
+  const evidenceFindings: Finding[] = []
+  const dupFindings: Finding[] = []
+
+  const seenTuples = new Map<string, string>() // tuple → first xwalk_id seen
+
+  for (const row of rows) {
+    const rowStatus = (row['status'] ?? '').trim().toLowerCase()
+    if (rowStatus === 'deprecated' || rowStatus === 'obsolete') continue
+
+    const xid = (row['xwalk_id'] ?? '').trim() || '<no-id>'
+    const from = (row['from_concept'] ?? '').trim()
+    const to = (row['to_concept'] ?? '').trim()
+    const rel = (row['relationship_type'] ?? '').trim()
+    const rat = (row['rationale_type'] ?? '').trim()
+    const conf = (row['confidence'] ?? '').trim().toLowerCase()
+    const ev = (row['evidence'] ?? '').trim()
+
+    // Vocab
+    if (rel && !XWALK_VOCAB_REL.has(rel)) {
+      vocabFindings.push({
+        csv: relPath, row: null, field: 'relationship_type', value: xid,
+        message: `${xid}: relationship_type="${rel}" is not in the closed vocabulary`,
+      })
+    }
+    if (rat && !XWALK_VOCAB_RATIONALE.has(rat)) {
+      vocabFindings.push({
+        csv: relPath, row: null, field: 'rationale_type', value: xid,
+        message: `${xid}: rationale_type="${rat}" is not in the closed vocabulary`,
+      })
+    }
+    if (conf && !XWALK_VOCAB_CONFIDENCE.has(conf)) {
+      vocabFindings.push({
+        csv: relPath, row: null, field: 'confidence', value: xid,
+        message: `${xid}: confidence="${conf}" must be high|medium|low`,
+      })
+    }
+
+    // ID resolution — exact-match first, then normalised fallback. A
+    // normalised hit is non-canonical drift (WARNING); no match at all is
+    // a true unresolved id (ERROR).
+    if (from && !known.has(from)) {
+      const canonical = normalisedKnown.get(normalizeConceptId(from))
+      if (canonical) {
+        fromSoftFindings.push({
+          csv: relPath, row: null, field: 'from_concept', value: xid,
+          message: `${xid}: from_concept="${from}" is non-canonical — should be "${canonical}". Re-run merge-xwalk to canonicalise.`,
+        })
+      } else {
+        fromHardFindings.push({
+          csv: relPath, row: null, field: 'from_concept', value: xid,
+          message: `${xid}: from_concept="${from}" does not resolve to library/compliance/timeline (no normalised match either)`,
+        })
+      }
+    }
+    if (to && !known.has(to)) {
+      const canonical = normalisedKnown.get(normalizeConceptId(to))
+      if (canonical) {
+        toSoftFindings.push({
+          csv: relPath, row: null, field: 'to_concept', value: xid,
+          message: `${xid}: to_concept="${to}" is non-canonical — should be "${canonical}". Re-run merge-xwalk to canonicalise.`,
+        })
+      } else {
+        toHardFindings.push({
+          csv: relPath, row: null, field: 'to_concept', value: xid,
+          message: `${xid}: to_concept="${to}" does not resolve to library/compliance/timeline (no normalised match either)`,
+        })
+      }
+    }
+
+    // Evidence
+    if (!ev) {
+      evidenceFindings.push({
+        csv: relPath, row: null, field: 'evidence', value: xid,
+        message: `${xid}: evidence field is empty`,
+      })
+    } else if (ev.length < 40) {
+      evidenceFindings.push({
+        csv: relPath, row: null, field: 'evidence', value: xid,
+        message: `${xid}: evidence is only ${ev.length} chars (recommended ≥40)`,
+      })
+    }
+
+    // Duplicate tuples
+    if (from && to && rel) {
+      const tuple = `${from}|${to}|${rel}`
+      const first = seenTuples.get(tuple)
+      if (first) {
+        dupFindings.push({
+          csv: relPath, row: null, field: 'tuple', value: xid,
+          message: `${xid}: duplicate of ${first} on tuple "${from}" → "${to}" (${rel})`,
+        })
+      } else {
+        seenTuples.set(tuple, xid)
+      }
+    }
+  }
+
+  // Combine hard + soft findings per side. Hard findings dominate severity.
+  const fromAll = [...fromHardFindings, ...fromSoftFindings]
+  const toAll = [...toHardFindings, ...toSoftFindings]
+
+  return [
+    vocabFindings.length > 0
+      ? fail('CM-Xwalk-VOCAB', 'Xwalk closed-vocabulary check', relPath, vocabFindings, 'ERROR')
+      : pass('CM-Xwalk-VOCAB', 'Xwalk closed-vocabulary check', relPath),
+    fromAll.length > 0
+      ? fail(
+          'CM-Xwalk-FROM',
+          fromHardFindings.length > 0
+            ? 'Xwalk from_concept ID resolution — unresolved IDs found'
+            : 'Xwalk from_concept ID resolution — non-canonical forms found',
+          relPath,
+          fromAll,
+          fromHardFindings.length > 0 ? 'ERROR' : 'WARNING'
+        )
+      : pass('CM-Xwalk-FROM', 'Xwalk from_concept ID resolution', relPath),
+    toAll.length > 0
+      ? fail(
+          'CM-Xwalk-TO',
+          toHardFindings.length > 0
+            ? 'Xwalk to_concept ID resolution — unresolved IDs found'
+            : 'Xwalk to_concept ID resolution — non-canonical forms found',
+          relPath,
+          toAll,
+          toHardFindings.length > 0 ? 'ERROR' : 'WARNING'
+        )
+      : pass('CM-Xwalk-TO', 'Xwalk to_concept ID resolution', relPath),
+    evidenceFindings.length > 0
+      ? fail('CM-Xwalk-EVIDENCE', 'Xwalk evidence field minimum length', relPath, evidenceFindings, 'WARNING')
+      : pass('CM-Xwalk-EVIDENCE', 'Xwalk evidence field minimum length', relPath),
+    dupFindings.length > 0
+      ? fail('CM-Xwalk-DUPLICATE', 'Xwalk duplicate tuple detection', relPath, dupFindings, 'ERROR')
+      : pass('CM-Xwalk-DUPLICATE', 'Xwalk duplicate tuple detection', relPath),
+  ]
+}
+
 // ── Entry point ──────────────────────────────────────────────────────────────
 
 export async function runTrustEngineChecks(): Promise<CheckResult[]> {
-  const [cm1, cm2, cm3, cm4, cmE, cmCswp, cmG, cmT, cmTs, cmAt] = await Promise.all([
-    runCm1(), runCm2(), runCm3(), runCm4(), runCmE(), runCmCswp(), runCmG(), runCmT(), runCmTs(), runCmAt(),
+  const [cm1, cm2, cm3, cm4, cmE, cmCswp, cmG, cmT, cmTs, cmAt, cmF, cmXw] = await Promise.all([
+    runCm1(), runCm2(), runCm3(), runCm4(), runCmE(), runCmCswp(), runCmG(), runCmT(), runCmTs(), runCmAt(), runCmF(), runCmXwalk(),
   ])
-  return [runCmW(), runCmC(), runQaS(), runQaCswp(), cm1, cm2, cm3, cm4, cmE, cmCswp, cmG, ...cmT, cmTs, ...cmAt]
+  return [runCmW(), runCmC(), runQaS(), runQaCswp(), cm1, cm2, cm3, cm4, cmE, cmCswp, cmG, ...cmT, cmTs, ...cmAt, ...cmF, runCmFlag(), ...cmXw]
 }

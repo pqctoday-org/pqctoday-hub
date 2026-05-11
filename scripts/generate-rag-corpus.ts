@@ -864,6 +864,9 @@ function processThreats(): RAGChunk[] {
   for (let i = 1; i < rows.length; i++) {
     const row = rows[i]
     if (row.length < 7) continue
+    // Skip deprecated/obsolete rows (status col = index 19)
+    const rowStatus = row[19]?.trim().toLowerCase()
+    if (rowStatus === 'deprecated' || rowStatus === 'obsolete') continue
 
     const [
       industry,
@@ -991,6 +994,8 @@ function processMigrateSoftware(): RAGChunk[] {
     const r = records[i]
     const name = sanitize(r.software_name)
     if (!name) continue
+    const rowStatus = sanitize(r.status)?.toLowerCase()
+    if (rowStatus === 'deprecated' || rowStatus === 'obsolete') continue
 
     const content = [
       `Software: ${name}`,
@@ -1074,6 +1079,12 @@ function processLeaders(): RAGChunk[] {
   for (let i = 1; i < rows.length; i++) {
     const row = rows[i]
     if (row.length < 7) continue
+
+    // Skip deprecated/obsolete leaders (status col = index 16). Matches the
+    // loader's filterActive behavior in leadersData.ts, so chunks stay in sync
+    // with trustScoreData.ts (no orphan leader chunks per C3 invariant).
+    const rowStatus = (row[16] ?? '').trim().toLowerCase()
+    if (rowStatus === 'deprecated' || rowStatus === 'obsolete') continue
 
     const [name, country, role, organizations, type, category, contribution] = row
 
@@ -4116,4 +4127,6 @@ async function main() {
   console.log(`   Output: ${OUTPUT_FILE}`)
 }
 
-main()
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main()
+}

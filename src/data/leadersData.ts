@@ -15,6 +15,8 @@ export interface Leader {
   websiteUrl?: string
   linkedinUrl?: string
   keyResourceUrl?: string[]
+  /** Library reference IDs cited as evidence for this leader's contribution. Used by trust scoring to inherit peer-review + vetting from authored documents (the `keyResourceUrl` field above stores URLs, not IDs, so it cannot be used as a lookup key against the library map). */
+  keyResourceRefs?: string[]
   peerReviewed?: 'yes' | 'no' | 'partial'
   vettingBody?: string[]
   status?: 'New' | 'Updated'
@@ -38,6 +40,9 @@ interface RawLeaderRow {
   peer_reviewed: string
   vetting_body: string
   data_quality_notes: string
+  status?: string
+  deprecated_at?: string
+  deprecated_reason?: string
 }
 
 const modules = import.meta.glob('./leaders_*.csv', {
@@ -55,25 +60,29 @@ const {
 } = loadLatestCSV<RawLeaderRow, LeaderCore>(
   modules,
   /leaders_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
-  (row) => ({
-    name: row.Name,
-    country: row.Country,
-    title: row.Role,
-    organizations: splitSemicolon(row.Organization),
-    type: row.Type as Leader['type'],
-    category: row.Category,
-    bio: row.Contribution,
-    imageUrl: row.ImageUrl?.includes('ui-avatars.com') ? undefined : row.ImageUrl,
-    websiteUrl: row.WebsiteUrl,
-    linkedinUrl: row.LinkedinUrl,
-    keyResourceUrl: row.KeyResourceUrls
-      ? splitSemicolon(row.KeyResourceUrls)
-      : row.KeyResourceUrl
-        ? splitSemicolon(row.KeyResourceUrl)
-        : undefined,
-    peerReviewed: (row.peer_reviewed?.toLowerCase() as Leader['peerReviewed']) || undefined,
-    vettingBody: row.vetting_body ? splitSemicolon(row.vetting_body) : undefined,
-  }),
+  (row) => {
+    if (row.status && row.status !== 'active') return null
+    return {
+      name: row.Name,
+      country: row.Country,
+      title: row.Role,
+      organizations: splitSemicolon(row.Organization),
+      type: row.Type as Leader['type'],
+      category: row.Category,
+      bio: row.Contribution,
+      imageUrl: row.ImageUrl?.includes('ui-avatars.com') ? undefined : row.ImageUrl,
+      websiteUrl: row.WebsiteUrl,
+      linkedinUrl: row.LinkedinUrl,
+      keyResourceUrl: row.KeyResourceUrls
+        ? splitSemicolon(row.KeyResourceUrls)
+        : row.KeyResourceUrl
+          ? splitSemicolon(row.KeyResourceUrl)
+          : undefined,
+      keyResourceRefs: row.KeyResourceRefs ? splitSemicolon(row.KeyResourceRefs) : undefined,
+      peerReviewed: (row.peer_reviewed?.toLowerCase() as Leader['peerReviewed']) || undefined,
+      vettingBody: row.vetting_body ? splitSemicolon(row.vetting_body) : undefined,
+    }
+  },
   true // withPrevious for status badges
 )
 

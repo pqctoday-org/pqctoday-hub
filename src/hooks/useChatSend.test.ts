@@ -101,6 +101,7 @@ vi.mock('@/services/chat/RetrievalService', () => ({
     search: (...args: unknown[]) => mockSearch(...(args as [string])),
   },
   classifyIntent: vi.fn().mockReturnValue('general'),
+  buildTrustRefusal: vi.fn().mockReturnValue(null),
 }))
 
 vi.mock('@/utils/dataFingerprint', () => ({

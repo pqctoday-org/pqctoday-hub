@@ -113,11 +113,12 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
 
   if (!isOpen || !item) return null
 
-  // Pass 1: reverse keyResourceUrl lookup (authoritative)
+  // Pass 1: reverse keyResourceRefs lookup (authoritative). `keyResourceUrl`
+  // contains URLs, not library reference IDs — use the dedicated refs field.
   const seen = new Set<string>()
   const relatedLeaders = []
   for (const l of leadersData) {
-    if (l.keyResourceUrl?.includes(item.referenceId)) {
+    if (l.keyResourceRefs?.includes(item.referenceId)) {
       relatedLeaders.push(l)
       seen.add(l.id)
     }

@@ -38,7 +38,7 @@ export const ROUTE_PRESET_LABELS: Record<string, string> = {
   algorithms: 'Algorithms',
   library: 'Library',
   threats: 'Threats',
-  leaders: 'Leaders',
+  leaders: 'Community',
   compliance: 'Compliance',
   migrate: 'Migrate',
   playground: 'Playground',

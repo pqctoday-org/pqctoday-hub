@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useCallback, useMemo } from 'react'
-import { Plus, Trash2, Download, Copy, Check } from 'lucide-react'
+import { Plus, Trash2, Download, Copy, Check, FileType2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useModuleStore } from '@/store/useModuleStore'
+import { markdownToPdf } from '@/services/export/pdfExport'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 interface RiskEntry {
@@ -193,6 +194,10 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
     setTimeout(() => setCopied(false), 2000)
   }, [exportMarkdown])
 
+  const handleDownloadPdf = useCallback(async () => {
+    await markdownToPdf(exportMarkdown, 'quantum-risk-register', 'Quantum Risk Register')
+  }, [exportMarkdown])
+
   return (
     <div className="space-y-6">
       {/* Action bar */}
@@ -204,6 +209,10 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
         <Button variant="outline" size="sm" onClick={handleCopy}>
           {copied ? <Check size={14} /> : <Copy size={14} />}
           <span className="ml-1.5">{copied ? 'Copied' : 'Copy Markdown'}</span>
+        </Button>
+        <Button variant="outline" size="sm" onClick={handleDownloadPdf}>
+          <FileType2 size={14} />
+          <span className="ml-1.5">.pdf</span>
         </Button>
         <Button variant="outline" size="sm" onClick={handleExport}>
           <Download size={14} />

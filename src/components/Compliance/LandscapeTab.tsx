@@ -17,6 +17,7 @@ import { ComplianceLandscape, type FrameworkSortOption } from './ComplianceLands
 import { LandscapeTypeFacet, type LandscapeType } from './LandscapeTypeFacet'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { type ViewMode } from '@/components/Library/ViewToggle'
+import { useTrustTierFilter, matchesTrustTierFilter } from '@/components/common/TrustTierFilter'
 
 interface Props {
   type: LandscapeType
@@ -45,17 +46,30 @@ interface Props {
 }
 
 export function LandscapeTab({ type, onTypeChange, onNavigateToCswp39, ...landscape }: Props) {
+  // Trust tier filter — applied before slicing so per-facet counts reflect
+  // the active tier selection. Empty selection = no-op (pass everything).
+  const tierFilter = useTrustTierFilter()
+  const tierFilteredFrameworks = useMemo(
+    () =>
+      tierFilter.length === 0
+        ? complianceFrameworks
+        : complianceFrameworks.filter((f) =>
+            matchesTrustTierFilter(tierFilter, 'compliance', f.id)
+          ),
+    [tierFilter]
+  )
+
   // Same partitioning as the legacy tabs. Industry alliances ride along with
   // standardization bodies — they're standardization-adjacent.
   const slices = useMemo(() => {
-    const bodies = complianceFrameworks.filter(
+    const bodies = tierFilteredFrameworks.filter(
       (f) => f.bodyType === 'standardization_body' || f.bodyType === 'industry_alliance'
     )
-    const standards = complianceFrameworks.filter((f) => f.bodyType === 'technical_standard')
-    const certifications = complianceFrameworks.filter((f) => f.bodyType === 'certification_body')
-    const regulations = complianceFrameworks.filter((f) => f.bodyType === 'compliance_framework')
+    const standards = tierFilteredFrameworks.filter((f) => f.bodyType === 'technical_standard')
+    const certifications = tierFilteredFrameworks.filter((f) => f.bodyType === 'certification_body')
+    const regulations = tierFilteredFrameworks.filter((f) => f.bodyType === 'compliance_framework')
     return { bodies, standards, certifications, regulations }
-  }, [])
+  }, [tierFilteredFrameworks])
 
   const counts = {
     regulations: slices.regulations.length,
@@ -80,10 +94,8 @@ export function LandscapeTab({ type, onTypeChange, onNavigateToCswp39, ...landsc
       <ComplianceLandscape
         frameworks={frameworks}
         showDeadlineTimeline={false}
-        // Only the regulations slice carries CSWP.39 maturity links today —
-        // matches the legacy "compliance" tab behaviour.
-        maturityByRefId={type === 'regulations' ? maturityByRefId : undefined}
-        onNavigateToCswp39={type === 'regulations' ? onNavigateToCswp39 : undefined}
+        maturityByRefId={maturityByRefId}
+        onNavigateToCswp39={onNavigateToCswp39}
         {...landscape}
       />
     </div>

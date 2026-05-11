@@ -6,6 +6,17 @@ import { ThreatsDashboard } from './ThreatsDashboard'
 import type { ThreatData } from '../../data/threatsData'
 import '@testing-library/jest-dom'
 import { Button } from '@/components/ui/button'
+import * as useSemanticSearchModule from '@/services/search/useSemanticSearch'
+
+vi.mock('@/services/search/useSemanticSearch', async () => {
+  const actual = await vi.importActual<typeof useSemanticSearchModule>(
+    '@/services/search/useSemanticSearch'
+  )
+  return {
+    ...actual,
+    useSemanticSearch: vi.fn(() => ({ hits: [], mode: 'idle' as const, loading: false })),
+  }
+})
 
 // Mock dependencies
 vi.mock('../../data/threatsData', () => ({
@@ -246,5 +257,44 @@ describe('ThreatsDashboard', () => {
 
     // Both mobile and desktop render the empty state message
     expect(screen.getAllByText('No threats found matching your filters.').length).toBeGreaterThan(0)
+  })
+
+  describe('Phase 3 — semantic search supplement', () => {
+    it('falls back to pure lexical when the runtime is not ready', () => {
+      vi.mocked(useSemanticSearchModule.useSemanticSearch).mockReturnValue({
+        hits: [],
+        mode: 'lexical',
+        loading: false,
+      })
+      render(
+        <MemoryRouter>
+          <ThreatsDashboard />
+        </MemoryRouter>
+      )
+      const searchInput = screen.getAllByPlaceholderText('Search threats...')[0]
+      fireEvent.change(searchInput, { target: { value: 'NonExistentTermXYZ' } })
+      // No semantic hits → empty state remains.
+      expect(screen.getAllByText('No threats found matching your filters.').length).toBeGreaterThan(
+        0
+      )
+    })
+
+    it('includes a semantic-only threat in the result set via union', () => {
+      // THR-002 (Healthcare) does not match 'paraphrase-only' lexically.
+      vi.mocked(useSemanticSearchModule.useSemanticSearch).mockReturnValue({
+        hits: [{ id: 'THR-002', score: 0.88 }],
+        mode: 'semantic',
+        loading: false,
+      })
+      render(
+        <MemoryRouter>
+          <ThreatsDashboard />
+        </MemoryRouter>
+      )
+      const searchInput = screen.getAllByPlaceholderText('Search threats...')[0]
+      fireEvent.change(searchInput, { target: { value: 'paraphrase-only' } })
+      // The semantic-only row should render in the table or card view.
+      expect(screen.getAllByText('THR-002').length).toBeGreaterThan(0)
+    })
   })
 })

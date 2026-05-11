@@ -362,7 +362,7 @@ export const TimelinePlanner: React.FC<TimelinePlannerProps> = ({
         title="Timeline Export"
         exportData={exportMarkdown}
         filename="migration-timeline"
-        formats={['markdown']}
+        formats={['markdown', 'pdf']}
       >
         <p className="text-sm text-muted-foreground">
           Export your timeline milestones and external deadlines.
