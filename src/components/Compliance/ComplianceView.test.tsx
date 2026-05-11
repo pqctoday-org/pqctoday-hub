@@ -121,6 +121,13 @@ describe('ComplianceView', () => {
     ).toBeInTheDocument()
   })
 
+  // Timeouts bumped to 15s for the next two tests: ComplianceView's eager
+  // imports pull in maturityGovernanceData + complianceData + the RAG corpus
+  // module-init chain, which is fast on a developer laptop but consistently
+  // bumps past Vitest's 5s default on GitHub-hosted CI runners (Ubuntu, 2 CPU).
+  // Tests 1+2 above use simpler `getByText` assertions that don't await full
+  // mount; tests 3+4 wait on `getByRole('button', ...)` which requires the
+  // header action cluster to be fully rendered.
   it('renders the Sources and Glossary buttons in the header', () => {
     render(
       <MemoryRouter>
@@ -130,7 +137,7 @@ describe('ComplianceView', () => {
     // Authoritative sources are accessible via the Sources button (SourcesButton)
     expect(screen.getByRole('button', { name: /sources/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /glossary/i })).toBeInTheDocument()
-  })
+  }, 15000)
 
   it('renders the three primary tab triggers and More overflow button', () => {
     render(

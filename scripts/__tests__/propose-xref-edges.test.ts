@@ -29,6 +29,12 @@ function isCorpusParseable(): boolean {
   }
 }
 const hasArtifact = fs.existsSync(META_PATH) && fs.existsSync(BIN_PATH) && isCorpusParseable()
+// `propose-xref-edges.ts` has an explicit "local-only by policy" guard: it
+// exits non-zero when run in a CI environment (process.env.CI is set), so
+// these tests — which spawn the script via execFileSync — must skip on CI.
+// Output is for admin-portal SME review, run on a maintainer machine.
+const isCI = !!process.env.CI
+const shouldRun = hasArtifact && !isCI
 
 interface CandidateOutput {
   version: 1
@@ -58,7 +64,7 @@ function runScript(args: string[] = []): CandidateOutput {
   return JSON.parse(raw) as CandidateOutput
 }
 
-describe.skipIf(!hasArtifact)('propose-xref-edges — Phase 2.5 generator', () => {
+describe.skipIf(!shouldRun)('propose-xref-edges — Phase 2.5 generator', () => {
   let output: CandidateOutput
 
   beforeAll(() => {
