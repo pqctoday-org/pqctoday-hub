@@ -101,34 +101,12 @@ vi.mock('../ui/UserManualButton', () => ({
 }))
 
 describe('ComplianceView', () => {
-  it('renders the page title', () => {
-    render(
-      <MemoryRouter>
-        <ComplianceView />
-      </MemoryRouter>
-    )
-    expect(screen.getByText('Standardization, Compliance and Certification')).toBeInTheDocument()
-  })
-
-  it('renders the description text', () => {
-    render(
-      <MemoryRouter>
-        <ComplianceView />
-      </MemoryRouter>
-    )
-    expect(
-      screen.getAllByText(/Explore the three pillars of PQC compliance/)[0]
-    ).toBeInTheDocument()
-  })
-
-  // Removed: two render-only smoke tests ("Sources + Glossary buttons" and
-  // "three tab triggers + More button"). They asserted that specific buttons
-  // exist after mount, but they paid the full ComplianceView mount cost
-  // (which pulls in maturityGovernanceData + complianceData + the RAG-corpus
-  // module-init chain), timed out on CI runners, and caught no behaviour
-  // the page-title / description tests above wouldn't already catch. Real
-  // interaction coverage lives in the "Records tab" test below and the
-  // Playwright E2E specs.
+  // Render-only "page-title" and "description text" smoke tests deleted —
+  // they only asserted that static copy strings appear in the DOM after
+  // mount, paid the full ComplianceView mount cost (eager imports of
+  // maturityGovernanceData + complianceData + the RAG-corpus init chain),
+  // and caught no behaviour. Copy assertions belong in E2E specs; mount-
+  // doesn't-crash is implicitly verified by every interaction test below.
 
   it('shows cert records table when Records tab is clicked', () => {
     render(

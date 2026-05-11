@@ -4,37 +4,20 @@ import { render, screen } from '@testing-library/react'
 import { TrustBadge } from './TrustBadge'
 
 describe('TrustBadge', () => {
-  it('renders the tier label', () => {
-    render(<TrustBadge tier="Authoritative" score={92} />)
-    expect(screen.getByText('Authoritative')).toBeInTheDocument()
+  it.each([
+    ['Authoritative', 92, 'text-status-success'],
+    ['High', 75, 'text-primary'],
+    ['Moderate', 55, 'text-status-warning'],
+    ['Low', 30, 'text-status-error'],
+  ] as const)('tier=%s score=%i → renders label, title, and %s class', (tier, score, cls) => {
+    render(<TrustBadge tier={tier} score={score} />)
+    const label = screen.getByText(tier)
+    expect(label).toBeInTheDocument()
+    expect(screen.getByTitle(`Trust Score: ${score}/100 (${tier})`)).toBeInTheDocument()
+    expect(label.closest('span')).toHaveClass(cls)
   })
 
-  it('renders the score in title', () => {
-    render(<TrustBadge tier="High" score={75} />)
-    expect(screen.getByTitle('Trust Score: 75/100 (High)')).toBeInTheDocument()
-  })
-
-  it('applies success styles for Authoritative tier', () => {
-    render(<TrustBadge tier="Authoritative" score={90} />)
-    expect(screen.getByText('Authoritative').closest('span')).toHaveClass('text-status-success')
-  })
-
-  it('applies primary styles for High tier', () => {
-    render(<TrustBadge tier="High" score={75} />)
-    expect(screen.getByText('High').closest('span')).toHaveClass('text-primary')
-  })
-
-  it('applies warning styles for Moderate tier', () => {
-    render(<TrustBadge tier="Moderate" score={55} />)
-    expect(screen.getByText('Moderate').closest('span')).toHaveClass('text-status-warning')
-  })
-
-  it('applies error styles for Low tier', () => {
-    render(<TrustBadge tier="Low" score={30} />)
-    expect(screen.getByText('Low').closest('span')).toHaveClass('text-status-error')
-  })
-
-  it('supports small size', () => {
+  it('applies small-size text class when size="sm"', () => {
     render(<TrustBadge tier="High" score={75} size="sm" />)
     expect(screen.getByText('High').closest('span')).toHaveClass('text-[10px]')
   })

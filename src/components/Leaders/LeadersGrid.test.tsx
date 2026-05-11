@@ -120,31 +120,30 @@ describe('LeadersGrid', () => {
     vi.clearAllMocks()
   })
 
-  it('renders the header and description', () => {
+  it('renders header, leader cards, and per-card details from the mock fixture', () => {
+    // Consolidated: previously three separate tests each paying the full
+    // LeadersGrid mount cost to assert different parts of the same render
+    // pass. Single mount + every assertion below catches mount-doesn't-
+    // crash + grid count + per-card content + the expand-toggle a11y label.
     render(<LeadersGrid />)
+
+    // Header
     expect(screen.getByText('Community')).toBeInTheDocument()
     expect(screen.getAllByText(/People contributing to the advances/)[0]).toBeInTheDocument()
-  })
 
-  it('renders a grid of leaders', () => {
-    render(<LeadersGrid />)
+    // Grid cardinality + identity
     const articles = screen.getAllByRole('article')
     expect(articles).toHaveLength(3)
-
     expect(screen.getByText('Alice Quant')).toBeInTheDocument()
     expect(screen.getByText('Bob Cyber')).toBeInTheDocument()
-  })
 
-  it('displays leader details correctly', () => {
-    render(<LeadersGrid />)
-
-    // Alice details
+    // Per-card content (Alice)
     expect(screen.getByText('Chief Scientist')).toBeInTheDocument()
     expect(screen.getByText('Quantum Corp')).toBeInTheDocument()
     expect(screen.getByText('"Leading PQC research."')).toBeInTheDocument()
     expect(screen.getByText('Private Sector')).toBeInTheDocument()
 
-    // Details now shown via inline collapsible — verify expand toggle exists
+    // Inline-collapsible toggle exists for each card
     expect(screen.getAllByLabelText(/Expand details for/).length).toBeGreaterThan(0)
   })
 
