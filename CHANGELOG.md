@@ -61,161 +61,179 @@ _Internal detail: `SectorFilter.tsx` exports `NAICS_LABELS` and a `resolveToNaic
 
 ## [3.11.0] - 2026-05-10
 
-### Added — Phase 2: embedding-driven trust-engine data-quality validators
+### Highlights
 
-Five offline validators / generators that consume the Phase 1 embedding index (`embeddings.bin`) and surface data-quality candidates for SME review. All ship as WARNING/INFO (CI gate unchanged). Outputs are JSON files designed for the admin-portal review queues; no auto-writes to CSVs.
+- **Search now understands what you mean, not just what you type.** Typing "TLS hybrid" on Library, Migrate, Patents, Compliance, Threats, Timeline, Community, or Algorithms now also returns documents that talk about KEM hybrid in TLS 1.3 — even when none of those words appear literally. The classic keyword search is still the floor; semantic matches are added on top.
+- **Free-text Compliance suggestions in the Assessment.** Step 5 has a new "Describe your context" textarea that recommends the top 5 frameworks for your situation and lets you add them with one click.
+- **Five new behind-the-scenes data-quality watchers** that surface candidate fixes (missing references, possible duplicates, possible counter-claims, weak topic coverage) for SME review. They generate review queues; they don't auto-edit data.
+- **Trust-tier baseline captured** at 47 Authoritative / 446 High / 786 Moderate / 2,035 Low so future shifts can be measured against this snapshot.
 
-- **MR-1 candidate suggestions (Phase 2.1)** — `scripts/validators/missing-reference-checks.ts` extends the existing missing-reference detector with `proposeReferenceCandidates(claimText, k=3)`, ranking trusted-source chunks by cosine. New `--with-candidates` flag on `scripts/validate-data-integrity.ts`. Each finding gains a `candidates: Array<{id, score, label}>` field.
-- **`scripts/propose-xref-edges.ts` (Phase 2.5)** — proposes new `(resource_type, resource_id, source_id)` rows for `trusted_source_xref` by cosine over resource × trusted-source chunks. Defaults: threshold 0.75, max-existing 3, top-K 5. Local-only (CI hard-fail). Writes `/tmp/xref-candidates.json`. 449 candidates from 2,675 resources on current corpus.
-- **`scripts/validators/qa-semantic-checks.ts` (Phase 2.4 / T20)** — six semantic checks over `document-enrichment` chunks: QA-F7 main-topic grounding, QA-F8 PQC algo mention, QA-F9 threats↔timeline coupling, QA-F10 Tier-1 corroboration, QA-F11 std-bodies vocab, QA-F12 compliance-framework vocab. Pre-encoded vector reuse via new `cosineSearchByChunkId` — full sweep over 1,611 enrichment chunks in ~0.7s.
-- **`scripts/validators/duplicate-checks.ts` (Phase 2.3 / DUP-1)** — pair-wise semantic-duplicate detection within library / migrate / timeline. Per-CSV thresholds (0.92 / 0.90 / 0.88). 300 candidate pairs in ~0.94s on current corpus. Same-refId chunks auto-excluded (multi-chunk records aren't duplicates).
-- **`scripts/discover-counter-claims.ts` (Phase 2.2)** — spherical k-means clustering of Authoritative-tier chunks + cross-source pair extraction. Deterministic seed. 335 candidate pairs at default k=50/threshold=0.6 in ~0.24s. Output explicitly framed as "candidates for SME review" — many pairs are jurisdictional peers (e.g. NSA/US vs ANSSI/FR), not contradictions.
+### Semantic search across the site
 
-### Added — Phase 3: user-facing semantic search
+- Single shared `useSemanticSearch` hook wired into **8 list-driven views** (Library, Patents, Migrate, Compliance Landscape, Threats, Timeline, Community, Algorithms — both transitions and filteredAlgorithms slices) plus the Assessment wizard's Compliance step.
+- **Lexical floor preserved everywhere.** If the embedding runtime hasn't loaded, the page falls back cleanly to the existing keyword filter — no behavioural regression.
+- **Score interleave on Patents** — semantic hits are now merged with lexical hits by normalised score, so high-relevance semantic-only matches don't get pushed to the bottom of the list.
+- **Improved empty-state copy** on Library / Migrate / Compliance: shows "semantic search is still loading…" while the runtime warms up, and "no direct or semantically related X found" once it has run.
+- **Small "✨ Expanded with semantically related matches" hint** appears above results when semantic search added items the keyword filter wouldn't have surfaced.
 
-Single shared React hook (`useSemanticSearch`) wired into 9 user-facing search surfaces. Pattern: lexical filter stays as the floor; semantic hits are unioned in when the embedding runtime is ready. Sort order preserved; no behavioral regression when runtime unavailable.
+_Internal detail: `src/services/search/useSemanticSearch.ts` (modes idle / loading / lexical / semantic, 250 ms debounce, 7 unit tests). Reuses the existing chunk pool from `UnifiedSearchService` so there's no duplicate corpus fetch. `embeddingRetrieval.ts` now exports `cosineSearchByChunkId`, `getChunkVector`, `getEmbeddingDimensions` for the new validators below._
 
-- **`src/services/search/useSemanticSearch.ts`** — modes `semantic` / `lexical` / `idle` / `loading`. 250 ms debounce. Reuses chunk pool from `UnifiedSearchService` (no duplicate corpus fetch). Lazy `initEmbeddingRuntime()` on first non-empty query. 7 unit tests.
-- **8 pages wired** — Library, Patents, Migrate, Compliance Landscape, Threats, Timeline, Leaders, Algorithms (both filteredAlgorithms and filteredTransitions). Each page commit includes lexical-floor preservation and existing-test regression check.
-- **Assessment (Step 5 Compliance)** — opt-in "Describe your context" disclosure with a free-text textarea. Top-5 framework suggestions ranked by cosine, filtered to those not already shown in the tier groups. One-click add via existing `toggleCompliance` API.
-- **`SemanticSearchHint` common component** — small "✨ Expanded with semantically related matches" affordance above results, plus a "Loading semantic search…" transient. Wired into Library / Migrate / Compliance.
-- **Patents score interleave** — semantic and lexical hits merged by normalized score (lexical scores divided by lexical max → [0,1]; cosine in [0,1] directly). High-cosine semantic-only hits no longer get appended to the bottom of the list.
-- **Empty-state copy upgrade** — Library / Migrate / Compliance empty-states now mention "semantic search is still loading…" while warming up, and "no direct or semantically related X found" once the runtime ran and produced nothing.
+### Data-quality watchers (admin-portal review queues)
 
-### Added — Phase 3 infrastructure
+Five offline scripts that run against the embedding index and produce review queues for subject-matter experts. None of them auto-edit data, and they all ship as WARNING/INFO so they can't break CI:
 
-- **`src/services/search/embeddingRetrieval.ts`** new exports — `cosineSearchByChunkId(chunkId, opts)` (reuses pre-encoded vectors; ~120k FLOPs per call), `getChunkVector(chunkId)` (read-only Float32Array view), `getEmbeddingDimensions()`. Enables the pair-wise / clustering validators above.
+- **Missing-reference candidates** — for every record flagged as having no source citation, suggests the top 3 trusted-source candidates by semantic similarity. Drives the admin-portal "MR-1" queue.
+- **Trusted-source cross-reference proposer** — proposes new `(resource, source)` links for records that should probably cite an existing trusted source but don't. 449 candidates from 2,675 resources on the current corpus.
+- **Semantic data-quality checks** (six new) — main-topic grounding, PQC-algo mention, threats↔timeline coupling, Tier-1 corroboration, standards-body vocab, compliance-framework vocab. Full sweep over 1,611 enrichment chunks takes ~0.7s.
+- **Pair-wise duplicate detector** — flags near-duplicate records within Library / Migrate / Timeline. 300 candidate pairs surfaced on the current corpus.
+- **Counter-claim auto-discovery** — clusters Authoritative-tier chunks and surfaces cross-source pairs that may disagree. Explicitly framed as "candidates for SME review" because many pairs are jurisdictional peers (NSA/US vs ANSSI/FR) rather than contradictions.
 
-### Added — Phase 2 measurement
+_Internal detail: lives under `scripts/validators/` and `scripts/`. Severity stays WARNING/INFO until SMEs sample 30 findings and confirm precision. Promotion plan documented in the relevant script docstrings. All five tolerate a mid-write `rag-corpus.json` via try/catch + `isCorpusParseable()` so they self-skip instead of crashing during enrichment runs._
 
-- **`reports/trust-tier-snapshot.json`** + `src/data/trustScore/__tests__/measure-tier-distribution.test.ts` — pre-SME-triage baseline of the trust-tier distribution (47 Authoritative / 446 High / 786 Moderate / 2,035 Low; total 3,314). Re-run via `npx vitest run …measure-tier-distribution.test.ts` after admin-portal queue approvals merge into CSVs to quantify the roadmap's "5–8% records move up one tier" claim.
+### Fixed
 
-### Fixed — Phase 2 robustness
+- **Validators no longer crash mid-enrichment.** Three validators (`missing-reference-checks`, `qa-semantic-checks`, `duplicate-checks`) plus five test files now tolerate a partially-written `rag-corpus.json` and self-skip with empty findings instead of failing.
+- **Counter-claim output explicitly framed as candidates, not declarations.** The script's docstring + test assertions clarify that cross-source pairs (e.g. NSA vs ANSSI on the same algorithm) are jurisdictional peers, not stance disagreements — the algorithm can't tell those two cases apart, so the output is a queue for human review.
 
-- **Graceful corpus mid-write fallback** — three validators (`missing-reference-checks`, `qa-semantic-checks`, `duplicate-checks`) and five test files (`useSemanticSearch`, `missing-reference`, `qa-semantic`, `duplicate`, `propose-xref-edges`, `discover-counter-claims` — the latter two with `isCorpusParseable()` gate) wrap `JSON.parse(rag-corpus.json)` in try/catch. When the enrichment pipeline is mid-write, validators self-skip with empty findings instead of crashing.
-- **Phase 2.2 jurisdiction clarification** — cross-source candidate pairs are NOT contradictions. The NSA↔ANSSI test assertion was replaced with a structural diversity check (≥10 distinct source-pair combinations). The script's docstring now states explicitly that the output is a candidate queue for SME review, not declared contradictions, since the algorithm can't distinguish stance disagreement from region-scoped guidance.
+### Behind the scenes
 
-### Notes — Genuinely deferred
-
-- **Phase 2.4 QA-F7..F12 ERROR-severity promotion** waits on two enrichment cycles + a 30-finding precision sample reviewed by an SME. Currently all six checks ship as WARNING/INFO. Promotion plan documented inline in `qa-semantic-checks.ts`.
-- **Post-triage tier snapshot** — the "after" half of the 5–8% measurement can only run once SMEs merge approvals via the admin-portal queues (separate repo, separate PR).
-- **Browser smoke test of all 9 Phase 3 pages** — `npm run dev` + manual paraphrase queries per page from the roadmap §5.2 table. Hooks are framework-tested but the UX experience needs a live page check.
+- **Trust-tier baseline snapshot** captured at `reports/trust-tier-snapshot.json` — 3,314 records distributed 47 / 446 / 786 / 2,035 Authoritative / High / Moderate / Low. Re-run the `measure-tier-distribution` test after data changes to compare.
+- **Genuinely deferred to a later cycle**: ERROR-severity promotion of the six new semantic data-quality checks (waiting on two enrichment cycles + an SME-reviewed precision sample); the "after" half of the 5–8% tier-lift measurement (waits on admin-portal queue approvals); a live browser smoke test of all 9 semantic-search surfaces.
 
 ## [3.10.0] - 2026-05-10
 
-### Added — Trust-engine acceptance layer
+### Highlights
 
-- **TrustTierFilter component** (`?tier=` URL param, multi-select) wired into Library, Migrate, Compliance, Threats, and Timeline. Records tab on Compliance honours the filter via a source→framework-id mapping. Per-layer counts on Migrate and the 4 Landscape memos on Compliance are tier-consistent.
-- **CitationTierChip** rendered next to every chat citation in `ChatMessage.tsx` — closes §14.3 step 4 of trust-engine-explainability. Chip aria-label reflects the engine's tier exactly.
-- **⌘K palette tier-aware ranking + "Authoritative only" toggle** — `UnifiedSearchService.searchPalette()` applies the same trust-tier multiplier (×1.20 / ×1.10 / ×1.00 / ×0.80, default ×0.95) as the chat retrieval path. Persistent toggle in `CommandPalette` filters to Authoritative + High tiers; preference saved in localStorage. Closes §14.3 step 5.
-- **TimelineEvidenceBadge freshness pill** — derives a `current` / `stale` / `critical` state from `sourceDate` (≤365d / ≤730d / >730d). Rendered in both compact (card) and full (popover) modes.
-- **Corpus invariant CI gate** — new `src/__tests__/corpus-trust-invariants.test.ts` (7 tests) pins C3 tier coverage, C4 W3C PROV-DM chain integrity, and C5 freshness across the ~10,800-chunk corpus. Monotone-decreasing thresholds; regressions fail closed.
-- **C1–C10 acceptance contract** — 79 new Vitest tests across `contract.test.ts`, `chunkToResource.contract.test.ts`, `RetrievalService.tier.test.ts`, `RetrievalService.tierOrdering.test.ts`, `UnifiedSearchService.singleton.test.ts`, `UnifiedSearchService.tierPalette.test.ts`, `CitationTierChip.binding.test.tsx`, `TrustTierFilter.test.tsx`, `TimelineEvidenceBadge.test.tsx`.
-- **4 Playwright E2E specs** validated locally under `--project=chromium`: `trust-tier-filter.spec.ts` (5 views), `timeline-freshness-badge.spec.ts`, `cmdk-trust-order.spec.ts`, `chat-citation-tier.spec.ts`.
+- **Trust tier filter on five views.** Library, Migrate, Compliance, Threats, and Timeline now have a tier-filter chip in the URL (`?tier=`) — show only Authoritative, only High, or any combination.
+- **Chat citations now show trust tier.** Every citation in a chat answer is labelled with its tier so you can see at a glance how authoritative the source is.
+- **⌘K command palette is tier-aware.** Authoritative and High results outrank Moderate / Low ones, and there's a persistent "Authoritative only" toggle.
+- **Timeline events show a freshness pill** — current (≤1 year old), stale (1–2 years), or critical (>2 years) — based on the underlying source date.
+- **A long-tail of broken trust links is fixed.** Tier-resolution previously failed for 1,316 records ("orphans" — chunks whose trust tier could not be resolved). After this release: just 13 left. **99% improvement.**
 
-### Fixed — Trust-engine integrity
+### Trust signals across the UI
 
-- **Tier-resolution orphans 1,316 → 13 (99%)**. Root causes diagnosed and patched:
-  - `generate-rag-corpus.ts` `processLeaders` now skips deprecated rows (matches loader's `filterActive`). Closes 1 leader orphan.
-  - `trustScoreData.ts` registers alternate keys for `${country} — ${title}`, `${country}:${body} — ${title}`, and the `United States` un-rename for NSA-orged events. Closes 235 timeline + most doc-enrichment orphans.
-  - `chunkToResource.ts` routes `document-enrichment` chunks by `metadata.collection` (library / timeline / threats / catalog) instead of always mapping to library. Closes 982 doc-enrichment orphans.
-  - `chunkToResource.ts` returns null for classical-family algorithm chunks (RSA, ECDH, ECDSA, Ed25519/Ed448, etc.) — these are migration sources, not trust subjects. Closes 15 algorithm orphans.
-  - New `algorithms_transitions_05102026.csv` adds 49 missing PQC variants (BIKE, SLH-DSA fast variants, more Classic-McEliece, SMAUG-T, NTRU+, Aigis, HAETAE, AIMer, MAYO, HAWK, LMS/XMSS, ML-DSA hybrids). Closes 49 algorithm orphans.
-- **`scripts/download-timeline.js` `title.slice(0, 50)` removed** — the hard 50-char truncation propagated truncated event titles into manifest labels → enrichment refIds → corpus chunks, orphaning 19 doc-enrichment chunks. One-shot script patched 6 existing entries; 13 remain (stale title renames awaiting next enrichment cycle).
-- **Trusted-source xref dedup** — new `trusted_source_xref_05102026_r1.csv` removes 3 duplicate `(resource_type, resource_id, source_id)` tuples (2× direct+mapped pairs + 1× pure dup) that were inflating `densityBonus` in the `sourceCredibility` dimension. Resolves the `trustedSourceXrefData.test.ts` failure from `d58aaecc`.
-- **Corpus invariant test paths** — added `src/data/module-qa/` to the CSV-existence search so `module_qa_combined_*.csv` references resolve. `MAX_MISSING_CSVS` 1 → 0.
-- **`download-library.js` re-run** — fetched 3 cached docs that closed the gap in `chunk.prov.source_doc` resolution. `MAX_MISSING_SOURCE_DOCS` 15 → 0.
+- **TrustTierFilter chip** (`?tier=` URL parameter, multi-select) on Library, Migrate, Compliance, Threats, Timeline. Per-layer counts on Migrate and the 4 Landscape memos on Compliance update consistently with the active selection.
+- **Records tab on Compliance** honours the filter via a source → framework-id mapping.
+- **CitationTierChip** rendered next to every citation in chat answers. The chip's `aria-label` reflects the engine's tier exactly so screen readers don't lose the signal.
+- **⌘K palette tier-aware ranking** — applies the same trust-tier multiplier (Authoritative ×1.20, High ×1.10, Moderate ×1.00, Low ×0.80, Unknown ×0.95) as the chat retrieval path. Persistent "Authoritative only" toggle saved to `localStorage`.
+- **TimelineEvidenceBadge freshness pill** in both compact (card) and full (popover) modes, derived from each event's `sourceDate`.
 
-### Changed
+_Internal detail: `src/components/common/TrustTierFilter.tsx`, `ChatMessage.tsx`, `UnifiedSearchService.searchPalette()`, `TimelineEvidenceBadge.tsx`. 79 new Vitest contract tests + 4 Playwright E2E specs validate the surface._
 
-- **`MAX_DOC_WITHOUT_PASSAGES` 420 → 431** — IETF library backfill (`5567577e`) added 11 docs with `localFile` set but no extracted passages yet. Threshold is monotone-decreasing; next enrichment run reduces it.
-- **`eslint.config.js`** — extended node-files glob to include `scripts/**/*.{js,cjs,mjs,ts}` so tooling scripts lint cleanly without per-file env directives.
+### Fixed — Trust-tier resolution orphans (1,316 → 13)
+
+Five distinct fixes diagnosed and applied:
+
+- **Deprecated leaders no longer appear in the corpus.** `generate-rag-corpus.ts` now matches the loader's `filterActive` filter (closes 1 orphan).
+- **Timeline events register all their lookup keys** — `${country} — ${title}`, `${country}:${body} — ${title}`, and the "United States" un-rename for NSA-organised events (closes 235 timeline + most doc-enrichment orphans).
+- **Enrichment chunks routed by their collection** — document-enrichment chunks were always being mapped to "library" regardless of their actual source. Now read `metadata.collection` (library / timeline / threats / catalog) (closes 982 orphans).
+- **Classical algorithms excluded from trust scoring** — RSA, ECDH, ECDSA, Ed25519/Ed448 etc. are migration sources, not trust subjects (closes 15 algorithm orphans).
+- **49 missing PQC algorithm variants added** to the transitions data — BIKE, SLH-DSA fast variants, more Classic-McEliece, SMAUG-T, NTRU+, Aigis, HAETAE, AIMer, MAYO, HAWK, LMS/XMSS, ML-DSA hybrids (closes 49 algorithm orphans).
+
+### Fixed
+
+- **Timeline event titles no longer get truncated to 50 characters** by `scripts/download-timeline.js`. The hard truncation had been propagating into manifest labels → enrichment refIds → corpus chunks, orphaning 19 records.
+- **Trusted-source cross-reference deduplication** — removed 3 duplicate `(resource, source)` tuples that were inflating the source-credibility dimension's density bonus.
+- **3 cached library documents re-fetched** so every chunk's `prov.source_doc` resolves.
+
+### Behind the scenes
+
+- **Corpus invariant CI gate** — `src/__tests__/corpus-trust-invariants.test.ts` (7 tests) pins tier coverage, PROV-DM chain integrity, and freshness across the ~10,800-chunk corpus. Thresholds are monotone-decreasing so regressions fail closed.
+- **C1–C10 acceptance contract** — 79 new Vitest contract tests plus 4 Playwright E2E specs (`trust-tier-filter`, `timeline-freshness-badge`, `cmdk-trust-order`, `chat-citation-tier`) validate the trust-engine acceptance layer end-to-end under Chromium.
+- ESLint config extended to lint `scripts/**` cleanly without per-file env directives.
 
 ## [3.9.0] - 2026-05-10
 
-### Changed — Community rebrand + Leaders UX
+### Highlights
 
-- **Renamed "Leaders" → "Community"** across all UI surfaces: main nav, embed layout, breadcrumb, route presets, and About page discussions panel
+- **"Leaders" is now called "Community"** across the whole site — main nav, breadcrumb, embed layout, route presets, and the About page.
+- **Clicking a community member expands their detail inline** instead of opening a modal popover. Same on both card and table views, with a clear chevron toggle.
+- **Behind-the-scenes data quality improved** — 10 more validator warnings cleared (from 31 down to 21), 9 more library documents enriched, and the trusted-source map refreshed against the latest IETF downloads.
 
-- **Inline leader detail** — replaced detached modal popover (`LeaderDetailPopover`) with inline expand/collapse using a new `LeaderDetailSection` component. Both card view and table view share the same expansion pattern (`expandedLeaderId` state, `ChevronDown`/`ChevronUp` toggle, `aria-expanded` attribute)
+### Community page (formerly Leaders)
 
-- **Status-column support in leaders loader** — `leadersData.ts` now filters rows where `status !== 'active'`, consistent with the DS-series self-containment schema. New leaders CSV: `leaders_05102026.csv`
+- Renamed across **all UI surfaces**: main navigation, breadcrumb, embed layout, route presets, About page discussion panel.
+- **Inline expand/collapse on Community detail** — both card view and table view share the same expansion pattern (chevron toggle, `aria-expanded`). Closing the previous detached modal popover.
+- **Deprecated rows hidden from listings** — the loader now filters by `status === 'active'` (matching the DS-series self-containment schema introduced in 3.8.0), so retired entries are preserved in the CSV but no longer visible in the UI.
 
-### Added — Data quality & enrichment
+_Internal detail: new `LeaderDetailSection` component replaces `LeaderDetailPopover`; `leadersData.ts` filters by `status`; latest data file is `leaders_05102026.csv`._
 
-- **Library enrichment** — 9 additional entries enriched via Ollama (now 571/787 total, 72.6% coverage)
+### Data quality cleanup
 
-- **Warning batch fixes** — validator warnings reduced 31 → 21 across 6 checks:
-  - **CM-T-01** — added `trusted_source_id` to 2 completed timeline events (`cisa-pqc-products`, `pki-consortium`)
-  - **GC-3** — algorithm canonicalization: added ECC→Classical, Hybrid Auth/Framework→Hybrid PQC, SSH/PSK/all-transition to skip list
-  - **N23-E** — fixed 41 invalid `Relevant PQC Today Features` tokens across library/timeline/threats enrichments
-  - **CM-ORPHAN** — added 5 missing trusted sources (McKinsey, Ponemon, AppViewX, Gartner, Venafi)
-  - **N22** — cleared `local_file` for 6 files that fail quality checks (EU HTML stubs, APRA/OpenSSL/ref-joseph library entries, AUTO-002 threat)
-  - **MR-1** — added `related_standards` citation column to compliance/timeline/threats CSVs; 64 rows populated
+- **9 more library documents enriched** via Ollama — coverage 571 / 787 (72.6%, up from 562 / 787).
+- **Validator warnings: 31 → 21** across six checks:
+  - 2 completed timeline events gained `trusted_source_id` (CISA PQC Products, PKI Consortium).
+  - Algorithm canonicalisation refined — ECC → Classical, Hybrid Auth / Framework → Hybrid PQC, SSH / PSK / all-transition added to the skip list.
+  - 41 invalid `Relevant PQC Today Features` tokens fixed across library / timeline / threats enrichments.
+  - 5 missing trusted sources added (McKinsey, Ponemon, AppViewX, Gartner, Venafi).
+  - 6 local files that failed quality checks had their `local_file` cleared (EU HTML stubs, APRA / OpenSSL / ref-joseph library entries, AUTO-002 threat).
+  - 64 records gained a `related_standards` citation column across compliance / timeline / threats CSVs.
+- **Trusted-source map refreshed** against the latest IETF library downloads — 275 sources, 467 documents, 2,163 cross-reference rows.
 
-- **Trust engine sync** — regenerated `trusted_sources_05102026.csv` (275 sources, 467 docs) and `trusted_source_xref_05102026.csv` (2163 rows) after IETF library downloads. Algorithm rows from prior xref carried forward.
+_Internal detail: validator codes touched — CM-T-01, GC-3, N23-E, CM-ORPHAN, N22, MR-1. Data files — `trusted_sources_05102026.csv`, `trusted_source_xref_05102026.csv`. Algorithm rows from the prior xref carried forward unchanged._
 
 ## [3.8.0] - 2026-05-10
 
-### Added — Data Self-Containment (DS01–DS22)
+### Highlights
 
-Every dated CSV in `src/data/` and MD enrichment file in `src/data/doc-enrichments/` is now self-contained — no record exists only in older / archived versions. Closes the silent-data-loss risk surfaced by `scripts/check-data-archival-risk.py` (638 CSV records + 632 MD records were missing from latest before this work; now 225 / 52 residual).
+- **Records can no longer silently disappear from the data files.** Until this release, regenerating any CSV from scratch (which several enrichment scripts did) could lose rows that lived only in the previous version. Going forward, obsolete rows are marked `deprecated` instead of being deleted, and they're carried forward to every new file so the latest version is always self-sufficient. This closes a silent-data-loss risk that had quietly dropped **1,270 records** across the corpus.
+- **318 records restored or formally preserved** across Library (80), Compliance frameworks (7), Vendors (1), Threats × Industries (3), Community (146 preserved as deprecated), and Product Catalog (81 preserved as deprecated).
+- **CI now refuses pull requests that would silently drop records.** New `promote-cowork.ts --force-drop` flag is required if you ever do need to delete something deliberately.
+- **8 new validator gates** monitor data self-containment + the controlled vocabularies used by persona filters.
 
-**Phase 1 — Foundations:**
+### Data self-containment guarantee
 
-- **DS01 status-column schema** — three new columns added to every record-bearing CSV: `status` ∈ {`active`,`deprecated`,`obsolete`}, `deprecated_at` (ISO date), `deprecated_reason`. Rows are NEVER deleted; obsolete rows are marked deprecated and carried forward. Spec: `pqctoday-priv/docs/platform/data/csv-status-schema.md`.
+- **Three new columns** on every record-bearing CSV in `src/data/`: `status` (active / deprecated / obsolete), `deprecated_at` (ISO date), `deprecated_reason` (human-readable).
+- **Rows are never deleted.** When a record is no longer relevant, it's marked `deprecated` and stays in the file. The UI loaders hide it; the data files keep it.
+- **Loader helpers**: `src/data/loaderUtils.ts` exports `filterActive()` and `partitionByStatus()`. Backwards-compatible — rows without the `status` column are treated as active.
+- **Eight new validators in CI** — CSV self-containment, MD-enrichment self-containment, collision-aware status checks, four controlled-vocabulary gates (countries, industries, region-scope, threat-industries, roles), and a trust-path orphan check.
+- **All eight ship as WARNING.** A staged `DS_SEVERITY=ERROR` environment variable will flip them to hard fails in CI once the residual count is acceptable.
 
-- **DS02 loader filter** — `src/data/loaderUtils.ts` exports `filterActive<T>(rows)` and `partitionByStatus<T>(rows)`. Backwards-compatible (rows without `status` column treated as active). Demonstrated on `vendorData.ts`; other 13 loaders adopt incrementally.
+_Internal detail: spec at `pqctoday-priv/docs/platform/data/csv-status-schema.md`; CSV management protocol updated in `CSVmaintenance.md §11`. Validator gates live in `scripts/validators/self-containment-checks.ts` and are wired through `scripts/validate-data-integrity.ts`._
 
-- **DS03/DS19 — 8 new validator gates** in `scripts/validators/self-containment-checks.ts`: `CM-SC` (CSV self-containment), `CM-SC-MD` (MD self-containment), `CM-STATUS` (collision-aware), `CM-VT-COUNTRIES` / `-INDUSTRIES` / `-REGION-SCOPE` / `-THREAT-INDUSTRY` / `-ROLES` (vocab-tag closed sets), `CM-ORPHAN` (trust-path orphan check). Wired into `scripts/validate-data-integrity.ts`.
+### Writer-side protections (eight scripts)
 
-- **DS17 severity promotion env-var staged** — `DS_SEVERITY=ERROR` flips all DS-series checks from WARNING to ERROR. Activate in CI workflow once CM-SC residual reaches an acceptable level.
+Eight data-writing scripts have been updated so they can never silently drop records:
 
-**Phase 2 — Writer-side patches (8 scripts):**
+- **Enrichment writers** (`enrich-docs-ollama.py`, `enrich-compliance-cswp39-tags.py`, `apply-extraction-to-catalog.py`) — non-empty-wins merge, plus an explicit warning when an input has fewer rows than the previous version.
+- **Cross-reference generators** (`match_certifications.py`, `generate-cpe-xref.py`, `generate-purl-xref.py`) — upsert preserves dropped rows as `deprecated_at=today, deprecated_reason='not in regen'`.
+- **Promotion script** (`promote-cowork.ts`) — refuses to drop records present in production but absent from cowork unless you pass `--force-drop`. Closes the deletion-audit gap.
 
-- `scripts/enrich-docs-ollama.py` — DS05 self-contained MD writer: non-empty wins on per-record merge + `written_ref_ids` carry-forward of un-iterated records.
-- `scripts/match_certifications.py`, `scripts/generate-cpe-xref.py`, `scripts/generate-purl-xref.py` — DS06/07/08 `merge_with_prev()` upsert preserves dropped rows as `deprecated_at=today, deprecated_reason='not in regen'`.
-- `scripts/promote-cowork.ts` — DS09 deletion audit: refuses to silently drop records (in production but absent from cowork) unless `--force-drop`.
-- `scripts/enrich-compliance-cswp39-tags.py`, `scripts/apply-extraction-to-catalog.py` — DS10/DS12 self-containment guards: warn when input has fewer rows than previous version.
+### Tooling + execution
 
-**Phase 3 — Tooling + execution:**
+- **Generic backfill tool** (`scripts/backfill-csv-self-containment.py`) — detects status-column collisions (e.g. the algorithm reference CSV's existing `status` column for standardisation vocab) and falls back to `lifecycle_status`. Includes a re-normalise hook that updates trust tiers and vocab tags after backfill.
+- **Phase 3 orchestrator** (`scripts/queue-phase3.sh`) — runs the full backfill → re-enrichment → corpus regen → validator sweep as one atomic step.
+- **Enrichment merger** (`scripts/merge-enrichment.py --in-place --all`) folds scattered enrichment markdowns into one self-contained latest file per family.
+- **80 restored library records re-enriched** (qwen3.6:27b + nomic-embed-text pre-filter) in 41 min.
+- **RAG corpus regenerated** to 10,704 chunks. Both `revisions.jsonl` and `rag-corpus.json` re-signed with the production ML-DSA-65 attestation key (kid `11b723084d047b4c`). End-to-end trust path complete: chunk → `was_attributed_to` → `trusted_sources` → `trust_tier` → tier multiplier.
 
-- **`scripts/backfill-csv-self-containment.py`** (DS13/DS18) — generic per-family backfill. Detects status-column collision (e.g. `pqc_complete_algorithm_reference`'s existing `status` column for algorithm-standardization vocab) and falls back to `lifecycle_status`. Re-normalize hook invokes `normalize-trust-tiers.ts` + `normalize-vocab-tags.py --all`.
-- **`scripts/queue-phase3.sh`** — atomic Phase 3 orchestrator: DS14 → DS22 → DS15 → DS21 → validators.
-- **`scripts/merge-enrichment.py --in-place --all`** (DS15) folds scattered MD enrichment files into self-contained latest per family.
-- **DS22 targeted re-enrichment** — 80 restored library records re-enriched in 41 min (qwen3.6:27b + nomic-embed-text pre-filter via T16-A).
-- **DS21 RAG corpus regen + re-sign** — `scripts/generate-rag-corpus.ts` produces 10,704 chunks. Both `revisions.jsonl` and `rag-corpus.json` re-signed with the production attestation key (kid `11b723084d047b4c`, ML-DSA-65). Trust path complete: chunk → `was_attributed_to` → `trusted_sources` → `trust_tier` → tier multiplier.
+### Restored data
 
-### Changed
+| Family                           | Restored                      | Notes                                                                                                       |
+| -------------------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Library                          | 80 records                    | e.g. ANSSI-PQC-Position-2022, 3GPP TS 33.501 Rel-19, FIPS-207-HQC, NSA-QKD-Advisory-2023, ISO-IEC-23837-1/2 |
+| Compliance frameworks            | 7 frameworks                  | e.g. AU-MALABO, EUCC-V2                                                                                     |
+| Vendors                          | 1 row                         |                                                                                                             |
+| Quantum threats × HSM industries | 3 rows                        |                                                                                                             |
+| Community (Leaders)              | 146 preserved as `deprecated` | reason: 2026-03-13 leaders policy filter                                                                    |
+| PQC product catalog              | 81 preserved as `deprecated`  | reason: catalog refactor pre-2026-05                                                                        |
+| **Total**                        | **318 records**               | across 6 families; the status columns now exist on 10 families                                              |
 
-- **CSVmaintenance.md** gains §11 "Self-containment guarantee" — documents the status-column rule, loader behaviour, validator gates, and writer obligations. CLAUDE.md "CSV Management" section linked.
-- **Validator results** vs start of work:
-  - CM-SC: 638 → 225 findings (−65%)
-  - CM-SC-MD: 632 → 52 findings (−91%)
-  - All 5 CM-VT-\* checks: 238 → 0 (✓ PASS)
-  - CM-STATUS: ✓ PASS, 10 families managed
-  - CM-ORPHAN: 5 / 323 = 1.5% (well under 10% abort)
+### Validator score-card (start → end)
 
-### Restored
+| Check                      | Before | After | Result                         |
+| -------------------------- | -----: | ----: | ------------------------------ |
+| CSV self-containment       |    638 |   225 | −65%                           |
+| MD self-containment        |    632 |    52 | −91%                           |
+| Controlled-vocab tags (×5) |    238 |     0 | ✓ PASS                         |
+| Status-column collisions   |      — |     0 | ✓ PASS (10 families managed)   |
+| Trust-path orphans         |      — |  1.5% | well under 10% abort threshold |
 
-- **Library**: 80 records restored from archive (e.g. `ANSSI-PQC-Position-2022`, `3GPP TS 33.501 Rel-19`, `FIPS-207-HQC`, `NSA-QKD-Advisory-2023`, `ISO-IEC-23837-1/2`).
-- **Compliance**: 7 frameworks restored (`AU-MALABO`, `EUCC-V2`, …).
-- **Vendors**: 1 row restored.
-- **Quantum threats × HSM industries**: 3 rows restored.
-- **Leaders**: 146 rows preserved as `deprecated` (reason: 2026-03-13 leaders policy filter).
-- **PQC product catalog**: 81 products preserved as `deprecated` (reason: catalog refactor pre-2026-05).
+### Housekeeping
 
-Total: 318 records restored or formally deprecated across 6 families. DS01 columns added to 10 families.
+- 21 CSVs and 51 enrichment MDs archived to `src/data/archive/` and `src/data/doc-enrichments/archive/` (the "keep 2 versions" rule from `CSVmaintenance.md`). Safe to archive because each latest file is now independently self-sufficient.
 
-### Archived (DS16)
-
-21 CSVs + 51 MDs moved to `src/data/archive/` and `src/data/doc-enrichments/archive/` per CSVmaintenance.md "keep 2 versions" rule. Safe because each latest file is now independently sufficient.
-
-### Plan + tracker docs
-
-- `pqctoday-priv/docs/platform/data/data-self-containment-implementation-plan.md` — 22-task plan, 4 phases, validation rules, abort gates.
-- `pqctoday-priv/docs/platform/data/data-self-containment-implementation-tracker.md` — live tracker.
-- `pqctoday-priv/docs/platform/data/csv-status-schema.md` — schema convention.
+_Internal detail: 22-task implementation plan + tracker + schema spec at `pqctoday-priv/docs/platform/data/data-self-containment-implementation-{plan,tracker}.md` and `csv-status-schema.md`._
 
 ## [3.7.0] - 2026-05-09
 
