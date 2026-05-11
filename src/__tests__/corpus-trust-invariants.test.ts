@@ -238,12 +238,29 @@ describe('corpus trust invariants — PROV chain (C4)', () => {
 
   it('source_doc local paths resolve on disk', () => {
     const corpus2 = loadCorpus()
+    // public/{library,timeline,threats,products,vendor-roadmaps}/ are local
+    // reference caches (downloaded via `npm run download:*` for the
+    // maintainer's review UX). They are not committed to the public repo by
+    // design — file sizes + licensing make it inappropriate. The corpus
+    // carries `prov.source_doc` pointers to these for the citation UI's
+    // local-link affordance, but their absence on a clean CI checkout is
+    // expected and must not be a test failure. See CLAUDE.md "Reference
+    // Document Cache" section + .gitignore lines 240-247.
+    const LOCAL_ONLY_PREFIXES = [
+      'public/library/',
+      'public/timeline/',
+      'public/threats/',
+      'public/products/',
+      'public/vendor-roadmaps/',
+    ]
     const failures: string[] = []
     for (const chunk of corpus2) {
       const doc = chunk.prov?.source_doc
       if (!doc) continue
       // External URLs accepted as-is
       if (/^https?:\/\//i.test(doc)) continue
+      // Local-only reference caches — informational pointers, not required.
+      if (LOCAL_ONLY_PREFIXES.some((p) => doc.startsWith(p))) continue
       const abs = path.isAbsolute(doc) ? doc : path.join(REPO_ROOT, doc)
       if (!fs.existsSync(abs)) failures.push(`${chunk.id}: ${doc}`)
     }
