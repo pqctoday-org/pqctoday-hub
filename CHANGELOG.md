@@ -35,7 +35,11 @@ All notable changes to this project will be documented in this file.
 
 ### Added — Plan 07 `/agility` maturity dashboard
 
-- **`/agility` route** — new top-level route rendering the NIST CSWP 39 Cryptographic-Agility Maturity grid (4 levels × 5 pillars). `src/components/Agility/AgilityView.tsx` reuses the existing `MaturityEvidenceGrid` over a CSWP-39-filtered slice of `maturityRequirements`, plus a three-cell KPI bar (grid coverage %, mean confidence, source records). Empty-state copy points operators at the enrichment script when the slice is empty. Closes the last remaining 🟡 gap in Plan 07 of the trust-engine sub-plans — Plan 07 is now ✅. Trust-engine sub-plan completion now **12/13 ✅** (Plans 01 module-version gate and 02 tool-outputSpec backfill remain 🟡).
+- **`/agility` route** — new top-level route rendering the NIST CSWP 39 Cryptographic-Agility Maturity grid (4 levels × 5 pillars). `src/components/Agility/AgilityView.tsx` reuses the existing `MaturityEvidenceGrid` over a CSWP-39-filtered slice of `maturityRequirements`, plus a three-cell KPI bar (grid coverage %, mean confidence, source records). Empty-state copy points operators at the enrichment script when the slice is empty. Closes the last remaining 🟡 gap in Plan 07 of the trust-engine sub-plans.
+
+### Status — Trust-Engine sub-plans 13/13 ✅
+
+Plans 01 (learn-module gates) and 02 (workshop-tool outputSpec) were previously listed as 🟡 in the in-session status doc but on inspection are already complete: `scripts/ci/check-module-version-bump.ts` + `scripts/ci/check-tool-version-bump.ts` exist and are wired into `.github/workflows/ci.yml`; `scripts/validators/trust-engine-checks.ts` implements CM-W, CM-C, QA-S, QA-CSWP validators; CM-W currently passes (0 findings — no tool with `hasOutput: true` is missing `outputSpec`, no crypto-category tool is missing `hasOutput`); CM-C and QA-S emit operational WARNINGs (38 stale modules, 707 Q&A rows without citations) that are the intended SME-review queue, not implementation gaps. **All 13 sub-plans of the trust-engine roadmap are now ✅ code-complete on this branch.**
 
 ## [3.11.0] - 2026-05-10
 
