@@ -31,6 +31,7 @@ import {
 } from '@/data/complianceData'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { NAICS_LABELS } from '@/components/common/SectorFilter'
 import { CountryFlag } from '@/components/common/CountryFlag'
 import { ViewToggle, type ViewMode } from '@/components/Library/ViewToggle'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
@@ -917,19 +918,34 @@ export function ComplianceLandscape({
     ]
   }, [])
 
-  // Industry options — derived from full dataset (union of fw.industries)
-  // rather than a hardcoded list, so new industries in the CSV appear
-  // automatically and are filterable on every tab.
+  // Industry options — derived from full dataset (union of fw.industries),
+  // which in this CSV are NAICS 2-digit sector codes (e.g. "52", "92"). We
+  // render the human-readable label via NAICS_LABELS and fall back to the
+  // raw code only when no label is registered, so users never see bare
+  // numbers in the dropdown. If the active industryFilter isn't in the
+  // vocabulary (e.g. seeded from a cross-page persona/URL using a different
+  // taxonomy like "Finance & Banking"), include it anyway so the dropdown
+  // surfaces the active value instead of falling back to "Industry".
   const industryItems = useMemo(() => {
     const inds = new Set<string>()
     for (const fw of complianceFrameworks) {
       for (const i of fw.industries) inds.add(i)
     }
+    if (industryFilter !== 'All' && !inds.has(industryFilter)) {
+      inds.add(industryFilter)
+    }
+    const labelFor = (code: string) => {
+      // eslint-disable-next-line security/detect-object-injection
+      const label = NAICS_LABELS[code]
+      return label ? `${label} (${code})` : code
+    }
     return [
       { id: 'All', label: 'All Industries' },
-      ...[...inds].sort().map((i) => ({ id: i, label: i })),
+      ...[...inds]
+        .sort((a, b) => labelFor(a).localeCompare(labelFor(b)))
+        .map((i) => ({ id: i, label: labelFor(i) })),
     ]
-  }, [])
+  }, [industryFilter])
 
   // Region options — derived from full dataset with per-region counts so the
   // facet always lists every populated region (e.g. Africa) regardless of the

@@ -15,6 +15,22 @@ interface SectorFilterProps {
 }
 
 // NAICS 2-digit group labels relevant to PQC — used when no custom options provided
+export const NAICS_LABELS: Record<string, string> = {
+  '22': 'Energy & Utilities',
+  '44': 'Retail Trade',
+  '45': 'Retail Trade',
+  '48': 'Transportation',
+  '49': 'Transportation',
+  '51': 'Information Technology',
+  '52': 'Finance & Insurance',
+  '54': 'Professional & Technical Services',
+  '56': 'Administrative & Support Services',
+  '61': 'Educational Services',
+  '62': 'Healthcare & Life Sciences',
+  '91': 'Government & Defense',
+  '92': 'Public Administration',
+}
+
 const DEFAULT_SECTOR_OPTIONS: FilterDropdownItem[] = [
   { id: '52', label: 'Finance & Insurance' },
   { id: '92', label: 'Public Administration' },
@@ -31,7 +47,7 @@ const DEFAULT_SECTOR_OPTIONS: FilterDropdownItem[] = [
 ]
 
 // Freeform industry strings that map to NAICS 2-digit groups
-const INDUSTRY_TO_NAICS: Record<string, string[]> = {
+export const INDUSTRY_TO_NAICS: Record<string, string[]> = {
   '52': ['Finance & Banking', 'Finance & Insurance', 'Banking', 'financial'],
   '92': ['Government & Defense', 'Government', 'Defense', 'Public Administration', 'Federal'],
   '54': ['Technology', 'Professional Services', 'Consulting', 'Legal'],
@@ -75,6 +91,23 @@ export function SectorFilter({ options, className }: SectorFilterProps) {
       className={className}
     />
   )
+}
+
+/**
+ * Resolve a freeform industry string (e.g. "Finance & Banking", from a URL
+ * param or persona store using a non-NAICS taxonomy) to a NAICS 2-digit code
+ * if a known alias exists. Returns the input unchanged when it's already a
+ * NAICS code or has no alias mapping.
+ */
+export function resolveToNaics(value: string): string {
+  if (!value || value === 'All') return value
+  // Already a NAICS code present in our label table
+  if (Object.prototype.hasOwnProperty.call(NAICS_LABELS, value)) return value
+  const lower = value.toLowerCase()
+  for (const [code, aliases] of Object.entries(INDUSTRY_TO_NAICS)) {
+    if (aliases.some((alias) => alias.toLowerCase() === lower)) return code
+  }
+  return value
 }
 
 /** Read sector filter state from URL — returns empty array when unset */
