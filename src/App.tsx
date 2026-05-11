@@ -89,6 +89,11 @@ const ComplianceView = lazyWithRetry(() =>
     default: module.ComplianceView,
   }))
 )
+const AgilityView = lazyWithRetry(() =>
+  import('./components/Agility/AgilityView').then((module) => ({
+    default: module.AgilityView,
+  }))
+)
 const ChangelogView = lazyWithRetry(() =>
   import('./components/Changelog/ChangelogView').then((module) => ({
     default: module.ChangelogView,
@@ -278,6 +283,14 @@ function App() {
         element={
           <ErrorBoundary>
             <ComplianceView />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="agility"
+        element={
+          <ErrorBoundary>
+            <AgilityView />
           </ErrorBoundary>
         }
       />
