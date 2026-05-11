@@ -9,31 +9,15 @@ describe('CitationTierChip', () => {
     expect(container.firstChild).toBeNull()
   })
 
-  it('renders an "A" glyph for Authoritative', () => {
-    render(<CitationTierChip tier="Authoritative" />)
-    const chip = screen.getByLabelText(/Authoritative/i)
-    expect(chip).toBeInTheDocument()
-    expect(chip.textContent).toBe('A')
-  })
-
-  it('renders an "H" glyph for High', () => {
-    render(<CitationTierChip tier="High" />)
-    expect(screen.getByLabelText(/High/i).textContent).toBe('H')
-  })
-
-  it('renders an "M" glyph for Moderate', () => {
-    render(<CitationTierChip tier="Moderate" />)
-    expect(screen.getByLabelText(/Moderate/i).textContent).toBe('M')
-  })
-
-  it('renders an "L" glyph for Low', () => {
-    render(<CitationTierChip tier="Low" />)
-    expect(screen.getByLabelText(/Low/i).textContent).toBe('L')
-  })
-
-  it('exposes accessible aria-label', () => {
-    render(<CitationTierChip tier="Authoritative" />)
-    expect(screen.getByLabelText('Trust tier: Authoritative')).toBeInTheDocument()
+  it.each([
+    ['Authoritative', 'A'],
+    ['High', 'H'],
+    ['Moderate', 'M'],
+    ['Low', 'L'],
+  ] as const)('tier=%s → renders "%s" glyph with matching aria-label', (tier, glyph) => {
+    render(<CitationTierChip tier={tier} />)
+    const chip = screen.getByLabelText(`Trust tier: ${tier}`)
+    expect(chip.textContent).toBe(glyph)
   })
 
   it('passes through additional className', () => {

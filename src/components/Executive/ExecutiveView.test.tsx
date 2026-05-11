@@ -80,15 +80,13 @@ describe('ExecutiveView', () => {
     mockAssessmentStore.industry = ''
   })
 
-  it('renders the page title', () => {
+  it('renders the page title alongside the four KPI card labels', () => {
+    // Consolidated: previously two separate tests, each paying full mount
+    // cost just to assert that static strings appear. One mount, all five
+    // assertions; mount-doesn't-crash is implicit if any of them resolve.
     renderView()
 
     expect(screen.getByText('PQC Readiness Summary')).toBeInTheDocument()
-  })
-
-  it('renders KPI cards with correct labels', () => {
-    renderView()
-
     expect(screen.getByText('Critical Threats')).toBeInTheDocument()
     expect(screen.getByText('Algorithms at Risk')).toBeInTheDocument()
     expect(screen.getByText('Migration Tools')).toBeInTheDocument()
@@ -107,16 +105,12 @@ describe('ExecutiveView', () => {
     expect(kpiCard.textContent).toContain('4')
   })
 
-  it('renders the priority actions table', () => {
+  it('renders the priority actions table and risk summary section', () => {
+    // Consolidated: previously two separate tests for static section headings.
     renderView()
 
     expect(screen.getByText('Top Priority Actions')).toBeInTheDocument()
     expect(screen.getByText(/Address critical quantum threats/)).toBeInTheDocument()
-  })
-
-  it('renders the risk summary section', () => {
-    renderView()
-
     expect(screen.getByText('Risk Summary')).toBeInTheDocument()
   })
 
