@@ -86,7 +86,9 @@ if (!moduleDataChanged) {
 }
 
 // Get diff for moduleData.ts
-const moduleDataDiff = run('git diff origin/main...HEAD -- src/components/PKILearning/moduleData.ts')
+const moduleDataDiff = run(
+  'git diff origin/main...HEAD -- src/components/PKILearning/moduleData.ts'
+)
 
 const affectedModuleIds = extractAffectedModuleIds(moduleDataDiff)
 
@@ -152,9 +154,7 @@ for (const moduleId of affectedModuleIds) {
 if (errors.length > 0) {
   console.error('\nModule version bump check FAILED:')
   errors.forEach((e) => console.error(e))
-  console.error(
-    '\nBump the version field in the affected module content.ts file(s).\n'
-  )
+  console.error('\nBump the version field in the affected module content.ts file(s).\n')
   process.exit(1)
 }
 
