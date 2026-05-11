@@ -136,7 +136,7 @@ function require_env(name: string): string {
 
 function githubApiGet(endpoint: string, token: string): unknown {
   const result = execSync(
-    `curl -s -H "Authorization: Bearer ${token}" -H "Accept: application/vnd.github+json" "https://api.github.com/${endpoint}"`,
+    `curl -s -H "Authorization: Bearer ${token}" -H "Accept: application/vnd.github+json" "https://api.github.com/${endpoint}"`
   ).toString()
   return JSON.parse(result)
 }
@@ -145,7 +145,7 @@ function resolveGithubReviewer(
   prNumber: number,
   token: string,
   repo: string,
-  registry: Reviewer[],
+  registry: Reviewer[]
 ): { reviewer: Reviewer; method: 'github' } | null {
   let reviews: Array<{ state: string; user: { login: string } }>
   try {
@@ -160,9 +160,7 @@ function resolveGithubReviewer(
   if (!approved) return null
 
   const handle = approved.user.login.toLowerCase()
-  const reviewer = registry.find(
-    (r) => r.active && r.github_handle?.toLowerCase() === handle,
-  )
+  const reviewer = registry.find((r) => r.active && r.github_handle?.toLowerCase() === handle)
   if (!reviewer) {
     console.warn(`[append-revision] Approver @${handle} not found in reviewers.json`)
     return null
@@ -172,7 +170,7 @@ function resolveGithubReviewer(
 
 function resolveOfflineReviewer(
   prNumber: number,
-  registry: Reviewer[],
+  registry: Reviewer[]
 ): { reviewer: Reviewer; attestation: OfflineAttestation; method: 'offline' } | null {
   const approvalsDir = path.join(process.cwd(), 'approvals')
   if (!fs.existsSync(approvalsDir)) return null
@@ -184,11 +182,9 @@ function resolveOfflineReviewer(
   for (const file of files) {
     try {
       const attestation = JSON.parse(
-        fs.readFileSync(path.join(approvalsDir, file), 'utf-8'),
+        fs.readFileSync(path.join(approvalsDir, file), 'utf-8')
       ) as OfflineAttestation
-      const reviewer = registry.find(
-        (r) => r.active && r.reviewer_id === attestation.reviewer_id,
-      )
+      const reviewer = registry.find((r) => r.active && r.reviewer_id === attestation.reviewer_id)
       if (reviewer) {
         return { reviewer, attestation, method: 'offline' }
       }
@@ -352,7 +348,7 @@ async function main() {
   if (!resolvedResult) {
     console.error(
       `[append-revision] No valid reviewer found for PR #${prNumber}. ` +
-        'Ensure a registered SME approved on GitHub or committed an offline approval file.',
+        'Ensure a registered SME approved on GitHub or committed an offline approval file.'
     )
     // Log a placeholder entry to avoid blocking deploys entirely — mark as unreviewed
     // In production, pair this with a required CI check that blocks merge
@@ -417,7 +413,7 @@ async function main() {
         tool_id: tool.tool_id,
         scope_summary: `Tool ${tool.tool_id}: v${tool.old_version} → v${tool.new_version}`.slice(
           0,
-          120,
+          120
         ),
       }
       fs.appendFileSync(revisionsPath, JSON.stringify(toolEntry) + '\n', 'utf-8')
@@ -431,7 +427,7 @@ async function main() {
     execSync('git config user.email "github-actions[bot]@users.noreply.github.com"')
     execSync(`git add "${revisionsPath}"`)
     execSync(
-      `git commit -m "chore(revisions): append revision entry for PR #${prNumber} [skip ci]"`,
+      `git commit -m "chore(revisions): append revision entry for PR #${prNumber} [skip ci]"`
     )
     execSync('git push')
     console.log('[append-revision] Committed and pushed revisions.jsonl')
