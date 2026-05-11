@@ -329,8 +329,9 @@ function computeAllScores(): Map<string, TrustScore> {
     const derivedVetting = new Set<string>(item.vettingBody ?? [])
     if (item.fipsValidated === 'yes') derivedVetting.add('NIST')
     for (const cert of certs) {
-      if (cert.certType === 'FIPS' || cert.certType === 'ACVP') derivedVetting.add('NIST')
-      else if (cert.certType === 'CC') derivedVetting.add('Common Criteria')
+      if (cert.certType === 'FIPS 140-3' || cert.certType === 'ACVP') derivedVetting.add('NIST')
+      else if (cert.certType === 'Common Criteria') derivedVetting.add('Common Criteria')
+      else if (cert.certType === 'PSA Certified') derivedVetting.add('PSA Certified')
     }
     const hasGovValidation = item.fipsValidated === 'yes' || certs.length > 0
     const derivedPeerReviewed = item.peerReviewed ?? (hasGovValidation ? 'yes' : undefined)

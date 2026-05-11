@@ -80,7 +80,7 @@ describe('useSemanticSearch', () => {
         title: 'fake',
         content: 'fake',
         metadata: { referenceId: 'FAKE' },
-      } as RAGChunk,
+      } as unknown as RAGChunk,
     ])
     const { result } = renderHook(() => useSemanticSearch('library', 'anything'))
     await act(async () => {
@@ -107,21 +107,21 @@ describe('useSemanticSearch', () => {
         title: 'A',
         content: 'a',
         metadata: { referenceId: 'A' },
-      } as RAGChunk,
+      } as unknown as RAGChunk,
       {
         id: 'library-B',
         source: 'library',
         title: 'B',
         content: 'b',
         metadata: { referenceId: 'B' },
-      } as RAGChunk,
+      } as unknown as RAGChunk,
       {
         id: 'library-C',
         source: 'library',
         title: 'C',
         content: 'c',
         metadata: { referenceId: 'C' },
-      } as RAGChunk,
+      } as unknown as RAGChunk,
     ])
 
     const { result } = renderHook(() => useSemanticSearch('library', 'find A'))
@@ -149,21 +149,21 @@ describe('useSemanticSearch', () => {
         title: 'A',
         content: '',
         metadata: { referenceId: 'A' },
-      } as RAGChunk,
+      } as unknown as RAGChunk,
       {
         id: 'library-B',
         source: 'library',
         title: 'B',
         content: '',
         metadata: { referenceId: 'B' },
-      } as RAGChunk,
+      } as unknown as RAGChunk,
       {
         id: 'library-C',
         source: 'library',
         title: 'C',
         content: '',
         metadata: { referenceId: 'C' },
-      } as RAGChunk,
+      } as unknown as RAGChunk,
     ])
     const { result } = renderHook(() => useSemanticSearch('library', 'q', { limit: 2 }))
     await act(async () => {
@@ -194,7 +194,7 @@ describe('useSemanticSearch', () => {
         title: 'A',
         content: '',
         metadata: { referenceId: 'A' },
-      } as RAGChunk,
+      } as unknown as RAGChunk,
     ])
     const { rerender } = renderHook(({ q }: { q: string }) => useSemanticSearch('library', q), {
       initialProps: { q: 'a' },
@@ -222,7 +222,7 @@ describe('useSemanticSearch', () => {
         title: 'A',
         content: '',
         metadata: { referenceId: 'A' },
-      } as RAGChunk,
+      } as unknown as RAGChunk,
     ])
     const { result } = renderHook(() => useSemanticSearch('migrate', 'q'))
     await act(async () => {
