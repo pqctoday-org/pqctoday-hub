@@ -3,6 +3,7 @@ import { conceptXwalkData, type ConceptXwalkRecord } from '@/data/conceptXwalkDa
 import {
   conceptByCanonicalId,
   conceptIdByStoreKey,
+  conceptRegistry,
   type ConceptRegistryRow,
   type ConceptSourceType,
 } from '@/data/conceptRegistry'
@@ -58,9 +59,16 @@ export function buildConceptGraph(
   const center = conceptByCanonicalId.get(centerConceptId)
   if (!center) return { nodes: [], edges: [] }
 
-  // 1-hop xwalk edges touching the center.
+  // Equivalent canonicals — a compliance row's short-form id (e.g. CNSA-2)
+  // and the library-stub long form (NSA CNSA 2.0) describe the same concept
+  // but have different canonical ids. The xwalk edges land on whichever
+  // form was authored. Walk all forms so the graph populates regardless of
+  // which the user clicked.
+  const centerIds = new Set<string>([centerConceptId, ...equivalentCanonicals(center)])
+
+  // 1-hop xwalk edges touching any of the center forms.
   const directEdges = conceptXwalkData.filter(
-    (e) => e.fromConceptId === centerConceptId || e.toConceptId === centerConceptId
+    (e) => centerIds.has(e.fromConceptId) || centerIds.has(e.toConceptId)
   )
 
   const nodes = new Map<string, XwalkGraphNode>()
@@ -69,12 +77,20 @@ export function buildConceptGraph(
   const edges: XwalkGraphEdge[] = []
   for (const e of directEdges) {
     if (!e.fromConceptId || !e.toConceptId) continue
-    const neighborId = e.fromConceptId === centerConceptId ? e.toConceptId : e.fromConceptId
+    const neighborId = centerIds.has(e.fromConceptId) ? e.toConceptId : e.fromConceptId
+    if (centerIds.has(neighborId)) continue // edge between two equivalent center forms
     if (!nodes.has(neighborId)) {
       const reg = conceptByCanonicalId.get(neighborId)
       if (reg) nodes.set(neighborId, toNode(reg, false))
     }
-    edges.push(xwalkToEdge(e))
+    // Rewrite edge source/target so all equivalent-form references collapse
+    // onto the single centerConceptId for rendering.
+    const remapped: ConceptXwalkRecord = {
+      ...e,
+      fromConceptId: centerIds.has(e.fromConceptId) ? centerConceptId : e.fromConceptId,
+      toConceptId: centerIds.has(e.toConceptId) ? centerConceptId : e.toConceptId,
+    }
+    edges.push(xwalkToEdge(remapped))
   }
 
   // Synthetic algorithm leaves on standards in the 1-hop set.
@@ -139,6 +155,40 @@ function kebab(s: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '')
+}
+
+/**
+ * Returns canonical_ids that describe the same concept as `center` but live
+ * under different store keys (e.g. compliance row `CNSA-2` and library stub
+ * `NSA CNSA 2.0`). Used by buildConceptGraph so a click on either form
+ * yields the same neighbourhood.
+ *
+ * The match is token-substring of kebab(source_row_id). For example:
+ *   center.kebab = "cnsa-2"
+ *   library "NSA CNSA 2.0".kebab = "nsa-cnsa-2-0"
+ *     → contains "-cnsa-2-" → equivalent ✓
+ *
+ * Minimum needle length 4 avoids generic tokens like "nsa", "iso" gobbling
+ * the entire registry.
+ */
+function equivalentCanonicals(center: ConceptRegistryRow): string[] {
+  if (!center.sourceRowId) return []
+  const needle = kebab(center.sourceRowId)
+  if (needle.length < 4) return []
+  const out: string[] = []
+  for (const r of conceptRegistry) {
+    if (r.conceptId === center.conceptId) continue
+    if (!r.sourceRowId) continue
+    const hay = kebab(r.sourceRowId)
+    if (hay === needle) {
+      out.push(r.conceptId)
+      continue
+    }
+    if (hay.startsWith(`${needle}-`) || hay.endsWith(`-${needle}`) || hay.includes(`-${needle}-`)) {
+      out.push(r.conceptId)
+    }
+  }
+  return out
 }
 
 /**

@@ -4,6 +4,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.14.2] - 2026-05-11
+
+### Fixed
+
+- **Compliance Concept Graph now populates for tiles whose `compliance.id` differs from the long-form display label the xwalk uses** (CNSA 2.0, NIS2 Directive, DORA, eIDAS 2.0, etc.). Previously clicking these tiles opened a modal showing only the centre node alone — the xwalk edges authored against the long form (e.g. `NSA CNSA 2.0` → `guidance:nsa-cnsa-2-0`) didn't connect to the centre canonical (`guidance:cnsa-2`) so the 1-hop filter returned zero edges. `buildConceptGraph` now also walks registry entries whose `kebab(sourceRowId)` token-contains the centre tile's kebab — pulling in the cross-store cousins that hold the edges. Edge endpoints get remapped back to the single centre id so the rendered graph stays visually focused (no duplicate "CNSA 2.0" + "NSA CNSA 2.0" node pair).
+- **Minimum needle length 4** on the equivalents matcher prevents short generic tokens (`iso`, `gov`) from collapsing unrelated entries. Tiles whose compliance.id kebabs to fewer than 4 chars get only their direct edges — acceptable for those edge cases.
+
+### Behind the scenes
+
+- New `equivalentCanonicals(center)` helper in [`src/utils/conceptXwalkGraph.ts`](src/utils/conceptXwalkGraph.ts) — ~25 LOC. Uses the existing `conceptRegistry` export.
+
 ## [3.14.1] - 2026-05-11
 
 ### Fixed
@@ -18,7 +29,7 @@ All notable changes to this project will be documented in this file.
 
 ### Known limitation (queued for the next release)
 
-- Cards whose `id` doesn't directly match an xwalk endpoint (e.g. clicking CNSA 2.0 → centerConceptId is `guidance:cnsa-2`, but xwalk uses display_label `NSA CNSA 2.0` → canonical `guidance:nsa-cnsa-2-0`) will see an empty graph with the message _"No concept-xwalk edges for this framework."_ This is correct given the current canonical-id assignment — the deeper fix is a curated equivalence table in the registry, or a runtime "equivalent canonicals" lookup in the graph builder. Tracked for the next release.
+- Cards whose `id` doesn't directly match an xwalk endpoint (e.g. clicking CNSA 2.0 → centerConceptId is `guidance:cnsa-2`, but xwalk uses display*label `NSA CNSA 2.0` → canonical `guidance:nsa-cnsa-2-0`) will see an empty graph with the message *"No concept-xwalk edges for this framework."\_ This is correct given the current canonical-id assignment — the deeper fix is a curated equivalence table in the registry, or a runtime "equivalent canonicals" lookup in the graph builder. Tracked for the next release.
 
 ## [3.14.0] - 2026-05-11
 
