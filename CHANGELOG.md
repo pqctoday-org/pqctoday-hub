@@ -4,6 +4,47 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.14.6] - 2026-05-11
+
+### Added — 15 Gemini-extracted xwalk candidates for ASC X9 + NY DFS docs
+
+Filled the data gap for the 5 source documents that the local Ollama enrichment had skipped (the cause of the empty Concept Graph icons on the ASC X9 and NY DFS compliance tiles in v3.14.5). Used Gemini 3.1 Pro with a parallel-sub-agent orchestrator prompt — one sub-agent per source doc, 3–4 IR 8477 relationships extracted per doc, returned as IR-8477-compliant CSV.
+
+**Source docs processed** (from `public/library/`):
+
+- `ASC-X9-TR-50-2019-Quantum-Techniques-CMS.pdf` → 3 candidates (RFC 5990, NIST PQC Project, RFC 5652)
+- `ASC-X9-IR-F01-2022-Quantum-Computing-Risk-Study.pdf` → 3 candidates (DHS PQC Roadmap, Mosca's Theorem, NIST NCCoE)
+- `ASC-X9-PQC-Financial-Readiness-2025.pdf` → 3 candidates (FIPS 203, FIPS 204, NSA CNSA 2.0)
+- `ASC-X9-Financial-PKI.html` → 3 candidates (FIPS 203, FIPS 204, RFC 8446)
+- `NY-DFS-23-NYCRR-500-A2.pdf` → 3 candidates (NIST CSF, ISO/IEC 27001, FIPS 140-3)
+
+After staging in `pqctoday-priv/cowork/concept_xwalk_candidates_05082026.csv` and running `scripts/merge-xwalk-candidates.ts`:
+
+- **9 of 15 newly mergeable** — the rest were orphans (`to_concept` doesn't resolve to a registered library/compliance/timeline ID — e.g. `Mosca's Theorem` is an abstract concept, `DHS PQC Roadmap` has no source doc, `NIST PQC Standardization Project` is too vague to map to a single record).
+- 1 invalid-vocab finding: `Mosca's Theorem` row used `rationale_type=semantic` which the merge script's vocab validator rejects (it lags v3.14.0's IR 8477 alignment). Known issue, separate fix.
+- Final: **957 rows** in `concept_xwalks_05112026_r2.csv` (was 948 in v3.14.5).
+
+### Effect on the UI
+
+- **ASC X9 Financial PKI & PQC Standards** tile — Network icon now appears, graph populates with FIPS 203, FIPS 204, RFC 8446 (and via equivalence the `ASC-X9-PQC-Readiness-2025` graph picks up FIPS 203/204 + NSA CNSA 2.0).
+- **NY DFS 23 NYCRR 500** tile — Network icon now appears, graph populates with FIPS 140-3 (NIST CSF + ISO/IEC 27001 are orphan but didn't land).
+- Other ASC X9 docs (TR-50, IR-F01-2022, Financial-PKI) gain graph entry-points where they didn't have edges before.
+
+### Pipeline note
+
+The `merge-xwalk-candidates.ts` reads from the private `pqctoday-priv/cowork/` directory, not the public `src/data/concept_xwalk_candidates_*.csv` mirror. Appending to the mirror file silently has no effect on a merge run. Future Gemini-extraction iterations should append directly to the cowork file.
+
+### Known follow-ups
+
+- **80 unresolved endpoint references** in the migrated xwalk (unchanged from v3.14.5) — concepts like `CA-B-Forum-Ballot-SMC014`, `CNSS Policy #15`, `NIST CSF 2.0` need registry entries.
+- **PQC Coalition** still has no source doc — needs to be downloaded before extraction.
+- **SOC 2** still requires hand-authored edges (AICPA paywalled).
+- **Merger vocab validator stale** — rejects `semantic`/`syntactic`/`functional`. Fixable by aligning `scripts/mergeXwalkCandidates.ts` (or similar) to the v3.14.0 IR 8477 closed set.
+
+### Verified
+
+`npx vitest run src/data src/components/Compliance` → 330/330 pass; tsc silent.
+
 ## [3.14.5] - 2026-05-11
 
 ### Improved — Concept Graph icon now hides when graph would be empty + matcher handles NIST doc-suffix variants
