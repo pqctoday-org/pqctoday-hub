@@ -313,3 +313,13 @@ export const libraryMetadata = parsedMetadata
 export function getLibraryItemsForModule(moduleId: string): LibraryItem[] {
   return libraryData.filter((item) => item.moduleIds?.includes(moduleId))
 }
+
+/**
+ * Canonical concept_id for a library row — PR 3c of the IR 8477 fidelity
+ * remediation. Resolves via the concept_registry by (source_table, source_row_id).
+ * Returns undefined when the row has no registry entry.
+ */
+import { conceptIdForStoreKey } from './conceptRegistry'
+export function conceptIdForLibraryItem(item: { referenceId: string }): string | undefined {
+  return conceptIdForStoreKey('library', item.referenceId)
+}

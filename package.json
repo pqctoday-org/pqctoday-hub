@@ -1,7 +1,7 @@
 {
   "name": "pqctoday-hub",
   "private": true,
-  "version": "3.13.0",
+  "version": "3.14.0",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -81,12 +81,14 @@
     "@scure/bip39": "^2.0.1",
     "@tailwindcss/vite": "^4.2.2",
     "@tanstack/react-virtual": "^3.13.24",
+    "@types/dagre": "^0.7.54",
     "@types/file-saver": "^2.0.7",
     "@types/papaparse": "^5.5.2",
     "@xyflow/react": "^12.10.1",
     "cborg": "^5.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dagre": "^0.8.5",
     "docx": "^9.6.1",
     "ed25519-hd-key": "^1.3.0",
     "file-saver": "^2.0.5",

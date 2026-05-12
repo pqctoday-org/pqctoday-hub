@@ -130,4 +130,22 @@ describe('conceptXwalkData', () => {
     )
     expect(legacy).toHaveLength(0)
   })
+
+  // PR 3b — canonical-id columns populated by migrate-xwalk-ids.ts.
+  it('CSWP 39 → FIPS 203 edge carries canonical concept ids', () => {
+    const edge = conceptXwalkData.find(
+      (e) => e.fromConcept === 'NIST CSWP 39' && e.toConcept === 'FIPS 203'
+    )
+    expect(edge?.fromConceptId).toBe('framework:nist-cswp-39')
+    expect(edge?.toConceptId).toBe('standard:fips-203')
+  })
+
+  it('at least 99% of edges have both from_concept_id and to_concept_id populated', () => {
+    const resolved = conceptXwalkData.filter((e) => e.fromConceptId && e.toConceptId).length
+    const rate = resolved / conceptXwalkData.length
+    // Allow a few SME-review orphans (e.g. "NIST SP 800-90B" vs "NIST-SP-800-90B")
+    expect(rate, `resolved=${resolved} / total=${conceptXwalkData.length}`).toBeGreaterThanOrEqual(
+      0.99
+    )
+  })
 })

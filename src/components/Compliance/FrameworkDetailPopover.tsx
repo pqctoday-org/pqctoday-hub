@@ -2,8 +2,10 @@
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import FocusLock from 'react-focus-lock'
+import { useState } from 'react'
 import {
   ShieldCheck,
+  Network,
   X,
   ExternalLink,
   BookOpen,
@@ -17,8 +19,10 @@ import type { ComplianceFramework } from '@/data/complianceData'
 import type { LibraryItem } from '@/data/libraryData'
 import type { TimelineEvent } from '@/types/timeline'
 import { libraryData } from '@/data/libraryData'
+import { conceptIdForFramework } from '@/data/complianceData'
 import { timelineData } from '@/data/timelineData'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
+import { FrameworkConceptGraphModal } from './FrameworkConceptGraphModal'
 
 interface FrameworkDetailPopoverProps {
   isOpen: boolean
@@ -37,6 +41,8 @@ export const FrameworkDetailPopover = ({
   onSelectTimeline,
 }: FrameworkDetailPopoverProps) => {
   const popoverRef = useRef<HTMLDivElement>(null)
+  const [graphOpen, setGraphOpen] = useState(false)
+  const graphConceptId = framework ? conceptIdForFramework(framework) : undefined
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -121,14 +127,27 @@ export const FrameworkDetailPopover = ({
                 </h3>
                 <p className="text-xs text-muted-foreground mt-0.5">{framework.enforcementBody}</p>
               </div>
-              <Button
-                variant="ghost"
-                onClick={onClose}
-                aria-label="Close details"
-                className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors flex-shrink-0"
-              >
-                <X size={18} aria-hidden="true" />
-              </Button>
+              <div className="flex items-center gap-1 flex-shrink-0">
+                {graphConceptId && (
+                  <Button
+                    variant="ghost"
+                    onClick={() => setGraphOpen(true)}
+                    aria-label="Open concept graph"
+                    title="Concept graph (IR 8477 xwalk)"
+                    className="p-1.5 text-muted-foreground hover:text-primary hover:bg-muted rounded-md transition-colors"
+                  >
+                    <Network size={18} aria-hidden="true" />
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  onClick={onClose}
+                  aria-label="Close details"
+                  className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+                >
+                  <X size={18} aria-hidden="true" />
+                </Button>
+              </div>
             </div>
 
             <div className="overflow-y-auto p-4 space-y-4">
@@ -299,6 +318,14 @@ export const FrameworkDetailPopover = ({
           </div>
         </FocusLock>
       </div>
+      {graphConceptId && framework && (
+        <FrameworkConceptGraphModal
+          isOpen={graphOpen}
+          onClose={() => setGraphOpen(false)}
+          centerConceptId={graphConceptId}
+          title={framework.label}
+        />
+      )}
     </>
   )
 

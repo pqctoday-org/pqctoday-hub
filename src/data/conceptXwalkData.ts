@@ -27,8 +27,17 @@ export type XwalkConfidenceLabel = 'high' | 'medium' | 'low'
 
 export interface ConceptXwalkRecord {
   xwalkId: string
+  /** Human-readable label preserved verbatim from the CSV. */
   fromConcept: string
   toConcept: string
+  /**
+   * Canonical concept-id from concept_registry, e.g. `framework:nist-cswp-39`.
+   * Populated in concept_xwalks_05112026_r1+ (PR 3b migration). Empty string
+   * means the endpoint could not be auto-resolved to a registry row —
+   * CM-CONCEPT WARNS on these for SME review.
+   */
+  fromConceptId: string
+  toConceptId: string
   relationshipType: XwalkRelationshipType
   rationaleType: XwalkRationaleType
   evidence: string
@@ -43,6 +52,8 @@ interface RawXwalkRow {
   xwalk_id: string
   from_concept: string
   to_concept: string
+  from_concept_id?: string
+  to_concept_id?: string
   relationship_type: string
   rationale_type: string
   evidence: string
@@ -98,6 +109,8 @@ function transformRow(row: RawXwalkRow): ConceptXwalkRecord | null {
     xwalkId: row.xwalk_id,
     fromConcept: row.from_concept,
     toConcept: row.to_concept,
+    fromConceptId: row.from_concept_id ?? '',
+    toConceptId: row.to_concept_id ?? '',
     relationshipType: row.relationship_type as XwalkRelationshipType,
     rationaleType: row.rationale_type as XwalkRationaleType,
     evidence: row.evidence ?? '',

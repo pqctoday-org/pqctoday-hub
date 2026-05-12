@@ -4,6 +4,68 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.14.0] - 2026-05-11
+
+### Highlights
+
+- **Knowledge-model alignment to NIST IR 8477.** Three small data-model gaps were blocking the doc's D3 worked-example graph (CSWP 39 → FIPS standards → algorithms) from being faithfully renderable end-to-end. All three are now closed: the `rationale_type` vocabulary matches IR 8477 §3.2 exactly, PQC parameter sets have their own first-class xref table, and every xwalk endpoint resolves through a new canonical concept-id registry.
+- **Concept graph icon on every compliance framework card.** Click the Network icon on any framework tile (Landscape view, detail popover, or For You executive timeline) to open an interactive xyflow graph centred on that framework — 1-hop xwalk neighbourhood plus synthetic `implements` edges to the default NIST PQC parameter sets, matching the doc's IR 8477 worked example.
+
+### Trust Engine — IR 8477 vocabulary alignment (PR 1)
+
+- **`XwalkRationaleType` enum now matches doc §3.2 closed set exactly:** `syntactic | semantic | functional | technical_dependency | policy_reference | implementation_guidance | timeline_anchor`. Previously the enum was missing the first three doc-named values and carried two custom values (`equivalence`, `specialization`) instead — rows authored against the doc's vocabulary were being silently dropped at load.
+- **17 rows rewritten** in a one-shot migration (`/tmp/migrate-xwalk-rationale.ts`): 14 × `equivalence` → `semantic`, 3 × `specialization` → `functional`. New CSV `concept_xwalks_05112026.csv` per `CSVmaintenance.md §1` (never edit in place).
+- **12 candidate rows rewritten** the same way in the LLM-staging `concept_xwalk_candidates_05112026.csv` so the next `merge-xwalk-candidates.ts` run doesn't trip the new validator gate.
+- **Loader + validator vocab sets** updated in `conceptXwalkData.ts` and both `CM-2` / `CM-Xwalk-VOCAB` checks in `trust-engine-checks.ts`.
+
+### Trust Engine — algorithm parameter-set xref (PR 2)
+
+- **New `standard_implements_algo_xref` table** (18 rows) gives every NIST PQC parameter set a first-class schema home outside the IR 8477 concept-xwalk. `implements` is intentionally not added to the IR 8477 `relationship_type` enum — D3's dotted edges are synthesised at render time from this xref.
+- Full NIST PQC matrix seeded: ML-KEM-512/768/1024 (FIPS 203), ML-DSA-44/65/87 (FIPS 204), and all 12 SLH-DSA variants (SHA2 × 3 levels × s/f + SHAKE × 3 levels × s/f, FIPS 205). The three D3-canonical defaults — ML-KEM-768, ML-DSA-65, SLH-DSA-SHA2-128f — are flagged `is_default=yes`.
+- **New loader** `src/data/standardImplementsAlgoXref.ts` with `paramSetsByStandard` and `standardByParamSet` O(1) lookup maps.
+- **New validator** `CM-ALGO-XREF` (4 sub-checks): standard_id resolves to library row, param_set matches the canonical PQC regex, family is in `{KEM | DSA | HBS}`, and exactly one `is_default=yes` per standard.
+
+### Trust Engine — canonical concept registry + xwalk migration (PR 3a + 3b + 3c)
+
+- **New `concept_registry_05112026.csv`** (392 rows) maps every distinct xwalk endpoint to a canonical id like `framework:nist-cswp-39`, `guidance:cnsa-2`, `standard:fips-203`, `algorithm:ml-kem-768`, `timeline:nss-acquisitions-cnsa-2-0-required`. Closes the "ghost concept" problem where `NIST CSWP 39` had ~100 incoming/outgoing edges but no backing record. **99.5% of concepts auto-resolved** by deterministic join against library / compliance / timeline / algo-xref; the remainder is concept-only or SME-review.
+- **Programmatic builder** `scripts/build-concept-registry.ts` with name-based heuristics for the source_type classifier (framework / guidance / standard / algorithm / timeline / concept_only).
+- **New loader** `src/data/conceptRegistry.ts` with `conceptByCanonicalId` and `conceptIdByStoreKey` indexes plus a `conceptIdForStoreKey(table, id)` helper.
+- **New validator** `CM-REGISTRY` (3 sub-checks): source_type in closed set, concept_id uniqueness, source_row_id resolves to a real record in the named table.
+- **Xwalk migration to canonical ids** — `concept_xwalks_05112026_r2.csv` adds `from_concept_id` and `to_concept_id` columns alongside the original human-readable strings. **99.8% of endpoint references auto-populated** via deterministic registry join. The remaining 2 (`xw-517`, `xw-518` using `NIST SP 800-90B` with spaces) were closed by renaming to the dashed form that matches the library reference_id.
+- **New validator** `CM-CONCEPT` (2 sub-checks, WARNING severity): from/to_concept_id is non-empty AND resolves to a registry row. Promotion to ERROR after next SME sweep.
+- **`conceptIdFor*` accessors added** to `libraryData.ts`, `complianceData.ts`, `timelineData.ts`, and `standardImplementsAlgoXref.ts` so hub components holding a domain row can resolve its canonical id in O(1).
+- **`ConceptXwalkRecord` interface gains** `fromConceptId` and `toConceptId` fields; existing `fromConcept`/`toConcept` strings preserved as human-readable labels.
+
+### Compliance — Concept Graph icon (UI)
+
+- **New Network icon on every framework card** in `ComplianceLandscape`, in the `FrameworkDetailPopover` header, and on `FrameworkDeadlineCard` (Executive timeline view). Click opens a portal modal with the framework's xwalk neighbourhood rendered as an interactive graph.
+- **`FrameworkConceptGraph` component** (`src/components/Compliance/FrameworkConceptGraph.tsx`) — first use of `@xyflow/react` inside the public hub bundle. Uses `dagre` (~30 KB, MIT) for LR auto-layout. Custom node renderer colour-codes by `source_type` using semantic tokens; framework (primary), guidance (status-error), standard (status-success), algorithm (purple), timeline (status-warning). Dashed strokes for synthetic `implements` edges to the default parameter set on FIPS 203/204/205. Includes zoom/fit Controls and a MiniMap.
+- **Graph builder utility** `src/utils/conceptXwalkGraph.ts` filters `conceptXwalkData` to edges whose `fromConceptId === centerConceptId || toConceptId === centerConceptId`, then optionally extends with synthetic `implements` edges to algorithm leaves via `paramSetsByStandard.get(standardId)` (defaults only by default).
+- **Modal wrapper** `FrameworkConceptGraphModal.tsx` matches the existing `FrameworkDetailPopover` pattern (portal, FocusLock, Escape close, body-scroll lock).
+- **`ComplianceTable` was intentionally skipped** — its rows are per-certification (FIPS CMVP / CC / ACVP), not per-framework, so concept-graph generation doesn't apply.
+
+### Data artefacts regenerated
+
+- `public/data/rag-corpus.json` — **10,847 chunks, 16.1 MB** (10s regen). PROV-DM 100% on `was_attributed_to`; all 10,788 deep-links validated.
+- `public/data/embeddings.bin` + `embeddings-meta.json` — **15.9 MB / 420 KB** (173s regen). Re-aligned with the regenerated corpus via `npm run generate-embeddings` (bge-small-en-v1.5 quantized int8, 384-dim).
+- `public/data/pqctoday-oscal*.json` + `pqctoday-cbom.json` — regenerated by `npm run build`.
+
+### Validator suite — new gates
+
+- `CM-2` + `CM-Xwalk-VOCAB` extended to enforce IR 8477 §3.2 closed rationale_type set (existing checks now reflect new vocab).
+- `CM-ALGO-XREF-STD`, `CM-ALGO-XREF-PARAM`, `CM-ALGO-XREF-FAM`, `CM-ALGO-XREF-DEFAULT` — referential integrity for the new algorithm xref.
+- `CM-REGISTRY-TYPE`, `CM-REGISTRY-DUP`, `CM-REGISTRY-REF` — referential integrity for the new concept registry.
+- `CM-CONCEPT-FROM`, `CM-CONCEPT-TO` — xwalk canonical-id resolution (WARNING).
+
+### Known pre-existing issue (not addressed in this release)
+
+- `scripts/validators/__tests__/duplicate-checks.test.ts` and `qa-semantic-checks.test.ts` overwrite `public/data/rag-corpus.json` with synthetic data during their setup phase. They do attempt a backup/restore (`.qa-semantic-test-backup`) but there's no SIGTERM handler — if the test is killed mid-run (CI timeout, OOM, manual abort), the production corpus is left corrupted. Will be fixed in a separate PR.
+
+### Behind the scenes
+
+- All Trust Engine model alignment changes verified by 53/53 → 337/337 → 330/330 progressively widening test runs; production `npm run build` clean.
+- New dependency: `dagre@^0.8.5` + `@types/dagre` (~30 KB, MIT) — first graph-layout library in the hub bundle, not a crypto library (outside CLAUDE.md's "no new crypto libs without permission" rule).
+
 ## [3.13.0] - 2026-05-11
 
 ### Highlights

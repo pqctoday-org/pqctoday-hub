@@ -379,12 +379,17 @@ async function runCm1(): Promise<CheckResult> {
 
 // ── CM-2: Xwalk rationale_type validation ────────────────────────────────────
 
+// Closed set per NIST IR 8477 §3.2 (trust-engine-explainability.md).
+// Aligned 2026-05-11: legacy `equivalence` / `specialization` rewritten to
+// `semantic` / `functional` in concept_xwalks_05112026.csv; the loader enum
+// in src/data/conceptXwalkData.ts mirrors this set.
 const VALID_RATIONALE_TYPES = new Set([
+  'syntactic',
+  'semantic',
+  'functional',
   'technical_dependency',
   'policy_reference',
   'implementation_guidance',
-  'equivalence',
-  'specialization',
   'timeline_anchor', // edge from a standard to its publication timeline event
 ])
 
@@ -701,6 +706,369 @@ async function runCmTs(): Promise<CheckResult> {
     : pass('CM-TS', 'Trusted-source trust_tier vocabulary normalised (4-value v2)', latest)
 }
 
+// ── CM-ALGO-XREF: standard_implements_algo_xref referential integrity ───────
+// PR 2 of the IR 8477 fidelity remediation. Validates that:
+//   • Every `standard_id` resolves to a library row by exact reference_id /
+//     document_title match.
+//   • Every `param_set` matches the canonical PQC family pattern
+//     (ML-KEM-\d+ | ML-DSA-\d+ | SLH-DSA-(SHA2|SHAKE)-\d+[sf]).
+//   • Exactly one `is_default=yes` row per `standard_id`.
+//   • `family` is one of KEM | DSA | HBS.
+
+const PARAM_SET_RE = /^(ML-KEM|ML-DSA)-\d+$|^SLH-DSA-(SHA2|SHAKE)-\d+[sf]$/
+const ALGO_XREF_FAMILIES = new Set(['KEM', 'DSA', 'HBS'])
+
+async function runCmAlgoXref(): Promise<CheckResult[]> {
+  const sourceDesc = 'src/data/standard_implements_algo_xref_*.csv'
+  const files = await glob('src/data/standard_implements_algo_xref_*.csv', { cwd: REPO_ROOT })
+  files.sort()
+  const latest = files.at(-1)
+  if (!latest) {
+    return [pass('CM-ALGO-XREF', 'standard_implements_algo_xref referential integrity', sourceDesc)]
+  }
+  const relPath = path.relative(REPO_ROOT, latest)
+  const raw = fs.readFileSync(path.join(REPO_ROOT, latest), 'utf-8')
+  const { data: rows } = Papa.parse<Record<string, string>>(raw, {
+    header: true,
+    skipEmptyLines: true,
+  })
+
+  // Build the set of known library standard identifiers (reference_id + document_title)
+  const libGlob = await glob('src/data/library_*.csv', { cwd: REPO_ROOT })
+  libGlob.sort()
+  const libLatest = libGlob.at(-1)
+  const known = new Set<string>()
+  if (libLatest) {
+    const libRaw = fs.readFileSync(path.join(REPO_ROOT, libLatest), 'utf-8')
+    const { data: libRows } = Papa.parse<Record<string, string>>(libRaw, {
+      header: true,
+      skipEmptyLines: true,
+    })
+    for (const r of libRows) {
+      if (r['reference_id']) known.add(r['reference_id'].trim())
+      if (r['document_title']) known.add(r['document_title'].trim())
+    }
+  }
+
+  const stdFindings: Finding[] = []
+  const paramFindings: Finding[] = []
+  const familyFindings: Finding[] = []
+  const defaultCounts = new Map<string, number>()
+
+  for (const r of rows) {
+    const std = (r['standard_id'] ?? '').trim()
+    const param = (r['param_set'] ?? '').trim()
+    const fam = (r['family'] ?? '').trim()
+    const isDefault = (r['is_default'] ?? '').trim().toLowerCase() === 'yes'
+    const status = (r['status'] ?? 'active').trim().toLowerCase()
+    if (status === 'deprecated') continue
+
+    if (std && known.size > 0 && !known.has(std)) {
+      stdFindings.push({
+        csv: relPath,
+        row: null,
+        field: 'standard_id',
+        value: r['xref_id'] ?? '',
+        message: `xref '${r['xref_id']}' standard_id="${std}" does not resolve to any library row`,
+      })
+    }
+    if (param && !PARAM_SET_RE.test(param)) {
+      paramFindings.push({
+        csv: relPath,
+        row: null,
+        field: 'param_set',
+        value: r['xref_id'] ?? '',
+        message: `xref '${r['xref_id']}' param_set="${param}" does not match the canonical PQC pattern`,
+      })
+    }
+    if (fam && !ALGO_XREF_FAMILIES.has(fam)) {
+      familyFindings.push({
+        csv: relPath,
+        row: null,
+        field: 'family',
+        value: r['xref_id'] ?? '',
+        message: `xref '${r['xref_id']}' family="${fam}" — must be one of KEM | DSA | HBS`,
+      })
+    }
+    if (isDefault) defaultCounts.set(std, (defaultCounts.get(std) ?? 0) + 1)
+  }
+
+  const defaultFindings: Finding[] = []
+  for (const [std, n] of defaultCounts) {
+    if (n > 1) {
+      defaultFindings.push({
+        csv: relPath,
+        row: null,
+        field: 'is_default',
+        value: std,
+        message: `standard_id="${std}" has ${n} rows marked is_default=yes — must be exactly 1`,
+      })
+    }
+  }
+
+  return [
+    stdFindings.length > 0
+      ? fail('CM-ALGO-XREF-STD', 'Xref standard_id resolves to a library row', relPath, stdFindings)
+      : pass('CM-ALGO-XREF-STD', 'Xref standard_id resolves to a library row', relPath),
+    paramFindings.length > 0
+      ? fail('CM-ALGO-XREF-PARAM', 'Xref param_set matches canonical PQC pattern', relPath, paramFindings)
+      : pass('CM-ALGO-XREF-PARAM', 'Xref param_set matches canonical PQC pattern', relPath),
+    familyFindings.length > 0
+      ? fail('CM-ALGO-XREF-FAM', 'Xref family is in closed set', relPath, familyFindings)
+      : pass('CM-ALGO-XREF-FAM', 'Xref family is in closed set', relPath),
+    defaultFindings.length > 0
+      ? fail('CM-ALGO-XREF-DEFAULT', 'Exactly one default per standard_id', relPath, defaultFindings)
+      : pass('CM-ALGO-XREF-DEFAULT', 'Exactly one default per standard_id', relPath),
+  ]
+}
+
+// ── CM-REGISTRY: concept_registry referential integrity ─────────────────────
+// PR 3a of the IR 8477 fidelity remediation. Validates that:
+//   • Every registry row with a non-empty `source_row_id` resolves to a
+//     real record in `source_table` (library / compliance / timeline /
+//     standard_implements_algo_xref).
+//   • Every `concept_id` is unique across the registry.
+//   • Every `source_type` is in the closed set.
+// `concept_only` rows are allowed and DO NOT require a backing record —
+// they document concepts that live solely inside the xwalk.
+
+const VALID_REGISTRY_TYPES = new Set([
+  'framework',
+  'guidance',
+  'standard',
+  'algorithm',
+  'timeline',
+  'concept_only',
+])
+
+async function runCmRegistry(): Promise<CheckResult[]> {
+  const sourceDesc = 'src/data/concept_registry_*.csv'
+  const files = await glob('src/data/concept_registry_*.csv', { cwd: REPO_ROOT })
+  files.sort()
+  const latest = files.at(-1)
+  if (!latest) {
+    return [pass('CM-REGISTRY', 'concept_registry referential integrity', sourceDesc)]
+  }
+  const relPath = path.relative(REPO_ROOT, latest)
+  const raw = fs.readFileSync(path.join(REPO_ROOT, latest), 'utf-8')
+  const { data: rows } = Papa.parse<Record<string, string>>(raw, {
+    header: true,
+    skipEmptyLines: true,
+  })
+
+  // Build the resolution targets for each source_table.
+  async function loadIds(globPattern: string, idCols: string[]): Promise<Set<string>> {
+    const matches = await glob(globPattern, { cwd: REPO_ROOT })
+    matches.sort()
+    const latestMatch = matches.at(-1)
+    const ids = new Set<string>()
+    if (!latestMatch) return ids
+    const csv = fs.readFileSync(path.join(REPO_ROOT, latestMatch), 'utf-8')
+    const { data } = Papa.parse<Record<string, string>>(csv, {
+      header: true,
+      skipEmptyLines: true,
+    })
+    for (const r of data) {
+      for (const col of idCols) {
+        const v = (r[col] ?? '').trim()
+        if (v) ids.add(v)
+      }
+    }
+    return ids
+  }
+
+  const [libIds, compIds, tlIds, algoIds] = await Promise.all([
+    loadIds('src/data/library_*.csv', ['reference_id', 'document_title']),
+    loadIds('src/data/compliance_*.csv', ['id', 'label']),
+    loadIds('src/data/timeline_*.csv', ['Title']),
+    loadIds('src/data/standard_implements_algo_xref_*.csv', ['param_set']),
+  ])
+
+  const typeFindings: Finding[] = []
+  const dupFindings: Finding[] = []
+  const refFindings: Finding[] = []
+  const seenIds = new Set<string>()
+
+  for (const r of rows) {
+    const cid = (r['concept_id'] ?? '').trim()
+    if (!cid) continue
+    if (seenIds.has(cid)) {
+      dupFindings.push({
+        csv: relPath,
+        row: null,
+        field: 'concept_id',
+        value: cid,
+        message: `duplicate concept_id "${cid}"`,
+      })
+    }
+    seenIds.add(cid)
+
+    const st = (r['source_type'] ?? '').trim()
+    if (!VALID_REGISTRY_TYPES.has(st)) {
+      typeFindings.push({
+        csv: relPath,
+        row: null,
+        field: 'source_type',
+        value: cid,
+        message: `concept_id "${cid}" has invalid source_type="${st}"`,
+      })
+    }
+
+    if (st === 'concept_only') continue
+    const table = (r['source_table'] ?? '').trim()
+    const rid = (r['source_row_id'] ?? '').trim()
+    if (!table || !rid) {
+      refFindings.push({
+        csv: relPath,
+        row: null,
+        field: 'source_row_id',
+        value: cid,
+        message: `concept_id "${cid}" has source_type="${st}" but missing source_table or source_row_id`,
+      })
+      continue
+    }
+    const targetSet =
+      table === 'library'
+        ? libIds
+        : table === 'compliance'
+          ? compIds
+          : table === 'timeline'
+            ? tlIds
+            : table === 'standard_implements_algo_xref'
+              ? algoIds
+              : null
+    if (!targetSet) {
+      refFindings.push({
+        csv: relPath,
+        row: null,
+        field: 'source_table',
+        value: cid,
+        message: `concept_id "${cid}" references unknown source_table="${table}"`,
+      })
+      continue
+    }
+    if (!targetSet.has(rid)) {
+      refFindings.push({
+        csv: relPath,
+        row: null,
+        field: 'source_row_id',
+        value: cid,
+        message: `concept_id "${cid}" source_row_id="${rid}" not found in ${table}`,
+      })
+    }
+  }
+
+  return [
+    typeFindings.length > 0
+      ? fail('CM-REGISTRY-TYPE', 'Registry source_type is in closed set', relPath, typeFindings)
+      : pass('CM-REGISTRY-TYPE', 'Registry source_type is in closed set', relPath),
+    dupFindings.length > 0
+      ? fail('CM-REGISTRY-DUP', 'Registry concept_id uniqueness', relPath, dupFindings)
+      : pass('CM-REGISTRY-DUP', 'Registry concept_id uniqueness', relPath),
+    refFindings.length > 0
+      ? fail('CM-REGISTRY-REF', 'Registry source_row_id resolves to a real record', relPath, refFindings, 'WARNING')
+      : pass('CM-REGISTRY-REF', 'Registry source_row_id resolves to a real record', relPath),
+  ]
+}
+
+// ── CM-CONCEPT: xwalk canonical-id resolution ───────────────────────────────
+// PR 3b of the IR 8477 fidelity remediation. Validates that:
+//   • Every active xwalk row's `from_concept_id` + `to_concept_id` is non-empty
+//     AND resolves to a concept_registry row.
+//   • Severity: WARNING. Promotion to ERROR after the SME review sweep that
+//     fills in any orphaned endpoints (e.g. naming-style aliases like
+//     "NIST SP 800-90B" vs "NIST-SP-800-90B").
+
+async function runCmConcept(): Promise<CheckResult[]> {
+  const xwalkGlob = await glob('src/data/concept_xwalks_*.csv', { cwd: REPO_ROOT })
+  xwalkGlob.sort()
+  const xwalkLatest = xwalkGlob.at(-1)
+  const sourceDesc = 'src/data/concept_xwalks_*.csv'
+  if (!xwalkLatest) {
+    return [pass('CM-CONCEPT', 'Xwalk canonical-id resolution', sourceDesc)]
+  }
+  const relPath = path.relative(REPO_ROOT, xwalkLatest)
+
+  // Load registry concept_ids
+  const regGlob = await glob('src/data/concept_registry_*.csv', { cwd: REPO_ROOT })
+  regGlob.sort()
+  const regLatest = regGlob.at(-1)
+  const knownIds = new Set<string>()
+  if (regLatest) {
+    const regRaw = fs.readFileSync(path.join(REPO_ROOT, regLatest), 'utf-8')
+    const { data: regRows } = Papa.parse<Record<string, string>>(regRaw, {
+      header: true,
+      skipEmptyLines: true,
+    })
+    for (const r of regRows) {
+      const cid = (r['concept_id'] ?? '').trim()
+      if (cid) knownIds.add(cid)
+    }
+  }
+
+  const xwalkRaw = fs.readFileSync(path.join(REPO_ROOT, xwalkLatest), 'utf-8')
+  const { data: xwalkRows } = Papa.parse<Record<string, string>>(xwalkRaw, {
+    header: true,
+    skipEmptyLines: true,
+  })
+
+  const fromFindings: Finding[] = []
+  const toFindings: Finding[] = []
+
+  for (const r of xwalkRows) {
+    const status = (r['status'] ?? 'active').trim().toLowerCase()
+    if (status === 'deprecated' || status === 'obsolete') continue
+    const xid = r['xwalk_id'] ?? ''
+    const fromCid = (r['from_concept_id'] ?? '').trim()
+    const toCid = (r['to_concept_id'] ?? '').trim()
+    const fromConcept = r['from_concept'] ?? ''
+    const toConcept = r['to_concept'] ?? ''
+    if (!fromCid) {
+      fromFindings.push({
+        csv: relPath,
+        row: null,
+        field: 'from_concept_id',
+        value: xid,
+        message: `xwalk ${xid} from_concept="${fromConcept}" has no canonical from_concept_id`,
+      })
+    } else if (knownIds.size > 0 && !knownIds.has(fromCid)) {
+      fromFindings.push({
+        csv: relPath,
+        row: null,
+        field: 'from_concept_id',
+        value: xid,
+        message: `xwalk ${xid} from_concept_id="${fromCid}" not in concept_registry`,
+      })
+    }
+    if (!toCid) {
+      toFindings.push({
+        csv: relPath,
+        row: null,
+        field: 'to_concept_id',
+        value: xid,
+        message: `xwalk ${xid} to_concept="${toConcept}" has no canonical to_concept_id`,
+      })
+    } else if (knownIds.size > 0 && !knownIds.has(toCid)) {
+      toFindings.push({
+        csv: relPath,
+        row: null,
+        field: 'to_concept_id',
+        value: xid,
+        message: `xwalk ${xid} to_concept_id="${toCid}" not in concept_registry`,
+      })
+    }
+  }
+
+  return [
+    fromFindings.length > 0
+      ? fail('CM-CONCEPT-FROM', 'Xwalk from_concept_id resolves to registry', relPath, fromFindings, 'WARNING')
+      : pass('CM-CONCEPT-FROM', 'Xwalk from_concept_id resolves to registry', relPath),
+    toFindings.length > 0
+      ? fail('CM-CONCEPT-TO', 'Xwalk to_concept_id resolves to registry', relPath, toFindings, 'WARNING')
+      : pass('CM-CONCEPT-TO', 'Xwalk to_concept_id resolves to registry', relPath),
+  ]
+}
+
 // ── CM-AT: Migrate / Vendors / Leaders attribution coverage ─────────────────
 // T06 of the Trust Engine implementation plan.
 //
@@ -1011,11 +1379,12 @@ export function runCmFlag(): CheckResult {
 
 const XWALK_VOCAB_REL = new Set(['subset_of', 'superset_of', 'equivalent', 'intersects_with', 'not_related'])
 const XWALK_VOCAB_RATIONALE = new Set([
+  'syntactic',
+  'semantic',
+  'functional',
   'technical_dependency',
   'policy_reference',
   'implementation_guidance',
-  'equivalence',
-  'specialization',
   'timeline_anchor',
 ])
 const XWALK_VOCAB_CONFIDENCE = new Set(['high', 'medium', 'low'])
@@ -1241,8 +1610,8 @@ async function runCmXwalk(): Promise<CheckResult[]> {
 // ── Entry point ──────────────────────────────────────────────────────────────
 
 export async function runTrustEngineChecks(): Promise<CheckResult[]> {
-  const [cm1, cm2, cm3, cm4, cmE, cmCswp, cmG, cmT, cmTs, cmAt, cmF, cmXw] = await Promise.all([
-    runCm1(), runCm2(), runCm3(), runCm4(), runCmE(), runCmCswp(), runCmG(), runCmT(), runCmTs(), runCmAt(), runCmF(), runCmXwalk(),
+  const [cm1, cm2, cm3, cm4, cmE, cmCswp, cmG, cmT, cmTs, cmAt, cmF, cmXw, cmAx, cmRg, cmCn] = await Promise.all([
+    runCm1(), runCm2(), runCm3(), runCm4(), runCmE(), runCmCswp(), runCmG(), runCmT(), runCmTs(), runCmAt(), runCmF(), runCmXwalk(), runCmAlgoXref(), runCmRegistry(), runCmConcept(),
   ])
-  return [runCmW(), runCmC(), runQaS(), runQaCswp(), cm1, cm2, cm3, cm4, cmE, cmCswp, cmG, ...cmT, cmTs, ...cmAt, ...cmF, runCmFlag(), ...cmXw]
+  return [runCmW(), runCmC(), runQaS(), runQaCswp(), cm1, cm2, cm3, cm4, cmE, cmCswp, cmG, ...cmT, cmTs, ...cmAt, ...cmF, runCmFlag(), ...cmXw, ...cmAx, ...cmRg, ...cmCn]
 }
