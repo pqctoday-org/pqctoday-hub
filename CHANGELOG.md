@@ -4,6 +4,40 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.14.7] - 2026-05-11
+
+### Reverted — v3.14.6's Gemini-extracted xwalk edges (trust-engine violation)
+
+**v3.14.6 promoted 9 IR 8477 xwalk edges sourced from a Gemini 3.1 Pro extraction run.** During that session it became evident that at least 3 of the 9 emitted `evidence` quotes closely echoed the example row in the orchestrator prompt rather than literal text from the source PDFs — i.e. the model was almost certainly hallucinating the evidence string while emitting plausible-looking `(from, to, relationship_type)` tuples. None of the 9 promoted rows had been verified against the actual source-doc text before merge.
+
+The trust-engine architecture is "source-grounded by construction" (doc §16.1) — every claim must anchor to a cached source passage and pass the cross-check validators (N20/N21). Allowing un-verified evidence into production poisons the audit trail the entire platform depends on: downstream OSCAL + CBOM exports inherit the trust signal, SME signatures aggregate into reviewer attribution, and the corpus regeneration ingests the rows as authoritative.
+
+The right answer when an SME-grade source like ASC X9 or NY DFS doesn't yet have edges in the production xwalk is **"this concept has no graph yet"** — not "fill it in with a less-trusted extraction path".
+
+### What was reverted
+
+- `src/data/concept_xwalks_05112026_r2.csv` — restored to v3.14.5 state (948 rows, was 957 after v3.14.6).
+- `src/data/concept_xwalks_05112026_r1.csv` — restored to v3.14.5 state (1037 rows, was 1045 after v3.14.6).
+- `src/data/concept_xwalk_candidates_05112026.csv` — public mirror restored to v3.14.5 state.
+
+### What was preserved
+
+- The 15 Gemini-emitted rows in `pqctoday-priv/cowork/concept_xwalk_candidates_05082026.csv` are kept but marked `review_status=rejected`, `reviewed_by=auto-revert-v3.14.7`, `reviewed_date=2026-05-11`, with a `notes` field appended explaining the trust reason. Preserving them in cowork — rather than deleting — keeps the audit trail intact: future SME review can re-promote any row after verifying the evidence quote is a verbatim substring of the source PDF.
+
+### Effect on the UI
+
+The Concept Graph icon disappears again from **ASC X9 Financial PKI & PQC Standards** and **NY DFS 23 NYCRR 500** tiles (their backing concepts have no edges in production again). The v3.14.5 `hasGraphEdges` gate does the right thing: empty graphs no longer surface as clickable icons.
+
+### Policy decision
+
+- **Gemini will not be used for IR 8477 xwalk evidence extraction going forward.** The `qwen3.6:27b` single-model discipline is the production-grade path: N20/N21 cross-checks verify every claim against TF-IDF passages from the cached source doc. The right way to fill the ASC X9 / NY DFS / PQC Coalition gap is to investigate why the local enrichment skipped those docs and re-run the Ollama pipeline targeting them.
+- **Gemini may still be used for non-evidence-bearing tasks** — drafting registry display labels, classifying `source_type`, suggesting `concept_id` kebab forms. The risk is bounded when no `evidence` field downstream depends on the output.
+- **Future hardening (separate PR):** extend the N20/N21 validators with a `CM-EVIDENCE-SUBSTRING` check that, for every `evidence` value in a production xwalk row, verifies it is a verbatim substring of the cached source-doc text. This catches drift regardless of which model produced the row.
+
+### Verified
+
+`npx vitest run src/data src/components/Compliance` → 330/330 pass after revert. tsc silent.
+
 ## [3.14.6] - 2026-05-11
 
 ### Added — 15 Gemini-extracted xwalk candidates for ASC X9 + NY DFS docs
