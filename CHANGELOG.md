@@ -4,6 +4,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.12.1] - 2026-05-11
+
+### Fixes
+
+- **`/about` page no longer crashes in production.** `GlobalRevisionsFeed` was building its entity-label map at module-load time via an IIFE that iterated `WORKSHOP_TOOLS`, `MODULE_CATALOG`, and `conceptXwalkData`. Under prod code-splitting one of those imports could be `undefined` at init time, raising `TypeError: z is not iterable` and breaking the entire `/about` route. The label map is now built lazily on first lookup with null-guards on each source.
+- **`/compliance` "For You" tab — industry filter now actually filters.** Three independent issues were combining to make the editable industry dropdown look broken:
+  - **Duplicated controls.** Two filter strips were stacked on the tab — `<GeoFilter>` / `<SectorFilter>` / `<RoleFilter>` (URL-driven, NAICS codes) above a `<ProfileSummary>` (assessment-store-driven, freeform industry names). Removed the top Geo + Sector chips on this tab; `<ProfileSummary>` is now the sole country/industry editor (`<RoleFilter>` for persona remains).
+  - **NAICS ↔ freeform vocabulary mismatch.** The compliance CSV stores industries as NAICS 2-digit codes (`'92'`, `'52'`, …) but `<ProfileSummary>` writes freeform names (`'Government & Defense'`, …). The framework matcher did exact `industries.includes(profile.industry)` with no normalisation, so freeform picks never matched any rows. Added `expandIndustriesForMatching` in `applicabilityEngine.ts` to expand CSV NAICS codes with their freeform aliases before classifying — both vocabularies now match the same rows.
+  - **URL `profileOverride` shadowed user edits every render.** `ForYouSection` was building a `profileOverride` from URL params (`?country=`, `?industry=`, `?ind=`, `?geo=`, `?sector=`) and persona `selectedIndustries[0]`. `useApplicability` merged as `override ?? store`, so any URL/persona value silently shadowed the assessment-store write made by `<ProfileSummary>`. Rewrote `ForYouSection` to drop the override entirely and instead mirror those URL params into the assessment store on first mount only — keeps backwards-compat with workshop deep links while letting subsequent edits propagate.
+
+_Internal detail: `src/components/ui/GlobalRevisionsFeed.tsx`, `src/components/Compliance/ComplianceView.tsx` (`ForYouSection`), `src/utils/applicabilityEngine.ts` (`expandIndustriesForMatching`, applied in `applicableFrameworks`)._
+
 ## [3.12.0] - 2026-05-10
 
 ### Highlights

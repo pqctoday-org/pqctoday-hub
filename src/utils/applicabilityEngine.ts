@@ -202,6 +202,24 @@ export function normalizeIndustry(value: string): string[] {
   return [v]
 }
 
+/**
+ * Expand a CSV `industries` list (typically NAICS 2-digit codes from compliance
+ * frameworks) to also include the freeform aliases users see in the UI. Keeps
+ * the original codes so NAICS-driven filters (top SectorFilter, ?sector=) keep
+ * working while letting freeform-driven inputs (ProfileSummary, persona/assess
+ * store) match the same rows.
+ */
+export function expandIndustriesForMatching(industries: string[]): string[] {
+  const out = new Set<string>(industries)
+  for (const i of industries) {
+    if (/^\d{2,6}$/.test(i)) {
+      const aliases = NAICS_2DIGIT_TO_FREEFORM[i.slice(0, 2)] ?? []
+      for (const a of aliases) out.add(a)
+    }
+  }
+  return Array.from(out)
+}
+
 // ── Tier classifier ──────────────────────────────────────────────────────
 
 interface ClassifyResult {
@@ -317,7 +335,7 @@ export function applicableFrameworks(
   for (const fw of frameworks) {
     const match = classifyMatch(profile, {
       countries: fw.countries,
-      industries: fw.industries,
+      industries: expandIndustriesForMatching(fw.industries),
       industryUniversal: isIndustryUniversal(fw.industries),
       countryUniversal: isCountryUniversal(fw.countries),
       enforcementBody: fw.enforcementBody,
