@@ -4,6 +4,7 @@ import type { MaturityRequirement } from '@/types/MaturityTypes'
 import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
 import {
+  Network,
   ShieldCheck,
   ShieldAlert,
   Clock,
@@ -36,6 +37,8 @@ import { CountryFlag } from '@/components/common/CountryFlag'
 import { ViewToggle, type ViewMode } from '@/components/Library/ViewToggle'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
+import { conceptIdForFramework } from '@/data/complianceData'
+import { FrameworkConceptGraphModal } from './FrameworkConceptGraphModal'
 import { resolveTimelineRef } from '@/utils/timelineResolver'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { SemanticSearchHint } from '@/components/common/SemanticSearchHint'
@@ -310,10 +313,12 @@ function FrameworkCard({
   highlighted?: boolean
 }) {
   const [expanded, setExpanded] = useState(false)
+  const [graphOpen, setGraphOpen] = useState(false)
   const urgency = deadlineUrgency(fw.deadline)
   const hasRefs = fw.libraryRefs.length > 0 || fw.timelineRefs.length > 0
   const isSelected = useComplianceSelectionStore((s) => s.myFrameworks.includes(fw.id))
   const toggleMyFramework = useComplianceSelectionStore((s) => s.toggleMyFramework)
+  const graphConceptId = conceptIdForFramework(fw)
 
   // Count maturity requirements reachable via this framework's library refs
   const maturityCount = useMemo(() => {
@@ -391,6 +396,22 @@ function FrameworkCard({
             )}
           </div>
         </div>
+        {graphConceptId && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            aria-label={`Open concept graph for ${fw.label}`}
+            title="Concept graph (IR 8477 xwalk)"
+            onClick={(e) => {
+              e.stopPropagation()
+              setGraphOpen(true)
+            }}
+            className="p-1 h-auto shrink-0 text-muted-foreground hover:text-primary"
+          >
+            <Network size={16} />
+          </Button>
+        )}
         <Button
           type="button"
           variant="ghost"
@@ -409,6 +430,14 @@ function FrameworkCard({
           {isSelected ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
         </Button>
       </div>
+      {graphConceptId && (
+        <FrameworkConceptGraphModal
+          isOpen={graphOpen}
+          onClose={() => setGraphOpen(false)}
+          centerConceptId={graphConceptId}
+          title={fw.label}
+        />
+      )}
 
       <div className={`flex items-center gap-1.5 text-xs ${urgencyColor(urgency)}`}>
         <Clock size={12} />

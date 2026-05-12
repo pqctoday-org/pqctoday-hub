@@ -349,6 +349,16 @@ export const timelineData: CountryData[] = parsedData
 export const timelineMetadata = metadata
 
 /**
+ * Canonical concept_id for a timeline event — PR 3c. Timeline events have no
+ * stable ID column in the source CSV; `title` is the natural key used by the
+ * registry build script.
+ */
+import { conceptIdForStoreKey } from './conceptRegistry'
+export function conceptIdForTimelineEvent(event: { title: string }): string | undefined {
+  return conceptIdForStoreKey('timeline', event.title)
+}
+
+/**
  * Converts timeline events into Gantt-compatible data with phases and milestones
  */
 export function transformToGanttData(countries: CountryData[]): GanttCountryData[] {

@@ -50,6 +50,11 @@ function edge(
     xwalkId: `${from}→${to}`,
     fromConcept: from,
     toConcept: to,
+    // PR 3b — canonical-id fields. The traversal helper currently matches on
+    // the human-readable from/to_concept strings, so the synthesised ids here
+    // are not load-bearing; populated for type satisfaction.
+    fromConceptId: '',
+    toConceptId: '',
     relationshipType: rel,
     rationaleType: 'technical_dependency',
     evidence: `${from} references ${to}`,

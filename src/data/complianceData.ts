@@ -313,3 +313,12 @@ export const complianceDB: Record<
     { requiresPQC: fw.requiresPQC, deadline: fw.deadline, notes: fw.notes },
   ])
 )
+
+/**
+ * Canonical concept_id for a compliance framework — PR 3c.
+ * Resolves via the concept_registry by (source_table, source_row_id).
+ */
+import { conceptIdForStoreKey } from './conceptRegistry'
+export function conceptIdForFramework(fw: { id: string }): string | undefined {
+  return conceptIdForStoreKey('compliance', fw.id)
+}

@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { ShieldCheck } from 'lucide-react'
+import { useState } from 'react'
+import { Network, ShieldCheck } from 'lucide-react'
 import type { ComplianceFramework } from '../../../../data/complianceData'
+import { conceptIdForFramework } from '../../../../data/complianceData'
 import type { TimelineEvent } from '../../../../types/timeline'
 import type { ApplicabilityResult } from '../../../../utils/applicabilityEngine'
 import { TIER_STYLES } from '../../../applicability/parts/tierStyles'
 import { TierBadge } from '../../../applicability/parts/items'
 import { Button } from '../../../ui/button'
+import { FrameworkConceptGraphModal } from '../../FrameworkConceptGraphModal'
 
 interface FrameworkDeadlineCardProps {
   result: ApplicabilityResult<ComplianceFramework>
@@ -32,6 +35,8 @@ export function FrameworkDeadlineCard({
   onSelectFramework,
 }: FrameworkDeadlineCardProps) {
   const fw = result.item
+  const [graphOpen, setGraphOpen] = useState(false)
+  const graphConceptId = conceptIdForFramework(fw)
 
   const styles = TIER_STYLES[result.tier]
   const sortedEvents = [...events].sort((a, b) => a.item.startYear - b.item.startYear)
@@ -58,9 +63,33 @@ export function FrameworkDeadlineCard({
 
   return (
     <div
-      className="rounded-lg border border-border bg-card p-3 space-y-2 overflow-hidden"
+      className="relative rounded-lg border border-border bg-card p-3 space-y-2 overflow-hidden"
       title={result.reason}
     >
+      {graphConceptId && (
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          aria-label={`Open concept graph for ${fw.label}`}
+          title="Concept graph (IR 8477 xwalk)"
+          onClick={(e) => {
+            e.stopPropagation()
+            setGraphOpen(true)
+          }}
+          className="absolute top-1 right-1 p-1 h-auto z-10 text-muted-foreground hover:text-primary"
+        >
+          <Network size={14} />
+        </Button>
+      )}
+      {graphConceptId && (
+        <FrameworkConceptGraphModal
+          isOpen={graphOpen}
+          onClose={() => setGraphOpen(false)}
+          centerConceptId={graphConceptId}
+          title={fw.label}
+        />
+      )}
       {onSelectFramework ? (
         <Button
           type="button"
