@@ -260,7 +260,7 @@ export const useChatStore = create<ChatState>()(
     }),
     {
       name: 'pqc-chat-storage',
-      version: 8,
+      version: 11,
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         apiKey: state.apiKey,
@@ -352,18 +352,38 @@ export const useChatStore = create<ChatState>()(
         if (state.provider !== 'gemini' && state.provider !== 'local' && state.provider !== null) {
           state.provider = null
         }
+        // v9 → v10: catalog curated down to three picks (Qwen 3 1.7B / Llama 3.2 3B
+        // / Qwen 3 8B). Map dropped models to the closest surviving option so
+        // existing users keep a sensible selection instead of being reset to default.
+        // - Phi 3.5 Mini, Phi 4 Mini, Qwen 3 4B → Llama 3.2 3B (similar VRAM, no
+        //   known failure mode)
+        // - Qwen 3 0.6B → Qwen 3 1.7B (only 600 MB more VRAM, materially better)
+        if (version < 10) {
+          const REMAP: Record<string, string> = {
+            'Phi-3.5-mini-instruct-q4f16_1-MLC': 'Llama-3.2-3B-Instruct-q4f16_1-MLC',
+            'Phi-4-mini-instruct-q4f16_1-MLC': 'Llama-3.2-3B-Instruct-q4f16_1-MLC',
+            'Qwen3-4B-q4f16_1-MLC': 'Llama-3.2-3B-Instruct-q4f16_1-MLC',
+            'Qwen3-0.6B-q4f16_1-MLC': 'Qwen3-1.7B-q4f16_1-MLC',
+          }
+          if (typeof state.localModel === 'string' && REMAP[state.localModel]) {
+            state.localModel = REMAP[state.localModel]
+          }
+        }
+
+        // v10 → v11: catalog narrowed to a single model (Qwen 3 8B) because smaller
+        // models hallucinate unacceptably on PQC standards content. Map every prior
+        // local-model selection — including those that survived the v10 cleanup —
+        // to Qwen 3 8B so existing users land on the only supported option.
+        if (version < 11 && state.localModel !== 'Qwen3-8B-q4f16_1-MLC') {
+          state.localModel = 'Qwen3-8B-q4f16_1-MLC'
+        }
+
         // Validate localModel against current catalog — reset stale IDs from old versions
-        const VALID_LOCAL_MODELS = new Set([
-          'Qwen3-1.7B-q4f16_1-MLC',
-          'Qwen3-4B-q4f16_1-MLC',
-          'Qwen3-0.6B-q4f16_1-MLC',
-          'Llama-3.2-3B-Instruct-q4f16_1-MLC',
-          'Phi-3.5-mini-instruct-q4f16_1-MLC',
-        ])
+        const VALID_LOCAL_MODELS = new Set(['Qwen3-8B-q4f16_1-MLC'])
         state.localModel =
           typeof state.localModel === 'string' && VALID_LOCAL_MODELS.has(state.localModel)
             ? state.localModel
-            : 'Qwen3-1.7B-q4f16_1-MLC'
+            : 'Qwen3-8B-q4f16_1-MLC'
         state.localContextWindow =
           typeof state.localContextWindow === 'number' ? state.localContextWindow : 4_096
 
@@ -374,8 +394,15 @@ export const useChatStore = create<ChatState>()(
           }
         }
 
-        // v7 → v8: expanded model catalog (Llama 3.2, Phi 3.5) with context up to 16K.
-        // No data migration needed — VALID_LOCAL_MODELS and presets handle new IDs.
+        // v8 → v9: every MLC compiled build is capped at 4K context. Earlier
+        // catalog entries falsely advertised 8K/16K — clamp any user setting
+        // above 4096 down to the actual hard cap so initialization doesn't
+        // silently fail or trigger a runtime error.
+        if (version < 9) {
+          if (typeof state.localContextWindow === 'number' && state.localContextWindow > 4_096) {
+            state.localContextWindow = 4_096
+          }
+        }
 
         return state
       },
