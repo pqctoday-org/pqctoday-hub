@@ -4,6 +4,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.14.8] - 2026-05-11
+
+### Fixed — `enrich-ir8477-xwalk.py` no longer wastes compute on 0-result docs
+
+The IR 8477 xwalk extraction script's `--skip-existing` flag only remembered docs that produced ≥1 candidate row. Docs that the LLM looked at and returned 0 IR 8477 relationships for never had a row written → every subsequent `--skip-existing` run re-tried them at ~50–80s each. Cumulative observed waste in one operator's enrichment runs since 2026-05-08: ≥40 hours of compute on the same set of zero-yield docs.
+
+**Fix:** When `parse_relationships()` returns an empty list, the script now writes a sentinel row with `to_concept='__NO_EXTRACTIONS__'`, empty `relationship_type`, and `review_status='no_extractions'`. The merge pipeline (`mergeXwalkCandidates.ts`) flags sentinels as `invalid_vocab` and never promotes them; the production loader (`conceptXwalkData.ts`) drops them at parse time via the existing `VALID_RELATIONSHIP_TYPES` filter. Sentinels are inert to every consumer except `--skip-existing` itself, which now correctly remembers the attempt.
+
+Next `enrich-ir8477-xwalk.py --skip-existing --append` run will produce sentinels for the ~470 docs that have historically returned 0 rows, so subsequent runs only re-scan docs that have genuinely never been attempted.
+
 ## [3.14.7] - 2026-05-11
 
 ### Reverted — v3.14.6's Gemini-extracted xwalk edges (trust-engine violation)
