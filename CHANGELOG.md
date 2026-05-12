@@ -4,6 +4,37 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.14.3] - 2026-05-11
+
+### Updated — About / Software Bill of Materials section
+
+Refreshed [`src/components/About/sections/SbomSection.tsx`](src/components/About/sections/SbomSection.tsx) to match the live `package.json`. Drift had accumulated over the last several minor releases; this release brings the user-visible SBOM panel back in line with what's actually installed.
+
+**Version corrections** — SBOM was claiming versions that didn't match the live package.json:
+
+- Framer Motion: v12.35.0 → **v12.27.5**
+- Lucide React: v0.577.0 → **v1.14.0**
+- Tailwind CSS: v4.2.2 → **v4.1.17**
+- React Router: v7.13.1 → **v7.12.0**
+- Zustand: v5.0.11 → **v5.0.10**
+- ESLint: v9.39.4 → **v9.39.2**
+- Prettier: v3.8.1 → **v3.8.0**
+- Playwright: v1.58.2 → **v1.59.1** (was understated)
+- pqctoday-tpm caption corrected v0.2.0 → **v0.3.0** to match the linked release URL.
+
+**New entries** that were shipping in production without appearing in the SBOM:
+
+- **@xyflow/react v12.10.1** + **dagre v0.8.5** — the graph + auto-layout stack added for the Compliance → Concept Graph icon (v3.14.0).
+- **@tanstack/react-virtual v3.13.24** — table virtualization on Migrate / Library.
+- **@noble/post-quantum v0.6.1** — ML-DSA-65 attestation for `revisions.jsonl` + `rag-corpus.json` (per doc §12.5 T12).
+- **@peculiar/x509 v2.0.0** — certificate parsing in the playground.
+- **jspdf + jspdf-autotable**, **docx**, **pptxgenjs**, **cborg**, **lodash** — export + utility libs that were in deps but absent from the SBOM panel.
+- **New "Local AI & Embeddings" section** covering `@mlc-ai/web-llm` (in-browser Qwen 3 8B), `@huggingface/transformers` (bge-small embeddings), and `@react-oauth/google`.
+
+### Behind the scenes
+
+- No new dependencies introduced — this is a doc-truth-update only. The 5 About-page tests still pass; tsc silent.
+
 ## [3.14.2] - 2026-05-11
 
 ### Fixed
