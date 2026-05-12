@@ -4,6 +4,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.14.5] - 2026-05-11
+
+### Improved — Concept Graph icon now hides when graph would be empty + matcher handles NIST doc-suffix variants
+
+When a user clicks a compliance tile's Network icon and lands on an empty graph (only the centre node, no edges), that's a confusing UX — the icon implied something to explore. This release addresses both why the graphs were empty and the surface symptom.
+
+- **New `hasGraphEdges(centerConceptId)` helper** in [`src/utils/conceptXwalkGraph.ts`](src/utils/conceptXwalkGraph.ts). Returns true only when the centre concept (or any of its equivalent canonicals) has at least one xwalk edge. The Network icon on framework cards in **ComplianceLandscape**, **FrameworkDetailPopover**, and the executive **FrameworkDeadlineCard** is now gated on this — tiles whose backing concepts have no SME-authored relationships yet (SOC 2, NY DFS 23 NYCRR 500, NIST NCCoE SP 1800-38 at compliance-id level, ASC X9, PQC Coalition, etc.) no longer offer the icon.
+- **Matcher in `equivalentCanonicals` relaxed** to treat a trailing single alpha letter as a token boundary, so a centre concept `nist-nccoe-sp-1800-38` (compliance row) now matches library entries `nist-nccoe-sp-1800-38a`, `-38b`, `-38c` — the doc-suffix convention NIST uses for sub-parts of the same regulation. Digit suffixes still don't match, so `fips-2` does not gobble `fips-203`.
+
+### Data — 92 new xwalk edges promoted from candidate staging
+
+Ran [`scripts/merge-xwalk-candidates.ts`](scripts/merge-xwalk-candidates.ts) against the Ollama-generated candidates that had been accumulating over the last 3 days of enrichment. Net result on `concept_xwalks_05112026_r2.csv`:
+
+- **+92 new edges** promoted out of 939 candidates (rest were already in production or had unresolved `to_concept` references — 52 orphan candidates).
+- Post-merge cleanup dropped **83 duplicate `xwalk_id` rows** (merge-tool collision; first occurrence kept) and **5 `not_related` rows** (the IR 8477 vocabulary includes `not_related` but project convention is to omit those — they're documented as edges that aren't edges).
+- Final row count: **948** (was 944).
+
+### Known follow-ups (not addressed in this release)
+
+- **No new edges for SOC 2, ASC X9, NY DFS, PQC Coalition.** Source documents exist in `public/library/` for ASC X9 (4 docs) and NY DFS, but the Ollama enrichment either skipped them or extracted no relationships. Need to re-run `scripts/enrich-ir8477-xwalk.py` targeting those specific docs. SOC 2 source is AICPA-paywalled — would need manual edge authoring.
+- **80 unresolved endpoint references** in the migrated xwalk (`to_concept_id` empty) — these point at concepts that aren't yet in `concept_registry`. CM-CONCEPT validator will flag these as WARNING.
+
+### Verified
+
+`npm test src/data src/components/Compliance` → 330/330 pass. tsc silent.
+
 ## [3.14.4] - 2026-05-11
 
 ### Fixed — SBOM panel showing actually-installed versions (not package.json caret floors)

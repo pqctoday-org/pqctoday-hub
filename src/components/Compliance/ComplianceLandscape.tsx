@@ -38,6 +38,7 @@ import { ViewToggle, type ViewMode } from '@/components/Library/ViewToggle'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { conceptIdForFramework } from '@/data/complianceData'
+import { hasGraphEdges } from '@/utils/conceptXwalkGraph'
 import { FrameworkConceptGraphModal } from './FrameworkConceptGraphModal'
 import { resolveTimelineRef } from '@/utils/timelineResolver'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
@@ -319,6 +320,7 @@ function FrameworkCard({
   const isSelected = useComplianceSelectionStore((s) => s.myFrameworks.includes(fw.id))
   const toggleMyFramework = useComplianceSelectionStore((s) => s.toggleMyFramework)
   const graphConceptId = conceptIdForFramework(fw)
+  const showGraphIcon = graphConceptId !== undefined && hasGraphEdges(graphConceptId)
 
   // Count maturity requirements reachable via this framework's library refs
   const maturityCount = useMemo(() => {
@@ -396,7 +398,7 @@ function FrameworkCard({
             )}
           </div>
         </div>
-        {graphConceptId && (
+        {showGraphIcon && (
           <Button
             type="button"
             variant="ghost"
@@ -430,7 +432,7 @@ function FrameworkCard({
           {isSelected ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
         </Button>
       </div>
-      {graphConceptId && (
+      {showGraphIcon && graphConceptId && (
         <FrameworkConceptGraphModal
           isOpen={graphOpen}
           onClose={() => setGraphOpen(false)}
