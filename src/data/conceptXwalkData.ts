@@ -8,12 +8,19 @@ export type XwalkRelationshipType =
   | 'intersects_with'
   | 'not_related'
 
+/**
+ * Closed set per NIST IR 8477 §3.2 (trust-engine-explainability.md).
+ * Aligned 2026-05-11: previous `equivalence` / `specialization` values were
+ * rewritten to `semantic` / `functional` via the one-shot migration.
+ * CM-RATIONALE validator enforces this set going forward.
+ */
 export type XwalkRationaleType =
+  | 'syntactic'
+  | 'semantic'
+  | 'functional'
   | 'technical_dependency'
   | 'policy_reference'
   | 'implementation_guidance'
-  | 'equivalence'
-  | 'specialization'
   | 'timeline_anchor'
 
 export type XwalkConfidenceLabel = 'high' | 'medium' | 'low'
@@ -60,11 +67,12 @@ const VALID_RELATIONSHIP_TYPES = new Set<string>([
 ])
 
 const VALID_RATIONALE_TYPES = new Set<string>([
+  'syntactic',
+  'semantic',
+  'functional',
   'technical_dependency',
   'policy_reference',
   'implementation_guidance',
-  'equivalence',
-  'specialization',
   'timeline_anchor',
 ])
 
