@@ -4,6 +4,56 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.13.0] - 2026-05-11
+
+### Highlights
+
+- **Local AI is now framed as exploratory and gated behind explicit consent.** After observing the in-browser models confidently fabricate FIPS 203 algorithm names ("Sphinx", "Tapestry") and use deprecated terminology ("Kyber" for ML-KEM), we narrowed the local-AI surface to a single best-available model and require two distinct user acknowledgements before any local session can start. Cloud (Gemini Flash) is now visually surfaced as the **Recommended** path for any factual question.
+- **Local catalog narrowed to one model — Qwen 3 8B.** Smaller in-browser models (1.7B–4B parameters) hallucinate too aggressively on PQC standards content; we'll re-expand the catalog when on-device models reach the accuracy bar this app needs.
+- **Chat panel can now expand to ~85vw** for users who want to read longer responses without dragging — a new toggle in the panel header switches between partial (~40vw) and expanded width, and the choice persists across reloads.
+
+### Local AI — quality gating
+
+- **Double acknowledgement required before any local-AI session.** Two checkboxes, neither pre-checked, neither saved across sessions:
+  1. _"I understand that local AI may fabricate algorithm names, standards, dates, and other facts, and I will verify every named entity in its responses against the source pages before relying on it."_ — required to enable **Get Started**.
+  2. _"I understand that local AI is an exploratory feature, that current results do not meet the accuracy bar of this app, and I am proceeding on that basis. I will not screenshot or share local-AI responses as if they were authoritative."_ — required to enable the final **Agree & Download** button.
+     Backing out of the consent flow resets both checkboxes so prior consent can never be passively reused.
+- **Cloud (Gemini Flash) card now badged as Recommended** with a primary-coloured affirmation banner: _"Meets this app's accuracy bar — Gemini 2.5 Flash reliably grounds its answers in the retrieved PQC corpus, honors the 'answer only from context' instruction, and uses current standard names (ML-KEM, ML-DSA — not the deprecated Kyber/Dilithium)."_ Border bumped to a thicker primary outline so the Cloud card visually wins the side-by-side comparison.
+- **Local card now badged as Experimental** with a yellow warning banner: _"Accuracy is currently below our bar — Local AI runs entirely in your browser, but small on-device models (1.7–8B parameters) routinely fabricate facts about specific algorithms, standards, and dates."_ Footer note explains we're monitoring local-AI progress and will reintroduce a tiered catalog when models improve.
+
+### Local AI — catalog overhaul
+
+- **Catalog reduced from five models to one.** Removed Qwen 3 0.6B, Qwen 3 1.7B, Qwen 3 4B, Llama 3.2 3B, and Phi 3.5/4 Mini; kept only **Qwen 3 8B** (`Qwen3-8B-q4f16_1-MLC`, ~5.7 GB VRAM, ~4.5 GB download). Justification: it has the newest training cutoff (early 2025) of any 7B+ model in the MLC registry, the strongest instruction-following at that size, and avoids the dominant failure modes of the smaller alternatives (Phi 4 Mini's repetition loops on structured prompts; Qwen 3 4B's `<think>`-mode trap; Llama 3.2 3B's confident hallucination of named entities).
+- **Every catalog entry's `maxContextLength` corrected to 4096.** Previous values claimed 8K (Qwen 3 1.7B/4B, Llama 3.2 3B) and 16K (Phi 3.5 Mini), but every MLC-compiled WebLLM build is hard-capped at 4K — the over-claimed values were silently clamping or erroring at runtime when the slider went above 4K. The misleading "Largest context window" tip on Phi was the most visible symptom.
+- **Qwen 3 0.6B VRAM corrected** from 604 MB → 1403 MB (off by 2.3×) and download size from 0.4 GB → 0.6 GB before the model was dropped from the catalog. The previous values would have made the "Fastest" tier look much cheaper than it actually was.
+- **Persistence migration `v8 → v9 → v10 → v11`** in `useChatStore.ts`. Whatever local model an existing user previously had selected, they now land on Qwen 3 8B (or Cloud) without being silently reset to the default — the migration walks through the intermediate states (Phi 3.5 → Phi 4 → Llama 3.2 3B → Qwen 3 8B; Qwen 3 0.6B → Qwen 3 1.7B → Qwen 3 8B). Persisted `localContextWindow > 4096` is also clamped down to 4096 so stale slider values don't break model init.
+- **Single-model UI affordance:** when the catalog has only one entry the model picker renders as a static labelled box instead of a useless single-item dropdown.
+
+### Local AI — reliability fix for Qwen `<think>` mode
+
+- **`/no_think` is now injected into both the system prompt and the trailing user turn** for Qwen 3 models. The previous user-only injection was flaky on Qwen 3 4B (and 8B with long system prompts) — the model would honor the directive sometimes and ignore it other times, leaving the entire response trapped inside an unclosed `<think>...</think>` block that the post-stream stripper removed, producing an empty assistant bubble with citations populated but no content.
+- **Empty post-strip output now surfaces a partial reasoning excerpt with a notice** instead of silently rendering an empty bubble. When Qwen ignores `/no_think` and produces only thinking content, the user sees: _"The local model produced reasoning but no final answer (its 'thinking mode' wasn't suppressed). Partial reasoning shown below — try a shorter question or switch to a smaller Qwen variant."_
+
+### Right panel — width toggle
+
+- **New maximize / minimize toggle in the panel header.** Click it to expand the right panel from ~40vw to ~85vw for easier reading of long chat responses; click again to shrink back. Animated 200 ms width transition; state persists across reloads via a new `isExpanded` flag in `useRightPanelStore` (migration `v5 → v6`, defaults existing users to partial). Hidden on mobile (panel is already full-width below `sm:` breakpoint).
+
+### Fixed — chat panel header
+
+- **Provider chip in the chat header now shows just the model name.** Previously the trim regex was `/ \(.*\)$/` which only matches parens at end-of-string; once we added taglines like `"Llama 3.2 3B (1.5 GB) — Strong instruction following"`, the regex stopped matching and the entire long label rendered into the header, eating horizontal space and pushing the action icons around. Replaced with `.split(/ \(| —/)[0]` so the chip displays only e.g. `"Llama 3.2 3B"`.
+- **Action icons in the chat header no longer wrap to a second line.** Removed `flex-wrap` from the icon row and added `shrink-0`; the title group on the left already has `min-w-0` + `truncate` so it compresses gracefully instead.
+
+### Fixed — provider setup screen
+
+- **Context Window preset cards no longer collapse into one mashed line.** The cards were rendered with `<Button variant="ghost">` (default size), whose base classes include `inline-flex items-center justify-center whitespace-nowrap` — these flattened the card's two-row internal layout into a single horizontal line, producing strings like `"4K tokensSafe default9 chunks · 60% coverageAny GPU"`. Switched to `size="tile"` which provides `flex-col items-start whitespace-normal` defaults, with `min-h-0 p-2.5` overrides to keep the compact card height and `w-full` on inner flex rows.
+- **Duplicate "Model" label removed.** The outer `<span>Model</span>` plus a `label="Model"` prop on `<FilterDropdown noContainer>` was rendering "Model" twice. Removed the dropdown's `label` prop; the outer span is now the single label.
+- **Help text updated** to describe only the surviving model and to redirect factual queries to Cloud.
+
+### Behind the scenes
+
+- WebLLM catalog file (`src/services/chat/WebLLMService.ts`) carries an explicit header comment documenting the rationale for the single-model catalog and the criterion for re-expansion.
+- All chat / local-AI / right-panel changes verified by `npx tsc --noEmit` and 391 passing tests across `src/services/chat/`, `src/store/`, `src/components/Chat/`, and `src/components/RightPanel/`.
+
 ## [3.12.1] - 2026-05-11
 
 ### Fixes

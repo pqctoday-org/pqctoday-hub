@@ -192,10 +192,9 @@ export const ChatPanelContent: React.FC = () => {
   }
 
   const ProviderIcon = provider === 'local' ? Shield : Cloud
-  const localModelLabel = WEBLLM_MODELS.find((m) => m.id === localModel)?.label?.replace(
-    / \(.*\)$/,
-    ''
-  )
+  // Strip everything from the first " (" or " —" onward so the header chip shows
+  // just the model name (e.g. "Llama 3.2 3B") and not the size + tagline.
+  const localModelLabel = WEBLLM_MODELS.find((m) => m.id === localModel)?.label?.split(/ \(| —/)[0]
   const providerLabel = provider === 'local' ? (localModelLabel ?? 'Local') : 'Cloud'
 
   return (
@@ -214,7 +213,7 @@ export const ChatPanelContent: React.FC = () => {
             )}
           </div>
           {provider && (
-            <div className="flex items-center gap-1 flex-wrap">
+            <div className="flex items-center gap-1 shrink-0">
               <div className="flex items-center gap-1.5 px-1">
                 <Plane
                   size={14}

@@ -24,7 +24,8 @@ const WorkshopPanel = React.lazy(() =>
 )
 
 export const RightPanel: React.FC = () => {
-  const { isOpen, activeTab, setTab, close, minimize, toggle } = useRightPanelStore()
+  const { isOpen, activeTab, isExpanded, setTab, close, minimize, toggle, toggleExpanded } =
+    useRightPanelStore()
   const workshopMode = useWorkshopStore((s) => s.mode)
   const workshopActive = isWorkshopPinning(workshopMode)
 
@@ -76,7 +77,9 @@ export const RightPanel: React.FC = () => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed top-0 right-0 bottom-0 z-panel bg-background shadow-2xl flex flex-col overflow-hidden print:hidden border-l border-border rounded-l-xl w-full sm:w-[40vw] sm:min-w-[360px]"
+              className={`fixed top-0 right-0 bottom-0 z-panel bg-background shadow-2xl flex flex-col overflow-hidden print:hidden border-l border-border rounded-l-xl w-full transition-[width] duration-200 ease-out sm:min-w-[360px] ${
+                isExpanded ? 'sm:w-[85vw]' : 'sm:w-[40vw]'
+              }`}
               role="dialog"
               aria-label={panelLabel}
               onClick={(e) => e.stopPropagation()}
@@ -86,6 +89,8 @@ export const RightPanel: React.FC = () => {
                 onTabChange={setTab}
                 onClose={workshopActive ? () => {} : close}
                 onMinimize={workshopActive ? undefined : minimize}
+                isExpanded={isExpanded}
+                onToggleExpanded={toggleExpanded}
               />
 
               {activeTab === 'chat' && <ChatPanelContent />}

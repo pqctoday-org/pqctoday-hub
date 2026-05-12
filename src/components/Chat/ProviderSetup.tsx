@@ -46,6 +46,11 @@ export const ProviderSetup: React.FC = () => {
   const [webgpuCheck, setWebgpuCheck] = useState<WebGPUCheck>('checking')
   const [showConsent, setShowConsent] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
+  // Double acknowledgement gate. Both must be explicitly ticked before the user
+  // can start a local-AI session. Reset each time the user backs out so they
+  // re-confirm rather than passively re-using a prior agreement.
+  const [ackExploratory, setAckExploratory] = useState(false)
+  const [ackQualityRisk, setAckQualityRisk] = useState(false)
 
   const selectedModelData = WEBLLM_MODELS.find((m) => m.id === selectedModel)
   const modelMaxContext = selectedModelData?.maxContextLength ?? MIN_CONTEXT_WINDOW
@@ -176,10 +181,40 @@ export const ProviderSetup: React.FC = () => {
               <div className="w-9 h-9 rounded-full bg-status-success/20 flex items-center justify-center">
                 <Shield size={18} className="text-status-success" />
               </div>
-              <div>
-                <h4 className="text-sm font-semibold text-foreground">Local (Private)</h4>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h4 className="text-sm font-semibold text-foreground">Local (Private)</h4>
+                  <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-status-warning/20 text-status-warning">
+                    Experimental
+                  </span>
+                </div>
                 <p className="text-xs text-muted-foreground">100% on-device</p>
               </div>
+            </div>
+
+            {/* Quality warning — prominent, not collapsed. Sets expectations
+                before the user has invested time picking a model. */}
+            <div className="rounded-lg bg-status-warning/10 border border-status-warning/30 p-3 space-y-2">
+              <div className="flex items-center gap-2 text-sm font-medium text-status-warning">
+                <AlertTriangle size={14} className="shrink-0" />
+                Accuracy is currently below our bar
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Local AI runs entirely in your browser, but small on-device models (1.7–8B
+                parameters) <strong className="text-foreground">routinely fabricate facts</strong>{' '}
+                about specific algorithms, standards, and dates — including inventing non-existent
+                algorithm names or using deprecated terminology.
+              </p>
+              <p className="text-xs text-muted-foreground">
+                We&apos;re actively monitoring local-AI progress and will reintroduce it as a
+                first-class option once on-device models reach the accuracy bar this app needs. For
+                now,{' '}
+                <strong className="text-foreground">
+                  use Cloud (Gemini) for any factual question about standards, algorithms, or
+                  compliance
+                </strong>
+                .
+              </p>
             </div>
 
             <p className="text-sm text-muted-foreground">
@@ -211,13 +246,22 @@ export const ProviderSetup: React.FC = () => {
               <>
                 <div className="space-y-2">
                   <span className="text-xs font-medium text-muted-foreground">Model</span>
-                  <FilterDropdown
-                    items={modelItems}
-                    selectedId={selectedModel}
-                    onSelect={handleModelChange}
-                    noContainer
-                    label="Model"
-                  />
+                  {/* When only one model is offered, render a static label instead of
+                      a single-item dropdown — avoids implying choice that doesn't exist. */}
+                  {WEBLLM_MODELS.length > 1 ? (
+                    <FilterDropdown
+                      items={modelItems}
+                      selectedId={selectedModel}
+                      onSelect={handleModelChange}
+                      noContainer
+                    />
+                  ) : (
+                    <div className="rounded-lg border border-border bg-muted/10 p-2.5">
+                      <p className="text-sm font-medium text-foreground">
+                        {selectedModelData?.label ?? selectedModel}
+                      </p>
+                    </div>
+                  )}
                   {selectedModelData && (
                     <div className="rounded-lg border border-border bg-muted/10 p-2.5 space-y-1.5">
                       <p className="text-[11px] text-muted-foreground">{selectedModelData.tip}</p>
@@ -249,16 +293,17 @@ export const ProviderSetup: React.FC = () => {
                     {contextPresets.map((p) => (
                       <Button
                         variant="ghost"
+                        size="tile"
                         key={p.tokens}
                         type="button"
                         onClick={() => setContextWindow(p.tokens)}
-                        className={`w-full text-left rounded-lg border p-2.5 transition-colors ${
+                        className={`min-h-0 p-2.5 border transition-colors ${
                           contextWindow === p.tokens
                             ? 'border-primary bg-primary/10'
                             : 'border-border bg-muted/10 hover:border-muted-foreground/30'
                         }`}
                       >
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between w-full">
                           <span className="text-xs font-semibold text-foreground">
                             {p.label} tokens
                           </span>
@@ -271,14 +316,14 @@ export const ProviderSetup: React.FC = () => {
                             <span className="text-[10px] text-muted-foreground">{p.note}</span>
                           </div>
                         </div>
-                        <div className="flex items-center justify-between mt-0.5">
+                        <div className="flex items-center justify-between w-full mt-0.5">
                           <span className="text-[10px] text-muted-foreground">
                             {p.chunks} chunks &middot; {p.coverage} coverage
                           </span>
                           <span className="text-[10px] text-muted-foreground">{p.hw}</span>
                         </div>
                         {p.highVram && contextWindow === p.tokens && (
-                          <p className="text-[10px] text-status-warning mt-1">
+                          <p className="text-[10px] text-status-warning mt-1 w-full">
                             If loading fails with an out-of-memory error, switch to a lower context
                             window or a smaller model.
                           </p>
@@ -318,23 +363,49 @@ export const ProviderSetup: React.FC = () => {
                       4K default works on any GPU — increase if your hardware allows.
                     </p>
                     <p>
-                      <strong className="text-foreground">Choosing a model</strong>: Qwen 3 1.7B is
-                      the best all-rounder. Llama 3.2 3B excels at following formatting rules
-                      (links, lists). Phi 3.5 Mini can use up to 16K context for the deepest
-                      answers. Qwen 3 4B gives the highest accuracy but needs more VRAM. Qwen 3 0.6B
-                      is the fastest for quick lookups.
+                      <strong className="text-foreground">Why only Qwen 3 8B</strong>: Smaller
+                      in-browser models (1.7–4B parameters) hallucinate too aggressively on PQC
+                      standards content — inventing algorithm names, mixing up FIPS numbers, and
+                      using deprecated terminology (e.g., &ldquo;Kyber&rdquo; instead of ML-KEM).
+                      Qwen 3 8B is the strongest currently-available MLC build for this app&apos;s
+                      RAG workload. We&apos;re monitoring smaller-model progress and will
+                      reintroduce a tiered catalog when on-device models reach the accuracy bar this
+                      app needs.
                     </p>
                     <p>
-                      <strong className="text-foreground">Limitations vs Cloud</strong>: Local
-                      models (0.6–4B parameters) are much smaller than Gemini (cloud). They may give
-                      shorter answers, miss nuances, and produce fewer deep links to app pages. For
-                      best results, ask specific, focused questions.
+                      <strong className="text-foreground">Limitations vs Cloud</strong>: Even Qwen 3
+                      8B is much smaller than Gemini and still hallucinates a meaningful fraction of
+                      factual answers. For any question about specific standards, algorithms,
+                      certifications, or compliance frameworks, use Cloud (Gemini) and verify named
+                      entities against the source pages.
                     </p>
                   </div>
                 )}
 
                 {!showConsent ? (
                   <>
+                    {/* Acknowledgement #1 — quality risk. Stays in the main card so
+                        the user faces it before clicking Get Started. */}
+                    <label className="flex items-start gap-2 cursor-pointer rounded-lg border border-border bg-muted/10 p-3 hover:border-muted-foreground/30">
+                      <input
+                        type="checkbox"
+                        checked={ackQualityRisk}
+                        onChange={(e) => setAckQualityRisk(e.target.checked)}
+                        className="mt-0.5 shrink-0 h-4 w-4 accent-primary"
+                        aria-describedby="local-ack-quality-text"
+                      />
+                      <span
+                        id="local-ack-quality-text"
+                        className="text-xs text-foreground leading-relaxed"
+                      >
+                        I understand that local AI may{' '}
+                        <strong>
+                          fabricate algorithm names, standards, dates, and other facts
+                        </strong>
+                        , and I will verify every named entity in its responses against the source
+                        pages before relying on it.
+                      </span>
+                    </label>
                     <p className="text-xs text-muted-foreground">
                       One-time download ({selectedModelData?.sizeGB ?? '?'} GB). Cached in your
                       browser for instant startup.
@@ -343,6 +414,7 @@ export const ProviderSetup: React.FC = () => {
                       variant="gradient"
                       className="w-full"
                       onClick={() => setShowConsent(true)}
+                      disabled={!ackQualityRisk}
                     >
                       Get Started
                     </Button>
@@ -376,14 +448,45 @@ export const ProviderSetup: React.FC = () => {
                       Ensure <strong>huggingface.co</strong> is not blocked by your ad blocker,
                       firewall, or VPN.
                     </p>
+                    {/* Acknowledgement #2 — exploratory status, distinct from #1.
+                        Required to enable the final "Agree & Download" button. */}
+                    <label className="flex items-start gap-2 cursor-pointer rounded-lg border border-status-warning/30 bg-status-warning/10 p-3">
+                      <input
+                        type="checkbox"
+                        checked={ackExploratory}
+                        onChange={(e) => setAckExploratory(e.target.checked)}
+                        className="mt-0.5 shrink-0 h-4 w-4 accent-primary"
+                        aria-describedby="local-ack-exploratory-text"
+                      />
+                      <span
+                        id="local-ack-exploratory-text"
+                        className="text-xs text-foreground leading-relaxed"
+                      >
+                        I understand that local AI is an <strong>exploratory feature</strong>, that
+                        current results do <strong>not meet the accuracy bar</strong> of this app,
+                        and I am proceeding on that basis. I will not screenshot or share local-AI
+                        responses as if they were authoritative.
+                      </span>
+                    </label>
                     <div className="flex gap-2">
-                      <Button variant="gradient" className="flex-1" onClick={handleLocalStart}>
+                      <Button
+                        variant="gradient"
+                        className="flex-1"
+                        onClick={handleLocalStart}
+                        disabled={!ackExploratory}
+                      >
                         Agree & Download
                       </Button>
                       <Button
                         variant="ghost"
                         className="shrink-0"
-                        onClick={() => setShowConsent(false)}
+                        onClick={() => {
+                          // Reset both ack flags so backing out forces a fresh
+                          // re-confirmation rather than passively reusing prior consent.
+                          setShowConsent(false)
+                          setAckExploratory(false)
+                          setAckQualityRisk(false)
+                        }}
                       >
                         Back
                       </Button>
@@ -396,7 +499,7 @@ export const ProviderSetup: React.FC = () => {
 
           {/* Gemini (Cloud) Card */}
           <div
-            className={`glass-panel rounded-xl p-5 space-y-4 border border-border max-h-[80vh] overflow-y-auto ${
+            className={`glass-panel rounded-xl p-5 space-y-4 border-2 border-primary/40 max-h-[80vh] overflow-y-auto ${
               airplaneMode ? 'opacity-50 pointer-events-none' : ''
             }`}
             aria-disabled={airplaneMode}
@@ -413,10 +516,33 @@ export const ProviderSetup: React.FC = () => {
               <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center">
                 <Cloud size={18} className="text-primary" />
               </div>
-              <div>
-                <h4 className="text-sm font-semibold text-foreground">Gemini 2.5 Flash (Cloud)</h4>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h4 className="text-sm font-semibold text-foreground">
+                    Gemini 2.5 Flash (Cloud)
+                  </h4>
+                  <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/20 text-primary">
+                    Recommended
+                  </span>
+                </div>
                 <p className="text-xs text-muted-foreground">1M token context · 40+ languages</p>
               </div>
+            </div>
+
+            {/* Recommended-quality banner — mirrors the warning on Local. Sets the
+                expectation that Cloud is the path that meets this app's bar. */}
+            <div className="rounded-lg bg-primary/10 border border-primary/30 p-3 space-y-2">
+              <div className="flex items-center gap-2 text-sm font-medium text-primary">
+                <CheckCircle size={14} className="shrink-0" />
+                Meets this app&apos;s accuracy bar
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Gemini 2.5 Flash reliably grounds its answers in the retrieved PQC corpus, honors
+                the &ldquo;answer only from context&rdquo; instruction, and uses current standard
+                names (ML-KEM, ML-DSA — not the deprecated Kyber/Dilithium). It&apos;s the provider
+                we test against and the one we recommend for any factual question about standards,
+                algorithms, or compliance.
+              </p>
             </div>
 
             <p className="text-sm text-muted-foreground">

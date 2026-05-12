@@ -1,6 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
-import { Bot, Clock, Bookmark, HelpCircle, X, Minus, GraduationCap } from 'lucide-react'
+import {
+  Bot,
+  Clock,
+  Bookmark,
+  HelpCircle,
+  X,
+  Minus,
+  GraduationCap,
+  Maximize2,
+  Minimize2,
+} from 'lucide-react'
 import { Button } from '../ui/button'
 import type { RightPanelTab } from '@/types/HistoryTypes'
 interface PanelHeaderProps {
@@ -8,6 +18,8 @@ interface PanelHeaderProps {
   onTabChange: (tab: RightPanelTab) => void
   onClose: () => void
   onMinimize?: () => void
+  isExpanded?: boolean
+  onToggleExpanded?: () => void
 }
 
 export const PanelHeader: React.FC<PanelHeaderProps> = ({
@@ -15,6 +27,8 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
   onTabChange,
   onClose,
   onMinimize,
+  isExpanded,
+  onToggleExpanded,
 }) => {
   const tabs: { id: RightPanelTab; label: string; icon: React.ElementType }[] = [
     { id: 'chat', label: 'Assistant', icon: Bot },
@@ -47,6 +61,21 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
           ))}
         </div>
         <div className="flex items-center gap-1">
+          {onToggleExpanded && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onToggleExpanded}
+              className="min-h-[44px] min-w-[44px] p-2 hidden sm:inline-flex"
+              aria-label={
+                isExpanded ? 'Shrink assistant to partial width' : 'Expand assistant to full width'
+              }
+              aria-pressed={isExpanded}
+              title={isExpanded ? 'Shrink to partial width' : 'Expand to full width'}
+            >
+              {isExpanded ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+            </Button>
+          )}
           {onMinimize && (
             <Button
               variant="ghost"

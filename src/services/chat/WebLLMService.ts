@@ -41,60 +41,34 @@ export const MIN_CONTEXT_WINDOW = 2_048
 /** Default context window for new users (tokens). Matches web-llm's own default. */
 export const DEFAULT_CONTEXT_WINDOW = 4_096
 
+// VRAM, context window, and quantization sizes mirror the MLC prebuilt registry
+// at https://github.com/mlc-ai/web-llm/blob/main/src/config.ts. Every MLC build
+// currently ships a 4K context window — the underlying model architectures may
+// support more, but the compiled WebLLM artifacts do not. Do not raise
+// maxContextLength above 4096 without confirming a registry change.
+//
+// Catalog is intentionally narrowed to a single option — Qwen 3 8B — because
+// smaller in-browser models (1.7B–4B) hallucinate too aggressively on PQC
+// standards content (e.g., inventing "Sphinx" / "Tapestry" as FIPS 203
+// algorithms). Qwen 3 8B is the strongest currently-available MLC build for
+// this app's RAG workload: newest training cutoff among 7B+ MLC builds, best
+// instruction-following at that size, and meaningfully lower hallucination
+// rate. Re-expand the catalog only when on-device models reach the accuracy
+// bar this app needs.
 export const WEBLLM_MODELS: WebLLMModel[] = [
   {
-    id: 'Qwen3-1.7B-q4f16_1-MLC',
-    label: 'Qwen 3 1.7B (1.0 GB) — Recommended',
-    sizeGB: 1.0,
-    maxContextLength: 8_192,
-    vramMB: 2037,
-    speed: 4,
-    accuracy: 3,
-    tip: 'Best balance of speed and quality. Works on most GPUs.',
-  },
-  {
-    id: 'Llama-3.2-3B-Instruct-q4f16_1-MLC',
-    label: 'Llama 3.2 3B (1.5 GB) — Strong instruction following',
-    sizeGB: 1.5,
-    maxContextLength: 8_192,
-    vramMB: 2264,
-    speed: 3,
-    accuracy: 4,
-    tip: 'Best at following complex instructions — links, formatting, lists.',
-  },
-  {
-    id: 'Phi-3.5-mini-instruct-q4f16_1-MLC',
-    label: 'Phi 3.5 Mini (2.1 GB) — Largest context window',
-    sizeGB: 2.1,
-    maxContextLength: 16_384,
-    vramMB: 3672,
-    speed: 2,
-    accuracy: 4,
-    tip: 'Up to 16K context — feeds the model 4x more reference data.',
-  },
-  {
-    id: 'Qwen3-4B-q4f16_1-MLC',
-    label: 'Qwen 3 4B (2.3 GB) — Best quality',
-    sizeGB: 2.3,
-    maxContextLength: 8_192,
-    vramMB: 3432,
-    speed: 2,
-    accuracy: 5,
-    tip: 'Highest accuracy. Needs a dedicated or Apple Silicon GPU.',
-  },
-  {
-    id: 'Qwen3-0.6B-q4f16_1-MLC',
-    label: 'Qwen 3 0.6B (0.4 GB) — Fastest',
-    sizeGB: 0.4,
+    id: 'Qwen3-8B-q4f16_1-MLC',
+    label: 'Qwen 3 8B (4.5 GB) — Best on-device option available',
+    sizeGB: 4.5,
     maxContextLength: 4_096,
-    vramMB: 604,
-    speed: 5,
-    accuracy: 1,
-    tip: 'Ultra-fast responses but lower accuracy. Good for quick lookups.',
+    vramMB: 5696,
+    speed: 1,
+    accuracy: 5,
+    tip: 'Strongest currently-available local model. Needs ~6 GB of free VRAM — discrete GPU or 16 GB+ Apple Silicon recommended. Smaller models were dropped due to unreliable factual accuracy.',
   },
 ]
 
-export const DEFAULT_LOCAL_MODEL = 'Qwen3-1.7B-q4f16_1-MLC'
+export const DEFAULT_LOCAL_MODEL = 'Qwen3-8B-q4f16_1-MLC'
 
 /* ------------------------------------------------------------------ */
 /*  Engine singleton                                                   */
@@ -348,9 +322,13 @@ export async function* streamResponse(
     role: m.role === 'user' ? ('user' as const) : ('assistant' as const),
     content: m.content,
   }))
-  // Inject /no_think into the last user message for Qwen 3 models only.
-  // This directive disables Qwen's internal thinking mode; other model families ignore it.
+  // Inject /no_think for Qwen 3 models. The directive is honored most reliably
+  // when present in BOTH the system prompt and the trailing user turn —
+  // user-only injection is flaky on Qwen 3 4B with longer system prompts and
+  // can leave the entire response trapped inside an unclosed <think> block
+  // that the strip below removes, producing an empty visible answer.
   const isQwen = loadedModelId?.startsWith('Qwen') ?? false
+  const finalSystemPrompt = isQwen ? '/no_think\n' + systemPrompt : systemPrompt
   if (isQwen && history.length > 0 && history[history.length - 1].role === 'user') {
     history[history.length - 1] = {
       ...history[history.length - 1],
@@ -358,7 +336,7 @@ export async function* streamResponse(
     }
   }
   const formattedMessages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }> = [
-    { role: 'system', content: systemPrompt },
+    { role: 'system', content: finalSystemPrompt },
     ...history,
   ]
 
@@ -424,5 +402,19 @@ export async function* streamResponse(
     : accumulated
   if (final.length > yieldedLength) {
     yield final.slice(yieldedLength)
+  }
+
+  // Fallback: if Qwen ignored /no_think and produced ONLY thinking content
+  // (no visible answer survived the strip), surface a partial reasoning excerpt
+  // so the user sees something actionable instead of an empty bubble.
+  if (final.trim().length === 0 && accumulated.trim().length > 0) {
+    const thinkMatch = accumulated.match(/<think>([\s\S]*?)(?:<\/think>|$)/)
+    const reasoning = thinkMatch?.[1]?.trim() ?? accumulated.trim()
+    const excerpt = reasoning.slice(0, 800)
+    const truncated = reasoning.length > 800 ? '…' : ''
+    yield `> *The local model produced reasoning but no final answer ` +
+      `(its "thinking mode" wasn't suppressed). Partial reasoning shown below — ` +
+      `try a shorter question or switch to a smaller Qwen variant.*\n\n` +
+      `${excerpt}${truncated}`
   }
 }
