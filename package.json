@@ -1,7 +1,7 @@
 {
   "name": "pqctoday-hub",
   "private": true,
-  "version": "3.14.5",
+  "version": "3.14.6",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
