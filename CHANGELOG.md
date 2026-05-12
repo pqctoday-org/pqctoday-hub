@@ -4,6 +4,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.14.1] - 2026-05-11
+
+### Fixed
+
+- **Concept Graph icon now appears on every Landscape framework card** (was missing on ~90 of 123). The initial registry was built only from xwalk endpoints, capturing 33 compliance frameworks; cards whose `id` didn't appear as a xwalk endpoint (NIS2, DORA, eIDAS, BOI-PQC, CCCS-ITSM, Jordan Financial Sector PQC Roadmap, and many more) couldn't resolve to a canonical concept_id and so the icon was hidden. The build script now enumerates every record in compliance / library / timeline / algo-xref as a Pass A pre-pass, then maps xwalk endpoints to the existing canonicals. Result: **1,154 canonical concepts** (up from 392), **0 unresolved xwalk endpoints**, and the icon appears on every framework card.
+- **`build-concept-registry.ts` kebab function** now treats `.` as a separator alongside whitespace/underscore/slash. Previously `kebab("NSA CNSA 2.0")` produced `nsa-cnsa-20` (stripping the dot and fusing `2` + `0`); now produces `nsa-cnsa-2-0`, allowing the matcher to correctly identify `CNSA-2` as a token inside it.
+- **`migrate-xwalk-ids.ts` re-migration safety:** the script now finds the next available `_rN` revision when the natural target file already exists, instead of refusing to write. Also handles the case where the input CSV already has `from_concept_id`/`to_concept_id` columns (preserves position instead of duplicating).
+
+### Schema
+
+- **`concept_registry` CSV gains an `aliases` column** — semicolon-delimited list of (a) alternate display-label forms used by xwalk endpoints, and (b) secondary store-key bindings of the form `<table>:<id>`. The loader's `conceptIdByStoreKey` index now also picks up secondary bindings.
+
+### Known limitation (queued for the next release)
+
+- Cards whose `id` doesn't directly match an xwalk endpoint (e.g. clicking CNSA 2.0 → centerConceptId is `guidance:cnsa-2`, but xwalk uses display_label `NSA CNSA 2.0` → canonical `guidance:nsa-cnsa-2-0`) will see an empty graph with the message _"No concept-xwalk edges for this framework."_ This is correct given the current canonical-id assignment — the deeper fix is a curated equivalence table in the registry, or a runtime "equivalent canonicals" lookup in the graph builder. Tracked for the next release.
+
 ## [3.14.0] - 2026-05-11
 
 ### Highlights
