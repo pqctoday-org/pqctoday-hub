@@ -31,6 +31,15 @@ export interface ConceptRegistryRow {
   sourceTable: string
   sourceRowId: string
   primaryUrl: string
+  /**
+   * Two-purpose semicolon-delimited list (parsed at load time):
+   *  - Bare strings = display-label aliases (alternate xwalk-endpoint forms,
+   *    e.g. "DORA-REG-2022-2554" aliases the compliance row "DORA").
+   *  - `<table>:<id>` keys = secondary store bindings, so e.g.
+   *    `library:DORA-REG-2022-2554` resolves to the same canonical id as
+   *    `compliance:DORA`.
+   */
+  aliases: string[]
   status: 'active' | 'deprecated'
   deprecatedAt: string
   deprecatedReason: string
@@ -43,10 +52,13 @@ interface RawRow {
   source_table: string
   source_row_id: string
   primary_url: string
+  aliases?: string
   status?: string
   deprecated_at?: string
   deprecated_reason?: string
 }
+
+const SECONDARY_KEY_RE = /^(?:library|compliance|timeline|standard_implements_algo_xref):/
 
 const VALID_SOURCE_TYPES = new Set<string>([
   'framework',
@@ -70,6 +82,10 @@ function transformRow(row: RawRow): ConceptRegistryRow | null {
   const status = (row.status?.trim().toLowerCase() ?? 'active') as 'active' | 'deprecated'
   if (status === 'deprecated') return null
   if (!VALID_SOURCE_TYPES.has(row.source_type)) return null
+  const aliases = (row.aliases ?? '')
+    .split(';')
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0)
   return {
     conceptId: row.concept_id,
     displayLabel: row.display_label,
@@ -77,6 +93,7 @@ function transformRow(row: RawRow): ConceptRegistryRow | null {
     sourceTable: row.source_table ?? '',
     sourceRowId: row.source_row_id ?? '',
     primaryUrl: row.primary_url ?? '',
+    aliases,
     status,
     deprecatedAt: row.deprecated_at ?? '',
     deprecatedReason: row.deprecated_reason ?? '',
@@ -111,6 +128,11 @@ export const conceptByCanonicalId: Map<string, ConceptRegistryRow> = allRows.red
 export const conceptIdByStoreKey: Map<string, string> = allRows.reduce((map, r) => {
   if (r.sourceTable && r.sourceRowId) {
     map.set(`${r.sourceTable}:${r.sourceRowId}`, r.conceptId)
+  }
+  // Pick up secondary store keys from the aliases column (e.g.
+  // `library:DORA-REG-2022-2554` → guidance:dora).
+  for (const a of r.aliases) {
+    if (SECONDARY_KEY_RE.test(a)) map.set(a, r.conceptId)
   }
   return map
 }, new Map<string, string>())
