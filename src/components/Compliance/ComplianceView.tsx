@@ -65,10 +65,10 @@ import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore
 import { useHistoryStore } from '@/store/useHistoryStore'
 import { type ViewMode } from '@/components/Library/ViewToggle'
 import debounce from 'lodash/debounce'
-import { GeoFilter, useGeoFilter } from '../common/GeoFilter'
-import { SectorFilter, useSectorFilter, resolveToNaics } from '../common/SectorFilter'
+import { resolveToNaics } from '../common/SectorFilter'
 import { RoleFilter } from '../common/RoleFilter'
-import { normalizeCountry, normalizeIndustry } from '@/utils/applicabilityEngine'
+import { normalizeCountry } from '@/utils/applicabilityEngine'
+import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
 
 // Maps industry → recommended top-level section + sub-hint
 const INDUSTRY_COMPLIANCE_HINT: Record<
@@ -258,28 +258,39 @@ function timelineEventToRow(ev: TimelineEvent): TimelineDocumentRow {
  * deep-link `?country=Australia&ind=Government & Defense` works regardless
  * of persona.
  */
-function ForYouSection({
-  landscapeProps,
-}: {
-  landscapeProps: { countryFilter: string; industryFilter: string }
-}) {
+function ForYouSection() {
   const persona = usePersonaStore((s) => s.selectedPersona)
-  const geoFilter = useGeoFilter()
-  const sectorFilter = useSectorFilter()
+  const selectedIndustries = usePersonaStore((s) => s.selectedIndustries)
+  const storeCountry = useAssessmentFormStore((s) => s.country)
+  const storeIndustry = useAssessmentFormStore((s) => s.industry)
+  const setCountry = useAssessmentFormStore((s) => s.setCountry)
+  const setIndustry = useAssessmentFormStore((s) => s.setIndustry)
+  const [searchParams] = useSearchParams()
 
-  // Resolve geo/sector URL params to single-value profile overrides.
-  // Explicit lsCountry/lsIndustry (from the landscape picker) take precedence;
-  // geo/sector dropdowns kick in only when the landscape picker is at "All".
-  const geoCountry =
-    geoFilter.length > 0 ? (normalizeCountry(geoFilter[0])[0] ?? undefined) : undefined
-  const sectorIndustry =
-    sectorFilter.length > 0 ? (normalizeIndustry(sectorFilter[0])[0] ?? undefined) : undefined
-
-  const profileOverride = {
-    country: landscapeProps.countryFilter !== 'All' ? landscapeProps.countryFilter : geoCountry,
-    industry:
-      landscapeProps.industryFilter !== 'All' ? landscapeProps.industryFilter : sectorIndustry,
-  }
+  // Backwards compat for workshop / Landscape deep-links (`?country=…&industry=…`,
+  // `?ind=…`, `?geo=…`, `?sector=…`): on first mount, mirror them into the
+  // assessment store if it's empty. From there, the editable ProfileSummary in
+  // ApplicabilityPanel is the single source of truth, so user edits are no
+  // longer shadowed by a stale URL override.
+  const didSyncRef = useRef(false)
+  useEffect(() => {
+    if (didSyncRef.current) return
+    didSyncRef.current = true
+    if (!storeCountry) {
+      const urlCountry = searchParams.get('country') ?? searchParams.get('geo')
+      const country = urlCountry ? normalizeCountry(urlCountry)[0] : null
+      if (country && country !== 'All') setCountry(country)
+    }
+    if (!storeIndustry) {
+      const urlIndustry =
+        searchParams.get('industry') ?? searchParams.get('ind') ?? searchParams.get('sector')
+      if (urlIndustry && urlIndustry !== 'All') {
+        setIndustry(urlIndustry)
+      } else if (selectedIndustries.length === 1) {
+        setIndustry(selectedIndustries[0])
+      }
+    }
+  }, [storeCountry, storeIndustry, searchParams, selectedIndustries, setCountry, setIndustry])
 
   const [selectedLibrary, setSelectedLibrary] = useState<LibraryItem | null>(null)
   const [selectedThreat, setSelectedThreat] = useState<ThreatData | null>(null)
@@ -296,9 +307,9 @@ function ForYouSection({
   return (
     <>
       {persona === 'executive' ? (
-        <ExecutiveTimelineView profileOverride={profileOverride} {...callbacks} />
+        <ExecutiveTimelineView {...callbacks} />
       ) : (
-        <ApplicabilityPanel variant="tab" profileOverride={profileOverride} {...callbacks} />
+        <ApplicabilityPanel variant="tab" {...callbacks} />
       )}
       <LibraryDetailPopover
         isOpen={!!selectedLibrary}
@@ -496,11 +507,9 @@ function MobileViewToggle({
       {section === 'foryou' && (
         <div className="space-y-4">
           <div className="flex flex-wrap gap-2">
-            <GeoFilter options={[]} />
-            <SectorFilter />
             <RoleFilter syncWithPersona />
           </div>
-          <ForYouSection landscapeProps={landscapeProps} />
+          <ForYouSection />
         </div>
       )}
       {section === 'standards' && (
@@ -1453,16 +1462,9 @@ export const ComplianceView = () => {
               learnTo="/assess"
             />
             <div className="flex flex-wrap gap-2">
-              <GeoFilter options={[]} />
-              <SectorFilter />
               <RoleFilter syncWithPersona />
             </div>
-            <ForYouSection
-              landscapeProps={{
-                countryFilter: lsCountry,
-                industryFilter: lsIndustry,
-              }}
-            />
+            <ForYouSection />
           </TabsContent>
 
           {/* ── Landscape — unified surface with a type facet ── */}
