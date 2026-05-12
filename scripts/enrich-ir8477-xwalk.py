@@ -615,6 +615,28 @@ def run_extraction(args: argparse.Namespace) -> None:
         rels = parse_relationships(raw_response, ref_id, known_ids)
         print(f'  → {len(rels)} relationships found ({elapsed:.1f}s)')
 
+        if not rels:
+            # Sentinel — record the attempt so --skip-existing won't re-try every run.
+            # Empty relationship_type → merge pipeline flags as invalid_vocab and never promotes.
+            ts = datetime.utcnow().isoformat() + 'Z'
+            sentinel = [{
+                'from_concept': ref_id,
+                'to_concept': '__NO_EXTRACTIONS__',
+                'relationship_type': '',
+                'rationale_type': '',
+                'evidence': '',
+                'confidence': '',
+                'notes': f'qwen3.6:27b returned 0 IR 8477 relationships in {elapsed:.1f}s; sentinel — do not re-extract',
+                'extraction_source': local_file,
+                'extracted_at': ts,
+                'review_status': 'no_extractions',
+                'reviewed_by': '',
+                'reviewed_date': '',
+            }]
+            write_candidates(out_path, sentinel, append=True)
+            print(f'  ↳ wrote sentinel (review_status=no_extractions)')
+            continue
+
         # Filter out already-existing pairs
         new_rels = []
         for rel in rels:
