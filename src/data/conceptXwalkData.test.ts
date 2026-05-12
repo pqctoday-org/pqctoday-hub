@@ -102,4 +102,32 @@ describe('conceptXwalkData', () => {
       ).toBe(true)
     }
   })
+
+  // IR 8477 §3.2 vocabulary alignment (2026-05-11).
+  it('all rationale_type values are in the IR 8477 closed set', () => {
+    const valid = new Set([
+      'syntactic',
+      'semantic',
+      'functional',
+      'technical_dependency',
+      'policy_reference',
+      'implementation_guidance',
+      'timeline_anchor',
+    ])
+    for (const edge of conceptXwalkData) {
+      expect(
+        valid.has(edge.rationaleType),
+        `xwalk ${edge.xwalkId} has out-of-vocab rationale_type "${edge.rationaleType}"`
+      ).toBe(true)
+    }
+  })
+
+  it('no rows use the deprecated equivalence / specialization rationale values', () => {
+    const legacy = conceptXwalkData.filter(
+      (e) =>
+        (e.rationaleType as string) === 'equivalence' ||
+        (e.rationaleType as string) === 'specialization'
+    )
+    expect(legacy).toHaveLength(0)
+  })
 })
