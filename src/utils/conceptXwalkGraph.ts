@@ -175,18 +175,18 @@ function equivalentCanonicals(center: ConceptRegistryRow): string[] {
   if (!center.sourceRowId) return []
   const needle = kebab(center.sourceRowId)
   if (needle.length < 4) return []
+  // Token match: needle bounded by start/end, hyphens, OR a single trailing
+  // alpha letter that itself sits at end-of-string or before a hyphen. The
+  // alpha-letter branch is what lets `nist-nccoe-sp-1800-38` match
+  // `nist-nccoe-sp-1800-38a/b/c` (the doc-suffix convention NIST uses).
+  // Digit suffixes still don't match, so `fips-2` doesn't gobble `fips-203`.
+  const re = new RegExp(`(^|-)${needle}([a-z](?=-|$)|-|$)`)
   const out: string[] = []
   for (const r of conceptRegistry) {
     if (r.conceptId === center.conceptId) continue
     if (!r.sourceRowId) continue
     const hay = kebab(r.sourceRowId)
-    if (hay === needle) {
-      out.push(r.conceptId)
-      continue
-    }
-    if (hay.startsWith(`${needle}-`) || hay.endsWith(`-${needle}`) || hay.includes(`-${needle}-`)) {
-      out.push(r.conceptId)
-    }
+    if (hay === needle || re.test(hay)) out.push(r.conceptId)
   }
   return out
 }
@@ -199,6 +199,21 @@ function equivalentCanonicals(center: ConceptRegistryRow): string[] {
 function registryLabelForStandard(conceptId: string): string {
   const reg = conceptByCanonicalId.get(conceptId)
   return reg?.sourceRowId || reg?.displayLabel || ''
+}
+
+/**
+ * Cheap pre-check used to gate the "open graph" icon: returns true only when
+ * the centre concept (or any of its equivalent canonicals) has at least one
+ * xwalk edge authored against it. Avoids surfacing an icon that opens an
+ * empty graph for frameworks that don't yet have SME-authored relationships.
+ */
+export function hasGraphEdges(centerConceptId: string): boolean {
+  const center = conceptByCanonicalId.get(centerConceptId)
+  if (!center) return false
+  const centerIds = new Set<string>([centerConceptId, ...equivalentCanonicals(center)])
+  return conceptXwalkData.some(
+    (e) => centerIds.has(e.fromConceptId) || centerIds.has(e.toConceptId)
+  )
 }
 
 /**

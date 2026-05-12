@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Network, ShieldCheck } from 'lucide-react'
 import type { ComplianceFramework } from '../../../../data/complianceData'
 import { conceptIdForFramework } from '../../../../data/complianceData'
+import { hasGraphEdges } from '../../../../utils/conceptXwalkGraph'
 import type { TimelineEvent } from '../../../../types/timeline'
 import type { ApplicabilityResult } from '../../../../utils/applicabilityEngine'
 import { TIER_STYLES } from '../../../applicability/parts/tierStyles'
@@ -37,6 +38,7 @@ export function FrameworkDeadlineCard({
   const fw = result.item
   const [graphOpen, setGraphOpen] = useState(false)
   const graphConceptId = conceptIdForFramework(fw)
+  const showGraphIcon = graphConceptId !== undefined && hasGraphEdges(graphConceptId)
 
   const styles = TIER_STYLES[result.tier]
   const sortedEvents = [...events].sort((a, b) => a.item.startYear - b.item.startYear)
@@ -66,7 +68,7 @@ export function FrameworkDeadlineCard({
       className="relative rounded-lg border border-border bg-card p-3 space-y-2 overflow-hidden"
       title={result.reason}
     >
-      {graphConceptId && (
+      {showGraphIcon && (
         <Button
           type="button"
           variant="ghost"
@@ -82,7 +84,7 @@ export function FrameworkDeadlineCard({
           <Network size={14} />
         </Button>
       )}
-      {graphConceptId && (
+      {showGraphIcon && (
         <FrameworkConceptGraphModal
           isOpen={graphOpen}
           onClose={() => setGraphOpen(false)}

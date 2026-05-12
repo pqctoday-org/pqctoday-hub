@@ -22,6 +22,7 @@ import { libraryData } from '@/data/libraryData'
 import { conceptIdForFramework } from '@/data/complianceData'
 import { timelineData } from '@/data/timelineData'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
+import { hasGraphEdges } from '@/utils/conceptXwalkGraph'
 import { FrameworkConceptGraphModal } from './FrameworkConceptGraphModal'
 
 interface FrameworkDetailPopoverProps {
@@ -43,6 +44,7 @@ export const FrameworkDetailPopover = ({
   const popoverRef = useRef<HTMLDivElement>(null)
   const [graphOpen, setGraphOpen] = useState(false)
   const graphConceptId = framework ? conceptIdForFramework(framework) : undefined
+  const showGraphIcon = graphConceptId !== undefined && hasGraphEdges(graphConceptId)
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -128,7 +130,7 @@ export const FrameworkDetailPopover = ({
                 <p className="text-xs text-muted-foreground mt-0.5">{framework.enforcementBody}</p>
               </div>
               <div className="flex items-center gap-1 flex-shrink-0">
-                {graphConceptId && (
+                {showGraphIcon && (
                   <Button
                     variant="ghost"
                     onClick={() => setGraphOpen(true)}
@@ -318,7 +320,7 @@ export const FrameworkDetailPopover = ({
           </div>
         </FocusLock>
       </div>
-      {graphConceptId && framework && (
+      {showGraphIcon && graphConceptId && framework && (
         <FrameworkConceptGraphModal
           isOpen={graphOpen}
           onClose={() => setGraphOpen(false)}
