@@ -4,6 +4,37 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.14.4] - 2026-05-11
+
+### Fixed — SBOM panel showing actually-installed versions (not package.json caret floors)
+
+The previous v3.14.3 release accidentally **downgraded** several SBOM version labels because it read the `^X.Y.Z` floor from `package.json` instead of the resolved version in `node_modules`. SBOM panels should show what's actually shipping in the bundle, not the minimum the project will accept.
+
+**Reverted downgrades** to true installed versions:
+
+- Framer Motion: v12.27.5 → **v12.35.0** (restored)
+- Tailwind CSS: v4.1.17 → **v4.2.4** (also picks up the new patch since the original SBOM)
+- React Router: v7.12.0 → **v7.13.1** (restored)
+- Zustand: v5.0.10 → **v5.0.12** (picks up new patch)
+- ESLint: v9.39.2 → **v9.39.4** (restored)
+- Prettier: v3.8.0 → **v3.8.1** (restored)
+
+**Other corrections from running `node -p require('pkg/package.json').version`**:
+
+- @mlc-ai/web-llm: v0.2.81 → **v0.2.83** (was a guess; resolved is newer)
+- lodash: v4.17.23 → **v4.18.1**
+
+The user-corrected entries from v3.14.3 stay (those were genuine fixes, not downgrades):
+
+- Lucide React (v0.577.0 → v1.14.0) — was a stale carry-over from the legacy 0.x scheme
+- Playwright (v1.58.2 → v1.59.1) — was understated
+- pqctoday-tpm caption (v0.2.0 → v0.3.0) — matched the linked URL
+- New entries: @xyflow/react, dagre, @tanstack/react-virtual, @noble/post-quantum, @peculiar/x509, jspdf+autotable, docx, pptxgenjs, cborg, lodash, Local AI & Embeddings section
+
+### Verified
+
+`node -p "require('<pkg>/package.json').version"` against every entry now matches what the SBOM panel displays. 5/5 About-page tests pass; tsc silent.
+
 ## [3.14.3] - 2026-05-11
 
 ### Updated — About / Software Bill of Materials section
