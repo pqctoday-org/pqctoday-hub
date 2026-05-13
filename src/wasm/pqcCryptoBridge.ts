@@ -39,20 +39,56 @@ const CKM_ML_KEM_KEY_PAIR_GEN = 0x0000000f
 const CKM_ML_KEM = 0x00000017
 const CKM_ML_DSA_KEY_PAIR_GEN = 0x0000001c
 const CKM_ML_DSA = 0x0000001d
+// PKCS#11 v3.2 paramset enumerations. The bridge accepts the TPM-style
+// paramSet (1/2/3) and maps directly — TCG V1.85 §11.9 + PKCS#11 v3.2
+// happen to use the same numeric values for the three NIST levels.
+const CKP_ML_KEM_512 = 0x1
 const CKP_ML_KEM_768 = 0x2
+const CKP_ML_KEM_1024 = 0x3
+const CKP_ML_DSA_44 = 0x1
 const CKP_ML_DSA_65 = 0x2
+const CKP_ML_DSA_87 = 0x3
 const CK_ATTRIBUTE_SIZE = 12
 const CK_MECHANISM_SIZE = 12
+
+function mlkemParamName(p: number): string {
+  if (p === 1) return 'ML-KEM-512'
+  if (p === 2) return 'ML-KEM-768'
+  if (p === 3) return 'ML-KEM-1024'
+  return `ML-KEM-?(${p})`
+}
+function mldsaParamName(p: number): string {
+  if (p === 1) return 'ML-DSA-44'
+  if (p === 2) return 'ML-DSA-65'
+  if (p === 3) return 'ML-DSA-87'
+  return `ML-DSA-?(${p})`
+}
+function mlkemCkp(p: number): number | null {
+  if (p === 1) return CKP_ML_KEM_512
+  if (p === 2) return CKP_ML_KEM_768
+  if (p === 3) return CKP_ML_KEM_1024
+  return null
+}
+function mldsaCkp(p: number): number | null {
+  if (p === 1) return CKP_ML_DSA_44
+  if (p === 2) return CKP_ML_DSA_65
+  if (p === 3) return CKP_ML_DSA_87
+  return null
+}
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let hsmModule: SoftHSMModule | null = null
 let hsmSession: number = 0
 let hsmInitialized = false
 
-// Cache generated key handles for the TPM bridge
-let mlkemPubHandle = 0
-let mlkemPrivHandle = 0
-let mldsaPrivHandle = 0
+// Cache generated key handles for the TPM bridge, keyed by paramSet (1/2/3).
+// Last keygen of each paramSet wins; sign / encap / decap look up by the
+// paramSet libtpms passes in. Without per-paramSet keying, provisioning
+// multiple PQC keys (e.g. V2.7 ML-DSA-65 EK + ML-DSA-65 AK) overwrites
+// the cache and breaks sign for whichever was provisioned first.
+const mlkemPubHandleByParam: Map<number, number> = new Map()
+const mlkemPrivHandleByParam: Map<number, number> = new Map()
+const mldsaPrivHandleByParam: Map<number, number> = new Map()
 
 // ── HSM memory helpers ────────────────────────────────────────────────────────
 function hsmAlloc(size: number): number {
@@ -185,7 +221,7 @@ async function ensureHSM(): Promise<void> {
 
 // ── ML-KEM keygen via PKCS#11 ─────────────────────────────────────────────────
 function mlkemKeygen(
-  _paramSet: number,
+  paramSet: number,
   _seedPtr: number,
   _seedLen: number,
   pkOutPtr: number,
@@ -197,6 +233,11 @@ function mlkemKeygen(
   const M = hsmModule
   const tpm = (globalThis as any).__pqcTpmModule as PqcTpmModule | undefined
   if (!tpm) return -1
+  const ckp = mlkemCkp(paramSet)
+  if (ckp === null) {
+    console.warn(`[PQC Bridge] mlkemKeygen: unsupported paramSet ${paramSet}`)
+    return -1
+  }
 
   try {
     // Build key pair generation templates
@@ -205,7 +246,7 @@ function mlkemKeygen(
       buildAttr(CKA_KEY_TYPE, { ulong: CKK_ML_KEM }),
       buildAttr(CKA_TOKEN, { bool: false }),
       buildAttr(CKA_ENCAPSULATE, { bool: true }),
-      buildAttr(CKA_PARAMETER_SET, { ulong: CKP_ML_KEM_768 }),
+      buildAttr(CKA_PARAMETER_SET, { ulong: ckp }),
     ]
     const privAttrs = [
       buildAttr(CKA_CLASS, { ulong: CKO_PRIVATE_KEY }),
@@ -249,21 +290,16 @@ function mlkemKeygen(
       return -2
     }
 
-    // Save handles for later encap/decap
-    mlkemPubHandle = pubH
-    mlkemPrivHandle = privH
+    // Cache handles by paramSet so subsequent encap/decap pick the right key.
+    mlkemPubHandleByParam.set(paramSet, pubH)
+    mlkemPrivHandleByParam.set(paramSet, privH)
 
     // Extract public key via C_GetAttributeValue
     const pkBytes = extractAttribute(M, pubH, CKA_VALUE, pkOutMax)
     if (!pkBytes || pkBytes.length === 0) return -2
 
-    // Write the public key into TPM WASM memory
     tpm.HEAPU8.set(pkBytes, pkOutPtr)
-
-    // For the private key, we store the seed (which was already written by the C code)
-    // The softhsm handles stay alive in mlkemPrivHandle for encap/decap
-
-    console.log(`[PQC Bridge] ML-KEM-768 keygen OK: pk=${pkBytes.length}B`)
+    console.log(`[PQC Bridge] ${mlkemParamName(paramSet)} keygen OK: pk=${pkBytes.length}B`)
     return pkBytes.length
   } catch (e) {
     console.error('[PQC Bridge] mlkemKeygen error:', e)
@@ -273,7 +309,7 @@ function mlkemKeygen(
 
 // ── ML-KEM encapsulate via PKCS#11 ────────────────────────────────────────────
 function mlkemEncap(
-  _paramSet: number,
+  paramSet: number,
   pkPtr: number,
   pkLen: number,
   ctOutPtr: number,
@@ -282,13 +318,13 @@ function mlkemEncap(
   ssOutMax: number
 ): number {
   if (!hsmModule) return -1
+  if (mlkemCkp(paramSet) === null) return -1
   const M = hsmModule
   const tpm = (globalThis as any).__pqcTpmModule as PqcTpmModule | undefined
   if (!tpm) return -1
 
   try {
-    // If we don't have a cached public key handle, import the pk
-    let pubH = mlkemPubHandle
+    let pubH = mlkemPubHandleByParam.get(paramSet) ?? 0
     if (!pubH) {
       // Import the public key from TPM memory
       const pkData = new Uint8Array(tpm.HEAPU8.buffer, pkPtr, pkLen).slice()
@@ -353,7 +389,9 @@ function mlkemEncap(
     hsmFree(ctBufPtr)
     hsmFree(phKey)
 
-    console.log(`[PQC Bridge] ML-KEM encap OK: ct=${actualCtLen}B ss=${ssBytes?.length ?? 0}B`)
+    console.log(
+      `[PQC Bridge] ${mlkemParamName(paramSet)} encap OK: ct=${actualCtLen}B ss=${ssBytes?.length ?? 0}B`
+    )
     return 0
   } catch (e) {
     console.error('[PQC Bridge] mlkemEncap error:', e)
@@ -363,7 +401,7 @@ function mlkemEncap(
 
 // ── ML-KEM decapsulate via PKCS#11 ────────────────────────────────────────────
 function mlkemDecap(
-  _paramSet: number,
+  paramSet: number,
   _skPtr: number,
   _skLen: number,
   ctPtr: number,
@@ -371,7 +409,9 @@ function mlkemDecap(
   ssOutPtr: number,
   ssOutMax: number
 ): number {
-  if (!hsmModule || !mlkemPrivHandle) return -1
+  if (!hsmModule) return -1
+  const privH = mlkemPrivHandleByParam.get(paramSet) ?? 0
+  if (!privH) return -1
   const M = hsmModule
   const tpm = (globalThis as any).__pqcTpmModule as PqcTpmModule | undefined
   if (!tpm) return -1
@@ -396,7 +436,7 @@ function mlkemDecap(
     const rv = M._C_DecapsulateKey(
       hsmSession,
       mechPtr,
-      mlkemPrivHandle,
+      privH,
       deriveTplPtr,
       deriveTplAttrs.length,
       ctHsmPtr,
@@ -422,7 +462,7 @@ function mlkemDecap(
     }
 
     hsmFree(phKey)
-    console.log(`[PQC Bridge] ML-KEM decap OK: ss=${ssBytes?.length ?? 0}B`)
+    console.log(`[PQC Bridge] ${mlkemParamName(paramSet)} decap OK: ss=${ssBytes?.length ?? 0}B`)
     return 0
   } catch (e) {
     console.error('[PQC Bridge] mlkemDecap error:', e)
@@ -432,7 +472,7 @@ function mlkemDecap(
 
 // ── ML-DSA keygen via PKCS#11 ─────────────────────────────────────────────────
 function mldsaKeygen(
-  _paramSet: number,
+  paramSet: number,
   _seedPtr: number,
   _seedLen: number,
   pkOutPtr: number,
@@ -444,6 +484,11 @@ function mldsaKeygen(
   const M = hsmModule
   const tpm = (globalThis as any).__pqcTpmModule as PqcTpmModule | undefined
   if (!tpm) return -1
+  const ckp = mldsaCkp(paramSet)
+  if (ckp === null) {
+    console.warn(`[PQC Bridge] mldsaKeygen: unsupported paramSet ${paramSet}`)
+    return -1
+  }
 
   try {
     const pubAttrs = [
@@ -451,7 +496,7 @@ function mldsaKeygen(
       buildAttr(CKA_KEY_TYPE, { ulong: CKK_ML_DSA }),
       buildAttr(CKA_TOKEN, { bool: false }),
       buildAttr(CKA_VERIFY, { bool: true }),
-      buildAttr(CKA_PARAMETER_SET, { ulong: CKP_ML_DSA_65 }),
+      buildAttr(CKA_PARAMETER_SET, { ulong: ckp }),
     ]
     const privAttrs = [
       buildAttr(CKA_CLASS, { ulong: CKO_PRIVATE_KEY }),
@@ -494,13 +539,13 @@ function mldsaKeygen(
       return -2
     }
 
-    mldsaPrivHandle = privH
+    mldsaPrivHandleByParam.set(paramSet, privH)
 
     const pkBytes = extractAttribute(M, pubH, CKA_VALUE, pkOutMax)
     if (!pkBytes || pkBytes.length === 0) return -2
 
     tpm.HEAPU8.set(pkBytes, pkOutPtr)
-    console.log(`[PQC Bridge] ML-DSA-65 keygen OK: pk=${pkBytes.length}B`)
+    console.log(`[PQC Bridge] ${mldsaParamName(paramSet)} keygen OK: pk=${pkBytes.length}B`)
     return pkBytes.length
   } catch (e) {
     console.error('[PQC Bridge] mldsaKeygen error:', e)
@@ -510,7 +555,7 @@ function mldsaKeygen(
 
 // ── ML-DSA sign via PKCS#11 ───────────────────────────────────────────────────
 function mldsaSign(
-  _paramSet: number,
+  paramSet: number,
   _skPtr: number,
   _skLen: number,
   digestPtr: number,
@@ -518,7 +563,9 @@ function mldsaSign(
   sigOutPtr: number,
   sigOutMax: number
 ): number {
-  if (!hsmModule || !mldsaPrivHandle) return -1
+  if (!hsmModule) return -1
+  const privH = mldsaPrivHandleByParam.get(paramSet) ?? 0
+  if (!privH) return -1
   const M = hsmModule
   const tpm = (globalThis as any).__pqcTpmModule as PqcTpmModule | undefined
   if (!tpm) return -1
@@ -526,7 +573,7 @@ function mldsaSign(
   try {
     // C_SignInit
     const mechPtr = writeMechanism(CKM_ML_DSA)
-    let rv = M._C_SignInit(hsmSession, mechPtr, mldsaPrivHandle)
+    let rv = M._C_SignInit(hsmSession, mechPtr, privH)
     hsmFree(mechPtr)
     if (rv >>> 0 !== 0) {
       console.error(`[PQC Bridge] C_SignInit(ML-DSA) failed: 0x${(rv >>> 0).toString(16)}`)
@@ -560,7 +607,7 @@ function mldsaSign(
 
     // Write signature into TPM WASM memory
     tpm.HEAPU8.set(sigData, sigOutPtr)
-    console.log(`[PQC Bridge] ML-DSA-65 sign OK: sig=${actualSigLen}B`)
+    console.log(`[PQC Bridge] ${mldsaParamName(paramSet)} sign OK: sig=${actualSigLen}B`)
     return actualSigLen
   } catch (e) {
     console.error('[PQC Bridge] mldsaSign error:', e)

@@ -24,7 +24,7 @@ export function clearLastTpmErr(): void {
 }
 
 // Build stamp used for cache-busting — updated each deploy
-const WASM_BUILD = '20260513-v0p7'
+const WASM_BUILD = '20260513-v0p7-cert-x509fix'
 
 // V2.7 RC1 provisioning status, captured after registerPqcBridge runs.
 // Indexes: 0=ML-KEM-512, 1=ML-KEM-768, 2=ML-KEM-1024,
@@ -125,6 +125,18 @@ export async function initTpm(): Promise<void> {
             if (_v2p7Log) console.log(_v2p7Log)
           } catch (provErr) {
             console.warn('V2.7 EK provisioning threw:', provErr)
+          }
+
+          // V2.7 §5.3.1 EK cert NV slot provisioning via openSSLService +
+          // raw TPM2_NV_DefineSpace/NV_Write. Best-effort.
+          console.log('[V2.7 cert] starting cert provisioner import…')
+          try {
+            const mod = await import('./v2p7CertProvisioner')
+            console.log('[V2.7 cert] module imported, calling provisionV2p7Certs')
+            const certCount = await mod.provisionV2p7Certs(_v2p7Status)
+            console.log(`[V2.7 cert] V2.7 EK cert NV provisioning: ${certCount}/6 slots populated`)
+          } catch (certErr) {
+            console.error('[V2.7 cert] cert provisioning threw:', certErr)
           }
 
           resolve()
@@ -347,4 +359,91 @@ export async function nvReadAll(nvIndex: number): Promise<Uint8Array> {
     if (got === 0) break
   }
   return out
+}
+
+// ── V2.7 cert provisioning helpers (TPM2_NV_DefineSpace + chunked Write) ──
+
+const TPM_RH_PLATFORM = 0x4000000c
+const TPM_RC_NV_DEFINED = 0x14c
+
+/**
+ * TPM2_NV_DefineSpace — V1.85 Part 3 §31.4. Defines a §5.3.1 EK cert NV
+ * slot with the attribute set that mirrors the native swtpm_setup
+ * provisioning path (PLATFORMCREATE | AUTHREAD | OWNERREAD | PPREAD |
+ * PPWRITE | NO_DA | WRITEDEFINE = 0x42072001).
+ *
+ * Idempotent: if the slot already exists (TPM_RC_NV_DEFINED = 0x14c),
+ * resolves successfully so subsequent NV_Write overwrites the contents.
+ */
+export async function nvDefineSpace(nvIndex: number, dataSize: number): Promise<void> {
+  const nvAttrs = 0x42072001
+  const session = [...u32be(0x40000009), ...u16be(0), 0, ...u16be(0)]
+  // TPMS_NV_PUBLIC: nvIndex(4) + nameAlg(2)=SHA256(0x000b) + attrs(4) +
+  //                 authPolicy.size(2)=0 + dataSize(2) = 14 bytes
+  const nvPublic = new Uint8Array([
+    ...u32be(nvIndex),
+    ...u16be(0x000b),
+    ...u32be(nvAttrs),
+    ...u16be(0),
+    ...u16be(dataSize),
+  ])
+  const body = [
+    ...u32be(TPM_RH_PLATFORM),
+    ...u32be(session.length),
+    ...session,
+    ...u16be(0), // TPM2B_AUTH auth.size = 0
+    ...u16be(nvPublic.length), // TPM2B_NV_PUBLIC.size
+    ...nvPublic,
+  ]
+  const cmd = new Uint8Array([
+    ...u16be(0x8002),
+    ...u32be(10 + body.length),
+    ...u32be(0x0000012a), // TPM_CC_NV_DefineSpace
+    ...body,
+  ])
+  const resp = await executeTpmCommandLarge(cmd, 1024)
+  if (resp.length < 10) throw new Error('NV_DefineSpace: response too short')
+  const rc = (resp[6] << 24) | (resp[7] << 16) | (resp[8] << 8) | resp[9]
+  if (rc === 0 || rc === TPM_RC_NV_DEFINED) return
+  throw new Error(
+    `NV_DefineSpace(0x${nvIndex.toString(16)}, ${dataSize} B) → TPM rc 0x${rc.toString(16)}`
+  )
+}
+
+/**
+ * TPM2_NV_Write — V1.85 Part 3 §31.6. Writes `data` to `nvIndex` in
+ * MAX_NV_BUFFER_SIZE chunks (1024 B). Uses Platform auth (matches the
+ * NV_DefineSpace path; the §5.3.1 slots have PPWRITE set).
+ */
+export async function nvWrite(nvIndex: number, data: Uint8Array): Promise<void> {
+  const CHUNK = 1024
+  let off = 0
+  while (off < data.length) {
+    const want = Math.min(CHUNK, data.length - off)
+    const session = [...u32be(0x40000009), ...u16be(0), 0, ...u16be(0)]
+    const body = [
+      ...u32be(TPM_RH_PLATFORM),
+      ...u32be(nvIndex),
+      ...u32be(session.length),
+      ...session,
+      ...u16be(want),
+      ...Array.from(data.subarray(off, off + want)),
+      ...u16be(off),
+    ]
+    const cmd = new Uint8Array([
+      ...u16be(0x8002),
+      ...u32be(10 + body.length),
+      ...u32be(0x00000137), // TPM_CC_NV_Write
+      ...body,
+    ])
+    const resp = await executeTpmCommandLarge(cmd, 1024)
+    if (resp.length < 10) throw new Error('NV_Write: response too short')
+    const rc = (resp[6] << 24) | (resp[7] << 16) | (resp[8] << 8) | resp[9]
+    if (rc !== 0) {
+      throw new Error(
+        `NV_Write(0x${nvIndex.toString(16)}) @off ${off} → TPM rc 0x${rc.toString(16)}`
+      )
+    }
+    off += want
+  }
 }
