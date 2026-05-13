@@ -19,6 +19,12 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ---
 
+## [Unreleased]
+
+### Chore — re-sign trust artefacts after OSCAL/CBOM regeneration (2026-05-13)
+
+`scripts/generate-oscal.ts` was re-run, bumping `metadata.timestamp` / `last-modified` on `pqctoday-oscal.json`, `pqctoday-oscal-full.json`, `pqctoday-oscal-governance.json`, and `pqctoday-cbom.json` (no semantic content change). All 8 trust artefacts re-signed with the ML-DSA-65 maintainer key (`kid=11b723084d047b4c`); `npm run trust-engine:verify` clean.
+
 ## [3.15.0] - 2026-05-12
 
 ### Added — HSM Capacity Calculator: per-region distribution + RSA-baseline explainer
