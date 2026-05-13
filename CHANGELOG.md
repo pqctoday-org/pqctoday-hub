@@ -39,12 +39,37 @@ The HSM Capacity Calculator (Step 5 of the HSM-PQC learning module, also linked 
 
 - JSDoc claimed the parent must respond within 2 seconds, but `HOST_CHECK_TIMEOUT_MS` is `8000`. Comment now matches the constant; no functional change.
 
-### Data
+### Data — overnight enrichment chain (2026-05-12 → 2026-05-13, ~31h wall-clock)
 
-- **`src/data/concept_xwalk_candidates_05112026.csv`** — regenerated after the v3.14.8 sentinel-row fix landed. The `--skip-existing --append` pass produced new sentinel rows for docs the LLM had previously returned 0 IR 8477 relationships for; future runs no longer re-scan them. Production loader and merge pipeline filter sentinels at parse time, so no UI-visible impact.
-- **`src/data/doc-enrichments/library_doc_enrichments_05122026.md`** + **`src/data/doc-enrichments/timeline_doc_enrichments_05112026.md`** — fresh enrichment batches from the Ollama (`qwen3.6:27b`) pipeline; consumed by `generate-rag-corpus.ts`.
-- **`public/data/rag-corpus.json`** — regenerated to include the new enrichments. The new chunks are also picked up by the admin `/requirements` mini-search via its own embedding pipeline (see `pqctoday-admin` v0.5.2 `[Unreleased]`).
-- **`reports/trust-tier-snapshot.json`** — re-signed after sentinel rows landed; row-count metadata refreshed.
+Full sequence: Stage 1 (IR 8477 xwalk) → Stage 2 (library `--update`) → Stage 3 (timeline → threats; catalog deliberately dropped). All Ollama runs used `qwen3.6:27b` exclusively (NFR-05 discipline).
+
+#### Xwalk
+
+- **`src/data/concept_xwalks_05112026_r4.csv`** — new production xwalk (957 rows = 948 prior + 97 newly merged − 83 dedupe-removed − 5 `not_related` removed). Canonical `from_concept_id` / `to_concept_id` columns populated for all rows.
+- **`src/data/concept_xwalk_candidates_05112026.csv`** — Stage 1 wrote 528 candidate edges + 489 sentinel rows (`review_status='no_extractions'`). The new `validate-evidence-substring.ts` gate **auto-rejected 55 rows** as `rejected_evidence_drift` after their `evidence` string failed a substring check against the cached source PDF/HTML — most were `Japan_CRYPTREC_Report_2024.pdf` template paraphrases (`"Section X.Y.Z explicitly lists Y as a major ... scheme"`) that v3.14.7 doctrine forbids in the trust-engine audit trail. The CM-EVIDENCE-SUBSTRING gate was queued in v3.14.7 changelog ("Future hardening") and shipped here as a runnable validator.
+- **109 new `to_concept` standards** now reachable from the graph (`draft-ietf-lamps-pq-composite-kem-12`, `RFC 6712`, `NIST SP 800-152`, `ISO/IEC 19790:2012`, `Microsoft-QSP-Roadmap-2025`, etc.) — Concept Graph tiles that previously dead-ended on a single node now branch.
+- 359 high-confidence Stage 1 candidates auto-promoted via `auto-cm-evidence-substring+high-confidence` (high confidence + substring-verified evidence); remaining 1053 candidate rows held for human SME review.
+
+#### Library / Timeline / Threats
+
+- **`src/data/doc-enrichments/library_doc_enrichments_05122026.md`** — 725 docs, `--update` mode with `--embedding-prefilter nomic-embed-text`. v3-dimension fill rate climbs from 39.8% (prior 05102026) to **42.6%** (+2.8pp); average section length up 6%. Biggest jump: Deployment & Migration Complexity (+11.3pp). Three weak dimensions remain: QKD Protocols (10.5%), Financial & Business Impact (16.5%), QRNG (26.3%).
+- **`src/data/doc-enrichments/timeline_doc_enrichments_05132026.md`** — 235 timeline events re-enriched with the same pre-filter + qwen3.6:27b pipeline.
+- **`src/data/doc-enrichments/threats_doc_enrichments_05132026.md`** — 88 threats (1 quality-gate skip out of 89 eligible). Faster than library at ~39s/doc thanks to smaller threat rows.
+- **Catalog dropped** from Stage 3 — the 04162026 catalog enrichment is fresh (~26 days) and the marginal cost (~7.5h) versus marginal value (v3-dim refresh only) was a poor trade. Catalog can be refreshed later via a targeted one-shot run.
+
+#### Dedup pass on enrichment files
+
+- `catalog_doc_enrichments_04152026.md` — 11 duplicate `Extraction Note` field lines removed (legacy `"No source text available"` lines stacked under newer v3-extraction lines).
+- `catalog_doc_enrichments_04162026.md` — 750 duplicate value tokens removed (one Kiteworks `Applicable Regions / Bodies` field had a country list looped 7+ times; reduced ~25 KB to ~9 KB).
+- `timeline_doc_enrichments_05062026.md` — 1 duplicate `## REF_ID` section collapsed (G7 ×2).
+- `timeline_doc_enrichments_05092026.md` — 6 duplicate sections collapsed (Singapore, Hong Kong, Germany, Brazil, G7, Malaysia each appeared twice). Dedup logic keeps the LAST occurrence (matches `--update` semantics) and tokenizes values on `;` (with space) only to avoid breaking `(Acme, USA), Bob` patterns.
+
+#### Corpus + signing
+
+- **`public/data/rag-corpus.json`** — regenerated to include all 1,048 new enrichment sections.
+- **`public/data/embeddings.bin`** + **`embeddings-meta.json`** — embedding index rebuilt for the new corpus chunks.
+- All 8 trust artefacts re-signed with the ML-DSA-65 maintainer key (`rag-corpus`, `OSCAL` ×3, `CBOM`, `community-signals`, `revisions.jsonl`, plus the OSCAL assessment-plan). Pre-push hook now verifies clean.
+- **`reports/trust-tier-snapshot.json`** — re-measured against the new corpus.
 
 ## [3.14.8] - 2026-05-11
 
