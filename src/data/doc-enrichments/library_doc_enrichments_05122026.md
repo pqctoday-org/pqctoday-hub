@@ -24171,4 +24171,216 @@ enrichment_method: ollama-qwen3.6:27b
 - **Source Document**: RFC_4056.html (23,244 bytes, 11,426 extracted chars)
 - **Extraction Timestamp**: 2026-05-12T22:01:30
 
+--## RFC 4210
+
+- **Reference ID**: RFC 4210
+- **Title**: Internet X.509 PKI Certificate Management Protocol (CMP)
+- **Authors**: IETF
+- **Publication Date**: 2005-09-01
+- **Last Updated**: 2005-09-01
+- **Document Status**: Proposed Standard
+- **Main Topic**: Defines the Internet X.509 Public Key Infrastructure Certificate Management Protocol (CMP) for certificate lifecycle management and PKI component interactions.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: C. Adams, S. Farrell, T. Kause, T. Mononen
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: CMP, X.509, PKI
+- **Infrastructure Layers**: PKI, Certification Authority, Registration Authority, Personal Security Environment
+- **Standardization Bodies**: IETF, ISO, ITU-T, IANA
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA, DSA, MD5, SHA-1
+- **Key Takeaways**: CMP defines protocol messages for X.509v3 certificate creation and management; PKI management protocols must support on-line interactions between components like CAs and clients; The protocol allows the use of different industry-standard cryptographic algorithms including RSA, DSA, MD5, and SHA-1; Key generation may occur at the end entity, RA, or CA without preclusion by the protocol; Out-of-band mechanisms are required for root CA public key publication and verification.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, Developer, Compliance Officer
+- **Implementation Prerequisites**: Support for X.509v3 certificates; Implementation of PKI General Message types; Support for mandatory algorithm identifiers such as DSA/SHA-1 for message protection.
+- **Relevant PQC Today Features**: pki-workshop, crypto-agility, migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update (DS05 non-empty wins): 10 dimensions extracted; base fields preserved from prior enrichment
+- **Source Document**: RFC_4210.html (263,449 bytes, 20,562 extracted chars)
+- **Extraction Timestamp**: 2026-05-12T22:02:17
+
+---
+
+## RFC 4250
+
+- **Reference ID**: RFC 4250
+- **Title**: SSH Protocol Assigned Numbers
+- **Authors**: IETF
+- **Publication Date**: 2006-01-01
+- **Last Updated**: 2006-01-01
+- **Document Status**: Proposed Standard
+- **Main Topic**: This document defines the IANA assigned numbers and registry instructions for the Secure Shell (SSH) protocol.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: S. Lehtinen, C. Lonvick, Tatu Ylonen, Tero Kivinen, Timo J. Rinne, Sami Lehtinen, Markku-Juhani O. Saarinen, Darren Moffat
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: SSH
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IANA, IETF, IESG, Internet Society
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: diffie-hellman-group1-sha1, diffie-hellman-group14-sha1, 3des-cbc, blowfish-cbc, twofish256-cbc
+- **Key Takeaways**: The document establishes the initial state of IANA registries for SSH protocol assigned numbers; It provides instructions for future assignments of message numbers, algorithm names, and other protocol fields; It references existing SSH architecture and transport layer standards for detailed protocol definitions; It outlines specific conventions for naming namespaces and allocating number ranges for transport, authentication, and connection layers
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer, Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Algorithms, vpn-ssh-pqc
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update (DS05 non-empty wins): 10 dimensions extracted; base fields preserved from prior enrichment
+- **Source Document**: RFC_4250.html (70,290 bytes, 10,254 extracted chars)
+- **Extraction Timestamp**: 2026-05-12T22:03:25
+
+---
+
+## RFC 4252
+
+- **Reference ID**: RFC 4252
+- **Title**: SSH Authentication Protocol
+- **Authors**: IETF
+- **Publication Date**: 2006-01-01
+- **Last Updated**: 2006-01-01
+- **Document Status**: Proposed Standard
+- **Main Topic**: Defines the SSH-2 user authentication layer and framework, with a description noting updates for PQC public-key authentication methods using ML-DSA host keys.
+- **PQC Algorithms Covered**: ML-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: T. Ylonen; C. Lonvick; Tatu Ylonen; Tero Kivinen; Timo J. Rinne; Sami Lehtinen; Markku-Juhani O. Saarinen; Darren Moffat; Mats Andersson; Ben Harris; Bill Sommerfeld; Brent McClure; Niels Moller; Damien Miller; Derek Fawcus; Frank Cusack; Heikki Nousiainen; Jakob Schlyter; Jeff Van Dyke; Jeffrey Altman; Jeffrey Hutzelman; Jon Bright; Joseph Galbraith; Ken Hornstein; Markus Friedl; Martin Forssen; Nicolas Williams; Niels Provos; Perry Metzger; Peter Gutmann; Simon Josefsson; Simon Tatham; Wei Dai; Denis Bider; der Mouse; Tadayoshi Kohno
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: SSH; SSH-2; SSH Authentication Protocol; SSH transport layer protocol; SSH connection protocol
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IETF; Internet Society; Internet Engineering Task Force
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The SSH authentication protocol runs on top of the SSH transport layer protocol; Public key algorithms are defined in the transport layer specification; Password authentication SHOULD be disabled if no confidentiality is provided; The server MUST verify the signature with the private host key; The document is being updated for PQC public-key authentication methods using ML-DSA host keys
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Algorithms; vpn-ssh-pqc; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update (DS05 non-empty wins): 10 dimensions extracted; base fields preserved from prior enrichment
+- **Source Document**: RFC_4252.html (50,574 bytes, 11,548 extracted chars)
+- **Extraction Timestamp**: 2026-05-12T22:04:11
+
+---
+
+## RFC 4254
+
+- **Reference ID**: RFC 4254
+- **Title**: SSH Connection Protocol
+- **Authors**: IETF
+- **Publication Date**: 2006-01-01
+- **Last Updated**: 2006-01-01
+- **Document Status**: Proposed Standard
+- **Main Topic**: Defines the SSH-2 connection multiplexing protocol for secure remote login and network services.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: T. Ylonen; C. Lonvick; Tero Kivinen; Timo J. Rinne; Sami Lehtinen; Markku-Juhani O. Saarinen; Darren Moffat
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: SSH Connection Protocol; SSH-2
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IETF; Internet Society
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The SSH Connection Protocol multiplexes interactive login, remote command execution, and forwarded connections into a single encrypted tunnel; Implementations must handle window sizes up to 2^32 - 1 bytes; Dangerous features like agent and X11 forwarding should be disabled if host keys change unexpectedly; The protocol relies on underlying transport and authentication layers for security and authentication.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: Window size limit 2^32 - 1 bytes
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: SSH transport layer; SSH user authentication protocols
+- **Relevant PQC Today Features**: vpn-ssh-pqc
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update (DS05 non-empty wins): 10 dimensions extracted; base fields preserved from prior enrichment
+- **Source Document**: RFC_4254.html (69,830 bytes, 10,254 extracted chars)
+- **Extraction Timestamp**: 2026-05-12T22:04:57
+
+---
+
+## RFC 4302
+
+- **Reference ID**: RFC 4302
+- **Title**: IP Authentication Header
+- **Authors**: IETF
+- **Publication Date**: 2005-12-01
+- **Last Updated**: 2005-12-01
+- **Document Status**: Proposed Standard
+- **Main Topic**: Defines the IP Authentication Header (AH) protocol for data origin authentication and integrity in IPv4 and IPv6, obsoleting RFC 2402.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: S. Kent (author); Ran Atkinson (critical role in initial IPsec activities, authored RFCs 1825-1827); Karen Seo (editing help)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: IP Authentication Header (AH), IPsec, IKEv2, IPv4, IPv6, TCP, UDP, ICMP
+- **Infrastructure Layers**: Security Associations, Security Parameter Index (SPI), Integrity Check Value (ICV)
+- **Standardization Bodies**: IETF, Internet Society, Internet Engineering Task Force, IANA
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: AES, MD5, SHA-1
+- **Key Takeaways**: AH provides authentication services for IPv4 and IPv6 but does not provide confidentiality; AH covers more IP header fields than ESP, protecting immutable fields while handling mutable fields separately; Implementations must support Path MTU discovery to minimize fragmentation, which reduces performance and creates denial of service vulnerabilities; Backward compatibility concerns must be addressed via signaling mechanisms like IKEv2 since AH lacks a version number; Conformance requires full implementation of AH syntax and processing for unicast traffic and compliance with the Security Architecture document.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, Developer, Network Engineer
+- **Implementation Prerequisites**: Support for canonical network byte order; compliance with Security Architecture document; support for ICMP PMTU messages or equivalent internal signaling
+- **Relevant PQC Today Features**: vpn-ssh-pqc, crypto-agility, tls-basics
+- **Implementation Attack Surface**: Denial of service vulnerabilities via fragment reassembly; mutable field processing risks
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Conformance testing against specification requirements; interoperability via IKE signaling
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Backward compatibility requires signaling mechanism (e.g., IKE) to ensure compatible versions; fragmentation handling adds complexity for bump-in-the-stack implementations
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: RFC_4302.html (107,797 bytes, 15,108 extracted chars)
+- **Extraction Timestamp**: 2026-05-12T22:05:42
+
 ---
