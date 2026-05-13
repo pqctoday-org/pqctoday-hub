@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useWorkshopStore } from '@/store/useWorkshopStore'
 import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { useModuleStore } from '@/store/useModuleStore'
-import { resolveWorkshopFlow, flattenFlow } from '@/data/workshopRegistry'
-import type { WorkshopStep } from '@/types/Workshop'
+import { loadManifest, loadFlow, findEntry } from '@/services/workshopFlowLoader'
+import { flattenFlow } from '@/data/workshopRegistry'
+import type { WorkshopFlow, WorkshopStep } from '@/types/Workshop'
 import { usePersonaStore } from '@/store/usePersonaStore'
 
 /**
@@ -30,14 +31,36 @@ export function useWorkshopAutoComplete(): void {
   const proficiency = usePersonaStore((s) => s.experienceLevel)
   const industry = usePersonaStore((s) => s.selectedIndustry)
 
+  // Hydrate the active flow from the JSON manifest whenever the running flow id
+  // changes. Cached by workshopFlowLoader so this is a no-op after the first hit.
+  const [activeFlow, setActiveFlow] = useState<WorkshopFlow | null>(null)
+  useEffect(() => {
+    if (mode !== 'running' || !currentFlowId) return
+    let cancelled = false
+    void (async () => {
+      const manifest = await loadManifest().catch(() => null)
+      if (cancelled || !manifest) return
+      const entry = findEntry(manifest, currentFlowId)
+      if (!entry) return
+      const flow = await loadFlow(entry.file).catch(() => null)
+      if (!cancelled && flow) setActiveFlow(flow)
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [mode, currentFlowId])
+
   useEffect(() => {
     if (mode !== 'running' || !currentFlowId || !selectedRegion) return
-    if (!role || !proficiency || !industry) return
+    if (!activeFlow || activeFlow.id !== currentFlowId) return
 
-    const flow = resolveWorkshopFlow({ role, proficiency, industry, region: selectedRegion })
-    if (!flow || flow.id !== currentFlowId) return
-
-    const steps = flattenFlow(flow, selectedRegion)
+    const steps = flattenFlow(
+      activeFlow,
+      selectedRegion,
+      industry ?? undefined,
+      role ?? undefined,
+      proficiency ?? undefined
+    )
     for (const step of steps) {
       if (completedStepIds.includes(step.id)) continue
       if (
@@ -56,6 +79,7 @@ export function useWorkshopAutoComplete(): void {
     mode,
     currentFlowId,
     selectedRegion,
+    activeFlow,
     completedStepIds,
     location.pathname,
     assessmentStatus,

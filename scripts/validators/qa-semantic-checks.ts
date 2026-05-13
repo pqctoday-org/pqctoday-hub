@@ -29,7 +29,12 @@ import type { CheckResult, Finding, Severity } from './types.js'
 import { cosineSearchByChunkId } from '../../src/services/search/embeddingRetrieval.js'
 
 const REPO_ROOT = process.cwd()
-const CORPUS_PATH = path.join(REPO_ROOT, 'public/data/rag-corpus.json')
+const DEFAULT_CORPUS_PATH = path.join(REPO_ROOT, 'public/data/rag-corpus.json')
+// Tests override via `RAG_CORPUS_PATH` to keep the live corpus off-limits
+// to parallel test workers. Resolved lazily — env may be set after import.
+function corpusPath(): string {
+  return process.env.RAG_CORPUS_PATH ?? DEFAULT_CORPUS_PATH
+}
 
 interface RagChunk {
   id: string
@@ -167,16 +172,22 @@ const KNOWN_COMPLIANCE_FRAMEWORKS = new Set<string>([
 ])
 
 let cachedCorpus: { chunks: RagChunk[]; records: EnrichmentRecord[] } | null = null
+let cachedCorpusPath: string | null = null
 
 function loadCorpus(): { chunks: RagChunk[]; records: EnrichmentRecord[] } {
-  if (cachedCorpus) return cachedCorpus
-  if (!fs.existsSync(CORPUS_PATH)) {
+  // Invalidate cache if RAG_CORPUS_PATH changes between calls (a test that
+  // toggles between live and synthetic corpora would otherwise see stale data).
+  const p = corpusPath()
+  if (cachedCorpus && cachedCorpusPath === p) return cachedCorpus
+  cachedCorpus = null
+  cachedCorpusPath = p
+  if (!fs.existsSync(p)) {
     cachedCorpus = { chunks: [], records: [] }
     return cachedCorpus
   }
   let raw: { chunks?: RagChunk[] } | RagChunk[]
   try {
-    raw = JSON.parse(fs.readFileSync(CORPUS_PATH, 'utf8'))
+    raw = JSON.parse(fs.readFileSync(p, 'utf8'))
   } catch {
     // Corpus is mid-write from enrichment — return empty so checks self-PASS.
     cachedCorpus = { chunks: [], records: [] }
@@ -566,4 +577,5 @@ export async function runQASemanticChecks(
 /** Test-only: clear cached corpus between tests. */
 export function _resetCacheForTesting(): void {
   cachedCorpus = null
+  cachedCorpusPath = null
 }
