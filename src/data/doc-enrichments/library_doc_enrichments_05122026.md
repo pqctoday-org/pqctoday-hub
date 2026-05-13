@@ -24384,3 +24384,129 @@ enrichment_method: ollama-qwen3.6:27b
 - **Extraction Timestamp**: 2026-05-12T22:05:42
 
 ---
+
+ ## RFC 4306
+
+- **Reference ID**: RFC 4306
+- **Title**: IKEv2: Internet Key Exchange Protocol Version 2
+- **Authors**: IETF
+- **Publication Date**: 2005-12-01
+- **Last Updated**: 2005-12-01
+- **Document Status**: Proposed Standard
+- **Main Topic**: Specification of the Internet Key Exchange version 2 (IKEv2) protocol for mutual authentication and establishing security associations within IPsec.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: C. Kaufman, Ed.
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: IKEv2, IPsec, ESP, AH, ISAKMP, DOI, NAT Traversal, EAP, IPComp
+- **Infrastructure Layers**: Key Management, Security Associations
+- **Standardization Bodies**: IETF, Internet Society, IANA
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: Diffie-Hellman, PKIX Certificates, pre-shared keys, ENCR_NULL, NONE
+- **Key Takeaways**: IKEv2 does not interoperate with version 1 but shares enough header format to run over the same UDP port; Implementations must not negotiate NONE as the IKE integrity protection algorithm or ENCR_NULL as the IKE encryption algorithm; Pre-shared keys must contain as much randomness as the strongest key being negotiated to avoid dictionary and social engineering attacks; NAT detection hashes may allow attackers to discover internal IP addresses by brute-forcing the 32-bit IPv4 address space; Long IKEv2 messages requiring IP fragmentation are vulnerable to buffer exhaustion attacks by attackers.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer, Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: vpn-ssh-pqc, crypto-agility
+- **Implementation Attack Surface**: Denial of Service via half-open connections; NAT address discovery via hash brute-forcing; Buffer exhaustion via IP fragmentation
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: RFC_4306.html (295,674 bytes, 16,935 extracted chars)
+- **Extraction Timestamp**: 2026-05-12T22:07:41
+
+---
+
+## RFC 4419
+
+- **Reference ID**: RFC 4419
+- **Title**: Diffie-Hellman Group Exchange for the SSH Transport Layer Protocol
+- **Authors**: IETF
+- **Publication Date**: 2006-03-01
+- **Last Updated**: 2006-03-01
+- **Document Status**: Proposed Standard
+- **Main Topic**: Defines a new key exchange method for the Secure Shell (SSH) protocol that allows the server to propose new groups for Diffie-Hellman key exchange.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Markus Friedl; Niels Provos; William A. Simpson
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: SSH
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IETF; Internet Society
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: Diffie-Hellman; SHA-1; SHA-256
+- **Key Takeaways**: The document defines runtime DH group negotiation for SSH-2 to mitigate precomputation attacks; The server can propose new groups dynamically rather than using fixed groups; The returned group size should be at least 1024 bits; Two new key exchange methods are defined: diffie-hellman-group-exchange-sha1 and diffie-hellman-group-exchange-sha256
+- **Security Levels & Parameters**: 1024 bits
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: vpn-ssh-pqc; crypto-agility
+- **Implementation Attack Surface**: confinement attacks
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: RFC_4419.html (30,402 bytes, 8,577 extracted chars)
+- **Extraction Timestamp**: 2026-05-12T22:09:35
+
+---
+
+## RFC 4718
+
+- **Reference ID**: RFC 4718
+- **Title**: IKEv2 Clarifications and Implementation Guidelines
+- **Authors**: IETF
+- **Publication Date**: 2006-10-01
+- **Last Updated**: 2006-10-01
+- **Document Status**: Informational
+- **Main Topic**: This document provides clarifications and implementation guidelines for the IKEv2 specification to resolve ambiguities and encourage interoperable implementations.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: P. Eronen (Editor); P. Hoffman (Editor); Bernard Aboba (Acknowledged); Jari Arkko (Acknowledged); Vijay Devarapalli (Acknowledged); William Dixon (Acknowledged); Francis Dupont (Acknowledged); Alfred Hoenes (Acknowledged); Mika Joutsenvirta (Acknowledged)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: IKEv2; IPsec; EAP; PKCS#1; X.509; PKCS #7; PGP; DNS Signed Key; Kerberos; SPKI; TCP
+- **Infrastructure Layers**: PKI; VPN; Remote Access; Site-to-Site VPN
+- **Standardization Bodies**: IETF; IPsec WG; Internet Society; Internet Engineering Task Force
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; SHA-1; AES; 3DES; Diffie-Hellman
+- **Key Takeaways**: Implementations should support SHA-1 as the default hash function for RSA signatures to ensure interoperability; Developers should avoid using undefined certificate encoding values like PKCS #7 or PGP until new specifications are available; Initiators must not propose traffic selectors that violate their own policy to prevent valid traffic from being dropped; Clarifying complex specification areas reduces the likelihood of implementation problems with security implications; Interoperability testing and mailing list discussions are critical sources for identifying implementation issues.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect; Network Engineer
+- **Implementation Prerequisites**: Support for SHA-1 hash function; Adherence to IKEv2 specification requirements; Understanding of IPsec WG mailing list archives
+- **Relevant PQC Today Features**: vpn-ssh-pqc; crypto-agility; tls-basics
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Interoperability testing
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: RFC_4718.html (168,742 bytes, 12,081 extracted chars)
+- **Extraction Timestamp**: 2026-05-12T22:11:02
+
+---
