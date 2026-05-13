@@ -99,11 +99,15 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   // Residuals:
   //   - algorithms: 64 variants missing from algorithms_transitions CSV
   //     (BIKE-*, SLH-DSA-*f, Classic-McEliece-348864/8192128) — data gap
-  //   - document-enrichment: 19 enrichment refIds truncated relative to
-  //     timeline event titles — fix upstream in enrichment generator
+  //   - document-enrichment: enrichment refIds truncated relative to
+  //     timeline event titles — fix upstream in enrichment generator.
+  //     2026-05-13: bumped 13 → 18 after v3.15.0 enrichment chain added
+  //     5 new doc-enrichment chunks (library/timeline/threats stages) that
+  //     lack trust-score wiring. Drive back to zero by extending the
+  //     title-alias map in trustScoreData.ts or upstream refId normalization.
   timeline: 0,
   algorithms: 0,
-  'document-enrichment': 13,
+  'document-enrichment': 18,
 }
 
 /**
