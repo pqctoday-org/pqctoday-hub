@@ -690,7 +690,7 @@ var PqcTpmModule = (() => {
     Module['stringToUTF8'] = stringToUTF8
     Module['lengthBytesUTF8'] = lengthBytesUTF8
     var ASM_CONSTS = {
-      633256: ($0, $1) => {
+      633752: ($0, $1) => {
         if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
           crypto.getRandomValues(HEAPU8.subarray($0, $0 + $1))
         }
@@ -835,33 +835,33 @@ var PqcTpmModule = (() => {
       __indirect_function_table = wasmTable = wasmExports['E']
     }
     var wasmImports = {
-      f: ___syscall_fcntl64,
+      g: ___syscall_fcntl64,
       A: ___syscall_fstat64,
-      q: ___syscall_getdents64,
+      r: ___syscall_getdents64,
       b: ___syscall_ioctl,
       x: ___syscall_lstat64,
       y: ___syscall_newfstatat,
-      g: ___syscall_openat,
+      h: ___syscall_openat,
       z: ___syscall_stat64,
-      k: __abort_js,
-      o: __emscripten_throw_longjmp,
-      r: __gmtime_js,
-      s: __tzset_js,
-      j: _clock_time_get,
-      l: _emscripten_asm_const_int,
-      h: _emscripten_date_now,
-      p: _emscripten_resize_heap,
-      u: _environ_get,
-      v: _environ_sizes_get,
+      l: __abort_js,
+      p: __emscripten_throw_longjmp,
+      s: __gmtime_js,
+      t: __tzset_js,
+      k: _clock_time_get,
+      m: _emscripten_asm_const_int,
+      i: _emscripten_date_now,
+      q: _emscripten_resize_heap,
+      v: _environ_get,
+      w: _environ_sizes_get,
       a: _fd_close,
-      d: _fd_read,
-      t: _fd_seek,
-      e: _fd_write,
+      e: _fd_read,
+      u: _fd_seek,
+      f: _fd_write,
       B: invoke_viiii,
-      i: pqc_bridge_mldsa_keygen,
-      w: pqc_bridge_mldsa_sign,
-      m: pqc_bridge_mlkem_decap,
-      n: pqc_bridge_mlkem_encap,
+      j: pqc_bridge_mldsa_keygen,
+      d: pqc_bridge_mldsa_sign,
+      n: pqc_bridge_mlkem_decap,
+      o: pqc_bridge_mlkem_encap,
       c: pqc_bridge_mlkem_keygen,
     }
     function invoke_viiii(index, a1, a2, a3, a4) {

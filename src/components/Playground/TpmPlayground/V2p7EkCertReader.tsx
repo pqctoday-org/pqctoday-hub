@@ -5,6 +5,11 @@
  * @peculiar/x509 parse → byte-exact SPKI OID match vs the NIST CSOR
  * reference from V2.7 §6.2.x.
  */
+// @peculiar/x509 pulls in tsyringe which needs the reflect-metadata polyfill.
+// Existing certParser.ts does the same at its own top — duplicate here so
+// the polyfill is installed when /playground/tpm loads (pre-existing entry
+// only fires on the embed view).
+import 'reflect-metadata'
 import { useCallback, useEffect, useState } from 'react'
 import { CheckCircle2, XCircle, AlertCircle, RefreshCw, Download } from 'lucide-react'
 import * as x509 from '@peculiar/x509'
@@ -109,9 +114,18 @@ export function V2p7EkCertReader({ isWasmReady, v2p7Status }: Props) {
             Re-read
           </Button>
         </div>
+        <div className="mt-4 text-xs px-3 py-2 rounded bg-status-warning/10 text-status-warning border border-status-warning/30">
+          <strong>WASM build limitation.</strong> The 6 EK keys ARE provisioned (visible in the V2.7
+          EKs tab), but the §5.3.1 NV cert slots stay empty because cert generation requires{' '}
+          <code>EVP_PKEY_keygen</code>
+          for the issuer — the path not wired in the stripped <code>libcrypto.a</code> linked into{' '}
+          <code>pqctpm.wasm</code>. The native <code>make ek-cert-conformance-xcheck</code>{' '}
+          populates these slots; in-browser cert build via <code>openSSLService</code> + raw
+          NV_Write is the follow-up.
+        </div>
         {v2p7Status && (
           <div className="mt-4 text-xs font-mono text-muted-foreground">
-            V2.7 cert provisioning status:{' '}
+            V2.7 EK key provisioning status (not cert):{' '}
             {v2p7Status.map((s, i) => (
               <span key={i} className="mr-2">
                 {
