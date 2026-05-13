@@ -24,7 +24,7 @@ export function clearLastTpmErr(): void {
 }
 
 // Build stamp used for cache-busting — updated each deploy
-const WASM_BUILD = '20260513-v0p7-cert-x509fix'
+const WASM_BUILD = '20260513-v0p7-ak-noDA'
 
 // V2.7 RC1 provisioning status, captured after registerPqcBridge runs.
 // Indexes: 0=ML-KEM-512, 1=ML-KEM-768, 2=ML-KEM-1024,
