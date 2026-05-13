@@ -9,7 +9,7 @@ const HOST_CHECK_TIMEOUT_MS = 8000
  * Enforces that the embedding parent page is an authorised host.
  *
  * On mount the embed broadcasts `pqc:ready` to `window.parent`. The parent
- * must respond with `{ type: 'pqc:challenge' }` within 2 seconds. The embed
+ * must respond with `{ type: 'pqc:challenge' }` within 8 seconds. The embed
  * then validates `event.origin` against the `allowedOrigins` list baked into
  * the vendor certificate.
  *
