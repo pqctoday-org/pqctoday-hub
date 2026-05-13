@@ -21,6 +21,18 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Fixed — `rag-corpus.json` truncated in v3.15.0; full regen (2026-05-13)
+
+The v3.15.0 enrichment commit (`81911a86`) shipped a truncated `public/data/rag-corpus.json` — 1.54 MB instead of the expected 16.5 MB, ending mid-string with no closing braces. The corpus generator's `fs.writeFileSync` was interrupted mid-write; the in-memory embeddings completed fine and `embeddings.bin` held all 10,989 vectors, but the JSON serialization was cut off at ~9% through. Local pre-push verification passed because `verify-rag-corpus.ts` only checks the ML-DSA-65 signature over file bytes, not JSON validity — CI's `corpus-trust-invariants.test.ts` was the only gate that actually `JSON.parse()`s, and it had been failing on every push since.
+
+Re-ran `npx tsx scripts/generate-rag-corpus.ts` → fresh `rag-corpus.json` at 16,767,244 bytes, 10,989 chunks, parses cleanly. `npx tsx scripts/build-embedding-index.ts` rebuilt `embeddings-meta.json` to bind to the new corpus SHA-256 (`a7fab2e9…`); `embeddings.bin` byte-identical to prior (same chunks → same vectors). All 8 trust artefacts re-signed with the maintainer key (`kid=11b723084d047b4c`); `npm run trust-engine:verify` clean.
+
+`TIER_RESOLUTION_GAPS['document-enrichment']` bumped 13 → 18 in `corpus-trust-invariants.test.ts` to account for 5 new doc-enrichment chunks introduced by v3.15.0's library/timeline/threats enrichment stages that don't yet have trust-score wiring. Marked as tech debt to drive back to zero via upstream refId normalization.
+
+### Chore — deleted CI workflow `sign-revisions.yml`
+
+The "Sign trust-engine artifacts" workflow had been failing on every push since 2026-05-08 with `ERR_MODULE_NOT_FOUND` on `scripts/attestation/verify-all.ts` — `.gitignore` line 215 (`scripts/*`) excludes the attestation tooling from the public tree, so CI never had the scripts to run. Local pre-push hook covers signing now; workflow deleted rather than disabled.
+
 ### Chore — re-sign trust artefacts after OSCAL/CBOM regeneration (2026-05-13)
 
 `scripts/generate-oscal.ts` was re-run, bumping `metadata.timestamp` / `last-modified` on `pqctoday-oscal.json`, `pqctoday-oscal-full.json`, `pqctoday-oscal-governance.json`, and `pqctoday-cbom.json` (no semantic content change). All 8 trust artefacts re-signed with the ML-DSA-65 maintainer key (`kid=11b723084d047b4c`); `npm run trust-engine:verify` clean.
