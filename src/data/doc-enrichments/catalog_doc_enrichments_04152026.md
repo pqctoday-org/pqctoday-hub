@@ -428,7 +428,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: XiPKI.md (10,633 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-15T17:00:50
@@ -1287,7 +1286,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Bouncy_Castle_C\_\_.NET_repo.md (4,227 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-15T17:36:38
@@ -1847,7 +1845,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: pqcrypto.html (3,197 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-15T17:58:36
@@ -1891,7 +1888,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: liboqs-rust\__oqs_crate_.html (3,192 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-15T18:00:06
@@ -2150,7 +2146,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: citadel_pqcrypto.html (3,205 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-15T18:10:34
@@ -3440,7 +3435,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: testssl.sh.md (11,143 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-15T18:41:09
@@ -4257,7 +4251,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Samsung_S3SSE2A_eSE.html (212 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-15T18:55:54
@@ -4773,7 +4766,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: Blocked by IETF PQC JOSE specification
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: jose4j.html (16,675 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-15T19:05:26
@@ -5759,7 +5751,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: code signing infrastructure not yet updated for PQC
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Apple_codesign.html (3,333 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-15T19:25:59
@@ -6189,7 +6180,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: PQC support blocked pending OpenSSL dependency update
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Node.js_repo.md (42,782 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-15T19:35:04
@@ -10339,7 +10329,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Deployment & Migration Complexity**: PQC planned under CNSA 2.0 alignment
 - **Financial & Business Impact**: None detected
 - **Organizational Readiness**: None detected
-- **Extraction Note**: No source text available
 - **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
 - **Source Document**: Qualcomm_Snapdragon_Trusted_Execution_Environment.html (8,748 bytes, no text extracted)
 - **Extraction Timestamp**: 2026-04-15T21:18:29
