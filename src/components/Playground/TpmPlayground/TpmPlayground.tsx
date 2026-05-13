@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react'
 import { ShieldCheck, Terminal, Cpu } from 'lucide-react'
-import { initTpm } from '../../../wasm/tpmBridge'
+import { initTpm, getV2p7Status } from '../../../wasm/tpmBridge'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { CommandBuilder } from './CommandBuilder'
 import { StateInspector } from './StateInspector'
 import { ExecutionLog } from './ExecutionLog'
 import { ComplianceRunner } from './ComplianceRunner'
+import { V2p7EkExplorer } from './V2p7EkExplorer'
+import { V2p7EkCertReader } from './V2p7EkCertReader'
+import { AttestationPanel } from './AttestationPanel'
 
 export interface TpmLogEntry {
   commandType: string
@@ -63,47 +67,70 @@ export default function TpmPlayground() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left Column: Command Builder & Compliance */}
-        <div className="lg:col-span-4 space-y-8">
-          <div className="glass-panel p-6 border-l-4 border-l-primary">
-            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <Terminal className="text-primary h-5 w-5" />
-              Command Builder
-            </h2>
-            <CommandBuilder
-              disabled={!isWasmReady}
-              onLogUpdate={(log) => setLogs((prev) => [...prev, log])}
-              onObjectUpdate={(obj) => setObjects((prev) => [...prev, obj])}
-              objects={objects}
-            />
-          </div>
+      <Tabs defaultValue="builder" className="w-full">
+        <TabsList className="mb-6">
+          <TabsTrigger value="builder">Command Builder</TabsTrigger>
+          <TabsTrigger value="v27-eks">V2.7 EKs</TabsTrigger>
+          <TabsTrigger value="v27-certs">EK Certs</TabsTrigger>
+          <TabsTrigger value="attestation">Attestation</TabsTrigger>
+        </TabsList>
 
-          <div className="glass-panel p-6 border-l-4 border-l-secondary">
-            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-              <ShieldCheck className="text-secondary h-5 w-5" />
-              Compliance Suite
-            </h2>
-            <ComplianceRunner />
-          </div>
-        </div>
+        <TabsContent value="builder">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            {/* Left Column: Command Builder & Compliance */}
+            <div className="lg:col-span-4 space-y-8">
+              <div className="glass-panel p-6 border-l-4 border-l-primary">
+                <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                  <Terminal className="text-primary h-5 w-5" />
+                  Command Builder
+                </h2>
+                <CommandBuilder
+                  disabled={!isWasmReady}
+                  onLogUpdate={(log) => setLogs((prev) => [...prev, log])}
+                  onObjectUpdate={(obj) => setObjects((prev) => [...prev, obj])}
+                  objects={objects}
+                />
+              </div>
 
-        {/* Center Column: Execution Log */}
-        <div className="lg:col-span-5 space-y-8">
-          <div className="glass-panel p-6 h-full flex flex-col">
-            <h2 className="text-xl font-bold mb-4">Execution Log</h2>
-            <ExecutionLog logs={logs} />
-          </div>
-        </div>
+              <div className="glass-panel p-6 border-l-4 border-l-secondary">
+                <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                  <ShieldCheck className="text-secondary h-5 w-5" />
+                  Compliance Suite
+                </h2>
+                <ComplianceRunner />
+              </div>
+            </div>
 
-        {/* Right Column: State Inspector */}
-        <div className="lg:col-span-3 space-y-8">
-          <div className="glass-panel p-6 h-full flex flex-col">
-            <h2 className="text-xl font-bold mb-4">TPM State</h2>
-            <StateInspector objects={objects} />
+            {/* Center Column: Execution Log */}
+            <div className="lg:col-span-5 space-y-8">
+              <div className="glass-panel p-6 h-full flex flex-col">
+                <h2 className="text-xl font-bold mb-4">Execution Log</h2>
+                <ExecutionLog logs={logs} />
+              </div>
+            </div>
+
+            {/* Right Column: State Inspector */}
+            <div className="lg:col-span-3 space-y-8">
+              <div className="glass-panel p-6 h-full flex flex-col">
+                <h2 className="text-xl font-bold mb-4">TPM State</h2>
+                <StateInspector objects={objects} />
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </TabsContent>
+
+        <TabsContent value="v27-eks">
+          <V2p7EkExplorer isWasmReady={isWasmReady} v2p7Status={getV2p7Status()} />
+        </TabsContent>
+
+        <TabsContent value="v27-certs">
+          <V2p7EkCertReader isWasmReady={isWasmReady} v2p7Status={getV2p7Status()} />
+        </TabsContent>
+
+        <TabsContent value="attestation">
+          <AttestationPanel isWasmReady={isWasmReady} />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }
