@@ -221,6 +221,12 @@ scripts/*
 !scripts/generate-oscal.ts
 !scripts/generate-cbom.ts
 
+# Workshop flow static audit — runs in CI, must be tracked. Reads
+# public/workshop/*.json + src/. The companion timing fixer
+# (scripts/fix-workshop-caption-timing.ts) stays private since it mutates
+# authored content.
+!scripts/audit-workshop-flows.ts
+
 # Private CI workflows (compliance scraper runs locally, not in public CI)
 .github/workflows/update-compliance.yml
 

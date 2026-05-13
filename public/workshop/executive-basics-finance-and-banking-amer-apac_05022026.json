@@ -73,13 +73,13 @@
             "text": "When ready: Start the Journey opens the Learn modules. Open Command Center — where we build your board report — is the last stop of the workshop."
           },
           {
+            "tMs": 66000,
+            "kind": "advance"
+          },
+          {
             "tMs": 70000,
             "kind": "spotlight",
             "selector": "[data-workshop-target=\"landing-cta-primary\"]"
-          },
-          {
-            "tMs": 66000,
-            "kind": "advance"
           }
         ]
       }
@@ -131,52 +131,52 @@
               "text": "Executive Quantum Impact — You need a common board-ready vocabulary: Q-Day, HNDL, CNSA 2.0 deadlines. This module gives you the five-second answers."
             },
             {
-              "tMs": 4000,
+              "tMs": 13672,
               "kind": "select-tab",
               "tabName": "Learn"
             },
             {
-              "tMs": 5800,
+              "tMs": 15472,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"why-it-matters\"]"
             },
             {
-              "tMs": 6000,
+              "tMs": 15672,
               "kind": "caption",
               "text": "Section 1/3: The Executive Quantum Challenge"
             },
             {
-              "tMs": 53133,
+              "tMs": 62805,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"what-to-learn\"]"
             },
             {
-              "tMs": 53333,
+              "tMs": 63005,
               "kind": "caption",
               "text": "Section 2/3: Why Now?"
             },
             {
-              "tMs": 100466,
+              "tMs": 110138,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"how-to-act\"]"
             },
             {
-              "tMs": 100666,
+              "tMs": 110338,
               "kind": "caption",
               "text": "Section 3/3: What This Module Covers"
             },
             {
-              "tMs": 149499,
+              "tMs": 159171,
               "kind": "select-tab",
               "tabName": "References"
             },
             {
-              "tMs": 150999,
+              "tMs": 160671,
               "kind": "caption",
               "text": "References — primary sources every claim is cited from."
             },
             {
-              "tMs": 158999,
+              "tMs": 168671,
               "kind": "advance"
             }
           ]
@@ -214,42 +214,42 @@
               "text": "Quantum Threats — Shor, Grover, CRQC, and Harvest-Now-Decrypt-Later — the four words a finance CISO will say at every PQC meeting."
             },
             {
-              "tMs": 4000,
+              "tMs": 12386,
               "kind": "select-tab",
               "tabName": "Learn"
             },
             {
-              "tMs": 5800,
+              "tMs": 14186,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"crqc\"]"
             },
             {
-              "tMs": 6000,
+              "tMs": 14386,
               "kind": "caption",
               "text": "Section 1/3: CRQC Timeline Projections"
             },
             {
-              "tMs": 53133,
+              "tMs": 61519,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"hndl\"]"
             },
             {
-              "tMs": 53333,
+              "tMs": 61719,
               "kind": "caption",
               "text": "Section 2/3: Harvest Now, Decrypt Later"
             },
             {
-              "tMs": 100466,
+              "tMs": 108852,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"security-levels\"]"
             },
             {
-              "tMs": 100666,
+              "tMs": 109052,
               "kind": "caption",
               "text": "Section 3/3: Harvest Now, Forge Later"
             },
             {
-              "tMs": 108666,
+              "tMs": 117052,
               "kind": "advance"
             }
           ]
@@ -287,42 +287,42 @@
               "text": "PQC Risk Management — How to put quantum risk on your enterprise risk register, score it on a heatmap, and turn it into a board-level KPI."
             },
             {
-              "tMs": 4000,
+              "tMs": 12958,
               "kind": "select-tab",
               "tabName": "Learn"
             },
             {
-              "tMs": 5800,
+              "tMs": 14758,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"crqc\"]"
             },
             {
-              "tMs": 6000,
+              "tMs": 14958,
               "kind": "caption",
               "text": "Section 1/3: Why PQC Risk Management?"
             },
             {
-              "tMs": 53133,
+              "tMs": 62091,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"register\"]"
             },
             {
-              "tMs": 53333,
+              "tMs": 62291,
               "kind": "caption",
               "text": "Section 2/3: Key Concepts"
             },
             {
-              "tMs": 100466,
+              "tMs": 109424,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"heatmap\"]"
             },
             {
-              "tMs": 100666,
+              "tMs": 109624,
               "kind": "caption",
               "text": "Section 3/3: Executive Perspective"
             },
             {
-              "tMs": 108666,
+              "tMs": 117624,
               "kind": "advance"
             }
           ]
@@ -360,42 +360,42 @@
               "text": "Compliance & Regulatory Strategy — Map your jurisdiction's PQC deadlines (NIST 2030/2035, CCCS 2031/2035, ASD end-2030) to your audit calendar."
             },
             {
-              "tMs": 4000,
+              "tMs": 13315,
               "kind": "select-tab",
               "tabName": "Learn"
             },
             {
-              "tMs": 5800,
+              "tMs": 15115,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"frameworks\"]"
             },
             {
-              "tMs": 6000,
+              "tMs": 15315,
               "kind": "caption",
               "text": "Section 1/3: Compliance Landscape & Key Frameworks"
             },
             {
-              "tMs": 53133,
+              "tMs": 62448,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"jurisdiction\"]"
             },
             {
-              "tMs": 53333,
+              "tMs": 62648,
               "kind": "caption",
               "text": "Section 2/3: Compliance vs Risk Approach & Major Deadlines"
             },
             {
-              "tMs": 100466,
+              "tMs": 109781,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"audit\"]"
             },
             {
-              "tMs": 100666,
+              "tMs": 109981,
               "kind": "caption",
               "text": "Section 3/3: Country Deadlines, Dependencies & Workshop"
             },
             {
-              "tMs": 108666,
+              "tMs": 117981,
               "kind": "advance"
             }
           ]
@@ -404,7 +404,7 @@
           "id": "f-mod-pqc-business-case",
           "chapter": "foundations",
           "title": "PQC Business Case",
-          "estMinutes": 3,
+          "estMinutes": 4,
           "whyItMatters": "ROI, breach cost modelling, and the three slides every CFO will ask for before signing the budget.",
           "page": {
             "route": "/learn/pqc-business-case"
@@ -433,77 +433,77 @@
               "text": "PQC Business Case — ROI, breach cost modelling, and the three slides every CFO will ask for before signing the budget."
             },
             {
-              "tMs": 4000,
+              "tMs": 11529,
               "kind": "select-tab",
               "tabName": "Learn"
             },
             {
-              "tMs": 5800,
+              "tMs": 13329,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"roi\"]"
             },
             {
-              "tMs": 6000,
+              "tMs": 13529,
               "kind": "caption",
               "text": "Section 1/2: Why Build a PQC Business Case — Investment & Cost Categories"
             },
             {
-              "tMs": 76800,
+              "tMs": 84329,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"board\"]"
             },
             {
-              "tMs": 77000,
+              "tMs": 84529,
               "kind": "caption",
               "text": "Section 2/2: Workshop: Build Your Business Case & Resources"
             },
             {
-              "tMs": 130000,
+              "tMs": 137529,
               "kind": "select-tab",
               "tabName": "Workshop"
             },
             {
-              "tMs": 132000,
+              "tMs": 139529,
               "kind": "caption",
               "text": "Workshop: 4 hands-on tools — ROI Calculator, Breach Simulator, Board Pitch Builder, Cost of Inaction."
             },
             {
-              "tMs": 138000,
+              "tMs": 148344,
               "kind": "caption",
               "text": "Step 1/4: ROI Calculator — model migration cost vs. breach cost vs. compliance penalty."
             },
             {
-              "tMs": 148000,
+              "tMs": 158344,
               "kind": "click",
               "selector": "[data-workshop-target=\"learn-stepper-next\"]"
             },
             {
-              "tMs": 150000,
+              "tMs": 160344,
               "kind": "caption",
               "text": "Step 2/4: Breach Scenario Simulator — quantify CRQC breach impact for your sector."
             },
             {
-              "tMs": 160000,
+              "tMs": 170344,
               "kind": "click",
               "selector": "[data-workshop-target=\"learn-stepper-next\"]"
             },
             {
-              "tMs": 162000,
+              "tMs": 172344,
               "kind": "caption",
               "text": "Step 3/4: Board Pitch Builder — the three slides every CFO needs to approve budget."
             },
             {
-              "tMs": 172000,
+              "tMs": 182344,
               "kind": "click",
               "selector": "[data-workshop-target=\"learn-stepper-next\"]"
             },
             {
-              "tMs": 174000,
+              "tMs": 184344,
               "kind": "caption",
               "text": "Step 4/4: Cost of Inaction — what delay costs per quarter in your jurisdiction."
             },
             {
-              "tMs": 182000,
+              "tMs": 192344,
               "kind": "advance"
             }
           ]
@@ -541,42 +541,42 @@
               "text": "PQC Governance & Policy — Who owns cryptography, who approves exceptions, who reports to the board. The org-chart questions PQC forces you to answer."
             },
             {
-              "tMs": 4000,
+              "tMs": 13743,
               "kind": "select-tab",
               "tabName": "Learn"
             },
             {
-              "tMs": 5800,
+              "tMs": 15543,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"model\"]"
             },
             {
-              "tMs": 6000,
+              "tMs": 15743,
               "kind": "caption",
               "text": "Section 1/3: Why Governance, RACI & Policy Hierarchy"
             },
             {
-              "tMs": 53133,
+              "tMs": 62876,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"policy\"]"
             },
             {
-              "tMs": 53333,
+              "tMs": 63076,
               "kind": "caption",
               "text": "Section 2/3: Governance Models, Escalation & KPIs"
             },
             {
-              "tMs": 100466,
+              "tMs": 110209,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"kpi\"]"
             },
             {
-              "tMs": 100666,
+              "tMs": 110409,
               "kind": "caption",
               "text": "Section 3/3: Resources & Workshop"
             },
             {
-              "tMs": 108666,
+              "tMs": 118409,
               "kind": "advance"
             }
           ]
@@ -614,52 +614,52 @@
               "text": "Vendor & Supply Chain Risk — Your vendors' PQC roadmap IS your PQC roadmap. Contract language, certification deadlines, and the readiness scorecard you should send to every supplier."
             },
             {
-              "tMs": 4000,
+              "tMs": 16100,
               "kind": "select-tab",
               "tabName": "Learn"
             },
             {
-              "tMs": 5800,
+              "tMs": 17900,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"readiness\"]"
             },
             {
-              "tMs": 8000,
+              "tMs": 20100,
               "kind": "caption",
               "text": "Section 1/4: Why Vendor PQC Risk Matters"
             },
             {
-              "tMs": 41300,
+              "tMs": 53400,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"supply-chain\"]"
             },
             {
-              "tMs": 41500,
+              "tMs": 53600,
               "kind": "caption",
               "text": "Section 2/4: Vendor PQC Scorecards"
             },
             {
-              "tMs": 76800,
+              "tMs": 88900,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"contracts\"]"
             },
             {
-              "tMs": 77000,
+              "tMs": 89100,
               "kind": "caption",
               "text": "Section 3/4: CBOM — Crypto Bill of Materials"
             },
             {
-              "tMs": 112300,
+              "tMs": 124400,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"risk-matrix\"]"
             },
             {
-              "tMs": 112500,
+              "tMs": 124600,
               "kind": "caption",
               "text": "Section 4/4: Vendor Assessment Framework"
             },
             {
-              "tMs": 120500,
+              "tMs": 132600,
               "kind": "advance"
             }
           ]
@@ -697,32 +697,32 @@
               "text": "Migration Program Mgmt — Treat PQC migration like Y2K — a 3-year programme with stakeholders, milestones, and a deployment plan, not a one-quarter project."
             },
             {
-              "tMs": 4000,
+              "tMs": 14172,
               "kind": "select-tab",
               "tabName": "Learn"
             },
             {
-              "tMs": 5800,
+              "tMs": 15972,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"roadmap\"]"
             },
             {
-              "tMs": 6000,
+              "tMs": 16172,
               "kind": "caption",
               "text": "Section 1/2: PQC Migration — Program Management & 7-Phase Framework"
             },
             {
-              "tMs": 76800,
+              "tMs": 86972,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"deployment\"]"
             },
             {
-              "tMs": 77000,
+              "tMs": 87172,
               "kind": "caption",
               "text": "Section 2/2: Critical Success Factors & Workshop"
             },
             {
-              "tMs": 85000,
+              "tMs": 95172,
               "kind": "advance"
             }
           ]
@@ -756,42 +756,42 @@
               "text": "Data & Asset Sensitivity — Classify what you're protecting before you spend a dollar migrating it. The board will ask which crown-jewel data falls under HNDL exposure."
             },
             {
-              "tMs": 4000,
+              "tMs": 15029,
               "kind": "select-tab",
               "tabName": "Learn"
             },
             {
-              "tMs": 5800,
+              "tMs": 16829,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"classification\"]"
             },
             {
-              "tMs": 6000,
+              "tMs": 17029,
               "kind": "caption",
               "text": "Section 1/3: Data Asset Classification"
             },
             {
-              "tMs": 34200,
+              "tMs": 45229,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"compliance\"]"
             },
             {
-              "tMs": 34400,
+              "tMs": 45429,
               "kind": "caption",
               "text": "Section 2/3: Compliance Mapping (GDPR, HIPAA, DORA, NIS2)"
             },
             {
-              "tMs": 62600,
+              "tMs": 73629,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"methodology\"]"
             },
             {
-              "tMs": 62800,
+              "tMs": 73829,
               "kind": "caption",
               "text": "Section 3/3: Risk Methodology (NIST RMF, ISO 27005, FAIR)"
             },
             {
-              "tMs": 70800,
+              "tMs": 81829,
               "kind": "advance"
             }
           ]
@@ -825,62 +825,62 @@
               "text": "Standards, Certification & Compliance Bodies — Know which body publishes, which certifies, which enforces — so when a regulator cites a framework, you know its authority and timeline."
             },
             {
-              "tMs": 4000,
+              "tMs": 16172,
               "kind": "select-tab",
               "tabName": "Learn"
             },
             {
-              "tMs": 5800,
+              "tMs": 17972,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"three-roles\"]"
             },
             {
-              "tMs": 6000,
+              "tMs": 18172,
               "kind": "caption",
               "text": "Section 1/5: Three Distinct Roles in the PQC Ecosystem"
             },
             {
-              "tMs": 34200,
+              "tMs": 46372,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"gov-vs-nongov\"]"
             },
             {
-              "tMs": 34400,
+              "tMs": 46572,
               "kind": "caption",
               "text": "Section 2/5: Governmental vs Non-Governmental"
             },
             {
-              "tMs": 62600,
+              "tMs": 74772,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"global-regional\"]"
             },
             {
-              "tMs": 62800,
+              "tMs": 74972,
               "kind": "caption",
               "text": "Section 3/5: Global Tier — Universal Authority & Regional Landscape"
             },
             {
-              "tMs": 91000,
+              "tMs": 103172,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"app-pages-guide\"]"
             },
             {
-              "tMs": 91200,
+              "tMs": 103372,
               "kind": "caption",
               "text": "Section 4/5: Reading the App — Compliance & Migrate Pages"
             },
             {
-              "tMs": 119400,
+              "tMs": 131572,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"ietf-process\"]"
             },
             {
-              "tMs": 119600,
+              "tMs": 131772,
               "kind": "caption",
               "text": "Section 5/5: IETF Working Groups & the RFC Process"
             },
             {
-              "tMs": 127600,
+              "tMs": 139772,
               "kind": "advance"
             }
           ]
@@ -968,142 +968,142 @@
               "text": "Quick mode — eight questions, calibrated for executives."
             },
             {
-              "tMs": 2000,
+              "tMs": 5600,
               "kind": "spotlight",
               "selector": "[data-workshop-target=\"assess-mode-quick\"]"
             },
             {
-              "tMs": 3000,
+              "tMs": 6600,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-mode-quick\"]"
             },
             {
-              "tMs": 5000,
+              "tMs": 8600,
               "kind": "caption",
               "text": "Step 1: Industry — pre-filled from your persona."
             },
             {
-              "tMs": 7000,
+              "tMs": 13629,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-next\"]"
             },
             {
-              "tMs": 9000,
+              "tMs": 15629,
               "kind": "caption",
               "text": "Step 2: Country — pre-filled."
             },
             {
-              "tMs": 11000,
+              "tMs": 19301,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-next\"]"
             },
             {
-              "tMs": 13000,
+              "tMs": 21301,
               "kind": "caption",
               "text": "Step 3: Crypto inventory — picking 'I’m not sure'."
             },
             {
-              "tMs": 15000,
+              "tMs": 26473,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-not-sure\"]"
             },
             {
-              "tMs": 17000,
+              "tMs": 28473,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-next\"]"
             },
             {
-              "tMs": 19000,
+              "tMs": 30473,
               "kind": "caption",
               "text": "Step 4: Data sensitivity — picking 'I’m not sure'."
             },
             {
-              "tMs": 21000,
+              "tMs": 35645,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-not-sure\"]"
             },
             {
-              "tMs": 23000,
+              "tMs": 37645,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-next\"]"
             },
             {
-              "tMs": 25000,
+              "tMs": 39645,
               "kind": "caption",
               "text": "Step 5: Compliance frameworks — picking 'I’m not sure'."
             },
             {
-              "tMs": 27000,
+              "tMs": 45174,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-not-sure\"]"
             },
             {
-              "tMs": 29000,
+              "tMs": 47174,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-next\"]"
             },
             {
-              "tMs": 31000,
+              "tMs": 49174,
               "kind": "caption",
               "text": "Step 6: Migration status — picking 'I’m not sure'."
             },
             {
-              "tMs": 33000,
+              "tMs": 54346,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-not-sure\"]"
             },
             {
-              "tMs": 35000,
+              "tMs": 56346,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-next\"]"
             },
             {
-              "tMs": 37000,
+              "tMs": 58346,
               "kind": "caption",
               "text": "Step 7: Infrastructure — picking 'I’m not sure'."
             },
             {
-              "tMs": 39000,
+              "tMs": 63375,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-not-sure\"]"
             },
             {
-              "tMs": 41000,
+              "tMs": 65375,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-next\"]"
             },
             {
-              "tMs": 43000,
+              "tMs": 67375,
               "kind": "caption",
               "text": "Step 8: Timeline pressure — picking 'I’m not sure'."
             },
             {
-              "tMs": 45000,
+              "tMs": 72618,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-not-sure\"]"
             },
             {
-              "tMs": 48000,
+              "tMs": 75618,
               "kind": "caption",
               "text": "Generating your board-ready report..."
             },
             {
-              "tMs": 50000,
+              "tMs": 79861,
               "kind": "click",
               "selector": "[data-workshop-target=\"assess-submit\"]"
             },
             {
-              "tMs": 55000,
+              "tMs": 84861,
               "kind": "caption",
               "text": "Risk profile complete — your personalised report is live."
             },
             {
-              "tMs": 80000,
+              "tMs": 109861,
               "kind": "caption",
               "text": "The report is the input to every Command Center artifact."
             },
             {
-              "tMs": 88000,
+              "tMs": 117861,
               "kind": "advance"
             }
           ]
@@ -1136,72 +1136,72 @@
               "text": "Your board-ready PQC risk report — personalised to Finance & Banking in your jurisdiction."
             },
             {
-              "tMs": 5000,
+              "tMs": 9529,
               "kind": "click",
               "selector": "[data-workshop-target=\"report-toc-riskScore\"]"
             },
             {
-              "tMs": 5200,
+              "tMs": 9729,
               "kind": "caption",
               "text": "Section 1/6: Risk Score — your quantified exposure and migration urgency."
             },
             {
-              "tMs": 13000,
+              "tMs": 17529,
               "kind": "click",
               "selector": "[data-workshop-target=\"report-toc-keyFindings\"]"
             },
             {
-              "tMs": 13200,
+              "tMs": 17729,
               "kind": "caption",
               "text": "Section 2/6: Key Findings — your personalised top-line risks, ranked."
             },
             {
-              "tMs": 21000,
+              "tMs": 25529,
               "kind": "click",
               "selector": "[data-workshop-target=\"report-toc-executiveSummary\"]"
             },
             {
-              "tMs": 21200,
+              "tMs": 25729,
               "kind": "caption",
               "text": "Section 3/6: Executive Summary — the 60-second board-pack narrative."
             },
             {
-              "tMs": 29000,
+              "tMs": 33529,
               "kind": "click",
               "selector": "[data-workshop-target=\"report-toc-complianceImpact\"]"
             },
             {
-              "tMs": 29200,
+              "tMs": 33729,
               "kind": "caption",
               "text": "Section 4/6: Compliance Impact — frameworks that gate your jurisdiction."
             },
             {
-              "tMs": 37000,
+              "tMs": 41529,
               "kind": "click",
               "selector": "[data-workshop-target=\"report-toc-recommendedActions\"]"
             },
             {
-              "tMs": 37200,
+              "tMs": 41729,
               "kind": "caption",
               "text": "Section 5/6: Recommended Actions — the 5-action shortlist tied to your country."
             },
             {
-              "tMs": 45000,
+              "tMs": 49529,
               "kind": "click",
               "selector": "[data-workshop-target=\"report-toc-migrationRoadmap\"]"
             },
             {
-              "tMs": 45200,
+              "tMs": 49729,
               "kind": "caption",
               "text": "Section 6/6: Migration Roadmap — your 3-year phased plan."
             },
             {
-              "tMs": 53000,
+              "tMs": 57529,
               "kind": "caption",
               "text": "Share button generates a token-bearing URL — re-renders against current data, no PDFs going stale."
             },
             {
-              "tMs": 61000,
+              "tMs": 65529,
               "kind": "advance"
             }
           ]
@@ -1217,7 +1217,7 @@
           "id": "a1a-gov-business-and-threats",
           "chapter": "action",
           "title": "Governance — Business case + Threats (CSWP §5.1)",
-          "estMinutes": 5,
+          "estMinutes": 6,
           "whyItMatters": "Before policy you need executive narrative. ROI, board deck, and a CRQC-scenario walk give the C-suite a defensible reason to fund migration.",
           "page": {
             "route": "/business",
@@ -1248,67 +1248,67 @@
               "text": "Before policy you need executive narrative. ROI, board deck, and a CRQC-scenario walk give the C-suite a defensible reason to fund migration."
             },
             {
-              "tMs": 3000,
+              "tMs": 13172,
               "kind": "click",
               "selector": "[data-workshop-target=\"business-zone-governance\"]"
             },
             {
-              "tMs": 3500,
+              "tMs": 13672,
               "kind": "expand-section",
               "selector": "[data-workshop-target=\"section-business-zone-governance\"]"
             },
             {
-              "tMs": 6000,
+              "tMs": 16172,
               "kind": "caption",
               "text": "Artifact: ROI Model"
             },
             {
-              "tMs": 7500,
+              "tMs": 19272,
               "kind": "generate-artifact",
               "artifactType": "roi-model"
             },
             {
-              "tMs": 16000,
+              "tMs": 27772,
               "kind": "caption",
               "text": "Quantifies migration cost vs. breach cost vs. compliance penalty. The CFO's first question gets a number."
             },
             {
-              "tMs": 102000,
+              "tMs": 113772,
               "kind": "caption",
               "text": "Artifact: Board Deck"
             },
             {
-              "tMs": 103500,
+              "tMs": 116872,
               "kind": "generate-artifact",
               "artifactType": "board-deck"
             },
             {
-              "tMs": 108000,
+              "tMs": 121372,
               "kind": "caption",
               "text": "Pre-built slides citing your jurisdiction's deadline. 12 minutes, not 60."
             },
             {
-              "tMs": 198000,
+              "tMs": 211372,
               "kind": "caption",
               "text": "Artifact: CRQC Scenario"
             },
             {
-              "tMs": 199500,
+              "tMs": 214615,
               "kind": "generate-artifact",
               "artifactType": "crqc-scenario"
             },
             {
-              "tMs": 204000,
+              "tMs": 219115,
               "kind": "caption",
               "text": "A scripted what-if for \"the day a CRQC is announced\" — your incident response, day zero."
             },
             {
-              "tMs": 298000,
+              "tMs": 313115,
               "kind": "caption",
               "text": "3 governance artifacts created."
             },
             {
-              "tMs": 302000,
+              "tMs": 317115,
               "kind": "advance"
             }
           ]
@@ -1317,7 +1317,7 @@
           "id": "a1b-gov-standards-and-regulations",
           "chapter": "action",
           "title": "Governance — Standards & Regulations (CSWP §5.1)",
-          "estMinutes": 5,
+          "estMinutes": 6,
           "whyItMatters": "Policy authority comes from external standards. The audit checklist and compliance docs make your governance defensible to regulators and external auditors.",
           "page": {
             "route": "/business",
@@ -1348,67 +1348,67 @@
               "text": "Policy authority comes from external standards. The audit checklist and compliance docs make your governance defensible to regulators and external auditors."
             },
             {
-              "tMs": 3000,
+              "tMs": 14243,
               "kind": "click",
               "selector": "[data-workshop-target=\"business-zone-governance\"]"
             },
             {
-              "tMs": 3500,
+              "tMs": 14743,
               "kind": "expand-section",
               "selector": "[data-workshop-target=\"section-business-zone-governance\"]"
             },
             {
-              "tMs": 6500,
+              "tMs": 17743,
               "kind": "caption",
               "text": "Artifact: Audit Checklist"
             },
             {
-              "tMs": 8000,
+              "tMs": 21129,
               "kind": "generate-artifact",
               "artifactType": "audit-checklist"
             },
             {
-              "tMs": 16500,
+              "tMs": 29629,
               "kind": "caption",
               "text": "Maps your crypto inventory to three standards. FIPS 140 dash 3. NIST I R 8547. And CNSA version 2. Drop-in for your audit cycle."
             },
             {
-              "tMs": 102500,
+              "tMs": 115629,
               "kind": "caption",
               "text": "Artifact: Compliance Timeline"
             },
             {
-              "tMs": 104000,
+              "tMs": 119301,
               "kind": "generate-artifact",
               "artifactType": "compliance-timeline"
             },
             {
-              "tMs": 108500,
+              "tMs": 123801,
               "kind": "caption",
               "text": "A visual of every binding deadline. NIST. CCCS. ASD. PCI version 4. All overlaid on your fiscal calendar."
             },
             {
-              "tMs": 198500,
+              "tMs": 213801,
               "kind": "caption",
               "text": "Artifact: Compliance Checklist"
             },
             {
-              "tMs": 200000,
+              "tMs": 217544,
               "kind": "generate-artifact",
               "artifactType": "compliance-checklist"
             },
             {
-              "tMs": 204500,
+              "tMs": 222044,
               "kind": "caption",
               "text": "One-pager you hand to your CISO's deputy. They sign every line monthly."
             },
             {
-              "tMs": 298500,
+              "tMs": 316044,
               "kind": "caption",
               "text": "3 governance artifacts created."
             },
             {
-              "tMs": 302500,
+              "tMs": 320044,
               "kind": "advance"
             }
           ]
@@ -1417,7 +1417,7 @@
           "id": "a1c-gov-crypto-policies",
           "chapter": "action",
           "title": "Governance — Crypto Policies (CSWP §5.3)",
-          "estMinutes": 5,
+          "estMinutes": 6,
           "whyItMatters": "The policy layer itself. Without a published mandate, every later artifact stalls in committee. CSWP §5.3 is the heart of governance.",
           "page": {
             "route": "/business",
@@ -1448,67 +1448,67 @@
               "text": "The policy layer itself. Without a published mandate, every later artifact stalls in committee. CSWP §5.3 is the heart of governance."
             },
             {
-              "tMs": 3000,
+              "tMs": 12600,
               "kind": "click",
               "selector": "[data-workshop-target=\"business-zone-governance\"]"
             },
             {
-              "tMs": 3500,
+              "tMs": 13100,
               "kind": "expand-section",
               "selector": "[data-workshop-target=\"section-business-zone-governance\"]"
             },
             {
-              "tMs": 6000,
+              "tMs": 15600,
               "kind": "caption",
               "text": "Artifact: Policy Draft"
             },
             {
-              "tMs": 7500,
+              "tMs": 18772,
               "kind": "generate-artifact",
               "artifactType": "policy-draft"
             },
             {
-              "tMs": 16000,
+              "tMs": 27272,
               "kind": "caption",
               "text": "One-page mandate your legal team finishes in an afternoon. The signed policy becomes the audit anchor."
             },
             {
-              "tMs": 102000,
+              "tMs": 113272,
               "kind": "caption",
               "text": "Artifact: RACI Matrix"
             },
             {
-              "tMs": 103500,
+              "tMs": 116372,
               "kind": "generate-artifact",
               "artifactType": "raci-matrix"
             },
             {
-              "tMs": 108000,
+              "tMs": 120872,
               "kind": "caption",
               "text": "PQC champion responsible · CISO accountable · CRO consulted · Board sponsor informed. Names, not roles."
             },
             {
-              "tMs": 198000,
+              "tMs": 210872,
               "kind": "caption",
               "text": "Artifact: Stakeholder Comms"
             },
             {
-              "tMs": 199500,
+              "tMs": 214401,
               "kind": "generate-artifact",
               "artifactType": "stakeholder-comms"
             },
             {
-              "tMs": 204000,
+              "tMs": 218901,
               "kind": "caption",
               "text": "Email and slide templates for the announcements that make migration real to your org."
             },
             {
-              "tMs": 298000,
+              "tMs": 312901,
               "kind": "caption",
               "text": "3 governance artifacts created."
             },
             {
-              "tMs": 302000,
+              "tMs": 316901,
               "kind": "advance"
             }
           ]
@@ -1517,7 +1517,7 @@
           "id": "a1d-gov-supply-chain",
           "chapter": "action",
           "title": "Governance — Supply Chain (CSWP §5.4)",
-          "estMinutes": 5,
+          "estMinutes": 6,
           "whyItMatters": "Your vendors' PQC roadmap IS your PQC roadmap. The scorecard, contract clause, and supply chain matrix close the loop on third-party risk.",
           "page": {
             "route": "/business",
@@ -1548,67 +1548,67 @@
               "text": "Your vendors' PQC roadmap IS your PQC roadmap. The scorecard, contract clause, and supply chain matrix close the loop on third-party risk."
             },
             {
-              "tMs": 3000,
+              "tMs": 12958,
               "kind": "click",
               "selector": "[data-workshop-target=\"business-zone-governance\"]"
             },
             {
-              "tMs": 3500,
+              "tMs": 13458,
               "kind": "expand-section",
               "selector": "[data-workshop-target=\"section-business-zone-governance\"]"
             },
             {
-              "tMs": 6000,
+              "tMs": 15958,
               "kind": "caption",
               "text": "Artifact: Vendor Scorecard"
             },
             {
-              "tMs": 7500,
+              "tMs": 19416,
               "kind": "generate-artifact",
               "artifactType": "vendor-scorecard"
             },
             {
-              "tMs": 16000,
+              "tMs": 27916,
               "kind": "caption",
               "text": "Rates your top-20 crypto vendors on PQC roadmap, FIPS 140-3 status, and migration commitment."
             },
             {
-              "tMs": 102000,
+              "tMs": 113916,
               "kind": "caption",
               "text": "Artifact: Contract Clause"
             },
             {
-              "tMs": 103500,
+              "tMs": 117302,
               "kind": "generate-artifact",
               "artifactType": "contract-clause"
             },
             {
-              "tMs": 108000,
+              "tMs": 121802,
               "kind": "caption",
               "text": "Drop-in PQC readiness language for procurement and renewal contracts. Your legal team will thank you."
             },
             {
-              "tMs": 198000,
+              "tMs": 211802,
               "kind": "caption",
               "text": "Artifact: Supply Chain Matrix"
             },
             {
-              "tMs": 199500,
+              "tMs": 215474,
               "kind": "generate-artifact",
               "artifactType": "supply-chain-matrix"
             },
             {
-              "tMs": 204000,
+              "tMs": 219974,
               "kind": "caption",
               "text": "End-to-end view: which vendors' systems hold which crypto assets. The map your CISO needs at every audit."
             },
             {
-              "tMs": 298000,
+              "tMs": 313974,
               "kind": "caption",
               "text": "3 governance artifacts created."
             },
             {
-              "tMs": 302000,
+              "tMs": 317974,
               "kind": "advance"
             }
           ]
@@ -1617,7 +1617,7 @@
           "id": "a1e-gov-architecture",
           "chapter": "action",
           "title": "Governance — Crypto Architecture (CSWP §5.1)",
-          "estMinutes": 2,
+          "estMinutes": 3,
           "whyItMatters": "A single architectural diagram of your cryptographic estate. The picture every executive review starts with.",
           "page": {
             "route": "/business",
@@ -1646,37 +1646,37 @@
               "text": "A single architectural diagram of your cryptographic estate. The picture every executive review starts with."
             },
             {
-              "tMs": 3000,
+              "tMs": 10815,
               "kind": "click",
               "selector": "[data-workshop-target=\"business-zone-governance\"]"
             },
             {
-              "tMs": 3500,
+              "tMs": 11315,
               "kind": "expand-section",
               "selector": "[data-workshop-target=\"section-business-zone-governance\"]"
             },
             {
-              "tMs": 5000,
+              "tMs": 12815,
               "kind": "caption",
               "text": "Artifact: Crypto Architecture"
             },
             {
-              "tMs": 6500,
+              "tMs": 16487,
               "kind": "generate-artifact",
               "artifactType": "crypto-architecture"
             },
             {
-              "tMs": 15000,
+              "tMs": 24987,
               "kind": "caption",
               "text": "Layered diagram: applications → libraries → HSMs → vendors. Annotated with classical and post-quantum algorithms."
             },
             {
-              "tMs": 117000,
+              "tMs": 126987,
               "kind": "caption",
               "text": "1 governance artifact created."
             },
             {
-              "tMs": 121000,
+              "tMs": 130987,
               "kind": "advance"
             }
           ]
@@ -1685,7 +1685,7 @@
           "id": "a1f-gov-kpis",
           "chapter": "action",
           "title": "Governance — KPIs & Tools Audit (cross-zone)",
-          "estMinutes": 3,
+          "estMinutes": 4,
           "whyItMatters": "Governance feeds risk-management dashboards. The KPI dashboard and management tools audit make your migration progress visible quarterly.",
           "page": {
             "route": "/business",
@@ -1715,52 +1715,52 @@
               "text": "Governance feeds risk-management dashboards. The KPI dashboard and management tools audit make your migration progress visible quarterly."
             },
             {
-              "tMs": 3000,
+              "tMs": 12886,
               "kind": "click",
               "selector": "[data-workshop-target=\"business-zone-governance\"]"
             },
             {
-              "tMs": 3500,
+              "tMs": 13386,
               "kind": "expand-section",
               "selector": "[data-workshop-target=\"section-business-zone-governance\"]"
             },
             {
-              "tMs": 6000,
+              "tMs": 15886,
               "kind": "caption",
               "text": "Artifact: KPI Dashboard"
             },
             {
-              "tMs": 7500,
+              "tMs": 19129,
               "kind": "generate-artifact",
               "artifactType": "kpi-dashboard"
             },
             {
-              "tMs": 16000,
+              "tMs": 27629,
               "kind": "caption",
               "text": "Three numbers your board will track: FIPS 140-3 coverage, PQC-ready certificate share, vendor PQC commitment."
             },
             {
-              "tMs": 90000,
+              "tMs": 101629,
               "kind": "caption",
               "text": "Artifact: Management Tools Audit"
             },
             {
-              "tMs": 91500,
+              "tMs": 105515,
               "kind": "generate-artifact",
               "artifactType": "management-tools-audit"
             },
             {
-              "tMs": 96000,
+              "tMs": 110015,
               "kind": "caption",
               "text": "An inventory of every crypto-related management tool. Certificate authorities. Key management. Hardware security module panels. Configuration management. And their post-quantum readiness."
             },
             {
-              "tMs": 178000,
+              "tMs": 192015,
               "kind": "caption",
               "text": "2 governance artifacts created."
             },
             {
-              "tMs": 182000,
+              "tMs": 196015,
               "kind": "advance"
             }
           ]
@@ -1903,97 +1903,97 @@
               "text": "United States. NIST plus CNSA version 2 plus FIPS 140 dash 3. That is your binding stack."
             },
             {
-              "tMs": 4000,
+              "tMs": 9458,
               "kind": "click",
               "selector": "[data-workshop-target=\"compliance-tab-foryou\"]"
             },
             {
-              "tMs": 4500,
+              "tMs": 9958,
               "kind": "caption",
               "text": "For You — your personalised compliance view, computed from your persona context."
             },
             {
-              "tMs": 11800,
+              "tMs": 17258,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"profile-summary\"]"
             },
             {
-              "tMs": 12000,
+              "tMs": 17458,
               "kind": "caption",
               "text": "Profile Summary — your country + industry + role drives every section below."
             },
             {
-              "tMs": 36800,
+              "tMs": 42258,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"regulatory-clock\"]"
             },
             {
-              "tMs": 37000,
+              "tMs": 42458,
               "kind": "caption",
               "text": "Regulatory Clock — visual countdown to your most binding deadline."
             },
             {
-              "tMs": 61800,
+              "tMs": 67258,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"frameworks-mandatory\"]"
             },
             {
-              "tMs": 62000,
+              "tMs": 67458,
               "kind": "caption",
               "text": "Mandatory frameworks — what your jurisdiction binds you to today."
             },
             {
-              "tMs": 86800,
+              "tMs": 92258,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"frameworks-recognized\"]"
             },
             {
-              "tMs": 87000,
+              "tMs": 92458,
               "kind": "caption",
               "text": "Recognized standards — what your auditor will accept as evidence."
             },
             {
-              "tMs": 111800,
+              "tMs": 117258,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"frameworks-crossborder\"]"
             },
             {
-              "tMs": 112000,
+              "tMs": 117458,
               "kind": "caption",
               "text": "Cross-border frameworks — what subsidiaries and partners need."
             },
             {
-              "tMs": 136800,
+              "tMs": 142258,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"next-decision\"]"
             },
             {
-              "tMs": 137000,
+              "tMs": 142458,
               "kind": "caption",
               "text": "Next Decision — the one action your board should sign off on this quarter."
             },
             {
-              "tMs": 161800,
+              "tMs": 167258,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"sidebar-threats\"]"
             },
             {
-              "tMs": 162000,
+              "tMs": 167458,
               "kind": "caption",
               "text": "Sector threats — country-tagged threats your finance peers are tracking."
             },
             {
-              "tMs": 186800,
+              "tMs": 192258,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"sidebar-library\"]"
             },
             {
-              "tMs": 187000,
+              "tMs": 192458,
               "kind": "caption",
               "text": "Top library docs — primary-source reading list for the CISO."
             },
             {
-              "tMs": 195000,
+              "tMs": 200458,
               "kind": "advance"
             }
           ]
@@ -2033,29 +2033,29 @@
               "text": "Three signals: DoD · FedRAMP · G7 financial roadmap."
             },
             {
-              "tMs": 4000,
+              "tMs": 6815,
               "kind": "spotlight",
               "selector": "[data-workshop-target=\"timeline-toc-United States\"]"
             },
             {
-              "tMs": 8000,
+              "tMs": 10815,
               "kind": "callout",
               "selector": "[data-workshop-target=\"timeline-toc-United States\"]",
               "label": "United States timeline pinned",
               "arrow": "right"
             },
             {
-              "tMs": 60000,
+              "tMs": 62815,
               "kind": "caption",
               "text": "DoD five-year SandboxAQ agreement · FedRAMP PQC evaluation criteria · G7 2030–2035 roadmap."
             },
             {
-              "tMs": 120000,
+              "tMs": 122815,
               "kind": "caption",
               "text": "Federal moves cascade into private sector procurement — especially banks serving federal customers."
             },
             {
-              "tMs": 128000,
+              "tMs": 130815,
               "kind": "advance"
             }
           ]
@@ -2095,37 +2095,37 @@
               "text": "In a U.S. context — FedWire, CHIPS, SWIFT HSM exposure."
             },
             {
-              "tMs": 6000,
+              "tMs": 8529,
               "kind": "spotlight",
               "selector": "[data-workshop-target=\"threats-toc-FIN-001\"]"
             },
             {
-              "tMs": 12000,
+              "tMs": 14529,
               "kind": "click",
               "selector": "[data-workshop-target=\"threats-toc-FIN-001\"]"
             },
             {
-              "tMs": 60000,
+              "tMs": 62529,
               "kind": "caption",
               "text": "F I N 004. Your domestic HSM fleet is on the timeline regardless of your application stack."
             },
             {
-              "tMs": 65000,
+              "tMs": 70629,
               "kind": "spotlight",
               "selector": "[data-workshop-target=\"threats-toc-FIN-004\"]"
             },
             {
-              "tMs": 120000,
+              "tMs": 125629,
               "kind": "caption",
               "text": "F I N 005. FS-ISAC: by their measurement, the sector is short of resources to hit 2030."
             },
             {
-              "tMs": 125000,
+              "tMs": 133444,
               "kind": "click",
               "selector": "[data-workshop-target=\"threats-toc-FIN-005\"]"
             },
             {
-              "tMs": 128000,
+              "tMs": 136444,
               "kind": "advance"
             }
           ]
@@ -2276,97 +2276,97 @@
               "text": "Canada — CCCS ITSM.40.001 phased mandate (2026 plans, 2031 high-priority, 2035 full)."
             },
             {
-              "tMs": 4000,
+              "tMs": 9172,
               "kind": "click",
               "selector": "[data-workshop-target=\"compliance-tab-foryou\"]"
             },
             {
-              "tMs": 4500,
+              "tMs": 9672,
               "kind": "caption",
               "text": "For You — your personalised compliance view, computed from your persona context."
             },
             {
-              "tMs": 11800,
+              "tMs": 16972,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"profile-summary\"]"
             },
             {
-              "tMs": 12000,
+              "tMs": 17172,
               "kind": "caption",
               "text": "Profile Summary — your country + industry + role drives every section below."
             },
             {
-              "tMs": 36800,
+              "tMs": 41972,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"regulatory-clock\"]"
             },
             {
-              "tMs": 37000,
+              "tMs": 42172,
               "kind": "caption",
               "text": "Regulatory Clock — visual countdown to your most binding deadline."
             },
             {
-              "tMs": 61800,
+              "tMs": 66972,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"frameworks-mandatory\"]"
             },
             {
-              "tMs": 62000,
+              "tMs": 67172,
               "kind": "caption",
               "text": "Mandatory frameworks — what your jurisdiction binds you to today."
             },
             {
-              "tMs": 86800,
+              "tMs": 91972,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"frameworks-recognized\"]"
             },
             {
-              "tMs": 87000,
+              "tMs": 92172,
               "kind": "caption",
               "text": "Recognized standards — what your auditor will accept as evidence."
             },
             {
-              "tMs": 111800,
+              "tMs": 116972,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"frameworks-crossborder\"]"
             },
             {
-              "tMs": 112000,
+              "tMs": 117172,
               "kind": "caption",
               "text": "Cross-border frameworks — what subsidiaries and partners need."
             },
             {
-              "tMs": 136800,
+              "tMs": 141972,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"next-decision\"]"
             },
             {
-              "tMs": 137000,
+              "tMs": 142172,
               "kind": "caption",
               "text": "Next Decision — the one action your board should sign off on this quarter."
             },
             {
-              "tMs": 161800,
+              "tMs": 166972,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"sidebar-threats\"]"
             },
             {
-              "tMs": 162000,
+              "tMs": 167172,
               "kind": "caption",
               "text": "Sector threats — country-tagged threats your finance peers are tracking."
             },
             {
-              "tMs": 186800,
+              "tMs": 191972,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"sidebar-library\"]"
             },
             {
-              "tMs": 187000,
+              "tMs": 192172,
               "kind": "caption",
               "text": "Top library docs — primary-source reading list for the CISO."
             },
             {
-              "tMs": 195000,
+              "tMs": 200172,
               "kind": "advance"
             }
           ]
@@ -2406,29 +2406,29 @@
               "text": "Three documents define your runway — ISED 2023 · CCCS June 2025 · TBS SPIN October 2025."
             },
             {
-              "tMs": 4000,
+              "tMs": 9386,
               "kind": "spotlight",
               "selector": "[data-workshop-target=\"timeline-toc-Canada\"]"
             },
             {
-              "tMs": 8000,
+              "tMs": 13386,
               "kind": "callout",
               "selector": "[data-workshop-target=\"timeline-toc-Canada\"]",
               "label": "Canada timeline pinned",
               "arrow": "right"
             },
             {
-              "tMs": 60000,
+              "tMs": 65386,
               "kind": "caption",
               "text": "ISED 2023 — when your peers started budgeting. CCCS June 2025 — the binding federal document."
             },
             {
-              "tMs": 120000,
+              "tMs": 125386,
               "kind": "caption",
               "text": "TBS SPIN October 2025 — turns the roadmap into a contractual obligation across federal procurement."
             },
             {
-              "tMs": 128000,
+              "tMs": 133386,
               "kind": "advance"
             }
           ]
@@ -2468,37 +2468,37 @@
               "text": "For Canadian banks — G7 framework participation, cross-border settlement exposure."
             },
             {
-              "tMs": 6000,
+              "tMs": 10458,
               "kind": "spotlight",
               "selector": "[data-workshop-target=\"threats-toc-FIN-001\"]"
             },
             {
-              "tMs": 12000,
+              "tMs": 16458,
               "kind": "click",
               "selector": "[data-workshop-target=\"threats-toc-FIN-001\"]"
             },
             {
-              "tMs": 60000,
+              "tMs": 64458,
               "kind": "caption",
               "text": "F I N 002. HNDL on cross-border settlement traffic — a permanent privacy exposure under PIPEDA."
             },
             {
-              "tMs": 65000,
+              "tMs": 72844,
               "kind": "spotlight",
               "selector": "[data-workshop-target=\"threats-toc-FIN-002\"]"
             },
             {
-              "tMs": 120000,
+              "tMs": 127844,
               "kind": "caption",
               "text": "F I N 005. Your sector readiness is no better than your U.S. peers."
             },
             {
-              "tMs": 125000,
+              "tMs": 134230,
               "kind": "click",
               "selector": "[data-workshop-target=\"threats-toc-FIN-005\"]"
             },
             {
-              "tMs": 128000,
+              "tMs": 137230,
               "kind": "advance"
             }
           ]
@@ -2653,97 +2653,97 @@
               "text": "Australia. ASD I S M 1917 prohibits classical crypto by end of 2030. Five years ahead of the US and UK."
             },
             {
-              "tMs": 4000,
+              "tMs": 10458,
               "kind": "click",
               "selector": "[data-workshop-target=\"compliance-tab-foryou\"]"
             },
             {
-              "tMs": 5000,
+              "tMs": 11458,
               "kind": "caption",
               "text": "For You — your personalised compliance view, computed from your persona context."
             },
             {
-              "tMs": 12300,
+              "tMs": 18758,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"profile-summary\"]"
             },
             {
-              "tMs": 12500,
+              "tMs": 18958,
               "kind": "caption",
               "text": "Profile Summary — your country + industry + role drives every section below."
             },
             {
-              "tMs": 37300,
+              "tMs": 43758,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"regulatory-clock\"]"
             },
             {
-              "tMs": 37500,
+              "tMs": 43958,
               "kind": "caption",
               "text": "Regulatory Clock — visual countdown to your most binding deadline."
             },
             {
-              "tMs": 62300,
+              "tMs": 68758,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"frameworks-mandatory\"]"
             },
             {
-              "tMs": 62500,
+              "tMs": 68958,
               "kind": "caption",
               "text": "Mandatory frameworks — what your jurisdiction binds you to today."
             },
             {
-              "tMs": 87300,
+              "tMs": 93758,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"frameworks-recognized\"]"
             },
             {
-              "tMs": 87500,
+              "tMs": 93958,
               "kind": "caption",
               "text": "Recognized standards — what your auditor will accept as evidence."
             },
             {
-              "tMs": 112300,
+              "tMs": 118758,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"frameworks-crossborder\"]"
             },
             {
-              "tMs": 112500,
+              "tMs": 118958,
               "kind": "caption",
               "text": "Cross-border frameworks — what subsidiaries and partners need."
             },
             {
-              "tMs": 137300,
+              "tMs": 143758,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"next-decision\"]"
             },
             {
-              "tMs": 137500,
+              "tMs": 143958,
               "kind": "caption",
               "text": "Next Decision — the one action your board should sign off on this quarter."
             },
             {
-              "tMs": 162300,
+              "tMs": 168758,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"sidebar-threats\"]"
             },
             {
-              "tMs": 162500,
+              "tMs": 168958,
               "kind": "caption",
               "text": "Sector threats — country-tagged threats your finance peers are tracking."
             },
             {
-              "tMs": 187300,
+              "tMs": 193758,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"sidebar-library\"]"
             },
             {
-              "tMs": 187500,
+              "tMs": 193958,
               "kind": "caption",
               "text": "Top library docs — primary-source reading list for the CISO."
             },
             {
-              "tMs": 195500,
+              "tMs": 201958,
               "kind": "advance"
             }
           ]
@@ -2775,34 +2775,34 @@
               "text": "Three documents define your runway. The 2022 ASD guide. The binding December 2024 ISM update. The ASD LATICE practitioner guidance."
             },
             {
-              "tMs": 8000,
+              "tMs": 14958,
               "kind": "spotlight",
               "selector": "[data-workshop-target=\"timeline-toc-Australia\"]"
             },
             {
-              "tMs": 12000,
+              "tMs": 18958,
               "kind": "callout",
               "selector": "[data-workshop-target=\"timeline-toc-Australia\"]",
               "label": "Australia row pinned",
               "arrow": "right"
             },
             {
-              "tMs": 60000,
+              "tMs": 66958,
               "kind": "caption",
               "text": "Three phases — planning 2024-2026, critical-systems migration 2026-2028, full migration 2028-2030."
             },
             {
-              "tMs": 120000,
+              "tMs": 126958,
               "kind": "caption",
               "text": "Smallest remaining runway of the three jurisdictions in this workshop."
             },
             {
-              "tMs": 180000,
+              "tMs": 186958,
               "kind": "caption",
               "text": "You are already in phase one."
             },
             {
-              "tMs": 188000,
+              "tMs": 194958,
               "kind": "advance"
             }
           ]
@@ -2834,37 +2834,37 @@
               "text": "In Australia, these stop being threats — they become compliance gates after end-2030."
             },
             {
-              "tMs": 6000,
+              "tMs": 10672,
               "kind": "spotlight",
               "selector": "[data-workshop-target=\"threats-toc-FIN-001\"]"
             },
             {
-              "tMs": 12000,
+              "tMs": 16672,
               "kind": "click",
               "selector": "[data-workshop-target=\"threats-toc-FIN-001\"]"
             },
             {
-              "tMs": 60000,
+              "tMs": 64672,
               "kind": "caption",
               "text": "F I N 004. A hardware security module fleet wrapping backup keys with RSA is non-compliant under ASD I S M 1917 by 2030."
             },
             {
-              "tMs": 65000,
+              "tMs": 74844,
               "kind": "click",
               "selector": "[data-workshop-target=\"threats-toc-FIN-004\"]"
             },
             {
-              "tMs": 120000,
+              "tMs": 129844,
               "kind": "caption",
               "text": "FIN-005: FS-ISAC warns the sector is short of resources — and you have five fewer years than U.S. peers."
             },
             {
-              "tMs": 125000,
+              "tMs": 138873,
               "kind": "click",
               "selector": "[data-workshop-target=\"threats-toc-FIN-005\"]"
             },
             {
-              "tMs": 128000,
+              "tMs": 141873,
               "kind": "advance"
             }
           ]
@@ -2912,7 +2912,7 @@
           "chapter": "region",
           "region": "AU",
           "title": "ASD ISM + NIST FIPS — primary sources",
-          "estMinutes": 3,
+          "estMinutes": 4,
           "whyItMatters": "Your CISO will ask ‘what document says that?’ for every claim in this workshop. This step bookmarks the three primary sources ASD-aligned organisations rely on.",
           "page": {
             "route": "/library"
@@ -3017,62 +3017,62 @@
             "text": "Test what you learned. Pick a duration, pick topics, go."
           },
           {
-            "tMs": 6000,
+            "tMs": 7100,
             "kind": "spotlight",
             "selector": "[data-workshop-target=\"quiz-duration-slider\"]"
           },
           {
-            "tMs": 7500,
+            "tMs": 8600,
             "kind": "caption",
             "text": "Duration slider. Five to forty-five minutes. Quiz scales the question count to match."
           },
           {
-            "tMs": 22000,
+            "tMs": 23100,
             "kind": "spotlight",
             "selector": "[data-workshop-target=\"quiz-difficulty-row\"]"
           },
           {
-            "tMs": 23500,
+            "tMs": 24600,
             "kind": "caption",
             "text": "Difficulty filter. Beginner, Intermediate, Advanced. Multi-select."
           },
           {
-            "tMs": 38000,
+            "tMs": 39100,
             "kind": "spotlight",
             "selector": "[data-workshop-target=\"quiz-topic-grid\"]"
           },
           {
-            "tMs": 39500,
+            "tMs": 40600,
             "kind": "caption",
             "text": "Topic grid. Categories pre-filtered by your persona context."
           },
           {
-            "tMs": 55000,
+            "tMs": 56100,
             "kind": "click",
             "selector": "[data-workshop-target=\"quiz-category-compliance\"]"
           },
           {
-            "tMs": 56500,
+            "tMs": 57600,
             "kind": "caption",
             "text": "Selected topics show a checkmark. The Start button activates once you pick at least one."
           },
           {
-            "tMs": 75000,
+            "tMs": 76100,
             "kind": "spotlight",
             "selector": "[data-workshop-target=\"quiz-start-category\"]"
           },
           {
-            "tMs": 76500,
+            "tMs": 77600,
             "kind": "caption",
             "text": "Start the quiz when you're ready. Run it after the workshop to benchmark your retention."
           },
           {
-            "tMs": 165000,
+            "tMs": 166100,
             "kind": "caption",
             "text": "Results show your score, category breakdown, difficulty breakdown, and let you retake or change topics."
           },
           {
-            "tMs": 173000,
+            "tMs": 174100,
             "kind": "advance"
           }
         ]

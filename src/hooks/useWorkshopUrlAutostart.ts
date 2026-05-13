@@ -4,7 +4,8 @@ import { useSearchParams } from 'react-router-dom'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useWorkshopStore } from '@/store/useWorkshopStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
-import { resolveWorkshopFlow, flattenFlow } from '@/data/workshopRegistry'
+import { loadManifest, loadFlow, resolveFromManifest } from '@/services/workshopFlowLoader'
+import { flattenFlow } from '@/data/workshopRegistry'
 import type { WorkshopRegion } from '@/types/Workshop'
 import type { PersonaId } from '@/data/learningPersonas'
 import type { ExperienceLevel } from '@/store/usePersonaStore'
@@ -43,13 +44,24 @@ export function useWorkshopUrlAutostart(): void {
     setExperienceLevel(proficiency)
     setIndustry(industry)
 
-    const flow = resolveWorkshopFlow({ role: persona, proficiency, industry, region })
-    if (!flow) return
-    const steps = flattenFlow(flow, region)
-    if (steps.length === 0) return
+    let cancelled = false
+    void (async () => {
+      const manifest = await loadManifest().catch(() => null)
+      if (cancelled || !manifest) return
+      const entry = resolveFromManifest(manifest, { role: persona, proficiency, industry, region })
+      if (!entry) return
+      const flow = await loadFlow(entry.file).catch(() => null)
+      if (cancelled || !flow) return
+      const steps = flattenFlow(flow, region, industry, persona, proficiency)
+      if (steps.length === 0) return
 
-    fired.current = true
-    openPanel('workshop')
-    startVideo(flow.id, steps[0].id, region)
+      fired.current = true
+      openPanel('workshop')
+      startVideo(flow.id, steps[0].id, region)
+    })()
+
+    return () => {
+      cancelled = true
+    }
   }, [params, setPersona, setExperienceLevel, setIndustry, startVideo, openPanel])
 }

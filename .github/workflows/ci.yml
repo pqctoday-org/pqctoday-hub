@@ -76,6 +76,12 @@ jobs:
         run: DS_SEVERITY=ERROR npx tsx scripts/validate-data-integrity.ts
         continue-on-error: true
 
+      - name: Audit workshop flows
+        # Static audit: every cue in public/workshop/*.json must resolve to a
+        # real route / data-workshop-target slug / fixture key / artifact slug
+        # in current src/. Exits non-zero on any BLOCKER. WARN/INFO advisory.
+        run: npx tsx scripts/audit-workshop-flows.ts
+
       - name: Extract PR labels
         if: github.event_name == 'pull_request'
         id: pr-labels

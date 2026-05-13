@@ -28,7 +28,15 @@ import {
 } from '../../src/services/search/embeddingRetrieval.js'
 
 const REPO_ROOT = process.cwd()
-const CORPUS_PATH = path.join(REPO_ROOT, 'public/data/rag-corpus.json')
+const DEFAULT_CORPUS_PATH = path.join(REPO_ROOT, 'public/data/rag-corpus.json')
+// Tests may override the corpus path via `RAG_CORPUS_PATH` so the live
+// `public/data/rag-corpus.json` is never mutated under parallel test
+// execution. Resolved lazily (per call) because the env var may be set
+// AFTER this module is imported (ESM imports hoist above test-level
+// `process.env.X = ...` assignments).
+function corpusPath(): string {
+  return process.env.RAG_CORPUS_PATH ?? DEFAULT_CORPUS_PATH
+}
 
 interface RagChunk {
   id: string
@@ -49,9 +57,10 @@ const POOLS: DupPool[] = [
 ]
 
 function loadChunks(): RagChunk[] {
-  if (!fs.existsSync(CORPUS_PATH)) return []
+  const p = corpusPath()
+  if (!fs.existsSync(p)) return []
   try {
-    const raw = JSON.parse(fs.readFileSync(CORPUS_PATH, 'utf8'))
+    const raw = JSON.parse(fs.readFileSync(p, 'utf8'))
     return (raw.chunks ?? raw) as RagChunk[]
   } catch {
     // Corpus is mid-write from enrichment — caller gets an empty pool.

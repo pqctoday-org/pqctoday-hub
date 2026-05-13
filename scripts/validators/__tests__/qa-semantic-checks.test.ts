@@ -8,8 +8,9 @@
  *  - Real-artifact integration tests for F7 and F10 — self-skip when the
  *    embedding artifact or corpus is absent.
  */
-import { describe, it, expect, beforeAll, afterEach } from 'vitest'
+import { describe, it, expect, beforeAll, afterEach, afterAll } from 'vitest'
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 import { runQASemanticChecks, _resetCacheForTesting } from '../qa-semantic-checks.js'
 import { loadEmbeddingsFromDisk } from '../../lib/load-embeddings-from-disk.js'
@@ -19,15 +20,26 @@ import {
 } from '../../../src/services/search/embeddingRetrieval.js'
 
 const REPO_ROOT = process.cwd()
-const CORPUS_PATH = path.join(REPO_ROOT, 'public/data/rag-corpus.json')
+const LIVE_CORPUS_PATH = path.join(REPO_ROOT, 'public/data/rag-corpus.json')
 const META_PATH = path.join(REPO_ROOT, 'public/data/embeddings-meta.json')
 const BIN_PATH = path.join(REPO_ROOT, 'public/data/embeddings.bin')
-const hasCorpus = fs.existsSync(CORPUS_PATH)
-/** Corpus may be mid-write from the enrichment pipeline — self-skip rather than fail. */
+
+// Per-worker tmp corpus. The validator reads `process.env.RAG_CORPUS_PATH`
+// lazily, so synthetic-corpus tests never touch the live file. The original
+// design backed up + overwrote `public/data/rag-corpus.json` in place; that
+// raced with sibling test files (corpus-trust-invariants, duplicate-checks)
+// reading the same path under vitest's parallel pool.
+const TMP_CORPUS_PATH = path.join(
+  os.tmpdir(),
+  `pqctoday-qa-semantic-corpus-${process.pid}-${Date.now()}.json`
+)
+process.env.RAG_CORPUS_PATH = TMP_CORPUS_PATH
+
+const hasCorpus = fs.existsSync(LIVE_CORPUS_PATH)
 function isCorpusParseable(): boolean {
   if (!hasCorpus) return false
   try {
-    JSON.parse(fs.readFileSync(CORPUS_PATH, 'utf8'))
+    JSON.parse(fs.readFileSync(LIVE_CORPUS_PATH, 'utf8'))
     return true
   } catch {
     return false
@@ -36,33 +48,29 @@ function isCorpusParseable(): boolean {
 const hasArtifact =
   hasCorpus && fs.existsSync(META_PATH) && fs.existsSync(BIN_PATH) && isCorpusParseable()
 
-// ── Synthetic-corpus tests ─────────────────────────────────────────────────
-//
-// These tests work against a temporary corpus written to a tmpdir that
-// replaces `public/data/rag-corpus.json`. They cover the structural/lex
-// checks (F8, F9, F11, F12) without needing the real embeddings.
-
-const TMP_CORPUS_BACKUP = `${CORPUS_PATH}.qa-semantic-test-backup`
-
 function writeSyntheticCorpus(chunks: object[]) {
-  // Back up real corpus once, write the synthetic one.
-  if (hasCorpus && !fs.existsSync(TMP_CORPUS_BACKUP)) {
-    fs.copyFileSync(CORPUS_PATH, TMP_CORPUS_BACKUP)
-  }
-  fs.writeFileSync(CORPUS_PATH, JSON.stringify({ chunks }))
+  fs.writeFileSync(TMP_CORPUS_PATH, JSON.stringify({ chunks }))
   _resetCacheForTesting()
 }
 
-function restoreRealCorpus() {
-  if (fs.existsSync(TMP_CORPUS_BACKUP)) {
-    fs.renameSync(TMP_CORPUS_BACKUP, CORPUS_PATH)
+function cleanupTmpCorpus() {
+  try {
+    if (fs.existsSync(TMP_CORPUS_PATH)) fs.unlinkSync(TMP_CORPUS_PATH)
+  } catch {
+    // best-effort
   }
-  _resetCacheForTesting()
+}
+
+for (const sig of ['exit', 'SIGTERM', 'SIGINT', 'uncaughtException'] as const) {
+  process.once(sig, cleanupTmpCorpus)
 }
 
 describe('QA-F semantic validators — synthetic corpus', () => {
   afterEach(() => {
-    restoreRealCorpus()
+    _resetCacheForTesting()
+  })
+  afterAll(() => {
+    cleanupTmpCorpus()
   })
 
   it('QA-F8 flags an algorithm listed but absent from same-collection content', async () => {
@@ -195,9 +203,18 @@ describe('QA-F semantic validators — synthetic corpus', () => {
 
 describe.skipIf(!hasArtifact)('QA-F semantic validators — real corpus', () => {
   beforeAll(async () => {
+    // Point the validator at the live corpus for this block only.
+    process.env.RAG_CORPUS_PATH = LIVE_CORPUS_PATH
+    _resetCacheForTesting()
     resetEmbeddingRuntime()
     await loadEmbeddingsFromDisk()
   }, 120_000)
+  afterAll(() => {
+    // Restore the synthetic tmp path so any later test in this worker
+    // doesn't accidentally read the live corpus.
+    process.env.RAG_CORPUS_PATH = TMP_CORPUS_PATH
+    _resetCacheForTesting()
+  })
 
   it('full run completes in < 60s on the real corpus', async () => {
     const t0 = Date.now()
@@ -228,7 +245,7 @@ describe.skipIf(!hasArtifact)('QA-F semantic validators — real corpus', () => 
 
 describe('QA-F7/F10 with injected synthetic embedding runtime', () => {
   afterEach(() => {
-    restoreRealCorpus()
+    _resetCacheForTesting()
     resetEmbeddingRuntime()
   })
 

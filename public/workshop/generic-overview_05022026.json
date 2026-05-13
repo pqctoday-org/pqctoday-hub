@@ -38,12 +38,12 @@
             "text": "Welcome to PQC Today — vendor-neutral resource for the post-quantum migration."
           },
           {
-            "tMs": 5000,
+            "tMs": 7172,
             "kind": "caption",
             "text": "We will tour every page in about six minutes."
           },
           {
-            "tMs": 10000,
+            "tMs": 12172,
             "kind": "advance"
           }
         ]
@@ -74,12 +74,12 @@
             "text": "Persona switcher — tailor every page to your role, proficiency, industry, and region."
           },
           {
-            "tMs": 5000,
+            "tMs": 7672,
             "kind": "caption",
             "text": "Six roles: executive, developer, architect, ops, researcher, curious."
           },
           {
-            "tMs": 10000,
+            "tMs": 12672,
             "kind": "advance"
           }
         ]
@@ -116,22 +116,22 @@
               "text": "Learn — 40+ modules indexed across foundations, roles, industries, and protocols."
             },
             {
-              "tMs": 8000,
+              "tMs": 9386,
               "kind": "caption",
               "text": "Role-tailored modules surface based on your active persona."
             },
             {
-              "tMs": 16000,
+              "tMs": 17386,
               "kind": "caption",
               "text": "Every module has six tabs covering Learn, Visual, Workshop, Exercises, References, and Tools."
             },
             {
-              "tMs": 24000,
+              "tMs": 25629,
               "kind": "caption",
               "text": "Quiz module validates your understanding at interview / boardroom speed."
             },
             {
-              "tMs": 30000,
+              "tMs": 31629,
               "kind": "advance"
             }
           ]
@@ -140,7 +140,7 @@
           "id": "p-learn-pqc101",
           "chapter": "foundations",
           "title": "Walk PQC 101 — the foundation module",
-          "estMinutes": 3,
+          "estMinutes": 4,
           "whyItMatters": "PQC 101 is the foundation module everyone starts with — Q-Day, Harvest-Now Decrypt-Later, the new NIST standards (FIPS 203 ML-KEM and FIPS 204 ML-DSA), the migration timeline, and what a ready org looks like.",
           "page": {
             "route": "/learn/pqc-101"
@@ -170,142 +170,142 @@
               "text": "PQC 101 — PQC 101 is the foundation module everyone starts with — Q-Day, Harvest-Now Decrypt-Later, the new NIST standards (FIPS 203 ML-KEM and FIPS 204 ML-DSA), the migration timeline, and what a ready org looks like."
             },
             {
-              "tMs": 4000,
+              "tMs": 18672,
               "kind": "select-tab",
               "tabName": "Learn"
             },
             {
-              "tMs": 5800,
+              "tMs": 20472,
               "kind": "scroll-to",
               "selector": "[data-section-id=\"quantum-threat\"]"
             },
             {
-              "tMs": 6000,
+              "tMs": 20672,
               "kind": "caption",
               "text": "Section 1/5: The Quantum Threat to Cryptography"
             },
             {
-              "tMs": 16100,
+              "tMs": 30772,
               "kind": "click",
               "selector": "[data-workshop-target=\"learn-stepper-next\"]"
             },
             {
-              "tMs": 16400,
+              "tMs": 31072,
               "kind": "caption",
               "text": "Section 2/5: NIST-Selected PQC Algorithms"
             },
             {
-              "tMs": 26500,
+              "tMs": 41172,
               "kind": "click",
               "selector": "[data-workshop-target=\"learn-stepper-next\"]"
             },
             {
-              "tMs": 26800,
+              "tMs": 41472,
               "kind": "caption",
               "text": "Section 3/5: Global Migration Timeline"
             },
             {
-              "tMs": 36900,
+              "tMs": 51572,
               "kind": "click",
               "selector": "[data-workshop-target=\"learn-stepper-next\"]"
             },
             {
-              "tMs": 37200,
+              "tMs": 51872,
               "kind": "caption",
               "text": "Section 4/5: Organizational Readiness"
             },
             {
-              "tMs": 47300,
+              "tMs": 61972,
               "kind": "click",
               "selector": "[data-workshop-target=\"learn-stepper-next\"]"
             },
             {
-              "tMs": 47600,
+              "tMs": 62272,
               "kind": "caption",
               "text": "Section 5/5: Your Next Steps"
             },
             {
-              "tMs": 58000,
+              "tMs": 72672,
               "kind": "select-tab",
               "tabName": "Workshop"
             },
             {
-              "tMs": 59500,
+              "tMs": 74172,
               "kind": "caption",
               "text": "Hands-on 1/4: Algorithm Families"
             },
             {
-              "tMs": 70550,
+              "tMs": 85222,
               "kind": "click",
               "selector": "[data-workshop-target=\"learn-stepper-next\"]"
             },
             {
-              "tMs": 72500,
+              "tMs": 87172,
               "kind": "caption",
               "text": "Hands-on 2/4: Algorithm Comparison"
             },
             {
-              "tMs": 83550,
+              "tMs": 98222,
               "kind": "click",
               "selector": "[data-workshop-target=\"learn-stepper-next\"]"
             },
             {
-              "tMs": 85500,
+              "tMs": 100172,
               "kind": "caption",
               "text": "Hands-on 3/4: Key Generation"
             },
             {
-              "tMs": 96550,
+              "tMs": 111222,
               "kind": "click",
               "selector": "[data-workshop-target=\"learn-stepper-next\"]"
             },
             {
-              "tMs": 98500,
+              "tMs": 113172,
               "kind": "caption",
               "text": "Hands-on 4/4: Signature Demo"
             },
             {
-              "tMs": 112000,
+              "tMs": 126672,
               "kind": "select-tab",
               "tabName": "Visual"
             },
             {
-              "tMs": 113500,
+              "tMs": 128172,
               "kind": "caption",
               "text": "Visual tab — diagrams and animations for this topic."
             },
             {
-              "tMs": 128750,
+              "tMs": 143422,
               "kind": "select-tab",
               "tabName": "Exercises"
             },
             {
-              "tMs": 130250,
+              "tMs": 144922,
               "kind": "caption",
               "text": "Exercises — short knowledge checks to confirm you got it."
             },
             {
-              "tMs": 145500,
+              "tMs": 160172,
               "kind": "select-tab",
               "tabName": "References"
             },
             {
-              "tMs": 147000,
+              "tMs": 161672,
               "kind": "caption",
               "text": "References — primary sources every claim is cited from."
             },
             {
-              "tMs": 162250,
+              "tMs": 176922,
               "kind": "select-tab",
               "tabName": "Tools & Products"
             },
             {
-              "tMs": 163750,
+              "tMs": 178422,
               "kind": "caption",
               "text": "Tools & Products — vendor tooling and PQC-ready software."
             },
             {
-              "tMs": 180000,
+              "tMs": 194672,
               "kind": "advance"
             }
           ]
@@ -393,37 +393,37 @@
               "text": "Algorithms — NIST PQC standards + classical comparison."
             },
             {
-              "tMs": 6000,
+              "tMs": 7529,
               "kind": "select-tab",
               "tabName": "Transition Guide"
             },
             {
-              "tMs": 8000,
+              "tMs": 9529,
               "kind": "scroll-to",
               "selector": "[data-workshop-target=\"section-algorithm-transition\"]"
             },
             {
-              "tMs": 10000,
+              "tMs": 11529,
               "kind": "caption",
               "text": "Transition Guide — what to swap and when."
             },
             {
-              "tMs": 18000,
+              "tMs": 19529,
               "kind": "select-tab",
               "tabName": "Detailed Comparison"
             },
             {
-              "tMs": 20000,
+              "tMs": 21529,
               "kind": "scroll-to",
               "selector": "[data-workshop-target=\"section-algorithm-detailed\"]"
             },
             {
-              "tMs": 22000,
+              "tMs": 23529,
               "kind": "caption",
               "text": "Detailed Comparison — key sizes, performance, FIPS status."
             },
             {
-              "tMs": 30000,
+              "tMs": 31529,
               "kind": "advance"
             }
           ]
@@ -501,12 +501,12 @@
               "text": "NIST publishes FIPS, I R, and S P. IETF publishes R F Cs. Then ISO, ETSI, ENISA, CCCS, and ASD."
             },
             {
-              "tMs": 18000,
+              "tMs": 18386,
               "kind": "caption",
               "text": "Bookmark for inline reference in your reports."
             },
             {
-              "tMs": 25000,
+              "tMs": 25386,
               "kind": "advance"
             }
           ]
@@ -903,7 +903,7 @@
         "id": "close-quiz",
         "chapter": "close",
         "title": "Quiz — test what you learned",
-        "estMinutes": 3,
+        "estMinutes": 4,
         "whyItMatters": "A 5-to-45-minute quiz with persona-tuned topics gives you a quick measure of what stuck.",
         "page": {
           "route": "/learn/quiz",
@@ -933,62 +933,62 @@
             "text": "Test what you learned. Pick a duration, pick topics, go."
           },
           {
-            "tMs": 6000,
+            "tMs": 7100,
             "kind": "spotlight",
             "selector": "[data-workshop-target=\"quiz-duration-slider\"]"
           },
           {
-            "tMs": 7500,
+            "tMs": 8600,
             "kind": "caption",
             "text": "Duration slider. Five to forty-five minutes. Quiz scales the question count to match."
           },
           {
-            "tMs": 22000,
+            "tMs": 23100,
             "kind": "spotlight",
             "selector": "[data-workshop-target=\"quiz-difficulty-row\"]"
           },
           {
-            "tMs": 23500,
+            "tMs": 24600,
             "kind": "caption",
             "text": "Difficulty filter. Beginner, Intermediate, Advanced. Multi-select."
           },
           {
-            "tMs": 38000,
+            "tMs": 39100,
             "kind": "spotlight",
             "selector": "[data-workshop-target=\"quiz-topic-grid\"]"
           },
           {
-            "tMs": 39500,
+            "tMs": 40600,
             "kind": "caption",
             "text": "Topic grid. Categories pre-filtered by your persona context."
           },
           {
-            "tMs": 55000,
+            "tMs": 56100,
             "kind": "click",
             "selector": "[data-workshop-target=\"quiz-category-pqc-fundamentals\"]"
           },
           {
-            "tMs": 56500,
+            "tMs": 57600,
             "kind": "caption",
             "text": "Selected topics show a checkmark. The Start button activates once you pick at least one."
           },
           {
-            "tMs": 75000,
+            "tMs": 76100,
             "kind": "spotlight",
             "selector": "[data-workshop-target=\"quiz-start-category\"]"
           },
           {
-            "tMs": 76500,
+            "tMs": 77600,
             "kind": "caption",
             "text": "Start the quiz when you're ready. We'll skip running it inside the workshop."
           },
           {
-            "tMs": 165000,
+            "tMs": 166100,
             "kind": "caption",
             "text": "Results show your score, category breakdown, difficulty breakdown, and let you retake or change topics."
           },
           {
-            "tMs": 180000,
+            "tMs": 181100,
             "kind": "advance"
           }
         ]
