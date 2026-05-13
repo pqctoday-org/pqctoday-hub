@@ -31,6 +31,7 @@ import {
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
   USE_CASES,
   CLASSICAL_HSM_DEFAULT,
@@ -41,6 +42,8 @@ import {
   ALGO_SLIDER_RANGES,
   ORG_PARAM_DEFAULTS,
   ORG_PARAM_RANGES,
+  REGION_PRESETS,
+  BASE_UNIT_ALGO,
   deriveUseCaseTps,
   type AlgoId,
   type DeploymentSize,
@@ -130,26 +133,26 @@ function computeAlgoLoad(
 /**
  * Compute one capacity scenario (today / tomorrow / upgraded).
  *
- * Math model:
- *   load(a)        = Σ over enabled use-cases uc of: tps[uc] × uc.<workload>Ops[a]
- *   hsms(a)        = ceil( load(a) / hsmProfile.opsPerSec[a] )
- *   requiredRaw    = max over a of hsms(a)                       // bottleneck algorithm
- *   perLocationRaw = ceil( requiredRaw / numLocations )
- *   perLocationRequired   = applyRedundancy(perLocationRaw, mode)  // n+1: +1 ; 2n: ×2
- *   requiredWithRedundancy = numLocations × perLocationRequired
+ * Math model — **per-site demand, geo-redundant active-active**:
+ *   - Use-case TPS values describe what ONE site experiences (per-site load).
+ *   - Each location is independently sized to serve the full per-site demand.
+ *   - Multiple locations add geo-redundancy (any single site can fail entirely).
+ *   - Each location also has its own local HA (N+1 or 2N).
+ *
+ *   load(a)              = Σ over enabled use-cases uc of: tps[uc] × uc.<workload>Ops[a]
+ *                          (this is per-site load — TPS sliders are per-site)
+ *   perLocationRaw(a)    = ceil( load(a) / hsmProfile.opsPerSec[a] )
+ *   perLocationRaw       = max over a of perLocationRaw(a)              // bottleneck
+ *   perLocationRequired  = applyRedundancy(perLocationRaw, mode)        // +1 or ×2
+ *   requiredWithRedundancy = numLocations × perLocationRequired         // total fleet
+ *
+ *   `requiredRaw` is retained as a global figure for the worked-example explainer
+ *   and is identical to `perLocationRaw` (each site already carries full demand).
  *
  * The three scenarios pair (workload, hsmProfile) as:
  *   today    — classical workload on classical HSM
  *   tomorrow — PQC workload on the *same* classical HSM (ML-DSA in software → 150 ops/s)
  *   upgraded — PQC workload on next-gen PQC HSM (ML-DSA in hardware → 8000 ops/s)
- *
- * "Extra PQC capacity" is the delta in requiredRaw between scenarios:
- *   ΔHSM_existing_fleet = requiredRaw(tomorrow) − requiredRaw(today)
- *   ΔHSM_with_upgrade   = requiredRaw(upgraded) − requiredRaw(today)
- *
- * The PQC delta has two independent sources per use case:
- *   (1) op-count change — only TLS adds an op (hybrid X25519MLKEM768 retains ECDH and adds ML-KEM)
- *   (2) per-algorithm throughput change — dominated by ML-DSA-65 (150 ops/s on classical HSM)
  *
  * See HsmCapacityCalculator.test.ts for the validated size × locations matrix.
  */
@@ -168,19 +171,19 @@ function computeScenario(
   const algoLoad = computeAlgoLoad(useCases, state, workload)
   const perAlgoHsms = algoLoad.map(({ algo, opsPerSec }) => {
     const capacity = hsmProfile.opsPerSec[algo]
+    // Per-site demand = full slider load (geo-redundant active-active, no splitting).
     const hsms = opsPerSec > 0 ? Math.ceil(opsPerSec / capacity) : 0
-    // Utilization is per-location: each location handles 1/numLocations of load
-    const perLocLoad = opsPerSec / numLocations
     const perLocCapacity = capacity * hsmsPerLocation
-    const utilizationPct = hsmsPerLocation > 0 ? (perLocLoad / perLocCapacity) * 100 : 0
+    const utilizationPct = hsmsPerLocation > 0 ? (opsPerSec / perLocCapacity) * 100 : 0
     return { algo, hsms, utilizationPct, load: opsPerSec, capacity }
   })
-  const requiredRaw = perAlgoHsms.reduce((m, r) => Math.max(m, r.hsms), 0)
+  // Per-site raw need (bottleneck algorithm).
+  const perLocationRaw = perAlgoHsms.reduce((m, r) => Math.max(m, r.hsms), 0)
+  const requiredRaw = perLocationRaw // global figure under per-site model; each site = R
   const bottleneck = perAlgoHsms.reduce<{ algo: AlgoId; hsms: number }>(
     (m, r) => (r.hsms > m.hsms ? { algo: r.algo, hsms: r.hsms } : m),
     { algo: 'rsa-2048', hsms: 0 }
   ).algo
-  const perLocationRaw = requiredRaw > 0 ? Math.ceil(requiredRaw / numLocations) : 0
   const perLocationRequired = applyRedundancy(perLocationRaw, redundancy)
   const requiredWithRedundancy = numLocations * perLocationRequired
   const deployedHsms = numLocations * hsmsPerLocation
@@ -360,6 +363,19 @@ function NumericSliderRow({
   onChange: (v: number) => void
   disabled?: boolean
 }) {
+  // Uncontrolled input so partial typing ("5", "50", "500") is preserved during
+  // edit. Remount via `key` whenever `value` changes externally; commit on blur
+  // or Enter. Avoids the classic controlled-input bug where clamping each
+  // keystroke below `min` clobbers the user's intended target value.
+  const commit = (raw: string) => {
+    if (raw.trim() === '') return
+    const v = Number(raw)
+    if (Number.isFinite(v)) {
+      const clamped = Math.min(max, Math.max(min, v))
+      if (clamped !== value) onChange(clamped)
+    }
+  }
+
   return (
     <div className={clsx('space-y-1', disabled && 'opacity-50')}>
       <div className="flex items-center justify-between gap-2">
@@ -376,14 +392,17 @@ function NumericSliderRow({
           )}
         </label>
         <input
+          key={String(value)}
           type="number"
           min={min}
           max={max}
           step={step}
-          value={value}
-          onChange={(e) => {
-            const v = Number(e.target.value)
-            if (!isNaN(v)) onChange(Math.min(max, Math.max(min, v)))
+          defaultValue={value}
+          onBlur={(e) => commit(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              ;(e.currentTarget as HTMLInputElement).blur()
+            }
           }}
           className="w-20 text-xs font-mono text-primary bg-muted/40 border border-border rounded px-1.5 py-0.5 text-right focus:outline-none focus:border-primary"
           aria-label={`${label} numeric input`}
@@ -425,12 +444,33 @@ function ScenarioCard({
   inventoryLocked?: boolean
   inventoryCallout?: string
 }) {
-  const sufficient = scenario.perLocationSufficient
+  const demandMet = scenario.hsmsPerLocation >= scenario.perLocationRaw
+  const haMet = scenario.perLocationSufficient
+  const sufficient = haMet
   const Icon = sufficient ? CheckCircle2 : AlertTriangle
-  const statusClass = sufficient ? 'text-status-success' : 'text-status-error'
+  const statusClass = sufficient
+    ? 'text-status-success'
+    : demandMet
+      ? 'text-status-warning'
+      : 'text-status-error'
   const statusBg = sufficient
     ? 'bg-status-success/10 border-status-success/40'
-    : 'bg-status-error/10 border-status-error/40'
+    : demandMet
+      ? 'bg-status-warning/10 border-status-warning/40'
+      : 'bg-status-error/10 border-status-error/40'
+  const overallLabel = sufficient ? 'Sufficient' : demandMet ? 'Demand only' : 'Overloaded'
+
+  // Capacity / requirement ratio gauge — bottleneck-driven so it matches the
+  // sufficient/insufficient verdict. ratio ≥ 1.0 ⇔ HA met.
+  const ratioVsRequirement =
+    scenario.perLocationRequired > 0
+      ? scenario.hsmsPerLocation / scenario.perLocationRequired
+      : Infinity
+  const ratioVsDemand =
+    scenario.perLocationRaw > 0 ? scenario.hsmsPerLocation / scenario.perLocationRaw : Infinity
+  const fmtRatio = (r: number) =>
+    !Number.isFinite(r) ? 'idle' : r >= 100 ? '≥100×' : `${r.toFixed(2)}×`
+  const gaugePct = Math.min(150, Math.max(0, ratioVsRequirement * 100))
 
   return (
     <div className="glass-panel p-4 space-y-3">
@@ -443,10 +483,98 @@ function ScenarioCard({
         </div>
         <div className={clsx('rounded-md border px-2 py-1 flex items-center gap-1', statusBg)}>
           <Icon size={14} className={statusClass} aria-hidden="true" />
-          <span className={clsx('text-xs font-medium', statusClass)}>
-            {sufficient ? 'Sufficient' : 'Overloaded'}
+          <span className={clsx('text-xs font-medium', statusClass)}>{overallLabel}</span>
+        </div>
+      </div>
+
+      {/* Dual-badge: demand met / HA met */}
+      <div className="grid grid-cols-2 gap-2">
+        <div
+          className={clsx(
+            'rounded-md border px-2 py-1.5 text-[10px]',
+            demandMet
+              ? 'border-status-success/40 bg-status-success/5'
+              : 'border-status-error/40 bg-status-error/5'
+          )}
+          title="Deployed HSMs ≥ raw HSMs required to serve TPS demand (no redundancy)"
+        >
+          <p className="font-mono uppercase tracking-widest text-muted-foreground">Demand</p>
+          <p
+            className={clsx(
+              'font-mono font-semibold',
+              demandMet ? 'text-status-success' : 'text-status-error'
+            )}
+          >
+            {demandMet ? '✓ met' : '✗ short'} · {fmtRatio(ratioVsDemand)}
+          </p>
+          <p className="text-muted-foreground">
+            {scenario.hsmsPerLocation} / {scenario.perLocationRaw} HSMs (per loc)
+          </p>
+        </div>
+        <div
+          className={clsx(
+            'rounded-md border px-2 py-1.5 text-[10px]',
+            haMet
+              ? 'border-status-success/40 bg-status-success/5'
+              : demandMet
+                ? 'border-status-warning/40 bg-status-warning/5'
+                : 'border-status-error/40 bg-status-error/5'
+          )}
+          title="Deployed HSMs ≥ raw + redundancy (availability target)"
+        >
+          <p className="font-mono uppercase tracking-widest text-muted-foreground">
+            Availability (HA)
+          </p>
+          <p
+            className={clsx(
+              'font-mono font-semibold',
+              haMet
+                ? 'text-status-success'
+                : demandMet
+                  ? 'text-status-warning'
+                  : 'text-status-error'
+            )}
+          >
+            {haMet ? '✓ met' : '✗ short'} · {fmtRatio(ratioVsRequirement)}
+          </p>
+          <p className="text-muted-foreground">
+            {scenario.hsmsPerLocation} / {scenario.perLocationRequired} HSMs (per loc)
+          </p>
+        </div>
+      </div>
+
+      {/* Capacity / requirement ratio gauge */}
+      <div className="rounded-md bg-muted/20 px-2 py-1.5">
+        <div className="flex items-center justify-between text-[10px] font-mono">
+          <span className="text-muted-foreground uppercase tracking-widest">
+            Capacity / requirement
+          </span>
+          <span className={clsx('font-semibold', statusClass)}>
+            {fmtRatio(ratioVsRequirement)} ({Math.round(gaugePct)}%)
           </span>
         </div>
+        <div className="h-2 bg-muted/40 rounded-full overflow-hidden mt-1 relative">
+          <div
+            className="h-full rounded-full transition-all"
+            style={{
+              width: `${(gaugePct / 150) * 100}%`,
+              background: haMet
+                ? 'var(--color-status-success, #10b981)'
+                : demandMet
+                  ? 'var(--warning, #f59e0b)'
+                  : 'var(--destructive)',
+            }}
+          />
+          {/* 100% threshold marker */}
+          <div
+            className="absolute top-0 bottom-0 w-px bg-foreground/40"
+            style={{ left: `${(100 / 150) * 100}%` }}
+            aria-hidden="true"
+          />
+        </div>
+        <p className="text-[9px] text-muted-foreground mt-0.5">
+          Marker at 1.0× = HA target. Below 1.0× = HA gap (demand may still be met).
+        </p>
       </div>
 
       {/* Three-column breakdown */}
@@ -457,7 +585,10 @@ function ScenarioCard({
             {scenario.perLocationRequired}{' '}
             <span className="text-xs text-muted-foreground">HSMs</span>
           </p>
-          <p className="text-[10px] text-muted-foreground">{scenario.perLocationRaw} raw + HA</p>
+          <p className="text-[10px] text-muted-foreground">
+            {scenario.perLocationRaw} raw demand +{' '}
+            {scenario.perLocationRequired - scenario.perLocationRaw} HA
+          </p>
         </div>
         <div className="rounded-md bg-muted/30 px-2 py-1.5">
           <p className="text-muted-foreground">Deployed / loc</p>
@@ -559,42 +690,243 @@ function ScenarioCard({
   )
 }
 
-function HsmFleetVisual({ scenario }: { scenario: ScenarioResult }) {
-  const { numLocations, hsmsPerLocation, perLocationSufficient } = scenario
-  const statusClass = perLocationSufficient ? 'text-status-success' : 'text-status-error'
-  const MAX_ICONS_PER_LOC = Math.min(hsmsPerLocation, 12)
-  const MAX_LOCS = Math.min(numLocations, 8)
-  const hiddenLocs = numLocations - MAX_LOCS
+function TpsToHsmExplainer({
+  scenarios,
+  redundancy,
+  numLocations,
+}: {
+  scenarios: ScenarioResult[]
+  redundancy: Redundancy
+  numLocations: number
+}) {
+  // Use the worst-case (most stressed) scenario to ground the worked example.
+  const worst = scenarios.reduce((m, s) => (s.requiredRaw > m.requiredRaw ? s : m), scenarios[0])
+  const R = worst.requiredRaw
+  const L = Math.max(1, numLocations)
+  const perLocRaw = R > 0 ? Math.ceil(R / L) : 0
+  const nPlus1 = perLocRaw + 1
+  const twoN = perLocRaw * 2
+  const bottleneckLabel = ALGO_LABELS[worst.bottleneck]
+  const bottleneckLoad = worst.perAlgoHsms.find((r) => r.algo === worst.bottleneck)?.load ?? 0
+  const bottleneckCap = worst.perAlgoHsms.find((r) => r.algo === worst.bottleneck)?.capacity ?? 1
 
   return (
-    <div className="space-y-1">
-      {Array.from({ length: MAX_LOCS }).map((_, locIdx) => (
-        <div key={locIdx} className="flex items-center gap-1.5">
-          <span className="text-[9px] font-mono text-muted-foreground w-9 shrink-0">
-            Loc {locIdx + 1}
-          </span>
-          <div className="flex flex-wrap gap-0.5">
-            {Array.from({ length: MAX_ICONS_PER_LOC }).map((_, i) => (
-              <Server
-                key={i}
-                size={13}
-                className={clsx(statusClass, 'shrink-0')}
-                aria-hidden="true"
-              />
-            ))}
-            {hsmsPerLocation > 12 && (
-              <span className="text-[9px] font-mono text-muted-foreground">
-                +{hsmsPerLocation - 12}
-              </span>
-            )}
-          </div>
-        </div>
-      ))}
-      {hiddenLocs > 0 && (
-        <p className="text-[10px] font-mono text-muted-foreground ml-11">
-          +{hiddenLocs} more location{hiddenLocs > 1 ? 's' : ''}
+    <div className="glass-panel p-4 space-y-3">
+      <div className="flex items-center gap-2">
+        <Info size={14} className="text-primary" aria-hidden="true" />
+        <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+          How TPS becomes HSM count
         </p>
-      )}
+      </div>
+      <ol className="text-xs text-foreground space-y-2 list-decimal list-inside leading-relaxed">
+        <li>
+          <span className="font-semibold">Aggregate (per site)</span> — sum every enabled use
+          case&apos;s TPS × ops-per-transaction, by algorithm. TPS values describe what{' '}
+          <em>one site</em> experiences; result is ops/sec per algorithm at a single location.
+        </li>
+        <li>
+          <span className="font-semibold">Bottleneck</span> — divide each algorithm&apos;s load by
+          its HSM capacity; round up. The slowest algorithm sets the floor. In the worst current
+          scenario (<span className="font-mono text-primary">{worst.shortLabel}</span>
+          ), the bottleneck is <span className="font-mono text-primary">
+            {bottleneckLabel}
+          </span> at{' '}
+          <span className="font-mono">{Math.round(bottleneckLoad).toLocaleString()}</span> ops/s ÷{' '}
+          <span className="font-mono">{bottleneckCap.toLocaleString()}</span> ops/s ={' '}
+          <span className="font-mono text-secondary">R = {R}</span> HSMs to serve one
+          location&apos;s demand.
+        </li>
+        <li>
+          <span className="font-semibold">Replicate per location</span> — each of{' '}
+          <span className="font-mono">L = {L}</span> location
+          {L !== 1 ? 's' : ''} independently runs the full per-site workload (geo-redundant
+          active-active). No load splitting: every site carries{' '}
+          <span className="font-mono">R = {perLocRaw}</span> HSM
+          {perLocRaw !== 1 ? 's' : ''} of demand. Multi-location adds geo-HA (any single site can
+          fail entirely).
+        </li>
+        <li>
+          <span className="font-semibold">Add local availability headroom</span> — on top of the raw
+          demand count, each location gets its own N+1 or 2N spare. The raw count <em>alone</em>{' '}
+          meets TPS demand; local redundancy keeps that site serving traffic when an HSM there
+          fails.
+        </li>
+      </ol>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+        <div
+          className={clsx(
+            'rounded-md border px-3 py-2 space-y-1',
+            redundancy === 'n+1' ? 'border-primary/50 bg-primary/5' : 'border-border/40 bg-muted/20'
+          )}
+        >
+          <p className="text-xs font-semibold text-foreground">N + 1 — tolerate 1 failure</p>
+          <p className="text-[10px] text-muted-foreground leading-relaxed">
+            Per-location HSMs = <span className="font-mono">raw + 1</span> = {perLocRaw} + 1 ={' '}
+            <span className="font-mono text-primary">{nPlus1}</span> HSM
+            {nPlus1 !== 1 ? 's' : ''}. The +1 is an idle spare; demand is met by the {perLocRaw}{' '}
+            active HSM{perLocRaw !== 1 ? 's' : ''}. Lose one and the remaining {nPlus1 - 1} still
+            cover {perLocRaw} HSMs&apos; worth of demand.
+          </p>
+          <p className="text-[10px] font-mono text-muted-foreground">
+            Total fleet = {L} × {nPlus1} = {L * nPlus1} HSMs
+          </p>
+        </div>
+        <div
+          className={clsx(
+            'rounded-md border px-3 py-2 space-y-1',
+            redundancy === '2n' ? 'border-primary/50 bg-primary/5' : 'border-border/40 bg-muted/20'
+          )}
+        >
+          <p className="text-xs font-semibold text-foreground">
+            2N — fully redundant active-active
+          </p>
+          <p className="text-[10px] text-muted-foreground leading-relaxed">
+            Per-location HSMs = <span className="font-mono">raw × 2</span> = {perLocRaw} × 2 ={' '}
+            <span className="font-mono text-primary">{twoN}</span> HSM{twoN !== 1 ? 's' : ''}. Two
+            parallel sets of {perLocRaw} HSMs both serve traffic; lose an entire set and the other
+            still carries 100% of demand.
+          </p>
+          <p className="text-[10px] font-mono text-muted-foreground">
+            Total fleet = {L} × {twoN} = {L * twoN} HSMs
+          </p>
+        </div>
+      </div>
+      <p className="text-[10px] text-muted-foreground italic leading-relaxed">
+        Key invariant —{' '}
+        <span className="text-foreground">TPS demand is met by the raw count alone</span> (
+        {perLocRaw} HSMs/location). Redundancy ({redundancy === 'n+1' ? 'N+1' : '2N'}) adds{' '}
+        {redundancy === 'n+1'
+          ? '1 spare per location'
+          : `${perLocRaw} additional active HSMs per location`}{' '}
+        to maintain availability under failure. Sufficiency status in each scenario card below
+        reports both: <span className="text-status-success">Demand met</span> (deployed ≥ raw) AND{' '}
+        <span className="text-status-success">HA met</span> (deployed ≥ raw + redundancy).
+      </p>
+    </div>
+  )
+}
+
+function PerLocationCard({
+  locIndex,
+  regionLabel,
+  onRegionChange,
+  scenarios,
+  redundancy,
+}: {
+  locIndex: number
+  regionLabel: string
+  onRegionChange: (label: string) => void
+  scenarios: ScenarioResult[]
+  redundancy: Redundancy
+}) {
+  return (
+    <div className="glass-panel p-3 space-y-2">
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1.5">
+          <MapPin size={12} className="text-primary" aria-hidden="true" />
+          <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+            Loc {locIndex + 1}
+          </span>
+        </div>
+        <FilterDropdown
+          items={REGION_PRESETS}
+          selectedId={regionLabel}
+          onSelect={onRegionChange}
+          size="sm"
+          variant="ghost"
+          defaultLabel={regionLabel}
+          defaultIcon={null}
+          noContainer
+        />
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+        {scenarios.map((s) => (
+          <ScenarioLocationBlock key={s.key} scenario={s} redundancy={redundancy} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function ScenarioLocationBlock({
+  scenario,
+  redundancy,
+}: {
+  scenario: ScenarioResult
+  redundancy: Redundancy
+}) {
+  const {
+    hsmsPerLocation,
+    perLocationRaw,
+    perLocationRequired,
+    perLocationSufficient,
+    hsmProfile,
+  } = scenario
+  const baseRate = hsmProfile.opsPerSec[BASE_UNIT_ALGO]
+  const capacityRsa = hsmsPerLocation * baseRate
+  // Demand: met by raw count alone (redundancy is for availability, not throughput).
+  const demandMet = hsmsPerLocation >= perLocationRaw
+  const haMet = perLocationSufficient
+  const statusClass = haMet
+    ? 'text-status-success'
+    : demandMet
+      ? 'text-status-warning'
+      : 'text-status-error'
+  const MAX_ICONS = Math.min(hsmsPerLocation, 8)
+  const extra = hsmsPerLocation - MAX_ICONS
+  const demandRatio = perLocationRaw > 0 ? hsmsPerLocation / perLocationRaw : Infinity
+  const demandLabel =
+    demandRatio === Infinity ? 'idle' : demandRatio >= 100 ? '≥100×' : `${demandRatio.toFixed(2)}×`
+  const spare = Math.max(0, hsmsPerLocation - perLocationRaw)
+  const haTarget = perLocationRequired - perLocationRaw
+  const haLabel =
+    redundancy === 'n+1' ? `N+1: +${haTarget} spare` : `2N: ×2 (+${haTarget} active spare)`
+
+  return (
+    <div className="rounded-md border border-border/40 bg-muted/20 px-2 py-1.5 space-y-1">
+      <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+        {scenario.shortLabel}
+      </p>
+      <div className="flex flex-wrap items-center gap-0.5 min-h-[16px]">
+        {Array.from({ length: MAX_ICONS }).map((_, i) => {
+          const isSpare = i >= perLocationRaw
+          return (
+            <Server
+              key={i}
+              size={11}
+              className={clsx('shrink-0', isSpare ? 'text-muted-foreground' : statusClass)}
+              aria-hidden="true"
+            />
+          )
+        })}
+        {extra > 0 && (
+          <span className="text-[9px] font-mono text-muted-foreground ml-0.5">+{extra}</span>
+        )}
+      </div>
+      <div className="grid grid-cols-2 gap-x-2 text-[10px] font-mono">
+        <span className="text-muted-foreground">Deployed:</span>
+        <span className="text-foreground text-right">
+          {hsmsPerLocation} HSM{hsmsPerLocation !== 1 ? 's' : ''}
+        </span>
+        <span className="text-muted-foreground" title="HSMs needed to serve TPS demand">
+          Demand needs:
+        </span>
+        <span className={clsx('text-right', demandMet ? 'text-foreground' : 'text-status-error')}>
+          {perLocationRaw} HSM{perLocationRaw !== 1 ? 's' : ''} · {demandLabel}
+        </span>
+        <span className="text-muted-foreground" title="Extra HSMs for availability when one fails">
+          HA target:
+        </span>
+        <span className={clsx('text-right', haMet ? 'text-foreground' : 'text-status-warning')}>
+          {perLocationRequired} ({haLabel})
+        </span>
+        <span className="text-muted-foreground">Capacity:</span>
+        <span className="text-foreground text-right">{capacityRsa.toLocaleString()}</span>
+        <span className="text-muted-foreground" />
+        <span className="text-[9px] text-muted-foreground text-right">RSA-2048 ops/s</span>
+        <span className="text-muted-foreground">Spare HSMs:</span>
+        <span className="text-foreground text-right">{spare}</span>
+      </div>
     </div>
   )
 }
@@ -797,6 +1129,18 @@ export function HsmCapacityCalculator() {
     [scenarios]
   )
 
+  // Region labels per location — purely cosmetic, persisted in component state.
+  // Defaults rotate through REGION_PRESETS so the first N locations show plausible
+  // global active-active sites.
+  const [regionLabels, setRegionLabels] = useState<Record<number, string>>({})
+  const regionLabelFor = useCallback(
+    (idx: number) => regionLabels[idx] ?? REGION_PRESETS[idx % REGION_PRESETS.length],
+    [regionLabels]
+  )
+  const setRegionLabel = useCallback((idx: number, label: string) => {
+    setRegionLabels((prev) => ({ ...prev, [idx]: label }))
+  }, [])
+
   const [expandedEstimations, setExpandedEstimations] = useState<Set<string>>(new Set())
   const toggleEstimation = useCallback((id: string) => {
     setExpandedEstimations((prev) => {
@@ -830,7 +1174,8 @@ export function HsmCapacityCalculator() {
 
   const fleetChartData = scenarios.map((s) => ({
     name: s.shortLabel,
-    Required: s.requiredWithRedundancy,
+    'Required (demand)': s.numLocations * s.perLocationRaw,
+    'Required (HA target)': s.requiredWithRedundancy,
     Deployed: s.deployedHsms,
   }))
 
@@ -899,12 +1244,25 @@ export function HsmCapacityCalculator() {
   return (
     <div className="space-y-6">
       {/* Disclaimer */}
-      <div className="rounded-lg border border-status-warning/40 bg-status-warning/5 px-4 py-3">
+      <div className="rounded-lg border border-status-warning/40 bg-status-warning/5 px-4 py-3 space-y-1.5">
         <p className="text-xs text-status-warning leading-relaxed">
-          Educational model — HSM performance numbers are illustrative reference values from public
-          vendor datasheets (Thales Luna 7, Entrust nShield 5c, Utimaco SecurityServer). No vendor
-          currently publishes production ML-DSA hardware-accelerated TPS; that value is an
-          extrapolation. Adjust every parameter to match your measured environment.
+          <span className="font-semibold">
+            Simplified educational model — not a substitute for a consultant-grade capacity
+            analysis.
+          </span>{' '}
+          This simulator assumes per-site demand with geo-redundant active-active replication (each
+          location independently sized for the full workload), a single uniform HSM SKU per
+          scenario, peak-window sizing, and best-case PKCS#11 throughput. It does not model latency
+          budgets, per-tenant key isolation, geo-failover, cold-start surges, batching, partition
+          slots, firmware-specific limits, or compliance-driven duty-cycle constraints. Use it to
+          sanity-check ranges and explore trade-offs, not to size a production fleet.
+        </p>
+        <p className="text-xs text-status-warning leading-relaxed">
+          HSM performance numbers are illustrative reference values from public vendor datasheets
+          (Thales Luna 7, Entrust nShield 5c, Utimaco SecurityServer). No vendor currently publishes
+          production ML-DSA hardware-accelerated TPS; that value is an extrapolation. Adjust every
+          parameter to match your measured environment, and engage a vendor or HSM architect for a
+          real deployment.
         </p>
       </div>
 
@@ -915,39 +1273,31 @@ export function HsmCapacityCalculator() {
         defaultOpen={false}
       >
         <p className="text-xs text-foreground leading-relaxed">
-          <span className="font-semibold text-primary">Shared-fleet sizing model.</span> A single
-          HSM fleet serves all enabled use cases. Load is aggregated per algorithm across every
-          checked use case, then divided by the HSM&apos;s per-algorithm capacity. The bottleneck
-          algorithm (highest load / capacity ratio) determines the minimum global fleet size; that
-          global count is then split across locations and redundancy is applied{' '}
-          <span className="font-semibold">per location</span>.
+          <span className="font-semibold text-primary">Per-site, geo-redundant active-active.</span>{' '}
+          TPS sliders describe the load at a <em>single</em> location. Each location is
+          independently sized to serve the full per-site workload; multiple locations exist for
+          geo-redundancy (any single site can fail entirely without affecting the others). Local HA
+          (N+1 or 2N) is applied at <span className="font-semibold">each</span> location on top of
+          that raw per-site count.
         </p>
         <p className="text-xs text-muted-foreground leading-relaxed mt-2">
-          <span className="font-mono text-secondary">Raw required (R)</span> = max over all
+          <span className="font-mono text-secondary">Per-site raw (R)</span> = max over all
           algorithms of ⌈ algo_ops/s ÷ hsm_capacity ⌉
           <br />
-          <span className="font-mono text-secondary">Per-location raw</span> = ⌈ R ÷ L ⌉ &nbsp; (L =
-          locations; load split evenly)
+          <span className="font-mono text-secondary">N+1 per location</span> = R + 1
           <br />
-          <span className="font-mono text-secondary">N+1 per location</span> = per-location raw + 1
-          <br />
-          <span className="font-mono text-secondary">2N per location</span> = per-location raw × 2
+          <span className="font-mono text-secondary">2N per location</span> = R × 2
           <br />
           <span className="font-mono text-secondary">Total fleet</span> = L × per-location HA need
           <br />
-          <span className="font-mono text-secondary">Utilization (per location)</span> = (load ÷ L)
-          ÷ (capacity × deployed/location)
+          <span className="font-mono text-secondary">Utilization (per location)</span> = load ÷
+          (capacity × deployed/location)
         </p>
         <p className="text-[10px] text-muted-foreground/80 leading-relaxed mt-2">
-          <span className="font-semibold text-foreground">Assumptions:</span> traffic is split
-          equally across locations (no regional weighting); any HSM in the fleet can run any
-          algorithm; redundancy is site-local (each site survives one HSM loss for N+1, full
-          duplication for 2N) — strictly more conservative than a global N+1.
-          <br />
-          <span className="text-muted-foreground/60">
-            Verified by <span className="font-mono">HsmCapacityCalculator.test.ts</span> — size ×
-            locations matrix (small/medium/large × 2/3/20).
-          </span>
+          <span className="font-semibold text-foreground">Assumptions:</span> every site carries the
+          same workload (no regional weighting; no load splitting); any HSM in the fleet can run any
+          algorithm; redundancy is site-local; geo-redundancy across sites is in addition to local
+          HA (most conservative sizing).
         </p>
       </CollapsibleSection>
 
@@ -1295,8 +1645,11 @@ export function HsmCapacityCalculator() {
                 <p className="text-xs font-medium text-foreground">Distributed topology</p>
               </div>
               <p className="text-[10px] text-muted-foreground">
-                Each location independently satisfies the selected redundancy model (local HA). Load
-                is assumed evenly distributed across locations.
+                Each location runs the{' '}
+                <span className="font-semibold text-foreground">full per-site workload</span>{' '}
+                independently — multi-location deployments add geo-redundancy (one site can fail
+                without affecting others). Each site also has its own local HA (N+1 or 2N) on top of
+                raw demand.
               </p>
               <NumericSliderRow
                 label="Number of locations"
@@ -1305,53 +1658,49 @@ export function HsmCapacityCalculator() {
                 max={1_000}
                 step={1}
                 format={(v) => `${v} location${v !== 1 ? 's' : ''}`}
-                tooltip="Physical sites, data centres, or availability zones. Each must independently satisfy the HA model."
+                tooltip="Physical sites, data centres, or availability zones. Each independently serves the full per-site workload AND satisfies the local HA model."
                 onChange={setNumLocations}
               />
               <CollapsibleSection
-                title="Distributed capacity formula"
+                title="Per-location capacity formula"
                 icon={<Info size={12} className="text-muted-foreground" aria-hidden="true" />}
                 defaultOpen={false}
               >
                 <div className="text-[10px] space-y-2 font-mono text-muted-foreground">
                   <p>
-                    <span className="text-secondary">Per-location raw</span> = ⌈ R ÷ L ⌉ &nbsp;
-                    (load split evenly)
+                    <span className="text-secondary">Per-site raw (R)</span> = max over all
+                    algorithms of ⌈ algo_ops/s ÷ hsm_capacity ⌉
                   </p>
                   <p>
                     <span className="text-secondary">Per-location HA need</span> = redundancy
-                    applied to per-location raw
+                    applied to R
                     <br />
-                    &nbsp;&nbsp;N+1 → per-location raw + 1 &nbsp;·&nbsp; 2N → per-location raw × 2
+                    &nbsp;&nbsp;N+1 → R + 1 &nbsp;·&nbsp; 2N → R × 2
                   </p>
                   <p>
                     <span className="text-secondary">Total fleet required</span> = L × per-location
                     HA need
                   </p>
                   <p className="text-muted-foreground/70">
-                    R = total raw HSMs (bottleneck algorithm) · L = number of locations
+                    R = per-site raw HSMs (bottleneck algorithm) · L = number of geo-redundant sites
                   </p>
                   <div className="mt-2 pt-2 border-t border-border/30 space-y-0.5">
-                    <p className="text-foreground font-semibold">Example A — N+1, R=37, L=3:</p>
-                    <p>Per-location raw = ⌈37 ÷ 3⌉ = 13</p>
+                    <p className="text-foreground font-semibold">Example A — N+1, R=13, L=3:</p>
+                    <p>Per-location raw = R = 13 HSMs</p>
                     <p>Per-location HA = 13 + 1 = 14 HSMs</p>
                     <p>Total required = 3 × 14 = 42 HSMs</p>
                   </div>
                   <div className="mt-2 pt-2 border-t border-border/30 space-y-0.5">
-                    <p className="text-foreground font-semibold">Example B — 2N, R=37, L=3:</p>
-                    <p>Per-location raw = 13</p>
+                    <p className="text-foreground font-semibold">Example B — 2N, R=13, L=3:</p>
+                    <p>Per-location raw = R = 13 HSMs</p>
                     <p>Per-location HA = 13 × 2 = 26 HSMs</p>
                     <p>Total required = 3 × 26 = 78 HSMs</p>
                   </div>
                   <p className="text-muted-foreground/70 mt-2">
-                    Note: redundancy is <span className="text-foreground">per location</span>, so a
-                    fleet at L locations with N+1 carries L spare HSMs total — strictly more than a
-                    single global N+1 spare. With small R and large L, the &quot;⌈R/L⌉ ≥ 1&quot;
-                    rounding floor pins per-location to ≥1; with N+1 the total then collapses to L ×
-                    2 regardless of R.
-                  </p>
-                  <p className="text-muted-foreground/60 mt-2 not-italic">
-                    Verified by HsmCapacityCalculator.test.ts (size × locations matrix).
+                    Note: this model treats each site as fully active-active. Adding L locations
+                    multiplies total HSM count by L (since every site carries the full workload) —
+                    this is the most conservative geo-redundant sizing. If your real deployment
+                    splits load across sites, divide R by your active-site count.
                   </p>
                 </div>
               </CollapsibleSection>
@@ -1362,13 +1711,16 @@ export function HsmCapacityCalculator() {
 
       {/* Organisation profile — sliders that derive TPS */}
       <CollapsibleSection
-        title="Organisation profile"
+        title="Organisation profile (per-site)"
         icon={<Users size={14} className="text-primary" aria-hidden="true" />}
         defaultOpen={true}
       >
         <p className="text-[10px] text-muted-foreground mb-3">
-          Adjusting these sliders re-derives TPS defaults for all use cases using the same formulas
-          documented in each use case&apos;s estimation methodology.
+          These sliders describe what{' '}
+          <span className="font-semibold text-foreground">one location</span> experiences. Adjusting
+          any of them re-derives the per-site TPS for every use case using the formulas in each use
+          case&apos;s &quot;How we estimated this&quot; panel. Multi-location deployments replicate
+          this load at every site for geo-redundancy.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
           {(Object.keys(ORG_PARAM_RANGES) as (keyof OrgParams)[]).map((field) => {
@@ -1540,30 +1892,53 @@ export function HsmCapacityCalculator() {
         </div>
       </div>
 
-      {/* HSM fleet visual — grouped by location */}
-      <div className="glass-panel p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <Server size={14} className="text-primary" aria-hidden="true" />
-          <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
-            Fleet at a glance
+      {/* How TPS becomes HSM count — explainer */}
+      <TpsToHsmExplainer
+        scenarios={scenarios}
+        redundancy={redundancy}
+        numLocations={numLocations}
+      />
+
+      {/* Per-location distribution panel */}
+      <div className="glass-panel p-4 space-y-3">
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <div className="flex items-center gap-2">
+            <MapPin size={14} className="text-primary" aria-hidden="true" />
+            <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+              Per-location distribution
+            </p>
+          </div>
+          <p className="text-[10px] text-muted-foreground">
+            Each of {numLocations} location{numLocations !== 1 ? 's' : ''} independently serves the
+            full per-site workload (geo-redundant active-active). Region labels are cosmetic.
           </p>
         </div>
-        <div className="space-y-4">
-          {scenarios.map((s) => (
-            <div key={s.key}>
-              <div className="flex items-start gap-3">
-                <div className="w-40 shrink-0 text-xs">
-                  <p className="font-medium text-foreground">{s.shortLabel}</p>
-                  <p className="text-[10px] text-muted-foreground">{s.hsmProfile.name}</p>
-                  <p className="text-[10px] font-mono text-primary mt-0.5">
-                    {s.deployedHsms} total HSMs
-                  </p>
-                </div>
-                <HsmFleetVisual scenario={s} />
+        {(() => {
+          const MAX_LOCS = Math.min(numLocations, 8)
+          const hiddenLocs = numLocations - MAX_LOCS
+          return (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {Array.from({ length: MAX_LOCS }).map((_, idx) => (
+                  <PerLocationCard
+                    key={idx}
+                    locIndex={idx}
+                    regionLabel={regionLabelFor(idx)}
+                    onRegionChange={(label) => setRegionLabel(idx, label)}
+                    scenarios={scenarios}
+                    redundancy={redundancy}
+                  />
+                ))}
               </div>
-            </div>
-          ))}
-        </div>
+              {hiddenLocs > 0 && (
+                <p className="text-[10px] font-mono text-muted-foreground italic">
+                  +{hiddenLocs} more location{hiddenLocs > 1 ? 's' : ''} identical to those above
+                  (same HSM count, same load share, same redundancy).
+                </p>
+              )}
+            </>
+          )
+        })()}
       </div>
 
       {/* Charts */}
@@ -1594,11 +1969,16 @@ export function HsmCapacityCalculator() {
                 }}
               />
               <Legend wrapperStyle={{ fontSize: 10 }} />
-              <Bar dataKey="Required" fill="var(--color-primary)" radius={[3, 3, 0, 0]}>
-                {fleetChartData.map((_, i) => (
-                  <Cell key={i} fill="var(--color-primary)" />
-                ))}
-              </Bar>
+              <Bar
+                dataKey="Required (demand)"
+                fill="var(--color-muted-foreground)"
+                radius={[3, 3, 0, 0]}
+              />
+              <Bar
+                dataKey="Required (HA target)"
+                fill="var(--color-primary)"
+                radius={[3, 3, 0, 0]}
+              />
               <Bar dataKey="Deployed" fill="var(--color-secondary)" radius={[3, 3, 0, 0]}>
                 {fleetChartData.map((_d, i) => (
                   <Cell
@@ -1651,36 +2031,62 @@ export function HsmCapacityCalculator() {
         defaultOpen={false}
       >
         <p className="text-[10px] text-muted-foreground mb-3">
-          All values start at public-datasheet reference numbers. Tune each slider to match your
-          vendor&apos;s benchmarked TPS.
+          TPS per HSM is expressed in the industry-standard{' '}
+          <span className="font-mono text-foreground">RSA-2048 ops/sec</span> base unit. Every other
+          algorithm shows its <span className="font-mono text-foreground">cost ratio</span> against
+          that anchor (the number of RSA-2048-equivalent ops one operation of that algorithm
+          consumes). Tune each slider to match your vendor&apos;s benchmarked TPS.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {([classicalHsm, pqcHsm] as HsmProfile[]).map((profile) => (
-            <div key={profile.id} className="space-y-3">
-              <div>
-                <p className="text-sm font-semibold text-foreground">{profile.name}</p>
-                <p className="text-[10px] text-muted-foreground">{profile.description}</p>
-                <p className="text-[10px] text-muted-foreground italic mt-1">
-                  {profile.sourceNote}
-                </p>
+          {([classicalHsm, pqcHsm] as HsmProfile[]).map((profile) => {
+            const baseRate = profile.opsPerSec[BASE_UNIT_ALGO]
+            return (
+              <div key={profile.id} className="space-y-3">
+                <div>
+                  <p className="text-sm font-semibold text-foreground">{profile.name}</p>
+                  <p className="text-[10px] text-muted-foreground">{profile.description}</p>
+                  <div className="mt-2 rounded-md border border-primary/30 bg-primary/5 px-2 py-1.5">
+                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-mono">
+                      Per-HSM throughput (base unit)
+                    </p>
+                    <p className="text-base font-mono text-primary mt-0.5">
+                      {baseRate.toLocaleString()}{' '}
+                      <span className="text-xs text-muted-foreground">RSA-2048 ops/s</span>
+                    </p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">
+                      All other algorithm rates shown below as cost ratio × this baseline.
+                    </p>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground italic mt-2">
+                    {profile.sourceNote}
+                  </p>
+                </div>
+                {ALGO_IDS.map((algo) => {
+                  const range = ALGO_SLIDER_RANGES[algo]
+                  const isBase = algo === BASE_UNIT_ALGO
+                  const value = profile.opsPerSec[algo]
+                  const ratio = isBase ? 1 : baseRate / Math.max(1, value)
+                  const ratioLabel = isBase
+                    ? '1× (base unit)'
+                    : ratio >= 1
+                      ? `${ratio < 10 ? ratio.toFixed(1) : Math.round(ratio)}× RSA-2048 cost`
+                      : `${(1 / ratio).toFixed(1)}× faster than RSA-2048`
+                  return (
+                    <SliderRow
+                      key={algo}
+                      label={`${ALGO_LABELS[algo]} — ops/sec · ${ratioLabel}`}
+                      value={value}
+                      min={range.min}
+                      max={range.max}
+                      step={range.step}
+                      format={(v) => v.toLocaleString()}
+                      onChange={(v) => setHsmProfileAlgo(profile.id, algo, v)}
+                    />
+                  )
+                })}
               </div>
-              {ALGO_IDS.map((algo) => {
-                const range = ALGO_SLIDER_RANGES[algo]
-                return (
-                  <SliderRow
-                    key={algo}
-                    label={`${ALGO_LABELS[algo]} — ops/sec`}
-                    value={profile.opsPerSec[algo]}
-                    min={range.min}
-                    max={range.max}
-                    step={range.step}
-                    format={(v) => v.toLocaleString()}
-                    onChange={(v) => setHsmProfileAlgo(profile.id, algo, v)}
-                  />
-                )
-              })}
-            </div>
-          ))}
+            )
+          })}
         </div>
       </CollapsibleSection>
 

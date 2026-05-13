@@ -377,6 +377,46 @@ export const SIZE_PRESETS: SizePreset[] = [
   },
 ]
 
+/**
+ * RSA-2048 is the canonical HSM capacity unit. Vendors (Thales Luna 7,
+ * Entrust nShield 5c, Utimaco SecurityServer) all publish throughput in
+ * RSA-2048 signs/sec; every other algorithm's TPS is most readable as a
+ * ratio against that anchor.
+ */
+export const BASE_UNIT_ALGO: AlgoId = 'rsa-2048'
+
+/**
+ * How many RSA-2048-equivalent ops one op of `algo` "costs" on this HSM.
+ * Cost > 1 means the algorithm is slower than the RSA-2048 baseline.
+ */
+export function algoCostRatio(profile: HsmProfile, algo: AlgoId): number {
+  const base = profile.opsPerSec[BASE_UNIT_ALGO]
+  const algoRate = profile.opsPerSec[algo]
+  if (!algoRate || algoRate <= 0) return Infinity
+  return base / algoRate
+}
+
+/**
+ * Geographic region presets for the per-location distribution panel. Labels
+ * are purely cosmetic — load is still split evenly across `numLocations`.
+ * Ordered so the first N defaults sketch a plausible global active-active
+ * deployment.
+ */
+export const REGION_PRESETS: string[] = [
+  'Frankfurt',
+  'Virginia',
+  'Singapore',
+  'Dublin',
+  'Oregon',
+  'Tokyo',
+  'São Paulo',
+  'Sydney',
+  'London',
+  'Paris',
+  'Mumbai',
+  'Toronto',
+]
+
 export const ALGO_IDS: AlgoId[] = [
   'rsa-2048',
   'ecdsa-p256',

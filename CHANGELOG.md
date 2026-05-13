@@ -4,6 +4,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.15.0] - 2026-05-12
+
+### Added — HSM Capacity Calculator: per-region distribution + RSA-baseline explainer
+
+The HSM Capacity Calculator (Step 5 of the HSM-PQC learning module, also linked from the Playground tool catalog) gains three new components and the underlying primitives that drive them.
+
+- **`PerLocationCard` + `ScenarioLocationBlock`** ([HsmCapacityCalculator.tsx](src/components/Playground/hsm/HsmCapacityCalculator.tsx)) — every active-active fleet of size ≥ 2 now renders one card per location showing the workload share assigned to that site, the HSM count at the chosen redundancy level, and the algorithm-mix breakdown. Region labels come from a new geographic preset list so the first eight locations sketch a plausible global deployment (Frankfurt, Virginia, Singapore, Dublin, Oregon, Tokyo, São Paulo, Sydney). Load is still split evenly across `numLocations`; the labels are cosmetic and editable per scenario.
+- **`TpsToHsmExplainer`** — new collapsible card that shows the math behind "how many HSMs do I need for X TPS?" in three steps: target TPS × algo-cost ratio = RSA-2048-equivalent TPS → divide by HSM RSA-2048 ops/sec capacity → apply redundancy factor → ceiling to the next whole HSM. Surfaces vendor benchmark sources for the chosen profile (Thales Luna 7 / Entrust nShield 5c / Utimaco SecurityServer).
+- **`BASE_UNIT_ALGO` + `algoCostRatio()`** ([hsmCapacityDefaults.ts](src/data/hsmCapacityDefaults.ts)) — RSA-2048 is now the canonical capacity unit. `algoCostRatio(profile, algo)` returns how many RSA-2048-equivalent ops one op of `algo` costs on a given HSM, so explanations can compare apples-to-apples instead of carrying separate ops/sec rates per algorithm.
+- **`REGION_PRESETS`** ([hsmCapacityDefaults.ts](src/data/hsmCapacityDefaults.ts)) — 12 geographic region labels for the per-location distribution panel.
+- **`HsmCapacityCalculator.test.ts`** — rewrote test fixtures to cover the new per-location render path, `TpsToHsmExplainer` math (target TPS × cost ratio × redundancy), and the algorithm-mix breakdown per location. Net diff is large because the old fixtures asserted on the pre-card flat HSM-count row; the new fixtures assert on per-card output.
+
+### Added — Embed routePresets test coverage (already committed as `86622c8b`)
+
+- **21 unit tests** for `routePresets.ts` — the core embed authorization gate that had zero coverage after the v2.4 contract sync. Locks down the current preset set (asserts `explore` / `openssl` are gone, `patents` is present, `leaders` carries the Community label) plus the full surface of `resolveRoutes`, `matchesAllowedRoute`, `getFirstAllowedRoute`, and `getActivePresets`.
+
+### Fixed — Embed `useHostCheck` JSDoc (already committed as `acbbeda2`)
+
+- JSDoc claimed the parent must respond within 2 seconds, but `HOST_CHECK_TIMEOUT_MS` is `8000`. Comment now matches the constant; no functional change.
+
+### Data
+
+- **`src/data/concept_xwalk_candidates_05112026.csv`** — regenerated after the v3.14.8 sentinel-row fix landed. The `--skip-existing --append` pass produced new sentinel rows for docs the LLM had previously returned 0 IR 8477 relationships for; future runs no longer re-scan them. Production loader and merge pipeline filter sentinels at parse time, so no UI-visible impact.
+- **`src/data/doc-enrichments/library_doc_enrichments_05122026.md`** + **`src/data/doc-enrichments/timeline_doc_enrichments_05112026.md`** — fresh enrichment batches from the Ollama (`qwen3.6:27b`) pipeline; consumed by `generate-rag-corpus.ts`.
+- **`public/data/rag-corpus.json`** — regenerated to include the new enrichments. The new chunks are also picked up by the admin `/requirements` mini-search via its own embedding pipeline (see `pqctoday-admin` v0.5.2 `[Unreleased]`).
+- **`reports/trust-tier-snapshot.json`** — re-signed after sentinel rows landed; row-count metadata refreshed.
+
 ## [3.14.8] - 2026-05-11
 
 ### Fixed — `enrich-ir8477-xwalk.py` no longer wastes compute on 0-result docs

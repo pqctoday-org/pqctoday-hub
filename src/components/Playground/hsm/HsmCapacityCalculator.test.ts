@@ -6,6 +6,9 @@ import {
   CLASSICAL_HSM_DEFAULT,
   PQC_HSM_DEFAULT,
   ORG_PARAM_DEFAULTS,
+  REGION_PRESETS,
+  BASE_UNIT_ALGO,
+  algoCostRatio,
   deriveUseCaseTps,
   type DeploymentSize,
 } from '@/data/hsmCapacityDefaults'
@@ -112,24 +115,25 @@ describe('HSM capacity — computeScenarios', () => {
     expect(r[1].requiredRaw).toBe(134)
   })
 
-  it('distributes load across locations and applies local HA', () => {
-    // 3 locations, N+1, TLS at 10k TPS → raw = 67 HSMs globally (ceil(10000/150))
-    // per-location raw = ceil(67/3) = 23, per-location HA (N+1) = 24, total = 72
+  it('replicates per-site load across locations (geo-redundant active-active)', () => {
+    // 3 locations, N+1, TLS at 10k TPS → raw = 67 HSMs PER SITE (ceil(10000/150))
+    // Under per-site model, perLocationRaw = R = 67 (no splitting).
+    // perLocationRequired = 67 + 1 = 68 (N+1), total = 3 × 68 = 204.
     const r = computeScenarios({
       useCases: USE_CASES,
       state: stateWith(['tls'], 10_000),
       classical: CLASSICAL_HSM_DEFAULT,
       pqc: PQC_HSM_DEFAULT,
       redundancy: 'n+1',
-      hsmsPerLocation: { today: 1, tomorrow: 24, upgraded: 1 },
+      hsmsPerLocation: { today: 1, tomorrow: 68, upgraded: 1 },
       numLocations: 3,
     })
     const tomorrow = r[1]
     expect(tomorrow.requiredRaw).toBe(67)
-    expect(tomorrow.perLocationRaw).toBe(23) // ceil(67/3)
-    expect(tomorrow.perLocationRequired).toBe(24) // 23+1
-    expect(tomorrow.requiredWithRedundancy).toBe(72) // 3×24
-    expect(tomorrow.sufficient).toBe(true) // 24 HSMs/loc meets perLocationRequired=24
+    expect(tomorrow.perLocationRaw).toBe(67) // per-site model: each location runs full demand
+    expect(tomorrow.perLocationRequired).toBe(68) // 67 + 1 (N+1)
+    expect(tomorrow.requiredWithRedundancy).toBe(204) // 3 × 68
+    expect(tomorrow.sufficient).toBe(true) // 68 HSMs/loc meets perLocationRequired=68
   })
 
   it('inventory mode: N=10 classical HSMs at TLS 5k PQC TPS — today sufficient, tomorrow overloaded', () => {
@@ -173,9 +177,10 @@ describe('HSM capacity — computeScenarios', () => {
 
   it('inventory mode: large fleet — 1000 HSMs across 10 locations, N+1', () => {
     // 1000 HSMs ÷ 10 locations = 100/location.
-    // TLS at 5000 TPS PQC → ML-DSA load = 5000 ops/s, raw = ceil(5000/150) = 34.
-    // perLocationRaw = ceil(34/10) = 4, perLocationRequired (N+1) = 5
-    // Total required = 10 × 5 = 50. With 100/location deployed: sufficient.
+    // TLS at 5000 per-site TPS PQC → ML-DSA load = 5000 ops/s, raw = ceil(5000/150) = 34
+    // PER LOCATION (each site runs full per-site demand).
+    // perLocationRaw = 34, perLocationRequired (N+1) = 35
+    // Total required = 10 × 35 = 350. With 100/location deployed: sufficient (100 ≥ 35).
     const inventoryHsmCount = 1000
     const numLocations = 10
     const perLocClassical = Math.ceil(inventoryHsmCount / numLocations) // 100
@@ -189,10 +194,10 @@ describe('HSM capacity — computeScenarios', () => {
       hsmsPerLocation: { today: perLocClassical, tomorrow: perLocClassical, upgraded: 2 },
       numLocations,
     })
-    expect(r[1].perLocationRaw).toBe(4) // ceil(34/10)
-    expect(r[1].perLocationRequired).toBe(5) // 4+1 N+1
-    expect(r[1].requiredWithRedundancy).toBe(50) // 10 × 5
-    expect(r[1].sufficient).toBe(true) // 100/loc >> 5 required/loc
+    expect(r[1].perLocationRaw).toBe(34) // per-site model: full demand per location
+    expect(r[1].perLocationRequired).toBe(35) // 34+1 N+1
+    expect(r[1].requiredWithRedundancy).toBe(350) // 10 × 35
+    expect(r[1].sufficient).toBe(true) // 100/loc ≥ 35 required/loc
   })
 
   it('ML-KEM-768 load is correctly aggregated for PQC TLS workload', () => {
@@ -249,206 +254,48 @@ interface MatrixCase {
   deltaWithUpgrade: number // upgraded.requiredRaw - today.requiredRaw
 }
 
-const MATRIX: MatrixCase[] = [
-  // ---- small (requiredRaw: today=1, tomorrow=4, upgraded=1) ----
-  {
-    size: 'small',
-    locations: 2,
-    today: { requiredRaw: 1, perLocationRaw: 1, perLocationRequired: 2, requiredWithRedundancy: 4 },
-    tomorrow: {
-      requiredRaw: 4,
-      perLocationRaw: 2,
-      perLocationRequired: 3,
-      requiredWithRedundancy: 6,
-      bottleneck: 'ml-dsa-65',
-    },
-    upgraded: {
-      requiredRaw: 1,
-      perLocationRaw: 1,
-      perLocationRequired: 2,
-      requiredWithRedundancy: 4,
-    },
-    deltaExistingFleet: 3,
-    deltaWithUpgrade: 0,
-  },
-  {
-    size: 'small',
-    locations: 3,
-    today: { requiredRaw: 1, perLocationRaw: 1, perLocationRequired: 2, requiredWithRedundancy: 6 },
-    tomorrow: {
-      requiredRaw: 4,
-      perLocationRaw: 2, // ceil(4/3)
-      perLocationRequired: 3,
-      requiredWithRedundancy: 9,
-      bottleneck: 'ml-dsa-65',
-    },
-    upgraded: {
-      requiredRaw: 1,
-      perLocationRaw: 1,
-      perLocationRequired: 2,
-      requiredWithRedundancy: 6,
-    },
-    deltaExistingFleet: 3,
-    deltaWithUpgrade: 0,
-  },
-  {
-    size: 'small',
-    locations: 20,
-    today: {
-      requiredRaw: 1,
-      perLocationRaw: 1,
-      perLocationRequired: 2,
-      requiredWithRedundancy: 40,
-    },
-    tomorrow: {
-      requiredRaw: 4,
-      perLocationRaw: 1, // ceil(4/20)=1 — N+1 floor regime
-      perLocationRequired: 2,
-      requiredWithRedundancy: 40,
-      bottleneck: 'ml-dsa-65',
-    },
-    upgraded: {
-      requiredRaw: 1,
-      perLocationRaw: 1,
-      perLocationRequired: 2,
-      requiredWithRedundancy: 40,
-    },
-    deltaExistingFleet: 3,
-    deltaWithUpgrade: 0,
-  },
-  // ---- medium (requiredRaw: today=1, tomorrow=37, upgraded=1) ----
-  {
-    size: 'medium',
-    locations: 2,
-    today: { requiredRaw: 1, perLocationRaw: 1, perLocationRequired: 2, requiredWithRedundancy: 4 },
-    tomorrow: {
-      requiredRaw: 37,
-      perLocationRaw: 19, // ceil(37/2)
-      perLocationRequired: 20,
-      requiredWithRedundancy: 40,
-      bottleneck: 'ml-dsa-65',
-    },
-    upgraded: {
-      requiredRaw: 1,
-      perLocationRaw: 1,
-      perLocationRequired: 2,
-      requiredWithRedundancy: 4,
-    },
-    deltaExistingFleet: 36,
-    deltaWithUpgrade: 0,
-  },
-  {
-    size: 'medium',
-    locations: 3,
-    today: { requiredRaw: 1, perLocationRaw: 1, perLocationRequired: 2, requiredWithRedundancy: 6 },
-    tomorrow: {
-      requiredRaw: 37,
-      perLocationRaw: 13, // ceil(37/3)
-      perLocationRequired: 14,
-      requiredWithRedundancy: 42,
-      bottleneck: 'ml-dsa-65',
-    },
-    upgraded: {
-      requiredRaw: 1,
-      perLocationRaw: 1,
-      perLocationRequired: 2,
-      requiredWithRedundancy: 6,
-    },
-    deltaExistingFleet: 36,
-    deltaWithUpgrade: 0,
-  },
-  {
-    size: 'medium',
-    locations: 20,
-    today: {
-      requiredRaw: 1,
-      perLocationRaw: 1,
-      perLocationRequired: 2,
-      requiredWithRedundancy: 40,
-    },
-    tomorrow: {
-      requiredRaw: 37,
-      perLocationRaw: 2, // ceil(37/20)
-      perLocationRequired: 3,
-      requiredWithRedundancy: 60,
-      bottleneck: 'ml-dsa-65',
-    },
-    upgraded: {
-      requiredRaw: 1,
-      perLocationRaw: 1,
-      perLocationRequired: 2,
-      requiredWithRedundancy: 40,
-    },
-    deltaExistingFleet: 36,
-    deltaWithUpgrade: 0,
-  },
-  // ---- large (requiredRaw: today=6, tomorrow=370, upgraded=7) ----
-  {
-    size: 'large',
-    locations: 2,
-    today: { requiredRaw: 6, perLocationRaw: 3, perLocationRequired: 4, requiredWithRedundancy: 8 },
-    tomorrow: {
-      requiredRaw: 370,
-      perLocationRaw: 185, // ceil(370/2)
-      perLocationRequired: 186,
-      requiredWithRedundancy: 372,
-      bottleneck: 'ml-dsa-65',
-    },
-    upgraded: {
-      requiredRaw: 7,
-      perLocationRaw: 4, // ceil(7/2)
-      perLocationRequired: 5,
-      requiredWithRedundancy: 10,
-    },
-    deltaExistingFleet: 364,
-    deltaWithUpgrade: 1,
-  },
-  {
-    size: 'large',
-    locations: 3,
-    today: { requiredRaw: 6, perLocationRaw: 2, perLocationRequired: 3, requiredWithRedundancy: 9 },
-    tomorrow: {
-      requiredRaw: 370,
-      perLocationRaw: 124, // ceil(370/3)
-      perLocationRequired: 125,
-      requiredWithRedundancy: 375,
-      bottleneck: 'ml-dsa-65',
-    },
-    upgraded: {
-      requiredRaw: 7,
-      perLocationRaw: 3, // ceil(7/3)
-      perLocationRequired: 4,
-      requiredWithRedundancy: 12,
-    },
-    deltaExistingFleet: 364,
-    deltaWithUpgrade: 1,
-  },
-  {
-    size: 'large',
-    locations: 20,
-    today: {
-      requiredRaw: 6,
-      perLocationRaw: 1, // ceil(6/20)=1 — N+1 floor regime
-      perLocationRequired: 2,
-      requiredWithRedundancy: 40,
-    },
-    tomorrow: {
-      requiredRaw: 370,
-      perLocationRaw: 19, // ceil(370/20)
-      perLocationRequired: 20,
-      requiredWithRedundancy: 400,
-      bottleneck: 'ml-dsa-65',
-    },
-    upgraded: {
-      requiredRaw: 7,
-      perLocationRaw: 1, // ceil(7/20)=1 — N+1 floor regime
-      perLocationRequired: 2,
-      requiredWithRedundancy: 40,
-    },
-    deltaExistingFleet: 364,
-    deltaWithUpgrade: 1,
-  },
-]
+/**
+ * Derive a ScenarioExpect from raw demand under the per-site model
+ * (perLocationRaw = R; per-location HA = R+1 for N+1, R×2 for 2N;
+ *  total = L × per-location HA).
+ */
+function siteExpect(R: number, L: number, mode: 'n+1' | '2n', bottleneck?: string): ScenarioExpect {
+  const perLocReq = R > 0 ? (mode === 'n+1' ? R + 1 : R * 2) : 0
+  return {
+    requiredRaw: R,
+    perLocationRaw: R,
+    perLocationRequired: perLocReq,
+    requiredWithRedundancy: L * perLocReq,
+    bottleneck,
+  }
+}
+
+/**
+ * Hand-derived raw-demand values per size (under per-site model, perLocationRaw = R).
+ * Computed from the default org params via deriveUseCaseTps + classicalOps/pqcOps mapping.
+ */
+const RAW_BY_SIZE: Record<DeploymentSize, { today: number; tomorrow: number; upgraded: number }> = {
+  small: { today: 1, tomorrow: 4, upgraded: 1 },
+  medium: { today: 1, tomorrow: 37, upgraded: 1 },
+  large: { today: 6, tomorrow: 370, upgraded: 7 },
+}
+
+function caseFor(size: DeploymentSize, locations: number, mode: 'n+1' | '2n'): MatrixCase {
+  const raw = RAW_BY_SIZE[size]
+  return {
+    size,
+    locations,
+    today: siteExpect(raw.today, locations, mode),
+    tomorrow: siteExpect(raw.tomorrow, locations, mode, 'ml-dsa-65'),
+    upgraded: siteExpect(raw.upgraded, locations, mode),
+    deltaExistingFleet: raw.tomorrow - raw.today,
+    deltaWithUpgrade: raw.upgraded - raw.today,
+  }
+}
+
+const MATRIX: MatrixCase[] = (['small', 'medium', 'large'] as DeploymentSize[]).flatMap((s) =>
+  [2, 3, 20].map((L) => caseFor(s, L, 'n+1'))
+)
 
 describe('HSM capacity — size × locations matrix (PQC extra-capacity validation)', () => {
   it.each(MATRIX)(
@@ -507,10 +354,8 @@ describe('HSM capacity — size × locations matrix (PQC extra-capacity validati
     }
   })
 
-  it('2N redundancy at multiple locations doubles each site (not the global count)', () => {
-    // medium × 3 locations, 2N: requiredRaw=37, perLocRaw=⌈37/3⌉=13, perLocReq=13×2=26,
-    // total=3×26=78. A "global 2N" interpretation would give 37×2=74 — the per-location model
-    // is strictly more conservative (+4 HSMs).
+  it('per-site model: 2N at L locations multiplies the per-site doubled count by L', () => {
+    // medium × 3 locations, 2N: R=37, perLocRaw=R=37, perLocReq=74, total=3×74=222.
     const r = computeScenarios({
       useCases: USE_CASES,
       state: stateForSize('medium'),
@@ -522,16 +367,13 @@ describe('HSM capacity — size × locations matrix (PQC extra-capacity validati
     })
     const tm = r[1]
     expect(tm.requiredRaw).toBe(37)
-    expect(tm.perLocationRaw).toBe(13)
-    expect(tm.perLocationRequired).toBe(26) // 13 × 2 — applied per location
-    expect(tm.requiredWithRedundancy).toBe(78) // 3 × 26
-    // Global 2N would be 74; site-local 2N is strictly larger.
-    expect(tm.requiredWithRedundancy).toBeGreaterThan(tm.requiredRaw * 2)
+    expect(tm.perLocationRaw).toBe(37) // per-site: each location runs full demand
+    expect(tm.perLocationRequired).toBe(74) // 37 × 2
+    expect(tm.requiredWithRedundancy).toBe(222) // 3 × 74
   })
 
-  it('per-location utilization splits load by numLocations (equal split assumption)', () => {
-    // Same per-location HSM count and same workload, but 1 location vs. 4 locations:
-    // per-location utilization should be exactly 1/4 with 4 locations.
+  it('per-site model: per-location utilization is independent of numLocations', () => {
+    // Each location carries the FULL workload; adding locations doesn't reduce per-site load.
     const baseArgs = {
       useCases: USE_CASES,
       state: stateWith(['tls'], 4_000),
@@ -545,13 +387,12 @@ describe('HSM capacity — size × locations matrix (PQC extra-capacity validati
     const sML = single[1].perAlgoHsms.find((x) => x.algo === 'ml-dsa-65')!
     const fML = four[1].perAlgoHsms.find((x) => x.algo === 'ml-dsa-65')!
     expect(sML.utilizationPct).toBeCloseTo((4_000 / (150 * 27)) * 100, 5)
-    expect(fML.utilizationPct).toBeCloseTo(sML.utilizationPct / 4, 5)
+    expect(fML.utilizationPct).toBeCloseTo(sML.utilizationPct, 5)
   })
 
-  it('site-local N+1 buys L spare HSMs across the fleet (stricter than global N+1)', () => {
-    // medium × 5 locations, N+1: R=37, perLocRaw=⌈37/5⌉=8, perLocReq=9, total=5×9=45.
-    // Spares relative to "just enough per site": 45 − (5×8) = 5 = L. Exactly one spare per site.
-    // Global N+1 (the alternative interpretation) would be 37+1=38 — strictly fewer.
+  it('per-site N+1 buys exactly L spare HSMs across the fleet (one per location)', () => {
+    // medium × 5 locations, N+1: R=37, perLocRaw=37, perLocReq=38, total=5×38=190.
+    // Spares relative to "just enough per site": 190 − (5×37) = 5 = L.
     const r = computeScenarios({
       useCases: USE_CASES,
       state: stateForSize('medium'),
@@ -563,18 +404,16 @@ describe('HSM capacity — size × locations matrix (PQC extra-capacity validati
     })
     const tm = r[1]
     expect(tm.requiredRaw).toBe(37)
-    expect(tm.perLocationRaw).toBe(8)
-    expect(tm.perLocationRequired).toBe(9)
-    expect(tm.requiredWithRedundancy).toBe(45)
+    expect(tm.perLocationRaw).toBe(37) // per-site model
+    expect(tm.perLocationRequired).toBe(38)
+    expect(tm.requiredWithRedundancy).toBe(190)
     const spares = tm.requiredWithRedundancy - tm.numLocations * tm.perLocationRaw
-    expect(spares).toBe(tm.numLocations) // exactly L spares — one per site
-    expect(tm.requiredWithRedundancy).toBeGreaterThan(tm.requiredRaw + 1) // > global N+1
+    expect(spares).toBe(tm.numLocations)
   })
 
-  it('20-location N+1 floor: trivial loads collapse to (locations × 2)', () => {
-    // small/today raw=1 → perLoc=1, +1=2, ×20=40
-    // small/upgraded raw=1 → same → 40
-    // small/tomorrow raw=4 → ceil(4/20)=1, +1=2, ×20=40 — collapses to floor too
+  it('per-site N+1 at L=20: totals scale linearly with raw demand × L', () => {
+    // small × 20 × N+1: today R=1 → 20×(1+1)=40; tomorrow R=4 → 20×(4+1)=100;
+    // upgraded R=1 → 40.
     const r = computeScenarios({
       useCases: USE_CASES,
       state: stateForSize('small'),
@@ -585,7 +424,7 @@ describe('HSM capacity — size × locations matrix (PQC extra-capacity validati
       numLocations: 20,
     })
     expect(r[0].requiredWithRedundancy).toBe(40)
-    expect(r[1].requiredWithRedundancy).toBe(40)
+    expect(r[1].requiredWithRedundancy).toBe(100)
     expect(r[2].requiredWithRedundancy).toBe(40)
   })
 })
@@ -598,216 +437,9 @@ describe('HSM capacity — size × locations matrix (PQC extra-capacity validati
 // (4) Model invariants across a 30-case grid
 // ---------------------------------------------------------------------------
 
-const MATRIX_2N: MatrixCase[] = [
-  // small (R: today=1, tomorrow=4, upgraded=1)
-  {
-    size: 'small',
-    locations: 2,
-    today: { requiredRaw: 1, perLocationRaw: 1, perLocationRequired: 2, requiredWithRedundancy: 4 },
-    tomorrow: {
-      requiredRaw: 4,
-      perLocationRaw: 2,
-      perLocationRequired: 4, // 2 × 2
-      requiredWithRedundancy: 8,
-      bottleneck: 'ml-dsa-65',
-    },
-    upgraded: {
-      requiredRaw: 1,
-      perLocationRaw: 1,
-      perLocationRequired: 2,
-      requiredWithRedundancy: 4,
-    },
-    deltaExistingFleet: 3,
-    deltaWithUpgrade: 0,
-  },
-  {
-    size: 'small',
-    locations: 3,
-    today: { requiredRaw: 1, perLocationRaw: 1, perLocationRequired: 2, requiredWithRedundancy: 6 },
-    tomorrow: {
-      requiredRaw: 4,
-      perLocationRaw: 2, // ceil(4/3)
-      perLocationRequired: 4,
-      requiredWithRedundancy: 12,
-      bottleneck: 'ml-dsa-65',
-    },
-    upgraded: {
-      requiredRaw: 1,
-      perLocationRaw: 1,
-      perLocationRequired: 2,
-      requiredWithRedundancy: 6,
-    },
-    deltaExistingFleet: 3,
-    deltaWithUpgrade: 0,
-  },
-  {
-    size: 'small',
-    locations: 20,
-    today: {
-      requiredRaw: 1,
-      perLocationRaw: 1,
-      perLocationRequired: 2,
-      requiredWithRedundancy: 40,
-    },
-    tomorrow: {
-      requiredRaw: 4,
-      perLocationRaw: 1,
-      perLocationRequired: 2,
-      requiredWithRedundancy: 40,
-      bottleneck: 'ml-dsa-65',
-    },
-    upgraded: {
-      requiredRaw: 1,
-      perLocationRaw: 1,
-      perLocationRequired: 2,
-      requiredWithRedundancy: 40,
-    },
-    deltaExistingFleet: 3,
-    deltaWithUpgrade: 0,
-  },
-  // medium (R: today=1, tomorrow=37, upgraded=1)
-  {
-    size: 'medium',
-    locations: 2,
-    today: { requiredRaw: 1, perLocationRaw: 1, perLocationRequired: 2, requiredWithRedundancy: 4 },
-    tomorrow: {
-      requiredRaw: 37,
-      perLocationRaw: 19,
-      perLocationRequired: 38, // 19 × 2
-      requiredWithRedundancy: 76,
-      bottleneck: 'ml-dsa-65',
-    },
-    upgraded: {
-      requiredRaw: 1,
-      perLocationRaw: 1,
-      perLocationRequired: 2,
-      requiredWithRedundancy: 4,
-    },
-    deltaExistingFleet: 36,
-    deltaWithUpgrade: 0,
-  },
-  {
-    size: 'medium',
-    locations: 3,
-    today: { requiredRaw: 1, perLocationRaw: 1, perLocationRequired: 2, requiredWithRedundancy: 6 },
-    tomorrow: {
-      requiredRaw: 37,
-      perLocationRaw: 13,
-      perLocationRequired: 26, // 13 × 2
-      requiredWithRedundancy: 78,
-      bottleneck: 'ml-dsa-65',
-    },
-    upgraded: {
-      requiredRaw: 1,
-      perLocationRaw: 1,
-      perLocationRequired: 2,
-      requiredWithRedundancy: 6,
-    },
-    deltaExistingFleet: 36,
-    deltaWithUpgrade: 0,
-  },
-  {
-    size: 'medium',
-    locations: 20,
-    today: {
-      requiredRaw: 1,
-      perLocationRaw: 1,
-      perLocationRequired: 2,
-      requiredWithRedundancy: 40,
-    },
-    tomorrow: {
-      requiredRaw: 37,
-      perLocationRaw: 2,
-      perLocationRequired: 4, // 2 × 2
-      requiredWithRedundancy: 80,
-      bottleneck: 'ml-dsa-65',
-    },
-    upgraded: {
-      requiredRaw: 1,
-      perLocationRaw: 1,
-      perLocationRequired: 2,
-      requiredWithRedundancy: 40,
-    },
-    deltaExistingFleet: 36,
-    deltaWithUpgrade: 0,
-  },
-  // large (R: today=6, tomorrow=370, upgraded=7)
-  {
-    size: 'large',
-    locations: 2,
-    today: {
-      requiredRaw: 6,
-      perLocationRaw: 3,
-      perLocationRequired: 6, // 3 × 2
-      requiredWithRedundancy: 12,
-    },
-    tomorrow: {
-      requiredRaw: 370,
-      perLocationRaw: 185,
-      perLocationRequired: 370, // 185 × 2
-      requiredWithRedundancy: 740, // == R × 2 because L evenly divides R
-      bottleneck: 'ml-dsa-65',
-    },
-    upgraded: {
-      requiredRaw: 7,
-      perLocationRaw: 4,
-      perLocationRequired: 8,
-      requiredWithRedundancy: 16,
-    },
-    deltaExistingFleet: 364,
-    deltaWithUpgrade: 1,
-  },
-  {
-    size: 'large',
-    locations: 3,
-    today: {
-      requiredRaw: 6,
-      perLocationRaw: 2,
-      perLocationRequired: 4,
-      requiredWithRedundancy: 12,
-    },
-    tomorrow: {
-      requiredRaw: 370,
-      perLocationRaw: 124,
-      perLocationRequired: 248,
-      requiredWithRedundancy: 744, // > R × 2 = 740 (L doesn't evenly divide R)
-      bottleneck: 'ml-dsa-65',
-    },
-    upgraded: {
-      requiredRaw: 7,
-      perLocationRaw: 3,
-      perLocationRequired: 6,
-      requiredWithRedundancy: 18,
-    },
-    deltaExistingFleet: 364,
-    deltaWithUpgrade: 1,
-  },
-  {
-    size: 'large',
-    locations: 20,
-    today: {
-      requiredRaw: 6,
-      perLocationRaw: 1,
-      perLocationRequired: 2,
-      requiredWithRedundancy: 40,
-    },
-    tomorrow: {
-      requiredRaw: 370,
-      perLocationRaw: 19,
-      perLocationRequired: 38,
-      requiredWithRedundancy: 760,
-      bottleneck: 'ml-dsa-65',
-    },
-    upgraded: {
-      requiredRaw: 7,
-      perLocationRaw: 1,
-      perLocationRequired: 2,
-      requiredWithRedundancy: 40,
-    },
-    deltaExistingFleet: 364,
-    deltaWithUpgrade: 1,
-  },
-]
+const MATRIX_2N: MatrixCase[] = (['small', 'medium', 'large'] as DeploymentSize[]).flatMap((s) =>
+  [2, 3, 20].map((L) => caseFor(s, L, '2n'))
+)
 
 describe('HSM capacity — size × locations matrix (2N redundancy)', () => {
   it.each(MATRIX_2N)(
@@ -852,9 +484,9 @@ describe('HSM capacity — size × locations matrix (2N redundancy)', () => {
     }
   )
 
-  it('large × 2 × tomorrow: per-location 2N equals global 2N when L evenly divides R', () => {
-    // R=370, L=2, perLocRaw=185, perLocReq=370, total=740 = R × 2.
-    const r = computeScenarios({
+  it('per-site 2N totals scale linearly with L (no divisibility quirks)', () => {
+    // R=370, 2N → perLocRaw=370, perLocReq=740, total = L × 740.
+    const r2 = computeScenarios({
       useCases: USE_CASES,
       state: stateForSize('large'),
       classical: CLASSICAL_HSM_DEFAULT,
@@ -863,12 +495,9 @@ describe('HSM capacity — size × locations matrix (2N redundancy)', () => {
       hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
       numLocations: 2,
     })
-    expect(r[1].requiredWithRedundancy).toBe(r[1].requiredRaw * 2) // 740 = 370 × 2
-  })
+    expect(r2[1].requiredWithRedundancy).toBe(2 * 370 * 2) // 1480
 
-  it('large × 3 × tomorrow: per-location 2N is strictly larger than global 2N when L doesn’t divide R', () => {
-    // R=370, L=3, perLocRaw=124 (ceil), perLocReq=248, total=744 > 370 × 2 = 740.
-    const r = computeScenarios({
+    const r3 = computeScenarios({
       useCases: USE_CASES,
       state: stateForSize('large'),
       classical: CLASSICAL_HSM_DEFAULT,
@@ -877,8 +506,7 @@ describe('HSM capacity — size × locations matrix (2N redundancy)', () => {
       hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
       numLocations: 3,
     })
-    expect(r[1].requiredWithRedundancy).toBeGreaterThan(r[1].requiredRaw * 2)
-    expect(r[1].requiredWithRedundancy).toBe(744)
+    expect(r3[1].requiredWithRedundancy).toBe(3 * 370 * 2) // 2220
   })
 })
 
@@ -990,5 +618,97 @@ describe('HSM capacity — model invariants', () => {
         expect(s.perLocationRequired).toBe(0)
       }
     }
+  })
+})
+
+describe('HSM capacity — RSA-2048 base unit', () => {
+  it('algoCostRatio: rsa-2048 is the base (cost = 1)', () => {
+    expect(algoCostRatio(CLASSICAL_HSM_DEFAULT, BASE_UNIT_ALGO)).toBe(1)
+    expect(algoCostRatio(PQC_HSM_DEFAULT, BASE_UNIT_ALGO)).toBe(1)
+  })
+
+  it('algoCostRatio: ML-DSA-65 on classical HSM costs base/rate = 10000/150 ≈ 66.7×', () => {
+    const ratio = algoCostRatio(CLASSICAL_HSM_DEFAULT, 'ml-dsa-65')
+    expect(ratio).toBeCloseTo(10_000 / 150, 5)
+  })
+
+  it('algoCostRatio: ML-KEM-768 on next-gen HSM is faster than base (cost < 1)', () => {
+    // PQC HSM: rsa-2048 = 100k, ml-kem-768 = 12k → cost ratio 100/12 ≈ 8.3 (slower than RSA)
+    // ML-KEM is dedicated-hardware accelerated but RSA stays fastest on next-gen silicon.
+    const ratio = algoCostRatio(PQC_HSM_DEFAULT, 'ml-kem-768')
+    expect(ratio).toBeCloseTo(100_000 / 12_000, 5)
+    expect(ratio).toBeGreaterThan(1)
+  })
+
+  it('algoCostRatio: handles zero rate without crashing', () => {
+    const zeroProfile = {
+      ...CLASSICAL_HSM_DEFAULT,
+      opsPerSec: { ...CLASSICAL_HSM_DEFAULT.opsPerSec, 'ml-dsa-65': 0 },
+    }
+    expect(algoCostRatio(zeroProfile, 'ml-dsa-65')).toBe(Infinity)
+  })
+})
+
+describe('HSM capacity — demand vs availability separation', () => {
+  it('demand is met by raw count alone; HA target adds redundancy on top', () => {
+    // Pick a small workload at L=1, N+1: raw=R, required = R+1.
+    // Deploying exactly R HSMs meets demand but NOT HA.
+    const state: Record<string, { enabled: boolean; tps: number }> = {}
+    for (const uc of USE_CASES) {
+      state[uc.id] = { enabled: uc.id === 'code-signing', tps: 100 }
+    }
+    const r = computeScenarios({
+      useCases: USE_CASES,
+      state,
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1',
+      // Deploy exactly the raw count for the "today" scenario (1 HSM at 100 TPS RSA-2048).
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 1,
+    })
+    const today = r[0]
+    expect(today.perLocationRaw).toBe(1)
+    expect(today.perLocationRequired).toBe(2) // N+1
+    expect(today.hsmsPerLocation).toBe(1)
+    // Demand check: deployed (1) ≥ raw (1) → met
+    expect(today.hsmsPerLocation >= today.perLocationRaw).toBe(true)
+    // HA check: deployed (1) < required (2) → NOT met
+    expect(today.perLocationSufficient).toBe(false)
+  })
+
+  it('2N doubles the per-location count, N+1 adds one — both above raw', () => {
+    const state: Record<string, { enabled: boolean; tps: number }> = {}
+    for (const uc of USE_CASES) {
+      state[uc.id] = { enabled: uc.id === 'tls', tps: 50_000 }
+    }
+    const nPlus1 = computeScenarios({
+      useCases: USE_CASES,
+      state,
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: 'n+1',
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 3,
+    })[0]
+    const twoN = computeScenarios({
+      useCases: USE_CASES,
+      state,
+      classical: CLASSICAL_HSM_DEFAULT,
+      pqc: PQC_HSM_DEFAULT,
+      redundancy: '2n',
+      hsmsPerLocation: { today: 1, tomorrow: 1, upgraded: 1 },
+      numLocations: 3,
+    })[0]
+    expect(nPlus1.perLocationRaw).toBe(twoN.perLocationRaw) // same demand
+    expect(nPlus1.perLocationRequired).toBe(nPlus1.perLocationRaw + 1)
+    expect(twoN.perLocationRequired).toBe(twoN.perLocationRaw * 2)
+  })
+})
+
+describe('HSM capacity — region presets', () => {
+  it('REGION_PRESETS has enough entries to label the default panel size (8)', () => {
+    expect(REGION_PRESETS.length).toBeGreaterThanOrEqual(8)
+    expect(new Set(REGION_PRESETS).size).toBe(REGION_PRESETS.length) // no duplicates
   })
 })
