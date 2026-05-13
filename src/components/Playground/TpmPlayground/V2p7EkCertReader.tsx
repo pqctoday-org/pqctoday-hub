@@ -114,18 +114,9 @@ export function V2p7EkCertReader({ isWasmReady, v2p7Status }: Props) {
             Re-read
           </Button>
         </div>
-        <div className="mt-4 text-xs px-3 py-2 rounded bg-status-warning/10 text-status-warning border border-status-warning/30">
-          <strong>WASM build limitation.</strong> The 6 EK keys ARE provisioned (visible in the V2.7
-          EKs tab), but the §5.3.1 NV cert slots stay empty because cert generation requires{' '}
-          <code>EVP_PKEY_keygen</code>
-          for the issuer — the path not wired in the stripped <code>libcrypto.a</code> linked into{' '}
-          <code>pqctpm.wasm</code>. The native <code>make ek-cert-conformance-xcheck</code>{' '}
-          populates these slots; in-browser cert build via <code>openSSLService</code> + raw
-          NV_Write is the follow-up.
-        </div>
         {v2p7Status && (
           <div className="mt-4 text-xs font-mono text-muted-foreground">
-            V2.7 EK key provisioning status (not cert):{' '}
+            V2.7 EK key provisioning status:{' '}
             {v2p7Status.map((s, i) => (
               <span key={i} className="mr-2">
                 {
