@@ -119,7 +119,7 @@ var PqcTpmModule = (() => {
     }
     function initRuntime() {
       runtimeInitialized = true
-      wasmExports['B']()
+      wasmExports['D']()
     }
     function postRun() {
       if (Module['postRun']) {
@@ -353,13 +353,85 @@ var PqcTpmModule = (() => {
     var __emscripten_throw_longjmp = () => {
       throw Infinity
     }
+    var INT53_MAX = 9007199254740992
+    var INT53_MIN = -9007199254740992
+    var bigintToI53Checked = (num) => (num < INT53_MIN || num > INT53_MAX ? NaN : Number(num))
+    function __gmtime_js(time, tmPtr) {
+      time = bigintToI53Checked(time)
+      var date = new Date(time * 1e3)
+      HEAP32[tmPtr >> 2] = date.getUTCSeconds()
+      HEAP32[(tmPtr + 4) >> 2] = date.getUTCMinutes()
+      HEAP32[(tmPtr + 8) >> 2] = date.getUTCHours()
+      HEAP32[(tmPtr + 12) >> 2] = date.getUTCDate()
+      HEAP32[(tmPtr + 16) >> 2] = date.getUTCMonth()
+      HEAP32[(tmPtr + 20) >> 2] = date.getUTCFullYear() - 1900
+      HEAP32[(tmPtr + 24) >> 2] = date.getUTCDay()
+      var start = Date.UTC(date.getUTCFullYear(), 0, 1, 0, 0, 0, 0)
+      var yday = ((date.getTime() - start) / (1e3 * 60 * 60 * 24)) | 0
+      HEAP32[(tmPtr + 28) >> 2] = yday
+    }
+    var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
+      if (!(maxBytesToWrite > 0)) return 0
+      var startIdx = outIdx
+      var endIdx = outIdx + maxBytesToWrite - 1
+      for (var i = 0; i < str.length; ++i) {
+        var u = str.codePointAt(i)
+        if (u <= 127) {
+          if (outIdx >= endIdx) break
+          heap[outIdx++] = u
+        } else if (u <= 2047) {
+          if (outIdx + 1 >= endIdx) break
+          heap[outIdx++] = 192 | (u >> 6)
+          heap[outIdx++] = 128 | (u & 63)
+        } else if (u <= 65535) {
+          if (outIdx + 2 >= endIdx) break
+          heap[outIdx++] = 224 | (u >> 12)
+          heap[outIdx++] = 128 | ((u >> 6) & 63)
+          heap[outIdx++] = 128 | (u & 63)
+        } else {
+          if (outIdx + 3 >= endIdx) break
+          heap[outIdx++] = 240 | (u >> 18)
+          heap[outIdx++] = 128 | ((u >> 12) & 63)
+          heap[outIdx++] = 128 | ((u >> 6) & 63)
+          heap[outIdx++] = 128 | (u & 63)
+          i++
+        }
+      }
+      heap[outIdx] = 0
+      return outIdx - startIdx
+    }
+    var stringToUTF8 = (str, outPtr, maxBytesToWrite) =>
+      stringToUTF8Array(str, HEAPU8, outPtr, maxBytesToWrite)
+    var __tzset_js = (timezone, daylight, std_name, dst_name) => {
+      var currentYear = new Date().getFullYear()
+      var winter = new Date(currentYear, 0, 1)
+      var summer = new Date(currentYear, 6, 1)
+      var winterOffset = winter.getTimezoneOffset()
+      var summerOffset = summer.getTimezoneOffset()
+      var stdTimezoneOffset = Math.max(winterOffset, summerOffset)
+      HEAPU32[timezone >> 2] = stdTimezoneOffset * 60
+      HEAP32[daylight >> 2] = Number(winterOffset != summerOffset)
+      var extractZone = (timezoneOffset) => {
+        var sign = timezoneOffset >= 0 ? '-' : '+'
+        var absOffset = Math.abs(timezoneOffset)
+        var hours = String(Math.floor(absOffset / 60)).padStart(2, '0')
+        var minutes = String(absOffset % 60).padStart(2, '0')
+        return `UTC${sign}${hours}${minutes}`
+      }
+      var winterName = extractZone(winterOffset)
+      var summerName = extractZone(summerOffset)
+      if (summerOffset < winterOffset) {
+        stringToUTF8(winterName, std_name, 17)
+        stringToUTF8(summerName, dst_name, 17)
+      } else {
+        stringToUTF8(winterName, dst_name, 17)
+        stringToUTF8(summerName, std_name, 17)
+      }
+    }
     var _emscripten_get_now = () => performance.now()
     var _emscripten_date_now = () => Date.now()
     var nowIsMonotonic = 1
     var checkWasiClock = (clock_id) => clock_id >= 0 && clock_id <= 3
-    var INT53_MAX = 9007199254740992
-    var INT53_MIN = -9007199254740992
-    var bigintToI53Checked = (num) => (num < INT53_MIN || num > INT53_MAX ? NaN : Number(num))
     function _clock_time_get(clk_id, ignored_precision, ptime) {
       ignored_precision = bigintToI53Checked(ignored_precision)
       if (!checkWasiClock(clk_id)) {
@@ -461,38 +533,6 @@ var PqcTpmModule = (() => {
       }
       return getEnvStrings.strings
     }
-    var stringToUTF8Array = (str, heap, outIdx, maxBytesToWrite) => {
-      if (!(maxBytesToWrite > 0)) return 0
-      var startIdx = outIdx
-      var endIdx = outIdx + maxBytesToWrite - 1
-      for (var i = 0; i < str.length; ++i) {
-        var u = str.codePointAt(i)
-        if (u <= 127) {
-          if (outIdx >= endIdx) break
-          heap[outIdx++] = u
-        } else if (u <= 2047) {
-          if (outIdx + 1 >= endIdx) break
-          heap[outIdx++] = 192 | (u >> 6)
-          heap[outIdx++] = 128 | (u & 63)
-        } else if (u <= 65535) {
-          if (outIdx + 2 >= endIdx) break
-          heap[outIdx++] = 224 | (u >> 12)
-          heap[outIdx++] = 128 | ((u >> 6) & 63)
-          heap[outIdx++] = 128 | (u & 63)
-        } else {
-          if (outIdx + 3 >= endIdx) break
-          heap[outIdx++] = 240 | (u >> 18)
-          heap[outIdx++] = 128 | ((u >> 12) & 63)
-          heap[outIdx++] = 128 | ((u >> 6) & 63)
-          heap[outIdx++] = 128 | (u & 63)
-          i++
-        }
-      }
-      heap[outIdx] = 0
-      return outIdx - startIdx
-    }
-    var stringToUTF8 = (str, outPtr, maxBytesToWrite) =>
-      stringToUTF8Array(str, HEAPU8, outPtr, maxBytesToWrite)
     var _environ_get = (__environ, environ_buf) => {
       var bufSize = 0
       var envp = 0
@@ -650,7 +690,7 @@ var PqcTpmModule = (() => {
     Module['stringToUTF8'] = stringToUTF8
     Module['lengthBytesUTF8'] = lengthBytesUTF8
     var ASM_CONSTS = {
-      627048: ($0, $1) => {
+      633256: ($0, $1) => {
         if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
           crypto.getRandomValues(HEAPU8.subarray($0, $0 + $1))
         }
@@ -708,6 +748,9 @@ var PqcTpmModule = (() => {
       _tpm_wasm_get_nv_size,
       _tpm_wasm_get_nv,
       _tpm_wasm_set_nv,
+      _tpm_wasm_provision_v2p7,
+      _tpm_wasm_get_v2p7_status,
+      _tpm_wasm_get_v2p7_log,
       _setThrew,
       __emscripten_stack_restore,
       __emscripten_stack_alloc,
@@ -741,31 +784,34 @@ var PqcTpmModule = (() => {
       wasmMemory,
       wasmTable
     function assignWasmExports(wasmExports) {
-      _free = Module['_free'] = wasmExports['D']
-      _malloc = Module['_malloc'] = wasmExports['E']
-      _TPMLIB_ChooseTPMVersion = Module['_TPMLIB_ChooseTPMVersion'] = wasmExports['F']
-      _TPMLIB_MainInit = Module['_TPMLIB_MainInit'] = wasmExports['G']
-      _TPMLIB_Terminate = Module['_TPMLIB_Terminate'] = wasmExports['H']
-      _TPMLIB_Process = Module['_TPMLIB_Process'] = wasmExports['I']
-      _TPMLIB_SetBufferSize = Module['_TPMLIB_SetBufferSize'] = wasmExports['J']
-      _TPMLIB_SetProfile = Module['_TPMLIB_SetProfile'] = wasmExports['K']
-      _TPMLIB_WasManufactured = Module['_TPMLIB_WasManufactured'] = wasmExports['L']
-      _TPMLIB_SetDebugFD = Module['_TPMLIB_SetDebugFD'] = wasmExports['M']
-      _TPMLIB_SetDebugLevel = Module['_TPMLIB_SetDebugLevel'] = wasmExports['N']
-      _tpm_wasm_startup = Module['_tpm_wasm_startup'] = wasmExports['O']
-      _tpm_wasm_process = Module['_tpm_wasm_process'] = wasmExports['P']
-      _tpm_wasm_get_nv_size = Module['_tpm_wasm_get_nv_size'] = wasmExports['Q']
-      _tpm_wasm_get_nv = Module['_tpm_wasm_get_nv'] = wasmExports['R']
-      _tpm_wasm_set_nv = Module['_tpm_wasm_set_nv'] = wasmExports['S']
-      _setThrew = wasmExports['T']
-      __emscripten_stack_restore = wasmExports['U']
-      __emscripten_stack_alloc = wasmExports['V']
-      _emscripten_stack_get_current = wasmExports['W']
+      _free = Module['_free'] = wasmExports['F']
+      _malloc = Module['_malloc'] = wasmExports['G']
+      _TPMLIB_ChooseTPMVersion = Module['_TPMLIB_ChooseTPMVersion'] = wasmExports['H']
+      _TPMLIB_MainInit = Module['_TPMLIB_MainInit'] = wasmExports['I']
+      _TPMLIB_Terminate = Module['_TPMLIB_Terminate'] = wasmExports['J']
+      _TPMLIB_Process = Module['_TPMLIB_Process'] = wasmExports['K']
+      _TPMLIB_SetBufferSize = Module['_TPMLIB_SetBufferSize'] = wasmExports['L']
+      _TPMLIB_SetProfile = Module['_TPMLIB_SetProfile'] = wasmExports['M']
+      _TPMLIB_WasManufactured = Module['_TPMLIB_WasManufactured'] = wasmExports['N']
+      _TPMLIB_SetDebugFD = Module['_TPMLIB_SetDebugFD'] = wasmExports['O']
+      _TPMLIB_SetDebugLevel = Module['_TPMLIB_SetDebugLevel'] = wasmExports['P']
+      _tpm_wasm_startup = Module['_tpm_wasm_startup'] = wasmExports['Q']
+      _tpm_wasm_process = Module['_tpm_wasm_process'] = wasmExports['R']
+      _tpm_wasm_get_nv_size = Module['_tpm_wasm_get_nv_size'] = wasmExports['S']
+      _tpm_wasm_get_nv = Module['_tpm_wasm_get_nv'] = wasmExports['T']
+      _tpm_wasm_set_nv = Module['_tpm_wasm_set_nv'] = wasmExports['U']
+      _tpm_wasm_provision_v2p7 = Module['_tpm_wasm_provision_v2p7'] = wasmExports['V']
+      _tpm_wasm_get_v2p7_status = Module['_tpm_wasm_get_v2p7_status'] = wasmExports['W']
+      _tpm_wasm_get_v2p7_log = Module['_tpm_wasm_get_v2p7_log'] = wasmExports['X']
+      _setThrew = wasmExports['Y']
+      __emscripten_stack_restore = wasmExports['Z']
+      __emscripten_stack_alloc = wasmExports['_']
+      _emscripten_stack_get_current = wasmExports['$']
       dynCall_iiii = wasmExports['dynCall_iiii']
       dynCall_iiiii = wasmExports['dynCall_iiiii']
       dynCall_ii = wasmExports['dynCall_ii']
       dynCall_iii = wasmExports['dynCall_iii']
-      dynCall_viiii = wasmExports['X']
+      dynCall_viiii = wasmExports['aa']
       dynCall_viii = wasmExports['dynCall_viii']
       dynCall_vi = wasmExports['dynCall_vi']
       dynCall_vii = wasmExports['dynCall_vii']
@@ -785,33 +831,35 @@ var PqcTpmModule = (() => {
       dynCall_vij = wasmExports['dynCall_vij']
       dynCall_jiji = wasmExports['dynCall_jiji']
       dynCall_iidiiii = wasmExports['dynCall_iidiiii']
-      memory = wasmMemory = wasmExports['A']
-      __indirect_function_table = wasmTable = wasmExports['C']
+      memory = wasmMemory = wasmExports['C']
+      __indirect_function_table = wasmTable = wasmExports['E']
     }
     var wasmImports = {
       f: ___syscall_fcntl64,
-      y: ___syscall_fstat64,
+      A: ___syscall_fstat64,
       q: ___syscall_getdents64,
       b: ___syscall_ioctl,
-      v: ___syscall_lstat64,
-      w: ___syscall_newfstatat,
+      x: ___syscall_lstat64,
+      y: ___syscall_newfstatat,
       g: ___syscall_openat,
-      x: ___syscall_stat64,
+      z: ___syscall_stat64,
       k: __abort_js,
       o: __emscripten_throw_longjmp,
+      r: __gmtime_js,
+      s: __tzset_js,
       j: _clock_time_get,
       l: _emscripten_asm_const_int,
       h: _emscripten_date_now,
       p: _emscripten_resize_heap,
-      s: _environ_get,
-      t: _environ_sizes_get,
+      u: _environ_get,
+      v: _environ_sizes_get,
       a: _fd_close,
       d: _fd_read,
-      r: _fd_seek,
+      t: _fd_seek,
       e: _fd_write,
-      z: invoke_viiii,
+      B: invoke_viiii,
       i: pqc_bridge_mldsa_keygen,
-      u: pqc_bridge_mldsa_sign,
+      w: pqc_bridge_mldsa_sign,
       m: pqc_bridge_mlkem_decap,
       n: pqc_bridge_mlkem_encap,
       c: pqc_bridge_mlkem_keygen,
