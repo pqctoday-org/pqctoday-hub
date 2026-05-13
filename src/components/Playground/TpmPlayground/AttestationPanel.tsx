@@ -280,6 +280,37 @@ export function AttestationPanel({ isWasmReady }: Props) {
         throw new Error(`AK pubkey ${pubkey.length} B ≠ FIPS expected ${ak.fipsPubKeySize} B`)
       }
 
+      // Regression guard: bridge's last paramSet-cached pubkey is intended
+      // as a diagnostic for cache-collision symptoms. The per-key handle
+      // pinned in the libtpms sensitive buffer (pqcCryptoBridge.ts MAGIC
+      // 0x42504751) is the authoritative path; this is a belt-and-braces
+      // warning if for any reason it falls back to the per-paramSet cache
+      // and that cache disagrees with the TPM-stored AK pubkey.
+      try {
+        const { getBridgeMlDsaPubBytes } = await import('../../../wasm/pqcCryptoBridge')
+        const paramSet = ak.label === 'ML-DSA-44' ? 1 : ak.label === 'ML-DSA-65' ? 2 : 3
+        const bridgePub = getBridgeMlDsaPubBytes(paramSet)
+        if (bridgePub && bridgePub.length === pubkey.length) {
+          let match = true
+          for (let i = 0; i < pubkey.length; i++) {
+            // eslint-disable-next-line security/detect-object-injection
+            if (bridgePub[i] !== pubkey[i]) {
+              match = false
+              break
+            }
+          }
+          if (!match) {
+            console.warn(
+              `[Attestation] TPM AK_pub differs from bridge paramSet=${paramSet} cached pub — ` +
+                `the per-key handle pinned in sensitive will sign with the right key, ` +
+                `but a regression in that code path would cause a verify rejection here.`
+            )
+          }
+        }
+      } catch (diagErr) {
+        console.warn('[Attestation] bridge cross-check failed:', diagErr)
+      }
+
       let cmd: Uint8Array
       if (operation === 'quote') {
         const sel = parsePcrSelection(pcrSel)
@@ -315,6 +346,34 @@ export function AttestationPanel({ isWasmReady }: Props) {
         const pubkeyPem = pemSpkiFromRawMlDsa(pubkey, ak)
         const ok = await mldsaVerify(signature, attest, pubkeyPem)
         setResult({ ...partial, verifyResult: ok ? 'pass' : 'fail' })
+
+        // If verify failed, try the bridge's last paramSet-cached pubkey
+        // as a second pass. If THAT verifies, the bug is bridge cache
+        // collision (TPM-stored AK_pub doesn't match the key softhsmv3
+        // actually signed with). If that also fails, the bug is somewhere
+        // in sig generation or message-bytes plumbing.
+        if (!ok) {
+          try {
+            const { getBridgeMlDsaPubBytes } = await import('../../../wasm/pqcCryptoBridge')
+            const paramSet = ak.label === 'ML-DSA-44' ? 1 : ak.label === 'ML-DSA-65' ? 2 : 3
+            const bridgePub = getBridgeMlDsaPubBytes(paramSet)
+            if (bridgePub && bridgePub.length === pubkey.length) {
+              const bridgePem = pemSpkiFromRawMlDsa(bridgePub, ak)
+              const retryOk = await mldsaVerify(signature, attest, bridgePem)
+              if (retryOk) {
+                console.warn(
+                  '[Attestation] verify against TPM-stored AK_pub REJECTED but verify against ' +
+                    'bridge paramSet=' +
+                    paramSet +
+                    ' cached pubkey PASSED — bridge cache collision regressed; ' +
+                    'see pqcCryptoBridge.ts per-key handle path.'
+                )
+              }
+            }
+          } catch (diagErr) {
+            console.warn('[Attestation] bridge-pub retry failed:', diagErr)
+          }
+        }
       } catch (verifyErr: unknown) {
         setResult({
           ...partial,

@@ -81,14 +81,32 @@ let hsmModule: SoftHSMModule | null = null
 let hsmSession: number = 0
 let hsmInitialized = false
 
-// Cache generated key handles for the TPM bridge, keyed by paramSet (1/2/3).
-// Last keygen of each paramSet wins; sign / encap / decap look up by the
-// paramSet libtpms passes in. Without per-paramSet keying, provisioning
-// multiple PQC keys (e.g. V2.7 ML-DSA-65 EK + ML-DSA-65 AK) overwrites
-// the cache and breaks sign for whichever was provisioned first.
+// Per-paramSet fallback cache. Used ONLY when libtpms does not carry the
+// per-object handle in its sensitive buffer (e.g. legacy KEM flows that
+// don't round-trip a sensitive). For ML-DSA keys provisioned via the bridge
+// the per-object handle stored in libtpms's sensitive buffer (first 4 bytes,
+// little-endian) is authoritative — see PQC_BRIDGE_SK_MAGIC below. That
+// per-object encoding survives compliance-suite collisions where two AKs
+// share paramSet=2 but live at different persistent handles.
 const mlkemPubHandleByParam: Map<number, number> = new Map()
 const mlkemPrivHandleByParam: Map<number, number> = new Map()
 const mldsaPrivHandleByParam: Map<number, number> = new Map()
+const mldsaPubHandleByParam: Map<number, number> = new Map()
+// Map of every softhsm ML-DSA private handle ever produced by the bridge.
+// Used by mldsaSign to validate the handle libtpms reads back from its
+// sensitive buffer is one we actually issued. Filters out the unlikely
+// case of random sensitive bytes (placeholder fallback) coincidentally
+// matching a stale handle.
+const mldsaIssuedPrivHandles: Set<number> = new Set()
+const mldsaLastPubBytesByParam: Map<number, Uint8Array> = new Map()
+// Tag the first 4 bytes of the sensitive buffer with a magic prefix so
+// mldsaSign can tell "the bridge wrote this" from "libtpms wrote random
+// seed bytes here". 0x42504751 = "BPGQ" (Bridge PQC Q-sign).
+const PQC_BRIDGE_SK_MAGIC = 0x42504751
+
+export function getBridgeMlDsaPubBytes(paramSet: number): Uint8Array | null {
+  return mldsaLastPubBytesByParam.get(paramSet) ?? null
+}
 
 // ── HSM memory helpers ────────────────────────────────────────────────────────
 function hsmAlloc(size: number): number {
@@ -477,8 +495,8 @@ function mldsaKeygen(
   _seedLen: number,
   pkOutPtr: number,
   pkOutMax: number,
-  _skOutPtr: number,
-  _skOutMax: number
+  skOutPtr: number,
+  skOutMax: number
 ): number {
   if (!hsmModule) return -1
   const M = hsmModule
@@ -540,12 +558,34 @@ function mldsaKeygen(
     }
 
     mldsaPrivHandleByParam.set(paramSet, privH)
+    mldsaPubHandleByParam.set(paramSet, pubH)
+    mldsaIssuedPrivHandles.add(privH)
 
     const pkBytes = extractAttribute(M, pubH, CKA_VALUE, pkOutMax)
     if (!pkBytes || pkBytes.length === 0) return -2
 
     tpm.HEAPU8.set(pkBytes, pkOutPtr)
-    console.log(`[PQC Bridge] ${mldsaParamName(paramSet)} keygen OK: pk=${pkBytes.length}B`)
+    mldsaLastPubBytesByParam.set(paramSet, new Uint8Array(pkBytes))
+
+    // Encode [privH(4 LE) | MAGIC(4 LE) | random padding] into libtpms's
+    // sensitive buffer. mldsaSign reads privH out by the magic tag — this
+    // makes the per-TPM-key softhsm pointer survive cache collisions where
+    // a later mldsaKeygen on the same paramSet would otherwise overwrite
+    // a Map keyed on paramSet. See PQC_BRIDGE_SK_MAGIC above.
+    if (skOutPtr && skOutMax >= 8) {
+      const skBytes = new Uint8Array(Math.min(skOutMax, 32))
+      const dv = new DataView(skBytes.buffer)
+      dv.setUint32(0, privH >>> 0, true)
+      dv.setUint32(4, PQC_BRIDGE_SK_MAGIC, true)
+      if (skBytes.length > 8) {
+        crypto.getRandomValues(skBytes.subarray(8))
+      }
+      tpm.HEAPU8.set(skBytes, skOutPtr)
+    }
+
+    console.log(
+      `[PQC Bridge] ${mldsaParamName(paramSet)} keygen OK: pk=${pkBytes.length}B privH=${privH} pubH=${pubH} (handle pinned in sensitive)`
+    )
     return pkBytes.length
   } catch (e) {
     console.error('[PQC Bridge] mldsaKeygen error:', e)
@@ -556,19 +596,41 @@ function mldsaKeygen(
 // ── ML-DSA sign via PKCS#11 ───────────────────────────────────────────────────
 function mldsaSign(
   paramSet: number,
-  _skPtr: number,
-  _skLen: number,
+  skPtr: number,
+  skLen: number,
   digestPtr: number,
   digestLen: number,
   sigOutPtr: number,
   sigOutMax: number
 ): number {
   if (!hsmModule) return -1
-  const privH = mldsaPrivHandleByParam.get(paramSet) ?? 0
-  if (!privH) return -1
   const M = hsmModule
   const tpm = (globalThis as any).__pqcTpmModule as PqcTpmModule | undefined
   if (!tpm) return -1
+
+  // Per-key handle lookup: libtpms's sensitive buffer carries the softhsm
+  // handle the bridge stamped in at keygen time (first 4 LE bytes, with
+  // MAGIC at offset 4). Falls back to the legacy paramSet-keyed cache if
+  // the sensitive doesn't carry our tag — preserves backward compat for
+  // flows that don't round-trip the sensitive (placeholder / KEM-only).
+  let privH = 0
+  if (skPtr && skLen >= 8) {
+    const dv = new DataView(tpm.HEAPU8.buffer, skPtr, 8)
+    const candidate = dv.getUint32(0, true)
+    const magic = dv.getUint32(4, true)
+    if (magic === PQC_BRIDGE_SK_MAGIC && mldsaIssuedPrivHandles.has(candidate)) {
+      privH = candidate
+    }
+  }
+  if (!privH) {
+    privH = mldsaPrivHandleByParam.get(paramSet) ?? 0
+    if (privH) {
+      console.warn(
+        `[PQC Bridge] mldsaSign: no per-key handle tag in sensitive, falling back to last paramSet=${paramSet} handle ${privH}`
+      )
+    }
+  }
+  if (!privH) return -1
 
   try {
     // C_SignInit

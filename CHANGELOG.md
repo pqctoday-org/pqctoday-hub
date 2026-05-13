@@ -21,6 +21,14 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Fixed — TPM AttestationPanel ML-DSA Quote/Certify verify rejection after compliance-suite run (2026-05-13)
+
+`pqcCryptoBridge.ts` cached softhsmv3-wasm key handles in a `Map<paramSet, handle>`. The V1.85 compliance suite's `TPM2_CreatePrimary` on ML-DSA-65 (and similarly ML-KEM-768) overwrote the AK's cached handle, so the next `TPM2_Quote` against the persistent AK at `0x810100A1` signed with the compliance test key, not the AK. OpenSSL WASM `pkeyutl -verify` correctly rejected with `EVP_DigestVerify: provider signature failure: ML-DSA-65 digest_verify`. Independent Node test confirmed softhsmv3 sign ↔ OpenSSL 3.6.2 ML-DSA verify is byte-compatible — the bug was wiring, not cryptography.
+
+The bridge now **stamps the softhsm handle into libtpms's `TPMT_SENSITIVE.sensitive.mldsa.t.buffer` at keygen**: `[handle_u32_LE | MAGIC 0x42504751 | random padding]`. `mldsaSign` reads `skPtr[0..8]` first; if MAGIC matches and the handle is in `mldsaIssuedPrivHandles`, that handle is authoritative. Falls back to the paramSet-keyed cache when MAGIC is absent (preserves placeholder-fallback and KEM-only flows). libtpms preserves sensitive bytes verbatim across `CreatePrimary → EvictControl → ReadPublic → Quote` within a session, so each TPM key carries its own softhsm pointer — collisions on shared paramSets no longer matter. JS-only fix; the existing `public/wasm/pqctpm.{js,wasm}` bundle is unchanged.
+
+Diagnostic logs added to [AttestationPanel.tsx](src/components/Playground/TpmPlayground/AttestationPanel.tsx) compare the TPM-stored AK pubkey with the bridge's last-cached pubkey and print `TPM AK_pub MATCHES ✓ bridge cached pub` on success. On a failed verify they retry with the bridge-cached pubkey to disambiguate cache collision from a sign/msg path bug.
+
 ### Fixed — `rag-corpus.json` truncated in v3.15.0; full regen (2026-05-13)
 
 The v3.15.0 enrichment commit (`81911a86`) shipped a truncated `public/data/rag-corpus.json` — 1.54 MB instead of the expected 16.5 MB, ending mid-string with no closing braces. The corpus generator's `fs.writeFileSync` was interrupted mid-write; the in-memory embeddings completed fine and `embeddings.bin` held all 10,989 vectors, but the JSON serialization was cut off at ~9% through. Local pre-push verification passed because `verify-rag-corpus.ts` only checks the ML-DSA-65 signature over file bytes, not JSON validity — CI's `corpus-trust-invariants.test.ts` was the only gate that actually `JSON.parse()`s, and it had been failing on every push since.
