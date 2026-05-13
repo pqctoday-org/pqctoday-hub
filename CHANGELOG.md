@@ -1,8 +1,23 @@
 # Changelog
 
-<!-- markdownlint-disable MD024 -->
+<!-- markdownlint-disable MD024 MD060 -->
 
 All notable changes to this project will be documented in this file.
+
+## What's new — May 10–12, 2026
+
+The biggest three-day release window of the year. What you'll actually notice:
+
+- **Trust scores everywhere.** Every standard, algorithm, and threat now shows where it came from and how trustworthy it is. Click a trust badge to see the source.
+- **New `/agility` page.** A maturity dashboard that scores how PQC-ready your organisation is.
+- **Concept Graphs on Compliance tiles.** A small graph icon next to a framework means you can click in and see the documents, algorithms, and concepts that back it.
+- **Search that understands intent.** Type a question on Algorithms, Threats, Patents, Timeline, Compliance, or the renamed **Community** page (was _Leaders_) and get ranked, snippet-previewed results.
+- **In-browser AI assistant.** A local Qwen 3 8B model answers PQC questions without sending anything to a cloud API. Catalog refreshed, reliability improved.
+- **HSM Capacity Calculator — fleet planner.** Pick a region, get one card per location with its workload share and HSM count. New "how many HSMs do I need for X TPS?" explainer shows the math step by step.
+- **About / SBOM panel.** Now displays the dependency versions actually installed, not the caret-floor versions from `package.json`.
+- **Cleaner data.** Trust-tier orphans dropped from 1,316 to 13; CSV rows are deprecated instead of silently deleted; the xwalk pipeline stopped wasting compute on docs that always return zero results.
+
+---
 
 ## [3.15.0] - 2026-05-12
 
