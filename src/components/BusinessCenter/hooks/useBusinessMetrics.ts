@@ -14,6 +14,11 @@ import type {
   LearningProgress,
 } from '@/services/storage/types'
 import { complianceFrameworks, type ComplianceFramework } from '@/data/complianceData'
+import {
+  applicableFrameworks,
+  type ApplicabilityTier,
+  type UserProfile,
+} from '@/utils/applicabilityEngine'
 import { softwareData } from '@/data/migrateData'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import { MODULE_STEP_COUNTS, MODULE_CATALOG } from '@/components/PKILearning/moduleData'
@@ -138,8 +143,58 @@ export interface TrackedFramework extends ComplianceFramework {
   daysUntilDeadline: number | null
   urgency: 'critical' | 'warning' | 'safe' | 'unknown'
   /** Where the framework came from: starred on /compliance, captured by /assess,
-   *  or both. Used to disambiguate provenance in the GovernanceWire UI. */
-  source: 'compliance' | 'assess' | 'both'
+   *  both, or auto-included because the applicability engine flagged it as
+   *  Mandatory for the user's (country, industry) profile. */
+  source: 'compliance' | 'assess' | 'both' | 'auto-mandatory'
+  /** Applicability lens result for the user's current jurisdiction context.
+   *  `null` when the framework matches neither country nor industry — these
+   *  are jurisdictionally irrelevant and Command Center zones filter them. */
+  applicability: { tier: ApplicabilityTier; reason: string } | null
+}
+
+const TIER_PRIORITY: Record<ApplicabilityTier, number> = {
+  mandatory: 0,
+  recognized: 1,
+  'cross-border': 2,
+  advisory: 3,
+  derived: 4,
+  informational: 5,
+}
+
+/**
+ * Project `trackedFrameworks` to the jurisdiction-aware view that Command
+ * Center zones render: drop items with no applicability (mismatched country
+ * AND industry) and sort by tier so Mandatory leads. When the user has no
+ * business context set, returns the input unchanged so the zones don't show
+ * an empty list to users who haven't completed /assess.
+ *
+ * Used by GovernanceWire + RiskManagementWire — keep both in sync via this
+ * helper, do not inline equivalent logic.
+ */
+export interface ApplicableFrameworksView {
+  visible: TrackedFramework[]
+  hiddenCount: number
+  hasContext: boolean
+}
+
+export function selectApplicableFrameworks(
+  trackedFrameworks: TrackedFramework[],
+  industry: string,
+  country: string
+): ApplicableFrameworksView {
+  const hasContext = Boolean(industry || country)
+  if (!hasContext) {
+    return { visible: trackedFrameworks, hiddenCount: 0, hasContext }
+  }
+  const visible = trackedFrameworks
+    .filter((f) => f.applicability !== null)
+    .sort((a, b) => {
+      const ta = a.applicability ? TIER_PRIORITY[a.applicability.tier] : 99
+      const tb = b.applicability ? TIER_PRIORITY[b.applicability.tier] : 99
+      if (ta !== tb) return ta - tb
+      return (a.daysUntilDeadline ?? Infinity) - (b.daysUntilDeadline ?? Infinity)
+    })
+  return { visible, hiddenCount: trackedFrameworks.length - visible.length, hasContext }
 }
 
 export interface InfraLayerCoverage {
@@ -502,14 +557,41 @@ export function useBusinessMetrics(): BusinessMetrics {
     const previousCategoryScores: CategoryScores | null = prevSnapshot?.categoryScores ?? null
 
     // ── Compliance tracking ─────────────────────────────────────
+    // Two stores feed this list with different key conventions:
+    //   complianceStore.myFrameworks   → framework `id`   (e.g. "CNSA_2.0")
+    //   assessmentStore.complianceRequirements → framework `label` (e.g. "CNSA 2.0")
+    // Match both so /assess-selected entries actually surface here (latent bug
+    // pre-2026-05-13: the assess-side path was silently dropped).
     const fromCompliancePage = new Set(complianceStore.myFrameworks)
     const fromAssessment = new Set(assessmentStore.complianceRequirements)
-    const trackedIds = new Set([...fromCompliancePage, ...fromAssessment])
     const now = new Date()
     const currentYear = now.getFullYear()
 
+    // Applicability lens — same engine /compliance For-You uses. Frameworks
+    // tagged `mandatory` for the user's (country, industry) are auto-included
+    // even without an explicit star, so AU + Finance users see ASD ISM out of
+    // the box without rummaging through /compliance.
+    const profile: UserProfile = {
+      industry: assessmentStore.industry || null,
+      country: assessmentStore.country || null,
+      region: personaStore.selectedRegion,
+    }
+    const applicabilityResults = applicableFrameworks(profile)
+    const applicabilityById = new Map(
+      applicabilityResults.map((r) => [r.item.id, { tier: r.tier, reason: r.reason }])
+    )
+    const mandatoryIds = new Set(
+      applicabilityResults.filter((r) => r.tier === 'mandatory').map((r) => r.item.id)
+    )
+
     const trackedFrameworks: TrackedFramework[] = complianceFrameworks
-      .filter((f) => trackedIds.has(f.id))
+      .filter(
+        (f) =>
+          fromCompliancePage.has(f.id) ||
+          fromAssessment.has(f.id) ||
+          fromAssessment.has(f.label) ||
+          mandatoryIds.has(f.id)
+      )
       .map((f) => {
         const deadlineYear = parseDeadlineYear(f.deadline)
         const daysUntilDeadline = deadlineYear
@@ -527,11 +609,16 @@ export function useBusinessMetrics(): BusinessMetrics {
         }
 
         const inCompliance = fromCompliancePage.has(f.id)
-        const inAssess = fromAssessment.has(f.id)
-        const source: TrackedFramework['source'] =
-          inCompliance && inAssess ? 'both' : inCompliance ? 'compliance' : 'assess'
+        const inAssess = fromAssessment.has(f.id) || fromAssessment.has(f.label)
+        let source: TrackedFramework['source']
+        if (inCompliance && inAssess) source = 'both'
+        else if (inCompliance) source = 'compliance'
+        else if (inAssess) source = 'assess'
+        else source = 'auto-mandatory'
 
-        return { ...f, daysUntilDeadline, urgency, source }
+        const applicability = applicabilityById.get(f.id) ?? null
+
+        return { ...f, daysUntilDeadline, urgency, source, applicability }
       })
       .sort((a, b) => (a.daysUntilDeadline ?? Infinity) - (b.daysUntilDeadline ?? Infinity))
 

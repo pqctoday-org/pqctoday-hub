@@ -21,6 +21,22 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Fixed — Command Center showed wrong-country regulations (2026-05-13)
+
+**What you'll notice:** On `/business`, if you'd set Country = Australia and Industry = Finance & Banking, the **Governance** and **Data-Centric Risk Management** zones were listing **NIS2 Directive** (EU), **ANSSI** (France), and **CNSA 2.0** (USA) instead of the regulations that actually apply to you. Both zones now use the same applicability lens that the `/compliance` "For You" tab already uses, so an Australian finance user sees **ASD ISM** (with "Your regulator: ASD") at the top with a **MANDATORY** badge, and any non-applicable regulations you'd previously starred are filtered out with a small footer like _"3 hidden — not applicable to Australia · Review on Compliance"_.
+
+**Why it was wrong:** The tracked-frameworks list was the union of "what you starred on /compliance" + "what you picked on /assess" with no country/industry filter applied at render time. Stars persisted across context changes, so switching country never cleaned them up. The applicability engine that solves this exists since v3.12.x but was never wired into the Command Center.
+
+**Under the hood:**
+
+- New `selectApplicableFrameworks()` helper in [useBusinessMetrics.ts](src/components/BusinessCenter/hooks/useBusinessMetrics.ts) — single source of truth used by both [GovernanceWire.tsx](src/components/BusinessCenter/sections/wires/GovernanceWire.tsx) and [RiskManagementWire.tsx](src/components/BusinessCenter/sections/wires/RiskManagementWire.tsx). Drops frameworks the engine has no opinion on, sorts by tier so Mandatory leads.
+- `TrackedFramework` gains an `applicability: { tier, reason }` field and a new `source: 'auto-mandatory'` value for frameworks the engine auto-included from your country + industry (no manual starring needed).
+- [FrameworkDeadlineList.tsx](src/components/BusinessCenter/widgets/FrameworkDeadlineList.tsx) renders the regulator subtitle ("Your regulator: ASD") and a tier badge per row.
+- Fixed a latent join bug: `assessmentStore.complianceRequirements` stores framework **labels** (e.g. `"CNSA 2.0"`) but the trackedFrameworks filter was matching only by **id** (e.g. `"CNSA-2"`), so anything you'd selected via the /assess wizard was silently invisible in the Command Center. Both joins now succeed.
+- 4 new unit tests in [useBusinessMetrics.test.ts](src/components/BusinessCenter/hooks/useBusinessMetrics.test.ts) lock in the auto-include, mismatch-filter, label/id join, and empty-context behaviors.
+
+**Not yet fixed (tracked for follow-up):** The CSWP.39 maturity-tier math in [cswp39Tier.ts](src/components/BusinessCenter/lib/cswp39Tier.ts) still counts wrong-jurisdiction frameworks toward "Tier 2 · Risk-Informed". The other four sub-zone chips on the Governance card (Supply Chains, Crypto Policies, Crypto Architecture, the standards-vs-regulations split) remain visual-only with no widget behind them.
+
 ### Fixed — TPM AttestationPanel ML-DSA Quote/Certify verify rejection after compliance-suite run (2026-05-13)
 
 `pqcCryptoBridge.ts` cached softhsmv3-wasm key handles in a `Map<paramSet, handle>`. The V1.85 compliance suite's `TPM2_CreatePrimary` on ML-DSA-65 (and similarly ML-KEM-768) overwrote the AK's cached handle, so the next `TPM2_Quote` against the persistent AK at `0x810100A1` signed with the compliance test key, not the AK. OpenSSL WASM `pkeyutl -verify` correctly rejected with `EVP_DigestVerify: provider signature failure: ML-DSA-65 digest_verify`. Independent Node test confirmed softhsmv3 sign ↔ OpenSSL 3.6.2 ML-DSA verify is byte-compatible — the bug was wiring, not cryptography.

@@ -78,6 +78,49 @@ const validBodyTypes: BodyType[] = [
   'industry_alliance',
 ]
 
+// ISO alpha-2 + PQC-REGION-* overlays used in the normalized compliance CSV
+// (post-2026-05-09 vocab pass) → full country names that the rest of the app
+// (region facet, country dropdown, flag map, "For You" filter, assess defaults)
+// keys off. Identity entries keep older / legacy rows working.
+const COUNTRY_CODE_TO_NAME: Record<string, string> = {
+  AE: 'United Arab Emirates',
+  AU: 'Australia',
+  BH: 'Bahrain',
+  BR: 'Brazil',
+  CA: 'Canada',
+  CH: 'Switzerland',
+  CN: 'China',
+  DE: 'Germany',
+  DK: 'Denmark',
+  ES: 'Spain',
+  FR: 'France',
+  GB: 'United Kingdom',
+  HK: 'Hong Kong',
+  IL: 'Israel',
+  IN: 'India',
+  IT: 'Italy',
+  JO: 'Jordan',
+  JP: 'Japan',
+  KE: 'Kenya',
+  KR: 'South Korea',
+  MY: 'Malaysia',
+  NL: 'Netherlands',
+  NZ: 'New Zealand',
+  SA: 'Saudi Arabia',
+  SG: 'Singapore',
+  TW: 'Taiwan',
+  US: 'United States',
+  ZA: 'South Africa',
+  'PQC-REGION-EU': 'European Union',
+  'PQC-REGION-GLOBAL': 'Global',
+}
+
+function expandCountryToken(token: string): string {
+  const trimmed = token.trim()
+  // eslint-disable-next-line security/detect-object-injection
+  return COUNTRY_CODE_TO_NAME[trimmed] ?? trimmed
+}
+
 const CURRENT_YEAR = new Date().getFullYear()
 
 /**
@@ -142,7 +185,7 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     label: row.label,
     description: row.description || '',
     industries: splitSemicolon(row.industries),
-    countries: splitSemicolon(row.countries),
+    countries: splitSemicolon(row.countries).map(expandCountryToken),
     requiresPQC: parseBoolYesNo(row.requires_pqc),
     deadline,
     deadlineYear,

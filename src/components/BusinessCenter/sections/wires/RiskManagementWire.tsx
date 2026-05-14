@@ -31,8 +31,10 @@ const CATEGORY_TREND_ROWS: {
   { key: 'regulatoryPressure', label: 'Regulatory Pressure', lowerIsBetter: true },
   { key: 'organizationalReadiness', label: 'Org. Readiness', lowerIsBetter: false },
 ]
+import { useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import type { BusinessMetrics } from '../../hooks/useBusinessMetrics'
+import { selectApplicableFrameworks } from '../../hooks/useBusinessMetrics'
 import { FrameworkDeadlineList } from '../../widgets/FrameworkDeadlineList'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { useThreatsData } from '@/hooks/useThreatsData'
@@ -182,6 +184,11 @@ function HealthTile({ metrics }: { metrics: BusinessMetrics }) {
 
 function FrameworkBlock({ metrics }: { metrics: BusinessMetrics }) {
   const navigate = useNavigate()
+  const { visible, hiddenCount, hasContext } = useMemo(
+    () => selectApplicableFrameworks(metrics.trackedFrameworks, metrics.industry, metrics.country),
+    [metrics.trackedFrameworks, metrics.industry, metrics.country]
+  )
+
   if (metrics.trackedFrameworks.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-border bg-muted/10 p-3">
@@ -210,7 +217,7 @@ function FrameworkBlock({ metrics }: { metrics: BusinessMetrics }) {
         <div className="flex items-center gap-2">
           <Calendar size={14} className="text-muted-foreground" />
           <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
-            Tracked frameworks ({metrics.trackedFrameworks.length})
+            Tracked frameworks ({visible.length})
           </span>
         </div>
         <Button
@@ -222,7 +229,27 @@ function FrameworkBlock({ metrics }: { metrics: BusinessMetrics }) {
           Open Compliance <ArrowRight size={12} className="ml-0.5" />
         </Button>
       </div>
-      <FrameworkDeadlineList frameworks={metrics.trackedFrameworks} limit={6} />
+      {visible.length === 0 ? (
+        <p className="text-xs text-muted-foreground py-2">
+          No frameworks tracked for {metrics.industry || 'your industry'}
+          {metrics.country ? ` in ${metrics.country}` : ''} yet — open Compliance to add some.
+        </p>
+      ) : (
+        <FrameworkDeadlineList frameworks={visible} limit={6} />
+      )}
+      {hasContext && hiddenCount > 0 && (
+        <p className="text-[11px] text-muted-foreground inline-flex items-center gap-1 flex-wrap">
+          {hiddenCount} hidden — not applicable to {metrics.country || metrics.industry}.
+          <Button
+            variant="link"
+            size="sm"
+            onClick={() => navigate('/compliance')}
+            className="h-auto p-0 text-[11px]"
+          >
+            Review on Compliance
+          </Button>
+        </p>
+      )}
     </div>
   )
 }
