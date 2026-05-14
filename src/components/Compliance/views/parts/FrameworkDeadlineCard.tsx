@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
-import { Network, ShieldCheck } from 'lucide-react'
+import { ChevronDown, ChevronRight, Network, ShieldCheck } from 'lucide-react'
 import type { ComplianceFramework } from '../../../../data/complianceData'
 import { conceptIdForFramework } from '../../../../data/complianceData'
 import { hasGraphEdges } from '../../../../utils/conceptXwalkGraph'
@@ -37,11 +37,20 @@ export function FrameworkDeadlineCard({
 }: FrameworkDeadlineCardProps) {
   const fw = result.item
   const [graphOpen, setGraphOpen] = useState(false)
+  const [eventsExpanded, setEventsExpanded] = useState(false)
   const graphConceptId = conceptIdForFramework(fw)
   const showGraphIcon = graphConceptId !== undefined && hasGraphEdges(graphConceptId)
 
   const styles = TIER_STYLES[result.tier]
   const sortedEvents = [...events].sort((a, b) => a.item.startYear - b.item.startYear)
+  const earliestYear = sortedEvents[0]?.item.startYear
+  const latestYear = sortedEvents[sortedEvents.length - 1]?.item.startYear
+  const yearRange =
+    earliestYear !== undefined && latestYear !== undefined
+      ? earliestYear === latestYear
+        ? `${earliestYear}`
+        : `${earliestYear}–${latestYear}`
+      : undefined
 
   const headerContent = (
     <div className="flex items-start gap-2 w-full">
@@ -106,7 +115,29 @@ export function FrameworkDeadlineCard({
       )}
 
       {sortedEvents.length > 0 && (
-        <ul className="pl-6 space-y-0.5 border-l-2 border-border ml-1">
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => setEventsExpanded((v) => !v)}
+          aria-expanded={eventsExpanded}
+          aria-controls={`fw-events-${fw.id}`}
+          className="flex items-center gap-1 h-auto py-1 px-1 -mx-1 text-[11px] text-muted-foreground hover:text-foreground hover:bg-muted/40 rounded"
+        >
+          {eventsExpanded ? (
+            <ChevronDown size={12} aria-hidden="true" />
+          ) : (
+            <ChevronRight size={12} aria-hidden="true" />
+          )}
+          <span>
+            {sortedEvents.length} milestone{sortedEvents.length === 1 ? '' : 's'}
+            {yearRange ? ` · ${yearRange}` : ''}
+          </span>
+        </Button>
+      )}
+
+      {sortedEvents.length > 0 && eventsExpanded && (
+        <ul id={`fw-events-${fw.id}`} className="pl-6 space-y-0.5 border-l-2 border-border ml-1">
           {sortedEvents.map((evRes, i) => {
             const ev = evRes.item
             const content = (
