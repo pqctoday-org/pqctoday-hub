@@ -21,6 +21,10 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Fixed — Timeline document cards: whole tile is now clickable (2026-05-13)
+
+On the `/timeline` page (Documents · Cards view), each document tile (title, organization, badges, period) was purely informational — the only way to open the detail popover was to click the small **Details** button at the bottom. The whole `<motion.article>` had no `onClick`. Now the entire tile is the click target: `role="button"`, keyboard support (Enter / Space), a focus ring for keyboard navigation, and a subtle `hover:bg-card/70` cue. The Source link, Endorse, and Flag buttons in the footer keep their dedicated behaviors via `stopPropagation` so they don't double-fire the popover. The explicit "Details" button stays as a discoverability affordance. [TimelineDocumentCard.tsx](src/components/Timeline/TimelineDocumentCard.tsx)
+
 ### Fixed — Command Center showed wrong-country regulations (2026-05-13)
 
 **What you'll notice:** On `/business`, if you'd set Country = Australia and Industry = Finance & Banking, the **Governance** and **Data-Centric Risk Management** zones were listing **NIS2 Directive** (EU), **ANSSI** (France), and **CNSA 2.0** (USA) instead of the regulations that actually apply to you. Both zones now use the same applicability lens that the `/compliance` "For You" tab already uses, so an Australian finance user sees **ASD ISM** (with "Your regulator: ASD") at the top with a **MANDATORY** badge, and any non-applicable regulations you'd previously starred are filtered out with a small footer like _"3 hidden — not applicable to Australia · Review on Compliance"_.

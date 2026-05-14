@@ -51,7 +51,17 @@ export const TimelineDocumentCard = ({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, delay: index * 0.03 }}
-      className="glass-panel p-5 flex flex-col h-full hover:border-secondary/50 transition-colors bg-card/50 relative"
+      role="button"
+      tabIndex={0}
+      onClick={() => onViewDetails(row)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onViewDetails(row)
+        }
+      }}
+      aria-label={`View details for ${row.title}`}
+      className="glass-panel p-5 flex flex-col h-full hover:border-secondary/50 hover:bg-card/70 transition-colors bg-card/50 relative cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1"
     >
       {row.status && (
         <div className="absolute top-3 right-3">
@@ -125,10 +135,18 @@ export const TimelineDocumentCard = ({
       </div>
 
       {/* Footer actions */}
-      <div className="flex items-center gap-2 mt-auto pt-3 border-t border-border">
+      <div
+        className="flex items-center gap-2 mt-auto pt-3 border-t border-border"
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
+        role="presentation"
+      >
         <Button
           variant="ghost"
-          onClick={() => onViewDetails(row)}
+          onClick={(e) => {
+            e.stopPropagation()
+            onViewDetails(row)
+          }}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/20 hover:border-primary/40 text-primary text-xs font-medium transition-all"
           aria-label={`View details for ${row.title}`}
         >
@@ -144,6 +162,7 @@ export const TimelineDocumentCard = ({
             href={row.sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-muted/30 border border-border text-muted-foreground hover:text-foreground text-xs font-medium transition-all"
             aria-label={`View source for ${row.title}`}
           >
