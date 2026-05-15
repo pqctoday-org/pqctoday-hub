@@ -78,7 +78,6 @@ type ViewMode = 'heatmap' | 'detailed'
 
 interface DimensionBadgeProps {
   status: DimensionStatus
-  compact?: boolean
 }
 
 function dimensionLabel(value: DimensionStatusValue): string {
@@ -151,25 +150,18 @@ function DeploymentBadge({ status }: { status: DimensionStatus }) {
   )
 }
 
-function DimensionBadge({ status, compact = false }: DimensionBadgeProps) {
+function DimensionBadge({ status }: DimensionBadgeProps) {
   return (
-    <div className="flex flex-col gap-1">
-      <div className="flex flex-wrap items-center gap-1">
-        <span
-          className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium ${dimensionTone(
-            status.value
-          )}`}
-          title={status.note}
-        >
-          {dimensionLabel(status.value)}
-        </span>
-        <DeploymentBadge status={status} />
-      </div>
-      {!compact && (
-        <span className="text-[10px] leading-tight text-muted-foreground line-clamp-2">
-          {status.note}
-        </span>
-      )}
+    <div className="flex flex-wrap items-center gap-1">
+      <span
+        className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium ${dimensionTone(
+          status.value
+        )}`}
+        title={status.note}
+      >
+        {dimensionLabel(status.value)}
+      </span>
+      <DeploymentBadge status={status} />
     </div>
   )
 }
@@ -789,16 +781,16 @@ export function PQCProtocolMatrix() {
                     </>
                   )}
                   <td className="px-3 py-3">
-                    <DimensionBadge status={p.dimensions.pureKem} compact={isHeatmap} />
+                    <DimensionBadge status={p.dimensions.pureKem} />
                   </td>
                   <td className="px-3 py-3">
-                    <DimensionBadge status={p.dimensions.hybridKem} compact={isHeatmap} />
+                    <DimensionBadge status={p.dimensions.hybridKem} />
                   </td>
                   <td className="px-3 py-3">
-                    <DimensionBadge status={p.dimensions.pureSig} compact={isHeatmap} />
+                    <DimensionBadge status={p.dimensions.pureSig} />
                   </td>
                   <td className="px-3 py-3">
-                    <DimensionBadge status={p.dimensions.hybridSig} compact={isHeatmap} />
+                    <DimensionBadge status={p.dimensions.hybridSig} />
                   </td>
                   <td className="px-3 py-3">
                     {isHeatmap ? (
