@@ -1,0 +1,110 @@
+name: Reference-Cache Drift Audit
+
+# Weekly drift check on the locally-cached library / timeline / threats
+# documents under public/{library,timeline,threats}/. Re-fetches every
+# `downloaded` entry, hashes the response, and compares against the
+# `sha256` stored in each manifest.json. Closes the trust-engine
+# explainability doc §16 Opportunity #14 (per-document content hashes).
+#
+# The audit script always exits 0 on completion (drift is a finding,
+# not an error); this workflow examines the JSON report and only opens
+# a tracking issue when actual drift is detected.
+
+on:
+  schedule:
+    - cron: '15 9 * * 1' # Mondays at 09:15 UTC (15 min after trusted-source-freshness)
+  workflow_dispatch:
+    inputs:
+      collection:
+        description: 'Collection to audit (library / timeline / threats / all)'
+        required: false
+        default: 'all'
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run reference-cache drift audit
+        run: |
+          COLLECTION="${{ github.event.inputs.collection || 'all' }}"
+          npx tsx scripts/audit-reference-cache-drift.ts --collection "$COLLECTION"
+
+      - name: Upload drift report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reference-cache-drift-report
+          path: public/data/reference-cache-drift.json
+          retention-days: 90
+
+      - name: Summarise drift counts
+        id: summary
+        run: |
+          if [ ! -f public/data/reference-cache-drift.json ]; then
+            echo "report_missing=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          DRIFT=$(jq '.classifications.drift' public/data/reference-cache-drift.json)
+          SIZE_MISMATCH=$(jq '.classifications["size-mismatch"]' public/data/reference-cache-drift.json)
+          FETCH_ERROR=$(jq '.classifications["fetch-error"]' public/data/reference-cache-drift.json)
+          echo "drift=$DRIFT" >> $GITHUB_OUTPUT
+          echo "size_mismatch=$SIZE_MISMATCH" >> $GITHUB_OUTPUT
+          echo "fetch_error=$FETCH_ERROR" >> $GITHUB_OUTPUT
+          echo "Drift counts — drift=$DRIFT size-mismatch=$SIZE_MISMATCH fetch-error=$FETCH_ERROR"
+
+      - name: Open tracking issue when drift detected
+        if: steps.summary.outputs.drift != '0' || steps.summary.outputs.size_mismatch != '0'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs')
+            const report = JSON.parse(fs.readFileSync('public/data/reference-cache-drift.json', 'utf-8'))
+            const lines = [
+              '## Reference-cache drift detected',
+              '',
+              `Audit run: ${report.generatedAt}`,
+              `Entries checked: ${report.totalEntries}`,
+              '',
+              '| Classification | Count |',
+              '|---|---:|',
+              ...Object.entries(report.classifications).map(
+                ([k, v]) => `| ${k} | ${v} |`
+              ),
+              '',
+              '### Drifted entries',
+              '',
+              ...report.findings
+                .filter((f) => f.classification === 'drift' || f.classification === 'size-mismatch')
+                .slice(0, 30)
+                .map((f) =>
+                  `- **${f.collection}/${f.refId}** — ${f.classification}\n  - ${f.url}\n  - stored sha256: \`${f.storedSha256 ?? '—'}\`\n  - observed sha256: \`${f.observedSha256 ?? '—'}\``
+                ),
+              '',
+              'See the `reference-cache-drift-report` artifact for the full JSON.',
+            ]
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Reference-cache drift detected (week of ${context.runId})`,
+              body: lines.join('\n'),
+              labels: ['reference-cache:drift', 'trust-engine'],
+            })
