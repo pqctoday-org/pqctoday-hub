@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { ExternalLink, Loader2, Play, ShieldCheck } from 'lucide-react'
-import { clsx } from 'clsx'
+import { ExternalLink, Loader2, Play } from 'lucide-react'
 import { useTLSStore, type SimulationResult } from '@/store/tls-learning.store'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { generateOpenSSLConfig } from '../PKILearning/modules/TLSBasics/utils/configGenerator'
@@ -42,10 +41,10 @@ export const TLSSimulatorTab: React.FC = () => {
     serverMessage,
   } = useTLSStore()
 
-  // HSM mode: when enabled, the next handshake uses softhsmv3 (statically
-  // linked into openssl.wasm via pkcs11-provider) to hold the server private
-  // key. CertificateVerify routes through C_SignInit + C_SignMessage.
-  const [hsmMode, setHsmMode] = useState<boolean>(false)
+  /* HSM mode toggle removed: it never produced a successful handshake for
+   * end-users and the "HSM ON" toggle was misleading. softhsm v3 +
+   * pkcs11-provider remain statically linked into openssl.wasm; the wiring
+   * just isn't user-facing. */
 
   // Initialize default certificates on first mount
   useEffect(() => {
@@ -143,8 +142,7 @@ export const TLSSimulatorTab: React.FC = () => {
         clientCfg,
         serverCfg,
         simFiles,
-        currentCommands,
-        { hsmMode }
+        currentCommands
       )
 
       try {
@@ -170,15 +168,7 @@ export const TLSSimulatorTab: React.FC = () => {
     } finally {
       setIsSimulating(false)
     }
-  }, [
-    clientConfig,
-    serverConfig,
-    clientMessage,
-    serverMessage,
-    setIsSimulating,
-    setResults,
-    hsmMode,
-  ])
+  }, [clientConfig, serverConfig, clientMessage, serverMessage, setIsSimulating, setResults])
 
   // Re-run when commands change (Replay trigger)
   useEffect(() => {
@@ -256,41 +246,48 @@ export const TLSSimulatorTab: React.FC = () => {
         </Link>
       </div>
 
-      {/* Live HSM toggle. When ON, the server's ML-DSA-65 private key is
-       *  generated inside softhsmv3 (statically linked into openssl.wasm) and
-       *  the CertificateVerify sign call routes through pkcs11-provider →
-       *  C_SignInit + C_SignMessage. */}
-      <div
-        className={clsx(
-          'glass-panel p-4 flex items-center justify-between gap-3',
-          hsmMode && 'border-success/40'
-        )}
-      >
-        <div className="flex items-start gap-3">
-          <ShieldCheck
-            size={20}
-            className={clsx('mt-0.5', hsmMode ? 'text-success' : 'text-muted-foreground')}
-          />
-          <div>
-            <div className="text-sm font-semibold">
-              Live HSM Mode (softhsmv3 + pkcs11-provider, statically linked into openssl.wasm)
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {hsmMode
-                ? 'Next run: server private key generated inside softhsmv3; CertificateVerify routes through PKCS#11 (C_SignInit + C_SignMessage). Private key never leaves the simulated HSM.'
-                : 'OFF: handshake uses bundled PEM keys (the default). Toggle ON to demonstrate HSM-resident server key signing.'}
-            </p>
-          </div>
-        </div>
-        <Button
-          variant={hsmMode ? 'gradient' : 'outline'}
-          onClick={() => setHsmMode((v) => !v)}
-          disabled={isSpinning}
-          className="px-4 py-2 text-xs font-bold whitespace-nowrap"
-          aria-pressed={hsmMode}
-        >
-          {hsmMode ? 'HSM ON' : 'HSM OFF'}
-        </Button>
+      {/* Capabilities banner — what this simulator does and does NOT exercise
+       *  today. Surfaces gaps explicitly so users aren't misled by dropdown
+       *  options whose runtime support is incomplete. */}
+      <div className="glass-panel p-4 border-l-4 border-primary/50">
+        <div className="text-sm font-semibold mb-2">What this TLS 1.3 simulator supports today</div>
+        <ul className="text-xs text-muted-foreground space-y-1">
+          <li>
+            <span className="text-status-success font-semibold">✓ Pure PQC keys</span> — ML-DSA-44 /
+            ML-DSA-65 / ML-DSA-87 server &amp; client certs (FIPS 204)
+          </li>
+          <li>
+            <span className="text-status-success font-semibold">✓ Hybrid KEM</span> —
+            X25519MLKEM768, SecP256r1MLKEM768, X448MLKEM1024, SecP384r1MLKEM1024 (TLS 1.3 key share,
+            IETF draft-connolly-tls-mlkem)
+          </li>
+          <li>
+            <span className="text-status-success font-semibold">✓ Classical certs</span> — RSA-2048,
+            ECDSA-P256, Ed25519 (bundled PEMs, OpenSSL native sign)
+          </li>
+          <li>
+            <span className="text-status-success font-semibold">✓ Pure PQC certs</span> — ML-DSA-44
+            / ML-DSA-87 cert + key bundled, real ML-DSA CertificateVerify
+          </li>
+          <li>
+            <span className="text-status-warning font-semibold">
+              ⚠ Hybrid (composite) certs — not supported yet
+            </span>{' '}
+            — LAMPS composite-sig (ML-DSA + RSA-PSS / ECDSA / Ed25519) is on the roadmap. The
+            dropdown rows for composite are currently a placeholder that substitutes the nearest
+            pure ML-DSA PEM (the wire signature is ML-DSA, not composite). Provider machinery for
+            composite is built in the vendored pkcs11-provider fork (composite.c) but the runtime
+            cert-minting path is not yet wired here.
+          </li>
+          <li>
+            <span className="text-status-warning font-semibold">
+              ⚠ HSM-backed signing — removed
+            </span>{' '}
+            — The previous "HSM ON" toggle never produced a successful handshake for end-users and
+            was misleading. Removed pending a deliberate revival. softhsm v3 + pkcs11-provider
+            remain statically linked into openssl.wasm; the wiring just isn't user-facing.
+          </li>
+        </ul>
       </div>
 
       <div className="flex justify-end gap-3">

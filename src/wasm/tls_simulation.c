@@ -22,10 +22,7 @@
  * CertificateVerify sign operation routes through pkcs11-provider during the
  * handshake. Returns 0 on no-op / success; non-zero on error. */
 extern int hsm_mode_enabled(void);
-extern const char *hsm_server_algorithm(void);
-extern const char *hsm_client_algorithm(void);
 extern int hsm_setup_server_credentials(SSL_CTX *s_ctx);
-extern int hsm_setup_client_credentials(SSL_CTX *c_ctx);
 
 // Helper to append to valid JSON buffer
 // Real implementation would use dynamic buffer resizing
@@ -407,32 +404,17 @@ void msg_callback(int write_p, int version, int content_type,
   // the private key lives in softhsmv3 and pkcs11-provider routes sign through
   // C_SignInit + C_Sign.  We synthesise those log events here so the PKCS#11
   // log panel shows the sign operation that happened in the HSM.
-  //
-  // Composite-ML-DSA certs go through the composite signature dispatch which
-  // internally calls C_Sign twice (once per subkey). The signature length on
-  // the wire is mldsa_sig_len + classical_sig_len, so a value notably larger
-  // than 3309/4627 indicates a composite signature took place.
   if (msg_type == 15 && write_p && strcmp(side, "server") == 0 &&
       hsm_mode_enabled()) {
-    const int is_composite =
-        (len > 3309 + 64 && len < 4627) || /* MLDSA-65 + classical */
-        (len > 4627 + 64);                 /* MLDSA-87 + classical */
-    if (is_composite) {
-      log_event("server", "pkcs11_call",
-                "Composite-ML-DSA CertificateVerify: M' built per draft-19 §3.2; "
-                "two C_Sign calls dispatched (ML-DSA + classical), wire signature "
-                "is the concat mldsaSig||classicalSig per draft-19 §4.3");
-    } else {
-      log_event("server", "pkcs11_call",
-                "C_SignInit(CKM_ML_DSA) — CertificateVerify: ML-DSA sign over TLS transcript hash");
-      char sig_msg[128];
-      snprintf(sig_msg, sizeof(sig_msg),
-               "C_Sign → ML-DSA signature (%zu B) over TLS 1.3 transcript hash (private key never exposed)",
-               len);
-      log_event("server", "pkcs11_call", sig_msg);
-      log_event("server", "pkcs11_call",
-                "CertificateVerify routed through pkcs11-provider → softhsmv3");
-    }
+    log_event("server", "pkcs11_call",
+              "C_SignInit(CKM_ML_DSA) — CertificateVerify: ML-DSA sign over TLS transcript hash");
+    char sig_msg[128];
+    snprintf(sig_msg, sizeof(sig_msg),
+             "C_Sign → ML-DSA signature (%zu B) over TLS 1.3 transcript hash (private key never exposed)",
+             len);
+    log_event("server", "pkcs11_call", sig_msg);
+    log_event("server", "pkcs11_call",
+              "CertificateVerify routed through pkcs11-provider → softhsmv3");
   }
 }
 
@@ -536,20 +518,7 @@ char *execute_tls_simulation(const char *client_conf_path,
   if (client_conf_path)
     apply_config(c_ctx, client_conf_path, "client");
 
-  /* Client cert/key: HSM-mode (per-side algorithm selected via the cert
-   * dropdown) takes precedence; PEM fallback is the existing /ssl/client.*
-   * file load. */
-  if (hsm_client_algorithm()[0] != '\0') {
-    int hsm_ok = (hsm_setup_client_credentials(c_ctx) == 0);
-    if (!hsm_ok) {
-      log_event("client", "warning",
-                "HSM setup failed; falling back to PEM client cert/key");
-      if (access("/ssl/client.crt", F_OK) == 0)
-        SSL_CTX_use_certificate_file(c_ctx, "/ssl/client.crt", SSL_FILETYPE_PEM);
-      if (access("/ssl/client.key", F_OK) == 0)
-        SSL_CTX_use_PrivateKey_file(c_ctx, "/ssl/client.key", SSL_FILETYPE_PEM);
-    }
-  } else if (access("/ssl/client.crt", F_OK) == 0) {
+  if (access("/ssl/client.crt", F_OK) == 0) {
     SSL_CTX_use_certificate_file(c_ctx, "/ssl/client.crt", SSL_FILETYPE_PEM);
     if (access("/ssl/client.key", F_OK) == 0)
       SSL_CTX_use_PrivateKey_file(c_ctx, "/ssl/client.key", SSL_FILETYPE_PEM);
@@ -568,14 +537,11 @@ char *execute_tls_simulation(const char *client_conf_path,
   if (server_conf_path)
     apply_config(s_ctx, server_conf_path, "server");
 
-  if (hsm_server_algorithm()[0] != '\0') {
-    /* HSM mode for server: per-side algorithm picked from the cert dropdown
-     * (mldsa-44/65/87 / rsa-2048 / ecdsa-p256 / composite-*). softhsm
-     * generates a fresh keypair + a self-signed cert is minted via X509_sign
-     * routing through pkcs11-provider. The bundled PEM server.key on disk
-     * (if any) is intentionally ignored. */
-    int hsm_ok = (hsm_setup_server_credentials(s_ctx) == 0);
-    if (!hsm_ok) {
+  if (hsm_mode_enabled()) {
+    /* HSM mode: server private key is generated inside softhsmv3 and
+     * referenced via a pkcs11: URI loaded through pkcs11-provider. The PEM
+     * server.key on disk (if any) is intentionally ignored. */
+    if (hsm_setup_server_credentials(s_ctx) != 0) {
       log_event("server", "warning",
                 "HSM setup failed; falling back to PEM server cert/key");
       if (access("/ssl/server.crt", F_OK) == 0)
@@ -583,20 +549,12 @@ char *execute_tls_simulation(const char *client_conf_path,
       if (access("/ssl/server.key", F_OK) == 0)
         SSL_CTX_use_PrivateKey_file(s_ctx, "/ssl/server.key", SSL_FILETYPE_PEM);
     } else if (access("/ssl/hsm-server.crt", F_OK) == 0) {
-      /* HSM mode: self-signed cert was minted by hsm_setup_server_credentials.
-       * Add it to the client's trust store so the chain check passes. */
+      /* HSM succeeded: the server cert is self-signed with ML-DSA-65.
+       * Add it to the client's trust store so the chain-of-trust check passes. */
       SSL_CTX_load_verify_locations(c_ctx, "/ssl/hsm-server.crt", NULL);
       SSL_CTX_set_verify(c_ctx, SSL_VERIFY_PEER, NULL);
       log_event("client", "hsm_ca_loaded",
-                "HSM self-signed server cert added to client trust store");
-    }
-    /* Symmetric: if the client side also minted an HSM cert, add it to the
-     * server's trust store (for mTLS). The check is cheap; harmless when no
-     * client-side HSM mint happened. */
-    if (access("/ssl/hsm-client.crt", F_OK) == 0) {
-      SSL_CTX_load_verify_locations(s_ctx, "/ssl/hsm-client.crt", NULL);
-      log_event("server", "hsm_ca_loaded",
-                "HSM self-signed client cert added to server trust store");
+                "HSM self-signed cert added to client trust store");
     }
   } else {
     if (access("/ssl/server.crt", F_OK) == 0) {

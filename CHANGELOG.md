@@ -21,28 +21,24 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
-### TLS Simulator — per-side HSM algorithm selection (2026-05-15)
+### TLS Simulator — remove "Live HSM Mode" toggle; add capabilities banner (2026-05-15)
 
-Replaces the binary `hsmMode` / `hsmCompositeMode` flag pair with a per-side **algorithm string** in both the JS worker protocol and the C-side WASM. The simulator can now mix-and-match what cryptography each side of the handshake uses, including LAMPS `draft-ietf-lamps-pq-composite-sigs-19` composite signatures with the ML-DSA component held in softhsmv3.
+The "HSM ON / HSM OFF" toggle in both TLS simulator surfaces ([Workshop](src/components/PKILearning/modules/TLSBasics/TLSBasicsModule.tsx) and [Playground](src/components/OpenSSLStudio/TLSSimulatorTab.tsx)) was misleading: the HSM-mode path never produced a successful handshake for end-users, and the toggle's existence implied HSM coverage that wasn't real for most cert types or for the client side at all. Removed pending a deliberate revival on a future cycle.
 
-**API shape change** (worker / OpenSSLService):
+Replaced with a **capabilities banner** at the top of each TLS sim surface, stating explicitly what the simulator does and does not exercise today:
 
-```text
-old: simulateTLS(..., { hsmMode?: boolean, hsmCompositeMode?: boolean })
-new: simulateTLS(..., { serverHsmAlgorithm?: string, clientHsmAlgorithm?: string })
-```
+- ✓ **Pure PQC keys** — ML-DSA-44 / 65 / 87 server & client (FIPS 204)
+- ✓ **Hybrid KEM** — X25519MLKEM768, SecP256r1MLKEM768, X448MLKEM1024, SecP384r1MLKEM1024 (TLS 1.3 key share, IETF draft-connolly-tls-mlkem)
+- ✓ **Classical certs** — RSA-2048, ECDSA-P256, Ed25519 (bundled PEMs, OpenSSL native sign)
+- ✓ **Pure PQC certs** — ML-DSA-44 / ML-DSA-87 cert + key bundled, real ML-DSA CertificateVerify
+- ⚠ **Hybrid (composite) certs — not supported yet** — LAMPS composite-sig (ML-DSA + RSA-PSS / ECDSA / Ed25519) on the roadmap. Dropdown rows for composite are a placeholder that substitutes the nearest pure ML-DSA PEM (the wire signature is ML-DSA, not composite). Provider machinery exists in the vendored pkcs11-provider fork (`composite.c`) but the runtime cert-minting path isn't wired here.
+- ⚠ **HSM-backed signing — removed** — softhsm v3 + pkcs11-provider remain statically linked into `openssl.wasm`; the wiring just isn't user-facing.
 
-Recognized algorithm values (must match the C-side parser in [tls_simulation_hsm.c](src/wasm/tls_simulation_hsm.c) `hsm_resolve_mldsa_algo` and its future RSA/ECDSA/composite branches): `""` (PEM mode for that side — no HSM), `"mldsa-44"`, `"mldsa-65"`, `"mldsa-87"`, `"rsa-2048"`, `"ecdsa-p256"`, `"composite-mldsa44-rsa2048-pss"`, `"composite-mldsa65-ecdsa-p256"`, `"composite-mldsa87-ecdsa-p384"`.
+**API shape**: `simulateTLS(...)` drops the `options.hsmMode?: boolean` parameter; the TLS_SIMULATE worker message drops the `hsmMode` field; the `tls_simulation_set_hsm_mode` cwrap call in the worker is gone. The C-side symbol still exists in the linked WASM (left for a future revival) but is never called — `g_hsm_mode_enabled` stays at 0 and [tls_simulation.c](src/wasm/tls_simulation.c) always takes the PEM-file branch.
 
-**C-side state change** ([tls_simulation_hsm.c](src/wasm/tls_simulation_hsm.c)):
+**Reverted in lockstep**: the in-flight per-side HSM algorithm refactor (4 commits behind `origin/main` that never shipped to production) for the TLS simulator's shared backend files (`tls_simulation.c`, `tls_simulation_hsm.c`, `softhsm.ts`, `openssl.worker.ts`, `OpenSSLService.ts`, the WASM binary). Their changelog entry from earlier today has been replaced by this one because the work was reverted. The composite-signature machinery in the upstream `pqctoday-hsm` provider (composite.c keymgmt + signature dispatch + encoder + ALGORITHM_ID + TLS sigalg + PKCS#11 v3.2 §6.67.5 fix) remains committed in that repo and is unaffected.
 
-- Removed: `g_hsm_mode_enabled`, `g_hsm_composite_mode_enabled` (two `int` flags) and their `set_hsm_mode` / `set_hsm_composite_mode` setters.
-- Added: `g_server_hsm_algo[48]`, `g_client_hsm_algo[48]` (per-side `char` arrays) and `tls_simulation_set_server_hsm_algorithm` / `tls_simulation_set_client_hsm_algorithm` cwrap setters.
-- New accessors `hsm_server_algorithm()` / `hsm_client_algorithm()` for [tls_simulation.c](src/wasm/tls_simulation.c) to branch on. The legacy `hsm_mode_enabled()` is preserved for the CertificateVerify logging branch — it now returns true iff either side selected an HSM algorithm.
-
-**OpenSSL WASM rebuilt**: [public/wasm/openssl.wasm](public/wasm/openssl.wasm) regenerated from the updated `tls_simulation_hsm.c` + `tls_simulation.c`. Size: 5258276 → 5261602 bytes (+3326 bytes for the new per-side algorithm-resolution branches).
-
-**Net**: `+302 / -562` across 6 files. Simpler than the previous flag pair; supports 9 algorithm combinations per side (81 total handshake configurations) instead of the previous 4.
+**Net** (this session): 5 hub-side files modified, 0 net new behavior, but the simulator is now honest about what it does. The composite-cert path remains the open item; its plan lives at `~/.claude/plans/why-do-we-need-synchronous-firefly.md`.
 
 ### TPM Playground — V1.85 RC4 strict-compliance audit + pqctoday-tpm v0.8.0 alignment (2026-05-15)
 
