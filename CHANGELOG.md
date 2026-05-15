@@ -21,6 +21,53 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Added — PQC Protocol Support matrix: PQCC alignment, live deployments, detail modal (2026-05-15)
+
+The **Protocol Support** tab on `/algorithms` doubled in scope and now mirrors the PQCC State-of-the-Migration April 2026 heatmap with a row-level deployment ledger you can audit.
+
+**Data model:**
+
+- 10 → 20 protocol rows in [pqcProtocolMatrix.ts](src/data/pqcProtocolMatrix.ts): added **COSE**, **JOSE**, **EST/CMP**, **5G SUCI** as new families; added 6 inheritance rows (**DTLS 1.2**, **DTLS 1.3**, **FIDO**, **FIDO 2**, **MACsec**, **UEFI Secure Boot**) with `inheritsFromProtocolId` pointing to the parent and matching dimension badges.
+- New `LiveDeployment` type — `{provider, what, since, referenceUrl}`. **24 production deployments** seeded across 13 rows; every `referenceUrl` was verified to resolve (HTTP 200) before being committed. Examples: Cloudflare X25519MLKEM768 at the edge ([blog.cloudflare.com/pq-2025](https://blog.cloudflare.com/pq-2025/)), Google Chrome 131+ default ([blog.google/chromium](https://blog.google/chromium/advancing-our-amazing-bet-on-asymmetric/)), AWS KMS/ACM/Secrets ML-KEM, Apple iMessage PQ3, Signal PQXDH, X9 Financial PKI by DigiCert, F5 BIG-IP v17.5+, Palo Alto PAN-OS 11.2/12.1+, SK Telecom + Thales 5G SUCI trial, EJBCA 9.1+ ML-DSA via CMP, Dell 2026 commercial PCs LMS BIOS code signing, Turkcell + Juniper + ID Quantique quantum-safe MACsec, wolfTPM v1.85 PQ commands.
+- New `DimensionStatus.deploymentPosture` (`production` / `pilot` / `experimental`) + `deploymentNote` — captures cases like TLS 1.3 hybrid-KEM being in `draft` status at IETF but **already in production** at major CDNs. Surfaced as a rocket badge on each dimension cell.
+- New `noDeploymentReason` field for the 7 rows without verified deployments (TLS 1.2, S/MIME, COSE, JOSE, DNSSEC, DTLS 1.2, FIDO). Each row explains _why_ the slot is empty (by-design, standards too fresh, market migrated to OpenPGP/proprietary, no IANA codepoint, etc.) — surfaced inline in the modal so users see structural reasons rather than apparent omissions.
+- New `inheritedBy[]` chips on parent rows showing which protocols reuse their PQC posture.
+
+**PQCC April 2026 alignment** (cross-checked vs the April 2026 image-only heatmap, read via vision):
+
+- 6 dimension flag bumps applied where PQCC scored higher than our internal flag: SSH hybridSig `none → experimental` (CNSA 2.0 SSH profile context); S/MIME hybridKem + hybridSig `experimental → draft` (cites `draft-ietf-lamps-cms-composite-kem-01` and `draft-ietf-lamps-cms-composite-sigs-04`, both LAMPS WG-adopted); OpenPGP pureKem `none → experimental` (PQCC tracks chartered work); MLS hybridKem + hybridSig `experimental → draft` (cites `draft-ietf-mls-combiner-02`).
+- IKE/IPsec hybridKem note tightened — kept `rfc` for the RFC 9370 multi-KE framework while explicitly noting the ML-KEM-specific binding (`draft-ietf-ipsecme-ikev2-mlkem-05`) is still WG draft.
+- Transport-issues panel updated: removed **IKE first packet** (PQCC dropped it; handled via RFC 9242 IKE_INTERMEDIATE); added **Merkle Tree Certs** (cites `draft-ietf-plants-merkle-tree-certs`).
+- Two PQCC scores we defensibly disagreed with: TPM hybridSig stays `na` (TCG hasn't chartered composite-sig work; signatures are atomic per-key by design); IKE/IPsec hybridKem stays `rfc` for the framework view.
+
+**UI** ([PQCProtocolMatrix.tsx](src/components/Algorithms/PQCProtocolMatrix.tsx), new [ProtocolDetailModal.tsx](src/components/Algorithms/ProtocolDetailModal.tsx)):
+
+- **Heatmap ↔ Detailed view toggle**, default heatmap. Heatmap mode shows only Protocol, 4 dimension badges, OSS/Commercial/Deployment count badges. Detailed mode adds release/draft document links, all chips, and the playground column.
+- **New Live Deployments column** in both views — green count badge with tooltip in heatmap; clickable provider chips with `→` external link to the reference URL in detailed view. Filter dropdown adds `Has live deployment` / `No live deployment` options.
+- **Filter toolbar simplified to one row** — search input, status (multi-select), filter (single-select for OSS/commercial/playground/deployment), sort dropdown with direction toggle, clear button, live row count. Dropped the redundant Row-type filter (20 rows scan easily, inheritance rows visually distinct).
+- **New protocol detail modal** opens by clicking any protocol name. Sections: standardization status (2×2 dimension grid), latest releases, latest drafts, OSS chips, commercial chips, **live deployments with `since` date and external links**, playground tools. Inheritance rows show "inherits from X" banner. Empty deployment section shows the row's `noDeploymentReason`.
+- **Removed the "Known Gaps" panel** entirely — replaced the muddled mix of standardization gaps + internal tooling backlog + protocol constraints with a clean split: standardization state stays in dimension badges, constraints folded into dimension notes (X.509 KEM cert encryption-only, DNSSEC MTU, FIDO 2 storage cost, UEFI sig size), and cross-cutting transport blockers stay in the Transport-Layer Blockers panel.
+
+**Bottom line**: 13 of 20 rows now have at least one verified production deployment, with every claim citation-grounded; 7 rows are documented empty-with-reason. The matrix now answers "what's actually deployed?" and "if not, why?" — not just "what's the standardization status?".
+
+### Fixed — generate-rag-corpus.ts: deprecated CSV rows leaked into RAG corpus (2026-05-15)
+
+A hallucinated stub `draft-ietf-tls-authkem` (404 on datatracker; the real drafts are `draft-celi-wiggers-tls-authkem` individual submissions, never WG-adopted) was surfacing in RAG search results despite being marked `status='deprecated'` in `library_05152026.csv` since the day it was created. Root cause: `scripts/generate-rag-corpus.ts` did not call `filterActive()` (from [loaderUtils.ts](src/data/loaderUtils.ts)) when processing the library CSV — only the `processLeaders()` path had a hardcoded check. **207 deprecated rows across 5 CSV sources** were leaking through.
+
+Added two helpers near [readCSV definitions](scripts/generate-rag-corpus.ts) — `isInactiveRow(rows, i)` for positional parsers and `isInactiveRecord(rec)` for header-keyed parsers — both treating missing `status` columns as pre-DS01 active (backwards compatible). Wired them into 13 processors plus the library-refId cross-link lookup: library, timeline, X.509 algorithms, threats, compliance, leaders (unified the existing hardcoded check), product catalog (unified another hardcoded check), vendors, trusted sources, assessment config, and the certification cross-reference (both `byType` and `byVendor` groupings).
+
+Regenerated `public/data/rag-corpus.json` — AuthKEM stub gone; strict cross-check against the deprecated-id set finds 0 chunks whose title exactly matches a deprecated CSV row. 11,003 → 11,009 chunks after later library backfill. All 31 corpus generator tests still pass.
+
+### Added — Library backfill: CMS composite KEM/sigs + TLS cert-abridge (2026-05-15)
+
+Three IETF drafts cited by the PQCC April 2026 heatmap were missing from our library data. Added in revision file [src/data/library_05152026_r1.csv](src/data/library_05152026_r1.csv) (818 rows, written via PapaParse `unparse()` per the CSV Write Method rule, never shell heredocs):
+
+- **`draft-ietf-lamps-cms-composite-kem-01`** (LAMPS WG-adopted, May 6 2026, Proposed Standard) — composite ML-KEM for CMS using KEMRecipientInfo per RFC 9629; covers ML-KEM + RSA-OAEP / ECDH / X25519 / X448 combinations. Closes the S/MIME hybridKem gap.
+- **`draft-ietf-lamps-cms-composite-sigs-04`** (LAMPS WG-adopted, Feb 5 2026, AD Followup with pending DISCUSS) — composite ML-DSA SignerInfo for CMS per RFC 5652; 18 combinations operating in pre-hash mode with algorithm-specific digests. Closes the S/MIME hybridSig gap.
+- **`draft-ietf-tls-cert-abridge-02`** (TLS WG, expired Sep 2024 awaiting revival) — TLS Certificate Compression scheme using a shared root/intermediate WebPKI dictionary; cited by PQCC transport-issues panel as the TCP Initial Congestion Window + QUIC amplification mitigation reference. Flagged with `data_quality_notes='EXPIRED'` since it's the authoritative reference even while dormant.
+
+Cached the 3 HTMLs to `public/library/` (222 KB combined) via `scripts/download-library.js`. Enriched via `caffeinate -i python3 -u scripts/enrich-docs-ollama.py` with qwen3.6:27b (7 min 15 s wall time, 0 failures, dimensions filled per-doc: 21/39 for cms-composite-kem, 18/39 for cms-composite-sigs, 14/39 for tls-cert-abridge — qwen correctly reports "None detected" for fields the source docs don't address). Appended to `src/data/doc-enrichments/library_doc_enrichments_05152026.md`. Corpus regenerated → 6 new chunks (2 per draft × `library` + `document-enrichment` sources).
+
 ### Fixed — Timeline document cards: whole tile is now clickable (2026-05-13)
 
 On the `/timeline` page (Documents · Cards view), each document tile (title, organization, badges, period) was purely informational — the only way to open the detail popover was to click the small **Details** button at the bottom. The whole `<motion.article>` had no `onClick`. Now the entire tile is the click target: `role="button"`, keyboard support (Enter / Space), a focus ring for keyboard navigation, and a subtle `hover:bg-card/70` cue. The Source link, Endorse, and Flag buttons in the footer keep their dedicated behaviors via `stopPropagation` so they don't double-fire the popover. The explicit "Details" button stays as a discoverability affordance. [TimelineDocumentCard.tsx](src/components/Timeline/TimelineDocumentCard.tsx)
