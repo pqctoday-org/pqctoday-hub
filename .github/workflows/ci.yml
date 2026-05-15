@@ -133,6 +133,20 @@ jobs:
         if: github.event_name == 'pull_request'
         run: npx tsx scripts/ci/check-module-version-bump.ts
 
+      - name: Validate offline-attestation files
+        # When approvals/offline-{pr}-*.json files are committed to the PR,
+        # verify they (a) match the required schema, (b) name an active SME
+        # from reviewers.json, and (c) carry a proxy_github_handle that is a
+        # member of at least one CODEOWNERS team owning a changed file.
+        # No-ops when no attestation files are present (the common case).
+        # See trust-engine explainability doc §5.3.
+        if: github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.OFFLINE_ATTESTATION_TOKEN || secrets.GITHUB_TOKEN }}
+          GITHUB_PR_NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: npx tsx scripts/ci/validate-offline-attestation.ts
+
   append-revision:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
