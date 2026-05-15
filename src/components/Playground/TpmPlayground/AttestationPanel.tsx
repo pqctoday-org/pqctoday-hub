@@ -14,7 +14,7 @@ import { useCallback, useState } from 'react'
 import { AlertCircle, CheckCircle2, Download, Play, Shield, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { executeTpmCommandLarge, readPublic } from '../../../wasm/tpmBridge'
+import { executeTpmCommandLarge, flushAllTransient, readPublic } from '../../../wasm/tpmBridge'
 import { verify as mldsaVerify } from '../../../wasm/liboqs_dsa'
 import {
   MLDSA_AK_SPECS,
@@ -272,6 +272,13 @@ export function AttestationPanel({ isWasmReady }: Props) {
     setResult(null)
     try {
       const qData = hexToBytes(nonce)
+
+      // Free any transient-object slots left over from previous panels
+      // (Compliance Runner, Command Builder, EK Explorer). Without this,
+      // Quote/Certify can hit TPM_RC_OBJECT_MEMORY (0x902 = RC_WARN + 0x002)
+      // when libtpms tries to allocate its internal signing-context slot
+      // (V1.85 Part 3 §28.4 Tables 228-229).
+      await flushAllTransient()
 
       // Fetch AK pubkey via TPM2_ReadPublic.
       const tpmtPublic = await readPublic(ak.persistentHandle)

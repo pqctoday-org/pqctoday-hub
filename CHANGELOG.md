@@ -56,6 +56,27 @@ Killed two outright hallucinations: (a) `TPM2_CreatePrimary` claimed "ML-DSA-65 
 
 Five wrong V185 check citations corrected: V185-001 SelfTest §11.2.1 → Part 3 §10.2; V185-002 Response Header §7.2 → Part 1 §15.2 (Command/Response Header Fields); V185-004/005 ML-KEM/ML-DSA registered §11.9 (doesn't exist) → Part 2 §6.3 (TPM_ALG_ID). Phase narratives re-cited the same way. V185-015 SignDigest wire-byte builder rewritten to the V1.85 RC4 Table 126 shape — without this rewrite the v0.8.0 WASM would reject the suite's request with `TPM_RC_SCHEME (rc=0x1d2)` on parameter 1.
 
+**Compliance Runner — 6 new V185 checks for full PQC command surface (V185-019 → V185-024)**
+
+The in-browser compliance suite was 18/18 passing but only exercised half the V1.85 RC4 PQC command surface — `TPM2_VerifyDigestSignature` and the four ML-DSA sequence commands had no compliance coverage at all. Extended to **24 checks**:
+
+| Check    | Command exercised                                                         | Spec                        |
+| -------- | ------------------------------------------------------------------------- | --------------------------- |
+| V185-019 | `TPM2_VerifyDigestSignature` round-trip → `TPM_ST_DIGEST_VERIFIED` ticket | Part 3 §20.4 Table 120      |
+| V185-020 | `TPM2_SignSequenceStart` → `sequenceHandle` returned                      | Part 3 §17.5 Tables 89-90   |
+| V185-021 | `TPM2_SignSequenceComplete` → ML-DSA-65 sig = 3309 B (FIPS 204)           | Part 3 §20.6 Tables 124-125 |
+| V185-022 | `TPM2_VerifySequenceStart` → `sequenceHandle` returned                    | Part 3 §17.6 Tables 87-88   |
+| V185-023 | `TPM2_SequenceUpdate` accumulates a 64-B chunk                            | Part 3 §17.7                |
+| V185-024 | `TPM2_VerifySequenceComplete` → `TPM_ST_MESSAGE_VERIFIED` ticket          | Part 3 §20.3 Table 119      |
+
+V185-019 reuses the signature captured in V185-015 (V1.85 RC4 wire shape from earlier this commit chain). V185-020 → V185-024 form a streaming ML-DSA round-trip on the unrestricted AK (`allowExternalMu = YES`). All six checks build raw wire bytes against the PDF-grounded layouts and run through the same `executeTpmCommand` path as the existing 18 — no test-double, this is end-to-end against the v0.8.0 WASM. EK handle is `FlushContext`-released before Phase 11 to free a transient slot for the sequence handles (the WASM build has 3 transient slots; EK + AK + sequence = 3 max).
+
+**Attestation Panel — `TPM_RC_OBJECT_MEMORY (0x902)` fix**
+
+`AttestationPanel.tsx` was hitting `TPM_RC 0x902 = RC_WARN + 0x002` ("out of memory for object contexts" per Part 2 line 2900) when the user clicked Quote/Certify after running the Compliance Runner or Command Builder. Persistent EK/AK handles don't consume transient slots, but the TPM allocates an internal working slot during signing — and that slot was unavailable because prior `TPM2_CreatePrimary` calls had filled all three transient slots and never released them.
+
+Fix: new `flushAllTransient()` helper in [tpmBridge.ts](src/wasm/tpmBridge.ts) that walks `0x80000000–0x80000002` (transient objects) and `0x80FF0000–0x80FF0004` (sequence handles) and issues `TPM2_FlushContext` (Part 3 §28.4 Tables 228-229) on each, tolerating `TPM_RC_HANDLE` / `TPM_RC_VALUE` for empty slots. [AttestationPanel.tsx](src/components/Playground/TpmPlayground/AttestationPanel.tsx) calls it at the top of `run()` so every Quote/Certify starts with a clean slot pool regardless of what the user did before.
+
 **Streaming ML-DSA — four new sequence commands wired into CommandBuilder**
 
 Added top-level entries for `TPM2_SignSequenceStart` (§17.5 Tables 89-90), `TPM2_SignSequenceComplete` (§20.6 Tables 124-125), `TPM2_VerifySequenceStart` (§17.6 Tables 87-88), and `TPM2_VerifySequenceComplete` (§20.3 Tables 118-119). Surfaced as a new "Phase 4 — Streaming ML-DSA (chain Start → SequenceUpdate → Complete)" group in [CommandBuilder.tsx](src/components/Playground/TpmPlayground/CommandBuilder.tsx). Every wire-byte layout PDF-grounded against Part 3 Tables in V1.85 RC4, including the spec edge cases (Table 87: `hint` MUST be zero-length for ML-DSA — only EDDSA uses it; Table 118: produces `TPM_ST_MESSAGE_VERIFIED` ticket distinct from the `TPM_ST_DIGEST_VERIFIED` ticket of `TPM2_VerifyDigestSignature`). [ExecutionLog.tsx](src/components/Playground/TpmPlayground/ExecutionLog.tsx) opcode → name map extended with the four new CCs plus `TPM2_SequenceUpdate` (0x15C) and `TPM2_FlushContext` (0x165) for cleaner wire-byte traces.
@@ -90,7 +111,7 @@ Hygiene pass on the Protocol Support matrix. Every RFC number and IETF-draft slu
 
 **RAG corpus regenerated**: 11,009 → 11,011 chunks (+2 from the new HPKE-PQ draft × library + document-enrichment sources).
 
-Going forward — if you cite an RFC number or draft slug inside a `note`, that's a regression: the doc belongs in `latestRelease` or `latestDraft` instead.
+Going forward — if you cite an RFC number or draft slug inside a `note`, that's a regression: the doc belongs in `latestRelease` or `latestDraft` instead. A CI gate enforces this: [scripts/audit-matrix-refs.ts](scripts/audit-matrix-refs.ts) (run via `npm run audit:matrix-refs`) parses every text field on every row and exits non-zero if any RFC number or `draft-…` slug leaks into prose. Wire into the CI pipeline before tests; takes < 1 s.
 
 ### Added — PQC Protocol Support matrix: PQCC alignment, live deployments, detail modal (2026-05-15)
 
