@@ -40,7 +40,12 @@ const COMMAND_GROUPS = [
   { label: 'Phase 3 — Create Keys', commands: ['TPM2_CreatePrimary'] },
   {
     label: 'Phase 4 — Use Keys',
-    commands: ['TPM2_Encapsulate', 'TPM2_Decapsulate', 'TPM2_SignDigest'],
+    commands: [
+      'TPM2_Encapsulate',
+      'TPM2_Decapsulate',
+      'TPM2_SignDigest',
+      'TPM2_VerifyDigestSignature',
+    ],
   },
   {
     label: 'Phase 4 — Educational (not in TCG v1.85)',
@@ -73,7 +78,7 @@ function isHybridCommand(cmd: string): boolean {
 function getAlgoOptionsForCommand(cmd: string): string[] {
   if (cmd === 'TPM2_CreatePrimary') return ALL_ALGOS
   if (cmd === 'TPM2_Encapsulate' || cmd === 'TPM2_Decapsulate') return KEM_ALGOS
-  if (cmd === 'TPM2_SignDigest') return DSA_ALGOS
+  if (cmd === 'TPM2_SignDigest' || cmd === 'TPM2_VerifyDigestSignature') return DSA_ALGOS
   if (isHybridCommand(cmd)) return HYBRID_ALGOS
   return []
 }
