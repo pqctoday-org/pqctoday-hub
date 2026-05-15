@@ -70,6 +70,7 @@ export interface ProtocolMatrixRow {
     hybridSig: DimensionStatus
   }
   ossLibraries: OssLibrary[]
+  commercialLibraries: OssLibrary[]
   playground: PlaygroundTool | null
   gaps: string[]
 }
@@ -135,7 +136,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         name: 'OpenSSH',
         versionNote: '9.9+ (sntrup761x25519, mlkem768x25519)',
       },
-      { productId: 'wolfssh', name: 'wolfSSH' },
+    ],
+    commercialLibraries: [
+      { productId: 'wolfssh', name: 'wolfSSH', versionNote: 'Commercial dual-license' },
+      { productId: 'bitvise-ssh-server', name: 'Bitvise SSH Server' },
+      { productId: 'aws-transfer-family', name: 'AWS Transfer Family' },
+      { productId: 'github-ssh-pqc', name: 'GitHub SSH (PQC)' },
     ],
     playground: {
       toolId: 'pqc-ssh-sim',
@@ -182,7 +188,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ossLibraries: [
       { productId: 'openssl', name: 'OpenSSL', versionNote: 'TLS 1.2 transport — no PQC' },
       { productId: 'boringssl', name: 'BoringSSL', versionNote: 'TLS 1.2 transport — no PQC' },
+    ],
+    commercialLibraries: [
       { productId: 'wolfssl', name: 'wolfSSL', versionNote: 'TLS 1.2 transport — no PQC' },
+      { productId: 'safelogic-cryptocomply', name: 'SafeLogic CryptoComply' },
+      { productId: 'venafi-tls-protect', name: 'Venafi TLS Protect' },
     ],
     playground: null,
     gaps: [
@@ -258,8 +268,17 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       { productId: 'aws-lc', name: 'AWS-LC', versionNote: 'ML-KEM + ML-DSA' },
       { productId: 'boringssl', name: 'BoringSSL', versionNote: 'X25519MLKEM768 production' },
       { productId: 'rustls', name: 'rustls', versionNote: 'via rustls-post-quantum crate' },
-      { productId: 'wolfssl', name: 'wolfSSL', versionNote: 'ML-KEM, ML-DSA, FALCON' },
       { productId: 'oqs-provider', name: 'oqs-provider', versionNote: 'OpenSSL 3.x plugin' },
+    ],
+    commercialLibraries: [
+      { productId: 'wolfssl', name: 'wolfSSL', versionNote: 'ML-KEM + ML-DSA + FALCON' },
+      {
+        productId: 'cloudflare-edge-network',
+        name: 'Cloudflare Edge Network',
+        versionNote: 'X25519MLKEM768 in production',
+      },
+      { productId: 'akamai-pqc-edge', name: 'Akamai PQC Edge' },
+      { productId: 'venafi-tls-protect', name: 'Venafi TLS Protect' },
     ],
     playground: {
       toolId: 'tls-simulator',
@@ -349,6 +368,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       { productId: 'aws-lc', name: 'AWS-LC', versionNote: 'PQ cert verification' },
     ],
+    commercialLibraries: [
+      { productId: 'entrust-pki', name: 'Entrust PKI' },
+      { productId: 'entrust-nshield', name: 'Entrust nShield' },
+      { productId: 'entrust-keycontrol', name: 'Entrust KeyControl' },
+      { productId: 'keyfactor-ejbca', name: 'Keyfactor EJBCA' },
+      { productId: 'venafi-trust-protection-platform', name: 'Venafi Trust Protection Platform' },
+      { productId: 'microsoft-ad-cs', name: 'Microsoft AD CS' },
+    ],
     playground: {
       toolId: 'hybrid-certs',
       toolName: 'Hybrid Certificate Workshop',
@@ -415,6 +442,15 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       { productId: 'nss-mozilla', name: 'NSS (Mozilla)', versionNote: 'CMS PQ in progress' },
       { productId: 'openssl-3-5-0', name: 'OpenSSL 3.5.0', versionNote: 'PQ CMS via oqs-provider' },
     ],
+    commercialLibraries: [
+      { productId: 'zscaler-zero-trust-exchange', name: 'Zscaler Zero Trust Exchange' },
+      { productId: 'gmail-google-workspace', name: 'Gmail / Google Workspace' },
+      {
+        productId: 'proton-mail-pqc-openpgp',
+        name: 'Proton Mail PQC OpenPGP',
+        versionNote: 'Open Source / Commercial',
+      },
+    ],
     playground: null,
     gaps: [
       'No S/MIME or CMS playground tool exists in /playground.',
@@ -477,6 +513,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       { productId: 'gnupg', name: 'GnuPG', versionNote: 'PQC branch tracking draft -17' },
       { productId: 'sequoia-pgp-pqc', name: 'Sequoia-PGP PQC' },
       { productId: 'openpgp-js', name: 'OpenPGP.js', versionNote: 'PQC PR series' },
+    ],
+    commercialLibraries: [
+      {
+        productId: 'proton-mail-pqc-openpgp',
+        name: 'Proton Mail PQC OpenPGP',
+        versionNote: 'Open Source / Commercial',
+      },
     ],
     playground: null,
     gaps: [
@@ -561,6 +604,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       { productId: 'libreswan', name: 'Libreswan' },
     ],
+    commercialLibraries: [
+      { productId: 'cisco-ios-xe-pqc', name: 'Cisco IOS XE PQC' },
+      { productId: 'juniper-junos-os', name: 'Juniper Junos OS' },
+      { productId: 'palo-alto-pan-os', name: 'Palo Alto PAN-OS' },
+      { productId: 'fortinet-fortios', name: 'Fortinet FortiOS' },
+      { productId: 'check-point-quantum', name: 'Check Point Quantum' },
+      { productId: 'expressvpn-lightway', name: 'ExpressVPN Lightway' },
+    ],
     playground: {
       toolId: 'vpn-sim',
       toolName: 'PQC IKEv2/IPsec Workshop',
@@ -635,6 +686,18 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       { productId: 'mls-rs', name: 'mls-rs', versionNote: 'AWS Rust SDK' },
       { productId: 'mlspp', name: 'mlspp', versionNote: 'C++ reference impl' },
     ],
+    commercialLibraries: [
+      {
+        productId: 'apple-pq3-corecrypto',
+        name: 'Apple PQ3 / CoreCrypto',
+        versionNote: 'Proprietary (iMessage PQ3)',
+      },
+      {
+        productId: 'whatsapp',
+        name: 'WhatsApp',
+        versionNote: 'Proprietary (PQXDH on Signal protocol)',
+      },
+    ],
     playground: null,
     gaps: [
       'No MLS playground tool exists in /playground.',
@@ -645,34 +708,53 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     id: 'tpm',
     name: 'TPM',
     description:
-      'Trusted Platform Module — TPM 2.0 Library v1.85 adds ML-DSA, ML-KEM, Labeled KEM, EdDSA.',
+      'Trusted Platform Module — TPM 2.0 Library v1.85 (PUBLISHED 2026-05) adds ML-DSA, ML-KEM, Labeled KEM, EdDSA.',
     latestRelease: [
       {
-        id: 'TCG-TPM-2.0-Library-v1.83',
-        title: 'TCG TPM 2.0 Library Specification v1.83',
+        id: 'TCG-TPM-2.0-Library-v1.85-Part3-Published',
+        title: 'TCG TPM 2.0 Library v1.85 Part 3: Commands (Published 2026-05)',
         url: 'https://trustedcomputinggroup.org/resource/tpm-library-specification/',
-        date: '2023',
+        date: '2026-05',
+        localFile:
+          '/library/Trusted-Platform-Module-2.0-Library-Part-3-Commands_Version-185_pub.pdf',
       },
-    ],
-    latestDraft: [
       {
-        id: 'TCG-TPM-2.0-Library-v1.85-RC4',
-        title: 'TCG TPM 2.0 Library Specification v1.85 RC4 (ML-DSA + ML-KEM + Labeled KEM)',
+        id: 'TCG-PC-Client-Platform-TPM-Profile-v1.07',
+        title: 'TCG PC Client Specific Platform TPM Profile v1.07 (Published)',
+        url: 'https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/',
+        date: '2026-05',
+        localFile: '/library/PC-Client-Specific-Platform-TPM-Profile-for-TPM-2p0-v1p07_Pub.pdf',
+      },
+      {
+        id: 'TCG-EK-Credential-Profile-v2.7',
+        title: 'TCG EK Credential Profile for TPM 2.0, Level 0, v2.7 (Published)',
+        url: 'https://trustedcomputinggroup.org/resource/tcg-ek-credential-profile-for-tpm-family-2-0/',
+        date: '2026-05',
+        localFile:
+          '/library/TCG-EK-Credential-Profile-for-TPM-Family-2.0-Level-0-Version-2.7_Pub.pdf',
+      },
+      {
+        id: 'TCG-TPM-2.0-Library-v1.85-Errata',
+        title: 'TCG TPM 2.0 Library v1.85 — Errata',
         url: 'https://trustedcomputinggroup.org/resource/tpm-library-specification/',
-        date: '2025-12-12',
-        localFile: '/library/TCG-TPM-V185-Part1-Architecture.pdf',
+        date: '2026-05',
+        localFile: '/library/Eratta-Trusted-Platform-Module-2.0-Library_Version-185_pub.pdf',
       },
     ],
+    latestDraft: [],
     dimensions: {
       pureKem: {
-        value: 'draft',
-        note: 'v1.85 SHALL support ML-KEM-768 or ML-KEM-1024 (TCG draft RC4).',
+        value: 'rfc',
+        note: 'v1.85 PUBLISHED — TPM SHALL support ML-KEM-768 or ML-KEM-1024.',
       },
       hybridKem: {
         value: 'experimental',
         note: 'v1.85 Labeled KEM abstraction can mix algorithms; not standardized as "hybrid".',
       },
-      pureSig: { value: 'draft', note: 'v1.85 SHALL support ML-DSA-65 or ML-DSA-87.' },
+      pureSig: {
+        value: 'rfc',
+        note: 'v1.85 PUBLISHED — TPM SHALL support ML-DSA-65 or ML-DSA-87.',
+      },
       hybridSig: {
         value: 'na',
         note: 'TPM signatures are atomic per-key; hybrid sig not in TCG scope.',
@@ -682,15 +764,30 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         productId: 'libtpms',
         name: 'libtpms',
-        versionNote: 'Tracks v1.83; v1.85 in fork branches',
+        versionNote: 'Tracks v1.83 upstream; published v1.85 PQ commands via pqctoday-tpm fork',
       },
-      { productId: 'swtpm', name: 'swtpm', versionNote: 'Tracks v1.83' },
+      {
+        productId: 'swtpm',
+        name: 'swtpm',
+        versionNote: 'Tracks v1.83 upstream; PQ via pqctoday-tpm fork',
+      },
       {
         productId: 'pqctoday-tpm',
         name: 'pqctoday-tpm',
-        versionNote: 'Our fork — v1.85 PQ commands',
+        versionNote: 'Our fork — Published TPM 2.0 v1.85 PQ commands',
       },
       { productId: 'wolftpm-pqc', name: 'wolfTPM PQC' },
+    ],
+    commercialLibraries: [
+      {
+        productId: 'wolftpm-pqc',
+        name: 'wolfTPM PQC',
+        versionNote: 'Open Source / Commercial dual',
+      },
+      { productId: 'infineon-tegrion-slc27-pqc', name: 'Infineon TEGRION SLC27 PQC' },
+      { productId: 'infineon-optiga-tpm-slb-9672', name: 'Infineon OPTIGA TPM SLB 9672' },
+      { productId: 'sealsq-quantum-shield', name: 'SEALSQ Quantum Shield' },
+      { productId: 'sealsq-qvault-tpm', name: 'SEALSQ QVault TPM' },
     ],
     playground: {
       toolId: 'tpm-playground',
@@ -699,7 +796,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     },
     gaps: [
       'Hybrid KEM not in TCG v1.85 — only Labeled KEM abstraction.',
-      'libtpms / swtpm upstream still track v1.83; pqctoday-tpm fork ports v1.85 PQ commands.',
+      'libtpms / swtpm upstream still track v1.83 (no PQ); v1.85 PQ commands via pqctoday-tpm fork.',
+      'Need to re-download Published v1.85 Parts 0/1/2 — we still have the Dec 2025 RC4 versions for those parts.',
     ],
   },
   {
@@ -759,6 +857,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         versionNote: 'Experimental',
       },
       { productId: 'isc-bind-9-21', name: 'ISC BIND 9.21', versionNote: 'Classical DNSSEC only' },
+    ],
+    commercialLibraries: [
+      { productId: 'adguard-dns', name: 'AdGuard DNS', versionNote: 'Commercial / Free' },
     ],
     playground: null,
     gaps: [
