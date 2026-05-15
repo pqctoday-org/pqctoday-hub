@@ -57,6 +57,16 @@ const COMMAND_GROUPS = [
     ],
   },
   {
+    label: 'Phase 4 — Driven by dedicated panels (info-only)',
+    commands: [
+      'TPM2_ReadPublic',
+      'TPM2_Quote',
+      'TPM2_Certify',
+      'TPM2_NV_ReadPublic',
+      'TPM2_NV_Read',
+    ],
+  },
+  {
     label: 'Phase 4 — Educational (not in TCG v1.85)',
     commands: ['TPM2_LabeledKEM_Hybrid_Encap', 'TPM2_LabeledKEM_Hybrid_Decap'],
   },

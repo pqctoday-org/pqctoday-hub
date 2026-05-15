@@ -1462,6 +1462,305 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
       },
     ],
   },
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Phase 4 — Commands driven by dedicated playground panels (info-only)
+  //
+  // These commands ARE supported by the v0.8.0 WASM and are exercised by
+  // the playground, but through dedicated UI panels rather than the generic
+  // CommandBuilder. Each entry documents the spec wire shape so users can
+  // inspect the exact bytes the panels are sending. Sending them from the
+  // CommandBuilder dropdown works, but the dedicated panel is usually the
+  // better experience.
+  // ──────────────────────────────────────────────────────────────────────────
+
+  {
+    key: 'TPM2_ReadPublic',
+    cc: 0x00000173,
+    name: 'TPM2_ReadPublic',
+    section: 'TCG Part 3 §12.4 Tables 24-25 (V1.85 RC4)',
+    phase: 'use',
+    showAlgorithm: false,
+    description:
+      'Reads the public area, Name, and Qualified Name of any loaded object. Public-key operation; no authorization required (Auth Index: None). Used by V2p7EkExplorer to display TPMT_PUBLIC for each provisioned EK and by AttestationPanel to fetch the AK pubkey before each Quote/Certify.',
+    why: 'Foundation of any "what does this key look like" workflow. Returns the TPMT_PUBLIC bytes that include algorithm, parameter set, attributes, authPolicy, and the unique field (public key material).',
+    params: () => [
+      {
+        name: 'objectHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: '0x81010060–0x81010066 (V2.7 persistent EK handles)',
+        description: 'TPM handle of an object (Auth Index: None — Table 24).',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 0,
+        byteSize: 2,
+        description:
+          'TPM_ST_SESSIONS if audit/encrypt session present; otherwise TPM_ST_NO_SESSIONS.',
+      },
+      {
+        name: 'responseSize',
+        tpmType: 'UINT32',
+        byteOffset: 2,
+        byteSize: 4,
+        description: 'Total response size.',
+      },
+      {
+        name: 'responseCode',
+        tpmType: 'TPM_RC',
+        byteOffset: 6,
+        byteSize: 4,
+        description: '0 on success.',
+      },
+      {
+        name: 'outPublic',
+        tpmType: 'TPM2B_PUBLIC',
+        byteOffset: 10,
+        byteSize: 0,
+        description: '{size(2), TPMT_PUBLIC bytes} — Table 25.',
+      },
+      {
+        name: 'name',
+        tpmType: 'TPM2B_NAME',
+        byteOffset: 0,
+        byteSize: 0,
+        description: 'Name = nameAlg(2) || H_nameAlg(TPMT_PUBLIC).',
+      },
+      {
+        name: 'qualifiedName',
+        tpmType: 'TPM2B_NAME',
+        byteOffset: 0,
+        byteSize: 0,
+        description: 'H_nameAlg(parent.qualifiedName || Name).',
+      },
+    ],
+  },
+
+  {
+    key: 'TPM2_Quote',
+    cc: 0x00000158,
+    name: 'TPM2_Quote',
+    section: 'TCG Part 3 §18.4 Tables 101-102 (V1.85 RC4)',
+    phase: 'use',
+    requiresDsa: true,
+    showAlgorithm: false,
+    description:
+      "Signs a TPM-attested digest of selected PCRs using the specified signing key. The TPM hashes the concatenated PCR digest values with the key's nameAlg and signs the resulting TPMS_ATTEST. Driven by AttestationPanel — set a PCR selection + nonce, click Quote.",
+    why: 'Platform attestation — proves a specific PCR state to a remote verifier without revealing the AK private key. The signed TPMS_ATTEST carries the magic 0xFF544347 (TPM_GENERATED_VALUE) prefix that a verifier checks to confirm the structure came from a TPM.',
+    params: () => [
+      {
+        name: '@signHandle',
+        tpmType: 'TPMI_DH_OBJECT+',
+        value: 'persistent ML-DSA AK handle',
+        description:
+          'Auth Index: 1, Auth Role: USER (Table 101). TPM_RH_NULL produces an unsigned attest with NULL signature.',
+      },
+      {
+        name: 'qualifyingData',
+        tpmType: 'TPM2B_DATA',
+        value: 'caller-supplied nonce (any bytes)',
+        description: 'Anti-replay nonce; copied verbatim into the signed TPMS_ATTEST.',
+      },
+      {
+        name: 'inScheme',
+        tpmType: 'TPMT_SIG_SCHEME+',
+        value: 'TPM_ALG_NULL (use key default)',
+        description: 'Signing scheme override; NULL → derive from key.',
+      },
+      {
+        name: 'PCRselect',
+        tpmType: 'TPML_PCR_SELECTION',
+        value: 'e.g., {SHA-256, PCR[0,1,2,3,7]}',
+        description: 'PCR set to quote.',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 0,
+        byteSize: 2,
+        description: '0x8002 = TPM_ST_SESSIONS (Table 101 mandates SESSIONS).',
+      },
+      {
+        name: 'quoted',
+        tpmType: 'TPM2B_ATTEST',
+        byteOffset: 14,
+        byteSize: 0,
+        description: 'Signed TPMS_ATTEST blob. Starts with TPM_GENERATED_VALUE = 0xFF54_4347.',
+      },
+      {
+        name: 'signature',
+        tpmType: 'TPMT_SIGNATURE',
+        byteOffset: 0,
+        byteSize: 0,
+        description: 'sigAlg(2) + TPM2B_SIGNATURE_MLDSA{size, buf} for ML-DSA AK.',
+      },
+    ],
+  },
+
+  {
+    key: 'TPM2_Certify',
+    cc: 0x00000148,
+    name: 'TPM2_Certify',
+    section: 'TCG Part 3 §18.2 Tables 97-98 (V1.85 RC4)',
+    phase: 'use',
+    requiresDsa: true,
+    showAlgorithm: false,
+    description:
+      'Signs an attestation of the Name and Qualified Name of an object using a separate signing key. Requires TWO authorizations: objectHandle (ADMIN role per Table 97) + signHandle (USER role). Driven by AttestationPanel — supports self-certify by setting both handles to the same AK.',
+    why: 'Object identity attestation — proves a specific object exists in the TPM with the claimed name without revealing private material. Used for key birth certificates and migration proofs.',
+    params: () => [
+      {
+        name: '@objectHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: 'handle of object to be certified',
+        description: 'Auth Index: 1, Auth Role: ADMIN (Table 97).',
+      },
+      {
+        name: '@signHandle',
+        tpmType: 'TPMI_DH_OBJECT+',
+        value: 'ML-DSA signing handle',
+        description: 'Auth Index: 2, Auth Role: USER. May equal objectHandle for self-certify.',
+      },
+      {
+        name: 'qualifyingData',
+        tpmType: 'TPM2B_DATA',
+        value: 'caller-supplied nonce',
+        description: 'Anti-replay; copied into the signed TPMS_ATTEST.',
+      },
+      {
+        name: 'inScheme',
+        tpmType: 'TPMT_SIG_SCHEME+',
+        value: 'TPM_ALG_NULL (use key default)',
+        description: 'Signing scheme override.',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 0,
+        byteSize: 2,
+        description: '0x8002 = TPM_ST_SESSIONS.',
+      },
+      {
+        name: 'certifyInfo',
+        tpmType: 'TPM2B_ATTEST',
+        byteOffset: 14,
+        byteSize: 0,
+        description: 'Signed TPMS_ATTEST containing the certified object Name + Qualified Name.',
+      },
+      {
+        name: 'signature',
+        tpmType: 'TPMT_SIGNATURE',
+        byteOffset: 0,
+        byteSize: 0,
+        description: 'Signature of certifyInfo by signHandle.',
+      },
+    ],
+  },
+
+  {
+    key: 'TPM2_NV_ReadPublic',
+    cc: 0x00000169,
+    name: 'TPM2_NV_ReadPublic',
+    section: 'TCG Part 3 §31.6 Tables 251-252 (V1.85 RC4)',
+    phase: 'use',
+    showAlgorithm: false,
+    description:
+      'Reads the public area (TPMS_NV_PUBLIC) of an NV index — nvIndex value, nameAlg, attributes, authPolicy, dataSize. No authorization required (Auth Index: None per Table 251). Driven by V2p7EkCertReader to learn the cert blob size before chunking through TPM2_NV_Read.',
+    why: 'Pre-flight for any NV_Read — you need dataSize to know how many chunks to request.',
+    params: () => [
+      {
+        name: 'nvIndex',
+        tpmType: 'TPMI_RH_NV_INDEX',
+        value: '0x01c00060/62/64/70/72/74 (V2.7 PQC EK certs)',
+        description: 'NV Index handle (Auth Index: None).',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 0,
+        byteSize: 2,
+        description: 'TPM_ST_SESSIONS if audit/encrypt; otherwise TPM_ST_NO_SESSIONS.',
+      },
+      {
+        name: 'nvPublic',
+        tpmType: 'TPM2B_NV_PUBLIC',
+        byteOffset: 10,
+        byteSize: 0,
+        description: 'TPMS_NV_PUBLIC: {nvIndex, nameAlg, attributes, authPolicy, dataSize}.',
+      },
+      {
+        name: 'nvName',
+        tpmType: 'TPM2B_NAME',
+        byteOffset: 0,
+        byteSize: 0,
+        description: 'nameAlg || H_nameAlg(TPMS_NV_PUBLIC).',
+      },
+    ],
+  },
+
+  {
+    key: 'TPM2_NV_Read',
+    cc: 0x0000014e,
+    name: 'TPM2_NV_Read',
+    section: 'TCG Part 3 §31.13 Tables 265-266 (V1.85 RC4)',
+    phase: 'use',
+    showAlgorithm: false,
+    description:
+      'Reads up to MAX_NV_BUFFER_SIZE octets from an NV Index at an offset. Two handles: authHandle (TPMA_NV-authorised reader) and nvIndex (Auth Index: None for the index itself per Table 265). Driven by V2p7EkCertReader — chunks through cert blobs by calling NV_Read repeatedly with incremented offset until dataSize is consumed.',
+    why: 'Read PQC EK X.509 certs out of the V2.7 NV slots, or any other NV-stored data.',
+    params: () => [
+      {
+        name: '@authHandle',
+        tpmType: 'TPMI_RH_NV_AUTH',
+        value: 'TPM_RH_OWNER / TPM_RH_PLATFORM / nvIndex itself',
+        description:
+          'Auth Index: 1, Auth Role: USER. EK cert slots permit OWNER/PLATFORM/AUTHREAD per V2.7 §5.3.1.',
+      },
+      {
+        name: 'nvIndex',
+        tpmType: 'TPMI_RH_NV_INDEX',
+        value: 'V2.7 PQC EK cert index',
+        description: 'NV index to read (Auth Index: None — Table 265).',
+      },
+      {
+        name: 'size',
+        tpmType: 'UINT16',
+        value: '≤ MAX_NV_BUFFER_SIZE (1024 default)',
+        description: 'Number of octets to read.',
+      },
+      {
+        name: 'offset',
+        tpmType: 'UINT16',
+        value: 'octet offset into NV area',
+        description: 'Must be ≤ nvIndex dataSize (otherwise TPM_RC_VALUE).',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 0,
+        byteSize: 2,
+        description: '0x8002 = TPM_ST_SESSIONS.',
+      },
+      {
+        name: 'data',
+        tpmType: 'TPM2B_MAX_NV_BUFFER',
+        byteOffset: 14,
+        byteSize: 0,
+        description: '{size(2), buffer[size]} — the requested bytes.',
+      },
+    ],
+  },
 ]
 
 export function getCommandDef(key: string): TpmCommandDef | undefined {
