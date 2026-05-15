@@ -22,7 +22,9 @@
  * CertificateVerify sign operation routes through pkcs11-provider during the
  * handshake. Returns 0 on no-op / success; non-zero on error. */
 extern int hsm_mode_enabled(void);
+extern int hsm_composite_mode_enabled(void);
 extern int hsm_setup_server_credentials(SSL_CTX *s_ctx);
+extern int hsm_setup_server_credentials_composite(SSL_CTX *s_ctx);
 
 // Helper to append to valid JSON buffer
 // Real implementation would use dynamic buffer resizing
@@ -404,17 +406,38 @@ void msg_callback(int write_p, int version, int content_type,
   // the private key lives in softhsmv3 and pkcs11-provider routes sign through
   // C_SignInit + C_Sign.  We synthesise those log events here so the PKCS#11
   // log panel shows the sign operation that happened in the HSM.
+  // Composite-ML-DSA mode: TWO C_Sign calls happen — one for the PQ half
+  // (CKM_ML_DSA with mldsa_ctx=Label per draft-19 §3.2), one for the
+  // classical half (CKM_ECDSA_SHA512 for the MLDSA65+ECDSA-P256 profile).
   if (msg_type == 15 && write_p && strcmp(side, "server") == 0 &&
       hsm_mode_enabled()) {
-    log_event("server", "pkcs11_call",
-              "C_SignInit(CKM_ML_DSA) — CertificateVerify: ML-DSA sign over TLS transcript hash");
-    char sig_msg[128];
-    snprintf(sig_msg, sizeof(sig_msg),
-             "C_Sign → ML-DSA signature (%zu B) over TLS 1.3 transcript hash (private key never exposed)",
-             len);
-    log_event("server", "pkcs11_call", sig_msg);
-    log_event("server", "pkcs11_call",
-              "CertificateVerify routed through pkcs11-provider → softhsmv3");
+    if (hsm_composite_mode_enabled()) {
+      log_event("server", "pkcs11_call",
+                "Composite-ML-DSA CertificateVerify: building M' = Prefix || Label || len(ctx) || ctx || PH(transcript) per draft-19 §3.2");
+      log_event("server", "pkcs11_call",
+                "C_SignInit(CKM_ML_DSA, ctx=COMPSIG-MLDSA65-ECDSA-P256-SHA512) — PQ half (FIPS 204)");
+      log_event("server", "pkcs11_call",
+                "C_Sign → ML-DSA-65 signature (3309 B) over M' (private key never exposed)");
+      log_event("server", "pkcs11_call",
+                "C_SignInit(CKM_ECDSA_SHA512) — classical half");
+      char ec_msg[160];
+      snprintf(ec_msg, sizeof(ec_msg),
+               "C_Sign → ECDSA-P256-SHA512 signature over M', combined wire bytes %zu B total (mldsaSig || classicalSig per draft-19 §4.3)",
+               len);
+      log_event("server", "pkcs11_call", ec_msg);
+      log_event("server", "pkcs11_call",
+                "CertificateVerify routed through composite signature dispatch → pkcs11-provider → softhsmv3 (twice)");
+    } else {
+      log_event("server", "pkcs11_call",
+                "C_SignInit(CKM_ML_DSA) — CertificateVerify: ML-DSA sign over TLS transcript hash");
+      char sig_msg[128];
+      snprintf(sig_msg, sizeof(sig_msg),
+               "C_Sign → ML-DSA signature (%zu B) over TLS 1.3 transcript hash (private key never exposed)",
+               len);
+      log_event("server", "pkcs11_call", sig_msg);
+      log_event("server", "pkcs11_call",
+                "CertificateVerify routed through pkcs11-provider → softhsmv3");
+    }
   }
 }
 
@@ -540,17 +563,40 @@ char *execute_tls_simulation(const char *client_conf_path,
   if (hsm_mode_enabled()) {
     /* HSM mode: server private key is generated inside softhsmv3 and
      * referenced via a pkcs11: URI loaded through pkcs11-provider. The PEM
-     * server.key on disk (if any) is intentionally ignored. */
-    if (hsm_setup_server_credentials(s_ctx) != 0) {
+     * server.key on disk (if any) is intentionally ignored.
+     *
+     * Composite-ML-DSA mode (draft-ietf-lamps-pq-composite-sigs-19):
+     * branch to the composite credentials setup which generates BOTH a
+     * PQ subkey and a classical subkey in softhsm, then wires the
+     * composite EVP_PKEY into the SSL_CTX. The composite cert PEM must
+     * be pre-written to /ssl/composite-server.crt by the caller (e.g.
+     * the JS-side cert workshop's buildCompositeCertDraft19). */
+    int hsm_ok;
+    int composite = hsm_composite_mode_enabled();
+    if (composite) {
+      log_event("server", "hsm_mode",
+                "Composite-ML-DSA mode: PQ + classical subkeys both HSM-resident");
+      hsm_ok = (hsm_setup_server_credentials_composite(s_ctx) == 0);
+    } else {
+      hsm_ok = (hsm_setup_server_credentials(s_ctx) == 0);
+    }
+    if (!hsm_ok) {
       log_event("server", "warning",
                 "HSM setup failed; falling back to PEM server cert/key");
       if (access("/ssl/server.crt", F_OK) == 0)
         SSL_CTX_use_certificate_file(s_ctx, "/ssl/server.crt", SSL_FILETYPE_PEM);
       if (access("/ssl/server.key", F_OK) == 0)
         SSL_CTX_use_PrivateKey_file(s_ctx, "/ssl/server.key", SSL_FILETYPE_PEM);
+    } else if (composite && access("/ssl/composite-server.crt", F_OK) == 0) {
+      /* Composite mode: the self-signed-equivalent cert was pre-written
+       * by JS. Trust it on the client side so the chain check passes. */
+      SSL_CTX_load_verify_locations(c_ctx, "/ssl/composite-server.crt", NULL);
+      SSL_CTX_set_verify(c_ctx, SSL_VERIFY_PEER, NULL);
+      log_event("client", "hsm_ca_loaded",
+                "Composite cert added to client trust store");
     } else if (access("/ssl/hsm-server.crt", F_OK) == 0) {
-      /* HSM succeeded: the server cert is self-signed with ML-DSA-65.
-       * Add it to the client's trust store so the chain-of-trust check passes. */
+      /* Pure ML-DSA HSM mode: self-signed cert was minted in C by
+       * hsm_setup_server_credentials. */
       SSL_CTX_load_verify_locations(c_ctx, "/ssl/hsm-server.crt", NULL);
       SSL_CTX_set_verify(c_ctx, SSL_VERIFY_PEER, NULL);
       log_event("client", "hsm_ca_loaded",
