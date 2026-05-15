@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:pqctoday-cbom-20260522",
+  "serialNumber": "urn:uuid:pqctoday-cbom-20260515",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-05-22T20:53:31.117Z",
+    "timestamp": "2026-05-15T15:36:58.180Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -4061,13 +4061,9 @@
       "name": "Microsoft AD CS",
       "version": "Windows Server 2025",
       "cryptoProperties": {
-        "assetType": "related-crypto-material",
-        "algorithmProperties": {
-          "parameterSetIdentifier": "ML-KEM, ML-DSA",
-          "primitive": "KEM"
-        }
+        "assetType": "related-crypto-material"
       },
-      "description": "ML-DSA certificate issuance now supported in Windows Server 2025 AD CS. ML-KEM key exchange and composite certificates (classical + PQC) planned for 2026.",
+      "description": "Not stated. The document mentions \"Disable weak cryptographic algorithms\" but does not explicitly mention Post-Quantum Cryptography algorithms or support.",
       "externalReferences": [
         {
           "type": "website",
@@ -4097,7 +4093,7 @@
         },
         {
           "name": "pqctoday:confidence_score",
-          "value": "80"
+          "value": "60"
         }
       ]
     },
