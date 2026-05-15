@@ -1424,7 +1424,8 @@ export const hsm_generateMLDSAKeyPair = (
   variant: 44 | 65 | 87,
   extractable = false,
   token = false,
-  keyId?: Uint8Array
+  keyId?: Uint8Array,
+  label?: string
 ): { pubHandle: number; privHandle: number } => {
   const mech = M._malloc(12)
   M.setValue(mech, CKM_ML_DSA_KEY_PAIR_GEN, 'i32')
@@ -1432,6 +1433,8 @@ export const hsm_generateMLDSAKeyPair = (
   M.setValue(mech + 8, 0, 'i32')
 
   const keyIdPtr = keyId && keyId.length ? writeBytes(M, keyId) : 0
+  const labelBytes = label ? new TextEncoder().encode(label) : null
+  const labelPtr = labelBytes ? writeBytes(M, labelBytes) : 0
 
   const ps = dsaParamSet(variant)
   const pubDefs = [
@@ -1441,6 +1444,9 @@ export const hsm_generateMLDSAKeyPair = (
     { type: CKA_VERIFY, boolVal: true },
     { type: CKA_PARAMETER_SET, ulongVal: ps },
     ...(keyIdPtr && keyId ? [{ type: CKA_ID, bytesPtr: keyIdPtr, bytesLen: keyId.length }] : []),
+    ...(labelPtr && labelBytes
+      ? [{ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length }]
+      : []),
   ]
   // Per spec §6.67.4: CKA_PARAMETER_SET goes in the public key template only.
   // The mechanism infers the parameter set for the private key from the public key template.
@@ -1453,6 +1459,9 @@ export const hsm_generateMLDSAKeyPair = (
     { type: CKA_EXTRACTABLE, boolVal: extractable },
     { type: CKA_SIGN, boolVal: true },
     ...(keyIdPtr && keyId ? [{ type: CKA_ID, bytesPtr: keyIdPtr, bytesLen: keyId.length }] : []),
+    ...(labelPtr && labelBytes
+      ? [{ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length }]
+      : []),
   ]
   const pubTpl = buildTemplate(M, pubDefs)
   const prvTpl = buildTemplate(M, prvDefs)
@@ -1481,6 +1490,7 @@ export const hsm_generateMLDSAKeyPair = (
     M._free(pubHPtr)
     M._free(prvHPtr)
     if (keyIdPtr) M._free(keyIdPtr)
+    if (labelPtr) M._free(labelPtr)
   }
 }
 
@@ -1717,12 +1727,19 @@ export const hsm_signBytesMLDSA = (
   M: SoftHSMModule,
   hSession: number,
   privHandle: number,
-  data: Uint8Array
+  data: Uint8Array,
+  opts?: MLDSASignOptions
 ): Uint8Array => {
+  // Build CK_SIGN_ADDITIONAL_CONTEXT if hedging or context specified — mirrors
+  // the hsm_sign() pattern above. Composite-ML-DSA per draft-19 §3.2 requires
+  // mldsa_ctx = signature_label, plumbed here via opts.context.
+  const hasParams = opts && (opts.hedging || (opts.context && opts.context.length > 0))
+  const ctxAlloc = hasParams ? buildSignContext(M, opts as MLDSASignOptions) : null
+
   const mech = M._malloc(12)
   M.setValue(mech, CKM_ML_DSA, 'i32')
-  M.setValue(mech + 4, 0, 'i32')
-  M.setValue(mech + 8, 0, 'i32')
+  M.setValue(mech + 4, ctxAlloc ? ctxAlloc.paramPtr : 0, 'i32') // pParameter
+  M.setValue(mech + 8, ctxAlloc ? ctxAlloc.paramLen : 0, 'i32') // ulParameterLen
 
   const msgPtr = writeBytes(M, data)
   const sigLenPtr = allocUlong(M)
@@ -1748,6 +1765,7 @@ export const hsm_signBytesMLDSA = (
     M._free(msgPtr)
     M._free(sigLenPtr)
     if (sigPtr) M._free(sigPtr)
+    if (ctxAlloc) ctxAlloc.allocPtrs.forEach((p) => M._free(p))
   }
 }
 
