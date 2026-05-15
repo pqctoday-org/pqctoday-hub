@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useMemo, useState } from 'react'
-import { GitMerge, Bot, Filter } from 'lucide-react'
+import { GitMerge, Bot, Filter, X } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useRevisions, byRecord, type RevisionEntry } from '@/hooks/useRevisions'
 import { Button } from '@/components/ui/button'
@@ -8,6 +8,9 @@ import { BypassChip } from '@/components/ui/BypassChip'
 import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
 import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { conceptXwalkData } from '@/data/conceptXwalkData'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { PERSONA_REVISION_DOMAINS } from '@/data/personaConfig'
+import { applyPersonaSort } from './applyPersonaSort'
 
 // Label lookup: pt_id / moduleId / xwalkId → human-readable name. Built lazily to avoid circular dependency crashes.
 let entityLabelsCache: Map<string, string> | null = null
@@ -200,17 +203,33 @@ export function GlobalRevisionsFeed({
   const availableDomains = domains ?? ALL_DOMAINS
   const [activeDomains, setActiveDomains] = useState<Set<string>>(new Set(availableDomains))
   const [page, setPage] = useState(1)
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const [personaSortActive, setPersonaSortActive] = useState(true)
+
+  // Domains the active persona cares about. Empty when no persona is selected,
+  // when the user has dismissed the persona pill, or when the persona's
+  // priority list is intentionally empty (researcher).
+  const personaDomains = useMemo<readonly string[]>(() => {
+    if (!selectedPersona || !personaSortActive) return []
+    // eslint-disable-next-line security/detect-object-injection
+    return PERSONA_REVISION_DOMAINS[selectedPersona] ?? []
+  }, [selectedPersona, personaSortActive])
 
   const filtered = useMemo(() => {
-    if (entityFilter) {
-      return byRecord(revisions, domainFilter ?? '', entityFilter).filter(
-        (r) => r.merge_sha !== 'baseline'
-      )
-    }
-    return revisions.filter(
-      (r) => r.merge_sha !== 'baseline' && (activeDomains.size === 0 || activeDomains.has(r.domain))
-    )
-  }, [revisions, activeDomains, entityFilter, domainFilter])
+    const base = entityFilter
+      ? byRecord(revisions, domainFilter ?? '', entityFilter).filter(
+          (r) => r.merge_sha !== 'baseline'
+        )
+      : revisions.filter(
+          (r) =>
+            r.merge_sha !== 'baseline' && (activeDomains.size === 0 || activeDomains.has(r.domain))
+        )
+
+    // When entityFilter is active the entries are already scoped to one
+    // record, so persona sort is a no-op.
+    if (entityFilter) return base
+    return applyPersonaSort(base, personaDomains)
+  }, [revisions, activeDomains, entityFilter, domainFilter, personaDomains])
 
   const visible = filtered.slice(0, page * pageSize)
   const hasMore = visible.length < filtered.length
@@ -259,17 +278,40 @@ export function GlobalRevisionsFeed({
         </div>
       ) : (
         availableDomains.length > 1 && (
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <Filter className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-            {availableDomains.map((d) => (
-              <DomainChip
-                key={d}
-                domain={d}
-                active={activeDomains.has(d)}
-                onClick={() => toggleDomain(d)}
-              />
-            ))}
-          </div>
+          <>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <Filter className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+              {availableDomains.map((d) => (
+                <DomainChip
+                  key={d}
+                  domain={d}
+                  active={activeDomains.has(d)}
+                  onClick={() => toggleDomain(d)}
+                />
+              ))}
+            </div>
+            {selectedPersona && personaSortActive && personaDomains.length > 0 && (
+              <div
+                className="flex items-center gap-2 text-xs text-muted-foreground"
+                aria-label="Persona ranking active"
+              >
+                <span>
+                  Prioritised for{' '}
+                  <span className="capitalize text-foreground">{selectedPersona}</span>:{' '}
+                  <span className="text-foreground">{personaDomains.join(' · ')}</span>
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setPersonaSortActive(false)}
+                  className="h-auto p-0.5 text-muted-foreground hover:text-foreground"
+                  aria-label="Disable persona ranking for this session"
+                >
+                  <X className="w-3 h-3" />
+                </Button>
+              </div>
+            )}
+          </>
         )
       )}
 
