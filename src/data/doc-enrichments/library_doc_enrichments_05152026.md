@@ -3979,3 +3979,268 @@ enrichment_method: ollama-qwen3.6:27b
 - **Extraction Timestamp**: 2026-05-15T14:37:14
 
 ---
+
+## draft-reddy-cose-jose-pqc-hybrid-hpke
+
+- **Reference ID**: draft-reddy-cose-jose-pqc-hybrid-hpke
+- **Title**: Post-Quantum and Hybrid KEMs for HPKE with JOSE and COSE
+- **Authors**: T. Reddy (individual)
+- **Publication Date**: 2024-09-01
+- **Last Updated**: 2026-02-16
+- **Document Status**: Active Internet-Draft (Individual Submission)
+- **Main Topic**: Specification of Post-Quantum and Hybrid KEMs for HPKE within JOSE and COSE, including algorithm identifiers and key formats.
+- **PQC Algorithms Covered**: ML-KEM
+- **Quantum Threats Addressed**: Quantum cryptanalysis
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Tirumaleswar Reddy.K; Hannes Tschofenig
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: HPKE; JOSE; COSE
+- **Infrastructure Layers**: Key Management
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; elliptic curve cryptography (ECC); Elliptic Curve Diffie-Hellman Ephemeral Static; Ephemeral-Static (ES) DH; Static-Static (SS) DH; X25519
+- **Key Takeaways**: Hybrid key exchange is preferred for defense in depth during transition; Pure PQC may be required for regulatory compliance; ML-KEM-768 or ML-KEM-1024 are preferred over ML-KEM-512 for higher security margin; Separate algorithm identifiers are registered for Key Encryption and Integrated Encryption modes
+- **Security Levels & Parameters**: ML-KEM-512; ML-KEM-768; ML-KEM-1024; NIST security category 1
+- **Hybrid & Transition Approaches**: Hybrid key exchange; PQ/T hybrid combinations; defense in depth
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: "pure post-quantum algorithms (ML-KEM)"
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "PQ/T hybrid KEM that combines a PQC KEM with a traditional key-exchange algorithm"
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: HPKE implementation; JOSE or COSE implementation; support for ML-KEM parameter sets
+- **Relevant PQC Today Features**: hybrid-crypto; Algorithms; crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: draft-reddy-cose-jose-pqc-hybrid-hpke.html (81,712 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-15T15:57:31
+
+---
+
+## RFC 9810
+
+- **Reference ID**: RFC 9810
+- **Title**: Certificate Management Protocol (CMP) Updates for KEM
+- **Authors**: IETF LAMPS
+- **Publication Date**: 2025-07-01
+- **Last Updated**: 2025-07-01
+- **Document Status**: Standards Track
+- **Main Topic**: RFC 9810 updates the Certificate Management Protocol (CMP) to support Key Encapsulation Mechanism (KEM) keys for certificate management and message protection.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: H. Brockhaus; D. von Oheimb; M. Ounsworth; J. Gray
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: CMP; X.509; CMS
+- **Infrastructure Layers**: PKI; Key Management
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: DH
+- **Key Takeaways**: CMP version 3 introduces support for KEM keys in Proof-of-Possession and message protection; EnvelopedData replaces EncryptedValue to improve crypto agility; RootCaKeyUpdateContent is added as an alternative to repository-based root CA certificate acquisition; Backward compatibility with CMP version 2 is maintained wherever possible
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Crypto agility
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: X.509
+- **PQC Heatmap Protocols Evidence**: X.509: "Internet X.509 Public Key Infrastructure -- Certificate Management Protocol (CMP)"
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Developer; Compliance Officer
+- **Implementation Prerequisites**: Support for CMP version 3; ASN.1 syntax updates for EnvelopedData
+- **Relevant PQC Today Features**: crypto-agility; pki-workshop; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Backward compatibility with CMP version 2 is maintained wherever possible
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: RFC_9810.html (583,480 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-15T16:00:24
+
+---
+
+## draft-ietf-jose-pqc-kem
+
+- **Reference ID**: draft-ietf-jose-pqc-kem
+- **Title**: Use of Post-Quantum Key Encapsulation Mechanisms in JOSE
+- **Authors**: IETF JOSE WG
+- **Publication Date**: 2024-01-01
+- **Last Updated**: 2025-11-01
+- **Document Status**: Internet-Draft
+- **Main Topic**: Defines conventions for using Post-Quantum Key Encapsulation Mechanisms (ML-KEM) within JOSE and COSE for quantum-safe token encryption.
+- **PQC Algorithms Covered**: ML-KEM
+- **Quantum Threats Addressed**: Quantum computers impacting current cryptographic systems; Harvest Now Decrypt Later implied by "protect... against the quantum threat"
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Tirumaleswar Reddy.K; Aritra Banerjee; Hannes Tschofenig
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: JOSE; COSE
+- **Infrastructure Layers**: Key Management
+- **Standardization Bodies**: IETF; NIST
+- **Compliance Frameworks Referenced**: FIPS 203
+- **Classical Algorithms Referenced**: RSA; ECC; Elliptic Curve Diffie-Hellman Ephemeral Static; Ephemeral-Static DH; Static-Static DH
+- **Key Takeaways**: ML-KEM-512, ML-KEM-768, and ML-KEM-1024 are specified for JOSE/COSE key agreement; Fujisaki-Okamoto transform is required for IND-CCA2 security; Hybrid PQ/T KEMs are supported via HPKE extension; Direct and Key Wrapping modes are defined for both JOSE and COSE
+- **Security Levels & Parameters**: ML-KEM-512; ML-KEM-768; ML-KEM-1024
+- **Hybrid & Transition Approaches**: Hybrid post-quantum KEMs via HPKE extension; transition from traditional to post-quantum algorithms
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: "This document focuses on Module-Lattice-based Key Encapsulation Mechanisms (ML-KEMs)"
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: Fujisaki-Okamoto transform implementation; KDF for shared secret derivation
+- **Relevant PQC Today Features**: Algorithms; api-security-jwt; hybrid-crypto; crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Transition from traditional to post-quantum algorithms; hybrid support via HPKE
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: draft-ietf-jose-pqc-kem.html (84,725 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-15T16:02:53
+
+---
+
+## draft-ietf-cose-dilithium
+
+- **Reference ID**: draft-ietf-cose-dilithium
+- **Title**: ML-DSA for JOSE and COSE
+- **Authors**: IETF
+- **Publication Date**: 2024-05-01
+- **Last Updated**: 2024-05-01
+- **Document Status**: Published
+- **Main Topic**: This document specifies JSON Object Signing and Encryption (JOSE) and CBOR Object Signing and Encryption (COSE) serializations for the Module-Lattice-Based Digital Signature Standard (ML-DSA).
+- **PQC Algorithms Covered**: ML-DSA, ML-DSA-44, ML-DSA-65, ML-DSA-87
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: M. Prorock; O. Steele
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: JOSE, COSE
+- **Infrastructure Layers**: Key Management
+- **Standardization Bodies**: IETF, US NIST
+- **Compliance Frameworks Referenced**: FIPS 204
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The document defines a new Algorithm Key Pair (AKP) key type for generic cryptographic keys in JOSE and COSE; ML-DSA private keys are specified using only the seed format (32 bytes) to ensure compact representation and interoperability; HashML-DSA is explicitly not supported to avoid complexity and compatibility issues; ML-DSA keys and signatures are significantly larger than traditional algorithms, posing challenges for bandwidth and memory-constrained deployments; Thumbprint algorithms are defined for AKP keys to facilitate key comparison and identification.
+- **Security Levels & Parameters**: ML-DSA-44; ML-DSA-65; ML-DSA-87
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "This document specifies how to use ML-DSA keys and signatures... in conjunction with JOSE and COSE."
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: ML-DSA-44 Private Key 2560 bytes; ML-DSA-44 Public Key 1312 bytes; ML-DSA-44 Signature 2420 bytes; ML-DSA-65 Private Key 4032 bytes; ML-DSA-65 Public Key 1952 bytes; ML-DSA-65 Signature 3309 bytes; ML-DSA-87 Private Key 4896 bytes; ML-DSA-87 Public Key 2592 bytes; ML-DSA-87 Signature 4627 bytes; Seed length 32 bytes
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: Support for JOSE and COSE standards; Implementation of US NIST FIPS 204 ML-DSA algorithms
+- **Relevant PQC Today Features**: Algorithms; api-security-jwt; digital-assets
+- **Implementation Attack Surface**: Private key compromise; Mismatched AKP parameters; Tampered public and private information class parameters
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Key validation; Seed length check; pkEncode and pkDecode range validation
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: ML-DSA may not be suitable for use cases requiring small keys or signatures due to size increase challenges for limited bandwidth, memory, or processing capacity
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Simplifying key management by using a single ML-DSA private key representation for COSE and JOSE
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: draft-ietf-cose-dilithium.html (258,928 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-15T16:05:36
+
+---
+
+## draft-ietf-cose-dilithium-05
+
+- **Reference ID**: draft-ietf-cose-dilithium-05
+- **Title**: draft-ietf-cose-dilithium-05
+- **Authors**: IETF
+- **Publication Date**: 2026-04-28
+- **Last Updated**: 2026-04-28
+- **Document Status**: Active
+- **Main Topic**: This document specifies JSON Object Signing and Encryption (JOSE) and CBOR Object Signing and Encryption (COSE) serializations for the ML-DSA post-quantum digital signature scheme.
+- **PQC Algorithms Covered**: ML-DSA, ML-DSA-44, ML-DSA-65, ML-DSA-87
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Michael Prorock; Orie Steele
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: JOSE, COSE
+- **Infrastructure Layers**: Key Management
+- **Standardization Bodies**: IETF, NIST
+- **Compliance Frameworks Referenced**: FIPS 204
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The document defines a new Algorithm Key Pair (AKP) type for expressing public and private keys for algorithms not limited to those registered; ML-DSA private keys are specified using only the seed format (32 bytes) to ensure a single compact representation across COSE and JOSE; The document registers ML-DSA-44, ML-DSA-65, and ML-DSA-87 algorithms in IANA JOSE and COSE registries; HashML-DSA is explicitly not supported in this specification
+- **Security Levels & Parameters**: ML-DSA-44; ML-DSA-65; ML-DSA-87
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "specifies ... serializations for ... ML-DSA ... digital signature scheme"
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: ML-DSA-44 Private Key 2560 bytes; ML-DSA-44 Public Key 1312 bytes; ML-DSA-44 Signature 2420 bytes; ML-DSA-65 Private Key 4032 bytes; ML-DSA-65 Public Key 1952 bytes; ML-DSA-65 Signature 3309 bytes; ML-DSA-87 Private Key 4896 bytes; ML-DSA-87 Public Key 2592 bytes; ML-DSA-87 Signature 4627 bytes; Seed length 32 bytes
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: Support for JOSE and COSE standards; Implementation of NIST FIPS 204 ML-DSA
+- **Relevant PQC Today Features**: Algorithms; digital-id; api-security-jwt
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: draft-ietf-cose-dilithium-05.html (238,236 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-15T16:08:37
+
+---

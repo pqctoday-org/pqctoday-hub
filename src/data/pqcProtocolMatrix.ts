@@ -226,11 +226,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        note: 'CNSA 2.0 SSH profile requires ML-KEM-1024 alone from 2027; not yet RFC-published.',
+        note: 'ML-KEM-1024 alone required by CNSA 2.0 SSH profile from 2027; profile is an Independent Submission, not yet RFC-published.',
       },
       hybridKem: {
         value: 'rfc',
-        note: 'sntrup761x25519 published as RFC 9941 (Apr 2026); ML-KEM-768+X25519 in draft -10.',
+        note: 'sntrup761x25519 is RFC-published (April 2026); ML-KEM-768 + X25519 hybrid is an active WG draft.',
       },
       pureSig: {
         value: 'draft',
@@ -327,7 +327,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     playgrounds: [],
     noDeploymentReason:
-      'By design — the IETF TLS WG scoped all PQC work to TLS 1.3 only (see RFC 9325 / BCP 195). Operators must migrate to TLS 1.3 to obtain any PQ posture; there is no path to retrofit PQ key exchange or signatures into TLS 1.2 transport.',
+      'By design — the IETF TLS WG scoped all PQC work to TLS 1.3 only (TLS 1.2 BCP recommends migrating off TLS 1.2). Operators must migrate to TLS 1.3 to obtain any PQ posture; no path exists to retrofit PQ key exchange or signatures into TLS 1.2 transport.',
     inheritedBy: ['DTLS 1.2', 'FIDO'],
   },
   {
@@ -377,22 +377,25 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        note: 'draft-ietf-tls-mlkem-07: pure ML-KEM-512/768/1024 groups (revising post-WGLC).',
+        note: 'Pure ML-KEM-512/768/1024 groups specified in an active WG draft (revising post-WGLC).',
         deploymentPosture: 'pilot',
         deploymentNote:
           'Standalone ML-KEM groups gated behind feature flags in BoringSSL / Chromium experimental builds.',
       },
       hybridKem: {
         value: 'draft',
-        note: 'X25519MLKEM768 (0x11EC) shipped in production; in RFC Editor queue.',
+        note: 'X25519MLKEM768 hybrid group (IANA codepoint 4588) sits in the RFC Editor queue; already shipped in production.',
         deploymentPosture: 'production',
         deploymentNote:
           'X25519MLKEM768 enabled by default in Cloudflare edge, Google services, AWS, BoringSSL, OpenSSL 3.5 since 2024–2025 — production deployment exceeds spec status.',
       },
-      pureSig: { value: 'draft', note: 'draft-ietf-tls-mldsa-03 in Publication Requested.' },
+      pureSig: {
+        value: 'draft',
+        note: 'ML-DSA SignatureSchemes specified in WG draft, IESG state Publication Requested.',
+      },
       hybridSig: {
         value: 'draft',
-        note: 'Composite signatures via X.509 RFC 9881 + draft-lamps-pq-composite-sigs.',
+        note: 'Composite signatures bind at the X.509 certificate layer; see X.509 row for composite sig drafts.',
       },
     },
     ossLibraries: [
@@ -422,7 +425,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         toolName: 'TLS 1.3 Simulator',
         testability: { pureKem: 'full', hybridKem: 'full', pureSig: 'full', hybridSig: 'partial' },
         hybridSigNote:
-          'Composite-sig cert IDs (draft-ietf-lamps-pq-composite-sigs-19) are exposed in the dropdown, but currently substitute the closest pre-baked ML-DSA PEM. True composite cert generation is delegated to OpenSSL Studio "Custom".',
+          'Composite-sig cert IDs are exposed in the dropdown but currently substitute the closest pre-baked ML-DSA PEM. True composite cert generation is delegated to OpenSSL Studio "Custom".',
       },
       {
         toolId: 'openssl-studio',
@@ -539,16 +542,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'rfc',
-        note: 'RFC 9935: ML-KEM-512/768/1024 OIDs. Constraint: KEM certs are encryption-only per §4 — cannot self-sign, must be issued under a signature cert.',
+        note: 'ML-KEM-512/768/1024 X.509 OIDs published. Constraint: KEM certs are encryption-only per the RFC — cannot self-sign, must be issued under a signature cert.',
       },
       hybridKem: {
         value: 'draft',
-        note: 'draft-ietf-lamps-pq-composite-kem-14: ML-KEM + classical composite.',
+        note: 'Composite ML-KEM + classical (RSA-OAEP / ECDH / X25519 / X448) specified in WG draft.',
       },
-      pureSig: { value: 'rfc', note: 'RFC 9881 (ML-DSA) + RFC 9909 (SLH-DSA).' },
+      pureSig: { value: 'rfc', note: 'ML-DSA and SLH-DSA X.509 OIDs are both RFC-published.' },
       hybridSig: {
         value: 'draft',
-        note: 'draft-ietf-lamps-pq-composite-sigs-19: ML-DSA + ECDSA/RSA/Ed25519/EdDSA composite.',
+        note: 'Composite ML-DSA + ECDSA / RSA / Ed25519 / EdDSA specified in WG draft.',
       },
     },
     ossLibraries: [
@@ -652,6 +655,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2025-07',
         localFile: '/library/RFC_9814.html',
       },
+      {
+        id: 'RFC-9629',
+        title: 'RFC 9629 — KEMRecipientInfo for CMS',
+        url: 'https://datatracker.ietf.org/doc/html/rfc9629',
+        date: '2024-08',
+        localFile: '/library/RFC_9629.html',
+      },
     ],
     latestDraft: [
       {
@@ -668,15 +678,15 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
     ],
     dimensions: {
-      pureKem: { value: 'rfc', note: 'RFC 9936: ML-KEM key transport in CMS.' },
+      pureKem: { value: 'rfc', note: 'ML-KEM key transport in CMS is RFC-published.' },
       hybridKem: {
         value: 'draft',
-        note: 'draft-ietf-lamps-cms-composite-kem-01 (LAMPS WG-adopted, May 2026): composite ML-KEM for CMS using KEMRecipientInfo (RFC 9629); covers ML-KEM + RSA-OAEP/ECDH/X25519/X448 combinations.',
+        note: 'Composite ML-KEM for CMS specified in a LAMPS WG-adopted draft, using the CMS KEMRecipientInfo structure; covers ML-KEM with RSA-OAEP / ECDH / X25519 / X448.',
       },
-      pureSig: { value: 'rfc', note: 'RFC 9882 (ML-DSA) + RFC 9814 (SLH-DSA).' },
+      pureSig: { value: 'rfc', note: 'ML-DSA and SLH-DSA CMS conventions are both RFC-published.' },
       hybridSig: {
         value: 'draft',
-        note: 'draft-ietf-lamps-cms-composite-sigs-04 (LAMPS WG-adopted): composite ML-DSA SignerInfo for CMS, mirroring the X.509 composite-sigs construction.',
+        note: 'Composite ML-DSA SignerInfo for CMS specified in a LAMPS WG-adopted draft, mirroring the X.509 composite-sigs construction.',
       },
     },
     ossLibraries: [
@@ -695,7 +705,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     playgrounds: [],
     noDeploymentReason:
-      'S/MIME PQ standards are very fresh (RFC 9882 ML-DSA Oct 2025, RFC 9814 SLH-DSA Jul 2025, RFC 9936 ML-KEM Mar 2026) — typical standards-to-ship gap is 12–24 months. The quantum-safe consumer-email market migrated to OpenPGP (Proton Mail) and proprietary protocols (Tuta / TutaCrypt) rather than S/MIME; mainstream providers (Gmail / Outlook / Apple Mail) rely on TLS-in-transit + at-rest encryption and do not drive S/MIME at all. The procurement-cycle slots that will force S/MIME PQ deployment — CNSA 2.0 S/MIME profile (still draft) and X9 Financial PKI consumers — have not yet shipped a product. Building blocks (OpenSSL 3.5 `cms`, Bouncy Castle 1.79+ CMS API) exist and IETF Hackathon runs cross-vendor interop tests, but no end-user product deployment.',
+      'S/MIME PQ standards are very fresh (ML-DSA Oct 2025, SLH-DSA Jul 2025, ML-KEM Mar 2026) — typical standards-to-ship gap is 12–24 months. The quantum-safe consumer-email market migrated to OpenPGP (Proton Mail) and proprietary protocols (Tuta / TutaCrypt) rather than S/MIME; mainstream providers (Gmail / Outlook / Apple Mail) rely on TLS-in-transit + at-rest encryption and do not drive S/MIME at all. The procurement-cycle slots that will force S/MIME PQ deployment — CNSA 2.0 S/MIME profile (still draft) and X9 Financial PKI consumers — have not yet shipped a product. Building blocks (OpenSSL 3.5 `cms`, Bouncy Castle 1.79+ CMS API) exist and IETF Hackathon runs cross-vendor interop tests, but no end-user product deployment.',
   },
   {
     id: 'cose',
@@ -733,11 +743,19 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2026-03-25',
         localFile: '/library/draft-ietf-cose-falcon-04.html',
       },
+      {
+        id: 'draft-reddy-cose-jose-pqc-hybrid-hpke-11',
+        title:
+          'draft-reddy-cose-jose-pqc-hybrid-hpke-11 — PQ/T Hybrid KEMs for HPKE with JOSE/COSE',
+        url: 'https://datatracker.ietf.org/doc/draft-reddy-cose-jose-pqc-hybrid-hpke/',
+        date: '2026-02-16',
+        localFile: '/library/draft-reddy-cose-jose-pqc-hybrid-hpke.html',
+      },
     ],
     dimensions: {
       pureKem: {
         value: 'experimental',
-        note: 'HPKE PQ for JOSE/COSE in draft-reddy-cose-jose-pqc-hybrid-hpke; not WG-adopted.',
+        note: 'HPKE-based PQ KEM path defined in an individual submission; not WG-adopted.',
       },
       hybridKem: {
         value: 'experimental',
@@ -745,11 +763,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'draft',
-        note: 'draft-ietf-cose-dilithium-05: ML-DSA algorithm identifiers for COSE_Sign.',
+        note: 'ML-DSA algorithm identifiers for COSE_Sign specified in WG draft.',
       },
       hybridSig: {
         value: 'experimental',
-        note: 'Composite signatures via draft-prabel-jose-pq-composite-sigs (individual draft).',
+        note: 'Composite signatures specified at the JOSE layer (see JOSE row for WG-adopted composite-sigs draft).',
       },
     },
     ossLibraries: [
@@ -758,7 +776,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     commercialLibraries: [],
     playgrounds: [],
     noDeploymentReason:
-      'Standards are still draft (draft-ietf-cose-dilithium-11 expires May 2026) and the consumer/IoT product that would consume COSE-PQ signatures (passkeys / WebAuthn / constrained-device firmware) is itself pre-deployment. IANA registered COSE alg IDs for ML-DSA in April 2025, but no commercial COSE-PQ product has shipped.',
+      'COSE PQ standards are still in WG draft and the consumer/IoT products that would consume COSE-PQ signatures (passkeys / WebAuthn / constrained-device firmware) are themselves pre-deployment. IANA registered COSE alg IDs for ML-DSA in April 2025, but no commercial COSE-PQ product has shipped.',
   },
   {
     id: 'jose',
@@ -803,23 +821,31 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2025-01',
         localFile: '/library/draft-ietf-jose-pq-composite-sigs.html',
       },
+      {
+        id: 'draft-reddy-cose-jose-pqc-hybrid-hpke-11',
+        title:
+          'draft-reddy-cose-jose-pqc-hybrid-hpke-11 — PQ/T Hybrid KEMs for HPKE with JOSE/COSE',
+        url: 'https://datatracker.ietf.org/doc/draft-reddy-cose-jose-pqc-hybrid-hpke/',
+        date: '2026-02-16',
+        localFile: '/library/draft-reddy-cose-jose-pqc-hybrid-hpke.html',
+      },
     ],
     dimensions: {
       pureKem: {
         value: 'draft',
-        note: 'draft-ietf-jose-pqc-kem: ML-KEM-512/768/1024 alg IDs for JWE.',
+        note: 'ML-KEM-512/768/1024 alg IDs for JWE specified in WG draft.',
       },
       hybridKem: {
         value: 'experimental',
-        note: 'Hybrid HPKE for JOSE via individual draft-reddy-cose-jose-pqc-hybrid-hpke.',
+        note: 'Hybrid HPKE path for JOSE is an individual submission, not WG-adopted.',
       },
       pureSig: {
         value: 'draft',
-        note: 'ML-DSA alg IDs for JWS via draft-ietf-cose-dilithium (covers JOSE + COSE).',
+        note: 'ML-DSA alg IDs for JWS specified in the shared JOSE/COSE Dilithium draft.',
       },
       hybridSig: {
         value: 'draft',
-        note: 'draft-ietf-jose-pq-composite-sigs: PQ/T composite signatures in JWS.',
+        note: 'PQ/T composite signatures in JWS specified in WG draft.',
       },
     },
     ossLibraries: [
@@ -892,19 +918,19 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'rfc',
-        note: 'RFC 9810 adds KEM key transport to CMP; RFC 9935 ML-KEM OIDs apply.',
+        note: 'CMP adds KEM key transport (RFC-published); ML-KEM X.509 OIDs apply from the X.509 row.',
       },
       hybridKem: {
         value: 'draft',
-        note: 'draft-ietf-lamps-pq-composite-kem-14 enrollable via PKCS#10/CMP per RFC 9810.',
+        note: 'Composite ML-KEM enrollment via PKCS#10 / CMP is specified by the X.509 composite-kem WG draft + the CMP KEM-update RFC.',
       },
       pureSig: {
         value: 'rfc',
-        note: 'ML-DSA enrollment via RFC 9881 OIDs; CSRs and CMP responses standardized.',
+        note: 'ML-DSA enrollment uses the RFC-published X.509 ML-DSA OIDs; CSRs and CMP responses standardized.',
       },
       hybridSig: {
         value: 'draft',
-        note: 'draft-ietf-lamps-pq-composite-sigs-19 composite CSR/issuance flows.',
+        note: 'Composite-sig CSR / issuance flows specified by the X.509 composite-sigs WG draft.',
       },
     },
     ossLibraries: [
@@ -1042,16 +1068,19 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'experimental',
-        note: 'WG-adopted draft (draft-ietf-openpgp-pqc-17) ships composite KEM only; pure ML-KEM mode is chartered/in-progress per PQCC tracking but not yet specified in any IETF document.',
+        note: 'WG-adopted OpenPGP-PQC draft ships composite KEM only; pure ML-KEM mode is chartered/in-progress per PQCC tracking but not yet specified in any IETF document.',
       },
       hybridKem: {
         value: 'draft',
-        note: 'draft-ietf-openpgp-pqc-17: composite ML-KEM-768/1024 + ECDH (P-256/P-384/X25519/X448).',
+        note: 'Composite ML-KEM-768/1024 + ECDH (P-256 / P-384 / X25519 / X448) specified in the WG-adopted OpenPGP-PQC draft.',
       },
-      pureSig: { value: 'draft', note: 'draft-ietf-openpgp-pqc-17: SLH-DSA standalone signature.' },
+      pureSig: {
+        value: 'draft',
+        note: 'SLH-DSA standalone signature specified in the WG-adopted OpenPGP-PQC draft.',
+      },
       hybridSig: {
         value: 'draft',
-        note: 'draft-ietf-openpgp-pqc-17: composite ML-DSA + ECDSA/EdDSA.',
+        note: 'Composite ML-DSA + ECDSA / EdDSA specified in the WG-adopted OpenPGP-PQC draft.',
       },
     },
     ossLibraries: [
@@ -1110,6 +1139,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2025',
         localFile: '/library/RFC_9867.html',
       },
+      {
+        id: 'RFC-9242',
+        title: 'RFC 9242 — IKE_INTERMEDIATE Exchange',
+        url: 'https://datatracker.ietf.org/doc/html/rfc9242',
+        date: '2022-05',
+        localFile: '/library/RFC_9242.html',
+      },
     ],
     latestDraft: [
       {
@@ -1130,15 +1166,15 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        note: 'draft-ietf-ipsecme-ikev2-mlkem-05: ML-KEM standalone transform IDs.',
+        note: 'ML-KEM standalone transform IDs specified in WG draft.',
       },
       hybridKem: {
         value: 'rfc',
-        note: 'RFC 9370 multi-KE framework is RFC (May 2023) and enables hybrid IKEv2 KEX today; the ML-KEM-specific binding (draft-ietf-ipsecme-ikev2-mlkem-05) is still WG draft (PQCC scores it 6 / near-finalized).',
+        note: 'Multi-KE framework for IKEv2 is RFC-published (May 2023) and enables hybrid IKEv2 KEX today; the ML-KEM-specific binding is still a WG draft (PQCC scores it 6 / near-finalized).',
       },
       pureSig: {
         value: 'draft',
-        note: 'draft-ietf-ipsecme-ikev2-pqc-auth-08: ML-DSA and SLH-DSA auth methods.',
+        note: 'ML-DSA and SLH-DSA IKEv2 auth methods specified in WG draft.',
       },
       hybridSig: {
         value: 'experimental',
@@ -1196,7 +1232,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       {
         provider: 'Cisco Secure Firewall',
-        what: 'Hybrid IKEv2 (RFC 9242 + 9370) on ASA 9.19+; ML-KEM in FTD 10.5 / ASA 9.25',
+        what: 'Hybrid IKEv2 (IKE_INTERMEDIATE + multi-KE RFCs) on ASA 9.19+; ML-KEM in FTD 10.5 / ASA 9.25',
         since: '2024',
         referenceUrl:
           'https://blogs.cisco.com/security/preparing-for-post-quantum-cryptography-the-secure-firewall-roadmap',
@@ -1250,19 +1286,19 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        note: 'draft-ietf-mls-pq-ciphersuites-04: pure ML-KEM cipher suites (WG Last Call).',
+        note: 'Pure ML-KEM cipher suites specified in WG draft (WG Last Call).',
       },
       hybridKem: {
         value: 'draft',
-        note: 'draft-ietf-mls-combiner-02 (WG-adopted, expired 2026-04-23 awaiting rev): flexible hybrid PQ MLS combiner seeds PQ guarantees into traditional ciphersuite via exporter secret.',
+        note: 'Flexible hybrid PQ MLS combiner specified in a WG-adopted draft (expired 2026-04-23 awaiting rev); seeds PQ guarantees into traditional ciphersuite via exporter secret.',
       },
       pureSig: {
         value: 'draft',
-        note: 'draft-ietf-mls-pq-ciphersuites-04 pairs PQ KEM with PQ signature (ML-DSA).',
+        note: 'WG draft pairs PQ KEM with PQ signature (ML-DSA) in cipher suite definitions.',
       },
       hybridSig: {
         value: 'draft',
-        note: 'draft-ietf-mls-combiner-02 (WG-adopted) covers hybrid sig path via session combination; X.509 composite-sigs binds at cert layer.',
+        note: 'WG-adopted MLS combiner draft covers hybrid sig path via session combination; X.509 composite-sigs binds at the cert layer (see X.509 row).',
       },
     },
     ossLibraries: [
@@ -1518,7 +1554,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        note: 'Inherits TLS 1.3 — pure ML-KEM groups (draft-ietf-tls-mlkem-07).',
+        note: 'Inherits TLS 1.3 — pure ML-KEM groups via the TLS 1.3 WG draft.',
       },
       hybridKem: {
         value: 'draft',
@@ -1568,7 +1604,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        note: 'Inherits TLS 1.3 — pure ML-KEM groups via draft-ietf-tls-mlkem-07.',
+        note: 'Inherits TLS 1.3 — pure ML-KEM groups via the TLS 1.3 WG draft.',
       },
       hybridKem: {
         value: 'draft',
@@ -1579,11 +1615,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'experimental',
-        note: 'WebAuthn registers signature algorithms via COSE; ML-DSA COSE alg IDs in draft-ietf-cose-dilithium-11. Constraint: authenticator-side ML-DSA private key (~5–7 KB) strains secure-element storage budgets.',
+        note: 'WebAuthn registers signature algorithms via COSE; ML-DSA alg IDs sourced from the COSE row. Constraint: authenticator-side ML-DSA private key (~5–7 KB) strains secure-element storage budgets.',
       },
       hybridSig: {
         value: 'experimental',
-        note: 'PQ/T composite COSE signatures (draft-ietf-jose-pq-composite-sigs) are the likely path; no FIDO Alliance profile yet.',
+        note: 'PQ/T composite COSE signatures (see JOSE row) are the likely path; no FIDO Alliance profile yet.',
       },
     },
     ossLibraries: [],
@@ -1655,14 +1691,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       hybridKem: { value: 'na', note: 'Secure Boot is signature-only — no KEM.' },
       pureSig: {
         value: 'rfc',
-        note: 'Inherits X.509 — RFC 9881 (ML-DSA) + RFC 9909 (SLH-DSA) OIDs usable in PE/COFF Authenticode. Constraint: ML-DSA-65 signatures (~3 KB) inflate Authenticode blocks vs. ~256 B RSA-2048.',
+        note: 'Inherits X.509 — ML-DSA and SLH-DSA OIDs (see X.509 row) usable in PE/COFF Authenticode. Constraint: ML-DSA-65 signatures (~3 KB) inflate Authenticode blocks vs. ~256 B RSA-2048.',
         deploymentPosture: 'pilot',
         deploymentNote:
           'Microsoft + Intel announced ML-DSA secure-boot pilots Q4 2025; first SLH-DSA UEFI signatures in vendor firmware Q1 2026.',
       },
       hybridSig: {
         value: 'draft',
-        note: 'Inherits X.509 — draft-ietf-lamps-pq-composite-sigs-19 for dual-cert dual-algorithm boot.',
+        note: 'Inherits X.509 — composite-sigs WG draft (see X.509 row) for dual-cert dual-algorithm boot.',
       },
     },
     ossLibraries: [

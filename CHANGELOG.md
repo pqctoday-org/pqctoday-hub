@@ -73,6 +73,25 @@ Added top-level entries for `TPM2_SignSequenceStart` (§17.5 Tables 89-90), `TPM
 
 Re-ran the trust-tier measurement script for the Phase 2 SME-triage baseline. Net change vs the 2026-05-13 snapshot: +14 Moderate, +18 Low, **+32 total records** (3,314 → 3,346) from the intervening enrichment + xwalk runs. Authoritative (90) and High (649) tiers unchanged.
 
+### Changed — PQC Protocol Matrix: all doc references moved from prose to structured pointers (2026-05-15)
+
+Hygiene pass on the Protocol Support matrix. Every RFC number and IETF-draft slug that was previously inlined in dimension `note`, `deploymentNote`, `noDeploymentReason`, playground tooltip, and live-deployment description fields has been moved out of free-text. **45 fields cleaned, 0 doc-ID mentions remain in prose**; all citations now live exclusively in the structured `latestRelease[]` and `latestDraft[]` arrays.
+
+**Why:** prose citations drift (e.g. the TLS 1.3 `hybridSig.note` carried a typo'd `draft-lamps-pq-composite-sigs` slug missing the `-ietf-` segment; the COSE `hybridSig.note` cited `draft-prabel-jose-pq-composite-sigs` which is **expired and replaced** by the WG-adopted successor). Structured pointers are auditable, link to a cached `localFile`, and surface in the UI as clickable doc chips.
+
+**Library completeness check.** Audited every doc reference in the matrix against `library_05152026_r2.csv`: **28 / 28 refs are now in library + enriched + in the RAG corpus.** One missing entry was added: `draft-reddy-cose-jose-pqc-hybrid-hpke-11` (individual submission, HPKE-PQ binding for JOSE/COSE, Feb 2026) — downloaded to `public/library/` and enriched via qwen3.6:27b. Four pre-existing library rows that were unenriched got their first pass: RFC 9810 (CMP KEM-update), `draft-ietf-cose-dilithium` and `-05`, `draft-ietf-jose-pqc-kem`. Total enrichment: 5 docs in 14 min 56 s wall-time, 0 failures, 19–23 of 39 dimensions filled per doc.
+
+**Matrix array additions** (structured pointers that replaced inlined citations):
+
+- S/MIME `latestRelease`: + RFC 9629 (KEMRecipientInfo, the CMS structure the composite-KEM draft profiles)
+- IKE/IPsec `latestRelease`: + RFC 9242 (IKE_INTERMEDIATE, the substrate that enables PQ KEX rounds)
+- COSE `latestDraft`: + `draft-reddy-cose-jose-pqc-hybrid-hpke-11`
+- JOSE `latestDraft`: + `draft-reddy-cose-jose-pqc-hybrid-hpke-11`
+
+**RAG corpus regenerated**: 11,009 → 11,011 chunks (+2 from the new HPKE-PQ draft × library + document-enrichment sources).
+
+Going forward — if you cite an RFC number or draft slug inside a `note`, that's a regression: the doc belongs in `latestRelease` or `latestDraft` instead.
+
 ### Added — PQC Protocol Support matrix: PQCC alignment, live deployments, detail modal (2026-05-15)
 
 The **Protocol Support** tab on `/algorithms` doubled in scope and now mirrors the PQCC State-of-the-Migration April 2026 heatmap with a row-level deployment ledger you can audit.
