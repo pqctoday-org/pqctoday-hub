@@ -177,6 +177,31 @@ export function sanitize(s: string | undefined | null): string {
   return (s ?? '').trim()
 }
 
+/**
+ * DS-series shared filter: skip CSV rows whose `status` column is
+ * 'deprecated' or 'obsolete'. Matches `filterActive()` in
+ * `src/data/loaderUtils.ts` so RAG chunks stay in sync with what the UI
+ * loaders actually surface.
+ *
+ * Both helpers are no-ops on CSVs without a `status` column (pre-DS01
+ * schema) — those rows are treated as active.
+ */
+function isInactiveRow(rows: string[][], i: number): boolean {
+  const header = rows[0]
+  if (!header) return false
+  const statusIdx = header.indexOf('status')
+  if (statusIdx === -1) return false
+  const row = rows[i]
+  if (!row) return false
+  const v = (row[statusIdx] ?? '').trim().toLowerCase()
+  return v === 'deprecated' || v === 'obsolete'
+}
+
+function isInactiveRecord(rec: Record<string, string>): boolean {
+  const v = (rec.status ?? '').trim().toLowerCase()
+  return v === 'deprecated' || v === 'obsolete'
+}
+
 /** Load all library referenceIds for cross-linking other sources to /library?ref= */
 let _libraryRefIds: Set<string> | null = null
 function getLibraryRefIds(): Set<string> {
@@ -186,6 +211,7 @@ function getLibraryRefIds(): Set<string> {
   if (file) {
     const rows = readCSV(file)
     for (let i = 1; i < rows.length; i++) {
+      if (isInactiveRow(rows, i)) continue
       const refId = sanitize(rows[i][0])
       if (refId) _libraryRefIds.add(refId)
     }
@@ -499,6 +525,7 @@ function processTimeline(): RAGChunk[] {
 
   // Skip header row
   for (let i = 1; i < rows.length; i++) {
+    if (isInactiveRow(rows, i)) continue
     const row = rows[i]
     if (row.length < 12) continue
 
@@ -631,6 +658,7 @@ function processLibrary(): RAGChunk[] {
   })()
 
   for (let i = 1; i < rows.length; i++) {
+    if (isInactiveRow(rows, i)) continue
     const row = rows[i]
     if (row.length < 17) continue
 
@@ -755,6 +783,7 @@ function processAlgorithms(): RAGChunk[] {
   const chunks: RAGChunk[] = []
 
   for (let i = 1; i < rows.length; i++) {
+    if (isInactiveRow(rows, i)) continue
     const row = rows[i]
     if (row.length < 16) continue
 
@@ -862,11 +891,9 @@ function processThreats(): RAGChunk[] {
   const chunks: RAGChunk[] = []
 
   for (let i = 1; i < rows.length; i++) {
+    if (isInactiveRow(rows, i)) continue
     const row = rows[i]
     if (row.length < 7) continue
-    // Skip deprecated/obsolete rows (status col = index 19)
-    const rowStatus = row[19]?.trim().toLowerCase()
-    if (rowStatus === 'deprecated' || rowStatus === 'obsolete') continue
 
     const [
       industry,
@@ -925,6 +952,7 @@ function processCompliance(): RAGChunk[] {
   const chunks: RAGChunk[] = []
 
   for (let i = 1; i < rows.length; i++) {
+    if (isInactiveRow(rows, i)) continue
     const row = rows[i]
     if (row.length < 9) continue
 
@@ -992,10 +1020,9 @@ function processMigrateSoftware(): RAGChunk[] {
 
   for (let i = 0; i < records.length; i++) {
     const r = records[i]
+    if (isInactiveRecord(r)) continue
     const name = sanitize(r.software_name)
     if (!name) continue
-    const rowStatus = sanitize(r.status)?.toLowerCase()
-    if (rowStatus === 'deprecated' || rowStatus === 'obsolete') continue
 
     const content = [
       `Software: ${name}`,
@@ -1077,14 +1104,9 @@ function processLeaders(): RAGChunk[] {
   const chunks: RAGChunk[] = []
 
   for (let i = 1; i < rows.length; i++) {
+    if (isInactiveRow(rows, i)) continue
     const row = rows[i]
     if (row.length < 7) continue
-
-    // Skip deprecated/obsolete leaders (status col = index 16). Matches the
-    // loader's filterActive behavior in leadersData.ts, so chunks stay in sync
-    // with trustScoreData.ts (no orphan leader chunks per C3 invariant).
-    const rowStatus = (row[16] ?? '').trim().toLowerCase()
-    if (rowStatus === 'deprecated' || rowStatus === 'obsolete') continue
 
     const [name, country, role, organizations, type, category, contribution] = row
 
@@ -1171,6 +1193,7 @@ function processVendors(): RAGChunk[] {
   const chunks: RAGChunk[] = []
 
   for (const r of records) {
+    if (isInactiveRecord(r)) continue
     const vendorId = sanitize(r.vendor_id)
     if (!vendorId) continue
     const displayName = sanitize(r.vendor_display_name) || sanitize(r.vendor_name) || vendorId
@@ -1565,6 +1588,7 @@ function processTrustedSources(): RAGChunk[] {
   const chunks: RAGChunk[] = []
 
   for (const r of records) {
+    if (isInactiveRecord(r)) continue
     const sourceId = sanitize(r.source_id)
     if (!sourceId) continue
 
@@ -2301,6 +2325,7 @@ function processAssessmentConfig(): RAGChunk[] {
   // Group by category
   const byCategory = new Map<string, typeof records>()
   for (const r of records) {
+    if (isInactiveRecord(r)) continue
     const cat = sanitize(r.category) || 'general'
     const existing = byCategory.get(cat) ?? []
     existing.push(r)
@@ -3206,6 +3231,7 @@ function processCertificationXref(): RAGChunk[] {
   // --- Group by cert_type (original 3 chunks) ---
   const byType = new Map<string, typeof records>()
   for (const r of records) {
+    if (isInactiveRecord(r)) continue
     const certType = sanitize(r.cert_type) || 'Other'
     const existing = byType.get(certType) ?? []
     existing.push(r)
@@ -3246,6 +3272,7 @@ function processCertificationXref(): RAGChunk[] {
   const vendorKey = (v: string) => v.toLowerCase().replace(/[^a-z0-9]+/g, '-')
   const byVendor = new Map<string, { displayName: string; records: typeof records }>()
   for (const r of records) {
+    if (isInactiveRecord(r)) continue
     const rawVendor = sanitize(r.cert_vendor) || sanitize(r.software_name) || 'Unknown'
     const key = vendorKey(rawVendor)
     const existing = byVendor.get(key)
