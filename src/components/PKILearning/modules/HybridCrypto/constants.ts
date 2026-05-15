@@ -170,6 +170,8 @@ export type HybridFormatId =
   | 'alt-sig'
   | 'related-certs'
   | 'chameleon'
+  | 'pure-pqc-kem'
+  | 'composite-kem'
 
 /** Static Tailwind badge classes by status color — avoids dynamic class purging */
 export const STATUS_BADGE_CLASSES: Record<string, string> = {
@@ -393,6 +395,83 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
       "RFC 9763 (Related Certificates) pairs two fully independent certificates — one classical, one PQC — bound by a SHA-256 hash in a RelatedCertificate extension. Each certificate is independently valid. Legacy systems validate the classical cert; PQC-aware systems verify both and check the binding hash. Unlike Alt-Sig (which embeds a secondary signature inside one certificate's extensions), Related Certificates keeps both certificates completely separate.",
     classicalAlg: 'EC',
     pqcAlg: 'ML-DSA-65',
+  },
+  {
+    id: 'pure-pqc-kem',
+    label: 'Pure PQC KEM (ML-KEM-768)',
+    shortLabel: 'Pure KEM',
+    approach: 'Single PQC KEM algorithm',
+    standard: 'RFC 9935',
+    standardUrl: 'https://datatracker.ietf.org/doc/rfc9935/',
+    oids: ['2.16.840.1.101.3.4.4.2'],
+    status: 'Published',
+    statusColor: 'success',
+    quantumSafe: true,
+    legacyCompat: false,
+    description:
+      'X.509 certificate whose SubjectPublicKey is an ML-KEM-768 public key. RFC 9935 §4: KEM certs are encryption-only — they cannot sign.',
+    structureLines: [
+      { text: 'Certificate ::= SEQUENCE {', color: 'foreground', indent: 0 },
+      { text: 'tbsCertificate {', color: 'muted', indent: 1 },
+      {
+        text: 'subjectPublicKeyInfo  ML-KEM-768 (2.16.840.1.101.3.4.4.2)',
+        color: 'success',
+        indent: 2,
+      },
+      { text: 'keyUsage              keyEncipherment only', color: 'success', indent: 2 },
+      { text: '}', color: 'muted', indent: 1 },
+      {
+        text: 'signatureAlgorithm  (signed by external CA — ML-DSA or classical)',
+        color: 'muted',
+        indent: 1,
+      },
+      { text: 'signatureValue      CA signature', color: 'muted', indent: 1 },
+      { text: '}', color: 'foreground', indent: 0 },
+    ],
+    educationalNote:
+      'RFC 9935 (October 2025) defines X.509 algorithm identifiers for ML-KEM-512/768/1024. KEM certificates are encryption-only per §4 — they cannot self-sign. This workshop uses OpenSSL 3.5+ to generate an ML-KEM-768 key and wrap it in a self-issued certificate carrier; in production a separate signing CA must endorse it. KEM certs enable PQ-safe key encapsulation at the X.509 layer (CMS, S/MIME, IKE certificate-based modes).',
+    classicalAlg: null,
+    pqcAlg: 'ML-KEM-768',
+  },
+  {
+    id: 'composite-kem',
+    label: 'Composite KEM (ML-KEM-768 + X25519)',
+    shortLabel: 'Composite KEM',
+    approach: 'Single composite KEM OID',
+    standard: 'draft-ietf-lamps-pq-composite-kem',
+    standardUrl: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/',
+    oids: ['2.16.840.1.114027.80.5.2.21'],
+    status: 'IETF Last Call',
+    statusColor: 'primary',
+    quantumSafe: true,
+    legacyCompat: false,
+    description:
+      'X.509 certificate carrying a composite ML-KEM-768 + X25519 public key under a single OID. Both KEM shares are combined via KDF on encapsulation.',
+    structureLines: [
+      { text: 'Certificate ::= SEQUENCE {', color: 'foreground', indent: 0 },
+      { text: 'tbsCertificate {', color: 'muted', indent: 1 },
+      { text: 'subjectPublicKeyInfo  CompositeKEMPublicKey {', color: 'primary', indent: 2 },
+      { text: 'x25519PublicKey     X25519 (32 bytes)', color: 'warning', indent: 3 },
+      { text: 'mlkem768PublicKey   ML-KEM-768 (1184 bytes)', color: 'success', indent: 3 },
+      { text: '}', color: 'primary', indent: 2 },
+      {
+        text: 'subjectPublicKeyOID  id-X25519-MLKEM768 (2.16.840.1.114027.80.5.2.21)',
+        color: 'primary',
+        indent: 2,
+      },
+      { text: '}', color: 'muted', indent: 1 },
+      {
+        text: 'signatureAlgorithm  (signed by external CA — ML-DSA or classical)',
+        color: 'muted',
+        indent: 1,
+      },
+      { text: 'signatureValue      CA signature', color: 'muted', indent: 1 },
+      { text: '}', color: 'foreground', indent: 0 },
+    ],
+    educationalNote:
+      'draft-ietf-lamps-pq-composite-kem-14 defines composite KEM public keys binding ML-KEM-768 with a classical KEM (X25519, P-256, P-384, X448, brainpoolP256) under a single OID. Encapsulation runs both KEMs and combines shared secrets via a KDF — both must succeed. Like composite signatures, the wire format is parsed only by composite-aware libraries (OpenSSL 3.5 + oqs-provider). KEM certs are encryption-only (RFC 9935 §4); signing requires a separate CA.',
+    classicalAlg: 'X25519',
+    pqcAlg: 'ML-KEM-768',
   },
   {
     id: 'chameleon',

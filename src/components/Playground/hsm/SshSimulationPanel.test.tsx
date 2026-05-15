@@ -21,6 +21,42 @@ vi.mock('@/wasm/openssh', () => ({
     terminate: vi.fn(),
     bindHsm: vi.fn(),
   },
+  SSH_KEX_OPTIONS: [
+    { id: 'curve25519-sha256', label: 'curve25519-sha256 (classical)', family: 'classical' },
+    {
+      id: 'mlkem512-curve25519-sha256',
+      label: 'mlkem512-curve25519-sha256 (hybrid)',
+      family: 'hybrid',
+    },
+    {
+      id: 'mlkem768-curve25519-sha256',
+      label: 'mlkem768-curve25519-sha256 (hybrid)',
+      family: 'hybrid',
+    },
+    {
+      id: 'mlkem1024-curve25519-sha256',
+      label: 'mlkem1024-curve25519-sha256 (hybrid)',
+      family: 'hybrid',
+    },
+    {
+      id: 'mlkem512-nistp256-sha256',
+      label: 'mlkem512-nistp256-sha256 (hybrid)',
+      family: 'hybrid',
+    },
+    {
+      id: 'mlkem768-nistp256-sha256',
+      label: 'mlkem768-nistp256-sha256 (hybrid)',
+      family: 'hybrid',
+    },
+    { id: 'mlkem768', label: 'mlkem768 (pure ML-KEM)', family: 'pure' },
+    { id: 'mlkem1024', label: 'mlkem1024 (pure ML-KEM)', family: 'pure' },
+  ],
+  SSH_HOST_KEY_OPTIONS: [
+    { id: 'ssh-ed25519', label: 'ssh-ed25519 (classical)' },
+    { id: 'ssh-mldsa-44', label: 'ssh-mldsa-44 (PQC)' },
+    { id: 'ssh-mldsa-65', label: 'ssh-mldsa-65 (PQC)' },
+    { id: 'ssh-mldsa-87', label: 'ssh-mldsa-87 (PQC)' },
+  ],
 }))
 
 // Mock Pkcs11LogPanel — avoids complex rendering in unit tests

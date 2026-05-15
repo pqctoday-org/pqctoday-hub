@@ -284,6 +284,59 @@ export const HybridCertFormats: React.FC = () => {
             },
           }))
           if (!relResult.error) pushHybridFiles(formatId, relCerts)
+        } else if (formatId === 'pure-pqc-kem') {
+          // Pure ML-KEM-768 X.509 cert per RFC 9935 (encryption-only).
+          const certResult = await hybridCryptoService.generatePurePQCCertMLKEM(
+            'ML-KEM-768',
+            'Pure PQC KEM (ML-KEM-768) Demo'
+          )
+          const kemCerts = certResult.error
+            ? []
+            : [
+                {
+                  label: 'ML-KEM-768 Certificate (RFC 9935, encryption-only)',
+                  pem: certResult.pem,
+                  parsed: certResult.parsed,
+                  type: 'pqc' as const,
+                },
+              ]
+          setResults((prev) => ({
+            ...prev,
+            [formatId]: {
+              formatId,
+              certs: kemCerts,
+              timingMs: certResult.timingMs,
+              error: certResult.error,
+            },
+          }))
+          if (!certResult.error) pushHybridFiles(formatId, kemCerts)
+        } else if (formatId === 'composite-kem') {
+          // Composite ML-KEM-768 + X25519 X.509 cert per draft-ietf-lamps-pq-composite-kem-14.
+          const certResult = await hybridCryptoService.generateCompositeKEMCert(
+            'ML-KEM-768',
+            'X25519',
+            'Composite KEM (ML-KEM-768 + X25519) Demo'
+          )
+          const compKemCerts = certResult.error
+            ? []
+            : [
+                {
+                  label: 'Composite Certificate: X25519-MLKEM768 (encryption-only)',
+                  pem: certResult.pem,
+                  parsed: certResult.parsed,
+                  type: 'pqc' as const,
+                },
+              ]
+          setResults((prev) => ({
+            ...prev,
+            [formatId]: {
+              formatId,
+              certs: compKemCerts,
+              timingMs: certResult.timingMs,
+              error: certResult.error,
+            },
+          }))
+          if (!certResult.error) pushHybridFiles(formatId, compKemCerts)
         } else if (formatId === 'chameleon') {
           // Real Chameleon certificate (draft-bonnell-lamps-chameleon-certs-07)
           const certResult = await hybridCryptoService.generateChameleonCert(
@@ -504,6 +557,10 @@ export const HybridCertFormats: React.FC = () => {
                             'Requires two independent key pairs (ECDSA + ML-DSA-65) with SHA-256 cross-binding.'}
                           {fmt.id === 'chameleon' &&
                             'Requires ML-DSA-65 primary and ECDSA delta key pair; DeltaCertificateDescriptor extension must encode both.'}
+                          {fmt.id === 'pure-pqc-kem' &&
+                            'Requires OpenSSL 3.5+ with ML-KEM support and -force_pubkey flag; KEM keys cannot self-sign, so a transient ML-DSA-65 issuer is used.'}
+                          {fmt.id === 'composite-kem' &&
+                            'Requires OpenSSL 3.5+ with composite KEM (X25519MLKEM768) support via oqs-provider; signed by a transient ML-DSA-65 issuer (KEM keys cannot sign).'}
                         </p>
                         {!isGeneratingThis && (
                           <Button
