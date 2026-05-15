@@ -17,6 +17,19 @@ const CC_CREATE_PRIMARY = 0x00000131
 const CC_ENCAPSULATE = 0x000001a7
 const CC_DECAPSULATE = 0x000001a8
 const CC_SIGN_DIGEST = 0x000001a6
+const CC_VERIFY_DIGEST_SIG = 0x000001a5
+const CC_SIGN_SEQ_START = 0x000001aa
+const CC_SIGN_SEQ_COMPLETE = 0x000001a4
+const CC_VERIFY_SEQ_START = 0x000001a9
+const CC_VERIFY_SEQ_COMPLETE = 0x000001a3
+const CC_SEQUENCE_UPDATE = 0x0000015c
+const CC_FLUSH_CONTEXT = 0x00000165
+
+const TPM_ST_MESSAGE_VERIFIED = 0x8026
+const TPM_ST_DIGEST_VERIFIED = 0x8027
+const TPM_ST_HASHCHECK = 0x8024
+const TPM_RH_NULL = 0x40000007
+
 const CAP_ALGS = 0x00000000
 
 const ALG_MLKEM = 0x00a0
@@ -178,6 +191,24 @@ const INITIAL_CHECKS: Omit<CheckEntry, 'status' | 'detail'>[] = [
   { id: 'V185-016', name: 'SignDigest Signature Size = 3309 B', section: 'FIPS 204 §7' },
   { id: 'V185-017', name: 'KEM Round-Trip: ss_encap === ss_decap', section: 'FIPS 203 §7.3' },
   { id: 'V185-018', name: 'DSA Non-Trivial: sig ≠ placeholder', section: 'Issue #9' },
+  { id: 'V185-019', name: 'TPM2_VerifyDigestSignature (DIGEST_VERIFIED)', section: 'Part 3 §20.4' },
+  { id: 'V185-020', name: 'TPM2_SignSequenceStart → sequenceHandle', section: 'Part 3 §17.5' },
+  {
+    id: 'V185-021',
+    name: 'TPM2_SignSequenceComplete sig=3309 B',
+    section: 'Part 3 §20.6 + FIPS 204',
+  },
+  { id: 'V185-022', name: 'TPM2_VerifySequenceStart → sequenceHandle', section: 'Part 3 §17.6' },
+  {
+    id: 'V185-023',
+    name: 'TPM2_SequenceUpdate (verify, 256 B chunk)',
+    section: 'Part 3 §17.7',
+  },
+  {
+    id: 'V185-024',
+    name: 'TPM2_VerifySequenceComplete → MESSAGE_VERIFIED',
+    section: 'Part 3 §20.3 Table 119',
+  },
 ]
 
 export function ComplianceRunner() {
@@ -838,6 +869,331 @@ export function ComplianceRunner() {
         markFail('V185-018', 'Skipped — no signature captured from SignDigest')
         addLine('recv', '    ← Skipped (no signature captured) ✗', false)
       }
+
+      // ── Phase 11: PQC Verify + Streaming ML-DSA (V185-019..024) ────
+      addLine('divider', '')
+      addLine(
+        'phase',
+        '[+] Phase 11 — Verify + Streaming ML-DSA  (Part 3 §17.5/§17.6/§20.3/§20.4/§20.6)'
+      )
+
+      // Free a transient slot for the upcoming sequence handles.
+      // EK and unrestricted AK occupy 2 of the 3 transient slots — flush EK.
+      if (ekHandle !== 0) {
+        const flushP: number[] = []
+        putU16(flushP, 0x8001) // TPM_ST_NO_SESSIONS
+        putU32(flushP, 14)
+        putU32(flushP, CC_FLUSH_CONTEXT)
+        putU32(flushP, ekHandle)
+        await executeTpmCommand(new Uint8Array(flushP))
+      }
+
+      // ── V185-019: TPM2_VerifyDigestSignature → DIGEST_VERIFIED ─────
+      updateCheck('V185-019', { status: 'running' })
+      await delay()
+      addLine(
+        'send',
+        '    → TPM2_VerifyDigestSignature(keyHandle, context=∅, digest=0xBB×32, signature)  [Table 120]'
+      )
+      if (akHandle === 0 || !signatureBytes) {
+        markFail('V185-019', 'Skipped — no AK or no signature captured')
+        addLine('recv', '    ← Skipped (need V185-015 sig)', false)
+      } else {
+        try {
+          const digestBytes = new Uint8Array(32).fill(0xbb)
+          const verifyP: number[] = []
+          // Wire per Table 120: {context, digest, signature}
+          putU16(verifyP, 0x8002)
+          putU32(verifyP, 0)
+          putU32(verifyP, CC_VERIFY_DIGEST_SIG)
+          putU32(verifyP, akHandle)
+          putU32(verifyP, 9)
+          putU32(verifyP, RS_PW)
+          putU16(verifyP, 0)
+          verifyP.push(0)
+          putU16(verifyP, 0)
+          // P1: context (empty)
+          putU16(verifyP, 0)
+          // P2: digest
+          putU16(verifyP, digestBytes.length)
+          for (const b of digestBytes) verifyP.push(b)
+          // P3: signature TPMT_SIGNATURE = sigAlg(2) + TPM2B_SIGNATURE_MLDSA{size, buf}
+          putU16(verifyP, ALG_MLDSA)
+          putU16(verifyP, signatureBytes.length)
+          for (const b of signatureBytes) verifyP.push(b)
+          const verifyTotal = verifyP.length
+          verifyP[2] = (verifyTotal >> 24) & 0xff
+          verifyP[3] = (verifyTotal >> 16) & 0xff
+          verifyP[4] = (verifyTotal >> 8) & 0xff
+          verifyP[5] = verifyTotal & 0xff
+          const verifyResp = await executeTpmCommand(new Uint8Array(verifyP))
+          const vh = parseHeader(verifyResp)
+          if (vh.rc !== 0) {
+            markFail('V185-019', `rc=0x${vh.rc.toString(16).padStart(8, '0')}`)
+            addLine('recv', `    ← rc=0x${vh.rc.toString(16).padStart(8, '0')} ✗`, false)
+          } else {
+            // Response: header(10) + paramSize(4) + TPMT_TK_VERIFIED{tag(2), hierarchy(4), ...}
+            const tickTag = (verifyResp[14] << 8) | verifyResp[15]
+            if (tickTag === TPM_ST_DIGEST_VERIFIED) {
+              markPass('V185-019', `tag=0x${tickTag.toString(16)} (TPM_ST_DIGEST_VERIFIED) ✓`)
+              addLine(
+                'recv',
+                `    ← validation.tag = 0x${tickTag.toString(16)} (DIGEST_VERIFIED) ✓`,
+                true
+              )
+            } else {
+              markFail('V185-019', `tag=0x${tickTag.toString(16)} (expected 0x8027)`)
+              addLine('recv', `    ← wrong ticket tag 0x${tickTag.toString(16)} ✗`, false)
+            }
+          }
+        } catch (e) {
+          markError('V185-019', String(e))
+          addLine('recv', `    ← ERROR: ${String(e)}`, false)
+        }
+      }
+
+      // ── V185-020: TPM2_SignSequenceStart → sequenceHandle ──────────
+      updateCheck('V185-020', { status: 'running' })
+      await delay()
+      let signSeqHandle = 0
+      addLine('send', '    → TPM2_SignSequenceStart(keyHandle, auth=∅, context=∅)  [Table 89]')
+      if (akHandle === 0) {
+        markFail('V185-020', 'Skipped — no AK')
+      } else {
+        try {
+          const startP: number[] = []
+          putU16(startP, 0x8001) // TPM_ST_NO_SESSIONS (Auth Index: None per Table 89)
+          putU32(startP, 0)
+          putU32(startP, CC_SIGN_SEQ_START)
+          putU32(startP, akHandle)
+          // P1: auth (empty), P2: context (empty)
+          putU16(startP, 0)
+          putU16(startP, 0)
+          const startTotal = startP.length
+          startP[2] = (startTotal >> 24) & 0xff
+          startP[3] = (startTotal >> 16) & 0xff
+          startP[4] = (startTotal >> 8) & 0xff
+          startP[5] = startTotal & 0xff
+          const startResp = await executeTpmCommand(new Uint8Array(startP))
+          const sh = parseHeader(startResp)
+          if (sh.rc !== 0) {
+            markFail('V185-020', `rc=0x${sh.rc.toString(16).padStart(8, '0')}`)
+          } else {
+            signSeqHandle =
+              (startResp[10] << 24) | (startResp[11] << 16) | (startResp[12] << 8) | startResp[13]
+            markPass('V185-020', `signSeqHandle=0x${signSeqHandle.toString(16)} ✓`)
+            addLine(
+              'recv',
+              `    ← sequenceHandle = 0x${signSeqHandle.toString(16)} (vendor range) ✓`,
+              true
+            )
+          }
+        } catch (e) {
+          markError('V185-020', String(e))
+        }
+      }
+
+      // ── V185-021: TPM2_SignSequenceComplete → sig=3309 B ───────────
+      updateCheck('V185-021', { status: 'running' })
+      await delay()
+      let seqSignatureBytes: Uint8Array | null = null
+      const messageBytes = new Uint8Array(64).fill(0xa5)
+      addLine(
+        'send',
+        `    → TPM2_SignSequenceComplete(@seq, @key, buffer=0xA5×${messageBytes.length})  [Table 124]`
+      )
+      if (signSeqHandle === 0 || akHandle === 0) {
+        markFail('V185-021', 'Skipped — no sequence handle from V185-020')
+      } else {
+        try {
+          const compP: number[] = []
+          putU16(compP, 0x8002) // TPM_ST_SESSIONS (mandated by Table 124)
+          putU32(compP, 0)
+          putU32(compP, CC_SIGN_SEQ_COMPLETE)
+          putU32(compP, signSeqHandle) // @sequenceHandle
+          putU32(compP, akHandle) // @keyHandle
+          // Two empty-password sessions (Auth Index 1 + Auth Index 2)
+          putU32(compP, 18)
+          putU32(compP, RS_PW)
+          putU16(compP, 0)
+          compP.push(0)
+          putU16(compP, 0)
+          putU32(compP, RS_PW)
+          putU16(compP, 0)
+          compP.push(0)
+          putU16(compP, 0)
+          // P1: buffer (TPM2B_MAX_BUFFER)
+          putU16(compP, messageBytes.length)
+          for (const b of messageBytes) compP.push(b)
+          const compTotal = compP.length
+          compP[2] = (compTotal >> 24) & 0xff
+          compP[3] = (compTotal >> 16) & 0xff
+          compP[4] = (compTotal >> 8) & 0xff
+          compP[5] = compTotal & 0xff
+          const compResp = await executeTpmCommand(new Uint8Array(compP))
+          const ch = parseHeader(compResp)
+          if (ch.rc !== 0) {
+            markFail('V185-021', `rc=0x${ch.rc.toString(16).padStart(8, '0')}`)
+          } else {
+            // Response: hdr(10) + paramSize(4) + sigAlg(2) + sig.size(2) + sig.buffer
+            const sigAlg = (compResp[14] << 8) | compResp[15]
+            const sigSize = (compResp[16] << 8) | compResp[17]
+            if (sigAlg === ALG_MLDSA && sigSize === MLDSA_65_SIG_SIZE) {
+              seqSignatureBytes = compResp.slice(18, 18 + sigSize)
+              markPass('V185-021', `sig=${sigSize}B ML-DSA-65 ✓`)
+              addLine('recv', `    ← signature = ${sigSize} B (FIPS 204 ML-DSA-65) ✓`, true)
+            } else {
+              markFail(
+                'V185-021',
+                `sigAlg=0x${sigAlg.toString(16)} sig=${sigSize}B (exp 0x00A1 + 3309)`
+              )
+            }
+          }
+        } catch (e) {
+          markError('V185-021', String(e))
+        }
+      }
+
+      // ── V185-022: TPM2_VerifySequenceStart → sequenceHandle ────────
+      updateCheck('V185-022', { status: 'running' })
+      await delay()
+      let verifySeqHandle = 0
+      addLine(
+        'send',
+        '    → TPM2_VerifySequenceStart(keyHandle, auth=∅, hint=∅, context=∅)  [Table 87]'
+      )
+      if (akHandle === 0) {
+        markFail('V185-022', 'Skipped — no AK')
+      } else {
+        try {
+          const vsP: number[] = []
+          putU16(vsP, 0x8001) // TPM_ST_NO_SESSIONS
+          putU32(vsP, 0)
+          putU32(vsP, CC_VERIFY_SEQ_START)
+          putU32(vsP, akHandle)
+          // P1: auth (empty), P2: hint (empty — MUST be zero per Table 87 for ML-DSA),
+          // P3: context (empty)
+          putU16(vsP, 0)
+          putU16(vsP, 0)
+          putU16(vsP, 0)
+          const vsTotal = vsP.length
+          vsP[2] = (vsTotal >> 24) & 0xff
+          vsP[3] = (vsTotal >> 16) & 0xff
+          vsP[4] = (vsTotal >> 8) & 0xff
+          vsP[5] = vsTotal & 0xff
+          const vsResp = await executeTpmCommand(new Uint8Array(vsP))
+          const vsh = parseHeader(vsResp)
+          if (vsh.rc !== 0) {
+            markFail('V185-022', `rc=0x${vsh.rc.toString(16).padStart(8, '0')}`)
+          } else {
+            verifySeqHandle =
+              (vsResp[10] << 24) | (vsResp[11] << 16) | (vsResp[12] << 8) | vsResp[13]
+            markPass('V185-022', `verifySeqHandle=0x${verifySeqHandle.toString(16)} ✓`)
+            addLine('recv', `    ← sequenceHandle = 0x${verifySeqHandle.toString(16)} ✓`, true)
+          }
+        } catch (e) {
+          markError('V185-022', String(e))
+        }
+      }
+
+      // ── V185-023: TPM2_SequenceUpdate (feed message to verify seq) ──
+      updateCheck('V185-023', { status: 'running' })
+      await delay()
+      addLine(
+        'send',
+        `    → TPM2_SequenceUpdate(@seq, buffer=0xA5×${messageBytes.length})  [Part 3 §17.7]`
+      )
+      if (verifySeqHandle === 0) {
+        markFail('V185-023', 'Skipped — no verify sequence handle')
+      } else {
+        try {
+          const upP: number[] = []
+          putU16(upP, 0x8002) // TPM_ST_SESSIONS (sequence auth required)
+          putU32(upP, 0)
+          putU32(upP, CC_SEQUENCE_UPDATE)
+          putU32(upP, verifySeqHandle) // @sequenceHandle
+          putU32(upP, 9)
+          putU32(upP, RS_PW)
+          putU16(upP, 0)
+          upP.push(0)
+          putU16(upP, 0)
+          putU16(upP, messageBytes.length)
+          for (const b of messageBytes) upP.push(b)
+          const upTotal = upP.length
+          upP[2] = (upTotal >> 24) & 0xff
+          upP[3] = (upTotal >> 16) & 0xff
+          upP[4] = (upTotal >> 8) & 0xff
+          upP[5] = upTotal & 0xff
+          const upResp = await executeTpmCommand(new Uint8Array(upP))
+          const uh = parseHeader(upResp)
+          if (uh.rc !== 0) {
+            markFail('V185-023', `rc=0x${uh.rc.toString(16).padStart(8, '0')}`)
+          } else {
+            markPass('V185-023', `${messageBytes.length}B chunk accepted ✓`)
+            addLine('recv', `    ← ${messageBytes.length} B accumulated ✓`, true)
+          }
+        } catch (e) {
+          markError('V185-023', String(e))
+        }
+      }
+
+      // ── V185-024: TPM2_VerifySequenceComplete → MESSAGE_VERIFIED ────
+      updateCheck('V185-024', { status: 'running' })
+      await delay()
+      addLine('send', '    → TPM2_VerifySequenceComplete(@seq, keyHandle, signature)  [Table 118]')
+      if (verifySeqHandle === 0 || akHandle === 0 || !seqSignatureBytes) {
+        markFail('V185-024', 'Skipped — sequence handle or signature missing')
+      } else {
+        try {
+          const vcP: number[] = []
+          putU16(vcP, 0x8002) // TPM_ST_SESSIONS (mandated by Table 118)
+          putU32(vcP, 0)
+          putU32(vcP, CC_VERIFY_SEQ_COMPLETE)
+          putU32(vcP, verifySeqHandle) // @sequenceHandle
+          putU32(vcP, akHandle) // keyHandle (Auth Index: None)
+          // ONE PW session for sequenceHandle auth
+          putU32(vcP, 9)
+          putU32(vcP, RS_PW)
+          putU16(vcP, 0)
+          vcP.push(0)
+          putU16(vcP, 0)
+          // P1: signature TPMT_SIGNATURE = sigAlg + TPM2B_SIGNATURE_MLDSA
+          putU16(vcP, ALG_MLDSA)
+          putU16(vcP, seqSignatureBytes.length)
+          for (const b of seqSignatureBytes) vcP.push(b)
+          const vcTotal = vcP.length
+          vcP[2] = (vcTotal >> 24) & 0xff
+          vcP[3] = (vcTotal >> 16) & 0xff
+          vcP[4] = (vcTotal >> 8) & 0xff
+          vcP[5] = vcTotal & 0xff
+          const vcResp = await executeTpmCommand(new Uint8Array(vcP))
+          const vch = parseHeader(vcResp)
+          if (vch.rc !== 0) {
+            markFail('V185-024', `rc=0x${vch.rc.toString(16).padStart(8, '0')}`)
+            addLine('recv', `    ← rc=0x${vch.rc.toString(16).padStart(8, '0')} ✗`, false)
+          } else {
+            // Response: hdr(10) + paramSize(4) + TPMT_TK_VERIFIED{tag(2), ...}
+            const tickTag = (vcResp[14] << 8) | vcResp[15]
+            if (tickTag === TPM_ST_MESSAGE_VERIFIED) {
+              markPass('V185-024', `tag=0x${tickTag.toString(16)} (TPM_ST_MESSAGE_VERIFIED) ✓`)
+              addLine(
+                'recv',
+                `    ← validation.tag = 0x${tickTag.toString(16)} (MESSAGE_VERIFIED) — full streaming ML-DSA round-trip ✓`,
+                true
+              )
+            } else {
+              markFail('V185-024', `tag=0x${tickTag.toString(16)} (expected 0x8026)`)
+            }
+          }
+        } catch (e) {
+          markError('V185-024', String(e))
+        }
+      }
+
+      // Suppress unused-constant warnings for shared constants reserved
+      // for future tests (HASHCHECK ticket builders + NULL hierarchy ref).
+      void TPM_ST_HASHCHECK
+      void TPM_RH_NULL
 
       // ── Summary table ────────────────────────────────────────────
       addLine('divider', '')
