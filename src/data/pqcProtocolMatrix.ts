@@ -153,18 +153,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         toolId: 'pqc-ssh-sim',
         toolName: 'PQC SSH Simulation',
         testability: {
-          pureKem: 'none',
-          hybridKem: 'partial',
-          pureSig: 'partial',
+          pureKem: 'full',
+          hybridKem: 'full',
+          pureSig: 'full',
           hybridSig: 'none',
         },
       },
     ],
     gaps: [
-      'Pure ML-KEM (no classical) is not selectable in the SSH playground.',
-      'Hybrid KEX is hardcoded to mlkem768x25519-sha256 — no UI choice of algorithm.',
-      'Host-key signature is hardcoded to ssh-mldsa-65 — no algorithm choice.',
-      'Composite SSH host-key signature (classical + ML-DSA) not supported in the tool.',
+      'sntrup761x25519 (RFC 9941) — softhsmv3 has no sntrup; would require separate non-HSM path.',
+      'Composite SSH host-key signature (classical + ML-DSA) — no IETF spec.',
     ],
   },
   {
@@ -293,11 +291,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         toolId: 'tls-simulator',
         toolName: 'TLS 1.3 Simulator',
-        testability: { pureKem: 'full', hybridKem: 'full', pureSig: 'full', hybridSig: 'none' },
+        testability: { pureKem: 'full', hybridKem: 'full', pureSig: 'full', hybridSig: 'partial' },
       },
     ],
     gaps: [
-      'TLS 1.3 simulator SIG_ALGS list has classical (ECDSA, RSA, Ed25519) and pure-PQ (ML-DSA, SLH-DSA) but no composite/hybrid signature algorithm choice.',
+      'Composite-sig cert options are present in the cert dropdown (draft-ietf-lamps-pq-composite-sigs-19), but the underlying simulator currently substitutes the closest pre-baked ML-DSA PEM — true composite cert generation is delegated to the OpenSSL Studio "Custom" path.',
     ],
   },
   {
@@ -393,10 +391,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         toolId: 'hybrid-certs',
         toolName: 'Hybrid Certificate Workshop',
-        testability: { pureKem: 'na', hybridKem: 'na', pureSig: 'full', hybridSig: 'full' },
+        testability: { pureKem: 'full', hybridKem: 'full', pureSig: 'full', hybridSig: 'full' },
       },
     ],
-    gaps: ['Workshop is signature-focused — no KEM certificate generation flow.'],
+    gaps: [
+      'KEM certificates are encryption-only per RFC 9935 §4 — they cannot self-sign, so the workshop issues them under a transient ML-DSA-65 issuer for illustration.',
+    ],
   },
   {
     id: 'smime',
@@ -807,11 +807,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         toolId: 'tpm-playground',
         toolName: 'PQC TPM Workshop',
-        testability: { pureKem: 'full', hybridKem: 'none', pureSig: 'full', hybridSig: 'na' },
+        testability: { pureKem: 'full', hybridKem: 'partial', pureSig: 'full', hybridSig: 'na' },
       },
     ],
     gaps: [
-      'Hybrid KEM not in TCG v1.85 — only Labeled KEM abstraction.',
+      'Hybrid KEM is an educational Labeled-KEM construct (ML-KEM + classical ECDH via HKDF combine); TCG v1.85 does not standardize hybrid.',
       'libtpms / swtpm upstream still track v1.83 (no PQ); v1.85 PQ commands via pqctoday-tpm fork.',
       'Need to re-download Published v1.85 Parts 0/1/2 — we still have the Dec 2025 RC4 versions for those parts.',
     ],

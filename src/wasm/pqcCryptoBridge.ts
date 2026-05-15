@@ -108,6 +108,15 @@ export function getBridgeMlDsaPubBytes(paramSet: number): Uint8Array | null {
   return mldsaLastPubBytesByParam.get(paramSet) ?? null
 }
 
+// Cache the ML-KEM public bytes per paramSet so the hybrid Labeled-KEM Encap
+// can run without a TPM2_CreatePrimary round-trip if the caller already has
+// a softhsm key from a previous keygen via the bridge.
+const mlkemLastPubBytesByParam: Map<number, Uint8Array> = new Map()
+
+export function getBridgeMlKemPubBytes(paramSet: number): Uint8Array | null {
+  return mlkemLastPubBytesByParam.get(paramSet) ?? null
+}
+
 // ── HSM memory helpers ────────────────────────────────────────────────────────
 function hsmAlloc(size: number): number {
   return hsmModule!._malloc(size)
@@ -317,6 +326,7 @@ function mlkemKeygen(
     if (!pkBytes || pkBytes.length === 0) return -2
 
     tpm.HEAPU8.set(pkBytes, pkOutPtr)
+    mlkemLastPubBytesByParam.set(paramSet, new Uint8Array(pkBytes))
     console.log(`[PQC Bridge] ${mlkemParamName(paramSet)} keygen OK: pk=${pkBytes.length}B`)
     return pkBytes.length
   } catch (e) {
@@ -767,4 +777,333 @@ export async function registerPqcBridge(tpmModule: PqcTpmModule): Promise<void> 
   }
 
   console.log('[PQC Bridge] Registered on pqctpm Module — real ML-KEM/ML-DSA active')
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Hybrid Labeled-KEM (educational construct atop TCG v1.85 §11 Labeled KEM)
+// ─────────────────────────────────────────────────────────────────────────────
+//
+// TCG v1.85 §11 introduces "Labeled KEM" as a generic abstraction for wrapping
+// KEM algorithms with a domain-separation label. The spec does NOT define a
+// hybrid (classical + PQ) mode — that is an educational construct we build by
+// composing two real KEMs at the JS layer:
+//
+//   ss1 = ML-KEM.Encap(mlkem_pk)        // real ML-KEM via softhsmv3 PKCS#11
+//   ss2 = ECDH(classical_pk, classical_sk_eph)  // real X25519 or P-256 via Web Crypto
+//   ss  = HKDF-SHA256(salt = "TCG-LabeledKEM-Hybrid-v0",
+//                     ikm  = ss1 || ss2,
+//                     info = "ml-kem || classical",
+//                     L    = 32)
+//
+// Every primitive here is real — no placeholders, no hand-rolled lattice math.
+// This is marked `experimental` in the protocol matrix and the UI surfaces a
+// banner reminding the user the construct is educational only.
+
+export type HybridLabeledKemClassicalAlg = 'X25519' | 'P-256'
+
+export interface HybridLabeledKemEncapResult {
+  mlkemCt: Uint8Array
+  mlkemSs: Uint8Array
+  classicalCt: Uint8Array // raw ephemeral public key
+  classicalSs: Uint8Array
+  combinedSs: Uint8Array
+  classicalAlg: HybridLabeledKemClassicalAlg
+  mlkemParamSet: number
+}
+
+export interface HybridLabeledKemDecapResult {
+  mlkemSs: Uint8Array
+  classicalSs: Uint8Array
+  combinedSs: Uint8Array
+}
+
+// HKDF combiner labels — fixed strings for reproducibility / unit testability.
+const HYBRID_KEM_HKDF_SALT = new TextEncoder().encode('TCG-LabeledKEM-Hybrid-v0')
+const HYBRID_KEM_HKDF_INFO = new TextEncoder().encode('ml-kem || classical')
+
+/**
+ * Real HKDF-SHA256 combiner via Web Crypto API (RFC 5869).
+ * Returns a 32-byte combined shared secret.
+ */
+async function hkdfCombine(ss1: Uint8Array, ss2: Uint8Array): Promise<Uint8Array> {
+  const ikm = new Uint8Array(ss1.length + ss2.length)
+  ikm.set(ss1, 0)
+  ikm.set(ss2, ss1.length)
+
+  const ikmKey = await crypto.subtle.importKey(
+    'raw',
+    ikm as BufferSource,
+    { name: 'HKDF' },
+    false,
+    ['deriveBits']
+  )
+  const okm = await crypto.subtle.deriveBits(
+    {
+      name: 'HKDF',
+      hash: 'SHA-256',
+      salt: HYBRID_KEM_HKDF_SALT as BufferSource,
+      info: HYBRID_KEM_HKDF_INFO as BufferSource,
+    },
+    ikmKey,
+    256 // 32 bytes
+  )
+  return new Uint8Array(okm)
+}
+
+/**
+ * Run real ML-KEM encap against the softhsm public key cached at the given
+ * paramSet, returning { ct, ss } as plain Uint8Arrays (no TPM heap involved).
+ * The public key MUST have been produced via the bridge already (mlkemKeygen
+ * caches the handle by paramSet).
+ */
+async function softhsmMlKemEncap(paramSet: number): Promise<{ ct: Uint8Array; ss: Uint8Array }> {
+  await ensureHSM()
+  if (!hsmModule) throw new Error('softhsmv3 not initialized')
+  const M = hsmModule
+
+  const pubH = mlkemPubHandleByParam.get(paramSet)
+  if (!pubH) {
+    throw new Error(
+      `Hybrid Labeled-KEM Encap: no ML-KEM public key cached for paramSet=${paramSet}. ` +
+        'Run TPM2_CreatePrimary with the matching ML-KEM algorithm first.'
+    )
+  }
+
+  const mechPtr = writeMechanism(CKM_ML_KEM)
+  const deriveTplAttrs = [
+    buildAttr(CKA_CLASS, { ulong: CKO_PRIVATE_KEY }),
+    buildAttr(CKA_KEY_TYPE, { ulong: 0x10 /* CKK_GENERIC_SECRET */ }),
+    buildAttr(CKA_TOKEN, { bool: false }),
+  ]
+  const deriveTplPtr = writeTemplate(deriveTplAttrs)
+
+  // Worst-case ciphertext sizes per FIPS 203 §7
+  const ctMax = paramSet === 1 ? 768 : paramSet === 2 ? 1088 : 1568
+  const ctLenPtr = hsmAlloc(4)
+  hsmSetValue(ctLenPtr, ctMax)
+  const ctBufPtr = hsmAlloc(ctMax)
+  const phKey = hsmAlloc(4)
+
+  const rv = M._C_EncapsulateKey(
+    hsmSession,
+    mechPtr,
+    pubH,
+    deriveTplPtr,
+    deriveTplAttrs.length,
+    ctBufPtr,
+    ctLenPtr,
+    phKey
+  )
+
+  hsmFree(mechPtr)
+  hsmFree(deriveTplPtr)
+  freeAttrs(deriveTplAttrs)
+
+  if (rv >>> 0 !== 0) {
+    hsmFree(ctLenPtr)
+    hsmFree(ctBufPtr)
+    hsmFree(phKey)
+    throw new Error(`C_EncapsulateKey failed: 0x${(rv >>> 0).toString(16)}`)
+  }
+
+  const actualCtLen = hsmGetValue(ctLenPtr)
+  const ct = new Uint8Array(M.HEAPU8.buffer, ctBufPtr, actualCtLen).slice()
+  const derivedKeyH = hsmGetValue(phKey)
+  const ss = extractAttribute(M, derivedKeyH, CKA_VALUE, 64) ?? new Uint8Array(0)
+
+  hsmFree(ctLenPtr)
+  hsmFree(ctBufPtr)
+  hsmFree(phKey)
+
+  if (ss.length === 0) throw new Error('Failed to extract ML-KEM shared secret')
+  return { ct, ss }
+}
+
+/**
+ * Real ML-KEM decap via softhsmv3 PKCS#11 (no TPM heap).
+ */
+async function softhsmMlKemDecap(paramSet: number, ct: Uint8Array): Promise<Uint8Array> {
+  await ensureHSM()
+  if (!hsmModule) throw new Error('softhsmv3 not initialized')
+  const M = hsmModule
+
+  const privH = mlkemPrivHandleByParam.get(paramSet)
+  if (!privH) {
+    throw new Error(
+      `Hybrid Labeled-KEM Decap: no ML-KEM private key cached for paramSet=${paramSet}. ` +
+        'Run TPM2_CreatePrimary with the matching ML-KEM algorithm first.'
+    )
+  }
+
+  const mechPtr = writeMechanism(CKM_ML_KEM)
+  const deriveTplAttrs = [
+    buildAttr(CKA_CLASS, { ulong: CKO_PRIVATE_KEY }),
+    buildAttr(CKA_KEY_TYPE, { ulong: 0x10 /* CKK_GENERIC_SECRET */ }),
+    buildAttr(CKA_TOKEN, { bool: false }),
+  ]
+  const deriveTplPtr = writeTemplate(deriveTplAttrs)
+
+  const ctHsmPtr = hsmAlloc(ct.length)
+  M.HEAPU8.set(ct, ctHsmPtr)
+  const phKey = hsmAlloc(4)
+
+  const rv = M._C_DecapsulateKey(
+    hsmSession,
+    mechPtr,
+    privH,
+    deriveTplPtr,
+    deriveTplAttrs.length,
+    ctHsmPtr,
+    ct.length,
+    phKey
+  )
+
+  hsmFree(mechPtr)
+  hsmFree(deriveTplPtr)
+  hsmFree(ctHsmPtr)
+  freeAttrs(deriveTplAttrs)
+
+  if (rv >>> 0 !== 0) {
+    hsmFree(phKey)
+    throw new Error(`C_DecapsulateKey failed: 0x${(rv >>> 0).toString(16)}`)
+  }
+
+  const derivedKeyH = hsmGetValue(phKey)
+  const ss = extractAttribute(M, derivedKeyH, CKA_VALUE, 64) ?? new Uint8Array(0)
+  hsmFree(phKey)
+
+  if (ss.length === 0) throw new Error('Failed to extract ML-KEM shared secret on decap')
+  return ss
+}
+
+/**
+ * Generate a real classical ephemeral key pair via Web Crypto.
+ * Returns { rawPub, privKey } — rawPub is the wire-format public key bytes
+ * (32 for X25519, 65 for P-256 uncompressed SEC1).
+ */
+async function classicalGenerateEphemeral(
+  alg: HybridLabeledKemClassicalAlg
+): Promise<{ rawPub: Uint8Array; privKey: CryptoKey }> {
+  const algorithm =
+    alg === 'X25519' ? { name: 'X25519' } : { name: 'ECDH', namedCurve: 'P-256' as const }
+  const pair = (await crypto.subtle.generateKey(algorithm, true, ['deriveBits'])) as CryptoKeyPair
+  const rawPubBuf = await crypto.subtle.exportKey('raw', pair.publicKey)
+  return { rawPub: new Uint8Array(rawPubBuf), privKey: pair.privateKey }
+}
+
+/**
+ * Import a raw classical public key (peer side) for ECDH derivation.
+ */
+async function classicalImportPub(
+  alg: HybridLabeledKemClassicalAlg,
+  rawPub: Uint8Array
+): Promise<CryptoKey> {
+  const algorithm =
+    alg === 'X25519' ? { name: 'X25519' } : { name: 'ECDH', namedCurve: 'P-256' as const }
+  return crypto.subtle.importKey('raw', rawPub as BufferSource, algorithm, false, [])
+}
+
+/**
+ * Real ECDH derivation via Web Crypto.
+ */
+async function classicalEcdh(
+  alg: HybridLabeledKemClassicalAlg,
+  privKey: CryptoKey,
+  peerPub: CryptoKey
+): Promise<Uint8Array> {
+  const name = alg === 'X25519' ? 'X25519' : 'ECDH'
+  const bits = await crypto.subtle.deriveBits({ name, public: peerPub }, privKey, 256)
+  return new Uint8Array(bits)
+}
+
+/**
+ * Hybrid Labeled-KEM Encapsulate — educational construct.
+ *
+ * Performs:
+ *  1. Real ML-KEM encap against the softhsm-resident public key identified by
+ *     `mlkemParamSet` (the same one TPM2_Encapsulate would target via the bridge).
+ *  2. Real classical ECDH (X25519 or P-256) where this side acts as the
+ *     ephemeral originator; `classicalPeerPubBytes` is the peer's static or
+ *     ephemeral public key (raw wire format).
+ *  3. HKDF-SHA256 combine ss1 || ss2 → 32-byte combined shared secret.
+ *
+ * @param mlkemParamSet   1=ML-KEM-512, 2=ML-KEM-768, 3=ML-KEM-1024
+ * @param classicalAlg    'X25519' or 'P-256'
+ * @param classicalPeerPubBytes  Peer's raw public key (32 B X25519 / 65 B P-256 SEC1 uncompressed)
+ */
+export async function hybridLabeledKemEncap(
+  mlkemParamSet: number,
+  classicalAlg: HybridLabeledKemClassicalAlg,
+  classicalPeerPubBytes: Uint8Array
+): Promise<HybridLabeledKemEncapResult> {
+  // 1. ML-KEM via softhsmv3 (real)
+  const { ct: mlkemCt, ss: mlkemSs } = await softhsmMlKemEncap(mlkemParamSet)
+
+  // 2. Classical ECDH via Web Crypto (real)
+  const peerPub = await classicalImportPub(classicalAlg, classicalPeerPubBytes)
+  const { rawPub: classicalCt, privKey: ephPriv } = await classicalGenerateEphemeral(classicalAlg)
+  const classicalSs = await classicalEcdh(classicalAlg, ephPriv, peerPub)
+
+  // 3. HKDF-SHA256 combine (real KDF, not a stub)
+  const combinedSs = await hkdfCombine(mlkemSs, classicalSs)
+
+  console.log(
+    `[PQC Bridge] Hybrid Labeled-KEM Encap OK: ${mlkemParamName(mlkemParamSet)} + ${classicalAlg} → ct(ML-KEM)=${mlkemCt.length}B ct(classical)=${classicalCt.length}B ss(combined)=${combinedSs.length}B`
+  )
+
+  return {
+    mlkemCt,
+    mlkemSs,
+    classicalCt,
+    classicalSs,
+    combinedSs,
+    classicalAlg,
+    mlkemParamSet,
+  }
+}
+
+/**
+ * Hybrid Labeled-KEM Decapsulate — educational mirror of the Encap path.
+ *
+ * @param mlkemParamSet   1=ML-KEM-512, 2=ML-KEM-768, 3=ML-KEM-1024
+ * @param mlkemCt         ML-KEM ciphertext produced by hybridLabeledKemEncap
+ * @param classicalAlg    'X25519' or 'P-256'
+ * @param classicalEphPubBytes  Ephemeral classical pub from the encapsulator
+ *                              (the `classicalCt` field of HybridLabeledKemEncapResult)
+ * @param classicalLocalPriv    Local (static) classical private key — the one
+ *                              whose public was given to the encapsulator
+ */
+export async function hybridLabeledKemDecap(
+  mlkemParamSet: number,
+  mlkemCt: Uint8Array,
+  classicalAlg: HybridLabeledKemClassicalAlg,
+  classicalEphPubBytes: Uint8Array,
+  classicalLocalPriv: CryptoKey
+): Promise<HybridLabeledKemDecapResult> {
+  // 1. ML-KEM decap via softhsmv3 (real)
+  const mlkemSs = await softhsmMlKemDecap(mlkemParamSet, mlkemCt)
+
+  // 2. Classical ECDH (real)
+  const peerEph = await classicalImportPub(classicalAlg, classicalEphPubBytes)
+  const classicalSs = await classicalEcdh(classicalAlg, classicalLocalPriv, peerEph)
+
+  // 3. HKDF combine
+  const combinedSs = await hkdfCombine(mlkemSs, classicalSs)
+
+  console.log(
+    `[PQC Bridge] Hybrid Labeled-KEM Decap OK: ${mlkemParamName(mlkemParamSet)} + ${classicalAlg} → ss(combined)=${combinedSs.length}B`
+  )
+
+  return { mlkemSs, classicalSs, combinedSs }
+}
+
+/**
+ * Helper: generate a "peer" classical key pair the playground can use as the
+ * stand-in receiver. Returns both the raw public bytes (for the encap caller)
+ * and the private key (for the matching decap demonstration).
+ */
+export async function generateHybridLabeledKemPeer(
+  classicalAlg: HybridLabeledKemClassicalAlg
+): Promise<{ rawPub: Uint8Array; privKey: CryptoKey }> {
+  return classicalGenerateEphemeral(classicalAlg)
 }

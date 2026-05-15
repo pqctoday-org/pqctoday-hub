@@ -157,6 +157,29 @@ export function getPkSize(algorithm: string): number {
   return KEM_PK_SIZES[algorithm] ?? DSA_PK_SIZES[algorithm] ?? 1184
 }
 
+// Hybrid Labeled-KEM algorithm-string parser. Strings have the shape
+// "HYBRID:MLKEM-768+X25519". Anything we can't parse defaults to MLKEM-768 +
+// X25519 so the params table never crashes.
+export interface HybridAlgoParts {
+  mlkem: 'MLKEM-512' | 'MLKEM-768' | 'MLKEM-1024'
+  classical: 'X25519' | 'P-256'
+}
+export function parseHybridAlgo(algorithm: string): HybridAlgoParts {
+  // Accept both 'HYBRID:MLKEM-768+X25519' and the raw 'MLKEM-768+X25519' shape.
+  const body = algorithm.startsWith('HYBRID:') ? algorithm.slice('HYBRID:'.length) : algorithm
+  const [mlkem, classical] = body.split('+')
+  const validMlkem: HybridAlgoParts['mlkem'][] = ['MLKEM-512', 'MLKEM-768', 'MLKEM-1024']
+  const validClassical: HybridAlgoParts['classical'][] = ['X25519', 'P-256']
+  return {
+    mlkem: validMlkem.includes(mlkem as HybridAlgoParts['mlkem'])
+      ? (mlkem as HybridAlgoParts['mlkem'])
+      : 'MLKEM-768',
+    classical: validClassical.includes(classical as HybridAlgoParts['classical'])
+      ? (classical as HybridAlgoParts['classical'])
+      : 'X25519',
+  }
+}
+
 // ── Command definitions ──────────────────────────────────────────────────────
 
 export const COMMAND_DEFS: TpmCommandDef[] = [
@@ -667,6 +690,145 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
         byteSize: 0,
         description:
           'The recovered shared secret. Must match the value returned by the corresponding Encapsulate call.',
+      },
+    ],
+  },
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Educational construct — TCG v1.85 §11 Labeled KEM does NOT standardize a
+  // hybrid mode. These entries demonstrate how a hybrid Labeled-KEM could be
+  // composed from a real ML-KEM (via softhsmv3 / TCG v1.85 §11) plus a real
+  // classical ECDH (X25519 or P-256) combined under HKDF-SHA256.
+  // ──────────────────────────────────────────────────────────────────────────
+  {
+    key: 'TPM2_LabeledKEM_Hybrid_Encap',
+    cc: 0x000001a7,
+    name: 'TPM2_LabeledKEM_Hybrid_Encap (educational)',
+    section: 'Educational — not in TCG v1.85',
+    phase: 'use',
+    requiresKem: true,
+    showAlgorithm: true,
+    description:
+      'EDUCATIONAL CONSTRUCT (not a TCG v1.85 command). Composes a real ML-KEM encapsulation (via softhsmv3) with a real classical ECDH (X25519 or P-256, via Web Crypto) and combines the two shared secrets under HKDF-SHA256. TCG v1.85 §11 introduces Labeled KEM but does NOT define a hybrid mode — this is a teaching device for what a hybrid Labeled-KEM could look like.',
+    why: 'Hybrid KEMs hedge classical ECDH against quantum attack while keeping classical security under cryptanalytic regression of ML-KEM. The HKDF combiner with a fixed label string provides domain separation. Every primitive here is real — ML-KEM via PKCS#11 v3.2 C_EncapsulateKey, ECDH via WebCrypto deriveBits, HKDF-SHA256 via WebCrypto.',
+    params: (algorithm: string) => {
+      // algorithm string is "HYBRID:MLKEM-768+X25519" etc.
+      const { mlkem, classical } = parseHybridAlgo(algorithm)
+      const pkSize = getPkSize(mlkem)
+      const classicalPubSize = classical === 'X25519' ? 32 : 65
+      const mlkemCtSize = mlkem === 'MLKEM-512' ? 768 : mlkem === 'MLKEM-768' ? 1088 : 1568
+      return [
+        {
+          name: 'mlkemHandle',
+          tpmType: 'TPMI_DH_OBJECT',
+          value: 'ML-KEM handle (see TPM State)',
+          description: `Same softhsm-backed ${mlkem} handle TPM2_Encapsulate would use. Public key size: ${pkSize} B.`,
+        },
+        {
+          name: 'classicalAlg',
+          tpmType: 'enum {X25519, P-256}',
+          value: classical,
+          description:
+            classical === 'X25519'
+              ? 'Curve25519 (RFC 7748) — 32-byte ephemeral public key, 32-byte shared secret.'
+              : 'NIST P-256 (SEC1 uncompressed) — 65-byte ephemeral public key, 32-byte shared secret.',
+        },
+        {
+          name: 'classicalPeerPub',
+          tpmType: 'BYTE[]',
+          value: `${classicalPubSize} B (peer ephemeral)`,
+          description:
+            'Peer-side classical public key. The playground generates this on demand via Web Crypto so the hybrid encap has a real recipient.',
+        },
+        {
+          name: 'combiner',
+          tpmType: 'KDF',
+          value: 'HKDF-SHA256',
+          description:
+            'salt = "TCG-LabeledKEM-Hybrid-v0", info = "ml-kem || classical", ikm = ss_pqc || ss_classical, L = 32 B (RFC 5869).',
+        },
+        {
+          name: '→ outCt(ML-KEM)',
+          tpmType: 'BYTE[]',
+          value: `${mlkemCtSize} B`,
+          description: `ML-KEM ciphertext from C_EncapsulateKey on the softhsm ${mlkem} key.`,
+        },
+        {
+          name: '→ outCt(classical)',
+          tpmType: 'BYTE[]',
+          value: `${classicalPubSize} B`,
+          description:
+            'Ephemeral classical public key (the "ct" in DH-as-KEM framing) generated by Web Crypto.',
+        },
+        {
+          name: '→ combinedSs',
+          tpmType: 'BYTE[32]',
+          value: '32 B',
+          description: 'HKDF-SHA256 output — the actual session key material for AEAD use.',
+        },
+      ]
+    },
+    respFields: () => [
+      {
+        name: 'note',
+        tpmType: '—',
+        byteOffset: 0,
+        byteSize: 0,
+        description:
+          'No TPM-wire response — this command is composed at the JS layer. The “Send” button invokes the bridge directly. See the playground log for the encap output values.',
+      },
+    ],
+  },
+  {
+    key: 'TPM2_LabeledKEM_Hybrid_Decap',
+    cc: 0x000001a8,
+    name: 'TPM2_LabeledKEM_Hybrid_Decap (educational)',
+    section: 'Educational — not in TCG v1.85',
+    phase: 'use',
+    requiresKem: true,
+    showAlgorithm: true,
+    description:
+      'EDUCATIONAL CONSTRUCT (mirror of the hybrid encap). Runs real ML-KEM decapsulation against the softhsm-resident private key and real classical ECDH against the saved local private key, then HKDF-combines the two. Must run AFTER the matching hybrid encap so the playground has the ML-KEM ciphertext + classical ephemeral pub from that step.',
+    why: 'Demonstrates the full round-trip: combinedSs from decap MUST equal combinedSs from encap byte-for-byte. The playground log highlights both values for visual comparison.',
+    params: (algorithm: string) => {
+      const { mlkem, classical } = parseHybridAlgo(algorithm)
+      const mlkemCtSize = mlkem === 'MLKEM-512' ? 768 : mlkem === 'MLKEM-768' ? 1088 : 1568
+      const classicalPubSize = classical === 'X25519' ? 32 : 65
+      return [
+        {
+          name: 'mlkemHandle',
+          tpmType: 'TPMI_DH_OBJECT',
+          value: 'ML-KEM handle (see TPM State)',
+          description: `softhsm-backed ${mlkem} key. Private key never leaves the HSM boundary.`,
+        },
+        {
+          name: 'mlkemCt',
+          tpmType: 'BYTE[]',
+          value: `${mlkemCtSize} B (from prior Encap)`,
+          description: 'ML-KEM ciphertext captured from the matching hybrid encap step.',
+        },
+        {
+          name: 'classicalEphPub',
+          tpmType: 'BYTE[]',
+          value: `${classicalPubSize} B (from prior Encap)`,
+          description: 'Ephemeral classical public key the encapsulator generated.',
+        },
+        {
+          name: 'classicalAlg',
+          tpmType: 'enum {X25519, P-256}',
+          value: classical,
+          description: 'Classical curve used in the matching encap.',
+        },
+      ]
+    },
+    respFields: () => [
+      {
+        name: 'note',
+        tpmType: '—',
+        byteOffset: 0,
+        byteSize: 0,
+        description:
+          'No TPM-wire response — this command is composed at the JS layer. The “Send” button invokes the bridge directly. See the playground log for the decap output and the equality check vs the encap output.',
       },
     ],
   },

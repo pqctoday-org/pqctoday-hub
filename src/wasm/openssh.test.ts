@@ -146,7 +146,9 @@ describe('SshEngine', () => {
 
     it('returns PQC algorithm names', async () => {
       const result = await engine.runHandshake('pqc')
-      expect(result.kex_algorithm).toBe('mlkem768x25519-sha256')
+      // Legacy 'pqc' mode now maps to the canonical IETF KEX name used by the
+      // structured-config refactor (Fix 2).
+      expect(result.kex_algorithm).toBe('mlkem768-curve25519-sha256')
       expect(result.host_key_algorithm).toBe('ssh-mldsa-65')
       expect(result.quantum_safe).toBe(true)
     })
@@ -156,5 +158,69 @@ describe('SshEngine', () => {
     engine.bindHsm({ module: fakeModule as never, hSession: 1 })
     engine.terminate()
     await expect(engine.runHandshake('classical')).rejects.toThrow()
+  })
+
+  describe('structured config (Fix 2)', () => {
+    beforeEach(() => {
+      engine.bindHsm({ module: fakeModule as never, hSession: 1 })
+    })
+
+    it('pure ML-KEM-768 + ML-DSA-87 skips classical EC keygen', async () => {
+      const result = await engine.runHandshake({ kex: 'mlkem768', hostKey: 'ssh-mldsa-87' })
+      expect(result.connection_ok).toBe(true)
+      expect(result.kex_algorithm).toBe('mlkem768')
+      expect(result.host_key_algorithm).toBe('ssh-mldsa-87')
+      expect(result.quantum_safe).toBe(true)
+      // Pure ML-KEM: no classical EC keypair is generated.
+      expect(hsm_generateECKeyPair).not.toHaveBeenCalled()
+      expect(hsm_generateMLDSAKeyPair).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.anything(),
+        87,
+        false
+      )
+      expect(hsm_generateMLKEMKeyPair).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.anything(),
+        768,
+        true
+      )
+    })
+
+    it('pure ML-KEM-1024 + ML-DSA-44 uses requested parameter sets', async () => {
+      const result = await engine.runHandshake({ kex: 'mlkem1024', hostKey: 'ssh-mldsa-44' })
+      expect(result.connection_ok).toBe(true)
+      expect(result.kex_algorithm).toBe('mlkem1024')
+      expect(result.host_key_algorithm).toBe('ssh-mldsa-44')
+      expect(hsm_generateMLDSAKeyPair).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.anything(),
+        44,
+        false
+      )
+      expect(hsm_generateMLKEMKeyPair).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.anything(),
+        1024,
+        true
+      )
+    })
+
+    it('hybrid ML-KEM-512 + nistp256 still generates a classical EC keypair', async () => {
+      const result = await engine.runHandshake({
+        kex: 'mlkem512-nistp256-sha256',
+        hostKey: 'ssh-mldsa-65',
+      })
+      expect(result.connection_ok).toBe(true)
+      expect(result.kex_algorithm).toBe('mlkem512-nistp256-sha256')
+      // Hybrid path: server + client EC keypair generation (2 calls).
+      expect(hsm_generateECKeyPair).toHaveBeenCalledTimes(2)
+      expect(hsm_generateMLKEMKeyPair).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.anything(),
+        512,
+        true
+      )
+    })
   })
 })
