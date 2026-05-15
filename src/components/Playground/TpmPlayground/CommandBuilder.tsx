@@ -48,6 +48,15 @@ const COMMAND_GROUPS = [
     ],
   },
   {
+    label: 'Phase 4 — Streaming ML-DSA (chain Start → SequenceUpdate → Complete)',
+    commands: [
+      'TPM2_SignSequenceStart',
+      'TPM2_SignSequenceComplete',
+      'TPM2_VerifySequenceStart',
+      'TPM2_VerifySequenceComplete',
+    ],
+  },
+  {
     label: 'Phase 4 — Educational (not in TCG v1.85)',
     commands: ['TPM2_LabeledKEM_Hybrid_Encap', 'TPM2_LabeledKEM_Hybrid_Decap'],
   },
@@ -78,7 +87,16 @@ function isHybridCommand(cmd: string): boolean {
 function getAlgoOptionsForCommand(cmd: string): string[] {
   if (cmd === 'TPM2_CreatePrimary') return ALL_ALGOS
   if (cmd === 'TPM2_Encapsulate' || cmd === 'TPM2_Decapsulate') return KEM_ALGOS
-  if (cmd === 'TPM2_SignDigest' || cmd === 'TPM2_VerifyDigestSignature') return DSA_ALGOS
+  if (
+    cmd === 'TPM2_SignDigest' ||
+    cmd === 'TPM2_VerifyDigestSignature' ||
+    cmd === 'TPM2_SignSequenceStart' ||
+    cmd === 'TPM2_SignSequenceComplete' ||
+    cmd === 'TPM2_VerifySequenceStart' ||
+    cmd === 'TPM2_VerifySequenceComplete'
+  ) {
+    return DSA_ALGOS
+  }
   if (isHybridCommand(cmd)) return HYBRID_ALGOS
   return []
 }

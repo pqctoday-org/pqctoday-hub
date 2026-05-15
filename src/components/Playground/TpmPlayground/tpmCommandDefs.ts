@@ -1098,6 +1098,370 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
       },
     ],
   },
+
+  {
+    key: 'TPM2_SignSequenceStart',
+    cc: 0x000001aa,
+    name: 'TPM2_SignSequenceStart',
+    section: 'TCG Part 3 §17.5 Tables 89-90 (V1.85 RC4)',
+    phase: 'use',
+    requiresDsa: true,
+    showAlgorithm: false,
+    description:
+      'Starts a streaming-message ML-DSA signing sequence. Returns a sequenceHandle that subsequent TPM2_SequenceUpdate calls accumulate into; the message is then signed by TPM2_SignSequenceComplete. Per §17.5.1, this is the streaming counterpart of TPM2_SignDigest — used when the message is too large to fit in a single TPM2B_DIGEST buffer or when the µ value must be computed inside the TPM.',
+    why: 'Phase 4 (streaming) ML-DSA. Required for signing large firmware images, full attestation reports, or any message that exceeds the digest buffer limit. Pairs with TPM2_VerifySequenceComplete on the other end.',
+    params: () => [
+      {
+        name: 'keyHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: 'ML-DSA signing handle (see TPM State)',
+        description:
+          'Handle of a signing key (Table 89: Auth Index None — no authorization required for the start itself; auth is established for the sequence via the auth parameter below).',
+      },
+      {
+        name: 'auth.size',
+        tpmType: 'UINT16',
+        value: '0x0000 (empty)',
+        description: 'Length of the auth value to attach to the sequence handle (TPM2B_AUTH).',
+      },
+      {
+        name: 'auth.buffer',
+        tpmType: 'BYTE[]',
+        value: '(empty)',
+        description:
+          'Authorization value for subsequent use of the sequence (Table 89). Used by SequenceUpdate / SignSequenceComplete to authorize the sequenceHandle.',
+      },
+      {
+        name: 'context.size',
+        tpmType: 'UINT16',
+        value: '0x0000 (empty)',
+        description: 'TPM2B_SIGNATURE_CTX. Length of FIPS 204 §5.2 context value.',
+      },
+      {
+        name: 'context.buffer',
+        tpmType: 'BYTE[]',
+        value: '(empty)',
+        description:
+          'Domain-separation context (≤ 255 B). Same value will be expected on the matching VerifySequenceStart.',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 0,
+        byteSize: 2,
+        description:
+          'Per Table 89: TPM_ST_SESSIONS (0x8002) if an audit or decrypt session is present; otherwise TPM_ST_NO_SESSIONS (0x8001).',
+      },
+      {
+        name: 'responseSize',
+        tpmType: 'UINT32',
+        byteOffset: 2,
+        byteSize: 4,
+        description: 'Total response size in bytes.',
+      },
+      {
+        name: 'responseCode',
+        tpmType: 'TPM_RC',
+        byteOffset: 6,
+        byteSize: 4,
+        description: '0x00000000 = sequence started.',
+      },
+      {
+        name: 'sequenceHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        byteOffset: 10,
+        byteSize: 4,
+        description:
+          'Handle to reference the sequence (Table 90). Pass to subsequent TPM2_SequenceUpdate and TPM2_SignSequenceComplete calls. Typically in the TPM vendor range (0x80FF00xx for libtpms).',
+      },
+    ],
+  },
+
+  {
+    key: 'TPM2_SignSequenceComplete',
+    cc: 0x000001a4,
+    name: 'TPM2_SignSequenceComplete',
+    section: 'TCG Part 3 §20.6 Tables 124-125 (V1.85 RC4)',
+    phase: 'use',
+    requiresDsa: true,
+    showAlgorithm: false,
+    description:
+      'Completes a streaming ML-DSA signing sequence. Appends a final message chunk to the accumulated buffer, then signs the full message with the key and returns the signature. The sequence handle is consumed (released by the TPM) regardless of whether signing succeeds.',
+    why: 'Closes the streaming sign flow started by TPM2_SignSequenceStart. ML-DSA-65 signatures are 3309 bytes (FIPS 204 Table 3).',
+    params: () => [
+      {
+        name: '@sequenceHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: 'sequenceHandle from SignSequenceStart',
+        description:
+          'Auth Index: 1, Auth Role: USER (Table 124) — requires authorization session with the auth value set in TPM2_SignSequenceStart.',
+      },
+      {
+        name: '@keyHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: 'Same signing key used in SignSequenceStart',
+        description:
+          'Auth Index: 2, Auth Role: USER (Table 124) — both sequence and key authorizations are required.',
+      },
+      {
+        name: 'buffer.size',
+        tpmType: 'UINT16',
+        value: '0x0000-0x0400',
+        description:
+          'TPM2B_MAX_BUFFER size. Final chunk to append before signing. 0 if all data was supplied via prior SequenceUpdate calls.',
+      },
+      {
+        name: 'buffer.buffer',
+        tpmType: 'BYTE[]',
+        value: '(message bytes)',
+        description:
+          'Data to be added to the signature (Table 124). After append, the TPM signs the entire accumulated message.',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 0,
+        byteSize: 2,
+        description: '0x8002 = TPM_ST_SESSIONS (always — Table 124 mandates SESSIONS).',
+      },
+      {
+        name: 'responseSize',
+        tpmType: 'UINT32',
+        byteOffset: 2,
+        byteSize: 4,
+        description: 'Total response size. ML-DSA-65 → ~3329 B.',
+      },
+      {
+        name: 'responseCode',
+        tpmType: 'TPM_RC',
+        byteOffset: 6,
+        byteSize: 4,
+        description: '0x00000000 = signature produced.',
+      },
+      {
+        name: 'paramSize',
+        tpmType: 'UINT32',
+        byteOffset: 10,
+        byteSize: 4,
+        description: 'Size of the parameter area.',
+      },
+      {
+        name: 'signature.sigAlg',
+        tpmType: 'TPM_ALG_ID',
+        byteOffset: 14,
+        byteSize: 2,
+        description: '0x00A1 = TPM_ALG_MLDSA.',
+      },
+      {
+        name: 'signature.sig.size',
+        tpmType: 'UINT16',
+        byteOffset: 16,
+        byteSize: 2,
+        description:
+          'TPM2B_SIGNATURE_MLDSA size — 2420 (ML-DSA-44), 3309 (ML-DSA-65), 4627 (ML-DSA-87).',
+      },
+      {
+        name: 'signature.sig.buffer',
+        tpmType: 'BYTE[]',
+        byteOffset: 18,
+        byteSize: 0,
+        description: 'The ML-DSA signature over the accumulated message (Table 125).',
+      },
+    ],
+  },
+
+  {
+    key: 'TPM2_VerifySequenceStart',
+    cc: 0x000001a9,
+    name: 'TPM2_VerifySequenceStart',
+    section: 'TCG Part 3 §17.6 Tables 87-88 (V1.85 RC4)',
+    phase: 'use',
+    requiresDsa: true,
+    showAlgorithm: false,
+    description:
+      'Starts a streaming-message ML-DSA verification sequence. Returns a sequenceHandle that subsequent TPM2_SequenceUpdate calls feed message bytes into; the signature is then tested by TPM2_VerifySequenceComplete. Per Table 87, hint must be zero-length for ML-DSA (only TPM_ALG_EDDSA uses hint).',
+    why: "Phase 4 (streaming) ML-DSA verify. Mirrors SignSequenceStart on the verify side. Used by wolfTPM's mldsa_sign example to round-trip pure-message ML-DSA via the TPM.",
+    params: () => [
+      {
+        name: 'keyHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: 'ML-DSA verification handle (see TPM State)',
+        description:
+          'Handle of a verification key (Table 87: Auth Index None — verification uses public key only).',
+      },
+      {
+        name: 'auth.size',
+        tpmType: 'UINT16',
+        value: '0x0000 (empty)',
+        description: 'Length of the auth value to attach to the sequence handle.',
+      },
+      {
+        name: 'auth.buffer',
+        tpmType: 'BYTE[]',
+        value: '(empty)',
+        description: 'Authorization value for subsequent use of the sequence.',
+      },
+      {
+        name: 'hint.size',
+        tpmType: 'UINT16',
+        value: '0x0000 (MUST be empty for ML-DSA)',
+        description:
+          'TPM2B_SIGNATURE_HINT. Per Table 87: "hint must be supplied for TPM_ALG_EDDSA, and must be zero-length in all other cases." For ML-DSA this MUST be empty.',
+      },
+      {
+        name: 'hint.buffer',
+        tpmType: 'BYTE[]',
+        value: '(empty for ML-DSA)',
+        description: 'Empty for all PQC algorithms.',
+      },
+      {
+        name: 'context.size',
+        tpmType: 'UINT16',
+        value: '0x0000 (empty)',
+        description: 'TPM2B_SIGNATURE_CTX — must match what SignSequenceStart used.',
+      },
+      {
+        name: 'context.buffer',
+        tpmType: 'BYTE[]',
+        value: '(empty)',
+        description: 'Domain-separation context bytes.',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 0,
+        byteSize: 2,
+        description:
+          'Per Table 87: TPM_ST_SESSIONS (0x8002) if an audit or decrypt session is present; otherwise TPM_ST_NO_SESSIONS (0x8001).',
+      },
+      {
+        name: 'responseSize',
+        tpmType: 'UINT32',
+        byteOffset: 2,
+        byteSize: 4,
+        description: 'Total response size in bytes.',
+      },
+      {
+        name: 'responseCode',
+        tpmType: 'TPM_RC',
+        byteOffset: 6,
+        byteSize: 4,
+        description: '0x00000000 = sequence started.',
+      },
+      {
+        name: 'sequenceHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        byteOffset: 10,
+        byteSize: 4,
+        description:
+          'Handle to reference the sequence (Table 88). Use with TPM2_SequenceUpdate to feed the message bytes, then TPM2_VerifySequenceComplete to test the signature.',
+      },
+    ],
+  },
+
+  {
+    key: 'TPM2_VerifySequenceComplete',
+    cc: 0x000001a3,
+    name: 'TPM2_VerifySequenceComplete',
+    section: 'TCG Part 3 §20.3 Tables 118-119 (V1.85 RC4)',
+    phase: 'use',
+    requiresDsa: true,
+    showAlgorithm: false,
+    description:
+      'Completes a streaming verification sequence. The signature is tested against the accumulated message and the public portion of keyHandle. On success returns a TPMT_TK_VERIFIED ticket with tag = TPM_ST_MESSAGE_VERIFIED — distinct from the TPM_ST_DIGEST_VERIFIED ticket that TPM2_VerifyDigestSignature produces (Part 2 §10.6.4 Table 110 TPMU_TK_VERIFIED_META encodes this distinction).',
+    why: 'Closes the streaming verify flow. The returned MESSAGE_VERIFIED ticket can be passed back to the TPM as evidence that a specific message was signed by a specific TPM-resident key, without re-validating the signature.',
+    params: () => [
+      {
+        name: '@sequenceHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: 'sequenceHandle from VerifySequenceStart',
+        description:
+          'Auth Index: 1, Auth Role: USER (Table 118) — requires authorization with the auth value set in VerifySequenceStart.',
+      },
+      {
+        name: 'keyHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: 'Same verification key used in VerifySequenceStart',
+        description: 'Auth Index: None — no authorization session required (public-key operation).',
+      },
+      {
+        name: 'signature.sigAlg',
+        tpmType: 'TPM_ALG_ID',
+        value: '0x00A1 (TPM_ALG_MLDSA)',
+        description: 'Algorithm of the signature being tested.',
+      },
+      {
+        name: 'signature.sig.size',
+        tpmType: 'UINT16',
+        value: '0x0CED (3309)',
+        description: 'Signature length matching the verifying key parameter set.',
+      },
+      {
+        name: 'signature.sig.buffer',
+        tpmType: 'BYTE[]',
+        value: '(signature bytes from a SignSequenceComplete)',
+        description: 'TPMT_SIGNATURE — the signature to be tested (Table 118).',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 0,
+        byteSize: 2,
+        description: '0x8002 = TPM_ST_SESSIONS (always — Table 118 mandates SESSIONS).',
+      },
+      {
+        name: 'responseSize',
+        tpmType: 'UINT32',
+        byteOffset: 2,
+        byteSize: 4,
+        description: 'Total response size in bytes.',
+      },
+      {
+        name: 'responseCode',
+        tpmType: 'TPM_RC',
+        byteOffset: 6,
+        byteSize: 4,
+        description: '0x00000000 = signature verified; 0x000001DB = TPM_RC_SIGNATURE on bad sig.',
+      },
+      {
+        name: 'paramSize',
+        tpmType: 'UINT32',
+        byteOffset: 10,
+        byteSize: 4,
+        description: 'Size of the parameter area.',
+      },
+      {
+        name: 'validation.tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 14,
+        byteSize: 2,
+        description:
+          '0x8026 = TPM_ST_MESSAGE_VERIFIED on success (Table 119: "tag will be TPM_ST_MESSAGE_VERIFIED"). Distinct from TPM_ST_DIGEST_VERIFIED (0x8027) returned by TPM2_VerifyDigestSignature.',
+      },
+      {
+        name: 'validation.hierarchy',
+        tpmType: 'TPMI_RH_HIERARCHY',
+        byteOffset: 16,
+        byteSize: 4,
+        description: 'Hierarchy of the verifying key.',
+      },
+      {
+        name: 'validation.hmac.size',
+        tpmType: 'UINT16',
+        byteOffset: 20,
+        byteSize: 2,
+        description: 'HMAC ticket binding length (Part 2 §10.6.5 Table 112).',
+      },
+    ],
+  },
 ]
 
 export function getCommandDef(key: string): TpmCommandDef | undefined {
