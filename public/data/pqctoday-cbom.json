@@ -4,7 +4,7 @@
   "serialNumber": "urn:uuid:pqctoday-cbom-20260515",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-05-15T03:54:56.601Z",
+    "timestamp": "2026-05-15T12:58:25.471Z",
     "tools": [
       {
         "name": "pqctoday-hub",
@@ -36587,6 +36587,353 @@
         {
           "name": "pqctoday:algorithm_source",
           "value": "capability_description"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "ef10114ce93b1dad",
+      "name": "OpenPGP.js",
+      "version": "5.11.3",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA, SLH-DSA",
+          "primitive": "KEM"
+        }
+      },
+      "description": "OpenPGP.js PQC PR series tracks draft-ietf-openpgp-pqc (composite ML-KEM+ECDH encryption, composite ML-DSA+ECDSA signatures, standalone SLH-DSA).",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/openpgpjs/openpgpjs"
+        },
+        {
+          "type": "website",
+          "url": "https://openpgpjs.org/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "openpgp-js"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Cryptographic Libraries"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "85"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "b65ed8c468acb5fc",
+      "name": "OpenMLS",
+      "version": "0.6.0",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "KEM"
+        }
+      },
+      "description": "OpenMLS PQ branch tracks draft-ietf-mls-pq-ciphersuites-04 (ML-KEM + ML-DSA cipher suites for MLS group messaging).",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/openmls/openmls"
+        },
+        {
+          "type": "website",
+          "url": "https://openmls.tech/"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "openmls"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Secure Messaging Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "85"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "9052fb758f76251a",
+      "name": "mls-rs (AWS)",
+      "version": "0.43.0",
+      "manufacturer": {
+        "name": "Amazon Web Services"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM",
+          "primitive": "KEM"
+        }
+      },
+      "description": "mls-rs PQ track: ML-KEM-based cipher suites for MLS, tracking draft-ietf-mls-pq-ciphersuites.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/awslabs/mls-rs"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/awslabs/mls-rs"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "mls-rs"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Secure Messaging Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "85"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "02eab1da04d587ae",
+      "name": "mlspp",
+      "version": "2025-09",
+      "manufacturer": {
+        "name": "Cisco"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "C++ reference implementation for MLS protocol; PQ work in progress aligned with draft-ietf-mls-pq-ciphersuites.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/cisco/mlspp"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/cisco/mlspp"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "mlspp"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Secure Messaging Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "AppServers"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "85"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "219fe1eee41d3d64",
+      "name": "libtpms",
+      "version": "0.10.0",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "libtpms is a C library providing TPM 2.0 functionality. Tracks TCG TPM 2.0 Library v1.83 (no PQ); v1.85 PQ support in fork branches (incl. pqctoday-tpm).",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/stefanberger/libtpms"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/stefanberger/libtpms"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "libtpms"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Trusted Platform Module Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware Security"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "85"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "65b0bceb8aea2756",
+      "name": "swtpm",
+      "version": "0.10.0",
+      "cryptoProperties": {
+        "assetType": "related-crypto-material"
+      },
+      "description": "swtpm is a libtpms-based software TPM emulator. Tracks libtpms versions; PQ via pqctoday-tpm fork branches.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/stefanberger/swtpm"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/stefanberger/swtpm"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "swtpm"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Trusted Platform Module Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware Security"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "85"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "2ed6ecdfb9562c0a",
+      "name": "pqctoday-tpm",
+      "version": "1.85-rc4",
+      "manufacturer": {
+        "name": "pqctoday (self)"
+      },
+      "cryptoProperties": {
+        "assetType": "related-crypto-material",
+        "algorithmProperties": {
+          "parameterSetIdentifier": "ML-KEM, ML-DSA",
+          "primitive": "KEM"
+        }
+      },
+      "description": "Fork of swtpm+libtpms adding TCG TPM 2.0 v1.85 RC4 PQ commands (ML-DSA-44/65/87, ML-KEM-512/768/1024, Labeled KEM). Drives the /playground/tpm-playground workshop.",
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/pqctoday-org/pqctoday-tpm"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/pqctoday-org/pqctoday-tpm"
+        }
+      ],
+      "properties": [
+        {
+          "name": "pqctoday:product_id",
+          "value": "pqctoday-tpm"
+        },
+        {
+          "name": "pqctoday:category",
+          "value": "Trusted Platform Module Software"
+        },
+        {
+          "name": "pqctoday:layer",
+          "value": "Hardware Security"
+        },
+        {
+          "name": "pqctoday:fips_validated",
+          "value": "No"
+        },
+        {
+          "name": "pqctoday:algorithm_source",
+          "value": "capability_description"
+        },
+        {
+          "name": "pqctoday:confidence_score",
+          "value": "85"
         }
       ]
     }
