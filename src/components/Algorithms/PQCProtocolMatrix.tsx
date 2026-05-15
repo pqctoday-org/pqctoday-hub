@@ -1,19 +1,84 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   PROTOCOL_MATRIX,
+  PROTOCOL_MATRIX_LAST_UPDATED,
+  TRANSPORT_ISSUES,
+  type DeploymentPosture,
   type DimensionStatusValue,
+  type LiveDeployment,
   type TestabilityValue,
   type ProtocolMatrixRow,
   type DimensionStatus,
   type OssLibrary,
   type PlaygroundTool,
 } from '../../data/pqcProtocolMatrix'
-import { ExternalLink, FlaskConical, AlertTriangle, CheckCircle2, FileText } from 'lucide-react'
+import {
+  ExternalLink,
+  FlaskConical,
+  AlertTriangle,
+  FileText,
+  LayoutGrid,
+  Table2,
+  Calendar,
+  GitBranch,
+  Rocket,
+  Zap,
+  Search,
+  X,
+  ArrowUp,
+  ArrowDown,
+  Globe2,
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { ProtocolDetailModal } from './ProtocolDetailModal'
+
+type SortKey = 'matrix' | 'name' | 'maturity' | 'oss' | 'commercial' | 'deployments'
+type SortDirection = 'asc' | 'desc'
+type AvailabilityFilter =
+  | 'all'
+  | 'has-oss'
+  | 'has-commercial'
+  | 'has-playground'
+  | 'has-deployment'
+  | 'no-oss'
+  | 'no-commercial'
+  | 'no-deployment'
+
+const DIMENSION_MATURITY: Record<DimensionStatusValue, number> = {
+  rfc: 4,
+  draft: 3,
+  experimental: 2,
+  none: 1,
+  na: 0,
+}
+
+function rowMaturity(row: ProtocolMatrixRow): number {
+  return (
+    DIMENSION_MATURITY[row.dimensions.pureKem.value] +
+    DIMENSION_MATURITY[row.dimensions.hybridKem.value] +
+    DIMENSION_MATURITY[row.dimensions.pureSig.value] +
+    DIMENSION_MATURITY[row.dimensions.hybridSig.value]
+  )
+}
+
+function rowDimensionValues(row: ProtocolMatrixRow): DimensionStatusValue[] {
+  return [
+    row.dimensions.pureKem.value,
+    row.dimensions.hybridKem.value,
+    row.dimensions.pureSig.value,
+    row.dimensions.hybridSig.value,
+  ]
+}
+
+type ViewMode = 'heatmap' | 'detailed'
 
 interface DimensionBadgeProps {
   status: DimensionStatus
+  compact?: boolean
 }
 
 function dimensionLabel(value: DimensionStatusValue): string {
@@ -46,20 +111,65 @@ function dimensionTone(value: DimensionStatusValue): string {
   }
 }
 
-function DimensionBadge({ status }: DimensionBadgeProps) {
+function deploymentPostureClass(posture: DeploymentPosture): string {
+  switch (posture) {
+    case 'production':
+      return 'bg-status-success/20 text-status-success border-status-success/40'
+    case 'pilot':
+      return 'bg-status-warning/20 text-status-warning border-status-warning/40'
+    case 'experimental':
+      return 'bg-muted text-muted-foreground border-border'
+  }
+}
+
+function deploymentPostureLabel(posture: DeploymentPosture): string {
+  switch (posture) {
+    case 'production':
+      return 'Production'
+    case 'pilot':
+      return 'Pilot'
+    case 'experimental':
+      return 'Experimental'
+  }
+}
+
+function DeploymentBadge({ status }: { status: DimensionStatus }) {
+  if (!status.deploymentPosture) return null
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0 text-[10px] font-medium ${deploymentPostureClass(
+        status.deploymentPosture
+      )}`}
+      title={
+        status.deploymentNote ??
+        `Deployment posture: ${deploymentPostureLabel(status.deploymentPosture)}`
+      }
+    >
+      <Rocket size={9} />
+      {deploymentPostureLabel(status.deploymentPosture)}
+    </span>
+  )
+}
+
+function DimensionBadge({ status, compact = false }: DimensionBadgeProps) {
   return (
     <div className="flex flex-col gap-1">
-      <span
-        className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium ${dimensionTone(
-          status.value
-        )}`}
-        title={status.note}
-      >
-        {dimensionLabel(status.value)}
-      </span>
-      <span className="text-[10px] leading-tight text-muted-foreground line-clamp-2">
-        {status.note}
-      </span>
+      <div className="flex flex-wrap items-center gap-1">
+        <span
+          className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium ${dimensionTone(
+            status.value
+          )}`}
+          title={status.note}
+        >
+          {dimensionLabel(status.value)}
+        </span>
+        <DeploymentBadge status={status} />
+      </div>
+      {!compact && (
+        <span className="text-[10px] leading-tight text-muted-foreground line-clamp-2">
+          {status.note}
+        </span>
+      )}
     </div>
   )
 }
@@ -215,8 +325,151 @@ function DocList({ docs, label }: { docs: ProtocolMatrixRow['latestRelease']; la
   )
 }
 
+function DeploymentCountBadge({
+  deployments,
+  noDeploymentReason,
+}: {
+  deployments: LiveDeployment[]
+  noDeploymentReason?: string
+}) {
+  if (deployments.length === 0) {
+    return (
+      <span
+        className="inline-flex items-center gap-1 rounded-md border border-status-error/30 bg-status-error/10 px-2 py-0.5 text-xs font-medium text-status-error"
+        title={noDeploymentReason ?? 'No known production deployment'}
+      >
+        ✗ No deployment
+      </span>
+    )
+  }
+  const toneClass =
+    deployments.length >= 3
+      ? 'border-status-success/30 bg-status-success/15 text-status-success'
+      : 'border-status-warning/30 bg-status-warning/15 text-status-warning'
+  const titleText = deployments.map((d) => `${d.provider} — ${d.what}`).join('\n')
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium ${toneClass}`}
+      title={titleText}
+    >
+      <Globe2 size={11} />
+      {deployments.length} live
+    </span>
+  )
+}
+
+function DeploymentChip({ deployment }: { deployment: LiveDeployment }) {
+  return (
+    <a
+      href={deployment.referenceUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-1 rounded-md border border-status-success/30 bg-status-success/10 px-1.5 py-0.5 text-[11px] text-status-success transition-colors hover:bg-status-success/20"
+      title={`${deployment.what}${deployment.since ? ` (since ${deployment.since})` : ''} — opens reference`}
+    >
+      <Globe2 size={10} />
+      {deployment.provider}
+    </a>
+  )
+}
+
+function AvailabilityBadge({ count, tone }: { count: number; tone: 'oss' | 'commercial' }) {
+  const label = tone === 'oss' ? 'OSS' : 'Comm.'
+  if (count === 0) {
+    return (
+      <span
+        className="inline-flex items-center gap-1 rounded-md border border-status-error/30 bg-status-error/10 px-2 py-0.5 text-xs font-medium text-status-error"
+        title={`No ${tone === 'oss' ? 'open-source' : 'commercial'} implementation chipped`}
+      >
+        ✗ {label}
+      </span>
+    )
+  }
+  const toneClass =
+    count >= 3
+      ? 'border-status-success/30 bg-status-success/15 text-status-success'
+      : 'border-status-warning/30 bg-status-warning/15 text-status-warning'
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium ${toneClass}`}
+      title={`${count} ${tone === 'oss' ? 'open-source' : 'commercial'} implementation${count === 1 ? '' : 's'}`}
+    >
+      ✓ {count} {label}
+    </span>
+  )
+}
+
 export function PQCProtocolMatrix() {
-  const totalGaps = useMemo(() => PROTOCOL_MATRIX.reduce((acc, p) => acc + p.gaps.length, 0), [])
+  const [viewMode, setViewMode] = useState<ViewMode>('heatmap')
+  const [searchText, setSearchText] = useState('')
+  const [statusFilter, setStatusFilter] = useState<DimensionStatusValue[]>([])
+  const [availabilityFilter, setAvailabilityFilter] = useState<AvailabilityFilter>('all')
+  const [sortKey, setSortKey] = useState<SortKey>('matrix')
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
+  const [selectedProtocol, setSelectedProtocol] = useState<ProtocolMatrixRow | null>(null)
+  const isHeatmap = viewMode === 'heatmap'
+
+  const filteredRows = useMemo(() => {
+    const search = searchText.trim().toLowerCase()
+    const filtered = PROTOCOL_MATRIX.filter((row) => {
+      if (
+        search &&
+        !row.name.toLowerCase().includes(search) &&
+        !row.description.toLowerCase().includes(search)
+      ) {
+        return false
+      }
+      if (statusFilter.length > 0) {
+        const rowValues = rowDimensionValues(row)
+        if (!statusFilter.some((s) => rowValues.includes(s))) return false
+      }
+      if (availabilityFilter === 'has-oss' && row.ossLibraries.length === 0) return false
+      if (availabilityFilter === 'no-oss' && row.ossLibraries.length > 0) return false
+      if (availabilityFilter === 'has-commercial' && row.commercialLibraries.length === 0)
+        return false
+      if (availabilityFilter === 'no-commercial' && row.commercialLibraries.length > 0) return false
+      if (availabilityFilter === 'has-playground' && row.playgrounds.length === 0) return false
+      if (availabilityFilter === 'has-deployment' && (row.liveDeployments?.length ?? 0) === 0)
+        return false
+      if (availabilityFilter === 'no-deployment' && (row.liveDeployments?.length ?? 0) > 0)
+        return false
+      return true
+    })
+
+    if (sortKey === 'matrix') return filtered
+
+    const dir = sortDirection === 'asc' ? 1 : -1
+    return [...filtered].sort((a, b) => {
+      switch (sortKey) {
+        case 'name':
+          return a.name.localeCompare(b.name) * dir
+        case 'maturity':
+          return (rowMaturity(a) - rowMaturity(b)) * dir
+        case 'oss':
+          return (a.ossLibraries.length - b.ossLibraries.length) * dir
+        case 'commercial':
+          return (a.commercialLibraries.length - b.commercialLibraries.length) * dir
+        case 'deployments':
+          return ((a.liveDeployments?.length ?? 0) - (b.liveDeployments?.length ?? 0)) * dir
+        default:
+          return 0
+      }
+    })
+  }, [searchText, statusFilter, availabilityFilter, sortKey, sortDirection])
+
+  const hasActiveFilters =
+    searchText.length > 0 ||
+    statusFilter.length > 0 ||
+    availabilityFilter !== 'all' ||
+    sortKey !== 'matrix'
+
+  const clearFilters = () => {
+    setSearchText('')
+    setStatusFilter([])
+    setAvailabilityFilter('all')
+    setSortKey('matrix')
+    setSortDirection('asc')
+  }
 
   return (
     <div className="space-y-6">
@@ -234,22 +487,55 @@ export function PQCProtocolMatrix() {
           </div>
           <p className="text-xs text-muted-foreground">
             Data and schema are still being validated against the underlying enrichment dataset (66
-            docs enriched 2026-05-15) and the live playground tools. Dimension flags, gaps, and
-            library back-links may change. Use as a reference, not a compliance artifact.
+            docs enriched 2026-05-15) and the live playground tools. Dimension flags, constraints,
+            and library back-links may change. Use as a reference, not a compliance artifact.
           </p>
         </div>
       </div>
 
-      {/* Intro panel */}
-      <div className="glass-panel space-y-2 p-4">
-        <h3 className="text-lg font-semibold text-foreground">PQC Protocol Support Matrix</h3>
-        <p className="text-sm text-muted-foreground">
-          Cross-check of where post-quantum cryptography stands for the 10 standard protocol
-          families. Each row shows the latest stable release, latest active draft, the 4 PQC
-          dimensions (pure / hybrid × KEM / signature), open-source and commercial implementations
-          that back the spec, and which dimensions our in-browser playground can exercise. Snapshot:
-          2026-05-15.
-        </p>
+      {/* Intro panel + view toggle */}
+      <div className="glass-panel space-y-3 p-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="flex-1 space-y-2">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <h3 className="text-lg font-semibold text-foreground">PQC Protocol Support Matrix</h3>
+              <span
+                className="inline-flex items-center gap-1 rounded-md border border-border bg-muted/40 px-2 py-0.5 text-[11px] text-muted-foreground"
+                title={`Snapshot date — last manual update to the matrix data file (${PROTOCOL_MATRIX_LAST_UPDATED})`}
+              >
+                <Calendar size={11} />
+                Last updated {PROTOCOL_MATRIX_LAST_UPDATED}
+              </span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {isHeatmap
+                ? 'Heatmap view — standardization status (4 PQC dimensions) and availability of open-source and commercial implementations across protocol families.'
+                : 'Detailed view — latest stable release, latest active draft, the 4 PQC dimensions, open-source and commercial implementations, and which dimensions our in-browser playground can exercise.'}
+            </p>
+          </div>
+          <div className="inline-flex shrink-0 rounded-md border border-border bg-card p-0.5">
+            <Button
+              variant={isHeatmap ? 'gradient' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('heatmap')}
+              className="gap-1.5"
+              aria-pressed={isHeatmap}
+            >
+              <LayoutGrid size={14} />
+              Heatmap
+            </Button>
+            <Button
+              variant={!isHeatmap ? 'gradient' : 'ghost'}
+              size="sm"
+              onClick={() => setViewMode('detailed')}
+              className="gap-1.5"
+              aria-pressed={!isHeatmap}
+            >
+              <Table2 size={14} />
+              Detailed
+            </Button>
+          </div>
+        </div>
         <div className="flex flex-wrap gap-2 pt-1 text-xs">
           <span className="rounded-md bg-status-success/15 border border-status-success/30 text-status-success px-2 py-0.5">
             ✓ RFC = published standard
@@ -269,6 +555,110 @@ export function PQCProtocolMatrix() {
         </div>
       </div>
 
+      {/* Filter & sort toolbar — single row, no inline labels (dropdowns self-describe) */}
+      <div className="glass-panel flex flex-wrap items-center gap-2 p-2">
+        <div className="relative flex-1 min-w-[200px]">
+          <Search
+            size={14}
+            className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+          />
+          <Input
+            type="search"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            placeholder="Search protocols…"
+            className="pl-8 h-9"
+            aria-label="Search protocols"
+          />
+        </div>
+
+        <FilterDropdown
+          items={[
+            { id: 'rfc', label: '✓ RFC (published)' },
+            { id: 'draft', label: '⊳ Draft' },
+            { id: 'experimental', label: '⚠ Experimental' },
+            { id: 'none', label: '✗ None' },
+            { id: 'na', label: '— N/A' },
+          ]}
+          selectedId=""
+          onSelect={() => undefined}
+          multiSelectedIds={statusFilter}
+          onMultiSelect={(ids) => setStatusFilter(ids as DimensionStatusValue[])}
+          defaultLabel="Status"
+          size="sm"
+        />
+
+        <FilterDropdown
+          items={[
+            { id: 'all', label: 'All rows' },
+            { id: 'has-oss', label: 'Has OSS' },
+            { id: 'no-oss', label: 'No OSS' },
+            { id: 'has-commercial', label: 'Has commercial' },
+            { id: 'no-commercial', label: 'No commercial' },
+            { id: 'has-playground', label: 'Has playground' },
+            { id: 'has-deployment', label: 'Has live deployment' },
+            { id: 'no-deployment', label: 'No live deployment' },
+          ]}
+          selectedId={availabilityFilter}
+          onSelect={(id) => setAvailabilityFilter(id as AvailabilityFilter)}
+          defaultLabel="Filter"
+          size="sm"
+        />
+
+        <div className="inline-flex items-center gap-0.5 rounded-md border border-border bg-card">
+          <FilterDropdown
+            items={[
+              { id: 'matrix', label: 'Matrix order' },
+              { id: 'name', label: 'Name' },
+              { id: 'maturity', label: 'Maturity score' },
+              { id: 'oss', label: 'OSS count' },
+              { id: 'commercial', label: 'Commercial count' },
+              { id: 'deployments', label: 'Live deployments' },
+            ]}
+            selectedId={sortKey}
+            onSelect={(id) => setSortKey(id as SortKey)}
+            defaultLabel="Sort"
+            size="sm"
+            variant="ghost"
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => setSortDirection((d) => (d === 'asc' ? 'desc' : 'asc'))}
+            className="h-7 w-7"
+            aria-label={`Sort ${sortDirection === 'asc' ? 'ascending' : 'descending'} — click to reverse`}
+            title={`Sort ${sortDirection === 'asc' ? 'ascending' : 'descending'}`}
+          >
+            {sortDirection === 'asc' ? (
+              <ArrowUp size={12} className="text-primary" />
+            ) : (
+              <ArrowDown size={12} className="text-primary" />
+            )}
+          </Button>
+        </div>
+
+        {hasActiveFilters && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearFilters}
+            className="h-9 gap-1 text-muted-foreground hover:text-foreground"
+            aria-label="Clear all filters"
+            title="Clear all filters"
+          >
+            <X size={12} />
+            Clear
+          </Button>
+        )}
+
+        <span className="ml-auto whitespace-nowrap text-xs text-muted-foreground">
+          <span className="font-semibold text-foreground">{filteredRows.length}</span>
+          <span className="mx-1">/</span>
+          <span className="font-semibold text-foreground">{PROTOCOL_MATRIX.length}</span> rows
+        </span>
+      </div>
+
       {/* Main matrix table */}
       <div className="glass-panel overflow-x-auto">
         <table className="w-full text-sm">
@@ -277,12 +667,16 @@ export function PQCProtocolMatrix() {
               <th className="sticky left-0 z-10 bg-muted/60 px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Protocol
               </th>
-              <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Latest Release
-              </th>
-              <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Latest Draft
-              </th>
+              {!isHeatmap && (
+                <>
+                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    Latest Release
+                  </th>
+                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    Latest Draft
+                  </th>
+                </>
+              )}
               <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Pure KEM
               </th>
@@ -302,118 +696,222 @@ export function PQCProtocolMatrix() {
                 Commercial
               </th>
               <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Playground
+                Live Deployments
               </th>
+              {!isHeatmap && (
+                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Playground
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
-            {PROTOCOL_MATRIX.map((p) => (
-              <tr
-                key={p.id}
-                className="border-b border-border/50 align-top hover:bg-muted/20 transition-colors"
-              >
-                <td className="sticky left-0 z-10 bg-card px-3 py-3">
-                  <div className="flex flex-col gap-0.5">
-                    <span className="font-semibold text-foreground">{p.name}</span>
-                    <span className="text-[10px] leading-tight text-muted-foreground line-clamp-2">
-                      {p.description}
-                    </span>
-                  </div>
-                </td>
-                <td className="px-3 py-3">
-                  <DocList docs={p.latestRelease} label="Release" />
-                </td>
-                <td className="px-3 py-3">
-                  <DocList docs={p.latestDraft} label="Draft" />
-                </td>
-                <td className="px-3 py-3">
-                  <DimensionBadge status={p.dimensions.pureKem} />
-                </td>
-                <td className="px-3 py-3">
-                  <DimensionBadge status={p.dimensions.hybridKem} />
-                </td>
-                <td className="px-3 py-3">
-                  <DimensionBadge status={p.dimensions.pureSig} />
-                </td>
-                <td className="px-3 py-3">
-                  <DimensionBadge status={p.dimensions.hybridSig} />
-                </td>
-                <td className="px-3 py-3">
-                  {p.ossLibraries.length === 0 ? (
-                    <span className="text-xs text-muted-foreground">—</span>
-                  ) : (
-                    <div className="flex flex-wrap gap-1">
-                      {p.ossLibraries.map((lib) => (
-                        <LibraryChip key={lib.productId} lib={lib} tone="oss" />
-                      ))}
-                    </div>
-                  )}
-                </td>
-                <td className="px-3 py-3">
-                  {p.commercialLibraries.length === 0 ? (
-                    <span className="text-xs text-muted-foreground">—</span>
-                  ) : (
-                    <div className="flex flex-wrap gap-1">
-                      {p.commercialLibraries.map((lib) => (
-                        <LibraryChip key={lib.productId} lib={lib} tone="commercial" />
-                      ))}
-                    </div>
-                  )}
-                </td>
-                <td className="px-3 py-3">
-                  <PlaygroundCell tools={p.playgrounds} />
+            {filteredRows.length === 0 && (
+              <tr>
+                <td
+                  colSpan={isHeatmap ? 8 : 11}
+                  className="px-3 py-8 text-center text-sm text-muted-foreground"
+                >
+                  No protocols match the current filters.{' '}
+                  <Button
+                    type="button"
+                    variant="link"
+                    size="sm"
+                    onClick={clearFilters}
+                    className="h-auto p-0 text-primary"
+                  >
+                    Clear filters
+                  </Button>
                 </td>
               </tr>
-            ))}
+            )}
+            {filteredRows.map((p) => {
+              const parent = p.inheritsFromProtocolId
+                ? PROTOCOL_MATRIX.find((r) => r.id === p.inheritsFromProtocolId)
+                : undefined
+              const isInheritance = Boolean(parent)
+              return (
+                <tr
+                  key={p.id}
+                  className={`border-b border-border/50 align-top transition-colors ${
+                    isInheritance ? 'bg-muted/10 hover:bg-muted/30' : 'hover:bg-muted/20'
+                  }`}
+                >
+                  <td className="sticky left-0 z-10 bg-card px-3 py-3">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-1.5">
+                        {isInheritance && (
+                          <GitBranch size={12} className="shrink-0 text-muted-foreground" />
+                        )}
+                        <Button
+                          type="button"
+                          variant="link"
+                          size="sm"
+                          onClick={() => setSelectedProtocol(p)}
+                          className={`h-auto p-0 font-semibold text-left no-underline hover:underline focus-visible:underline ${
+                            isInheritance ? 'italic text-muted-foreground' : 'text-foreground'
+                          }`}
+                          aria-label={`Open details for ${p.name}`}
+                        >
+                          {p.name}
+                        </Button>
+                      </div>
+                      {isInheritance && parent && (
+                        <span className="text-[10px] leading-tight text-muted-foreground">
+                          inherits from{' '}
+                          <span className="font-medium text-foreground">{parent.name}</span>
+                        </span>
+                      )}
+                      {!isInheritance && p.inheritedBy && p.inheritedBy.length > 0 && (
+                        <span
+                          className="inline-flex w-fit items-center gap-1 rounded-md border border-accent/30 bg-accent/10 px-1.5 py-0 text-[10px] text-accent"
+                          title={`Same PQC posture also covers: ${p.inheritedBy.join(', ')}`}
+                        >
+                          <GitBranch size={9} />
+                          inherits: {p.inheritedBy.join(', ')}
+                        </span>
+                      )}
+                      {!isHeatmap && (
+                        <span className="text-[10px] leading-tight text-muted-foreground line-clamp-2">
+                          {p.description}
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                  {!isHeatmap && (
+                    <>
+                      <td className="px-3 py-3">
+                        <DocList docs={p.latestRelease} label="Release" />
+                      </td>
+                      <td className="px-3 py-3">
+                        <DocList docs={p.latestDraft} label="Draft" />
+                      </td>
+                    </>
+                  )}
+                  <td className="px-3 py-3">
+                    <DimensionBadge status={p.dimensions.pureKem} compact={isHeatmap} />
+                  </td>
+                  <td className="px-3 py-3">
+                    <DimensionBadge status={p.dimensions.hybridKem} compact={isHeatmap} />
+                  </td>
+                  <td className="px-3 py-3">
+                    <DimensionBadge status={p.dimensions.pureSig} compact={isHeatmap} />
+                  </td>
+                  <td className="px-3 py-3">
+                    <DimensionBadge status={p.dimensions.hybridSig} compact={isHeatmap} />
+                  </td>
+                  <td className="px-3 py-3">
+                    {isHeatmap ? (
+                      <AvailabilityBadge count={p.ossLibraries.length} tone="oss" />
+                    ) : p.ossLibraries.length === 0 ? (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    ) : (
+                      <div className="flex flex-wrap gap-1">
+                        {p.ossLibraries.map((lib) => (
+                          <LibraryChip key={lib.productId} lib={lib} tone="oss" />
+                        ))}
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-3 py-3">
+                    {isHeatmap ? (
+                      <AvailabilityBadge count={p.commercialLibraries.length} tone="commercial" />
+                    ) : p.commercialLibraries.length === 0 ? (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    ) : (
+                      <div className="flex flex-wrap gap-1">
+                        {p.commercialLibraries.map((lib) => (
+                          <LibraryChip key={lib.productId} lib={lib} tone="commercial" />
+                        ))}
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-3 py-3">
+                    {isHeatmap ? (
+                      <DeploymentCountBadge
+                        deployments={p.liveDeployments ?? []}
+                        noDeploymentReason={p.noDeploymentReason}
+                      />
+                    ) : !p.liveDeployments || p.liveDeployments.length === 0 ? (
+                      <span
+                        className="inline-flex items-center gap-1 text-xs text-muted-foreground"
+                        title="No known production deployment"
+                      >
+                        <Globe2 size={11} className="opacity-50" /> None
+                      </span>
+                    ) : (
+                      <div className="flex flex-wrap gap-1">
+                        {p.liveDeployments.map((d, idx) => (
+                          <DeploymentChip key={`${d.provider}-${idx}`} deployment={d} />
+                        ))}
+                      </div>
+                    )}
+                  </td>
+                  {!isHeatmap && (
+                    <td className="px-3 py-3">
+                      <PlaygroundCell tools={p.playgrounds} />
+                    </td>
+                  )}
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>
 
-      {/* Gaps panel */}
-      <div className="glass-panel space-y-3 p-4">
-        <div className="flex items-center justify-between">
-          <h3 className="flex items-center gap-2 text-lg font-semibold text-foreground">
-            <AlertTriangle size={18} className="text-status-warning" />
-            Known Gaps ({totalGaps})
-          </h3>
-          <span className="text-xs text-muted-foreground">
-            Aggregated across all 10 protocol families
-          </span>
+      {/* Transport-layer blockers panel (detailed view only) */}
+      {!isHeatmap && TRANSPORT_ISSUES.length > 0 && (
+        <div className="glass-panel space-y-3 p-4">
+          <div className="flex items-center justify-between">
+            <h3 className="flex items-center gap-2 text-lg font-semibold text-foreground">
+              <Zap size={18} className="text-status-warning" />
+              Transport-Layer Blockers ({TRANSPORT_ISSUES.length})
+            </h3>
+            <span className="text-xs text-muted-foreground">
+              Cross-cutting issues that affect PQC handshake performance
+            </span>
+          </div>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+            {TRANSPORT_ISSUES.map((issue) => {
+              const affected = issue.affectedProtocolIds
+                .map((pid) => PROTOCOL_MATRIX.find((p) => p.id === pid)?.name ?? pid)
+                .join(', ')
+              return (
+                <div
+                  key={issue.id}
+                  className="rounded-md border border-status-warning/30 bg-status-warning/5 p-3"
+                >
+                  <div className="mb-1.5 flex items-start justify-between gap-2">
+                    <span className="text-sm font-semibold text-foreground">{issue.name}</span>
+                    {issue.referenceUrl && (
+                      <a
+                        href={issue.referenceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="shrink-0 text-primary hover:text-primary/80"
+                        title="Authoritative reference"
+                      >
+                        <ExternalLink size={11} />
+                      </a>
+                    )}
+                  </div>
+                  <p className="mb-2 text-xs text-muted-foreground">{issue.description}</p>
+                  <div className="text-[10px] text-muted-foreground">
+                    <span className="font-medium text-foreground">Affects:</span> {affected}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </div>
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          {PROTOCOL_MATRIX.filter((p) => p.gaps.length > 0).map((p) => (
-            <div key={p.id} className="rounded-md border border-border bg-muted/20 p-3">
-              <div className="mb-1.5 flex items-center gap-2">
-                <span className="text-sm font-semibold text-foreground">{p.name}</span>
-                <span className="rounded bg-status-warning/15 px-1.5 py-0.5 text-[10px] text-status-warning">
-                  {p.gaps.length} {p.gaps.length === 1 ? 'gap' : 'gaps'}
-                </span>
-              </div>
-              <ul className="space-y-1 text-xs text-muted-foreground">
-                {p.gaps.map((g, i) => (
-                  <li key={i} className="flex items-start gap-1.5">
-                    <span className="mt-1 inline-block h-1 w-1 shrink-0 rounded-full bg-status-warning" />
-                    <span>{g}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-          {PROTOCOL_MATRIX.filter((p) => p.gaps.length === 0).length > 0 && (
-            <div className="rounded-md border border-status-success/30 bg-status-success/10 p-3 md:col-span-2">
-              <div className="flex items-center gap-2 text-sm">
-                <CheckCircle2 size={14} className="text-status-success" />
-                <span className="text-foreground">No known gaps:</span>
-                <span className="text-muted-foreground">
-                  {PROTOCOL_MATRIX.filter((p) => p.gaps.length === 0)
-                    .map((p) => p.name)
-                    .join(', ')}
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+      )}
+
+      {/* Protocol detail modal */}
+      <ProtocolDetailModal
+        isOpen={selectedProtocol !== null}
+        onClose={() => setSelectedProtocol(null)}
+        protocol={selectedProtocol}
+      />
     </div>
   )
 }

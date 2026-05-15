@@ -557,6 +557,12 @@ export function AlgorithmsView() {
               <TabsTrigger value="support" className="flex items-center gap-2">
                 <Network size={18} />
                 Protocol Support
+                <span
+                  className="rounded-sm bg-status-warning/20 text-status-warning px-1 py-0 text-[9px] font-bold uppercase tracking-wider"
+                  title="Work in progress — schema + data are evolving"
+                >
+                  WIP
+                </span>
               </TabsTrigger>
             </TabsList>
 
