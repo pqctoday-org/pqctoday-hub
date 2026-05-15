@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import type { ConceptXwalkRecord, XwalkRelationshipType } from '../data/conceptXwalkData'
+import type {
+  ConceptXwalkRecord,
+  XwalkRationaleType,
+  XwalkRelationshipType,
+} from '../data/conceptXwalkData'
 import type { ApplicabilityResult, ApplicabilityTier, TrustPath } from './applicabilityEngine'
 import type { PersonaLens } from './applicabilityLens'
 import type { ComplianceFramework } from '../data/complianceData'
@@ -36,6 +40,19 @@ const RELATIONSHIP_MULTIPLIER: Record<XwalkRelationshipType, number> = {
   intersects_with: 0.8,
   not_related: 0,
 }
+
+/**
+ * Rationale types that may anchor a hop-2 derivation. Per the explainability
+ * doc §3.3, two-hop derived results are capped at 0 unless the edge's
+ * rationale is `implementation_guidance` or `technical_dependency` — the two
+ * rationale types that represent a hard semantic inference rather than a
+ * loose policy or timeline link. Soft chains (`policy_reference`, `semantic`,
+ * etc.) survive at hop 1 but are not allowed to compound through hop 2.
+ */
+const HOP2_ALLOWED_RATIONALES: ReadonlySet<XwalkRationaleType> = new Set([
+  'implementation_guidance',
+  'technical_dependency',
+])
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -188,6 +205,14 @@ export function traverseXwalkPaths(
       )) {
         if (seen.has(neighborId)) continue
         seen.add(neighborId)
+
+        // Hop-2 rationale gate (doc §3.3): only hard semantic inferences
+        // (technical_dependency, implementation_guidance) may compound
+        // through a second hop. Soft rationales (policy_reference,
+        // semantic, timeline_anchor, etc.) are admissible at hop 1 but
+        // not at hop 2 — chaining two soft inferences yields guilt-by-
+        // association, not evidence.
+        if (!HOP2_ALLOWED_RATIONALES.has(edge.rationaleType)) continue
 
         const derived = computeDerivedConfidence(
           h1Conf,
