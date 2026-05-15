@@ -21,6 +21,50 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### TPM Playground — V1.85 RC4 strict-compliance audit + pqctoday-tpm v0.8.0 alignment (2026-05-15)
+
+Brought the in-browser TPM Playground (`/playground` → TPM tab) into byte-and-byte agreement with the published TCG TPM 2.0 Library Specification V1.85 RC4 and the freshly-released `pqctoday-tpm v0.8.0` WASM. Every section reference, table number, and wire-byte layout was re-verified against the PDF — no claim left unverified.
+
+**WASM refresh**
+
+- Rebuilt `public/wasm/pqctpm.{wasm,js}` from `pqctoday-tpm` main at v0.8.0 (commit `5385711e`) via `wasm/build.sh`. The v0.8.0 release includes the V1.85 RC4 `TPM2_SignDigest` + `TPM2_VerifyDigestSignature` wire-format migration (Tables 126 / 120) — the prior v0.7-built WASM expected pre-RC4 legacy shapes and would have rejected spec-compliant clients with `TPM_RC_SCHEME`.
+- Bumped `WASM_BUILD = '20260515-v0p8-rc4-wire'` in [tpmBridge.ts](src/wasm/tpmBridge.ts) to invalidate browser caches of the previous WASM.
+
+**Unitary commands — every entry in `tpmCommandDefs.ts` re-grounded against V1.85 RC4 PDF**
+
+Fixed 7 wrong section citations and 2 outright hallucinations:
+
+| Command                    | Was                                   | Is (verified in /tmp/tpm-part\*.txt) |
+| -------------------------- | ------------------------------------- | ------------------------------------ |
+| TPM2_Startup               | §12.1 (actually TPM2_Create)          | §9.3 Tables 4-5                      |
+| TPM2_SelfTest              | §11.4 (does not exist)                | §10.2 Tables 8-9                     |
+| TPM2_GetCapability         | §30.2                                 | §30.2 Tables 238-239                 |
+| TPM2_GetRandom             | §16.1                                 | §16.1 Tables 75-76                   |
+| TPM2_CreatePrimary         | §24.1                                 | §24.1 Tables 191-192                 |
+| TPM2_Encapsulate           | §26.1 (does not exist)                | §14.10 Tables 60-61                  |
+| TPM2_Decapsulate           | §26.2 (does not exist)                | §14.11 Tables 62-63                  |
+| TPM2_SignDigest            | §20.1 (actually SignSequenceComplete) | §20.7 Tables 126-127                 |
+| TPM2_VerifyDigestSignature | _missing entirely_                    | **added** — §20.4 Tables 120-121     |
+
+Killed two outright hallucinations: (a) `TPM2_CreatePrimary` claimed "ML-DSA-65 security level 3 (128-bit)" — ML-DSA-65 is NIST PQC Category 3 (~192-bit); ML-DSA-44 is the 128-bit one. (b) Both `TPM2_Encapsulate.outSharedKey` and `TPM2_Decapsulate.inEncapsulation`/`outSharedKey` were invented field names — spec Tables 60-63 use `sharedSecret` and `ciphertext`. Renamed to spec names.
+
+`TPM2_SignDigest` request wire fully rewritten from the pre-RC4 5-field shape `{keyHandle, inScheme, digest, context, hint}` to the RC4 Table 126 shape `{keyHandle, context, digest, validation(TPMT_TK_HASHCHECK)}`. Response also corrected: `TPM2B_SIGNATURE_MLDSA` is `{size, buffer}` per Table 216 — no `parameterSet` field on the wire.
+
+`TPM2_VerifyDigestSignature` is a new top-level entry; wired into [CommandBuilder.tsx](src/components/Playground/TpmPlayground/CommandBuilder.tsx) as a Phase 4 "Use Keys" command alongside SignDigest.
+
+**Compliance Runner ([ComplianceRunner.tsx](src/components/Playground/TpmPlayground/ComplianceRunner.tsx))**
+
+Five wrong V185 check citations corrected: V185-001 SelfTest §11.2.1 → Part 3 §10.2; V185-002 Response Header §7.2 → Part 1 §15.2 (Command/Response Header Fields); V185-004/005 ML-KEM/ML-DSA registered §11.9 (doesn't exist) → Part 2 §6.3 (TPM_ALG_ID). Phase narratives re-cited the same way. V185-015 SignDigest wire-byte builder rewritten to the V1.85 RC4 Table 126 shape — without this rewrite the v0.8.0 WASM would reject the suite's request with `TPM_RC_SCHEME (rc=0x1d2)` on parameter 1.
+
+**EK + Attestation components — audited clean (no fixes needed)**
+
+[V2p7EkExplorer.tsx](src/components/Playground/TpmPlayground/V2p7EkExplorer.tsx), [V2p7EkCertReader.tsx](src/components/Playground/TpmPlayground/V2p7EkCertReader.tsx), [v2p7-reference.ts](src/components/Playground/TpmPlayground/v2p7-reference.ts), and [AttestationPanel.tsx](src/components/Playground/TpmPlayground/AttestationPanel.tsx) all PDF-cross-checked: 6 PQC EK NV indices (`0x01c00060/62/64/70/72/74`), TCG EK V2.7 RC1 Tables 8/13/14, §5.3.1 NV layout, §6.2.3/§6.2.4 SPKI OIDs, Part 3 §18.2 TPM2_Certify (Tables 97-98), Part 3 §18.4 TPM2_Quote (Tables 101-102), and `TPM_GENERATED_VALUE = 0xff544347` all match the spec PDFs byte-for-byte.
+
+**Validation**
+
+- TypeScript: `tsc --noEmit` clean.
+- pqctoday-tpm v0.8.0 source suites (re-run at this branch's HEAD): `v185_compliance.sh` 106/106, `test_pqc_phase3` 21/21, `run_wolftpm_runtime_xcheck.sh` 30/30, `run_attestation_xcheck.sh` 12/12, `run_ek_cert_conformance_xcheck.sh` 11/11, and `wolfTPM/examples/pqc/pqc_mssim_e2e` (the spec-compliant V1.85 RC4 SignDigest + VerifyDigestSignature interop binary) exits 0 against our libtpms.
+
 ### Data — Trust-tier baseline snapshot refreshed (2026-05-15)
 
 Re-ran the trust-tier measurement script for the Phase 2 SME-triage baseline. Net change vs the 2026-05-13 snapshot: +14 Moderate, +18 Low, **+32 total records** (3,314 → 3,346) from the intervening enrichment + xwalk runs. Authoritative (90) and High (649) tiers unchanged.
