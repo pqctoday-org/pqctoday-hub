@@ -33,6 +33,7 @@
     "format:check": "prettier --check .",
     "prepare": "husky",
     "validate:workshop": "tsx scripts/validate-workshop.ts",
+    "audit:matrix-refs": "tsx scripts/audit-matrix-refs.ts",
     "video:workshop": "tsx scripts/record-workshop.ts",
     "video:finalize": "tsx scripts/finalize-video.ts",
     "build:workshop-manifest": "tsx scripts/build-workshop-manifest.ts",
