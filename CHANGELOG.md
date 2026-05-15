@@ -21,6 +21,29 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### TLS Simulator — per-side HSM algorithm selection (2026-05-15)
+
+Replaces the binary `hsmMode` / `hsmCompositeMode` flag pair with a per-side **algorithm string** in both the JS worker protocol and the C-side WASM. The simulator can now mix-and-match what cryptography each side of the handshake uses, including LAMPS `draft-ietf-lamps-pq-composite-sigs-19` composite signatures with the ML-DSA component held in softhsmv3.
+
+**API shape change** (worker / OpenSSLService):
+
+```text
+old: simulateTLS(..., { hsmMode?: boolean, hsmCompositeMode?: boolean })
+new: simulateTLS(..., { serverHsmAlgorithm?: string, clientHsmAlgorithm?: string })
+```
+
+Recognized algorithm values (must match the C-side parser in [tls_simulation_hsm.c](src/wasm/tls_simulation_hsm.c) `hsm_resolve_mldsa_algo` and its future RSA/ECDSA/composite branches): `""` (PEM mode for that side — no HSM), `"mldsa-44"`, `"mldsa-65"`, `"mldsa-87"`, `"rsa-2048"`, `"ecdsa-p256"`, `"composite-mldsa44-rsa2048-pss"`, `"composite-mldsa65-ecdsa-p256"`, `"composite-mldsa87-ecdsa-p384"`.
+
+**C-side state change** ([tls_simulation_hsm.c](src/wasm/tls_simulation_hsm.c)):
+
+- Removed: `g_hsm_mode_enabled`, `g_hsm_composite_mode_enabled` (two `int` flags) and their `set_hsm_mode` / `set_hsm_composite_mode` setters.
+- Added: `g_server_hsm_algo[48]`, `g_client_hsm_algo[48]` (per-side `char` arrays) and `tls_simulation_set_server_hsm_algorithm` / `tls_simulation_set_client_hsm_algorithm` cwrap setters.
+- New accessors `hsm_server_algorithm()` / `hsm_client_algorithm()` for [tls_simulation.c](src/wasm/tls_simulation.c) to branch on. The legacy `hsm_mode_enabled()` is preserved for the CertificateVerify logging branch — it now returns true iff either side selected an HSM algorithm.
+
+**OpenSSL WASM rebuilt**: [public/wasm/openssl.wasm](public/wasm/openssl.wasm) regenerated from the updated `tls_simulation_hsm.c` + `tls_simulation.c`. Size: 5258276 → 5261602 bytes (+3326 bytes for the new per-side algorithm-resolution branches).
+
+**Net**: `+302 / -562` across 6 files. Simpler than the previous flag pair; supports 9 algorithm combinations per side (81 total handshake configurations) instead of the previous 4.
+
 ### TPM Playground — V1.85 RC4 strict-compliance audit + pqctoday-tpm v0.8.0 alignment (2026-05-15)
 
 Brought the in-browser TPM Playground (`/playground` → TPM tab) into byte-and-byte agreement with the published TCG TPM 2.0 Library Specification V1.85 RC4 and the freshly-released `pqctoday-tpm v0.8.0` WASM. Every section reference, table number, and wire-byte layout was re-verified against the PDF — no claim left unverified.
