@@ -106,49 +106,65 @@ function LibraryChip({ lib, tone }: { lib: OssLibrary; tone: 'oss' | 'commercial
   )
 }
 
-function PlaygroundCell({ tool }: { tool: PlaygroundTool | null }) {
-  if (!tool) {
+function PlaygroundCell({ tools }: { tools: PlaygroundTool[] }) {
+  if (tools.length === 0) {
     return (
       <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
         <AlertTriangle size={12} /> No tool
       </span>
     )
   }
+  const [primary, ...secondary] = tools
   return (
     <div className="flex flex-col gap-1">
       <Link
-        to={`/playground/${tool.toolId}`}
+        to={`/playground/${primary.toolId}`}
         className="inline-flex items-center gap-1.5 rounded-md border border-primary/30 bg-primary/10 px-2 py-1 text-xs font-medium text-primary transition-colors hover:bg-primary/20"
       >
         <FlaskConical size={12} />
-        {tool.toolName}
+        {primary.toolName}
       </Link>
       <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] leading-tight">
         <span>
           pKEM:{' '}
-          <span className={testabilityTone(tool.testability.pureKem)}>
-            {testabilityLabel(tool.testability.pureKem)}
+          <span className={testabilityTone(primary.testability.pureKem)}>
+            {testabilityLabel(primary.testability.pureKem)}
           </span>
         </span>
         <span>
           hKEM:{' '}
-          <span className={testabilityTone(tool.testability.hybridKem)}>
-            {testabilityLabel(tool.testability.hybridKem)}
+          <span className={testabilityTone(primary.testability.hybridKem)}>
+            {testabilityLabel(primary.testability.hybridKem)}
           </span>
         </span>
         <span>
           pSig:{' '}
-          <span className={testabilityTone(tool.testability.pureSig)}>
-            {testabilityLabel(tool.testability.pureSig)}
+          <span className={testabilityTone(primary.testability.pureSig)}>
+            {testabilityLabel(primary.testability.pureSig)}
           </span>
         </span>
         <span>
           hSig:{' '}
-          <span className={testabilityTone(tool.testability.hybridSig)}>
-            {testabilityLabel(tool.testability.hybridSig)}
+          <span className={testabilityTone(primary.testability.hybridSig)}>
+            {testabilityLabel(primary.testability.hybridSig)}
           </span>
         </span>
       </div>
+      {secondary.length > 0 && (
+        <div className="flex flex-wrap gap-1 pt-0.5">
+          {secondary.map((s) => (
+            <Link
+              key={s.toolId}
+              to={`/playground/${s.toolId}`}
+              className="inline-flex items-center gap-1 rounded-md border border-accent/30 bg-accent/5 px-1.5 py-0.5 text-[10px] text-accent transition-colors hover:bg-accent/15"
+              title={s.toolName}
+            >
+              <FlaskConical size={10} />
+              {s.toolName}
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
@@ -309,7 +325,7 @@ export function PQCProtocolMatrix() {
                   )}
                 </td>
                 <td className="px-3 py-3">
-                  <PlaygroundCell tool={p.playground} />
+                  <PlaygroundCell tools={p.playgrounds} />
                 </td>
               </tr>
             ))}

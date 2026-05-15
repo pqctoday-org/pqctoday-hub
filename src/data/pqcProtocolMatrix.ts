@@ -71,7 +71,12 @@ export interface ProtocolMatrixRow {
   }
   ossLibraries: OssLibrary[]
   commercialLibraries: OssLibrary[]
-  playground: PlaygroundTool | null
+  /**
+   * One or more playground tools. First entry is the primary (drives the
+   * row's testability badges); additional entries surface as secondary chips.
+   * Empty array = no playground for this protocol.
+   */
+  playgrounds: PlaygroundTool[]
   gaps: string[]
 }
 
@@ -143,19 +148,23 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       { productId: 'aws-transfer-family', name: 'AWS Transfer Family' },
       { productId: 'github-ssh-pqc', name: 'GitHub SSH (PQC)' },
     ],
-    playground: {
-      toolId: 'pqc-ssh-sim',
-      toolName: 'PQC SSH Simulation',
-      testability: {
-        pureKem: 'none',
-        hybridKem: 'full',
-        pureSig: 'full',
-        hybridSig: 'partial',
+    playgrounds: [
+      {
+        toolId: 'pqc-ssh-sim',
+        toolName: 'PQC SSH Simulation',
+        testability: {
+          pureKem: 'none',
+          hybridKem: 'partial',
+          pureSig: 'partial',
+          hybridSig: 'none',
+        },
       },
-    },
+    ],
     gaps: [
-      'Pure ML-KEM (no classical) is not user-selectable in the SSH playground.',
-      'Composite SSH host-key signature (classical + ML-DSA) not testable.',
+      'Pure ML-KEM (no classical) is not selectable in the SSH playground.',
+      'Hybrid KEX is hardcoded to mlkem768x25519-sha256 — no UI choice of algorithm.',
+      'Host-key signature is hardcoded to ssh-mldsa-65 — no algorithm choice.',
+      'Composite SSH host-key signature (classical + ML-DSA) not supported in the tool.',
     ],
   },
   {
@@ -194,7 +203,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       { productId: 'safelogic-cryptocomply', name: 'SafeLogic CryptoComply' },
       { productId: 'venafi-tls-protect', name: 'Venafi TLS Protect' },
     ],
-    playground: null,
+    playgrounds: [],
     gaps: [
       'PQC is intentionally NOT pursued for TLS 1.2 — recommendation is to migrate to TLS 1.3 first.',
       'No playground tool — by design.',
@@ -280,12 +289,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       { productId: 'akamai-pqc-edge', name: 'Akamai PQC Edge' },
       { productId: 'venafi-tls-protect', name: 'Venafi TLS Protect' },
     ],
-    playground: {
-      toolId: 'tls-simulator',
-      toolName: 'TLS 1.3 Simulator',
-      testability: { pureKem: 'full', hybridKem: 'full', pureSig: 'full', hybridSig: 'full' },
-    },
-    gaps: [],
+    playgrounds: [
+      {
+        toolId: 'tls-simulator',
+        toolName: 'TLS 1.3 Simulator',
+        testability: { pureKem: 'full', hybridKem: 'full', pureSig: 'full', hybridSig: 'none' },
+      },
+    ],
+    gaps: [
+      'TLS 1.3 simulator SIG_ALGS list has classical (ECDSA, RSA, Ed25519) and pure-PQ (ML-DSA, SLH-DSA) but no composite/hybrid signature algorithm choice.',
+    ],
   },
   {
     id: 'x509',
@@ -376,11 +389,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       { productId: 'venafi-trust-protection-platform', name: 'Venafi Trust Protection Platform' },
       { productId: 'microsoft-ad-cs', name: 'Microsoft AD CS' },
     ],
-    playground: {
-      toolId: 'hybrid-certs',
-      toolName: 'Hybrid Certificate Workshop',
-      testability: { pureKem: 'na', hybridKem: 'na', pureSig: 'full', hybridSig: 'full' },
-    },
+    playgrounds: [
+      {
+        toolId: 'hybrid-certs',
+        toolName: 'Hybrid Certificate Workshop',
+        testability: { pureKem: 'na', hybridKem: 'na', pureSig: 'full', hybridSig: 'full' },
+      },
+    ],
     gaps: ['Workshop is signature-focused — no KEM certificate generation flow.'],
   },
   {
@@ -451,7 +466,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         versionNote: 'Open Source / Commercial',
       },
     ],
-    playground: null,
+    playgrounds: [],
     gaps: [
       'No S/MIME or CMS playground tool exists in /playground.',
       'Hybrid CMS KEM has no IETF draft as of 2026-05.',
@@ -521,7 +536,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         versionNote: 'Open Source / Commercial',
       },
     ],
-    playground: null,
+    playgrounds: [],
     gaps: [
       'No OpenPGP playground tool exists in /playground.',
       'Pure ML-KEM (without classical concatenation) is not specified by the draft.',
@@ -612,15 +627,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       { productId: 'check-point-quantum', name: 'Check Point Quantum' },
       { productId: 'expressvpn-lightway', name: 'ExpressVPN Lightway' },
     ],
-    playground: {
-      toolId: 'vpn-sim',
-      toolName: 'PQC IKEv2/IPsec Workshop',
-      testability: { pureKem: 'partial', hybridKem: 'full', pureSig: 'full', hybridSig: 'none' },
-    },
-    gaps: [
-      'Pure ML-KEM IKEv2 mode is URL-driven only (?vpnMode=pure-pqc); no UI selector.',
-      'Composite IKEv2 authentication (classical + ML-DSA) not testable.',
+    playgrounds: [
+      {
+        toolId: 'vpn-sim',
+        toolName: 'PQC IKEv2/IPsec Workshop',
+        testability: { pureKem: 'full', hybridKem: 'full', pureSig: 'full', hybridSig: 'none' },
+      },
     ],
+    gaps: ['Composite IKEv2 authentication (classical + ML-DSA) not supported in the tool.'],
   },
   {
     id: 'mls',
@@ -698,7 +712,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         versionNote: 'Proprietary (PQXDH on Signal protocol)',
       },
     ],
-    playground: null,
+    playgrounds: [],
     gaps: [
       'No MLS playground tool exists in /playground.',
       'Combiner draft -02 is expired; revival in flight for WGLC.',
@@ -789,11 +803,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       { productId: 'sealsq-quantum-shield', name: 'SEALSQ Quantum Shield' },
       { productId: 'sealsq-qvault-tpm', name: 'SEALSQ QVault TPM' },
     ],
-    playground: {
-      toolId: 'tpm-playground',
-      toolName: 'PQC TPM Workshop',
-      testability: { pureKem: 'full', hybridKem: 'none', pureSig: 'full', hybridSig: 'na' },
-    },
+    playgrounds: [
+      {
+        toolId: 'tpm-playground',
+        toolName: 'PQC TPM Workshop',
+        testability: { pureKem: 'full', hybridKem: 'none', pureSig: 'full', hybridSig: 'na' },
+      },
+    ],
     gaps: [
       'Hybrid KEM not in TCG v1.85 — only Labeled KEM abstraction.',
       'libtpms / swtpm upstream still track v1.83 (no PQ); v1.85 PQ commands via pqctoday-tpm fork.',
@@ -861,7 +877,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     commercialLibraries: [
       { productId: 'adguard-dns', name: 'AdGuard DNS', versionNote: 'Commercial / Free' },
     ],
-    playground: null,
+    playgrounds: [],
     gaps: [
       'No DNSSEC playground tool exists in /playground.',
       'No PQ algorithm has been assigned a DNSKEY algorithm code point in the IANA registry.',
