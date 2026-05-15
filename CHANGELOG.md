@@ -21,6 +21,10 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Data — Trust-tier baseline snapshot refreshed (2026-05-15)
+
+Re-ran the trust-tier measurement script for the Phase 2 SME-triage baseline. Net change vs the 2026-05-13 snapshot: +14 Moderate, +18 Low, **+32 total records** (3,314 → 3,346) from the intervening enrichment + xwalk runs. Authoritative (90) and High (649) tiers unchanged.
+
 ### Added — PQC Protocol Support matrix: PQCC alignment, live deployments, detail modal (2026-05-15)
 
 The **Protocol Support** tab on `/algorithms` doubled in scope and now mirrors the PQCC State-of-the-Migration April 2026 heatmap with a row-level deployment ledger you can audit.
