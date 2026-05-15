@@ -121,7 +121,9 @@ function DimensionPanel({ label, status }: DimensionPanelProps) {
           {dimensionLabel(status.value)}
         </span>
       </div>
-      <p className="text-xs text-muted-foreground leading-relaxed">{status.note}</p>
+      {status.note && (
+        <p className="text-xs text-muted-foreground leading-relaxed">{status.note}</p>
+      )}
       {status.deploymentPosture && (
         <div className="mt-2 flex items-start gap-1.5 rounded-md border border-border bg-muted/30 px-2 py-1.5">
           <span

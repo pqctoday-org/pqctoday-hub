@@ -38,7 +38,7 @@ export type DeploymentPosture = 'production' | 'pilot' | 'experimental'
 
 export interface DimensionStatus {
   value: DimensionStatusValue
-  note: string
+  note?: string
   deploymentPosture?: DeploymentPosture
   deploymentNote?: string
 }
@@ -226,19 +226,17 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        note: 'ML-KEM-1024 alone required by CNSA 2.0 SSH profile from 2027; profile is an Independent Submission, not yet RFC-published.',
+        note: 'ML-KEM-1024 required by CNSA 2.0 SSH profile from 2027 (Independent Submission track).',
       },
       hybridKem: {
         value: 'rfc',
-        note: 'sntrup761x25519 is RFC-published (April 2026); ML-KEM-768 + X25519 hybrid is an active WG draft.',
       },
       pureSig: {
         value: 'draft',
-        note: 'ssh-mldsa-65/87 host-key methods specified in CNSA 2.0 SSH profile (Independent Submission).',
       },
       hybridSig: {
         value: 'experimental',
-        note: 'No standalone IETF draft for composite SSH host-key auth; CNSA 2.0 SSH profile (Independent Submission) is the only individual document touching composite-sig host-key semantics.',
+        note: 'No standalone composite SSH host-key auth track; only the CNSA 2.0 SSH profile (Independent Submission) touches composite-sig host-key semantics.',
       },
     },
     ossLibraries: [
@@ -377,25 +375,23 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        note: 'Pure ML-KEM-512/768/1024 groups specified in an active WG draft (revising post-WGLC).',
         deploymentPosture: 'pilot',
         deploymentNote:
           'Standalone ML-KEM groups gated behind feature flags in BoringSSL / Chromium experimental builds.',
       },
       hybridKem: {
         value: 'draft',
-        note: 'X25519MLKEM768 hybrid group (IANA codepoint 4588) sits in the RFC Editor queue; already shipped in production.',
+        note: 'X25519MLKEM768 hybrid group (IANA codepoint 4588) — already shipped in production.',
         deploymentPosture: 'production',
         deploymentNote:
           'X25519MLKEM768 enabled by default in Cloudflare edge, Google services, AWS, BoringSSL, OpenSSL 3.5 since 2024–2025 — production deployment exceeds spec status.',
       },
       pureSig: {
         value: 'draft',
-        note: 'ML-DSA SignatureSchemes specified in WG draft, IESG state Publication Requested.',
       },
       hybridSig: {
         value: 'draft',
-        note: 'Composite signatures bind at the X.509 certificate layer; see X.509 row for composite sig drafts.',
+        note: 'Composite signatures bind at the X.509 certificate layer — see X.509 row.',
       },
     },
     ossLibraries: [
@@ -542,16 +538,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'rfc',
-        note: 'ML-KEM-512/768/1024 X.509 OIDs published. Constraint: KEM certs are encryption-only per the RFC — cannot self-sign, must be issued under a signature cert.',
+        note: 'Constraint: KEM certs are encryption-only — cannot self-sign, must be issued under a signature cert.',
       },
       hybridKem: {
         value: 'draft',
-        note: 'Composite ML-KEM + classical (RSA-OAEP / ECDH / X25519 / X448) specified in WG draft.',
+        note: 'Composite mode pairs ML-KEM with RSA-OAEP / ECDH / X25519 / X448 classical KEMs.',
       },
-      pureSig: { value: 'rfc', note: 'ML-DSA and SLH-DSA X.509 OIDs are both RFC-published.' },
+      pureSig: { value: 'rfc' },
       hybridSig: {
         value: 'draft',
-        note: 'Composite ML-DSA + ECDSA / RSA / Ed25519 / EdDSA specified in WG draft.',
+        note: 'Composite mode pairs ML-DSA with ECDSA / RSA / Ed25519 / EdDSA classical signatures.',
       },
     },
     ossLibraries: [
@@ -678,15 +674,15 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
     ],
     dimensions: {
-      pureKem: { value: 'rfc', note: 'ML-KEM key transport in CMS is RFC-published.' },
+      pureKem: { value: 'rfc' },
       hybridKem: {
         value: 'draft',
-        note: 'Composite ML-KEM for CMS specified in a LAMPS WG-adopted draft, using the CMS KEMRecipientInfo structure; covers ML-KEM with RSA-OAEP / ECDH / X25519 / X448.',
+        note: 'Uses the CMS KEMRecipientInfo structure; pairs ML-KEM with RSA-OAEP / ECDH / X25519 / X448 classical KEMs.',
       },
-      pureSig: { value: 'rfc', note: 'ML-DSA and SLH-DSA CMS conventions are both RFC-published.' },
+      pureSig: { value: 'rfc' },
       hybridSig: {
         value: 'draft',
-        note: 'Composite ML-DSA SignerInfo for CMS specified in a LAMPS WG-adopted draft, mirroring the X.509 composite-sigs construction.',
+        note: 'Composite ML-DSA SignerInfo construction mirrors the X.509 composite-sigs row.',
       },
     },
     ossLibraries: [
@@ -755,19 +751,17 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'experimental',
-        note: 'HPKE-based PQ KEM path defined in an individual submission; not WG-adopted.',
       },
       hybridKem: {
         value: 'experimental',
-        note: 'Same HPKE hybrid draft covers both pure and hybrid KEM modes.',
+        note: 'Same HPKE construction covers both pure and hybrid KEM modes.',
       },
       pureSig: {
         value: 'draft',
-        note: 'ML-DSA algorithm identifiers for COSE_Sign specified in WG draft.',
       },
       hybridSig: {
         value: 'experimental',
-        note: 'Composite signatures specified at the JOSE layer (see JOSE row for WG-adopted composite-sigs draft).',
+        note: 'Composite signatures are specified at the JOSE layer — see JOSE row.',
       },
     },
     ossLibraries: [
@@ -833,19 +827,15 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        note: 'ML-KEM-512/768/1024 alg IDs for JWE specified in WG draft.',
       },
       hybridKem: {
         value: 'experimental',
-        note: 'Hybrid HPKE path for JOSE is an individual submission, not WG-adopted.',
       },
       pureSig: {
         value: 'draft',
-        note: 'ML-DSA alg IDs for JWS specified in the shared JOSE/COSE Dilithium draft.',
       },
       hybridSig: {
         value: 'draft',
-        note: 'PQ/T composite signatures in JWS specified in WG draft.',
       },
     },
     ossLibraries: [
@@ -918,19 +908,19 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'rfc',
-        note: 'CMP adds KEM key transport (RFC-published); ML-KEM X.509 OIDs apply from the X.509 row.',
+        note: 'ML-KEM X.509 OIDs apply from the X.509 row; CMP adds KEM key-transport semantics on top.',
       },
       hybridKem: {
         value: 'draft',
-        note: 'Composite ML-KEM enrollment via PKCS#10 / CMP is specified by the X.509 composite-kem WG draft + the CMP KEM-update RFC.',
+        note: 'Composite enrollment uses PKCS#10 / CMP wrappers — see X.509 row for the composite KEM construction.',
       },
       pureSig: {
         value: 'rfc',
-        note: 'ML-DSA enrollment uses the RFC-published X.509 ML-DSA OIDs; CSRs and CMP responses standardized.',
+        note: 'ML-DSA enrollment uses X.509 ML-DSA OIDs (see X.509 row); CSR and CMP response flows defined.',
       },
       hybridSig: {
         value: 'draft',
-        note: 'Composite-sig CSR / issuance flows specified by the X.509 composite-sigs WG draft.',
+        note: 'Composite-sig CSR / issuance flows wrap the X.509 composite-sigs construction — see X.509 row.',
       },
     },
     ossLibraries: [
@@ -985,11 +975,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'experimental',
-        note: 'TR 33.841 "Profile C" — ML-KEM-768 standalone for SUCI; study item, not standardized.',
+        note: '3GPP TR 33.841 "Profile C" — ML-KEM-768 standalone for SUCI concealment (study item).',
       },
       hybridKem: {
         value: 'experimental',
-        note: 'TR 33.841 Profile C hybrid mode — X25519 + ML-KEM-768; study item, not standardized.',
+        note: '3GPP TR 33.841 Profile C hybrid mode — X25519 + ML-KEM-768 SUCI concealment (study item).',
       },
       pureSig: {
         value: 'na',
@@ -1068,19 +1058,18 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'experimental',
-        note: 'WG-adopted OpenPGP-PQC draft ships composite KEM only; pure ML-KEM mode is chartered/in-progress per PQCC tracking but not yet specified in any IETF document.',
+        note: 'OpenPGP-PQC ships composite KEM only; pure ML-KEM mode is chartered but not yet specified.',
       },
       hybridKem: {
         value: 'draft',
-        note: 'Composite ML-KEM-768/1024 + ECDH (P-256 / P-384 / X25519 / X448) specified in the WG-adopted OpenPGP-PQC draft.',
+        note: 'Composite mode pairs ML-KEM-768/1024 with ECDH P-256 / P-384 / X25519 / X448.',
       },
       pureSig: {
         value: 'draft',
-        note: 'SLH-DSA standalone signature specified in the WG-adopted OpenPGP-PQC draft.',
       },
       hybridSig: {
         value: 'draft',
-        note: 'Composite ML-DSA + ECDSA / EdDSA specified in the WG-adopted OpenPGP-PQC draft.',
+        note: 'Composite mode pairs ML-DSA with ECDSA / EdDSA classical signatures.',
       },
     },
     ossLibraries: [
@@ -1166,15 +1155,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        note: 'ML-KEM standalone transform IDs specified in WG draft.',
       },
       hybridKem: {
         value: 'rfc',
-        note: 'Multi-KE framework for IKEv2 is RFC-published (May 2023) and enables hybrid IKEv2 KEX today; the ML-KEM-specific binding is still a WG draft (PQCC scores it 6 / near-finalized).',
+        note: 'Multi-KE framework enables hybrid IKEv2 KEX today; ML-KEM-specific binding is near-finalized (PQCC score 6 / 7).',
       },
       pureSig: {
         value: 'draft',
-        note: 'ML-DSA and SLH-DSA IKEv2 auth methods specified in WG draft.',
       },
       hybridSig: {
         value: 'experimental',
@@ -1286,19 +1273,18 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        note: 'Pure ML-KEM cipher suites specified in WG draft (WG Last Call).',
       },
       hybridKem: {
         value: 'draft',
-        note: 'Flexible hybrid PQ MLS combiner specified in a WG-adopted draft (expired 2026-04-23 awaiting rev); seeds PQ guarantees into traditional ciphersuite via exporter secret.',
+        note: 'Combiner seeds PQ guarantees into the traditional ciphersuite via the exporter secret.',
       },
       pureSig: {
         value: 'draft',
-        note: 'WG draft pairs PQ KEM with PQ signature (ML-DSA) in cipher suite definitions.',
+        note: 'Cipher suites bundle ML-DSA with the PQ KEM as a paired choice.',
       },
       hybridSig: {
         value: 'draft',
-        note: 'WG-adopted MLS combiner draft covers hybrid sig path via session combination; X.509 composite-sigs binds at the cert layer (see X.509 row).',
+        note: 'Hybrid sig path is via session combination; cert-layer composite-sigs lives in the X.509 row.',
       },
     },
     ossLibraries: [
@@ -1379,15 +1365,15 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'rfc',
-        note: 'v1.85 PUBLISHED — TPM SHALL support ML-KEM-768 or ML-KEM-1024.',
+        note: 'TPM 2.0 SHALL support ML-KEM-768 or ML-KEM-1024.',
       },
       hybridKem: {
         value: 'experimental',
-        note: 'v1.85 Labeled KEM abstraction can mix algorithms; not standardized as "hybrid".',
+        note: 'TPM 2.0 Labeled KEM abstraction can mix algorithms; not standardized as "hybrid".',
       },
       pureSig: {
         value: 'rfc',
-        note: 'v1.85 PUBLISHED — TPM SHALL support ML-DSA-65 or ML-DSA-87.',
+        note: 'TPM 2.0 SHALL support ML-DSA-65 or ML-DSA-87.',
       },
       hybridSig: {
         value: 'na',
@@ -1488,7 +1474,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       hybridKem: { value: 'na', note: 'DNSSEC is a signature-only protocol; no KEM dimension.' },
       pureSig: {
         value: 'experimental',
-        note: 'Individual drafts only (not WG-adopted); no IANA DNSKEY code point assigned. Constraint: ML-DSA (2.4–4.6 KB) and SLH-DSA (7.8–49.8 KB) signatures exceed the ~1232-byte DNS UDP limit — forces TCP fallback.',
+        note: 'No IANA DNSKEY code point assigned yet. Constraint: ML-DSA (2.4–4.6 KB) and SLH-DSA (7.8–49.8 KB) signatures exceed the ~1232-byte DNS UDP limit — forces TCP fallback.',
       },
       hybridSig: {
         value: 'experimental',
@@ -1554,7 +1540,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        note: 'Inherits TLS 1.3 — pure ML-KEM groups via the TLS 1.3 WG draft.',
+        note: 'Inherits TLS 1.3 — pure ML-KEM groups.',
       },
       hybridKem: {
         value: 'draft',
@@ -1604,7 +1590,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     dimensions: {
       pureKem: {
         value: 'draft',
-        note: 'Inherits TLS 1.3 — pure ML-KEM groups via the TLS 1.3 WG draft.',
+        note: 'Inherits TLS 1.3 — pure ML-KEM groups.',
       },
       hybridKem: {
         value: 'draft',
@@ -1615,11 +1601,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'experimental',
-        note: 'WebAuthn registers signature algorithms via COSE; ML-DSA alg IDs sourced from the COSE row. Constraint: authenticator-side ML-DSA private key (~5–7 KB) strains secure-element storage budgets.',
+        note: 'Algorithm IDs sourced from the COSE row. Constraint: authenticator-side ML-DSA private key (~5–7 KB) strains secure-element storage budgets.',
       },
       hybridSig: {
         value: 'experimental',
-        note: 'PQ/T composite COSE signatures (see JOSE row) are the likely path; no FIDO Alliance profile yet.',
+        note: 'Composite path inherits from the JOSE row; no FIDO Alliance profile yet.',
       },
     },
     ossLibraries: [],
@@ -1691,14 +1677,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       hybridKem: { value: 'na', note: 'Secure Boot is signature-only — no KEM.' },
       pureSig: {
         value: 'rfc',
-        note: 'Inherits X.509 — ML-DSA and SLH-DSA OIDs (see X.509 row) usable in PE/COFF Authenticode. Constraint: ML-DSA-65 signatures (~3 KB) inflate Authenticode blocks vs. ~256 B RSA-2048.',
+        note: 'Inherits X.509 ML-DSA / SLH-DSA OIDs in PE/COFF Authenticode. Constraint: ML-DSA-65 signatures (~3 KB) inflate Authenticode blocks vs. ~256 B RSA-2048.',
         deploymentPosture: 'pilot',
         deploymentNote:
           'Microsoft + Intel announced ML-DSA secure-boot pilots Q4 2025; first SLH-DSA UEFI signatures in vendor firmware Q1 2026.',
       },
       hybridSig: {
         value: 'draft',
-        note: 'Inherits X.509 — composite-sigs WG draft (see X.509 row) for dual-cert dual-algorithm boot.',
+        note: 'Inherits X.509 composite-sigs for dual-cert dual-algorithm boot — see X.509 row.',
       },
     },
     ossLibraries: [
