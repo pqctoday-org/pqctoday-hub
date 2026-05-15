@@ -174,6 +174,7 @@ extern void log_event(const char *side, const char *event, const char *details);
 /* ── Module state ───────────────────────────────────────────────────────── */
 
 static int g_hsm_mode_enabled = 0;
+static int g_hsm_composite_mode_enabled = 0;
 static int g_hsm_initialized  = 0;
 static OSSL_PROVIDER *g_pkcs11_provider = NULL;
 
@@ -187,9 +188,28 @@ int tls_simulation_get_hsm_mode(void) {
     return g_hsm_mode_enabled;
 }
 
+/* Composite-ML-DSA HSM mode (per draft-ietf-lamps-pq-composite-sigs-19).
+ * Orthogonal to the plain HSM mode: composite mode REQUIRES HSM mode to
+ * also be on, since both subkeys live in softhsm.
+ * Setter is called from JS via Module.ccall *before* simulateTLS so the
+ * branch in tls_simulation.c picks the composite credential path. */
+EMSCRIPTEN_KEEPALIVE
+void tls_simulation_set_hsm_composite_mode(int enabled) {
+    g_hsm_composite_mode_enabled = enabled ? 1 : 0;
+}
+
+EMSCRIPTEN_KEEPALIVE
+int tls_simulation_get_hsm_composite_mode(void) {
+    return g_hsm_composite_mode_enabled;
+}
+
 /* Externally callable from tls_simulation.c. */
 int hsm_mode_enabled(void) {
     return g_hsm_mode_enabled;
+}
+
+int hsm_composite_mode_enabled(void) {
+    return g_hsm_composite_mode_enabled && g_hsm_mode_enabled;
 }
 
 /* ── softhsmv3 conf bootstrap (idempotent) ─────────────────────────────── */
@@ -1038,6 +1058,7 @@ int hsm_setup_server_credentials_composite(SSL_CTX *s_ctx) {
 
 #else /* !__EMSCRIPTEN__ */
 int hsm_mode_enabled(void) { return 0; }
+int hsm_composite_mode_enabled(void) { return 0; }
 int hsm_setup_server_credentials(void *ctx) { (void)ctx; return 0; }
 int hsm_setup_server_credentials_composite(void *ctx) { (void)ctx; return 0; }
 #endif /* __EMSCRIPTEN__ */
