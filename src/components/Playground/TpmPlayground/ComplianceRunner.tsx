@@ -902,19 +902,15 @@ export function ComplianceRunner() {
         try {
           const digestBytes = new Uint8Array(32).fill(0xbb)
           const verifyP: number[] = []
-          // Wire per Table 120: {context, digest, signature}
-          putU16(verifyP, 0x8002)
-          putU32(verifyP, 0)
+          // V1.85 RC4 Part 3 §20.4.2 Table 120 wire: {keyHandle, context, digest, signature}.
+          // keyHandle has Auth Index: None — TPM_ST_NO_SESSIONS, no auth area.
+          putU16(verifyP, 0x8001) // TPM_ST_NO_SESSIONS
+          putU32(verifyP, 0) // commandSize placeholder
           putU32(verifyP, CC_VERIFY_DIGEST_SIG)
           putU32(verifyP, akHandle)
-          putU32(verifyP, 9)
-          putU32(verifyP, RS_PW)
+          // P1: context (empty TPM2B_SIGNATURE_CTX)
           putU16(verifyP, 0)
-          verifyP.push(0)
-          putU16(verifyP, 0)
-          // P1: context (empty)
-          putU16(verifyP, 0)
-          // P2: digest
+          // P2: digest (TPM2B_DIGEST)
           putU16(verifyP, digestBytes.length)
           for (const b of digestBytes) verifyP.push(b)
           // P3: signature TPMT_SIGNATURE = sigAlg(2) + TPM2B_SIGNATURE_MLDSA{size, buf}
@@ -932,8 +928,9 @@ export function ComplianceRunner() {
             markFail('V185-019', `rc=0x${vh.rc.toString(16).padStart(8, '0')}`)
             addLine('recv', `    ← rc=0x${vh.rc.toString(16).padStart(8, '0')} ✗`, false)
           } else {
-            // Response: header(10) + paramSize(4) + TPMT_TK_VERIFIED{tag(2), hierarchy(4), ...}
-            const tickTag = (verifyResp[14] << 8) | verifyResp[15]
+            // TPM_ST_NO_SESSIONS response: header(10) + TPMT_TK_VERIFIED{tag(2), hierarchy(4), ...}
+            // No paramSize prefix (only present in TPM_ST_SESSIONS responses).
+            const tickTag = (verifyResp[10] << 8) | verifyResp[11]
             if (tickTag === TPM_ST_DIGEST_VERIFIED) {
               markPass('V185-019', `tag=0x${tickTag.toString(16)} (TPM_ST_DIGEST_VERIFIED) ✓`)
               addLine(
