@@ -106,6 +106,26 @@ function LibraryChip({ lib, tone }: { lib: OssLibrary; tone: 'oss' | 'commercial
   )
 }
 
+function TestabilityChip({
+  label,
+  value,
+  note,
+}: {
+  label: string
+  value: TestabilityValue
+  note?: string
+}) {
+  return (
+    <span title={note} className={note ? 'cursor-help' : undefined}>
+      {label}:{' '}
+      <span className={testabilityTone(value)}>
+        {testabilityLabel(value)}
+        {note ? <span className="ml-0.5 text-muted-foreground">ⓘ</span> : null}
+      </span>
+    </span>
+  )
+}
+
 function PlaygroundCell({ tools }: { tools: PlaygroundTool[] }) {
   if (tools.length === 0) {
     return (
@@ -125,30 +145,26 @@ function PlaygroundCell({ tools }: { tools: PlaygroundTool[] }) {
         {primary.toolName}
       </Link>
       <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] leading-tight">
-        <span>
-          pKEM:{' '}
-          <span className={testabilityTone(primary.testability.pureKem)}>
-            {testabilityLabel(primary.testability.pureKem)}
-          </span>
-        </span>
-        <span>
-          hKEM:{' '}
-          <span className={testabilityTone(primary.testability.hybridKem)}>
-            {testabilityLabel(primary.testability.hybridKem)}
-          </span>
-        </span>
-        <span>
-          pSig:{' '}
-          <span className={testabilityTone(primary.testability.pureSig)}>
-            {testabilityLabel(primary.testability.pureSig)}
-          </span>
-        </span>
-        <span>
-          hSig:{' '}
-          <span className={testabilityTone(primary.testability.hybridSig)}>
-            {testabilityLabel(primary.testability.hybridSig)}
-          </span>
-        </span>
+        <TestabilityChip
+          label="pKEM"
+          value={primary.testability.pureKem}
+          note={primary.pureKemNote}
+        />
+        <TestabilityChip
+          label="hKEM"
+          value={primary.testability.hybridKem}
+          note={primary.hybridKemNote}
+        />
+        <TestabilityChip
+          label="pSig"
+          value={primary.testability.pureSig}
+          note={primary.pureSigNote}
+        />
+        <TestabilityChip
+          label="hSig"
+          value={primary.testability.hybridSig}
+          note={primary.hybridSigNote}
+        />
       </div>
       {secondary.length > 0 && (
         <div className="flex flex-wrap gap-1 pt-0.5">
@@ -204,6 +220,26 @@ export function PQCProtocolMatrix() {
 
   return (
     <div className="space-y-6">
+      {/* WIP banner */}
+      <div className="flex items-start gap-3 rounded-lg border border-status-warning/40 bg-status-warning/10 p-3">
+        <AlertTriangle size={18} className="mt-0.5 shrink-0 text-status-warning" />
+        <div className="space-y-1 text-sm">
+          <div className="flex items-center gap-2">
+            <span className="rounded bg-status-warning text-background px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+              WIP
+            </span>
+            <span className="font-semibold text-foreground">
+              Protocol Support Matrix — work in progress
+            </span>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Data and schema are still being validated against the underlying enrichment dataset (66
+            docs enriched 2026-05-15) and the live playground tools. Dimension flags, gaps, and
+            library back-links may change. Use as a reference, not a compliance artifact.
+          </p>
+        </div>
+      </div>
+
       {/* Intro panel */}
       <div className="glass-panel space-y-2 p-4">
         <h3 className="text-lg font-semibold text-foreground">PQC Protocol Support Matrix</h3>
