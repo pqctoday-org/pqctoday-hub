@@ -172,45 +172,71 @@ extern int p11prov_OSSL_provider_init(const void *handle,
 extern void log_event(const char *side, const char *event, const char *details);
 
 /* ── Module state ───────────────────────────────────────────────────────── */
+/*
+ * Per-side HSM algorithm selection.
+ *
+ *   ""                              → PEM mode (no HSM, today's default path)
+ *   "mldsa-44" / "mldsa-65" / "mldsa-87"
+ *   "rsa-2048"
+ *   "ecdsa-p256"
+ *   "composite-mldsa44-rsa2048-pss"
+ *   "composite-mldsa65-ecdsa-p256"
+ *   "composite-mldsa87-ecdsa-p384"
+ *
+ * Set from JS before every simulateTLS call via the two cwrap setters.
+ * tls_simulation.c branches per-side on whether the slot is non-empty.
+ */
+#define HSM_ALGO_MAX 48
+static char g_server_hsm_algo[HSM_ALGO_MAX] = "";
+static char g_client_hsm_algo[HSM_ALGO_MAX] = "";
 
-static int g_hsm_mode_enabled = 0;
-static int g_hsm_composite_mode_enabled = 0;
 static int g_hsm_initialized  = 0;
 static OSSL_PROVIDER *g_pkcs11_provider = NULL;
 
 EMSCRIPTEN_KEEPALIVE
-void tls_simulation_set_hsm_mode(int enabled) {
-    g_hsm_mode_enabled = enabled ? 1 : 0;
+void tls_simulation_set_server_hsm_algorithm(const char *algo) {
+    if (algo == NULL) {
+        g_server_hsm_algo[0] = '\0';
+        return;
+    }
+    size_t n = strlen(algo);
+    if (n >= HSM_ALGO_MAX) n = HSM_ALGO_MAX - 1;
+    memcpy(g_server_hsm_algo, algo, n);
+    g_server_hsm_algo[n] = '\0';
 }
 
 EMSCRIPTEN_KEEPALIVE
-int tls_simulation_get_hsm_mode(void) {
-    return g_hsm_mode_enabled;
-}
-
-/* Composite-ML-DSA HSM mode (per draft-ietf-lamps-pq-composite-sigs-19).
- * Orthogonal to the plain HSM mode: composite mode REQUIRES HSM mode to
- * also be on, since both subkeys live in softhsm.
- * Setter is called from JS via Module.ccall *before* simulateTLS so the
- * branch in tls_simulation.c picks the composite credential path. */
-EMSCRIPTEN_KEEPALIVE
-void tls_simulation_set_hsm_composite_mode(int enabled) {
-    g_hsm_composite_mode_enabled = enabled ? 1 : 0;
+void tls_simulation_set_client_hsm_algorithm(const char *algo) {
+    if (algo == NULL) {
+        g_client_hsm_algo[0] = '\0';
+        return;
+    }
+    size_t n = strlen(algo);
+    if (n >= HSM_ALGO_MAX) n = HSM_ALGO_MAX - 1;
+    memcpy(g_client_hsm_algo, algo, n);
+    g_client_hsm_algo[n] = '\0';
 }
 
 EMSCRIPTEN_KEEPALIVE
-int tls_simulation_get_hsm_composite_mode(void) {
-    return g_hsm_composite_mode_enabled;
+const char *tls_simulation_get_server_hsm_algorithm(void) {
+    return g_server_hsm_algo;
+}
+EMSCRIPTEN_KEEPALIVE
+const char *tls_simulation_get_client_hsm_algorithm(void) {
+    return g_client_hsm_algo;
 }
 
-/* Externally callable from tls_simulation.c. */
+/* Externally callable from tls_simulation.c. Returns 1 iff EITHER side has
+ * an HSM algorithm selected. Used only by the CertificateVerify-logging
+ * branch in tls_simulation.c which needs to know whether to render the
+ * PKCS#11 C_Sign hint at all. */
 int hsm_mode_enabled(void) {
-    return g_hsm_mode_enabled;
+    return g_server_hsm_algo[0] != '\0' || g_client_hsm_algo[0] != '\0';
 }
 
-int hsm_composite_mode_enabled(void) {
-    return g_hsm_composite_mode_enabled && g_hsm_mode_enabled;
-}
+/* Per-side accessors used by tls_simulation.c to pick the right branch. */
+const char *hsm_server_algorithm(void) { return g_server_hsm_algo; }
+const char *hsm_client_algorithm(void) { return g_client_hsm_algo; }
 
 /* ── softhsmv3 conf bootstrap (idempotent) ─────────────────────────────── */
 
@@ -479,16 +505,91 @@ static EVP_PKEY *hsm_load_pkcs11_key(const char *uri) {
     return pkey;
 }
 
-/* Public entry: invoked by tls_simulation.c right before SSL_CTX gets its
- * server cert/key. Replaces the file-backed PEM load with HSM-backed key. */
-int hsm_setup_server_credentials(SSL_CTX *s_ctx) {
-    if (!g_hsm_mode_enabled) return 0; /* no-op */
+/* Map a string algo id (from the JS-side dropdown) to:
+ *  - ML-DSA paramset (CKP_ML_DSA_*_VAL)
+ *  - PKCS#11 object label (used as CKA_LABEL so OSSL_STORE can locate it)
+ *  - OpenSSL algorithm name (for EVP_PKEY_fromdata when wrapping the SPKI bytes)
+ *
+ * Returns 1 on supported ML-DSA algo, 0 on unrecognized / non-ML-DSA. */
+static int hsm_resolve_mldsa_algo(const char *algo, const char *side,
+                                  CK_ULONG *paramset_out,
+                                  char *label_out, size_t label_out_len,
+                                  const char **evp_name_out) {
+    if (algo == NULL || side == NULL || paramset_out == NULL
+        || label_out == NULL || evp_name_out == NULL) {
+        return 0;
+    }
+    if (strcmp(algo, "mldsa-44") == 0) {
+        *paramset_out = CKP_ML_DSA_44_VAL;
+        snprintf(label_out, label_out_len, "tls-%s-mldsa44", side);
+        *evp_name_out = "ML-DSA-44";
+        return 1;
+    }
+    if (strcmp(algo, "mldsa-65") == 0) {
+        *paramset_out = CKP_ML_DSA_65_VAL;
+        snprintf(label_out, label_out_len, "tls-%s-mldsa65", side);
+        *evp_name_out = "ML-DSA-65";
+        return 1;
+    }
+    if (strcmp(algo, "mldsa-87") == 0) {
+        *paramset_out = CKP_ML_DSA_87_VAL;
+        snprintf(label_out, label_out_len, "tls-%s-mldsa87", side);
+        *evp_name_out = "ML-DSA-87";
+        return 1;
+    }
+    return 0;
+}
 
-    log_event("server", "hsm_mode", "Live HSM enabled — softhsmv3 will hold the server private key");
+/* Forward declaration — defined further down for the composite path. */
+static int hsm_setup_composite_credentials_for_side(const char *side,
+                                                    const char *algo,
+                                                    SSL_CTX *ssl_ctx);
+
+/* Internal helper: per-side HSM credential setup. Reads the side's selected
+ * algo from g_{server,client}_hsm_algo and dispatches.
+ *
+ *  side      : "server" or "client" — drives CKA_LABEL prefix + cert path
+ *  algo      : the algorithm string (mldsa-44/65/87, rsa-2048, ecdsa-p256,
+ *              composite-*)
+ *  ssl_ctx   : the SSL_CTX to attach cert+key to
+ *
+ * Returns 0 on success (or no-op when algo == ""), -1 on failure. */
+static int hsm_setup_credentials_for_side(const char *side, const char *algo,
+                                          SSL_CTX *ssl_ctx) {
+    if (algo == NULL || algo[0] == '\0') return 0; /* no-op: PEM mode */
+
+    if (strncmp(algo, "composite-", 10) == 0) {
+        return hsm_setup_composite_credentials_for_side(side, algo, ssl_ctx);
+    }
+
+    /* Currently supported non-composite HSM algos: mldsa-44, mldsa-65, mldsa-87.
+     * RSA-2048 and ECDSA-P256 dropdown rows are reserved but not yet wired. */
+    CK_ULONG paramset;
+    char key_label_buf[40];
+    const char *evp_alg_name = NULL;
+    if (!hsm_resolve_mldsa_algo(algo, side, &paramset, key_label_buf,
+                                sizeof(key_label_buf), &evp_alg_name)) {
+        char err[120];
+        snprintf(err, sizeof(err),
+                 "HSM algorithm \"%s\" is reserved but not yet implemented", algo);
+        log_event(side, "hsm_error", err);
+        return -1;
+    }
+
+    char modemsg[160];
+    snprintf(modemsg, sizeof(modemsg),
+             "Live HSM enabled — softhsmv3 will hold the %s private key (algo=%s, paramset=0x%02lx)",
+             side, algo, (unsigned long)paramset);
+    log_event(side, "hsm_mode", modemsg);
+
+    /* Body of the original hsm_setup_server_credentials path follows below;
+     * it now drives off (paramset, key_label_buf, evp_alg_name) instead of
+     * calling detect_mldsa_paramset(). The original function is kept as a
+     * thin wrapper that delegates here. */
 
     if (!g_hsm_initialized) {
         if (hsm_write_conf() != 0) {
-            log_event("server", "hsm_error", "could not write softhsm conf");
+            log_event(side, "hsm_error", "could not write softhsm conf");
             return -1;
         }
         g_hsm_initialized = 1;
@@ -497,7 +598,7 @@ int hsm_setup_server_credentials(SSL_CTX *s_ctx) {
     /* Step 1: PKCS#11 session + ML-DSA-65 keypair generation. */
     CK_FUNCTION_LIST *p11 = NULL;
     if (C_GetFunctionList(&p11) != CKR_OK || !p11) {
-        log_event("server", "hsm_error", "C_GetFunctionList unavailable");
+        log_event(side, "hsm_error", "C_GetFunctionList unavailable");
         return -1;
     }
     CK_C_INITIALIZE_ARGS iargs = { 0 };
@@ -505,25 +606,25 @@ int hsm_setup_server_credentials(SSL_CTX *s_ctx) {
     CK_RV rv = p11->C_Initialize(&iargs);
     if (rv != CKR_OK && rv != CKR_CRYPTOKI_ALREADY_INITIALIZED) {
         char m[64]; snprintf(m, sizeof(m), "C_Initialize rv=0x%lx", (unsigned long)rv);
-        log_event("server", "hsm_error", m);
+        log_event(side, "hsm_error", m);
         return -1;
     }
-    log_event("server", "pkcs11_call", "C_Initialize");
+    log_event(side, "pkcs11_call", "C_Initialize");
 
     CK_SLOT_ID slot_id = 0;
     CK_ULONG   slot_count = 1;
     rv = p11->C_GetSlotList(CK_FALSE, &slot_id, &slot_count);
     if (rv != CKR_OK || slot_count == 0) {
-        log_event("server", "hsm_error", "C_GetSlotList: no slot");
+        log_event(side, "hsm_error", "C_GetSlotList: no slot");
         return -1;
     }
-    log_event("server", "pkcs11_call", "C_GetSlotList");
+    log_event(side, "pkcs11_call", "C_GetSlotList");
 
     /* Init token + PINs. Idempotent (CKR_OK on first run, errors swallowed thereafter). */
     CK_BYTE label[32]; memset(label, ' ', sizeof(label));
     memcpy(label, "tls-sim-token", 13);
     p11->C_InitToken(slot_id, (CK_UTF8CHAR_PTR)HSM_PIN, strlen(HSM_PIN), (CK_UTF8CHAR_PTR)label);
-    log_event("server", "pkcs11_call", "C_InitToken");
+    log_event(side, "pkcs11_call", "C_InitToken");
 
     CK_SESSION_HANDLE so_sess;
     if (p11->C_OpenSession(slot_id, CKF_SERIAL_SESSION | CKF_RW_SESSION,
@@ -537,23 +638,26 @@ int hsm_setup_server_credentials(SSL_CTX *s_ctx) {
     CK_SESSION_HANDLE sess;
     if (p11->C_OpenSession(slot_id, CKF_SERIAL_SESSION | CKF_RW_SESSION,
                            NULL, NULL, &sess) != CKR_OK) {
-        log_event("server", "hsm_error", "C_OpenSession failed");
+        log_event(side, "hsm_error", "C_OpenSession failed");
         return -1;
     }
-    log_event("server", "pkcs11_call", "C_OpenSession");
+    log_event(side, "pkcs11_call", "C_OpenSession");
     if (p11->C_Login(sess, CKU_USER, (CK_UTF8CHAR_PTR)HSM_PIN, strlen(HSM_PIN)) != CKR_OK) {
-        log_event("server", "hsm_error", "C_Login(user) failed");
+        log_event(side, "hsm_error", "C_Login(user) failed");
         return -1;
     }
-    log_event("server", "pkcs11_call", "C_Login(CKU_USER)");
+    log_event(side, "pkcs11_call", "C_Login(CKU_USER)");
 
-    char            key_label_buf[32];
-    CK_ULONG        paramset  = detect_mldsa_paramset(key_label_buf, sizeof(key_label_buf));
+    /* paramset, key_label_buf, evp_alg_name already populated at the top of
+     * this function by hsm_resolve_mldsa_algo(). The previous detect call
+     * that read /ssl/server.crt is no longer needed: the JS side selects
+     * the algorithm explicitly via the cert dropdown. */
     {
-        char msg[128];
-        snprintf(msg, sizeof(msg), "Detected ML-DSA paramset=0x%02lx label=%s",
+        char msg[160];
+        snprintf(msg, sizeof(msg),
+                 "ML-DSA paramset selected via dropdown: 0x%02lx label=%s",
                  (unsigned long)paramset, key_label_buf);
-        log_event("server", "hsm_paramset", msg);
+        log_event(side, "hsm_paramset", msg);
     }
     CK_MECHANISM keygen_mech = { CKM_ML_DSA_KEY_PAIR_GEN, NULL, 0 };
     CK_OBJECT_CLASS pubclass  = CKO_PUBLIC_KEY;
@@ -590,7 +694,7 @@ int hsm_setup_server_credentials(SSL_CTX *s_ctx) {
                                 &hpub, &hpriv);
     if (rv != CKR_OK) {
         char m[96]; snprintf(m, sizeof(m), "C_GenerateKeyPair rv=0x%lx", (unsigned long)rv);
-        log_event("server", "hsm_error", m);
+        log_event(side, "hsm_error", m);
         return -1;
     }
     {
@@ -599,14 +703,14 @@ int hsm_setup_server_credentials(SSL_CTX *s_ctx) {
                                "→ pub=0x%lx, priv=0x%lx (private never leaves softhsmv3)",
                  (unsigned long)paramset, key_label,
                  (unsigned long)hpub, (unsigned long)hpriv);
-        log_event("server", "pkcs11_call", m);
+        log_event(side, "pkcs11_call", m);
     }
 
     /* Step 2: Read public-key bytes (SPKI-encoded) from softhsmv3. */
     CK_ATTRIBUTE pub_value[] = { { CKA_VALUE, NULL, 0 } };
     rv = p11->C_GetAttributeValue(sess, hpub, pub_value, 1);
     if (rv != CKR_OK || pub_value[0].ulValueLen == 0) {
-        log_event("server", "hsm_error", "C_GetAttributeValue(CKA_VALUE) sizing failed");
+        log_event(side, "hsm_error", "C_GetAttributeValue(CKA_VALUE) sizing failed");
         return -1;
     }
     unsigned char *pub_buf = (unsigned char *)malloc(pub_value[0].ulValueLen);
@@ -614,14 +718,14 @@ int hsm_setup_server_credentials(SSL_CTX *s_ctx) {
     pub_value[0].pValue = pub_buf;
     rv = p11->C_GetAttributeValue(sess, hpub, pub_value, 1);
     if (rv != CKR_OK) {
-        log_event("server", "hsm_error", "C_GetAttributeValue(CKA_VALUE) read failed");
+        log_event(side, "hsm_error", "C_GetAttributeValue(CKA_VALUE) read failed");
         free(pub_buf); return -1;
     }
     {
         char m[96];
         snprintf(m, sizeof(m), "C_GetAttributeValue(CKA_VALUE) → %lu B SubjectPublicKeyInfo",
                  (unsigned long)pub_value[0].ulValueLen);
-        log_event("server", "pkcs11_call", m);
+        log_event(side, "pkcs11_call", m);
     }
 
     /* Close our manual session before pkcs11-provider opens its own.
@@ -631,7 +735,7 @@ int hsm_setup_server_credentials(SSL_CTX *s_ctx) {
      * The keypair is token-resident (CKA_TOKEN=CK_TRUE) and persists. */
     p11->C_Logout(sess);
     p11->C_CloseSession(sess);
-    log_event("server", "pkcs11_call", "C_CloseSession (yielding slot to pkcs11-provider)");
+    log_event(side, "pkcs11_call", "C_CloseSession (yielding slot to pkcs11-provider)");
 
     /* Step 3: Load pkcs11-provider so we can build an EVP_PKEY URI handle. */
     if (hsm_load_provider() != 0) {
@@ -658,33 +762,39 @@ int hsm_setup_server_credentials(SSL_CTX *s_ctx) {
     X509 *cert = PEM_read_bio_X509(cert_bio, NULL, NULL, NULL);
     BIO_free(cert_bio);
     if (!cert) {
-        log_event("server", "hsm_error", "Failed to parse minted cert PEM");
+        log_event(side, "hsm_error", "Failed to parse minted cert PEM");
         free(cert_pem); EVP_PKEY_free(priv_pkey);
         return -1;
     }
 
-    if (SSL_CTX_use_certificate(s_ctx, cert) != 1) {
-        log_event("server", "hsm_error", "SSL_CTX_use_certificate(hsm_cert) failed");
+    if (SSL_CTX_use_certificate(ssl_ctx, cert) != 1) {
+        log_event(side, "hsm_error", "SSL_CTX_use_certificate(hsm_cert) failed");
         X509_free(cert); free(cert_pem); EVP_PKEY_free(priv_pkey);
         return -1;
     }
-    if (SSL_CTX_use_PrivateKey(s_ctx, priv_pkey) != 1) {
-        log_event("server", "hsm_error", "SSL_CTX_use_PrivateKey(pkcs11_uri) failed");
+    if (SSL_CTX_use_PrivateKey(ssl_ctx, priv_pkey) != 1) {
+        log_event(side, "hsm_error", "SSL_CTX_use_PrivateKey(pkcs11_uri) failed");
         X509_free(cert); free(cert_pem); EVP_PKEY_free(priv_pkey);
         return -1;
     }
-    log_event("server", "hsm_attached",
+    log_event(side, "hsm_attached",
               "SSL_CTX configured: cert from softhsmv3 SPKI, private key via pkcs11: URI");
 
-    /* Write the self-signed cert to a well-known path so the client context
-     * can load it as a trusted CA.  Without this the client rejects the cert
-     * because it was not signed by the pre-existing RSA CA in client-ca.crt. */
-    FILE *ca_fp = fopen("/ssl/hsm-server.crt", "w");
+    /* Write the self-signed cert to a side-specific path so the OTHER side's
+     * context can load it as a trusted CA. Without this, the peer rejects
+     * the cert because it was not signed by the pre-existing RSA CA. */
+    const char *ca_path = (strcmp(side, "server") == 0)
+                              ? "/ssl/hsm-server.crt"
+                              : "/ssl/hsm-client.crt";
+    FILE *ca_fp = fopen(ca_path, "w");
     if (ca_fp) {
         fputs(cert_pem, ca_fp);
         fclose(ca_fp);
-        log_event("server", "hsm_ca_written",
-                  "Self-signed cert written to /ssl/hsm-server.crt for client trust");
+        char m[160];
+        snprintf(m, sizeof(m),
+                 "Self-signed %s cert written to %s for peer trust",
+                 side, ca_path);
+        log_event(side, "hsm_ca_written", m);
     }
 
     /* OpenSSL retains the cert + key; we can free our refs. */
@@ -694,413 +804,50 @@ int hsm_setup_server_credentials(SSL_CTX *s_ctx) {
     return 0;
 }
 
-/* ─────────────────────────────────────────────────────────────────────────
- *           Composite-ML-DSA TLS 1.3 server credentials (phase 4b)
+/* Composite HSM credential setup — RESERVED.
  *
- * Sets up the SSL_CTX with a Composite-ML-DSA server private key per
- * draft-ietf-lamps-pq-composite-sigs-19. Both halves of the composite key
- * live in softhsm via PKCS#11 (CKM_ML_DSA + CKM_EC_KEY_PAIR_GEN with the
- * profile's classical algorithm). The composite EVP_PKEY is constructed
- * by:
- *   1. Generating each subkey separately in softhsm (real PKCS#11 calls
- *      logged to the JSON event stream).
- *   2. Wrapping each handle in a P11PROV_OBJ via p11prov_obj_new() (a
- *      public accessor exported by pkcs11-provider/src/objects.h).
- *   3. Calling p11prov_composite_obj_new_from_subkeys() to build the
- *      composite wrapper struct (defined in
- *      pqctoday-hsm/src/vendor/pkcs11-provider/src/composite.c).
- *   4. Calling EVP_PKEY_fromdata with the per-profile algorithm name and
- *      a "pqctoday-composite-ref" OSSL_PARAM holding the composite
- *      struct pointer. The provider's KEYMGMT_IMPORT (phase 4a, commit
- *      08220d6) consumes the reference and returns an EVP_PKEY whose
- *      keymgmt is our composite keymgmt — so SSL_CTX_use_PrivateKey
- *      installs it directly and SSL_do_handshake's CertificateVerify
- *      routes through our composite signature dispatch (phase 3b).
+ * The provider-side composite machinery (keymgmt, signature dispatch, encoder,
+ * ALGORITHM_ID) was built earlier this session and is linked into the WASM.
+ * The runtime cert-minting path that exercises it is deferred to a follow-up
+ * cycle. When invoked today, this stub returns -1 so the simulator surfaces a
+ * clear error rather than silently substituting the wrong cert.
  *
- * The composite cert PEM is NOT minted here. The caller (JS-side, via
- * the cert workshop's buildCompositeCertDraft19) writes a real
- * draft-19-compliant composite cert to /ssl/composite-server.crt
- * before invoking the TLS simulation. This keeps the cert generation
- * in the layer where Peculiar already handles ASN.1; the C side only
- * cares about wiring the EVP_PKEY into the SSL_CTX so CertificateVerify
- * can sign with both halves.
- *
- * Composite profile: hard-wired to MLDSA65 + ECDSA-P256-SHA512 for the
- * first integration. The other two LAMPS profiles (MLDSA44+RSA2048-PSS
- * and MLDSA87+ECDSA-P384) follow the same shape; add separate setup
- * functions or parametrize this one when needed.
- * ──────────────────────────────────────────────────────────────────── */
-
-/* PKCS#11 mechanisms / classes / attributes we need for the EC half. */
-#define CKM_EC_KEY_PAIR_GEN  0x00001040UL
-#define CKK_EC_VAL           0x00000003UL
-#define CKA_EC_PARAMS        0x00000180UL
-
-/* Composite EVP_PKEY algorithm name (draft-19 §6 id-MLDSA65-ECDSA-P256-SHA512).
- * Matches P11PROV_NAMES_COMPOSITE_MLDSA65_ECDSA_P256 in pkcs11-provider
- * provider.h — any of the colon-separated aliases works. */
-#define COMPOSITE_ALG_NAME    "MLDSA65-ECDSA-P256-SHA512"
-
-/* From the provider — forward declaration of the public constructor. We
- * forward-declare rather than #include composite.c headers to keep this
- * file's include set minimal (it's mostly typed via PKCS#11 + OpenSSL
- * headers above). Resolution happens at link time inside openssl.wasm. */
-struct p11prov_ctx;
-struct p11prov_obj;
-struct p11prov_composite_profile;
-struct p11prov_composite_obj;
-
-extern const struct p11prov_composite_profile *
-p11prov_composite_profile_by_oid(const char *oid);
-
-extern struct p11prov_obj *p11prov_obj_new(
-    struct p11prov_ctx *ctx, CK_ULONG slotid, CK_ULONG handle,
-    CK_ULONG obj_class);
-extern void p11prov_obj_free(struct p11prov_obj *obj);
-
-extern struct p11prov_composite_obj *p11prov_composite_obj_new_from_subkeys(
-    struct p11prov_ctx *provctx,
-    const struct p11prov_composite_profile *profile,
-    struct p11prov_obj *pq_obj,
-    struct p11prov_obj *classical_obj);
-
-/* P-256 named curve OID encoded as a raw ASN.1 OID TLV (DER bytes),
- * needed for CKA_EC_PARAMS when generating an EC keypair in softhsm. */
-static const unsigned char EC_P256_PARAMS_DER[] = {
-    0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07,
-};
-
-/* Find a single PKCS#11 object by class + label. Returns 0 (CK_INVALID_HANDLE)
- * if not found. Used by the composite credentials path to consume keys that
- * the JS side already generated in this same softhsm instance — avoids the
- * "two-instance" pitfall where JS uses softhsm.wasm and C uses the bundled
- * softhsm. With the openssl.wasm PKCS#11 exports added in build-wasm.sh, JS
- * drives THIS softhsm, so keys it generates are visible here. */
-static CK_OBJECT_HANDLE find_object_by_label(
-    CK_FUNCTION_LIST *p11, CK_SESSION_HANDLE sess,
-    CK_OBJECT_CLASS class, const char *label)
-{
-    CK_ATTRIBUTE filter[] = {
-        { CKA_CLASS, &class, sizeof(class) },
-        { CKA_LABEL, (void *)label, (CK_ULONG)strlen(label) },
-    };
-    CK_OBJECT_HANDLE handles[2] = { 0, 0 };
-    CK_ULONG found = 0;
-    CK_RV rv = p11->C_FindObjectsInit(sess, filter, 2);
-    if (rv != CKR_OK) {
-        return 0;
-    }
-    p11->C_FindObjects(sess, handles, 2, &found);
-    p11->C_FindObjectsFinal(sess);
-    return found > 0 ? handles[0] : 0;
+ * Recovery: the full implementation that previously lived here is preserved
+ * in git history at commit c3ab3b66 (and a working copy at
+ * /tmp/composite_func_recovered.c during this session) — see plan file
+ * /Users/ericamador/.claude/plans/why-do-we-need-synchronous-firefly.md
+ * §"What this plan adds / changes / restores" for the wiring instructions. */
+static int hsm_setup_composite_credentials_for_side(const char *side,
+                                                    const char *algo,
+                                                    SSL_CTX *ssl_ctx) {
+    (void)ssl_ctx;
+    char err[200];
+    snprintf(err, sizeof(err),
+             "Composite HSM algorithm \"%s\" is reserved; the runtime cert "
+             "minting path is deferred to a follow-up cycle (the provider-side "
+             "machinery is in place, see composite.c)", algo);
+    log_event(side, "hsm_error", err);
+    return -1;
 }
 
-int hsm_setup_server_credentials_composite(SSL_CTX *s_ctx) {
-    if (!g_hsm_mode_enabled) return 0; /* no-op */
-
-    log_event("server", "hsm_mode",
-              "Composite-ML-DSA: softhsmv3 holds PQ + classical halves");
-
-    if (!g_hsm_initialized) {
-        if (hsm_write_conf() != 0) {
-            log_event("server", "hsm_error", "could not write softhsm conf");
-            return -1;
-        }
-        g_hsm_initialized = 1;
-    }
-
-    /* Step 1: PKCS#11 session + two keypair generations (ML-DSA-65, EC P-256). */
-    CK_FUNCTION_LIST *p11 = NULL;
-    if (C_GetFunctionList(&p11) != CKR_OK || !p11) {
-        log_event("server", "hsm_error", "C_GetFunctionList unavailable");
-        return -1;
-    }
-    CK_C_INITIALIZE_ARGS iargs = { 0 };
-    iargs.flags = CKF_OS_LOCKING_OK;
-    CK_RV rv = p11->C_Initialize(&iargs);
-    if (rv != CKR_OK && rv != CKR_CRYPTOKI_ALREADY_INITIALIZED) {
-        char m[64]; snprintf(m, sizeof(m), "C_Initialize rv=0x%lx", (unsigned long)rv);
-        log_event("server", "hsm_error", m);
-        return -1;
-    }
-    log_event("server", "pkcs11_call", "C_Initialize (composite mode)");
-
-    CK_SLOT_ID slot_id = 0;
-    CK_ULONG slot_count = 1;
-    rv = p11->C_GetSlotList(CK_FALSE, &slot_id, &slot_count);
-    if (rv != CKR_OK || slot_count == 0) {
-        log_event("server", "hsm_error", "C_GetSlotList: no slot");
-        return -1;
-    }
-    log_event("server", "pkcs11_call", "C_GetSlotList");
-
-    CK_BYTE label[32]; memset(label, ' ', sizeof(label));
-    memcpy(label, "tls-sim-composite", 17);
-    p11->C_InitToken(slot_id, (CK_UTF8CHAR_PTR)HSM_PIN, strlen(HSM_PIN),
-                     (CK_UTF8CHAR_PTR)label);
-
-    /* SO login → InitPIN → user login (same dance as the pure ML-DSA path). */
-    CK_SESSION_HANDLE so_sess;
-    if (p11->C_OpenSession(slot_id, CKF_SERIAL_SESSION | CKF_RW_SESSION,
-                           NULL, NULL, &so_sess) == CKR_OK) {
-        p11->C_Login(so_sess, CKU_SO, (CK_UTF8CHAR_PTR)HSM_PIN, strlen(HSM_PIN));
-        p11->C_InitPIN(so_sess, (CK_UTF8CHAR_PTR)HSM_PIN, strlen(HSM_PIN));
-        p11->C_Logout(so_sess);
-        p11->C_CloseSession(so_sess);
-    }
-
-    CK_SESSION_HANDLE sess;
-    if (p11->C_OpenSession(slot_id, CKF_SERIAL_SESSION | CKF_RW_SESSION,
-                           NULL, NULL, &sess) != CKR_OK) {
-        log_event("server", "hsm_error", "C_OpenSession failed");
-        return -1;
-    }
-    log_event("server", "pkcs11_call", "C_OpenSession");
-    if (p11->C_Login(sess, CKU_USER, (CK_UTF8CHAR_PTR)HSM_PIN, strlen(HSM_PIN))
-        != CKR_OK) {
-        log_event("server", "hsm_error", "C_Login(user) failed");
-        return -1;
-    }
-    log_event("server", "pkcs11_call", "C_Login(CKU_USER)");
-
-    /* ── Subkey 1: ML-DSA-65 ── */
-    CK_OBJECT_CLASS pubclass = CKO_PUBLIC_KEY;
-    CK_OBJECT_CLASS privclass = CKO_PRIVATE_KEY;
-    CK_KEY_TYPE ktype_mldsa = CKK_ML_DSA_VAL;
-    CK_BBOOL ck_true = CK_TRUE;
-    CK_BBOOL ck_token = CK_TRUE;
-    CK_ULONG paramset_65 = CKP_ML_DSA_65_VAL;
-    const char *pq_label = "composite-pq-mldsa65";
-    const char *pq_id = "01";
-    CK_ATTRIBUTE pq_pub_tmpl[] = {
-        { CKA_CLASS,             &pubclass,    sizeof(pubclass) },
-        { CKA_KEY_TYPE,          &ktype_mldsa, sizeof(ktype_mldsa) },
-        { CKA_VERIFY,            &ck_true,     sizeof(ck_true) },
-        { CKA_PARAMETER_SET_VAL, &paramset_65, sizeof(paramset_65) },
-        { CKA_TOKEN,             &ck_token,    sizeof(ck_token) },
-        { CKA_LABEL,             (void *)pq_label, (CK_ULONG)strlen(pq_label) },
-        { CKA_ID,                (void *)pq_id,    (CK_ULONG)strlen(pq_id) },
-    };
-    CK_ATTRIBUTE pq_priv_tmpl[] = {
-        { CKA_CLASS,             &privclass,   sizeof(privclass) },
-        { CKA_KEY_TYPE,          &ktype_mldsa, sizeof(ktype_mldsa) },
-        { CKA_SIGN,              &ck_true,     sizeof(ck_true) },
-        { CKA_PARAMETER_SET_VAL, &paramset_65, sizeof(paramset_65) },
-        { CKA_TOKEN,             &ck_token,    sizeof(ck_token) },
-        { CKA_LABEL,             (void *)pq_label, (CK_ULONG)strlen(pq_label) },
-        { CKA_ID,                (void *)pq_id,    (CK_ULONG)strlen(pq_id) },
-    };
-    CK_OBJECT_HANDLE pq_hpub = 0, pq_hpriv = 0;
-    /* If JS pre-created the PQ subkey (Option C flow: JS calls
-     * Module._C_GenerateKeyPair on this same softhsm instance via the new
-     * PKCS#11 exports), pick it up by label rather than generating again. */
-    pq_hpriv = find_object_by_label(p11, sess, CKO_PRIVATE_KEY, pq_label);
-    pq_hpub = find_object_by_label(p11, sess, CKO_PUBLIC_KEY, pq_label);
-    if (pq_hpriv != 0 && pq_hpub != 0) {
-        log_event("server", "pkcs11_call",
-                  "Found existing PQ subkey by label (generated by JS)");
-    } else {
-        CK_MECHANISM mldsa_keygen_mech = { CKM_ML_DSA_KEY_PAIR_GEN, NULL, 0 };
-        rv = p11->C_GenerateKeyPair(sess, &mldsa_keygen_mech,
-                                    pq_pub_tmpl, 7, pq_priv_tmpl, 7,
-                                    &pq_hpub, &pq_hpriv);
-        if (rv != CKR_OK) {
-            char m[96]; snprintf(m, sizeof(m),
-                                 "C_GenerateKeyPair(ML-DSA-65) rv=0x%lx",
-                                 (unsigned long)rv);
-            log_event("server", "hsm_error", m);
-            return -1;
-        }
-        log_event("server", "pkcs11_call",
-                  "C_GenerateKeyPair(CKM_ML_DSA_KEY_PAIR_GEN, paramset=65) PQ subkey");
-    }
-
-    /* ── Subkey 2: ECDSA P-256 ── */
-    CK_KEY_TYPE ktype_ec = CKK_EC_VAL;
-    const char *ec_label = "composite-classical-ecp256";
-    const char *ec_id = "02";
-    CK_ATTRIBUTE ec_pub_tmpl[] = {
-        { CKA_CLASS,        &pubclass,    sizeof(pubclass) },
-        { CKA_KEY_TYPE,     &ktype_ec,    sizeof(ktype_ec) },
-        { CKA_VERIFY,       &ck_true,     sizeof(ck_true) },
-        { CKA_EC_PARAMS,    (void *)EC_P256_PARAMS_DER,
-                            (CK_ULONG)sizeof(EC_P256_PARAMS_DER) },
-        { CKA_TOKEN,        &ck_token,    sizeof(ck_token) },
-        { CKA_LABEL,        (void *)ec_label, (CK_ULONG)strlen(ec_label) },
-        { CKA_ID,           (void *)ec_id,    (CK_ULONG)strlen(ec_id) },
-    };
-    CK_ATTRIBUTE ec_priv_tmpl[] = {
-        { CKA_CLASS,        &privclass,   sizeof(privclass) },
-        { CKA_KEY_TYPE,     &ktype_ec,    sizeof(ktype_ec) },
-        { CKA_SIGN,         &ck_true,     sizeof(ck_true) },
-        { CKA_TOKEN,        &ck_token,    sizeof(ck_token) },
-        { CKA_LABEL,        (void *)ec_label, (CK_ULONG)strlen(ec_label) },
-        { CKA_ID,           (void *)ec_id,    (CK_ULONG)strlen(ec_id) },
-    };
-    CK_OBJECT_HANDLE ec_hpub = 0, ec_hpriv = 0;
-    ec_hpriv = find_object_by_label(p11, sess, CKO_PRIVATE_KEY, ec_label);
-    ec_hpub = find_object_by_label(p11, sess, CKO_PUBLIC_KEY, ec_label);
-    if (ec_hpriv != 0 && ec_hpub != 0) {
-        log_event("server", "pkcs11_call",
-                  "Found existing classical subkey by label (generated by JS)");
-    } else {
-        CK_MECHANISM ec_keygen_mech = { CKM_EC_KEY_PAIR_GEN, NULL, 0 };
-        rv = p11->C_GenerateKeyPair(sess, &ec_keygen_mech,
-                                    ec_pub_tmpl, 7, ec_priv_tmpl, 6,
-                                    &ec_hpub, &ec_hpriv);
-        if (rv != CKR_OK) {
-            char m[96]; snprintf(m, sizeof(m),
-                                 "C_GenerateKeyPair(ECDSA P-256) rv=0x%lx",
-                                 (unsigned long)rv);
-            log_event("server", "hsm_error", m);
-            return -1;
-        }
-        log_event("server", "pkcs11_call",
-                  "C_GenerateKeyPair(CKM_EC_KEY_PAIR_GEN, P-256) classical subkey");
-    }
-
-    /* Close session so pkcs11-provider can open its own without colliding
-     * with our login. The token-resident keypairs persist. */
-    p11->C_Logout(sess);
-    p11->C_CloseSession(sess);
-    log_event("server", "pkcs11_call",
-              "C_CloseSession (yielding slot to pkcs11-provider)");
-
-    /* Step 2: Load pkcs11-provider — gives us the OSSL_PROVIDER + its
-     * internal P11PROV_CTX (accessed via OSSL_PROVIDER_get0_provider_ctx). */
-    if (hsm_load_provider() != 0) {
-        return -1;
-    }
-    struct p11prov_ctx *provctx =
-        (struct p11prov_ctx *)OSSL_PROVIDER_get0_provider_ctx(g_pkcs11_provider);
-    if (provctx == NULL) {
-        log_event("server", "hsm_error",
-                  "OSSL_PROVIDER_get0_provider_ctx returned NULL");
-        return -1;
-    }
-
-    /* Step 3: Wrap both private-key handles in P11PROV_OBJs. */
-    struct p11prov_obj *pq_obj =
-        p11prov_obj_new(provctx, slot_id, pq_hpriv, CKO_PRIVATE_KEY);
-    if (pq_obj == NULL) {
-        log_event("server", "hsm_error", "p11prov_obj_new(PQ priv) failed");
-        return -1;
-    }
-    struct p11prov_obj *classical_obj =
-        p11prov_obj_new(provctx, slot_id, ec_hpriv, CKO_PRIVATE_KEY);
-    if (classical_obj == NULL) {
-        log_event("server", "hsm_error",
-                  "p11prov_obj_new(classical priv) failed");
-        p11prov_obj_free(pq_obj);
-        return -1;
-    }
-    log_event("server", "hsm_attached",
-              "P11PROV_OBJ refs created for both composite subkey handles");
-
-    /* Step 4: Build the composite key wrapper. Profile lookup is by the
-     * draft-19 §6 OID; phase 2's registry returns NULL for unknown OIDs. */
-    const struct p11prov_composite_profile *profile =
-        p11prov_composite_profile_by_oid("1.3.6.1.5.5.7.6.45");
-    if (profile == NULL) {
-        log_event("server", "hsm_error",
-                  "Composite profile MLDSA65-ECDSA-P256-SHA512 not registered");
-        p11prov_obj_free(pq_obj); p11prov_obj_free(classical_obj);
-        return -1;
-    }
-    struct p11prov_composite_obj *composite_obj =
-        p11prov_composite_obj_new_from_subkeys(provctx, profile, pq_obj,
-                                               classical_obj);
-    /* p11prov_composite_obj_new_from_subkeys ref-bumps both subkeys; we
-     * still own our own refs and must free them. */
-    p11prov_obj_free(pq_obj);
-    p11prov_obj_free(classical_obj);
-    if (composite_obj == NULL) {
-        log_event("server", "hsm_error",
-                  "p11prov_composite_obj_new_from_subkeys failed");
-        return -1;
-    }
-    log_event("server", "hsm_attached",
-              "Composite key wrapper built (MLDSA65 + ECDSA-P256, both HSM-resident)");
-
-    /* Step 5: Wrap into an EVP_PKEY via EVP_PKEY_fromdata. The
-     * "pqctoday-composite-ref" OSSL_PARAM is the handshake added in
-     * pqctoday-hsm commit 08220d6 (phase 4a) — the keymgmt IMPORT
-     * dispatch consumes the reference and takes ownership of the
-     * composite obj. */
-    EVP_PKEY_CTX *pctx =
-        EVP_PKEY_CTX_new_from_name(NULL, COMPOSITE_ALG_NAME, NULL);
-    if (pctx == NULL || EVP_PKEY_fromdata_init(pctx) != 1) {
-        log_event("server", "hsm_error",
-                  "EVP_PKEY_CTX_new_from_name(MLDSA65-ECDSA-P256-SHA512) failed");
-        EVP_PKEY_CTX_free(pctx);
-        /* composite_obj is leaked here; caller's softhsm session cleanup
-         * will reclaim the underlying handles when the WASM unloads. */
-        return -1;
-    }
-    OSSL_PARAM import_params[] = {
-        OSSL_PARAM_construct_octet_string("pqctoday-composite-ref",
-                                          &composite_obj, sizeof(composite_obj)),
-        OSSL_PARAM_construct_end(),
-    };
-    EVP_PKEY *composite_pkey = NULL;
-    if (EVP_PKEY_fromdata(pctx, &composite_pkey, EVP_PKEY_KEYPAIR,
-                          import_params) != 1) {
-        char err[160];
-        snprintf(err, sizeof(err),
-                 "EVP_PKEY_fromdata(composite) failed: 0x%lx", ERR_get_error());
-        log_event("server", "hsm_error", err);
-        EVP_PKEY_CTX_free(pctx);
-        return -1;
-    }
-    EVP_PKEY_CTX_free(pctx);
-    log_event("server", "hsm_attached",
-              "EVP_PKEY wraps composite-sig key; CertificateVerify will sign "
-              "via pkcs11-provider → softhsm (twice)");
-
-    /* Step 6: Load the composite cert that the JS-side (cert workshop)
-     * pre-wrote to /ssl/composite-server.crt. The cert must already have
-     * the composite OID (1.3.6.1.5.5.7.6.45) and the concat public key
-     * per draft-19 §4.1 — buildCompositeCertDraft19 in pqctoday-hub
-     * produces exactly that format. */
-    FILE *fp = fopen("/ssl/composite-server.crt", "r");
-    if (!fp) {
-        log_event("server", "hsm_error",
-                  "/ssl/composite-server.crt not found — JS must pre-write it");
-        EVP_PKEY_free(composite_pkey);
-        return -1;
-    }
-    X509 *cert = PEM_read_X509(fp, NULL, NULL, NULL);
-    fclose(fp);
-    if (!cert) {
-        log_event("server", "hsm_error",
-                  "PEM_read_X509(/ssl/composite-server.crt) failed");
-        EVP_PKEY_free(composite_pkey);
-        return -1;
-    }
-
-    if (SSL_CTX_use_certificate(s_ctx, cert) != 1) {
-        log_event("server", "hsm_error",
-                  "SSL_CTX_use_certificate(composite cert) failed");
-        X509_free(cert); EVP_PKEY_free(composite_pkey);
-        return -1;
-    }
-    if (SSL_CTX_use_PrivateKey(s_ctx, composite_pkey) != 1) {
-        log_event("server", "hsm_error",
-                  "SSL_CTX_use_PrivateKey(composite EVP_PKEY) failed");
-        X509_free(cert); EVP_PKEY_free(composite_pkey);
-        return -1;
-    }
-    log_event("server", "hsm_attached",
-              "SSL_CTX wired: composite cert + composite key (HSM-backed)");
-
-    X509_free(cert);
-    EVP_PKEY_free(composite_pkey);
-    return 0;
+/* Public entry — server side. Invoked by tls_simulation.c right before
+ * SSL_CTX gets its server cert/key. No-op (returns 0) when the dropdown
+ * has the server in PEM mode (g_server_hsm_algo == ""). */
+int hsm_setup_server_credentials(SSL_CTX *s_ctx) {
+    return hsm_setup_credentials_for_side("server", g_server_hsm_algo, s_ctx);
 }
+
+/* Public entry — client side. New in this cycle: previously the simulator
+ * had no client-side HSM wiring at all. */
+int hsm_setup_client_credentials(SSL_CTX *c_ctx) {
+    return hsm_setup_credentials_for_side("client", g_client_hsm_algo, c_ctx);
+}
+
 
 #else /* !__EMSCRIPTEN__ */
 int hsm_mode_enabled(void) { return 0; }
-int hsm_composite_mode_enabled(void) { return 0; }
+const char *hsm_server_algorithm(void) { return ""; }
+const char *hsm_client_algorithm(void) { return ""; }
 int hsm_setup_server_credentials(void *ctx) { (void)ctx; return 0; }
-int hsm_setup_server_credentials_composite(void *ctx) { (void)ctx; return 0; }
+int hsm_setup_client_credentials(void *ctx) { (void)ctx; return 0; }
 #endif /* __EMSCRIPTEN__ */

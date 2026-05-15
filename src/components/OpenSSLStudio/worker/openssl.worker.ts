@@ -21,7 +21,10 @@ type WorkerMessage =
       serverConfig: string
       files?: { name: string; data: Uint8Array }[]
       commands?: string[]
-      hsmMode?: boolean
+      /* Per-side HSM algorithm selection. Empty = PEM mode. See
+       * OpenSSLService.simulateTLS for the enumerated values. */
+      serverHsmAlgorithm?: string
+      clientHsmAlgorithm?: string
       requestId?: string
     }
   | { type: 'READY'; requestId?: string }
@@ -598,14 +601,14 @@ var executeSimulation = async (
   serverConfig: string,
   files: { name: string; data: Uint8Array }[] = [],
   commands: string[] = [],
-  hsmMode: boolean = false,
-  hsmCompositeMode: boolean = false,
+  serverHsmAlgorithm: string = '',
+  clientHsmAlgorithm: string = '',
   requestId?: string
 ) => {
   self.postMessage({
     type: 'LOG',
     stream: 'stdout',
-    message: `[Debug] executeSimulation started (hsmMode=${hsmMode}, compositeMode=${hsmCompositeMode})`,
+    message: `[Debug] executeSimulation started (serverHsm="${serverHsmAlgorithm}", clientHsm="${clientHsmAlgorithm}")`,
     requestId,
   })
 
@@ -637,47 +640,31 @@ var executeSimulation = async (
     }
 
     // 3. Bind C Functions
-    // void tls_simulation_set_hsm_mode(int enabled)
-    const setHsmModeC = openSSLModule.cwrap('tls_simulation_set_hsm_mode', null, ['number'])
-    if (setHsmModeC) {
-      setHsmModeC(hsmMode ? 1 : 0)
+    // void tls_simulation_set_{server,client}_hsm_algorithm(const char *algo)
+    // Empty string = PEM mode (no HSM); recognized non-empty values listed
+    // in OpenSSLService.simulateTLS.
+    const setServerHsmAlgoC = openSSLModule.cwrap('tls_simulation_set_server_hsm_algorithm', null, [
+      'string',
+    ])
+    const setClientHsmAlgoC = openSSLModule.cwrap('tls_simulation_set_client_hsm_algorithm', null, [
+      'string',
+    ])
+    if (setServerHsmAlgoC && setClientHsmAlgoC) {
+      setServerHsmAlgoC(serverHsmAlgorithm)
+      setClientHsmAlgoC(clientHsmAlgorithm)
       self.postMessage({
         type: 'LOG',
         stream: 'stdout',
-        message: `[Debug] tls_simulation_set_hsm_mode(${hsmMode ? 1 : 0})`,
+        message: `[Debug] tls_simulation_set_*_hsm_algorithm(server="${serverHsmAlgorithm}", client="${clientHsmAlgorithm}")`,
         requestId,
       })
-    } else if (hsmMode) {
+    } else if (serverHsmAlgorithm || clientHsmAlgorithm) {
       self.postMessage({
         type: 'LOG',
         stream: 'stderr',
         message:
-          '[Debug] tls_simulation_set_hsm_mode unavailable; running with bundled keys instead',
-        requestId,
-      })
-    }
-
-    // void tls_simulation_set_hsm_composite_mode(int enabled)
-    // Composite mode requires HSM mode to also be on (the C side enforces this).
-    const setHsmCompositeModeC = openSSLModule.cwrap(
-      'tls_simulation_set_hsm_composite_mode',
-      null,
-      ['number']
-    )
-    if (setHsmCompositeModeC) {
-      setHsmCompositeModeC(hsmCompositeMode ? 1 : 0)
-      self.postMessage({
-        type: 'LOG',
-        stream: 'stdout',
-        message: `[Debug] tls_simulation_set_hsm_composite_mode(${hsmCompositeMode ? 1 : 0})`,
-        requestId,
-      })
-    } else if (hsmCompositeMode) {
-      self.postMessage({
-        type: 'LOG',
-        stream: 'stderr',
-        message:
-          '[Debug] tls_simulation_set_hsm_composite_mode unavailable; composite mode ignored (WASM needs rebuild with phase 5b)',
+          '[Debug] tls_simulation_set_*_hsm_algorithm cwrap unavailable; ' +
+          'WASM may need a rebuild with the new exports. Falling back to PEM.',
         requestId,
       })
     }
@@ -817,24 +804,21 @@ self.addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
       }
       await executeCommand(command, args, files, requestId)
     } else if (type === 'TLS_SIMULATE') {
-      const { clientConfig, serverConfig, files, commands, hsmMode, hsmCompositeMode } =
-        event.data as {
-          type: 'TLS_SIMULATE'
-          clientConfig: string
-          serverConfig: string
-          files?: { name: string; data: Uint8Array }[]
-          commands?: string[]
-          hsmMode?: boolean
-          hsmCompositeMode?: boolean
-          requestId?: string
-        }
+      const { clientConfig, serverConfig, files, commands, hsmMode } = event.data as {
+        type: 'TLS_SIMULATE'
+        clientConfig: string
+        serverConfig: string
+        files?: { name: string; data: Uint8Array }[]
+        commands?: string[]
+        hsmMode?: boolean
+        requestId?: string
+      }
       await executeSimulation(
         clientConfig,
         serverConfig,
         files,
         commands || [],
         Boolean(hsmMode),
-        Boolean(hsmCompositeMode),
         requestId
       )
     } else if (type === 'DELETE_FILE') {

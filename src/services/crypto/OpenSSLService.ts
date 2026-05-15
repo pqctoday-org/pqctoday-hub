@@ -266,7 +266,16 @@ class OpenSSLService {
     serverConfig: string,
     files: { name: string; data: Uint8Array }[] = [],
     commands: string[] = [],
-    options: { hsmMode?: boolean; hsmCompositeMode?: boolean } = {}
+    options: {
+      /* Per-side HSM algorithm selection. Empty / undefined = PEM mode for
+       * that side. Recognized values (must match C-side parser in
+       * tls_simulation_hsm.c hsm_resolve_mldsa_algo + future RSA/ECDSA/
+       * composite branches): "mldsa-44" | "mldsa-65" | "mldsa-87" |
+       * "rsa-2048" | "ecdsa-p256" | "composite-mldsa44-rsa2048-pss" |
+       * "composite-mldsa65-ecdsa-p256" | "composite-mldsa87-ecdsa-p384". */
+      serverHsmAlgorithm?: string
+      clientHsmAlgorithm?: string
+    } = {}
   ): Promise<string> {
     try {
       await this.init()
@@ -316,8 +325,8 @@ class OpenSSLService {
         serverConfig,
         files,
         commands,
-        hsmMode: options.hsmMode === true,
-        hsmCompositeMode: options.hsmCompositeMode === true,
+        serverHsmAlgorithm: options.serverHsmAlgorithm ?? '',
+        clientHsmAlgorithm: options.clientHsmAlgorithm ?? '',
         requestId,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any)
