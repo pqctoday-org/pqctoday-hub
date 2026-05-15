@@ -21,10 +21,6 @@ type WorkerMessage =
       serverConfig: string
       files?: { name: string; data: Uint8Array }[]
       commands?: string[]
-      /* Per-side HSM algorithm selection. Empty = PEM mode. See
-       * OpenSSLService.simulateTLS for the enumerated values. */
-      serverHsmAlgorithm?: string
-      clientHsmAlgorithm?: string
       requestId?: string
     }
   | { type: 'READY'; requestId?: string }
@@ -601,14 +597,12 @@ var executeSimulation = async (
   serverConfig: string,
   files: { name: string; data: Uint8Array }[] = [],
   commands: string[] = [],
-  serverHsmAlgorithm: string = '',
-  clientHsmAlgorithm: string = '',
   requestId?: string
 ) => {
   self.postMessage({
     type: 'LOG',
     stream: 'stdout',
-    message: `[Debug] executeSimulation started (serverHsm="${serverHsmAlgorithm}", clientHsm="${clientHsmAlgorithm}")`,
+    message: `[Debug] executeSimulation started (PEM mode — bundled cert + key)`,
     requestId,
   })
 
@@ -639,35 +633,11 @@ var executeSimulation = async (
       openSSLModule.FS.writeFile(scriptPath, enc.encode(scriptContent))
     }
 
-    // 3. Bind C Functions
-    // void tls_simulation_set_{server,client}_hsm_algorithm(const char *algo)
-    // Empty string = PEM mode (no HSM); recognized non-empty values listed
-    // in OpenSSLService.simulateTLS.
-    const setServerHsmAlgoC = openSSLModule.cwrap('tls_simulation_set_server_hsm_algorithm', null, [
-      'string',
-    ])
-    const setClientHsmAlgoC = openSSLModule.cwrap('tls_simulation_set_client_hsm_algorithm', null, [
-      'string',
-    ])
-    if (setServerHsmAlgoC && setClientHsmAlgoC) {
-      setServerHsmAlgoC(serverHsmAlgorithm)
-      setClientHsmAlgoC(clientHsmAlgorithm)
-      self.postMessage({
-        type: 'LOG',
-        stream: 'stdout',
-        message: `[Debug] tls_simulation_set_*_hsm_algorithm(server="${serverHsmAlgorithm}", client="${clientHsmAlgorithm}")`,
-        requestId,
-      })
-    } else if (serverHsmAlgorithm || clientHsmAlgorithm) {
-      self.postMessage({
-        type: 'LOG',
-        stream: 'stderr',
-        message:
-          '[Debug] tls_simulation_set_*_hsm_algorithm cwrap unavailable; ' +
-          'WASM may need a rebuild with the new exports. Falling back to PEM.',
-        requestId,
-      })
-    }
+    /* HSM-mode cwrap removed: the JS-side UI no longer exposes an HSM
+     * toggle. The C-side `tls_simulation_set_hsm_mode` symbol still exists
+     * in the linked WASM (left for a future, deliberate revival) but is
+     * never called from JS, so the C global `g_hsm_mode_enabled` stays 0
+     * and tls_simulation.c always takes the PEM-file branch. */
 
     // char* execute_tls_simulation(const char* client_conf_path, const char* server_conf_path, const char* script_path)
     const simulateC = openSSLModule.cwrap('execute_tls_simulation', 'string', [
@@ -804,23 +774,15 @@ self.addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
       }
       await executeCommand(command, args, files, requestId)
     } else if (type === 'TLS_SIMULATE') {
-      const { clientConfig, serverConfig, files, commands, hsmMode } = event.data as {
+      const { clientConfig, serverConfig, files, commands } = event.data as {
         type: 'TLS_SIMULATE'
         clientConfig: string
         serverConfig: string
         files?: { name: string; data: Uint8Array }[]
         commands?: string[]
-        hsmMode?: boolean
         requestId?: string
       }
-      await executeSimulation(
-        clientConfig,
-        serverConfig,
-        files,
-        commands || [],
-        Boolean(hsmMode),
-        requestId
-      )
+      await executeSimulation(clientConfig, serverConfig, files, commands || [], requestId)
     } else if (type === 'DELETE_FILE') {
       const { name } = event.data as { type: 'DELETE_FILE'; name: string }
       // moduleFactory is not defined in this scope, assuming it's a global or imported variable
