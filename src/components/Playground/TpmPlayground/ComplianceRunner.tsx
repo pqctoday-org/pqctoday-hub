@@ -160,11 +160,11 @@ interface ScenarioLine {
 }
 
 const INITIAL_CHECKS: Omit<CheckEntry, 'status' | 'detail'>[] = [
-  { id: 'V185-001', name: 'TPM2_SelfTest(fullTest)', section: '§11.2.1' },
-  { id: 'V185-002', name: 'Response Header Structure', section: '§7.2' },
-  { id: 'V185-003', name: 'TPM2_GetCapability(ALGS)', section: '§30.2' },
-  { id: 'V185-004', name: 'ML-KEM Algorithm Registered (0x00A0)', section: '§11.9' },
-  { id: 'V185-005', name: 'ML-DSA Algorithm Registered (0x00A1)', section: '§11.9' },
+  { id: 'V185-001', name: 'TPM2_SelfTest(fullTest)', section: 'Part 3 §10.2' },
+  { id: 'V185-002', name: 'Response Header Structure', section: 'Part 1 §15.2' },
+  { id: 'V185-003', name: 'TPM2_GetCapability(ALGS)', section: 'Part 3 §30.2' },
+  { id: 'V185-004', name: 'ML-KEM Algorithm Registered (0x00A0)', section: 'Part 2 §6.3' },
+  { id: 'V185-005', name: 'ML-DSA Algorithm Registered (0x00A1)', section: 'Part 2 §6.3' },
   { id: 'V185-006', name: 'TPM2_GetRandom Entropy Source', section: '§16.1' },
   { id: 'V185-007', name: 'Entropy Non-Trivial (32B)', section: '§16.1' },
   { id: 'V185-008', name: 'CreatePrimary ML-KEM-768 EK', section: '§11.2.6 Table 204' },
@@ -236,7 +236,7 @@ export function ComplianceRunner() {
 
     try {
       // ── Phase 2: Algorithm Self-Test ────────────────────────────
-      addLine('phase', '[+] Phase 2 — Algorithm Self-Test  (TCG V1.85 §11.2.1)')
+      addLine('phase', '[+] Phase 2 — Algorithm Self-Test  (TCG V1.85 Part 3 §10.2)')
       addLine('send', '    → TPM2_SelfTest(fullTest=1)')
 
       updateCheck('V185-001', { status: 'running' })
@@ -316,7 +316,11 @@ export function ComplianceRunner() {
       addLine('send', '    → checking TPM_ALG_MLKEM (0x00A0)')
       if (algList.includes(ALG_MLKEM)) {
         markPass('V185-004', `TPM_ALG_MLKEM (0x00A0) present`)
-        addLine('recv', '    ← ML-KEM-768: registered ✓  (FIPS 203, TCG V1.85 §14)', true)
+        addLine(
+          'recv',
+          '    ← ML-KEM-768: registered ✓  (FIPS 203, TCG V1.85 Part 2 §6.3 + §11.2.6)',
+          true
+        )
       } else {
         markFail('V185-004', `TPM_ALG_MLKEM (0x00A0) NOT found in ${algList.length} algorithms`)
         addLine('recv', `    ← ML-KEM-768 (0x00A0): NOT REGISTERED ✗`, false)
@@ -327,7 +331,11 @@ export function ComplianceRunner() {
       addLine('send', '    → checking TPM_ALG_MLDSA (0x00A1)')
       if (algList.includes(ALG_MLDSA)) {
         markPass('V185-005', `TPM_ALG_MLDSA (0x00A1) present`)
-        addLine('recv', '    ← ML-DSA-65: registered ✓  (FIPS 204, TCG V1.85 §15)', true)
+        addLine(
+          'recv',
+          '    ← ML-DSA-65: registered ✓  (FIPS 204, TCG V1.85 Part 2 §6.3 + §11.2.7)',
+          true
+        )
       } else {
         markFail('V185-005', `TPM_ALG_MLDSA (0x00A1) NOT found in ${algList.length} algorithms`)
         addLine('recv', `    ← ML-DSA-65 (0x00A1): NOT REGISTERED ✗`, false)
@@ -662,7 +670,10 @@ export function ComplianceRunner() {
 
       // ── Phase 9: SignDigest ──────────────────────────────────────
       addLine('phase', '[+] Phase 9 — Digest Signing  (ML-DSA-65 AK)')
-      addLine('send', '    → TPM2_SignDigest(keyHandle = AK handle, digest = 32B SHA-256)')
+      addLine(
+        'send',
+        '    → TPM2_SignDigest(keyHandle, context=∅, digest=32B SHA-256, validation=NULL ticket)  [V1.85 RC4 Table 126]'
+      )
 
       updateCheck('V185-015', { status: 'running' })
       await delay()
@@ -676,20 +687,26 @@ export function ComplianceRunner() {
           const putU16 = (v: number) => p.push((v >> 8) & 0xff, v & 0xff)
           const putU32 = (v: number) =>
             p.push((v >> 24) & 0xff, (v >> 16) & 0xff, (v >> 8) & 0xff, v & 0xff)
-          putU16(0x8002)
-          putU32(0)
-          putU32(CC_SIGN_DIGEST)
-          putU32(akHandle)
+          // V1.85 RC4 Table 126 wire: {keyHandle, context, digest, validation}
+          putU16(0x8002) // tag = TPM_ST_SESSIONS
+          putU32(0) // commandSize placeholder
+          putU32(CC_SIGN_DIGEST) // commandCode = TPM_CC_SignDigest (0x000001A6)
+          putU32(akHandle) // @keyHandle
+          // authArea: 9 bytes — one password session
           putU32(9)
-          putU32(RS_PW)
+          putU32(RS_PW) // sessionHandle = TPM_RS_PW (0x40000009)
+          putU16(0) // nonce.size = 0
+          p.push(0) // sessionAttributes = 0
+          putU16(0) // hmac.size = 0
+          // P1: context (TPM2B_SIGNATURE_CTX, empty)
           putU16(0)
-          p.push(0)
-          putU16(0) // auth area
-          putU16(0x0010) // inScheme.scheme = TPM_ALG_NULL (0x0010) → key default
-          putU16(32) // digest.size = 32 (TPM2B_DIGEST size prefix)
-          for (let i = 0; i < 32; i++) p.push(0xbb) // digest bytes
-          putU16(0) // context.size = 0 (empty domain-separation context)
-          putU16(0) // hint.size = 0 (empty determinism hint)
+          // P2: digest (TPM2B_DIGEST = size + buffer)
+          putU16(32)
+          for (let i = 0; i < 32; i++) p.push(0xbb)
+          // P3: validation (TPMT_TK_HASHCHECK = tag + hierarchy + digest)
+          putU16(0x8024) // tag = TPM_ST_HASHCHECK
+          putU32(0x40000007) // hierarchy = TPM_RH_NULL (NULL ticket)
+          putU16(0) // digest.size = 0 (empty for NULL ticket)
           const total = p.length
           p[2] = (total >> 24) & 0xff
           p[3] = (total >> 16) & 0xff

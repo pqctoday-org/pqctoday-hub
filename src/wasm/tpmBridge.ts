@@ -24,7 +24,9 @@ export function clearLastTpmErr(): void {
 }
 
 // Build stamp used for cache-busting — updated each deploy
-const WASM_BUILD = '20260513-v0p7-ak-noDA'
+// 20260515-v0p8-rc4-wire: pqctoday-tpm v0.8.0 — V1.85 RC4 SignDigest +
+// VerifyDigestSignature wire-format migration (Tables 126 / 120).
+const WASM_BUILD = '20260515-v0p8-rc4-wire'
 
 // V2.7 RC1 provisioning status, captured after registerPqcBridge runs.
 // Indexes: 0=ML-KEM-512, 1=ML-KEM-768, 2=ML-KEM-1024,
