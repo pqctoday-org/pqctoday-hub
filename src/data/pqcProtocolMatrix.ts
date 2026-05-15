@@ -55,6 +55,16 @@ export interface PlaygroundTool {
     pureSig: TestabilityValue
     hybridSig: TestabilityValue
   }
+  /**
+   * Optional caveats surfaced as tooltips next to the testability label.
+   * Use sparingly — reserved for educational/experimental constructs that
+   * earn a 'partial' rating but warrant explicit disclosure (e.g. TPM
+   * Labeled-KEM hybrid is not standardized by TCG v1.85).
+   */
+  pureKemNote?: string
+  hybridKemNote?: string
+  pureSigNote?: string
+  hybridSigNote?: string
 }
 
 export interface ProtocolMatrixRow {
@@ -292,6 +302,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         toolId: 'tls-simulator',
         toolName: 'TLS 1.3 Simulator',
         testability: { pureKem: 'full', hybridKem: 'full', pureSig: 'full', hybridSig: 'partial' },
+        hybridSigNote:
+          'Composite-sig cert IDs (draft-ietf-lamps-pq-composite-sigs-19) are exposed in the dropdown, but currently substitute the closest pre-baked ML-DSA PEM. True composite cert generation is delegated to OpenSSL Studio "Custom".',
       },
     ],
     gaps: [
@@ -722,13 +734,13 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     id: 'tpm',
     name: 'TPM',
     description:
-      'Trusted Platform Module — TPM 2.0 Library v1.85 (PUBLISHED 2026-05) adds ML-DSA, ML-KEM, Labeled KEM, EdDSA.',
+      'Trusted Platform Module — TPM 2.0 Library v1.85 (PUBLISHED 2026-03-12) adds ML-DSA, ML-KEM, Labeled KEM, EdDSA.',
     latestRelease: [
       {
         id: 'TCG-TPM-2.0-Library-v1.85-Part3-Published',
-        title: 'TCG TPM 2.0 Library v1.85 Part 3: Commands (Published 2026-05)',
+        title: 'TCG TPM 2.0 Library v1.85 Part 3: Commands (Published 2026-03-12)',
         url: 'https://trustedcomputinggroup.org/resource/tpm-library-specification/',
-        date: '2026-05',
+        date: '2026-03-12',
         localFile:
           '/library/Trusted-Platform-Module-2.0-Library-Part-3-Commands_Version-185_pub.pdf',
       },
@@ -736,14 +748,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         id: 'TCG-PC-Client-Platform-TPM-Profile-v1.07',
         title: 'TCG PC Client Specific Platform TPM Profile v1.07 (Published)',
         url: 'https://trustedcomputinggroup.org/resource/pc-client-platform-tpm-profile-ptp-specification/',
-        date: '2026-05',
+        date: '2026-03-12',
         localFile: '/library/PC-Client-Specific-Platform-TPM-Profile-for-TPM-2p0-v1p07_Pub.pdf',
       },
       {
         id: 'TCG-EK-Credential-Profile-v2.7',
         title: 'TCG EK Credential Profile for TPM 2.0, Level 0, v2.7 (Published)',
         url: 'https://trustedcomputinggroup.org/resource/tcg-ek-credential-profile-for-tpm-family-2-0/',
-        date: '2026-05',
+        date: '2026-03-12',
         localFile:
           '/library/TCG-EK-Credential-Profile-for-TPM-Family-2.0-Level-0-Version-2.7_Pub.pdf',
       },
@@ -751,7 +763,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         id: 'TCG-TPM-2.0-Library-v1.85-Errata',
         title: 'TCG TPM 2.0 Library v1.85 — Errata',
         url: 'https://trustedcomputinggroup.org/resource/tpm-library-specification/',
-        date: '2026-05',
+        date: '2026-03-12',
         localFile: '/library/Eratta-Trusted-Platform-Module-2.0-Library_Version-185_pub.pdf',
       },
     ],
@@ -808,6 +820,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         toolId: 'tpm-playground',
         toolName: 'PQC TPM Workshop',
         testability: { pureKem: 'full', hybridKem: 'partial', pureSig: 'full', hybridSig: 'na' },
+        hybridKemNote:
+          'Educational Labeled-KEM construct (ML-KEM via softhsmv3 + classical ECDH via Web Crypto, combined with HKDF-SHA256). TCG v1.85 does not standardize hybrid.',
       },
     ],
     gaps: [
