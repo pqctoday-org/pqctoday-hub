@@ -509,6 +509,10 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         },
       },
     ],
+    gaps: [
+      'sntrup761x25519 (RFC 9941) not exposed — softhsmv3 has no sntrup KEM.',
+      'Composite SSH host-key signature (classical + ML-DSA) not supported in the tool — no IETF spec.',
+    ],
     liveDeployments: [
       {
         provider: 'OpenSSH',
