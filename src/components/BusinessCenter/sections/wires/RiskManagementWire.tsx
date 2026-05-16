@@ -36,6 +36,7 @@ import { Button } from '@/components/ui/button'
 import type { BusinessMetrics } from '../../hooks/useBusinessMetrics'
 import { selectApplicableFrameworks } from '../../hooks/useBusinessMetrics'
 import { FrameworkDeadlineList } from '../../widgets/FrameworkDeadlineList'
+import { HiddenFrameworksToggle } from '../../widgets/HiddenFrameworksToggle'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { useThreatsData } from '@/hooks/useThreatsData'
 
@@ -184,7 +185,7 @@ function HealthTile({ metrics }: { metrics: BusinessMetrics }) {
 
 function FrameworkBlock({ metrics }: { metrics: BusinessMetrics }) {
   const navigate = useNavigate()
-  const { visible, hiddenCount, hasContext } = useMemo(
+  const { visible, hiddenCount, hasContext, hidden } = useMemo(
     () => selectApplicableFrameworks(metrics.trackedFrameworks, metrics.industry, metrics.country),
     [metrics.trackedFrameworks, metrics.industry, metrics.country]
   )
@@ -238,17 +239,20 @@ function FrameworkBlock({ metrics }: { metrics: BusinessMetrics }) {
         <FrameworkDeadlineList frameworks={visible} limit={6} />
       )}
       {hasContext && hiddenCount > 0 && (
-        <p className="text-[11px] text-muted-foreground inline-flex items-center gap-1 flex-wrap">
-          {hiddenCount} hidden — not applicable to {metrics.country || metrics.industry}.
+        <div className="flex flex-col gap-1">
+          <HiddenFrameworksToggle
+            hidden={hidden}
+            jurisdictionLabel={metrics.country || metrics.industry}
+          />
           <Button
             variant="link"
             size="sm"
             onClick={() => navigate('/compliance')}
-            className="h-auto p-0 text-[11px]"
+            className="h-auto p-0 text-[11px] self-start"
           >
             Review on Compliance
           </Button>
-        </p>
+        </div>
       )}
     </div>
   )

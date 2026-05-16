@@ -33,6 +33,7 @@ import { CommandCenterStrategicPlan } from './sections/CommandCenterStrategicPla
 import { ApplicabilityPanel } from '../applicability/ApplicabilityPanel'
 import { CSWP39SectionsNav } from './sections/CSWP39SectionsNav'
 import { CSWP39ZonePanel } from './sections/CSWP39ZonePanel'
+import { PillarDisclaimer } from './widgets/PillarDisclaimer'
 import { ActionItemsSection } from './sections/ActionItemsSection'
 import { CompactLearningBar } from './CompactLearningBar'
 import { LearningFrameBanner } from './LearningFrameBanner'
@@ -44,6 +45,7 @@ import {
   BASIC_DENSITY_DEFAULT_ZONE,
 } from './lib/density'
 import { ArtifactDrawer, type DrawerMode } from './ArtifactDrawer'
+import { CryptoAgilityDefinitions } from './widgets/CryptoAgilityDefinitions'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 
 function WelcomeState() {
@@ -471,12 +473,20 @@ export function BusinessCenterView() {
                     {...zoneCallbacks}
                   />
                 ))}
+                <PillarDisclaimer className="px-1 pt-2" />
               </div>
             </div>
           </div>
 
           {/* Bottom cross-cut: learning bar */}
           <CompactLearningBar modules={metrics.execModuleProgress} />
+
+          {/* Glossary surface — primary NIST CSWP 39 definition + alternative
+               framework definitions from Appendix B (FS-ISAC, ATIS, ETSI,
+               CARAF, 2016 NIST workshop). Low-prominence accordion at the
+               bottom of the dashboard so it doesn't compete with the
+               strategic plan but is discoverable. (Audit T2.) */}
+          <CryptoAgilityDefinitions />
         </div>
       )}
 
