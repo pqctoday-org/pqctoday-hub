@@ -15,13 +15,29 @@ export type BodyType =
 
 export type DeadlinePhase = 'active' | 'imminent' | 'near' | 'mid' | 'long' | 'ongoing'
 
+/**
+ * Five-valued PQC-requirement enum (canonical surface). Existing consumers
+ * keep using the legacy `requiresPQC` boolean (= `pqcRequirement === 'yes'`);
+ * new code should branch on the enum to surface the full spectrum.
+ *
+ * - `yes`      explicit mandate (e.g. CNSA 2.0, ANSSI PQC qualification)
+ * - `no`       framework does not mandate / address PQC
+ * - `partial`  PQC mandated for some scope but not whole framework
+ * - `guidance` framework publishes PQC guidance but does not mandate adoption
+ * - `expected` PQC mandate anticipated but not yet codified (e.g. CRA, FedRAMP)
+ */
+export type PQCRequirement = 'yes' | 'no' | 'partial' | 'guidance' | 'expected'
+
 export interface ComplianceFramework {
   id: string
   label: string
   description: string
   industries: string[]
   countries: string[]
+  /** Legacy boolean — equivalent to `pqcRequirement === 'yes'`. Prefer `pqcRequirement` in new code. */
   requiresPQC: boolean
+  /** Canonical 5-valued PQC-requirement enum — surfaces nuance the boolean drops. */
+  pqcRequirement: PQCRequirement
   deadline: string
   deadlineYear?: number
   deadlinePhase: DeadlinePhase
@@ -201,6 +217,13 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     industries: splitSemicolon(row.industries),
     countries: splitSemicolon(row.countries).map(expandCountryToken),
     requiresPQC: parseBoolYesNo(row.requires_pqc),
+    pqcRequirement: ((): PQCRequirement => {
+      const v = (row.requires_pqc || '').trim().toLowerCase()
+      if (v === 'yes' || v === 'no' || v === 'partial' || v === 'guidance' || v === 'expected') {
+        return v
+      }
+      return 'no'
+    })(),
     deadline,
     deadlineYear,
     deadlinePhase,

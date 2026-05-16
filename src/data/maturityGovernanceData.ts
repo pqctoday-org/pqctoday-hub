@@ -4,6 +4,12 @@
  * Unlike standard loaders that pick only the latest file, the maturity corpus
  * spans multiple run dates (each enrichment script appends to the date it ran).
  * Deduplication key: ref_id + pillar + maturity_level + requirement[:60].
+ *
+ * Iteration order: filename DESCENDING so the most recent revision wins on
+ * dedup-key collisions. Enrichment runs that *replace* an earlier paraphrase
+ * (e.g. the 2026-05-15 audit fixes in *_r1.csv) must shadow the older row, not
+ * be shadowed by it. Pure additions (new tier behaviours, new sources) still
+ * load regardless of order since they don't share dedup keys with prior rows.
  */
 import Papa from 'papaparse'
 import type { MaturityRequirement, MaturityCategory } from '@/types/MaturityTypes'
@@ -51,7 +57,10 @@ const modules = import.meta.glob('./pqc_maturity_governance_requirements_*.csv',
 const seen = new Set<string>()
 const merged: MaturityRequirement[] = []
 
-for (const content of Object.values(modules)) {
+// Iterate in filename DESCENDING order so newer revisions win on dedup-key
+// collisions (e.g. *_r1 > base file > previous month's file).
+const orderedEntries = Object.entries(modules).sort(([a], [b]) => b.localeCompare(a))
+for (const [, content] of orderedEntries) {
   if (typeof content !== 'string') continue
   const { data } = Papa.parse<RawMaturityRow>(content.trim(), {
     header: true,

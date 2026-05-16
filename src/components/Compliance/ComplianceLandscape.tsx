@@ -354,8 +354,12 @@ function FrameworkCard({
       aria-label={onSelectDetail ? `View details for ${fw.label}` : undefined}
     >
       <div className="flex items-start gap-2">
-        {fw.requiresPQC ? (
+        {fw.pqcRequirement === 'yes' ? (
           <ShieldCheck size={18} className="text-status-success shrink-0 mt-0.5" />
+        ) : fw.pqcRequirement === 'partial' || fw.pqcRequirement === 'expected' ? (
+          <ShieldCheck size={18} className="text-status-warning shrink-0 mt-0.5" />
+        ) : fw.pqcRequirement === 'guidance' ? (
+          <ShieldCheck size={18} className="text-status-info shrink-0 mt-0.5" />
         ) : (
           <ShieldAlert size={18} className="text-muted-foreground shrink-0 mt-0.5" />
         )}
@@ -385,8 +389,29 @@ function FrameworkCard({
                 Alliance
               </span>
             )}
-            {fw.requiresPQC ? (
+            {fw.pqcRequirement === 'yes' ? (
               <span className="text-xs text-status-success font-medium">Requires PQC</span>
+            ) : fw.pqcRequirement === 'partial' ? (
+              <span
+                className="text-xs text-status-warning font-medium"
+                title="PQC required for some scope but not the whole framework"
+              >
+                PQC partial
+              </span>
+            ) : fw.pqcRequirement === 'expected' ? (
+              <span
+                className="text-xs text-status-warning font-medium"
+                title="PQC mandate anticipated but not yet codified"
+              >
+                PQC expected
+              </span>
+            ) : fw.pqcRequirement === 'guidance' ? (
+              <span
+                className="text-xs text-status-info font-medium"
+                title="Framework publishes PQC guidance but does not mandate adoption"
+              >
+                PQC guidance
+              </span>
             ) : (
               <span className="text-xs text-muted-foreground">No PQC mandate yet</span>
             )}
