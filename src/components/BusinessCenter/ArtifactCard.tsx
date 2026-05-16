@@ -34,6 +34,7 @@ export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'hybrid-transition': 'Hybrid Transition Plan',
   'mti-negotiator': 'MTI Recommendation',
   'crypto-api-refactor': 'Crypto API Refactor Audit',
+  'cloud-responsibility-matrix': 'Cloud Responsibility Matrix',
 }
 
 const PILLAR_COLORS: Record<string, string> = {

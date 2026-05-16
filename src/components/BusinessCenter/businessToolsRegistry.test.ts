@@ -51,6 +51,7 @@ const ALL_ARTIFACT_TYPES: ExecutiveDocumentType[] = [
   'hybrid-transition',
   'mti-negotiator',
   'crypto-api-refactor',
+  'cloud-responsibility-matrix',
 ]
 
 /** Artifact types that intentionally have NO builder component. Each entry

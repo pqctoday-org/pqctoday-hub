@@ -29,6 +29,7 @@ export const STEP_ARTIFACT_TYPES: Record<CSWP39StepId, ExecutiveDocumentType[]> 
     'compliance-checklist',
     'contract-clause',
     'mti-negotiator',
+    'cloud-responsibility-matrix',
   ],
   inventory: ['supply-chain-matrix', 'crypto-cbom', 'crypto-vulnerability-watch'],
   'identify-gaps': ['risk-register', 'vendor-scorecard'],
@@ -73,6 +74,7 @@ export const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
   'hybrid-transition': 'architecture',
   'mti-negotiator': 'governance',
   'crypto-api-refactor': 'architecture',
+  'cloud-responsibility-matrix': 'governance',
 }
 
 export function getPillarForType(type: ExecutiveDocumentType): PillarKey {
