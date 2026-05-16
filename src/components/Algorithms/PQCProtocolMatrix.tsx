@@ -35,6 +35,48 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ProtocolDetailModal } from './ProtocolDetailModal'
+import { libraryData } from '../../data/libraryData'
+
+/* Build a Set of library reference_ids once at module load. Used to decide
+ * whether a matrix doc reference should route to /library?ref=<id> (opens
+ * the LibraryDetailPopover overview) or fall back to its direct source URL.
+ *
+ * Walks nested `children` so docs under a parent (e.g. RFC versions, draft
+ * iterations) are reachable too. */
+const LIBRARY_REF_IDS: Set<string> = (() => {
+  const ids = new Set<string>()
+  const walk = (items: typeof libraryData) => {
+    for (const item of items) {
+      ids.add(item.referenceId)
+      if (item.children) walk(item.children)
+    }
+  }
+  walk(libraryData)
+  return ids
+})()
+
+/* Normalize a matrix doc id (e.g. `RFC-4253`, `draft-ietf-tls-mlkem-07`)
+ * to the library's `reference_id` convention (e.g. `RFC 4253`, drafts
+ * pass through unchanged). Only RFCs need the dash→space swap; other
+ * identifier families already match. */
+const toLibraryRefId = (matrixId: string): string =>
+  matrixId.startsWith('RFC-') ? `RFC ${matrixId.slice(4)}` : matrixId
+
+/* Decide the click target for a matrix doc reference. Always routes to the
+ * library detail pane (`/library?ref=<refId>`) so the user sees a doc
+ * overview before clicking through to the source URL inside the pane. If
+ * a matrix ref's library entry is missing, this is a data gap — fix by
+ * adding the doc to library CSV rather than silently leaking the source
+ * URL into a new tab. Dev-only console warning surfaces the gap. */
+const resolveDocHref = (matrixId: string): string => {
+  const libRefId = toLibraryRefId(matrixId)
+  if (!LIBRARY_REF_IDS.has(libRefId) && import.meta.env.DEV) {
+    console.warn(
+      `[PQCProtocolMatrix] doc ref "${matrixId}" (normalized "${libRefId}") not in library — add it to the library CSV`
+    )
+  }
+  return `/library?ref=${encodeURIComponent(libRefId)}`
+}
 
 type SortKey = 'matrix' | 'name' | 'maturity' | 'oss' | 'commercial' | 'deployments'
 type SortDirection = 'asc' | 'desc'
@@ -300,15 +342,14 @@ function DocList({ docs, label }: { docs: ProtocolMatrixRow['latestRelease']; la
       {docs.map((d) => (
         <div key={d.id} className="flex flex-col gap-0.5">
           <a
-            href={d.url}
+            href={resolveDocHref(d.id)}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-start gap-1 text-xs text-primary hover:underline"
-            title={`${label}: ${d.title}`}
+            title={`${label}: ${d.title} — opens in library`}
           >
             <FileText size={11} className="mt-0.5 shrink-0" />
             <span className="font-medium">{d.id}</span>
-            <ExternalLink size={9} className="mt-0.5 shrink-0 opacity-60" />
           </a>
           <span className="text-[10px] leading-tight text-muted-foreground">{d.date}</span>
         </div>
