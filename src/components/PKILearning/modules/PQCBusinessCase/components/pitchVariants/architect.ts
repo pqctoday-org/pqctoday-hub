@@ -47,7 +47,7 @@ export function buildArchitectVariant(data: ExecutiveModuleData): PitchVariant {
     },
     {
       id: 'quantum-urgency',
-      title: 'HNDL / HNFL — Design Constraints',
+      title: 'HNDL / HNFL - Design Constraints',
       description: 'Time-bound risks that constrain migration sequencing.',
       fields: [
         {
@@ -60,7 +60,7 @@ export function buildArchitectVariant(data: ExecutiveModuleData): PitchVariant {
     },
     {
       id: 'crypto-inventory',
-      title: 'Crypto Inventory — Architecture Detail',
+      title: 'Crypto Inventory - Architecture Detail',
       description: 'Algorithm inventory mapped to infrastructure layers and use cases.',
       fields: [
         {
@@ -87,7 +87,7 @@ export function buildArchitectVariant(data: ExecutiveModuleData): PitchVariant {
     {
       id: 'algorithm-migrations',
       title: 'Algorithm Substitution Matrix',
-      description: 'Classical → PQC substitutions with hybrid deployment implications.',
+      description: 'Classical -> PQC substitutions with hybrid deployment implications.',
       fields: [
         {
           id: 'migrations',
@@ -125,7 +125,7 @@ export function buildArchitectVariant(data: ExecutiveModuleData): PitchVariant {
     },
     {
       id: 'governance',
-      title: 'Governance — Crypto Review Board',
+      title: 'Governance - Crypto Review Board',
       description: 'Algorithm approvals, exceptions, and crypto-agility enforcement.',
       fields: [
         {
@@ -172,7 +172,7 @@ export function buildArchitectVariant(data: ExecutiveModuleData): PitchVariant {
     })
     const get = (sid: string, fid: string) => (formData[sid]?.[fid] as string) || '_Not specified_'
 
-    let md = '# PQC Migration — Architecture Review\n\n'
+    let md = '# PQC Migration - Architecture Review\n\n'
     md += `**Prepared:** ${dateStr}\n`
     if (d.industry) md += `**Industry:** ${d.industry}\n`
     if (d.country) md += `**Country:** ${d.country}\n`
@@ -211,12 +211,14 @@ export function buildArchitectVariant(data: ExecutiveModuleData): PitchVariant {
     md += '## 11. Recommended Actions\n\n'
     md += `${get('actions', 'recommendations')}\n\n---\n\n`
 
+    md +=
+      '*Aligned to NIST CSWP 39 §3.2.4 (Hybrid Algorithms), §5.2 (Crypto Security Policy Enforcement), §5.4 (Crypto Architecture). https://doi.org/10.6028/NIST.CSWP.39*\n'
     md += '*Customized for the Architect role via PQC Today Command Center.*\n'
     return md
   }
 
   return {
-    title: 'PQC Migration — Architecture Review',
+    title: 'PQC Migration - Architecture Review',
     description:
       'An architecture-review-ready brief covering substitutions, patterns, and governance.',
     objective: buildPitchObjective('architect'),

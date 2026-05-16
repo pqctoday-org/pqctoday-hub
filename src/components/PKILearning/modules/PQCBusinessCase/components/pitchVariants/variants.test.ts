@@ -149,3 +149,35 @@ describe('getPitchVariant', () => {
     expect((view.match(/^## /gm) ?? []).length).toBeGreaterThan(4)
   })
 })
+
+describe('CSWP-39 citation', () => {
+  const data = makeData()
+
+  function previewFor(persona: 'executive' | 'developer' | 'architect' | 'ops'): string {
+    const v = getPitchVariant(persona, data)
+    const emptyFormData: Record<string, Record<string, string | string[]>> = {}
+    for (const section of v.sections) {
+      emptyFormData[section.id] = {}
+      for (const field of section.fields) {
+        emptyFormData[section.id][field.id] = field.defaultValue ?? ''
+      }
+    }
+    return v.renderPreview(emptyFormData, data)
+  }
+
+  it('every persona variant cites NIST CSWP 39 + DOI in footer', () => {
+    const personas = ['executive', 'developer', 'architect', 'ops'] as const
+    for (const p of personas) {
+      const view = previewFor(p)
+      expect(view, `${p} variant should cite NIST CSWP 39`).toMatch(/NIST CSWP 39/)
+      expect(view, `${p} variant should link the DOI`).toMatch(/doi\.org\/10\.6028\/NIST\.CSWP\.39/)
+    }
+  })
+
+  it('architect variant cites the hybrid + governance + architecture sections', () => {
+    const view = previewFor('architect')
+    expect(view).toMatch(/§3\.2\.4/)
+    expect(view).toMatch(/§5\.2/)
+    expect(view).toMatch(/§5\.4/)
+  })
+})

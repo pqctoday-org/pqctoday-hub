@@ -357,6 +357,13 @@ function renderContractPreview(data: Record<string, Record<string, string | stri
   md +=
     '*This document is generated for educational purposes. Consult legal counsel before incorporating into vendor agreements.*\n'
 
+  md += '\n---\n\n'
+  md +=
+    '*Aligned to NIST CSWP 39 §5.3 - Cryptographic Technology Supply Chains. https://doi.org/10.6028/NIST.CSWP.39*\n'
+
+  // N5: sanitise non-ASCII punctuation in the exported markdown string only.
+  md = md.replace(/—/g, '-').replace(/–/g, '-').replace(/[‘’]/g, "'").replace(/[“”]/g, '"')
+
   return md
 }
 
@@ -436,6 +443,7 @@ export const ContractClauseGenerator: React.FC = () => {
         exportFilename="pqc-vendor-contract"
         exportFormats={['markdown', 'pdf']}
         renderPreview={renderContractPreview}
+        wideTable
       />
     </div>
   )

@@ -67,29 +67,29 @@ export function buildQuantumUrgencyDefault(data: Data): string {
   const hnfl = data.hnflRiskWindow
 
   if (hndl) {
-    const est = hndl.isEstimated ? ' (estimated — retention unknown)' : ''
+    const est = hndl.isEstimated ? ' (estimated - retention unknown)' : ''
     if (hndl.isAtRisk) {
       parts.push(
         `HNDL (harvest-now-decrypt-later): data with a ${hndl.dataRetentionYears}-year retention is being captured today for future decryption. Exposure window = ${hndl.riskWindowYears} years beyond the estimated quantum threat year (${hndl.estimatedQuantumThreatYear})${est}.`
       )
     } else {
       parts.push(
-        `HNDL risk: retention (${hndl.dataRetentionYears}y) currently sits inside the pre-quantum window — monitor annually${est}.`
+        `HNDL risk: retention (${hndl.dataRetentionYears}y) currently sits inside the pre-quantum window - monitor annually${est}.`
       )
     }
   }
   if (hnfl) {
-    const est = hnfl.isEstimated ? ' (estimated — credential lifetime unknown)' : ''
+    const est = hnfl.isEstimated ? ' (estimated - credential lifetime unknown)' : ''
     if (hnfl.isAtRisk) {
       parts.push(
-        `HNFL (harvest-now-forge-later): signing credentials remain trusted for ${hnfl.credentialLifetimeYears} years — ${hnfl.riskWindowYears} year${hnfl.riskWindowYears !== 1 ? 's' : ''} past the quantum threat line. Forgery liability grows with every unrotated certificate${est}.`
+        `HNFL (harvest-now-forge-later): signing credentials remain trusted for ${hnfl.credentialLifetimeYears} years - ${hnfl.riskWindowYears} year${hnfl.riskWindowYears !== 1 ? 's' : ''} past the quantum threat line. Forgery liability grows with every unrotated certificate${est}.`
       )
       if (hnfl.hnflRelevantUseCases.length > 0) {
         parts.push(`High-relevance use cases: ${hnfl.hnflRelevantUseCases.join(', ')}.`)
       }
     } else if (hnfl.hasSigningAlgorithms) {
       parts.push(
-        `HNFL: signing present but credential lifetimes do not extend past the quantum threat window — rotation cadence is adequate for now${est}.`
+        `HNFL: signing present but credential lifetimes do not extend past the quantum threat window - rotation cadence is adequate for now${est}.`
       )
     }
   }
@@ -111,7 +111,7 @@ export function buildCryptoInventoryDefault(data: Data, detail: 'summary' | 'det
   }
   if (profile?.algorithmUnknown) {
     lines.push(
-      'Algorithm inventory is incomplete — a CBOM (Cryptographic Bill of Materials) is a prerequisite for migration planning.'
+      'Algorithm inventory is incomplete - a CBOM (Cryptographic Bill of Materials) is a prerequisite for migration planning.'
     )
   }
 
@@ -124,7 +124,7 @@ export function buildCryptoInventoryDefault(data: Data, detail: 'summary' | 'det
     lines.push('Per-layer technology stack:')
     for (const [layer, values] of Object.entries(subcats)) {
       if (values.length > 0) {
-        lines.push(`  • ${layer}: ${values.join(', ')}`)
+        lines.push(`  - ${layer}: ${values.join(', ')}`)
       }
     }
   }
@@ -137,7 +137,7 @@ export function buildCryptoInventoryDefault(data: Data, detail: 'summary' | 'det
     const quantumVuln = data.algorithmMigrations.filter((m) => m.quantumVulnerable)
     if (quantumVuln.length > 0) {
       lines.push(
-        `\nQuantum-vulnerable algorithms (${quantumVuln.length}): ${quantumVuln.map((m) => `${m.classical} → ${m.replacement}`).join('; ')}.`
+        `\nQuantum-vulnerable algorithms (${quantumVuln.length}): ${quantumVuln.map((m) => `${m.classical} -> ${m.replacement}`).join('; ')}.`
       )
     }
   }
@@ -155,20 +155,20 @@ export function buildCategoryDriversDefault(data: Data): string {
     return 'Complete the assessment to see per-category score drivers (quantum exposure, migration complexity, regulatory pressure, organizational readiness).'
   }
   return [
-    `Quantum Exposure — ${scores.quantumExposure}/100. ${drivers.quantumExposure}`,
-    `Migration Complexity — ${scores.migrationComplexity}/100. ${drivers.migrationComplexity}`,
-    `Regulatory Pressure — ${scores.regulatoryPressure}/100. ${drivers.regulatoryPressure}`,
-    `Organizational Readiness — ${scores.organizationalReadiness}/100. ${drivers.organizationalReadiness}`,
+    `Quantum Exposure - ${scores.quantumExposure}/100. ${drivers.quantumExposure}`,
+    `Migration Complexity - ${scores.migrationComplexity}/100. ${drivers.migrationComplexity}`,
+    `Regulatory Pressure - ${scores.regulatoryPressure}/100. ${drivers.regulatoryPressure}`,
+    `Organizational Readiness - ${scores.organizationalReadiness}/100. ${drivers.organizationalReadiness}`,
   ].join('\n\n')
 }
 
 export function buildAlgorithmMigrationsDefault(data: Data): string {
   if (data.algorithmMigrations.length === 0) {
-    return 'Complete the assessment (Step 3: Current Crypto) to generate the classical → PQC replacement map.'
+    return 'Complete the assessment (Step 3: Current Crypto) to generate the classical -> PQC replacement map.'
   }
   const rows = data.algorithmMigrations.map((m) => {
-    const flag = m.quantumVulnerable ? '⚠️ vulnerable' : 'safe'
-    return `• ${m.classical} → ${m.replacement} [${m.urgency}, ${flag}] — ${m.notes}`
+    const flag = m.quantumVulnerable ? '[VULN] vulnerable' : 'safe'
+    return `- ${m.classical} -> ${m.replacement} [${m.urgency}, ${flag}] - ${m.notes}`
   })
   return rows.join('\n')
 }
@@ -188,7 +188,7 @@ export function buildMigrationEffortDefault(data: Data): string {
   }
   const summary = `Effort rollup: ${counts['quick-win']} quick-wins · ${counts.moderate} moderate · ${counts['major-project']} major projects · ${counts['multi-year']} multi-year initiatives.`
   const rows = data.migrationEffort.map(
-    (m) => `• ${m.algorithm} — ${m.complexity} complexity, ${m.estimatedScope}. ${m.rationale}`
+    (m) => `- ${m.algorithm} - ${m.complexity} complexity, ${m.estimatedScope}. ${m.rationale}`
   )
   return `${summary}\n\n${rows.join('\n')}`
 }
@@ -200,40 +200,40 @@ export function buildTimelineDefault(data: Data, persona: PersonaId): string {
     // Persona-specific fallback
     switch (persona) {
       case 'developer':
-        return 'Sprint cadence recommendation:\n• Sprints 1–4: CBOM discovery + hybrid TLS PoC.\n• Sprints 5–12: Library upgrades (OpenSSL/BoringSSL ≥ PQC-enabled versions), API surface review, test vectors.\n• Sprints 13–24: Rollout behind feature flags + gradual cutover.'
+        return 'Sprint cadence recommendation:\n- Sprints 1-4: CBOM discovery + hybrid TLS PoC.\n- Sprints 5-12: Library upgrades (OpenSSL/BoringSSL >= PQC-enabled versions), API surface review, test vectors.\n- Sprints 13-24: Rollout behind feature flags + gradual cutover.'
       case 'architect':
-        return 'Migration roadmap (architecture phases):\n• Phase 1 (Q1–Q2): Crypto-agility review, HSM/KMS inventory, interop matrix.\n• Phase 2 (Q3–Q4): Hybrid PQC/classical at perimeter (TLS, VPN, IKE). Root-of-trust hierarchy design.\n• Phase 3 (Y2): PKI re-issuance + PQC signing at CA. Code-signing migration.\n• Phase 4 (Y2+): Full PQC-only with classical fallback retired.'
+        return 'Migration roadmap (architecture phases):\n- Phase 1 (Q1-Q2): Crypto-agility review, HSM/KMS inventory, interop matrix.\n- Phase 2 (Q3-Q4): Hybrid PQC/classical at perimeter (TLS, VPN, IKE). Root-of-trust hierarchy design.\n- Phase 3 (Y2): PKI re-issuance + PQC signing at CA. Code-signing migration.\n- Phase 4 (Y2+): Full PQC-only with classical fallback retired.'
       case 'ops':
-        return 'Operational rollout (phased by risk tier):\n• T-0: Inventory + telemetry baseline. Canary services identified.\n• T+4w: Hybrid PQC deployed to canary (5% traffic). Latency SLOs tracked.\n• T+12w: Progressive rollout 25% → 50% → 100% with rollback runbooks at each gate.\n• T+24w: Credential rotation + cert re-issue cycle complete.'
+        return 'Operational rollout (phased by risk tier):\n- T-0: Inventory + telemetry baseline. Canary services identified.\n- T+4w: Hybrid PQC deployed to canary (5% traffic). Latency SLOs tracked.\n- T+12w: Progressive rollout 25% -> 50% -> 100% with rollback runbooks at each gate.\n- T+24w: Credential rotation + cert re-issue cycle complete.'
       default:
-        return 'Phased migration:\n• Phase 1 (3–6 months): Assessment + CBOM.\n• Phase 2 (6–12 months): Hybrid PQC deployment for highest-HNDL systems.\n• Phase 3 (12–24 months): Full NIST-standardized PQC across production.\nEarlier adoption reduces HNDL liability and positions ahead of regulatory deadlines.'
+        return 'Phased migration:\n- Phase 1 (3-6 months): Assessment + CBOM.\n- Phase 2 (6-12 months): Hybrid PQC deployment for highest-HNDL systems.\n- Phase 3 (12-24 months): Full NIST-standardized PQC across production.\nEarlier adoption reduces HNDL liability and positions ahead of regulatory deadlines.'
     }
   }
   const yearsRemaining = year - new Date().getFullYear()
   const base = `${country} has a binding PQC deadline targeting ${year} (${yearsRemaining} years out).`
   switch (persona) {
     case 'developer':
-      return `${base} Recommended cadence: complete library upgrades + hybrid PoC in Year 1; progressive rollout + CBOM automation in Year 2; leave ≥12 months for regression and interop testing before the deadline.`
+      return `${base} Recommended cadence: complete library upgrades + hybrid PoC in Year 1; progressive rollout + CBOM automation in Year 2; leave >=12 months for regression and interop testing before the deadline.`
     case 'architect':
-      return `${base} Architecture phases: hybrid perimeter (Y1) → PKI + signing migration (Y2) → full PQC with classical retired (pre-deadline). Reserve the final 12 months for interop validation with downstream partners and vendors.`
+      return `${base} Architecture phases: hybrid perimeter (Y1) -> PKI + signing migration (Y2) -> full PQC with classical retired (pre-deadline). Reserve the final 12 months for interop validation with downstream partners and vendors.`
     case 'ops':
       return `${base} Operational plan: canary + progressive rollout (Y1), credential rotation + cert re-issue cycle (Y2), full cutover with documented rollback gates no later than 12 months before the deadline.`
     default:
-      return `${base} Recommended plan: start immediately with assessment + hybrid PoCs, target full PQC deployment ≥12 months before the deadline, and use the first year to shake out interop issues with downstream partners.`
+      return `${base} Recommended plan: start immediately with assessment + hybrid PoCs, target full PQC deployment >=12 months before the deadline, and use the first year to shake out interop issues with downstream partners.`
   }
 }
 
 export function buildCostBenefitDefault(data: Data): string {
   const level = data.assessmentResult?.riskLevel
   const tier = level === 'critical' || level === 'high' ? 'major' : 'moderate'
-  const multiplier = tier === 'major' ? '3–5×' : '2–3×'
+  const multiplier = tier === 'major' ? '3-5×' : '2-3×'
   const parts: string[] = []
   parts.push(
     `Cost of inaction (${tier}): regulatory penalties, breach response, contract loss, and reputational damage typically total ${multiplier} the migration investment. The ROI Calculator (Step 1 of this workshop) provides organization-specific figures.`
   )
   if (data.migrationDeadlineYear) {
     parts.push(
-      `Deadline-driven urgency: ${data.migrationDeadlineYear} compliance window compresses procurement and training lead times — late-start projects consistently overrun by 40–60%.`
+      `Deadline-driven urgency: ${data.migrationDeadlineYear} compliance window compresses procurement and training lead times - late-start projects consistently overrun by 40-60%.`
     )
   }
   if (data.hndlRiskWindow?.isAtRisk) {
@@ -249,18 +249,18 @@ export function buildCostBenefitDefault(data: Data): string {
 
 export function buildBudgetDefault(data: Data): { amount: string; breakdown: string } {
   const level = data.assessmentResult?.riskLevel
-  // Ranges are illustrative — the ROI Calculator refines them per org.
-  let amount = '$500K – $1.5M over 18–24 months'
-  if (level === 'high') amount = '$1M – $3M over 24 months'
-  if (level === 'critical') amount = '$2M – $6M over 24–36 months'
+  // Ranges are illustrative - the ROI Calculator refines them per org.
+  let amount = '$500K - $1.5M over 18-24 months'
+  if (level === 'high') amount = '$1M - $3M over 24 months'
+  if (level === 'critical') amount = '$2M - $6M over 24-36 months'
 
   const breakdown =
-    '• Software (PQC-enabled libraries, HSM/KMS upgrades): 30%\n' +
-    '• Hardware (FIPS-140-3 modules, TPM refreshes): 15%\n' +
-    '• Consulting / SI partner (CBOM + migration): 25%\n' +
-    '• Training & certification: 10%\n' +
-    '• Testing, interop, and regression: 15%\n' +
-    '• Contingency / multi-year support: 5%'
+    '- Software (PQC-enabled libraries, HSM/KMS upgrades): 30%\n' +
+    '- Hardware (FIPS-140-3 modules, TPM refreshes): 15%\n' +
+    '- Consulting / SI partner (CBOM + migration): 25%\n' +
+    '- Training & certification: 10%\n' +
+    '- Testing, interop, and regression: 15%\n' +
+    '- Contingency / multi-year support: 5%'
 
   return { amount, breakdown }
 }
@@ -277,10 +277,10 @@ export function buildGovernanceDefault(data: Data, persona: PersonaId): string {
       return [
         context,
         'Recommended RACI:',
-        '• Accountable: CISO (budget + audit sign-off).',
-        '• Responsible: Crypto lead / PKI owner.',
-        '• Consulted: Legal (compliance), Architecture, Procurement.',
-        '• Informed: Board (quarterly), Audit Committee (milestones).',
+        '- Accountable: CISO (budget + audit sign-off).',
+        '- Responsible: Crypto lead / PKI owner.',
+        '- Consulted: Legal (compliance), Architecture, Procurement.',
+        '- Informed: Board (quarterly), Audit Committee (milestones).',
         'Recommended executive sponsor: CISO or CTO. Progress reported quarterly against a named PQC migration charter.',
       ]
         .filter(Boolean)
@@ -289,9 +289,9 @@ export function buildGovernanceDefault(data: Data, persona: PersonaId): string {
       return [
         context,
         'Governance structure:',
-        '• Crypto Review Board (CRB) — approves algorithm selections + crypto-agility exceptions.',
-        '• Architecture runway — PQC hybrid deployment patterns published as reference architectures.',
-        '• Exception process — any non-PQC-ready component requires CRB sign-off with a remediation deadline.',
+        '- Crypto Review Board (CRB) - approves algorithm selections + crypto-agility exceptions.',
+        '- Architecture runway - PQC hybrid deployment patterns published as reference architectures.',
+        '- Exception process - any non-PQC-ready component requires CRB sign-off with a remediation deadline.',
       ]
         .filter(Boolean)
         .join('\n')
@@ -299,10 +299,10 @@ export function buildGovernanceDefault(data: Data, persona: PersonaId): string {
       return [
         context,
         'Operational ownership:',
-        '• On-call rotation: PKI + crypto infra added to existing platform on-call.',
-        '• Runbook: credential rotation, cert re-issue, hybrid rollback procedures.',
-        '• Monitoring: TLS handshake success rates, PQC algorithm usage, cert expiry dashboards.',
-        '• Escalation path: Platform SRE → Crypto lead → CISO.',
+        '- On-call rotation: PKI + crypto infra added to existing platform on-call.',
+        '- Runbook: credential rotation, cert re-issue, hybrid rollback procedures.',
+        '- Monitoring: TLS handshake success rates, PQC algorithm usage, cert expiry dashboards.',
+        '- Escalation path: Platform SRE -> Crypto lead -> CISO.',
       ]
         .filter(Boolean)
         .join('\n')
@@ -321,7 +321,7 @@ export function buildPeerBenchmarkDefault(data: Data): string {
   )
   if (data.migrationDeadlineYear) {
     parts.push(
-      `The ${data.migrationDeadlineYear} deadline is the anchor — peers that started in year T-4 or earlier are on track; later starters are showing schedule slippage.`
+      `The ${data.migrationDeadlineYear} deadline is the anchor - peers that started in year T-4 or earlier are on track; later starters are showing schedule slippage.`
     )
   }
   parts.push(
@@ -352,11 +352,11 @@ export function buildExecutiveSummaryDefault(data: Data, persona: PersonaId): st
     const industry = data.industry || 'our'
     switch (persona) {
       case 'developer':
-        return `Our ${industry} systems carry ${level} quantum-risk exposure (${data.riskScore}/100). This proposal lays out the engineering work required — library upgrades, API migration, test vector coverage, and hybrid deployment — to reach PQC-ready status without breaking existing integrations.`
+        return `Our ${industry} systems carry ${level} quantum-risk exposure (${data.riskScore}/100). This proposal lays out the engineering work required - library upgrades, API migration, test vector coverage, and hybrid deployment - to reach PQC-ready status without breaking existing integrations.`
       case 'architect':
         return `Our ${industry} crypto architecture shows ${level} quantum-risk exposure (${data.riskScore}/100). This review covers the algorithmic substitutions, hybrid deployment patterns, PKI re-issuance, and crypto-agility gaps that must be closed to hit the migration deadline.`
       case 'ops':
-        return `Production systems in our ${industry} environment carry ${level} quantum-risk exposure (${data.riskScore}/100). This plan defines the operational rollout — phases, gates, rollback procedures, credential rotation, and monitoring — required to migrate without service disruption.`
+        return `Production systems in our ${industry} environment carry ${level} quantum-risk exposure (${data.riskScore}/100). This plan defines the operational rollout - phases, gates, rollback procedures, credential rotation, and monitoring - required to migrate without service disruption.`
       default:
         return `Our ${industry} organization faces ${level}-level quantum risk (${data.riskScore}/100). Post-quantum cryptography migration is required to protect long-retention data, maintain regulatory compliance, and ensure long-term business resilience. This proposal outlines the investment, timeline, and governance.`
     }

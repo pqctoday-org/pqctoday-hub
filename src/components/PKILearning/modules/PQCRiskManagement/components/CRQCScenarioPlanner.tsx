@@ -217,6 +217,14 @@ export const CRQCScenarioPlanner: React.FC = () => {
       if (migrationDeadlineYear) md += `- **Migration Deadline:** ${migrationDeadlineYear}\n`
     }
 
+    md += '\n---\n\n'
+    md +=
+      '*Aligned to NIST CSWP 39 §2.3 (Constant Needs of Transition) and §6.1 (Resource Considerations). https://doi.org/10.6028/NIST.CSWP.39*\n'
+
+    // N5: sanitise non-ASCII punctuation in the exported markdown string only
+    // (em-dash, en-dash, smart single/double quotes).
+    md = md.replace(/—/g, '-').replace(/–/g, '-').replace(/[‘’]/g, "'").replace(/[“”]/g, '"')
+
     return md
   }, [
     crqcYear,
