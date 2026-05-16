@@ -32,6 +32,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky",
+    "check:compliance-fresh": "tsx scripts/ci/check-compliance-freshness.ts",
     "validate:workshop": "tsx scripts/validate-workshop.ts",
     "audit:matrix-refs": "tsx scripts/audit-matrix-refs.ts",
     "video:workshop": "tsx scripts/record-workshop.ts",

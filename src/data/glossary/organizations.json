@@ -230,5 +230,68 @@
     "relatedModule": "/learn/vendor-risk",
     "complexity": "intermediate",
     "category": "organization"
+  },
+  {
+    "term": "ACVP",
+    "acronym": "Automated Cryptographic Validation Program",
+    "definition": "NIST-managed automated testing program for individual cryptographic algorithm implementations. Distinct from CMVP (which validates whole modules); ACVP grants per-algorithm validation IDs that CMVP submissions reference.",
+    "complexity": "intermediate",
+    "category": "organization"
+  },
+  {
+    "term": "CC",
+    "acronym": "Common Criteria",
+    "definition": "International standard (ISO/IEC 15408) for security-product evaluation. Country-specific schemes (BSI Germany, ANSSI France, NIAP US, CCS Canada, etc.) run evaluations; results mutually recognised through the CCRA. EUCC succeeds the SOG-IS MRA in the EU.",
+    "complexity": "intermediate",
+    "category": "organization"
+  },
+  {
+    "term": "CSA",
+    "acronym": "Cyber Security Agency of Singapore",
+    "definition": "Singapore's national cybersecurity authority. Publishes the Cybersecurity Code of Practice and PQC readiness guidance for critical-information-infrastructure operators. Note: also used for Cloud Security Alliance (separate org).",
+    "complexity": "beginner",
+    "category": "organization"
+  },
+  {
+    "term": "ITSM (CCCS)",
+    "acronym": "Information Technology Security Management series",
+    "definition": "CCCS Canada's technical-guidance document series (ITSM.40.xxx, ITSAP.xx.xxx). The PQC-relevant entry today is ITSAP.00.017 — Preparing your organization for the quantum threat to cryptography.",
+    "complexity": "intermediate",
+    "category": "organization"
+  },
+  {
+    "term": "MAS",
+    "acronym": "Monetary Authority of Singapore",
+    "definition": "Singapore's central bank and integrated financial regulator. Publishes Technology Risk Management Guidelines and circulars that cover cryptographic-control expectations for financial institutions.",
+    "complexity": "beginner",
+    "category": "organization"
+  },
+  {
+    "term": "KISA",
+    "acronym": "Korea Internet & Security Agency",
+    "definition": "South Korea's national agency for cybersecurity and internet governance. Operates the K-CMVP cryptographic-module validation programme and co-administers the KpqC competition with academic partners.",
+    "complexity": "beginner",
+    "category": "organization"
+  },
+  {
+    "term": "MSIT (Korea)",
+    "acronym": "Ministry of Science and ICT",
+    "definition": "South Korea's policy ministry for science, ICT, and broadcasting. Co-sponsors the KpqC standardization competition with KISA and the National Intelligence Service.",
+    "complexity": "beginner",
+    "category": "organization"
+  },
+  {
+    "term": "DISA",
+    "acronym": "Defense Information Systems Agency",
+    "definition": "US Department of Defense combat-support agency that runs IT infrastructure for the joint warfighter. Maintains the STIG library that locks down DoD system configurations, including cryptographic-suite controls.",
+    "complexity": "intermediate",
+    "category": "organization"
+  },
+  {
+    "term": "TCG",
+    "acronym": "Trusted Computing Group",
+    "definition": "Industry consortium that publishes the TPM (Trusted Platform Module) and DICE (Device Identifier Composition Engine) specifications. PQC-relevant work covers TPM 2.0 PQC algorithm additions and attestation-quote signing.",
+    "complexity": "intermediate",
+    "category": "organization"
   }
 ]
