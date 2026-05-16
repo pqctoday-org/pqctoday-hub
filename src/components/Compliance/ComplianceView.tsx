@@ -35,6 +35,8 @@ import { GlossaryStrip } from './GlossaryStrip'
 import { LandscapeTab as LandscapeTabBody } from './LandscapeTab'
 import type { LandscapeType } from './LandscapeTypeFacet'
 import { ExecutiveTimelineView } from './views/ExecutiveTimelineView'
+import { ArchitectStandardsView } from './views/ArchitectStandardsView'
+import { ResearcherEvidenceView } from './views/ResearcherEvidenceView'
 import { LibraryDetailPopover } from '@/components/Library/LibraryDetailPopover'
 import { ThreatDetailDialog } from '@/components/Threats/ThreatDetailDialog'
 import {
@@ -308,6 +310,10 @@ function ForYouSection() {
     <>
       {persona === 'executive' ? (
         <ExecutiveTimelineView {...callbacks} />
+      ) : persona === 'architect' ? (
+        <ArchitectStandardsView {...callbacks} />
+      ) : persona === 'researcher' ? (
+        <ResearcherEvidenceView {...callbacks} />
       ) : (
         <ApplicabilityPanel variant="tab" {...callbacks} />
       )}
