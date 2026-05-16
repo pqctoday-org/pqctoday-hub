@@ -38,6 +38,12 @@ interface PageHeaderProps {
   /** When provided, renders a page-specific Guide button */
   pageId?: PageId
   testId?: string
+  /**
+   * Suppress the `SourcesButton` in the action cluster even when `viewType` is
+   * set. Used by /compliance, where provenance is surfaced inline via
+   * `TrustPathPopover` + the explicit external link grid (ux-standard P10).
+   */
+  suppressSources?: boolean
 }
 
 /**
@@ -61,7 +67,9 @@ export const PageHeader = ({
   flagResourceType,
   pageId,
   testId,
+  suppressSources,
 }: PageHeaderProps) => {
+  const showSources = !!viewType && !suppressSources
   const openChat = useRightPanelStore((s) => s.open)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const mobileMenuRef = useRef<HTMLDivElement>(null)
@@ -133,7 +141,7 @@ export const PageHeader = ({
                 className="absolute right-0 top-full mt-1 z-50 bg-popover border border-border rounded-lg shadow-xl p-2 flex flex-col gap-1 min-w-[180px]"
                 role="menu"
               >
-                {viewType && <SourcesButton viewType={viewType} />}
+                {showSources && <SourcesButton viewType={viewType!} />}
                 {shareTitle && <ShareButton title={shareTitle} text={shareText} />}
                 <GlossaryButton />
                 <FAQButton />
@@ -164,7 +172,7 @@ export const PageHeader = ({
       {hasActions && (
         <div className="hidden md:flex justify-center items-center gap-3 text-[10px] md:text-xs text-muted-foreground font-mono">
           {dataSource && <p>{dataSource}</p>}
-          {viewType && <SourcesButton viewType={viewType} />}
+          {showSources && <SourcesButton viewType={viewType!} />}
           {shareTitle && <ShareButton title={shareTitle} text={shareText} />}
           <GlossaryButton />
           {pageId && <UserManualButton pageId={pageId} />}
