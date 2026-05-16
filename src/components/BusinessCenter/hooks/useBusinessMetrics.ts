@@ -103,6 +103,7 @@ export const PILLAR_SOURCE_MODULES: Record<string, Record<ExecutiveDocumentType,
     'migration-roadmap': 'migration-program',
     'deployment-playbook': 'migration-program',
     'hybrid-transition': 'crypto-mgmt-modernization',
+    'crypto-api-refactor': 'crypto-mgmt-modernization',
   } as Record<ExecutiveDocumentType, string>,
 }
 

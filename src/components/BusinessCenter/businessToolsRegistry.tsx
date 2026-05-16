@@ -24,6 +24,7 @@ import {
   ShieldAlert,
   GitBranch,
   Scale,
+  Code2,
 } from 'lucide-react'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 import type { ZoneId } from '@/data/cswp39ZoneData'
@@ -328,6 +329,32 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39SectionRef: '§3.1.1',
     cswp39SubSection: 'Mandatory-to-Implement Algorithms',
   },
+  {
+    id: 'crypto-api-refactor-audit',
+    name: 'Crypto API Refactor Audit',
+    description:
+      'Architect + senior-developer audit from CSWP.39 §4.1 - grades current crypto-agility state and emits a phased refactor checklist with language-specific call-site guidance (Go / Java / .NET / Node / Python / Rust / C / C++ / JS)',
+    category: 'Migration Planning',
+    icon: Code2,
+    keywords: [
+      'api',
+      'refactor',
+      'audit',
+      'agility',
+      'facade',
+      'evp',
+      'openssl',
+      'bouncycastle',
+      'pkcs11',
+      'call-sites',
+      'developer',
+      'architect',
+    ],
+    cswp39Zone: 'migration',
+    cswp39ZoneSubElement: 'Library upgrades',
+    cswp39SectionRef: '§4.1',
+    cswp39SubSection: 'Using an API in a Crypto Library Application',
+  },
 
   // ── Architecture (CSWP.39 §5.4) ────────────────────────────────────────────
   {
@@ -449,6 +476,7 @@ export const ARTIFACT_TYPE_TO_TOOL_ID: Partial<Record<ExecutiveDocumentType, str
   'crypto-vulnerability-watch': 'crypto-vulnerability-watch',
   'hybrid-transition': 'hybrid-transition-planner',
   'mti-negotiator': 'mti-negotiator',
+  'crypto-api-refactor': 'crypto-api-refactor-audit',
 }
 
 /** Look up the CSWP.39 §-reference (and optional sub-section label) for an

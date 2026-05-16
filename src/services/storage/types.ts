@@ -59,6 +59,7 @@ export type ExecutiveDocumentType =
   | 'crypto-vulnerability-watch'
   | 'hybrid-transition'
   | 'mti-negotiator'
+  | 'crypto-api-refactor'
 
 export interface ExecutiveDocumentRevision {
   /** Unix ms when this revision was recorded. */

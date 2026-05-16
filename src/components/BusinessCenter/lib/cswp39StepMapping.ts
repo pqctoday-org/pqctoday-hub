@@ -38,6 +38,7 @@ export const STEP_ARTIFACT_TYPES: Record<CSWP39StepId, ExecutiveDocumentType[]> 
     'migration-roadmap',
     'deployment-playbook',
     'hybrid-transition',
+    'crypto-api-refactor',
   ],
 }
 
@@ -71,6 +72,7 @@ export const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
   'crypto-vulnerability-watch': 'risk',
   'hybrid-transition': 'architecture',
   'mti-negotiator': 'governance',
+  'crypto-api-refactor': 'architecture',
 }
 
 export function getPillarForType(type: ExecutiveDocumentType): PillarKey {
