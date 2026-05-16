@@ -4244,3 +4244,321 @@ enrichment_method: ollama-qwen3.6:27b
 - **Extraction Timestamp**: 2026-05-15T16:08:37
 
 ---
+
+## RFC 7030
+
+- **Reference ID**: RFC 7030
+- **Title**: Enrollment over Secure Transport (EST)
+- **Authors**: M. Pritikin; P. Yee; D. Harkins (Cisco)
+- **Publication Date**: 2013-10-01
+- **Last Updated**: 2013-10-01
+- **Document Status**: Proposed Standard
+- **Main Topic**: This document profiles certificate enrollment for clients using Certificate Management over CMS (CMC) messages over a secure transport, defining the Enrollment over Secure Transport (EST) protocol.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: M. Pritikin, Ed.; P. Yee, Ed.; D. Harkins, Ed.
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS 1.1; TLS 1.2; HTTP; CMC; CMP
+- **Infrastructure Layers**: PKI; CA; RA
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: EST profiles certificate enrollment using CMC messages over HTTPS; EST supports both client-generated and server-generated key pairs; EST adopts the CMP model for CA certificate rollover but does not use CMP syntax; EST specifies secure message transfer via HTTP over TLS using HTTP headers and media types; EST is extensible for new functions such as CSR attributes and server-generated keys
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Developer; Operations
+- **Implementation Prerequisites**: TLS 1.1 or 1.2; HTTP; CMC support; TCP transport
+- **Relevant PQC Today Features**: pki-workshop; crypto-agility; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: RFC_7030.html (166,146 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-15T19:07:00
+
+---
+
+## RFC 7030
+
+- **Reference ID**: RFC 7030
+- **Title**: Enrollment over Secure Transport (EST)
+- **Authors**: M. Pritikin; P. Yee; D. Harkins (Cisco)
+- **Publication Date**: 2013-10-01
+- **Last Updated**: 2013-10-01
+- **Document Status**: Proposed Standard
+- **Main Topic**: This document profiles certificate enrollment for clients using Certificate Management over CMS (CMC) messages over a secure transport, defining the Enrollment over Secure Transport (EST) protocol.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: M. Pritikin, Ed.; P. Yee, Ed.; D. Harkins, Ed.
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS 1.1; TLS 1.2; HTTP; CMC; CMP
+- **Infrastructure Layers**: PKI; CA; RA
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: EST profiles certificate enrollment using CMC messages over HTTPS; EST supports both client-generated and server-generated key pairs; EST adopts the CMP model for CA certificate rollover but does not use CMP syntax; EST specifies secure message transfer via HTTP over TLS using HTTP headers and media types; EST is extensible for new functions such as CSR attributes and server-generated keys
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Developer; Operations
+- **Implementation Prerequisites**: TLS 1.1 or 1.2; HTTP; CMC support; TCP transport
+- **Relevant PQC Today Features**: pki-workshop; crypto-agility; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: RFC_7030.html (166,146 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-15T19:10:35
+
+---
+
+## RFC 7296
+
+- **Reference ID**: RFC 7296
+- **Title**: Internet Key Exchange Protocol Version 2 (IKEv2)
+- **Authors**: C. Kaufman; P. Hoffman; Y. Nir; P. Eronen; T. Kivinen
+- **Publication Date**: 2014-10-01
+- **Last Updated**: 2014-10-01
+- **Document Status**: Internet Standard
+- **Main Topic**: This document describes version 2 of the Internet Key Exchange (IKE) protocol, a component of IPsec used for performing mutual authentication and establishing Security Associations.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: C. Kaufman; P. Hoffman; Y. Nir; P. Eronen; T. Kivinen
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: IKEv2; IPsec; ESP; AH; IPComp; EAP
+- **Infrastructure Layers**: Key Management; Security Associations
+- **Standardization Bodies**: IETF; IESG
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: Diffie-Hellman; MODP
+- **Key Takeaways**: IKEv2 is an Internet Standard that obsoletes RFC 5996; The protocol establishes shared state for IPsec SAs dynamically; Mutual authentication and key establishment are core functions; The document defines specific exchange types like IKE_SA_INIT and CREATE_CHILD_SA; Cryptographic suites are negotiated via mix-and-match algorithm proposals
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: IKE/IPsec
+- **PQC Heatmap Protocols Evidence**: IKE/IPsec: "IKE is a component of IPsec used for performing mutual authentication"
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Developer; Network Engineer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: vpn-ssh-pqc; crypto-agility; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: RFC_7296.html (422,639 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-15T19:13:41
+
+---
+
+## draft-ietf-lamps-cms-composite-kem-01
+
+- **Reference ID**: draft-ietf-lamps-cms-composite-kem-01
+- **Title**: Use of Composite ML-KEM in the Cryptographic Message Syntax (CMS)
+- **Authors**: IETF LAMPS WG
+- **Publication Date**: 2025-04-25
+- **Last Updated**: 2026-04-15
+- **Document Status**: IETF Draft
+- **Main Topic**: Defines CMS payload encoding conventions for hybrid composite KEMs combining ML-KEM with classical algorithms like RSA-OAEP, ECDH, and X25519.
+- **PQC Algorithms Covered**: ML-KEM
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Daniel Van Geest; Mike Ounsworth; John Gray; Jan Klaußner
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: CMS; S/MIME
+- **Infrastructure Layers**: PKI
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: BCP 78; BCP 79; SP.800-57pt1r5
+- **Classical Algorithms Referenced**: RSA-OAEP; ECDH; X25519; X448; SHA-256; SHA3-256; AES-Wrap-256; HKDF
+- **Key Takeaways**: Composite ML-KEM combines ML-KEM with classical KEMs for hybrid security in CMS; Implementations must support HKDF with SHA-256 and AES-Wrap-256 for KEMRecipientInfo; S/MIME capabilities attribute can announce support for Composite ML-KEM OIDs; Security levels align ML-KEM-768 with 192-bit strength and ML-KEM-1024 with 256-bit strength
+- **Security Levels & Parameters**: ML-KEM-768; ML-KEM-1024; 192-bit; 256-bit; RSA-2048; RSA-3072; RSA-4096; P-256; P-384; P-521; brainpoolP256r1; brainpoolP384r1
+- **Hybrid & Transition Approaches**: Composite ML-KEM; hybrid KEM
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: Composite ML-KEM defines combinations of ML-KEM with RSA-OAEP, ECDH, X25519, and X448
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: S/MIME
+- **PQC Heatmap Protocols Evidence**: S/MIME: SMIME Capabilities Attribute Conventions
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: RFC 9629 KEMRecipientInfo structure; HKDF with SHA-256; AES-Wrap-256
+- **Relevant PQC Today Features**: hybrid-crypto; email-signing; pki-workshop; Algorithms
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: draft-ietf-lamps-cms-composite-kem-01.html (117,979 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-15T19:15:58
+
+---
+
+## draft-ietf-lamps-cms-composite-sigs-04
+
+- **Reference ID**: draft-ietf-lamps-cms-composite-sigs-04
+- **Title**: Use of Composite ML-DSA in the Cryptographic Message Syntax (CMS)
+- **Authors**: IETF LAMPS WG
+- **Publication Date**: 2025-03-10
+- **Last Updated**: 2026-04-30
+- **Document Status**: IETF Draft
+- **Main Topic**: Defines CMS payload encoding conventions for hybrid composite signatures combining ML-DSA with RSA, ECDSA, or EdDSA.
+- **PQC Algorithms Covered**: ML-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: Cryptographic Message Syntax (CMS)
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA, ECDSA, Ed25519, Ed448, SHA-256, SHA-512, SHAKE256
+- **Key Takeaways**: Composite ML-DSA operates only in pre-hash mode within CMS; The digest algorithm in CMS must match the pre-hash digest of the Composite ML-DSA algorithm; The parameters field of the AlgorithmIdentifier for Composite ML-DSA must be absent; Context string for Composite ML-DSA is set to empty string in this specification
+- **Security Levels & Parameters**: ML-DSA-44, ML-DSA-65, ML-DSA-87, RSA-2048, RSA-3072, RSA-4096, P-256, P-384, P-521, brainpoolP256r1, brainpoolP384r1
+- **Hybrid & Transition Approaches**: Composite signatures
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Yes
+- **Hybrid PQC Signature Evidence**: "Composite ML-DSA defines combinations of ML-DSA with RSA, ECDSA, and EdDSA"
+- **PQC Heatmap Protocols Covered**: S/MIME
+- **PQC Heatmap Protocols Evidence**: S/MIME: "What S/MIME signers ... need for sign-time hybrid migration"
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: hybrid-crypto; email-signing; pki-workshop; code-signing
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: draft-ietf-lamps-cms-composite-sigs-04.html (113,153 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-15T19:18:42
+
+---
+
+## draft-reddy-cose-jose-pqc-hybrid-hpke-11
+
+- **Reference ID**: draft-reddy-cose-jose-pqc-hybrid-hpke-11
+- **Title**: Use of Hybrid Public-Key Encryption (HPKE) with Post-Quantum Algorithms in COSE / JOSE
+- **Authors**: T. Reddy; H. Tschofenig; et al.
+- **Publication Date**: 2024-07-08
+- **Last Updated**: 2026-03-22
+- **Document Status**: IETF Draft
+- **Main Topic**: Specifies the use of Post-Quantum and Hybrid KEMs within HPKE for JOSE and COSE, defining algorithm identifiers and key formats.
+- **PQC Algorithms Covered**: ML-KEM, ML-KEM-512, ML-KEM-768, ML-KEM-1024
+- **Quantum Threats Addressed**: Quantum cryptanalysis
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: T. Reddy (Nokia); H. Tschofenig (Authors)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: JOSE, COSE, HPKE
+- **Infrastructure Layers**: Key Management
+- **Standardization Bodies**: IETF, IANA
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA, ECC, Elliptic Curve Diffie-Hellman Ephemeral Static, Ephemeral-Static DH, Static-Static DH, X25519, P-256, SHAKE256, AES-256-GCM
+- **Key Takeaways**: Hybrid key exchange is preferred for defense in depth during transition; Pure PQC may be required for specific regulatory mandates; HPKE supports both pure PQC and hybrid KEMs in JOSE/COSE; Implementers should prefer ML-KEM-768 or ML-KEM-1024 for higher security margins; Only HPKE Base mode is supported for these KEMs
+- **Security Levels & Parameters**: NIST security category 1 (ML-KEM-512); ML-KEM-768; ML-KEM-1024
+- **Hybrid & Transition Approaches**: PQ/T Hybrid Key Encapsulation Mechanism; Hybrid combiner construction (C2PRICombiner)
+- **Pure PQC KEM Support**: Yes
+- **Pure PQC KEM Evidence**: "For pure PQC, the ML-KEM algorithms are used as standalone KEMs"
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "PQ/T hybrid KEM that combines a PQC KEM with a traditional key-exchange algorithm"
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: Support for HPKE Base mode; AKP key type implementation; Base64url encoding for JWK
+- **Relevant PQC Today Features**: hybrid-crypto; api-security-jwt; Algorithms
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Flexible deployment choices between hybrid and pure PQC; Hybrid provides conservative transition strategy
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Source Document**: draft-reddy-cose-jose-pqc-hybrid-hpke-11.html (153,477 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-15T19:21:16
+
+---
