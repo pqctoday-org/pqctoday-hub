@@ -21,6 +21,26 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Compliance — audit-driven loader hardening + dead-URL fixes (2026-05-15)
+
+A targeted set of fixes following the in-depth `/compliance` audit ([audit-2026-05-15.md](../pqctoday-priv/docs/platform/compliance/audit-2026-05-15.md)). Touches the loader and the framework CSV only; no UI changes.
+
+**Loader — [src/data/complianceData.ts](src/data/complianceData.ts):**
+
+- **DS-series status column now honoured.** `RawComplianceRow` and `ComplianceFramework` now declare `status` / `deprecated_at` / `deprecated_reason` / `related_standards`. The `complianceFrameworks` export is wrapped in `filterActive(...)` from [loaderUtils.ts](src/data/loaderUtils.ts), so any future row marked `deprecated` / `obsolete` is filtered out at load instead of silently rendering. A companion `allComplianceFrameworks` export surfaces the unfiltered set for cross-reference resolvers and audit views that need it.
+- **`regulatory_body` added to `BodyType`.** The CSV's 2 regulatory-body rows (`ACPR`, `AMF-FR` — French banking + securities regulators) were silently being coerced to `compliance_framework`. They now retain their declared type.
+- **`CZ` added to `COUNTRY_CODE_TO_NAME`.** One row (`NATO-4774`, country list `US;PQC-REGION-EU;CA;CZ;AU`) was rendering `CZ` raw because the ISO-alpha-2 expansion map lacked the entry. Now expands to "Czech Republic".
+
+**Data — [src/data/compliance_05152026.csv](src/data/compliance_05152026.csv) (123 rows; supersedes `_r5`):**
+
+- `CCCS-ITSM` website corrected from `/en/guidance/itsm400001-guidance-quantum-cryptography` (404) to `/en/guidance/preparing-your-organization-quantum-threat-cryptography-itsap00017` (current CCCS ITSAP.00.017).
+- `BSI` website corrected from `/EN/Topics/Cryptography/cryptography_node.html` (404) to the verified-live BSI TR-02102 landing page (version 2026-01).
+- `ISO-19790` website corrected from `iso.org/standard/81624.html` (404) to `iso.org/standard/85063.html` (ISO/IEC 19790:2025).
+
+Older revisions `compliance_05092026_r3.csv` and `_r4.csv` moved to `src/data/archive/` per the "keep 2 versions" rule.
+
+**Still outstanding** (audit P0/P1 carried forward): 11 remaining dead framework URLs need targeted research; the `requires_pqc` field is still a boolean (audit suggests the underlying enum has 5 values); `cswp39_tags` is empty across all 123 rows; 5 `trusted_source_id` orphans (`apra`, `oaic`, `austrac`, `osfi`, `uk-dsit`); ux-standard P10 description is two refactors out of date.
+
 ### Library detail — CSWP 39 Requirements collapsed by default (2026-05-15)
 
 The CSWP 39 Requirements section in the [Library detail popover](src/components/Library/LibraryDetailPopover.tsx) was always expanded, dominating the popover for any document with extracted governance obligations (NIST CSWP 39 itself surfaces 100+ requirement rows). Users had to scroll past the full requirements list to reach trust/source/dependency info further down.
