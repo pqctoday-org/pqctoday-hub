@@ -21,6 +21,28 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### PQC Protocol Matrix — reference chips open library detail pane (2026-05-15)
+
+Previously, clicking a standards-reference chip in the [PQC Protocol Matrix](src/components/Algorithms/PQCProtocolMatrix.tsx) (e.g. `RFC 8446`, `draft-ietf-tls-mlkem-07`) opened the raw source URL directly in a new tab. Users had no chance to see context — document status, applicable industries, dependencies, trust tier — before clicking through.
+
+Reference chips now route to `/library?ref=<refId>` instead, which opens the [`LibraryDetailPopover`](src/components/Library/LibraryDetailPopover.tsx) so the user sees an overview of the document (title, dependencies, toolchain support, status, source URL) before opening the actual standards PDF/HTML.
+
+**ID normalization** — matrix chip IDs use kebab form (`RFC-4253`); library `reference_id` uses space form (`RFC 4253`). A `toLibraryRefId(id)` helper handles the `RFC-` → `RFC ` swap; drafts pass through unchanged.
+
+**Library doc set expanded** — 5 matrix references that previously had no library entry have been added to [library_05152026_r3.csv](src/data/library_05152026_r3.csv) (823 rows, up from 818):
+
+| Reference ID                               | Document                                                     |
+| ------------------------------------------ | ------------------------------------------------------------ |
+| `RFC 7030`                                 | Enrollment over Secure Transport (EST)                       |
+| `RFC 7296`                                 | Internet Key Exchange Protocol Version 2 (IKEv2) — base spec |
+| `draft-ietf-lamps-cms-composite-kem-01`    | Use of Composite ML-KEM in CMS                               |
+| `draft-ietf-lamps-cms-composite-sigs-04`   | Use of Composite ML-DSA in CMS                               |
+| `draft-reddy-cose-jose-pqc-hybrid-hpke-11` | HPKE with PQC in COSE/JOSE                                   |
+
+Each new entry has minimum-viable metadata (title, status, dependencies, toolchain, etc.) and is marked `confidence_score: 50` with `data_quality_notes` flagging that ollama qwen3.6:27b enrichment is pending. Existing library enrichment / corpus / RAG pipelines will pick these up on next run.
+
+A dev-only `console.warn` fires if a matrix doc ref ever has no matching library entry — surfacing data gaps before they become silent broken links.
+
 ### TLS Simulator — remove "Live HSM Mode" toggle; add capabilities banner (2026-05-15)
 
 The "HSM ON / HSM OFF" toggle in both TLS simulator surfaces ([Workshop](src/components/PKILearning/modules/TLSBasics/TLSBasicsModule.tsx) and [Playground](src/components/OpenSSLStudio/TLSSimulatorTab.tsx)) was misleading: the HSM-mode path never produced a successful handshake for end-users, and the toggle's existence implied HSM coverage that wasn't real for most cert types or for the client side at all. Removed pending a deliberate revival on a future cycle.
