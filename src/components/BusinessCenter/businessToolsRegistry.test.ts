@@ -48,6 +48,7 @@ const ALL_ARTIFACT_TYPES: ExecutiveDocumentType[] = [
   'management-tools-audit',
   'crypto-cbom',
   'crypto-vulnerability-watch',
+  'hybrid-transition',
 ]
 
 /** Artifact types that intentionally have NO builder component. Each entry

@@ -57,6 +57,7 @@ export type ExecutiveDocumentType =
   | 'management-tools-audit'
   | 'crypto-cbom'
   | 'crypto-vulnerability-watch'
+  | 'hybrid-transition'
 
 export interface ExecutiveDocumentRevision {
   /** Unix ms when this revision was recorded. */
