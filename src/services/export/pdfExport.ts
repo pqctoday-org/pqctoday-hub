@@ -650,7 +650,12 @@ export function buildArtifactPdf(
       contentRight,
       ensure
     )
-    y = cursor.y + size * LINE_HEIGHT_FACTOR * 0.2 + trailingSpacing
+    // renderRuns returns the baseline of the LAST drawn line. To position the
+    // NEXT block's first baseline we add a full line-height (baseline to
+    // baseline) plus the configured trailing-space for paragraph separation.
+    // Previously this used `* 0.2` which only advanced ~20% of a line-height,
+    // causing every block after the first to overlap by ~7pt at SIZE_BODY=10.
+    y = cursor.y + size * LINE_HEIGHT_FACTOR + trailingSpacing
   }
 
   // When the learning banner was stripped, prepend a muted standards-citation
