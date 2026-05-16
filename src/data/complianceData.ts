@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { IndustryComplianceConfig } from './industryAssessConfig'
 import { loadLatestCSV, splitSemicolon, parseBoolYesNo } from './csvUtils'
+import { filterActive } from './loaderUtils'
 
 // ── Types ────────────────────────────────────────────────────────────────
 
@@ -10,6 +11,7 @@ export type BodyType =
   | 'certification_body'
   | 'compliance_framework'
   | 'industry_alliance'
+  | 'regulatory_body'
 
 export type DeadlinePhase = 'active' | 'imminent' | 'near' | 'mid' | 'long' | 'ongoing'
 
@@ -37,6 +39,12 @@ export interface ComplianceFramework {
   cswp39Tags?: string[]
   /** NAICS 2-digit sector codes — machine-readable counterpart to industries */
   naicsCodes?: string[]
+  /** DS-series status — `active` rows are surfaced; `deprecated`/`obsolete` filtered out at load. */
+  status?: 'active' | 'deprecated' | 'obsolete'
+  deprecatedAt?: string
+  deprecatedReason?: string
+  /** Sister-standards / cross-walk tokens (free text; not yet resolved). */
+  relatedStandards?: string[]
 }
 
 // ── CSV loading (versioned filename pattern) ────────────────────────────
@@ -62,6 +70,10 @@ interface RawComplianceRow {
   confidence_score?: string
   cswp39_tags?: string
   naics_codes?: string
+  status?: string
+  deprecated_at?: string
+  deprecated_reason?: string
+  related_standards?: string
 }
 
 const modules = import.meta.glob('./compliance_*.csv', {
@@ -76,6 +88,7 @@ const validBodyTypes: BodyType[] = [
   'certification_body',
   'compliance_framework',
   'industry_alliance',
+  'regulatory_body',
 ]
 
 // ISO alpha-2 + PQC-REGION-* overlays used in the normalized compliance CSV
@@ -90,6 +103,7 @@ const COUNTRY_CODE_TO_NAME: Record<string, string> = {
   CA: 'Canada',
   CH: 'Switzerland',
   CN: 'China',
+  CZ: 'Czech Republic',
   DE: 'Germany',
   DK: 'Denmark',
   ES: 'Spain',
@@ -204,11 +218,29 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
     cswp39Tags: row.cswp39_tags ? splitSemicolon(row.cswp39_tags) : undefined,
     naicsCodes: row.naics_codes ? splitSemicolon(row.naics_codes) : undefined,
+    status: ((): ComplianceFramework['status'] => {
+      const s = (row.status || '').trim().toLowerCase()
+      if (s === 'deprecated' || s === 'obsolete') return s
+      return 'active'
+    })(),
+    deprecatedAt: row.deprecated_at?.trim() || undefined,
+    deprecatedReason: row.deprecated_reason?.trim() || undefined,
+    relatedStandards: row.related_standards ? splitSemicolon(row.related_standards) : undefined,
   }
 })
 
-/** All compliance frameworks from the latest compliance CSV. */
-export const complianceFrameworks: ComplianceFramework[] = frameworks
+/**
+ * All ACTIVE compliance frameworks from the latest compliance CSV. Deprecated /
+ * obsolete rows are filtered out at load (DS-series self-containment rule). Use
+ * `allComplianceFrameworks` if you need the unfiltered set for cross-reference
+ * resolution or audit views.
+ */
+export const complianceFrameworks: ComplianceFramework[] = filterActive(
+  frameworks as Array<ComplianceFramework & { status?: string }>
+) as ComplianceFramework[]
+
+/** Unfiltered set including deprecated/obsolete rows — for audits + cross-refs. */
+export const allComplianceFrameworks: ComplianceFramework[] = frameworks
 
 /** CSV file metadata (filename and date). */
 export const complianceMetadata = parsedMetadata
