@@ -60,6 +60,7 @@ export type ExecutiveDocumentType =
   | 'hybrid-transition'
   | 'mti-negotiator'
   | 'crypto-api-refactor'
+  | 'cloud-responsibility-matrix'
 
 export interface ExecutiveDocumentRevision {
   /** Unix ms when this revision was recorded. */

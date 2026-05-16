@@ -29,6 +29,7 @@ const WIDE_TABLE_TYPES = new Set<ExecutiveDocumentType>([
   'contract-clause',
   'policy-draft',
   'crypto-cbom',
+  'cloud-responsibility-matrix',
 ])
 
 // ── Drawer component ────────────────────────────────────────────────────

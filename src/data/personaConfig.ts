@@ -517,6 +517,7 @@ export const BC_ZONE_EMPHASIS_BY_PERSONA: Partial<Record<PersonaId, BCZoneEmphas
         'policy-draft',
         'vendor-scorecard',
         'supply-chain-matrix',
+        'cloud-responsibility-matrix',
       ],
       'risk-management': ['risk-register', 'risk-treatment-plan'],
       migration: [

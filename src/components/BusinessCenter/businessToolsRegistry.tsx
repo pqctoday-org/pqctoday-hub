@@ -25,6 +25,7 @@ import {
   GitBranch,
   Scale,
   Code2,
+  Cloud,
 } from 'lucide-react'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 import type { ZoneId } from '@/data/cswp39ZoneData'
@@ -355,6 +356,34 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39SectionRef: '§4.1',
     cswp39SubSection: 'Using an API in a Crypto Library Application',
   },
+  {
+    id: 'cloud-responsibility-matrix',
+    name: 'Cloud Responsibility Matrix',
+    description:
+      'Architect + compliance-lead matrix from CSWP.39 §6.4 - per-asset-class shared-responsibility model across IaaS / PaaS / SaaS / FaaS, with PQC availability per cloud and watch-outs for multi-cloud, BYOK, FedRAMP, and sovereign-cloud overlays',
+    category: 'Migration Planning',
+    icon: Cloud,
+    keywords: [
+      'cloud',
+      'iaas',
+      'paas',
+      'saas',
+      'faas',
+      'fedramp',
+      'sovereign',
+      'shared-responsibility',
+      'byok',
+      'hyok',
+      'kms',
+      'aws',
+      'gcp',
+      'azure',
+    ],
+    cswp39Zone: 'governance',
+    cswp39ZoneSubElement: 'Supply Chains',
+    cswp39SectionRef: '§6.4',
+    cswp39SubSection: 'Crypto Agility in the Cloud',
+  },
 
   // ── Architecture (CSWP.39 §5.4) ────────────────────────────────────────────
   {
@@ -477,6 +506,7 @@ export const ARTIFACT_TYPE_TO_TOOL_ID: Partial<Record<ExecutiveDocumentType, str
   'hybrid-transition': 'hybrid-transition-planner',
   'mti-negotiator': 'mti-negotiator',
   'crypto-api-refactor': 'crypto-api-refactor-audit',
+  'cloud-responsibility-matrix': 'cloud-responsibility-matrix',
 }
 
 /** Look up the CSWP.39 §-reference (and optional sub-section label) for an

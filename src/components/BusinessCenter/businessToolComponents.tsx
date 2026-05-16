@@ -145,6 +145,11 @@ export const BUSINESS_TOOL_COMPONENTS: Record<string, LazyComp> = {
       (m) => ({ default: m.CryptoApiRefactorAudit })
     )
   ),
+  'cloud-responsibility-matrix': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/CryptoMgmtModernization/components/CloudResponsibilityMatrix').then(
+      (m) => ({ default: m.CloudResponsibilityMatrix })
+    )
+  ),
 }
 
 /** Look up the lazy-loaded builder component for a given artifact type. */

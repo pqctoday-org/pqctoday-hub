@@ -93,6 +93,7 @@ export const PILLAR_SOURCE_MODULES: Record<string, Record<ExecutiveDocumentType,
     'stakeholder-comms': 'migration-program',
     'kpi-tracker': 'migration-program',
     'mti-negotiator': 'crypto-mgmt-modernization',
+    'cloud-responsibility-matrix': 'crypto-mgmt-modernization',
   } as Record<ExecutiveDocumentType, string>,
   vendor: {
     'vendor-scorecard': 'vendor-risk',
