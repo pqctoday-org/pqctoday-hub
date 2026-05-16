@@ -21,6 +21,16 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Compliance — consolidated CSWP-39 maturity views, dropped duplicate `/agility` route (2026-05-16)
+
+The `/agility` route was a thinner duplicate of the `/compliance` → **CSWP 39** tab. Both rendered the same `MaturityEvidenceGrid` over the same `maturityRequirements` data; `/agility` added only a small 3-cell KPI bar (coverage %, mean confidence, source records) and was never wired into the main-nav `navItems` array — only reachable by typing the URL.
+
+- **`/agility` route removed.** [App.tsx](src/App.tsx) — the `AgilityView` lazy import and its `Route path="agility"` element are gone. Files deleted: `src/components/Agility/AgilityView.tsx`, `src/components/Agility/AgilityView.test.tsx`. The `Agility/` directory is auto-cleaned.
+- **KPI bar moved to the CSWP 39 tab.** [CSWP39Explorer.tsx](src/components/Compliance/CSWP39Explorer.tsx) — now computes a CSWP-39-scoped slice of `maturityRequirements` and renders a 3-cell KPI bar (`CSWP-39 grid coverage`, `Mean confidence`, `CSWP-39 source records`) at the top of the "Authoritative Evidence" section, just above the grid. The grid itself still surfaces all catalogued frameworks so users can compare CSWP-39 against the rest; the KPI bar narrows the scope to the canonical agility paper.
+- **Persona-nav cleanup.** [personaConfig.ts](src/data/personaConfig.ts) — `/agility` removed from the four persona nav arrays (`executive`, `developer`, `architect`, `ops`) that previously listed it as allowed-but-never-rendered.
+
+Closes the "remaining gap" from the CSWP-39 audit's rev-4 post-mortem: `/agility` was an undiscoverable subset of `/compliance`. Single canonical maturity view now lives in `/compliance` → CSWP 39 tab.
+
 ### Command Center — CSWP 39 audit closure, Sprint 0 through Sprint 4 (2026-05-15 → 2026-05-16)
 
 A five-sprint cleanup driven by an in-depth audit of the `/business` Command Center against NIST CSWP 39 _Considerations for Achieving Crypto Agility — Strategies and Practices_ (December 2025 final). All 18 findings closed: 3 blockers, 13 majors, the minor list, and the nit list. The audit report is in `pqctoday-priv/docs/platform/ux/command-center-cswp39-audit-05152026.md` (rev 4).

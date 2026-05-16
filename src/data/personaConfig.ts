@@ -18,7 +18,6 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/library',
     '/leaders',
     '/patents',
-    '/agility',
     '/revisions',
   ],
   developer: [
@@ -31,7 +30,6 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/playground',
     '/openssl',
     '/patents',
-    '/agility',
     '/revisions',
   ],
   architect: [
@@ -45,7 +43,6 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/playground',
     '/leaders',
     '/patents',
-    '/agility',
     '/revisions',
   ],
   researcher: null,
@@ -58,7 +55,6 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/library',
     '/playground',
     '/openssl',
-    '/agility',
     '/revisions',
   ],
   curious: ['/explore', '/compliance', '/assess', '/report', '/library', '/leaders', '/revisions'],
@@ -170,6 +166,7 @@ export const REGION_COUNTRIES_MAP: Record<Region, string[]> = {
 export const MODULE_INDUSTRY_RELEVANCE: Record<string, string[] | null> = {
   'pqc-101': null,
   'quantum-threats': null,
+  'pqc-candidates': null,
   'hybrid-crypto': ['Finance & Banking', 'Government & Defense', 'Technology'],
   'crypto-agility': ['Finance & Banking', 'Government & Defense', 'Telecommunications'],
   'tls-basics': ['Technology', 'Finance & Banking', 'Telecommunications'],
