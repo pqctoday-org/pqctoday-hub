@@ -33,6 +33,15 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     duration: '40 min',
     difficulty: 'beginner',
   },
+  'pqc-candidates': {
+    id: 'pqc-candidates',
+    lm_id: 'LM-053',
+    title: 'PQC Candidates & Lifecycle',
+    description:
+      'How NIST evaluates new post-quantum mechanisms, the nine third-round signature on-ramp candidates across four math families, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC).',
+    duration: '55 min',
+    difficulty: 'intermediate',
+  },
   'hybrid-crypto': {
     id: 'hybrid-crypto',
     lm_id: 'LM-006',
@@ -501,6 +510,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'digital-id': 5,
   'tls-basics': 4,
   'quantum-threats': 5,
+  'pqc-candidates': 6,
   'hybrid-crypto': 5,
   'crypto-agility': 4,
   'crypto-mgmt-modernization': 5,
@@ -581,6 +591,7 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['entropy-randomness'],
       MODULE_CATALOG['pqc-101'],
       MODULE_CATALOG['quantum-threats'],
+      MODULE_CATALOG['pqc-candidates'],
     ],
   },
   {
@@ -602,6 +613,7 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['tls-basics'],
       MODULE_CATALOG['vpn-ssh-pqc'],
       MODULE_CATALOG['email-signing'],
+      MODULE_CATALOG['mls-group-messaging'],
     ],
   },
   {
@@ -694,6 +706,13 @@ export const LEARN_SECTIONS: Record<string, { id: string; label: string }[]> = {
     { id: 'hndl', label: 'HNDL/HNFL Risk Windows & Prioritization' },
     { id: 'security-levels', label: 'Post-Quantum Security Levels' },
   ],
+  'pqc-candidates': [
+    { id: 'rolling-process', label: 'Standardisation is a Rolling Process' },
+    { id: 'validation', label: 'How Candidates Are Validated' },
+    { id: 'families', label: 'Four Math Families on the Table' },
+    { id: 'worldwide', label: 'Worldwide Parallel Processes' },
+    { id: 'whats-next', label: "What's Coming Next" },
+  ],
   'hybrid-crypto': [
     { id: 'why-hybrid', label: 'Why Hybrid Cryptography?' },
     { id: 'cert-formats', label: 'Hybrid Certificate Formats' },
@@ -728,12 +747,22 @@ export const LEARN_SECTIONS: Record<string, { id: string; label: string }[]> = {
     { id: 'smime', label: 'S/MIME, CMS & KEM Encryption' },
     { id: 'cms', label: 'Certificate Requirements & Migration' },
   ],
+  'mls-group-messaging': [
+    { id: 'mls-overview', label: 'TreeKEM, HPKE, Key Schedule (RFC 9420)' },
+    { id: 'pq-mls', label: 'PQ ciphersuites & openmls_pqctoday_crypto provider' },
+  ],
   'pki-workshop': [
     { id: 'fundamentals', label: 'PKI Fundamentals & Trust Models' },
     { id: 'cert-structure', label: 'Certificate Structure & Extensions' },
     { id: 'ca-hierarchy', label: 'CA Hierarchies & Certificate Chains' },
     { id: 'lifecycle', label: 'Certificate Lifecycle & Revocation' },
     { id: 'pqc-pki', label: 'PQC PKI Migration Path' },
+  ],
+  'pki-enrollment-protocols': [
+    { id: 'enrollment-overview', label: 'Enrollment Protocols Overview' },
+    { id: 'est-protocol', label: 'EST (RFC 7030) Walkthrough' },
+    { id: 'cmp-protocol', label: 'CMP (RFC 4210 + 9810) Walkthrough' },
+    { id: 'pqc-enrollment', label: 'PQC Enrollment Landscape & Drafts' },
   ],
   'kms-pqc': [
     { id: 'key-hierarchy', label: 'PQC Key Hierarchy Design' },
@@ -1047,6 +1076,14 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'hndl-timeline', label: 'HNDL Timeline' },
     { id: 'hnfl-timeline', label: 'HNFL Risk Calculator' },
   ],
+  'pqc-candidates': [
+    { id: 'lifecycle', label: 'Standardisation Lifecycle' },
+    { id: 'family-math', label: 'Family Math Explainer' },
+    { id: 'comparator', label: 'Candidate Comparator' },
+    { id: 'cryptanalysis', label: 'Cryptanalysis Timeline' },
+    { id: 'future-rounds', label: 'Future Rounds Forecaster' },
+    { id: 'worldwide-map', label: 'Worldwide Standardisation Map' },
+  ],
   'hybrid-crypto': [
     { id: 'key-generation', label: 'Key Generation' },
     { id: 'encrypt-sign', label: 'Encrypt & Sign' },
@@ -1083,6 +1120,10 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'cms-signing', label: 'CMS Signing' },
     { id: 'cms-encryption', label: 'CMS Encryption' },
   ],
+  'mls-group-messaging': [
+    { id: 'treekem', label: 'TreeKEM Ratchet Tree Visualizer' },
+    { id: 'provider-arch', label: 'OpenMLS ↔ PKCS#11 Provider Architecture' },
+  ],
   'pki-workshop': [
     { id: 'csr', label: 'Certificate Signing Request' },
     { id: 'root-ca', label: 'Root CA Setup' },
@@ -1090,6 +1131,14 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'parse', label: 'Certificate Parsing' },
     { id: 'revoke', label: 'Certificate Revocation' },
     { id: 'mtc', label: 'Merkle Tree Certificates' },
+  ],
+  'pki-enrollment-protocols': [
+    { id: 'keygen', label: 'Generate End-Entity Key (ML-DSA / ML-KEM)' },
+    { id: 'cmp-ir', label: 'CMP Initial Request' },
+    { id: 'est-enroll', label: 'EST simpleenroll' },
+    { id: 'cmp-kur', label: 'CMP Key Update with ML-KEM' },
+    { id: 'composite', label: 'Composite Enrollment (draft)' },
+    { id: 'cert-viewer', label: 'Inspect Issued Certificate' },
   ],
   'kms-pqc': [
     { id: 'key-hierarchy', label: 'Key Hierarchy' },

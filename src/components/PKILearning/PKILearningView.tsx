@@ -47,6 +47,9 @@ const QuizModule = lazyWithRetry(() =>
 const QuantumThreatsModule = lazyWithRetry(() =>
   import('./modules/QuantumThreats').then((module) => ({ default: module.QuantumThreatsModule }))
 )
+const PQCCandidatesModule = lazyWithRetry(() =>
+  import('./modules/PQCCandidates').then((module) => ({ default: module.PQCCandidatesModule }))
+)
 const HybridCryptoModule = lazyWithRetry(() =>
   import('./modules/HybridCrypto').then((module) => ({ default: module.HybridCryptoModule }))
 )
@@ -99,6 +102,11 @@ const CodeSigningModule = lazyWithRetry(() =>
 const APISecurityJWTModule = lazyWithRetry(() =>
   import('./modules/APISecurityJWT').then((module) => ({
     default: module.APISecurityJWTModule,
+  }))
+)
+const PKIEnrollmentProtocolsModule = lazyWithRetry(() =>
+  import('./modules/PKIEnrollmentProtocols').then((module) => ({
+    default: module.PKIEnrollmentProtocolsModule,
   }))
 )
 const IoTOTModule = lazyWithRetry(() =>
@@ -383,6 +391,7 @@ export const PKILearningView: React.FC = () => {
                 <Route path="pqc-101" element={<PQC101Module />} />
                 <Route path="quiz" element={<QuizModule />} />
                 <Route path="quantum-threats" element={<QuantumThreatsModule />} />
+                <Route path="pqc-candidates" element={<PQCCandidatesModule />} />
                 <Route path="hybrid-crypto" element={<HybridCryptoModule />} />
                 <Route path="crypto-agility" element={<CryptoAgilityModule />} />
                 <Route
@@ -400,6 +409,7 @@ export const PKILearningView: React.FC = () => {
                 <Route path="merkle-tree-certs" element={<MerkleTreeCertsModule />} />
                 <Route path="code-signing" element={<CodeSigningModule />} />
                 <Route path="api-security-jwt" element={<APISecurityJWTModule />} />
+                <Route path="pki-enrollment-protocols" element={<PKIEnrollmentProtocolsModule />} />
                 <Route path="iot-ot-pqc" element={<IoTOTModule />} />
                 <Route path="pqc-risk-management" element={<PQCRiskManagementModule />} />
                 <Route path="pqc-business-case" element={<PQCBusinessCaseModule />} />

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { AlgorithmComparison } from './AlgorithmComparison'
 import { AlgorithmDetailedComparison } from './AlgorithmDetailedComparison'
@@ -9,7 +9,7 @@ import { AlgorithmFilters } from './AlgorithmFilters'
 import { AlgorithmCompareBar } from './AlgorithmCompareBar'
 import { AlgorithmComparisonPanel } from './AlgorithmComparisonPanel'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
-import { ArrowRight, BarChart3, Shield, Monitor, Lightbulb, Network } from 'lucide-react'
+import { ArrowRight, BarChart3, Shield, Monitor, Lightbulb, Network, Info } from 'lucide-react'
 import {
   loadPQCAlgorithmsData,
   loadedFileMetadata,
@@ -542,6 +542,26 @@ export function AlgorithmsView() {
             totalCount={totalAlgoCount}
             availableLevels={availableLevels}
           />
+
+          {/* Cross-link to PQC Candidates module when filtering by Candidate status */}
+          {filterStatus === 'Candidate' && (
+            <div className="mt-3 rounded-lg border border-info/30 bg-info/5 p-3 flex items-start gap-2">
+              <Info size={16} className="text-info shrink-0 mt-0.5" />
+              <p className="text-xs text-foreground/85 leading-relaxed">
+                These are NIST Additional Signatures Round-2 / Round-3 candidates, not yet
+                standardised. To understand the standardisation lifecycle — the four math families,
+                the cryptanalysis events, and the worldwide parallel tracks (KpqC, CACR, ISO/IEC) —
+                see the{' '}
+                <Link
+                  to="/learn/pqc-candidates"
+                  className="text-info hover:underline font-semibold inline-flex items-center gap-1"
+                >
+                  PQC Candidates &amp; Standardisation Lifecycle <ArrowRight size={11} />
+                </Link>{' '}
+                learn module.
+              </p>
+            </div>
+          )}
 
           {/* View Tabs */}
           <Tabs value={activeTab} onValueChange={handleTabChange} className="mt-6">

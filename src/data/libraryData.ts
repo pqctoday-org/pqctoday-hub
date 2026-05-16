@@ -37,6 +37,10 @@ export interface LibraryItem {
   dataQualityNotes?: string
   confidenceScore?: number
   status?: 'New' | 'Updated'
+  /** Mathematical family / families (semicolon-separated in CSV). Sourced from enrichment dimension `Math Family`. */
+  mathFamily?: string[]
+  /** Standardisation-round lifecycle (`Standardised`, `Draft`, `Round 2`, etc.). Sourced from enrichment dimension `PQC Round`. */
+  pqcRound?: string
 }
 
 // C-001: Single source of truth for categories
@@ -164,6 +168,8 @@ interface RawLibraryRow {
   trusted_source_id_status?: string
   data_quality_notes?: string
   confidence_score?: string
+  math_family?: string
+  pqc_round?: string
 }
 
 function transformLibraryRow(row: RawLibraryRow): LibraryItem {
@@ -202,6 +208,9 @@ function transformLibraryRow(row: RawLibraryRow): LibraryItem {
     trustedSourceIdStatus: row.trusted_source_id_status || undefined,
     dataQualityNotes: row.data_quality_notes || undefined,
     confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
+    mathFamily:
+      row.math_family && row.math_family.trim() ? splitSemicolon(row.math_family) : undefined,
+    pqcRound: row.pqc_round?.trim() || undefined,
   }
 
   // Multi-category Logic: Combine manual_category WITH auto-detected categories
