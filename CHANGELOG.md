@@ -21,6 +21,200 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Library detail — CSWP 39 Requirements collapsed by default (2026-05-15)
+
+The CSWP 39 Requirements section in the [Library detail popover](src/components/Library/LibraryDetailPopover.tsx) was always expanded, dominating the popover for any document with extracted governance obligations (NIST CSWP 39 itself surfaces 100+ requirement rows). Users had to scroll past the full requirements list to reach trust/source/dependency info further down.
+
+The section is now a collapsible card (closed by default) with a `ListChecks` icon, requirement count, and chevron — matching the popover's other glass-panel sections. Click to expand the full pillar-grouped, maturity-tiered requirement breakdown. No data lost; just less wall-of-text on first open.
+
+### Migrate — deep-link reliability and search precision (2026-05-15)
+
+Two fixes for [`/migrate`](src/components/Migrate/MigrateView.tsx):
+
+- **Deep links reset stale filters.** Entering `/migrate` via a chatbot result, a Library/Compliance reference chip, or a `?software=…` / `?product=…` link now clears persisted layer / category / vendor / license filters. Previously a stale "Cloud" layer or vendor filter from a prior session could silently hide the target row, making the deep link land on an empty table.
+- **`?software=<name>` deep link** — new URL param expands the matching product row, applies the name as a filter, and switches to table view. Used by upstream cross-references that want to land directly on one product.
+- **Search prioritises product identity over backend mentions.** Typing `wolfssl` used to return 7 rows because curl / strongSwan / ExpressVPN / etc. mention wolfSSL as a backend in their capability description. Now, if any product matches by name / product ID / category, only those products are shown — description-only "mentioned as a backend" matches are suppressed. Capability searches like `ML-KEM` still match across description fields when no product name matches.
+
+### PQC Protocol Matrix — reference chips open library detail pane (2026-05-15)
+
+Previously, clicking a standards-reference chip in the [PQC Protocol Matrix](src/components/Algorithms/PQCProtocolMatrix.tsx) (e.g. `RFC 8446`, `draft-ietf-tls-mlkem-07`) opened the raw source URL directly in a new tab. Users had no chance to see context — document status, applicable industries, dependencies, trust tier — before clicking through.
+
+Reference chips now route to `/library?ref=<refId>` instead, which opens the [`LibraryDetailPopover`](src/components/Library/LibraryDetailPopover.tsx) so the user sees an overview of the document (title, dependencies, toolchain support, status, source URL) before opening the actual standards PDF/HTML.
+
+**ID normalization** — matrix chip IDs use kebab form (`RFC-4253`); library `reference_id` uses space form (`RFC 4253`). A `toLibraryRefId(id)` helper handles the `RFC-` → `RFC ` swap; drafts pass through unchanged.
+
+**Library doc set expanded** — 5 matrix references that previously had no library entry have been added to [library_05152026_r3.csv](src/data/library_05152026_r3.csv) (823 rows, up from 818):
+
+| Reference ID                               | Document                                                     |
+| ------------------------------------------ | ------------------------------------------------------------ |
+| `RFC 7030`                                 | Enrollment over Secure Transport (EST)                       |
+| `RFC 7296`                                 | Internet Key Exchange Protocol Version 2 (IKEv2) — base spec |
+| `draft-ietf-lamps-cms-composite-kem-01`    | Use of Composite ML-KEM in CMS                               |
+| `draft-ietf-lamps-cms-composite-sigs-04`   | Use of Composite ML-DSA in CMS                               |
+| `draft-reddy-cose-jose-pqc-hybrid-hpke-11` | HPKE with PQC in COSE/JOSE                                   |
+
+Each new entry has minimum-viable metadata (title, status, dependencies, toolchain, etc.) and is marked `confidence_score: 50` with `data_quality_notes` flagging that ollama qwen3.6:27b enrichment is pending. Existing library enrichment / corpus / RAG pipelines will pick these up on next run.
+
+A dev-only `console.warn` fires if a matrix doc ref ever has no matching library entry — surfacing data gaps before they become silent broken links.
+
+### TLS Simulator — remove "Live HSM Mode" toggle; add capabilities banner (2026-05-15)
+
+The "HSM ON / HSM OFF" toggle in both TLS simulator surfaces ([Workshop](src/components/PKILearning/modules/TLSBasics/TLSBasicsModule.tsx) and [Playground](src/components/OpenSSLStudio/TLSSimulatorTab.tsx)) was misleading: the HSM-mode path never produced a successful handshake for end-users, and the toggle's existence implied HSM coverage that wasn't real for most cert types or for the client side at all. Removed pending a deliberate revival on a future cycle.
+
+Replaced with a **capabilities banner** at the top of each TLS sim surface, stating explicitly what the simulator does and does not exercise today:
+
+- ✓ **Pure PQC keys** — ML-DSA-44 / 65 / 87 server & client (FIPS 204)
+- ✓ **Hybrid KEM** — X25519MLKEM768, SecP256r1MLKEM768, X448MLKEM1024, SecP384r1MLKEM1024 (TLS 1.3 key share, IETF draft-connolly-tls-mlkem)
+- ✓ **Classical certs** — RSA-2048, ECDSA-P256, Ed25519 (bundled PEMs, OpenSSL native sign)
+- ✓ **Pure PQC certs** — ML-DSA-44 / ML-DSA-87 cert + key bundled, real ML-DSA CertificateVerify
+- ⚠ **Hybrid (composite) certs — not supported yet** — LAMPS composite-sig (ML-DSA + RSA-PSS / ECDSA / Ed25519) on the roadmap. Dropdown rows for composite are a placeholder that substitutes the nearest pure ML-DSA PEM (the wire signature is ML-DSA, not composite). Provider machinery exists in the vendored pkcs11-provider fork (`composite.c`) but the runtime cert-minting path isn't wired here.
+- ⚠ **HSM-backed signing — removed** — softhsm v3 + pkcs11-provider remain statically linked into `openssl.wasm`; the wiring just isn't user-facing.
+
+**API shape**: `simulateTLS(...)` drops the `options.hsmMode?: boolean` parameter; the TLS_SIMULATE worker message drops the `hsmMode` field; the `tls_simulation_set_hsm_mode` cwrap call in the worker is gone. The C-side symbol still exists in the linked WASM (left for a future revival) but is never called — `g_hsm_mode_enabled` stays at 0 and [tls_simulation.c](src/wasm/tls_simulation.c) always takes the PEM-file branch.
+
+**Reverted in lockstep**: the in-flight per-side HSM algorithm refactor (4 commits behind `origin/main` that never shipped to production) for the TLS simulator's shared backend files (`tls_simulation.c`, `tls_simulation_hsm.c`, `softhsm.ts`, `openssl.worker.ts`, `OpenSSLService.ts`, the WASM binary). Their changelog entry from earlier today has been replaced by this one because the work was reverted. The composite-signature machinery in the upstream `pqctoday-hsm` provider (composite.c keymgmt + signature dispatch + encoder + ALGORITHM_ID + TLS sigalg + PKCS#11 v3.2 §6.67.5 fix) remains committed in that repo and is unaffected.
+
+**Net** (this session): 5 hub-side files modified, 0 net new behavior, but the simulator is now honest about what it does. The composite-cert path remains the open item; its plan lives at `~/.claude/plans/why-do-we-need-synchronous-firefly.md`.
+
+### TPM Playground — V1.85 RC4 strict-compliance audit + pqctoday-tpm v0.8.0 alignment (2026-05-15)
+
+Brought the in-browser TPM Playground (`/playground` → TPM tab) into byte-and-byte agreement with the published TCG TPM 2.0 Library Specification V1.85 RC4 and the freshly-released `pqctoday-tpm v0.8.0` WASM. Every section reference, table number, and wire-byte layout was re-verified against the PDF — no claim left unverified.
+
+**WASM refresh**
+
+- Rebuilt `public/wasm/pqctpm.{wasm,js}` from `pqctoday-tpm` main at v0.8.0 (commit `5385711e`) via `wasm/build.sh`. The v0.8.0 release includes the V1.85 RC4 `TPM2_SignDigest` + `TPM2_VerifyDigestSignature` wire-format migration (Tables 126 / 120) — the prior v0.7-built WASM expected pre-RC4 legacy shapes and would have rejected spec-compliant clients with `TPM_RC_SCHEME`.
+- Bumped `WASM_BUILD = '20260515-v0p8-rc4-wire'` in [tpmBridge.ts](src/wasm/tpmBridge.ts) to invalidate browser caches of the previous WASM.
+
+**Unitary commands — every entry in `tpmCommandDefs.ts` re-grounded against V1.85 RC4 PDF**
+
+Fixed 7 wrong section citations and 2 outright hallucinations:
+
+| Command                    | Was                                   | Is (verified in /tmp/tpm-part\*.txt) |
+| -------------------------- | ------------------------------------- | ------------------------------------ |
+| TPM2_Startup               | §12.1 (actually TPM2_Create)          | §9.3 Tables 4-5                      |
+| TPM2_SelfTest              | §11.4 (does not exist)                | §10.2 Tables 8-9                     |
+| TPM2_GetCapability         | §30.2                                 | §30.2 Tables 238-239                 |
+| TPM2_GetRandom             | §16.1                                 | §16.1 Tables 75-76                   |
+| TPM2_CreatePrimary         | §24.1                                 | §24.1 Tables 191-192                 |
+| TPM2_Encapsulate           | §26.1 (does not exist)                | §14.10 Tables 60-61                  |
+| TPM2_Decapsulate           | §26.2 (does not exist)                | §14.11 Tables 62-63                  |
+| TPM2_SignDigest            | §20.1 (actually SignSequenceComplete) | §20.7 Tables 126-127                 |
+| TPM2_VerifyDigestSignature | _missing entirely_                    | **added** — §20.4 Tables 120-121     |
+
+Killed two outright hallucinations: (a) `TPM2_CreatePrimary` claimed "ML-DSA-65 security level 3 (128-bit)" — ML-DSA-65 is NIST PQC Category 3 (~192-bit); ML-DSA-44 is the 128-bit one. (b) Both `TPM2_Encapsulate.outSharedKey` and `TPM2_Decapsulate.inEncapsulation`/`outSharedKey` were invented field names — spec Tables 60-63 use `sharedSecret` and `ciphertext`. Renamed to spec names.
+
+`TPM2_SignDigest` request wire fully rewritten from the pre-RC4 5-field shape `{keyHandle, inScheme, digest, context, hint}` to the RC4 Table 126 shape `{keyHandle, context, digest, validation(TPMT_TK_HASHCHECK)}`. Response also corrected: `TPM2B_SIGNATURE_MLDSA` is `{size, buffer}` per Table 216 — no `parameterSet` field on the wire.
+
+`TPM2_VerifyDigestSignature` is a new top-level entry; wired into [CommandBuilder.tsx](src/components/Playground/TpmPlayground/CommandBuilder.tsx) as a Phase 4 "Use Keys" command alongside SignDigest.
+
+**Compliance Runner ([ComplianceRunner.tsx](src/components/Playground/TpmPlayground/ComplianceRunner.tsx))**
+
+Five wrong V185 check citations corrected: V185-001 SelfTest §11.2.1 → Part 3 §10.2; V185-002 Response Header §7.2 → Part 1 §15.2 (Command/Response Header Fields); V185-004/005 ML-KEM/ML-DSA registered §11.9 (doesn't exist) → Part 2 §6.3 (TPM_ALG_ID). Phase narratives re-cited the same way. V185-015 SignDigest wire-byte builder rewritten to the V1.85 RC4 Table 126 shape — without this rewrite the v0.8.0 WASM would reject the suite's request with `TPM_RC_SCHEME (rc=0x1d2)` on parameter 1.
+
+**Compliance Runner — 6 new V185 checks for full PQC command surface (V185-019 → V185-024)**
+
+The in-browser compliance suite was 18/18 passing but only exercised half the V1.85 RC4 PQC command surface — `TPM2_VerifyDigestSignature` and the four ML-DSA sequence commands had no compliance coverage at all. Extended to **24 checks**:
+
+| Check    | Command exercised                                                         | Spec                        |
+| -------- | ------------------------------------------------------------------------- | --------------------------- |
+| V185-019 | `TPM2_VerifyDigestSignature` round-trip → `TPM_ST_DIGEST_VERIFIED` ticket | Part 3 §20.4 Table 120      |
+| V185-020 | `TPM2_SignSequenceStart` → `sequenceHandle` returned                      | Part 3 §17.5 Tables 89-90   |
+| V185-021 | `TPM2_SignSequenceComplete` → ML-DSA-65 sig = 3309 B (FIPS 204)           | Part 3 §20.6 Tables 124-125 |
+| V185-022 | `TPM2_VerifySequenceStart` → `sequenceHandle` returned                    | Part 3 §17.6 Tables 87-88   |
+| V185-023 | `TPM2_SequenceUpdate` accumulates a 64-B chunk                            | Part 3 §17.7                |
+| V185-024 | `TPM2_VerifySequenceComplete` → `TPM_ST_MESSAGE_VERIFIED` ticket          | Part 3 §20.3 Table 119      |
+
+V185-019 reuses the signature captured in V185-015 (V1.85 RC4 wire shape from earlier this commit chain). V185-020 → V185-024 form a streaming ML-DSA round-trip on the unrestricted AK (`allowExternalMu = YES`). All six checks build raw wire bytes against the PDF-grounded layouts and run through the same `executeTpmCommand` path as the existing 18 — no test-double, this is end-to-end against the v0.8.0 WASM. EK handle is `FlushContext`-released before Phase 11 to free a transient slot for the sequence handles (the WASM build has 3 transient slots; EK + AK + sequence = 3 max).
+
+**Attestation Panel — `TPM_RC_OBJECT_MEMORY (0x902)` fix**
+
+`AttestationPanel.tsx` was hitting `TPM_RC 0x902 = RC_WARN + 0x002` ("out of memory for object contexts" per Part 2 line 2900) when the user clicked Quote/Certify after running the Compliance Runner or Command Builder. Persistent EK/AK handles don't consume transient slots, but the TPM allocates an internal working slot during signing — and that slot was unavailable because prior `TPM2_CreatePrimary` calls had filled all three transient slots and never released them.
+
+Fix: new `flushAllTransient()` helper in [tpmBridge.ts](src/wasm/tpmBridge.ts) that walks `0x80000000–0x80000002` (transient objects) and `0x80FF0000–0x80FF0004` (sequence handles) and issues `TPM2_FlushContext` (Part 3 §28.4 Tables 228-229) on each, tolerating `TPM_RC_HANDLE` / `TPM_RC_VALUE` for empty slots. [AttestationPanel.tsx](src/components/Playground/TpmPlayground/AttestationPanel.tsx) calls it at the top of `run()` so every Quote/Certify starts with a clean slot pool regardless of what the user did before.
+
+**Streaming ML-DSA — four new sequence commands wired into CommandBuilder**
+
+Added top-level entries for `TPM2_SignSequenceStart` (§17.5 Tables 89-90), `TPM2_SignSequenceComplete` (§20.6 Tables 124-125), `TPM2_VerifySequenceStart` (§17.6 Tables 87-88), and `TPM2_VerifySequenceComplete` (§20.3 Tables 118-119). Surfaced as a new "Phase 4 — Streaming ML-DSA (chain Start → SequenceUpdate → Complete)" group in [CommandBuilder.tsx](src/components/Playground/TpmPlayground/CommandBuilder.tsx). Every wire-byte layout PDF-grounded against Part 3 Tables in V1.85 RC4, including the spec edge cases (Table 87: `hint` MUST be zero-length for ML-DSA — only EDDSA uses it; Table 118: produces `TPM_ST_MESSAGE_VERIFIED` ticket distinct from the `TPM_ST_DIGEST_VERIFIED` ticket of `TPM2_VerifyDigestSignature`). [ExecutionLog.tsx](src/components/Playground/TpmPlayground/ExecutionLog.tsx) opcode → name map extended with the four new CCs plus `TPM2_SequenceUpdate` (0x15C) and `TPM2_FlushContext` (0x165) for cleaner wire-byte traces.
+
+**EK + Attestation components — audited clean (no fixes needed)**
+
+[V2p7EkExplorer.tsx](src/components/Playground/TpmPlayground/V2p7EkExplorer.tsx), [V2p7EkCertReader.tsx](src/components/Playground/TpmPlayground/V2p7EkCertReader.tsx), [v2p7-reference.ts](src/components/Playground/TpmPlayground/v2p7-reference.ts), and [AttestationPanel.tsx](src/components/Playground/TpmPlayground/AttestationPanel.tsx) all PDF-cross-checked: 6 PQC EK NV indices (`0x01c00060/62/64/70/72/74`), TCG EK V2.7 RC1 Tables 8/13/14, §5.3.1 NV layout, §6.2.3/§6.2.4 SPKI OIDs, Part 3 §18.2 TPM2_Certify (Tables 97-98), Part 3 §18.4 TPM2_Quote (Tables 101-102), and `TPM_GENERATED_VALUE = 0xff544347` all match the spec PDFs byte-for-byte.
+
+**Validation**
+
+- TypeScript: `tsc --noEmit` clean.
+- pqctoday-tpm v0.8.0 source suites (re-run at this branch's HEAD): `v185_compliance.sh` 106/106, `test_pqc_phase3` 21/21, `run_wolftpm_runtime_xcheck.sh` 30/30, `run_attestation_xcheck.sh` 12/12, `run_ek_cert_conformance_xcheck.sh` 11/11, and `wolfTPM/examples/pqc/pqc_mssim_e2e` (the spec-compliant V1.85 RC4 SignDigest + VerifyDigestSignature interop binary) exits 0 against our libtpms.
+
+### Data — Trust-tier baseline snapshot refreshed (2026-05-15)
+
+Re-ran the trust-tier measurement script for the Phase 2 SME-triage baseline. Net change vs the 2026-05-13 snapshot: +14 Moderate, +18 Low, **+32 total records** (3,314 → 3,346) from the intervening enrichment + xwalk runs. Authoritative (90) and High (649) tiers unchanged.
+
+### Changed — PQC Protocol Matrix: all doc references moved from prose to structured pointers (2026-05-15)
+
+Hygiene pass on the Protocol Support matrix. Every RFC number and IETF-draft slug that was previously inlined in dimension `note`, `deploymentNote`, `noDeploymentReason`, playground tooltip, and live-deployment description fields has been moved out of free-text. **45 fields cleaned, 0 doc-ID mentions remain in prose**; all citations now live exclusively in the structured `latestRelease[]` and `latestDraft[]` arrays.
+
+**Why:** prose citations drift (e.g. the TLS 1.3 `hybridSig.note` carried a typo'd `draft-lamps-pq-composite-sigs` slug missing the `-ietf-` segment; the COSE `hybridSig.note` cited `draft-prabel-jose-pq-composite-sigs` which is **expired and replaced** by the WG-adopted successor). Structured pointers are auditable, link to a cached `localFile`, and surface in the UI as clickable doc chips.
+
+**Library completeness check.** Audited every doc reference in the matrix against `library_05152026_r2.csv`: **28 / 28 refs are now in library + enriched + in the RAG corpus.** One missing entry was added: `draft-reddy-cose-jose-pqc-hybrid-hpke-11` (individual submission, HPKE-PQ binding for JOSE/COSE, Feb 2026) — downloaded to `public/library/` and enriched via qwen3.6:27b. Four pre-existing library rows that were unenriched got their first pass: RFC 9810 (CMP KEM-update), `draft-ietf-cose-dilithium` and `-05`, `draft-ietf-jose-pqc-kem`. Total enrichment: 5 docs in 14 min 56 s wall-time, 0 failures, 19–23 of 39 dimensions filled per doc.
+
+**Matrix array additions** (structured pointers that replaced inlined citations):
+
+- S/MIME `latestRelease`: + RFC 9629 (KEMRecipientInfo, the CMS structure the composite-KEM draft profiles)
+- IKE/IPsec `latestRelease`: + RFC 9242 (IKE_INTERMEDIATE, the substrate that enables PQ KEX rounds)
+- COSE `latestDraft`: + `draft-reddy-cose-jose-pqc-hybrid-hpke-11`
+- JOSE `latestDraft`: + `draft-reddy-cose-jose-pqc-hybrid-hpke-11`
+
+**RAG corpus regenerated**: 11,009 → 11,011 chunks (+2 from the new HPKE-PQ draft × library + document-enrichment sources).
+
+Going forward — if you cite an RFC number or draft slug inside a `note`, that's a regression: the doc belongs in `latestRelease` or `latestDraft` instead. A CI gate enforces this: [scripts/audit-matrix-refs.ts](scripts/audit-matrix-refs.ts) (run via `npm run audit:matrix-refs`) parses every text field on every row and exits non-zero if any RFC number or `draft-…` slug leaks into prose. Wire into the CI pipeline before tests; takes < 1 s.
+
+### Added — PQC Protocol Support matrix: PQCC alignment, live deployments, detail modal (2026-05-15)
+
+The **Protocol Support** tab on `/algorithms` doubled in scope and now mirrors the PQCC State-of-the-Migration April 2026 heatmap with a row-level deployment ledger you can audit.
+
+**Data model:**
+
+- 10 → 20 protocol rows in [pqcProtocolMatrix.ts](src/data/pqcProtocolMatrix.ts): added **COSE**, **JOSE**, **EST/CMP**, **5G SUCI** as new families; added 6 inheritance rows (**DTLS 1.2**, **DTLS 1.3**, **FIDO**, **FIDO 2**, **MACsec**, **UEFI Secure Boot**) with `inheritsFromProtocolId` pointing to the parent and matching dimension badges.
+- New `LiveDeployment` type — `{provider, what, since, referenceUrl}`. **24 production deployments** seeded across 13 rows; every `referenceUrl` was verified to resolve (HTTP 200) before being committed. Examples: Cloudflare X25519MLKEM768 at the edge ([blog.cloudflare.com/pq-2025](https://blog.cloudflare.com/pq-2025/)), Google Chrome 131+ default ([blog.google/chromium](https://blog.google/chromium/advancing-our-amazing-bet-on-asymmetric/)), AWS KMS/ACM/Secrets ML-KEM, Apple iMessage PQ3, Signal PQXDH, X9 Financial PKI by DigiCert, F5 BIG-IP v17.5+, Palo Alto PAN-OS 11.2/12.1+, SK Telecom + Thales 5G SUCI trial, EJBCA 9.1+ ML-DSA via CMP, Dell 2026 commercial PCs LMS BIOS code signing, Turkcell + Juniper + ID Quantique quantum-safe MACsec, wolfTPM v1.85 PQ commands.
+- New `DimensionStatus.deploymentPosture` (`production` / `pilot` / `experimental`) + `deploymentNote` — captures cases like TLS 1.3 hybrid-KEM being in `draft` status at IETF but **already in production** at major CDNs. Surfaced as a rocket badge on each dimension cell.
+- New `noDeploymentReason` field for the 7 rows without verified deployments (TLS 1.2, S/MIME, COSE, JOSE, DNSSEC, DTLS 1.2, FIDO). Each row explains _why_ the slot is empty (by-design, standards too fresh, market migrated to OpenPGP/proprietary, no IANA codepoint, etc.) — surfaced inline in the modal so users see structural reasons rather than apparent omissions.
+- New `inheritedBy[]` chips on parent rows showing which protocols reuse their PQC posture.
+
+**PQCC April 2026 alignment** (cross-checked vs the April 2026 image-only heatmap, read via vision):
+
+- 6 dimension flag bumps applied where PQCC scored higher than our internal flag: SSH hybridSig `none → experimental` (CNSA 2.0 SSH profile context); S/MIME hybridKem + hybridSig `experimental → draft` (cites `draft-ietf-lamps-cms-composite-kem-01` and `draft-ietf-lamps-cms-composite-sigs-04`, both LAMPS WG-adopted); OpenPGP pureKem `none → experimental` (PQCC tracks chartered work); MLS hybridKem + hybridSig `experimental → draft` (cites `draft-ietf-mls-combiner-02`).
+- IKE/IPsec hybridKem note tightened — kept `rfc` for the RFC 9370 multi-KE framework while explicitly noting the ML-KEM-specific binding (`draft-ietf-ipsecme-ikev2-mlkem-05`) is still WG draft.
+- Transport-issues panel updated: removed **IKE first packet** (PQCC dropped it; handled via RFC 9242 IKE_INTERMEDIATE); added **Merkle Tree Certs** (cites `draft-ietf-plants-merkle-tree-certs`).
+- Two PQCC scores we defensibly disagreed with: TPM hybridSig stays `na` (TCG hasn't chartered composite-sig work; signatures are atomic per-key by design); IKE/IPsec hybridKem stays `rfc` for the framework view.
+
+**UI** ([PQCProtocolMatrix.tsx](src/components/Algorithms/PQCProtocolMatrix.tsx), new [ProtocolDetailModal.tsx](src/components/Algorithms/ProtocolDetailModal.tsx)):
+
+- **Heatmap ↔ Detailed view toggle**, default heatmap. Heatmap mode shows only Protocol, 4 dimension badges, OSS/Commercial/Deployment count badges. Detailed mode adds release/draft document links, all chips, and the playground column.
+- **New Live Deployments column** in both views — green count badge with tooltip in heatmap; clickable provider chips with `→` external link to the reference URL in detailed view. Filter dropdown adds `Has live deployment` / `No live deployment` options.
+- **Filter toolbar simplified to one row** — search input, status (multi-select), filter (single-select for OSS/commercial/playground/deployment), sort dropdown with direction toggle, clear button, live row count. Dropped the redundant Row-type filter (20 rows scan easily, inheritance rows visually distinct).
+- **New protocol detail modal** opens by clicking any protocol name. Sections: standardization status (2×2 dimension grid), latest releases, latest drafts, OSS chips, commercial chips, **live deployments with `since` date and external links**, playground tools. Inheritance rows show "inherits from X" banner. Empty deployment section shows the row's `noDeploymentReason`.
+- **Removed the "Known Gaps" panel** entirely — replaced the muddled mix of standardization gaps + internal tooling backlog + protocol constraints with a clean split: standardization state stays in dimension badges, constraints folded into dimension notes (X.509 KEM cert encryption-only, DNSSEC MTU, FIDO 2 storage cost, UEFI sig size), and cross-cutting transport blockers stay in the Transport-Layer Blockers panel.
+
+**Bottom line**: 13 of 20 rows now have at least one verified production deployment, with every claim citation-grounded; 7 rows are documented empty-with-reason. The matrix now answers "what's actually deployed?" and "if not, why?" — not just "what's the standardization status?".
+
+### Fixed — generate-rag-corpus.ts: deprecated CSV rows leaked into RAG corpus (2026-05-15)
+
+A hallucinated stub `draft-ietf-tls-authkem` (404 on datatracker; the real drafts are `draft-celi-wiggers-tls-authkem` individual submissions, never WG-adopted) was surfacing in RAG search results despite being marked `status='deprecated'` in `library_05152026.csv` since the day it was created. Root cause: `scripts/generate-rag-corpus.ts` did not call `filterActive()` (from [loaderUtils.ts](src/data/loaderUtils.ts)) when processing the library CSV — only the `processLeaders()` path had a hardcoded check. **207 deprecated rows across 5 CSV sources** were leaking through.
+
+Added two helpers near [readCSV definitions](scripts/generate-rag-corpus.ts) — `isInactiveRow(rows, i)` for positional parsers and `isInactiveRecord(rec)` for header-keyed parsers — both treating missing `status` columns as pre-DS01 active (backwards compatible). Wired them into 13 processors plus the library-refId cross-link lookup: library, timeline, X.509 algorithms, threats, compliance, leaders (unified the existing hardcoded check), product catalog (unified another hardcoded check), vendors, trusted sources, assessment config, and the certification cross-reference (both `byType` and `byVendor` groupings).
+
+Regenerated `public/data/rag-corpus.json` — AuthKEM stub gone; strict cross-check against the deprecated-id set finds 0 chunks whose title exactly matches a deprecated CSV row. 11,003 → 11,009 chunks after later library backfill. All 31 corpus generator tests still pass.
+
+### Added — Library backfill: CMS composite KEM/sigs + TLS cert-abridge (2026-05-15)
+
+Three IETF drafts cited by the PQCC April 2026 heatmap were missing from our library data. Added in revision file [src/data/library_05152026_r1.csv](src/data/library_05152026_r1.csv) (818 rows, written via PapaParse `unparse()` per the CSV Write Method rule, never shell heredocs):
+
+- **`draft-ietf-lamps-cms-composite-kem-01`** (LAMPS WG-adopted, May 6 2026, Proposed Standard) — composite ML-KEM for CMS using KEMRecipientInfo per RFC 9629; covers ML-KEM + RSA-OAEP / ECDH / X25519 / X448 combinations. Closes the S/MIME hybridKem gap.
+- **`draft-ietf-lamps-cms-composite-sigs-04`** (LAMPS WG-adopted, Feb 5 2026, AD Followup with pending DISCUSS) — composite ML-DSA SignerInfo for CMS per RFC 5652; 18 combinations operating in pre-hash mode with algorithm-specific digests. Closes the S/MIME hybridSig gap.
+- **`draft-ietf-tls-cert-abridge-02`** (TLS WG, expired Sep 2024 awaiting revival) — TLS Certificate Compression scheme using a shared root/intermediate WebPKI dictionary; cited by PQCC transport-issues panel as the TCP Initial Congestion Window + QUIC amplification mitigation reference. Flagged with `data_quality_notes='EXPIRED'` since it's the authoritative reference even while dormant.
+
+Cached the 3 HTMLs to `public/library/` (222 KB combined) via `scripts/download-library.js`. Enriched via `caffeinate -i python3 -u scripts/enrich-docs-ollama.py` with qwen3.6:27b (7 min 15 s wall time, 0 failures, dimensions filled per-doc: 21/39 for cms-composite-kem, 18/39 for cms-composite-sigs, 14/39 for tls-cert-abridge — qwen correctly reports "None detected" for fields the source docs don't address). Appended to `src/data/doc-enrichments/library_doc_enrichments_05152026.md`. Corpus regenerated → 6 new chunks (2 per draft × `library` + `document-enrichment` sources).
+
 ### Fixed — Timeline document cards: whole tile is now clickable (2026-05-13)
 
 On the `/timeline` page (Documents · Cards view), each document tile (title, organization, badges, period) was purely informational — the only way to open the detail popover was to click the small **Details** button at the bottom. The whole `<motion.article>` had no `onClick`. Now the entire tile is the click target: `role="button"`, keyboard support (Enter / Space), a focus ring for keyboard navigation, and a subtle `hover:bg-card/70` cue. The Source link, Endorse, and Flag buttons in the footer keep their dedicated behaviors via `stopPropagation` so they don't double-fire the popover. The explicit "Details" button stays as a discoverability affordance. [TimelineDocumentCard.tsx](src/components/Timeline/TimelineDocumentCard.tsx)

@@ -77,6 +77,33 @@ export const PERSONA_RECOMMENDED_PATHS: Record<PersonaId, string[]> = {
 }
 
 /**
+ * Revisions-feed domain priorities per persona.
+ *
+ * On the /revisions route, entries are still loaded in chronological (most-
+ * recent-first) order, but when a persona is selected and persona-sort is
+ * enabled, entries in the persona's priority domains float above entries in
+ * non-priority domains. Within each group the chronological order is
+ * preserved. This implements the persona-aware ranking described in the
+ * trust-engine explainability doc §9.3.
+ *
+ * The lists below are derived from each persona's nav-path interests
+ * (PERSONA_NAV_PATHS / PERSONA_RECOMMENDED_PATHS), normalised to the
+ * revision-feed domain vocabulary: module, tool, library, compliance,
+ * migrate, threats, algorithms.
+ *
+ * `researcher` returns an empty list deliberately — researchers see all
+ * revisions equally, with strict chronological ordering.
+ */
+export const PERSONA_REVISION_DOMAINS: Record<PersonaId, readonly string[]> = {
+  executive: ['compliance', 'migrate', 'threats'],
+  developer: ['algorithms', 'migrate', 'tool'],
+  architect: ['compliance', 'migrate', 'algorithms', 'library'],
+  researcher: [],
+  ops: ['migrate', 'compliance', 'threats'],
+  curious: ['compliance', 'library'],
+}
+
+/**
  * Recommended assessment mode per persona.
  * Executives benefit from the quick path; technical personas from comprehensive.
  */

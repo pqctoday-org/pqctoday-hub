@@ -24,7 +24,9 @@ export function clearLastTpmErr(): void {
 }
 
 // Build stamp used for cache-busting — updated each deploy
-const WASM_BUILD = '20260513-v0p7-ak-noDA'
+// 20260515-v0p8-rc4-wire: pqctoday-tpm v0.8.0 — V1.85 RC4 SignDigest +
+// VerifyDigestSignature wire-format migration (Tables 126 / 120).
+const WASM_BUILD = '20260515-v0p8-rc4-wire'
 
 // V2.7 RC1 provisioning status, captured after registerPqcBridge runs.
 // Indexes: 0=ML-KEM-512, 1=ML-KEM-768, 2=ML-KEM-1024,
@@ -238,6 +240,47 @@ function u16be(v: number): [number, number] {
 }
 function u32be(v: number): [number, number, number, number] {
   return [(v >>> 24) & 0xff, (v >>> 16) & 0xff, (v >>> 8) & 0xff, v & 0xff]
+}
+
+/**
+ * TPM2_FlushContext — V1.85 RC4 Part 3 §28.4 Tables 228-229.
+ * Releases a single transient object / sequence / session handle.
+ *
+ * Wire: TPM_ST_NO_SESSIONS, size=14, TPM_CC_FlushContext(0x00000165),
+ *       flushHandle(4).
+ *
+ * Tolerates TPM_RC_HANDLE / TPM_RC_VALUE silently (handle wasn't loaded).
+ */
+async function flushHandle(handle: number): Promise<void> {
+  const cmd = new Uint8Array([
+    ...u16be(0x8001),
+    ...u32be(14),
+    ...u32be(0x00000165),
+    ...u32be(handle),
+  ])
+  try {
+    await executeTpmCommandLarge(cmd, 256)
+  } catch {
+    /* not an error if the handle wasn't loaded */
+  }
+}
+
+/**
+ * Flush every transient object slot (0x80000000-0x80000002 — the WASM
+ * libtpms build is configured with 3 transient slots) and the conventional
+ * sequence-handle range (0x80FF0000-0x80FF0004).
+ *
+ * Call before any operation that needs a fresh transient slot (Quote,
+ * Certify, SignSequenceComplete, etc.) to avoid `TPM_RC_OBJECT_MEMORY
+ * (0x902 = RC_WARN + 0x002)` accumulated from prior panel runs.
+ */
+export async function flushAllTransient(): Promise<void> {
+  for (let h = 0x80000000; h <= 0x80000002; h++) {
+    await flushHandle(h)
+  }
+  for (let h = 0x80ff0000; h <= 0x80ff0004; h++) {
+    await flushHandle(h)
+  }
 }
 
 /**

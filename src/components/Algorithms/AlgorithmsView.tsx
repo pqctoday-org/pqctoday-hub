@@ -4,11 +4,12 @@ import { useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { AlgorithmComparison } from './AlgorithmComparison'
 import { AlgorithmDetailedComparison } from './AlgorithmDetailedComparison'
+import { PQCProtocolMatrix } from './PQCProtocolMatrix'
 import { AlgorithmFilters } from './AlgorithmFilters'
 import { AlgorithmCompareBar } from './AlgorithmCompareBar'
 import { AlgorithmComparisonPanel } from './AlgorithmComparisonPanel'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
-import { ArrowRight, BarChart3, Shield, Monitor, Lightbulb } from 'lucide-react'
+import { ArrowRight, BarChart3, Shield, Monitor, Lightbulb, Network } from 'lucide-react'
 import {
   loadPQCAlgorithmsData,
   loadedFileMetadata,
@@ -88,15 +89,15 @@ export function AlgorithmsView() {
   }, [searchParams])
 
   // --- Active tab ---
-  const [activeTab, setActiveTab] = useState<'transition' | 'detailed'>(() => {
+  const [activeTab, setActiveTab] = useState<'transition' | 'detailed' | 'support'>(() => {
     const tab = searchParams.get('tab')
-    if (tab === 'transition' || tab === 'detailed') return tab
+    if (tab === 'transition' || tab === 'detailed' || tab === 'support') return tab
     return searchParams.get('highlight') ? 'detailed' : 'transition'
   })
 
   useEffect(() => {
     const tab = searchParams.get('tab')
-    if (tab === 'transition' || tab === 'detailed') {
+    if (tab === 'transition' || tab === 'detailed' || tab === 'support') {
       setActiveTab((prev) => (prev !== tab ? tab : prev))
     }
   }, [searchParams])
@@ -553,6 +554,16 @@ export function AlgorithmsView() {
                 <BarChart3 size={18} />
                 Detailed Comparison
               </TabsTrigger>
+              <TabsTrigger value="support" className="flex items-center gap-2">
+                <Network size={18} />
+                Protocol Support
+                <span
+                  className="rounded-sm bg-status-warning/20 text-status-warning px-1 py-0 text-[9px] font-bold uppercase tracking-wider"
+                  title="Work in progress — schema + data are evolving"
+                >
+                  WIP
+                </span>
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="transition">
@@ -603,10 +614,21 @@ export function AlgorithmsView() {
                 />
               </motion.div>
             </TabsContent>
+
+            <TabsContent value="support">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                data-workshop-target="section-algorithm-protocol-support"
+              >
+                <PQCProtocolMatrix />
+              </motion.div>
+            </TabsContent>
           </Tabs>
 
-          {/* Comparison panel */}
-          {showComparison && comparisonAlgos.length >= 2 && (
+          {/* Comparison panel — only meaningful for transition/detailed tabs; suppressed on Protocol Support */}
+          {showComparison && comparisonAlgos.length >= 2 && activeTab !== 'support' && (
             <div ref={comparisonPanelRef} className="mt-6">
               <AlgorithmComparisonPanel
                 algorithms={comparisonAlgos}

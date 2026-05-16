@@ -919,6 +919,178 @@ export class HybridCryptoService {
       }
     }
   }
+
+  /**
+   * Pure PQC KEM certificate: ML-KEM-512/768/1024 per RFC 9935.
+   *
+   * KEM keys cannot self-sign (RFC 9935 §4: encryption-only). Workshop simplification:
+   * generate an ML-DSA-65 transient issuer to act as a one-shot CA, and embed the ML-KEM
+   * public key via OpenSSL's `-force_pubkey`. In production deployments the CA must be
+   * pre-provisioned; this is purely an educational illustration of the wire format.
+   *
+   * RFC 9935 OIDs:
+   *   id-alg-ml-kem-512   = 2.16.840.1.101.3.4.4.1
+   *   id-alg-ml-kem-768   = 2.16.840.1.101.3.4.4.2
+   *   id-alg-ml-kem-1024  = 2.16.840.1.101.3.4.4.3
+   */
+  async generatePurePQCCertMLKEM(
+    variant: 'ML-KEM-512' | 'ML-KEM-768' | 'ML-KEM-1024',
+    cn: string
+  ): Promise<CertResult> {
+    const start = performance.now()
+    const tag = variant.toLowerCase().replace(/-/g, '_')
+    const kemKeyFile = `kem_${tag}_priv.pem`
+    const issuerKeyFile = `kem_${tag}_issuer.pem`
+    const certFile = `kem_${tag}_cert.pem`
+    const subj = `/CN=${cn}/O=PQC Today/OU=Hybrid Certificate Sandbox`
+
+    try {
+      // 1. Generate the ML-KEM subject key (encryption-only).
+      const kemKey = await this.generateKey(variant, kemKeyFile)
+      if (kemKey.error || !kemKey.fileData) {
+        return {
+          pem: '',
+          parsed: '',
+          timingMs: performance.now() - start,
+          error: kemKey.error || `${variant} key generation failed`,
+        }
+      }
+
+      // 2. Generate a transient ML-DSA-65 issuer key to sign the cert (KEM keys cannot sign).
+      const issuerKey = await this.generateKey('ML-DSA-65', issuerKeyFile)
+      if (issuerKey.error || !issuerKey.fileData) {
+        return {
+          pem: '',
+          parsed: '',
+          timingMs: performance.now() - start,
+          error: issuerKey.error || 'Issuer (ML-DSA-65) key generation failed',
+        }
+      }
+
+      // 3. Issue cert: issuer signs; -force_pubkey embeds the ML-KEM key as subjectPublicKey.
+      //    OpenSSL 3.5+ supports -force_pubkey on `req -x509`.
+      const certResult = await openSSLService.execute(
+        `openssl req -new -x509 -key ${issuerKeyFile} -force_pubkey ${kemKeyFile} -out ${certFile} -days 365 -subj "${subj}"`,
+        [issuerKey.fileData, kemKey.fileData]
+      )
+      if (certResult.error) {
+        return {
+          pem: '',
+          parsed: '',
+          timingMs: performance.now() - start,
+          error: `${variant} cert issuance failed: ${certResult.error}`,
+        }
+      }
+
+      const certFileData = certResult.files.find((f) => f.name === certFile)
+      const pem = certFileData ? new TextDecoder().decode(certFileData.data) : ''
+      const parsedResult = await openSSLService.execute(
+        `openssl x509 -in ${certFile} -text -noout`,
+        certFileData ? [{ name: certFile, data: certFileData.data }] : []
+      )
+
+      return {
+        pem,
+        parsed: parsedResult.stdout || parsedResult.stderr || '',
+        timingMs: performance.now() - start,
+      }
+    } catch (e) {
+      return {
+        pem: '',
+        parsed: '',
+        timingMs: performance.now() - start,
+        error: e instanceof Error ? e.message : `${variant} certificate generation failed`,
+      }
+    }
+  }
+
+  /**
+   * Composite KEM certificate per draft-ietf-lamps-pq-composite-kem-14.
+   *
+   * The subject public key is a CompositeKEMPublicKey binding ML-KEM-768 with a classical
+   * KEM (X25519 or P-256) under a single OID. Like pure KEM certs, the cert itself is signed
+   * by a separate signing-capable issuer key (KEM keys cannot self-sign).
+   *
+   * draft-composite-kem-14 OIDs:
+   *   id-X25519-MLKEM768  = 2.16.840.1.114027.80.5.2.21
+   *   id-P256-MLKEM768    = 2.16.840.1.114027.80.5.2.22
+   *
+   * OpenSSL 3.5 ships X25519MLKEM768 natively (TLS hybrid group). For raw composite
+   * cert issuance we rely on the same `-force_pubkey` flow as pure KEM certs.
+   */
+  async generateCompositeKEMCert(
+    pqcVariant: 'ML-KEM-768',
+    classicalVariant: 'X25519' | 'P-256',
+    cn: string
+  ): Promise<CertResult> {
+    const start = performance.now()
+    const compositeAlgo = classicalVariant === 'X25519' ? 'X25519MLKEM768' : 'SecP256r1MLKEM768'
+    const tag = `${classicalVariant.toLowerCase()}_${pqcVariant.toLowerCase().replace(/-/g, '_')}`
+    const compositeKeyFile = `comp_${tag}_priv.pem`
+    const issuerKeyFile = `comp_${tag}_issuer.pem`
+    const certFile = `comp_${tag}_cert.pem`
+    const subj = `/CN=${cn}/O=PQC Today/OU=Hybrid Certificate Sandbox`
+
+    try {
+      // 1. Generate the composite KEM subject key (encryption-only).
+      const compKey = await this.generateKey(compositeAlgo, compositeKeyFile)
+      if (compKey.error || !compKey.fileData) {
+        return {
+          pem: '',
+          parsed: '',
+          timingMs: performance.now() - start,
+          error:
+            compKey.error ||
+            `Composite KEM (${compositeAlgo}) key generation failed — requires OpenSSL 3.5+ with oqs-provider composite-kem support`,
+        }
+      }
+
+      // 2. Transient ML-DSA-65 issuer to sign the cert.
+      const issuerKey = await this.generateKey('ML-DSA-65', issuerKeyFile)
+      if (issuerKey.error || !issuerKey.fileData) {
+        return {
+          pem: '',
+          parsed: '',
+          timingMs: performance.now() - start,
+          error: issuerKey.error || 'Issuer (ML-DSA-65) key generation failed',
+        }
+      }
+
+      // 3. Issue cert with the composite KEM key as subjectPublicKey.
+      const certResult = await openSSLService.execute(
+        `openssl req -new -x509 -key ${issuerKeyFile} -force_pubkey ${compositeKeyFile} -out ${certFile} -days 365 -subj "${subj}"`,
+        [issuerKey.fileData, compKey.fileData]
+      )
+      if (certResult.error) {
+        return {
+          pem: '',
+          parsed: '',
+          timingMs: performance.now() - start,
+          error: `Composite KEM cert issuance failed: ${certResult.error}`,
+        }
+      }
+
+      const certFileData = certResult.files.find((f) => f.name === certFile)
+      const pem = certFileData ? new TextDecoder().decode(certFileData.data) : ''
+      const parsedResult = await openSSLService.execute(
+        `openssl x509 -in ${certFile} -text -noout`,
+        certFileData ? [{ name: certFile, data: certFileData.data }] : []
+      )
+
+      return {
+        pem,
+        parsed: parsedResult.stdout || parsedResult.stderr || '',
+        timingMs: performance.now() - start,
+      }
+    } catch (e) {
+      return {
+        pem: '',
+        parsed: '',
+        timingMs: performance.now() - start,
+        error: e instanceof Error ? e.message : 'Composite KEM certificate generation failed',
+      }
+    }
+  }
 }
 
 export const hybridCryptoService = new HybridCryptoService()

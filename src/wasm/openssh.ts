@@ -85,7 +85,121 @@ export interface SshWirePacket {
   hexPreview: string
 }
 
+/**
+ * SSH KEX algorithms exposed by this engine.
+ *
+ * Classical:
+ *   - curve25519-sha256                  RFC 8731 (X25519 only)
+ *
+ * Hybrid ML-KEM + classical (draft-ietf-sshm-mlkem-hybrid-kex-10):
+ *   - mlkem512-curve25519-sha256
+ *   - mlkem768-curve25519-sha256         (current production hybrid)
+ *   - mlkem1024-curve25519-sha256
+ *   - mlkem512-nistp256-sha256
+ *   - mlkem768-nistp256-sha256
+ *
+ * Pure ML-KEM (CNSA 2.0 SSH profile, no classical fallback):
+ *   - mlkem768
+ *   - mlkem1024
+ */
+export type SshKexAlg =
+  | 'curve25519-sha256'
+  | 'mlkem512-curve25519-sha256'
+  | 'mlkem768-curve25519-sha256'
+  | 'mlkem1024-curve25519-sha256'
+  | 'mlkem512-nistp256-sha256'
+  | 'mlkem768-nistp256-sha256'
+  | 'mlkem768'
+  | 'mlkem1024'
+
+/** SSH host-key signature algorithms exposed by this engine. */
+export type SshHostKeyAlg = 'ssh-ed25519' | 'ssh-mldsa-44' | 'ssh-mldsa-65' | 'ssh-mldsa-87'
+
+export interface SshHandshakeConfig {
+  kex: SshKexAlg
+  hostKey: SshHostKeyAlg
+}
+
+/**
+ * Back-compat alias — the engine used to take a coarse `'classical' | 'pqc'`
+ * mode. Existing callers can still pass the string; we map it to the
+ * structured config they would have gotten before.
+ */
 export type SshAlgoMode = 'classical' | 'pqc'
+
+export const SSH_KEX_OPTIONS: ReadonlyArray<{
+  id: SshKexAlg
+  label: string
+  family: 'classical' | 'hybrid' | 'pure'
+  /** Public-share bytes shipped by the client in KEX_ECDH_INIT (Q_C). */
+  clientShareBytes: number
+  /** Reply share bytes shipped by the server in KEX_ECDH_REPLY (Q_S). */
+  serverShareBytes: number
+}> = [
+  {
+    id: 'curve25519-sha256',
+    label: 'curve25519-sha256 (classical)',
+    family: 'classical',
+    clientShareBytes: 32,
+    serverShareBytes: 32,
+  },
+  {
+    id: 'mlkem512-curve25519-sha256',
+    label: 'mlkem512-curve25519-sha256 (hybrid)',
+    family: 'hybrid',
+    clientShareBytes: 800 + 32,
+    serverShareBytes: 768 + 32,
+  },
+  {
+    id: 'mlkem768-curve25519-sha256',
+    label: 'mlkem768-curve25519-sha256 (hybrid)',
+    family: 'hybrid',
+    clientShareBytes: 1184 + 32,
+    serverShareBytes: 1088 + 32,
+  },
+  {
+    id: 'mlkem1024-curve25519-sha256',
+    label: 'mlkem1024-curve25519-sha256 (hybrid)',
+    family: 'hybrid',
+    clientShareBytes: 1568 + 32,
+    serverShareBytes: 1568 + 32,
+  },
+  {
+    id: 'mlkem512-nistp256-sha256',
+    label: 'mlkem512-nistp256-sha256 (hybrid)',
+    family: 'hybrid',
+    clientShareBytes: 800 + 65,
+    serverShareBytes: 768 + 65,
+  },
+  {
+    id: 'mlkem768-nistp256-sha256',
+    label: 'mlkem768-nistp256-sha256 (hybrid)',
+    family: 'hybrid',
+    clientShareBytes: 1184 + 65,
+    serverShareBytes: 1088 + 65,
+  },
+  {
+    id: 'mlkem768',
+    label: 'mlkem768 (pure ML-KEM)',
+    family: 'pure',
+    clientShareBytes: 1184,
+    serverShareBytes: 1088,
+  },
+  {
+    id: 'mlkem1024',
+    label: 'mlkem1024 (pure ML-KEM)',
+    family: 'pure',
+    clientShareBytes: 1568,
+    serverShareBytes: 1568,
+  },
+]
+
+export const SSH_HOST_KEY_OPTIONS: ReadonlyArray<{ id: SshHostKeyAlg; label: string }> = [
+  { id: 'ssh-ed25519', label: 'ssh-ed25519 (classical)' },
+  { id: 'ssh-mldsa-44', label: 'ssh-mldsa-44 (PQC)' },
+  { id: 'ssh-mldsa-65', label: 'ssh-mldsa-65 (PQC)' },
+  { id: 'ssh-mldsa-87', label: 'ssh-mldsa-87 (PQC)' },
+]
 
 export interface SshHsmBinding {
   module: SoftHSMModule
@@ -112,9 +226,122 @@ function bytesToLatin1(bytes: Uint8Array): string {
   return s
 }
 
+function stripX25519DerWrapper(raw: Uint8Array): Uint8Array {
+  if (raw.length === 34 && raw[0] === 0x04 && raw[1] === 0x20) return raw.slice(2)
+  return raw
+}
+
+/**
+ * Extract the raw uncompressed point bytes for a P-256 public key. softhsmv3
+ * returns CKA_EC_POINT as a DER OCTET STRING wrapping the SEC1 point
+ * (`04 41 04 X Y` — 67 bytes total). We strip the 2-byte DER prefix to get the
+ * 65-byte SEC1 uncompressed point used on the SSH wire.
+ */
+function stripP256DerWrapper(raw: Uint8Array): Uint8Array {
+  if (raw.length === 67 && raw[0] === 0x04 && raw[1] === 0x41) return raw.slice(2)
+  return raw
+}
+
+// ── Per-algorithm parameter resolution ───────────────────────────────────────
+
+function kexAlgInfo(kex: SshKexAlg): {
+  mlkemVariant: 512 | 768 | 1024 | null
+  classicalCurve: 'X25519' | 'P-256' | null
+  isHybrid: boolean
+  isPurePqc: boolean
+  isClassicalOnly: boolean
+} {
+  switch (kex) {
+    case 'curve25519-sha256':
+      return {
+        mlkemVariant: null,
+        classicalCurve: 'X25519',
+        isHybrid: false,
+        isPurePqc: false,
+        isClassicalOnly: true,
+      }
+    case 'mlkem512-curve25519-sha256':
+      return {
+        mlkemVariant: 512,
+        classicalCurve: 'X25519',
+        isHybrid: true,
+        isPurePqc: false,
+        isClassicalOnly: false,
+      }
+    case 'mlkem768-curve25519-sha256':
+      return {
+        mlkemVariant: 768,
+        classicalCurve: 'X25519',
+        isHybrid: true,
+        isPurePqc: false,
+        isClassicalOnly: false,
+      }
+    case 'mlkem1024-curve25519-sha256':
+      return {
+        mlkemVariant: 1024,
+        classicalCurve: 'X25519',
+        isHybrid: true,
+        isPurePqc: false,
+        isClassicalOnly: false,
+      }
+    case 'mlkem512-nistp256-sha256':
+      return {
+        mlkemVariant: 512,
+        classicalCurve: 'P-256',
+        isHybrid: true,
+        isPurePqc: false,
+        isClassicalOnly: false,
+      }
+    case 'mlkem768-nistp256-sha256':
+      return {
+        mlkemVariant: 768,
+        classicalCurve: 'P-256',
+        isHybrid: true,
+        isPurePqc: false,
+        isClassicalOnly: false,
+      }
+    case 'mlkem768':
+      return {
+        mlkemVariant: 768,
+        classicalCurve: null,
+        isHybrid: false,
+        isPurePqc: true,
+        isClassicalOnly: false,
+      }
+    case 'mlkem1024':
+      return {
+        mlkemVariant: 1024,
+        classicalCurve: null,
+        isHybrid: false,
+        isPurePqc: true,
+        isClassicalOnly: false,
+      }
+  }
+}
+
+function hostKeyAlgInfo(hk: SshHostKeyAlg): {
+  isClassical: boolean
+  mldsaVariant: 44 | 65 | 87 | null
+} {
+  switch (hk) {
+    case 'ssh-ed25519':
+      return { isClassical: true, mldsaVariant: null }
+    case 'ssh-mldsa-44':
+      return { isClassical: false, mldsaVariant: 44 }
+    case 'ssh-mldsa-65':
+      return { isClassical: false, mldsaVariant: 65 }
+    case 'ssh-mldsa-87':
+      return { isClassical: false, mldsaVariant: 87 }
+  }
+}
+
 // ── Classical handshake (curve25519-sha256 + ssh-ed25519) ────────────────────
 
-async function runClassical(M: SoftHSMModule, h: number): Promise<SshHandshakeResult> {
+async function runClassical(
+  M: SoftHSMModule,
+  h: number,
+  config: SshHandshakeConfig
+): Promise<SshHandshakeResult> {
   const kexInitBytes = 104
 
   const t0 = performance.now()
@@ -128,20 +355,14 @@ async function runClassical(M: SoftHSMModule, h: number): Promise<SshHandshakeRe
   const t1 = performance.now()
 
   // Extract public keys
-  // X25519 → raw 32 bytes (CKA_VALUE); Ed25519 → DER-wrapped (strip 0x04 0x20)
   const serverX25519Pub = hsm_extractECPoint(M, h, serverX.pubHandle)
   const clientX25519Pub = hsm_extractECPoint(M, h, clientX.pubHandle)
 
-  function stripDerWrapper(raw: Uint8Array): Uint8Array {
-    if (raw.length === 34 && raw[0] === 0x04 && raw[1] === 0x20) return raw.slice(2)
-    return raw
-  }
-
-  const serverX25519Raw = stripDerWrapper(serverX25519Pub)
-  const clientX25519Raw = stripDerWrapper(clientX25519Pub)
+  const serverX25519Raw = stripX25519DerWrapper(serverX25519Pub)
+  const clientX25519Raw = stripX25519DerWrapper(clientX25519Pub)
 
   const hostEd25519Pub = hsm_extractECPoint(M, h, hostEd.pubHandle)
-  const hostEd25519Raw = stripDerWrapper(hostEd25519Pub)
+  const hostEd25519Raw = stripX25519DerWrapper(hostEd25519Pub)
 
   // KEX phase: ECDH derive on both sides
   const serverDerived = hsm_ecdhDerive(
@@ -169,7 +390,7 @@ async function runClassical(M: SoftHSMModule, h: number): Promise<SshHandshakeRe
 
   // Exchange hash H per RFC 8731
   const enc = new TextEncoder()
-  const K_S = concat(sshString(enc.encode('ssh-ed25519')), sshString(hostEd25519Raw))
+  const K_S = concat(sshString(enc.encode(config.hostKey)), sshString(hostEd25519Raw))
   const Q_C = sshString(clientX25519Raw)
   const Q_S = sshString(serverX25519Raw)
   const K = sshString(serverSS)
@@ -187,7 +408,7 @@ async function runClassical(M: SoftHSMModule, h: number): Promise<SshHandshakeRe
   const t4 = performance.now()
 
   // Wire packets
-  const host_pubkey_bytes = 4 + 11 + 4 + 32 // sshString("ssh-ed25519") + sshString(32B key)
+  const host_pubkey_bytes = 4 + config.hostKey.length + 4 + 32
   const kex_share_bytes = 36 // sshString(32B X25519 pub)
   const kex_reply_share_bytes = 36
   const host_sig_bytes = hostSig.length
@@ -265,9 +486,9 @@ async function runClassical(M: SoftHSMModule, h: number): Promise<SshHandshakeRe
   return {
     connection_ok: true,
     quantum_safe: false,
-    host_key_algorithm: 'ssh-ed25519',
-    client_auth_algorithm: 'ssh-ed25519',
-    kex_algorithm: 'curve25519-sha256',
+    host_key_algorithm: config.hostKey,
+    client_auth_algorithm: config.hostKey,
+    kex_algorithm: config.kex,
     host_pubkey_bytes,
     client_pubkey_bytes,
     kex_share_bytes,
@@ -286,88 +507,117 @@ async function runClassical(M: SoftHSMModule, h: number): Promise<SshHandshakeRe
   }
 }
 
-// ── PQC handshake (mlkem768x25519-sha256 + ssh-mldsa-65) ─────────────────────
+// ── PQC handshake (ML-KEM KEX + ML-DSA host key) ─────────────────────────────
+//
+// Handles hybrid (ML-KEM + classical X25519/P-256, draft-ietf-sshm-mlkem-hybrid-kex)
+// and pure ML-KEM-{768,1024} (CNSA 2.0 SSH profile) modes against any of the
+// three ML-DSA host-key parameter sets.
 
-async function runPqc(M: SoftHSMModule, h: number): Promise<SshHandshakeResult> {
+async function runPqc(
+  M: SoftHSMModule,
+  h: number,
+  config: SshHandshakeConfig
+): Promise<SshHandshakeResult> {
+  const kex = kexAlgInfo(config.kex)
+  const host = hostKeyAlgInfo(config.hostKey)
+  if (kex.mlkemVariant === null) {
+    throw new Error(`runPqc invoked on non-PQC KEX ${config.kex}`)
+  }
+  if (host.mldsaVariant === null) {
+    throw new Error(`runPqc invoked on non-PQC host key ${config.hostKey}`)
+  }
+
   const kexInitBytes = 112
 
   const t0 = performance.now()
 
   // Key generation phase
-  const hostDsa = hsm_generateMLDSAKeyPair(M, h, 65, false)
-  const clientDsa = hsm_generateMLDSAKeyPair(M, h, 65, false)
-  const clientKem = hsm_generateMLKEMKeyPair(M, h, 768, true)
-  const serverX = hsm_generateECKeyPair(M, h, 'X25519', false)
-  const clientX = hsm_generateECKeyPair(M, h, 'X25519', false)
+  const hostDsa = hsm_generateMLDSAKeyPair(M, h, host.mldsaVariant, false)
+  const clientDsa = hsm_generateMLDSAKeyPair(M, h, host.mldsaVariant, false)
+  const clientKem = hsm_generateMLKEMKeyPair(M, h, kex.mlkemVariant, true)
+
+  // Classical ECDH key pairs only generated for hybrid modes.
+  const serverEc = kex.classicalCurve
+    ? hsm_generateECKeyPair(M, h, kex.classicalCurve, false)
+    : null
+  const clientEc = kex.classicalCurve
+    ? hsm_generateECKeyPair(M, h, kex.classicalCurve, false)
+    : null
 
   const t1 = performance.now()
 
   // Extract public keys
-  function stripDerWrapper(raw: Uint8Array): Uint8Array {
-    if (raw.length === 34 && raw[0] === 0x04 && raw[1] === 0x20) return raw.slice(2)
-    return raw
+  // ML-KEM public key: CKA_VALUE on public key object.
+  const clientKemPub = hsm_extractKeyValue(M, h, clientKem.pubHandle)
+
+  // Classical EC public keys (X25519: raw 32B; P-256: SEC1 uncompressed 65B).
+  let serverEcRaw: Uint8Array | null = null
+  let clientEcRaw: Uint8Array | null = null
+  if (serverEc && clientEc && kex.classicalCurve) {
+    const stripper = kex.classicalCurve === 'X25519' ? stripX25519DerWrapper : stripP256DerWrapper
+    serverEcRaw = stripper(hsm_extractECPoint(M, h, serverEc.pubHandle))
+    clientEcRaw = stripper(hsm_extractECPoint(M, h, clientEc.pubHandle))
   }
 
-  // ML-KEM-768 public key: 1184 bytes (CKA_VALUE on public key object)
-  const clientKemPub = hsm_extractKeyValue(M, h, clientKem.pubHandle)
-  // X25519 public keys: 32 bytes each
-  const serverX25519Raw = stripDerWrapper(hsm_extractECPoint(M, h, serverX.pubHandle))
-  const clientX25519Raw = stripDerWrapper(hsm_extractECPoint(M, h, clientX.pubHandle))
+  // Client init share = ML-KEM pub (+ classical pub if hybrid)
+  const clientInitShare = clientEcRaw ? concat(clientKemPub, clientEcRaw) : clientKemPub
+  const kex_share_bytes = clientInitShare.length
 
-  // Client init share = ML-KEM pub (1184B) + X25519 pub (32B) = 1216B
-  const clientInitShare = concat(clientKemPub, clientX25519Raw)
-  const kex_share_bytes = clientInitShare.length // 1216
-
-  // Server: encapsulate to client's ML-KEM public key → ciphertext 1088B + SS_pq 32B
+  // Server: encapsulate to client's ML-KEM public key
   const { ciphertextBytes: kemCt, secretHandle: kemSSHandle } = hsm_encapsulate(
     M,
     h,
     clientKem.pubHandle,
-    768
+    kex.mlkemVariant
   )
   const SS_pq = hsm_extractKeyValue(M, h, kemSSHandle)
 
-  // Server ECDH with client X25519 pub
-  const serverDerived = hsm_ecdhDerive(
-    M,
-    h,
-    serverX.privHandle,
-    clientX25519Raw,
-    CKD_NULL_VALUE,
-    undefined,
-    { keyLen: 32, extractable: true }
-  )
-  const SS_classical = hsm_extractKeyValue(M, h, serverDerived)
+  // Classical ECDH (hybrid only)
+  let SS_classical: Uint8Array | null = null
+  if (serverEc && clientEcRaw) {
+    const serverDerived = hsm_ecdhDerive(
+      M,
+      h,
+      serverEc.privHandle,
+      clientEcRaw,
+      CKD_NULL_VALUE,
+      undefined,
+      { keyLen: 32, extractable: true }
+    )
+    SS_classical = hsm_extractKeyValue(M, h, serverDerived)
+  }
 
-  // Hybrid K = SHA-256(SS_pq || SS_classical)  per draft-kampanakis §3.1
-  const hybridInput = concat(SS_pq, SS_classical)
+  // K derivation:
+  //   hybrid: K = SHA-256(SS_pq || SS_classical) per draft-kampanakis §3.1
+  //   pure ML-KEM: K = SHA-256(SS_pq) — single-component hash for transcript stability
+  const hybridInput = SS_classical ? concat(SS_pq, SS_classical) : SS_pq
   const K = hsm_digest(M, h, hybridInput, CKM_SHA256)
 
-  // Server reply: ML-KEM ciphertext (1088B) + server X25519 pub (32B) = 1120B
-  const serverReplyShare = concat(kemCt, serverX25519Raw)
-  const kex_reply_share_bytes = serverReplyShare.length // 1120
+  // Server reply: ML-KEM ciphertext (+ classical pub if hybrid)
+  const serverReplyShare = serverEcRaw ? concat(kemCt, serverEcRaw) : kemCt
+  const kex_reply_share_bytes = serverReplyShare.length
 
   const t2 = performance.now()
 
   // Exchange hash H
   const enc = new TextEncoder()
   const host_dsa_pub_raw = hsm_extractKeyValue(M, h, hostDsa.pubHandle)
-  const K_S = concat(sshString(enc.encode('ssh-mldsa-65')), sshString(host_dsa_pub_raw))
+  const K_S = concat(sshString(enc.encode(config.hostKey)), sshString(host_dsa_pub_raw))
   const Q_C = sshString(clientInitShare)
   const Q_S = sshString(serverReplyShare)
   const K_wrapped = sshString(K)
   const hashInput = concat(sshString(K_S), Q_C, Q_S, K_wrapped)
   const H = hsm_digest(M, h, hashInput, CKM_SHA256)
 
-  // Host signature (ML-DSA-65)
+  // Host signature (ML-DSA)
   const hostSig = hsm_signBytesMLDSA(M, h, hostDsa.privHandle, H)
   const t3 = performance.now()
 
-  // Client signature (ML-DSA-65)
+  // Client signature (ML-DSA)
   const clientSig = hsm_signBytesMLDSA(M, h, clientDsa.privHandle, H)
   const t4 = performance.now()
 
-  const host_pubkey_bytes = 4 + 12 + 4 + host_dsa_pub_raw.length // sshString("ssh-mldsa-65") + sshString(pub)
+  const host_pubkey_bytes = 4 + config.hostKey.length + 4 + host_dsa_pub_raw.length
   const client_pubkey_bytes = host_pubkey_bytes
   const host_sig_bytes = hostSig.length
   const client_sig_bytes = clientSig.length
@@ -443,9 +693,9 @@ async function runPqc(M: SoftHSMModule, h: number): Promise<SshHandshakeResult> 
   return {
     connection_ok: true,
     quantum_safe: true,
-    host_key_algorithm: 'ssh-mldsa-65',
-    client_auth_algorithm: 'ssh-mldsa-65',
-    kex_algorithm: 'mlkem768x25519-sha256',
+    host_key_algorithm: config.hostKey,
+    client_auth_algorithm: config.hostKey,
+    kex_algorithm: config.kex,
     host_pubkey_bytes,
     client_pubkey_bytes,
     kex_share_bytes,
@@ -466,6 +716,20 @@ async function runPqc(M: SoftHSMModule, h: number): Promise<SshHandshakeResult> 
 
 // ── SshEngine ─────────────────────────────────────────────────────────────────
 
+/**
+ * Normalise the legacy `'classical' | 'pqc'` mode strings into the structured
+ * `SshHandshakeConfig` the engine now consumes internally. Keeps existing
+ * callers (tests, embedded learn-module runners) working without churn.
+ */
+function normaliseConfig(input: SshAlgoMode | SshHandshakeConfig): SshHandshakeConfig {
+  if (typeof input === 'string') {
+    return input === 'classical'
+      ? { kex: 'curve25519-sha256', hostKey: 'ssh-ed25519' }
+      : { kex: 'mlkem768-curve25519-sha256', hostKey: 'ssh-mldsa-65' }
+  }
+  return input
+}
+
 export class SshEngine {
   private binding: SshHsmBinding | null = null
 
@@ -473,22 +737,25 @@ export class SshEngine {
     this.binding = binding
   }
 
-  public async runHandshake(mode: SshAlgoMode): Promise<SshHandshakeResult> {
+  public async runHandshake(input: SshAlgoMode | SshHandshakeConfig): Promise<SshHandshakeResult> {
     if (!this.binding) throw new Error('No HSM binding — call bindHsm() first')
     const { module, hSession, onPkcs11 } = this.binding
     const M = onPkcs11 ? createLoggingProxy(module, onPkcs11, 'rust') : module
 
+    const config = normaliseConfig(input)
+    const kex = kexAlgInfo(config.kex)
+
     try {
-      if (mode === 'classical') return await runClassical(M, hSession)
-      return await runPqc(M, hSession)
+      if (kex.isClassicalOnly) return await runClassical(M, hSession, config)
+      return await runPqc(M, hSession, config)
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err)
       const base: SshHandshakeResult = {
         connection_ok: false,
-        quantum_safe: mode === 'pqc',
-        host_key_algorithm: '',
-        client_auth_algorithm: '',
-        kex_algorithm: '',
+        quantum_safe: !kex.isClassicalOnly,
+        host_key_algorithm: config.hostKey,
+        client_auth_algorithm: config.hostKey,
+        kex_algorithm: config.kex,
         host_pubkey_bytes: 0,
         client_pubkey_bytes: 0,
         kex_share_bytes: 0,
