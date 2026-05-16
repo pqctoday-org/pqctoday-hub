@@ -140,6 +140,11 @@ export const BUSINESS_TOOL_COMPONENTS: Record<string, LazyComp> = {
       (m) => ({ default: m.MTINegotiator })
     )
   ),
+  'crypto-api-refactor-audit': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/CryptoMgmtModernization/components/CryptoApiRefactorAudit').then(
+      (m) => ({ default: m.CryptoApiRefactorAudit })
+    )
+  ),
 }
 
 /** Look up the lazy-loaded builder component for a given artifact type. */

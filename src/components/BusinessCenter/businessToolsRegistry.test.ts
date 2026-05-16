@@ -50,6 +50,7 @@ const ALL_ARTIFACT_TYPES: ExecutiveDocumentType[] = [
   'crypto-vulnerability-watch',
   'hybrid-transition',
   'mti-negotiator',
+  'crypto-api-refactor',
 ]
 
 /** Artifact types that intentionally have NO builder component. Each entry
