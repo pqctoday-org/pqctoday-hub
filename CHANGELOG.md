@@ -21,6 +21,20 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Library detail — CSWP 39 Requirements collapsed by default (2026-05-15)
+
+The CSWP 39 Requirements section in the [Library detail popover](src/components/Library/LibraryDetailPopover.tsx) was always expanded, dominating the popover for any document with extracted governance obligations (NIST CSWP 39 itself surfaces 100+ requirement rows). Users had to scroll past the full requirements list to reach trust/source/dependency info further down.
+
+The section is now a collapsible card (closed by default) with a `ListChecks` icon, requirement count, and chevron — matching the popover's other glass-panel sections. Click to expand the full pillar-grouped, maturity-tiered requirement breakdown. No data lost; just less wall-of-text on first open.
+
+### Migrate — deep-link reliability and search precision (2026-05-15)
+
+Two fixes for [`/migrate`](src/components/Migrate/MigrateView.tsx):
+
+- **Deep links reset stale filters.** Entering `/migrate` via a chatbot result, a Library/Compliance reference chip, or a `?software=…` / `?product=…` link now clears persisted layer / category / vendor / license filters. Previously a stale "Cloud" layer or vendor filter from a prior session could silently hide the target row, making the deep link land on an empty table.
+- **`?software=<name>` deep link** — new URL param expands the matching product row, applies the name as a filter, and switches to table view. Used by upstream cross-references that want to land directly on one product.
+- **Search prioritises product identity over backend mentions.** Typing `wolfssl` used to return 7 rows because curl / strongSwan / ExpressVPN / etc. mention wolfSSL as a backend in their capability description. Now, if any product matches by name / product ID / category, only those products are shown — description-only "mentioned as a backend" matches are suppressed. Capability searches like `ML-KEM` still match across description fields when no product name matches.
+
 ### PQC Protocol Matrix — reference chips open library detail pane (2026-05-15)
 
 Previously, clicking a standards-reference chip in the [PQC Protocol Matrix](src/components/Algorithms/PQCProtocolMatrix.tsx) (e.g. `RFC 8446`, `draft-ietf-tls-mlkem-07`) opened the raw source URL directly in a new tab. Users had no chance to see context — document status, applicable industries, dependencies, trust tier — before clicking through.

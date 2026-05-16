@@ -239,13 +239,24 @@ export const MigrateView: React.FC = () => {
 
   // Sync URL params on same-route navigations (e.g. chatbot deep links)
   useEffect(() => {
-    if (searchParams.get('from_search') === '1') {
+    // Deep-link entry from external pages (matrix chips, library/compliance refs,
+    // chatbot results): reset persisted filters that could silently hide the
+    // target row. Persisted activeLayer / category / vendor / license filters
+    // in localStorage otherwise outlive the user's intent and a /migrate?software=foo
+    // link can return 0 results because a stale "Cloud" layer is still active.
+    const isDeepLinkEntry =
+      searchParams.get('from_search') === '1' ||
+      searchParams.has('software') ||
+      searchParams.has('product')
+    if (isDeepLinkEntry) {
       setActiveLayer('All')
       setFlatCategoryFilter('All')
       setVendorFilter('All')
       setVerificationFilter('All')
       setLicenseFilter('All')
       setShowOnlyMyProducts(false)
+    }
+    if (searchParams.get('from_search') === '1') {
       setSearchParams(
         (prev) => {
           const next = new URLSearchParams(prev)
@@ -295,6 +306,23 @@ export const MigrateView: React.FC = () => {
         prev.size === 1 && prev.has(product) ? prev : new Set([product])
       )
       // Removed: if (mode === null) setViewMode('table')
+    }
+    const software = searchParams.get('software')
+    if (software !== null) {
+      setTableExpandedIds((prev) =>
+        prev.size === 1 && prev.has(software) ? prev : new Set([software])
+      )
+      setFilterText(software)
+      setInputValue(software)
+      if (mode === null) setViewMode('table')
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          next.delete('software')
+          return next
+        },
+        { replace: true }
+      )
     }
     const subcat = searchParams.get('subcat')
     if (subcat !== null) setActiveSubCategory(subcat)
@@ -469,6 +497,29 @@ export const MigrateView: React.FC = () => {
     [semantic.mode, semantic.hits]
   )
 
+  // When the search query matches at least one product's identity field
+  // (softwareName / productId / categoryName), description-only matches in
+  // other rows are suppressed. Otherwise typing "wolfssl" returns 7 rows
+  // because curl/strongSwan/ExpressVPN/etc. mention wolfSSL as a backend in
+  // their pqcCapabilityDescription. When no identity field matches, fall
+  // through to the broader lexical match so capability searches like "ML-KEM"
+  // still work across description fields.
+  const searchNameHitIds = useMemo(() => {
+    if (!filterText) return null
+    const q = filterText.toLowerCase()
+    const hits = new Set<string>()
+    for (const item of softwareData) {
+      if (
+        item.softwareName.toLowerCase().includes(q) ||
+        item.productId?.toLowerCase().includes(q) ||
+        item.categoryName?.toLowerCase().includes(q)
+      ) {
+        hits.add(item.productId)
+      }
+    }
+    return hits.size > 0 ? hits : null
+  }, [filterText])
+
   // Per-layer data: products scoped by global filters (search, step)
   const perLayerData = useMemo(() => {
     return activePartitions.reduce(
@@ -518,13 +569,15 @@ export const MigrateView: React.FC = () => {
           if (!matchesTrustTierFilter(tierFilter, 'migrate', item.softwareName)) return false
           // Search filter — lexical floor + semantic supplement.
           if (filterText) {
+            // If any product's identity field matches the query, only those
+            // products qualify. Suppresses noisy "mentioned as a backend"
+            // matches from description fields.
+            if (searchNameHitIds) return searchNameHitIds.has(item.productId)
             const q = filterText.toLowerCase()
             const lexicalMatch =
-              item.softwareName.toLowerCase().includes(q) ||
               item.pqcCapabilityDescription?.toLowerCase().includes(q) ||
               item.pqcSupport?.toLowerCase().includes(q) ||
               item.productBrief?.toLowerCase().includes(q) ||
-              item.categoryName?.toLowerCase().includes(q) ||
               item.license?.toLowerCase().includes(q)
             if (lexicalMatch) return true
             if (semanticNameSet && semanticNameSet.has(item.softwareName.toLowerCase())) {
@@ -553,6 +606,7 @@ export const MigrateView: React.FC = () => {
     myProductsSet,
     tierFilter,
     semanticNameSet,
+    searchNameHitIds,
   ])
 
   // Layer product counts (for badges on collapsed layer rows)
@@ -757,13 +811,12 @@ export const MigrateView: React.FC = () => {
       if (showOnlyMyProducts && !myProductsSet.has(item.productId)) return false
       // Search filter — lexical floor + semantic supplement.
       if (filterText) {
+        if (searchNameHitIds) return searchNameHitIds.has(item.productId)
         const q = filterText.toLowerCase()
         const lexicalMatch =
-          item.softwareName.toLowerCase().includes(q) ||
           item.pqcCapabilityDescription?.toLowerCase().includes(q) ||
           item.pqcSupport?.toLowerCase().includes(q) ||
           item.productBrief?.toLowerCase().includes(q) ||
-          item.categoryName?.toLowerCase().includes(q) ||
           item.license?.toLowerCase().includes(q)
         if (lexicalMatch) return true
         if (semanticNameSet && semanticNameSet.has(item.softwareName.toLowerCase())) {
@@ -781,6 +834,7 @@ export const MigrateView: React.FC = () => {
     flatCategoryFilter,
     filterText,
     semanticNameSet,
+    searchNameHitIds,
     vendorFilter,
     verificationFilter,
     licenseFilter,
