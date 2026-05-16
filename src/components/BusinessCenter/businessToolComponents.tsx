@@ -130,6 +130,11 @@ export const BUSINESS_TOOL_COMPONENTS: Record<string, LazyComp> = {
       default: m.CryptoVulnerabilityWatch,
     }))
   ),
+  'hybrid-transition-planner': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/CryptoMgmtModernization/components/HybridTransitionPlanner').then(
+      (m) => ({ default: m.HybridTransitionPlanner })
+    )
+  ),
 }
 
 /** Look up the lazy-loaded builder component for a given artifact type. */

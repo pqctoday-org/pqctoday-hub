@@ -31,6 +31,7 @@ export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'management-tools-audit': 'Management Tools Audit',
   'crypto-cbom': 'Crypto BOM (CBOM)',
   'crypto-vulnerability-watch': 'Crypto Vulnerability Watch',
+  'hybrid-transition': 'Hybrid Transition Plan',
 }
 
 const PILLAR_COLORS: Record<string, string> = {

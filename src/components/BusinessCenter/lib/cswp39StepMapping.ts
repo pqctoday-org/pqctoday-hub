@@ -32,7 +32,12 @@ export const STEP_ARTIFACT_TYPES: Record<CSWP39StepId, ExecutiveDocumentType[]> 
   inventory: ['supply-chain-matrix', 'crypto-cbom', 'crypto-vulnerability-watch'],
   'identify-gaps': ['risk-register', 'vendor-scorecard'],
   prioritise: ['kpi-dashboard', 'kpi-tracker', 'compliance-timeline', 'crqc-scenario'],
-  implement: ['risk-treatment-plan', 'migration-roadmap', 'deployment-playbook'],
+  implement: [
+    'risk-treatment-plan',
+    'migration-roadmap',
+    'deployment-playbook',
+    'hybrid-transition',
+  ],
 }
 
 /** Single source of truth for artifact-type → pillar (status colour). Drives
@@ -63,6 +68,7 @@ export const PILLAR_FOR_TYPE: Record<ExecutiveDocumentType, PillarKey> = {
   'management-tools-audit': 'governance',
   'crypto-cbom': 'inventory',
   'crypto-vulnerability-watch': 'risk',
+  'hybrid-transition': 'architecture',
 }
 
 export function getPillarForType(type: ExecutiveDocumentType): PillarKey {

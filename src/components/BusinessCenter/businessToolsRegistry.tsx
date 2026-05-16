@@ -22,6 +22,7 @@ import {
   Wrench,
   Boxes,
   ShieldAlert,
+  GitBranch,
 } from 'lucide-react'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 import type { ZoneId } from '@/data/cswp39ZoneData'
@@ -278,6 +279,29 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39SectionRef: '§4',
     cswp39SubSection: 'System implementations',
   },
+  {
+    id: 'hybrid-transition-planner',
+    name: 'Hybrid Transition Planner',
+    description:
+      'Architect-facing decision tree from CSWP.39 §3.2.4 - pick traditional+PQC, PQC+PQC, pure PQC, or crypto-gateway pathway with concrete algorithm pairings',
+    category: 'Migration Planning',
+    icon: GitBranch,
+    keywords: [
+      'hybrid',
+      'transition',
+      'composite',
+      'pqc',
+      'kem',
+      'signature',
+      'ml-kem',
+      'ml-dsa',
+      'architect',
+    ],
+    cswp39Zone: 'migration',
+    cswp39ZoneSubElement: 'Protocol negotiation updates',
+    cswp39SectionRef: '§3.2.4',
+    cswp39SubSection: 'Hybrid Cryptographic Algorithms',
+  },
 
   // ── Architecture (CSWP.39 §5.4) ────────────────────────────────────────────
   {
@@ -397,6 +421,7 @@ export const ARTIFACT_TYPE_TO_TOOL_ID: Partial<Record<ExecutiveDocumentType, str
   'management-tools-audit': 'management-tools-audit',
   'crypto-cbom': 'crypto-cbom-builder',
   'crypto-vulnerability-watch': 'crypto-vulnerability-watch',
+  'hybrid-transition': 'hybrid-transition-planner',
 }
 
 /** Look up the CSWP.39 §-reference (and optional sub-section label) for an
