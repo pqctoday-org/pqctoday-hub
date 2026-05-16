@@ -21,6 +21,60 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Command Center — CSWP 39 audit closure, Sprint 0 through Sprint 4 (2026-05-15 → 2026-05-16)
+
+A five-sprint cleanup driven by an in-depth audit of the `/business` Command Center against NIST CSWP 39 _Considerations for Achieving Crypto Agility — Strategies and Practices_ (December 2025 final). All 18 findings closed: 3 blockers, 13 majors, the minor list, and the nit list. The audit report is in `pqctoday-priv/docs/platform/ux/command-center-cswp39-audit-05152026.md` (rev 4).
+
+**Source-of-truth fixes (Sprint 0 — `4694e860`):**
+
+- **Fig.3 zone model accuracy.** Added the three Governance sub-elements that were missing from [cswp39ZoneData.ts](src/data/cswp39ZoneData.ts) — Processes, Partner Ecosystem, and Stakeholders — so the Command Center zone panel matches paper Fig.3 exactly. Fixed the Assets-zone §-ref (was `§5.2 (Crypto Security Policy Enforcement)` which is unsupported; now `Fig.3 (Strategic Plan asset elements)`).
+- **Maturity-CSV provenance + drift fixes.** Three audit-flagged drifts in [pqc*maturity_governance_requirements*\*.csv](src/data/) corrected: requirement #1 (Algorithm Identification) had its scope widened beyond what paper §3.1 supports — now narrowed back to "within security protocols"; requirement #12 (stakeholder coordination) used an invented list — now matches the paper's §1 stakeholder enumeration; the duplicate strategic-plan row from Exec Summary marked `status='deprecated'` with a reason.
+- **Board-pitch glyph sanitisation.** `pitchVariants/sectionDefaults.ts` + all 4 persona variants swept of bullets (`•`), warning emoji (`⚠️`), em-dashes (`—`), en-dashes (`–`), arrows (`→`), inequalities (`≥`) — all replaced with PDF-safe ASCII (`-`, `[VULN]`, `->`, `>=`). The `[VULN]` marker is now the visible warning signal in the Algorithm Substitution Matrix where the emoji was silently dropping under Helvetica latin1.
+- **CSWP-39 §-citation in 11 tool exports.** roi-calculator (§2.4 + §5), crqc-scenario (§2.3 + §6.1), stakeholder-comms, risk-register, risk-treatment-plan, compliance-checklist, compliance-timeline, kpi-tracker, crypto-vulnerability-watch, policy-generator, contract-clause — all now embed a CSWP 39 §-citation header + DOI in the artifact body, not just on the UI chip a board never sees.
+- **`cswpRef` chips clickable.** Zone-panel §-refs now anchor to <https://doi.org/10.6028/NIST.CSWP.39> with `target="_blank" rel="noopener noreferrer"`. `ArtifactCard` rename input switched to the shared `<Input>` component.
+
+**PDF integrity (Sprint 1 — `4694e860`):**
+
+- **Encoding sanitiser at every jsPDF boundary.** [pdfExport.ts](src/services/export/pdfExport.ts) `sanitizeForLatin1()` substitution layer maps em/en-dashes, smart quotes, ellipsis, bullets, arrows, inequalities, math signs, Greek letters, warning/info emoji to safe ASCII; remaining codepoints > 0xFF render as visible `?` instead of silently dropping. Closes the "screen shows ≥ 90% but the PDF shows '90' " corruption class.
+- **Mermaid handled in PDF.** Fenced ` ```mermaid ` blocks render as "Diagram available in the PQC Today Hub web app" + diagram-type + first-node summary instead of raw fenced source. Compliance Timeline Builder and Crypto Architecture Diagram now emit readable PDFs.
+- **Landscape `wideTable` option.** Threaded through `ExportableArtifact` + `ArtifactBuilder`; flipped on for RACI Builder, Supply Chain Matrix, Crypto API Refactor Audit, Cloud Responsibility Matrix, Policy Generator's framework table, and Contract Clause. `ArtifactDrawer` maps `document.type → wideTable` for saved-artifact re-exports.
+- **`stripLearningBanner` for executive PDFs.** Board-emphasis artifacts strip the "Educational worked example" banner from the PDF + replace it with a standards-citation footer; on-screen banner preserved.
+
+**Maturity tier ladder + provenance (Sprint 2 — working tree):**
+
+- **17 new Tier 1/3/4 requirements (B3).** Paper §6.5 defines a 4-tier crypto-agility maturity model (Partial → Risk-Informed → Repeatable → Adaptive); only Tier 2 was represented previously. New file [pqc_maturity_governance_requirements_05162026.csv](src/data/pqc_maturity_governance_requirements_05162026.csv) (committed in `6b25cb6c`) adds the missing 7 Tier 1 + 6 Tier 3 + 4 Tier 4 rows with verbatim `evidence_quote` from §6.5 pp.30-31. Total CSWP-39 row distribution: Tier 1=7, Tier 2=17, Tier 3=6, Tier 4=4 = **34 rows** with full tier coverage.
+- **M1 re-tagging closed-as-not-required.** The audit's M1 finding flagged 14 maturity rows extracted by `qwen3.5:27b` (the deleted model). Per a 2026-05-16 update to `feedback-cc-extraction-model.md`, qwen3.5 and qwen3.6 outputs are judged effectively equivalent for retroactive purposes; the rule applies only to future extractions. Audit-verified rows stay tagged with their original extraction provenance. No row content changes.
+- **Loader sort-order fix.** [maturityGovernanceData.ts](src/data/maturityGovernanceData.ts) now iterates modules **descending** by filename so newer revisions win on dedup-key collisions. Previously the alphabetically-first `05012026.csv` was shadowing the corrected wording in `05152026.csv`. The 05012026 file is archived to `src/data/archive/` per the established 6-prior-version pattern.
+
+**Four new architect-persona tools (Sprint 3):**
+
+The audit's §7 _Educational Value — Security Architect_ identified the largest persona gap: paper Exec Summary directs architects to §3 + §4 + §6, but the Command Center had only governance (§5) and gateway (§4.6) tools. Sprint 3 closes the gap with four matching tools, each carrying a pure-function decision engine, an `ArtifactSection[]` wizard, a CSWP-39 §-citation header + DOI footer in the markdown body, and ASCII-only sanitisation:
+
+| Tool                                    | §-binding            | Commit       | What it does                                                                                                                                                                                                                                  |
+| --------------------------------------- | -------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Hybrid Algorithm Transition Planner** | §3.2.4 / paper Fig.1 | `0f018ae6`   | Walks an architect through the Traditional → Hybrid → {Pure PQC, Hybrid PQC&PQC} pathway with concrete algorithm pairings (ML-KEM + X25519, ML-DSA + ECDSA, etc.) and root-of-trust strategy.                                                 |
+| **MTI Negotiator**                      | §3.1.1 + §3.1        | `85be507b`   | Picks a Mandatory-to-Implement signature / KEM / hash plus alternates from audience (us-federal / eu-regulated / commercial / iot / post-CRQC), compliance deadline, standards posture, hardware constraints.                                 |
+| **Crypto API Refactor Audit**           | §4.1 / paper Fig.2   | `06403545`   | Grades current crypto-agility state across the Application → Protocol → Crypto-API → Provider stack and emits a phased refactor checklist with language-specific call-site guidance (Go / Java / .NET / Node / Python / Rust / C / C++ / JS). |
+| **Cloud Responsibility Matrix**         | §6.4 + §5.3          | working tree | Per-asset-class shared-responsibility model across IaaS / PaaS / SaaS / FaaS, with PQC availability per major cloud and watch-outs for multi-cloud, BYOK / HYOK, FedRAMP, and sovereign-cloud overlays.                                       |
+
+Tests assert CSWP-39 §-citation presence in rendered markdown for each tool.
+
+**Polish (Sprint 4 — `89679ac6` + `d51820fa`):**
+
+- **N2** — "X hidden — not applicable to {country}" filter in Governance / Risk-Mgmt wires now has a tooltip / expander explaining which frameworks were filtered out and why.
+- **N6** — Files asset class confirmed present in CBOM Builder ([fileArtifacts.ts](src/components/PKILearning/modules/CryptoMgmtModernization/data/fileArtifacts.ts) — TLS certs, signed binaries, encrypted data-at-rest, key files, archive signatures). All 6 Fig.3 asset classes (Code / Libraries / Applications / Files / Protocols / Systems) now covered.
+- **T1** — Pillar-tag disclaimer wherever Crypto Posture Management pillar tags appear in maturity views, making explicit that the 5-pillar framing (`inventory / governance / lifecycle / observability / assurance`) is the app's overlay on top of CSWP-39, not paper terminology.
+- **T2** — Appendix B (alternative crypto-agility definitions: CARAF, etc.) surfaced in the Library detail popover for `NIST CSWP 39`.
+
+**Validation (post-Sprint 3):**
+
+- `tsc --noEmit` clean
+- `npm run lint` — 0 errors, 1158 warnings (none in Sprint scope)
+- `npm run test` — 2840 / 2843 passing; the 3 failures are pre-existing local-only `corpus-trust-invariants` checks per commit `ac624bc1`, unrelated to Sprint scope (Sprint touched 0 corpus / embeddings files)
+- 75 net new tests added across the four Sprint 3 tools
+
+**Optional follow-up:** the 14 `manual-audit-verified` maturity rows can be upgraded to true qwen3.6:27b extraction provenance by running `caffeinate -i python3 -u scripts/enrich-std-bodies-ollama.py --force-ids "NIST CSWP 39"` — ~30 min Ollama time + ~15 min merge. Not on the critical path; the audit verification is already honest provenance.
+
 ### Compliance — audit-driven loader hardening + dead-URL fixes (2026-05-15)
 
 A targeted set of fixes following the in-depth `/compliance` audit ([audit-2026-05-15.md](../pqctoday-priv/docs/platform/compliance/audit-2026-05-15.md)). Touches the loader and the framework CSV only; no UI changes.
