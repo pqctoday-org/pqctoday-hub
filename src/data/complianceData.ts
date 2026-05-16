@@ -238,7 +238,12 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
       (row.peer_reviewed?.toLowerCase() as ComplianceFramework['peerReviewed']) || undefined,
     vettingBody: row.vetting_body ? splitSemicolon(row.vetting_body) : undefined,
     websiteUrlQuality: row.website_url_quality || undefined,
-    confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
+    confidenceScore: ((): number | undefined => {
+      const raw = (row.confidence_score || '').trim()
+      if (!raw) return undefined
+      const n = Number(raw)
+      return Number.isFinite(n) ? n : undefined
+    })(),
     cswp39Tags: row.cswp39_tags ? splitSemicolon(row.cswp39_tags) : undefined,
     naicsCodes: row.naics_codes ? splitSemicolon(row.naics_codes) : undefined,
     status: ((): ComplianceFramework['status'] => {

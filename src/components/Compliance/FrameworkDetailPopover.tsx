@@ -220,6 +220,14 @@ export const FrameworkDetailPopover = ({
                     <p className="text-foreground">{framework.industries.join(', ')}</p>
                   </div>
                 )}
+                {framework.relatedStandards && framework.relatedStandards.length > 0 && (
+                  <div className="sm:col-span-2">
+                    <h4 className="font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                      Related Standards
+                    </h4>
+                    <p className="text-foreground">{framework.relatedStandards.join(', ')}</p>
+                  </div>
+                )}
               </div>
 
               {linkedLibrary.length > 0 && (
