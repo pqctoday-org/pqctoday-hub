@@ -58,6 +58,7 @@ export type ExecutiveDocumentType =
   | 'crypto-cbom'
   | 'crypto-vulnerability-watch'
   | 'hybrid-transition'
+  | 'mti-negotiator'
 
 export interface ExecutiveDocumentRevision {
   /** Unix ms when this revision was recorded. */

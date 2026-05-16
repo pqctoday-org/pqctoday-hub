@@ -23,6 +23,7 @@ import {
   Boxes,
   ShieldAlert,
   GitBranch,
+  Scale,
 } from 'lucide-react'
 import type { ExecutiveDocumentType } from '@/services/storage/types'
 import type { ZoneId } from '@/data/cswp39ZoneData'
@@ -302,6 +303,31 @@ export const BUSINESS_TOOLS: BusinessTool[] = [
     cswp39SectionRef: '§3.2.4',
     cswp39SubSection: 'Hybrid Cryptographic Algorithms',
   },
+  {
+    id: 'mti-negotiator',
+    name: 'MTI Negotiator',
+    description:
+      'Protocol-designer + architect decision tool from CSWP.39 §3.1.1 - picks Mandatory-to-Implement signature / KEM / hash plus alternates from audience, deadline, and constraint inputs',
+    category: 'Migration Planning',
+    icon: Scale,
+    keywords: [
+      'mti',
+      'mandatory-to-implement',
+      'cipher-suite',
+      'negotiation',
+      'protocol',
+      'tls',
+      'ikev2',
+      'ml-kem',
+      'ml-dsa',
+      'slh-dsa',
+      'cnsa',
+    ],
+    cswp39Zone: 'migration',
+    cswp39ZoneSubElement: 'Protocol negotiation updates',
+    cswp39SectionRef: '§3.1.1',
+    cswp39SubSection: 'Mandatory-to-Implement Algorithms',
+  },
 
   // ── Architecture (CSWP.39 §5.4) ────────────────────────────────────────────
   {
@@ -422,6 +448,7 @@ export const ARTIFACT_TYPE_TO_TOOL_ID: Partial<Record<ExecutiveDocumentType, str
   'crypto-cbom': 'crypto-cbom-builder',
   'crypto-vulnerability-watch': 'crypto-vulnerability-watch',
   'hybrid-transition': 'hybrid-transition-planner',
+  'mti-negotiator': 'mti-negotiator',
 }
 
 /** Look up the CSWP.39 §-reference (and optional sub-section label) for an

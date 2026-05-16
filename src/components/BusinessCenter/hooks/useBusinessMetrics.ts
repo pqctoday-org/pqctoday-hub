@@ -92,6 +92,7 @@ export const PILLAR_SOURCE_MODULES: Record<string, Record<ExecutiveDocumentType,
     'kpi-dashboard': 'pqc-governance',
     'stakeholder-comms': 'migration-program',
     'kpi-tracker': 'migration-program',
+    'mti-negotiator': 'crypto-mgmt-modernization',
   } as Record<ExecutiveDocumentType, string>,
   vendor: {
     'vendor-scorecard': 'vendor-risk',

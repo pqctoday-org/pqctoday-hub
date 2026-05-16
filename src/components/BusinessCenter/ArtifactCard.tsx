@@ -32,6 +32,7 @@ export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'crypto-cbom': 'Crypto BOM (CBOM)',
   'crypto-vulnerability-watch': 'Crypto Vulnerability Watch',
   'hybrid-transition': 'Hybrid Transition Plan',
+  'mti-negotiator': 'MTI Recommendation',
 }
 
 const PILLAR_COLORS: Record<string, string> = {
