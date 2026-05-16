@@ -50,13 +50,25 @@ const TAG_NAMES: Record<number, string> = {
 const CC_NAMES: Record<number, string> = {
   0x00000144: 'TPM2_Startup',
   0x00000143: 'TPM2_SelfTest',
+  0x0000015c: 'TPM2_SequenceUpdate',
+  0x00000165: 'TPM2_FlushContext',
   0x0000017a: 'TPM2_GetCapability',
   0x0000017b: 'TPM2_GetRandom',
   0x00000131: 'TPM2_CreatePrimary',
+  0x00000148: 'TPM2_Certify',
+  0x0000014e: 'TPM2_NV_Read',
   0x00000157: 'TPM2_Load',
+  0x00000158: 'TPM2_Quote',
+  0x00000169: 'TPM2_NV_ReadPublic',
+  0x00000173: 'TPM2_ReadPublic',
+  0x000001a3: 'TPM2_VerifySequenceComplete',
+  0x000001a4: 'TPM2_SignSequenceComplete',
+  0x000001a5: 'TPM2_VerifyDigestSignature',
   0x000001a6: 'TPM2_SignDigest',
   0x000001a7: 'TPM2_Encapsulate',
   0x000001a8: 'TPM2_Decapsulate',
+  0x000001a9: 'TPM2_VerifySequenceStart',
+  0x000001aa: 'TPM2_SignSequenceStart',
 }
 
 // ── Sub-components ────────────────────────────────────────────────────────────

@@ -690,7 +690,7 @@ var PqcTpmModule = (() => {
     Module['stringToUTF8'] = stringToUTF8
     Module['lengthBytesUTF8'] = lengthBytesUTF8
     var ASM_CONSTS = {
-      633752: ($0, $1) => {
+      633736: ($0, $1) => {
         if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
           crypto.getRandomValues(HEAPU8.subarray($0, $0 + $1))
         }

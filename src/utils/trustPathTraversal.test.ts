@@ -43,7 +43,8 @@ function edge(
   from: string,
   to: string,
   rel: ConceptXwalkRecord['relationshipType'],
-  conf: ConceptXwalkRecord['confidence'] = 'high'
+  conf: ConceptXwalkRecord['confidence'] = 'high',
+  rationale: ConceptXwalkRecord['rationaleType'] = 'technical_dependency'
 ): ConceptXwalkRecord {
   const SCORE: Record<string, number> = { high: 85, medium: 60, low: 30 }
   return {
@@ -56,7 +57,7 @@ function edge(
     fromConceptId: '',
     toConceptId: '',
     relationshipType: rel,
-    rationaleType: 'technical_dependency',
+    rationaleType: rationale,
     evidence: `${from} references ${to}`,
     verifiedDate: '2026-05-07',
     verifiedBy: 'test',
@@ -399,6 +400,92 @@ describe('traverseXwalkPaths', () => {
       const ids = results.map((r) => r.standardId)
       expect(ids).toContain('B')
       expect(ids).not.toContain('C') // no 2-hop for architect
+    })
+  })
+
+  describe('B3 — hop-2 rationale gate (doc §3.3)', () => {
+    // Per the explainability doc §3.3: hop-2 derivations are capped at 0
+    // unless the edge's rationale_type is `implementation_guidance` or
+    // `technical_dependency`. Hop-1 edges remain unaffected by this gate;
+    // soft rationales survive at hop 1 and only fail to compound through
+    // a second hop.
+
+    it('hop-2 edge with policy_reference rationale is filtered out', () => {
+      const results = traverseXwalkPaths(
+        [direct('A', 'A', 'mandatory')],
+        [
+          edge('A', 'B', 'intersects_with', 'high', 'technical_dependency'),
+          edge('B', 'C', 'intersects_with', 'high', 'policy_reference'),
+        ],
+        getLens('researcher')
+      )
+      const ids = results.map((r) => r.standardId)
+      expect(ids).toContain('B') // hop 1 still admits soft rationales — not gated
+      expect(ids).not.toContain('C') // hop 2 rejects policy_reference
+    })
+
+    it('hop-2 edge with semantic rationale is filtered out', () => {
+      const results = traverseXwalkPaths(
+        [direct('A', 'A', 'mandatory')],
+        [
+          edge('A', 'B', 'intersects_with', 'high', 'technical_dependency'),
+          edge('B', 'C', 'intersects_with', 'high', 'semantic'),
+        ],
+        getLens('researcher')
+      )
+      const ids = results.map((r) => r.standardId)
+      expect(ids).not.toContain('C')
+    })
+
+    it('hop-2 edge with timeline_anchor rationale is filtered out', () => {
+      const results = traverseXwalkPaths(
+        [direct('A', 'A', 'mandatory')],
+        [
+          edge('A', 'B', 'intersects_with', 'high', 'technical_dependency'),
+          edge('B', 'C', 'intersects_with', 'high', 'timeline_anchor'),
+        ],
+        getLens('researcher')
+      )
+      const ids = results.map((r) => r.standardId)
+      expect(ids).not.toContain('C')
+    })
+
+    it('hop-2 edge with implementation_guidance rationale is admitted', () => {
+      const results = traverseXwalkPaths(
+        [direct('A', 'A', 'mandatory')],
+        [
+          edge('A', 'B', 'intersects_with', 'high', 'technical_dependency'),
+          edge('B', 'C', 'intersects_with', 'high', 'implementation_guidance'),
+        ],
+        getLens('researcher')
+      )
+      const ids = results.map((r) => r.standardId)
+      expect(ids).toContain('C')
+    })
+
+    it('hop-2 edge with technical_dependency rationale is admitted', () => {
+      const results = traverseXwalkPaths(
+        [direct('A', 'A', 'mandatory')],
+        [
+          edge('A', 'B', 'intersects_with', 'high', 'technical_dependency'),
+          edge('B', 'C', 'intersects_with', 'high', 'technical_dependency'),
+        ],
+        getLens('researcher')
+      )
+      const ids = results.map((r) => r.standardId)
+      expect(ids).toContain('C')
+    })
+
+    it('hop-1 edge with policy_reference rationale is NOT filtered (gate is hop-2 only)', () => {
+      // Soft rationales remain admissible at hop 1 — the gate exists to
+      // prevent compounding two soft inferences, not to reject the first.
+      const results = traverseXwalkPaths(
+        [direct('A', 'A', 'mandatory')],
+        [edge('A', 'B', 'intersects_with', 'high', 'policy_reference')],
+        getLens('researcher')
+      )
+      const ids = results.map((r) => r.standardId)
+      expect(ids).toContain('B')
     })
   })
 })

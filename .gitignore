@@ -227,6 +227,18 @@ scripts/*
 # authored content.
 !scripts/audit-workshop-flows.ts
 
+# Reference-cache drift audit — runs in the reference-cache-drift CI
+# workflow weekly. Reads public/{library,timeline,threats}/manifest.json,
+# re-fetches each entry, compares SHA-256 against the stored hash. Pure
+# read-only inputs, public report output — nothing private to protect.
+!scripts/audit-reference-cache-drift.ts
+!scripts/audit-reference-cache-drift.test.ts
+
+# Matrix prose-doc-ID audit — CI gate that guards `src/data/pqcProtocolMatrix.ts`
+# against doc-ID citations leaking into note / deploymentNote / playground /
+# liveDeployment text fields. Pure read-only against public data.
+!scripts/audit-matrix-refs.ts
+
 # Private CI workflows (compliance scraper runs locally, not in public CI)
 .github/workflows/update-compliance.yml
 

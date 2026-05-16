@@ -157,6 +157,29 @@ export function getPkSize(algorithm: string): number {
   return KEM_PK_SIZES[algorithm] ?? DSA_PK_SIZES[algorithm] ?? 1184
 }
 
+// Hybrid Labeled-KEM algorithm-string parser. Strings have the shape
+// "HYBRID:MLKEM-768+X25519". Anything we can't parse defaults to MLKEM-768 +
+// X25519 so the params table never crashes.
+export interface HybridAlgoParts {
+  mlkem: 'MLKEM-512' | 'MLKEM-768' | 'MLKEM-1024'
+  classical: 'X25519' | 'P-256'
+}
+export function parseHybridAlgo(algorithm: string): HybridAlgoParts {
+  // Accept both 'HYBRID:MLKEM-768+X25519' and the raw 'MLKEM-768+X25519' shape.
+  const body = algorithm.startsWith('HYBRID:') ? algorithm.slice('HYBRID:'.length) : algorithm
+  const [mlkem, classical] = body.split('+')
+  const validMlkem: HybridAlgoParts['mlkem'][] = ['MLKEM-512', 'MLKEM-768', 'MLKEM-1024']
+  const validClassical: HybridAlgoParts['classical'][] = ['X25519', 'P-256']
+  return {
+    mlkem: validMlkem.includes(mlkem as HybridAlgoParts['mlkem'])
+      ? (mlkem as HybridAlgoParts['mlkem'])
+      : 'MLKEM-768',
+    classical: validClassical.includes(classical as HybridAlgoParts['classical'])
+      ? (classical as HybridAlgoParts['classical'])
+      : 'X25519',
+  }
+}
+
 // ── Command definitions ──────────────────────────────────────────────────────
 
 export const COMMAND_DEFS: TpmCommandDef[] = [
@@ -164,7 +187,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_Startup',
     cc: 0x00000144,
     name: 'TPM2_Startup',
-    section: 'TCG Part 3 §12.1',
+    section: 'TCG Part 3 §9.3 Tables 4-5 (V1.85 RC4)',
     phase: 'startup',
     description:
       'Initialize the TPM and establish its internal state. Must be the first command after power-on. TPM_SU_CLEAR resets all transient objects and sessions while preserving NV data.',
@@ -208,7 +231,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_SelfTest',
     cc: 0x00000143,
     name: 'TPM2_SelfTest',
-    section: 'TCG Part 3 §11.4',
+    section: 'TCG Part 3 §10.2 Tables 8-9 (V1.85 RC4)',
     phase: 'explore',
     description:
       'Instruct the TPM to execute cryptographic self-tests for all or untested algorithms. Returns RC_SUCCESS once all tests pass.',
@@ -252,7 +275,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_GetCapability',
     cc: 0x0000017a,
     name: 'TPM2_GetCapability',
-    section: 'TCG Part 3 §30.2',
+    section: 'TCG Part 3 §30.2 Tables 238-239 (V1.85 RC4)',
     phase: 'explore',
     description:
       'Query the TPM for registered capabilities — algorithm IDs, supported commands, PCR properties, and active handles.',
@@ -338,7 +361,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_GetRandom',
     cc: 0x0000017b,
     name: 'TPM2_GetRandom',
-    section: 'TCG Part 3 §16.1',
+    section: 'TCG Part 3 §16.1 Tables 75-76 (V1.85 RC4)',
     phase: 'explore',
     description:
       'Draw bytes from the TPM internal DRBG (AES-256-CTR, seeded at manufacture). Returns cryptographically strong random bytes isolated from OS-level entropy.',
@@ -397,7 +420,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_CreatePrimary',
     cc: 0x00000131,
     name: 'TPM2_CreatePrimary',
-    section: 'TCG Part 3 §24.1',
+    section: 'TCG Part 3 §24.1 Tables 191-192 (V1.85 RC4)',
     phase: 'create',
     description:
       'Create a primary key in a specified hierarchy and load it into the TPM. Primary keys are derived deterministically from the hierarchy seed and the public template — the same template always reproduces the same key.',
@@ -430,8 +453,8 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
           tpmType: isKem ? 'TPMI_MLKEM_PARAMETER_SET' : 'TPMI_MLDSA_PARAMETER_SET',
           value: `0x0002 (${algorithm})`,
           description: isKem
-            ? `${algorithm}: Security level 3 (192-bit). Public key = ${pkSize} B. TCG V1.85 §11.2.6 Table 204.`
-            : `${algorithm}: Security level 3 (128-bit). Public key = ${pkSize} B. TCG V1.85 §11.2.7 Table 207.`,
+            ? `${algorithm}: NIST PQC Category 3 (~192-bit classical security). Public key = ${pkSize} B. TCG V1.85 §11.2.6 Table 204 (TPMI_MLKEM_PARAMETER_SET).`
+            : `${algorithm}: NIST PQC Category 3 (~192-bit classical security). Public key = ${pkSize} B. TCG V1.85 §11.2.7 Table 207 (TPMI_MLDSA_PARAMETER_SET).`,
         },
         {
           name: 'inPublic.objectAttributes',
@@ -541,12 +564,12 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_Encapsulate',
     cc: 0x000001a7,
     name: 'TPM2_Encapsulate',
-    section: 'TCG Part 3 §26.1 (V1.85)',
+    section: 'TCG Part 3 §14.10 Tables 60-61 (V1.85 RC4)',
     phase: 'use',
     requiresKem: true,
     showAlgorithm: false,
     description:
-      'Generate a shared secret and a ciphertext (encapsulation) using an ML-KEM public key. The holder of the corresponding private key can run Decapsulate to recover the identical shared secret. With the PQC bridge active, this performs real ML-KEM-768 encapsulation via SoftHSMv3.',
+      'Public-key operation of a Key Encapsulation Mechanism. Generates a random sharedSecret and an accompanying ciphertext that can be decapsulated with the corresponding private key. Per Part 3 §14.10.1, the key referenced by keyHandle shall be a KEM key (TPM_RC_KEY) with restricted CLEAR and decrypt SET (TPM_RC_ATTRIBUTES).',
     why: 'Post-quantum key agreement replaces ECDH/RSA-OAEP. The shared secret feeds a KDF (HKDF-SHA256) to derive symmetric keys for AES-GCM or ChaCha20, creating a quantum-safe encrypted channel.',
     params: () => [
       {
@@ -554,7 +577,7 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
         tpmType: 'TPMI_DH_OBJECT',
         value: 'ML-KEM handle (see TPM State)',
         description:
-          'Handle returned by TPM2_CreatePrimary with ML-KEM key. Must have the decrypt attribute set.',
+          'Reference to public portion of KEM key (Part 3 Table 60: Auth Index: None — no authorization). Returned by TPM2_CreatePrimary with ML-KEM key; must have the decrypt attribute set, restricted CLEAR.',
       },
     ],
     respFields: () => [
@@ -564,36 +587,53 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
         byteOffset: 0,
         byteSize: 2,
         description:
-          '0x8001 = TPM_ST_NO_SESSIONS (encapsulation uses public key only — no auth needed)',
+          'Per Table 60: TPM_ST_SESSIONS (0x8002) if an audit or encrypt session is present; otherwise TPM_ST_NO_SESSIONS (0x8001).',
       },
       {
-        name: 'size',
+        name: 'responseSize',
         tpmType: 'UINT32',
         byteOffset: 2,
         byteSize: 4,
-        description: 'Total response size',
+        description: 'Total response size in bytes.',
       },
       {
         name: 'responseCode',
         tpmType: 'TPM_RC',
         byteOffset: 6,
         byteSize: 4,
-        description: '0x00000000 = shared secret and ciphertext generated',
+        description: '0x00000000 = sharedSecret and ciphertext generated.',
       },
       {
-        name: 'outSharedKey.size',
+        name: 'sharedSecret.size',
         tpmType: 'UINT16',
         byteOffset: 10,
         byteSize: 2,
-        description: 'Shared secret length (32 bytes for ML-KEM-768 → matches AES-256)',
+        description:
+          'Size of the random secret shared between both parties. 0x0020 (32) for ML-KEM per FIPS 203 — all parameter sets share the same 32-byte shared-secret length.',
       },
       {
-        name: 'outSharedKey.buffer',
+        name: 'sharedSecret.buffer',
         tpmType: 'BYTE[]',
         byteOffset: 12,
         byteSize: 0,
         description:
-          'The derived shared secret. Feed into HKDF to produce symmetric encryption keys.',
+          'Random secret shared between both parties (Table 61: TPM2B_SHARED_SECRET). Feed into HKDF to derive symmetric encryption keys.',
+      },
+      {
+        name: 'ciphertext.size',
+        tpmType: 'UINT16',
+        byteOffset: 0,
+        byteSize: 2,
+        description:
+          'Size of the encapsulated ciphertext. ML-KEM-512: 768 B; ML-KEM-768: 1088 B; ML-KEM-1024: 1568 B (FIPS 203 Table 2).',
+      },
+      {
+        name: 'ciphertext.buffer',
+        tpmType: 'BYTE[]',
+        byteOffset: 0,
+        byteSize: 0,
+        description:
+          'Encapsulated ciphertext that can be decapsulated with the private key to produce sharedSecret (Table 61: TPM2B_KEM_CIPHERTEXT).',
       },
     ],
   },
@@ -602,33 +642,34 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_Decapsulate',
     cc: 0x000001a8,
     name: 'TPM2_Decapsulate',
-    section: 'TCG Part 3 §26.2 (V1.85)',
+    section: 'TCG Part 3 §14.11 Tables 62-63 (V1.85 RC4)',
     phase: 'use',
     requiresKem: true,
     showAlgorithm: false,
     description:
-      "Recover the shared secret from an ML-KEM ciphertext using the private key held inside the TPM. The private key never leaves the TPM boundary. With the PQC bridge active, the recovered shared secret matches the encapsulator's secret byte-for-byte.",
+      'Private-key operation of a KEM. Given a ciphertext from a prior Encapsulate, returns the same sharedSecret produced during the encapsulation. Per §14.11.1, the key referenced by keyHandle shall be a KEM key (TPM_RC_KEY) with restricted CLEAR and decrypt SET (TPM_RC_ATTRIBUTES); private-key access requires authorization.',
     why: 'Post-quantum key establishment from the receiver side. The TPM is the decapsulation oracle — private key material stays in protected storage while the agreed shared secret is returned for symmetric cipher use.',
     params: () => [
       {
-        name: 'keyHandle',
+        name: '@keyHandle',
         tpmType: 'TPMI_DH_OBJECT',
         value: 'ML-KEM handle (see TPM State)',
-        description: 'Same ML-KEM key used during the encapsulation step on the sender side.',
+        description:
+          'Reference to loaded KEM key. Auth Index: 1, Auth Role: USER (Table 62) — requires authorization session for private-key use.',
       },
       {
-        name: 'inEncapsulation.size',
+        name: 'ciphertext.size',
         tpmType: 'UINT16',
         value: `1088 B (ML-KEM-768)`,
         description:
-          'Ciphertext length for ML-KEM-768: 1088 bytes (FIPS 203 §7). For ML-KEM-1024: 1568 bytes.',
+          'ML-KEM-512: 768 B; ML-KEM-768: 1088 B; ML-KEM-1024: 1568 B (FIPS 203 Table 2).',
       },
       {
-        name: 'inEncapsulation.buffer',
+        name: 'ciphertext.buffer',
         tpmType: 'BYTE[]',
-        value: 'Real ciphertext from Encapsulate (PQC bridge)',
+        value: 'Ciphertext from prior TPM2_Encapsulate',
         description:
-          'Ciphertext produced by TPM2_Encapsulate. With the PQC bridge active, the compliance suite captures and reuses the actual ciphertext for a true round-trip validation.',
+          'Encapsulated ciphertext (Table 62: TPM2B_KEM_CIPHERTEXT) produced by an earlier Encapsulate. With the PQC bridge active, the compliance suite captures and reuses the actual ciphertext for a round-trip validation.',
       },
     ],
     respFields: () => [
@@ -637,36 +678,177 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
         tpmType: 'TPM_ST',
         byteOffset: 0,
         byteSize: 2,
-        description: '0x8002',
+        description:
+          '0x8002 = TPM_ST_SESSIONS (private-key access requires auth — auth session always present in response).',
       },
       {
-        name: 'size',
+        name: 'responseSize',
         tpmType: 'UINT32',
         byteOffset: 2,
         byteSize: 4,
-        description: 'Total response size',
+        description: 'Total response size in bytes.',
       },
       {
         name: 'responseCode',
         tpmType: 'TPM_RC',
         byteOffset: 6,
         byteSize: 4,
-        description: '0x00000000 = success',
+        description: '0x00000000 = success.',
       },
       {
-        name: 'outSharedKey.size',
+        name: 'sharedSecret.size',
         tpmType: 'UINT16',
-        byteOffset: 10,
+        byteOffset: 14,
         byteSize: 2,
-        description: 'Size of the recovered shared secret',
+        description:
+          'Size of the decapsulated shared secret. 0x0020 (32) for ML-KEM (FIPS 203). Offset 14 = header(10) + paramSize(4) because TPM_ST_SESSIONS response carries a paramSize prefix.',
       },
       {
-        name: 'outSharedKey.buffer',
+        name: 'sharedSecret.buffer',
         tpmType: 'BYTE[]',
-        byteOffset: 12,
+        byteOffset: 16,
         byteSize: 0,
         description:
-          'The recovered shared secret. Must match the value returned by the corresponding Encapsulate call.',
+          'Decapsulated shared secret (Table 63: TPM2B_SHARED_SECRET). Must match the value returned by the corresponding Encapsulate.',
+      },
+    ],
+  },
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Educational construct — TCG v1.85 §11 Labeled KEM does NOT standardize a
+  // hybrid mode. These entries demonstrate how a hybrid Labeled-KEM could be
+  // composed from a real ML-KEM (via softhsmv3 / TCG v1.85 §11) plus a real
+  // classical ECDH (X25519 or P-256) combined under HKDF-SHA256.
+  // ──────────────────────────────────────────────────────────────────────────
+  {
+    key: 'TPM2_LabeledKEM_Hybrid_Encap',
+    cc: 0x000001a7,
+    name: 'TPM2_LabeledKEM_Hybrid_Encap (educational)',
+    section: 'Educational — not in TCG v1.85',
+    phase: 'use',
+    requiresKem: true,
+    showAlgorithm: true,
+    description:
+      'EDUCATIONAL CONSTRUCT (not a TCG v1.85 command). Composes a real ML-KEM encapsulation (via softhsmv3) with a real classical ECDH (X25519 or P-256, via Web Crypto) and combines the two shared secrets under HKDF-SHA256. TCG v1.85 §11 introduces Labeled KEM but does NOT define a hybrid mode — this is a teaching device for what a hybrid Labeled-KEM could look like.',
+    why: 'Hybrid KEMs hedge classical ECDH against quantum attack while keeping classical security under cryptanalytic regression of ML-KEM. The HKDF combiner with a fixed label string provides domain separation. Every primitive here is real — ML-KEM via PKCS#11 v3.2 C_EncapsulateKey, ECDH via WebCrypto deriveBits, HKDF-SHA256 via WebCrypto.',
+    params: (algorithm: string) => {
+      // algorithm string is "HYBRID:MLKEM-768+X25519" etc.
+      const { mlkem, classical } = parseHybridAlgo(algorithm)
+      const pkSize = getPkSize(mlkem)
+      const classicalPubSize = classical === 'X25519' ? 32 : 65
+      const mlkemCtSize = mlkem === 'MLKEM-512' ? 768 : mlkem === 'MLKEM-768' ? 1088 : 1568
+      return [
+        {
+          name: 'mlkemHandle',
+          tpmType: 'TPMI_DH_OBJECT',
+          value: 'ML-KEM handle (see TPM State)',
+          description: `Same softhsm-backed ${mlkem} handle TPM2_Encapsulate would use. Public key size: ${pkSize} B.`,
+        },
+        {
+          name: 'classicalAlg',
+          tpmType: 'enum {X25519, P-256}',
+          value: classical,
+          description:
+            classical === 'X25519'
+              ? 'Curve25519 (RFC 7748) — 32-byte ephemeral public key, 32-byte shared secret.'
+              : 'NIST P-256 (SEC1 uncompressed) — 65-byte ephemeral public key, 32-byte shared secret.',
+        },
+        {
+          name: 'classicalPeerPub',
+          tpmType: 'BYTE[]',
+          value: `${classicalPubSize} B (peer ephemeral)`,
+          description:
+            'Peer-side classical public key. The playground generates this on demand via Web Crypto so the hybrid encap has a real recipient.',
+        },
+        {
+          name: 'combiner',
+          tpmType: 'KDF',
+          value: 'HKDF-SHA256',
+          description:
+            'salt = "TCG-LabeledKEM-Hybrid-v0", info = "ml-kem || classical", ikm = ss_pqc || ss_classical, L = 32 B (RFC 5869).',
+        },
+        {
+          name: '→ outCt(ML-KEM)',
+          tpmType: 'BYTE[]',
+          value: `${mlkemCtSize} B`,
+          description: `ML-KEM ciphertext from C_EncapsulateKey on the softhsm ${mlkem} key.`,
+        },
+        {
+          name: '→ outCt(classical)',
+          tpmType: 'BYTE[]',
+          value: `${classicalPubSize} B`,
+          description:
+            'Ephemeral classical public key (the "ct" in DH-as-KEM framing) generated by Web Crypto.',
+        },
+        {
+          name: '→ combinedSs',
+          tpmType: 'BYTE[32]',
+          value: '32 B',
+          description: 'HKDF-SHA256 output — the actual session key material for AEAD use.',
+        },
+      ]
+    },
+    respFields: () => [
+      {
+        name: 'note',
+        tpmType: '—',
+        byteOffset: 0,
+        byteSize: 0,
+        description:
+          'No TPM-wire response — this command is composed at the JS layer. The “Send” button invokes the bridge directly. See the playground log for the encap output values.',
+      },
+    ],
+  },
+  {
+    key: 'TPM2_LabeledKEM_Hybrid_Decap',
+    cc: 0x000001a8,
+    name: 'TPM2_LabeledKEM_Hybrid_Decap (educational)',
+    section: 'Educational — not in TCG v1.85',
+    phase: 'use',
+    requiresKem: true,
+    showAlgorithm: true,
+    description:
+      'EDUCATIONAL CONSTRUCT (mirror of the hybrid encap). Runs real ML-KEM decapsulation against the softhsm-resident private key and real classical ECDH against the saved local private key, then HKDF-combines the two. Must run AFTER the matching hybrid encap so the playground has the ML-KEM ciphertext + classical ephemeral pub from that step.',
+    why: 'Demonstrates the full round-trip: combinedSs from decap MUST equal combinedSs from encap byte-for-byte. The playground log highlights both values for visual comparison.',
+    params: (algorithm: string) => {
+      const { mlkem, classical } = parseHybridAlgo(algorithm)
+      const mlkemCtSize = mlkem === 'MLKEM-512' ? 768 : mlkem === 'MLKEM-768' ? 1088 : 1568
+      const classicalPubSize = classical === 'X25519' ? 32 : 65
+      return [
+        {
+          name: 'mlkemHandle',
+          tpmType: 'TPMI_DH_OBJECT',
+          value: 'ML-KEM handle (see TPM State)',
+          description: `softhsm-backed ${mlkem} key. Private key never leaves the HSM boundary.`,
+        },
+        {
+          name: 'mlkemCt',
+          tpmType: 'BYTE[]',
+          value: `${mlkemCtSize} B (from prior Encap)`,
+          description: 'ML-KEM ciphertext captured from the matching hybrid encap step.',
+        },
+        {
+          name: 'classicalEphPub',
+          tpmType: 'BYTE[]',
+          value: `${classicalPubSize} B (from prior Encap)`,
+          description: 'Ephemeral classical public key the encapsulator generated.',
+        },
+        {
+          name: 'classicalAlg',
+          tpmType: 'enum {X25519, P-256}',
+          value: classical,
+          description: 'Classical curve used in the matching encap.',
+        },
+      ]
+    },
+    respFields: () => [
+      {
+        name: 'note',
+        tpmType: '—',
+        byteOffset: 0,
+        byteSize: 0,
+        description:
+          'No TPM-wire response — this command is composed at the JS layer. The “Send” button invokes the bridge directly. See the playground log for the decap output and the equality check vs the encap output.',
       },
     ],
   },
@@ -675,33 +857,67 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
     key: 'TPM2_SignDigest',
     cc: 0x000001a6,
     name: 'TPM2_SignDigest',
-    section: 'TCG Part 3 §20.1 (V1.85)',
+    section: 'TCG Part 3 §20.7 Tables 126-127 (V1.85 RC4)',
     phase: 'use',
     requiresDsa: true,
     showAlgorithm: false,
     description:
-      'Sign a pre-hashed message digest using an ML-DSA key stored in the TPM. The private key never leaves the TPM. With the PQC bridge active, this produces a cryptographically valid 3309-byte ML-DSA-65 signature via SoftHSMv3.',
-    why: "Post-quantum attestation and code signing. ML-DSA-65 signatures are lattice-based and resist Shor's algorithm, replacing ECDSA/RSA-PSS for firmware signing, certificate issuance, and platform attestation.",
+      'Sign a pre-hashed message digest (or, for ML-DSA with allowExternalMu=YES, an externally-computed µ value per FIPS 204) using an ML-DSA or HashML-DSA key stored in the TPM. The private key never leaves the TPM. Per §20.7.1, restricted keys are permitted only with a valid TPMT_TK_HASHCHECK — for ML-DSA no valid ticket can be produced, so restricted ML-DSA keys with a NULL ticket return TPM_RC_TICKET on parameter 3.',
+    why: "Post-quantum attestation and code signing. ML-DSA signatures are lattice-based and resist Shor's algorithm, replacing ECDSA/RSA-PSS for firmware signing, certificate issuance, and platform attestation.",
     params: () => [
       {
-        name: 'keyHandle',
+        name: '@keyHandle',
         tpmType: 'TPMI_DH_OBJECT',
-        value: 'ML-DSA handle (see TPM State)',
+        value: 'ML-DSA / HashML-DSA handle (see TPM State)',
         description:
-          'Handle returned by TPM2_CreatePrimary with ML-DSA key. Must have the sign attribute set.',
+          'Handle of key that will perform signing (Table 126: Auth Index 1, Auth Role USER). Returned by TPM2_CreatePrimary; must have the sign attribute set.',
+      },
+      {
+        name: 'context.size',
+        tpmType: 'UINT16',
+        value: '0x0000 (empty)',
+        description:
+          'TPM2B_SIGNATURE_CTX. Length of additional context value used by the signing scheme. Per Table 126: "depending on the scheme, context may be optional, i.e., zero-length."',
+      },
+      {
+        name: 'context.buffer',
+        tpmType: 'BYTE[]',
+        value: '(empty)',
+        description:
+          'Optional FIPS 204 §5.2 context string (≤ 255 B). Empty by default. Domain-separates signatures across applications.',
       },
       {
         name: 'digest.size',
         tpmType: 'UINT16',
         value: '0x0020 (32)',
-        description: '32 bytes = SHA-256 hash of the message to sign.',
+        description: '32 bytes = SHA-256 hash of the message to sign (or 64 B external µ).',
       },
       {
         name: 'digest.buffer',
         tpmType: 'BYTE[]',
         value: '0xBB × 32 (SHA-256 digest)',
         description:
-          'In production: SHA-256 hash of the firmware image, certificate, or message to be signed. With the PQC bridge active, this produces a real ML-DSA-65 signature verifiable against the public key.',
+          'TPM2B_DIGEST. In production: SHA-256 hash of the firmware image, certificate, or message to be signed. For ML-DSA with allowExternalMu=YES: 64-byte external µ per FIPS 204.',
+      },
+      {
+        name: 'validation.tag',
+        tpmType: 'TPM_ST',
+        value: '0x8024 (TPM_ST_HASHCHECK)',
+        description:
+          'TPMT_TK_HASHCHECK. Per Table 126: "If keyHandle is not a restricted signing key, then this may be a NULL Ticket with tag = TPM_ST_HASHCHECK."',
+      },
+      {
+        name: 'validation.hierarchy',
+        tpmType: 'TPMI_RH_HIERARCHY',
+        value: '0x40000007 (TPM_RH_NULL)',
+        description:
+          'NULL hierarchy = NULL Ticket. For ML-DSA, no valid HASHCHECK ticket can exist (§20.7.1 Note), so this is always NULL for ML-DSA SignDigest.',
+      },
+      {
+        name: 'validation.digest.size',
+        tpmType: 'UINT16',
+        value: '0x0000',
+        description: 'Empty TPM2B_DIGEST inside the NULL ticket.',
       },
     ],
     respFields: () => [
@@ -710,49 +926,838 @@ export const COMMAND_DEFS: TpmCommandDef[] = [
         tpmType: 'TPM_ST',
         byteOffset: 0,
         byteSize: 2,
-        description: '0x8002',
+        description: '0x8002 = TPM_ST_SESSIONS (auth session present in response).',
       },
       {
-        name: 'size',
+        name: 'responseSize',
         tpmType: 'UINT32',
         byteOffset: 2,
         byteSize: 4,
-        description: 'Total response size (> 3300 bytes for ML-DSA-65 signature)',
+        description:
+          'Total response size in bytes. ML-DSA-65 → ~3329 B (header 10 + paramSize 4 + sigAlg 2 + paramSet 2 + size 2 + 3309 sig + auth).',
       },
       {
         name: 'responseCode',
         tpmType: 'TPM_RC',
         byteOffset: 6,
         byteSize: 4,
-        description: '0x00000000 = signature generated',
+        description: '0x00000000 = signature generated.',
+      },
+      {
+        name: 'paramSize',
+        tpmType: 'UINT32',
+        byteOffset: 10,
+        byteSize: 4,
+        description:
+          'Size of the parameter area (precedes parameters in TPM_ST_SESSIONS responses).',
       },
       {
         name: 'signature.sigAlg',
         tpmType: 'TPM_ALG_ID',
-        byteOffset: 10,
+        byteOffset: 14,
         byteSize: 2,
-        description: '0x00A1 = TPM_ALG_MLDSA',
-      },
-      {
-        name: 'signature.parameterSet',
-        tpmType: 'UINT16',
-        byteOffset: 12,
-        byteSize: 2,
-        description: '0x0002 = ML-DSA-65',
+        description: '0x00A1 = TPM_ALG_MLDSA, or 0x00A2 = TPM_ALG_HASH_MLDSA (Part 2 §6.3).',
       },
       {
         name: 'signature.sig.size',
         tpmType: 'UINT16',
-        byteOffset: 14,
+        byteOffset: 16,
         byteSize: 2,
-        description: 'Signature length in bytes (ML-DSA-65 produces up to 3309 bytes)',
+        description:
+          'TPM2B_SIGNATURE_MLDSA size (Table 216 = {size, buffer}). FIPS 204 Table 3 lengths: 2420 (ML-DSA-44), 3309 (ML-DSA-65), 4627 (ML-DSA-87). Parameter set is implicit from the signing key — TPM2B_SIGNATURE_MLDSA does NOT carry a paramSet field on the wire.',
       },
       {
         name: 'signature.sig.buffer',
         tpmType: 'BYTE[]',
-        byteOffset: 16,
+        byteOffset: 18,
         byteSize: 0,
-        description: 'The ML-DSA-65 signature bytes. Distribute with the message for verification.',
+        description:
+          'The ML-DSA signature bytes (Table 127: TPMT_SIGNATURE → TPMU_SIGNATURE.mldsa). Distribute with the message for verification.',
+      },
+    ],
+  },
+
+  {
+    key: 'TPM2_VerifyDigestSignature',
+    cc: 0x000001a5,
+    name: 'TPM2_VerifyDigestSignature',
+    section: 'TCG Part 3 §20.4 Tables 120-121 (V1.85 RC4)',
+    phase: 'use',
+    requiresDsa: true,
+    showAlgorithm: false,
+    description:
+      'Verify an ML-DSA or HashML-DSA signature over a pre-computed digest using the public portion of the verification key. On success returns a TPMT_TK_VERIFIED ticket with tag = TPM_ST_DIGEST_VERIFIED.',
+    why: 'Closes the post-quantum signature loop. Used by the TPM itself (after Quote/Certify external workflows) and by clients to confirm a signature came from a TPM-attested key without leaving the TPM trust boundary.',
+    params: () => [
+      {
+        name: 'keyHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: 'ML-DSA / HashML-DSA handle (see TPM State)',
+        description:
+          'Handle of public key used for validation. Per Table 120: Auth Index None — verification uses public key only, no authorization required.',
+      },
+      {
+        name: 'context.size',
+        tpmType: 'UINT16',
+        value: '0x0000 (empty)',
+        description:
+          'TPM2B_SIGNATURE_CTX. Same context value used during signing. Empty when SignDigest used empty context.',
+      },
+      {
+        name: 'context.buffer',
+        tpmType: 'BYTE[]',
+        value: '(empty)',
+        description: 'Domain-separation context bytes (≤ 255 B). Must match what was signed.',
+      },
+      {
+        name: 'digest.size',
+        tpmType: 'UINT16',
+        value: '0x0020 (32)',
+        description: 'Length of the original digest that was signed.',
+      },
+      {
+        name: 'digest.buffer',
+        tpmType: 'BYTE[]',
+        value: '(digest bytes)',
+        description: 'TPM2B_DIGEST — the digest that was signed.',
+      },
+      {
+        name: 'signature.sigAlg',
+        tpmType: 'TPM_ALG_ID',
+        value: '0x00A1 (TPM_ALG_MLDSA)',
+        description: 'Algorithm of the signature being verified.',
+      },
+      {
+        name: 'signature.sig.size',
+        tpmType: 'UINT16',
+        value: '0x0CED (3309)',
+        description: 'Signature length matching the parameter set.',
+      },
+      {
+        name: 'signature.sig.buffer',
+        tpmType: 'BYTE[]',
+        value: '(signature bytes)',
+        description: 'TPMT_SIGNATURE — the signature to be tested (Table 120).',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 0,
+        byteSize: 2,
+        description:
+          'Per Table 120: TPM_ST_SESSIONS (0x8002) if an audit or decrypt session is present; otherwise TPM_ST_NO_SESSIONS (0x8001).',
+      },
+      {
+        name: 'responseSize',
+        tpmType: 'UINT32',
+        byteOffset: 2,
+        byteSize: 4,
+        description: 'Total response size in bytes.',
+      },
+      {
+        name: 'responseCode',
+        tpmType: 'TPM_RC',
+        byteOffset: 6,
+        byteSize: 4,
+        description:
+          '0x00000000 = signature verified; 0x000001D2 = TPM_RC_SCHEME on context; 0x00000182 = TPM_RC_ATTRIBUTES (e.g., allowExternalMu=NO); 0x000001DB = TPM_RC_SIGNATURE.',
+      },
+      {
+        name: 'validation.tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 10,
+        byteSize: 2,
+        description:
+          '0x8027 = TPM_ST_DIGEST_VERIFIED on success (Table 121: "tag will be TPM_ST_DIGEST_VERIFIED").',
+      },
+      {
+        name: 'validation.hierarchy',
+        tpmType: 'TPMI_RH_HIERARCHY',
+        byteOffset: 12,
+        byteSize: 4,
+        description:
+          'Hierarchy that owns the verifying key. TPM_RH_NULL (0x40000007) when no HMAC binding (e.g., NULL nameAlg or NULL hierarchy).',
+      },
+      {
+        name: 'validation.metadata.digestVerified',
+        tpmType: 'TPM_ALG_ID',
+        byteOffset: 16,
+        byteSize: 2,
+        description:
+          'TPMU_TK_VERIFIED_META.digestVerified (Part 2 §10.6.4 Table 110): the hash algorithm of the verified digest. Omitted (0 bytes) for NULL tickets per V1.85 §10.6.5.',
+      },
+      {
+        name: 'validation.hmac.size',
+        tpmType: 'UINT16',
+        byteOffset: 0,
+        byteSize: 2,
+        description:
+          'Length of the ticket HMAC binding (Part 2 §10.6.5 Table 112). 0 for NULL tickets.',
+      },
+    ],
+  },
+
+  {
+    key: 'TPM2_SignSequenceStart',
+    cc: 0x000001aa,
+    name: 'TPM2_SignSequenceStart',
+    section: 'TCG Part 3 §17.5 Tables 89-90 (V1.85 RC4)',
+    phase: 'use',
+    requiresDsa: true,
+    showAlgorithm: false,
+    description:
+      'Starts a streaming-message ML-DSA signing sequence. Returns a sequenceHandle that subsequent TPM2_SequenceUpdate calls accumulate into; the message is then signed by TPM2_SignSequenceComplete. Per §17.5.1, this is the streaming counterpart of TPM2_SignDigest — used when the message is too large to fit in a single TPM2B_DIGEST buffer or when the µ value must be computed inside the TPM.',
+    why: 'Phase 4 (streaming) ML-DSA. Required for signing large firmware images, full attestation reports, or any message that exceeds the digest buffer limit. Pairs with TPM2_VerifySequenceComplete on the other end.',
+    params: () => [
+      {
+        name: 'keyHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: 'ML-DSA signing handle (see TPM State)',
+        description:
+          'Handle of a signing key (Table 89: Auth Index None — no authorization required for the start itself; auth is established for the sequence via the auth parameter below).',
+      },
+      {
+        name: 'auth.size',
+        tpmType: 'UINT16',
+        value: '0x0000 (empty)',
+        description: 'Length of the auth value to attach to the sequence handle (TPM2B_AUTH).',
+      },
+      {
+        name: 'auth.buffer',
+        tpmType: 'BYTE[]',
+        value: '(empty)',
+        description:
+          'Authorization value for subsequent use of the sequence (Table 89). Used by SequenceUpdate / SignSequenceComplete to authorize the sequenceHandle.',
+      },
+      {
+        name: 'context.size',
+        tpmType: 'UINT16',
+        value: '0x0000 (empty)',
+        description: 'TPM2B_SIGNATURE_CTX. Length of FIPS 204 §5.2 context value.',
+      },
+      {
+        name: 'context.buffer',
+        tpmType: 'BYTE[]',
+        value: '(empty)',
+        description:
+          'Domain-separation context (≤ 255 B). Same value will be expected on the matching VerifySequenceStart.',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 0,
+        byteSize: 2,
+        description:
+          'Per Table 89: TPM_ST_SESSIONS (0x8002) if an audit or decrypt session is present; otherwise TPM_ST_NO_SESSIONS (0x8001).',
+      },
+      {
+        name: 'responseSize',
+        tpmType: 'UINT32',
+        byteOffset: 2,
+        byteSize: 4,
+        description: 'Total response size in bytes.',
+      },
+      {
+        name: 'responseCode',
+        tpmType: 'TPM_RC',
+        byteOffset: 6,
+        byteSize: 4,
+        description: '0x00000000 = sequence started.',
+      },
+      {
+        name: 'sequenceHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        byteOffset: 10,
+        byteSize: 4,
+        description:
+          'Handle to reference the sequence (Table 90). Pass to subsequent TPM2_SequenceUpdate and TPM2_SignSequenceComplete calls. Typically in the TPM vendor range (0x80FF00xx for libtpms).',
+      },
+    ],
+  },
+
+  {
+    key: 'TPM2_SignSequenceComplete',
+    cc: 0x000001a4,
+    name: 'TPM2_SignSequenceComplete',
+    section: 'TCG Part 3 §20.6 Tables 124-125 (V1.85 RC4)',
+    phase: 'use',
+    requiresDsa: true,
+    showAlgorithm: false,
+    description:
+      'Completes a streaming ML-DSA signing sequence. Appends a final message chunk to the accumulated buffer, then signs the full message with the key and returns the signature. The sequence handle is consumed (released by the TPM) regardless of whether signing succeeds.',
+    why: 'Closes the streaming sign flow started by TPM2_SignSequenceStart. ML-DSA-65 signatures are 3309 bytes (FIPS 204 Table 3).',
+    params: () => [
+      {
+        name: '@sequenceHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: 'sequenceHandle from SignSequenceStart',
+        description:
+          'Auth Index: 1, Auth Role: USER (Table 124) — requires authorization session with the auth value set in TPM2_SignSequenceStart.',
+      },
+      {
+        name: '@keyHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: 'Same signing key used in SignSequenceStart',
+        description:
+          'Auth Index: 2, Auth Role: USER (Table 124) — both sequence and key authorizations are required.',
+      },
+      {
+        name: 'buffer.size',
+        tpmType: 'UINT16',
+        value: '0x0000-0x0400',
+        description:
+          'TPM2B_MAX_BUFFER size. Final chunk to append before signing. 0 if all data was supplied via prior SequenceUpdate calls.',
+      },
+      {
+        name: 'buffer.buffer',
+        tpmType: 'BYTE[]',
+        value: '(message bytes)',
+        description:
+          'Data to be added to the signature (Table 124). After append, the TPM signs the entire accumulated message.',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 0,
+        byteSize: 2,
+        description: '0x8002 = TPM_ST_SESSIONS (always — Table 124 mandates SESSIONS).',
+      },
+      {
+        name: 'responseSize',
+        tpmType: 'UINT32',
+        byteOffset: 2,
+        byteSize: 4,
+        description: 'Total response size. ML-DSA-65 → ~3329 B.',
+      },
+      {
+        name: 'responseCode',
+        tpmType: 'TPM_RC',
+        byteOffset: 6,
+        byteSize: 4,
+        description: '0x00000000 = signature produced.',
+      },
+      {
+        name: 'paramSize',
+        tpmType: 'UINT32',
+        byteOffset: 10,
+        byteSize: 4,
+        description: 'Size of the parameter area.',
+      },
+      {
+        name: 'signature.sigAlg',
+        tpmType: 'TPM_ALG_ID',
+        byteOffset: 14,
+        byteSize: 2,
+        description: '0x00A1 = TPM_ALG_MLDSA.',
+      },
+      {
+        name: 'signature.sig.size',
+        tpmType: 'UINT16',
+        byteOffset: 16,
+        byteSize: 2,
+        description:
+          'TPM2B_SIGNATURE_MLDSA size — 2420 (ML-DSA-44), 3309 (ML-DSA-65), 4627 (ML-DSA-87).',
+      },
+      {
+        name: 'signature.sig.buffer',
+        tpmType: 'BYTE[]',
+        byteOffset: 18,
+        byteSize: 0,
+        description: 'The ML-DSA signature over the accumulated message (Table 125).',
+      },
+    ],
+  },
+
+  {
+    key: 'TPM2_VerifySequenceStart',
+    cc: 0x000001a9,
+    name: 'TPM2_VerifySequenceStart',
+    section: 'TCG Part 3 §17.6 Tables 87-88 (V1.85 RC4)',
+    phase: 'use',
+    requiresDsa: true,
+    showAlgorithm: false,
+    description:
+      'Starts a streaming-message ML-DSA verification sequence. Returns a sequenceHandle that subsequent TPM2_SequenceUpdate calls feed message bytes into; the signature is then tested by TPM2_VerifySequenceComplete. Per Table 87, hint must be zero-length for ML-DSA (only TPM_ALG_EDDSA uses hint).',
+    why: "Phase 4 (streaming) ML-DSA verify. Mirrors SignSequenceStart on the verify side. Used by wolfTPM's mldsa_sign example to round-trip pure-message ML-DSA via the TPM.",
+    params: () => [
+      {
+        name: 'keyHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: 'ML-DSA verification handle (see TPM State)',
+        description:
+          'Handle of a verification key (Table 87: Auth Index None — verification uses public key only).',
+      },
+      {
+        name: 'auth.size',
+        tpmType: 'UINT16',
+        value: '0x0000 (empty)',
+        description: 'Length of the auth value to attach to the sequence handle.',
+      },
+      {
+        name: 'auth.buffer',
+        tpmType: 'BYTE[]',
+        value: '(empty)',
+        description: 'Authorization value for subsequent use of the sequence.',
+      },
+      {
+        name: 'hint.size',
+        tpmType: 'UINT16',
+        value: '0x0000 (MUST be empty for ML-DSA)',
+        description:
+          'TPM2B_SIGNATURE_HINT. Per Table 87: "hint must be supplied for TPM_ALG_EDDSA, and must be zero-length in all other cases." For ML-DSA this MUST be empty.',
+      },
+      {
+        name: 'hint.buffer',
+        tpmType: 'BYTE[]',
+        value: '(empty for ML-DSA)',
+        description: 'Empty for all PQC algorithms.',
+      },
+      {
+        name: 'context.size',
+        tpmType: 'UINT16',
+        value: '0x0000 (empty)',
+        description: 'TPM2B_SIGNATURE_CTX — must match what SignSequenceStart used.',
+      },
+      {
+        name: 'context.buffer',
+        tpmType: 'BYTE[]',
+        value: '(empty)',
+        description: 'Domain-separation context bytes.',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 0,
+        byteSize: 2,
+        description:
+          'Per Table 87: TPM_ST_SESSIONS (0x8002) if an audit or decrypt session is present; otherwise TPM_ST_NO_SESSIONS (0x8001).',
+      },
+      {
+        name: 'responseSize',
+        tpmType: 'UINT32',
+        byteOffset: 2,
+        byteSize: 4,
+        description: 'Total response size in bytes.',
+      },
+      {
+        name: 'responseCode',
+        tpmType: 'TPM_RC',
+        byteOffset: 6,
+        byteSize: 4,
+        description: '0x00000000 = sequence started.',
+      },
+      {
+        name: 'sequenceHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        byteOffset: 10,
+        byteSize: 4,
+        description:
+          'Handle to reference the sequence (Table 88). Use with TPM2_SequenceUpdate to feed the message bytes, then TPM2_VerifySequenceComplete to test the signature.',
+      },
+    ],
+  },
+
+  {
+    key: 'TPM2_VerifySequenceComplete',
+    cc: 0x000001a3,
+    name: 'TPM2_VerifySequenceComplete',
+    section: 'TCG Part 3 §20.3 Tables 118-119 (V1.85 RC4)',
+    phase: 'use',
+    requiresDsa: true,
+    showAlgorithm: false,
+    description:
+      'Completes a streaming verification sequence. The signature is tested against the accumulated message and the public portion of keyHandle. On success returns a TPMT_TK_VERIFIED ticket with tag = TPM_ST_MESSAGE_VERIFIED — distinct from the TPM_ST_DIGEST_VERIFIED ticket that TPM2_VerifyDigestSignature produces (Part 2 §10.6.4 Table 110 TPMU_TK_VERIFIED_META encodes this distinction).',
+    why: 'Closes the streaming verify flow. The returned MESSAGE_VERIFIED ticket can be passed back to the TPM as evidence that a specific message was signed by a specific TPM-resident key, without re-validating the signature.',
+    params: () => [
+      {
+        name: '@sequenceHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: 'sequenceHandle from VerifySequenceStart',
+        description:
+          'Auth Index: 1, Auth Role: USER (Table 118) — requires authorization with the auth value set in VerifySequenceStart.',
+      },
+      {
+        name: 'keyHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: 'Same verification key used in VerifySequenceStart',
+        description: 'Auth Index: None — no authorization session required (public-key operation).',
+      },
+      {
+        name: 'signature.sigAlg',
+        tpmType: 'TPM_ALG_ID',
+        value: '0x00A1 (TPM_ALG_MLDSA)',
+        description: 'Algorithm of the signature being tested.',
+      },
+      {
+        name: 'signature.sig.size',
+        tpmType: 'UINT16',
+        value: '0x0CED (3309)',
+        description: 'Signature length matching the verifying key parameter set.',
+      },
+      {
+        name: 'signature.sig.buffer',
+        tpmType: 'BYTE[]',
+        value: '(signature bytes from a SignSequenceComplete)',
+        description: 'TPMT_SIGNATURE — the signature to be tested (Table 118).',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 0,
+        byteSize: 2,
+        description: '0x8002 = TPM_ST_SESSIONS (always — Table 118 mandates SESSIONS).',
+      },
+      {
+        name: 'responseSize',
+        tpmType: 'UINT32',
+        byteOffset: 2,
+        byteSize: 4,
+        description: 'Total response size in bytes.',
+      },
+      {
+        name: 'responseCode',
+        tpmType: 'TPM_RC',
+        byteOffset: 6,
+        byteSize: 4,
+        description: '0x00000000 = signature verified; 0x000001DB = TPM_RC_SIGNATURE on bad sig.',
+      },
+      {
+        name: 'paramSize',
+        tpmType: 'UINT32',
+        byteOffset: 10,
+        byteSize: 4,
+        description: 'Size of the parameter area.',
+      },
+      {
+        name: 'validation.tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 14,
+        byteSize: 2,
+        description:
+          '0x8026 = TPM_ST_MESSAGE_VERIFIED on success (Table 119: "tag will be TPM_ST_MESSAGE_VERIFIED"). Distinct from TPM_ST_DIGEST_VERIFIED (0x8027) returned by TPM2_VerifyDigestSignature.',
+      },
+      {
+        name: 'validation.hierarchy',
+        tpmType: 'TPMI_RH_HIERARCHY',
+        byteOffset: 16,
+        byteSize: 4,
+        description: 'Hierarchy of the verifying key.',
+      },
+      {
+        name: 'validation.hmac.size',
+        tpmType: 'UINT16',
+        byteOffset: 20,
+        byteSize: 2,
+        description: 'HMAC ticket binding length (Part 2 §10.6.5 Table 112).',
+      },
+    ],
+  },
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Phase 4 — Commands driven by dedicated playground panels (info-only)
+  //
+  // These commands ARE supported by the v0.8.0 WASM and are exercised by
+  // the playground, but through dedicated UI panels rather than the generic
+  // CommandBuilder. Each entry documents the spec wire shape so users can
+  // inspect the exact bytes the panels are sending. Sending them from the
+  // CommandBuilder dropdown works, but the dedicated panel is usually the
+  // better experience.
+  // ──────────────────────────────────────────────────────────────────────────
+
+  {
+    key: 'TPM2_ReadPublic',
+    cc: 0x00000173,
+    name: 'TPM2_ReadPublic',
+    section: 'TCG Part 3 §12.4 Tables 24-25 (V1.85 RC4)',
+    phase: 'use',
+    showAlgorithm: false,
+    description:
+      'Reads the public area, Name, and Qualified Name of any loaded object. Public-key operation; no authorization required (Auth Index: None). Used by V2p7EkExplorer to display TPMT_PUBLIC for each provisioned EK and by AttestationPanel to fetch the AK pubkey before each Quote/Certify.',
+    why: 'Foundation of any "what does this key look like" workflow. Returns the TPMT_PUBLIC bytes that include algorithm, parameter set, attributes, authPolicy, and the unique field (public key material).',
+    params: () => [
+      {
+        name: 'objectHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: '0x81010060–0x81010066 (V2.7 persistent EK handles)',
+        description: 'TPM handle of an object (Auth Index: None — Table 24).',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 0,
+        byteSize: 2,
+        description:
+          'TPM_ST_SESSIONS if audit/encrypt session present; otherwise TPM_ST_NO_SESSIONS.',
+      },
+      {
+        name: 'responseSize',
+        tpmType: 'UINT32',
+        byteOffset: 2,
+        byteSize: 4,
+        description: 'Total response size.',
+      },
+      {
+        name: 'responseCode',
+        tpmType: 'TPM_RC',
+        byteOffset: 6,
+        byteSize: 4,
+        description: '0 on success.',
+      },
+      {
+        name: 'outPublic',
+        tpmType: 'TPM2B_PUBLIC',
+        byteOffset: 10,
+        byteSize: 0,
+        description: '{size(2), TPMT_PUBLIC bytes} — Table 25.',
+      },
+      {
+        name: 'name',
+        tpmType: 'TPM2B_NAME',
+        byteOffset: 0,
+        byteSize: 0,
+        description: 'Name = nameAlg(2) || H_nameAlg(TPMT_PUBLIC).',
+      },
+      {
+        name: 'qualifiedName',
+        tpmType: 'TPM2B_NAME',
+        byteOffset: 0,
+        byteSize: 0,
+        description: 'H_nameAlg(parent.qualifiedName || Name).',
+      },
+    ],
+  },
+
+  {
+    key: 'TPM2_Quote',
+    cc: 0x00000158,
+    name: 'TPM2_Quote',
+    section: 'TCG Part 3 §18.4 Tables 101-102 (V1.85 RC4)',
+    phase: 'use',
+    requiresDsa: true,
+    showAlgorithm: false,
+    description:
+      "Signs a TPM-attested digest of selected PCRs using the specified signing key. The TPM hashes the concatenated PCR digest values with the key's nameAlg and signs the resulting TPMS_ATTEST. Driven by AttestationPanel — set a PCR selection + nonce, click Quote.",
+    why: 'Platform attestation — proves a specific PCR state to a remote verifier without revealing the AK private key. The signed TPMS_ATTEST carries the magic 0xFF544347 (TPM_GENERATED_VALUE) prefix that a verifier checks to confirm the structure came from a TPM.',
+    params: () => [
+      {
+        name: '@signHandle',
+        tpmType: 'TPMI_DH_OBJECT+',
+        value: 'persistent ML-DSA AK handle',
+        description:
+          'Auth Index: 1, Auth Role: USER (Table 101). TPM_RH_NULL produces an unsigned attest with NULL signature.',
+      },
+      {
+        name: 'qualifyingData',
+        tpmType: 'TPM2B_DATA',
+        value: 'caller-supplied nonce (any bytes)',
+        description: 'Anti-replay nonce; copied verbatim into the signed TPMS_ATTEST.',
+      },
+      {
+        name: 'inScheme',
+        tpmType: 'TPMT_SIG_SCHEME+',
+        value: 'TPM_ALG_NULL (use key default)',
+        description: 'Signing scheme override; NULL → derive from key.',
+      },
+      {
+        name: 'PCRselect',
+        tpmType: 'TPML_PCR_SELECTION',
+        value: 'e.g., {SHA-256, PCR[0,1,2,3,7]}',
+        description: 'PCR set to quote.',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 0,
+        byteSize: 2,
+        description: '0x8002 = TPM_ST_SESSIONS (Table 101 mandates SESSIONS).',
+      },
+      {
+        name: 'quoted',
+        tpmType: 'TPM2B_ATTEST',
+        byteOffset: 14,
+        byteSize: 0,
+        description: 'Signed TPMS_ATTEST blob. Starts with TPM_GENERATED_VALUE = 0xFF54_4347.',
+      },
+      {
+        name: 'signature',
+        tpmType: 'TPMT_SIGNATURE',
+        byteOffset: 0,
+        byteSize: 0,
+        description: 'sigAlg(2) + TPM2B_SIGNATURE_MLDSA{size, buf} for ML-DSA AK.',
+      },
+    ],
+  },
+
+  {
+    key: 'TPM2_Certify',
+    cc: 0x00000148,
+    name: 'TPM2_Certify',
+    section: 'TCG Part 3 §18.2 Tables 97-98 (V1.85 RC4)',
+    phase: 'use',
+    requiresDsa: true,
+    showAlgorithm: false,
+    description:
+      'Signs an attestation of the Name and Qualified Name of an object using a separate signing key. Requires TWO authorizations: objectHandle (ADMIN role per Table 97) + signHandle (USER role). Driven by AttestationPanel — supports self-certify by setting both handles to the same AK.',
+    why: 'Object identity attestation — proves a specific object exists in the TPM with the claimed name without revealing private material. Used for key birth certificates and migration proofs.',
+    params: () => [
+      {
+        name: '@objectHandle',
+        tpmType: 'TPMI_DH_OBJECT',
+        value: 'handle of object to be certified',
+        description: 'Auth Index: 1, Auth Role: ADMIN (Table 97).',
+      },
+      {
+        name: '@signHandle',
+        tpmType: 'TPMI_DH_OBJECT+',
+        value: 'ML-DSA signing handle',
+        description: 'Auth Index: 2, Auth Role: USER. May equal objectHandle for self-certify.',
+      },
+      {
+        name: 'qualifyingData',
+        tpmType: 'TPM2B_DATA',
+        value: 'caller-supplied nonce',
+        description: 'Anti-replay; copied into the signed TPMS_ATTEST.',
+      },
+      {
+        name: 'inScheme',
+        tpmType: 'TPMT_SIG_SCHEME+',
+        value: 'TPM_ALG_NULL (use key default)',
+        description: 'Signing scheme override.',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 0,
+        byteSize: 2,
+        description: '0x8002 = TPM_ST_SESSIONS.',
+      },
+      {
+        name: 'certifyInfo',
+        tpmType: 'TPM2B_ATTEST',
+        byteOffset: 14,
+        byteSize: 0,
+        description: 'Signed TPMS_ATTEST containing the certified object Name + Qualified Name.',
+      },
+      {
+        name: 'signature',
+        tpmType: 'TPMT_SIGNATURE',
+        byteOffset: 0,
+        byteSize: 0,
+        description: 'Signature of certifyInfo by signHandle.',
+      },
+    ],
+  },
+
+  {
+    key: 'TPM2_NV_ReadPublic',
+    cc: 0x00000169,
+    name: 'TPM2_NV_ReadPublic',
+    section: 'TCG Part 3 §31.6 Tables 251-252 (V1.85 RC4)',
+    phase: 'use',
+    showAlgorithm: false,
+    description:
+      'Reads the public area (TPMS_NV_PUBLIC) of an NV index — nvIndex value, nameAlg, attributes, authPolicy, dataSize. No authorization required (Auth Index: None per Table 251). Driven by V2p7EkCertReader to learn the cert blob size before chunking through TPM2_NV_Read.',
+    why: 'Pre-flight for any NV_Read — you need dataSize to know how many chunks to request.',
+    params: () => [
+      {
+        name: 'nvIndex',
+        tpmType: 'TPMI_RH_NV_INDEX',
+        value: '0x01c00060/62/64/70/72/74 (V2.7 PQC EK certs)',
+        description: 'NV Index handle (Auth Index: None).',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 0,
+        byteSize: 2,
+        description: 'TPM_ST_SESSIONS if audit/encrypt; otherwise TPM_ST_NO_SESSIONS.',
+      },
+      {
+        name: 'nvPublic',
+        tpmType: 'TPM2B_NV_PUBLIC',
+        byteOffset: 10,
+        byteSize: 0,
+        description: 'TPMS_NV_PUBLIC: {nvIndex, nameAlg, attributes, authPolicy, dataSize}.',
+      },
+      {
+        name: 'nvName',
+        tpmType: 'TPM2B_NAME',
+        byteOffset: 0,
+        byteSize: 0,
+        description: 'nameAlg || H_nameAlg(TPMS_NV_PUBLIC).',
+      },
+    ],
+  },
+
+  {
+    key: 'TPM2_NV_Read',
+    cc: 0x0000014e,
+    name: 'TPM2_NV_Read',
+    section: 'TCG Part 3 §31.13 Tables 265-266 (V1.85 RC4)',
+    phase: 'use',
+    showAlgorithm: false,
+    description:
+      'Reads up to MAX_NV_BUFFER_SIZE octets from an NV Index at an offset. Two handles: authHandle (TPMA_NV-authorised reader) and nvIndex (Auth Index: None for the index itself per Table 265). Driven by V2p7EkCertReader — chunks through cert blobs by calling NV_Read repeatedly with incremented offset until dataSize is consumed.',
+    why: 'Read PQC EK X.509 certs out of the V2.7 NV slots, or any other NV-stored data.',
+    params: () => [
+      {
+        name: '@authHandle',
+        tpmType: 'TPMI_RH_NV_AUTH',
+        value: 'TPM_RH_OWNER / TPM_RH_PLATFORM / nvIndex itself',
+        description:
+          'Auth Index: 1, Auth Role: USER. EK cert slots permit OWNER/PLATFORM/AUTHREAD per V2.7 §5.3.1.',
+      },
+      {
+        name: 'nvIndex',
+        tpmType: 'TPMI_RH_NV_INDEX',
+        value: 'V2.7 PQC EK cert index',
+        description: 'NV index to read (Auth Index: None — Table 265).',
+      },
+      {
+        name: 'size',
+        tpmType: 'UINT16',
+        value: '≤ MAX_NV_BUFFER_SIZE (1024 default)',
+        description: 'Number of octets to read.',
+      },
+      {
+        name: 'offset',
+        tpmType: 'UINT16',
+        value: 'octet offset into NV area',
+        description: 'Must be ≤ nvIndex dataSize (otherwise TPM_RC_VALUE).',
+      },
+    ],
+    respFields: () => [
+      {
+        name: 'tag',
+        tpmType: 'TPM_ST',
+        byteOffset: 0,
+        byteSize: 2,
+        description: '0x8002 = TPM_ST_SESSIONS.',
+      },
+      {
+        name: 'data',
+        tpmType: 'TPM2B_MAX_NV_BUFFER',
+        byteOffset: 14,
+        byteSize: 0,
+        description: '{size(2), buffer[size]} — the requested bytes.',
       },
     ],
   },

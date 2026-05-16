@@ -265,8 +265,7 @@ class OpenSSLService {
     clientConfig: string,
     serverConfig: string,
     files: { name: string; data: Uint8Array }[] = [],
-    commands: string[] = [],
-    options: { hsmMode?: boolean } = {}
+    commands: string[] = []
   ): Promise<string> {
     try {
       await this.init()
@@ -316,7 +315,6 @@ class OpenSSLService {
         serverConfig,
         files,
         commands,
-        hsmMode: options.hsmMode === true,
         requestId,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any)

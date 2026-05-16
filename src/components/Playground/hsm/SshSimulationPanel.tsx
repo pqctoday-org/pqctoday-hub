@@ -2,10 +2,11 @@
 //
 // SshSimulationPanel — Playground tool PT-SSH-PQC.
 //
-// Runs real softhsmv3 PKCS#11 SSH handshakes (classical + PQC) directly in
-// the browser — no Web Workers, no network, no container required.
+// Runs real softhsmv3 PKCS#11 SSH handshakes (classical baseline + a user-
+// selectable PQC config) directly in the browser — no Web Workers, no network,
+// no container required.
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { ErrorAlert } from '@/components/ui/error-alert'
 import { translateCryptoError } from '@/utils/cryptoErrorHint'
 import {
@@ -28,7 +29,15 @@ import { Button } from '@/components/ui/button'
 import { ChromiumGateBanner, useChromiumGate } from '@/components/shared/ChromiumGateBanner'
 import { SshComparisonPanel } from './SshComparisonPanel'
 import { SshLearnSection } from './SshLearnSection'
-import { sshEngine, type SshHandshakeResult, type SshWirePacket } from '@/wasm/openssh'
+import {
+  sshEngine,
+  SSH_KEX_OPTIONS,
+  SSH_HOST_KEY_OPTIONS,
+  type SshHandshakeResult,
+  type SshWirePacket,
+  type SshKexAlg,
+  type SshHostKeyAlg,
+} from '@/wasm/openssh'
 import type { Pkcs11LogEntry } from '@/wasm/softhsm'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { useHsmContext } from './HsmContext'
@@ -43,12 +52,19 @@ function ts() {
   return new Date().toISOString().slice(11, 23)
 }
 
+const CLASSICAL_BASELINE = {
+  kex: 'curve25519-sha256' as SshKexAlg,
+  hostKey: 'ssh-ed25519' as SshHostKeyAlg,
+}
+
 export function SshSimulationPanel() {
   const { moduleRef, hSessionRef, isReady, autoInit } = useHsmContext()
 
   const [phase, setPhase] = useState<
     'idle' | 'initializing' | 'running-classical' | 'running-pqc' | 'done' | 'error'
   >('idle')
+  const [pqcKex, setPqcKex] = useState<SshKexAlg>('mlkem768-curve25519-sha256')
+  const [pqcHostKey, setPqcHostKey] = useState<SshHostKeyAlg>('ssh-mldsa-65')
   const [classicalResult, setClassicalResult] = useState<SshHandshakeResult | undefined>()
   const [pqcResult, setPqcResult] = useState<SshHandshakeResult | undefined>()
   const [logs, setLogs] = useState<LogEntry[]>([])
@@ -56,6 +72,16 @@ export function SshSimulationPanel() {
   const [errorMsg, setErrorMsg] = useState<string>()
   const [pkcs11BeginnerMode, setPkcs11BeginnerMode] = useState(true)
   const [wirePacketsView, setWirePacketsView] = useState<'list' | 'diagram' | 'compare'>('diagram')
+
+  // PQC-family KEX options excluding the classical baseline (which is the
+  // implicit comparison run).
+  const pqcKexOptions = useMemo(() => SSH_KEX_OPTIONS.filter((o) => o.family !== 'classical'), [])
+  // ML-DSA host-key options. Ed25519 stays on the classical baseline run and
+  // is never paired with a PQC KEX in this simulator.
+  const pqcHostKeyOptions = useMemo(
+    () => SSH_HOST_KEY_OPTIONS.filter((o) => o.id !== 'ssh-ed25519'),
+    []
+  )
 
   const appendLog = useCallback((text: string, level: 'info' | 'error' = 'info') => {
     setLogs((prev) => [...prev.slice(-200), { ts: ts(), level, text }])
@@ -88,10 +114,12 @@ export function SshSimulationPanel() {
         onPkcs11: (e) => setPkcs11Log((prev) => [...prev.slice(-200), e]),
       })
 
-      // ── Run 1: classical ──────────────────────────────────────────────────
+      // ── Run 1: classical baseline ─────────────────────────────────────────
       setPhase('running-classical')
-      appendLog('Starting classical handshake (curve25519-sha256 + ssh-ed25519)…')
-      const classical = await sshEngine.runHandshake('classical')
+      appendLog(
+        `Starting classical handshake (${CLASSICAL_BASELINE.kex} + ${CLASSICAL_BASELINE.hostKey})…`
+      )
+      const classical = await sshEngine.runHandshake(CLASSICAL_BASELINE)
       setClassicalResult(classical)
       appendLog(
         `Classical done: connection_ok=${classical.connection_ok}, auth_ms=${classical.auth_ms.toFixed(1)}ms`
@@ -106,10 +134,10 @@ export function SshSimulationPanel() {
         })
       }
 
-      // ── Run 2: PQC ────────────────────────────────────────────────────────
+      // ── Run 2: user-selected PQC config ───────────────────────────────────
       setPhase('running-pqc')
-      appendLog('Starting PQC handshake (mlkem768x25519-sha256 + ssh-mldsa-65)…')
-      const pqc = await sshEngine.runHandshake('pqc')
+      appendLog(`Starting PQC handshake (${pqcKex} + ${pqcHostKey})…`)
+      const pqc = await sshEngine.runHandshake({ kex: pqcKex, hostKey: pqcHostKey })
       setPqcResult(pqc)
       appendLog(`PQC done: connection_ok=${pqc.connection_ok}, auth_ms=${pqc.auth_ms.toFixed(1)}ms`)
 
@@ -120,7 +148,7 @@ export function SshSimulationPanel() {
       setPhase('error')
       appendLog(`Error: ${msg}`, 'error')
     }
-  }, [appendLog, autoInit, hSessionRef, isReady, moduleRef])
+  }, [appendLog, autoInit, hSessionRef, isReady, moduleRef, pqcKex, pqcHostKey])
 
   const handleReset = useCallback(() => {
     sshEngine.terminate()
@@ -160,9 +188,10 @@ export function SshSimulationPanel() {
         <div className="flex-1 min-w-0">
           <h2 className="text-lg font-bold text-gradient">PQC SSH Simulator</h2>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Real softhsmv3 PKCS#11 SSH handshakes — ML-KEM-768 × X25519 hybrid KEX + ML-DSA-65 host
-            auth. All key material lives inside the softhsmv3 WASM token; no network or container
-            required.
+            Real softhsmv3 PKCS#11 SSH handshakes — pick any ML-KEM KEX (hybrid or pure) plus an
+            ML-DSA host-key variant and compare it against the classical curve25519 + Ed25519
+            baseline. All key material lives inside the softhsmv3 WASM token; no network or
+            container required.
           </p>
         </div>
         <Link to="/learn/network-security-pqc">
@@ -178,6 +207,61 @@ export function SshSimulationPanel() {
 
       {/* Browser gate */}
       <ChromiumGateBanner feature="PQC SSH handshake" />
+
+      {/* PQC algorithm selectors */}
+      <div className="glass-panel p-3 space-y-3">
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              PQC KEX Algorithm
+            </span>
+            <span className="text-[10px] text-muted-foreground">
+              hybrid = classical ECDH ⊕ ML-KEM; pure = ML-KEM only (CNSA 2.0)
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {pqcKexOptions.map((opt) => (
+              <Button
+                key={opt.id}
+                variant={pqcKex === opt.id ? 'default' : 'outline'}
+                size="sm"
+                disabled={isRunning}
+                onClick={() => setPqcKex(opt.id)}
+                className="h-7 text-[11px] font-mono"
+                aria-pressed={pqcKex === opt.id}
+              >
+                {opt.id}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              PQC Host-Key Algorithm
+            </span>
+            <span className="text-[10px] text-muted-foreground">
+              softhsmv3 generates and signs with the chosen ML-DSA parameter set
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {pqcHostKeyOptions.map((opt) => (
+              <Button
+                key={opt.id}
+                variant={pqcHostKey === opt.id ? 'default' : 'outline'}
+                size="sm"
+                disabled={isRunning}
+                onClick={() => setPqcHostKey(opt.id)}
+                className="h-7 text-[11px] font-mono"
+                aria-pressed={pqcHostKey === opt.id}
+              >
+                {opt.id}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* Controls */}
       <div className="flex items-center gap-2 flex-wrap">
@@ -212,33 +296,52 @@ export function SshSimulationPanel() {
       {/* Error banner */}
       {errorMsg && <ErrorAlert message={errorMsg} />}
 
-      {/* Fix 1: Hybrid KEX rationale */}
-      {(phase === 'running-pqc' || phase === 'done') && (
-        <div className="my-4 flex items-start gap-3 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm">
-          <ShieldCheck size={16} className="mt-0.5 shrink-0 text-primary" />
-          <div className="space-y-1">
-            <p className="font-medium text-foreground">Why hybrid? Defense in depth.</p>
-            <p className="text-muted-foreground text-xs">
-              <strong className="text-foreground">mlkem768x25519-sha256</strong> combines classical
-              X25519 with ML-KEM-768 in a single key exchange. Both algorithms must be broken for
-              the session key to be compromised.
-            </p>
-            <p className="text-muted-foreground text-xs">
-              <strong className="text-foreground">X25519</strong> protects against classical
-              adversaries today. <strong className="text-foreground">ML-KEM-768</strong> protects
-              against &quot;harvest now, decrypt later&quot; (HNDL) attacks by quantum computers.
-            </p>
-            <a
-              href="https://datatracker.ietf.org/doc/draft-ietf-sshm-hybrid/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-primary underline hover:text-primary/80 flex items-center gap-0.5 w-fit"
-            >
-              draft-ietf-sshm-hybrid <ExternalLink size={9} />
-            </a>
+      {/* Hybrid KEX rationale (shown for hybrid PQC runs only) */}
+      {(phase === 'running-pqc' || phase === 'done') &&
+        pqcKex.includes('-curve25519-') === false &&
+        pqcKex.includes('-nistp256-') === false && (
+          <div className="my-4 flex items-start gap-3 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm">
+            <ShieldCheck size={16} className="mt-0.5 shrink-0 text-primary" />
+            <div className="space-y-1">
+              <p className="font-medium text-foreground">
+                Pure ML-KEM mode: no classical fallback.
+              </p>
+              <p className="text-muted-foreground text-xs">
+                <strong className="text-foreground">{pqcKex}</strong> runs ML-KEM alone, with no
+                classical Diffie-Hellman component. This matches the CNSA 2.0 SSH profile target
+                end-state but offers no algorithmic defense in depth: if ML-KEM is broken, the
+                session key is exposed.
+              </p>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      {(phase === 'running-pqc' || phase === 'done') &&
+        (pqcKex.includes('-curve25519-') || pqcKex.includes('-nistp256-')) && (
+          <div className="my-4 flex items-start gap-3 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm">
+            <ShieldCheck size={16} className="mt-0.5 shrink-0 text-primary" />
+            <div className="space-y-1">
+              <p className="font-medium text-foreground">Why hybrid? Defense in depth.</p>
+              <p className="text-muted-foreground text-xs">
+                <strong className="text-foreground">{pqcKex}</strong> combines a classical ECDH
+                exchange with ML-KEM in a single key exchange. Both algorithms must be broken for
+                the session key to be compromised.
+              </p>
+              <p className="text-muted-foreground text-xs">
+                The classical leg protects against classical adversaries today. The ML-KEM leg
+                protects against &quot;harvest now, decrypt later&quot; (HNDL) attacks by quantum
+                computers.
+              </p>
+              <a
+                href="https://datatracker.ietf.org/doc/draft-ietf-sshm-hybrid/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-primary underline hover:text-primary/80 flex items-center gap-0.5 w-fit"
+              >
+                draft-ietf-sshm-hybrid <ExternalLink size={9} />
+              </a>
+            </div>
+          </div>
+        )}
 
       {/* Comparison */}
       <SshComparisonPanel classical={classicalResult} pqc={pqcResult} />

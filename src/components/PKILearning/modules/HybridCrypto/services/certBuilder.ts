@@ -68,6 +68,56 @@ export const DELTA_CERT_DESC_OID = '2.16.840.1.114027.80.6.1'
 /** SHA-256 — 2.16.840.1.101.3.4.2.1 */
 export const SHA256_OID_STR = '2.16.840.1.101.3.4.2.1'
 
+// ---------------------------------------------------------------------------
+// OID constants for LAMPS composite-sig draft-19 (id-pq-composite-sigs)
+// All composite OIDs live under the PKIX alg arc: 1.3.6.1.5.5.7.6.{37..51}
+// Reference: draft-ietf-lamps-pq-composite-sigs-19 §6
+// ---------------------------------------------------------------------------
+
+/** ML-DSA-44 — 2.16.840.1.101.3.4.3.17 (FIPS 204) */
+export const ML_DSA_44_OID_STR = '2.16.840.1.101.3.4.3.17'
+
+/** ML-DSA-87 — 2.16.840.1.101.3.4.3.19 (FIPS 204) */
+export const ML_DSA_87_OID_STR = '2.16.840.1.101.3.4.3.19'
+
+/** RSASSA-PSS — 1.2.840.113549.1.1.10 (RFC 8017 §A.2.3) */
+export const RSA_PSS_OID_STR = '1.2.840.113549.1.1.10'
+
+/** rsaEncryption — 1.2.840.113549.1.1.1 */
+export const RSA_ENCRYPTION_OID_STR = '1.2.840.113549.1.1.1'
+
+/** Ed25519 — 1.3.101.112 (RFC 8410) */
+export const ED25519_OID_STR = '1.3.101.112'
+
+/** secp384r1 (P-384) — 1.3.132.0.34 */
+export const EC_P384_CURVE_OID_STR = '1.3.132.0.34'
+
+/** ecdsa-with-SHA384 — 1.2.840.10045.4.3.3 */
+export const ECDSA_SHA384_OID_STR = '1.2.840.10045.4.3.3'
+
+/** ecdsa-with-SHA512 — 1.2.840.10045.4.3.4 */
+export const ECDSA_SHA512_OID_STR = '1.2.840.10045.4.3.4'
+
+/** SHA-384 — 2.16.840.1.101.3.4.2.2 */
+export const SHA384_OID_STR = '2.16.840.1.101.3.4.2.2'
+
+/** SHA-512 — 2.16.840.1.101.3.4.2.3 */
+export const SHA512_OID_STR = '2.16.840.1.101.3.4.2.3'
+
+/** id-MLDSA44-RSA2048-PSS-SHA256 — 1.3.6.1.5.5.7.6.37 (draft-19 §6) */
+export const COMPOSITE_MLDSA44_RSA2048_PSS_SHA256_OID_STR = '1.3.6.1.5.5.7.6.37'
+
+/**
+ * id-MLDSA65-ECDSA-P256-SHA512 — 1.3.6.1.5.5.7.6.45 (draft-19 §6).
+ *
+ * Same OID as the existing {@link COMPOSITE_MLDSA65_ECDSA_P256_OID_STR}, kept
+ * separate so callers picking the draft-19 builder are unambiguous.
+ */
+export const COMPOSITE_MLDSA65_ECDSA_P256_SHA512_OID_STR = '1.3.6.1.5.5.7.6.45'
+
+/** id-MLDSA87-ECDSA-P384-SHA512 — 1.3.6.1.5.5.7.6.49 (draft-19 §6) */
+export const COMPOSITE_MLDSA87_ECDSA_P384_SHA512_OID_STR = '1.3.6.1.5.5.7.6.49'
+
 // Legacy OID exports (raw bytes) for backward compat with existing callers
 export const SLH_DSA_SHA2_128S_OID = new Uint8Array([
   0x60, 0x86, 0x48, 0x01, 0x65, 0x03, 0x04, 0x03, 0x14,
@@ -101,6 +151,24 @@ function buildECAlgId(): AlgorithmIdentifier {
   return new AlgorithmIdentifier({
     algorithm: EC_PUBLIC_KEY_OID_STR,
     parameters: oidBytes.buffer as ArrayBuffer,
+  })
+}
+
+function buildECP384AlgId(): AlgorithmIdentifier {
+  // P-384 OID 1.3.132.0.34 encoded as raw DER OID TLV
+  const oidBytes = new Uint8Array([0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x22])
+  return new AlgorithmIdentifier({
+    algorithm: EC_PUBLIC_KEY_OID_STR,
+    parameters: oidBytes.buffer as ArrayBuffer,
+  })
+}
+
+function buildRSAEncryptionAlgId(): AlgorithmIdentifier {
+  // PKCS#1 v1.5 rsaEncryption with NULL parameters per RFC 8017 §A.1
+  const nullParams = new Uint8Array([0x05, 0x00])
+  return new AlgorithmIdentifier({
+    algorithm: RSA_ENCRYPTION_OID_STR,
+    parameters: nullParams.buffer as ArrayBuffer,
   })
 }
 
@@ -276,6 +344,242 @@ export async function buildCompositeCert(
   ])
 
   // Certificate wrapper: TBS + AlgId + BIT STRING(compositeSignature)
+  const cert = new Certificate({
+    tbsCertificate: AsnConvert.parse(AsnConvert.serialize(tbs), TBSCertificate),
+    signatureAlgorithm: compositeAlgId,
+    signatureValue: compositeSignature.buffer as ArrayBuffer,
+  })
+  return new Uint8Array(AsnConvert.serialize(cert))
+}
+
+// ---------------------------------------------------------------------------
+// 2b. Composite certificate — draft-19 LAMPS profiles
+//
+// PROFILE DIFFERENCES vs the older buildCompositeCert above (which targets
+// draft-15): draft-19 §4.3 encodes CompositeSignatureValue as the plain byte
+// concatenation `mldsaSig || tradSig` inside the outer BIT STRING — NOT as
+// `SEQUENCE OF BIT STRING`. ML-DSA always comes first; the verifier splits
+// at the ML-DSA signature's fixed length per FIPS 204 (Table 1 in the draft).
+//
+// The CompositePublicKey is also a plain concat per draft-19 §4.1:
+//   `output mldsaPK || tradPK`  (not a SEQUENCE of SPKIs).
+//
+// We do NOT modify the existing draft-15 builder so its consumers in the
+// HybridCrypto workshop keep their byte layouts. Pick this builder for any
+// new code that must interoperate with draft-19 verifiers.
+// ---------------------------------------------------------------------------
+
+/** Fixed Prefix per draft-19 §2.2: ASCII "CompositeAlgorithmSignatures2025" */
+export const COMPOSITE_DRAFT19_PREFIX = new TextEncoder().encode('CompositeAlgorithmSignatures2025')
+
+/** Pre-hash function name as accepted by Web Crypto / Node crypto digest APIs */
+export type CompositePreHash = 'SHA-256' | 'SHA-512'
+
+/**
+ * Describes one LAMPS composite-sig profile from draft-19 §6.
+ *
+ * Captures everything needed to construct the message representative
+ *   M' = Prefix || Label || len(ctx) || ctx || PH(M)
+ * per draft-19 §2.2 and §3.2, and to call the underlying primitives correctly:
+ *   mldsaSig = ML-DSA.Sign(skPQ, M', mldsa_ctx=Label)
+ *   tradSig  = Trad.Sign(skClassical, M')
+ */
+export interface CompositeProfileDraft19 {
+  /** Composite OID (e.g. '1.3.6.1.5.5.7.6.45' for MLDSA-65+ECDSA-P256-SHA512) */
+  compositeOid: string
+  /** Identifier label, matches draft-19 §6 entry (e.g. 'id-MLDSA65-ECDSA-P256-SHA512') */
+  label: string
+  /**
+   * Signature label used inside M' and as the ML-DSA `ctx` parameter
+   * (FIPS 204 Algorithm 2). Per draft-19 §6 (e.g. 'COMPSIG-MLDSA65-ECDSA-P256-SHA512').
+   * MUST be passed verbatim to ML-DSA.Sign as `mldsa_ctx`.
+   */
+  signatureLabel: string
+  /** Pre-hash function applied to the to-be-signed message per draft-19 §6 */
+  preHash: CompositePreHash
+  /** ML-DSA OID for the SPKI inside the composite public key */
+  mldsaOid: string
+  /** Builder that returns the classical AlgorithmIdentifier (with parameters) */
+  buildClassicalAlgId: () => AlgorithmIdentifier
+  /**
+   * ML-DSA signature length in bytes (FIPS 204 Table 1):
+   *   ML-DSA-44 → 2420
+   *   ML-DSA-65 → 3309
+   *   ML-DSA-87 → 4627
+   * Used by verifiers to split mldsaSig from tradSig in the concat encoding.
+   */
+  mldsaSigBytes: number
+}
+
+export const COMPOSITE_PROFILE_MLDSA44_RSA2048_PSS_SHA256: CompositeProfileDraft19 = {
+  compositeOid: COMPOSITE_MLDSA44_RSA2048_PSS_SHA256_OID_STR,
+  label: 'id-MLDSA44-RSA2048-PSS-SHA256',
+  signatureLabel: 'COMPSIG-MLDSA44-RSA2048-PSS-SHA256',
+  preHash: 'SHA-256',
+  mldsaOid: ML_DSA_44_OID_STR,
+  buildClassicalAlgId: buildRSAEncryptionAlgId,
+  mldsaSigBytes: 2420,
+}
+
+export const COMPOSITE_PROFILE_MLDSA65_ECDSA_P256_SHA512: CompositeProfileDraft19 = {
+  compositeOid: COMPOSITE_MLDSA65_ECDSA_P256_SHA512_OID_STR,
+  label: 'id-MLDSA65-ECDSA-P256-SHA512',
+  signatureLabel: 'COMPSIG-MLDSA65-ECDSA-P256-SHA512',
+  preHash: 'SHA-512',
+  mldsaOid: ML_DSA_65_OID_STR,
+  buildClassicalAlgId: buildECAlgId,
+  mldsaSigBytes: 3309,
+}
+
+export const COMPOSITE_PROFILE_MLDSA87_ECDSA_P384_SHA512: CompositeProfileDraft19 = {
+  compositeOid: COMPOSITE_MLDSA87_ECDSA_P384_SHA512_OID_STR,
+  label: 'id-MLDSA87-ECDSA-P384-SHA512',
+  signatureLabel: 'COMPSIG-MLDSA87-ECDSA-P384-SHA512',
+  preHash: 'SHA-512',
+  mldsaOid: ML_DSA_87_OID_STR,
+  buildClassicalAlgId: buildECP384AlgId,
+  mldsaSigBytes: 4627,
+}
+
+/**
+ * Composite ML-DSA signer contract.
+ *
+ * The caller binds a softhsm ML-DSA private-key handle and forwards the
+ * `mldsaCtx` parameter to PKCS#11 (`CK_ML_DSA_PARAMS.context` = `mldsaCtx`),
+ * which routes to the underlying `EVP_DigestSign` with
+ * `OSSL_SIGNATURE_PARAM_CONTEXT_STRING` per FIPS 204.
+ *
+ * Conformance: this is what makes the produced signatures verifiable by a
+ * draft-19 Composite-ML-DSA.Verify implementation. Calling vanilla
+ * ML-DSA.Sign without `mldsaCtx` produces signatures that the standard
+ * rejects.
+ */
+export type CompositeMLDSASignerFn = (
+  mprime: Uint8Array,
+  mldsaCtx: Uint8Array
+) => Promise<Uint8Array>
+
+/**
+ * Build the message representative M' per draft-19 §2.2:
+ *   M' = Prefix || Label || len(ctx) || ctx || PH(M)
+ *
+ * Exported for tests / external verifiers that need to recompute M' before
+ * calling component verifiers.
+ */
+export async function buildCompositeMessageRepresentative(
+  profile: CompositeProfileDraft19,
+  message: Uint8Array,
+  ctx: Uint8Array
+): Promise<Uint8Array> {
+  if (ctx.length > 255) {
+    throw new Error(`Composite-sig application context exceeds 255 bytes (got ${ctx.length})`)
+  }
+  const labelBytes = new TextEncoder().encode(profile.signatureLabel)
+  const phBuffer = await crypto.subtle.digest(profile.preHash, message as BufferSource)
+  const ph = new Uint8Array(phBuffer)
+
+  const total = COMPOSITE_DRAFT19_PREFIX.length + labelBytes.length + 1 + ctx.length + ph.length
+  const out = new Uint8Array(total)
+  let off = 0
+  out.set(COMPOSITE_DRAFT19_PREFIX, off)
+  off += COMPOSITE_DRAFT19_PREFIX.length
+  out.set(labelBytes, off)
+  off += labelBytes.length
+  out[off++] = ctx.length
+  if (ctx.length > 0) {
+    out.set(ctx, off)
+    off += ctx.length
+  }
+  out.set(ph, off)
+  return out
+}
+
+/**
+ * Builds a draft-19-compliant composite-sig X.509 certificate.
+ *
+ * Implements Composite-ML-DSA.Sign per draft-ietf-lamps-pq-composite-sigs-19
+ * §3.2 + §4:
+ *
+ *   M' = Prefix || Label || len(ctx) || ctx || PH(TBS)
+ *   mldsaSig = ML-DSA.Sign(skPQ, M', mldsa_ctx=Label)
+ *   tradSig  = Trad.Sign(skClassical, M')
+ *
+ *   subjectPublicKey BIT STRING content := mldsaPubKey || classicalPubKey
+ *   signatureValue   BIT STRING content := mldsaSig || classicalSig
+ *
+ * CRITICAL: the ML-DSA signer MUST pass `signatureLabel` as the ML-DSA `ctx`
+ * parameter (FIPS 204 Algorithm 2). softhsm supports this via
+ * `CK_ML_DSA_PARAMS.context` (PKCS#11 v3.2) — see OSSLMLDSA.cpp lines 339-344.
+ * Vanilla ML-DSA.Sign without the context produces signatures that draft-19
+ * verifiers reject (security analysis: §9.2.3, weak/strong non-separability).
+ *
+ * @param profile           One of the COMPOSITE_PROFILE_* constants
+ * @param mldsaPubKey       Raw ML-DSA public key bytes (1312 / 1952 / 2592 for 44/65/87)
+ * @param classicalPubKey   Raw classical public key bytes (encoding depends on profile)
+ * @param mldsaSign         Signs M' with ML-DSA, passing `signatureLabel` as ctx
+ * @param classicalSign     Signs M' with the traditional algorithm (no ctx)
+ * @param subject           DN string `/CN=.../O=...`
+ * @param ctx               Application context (≤ 255 bytes; empty by default)
+ */
+export async function buildCompositeCertDraft19(
+  profile: CompositeProfileDraft19,
+  mldsaPubKey: Uint8Array,
+  classicalPubKey: Uint8Array,
+  mldsaSign: CompositeMLDSASignerFn,
+  classicalSign: SignerFn,
+  subject: string,
+  ctx: Uint8Array = new Uint8Array(0)
+): Promise<Uint8Array> {
+  const compositeAlgId = buildAlgId(profile.compositeOid)
+  const { validity } = buildValidity()
+  const name = buildName(subject)
+
+  // CompositePublicKey per draft-19 §4.1: mldsaPK || tradPK (raw concat)
+  const compositeKeyBytes = new Uint8Array(mldsaPubKey.length + classicalPubKey.length)
+  compositeKeyBytes.set(mldsaPubKey, 0)
+  compositeKeyBytes.set(classicalPubKey, mldsaPubKey.length)
+
+  const compositeSPKI = new SubjectPublicKeyInfo({
+    algorithm: compositeAlgId,
+    subjectPublicKey: compositeKeyBytes.buffer as ArrayBuffer,
+  })
+
+  const tbs = new TBSCertificate({
+    version: Version.v3,
+    serialNumber: generateSerialBytes(),
+    signature: compositeAlgId,
+    issuer: name,
+    validity,
+    subject: name,
+    subjectPublicKeyInfo: compositeSPKI,
+    extensions: new Extensions([basicConstraintsExt()]),
+  })
+
+  const tbsDer = serializeTBS(tbs)
+
+  // Compute M' per draft-19 §2.2 and §3.2 (TBS is the message M for a cert)
+  const mPrime = await buildCompositeMessageRepresentative(profile, tbsDer, ctx)
+
+  // ML-DSA signs M' with ctx = signatureLabel; traditional signs raw M'
+  const mldsaCtx = new TextEncoder().encode(profile.signatureLabel)
+  const [mldsaSig, classicalSig] = await Promise.all([
+    mldsaSign(mPrime, mldsaCtx),
+    classicalSign(mPrime),
+  ])
+
+  if (mldsaSig.length !== profile.mldsaSigBytes) {
+    throw new Error(
+      `Composite signer returned ML-DSA signature of ${mldsaSig.length} bytes; ` +
+        `profile ${profile.label} expects ${profile.mldsaSigBytes}. ` +
+        `Check ML-DSA parameter set matches OID ${profile.mldsaOid}.`
+    )
+  }
+
+  // CompositeSignatureValue per draft-19 §4.3: mldsaSig || tradSig (raw concat)
+  const compositeSignature = new Uint8Array(mldsaSig.length + classicalSig.length)
+  compositeSignature.set(mldsaSig, 0)
+  compositeSignature.set(classicalSig, mldsaSig.length)
+
   const cert = new Certificate({
     tbsCertificate: AsnConvert.parse(AsnConvert.serialize(tbs), TBSCertificate),
     signatureAlgorithm: compositeAlgId,

@@ -63,12 +63,15 @@ export const TLSBasicsModule: React.FC = () => {
   const startTimeRef = useRef(Date.now())
   const { updateModuleProgress, markStepComplete } = useModuleStore()
 
-  // Live HSM mode for the TLS handshake itself (S1 from audit). When ON, the
-  // server's ML-DSA-65 key is generated inside softhsmv3 (statically linked
-  // into openssl.wasm via pkcs11-provider) and CertificateVerify routes
-  // through C_SignInit + C_SignMessage during the real handshake — replacing
-  // the legacy side-demo button below this panel.
-  const [liveHsmMode, setLiveHsmMode] = useState<boolean>(false)
+  /* The TLS simulator's HSM mode (live softhsm keygen + cert-mint at session
+   * start, with CertificateVerify signing through pkcs11-provider) was
+   * removed: it never produced a successful handshake for end-users and the
+   * "HSM ON" toggle was misleading. The C-side wiring is left in
+   * tls_simulation_hsm.c (currently unreachable: no JS plumbing calls
+   * tls_simulation_set_hsm_mode anymore) for a future, deliberate revival.
+   * For now the workshop runs PEM-only — the bundled cert/key PEMs in
+   * defaultCertificates.ts, OpenSSL native signing. That's how the
+   * production build at origin/main behaves today. */
 
   const {
     clientConfig,
@@ -246,8 +249,7 @@ export const TLSBasicsModule: React.FC = () => {
         clientCfg,
         serverCfg,
         simFiles,
-        currentCommands,
-        { hsmMode: liveHsmMode }
+        currentCommands
       )
 
       try {
@@ -297,7 +299,6 @@ export const TLSBasicsModule: React.FC = () => {
     setIsSimulating,
     setResults,
     markStepComplete,
-    liveHsmMode,
   ])
 
   // Trigger simulation when commands change (Replay)
@@ -410,37 +411,51 @@ export const TLSBasicsModule: React.FC = () => {
         {/* Simulate Tab */}
         <TabsContent value="workshop">
           <div className="space-y-6">
-            {/* Live HSM Mode toggle — when ON, the next handshake's
-             *  CertificateVerify is signed by softhsmv3 (statically linked
-             *  into openssl.wasm via pkcs11-provider). The server's ML-DSA-65
-             *  private key never leaves the simulated HSM. */}
-            <div
-              className={`glass-panel p-4 flex items-center justify-between gap-3 ${liveHsmMode ? 'border-success/40' : ''}`}
-            >
-              <div className="flex items-start gap-3">
-                <span
-                  className={`mt-1 w-2.5 h-2.5 rounded-full ${liveHsmMode ? 'bg-success animate-pulse' : 'bg-muted-foreground/40'}`}
-                />
-                <div>
-                  <div className="text-sm font-semibold">
-                    Live HSM Mode (softhsmv3 + pkcs11-provider, statically linked into openssl.wasm)
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {liveHsmMode
-                      ? 'Next run: server private key generated inside softhsmv3; CertificateVerify routes through PKCS#11 (C_SignInit + C_SignMessage). Private key never leaves the simulated HSM.'
-                      : 'OFF: handshake uses bundled PEM keys. Toggle ON to demonstrate HSM-resident server key signing.'}
-                  </p>
-                </div>
+            {/* Capabilities banner — what this simulator does and does NOT
+             *  exercise today. Surfaces the gaps explicitly so users aren't
+             *  misled by dropdown options whose runtime support is incomplete. */}
+            <div className="glass-panel p-4 border-l-4 border-primary/50">
+              <div className="text-sm font-semibold mb-2">
+                What this TLS 1.3 simulator supports today
               </div>
-              <Button
-                variant={liveHsmMode ? 'gradient' : 'outline'}
-                onClick={() => setLiveHsmMode((v) => !v)}
-                disabled={isSimulating}
-                aria-pressed={liveHsmMode}
-                className="px-4 py-2 text-xs font-bold whitespace-nowrap"
-              >
-                {liveHsmMode ? 'HSM ON' : 'HSM OFF'}
-              </Button>
+              <ul className="text-xs text-muted-foreground space-y-1">
+                <li>
+                  <span className="text-status-success font-semibold">✓ Pure PQC keys</span> —
+                  ML-DSA-44 / ML-DSA-65 / ML-DSA-87 server &amp; client certs (FIPS 204)
+                </li>
+                <li>
+                  <span className="text-status-success font-semibold">✓ Hybrid KEM</span> —
+                  X25519MLKEM768, SecP256r1MLKEM768, X448MLKEM1024, SecP384r1MLKEM1024 (TLS 1.3 key
+                  share, IETF draft-connolly-tls-mlkem)
+                </li>
+                <li>
+                  <span className="text-status-success font-semibold">✓ Classical certs</span> —
+                  RSA-2048, ECDSA-P256, Ed25519 (bundled PEMs, OpenSSL native sign)
+                </li>
+                <li>
+                  <span className="text-status-success font-semibold">✓ Pure PQC certs</span> —
+                  ML-DSA-44 / ML-DSA-87 cert + key bundled, real ML-DSA CertificateVerify
+                </li>
+                <li>
+                  <span className="text-status-warning font-semibold">
+                    ⚠ Hybrid (composite) certs — not supported yet
+                  </span>{' '}
+                  — LAMPS composite-sig (ML-DSA + RSA-PSS / ECDSA / Ed25519) is on the roadmap. The
+                  dropdown rows for composite are currently a placeholder that substitutes the
+                  nearest pure ML-DSA PEM (the wire signature is ML-DSA, not composite). Provider
+                  machinery for composite is built in the vendored pkcs11-provider fork
+                  (composite.c) but the runtime cert-minting path is not yet wired here.
+                </li>
+                <li>
+                  <span className="text-status-warning font-semibold">
+                    ⚠ HSM-backed signing — removed
+                  </span>{' '}
+                  — The previous "HSM ON" toggle never produced a successful handshake for end-users
+                  and was misleading. Removed pending a deliberate revival. softhsm v3 +
+                  pkcs11-provider remain statically linked into openssl.wasm; the wiring just isn't
+                  user-facing.
+                </li>
+              </ul>
             </div>
 
             {/* Simulation Controls */}

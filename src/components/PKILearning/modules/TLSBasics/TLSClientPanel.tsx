@@ -73,6 +73,14 @@ const CERTS = [
   { id: 'default', label: 'Default (RSA 2048)' },
   { id: 'mldsa44', label: 'Default (ML-DSA-44)' },
   { id: 'mldsa87', label: 'Default (ML-DSA-87)' },
+  // Composite signatures per draft-ietf-lamps-pq-composite-sigs-19.
+  // Current shipping defaults fall back to the closest pre-baked ML-DSA cert; the
+  // OpenSSL WASM build (3.5+ with oqs-provider 0.10) supports composite sig OIDs
+  // (id-MLDSA44-RSA2048-PSS, id-MLDSA65-ECDSA-P256, id-MLDSA87-Ed25519) once a
+  // composite PEM is generated via the OpenSSL Studio "Custom" path.
+  { id: 'composite-mldsa44-rsa2048', label: 'Composite (ML-DSA-44 + RSA-2048)' },
+  { id: 'composite-mldsa65-ecdsa-p256', label: 'Composite (ML-DSA-65 + ECDSA-P256)' },
+  { id: 'composite-mldsa87-ed25519', label: 'Composite (ML-DSA-87 + Ed25519)' },
   { id: 'none', label: 'None' },
   { id: 'custom', label: 'Custom from OpenSSL Studio' },
 ]
@@ -207,6 +215,29 @@ export const TLSClientPanel: React.FC = () => {
         },
       })
     } else if (certSelection === 'mldsa87') {
+      setClientConfig({
+        certificates: {
+          ...clientConfig.certificates,
+          certPem: DEFAULT_MLDSA87_CLIENT_CERT,
+          keyPem: DEFAULT_MLDSA87_CLIENT_KEY,
+        },
+      })
+    } else if (
+      certSelection === 'composite-mldsa44-rsa2048' ||
+      certSelection === 'composite-mldsa65-ecdsa-p256'
+    ) {
+      // Composite ML-DSA-44/65 fallback: ship the PQ half (ML-DSA-44 default).
+      // Composite cert generation per draft-ietf-lamps-pq-composite-sigs-19 is
+      // delegated to OpenSSL Studio (Custom) until composite PEMs ship as defaults.
+      setClientConfig({
+        certificates: {
+          ...clientConfig.certificates,
+          certPem: DEFAULT_MLDSA_CLIENT_CERT,
+          keyPem: DEFAULT_MLDSA_CLIENT_KEY,
+        },
+      })
+    } else if (certSelection === 'composite-mldsa87-ed25519') {
+      // Composite ML-DSA-87 fallback: ship the PQ half (ML-DSA-87 default).
       setClientConfig({
         certificates: {
           ...clientConfig.certificates,
