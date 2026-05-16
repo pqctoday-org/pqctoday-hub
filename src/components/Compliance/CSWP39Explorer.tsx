@@ -15,6 +15,7 @@ import { CryptoAgilityProcessDiagram } from '@/components/PKILearning/modules/Cr
 import { CSWP39_STEPS, CSWP39_TIERS, CSWP39_CROSS_WALK, CSWP39_SOURCE_METADATA } from './cswp39Data'
 import { CSWP39StepCard } from './CSWP39StepCard'
 import { MaturityEvidenceGrid } from './MaturityEvidenceGrid'
+import { PillarDisclaimer } from '@/components/BusinessCenter/widgets/PillarDisclaimer'
 import { maturityRequirements } from '@/data/maturityGovernanceData'
 
 interface CSWP39ExplorerProps {
@@ -164,6 +165,7 @@ export const CSWP39Explorer: React.FC<CSWP39ExplorerProps> = ({
               onFrameworkChipClick={onNavigateToFramework}
             />
           ))}
+          <PillarDisclaimer className="px-1 pt-2" />
         </div>
       </section>
 
