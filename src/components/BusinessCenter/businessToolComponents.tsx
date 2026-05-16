@@ -135,6 +135,11 @@ export const BUSINESS_TOOL_COMPONENTS: Record<string, LazyComp> = {
       (m) => ({ default: m.HybridTransitionPlanner })
     )
   ),
+  'mti-negotiator': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/CryptoMgmtModernization/components/MTINegotiator').then(
+      (m) => ({ default: m.MTINegotiator })
+    )
+  ),
 }
 
 /** Look up the lazy-loaded builder component for a given artifact type. */

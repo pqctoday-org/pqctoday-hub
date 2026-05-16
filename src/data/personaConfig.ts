@@ -519,7 +519,7 @@ export const BC_ZONE_EMPHASIS_BY_PERSONA: Partial<Record<PersonaId, BCZoneEmphas
         'supply-chain-matrix',
       ],
       'risk-management': ['risk-register', 'risk-treatment-plan'],
-      migration: ['hybrid-transition', 'migration-roadmap'],
+      migration: ['mti-negotiator', 'hybrid-transition', 'migration-roadmap'],
     },
   },
   // Ops: open with Migration — surface deployment, roadmap, KPI tracker.
