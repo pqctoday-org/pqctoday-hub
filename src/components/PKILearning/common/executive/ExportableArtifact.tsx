@@ -24,6 +24,9 @@ interface ExportableArtifactProps {
   filename?: string
   formats?: ExportFormat[]
   onExport?: () => void
+  /** Render the PDF in A4 landscape for wide tables (RACI matrix, CBOM,
+   *  supply-chain grid, framework checklist, contract clauses). Audit M4. */
+  wideTable?: boolean
 }
 
 export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
@@ -33,6 +36,7 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
   filename = 'export',
   formats = ['markdown'],
   onExport,
+  wideTable = false,
 }) => {
   const [copied, setCopied] = React.useState(false)
   const [savedFlash, setSavedFlash] = React.useState(false)
@@ -82,7 +86,7 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
         return
       }
       if (format === 'pdf') {
-        await markdownToPdf(exportData, filename, title)
+        await markdownToPdf(exportData, filename, title, { wideTable })
         triggerSave()
         return
       }
@@ -102,7 +106,7 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
       URL.revokeObjectURL(url)
       triggerSave()
     },
-    [exportData, filename, title, triggerSave]
+    [exportData, filename, title, triggerSave, wideTable]
   )
 
   const handlePrint = useCallback(() => {

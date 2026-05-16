@@ -269,6 +269,9 @@ export const ROICalculator: React.FC = () => {
       md += `| ${row.label} | ${formatCurrency(row.low)} | ${formatCurrency(row.high)} | ${formatCurrency(row.delta)} |\n`
     }
     md += `\n*Educational estimate for planning purposes. Breach baseline: IBM Cost of a Data Breach Report 2024. Compliance penalties: published regulatory enforcement data.*\n`
+    md += '\n---\n\n'
+    md +=
+      '*Aligned to NIST CSWP 39 §2.4 (Resource and Performance Challenges) and §5 (Strategic Plan). https://doi.org/10.6028/NIST.CSWP.39*\n'
     return md
   }, [
     assumptions,

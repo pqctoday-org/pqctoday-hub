@@ -177,6 +177,11 @@ function renderPreview(
     lines.push('')
   }
 
+  lines.push('---\n')
+  lines.push(
+    '*Aligned to NIST CSWP 39 §5.1 - Cryptographic Standards, Regulations, and Mandates. https://doi.org/10.6028/NIST.CSWP.39*\n'
+  )
+
   return lines.join('\n')
 }
 

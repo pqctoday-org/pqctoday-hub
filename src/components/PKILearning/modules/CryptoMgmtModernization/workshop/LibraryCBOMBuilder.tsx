@@ -588,10 +588,11 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
 
       {/* Save to Command Center / export */}
       <ExportableArtifact
-        title="CBOM — Export"
+        title="CBOM - Export"
         exportData={exportMarkdown}
         filename="crypto-bom"
         formats={['markdown', 'pdf', 'docx']}
+        wideTable
         onExport={() => {
           addExecutiveDocument({
             id: `crypto-cbom-${Date.now()}`,

@@ -11,10 +11,21 @@
  * rules, blockquotes, and the `**label:** value` key/value pattern emitted by
  * many builders.
  *
+ * Mermaid (```` ```mermaid ```` fenced blocks): jsPDF can't render the SVG and
+ * pre-rendering to PNG would balloon the bundle (~400 KB for headless mermaid
+ * + chromium-shim), so the source is stripped and replaced with a substitute
+ * paragraph that names the diagram type and first label. Audit B1.
+ *
  * Inline support: **bold**, *italic*, `code`, [text](url) — all rendered with
  * matching font weight/family. `*` characters that are not paired or appear
  * inside URIs/glob patterns survive as literals (the parser only consumes
  * matched pairs).
+ *
+ * Character encoding: jsPDF's built-in Helvetica/Courier fonts are WinAnsi
+ * (latin1) only. Every string fed into the doc passes through
+ * `sanitizeForLatin1` so smart quotes, em-dashes, math symbols, Greek letters,
+ * and status emoji become ASCII equivalents instead of being silently
+ * dropped. Audit B2.
  *
  * Page furniture: every page gets a footer with the artifact title (left) and
  * "Page N of M" (right).
@@ -42,6 +53,157 @@ const SIZE_TABLE = 9
 const SIZE_FOOTER = 8
 const LINE_HEIGHT_FACTOR = 1.35
 
+// ── ASCII / latin1 substitution (audit B2) ─────────────────────────────────
+/**
+ * Map of non-latin1 glyphs the codebase actually emits to their nearest ASCII
+ * equivalent. Order matters only insofar as overlapping replacements (none
+ * currently overlap). Encoded as `[regex, replacement]` so the per-string
+ * pass is a fixed number of `String.replace` calls.
+ *
+ * Embedding a TrueType font (Inter / Roboto Mono) would cost ~400 KB on the
+ * bundle vs. this ~1 KB table; ASCII fidelity is acceptable for the worked
+ * examples and accepted by the audit.
+ */
+const LATIN1_SUBSTITUTIONS: ReadonlyArray<readonly [RegExp, string]> = [
+  // Punctuation
+  [/—/g, '-'], // U+2014 em-dash
+  [/–/g, '-'], // U+2013 en-dash
+  [/‘/g, "'"], // U+2018 left single quote
+  [/’/g, "'"], // U+2019 right single quote / apostrophe
+  [/“/g, '"'], // U+201C left double quote
+  [/”/g, '"'], // U+201D right double quote
+  [/…/g, '...'], // U+2026 horizontal ellipsis
+  [/•/g, '-'], // U+2022 bullet
+  // Arrows / inequality / math
+  [/→/g, '->'], // U+2192
+  [/←/g, '<-'], // U+2190
+  [/≤/g, '<='], // U+2264
+  [/≥/g, '>='], // U+2265
+  [/≠/g, '!='], // U+2260
+  [/×/g, 'x'], // U+00D7 (technically latin1 but not on Helvetica WinAnsi)
+  [/±/g, '+/-'], // U+00B1
+  [/°/g, ' deg'], // U+00B0
+  [/∞/g, 'inf'], // U+221E
+  // Greek letters used in PQC math notation
+  [/α/g, 'alpha'],
+  [/β/g, 'beta'],
+  [/γ/g, 'gamma'],
+  [/δ/g, 'delta'],
+  [/Δ/g, 'Delta'],
+  [/π/g, 'pi'],
+  [/Σ/g, 'Sigma'],
+  [/μ/g, 'mu'],
+  [/λ/g, 'lambda'],
+  // Status emoji / dingbats (U+FE0F variation selector is optional & stripped)
+  [/⚠️?/g, '[!]'], // U+26A0
+  [/ℹ️?/g, '[i]'], // U+2139
+  [/✓/g, '[OK]'], // U+2713
+  [/✗/g, '[X]'], // U+2717
+  [/★/g, '[*]'], // U+2605
+]
+
+/**
+ * Replace non-latin1 glyphs with ASCII equivalents. After the explicit table
+ * is applied, any surviving character with codepoint > 0xFF is replaced with
+ * `?` — a single visible fallback rather than a silent drop so QA can spot
+ * missing glyphs in review.
+ */
+export function sanitizeForLatin1(input: string): string {
+  if (!input) return input
+  let out = input
+  for (const [pattern, replacement] of LATIN1_SUBSTITUTIONS) {
+    out = out.replace(pattern, replacement)
+  }
+  return Array.from(out)
+    .map((ch) => (ch.charCodeAt(0) > 0xff ? '?' : ch))
+    .join('')
+}
+
+// ── Mermaid strip-and-summarise (audit B1) ─────────────────────────────────
+const MERMAID_HEADER_PATTERN =
+  /^(timeline|flowchart|graph|sequenceDiagram|gantt|classDiagram|stateDiagram(?:-v2)?|erDiagram|journey|pie|mindmap|quadrantChart|requirementDiagram|gitGraph|c4Context)\b/
+
+/**
+ * Detect the mermaid diagram type by inspecting the first non-empty,
+ * non-directive line. Returns `diagram` if nothing recognised so the
+ * substitute paragraph still reads naturally.
+ */
+function detectMermaidType(source: string): string {
+  for (const raw of source.split(/\r?\n/)) {
+    const line = raw.trim()
+    if (!line || line.startsWith('%%')) continue
+    const match = line.match(MERMAID_HEADER_PATTERN)
+    if (match) return match[1]
+    return 'diagram'
+  }
+  return 'diagram'
+}
+
+/**
+ * Extract the first quoted label or node identifier from a mermaid block —
+ * gives the reader at least one anchor to recognise the diagram in the app.
+ */
+function extractMermaidFirstLabel(source: string): string | undefined {
+  for (const raw of source.split(/\r?\n/)) {
+    const line = raw.trim()
+    if (!line || line.startsWith('%%')) continue
+    // Skip the header line itself (timeline / flowchart TD / etc.).
+    if (MERMAID_HEADER_PATTERN.test(line)) continue
+    // Prefer a quoted label.
+    const quoted = line.match(/"([^"]+)"/)
+    if (quoted) return quoted[1]
+    // Otherwise a bracketed node label: A[Label] / A(Label) / A{Label}
+    const bracketed = line.match(/[[({]([^\])}]+)[\])}]/)
+    if (bracketed) return bracketed[1]
+    // Otherwise the first identifier on the line.
+    const ident = line.match(/^([A-Za-z0-9_-]+)/)
+    if (ident) return ident[1]
+  }
+  return undefined
+}
+
+// ── Learning-banner strip (audit M9) ───────────────────────────────────────
+/**
+ * The Command Center LearningFrameBanner is a JSX-only component that doesn't
+ * normally enter the markdown pipeline. The strip is therefore a defensive
+ * filter for any caller that has stringified the banner into their export
+ * (matches `> Worked example ...` / `> This is a worked example ...` leading
+ * blockquote variants).
+ */
+const BANNER_LINE = /^\s*>\s*(?:This is a )?worked example\b/i
+
+function stripLearningBannerFromMarkdown(markdown: string): string {
+  const lines = markdown.split(/\r?\n/)
+  let i = 0
+  while (i < lines.length && (lines[i] ?? '').trim() === '') i++
+  let stripped = false
+  while (i < lines.length && BANNER_LINE.test(lines[i] ?? '')) {
+    lines.splice(i, 1)
+    stripped = true
+  }
+  if (stripped && i < lines.length && (lines[i] ?? '').trim() === '') {
+    lines.splice(i, 1)
+  }
+  return lines.join('\n')
+}
+
+// ── Public option surface ──────────────────────────────────────────────────
+export interface PdfExportOptions {
+  /**
+   * Render in A4 landscape (842 x 595 pt) so wide tables — RACI matrices,
+   * supply-chain matrices, framework grids, contract clauses, CBOM rows — fit
+   * without column truncation. Default: `false` (portrait). Audit M4.
+   */
+  wideTable?: boolean
+  /**
+   * Drop the LearningFrameBanner content from the markdown before tokenisation
+   * and append a short standards-citation note in muted text below the title.
+   * Used for executive-emphasis exports where the in-app pedagogy framing is
+   * noise. Default: `false`. Audit M9.
+   */
+  stripLearningBanner?: boolean
+}
+
 interface Run {
   text: string
   bold?: boolean
@@ -54,8 +216,14 @@ interface Run {
  * Tokenise a single line of markdown text into styled runs. Recursive on
  * **bold** so that mixed bold+italic / bold+code combinations render
  * correctly. Unpaired markers fall through as literals.
+ *
+ * Sanitisation: the raw text is run through `sanitizeForLatin1` once at the
+ * top so every downstream Run already speaks WinAnsi. All markdown markers
+ * (`*`, `_`, `[`, `]`, backtick) are ASCII, so sanitising before tokenisation
+ * is safe.
  */
-function parseInline(text: string): Run[] {
+function parseInline(rawText: string): Run[] {
+  const text = sanitizeForLatin1(rawText)
   const runs: Run[] = []
   let i = 0
 
@@ -222,6 +390,7 @@ type Block =
   | { kind: 'check'; text: string; checked: boolean }
   | { kind: 'kv'; label: string; value: string }
   | { kind: 'codeblock'; lines: string[]; lang?: string }
+  | { kind: 'mermaid-stub'; diagramType: string; firstLabel?: string }
   | { kind: 'table'; rows: string[] }
   | { kind: 'hr' }
   | { kind: 'blockquote'; text: string }
@@ -248,6 +417,18 @@ function tokenize(markdown: string): Block[] {
         i++
       }
       i++ // skip closing fence
+      // Mermaid: strip the source and emit a substitute paragraph block
+      // (handled in the render switch). Audit B1.
+      if (lang === 'mermaid') {
+        const source = buf.join('\n')
+        blocks.push({
+          kind: 'mermaid-stub',
+          diagramType: detectMermaidType(source),
+          firstLabel: extractMermaidFirstLabel(source),
+        })
+        orderedIndex = 0
+        continue
+      }
       blocks.push({ kind: 'codeblock', lines: buf, lang })
       orderedIndex = 0
       continue
@@ -370,19 +551,24 @@ function parseTableRows(rawRows: string[]): { head: string[]; body: string[][] }
 
 /** Strip inline markdown markers for table cells (autoTable doesn't render
  *  styled runs; bolding cells would require cell-level hooks per col/row,
- *  which is over-engineering for the small visual win). */
+ *  which is over-engineering for the small visual win). Also passes through
+ *  `sanitizeForLatin1` so smart quotes / em-dashes / emoji in table cells
+ *  don't survive into autoTable's WinAnsi render path. */
 function stripInlineForCell(s: string): string {
-  return s
-    .replace(/`([^`]+)`/g, '$1')
-    .replace(/\*\*([^*]+)\*\*/g, '$1')
-    .replace(/(?<![A-Za-z0-9])\*([^*]+)\*(?!\*)/g, '$1')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1')
+  return sanitizeForLatin1(
+    s
+      .replace(/`([^`]+)`/g, '$1')
+      .replace(/\*\*([^*]+)\*\*/g, '$1')
+      .replace(/(?<![A-Za-z0-9])\*([^*]+)\*(?!\*)/g, '$1')
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1')
+  )
 }
 
 /** Stamp footer (title left, page N of M right) on every page. Called once,
  *  after all content is laid out and the page count is final. */
 function drawFooters(doc: jsPDF, title: string) {
   const total = doc.getNumberOfPages()
+  const safeTitle = sanitizeForLatin1(title)
   for (let p = 1; p <= total; p++) {
     doc.setPage(p)
     doc.setFont(FONT_BODY, 'normal')
@@ -390,7 +576,7 @@ function drawFooters(doc: jsPDF, title: string) {
     doc.setTextColor(110)
     const ph = doc.internal.pageSize.getHeight()
     const pw = doc.internal.pageSize.getWidth()
-    if (title) doc.text(title, MARGIN_X, ph - FOOTER_Y_OFFSET)
+    if (safeTitle) doc.text(safeTitle, MARGIN_X, ph - FOOTER_Y_OFFSET)
     doc.text(`Page ${p} of ${total}`, pw - MARGIN_X, ph - FOOTER_Y_OFFSET, { align: 'right' })
     doc.setTextColor(0)
   }
@@ -400,20 +586,37 @@ function drawFooters(doc: jsPDF, title: string) {
  * Build a paginated A4 PDF from the artifact's markdown source. Returns the
  * jsPDF document without saving — exposed for tests so they can inspect the
  * rendered output without going through a browser download.
+ *
+ * @param markdown The artifact's source markdown.
+ * @param title    Document title used for the PDF's `/Info` dictionary and
+ *                 the per-page footer.
+ * @param options  See {@link PdfExportOptions}. Defaults to portrait, banner
+ *                 retained.
  */
-export function buildArtifactPdf(markdown: string, title?: string): jsPDF {
+export function buildArtifactPdf(
+  markdown: string,
+  title?: string,
+  options: PdfExportOptions = {}
+): jsPDF {
+  const { wideTable = false, stripLearningBanner = false } = options
+
+  const sourceMarkdown = stripLearningBanner ? stripLearningBannerFromMarkdown(markdown) : markdown
+
   const doc = new jsPDF({
     unit: 'pt',
     format: PAGE_FORMAT,
-    orientation: 'portrait',
+    orientation: wideTable ? 'landscape' : 'portrait',
     compress: true,
   })
   doc.setProperties({
-    title: title ?? '',
+    title: sanitizeForLatin1(title ?? ''),
     subject: 'PQC Command Center artifact',
     creator: 'PQC Today Hub',
   })
 
+  // pageSize.getWidth/getHeight already return the orientation-correct
+  // dimensions, so the rest of the layout adapts to landscape without further
+  // changes. Footer position recomputes per page in drawFooters().
   const pageWidth = doc.internal.pageSize.getWidth()
   const pageHeight = doc.internal.pageSize.getHeight()
   const contentLeft = MARGIN_X
@@ -450,7 +653,26 @@ export function buildArtifactPdf(markdown: string, title?: string): jsPDF {
     y = cursor.y + size * LINE_HEIGHT_FACTOR * 0.2 + trailingSpacing
   }
 
-  const blocks = tokenize(markdown)
+  // When the learning banner was stripped, prepend a muted standards-citation
+  // line in its place so the document still establishes provenance. Audit
+  // B1+M9. Rendered as page-1 furniture, not part of the block stream, so it
+  // doesn't disturb later headings or table-of-contents heuristics.
+  if (stripLearningBanner) {
+    doc.setFont(FONT_BODY, 'italic')
+    doc.setFontSize(SIZE_BODY * 0.9)
+    doc.setTextColor(120, 120, 120)
+    doc.text(
+      sanitizeForLatin1(
+        'Generated by PQC Today Hub. Standards citations: NIST CSWP 39, FIPS 203/204/205.'
+      ),
+      contentLeft,
+      y
+    )
+    doc.setTextColor(0, 0, 0)
+    y += SIZE_BODY * LINE_HEIGHT_FACTOR
+  }
+
+  const blocks = tokenize(sourceMarkdown)
 
   for (let bi = 0; bi < blocks.length; bi++) {
     // eslint-disable-next-line security/detect-object-injection
@@ -482,7 +704,7 @@ export function buildArtifactPdf(markdown: string, title?: string): jsPDF {
         break
       case 'bullet':
         writeBlockText(
-          [{ text: '• ' }, ...parseInline(block.text)],
+          [{ text: '- ' }, ...parseInline(block.text)],
           SIZE_BODY,
           0,
           SIZE_BODY * 0.2,
@@ -499,8 +721,10 @@ export function buildArtifactPdf(markdown: string, title?: string): jsPDF {
         )
         break
       case 'check':
+        // Checkbox glyphs ☑/☐ are U+2611 / U+2610 — not in WinAnsi. Substitute
+        // with bracket-style markers so the state is still legible in PDF.
         writeBlockText(
-          [{ text: block.checked ? '☑ ' : '☐ ' }, ...parseInline(block.text)],
+          [{ text: block.checked ? '[x] ' : '[ ] ' }, ...parseInline(block.text)],
           SIZE_BODY,
           0,
           SIZE_BODY * 0.2,
@@ -509,7 +733,10 @@ export function buildArtifactPdf(markdown: string, title?: string): jsPDF {
         break
       case 'kv':
         writeBlockText(
-          [{ text: `${block.label}: `, bold: true }, ...parseInline(block.value)],
+          [
+            { text: `${sanitizeForLatin1(block.label)}: `, bold: true },
+            ...parseInline(block.value),
+          ],
           SIZE_BODY
         )
         break
@@ -527,11 +754,31 @@ export function buildArtifactPdf(markdown: string, title?: string): jsPDF {
           12
         )
         break
+      case 'mermaid-stub': {
+        // Substitute paragraph: tells the reader the diagram exists in the
+        // web app and what to look for. Audit B1.
+        writeBlockText(
+          parseInline(
+            '[Diagram available in the PQC Today Hub web app - Mermaid not rendered in PDF.]'
+          ),
+          SIZE_BODY,
+          SIZE_BODY * 0.3,
+          SIZE_BODY * 0.1
+        )
+        const summary = block.firstLabel
+          ? `Diagram type: ${block.diagramType} - first node: ${block.firstLabel}`
+          : `Diagram type: ${block.diagramType}`
+        writeBlockText(parseInline(summary), SIZE_BODY)
+        break
+      }
       case 'codeblock': {
         y += 4
         const lineH = SIZE_CODE * LINE_HEIGHT_FACTOR
         const padding = 6
-        const blockHeight = block.lines.length * lineH + padding * 2
+        // Pre-sanitise lines for the WinAnsi render path. Markdown markers
+        // don't apply inside fenced code, so this is just the latin1 guard.
+        const safeLines = block.lines.map(sanitizeForLatin1)
+        const blockHeight = safeLines.length * lineH + padding * 2
         // If the whole block doesn't fit, push it to the next page rather than
         // splitting (code is hard to read across page breaks).
         if (y + blockHeight > contentBottom && blockHeight < contentBottom - MARGIN_TOP) {
@@ -552,7 +799,7 @@ export function buildArtifactPdf(markdown: string, title?: string): jsPDF {
         doc.setFontSize(SIZE_CODE)
         doc.setTextColor(40)
         let cy = startY + padding + SIZE_CODE
-        for (const cl of block.lines) {
+        for (const cl of safeLines) {
           ensure(lineH)
           if (cy > contentBottom - padding) {
             // Continue the code block on the next page with a fresh background
@@ -595,6 +842,8 @@ export function buildArtifactPdf(markdown: string, title?: string): jsPDF {
         break
       case 'table': {
         const { head, body } = parseTableRows(block.rows)
+        // stripInlineForCell already runs sanitizeForLatin1 on every cell, so
+        // autoTable receives only WinAnsi-safe strings.
         const cleanedHead = head.map(stripInlineForCell)
         const cleanedBody = body.map((r) => r.map(stripInlineForCell))
         autoTable(doc, {
@@ -646,13 +895,18 @@ export function buildArtifactPdf(markdown: string, title?: string): jsPDF {
 /**
  * Convert an artifact's markdown export into a paginated A4 PDF and trigger
  * a browser download with the sanitised filename.
+ *
+ * @param options See {@link PdfExportOptions}. Backwards-compatible: all
+ *                existing callers (no fourth arg) get the same portrait
+ *                layout and banner-retained behaviour as before.
  */
 export async function markdownToPdf(
   markdown: string,
   filename: string,
-  title?: string
+  title?: string,
+  options: PdfExportOptions = {}
 ): Promise<void> {
-  const doc = buildArtifactPdf(markdown, title ?? filename)
+  const doc = buildArtifactPdf(markdown, title ?? filename, options)
   doc.save(`${sanitiseFilename(filename)}.pdf`)
 }
 

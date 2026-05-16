@@ -45,7 +45,7 @@ export function buildOpsVariant(data: ExecutiveModuleData): PitchVariant {
     },
     {
       id: 'quantum-urgency',
-      title: 'HNDL / HNFL — Window to Act',
+      title: 'HNDL / HNFL - Window to Act',
       description: 'Time-bound risks and what they mean for rollout pacing.',
       fields: [
         {
@@ -58,7 +58,7 @@ export function buildOpsVariant(data: ExecutiveModuleData): PitchVariant {
     },
     {
       id: 'crypto-inventory',
-      title: 'Crypto Inventory — Production Detail',
+      title: 'Crypto Inventory - Production Detail',
       description: 'What needs to be rotated, redeployed, and re-issued.',
       fields: [
         {
@@ -72,7 +72,7 @@ export function buildOpsVariant(data: ExecutiveModuleData): PitchVariant {
     {
       id: 'algorithm-migrations',
       title: 'Algorithm Changes Impacting Ops',
-      description: 'Classical → PQC swaps that change deployment, cert issuance, and rotation.',
+      description: 'Classical -> PQC swaps that change deployment, cert issuance, and rotation.',
       fields: [
         {
           id: 'migrations',
@@ -98,7 +98,7 @@ export function buildOpsVariant(data: ExecutiveModuleData): PitchVariant {
     {
       id: 'timeline',
       title: 'Phased Rollout Plan',
-      description: 'Canary → progressive rollout → cutover with rollback gates.',
+      description: 'Canary -> progressive rollout -> cutover with rollback gates.',
       fields: [
         {
           id: 'timeline',
@@ -144,7 +144,7 @@ export function buildOpsVariant(data: ExecutiveModuleData): PitchVariant {
     })
     const get = (sid: string, fid: string) => (formData[sid]?.[fid] as string) || '_Not specified_'
 
-    let md = '# PQC Migration — Operational Rollout Plan\n\n'
+    let md = '# PQC Migration - Operational Rollout Plan\n\n'
     md += `**Prepared:** ${dateStr}\n`
     if (d.industry) md += `**Industry:** ${d.industry}\n`
     if (d.country) md += `**Country:** ${d.country}\n`
@@ -177,12 +177,14 @@ export function buildOpsVariant(data: ExecutiveModuleData): PitchVariant {
     md += '## 9. Operational Actions\n\n'
     md += `${get('actions', 'recommendations')}\n\n---\n\n`
 
+    md +=
+      '*Aligned to NIST CSWP 39 §5 - Crypto Agility Strategic Plan. https://doi.org/10.6028/NIST.CSWP.39*\n'
     md += '*Customized for the Operations role via PQC Today Command Center.*\n'
     return md
   }
 
   return {
-    title: 'PQC Migration — Operational Rollout Plan',
+    title: 'PQC Migration - Operational Rollout Plan',
     description: 'A runbook-oriented brief for operational rollout planning.',
     objective: buildPitchObjective('ops'),
     filename: 'pqc-ops-plan',

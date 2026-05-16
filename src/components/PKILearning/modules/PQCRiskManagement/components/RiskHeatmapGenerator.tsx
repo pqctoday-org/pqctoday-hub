@@ -667,6 +667,10 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
       if (reason) md += `   *Priority note: ${reason}*\n`
     })
 
+    md += '\n---\n\n'
+    md +=
+      '*Aligned to NIST CSWP 39 \u00a75 (Strategic Plan) and \u00a76.5 (Governance, Risk, and Compliance). https://doi.org/10.6028/NIST.CSWP.39*\n'
+
     return md
   }, [
     riskEntries,

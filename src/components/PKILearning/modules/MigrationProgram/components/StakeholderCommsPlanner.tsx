@@ -225,6 +225,10 @@ function renderCommsPreview(data: Record<string, Record<string, string | string[
   md += `**Escalation Triggers:**\n${triggers}\n\n`
   md += `**Escalation Path:**\n${path}\n`
 
+  md += '\n---\n\n'
+  md +=
+    '*Aligned to NIST CSWP 39 §1 (Introduction) and §5 (Strategic Plan). https://doi.org/10.6028/NIST.CSWP.39*\n'
+
   return md
 }
 

@@ -8,8 +8,9 @@
 import Papa from 'papaparse'
 import type { MaturityRequirement, MaturityCategory } from '@/types/MaturityTypes'
 import { parseIntSafe } from './csvUtils'
+import { filterActive, type RowWithStatus } from './loaderUtils'
 
-interface RawMaturityRow {
+interface RawMaturityRow extends RowWithStatus {
   ref_id: string
   source_name: string
   category: string
@@ -56,7 +57,7 @@ for (const content of Object.values(modules)) {
     header: true,
     skipEmptyLines: true,
   })
-  for (const row of data) {
+  for (const row of filterActive(data)) {
     const level = parseIntSafe(row.maturity_level)
     const pillar = row.pillar?.trim() ?? ''
     const category = row.category?.trim() ?? ''

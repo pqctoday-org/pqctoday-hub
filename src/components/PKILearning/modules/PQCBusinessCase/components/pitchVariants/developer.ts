@@ -19,7 +19,7 @@ export function buildDeveloperVariant(data: ExecutiveModuleData): PitchVariant {
   const sections: ArtifactSection[] = [
     {
       id: 'tldr',
-      title: 'TL;DR — Engineering Ask',
+      title: 'TL;DR - Engineering Ask',
       description: 'One-paragraph framing for the engineering team.',
       fields: [
         {
@@ -45,7 +45,7 @@ export function buildDeveloperVariant(data: ExecutiveModuleData): PitchVariant {
     },
     {
       id: 'quantum-urgency',
-      title: 'HNDL / HNFL — Time Pressure',
+      title: 'HNDL / HNFL - Time Pressure',
       description: 'Why the migration clock is ticking, with windows quantified.',
       fields: [
         {
@@ -58,7 +58,7 @@ export function buildDeveloperVariant(data: ExecutiveModuleData): PitchVariant {
     },
     {
       id: 'crypto-inventory',
-      title: 'Crypto Inventory — Detail',
+      title: 'Crypto Inventory - Detail',
       description:
         'Algorithms, infrastructure layers, use cases. The basis of the migration scope.',
       fields: [
@@ -72,7 +72,7 @@ export function buildDeveloperVariant(data: ExecutiveModuleData): PitchVariant {
     },
     {
       id: 'algorithm-migrations',
-      title: 'Classical → PQC Algorithm Map',
+      title: 'Classical -> PQC Algorithm Map',
       description: 'Proposed substitutions per algorithm with urgency and vulnerability flags.',
       fields: [
         {
@@ -99,7 +99,7 @@ export function buildDeveloperVariant(data: ExecutiveModuleData): PitchVariant {
     {
       id: 'migration-effort',
       title: 'Migration Effort Breakdown',
-      description: 'Per-algorithm complexity and scope — shapes the sprint plan.',
+      description: 'Per-algorithm complexity and scope - shapes the sprint plan.',
       fields: [
         {
           id: 'effort',
@@ -145,7 +145,7 @@ export function buildDeveloperVariant(data: ExecutiveModuleData): PitchVariant {
     })
     const get = (sid: string, fid: string) => (formData[sid]?.[fid] as string) || '_Not specified_'
 
-    let md = '# PQC Migration — Technical Proposal\n\n'
+    let md = '# PQC Migration - Technical Proposal\n\n'
     md += `**Prepared:** ${dateStr}\n`
     if (d.industry) md += `**Industry:** ${d.industry}\n`
     if (d.country) md += `**Country:** ${d.country}\n`
@@ -178,12 +178,14 @@ export function buildDeveloperVariant(data: ExecutiveModuleData): PitchVariant {
     md += '## 9. Action Items\n\n'
     md += `${get('actions', 'recommendations')}\n\n---\n\n`
 
+    md +=
+      '*Aligned to NIST CSWP 39 §5 - Crypto Agility Strategic Plan. https://doi.org/10.6028/NIST.CSWP.39*\n'
     md += '*Customized for the Developer role via PQC Today Command Center.*\n'
     return md
   }
 
   return {
-    title: 'PQC Migration — Technical Proposal',
+    title: 'PQC Migration - Technical Proposal',
     description: 'An engineering-focused brief for sprint planning and architecture alignment.',
     objective: buildPitchObjective('developer'),
     filename: 'pqc-tech-proposal',
