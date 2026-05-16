@@ -58,6 +58,19 @@ export function ModuleReferencesTab({ moduleId }: ModuleReferencesTabProps) {
                   {item.documentStatus}
                 </span>
               )}
+              {item.pqcRound && (
+                <span className="text-xs px-1.5 py-0.5 rounded bg-info/10 text-info border border-info/20">
+                  {item.pqcRound}
+                </span>
+              )}
+              {item.mathFamily?.map((fam) => (
+                <span
+                  key={fam}
+                  className="text-xs px-1.5 py-0.5 rounded bg-warning/10 text-warning border border-warning/20"
+                >
+                  {fam}
+                </span>
+              ))}
             </div>
             <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
               {item.shortDescription}
