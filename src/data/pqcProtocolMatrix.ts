@@ -170,6 +170,8 @@ export type TestabilityValue = 'full' | 'partial' | 'none' | 'na'
 export interface PlaygroundTool {
   toolId: string
   toolName: string
+  /** Override the link target. Defaults to `/playground/${toolId}` when omitted. */
+  url?: string
   testability: {
     pureKem: TestabilityValue
     hybridKem: TestabilityValue
@@ -1311,6 +1313,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       {
         toolId: 'api-security-jwt',
         toolName: 'API Security & JWT Workshop',
+        url: '/learn/api-security-jwt?tab=workshop',
         testability: { pureKem: 'full', hybridKem: 'na', pureSig: 'full', hybridSig: 'full' },
         hybridKemNote: 'No HPKE tool yet — only direct ML-KEM-768 JWE encap/decap is covered.',
         pureSigNote:
