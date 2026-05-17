@@ -23,6 +23,27 @@ type WorkerMessage =
       commands?: string[]
       requestId?: string
     }
+  | {
+      type: 'CMP_SIMULATE'
+      eeKeyPath: string
+      subjectDn: string
+      reference: string
+      secret: string
+      caCertPath: string
+      caKeyPath: string
+      outCertPath: string
+      files?: { name: string; data: Uint8Array }[]
+      requestId?: string
+    }
+  | {
+      type: 'GEN_CA_ROOT'
+      algorithm: string
+      subjectDn: string
+      keyOutPath: string
+      certOutPath: string
+      days: number
+      requestId?: string
+    }
   | { type: 'READY'; requestId?: string }
   | { type: 'LOG'; stream: 'stdout' | 'stderr'; message: string; requestId?: string }
   | { type: 'ERROR'; error: string; requestId?: string }
@@ -407,10 +428,15 @@ var CRYPTO_COMMANDS = [
   'cms',
   'ca',
   'x509',
-  'verify',
-  'sign',
   'spkac',
   'pkeyutl',
+  'cmp',
+  // NOTE: do NOT add these here — they don't accept -rand and prepending it
+  // either prints "Unknown option: -rand" (visible: verify) or silently
+  // breaks the option parser (no output file: crl2pkcs7, pkcs7).
+  //   - 'verify'  — pure validation, no random ops
+  //   - 'crl2pkcs7' / 'pkcs7' — wrapping, no random ops
+  //   - 'sign'    — not actually an openssl subcommand
 ]
 
 var getStrategy = (command: string): CommandStrategy => {
@@ -674,6 +700,149 @@ var executeSimulation = async (
   }
 }
 
+var executeCmpSimulation = async (
+  eeKeyPath: string,
+  subjectDn: string,
+  reference: string,
+  secret: string,
+  caCertPath: string,
+  caKeyPath: string,
+  outCertPath: string,
+  files: { name: string; data: Uint8Array }[] = [],
+  requestId?: string
+) => {
+  try {
+    await loadOpenSSLScript('/wasm/openssl.js', requestId)
+    const module = await createOpenSSLInstance(requestId)
+    injectEntropy(module, requestId)
+    configureEnvironment(module, requestId)
+    if (files.length > 0) writeInputFiles(module, files, requestId)
+
+    const cmpC = module.cwrap('execute_cmp_simulation', 'string', [
+      'string',
+      'string',
+      'string',
+      'string',
+      'string',
+      'string',
+      'string',
+    ])
+    if (!cmpC) throw new Error('execute_cmp_simulation not found in WASM module')
+
+    const resultJson = cmpC(
+      eeKeyPath,
+      subjectDn,
+      reference,
+      secret,
+      caCertPath,
+      caKeyPath,
+      outCertPath
+    )
+
+    // Try to slurp the issued cert from the WASM FS — only present on success.
+    let certBytes: Uint8Array | null = null
+    try {
+      certBytes = module.FS.readFile(outCertPath)
+    } catch (_e) {
+      certBytes = null
+    }
+
+    self.postMessage({
+      type: 'LOG',
+      stream: 'stdout',
+      message: 'CMP_SIMULATION_RESULT:' + resultJson,
+      requestId,
+    })
+    if (certBytes) {
+      self.postMessage({
+        type: 'FILE_CREATED',
+        name: outCertPath.replace(/^\//, ''),
+        data: certBytes,
+        requestId,
+      })
+    }
+  } catch (error: any) {
+    self.postMessage({
+      type: 'ERROR',
+      error: error.message || 'CMP simulation failed',
+      requestId,
+    })
+  } finally {
+    self.postMessage({ type: 'DONE', requestId })
+  }
+}
+
+var generateCaRoot = async (
+  algorithm: string,
+  subjectDn: string,
+  keyOutPath: string,
+  certOutPath: string,
+  days: number,
+  requestId?: string
+) => {
+  try {
+    await loadOpenSSLScript('/wasm/openssl.js', requestId)
+    const module = await createOpenSSLInstance(requestId)
+    injectEntropy(module, requestId)
+    configureEnvironment(module, requestId)
+
+    const genCaC = module.cwrap('generate_mock_ca_root', 'string', [
+      'string',
+      'string',
+      'string',
+      'string',
+      'number',
+    ])
+    if (!genCaC) throw new Error('generate_mock_ca_root not found in WASM module')
+
+    const resultJson = genCaC(algorithm, subjectDn, keyOutPath, certOutPath, days)
+
+    let keyBytes: Uint8Array | null = null
+    let certBytes: Uint8Array | null = null
+    try {
+      keyBytes = module.FS.readFile(keyOutPath)
+    } catch (_e) {
+      keyBytes = null
+    }
+    try {
+      certBytes = module.FS.readFile(certOutPath)
+    } catch (_e) {
+      certBytes = null
+    }
+
+    self.postMessage({
+      type: 'LOG',
+      stream: 'stdout',
+      message: 'CA_ROOT_RESULT:' + resultJson,
+      requestId,
+    })
+    if (keyBytes) {
+      self.postMessage({
+        type: 'FILE_CREATED',
+        name: keyOutPath.replace(/^\//, ''),
+        data: keyBytes,
+        requestId,
+      })
+    }
+    if (certBytes) {
+      self.postMessage({
+        type: 'FILE_CREATED',
+        name: certOutPath.replace(/^\//, ''),
+        data: certBytes,
+        requestId,
+      })
+    }
+  } catch (error: any) {
+    self.postMessage({
+      type: 'ERROR',
+      error: error.message || 'CA root generation failed',
+      requestId,
+    })
+  } finally {
+    self.postMessage({ type: 'DONE', requestId })
+  }
+}
+
 var executeSkeyOperation = async (opType: 'create' | 'derive', params: any, requestId?: string) => {
   try {
     // 1. Load/Init
@@ -783,6 +952,41 @@ self.addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
         requestId?: string
       }
       await executeSimulation(clientConfig, serverConfig, files, commands || [], requestId)
+    } else if (type === 'CMP_SIMULATE') {
+      const d = event.data as {
+        type: 'CMP_SIMULATE'
+        eeKeyPath: string
+        subjectDn: string
+        reference: string
+        secret: string
+        caCertPath: string
+        caKeyPath: string
+        outCertPath: string
+        files?: { name: string; data: Uint8Array }[]
+        requestId?: string
+      }
+      await executeCmpSimulation(
+        d.eeKeyPath,
+        d.subjectDn,
+        d.reference,
+        d.secret,
+        d.caCertPath,
+        d.caKeyPath,
+        d.outCertPath,
+        d.files,
+        requestId
+      )
+    } else if (type === 'GEN_CA_ROOT') {
+      const g = event.data as {
+        type: 'GEN_CA_ROOT'
+        algorithm: string
+        subjectDn: string
+        keyOutPath: string
+        certOutPath: string
+        days: number
+        requestId?: string
+      }
+      await generateCaRoot(g.algorithm, g.subjectDn, g.keyOutPath, g.certOutPath, g.days, requestId)
     } else if (type === 'DELETE_FILE') {
       const { name } = event.data as { type: 'DELETE_FILE'; name: string }
       // moduleFactory is not defined in this scope, assuming it's a global or imported variable
