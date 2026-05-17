@@ -104,6 +104,11 @@ const APISecurityJWTModule = lazyWithRetry(() =>
     default: module.APISecurityJWTModule,
   }))
 )
+const MLSGroupMessagingModule = lazyWithRetry(() =>
+  import('./modules/MLSGroupMessaging').then((module) => ({
+    default: module.MLSGroupMessagingModule,
+  }))
+)
 const PKIEnrollmentProtocolsModule = lazyWithRetry(() =>
   import('./modules/PKIEnrollmentProtocols').then((module) => ({
     default: module.PKIEnrollmentProtocolsModule,
@@ -409,6 +414,8 @@ export const PKILearningView: React.FC = () => {
                 <Route path="merkle-tree-certs" element={<MerkleTreeCertsModule />} />
                 <Route path="code-signing" element={<CodeSigningModule />} />
                 <Route path="api-security-jwt" element={<APISecurityJWTModule />} />
+                <Route path="mls-group-messaging" element={<MLSGroupMessagingModule />} />
+                <Route path="mls" element={<MLSGroupMessagingModule />} />
                 <Route path="pki-enrollment-protocols" element={<PKIEnrollmentProtocolsModule />} />
                 <Route path="iot-ot-pqc" element={<IoTOTModule />} />
                 <Route path="pqc-risk-management" element={<PQCRiskManagementModule />} />

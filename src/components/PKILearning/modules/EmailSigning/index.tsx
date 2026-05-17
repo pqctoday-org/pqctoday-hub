@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
-import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, ShieldCheck, PenLine, Lock } from 'lucide-react'
+import React, { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react'
+import { Trash2, ShieldCheck, PenLine, Lock, FlaskConical } from 'lucide-react'
 import { EmailSigningIntroduction } from './components/EmailSigningIntroduction'
 import { EmailSigningExercises, type WorkshopConfig } from './components/EmailSigningExercises'
 import { SMIMECertViewer } from './workshop/SMIMECertViewer'
 import { CMSSigningDemo } from './workshop/CMSSigningDemo'
 import { CMSEncryptionDemo } from './workshop/CMSEncryptionDemo'
+const LiveHSMProvider = lazy(() =>
+  import('./workshop/LiveHSMProvider').then((m) => ({ default: m.LiveHSMProvider }))
+)
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -38,6 +41,13 @@ const PARTS = [
     description:
       'Compare RSA key transport with KEM-based encryption (RFC 9629) using AuthEnvelopedData.',
     icon: Lock,
+  },
+  {
+    id: 'live-hsm',
+    title: 'Step 4: Live HSM Provider',
+    description:
+      'Phase 1 foundation — load openssl.wasm with pkcs11-provider + softhsmv3 statically linked and register the provider in-process.',
+    icon: FlaskConical,
   },
 ]
 
@@ -204,6 +214,15 @@ export const EmailSigningModule: React.FC = () => {
               {currentPart === 0 && <SMIMECertViewer key={`smime-cert-${configKey}`} />}
               {currentPart === 1 && <CMSSigningDemo key={`cms-signing-${configKey}`} />}
               {currentPart === 2 && <CMSEncryptionDemo key={`cms-encryption-${configKey}`} />}
+              {currentPart === 3 && (
+                <Suspense
+                  fallback={
+                    <div className="text-sm text-muted-foreground">Loading Live HSM Provider…</div>
+                  }
+                >
+                  <LiveHSMProvider key={`live-hsm-${configKey}`} />
+                </Suspense>
+              )}
             </div>
 
             {/* Part Navigation */}

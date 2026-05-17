@@ -151,9 +151,9 @@ export function ResearcherEvidenceView({
                   </div>
                 </div>
                 {/* Inline trust-path sidebar per the researcher spec */}
-                {r.bestPath && (
+                {r.trustPath && (
                   <aside className="shrink-0">
-                    <TrustPathPopover path={r.bestPath} standardLabel={r.item.label} />
+                    <TrustPathPopover path={r.trustPath} standardLabel={r.item.label} />
                   </aside>
                 )}
               </li>

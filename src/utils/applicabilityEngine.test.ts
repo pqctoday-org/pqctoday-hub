@@ -20,6 +20,7 @@ function makeFramework(overrides: Partial<ComplianceFramework> = {}): Compliance
     industries: [],
     countries: [],
     requiresPQC: true,
+    pqcRequirement: 'yes',
     deadline: 'Ongoing',
     deadlinePhase: 'ongoing',
     notes: '',

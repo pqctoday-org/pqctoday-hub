@@ -1,8 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useMemo } from 'react'
-import { BarChart3, AlertTriangle } from 'lucide-react'
+import React, { useEffect, useMemo, useState } from 'react'
+import { BarChart3, AlertTriangle, Loader2 } from 'lucide-react'
 import { JOSE_SIGNING_ALGORITHMS, SAMPLE_JWT_PAYLOAD } from '../constants'
-import { createJWTHeader, createJWTPayload } from '../jwtUtils'
+import {
+  createJWTHeader,
+  createJWTPayload,
+  generateJwsKeyPair,
+  signJWS,
+  type JwsAlg,
+} from '../jwtUtils'
 
 const HTTP_HEADER_LIMIT = 8192 // 8 KB common default
 
@@ -12,9 +18,11 @@ interface TokenSizeData {
   headerB64Length: number
   payloadB64Length: number
   signatureB64Length: number
+  signatureBytes: number
   totalLength: number
   broken: boolean
   nistLevel?: number
+  measured: boolean
 }
 
 function getBarColor(total: number): string {
@@ -35,8 +43,20 @@ function getSizeLabelColor(total: number): string {
   return 'text-destructive'
 }
 
+// PQC algs we can actually sign in the browser
+const MEASURABLE_ALGS = new Set<string>([
+  'ML-DSA-44',
+  'ML-DSA-65',
+  'ML-DSA-87',
+  'SLH-DSA-SHA2-128s',
+  'MLDSA65-Ed25519',
+])
+
 export const TokenSizeAnalyzer: React.FC = () => {
   const [payloadJson, setPayloadJson] = useState(JSON.stringify(SAMPLE_JWT_PAYLOAD, null, 2))
+  const [measuredSigBytes, setMeasuredSigBytes] = useState<Record<string, number>>({})
+  const [isMeasuring, setIsMeasuring] = useState(true)
+  const [measureError, setMeasureError] = useState<string | null>(null)
 
   const isPayloadValid = useMemo(() => {
     try {
@@ -47,6 +67,41 @@ export const TokenSizeAnalyzer: React.FC = () => {
     }
   }, [payloadJson])
 
+  // Measure real signature sizes once on mount over a stable canonical input,
+  // so the table reflects byte counts produced by actual signing rather than
+  // hardcoded constants.
+  useEffect(() => {
+    let cancelled = false
+    const canonical: Record<string, unknown> = { sub: 'size-probe', iat: 0 }
+    const algsToMeasure = JOSE_SIGNING_ALGORITHMS.filter(
+      (a) => MEASURABLE_ALGS.has(a.jose) && a.category === 'signing'
+    )
+    ;(async () => {
+      try {
+        const out: Record<string, number> = {}
+        for (const a of algsToMeasure) {
+          const kp = await generateJwsKeyPair({ alg: a.jose as JwsAlg, backend: 'noble' })
+          const r = await signJWS({
+            alg: a.jose as JwsAlg,
+            payload: canonical,
+            keyPair: kp,
+            backend: 'noble',
+          })
+          if (cancelled) return
+          out[a.jose] = r.signature.length
+        }
+        if (!cancelled) setMeasuredSigBytes(out)
+      } catch (e) {
+        if (!cancelled) setMeasureError(e instanceof Error ? e.message : String(e))
+      } finally {
+        if (!cancelled) setIsMeasuring(false)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   const sizeData: TokenSizeData[] = useMemo(() => {
     if (!isPayloadValid) return []
 
@@ -56,8 +111,8 @@ export const TokenSizeAnalyzer: React.FC = () => {
 
       return JOSE_SIGNING_ALGORITHMS.filter((alg) => alg.sigBytes !== undefined).map((alg) => {
         const headerB64 = createJWTHeader(alg.jose)
-        // Base64url encoding: ~4/3 expansion, no padding
-        const signatureB64Length = Math.ceil((alg.sigBytes! * 4) / 3)
+        const sigBytes = measuredSigBytes[alg.jose] ?? alg.sigBytes!
+        const signatureB64Length = Math.ceil((sigBytes * 4) / 3)
         const totalLength = headerB64.length + 1 + payloadB64.length + 1 + signatureB64Length
 
         return {
@@ -66,15 +121,17 @@ export const TokenSizeAnalyzer: React.FC = () => {
           headerB64Length: headerB64.length,
           payloadB64Length: payloadB64.length,
           signatureB64Length,
+          signatureBytes: sigBytes,
           totalLength,
           broken: alg.broken,
           nistLevel: alg.nistLevel,
+          measured: measuredSigBytes[alg.jose] !== undefined,
         }
       })
     } catch {
       return []
     }
-  }, [payloadJson, isPayloadValid])
+  }, [payloadJson, isPayloadValid, measuredSigBytes])
 
   const maxSize = useMemo(
     () => Math.max(...sizeData.map((d) => d.totalLength), HTTP_HEADER_LIMIT),
@@ -88,10 +145,24 @@ export const TokenSizeAnalyzer: React.FC = () => {
           Interactive Token Size Comparison
         </h3>
         <p className="text-sm text-muted-foreground">
-          Edit the JWT payload below and see how total token size changes across all 7 signing
-          algorithms. Each bar is segmented into header, payload, and signature portions.
+          Edit the JWT payload below and see how total token size changes across every signing
+          algorithm in scope. PQC rows are <span className="font-bold text-primary">measured</span>{' '}
+          against the real signature bytes produced by @noble/post-quantum; classical rows use spec
+          sizes.
         </p>
       </div>
+
+      {isMeasuring && (
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Loader2 size={12} className="animate-spin" />
+          Measuring real signature sizes…
+        </div>
+      )}
+      {measureError && (
+        <div className="rounded-lg p-3 border border-destructive/50 bg-destructive/10 text-xs text-destructive">
+          Failed to measure: {measureError}
+        </div>
+      )}
 
       {/* Payload Editor */}
       <div className="glass-panel p-4">
@@ -157,6 +228,11 @@ export const TokenSizeAnalyzer: React.FC = () => {
                           L{item.nistLevel}
                         </span>
                       )}
+                      {item.measured && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded border font-bold bg-primary/10 text-primary border-primary/30">
+                          measured
+                        </span>
+                      )}
                     </div>
                     <div className="flex items-center gap-2">
                       <span
@@ -174,26 +250,22 @@ export const TokenSizeAnalyzer: React.FC = () => {
 
                   {/* Segmented Bar */}
                   <div className="w-full bg-muted rounded-full h-5 flex overflow-hidden relative">
-                    {/* Header segment */}
                     <div
                       className="bg-primary/40 h-5 transition-all"
                       style={{ width: `${headerPct}%` }}
                       title={`Header: ${item.headerB64Length} chars`}
                     />
-                    {/* Payload segment */}
                     <div
                       className="bg-success/40 h-5 transition-all"
                       style={{ width: `${payloadPct}%` }}
                       title={`Payload: ${item.payloadB64Length} chars`}
                     />
-                    {/* Signature segment */}
                     <div
                       className={`${getBarColor(item.totalLength)} h-5 transition-all`}
                       style={{ width: `${sigPct}%` }}
                       title={`Signature: ${item.signatureB64Length} chars`}
                     />
 
-                    {/* HTTP header limit marker */}
                     {maxSize > HTTP_HEADER_LIMIT && (
                       <div
                         className="absolute top-0 bottom-0 w-0.5 bg-destructive z-10"
@@ -214,7 +286,6 @@ export const TokenSizeAnalyzer: React.FC = () => {
             })}
           </div>
 
-          {/* HTTP Header Limit Reference */}
           <div className="mt-4 flex items-center gap-2 text-xs">
             <div className="flex items-center gap-1">
               <div className="w-4 h-0.5 bg-destructive" />
@@ -265,7 +336,6 @@ export const TokenSizeAnalyzer: React.FC = () => {
                 {sizeData.map((item) => {
                   const es256 = sizeData.find((d) => d.jose === 'ES256')
                   const multiplier = es256 ? (item.totalLength / es256.totalLength).toFixed(1) : '-'
-                  const algInfo = JOSE_SIGNING_ALGORITHMS.find((a) => a.jose === item.jose)
 
                   return (
                     <tr key={item.jose} className="border-b border-border/50">
@@ -278,7 +348,7 @@ export const TokenSizeAnalyzer: React.FC = () => {
                         </div>
                       </td>
                       <td className="p-2 text-right font-mono text-xs text-foreground">
-                        {algInfo?.sigBytes?.toLocaleString() ?? '-'}
+                        {item.signatureBytes.toLocaleString()}
                       </td>
                       <td className="p-2 text-right font-mono text-xs text-foreground">
                         {item.signatureB64Length.toLocaleString()}
@@ -306,7 +376,7 @@ export const TokenSizeAnalyzer: React.FC = () => {
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-xs text-muted-foreground">
           <strong>Key takeaway:</strong> SLH-DSA-SHA2-128s has the smallest key (32 bytes) but the
-          largest signature (7,856 bytes). ML-DSA-65 is the recommended balance for most API use
+          largest signature (~7,856 bytes). ML-DSA-65 is the recommended balance for most API use
           cases: NIST Level 3 security with a 3,309-byte signature. For APIs with strict header size
           constraints, consider reference tokens (opaque strings) with server-side introspection
           instead of self-contained JWTs.

@@ -1,10 +1,39 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
-import React, { useState, useMemo } from 'react'
-import { Search, Copy, Check, AlertTriangle, ShieldCheck } from 'lucide-react'
+import React, { useState, useMemo, useCallback } from 'react'
+import { Search, Copy, Check, AlertTriangle, ShieldCheck, XCircle, Loader2 } from 'lucide-react'
+import { ml_dsa44, ml_dsa65, ml_dsa87 } from '@noble/post-quantum/ml-dsa.js'
 import { SAMPLE_JWTS, JOSE_SIGNING_ALGORITHMS } from '../constants'
-import { decodeJWT } from '../jwtUtils'
+import { decodeJWT, verifyJWS } from '../jwtUtils'
+import joseKat from '@/data/acvp/cose-dilithium-11-jose-kat.json'
 import { Button } from '@/components/ui/button'
+
+// Map alg → IETF KAT seed → derived public key (for the "Verify against IETF KAT" button)
+const ML_DSA_SUITES = {
+  'ML-DSA-44': ml_dsa44,
+  'ML-DSA-65': ml_dsa65,
+  'ML-DSA-87': ml_dsa87,
+} as const
+
+function hexToBytes(hex: string): Uint8Array {
+  const out = new Uint8Array(hex.length / 2)
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16)
+  return out
+}
+
+interface KatVector {
+  alg: 'ML-DSA-44' | 'ML-DSA-65' | 'ML-DSA-87'
+  priv_seed_hex: string
+}
+
+function getKatPublicKey(alg: string): Uint8Array | null {
+  if (alg !== 'ML-DSA-44' && alg !== 'ML-DSA-65' && alg !== 'ML-DSA-87') return null
+  const vectors = (joseKat as { vectors: KatVector[] }).vectors
+  const vec = vectors.find((v) => v.alg === alg)
+  if (!vec) return null
+  const seed = hexToBytes(vec.priv_seed_hex)
+  return ML_DSA_SUITES[alg].keygen(seed).publicKey
+}
 
 type SampleKey = keyof typeof SAMPLE_JWTS
 
@@ -12,8 +41,37 @@ export const JWTInspector: React.FC = () => {
   const [jwtInput, setJwtInput] = useState(SAMPLE_JWTS['ES256'])
   const [selectedSample, setSelectedSample] = useState<SampleKey>('ES256')
   const [copied, setCopied] = useState(false)
+  const [katResult, setKatResult] = useState<{ valid: boolean; alg: string } | null>(null)
+  const [katError, setKatError] = useState<string | null>(null)
+  const [verifying, setVerifying] = useState(false)
 
   const decoded = useMemo(() => decodeJWT(jwtInput), [jwtInput])
+
+  const katPublicKey = useMemo(() => {
+    if (!decoded) return null
+    return getKatPublicKey(String(decoded.header.alg))
+  }, [decoded])
+
+  const handleVerifyAgainstKat = useCallback(async () => {
+    setVerifying(true)
+    setKatError(null)
+    setKatResult(null)
+    try {
+      if (!katPublicKey || !decoded) {
+        throw new Error('No KAT public key available for this algorithm')
+      }
+      const result = await verifyJWS({
+        token: jwtInput,
+        publicKey: katPublicKey,
+        backend: 'noble',
+      })
+      setKatResult({ valid: result.valid, alg: String(decoded.header.alg) })
+    } catch (e) {
+      setKatError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setVerifying(false)
+    }
+  }, [jwtInput, katPublicKey, decoded])
 
   const parts = useMemo(() => {
     const segments = jwtInput.split('.')
@@ -30,6 +88,8 @@ export const JWTInspector: React.FC = () => {
   const handleSampleChange = (key: SampleKey) => {
     setSelectedSample(key)
     setJwtInput(SAMPLE_JWTS[key])
+    setKatResult(null)
+    setKatError(null)
   }
 
   const handleCopy = async () => {
@@ -222,6 +282,47 @@ export const JWTInspector: React.FC = () => {
                 <strong>Total token size:</strong> {jwtInput.length} characters (
                 {(jwtInput.length / 1024).toFixed(1)} KB)
               </div>
+            </div>
+          )}
+
+          {/* Verify against the IETF KAT public key (ML-DSA-44/65/87 only) */}
+          {katPublicKey && (
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <Button
+                variant="outline"
+                onClick={() => void handleVerifyAgainstKat()}
+                disabled={verifying}
+                className="text-xs"
+              >
+                {verifying ? (
+                  <>
+                    <Loader2 size={12} className="animate-spin mr-1" />
+                    Verifying…
+                  </>
+                ) : (
+                  <>
+                    <ShieldCheck size={12} className="mr-1" />
+                    Verify against IETF KAT public key
+                  </>
+                )}
+              </Button>
+              {katResult && (
+                <span
+                  className={`flex items-center gap-1 text-xs px-2 py-1 rounded border font-bold ${
+                    katResult.valid
+                      ? 'bg-success/20 text-success border-success/50'
+                      : 'bg-destructive/20 text-destructive border-destructive/50'
+                  }`}
+                >
+                  {katResult.valid ? <Check size={12} /> : <XCircle size={12} />}
+                  {katResult.valid ? 'Signature valid' : 'Signature invalid'} · {katResult.alg}
+                </span>
+              )}
+              {katError && <span className="text-xs text-destructive">{katError}</span>}
+              <span className="text-[10px] text-muted-foreground">
+                Public key derived from the all-zeros AKP seed in draft-ietf-cose-dilithium-11
+                Appendix A.1
+              </span>
             </div>
           )}
         </div>
