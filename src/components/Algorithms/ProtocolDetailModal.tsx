@@ -328,7 +328,7 @@ function DeploymentRow({ deployment }: { deployment: LiveDeployment }) {
 function PlaygroundCard({ tool }: { tool: PlaygroundTool }) {
   return (
     <Link
-      to={`/playground/${tool.toolId}`}
+      to={tool.url ?? `/playground/${tool.toolId}`}
       className="block rounded-md border border-primary/30 bg-primary/10 p-3 transition-colors hover:border-primary/50 hover:bg-primary/20"
     >
       <div className="mb-1.5 flex items-center gap-2">

@@ -409,7 +409,7 @@ function PlaygroundCell({
   return (
     <div className="flex flex-col gap-1">
       <Link
-        to={`/playground/${primary.toolId}`}
+        to={primary.url ?? `/playground/${primary.toolId}`}
         className="inline-flex items-center gap-1.5 rounded-md border border-primary/30 bg-primary/10 px-2 py-1 text-xs font-medium text-primary transition-colors hover:bg-primary/20"
       >
         <FlaskConical size={12} />
@@ -444,7 +444,7 @@ function PlaygroundCell({
           {secondary.map((s) => (
             <Link
               key={s.toolId}
-              to={`/playground/${s.toolId}`}
+              to={s.url ?? `/playground/${s.toolId}`}
               className="inline-flex items-center gap-1 rounded-md border border-accent/30 bg-accent/5 px-1.5 py-0.5 text-[10px] text-accent transition-colors hover:bg-accent/15"
               title={s.toolName}
             >

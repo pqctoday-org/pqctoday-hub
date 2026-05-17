@@ -348,6 +348,11 @@ function configureEnvironment(M: OpenSSLModule): void {
   if (M.ENV) {
     M.ENV['OPENSSL_CONF'] = '/ssl/openssl.cnf'
     M.ENV['RANDFILE'] = '/random.seed'
+    // Pre-set PKCS11_PROVIDER_MODULE so p11prov_module_new() always resolves the
+    // module path to the statically-linked softhsmv3 — even when the app libctx
+    // processes the explicit -provider pkcs11 flag BEFORE reading [pkcs11_sect]
+    // from OPENSSL_CONF.  This is the highest-priority path in interface.c.
+    M.ENV['PKCS11_PROVIDER_MODULE'] = 'wasm:softhsmv3'
   }
 }
 
@@ -410,7 +415,12 @@ function setupSoftHsmConf(M: OpenSSLModule): void {
   } catch {
     /* ignore */
   }
-  if (M.ENV) M.ENV['SOFTHSM2_CONF'] = SOFTHSM_CONF_PATH
+  if (M.ENV) {
+    M.ENV['SOFTHSM2_CONF'] = SOFTHSM_CONF_PATH
+    // Repeat here so it's guaranteed set even if setupSoftHsmConf is called
+    // independently of configureEnvironment in future refactors.
+    M.ENV['PKCS11_PROVIDER_MODULE'] = 'wasm:softhsmv3'
+  }
 }
 
 /** Recursively walk `dir` in M's MEMFS and snapshot every file into vfs. */
@@ -526,11 +536,22 @@ function initSoftHsmTokenIfNeeded(M: OpenSSLModule): void {
   const pstringToUTF8 = stringToUTF8 as (s: string, p: number, n: number) => void
   const pHEAPU8 = HEAPU8 as Uint8Array
 
-  // C_Initialize — tolerate ALREADY_INITIALIZED (0x191)
+  // C_Initialize — prime softhsmv3 so it reads the token directory from MEMFS.
+  // Tolerate ALREADY_INITIALIZED (0x191).
   const rv0 = pC_Initialize(0)
   if (rv0 !== 0 && rv0 !== CKR_CRYPTOKI_ALREADY_INITIALIZED) return
 
-  // Get slot count, then slot list
+  // If token files were already in vfs they are now restored to MEMFS and
+  // softhsmv3 has loaded the token (including all key objects). Return now —
+  // do NOT call C_InitToken. Per PKCS#11 §11.6, calling C_InitToken on an
+  // already-initialized token with the CORRECT SO PIN resets the token and
+  // destroys ALL key objects. Calling it here would silently wipe alice's
+  // ML-DSA-65 key on every cmsMkCert / cmsSign module call.
+  const tokenExists = [...vfs.keys()].some((k) => k.startsWith(SOFTHSM_TOKEN_DIR + '/'))
+  if (tokenExists) return
+
+  // ── First-time initialization path ─────────────────────────────────────
+  // Get the uninitialized virtual slot.
   const cntP = pmalloc(4)
   psetValue(cntP, 0, 'i32')
   if (pC_GetSlotList(0, 0, cntP) !== 0) {
@@ -552,7 +573,7 @@ function initSoftHsmTokenIfNeeded(M: OpenSSLModule): void {
   pfree(listP)
   pfree(c2P)
 
-  // C_InitToken — initialize slot0 with label + SO PIN
+  // C_InitToken — create the token with label + SO PIN.
   const labelBuf = new Uint8Array(32).fill(0x20)
   const labelStr = 'cms-workshop'
   for (let i = 0; i < labelStr.length; i++) labelBuf[i] = labelStr.charCodeAt(i)
@@ -564,7 +585,7 @@ function initSoftHsmTokenIfNeeded(M: OpenSSLModule): void {
   const initRv = pC_InitToken(slot0, soPinP, soPin.length, labelP)
   pfree(soPinP)
   pfree(labelP)
-  if (initRv !== 0) return // already initialized or hardware error — treat as no-op
+  if (initRv !== 0) return // hardware error — unexpected on fresh token
 
   // Get slot list again — softhsmv3 moves the initialized token to a new slot
   const c3P = pmalloc(4)
@@ -608,7 +629,7 @@ function initSoftHsmTokenIfNeeded(M: OpenSSLModule): void {
   pfree(hSP)
 
   // Persist the freshly-created (empty) token directory so the next module
-  // instance finds an initialized token and skips this init step.
+  // instance finds an initialized token and only calls C_Initialize.
   persistSoftHsmTokenFiles(M)
 }
 
@@ -863,11 +884,16 @@ function pkcs11Uri(keyId: string): string {
   return `pkcs11:object=${keyId};pin-value=1234`
 }
 
-/** Provider flags prepended when useHsm is true. Order matters: `-provider
- *  default` must come AFTER `-provider pkcs11` so pkcs11-provider gets first
- *  shot at key-shaped URIs but the default provider still resolves the
- *  classical primitives (digest, cipher) the CMS engine needs. */
-const HSM_PROVIDER_FLAGS = ['-provider', 'pkcs11', '-provider', 'default']
+// pqctoday_cms_init() registers pkcs11-provider as a builtin in the GLOBAL
+// OpenSSL lib ctx (NULL). CLI `-provider pkcs11` flags create a SEPARATE
+// app_libctx that does NOT inherit that builtin; OpenSSL falls back to
+// dlopen("/usr/local/lib/ossl-modules/pkcs11.so") → NULL (file absent in
+// WASM) → "Module initialization failed!".  Without the flags the CLI uses
+// the global lib ctx where the provider is already loaded, pkcs11: URI store
+// ops work, and the HSM path is fully functional.  HSM_OPENSSL_CNF written
+// by newModule() guarantees [pkcs11_sect] is in OPENSSL_CONF before callMain
+// so the provider auto-activates even if the config is re-read on init.
+const HSM_PROVIDER_FLAGS: string[] = []
 
 async function cmsGenKey(
   alg: CmsAlg,
