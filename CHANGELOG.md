@@ -21,6 +21,22 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Fix — pkcs11-provider: ML-DSA `OSSL_PKEY_PARAM_MANDATORY_DIGEST` → T3 HSM CMS sign+verify KAT passes (2026-05-17)
+
+Root cause: `p11prov_mldsa_get_params` in `pqctoday-hsm/src/vendor/pkcs11-provider/src/keymgmt.c` was not implementing `OSSL_PKEY_PARAM_MANDATORY_DIGEST`. Without it, OpenSSL's `evp_keymgmt_util_get_deflt_digest_name` returns `-2` for pkcs11-provider ML-DSA keys, `cms_signature_nomd` returns `false`, `OBJ_find_sigid_by_algs` fails (no combined SHA+ML-DSA OID exists), and `CMS_add1_signer` raises `CMS_R_UNSUPPORTED_SIGNATURE_ALGORITHM` with `pkey nid=-1`.
+
+Fix: Added `OSSL_PKEY_PARAM_MANDATORY_DIGEST = ""` handler to `p11prov_mldsa_get_params` (mirrors `p11prov_ed_get_params`). An empty `MANDATORY_DIGEST` string signals "hash-internal — no external digest" per FIPS 204 §5.2. `cms_signature_nomd` now returns `true` for pkcs11-provider ML-DSA keys, enabling the correct `snid=pknid` path in `cms_generic_sign`.
+
+Also fixed: [build-wasm.sh](build-wasm.sh) — `make -j8 build_sw` → `make -j8 build_sw || echo [...]` so `set -e` does not abort when OpenSSL's Makefile fails to link `apps/openssl` (which requires `pqctoday_cms_init` from our custom shim — not in OpenSSL's Makefile). All `.o` files and `.a` archives are produced before the link step; the `|| echo` allows the script to reach the custom `emcc -o apps/openssl.js` step that follows.
+
+E2E evidence (all 5 pass):
+
+```text
+[cms-hsm] T3 hex dump: 0000  30 82 24 99 06 09 2a 86 48 86 f7 0d 01 07 02 a0  — real ASN.1 SEQUENCE
+[cms-hsm] T3 HSM evidence found: ["HSM (pkcs11:)","resident in softhsmv3"]
+[cms-hsm] T3 PASS — ML-DSA-65 HSM sign+verify KAT succeeded
+```
+
 ### Fix — HSM toggle greyed in playground + softhsm `C_Initialize rv=0x5` (2026-05-17)
 
 Two HSM bugs fixed in the Email Signing workshop:
