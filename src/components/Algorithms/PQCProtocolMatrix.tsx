@@ -38,6 +38,18 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ProtocolDetailModal } from './ProtocolDetailModal'
+import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
+
+// Resolve the canonical destination for a matrix PlaygroundTool cell.
+// Priority: explicit per-cell `url` > registry `moduleLink` > playground fallback.
+// Without this, every cell would hit `/playground/<toolId>`, which for several
+// tools (e.g. pki-enrollment) is a minimal preview rather than the full workshop.
+const WORKSHOP_TOOL_LINKS: Record<string, string> = Object.fromEntries(
+  WORKSHOP_TOOLS.map((t) => [t.id, t.moduleLink])
+)
+function resolveToolLink(tool: PlaygroundTool): string {
+  return tool.url ?? WORKSHOP_TOOL_LINKS[tool.toolId] ?? `/playground/${tool.toolId}`
+}
 import { libraryData } from '../../data/libraryData'
 
 /* Build a Set of library reference_ids once at module load. Used to decide
@@ -409,7 +421,7 @@ function PlaygroundCell({
   return (
     <div className="flex flex-col gap-1">
       <Link
-        to={primary.url ?? `/playground/${primary.toolId}`}
+        to={resolveToolLink(primary)}
         className="inline-flex items-center gap-1.5 rounded-md border border-primary/30 bg-primary/10 px-2 py-1 text-xs font-medium text-primary transition-colors hover:bg-primary/20"
       >
         <FlaskConical size={12} />
@@ -444,7 +456,7 @@ function PlaygroundCell({
           {secondary.map((s) => (
             <Link
               key={s.toolId}
-              to={s.url ?? `/playground/${s.toolId}`}
+              to={resolveToolLink(s)}
               className="inline-flex items-center gap-1 rounded-md border border-accent/30 bg-accent/5 px-1.5 py-0.5 text-[10px] text-accent transition-colors hover:bg-accent/15"
               title={s.toolName}
             >
