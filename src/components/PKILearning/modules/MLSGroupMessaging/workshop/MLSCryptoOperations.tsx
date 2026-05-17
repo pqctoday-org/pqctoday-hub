@@ -1,10 +1,24 @@
 // SPDX-License-Identifier: GPL-3.0-only
-
 import React, { useState } from 'react'
 import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js'
 import { ml_kem768 } from '@noble/post-quantum/ml-kem.js'
 import { Play, CheckCircle2, XCircle, Loader2, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useHSM, type UseHSMResult } from '@/hooks/useHSM'
+import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import {
+  hsm_generateMLDSAKeyPair,
+  hsm_signBytesMLDSA,
+  hsm_verifyBytes,
+  hsm_extractKeyValue,
+  hsm_destroyObject,
+  hsm_generateMLKEMKeyPair,
+  hsm_encapsulate,
+  hsm_decapsulate,
+  hsm_generateAESKey,
+  hsm_aesEncrypt,
+  hsm_aesDecrypt,
+} from '@/wasm/softhsm'
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -106,24 +120,46 @@ function StepCard({
 
 // ── Step 1 — Credential signing key (ML-DSA-65) ──────────────────────────────
 
-function CredentialKeyStep() {
+function CredentialKeyStep({ hsm }: { hsm: UseHSMResult }) {
   const { result, run } = useStep()
 
   const handleRun = () =>
     run(async () => {
-      const kp = ml_dsa65.keygen()
       const msg = new TextEncoder().encode(
         'leaf_node_v1|alice@example.com|2026-05-17|MLS_128_DhKemX25519Aes128GcmSha256Ed25519'
       )
+
+      if (hsm.isReady && hsm.moduleRef.current) {
+        const M = hsm.moduleRef.current
+        const session = hsm.hSessionRef.current
+        const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, session, 65)
+        const pk = hsm_extractKeyValue(M, session, pubHandle)
+        const sig = hsm_signBytesMLDSA(M, session, privHandle, msg)
+        const ok = hsm_verifyBytes(M, session, pubHandle, msg, sig)
+        if (!ok) throw new Error('verify returned false — should never happen')
+        const tampered = new Uint8Array(msg)
+        tampered[0] ^= 0xff
+        const bad = hsm_verifyBytes(M, session, pubHandle, tampered, sig)
+        if (bad) throw new Error('tampered msg verified — catastrophic')
+        hsm_destroyObject(M, session, pubHandle)
+        hsm_destroyObject(M, session, privHandle)
+        return [
+          `[HSM] pk  (${pk.length} B): ${shortHex(pk)}`,
+          `[HSM] sig (${sig.length} B): ${shortHex(sig)}`,
+          `C_MessageSignInit + C_SignMessage → verify(msg)      → ${ok}   ✓`,
+          `C_MessageVerifyInit + C_VerifyMessage → verify(tampered) → ${bad}  ✓ (mutation rejected)`,
+        ]
+      }
+
+      // noble (software) path
+      const kp = ml_dsa65.keygen()
       const sig = ml_dsa65.sign(msg, kp.secretKey)
       const ok = ml_dsa65.verify(sig, msg, kp.publicKey)
       if (!ok) throw new Error('verify returned false — should never happen')
-
       const tampered = new Uint8Array(msg)
       tampered[0] ^= 0xff
       const bad = ml_dsa65.verify(sig, tampered, kp.publicKey)
       if (bad) throw new Error('tampered msg verified — catastrophic')
-
       return [
         `pk  (${kp.publicKey.length} B): ${shortHex(kp.publicKey)}`,
         `sk  (${kp.secretKey.length} B): ${shortHex(kp.secretKey)}`,
@@ -146,28 +182,71 @@ function CredentialKeyStep() {
 
 // ── Step 2 — TreeKEM node update (ML-KEM-768 HPKE encapsulate/decapsulate) ───
 
-function TreeKEMNodeStep() {
+function TreeKEMNodeStep({ hsm }: { hsm: UseHSMResult }) {
   const { result, run } = useStep()
 
   const handleRun = () =>
     run(async () => {
-      // Alice generates a fresh HPKE leaf keypair (node_key in RFC 9420 §7.2)
+      if (hsm.isReady && hsm.moduleRef.current) {
+        const M = hsm.moduleRef.current
+        const session = hsm.hSessionRef.current
+
+        const alice = hsm_generateMLKEMKeyPair(M, session, 768)
+        const alicePk = hsm_extractKeyValue(M, session, alice.pubHandle)
+
+        const { ciphertextBytes, secretHandle: senderSH } = hsm_encapsulate(
+          M,
+          session,
+          alice.pubHandle,
+          768
+        )
+        const senderSS = hsm_extractKeyValue(M, session, senderSH)
+        const receiverSH = hsm_decapsulate(M, session, alice.privHandle, ciphertextBytes, 768)
+        const receiverSS = hsm_extractKeyValue(M, session, receiverSH)
+
+        const match = toHex(senderSS) === toHex(receiverSS)
+        if (!match) throw new Error('shared secrets diverged')
+
+        const other = hsm_generateMLKEMKeyPair(M, session, 768)
+        const wrongSH = hsm_decapsulate(M, session, other.privHandle, ciphertextBytes, 768)
+        const wrongSS = hsm_extractKeyValue(M, session, wrongSH)
+        const wrongMatch = toHex(wrongSS) === toHex(senderSS)
+
+        for (const h of [
+          alice.pubHandle,
+          alice.privHandle,
+          senderSH,
+          receiverSH,
+          other.pubHandle,
+          other.privHandle,
+          wrongSH,
+        ]) {
+          try {
+            hsm_destroyObject(M, session, h)
+          } catch {
+            /* already freed */
+          }
+        }
+
+        return [
+          `[HSM] node pk   (${alicePk.length} B): ${shortHex(alicePk)}`,
+          `[HSM] ciphertext(${ciphertextBytes.length} B): ${shortHex(ciphertextBytes)}`,
+          `[HSM] sender  SS (${senderSS.length} B): ${toHex(senderSS)}`,
+          `[HSM] receiver SS: ${toHex(receiverSS)}`,
+          `C_EncapsulateKey + C_DecapsulateKey → secrets match       → ${match}      ✓`,
+          `wrong-key SS match  → ${wrongMatch} ✓ (implicit rejection)`,
+        ]
+      }
+
+      // noble (software) path
       const alice = ml_kem768.keygen()
-
-      // A committing member encapsulates a fresh path_secret for Alice's node
       const { cipherText, sharedSecret: senderSS } = ml_kem768.encapsulate(alice.publicKey)
-
-      // Alice decapsulates to recover the same path_secret
       const receiverSS = ml_kem768.decapsulate(cipherText, alice.secretKey)
-
       const match = toHex(senderSS) === toHex(receiverSS)
       if (!match) throw new Error('shared secrets diverged')
-
-      // Wrong secret key must produce a different (implicit-rejection) secret
       const other = ml_kem768.keygen()
       const wrongSS = ml_kem768.decapsulate(cipherText, other.secretKey)
       const wrongMatch = toHex(wrongSS) === toHex(senderSS)
-
       return [
         `node pk   (${alice.publicKey.length} B): ${shortHex(alice.publicKey)}`,
         `ciphertext(${cipherText.length} B): ${shortHex(cipherText)}`,
@@ -191,7 +270,7 @@ function TreeKEMNodeStep() {
 
 // ── Step 3 — Application message encryption (AES-128-GCM) ────────────────────
 
-function AppMessageStep() {
+function AppMessageStep({ hsm }: { hsm: UseHSMResult }) {
   const [plaintext, setPlaintext] = useState('Hello, MLS group! 🔐')
   const { result, run } = useStep()
 
@@ -199,39 +278,88 @@ function AppMessageStep() {
     run(async () => {
       const enc = new TextEncoder()
       const pt = enc.encode(plaintext)
+      const aad = enc.encode('group:demo|epoch:1|content:application')
+      const badAad = enc.encode('group:demo|epoch:2|content:application')
 
-      // Simulate an epoch-derived content key (32 bytes of secure randomness)
+      if (hsm.isReady && hsm.moduleRef.current) {
+        const M = hsm.moduleRef.current
+        const session = hsm.hSessionRef.current
+
+        const keyHandle = hsm_generateAESKey(
+          M,
+          session,
+          128,
+          true,
+          true,
+          false,
+          false,
+          false,
+          true,
+          'mls-epoch-key'
+        )
+        const epochKeyBytes = hsm_extractKeyValue(M, session, keyHandle)
+
+        // Roundtrip: encrypt with aad, decrypt with same aad
+        const { ciphertext: ct, iv } = hsm_aesEncrypt(
+          M,
+          session,
+          keyHandle,
+          pt,
+          'gcm',
+          undefined,
+          aad
+        )
+        const recovered = new TextDecoder().decode(
+          hsm_aesDecrypt(M, session, keyHandle, ct, iv, 'gcm', aad)
+        )
+        if (recovered !== plaintext) throw new Error('decrypt mismatch')
+
+        // AAD integrity: same ciphertext + wrong aad → CKR_ENCRYPTED_DATA_INVALID
+        let aadOk = false
+        try {
+          hsm_aesDecrypt(M, session, keyHandle, ct, iv, 'gcm', badAad)
+          aadOk = true
+        } catch {
+          aadOk = false
+        }
+
+        hsm_destroyObject(M, session, keyHandle)
+
+        return [
+          `[HSM] epoch key (${epochKeyBytes.length} B): ${toHex(epochKeyBytes)}`,
+          `[HSM] nonce     (${iv.length} B): ${toHex(iv)}`,
+          `[HSM] plaintext : "${plaintext}"`,
+          `[HSM] ciphertext(${ct.length} B): ${shortHex(ct)}`,
+          `[HSM] decrypted : "${recovered}"`,
+          `C_EncryptInit(CKM_AES_GCM) + C_Encrypt ✓`,
+          `C_DecryptInit(CKM_AES_GCM) + C_Decrypt (correct AAD) ✓`,
+          `${!aadOk ? 'AAD integrity → CKR_ENCRYPTED_DATA_INVALID ✓' : '✗ AAD check did not throw — unexpected'}`,
+        ]
+      }
+
+      // Web Crypto (software) path
       const epochKey = crypto.getRandomValues(new Uint8Array(16))
       const iv = crypto.getRandomValues(new Uint8Array(12))
-
-      // additional_data = group_id || epoch || content_type (RFC 9420 §5.3)
-      const aad = enc.encode('group:demo|epoch:1|content:application')
-
       const cryptoKey = await crypto.subtle.importKey('raw', epochKey, 'AES-GCM', false, [
         'encrypt',
         'decrypt',
       ])
-
       const ctBuf = await crypto.subtle.encrypt(
         { name: 'AES-GCM', iv, additionalData: aad },
         cryptoKey,
         pt
       )
       const ct = new Uint8Array(ctBuf)
-
       const ptBuf = await crypto.subtle.decrypt(
         { name: 'AES-GCM', iv, additionalData: aad },
         cryptoKey,
         ct
       )
       const recovered = new TextDecoder().decode(ptBuf)
-
       if (recovered !== plaintext) throw new Error('decrypt mismatch')
 
-      // AAD integrity: wrong AAD must fail
       let aadOk = false
       try {
-        const badAad = enc.encode('group:demo|epoch:2|content:application')
         await crypto.subtle.decrypt({ name: 'AES-GCM', iv, additionalData: badAad }, cryptoKey, ct)
         aadOk = true
       } catch {
@@ -258,11 +386,11 @@ function AppMessageStep() {
       onRun={handleRun}
     >
       <div className="flex items-center gap-2 mt-1">
-        <label htmlFor="mls-plaintext" className="text-xs text-muted-foreground shrink-0">
+        <label htmlFor="mls-app-plaintext" className="text-xs text-muted-foreground shrink-0">
           Message:
         </label>
         <input
-          id="mls-plaintext"
+          id="mls-app-plaintext"
           type="text"
           value={plaintext}
           onChange={(e) => setPlaintext(e.target.value)}
@@ -274,21 +402,45 @@ function AppMessageStep() {
   )
 }
 
-// ── Main export ───────────────────────────────────────────────────────────────
+// ── Main export — single shared HSM instance for all three steps ──────────────
 
-export const MLSCryptoOperations: React.FC = () => (
-  <div className="glass-panel p-6 space-y-4">
-    <div>
-      <h3 className="text-lg font-semibold">Live MLS crypto primitives</h3>
-      <p className="text-sm text-muted-foreground mt-1">
-        Three in-browser operations that underpin every MLS session. Run each step to see real key
-        material and verify the cryptographic invariants. All crypto executes client-side via{' '}
-        <code className="text-primary">@noble/post-quantum</code> and the Web Crypto API — no server
-        contact.
-      </p>
+export const MLSCryptoOperations: React.FC = () => {
+  const hsm = useHSM()
+
+  return (
+    <div className="glass-panel p-6 space-y-4">
+      <div>
+        <h3 className="text-lg font-semibold">Live MLS crypto primitives</h3>
+        <p className="text-sm text-muted-foreground mt-1">
+          Three in-browser operations that underpin every MLS session. Run each step to see real key
+          material and verify the cryptographic invariants. Enable HSM mode below to route all steps
+          through <code className="text-primary">softhsmv3</code> (PKCS#11 v3.2) —{' '}
+          <code className="text-primary">C_SignMessage</code>,{' '}
+          <code className="text-primary">C_EncapsulateKey</code>, and{' '}
+          <code className="text-primary">C_EncryptInit</code>. All crypto executes client-side — no
+          server contact.
+        </p>
+      </div>
+      <LiveHSMToggle
+        hsm={hsm}
+        operations={[
+          'C_GenerateKeyPair',
+          'C_GenerateKey',
+          'C_MessageSignInit',
+          'C_SignMessage',
+          'C_MessageVerifyInit',
+          'C_VerifyMessage',
+          'C_EncapsulateKey',
+          'C_DecapsulateKey',
+          'C_EncryptInit',
+          'C_Encrypt',
+          'C_DecryptInit',
+          'C_Decrypt',
+        ]}
+      />
+      <CredentialKeyStep hsm={hsm} />
+      <TreeKEMNodeStep hsm={hsm} />
+      <AppMessageStep hsm={hsm} />
     </div>
-    <CredentialKeyStep />
-    <TreeKEMNodeStep />
-    <AppMessageStep />
-  </div>
-)
+  )
+}

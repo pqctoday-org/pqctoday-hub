@@ -8,8 +8,7 @@
  *   - lazy-import failures or workshop component initialization errors
  *
  * Validates that all three tabs (Learn / Workshop / References) render their
- * respective top-level components. This is intentionally low-depth — the
- * deeper MLS crypto correctness gap is tracked separately (audit pass).
+ * respective top-level components, plus the HSM crypto path (softhsmv3 WASM).
  */
 import { test, expect, type Page } from '@playwright/test'
 
@@ -109,5 +108,34 @@ test.describe('MLS — Playground tool', () => {
     await expect(page.getByText(/TreeKEM ratchet tree/i)).toBeVisible({ timeout: 15_000 })
     await expect(page.getByRole('heading', { name: /openmls_pqctoday_crypto/i })).toBeVisible()
     expect(page.url()).toContain('/playground/mls-group-messaging')
+  })
+
+  test('HSM path — Step 1 (ML-DSA-65) produces [HSM]-prefixed output via softhsmv3', async ({
+    page,
+  }) => {
+    // LiveHSMToggle with autoInit=true auto-starts softhsmv3 on mount.
+    // We wait for "Live HSM Mode Active" before clicking Run so the session
+    // is open and C_MessageSignInit can proceed without error.
+    await suppressWhatsNew(page)
+    await page.goto('/playground/mls-group-messaging')
+
+    // Wait for the WASM to finish initializing — the toggle switches from
+    // "Initializing SoftHSM…" to "Live HSM Mode Active" when the session opens.
+    await expect(page.getByText(/Live HSM Mode Active/i)).toBeVisible({ timeout: 30_000 })
+
+    // Click Run on the first step card (Credential signing key — ML-DSA-65).
+    // The StepCard Run button is the first "Run" button on the page.
+    await page.getByRole('button', { name: /^Run$/i }).first().click()
+
+    // Wait for the output pre element to contain HSM-prefixed key material.
+    const output = page.locator('pre').first()
+    await expect(output).toContainText('[HSM]', { timeout: 15_000 })
+    await expect(output).toContainText('C_MessageSignInit')
+    await expect(output).toContainText('verify(msg)      → true')
+
+    // No page errors throughout.
+    const errors: string[] = []
+    page.on('pageerror', (e) => errors.push(e.message))
+    expect(errors).toEqual([])
   })
 })

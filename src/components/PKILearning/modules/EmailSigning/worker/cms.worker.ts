@@ -53,6 +53,16 @@ interface OpenSSLModule {
   _C_Logout?: (hSession: number) => number
   _C_CloseSession?: (hSession: number) => number
   _C_InitPIN?: (hSession: number, pPin: number, ulPinLen: number) => number
+  _C_GenerateKeyPair?: (
+    hSession: number,
+    pMechanism: number,
+    pPublicKeyTemplate: number,
+    ulPublicKeyAttributeCount: number,
+    pPrivateKeyTemplate: number,
+    ulPrivateKeyAttributeCount: number,
+    phPublicKey: number,
+    phPrivateKey: number
+  ) => number
   _malloc?: (size: number) => number
   _free?: (ptr: number) => void
   HEAPU8?: Uint8Array
@@ -276,32 +286,6 @@ distinguished_name = req_distinguished_name
 [req_distinguished_name]
 `
 
-// HSM-aware OpenSSL config written over openssl.cnf after pqctoday_cms_init()
-// succeeds. Mirrors the PKCS11_CMS_CONF constant in cms_provider_init.c so that
-// if callMain's OPENSSL_init_ssl() re-reads from OPENSSL_CONF it sees
-// [pkcs11_sect] with the correct module path and doesn't overwrite the config
-// that pqctoday_cms_init loaded from /ssl/pkcs11.cnf with a MINIMAL version.
-// Without this, p11prov_module_init() gets mctx->path=NULL → dlopen(NULL) →
-// returns NULL in pkcs11_static_shim.c → CKR_GENERAL_ERROR → "Module
-// initialization failed!".
-const HSM_OPENSSL_CNF = `openssl_conf = openssl_init
-[openssl_init]
-providers = provider_sect
-[provider_sect]
-default = default_sect
-pkcs11 = pkcs11_sect
-[default_sect]
-activate = 1
-[pkcs11_sect]
-module = wasm:softhsmv3
-pkcs11-module-path = wasm:softhsmv3
-pkcs11-module-token-pin = 1234
-activate = 1
-[req]
-distinguished_name = req_distinguished_name
-[req_distinguished_name]
-`
-
 function configureEnvironment(M: OpenSSLModule): void {
   // Inject 4 KB of crypto-strong entropy so genpkey doesn't fall back to
   // weak sources in the Emscripten /dev/urandom shim.
@@ -379,6 +363,24 @@ const CKR_CRYPTOKI_ALREADY_INITIALIZED = 0x191
 const CKF_RW_SESSION_VAL = 0x0002
 const CKF_SERIAL_SESSION_VAL = 0x0004
 const CKU_SO_VAL = 0
+const CKU_USER_VAL = 1
+// PKCS#11 v3.2 ML-DSA key generation constants (FIPS 204 via softhsmv3).
+const CKM_ML_DSA_KEY_PAIR_GEN_VAL = 0x0000001c
+const CKK_ML_DSA_VAL = 0x0000004a
+const CKP_ML_DSA_44_VAL = 0x00000001
+const CKP_ML_DSA_65_VAL = 0x00000002
+const CKP_ML_DSA_87_VAL = 0x00000003
+const CKA_CLASS_ATTR = 0x00000000
+const CKA_TOKEN_ATTR = 0x00000001
+const CKA_LABEL_ATTR = 0x00000003
+const CKA_KEY_TYPE_ATTR = 0x00000100
+const CKA_ID_ATTR = 0x00000102
+const CKA_SENSITIVE_ATTR = 0x00000103
+const CKA_SIGN_ATTR = 0x00000108
+const CKA_VERIFY_ATTR = 0x0000010a
+const CKA_PARAMETER_SET_ATTR = 0x0000061d
+const CKO_PUBLIC_KEY_VAL = 0x00000002
+const CKO_PRIVATE_KEY_VAL = 0x00000003
 
 /** Ensure all parent directories of `filePath` exist in M's MEMFS. */
 function ensureDirs(M: OpenSSLModule, filePath: string): void {
@@ -407,18 +409,32 @@ function setupSoftHsmConf(M: OpenSSLModule): void {
     /* already exists */
   }
   const conf =
-    `directories.tokendir = ${SOFTHSM_TOKEN_DIR}\n` +
+    `directories.tokendir = ${SOFTHSM_TOKEN_DIR}/\n` +
     `objectstore.backend = file\n` +
     `log.level = ERROR\n`
+  // Write to the custom path (used when getenv("SOFTHSM2_CONF") is visible to C).
   try {
     M.FS.writeFile(SOFTHSM_CONF_PATH, new TextEncoder().encode(conf))
   } catch {
     /* ignore */
   }
+  // Also write to the compiled-in DEFAULT_SOFTHSM2_CONF path (/etc/softhsmv3.conf).
+  // Emscripten's getEnvStrings() caches env strings on first call, so M.ENV changes
+  // made after module creation may not be visible to C getenv(). When getenv returns
+  // NULL softhsm falls back to this compiled-in path. Mirrors what softhsm_pre.js
+  // does for the standalone softhsm.wasm build.
+  try {
+    M.FS.mkdir('/etc')
+  } catch {
+    /* already exists */
+  }
+  try {
+    M.FS.writeFile('/etc/softhsmv3.conf', new TextEncoder().encode(conf))
+  } catch {
+    /* ignore */
+  }
   if (M.ENV) {
     M.ENV['SOFTHSM2_CONF'] = SOFTHSM_CONF_PATH
-    // Repeat here so it's guaranteed set even if setupSoftHsmConf is called
-    // independently of configureEnvironment in future refactors.
     M.ENV['PKCS11_PROVIDER_MODULE'] = 'wasm:softhsmv3'
   }
 }
@@ -670,30 +686,18 @@ async function newModule(withHsm = false): Promise<OpenSSLModule> {
     // token on its very first look during OSSL_PROVIDER_load.
     initSoftHsmTokenIfNeeded(M)
     const initCode = ensureProviderInit(M)
-    if (initCode < 0) {
+    if (initCode === -100 || initCode === -101) {
       throw new Error(
-        `pqctoday_cms_init returned ${initCode} — WASM bundle may not have been rebuilt with the provider shim. Run \`npm run build:openssl-wasm\`.`
+        `pqctoday_cms_init not exported — WASM bundle needs rebuild: \`npm run build:openssl-wasm\``
       )
     }
-    // Overwrite OPENSSL_CONF paths with an HSM-aware config that includes
-    // [pkcs11_sect]. callMain's OPENSSL_init_ssl() may re-read from
-    // OPENSSL_CONF; if it finds MINIMAL (no pkcs11_sect) it can blot out the
-    // [pkcs11_sect] that pqctoday_cms_init loaded from /ssl/pkcs11.cnf, leaving
-    // pkcs11-provider with mctx->path=NULL → dlopen(NULL) → "Module
-    // initialization failed!" on every subsequent CLI invocation.
-    const hsmCnfBytes = new TextEncoder().encode(HSM_OPENSSL_CNF)
-    for (const path of [
-      '/ssl/openssl.cnf',
-      '/usr/local/ssl/openssl.cnf',
-      '/openssl-wasm/openssl.cnf',
-      '/openssl.cnf',
-    ]) {
-      try {
-        M.FS.writeFile(path, hsmCnfBytes)
-      } catch {
-        /* ignore — path may not exist */
-      }
-    }
+    // initCode -1..-4: cwrap-context pre-init partially failed. This is non-fatal:
+    // apps_startup() (Fix A, compiled into openssl.c) re-runs pqctoday_cms_init()
+    // inside every callMain() where M.ENV vars are fully visible to C getenv(),
+    // ensuring the pkcs11-provider is loaded before any CLI operation touches a
+    // pkcs11: URI. OPENSSL_CONF stays as MINIMAL_OPENSSL_CNF so OPENSSL_init_ssl
+    // does not try to load pkcs11 (builtin not registered yet), avoiding any
+    // partially-failed provider stub in the global lib ctx.
   }
   return M
 }
@@ -884,15 +888,262 @@ function pkcs11Uri(keyId: string): string {
   return `pkcs11:object=${keyId};pin-value=1234`
 }
 
+/** Returns the CKP_ML_DSA_* parameter-set value for an ML-DSA CmsAlg,
+ *  or -1 for non-ML-DSA algorithms. */
+function mlDsaParamSet(alg: CmsAlg): number {
+  if (alg === 'ML-DSA-44') return CKP_ML_DSA_44_VAL
+  if (alg === 'ML-DSA-65') return CKP_ML_DSA_65_VAL
+  if (alg === 'ML-DSA-87') return CKP_ML_DSA_87_VAL
+  return -1
+}
+
+/**
+ * Generate an ML-DSA key pair directly in softhsmv3 via C_GenerateKeyPair.
+ *
+ * `genpkey -out pkcs11:...` routes output through POSIX open() (not
+ * OSSL_STORE), so it writes a PEM file to the WASM MEMFS root rather than
+ * into the softhsmv3 token. This function uses the PKCS#11 C API directly,
+ * which stores the key object in the file-backed token so that pkcs11: URI
+ * references in subsequent CLI commands (req, cms) find it via C_FindObjects.
+ *
+ * Precondition: initSoftHsmTokenIfNeeded() has already run on M, so
+ * softhsmv3 is initialised and the token is present.
+ *
+ * Returns null on success, or a diagnostic string describing the exact
+ * failure (call name + CK return code) so callers can surface it in the UI.
+ */
+function generateMlDsaKeyInHsm(M: OpenSSLModule, alg: CmsAlg, keyId: string): string | null {
+  const paramSet = mlDsaParamSet(alg)
+  if (paramSet < 0) return `bad paramSet for alg=${alg}`
+
+  const {
+    _C_GetSlotList,
+    _C_OpenSession,
+    _C_Login,
+    _C_GenerateKeyPair,
+    _C_Logout,
+    _C_CloseSession,
+    _malloc,
+    _free,
+    HEAPU8,
+    setValue,
+    getValue,
+    stringToUTF8,
+  } = M as OpenSSLModule & Record<string, unknown>
+
+  const { _C_Initialize: _C_Init2 } = M as OpenSSLModule & Record<string, unknown>
+
+  const missing: string[] = []
+  if (typeof _C_GetSlotList !== 'function') missing.push('_C_GetSlotList')
+  if (typeof _C_OpenSession !== 'function') missing.push('_C_OpenSession')
+  if (typeof _C_Login !== 'function') missing.push('_C_Login')
+  if (typeof _C_GenerateKeyPair !== 'function') missing.push('_C_GenerateKeyPair')
+  if (typeof _C_Logout !== 'function') missing.push('_C_Logout')
+  if (typeof _C_CloseSession !== 'function') missing.push('_C_CloseSession')
+  if (typeof _malloc !== 'function') missing.push('_malloc')
+  if (typeof _free !== 'function') missing.push('_free')
+  if (typeof setValue !== 'function') missing.push('setValue')
+  if (typeof getValue !== 'function') missing.push('getValue')
+  if (typeof stringToUTF8 !== 'function') missing.push('stringToUTF8')
+  if (!(HEAPU8 instanceof Uint8Array)) missing.push('HEAPU8')
+  if (missing.length > 0) return `missing WASM exports: ${missing.join(', ')}`
+
+  type P11Fn = (...args: number[]) => number
+  const fn_GetSlotList = _C_GetSlotList as P11Fn
+  const fn_OpenSession = _C_OpenSession as P11Fn
+  const fn_Login = _C_Login as P11Fn
+  const fn_GenerateKeyPair = _C_GenerateKeyPair as P11Fn
+  const fn_Logout = _C_Logout as P11Fn
+  const fn_CloseSession = _C_CloseSession as P11Fn
+  const fn_malloc = _malloc as P11Fn
+  const fn_free = _free as P11Fn
+  const fn_setValue = setValue as (p: number, v: number, t: string) => void
+  const fn_getValue = getValue as (p: number, t: string) => number
+  const fn_stringToUTF8 = stringToUTF8 as (s: string, p: number, n: number) => void
+  const heap = HEAPU8 as Uint8Array
+
+  // Ensure Cryptoki is initialized — tolerate ALREADY_INITIALIZED (0x191) since
+  // initSoftHsmTokenIfNeeded() may have called C_Initialize first, or pkcs11-provider
+  // may have called it during OSSL_PROVIDER_load. A fresh rv=0 here means
+  // initSoftHsmTokenIfNeeded silently failed (config unreadable, etc.) — in that
+  // case the token is not set up and we'll get 0 slots from C_GetSlotList below.
+  if (typeof _C_Init2 === 'function') {
+    // Capture any ERROR_MSG / WARNING_MSG printed to stderr by softhsmv3
+    // during C_Initialize — these pinpoint exactly which sub-step fails.
+    const diagLogs: string[] = []
+    const origPrintErr = M.printErr
+    M.printErr = (text: string) => {
+      diagLogs.push(text)
+    }
+    const initRv = (_C_Init2 as P11Fn)(0)
+    M.printErr = origPrintErr
+    if (initRv !== 0 && initRv !== CKR_CRYPTOKI_ALREADY_INITIALIZED) {
+      const diagStr = diagLogs.length > 0 ? ` | stderr: ${diagLogs.join(' | ')}` : ''
+      return `C_Initialize rv=0x${initRv.toString(16)} SOFTHSM2_CONF=${M.ENV?.['SOFTHSM2_CONF'] ?? 'unset'} tokenDir=[${(() => {
+        try {
+          return M.FS.readdir(SOFTHSM_TOKEN_DIR).join(',')
+        } catch {
+          return 'ERR'
+        }
+      })()}]${diagStr}`
+    }
+  }
+
+  // Find the initialized token slot (tokenPresent=1).
+  const cntP = fn_malloc(4)
+  fn_setValue(cntP, 0, 'i32')
+  const slCountRv = fn_GetSlotList(1, 0, cntP)
+  if (slCountRv !== 0) {
+    fn_free(cntP)
+    return `C_GetSlotList(count) rv=0x${slCountRv.toString(16)}`
+  }
+  const cnt = fn_getValue(cntP, 'i32')
+  fn_free(cntP)
+  if (cnt === 0) return `C_GetSlotList returned 0 initialized slots`
+
+  const listP = fn_malloc(cnt * 4)
+  const c2P = fn_malloc(4)
+  fn_setValue(c2P, cnt, 'i32')
+  const slFillRv = fn_GetSlotList(1, listP, c2P)
+  if (slFillRv !== 0) {
+    fn_free(listP)
+    fn_free(c2P)
+    return `C_GetSlotList(fill) rv=0x${slFillRv.toString(16)}`
+  }
+  const tokenSlot = fn_getValue(listP, 'i32')
+  fn_free(listP)
+  fn_free(c2P)
+
+  // Open session + login as user.
+  const hSP = fn_malloc(4)
+  fn_setValue(hSP, 0, 'i32')
+  const openSessRv = fn_OpenSession(
+    tokenSlot,
+    CKF_RW_SESSION_VAL | CKF_SERIAL_SESSION_VAL,
+    0,
+    0,
+    hSP
+  )
+  if (openSessRv !== 0) {
+    fn_free(hSP)
+    return `C_OpenSession(slot=${tokenSlot}) rv=0x${openSessRv.toString(16)}`
+  }
+  const hSession = fn_getValue(hSP, 'i32')
+  fn_free(hSP)
+
+  const pin = SOFTHSM_USER_PIN
+  const pinP = fn_malloc(pin.length + 1)
+  fn_stringToUTF8(pin, pinP, pin.length + 1)
+  const loginRv = fn_Login(hSession, CKU_USER_VAL, pinP, pin.length)
+  fn_free(pinP)
+  if (loginRv !== 0) {
+    fn_CloseSession(hSession)
+    return `C_Login rv=0x${loginRv.toString(16)}`
+  }
+
+  // Shared value buffers.
+  // CK_BBOOL (1 byte) for boolean attributes.
+  const boolTrueP = fn_malloc(1)
+  heap[boolTrueP] = 1 // CK_TRUE
+  // CK_ULONG (4 bytes) for class, key-type, parameter-set.
+  const pubClassP = fn_malloc(4)
+  fn_setValue(pubClassP, CKO_PUBLIC_KEY_VAL, 'i32')
+  const privClassP = fn_malloc(4)
+  fn_setValue(privClassP, CKO_PRIVATE_KEY_VAL, 'i32')
+  const keyTypeP = fn_malloc(4)
+  fn_setValue(keyTypeP, CKK_ML_DSA_VAL, 'i32')
+  const paramSetP = fn_malloc(4)
+  fn_setValue(paramSetP, paramSet, 'i32')
+  // Label + ID byte strings (PKCS#11 does not use null terminators for byte strings).
+  const labelBytes = new TextEncoder().encode(keyId)
+  const labelP = fn_malloc(labelBytes.length)
+  heap.set(labelBytes, labelP)
+  const idBytes = new TextEncoder().encode(keyId)
+  const idP = fn_malloc(idBytes.length)
+  heap.set(idBytes, idP)
+
+  // CK_MECHANISM (12 bytes: type | pParameter | ulParameterLen).
+  const mechP = fn_malloc(12)
+  fn_setValue(mechP, CKM_ML_DSA_KEY_PAIR_GEN_VAL, 'i32')
+  fn_setValue(mechP + 4, 0, 'i32') // pParameter = NULL
+  fn_setValue(mechP + 8, 0, 'i32') // ulParameterLen = 0
+
+  // CK_ATTRIBUTE helper: write one entry at base[idx] (12 bytes each).
+  const writeAttr = (base: number, idx: number, type: number, valPtr: number, valLen: number) => {
+    const off = base + idx * 12
+    fn_setValue(off, type, 'i32')
+    fn_setValue(off + 4, valPtr, 'i32')
+    fn_setValue(off + 8, valLen, 'i32')
+  }
+
+  // Public key template: CLASS, TOKEN, LABEL, ID, KEY_TYPE, PARAMETER_SET, VERIFY
+  const pubAttrCount = 7
+  const pubTplP = fn_malloc(pubAttrCount * 12)
+  writeAttr(pubTplP, 0, CKA_CLASS_ATTR, pubClassP, 4)
+  writeAttr(pubTplP, 1, CKA_TOKEN_ATTR, boolTrueP, 1)
+  writeAttr(pubTplP, 2, CKA_LABEL_ATTR, labelP, labelBytes.length)
+  writeAttr(pubTplP, 3, CKA_ID_ATTR, idP, idBytes.length)
+  writeAttr(pubTplP, 4, CKA_KEY_TYPE_ATTR, keyTypeP, 4)
+  writeAttr(pubTplP, 5, CKA_PARAMETER_SET_ATTR, paramSetP, 4)
+  writeAttr(pubTplP, 6, CKA_VERIFY_ATTR, boolTrueP, 1)
+
+  // Private key template: CLASS, TOKEN, LABEL, ID, KEY_TYPE, PARAMETER_SET, SENSITIVE, SIGN
+  const privAttrCount = 8
+  const privTplP = fn_malloc(privAttrCount * 12)
+  writeAttr(privTplP, 0, CKA_CLASS_ATTR, privClassP, 4)
+  writeAttr(privTplP, 1, CKA_TOKEN_ATTR, boolTrueP, 1)
+  writeAttr(privTplP, 2, CKA_LABEL_ATTR, labelP, labelBytes.length)
+  writeAttr(privTplP, 3, CKA_ID_ATTR, idP, idBytes.length)
+  writeAttr(privTplP, 4, CKA_KEY_TYPE_ATTR, keyTypeP, 4)
+  writeAttr(privTplP, 5, CKA_PARAMETER_SET_ATTR, paramSetP, 4)
+  writeAttr(privTplP, 6, CKA_SENSITIVE_ATTR, boolTrueP, 1)
+  writeAttr(privTplP, 7, CKA_SIGN_ATTR, boolTrueP, 1)
+
+  // Output handles.
+  const hPubP = fn_malloc(4)
+  const hPrivP = fn_malloc(4)
+  fn_setValue(hPubP, 0, 'i32')
+  fn_setValue(hPrivP, 0, 'i32')
+
+  const genRv = fn_GenerateKeyPair(
+    hSession,
+    mechP,
+    pubTplP,
+    pubAttrCount,
+    privTplP,
+    privAttrCount,
+    hPubP,
+    hPrivP
+  )
+  fn_free(hPubP)
+  fn_free(hPrivP)
+  fn_free(pubTplP)
+  fn_free(privTplP)
+  fn_free(mechP)
+  fn_free(boolTrueP)
+  fn_free(pubClassP)
+  fn_free(privClassP)
+  fn_free(keyTypeP)
+  fn_free(paramSetP)
+  fn_free(labelP)
+  fn_free(idP)
+
+  fn_Logout(hSession)
+  fn_CloseSession(hSession)
+
+  if (genRv !== 0) return `C_GenerateKeyPair(${alg}, slot=${tokenSlot}) rv=0x${genRv.toString(16)}`
+  return null
+}
+
 // pqctoday_cms_init() registers pkcs11-provider as a builtin in the GLOBAL
 // OpenSSL lib ctx (NULL). CLI `-provider pkcs11` flags create a SEPARATE
 // app_libctx that does NOT inherit that builtin; OpenSSL falls back to
 // dlopen("/usr/local/lib/ossl-modules/pkcs11.so") → NULL (file absent in
 // WASM) → "Module initialization failed!".  Without the flags the CLI uses
 // the global lib ctx where the provider is already loaded, pkcs11: URI store
-// ops work, and the HSM path is fully functional.  HSM_OPENSSL_CNF written
-// by newModule() guarantees [pkcs11_sect] is in OPENSSL_CONF before callMain
-// so the provider auto-activates even if the config is re-read on init.
+// ops work, and the HSM path is fully functional.  apps_startup() (Fix A)
+// calls pqctoday_cms_init() inside every callMain() so the provider is always
+// loaded before any CLI command accesses a pkcs11: URI.
 const HSM_PROVIDER_FLAGS: string[] = []
 
 async function cmsGenKey(
@@ -909,30 +1160,40 @@ async function cmsGenKey(
   safeUnlink(M, keyPath)
 
   if (useHsm) {
-    // genpkey into softhsmv3 via pkcs11-provider. The key destination is a
-    // pkcs11: URI passed as `-out` — pkcs11-provider registers an OSSL_STORE
-    // writer for the pkcs11: scheme so new key material is stored in the HSM
-    // (softhsmv3 token) rather than serialized to a PEM file. No file is
-    // written to the WASM FS at all. See pkcs11-provider/HOWTO.md §"Key
-    // generation". Downstream calls (cmsSign, cmsMkCert, cmsDecrypt) already
-    // reference the key via pkcs11Uri(keyId) when useHsm=true, so no VFS
-    // entry is needed here.
-    const argv = ['genpkey', ...HSM_PROVIDER_FLAGS, '-algorithm', alg, '-out', pkcs11Uri(keyId)]
-    const { rc, stderr } = runOpenssl(M, argv)
-    if (rc !== 0) {
-      post({
-        type: 'ERROR',
-        error: `hsm genpkey ${alg} failed (rc=${rc}): ${stderr.slice(-300)}`,
-        requestId,
-      })
-      return
+    if (mlDsaParamSet(alg) >= 0) {
+      // ML-DSA: generate key pair directly in softhsmv3 via C_GenerateKeyPair.
+      // `genpkey -out pkcs11:...` routes output through POSIX open() (BIO) which
+      // writes a PEM file to the WASM MEMFS root — it does NOT use OSSL_STORE and
+      // the key never reaches softhsmv3. Direct PKCS#11 key generation stores the
+      // key object in the file-backed token so pkcs11: URI references in req and
+      // cms commands find it via C_FindObjects.
+      const errDetail = generateMlDsaKeyInHsm(M, alg, keyId)
+      if (errDetail !== null) {
+        post({
+          type: 'ERROR',
+          error: `HSM keygen (${alg}): ${errDetail}`,
+          requestId,
+        })
+        return
+      }
+    } else {
+      // Non-ML-DSA HSM keygen (LAMPS composite OIDs). pkcs11-provider's
+      // composite.c handles these through a different mechanism type — genpkey
+      // may not route to softhsmv3 correctly; this path is a best-effort attempt.
+      const argv = ['genpkey', '-algorithm', alg, '-out', pkcs11Uri(keyId)]
+      const { rc, stderr } = runOpenssl(M, argv)
+      if (rc !== 0) {
+        post({
+          type: 'ERROR',
+          error: `hsm genpkey ${alg} failed (rc=${rc}): ${stderr.slice(-300)}`,
+          requestId,
+        })
+        return
+      }
     }
-    // Key lives in softhsmv3's file-backed token. Persist ALL token object
-    // files to vfs so the next module instance finds the key when it restores
-    // from vfs during rehydration. Without this persist, the key is lost when
-    // this module's WASM heap is GC'd.
+    // Persist ALL softhsm token object files so the next module instance
+    // restores the key during vfs rehydration.
     persistSoftHsmTokenFiles(M)
-    // Return a human-readable placeholder (no PEM file was written).
     const keyPem = `# HSM-resident key\n# URI: ${pkcs11Uri(keyId)}\n# Algorithm: ${alg}\n`
     post({ type: 'CMS_GENKEY_RESULT', keyPem, pubPem: '', requestId })
     return
@@ -1178,7 +1439,7 @@ async function cmsSign(
   if (rc !== 0 || !fileExists(M, outPath)) {
     post({
       type: 'ERROR',
-      error: `cms -sign failed (rc=${rc}): ${stderr.slice(-400)}`,
+      error: `cms -sign failed (rc=${rc}): ${stderr}`,
       requestId,
     })
     return

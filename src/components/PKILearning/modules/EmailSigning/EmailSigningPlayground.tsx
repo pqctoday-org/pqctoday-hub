@@ -6,9 +6,7 @@ import { Button } from '@/components/ui/button'
 import { SMIMECertViewer } from './workshop/SMIMECertViewer'
 import { CMSSigningDemo } from './workshop/CMSSigningDemo'
 import { CMSEncryptionDemo } from './workshop/CMSEncryptionDemo'
-import { MLDSASignDemo } from './workshop/MLDSASignDemo'
-import { MLKEMEncryptDemo } from './workshop/MLKEMEncryptDemo'
-import { DualSignDemo } from './workshop/DualSignDemo'
+import { LiveHSMProvider } from './workshop/LiveHSMProvider'
 
 const SECTIONS = [
   {
@@ -27,22 +25,10 @@ const SECTIONS = [
     description: 'CMS AuthEnvelopedData with KEMRecipientInfo key transport',
   },
   {
-    id: 'mldsa-sign',
-    title: 'Step 4a — ML-DSA Live Sign + Verify',
+    id: 'live-hsm',
+    title: 'Step 4 — Live HSM Demos (ML-DSA · ML-KEM · Dual-Sign)',
     description:
-      'Real OpenSSL 3.6 WASM CMS SignedData with ML-DSA-44/65/87 and SLH-DSA; optional softhsmv3 PKCS#11 HSM routing',
-  },
-  {
-    id: 'mlkem-encrypt',
-    title: 'Step 4b — ML-KEM Live Encrypt + Decrypt',
-    description:
-      'CMS AuthEnvelopedData with ML-KEM-768 KEMRecipientInfo; CA-issued cert flow for KEM-only keys',
-  },
-  {
-    id: 'dual-sign',
-    title: 'Step 4c — Dual Signature (PQ + Classical)',
-    description:
-      'Multi-SignerInfo CMS blob carrying both a PQC and a classical signature for migration parity',
+      'Real OpenSSL 3.6 WASM sign+verify and encrypt+decrypt with optional softhsmv3 PKCS#11 HSM routing. Provider init banner gates the HSM toggle.',
   },
 ]
 
@@ -51,9 +37,7 @@ export const EmailSigningPlayground: React.FC = () => {
     'smime-certs': false,
     'cms-signing': false,
     'cms-encryption': false,
-    'mldsa-sign': true,
-    'mlkem-encrypt': true,
-    'dual-sign': false,
+    'live-hsm': true,
   })
 
   const toggle = (id: string) => setExpanded((prev) => ({ ...prev, [id]: !prev[id] }))
@@ -91,9 +75,7 @@ export const EmailSigningPlayground: React.FC = () => {
                 {id === 'smime-certs' && <SMIMECertViewer />}
                 {id === 'cms-signing' && <CMSSigningDemo />}
                 {id === 'cms-encryption' && <CMSEncryptionDemo />}
-                {id === 'mldsa-sign' && <MLDSASignDemo />}
-                {id === 'mlkem-encrypt' && <MLKEMEncryptDemo />}
-                {id === 'dual-sign' && <DualSignDemo />}
+                {id === 'live-hsm' && <LiveHSMProvider />}
               </div>
             )}
           </div>
