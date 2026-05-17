@@ -1,0 +1,68 @@
+name: Update Protocol Matrix
+
+on:
+  schedule:
+    - cron: '0 9 * * 1' # Mondays at 09:00 UTC
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  refresh-stages:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Node Dependencies
+        run: npm ci
+
+      - name: Run Deterministic Stage Refresh
+        # No LLM in CI (per project policy: no API keys / Ollama in CI).
+        # Only Phase 1 of the enrichment script runs here. Exit code 1 just
+        # means "drift detected" — that is the trigger for the PR job below.
+        run: |
+          python3 scripts/enrich-protocol-matrix.py || true
+
+      - name: Audit Matrix Hygiene
+        run: npm run audit:matrix-refs
+
+      - name: Apply Stage Drift (in-place edit)
+        run: npx tsx scripts/apply-protocol-matrix-updates.ts --apply --allow-dirty || true
+
+      - name: Open PR if changed
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: 'chore(matrix): refresh protocol-matrix stages from IETF datatracker'
+          title: 'chore(matrix): weekly protocol-matrix stage refresh'
+          body: |
+            Automated weekly refresh of the PQC Protocol Support Matrix
+            (`src/data/pqcProtocolMatrix.ts`).
+
+            - Source: IETF datatracker (Phase 1, deterministic — no LLM)
+            - Generated report: `reports/protocol-matrix-changes.md`
+            - Hygiene gate: `npm run audit:matrix-refs` passed before this PR.
+
+            Please review the diff against the report before merging. The
+            apply script is idempotent — re-running it without changes
+            is a no-op.
+          branch: chore/protocol-matrix-refresh
+          delete-branch: true
+          add-paths: |
+            src/data/pqcProtocolMatrix.ts
+            reports/protocol-matrix-changes.md
+            reports/protocol-matrix-updates.json
