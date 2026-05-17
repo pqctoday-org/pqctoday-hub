@@ -54,6 +54,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Audit protocol matrix refs
+        run: npm run audit:matrix-refs
+
       - name: Install Playwright Browsers
         run: npx playwright install chromium --with-deps
 

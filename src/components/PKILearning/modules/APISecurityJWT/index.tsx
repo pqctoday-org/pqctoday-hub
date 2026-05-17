@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, Search, PenLine, Layers, Lock, BarChart3 } from 'lucide-react'
+import { Trash2, Search, PenLine, Layers, Lock, BarChart3, Activity } from 'lucide-react'
 import { APISecurityIntroduction } from './components/APISecurityIntroduction'
 import { APISecurityExercises, type WorkshopConfig } from './components/APISecurityExercises'
 import { JWTInspector } from './workshop/JWTInspector'
@@ -9,6 +9,7 @@ import { PQCJWTSigning } from './workshop/PQCJWTSigning'
 import { HybridJWT } from './workshop/HybridJWT'
 import { JWEEncryption } from './workshop/JWEEncryption'
 import { TokenSizeAnalyzer } from './workshop/TokenSizeAnalyzer'
+import { JOSEProtocolMatrixAudit } from './workshop/JOSEProtocolMatrixAudit'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -51,6 +52,12 @@ const PARTS = [
     title: 'Step 5: Token Size Analyzer',
     description: 'Compare JWT sizes across signing algorithms interactively.',
     icon: BarChart3,
+  },
+  {
+    id: 'matrix-audit',
+    title: 'Step 6: Matrix Audit',
+    description: 'Audit the JOSE row of the PQC Protocol Matrix and propose a patch.',
+    icon: Activity,
   },
 ]
 
@@ -217,6 +224,7 @@ export const APISecurityJWTModule: React.FC = () => {
               {currentPart === 2 && <HybridJWT key={`hybrid-jwt-${configKey}`} />}
               {currentPart === 3 && <JWEEncryption key={`jwe-encryption-${configKey}`} />}
               {currentPart === 4 && <TokenSizeAnalyzer key={`size-analyzer-${configKey}`} />}
+              {currentPart === 5 && <JOSEProtocolMatrixAudit key={`matrix-audit-${configKey}`} />}
             </div>
 
             {/* Part Navigation */}

@@ -41,6 +41,38 @@ The fully self-contained in-browser CMP exchange is, to our knowledge, the first
 
 Note: `public/wasm/openssl.wasm` rebuilt from the modified `build-wasm.sh` link line (which now includes `cmp_simulation.o` + `apps/openssl-bin-cmp.o` + `apps/lib/openssl-bin-cmp_mock_srv.o` and exports `_execute_cmp_simulation` + `_generate_mock_ca_root`). The matrix `playgrounds[]` entry on the EST/CMP row + the `HybridJWT.tsx` `size="tile"` layout fix from earlier in the session land with the CSWP-39 audit commit (mixed-scope file).
 
+### Learn — PKI Enrollment Protocols E2E crypto validation suite (2026-05-17)
+
+[e2e/pki-enrollment-protocols.spec.ts](e2e/pki-enrollment-protocols.spec.ts) — 4 Playwright tests, all cryptographic assertions, zero layout/smoke checks. 90 s timeout to absorb cold WASM load + ML-DSA-65 CA provisioning on slow CI runners. Each test asserts a concrete cryptographic property:
+
+| Test                      | Assertion                                                                                                                            |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Step 1 — KeyGen           | `-----BEGIN/END PRIVATE KEY-----` guards visible in the PEM details panel (real `genpkey` output)                                    |
+| Step 2 — CMP IR           | `openssl x509 -text` output contains `ML-DSA` in the Signature Algorithm line; transcript reports ≥ 2 events                         |
+| Step 3 — EST simpleenroll | `-----BEGIN/END PKCS7-----` guards present (real `crl2pkcs7` SignedData envelope, RFC 7030 §4.2.3)                                   |
+| Step 4 — ML-KEM POP       | Both 64-char lowercase hex secrets match exactly (`encap === decap`), verifying the RFC 9810 encrCert proof-of-possession round-trip |
+
+XPath `following-sibling::pre[1]` used to extract the ML-KEM shared-secret `<pre>` from the exact label element, avoiding false-positive matches on the cert-decode `<pre>` (which uses colon-separated hex). All 4 pass locally in 7.8 s on Chromium.
+
+### Fix — Email Signing workshop HSM mode: pkcs11 module initialization (2026-05-17)
+
+After the PKI Enrollment Protocols WASM rebuild (c5a485d3), the Email Signing workshop's HSM path failed on every `req -x509 -key pkcs11:...` invocation with `p11prov_ctx_status: General Error: Module initialization failed!`. Root cause: `configureEnvironment()` writes MINIMAL_OPENSSL_CNF (no `[pkcs11_sect]`) to all four `openssl.cnf` paths; `pqctoday_cms_init()` then loads `/ssl/pkcs11.cnf` (which has `[pkcs11_sect]`) into the default libctx. But when `callMain(['req', ...])` runs, OpenSSL's `OPENSSL_init_ssl()` re-reads from `OPENSSL_CONF` — the MINIMAL file — and blots out the `[pkcs11_sect]` that was loaded from `pkcs11.cnf`, leaving pkcs11-provider with `mctx->path = NULL`. Our `pkcs11_static_shim.c` returns `NULL` from `dlopen(NULL)` → `CKR_GENERAL_ERROR` → "Module initialization failed!".
+
+Fix in [cms.worker.ts](src/components/PKILearning/modules/EmailSigning/worker/cms.worker.ts): after `ensureProviderInit()` succeeds, overwrite all four `openssl.cnf` paths with `HSM_OPENSSL_CNF` — a config identical to `PKCS11_CMS_CONF` in `cms_provider_init.c` that includes `[pkcs11_sect]` with `module = wasm:softhsmv3`. Also dropped the unused `tokenExists` variable from `initSoftHsmTokenIfNeeded` (the early-return on token-files-in-vfs was intentionally removed so softhsmv3 is always C_Initialize'd before pkcs11-provider's lazy init fires, but the declaration was left behind — ESLint error).
+
+Also fixed: `MODULE_STEP_COUNTS` was missing the `'pki-enrollment-protocols': 6` entry, producing a console error on every module mount.
+
+### Algorithms — PQC Protocol Matrix: SSH PQ row, stage granularity, CI audit gate (2026-05-17)
+
+- **SSH PQ row.** New `ssh-pq` protocol row in [pqcProtocolMatrix.ts](src/data/pqcProtocolMatrix.ts) tracking the four active IETF SSHM drafts: `draft-harrison-sshm-mlkem` (ML-KEM-768/1024 KEX, adopted WG document), `draft-sfluhrer-ssh-mldsa` (ML-DSA-65/87 host-key algorithm, individual draft), `draft-josefsson-ssh-sphincs` (SLH-DSA-SHA2-128s, individual draft), and `draft-miller-sshm-mldsa65-ed25519-composite` (composite ML-DSA-65 + Ed25519, experimental). Includes `deploymentNotes`, `liveDeployments` (OpenSSH, Cisco), and `knownGaps`.
+- **Stage granularity in the matrix UI.** [PQCProtocolMatrix.tsx](src/components/Algorithms/PQCProtocolMatrix.tsx) — `DimensionBadge` now renders a two-line badge when a `stage` is set: the coarse `value` label on top, the fine-grained `stage` short-form below (e.g. `draft / wg-doc`). `DimensionRefChip` renders per-cell RFC/draft chips as clickable pills with a tone derived from stage level. `shortRefLabel()` exported for use in `ProtocolDetailModal.tsx`. `PlaygroundCell` renders a compact tools column. `DocList` truncates after 3 entries with a `+N more` expander.
+- **Stage ↔ value consistency audit.** [scripts/audit-matrix-refs.ts](scripts/audit-matrix-refs.ts) — new `STAGE_VALUE_CONSISTENCY` table (exported for unit tests) and `auditStageValueConsistency()` validate that every dimension with a `stage` set carries a compatible `value` (e.g. `stage='rfc-published'` requires `value='rfc'`). `auditRefIdShape()` validates every ref ID against a tightened regex covering RFC, IETF draft, TCG, 3GPP, UEFI, and IEEE forms. `auditProseHygiene()` extended to check `stageNote` text fields in addition to `note`. All three run as a single `npm run audit:matrix-refs` pass.
+- **CI gate.** [.github/workflows/ci.yml](.github/workflows/ci.yml) — `audit:matrix-refs` step added between Lint and Build so any stage/value drift or prose-hygiene regression breaks the pipeline before the bundle is produced.
+
+### Learn — API Security JWT: SLH-DSA backend, composite JWS, JWE KAT wiring (2026-05-17)
+
+[jwtUtils.ts](src/components/PKILearning/modules/APISecurityJWT/jwtUtils.ts) — expanded the `signJWS` / `verifyJWS` / `generateJwsKeyPair` adapter to cover `SLH-DSA-SHA2-128s/192s/256s` via `@noble/post-quantum/slh-dsa` (noble backend) and `hsm_generateSLHDSAKeyPair` / `hsm_signBytesSLHDSA` / `hsm_importSLHDSAPublicKey` (softhsmv3 backend). Cross-backend verification invariant extended: a token signed via noble MUST verify under softhsmv3 and vice versa for all three SLH-DSA parameter sets. Workshop files (`HybridJWT.tsx`, `JWEEncryption.tsx`, `JWTInspector.tsx`, `PQCJWTSigning.tsx`, `TokenSizeAnalyzer.tsx`) updated to surface the new algorithms in their dropdowns and size-comparison tables.
+
 ### Compliance — consolidated CSWP-39 maturity views, dropped duplicate `/agility` route (2026-05-16)
 
 The `/agility` route was a thinner duplicate of the `/compliance` → **CSWP 39** tab. Both rendered the same `MaturityEvidenceGrid` over the same `maturityRequirements` data; `/agility` added only a small 3-cell KPI bar (coverage %, mean confidence, source records) and was never wired into the main-nav `navItems` array — only reachable by typing the URL.

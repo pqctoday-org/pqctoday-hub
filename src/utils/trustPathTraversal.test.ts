@@ -16,6 +16,7 @@ function makeFramework(id: string, label: string): ComplianceFramework {
     industries: [],
     countries: ['United States'],
     requiresPQC: true,
+    pqcRequirement: 'yes',
     deadline: 'Ongoing',
     deadlinePhase: 'ongoing',
     notes: '',

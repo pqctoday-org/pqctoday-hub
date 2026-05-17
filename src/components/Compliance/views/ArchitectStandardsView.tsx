@@ -22,6 +22,7 @@ import { ProfileSummary } from '../../applicability/parts/ProfileSummary'
 import { LibraryDocItem } from '../../applicability/parts/items'
 import { MaturityEvidenceGrid } from '../MaturityEvidenceGrid'
 import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button-variants'
 import { maturityRequirements } from '../../../data/maturityGovernanceData'
 import {
   regionForCountry,
@@ -125,11 +126,12 @@ export function ArchitectStandardsView({
               inventory are recorded in your assessment profile.
             </p>
           </div>
-          <Button asChild variant="gradient" size="sm">
-            <Link to="/assess" className="flex items-center gap-1.5">
-              Start assessment <ArrowRight size={14} />
-            </Link>
-          </Button>
+          <Link
+            to="/assess"
+            className={`${buttonVariants({ variant: 'gradient', size: 'sm' })} flex items-center gap-1.5`}
+          >
+            Start assessment <ArrowRight size={14} />
+          </Link>
         </div>
       </div>
     )

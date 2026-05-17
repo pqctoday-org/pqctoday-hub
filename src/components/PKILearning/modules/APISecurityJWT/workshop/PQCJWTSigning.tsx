@@ -1,11 +1,22 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useCallback, useMemo } from 'react'
-import { PenLine, Key, CheckCircle, Copy, Check } from 'lucide-react'
+import React, { useState, useCallback, useMemo, useEffect } from 'react'
+import { PenLine, Key, CheckCircle, XCircle, Copy, Check, ShieldCheck } from 'lucide-react'
 import { SAMPLE_JWT_PAYLOAD, JOSE_SIGNING_ALGORITHMS } from '../constants'
-import { createJWTHeader, createJWTPayload, simulateBase64url, simulateHexBytes } from '../jwtUtils'
+import {
+  bytesToHex,
+  generateJwsKeyPair,
+  isSoftHsmSupported,
+  signJWS,
+  verifyJWS,
+  type JwsBackend,
+  type JwsKeyPair,
+  type SignedJwsResult,
+} from '../jwtUtils'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 import { Button } from '@/components/ui/button'
+import { useHSM } from '@/hooks/useHSM'
+import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 
 const JWT_KAT_SPECS: KatTestSpec[] = [
   {
@@ -40,95 +51,53 @@ const JWT_KAT_SPECS: KatTestSpec[] = [
   },
 ]
 
-type SigningAlgorithm = 'ES256' | 'ML-DSA-44' | 'ML-DSA-65' | 'ML-DSA-87'
+type SigningAlgorithm =
+  | 'ML-DSA-44'
+  | 'ML-DSA-65'
+  | 'ML-DSA-87'
+  | 'SLH-DSA-SHA2-128s'
+  | 'SLH-DSA-SHA2-192s'
+  | 'SLH-DSA-SHA2-256s'
+  | 'ML-DSA-44-ES256'
+  | 'ML-DSA-65-ES256'
+  | 'ML-DSA-87-ES384'
+  | 'ML-DSA-44-Ed25519'
+  | 'ML-DSA-65-Ed25519'
+  | 'ML-DSA-87-Ed448'
 
-const SIGNABLE_ALGORITHMS = JOSE_SIGNING_ALGORITHMS.filter(
-  (a): a is (typeof JOSE_SIGNING_ALGORITHMS)[number] & { sigBytes: number } =>
-    ['ES256', 'ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87'].includes(a.jose) && a.sigBytes !== undefined
-)
+const SIGNABLE_ALGS: { jose: SigningAlgorithm; nistLevel: number; sigBytes: number }[] = [
+  { jose: 'ML-DSA-44', nistLevel: 2, sigBytes: 2420 },
+  { jose: 'ML-DSA-65', nistLevel: 3, sigBytes: 3309 },
+  { jose: 'ML-DSA-87', nistLevel: 5, sigBytes: 4627 },
+  { jose: 'SLH-DSA-SHA2-128s', nistLevel: 1, sigBytes: 7856 },
+  { jose: 'SLH-DSA-SHA2-192s', nistLevel: 3, sigBytes: 16224 },
+  { jose: 'SLH-DSA-SHA2-256s', nistLevel: 5, sigBytes: 29792 },
+  { jose: 'ML-DSA-44-ES256', nistLevel: 2, sigBytes: 2484 },
+  { jose: 'ML-DSA-65-ES256', nistLevel: 3, sigBytes: 3373 },
+  { jose: 'ML-DSA-87-ES384', nistLevel: 5, sigBytes: 4723 },
+  { jose: 'ML-DSA-44-Ed25519', nistLevel: 2, sigBytes: 2484 },
+  { jose: 'ML-DSA-65-Ed25519', nistLevel: 3, sigBytes: 3373 },
+  { jose: 'ML-DSA-87-Ed448', nistLevel: 5, sigBytes: 4741 },
+]
 
-interface KeypairState {
-  algorithm: string
-  publicKeyHex: string
-  privateKeyHex: string
-  generated: boolean
-}
-
-interface SignedJWT {
-  token: string
-  headerB64: string
-  payloadB64: string
-  signatureB64: string
-  verified: boolean
-}
+const ES256_SIG_BYTES = JOSE_SIGNING_ALGORITHMS.find((a) => a.jose === 'ES256')?.sigBytes ?? 64
 
 export const PQCJWTSigning: React.FC = () => {
   const [selectedAlg, setSelectedAlg] = useState<SigningAlgorithm>('ML-DSA-65')
+  const [backend, setBackend] = useState<JwsBackend>('noble')
   const [payloadJson, setPayloadJson] = useState(JSON.stringify(SAMPLE_JWT_PAYLOAD, null, 2))
-  const [keypair, setKeypair] = useState<KeypairState | null>(null)
-  const [signedJwt, setSignedJwt] = useState<SignedJWT | null>(null)
+  const [keypair, setKeypair] = useState<JwsKeyPair | null>(null)
+  const [signedJwt, setSignedJwt] = useState<SignedJwsResult | null>(null)
+  const [verifyResult, setVerifyResult] = useState<{ valid: boolean; backend: JwsBackend } | null>(
+    null
+  )
   const [isGenerating, setIsGenerating] = useState(false)
   const [isSigning, setIsSigning] = useState(false)
+  const [isVerifying, setIsVerifying] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
 
-  const algInfo = useMemo(
-    () => SIGNABLE_ALGORITHMS.find((a) => a.jose === selectedAlg),
-    [selectedAlg]
-  )
-
-  const handleGenerateKeypair = useCallback(() => {
-    if (!algInfo) return
-    setIsGenerating(true)
-    setSignedJwt(null)
-
-    // Simulate key generation with a brief delay
-    setTimeout(() => {
-      setKeypair({
-        algorithm: algInfo.jose,
-        publicKeyHex: simulateHexBytes(Math.min(algInfo.keyBytes, 64)),
-        privateKeyHex: simulateHexBytes(64),
-        generated: true,
-      })
-      setIsGenerating(false)
-    }, 500)
-  }, [algInfo])
-
-  const handleSign = useCallback(() => {
-    if (!keypair || !algInfo) return
-
-    try {
-      const claims = JSON.parse(payloadJson) as Record<string, unknown>
-      setIsSigning(true)
-
-      setTimeout(() => {
-        const headerB64 = createJWTHeader(algInfo.jose)
-        const payloadB64 = createJWTPayload(claims)
-        const signatureB64 = simulateBase64url(algInfo.sigBytes)
-
-        setSignedJwt({
-          token: `${headerB64}.${payloadB64}.${signatureB64}`,
-          headerB64,
-          payloadB64,
-          signatureB64,
-          verified: true,
-        })
-        setIsSigning(false)
-      }, 600)
-    } catch {
-      // Invalid JSON
-    }
-  }, [keypair, algInfo, payloadJson])
-
-  const handleCopy = async () => {
-    if (!signedJwt) return
-    try {
-      await navigator.clipboard.writeText(signedJwt.token)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {
-      // Clipboard API may not be available
-    }
-  }
+  const hsm = useHSM('rust')
 
   const isPayloadValid = useMemo(() => {
     try {
@@ -139,56 +108,217 @@ export const PQCJWTSigning: React.FC = () => {
     }
   }, [payloadJson])
 
-  // Compute comparison data for ES256 vs selected algorithm
-  const es256Info = SIGNABLE_ALGORITHMS.find((a) => a.jose === 'ES256')
+  const reset = useCallback(() => {
+    setKeypair(null)
+    setSignedJwt(null)
+    setVerifyResult(null)
+    setError(null)
+  }, [])
+
+  // If user toggles to a backend that doesn't support the alg, fall back to noble.
+  useEffect(() => {
+    if (backend === 'softhsmv3' && !isSoftHsmSupported(selectedAlg)) {
+      setBackend('noble')
+    }
+  }, [backend, selectedAlg])
+
+  const hsmCtx = useMemo(() => {
+    if (backend !== 'softhsmv3') return undefined
+    if (!hsm.isReady || !hsm.moduleRef.current) return undefined
+    return { M: hsm.moduleRef.current, session: hsm.hSessionRef.current }
+  }, [backend, hsm.isReady, hsm.moduleRef, hsm.hSessionRef])
+
+  const canUseHsm = backend === 'softhsmv3' && hsm.isReady && hsmCtx !== undefined
+
+  const handleGenerateKeypair = useCallback(async () => {
+    setIsGenerating(true)
+    setError(null)
+    setSignedJwt(null)
+    setVerifyResult(null)
+    try {
+      const kp = await generateJwsKeyPair({
+        alg: selectedAlg,
+        backend,
+        hsm: hsmCtx,
+      })
+      setKeypair(kp)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setIsGenerating(false)
+    }
+  }, [selectedAlg, backend, hsmCtx])
+
+  const handleSign = useCallback(async () => {
+    if (!keypair) return
+    setIsSigning(true)
+    setError(null)
+    setVerifyResult(null)
+    try {
+      const claims = JSON.parse(payloadJson) as Record<string, unknown>
+      const result = await signJWS({
+        alg: selectedAlg,
+        payload: claims,
+        keyPair: keypair,
+        backend,
+        hsm: hsmCtx,
+      })
+      setSignedJwt(result)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setIsSigning(false)
+    }
+  }, [keypair, payloadJson, selectedAlg, backend, hsmCtx])
+
+  const handleVerify = useCallback(
+    async (verifyBackend: JwsBackend) => {
+      if (!signedJwt || !keypair) return
+      setIsVerifying(true)
+      setError(null)
+      try {
+        const result = await verifyJWS({
+          token: signedJwt.token,
+          publicKey: keypair.publicKey,
+          backend: verifyBackend,
+          hsm: hsmCtx,
+        })
+        setVerifyResult({ valid: result.valid, backend: verifyBackend })
+      } catch (e) {
+        setError(e instanceof Error ? e.message : String(e))
+        setVerifyResult({ valid: false, backend: verifyBackend })
+      } finally {
+        setIsVerifying(false)
+      }
+    },
+    [signedJwt, keypair, hsmCtx]
+  )
+
+  const handleCopy = useCallback(async () => {
+    if (!signedJwt) return
+    try {
+      await navigator.clipboard.writeText(signedJwt.token)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // Clipboard API may not be available
+    }
+  }, [signedJwt])
+
+  const tamper = useCallback(() => {
+    if (!signedJwt) return
+    // Flip a bit in the signature segment so verify must fail.
+    const parts = signedJwt.token.split('.')
+    const sig = parts[2]
+    const flipped = sig.startsWith('A') ? 'B' + sig.slice(1) : 'A' + sig.slice(1)
+    setSignedJwt({
+      ...signedJwt,
+      signatureB64: flipped,
+      token: `${parts[0]}.${parts[1]}.${flipped}`,
+    })
+    setVerifyResult(null)
+  }, [signedJwt])
 
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-bold text-foreground mb-2">Simulated JWT Signing</h3>
+        <h3 className="text-lg font-bold text-foreground mb-2">Real PQC JWT Signing</h3>
         <p className="text-sm text-muted-foreground">
-          Select an algorithm, generate a keypair, edit the payload, and sign. The crypto is
-          simulated with realistic output sizes to demonstrate the size differences between
-          classical and PQC algorithms.
+          Generate a real ML-DSA keypair, sign a JWT over the canonical signing input{' '}
+          <code className="text-foreground/80">b64u(header).b64u(payload)</code>, and verify the
+          compact JWS — all in your browser. Algorithm codes follow{' '}
+          <a
+            href="https://datatracker.ietf.org/doc/draft-ietf-cose-dilithium/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            draft-ietf-cose-dilithium-11
+          </a>{' '}
+          (JOSE inherits from COSE).
         </p>
       </div>
 
       {/* Algorithm Selection */}
       <div className="flex flex-wrap gap-2">
-        {SIGNABLE_ALGORITHMS.map((alg) => (
+        {SIGNABLE_ALGS.map((alg) => (
           <Button
             variant="ghost"
             key={alg.jose}
             onClick={() => {
-              setSelectedAlg(alg.jose as SigningAlgorithm)
-              setKeypair(null)
-              setSignedJwt(null)
+              setSelectedAlg(alg.jose)
+              reset()
             }}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               selectedAlg === alg.jose
-                ? alg.broken
-                  ? 'bg-warning/20 text-warning border border-warning/50'
-                  : 'bg-success/20 text-success border border-success/50'
+                ? 'bg-success/20 text-success border border-success/50'
                 : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'
             }`}
           >
             {alg.jose}
-            {alg.nistLevel && <span className="ml-1 text-[10px] opacity-70">L{alg.nistLevel}</span>}
+            <span className="ml-1 text-[10px] opacity-70">L{alg.nistLevel}</span>
           </Button>
         ))}
       </div>
 
+      {/* Backend selector */}
+      <div className="glass-panel p-4">
+        <div className="flex items-center gap-2 mb-2">
+          <ShieldCheck size={16} className="text-primary" />
+          <h4 className="text-sm font-bold text-foreground">Signing backend</h4>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setBackend('noble')
+              reset()
+            }}
+            className={`px-3 py-1.5 rounded text-xs font-medium border ${
+              backend === 'noble'
+                ? 'bg-primary/20 text-primary border-primary/50'
+                : 'bg-muted/50 text-muted-foreground border-border hover:border-primary/30'
+            }`}
+          >
+            @noble/post-quantum (pure JS)
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setBackend('softhsmv3')
+              reset()
+            }}
+            disabled={!isSoftHsmSupported(selectedAlg)}
+            className={`px-3 py-1.5 rounded text-xs font-medium border disabled:opacity-40 ${
+              backend === 'softhsmv3'
+                ? 'bg-primary/20 text-primary border-primary/50'
+                : 'bg-muted/50 text-muted-foreground border-border hover:border-primary/30'
+            }`}
+          >
+            SoftHSM3 (PKCS#11 v3.2 WASM)
+          </Button>
+        </div>
+        {backend === 'softhsmv3' && (
+          <div className="mt-3">
+            <LiveHSMToggle
+              hsm={hsm}
+              operations={['C_GenerateKeyPair', 'C_MessageSignInit', 'C_SignMessage']}
+            />
+          </div>
+        )}
+      </div>
+
       {/* Keypair Generation */}
       <div className="glass-panel p-4">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
           <div className="flex items-center gap-2">
             <Key size={16} className="text-primary" />
             <h4 className="text-sm font-bold text-foreground">Keypair Generation</h4>
           </div>
           <Button
             variant="gradient"
-            onClick={handleGenerateKeypair}
-            disabled={isGenerating}
+            onClick={() => void handleGenerateKeypair()}
+            disabled={isGenerating || (backend === 'softhsmv3' && !canUseHsm)}
             className="px-4 py-2 text-sm font-bold rounded-lg disabled:opacity-50 transition-colors"
           >
             {isGenerating ? 'Generating...' : 'Generate Keypair'}
@@ -199,19 +329,25 @@ export const PQCJWTSigning: React.FC = () => {
           <div className="space-y-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-[10px] font-bold text-primary mb-1">
-                Public Key ({algInfo?.keyBytes.toLocaleString()} bytes)
+                Public Key ({keypair.publicKey.length.toLocaleString()} bytes)
               </div>
               <code className="text-[10px] font-mono text-foreground/70 break-all">
-                {keypair.publicKeyHex.substring(0, 128)}...
+                {bytesToHex(keypair.publicKey).substring(0, 192)}
+                {keypair.publicKey.length > 96 && '…'}
               </code>
             </div>
             <div className="bg-muted/50 rounded-lg p-3 border border-border">
               <div className="text-[10px] font-bold text-secondary mb-1">
-                Private Key (truncated for display)
+                Private Key{' '}
+                {keypair.hsmHandles
+                  ? `(handle ${keypair.hsmHandles.privHandle} — sealed in SoftHSM3)`
+                  : `(${keypair.secretKey.length.toLocaleString()} bytes, in-browser)`}
               </div>
-              <code className="text-[10px] font-mono text-foreground/70 break-all">
-                {keypair.privateKeyHex.substring(0, 128)}...
-              </code>
+              {!keypair.hsmHandles && (
+                <code className="text-[10px] font-mono text-foreground/70 break-all">
+                  {bytesToHex(keypair.secretKey).substring(0, 192)}…
+                </code>
+              )}
             </div>
           </div>
         )}
@@ -225,6 +361,7 @@ export const PQCJWTSigning: React.FC = () => {
           onChange={(e) => {
             setPayloadJson(e.target.value)
             setSignedJwt(null)
+            setVerifyResult(null)
           }}
           className={`w-full h-48 p-3 rounded-lg bg-background border text-xs font-mono text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/50 ${
             isPayloadValid ? 'border-border' : 'border-destructive'
@@ -242,7 +379,7 @@ export const PQCJWTSigning: React.FC = () => {
       <div className="flex justify-center">
         <Button
           variant="gradient"
-          onClick={handleSign}
+          onClick={() => void handleSign()}
           disabled={!keypair || !isPayloadValid || isSigning}
           className="px-6 py-3 font-bold rounded-lg disabled:opacity-50 transition-colors flex items-center gap-2"
         >
@@ -251,27 +388,34 @@ export const PQCJWTSigning: React.FC = () => {
         </Button>
       </div>
 
+      {/* Error */}
+      {error && (
+        <div className="rounded-lg p-3 border border-destructive/50 bg-destructive/10 text-xs text-destructive">
+          {error}
+        </div>
+      )}
+
       {/* Signed JWT Output */}
       {signedJwt && (
         <div className="glass-panel p-4">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
             <div className="flex items-center gap-2">
               <CheckCircle size={16} className="text-success" />
               <h4 className="text-sm font-bold text-foreground">Signed JWT</h4>
-              {signedJwt.verified && (
-                <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/20 text-success border-success/50">
-                  Signature Valid
-                </span>
-              )}
+              <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-primary/10 text-primary border-primary/30">
+                signed via {backend === 'noble' ? 'noble' : 'SoftHSM3'}
+              </span>
             </div>
-            <Button
-              variant="ghost"
-              onClick={handleCopy}
-              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {copied ? <Check size={14} /> : <Copy size={14} />}
-              {copied ? 'Copied' : 'Copy'}
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                onClick={() => void handleCopy()}
+                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {copied ? <Check size={14} /> : <Copy size={14} />}
+                {copied ? 'Copied' : 'Copy'}
+              </Button>
+            </div>
           </div>
 
           {/* Color-coded display */}
@@ -288,8 +432,48 @@ export const PQCJWTSigning: React.FC = () => {
             </code>
           </div>
 
+          {/* Verify */}
+          <div className="flex flex-wrap gap-2 items-center mt-3">
+            <Button
+              variant="outline"
+              onClick={() => void handleVerify('noble')}
+              disabled={isVerifying}
+              className="text-xs"
+            >
+              Verify (noble)
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => void handleVerify('softhsmv3')}
+              disabled={isVerifying || !canUseHsm || !isSoftHsmSupported(selectedAlg)}
+              className="text-xs"
+            >
+              Verify (SoftHSM3)
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={tamper}
+              className="text-xs text-muted-foreground hover:text-destructive"
+            >
+              Tamper signature
+            </Button>
+            {verifyResult && (
+              <span
+                className={`flex items-center gap-1 text-xs px-2 py-1 rounded border font-bold ${
+                  verifyResult.valid
+                    ? 'bg-success/20 text-success border-success/50'
+                    : 'bg-destructive/20 text-destructive border-destructive/50'
+                }`}
+              >
+                {verifyResult.valid ? <CheckCircle size={12} /> : <XCircle size={12} />}
+                {verifyResult.valid ? 'Signature valid' : 'Signature invalid'} ·{' '}
+                {verifyResult.backend}
+              </span>
+            )}
+          </div>
+
           {/* Size Info */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs mt-4">
             <div className="bg-muted/50 rounded p-2 border border-border">
               <div className="text-muted-foreground">Header</div>
               <div className="font-mono font-medium text-foreground">
@@ -305,7 +489,7 @@ export const PQCJWTSigning: React.FC = () => {
             <div className="bg-muted/50 rounded p-2 border border-border">
               <div className="text-muted-foreground">Signature</div>
               <div className="font-mono font-medium text-foreground">
-                {signedJwt.signatureB64.length} chars
+                {signedJwt.signatureB64.length} chars ({signedJwt.signature.length} B)
               </div>
             </div>
             <div className="bg-muted/50 rounded p-2 border border-border">
@@ -319,7 +503,7 @@ export const PQCJWTSigning: React.FC = () => {
       )}
 
       {/* Size Comparison */}
-      {signedJwt && algInfo && es256Info && selectedAlg !== 'ES256' && (
+      {signedJwt && (
         <div className="glass-panel p-4">
           <h4 className="text-sm font-bold text-foreground mb-3">
             Size Comparison: ES256 vs {selectedAlg}
@@ -327,13 +511,13 @@ export const PQCJWTSigning: React.FC = () => {
           <div className="space-y-3">
             <div>
               <div className="flex justify-between text-xs mb-1">
-                <span className="text-muted-foreground">ES256 JWT</span>
+                <span className="text-muted-foreground">ES256 JWT (estimated)</span>
                 <span className="font-mono text-foreground">
                   ~
                   {(
                     signedJwt.headerB64.length +
                     signedJwt.payloadB64.length +
-                    Math.ceil((es256Info.sigBytes * 4) / 3) +
+                    Math.ceil((ES256_SIG_BYTES * 4) / 3) +
                     2
                   ).toLocaleString()}{' '}
                   chars
@@ -343,14 +527,14 @@ export const PQCJWTSigning: React.FC = () => {
                 <div
                   className="bg-warning/60 h-3 rounded-full transition-all"
                   style={{
-                    width: `${Math.max(5, ((signedJwt.headerB64.length + signedJwt.payloadB64.length + Math.ceil((es256Info.sigBytes * 4) / 3)) / signedJwt.token.length) * 100)}%`,
+                    width: `${Math.max(5, ((signedJwt.headerB64.length + signedJwt.payloadB64.length + Math.ceil((ES256_SIG_BYTES * 4) / 3)) / signedJwt.token.length) * 100)}%`,
                   }}
                 />
               </div>
             </div>
             <div>
               <div className="flex justify-between text-xs mb-1">
-                <span className="text-muted-foreground">{selectedAlg} JWT</span>
+                <span className="text-muted-foreground">{selectedAlg} JWT (measured)</span>
                 <span className="font-mono text-foreground">
                   {signedJwt.token.length.toLocaleString()} chars
                 </span>
@@ -364,9 +548,9 @@ export const PQCJWTSigning: React.FC = () => {
             </div>
           </div>
           <p className="text-[10px] text-muted-foreground mt-2">
-            {selectedAlg} signature is {algInfo.sigBytes.toLocaleString()} bytes vs{' '}
-            {es256Info.sigBytes.toLocaleString()} bytes for ES256 &mdash; a{' '}
-            {Math.round(algInfo.sigBytes / es256Info.sigBytes)}x increase.
+            {selectedAlg} signature is {signedJwt.signature.length.toLocaleString()} bytes vs{' '}
+            {ES256_SIG_BYTES} bytes for ES256 — a{' '}
+            {Math.round(signedJwt.signature.length / ES256_SIG_BYTES)}× increase.
           </p>
         </div>
       )}
@@ -374,11 +558,11 @@ export const PQCJWTSigning: React.FC = () => {
       {/* Educational note */}
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-xs text-muted-foreground">
-          <strong>Note:</strong> The crypto operations above are simulated with realistic output
-          sizes. In production, JWT signing uses the private key to compute a cryptographic
-          signature over the header and payload. The JOSE header&apos;s{' '}
-          <code className="text-foreground/70">alg</code> field tells the verifier which algorithm
-          to use for validation.
+          <strong>Educational use only.</strong> The signing input is{' '}
+          <code className="text-foreground/80">b64u(JOSE header).b64u(payload)</code> per RFC 7515
+          §5.1. Both noble and SoftHSM3 produce byte-identical signatures over the same input — a
+          token signed via one backend verifies under the other, demonstrating that
+          draft-ietf-cose-dilithium-11 interoperates across implementations.
         </p>
       </div>
 
