@@ -1052,7 +1052,21 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         versionNote: 'Open Source / Commercial',
       },
     ],
-    playgrounds: [],
+    playgrounds: [
+      {
+        toolId: 'email-signing',
+        toolName: 'S/MIME & CMS Workshop (Email Signing)',
+        testability: { pureKem: 'full', hybridKem: 'none', pureSig: 'full', hybridSig: 'partial' },
+        pureSigNote:
+          'ML-DSA-44/65/87 and SLH-DSA-SHA2-128s sign+verify via real OpenSSL 3.6 WASM CMS SignedData; toggle routes signing key through softhsmv3 PKCS#11 HSM — private key never enters the openssl process address space.',
+        pureKemNote:
+          'ML-KEM-512/768/1024 encrypt+decrypt via CMS AuthEnvelopedData with KEMRecipientInfo; CA-issued cert flow for KEM-only keys. X25519 also exercised.',
+        hybridSigNote:
+          'LAMPS composite ML-DSA+ECDSA OIDs (draft-19) implemented via pkcs11-provider composite.c — exercised through the algorithm dropdown when HSM mode is on.',
+        hybridKemNote:
+          'Composite ML-KEM (draft-ietf-lamps-cms-composite-kem) deferred — awaiting composite-KEM OID support in pkcs11-provider.',
+      },
+    ],
     noDeploymentReason:
       'S/MIME PQ standards are very fresh (ML-DSA Oct 2025, SLH-DSA Jul 2025, ML-KEM Mar 2026) — typical standards-to-ship gap is 12–24 months. The quantum-safe consumer-email market migrated to OpenPGP (Proton Mail) and proprietary protocols (Tuta / TutaCrypt) rather than S/MIME; mainstream providers (Gmail / Outlook / Apple Mail) rely on TLS-in-transit + at-rest encryption and do not drive S/MIME at all. The procurement-cycle slots that will force S/MIME PQ deployment — CNSA 2.0 S/MIME profile (still draft) and X9 Financial PKI consumers — have not yet shipped a product. Building blocks (OpenSSL 3.5 `cms`, Bouncy Castle 1.79+ CMS API) exist and IETF Hackathon runs cross-vendor interop tests, but no end-user product deployment.',
   },
@@ -1208,7 +1222,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         id: 'draft-ietf-jose-pq-composite-sigs',
         title: 'draft-ietf-jose-pq-composite-sigs — PQ/T Composite Sigs for JOSE/COSE',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-jose-pq-composite-sigs/',
-        date: '2025-01',
+        date: '2026-02-27',
         localFile: '/library/draft-ietf-jose-pq-composite-sigs.html',
       },
       {
@@ -1247,6 +1261,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'draft',
+        stage: 'iesg-submitted',
+        stageNote: 'iesg submitted (datatracker 2025-11-15)',
         refs: [
           {
             kind: 'draft',
@@ -1259,6 +1275,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'draft',
+        stage: 'wg-document',
+        stageNote: 'wg document (datatracker 2026-02-27)',
         refs: [
           {
             kind: 'draft',
@@ -1289,7 +1307,18 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       { productId: 'okta-workforce-identity', name: 'Okta Workforce Identity' },
       { productId: 'keycloak', name: 'Keycloak' },
     ],
-    playgrounds: [],
+    playgrounds: [
+      {
+        toolId: 'api-security-jwt',
+        toolName: 'API Security & JWT Workshop',
+        testability: { pureKem: 'full', hybridKem: 'na', pureSig: 'full', hybridSig: 'full' },
+        hybridKemNote: 'No HPKE tool yet — only direct ML-KEM-768 JWE encap/decap is covered.',
+        pureSigNote:
+          'ML-DSA-44/65/87 and SLH-DSA-SHA2-128s/192s/256s; IETF cose-dilithium-11 KAT vectors verified in-browser.',
+        hybridSigNote:
+          'MLDSA65-Ed25519 composite per draft-ietf-jose-pq-composite-sigs-01 §4; pinned KAT snapshot verified.',
+      },
+    ],
     liveDeployments: [
       {
         provider: 'AWS KMS',
