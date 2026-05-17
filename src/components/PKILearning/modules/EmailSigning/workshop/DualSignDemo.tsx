@@ -81,7 +81,7 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
   const [pqAlg, setPqAlg] = useState<CmsAlg>('ML-DSA-65')
   const [clAlg, setClAlg] = useState<CmsAlg>('EC')
   const [payload, setPayload] = useState<string>(DEFAULT_PAYLOAD)
-  const [useHsmIntent, setUseHsmIntent] = useState<boolean>(false)
+  const [useHsmIntent, setUseHsmIntent] = useState<boolean>(true)
   const useHsm = providerReady && useHsmIntent
   const [stage, setStage] = useState<Stage>('idle')
   const [error, setError] = useState<string>('')

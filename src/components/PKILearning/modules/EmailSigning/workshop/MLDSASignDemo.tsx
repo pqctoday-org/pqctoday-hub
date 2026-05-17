@@ -74,7 +74,7 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
   // isn't ready so the demo never accidentally routes to a dead HSM path.
   // Composite algorithms (LAMPS draft-19) only exist inside pkcs11-provider
   // — selecting one forces useHsm to true.
-  const [useHsmIntent, setUseHsmIntent] = useState<boolean>(false)
+  const [useHsmIntent, setUseHsmIntent] = useState<boolean>(true)
   const composite = isCompositeAlg(alg)
   const useHsm = providerReady && (useHsmIntent || composite)
   const [stage, setStage] = useState<Stage>('idle')

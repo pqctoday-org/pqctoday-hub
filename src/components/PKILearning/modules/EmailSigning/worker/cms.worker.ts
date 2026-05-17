@@ -367,6 +367,18 @@ const CKU_USER_VAL = 1
 // PKCS#11 v3.2 ML-DSA key generation constants (FIPS 204 via softhsmv3).
 const CKM_ML_DSA_KEY_PAIR_GEN_VAL = 0x0000001c
 const CKK_ML_DSA_VAL = 0x0000004a
+// PKCS#11 EC key generation constants (softhsmv3 C++ engine).
+const CKM_EC_KEY_PAIR_GEN_VAL = 0x00001040
+const CKK_EC_VAL = 0x00000003
+const CKA_EC_PARAMS_ATTR = 0x00000180
+// PKCS#11 v3.2 ML-KEM key generation constants (FIPS 203 via softhsmv3).
+const CKM_ML_KEM_KEY_PAIR_GEN_VAL = 0x0000000f
+const CKK_ML_KEM_VAL = 0x00000049
+const CKA_ENCAPSULATE_ATTR = 0x00000633
+const CKA_DECAPSULATE_ATTR = 0x00000634
+const CKP_ML_KEM_512_VAL = 0x00000001
+const CKP_ML_KEM_768_VAL = 0x00000002
+const CKP_ML_KEM_1024_VAL = 0x00000003
 const CKP_ML_DSA_44_VAL = 0x00000001
 const CKP_ML_DSA_65_VAL = 0x00000002
 const CKP_ML_DSA_87_VAL = 0x00000003
@@ -897,6 +909,13 @@ function mlDsaParamSet(alg: CmsAlg): number {
   return -1
 }
 
+function mlKemParamSet(alg: CmsAlg): number {
+  if (alg === 'ML-KEM-512') return CKP_ML_KEM_512_VAL
+  if (alg === 'ML-KEM-768') return CKP_ML_KEM_768_VAL
+  if (alg === 'ML-KEM-1024') return CKP_ML_KEM_1024_VAL
+  return -1
+}
+
 /**
  * Generate an ML-DSA key pair directly in softhsmv3 via C_GenerateKeyPair.
  *
@@ -1135,6 +1154,409 @@ function generateMlDsaKeyInHsm(M: OpenSSLModule, alg: CmsAlg, keyId: string): st
   return null
 }
 
+/**
+ * Generate an EC P-256 key pair directly in softhsmv3 via C_GenerateKeyPair.
+ * CKA_EC_PARAMS carries the DER-encoded OID for prime256v1 (secp256r1).
+ * Follows the same session lifecycle as generateMlDsaKeyInHsm.
+ */
+function generateEcKeyInHsm(M: OpenSSLModule, keyId: string): string | null {
+  const {
+    _C_GetSlotList,
+    _C_OpenSession,
+    _C_Login,
+    _C_GenerateKeyPair,
+    _C_Logout,
+    _C_CloseSession,
+    _malloc,
+    _free,
+    HEAPU8,
+    setValue,
+    getValue,
+    stringToUTF8,
+  } = M as OpenSSLModule & Record<string, unknown>
+
+  const { _C_Initialize: _C_Init2 } = M as OpenSSLModule & Record<string, unknown>
+
+  const missing: string[] = []
+  if (typeof _C_GetSlotList !== 'function') missing.push('_C_GetSlotList')
+  if (typeof _C_OpenSession !== 'function') missing.push('_C_OpenSession')
+  if (typeof _C_Login !== 'function') missing.push('_C_Login')
+  if (typeof _C_GenerateKeyPair !== 'function') missing.push('_C_GenerateKeyPair')
+  if (typeof _C_Logout !== 'function') missing.push('_C_Logout')
+  if (typeof _C_CloseSession !== 'function') missing.push('_C_CloseSession')
+  if (typeof _malloc !== 'function') missing.push('_malloc')
+  if (typeof _free !== 'function') missing.push('_free')
+  if (typeof setValue !== 'function') missing.push('setValue')
+  if (typeof getValue !== 'function') missing.push('getValue')
+  if (typeof stringToUTF8 !== 'function') missing.push('stringToUTF8')
+  if (!(HEAPU8 instanceof Uint8Array)) missing.push('HEAPU8')
+  if (missing.length > 0) return `missing WASM exports: ${missing.join(', ')}`
+
+  type P11Fn = (...args: number[]) => number
+  const fn_GetSlotList = _C_GetSlotList as P11Fn
+  const fn_OpenSession = _C_OpenSession as P11Fn
+  const fn_Login = _C_Login as P11Fn
+  const fn_GenerateKeyPair = _C_GenerateKeyPair as P11Fn
+  const fn_Logout = _C_Logout as P11Fn
+  const fn_CloseSession = _C_CloseSession as P11Fn
+  const fn_malloc = _malloc as P11Fn
+  const fn_free = _free as P11Fn
+  const fn_setValue = setValue as (p: number, v: number, t: string) => void
+  const fn_getValue = getValue as (p: number, t: string) => number
+  const fn_stringToUTF8 = stringToUTF8 as (s: string, p: number, n: number) => void
+  const heap = HEAPU8 as Uint8Array
+
+  if (typeof _C_Init2 === 'function') {
+    const initRv = (_C_Init2 as P11Fn)(0)
+    if (initRv !== 0 && initRv !== CKR_CRYPTOKI_ALREADY_INITIALIZED) {
+      return `C_Initialize rv=0x${initRv.toString(16)}`
+    }
+  }
+
+  const cntP = fn_malloc(4)
+  fn_setValue(cntP, 0, 'i32')
+  const slCountRv = fn_GetSlotList(1, 0, cntP)
+  if (slCountRv !== 0) {
+    fn_free(cntP)
+    return `C_GetSlotList(count) rv=0x${slCountRv.toString(16)}`
+  }
+  const cnt = fn_getValue(cntP, 'i32')
+  fn_free(cntP)
+  if (cnt === 0) return `C_GetSlotList returned 0 initialized slots`
+
+  const listP = fn_malloc(cnt * 4)
+  const c2P = fn_malloc(4)
+  fn_setValue(c2P, cnt, 'i32')
+  const slFillRv = fn_GetSlotList(1, listP, c2P)
+  if (slFillRv !== 0) {
+    fn_free(listP)
+    fn_free(c2P)
+    return `C_GetSlotList(fill) rv=0x${slFillRv.toString(16)}`
+  }
+  const tokenSlot = fn_getValue(listP, 'i32')
+  fn_free(listP)
+  fn_free(c2P)
+
+  const hSP = fn_malloc(4)
+  fn_setValue(hSP, 0, 'i32')
+  const openSessRv = fn_OpenSession(
+    tokenSlot,
+    CKF_RW_SESSION_VAL | CKF_SERIAL_SESSION_VAL,
+    0,
+    0,
+    hSP
+  )
+  if (openSessRv !== 0) {
+    fn_free(hSP)
+    return `C_OpenSession(slot=${tokenSlot}) rv=0x${openSessRv.toString(16)}`
+  }
+  const hSession = fn_getValue(hSP, 'i32')
+  fn_free(hSP)
+
+  const pin = SOFTHSM_USER_PIN
+  const pinP = fn_malloc(pin.length + 1)
+  fn_stringToUTF8(pin, pinP, pin.length + 1)
+  const loginRv = fn_Login(hSession, CKU_USER_VAL, pinP, pin.length)
+  fn_free(pinP)
+  if (loginRv !== 0) {
+    fn_CloseSession(hSession)
+    return `C_Login rv=0x${loginRv.toString(16)}`
+  }
+
+  // DER-encoded ECParameters for prime256v1 (secp256r1, OID 1.2.840.10045.3.1.7).
+  const p256Oid = new Uint8Array([0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07])
+  const ecParamsP = fn_malloc(p256Oid.length)
+  heap.set(p256Oid, ecParamsP)
+
+  const boolTrueP = fn_malloc(1)
+  heap[boolTrueP] = 1
+  const pubClassP = fn_malloc(4)
+  fn_setValue(pubClassP, CKO_PUBLIC_KEY_VAL, 'i32')
+  const privClassP = fn_malloc(4)
+  fn_setValue(privClassP, CKO_PRIVATE_KEY_VAL, 'i32')
+  const keyTypeP = fn_malloc(4)
+  fn_setValue(keyTypeP, CKK_EC_VAL, 'i32')
+
+  const labelBytes = new TextEncoder().encode(keyId)
+  const labelP = fn_malloc(labelBytes.length)
+  heap.set(labelBytes, labelP)
+  const idBytes = new TextEncoder().encode(keyId)
+  const idP = fn_malloc(idBytes.length)
+  heap.set(idBytes, idP)
+
+  const mechP = fn_malloc(12)
+  fn_setValue(mechP, CKM_EC_KEY_PAIR_GEN_VAL, 'i32')
+  fn_setValue(mechP + 4, 0, 'i32')
+  fn_setValue(mechP + 8, 0, 'i32')
+
+  const writeAttr = (base: number, idx: number, type: number, valPtr: number, valLen: number) => {
+    const off = base + idx * 12
+    fn_setValue(off, type, 'i32')
+    fn_setValue(off + 4, valPtr, 'i32')
+    fn_setValue(off + 8, valLen, 'i32')
+  }
+
+  // Public key: CLASS, TOKEN, LABEL, ID, KEY_TYPE, EC_PARAMS, VERIFY
+  const pubAttrCount = 7
+  const pubTplP = fn_malloc(pubAttrCount * 12)
+  writeAttr(pubTplP, 0, CKA_CLASS_ATTR, pubClassP, 4)
+  writeAttr(pubTplP, 1, CKA_TOKEN_ATTR, boolTrueP, 1)
+  writeAttr(pubTplP, 2, CKA_LABEL_ATTR, labelP, labelBytes.length)
+  writeAttr(pubTplP, 3, CKA_ID_ATTR, idP, idBytes.length)
+  writeAttr(pubTplP, 4, CKA_KEY_TYPE_ATTR, keyTypeP, 4)
+  writeAttr(pubTplP, 5, CKA_EC_PARAMS_ATTR, ecParamsP, p256Oid.length)
+  writeAttr(pubTplP, 6, CKA_VERIFY_ATTR, boolTrueP, 1)
+
+  // Private key: CLASS, TOKEN, LABEL, ID, KEY_TYPE, SENSITIVE, SIGN
+  const privAttrCount = 7
+  const privTplP = fn_malloc(privAttrCount * 12)
+  writeAttr(privTplP, 0, CKA_CLASS_ATTR, privClassP, 4)
+  writeAttr(privTplP, 1, CKA_TOKEN_ATTR, boolTrueP, 1)
+  writeAttr(privTplP, 2, CKA_LABEL_ATTR, labelP, labelBytes.length)
+  writeAttr(privTplP, 3, CKA_ID_ATTR, idP, idBytes.length)
+  writeAttr(privTplP, 4, CKA_KEY_TYPE_ATTR, keyTypeP, 4)
+  writeAttr(privTplP, 5, CKA_SENSITIVE_ATTR, boolTrueP, 1)
+  writeAttr(privTplP, 6, CKA_SIGN_ATTR, boolTrueP, 1)
+
+  const hPubP = fn_malloc(4)
+  const hPrivP = fn_malloc(4)
+  fn_setValue(hPubP, 0, 'i32')
+  fn_setValue(hPrivP, 0, 'i32')
+
+  const genRv = fn_GenerateKeyPair(
+    hSession,
+    mechP,
+    pubTplP,
+    pubAttrCount,
+    privTplP,
+    privAttrCount,
+    hPubP,
+    hPrivP
+  )
+
+  fn_free(hPubP)
+  fn_free(hPrivP)
+  fn_free(pubTplP)
+  fn_free(privTplP)
+  fn_free(mechP)
+  fn_free(boolTrueP)
+  fn_free(pubClassP)
+  fn_free(privClassP)
+  fn_free(keyTypeP)
+  fn_free(ecParamsP)
+  fn_free(labelP)
+  fn_free(idP)
+
+  fn_Logout(hSession)
+  fn_CloseSession(hSession)
+
+  if (genRv !== 0)
+    return `C_GenerateKeyPair(EC/P-256, slot=${tokenSlot}) rv=0x${genRv.toString(16)}`
+  return null
+}
+
+/**
+ * Generate an ML-KEM key pair directly in softhsmv3 via C_GenerateKeyPair.
+ * Same rationale as generateMlDsaKeyInHsm: `genpkey -out pkcs11:...` writes
+ * a PEM to MEMFS via the BIO path, so the key never reaches the token and
+ * `pkey -in pkcs11:object=<keyId>` later fails with "Could not find private key".
+ */
+function generateMlKemKeyInHsm(M: OpenSSLModule, alg: CmsAlg, keyId: string): string | null {
+  const paramSet = mlKemParamSet(alg)
+  if (paramSet < 0) return `bad paramSet for alg=${alg}`
+
+  const {
+    _C_GetSlotList,
+    _C_OpenSession,
+    _C_Login,
+    _C_GenerateKeyPair,
+    _C_Logout,
+    _C_CloseSession,
+    _malloc,
+    _free,
+    HEAPU8,
+    setValue,
+    getValue,
+    stringToUTF8,
+  } = M as OpenSSLModule & Record<string, unknown>
+
+  const { _C_Initialize: _C_Init2 } = M as OpenSSLModule & Record<string, unknown>
+
+  const missing: string[] = []
+  if (typeof _C_GetSlotList !== 'function') missing.push('_C_GetSlotList')
+  if (typeof _C_OpenSession !== 'function') missing.push('_C_OpenSession')
+  if (typeof _C_Login !== 'function') missing.push('_C_Login')
+  if (typeof _C_GenerateKeyPair !== 'function') missing.push('_C_GenerateKeyPair')
+  if (typeof _C_Logout !== 'function') missing.push('_C_Logout')
+  if (typeof _C_CloseSession !== 'function') missing.push('_C_CloseSession')
+  if (typeof _malloc !== 'function') missing.push('_malloc')
+  if (typeof _free !== 'function') missing.push('_free')
+  if (typeof setValue !== 'function') missing.push('setValue')
+  if (typeof getValue !== 'function') missing.push('getValue')
+  if (typeof stringToUTF8 !== 'function') missing.push('stringToUTF8')
+  if (!(HEAPU8 instanceof Uint8Array)) missing.push('HEAPU8')
+  if (missing.length > 0) return `missing WASM exports: ${missing.join(', ')}`
+
+  type P11Fn = (...args: number[]) => number
+  const fn_GetSlotList = _C_GetSlotList as P11Fn
+  const fn_OpenSession = _C_OpenSession as P11Fn
+  const fn_Login = _C_Login as P11Fn
+  const fn_GenerateKeyPair = _C_GenerateKeyPair as P11Fn
+  const fn_Logout = _C_Logout as P11Fn
+  const fn_CloseSession = _C_CloseSession as P11Fn
+  const fn_malloc = _malloc as P11Fn
+  const fn_free = _free as P11Fn
+  const fn_setValue = setValue as (p: number, v: number, t: string) => void
+  const fn_getValue = getValue as (p: number, t: string) => number
+  const fn_stringToUTF8 = stringToUTF8 as (s: string, p: number, n: number) => void
+  const heap = HEAPU8 as Uint8Array
+
+  if (typeof _C_Init2 === 'function') {
+    const initRv = (_C_Init2 as P11Fn)(0)
+    if (initRv !== 0 && initRv !== CKR_CRYPTOKI_ALREADY_INITIALIZED) {
+      return `C_Initialize rv=0x${initRv.toString(16)}`
+    }
+  }
+
+  const cntP = fn_malloc(4)
+  fn_setValue(cntP, 0, 'i32')
+  const slCountRv = fn_GetSlotList(1, 0, cntP)
+  if (slCountRv !== 0) {
+    fn_free(cntP)
+    return `C_GetSlotList(count) rv=0x${slCountRv.toString(16)}`
+  }
+  const cnt = fn_getValue(cntP, 'i32')
+  fn_free(cntP)
+  if (cnt === 0) return `C_GetSlotList returned 0 initialized slots`
+
+  const listP = fn_malloc(cnt * 4)
+  const c2P = fn_malloc(4)
+  fn_setValue(c2P, cnt, 'i32')
+  const slFillRv = fn_GetSlotList(1, listP, c2P)
+  if (slFillRv !== 0) {
+    fn_free(listP)
+    fn_free(c2P)
+    return `C_GetSlotList(fill) rv=0x${slFillRv.toString(16)}`
+  }
+  const tokenSlot = fn_getValue(listP, 'i32')
+  fn_free(listP)
+  fn_free(c2P)
+
+  const hSP = fn_malloc(4)
+  fn_setValue(hSP, 0, 'i32')
+  const openSessRv = fn_OpenSession(
+    tokenSlot,
+    CKF_RW_SESSION_VAL | CKF_SERIAL_SESSION_VAL,
+    0,
+    0,
+    hSP
+  )
+  if (openSessRv !== 0) {
+    fn_free(hSP)
+    return `C_OpenSession(slot=${tokenSlot}) rv=0x${openSessRv.toString(16)}`
+  }
+  const hSession = fn_getValue(hSP, 'i32')
+  fn_free(hSP)
+
+  const pin = SOFTHSM_USER_PIN
+  const pinP = fn_malloc(pin.length + 1)
+  fn_stringToUTF8(pin, pinP, pin.length + 1)
+  const loginRv = fn_Login(hSession, CKU_USER_VAL, pinP, pin.length)
+  fn_free(pinP)
+  if (loginRv !== 0) {
+    fn_CloseSession(hSession)
+    return `C_Login rv=0x${loginRv.toString(16)}`
+  }
+
+  const boolTrueP = fn_malloc(1)
+  heap[boolTrueP] = 1
+  const pubClassP = fn_malloc(4)
+  fn_setValue(pubClassP, CKO_PUBLIC_KEY_VAL, 'i32')
+  const privClassP = fn_malloc(4)
+  fn_setValue(privClassP, CKO_PRIVATE_KEY_VAL, 'i32')
+  const keyTypeP = fn_malloc(4)
+  fn_setValue(keyTypeP, CKK_ML_KEM_VAL, 'i32')
+  const paramSetP = fn_malloc(4)
+  fn_setValue(paramSetP, paramSet, 'i32')
+
+  const labelBytes = new TextEncoder().encode(keyId)
+  const labelP = fn_malloc(labelBytes.length)
+  heap.set(labelBytes, labelP)
+  const idBytes = new TextEncoder().encode(keyId)
+  const idP = fn_malloc(idBytes.length)
+  heap.set(idBytes, idP)
+
+  const mechP = fn_malloc(12)
+  fn_setValue(mechP, CKM_ML_KEM_KEY_PAIR_GEN_VAL, 'i32')
+  fn_setValue(mechP + 4, 0, 'i32')
+  fn_setValue(mechP + 8, 0, 'i32')
+
+  const writeAttr = (base: number, idx: number, type: number, valPtr: number, valLen: number) => {
+    const off = base + idx * 12
+    fn_setValue(off, type, 'i32')
+    fn_setValue(off + 4, valPtr, 'i32')
+    fn_setValue(off + 8, valLen, 'i32')
+  }
+
+  // Public key: CLASS, TOKEN, LABEL, ID, KEY_TYPE, PARAMETER_SET, ENCAPSULATE
+  const pubAttrCount = 7
+  const pubTplP = fn_malloc(pubAttrCount * 12)
+  writeAttr(pubTplP, 0, CKA_CLASS_ATTR, pubClassP, 4)
+  writeAttr(pubTplP, 1, CKA_TOKEN_ATTR, boolTrueP, 1)
+  writeAttr(pubTplP, 2, CKA_LABEL_ATTR, labelP, labelBytes.length)
+  writeAttr(pubTplP, 3, CKA_ID_ATTR, idP, idBytes.length)
+  writeAttr(pubTplP, 4, CKA_KEY_TYPE_ATTR, keyTypeP, 4)
+  writeAttr(pubTplP, 5, CKA_PARAMETER_SET_ATTR, paramSetP, 4)
+  writeAttr(pubTplP, 6, CKA_ENCAPSULATE_ATTR, boolTrueP, 1)
+
+  // Private key: CLASS, TOKEN, LABEL, ID, KEY_TYPE, PARAMETER_SET, SENSITIVE, DECAPSULATE
+  const privAttrCount = 8
+  const privTplP = fn_malloc(privAttrCount * 12)
+  writeAttr(privTplP, 0, CKA_CLASS_ATTR, privClassP, 4)
+  writeAttr(privTplP, 1, CKA_TOKEN_ATTR, boolTrueP, 1)
+  writeAttr(privTplP, 2, CKA_LABEL_ATTR, labelP, labelBytes.length)
+  writeAttr(privTplP, 3, CKA_ID_ATTR, idP, idBytes.length)
+  writeAttr(privTplP, 4, CKA_KEY_TYPE_ATTR, keyTypeP, 4)
+  writeAttr(privTplP, 5, CKA_PARAMETER_SET_ATTR, paramSetP, 4)
+  writeAttr(privTplP, 6, CKA_SENSITIVE_ATTR, boolTrueP, 1)
+  writeAttr(privTplP, 7, CKA_DECAPSULATE_ATTR, boolTrueP, 1)
+
+  const hPubP = fn_malloc(4)
+  const hPrivP = fn_malloc(4)
+  fn_setValue(hPubP, 0, 'i32')
+  fn_setValue(hPrivP, 0, 'i32')
+
+  const genRv = fn_GenerateKeyPair(
+    hSession,
+    mechP,
+    pubTplP,
+    pubAttrCount,
+    privTplP,
+    privAttrCount,
+    hPubP,
+    hPrivP
+  )
+
+  fn_free(hPubP)
+  fn_free(hPrivP)
+  fn_free(pubTplP)
+  fn_free(privTplP)
+  fn_free(mechP)
+  fn_free(boolTrueP)
+  fn_free(pubClassP)
+  fn_free(privClassP)
+  fn_free(keyTypeP)
+  fn_free(paramSetP)
+  fn_free(labelP)
+  fn_free(idP)
+
+  fn_Logout(hSession)
+  fn_CloseSession(hSession)
+
+  if (genRv !== 0) return `C_GenerateKeyPair(${alg}, slot=${tokenSlot}) rv=0x${genRv.toString(16)}`
+  return null
+}
+
 // pqctoday_cms_init() registers pkcs11-provider as a builtin in the GLOBAL
 // OpenSSL lib ctx (NULL). CLI `-provider pkcs11` flags create a SEPARATE
 // app_libctx that does NOT inherit that builtin; OpenSSL falls back to
@@ -1176,8 +1598,33 @@ async function cmsGenKey(
         })
         return
       }
+    } else if (alg === 'EC') {
+      // EC P-256: use direct PKCS#11 C_GenerateKeyPair so the key object lands
+      // in the softhsmv3 token and is reachable via pkcs11:object=<keyId> URIs.
+      // `genpkey -out pkcs11:...` writes a PEM to MEMFS (BIO path), not the token.
+      const errDetail = generateEcKeyInHsm(M, keyId)
+      if (errDetail !== null) {
+        post({
+          type: 'ERROR',
+          error: `HSM keygen (EC): ${errDetail}`,
+          requestId,
+        })
+        return
+      }
+    } else if (mlKemParamSet(alg) >= 0) {
+      // ML-KEM: same rationale as ML-DSA — go direct via C_GenerateKeyPair so
+      // the key lands in the token (genpkey -out pkcs11:... writes a PEM to MEMFS).
+      const errDetail = generateMlKemKeyInHsm(M, alg, keyId)
+      if (errDetail !== null) {
+        post({
+          type: 'ERROR',
+          error: `HSM keygen (${alg}): ${errDetail}`,
+          requestId,
+        })
+        return
+      }
     } else {
-      // Non-ML-DSA HSM keygen (LAMPS composite OIDs). pkcs11-provider's
+      // Non-ML-DSA / non-EC / non-ML-KEM HSM keygen (LAMPS composite OIDs). pkcs11-provider's
       // composite.c handles these through a different mechanism type — genpkey
       // may not route to softhsmv3 correctly; this path is a best-effort attempt.
       const argv = ['genpkey', '-algorithm', alg, '-out', pkcs11Uri(keyId)]
