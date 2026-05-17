@@ -21,6 +21,43 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Feat — LAMPS composite cert + sign + verify wired end-to-end through pkcs11-provider (2026-05-17)
+
+The three LAMPS draft-ietf-lamps-pq-composite-sigs-19 composite OIDs in the S/MIME workshop dropdown (`id-MLDSA44-RSA2048-PSS-SHA256`, `id-MLDSA65-ECDSA-P256-SHA512`, `id-MLDSA87-ECDSA-P384-SHA512`) now produce **real** composite certs and **real** composite CMS signatures — not the previous "substitute the nearest pure ML-DSA PEM" placeholder. The wire signature is now `mldsaSig || classicalSig` per draft-19 §4, and verifiers must validate both halves against the same `M'` per §5.
+
+The provider machinery in [composite.c](../pqctoday-hsm/src/vendor/pkcs11-provider/src/composite.c) was already 90% there — the M' builder, signature dispatch, keymgmt, and SPKI encoder were all registered. Two gaps blocked the runtime path:
+
+1. **No CLI surface for composite EVP_PKEY construction.** The IMPORT path took a C pointer (`pqctoday-composite-ref`) — there was no way for `openssl genpkey -algorithm id-MLDSA65-...` to materialise a populated composite key from two softhsm subkeys.
+2. **No SPKI builder for the MLDSA44+RSA-2048-PSS profile.** The classical RSA half was an explicit `goto done` stub.
+
+Fixes — `pqctoday-hsm/src/vendor/pkcs11-provider/src/`:
+
+- **`composite.c`** — added `composite_get_rsa_pubkey` + `composite_collect_rsa_pubkey`, which use `OSSL_ENCODER_CTX_new_for_pkey(..., "type-specific", ...)` to emit a PKCS#1 RSAPublicKey DER from softhsm's RSA modulus + exponent OSSL_PARAMs per draft-19 Appendix C. Routed in `p11prov_composite_pubkey_to_x509` dispatch on `CKP_ML_DSA_44`.
+- **`composite.c`** — new `p11prov_composite_evp_pkey_from_uris(provctx, profile, pq_uri, classical_uri)` bridge. Uses `p11prov_store_direct_fetch` with an `OSSL_OBJECT_PARAM_REFERENCE` capture callback to recover both `P11PROV_OBJ` pointers from their pkcs11: URIs, calls `p11prov_composite_obj_new_from_subkeys`, then runs `EVP_PKEY_fromdata` with the `pqctoday-composite-ref` IMPORT param. Caller gets back a fully-formed composite `EVP_PKEY` that routes through the existing signature dispatch.
+- **`composite.h`** (new) — public declarations for the seven accessor functions plus `_evp_pkey_from_uris` and `_build_mprime`. Avoids leaking `provider.h`'s internal `config.h` chain into external callers.
+
+Fixes — `pqctoday-hub/src/wasm/cms_provider_init.c`:
+
+Three new `EMSCRIPTEN_KEEPALIVE` exports (`_pqctoday_composite_mkcert`, `_pqctoday_composite_cms_sign`, `_pqctoday_composite_cms_verify`) callable from the CMS worker via `cwrap`. Mint and sign both use `p11prov_composite_evp_pkey_from_uris` + `X509_sign` / `CMS_sign` — the composite signature dispatch produces real `mldsaSig || classicalSig` bytes. Verify is a **manual** two-half implementation per draft-19 §5 because pkcs11-provider has no SPKI decoder for composite keys (would need a software-side EVP_PKEY constructed from just cert bytes): the shim parses the cert's SPKI BIT STRING, splits using `profile->mldsa_pk_bytes`, builds software EVP_PKEYs (`EVP_PKEY_new_raw_public_key_ex` for ML-DSA, `EVP_PKEY_fromdata` with `OSSL_PKEY_PARAM_GROUP_NAME` for ECDSA, `d2i_PublicKey(EVP_PKEY_RSA, ...)` for RSA), parses the .p7m to extract `SignerInfo.signature` + eContent, splits the sig at `profile->mldsa_sig_bytes`, computes `M'` via `p11prov_composite_build_mprime`, and runs two `EVP_DigestVerify` ops (ML-DSA half with `OSSL_SIGNATURE_PARAM_CONTEXT_STRING = profile->signature_label` per draft-19 §3.2).
+
+Worker integration — [cms.worker.ts](src/components/PKILearning/modules/EmailSigning/worker/cms.worker.ts):
+
+- New `isCompositeAlg` / `compositeOidFor` / `compositeSubkeyIds` / `generateCompositeSubkeys` helpers. Composite keygen lands TWO softhsm-resident subkeys at `${keyId}__pq` + `${keyId}__cl`, then mkcert/sign/verify route through `cwrap`'d shim bindings (`compositeMkCert`, `compositeCmsSign`, `compositeCmsVerify`) — bypassing the openssl CLI entirely for the EVP_PKEY-aware steps.
+- `generateEcKeyInHsm` extended with a `curve: 'P-256' | 'P-384'` parameter (DER OID `06 05 2b 81 04 00 22` for P-384) so id-MLDSA87 composite gets the right classical half.
+- `CMS_MKCERT` / `CMS_SIGN` / `CMS_VERIFY` message types and matching `cmsMkCert` / `cmsSign` / `cmsVerify` functions gain an optional `alg?: CmsAlg` field. When set to a composite OID, the worker takes the shim path instead of the regular `openssl req` / `cms -sign` / `cms -verify` CLI invocations.
+
+UI — [MLDSASignDemo.tsx](src/components/PKILearning/modules/EmailSigning/workshop/MLDSASignDemo.tsx):
+
+- `alg` now propagates to `mkCert` / `sign` / `verify` calls in the demo's `run` flow.
+- LAMPS composite chip wording updated to "LAMPS composite -19 · live"; tooltip notes the path is wired end-to-end.
+- Per-half breakdown panel on the SignedData card: composite OID, ML-DSA half size (FIPS 204 Table 1: 2420/3309/4627 bytes), classical half name + size estimate (RSA-2048 ≈ 256 B, ECDSA-P256 ≈ 72 B, ECDSA-P384 ≈ 104 B). Verify card flips its success message to "Both halves (ML-DSA + classical) verified per draft-19 §5" when a composite OID is in play.
+
+Service surface — [CMSSigningService.ts](src/components/PKILearning/modules/EmailSigning/services/CMSSigningService.ts):
+
+- `mkCert` / `sign` / `verify` opts gain `alg?: CmsAlg` so the demo can pass through the composite OID. The message-contract change is additive — non-composite callers don't need to set the field.
+
+Rebuild required: `npm run build:openssl-wasm` (also rebuilds the pkcs11-provider archive in pqctoday-hsm). The new `openssl.wasm` (5.2 MB) ships with `_pqctoday_composite_mkcert`, `_pqctoday_composite_cms_sign`, and `_pqctoday_composite_cms_verify` in EXPORTED_FUNCTIONS.
+
 ### Fix — extend in-HSM keygen to EC P-256 + ML-KEM-512/768/1024; enable HSM-by-default in S/MIME workshop (2026-05-17)
 
 After the MANDATORY_DIGEST fix landed real ML-DSA HSM sign+verify, two of the three S/MIME workshop demos still couldn't run against softhsmv3 because their keygen path was wrong. `openssl genpkey -algorithm <X> -out pkcs11:object=<keyId>` resolves `pkcs11:...` through OpenSSL's BIO layer, which writes a PEM to MEMFS — the key never reaches the softhsmv3 token, and the demo's subsequent `pkcs11:object=<keyId>` lookups return `Could not find private key`. The ML-DSA path already worked around this with a direct `C_GenerateKeyPair` call ([generateMlDsaKeyInHsm](src/components/PKILearning/modules/EmailSigning/worker/cms.worker.ts)); EC + ML-KEM did not.
