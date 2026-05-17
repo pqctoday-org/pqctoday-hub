@@ -13,6 +13,33 @@ function validateCatalog(entries: Record<string, ModuleItem>): Record<string, Mo
   return entries
 }
 
+/**
+ * Strip undefined entries from track module arrays. A dangling
+ * `MODULE_CATALOG['some-removed-id']` reference returns undefined and
+ * crashes downstream `.map((m) => m.id)` consumers (Dashboard, LearnTrackStack).
+ * In dev we log the dropped slot so the broken track row is visible during
+ * triage; in prod we silently drop it so the page still renders.
+ */
+function validateTracks(
+  tracks: { track: string; modules: (ModuleItem | undefined)[] }[]
+): { track: string; modules: ModuleItem[] }[] {
+  return tracks.map((t) => {
+    const kept: ModuleItem[] = []
+    for (let i = 0; i < t.modules.length; i++) {
+      const m = t.modules[i]
+      if (m) {
+        kept.push(m)
+      } else if (import.meta.env.DEV) {
+        console.error(
+          `[moduleData] MODULE_TRACKS "${t.track}" slot ${i} is undefined ` +
+            `— a referenced module id is missing from MODULE_CATALOG`
+        )
+      }
+    }
+    return { track: t.track, modules: kept }
+  })
+}
+
 /** All module metadata keyed by module ID */
 export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   'pqc-101': {
@@ -95,6 +122,15 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     duration: '40 min',
     difficulty: 'intermediate',
   },
+  'mls-group-messaging': {
+    id: 'mls-group-messaging',
+    lm_id: 'LM-054',
+    title: 'MLS — Group Messaging',
+    description:
+      'Messaging Layer Security (RFC 9420) with TreeKEM, HPKE, and a PKCS#11-backed openmls provider. Scales group key agreement to thousands while keeping signature keys in the HSM.',
+    duration: '40 min',
+    difficulty: 'intermediate',
+  },
   'pki-workshop': {
     id: 'pki-workshop',
     lm_id: 'LM-020',
@@ -103,6 +139,15 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
       'Learn PKI fundamentals, build certificate chains hands-on, and explore PQC migration.',
     duration: '40 min',
     difficulty: 'intermediate',
+  },
+  'pki-enrollment-protocols': {
+    id: 'pki-enrollment-protocols',
+    lm_id: 'LM-055',
+    title: 'PKI Enrollment Protocols (EST & CMP)',
+    description:
+      'RFC 7030 EST and RFC 9810 CMP (KEM update) — hands-on PQC certificate enrollment with real OpenSSL 3.6 WASM crypto and an in-browser mock CA.',
+    duration: '50 min',
+    difficulty: 'advanced',
   },
   'kms-pqc': {
     id: 'kms-pqc',
@@ -509,6 +554,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   '5g-security': 3,
   'digital-id': 5,
   'tls-basics': 4,
+  'mls-group-messaging': 2,
   'quantum-threats': 5,
   'pqc-candidates': 6,
   'hybrid-crypto': 5,
@@ -556,6 +602,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'research-quantum-impact': 4,
   'secure-boot-pqc': 5,
   'os-pqc': 5,
+  'pki-enrollment-protocols': 6,
   quiz: 1, // Special: no LEARN_SECTIONS or WORKSHOP_STEPS — quiz engine tracks its own progress
   assess: 1, // Special: assessment wizard — only in step counts for overall progress tracking
 }
@@ -574,7 +621,7 @@ export const TRACK_COLORS: Record<string, string> = {
 }
 
 /** Module tracks for the grid display */
-export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
+export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = validateTracks([
   {
     track: 'Role Guides',
     modules: [
@@ -610,6 +657,7 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['network-security-pqc'],
       MODULE_CATALOG['web-gateway-pqc'],
       MODULE_CATALOG['api-security-jwt'],
+      MODULE_CATALOG['pki-enrollment-protocols'],
       MODULE_CATALOG['tls-basics'],
       MODULE_CATALOG['vpn-ssh-pqc'],
       MODULE_CATALOG['email-signing'],
@@ -674,7 +722,7 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['5g-security'],
     ],
   },
-]
+])
 
 /** Reverse lookup: module ID → track name (derived from MODULE_TRACKS) */
 export const MODULE_TO_TRACK: Record<string, string> = Object.fromEntries(
