@@ -168,14 +168,7 @@ test.describe('S/MIME Workshop — CMS sign+verify and encrypt+decrypt (P0 KAT)'
 
   // ── T3 — HSM sign+verify KAT ─────────────────────────────────────────────────
 
-  // TODO: T3 requires pkcs11_static_shim.c dlopen(NULL) → SOFTHSM_FAKE_HANDLE fix + WASM rebuild.
-  // Root cause: configureEnvironment() writes MINIMAL_OPENSSL_CNF (no [pkcs11_sect]) to
-  // OPENSSL_CONF; OPENSSL_init_ssl() re-reads it on callMain(['req',...]) and blots out the
-  // [pkcs11_sect] loaded by pqctoday_cms_init, leaving mctx->path=NULL → dlopen(NULL) → NULL
-  // → CKR_GENERAL_ERROR. Setting PKCS11_PROVIDER_MODULE in the worker ENV is not sufficient
-  // because p11prov_module_new reads the env var but dlopen still receives NULL from the shim
-  // when path resolution happens before getenv is called in the OpenSSL app libctx path.
-  test.skip('T3: ML-DSA-65 HSM sign+verify KAT (skips if provider_missing)', async ({ page }) => {
+  test('T3: ML-DSA-65 HSM sign+verify KAT (skips if provider_missing)', async ({ page }) => {
     test.setTimeout(PROVIDER_INIT_TIMEOUT + PIPELINE_TIMEOUT)
 
     await page.goto(WORKSHOP_URL)
@@ -210,7 +203,25 @@ test.describe('S/MIME Workshop — CMS sign+verify and encrypt+decrypt (P0 KAT)'
 
     const bodyText = await page.evaluate(() => document.body.innerText)
 
-    const errorLines = bodyText
+    // Read Worker logs from the collapsed <details> element (innerText skips closed details).
+    let workerLogs = ''
+    try {
+      const logsDetails = page
+        .locator('details')
+        .filter({ hasText: /Worker logs/ })
+        .first()
+      const isPresent = await logsDetails.count()
+      if (isPresent > 0) {
+        await logsDetails.locator('summary').click()
+        await logsDetails.locator('pre').first().waitFor({ state: 'visible', timeout: 3_000 })
+        workerLogs = await logsDetails.locator('pre').first().innerText()
+      }
+    } catch {
+      /* non-fatal — logs not required for the assertion */
+    }
+
+    const allDiagText = bodyText + '\n' + workerLogs
+    const errorLines = allDiagText
       .split('\n')
       .filter(
         (l) =>
@@ -218,9 +229,10 @@ test.describe('S/MIME Workshop — CMS sign+verify and encrypt+decrypt (P0 KAT)'
           l.toLowerCase().includes('error') ||
           l.includes('rc=') ||
           l.includes('pkcs11') ||
-          l.includes('Module initialization')
+          l.includes('Module initialization') ||
+          l.includes('[hsm-diag]')
       )
-      .slice(0, 20)
+      .slice(0, 30)
     if (errorLines.length > 0) {
       console.log(`[cms-hsm] T3 diagnostic lines:\n${errorLines.join('\n')}`)
     }
@@ -228,6 +240,7 @@ test.describe('S/MIME Workshop — CMS sign+verify and encrypt+decrypt (P0 KAT)'
     if (!bodyText.includes('Signature verifies against signer cert')) {
       throw new Error(
         `T3: HSM pipeline did not produce a verified signature.\n` +
+          `Worker logs:\n${workerLogs.slice(0, 2000)}\n` +
           `Body snippet (first 3000):\n${bodyText.slice(0, 3000)}`
       )
     }

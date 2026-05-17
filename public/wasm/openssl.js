@@ -6829,6 +6829,7 @@ var _crl2pkcs7_main = Module['_crl2pkcs7_main'] = makeInvalidEarlyAccess('_crl2p
 var _genpkey_main = Module['_genpkey_main'] = makeInvalidEarlyAccess('_genpkey_main');
 var _strerror = makeInvalidEarlyAccess('_strerror');
 var _main = Module['_main'] = makeInvalidEarlyAccess('_main');
+var _pqctoday_cms_init = Module['_pqctoday_cms_init'] = makeInvalidEarlyAccess('_pqctoday_cms_init');
 var _pkey_main = Module['_pkey_main'] = makeInvalidEarlyAccess('_pkey_main');
 var _pkeyutl_main = Module['_pkeyutl_main'] = makeInvalidEarlyAccess('_pkeyutl_main');
 var _req_main = Module['_req_main'] = makeInvalidEarlyAccess('_req_main');
@@ -6842,7 +6843,6 @@ var _execute_tls_simulation = Module['_execute_tls_simulation'] = makeInvalidEar
 var _tls_simulation_set_hsm_mode = Module['_tls_simulation_set_hsm_mode'] = makeInvalidEarlyAccess('_tls_simulation_set_hsm_mode');
 var _tls_simulation_get_hsm_mode = Module['_tls_simulation_get_hsm_mode'] = makeInvalidEarlyAccess('_tls_simulation_get_hsm_mode');
 var _C_GetFunctionList = Module['_C_GetFunctionList'] = makeInvalidEarlyAccess('_C_GetFunctionList');
-var _pqctoday_cms_init = Module['_pqctoday_cms_init'] = makeInvalidEarlyAccess('_pqctoday_cms_init');
 var _pqctoday_cms_shutdown = Module['_pqctoday_cms_shutdown'] = makeInvalidEarlyAccess('_pqctoday_cms_shutdown');
 var _generate_mock_ca_root = Module['_generate_mock_ca_root'] = makeInvalidEarlyAccess('_generate_mock_ca_root');
 var _execute_cmp_simulation = Module['_execute_cmp_simulation'] = makeInvalidEarlyAccess('_execute_cmp_simulation');
@@ -6889,6 +6889,7 @@ function assignWasmExports(wasmExports) {
   assert(typeof wasmExports['genpkey_main'] != 'undefined', 'missing Wasm export: genpkey_main');
   assert(typeof wasmExports['strerror'] != 'undefined', 'missing Wasm export: strerror');
   assert(typeof wasmExports['__main_argc_argv'] != 'undefined', 'missing Wasm export: __main_argc_argv');
+  assert(typeof wasmExports['pqctoday_cms_init'] != 'undefined', 'missing Wasm export: pqctoday_cms_init');
   assert(typeof wasmExports['pkey_main'] != 'undefined', 'missing Wasm export: pkey_main');
   assert(typeof wasmExports['pkeyutl_main'] != 'undefined', 'missing Wasm export: pkeyutl_main');
   assert(typeof wasmExports['req_main'] != 'undefined', 'missing Wasm export: req_main');
@@ -6902,7 +6903,6 @@ function assignWasmExports(wasmExports) {
   assert(typeof wasmExports['tls_simulation_set_hsm_mode'] != 'undefined', 'missing Wasm export: tls_simulation_set_hsm_mode');
   assert(typeof wasmExports['tls_simulation_get_hsm_mode'] != 'undefined', 'missing Wasm export: tls_simulation_get_hsm_mode');
   assert(typeof wasmExports['C_GetFunctionList'] != 'undefined', 'missing Wasm export: C_GetFunctionList');
-  assert(typeof wasmExports['pqctoday_cms_init'] != 'undefined', 'missing Wasm export: pqctoday_cms_init');
   assert(typeof wasmExports['pqctoday_cms_shutdown'] != 'undefined', 'missing Wasm export: pqctoday_cms_shutdown');
   assert(typeof wasmExports['generate_mock_ca_root'] != 'undefined', 'missing Wasm export: generate_mock_ca_root');
   assert(typeof wasmExports['execute_cmp_simulation'] != 'undefined', 'missing Wasm export: execute_cmp_simulation');
@@ -6945,6 +6945,7 @@ function assignWasmExports(wasmExports) {
   _genpkey_main = Module['_genpkey_main'] = createExportWrapper('genpkey_main', 2);
   _strerror = createExportWrapper('strerror', 1);
   _main = Module['_main'] = createExportWrapper('__main_argc_argv', 2);
+  _pqctoday_cms_init = Module['_pqctoday_cms_init'] = createExportWrapper('pqctoday_cms_init', 0);
   _pkey_main = Module['_pkey_main'] = createExportWrapper('pkey_main', 2);
   _pkeyutl_main = Module['_pkeyutl_main'] = createExportWrapper('pkeyutl_main', 2);
   _req_main = Module['_req_main'] = createExportWrapper('req_main', 2);
@@ -6958,7 +6959,6 @@ function assignWasmExports(wasmExports) {
   _tls_simulation_set_hsm_mode = Module['_tls_simulation_set_hsm_mode'] = createExportWrapper('tls_simulation_set_hsm_mode', 1);
   _tls_simulation_get_hsm_mode = Module['_tls_simulation_get_hsm_mode'] = createExportWrapper('tls_simulation_get_hsm_mode', 0);
   _C_GetFunctionList = Module['_C_GetFunctionList'] = createExportWrapper('C_GetFunctionList', 1);
-  _pqctoday_cms_init = Module['_pqctoday_cms_init'] = createExportWrapper('pqctoday_cms_init', 0);
   _pqctoday_cms_shutdown = Module['_pqctoday_cms_shutdown'] = createExportWrapper('pqctoday_cms_shutdown', 0);
   _generate_mock_ca_root = Module['_generate_mock_ca_root'] = createExportWrapper('generate_mock_ca_root', 5);
   _execute_cmp_simulation = Module['_execute_cmp_simulation'] = createExportWrapper('execute_cmp_simulation', 7);

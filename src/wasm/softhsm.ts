@@ -4121,7 +4121,8 @@ export const hsm_aesDecrypt = (
   keyHandle: number,
   ciphertext: Uint8Array,
   iv: Uint8Array,
-  mode: 'ctr' | 'gcm' | 'cbc' = 'gcm'
+  mode: 'ctr' | 'gcm' | 'cbc' = 'gcm',
+  aad?: Uint8Array
 ): Uint8Array => {
   let mech: number
   const allocPtrs: number[] = []
@@ -4130,7 +4131,7 @@ export const hsm_aesDecrypt = (
     allocPtrs.push(ctrP.ptr)
     mech = buildMech(M, CKM_AES_CTR, ctrP.ptr, ctrP.len)
   } else if (mode === 'gcm') {
-    const gcmP = buildGCMParams(M, iv)
+    const gcmP = buildGCMParams(M, iv, aad)
     gcmP.allocPtrs.forEach((p) => allocPtrs.push(p))
     mech = buildMech(M, CKM_AES_GCM, gcmP.ptr, gcmP.len)
   } else {

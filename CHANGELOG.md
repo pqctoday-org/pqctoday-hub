@@ -21,6 +21,26 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Fix — HSM toggle greyed in playground + softhsm `C_Initialize rv=0x5` (2026-05-17)
+
+Two HSM bugs fixed in the Email Signing workshop:
+
+**1. HSM toggle permanently greyed in `/playground/email-signing`**
+
+[EmailSigningPlayground.tsx](src/components/PKILearning/modules/EmailSigning/EmailSigningPlayground.tsx) was rendering `<MLDSASignDemo />` / `<MLKEMEncryptDemo />` / `<DualSignDemo />` directly without passing the required `providerReady: boolean` prop. TypeScript provides `undefined` (falsy) → `disabled={!providerReady}` always true. Fixed by collapsing the three Step 4a/b/c accordion panels into a single **Step 4 — Live HSM Demos** section that renders `<LiveHSMProvider />`, which owns the CMS worker lifecycle and passes `providerReady={true}` once `pqctoday_cms_init()` succeeds.
+
+**2. `C_Initialize rv=0x5` (CKR_GENERAL_ERROR) on HSM keygen**
+
+Root cause: Emscripten's `getEnvStrings()` **caches** the env string array on first call. Setting `M.ENV['SOFTHSM2_CONF']` after module creation is invisible to C `getenv()`, so softhsm falls back to its compiled-in `DEFAULT_SOFTHSM2_CONF = /etc/softhsmv3.conf`. That file did not exist in MEMFS → `Configuration::reload()` failed → `ObjectStore` invalid → `CKR_GENERAL_ERROR`.
+
+Fix in `setupSoftHsmConf()` ([cms.worker.ts](src/components/PKILearning/modules/EmailSigning/worker/cms.worker.ts)): now writes the softhsm conf to **both** `/ssl/softhsm.conf` (env-var path, works if caching hasn't fired) **and** `/etc/softhsmv3.conf` (compiled-in default, always works). Creates `/etc/` first if absent. Tokendir path gains trailing slash (`/ssl/softhsm-tokens/`) to match the pattern in `softhsm_pre.js`. Mirrors exactly what the standalone softhsm.wasm build's pre-run shim does.
+
+Also fixed: `jsx-a11y/label-has-associated-control` lint error in [MLSCryptoOperations.tsx](src/components/PKILearning/modules/MLSGroupMessaging/workshop/MLSCryptoOperations.tsx) (line 391 — application message label now uses `htmlFor="mls-app-plaintext"`) and removed an unused `eslint-disable no-console` directive from the same file.
+
+### Fix — `pkcs11_static_shim.c`: dlopen(NULL) must return SOFTHSM_FAKE_HANDLE (2026-05-17)
+
+[src/wasm/pkcs11_static_shim.c](src/wasm/pkcs11_static_shim.c) — extended the `dlopen` interception to handle `NULL` filename. pkcs11-provider calls `dlopen(NULL)` when `mctx->path` is NULL (e.g. when the app libctx reloads a minimal `openssl.cnf` that has no `[pkcs11_sect]` and the module path is not set). In a WASM binary there is no dynamic linker, so `NULL` has no valid meaning other than "the calling process itself" — which is the statically-linked softhsmv3. Returning `SOFTHSM_FAKE_HANDLE` for `NULL` lets `dlsym()` still resolve all PKCS#11 entry points. Previously `dlopen(NULL)` returned `NULL` → pkcs11-provider reported `CKR_GENERAL_ERROR` on every `req -x509 -key pkcs11:...` after a `configureEnvironment()` openssl.cnf reload blotted out the provider's path.
+
 ### Fix — Playground tool deep-links from PQC Protocol Matrix (2026-05-17)
 
 Clicking a playground tool link in the **PQC Protocol Matrix** (`/algorithms` → Protocol Support tab or detail modal) previously dropped users on the `/playground` grid without selecting the tool, because `email-signing` and `api-security-jwt` were referenced as `toolId` values in the matrix but had no workshop registry entries — `PlaygroundToolRoute` could not find them and redirected to `/playground`.

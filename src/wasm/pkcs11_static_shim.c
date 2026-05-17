@@ -56,7 +56,14 @@ static int is_softhsm_path(const char *path) {
 
 void *dlopen(const char *filename, int flags) {
     (void)flags;
-    if (is_softhsm_path(filename)) {
+    /* NULL means "the calling process itself" — in a WASM build there is no
+     * dynamic linker, so the only valid interpretation is the statically-linked
+     * softhsmv3.  pkcs11-provider calls dlopen(NULL) when it falls back from
+     * the module-path resolution path (e.g. when the OpenSSL app libctx reads
+     * a minimal openssl.cnf that omits [pkcs11_sect] and mctx->path is NULL).
+     * Returning SOFTHSM_FAKE_HANDLE here lets dlsym() still resolve all
+     * PKCS#11 entry points from the statically-linked softhsmv3 object. */
+    if (!filename || is_softhsm_path(filename)) {
         return SOFTHSM_FAKE_HANDLE;
     }
     return NULL;
