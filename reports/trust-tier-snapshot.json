@@ -1,20 +1,20 @@
 {
-  "measuredAt": "2026-05-16T13:50:59.887Z",
+  "measuredAt": "2026-05-17T13:40:08.322Z",
   "note": "Pre-SME-triage baseline for Phase 2 acceptance — re-run after admin-portal queues land to compare.",
   "overall": {
-    "Authoritative": 90,
-    "High": 641,
-    "Moderate": 958,
-    "Low": 1666,
-    "total": 3355
+    "Authoritative": 89,
+    "High": 657,
+    "Moderate": 939,
+    "Low": 1683,
+    "total": 3368
   },
   "byResourceType": {
     "library": {
       "Authoritative": 0,
       "High": 189,
-      "Moderate": 354,
-      "Low": 280,
-      "total": 823
+      "Moderate": 351,
+      "Low": 286,
+      "total": 826
     },
     "timeline": {
       "Authoritative": 0,
@@ -24,16 +24,16 @@
       "total": 962
     },
     "compliance": {
-      "Authoritative": 33,
-      "High": 40,
-      "Moderate": 43,
-      "Low": 7,
-      "total": 123
+      "Authoritative": 32,
+      "High": 41,
+      "Moderate": 46,
+      "Low": 14,
+      "total": 133
     },
     "migrate": {
       "Authoritative": 12,
-      "High": 79,
-      "Moderate": 156,
+      "High": 94,
+      "Moderate": 141,
       "Low": 585,
       "total": 832
     },
@@ -54,8 +54,8 @@
     "algorithm": {
       "Authoritative": 0,
       "High": 82,
-      "Moderate": 30,
-      "Low": 51,
+      "Moderate": 26,
+      "Low": 55,
       "total": 163
     }
   }
