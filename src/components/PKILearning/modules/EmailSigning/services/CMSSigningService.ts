@@ -212,6 +212,9 @@ export class CMSSigningService {
      *  of being self-signed. Required for KEM-only subject keys (ML-KEM,
      *  X25519) that can't produce a self-signature. */
     issuerKeyId?: string
+    /** Subject key algorithm. The worker uses this to route LAMPS
+     *  composite OIDs through the dedicated composite mkcert shim. */
+    alg?: CmsAlg
   }): Promise<MkCertResult> {
     await this.readyPromise
     return this.request('CMS_MKCERT_RESULT', { type: 'CMS_MKCERT', ...opts }, (msg) => ({
@@ -224,6 +227,8 @@ export class CMSSigningService {
     certId: string
     payload: Uint8Array
     useHsm?: boolean
+    /** Algorithm of the signing key — needed for composite OID routing. */
+    alg?: CmsAlg
   }): Promise<SignResult> {
     await this.readyPromise
     return this.request('CMS_SIGN_RESULT', { type: 'CMS_SIGN', ...opts }, (msg) => ({
@@ -235,6 +240,10 @@ export class CMSSigningService {
     signedP7m: Uint8Array
     certId: string
     useHsm?: boolean
+    /** Cert's signature algorithm — needed for composite OID routing.
+     *  When omitted, the worker assumes a non-composite cert and uses
+     *  `openssl cms -verify`. */
+    alg?: CmsAlg
   }): Promise<VerifyResult> {
     await this.readyPromise
     return this.request('CMS_VERIFY_RESULT', { type: 'CMS_VERIFY', ...opts }, (msg) => ({

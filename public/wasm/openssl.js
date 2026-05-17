@@ -6844,6 +6844,9 @@ var _tls_simulation_set_hsm_mode = Module['_tls_simulation_set_hsm_mode'] = make
 var _tls_simulation_get_hsm_mode = Module['_tls_simulation_get_hsm_mode'] = makeInvalidEarlyAccess('_tls_simulation_get_hsm_mode');
 var _C_GetFunctionList = Module['_C_GetFunctionList'] = makeInvalidEarlyAccess('_C_GetFunctionList');
 var _pqctoday_cms_shutdown = Module['_pqctoday_cms_shutdown'] = makeInvalidEarlyAccess('_pqctoday_cms_shutdown');
+var _pqctoday_composite_mkcert = Module['_pqctoday_composite_mkcert'] = makeInvalidEarlyAccess('_pqctoday_composite_mkcert');
+var _pqctoday_composite_cms_sign = Module['_pqctoday_composite_cms_sign'] = makeInvalidEarlyAccess('_pqctoday_composite_cms_sign');
+var _pqctoday_composite_cms_verify = Module['_pqctoday_composite_cms_verify'] = makeInvalidEarlyAccess('_pqctoday_composite_cms_verify');
 var _generate_mock_ca_root = Module['_generate_mock_ca_root'] = makeInvalidEarlyAccess('_generate_mock_ca_root');
 var _execute_cmp_simulation = Module['_execute_cmp_simulation'] = makeInvalidEarlyAccess('_execute_cmp_simulation');
 var _C_Initialize = Module['_C_Initialize'] = makeInvalidEarlyAccess('_C_Initialize');
@@ -6904,6 +6907,9 @@ function assignWasmExports(wasmExports) {
   assert(typeof wasmExports['tls_simulation_get_hsm_mode'] != 'undefined', 'missing Wasm export: tls_simulation_get_hsm_mode');
   assert(typeof wasmExports['C_GetFunctionList'] != 'undefined', 'missing Wasm export: C_GetFunctionList');
   assert(typeof wasmExports['pqctoday_cms_shutdown'] != 'undefined', 'missing Wasm export: pqctoday_cms_shutdown');
+  assert(typeof wasmExports['pqctoday_composite_mkcert'] != 'undefined', 'missing Wasm export: pqctoday_composite_mkcert');
+  assert(typeof wasmExports['pqctoday_composite_cms_sign'] != 'undefined', 'missing Wasm export: pqctoday_composite_cms_sign');
+  assert(typeof wasmExports['pqctoday_composite_cms_verify'] != 'undefined', 'missing Wasm export: pqctoday_composite_cms_verify');
   assert(typeof wasmExports['generate_mock_ca_root'] != 'undefined', 'missing Wasm export: generate_mock_ca_root');
   assert(typeof wasmExports['execute_cmp_simulation'] != 'undefined', 'missing Wasm export: execute_cmp_simulation');
   assert(typeof wasmExports['C_Initialize'] != 'undefined', 'missing Wasm export: C_Initialize');
@@ -6960,6 +6966,9 @@ function assignWasmExports(wasmExports) {
   _tls_simulation_get_hsm_mode = Module['_tls_simulation_get_hsm_mode'] = createExportWrapper('tls_simulation_get_hsm_mode', 0);
   _C_GetFunctionList = Module['_C_GetFunctionList'] = createExportWrapper('C_GetFunctionList', 1);
   _pqctoday_cms_shutdown = Module['_pqctoday_cms_shutdown'] = createExportWrapper('pqctoday_cms_shutdown', 0);
+  _pqctoday_composite_mkcert = Module['_pqctoday_composite_mkcert'] = createExportWrapper('pqctoday_composite_mkcert', 6);
+  _pqctoday_composite_cms_sign = Module['_pqctoday_composite_cms_sign'] = createExportWrapper('pqctoday_composite_cms_sign', 6);
+  _pqctoday_composite_cms_verify = Module['_pqctoday_composite_cms_verify'] = createExportWrapper('pqctoday_composite_cms_verify', 4);
   _generate_mock_ca_root = Module['_generate_mock_ca_root'] = createExportWrapper('generate_mock_ca_root', 5);
   _execute_cmp_simulation = Module['_execute_cmp_simulation'] = createExportWrapper('execute_cmp_simulation', 7);
   _C_Initialize = Module['_C_Initialize'] = createExportWrapper('C_Initialize', 1);

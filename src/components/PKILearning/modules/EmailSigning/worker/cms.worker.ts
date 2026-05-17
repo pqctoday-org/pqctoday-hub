@@ -137,6 +137,11 @@ type WorkerInbound =
        * (ML-KEM, X25519) that can't produce a self-signature.
        */
       issuerKeyId?: string
+      /**
+       * Algorithm of the subject key. For LAMPS composite OIDs the worker
+       * routes through pqctoday_composite_mkcert instead of `openssl req`.
+       */
+      alg?: CmsAlg
       requestId?: string
     }
   | {
@@ -145,6 +150,8 @@ type WorkerInbound =
       certId: string
       payload: Uint8Array
       useHsm?: boolean
+      /** Composite-OID routing — see CMS_MKCERT.alg. */
+      alg?: CmsAlg
       requestId?: string
     }
   | {
@@ -152,6 +159,8 @@ type WorkerInbound =
       signedP7m: Uint8Array
       certId: string
       useHsm?: boolean
+      /** Composite-OID routing — see CMS_MKCERT.alg. */
+      alg?: CmsAlg
       requestId?: string
     }
   | {
@@ -379,6 +388,23 @@ const CKA_DECAPSULATE_ATTR = 0x00000634
 const CKP_ML_KEM_512_VAL = 0x00000001
 const CKP_ML_KEM_768_VAL = 0x00000002
 const CKP_ML_KEM_1024_VAL = 0x00000003
+// PKCS#11 RSA key generation constants (softhsmv3 C++ engine).
+const CKM_RSA_PKCS_KEY_PAIR_GEN_VAL = 0x00000000
+const CKK_RSA_VAL = 0x00000000
+const CKA_MODULUS_BITS_ATTR = 0x00000121
+const CKA_PUBLIC_EXPONENT_ATTR = 0x00000122
+const CKA_DECRYPT_ATTR = 0x00000105
+const CKA_ENCRYPT_ATTR = 0x00000104
+// PKCS#11 v3.2 SLH-DSA key generation constants (FIPS 205 via softhsmv3).
+const CKM_SLH_DSA_KEY_PAIR_GEN_VAL = 0x0000002d
+const CKK_SLH_DSA_VAL = 0x0000004b
+const CKP_SLH_DSA_SHA2_128S_VAL = 0x00000001
+const CKP_SLH_DSA_SHA2_192S_VAL = 0x00000005
+const CKP_SLH_DSA_SHA2_256S_VAL = 0x00000009
+// PKCS#11 v3.2 Montgomery EC (X25519) key generation constants.
+const CKM_EC_MONTGOMERY_KEY_PAIR_GEN_VAL = 0x00001056
+const CKK_EC_MONTGOMERY_VAL = 0x00000041
+const CKA_DERIVE_ATTR = 0x0000010c
 const CKP_ML_DSA_44_VAL = 0x00000001
 const CKP_ML_DSA_65_VAL = 0x00000002
 const CKP_ML_DSA_87_VAL = 0x00000003
@@ -767,6 +793,184 @@ function ensureProviderInit(M: OpenSSLModule): number {
   }
 }
 
+/* ---------------------------------------------------------------------------
+ * LAMPS composite signature helpers
+ *
+ * The three pqctoday_composite_* shims in cms_provider_init.c each take
+ * the composite OID + two pkcs11: URIs + file paths, and route through
+ * pkcs11-provider's composite.c dispatch tables. The provider must be
+ * loaded before any shim runs — ensureProviderInit handles that on every
+ * fresh module instance.
+ * ------------------------------------------------------------------------- */
+
+function isCompositeAlg(alg: CmsAlg | undefined | null): boolean {
+  if (!alg) return false
+  return alg.startsWith('id-MLDSA')
+}
+
+/** Map an alg name to its composite OID per LAMPS draft-19 §6. */
+function compositeOidFor(alg: CmsAlg): string | null {
+  switch (alg) {
+    case 'id-MLDSA44-RSA2048-PSS-SHA256':
+      return '1.3.6.1.5.5.7.6.37'
+    case 'id-MLDSA65-ECDSA-P256-SHA512':
+      return '1.3.6.1.5.5.7.6.45'
+    case 'id-MLDSA87-ECDSA-P384-SHA512':
+      return '1.3.6.1.5.5.7.6.49'
+    default:
+      return null
+  }
+}
+
+/** For a composite alg, return the keyId suffixes for the two subkeys
+ *  generated in softhsmv3. Convention: composite key 'alice' → softhsm
+ *  objects 'alice__pq' + 'alice__cl'. */
+function compositeSubkeyIds(parentKeyId: string): { pqKeyId: string; classicalKeyId: string } {
+  return { pqKeyId: `${parentKeyId}__pq`, classicalKeyId: `${parentKeyId}__cl` }
+}
+
+/** For a composite alg, generate both subkeys in softhsm. Returns a
+ *  string error detail or null on success. */
+function generateCompositeSubkeys(
+  M: OpenSSLModule,
+  alg: CmsAlg,
+  parentKeyId: string
+): string | null {
+  const { pqKeyId, classicalKeyId } = compositeSubkeyIds(parentKeyId)
+  let pqErr: string | null = null
+  let classicalErr: string | null = null
+
+  switch (alg) {
+    case 'id-MLDSA44-RSA2048-PSS-SHA256':
+      pqErr = generateMlDsaKeyInHsm(M, 'ML-DSA-44', pqKeyId)
+      if (pqErr === null) {
+        // LAMPS draft-19 §6 pins this profile to RSA-2048-PSS.
+        classicalErr = generateRsaKeyInHsm(M, classicalKeyId, 2048)
+      }
+      break
+    case 'id-MLDSA65-ECDSA-P256-SHA512':
+      pqErr = generateMlDsaKeyInHsm(M, 'ML-DSA-65', pqKeyId)
+      if (pqErr === null) {
+        classicalErr = generateEcKeyInHsm(M, classicalKeyId, 'P-256')
+      }
+      break
+    case 'id-MLDSA87-ECDSA-P384-SHA512':
+      pqErr = generateMlDsaKeyInHsm(M, 'ML-DSA-87', pqKeyId)
+      if (pqErr === null) {
+        classicalErr = generateEcKeyInHsm(M, classicalKeyId, 'P-384')
+      }
+      break
+    default:
+      return `composite alg not recognized: ${alg}`
+  }
+
+  if (pqErr !== null) return `composite PQ subkey failed: ${pqErr}`
+  if (classicalErr !== null) return `composite classical subkey failed: ${classicalErr}`
+  return null
+}
+
+/** cwrap binding for _pqctoday_composite_mkcert. Returns 0 on success or
+ *  a negative error code from cms_provider_init.c. */
+function compositeMkCert(
+  M: OpenSSLModule,
+  compositeOid: string,
+  pqUri: string,
+  classicalUri: string,
+  subjectCn: string,
+  days: number,
+  outPath: string
+): number {
+  let fn:
+    | ((oid: string, pq: string, cl: string, cn: string, days: number, out: string) => number)
+    | null = null
+  try {
+    fn = M.cwrap('pqctoday_composite_mkcert', 'number', [
+      'string',
+      'string',
+      'string',
+      'string',
+      'number',
+      'string',
+    ]) as (oid: string, pq: string, cl: string, cn: string, days: number, out: string) => number
+  } catch {
+    return -100 // symbol missing — WASM not rebuilt
+  }
+  if (!fn) return -100
+  try {
+    return Number(fn(compositeOid, pqUri, classicalUri, subjectCn, days, outPath))
+  } catch {
+    return -101
+  }
+}
+
+/** cwrap binding for _pqctoday_composite_cms_sign. */
+function compositeCmsSign(
+  M: OpenSSLModule,
+  compositeOid: string,
+  pqUri: string,
+  classicalUri: string,
+  certPath: string,
+  payloadPath: string,
+  outP7mPath: string
+): number {
+  let fn:
+    | ((oid: string, pq: string, cl: string, cert: string, payload: string, out: string) => number)
+    | null = null
+  try {
+    fn = M.cwrap('pqctoday_composite_cms_sign', 'number', [
+      'string',
+      'string',
+      'string',
+      'string',
+      'string',
+      'string',
+    ]) as (
+      oid: string,
+      pq: string,
+      cl: string,
+      cert: string,
+      payload: string,
+      out: string
+    ) => number
+  } catch {
+    return -100
+  }
+  if (!fn) return -100
+  try {
+    return Number(fn(compositeOid, pqUri, classicalUri, certPath, payloadPath, outP7mPath))
+  } catch {
+    return -101
+  }
+}
+
+/** cwrap binding for _pqctoday_composite_cms_verify. Returns 0 on
+ *  success (both halves verified), negative otherwise. */
+function compositeCmsVerify(
+  M: OpenSSLModule,
+  compositeOid: string,
+  certPath: string,
+  signedP7mPath: string,
+  outPayloadPath: string
+): number {
+  let fn: ((oid: string, cert: string, p7m: string, out: string) => number) | null = null
+  try {
+    fn = M.cwrap('pqctoday_composite_cms_verify', 'number', [
+      'string',
+      'string',
+      'string',
+      'string',
+    ]) as (oid: string, cert: string, p7m: string, out: string) => number
+  } catch {
+    return -100
+  }
+  if (!fn) return -100
+  try {
+    return Number(fn(compositeOid, certPath, signedP7mPath, outPayloadPath))
+  } catch {
+    return -101
+  }
+}
+
 // Snapshot any /ssl/* file the worker wrote during this call into the
 // persistent vfs map so the next module instance sees it.
 function persistVfs(M: OpenSSLModule, paths: string[]): void {
@@ -913,6 +1117,13 @@ function mlKemParamSet(alg: CmsAlg): number {
   if (alg === 'ML-KEM-512') return CKP_ML_KEM_512_VAL
   if (alg === 'ML-KEM-768') return CKP_ML_KEM_768_VAL
   if (alg === 'ML-KEM-1024') return CKP_ML_KEM_1024_VAL
+  return -1
+}
+
+function slhDsaParamSet(alg: CmsAlg): number {
+  if (alg === 'SLH-DSA-SHA2-128s') return CKP_SLH_DSA_SHA2_128S_VAL
+  if (alg === 'SLH-DSA-SHA2-192s') return CKP_SLH_DSA_SHA2_192S_VAL
+  if (alg === 'SLH-DSA-SHA2-256s') return CKP_SLH_DSA_SHA2_256S_VAL
   return -1
 }
 
@@ -1155,11 +1366,17 @@ function generateMlDsaKeyInHsm(M: OpenSSLModule, alg: CmsAlg, keyId: string): st
 }
 
 /**
- * Generate an EC P-256 key pair directly in softhsmv3 via C_GenerateKeyPair.
- * CKA_EC_PARAMS carries the DER-encoded OID for prime256v1 (secp256r1).
+ * Generate an EC key pair directly in softhsmv3 via C_GenerateKeyPair.
+ * CKA_EC_PARAMS carries the DER-encoded curve OID. Default is prime256v1
+ * (secp256r1) for the standalone ECDSA workshop path; pass curve='P-384'
+ * to drive id-MLDSA87-ECDSA-P384-SHA512 composite keygen.
  * Follows the same session lifecycle as generateMlDsaKeyInHsm.
  */
-function generateEcKeyInHsm(M: OpenSSLModule, keyId: string): string | null {
+function generateEcKeyInHsm(
+  M: OpenSSLModule,
+  keyId: string,
+  curve: 'P-256' | 'P-384' = 'P-256'
+): string | null {
   const {
     _C_GetSlotList,
     _C_OpenSession,
@@ -1263,10 +1480,15 @@ function generateEcKeyInHsm(M: OpenSSLModule, keyId: string): string | null {
     return `C_Login rv=0x${loginRv.toString(16)}`
   }
 
-  // DER-encoded ECParameters for prime256v1 (secp256r1, OID 1.2.840.10045.3.1.7).
-  const p256Oid = new Uint8Array([0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07])
-  const ecParamsP = fn_malloc(p256Oid.length)
-  heap.set(p256Oid, ecParamsP)
+  // DER-encoded ECParameters OID:
+  //   P-256 = prime256v1 / secp256r1 / 1.2.840.10045.3.1.7
+  //   P-384 = secp384r1                / 1.3.132.0.34
+  const curveOid =
+    curve === 'P-384'
+      ? new Uint8Array([0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x22])
+      : new Uint8Array([0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07])
+  const ecParamsP = fn_malloc(curveOid.length)
+  heap.set(curveOid, ecParamsP)
 
   const boolTrueP = fn_malloc(1)
   heap[boolTrueP] = 1
@@ -1304,7 +1526,7 @@ function generateEcKeyInHsm(M: OpenSSLModule, keyId: string): string | null {
   writeAttr(pubTplP, 2, CKA_LABEL_ATTR, labelP, labelBytes.length)
   writeAttr(pubTplP, 3, CKA_ID_ATTR, idP, idBytes.length)
   writeAttr(pubTplP, 4, CKA_KEY_TYPE_ATTR, keyTypeP, 4)
-  writeAttr(pubTplP, 5, CKA_EC_PARAMS_ATTR, ecParamsP, p256Oid.length)
+  writeAttr(pubTplP, 5, CKA_EC_PARAMS_ATTR, ecParamsP, curveOid.length)
   writeAttr(pubTplP, 6, CKA_VERIFY_ATTR, boolTrueP, 1)
 
   // Private key: CLASS, TOKEN, LABEL, ID, KEY_TYPE, SENSITIVE, SIGN
@@ -1351,7 +1573,7 @@ function generateEcKeyInHsm(M: OpenSSLModule, keyId: string): string | null {
   fn_CloseSession(hSession)
 
   if (genRv !== 0)
-    return `C_GenerateKeyPair(EC/P-256, slot=${tokenSlot}) rv=0x${genRv.toString(16)}`
+    return `C_GenerateKeyPair(EC/${curve}, slot=${tokenSlot}) rv=0x${genRv.toString(16)}`
   return null
 }
 
@@ -1557,6 +1779,618 @@ function generateMlKemKeyInHsm(M: OpenSSLModule, alg: CmsAlg, keyId: string): st
   return null
 }
 
+/**
+ * Generate an RSA-3072 key pair directly in softhsmv3 via C_GenerateKeyPair.
+ * 3072 is the FIPS 140-3 floor; the public exponent is fixed at 65537 (DER 0x010001).
+ * Same rationale as the other helpers — bypasses the BIO/genpkey trap that writes
+ * PEM to MEMFS instead of the token. Used for both RSA-PSS (sign) and RSA (sign+wrap)
+ * pkcs11: URIs in CMS sign / cert mint flows.
+ */
+function generateRsaKeyInHsm(M: OpenSSLModule, keyId: string, bits = 3072): string | null {
+  const {
+    _C_GetSlotList,
+    _C_OpenSession,
+    _C_Login,
+    _C_GenerateKeyPair,
+    _C_Logout,
+    _C_CloseSession,
+    _malloc,
+    _free,
+    HEAPU8,
+    setValue,
+    getValue,
+    stringToUTF8,
+  } = M as OpenSSLModule & Record<string, unknown>
+
+  const { _C_Initialize: _C_Init2 } = M as OpenSSLModule & Record<string, unknown>
+
+  const missing: string[] = []
+  if (typeof _C_GetSlotList !== 'function') missing.push('_C_GetSlotList')
+  if (typeof _C_OpenSession !== 'function') missing.push('_C_OpenSession')
+  if (typeof _C_Login !== 'function') missing.push('_C_Login')
+  if (typeof _C_GenerateKeyPair !== 'function') missing.push('_C_GenerateKeyPair')
+  if (typeof _C_Logout !== 'function') missing.push('_C_Logout')
+  if (typeof _C_CloseSession !== 'function') missing.push('_C_CloseSession')
+  if (typeof _malloc !== 'function') missing.push('_malloc')
+  if (typeof _free !== 'function') missing.push('_free')
+  if (typeof setValue !== 'function') missing.push('setValue')
+  if (typeof getValue !== 'function') missing.push('getValue')
+  if (typeof stringToUTF8 !== 'function') missing.push('stringToUTF8')
+  if (!(HEAPU8 instanceof Uint8Array)) missing.push('HEAPU8')
+  if (missing.length > 0) return `missing WASM exports: ${missing.join(', ')}`
+
+  type P11Fn = (...args: number[]) => number
+  const fn_GetSlotList = _C_GetSlotList as P11Fn
+  const fn_OpenSession = _C_OpenSession as P11Fn
+  const fn_Login = _C_Login as P11Fn
+  const fn_GenerateKeyPair = _C_GenerateKeyPair as P11Fn
+  const fn_Logout = _C_Logout as P11Fn
+  const fn_CloseSession = _C_CloseSession as P11Fn
+  const fn_malloc = _malloc as P11Fn
+  const fn_free = _free as P11Fn
+  const fn_setValue = setValue as (p: number, v: number, t: string) => void
+  const fn_getValue = getValue as (p: number, t: string) => number
+  const fn_stringToUTF8 = stringToUTF8 as (s: string, p: number, n: number) => void
+  const heap = HEAPU8 as Uint8Array
+
+  if (typeof _C_Init2 === 'function') {
+    const initRv = (_C_Init2 as P11Fn)(0)
+    if (initRv !== 0 && initRv !== CKR_CRYPTOKI_ALREADY_INITIALIZED) {
+      return `C_Initialize rv=0x${initRv.toString(16)}`
+    }
+  }
+
+  const cntP = fn_malloc(4)
+  fn_setValue(cntP, 0, 'i32')
+  const slCountRv = fn_GetSlotList(1, 0, cntP)
+  if (slCountRv !== 0) {
+    fn_free(cntP)
+    return `C_GetSlotList(count) rv=0x${slCountRv.toString(16)}`
+  }
+  const cnt = fn_getValue(cntP, 'i32')
+  fn_free(cntP)
+  if (cnt === 0) return `C_GetSlotList returned 0 initialized slots`
+
+  const listP = fn_malloc(cnt * 4)
+  const c2P = fn_malloc(4)
+  fn_setValue(c2P, cnt, 'i32')
+  const slFillRv = fn_GetSlotList(1, listP, c2P)
+  if (slFillRv !== 0) {
+    fn_free(listP)
+    fn_free(c2P)
+    return `C_GetSlotList(fill) rv=0x${slFillRv.toString(16)}`
+  }
+  const tokenSlot = fn_getValue(listP, 'i32')
+  fn_free(listP)
+  fn_free(c2P)
+
+  const hSP = fn_malloc(4)
+  fn_setValue(hSP, 0, 'i32')
+  const openSessRv = fn_OpenSession(
+    tokenSlot,
+    CKF_RW_SESSION_VAL | CKF_SERIAL_SESSION_VAL,
+    0,
+    0,
+    hSP
+  )
+  if (openSessRv !== 0) {
+    fn_free(hSP)
+    return `C_OpenSession(slot=${tokenSlot}) rv=0x${openSessRv.toString(16)}`
+  }
+  const hSession = fn_getValue(hSP, 'i32')
+  fn_free(hSP)
+
+  const pin = SOFTHSM_USER_PIN
+  const pinP = fn_malloc(pin.length + 1)
+  fn_stringToUTF8(pin, pinP, pin.length + 1)
+  const loginRv = fn_Login(hSession, CKU_USER_VAL, pinP, pin.length)
+  fn_free(pinP)
+  if (loginRv !== 0) {
+    fn_CloseSession(hSession)
+    return `C_Login rv=0x${loginRv.toString(16)}`
+  }
+
+  // 65537 (0x010001) — standard RSA public exponent.
+  const expBytes = new Uint8Array([0x01, 0x00, 0x01])
+  const expP = fn_malloc(expBytes.length)
+  heap.set(expBytes, expP)
+
+  const boolTrueP = fn_malloc(1)
+  heap[boolTrueP] = 1
+  const pubClassP = fn_malloc(4)
+  fn_setValue(pubClassP, CKO_PUBLIC_KEY_VAL, 'i32')
+  const privClassP = fn_malloc(4)
+  fn_setValue(privClassP, CKO_PRIVATE_KEY_VAL, 'i32')
+  const keyTypeP = fn_malloc(4)
+  fn_setValue(keyTypeP, CKK_RSA_VAL, 'i32')
+  const modulusBitsP = fn_malloc(4)
+  fn_setValue(modulusBitsP, bits, 'i32')
+
+  const labelBytes = new TextEncoder().encode(keyId)
+  const labelP = fn_malloc(labelBytes.length)
+  heap.set(labelBytes, labelP)
+  const idBytes = new TextEncoder().encode(keyId)
+  const idP = fn_malloc(idBytes.length)
+  heap.set(idBytes, idP)
+
+  const mechP = fn_malloc(12)
+  fn_setValue(mechP, CKM_RSA_PKCS_KEY_PAIR_GEN_VAL, 'i32')
+  fn_setValue(mechP + 4, 0, 'i32')
+  fn_setValue(mechP + 8, 0, 'i32')
+
+  const writeAttr = (base: number, idx: number, type: number, valPtr: number, valLen: number) => {
+    const off = base + idx * 12
+    fn_setValue(off, type, 'i32')
+    fn_setValue(off + 4, valPtr, 'i32')
+    fn_setValue(off + 8, valLen, 'i32')
+  }
+
+  // Public key: CLASS, TOKEN, LABEL, ID, KEY_TYPE, MODULUS_BITS, PUBLIC_EXPONENT, VERIFY, ENCRYPT
+  const pubAttrCount = 9
+  const pubTplP = fn_malloc(pubAttrCount * 12)
+  writeAttr(pubTplP, 0, CKA_CLASS_ATTR, pubClassP, 4)
+  writeAttr(pubTplP, 1, CKA_TOKEN_ATTR, boolTrueP, 1)
+  writeAttr(pubTplP, 2, CKA_LABEL_ATTR, labelP, labelBytes.length)
+  writeAttr(pubTplP, 3, CKA_ID_ATTR, idP, idBytes.length)
+  writeAttr(pubTplP, 4, CKA_KEY_TYPE_ATTR, keyTypeP, 4)
+  writeAttr(pubTplP, 5, CKA_MODULUS_BITS_ATTR, modulusBitsP, 4)
+  writeAttr(pubTplP, 6, CKA_PUBLIC_EXPONENT_ATTR, expP, expBytes.length)
+  writeAttr(pubTplP, 7, CKA_VERIFY_ATTR, boolTrueP, 1)
+  writeAttr(pubTplP, 8, CKA_ENCRYPT_ATTR, boolTrueP, 1)
+
+  // Private key: CLASS, TOKEN, LABEL, ID, KEY_TYPE, SENSITIVE, SIGN, DECRYPT
+  const privAttrCount = 8
+  const privTplP = fn_malloc(privAttrCount * 12)
+  writeAttr(privTplP, 0, CKA_CLASS_ATTR, privClassP, 4)
+  writeAttr(privTplP, 1, CKA_TOKEN_ATTR, boolTrueP, 1)
+  writeAttr(privTplP, 2, CKA_LABEL_ATTR, labelP, labelBytes.length)
+  writeAttr(privTplP, 3, CKA_ID_ATTR, idP, idBytes.length)
+  writeAttr(privTplP, 4, CKA_KEY_TYPE_ATTR, keyTypeP, 4)
+  writeAttr(privTplP, 5, CKA_SENSITIVE_ATTR, boolTrueP, 1)
+  writeAttr(privTplP, 6, CKA_SIGN_ATTR, boolTrueP, 1)
+  writeAttr(privTplP, 7, CKA_DECRYPT_ATTR, boolTrueP, 1)
+
+  const hPubP = fn_malloc(4)
+  const hPrivP = fn_malloc(4)
+  fn_setValue(hPubP, 0, 'i32')
+  fn_setValue(hPrivP, 0, 'i32')
+
+  const genRv = fn_GenerateKeyPair(
+    hSession,
+    mechP,
+    pubTplP,
+    pubAttrCount,
+    privTplP,
+    privAttrCount,
+    hPubP,
+    hPrivP
+  )
+
+  fn_free(hPubP)
+  fn_free(hPrivP)
+  fn_free(pubTplP)
+  fn_free(privTplP)
+  fn_free(mechP)
+  fn_free(boolTrueP)
+  fn_free(pubClassP)
+  fn_free(privClassP)
+  fn_free(keyTypeP)
+  fn_free(modulusBitsP)
+  fn_free(expP)
+  fn_free(labelP)
+  fn_free(idP)
+
+  fn_Logout(hSession)
+  fn_CloseSession(hSession)
+
+  if (genRv !== 0)
+    return `C_GenerateKeyPair(RSA-${bits}, slot=${tokenSlot}) rv=0x${genRv.toString(16)}`
+  return null
+}
+
+/**
+ * Generate an SLH-DSA key pair directly in softhsmv3 via C_GenerateKeyPair.
+ * Mirrors generateMlDsaKeyInHsm — only the mechanism/key-type/paramSet differ.
+ * Covers SLH-DSA-SHA2-128s/192s/256s (FIPS 205 § 9.1 small-sig variants).
+ */
+function generateSlhDsaKeyInHsm(M: OpenSSLModule, alg: CmsAlg, keyId: string): string | null {
+  const paramSet = slhDsaParamSet(alg)
+  if (paramSet < 0) return `bad paramSet for alg=${alg}`
+
+  const {
+    _C_GetSlotList,
+    _C_OpenSession,
+    _C_Login,
+    _C_GenerateKeyPair,
+    _C_Logout,
+    _C_CloseSession,
+    _malloc,
+    _free,
+    HEAPU8,
+    setValue,
+    getValue,
+    stringToUTF8,
+  } = M as OpenSSLModule & Record<string, unknown>
+
+  const { _C_Initialize: _C_Init2 } = M as OpenSSLModule & Record<string, unknown>
+
+  const missing: string[] = []
+  if (typeof _C_GetSlotList !== 'function') missing.push('_C_GetSlotList')
+  if (typeof _C_OpenSession !== 'function') missing.push('_C_OpenSession')
+  if (typeof _C_Login !== 'function') missing.push('_C_Login')
+  if (typeof _C_GenerateKeyPair !== 'function') missing.push('_C_GenerateKeyPair')
+  if (typeof _C_Logout !== 'function') missing.push('_C_Logout')
+  if (typeof _C_CloseSession !== 'function') missing.push('_C_CloseSession')
+  if (typeof _malloc !== 'function') missing.push('_malloc')
+  if (typeof _free !== 'function') missing.push('_free')
+  if (typeof setValue !== 'function') missing.push('setValue')
+  if (typeof getValue !== 'function') missing.push('getValue')
+  if (typeof stringToUTF8 !== 'function') missing.push('stringToUTF8')
+  if (!(HEAPU8 instanceof Uint8Array)) missing.push('HEAPU8')
+  if (missing.length > 0) return `missing WASM exports: ${missing.join(', ')}`
+
+  type P11Fn = (...args: number[]) => number
+  const fn_GetSlotList = _C_GetSlotList as P11Fn
+  const fn_OpenSession = _C_OpenSession as P11Fn
+  const fn_Login = _C_Login as P11Fn
+  const fn_GenerateKeyPair = _C_GenerateKeyPair as P11Fn
+  const fn_Logout = _C_Logout as P11Fn
+  const fn_CloseSession = _C_CloseSession as P11Fn
+  const fn_malloc = _malloc as P11Fn
+  const fn_free = _free as P11Fn
+  const fn_setValue = setValue as (p: number, v: number, t: string) => void
+  const fn_getValue = getValue as (p: number, t: string) => number
+  const fn_stringToUTF8 = stringToUTF8 as (s: string, p: number, n: number) => void
+  const heap = HEAPU8 as Uint8Array
+
+  if (typeof _C_Init2 === 'function') {
+    const initRv = (_C_Init2 as P11Fn)(0)
+    if (initRv !== 0 && initRv !== CKR_CRYPTOKI_ALREADY_INITIALIZED) {
+      return `C_Initialize rv=0x${initRv.toString(16)}`
+    }
+  }
+
+  const cntP = fn_malloc(4)
+  fn_setValue(cntP, 0, 'i32')
+  const slCountRv = fn_GetSlotList(1, 0, cntP)
+  if (slCountRv !== 0) {
+    fn_free(cntP)
+    return `C_GetSlotList(count) rv=0x${slCountRv.toString(16)}`
+  }
+  const cnt = fn_getValue(cntP, 'i32')
+  fn_free(cntP)
+  if (cnt === 0) return `C_GetSlotList returned 0 initialized slots`
+
+  const listP = fn_malloc(cnt * 4)
+  const c2P = fn_malloc(4)
+  fn_setValue(c2P, cnt, 'i32')
+  const slFillRv = fn_GetSlotList(1, listP, c2P)
+  if (slFillRv !== 0) {
+    fn_free(listP)
+    fn_free(c2P)
+    return `C_GetSlotList(fill) rv=0x${slFillRv.toString(16)}`
+  }
+  const tokenSlot = fn_getValue(listP, 'i32')
+  fn_free(listP)
+  fn_free(c2P)
+
+  const hSP = fn_malloc(4)
+  fn_setValue(hSP, 0, 'i32')
+  const openSessRv = fn_OpenSession(
+    tokenSlot,
+    CKF_RW_SESSION_VAL | CKF_SERIAL_SESSION_VAL,
+    0,
+    0,
+    hSP
+  )
+  if (openSessRv !== 0) {
+    fn_free(hSP)
+    return `C_OpenSession(slot=${tokenSlot}) rv=0x${openSessRv.toString(16)}`
+  }
+  const hSession = fn_getValue(hSP, 'i32')
+  fn_free(hSP)
+
+  const pin = SOFTHSM_USER_PIN
+  const pinP = fn_malloc(pin.length + 1)
+  fn_stringToUTF8(pin, pinP, pin.length + 1)
+  const loginRv = fn_Login(hSession, CKU_USER_VAL, pinP, pin.length)
+  fn_free(pinP)
+  if (loginRv !== 0) {
+    fn_CloseSession(hSession)
+    return `C_Login rv=0x${loginRv.toString(16)}`
+  }
+
+  const boolTrueP = fn_malloc(1)
+  heap[boolTrueP] = 1
+  const pubClassP = fn_malloc(4)
+  fn_setValue(pubClassP, CKO_PUBLIC_KEY_VAL, 'i32')
+  const privClassP = fn_malloc(4)
+  fn_setValue(privClassP, CKO_PRIVATE_KEY_VAL, 'i32')
+  const keyTypeP = fn_malloc(4)
+  fn_setValue(keyTypeP, CKK_SLH_DSA_VAL, 'i32')
+  const paramSetP = fn_malloc(4)
+  fn_setValue(paramSetP, paramSet, 'i32')
+
+  const labelBytes = new TextEncoder().encode(keyId)
+  const labelP = fn_malloc(labelBytes.length)
+  heap.set(labelBytes, labelP)
+  const idBytes = new TextEncoder().encode(keyId)
+  const idP = fn_malloc(idBytes.length)
+  heap.set(idBytes, idP)
+
+  const mechP = fn_malloc(12)
+  fn_setValue(mechP, CKM_SLH_DSA_KEY_PAIR_GEN_VAL, 'i32')
+  fn_setValue(mechP + 4, 0, 'i32')
+  fn_setValue(mechP + 8, 0, 'i32')
+
+  const writeAttr = (base: number, idx: number, type: number, valPtr: number, valLen: number) => {
+    const off = base + idx * 12
+    fn_setValue(off, type, 'i32')
+    fn_setValue(off + 4, valPtr, 'i32')
+    fn_setValue(off + 8, valLen, 'i32')
+  }
+
+  const pubAttrCount = 7
+  const pubTplP = fn_malloc(pubAttrCount * 12)
+  writeAttr(pubTplP, 0, CKA_CLASS_ATTR, pubClassP, 4)
+  writeAttr(pubTplP, 1, CKA_TOKEN_ATTR, boolTrueP, 1)
+  writeAttr(pubTplP, 2, CKA_LABEL_ATTR, labelP, labelBytes.length)
+  writeAttr(pubTplP, 3, CKA_ID_ATTR, idP, idBytes.length)
+  writeAttr(pubTplP, 4, CKA_KEY_TYPE_ATTR, keyTypeP, 4)
+  writeAttr(pubTplP, 5, CKA_PARAMETER_SET_ATTR, paramSetP, 4)
+  writeAttr(pubTplP, 6, CKA_VERIFY_ATTR, boolTrueP, 1)
+
+  const privAttrCount = 8
+  const privTplP = fn_malloc(privAttrCount * 12)
+  writeAttr(privTplP, 0, CKA_CLASS_ATTR, privClassP, 4)
+  writeAttr(privTplP, 1, CKA_TOKEN_ATTR, boolTrueP, 1)
+  writeAttr(privTplP, 2, CKA_LABEL_ATTR, labelP, labelBytes.length)
+  writeAttr(privTplP, 3, CKA_ID_ATTR, idP, idBytes.length)
+  writeAttr(privTplP, 4, CKA_KEY_TYPE_ATTR, keyTypeP, 4)
+  writeAttr(privTplP, 5, CKA_PARAMETER_SET_ATTR, paramSetP, 4)
+  writeAttr(privTplP, 6, CKA_SENSITIVE_ATTR, boolTrueP, 1)
+  writeAttr(privTplP, 7, CKA_SIGN_ATTR, boolTrueP, 1)
+
+  const hPubP = fn_malloc(4)
+  const hPrivP = fn_malloc(4)
+  fn_setValue(hPubP, 0, 'i32')
+  fn_setValue(hPrivP, 0, 'i32')
+
+  const genRv = fn_GenerateKeyPair(
+    hSession,
+    mechP,
+    pubTplP,
+    pubAttrCount,
+    privTplP,
+    privAttrCount,
+    hPubP,
+    hPrivP
+  )
+
+  fn_free(hPubP)
+  fn_free(hPrivP)
+  fn_free(pubTplP)
+  fn_free(privTplP)
+  fn_free(mechP)
+  fn_free(boolTrueP)
+  fn_free(pubClassP)
+  fn_free(privClassP)
+  fn_free(keyTypeP)
+  fn_free(paramSetP)
+  fn_free(labelP)
+  fn_free(idP)
+
+  fn_Logout(hSession)
+  fn_CloseSession(hSession)
+
+  if (genRv !== 0) return `C_GenerateKeyPair(${alg}, slot=${tokenSlot}) rv=0x${genRv.toString(16)}`
+  return null
+}
+
+/**
+ * Generate an X25519 key pair directly in softhsmv3 via C_GenerateKeyPair.
+ * Uses the Montgomery EC mechanism (CKM_EC_MONTGOMERY_KEY_PAIR_GEN) — NOT the
+ * standard CKM_EC_KEY_PAIR_GEN (per softhsmv3 API quirk documented in the
+ * softhsmv3-capabilities memory). Montgomery keys don't sign — DERIVE only —
+ * so the public template carries no CKA_VERIFY and the private template no CKA_SIGN.
+ * Use case: KEM-only recipient in CMS KeyAgreeRecipientInfo (ECDH).
+ */
+function generateX25519KeyInHsm(M: OpenSSLModule, keyId: string): string | null {
+  const {
+    _C_GetSlotList,
+    _C_OpenSession,
+    _C_Login,
+    _C_GenerateKeyPair,
+    _C_Logout,
+    _C_CloseSession,
+    _malloc,
+    _free,
+    HEAPU8,
+    setValue,
+    getValue,
+    stringToUTF8,
+  } = M as OpenSSLModule & Record<string, unknown>
+
+  const { _C_Initialize: _C_Init2 } = M as OpenSSLModule & Record<string, unknown>
+
+  const missing: string[] = []
+  if (typeof _C_GetSlotList !== 'function') missing.push('_C_GetSlotList')
+  if (typeof _C_OpenSession !== 'function') missing.push('_C_OpenSession')
+  if (typeof _C_Login !== 'function') missing.push('_C_Login')
+  if (typeof _C_GenerateKeyPair !== 'function') missing.push('_C_GenerateKeyPair')
+  if (typeof _C_Logout !== 'function') missing.push('_C_Logout')
+  if (typeof _C_CloseSession !== 'function') missing.push('_C_CloseSession')
+  if (typeof _malloc !== 'function') missing.push('_malloc')
+  if (typeof _free !== 'function') missing.push('_free')
+  if (typeof setValue !== 'function') missing.push('setValue')
+  if (typeof getValue !== 'function') missing.push('getValue')
+  if (typeof stringToUTF8 !== 'function') missing.push('stringToUTF8')
+  if (!(HEAPU8 instanceof Uint8Array)) missing.push('HEAPU8')
+  if (missing.length > 0) return `missing WASM exports: ${missing.join(', ')}`
+
+  type P11Fn = (...args: number[]) => number
+  const fn_GetSlotList = _C_GetSlotList as P11Fn
+  const fn_OpenSession = _C_OpenSession as P11Fn
+  const fn_Login = _C_Login as P11Fn
+  const fn_GenerateKeyPair = _C_GenerateKeyPair as P11Fn
+  const fn_Logout = _C_Logout as P11Fn
+  const fn_CloseSession = _C_CloseSession as P11Fn
+  const fn_malloc = _malloc as P11Fn
+  const fn_free = _free as P11Fn
+  const fn_setValue = setValue as (p: number, v: number, t: string) => void
+  const fn_getValue = getValue as (p: number, t: string) => number
+  const fn_stringToUTF8 = stringToUTF8 as (s: string, p: number, n: number) => void
+  const heap = HEAPU8 as Uint8Array
+
+  if (typeof _C_Init2 === 'function') {
+    const initRv = (_C_Init2 as P11Fn)(0)
+    if (initRv !== 0 && initRv !== CKR_CRYPTOKI_ALREADY_INITIALIZED) {
+      return `C_Initialize rv=0x${initRv.toString(16)}`
+    }
+  }
+
+  const cntP = fn_malloc(4)
+  fn_setValue(cntP, 0, 'i32')
+  const slCountRv = fn_GetSlotList(1, 0, cntP)
+  if (slCountRv !== 0) {
+    fn_free(cntP)
+    return `C_GetSlotList(count) rv=0x${slCountRv.toString(16)}`
+  }
+  const cnt = fn_getValue(cntP, 'i32')
+  fn_free(cntP)
+  if (cnt === 0) return `C_GetSlotList returned 0 initialized slots`
+
+  const listP = fn_malloc(cnt * 4)
+  const c2P = fn_malloc(4)
+  fn_setValue(c2P, cnt, 'i32')
+  const slFillRv = fn_GetSlotList(1, listP, c2P)
+  if (slFillRv !== 0) {
+    fn_free(listP)
+    fn_free(c2P)
+    return `C_GetSlotList(fill) rv=0x${slFillRv.toString(16)}`
+  }
+  const tokenSlot = fn_getValue(listP, 'i32')
+  fn_free(listP)
+  fn_free(c2P)
+
+  const hSP = fn_malloc(4)
+  fn_setValue(hSP, 0, 'i32')
+  const openSessRv = fn_OpenSession(
+    tokenSlot,
+    CKF_RW_SESSION_VAL | CKF_SERIAL_SESSION_VAL,
+    0,
+    0,
+    hSP
+  )
+  if (openSessRv !== 0) {
+    fn_free(hSP)
+    return `C_OpenSession(slot=${tokenSlot}) rv=0x${openSessRv.toString(16)}`
+  }
+  const hSession = fn_getValue(hSP, 'i32')
+  fn_free(hSP)
+
+  const pin = SOFTHSM_USER_PIN
+  const pinP = fn_malloc(pin.length + 1)
+  fn_stringToUTF8(pin, pinP, pin.length + 1)
+  const loginRv = fn_Login(hSession, CKU_USER_VAL, pinP, pin.length)
+  fn_free(pinP)
+  if (loginRv !== 0) {
+    fn_CloseSession(hSession)
+    return `C_Login rv=0x${loginRv.toString(16)}`
+  }
+
+  // DER-encoded OID 1.3.101.110 (X25519).
+  const x25519Oid = new Uint8Array([0x06, 0x03, 0x2b, 0x65, 0x6e])
+  const ecParamsP = fn_malloc(x25519Oid.length)
+  heap.set(x25519Oid, ecParamsP)
+
+  const boolTrueP = fn_malloc(1)
+  heap[boolTrueP] = 1
+  const pubClassP = fn_malloc(4)
+  fn_setValue(pubClassP, CKO_PUBLIC_KEY_VAL, 'i32')
+  const privClassP = fn_malloc(4)
+  fn_setValue(privClassP, CKO_PRIVATE_KEY_VAL, 'i32')
+  const keyTypeP = fn_malloc(4)
+  fn_setValue(keyTypeP, CKK_EC_MONTGOMERY_VAL, 'i32')
+
+  const labelBytes = new TextEncoder().encode(keyId)
+  const labelP = fn_malloc(labelBytes.length)
+  heap.set(labelBytes, labelP)
+  const idBytes = new TextEncoder().encode(keyId)
+  const idP = fn_malloc(idBytes.length)
+  heap.set(idBytes, idP)
+
+  const mechP = fn_malloc(12)
+  fn_setValue(mechP, CKM_EC_MONTGOMERY_KEY_PAIR_GEN_VAL, 'i32')
+  fn_setValue(mechP + 4, 0, 'i32')
+  fn_setValue(mechP + 8, 0, 'i32')
+
+  const writeAttr = (base: number, idx: number, type: number, valPtr: number, valLen: number) => {
+    const off = base + idx * 12
+    fn_setValue(off, type, 'i32')
+    fn_setValue(off + 4, valPtr, 'i32')
+    fn_setValue(off + 8, valLen, 'i32')
+  }
+
+  // Public key: CLASS, TOKEN, LABEL, ID, KEY_TYPE, EC_PARAMS, DERIVE
+  // No CKA_VERIFY — Montgomery curves are ECDH-only, no signing.
+  const pubAttrCount = 7
+  const pubTplP = fn_malloc(pubAttrCount * 12)
+  writeAttr(pubTplP, 0, CKA_CLASS_ATTR, pubClassP, 4)
+  writeAttr(pubTplP, 1, CKA_TOKEN_ATTR, boolTrueP, 1)
+  writeAttr(pubTplP, 2, CKA_LABEL_ATTR, labelP, labelBytes.length)
+  writeAttr(pubTplP, 3, CKA_ID_ATTR, idP, idBytes.length)
+  writeAttr(pubTplP, 4, CKA_KEY_TYPE_ATTR, keyTypeP, 4)
+  writeAttr(pubTplP, 5, CKA_EC_PARAMS_ATTR, ecParamsP, x25519Oid.length)
+  writeAttr(pubTplP, 6, CKA_DERIVE_ATTR, boolTrueP, 1)
+
+  // Private key: CLASS, TOKEN, LABEL, ID, KEY_TYPE, SENSITIVE, DERIVE
+  const privAttrCount = 7
+  const privTplP = fn_malloc(privAttrCount * 12)
+  writeAttr(privTplP, 0, CKA_CLASS_ATTR, privClassP, 4)
+  writeAttr(privTplP, 1, CKA_TOKEN_ATTR, boolTrueP, 1)
+  writeAttr(privTplP, 2, CKA_LABEL_ATTR, labelP, labelBytes.length)
+  writeAttr(privTplP, 3, CKA_ID_ATTR, idP, idBytes.length)
+  writeAttr(privTplP, 4, CKA_KEY_TYPE_ATTR, keyTypeP, 4)
+  writeAttr(privTplP, 5, CKA_SENSITIVE_ATTR, boolTrueP, 1)
+  writeAttr(privTplP, 6, CKA_DERIVE_ATTR, boolTrueP, 1)
+
+  const hPubP = fn_malloc(4)
+  const hPrivP = fn_malloc(4)
+  fn_setValue(hPubP, 0, 'i32')
+  fn_setValue(hPrivP, 0, 'i32')
+
+  const genRv = fn_GenerateKeyPair(
+    hSession,
+    mechP,
+    pubTplP,
+    pubAttrCount,
+    privTplP,
+    privAttrCount,
+    hPubP,
+    hPrivP
+  )
+
+  fn_free(hPubP)
+  fn_free(hPrivP)
+  fn_free(pubTplP)
+  fn_free(privTplP)
+  fn_free(mechP)
+  fn_free(boolTrueP)
+  fn_free(pubClassP)
+  fn_free(privClassP)
+  fn_free(keyTypeP)
+  fn_free(ecParamsP)
+  fn_free(labelP)
+  fn_free(idP)
+
+  fn_Logout(hSession)
+  fn_CloseSession(hSession)
+
+  if (genRv !== 0) return `C_GenerateKeyPair(X25519, slot=${tokenSlot}) rv=0x${genRv.toString(16)}`
+  return null
+}
+
 // pqctoday_cms_init() registers pkcs11-provider as a builtin in the GLOBAL
 // OpenSSL lib ctx (NULL). CLI `-provider pkcs11` flags create a SEPARATE
 // app_libctx that does NOT inherit that builtin; OpenSSL falls back to
@@ -1623,20 +2457,64 @@ async function cmsGenKey(
         })
         return
       }
-    } else {
-      // Non-ML-DSA / non-EC / non-ML-KEM HSM keygen (LAMPS composite OIDs). pkcs11-provider's
-      // composite.c handles these through a different mechanism type — genpkey
-      // may not route to softhsmv3 correctly; this path is a best-effort attempt.
-      const argv = ['genpkey', '-algorithm', alg, '-out', pkcs11Uri(keyId)]
-      const { rc, stderr } = runOpenssl(M, argv)
-      if (rc !== 0) {
+    } else if (slhDsaParamSet(alg) >= 0) {
+      // SLH-DSA: FIPS 205 small-sig variants via direct C_GenerateKeyPair.
+      const errDetail = generateSlhDsaKeyInHsm(M, alg, keyId)
+      if (errDetail !== null) {
         post({
           type: 'ERROR',
-          error: `hsm genpkey ${alg} failed (rc=${rc}): ${stderr.slice(-300)}`,
+          error: `HSM keygen (${alg}): ${errDetail}`,
           requestId,
         })
         return
       }
+    } else if (alg === 'RSA' || alg === 'RSA-PSS') {
+      // RSA-3072 via direct C_GenerateKeyPair. Same modulus floor as the
+      // software path; PSS-vs-PKCS#1v1.5 routing is set at sign time.
+      const errDetail = generateRsaKeyInHsm(M, keyId)
+      if (errDetail !== null) {
+        post({
+          type: 'ERROR',
+          error: `HSM keygen (${alg}): ${errDetail}`,
+          requestId,
+        })
+        return
+      }
+    } else if (alg === 'X25519') {
+      // X25519 via direct C_GenerateKeyPair with Montgomery mechanism.
+      const errDetail = generateX25519KeyInHsm(M, keyId)
+      if (errDetail !== null) {
+        post({
+          type: 'ERROR',
+          error: `HSM keygen (X25519): ${errDetail}`,
+          requestId,
+        })
+        return
+      }
+    } else if (isCompositeAlg(alg)) {
+      // LAMPS draft-19 composite OIDs. The composite cert/sig flow needs
+      // TWO softhsm-resident subkeys (one ML-DSA, one classical), then
+      // pkcs11-provider's composite.c stitches them together via the
+      // pqctoday_composite_* shims at mkcert/sign/verify time.
+      // openssl genpkey on the composite alg name cannot do this — it
+      // doesn't know how to construct a composite EVP_PKEY from softhsm
+      // objects (the IMPORT path takes a C pointer, not a CLI URI).
+      const errDetail = generateCompositeSubkeys(M, alg, keyId)
+      if (errDetail !== null) {
+        post({
+          type: 'ERROR',
+          error: `HSM keygen (${alg}): ${errDetail}`,
+          requestId,
+        })
+        return
+      }
+    } else {
+      post({
+        type: 'ERROR',
+        error: `HSM keygen: unsupported algorithm ${alg}`,
+        requestId,
+      })
+      return
     }
     // Persist ALL softhsm token object files so the next module instance
     // restores the key during vfs rehydration.
@@ -1680,6 +2558,7 @@ async function cmsMkCert(
   days: number | undefined,
   useHsm: boolean | undefined,
   issuerKeyId: string | undefined,
+  alg: CmsAlg | undefined,
   requestId?: string
 ): Promise<void> {
   const M = await newModuleSafe(useHsm, requestId)
@@ -1687,6 +2566,43 @@ async function cmsMkCert(
   const subjectKeyPath = `/ssl/${keyId}.key`
   const subjectPubPath = `/ssl/${keyId}.pub`
   const certPath = `/ssl/${certId}.crt`
+
+  // Composite path: forks before any CLI invocation. Subkeys must already
+  // be in softhsm under the ${keyId}__pq / ${keyId}__cl convention
+  // (CMS_GENKEY routed through generateCompositeSubkeys above).
+  if (isCompositeAlg(alg) && useHsm) {
+    const compositeOid = compositeOidFor(alg as CmsAlg)
+    if (!compositeOid) {
+      post({ type: 'ERROR', error: `unknown composite alg: ${alg}`, requestId })
+      return
+    }
+    const { pqKeyId, classicalKeyId } = compositeSubkeyIds(keyId)
+    const subjectCn = subject.replace(/^\/?CN=/i, '')
+    vfs.delete(certPath)
+    safeUnlink(M, certPath)
+    const rc = compositeMkCert(
+      M,
+      compositeOid,
+      pkcs11Uri(pqKeyId),
+      pkcs11Uri(classicalKeyId),
+      subjectCn,
+      days ?? 365,
+      certPath
+    )
+    if (rc !== 0 || !fileExists(M, certPath)) {
+      post({
+        type: 'ERROR',
+        error: `composite mkcert (${alg}) failed (rc=${rc}) — softhsm subkeys at ${pqKeyId} + ${classicalKeyId} must exist`,
+        requestId,
+      })
+      return
+    }
+    const certPem = readPem(M, certPath)
+    persistVfs(M, [certPath])
+    post({ type: 'CMS_MKCERT_RESULT', certPem, requestId })
+    return
+  }
+
   if (!useHsm && !fileExists(M, subjectKeyPath)) {
     post({ type: 'ERROR', error: `subject key not found: ${subjectKeyPath}`, requestId })
     return
@@ -1834,6 +2750,7 @@ async function cmsSign(
   certId: string,
   payload: Uint8Array,
   useHsm: boolean | undefined,
+  alg: CmsAlg | undefined,
   requestId?: string
 ): Promise<void> {
   const M = await newModuleSafe(useHsm, requestId)
@@ -1846,6 +2763,45 @@ async function cmsSign(
     post({ type: 'ERROR', error: `cert not found: ${certPath}`, requestId })
     return
   }
+
+  // Composite path — bypass openssl CLI because cms -sign -inkey takes a
+  // single key, not a composite. The C shim builds the composite EVP_PKEY
+  // from two pkcs11 URIs via pkcs11-provider's IMPORT param, then runs
+  // CMS_sign() directly with that key.
+  if (isCompositeAlg(alg) && useHsm) {
+    const compositeOid = compositeOidFor(alg as CmsAlg)
+    if (!compositeOid) {
+      post({ type: 'ERROR', error: `unknown composite alg: ${alg}`, requestId })
+      return
+    }
+    const { pqKeyId, classicalKeyId } = compositeSubkeyIds(keyId)
+    writeBin(M, payloadPath, payload)
+    vfs.set(payloadPath, payload)
+    vfs.delete(outPath)
+    safeUnlink(M, outPath)
+    const rc = compositeCmsSign(
+      M,
+      compositeOid,
+      pkcs11Uri(pqKeyId),
+      pkcs11Uri(classicalKeyId),
+      certPath,
+      payloadPath,
+      outPath
+    )
+    if (rc !== 0 || !fileExists(M, outPath)) {
+      post({
+        type: 'ERROR',
+        error: `composite CMS sign (${alg}) failed (rc=${rc})`,
+        requestId,
+      })
+      return
+    }
+    const signedP7m = readBin(M, outPath)
+    persistVfs(M, [outPath])
+    post({ type: 'CMS_SIGN_RESULT', signedP7m, requestId })
+    return
+  }
+
   if (!useHsm && !fileExists(M, keyPath)) {
     post({ type: 'ERROR', error: `key not found: ${keyPath}`, requestId })
     return
@@ -1900,6 +2856,7 @@ async function cmsVerify(
   signedP7m: Uint8Array,
   certId: string,
   useHsm: boolean | undefined,
+  alg: CmsAlg | undefined,
   requestId?: string
 ): Promise<void> {
   const M = await newModuleSafe(useHsm, requestId)
@@ -1913,6 +2870,31 @@ async function cmsVerify(
   }
   writeBin(M, inPath, signedP7m)
   safeUnlink(M, outPath)
+
+  // Composite verify — pkcs11-provider has no SPKI decoder for composite
+  // keys, so CMS_verify() can't reconstruct the EVP_PKEY from the cert.
+  // The C shim does the two-half manual verify per draft-19 §5.
+  if (isCompositeAlg(alg)) {
+    const compositeOid = compositeOidFor(alg as CmsAlg)
+    if (!compositeOid) {
+      post({ type: 'ERROR', error: `unknown composite alg: ${alg}`, requestId })
+      return
+    }
+    const rc = compositeCmsVerify(M, compositeOid, certPath, inPath, outPath)
+    const ok = rc === 0 && fileExists(M, outPath)
+    const payload = ok ? readBin(M, outPath) : undefined
+    post({
+      type: 'CMS_VERIFY_RESULT',
+      ok,
+      payload,
+      stderrTail: ok
+        ? 'composite verify ok (both ML-DSA + classical halves passed)'
+        : `composite verify failed (rc=${rc})`,
+      requestId,
+    })
+    return
+  }
+
   // Verify only needs the signer's public key (in the cert), so private-key
   // routing is irrelevant. We still pass HSM provider flags when useHsm is
   // set so the verify path matches the sign path (uniform provider config
@@ -2235,14 +3217,15 @@ self.addEventListener('message', (e: MessageEvent<WorkerInbound>) => {
         msg.days,
         msg.useHsm,
         msg.issuerKeyId,
+        msg.alg,
         msg.requestId
       )
       break
     case 'CMS_SIGN':
-      void cmsSign(msg.keyId, msg.certId, msg.payload, msg.useHsm, msg.requestId)
+      void cmsSign(msg.keyId, msg.certId, msg.payload, msg.useHsm, msg.alg, msg.requestId)
       break
     case 'CMS_VERIFY':
-      void cmsVerify(msg.signedP7m, msg.certId, msg.useHsm, msg.requestId)
+      void cmsVerify(msg.signedP7m, msg.certId, msg.useHsm, msg.alg, msg.requestId)
       break
     case 'CMS_ENCRYPT':
       void cmsEncrypt(msg.recipientCertId, msg.payload, msg.cipher, msg.requestId)

@@ -113,6 +113,7 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
         subject: '/CN=Alice/O=PQC Workshop/C=US',
         days: 365,
         useHsm,
+        alg,
       })
       setResult((prev) => ({ ...prev, certPem: c.certPem }))
 
@@ -122,11 +123,12 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
         certId: CERT_ID,
         payload: new TextEncoder().encode(payload),
         useHsm,
+        alg,
       })
       setResult((prev) => ({ ...prev, signedP7m: s.signedP7m }))
 
       setStage('verify')
-      const v = await svc.verify({ signedP7m: s.signedP7m, certId: CERT_ID, useHsm })
+      const v = await svc.verify({ signedP7m: s.signedP7m, certId: CERT_ID, useHsm, alg })
       setResult((prev) => ({
         ...prev,
         verifyOk: v.ok,
@@ -158,6 +160,40 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
     }),
     [result]
   )
+
+  // LAMPS draft-19 composite profile constants — used to show a breakdown
+  // of the composite signature's two halves (ML-DSA + classical) when the
+  // user selects a composite OID. Sizes per FIPS 204 Table 1 + draft-19 §6.
+  const compositeProfile = useMemo(() => {
+    switch (alg) {
+      case 'id-MLDSA44-RSA2048-PSS-SHA256':
+        return {
+          mldsaSize: 2420,
+          mldsaName: 'ML-DSA-44',
+          classicalName: 'RSA-2048-PSS',
+          classicalSizeApprox: 256,
+          oid: '1.3.6.1.5.5.7.6.37',
+        }
+      case 'id-MLDSA65-ECDSA-P256-SHA512':
+        return {
+          mldsaSize: 3309,
+          mldsaName: 'ML-DSA-65',
+          classicalName: 'ECDSA-P256',
+          classicalSizeApprox: 72,
+          oid: '1.3.6.1.5.5.7.6.45',
+        }
+      case 'id-MLDSA87-ECDSA-P384-SHA512':
+        return {
+          mldsaSize: 4627,
+          mldsaName: 'ML-DSA-87',
+          classicalName: 'ECDSA-P384',
+          classicalSizeApprox: 104,
+          oid: '1.3.6.1.5.5.7.6.49',
+        }
+      default:
+        return null
+    }
+  }, [alg])
 
   const busy = stage !== 'idle' && stage !== 'done' && stage !== 'error'
 
@@ -226,9 +262,9 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
           {composite && (
             <span
               className="inline-flex items-center gap-1 rounded-md border border-accent/40 bg-accent/10 px-2 py-1 text-[10px] font-medium text-accent"
-              title="LAMPS draft-ietf-lamps-pq-composite-sigs-19 — single combined-OID SignerInfo. Verifier MUST validate both algorithms. Implemented by pkcs11-provider's composite.c."
+              title="LAMPS draft-ietf-lamps-pq-composite-sigs-19 — single combined-OID SignerInfo. Verifier MUST validate both ML-DSA and the classical half. Wired end-to-end through pkcs11-provider's composite.c (real composite cert + real composite signature)."
             >
-              LAMPS composite -19
+              LAMPS composite -19 · live
             </span>
           )}
           <Button onClick={run} disabled={busy} variant="gradient" size="sm" className="gap-1.5">
@@ -334,6 +370,19 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
           >
             {result.signedP7m ? <KVRow label="Encoding" value="DER (binary)" /> : null}
             {result.signedP7m ? <KVRow label="Size" value={`${sizes.sigBytes} bytes`} /> : null}
+            {result.signedP7m && compositeProfile && (
+              <>
+                <KVRow label="Composite OID" value={compositeProfile.oid} />
+                <KVRow
+                  label="ML-DSA half"
+                  value={`${compositeProfile.mldsaName} · ${compositeProfile.mldsaSize} B`}
+                />
+                <KVRow
+                  label="Classical half"
+                  value={`${compositeProfile.classicalName} · ≈${compositeProfile.classicalSizeApprox} B`}
+                />
+              </>
+            )}
             {result.signedP7m && (
               <details className="mt-2">
                 <summary className="cursor-pointer text-[11px] text-primary">
@@ -368,7 +417,9 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
               <>
                 <div className="flex items-center gap-1.5 text-xs text-status-success">
                   <CheckCircle2 size={14} />
-                  Signature verifies against signer cert
+                  {compositeProfile
+                    ? 'Both halves (ML-DSA + classical) verified per draft-19 §5'
+                    : 'Signature verifies against signer cert'}
                 </div>
                 <KVRow
                   label="Payload"
