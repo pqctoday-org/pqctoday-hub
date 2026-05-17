@@ -88,7 +88,7 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
   const [alg, setAlg] = useState<CmsAlg>('ML-KEM-768')
   const [cipher, setCipher] = useState<CmsCipher>('aes-256-gcm')
   const [payload, setPayload] = useState<string>(DEFAULT_PAYLOAD)
-  const [useHsmIntent, setUseHsmIntent] = useState<boolean>(false)
+  const [useHsmIntent, setUseHsmIntent] = useState<boolean>(true)
   const useHsm = providerReady && useHsmIntent
   const [stage, setStage] = useState<Stage>('idle')
   const [error, setError] = useState<string>('')

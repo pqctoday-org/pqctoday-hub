@@ -21,6 +21,22 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Fix — extend in-HSM keygen to EC P-256 + ML-KEM-512/768/1024; enable HSM-by-default in S/MIME workshop (2026-05-17)
+
+After the MANDATORY_DIGEST fix landed real ML-DSA HSM sign+verify, two of the three S/MIME workshop demos still couldn't run against softhsmv3 because their keygen path was wrong. `openssl genpkey -algorithm <X> -out pkcs11:object=<keyId>` resolves `pkcs11:...` through OpenSSL's BIO layer, which writes a PEM to MEMFS — the key never reaches the softhsmv3 token, and the demo's subsequent `pkcs11:object=<keyId>` lookups return `Could not find private key`. The ML-DSA path already worked around this with a direct `C_GenerateKeyPair` call ([generateMlDsaKeyInHsm](src/components/PKILearning/modules/EmailSigning/worker/cms.worker.ts)); EC + ML-KEM did not.
+
+Fix in [cms.worker.ts](src/components/PKILearning/modules/EmailSigning/worker/cms.worker.ts):
+
+- **`generateEcKeyInHsm()`** — direct `C_GenerateKeyPair` with `CKM_EC_KEY_PAIR_GEN` (0x1040), `CKK_EC` (0x03), `CKA_EC_PARAMS` carrying the DER-encoded OID for prime256v1 (`06 08 2a 86 48 ce 3d 03 01 07`), plus `CKA_VERIFY=TRUE` on pub and `CKA_SIGN=TRUE`+`CKA_SENSITIVE=TRUE` on priv. Used by **DualSignDemo**'s classical leg.
+- **`generateMlKemKeyInHsm()`** — direct `C_GenerateKeyPair` with `CKM_ML_KEM_KEY_PAIR_GEN` (0x0F), `CKK_ML_KEM` (0x49), `CKA_PARAMETER_SET` driven by `mlKemParamSet(alg)` → 1/2/3 for ML-KEM-512/768/1024, plus `CKA_ENCAPSULATE=TRUE` on pub and `CKA_DECAPSULATE=TRUE`+`CKA_SENSITIVE=TRUE` on priv. Used by **MLKEMEncryptDemo**.
+- **`cmsGenKey()` dispatch** — new `else if (alg === 'EC')` and `else if (mlKemParamSet(alg) >= 0)` branches route through the new direct-PKCS#11 paths; the existing fall-through for LAMPS composite OIDs remains for the composite cert flow that runs through pkcs11-provider's `composite.c`.
+
+Same session lifecycle as the ML-DSA path: `C_Initialize` (tolerates `CKR_CRYPTOKI_ALREADY_INITIALIZED`) → `C_GetSlotList` → `C_OpenSession(RW|SERIAL)` → `C_Login(USER, 1234)` → `C_GenerateKeyPair` → `C_Logout` → `C_CloseSession`. Label and ID both set to the workshop's `keyId` so `pkcs11:object=<keyId>` finds the resulting object.
+
+**Workshop demos now default to HSM mode** ([MLDSASignDemo.tsx](src/components/PKILearning/modules/EmailSigning/workshop/MLDSASignDemo.tsx), [MLKEMEncryptDemo.tsx](src/components/PKILearning/modules/EmailSigning/workshop/MLKEMEncryptDemo.tsx), [DualSignDemo.tsx](src/components/PKILearning/modules/EmailSigning/workshop/DualSignDemo.tsx)) — `useHsmIntent` initial state flipped from `false` to `true`. With all three keygen paths landing keys in softhsmv3, the HSM route is now the default educational story; the manual toggle still allows falling back to the MEMFS path for comparison.
+
+Also bumped: `reports/trust-tier-snapshot.json` (timestamp refresh).
+
 ### Fix — pkcs11-provider: ML-DSA `OSSL_PKEY_PARAM_MANDATORY_DIGEST` → T3 HSM CMS sign+verify KAT passes (2026-05-17)
 
 Root cause: `p11prov_mldsa_get_params` in `pqctoday-hsm/src/vendor/pkcs11-provider/src/keymgmt.c` was not implementing `OSSL_PKEY_PARAM_MANDATORY_DIGEST`. Without it, OpenSSL's `evp_keymgmt_util_get_deflt_digest_name` returns `-2` for pkcs11-provider ML-DSA keys, `cms_signature_nomd` returns `false`, `OBJ_find_sigid_by_algs` fails (no combined SHA+ML-DSA OID exists), and `CMS_add1_signer` raises `CMS_R_UNSUPPORTED_SIGNATURE_ALGORITHM` with `pkey nid=-1`.
