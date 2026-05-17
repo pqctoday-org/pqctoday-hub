@@ -321,6 +321,162 @@ class OpenSSLService {
     })
   }
 
+  public async simulateCmp(args: {
+    eeKeyPath: string
+    subjectDn: string
+    reference: string
+    secret: string
+    caCertPath: string
+    caKeyPath: string
+    outCertPath: string
+    files: { name: string; data: Uint8Array }[]
+  }): Promise<{
+    ok: boolean
+    error?: string
+    transcript: { side: string; event: string; detail: string }[]
+    certPem?: Uint8Array
+    certPath?: string
+    rawJson: string
+  }> {
+    try {
+      await this.init()
+    } catch (error) {
+      throw new Error(`OpenSSL Service not available: ${error}`)
+    }
+    if (!this.worker) throw new Error('Worker not initialized')
+
+    const requestId = `req_cmp_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
+
+    return new Promise((resolve, reject) => {
+      const timeoutId = setTimeout(() => {
+        this.pendingRequests.delete(requestId)
+        reject(new Error(`CMP simulation timed out after ${this.EXEC_TIMEOUT}ms`))
+      }, this.EXEC_TIMEOUT)
+
+      this.pendingRequests.set(requestId, {
+        resolve: (result) => {
+          clearTimeout(timeoutId)
+          const line = result.stdout.split('\n').find((l) => l.startsWith('CMP_SIMULATION_RESULT:'))
+          if (!line) {
+            reject(new Error('CMP simulation produced no result line. stderr:\n' + result.stderr))
+            return
+          }
+          const rawJson = line.replace('CMP_SIMULATION_RESULT:', '')
+          let parsed: {
+            ok: boolean
+            error?: string
+            transcript?: { side: string; event: string; detail: string }[]
+            certPath?: string
+          }
+          try {
+            parsed = JSON.parse(rawJson)
+          } catch {
+            reject(new Error(`CMP simulation result was not valid JSON: ${rawJson}`))
+            return
+          }
+          const certFile = parsed.certPath
+            ? result.files.find((f) => '/' + f.name === parsed.certPath)
+            : undefined
+          resolve({
+            ok: parsed.ok,
+            error: parsed.error,
+            transcript: parsed.transcript || [],
+            certPem: certFile?.data,
+            certPath: parsed.certPath,
+            rawJson,
+          })
+        },
+        reject: (error) => {
+          clearTimeout(timeoutId)
+          reject(error)
+        },
+        result: { stdout: '', stderr: '', error: '', files: [] },
+      })
+
+      this.worker!.postMessage({
+        type: 'CMP_SIMULATE',
+        eeKeyPath: args.eeKeyPath,
+        subjectDn: args.subjectDn,
+        reference: args.reference,
+        secret: args.secret,
+        caCertPath: args.caCertPath,
+        caKeyPath: args.caKeyPath,
+        outCertPath: args.outCertPath,
+        files: args.files,
+        requestId,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any)
+    })
+  }
+
+  public async generateCaRoot(args: {
+    algorithm: string
+    subjectDn: string
+    keyOutPath: string
+    certOutPath: string
+    days: number
+  }): Promise<{ ok: boolean; error?: string; keyPem?: Uint8Array; certPem?: Uint8Array }> {
+    try {
+      await this.init()
+    } catch (error) {
+      throw new Error(`OpenSSL Service not available: ${error}`)
+    }
+    if (!this.worker) throw new Error('Worker not initialized')
+
+    const requestId = `req_genca_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`
+
+    return new Promise((resolve, reject) => {
+      const timeoutId = setTimeout(() => {
+        this.pendingRequests.delete(requestId)
+        reject(new Error(`CA root generation timed out after ${this.EXEC_TIMEOUT}ms`))
+      }, this.EXEC_TIMEOUT)
+
+      this.pendingRequests.set(requestId, {
+        resolve: (result) => {
+          clearTimeout(timeoutId)
+          const line = result.stdout.split('\n').find((l) => l.startsWith('CA_ROOT_RESULT:'))
+          if (!line) {
+            reject(
+              new Error('CA root generation produced no result line. stderr:\n' + result.stderr)
+            )
+            return
+          }
+          let parsed: { ok: boolean; error?: string }
+          try {
+            parsed = JSON.parse(line.replace('CA_ROOT_RESULT:', ''))
+          } catch {
+            reject(new Error(`CA root result was not valid JSON: ${line}`))
+            return
+          }
+          const keyFile = result.files.find((f) => '/' + f.name === args.keyOutPath)
+          const certFile = result.files.find((f) => '/' + f.name === args.certOutPath)
+          resolve({
+            ok: parsed.ok,
+            error: parsed.error,
+            keyPem: keyFile?.data,
+            certPem: certFile?.data,
+          })
+        },
+        reject: (error) => {
+          clearTimeout(timeoutId)
+          reject(error)
+        },
+        result: { stdout: '', stderr: '', error: '', files: [] },
+      })
+
+      this.worker!.postMessage({
+        type: 'GEN_CA_ROOT',
+        algorithm: args.algorithm,
+        subjectDn: args.subjectDn,
+        keyOutPath: args.keyOutPath,
+        certOutPath: args.certOutPath,
+        days: args.days,
+        requestId,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any)
+    })
+  }
+
   public async executeSkey(
     opType: 'create' | 'derive',
     params: Record<string, unknown>

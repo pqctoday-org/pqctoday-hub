@@ -728,6 +728,43 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'advanced',
     recommendedPersonas: ['developer', 'architect', 'researcher'],
   },
+  {
+    id: 'pki-enrollment',
+    pt_id: 'PT-029',
+    version: '0.1.0',
+    name: 'PKI Enrollment (EST + CMP)',
+    description:
+      'RFC 7030 EST + RFC 4210/9810 CMP — generate an ML-DSA-65 key, run CMP IR against an in-WASM mock CA, verify the issued cert.',
+    category: 'OpenSSL Studio',
+    algorithms: ['ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87', 'ML-KEM-768', 'X.509', 'CMP', 'EST'],
+    icon: Workflow,
+    moduleLink: '/learn/pki-enrollment-protocols?tab=workshop',
+    keywords: [
+      'est',
+      'cmp',
+      'rfc 7030',
+      'rfc 4210',
+      'rfc 9810',
+      'enrollment',
+      'csr',
+      'pkcs10',
+      'x509',
+      'ml-dsa',
+      'ml-kem',
+      'mock ca',
+      'certificate',
+      'issuance',
+    ],
+    difficulty: 'advanced',
+    recommendedPersonas: ['developer', 'architect', 'ops', 'researcher'],
+    hasOutput: true,
+    outputSpec:
+      'Issued X.509 cert (PEM) chained to the workshop mock CA root, signed with ML-DSA-65. Chain verification must succeed (openssl verify -CAfile root.crt ee.crt → OK).',
+    opensourceTool: {
+      name: 'OpenSSL 3.6 cmp',
+      url: 'https://www.openssl.org/docs/man3.6/man1/openssl-cmp.html',
+    },
+  },
 ]
 
 export const CATEGORIES = [
@@ -804,6 +841,11 @@ export const TOOL_COMPONENTS: Record<string, LazyComp> = {
   'slh-dsa': lazyWithRetry(() =>
     import('@/components/PKILearning/modules/StatefulSignatures/workshop/SLHDSALiveDemo').then(
       (m) => ({ default: m.SLHDSALiveDemo })
+    )
+  ),
+  'pki-enrollment': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/PKIEnrollmentProtocols/PKIEnrollmentPlayground').then(
+      (m) => ({ default: m.PKIEnrollmentPlayground })
     )
   ),
   'lms-hss': lazyWithRetry(() =>
