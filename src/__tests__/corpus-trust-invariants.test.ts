@@ -125,9 +125,14 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     gap as 2026-05-13 — refId normalization in the enrichment pipeline.
   //     2026-05-17 (later): bumped 22 → 24 — concurrent enrichment session
   //     during JOSE composite-sigs work added RFC 7030 and one more doc.
+  //     2026-05-17 (later 2): bumped 24 → 25 — generate-rag-corpus regen after
+  //     CSWP.39 audit fixes (compliance CSV grew from 133→147 active rows for
+  //     new APAC/EU/LatAm/RU/TR jurisdictions) re-emitted one more unscored
+  //     doc-enrichment chunk: draft-reddy-cose-jose-pqc-hybrid-hpke remains
+  //     the persistent gap with no refId normalization upstream yet.
   timeline: 0,
   algorithms: 0,
-  'document-enrichment': 24,
+  'document-enrichment': 25,
 }
 
 /**

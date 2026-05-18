@@ -60,6 +60,9 @@ jobs:
       - name: Audit timeline aliases
         run: npm run audit:timeline-aliases
 
+      - name: Audit compliance country tokens
+        run: npm run audit:compliance-countries
+
       - name: Install Playwright Browsers
         run: npx playwright install chromium --with-deps
 

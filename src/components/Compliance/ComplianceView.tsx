@@ -576,7 +576,7 @@ export const ComplianceView = () => {
   const certParam = searchParams.get('cert') ?? undefined
   const evref = searchParams.get('evref') ?? undefined
   const { data, loading, refresh, lastUpdated, enrichRecord } = useComplianceRefresh()
-  const { selectedIndustries, selectedRegion, selectedPersona, experienceLevel } = usePersonaStore()
+  const { selectedIndustries, selectedRegion, selectedPersona } = usePersonaStore()
   const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
   const addHistoryEvent = useHistoryStore((s) => s.addEvent)
 
@@ -612,6 +612,26 @@ export const ComplianceView = () => {
       : null
 
   const [exportError, setExportError] = useState<string | null>(null)
+
+  // Intro banner dismissal — persists across sessions. Bump the version suffix
+  // if the copy changes substantively so returning users see the new wording.
+  const INTRO_DISMISS_KEY = 'compliance-intro-dismissed-v1'
+  const [introDismissed, setIntroDismissed] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false
+    try {
+      return window.localStorage.getItem(INTRO_DISMISS_KEY) === '1'
+    } catch {
+      return false
+    }
+  })
+  const dismissIntro = useCallback(() => {
+    setIntroDismissed(true)
+    try {
+      window.localStorage.setItem(INTRO_DISMISS_KEY, '1')
+    } catch {
+      /* private browsing / quota — banner just won't persist this session */
+    }
+  }, [])
 
   const handleExportCsv = useCallback(() => {
     try {
@@ -1265,22 +1285,35 @@ export const ComplianceView = () => {
         </div>
       )}
 
-      {/* Curious user intro context */}
-      {(selectedPersona === 'curious' || experienceLevel === 'curious') && (
+      {/* New-to-compliance intro — shown to everyone until dismissed.
+          Curious / first-time-experience visitors get the same framing as
+          executives or architects who land here without persona context. */}
+      {!introDismissed && (
         <div className="flex items-start gap-3 p-3 rounded-lg border border-secondary/20 bg-secondary/5 text-sm">
           <Info size={16} className="text-secondary mt-0.5 shrink-0" />
-          <div className="space-y-0.5">
+          <div className="flex-1 space-y-0.5">
             <span className="font-semibold text-foreground">New to compliance?</span>
             <p className="text-muted-foreground text-xs">
               This page tracks who sets the rules for quantum-safe cryptography.{' '}
-              <span className="font-medium text-foreground">Standardization bodies</span> define the
-              algorithms, <span className="font-medium text-foreground">certification schemes</span>{' '}
-              test that products implement them correctly, and{' '}
+              <span className="font-medium text-foreground">Standardization bodies</span> (NIST,
+              ENISA, ISO) define the algorithms,{' '}
+              <span className="font-medium text-foreground">certification schemes</span> (FIPS
+              140-3, Common Criteria, EUCC) test that products implement them correctly, and{' '}
               <span className="font-medium text-foreground">compliance frameworks</span> are the
-              laws and regulations that require organizations to adopt them. Start with the
-              Standards tab to see the big picture.
+              laws and regulations that require organizations to adopt them (CNSA 2.0, NIS2, DORA,
+              and national PQC mandates). Start with the Landscape tab for the big picture, or jump
+              to Records for live product certifications.
             </p>
           </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={dismissIntro}
+            className="h-auto text-xs px-2 py-1 text-muted-foreground hover:text-foreground shrink-0"
+            aria-label="Dismiss compliance intro"
+          >
+            Dismiss
+          </Button>
         </div>
       )}
 
@@ -1524,6 +1557,43 @@ export const ComplianceView = () => {
               description="Live certification records from NIST CMVP, NIST CAVP, and Common Criteria Portal — searchable product validations for FIPS 140-3, ACVP algorithm testing, and CC evaluations."
               learnLabel="Understand the cert chain"
               learnTo="/learn/standards-bodies?step=2"
+              glossary={[
+                {
+                  term: 'FIPS 140-3',
+                  definition:
+                    'NIST cryptographic module validation standard (supersedes FIPS 140-2). CMVP-issued certificate covers the entire module — software, firmware, hardware. Required for US federal procurement.',
+                },
+                {
+                  term: 'ACVP',
+                  definition:
+                    "Automated Cryptographic Validation Protocol — NIST CAVP's algorithm-level testing. ACVP certs validate individual primitives (e.g. ML-DSA-65) and are a prerequisite for FIPS 140-3 module certs.",
+                },
+                {
+                  term: 'Common Criteria',
+                  definition:
+                    'ISO/IEC 15408 product-evaluation framework. Evaluations are issued under national schemes (BSI, ANSSI, NIAP, CCN, etc.) and mutually recognised under CCRA up to EAL2/EAL4.',
+                },
+                {
+                  term: 'EUCC',
+                  definition:
+                    'European Union Common Criteria scheme — operative since 2024 under the EU Cybersecurity Act. Co-managed by ENISA and ECCG; supersedes SOG-IS MRA inside the EU.',
+                },
+                {
+                  term: 'CNSA 2.0',
+                  definition:
+                    'NSA Commercial National Security Algorithm suite v2.0 (2022) — binding PQC algorithm requirements for US National Security Systems. Mandates ML-KEM, ML-DSA, SLH-DSA, AES-256, SHA-384/512 with full transition by 2035.',
+                },
+                {
+                  term: 'HNDL',
+                  definition:
+                    'Harvest-Now-Decrypt-Later — the threat model that motivates near-term PQC migration. Adversaries collect encrypted traffic today and decrypt it once a cryptographically relevant quantum computer exists. Drives urgency for long-lived data (health, finance, state secrets).',
+                },
+                {
+                  term: 'NIS2 / DORA',
+                  definition:
+                    'NIS2 Directive (EU) 2022/2555 — cybersecurity baseline for essential and important entities, effective Oct 2024. DORA (EU) 2022/2554 — financial-sector digital operational resilience, effective Jan 2025. Both invoke "state of the art" cryptography, which ENISA interprets as covering PQC readiness.',
+                },
+              ]}
             />
             <ComplianceTable
               data={data}

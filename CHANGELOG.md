@@ -21,6 +21,34 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Fix — Compliance page audit: regional coverage, display bugs, educational framing (2026-05-17)
+
+Three bugs, two educational gaps, and 14 new jurisdictions on `/compliance`. Driven by an end-to-end audit of accuracy / completeness / educational value / regional coverage.
+
+Display bugs fixed:
+
+- Three rows used legacy `UNKNOWN:` country tokens (`UNKNOWN:Nigeria`, `UNKNOWN:Egypt`, `UNKNOWN:African Union`) that fell through `expandCountryToken()` in [src/data/complianceData.ts](src/data/complianceData.ts) and rendered as literal strings in the UI. Worse — `regionForCountry()` classified them as "Other" instead of "Africa" in the Landscape region facet. Rewritten in the new dated CSV [src/data/compliance_05172026.csv](src/data/compliance_05172026.csv) to `NG`, `EG`, and a new `PQC-REGION-AU-AFRICA` overlay.
+- Six ISO codes were silently missing from `COUNTRY_CODE_TO_NAME` (`NO`, `SE`, `FI`, `MX`, `CL`, `AR`) — they rendered as bare two-letter codes and likewise fell out of region-bloc classification. Map extended with all missing codes plus 14 new ones for the jurisdictions below.
+
+New regional coverage (14 jurisdictions):
+
+- APAC gaps: Indonesia (BSSN), Thailand (PDPC + NCSA + ETDA), Vietnam (MIC + A05), Philippines (NPC + DICT)
+- EU mid-tier: Estonia (RIA), Ireland (NCSC-IE), Belgium (CCB), Austria (A-SIT), Poland (NASK)
+- Latin America: Colombia (SIC + MinTIC), Peru (ANPD), Uruguay (URCDP + AGESIC)
+- Geopolitical: Russia (FSB + TC 26), Turkey (KVK Kurumu + BTK)
+
+CSV row count: 133 → 147 active. Compliance corpus chunks: 133 → 147. RAG corpus regenerated; embeddings regenerated in lockstep ([build-embedding-index.ts](scripts/build-embedding-index.ts) — 9835 chunks, 14.4 MB).
+
+New CI gate — [scripts/audit-compliance-countries.ts](scripts/audit-compliance-countries.ts) (`npm run audit:compliance-countries`) fails CI if any country token in the latest compliance CSV does not resolve through `COUNTRY_CODE_TO_NAME` or if any resolved country name is missing from `COUNTRY_TO_REGION`. Prevents the silent-ISO-drift bug class from recurring. Wired into [.github/workflows/ci.yml](.github/workflows/ci.yml) between the existing matrix-refs and build steps.
+
+Educational improvements:
+
+- The "New to compliance?" intro at [ComplianceView.tsx](src/components/Compliance/ComplianceView.tsx) used to render only for `selectedPersona === 'curious'`. Now shown to every visitor with a localStorage-backed dismiss (`compliance-intro-dismissed-v1`). Copy expanded with concrete examples per pillar (NIST/ENISA/ISO for standardization, FIPS 140-3/CC/EUCC for certification, CNSA 2.0/NIS2/DORA for compliance).
+- New `RegionContextCard` in [ComplianceLandscape.tsx](src/components/Compliance/ComplianceLandscape.tsx) — one short paragraph per regulatory bloc explaining what PQC governance looks like in that region. Surfaces inline above the framework grid when the user filters to a specific bloc.
+- Records-tab glossary expanded with 7 entries: FIPS 140-3, ACVP, Common Criteria, EUCC, CNSA 2.0, HNDL, NIS2/DORA.
+
+Trust-engine bookkeeping — bumped `TIER_RESOLUTION_GAPS['document-enrichment']` 24 → 25 in [corpus-trust-invariants.test.ts](src/__tests__/corpus-trust-invariants.test.ts) to track one persistent gap surfaced by the corpus regeneration (`draft-reddy-cose-jose-pqc-hybrid-hpke` refId normalization). All 10 corpus-trust invariants pass.
+
 ### Fix — ML-KEM CMS encrypt + decrypt: pubkey extraction from HSM-resident KEM key (2026-05-17)
 
 `MLKEMEncryptDemo` (Workshop → Step 4) failed in HSM mode at the CA-signed cert step with `pkey -pubout (subject) failed`. Root cause: `pkcs11-provider` could not reassemble a complete `EVP_PKEY` from the ML-KEM `CKO_PRIVATE_KEY` object alone — public components live on the separate `CKO_PUBLIC_KEY` object, and KEM keys don't carry the standard usage attributes (`CKA_SIGN` / `CKA_DECRYPT`) the provider's private-key search filters on.
