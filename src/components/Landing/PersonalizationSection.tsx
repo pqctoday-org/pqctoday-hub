@@ -146,6 +146,13 @@ const REGIONS: {
     cornerIcon: Compass,
   },
   {
+    id: 'mena',
+    label: 'MENA',
+    description: 'Israel, UAE, Saudi Arabia & Gulf states',
+    Icon: Compass,
+    cornerIcon: MapPin,
+  },
+  {
     id: 'apac',
     label: 'APAC',
     description: 'Australia, Japan, Singapore & more',
@@ -316,6 +323,14 @@ const REGION_HIGHLIGHTS: { region: string; items: string[] }[] = [
       'Compliance deadlines filtered to ENISA, BSI, ANSSI, and NIS2 frameworks',
       'Risk Assessment pre-filled with Germany as country',
       'Timeline highlights EU PQC directives and ETSI standards',
+    ],
+  },
+  {
+    region: 'MENA',
+    items: [
+      'Compliance deadlines filtered to Israel, UAE, Saudi Arabia, Bahrain, and Jordan',
+      'Risk Assessment pre-filled with Israel as country',
+      'Timeline highlights Gulf-state quantum readiness programs',
     ],
   },
   {

@@ -57,6 +57,9 @@ jobs:
       - name: Audit protocol matrix refs
         run: npm run audit:matrix-refs
 
+      - name: Audit timeline aliases
+        run: npm run audit:timeline-aliases
+
       - name: Install Playwright Browsers
         run: npx playwright install chromium --with-deps
 

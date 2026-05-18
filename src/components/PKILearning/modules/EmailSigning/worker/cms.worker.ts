@@ -840,6 +840,165 @@ function compositeSubkeyIds(parentKeyId: string): { pqKeyId: string; classicalKe
 
 /** For a composite alg, generate both subkeys in softhsm. Returns a
  *  string error detail or null on success. */
+/** Call softhsm's C_FindObjects directly with template {CKA_LABEL=<label>}
+ *  and return the number of object handles softhsm returns. Bypasses
+ *  pkcs11-provider's URI parser entirely — this is what pkcs11-provider
+ *  WOULD do internally if its URI parser is correct.
+ *
+ *  Returns -1 on init/session/login errors with the failing step appended
+ *  to the tag. Returns 0+ on success (the actual handle count). */
+function probeFindObjectsByLabel(M: OpenSSLModule, label: string, tag: string): number {
+  const {
+    _C_GetSlotList,
+    _C_OpenSession,
+    _C_Login,
+    _C_FindObjectsInit,
+    _C_FindObjects,
+    _C_FindObjectsFinal,
+    _C_Logout,
+    _C_CloseSession,
+    _malloc,
+    _free,
+    HEAPU8,
+    setValue,
+    getValue,
+  } = M as OpenSSLModule & Record<string, unknown>
+  const need = [
+    _C_GetSlotList,
+    _C_OpenSession,
+    _C_Login,
+    _C_FindObjectsInit,
+    _C_FindObjects,
+    _C_FindObjectsFinal,
+    _C_Logout,
+    _C_CloseSession,
+    _malloc,
+    _free,
+    setValue,
+    getValue,
+  ]
+  if (need.some((f) => typeof f !== 'function') || !(HEAPU8 instanceof Uint8Array)) {
+    console.error(`[findobj-probe ${tag} ${label}] missing C_* exports`)
+    return -1
+  }
+  type P11 = (...args: number[]) => number
+  const fn_GetSlotList = _C_GetSlotList as P11
+  const fn_OpenSession = _C_OpenSession as P11
+  const fn_Login = _C_Login as P11
+  const fn_FindInit = _C_FindObjectsInit as P11
+  const fn_Find = _C_FindObjects as P11
+  const fn_FindFinal = _C_FindObjectsFinal as P11
+  const fn_Logout = _C_Logout as P11
+  const fn_CloseSession = _C_CloseSession as P11
+  const fn_malloc = _malloc as P11
+  const fn_free = _free as P11
+  const fn_setValue = setValue as (p: number, v: number, t: string) => void
+  const fn_getValue = getValue as (p: number, t: string) => number
+  const heap = HEAPU8 as Uint8Array
+
+  // Find the first token-present slot
+  const slotCountP = fn_malloc(4)
+  fn_setValue(slotCountP, 0, 'i32')
+  let rv = fn_GetSlotList(1, 0, slotCountP)
+  const slotCount = fn_getValue(slotCountP, 'i32')
+  if (rv !== 0 || slotCount === 0) {
+    console.error(
+      `[findobj-probe ${tag} ${label}] GetSlotList rv=0x${rv.toString(16)} count=${slotCount}`
+    )
+    fn_free(slotCountP)
+    return -1
+  }
+  const slotsP = fn_malloc(slotCount * 8)
+  rv = fn_GetSlotList(1, slotsP, slotCountP)
+  const slot = fn_getValue(slotsP, 'i32')
+  fn_free(slotsP)
+  fn_free(slotCountP)
+  if (rv !== 0) {
+    return -1
+  }
+
+  // OpenSession R/O serial (flags = 4 = CKF_SERIAL_SESSION)
+  const sessP = fn_malloc(8)
+  fn_setValue(sessP, 0, 'i32')
+  rv = fn_OpenSession(slot, 4, 0, 0, sessP)
+  if (rv !== 0) {
+    fn_free(sessP)
+
+    console.error(`[findobj-probe ${tag} ${label}] OpenSession rv=0x${rv.toString(16)}`)
+    return -1
+  }
+  const session = fn_getValue(sessP, 'i32')
+
+  // Login USER with PIN "1234" (matches pin-value in our URI + pkcs11.cnf)
+  const pinBytes = new TextEncoder().encode('1234')
+  const pinP = fn_malloc(pinBytes.length)
+  heap.set(pinBytes, pinP)
+  fn_Login(session, 1, pinP, pinBytes.length)
+  fn_free(pinP)
+
+  // Build template { CKA_LABEL = labelBytes }
+  const labelBytes = new TextEncoder().encode(label)
+  const labelP = fn_malloc(labelBytes.length)
+  heap.set(labelBytes, labelP)
+  const tplP = fn_malloc(12) // 1 attribute × 12 bytes
+  fn_setValue(tplP + 0, CKA_LABEL_ATTR, 'i32')
+  fn_setValue(tplP + 4, labelP, 'i32')
+  fn_setValue(tplP + 8, labelBytes.length, 'i32')
+
+  rv = fn_FindInit(session, tplP, 1)
+  let found = -1
+  if (rv === 0) {
+    const handleBufP = fn_malloc(10 * 8) // up to 10 handles
+    const countP = fn_malloc(4)
+    fn_setValue(countP, 0, 'i32')
+    rv = fn_Find(session, handleBufP, 10, countP)
+    if (rv === 0) {
+      found = fn_getValue(countP, 'i32')
+    }
+    fn_free(handleBufP)
+    fn_free(countP)
+    fn_FindFinal(session)
+  }
+  fn_free(tplP)
+  fn_free(labelP)
+  fn_Logout(session)
+  fn_CloseSession(session)
+  fn_free(sessP)
+
+  console.error(
+    `[findobj-probe ${tag}] label="${label}" len=${labelBytes.length} found=${found} (rv=0x${rv.toString(16)})`
+  )
+  return found
+}
+
+/** Walk SOFTHSM_TOKEN_DIR recursively and console.error a flat list of
+ *  every file path + byte size. Used to verify softhsm actually wrote
+ *  the expected key objects between module instances. */
+function probeSofthsmTokenDir(M: OpenSSLModule, tag: string): void {
+  const entries: string[] = []
+  const walk = (dir: string): void => {
+    let names: string[] = []
+    try {
+      names = M.FS.readdir(dir)
+    } catch {
+      return
+    }
+    for (const n of names) {
+      if (n === '.' || n === '..') continue
+      const p = `${dir}/${n}`
+      try {
+        const data = M.FS.readFile(p) as Uint8Array
+        entries.push(`${p} (${data.byteLength}B)`)
+      } catch {
+        walk(p)
+      }
+    }
+  }
+  walk(SOFTHSM_TOKEN_DIR)
+
+  console.error(`[softhsm-probe ${tag}] ${entries.length} files:\n  ${entries.join('\n  ')}`)
+}
+
 function generateCompositeSubkeys(
   M: OpenSSLModule,
   alg: CmsAlg,
@@ -849,24 +1008,40 @@ function generateCompositeSubkeys(
   let pqErr: string | null = null
   let classicalErr: string | null = null
 
+  probeSofthsmTokenDir(M, 'before-pq-keygen')
   switch (alg) {
     case 'id-MLDSA44-RSA2048-PSS-SHA256':
       pqErr = generateMlDsaKeyInHsm(M, 'ML-DSA-44', pqKeyId)
+      probeSofthsmTokenDir(M, `after-pq-keygen (${pqKeyId}, err=${pqErr ?? 'null'})`)
       if (pqErr === null) {
         // LAMPS draft-19 §6 pins this profile to RSA-2048-PSS.
         classicalErr = generateRsaKeyInHsm(M, classicalKeyId, 2048)
+        probeSofthsmTokenDir(
+          M,
+          `after-classical-keygen (${classicalKeyId}, err=${classicalErr ?? 'null'})`
+        )
       }
       break
     case 'id-MLDSA65-ECDSA-P256-SHA512':
       pqErr = generateMlDsaKeyInHsm(M, 'ML-DSA-65', pqKeyId)
+      probeSofthsmTokenDir(M, `after-pq-keygen (${pqKeyId}, err=${pqErr ?? 'null'})`)
       if (pqErr === null) {
         classicalErr = generateEcKeyInHsm(M, classicalKeyId, 'P-256')
+        probeSofthsmTokenDir(
+          M,
+          `after-classical-keygen (${classicalKeyId}, err=${classicalErr ?? 'null'})`
+        )
       }
       break
     case 'id-MLDSA87-ECDSA-P384-SHA512':
       pqErr = generateMlDsaKeyInHsm(M, 'ML-DSA-87', pqKeyId)
+      probeSofthsmTokenDir(M, `after-pq-keygen (${pqKeyId}, err=${pqErr ?? 'null'})`)
       if (pqErr === null) {
         classicalErr = generateEcKeyInHsm(M, classicalKeyId, 'P-384')
+        probeSofthsmTokenDir(
+          M,
+          `after-classical-keygen (${classicalKeyId}, err=${classicalErr ?? 'null'})`
+        )
       }
       break
     default:
@@ -2589,6 +2764,51 @@ async function cmsMkCert(
     const subjectCn = subject.replace(/^\/?CN=/i, '')
     vfs.delete(certPath)
     safeUnlink(M, certPath)
+    probeSofthsmTokenDir(M, 'mkcert-start (module B, after vfs rehydrate)')
+    // Direct softhsm C_FindObjects probes — bypass pkcs11-provider's URI
+    // parser entirely. If softhsm returns 0 handles here, the bug is at
+    // the softhsm layer. If it returns 1+, the bug is in pkcs11-provider's
+    // URI → C_FindObjects template translation.
+    probeFindObjectsByLabel(M, pqKeyId, 'mkcert-find-pq')
+    probeFindObjectsByLabel(M, classicalKeyId, 'mkcert-find-cl')
+    // Decode each .object file's CKA_LABEL so we can see WHAT softhsm
+    // thinks the labels are vs. what our URI is searching for. softhsm
+    // serializes objects as a flat key/value blob: each attribute is
+    // {u32 type, u32 len, bytes}. CKA_LABEL = 0x00000003.
+    try {
+      const tokenRoot = M.FS.readdir(SOFTHSM_TOKEN_DIR) as string[]
+      for (const tokenDir of tokenRoot) {
+        if (tokenDir === '.' || tokenDir === '..') continue
+        const tokenPath = `${SOFTHSM_TOKEN_DIR}/${tokenDir}`
+        let objs: string[] = []
+        try {
+          objs = M.FS.readdir(tokenPath) as string[]
+        } catch {
+          continue
+        }
+        for (const obj of objs) {
+          if (!obj.endsWith('.object')) continue
+          const data = M.FS.readFile(`${tokenPath}/${obj}`) as Uint8Array
+          const txt = new TextDecoder('utf-8', { fatal: false }).decode(data)
+          const found: string[] = []
+          for (const candidate of [pqKeyId, classicalKeyId]) {
+            if (txt.includes(candidate)) found.push(candidate)
+          }
+          // Hex-dump first 256 bytes of each file so we can see softhsm's
+          // serialization layout — attribute IDs are little-endian u32 at
+          // the start of each {type,len,bytes} record.
+          const head = Array.from(data.slice(0, 256))
+            .map((b) => b.toString(16).padStart(2, '0'))
+            .join(' ')
+
+          console.error(
+            `[obj-probe] ${tokenDir}/${obj} bytes=${data.byteLength} labels-found=${JSON.stringify(found)}\n  head256: ${head}`
+          )
+        }
+      }
+    } catch (err) {
+      console.error(`[obj-probe] failed: ${String(err)}`)
+    }
     const rc = compositeMkCert(
       M,
       compositeOid,
@@ -2653,13 +2873,16 @@ async function cmsMkCert(
     const issuerKeyArg = useHsm ? pkcs11Uri(issuerKeyId) : issuerKeyPath
     const providerArgs = useHsm ? HSM_PROVIDER_FLAGS : []
 
+    const pubArgs = useHsm
+      ? ['-in', `${subjectKeyArg};type=public`, '-pubin']
+      : ['-in', subjectKeyArg]
+
     // Step 1 — extract subject pubkey. After this callMain the runtime is
     // dead; we discard the module before step 2.
     const pubRc = runOpenssl(M, [
       'pkey',
       ...providerArgs,
-      '-in',
-      subjectKeyArg,
+      ...pubArgs,
       '-pubout',
       '-out',
       subjectPubPath,

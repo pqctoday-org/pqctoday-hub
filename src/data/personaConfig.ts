@@ -120,6 +120,7 @@ export const PERSONA_RECOMMENDED_MODE: Record<PersonaId, AssessmentMode> = {
 export const REGION_COUNTRY_MAP: Record<Region, string | null> = {
   americas: 'United States',
   eu: null,
+  mena: 'Israel',
   apac: 'Japan',
   global: null,
 }
@@ -130,20 +131,8 @@ export const REGION_COUNTRY_MAP: Record<Region, string | null> = {
  */
 export const REGION_COUNTRIES_MAP: Record<Region, string[]> = {
   americas: ['United States', 'Canada'],
-  eu: [
-    'European Union',
-    'France',
-    'Germany',
-    'Italy',
-    'Spain',
-    'United Kingdom',
-    'Czech Republic',
-    'Israel',
-    'United Arab Emirates',
-    'Saudi Arabia',
-    'Bahrain',
-    'Jordan',
-  ],
+  eu: ['European Union', 'France', 'Germany', 'Italy', 'Spain', 'United Kingdom', 'Czech Republic'],
+  mena: ['Israel', 'United Arab Emirates', 'Saudi Arabia', 'Bahrain', 'Jordan'],
   apac: [
     'Japan',
     'Singapore',

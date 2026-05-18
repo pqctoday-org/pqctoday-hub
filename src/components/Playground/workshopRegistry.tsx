@@ -219,7 +219,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'HSM / PKCS#11',
     algorithms: ['IKEv2', 'ECDH', 'AES-256-CBC', 'HMAC-SHA2-256', 'PKCS#11'],
     icon: Shield,
-    moduleLink: '/learn/network-security-pqc',
+    moduleLink: '/learn/vpn-ssh-pqc',
     keywords: [
       'vpn',
       'ipsec',
@@ -251,7 +251,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'HSM / PKCS#11',
     algorithms: ['ML-KEM-768', 'X25519', 'ML-DSA-65', 'ssh-mldsa-65', 'PKCS#11'],
     icon: Terminal,
-    moduleLink: '/learn/network-security-pqc',
+    moduleLink: '/learn/vpn-ssh-pqc',
     keywords: [
       'ssh',
       'openssh',
@@ -554,7 +554,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'Protocol Simulations',
     algorithms: ['ECDH', 'ANSI X9.63-KDF', 'AES-128/256'],
     icon: Radio,
-    moduleLink: '/learn/network-security-pqc',
+    moduleLink: '/learn/5g-security',
     keywords: ['5g', 'suci', 'supi', 'subscriber', 'concealment', 'ecdh', 'hkdf', 'aes'],
     difficulty: 'advanced',
     recommendedPersonas: ['developer', 'architect', 'researcher'],

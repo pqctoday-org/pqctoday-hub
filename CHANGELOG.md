@@ -21,6 +21,22 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Fix — PQC Protocol Support Matrix accuracy audit (2026-05-17)
+
+Three classes of gap fixed against the matrix at `/algorithms → Protocol Support`:
+
+- **Stage chips bumped past IETF Last Call → RFC Ed Queue** for five cells whose underlying drafts have advanced on datatracker since the last refresh. Verified live against the datatracker IESG/RFC-Editor state lines on 2026-05-17:
+  - TLS 1.3 · hybridKem (`draft-ietf-tls-ecdhe-mlkem-04` — RFC Ed Queue / EDIT)
+  - TLS 1.3 · hybridSig and X.509 · hybridSig (`draft-ietf-lamps-pq-composite-sigs-19` — RFC Ed Queue / EDIT)
+  - OpenPGP · hybridKem + pureSig + hybridSig (`draft-ietf-openpgp-pqc-17` — RFC Ed Queue / AUTH48)
+  - JOSE · pureSig (`draft-ietf-cose-dilithium-11` — RFC Ed Queue / AUTH48-DONE)
+  - COSE · pureSig — same draft as JOSE, was missing a `stage` field entirely (only `value: 'draft'`); now carries `rfc-editor-queue` so the chip matches across both rows.
+- **Tool routing fixes** in [src/components/Playground/workshopRegistry.tsx](src/components/Playground/workshopRegistry.tsx) — three matrix playground chips were landing users on the wrong workshop module: `pqc-ssh-sim` and `vpn-sim` pointed at `/learn/network-security-pqc` (NGFW/IDS content) but the actual SSH/IKEv2 simulators (`SSHKeyExchangeSimulator`, `IKEv2HandshakeSimulator`, `LiveSshHandshakeRunner`) live in `/learn/vpn-ssh-pqc`; `suci-flow` pointed at the same wrong module but the actual `SuciFlow.tsx` lives in `/learn/5g-security`.
+- **Broken cached-doc links** — three matrix `localFile:` paths 404'd because the files in `public/library/` used different naming conventions: `RFC-9935.html` / `RFC-9936.html` (hyphen, matrix expected underscore) and `IETF_RFC_9242.html` (matrix dropped the `IETF_` prefix). Files renamed to `RFC_9935.html` / `RFC_9936.html` and `RFC_9242.html` added as a copy. All 59 unique `localFile:` paths in the matrix now resolve.
+- **Stale revision + year typo cleanup** — COSE row's `latestDraft[]` updated from `draft-ietf-cose-dilithium-05 / 2026-04-28` to `-11 / 2025-11-15 (AUTH48-DONE)` matching datatracker; TLS 1.3 · pureSig `stageNote` corrected from `Submitted to IESG (May 2025)` to `(May 2026 — Last Call Requested)` — the row's own `publishedOn: '2026-05-06'` had already contradicted the wrong year.
+
+Verified via `npm run audit:matrix-refs` (clean, 20 rows), `npx tsc --noEmit` (clean), and matrix/workshop-registry unit tests (102 / 102 pass).
+
 ### Test — comprehensive E2E for the S/MIME & CMS Workshop crypto flow (2026-05-17)
 
 New spec [e2e/cms-workshop-crypto.spec.ts](e2e/cms-workshop-crypto.spec.ts) drives every live crypto demo in `Playground → Email Signing → All Tools → OpenSSL Studio → S/MIME & CMS Workshop → Step 4` with minimal UI coupling (one `<select>` + one button + the result-card success/failure text). Each test attaches a `page.on('console')` listener that captures the cms.worker.ts stderr mirror — including the new `[composite-bridge]` / `[composite-mkcert]` fprintf diagnostics from [composite.c](../pqctoday-hsm/src/vendor/pkcs11-provider/src/composite.c) and [cms_provider_init.c](src/wasm/cms_provider_init.c). On failure the throw body contains the full forensic trail (worker stderr + OpenSSL `ERR_print_errors_fp` stack + first 4 KB of visible body), so the test output IS the diagnostic — no DevTools console required.

@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import type { PersonaId } from '../data/learningPersonas'
 
-export type Region = 'americas' | 'eu' | 'apac' | 'global'
+export type Region = 'americas' | 'eu' | 'mena' | 'apac' | 'global'
 export type ExperienceLevel = 'curious' | 'basics' | 'expert'
 export type ViewAccess = 'gated' | 'preview' | 'unlocked'
 
@@ -80,7 +80,7 @@ export const usePersonaStore = create<PersonaState>()(
     {
       name: 'pqc-learning-persona',
       storage: createJSONStorage(() => localStorage),
-      version: 4,
+      version: 5,
       migrate: (persisted: unknown, fromVersion: number) => {
         const s = (persisted ?? {}) as Record<string, unknown>
         if (fromVersion < 1) {
@@ -99,6 +99,12 @@ export const usePersonaStore = create<PersonaState>()(
           const wasUnlocked = (s.advancedViewsUnlocked as boolean | undefined) !== false
           s.viewAccess = wasUnlocked ? 'unlocked' : 'preview'
           delete s.advancedViewsUnlocked
+        }
+        if (fromVersion < 5) {
+          // MENA split: Israel/UAE/Saudi/Bahrain/Jordan moved out of 'eu' into 'mena'.
+          // Persona store only persists selectedRegion (not country), so existing
+          // 'eu' values remain valid. The companion assessment store carries the
+          // country and reassigns on next region change via handleRegion().
         }
         return s
       },

@@ -1,5 +1,3 @@
-/* @ts-self-types="./softhsmrustv3.d.ts" */
-
 import * as wasm from "./softhsmrustv3_bg.wasm";
 import { __wbg_set_wasm } from "./softhsmrustv3_bg.js";
 __wbg_set_wasm(wasm);
