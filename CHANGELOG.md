@@ -21,6 +21,51 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Fix — ML-KEM CMS encrypt + decrypt: pubkey extraction from HSM-resident KEM key (2026-05-17)
+
+`MLKEMEncryptDemo` (Workshop → Step 4) failed in HSM mode at the CA-signed cert step with `pkey -pubout (subject) failed`. Root cause: `pkcs11-provider` could not reassemble a complete `EVP_PKEY` from the ML-KEM `CKO_PRIVATE_KEY` object alone — public components live on the separate `CKO_PUBLIC_KEY` object, and KEM keys don't carry the standard usage attributes (`CKA_SIGN` / `CKA_DECRYPT`) the provider's private-key search filters on.
+
+Fix in [src/components/PKILearning/modules/EmailSigning/worker/cms.worker.ts](src/components/PKILearning/modules/EmailSigning/worker/cms.worker.ts) — when `useHsm`, route the pubkey extraction through the public-key object directly via RFC 7512 `;type=public` plus `-pubin`:
+
+```ts
+const pubArgs = useHsm
+  ? ['-in', `${pkcs11Uri(keyId)};type=public`, '-pubin']
+  : ['-in', subjectKeyPath]
+runOpenssl(M, ['pkey', ...HSM_PROVIDER_FLAGS, ...pubArgs, '-pubout', '-out', subjectPubPath])
+```
+
+This works because `generateMlKemKeyInHsm` writes both `CKO_PUBLIC_KEY` and `CKO_PRIVATE_KEY` with the same `CKA_LABEL=keyId` — `;type=public` filters cleanly to the pubkey object. Software path unchanged. Verified end-to-end against the K2 (`MLKEMEncryptDemo · ML-KEM-768 · HSM`) flow in the Workshop UI; `tsc --noEmit` and ESLint clean.
+
+### Fix — softhsmrustv3 WASM: AES-GCM AAD authentication (2026-05-17)
+
+`/learn/mls-group-messaging` Step 3 (Application message encryption — AES-128-GCM) was reporting `✗ AAD check did not throw — unexpected` even though the test code was correct. Root cause: a **critical security bug in `softhsmrustv3`** (the in-browser PKCS#11 engine compiled from [`pqctoday-hsm/rust/src/ffi.rs`](../../pqctoday-hsm/rust/src/ffi.rs)) where AES-GCM **silently ignored the AAD parameter** on both encrypt and decrypt. The C++ engine in the same repo (used by native softhsmv3.so / .dylib) was unaffected — only the WASM path.
+
+Empirical reproducer: encrypting the same plaintext + same IV + same key with three different AAD values produced byte-for-byte identical ciphertext including the 16-byte tag. The bug existed across **seven sites** in `ffi.rs`:
+
+| Site                                 | Bug                                                                                                                                                                                 |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `C_EncryptInit` (CKM_AES_GCM branch) | Never read `pAAD` / `ulAADLen` from CK_GCM_PARAMS; stored `Vec::new()` for AAD. Also read `*gcm.add(4)` as `tag_bits` — that's `ulAADLen` at byte 16; `ulTagBits` lives at byte 20. |
+| `C_Encrypt` (CKM_AES_GCM branch)     | `cipher.encrypt(nonce, plaintext)` dropped the captured AAD by auto-coercing `&[u8]` to `Payload { msg, aad: &[] }`.                                                                |
+| Size-query re-insert (encrypt)       | Wiped AAD with `Vec::new()` between the dual `C_Encrypt(NULL, len_query)` + `C_Encrypt(buffer, actual)` PKCS#11 pattern.                                                            |
+| `C_DecryptInit` (CKM_AES_GCM branch) | Same as `C_EncryptInit`.                                                                                                                                                            |
+| `C_Decrypt` (state extract)          | Destructured ctx as `(mech_type, key_handle, iv, tag_bits)` — never pulled `aad` out.                                                                                               |
+| `C_Decrypt` (CKM_AES_GCM branch)     | `cipher.decrypt(nonce, ciphertext)` dropped AAD.                                                                                                                                    |
+| Size-query re-insert (decrypt)       | Same wipe as encrypt.                                                                                                                                                               |
+
+Compare `ChaCha20Poly1305` path at the same ffi.rs:2789 which already used `Payload { msg, aad: &aad }` correctly — the AES-GCM branch was half-finished.
+
+**Fix landed in this repo** (the actual `ffi.rs` source changes live in [pqctoday-hsm](../../pqctoday-hsm/CHANGELOG.md)):
+
+- **Rebuilt WASM bundle** ([src/wasm/softhsmrustv3_bg.wasm](src/wasm/softhsmrustv3_bg.wasm)) from the fixed Rust source via `cargo build --target wasm32-unknown-unknown --release` + `wasm-bindgen --target bundler --no-typescript`. Required re-adding the custom `__wbg_get_memory()` shim to [softhsmrustv3.js](src/wasm/softhsmrustv3.js) and [softhsmrustv3_bg.js](src/wasm/softhsmrustv3_bg.js) per the post-build pattern documented in `[wasm-bindgen --target bundler](feedback-wasm-bindgen-bundler-target.md)`.
+- **Replaced the bogus self-pinned NIST KAT tag** in [src/wasm/softhsm.kat.test.ts:71](src/wasm/softhsm.kat.test.ts#L71). The previous "expected tag" `eb9f796c8d356fc31a8433884b696f4f` was generated by the buggy implementation and pinned, masking the bug for months. Replaced with the actual NIST GCM Test Case 4 expected tag `76fc6ece0f4e1768cddf8853bb2d551b` (from McGrew & Viega, "The Galois/Counter Mode of Operation (GCM)", also NIST SP 800-38D). The WASM now produces exactly this byte sequence.
+- **Two new permanent regression-guard KATs** ([softhsm.kat.test.ts:117–195](src/wasm/softhsm.kat.test.ts#L117)):
+  - `AAD authentication: tag changes when AAD changes` — same key/IV/plaintext, two different AADs → CT bytes (CTR keystream) match, last 16 bytes (GCM tag) MUST differ. Catches the silent-AAD-drop regression class.
+  - `AAD authentication: decrypt with wrong AAD must throw` — encrypts with correct AAD, decrypts with same → roundtrips; decrypts with `wrong-aad-x` → MUST throw. Catches the tag-not-validated regression class.
+
+All 17 tests in `softhsm.kat.test.ts` now pass; the underlying `/learn/mls-group-messaging` Step 3 demo now shows `AAD integrity → CKR_ENCRYPTED_DATA_INVALID ✓` for the tampered case.
+
+**Scope of impact before fix**: every in-browser AES-GCM operation under `softhsmrustv3` was producing _unauthenticated_ ciphertext — the "AAD" parameter passed by callers was silently dropped, the tag was computed over empty AAD. This affected the MLS playground, every workshop that demonstrated authenticated encryption in the browser, and any future code paths that relied on PKCS#11 AAD semantics inside WASM. Native code paths (Docker softhsmv3.so used by openmls-provider interop, native integration tests, etc.) were never affected.
+
 ### Fix — PQC Protocol Support Matrix accuracy audit (2026-05-17)
 
 Three classes of gap fixed against the matrix at `/algorithms → Protocol Support`:
