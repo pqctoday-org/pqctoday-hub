@@ -592,9 +592,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'ietf-last-call',
-        stageNote: 'IETF Last Call (Jan 2026)',
-        note: 'X25519MLKEM768 hybrid group (IANA codepoint 4588) — already shipped in production while spec is in IETF Last Call.',
+        stage: 'rfc-editor-queue',
+        stageNote: 'RFC Ed Queue (EDIT) — draft-ietf-tls-ecdhe-mlkem-04',
+        note: 'X25519MLKEM768 hybrid group (IANA codepoint 4588) — already shipped in production while spec is in the RFC Editor queue.',
         deploymentPosture: 'production',
         deploymentNote:
           'X25519MLKEM768 enabled by default in Cloudflare edge, Google services, AWS, BoringSSL, OpenSSL 3.5 since 2024–2025 — production deployment exceeds spec status.',
@@ -611,7 +611,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       pureSig: {
         value: 'draft',
         stage: 'iesg-submitted',
-        stageNote: 'Submitted to IESG (May 2025)',
+        stageNote: 'Submitted to IESG (May 2026) — Last Call Requested',
         refs: [
           {
             kind: 'draft',
@@ -624,9 +624,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'draft',
-        stage: 'ietf-last-call',
-        stageNote: 'LAMPS composite at IETF LC (Jan 2026); TLS dual-cert draft at I-D stage',
-        note: 'Two work streams: dual-certificate negotiation in TLS WG (Internet-Draft) and composite signatures from LAMPS that TLS will profile after publication. TLS profiling pending LAMPS publication.',
+        stage: 'rfc-editor-queue',
+        stageNote: 'LAMPS composite-sigs in RFC Ed Queue (EDIT); TLS dual-cert draft at I-D stage',
+        note: 'Two work streams: dual-certificate negotiation in TLS WG (Internet-Draft) and composite signatures from LAMPS that TLS will profile after publication. TLS profiling pending LAMPS RFC publication.',
         refs: [
           {
             kind: 'draft',
@@ -843,8 +843,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'draft',
-        stage: 'ietf-last-call',
-        stageNote: 'IETF Last Call (Jan 2026)',
+        stage: 'rfc-editor-queue',
+        stageNote: 'RFC Ed Queue (EDIT) — draft-ietf-lamps-pq-composite-sigs-19',
         note: 'Composite mode pairs ML-DSA with ECDSA / RSA / Ed25519 / EdDSA classical signatures.',
         refs: [
           {
@@ -1095,11 +1095,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
     ],
     latestDraft: [
       {
-        id: 'draft-ietf-cose-dilithium-05',
-        title: 'draft-ietf-cose-dilithium-05 — ML-DSA for JOSE and COSE',
+        id: 'draft-ietf-cose-dilithium-11',
+        title: 'draft-ietf-cose-dilithium-11 — ML-DSA for JOSE and COSE (AUTH48-DONE)',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-cose-dilithium/',
-        date: '2026-04-28',
-        localFile: '/library/draft-ietf-cose-dilithium-05.html',
+        date: '2025-11-15',
+        localFile: '/library/draft-ietf-cose-dilithium.html',
       },
       {
         id: 'draft-ietf-cose-falcon-04',
@@ -1145,13 +1145,15 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'draft',
+        stage: 'rfc-editor-queue',
+        stageNote: 'RFC Ed Queue (AUTH48-DONE) — draft-ietf-cose-dilithium-11; FN-DSA still WG-doc',
         refs: [
           {
             kind: 'draft',
             id: 'draft-ietf-cose-dilithium',
             title: 'ML-DSA for JOSE and COSE',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-cose-dilithium/',
-            publishedOn: '2026-04-28',
+            publishedOn: '2025-11-15',
           },
           {
             kind: 'draft',
@@ -1263,15 +1265,15 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'draft',
-        stage: 'iesg-submitted',
-        stageNote: 'iesg submitted (datatracker 2025-11-15)',
+        stage: 'rfc-editor-queue',
+        stageNote: 'RFC Ed Queue (AUTH48-DONE) — draft-ietf-cose-dilithium-11',
         refs: [
           {
             kind: 'draft',
             id: 'draft-ietf-cose-dilithium',
             title: 'ML-DSA for JOSE and COSE (shared with COSE)',
             url: 'https://datatracker.ietf.org/doc/draft-ietf-cose-dilithium/',
-            publishedOn: '2026-04-28',
+            publishedOn: '2025-11-15',
           },
         ],
       },
@@ -1610,8 +1612,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridKem: {
         value: 'draft',
-        stage: 'ietf-last-call',
-        stageNote: 'IETF Last Call (Oct 2025) — single draft also covers Pure/Hybrid Sig',
+        stage: 'rfc-editor-queue',
+        stageNote: 'RFC Ed Queue (AUTH48) — draft-ietf-openpgp-pqc-17 covers Pure/Hybrid Sig too',
         note: 'Composite mode pairs ML-KEM-768/1024 with ECDH P-256 / P-384 / X25519 / X448. Same draft draft-ietf-openpgp-pqc covers Pure Sig and Hybrid Sig.',
         refs: [
           {
@@ -1625,8 +1627,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'draft',
-        stage: 'ietf-last-call',
-        stageNote: 'IETF Last Call (Oct 2025) — same draft as Hybrid KEM',
+        stage: 'rfc-editor-queue',
+        stageNote: 'RFC Ed Queue (AUTH48) — same draft as Hybrid KEM',
         refs: [
           {
             kind: 'draft',
@@ -1639,8 +1641,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       hybridSig: {
         value: 'draft',
-        stage: 'ietf-last-call',
-        stageNote: 'IETF Last Call (Oct 2025) — same draft as Hybrid KEM',
+        stage: 'rfc-editor-queue',
+        stageNote: 'RFC Ed Queue (AUTH48) — same draft as Hybrid KEM',
         note: 'Composite mode pairs ML-DSA with ECDSA / EdDSA classical signatures.',
         refs: [
           {

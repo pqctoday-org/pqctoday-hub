@@ -214,6 +214,25 @@ describe('applicableFrameworks — tier classification', () => {
     const apacOnly: UserProfile = { industry: null, country: null, region: 'apac' }
     expect(applicableFrameworks(apacOnly, [fw])).toEqual([])
   })
+
+  it('matches MENA-country framework when profile region is mena', () => {
+    const fw = makeFramework({
+      id: 'IL-NCD-PQC',
+      countries: ['Israel'],
+      industries: ['Government & Defense'],
+      enforcementBody: 'INCD',
+    })
+    const ilProfile: UserProfile = {
+      industry: 'Government & Defense',
+      country: 'Israel',
+      region: 'mena',
+    }
+    const [result] = applicableFrameworks(ilProfile, [fw])
+    // Region: 'mena' must be accepted by the engine (no fallthrough to null).
+    // Tier promotes to mandatory because INCD is Israel's domestic regulator.
+    expect(result).toBeDefined()
+    expect(result?.tier).toBe('mandatory')
+  })
 })
 
 // ── applicableThreats ────────────────────────────────────────────────────

@@ -210,7 +210,7 @@ function StatusBanner({ status }: { status: InitStatus }) {
       <div className="flex items-center gap-2 rounded-md border border-status-success/30 bg-status-success/10 p-3 text-sm text-status-success">
         <CheckCircle2 size={16} />
         {status.kind === 'ok'
-          ? 'Provider registered (pkcs11-provider 0.4.0, softhsmv3 backend).'
+          ? 'Provider registered (pkcs11-provider 1.1, softhsmv3 backend).'
           : 'Provider already registered (idempotent — no-op on subsequent calls).'}
       </div>
     )
