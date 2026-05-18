@@ -697,8 +697,17 @@ async function newModule(withHsm = false): Promise<OpenSSLModule> {
   await loadFactory()
   const M = await createOpenSSLModule({
     noInitialRun: true,
-    print: (text: string) => post({ type: 'LOG', stream: 'stdout', message: text }),
-    printErr: (text: string) => post({ type: 'LOG', stream: 'stderr', message: text }),
+    print: (text: string) => {
+      // Mirror to worker console so debugging output is visible in DevTools
+      // without having to wire CMSSigningService.onLog into every demo UI.
+
+      console.log('[cms.worker]', text)
+      post({ type: 'LOG', stream: 'stdout', message: text })
+    },
+    printErr: (text: string) => {
+      console.error('[cms.worker]', text)
+      post({ type: 'LOG', stream: 'stderr', message: text })
+    },
     locateFile: (path: string) => (path.endsWith('.wasm') ? '/wasm/openssl.wasm' : path),
   })
   configureEnvironment(M)

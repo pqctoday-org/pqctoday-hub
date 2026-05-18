@@ -286,10 +286,18 @@ int pqctoday_composite_mkcert(const char *composite_oid,
                               const char *out_path)
 {
     struct composite_ctx cc;
+    fprintf(stderr, "[composite-mkcert] enter oid=%s pq=%s cl=%s cn=%s days=%d out=%s\n",
+            composite_oid ? composite_oid : "(null)",
+            pq_uri ? pq_uri : "(null)",
+            classical_uri ? classical_uri : "(null)",
+            subject_cn ? subject_cn : "(null)", days,
+            out_path ? out_path : "(null)");
     int rc = composite_setup(&cc, composite_oid);
     if (rc != 0) {
+        fprintf(stderr, "[composite-mkcert] composite_setup FAILED rc=%d\n", rc);
         return rc;
     }
+    fprintf(stderr, "[composite-mkcert] composite_setup OK profile=%p\n", (void *)cc.profile);
 
     EVP_PKEY *pkey = NULL;
     X509 *cert = NULL;
@@ -299,9 +307,11 @@ int pqctoday_composite_mkcert(const char *composite_oid,
     pkey = p11prov_composite_evp_pkey_from_uris(cc.provctx, cc.profile,
                                                 pq_uri, classical_uri);
     if (pkey == NULL) {
+        fprintf(stderr, "[composite-mkcert] evp_pkey_from_uris returned NULL\n");
         rc = -13;
         goto done;
     }
+    fprintf(stderr, "[composite-mkcert] EVP_PKEY constructed\n");
 
     cert = X509_new();
     if (cert == NULL) {
