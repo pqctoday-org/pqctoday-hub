@@ -21,6 +21,39 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Test — comprehensive E2E for the S/MIME & CMS Workshop crypto flow (2026-05-17)
+
+New spec [e2e/cms-workshop-crypto.spec.ts](e2e/cms-workshop-crypto.spec.ts) drives every live crypto demo in `Playground → Email Signing → All Tools → OpenSSL Studio → S/MIME & CMS Workshop → Step 4` with minimal UI coupling (one `<select>` + one button + the result-card success/failure text). Each test attaches a `page.on('console')` listener that captures the cms.worker.ts stderr mirror — including the new `[composite-bridge]` / `[composite-mkcert]` fprintf diagnostics from [composite.c](../pqctoday-hsm/src/vendor/pkcs11-provider/src/composite.c) and [cms_provider_init.c](src/wasm/cms_provider_init.c). On failure the throw body contains the full forensic trail (worker stderr + OpenSSL `ERR_print_errors_fp` stack + first 4 KB of visible body), so the test output IS the diagnostic — no DevTools console required.
+
+Test matrix (13 total, failures isolated):
+
+- **S0** smoke — workshop renders + provider terminal
+- **M1–M6** MLDSASignDemo sign+verify: ML-DSA-65 sw/HSM, ML-DSA-87 sw, SLH-DSA-SHA2-128s sw, EC sw, RSA-PSS sw
+- **C1–C3** LAMPS draft-19 composite: id-MLDSA65-ECDSA-P256-SHA512, id-MLDSA44-RSA2048-PSS-SHA256, id-MLDSA87-ECDSA-P384-SHA512
+- **K1/K2** MLKEMEncryptDemo: ML-KEM-768 software / HSM
+- **D1** DualSignDemo: ML-DSA-65 + EC software
+
+Wiring required for the captured-diagnostic UX:
+
+- **[cms.worker.ts](src/components/PKILearning/modules/EmailSigning/worker/cms.worker.ts)** — `print` / `printErr` callbacks now mirror to `console.log` / `console.error` with a `[cms.worker]` prefix in addition to the existing `LOG` postMessage. The previous setup routed worker stderr only into `CMSSigningService.logHandlers`, which `MLDSASignDemo` never subscribed to → debug output was invisible in the demo UI. The console mirror makes it visible in DevTools and (more importantly) captureable from Playwright.
+- **[cms_provider_init.c](src/wasm/cms_provider_init.c)** — added `fprintf(stderr, "[composite-mkcert] …")` traces at each step of `pqctoday_composite_mkcert` (enter / composite_setup result / evp_pkey_from_uris result).
+- **`pqctoday-hsm/.../composite.c`** — added `fprintf(stderr, "[composite-bridge] …")` traces in `p11prov_composite_evp_pkey_from_uris` for PQ subkey load, classical subkey load, composite obj construction, EVP_PKEY_CTX_new_from_name, fromdata_init, and fromdata. Each failure path also calls `ERR_print_errors_fp(stderr)` to dump the OpenSSL error stack.
+
+Confirmed via this harness (3.5 s for S0, ~5–6 s each for M1/M2):
+
+- ✅ S0, M1 (ML-DSA-65 software), M2 (ML-DSA-65 HSM) all pass — provider, single-key softhsm round-trip, sign+verify are healthy.
+- ❌ C1/C2/C3 (composite) all fail with the same captured trail:
+
+  ```text
+  [composite-mkcert] enter oid=1.3.6.1.5.5.7.6.{37,45,49} pq=pkcs11:object=alice__pq;… cl=…
+  [composite-mkcert] composite_setup OK profile=0x…
+  [composite-bridge] starting label=…
+  [composite-bridge] PQ subkey load FAILED for pkcs11:object=alice__pq;pin-value=1234
+  [composite-mkcert] evp_pkey_from_uris returned NULL
+  ```
+
+  No `ERR_print` output, meaning `OSSL_STORE_open(pkcs11:object=alice__pq;…)` returns store-EOF with zero objects — not an OpenSSL error, just "no match found". Since M2 (single ML-DSA HSM key under label `alice`) works, the keygen + URI lookup pipeline itself is fine — the issue is specific to the suffixed labels (`alice__pq` / `alice__cl`) the composite path uses, or to a silent persist failure between the genkey and mkcert module instances. Follow-up: add a `C_FindObjects` probe right after `generateCompositeSubkeys` to isolate "keygen lied" from "URI lookup broken".
+
 ### Feat — LAMPS composite cert + sign + verify wired end-to-end through pkcs11-provider (2026-05-17)
 
 The three LAMPS draft-ietf-lamps-pq-composite-sigs-19 composite OIDs in the S/MIME workshop dropdown (`id-MLDSA44-RSA2048-PSS-SHA256`, `id-MLDSA65-ECDSA-P256-SHA512`, `id-MLDSA87-ECDSA-P384-SHA512`) now produce **real** composite certs and **real** composite CMS signatures — not the previous "substitute the nearest pure ML-DSA PEM" placeholder. The wire signature is now `mldsaSig || classicalSig` per draft-19 §4, and verifiers must validate both halves against the same `M'` per §5.
