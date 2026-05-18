@@ -21,6 +21,34 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### WIP — LAMPS composite (draft-19) end-to-end via pkcs11-provider (2026-05-18)
+
+Eight pkcs11-provider root-cause fixes landed in [pqctoday-hsm composite.c](../../antigravity/pqctoday-hsm/src/vendor/pkcs11-provider/src/composite.c) that get composite **cert minting** working end-to-end through `X509_sign` (real 2676-byte composite signature, verified via per-step diagnostics in the WASM build):
+
+1. `composite_capture_object_ref` callback was storing a raw `P11PROV_OBJ *` that got freed when `p11prov_store_direct_fetch` tore down the store ctx. Now takes a ref inside the callback via `p11prov_obj_ref`.
+2. Bridge `p11prov_composite_evp_pkey_from_uris` used `p11prov_ctx_get_libctx(provctx)` for `EVP_PKEY_CTX_new_from_name`, which is the provider's INTERNAL libctx — only sees pkcs11-provider, not the default provider. Switched to `NULL` (global default libctx) so the composite keymgmt fetch can complete.
+3. Callback preferred whichever subkey arrived first (typically `CKO_PUBLIC_KEY`). Composite signing needs `CKO_PRIVATE_KEY` — fixed callback to prefer priv key with pub key as fallback.
+4. LAMPS draft-19 composite OIDs (`1.3.6.1.5.5.7.6.{37,45,49}`) aren't in OpenSSL 3.6's OBJ database. Bridge now calls `OBJ_create` idempotently before any `EVP_PKEY_get_id` consult.
+5. Composite keymgmt didn't expose `OSSL_PKEY_PARAM_MANDATORY_DIGEST`. Without it, `cms_signature_nomd` returns false and `X509_sign` fails to find a sigid (same root cause as the recent ML-DSA `MANDATORY_DIGEST` fix in keymgmt.c).
+6. `OSSL_FUNC_SIGNATURE_DIGEST_SIGN_INIT` / `DIGEST_VERIFY_INIT` had a 3-arg vs. 4-arg ABI mismatch. OpenSSL calls with `(vctx, mdname, keydata, params)`; we declared `(vctx, keydata, params)` and read 3 args from the wrong stack offsets → bogus key pointer → silent abort BEFORE our `digest_sign_init` could fprintf.
+7. New RSA SPKI builder for the `MLDSA44-RSA2048-PSS-SHA256` profile (`composite_get_rsa_pubkey` via `OSSL_ENCODER` with `type-specific` structure). Replaces the previous `goto done` stub.
+8. New `p11prov_composite_evp_pkey_from_uris` bridge plus its supporting infra: profile registry accessors, `p11prov_composite_obj_new_from_subkeys`, public header `composite.h` for callers outside the provider.
+
+Validated: an OpenSSL maintainer issue [#22932](https://github.com/openssl/openssl/issues/22932) and source inspection of `crypto/asn1/a_sign.c` confirm that for provider-managed signature algorithms, `ASN1_item_sign_ctx` queries the signature ctx's `OSSL_SIGNATURE_PARAM_ALGORITHM_ID` and skips `OBJ_find_sigid_by_algs` entirely. The composite SIGNATURE dispatch already exposes `ALGORITHM_ID` correctly.
+
+### Known gap: `CMS_sign` still aborts at `X509_check_private_key`
+
+`CMS_sign` extracts the signer cert's SPKI and calls `X509_get0_pubkey`, which goes through `OSSL_DECODER_from_data` looking for a `input=der,structure=SubjectPublicKeyInfo` decoder registered for the composite OID. No such decoder exists in OpenSSL 3.6 (composite is a draft). Our [first attempt at an SPKI decoder](../../antigravity/pqctoday-hsm/src/vendor/pkcs11-provider/src/composite.c) — full implementation in `composite.c` (decoder dispatch, `keymgmt_has`/`match` updates for software-side variant, unified `_obj_get_pubkey_bytes` helper) — **regressed mkcert** because `d2i_X509_PUBKEY` inside our decoder itself invokes the OpenSSL decoder chain, producing infinite recursion when the decoder is registered. Decoder code is preserved in `composite.c` but NOT registered in `provider.c`. Next iteration needs raw ASN.1 walking (`ASN1_get_object`) instead of `d2i_X509_PUBKEY`.
+
+### Architectural pivot ahead
+
+The OpenSSL provider path keeps surfacing draft-algorithm-shaped gotchas (8 root causes in one session). The hub already has a fully working draft-19 composite cert builder using `@peculiar/asn1-*` at [HybridCrypto/services/certBuilder.ts](src/components/PKILearning/modules/HybridCrypto/services/certBuilder.ts) (`buildCompositeCertDraft19` + 3 profile constants + `buildCompositeMessageRepresentative`). The workshop's composite path will pivot to call `buildCompositeCertDraft19` with softhsm-backed signer adapters (direct PKCS#11 `C_Sign` for each subkey, no OpenSSL `X509_sign` / `CMS_sign`) — bypassing the entire provider machinery for the workshop use case. The 8 pkcs11-provider fixes still ship as standalone improvements; just not load-bearing for the workshop path anymore.
+
+Files touched this session:
+
+- `pqctoday-hsm`: [composite.c](../../antigravity/pqctoday-hsm/src/vendor/pkcs11-provider/src/composite.c), [composite.h](../../antigravity/pqctoday-hsm/src/vendor/pkcs11-provider/src/composite.h), [provider.c](../../antigravity/pqctoday-hsm/src/vendor/pkcs11-provider/src/provider.c), [provider.h](../../antigravity/pqctoday-hsm/src/vendor/pkcs11-provider/src/provider.h), [objects.c](../../antigravity/pqctoday-hsm/src/vendor/pkcs11-provider/src/objects.c), [store.c](../../antigravity/pqctoday-hsm/src/vendor/pkcs11-provider/src/store.c)
+- `pqctoday-hub`: [src/wasm/cms_provider_init.c](src/wasm/cms_provider_init.c) (composite mkcert / cms_sign / cms_verify shims), [worker](src/components/PKILearning/modules/EmailSigning/worker/cms.worker.ts) (composite routing + softhsm probes + console mirror), [e2e](e2e/cms-workshop-crypto.spec.ts) (composite test cases)
+
 ### Fix — Compliance page audit: regional coverage, display bugs, educational framing (2026-05-17)
 
 Three bugs, two educational gaps, and 14 new jurisdictions on `/compliance`. Driven by an end-to-end audit of accuracy / completeness / educational value / regional coverage.
