@@ -36,6 +36,7 @@
     "validate:workshop": "tsx scripts/validate-workshop.ts",
     "audit:matrix-refs": "tsx scripts/audit-matrix-refs.ts",
     "audit:timeline-aliases": "tsx scripts/audit-timeline-aliases.ts",
+    "audit:compliance-countries": "tsx scripts/audit-compliance-countries.ts",
     "enrich:protocol-matrix": "python3 scripts/enrich-protocol-matrix.py",
     "enrich:protocol-matrix:xref": "python3 scripts/enrich-protocol-matrix.py --xref-only",
     "apply:protocol-matrix": "tsx scripts/apply-protocol-matrix-updates.ts",

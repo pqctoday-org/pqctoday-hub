@@ -298,6 +298,73 @@ export function DeadlineTimeline({
   )
 }
 
+// ── Region context card ─────────────────────────────────────────────────
+
+/**
+ * One short paragraph per regulatory bloc explaining what PQC governance
+ * looks like in that region. Surfaces inline above the framework grid when
+ * the user filters to a specific bloc, so the page provides context for a
+ * Brazilian / Indonesian / Nigerian visitor rather than just a raw list of
+ * 3-4 matching rows.
+ */
+const REGION_CONTEXT: Record<RegionBloc, { title: string; body: string }> = {
+  'North America': {
+    title: 'North America',
+    body: 'Dominated by US federal mandates: CNSA 2.0 (NSA) and NIST IR 8547 set the binding deprecation timeline through 2035. FIPS 140-3 (NIST CMVP) and FedRAMP carry the certification weight. Canada (CCCS) cross-recognises FIPS 140-3 and tracks NIST PQC for federal procurement.',
+  },
+  'European Union': {
+    title: 'European Union',
+    body: 'Layered framework: ENISA publishes the technical PQC guidance, EUCC is the cross-border certification scheme, NIS2 + DORA + eIDAS 2.0 are the operative legal instruments. National authorities (ANSSI, BSI, AgID, RIA, NCSC-IE, CCB, A-SIT, NASK) transpose NIS2 and add country-specific PQC roadmaps.',
+  },
+  'Europe (non-EU)': {
+    title: 'Europe (non-EU)',
+    body: 'Mixed landscape: UK NCSC, Switzerland and Norway track EU PQC guidance closely. Russia operates a separate national crypto regime (GOST via TC 26) with no Western PQC adoption. Turkey aligns partially with EU (KVKK / GDPR) but cryptography is BTK-regulated.',
+  },
+  'United Kingdom': {
+    title: 'United Kingdom',
+    body: 'NCSC publishes the UK Quantum-Safe Cryptography migration roadmap (2023-2035). Critical National Infrastructure operators are expected to publish PQC migration plans by 2028. Common Criteria evaluations are run via CCRA; FIPS 140-3 is widely required in cross-border procurement.',
+  },
+  'Asia-Pacific': {
+    title: 'Asia-Pacific',
+    body: 'Heterogeneous: Australia (ASD ISPEC 1) and Japan (METI/CRYPTREC) have explicit PQC tracks. South Korea (KISA) is developing national PQC profiles. Singapore (CSA), India (CERT-In), Indonesia (BSSN), Thailand (NCSA), Vietnam (MIC), Philippines (NPC) anchor to ISO 27001 + NIST. China and Hong Kong run separate national crypto regimes.',
+  },
+  'Middle East': {
+    title: 'Middle East',
+    body: 'Most jurisdictions anchor security obligations in national Personal Data Protection Laws (UAE, Saudi Arabia, Bahrain, Jordan) with ISO 27001 as the base technical standard. Israel (INCD) tracks NIST PQC closely. No region-wide PQC mandate yet; HNDL is the primary near-term concern for long-lived financial and government records.',
+  },
+  Africa: {
+    title: 'Africa',
+    body: 'The African Union Malabo Convention is the pan-continental harmonising instrument (entered into force 2023). National enforcement is country-by-country: NDPC (Nigeria), DPC (Egypt), ODPC (Kenya), Information Regulator (South Africa). PQC adoption is in advisory phase; the AU Cybersecurity Expert Group has flagged quantum-safe transition as a 2025+ priority.',
+  },
+  'Latin America': {
+    title: 'Latin America',
+    body: 'Data-protection laws dominate (LGPD in Brazil, Habeas Data 1581 in Colombia, Law 29733 in Peru, Law 18.331 in Uruguay, AAIP in Argentina) — most align with GDPR-style technical security obligations. Uruguay holds an EU adequacy decision. PQC mandates are not yet in force anywhere in the region; tracking is via national CERTs and digital-government agencies.',
+  },
+  Global: {
+    title: 'Global instruments',
+    body: 'Cross-border frameworks operate above the national layer: ISO/IEC JTC 1/SC 27 standardises PQC algorithms internationally, Common Criteria (CCRA) provides mutual-recognition of product evaluations, IETF integrates PQC into internet protocols (TLS, SSH, CMS, S/MIME), SWIFT CSP applies to wholesale banking, and PCI DSS to card payments.',
+  },
+  Other: {
+    title: 'Other',
+    body: 'Jurisdictions not yet classified into a regulatory bloc. If you see this label persisting, it usually means a country was added to the CSV without a corresponding entry in COUNTRY_TO_REGION — see src/data/complianceData.ts.',
+  },
+}
+
+function RegionContextCard({ region }: { region: RegionBloc }) {
+  // eslint-disable-next-line security/detect-object-injection
+  const entry = REGION_CONTEXT[region]
+  if (!entry) return null
+  return (
+    <div className="flex items-start gap-3 p-3 rounded-lg border border-primary/20 bg-primary/5 text-sm">
+      <Globe size={16} className="text-primary mt-0.5 shrink-0" />
+      <div className="space-y-0.5">
+        <span className="font-semibold text-foreground">{entry.title}</span>
+        <p className="text-muted-foreground text-xs">{entry.body}</p>
+      </div>
+    </div>
+  )
+}
+
 // ── Framework card ──────────────────────────────────────────────────────
 
 function FrameworkCard({
@@ -1309,6 +1376,12 @@ export function ComplianceLandscape({
           </Button>
         )}
       </div>
+
+      {/* Region context — short paragraph explaining what PQC governance looks
+          like in the selected bloc. Shown only when a region is selected so it
+          doesn't compete with the page-level intro when the user is exploring
+          the full landscape. */}
+      {regionFilter !== 'All' && <RegionContextCard region={regionFilter} />}
 
       {/* Semantic search hint — surfaces when embedding-driven matches augment the lexical filter */}
       <SemanticSearchHint
