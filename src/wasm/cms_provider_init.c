@@ -318,6 +318,7 @@ int pqctoday_composite_mkcert(const char *composite_oid,
         rc = -14;
         goto done;
     }
+    fprintf(stderr, "[composite-mkcert] X509_new OK\n");
     X509_set_version(cert, 2L); /* v3 */
     ASN1_INTEGER_set(X509_get_serialNumber(cert), 1);
     X509_gmtime_adj(X509_get_notBefore(cert), 0);
@@ -334,16 +335,23 @@ int pqctoday_composite_mkcert(const char *composite_oid,
     X509_set_issuer_name(cert, name); /* self-signed */
     X509_NAME_free(name);
     name = NULL;
+    fprintf(stderr, "[composite-mkcert] X509 setup done; calling set_pubkey\n");
 
     if (X509_set_pubkey(cert, pkey) != 1) {
+        fprintf(stderr, "[composite-mkcert] X509_set_pubkey FAILED\n");
+        ERR_print_errors_fp(stderr);
         rc = -15;
         goto done;
     }
+    fprintf(stderr, "[composite-mkcert] X509_set_pubkey OK; calling X509_sign\n");
 
     /* X509_sign with NULL md — composite is a "pre-hash, then sign with
      * label-bound context" algorithm whose digest is internal to the
      * signature dispatch. OpenSSL handles md=NULL for non-digest algs. */
-    if (X509_sign(cert, pkey, NULL) <= 0) {
+    int sign_ret = X509_sign(cert, pkey, NULL);
+    fprintf(stderr, "[composite-mkcert] X509_sign returned %d\n", sign_ret);
+    if (sign_ret <= 0) {
+        ERR_print_errors_fp(stderr);
         rc = -16;
         goto done;
     }
@@ -390,10 +398,18 @@ int pqctoday_composite_cms_sign(const char *composite_oid,
                                 const char *out_p7m_path)
 {
     struct composite_ctx cc;
+    fprintf(stderr,
+            "[composite-cms-sign] enter oid=%s cert=%s payload=%s out=%s\n",
+            composite_oid ? composite_oid : "(null)",
+            cert_path ? cert_path : "(null)",
+            payload_path ? payload_path : "(null)",
+            out_p7m_path ? out_p7m_path : "(null)");
     int rc = composite_setup(&cc, composite_oid);
     if (rc != 0) {
+        fprintf(stderr, "[composite-cms-sign] composite_setup FAILED rc=%d\n", rc);
         return rc;
     }
+    fprintf(stderr, "[composite-cms-sign] composite_setup OK\n");
 
     EVP_PKEY *pkey = NULL;
     X509 *cert = NULL;
@@ -405,46 +421,81 @@ int pqctoday_composite_cms_sign(const char *composite_oid,
     pkey = p11prov_composite_evp_pkey_from_uris(cc.provctx, cc.profile,
                                                 pq_uri, classical_uri);
     if (pkey == NULL) {
+        fprintf(stderr, "[composite-cms-sign] evp_pkey_from_uris NULL\n");
         rc = -13;
         goto done;
     }
+    fprintf(stderr, "[composite-cms-sign] EVP_PKEY constructed\n");
 
     cert_bio = BIO_new_file(cert_path, "r");
     if (cert_bio == NULL) {
+        fprintf(stderr, "[composite-cms-sign] BIO_new_file(cert) FAILED\n");
+        ERR_print_errors_fp(stderr);
         rc = -20;
         goto done;
     }
     cert = PEM_read_bio_X509(cert_bio, NULL, NULL, NULL);
     if (cert == NULL) {
+        fprintf(stderr, "[composite-cms-sign] PEM_read_bio_X509 FAILED\n");
+        ERR_print_errors_fp(stderr);
         rc = -20;
         goto done;
     }
+    fprintf(stderr, "[composite-cms-sign] cert loaded\n");
 
     payload_bio = BIO_new_file(payload_path, "rb");
     if (payload_bio == NULL) {
+        fprintf(stderr, "[composite-cms-sign] BIO_new_file(payload) FAILED\n");
+        ERR_print_errors_fp(stderr);
         rc = -21;
         goto done;
     }
+    fprintf(stderr, "[composite-cms-sign] payload BIO opened; calling CMS_sign\n");
+    /* Drain any pre-existing errors before CMS_sign so we can be sure the
+     * stack only contains CMS_sign-specific failures afterward. */
+    while (ERR_get_error() != 0) { /* drain */ }
 
     /* CMS_BINARY: treat payload as binary (no canonicalisation). No
      * CMS_DETACHED — eContent is embedded so verify can re-read the
      * exact bytes that were signed. */
     cms = CMS_sign(cert, pkey, NULL, payload_bio, CMS_BINARY);
+    fprintf(stderr, "[composite-cms-sign] CMS_sign returned cms=%p\n", (void *)cms);
     if (cms == NULL) {
+        /* Pop the OpenSSL error stack into stderr explicitly so we see
+         * lib/reason codes even if ERR_print_errors_fp's buffering hides
+         * them from the worker stderr mirror. */
+        unsigned long err;
+        int err_count = 0;
+        while ((err = ERR_get_error()) != 0) {
+            const char *lib = ERR_lib_error_string(err);
+            const char *reason = ERR_reason_error_string(err);
+            fprintf(stderr,
+                    "[composite-cms-sign] ERR[%d]: 0x%08lx lib=%s reason=%s\n",
+                    err_count++, err, lib ? lib : "(null)",
+                    reason ? reason : "(null)");
+        }
+        if (err_count == 0) {
+            fprintf(stderr, "[composite-cms-sign] CMS_sign NULL but error stack empty\n");
+        }
         rc = -22;
         goto done;
     }
 
     out_bio = BIO_new_file(out_p7m_path, "wb");
     if (out_bio == NULL) {
+        fprintf(stderr, "[composite-cms-sign] BIO_new_file(out) FAILED\n");
         rc = -23;
         goto done;
     }
-    if (i2d_CMS_bio(out_bio, cms) != 1) {
+    int i2d_rc = i2d_CMS_bio(out_bio, cms);
+    fprintf(stderr, "[composite-cms-sign] i2d_CMS_bio returned %d\n", i2d_rc);
+    if (i2d_rc != 1) {
+        ERR_print_errors_fp(stderr);
         rc = -24;
         goto done;
     }
     rc = 0;
+    fprintf(stderr, "[composite-cms-sign] SUCCESS\n");
 
 done:
     BIO_free(out_bio);
