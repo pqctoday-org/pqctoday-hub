@@ -1,0 +1,1721 @@
+
+<!DOCTYPE html>
+
+
+
+
+
+
+<html data-bs-theme="auto" lang="en" prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+    <head>
+        
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>
+            
+    
+        draft-sheth-pqc-dnssec-strategy-01 - Post-Quantum Cryptography Strategy for DNSSEC
+    
+
+        </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="traceparent" content="">
+        <link href="https://static.ietf.org/fonts/inter/import.css" rel="stylesheet">
+        <link href="https://static.ietf.org/fonts/noto-sans-mono/import.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://static.ietf.org/dt/12.65.0/ietf/css/ietf.css">
+        <link rel="stylesheet" href="https://static.ietf.org/dt/12.65.0/ietf/css/select2.css">
+        
+        <script src="https://static.ietf.org/dt/12.65.0/ietf/js/theme.js"></script>
+        <style>
+            .inline { display: inline; }
+        </style>
+        
+        
+    
+
+
+
+
+<meta property="og:title" content="Post-Quantum Cryptography Strategy for DNSSEC">
+<meta property="og:url" content="https://datatracker.ietf.org/doc/draft-sheth-pqc-dnssec-strategy/">
+<link rel="canonical" href="https://datatracker.ietf.org/doc/draft-sheth-pqc-dnssec-strategy/">
+<meta property="og:site_name" content="IETF Datatracker">
+<meta property="og:description" content="This document proposes a post-quantum cryptography (PQC) strategy for Domain Name System Security (DNSSEC) that includes two types of algorithms: one or more conservatively designed algorithms that are unlikely ever to need to be replaced, and one or more low-impact drop-in algorithms that are used the same way as a traditional signature algorithm. The conservatively designed algorithms can be used in a mode of operation that mitigates the operational impact of a large signature size. The combination provides both the routine performance of the low-impact algorithm and a resilient fallback to the conservatively designed choice. The draft outlines the strategy, provides recommendations for future testing and deployment, and highlights operational considerations in adopting PQC for DNSSEC.">
+<meta property="og:type" content="article">
+
+<meta property="article:section" content="Individual Internet-Draft">
+
+<meta property="article:author" content="Swapneel Sheth">
+<meta property="article:author" content="Taejoong Chung">
+<meta property="article:author" content="Benno Overeinder">
+
+
+
+    <link rel="alternate"
+          type="application/atom+xml"
+          title="Document changes"
+          href="/feed/document-changes/draft-sheth-pqc-dnssec-strategy/">
+    <meta name="description"
+          content="Post-Quantum Cryptography Strategy for DNSSEC ">
+
+        <script type="module" crossorigin="" src="https://static.ietf.org/dt/12.65.0/assets/embedded-6a75d9ec.js"></script>
+<link href="https://static.ietf.org/dt/12.65.0/assets/create-pinia-singleton-eb2d4c03.js" type="text/javascript" crossorigin="anonymous" rel="modulepreload" as="script" />
+<link href="https://static.ietf.org/dt/12.65.0/assets/Scrollbar-ebc27e1e.js" type="text/javascript" crossorigin="anonymous" rel="modulepreload" as="script" />
+        
+
+<link rel="apple-touch-icon"
+      sizes="180x180"
+      href="https://static.ietf.org/dt/12.65.0/ietf/images/ietf-logo-nor-180.png">
+<link rel="icon"
+      sizes="32x32"
+      href="https://static.ietf.org/dt/12.65.0/ietf/images/ietf-logo-nor-32.png">
+<link rel="icon"
+      sizes="16x16"
+      href="https://static.ietf.org/dt/12.65.0/ietf/images/ietf-logo-nor-16.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="mask-icon"
+      href="https://static.ietf.org/dt/12.65.0/ietf/images/ietf-logo-nor-mask.svg"
+      color="#ffffff">
+<meta name="msapplication-TileColor"
+      content="#ffffff">
+<meta name="theme-color"
+      content="#ffffff">
+        <script src="https://static.ietf.org/dt/12.65.0/ietf/js/ietf.js"></script>
+        
+    </head>
+    <body  class="navbar-offset position-relative"
+          data-group-menu-data-url="/group/groupmenu.json">
+        
+        <noscript><iframe class="status" title="Site status" src="/status/latest"></iframe></noscript>
+<div class="vue-embed" data-component="Status"></div>
+        <a class="visually-hidden visually-hidden-focusable" href="#content">Skip to main content</a>
+        <nav class="navbar navbar-expand-lg fixed-top bg-secondary-subtle">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">
+                    
+
+
+
+<img alt="IETF Logo"
+     class="d-lm-none me-2"
+     
+     
+        
+             src="https://static.ietf.org/dt/12.65.0/ietf/images/ietf-logo-nor-white.svg"
+        
+     
+     >
+
+<img alt="IETF Logo"
+     class="d-dm-none me-2"
+     
+     
+        
+             src="https://static.ietf.org/dt/12.65.0/ietf/images/ietf-logo-nor.svg"
+        
+     
+     >
+                    Datatracker
+                    
+                </a>
+                <div class="collapse navbar-collapse" id="navbar-collapse">
+                    <ul class="nav navbar-nav flex-nowrap">
+                        
+
+
+
+
+<li class="nav-item dropdown">
+    
+        <a href="#"
+           class="nav-link dropdown-toggle"
+           role="button"
+           data-bs-toggle="dropdown"
+           aria-expanded="false">
+            Groups
+        </a>
+        <ul class="dropdown-menu mt-n1">
+        
+    <li class="dropdown-header">By area/parent</li>
+    
+
+
+
+    
+    <li class="dropend group-menu group-parent-2010">
+        <a class="dropdown-item dropdown-toggle "
+           href="/wg/#ART">
+            Apps &amp; Realtime
+        </a>
+    </li>
+
+    
+    <li class="dropend group-menu group-parent-1008">
+        <a class="dropdown-item dropdown-toggle "
+           href="/wg/#GEN">
+            General
+        </a>
+    </li>
+
+    
+    <li class="dropend group-menu group-parent-1052">
+        <a class="dropdown-item dropdown-toggle "
+           href="/wg/#INT">
+            Internet
+        </a>
+    </li>
+
+    
+    <li class="dropend group-menu group-parent-1193">
+        <a class="dropdown-item dropdown-toggle "
+           href="/wg/#OPS">
+            Ops &amp; Management
+        </a>
+    </li>
+
+    
+    <li class="dropend group-menu group-parent-1249">
+        <a class="dropdown-item dropdown-toggle "
+           href="/wg/#RTG">
+            Routing
+        </a>
+    </li>
+
+    
+    <li class="dropend group-menu group-parent-1260">
+        <a class="dropdown-item dropdown-toggle "
+           href="/wg/#SEC">
+            Security
+        </a>
+    </li>
+
+    
+    <li class="dropend group-menu group-parent-2412">
+        <a class="dropdown-item dropdown-toggle "
+           href="/wg/#WIT">
+            Web and Internet Transport
+        </a>
+    </li>
+
+    
+        <li><a class="dropdown-item" href="/group/iesg/about/">IESG</a></li>
+    
+    <li class="dropend group-menu group-parent-7">
+        <a class="dropdown-item dropdown-toggle "
+           href="/program/">
+            IAB
+        </a>
+    </li>
+
+    
+    <li class="dropend group-menu group-parent-3">
+        <a class="dropdown-item dropdown-toggle "
+           href="/rg/">
+            IRTF
+        </a>
+    </li>
+
+    
+    <li class="dropend group-menu group-parent-2309">
+        <a class="dropdown-item dropdown-toggle "
+           href="/adm/">
+            IETF LLC
+        </a>
+    </li>
+
+    
+    <li class="dropend group-menu group-parent-1876">
+        <a class="dropdown-item dropdown-toggle "
+           href="/rfcedtyp/">
+            RFC Editor
+        </a>
+    </li>
+
+
+    <li class="dropend">
+        <a class="dropdown-item dropdown-toggle "
+           href="/group/">
+            Other
+        </a>
+        
+
+
+<ul class="dropdown-menu ms-n1">
+    
+        <li>
+            <a class="dropdown-item "
+               href="/ag/">Active AGs</a>
+        </li>
+    
+        <li>
+            <a class="dropdown-item "
+               href="/area/">Active Areas</a>
+        </li>
+    
+        <li>
+            <a class="dropdown-item "
+               href="/dir/">Active Directorates</a>
+        </li>
+    
+        <li>
+            <a class="dropdown-item "
+               href="/iabworkshop/">Active IAB Workshops</a>
+        </li>
+    
+        <li>
+            <a class="dropdown-item "
+               href="/program/">Active Programs</a>
+        </li>
+    
+        <li>
+            <a class="dropdown-item "
+               href="/rag/">Active RAGs</a>
+        </li>
+    
+        <li>
+            <a class="dropdown-item "
+               href="/team/">Active Teams</a>
+        </li>
+    
+    
+</ul>
+
+    </li>
+    <li><hr class="dropdown-divider"></li>
+    <li class="dropdown-header">New work</li>
+    <li>
+        <a class="dropdown-item"
+           href="/group/chartering/">
+            Chartering groups
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item"
+           href="/wg/bofs/">
+            BOFs
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item"
+           href="/doc/bof-requests">
+            BOF Requests
+        </a>
+    </li>
+    <li><hr class="dropdown-divider"></li>
+    <li class="dropdown-header">Other groups</li>
+    <li>
+        <a class="dropdown-item"
+           href="/group/concluded/">
+            Concluded groups
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item"
+           href="/list/nonwg">
+            Non-WG lists
+        </a>
+    </li>
+    
+    </ul>
+</li>
+
+<li class="nav-item dropdown">
+    
+        <a href="#"
+           class="nav-link dropdown-toggle"
+           role="button"
+           data-bs-toggle="dropdown"
+           aria-expanded="false">
+            Documents
+        </a>
+        <ul class="dropdown-menu mt-n1">
+        
+    <li>
+        <a class="dropdown-item"
+           href="/doc/search">
+            Search
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item"
+           href="/doc/recent">
+            Recent I-Ds
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item"
+           href="/submit/">
+            Submit an Internet-Draft
+        </a>
+    </li>
+    
+    
+        <li><hr class="dropdown-divider">
+        </li>
+    
+    <li class="dropdown-header">
+        RFC streams
+    </li>
+    <li>
+        <a class="dropdown-item"
+           href="/stream/iab/">
+            IAB
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item"
+           href="/stream/irtf/">
+            IRTF
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item"
+           href="/stream/ise/">
+            ISE
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item"
+           href="/stream/editorial/">
+            Editorial
+        </a>
+    </li>
+    
+        <li><hr class="dropdown-divider">
+        </li>
+    
+    <li class="dropdown-header">
+        Subseries
+    </li>
+    <li>
+        <a class="dropdown-item"
+           href="/doc/std">
+            STD
+        </a>
+        <a class="dropdown-item"
+           href="/doc/bcp">
+            BCP
+        </a>
+        <a class="dropdown-item"
+           href="/doc/fyi">
+            FYI
+        </a>
+    </li>
+    
+    </ul>
+</li>
+
+<li class="nav-item dropdown">
+    
+        <a href="#"
+           class="nav-link dropdown-toggle"
+           role="button"
+           data-bs-toggle="dropdown"
+           aria-expanded="false">
+            Meetings
+        </a>
+        <ul class="dropdown-menu mt-n1">
+        
+    <li>
+        <a class="dropdown-item"
+           href="/meeting/agenda">
+            Agenda
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item"
+           href="/meeting/materials">
+            Materials
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item"
+           href="/meeting/floor-plan">
+            Floor plan
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item"
+           href="https://www.ietf.org/how/meetings/register/">
+            Registration
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item"
+           href="/meeting/important-dates/">
+            Important dates
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item"
+           href="/meeting/session/request/">
+            Request a session
+        </a>
+    </li>
+    
+    <li>
+        <a class="dropdown-item"
+           href="/meeting/requests">
+            Session requests
+        </a>
+    </li>
+    
+    
+        
+            <li><hr class="dropdown-divider">
+            </li>
+        
+        <li class="dropdown-header">
+            Upcoming meetings
+        </li>
+    
+    <li>
+        <a class="dropdown-item"
+           href="/meeting/upcoming">
+            Upcoming meetings
+        </a>
+    </li>
+    
+        
+            <li><hr class="dropdown-divider">
+            </li>
+        
+        <li class="dropdown-header">
+            Past meetings
+        </li>
+    
+    <li>
+        <a class="dropdown-item"
+           href="/meeting/past">
+            Past meetings
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item"
+           href="https://www.ietf.org/how/meetings/past/">
+            Meeting proceedings
+        </a>
+    </li>
+    
+    </ul>
+</li>
+
+<li class="nav-item dropdown">
+    
+        <a href="#"
+           class="nav-link dropdown-toggle"
+           role="button"
+           data-bs-toggle="dropdown"
+           aria-expanded="false">
+            Other
+        </a>
+        <ul class="dropdown-menu mt-n1">
+        
+    <li>
+        <a class="dropdown-item"
+           href="/ipr/">
+            IPR disclosures
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item"
+           href="/liaison/">
+            Liaison statements
+        </a>
+    </li>
+    
+    <li>
+        <a class="dropdown-item"
+           href="/iesg/agenda/">
+            IESG agenda
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item"
+           href="/nomcom/">
+            NomComs
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item"
+           href="/doc/downref">
+            Downref registry
+        </a>
+    </li>
+    <li class="dropend">
+        <a class="dropdown-item dropdown-toggle" href="#">
+            Statistics
+        </a>
+        <ul class="dropdown-menu">
+            <li>
+                <a class="dropdown-item"
+                   href="/stats/document/">
+                    I-Ds/RFCs
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item"
+                   href="/stats/meeting/">
+                    Meetings
+                </a>
+            </li>
+            
+        </ul>
+    </li>
+    <li>
+        <a class="dropdown-item"
+           href="/api/">
+            API Help
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item"
+           href="/release/">
+            Release notes
+        </a>
+    </li>
+    <li>
+        <a class="dropdown-item"
+           target="_blank" href="https://status.ietf.org">
+            System status
+        </a>
+    </li>
+    
+        <li><hr class="dropdown-divider">
+        </li>
+    
+    <li>
+        <a class="dropdown-item text-danger "
+           target="_blank" href="https://github.com/ietf-tools/datatracker/issues/new/choose">
+            <i class="bi bi-bug">
+            </i>
+            Report a bug
+        </a>
+    </li>
+    
+    </ul>
+</li>
+
+
+    
+
+
+
+<li class="nav-item dropdown">
+    
+        <a href="#"
+           class="nav-link dropdown-toggle"
+           role="button"
+           data-bs-toggle="dropdown"
+           aria-expanded="false">
+            
+                User
+            
+        </a>
+        <ul class="dropdown-menu  mt-n1 ">
+        
+    
+    
+        
+            <li>
+                <a class="dropdown-item "
+                   rel="nofollow"
+                   href="/accounts/login/?next=/doc/draft-sheth-pqc-dnssec-strategy/">
+                    Sign in
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item "
+                   rel="nofollow"
+                   href="/accounts/reset/">
+                    Password reset
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item "
+                   href="/accounts/settings/"
+                   rel="nofollow">
+                    Preferences
+                </a>
+            </li>
+        
+    
+    
+        <li>
+            <a class="dropdown-item "
+               href="/accounts/create/">
+                New account
+            </a>
+        </li>
+    
+    <li class="dropend">
+      <a class="dropdown-item dropdown-toggle" href="#">
+        List subscriptions
+      </a>
+      <ul class="dropdown-menu">
+            <li>
+                <a class="dropdown-item "
+                href="https://mailman3.ietf.org/mailman3/lists/">
+                    IETF Lists
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item "
+                href="https://mailman3.irtf.org/mailman3/lists/">
+                IRTF Lists
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item "
+                href="https://mailman3.iab.org/mailman3/lists/">
+                    IAB Lists
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item "
+                href="https://mailman3.rfc-editor.org/mailman3/lists/">
+                    RFC-Editor Lists
+                </a>
+            </li>
+        </ul>
+    </li>
+    
+    
+    
+    
+    
+    </ul></li>
+
+
+                    </ul>
+                </div>
+                <div class="d-flex align-items-center">
+                    <a class="nav-link text-danger d-none d-xl-inline me-xl-4"
+                       target="_blank"
+                       href="https://github.com/ietf-tools/datatracker/issues/new/choose">
+                        Report a bug
+                        <i class="bi bi-bug"></i>
+                    </a>
+
+                    
+                        <a class="btn me-1  btn-warning  d-none d-sm-block"
+                           rel="nofollow"
+                           href="/accounts/login/?next=/doc/draft-sheth-pqc-dnssec-strategy/">
+                            Sign in
+                        </a>
+                    
+
+                    <div class="d-none d-md-block dropdown" id="navbar-doc-search-wrapper">
+                        <input class="form-control"
+                               id="navbar-doc-search"
+                               type="text"
+                               placeholder="Document search"
+                               autocomplete="off"
+                               data-ajax-url="/doc/select2search/document/all/"
+                               aria-label="Document search">
+                        <ul class="dropdown-menu" id="navbar-doc-search-results">
+                        </ul>
+                    </div>
+                </div>
+                <button class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbar-collapse"
+                        aria-controls="navbar-collapse"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <i class="navbar-toggler-icon"></i>
+                </button>
+            </div>
+        </nav>
+        
+        <main class="pt-3 container-fluid" id="main">
+            <div class="row">
+                
+                <div class="col mx-lg-3 ietf-auto-nav" id="content">
+                    <noscript data-nosnippet>
+                        <div class="alert alert-danger alert-ignore my-3">
+                            <b>Javascript disabled?</b> Like other modern websites, the IETF Datatracker relies on Javascript.
+                            Please enable Javascript for full functionality.
+                        </div>
+                    </noscript>
+                    
+                    
+    
+    
+
+
+
+<h1>
+    Post-Quantum Cryptography Strategy for DNSSEC
+    <br>
+    <small class="text-body-secondary">draft-sheth-pqc-dnssec-strategy-01</small>
+</h1>
+<ul class="nav nav-tabs my-3">
+    
+        <li  class="nav-item">
+            <a class="nav-link active"
+               href="/doc/draft-sheth-pqc-dnssec-strategy/">
+                Status
+            </a>
+        </li>
+    
+        <li  class="nav-item">
+            <a class="nav-link "
+               href="/doc/draft-sheth-pqc-dnssec-strategy/email/">
+                Email expansions
+            </a>
+        </li>
+    
+        <li  class="nav-item">
+            <a class="nav-link "
+               href="/doc/draft-sheth-pqc-dnssec-strategy/history/">
+                History
+            </a>
+        </li>
+    
+</ul>
+
+    
+
+
+
+    <label class="my-1 fw-bold">Versions:</label>
+    <nav class="mb-3">
+
+    <ul class="revision-list pagination pagination-sm text-center flex-wrap">
+        
+            
+                 
+                    <li class="page-item ">
+                        <a class="page-link"
+                        href="/doc/draft-sheth-pqc-dnssec-strategy/00/"
+                        >
+                            00
+                        </a>
+                    </li>
+                
+            
+                 
+                    <li class="page-item active">
+                        <a class="page-link"
+                        href="/doc/draft-sheth-pqc-dnssec-strategy/01/"
+                        >
+                            01
+                        </a>
+                    </li>
+                
+            
+            
+        
+    </ul>
+
+    </nav>
+
+    
+
+
+
+
+    <div class="alert alert-warning " role="alert">
+        This document is an Internet-Draft (I-D).
+        Anyone may submit an I-D to the IETF.
+        This I-D is <strong>not endorsed by the IETF</strong> and has <strong>no formal standing</strong> in the
+        <a href="/doc/rfc2026/">IETF standards process</a>.
+    </div>
+
+
+    <div id="doc-timeline"></div>
+    
+        
+    
+    <table class="table table-sm table-borderless">
+        
+
+
+
+
+
+
+
+<tbody class="meta align-top  border-top">
+    <tr>
+        <th scope="row">Document</th>
+        <th scope="row">Type</th>
+        <td class="edit"></td>
+        <td>
+            
+
+
+
+
+
+
+
+    <span class="text-success">Active Internet-Draft</span>
+    (individual)
+    
+
+            
+            
+            
+        </td>
+    </tr>
+    
+    <tr>
+        <td></td>
+        <th scope="row">Authors</th>
+        <td class="edit">
+            
+        </td>
+        <td>
+            
+            
+                <span ><a 
+           title="Datatracker profile of Swapneel Sheth"
+            href="/person/ssheth@verisign.com" >Swapneel Sheth</a> <a 
+               href="mailto:ssheth%40verisign.com"
+               aria-label="Compose email to ssheth@verisign.com"
+               title="Compose email to ssheth@verisign.com">
+                <i class="bi bi-envelope"></i></a></span>,
+            
+                <span ><a 
+           title="Datatracker profile of Taejoong Chung"
+            href="/person/tijay@vt.edu" >Taejoong Chung</a> <a 
+               href="mailto:tijay%40vt.edu"
+               aria-label="Compose email to tijay@vt.edu"
+               title="Compose email to tijay@vt.edu">
+                <i class="bi bi-envelope"></i></a></span>,
+            
+                <span ><a 
+           title="Datatracker profile of Benno Overeinder"
+            href="/person/benno@NLnetLabs.nl" >Benno Overeinder</a> <a 
+               href="mailto:benno%40NLnetLabs.nl"
+               aria-label="Compose email to benno@NLnetLabs.nl"
+               title="Compose email to benno@NLnetLabs.nl">
+                <i class="bi bi-envelope"></i></a></span>
+            
+            
+        </td>
+    </tr>
+    
+    
+    <tr>
+        <td></td>
+        <th scope="row">Last updated</th>
+        <td class="edit"></td>
+        <td>
+            2026-04-17
+            
+        </td>
+    </tr>
+    
+    
+        
+        
+        
+    
+    <tr>
+        <td></td>
+        <th scope="row">
+            RFC stream
+        </th>
+        <td class="edit">
+            
+        </td>
+        <td class="text-body-secondary">
+            
+                (None)
+            
+        </td>
+    </tr>
+    
+        <tr>
+            <td></td>
+            <th scope="row">
+                Intended RFC status
+            </th>
+            <td class="edit">
+                
+            </td>
+            <td>
+                
+                    <span class="text-body-secondary">
+                        (None)
+                    </span>
+                
+            </td>
+        </tr>
+    
+    <tr>
+        <td></td>
+        <th scope="row">
+            Formats
+        </th>
+        <td class="edit">
+        </td>
+        <td>
+            
+                
+    <div class="buttonlist">
+    
+        
+        <a class="btn btn-primary btn-sm"
+          
+          target="_blank"
+          href="https://www.ietf.org/archive/id/draft-sheth-pqc-dnssec-strategy-01.txt">
+            
+                <i class="bi bi-file-text"></i> txt
+            
+        </a>
+        
+    
+        
+        <a class="btn btn-primary btn-sm"
+          
+          target="_blank"
+          href="https://www.ietf.org/archive/id/draft-sheth-pqc-dnssec-strategy-01.html">
+            
+                <i class="bi bi-file-code"></i> html
+            
+        </a>
+        
+    
+        
+        <a class="btn btn-primary btn-sm"
+          
+          target="_blank"
+          href="https://www.ietf.org/archive/id/draft-sheth-pqc-dnssec-strategy-01.xml">
+            
+                <i class="bi bi-file-code"></i> xml
+            
+        </a>
+        
+    
+        
+        <a class="btn btn-primary btn-sm"
+          
+          
+          href="/doc/html/draft-sheth-pqc-dnssec-strategy-01">
+            
+                <i class="bi bi-file-code"></i> htmlized
+            
+        </a>
+        
+    
+        
+        <a class="btn btn-primary btn-sm"
+          
+          target="_blank"
+          href="/doc/draft-sheth-pqc-dnssec-strategy/01/bibtex/">
+            
+                <i class="bi bi-file-ruled"></i> bibtex
+            
+        </a>
+        
+    
+        
+        <a class="btn btn-primary btn-sm"
+          
+          target="_blank"
+          href="/doc/bibxml3/draft-sheth-pqc-dnssec-strategy-01.xml">
+            
+                <i class="bi bi-file-code"></i> bibxml
+            
+        </a>
+        
+    
+</div>
+
+            
+        </td>
+    </tr>
+    
+    
+        
+    
+        
+            
+            
+        
+    
+    
+        
+    
+</tbody>
+        <tbody class="meta border-top">
+            <tr>
+                <th scope="row">
+                    Stream
+                </th>
+                
+                    <th scope="row">
+                        Stream state
+                    </th>
+                    <td class="edit">
+                    </td>
+                    <td>
+                        <span class="text-body-secondary">(No stream defined)</span>
+                    </td>
+                
+            </tr>
+            
+            
+                <tr>
+                    <td></td>
+                    <th scope="row">
+                        Consensus boilerplate
+                    </th>
+                    <td class="edit">
+                        
+                    </td>
+                    <td>
+                        <span class="text-danger"
+                              title="Whether the document is the result of a community consensus process as defined in RFC 5741">
+                            Unknown
+                        </span>
+                    </td>
+                </tr>
+            
+            
+            
+                <tr>
+                    <td></td>
+                    <th scope="row">
+                        RFC Editor Note
+                    </th>
+                    <td class="edit">
+                        
+                    </td>
+                    <td>
+                        
+                            <span class="text-body-secondary">
+                                (None)
+                            </span>
+                        
+                    </td>
+                </tr>
+            
+            
+        </tbody>
+        
+            <tbody class="meta border-top">
+                <tr>
+                    <th scope="row">
+                        IESG
+                    </th>
+                    <th scope="row">
+                        <a href="/doc/help/state/draft-iesg/">
+                            IESG state
+                        </a>
+                    </th>
+                    <td class="edit">
+                        
+                    </td>
+                    <td>
+                        <span class="">
+                            
+                                I-D Exists
+                            
+                        </span>
+                    </td>
+                </tr>
+                
+                    
+                    <tr>
+                        <td></td>
+                        <th scope="row">
+                            Telechat date
+                        </th>
+                        <td class="edit">
+                            
+                        </td>
+                        <td>
+                            
+                                <span class="text-body-secondary">
+                                    (None)
+                                </span>
+                            
+                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <th scope="row">
+                            Responsible AD
+                        </th>
+                        <td class="edit">
+                            
+                        </td>
+                        <td>
+                            
+                                <span class="text-body-secondary">
+                                    (None)
+                                </span>
+                            
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td></td>
+                        <th scope="row">
+                            Send notices to
+                        </th>
+                        <td class="edit">
+                            
+                        </td>
+                        <td>
+                            
+                                <span class="text-body-secondary">
+                                    (None)
+                                </span>
+                            
+                        </td>
+                    </tr>
+                </tbody>
+            
+            
+                
+            
+            
+        </table>
+        <div class="buttonlist">
+            <a class="btn btn-primary btn-sm"
+               href="mailto:draft-sheth-pqc-dnssec-strategy@ietf.org?subject=Mail%20regarding%20draft-sheth-pqc-dnssec-strategy">
+                <i class="bi bi-envelope">
+                </i>
+                Email authors
+            </a>
+            
+            <a class="btn btn-primary btn-sm"
+               href="/ipr/search/?submit=draft&amp;id=draft-sheth-pqc-dnssec-strategy"
+               rel="nofollow">
+                <i class="bi bi-lightning">
+                </i>
+                IPR
+                
+            </a>
+            <a class="btn btn-primary btn-sm"
+               href="/doc/draft-sheth-pqc-dnssec-strategy/references/"
+               rel="nofollow">
+                <i class="bi bi-arrow-left">
+                </i>
+                References
+            </a>
+            <a class="btn btn-primary btn-sm"
+               href="/doc/draft-sheth-pqc-dnssec-strategy/referencedby/"
+               rel="nofollow">
+                <i class="bi bi-arrow-right">
+                </i>
+                Referenced by
+            </a>
+            <a class="btn btn-primary btn-sm"
+               href="https://author-tools.ietf.org/api/idnits?url=https://www.ietf.org/archive/id/draft-sheth-pqc-dnssec-strategy-01.txt"
+               rel="nofollow"
+               target="_blank">
+                <i class="bi bi-exclamation">
+                </i>
+                Nits
+            </a>
+            
+            <a class="btn btn-primary btn-sm"
+               href="https://mailarchive.ietf.org/arch/search/?q=%22draft-sheth-pqc-dnssec-strategy%22"
+               rel="nofollow"
+               target="_blank">
+                <i class="bi bi-search">
+                </i>
+                Search email archive
+            </a>
+            
+            
+            
+            
+        </div>
+        
+            <div class="card mt-5">
+                <div class="card-header">
+                    
+                        draft-sheth-pqc-dnssec-strategy-01
+                    
+                </div>
+                <div class="card-body">
+                    <pre>Network Working Group                                           S. Sheth
+Internet-Draft                                             Verisign Labs
+Intended status: Informational                                  T. Chung
+Expires: 19 October 2026                                   Virginia Tech
+                                                           B. Overeinder
+                                                              NLnet Labs
+                                                           17 April 2026
+
+             Post-Quantum Cryptography Strategy for DNSSEC
+                   draft-sheth-pqc-dnssec-strategy-01
+
+<span>Abstract</span>
+
+   This document proposes a post-quantum cryptography (PQC) strategy for
+   Domain Name System Security (DNSSEC) that includes two types of
+   algorithms: one or more conservatively designed algorithms that are
+   unlikely ever to need to be replaced, and one or more low-impact
+   drop-in algorithms that are used the same way as a traditional
+   signature algorithm.  The conservatively designed algorithms can be
+   used in a mode of operation that mitigates the operational impact of
+   a large signature size.  The combination provides both the routine
+   performance of the low-impact algorithm and a resilient fallback to
+   the conservatively designed choice.  The draft outlines the strategy,
+   provides recommendations for future testing and deployment, and
+   highlights operational considerations in adopting PQC for DNSSEC.
+
+<span>Status of This Memo</span>
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as &quot;work in progress.&quot;
+
+   This Internet-Draft will expire on 19 October 2026.
+
+<span>Copyright Notice</span>
+
+   Copyright (c) 2026 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+<span>Sheth, et al.            Expires 19 October 2026                [Page 1]</span>
+<span>Internet-Draft           PQC Strategy for DNSSEC              April 2026</span>
+
+   This document is subject to BCP 78 and the IETF Trust&#x27;s Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
+
+<span>Table of Contents</span>
+
+   1.  Conventions Used in This Document . . . . . . . . . . . . . .   2
+   2.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+   3.  Post-Quantum DNSSEC Challenges  . . . . . . . . . . . . . . .   3
+     3.1.  Operational Constraints . . . . . . . . . . . . . . . . .   3
+     3.2.  Deployment Cycles . . . . . . . . . . . . . . . . . . . .   3
+   4.  Proposed PQC Algorithm Diversity Strategy . . . . . . . . . .   3
+     4.1.  Mode of Operation . . . . . . . . . . . . . . . . . . . .   4
+   5.  Alternatives and Considerations . . . . . . . . . . . . . . .   4
+   6.  Recommended Next Steps  . . . . . . . . . . . . . . . . . . .   4
+   7.  Current Community Efforts . . . . . . . . . . . . . . . . . .   4
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
+   9.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .   5
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .   5
+     10.2.  Informative References . . . . . . . . . . . . . . . . .   6
+   Acknowledgements  . . . . . . . . . . . . . . . . . . . . . . . .   8
+   Change Log  . . . . . . . . . . . . . . . . . . . . . . . . . . .   8
+   Authors&#x27; Addresses  . . . . . . . . . . . . . . . . . . . . . . .   8
+
+1.  Conventions Used in This Document
+
+   The key words &quot;MUST&quot;, &quot;MUST NOT&quot;, &quot;REQUIRED&quot;, &quot;SHALL&quot;, &quot;SHALL NOT&quot;,
+   &quot;SHOULD&quot;, &quot;SHOULD NOT&quot;, &quot;RECOMMENDED&quot;, &quot;NOT RECOMMENDED&quot;, &quot;MAY&quot;, and
+   &quot;OPTIONAL&quot; in this document are to be interpreted as described in BCP
+   14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+2.  Introduction
+
+   DNSSEC [RFC4034][RFC4035][RFC9364] provides data origin
+   authentication for DNS resource records.  Current algorithms, such as
+   RSASHA256 (8) and ECDSA (13), are vulnerable to cryptanalytically
+   capable quantum computers.  While &quot;harvest now/decrypt later&quot; is not
+   a concern for DNSSEC, as it is for some other protocols such as TLS,
+   &quot;trust now/forge later&quot; is a concern for DNSSEC.  Ensuring that
+   signatures are valid and secure from inception until expiration is
+   critical.  This combined with the fact that standards bodies like the
+
+<span>Sheth, et al.            Expires 19 October 2026                [Page 2]</span>
+<span>Internet-Draft           PQC Strategy for DNSSEC              April 2026</span>
+
+   National Institute of Standards and Technology (NIST) are deprecating
+   support for classical algorithms ensures that migration to post-
+   quantum cryptography (PQC) is necessary.  Large system operators are
+   also publishing statements[Google-PQC][Cloudflare-PQC] encouraging
+   full migration to PQC in the next four years.  Unfortunately,
+   migration with the large signature sizes introduce operational risks.
+
+   This draft proposes a strategy deploying:
+
+   *  One or more conservatively designed PQC algorithm in a mode
+      mitigating large signature sizes.
+   *  One or more low-impact drop-in PQC algorithm analogous to
+      traditional DNSSEC signatures.
+
+   This dual-algorithm approach ensures routine performance and
+   resilient fallback during PQC transition.
+
+   This draft is intended as a contribution to ongoing algorithm updates
+   and the algorithm lifecycle per drafts [I-D.ietf-dnsop-rfc8624-bis]
+   and[I-D.crocker-dnsop-dnssec-algorithm-lifecycle]
+
+3.  Post-Quantum DNSSEC Challenges
+
+3.1.  Operational Constraints
+
+   DNS primarily runs over UDP, with packet sizes limited to a maximum
+   of ~1232 bytes.  Traditional signatures (e.g., RSASHA256, ECDSA) fit
+   within this limit.  PQC signatures (ML-DSA: 2420-4627 bytes, SLH-DSA:
+   7856-49856 bytes) exceed it, risking excessive TCP fallback, latency,
+   and resolver performance degradation [Sury2025].
+
+3.2.  Deployment Cycles
+
+   DNSSEC upgrades occur over years.  Novel PQC algorithms may face
+   uncertain adoption timelines, requiring fallback mechanisms.  Some
+   algorithms (e.g., SQIsign) impose verification overhead, slowing
+   response times [Sury2025].
+
+4.  Proposed PQC Algorithm Diversity Strategy
+
+   DNSSEC should deploy two types of PQC signature algorithms:
+
+   Currently standardized post-quantum secure algorithms that provide
+   cryptographic confidence and resilient fallback.  Examples: SLH-DSA
+   in Merkle Tree Ladder (MTL) mode [I-D.harvey-cfrg-mtl-mode],
+   Falcon[FALCON], XMSS[RFC8391], LMS[RFC8554].
+
+<span>Sheth, et al.            Expires 19 October 2026                [Page 3]</span>
+<span>Internet-Draft           PQC Strategy for DNSSEC              April 2026</span>
+
+   New algorithms such as the ones that remain under NIST onramp
+   evaluation or under consideration by other standards bodies.  These
+   provide routine performance with minimal operational impact.  They
+   may leverage newer but less well-established mathematical concepts.
+   Examples: MAYO[MAYO], SNOVA[SNOVA].
+
+4.1.  Mode of Operation
+
+   MTL mode signs a Merkle tree ladder rather than individual DNS
+   responses, amortizing signature size across multiple responses
+   [Fregly2023].  In DNSSEC, this reduces operational impact while
+   maintaining security[I-D.fregly-dnsop-slh-dsa-mtl-dnssec].
+
+5.  Alternatives and Considerations
+
+   *  Conservative candidates: SLH-DSA, ML-DSA (possibly combined with
+      traditional algorithms), Falcon, XMSS, LMS.
+   *  Low-impact candidates: New algorithms such as the ones that remain
+      under NIST onramp evaluation or under consideration by other
+      standards bodies.
+   *  Use of modes of operation (like MTL mode) to mitigate large
+      signature sizes.
+
+6.  Recommended Next Steps
+
+   *  Evaluate the impact of increased truncated responses and traffic
+      over TCP on DNS recursive resolvers and authorities at all scales.
+   *  Conduct hackathons testing multiple algorithms in BIND, NSD, and
+      CoreDNS (see current progress in Section 7).
+   *  Measure latency, fallback rates, and resilience under adversarial
+      conditions, including KeyTrap-style attacks [HeBrig2024].
+   *  Research countermeasures against denial-of-service risks for MTL
+      mode.
+
+7.  Current Community Efforts
+
+   Several efforts are underway to implement, test, and discuss PQC
+   algorithms in DNSSEC.
+
+   *  IETF PQC DNSSEC Side Meeting - https://wiki.ietf.org/en/group/pq-
+      dnssec
+   *  IETF 123 Hackathon - PQC DNSSEC Implementation [HACAKTHON-123]
+   *  IETF 122 Hackathon - PQC for DNSSEC - New Kids on the Block
+      [HACAKTHON-122-NEW]
+   *  IETF 122 Hackathon - PQC DNSSEC Metrics with MTL Mode
+      [HACAKTHON-122-MTL]
+
+<span>Sheth, et al.            Expires 19 October 2026                [Page 4]</span>
+<span>Internet-Draft           PQC Strategy for DNSSEC              April 2026</span>
+
+8.  IANA Considerations
+
+   This document makes no requests of IANA.  Future work may include
+   registration of new DNSSEC algorithm codes for PQC algorithms.
+
+9.  Security Considerations
+
+   The deployment of PQC algorithms strengthens DNSSEC against quantum
+   attacks but introduces operational risks.  Proper testing, fallback
+   mechanisms, and mode-of-operation considerations are essential to
+   avoid new vulnerabilities.
+
+   Continued community participation in PQC DNSSEC research, in
+   particular around low-impact drop-in algorithms, is essential to
+   standarizing secure PQC DNSSEC solutions.  Additional considerations
+   will be described based on continued analysis and feedback.
+
+10.  References
+
+10.1.  Normative References
+
+   [I-D.crocker-dnsop-dnssec-algorithm-lifecycle]
+              Crocker, S., Housley, R., and W. Hardaker, &quot;Documenting
+              and Managing DNSSEC Algorithm Lifecycles&quot;, Work in
+              Progress, Internet-Draft, draft-crocker-dnsop-dnssec-
+              algorithm-lifecycle-02, 2 November 2025,
+              &lt;https://datatracker.ietf.org/doc/html/draft-crocker-
+              dnsop-dnssec-algorithm-lifecycle-02&gt;.
+
+   [I-D.ietf-dnsop-rfc8624-bis]
+              Hardaker, W. and W. Kumari, &quot;DNSSEC Cryptographic
+              Algorithm Recommendation Update Process&quot;, Work in
+              Progress, Internet-Draft, draft-ietf-dnsop-rfc8624-bis-13,
+              4 June 2025, &lt;https://datatracker.ietf.org/doc/html/draft-
+              ietf-dnsop-rfc8624-bis-13&gt;.
+
+   [RFC2119]  Bradner, S., &quot;Key words for use in RFCs to Indicate
+              Requirement Levels&quot;, BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              &lt;https://www.rfc-editor.org/info/rfc2119&gt;.
+
+   [RFC4034]  Arends, R., Austein, R., Larson, M., Massey, D., and S.
+              Rose, &quot;Resource Records for the DNS Security Extensions&quot;,
+              RFC 4034, DOI 10.17487/RFC4034, March 2005,
+              &lt;https://www.rfc-editor.org/info/rfc4034&gt;.
+
+<span>Sheth, et al.            Expires 19 October 2026                [Page 5]</span>
+<span>Internet-Draft           PQC Strategy for DNSSEC              April 2026</span>
+
+   [RFC4035]  Arends, R., Austein, R., Larson, M., Massey, D., and S.
+              Rose, &quot;Protocol Modifications for the DNS Security
+              Extensions&quot;, RFC 4035, DOI 10.17487/RFC4035, March 2005,
+              &lt;https://www.rfc-editor.org/info/rfc4035&gt;.
+
+   [RFC8174]  Leiba, B., &quot;Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words&quot;, BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, &lt;https://www.rfc-editor.org/info/rfc8174&gt;.
+
+   [RFC9364]  Hoffman, P., &quot;DNS Security Extensions (DNSSEC)&quot;, BCP 237,
+              RFC 9364, DOI 10.17487/RFC9364, February 2023,
+              &lt;https://www.rfc-editor.org/info/rfc9364&gt;.
+
+10.2.  Informative References
+
+   [Cloudflare-PQC]
+              Westerbaan, B., &quot;Cloudflare targets 2029 for full post-
+              quantum security&quot;, 7 April 2026,
+              &lt;https://blog.cloudflare.com/post-quantum-roadmap/&gt;.
+
+   [FALCON]   Fouque, P., Hoffstein, J., Kirchner, P., Lyubashevsky, V.,
+              Pornin, T., Prest, T., Ricosset, T., Seiler, G., Whyte,
+              W., and Z. Zhang, &quot;Falcon: Fast-Fourier Lattice-based
+              Compact Signatures over NTRU&quot;, 10 January 2020,
+              &lt;https://falcon-sign.info/falcon.pdf&gt;.
+
+   [Fregly2023]
+              Fregly, A., Harvey, J., Kaliski, B., and S. Sheth, &quot;Merkle
+              Tree Ladder Mode: Reducing the Size Impact of NIST PQC
+              Signature Algorithms in Practice&quot;, 2022,
+              &lt;https://eprint.iacr.org/2022/1730&gt;.
+
+   [Google-PQC]
+              Adkins, H. and S. Schmeig, &quot;Quantum frontiers may be
+              closer than they appear&quot;, 25 March 2026,
+              &lt;https://blog.google/innovation-and-ai/technology/safety-
+              security/cryptography-migration-timeline/&gt;.
+
+   [HACAKTHON-122-MTL]
+              Harvey, J. and S. Sheth, &quot;IETF 122 - PQC DNSSEC Metrics
+              with MTL Mode&quot;, 16 March 2025,
+              &lt;https://datatracker.ietf.org/meeting/122/materials/
+              slides-122-hackathon-sessd-pqc-dnssec-metrics-with-mtl-
+              mode-00&gt;.
+
+<span>Sheth, et al.            Expires 19 October 2026                [Page 6]</span>
+<span>Internet-Draft           PQC Strategy for DNSSEC              April 2026</span>
+
+   [HACAKTHON-122-NEW]
+              Sury, O., &quot;PQC for DNSSEC - New Kids on the Block&quot;, 16
+              March 2025,
+              &lt;https://datatracker.ietf.org/meeting/122/materials/
+              slides-122-hackathon-sessd-pqc4dnssec-00&gt;.
+
+   [HACAKTHON-123]
+              Jimenez-Berenguel, A., Harvey, J., Blanco-Romero, J.,
+              Sheth, S., Sury, O., and W. Toorop, &quot;IETF 123 - PQC DNSSEC
+              Implementation&quot;, July 2025,
+              &lt;https://datatracker.ietf.org/meeting/123/materials/
+              slides-123-hackathon-sessd-ietf-123-pqc-dnssec-
+              implementation-00&gt;.
+
+   [HeBrig2024]
+              Heftrig, E., Schulmann, H., Vogel, N., and M. Waidner,
+              &quot;The Harder You Try, The Harder You Fail: The KeyTrap
+              Denial-of-Service Algorithmic Complexity Attacks on
+              DNSSEC&quot;, 2024, &lt;https://arxiv.org/abs/2406.03133&gt;.
+
+   [I-D.fregly-dnsop-slh-dsa-mtl-dnssec]
+              Fregly, A., Harvey, J., Kaliski, B., and D. Wessels,
+              &quot;Stateless Hash-Based Signatures in Merkle Tree Ladder
+              Mode (SLH-DSA-MTL) for DNSSEC&quot;, Work in Progress,
+              Internet-Draft, draft-fregly-dnsop-slh-dsa-mtl-dnssec-06,
+              30 March 2026, &lt;https://datatracker.ietf.org/doc/html/
+              draft-fregly-dnsop-slh-dsa-mtl-dnssec-06&gt;.
+
+   [I-D.harvey-cfrg-mtl-mode]
+              Harvey, J., Kaliski, B., Fregly, A., Sheth, S., and D.
+              McVicker, &quot;Merkle Tree Ladder (MTL) Mode Signatures&quot;, Work
+              in Progress, Internet-Draft, draft-harvey-cfrg-mtl-mode-
+              09, 24 March 2026, &lt;https://datatracker.ietf.org/doc/html/
+              draft-harvey-cfrg-mtl-mode-09&gt;.
+
+   [MAYO]     Beullens, W., Campos, F., Celi, S., Hess, B., and M.
+              Kannwischer, &quot;MAYO&quot;, 5 February 2025,
+              &lt;https://pqmayo.org/assets/specs/mayo-round2.pdf&gt;.
+
+   [RFC8391]  Huelsing, A., Butin, D., Gazdag, S., Rijneveld, J., and A.
+              Mohaisen, &quot;XMSS: eXtended Merkle Signature Scheme&quot;,
+              RFC 8391, DOI 10.17487/RFC8391, May 2018,
+              &lt;https://www.rfc-editor.org/info/rfc8391&gt;.
+
+   [RFC8554]  McGrew, D., Curcio, M., and S. Fluhrer, &quot;Leighton-Micali
+              Hash-Based Signatures&quot;, RFC 8554, DOI 10.17487/RFC8554,
+              April 2019, &lt;https://www.rfc-editor.org/info/rfc8554&gt;.
+
+<span>Sheth, et al.            Expires 19 October 2026                [Page 7]</span>
+<span>Internet-Draft           PQC Strategy for DNSSEC              April 2026</span>
+
+   [SNOVA]    Wang, L., Chou, C., Ding, J., Kuan, Y., Leegwater, J., Li,
+              M., Tseng, B., Tseng, P., and C. Wang, &quot;SNOVA Proposal for
+              NISTPQC: Additional Digital Signature Schemes&quot;, 25 January
+              2025, &lt;https://csrc.nist.gov/csrc/media/Projects/pqc-dig-
+              sig/documents/round-2/spec-files/snova-spec-
+              round2-web.pdf&gt;.
+
+   [Sury2025] Sury, O., &quot;Feasibility of the new Post Quantum
+              Cryptography for DNSSEC&quot;, 2025,
+              &lt;https://typst.app/project/rJ0w6uUpoHWo6Pjd1fbUx6&gt;.
+
+<span>Acknowledgements</span>
+
+   Thanks to Andrew Fregly for early contributions in promoting PQ
+   DNSSEC and uniting the research community around a post-quantum
+   research agenda.
+
+Change Log
+
+      00: Initial draft of the document.
+
+      01: Update intro and next steps based on latest publications.
+
+<span>Authors&#x27; Addresses</span>
+
+   Swapneel Sheth
+   Verisign Labs
+   12061 Bluemont Way
+   Reston, VA 20190
+   United States of America
+   Email: ssheth@verisign.com
+   URI:   https://www.verisignlabs.com/
+
+   Taejoong Chung
+   Virginia Tech
+   220 Gilbert Street, RM 4303
+   Blacksburg, VA 24060
+   United States of America
+   Email: tijay@vt.edu
+   URI:   https://www.vt.edu/
+
+   Benno Overeinder
+   NLnet Labs
+   Science Park 400
+   1098 XH Amsterdam
+   Netherlands
+
+<span>Sheth, et al.            Expires 19 October 2026                [Page 8]</span>
+<span>Internet-Draft           PQC Strategy for DNSSEC              April 2026</span>
+
+   Email: benno@nlnetlabs.nl
+   URI:   https://nlnetlabs.nl
+
+<span>Sheth, et al.            Expires 19 October 2026                [Page 9]</span>
+</pre>
+                </div>
+            </div>
+            
+        
+    
+                    
+                </div>
+            </div>
+        </main>
+        
+            <footer class="col-md-12 col-sm-12 border-top mt-5 py-5 bg-light-subtle text-center position-sticky">
+                <a href="https://www.ietf.org/" class="p-3">IETF</a>
+                <a href="https://www.ietf.org/iesg/" class="p-3">IESG</a>
+                <a href="https://www.iab.org/" class="p-3">IAB</a>
+                <a href="https://www.irtf.org/" class="p-3">IRTF</a>
+                <a href="https://www.ietf.org/llc/" class="p-3 text-nowrap">IETF LLC</a>
+                <a href="https://trustee.ietf.org/" class="p-3 text-nowrap">IETF Trust</a>
+                <a href="https://www.rfc-editor.org/" class="p-3 text-nowrap">RFC Editor</a>
+                <a href="https://www.iana.org/" class="p-3">IANA</a>
+                <a href="https://www.ietf.org/privacy-statement/" class="p-3 text-nowrap">Privacy Statement</a>
+                <div class="small text-body-secondary py-3">
+                    
+                        <a class="mx-2" href="/release/about">About IETF Datatracker</a>
+                        <span class="mx-2">
+                            
+                                <a href="https://github.com/ietf-tools/datatracker/releases/tag/12.65.0">
+                            
+                            Version 12.65.0
+                            (release - 3203f91)
+                            
+                                </a>
+                            
+                        </span>
+                    
+                    <a class="mx-2" href="https://status.ietf.org" target="_blank">System Status</a>
+                    <span class="mx-2 text-danger">
+                        <i class="bi bi-bug"></i>
+                        Report a bug:
+                        <a class="text-reset" target="_blank" href="https://github.com/ietf-tools/datatracker/issues/new/choose">GitHub</a>
+                        
+                            <a class="text-reset" href="mailto:tools-help@ietf.org">Email</a>
+                        
+                    </span>
+                    
+                </div>
+            </footer>
+        
+        
+        <script src="https://static.ietf.org/dt/12.65.0/ietf/js/d3.js">
+        </script>
+        <script src="https://static.ietf.org/dt/12.65.0/ietf/js/document_timeline.js">
+        </script>
+    
+        <script src="https://static.ietf.org/dt/12.65.0/ietf/js/select2.js"></script>
+        <script src="https://static.ietf.org/dt/12.65.0/ietf/js/navbar-doc-search.js"></script>
+      
+<script>
+  var _paq = window._paq || [];
+  
+  _paq.push(['disableCookies']);
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//analytics.ietf.org/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', 7]);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><p><img src="//analytics.ietf.org/matomo.php?idsite=7" style="border:0;" alt="" /></p></noscript>
+
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9fe01ba69b08af48',t:'MTc3OTE2MjMxNw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

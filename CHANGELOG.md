@@ -21,6 +21,22 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Data — Threats source URL refresh + 113-file evidence archive (2026-05-18)
+
+New date-versioned dataset [quantum_threats_05182026.csv](src/data/quantum_threats_05182026.csv) (112 rows, all 110 threat IDs preserved) with corrected source URLs for the three confirmed wrong-document entries surfaced during provenance audit:
+
+- **AUS-FIN-002** — replaced BIS WP 1237 ("The macroeconomics of green transitions", zero quantum content) with **BIS Papers No 149**: "Quantum computing and the financial system: opportunities and risks" (Oct 2024).
+- **TELCO-003** — replaced 3GPP specifications-by-series index (no TS 33.501 content) with the **3GPP TS 33.501 specification details** page.
+- **RAIL-005** — replaced an AWS-WAF-blocked etech.iec.ch URL with an accessible **IEC e-tech article on railway cybersecurity**.
+
+A second sweep refreshed ~13 additional rows where the canonical URL had drifted (AERO-001 RTCA → FAA airworthiness cybersecurity, AERO-002 / GOV-001 NSA CSA PDF → quantum.gov landing page, AUTO-001 / AUTO-003 → UNECE WP.29 Regulation No. 155 deep link, EDU-004 CMMC index → CMMC/About, ENERGY-003 → T&D World deep link, RAIL-002 → CENELEC TS 50701 explainer, TELCO-004 GSMA eSIM → eSIM specification deep link). `source_url_quality` count shifts: `url_authoritative` 66 → 47, `url_needs_review` 46 → 65 (corrected URLs now correctly flagged for re-review against the trusted-source registry).
+
+**New: [public/threats/evidence/](public/threats/evidence/)** — 113 archived source documents (~48 MB HTML + PDF) downloaded against the refreshed URLs, plus [manifest.json](public/threats/evidence/manifest.json) capturing `{threat_id, source_url, main_source, download_status, content_type, size_bytes, http_status, downloaded_at}` for each file. Mirrors the provenance archive pattern already used by [public/library/](public/library/), [public/timeline/](public/timeline/), and [public/threats/](public/threats/) (top-level industry-framework cache).
+
+Trust-tier snapshot rebaselined in [reports/trust-tier-snapshot.json](reports/trust-tier-snapshot.json) — overall 3393 → 3400 (+7), library +2 Moderate, compliance +5 Moderate, migrate tier rebalance (+4 High / +4 Moderate / −8 Low). OSCAL ([pqctoday-oscal.json](public/data/pqctoday-oscal.json), [-full](public/data/pqctoday-oscal-full.json), [-governance](public/data/pqctoday-oscal-governance.json)) and [CBOM](public/data/pqctoday-cbom.json) artifacts regenerated.
+
+App loader (`quantum_threats_hsm_industries_*.csv` glob in [threatsData.ts](src/data/threatsData.ts)) is unaffected — this dataset is the source-of-truth feed consumed by enrichment / cross-reference scripts.
+
 ### WIP — LAMPS composite (draft-19) end-to-end via pkcs11-provider (2026-05-18)
 
 Eight pkcs11-provider root-cause fixes landed in [pqctoday-hsm composite.c](../../antigravity/pqctoday-hsm/src/vendor/pkcs11-provider/src/composite.c) that get composite **cert minting** working end-to-end through `X509_sign` (real 2676-byte composite signature, verified via per-step diagnostics in the WASM build):
