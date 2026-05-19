@@ -83,7 +83,10 @@ async function decapWithWasm(
   return { rc, ss, stderr }
 }
 
-describe('ML-KEM cross-impl KAT — Node encap → WASM decap', () => {
+const nodeMajor = parseInt(process.versions.node.split('.')[0], 10)
+const describeIfNode24 = nodeMajor >= 24 ? describe : describe.skip
+
+describeIfNode24('ML-KEM cross-impl KAT — Node encap → WASM decap', () => {
   const cases: Array<{ alg: KEMFixture['alg']; ctLen: number; ssLen: number }> = [
     { alg: 'ml-kem-512', ctLen: 768, ssLen: 32 },
     { alg: 'ml-kem-768', ctLen: 1088, ssLen: 32 },
