@@ -53,6 +53,24 @@ Files touched this session:
 
 When a filter term is active and no specific infrastructure layer is selected (`isStackAllView`), [MigrateView.tsx](src/components/Migrate/MigrateView.tsx) now renders a flat product list below the layer cards — `SoftwareTable` on desktop and `SoftwareCardGrid` on mobile — so users can see all matching products across all layers without having to drill into each layer individually. Empty state shown when no products match.
 
+### Data — Product catalog proof audit complete: 720/751 rows resolved (2026-05-18)
+
+Full R∧P∧Q proof audit of [pqc_product_catalog_05182026.csv](src/data/pqc_product_catalog_05182026.csv) — every PQC claim backed by a reachable, product-naming, algorithm-citing proof URL. Eight passes across all 751 active rows.
+
+**Final score: 602 Verified / 118 Partially Verified / 31 Pending (95.9% resolved)**
+
+Audit methodology: R (URL reachable) ∧ P (page names the product) ∧ Q (page contains a PQC algorithm token). Q_strict = PQC token within ~400 chars of product name → `Verified`; Q_strict=false → `Partially Verified`; R∨P∨Q=false → `Pending Verification` with `proof_url` cleared.
+
+Notable resolutions this session (vendor_id assignments + 8 proof-audit batches):
+
+- **145 vendor_id fields** back-filled (VND-001 through VND-419) across all active rows
+- **Verified (Q_strict):** SEALSQ QS7001, CIRCL, Xiphera XIP6110B/xQlave, KiviCore PQC IP Cores, IBM Cloud HSM (Utimaco OEM), ISARA Advance, Broadcom Avi NSX ALB v31.2.1 (ML-KEM+ML-DSA), G+D PQC-SIM, C-DOT CEM (ML-KEM+ML-DSA, 80 Mbps), HP quantum-resistant printers (LMS), ETSI TS 104 105 (Covercrypt KEMAC), ANSSI 3-phase roadmap, BSI TR-02102-1, Quranium (SPHINCS+ Layer-1), Chelpis (FIPS 203/204/205 CAVP), SECQAI Q-Locked CHERI TPM (FIPS 203/204/205, TSMC 22nm), Taiwan QSMC, ASD/ACSC PQC guidance, NZISM v3.9, ASUSTOR ADM 5.1 (ML-KEM-768), Forward Edge-AI Isidore Quantum (FIPS 140-3 ×2), Netskope One (ML-KEM-768), Patero Q-ROCK, QAN XLINK (ML-DSA/FIPS 204), AIMer + HAETAE + MAYO + NTRU+ + SMAUG-T (KpqC/NIST ref impls), BTQ Bitcoin (BIP 360+ML-DSA), CIQ Rocky Linux CAVP (ML-KEM+ML-DSA), CZERTAINLY hybrid X.509, KpqC standards, Internxt Drive (Kyber-512), Quantropi QiSpace STM32, CISA quantum hub, Landis+Gyr+SEALSQ smart grid PKI, SK Telecom 5G PQC SIM (ML-KEM), Broadcom Emulex SecureHBA (CNSA 2.0, 120K+ units), F5 BIG-IP v17.5.1 (FIPS 203+204), Keeper Security (Kyber), Surfshark (ML-KEM WireGuard), WISeSat PQC satellites (SpaceX), Windscribe (ML-KEM WireGuard)
+- **Partially Verified:** LTO-10 PQC-ready tape, Keyfactor 2026, Microchip PolarFire FPGA, Ericsson quantum-safe 5G, India NQM roadmap, Enquantum FPGA, SA QuTI, Africa Quantum Consortium, Telefónica, STC+IBM quantum-safe, TUBITAK BILGEM, Qatar QC2, Malaysia NACSA, CZQCI/PIONIER-Q QKD backbones, Toshiba PQC-QKD, Garantir GaraTrust, Citrix CVAD 2507, Ascertia ADSS, SUPERCOP, SimpleX Chat (sntrup761), citadel_pqcrypto, Cilium (community demo), FENASBAC Pix PQC, Spain quantum strategy, Spherity EUBW, Versa Networks SASE, PacketLight optical, PQChat (NTRU+SPHINCS+), OpenWrt (community), MinIO Enterprise (X25519MLKEM768 release), QuantumCTek→Xinda Yimi PQC01 (attribution corrected)
+- **Downgraded (classical-only misclassified):** `@noble/curves`, `@noble/hashes` → `pqc_support=No`
+- **Attribution corrected:** QuantumCTek PQC Chip → Zhengzhou Xinda Yimi PQC01 (SMIC 22nm); Aigis flagged as Chinese CACR algorithm, not KpqC
+
+**31 confirmed structural gaps** (no proof exists today): Hyperledger Fabric ×2 (issue #3763), Eclipse Jetty + Payara (awaiting JEP 527/JDK 27), HashiCorp Consul (Vault has it, Consul does not), Jenkins, Avalanche (community ACP only), Mavenir, MariaDB, Redis, SOPS, JetBrains TeamCity 2026.1, MinIO (now resolved), libtpms/swtpm (upstream TCG spec pending), non-crypto products (Descope, Stytch, Cisco AI Defense, Galileo AI, BeyondTrust), and inaccessible regional entries (Indonesia BSSN, Kryptonite Shipovnik, Bradesco 2020 HE-only pilot).
+
 ### Data — Product catalog pass5-batch5 + force-pass proof audit (2026-05-18)
 
 Completed the final wave of pass5 proof resolution against [pqc_product_catalog_05182026.csv](src/data/pqc_product_catalog_05182026.csv): ~47 vendors resolved in this batch (batch5 + force-pass tier), bringing the overall pass5 run to ~160 vendors audited across all batches. Validation outcomes for the full pass5 run: **VALIDATED** (majority), **CORRECTED** (80 rows — upstream catalog errors fixed with authoritative evidence), **PARTIALLY_VALIDATED** (8), **FIPS_ISSUE** (5 — premature FIPS claims flagged), **FIPS_VERIFIED** (3).
