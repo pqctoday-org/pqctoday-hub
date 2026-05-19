@@ -68,7 +68,13 @@ describe('SoftHSMv3 NIST Known Answer Test (KAT) Suite via Unwrap', () => {
       '522dc1f099567d07f47f37a32a84427d643a8cdcbfe5c0c97598a2bd2555d1aa8cb08e48590dbb3da7b08b1056828838c5f61e6393ba7a0abcc9f662',
       'hex'
     )
-    const expectedTag = Buffer.from('eb9f796c8d356fc31a8433884b696f4f', 'hex')
+    // NIST GCM Test Case 4 (McGrew & Viega, "The Galois/Counter Mode of
+    // Operation (GCM)", also NIST SP 800-38D). This tag is computed over the
+    // 20-byte AAD `feedfacedeadbeeffeedfacedeadbeefabaddad2` and the plaintext;
+    // it changes if AAD is dropped or mutated — guards against the silent-AAD
+    // regression in softhsmrustv3 fixed at pqctoday-hsm ffi.rs:2583 / :2854 /
+    // :2696 / :2940 / :2820 / :3046.
+    const expectedTag = Buffer.from('76fc6ece0f4e1768cddf8853bb2d551b', 'hex')
 
     // 1. Wrap the NIST AES key
     const wrappedKey = aesKwWrap(KEK_BYTES, key)
@@ -106,6 +112,89 @@ describe('SoftHSMv3 NIST Known Answer Test (KAT) Suite via Unwrap', () => {
     // In PKCS#11, AEAD ciphertext incorporates the MAC tag natively at the tail end
     const combinedExpected = Buffer.concat([expectedCiphertext, expectedTag])
     expect(Buffer.from(ctOut).toString('hex')).toBe(combinedExpected.toString('hex'))
+  })
+
+  // =========================================================================
+  // 1b. AES-GCM AAD authentication — regression guards
+  // ─────────────────────────────────────────────────────────────────────────
+  // Regression guards for the silent-AAD bug fixed in pqctoday-hsm rust/src/ffi.rs:
+  //   - C_EncryptInit / C_DecryptInit hadn't been reading pAAD / ulAADLen from
+  //     CK_GCM_PARAMS — the AAD field was always Vec::new().
+  //   - C_Encrypt / C_Decrypt called cipher.encrypt(nonce, plaintext) instead of
+  //     cipher.encrypt(nonce, Payload { msg, aad }) — even if Init had captured
+  //     AAD, the call to aes_gcm dropped it.
+  //   - The size-query re-insert path wiped AAD with Vec::new() between the two
+  //     C_Encrypt / C_Decrypt passes.
+  // The NIST KAT above is the byte-exact check; these two cover the behaviour:
+  //   * Tag MUST change when AAD changes (catches silent AAD-drop on encrypt).
+  //   * Decrypt with the wrong AAD MUST fail (catches AAD-not-validated).
+  // =========================================================================
+  it('AAD authentication: tag changes when AAD changes', () => {
+    const keyHandle = SoftHSM.hsm_generateAESKey(
+      hsmd,
+      sessionHandle,
+      128,
+      true,
+      true,
+      false,
+      false,
+      false,
+      true,
+      'aad-tag-divergence'
+    )
+    const pt = new TextEncoder().encode('hello world')
+    const iv = new Uint8Array(12).fill(7)
+    const aad1 = new TextEncoder().encode('AAD-A')
+    const aad2 = new TextEncoder().encode('AAD-B')
+
+    const r1 = SoftHSM.hsm_aesEncrypt(hsmd, sessionHandle, keyHandle, pt, 'gcm', iv, aad1)
+    const r2 = SoftHSM.hsm_aesEncrypt(hsmd, sessionHandle, keyHandle, pt, 'gcm', iv, aad2)
+
+    // CT bytes (CTR keystream) are unaffected by AAD — only the 16-byte tag changes.
+    const hex = (b: Uint8Array) => Buffer.from(b).toString('hex')
+    expect(hex(r1.ciphertext.slice(0, pt.length))).toBe(hex(r2.ciphertext.slice(0, pt.length)))
+    expect(hex(r1.ciphertext.slice(pt.length))).not.toBe(hex(r2.ciphertext.slice(pt.length)))
+
+    SoftHSM.hsm_destroyObject(hsmd, sessionHandle, keyHandle)
+  })
+
+  it('AAD authentication: decrypt with wrong AAD must throw', () => {
+    const keyHandle = SoftHSM.hsm_generateAESKey(
+      hsmd,
+      sessionHandle,
+      128,
+      true,
+      true,
+      false,
+      false,
+      false,
+      true,
+      'aad-tamper'
+    )
+    const pt = new TextEncoder().encode('hello world')
+    const aad = new TextEncoder().encode('correct-aad')
+    const badAad = new TextEncoder().encode('wrong-aad-x')
+
+    const { ciphertext, iv } = SoftHSM.hsm_aesEncrypt(
+      hsmd,
+      sessionHandle,
+      keyHandle,
+      pt,
+      'gcm',
+      undefined,
+      aad
+    )
+
+    // Correct AAD: round-trips.
+    const ok = SoftHSM.hsm_aesDecrypt(hsmd, sessionHandle, keyHandle, ciphertext, iv, 'gcm', aad)
+    expect(new TextDecoder().decode(ok)).toBe('hello world')
+
+    // Wrong AAD: tag verification fails.
+    expect(() =>
+      SoftHSM.hsm_aesDecrypt(hsmd, sessionHandle, keyHandle, ciphertext, iv, 'gcm', badAad)
+    ).toThrow()
+
+    SoftHSM.hsm_destroyObject(hsmd, sessionHandle, keyHandle)
   })
 })
 

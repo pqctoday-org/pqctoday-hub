@@ -22,6 +22,10 @@ function personaRegionToWorkshop(r: Region | null): WorkshopRegion {
       return 'AU'
     case 'eu':
       return 'EU'
+    case 'mena':
+      // WorkshopRegion has no MENA member; fall through to OTHER until workshop
+      // flows add region-specific MENA chapters.
+      return 'OTHER'
     default:
       return 'OTHER'
   }

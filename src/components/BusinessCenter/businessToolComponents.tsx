@@ -130,6 +130,26 @@ export const BUSINESS_TOOL_COMPONENTS: Record<string, LazyComp> = {
       default: m.CryptoVulnerabilityWatch,
     }))
   ),
+  'hybrid-transition-planner': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/CryptoMgmtModernization/components/HybridTransitionPlanner').then(
+      (m) => ({ default: m.HybridTransitionPlanner })
+    )
+  ),
+  'mti-negotiator': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/CryptoMgmtModernization/components/MTINegotiator').then(
+      (m) => ({ default: m.MTINegotiator })
+    )
+  ),
+  'crypto-api-refactor-audit': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/CryptoMgmtModernization/components/CryptoApiRefactorAudit').then(
+      (m) => ({ default: m.CryptoApiRefactorAudit })
+    )
+  ),
+  'cloud-responsibility-matrix': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/CryptoMgmtModernization/components/CloudResponsibilityMatrix').then(
+      (m) => ({ default: m.CloudResponsibilityMatrix })
+    )
+  ),
 }
 
 /** Look up the lazy-loaded builder component for a given artifact type. */

@@ -20,6 +20,18 @@ import { BUSINESS_TOOL_COMPONENTS } from './businessToolComponents'
 // which also powers the /business/tools/:id route. One registry, one lazy
 // import per builder — zero duplication with that route.
 
+// Artifact types that emit wide tables / long prose and need A4 landscape in PDF
+// to avoid column truncation. Audit M4: raci-builder, supply-chain-matrix,
+// contract-clause, policy-generator framework table, crypto-cbom-builder.
+const WIDE_TABLE_TYPES = new Set<ExecutiveDocumentType>([
+  'raci-matrix',
+  'supply-chain-matrix',
+  'contract-clause',
+  'policy-draft',
+  'crypto-cbom',
+  'cloud-responsibility-matrix',
+])
+
 // ── Drawer component ────────────────────────────────────────────────────
 
 export type DrawerMode = 'view' | 'edit' | 'create'
@@ -107,7 +119,8 @@ export function ArtifactDrawer({
     if (!document) return
     setIsExportingPdf(true)
     try {
-      await markdownToPdf(document.data, document.title, document.title)
+      const wideTable = WIDE_TABLE_TYPES.has(document.type)
+      await markdownToPdf(document.data, document.title, document.title, { wideTable })
     } finally {
       setIsExportingPdf(false)
     }

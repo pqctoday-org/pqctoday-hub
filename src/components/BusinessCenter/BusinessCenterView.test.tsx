@@ -330,10 +330,11 @@ describe('BusinessCenterView', () => {
 
     renderView()
 
-    // Each zone panel header shows a "NIST CSWP.39 §..." chip from
-    // CSWP39_ZONE_DETAILS[zone].cswpRef. There are six zones, so at least six
-    // such chips render in the panel stack below the diagram.
-    const refs = screen.getAllByText(/^NIST CSWP\.39 §/)
+    // Each zone panel header shows a "NIST CSWP.39 §..." or "NIST CSWP.39 Fig.3 ..."
+    // chip from CSWP39_ZONE_DETAILS[zone].cswpRef. There are six zones, so at least
+    // six such chips render in the panel stack below the diagram. (Assets cites
+    // Fig.3 per audit M3 — paper has no §5.2 anchor for the Assets element.)
+    const refs = screen.getAllByText(/^NIST CSWP\.39 /)
     expect(refs.length).toBeGreaterThanOrEqual(6)
   })
 

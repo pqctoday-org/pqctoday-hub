@@ -1,16 +1,22 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // ── JOSE Algorithm Data ─────────────────────────────────────────────────────
+//
+// PQC `alg` codes follow draft-ietf-cose-dilithium-11 (JOSE inherits the
+// COSE registrations). The composite family uses draft-ietf-jose-pq-
+// composite-sigs-01. Sizes for PQC variants come from @noble/post-quantum
+// 0.6.1 measurements and match FIPS 203/204/205.
 
 export interface JOSEAlgorithm {
   name: string
   jose: string
-  type: 'classical' | 'pqc'
+  type: 'classical' | 'pqc' | 'composite'
   category: 'signing' | 'keyAgreement'
   keyBytes: number
   sigBytes?: number
   ctBytes?: number
   broken: boolean
   nistLevel?: number
+  spec?: string
 }
 
 export const JOSE_SIGNING_ALGORITHMS: JOSEAlgorithm[] = [
@@ -50,6 +56,7 @@ export const JOSE_SIGNING_ALGORITHMS: JOSEAlgorithm[] = [
     sigBytes: 2420,
     broken: false,
     nistLevel: 2,
+    spec: 'draft-ietf-cose-dilithium-11',
   },
   {
     name: 'ML-DSA-65',
@@ -60,6 +67,7 @@ export const JOSE_SIGNING_ALGORITHMS: JOSEAlgorithm[] = [
     sigBytes: 3309,
     broken: false,
     nistLevel: 3,
+    spec: 'draft-ietf-cose-dilithium-11',
   },
   {
     name: 'ML-DSA-87',
@@ -70,6 +78,7 @@ export const JOSE_SIGNING_ALGORITHMS: JOSEAlgorithm[] = [
     sigBytes: 4627,
     broken: false,
     nistLevel: 5,
+    spec: 'draft-ietf-cose-dilithium-11',
   },
   {
     name: 'SLH-DSA-SHA2-128s',
@@ -80,6 +89,73 @@ export const JOSE_SIGNING_ALGORITHMS: JOSEAlgorithm[] = [
     sigBytes: 7856,
     broken: false,
     nistLevel: 1,
+    spec: 'draft-ietf-cose-dilithium-11 (AKP key type)',
+  },
+  {
+    name: 'ML-DSA-44 + ECDSA P-256 (composite)',
+    jose: 'ML-DSA-44-ES256',
+    type: 'composite',
+    category: 'signing',
+    keyBytes: 1345, // 1312 + 33 (compressed P-256)
+    sigBytes: 2484, // 2420 + 64
+    broken: false,
+    nistLevel: 2,
+    spec: 'draft-ietf-jose-pq-composite-sigs-01 (Table 2)',
+  },
+  {
+    name: 'ML-DSA-65 + ECDSA P-256 (composite)',
+    jose: 'ML-DSA-65-ES256',
+    type: 'composite',
+    category: 'signing',
+    keyBytes: 1985, // 1952 + 33
+    sigBytes: 3373, // 3309 + 64
+    broken: false,
+    nistLevel: 3,
+    spec: 'draft-ietf-jose-pq-composite-sigs-01 (Table 2)',
+  },
+  {
+    name: 'ML-DSA-87 + ECDSA P-384 (composite)',
+    jose: 'ML-DSA-87-ES384',
+    type: 'composite',
+    category: 'signing',
+    keyBytes: 2641, // 2592 + 49 (compressed P-384)
+    sigBytes: 4723, // 4627 + 96
+    broken: false,
+    nistLevel: 5,
+    spec: 'draft-ietf-jose-pq-composite-sigs-01 (Table 2)',
+  },
+  {
+    name: 'ML-DSA-44 + Ed25519 (composite)',
+    jose: 'ML-DSA-44-Ed25519',
+    type: 'composite',
+    category: 'signing',
+    keyBytes: 1344, // 1312 + 32
+    sigBytes: 2484, // 2420 + 64
+    broken: false,
+    nistLevel: 2,
+    spec: 'draft-ietf-jose-pq-composite-sigs-01 (Table 2)',
+  },
+  {
+    name: 'ML-DSA-65 + Ed25519 (composite)',
+    jose: 'ML-DSA-65-Ed25519',
+    type: 'composite',
+    category: 'signing',
+    keyBytes: 1984, // 1952 + 32
+    sigBytes: 3373, // 3309 + 64
+    broken: false,
+    nistLevel: 3,
+    spec: 'draft-ietf-jose-pq-composite-sigs-01 (Table 2)',
+  },
+  {
+    name: 'ML-DSA-87 + Ed448 (composite)',
+    jose: 'ML-DSA-87-Ed448',
+    type: 'composite',
+    category: 'signing',
+    keyBytes: 2649, // 2592 + 57
+    sigBytes: 4741, // 4627 + 114
+    broken: false,
+    nistLevel: 5,
+    spec: 'draft-ietf-jose-pq-composite-sigs-01 (Table 2)',
   },
 ]
 
@@ -128,13 +204,25 @@ export const SAMPLE_JWT_PAYLOAD: Record<string, unknown> = {
 }
 
 // ── Sample JWTs ─────────────────────────────────────────────────────────────
+//
+// The three ML-DSA samples are the byte-exact JWS compact serializations
+// from draft-ietf-cose-dilithium-11 Appendix A.1 ("JOSE" examples). They are
+// generated from the all-zeros AKP seed and verify against the public key
+// derived via FIPS 204 KeyGen(seed) — see acvp/cose-dilithium-11-jose-kat.json
+// for the verifying public key bytes. The ES256 sample remains a synthetic
+// example (no IETF PQC JWS classical baseline is published).
+
+import joseKat from '@/data/acvp/cose-dilithium-11-jose-kat.json'
+
+const kat = (joseKat as { vectors: { alg: string; jws: string }[] }).vectors
+const findJws = (alg: string): string => kat.find((v) => v.alg === alg)?.jws ?? ''
 
 export const SAMPLE_JWTS: Record<string, string> = {
   ES256:
     'eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFsaWNlIEVuZ2luZWVyIiwiaWF0IjoxNzM1Njg5NjAwLCJleHAiOjE3MzU3NzYwMDAsImlzcyI6Imh0dHBzOi8vYXV0aC5leGFtcGxlLmNvbSIsImF1ZCI6Imh0dHBzOi8vYXBpLmV4YW1wbGUuY29tIiwicm9sZXMiOlsiZGV2ZWxvcGVyIiwiYWRtaW4iXX0.MEUCIQDKZokqnCjrRtw0tni8BHPtBrGJ3WEZVaRAwJk8tJbOzAIgK2DZ8f3sCGPBHH-5qUY-NfQaJ7x',
-  'ML-DSA-65':
-    'eyJhbGciOiJNTC1EU0EtNjUiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFsaWNlIEVuZ2luZWVyIiwiaWF0IjoxNzM1Njg5NjAwLCJleHAiOjE3MzU3NzYwMDAsImlzcyI6Imh0dHBzOi8vYXV0aC5leGFtcGxlLmNvbSIsImF1ZCI6Imh0dHBzOi8vYXBpLmV4YW1wbGUuY29tIiwicm9sZXMiOlsiZGV2ZWxvcGVyIiwiYWRtaW4iXX0.' +
-    'A'.repeat(4412),
+  'ML-DSA-44': findJws('ML-DSA-44'),
+  'ML-DSA-65': findJws('ML-DSA-65'),
+  'ML-DSA-87': findJws('ML-DSA-87'),
 }
 
 // ── JOSE Header comparison data ─────────────────────────────────────────────

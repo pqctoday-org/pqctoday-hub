@@ -115,7 +115,7 @@ for (const [id, headTool] of headMap) {
 
   if (!toolModified) continue
 
-  if (semverGt(baseTool.version, headTool.version) || baseTool.version === headTool.version) {
+  if (!semverGt(baseTool.version, headTool.version)) {
     errors.push(
       `  ✗ Tool '${id}' (${headTool.pt_id}) was modified but version not bumped ` +
         `(still ${headTool.version})`

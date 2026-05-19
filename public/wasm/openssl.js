@@ -446,7 +446,7 @@ function updateMemoryViews() {
   HEAP16 = new Int16Array(b);
   Module['HEAPU8'] = HEAPU8 = new Uint8Array(b);
   HEAPU16 = new Uint16Array(b);
-  HEAP32 = new Int32Array(b);
+  Module['HEAP32'] = HEAP32 = new Int32Array(b);
   HEAPU32 = new Uint32Array(b);
   HEAPF32 = new Float32Array(b);
   HEAPF64 = new Float64Array(b);
@@ -6353,6 +6353,9 @@ var findStringEnd = (heapOrArray, idx, maxBytesToRead, ignoreNul) => {
 
 
 
+
+
+
   FS.createPreloadedFile = FS_createPreloadedFile;
   FS.preloadFile = FS_preloadFile;
   FS.staticInit();;
@@ -6406,8 +6409,11 @@ if (Module['wasmBinary']) wasmBinary = Module['wasmBinary'];
   Module['callMain'] = callMain;
   Module['ENV'] = ENV;
   Module['cwrap'] = cwrap;
+  Module['setValue'] = setValue;
+  Module['getValue'] = getValue;
   Module['UTF8ToString'] = UTF8ToString;
   Module['stringToUTF8'] = stringToUTF8;
+  Module['lengthBytesUTF8'] = lengthBytesUTF8;
   Module['FS'] = FS;
   var missingLibrarySymbols = [
   'writeI53ToI64',
@@ -6564,7 +6570,6 @@ missingLibrarySymbols.forEach(missingLibrarySymbol)
   'HEAP8',
   'HEAP16',
   'HEAPU16',
-  'HEAP32',
   'HEAPU32',
   'HEAP64',
   'HEAPU64',
@@ -6614,14 +6619,11 @@ missingLibrarySymbols.forEach(missingLibrarySymbol)
   'ccall',
   'freeTableIndexes',
   'functionsInTableMap',
-  'setValue',
-  'getValue',
   'PATH',
   'PATH_FS',
   'UTF8Decoder',
   'UTF8ArrayToString',
   'stringToUTF8Array',
-  'lengthBytesUTF8',
   'intArrayFromString',
   'UTF16Decoder',
   'stringToUTF8OnStack',
@@ -6820,8 +6822,19 @@ function checkIncomingModuleAPI() {
 }
 
 // Imports from the Wasm binary.
+var _asn1parse_main = Module['_asn1parse_main'] = makeInvalidEarlyAccess('_asn1parse_main');
+var _cmp_main = Module['_cmp_main'] = makeInvalidEarlyAccess('_cmp_main');
+var _cms_main = Module['_cms_main'] = makeInvalidEarlyAccess('_cms_main');
+var _crl2pkcs7_main = Module['_crl2pkcs7_main'] = makeInvalidEarlyAccess('_crl2pkcs7_main');
+var _genpkey_main = Module['_genpkey_main'] = makeInvalidEarlyAccess('_genpkey_main');
 var _strerror = makeInvalidEarlyAccess('_strerror');
 var _main = Module['_main'] = makeInvalidEarlyAccess('_main');
+var _pqctoday_cms_init = Module['_pqctoday_cms_init'] = makeInvalidEarlyAccess('_pqctoday_cms_init');
+var _pkey_main = Module['_pkey_main'] = makeInvalidEarlyAccess('_pkey_main');
+var _pkeyutl_main = Module['_pkeyutl_main'] = makeInvalidEarlyAccess('_pkeyutl_main');
+var _req_main = Module['_req_main'] = makeInvalidEarlyAccess('_req_main');
+var _verify_main = Module['_verify_main'] = makeInvalidEarlyAccess('_verify_main');
+var _x509_main = Module['_x509_main'] = makeInvalidEarlyAccess('_x509_main');
 var _ntohs = makeInvalidEarlyAccess('_ntohs');
 var _fflush = makeInvalidEarlyAccess('_fflush');
 var _free = Module['_free'] = makeInvalidEarlyAccess('_free');
@@ -6829,6 +6842,32 @@ var _malloc = Module['_malloc'] = makeInvalidEarlyAccess('_malloc');
 var _execute_tls_simulation = Module['_execute_tls_simulation'] = makeInvalidEarlyAccess('_execute_tls_simulation');
 var _tls_simulation_set_hsm_mode = Module['_tls_simulation_set_hsm_mode'] = makeInvalidEarlyAccess('_tls_simulation_set_hsm_mode');
 var _tls_simulation_get_hsm_mode = Module['_tls_simulation_get_hsm_mode'] = makeInvalidEarlyAccess('_tls_simulation_get_hsm_mode');
+var _C_GetFunctionList = Module['_C_GetFunctionList'] = makeInvalidEarlyAccess('_C_GetFunctionList');
+var _pqctoday_cms_shutdown = Module['_pqctoday_cms_shutdown'] = makeInvalidEarlyAccess('_pqctoday_cms_shutdown');
+var _pqctoday_composite_mkcert = Module['_pqctoday_composite_mkcert'] = makeInvalidEarlyAccess('_pqctoday_composite_mkcert');
+var _pqctoday_composite_cms_sign = Module['_pqctoday_composite_cms_sign'] = makeInvalidEarlyAccess('_pqctoday_composite_cms_sign');
+var _pqctoday_composite_cms_verify = Module['_pqctoday_composite_cms_verify'] = makeInvalidEarlyAccess('_pqctoday_composite_cms_verify');
+var _generate_mock_ca_root = Module['_generate_mock_ca_root'] = makeInvalidEarlyAccess('_generate_mock_ca_root');
+var _execute_cmp_simulation = Module['_execute_cmp_simulation'] = makeInvalidEarlyAccess('_execute_cmp_simulation');
+var _C_Initialize = Module['_C_Initialize'] = makeInvalidEarlyAccess('_C_Initialize');
+var _C_Finalize = Module['_C_Finalize'] = makeInvalidEarlyAccess('_C_Finalize');
+var _C_GetSlotList = Module['_C_GetSlotList'] = makeInvalidEarlyAccess('_C_GetSlotList');
+var _C_InitToken = Module['_C_InitToken'] = makeInvalidEarlyAccess('_C_InitToken');
+var _C_InitPIN = Module['_C_InitPIN'] = makeInvalidEarlyAccess('_C_InitPIN');
+var _C_OpenSession = Module['_C_OpenSession'] = makeInvalidEarlyAccess('_C_OpenSession');
+var _C_CloseSession = Module['_C_CloseSession'] = makeInvalidEarlyAccess('_C_CloseSession');
+var _C_Login = Module['_C_Login'] = makeInvalidEarlyAccess('_C_Login');
+var _C_Logout = Module['_C_Logout'] = makeInvalidEarlyAccess('_C_Logout');
+var _C_GetAttributeValue = Module['_C_GetAttributeValue'] = makeInvalidEarlyAccess('_C_GetAttributeValue');
+var _C_FindObjectsInit = Module['_C_FindObjectsInit'] = makeInvalidEarlyAccess('_C_FindObjectsInit');
+var _C_FindObjects = Module['_C_FindObjects'] = makeInvalidEarlyAccess('_C_FindObjects');
+var _C_FindObjectsFinal = Module['_C_FindObjectsFinal'] = makeInvalidEarlyAccess('_C_FindObjectsFinal');
+var _C_SignInit = Module['_C_SignInit'] = makeInvalidEarlyAccess('_C_SignInit');
+var _C_Sign = Module['_C_Sign'] = makeInvalidEarlyAccess('_C_Sign');
+var _C_GenerateKeyPair = Module['_C_GenerateKeyPair'] = makeInvalidEarlyAccess('_C_GenerateKeyPair');
+var _C_MessageSignInit = Module['_C_MessageSignInit'] = makeInvalidEarlyAccess('_C_MessageSignInit');
+var _C_SignMessage = Module['_C_SignMessage'] = makeInvalidEarlyAccess('_C_SignMessage');
+var _C_MessageSignFinal = Module['_C_MessageSignFinal'] = makeInvalidEarlyAccess('_C_MessageSignFinal');
 var ___funcs_on_exit = makeInvalidEarlyAccess('___funcs_on_exit');
 var _emscripten_stack_get_end = makeInvalidEarlyAccess('_emscripten_stack_get_end');
 var _emscripten_stack_get_base = makeInvalidEarlyAccess('_emscripten_stack_get_base');
@@ -6846,8 +6885,19 @@ var wasmMemory = makeInvalidEarlyAccess('wasmMemory');
 var wasmTable = makeInvalidEarlyAccess('wasmTable');
 
 function assignWasmExports(wasmExports) {
+  assert(typeof wasmExports['asn1parse_main'] != 'undefined', 'missing Wasm export: asn1parse_main');
+  assert(typeof wasmExports['cmp_main'] != 'undefined', 'missing Wasm export: cmp_main');
+  assert(typeof wasmExports['cms_main'] != 'undefined', 'missing Wasm export: cms_main');
+  assert(typeof wasmExports['crl2pkcs7_main'] != 'undefined', 'missing Wasm export: crl2pkcs7_main');
+  assert(typeof wasmExports['genpkey_main'] != 'undefined', 'missing Wasm export: genpkey_main');
   assert(typeof wasmExports['strerror'] != 'undefined', 'missing Wasm export: strerror');
   assert(typeof wasmExports['__main_argc_argv'] != 'undefined', 'missing Wasm export: __main_argc_argv');
+  assert(typeof wasmExports['pqctoday_cms_init'] != 'undefined', 'missing Wasm export: pqctoday_cms_init');
+  assert(typeof wasmExports['pkey_main'] != 'undefined', 'missing Wasm export: pkey_main');
+  assert(typeof wasmExports['pkeyutl_main'] != 'undefined', 'missing Wasm export: pkeyutl_main');
+  assert(typeof wasmExports['req_main'] != 'undefined', 'missing Wasm export: req_main');
+  assert(typeof wasmExports['verify_main'] != 'undefined', 'missing Wasm export: verify_main');
+  assert(typeof wasmExports['x509_main'] != 'undefined', 'missing Wasm export: x509_main');
   assert(typeof wasmExports['ntohs'] != 'undefined', 'missing Wasm export: ntohs');
   assert(typeof wasmExports['fflush'] != 'undefined', 'missing Wasm export: fflush');
   assert(typeof wasmExports['free'] != 'undefined', 'missing Wasm export: free');
@@ -6855,6 +6905,32 @@ function assignWasmExports(wasmExports) {
   assert(typeof wasmExports['execute_tls_simulation'] != 'undefined', 'missing Wasm export: execute_tls_simulation');
   assert(typeof wasmExports['tls_simulation_set_hsm_mode'] != 'undefined', 'missing Wasm export: tls_simulation_set_hsm_mode');
   assert(typeof wasmExports['tls_simulation_get_hsm_mode'] != 'undefined', 'missing Wasm export: tls_simulation_get_hsm_mode');
+  assert(typeof wasmExports['C_GetFunctionList'] != 'undefined', 'missing Wasm export: C_GetFunctionList');
+  assert(typeof wasmExports['pqctoday_cms_shutdown'] != 'undefined', 'missing Wasm export: pqctoday_cms_shutdown');
+  assert(typeof wasmExports['pqctoday_composite_mkcert'] != 'undefined', 'missing Wasm export: pqctoday_composite_mkcert');
+  assert(typeof wasmExports['pqctoday_composite_cms_sign'] != 'undefined', 'missing Wasm export: pqctoday_composite_cms_sign');
+  assert(typeof wasmExports['pqctoday_composite_cms_verify'] != 'undefined', 'missing Wasm export: pqctoday_composite_cms_verify');
+  assert(typeof wasmExports['generate_mock_ca_root'] != 'undefined', 'missing Wasm export: generate_mock_ca_root');
+  assert(typeof wasmExports['execute_cmp_simulation'] != 'undefined', 'missing Wasm export: execute_cmp_simulation');
+  assert(typeof wasmExports['C_Initialize'] != 'undefined', 'missing Wasm export: C_Initialize');
+  assert(typeof wasmExports['C_Finalize'] != 'undefined', 'missing Wasm export: C_Finalize');
+  assert(typeof wasmExports['C_GetSlotList'] != 'undefined', 'missing Wasm export: C_GetSlotList');
+  assert(typeof wasmExports['C_InitToken'] != 'undefined', 'missing Wasm export: C_InitToken');
+  assert(typeof wasmExports['C_InitPIN'] != 'undefined', 'missing Wasm export: C_InitPIN');
+  assert(typeof wasmExports['C_OpenSession'] != 'undefined', 'missing Wasm export: C_OpenSession');
+  assert(typeof wasmExports['C_CloseSession'] != 'undefined', 'missing Wasm export: C_CloseSession');
+  assert(typeof wasmExports['C_Login'] != 'undefined', 'missing Wasm export: C_Login');
+  assert(typeof wasmExports['C_Logout'] != 'undefined', 'missing Wasm export: C_Logout');
+  assert(typeof wasmExports['C_GetAttributeValue'] != 'undefined', 'missing Wasm export: C_GetAttributeValue');
+  assert(typeof wasmExports['C_FindObjectsInit'] != 'undefined', 'missing Wasm export: C_FindObjectsInit');
+  assert(typeof wasmExports['C_FindObjects'] != 'undefined', 'missing Wasm export: C_FindObjects');
+  assert(typeof wasmExports['C_FindObjectsFinal'] != 'undefined', 'missing Wasm export: C_FindObjectsFinal');
+  assert(typeof wasmExports['C_SignInit'] != 'undefined', 'missing Wasm export: C_SignInit');
+  assert(typeof wasmExports['C_Sign'] != 'undefined', 'missing Wasm export: C_Sign');
+  assert(typeof wasmExports['C_GenerateKeyPair'] != 'undefined', 'missing Wasm export: C_GenerateKeyPair');
+  assert(typeof wasmExports['C_MessageSignInit'] != 'undefined', 'missing Wasm export: C_MessageSignInit');
+  assert(typeof wasmExports['C_SignMessage'] != 'undefined', 'missing Wasm export: C_SignMessage');
+  assert(typeof wasmExports['C_MessageSignFinal'] != 'undefined', 'missing Wasm export: C_MessageSignFinal');
   assert(typeof wasmExports['__funcs_on_exit'] != 'undefined', 'missing Wasm export: __funcs_on_exit');
   assert(typeof wasmExports['emscripten_stack_get_end'] != 'undefined', 'missing Wasm export: emscripten_stack_get_end');
   assert(typeof wasmExports['emscripten_stack_get_base'] != 'undefined', 'missing Wasm export: emscripten_stack_get_base');
@@ -6868,8 +6944,19 @@ function assignWasmExports(wasmExports) {
   assert(typeof wasmExports['emscripten_stack_get_current'] != 'undefined', 'missing Wasm export: emscripten_stack_get_current');
   assert(typeof wasmExports['memory'] != 'undefined', 'missing Wasm export: memory');
   assert(typeof wasmExports['__indirect_function_table'] != 'undefined', 'missing Wasm export: __indirect_function_table');
+  _asn1parse_main = Module['_asn1parse_main'] = createExportWrapper('asn1parse_main', 2);
+  _cmp_main = Module['_cmp_main'] = createExportWrapper('cmp_main', 2);
+  _cms_main = Module['_cms_main'] = createExportWrapper('cms_main', 2);
+  _crl2pkcs7_main = Module['_crl2pkcs7_main'] = createExportWrapper('crl2pkcs7_main', 2);
+  _genpkey_main = Module['_genpkey_main'] = createExportWrapper('genpkey_main', 2);
   _strerror = createExportWrapper('strerror', 1);
   _main = Module['_main'] = createExportWrapper('__main_argc_argv', 2);
+  _pqctoday_cms_init = Module['_pqctoday_cms_init'] = createExportWrapper('pqctoday_cms_init', 0);
+  _pkey_main = Module['_pkey_main'] = createExportWrapper('pkey_main', 2);
+  _pkeyutl_main = Module['_pkeyutl_main'] = createExportWrapper('pkeyutl_main', 2);
+  _req_main = Module['_req_main'] = createExportWrapper('req_main', 2);
+  _verify_main = Module['_verify_main'] = createExportWrapper('verify_main', 2);
+  _x509_main = Module['_x509_main'] = createExportWrapper('x509_main', 2);
   _ntohs = createExportWrapper('ntohs', 1);
   _fflush = createExportWrapper('fflush', 1);
   _free = Module['_free'] = createExportWrapper('free', 1);
@@ -6877,6 +6964,32 @@ function assignWasmExports(wasmExports) {
   _execute_tls_simulation = Module['_execute_tls_simulation'] = createExportWrapper('execute_tls_simulation', 3);
   _tls_simulation_set_hsm_mode = Module['_tls_simulation_set_hsm_mode'] = createExportWrapper('tls_simulation_set_hsm_mode', 1);
   _tls_simulation_get_hsm_mode = Module['_tls_simulation_get_hsm_mode'] = createExportWrapper('tls_simulation_get_hsm_mode', 0);
+  _C_GetFunctionList = Module['_C_GetFunctionList'] = createExportWrapper('C_GetFunctionList', 1);
+  _pqctoday_cms_shutdown = Module['_pqctoday_cms_shutdown'] = createExportWrapper('pqctoday_cms_shutdown', 0);
+  _pqctoday_composite_mkcert = Module['_pqctoday_composite_mkcert'] = createExportWrapper('pqctoday_composite_mkcert', 6);
+  _pqctoday_composite_cms_sign = Module['_pqctoday_composite_cms_sign'] = createExportWrapper('pqctoday_composite_cms_sign', 6);
+  _pqctoday_composite_cms_verify = Module['_pqctoday_composite_cms_verify'] = createExportWrapper('pqctoday_composite_cms_verify', 4);
+  _generate_mock_ca_root = Module['_generate_mock_ca_root'] = createExportWrapper('generate_mock_ca_root', 5);
+  _execute_cmp_simulation = Module['_execute_cmp_simulation'] = createExportWrapper('execute_cmp_simulation', 7);
+  _C_Initialize = Module['_C_Initialize'] = createExportWrapper('C_Initialize', 1);
+  _C_Finalize = Module['_C_Finalize'] = createExportWrapper('C_Finalize', 1);
+  _C_GetSlotList = Module['_C_GetSlotList'] = createExportWrapper('C_GetSlotList', 3);
+  _C_InitToken = Module['_C_InitToken'] = createExportWrapper('C_InitToken', 4);
+  _C_InitPIN = Module['_C_InitPIN'] = createExportWrapper('C_InitPIN', 3);
+  _C_OpenSession = Module['_C_OpenSession'] = createExportWrapper('C_OpenSession', 5);
+  _C_CloseSession = Module['_C_CloseSession'] = createExportWrapper('C_CloseSession', 1);
+  _C_Login = Module['_C_Login'] = createExportWrapper('C_Login', 4);
+  _C_Logout = Module['_C_Logout'] = createExportWrapper('C_Logout', 1);
+  _C_GetAttributeValue = Module['_C_GetAttributeValue'] = createExportWrapper('C_GetAttributeValue', 4);
+  _C_FindObjectsInit = Module['_C_FindObjectsInit'] = createExportWrapper('C_FindObjectsInit', 3);
+  _C_FindObjects = Module['_C_FindObjects'] = createExportWrapper('C_FindObjects', 4);
+  _C_FindObjectsFinal = Module['_C_FindObjectsFinal'] = createExportWrapper('C_FindObjectsFinal', 1);
+  _C_SignInit = Module['_C_SignInit'] = createExportWrapper('C_SignInit', 3);
+  _C_Sign = Module['_C_Sign'] = createExportWrapper('C_Sign', 5);
+  _C_GenerateKeyPair = Module['_C_GenerateKeyPair'] = createExportWrapper('C_GenerateKeyPair', 8);
+  _C_MessageSignInit = Module['_C_MessageSignInit'] = createExportWrapper('C_MessageSignInit', 3);
+  _C_SignMessage = Module['_C_SignMessage'] = createExportWrapper('C_SignMessage', 7);
+  _C_MessageSignFinal = Module['_C_MessageSignFinal'] = createExportWrapper('C_MessageSignFinal', 1);
   ___funcs_on_exit = createExportWrapper('__funcs_on_exit', 0);
   _emscripten_stack_get_end = wasmExports['emscripten_stack_get_end'];
   _emscripten_stack_get_base = wasmExports['emscripten_stack_get_base'];

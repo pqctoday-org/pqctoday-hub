@@ -1,0 +1,1372 @@
+
+
+<!DOCTYPE html>
+<html lang="fr"
+      data-fr-scheme="light"
+      >
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    
+  <title>Publications — ANSSI</title>
+
+
+    
+  <meta name="description" content="Retrouvez" />
+  
+
+
+    
+      <link rel="canonical" href="https://cyber.gouv.fr/nous-connaitre/publications/" />
+    
+
+    
+<link rel="apple-touch-icon"
+      href="/static/dsfr/dist/favicon/apple-touch-icon.png" />
+<!-- 180×180 -->
+<link rel="icon"
+      href="/static/dsfr/dist/favicon/favicon.svg"
+      type="image/svg+xml" />
+<link rel="shortcut icon"
+      href="/static/dsfr/dist/favicon/favicon.ico"
+      type="image/x-icon" />
+<!-- 32×32 -->
+<link rel="manifest"
+      href="/static/dsfr/dist/favicon/manifest.webmanifest"
+      crossorigin="use-credentials" />
+
+
+    
+<link rel="stylesheet"
+      href="/static/dsfr/dist/dsfr/dsfr.min.css"
+      >
+<link rel="stylesheet"
+      href="/static/dsfr/dist/utility/utility.min.css"
+      >
+<link rel="stylesheet"
+      href="/static/css/dsfr-django-overrides.css">
+
+<meta name="theme-color" content="#000091">
+<!-- Définit la couleur de thème du navigateur (Safari/Android) -->
+
+    <link href="/static/css/style.css" rel="stylesheet" type="text/css" />
+
+    
+    
+
+    
+      
+
+
+    
+
+    
+      
+        <!-- Privacy-friendly analytics by Plausible -->
+<script async src="https://stats.sites.beta.gouv.fr/js/pa-ClTV6JfIt_XjcYGtUAVle.js"></script>
+<script>
+  window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+  plausible.init()
+</script>
+      
+    
+
+    
+  <meta property="og:site_name" content="cyber.gouv.fr" />
+  <meta property="og:title"
+        content="Publications" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://cyber.gouv.fr/nous-connaitre/publications/" />
+  <meta property="og:description" content="Retrouvez" />
+  <meta property="og:locale" content="fr" />
+
+  
+
+  <meta name="twitter:title"
+        content="Publications" />
+  <meta name="twitter:description" content="Retrouvez" />
+
+  
+
+    <meta name="twitter:card" content="summary" />
+  
+
+  </head>
+
+  <body>
+    
+      
+
+<div class="fr-skiplinks">
+  <nav role="navigation"
+       class="fr-container"
+       aria-label="Accès rapide">
+    <ul class="fr-skiplinks__list">
+      
+        <li>
+          <a class="fr-link" href="#content">Contenu</a>
+        </li>
+      
+        <li>
+          <a class="fr-link" href="#fr-navigation">Menu</a>
+        </li>
+      
+    </ul>
+  </nav>
+</div>
+
+    
+
+    
+    
+<header role="banner" class="fr-header">
+  <div class="fr-header__body">
+    <div class="fr-container">
+      <div class="fr-header__body-row">
+        <div class="fr-header__brand fr-enlarge-link">
+          <div class="fr-header__brand-top">
+            <div class="fr-header__logo">
+              
+  <p class="fr-logo">république<br />française</p>
+
+            </div>
+            
+  
+    
+
+    <div class="fr-header__operator">
+      <img class="fr-responsive-img"
+           src="https://s3.eu-west-par.io.cloud.ovh.net/sf-cyber/sf-cyber/images/20230704_np_anssi_logotype_500x500.original.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=f56b12dc7d9741d6bb98766a26a6adca%2F20260519%2Feu-west-par%2Fs3%2Faws4_request&amp;X-Amz-Date=20260519T001224Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=c39595683476ba507e0df694e49c6a14210d352bac4b1d9acbea97ca9a41e541"
+           alt="Agence Nationale de la sécurité des systèmes d&#x27;information"
+           style="max-width:4.7rem;" />
+    </div>
+  
+
+            
+  
+  <div class="fr-header__navbar">
+    
+      <button class="fr-btn--search fr-btn"
+              data-fr-opened="false"
+              aria-controls="modal-search"
+              id="fr-btn-search-mobile"
+              title="Rechercher">Rechercher</button>
+    
+    
+    <button class="fr-btn--menu fr-btn"
+            data-fr-opened="false"
+            aria-controls="fr-menu-mobile"
+            id="fr-btn-menu-mobile"
+            title="Menu">Menu</button>
+  </div>
+
+          </div>
+          <div class="fr-header__service">
+            
+  
+  <a href="/"
+     title="Accueil — ANSSI">
+    <p class="fr-header__service-title">
+      
+        ANSSI
+      
+      
+    </p>
+  </a>
+
+            <p class="fr-header__service-tagline">
+              
+  Agence nationale de la sécurité des systèmes d&#x27;information
+
+            </p>
+          </div>
+        </div>
+        
+          <div class="fr-header__tools">
+            
+              <div class="fr-header__tools-links">
+                <ul class="fr-btns-group">
+                  
+  
+    
+
+  <li>
+
+<a class="fr-btn"
+   href="https://club.ssi.gouv.fr/#/declarations"
+   target="_blank" rel="noopener noreferrer"
+   >
+  Incident
+  
+    <span class="fr-sr-only">Ouvre une nouvelle fenêtre</span>
+  
+  
+</a>
+</li>
+
+
+    
+
+
+
+
+
+  
+    
+
+
+
+
+                </ul>
+              </div>
+            
+            
+  
+  
+    <div class="fr-header__search fr-modal" id="modal-search">
+      <div class="fr-container fr-container-lg--fluid">
+        
+        <button class="fr-btn--close fr-btn"
+                aria-controls="modal-search"
+                title="Fermer">Fermer</button>
+        <form action="/recherche/" method="get">
+          <div class="fr-search-bar" id="search-bar" role="search">
+            <label class="fr-label" for="query">Rechercher</label>
+            <input class="fr-input"
+                   placeholder="Rechercher"
+                   type="search"
+                   id="query"
+                   name="q">
+            <button class="fr-btn" title="Rechercher">Rechercher</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  
+
+          </div>
+        
+      </div>
+    </div>
+  </div>
+  
+  
+    <div class="fr-header__menu fr-modal"
+         id="fr-menu-mobile"
+         aria-labelledby="fr-btn-menu-mobile">
+      <div class="fr-container">
+        
+        <button type="button"
+                class="fr-btn--close fr-btn"
+                aria-controls="fr-menu-mobile">Fermer</button>
+        <div class="fr-header__menu-links"></div>
+        
+        <nav class="fr-nav" id="fr-navigation" aria-label="Menu principal">
+          
+<ul class="fr-nav__list">
+  
+    <li class="fr-nav__item">
+      
+<button aria-current="true" aria-expanded="false" aria-controls="collapse-menu-nous-connaitre" type="menu" class="fr-nav__btn">Nous connaître</button>
+<div class="fr-collapse fr-menu" id="collapse-menu-nous-connaitre">
+  <ul class="fr-menu__list">
+    
+      <li class="fr-nav__item">
+        
+
+<a class="fr-nav__link"
+   href="/nous-connaitre/lagence/"
+   
+   >
+  L&#x27;Agence
+  
+  
+</a>
+
+      </li>
+    
+      <li class="fr-nav__item">
+        
+
+<a class="fr-nav__link"
+   href="/nous-connaitre/ecosysteme/"
+   
+   >
+  Écosystème
+  
+  
+</a>
+
+      </li>
+    
+      <li class="fr-nav__item">
+        
+
+<a class="fr-nav__link"
+   href="/nous-connaitre/publications/"
+   
+   aria-current="page">
+  Publications
+  
+  
+</a>
+
+      </li>
+    
+  </ul>
+</div>
+    </li>
+  
+    <li class="fr-nav__item">
+      
+<button aria-expanded="false" aria-controls="collapse-menu-securisation" type="menu" class="fr-nav__btn">Sécurisation</button>
+<div class="fr-collapse fr-menu" id="collapse-menu-securisation">
+  <ul class="fr-menu__list">
+    
+      <li class="fr-nav__item">
+        
+
+<a class="fr-nav__link"
+   href="/securisation/10-regles-or-securite-num%C3%A9rique/"
+   
+   >
+  10 règles d’or en matière de sécurité numérique
+  
+  
+</a>
+
+      </li>
+    
+      <li class="fr-nav__item">
+        
+
+<a class="fr-nav__link"
+   href="/securisation/analyse-des-risques/"
+   
+   >
+  Analyse des risques
+  
+  
+</a>
+
+      </li>
+    
+      <li class="fr-nav__item">
+        
+
+<a class="fr-nav__link"
+   href="/securisation/parcours-de-cybersecurite/"
+   
+   >
+  Anciens parcours de cybersécurité
+  
+  
+</a>
+
+      </li>
+    
+      <li class="fr-nav__item">
+        
+
+<a class="fr-nav__link"
+   href="/securisation/gestion-de-crise/"
+   
+   >
+  Gestion de crise
+  
+  
+</a>
+
+      </li>
+    
+      <li class="fr-nav__item">
+        
+
+<a class="fr-nav__link"
+   href="/securisation/homologation-de-securite/"
+   
+   >
+  Homologation de sécurité
+  
+  
+</a>
+
+      </li>
+    
+  </ul>
+</div>
+    </li>
+  
+    <li class="fr-nav__item">
+      
+<button aria-expanded="false" aria-controls="collapse-menu-offre-de-services" type="menu" class="fr-nav__btn">Offre de services</button>
+<div class="fr-collapse fr-menu" id="collapse-menu-offre-de-services">
+  <ul class="fr-menu__list">
+    
+      <li class="fr-nav__item">
+        
+
+<a class="fr-nav__link"
+   href="/offre-de-service/formations-entrainement-et-decouverte-des-metiers/"
+   
+   >
+  Formations, entraînement et découverte des métiers
+  
+  
+</a>
+
+      </li>
+    
+      <li class="fr-nav__item">
+        
+
+<a class="fr-nav__link"
+   href="/offre-de-service/guides-services-numeriques-et-outils/"
+   
+   >
+  Guides, services numériques et outils
+  
+  
+</a>
+
+      </li>
+    
+      <li class="fr-nav__item">
+        
+
+<a class="fr-nav__link"
+   href="/offre-de-service/ncc-fr/"
+   
+   >
+  NCC-FR
+  
+  
+</a>
+
+      </li>
+    
+      <li class="fr-nav__item">
+        
+
+<a class="fr-nav__link"
+   href="/offre-de-service/politique-industrielle/"
+   
+   >
+  Politique industrielle
+  
+  
+</a>
+
+      </li>
+    
+      <li class="fr-nav__item">
+        
+
+<a class="fr-nav__link"
+   href="/offre-de-service/solutions-certifiees-et-qualifiees/"
+   
+   >
+  Solutions certifiées et qualifées
+  
+  
+</a>
+
+      </li>
+    
+  </ul>
+</div>
+    </li>
+  
+    <li class="fr-nav__item">
+      
+<button aria-expanded="false" aria-controls="collapse-menu-enjeux-technologiques" type="menu" class="fr-nav__btn">Enjeux technologiques</button>
+<div class="fr-collapse fr-menu" id="collapse-menu-enjeux-technologiques">
+  <ul class="fr-menu__list">
+    
+      <li class="fr-nav__item">
+        
+
+<a class="fr-nav__link"
+   href="/enjeux-technologiques/cloud/"
+   
+   >
+  Cloud
+  
+  
+</a>
+
+      </li>
+    
+      <li class="fr-nav__item">
+        
+
+<a class="fr-nav__link"
+   href="/enjeux-technologiques/cryptographie-post-quantique/"
+   
+   >
+  Cryptographie post-quantique (PQC)
+  
+  
+</a>
+
+      </li>
+    
+      <li class="fr-nav__item">
+        
+
+<a class="fr-nav__link"
+   href="/enjeux-technologiques/identite-confiance-numerique/"
+   
+   >
+  Identité et confiance numérique
+  
+  
+</a>
+
+      </li>
+    
+      <li class="fr-nav__item">
+        
+
+<a class="fr-nav__link"
+   href="/enjeux-technologiques/intelligence-artificielle/"
+   
+   >
+  Intelligence artificielle (IA)
+  
+  
+</a>
+
+      </li>
+    
+      <li class="fr-nav__item">
+        
+
+<a class="fr-nav__link"
+   href="/enjeux-technologiques/open-source/"
+   
+   >
+  Open-source
+  
+  
+</a>
+
+      </li>
+    
+  </ul>
+</div>
+    </li>
+  
+    <li class="fr-nav__item">
+      
+<button aria-expanded="false" aria-controls="collapse-menu-reglementation" type="menu" class="fr-nav__btn">Réglementation</button>
+<div class="fr-collapse fr-menu" id="collapse-menu-reglementation">
+  <ul class="fr-menu__list">
+    
+      <li class="fr-nav__item">
+        
+
+<a class="fr-nav__link"
+   href="/reglementation/cybersecurite-des-produits/"
+   
+   >
+  Cybersécurité des produits
+  
+  
+</a>
+
+      </li>
+    
+      <li class="fr-nav__item">
+        
+
+<a class="fr-nav__link"
+   href="/reglementation/cybersecurite-systemes-dinformation/"
+   
+   >
+  Cybersécurité des systèmes d&#x27;information
+  
+  
+</a>
+
+      </li>
+    
+      <li class="fr-nav__item">
+        
+
+<a class="fr-nav__link"
+   href="/reglementation/reglementation-identite-confiance-numerique/"
+   
+   >
+  Réglementation sur l’identité et la confiance numérique
+  
+  
+</a>
+
+      </li>
+    
+  </ul>
+</div>
+    </li>
+  
+    <li class="fr-nav__item">
+      
+
+<a class="fr-nav__link"
+   href="https://www.welcometothejungle.com/fr/companies/anssi"
+   target="_blank" rel="noopener noreferrer"
+   >
+  Nous rejoindre
+  
+    <span class="fr-sr-only">Ouvre une nouvelle fenêtre</span>
+  
+  
+</a>
+
+    </li>
+  
+    <li class="fr-nav__item">
+      
+
+<a class="fr-nav__link"
+   href="/contact-acces/"
+   
+   >
+  Contact
+  
+  
+</a>
+
+    </li>
+  
+    <li class="fr-nav__item">
+      
+
+<a class="fr-nav__link"
+   href="https://club.ssi.gouv.fr/#/declarations"
+   target="_blank" rel="noopener noreferrer"
+   >
+  Incident
+  
+    <span class="fr-sr-only">Ouvre une nouvelle fenêtre</span>
+  
+  
+</a>
+
+    </li>
+  
+</ul>
+        </nav>
+      </div>
+    </div>
+  
+
+</header>
+
+
+    
+
+    <main id="content" role="main">
+      
+  
+
+
+
+  <div class="fr-container fr-pt-4w">
+    
+
+
+  <nav role="navigation"
+       class="fr-breadcrumb"
+       aria-label="vous êtes ici :">
+    <button class="fr-breadcrumb__button"
+            aria-expanded="false"
+            aria-controls="page-breadcrumb">Voir le fil d’Ariane</button>
+    <div class="fr-collapse" id="page-breadcrumb">
+      <ol class="fr-breadcrumb__list">
+        
+          
+        
+          
+            <li>
+              <a class="fr-breadcrumb__link" href="/">Accueil</a>
+            </li>
+          
+        
+          
+            <li>
+              <a class="fr-breadcrumb__link" href="/nous-connaitre/">Nous connaître</a>
+            </li>
+          
+        
+        
+          <li>
+            <a class="fr-breadcrumb__link" aria-current="page">Publications</a>
+          </li>
+        
+      </ol>
+    </div>
+  </nav>
+
+
+    
+    
+      <h1>
+        Publications
+        
+
+
+      </h1>
+    
+  </div>
+
+  
+
+
+
+  
+
+
+  
+    
+
+<div class="fr-py-5w fr-mt-5w fr-mb-5w cmsfr-block-full-width-background"
+     
+     
+     
+     >
+  <div class="fr-container">
+
+
+  
+    <div class="fr-container cmsfr-block-item_grid">
+<div class="fr-grid-row fr-grid-row--gutters fr-grid-row--left fr-mb-2w">
+  
+    <div class="fr-col-12 fr-col-md-4">
+
+<div class="fr-tile fr-enlarge-link">
+  <div class="fr-tile__body">
+    <div class="fr-tile__content">
+      
+      <h3 class="fr-tile__title">
+        
+          <a href="/nous-connaitre/publications/rapports-dactivite/" >
+            Rapports d&#x27;activité
+            
+          </a>
+        
+      </h3>
+      
+      
+      
+      
+    </div>
+  </div>
+  
+    <div class="fr-tile__header">
+      
+      
+
+      
+        <div class="fr-tile__img"><img alt="" height="80" src="https://s3.eu-west-par.io.cloud.ovh.net/sf-cyber/sf-cyber/images/Pictogrammes_DSFR__Document__Document_nat6iza.width-80.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=f56b12dc7d9741d6bb98766a26a6adca%2F20260519%2Feu-west-par%2Fs3%2Faws4_request&amp;X-Amz-Date=20260519T001224Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=893ab2fd7f79ff75fb196aa7da9765ef06d5f5a3bbef01defbbcf202b7981857" width="80"></div>
+      
+    </div>
+  
+</div>
+</div>
+  
+    <div class="fr-col-12 fr-col-md-4">
+
+<div class="fr-tile fr-enlarge-link">
+  <div class="fr-tile__body">
+    <div class="fr-tile__content">
+      
+      <h3 class="fr-tile__title">
+        
+          <a href="https://messervices.cyber.gouv.fr/catalogue/#guides" >
+            Guides et recommandations
+            
+          </a>
+        
+      </h3>
+      
+      
+      
+      
+    </div>
+  </div>
+  
+    <div class="fr-tile__header">
+      
+      
+
+      
+        <div class="fr-tile__img"><img alt="" height="80" src="https://s3.eu-west-par.io.cloud.ovh.net/sf-cyber/sf-cyber/images/Pictogrammes_DSFR__Document__Document_nat6iza.width-80.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=f56b12dc7d9741d6bb98766a26a6adca%2F20260519%2Feu-west-par%2Fs3%2Faws4_request&amp;X-Amz-Date=20260519T001224Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=893ab2fd7f79ff75fb196aa7da9765ef06d5f5a3bbef01defbbcf202b7981857" width="80"></div>
+      
+    </div>
+  
+</div>
+</div>
+  
+    <div class="fr-col-12 fr-col-md-4">
+
+<div class="fr-tile fr-enlarge-link">
+  <div class="fr-tile__body">
+    <div class="fr-tile__content">
+      
+      <h3 class="fr-tile__title">
+        
+          <a href="/nous-connaitre/publications/panoramas-de-la-cybermenace/" >
+            Panoramas de la cybermenace
+            
+          </a>
+        
+      </h3>
+      
+      
+      
+      
+    </div>
+  </div>
+  
+    <div class="fr-tile__header">
+      
+      
+
+      
+        <div class="fr-tile__img"><img alt="" height="80" src="https://s3.eu-west-par.io.cloud.ovh.net/sf-cyber/sf-cyber/images/Pictogrammes_DSFR__Document__Document_nat6iza.width-80.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=f56b12dc7d9741d6bb98766a26a6adca%2F20260519%2Feu-west-par%2Fs3%2Faws4_request&amp;X-Amz-Date=20260519T001224Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=893ab2fd7f79ff75fb196aa7da9765ef06d5f5a3bbef01defbbcf202b7981857" width="80"></div>
+      
+    </div>
+  
+</div>
+</div>
+  
+    <div class="fr-col-12 fr-col-md-4">
+
+<div class="fr-tile fr-enlarge-link">
+  <div class="fr-tile__body">
+    <div class="fr-tile__content">
+      
+      <h3 class="fr-tile__title">
+        
+          <a href="/offre-de-service/formations-entrainement-et-decouverte-des-metiers/observatoires-des-metiers/" >
+            Observatoires des métiers
+            
+          </a>
+        
+      </h3>
+      
+      
+      
+      
+    </div>
+  </div>
+  
+    <div class="fr-tile__header">
+      
+      
+
+      
+        <div class="fr-tile__img"><img alt="" height="80" src="https://s3.eu-west-par.io.cloud.ovh.net/sf-cyber/sf-cyber/images/Pictogrammes_DSFR__Document__Document_nat6iza.width-80.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=f56b12dc7d9741d6bb98766a26a6adca%2F20260519%2Feu-west-par%2Fs3%2Faws4_request&amp;X-Amz-Date=20260519T001224Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=893ab2fd7f79ff75fb196aa7da9765ef06d5f5a3bbef01defbbcf202b7981857" width="80"></div>
+      
+    </div>
+  
+</div>
+</div>
+  
+    <div class="fr-col-12 fr-col-md-4">
+
+<div class="fr-tile fr-enlarge-link">
+  <div class="fr-tile__body">
+    <div class="fr-tile__content">
+      
+      <h3 class="fr-tile__title">
+        
+          <a href="/nous-connaitre/publications/feuilles-de-route-de-la-securite-numerique-de-letat/" >
+            Feuilles de route de la sécurité du numérique de l’Etat
+            
+          </a>
+        
+      </h3>
+      
+      
+      
+      
+    </div>
+  </div>
+  
+    <div class="fr-tile__header">
+      
+      
+
+      
+        <div class="fr-tile__img"><img alt="" height="80" src="https://s3.eu-west-par.io.cloud.ovh.net/sf-cyber/sf-cyber/images/Pictogrammes_DSFR__Document__Document_nat6iza.width-80.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=f56b12dc7d9741d6bb98766a26a6adca%2F20260519%2Feu-west-par%2Fs3%2Faws4_request&amp;X-Amz-Date=20260519T001224Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=893ab2fd7f79ff75fb196aa7da9765ef06d5f5a3bbef01defbbcf202b7981857" width="80"></div>
+      
+    </div>
+  
+</div>
+</div>
+  
+    <div class="fr-col-12 fr-col-md-4">
+
+<div class="fr-tile fr-enlarge-link">
+  <div class="fr-tile__body">
+    <div class="fr-tile__content">
+      
+      <h3 class="fr-tile__title">
+        
+          <a href="/nous-connaitre/publications/publications-scientifiques/" >
+            Publications scientifiques
+            
+          </a>
+        
+      </h3>
+      
+      
+      
+      
+    </div>
+  </div>
+  
+    <div class="fr-tile__header">
+      
+      
+
+      
+        <div class="fr-tile__img"><img alt="" height="80" src="https://s3.eu-west-par.io.cloud.ovh.net/sf-cyber/sf-cyber/images/Pictogrammes_DSFR__Document__Document_nat6iza.width-80.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=f56b12dc7d9741d6bb98766a26a6adca%2F20260519%2Feu-west-par%2Fs3%2Faws4_request&amp;X-Amz-Date=20260519T001224Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=893ab2fd7f79ff75fb196aa7da9765ef06d5f5a3bbef01defbbcf202b7981857" width="80"></div>
+      
+    </div>
+  
+</div>
+</div>
+  
+    <div class="fr-col-12 fr-col-md-4">
+
+<div class="fr-tile fr-enlarge-link">
+  <div class="fr-tile__body">
+    <div class="fr-tile__content">
+      
+      <h2 class="fr-tile__title">
+        
+          <a href="/nous-connaitre/publications/publications-internationales/" >
+            Publications internationales en co-portage
+            
+          </a>
+        
+      </h2>
+      
+      
+      
+      
+    </div>
+  </div>
+  
+    <div class="fr-tile__header">
+      
+      
+
+      
+        <div class="fr-tile__img"><img alt="" height="80" src="https://s3.eu-west-par.io.cloud.ovh.net/sf-cyber/sf-cyber/images/Pictogrammes_DSFR__Document__Document_nat6iza.width-80.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=f56b12dc7d9741d6bb98766a26a6adca%2F20260519%2Feu-west-par%2Fs3%2Faws4_request&amp;X-Amz-Date=20260519T001224Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=893ab2fd7f79ff75fb196aa7da9765ef06d5f5a3bbef01defbbcf202b7981857" width="80"></div>
+      
+    </div>
+  
+</div>
+</div>
+  
+    <div class="fr-col-12 fr-col-md-4">
+
+<div class="fr-tile fr-enlarge-link">
+  <div class="fr-tile__body">
+    <div class="fr-tile__content">
+      
+      <h2 class="fr-tile__title">
+        
+          <a href="/nous-connaitre/publications/analyse-de-risque-sectorielle-et-technique/" >
+            Analyses de risques sectorielles et technologiques
+            
+          </a>
+        
+      </h2>
+      
+      
+      
+      
+    </div>
+  </div>
+  
+    <div class="fr-tile__header">
+      
+      
+
+      
+        <div class="fr-tile__img"><img alt="" height="80" src="https://s3.eu-west-par.io.cloud.ovh.net/sf-cyber/sf-cyber/images/Pictogrammes_DSFR__Document__Document_nat6iza.width-80.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=f56b12dc7d9741d6bb98766a26a6adca%2F20260519%2Feu-west-par%2Fs3%2Faws4_request&amp;X-Amz-Date=20260519T001224Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=893ab2fd7f79ff75fb196aa7da9765ef06d5f5a3bbef01defbbcf202b7981857" width="80"></div>
+      
+    </div>
+  
+</div>
+</div>
+  
+    <div class="fr-col-12 fr-col-md-4">
+
+<div class="fr-tile fr-enlarge-link">
+  <div class="fr-tile__body">
+    <div class="fr-tile__content">
+      
+      <h2 class="fr-tile__title">
+        
+          <a href="/nous-connaitre/publications/etude-de-marche/" >
+            Etudes de marché
+            
+          </a>
+        
+      </h2>
+      
+      
+      
+      
+    </div>
+  </div>
+  
+    <div class="fr-tile__header">
+      
+      
+
+      
+        <div class="fr-tile__img"><img alt="" height="80" src="https://s3.eu-west-par.io.cloud.ovh.net/sf-cyber/sf-cyber/images/Pictogrammes_DSFR__Document__Document_nat6iza.width-80.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=f56b12dc7d9741d6bb98766a26a6adca%2F20260519%2Feu-west-par%2Fs3%2Faws4_request&amp;X-Amz-Date=20260519T001224Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=893ab2fd7f79ff75fb196aa7da9765ef06d5f5a3bbef01defbbcf202b7981857" width="80"></div>
+      
+    </div>
+  
+</div>
+</div>
+  
+    <div class="fr-col-12 fr-col-md-4">
+
+<div class="fr-tile fr-enlarge-link">
+  <div class="fr-tile__body">
+    <div class="fr-tile__content">
+      
+      <h2 class="fr-tile__title">
+        
+          <a href="/cyberdico/" >
+            CyberDico
+            
+          </a>
+        
+      </h2>
+      
+      
+      
+      
+    </div>
+  </div>
+  
+    <div class="fr-tile__header">
+      
+      
+
+      
+        <div class="fr-tile__img"><img alt="" height="80" src="https://s3.eu-west-par.io.cloud.ovh.net/sf-cyber/sf-cyber/images/Pictogrammes_DSFR__Document__Document_nat6iza.width-80.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=f56b12dc7d9741d6bb98766a26a6adca%2F20260519%2Feu-west-par%2Fs3%2Faws4_request&amp;X-Amz-Date=20260519T001224Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=893ab2fd7f79ff75fb196aa7da9765ef06d5f5a3bbef01defbbcf202b7981857" width="80"></div>
+      
+    </div>
+  
+</div>
+</div>
+  
+    <div class="fr-col-12 fr-col-md-4">
+
+<div class="fr-tile fr-enlarge-link">
+  <div class="fr-tile__body">
+    <div class="fr-tile__content">
+      
+      <h2 class="fr-tile__title">
+        
+          <a href="/nous-connaitre/publications/pauses-cyber/" >
+            Pauses Cyber
+            
+          </a>
+        
+      </h2>
+      
+      
+      
+      
+    </div>
+  </div>
+  
+    <div class="fr-tile__header">
+      
+      
+
+      
+        <div class="fr-tile__img"><img alt="" height="80" src="https://s3.eu-west-par.io.cloud.ovh.net/sf-cyber/sf-cyber/images/Pictogrammes_DSFR__Leisure__Video.width-80.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=f56b12dc7d9741d6bb98766a26a6adca%2F20260519%2Feu-west-par%2Fs3%2Faws4_request&amp;X-Amz-Date=20260519T001224Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=0b69293cd6d99abf6ff8ee9350ca32b873e443cbfffcc4d016cf625392b8e575" width="80"></div>
+      
+    </div>
+  
+</div>
+</div>
+  
+</div>
+</div>
+  
+
+</div>
+</div>
+
+  
+
+
+
+  <div class="fr-container fr-my-4w">
+    
+  </div>
+
+  
+
+
+    </main>
+
+    
+      
+        <aside id="cmsfr-block-follow">
+          
+
+<div class="fr-follow">
+  <div class="fr-container">
+    <div class="fr-grid-row">
+      
+  
+
+      
+  
+    <div class="fr-col-12">
+      <div class="fr-follow__social">
+        <h2 class="fr-h5">
+          Suivez-nous<br />sur les réseaux sociaux
+        </h2>
+        <ul class="fr-btns-group">
+          
+            <li>
+              <a class="fr-icon-twitter-x-line fr-btn"
+                 href="https://x.com/anssi_fr"
+                 target="_blank"
+                 title="X - Ouvre une nouvelle fenêtre"
+                 rel="noopener external">X</a>
+            </li>
+          
+            <li>
+              <a class="fr-icon-linkedin-box-line fr-btn"
+                 href="https://www.linkedin.com/company/anssi-fr/mycompany/"
+                 target="_blank"
+                 title="LinkedIn - Ouvre une nouvelle fenêtre"
+                 rel="noopener external">LinkedIn</a>
+            </li>
+          
+            <li>
+              <a class="fr-icon-bluesky-fill fr-btn"
+                 href="https://bsky.app/profile/did:plc:3i4htisyibpap3mkxe2wam3x?ref_src=embed"
+                 target="_blank"
+                 title="BlueSky - Ouvre une nouvelle fenêtre"
+                 rel="noopener external">BlueSky</a>
+            </li>
+          
+            <li>
+              <a class="fr-icon-github-fill fr-btn"
+                 href="https://github.com/ANSSI-FR"
+                 target="_blank"
+                 title="Github - Ouvre une nouvelle fenêtre"
+                 rel="noopener external">Github</a>
+            </li>
+          
+        </ul>
+      </div>
+    </div>
+  
+
+    </div>
+  </div>
+</div>
+
+        </aside>
+      
+    
+
+    
+
+<footer class="fr-footer" role="contentinfo" id="footer">
+  
+  
+  <div class="fr-container">
+    <div class="fr-footer__body">
+      
+  
+  
+    
+    <div class="fr-footer__brand fr-enlarge-link">
+      <p class="fr-logo"
+         title="Intitulé officiel">
+        république<br />française
+      </p>
+      <a class="fr-footer__brand-link"
+         href="/"
+         title="Retourner à l’accueil - Agence Nationale de la sécurité des systèmes d&#x27;information - Intitulé officiel">
+        <img class="fr-footer__logo"
+             src="https://s3.eu-west-par.io.cloud.ovh.net/sf-cyber/sf-cyber/images/20230704_np_anssi_logotype_500x500.original.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=f56b12dc7d9741d6bb98766a26a6adca%2F20260519%2Feu-west-par%2Fs3%2Faws4_request&amp;X-Amz-Date=20260519T001224Z&amp;X-Amz-Expires=3600&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=c39595683476ba507e0df694e49c6a14210d352bac4b1d9acbea97ca9a41e541"
+             alt="Agence Nationale de la sécurité des systèmes d&#x27;information"
+             style="max-width:4.7rem;" />
+        
+      </a>
+    </div>
+  
+
+      <div class="fr-footer__content">
+        
+  
+
+        <ul class="fr-footer__content-list">
+          <li class="fr-footer__content-item">
+            <a target="_blank"
+               rel="noopener external"
+               title="info.gouv.fr - Ouvre une nouvelle fenêtre"
+               id="footer__content-link-gouvernement"
+               class="fr-footer__content-link"
+               href="https://www.info.gouv.fr">info.gouv.fr</a>
+          </li>
+          <li class="fr-footer__content-item">
+            <a target="_blank"
+               rel="noopener external"
+               title="service-public.gouv.fr - Ouvre une nouvelle fenêtre"
+               id="footer__content-link-servicepublic"
+               class="fr-footer__content-link"
+               href="https://service-public.gouv.fr">service-public.gouv.fr</a>
+          </li>
+          <li class="fr-footer__content-item">
+            <a target="_blank"
+               rel="noopener external"
+               title="legifrance.gouv.fr - Ouvre une nouvelle fenêtre"
+               id="footer__content-link-legifrance"
+               class="fr-footer__content-link"
+               href="https://legifrance.gouv.fr">legifrance.gouv.fr</a>
+          </li>
+          <li class="fr-footer__content-item">
+            <a target="_blank"
+               rel="noopener external"
+               title="data.gouv.fr - Ouvre une nouvelle fenêtre"
+               id="footer__content-link-datagouv"
+               class="fr-footer__content-link"
+               href="https://data.gouv.fr">data.gouv.fr</a>
+          </li>
+          
+          
+        </ul>
+      </div>
+    </div>
+    
+    
+    <div class="fr-footer__bottom">
+      <ul class="fr-footer__bottom-list">
+        
+  
+    
+
+    <li class="fr-footer__bottom-item">
+
+<a class="fr-footer__bottom-link"
+   href="/contact-acces/"
+   
+   >
+  Contact &amp; accès
+  
+  
+</a>
+</li>
+
+    <li class="fr-footer__bottom-item">
+
+<a class="fr-footer__bottom-link"
+   href="/presse/"
+   
+   >
+  Presse
+  
+  
+</a>
+</li>
+
+    <li class="fr-footer__bottom-item">
+
+<a class="fr-footer__bottom-link"
+   href="/mentions-legales/"
+   
+   >
+  Mentions légales
+  
+  
+</a>
+</li>
+
+    <li class="fr-footer__bottom-item">
+
+<a class="fr-footer__bottom-link"
+   href="/accessibilite/"
+   
+   >
+  Accessibilité : non conforme
+  
+  
+</a>
+</li>
+
+
+  
+  <li class="fr-footer__bottom-item">
+    <a class="fr-footer__bottom-link" href="/plan-du-site/">Plan du site</a>
+  </li>
+  
+  
+
+      </ul>
+      <div class="fr-footer__bottom-copy">
+        <p>
+          
+          Sauf mention explicite de propriété intellectuelle détenue par des tiers, les contenus de ce site sont proposés sous
+          <a href="https://github.com/etalab/licence-ouverte/blob/master/LO.md"
+             target="_blank"
+             rel="noopener external"
+             title="Licence etalab-2.0 - Ouvre une nouvelle fenêtre">licence etalab-2.0</a>
+          
+  
+  <span class="cmsfr-footer__bottom-extra">
+    Ce site est fait avec <a href="https://sites.beta.gouv.fr/?mtm_campaign=footer-link"
+    target="_blank"
+    rel="noopener external"
+    title="Sites Conformes - Ouvre une nouvelle fenêtre">Sites Conformes</a>
+  </span>
+
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    
+
+    
+<script type="module"
+        src="/static/dsfr/dist/dsfr/dsfr.module.min.js"
+        
+        ></script>
+<script nomodule
+        src="/static/dsfr/dist/dsfr/dsfr.nomodule.min.js"
+        
+        ></script>
+
+    
+    
+
+    
+      
+    
+  </body>
+</html>

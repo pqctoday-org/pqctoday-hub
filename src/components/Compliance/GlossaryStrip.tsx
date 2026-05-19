@@ -47,31 +47,37 @@ export const TYPE_COLOURS = {
 
 export function GlossaryStrip() {
   return (
-    <div
-      role="region"
-      aria-label="Compliance glossary"
-      className="grid grid-cols-2 md:grid-cols-4 gap-2"
-    >
-      <Chip
-        name="Body"
-        swatch={TYPE_COLOURS.bodies}
-        def="Defines algorithms & protocols. NIST, IETF, ETSI, ISO/IEC."
-      />
-      <Chip
-        name="Standard"
-        swatch={TYPE_COLOURS.standards}
-        def="A published specification. FIPS 203, RFC 9180, NIST IR 8547."
-      />
-      <Chip
-        name="Certification"
-        swatch={TYPE_COLOURS.certifications}
-        def="A scheme that validates products against a standard. FIPS 140-3, Common Criteria."
-      />
-      <Chip
-        name="Regulation"
-        swatch={TYPE_COLOURS.regulations}
-        def="A legal or contractual mandate. CNSA 2.0, eIDAS 2.0, CCCS Canada."
-      />
+    <div className="space-y-1.5">
+      <div
+        role="region"
+        aria-label="Compliance type legend"
+        className="grid grid-cols-2 md:grid-cols-4 gap-2"
+      >
+        <Chip
+          name="Body"
+          swatch={TYPE_COLOURS.bodies}
+          def="Defines algorithms & protocols. NIST, IETF, ETSI, ISO/IEC."
+        />
+        <Chip
+          name="Standard"
+          swatch={TYPE_COLOURS.standards}
+          def="A published specification. FIPS 203, RFC 9180, NIST IR 8547."
+        />
+        <Chip
+          name="Certification"
+          swatch={TYPE_COLOURS.certifications}
+          def="A scheme that validates products against a standard. FIPS 140-3, Common Criteria."
+        />
+        <Chip
+          name="Regulation"
+          swatch={TYPE_COLOURS.regulations}
+          def="A legal or contractual mandate. CNSA 2.0, eIDAS 2.0, CCCS Canada."
+        />
+      </div>
+      <p className="text-[11px] text-muted-foreground">
+        For full term definitions (CMVP, ACVP, EAL, CNSA 2.0, NIS2, CSWP 39 …) open the glossary
+        from the page header.
+      </p>
     </div>
   )
 }

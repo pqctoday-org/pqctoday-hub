@@ -100,8 +100,28 @@ export const FrameworkDetailPopover = ({
                   <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
                     {framework.bodyType.replace(/_/g, ' ')}
                   </span>
-                  {framework.requiresPQC && (
-                    <span className="text-[10px] font-bold text-primary uppercase">PQC</span>
+                  {framework.pqcRequirement !== 'no' && (
+                    <span
+                      className={`text-[10px] font-bold uppercase ${
+                        framework.pqcRequirement === 'yes'
+                          ? 'text-status-success'
+                          : framework.pqcRequirement === 'partial' ||
+                              framework.pqcRequirement === 'expected'
+                            ? 'text-status-warning'
+                            : 'text-status-info'
+                      }`}
+                      title={
+                        framework.pqcRequirement === 'yes'
+                          ? 'PQC mandated'
+                          : framework.pqcRequirement === 'partial'
+                            ? 'PQC mandated for some scope'
+                            : framework.pqcRequirement === 'expected'
+                              ? 'PQC mandate anticipated, not yet codified'
+                              : 'PQC guidance (no mandate)'
+                      }
+                    >
+                      PQC · {framework.pqcRequirement}
+                    </span>
                   )}
                   {framework.deadline && (
                     <span className="text-[10px] text-status-error">{framework.deadline}</span>
@@ -198,6 +218,14 @@ export const FrameworkDetailPopover = ({
                       Industries
                     </h4>
                     <p className="text-foreground">{framework.industries.join(', ')}</p>
+                  </div>
+                )}
+                {framework.relatedStandards && framework.relatedStandards.length > 0 && (
+                  <div className="sm:col-span-2">
+                    <h4 className="font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+                      Related Standards
+                    </h4>
+                    <p className="text-foreground">{framework.relatedStandards.join(', ')}</p>
                   </div>
                 )}
               </div>

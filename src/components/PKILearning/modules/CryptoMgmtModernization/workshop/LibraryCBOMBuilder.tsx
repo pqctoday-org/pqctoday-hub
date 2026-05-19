@@ -9,6 +9,7 @@ import {
   type RiskColor,
 } from '../data/cryptoLibraries'
 import { HSM_VENDORS } from '../data/hsmVendors'
+import { FILE_ARTIFACTS } from '../data/fileArtifacts'
 import { SAMPLE_SBOMS } from '../data/sampleSBOMs'
 import type { CbomExportItem } from '../data/workshopTypes'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive/ExportableArtifact'
@@ -21,7 +22,7 @@ import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { useLiveCmvpStatus } from '@/hooks/useLiveCmvpStatus'
 import { LiveCmvpBadge } from '@/components/BusinessCenter/widgets/LiveCmvpBadge'
 
-type Mode = 'sbom' | 'libs' | 'hsm' | 'assessment'
+type Mode = 'sbom' | 'libs' | 'hsm' | 'files' | 'assessment'
 
 const FIPS_LABEL: Record<FipsStatus, string> = {
   active: 'FIPS active',
@@ -154,7 +155,9 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
           ? 'Library posture'
           : mode === 'hsm'
             ? 'HSM inventory'
-            : 'From your assessment'
+            : mode === 'files'
+              ? 'File artifacts'
+              : 'From your assessment'
     lines.push(`Mode: **${modeLabel}**`)
     lines.push('')
     lines.push('Per NIST CSWP.39 §5 (Inventory step) — feeds the Information Repository.')
@@ -230,6 +233,25 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
       }
       lines.push('')
     }
+    if (mode === 'files') {
+      lines.push(
+        `## File artifacts — ${FILE_ARTIFACTS.length} item${FILE_ARTIFACTS.length !== 1 ? 's' : ''}`
+      )
+      lines.push('')
+      lines.push(
+        '_Covers the Files asset class from NIST CSWP.39 Fig.3 (Code, Libraries, Applications, Files, Protocols, Systems)._'
+      )
+      lines.push('')
+      lines.push('| Artifact | Category | Classical | PQC target | Posture | Notes |')
+      lines.push('|---|---|---|---|---|---|')
+      for (const f of FILE_ARTIFACTS) {
+        const safeNotes = (f.notes ?? '').replace(/\|/g, '\\|')
+        lines.push(
+          `| ${f.label} | ${f.category} | ${f.classical} | ${f.pqcTarget} | ${f.posture} | ${safeNotes} |`
+        )
+      }
+      lines.push('')
+    }
     return lines.join('\n')
   }, [mode, cbomSlice])
 
@@ -272,6 +294,13 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
           className="text-xs"
         >
           Hardware FIPS 140-3 L3
+        </Button>
+        <Button
+          variant={mode === 'files' ? 'gradient' : 'outline'}
+          onClick={() => setMode('files')}
+          className="text-xs"
+        >
+          File artifacts
         </Button>
       </div>
 
@@ -586,12 +615,57 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
         </div>
       )}
 
+      {mode === 'files' && (
+        <div className="overflow-x-auto bg-muted/40 rounded-lg p-3 border border-border">
+          <p className="text-xs text-muted-foreground mb-3">
+            Cryptographically protected files: signed binaries, encrypted data-at-rest, certificate
+            files, key files, archive signatures. Covers the Files asset class from{' '}
+            <InlineTooltip term="NIST CSWP 39">NIST CSWP.39</InlineTooltip> Fig.3 (Code, Libraries,
+            Applications, Files, Protocols, Systems).
+          </p>
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="bg-muted/60 text-left">
+                <th className="p-2 font-bold">Artifact</th>
+                <th className="p-2 font-bold">Category</th>
+                <th className="p-2 font-bold">Classical</th>
+                <th className="p-2 font-bold">PQC target</th>
+                <th className="p-2 font-bold">Posture</th>
+              </tr>
+            </thead>
+            <tbody>
+              {FILE_ARTIFACTS.map((f) => (
+                <tr key={f.id} className="border-t border-border align-top">
+                  <td className="p-2">
+                    <div className="font-bold text-foreground">{f.label}</div>
+                    <div className="text-[10px] text-muted-foreground">{f.notes}</div>
+                  </td>
+                  <td className="p-2 text-muted-foreground">{f.category}</td>
+                  <td className="p-2 font-mono text-foreground">{f.classical}</td>
+                  <td className="p-2 font-mono text-foreground max-w-[260px]">{f.pqcTarget}</td>
+                  <td className="p-2">
+                    <span
+                      className={`inline-block w-3 h-3 rounded-full ${POSTURE_LIGHT[f.posture]}`}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="text-[10px] text-muted-foreground italic mt-3">
+            Illustrative defaults for teaching. Replace with the actual file artifacts in your
+            environment before quoting.
+          </p>
+        </div>
+      )}
+
       {/* Save to Command Center / export */}
       <ExportableArtifact
-        title="CBOM — Export"
+        title="CBOM - Export"
         exportData={exportMarkdown}
         filename="crypto-bom"
         formats={['markdown', 'pdf', 'docx']}
+        wideTable
         onExport={() => {
           addExecutiveDocument({
             id: `crypto-cbom-${Date.now()}`,

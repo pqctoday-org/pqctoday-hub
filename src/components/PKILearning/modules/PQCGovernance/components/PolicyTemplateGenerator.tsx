@@ -652,6 +652,9 @@ function renderPolicyPreview(
     }
   }
 
+  // N5: sanitise non-ASCII punctuation in the exported markdown string only.
+  md = md.replace(/—/g, '-').replace(/–/g, '-').replace(/[‘’]/g, "'").replace(/[“”]/g, '"')
+
   return md
 }
 
@@ -662,17 +665,24 @@ interface KpiDriftRule {
 }
 
 function renderKpiDriftRulesMd(rules: KpiDriftRule[]): string {
-  let md = '\n---\n\n## KPI Drift Rules (CSWP.39 §5.4 → §5.1 feedback loop)\n\n'
+  let md = '\n---\n\n## KPI Drift Rules (CSWP.39 §5.4 -> §5.1 feedback loop)\n\n'
   if (rules.length === 0) {
     md +=
-      '_No drift rules defined. Per §5.4 — KPI exceptions should feed back into policy-as-code updates._\n\n'
-    return md
+      '_No drift rules defined. Per §5.4 - KPI exceptions should feed back into policy-as-code updates._\n\n'
+  } else {
+    md += '| KPI | Threshold | Policy action when threshold breached |\n|---|---|---|\n'
+    for (const r of rules) {
+      md += `| ${r.kpi || '-'} | ${r.threshold || '-'} | ${r.policyAction || '-'} |\n`
+    }
+    md += '\n'
   }
-  md += '| KPI | Threshold | Policy action when threshold breached |\n|---|---|---|\n'
-  for (const r of rules) {
-    md += `| ${r.kpi || '—'} | ${r.threshold || '—'} | ${r.policyAction || '—'} |\n`
-  }
-  md += '\n'
+  md += '\n---\n\n'
+  md +=
+    '*Aligned to NIST CSWP 39 §5.2 - Crypto Security Policy Enforcement, and §5.4 - Measuring Migration Progress. https://doi.org/10.6028/NIST.CSWP.39*\n'
+
+  // N5: sanitise non-ASCII punctuation in the exported markdown string only.
+  md = md.replace(/—/g, '-').replace(/–/g, '-').replace(/[‘’]/g, "'").replace(/[“”]/g, '"')
+
   return md
 }
 
@@ -828,6 +838,7 @@ export const PolicyTemplateGenerator: React.FC = () => {
           renderPolicyPreview(activePolicyType, data) + renderKpiDriftRulesMd(kpiDriftRules)
         }
         exportFormats={['markdown', 'docx', 'pdf']}
+        wideTable
       />
 
       {/* CSWP.39 §5.4 → §5.1 KPI drift feedback loop */}

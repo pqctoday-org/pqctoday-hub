@@ -18,7 +18,6 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/library',
     '/leaders',
     '/patents',
-    '/agility',
     '/revisions',
   ],
   developer: [
@@ -31,7 +30,6 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/playground',
     '/openssl',
     '/patents',
-    '/agility',
     '/revisions',
   ],
   architect: [
@@ -45,7 +43,6 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/playground',
     '/leaders',
     '/patents',
-    '/agility',
     '/revisions',
   ],
   researcher: null,
@@ -58,7 +55,6 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/library',
     '/playground',
     '/openssl',
-    '/agility',
     '/revisions',
   ],
   curious: ['/explore', '/compliance', '/assess', '/report', '/library', '/leaders', '/revisions'],
@@ -124,6 +120,7 @@ export const PERSONA_RECOMMENDED_MODE: Record<PersonaId, AssessmentMode> = {
 export const REGION_COUNTRY_MAP: Record<Region, string | null> = {
   americas: 'United States',
   eu: null,
+  mena: 'Israel',
   apac: 'Japan',
   global: null,
 }
@@ -134,20 +131,8 @@ export const REGION_COUNTRY_MAP: Record<Region, string | null> = {
  */
 export const REGION_COUNTRIES_MAP: Record<Region, string[]> = {
   americas: ['United States', 'Canada'],
-  eu: [
-    'European Union',
-    'France',
-    'Germany',
-    'Italy',
-    'Spain',
-    'United Kingdom',
-    'Czech Republic',
-    'Israel',
-    'United Arab Emirates',
-    'Saudi Arabia',
-    'Bahrain',
-    'Jordan',
-  ],
+  eu: ['European Union', 'France', 'Germany', 'Italy', 'Spain', 'United Kingdom', 'Czech Republic'],
+  mena: ['Israel', 'United Arab Emirates', 'Saudi Arabia', 'Bahrain', 'Jordan'],
   apac: [
     'Japan',
     'Singapore',
@@ -170,6 +155,7 @@ export const REGION_COUNTRIES_MAP: Record<Region, string[]> = {
 export const MODULE_INDUSTRY_RELEVANCE: Record<string, string[] | null> = {
   'pqc-101': null,
   'quantum-threats': null,
+  'pqc-candidates': null,
   'hybrid-crypto': ['Finance & Banking', 'Government & Defense', 'Technology'],
   'crypto-agility': ['Finance & Banking', 'Government & Defense', 'Telecommunications'],
   'tls-basics': ['Technology', 'Finance & Banking', 'Telecommunications'],
@@ -517,9 +503,15 @@ export const BC_ZONE_EMPHASIS_BY_PERSONA: Partial<Record<PersonaId, BCZoneEmphas
         'policy-draft',
         'vendor-scorecard',
         'supply-chain-matrix',
+        'cloud-responsibility-matrix',
       ],
       'risk-management': ['risk-register', 'risk-treatment-plan'],
-      migration: ['migration-roadmap'],
+      migration: [
+        'mti-negotiator',
+        'hybrid-transition',
+        'crypto-api-refactor',
+        'migration-roadmap',
+      ],
     },
   },
   // Ops: open with Migration — surface deployment, roadmap, KPI tracker.

@@ -1,0 +1,668 @@
+---
+generated: 2026-05-19
+collection: catalog
+documents_processed: 48
+enrichment_method: ollama-qwen3.6:27b
+---
+
+## IBM z17 Quantum Safe
+
+- **Reference ID**: IBM z17 Quantum Safe
+- **Title**: IBM z17 Quantum Safe
+- **Authors**: Enterprise Server Platforms
+- **Publication Date**: 2026-01-01
+- **Last Updated**: 2026-05-18
+- **Document Status**: Verified
+- **Main Topic**: Overview of the IBM z17 mainframe's AI capabilities, security features, and quantum-safe hardware acceleration.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: IBM z17 includes hardware acceleration for post-quantum cryptography; The platform integrates AI to enhance security and operational resilience; Mainframes offer backward compatibility and transactional integrity compared to alternative platforms; Organizations can accelerate their quantum-safe journey using IBM Z security features.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Operations
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: vendor-risk; hsm-pqc; pqc-business-case
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: IBM_z17_Quantum_Safe.html (216,533 bytes, 4,940 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T00:17:14
+
+---
+
+## NXP S32K5 Automotive PQC MCU
+
+- **Reference ID**: NXP S32K5 Automotive PQC MCU
+- **Title**: NXP S32K5 Automotive PQC MCU
+- **Authors**: Automotive Microcontroller
+- **Publication Date**: 2025-01-01
+- **Last Updated**: 2026-05-18
+- **Document Status**: Partially Verified
+- **Main Topic**: Overview of the NXP S32K5 preproduction automotive microcontroller series featuring hardware security engines with post-quantum capabilities for zonal vehicle architectures.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: S32K5 Automotive Microcontrollers; NXP CoreRide Z248 Zonal Reference System
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Hardware Security Engine (HSE); Hardware root-of-trust
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: ISO 26262; ASIL D; AEC-Q100
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: The S32K5 MCU integrates an HSE2 security engine providing a post-quantum hardware root-of-trust; The platform supports zonal architecture applications including body, comfort, and chassis controllers; Firmware over-the-air updates are supported with flexible A/B swap and zero downtime; The device is qualified for automotive safety up to ASIL D and operates in -40 °C to 125 °C environments; NXP provides production-grade software including S32 Design Studio IDE and real-time drivers.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Draft
+- **Performance & Size Considerations**: 200-800 MHz core speed; up to 41 MB MRAM; 2.5 G / 1 G / 100 M / 10 BaseT1S Ethernet
+- **Target Audience**: Security Architect; Developer; Operations
+- **Implementation Prerequisites**: S32 Design Studio IDE; Arm Cortex-M7 or Cortex-R52 cores; AEC-Q100 Grade 1 qualification
+- **Relevant PQC Today Features**: hsm-pqc; iot-ot-pqc; vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Arm Cortex-M7 and Cortex-R52 cores; low-power run and standby modes; automotive MCU constraints
+- **Supply Chain & Vendor Risk**: NXP provided security firmware; field upgradable; certified partners support
+- **Deployment & Migration Complexity**: Firmware over-the-air (FOTA) with flexible A/B swap; zero downtime; roll-back support
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: NXP_S32K5_Automotive_PQC_MCU.html (262,743 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T00:19:28
+
+---
+
+## Securosys Primus CyberVault PQC
+
+- **Reference ID**: Securosys Primus CyberVault PQC
+- **Title**: Securosys Primus CyberVault PQC
+- **Authors**: Payment HSM
+- **Publication Date**: 2025-01-01
+- **Last Updated**: 2026-04-01
+- **Document Status**: Verified
+- **Main Topic**: Overview of Securosys Primus HSMs and CloudHSM services offering hybrid classical and post-quantum cryptography capabilities for secure key management.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA; HSS-LMS; XMSS
+- **Quantum Threats Addressed**: Quantum computing breaking classical cryptographic methods
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Switzerland
+- **Leaders Contributions Mentioned**: Prof. Dr. Esther Hänggi (HSLU scientific team leader for PQC algorithm performance research in TLS)
+- **PQC Products Mentioned**: Securosys Primus CyberVault HSM; Securosys CloudHSM; Primus HSM CyberVault (X2 Models); Primus HSM CyberVault Core (E2 Model); Primus HSM X-Series; Primus HSM E-Series; Primus HSM S-Series; Primus HSM Blockchain
+- **Protocols Covered**: TLS
+- **Infrastructure Layers**: HSM; Key Management; Cloud KMS
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; ECC
+- **Key Takeaways**: Securosys HSMs support hybrid operations combining RSA/ECC with PQC algorithms for phased migration; The platform supports NIST-standardized PQC algorithms including ML-KEM, ML-DSA, SLH-DSA, HSS-LMS, and XMSS; A dedicated CloudHSM Sandbox service is available for testing PQC migration strategies in a risk-free environment; Research collaboration with HSLU explores PQC performance in TLS under network constraints like packet loss and delay.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid operations combining classical (RSA/ECC) and PQC algorithms; Phased transition to quantum-resistant cryptography
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "Integrating classical algorithms like RSA and ECC/ED with PQC signatures and key exchange"
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Yes
+- **Hybrid PQC Signature Evidence**: "Integrating classical algorithms like RSA and ECC/ED with PQC signatures"
+- **PQC Heatmap Protocols Covered**: TLS-1.3
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: "explores PQC algorithm performance in TLS connections"
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: 50K+ TPS; Accommodating larger PQC keys and signatures efficiently
+- **Target Audience**: Security Architect; Developer; CISO
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: hsm-pqc; hybrid-crypto; migration-program; algorithms
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: CloudHSM Sandbox for testing PQC migration strategies
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Phased transition; Risk-free test environment available
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Hash-based
+- **PQC Round**: Standardised
+- **Source Document**: Securosys_Primus_CyberVault_PQC.html (280,892 bytes, 8,715 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T00:22:21
+
+---
+
+## EU PQC Implementation Roadmap
+
+- **Reference ID**: EU PQC Implementation Roadmap
+- **Title**: EU PQC Implementation Roadmap
+- **Authors**: Regional PQC Strategy
+- **Publication Date**: 2025-01-01
+- **Last Updated**: 2026-04-01
+- **Document Status**: Verified
+- **Main Topic**: EU Member States and Commission roadmap for the coordinated transition to Post-Quantum Cryptography.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Quantum computing threat to cryptographic algorithms protecting confidentiality and authenticity
+- **Migration Timeline Info**: Strategies 2026; critical infrastructure 2030; broad migration 2035
+- **Applicable Regions / Bodies**: Regions: EU Member States; Bodies: European Commission, NIS Cooperation Group
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Establish a work stream on PQC with the NIS Cooperation Group; Implement recommendations for a synchronised transition to PQC; Ensure all stakeholders are well informed on the quantum threat to cryptography; Follow the timeline for strategies (2026), critical infrastructure (2030), and broad migration (2035)
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Coordinated transition; synchronised transition
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Policy Maker; CISO; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Timeline; Threats; pqc-governance; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Phased rollout implied by timeline (2026, 2030, 2035)
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Stakeholder information measures required
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: EU_PQC_Implementation_Roadmap.html (48,594 bytes, 2,840 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T00:25:00
+
+---
+
+ ## Mozilla NSS
+
+- **Reference ID**: Mozilla NSS
+- **Title**: Mozilla NSS
+- **Authors**: Cryptographic Software/Libraries
+- **Publication Date**: 2024-01-01
+- **Last Updated**: 2026-05-18
+- **Document Status**: Verified
+- **Main Topic**: Overview of Mozilla Network Security Services (NSS) library capabilities and development resources.
+- **PQC Algorithms Covered**: ML-KEM
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: Mozilla NSS; Firefox
+- **Protocols Covered**: TLS; S/MIME; X.509
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Mozilla NSS supports cross-platform security-enabled applications; X25519MLKEM768 hybrid PQC TLS is available in Firefox 128; NSS supports multiple security standards including PKCS and X.509; Developers can contribute to NSS via provided documentation
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid PQC TLS
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: X25519MLKEM768 hybrid PQC TLS shipped in Firefox 128
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.3
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: X25519MLKEM768 hybrid PQC TLS shipped in Firefox 128
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: hybrid-crypto; tls-basics
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Source Document**: Mozilla_NSS.html (18,974 bytes, 2,788 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T00:27:25
+
+---
+
+## CIRCL
+
+- **Reference ID**: CIRCL
+- **Title**: CIRCL
+- **Authors**: Post-Quantum Cryptography Libraries
+- **Publication Date**: 2024-01-01
+- **Last Updated**: 2026-05-18
+- **Document Status**: Verified
+- **Main Topic**: CIRCL is a Go library providing production-ready post-quantum cryptographic algorithms and hybrid TLS groups.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; FrodoKEM; CSIDH
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: CIRCL
+- **Protocols Covered**: TLS
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: X25519; SecP256r1
+- **Key Takeaways**: CIRCL provides production-ready ML-KEM and ML-DSA implementations in Go; The library supports hybrid PQC TLS groups including X25519MLKEM768 and SecP256r1MLKEM768; It includes additional PQC schemes like FrodoKEM and CSIDH; The library is actively used in Cloudflare's TLS deployments
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: hybrid PQC TLS groups
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: hybrid PQC TLS groups (X25519MLKEM768, SecP256r1MLKEM768)
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.3
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: hybrid PQC TLS groups (X25519MLKEM768, SecP256r1MLKEM768)
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer
+- **Implementation Prerequisites**: Go
+- **Relevant PQC Today Features**: Algorithms; hybrid-crypto; tls-basics
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Isogeny
+- **PQC Round**: Standardised
+- **Extraction Note**: No source text available
+- **Source Document**: CIRCL.md (8,707 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-05-19T00:29:24
+
+---
+
+## IBM z16 Crypto Express 8S
+
+- **Reference ID**: IBM z16 Crypto Express 8S
+- **Title**: IBM z16 Crypto Express 8S
+- **Authors**: Hardware Security Module (HSM) Software
+- **Publication Date**: 2022-05-31
+- **Last Updated**: 2026-05-18
+- **Document Status**: Verified
+- **Main Topic**: IBM CEX8S is a high-assurance HSM for IBM Z mainframes providing quantum-safe key operations via EP11 firmware with ML-KEM and ML-DSA support.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: IBM CEX8S; EP11 firmware
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: HSM
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: FIPS 140-3
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: IBM CEX8S provides FIPS 140-3 Level 4 assurance for IBM Z mainframes; The hardware supports quantum-safe key operations via EP11 firmware; ML-KEM and ML-DSA algorithms are supported for post-quantum security; This is a hardware-based solution for enterprise mainframe environments
+- **Security Levels & Parameters**: FIPS 140-3 Level 4
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; CISO; Operations
+- **Implementation Prerequisites**: IBM Z mainframe; EP11 firmware
+- **Relevant PQC Today Features**: hsm-pqc; Algorithms; Compliance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Source Document**: IBM_z16_Crypto_Express_8S.html (136,765 bytes, 876 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T00:31:26
+
+---
+
+## AWS Certificate Manager
+
+- **Reference ID**: AWS Certificate Manager
+- **Title**: AWS Certificate Manager
+- **Authors**: Public Key Infrastructure (PKI) Software
+- **Publication Date**: 2016-01-01
+- **Last Updated**: 2026-05-18
+- **Document Status**: Verified
+- **Main Topic**: Overview of AWS Certificate Manager for provisioning and managing SSL/TLS certificates for AWS, hybrid, and multicloud workloads.
+- **PQC Algorithms Covered**: ML-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: AWS Certificate Manager
+- **Protocols Covered**: SSL/TLS
+- **Infrastructure Layers**: PKI; Key Management
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: FIPS 204
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: ACM Private CA supports ML-DSA certificate issuance for private PKI; Public certificates currently use classical algorithms pending CA/Browser Forum adoption; ACM provides managed renewal and key management for SSL/TLS certificates; The service supports workloads on EC2, containers, on-premises hosts, and AWS services.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: ACM Private CA supports ML-DSA certificate issuance
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: X.509
+- **PQC Heatmap Protocols Evidence**: X.509: ACM Private CA supports ML-DSA certificate issuance
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Operations; Developer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pki-workshop; Algorithms; Migrate
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Source Document**: AWS_Certificate_Manager.html (228,432 bytes, 3,280 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T00:33:14
+
+---
+
+## SOPS (Secrets OPerationS)
+
+- **Reference ID**: SOPS (Secrets OPerationS)
+- **Title**: SOPS (Secrets OPerationS)
+- **Authors**: Secrets Management
+- **Publication Date**: 2025-01-01
+- **Last Updated**: 2026-04-16
+- **Document Status**: Pending Verification
+- **Main Topic**: SOPS is a CNCF Sandbox project for encrypted file-based secrets management in GitOps workflows, offering PQC capability via the age -pq backend.
+- **PQC Algorithms Covered**: Kyber768
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: SOPS; age
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Key Management
+- **Standardization Bodies**: CNCF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: X25519
+- **Key Takeaways**: SOPS provides encrypted file-based secrets management for GitOps workflows; It supports PQC via the age -pq backend using hybrid X25519+Kyber768; It encrypts YAML, JSON, ENV, INI, and binary files; It is positioned as deployable open-source PQC secret encryption for Kubernetes and CI/CD pipelines
+- **Security Levels & Parameters**: Kyber768
+- **Hybrid & Transition Approaches**: hybrid X25519+Kyber768
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: hybrid X25519+Kyber768
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Operations
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: hybrid-crypto; kms-pqc; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Extraction Note**: No source text available
+- **Source Document**: SOPS\__Secrets_OPerationS_.md (2,251 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-05-19T00:35:04
+
+---
+
+## Certicom Code Signing and Key Management Server
+
+- **Reference ID**: Certicom Code Signing and Key Management Server
+- **Title**: Certicom Code Signing and Key Management Server
+- **Authors**: Code Signing and Software Integrity
+- **Publication Date**: Not specified
+- **Last Updated**: 2026-05-18
+- **Document Status**: Partially Verified
+- **Main Topic**: BlackBerry and NXP demonstrate quantum-resistant code signing for vehicle networking processors using CRYSTALS Dilithium to mitigate Y2Q risks.
+- **PQC Algorithms Covered**: CRYSTALS Dilithium
+- **Quantum Threats Addressed**: Y2Q; Harvest Now Decrypt Later (implied by "render today’s public key cryptography useless" and "quantum computers will be able to easily break traditional code signing schemes")
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Bodies: NIST, NATO, White House
+- **Leaders Contributions Mentioned**: Joppe Bos, Senior Principal Cryptographer at NXP Semiconductors; Jim Alfred, VP, BlackBerry Technology Solutions
+- **PQC Products Mentioned**: Code Signing and Key Management Server from Certicom by BlackBerry
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Key Management; Secure Boot
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Organizations should adopt quantum-resistant signature schemes like Dilithium for long-lifecycle assets; Code signing infrastructure must be hardened against future quantum attacks; Collaboration between chipmakers and security vendors is critical for crypto-agile hardware solutions; Y2Q poses a significant threat to industries with updatable software requiring immediate mitigation planning
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Crypto-agile
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "digitally signed using the National Institute of Standards and Technology’s (NIST) recently endorsed CRYSTALS Dilithium digital signature scheme"
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; CISO; Developer
+- **Implementation Prerequisites**: NXP S32G vehicle networking processors; Certicom Code Signing and Key Management Server
+- **Relevant PQC Today Features**: code-signing; crypto-agility; threats; iot-ot-pqc
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Embedded viability (vehicle networking processors)
+- **Supply Chain & Vendor Risk**: SBOMs; long lifecycle assets
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Source Document**: Certicom_Code_Signing_and_Key_Management_Server.html (396,891 bytes, 11,368 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T00:36:50
+
+---
+
+## BlackBerry QNX Hypervisor 8.0 for Safety
+
+- **Reference ID**: BlackBerry QNX Hypervisor 8.0 for Safety
+- **Title**: BlackBerry QNX Hypervisor 8.0 for Safety
+- **Authors**: Hardware Security and Embedded
+- **Publication Date**: Not specified
+- **Last Updated**: 2026-05-18
+- **Document Status**: Partially Verified
+- **Main Topic**: Announcement of the General Availability of QNX Hypervisor 8.0 for Safety, a safety-certified embedded virtualization platform for critical systems.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Grant Courville, SVP of Products and Strategy at QNX
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: ISO 26262 ASIL D; IEC 61508 SIL 4; IEC 62304 Class C
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: QNX Hypervisor 8.0 for Safety is now generally available for safety-critical systems; The platform supports ISO 26262 ASIL D, IEC 61508 SIL 4, and IEC 62304 Class C certifications; It enables isolation of critical workloads in mixed-criticality designs for Physical AI; Leading automotive and healthcare customers have committed to deploying the platform
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect; Compliance Officer
+- **Implementation Prerequisites**: QNX Software Development Platform (SDP) 8.0
+- **Relevant PQC Today Features**: compliance-strategy; iot-ot-pqc; vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: embedded viability; RTOS compatibility
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: BlackBerry_QNX_Hypervisor_8.0_for_Safety.html (46,674 bytes, 6,435 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T00:39:16
+
+---
+
+## Hex Trust Institutional Custody
+
+- **Reference ID**: Hex Trust Institutional Custody
+- **Title**: Hex Trust Institutional Custody
+- **Authors**: Digital Asset Custody
+- **Publication Date**: Not specified
+- **Last Updated**: 2026-04-26
+- **Document Status**: Cited
+- **Main Topic**: Hex Trust provides institutional-grade regulated digital asset custody, staking, and markets services for Web3 clients.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Singapore; Dubai; Hong Kong
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: HSM; Key Management
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: FIPS 140-3 Level 3; SOC 1; SOC 2
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Hex Trust uses FIPS 140-3 Level 3 HSMs for secure key storage; Client assets are legally and technologically segregated in distinct wallets; The platform is regulated in Singapore, Dubai, and Hong Kong; Insurance coverage of up to $50M+ protects against theft or loss; Private keys are never exposed to the internet and signing occurs in isolated environments
+- **Security Levels & Parameters**: FIPS 140-3 Level 3
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Compliance Officer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: digital-assets; hsm-pqc; compliance-strategy; vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: Insurance coverage up to $50M+
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: Hex_Trust_Institutional_Custody.html (101,858 bytes, 10,656 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T00:41:25
+
+---

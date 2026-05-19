@@ -100,6 +100,10 @@ export const KPITrackerTemplate: React.FC = () => {
     md += `- Risk Posture trend: ${trendSummary(riskHistory)}\n`
     md += `- All other dimensions accept manual input.\n`
 
+    md += '\n---\n\n'
+    md +=
+      '*Aligned to NIST CSWP 39 §5.4 (Measuring Migration Progress) and §6.5 (Governance, Risk, and Compliance). https://doi.org/10.6028/NIST.CSWP.39*\n'
+
     return md
   }, [dimensions, activePersona, riskHistory, userScores])
 

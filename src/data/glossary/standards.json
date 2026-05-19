@@ -550,5 +550,69 @@
     "relatedModule": "/learn/compliance-strategy",
     "complexity": "intermediate",
     "category": "standard"
+  },
+  {
+    "term": "EAL",
+    "acronym": "Evaluation Assurance Level",
+    "definition": "Common Criteria scoring scale from EAL1 (lowest) to EAL7 (highest) that grades the depth and rigor of a product's security evaluation. Higher EAL means more design analysis, more testing, and stronger evidence requirements — not necessarily a more secure product.",
+    "complexity": "intermediate",
+    "category": "standard"
+  },
+  {
+    "term": "CSWP 39",
+    "acronym": "NIST Cybersecurity White Paper 39",
+    "definition": "NIST CSWP 39 — Considerations for Achieving Crypto Agility — Strategies and Practices (final, December 2025). Defines a 5-pillar crypto-agility model (inventory, governance, lifecycle, observability, assurance) across a 4-tier maturity ladder (Partial → Risk-Informed → Repeatable → Adaptive).",
+    "relatedModule": "/library?ref=NIST-CSWP-39",
+    "complexity": "advanced",
+    "category": "standard"
+  },
+  {
+    "term": "NIS2",
+    "acronym": "Network and Information Security Directive 2",
+    "definition": "EU directive (2022/2555) requiring enhanced cybersecurity controls across critical-infrastructure sectors. Transposition deadline October 2024; enforcement ongoing across member states. Mandates appropriate cryptographic measures without naming PQC explicitly.",
+    "complexity": "intermediate",
+    "category": "standard"
+  },
+  {
+    "term": "eIDAS",
+    "acronym": "electronic IDentification, Authentication and trust Services",
+    "definition": "EU regulation governing electronic identity and trust services across member states. eIDAS 2.0 introduces the EU Digital Identity Wallet with phased PQC-relevant milestones for high-risk and full PQC adoption.",
+    "complexity": "intermediate",
+    "category": "standard"
+  },
+  {
+    "term": "CRA",
+    "acronym": "Cyber Resilience Act",
+    "definition": "EU regulation (2024/2847) imposing cybersecurity requirements on products with digital elements. Entered force December 2024; full obligations apply 11 December 2027 (reporting obligations from September 2026).",
+    "complexity": "intermediate",
+    "category": "standard"
+  },
+  {
+    "term": "SOC 2",
+    "acronym": "Service Organization Control 2",
+    "definition": "AICPA audit framework evaluating a service provider's controls against the Trust Services Criteria (security, availability, processing integrity, confidentiality, privacy). Cryptographic-control adequacy is evaluated within the security criterion.",
+    "complexity": "beginner",
+    "category": "standard"
+  },
+  {
+    "term": "ISO/IEC 27001",
+    "acronym": "Information Security Management Systems",
+    "definition": "International standard specifying requirements for an Information Security Management System (ISMS). Annex A.10 covers cryptography. Does not mandate PQC directly but the control framework drives PQC adoption.",
+    "complexity": "beginner",
+    "category": "standard"
+  },
+  {
+    "term": "STIG",
+    "acronym": "Security Technical Implementation Guide",
+    "definition": "DISA-maintained configuration standards that lock down DoD information systems and components. STIGs prescribe specific cryptographic-suite choices, with ongoing updates to reflect CNSA 2.0 / FIPS 140-3 alignment.",
+    "complexity": "intermediate",
+    "category": "standard"
+  },
+  {
+    "term": "CSPN",
+    "acronym": "Certification de Sécurité de Premier Niveau",
+    "definition": "ANSSI's first-level security certification scheme for IT products. Faster and lighter than full Common Criteria; PQC products began entering CSPN catalogue in 2025.",
+    "complexity": "intermediate",
+    "category": "standard"
   }
 ]

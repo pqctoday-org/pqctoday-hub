@@ -1,0 +1,297 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="/css/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Cryptology ePrint Archive</title>
+    <link rel="stylesheet" href="/css/eprint.css?v=10">
+
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/img/apple-touch-icon-180x180.png" />
+    
+<link rel="alternate" type="application/rss+xml" title="RSS Feed for eprint.iacr.org"  href="/rss/rss.xml" />
+<link rel="alternate" type="application/atom+xml" title="Atom Feed for eprint.iacr.org"  href="/rss/atom.xml" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Cryptology ePrint Archive" />
+<meta property="og:description" content="The Cryptology ePrint Archive provides rapid access to recent research in cryptology." />
+<meta property="og:url" content="https://eprint.iacr.org/" />
+<meta property="og:image" content="https://eprint.iacr.org/img/apple-touch-icon-180x180.png" />
+<meta property="og:site_name" content="Cryptology ePrint Archive" />
+<style>
+ input {
+   background-color: #e8e8e8 !important;
+ }
+</style>
+
+  </head>
+
+  <body>
+    <noscript>
+      <h1 class="text-center">What a lovely hat</h1>
+      <h4 class="text-center">Is it made out of <a href="https://iacr.org/tinfoil.html">tin foil</a>?</h4>
+    </noscript>
+    <div class="fixed-top" id="topNavbar">
+      <nav class="navbar navbar-custom navbar-expand-lg">
+        <div class="container px-0 justify-content-between justify-content-lg-evenly">
+          <div class="order-0 align-items-center d-flex">
+            <button class="navbar-toggler btnNoOutline" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false">
+              <span class="icon-bar top-bar"></span>
+              <span class="icon-bar middle-bar"></span>
+              <span class="icon-bar bottom-bar"></span>
+            </button>
+            <a class="d-none me-5 d-lg-inline" href="https://iacr.org/"><img class="iacrlogo" src="/img/iacrlogo_small.png" alt="IACR Logo" style="max-width:6rem;"></a>
+          </div>
+          <a class="ePrintname order-1" href="/">
+            <span class="longNavName">Cryptology ePrint Archive</span>
+          </a>
+          <div class="collapse navbar-collapse order-3" id="navbarContent">
+            <ul class="navbar-nav me-auto ms-2 mb-2 mb-lg-0 justify-content-end w-100">
+              <li class="ps-md-3 nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Papers
+                </a>
+                <ul class="dropdown-menu me-3" aria-labelledby="navbarDropdown">
+                  <span class="text-dark mx-3" style="white-space:nowrap;">Updates from the last:</span>
+                  <li><a class="dropdown-item ps-custom" href="/days/7">7 days</a></li>
+                  <li><a class="dropdown-item ps-custom" href="/days/31">31 days</a></li>
+                  <li><a class="dropdown-item ps-custom" href="/days/183">6 months</a></li>
+                  <li><a class="dropdown-item ps-custom" href="/days/365">365 days</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="/byyear">Listing by year</a></li>
+                  <li><a class="dropdown-item" href="/complete">All papers</a></li>
+                  <li><a class="dropdown-item" href="/complete/compact">Compact view</a></li>
+                  <li><a class="dropdown-item" href="https://www.iacr.org/news/subscribe">Subscribe</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="/citation.html">How to cite</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="/rss">Harvesting metadata</a></li>
+                </ul>
+              </li>
+              <li class="ps-md-3 nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="submissionsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Submissions
+                </a>
+                <ul class="dropdown-menu me-3" aria-labelledby="submissionsDropdown">
+                  <li><a class="dropdown-item" href="/submit">Submit a paper</a></li>
+                  <li><a class="dropdown-item" href="/revise">Revise or withdraw a paper</a></li>
+                  <li><a class="dropdown-item" href="/operations.html">Acceptance and publishing conditions</a></li>
+                </ul>
+              </li>
+              <li class="ps-md-3 nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="aboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  About
+                </a>
+                <ul class="dropdown-menu me-3" aria-labelledby="aboutDropdown">
+                  <li><a class="dropdown-item" href="/about.html">Goals and history</a></li>
+                  <li><a class="dropdown-item" href="/news.html">News</a></li>
+                  <li><a class="dropdown-item" href="/stats">Statistics</a></li>
+                  <li><a class="dropdown-item" href="/contact.html">Contact</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <div class="dropdown ps-md-2 text-right order-2 order-lg-last">
+            <button class="btn btnNoOutline" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+              <img src="/img/search.svg" class="searchIcon" alt="Search Button"/>
+            </button>
+            <div id="searchDd" class="dropdown-menu dropdown-menu-end p-0" aria-labelledby="dropdownMenuButton1">
+              <form action="/search" method="GET">
+                <div class="input-group">
+                  <input id="searchbox" name="q" type="search" class="form-control" autocomplete="off">
+                  <button class="btn btn-secondary border input-group-append ml-2">
+                    Search
+                  </button>
+                </div>
+              </form>
+              <div class="ms-2 p-1 d-none"><a href="/search">Advanced search</a></div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </div>
+    <main id="eprintContent" class="container px-3 py-4 p-md-4">
+<div class="row align-items-center">
+  <div class="col-lg-7 col-xl-8 col-xxl-7 px-4 px-xxl-3 py-3">
+
+    <p class="mb-0 text-justify">
+      The Cryptology ePrint Archive provides rapid access to recent
+      research in cryptology. Papers have been placed here by the
+      authors and did not undergo any refereeing process other than
+      verifying that the work seems to be within the scope of
+      cryptology and meets some minimal acceptance criteria and
+      publishing conditions.
+    </p>
+  </div>
+  <div class="col-lg-5 col-xl-4 col-xxl-5 gx-5 pt-2 pb-3">
+      <form method="GET" action="/search">
+        <div class="input-group">
+          <input type="text" name="q" class="form-control" id="anything" aria-label="Search the Archive" value="" placeholder="Search the Archive">
+          <button class="btn btn-outline-dark" type="submit">Search</button>
+        </div>
+      </form>
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-7 col-xl-8">
+    <div class="eprintCardHeader">
+      <h3 class="mb-0">Recent papers</h3>
+    </div>
+    <div class="row">
+      
+      <div class="col-xl-6 px-4 px-xxl-3 py-2">
+        <small><a href="/2026/979">2026/979</a></small>
+        <h6 class="mb-0" style="font-size: 1.1rem"><a href="/2026/979">Improved Dual Attack via Quantum Rejection Sampling</a></h6>
+        <div class="fst-italic mt-0" style="font-size: 0.9rem">Nicholas Zhao and Cong Ling</div>
+      </div>
+      
+      <div class="col-xl-6 px-4 px-xxl-3 py-2">
+        <small><a href="/2026/978">2026/978</a></small>
+        <h6 class="mb-0" style="font-size: 1.1rem"><a href="/2026/978">Verifying Consensus Protocols from LLM-assisted TLA$^+$: A Case Study of Byzantine Reliable Broadcast</a></h6>
+        <div class="fst-italic mt-0" style="font-size: 0.9rem">Shuhe Cao, Xin Wang, Chenxu Wang, Xiao Sui, and Sisi Duan</div>
+      </div>
+      
+      <div class="col-xl-6 px-4 px-xxl-3 py-2">
+        <small><a href="/2026/977">2026/977</a></small>
+        <h6 class="mb-0" style="font-size: 1.1rem"><a href="/2026/977">ThriftyMPC: Reducing the Cost of Large-Scale MPC in the Cloud</a></h6>
+        <div class="fst-italic mt-0" style="font-size: 0.9rem">David Inyangson, Sahbaaz Ansari, Tushar M. Jois, Rosario Gennaro, Gamze Gursoy, Gabriel Kaptchuk, Moti Yung, and Diogo Barradas</div>
+      </div>
+      
+      <div class="col-xl-6 px-4 px-xxl-3 py-2">
+        <small><a href="/2026/976">2026/976</a></small>
+        <h6 class="mb-0" style="font-size: 1.1rem"><a href="/2026/976">Revisiting DKLs Threshold ECDSA: Enhanced OT-based VOLE and Two-Party Signing</a></h6>
+        <div class="fst-italic mt-0" style="font-size: 0.9rem">Gilad Asharov</div>
+      </div>
+      
+    </div>
+  </div>
+  <div class="col-lg-5 col-xl-4">
+    <div class="eprintCardHeader">
+      <h3 class="mb-0">Submissions</h3>
+    </div>
+    <div class="eprintCardContent">
+      <p>
+        Have you submitted a paper, or are you interested in learning more
+        about submitting? You can also learn more about our <a href="/operations.html">acceptance and publishing conditions</a>
+      </p>
+      <div class="d-flex flex-column flex-md-row justify-content-around d-grid gap-2 my-4">
+        <a href="/submit" class="btn btn-outline-dark">
+          Submit a paper
+        </a>
+        <a href="/revise" class="btn btn-outline-dark">
+          Revise or withdraw
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6 col-xxl-4">
+    <div class="eprintCardHeader">
+      <h3 class="mb-0">Retrieve papers</h3>
+    </div>
+    <div class="eprintCardContent">
+      <p>
+        You can view the Cryptology ePrint Archive papers that were added:
+      </p>
+      <ul class="list-unstyled ps-3">
+        <li>
+          In the <a href="/days/7">last week</a>
+        </li>
+        <li>
+          In the <a href="/days/31">last month</a>
+        </li>
+        <li>
+          In the <a href="/days/183">last six months</a>
+        </li>
+        <li>
+          In the <a href="/curr/">current calendar year</a>
+        </li>
+      </ul>
+      <p>
+        You can also view <a href="/byyear">listings by year</a>,
+        <a href="/complete/">the complete contents</a>, or a
+        <a href="/complete/compact">compact view</a>. If you are looking for a
+        specific paper, use the search bar on the menu at the top of the page.
+      </p>
+    </div>
+  </div>
+  <div class="col-md-6 col-xxl-4">
+    <div class="eprintCard">
+      <div class="eprintCardHeader">
+        <h3 class="mb-0">News</h3>
+      </div>
+      <div class="eprintCardContent">
+        <dl>
+          <dt>10 Dec 2024</td>
+          <dd>Sofía Celi joins as new co-editor.</dd>
+          <dt>19 Oct 2023</dt>
+	  <dd>Matthias J. Kannwischer joins as new co-editor and replaces
+		  Tancr&egrave;de Lepoint.</dd>
+          <dt>20 Dec 2022</dt>
+          <dd><a href="/rss">New RSS feeds ordered by publication date</a></dd>
+          <dt>26 May 2022</dt>
+          <dd>By popular demand, the <a href="/complete/compact">compact view</a> view is back.</dd>
+          <dt>25 Apr 2022</dt>
+          <dd>Cryptology ePrint Archive has been rewritten in Python.</dd>
+          <dt>28 Sep 2021</dt>
+          <dd>Cryptology ePrint Archive now supports UTF-8.</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6 col-xxl-4">
+    <div class="eprintCardHeader">
+      <h3 class="mb-0">About</h3>
+    </div>
+    <div class="eprintCardContent">
+      <p>
+        For more than 20 years, the Cryptology ePrint Archive has been publishing pre-print papers relevant to the field of cryptology. You can read more about our <a href="/about.html">goals and history</a>, see our <a href="/operations.html">acceptance and publishing conditions</a>, check out <a href="/stats">some statistics</a>, or <a href="contact.html">contact us</a>.
+      </p>
+      <h5 class="mt-4 mb-3">Current Editors</h5>
+      <div class="row">
+        <div class="col-4 mx-auto text-center">
+          <img class="img-fluid mb-2" style="border-radius:50%;" src="/img/bos.png">
+          <small><a target="_blank" href="https://www.joppebos.com">Joppe W. Bos</a></small>
+        </div>
+        <div class="col-4 mx-auto text-center">
+          <img class="img-fluid mb-2" style="width: 100%;border-radius:50%;" src="/img/celi.png"><br>
+          <small><a target="_blank" href="https://sofiaceli.com/">Sofía Celi</a></small>
+        </div>
+        <div class="col-4 mx-auto text-center">
+          <img src="/img/mjk2023.jpg" class="img-fluid mb-2" style="border-radius: 50%;">
+          <small><a target="_blank" href="https://kannwischer.eu">Matthias J. Kannwischer</a></small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+<div class="container-fluid mt-auto" id="eprintFooter">
+  <a href="https://iacr.org/">
+    <img id="iacrlogo" src="/img/iacrlogo_small.png" class="img-fluid d-block mx-auto" alt="IACR Logo">
+  </a>
+  <div class="colorDiv"></div>
+  <div class="alert alert-success w-75 mx-auto">
+    Note: In order to protect the privacy of readers, eprint.iacr.org
+    does not use cookies or embedded third party content.
+  </div>
+</div>
+<script src="/css/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script>
+   var topNavbar = document.getElementById('topNavbar');
+   if (topNavbar) {
+     document.addEventListener('scroll', function(e) {
+       if (window.scrollY > 100) {
+         topNavbar.classList.add('scrolled');
+       } else {
+         topNavbar.classList.remove('scrolled');
+       }
+     })
+   }
+  </script>
+
+
+</body>
+</html>

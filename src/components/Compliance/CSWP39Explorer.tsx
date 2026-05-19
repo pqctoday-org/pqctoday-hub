@@ -15,6 +15,7 @@ import { CryptoAgilityProcessDiagram } from '@/components/PKILearning/modules/Cr
 import { CSWP39_STEPS, CSWP39_TIERS, CSWP39_CROSS_WALK, CSWP39_SOURCE_METADATA } from './cswp39Data'
 import { CSWP39StepCard } from './CSWP39StepCard'
 import { MaturityEvidenceGrid } from './MaturityEvidenceGrid'
+import { PillarDisclaimer } from '@/components/BusinessCenter/widgets/PillarDisclaimer'
 import { maturityRequirements } from '@/data/maturityGovernanceData'
 
 interface CSWP39ExplorerProps {
@@ -63,6 +64,39 @@ export const CSWP39Explorer: React.FC<CSWP39ExplorerProps> = ({
 }) => {
   const navigate = useNavigate()
   const uniqueSources = useMemo(() => new Set(maturityRequirements.map((r) => r.refId)).size, [])
+
+  // CSWP-39 slice — used to render the KPI bar inside the Authoritative
+  // Evidence section. The grid below still renders all sources so users can
+  // compare CSWP-39 against the other catalogued frameworks side-by-side.
+  const cswpRequirements = useMemo(
+    () =>
+      maturityRequirements.filter(
+        (r) => /CSWP\s*39/i.test(r.sourceName) || /CSWP\s*39/i.test(r.refId)
+      ),
+    []
+  )
+
+  const kpi = useMemo(() => {
+    // 4 levels × 5 pillars = 20 cells in the canonical agility grid.
+    // Coverage is the share of those 20 cells that have at least one CSWP-39 row.
+    const populated = new Set(cswpRequirements.map((r) => `${r.maturityLevel}:${r.pillar}`)).size
+    const confidenceMap = { low: 25, medium: 60, high: 95 } as const
+    const confidenceSum = cswpRequirements.reduce(
+      (sum, r) => sum + (confidenceMap[r.confidence] ?? 0),
+      0
+    )
+    const meanConfidence = cswpRequirements.length
+      ? Math.round(confidenceSum / cswpRequirements.length)
+      : 0
+    return {
+      populated,
+      total: 20,
+      coverage: Math.round((populated / 20) * 100),
+      meanConfidence,
+      recordCount: cswpRequirements.length,
+    }
+  }, [cswpRequirements])
+
   return (
     <div className="space-y-6">
       {/* Overview banner */}
@@ -164,6 +198,7 @@ export const CSWP39Explorer: React.FC<CSWP39ExplorerProps> = ({
               onFrameworkChipClick={onNavigateToFramework}
             />
           ))}
+          <PillarDisclaimer className="px-1 pt-2" />
         </div>
       </section>
 
@@ -295,12 +330,49 @@ export const CSWP39Explorer: React.FC<CSWP39ExplorerProps> = ({
             </p>
           </div>
         </div>
+
+        {/* CSWP-39-scoped KPI bar — coverage of the 4 × 5 canonical agility grid,
+         * mean extraction confidence, and source-row count. Filter intentionally
+         * narrower than the grid below so the bar describes the CSWP-39 slice
+         * specifically while the grid still surfaces all catalogued frameworks. */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4 p-4 bg-muted/30 rounded-lg border border-border">
+          <KpiCell
+            label="CSWP-39 grid coverage"
+            value={`${kpi.coverage}%`}
+            sub={`${kpi.populated}/${kpi.total} cells populated`}
+          />
+          <KpiCell
+            label="Mean confidence"
+            value={`${kpi.meanConfidence}/100`}
+            sub={
+              kpi.recordCount > 0
+                ? 'across extracted CSWP-39 requirements'
+                : 'no CSWP-39 requirements extracted yet'
+            }
+          />
+          <KpiCell
+            label="CSWP-39 source records"
+            value={String(kpi.recordCount)}
+            sub="rows in the CSWP-39 slice"
+          />
+        </div>
+
         <MaturityEvidenceGrid
           requirements={maturityRequirements}
           initialRefFilter={evref}
           onClearRefFilter={onClearEvref}
         />
       </section>
+    </div>
+  )
+}
+
+function KpiCell({ label, value, sub }: { label: string; value: string; sub: string }) {
+  return (
+    <div>
+      <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
+      <div className="text-2xl font-semibold text-foreground mt-1">{value}</div>
+      <div className="text-xs text-muted-foreground mt-1">{sub}</div>
     </div>
   )
 }

@@ -451,6 +451,9 @@ const MODULE_DIR_TO_ID: Record<string, string> = {
   SecureBootPQC: 'secure-boot-pqc',
   StandardsBodies: 'standards-bodies',
   PQCTestingValidation: 'pqc-testing-validation',
+  MLSGroupMessaging: 'mls-group-messaging',
+  PKIEnrollmentProtocols: 'pki-enrollment-protocols',
+  PQCCandidates: 'pqc-candidates',
 }
 
 // ---------------------------------------------------------------------------
@@ -1776,6 +1779,11 @@ const MODULE_NAME_MAP: Record<string, string> = {
   SecureBootPQC: 'Secure Boot & Firmware PQC',
   StandardsBodies: 'Standards, Certification & Compliance Bodies',
   PQCTestingValidation: 'PQC Network Testing & Validation',
+  CryptoMgmtModernization: 'Cryptographic Management & Modernization',
+  SLHDSAModule: 'SLH-DSA (Stateless Hash-Based Signatures)',
+  MLSGroupMessaging: 'MLS — Group Messaging',
+  PKIEnrollmentProtocols: 'PKI Enrollment Protocols (EST & CMP)',
+  PQCCandidates: 'PQC Candidates & Standardisation Lifecycle',
 }
 
 /**

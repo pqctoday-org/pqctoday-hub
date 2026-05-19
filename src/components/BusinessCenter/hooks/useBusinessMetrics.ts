@@ -16,6 +16,7 @@ import type {
 import { complianceFrameworks, type ComplianceFramework } from '@/data/complianceData'
 import {
   applicableFrameworks,
+  expandIndustriesForMatching,
   type ApplicabilityTier,
   type UserProfile,
 } from '@/utils/applicabilityEngine'
@@ -91,6 +92,8 @@ export const PILLAR_SOURCE_MODULES: Record<string, Record<ExecutiveDocumentType,
     'kpi-dashboard': 'pqc-governance',
     'stakeholder-comms': 'migration-program',
     'kpi-tracker': 'migration-program',
+    'mti-negotiator': 'crypto-mgmt-modernization',
+    'cloud-responsibility-matrix': 'crypto-mgmt-modernization',
   } as Record<ExecutiveDocumentType, string>,
   vendor: {
     'vendor-scorecard': 'vendor-risk',
@@ -100,6 +103,8 @@ export const PILLAR_SOURCE_MODULES: Record<string, Record<ExecutiveDocumentType,
   architecture: {
     'migration-roadmap': 'migration-program',
     'deployment-playbook': 'migration-program',
+    'hybrid-transition': 'crypto-mgmt-modernization',
+    'crypto-api-refactor': 'crypto-mgmt-modernization',
   } as Record<ExecutiveDocumentType, string>,
 }
 
@@ -171,10 +176,72 @@ const TIER_PRIORITY: Record<ApplicabilityTier, number> = {
  * Used by GovernanceWire + RiskManagementWire — keep both in sync via this
  * helper, do not inline equivalent logic.
  */
+export interface HiddenFrameworkEntry {
+  id: string
+  name: string
+  /** Short, glanceable explanation of which dimension(s) filtered the framework
+   *  out of the user's jurisdiction view — e.g. "applies to United States only
+   *  (country mismatch)" or "country + industry mismatch". */
+  reason: string
+}
+
 export interface ApplicableFrameworksView {
   visible: TrackedFramework[]
   hiddenCount: number
   hasContext: boolean
+  /** Frameworks dropped by the applicability filter, with a per-item reason
+   *  for the HiddenFrameworksToggle widget. Same total as `hiddenCount`. */
+  hidden: HiddenFrameworkEntry[]
+}
+
+/** Build a short human reason for why a framework is hidden, by checking which
+ *  applicability dimension (country, industry, or both) failed for the user's
+ *  profile. Designed for the small expander panel — keep terse, no jargon. */
+function describeHiddenReason(
+  framework: TrackedFramework,
+  industry: string,
+  country: string
+): string {
+  const userIndustry = industry.trim()
+  const userCountry = country.trim()
+  const fwCountries = framework.countries ?? []
+  const fwIndustries = framework.industries ?? []
+
+  const countryUniversal = fwCountries.length === 0 || fwCountries.includes('Global')
+  // Mirror the engine's industry-universal heuristic so the reason stays
+  // consistent with what `applicableFrameworks` actually evaluates.
+  const industryUniversal = fwIndustries.length === 0 || fwIndustries.length >= 3
+  const expandedFwIndustries = expandIndustriesForMatching(fwIndustries)
+
+  const countryMismatch = !!userCountry && !countryUniversal && !fwCountries.includes(userCountry)
+  const industryMismatch =
+    !!userIndustry && !industryUniversal && !expandedFwIndustries.includes(userIndustry)
+
+  if (countryMismatch && industryMismatch) {
+    return 'country + industry mismatch'
+  }
+  if (countryMismatch) {
+    if (fwCountries.length === 1) {
+      return `applies to ${fwCountries[0]} only (country mismatch)`
+    }
+    if (fwCountries.length > 1 && fwCountries.length <= 3) {
+      return `applies to ${fwCountries.join(', ')} (country mismatch)`
+    }
+    return 'country mismatch'
+  }
+  if (industryMismatch) {
+    if (fwIndustries.length === 1) {
+      return `${fwIndustries[0]} framework (industry mismatch)`
+    }
+    if (fwIndustries.length > 1 && fwIndustries.length <= 3) {
+      return `${fwIndustries.join(', ')} framework (industry mismatch)`
+    }
+    return 'industry mismatch'
+  }
+  // Fallback when neither dimension cleanly explains the drop — shouldn't
+  // happen in practice because the engine only filters out items with no
+  // applicability signal at all.
+  return 'not applicable to your profile'
 }
 
 export function selectApplicableFrameworks(
@@ -184,7 +251,7 @@ export function selectApplicableFrameworks(
 ): ApplicableFrameworksView {
   const hasContext = Boolean(industry || country)
   if (!hasContext) {
-    return { visible: trackedFrameworks, hiddenCount: 0, hasContext }
+    return { visible: trackedFrameworks, hiddenCount: 0, hasContext, hidden: [] }
   }
   const visible = trackedFrameworks
     .filter((f) => f.applicability !== null)
@@ -194,7 +261,14 @@ export function selectApplicableFrameworks(
       if (ta !== tb) return ta - tb
       return (a.daysUntilDeadline ?? Infinity) - (b.daysUntilDeadline ?? Infinity)
     })
-  return { visible, hiddenCount: trackedFrameworks.length - visible.length, hasContext }
+  const hidden: HiddenFrameworkEntry[] = trackedFrameworks
+    .filter((f) => f.applicability === null)
+    .map((f) => ({
+      id: f.id,
+      name: f.label,
+      reason: describeHiddenReason(f, industry, country),
+    }))
+  return { visible, hiddenCount: hidden.length, hasContext, hidden }
 }
 
 export interface InfraLayerCoverage {

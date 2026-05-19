@@ -227,10 +227,10 @@ describe('buildCategoryDriversDefault', () => {
       },
     })
     const out = buildCategoryDriversDefault(data)
-    expect(out).toContain('Quantum Exposure — 80/100')
-    expect(out).toContain('Migration Complexity — 55/100')
-    expect(out).toContain('Regulatory Pressure — 90/100')
-    expect(out).toContain('Organizational Readiness — 40/100')
+    expect(out).toContain('Quantum Exposure - 80/100')
+    expect(out).toContain('Migration Complexity - 55/100')
+    expect(out).toContain('Regulatory Pressure - 90/100')
+    expect(out).toContain('Organizational Readiness - 40/100')
   })
 })
 
@@ -248,9 +248,37 @@ describe('buildAlgorithmMigrationsDefault', () => {
       ],
     })
     const out = buildAlgorithmMigrationsDefault(data)
-    expect(out).toContain('RSA-2048 → ML-KEM-768')
+    expect(out).toContain('RSA-2048 -> ML-KEM-768')
     expect(out).toContain('immediate')
     expect(out).toContain('vulnerable')
+  })
+
+  it('uses ASCII [VULN] marker for quantum-vulnerable rows (PDF latin1-safe)', () => {
+    const data = makeData({
+      algorithmMigrations: [
+        {
+          classical: 'RSA-2048',
+          quantumVulnerable: true,
+          replacement: 'ML-KEM-768',
+          urgency: 'immediate',
+          notes: 'Replace in TLS.',
+        },
+        {
+          classical: 'AES-256',
+          quantumVulnerable: false,
+          replacement: 'AES-256',
+          urgency: 'long-term',
+          notes: 'Symmetric, increase key size only.',
+        },
+      ],
+    })
+    const out = buildAlgorithmMigrationsDefault(data)
+    // jsPDF Helvetica is latin1-only: the warning emoji and bullet glyph
+    // silently corrupt to '?'. We use ASCII markers instead.
+    expect(out).toContain('[VULN] vulnerable')
+    expect(out).not.toMatch(/⚠/)
+    expect(out).not.toMatch(/•/)
+    expect(out).not.toMatch(/—/)
   })
 })
 
@@ -349,6 +377,7 @@ describe('buildPeerBenchmarkDefault', () => {
           industries: [],
           countries: [],
           requiresPQC: true,
+          pqcRequirement: 'yes',
           deadline: '2035',
           deadlinePhase: 'mid',
           notes: '',

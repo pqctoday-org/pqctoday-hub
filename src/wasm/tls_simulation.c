@@ -909,13 +909,8 @@ cleanup:
   return log_buffer;
 }
 
-// Dummy CMP functions to satisfy linker
-typedef struct options_st {
-  const char *name;
-  int retval;
-  int valType;
-} OPTIONS;
-
-int cmp_main(int argc, char **argv) { return 0; }
-
-const OPTIONS cmp_options[] = {{NULL}};
+// Previously this file defined dummy cmp_main / cmp_options stubs because
+// apps/openssl-bin-cmp.o was excluded from the link to avoid pulling in the
+// mock-server test fixtures. The PKI Enrollment Protocols workshop now uses
+// the real `openssl cmp` subcommand (with -use_mock_srv), so the real
+// cmp_main from apps/openssl-bin-cmp.o is linked and these stubs are gone.

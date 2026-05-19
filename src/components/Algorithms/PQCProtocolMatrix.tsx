@@ -5,12 +5,15 @@ import {
   PROTOCOL_MATRIX,
   PROTOCOL_MATRIX_LAST_UPDATED,
   TRANSPORT_ISSUES,
+  DRAFT_STAGE_LEVEL,
+  DRAFT_STAGE_SHORT,
   type DeploymentPosture,
   type DimensionStatusValue,
   type LiveDeployment,
   type TestabilityValue,
   type ProtocolMatrixRow,
   type DimensionStatus,
+  type DimensionRef,
   type OssLibrary,
   type PlaygroundTool,
 } from '../../data/pqcProtocolMatrix'
@@ -35,6 +38,18 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ProtocolDetailModal } from './ProtocolDetailModal'
+import { WORKSHOP_TOOLS } from '@/components/Playground/workshopRegistry'
+
+// Resolve the canonical destination for a matrix PlaygroundTool cell.
+// Priority: explicit per-cell `url` > registry `moduleLink` > playground fallback.
+// Without this, every cell would hit `/playground/<toolId>`, which for several
+// tools (e.g. pki-enrollment) is a minimal preview rather than the full workshop.
+const WORKSHOP_TOOL_LINKS: Record<string, string> = Object.fromEntries(
+  WORKSHOP_TOOLS.map((t) => [t.id, t.moduleLink])
+)
+function resolveToolLink(tool: PlaygroundTool): string {
+  return tool.url ?? WORKSHOP_TOOL_LINKS[tool.toolId] ?? `/playground/${tool.toolId}`
+}
 import { libraryData } from '../../data/libraryData'
 
 /* Build a Set of library reference_ids once at module load. Used to decide
@@ -120,6 +135,17 @@ type ViewMode = 'heatmap' | 'detailed'
 
 interface DimensionBadgeProps {
   status: DimensionStatus
+  /** When true, drop the per-cell ref chips + stage caption — chip tooltip + modal carry them. */
+  compact?: boolean
+}
+
+/** Short display label for a draft slug: drop the boilerplate prefix so the
+ *  meaningful WG / topic stays visible in narrow heatmap cells. RFCs return
+ *  unchanged. Exported for unit-test KATs. */
+export function shortRefLabel(id: string): string {
+  if (id.startsWith('draft-ietf-')) return id.slice('draft-ietf-'.length)
+  if (id.startsWith('draft-')) return id.slice('draft-'.length)
+  return id
 }
 
 function dimensionLabel(value: DimensionStatusValue): string {
@@ -149,6 +175,37 @@ function dimensionTone(value: DimensionStatusValue): string {
       return 'bg-status-error/10 text-status-error border-status-error/30'
     case 'na':
       return 'bg-muted text-muted-foreground border-border'
+  }
+}
+
+/**
+ * Stage-aware graduated heatmap palette (0–7). When a DimensionStatus has a
+ * `stage`, the matrix renders this finer gradient instead of the 5-bucket
+ * coarse coloring. Uses semantic tokens only — no raw palette classes (see
+ * CLAUDE.md UX rules).
+ */
+function dimensionStageTone(status: DimensionStatus): string {
+  if (!status.stage) return dimensionTone(status.value)
+  const level = DRAFT_STAGE_LEVEL[status.stage]
+  switch (level) {
+    case 0:
+      return 'bg-muted text-muted-foreground border-border'
+    case 1:
+      return 'bg-status-error/15 text-status-error border-status-error/30'
+    case 2:
+      return 'bg-status-warning/10 text-status-warning border-status-warning/30'
+    case 3:
+      return 'bg-status-warning/20 text-status-warning border-status-warning/40'
+    case 4:
+      return 'bg-primary/10 text-primary border-primary/30'
+    case 5:
+      return 'bg-primary/20 text-primary border-primary/40'
+    case 6:
+      return 'bg-status-success/15 text-status-success border-status-success/30'
+    case 7:
+      return 'bg-status-success/30 text-status-success border-status-success/50'
+    default:
+      return dimensionTone(status.value)
   }
 }
 
@@ -192,18 +249,94 @@ function DeploymentBadge({ status }: { status: DimensionStatus }) {
   )
 }
 
-function DimensionBadge({ status }: DimensionBadgeProps) {
-  return (
-    <div className="flex flex-wrap items-center gap-1">
-      <span
-        className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium ${dimensionTone(
-          status.value
-        )}`}
-        title={status.note}
+/** Compact chip for a per-cell RFC/draft reference. Single line; full id + title in tooltip.
+ *  Draft slugs strip the `draft-`/`draft-ietf-` prefix in the visible label to keep cells narrow. */
+function DimensionRefChip({ cellRef }: { cellRef: DimensionRef }) {
+  const tone =
+    cellRef.kind === 'rfc'
+      ? 'bg-status-success/10 text-status-success border-status-success/30 hover:bg-status-success/20'
+      : cellRef.kind === 'spec'
+        ? 'bg-accent/10 text-accent border-accent/30 hover:bg-accent/20'
+        : 'bg-primary/10 text-primary border-primary/30 hover:bg-primary/20'
+  const display = shortRefLabel(cellRef.id)
+  const titleText = [
+    cellRef.id !== display ? cellRef.id : null,
+    cellRef.title,
+    cellRef.publishedOn ? `(${cellRef.publishedOn})` : null,
+  ]
+    .filter(Boolean)
+    .join(' — ')
+  if (cellRef.url) {
+    return (
+      <a
+        href={cellRef.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`inline-flex max-w-full items-center gap-1 truncate rounded border px-1.5 py-0 text-[10px] font-medium transition-colors ${tone}`}
+        title={titleText || cellRef.id}
       >
-        {dimensionLabel(status.value)}
-      </span>
-      <DeploymentBadge status={status} />
+        <FileText size={9} className="shrink-0" />
+        <span className="truncate">{display}</span>
+      </a>
+    )
+  }
+  return (
+    <span
+      className={`inline-flex max-w-full items-center gap-1 truncate rounded border px-1.5 py-0 text-[10px] font-medium ${tone}`}
+      title={titleText || cellRef.id}
+    >
+      <FileText size={9} className="shrink-0" />
+      <span className="truncate">{display}</span>
+    </span>
+  )
+}
+
+function DimensionBadge({ status, compact = false }: DimensionBadgeProps) {
+  const useStage = Boolean(status.stage)
+  const toneClass = useStage ? dimensionStageTone(status) : dimensionTone(status.value)
+  const stageLabel = status.stage ? DRAFT_STAGE_SHORT[status.stage] : null
+  const stageLevel = status.stage ? DRAFT_STAGE_LEVEL[status.stage] : null
+  // Build a comprehensive tooltip so compact mode loses nothing — hover gives
+  // the stageNote, plain note, and ref IDs at a glance.
+  const tooltipParts = [
+    status.stageNote,
+    status.note,
+    status.refs && status.refs.length > 0
+      ? `Refs: ${status.refs.map((r) => r.id).join(', ')}`
+      : null,
+  ].filter(Boolean) as string[]
+  const tooltip = tooltipParts.length > 0 ? tooltipParts.join(' · ') : undefined
+  return (
+    <div className="flex flex-col gap-1">
+      <div className="flex flex-wrap items-center gap-1">
+        <span
+          className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium ${toneClass}`}
+          title={tooltip}
+        >
+          {stageLabel ? (
+            <>
+              <span className="font-semibold tabular-nums">{stageLevel}</span>
+              <span className="opacity-50">·</span>
+              <span>{stageLabel}</span>
+            </>
+          ) : (
+            dimensionLabel(status.value)
+          )}
+        </span>
+        <DeploymentBadge status={status} />
+      </div>
+      {!compact && status.refs && status.refs.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {status.refs.map((r) => (
+            <DimensionRefChip key={r.id} cellRef={r} />
+          ))}
+        </div>
+      )}
+      {!compact && status.stageNote && useStage && (
+        <span className="text-[10px] leading-tight text-muted-foreground line-clamp-2">
+          {status.stageNote}
+        </span>
+      )}
     </div>
   )
 }
@@ -270,7 +403,13 @@ function TestabilityChip({
   )
 }
 
-function PlaygroundCell({ tools }: { tools: PlaygroundTool[] }) {
+function PlaygroundCell({
+  tools,
+  compact = false,
+}: {
+  tools: PlaygroundTool[]
+  compact?: boolean
+}) {
   if (tools.length === 0) {
     return (
       <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
@@ -282,40 +421,42 @@ function PlaygroundCell({ tools }: { tools: PlaygroundTool[] }) {
   return (
     <div className="flex flex-col gap-1">
       <Link
-        to={`/playground/${primary.toolId}`}
+        to={resolveToolLink(primary)}
         className="inline-flex items-center gap-1.5 rounded-md border border-primary/30 bg-primary/10 px-2 py-1 text-xs font-medium text-primary transition-colors hover:bg-primary/20"
       >
         <FlaskConical size={12} />
         {primary.toolName}
       </Link>
-      <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] leading-tight">
-        <TestabilityChip
-          label="pKEM"
-          value={primary.testability.pureKem}
-          note={primary.pureKemNote}
-        />
-        <TestabilityChip
-          label="hKEM"
-          value={primary.testability.hybridKem}
-          note={primary.hybridKemNote}
-        />
-        <TestabilityChip
-          label="pSig"
-          value={primary.testability.pureSig}
-          note={primary.pureSigNote}
-        />
-        <TestabilityChip
-          label="hSig"
-          value={primary.testability.hybridSig}
-          note={primary.hybridSigNote}
-        />
-      </div>
+      {!compact && (
+        <div className="flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] leading-tight">
+          <TestabilityChip
+            label="pKEM"
+            value={primary.testability.pureKem}
+            note={primary.pureKemNote}
+          />
+          <TestabilityChip
+            label="hKEM"
+            value={primary.testability.hybridKem}
+            note={primary.hybridKemNote}
+          />
+          <TestabilityChip
+            label="pSig"
+            value={primary.testability.pureSig}
+            note={primary.pureSigNote}
+          />
+          <TestabilityChip
+            label="hSig"
+            value={primary.testability.hybridSig}
+            note={primary.hybridSigNote}
+          />
+        </div>
+      )}
       {secondary.length > 0 && (
         <div className="flex flex-wrap gap-1 pt-0.5">
           {secondary.map((s) => (
             <Link
               key={s.toolId}
-              to={`/playground/${s.toolId}`}
+              to={resolveToolLink(s)}
               className="inline-flex items-center gap-1 rounded-md border border-accent/30 bg-accent/5 px-1.5 py-0.5 text-[10px] text-accent transition-colors hover:bg-accent/15"
               title={s.toolName}
             >
@@ -329,7 +470,19 @@ function PlaygroundCell({ tools }: { tools: PlaygroundTool[] }) {
   )
 }
 
-function DocList({ docs, label }: { docs: ProtocolMatrixRow['latestRelease']; label: string }) {
+/** Horizontal compact chip flow for the row-level Latest Release / Latest Draft
+ *  columns in the detailed view. Strips draft prefix in the visible label, full
+ *  ID + title + date in tooltip. Caps at 3 visible chips with a "+N more"
+ *  affordance that links into the row's detail modal. */
+function DocList({
+  docs,
+  label,
+  onMore,
+}: {
+  docs: ProtocolMatrixRow['latestRelease']
+  label: string
+  onMore?: () => void
+}) {
   if (docs.length === 0) {
     return (
       <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
@@ -337,23 +490,41 @@ function DocList({ docs, label }: { docs: ProtocolMatrixRow['latestRelease']; la
       </span>
     )
   }
+  const visible = docs.slice(0, 3)
+  const hiddenCount = docs.length - visible.length
   return (
-    <div className="flex flex-col gap-1.5">
-      {docs.map((d) => (
-        <div key={d.id} className="flex flex-col gap-0.5">
+    <div className="flex flex-wrap gap-1">
+      {visible.map((d) => {
+        const display = shortRefLabel(d.id)
+        const tooltip = [d.id !== display ? d.id : null, d.title, d.date]
+          .filter(Boolean)
+          .join(' — ')
+        return (
           <a
+            key={d.id}
             href={resolveDocHref(d.id)}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-start gap-1 text-xs text-primary hover:underline"
-            title={`${label}: ${d.title} — opens in library`}
+            className="inline-flex max-w-full items-center gap-1 truncate rounded border border-primary/30 bg-primary/10 px-1.5 py-0 text-[10px] font-medium text-primary transition-colors hover:bg-primary/20"
+            title={`${label}: ${tooltip}`}
           >
-            <FileText size={11} className="mt-0.5 shrink-0" />
-            <span className="font-medium">{d.id}</span>
+            <FileText size={9} className="shrink-0" />
+            <span className="truncate">{display}</span>
           </a>
-          <span className="text-[10px] leading-tight text-muted-foreground">{d.date}</span>
-        </div>
-      ))}
+        )
+      })}
+      {hiddenCount > 0 && (
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={onMore}
+          className="h-auto rounded border border-border bg-muted/30 px-1.5 py-0 text-[10px] font-medium text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+          title={`${hiddenCount} more — click to open details`}
+        >
+          +{hiddenCount} more
+        </Button>
+      )}
     </div>
   )
 }
@@ -407,14 +578,14 @@ function DeploymentChip({ deployment }: { deployment: LiveDeployment }) {
 }
 
 function AvailabilityBadge({ count, tone }: { count: number; tone: 'oss' | 'commercial' }) {
-  const label = tone === 'oss' ? 'OSS' : 'Comm.'
+  const longLabel = tone === 'oss' ? 'open-source' : 'commercial'
   if (count === 0) {
     return (
       <span
         className="inline-flex items-center gap-1 rounded-md border border-status-error/30 bg-status-error/10 px-2 py-0.5 text-xs font-medium text-status-error"
-        title={`No ${tone === 'oss' ? 'open-source' : 'commercial'} implementation chipped`}
+        title={`No ${longLabel} implementation chipped`}
       >
-        ✗ {label}
+        ✗ 0
       </span>
     )
   }
@@ -424,10 +595,10 @@ function AvailabilityBadge({ count, tone }: { count: number; tone: 'oss' | 'comm
       : 'border-status-warning/30 bg-status-warning/15 text-status-warning'
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium ${toneClass}`}
-      title={`${count} ${tone === 'oss' ? 'open-source' : 'commercial'} implementation${count === 1 ? '' : 's'}`}
+      className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium tabular-nums ${toneClass}`}
+      title={`${count} ${longLabel} implementation${count === 1 ? '' : 's'}`}
     >
-      ✓ {count} {label}
+      ✓ {count}
     </span>
   )
 }
@@ -569,20 +740,70 @@ export function PQCProtocolMatrix() {
             </Button>
           </div>
         </div>
-        <div className="flex flex-wrap gap-2 pt-1 text-xs">
-          <span className="rounded-md bg-status-success/15 border border-status-success/30 text-status-success px-2 py-0.5">
-            ✓ RFC = published standard
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1 text-[11px]">
+          <span className="text-muted-foreground">IETF stage</span>
+          <div className="inline-flex overflow-hidden rounded-md border border-border text-[10px] tabular-nums">
+            <span className="bg-muted px-1.5 py-0.5 text-muted-foreground" title="0 — no PQC track">
+              0
+            </span>
+            <span
+              className="bg-status-error/15 px-1.5 py-0.5 text-status-error"
+              title="1 — problem identified, no WG draft"
+            >
+              1
+            </span>
+            <span
+              className="bg-status-warning/10 px-1.5 py-0.5 text-status-warning"
+              title="2 — experimental / non-IETF"
+            >
+              2
+            </span>
+            <span
+              className="bg-status-warning/20 px-1.5 py-0.5 text-status-warning"
+              title="3 — Individual Internet-Draft"
+            >
+              3
+            </span>
+            <span
+              className="bg-primary/10 px-1.5 py-0.5 text-primary"
+              title="4 — WG document / WG Last Call"
+            >
+              4
+            </span>
+            <span
+              className="bg-primary/20 px-1.5 py-0.5 text-primary"
+              title="5 — Submitted to IESG"
+            >
+              5
+            </span>
+            <span
+              className="bg-status-success/15 px-1.5 py-0.5 text-status-success"
+              title="6 — IETF Last Call / RFC Editor queue"
+            >
+              6
+            </span>
+            <span
+              className="bg-status-success/30 px-1.5 py-0.5 text-status-success"
+              title="7 — RFC published / final spec"
+            >
+              7
+            </span>
+          </div>
+          <span className="text-muted-foreground">0 None → 7 RFC</span>
+          <span className="ml-2 text-muted-foreground">Coarse fallback</span>
+          <span className="rounded border border-status-success/30 bg-status-success/15 px-1.5 py-0.5 text-status-success">
+            ✓ RFC
           </span>
-          <span className="rounded-md bg-primary/15 border border-primary/30 text-primary px-2 py-0.5">
-            ⊳ Draft = active IETF/TCG draft
+          <span className="rounded border border-primary/30 bg-primary/15 px-1.5 py-0.5 text-primary">
+            ⊳ Draft
           </span>
-          <span className="rounded-md bg-status-warning/15 border border-status-warning/30 text-status-warning px-2 py-0.5">
-            ⚠ Experimental
+          <span className="rounded border border-status-warning/30 bg-status-warning/15 px-1.5 py-0.5 text-status-warning">
+            ⚠ Exp
           </span>
-          <span className="rounded-md bg-status-error/10 border border-status-error/30 text-status-error px-2 py-0.5">
+          <span className="rounded border border-status-error/30 bg-status-error/10 px-1.5 py-0.5 text-status-error">
             ✗ None
           </span>
-          <span className="rounded-md bg-muted text-muted-foreground border border-border px-2 py-0.5">
+          <span className="rounded border border-border bg-muted px-1.5 py-0.5 text-muted-foreground">
             — N/A
           </span>
         </div>
@@ -731,18 +952,16 @@ export function PQCProtocolMatrix() {
               <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Live Deployments
               </th>
-              {!isHeatmap && (
-                <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Playground
-                </th>
-              )}
+              <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Playground
+              </th>
             </tr>
           </thead>
           <tbody>
             {filteredRows.length === 0 && (
               <tr>
                 <td
-                  colSpan={isHeatmap ? 8 : 11}
+                  colSpan={isHeatmap ? 9 : 11}
                   className="px-3 py-8 text-center text-sm text-muted-foreground"
                 >
                   No protocols match the current filters.{' '}
@@ -814,24 +1033,32 @@ export function PQCProtocolMatrix() {
                   {!isHeatmap && (
                     <>
                       <td className="px-3 py-3">
-                        <DocList docs={p.latestRelease} label="Release" />
+                        <DocList
+                          docs={p.latestRelease}
+                          label="Release"
+                          onMore={() => setSelectedProtocol(p)}
+                        />
                       </td>
                       <td className="px-3 py-3">
-                        <DocList docs={p.latestDraft} label="Draft" />
+                        <DocList
+                          docs={p.latestDraft}
+                          label="Draft"
+                          onMore={() => setSelectedProtocol(p)}
+                        />
                       </td>
                     </>
                   )}
                   <td className="px-3 py-3">
-                    <DimensionBadge status={p.dimensions.pureKem} />
+                    <DimensionBadge status={p.dimensions.pureKem} compact={isHeatmap} />
                   </td>
                   <td className="px-3 py-3">
-                    <DimensionBadge status={p.dimensions.hybridKem} />
+                    <DimensionBadge status={p.dimensions.hybridKem} compact={isHeatmap} />
                   </td>
                   <td className="px-3 py-3">
-                    <DimensionBadge status={p.dimensions.pureSig} />
+                    <DimensionBadge status={p.dimensions.pureSig} compact={isHeatmap} />
                   </td>
                   <td className="px-3 py-3">
-                    <DimensionBadge status={p.dimensions.hybridSig} />
+                    <DimensionBadge status={p.dimensions.hybridSig} compact={isHeatmap} />
                   </td>
                   <td className="px-3 py-3">
                     {isHeatmap ? (
@@ -880,11 +1107,9 @@ export function PQCProtocolMatrix() {
                       </div>
                     )}
                   </td>
-                  {!isHeatmap && (
-                    <td className="px-3 py-3">
-                      <PlaygroundCell tools={p.playgrounds} />
-                    </td>
-                  )}
+                  <td className="px-3 py-3">
+                    <PlaygroundCell tools={p.playgrounds} compact={isHeatmap} />
+                  </td>
                 </tr>
               )
             })}
