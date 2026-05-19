@@ -163,6 +163,7 @@ const COUNTRY_CODE_TO_NAME: Record<string, string> = {
   UY: 'Uruguay',
   VN: 'Vietnam',
   ZA: 'South Africa',
+  EU: 'European Union',
   'PQC-REGION-AU-AFRICA': 'African Union',
   'PQC-REGION-EU': 'European Union',
   'PQC-REGION-GLOBAL': 'Global',
