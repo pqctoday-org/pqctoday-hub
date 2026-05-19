@@ -666,3 +666,499 @@ enrichment_method: ollama-qwen3.6:27b
 - **Extraction Timestamp**: 2026-05-19T00:41:25
 
 ---
+
+## Mozilla NSS
+
+- **Reference ID**: Mozilla NSS
+- **Title**: Mozilla NSS
+- **Authors**: Cryptographic Software/Libraries
+- **Publication Date**: 2024-01-01
+- **Last Updated**: 2026-05-18
+- **Document Status**: Verified
+- **Main Topic**: Overview of Mozilla Network Security Services (NSS) library capabilities and development resources.
+- **PQC Algorithms Covered**: ML-KEM
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: Mozilla NSS; Firefox
+- **Protocols Covered**: TLS; S/MIME; X.509
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Mozilla NSS supports cross-platform security-enabled applications; X25519MLKEM768 hybrid PQC TLS is available in Firefox 128; NSS supports multiple security standards including PKCS and X.509; Developers can contribute to NSS via provided documentation
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid PQC TLS
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: X25519MLKEM768 hybrid PQC TLS shipped in Firefox 128
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.3
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: X25519MLKEM768 hybrid PQC TLS shipped in Firefox 128
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: hybrid-crypto; tls-basics
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Source Document**: Mozilla_NSS.html (18,974 bytes, 2,788 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T06:35:30
+
+---
+
+## Komainu Custody
+
+- **Reference ID**: Komainu Custody
+- **Title**: Komainu Custody
+- **Authors**: Digital Asset Custody
+- **Publication Date**: Not specified
+- **Last Updated**: 2026-04-26
+- **Document Status**: Cited
+- **Main Topic**: Komainu provides independent, regulated institutional crypto custody using MPC and HSM technologies with bankruptcy-remote asset segregation.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Paul Frost-Smith (Co-CEO, Komainu)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: HSM; MPC
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: Travel Rule
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Komainu offers bankruptcy-remote, segregated on-chain custody for institutional digital assets; The platform utilizes both MPC and HSM wallet architectures for resilience; Assets are held off-balance sheet to mitigate counterparty risk; The service supports over 6,000 tokens across 40+ native blockchains; Regulatory oversight is provided through registrations in multiple key financial centers.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Compliance Officer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: digital-assets; hsm-pqc; vendor-risk; pqc-governance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: Komainu_Custody.html (174,083 bytes, 6,502 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T06:37:28
+
+---
+
+## Descope Customer & Agentic Identity Platform
+
+- **Reference ID**: Descope Customer & Agentic Identity Platform
+- **Title**: Descope Customer & Agentic Identity Platform
+- **Authors**: Customer Identity & Access Management (CIAM)
+- **Publication Date**: Not specified
+- **Last Updated**: 2026-04-26
+- **Document Status**: Cited
+- **Main Topic**: Descope is a no-code customer identity and access management (CIAM) platform offering drag-and-drop authentication flows, MFA, SSO, and agentic identity features.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: European Union; Bodies: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: SAML; OpenID Connect; SCIM; REST API
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: GDPR
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Descope provides a no-code drag-and-drop editor for building authentication flows; The platform supports passwordless methods like passkeys and magic links; It offers SDKs for various frontend and backend frameworks; Descope includes risk-based MFA and bot detection capabilities; The service supports multi-region data residency for GDPR compliance
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: digital-id; api-security-jwt
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: Descope_Customer\_\_\_Agentic_Identity_Platform.html (4,006,005 bytes, 9,130 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T06:39:22
+
+---
+
+## Cisco AI Defense (formerly Robust Intelligence Platform)
+
+- **Reference ID**: Cisco AI Defense (formerly Robust Intelligence Platform)
+- **Title**: Cisco AI Defense (formerly Robust Intelligence Platform)
+- **Authors**: AI/ML Security Platforms
+- **Publication Date**: Not specified
+- **Last Updated**: 2026-04-26
+- **Document Status**: Cited
+- **Main Topic**: Overview of Cisco AI Defense, an AI security platform incorporating Robust Intelligence for model validation and runtime protection.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Cisco acquired Robust Intelligence in October 2024 to enhance AI security capabilities; The platform provides end-to-end protection for AI application development and usage; Robust Intelligence pioneered AI security with algorithmic red teaming and the first AI Firewall; The solution aims to close the AI security gap to unblock enterprise AI transformation;
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: vendor-risk; pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: Cisco*AI_Defense\_\_formerly_Robust_Intelligence_Platform*.html (72,315 bytes, 2,641 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T06:41:21
+
+---
+
+## OpenSSL 3.5.0
+
+- **Reference ID**: OpenSSL 3.5.0
+- **Title**: OpenSSL 3.5.0
+- **Authors**: Cryptographic Libraries
+- **Publication Date**: 2025-04-29
+- **Last Updated**: 2026-05-04
+- **Document Status**: Verified
+- **Main Topic**: Release notes for OpenSSL 3.5.0 through 3.5.6, detailing security patches, bug fixes, and the addition of native NIST PQC algorithm support.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: OpenSSL
+- **Protocols Covered**: TLS; QUIC; CMS; S/MIME; PKCS#12; PKCS#7; DANE; CMP
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: FIPS 140-3
+- **Classical Algorithms Referenced**: RSA; DH; EC; ECX; AES-256-CBC; DES-EDE3-CBC; X25519; SM2; PBMAC1; OCB
+- **Key Takeaways**: OpenSSL 3.5.0 introduces native support for ML-KEM, ML-DSA, and SLH-DSA; Default TLS configurations now prefer hybrid PQC KEM groups including X25519MLKEM768; Multiple critical CVEs were fixed in the 3.5.x series regarding memory safety and validation; FIPS provider updates include PCT on key import for RSA, EC, and ECX; Server-side QUIC support is added in this release.
+- **Security Levels & Parameters**: ML-KEM-768; X25519MLKEM768
+- **Hybrid & Transition Approaches**: Hybrid PQC KEM groups; X25519MLKEM768
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "prefer hybrid PQC KEM groups"
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.3; S/MIME
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: "default TLS supported groups list has been changed to include and prefer hybrid PQC KEM groups"; S/MIME: "Default encryption cipher for the req , cms , and smime applications"
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect; Operations
+- **Implementation Prerequisites**: OpenSSL 3.5+
+- **Relevant PQC Today Features**: Algorithms; hybrid-crypto; tls-basics; crypto-agility
+- **Implementation Attack Surface**: Side-channel (timing); Memory safety (buffer overflow, use-after-free, NULL dereference); Input validation
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: JITTER seed source
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Breaking changes in default cipher and group lists; Deprecated BIO functions
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Hash-based
+- **PQC Round**: Standardised
+- **Source Document**: OpenSSL_3.5.0.html (45,881 bytes, 7,447 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T06:43:04
+
+---
+
+## Quantum Bridge Subsea QKD
+
+- **Reference ID**: Quantum Bridge Subsea QKD
+- **Title**: Quantum Bridge Subsea QKD
+- **Authors**: Quantum Key Distribution Software
+- **Publication Date**: 2025
+- **Last Updated**: 2026-03-30
+- **Document Status**: Needs Verification
+- **Main Topic**: Quantum Bridge announces NIST CAVP certification for its hybrid ML-KEM and DSKE quantum-safe security solutions.
+- **PQC Algorithms Covered**: ML-KEM
+- **Quantum Threats Addressed**: Harvest-now and decrypt later; cyberattacks using quantum computers
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: United States; NIST; EU member states; G7
+- **Leaders Contributions Mentioned**: Mattia Montagna (CEO at Quantum Bridge); Dr. Mattia Montagna (Founder); Professor Hoi-Kwong Lo (Founder)
+- **PQC Products Mentioned**: SDS; DSKE
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Key Management; 5G and 6G infrastructure; power grid
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: Cryptographic Algorithm Validation Program (CAVP)
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: NIST CAVP certification validates Quantum Bridge's hybrid ML-KEM and DSKE solution; Hybrid deployment combining PQC and symmetric keying is recommended by EU governments and G7 stakeholders; The solution targets long-lifecycle infrastructure like 5G/6G and critical sectors like banking and power grids; DSKE provides information-theoretic security with no distance limits to complement ML-KEM
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid QKD+PQC deployment model; combination of protocols; combining a deployed cryptographic scheme with PQC
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: "Combining DSKE and ML-KEM in a single encryption solution"
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance; hybrid-crypto; qkd; 5g-security; crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Cryptographic Algorithm Validation Program (CAVP)
+- **QKD Protocols & Quantum Networking**: QKD-as-a-service; trusted node architecture; long-distance quantum communication
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Symmetric
+- **PQC Round**: Standardised
+- **Source Document**: Quantum_Bridge_Subsea_QKD.html (129,622 bytes, 5,509 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T06:45:30
+
+---
+
+## ArgoCD / FluxCD 2026
+
+- **Reference ID**: ArgoCD / FluxCD 2026
+- **Title**: ArgoCD / FluxCD 2026
+- **Authors**: Supply Chain & DevSecOps
+- **Publication Date**: Not specified
+- **Last Updated**: 2026-03-30
+- **Document Status**: Pending Verification
+- **Main Topic**: A comparative analysis of ArgoCD and FluxCD GitOps tools for Kubernetes deployment automation in 2026.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Nawaz Dhandala
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: ArgoCD is preferred for teams needing a built-in web UI and fine-grained RBAC; FluxCD is better for CLI-first teams requiring a lightweight, composable footprint; Both tools are mature CNCF Graduated projects suitable for production GitOps; Monitoring deployment health is critical regardless of the chosen tool.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; DevOps; SRE
+- **Implementation Prerequisites**: Kubernetes cluster; Git repository
+- **Relevant PQC Today Features**: None detected
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: ArgoCD\_\_\_FluxCD_2026.html (245,843 bytes, 13,550 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T06:47:34
+
+---
+
+## Bamboo CI (Roadmap)
+
+- **Reference ID**: Bamboo CI (Roadmap)
+- **Title**: Bamboo CI (Roadmap)
+- **Authors**: Supply Chain & DevSecOps
+- **Publication Date**: Not specified
+- **Last Updated**: 2026-03-30
+- **Document Status**: Pending Verification
+- **Main Topic**: A roadmap for the Government of Canada to migrate non-classified IT systems to post-quantum cryptography, outlining stakeholders, execution phases, milestones, and governance.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Harvest now, decrypt later (HNDL)
+- **Migration Timeline Info**: April 2026: Develop an initial departmental PQC migration plan; End of 2031: Completion of PQC migration of high priority systems; End of 2035: Completion of PQC migration of remaining systems
+- **Applicable Regions / Bodies**: Regions: Canada; Bodies: Canadian Centre for Cyber Security, Treasury Board of Canada Secretariat, Shared Services Canada, Communications Security Establishment Canada
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: PKI; Key Management; HSM; Cloud KMS
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: Cryptographic Module Validation Program
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Develop departmental PQC migration plans by April 2026; Complete migration of high-priority systems by end of 2031; Complete migration of remaining systems by end of 2035; Establish a committee with senior management buy-in for executive support; Include PQC requirements in procurement clauses to reduce costs and avoid vendor lock-in
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Cryptographic agility
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Security Architect; Compliance Officer; Policy Maker
+- **Implementation Prerequisites**: Cryptographic inventory; Procurement policy updates; Financial planning; Education strategy
+- **Relevant PQC Today Features**: Timeline; Threats; Compliance; Migrate; Assess; pqc-governance; migration-program; pqc-risk-management; crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: Cryptographic discovery; Inventory of systems employing cryptography; Identification of vulnerable systems
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Vendor lock-in; Procurement risk; Vendor PQC roadmap maturity
+- **Deployment & Migration Complexity**: Phased rollout; Preparation; Identification; Transition; Backward compatibility via crypto agility
+- **Financial & Business Impact**: Cost estimates required; Staffing impacts; Potential cost reduction by leveraging existing IT lifecycles
+- **Organizational Readiness**: Governance prerequisites; Dedicated migration lead; Committee with senior management; Executive buy-in
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: Bamboo*CI\_\_Roadmap*.html (145,786 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T06:49:41
+
+---
+
+## HashiCorp Terraform / HCP
+
+- **Reference ID**: HashiCorp Terraform / HCP
+- **Title**: HashiCorp Terraform / HCP
+- **Authors**: Supply Chain & DevSecOps
+- **Publication Date**: Not specified
+- **Last Updated**: 2026-03-30
+- **Document Status**: Pending Verification
+- **Main Topic**: None detected
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: None detected
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: None detected
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: None detected
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: None detected
+- **Extraction Note**: No source text available
+- **Source Document**: HashiCorp_Terraform\_\_\_HCP.html (8,500 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-05-19T06:52:11
+
+---
