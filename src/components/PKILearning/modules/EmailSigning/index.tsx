@@ -264,7 +264,7 @@ export const EmailSigningModule: React.FC = () => {
         </TabsContent>
         {/* References Tab */}
         <TabsContent value="references">
-          <ModuleReferencesTab moduleId="email-signing" />
+          <ModuleReferencesTab moduleId={MODULE_ID} />
         </TabsContent>
         <TabsContent value="tools">
           <ModuleMigrateTab moduleId={MODULE_ID} />

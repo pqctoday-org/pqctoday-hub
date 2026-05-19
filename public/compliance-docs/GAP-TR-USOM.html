@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USOM — Ulusal Siber Olaylara Müdahale Merkezi</title>
+    <style>
+        @font-face {
+            font-family: 'STIX Two Text';
+            src: url('fonts/STIXTwoText-VariableFont_wght.ttf') format('truetype');
+            font-weight: 100 900;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'STIX Two Text';
+            src: url('fonts/STIXTwoText-Italic-VariableFont_wght.ttf') format('truetype');
+            font-weight: 100 900;
+            font-style: italic;
+            font-display: swap;
+        }
+    </style>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(150deg, #c6d1e5 0%, #d8e0ee 45%, #e8edf6 80%, #f0f3f8 100%);
+            font-family: 'STIX Two Text', Georgia, serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: clamp(40px, 8vh, 80px) clamp(20px, 5vw, 48px);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 50% 0%,   rgba(255, 255, 255, 0.55) 0%, transparent 55%),
+                radial-gradient(ellipse at 50% 100%, rgba(180, 195, 220, 0.35) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .logos {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(28px, 7vw, 88px);
+            flex-wrap: wrap;
+            max-width: 900px;
+            width: 100%;
+            animation: fadeUp 0.9s ease both;
+        }
+
+        .logo-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo-item img {
+            width:  clamp(160px, 22vw, 320px);
+            height: clamp(160px, 22vw, 320px);
+            object-fit: contain;
+            max-width: 42vw;
+        }
+
+        .divider {
+            width: min(900px, 100%);
+            height: 1px;
+            background: linear-gradient(
+                to right,
+                transparent,
+                rgba(51, 65, 108, 0.14) 20%,
+                rgba(51, 65, 108, 0.14) 80%,
+                transparent
+            );
+            margin-top: clamp(40px, 5vh, 64px);
+            animation: fadeUp 0.9s ease 0.15s both;
+        }
+
+        .message {
+            max-width: 900px;
+            width: 100%;
+            margin-top: clamp(32px, 4vh, 52px);
+            animation: fadeUp 0.9s ease 0.25s both;
+        }
+
+        .message p {
+            font-size: clamp(16px, 2.1vw, 21px);
+            font-weight: 400;
+            color: #2e3650;
+            line-height: 2.05;
+            letter-spacing: 0.01em;
+            margin-bottom: 28px;
+            text-align: justify;
+            hyphens: auto;
+            overflow-wrap: break-word;
+        }
+
+        .message ul {
+            font-size: clamp(16px, 2.1vw, 21px);
+            color: #2e3650;
+            line-height: 2.05;
+            letter-spacing: 0.01em;
+            margin: 0 0 0 2em;
+            padding: 0;
+        }
+
+        .message ul li {
+            margin-bottom: 4px;
+        }
+
+        .message p:last-child {
+            margin-bottom: 0;
+            margin-top: 8px;
+            text-align: center;
+            color: #2e3650;
+            letter-spacing: 0.06em;
+        }
+
+        .message em {
+            font-style: normal;
+            font-weight: 600;
+            color: #1a2540;
+        }
+
+        .message strong {
+            font-weight: 600;
+            color: #1a2540;
+        }
+
+        .new-url {
+            font-weight: 600;
+            color: #1a2540;
+            letter-spacing: 0.02em;
+        }
+
+        @media (max-width: 768px) {
+            .message p,
+            .message ul { line-height: 1.95; }
+        }
+
+        @media (max-width: 480px) {
+            .logos { gap: 16px; }
+
+            .message p {
+                text-align: left;
+                line-height: 1.8;
+            }
+
+            .message ul {
+                line-height: 1.8;
+                margin-left: 1.25em;
+            }
+
+            .message p:last-child {
+                text-align: left;
+            }
+        }
+
+        @media (max-height: 700px) {
+            body { padding: 2vh clamp(20px, 5vw, 48px); }
+            .logo-item img { width: 13vh; height: 13vh; max-width: 110px; }
+            .logos { gap: clamp(16px, 3vw, 48px); }
+            .divider { margin-top: 1.5vh; }
+            .message { margin-top: 1.5vh; }
+            .message p,
+            .message ul { font-size: clamp(13px, 1.4vw, 15px); line-height: 1.65; margin-bottom: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="logos">
+        <div class="logo-item">
+            <img src="logo/sgb.svg" alt="Siber Güvenlik Başkanlığı Amblemi">
+        </div>
+        <div class="logo-item">
+            <img src="logo/usom-logo.svg" alt="USOM Logosu">
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="message">
+
+        <p>
+            Siber Güvenlik Başkanlığı; 177 sayılı Cumhurbaşkanlığı Kararnamesi ve 12.03.2025 tarihli, 7545 sayılı Siber Güvenlik Kanunu uyarınca, ülkemizin kritik altyapı sistemlerinin siber dayanıklılığının artırılması ve siber tehditlere karşı dijital güvenliğin tesis edilmesi amacıyla kurulmuştur.
+        </p>
+
+        <p>Bu doğrultuda, bugüne kadar <strong>www.usom.gov.tr</strong> üzerinden sunulan;</p>
+        <ul>
+            <li>CVE başvuruları ve siber ihbar süreçleri,</li>
+            <li>Zararlı bağlantı listeleri,</li>
+            <li>Güvenlik bildirimleri ve teknik içerikler,</li>
+        </ul>
+        <p>ilgili mevzuat hükümleri çerçevesinde <strong><a href="http://siberguvenlik.gov.tr">www.siberguvenlik.gov.tr</a></strong> adresi üzerinden yayımlanmaya devam edecektir.</p>
+
+        <p>
+            Zararlı bağlantı listelerinin paylaşım yöntemlerinde güncel standartlara geçiş
+            yapılmaktadır. Mevcut API servislerimiz üzerinden sunulan hizmetlerin sürekliliği
+            önceliğimiz olup, .txt formatındaki dosya paylaşımı <strong>1 Haziran 2026</strong>
+            tarihi itibariyle sona erecektir.
+        </p>
+
+        <p>
+            Sistemlerinin güncel kalmasını amaçlayan paydaşlarımızın ve kullanıcılarımızın,
+            veri erişim süreçlerini API servislerimiz üzerinden yürütecek şekilde güncellemeleri
+            tavsiye edilmektedir.
+        </p>
+
+        <p>Kamuoyuna saygıyla duyurulur.</p>
+
+    </div>
+
+</body>
+</html>

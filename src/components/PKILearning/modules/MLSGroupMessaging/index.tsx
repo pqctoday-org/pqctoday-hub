@@ -8,6 +8,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
+import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import { MLSIntroduction } from './components/MLSIntroduction'
 import { TreeKEMVisualizer } from './workshop/TreeKEMVisualizer'
 import { ProviderArchitecture } from './workshop/ProviderArchitecture'
@@ -80,6 +81,7 @@ export const MLSGroupMessagingModule: React.FC = () => {
           <TabsTrigger value="learn">Learn</TabsTrigger>
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
+          <TabsTrigger value="tools">Tools &amp; Products</TabsTrigger>
         </TabsList>
 
         <TabsContent value="learn">
@@ -108,6 +110,10 @@ export const MLSGroupMessagingModule: React.FC = () => {
 
         <TabsContent value="references">
           <ModuleReferencesTab moduleId={MODULE_ID} />
+        </TabsContent>
+
+        <TabsContent value="tools">
+          <ModuleMigrateTab moduleId={MODULE_ID} />
         </TabsContent>
       </Tabs>
     </div>

@@ -1,0 +1,1563 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    
+    <title>Notifications - Reserve Bank of India</title>
+    <meta name="description" content="Notifications - Reserve Bank of India" />
+    <meta name="keyword" content="RBI Notifications" />
+
+    <meta name="author" content="" />
+    <meta name="viewport" content="width=device-width" />
+    <script type="text/javascript" src="/js/libs/modernizr-2.5.3.min.js"></script>
+   
+</head>
+<body onload="SetTreeStyles()">
+    <form method="post" action="./NotificationUser.aspx?Id=10435" id="form1">
+<div class="aspNetHidden">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUKMTE3MjYxNDE1NmRkXayD9uEyhJrdpr39ScMZC7GwxOWGrn2rJqe/Ks4UW7Q=" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="B1534F13" />
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="/wEdAAwyD95OwORYpQspba8Cv5QSlK+XrsQEVyjeDxQ0A4GYXFBwzdjZXczwplb2HKGyLlrNyH2BRDHW7ZJm+s8yUnNgi6wX7g7V+51d5y/uZ409MaU74zTCJ05u4w6h9ODXzwxkOnLtYme9ze2BdjTwJgskP6t93AkC4GhUEhJREhdaXBugERoe+4YdP6+Dm7i9UwLINzYr5zRLekLCkqLwgivbfcX9ZaEV78oETjPwNTvjRyaLpyghhgB3dOM81YQT2c8CQ6VP7YnAVqzmNdtl269D2pxvpnhvx7CC4tK1qgCkMg==" />
+</div>
+    <input type="hidden" name="hdnYear" id="hdnYear" />
+    <input type="hidden" name="hdnMonth" id="hdnMonth" value="0" />
+    
+<link href="/JQuery/css/jquery-ui-1.8.18.custom2.css" rel="stylesheet" type="text/css" />
+<link href="/includes/print.css" rel="stylesheet" media="print" type="text/css" />
+
+<link href="/Styles/960.css?v=1.0" rel="stylesheet" type="text/css" />
+<link href="/Includes1/rbi.css?v=5.0" rel="Stylesheet" type="text/css" />
+<script type="text/javascript" src="/js/libs/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="/JQuery/ui/jquery.ui.revampRBI.js"></script>
+<script type="text/javascript" src="/js/ImgSaveDisable.js"></script>
+<!--<script src='//tw.netcore.co.in/smartechclient.js'></script>
+<script>
+smartech('create', 'ADGMOT35CHFLVDHBJNIG50K968AU3Q5FOE3L6REE67CQ9HGBQ58G');
+smartech('register', '4d6884e503ecf55a3339a37e98b711da');
+smartech('identify', '');
+smartech('dispatch', 1, { });
+</script>-->
+<script type="text/javascript">
+  
+//Redirect to mobile site start
+    function detectmob() {
+        if (screen.width <= 599 || screen.Height <= 975) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    if (detectmob()) {
+       window.location.href = "https://m.rbi.org.in" + window.location.pathname;
+		
+       
+    }
+ //$(document).ready(function () { //for IAAP by ni
+ //      $('.container_12').attr('role','main');
+	
+ //   });
+	//Redirect to mobile site End
+    $(document).ready(function () {
+        Search();
+	
+    });
+
+    function Search() {
+        highlightTextAutocomplete();
+        $(".autoSuggest").autocomplete({
+
+
+            source: function (request, response) {
+                var param = { keyWord: document.getElementById('txtSearch').value };
+
+                $.ajax({
+                    url: "../Home.aspx/GetKeywords",
+                    data: JSON.stringify(param),
+                    dataType: "json",
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataFilter: function (data) { return data; },
+                    success: function (data) {
+
+                        if (data.d.length > 0) {
+                            response($.map(data.d, function (item) {
+                                return {
+                                    value: RemoveSpecialChars(item)
+
+                                }
+                            }))
+                        }
+                        else {
+                            response([{ label: "No results found", value: ""}]);
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert(textStatus);
+                    }
+                });
+            },
+
+            //            select: function (event, ui) {
+            //                if (ui.item.value != "") {
+            //                    window.open("/scripts/SearchResults.aspx?search=" + ui.item.value, '_blank');
+            //                }
+            //            },
+            minLength: 3
+
+        });
+    }
+
+    function highlightTextAutocomplete() {
+
+        var oldFn = $.ui.autocomplete.prototype._renderItem;
+
+        $.ui.autocomplete.prototype._renderItem = function (ul, item) {
+
+            var t = String(item.value).replace(
+                new RegExp(this.term, "gi"),
+                "<span class='ui-state-highlight'>$&</span>");
+            if (item.value != "") {
+                return $("<li class='borderAutocomplete'></li>")
+                  .data("item.autocomplete", item)
+                  .append("<a role='link'>" + t + "</a>")
+                  .appendTo(ul);
+            }
+
+            else {
+                return $("<li></li>")
+                  .data("item.autocomplete", item)
+                  .append("")
+                  .appendTo(ul);
+            }
+        };
+    }
+
+
+    function RemoveSpecialChars(inputText) {
+        var filteredString = inputText.replace(/[\*\^\'\!\@\$\.\#\(\)\-\?\<\>\;\"\&\+\{\}\:]/g, '');
+        //alert(filteredString);
+        return filteredString;
+    }
+    //    jQuery(document).ready(function () {
+    //        var xmlhttp;
+    //        jQuery("#txtSearch").autocomplete(
+    //                    {
+    //                        minLength: 3,
+    //                        delay: 0,
+    //                        source: function (request, response) {
+    //                            if (!xmlhttp) {
+    //                                if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+    //                                    xmlhttp = new XMLHttpRequest();
+    //                                }
+    //                                else {// code for IE6, IE5
+    //                                    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    //                                }
+    //                            }
+    //                            else if (xmlhttp.readyState != 0) {
+    //                                xmlhttp.abort();
+    //                            }
+    //                            xmlhttp.onreadystatechange = function () {
+    //                                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+    //                                    fetchedKeywords = xmlhttp.responseText.split("'");
+    //                                    
+    //                                    if (fetchedKeywords.length > 10) {
+    //                                        fetchedKeywords.splice(10, fetchedKeywords.length - 10);
+    //                                    }
+    //                                    if (fetchedKeywords != "") response(fetchedKeywords);
+    //                                    else response(null);
+    //                                }
+    //                            }
+    //                            var input = document.getElementById("txtSearch").value;
+    //                            xmlhttp.open("POST", "/Webservice/KeywordSearch.ashx?q=" + input, true);
+    //                            xmlhttp.send();
+    //                        }
+    //                    });
+    //    });
+
+    function LoadSearchData(id, key) {
+        if (id == "txtSearch") {
+            if (key == 13) {
+                validateSearchText();
+                return false;
+            }
+        }
+        else validateSearchText();
+        return true;
+    }
+    function validateSearchText() {
+        if (validation()) {
+            var strloc = new String(document.location.href.toString());
+            if (strloc.indexOf("SearchResults.aspx") == -1) {//             
+                window.open("/scripts/SearchResults.aspx?search=" + document.getElementById("txtSearch").value,"_self");
+            }
+            else window.open("/scripts/SearchResults.aspx?search=" + document.getElementById("txtSearch").value,"_self");
+        }
+    }
+    function validation() {
+        strSearch = trim(document.getElementById('txtSearch').value);
+        if (strSearch == "") { alert('Please enter the search text'); return false; }
+        else {
+            //var strFilterChars = new RegExp("[~`!@#$%^&*()_+-={}\\[\\]:/\\\\\";|'<>,.?]");
+            var strFilterChars = new RegExp("^[0-9a-zA-Z ]*$");
+            if (!strFilterChars.test(strSearch)) { alert("Please remove special characters from search text"); return false; }
+        }
+        return true;
+    }
+    function trim(value) {
+        value = value.replace(/^\s+/, '');
+        value = value.replace(/\s+$/, '');
+        return value;
+    }
+
+</script>
+
+    <style type="text/css">
+    .blink_msm1 
+{
+    -webkit-animation-name: blinker;
+    -webkit-animation-duration: 3s;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-iteration-count: infinite;
+
+    -moz-animation-name: blinker;
+    -moz-animation-duration: 3s;
+    -moz-animation-timing-function: linear;
+    -moz-animation-iteration-count: infinite;
+
+    animation-name: blinker;
+    animation-duration: 3s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+@-moz-keyframes blinker {  
+    0% { opacity: 1.0; }
+    50% { opacity: 0.0; }
+    100% { opacity: 1.0; }
+}
+
+@-webkit-keyframes blinker {  
+    0% { opacity: 1.0; }
+    50% { opacity: 0.0; }
+    100% { opacity: 1.0; }
+}
+
+@keyframes blinker {  
+    0% { opacity: 1.0; }
+    50% { opacity: 0.0; }
+    100% { opacity: 1.0; }
+}
+
+.blink_NewWebsite {
+        animation:blinker 1.5s linear 3;
+        color:blue;
+        font-size:1.5em;
+        margin-bottom:0px;
+        }
+    @keyframes blinker
+    {
+        50%{
+            opacity:0;
+        }
+    }
+
+.sr-only {
+position: absolute;
+left: -9999px;
+}
+</style>
+<div class="top_setting">
+    <div class="container_12">
+        <div class="grid_5 top_settings">
+            <a href="#mainsection">Skip to main content </a>
+        </div>
+        <div id="UsrFontCntr_tblThemes" style="float: right" class="grid_4 prefix_3 top_settings">
+            <ul style="margin:0px; padding:0px;">
+               <li class="fonts"> 
+                <a id="UsrFontCntr_LinkBtnSpace" role="button" title="Increase Line Spacing" href="javascript:__doPostBack(&#39;UsrFontCntr$LinkBtnSpace&#39;,&#39;&#39;)" style="text-decoration:none;"><img src="/images/letspace.png" alt="Increase Line Spacing" />
+                                <span id="UsrFontCntr_spanBtnSpace" class="sr-only"></span></a>                                
+            </li>
+
+            <li class="fonts">
+                <a id="UsrFontCntr_LinkBtnFontIncrease" role="button" title="Increase Font Size" href="javascript:__doPostBack(&#39;UsrFontCntr$LinkBtnFontIncrease&#39;,&#39;&#39;)" style="text-decoration:none;"><img src="/images/font-increase.gif" alt="Increase Font Size" />
+                    <span id="UsrFontCntr_spanFontIncrease" class="sr-only"></span></a>
+            </li>
+            <li class="fonts">
+                <a id="UsrFontCntr_LinkBtnFontRegular" role="button" title="Regular Font Size" href="javascript:__doPostBack(&#39;UsrFontCntr$LinkBtnFontRegular&#39;,&#39;&#39;)" style="text-decoration:none;"><img src="/images/font-reset.gif" alt="Regular Font Size" />
+                    <span id="UsrFontCntr_spanFontRegular" class="sr-only">Selected</span></a>
+            </li>
+            <li class="fonts">
+                <a id="UsrFontCntr_LinkBtnFontDecrease" role="button" title="Decrease Font Size" href="javascript:__doPostBack(&#39;UsrFontCntr$LinkBtnFontDecrease&#39;,&#39;&#39;)" style="text-decoration:none;"><img src="/images/font-decrease.gif" alt="Decrease Font Size" />
+                    <span id="UsrFontCntr_spanFontDecrease" class="sr-only"></span></a>
+            </li></ul>
+		<ul style="margin:0px;padding:0px;">
+            <li class="black">
+                <a id="UsrFontCntr_LinkBtnAccessibilty" role="button" title="Apply Dark Theme" href="javascript:__doPostBack(&#39;UsrFontCntr$LinkBtnAccessibilty&#39;,&#39;&#39;)" style="text-decoration:none;"><img src="/images/dark-theme.gif" alt="Apply Dark Theme" />
+                    <span id="UsrFontCntr_spanAccessibilty" class="sr-only"></span></a>
+            </li>
+            <li class="white">
+                <a id="UsrFontCntr_LinkBtnUndoAccessibilty" role="button" title="Apply Normal Theme" href="javascript:__doPostBack(&#39;UsrFontCntr$LinkBtnUndoAccessibilty&#39;,&#39;&#39;)" style="text-decoration:none;"><img src="/images/bright-theme.gif" alt="Apply Normal Theme" />
+                     <span id="UsrFontCntr_spanUndoAccessibilty" class="sr-only">Selected</span></a>
+            </li>
+            <li class="white">
+            <a id="UsrFontCntr_LinkBtnGreyScale" role="button" title="Apply Grey Theme" href="javascript:__doPostBack(&#39;UsrFontCntr$LinkBtnGreyScale&#39;,&#39;&#39;)" style="text-decoration:none;"><img src="/images/graytheme.gif" alt="Apply Grey Theme" />
+                                <span id="UsrFontCntr_spanGreyScale" class="sr-only"></span></a></li>
+
+            
+
+            </ul>
+		<div>
+		     <a href="#" onclick="javascript:window.print();" id="A1" title="Print This Page" style="text-decoration:none;" role="button">
+                <img src="/images/print-icon.png" alt="Print this page" class="print" />
+		</a></div>
+            <div style="float: right">
+                <label style="margin-right: 6px;">
+                    Language</label>
+			
+			<a href="#" onclick="SetLink();" class="link1"  title="Website in Hindi">हिंदी</a>
+			</div>
+                    
+        </div>
+        <div class="clearfix">
+        </div>
+    </div>
+    
+</div>
+<div class="container_12">
+    <div class="grid_4" role="banner">
+        <div class="logo">
+            <a href="/home.aspx" title="Official website of Reserve Bank of India">
+                <img src="/images/rbi-company-logo.jpg" alt="Logo of Official website of Reserve Bank of India" title="Official website of Reserve Bank of India" /></a></div>
+    </div>
+    <div class="grid_5" align="right" role="search" style="float: right">
+        <label for="searchbox" class="search_label">
+            Search the Website</label>
+        <input name="UsrFontCntr$txtSearch" type="text" maxlength="103" id="txtSearch" class="search_box autoSuggest" title="Search the Website" aria-label="Search the Website" onkeydown="return LoadSearchData(&#39;txtSearch&#39;,event.keyCode);" placeHolder="Search" />
+        <button id="btnSearch" onclick="return LoadSearchData('btnSearch',event.keyCode);"
+            type="button" class="search_button">
+            Search</button>
+    </div>
+	<div class="grid_2" align="CENTER" role="" style="float: right">
+        <div class="logo" >
+            
+            <img src="../images/BBBP_Logo_4.jpg" alt="Beti Bachao Beti Padhao Logo" style="padding-top: 10px;">
+        </div>
+    	</div>
+    <div class="clearfix">
+    </div>
+</div>
+<!--  NAVIGATION START-->
+<nav role="navigation" aria-label="Main">
+       <div class="top-newmenu">
+		<div class="midmenu">
+        <ul>
+			  <li><a href="https://rbi.org.in/home.aspx">Home</a></li>
+			  <li><a href="/Scripts/AboutusDisplay.aspx">About Us</a></li>
+			  
+            <li class="hasSubmenu"><a href="#">Notifications <img src="/images/down.gif" alt="" class="downarrowclass" style="border:0; padding-left: 5px"></a>
+                <ul>
+                  <li><a href="../Scripts/NotificationUser.aspx">Notifications </a></li>
+                  <li><a href="../Scripts/BS_ViewMasterDirections.aspx">Master Directions </a></li>
+                  <li><a href="../Scripts/BS_ViewMasterCirculardetails.aspx">Master Circulars </a></li>
+		  <li><a href="../Scripts/Fs_AmendmentDirections.aspx">Amendment Directions </a></li> 
+                  <li><a href="../Scripts/DraftNotificationsGuildelines.aspx">Draft Notifications/Guidelines </a></li> 
+                  <li><a href="../Scripts/BS_ViewREwiseDraftDirections.aspx">Draft Directions (RE-wise)</a></li> 
+                  <li><a href="../Scripts/BS_CircularIndexDisplay.aspx">Index To RBI Circulars </a></li>
+                  <li><a href="../Scripts/BS_ViewListofstandalonecirculars.aspx">Standalone Circulars </a></li> 
+                  <li class="last"><a href="../Scripts/NotificationUserWithdrawnCircular.aspx">Circulars Withdrawn </a></li>
+                </ul>
+              </li>
+
+			  <li><a href="/Scripts/BS_PressReleaseDisplay.aspx">Press Releases</a></li>
+			  
+
+            <li class="hasSubmenu"><a href="#">Speeches & Media Interactions<img src="/images/down.gif" alt="" class="downarrowclass" style="border:0; padding-left: 5px"></a>
+                <ul>
+                  <li><a href="/Scripts/BS_ViewSpeeches.aspx">Speeches</a></li>
+                  <li><a href="/Scripts/BS_ViewInterviews.aspx">Media Interactions</a></li>
+                  <li><a href="/Scripts/Lectures.aspx">Memorial Lectures</a></li>
+                  <li class="last"><a href="/Scripts/BS_ViewPodcast.aspx">Podcasts</a></li>
+                </ul>
+              </li>
+              
+              <li class="hasSubmenu"><a href="#">Publications <img src="/images/down.gif" alt="" class="downarrowclass" style="border:0; padding-left: 5px"></a>
+                <ul>
+		  <li><a href="../Scripts/Publications.aspx?publication=Biennial">Biennial</a></li>
+                  <li><a href="/Scripts/Publications.aspx?publication=Annual">Annual</a></li>
+                  <li><a href="/Scripts/Publications.aspx?publication=HalfYearly">Half-Yearly</a></li>
+                  <li><a href="/Scripts/Publications.aspx?publication=Quarterly">Quarterly</a></li>
+		          <li><a href="/Scripts/Publications.aspx?publication=Bimonthly">Bi-monthly</a></li>
+                  <li><a href="/Scripts/Publications.aspx?publication=Monthly">Monthly</a></li>
+                  <li><a href="/Scripts/Publications.aspx?publication=Weekly">Weekly</a></li>
+                  <li><a href="/Scripts/Publications.aspx?publication=Occasional">Occasional</a></li>
+                   <li><a href="/Scripts/Publications.aspx?publication=Reports">Reports</a></li>
+		            <li class="last"><a href="/Scripts/OccasionalPublications.aspx?head=Working Papers">Working Papers</a></li>
+	   	            
+
+                </ul>
+              </li>
+
+			  
+              
+             <li class="hasSubmenu"><a href="#">Legal Framework <img src="/images/down.gif" alt="" class="downarrowclass" style="border:0; padding-left: 5px"></a>
+                <ul>
+                  <li><a href="/Scripts/Act.aspx">Act </a></li>
+                   <li><a href="/Scripts/Rules.aspx">Rules </a></li>
+                    <li><a href="/Scripts/Regulations.aspx">Regulations </a></li> 
+                    <li class="last"><a href="/Scripts/Schemes.aspx">Schemes </a></li>
+                </ul>
+              </li>
+            	
+	     
+		<li class="hasSubmenu"><a href="#">Research <img src="/images/down.gif" alt="" class="downarrowclass" style="border:0; padding-left: 5px"></a>
+	        <ul>
+                <li><a href="/Scripts/ExternalResearchSchemes.aspx">External Research Schemes</a></li>
+                <li><a href="/Scripts/OccasionalPapers.aspx">RBI Occasional Papers</a></li>
+                <li><a href="/Scripts/OccasionalPublications.aspx?head=Working%20Papers">Working Papers</a></li>
+                <li><a href="/Scripts/BS_ViewBulletin.aspx">RBI Bulletin</a></li>
+	            <li><a href="/Scripts/Project1.aspx">History</a></li>
+                <li><a href="/Scripts/Occas_DRG_Studies.aspx">DRG Studies</a></li>
+                <li><a href="/Scripts/KLEMS.aspx">KLEMS</a></li>
+		        <li class="last"><a href="/Scripts/StateStatisticsFinances.aspx">State Statistics and Finances</a></li>
+                </ul>
+           </li>
+	    
+              <li class="hasSubmenu"><a href="#">Statistics <img src="/images/down.gif" alt="" class="downarrowclass" style="border:0; padding-left: 5px"></a>
+                <ul>
+                  <li><a href="/Scripts/Statistics.aspx">Data Releases</a></li>
+                  <li><a href="https://data.rbi.org.in" target="_blank">Database on Indian Economy</a></li>
+                  <li class="last"><a href="/scripts/FS_PDS.aspx">Public Debt Statistics</a></li>
+                </ul>
+              </li>
+
+              <li class="hasSubmenu"><a href="#">Regulatory Reporting<img src="/images/down.gif" alt="" class="downarrowclass" style="border:0; padding-left: 5px"></a>
+				 <ul>
+					<li><a href="/scripts/BS_Listofallreturns.aspx">List of Returns</a></li>
+					
+                    <li><a href="/scripts/DataDefinition.aspx">Data Definition</a>
+                        <!--<ul>
+                            <li><a href="../scripts/Assets.aspx">Assets</a></li>
+							<li><a href="../Scripts/Liabilities.aspx">Liabilities</a></li>	
+							<li><a href="../Scripts/OffBalanceSheetItems.aspx">Off-Balance Sheet Items</a></li>
+							<li><a href="../Scripts/ProfitandLossAccountItems.aspx">Profit and Loss Account Items</a></li>
+							<li><a href="../Scripts/Miscellaneous.aspx">Miscellaneous</a></li>
+                        </ul>-->
+                    </li>
+
+					<li><a href="/scripts/ValidationRules.aspx">Validation rules/ Taxonomy</a></li>
+					<li><a href="/scripts/ReportingPlaform.aspx">List of RBI Reporting Portals</a></li>
+					<li class="last"><a href="/scripts/ReportingFAQ.aspx">FAQs of RBI Reporting Portals</a></li>
+
+
+                </ul>
+             </li>
+
+
+              
+
+        </ul>
+    
+ </div>
+</div>
+</nav>
+<!--  NAVIGATION END-->
+<!--HEADER END-->
+<input type="submit" name="UsrFontCntr$btn" value="" id="btn" style="visibility: hidden; height: 0px; width: 0px;" />
+
+<script type="text/javascript">
+    function SetLink() {
+        //a.href = "https://www.rbi.org.in/hindi/Home.aspx";
+        var txt="This will lead you to Hindi (हिन्दी) language website. Are you sure you want to switch to this language?"
+        if(window.confirm(txt)==true){
+            document.cookie = 'preferLang' + '=;secure; expires=Thu, 01-Jan-70 00:00:01 GMT;path=/;';
+            window.location.replace("https://www.rbi.org.in/hindi/");
+        }
+        else return false;
+        
+    }
+
+
+// Open submenu on Enter/Space by ni
+
+/*const allMenuItems = document.querySelectorAll("nav ul li");
+allMenuItems.forEach(item => {
+item.addEventListener("focusin", (event) => {	
+		if(item.className.includes('hasSubmenu')){
+		}	
+		else{
+			const allMenuItems1 = document.querySelectorAll(".hasSubmenu");
+		allMenuItems1.forEach(item1 => {
+			item1.classList.remove('focused');
+			//if(item!==item1)
+			//rollback(item1)
+		});
+		}
+								
+		item.classList.add('focused');
+	});
+	item.addEventListener("focusout", (event) => {
+		
+		if(!item.className.includes('focused')){
+		
+		//rollback(item)
+		//item.className="hasSubmenu"
+		}
+		item.classList.remove('focused');
+	});
+});*/
+
+	const allMenuItems = document.querySelectorAll("nav ul li");
+	
+	allMenuItems.forEach(item => {
+		item.addEventListener("focusin", (event) => {	
+			const MenuText =event.target.textContent;
+			const allMenuItems1 = document.querySelectorAll(".hasSubmenu");
+			allMenuItems1.forEach(item1 => {
+				if (MenuText === 'Press Releases')
+				{	
+					//alert(MenuText);
+					item1.classList.remove('focused');
+					rollback(item1)
+					item1.classList.remove('open');
+				}
+			});
+			
+		});
+	});
+
+
+const menuItems = document.querySelectorAll(".hasSubmenu");
+menuItems.forEach(item => {
+	item.addEventListener("mouseenter", (event) => {
+		item.className="hasSubmenu open focused"
+		expandThis(item);
+	});
+	item.addEventListener("mouseleave", (event) => {		
+		rollback(item)
+		item.className="hasSubmenu"
+	});
+	item.addEventListener("focusin", (event) => {		
+		const allMenuItems = document.querySelectorAll("nav ul li");
+		allMenuItems.forEach(item1 => {
+			item1.classList.remove('focused');
+			if(item!==item1)
+			rollback(item1)
+			item1.classList.remove('open');	
+		});							
+		item.classList.add('focused');
+	});
+	item.addEventListener("focusout", (event) => {
+		
+		if(!item.className.includes('focused')){
+		
+		rollback(item)
+		item.className="hasSubmenu"
+		}
+		item.classList.remove('focused');
+		item.classList.remove('open');
+	});
+
+    item.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+		if(item.className.includes("hasSubmenu open")){
+			rollback(item)
+			item.className="hasSubmenu"
+		}
+		else{
+          	item.className="hasSubmenu open focused"
+		var ele=item.querySelectorAll("a")[0];
+		//ele.css('aria-expanded','true');
+		//var elel=item.querySelectorAll("ul")[0]; $(elel).trigger('mouseenter');
+		expandThis(item);	
+		}
+				
+        }
+	//var ctrlUl=item.querySelectorAll("ul");
+	//ctrlUl[0].css('display','block');
+    });
+	
+});
+function expandThis(menu){
+ var $targetul = $(menu).children("ul:eq(0)")
+				    if ($targetul.queue().length <= 1) //if 1 or less queued animations
+				        if (this.istopheader)
+					$targetul.css({ left: $(this).children('a').eq(0).position().left, top: $mainmenu.position().top + this._dimensions.h - 2 })
+				            
+				    if (document.all && !window.XMLHttpRequest) //detect IE6 or less, fix issue with overflow
+				        $mainmenu.find('ul').css({ overflow: (this.istopheader) ? 'hidden' : 'visible' })
+					
+					//$targetul.trigger('mouseenter');
+				    $targetul.dequeue().stop(true, true).slideDown(droplinemenu.animateduration.over)
+}
+const menuItemsf = document.querySelectorAll("nav .midmenu ul li");
+
+menuItemsf.forEach(item => {
+    item.addEventListener("keydown", (event) => {
+	//if (event.key !== "Enter" && event.key !== "Shift" ) {	
+	if(item.className.includes("last") ){
+		 if (pressedKeys['shift'] && event.key === "Tab"){}else{
+		var lastItem = document.getElementsByClassName('hasSubmenu open');
+		rollback(lastItem[0])
+		lastItem[0].className="hasSubmenu";
+		}
+	}
+	//}
+	});
+	
+	});
+	
+
+function rollback(menu){
+ var $targetul = $(menu).children("ul:eq(0)")
+$targetul.dequeue().stop(true, true).slideUp(droplinemenu.animateduration.out);
+//$targetul[0].style.display='';
+}
+ 
+
+function setLetterSpace(val) {
+    
+	
+    if (false) {
+                    document.body.setAttribute("style", "letter-spacing:1px; line-height:20px; word-spacing:2px;");
+       
+    }
+    else {
+                    document.body.removeAttribute("style");
+    }
+    return false;
+
+    
+    }
+   
+</script>
+    <div>
+        <div role="main" class="container_12">
+            <a id="mainsection" name="mainsection"></a>
+            
+            <nav aria-label="Breadcrumb" class="grid_12 breadcrumbs"> <ul>
+                    <li><a href="../Home.aspx">Home</a></li>
+                    <span id="lblNav"><li><a href="NotificationUser.aspx">Notifications</a></li></span>
+                </ul>
+
+            </nav>
+            <div class="clear">
+            </div>
+            
+            <div id="pnlDetails" class="grid_11 omega right_blue_border">
+	
+                <div>
+                    <div id="NotificationUser" class="text1">
+                        
+                        
+                         <h1 class="page_title">
+                            Notifications</h1>
+                        <div id="example-min">
+                            <div id="doublescroll">
+                                <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+                                    
+                                    <table class="tablebg" width="100%"><tr><td class="tableheader"><a id='APDF_NT41893F697BC1D57443BB76AFC7AB56272EB' target="_blank" href="https://rbidocs.rbi.org.in/rdocs/notification/PDFs/NT41893F697BC1D57443BB76AFC7AB56272EB.PDF" aria-labelledby='APDF_NT41893F697BC1D57443BB76AFC7AB56272EB SPDF_NT41893F697BC1D57443BB76AFC7AB56272EB'>
+   <img alt='PDF - Cyber Security Framework in Banks' style='padding: 8px;' src="../Images/pdf.gif" border="0" align="absmiddle"></a> (<span id='SPDF_NT41893F697BC1D57443BB76AFC7AB56272EB' aria-hidden="true">1314 kb</span>)</td></tr><tr><td align="center" class="tableheader"><b>Cyber Security Framework in Banks</b></td></tr><tr class="tablecontent2"><td><table width="100%" border="0" align="center" class="td">  <tr>    <td align="Justify"><p class="head">RBI/2015-16/418<br>    DBS.CO/CSITE/BC.11/33.01.001/2015-16</p>    <p align="right">Jyeshtha 12, 1938 (saka)<br>    June 2, 2016</p>    <p>To</p>    <p>The Chairman/ Managing Director /Chief Executive Officer<br>    All Scheduled Commercial Banks (excluding Regional Rural Banks)</p>    <p>Madam / Dear Sir,</p>    <p class="head" align="center">Cyber Security Framework in Banks</p>    <p class="head">Introduction</p>    <p>Use of Information Technology by banks and their constituents has grown rapidly and is now an integral part of the operational strategies of banks. The Reserve Bank, had, provided guidelines on Information Security, Electronic Banking, Technology Risk Management and Cyber Frauds (G.Gopalakrishna Committee) vide <a href="https://www.rbi.org.in/Scripts/NotificationUser.aspx?Id=6366&Mode=0" target="_blank" class="links">Circular DBS.CO.ITC.BC.No.6/31.02.008/2010-11 dated April 29, 2011</a>, wherein it was indicated that the measures suggested for implementation cannot be static and banks need to pro-actively create/fine-tune/modify their policies, procedures and technologies based on new developments and emerging concerns.</p>    <p>2. Since then, the use of technology by banks has gained further momentum. On the other hand, the number, frequency and impact of cyber incidents / attacks have increased manifold in the recent past, more so in the case of financial sector including banks, underlining the urgent need to put in place a robust cyber security/resilience framework at banks and to ensure adequate cyber-security preparedness among banks on a continuous basis. In view of the low barriers to entry, evolving nature, growing scale/velocity, motivation and resourcefulness of cyber-threats to the banking system, it is essential to enhance the resilience of the banking system by improving the current defences in addressing cyber risks. These would include, but not limited to, putting in place an adaptive Incident Response, Management and Recovery framework to deal with adverse incidents/disruptions, if and when they occur.</p>    <p class="head">Need for a Board approved Cyber-security Policy</p>    <p>3. Banks should <span class="head">immediately</span> put in place a cyber-security policy elucidating the strategy containing an appropriate approach to combat cyber threats given the level of complexity of business and acceptable levels of risk, duly approved by their Board. A confirmation in this regard may be communicated to Cyber Security and Information Technology Examination (CSITE) Cell of Department of Banking Supervision, Reserve Bank of India, Central Office, World Trade Centre-I, 4th Floor, Cuffe Parade, Mumbai 400005 at the earliest, and in any case not later than September 30, 2016.</p>    <p>It may be ensured that the strategy deals with the following broad aspects:</p>    <p class="head">Cyber Security Policy to be distinct from the broader IT policy / IS Security Policy of a bank</p>    <p>4. In order to address the need for the entire bank to contribute to a cyber-safe environment, the Cyber Security Policy should be distinct and separate from the broader IT policy / IS Security policy so that it can highlight the risks from cyber threats and the measures to address / mitigate these risks.</p>    <p>5. The size, systems, technological complexity, digital products, stakeholders and threat perception vary from bank to bank and hence it is important to identify the inherent risks and the controls in place to adopt appropriate cyber-security framework. While identifying and assessing the inherent risks, banks are required to reckon the technologies adopted, alignment with business and regulatory requirements, connections established, delivery channels, online / mobile products, technology services, organisational culture and internal & external threats. Depending on the level of inherent risks, the banks are required to identify their riskiness as low, moderate, high and very high or adopt any other similar categorisation. Riskiness of the business component also may be factored into while assessing the inherent risks. While evaluating the controls, Board oversight, policies, processes, cyber risk management architecture including experienced and qualified resources, training and culture, threat intelligence gathering arrangements, monitoring and analysing the threat intelligence received vis-à-vis the situation obtaining in banks, information sharing arrangements (among peer banks, with IDRBT/RBI/CERT-In), preventive, detective and corrective cyber security controls, vendor management and incident management & response are to be outlined.</p>    <p class="head">Arrangement for continuous surveillance</p>    <p>6. Testing for vulnerabilities at reasonable intervals of time is very important. The nature of cyber-attacks are such that they can occur at any time and in a manner that may not have been anticipated. Hence, it is mandated that a SOC (Security Operations Centre) be set up at the earliest, if not yet been done. It is also essential that this Centre ensures continuous surveillance and keeps itself regularly updated on the latest nature of emerging cyber threats.</p>    <p class="head">IT architecture should be conducive to security</p>    <p>7. The IT architecture should be designed in such a manner that it takes care of facilitating the security measures to be in place at all times. The same needs to be reviewed by the IT Sub Committee of the Board and upgraded, if required, as per their risk assessment in a phased manner. The risk cost/potential cost trade off decisions which a bank may take should be recorded in writing to enable an appropriate supervisory assessment subsequently.</p>    <p>8. An indicative, but not exhaustive, minimum baseline cyber security and resilience framework to be implemented by the banks is given in <a href="http://rbidocs.rbi.org.in/rdocs/content/pdfs/CSFB020616_AN1.pdf" target="_blank" class="links">Annex 1</a>. Banks should proactively initiate the process of setting up of and operationalising a Security Operations Centre (SOC) to monitor and manage cyber risks in real time. An indicative configuration of the SOC is given in <a href="http://rbidocs.rbi.org.in/rdocs/content/pdfs/CSFB020616_AN2.pdf" target="_blank" class="links">Annex 2</a>.</p>    <p class="head">Comprehensively address network and database security</p>    <p>9. Recent incidents have highlighted the need to thoroughly review network security in every bank. In addition, it has been observed that many times connections to networks/databases are allowed for a specified period of time to facilitate some business or operational requirement. However, the same do not get closed due to oversight making the network/database vulnerable to cyber-attacks. It is essential that unauthorized access to networks and databases is not allowed and wherever permitted, these are through well-defined processes which are invariably followed. Responsibility over such networks and databases should be clearly elucidated and should invariably rest with the officials of the bank.</p>    <p class="head">Ensuring Protection of customer information</p>    <p>10. Banks depend on technology very heavily not only in their smooth functioning but also in providing cutting-edge digital products to their consumers and in the process collect various personal and sensitive information. Banks, as owners of such data, should take appropriate steps in preserving the Confidentiality, Integrity and Availability of the same, <span class="head">irrespective</span> of whether the data is stored/in transit within themselves or with customers or with the third party vendors; the confidentiality of such custodial information should not be compromised at any situation and to this end, suitable systems and processes across the data/information lifecycle need to be put in place by banks.</p>    <p class="head">Cyber Crisis Management Plan</p>    <p>11. A Cyber Crisis Management Plan (CCMP) should be immediately evolved and should be a part of the overall Board approved strategy. Considering the fact that cyber-risk is different from many other risks, the traditional BCP/DR arrangements may not be adequate and hence needs to be revisited keeping in view the nuances of the cyber-risk. As you may be aware, in India, CERT-IN (Computer Emergency Response Team – India, a Government entity) has been taking important initiatives in strengthening cyber-security by providing proactive & reactive services as well as guidelines, threat intelligence and assessment of preparedness of various agencies across the sectors, including the financial sector. CERT-IN also have come out with National Cyber Crisis Management Plan and Cyber Security Assessment Framework. CERT-In/NCIIPC/RBI/IDRBT guidance may be referred to while formulating the CCMP.</p>    <p>12. CCMP should address the following four aspects: (i) Detection (ii) Response (iii) Recovery and (iv) Containment. Banks need to take effective measures to prevent cyber-attacks and to promptly detect any cyber-intrusions so as to respond / recover / contain the fall out. Banks are expected to be well prepared to face emerging cyber-threats such as ‘zero-day’ attacks, remote access threats, and targeted attacks. Among other things, banks should take necessary preventive and corrective measures in addressing various types of cyber threats including, but not limited to, denial of service, distributed denial of services (DDoS), ransom-ware / crypto ware, destructive malware, business email frauds including spam, email phishing, spear phishing, whaling, vishing frauds, drive-by downloads, browser gateway fraud, ghost administrator exploits, identity frauds, memory update frauds, password related frauds, etc.</p>    <p class="head">Cyber security preparedness indicators</p>    <p>13. The adequacy of and adherence to cyber resilience framework should be assessed and measured through development of indicators to assess the level of risk/preparedness. These indicators should be used for comprehensive testing through independent compliance checks and audits carried out by qualified and competent professionals. The awareness among the stakeholders including employees may also form a part of this assessment.</p>    <p class="head">Sharing of information on cyber-security incidents with RBI</p>    <p>14. It is observed that banks are hesitant to share cyber-incidents faced by them. However, the experience gained globally indicates that collaboration among entities in sharing the cyber-incidents and the best practices would facilitate timely measures in containing cyber-risks. It is reiterated that banks need to report all unusual cyber-security incidents (whether they were successful or were attempts which did not fructify) to the Reserve Bank. Banks are also encouraged to actively participate in the activities of their CISOs’ Forum coordinated by IDRBT and promptly report the incidents to Indian Banks – Center for Analysis of Risks and Threats (IB-CART) set up by IDRBT. Such collaborative efforts will help the banks in obtaining collective threat intelligence, timely alerts and adopting proactive cyber security measures.</p>    <p class="head">Supervisory Reporting framework</p>    <p>15. It has been decided to collect both summary level information as well as details on information security incidents including cyber-incidents. Banks are required to report promptly the incidents, in the format given in <a href="http://rbidocs.rbi.org.in/rdocs/content/pdfs/CSFB020616_AN3.pdf" target="_blank" class="links">Annex-3</a>.</p>    <p class="head">An immediate assessment of gaps in preparedness to be reported to RBI</p>    <p>16. The material gaps in controls may be identified early and appropriate remedial action under the active guidance and oversight of the IT Sub Committee of the Board as well as by the Board may be initiated immediately. The identified gaps, proposed measures/controls and their expected effectiveness, milestones with timelines for implementing the proposed controls/measures and measurement criteria for assessing their effectiveness including the risk assessment and risk management methodology followed by the bank/proposed by the bank, as per their self-assessment, may be submitted to the Cyber Security and Information Technology Examination (CSITE) Cell of Department of Banking Supervision, Central Office not later than July 31, 2016 by the Chief Information Security Officer.</p>    <p class="head">Organisational arrangements</p>    <p>17. Banks should review the organisational arrangements so that the security concerns are appreciated, receive adequate attention and get escalated to appropriate levels in the hierarchy to enable quick action.</p>    <p class="head">Cyber-security awareness among stakeholders / Top Management / Board</p>    <p>18. It should be realized that managing cyber risk requires the commitment of the entire organization to create a cyber-safe environment. This will require a high level of awareness among staff at all levels. Top Management and Board should also have a fair degree of awareness of the fine nuances of the threats and appropriate familiarisation may be organized. Banks should proactively promote, among their customers, vendors, service providers and other relevant stakeholders an understanding of the bank’s cyber resilience objectives, and require and ensure appropriate action to support their synchronised implementation and testing. It is well recognised that stakeholders’ (including customers, employees, partners and vendors) awareness about the potential impact of cyber-attacks helps in cyber-security preparedness of banks. Banks are required to take suitable steps in building this awareness. Concurrently, there is an urgent need to bring the Board of Directors and Top Management in banks up to speed on cyber-security related aspects, where necessary, and hence banks are advised to take immediate steps in this direction.</p>    <p>A copy of this circular may be placed before the Board of Directors in its ensuing meeting.</p>    <p>Yours sincerely,</p>    <p>(R.Ravikumar)<br>      Chief General Manager<br>      Encl: As above</p></td>  </tr></table></td></tr></table>
+                                </table>
+                            </div>
+                            <br />
+                            <div align="right">
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            
+</div>
+            <div class="grid_1 archives alpha">
+                <span id="DateSettree_lbltree"><div class="grid_subtree archives alpha" id="treeYearMonth_PR"><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2026">2026</a></h2><div class="accordionContent month" id="2026"><ul class="accordionlist"><li><a href="#" id="20260" onclick='GetYearMonth("2026","0")'>All Months</a></li><li><a href="#" id="20261" onclick='GetYearMonth("2026","1")'>January</a></li><li><a href="#" id="20262" onclick='GetYearMonth("2026","2")'>February</a></li><li><a href="#" id="20263" onclick='GetYearMonth("2026","3")'>March</a></li><li><a href="#" id="20264" onclick='GetYearMonth("2026","4")'>April</a></li><li><a href="#" id="20265" onclick='GetYearMonth("2026","5")'>May</a></li><li><a href="#" id="20266" onclick='GetYearMonth("2026","6")'>June</a></li><li><a href="#" id="20267" onclick='GetYearMonth("2026","7")'>July</a></li><li><a href="#" id="20268" onclick='GetYearMonth("2026","8")'>August</a></li><li><a href="#" id="20269" onclick='GetYearMonth("2026","9")'>September</a></li><li><a href="#" id="202610" onclick='GetYearMonth("2026","10")'>October</a></li><li><a href="#" id="202611" onclick='GetYearMonth("2026","11")'>November</a></li><li><a href="#" id="202612" onclick='GetYearMonth("2026","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2025">2025</a></h2><div class="accordionContent month" id="2025"><ul class="accordionlist"><li><a href="#" id="20250" onclick='GetYearMonth("2025","0")'>All Months</a></li><li><a href="#" id="20251" onclick='GetYearMonth("2025","1")'>January</a></li><li><a href="#" id="20252" onclick='GetYearMonth("2025","2")'>February</a></li><li><a href="#" id="20253" onclick='GetYearMonth("2025","3")'>March</a></li><li><a href="#" id="20254" onclick='GetYearMonth("2025","4")'>April</a></li><li><a href="#" id="20255" onclick='GetYearMonth("2025","5")'>May</a></li><li><a href="#" id="20256" onclick='GetYearMonth("2025","6")'>June</a></li><li><a href="#" id="20257" onclick='GetYearMonth("2025","7")'>July</a></li><li><a href="#" id="20258" onclick='GetYearMonth("2025","8")'>August</a></li><li><a href="#" id="20259" onclick='GetYearMonth("2025","9")'>September</a></li><li><a href="#" id="202510" onclick='GetYearMonth("2025","10")'>October</a></li><li><a href="#" id="202511" onclick='GetYearMonth("2025","11")'>November</a></li><li><a href="#" id="202512" onclick='GetYearMonth("2025","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2024">2024</a></h2><div class="accordionContent month" id="2024"><ul class="accordionlist"><li><a href="#" id="20240" onclick='GetYearMonth("2024","0")'>All Months</a></li><li><a href="#" id="20241" onclick='GetYearMonth("2024","1")'>January</a></li><li><a href="#" id="20242" onclick='GetYearMonth("2024","2")'>February</a></li><li><a href="#" id="20243" onclick='GetYearMonth("2024","3")'>March</a></li><li><a href="#" id="20244" onclick='GetYearMonth("2024","4")'>April</a></li><li><a href="#" id="20245" onclick='GetYearMonth("2024","5")'>May</a></li><li><a href="#" id="20246" onclick='GetYearMonth("2024","6")'>June</a></li><li><a href="#" id="20247" onclick='GetYearMonth("2024","7")'>July</a></li><li><a href="#" id="20248" onclick='GetYearMonth("2024","8")'>August</a></li><li><a href="#" id="20249" onclick='GetYearMonth("2024","9")'>September</a></li><li><a href="#" id="202410" onclick='GetYearMonth("2024","10")'>October</a></li><li><a href="#" id="202411" onclick='GetYearMonth("2024","11")'>November</a></li><li><a href="#" id="202412" onclick='GetYearMonth("2024","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2023">2023</a></h2><div class="accordionContent month" id="2023"><ul class="accordionlist"><li><a href="#" id="20230" onclick='GetYearMonth("2023","0")'>All Months</a></li><li><a href="#" id="20231" onclick='GetYearMonth("2023","1")'>January</a></li><li><a href="#" id="20232" onclick='GetYearMonth("2023","2")'>February</a></li><li><a href="#" id="20233" onclick='GetYearMonth("2023","3")'>March</a></li><li><a href="#" id="20234" onclick='GetYearMonth("2023","4")'>April</a></li><li><a href="#" id="20235" onclick='GetYearMonth("2023","5")'>May</a></li><li><a href="#" id="20236" onclick='GetYearMonth("2023","6")'>June</a></li><li><a href="#" id="20237" onclick='GetYearMonth("2023","7")'>July</a></li><li><a href="#" id="20238" onclick='GetYearMonth("2023","8")'>August</a></li><li><a href="#" id="20239" onclick='GetYearMonth("2023","9")'>September</a></li><li><a href="#" id="202310" onclick='GetYearMonth("2023","10")'>October</a></li><li><a href="#" id="202311" onclick='GetYearMonth("2023","11")'>November</a></li><li><a href="#" id="202312" onclick='GetYearMonth("2023","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2022">2022</a></h2><div class="accordionContent month" id="2022"><ul class="accordionlist"><li><a href="#" id="20220" onclick='GetYearMonth("2022","0")'>All Months</a></li><li><a href="#" id="20221" onclick='GetYearMonth("2022","1")'>January</a></li><li><a href="#" id="20222" onclick='GetYearMonth("2022","2")'>February</a></li><li><a href="#" id="20223" onclick='GetYearMonth("2022","3")'>March</a></li><li><a href="#" id="20224" onclick='GetYearMonth("2022","4")'>April</a></li><li><a href="#" id="20225" onclick='GetYearMonth("2022","5")'>May</a></li><li><a href="#" id="20226" onclick='GetYearMonth("2022","6")'>June</a></li><li><a href="#" id="20227" onclick='GetYearMonth("2022","7")'>July</a></li><li><a href="#" id="20228" onclick='GetYearMonth("2022","8")'>August</a></li><li><a href="#" id="20229" onclick='GetYearMonth("2022","9")'>September</a></li><li><a href="#" id="202210" onclick='GetYearMonth("2022","10")'>October</a></li><li><a href="#" id="202211" onclick='GetYearMonth("2022","11")'>November</a></li><li><a href="#" id="202212" onclick='GetYearMonth("2022","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2021">2021</a></h2><div class="accordionContent month" id="2021"><ul class="accordionlist"><li><a href="#" id="20210" onclick='GetYearMonth("2021","0")'>All Months</a></li><li><a href="#" id="20211" onclick='GetYearMonth("2021","1")'>January</a></li><li><a href="#" id="20212" onclick='GetYearMonth("2021","2")'>February</a></li><li><a href="#" id="20213" onclick='GetYearMonth("2021","3")'>March</a></li><li><a href="#" id="20214" onclick='GetYearMonth("2021","4")'>April</a></li><li><a href="#" id="20215" onclick='GetYearMonth("2021","5")'>May</a></li><li><a href="#" id="20216" onclick='GetYearMonth("2021","6")'>June</a></li><li><a href="#" id="20217" onclick='GetYearMonth("2021","7")'>July</a></li><li><a href="#" id="20218" onclick='GetYearMonth("2021","8")'>August</a></li><li><a href="#" id="20219" onclick='GetYearMonth("2021","9")'>September</a></li><li><a href="#" id="202110" onclick='GetYearMonth("2021","10")'>October</a></li><li><a href="#" id="202111" onclick='GetYearMonth("2021","11")'>November</a></li><li><a href="#" id="202112" onclick='GetYearMonth("2021","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2020">2020</a></h2><div class="accordionContent month" id="2020"><ul class="accordionlist"><li><a href="#" id="20200" onclick='GetYearMonth("2020","0")'>All Months</a></li><li><a href="#" id="20201" onclick='GetYearMonth("2020","1")'>January</a></li><li><a href="#" id="20202" onclick='GetYearMonth("2020","2")'>February</a></li><li><a href="#" id="20203" onclick='GetYearMonth("2020","3")'>March</a></li><li><a href="#" id="20204" onclick='GetYearMonth("2020","4")'>April</a></li><li><a href="#" id="20205" onclick='GetYearMonth("2020","5")'>May</a></li><li><a href="#" id="20206" onclick='GetYearMonth("2020","6")'>June</a></li><li><a href="#" id="20207" onclick='GetYearMonth("2020","7")'>July</a></li><li><a href="#" id="20208" onclick='GetYearMonth("2020","8")'>August</a></li><li><a href="#" id="20209" onclick='GetYearMonth("2020","9")'>September</a></li><li><a href="#" id="202010" onclick='GetYearMonth("2020","10")'>October</a></li><li><a href="#" id="202011" onclick='GetYearMonth("2020","11")'>November</a></li><li><a href="#" id="202012" onclick='GetYearMonth("2020","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2019">2019</a></h2><div class="accordionContent month" id="2019"><ul class="accordionlist"><li><a href="#" id="20190" onclick='GetYearMonth("2019","0")'>All Months</a></li><li><a href="#" id="20191" onclick='GetYearMonth("2019","1")'>January</a></li><li><a href="#" id="20192" onclick='GetYearMonth("2019","2")'>February</a></li><li><a href="#" id="20193" onclick='GetYearMonth("2019","3")'>March</a></li><li><a href="#" id="20194" onclick='GetYearMonth("2019","4")'>April</a></li><li><a href="#" id="20195" onclick='GetYearMonth("2019","5")'>May</a></li><li><a href="#" id="20196" onclick='GetYearMonth("2019","6")'>June</a></li><li><a href="#" id="20197" onclick='GetYearMonth("2019","7")'>July</a></li><li><a href="#" id="20198" onclick='GetYearMonth("2019","8")'>August</a></li><li><a href="#" id="20199" onclick='GetYearMonth("2019","9")'>September</a></li><li><a href="#" id="201910" onclick='GetYearMonth("2019","10")'>October</a></li><li><a href="#" id="201911" onclick='GetYearMonth("2019","11")'>November</a></li><li><a href="#" id="201912" onclick='GetYearMonth("2019","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2018">2018</a></h2><div class="accordionContent month" id="2018"><ul class="accordionlist"><li><a href="#" id="20180" onclick='GetYearMonth("2018","0")'>All Months</a></li><li><a href="#" id="20181" onclick='GetYearMonth("2018","1")'>January</a></li><li><a href="#" id="20182" onclick='GetYearMonth("2018","2")'>February</a></li><li><a href="#" id="20183" onclick='GetYearMonth("2018","3")'>March</a></li><li><a href="#" id="20184" onclick='GetYearMonth("2018","4")'>April</a></li><li><a href="#" id="20185" onclick='GetYearMonth("2018","5")'>May</a></li><li><a href="#" id="20186" onclick='GetYearMonth("2018","6")'>June</a></li><li><a href="#" id="20187" onclick='GetYearMonth("2018","7")'>July</a></li><li><a href="#" id="20188" onclick='GetYearMonth("2018","8")'>August</a></li><li><a href="#" id="20189" onclick='GetYearMonth("2018","9")'>September</a></li><li><a href="#" id="201810" onclick='GetYearMonth("2018","10")'>October</a></li><li><a href="#" id="201811" onclick='GetYearMonth("2018","11")'>November</a></li><li><a href="#" id="201812" onclick='GetYearMonth("2018","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2017">2017</a></h2><div class="accordionContent month" id="2017"><ul class="accordionlist"><li><a href="#" id="20170" onclick='GetYearMonth("2017","0")'>All Months</a></li><li><a href="#" id="20171" onclick='GetYearMonth("2017","1")'>January</a></li><li><a href="#" id="20172" onclick='GetYearMonth("2017","2")'>February</a></li><li><a href="#" id="20173" onclick='GetYearMonth("2017","3")'>March</a></li><li><a href="#" id="20174" onclick='GetYearMonth("2017","4")'>April</a></li><li><a href="#" id="20175" onclick='GetYearMonth("2017","5")'>May</a></li><li><a href="#" id="20176" onclick='GetYearMonth("2017","6")'>June</a></li><li><a href="#" id="20177" onclick='GetYearMonth("2017","7")'>July</a></li><li><a href="#" id="20178" onclick='GetYearMonth("2017","8")'>August</a></li><li><a href="#" id="20179" onclick='GetYearMonth("2017","9")'>September</a></li><li><a href="#" id="201710" onclick='GetYearMonth("2017","10")'>October</a></li><li><a href="#" id="201711" onclick='GetYearMonth("2017","11")'>November</a></li><li><a href="#" id="201712" onclick='GetYearMonth("2017","12")'>December</a></li></ul></div><h2 class="year"><a href="javascript:void(0);" style="text-decoration:none;" id="divArchiveMain"  onclick="hideshow('divArchiveSub');" style="cursor: pointer;">Archives</a></h2><div  id="divArchiveSub" style="display: none;"><div class="grid_subtree archives alpha" id="treeYearMonth_PR"><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2016">2016</a></h2><div class="accordionContent month" id="2016"><ul class="accordionlist"><li><a href="#" id="20160" onclick='GetYearMonth("2016","0")'>All Months</a></li><li><a href="#" id="20161" onclick='GetYearMonth("2016","1")'>January</a></li><li><a href="#" id="20162" onclick='GetYearMonth("2016","2")'>February</a></li><li><a href="#" id="20163" onclick='GetYearMonth("2016","3")'>March</a></li><li><a href="#" id="20164" onclick='GetYearMonth("2016","4")'>April</a></li><li><a href="#" id="20165" onclick='GetYearMonth("2016","5")'>May</a></li><li><a href="#" id="20166" onclick='GetYearMonth("2016","6")'>June</a></li><li><a href="#" id="20167" onclick='GetYearMonth("2016","7")'>July</a></li><li><a href="#" id="20168" onclick='GetYearMonth("2016","8")'>August</a></li><li><a href="#" id="20169" onclick='GetYearMonth("2016","9")'>September</a></li><li><a href="#" id="201610" onclick='GetYearMonth("2016","10")'>October</a></li><li><a href="#" id="201611" onclick='GetYearMonth("2016","11")'>November</a></li><li><a href="#" id="201612" onclick='GetYearMonth("2016","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2015">2015</a></h2><div class="accordionContent month" id="2015"><ul class="accordionlist"><li><a href="#" id="20150" onclick='GetYearMonth("2015","0")'>All Months</a></li><li><a href="#" id="20151" onclick='GetYearMonth("2015","1")'>January</a></li><li><a href="#" id="20152" onclick='GetYearMonth("2015","2")'>February</a></li><li><a href="#" id="20153" onclick='GetYearMonth("2015","3")'>March</a></li><li><a href="#" id="20154" onclick='GetYearMonth("2015","4")'>April</a></li><li><a href="#" id="20155" onclick='GetYearMonth("2015","5")'>May</a></li><li><a href="#" id="20156" onclick='GetYearMonth("2015","6")'>June</a></li><li><a href="#" id="20157" onclick='GetYearMonth("2015","7")'>July</a></li><li><a href="#" id="20158" onclick='GetYearMonth("2015","8")'>August</a></li><li><a href="#" id="20159" onclick='GetYearMonth("2015","9")'>September</a></li><li><a href="#" id="201510" onclick='GetYearMonth("2015","10")'>October</a></li><li><a href="#" id="201511" onclick='GetYearMonth("2015","11")'>November</a></li><li><a href="#" id="201512" onclick='GetYearMonth("2015","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2014">2014</a></h2><div class="accordionContent month" id="2014"><ul class="accordionlist"><li><a href="#" id="20140" onclick='GetYearMonth("2014","0")'>All Months</a></li><li><a href="#" id="20141" onclick='GetYearMonth("2014","1")'>January</a></li><li><a href="#" id="20142" onclick='GetYearMonth("2014","2")'>February</a></li><li><a href="#" id="20143" onclick='GetYearMonth("2014","3")'>March</a></li><li><a href="#" id="20144" onclick='GetYearMonth("2014","4")'>April</a></li><li><a href="#" id="20145" onclick='GetYearMonth("2014","5")'>May</a></li><li><a href="#" id="20146" onclick='GetYearMonth("2014","6")'>June</a></li><li><a href="#" id="20147" onclick='GetYearMonth("2014","7")'>July</a></li><li><a href="#" id="20148" onclick='GetYearMonth("2014","8")'>August</a></li><li><a href="#" id="20149" onclick='GetYearMonth("2014","9")'>September</a></li><li><a href="#" id="201410" onclick='GetYearMonth("2014","10")'>October</a></li><li><a href="#" id="201411" onclick='GetYearMonth("2014","11")'>November</a></li><li><a href="#" id="201412" onclick='GetYearMonth("2014","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2013">2013</a></h2><div class="accordionContent month" id="2013"><ul class="accordionlist"><li><a href="#" id="20130" onclick='GetYearMonth("2013","0")'>All Months</a></li><li><a href="#" id="20131" onclick='GetYearMonth("2013","1")'>January</a></li><li><a href="#" id="20132" onclick='GetYearMonth("2013","2")'>February</a></li><li><a href="#" id="20133" onclick='GetYearMonth("2013","3")'>March</a></li><li><a href="#" id="20134" onclick='GetYearMonth("2013","4")'>April</a></li><li><a href="#" id="20135" onclick='GetYearMonth("2013","5")'>May</a></li><li><a href="#" id="20136" onclick='GetYearMonth("2013","6")'>June</a></li><li><a href="#" id="20137" onclick='GetYearMonth("2013","7")'>July</a></li><li><a href="#" id="20138" onclick='GetYearMonth("2013","8")'>August</a></li><li><a href="#" id="20139" onclick='GetYearMonth("2013","9")'>September</a></li><li><a href="#" id="201310" onclick='GetYearMonth("2013","10")'>October</a></li><li><a href="#" id="201311" onclick='GetYearMonth("2013","11")'>November</a></li><li><a href="#" id="201312" onclick='GetYearMonth("2013","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2012">2012</a></h2><div class="accordionContent month" id="2012"><ul class="accordionlist"><li><a href="#" id="20120" onclick='GetYearMonth("2012","0")'>All Months</a></li><li><a href="#" id="20121" onclick='GetYearMonth("2012","1")'>January</a></li><li><a href="#" id="20122" onclick='GetYearMonth("2012","2")'>February</a></li><li><a href="#" id="20123" onclick='GetYearMonth("2012","3")'>March</a></li><li><a href="#" id="20124" onclick='GetYearMonth("2012","4")'>April</a></li><li><a href="#" id="20125" onclick='GetYearMonth("2012","5")'>May</a></li><li><a href="#" id="20126" onclick='GetYearMonth("2012","6")'>June</a></li><li><a href="#" id="20127" onclick='GetYearMonth("2012","7")'>July</a></li><li><a href="#" id="20128" onclick='GetYearMonth("2012","8")'>August</a></li><li><a href="#" id="20129" onclick='GetYearMonth("2012","9")'>September</a></li><li><a href="#" id="201210" onclick='GetYearMonth("2012","10")'>October</a></li><li><a href="#" id="201211" onclick='GetYearMonth("2012","11")'>November</a></li><li><a href="#" id="201212" onclick='GetYearMonth("2012","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2011">2011</a></h2><div class="accordionContent month" id="2011"><ul class="accordionlist"><li><a href="#" id="20110" onclick='GetYearMonth("2011","0")'>All Months</a></li><li><a href="#" id="20111" onclick='GetYearMonth("2011","1")'>January</a></li><li><a href="#" id="20112" onclick='GetYearMonth("2011","2")'>February</a></li><li><a href="#" id="20113" onclick='GetYearMonth("2011","3")'>March</a></li><li><a href="#" id="20114" onclick='GetYearMonth("2011","4")'>April</a></li><li><a href="#" id="20115" onclick='GetYearMonth("2011","5")'>May</a></li><li><a href="#" id="20116" onclick='GetYearMonth("2011","6")'>June</a></li><li><a href="#" id="20117" onclick='GetYearMonth("2011","7")'>July</a></li><li><a href="#" id="20118" onclick='GetYearMonth("2011","8")'>August</a></li><li><a href="#" id="20119" onclick='GetYearMonth("2011","9")'>September</a></li><li><a href="#" id="201110" onclick='GetYearMonth("2011","10")'>October</a></li><li><a href="#" id="201111" onclick='GetYearMonth("2011","11")'>November</a></li><li><a href="#" id="201112" onclick='GetYearMonth("2011","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2010">2010</a></h2><div class="accordionContent month" id="2010"><ul class="accordionlist"><li><a href="#" id="20100" onclick='GetYearMonth("2010","0")'>All Months</a></li><li><a href="#" id="20101" onclick='GetYearMonth("2010","1")'>January</a></li><li><a href="#" id="20102" onclick='GetYearMonth("2010","2")'>February</a></li><li><a href="#" id="20103" onclick='GetYearMonth("2010","3")'>March</a></li><li><a href="#" id="20104" onclick='GetYearMonth("2010","4")'>April</a></li><li><a href="#" id="20105" onclick='GetYearMonth("2010","5")'>May</a></li><li><a href="#" id="20106" onclick='GetYearMonth("2010","6")'>June</a></li><li><a href="#" id="20107" onclick='GetYearMonth("2010","7")'>July</a></li><li><a href="#" id="20108" onclick='GetYearMonth("2010","8")'>August</a></li><li><a href="#" id="20109" onclick='GetYearMonth("2010","9")'>September</a></li><li><a href="#" id="201010" onclick='GetYearMonth("2010","10")'>October</a></li><li><a href="#" id="201011" onclick='GetYearMonth("2010","11")'>November</a></li><li><a href="#" id="201012" onclick='GetYearMonth("2010","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2009">2009</a></h2><div class="accordionContent month" id="2009"><ul class="accordionlist"><li><a href="#" id="20090" onclick='GetYearMonth("2009","0")'>All Months</a></li><li><a href="#" id="20091" onclick='GetYearMonth("2009","1")'>January</a></li><li><a href="#" id="20092" onclick='GetYearMonth("2009","2")'>February</a></li><li><a href="#" id="20093" onclick='GetYearMonth("2009","3")'>March</a></li><li><a href="#" id="20094" onclick='GetYearMonth("2009","4")'>April</a></li><li><a href="#" id="20095" onclick='GetYearMonth("2009","5")'>May</a></li><li><a href="#" id="20096" onclick='GetYearMonth("2009","6")'>June</a></li><li><a href="#" id="20097" onclick='GetYearMonth("2009","7")'>July</a></li><li><a href="#" id="20098" onclick='GetYearMonth("2009","8")'>August</a></li><li><a href="#" id="20099" onclick='GetYearMonth("2009","9")'>September</a></li><li><a href="#" id="200910" onclick='GetYearMonth("2009","10")'>October</a></li><li><a href="#" id="200911" onclick='GetYearMonth("2009","11")'>November</a></li><li><a href="#" id="200912" onclick='GetYearMonth("2009","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2008">2008</a></h2><div class="accordionContent month" id="2008"><ul class="accordionlist"><li><a href="#" id="20080" onclick='GetYearMonth("2008","0")'>All Months</a></li><li><a href="#" id="20081" onclick='GetYearMonth("2008","1")'>January</a></li><li><a href="#" id="20082" onclick='GetYearMonth("2008","2")'>February</a></li><li><a href="#" id="20083" onclick='GetYearMonth("2008","3")'>March</a></li><li><a href="#" id="20084" onclick='GetYearMonth("2008","4")'>April</a></li><li><a href="#" id="20085" onclick='GetYearMonth("2008","5")'>May</a></li><li><a href="#" id="20086" onclick='GetYearMonth("2008","6")'>June</a></li><li><a href="#" id="20087" onclick='GetYearMonth("2008","7")'>July</a></li><li><a href="#" id="20088" onclick='GetYearMonth("2008","8")'>August</a></li><li><a href="#" id="20089" onclick='GetYearMonth("2008","9")'>September</a></li><li><a href="#" id="200810" onclick='GetYearMonth("2008","10")'>October</a></li><li><a href="#" id="200811" onclick='GetYearMonth("2008","11")'>November</a></li><li><a href="#" id="200812" onclick='GetYearMonth("2008","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2007">2007</a></h2><div class="accordionContent month" id="2007"><ul class="accordionlist"><li><a href="#" id="20070" onclick='GetYearMonth("2007","0")'>All Months</a></li><li><a href="#" id="20071" onclick='GetYearMonth("2007","1")'>January</a></li><li><a href="#" id="20072" onclick='GetYearMonth("2007","2")'>February</a></li><li><a href="#" id="20073" onclick='GetYearMonth("2007","3")'>March</a></li><li><a href="#" id="20074" onclick='GetYearMonth("2007","4")'>April</a></li><li><a href="#" id="20075" onclick='GetYearMonth("2007","5")'>May</a></li><li><a href="#" id="20076" onclick='GetYearMonth("2007","6")'>June</a></li><li><a href="#" id="20077" onclick='GetYearMonth("2007","7")'>July</a></li><li><a href="#" id="20078" onclick='GetYearMonth("2007","8")'>August</a></li><li><a href="#" id="20079" onclick='GetYearMonth("2007","9")'>September</a></li><li><a href="#" id="200710" onclick='GetYearMonth("2007","10")'>October</a></li><li><a href="#" id="200711" onclick='GetYearMonth("2007","11")'>November</a></li><li><a href="#" id="200712" onclick='GetYearMonth("2007","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2006">2006</a></h2><div class="accordionContent month" id="2006"><ul class="accordionlist"><li><a href="#" id="20060" onclick='GetYearMonth("2006","0")'>All Months</a></li><li><a href="#" id="20061" onclick='GetYearMonth("2006","1")'>January</a></li><li><a href="#" id="20062" onclick='GetYearMonth("2006","2")'>February</a></li><li><a href="#" id="20063" onclick='GetYearMonth("2006","3")'>March</a></li><li><a href="#" id="20064" onclick='GetYearMonth("2006","4")'>April</a></li><li><a href="#" id="20065" onclick='GetYearMonth("2006","5")'>May</a></li><li><a href="#" id="20066" onclick='GetYearMonth("2006","6")'>June</a></li><li><a href="#" id="20067" onclick='GetYearMonth("2006","7")'>July</a></li><li><a href="#" id="20068" onclick='GetYearMonth("2006","8")'>August</a></li><li><a href="#" id="20069" onclick='GetYearMonth("2006","9")'>September</a></li><li><a href="#" id="200610" onclick='GetYearMonth("2006","10")'>October</a></li><li><a href="#" id="200611" onclick='GetYearMonth("2006","11")'>November</a></li><li><a href="#" id="200612" onclick='GetYearMonth("2006","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2005">2005</a></h2><div class="accordionContent month" id="2005"><ul class="accordionlist"><li><a href="#" id="20050" onclick='GetYearMonth("2005","0")'>All Months</a></li><li><a href="#" id="20051" onclick='GetYearMonth("2005","1")'>January</a></li><li><a href="#" id="20052" onclick='GetYearMonth("2005","2")'>February</a></li><li><a href="#" id="20053" onclick='GetYearMonth("2005","3")'>March</a></li><li><a href="#" id="20054" onclick='GetYearMonth("2005","4")'>April</a></li><li><a href="#" id="20055" onclick='GetYearMonth("2005","5")'>May</a></li><li><a href="#" id="20056" onclick='GetYearMonth("2005","6")'>June</a></li><li><a href="#" id="20057" onclick='GetYearMonth("2005","7")'>July</a></li><li><a href="#" id="20058" onclick='GetYearMonth("2005","8")'>August</a></li><li><a href="#" id="20059" onclick='GetYearMonth("2005","9")'>September</a></li><li><a href="#" id="200510" onclick='GetYearMonth("2005","10")'>October</a></li><li><a href="#" id="200511" onclick='GetYearMonth("2005","11")'>November</a></li><li><a href="#" id="200512" onclick='GetYearMonth("2005","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2004">2004</a></h2><div class="accordionContent month" id="2004"><ul class="accordionlist"><li><a href="#" id="20040" onclick='GetYearMonth("2004","0")'>All Months</a></li><li><a href="#" id="20041" onclick='GetYearMonth("2004","1")'>January</a></li><li><a href="#" id="20042" onclick='GetYearMonth("2004","2")'>February</a></li><li><a href="#" id="20043" onclick='GetYearMonth("2004","3")'>March</a></li><li><a href="#" id="20044" onclick='GetYearMonth("2004","4")'>April</a></li><li><a href="#" id="20045" onclick='GetYearMonth("2004","5")'>May</a></li><li><a href="#" id="20046" onclick='GetYearMonth("2004","6")'>June</a></li><li><a href="#" id="20047" onclick='GetYearMonth("2004","7")'>July</a></li><li><a href="#" id="20048" onclick='GetYearMonth("2004","8")'>August</a></li><li><a href="#" id="20049" onclick='GetYearMonth("2004","9")'>September</a></li><li><a href="#" id="200410" onclick='GetYearMonth("2004","10")'>October</a></li><li><a href="#" id="200411" onclick='GetYearMonth("2004","11")'>November</a></li><li><a href="#" id="200412" onclick='GetYearMonth("2004","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2003">2003</a></h2><div class="accordionContent month" id="2003"><ul class="accordionlist"><li><a href="#" id="20030" onclick='GetYearMonth("2003","0")'>All Months</a></li><li><a href="#" id="20031" onclick='GetYearMonth("2003","1")'>January</a></li><li><a href="#" id="20032" onclick='GetYearMonth("2003","2")'>February</a></li><li><a href="#" id="20033" onclick='GetYearMonth("2003","3")'>March</a></li><li><a href="#" id="20034" onclick='GetYearMonth("2003","4")'>April</a></li><li><a href="#" id="20035" onclick='GetYearMonth("2003","5")'>May</a></li><li><a href="#" id="20036" onclick='GetYearMonth("2003","6")'>June</a></li><li><a href="#" id="20037" onclick='GetYearMonth("2003","7")'>July</a></li><li><a href="#" id="20038" onclick='GetYearMonth("2003","8")'>August</a></li><li><a href="#" id="20039" onclick='GetYearMonth("2003","9")'>September</a></li><li><a href="#" id="200310" onclick='GetYearMonth("2003","10")'>October</a></li><li><a href="#" id="200311" onclick='GetYearMonth("2003","11")'>November</a></li><li><a href="#" id="200312" onclick='GetYearMonth("2003","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2002">2002</a></h2><div class="accordionContent month" id="2002"><ul class="accordionlist"><li><a href="#" id="20020" onclick='GetYearMonth("2002","0")'>All Months</a></li><li><a href="#" id="20021" onclick='GetYearMonth("2002","1")'>January</a></li><li><a href="#" id="20022" onclick='GetYearMonth("2002","2")'>February</a></li><li><a href="#" id="20023" onclick='GetYearMonth("2002","3")'>March</a></li><li><a href="#" id="20024" onclick='GetYearMonth("2002","4")'>April</a></li><li><a href="#" id="20025" onclick='GetYearMonth("2002","5")'>May</a></li><li><a href="#" id="20026" onclick='GetYearMonth("2002","6")'>June</a></li><li><a href="#" id="20027" onclick='GetYearMonth("2002","7")'>July</a></li><li><a href="#" id="20028" onclick='GetYearMonth("2002","8")'>August</a></li><li><a href="#" id="20029" onclick='GetYearMonth("2002","9")'>September</a></li><li><a href="#" id="200210" onclick='GetYearMonth("2002","10")'>October</a></li><li><a href="#" id="200211" onclick='GetYearMonth("2002","11")'>November</a></li><li><a href="#" id="200212" onclick='GetYearMonth("2002","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2001">2001</a></h2><div class="accordionContent month" id="2001"><ul class="accordionlist"><li><a href="#" id="20010" onclick='GetYearMonth("2001","0")'>All Months</a></li><li><a href="#" id="20011" onclick='GetYearMonth("2001","1")'>January</a></li><li><a href="#" id="20012" onclick='GetYearMonth("2001","2")'>February</a></li><li><a href="#" id="20013" onclick='GetYearMonth("2001","3")'>March</a></li><li><a href="#" id="20014" onclick='GetYearMonth("2001","4")'>April</a></li><li><a href="#" id="20015" onclick='GetYearMonth("2001","5")'>May</a></li><li><a href="#" id="20016" onclick='GetYearMonth("2001","6")'>June</a></li><li><a href="#" id="20017" onclick='GetYearMonth("2001","7")'>July</a></li><li><a href="#" id="20018" onclick='GetYearMonth("2001","8")'>August</a></li><li><a href="#" id="20019" onclick='GetYearMonth("2001","9")'>September</a></li><li><a href="#" id="200110" onclick='GetYearMonth("2001","10")'>October</a></li><li><a href="#" id="200111" onclick='GetYearMonth("2001","11")'>November</a></li><li><a href="#" id="200112" onclick='GetYearMonth("2001","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn2000">2000</a></h2><div class="accordionContent month" id="2000"><ul class="accordionlist"><li><a href="#" id="20000" onclick='GetYearMonth("2000","0")'>All Months</a></li><li><a href="#" id="20001" onclick='GetYearMonth("2000","1")'>January</a></li><li><a href="#" id="20002" onclick='GetYearMonth("2000","2")'>February</a></li><li><a href="#" id="20003" onclick='GetYearMonth("2000","3")'>March</a></li><li><a href="#" id="20004" onclick='GetYearMonth("2000","4")'>April</a></li><li><a href="#" id="20005" onclick='GetYearMonth("2000","5")'>May</a></li><li><a href="#" id="20006" onclick='GetYearMonth("2000","6")'>June</a></li><li><a href="#" id="20007" onclick='GetYearMonth("2000","7")'>July</a></li><li><a href="#" id="20008" onclick='GetYearMonth("2000","8")'>August</a></li><li><a href="#" id="20009" onclick='GetYearMonth("2000","9")'>September</a></li><li><a href="#" id="200010" onclick='GetYearMonth("2000","10")'>October</a></li><li><a href="#" id="200011" onclick='GetYearMonth("2000","11")'>November</a></li><li><a href="#" id="200012" onclick='GetYearMonth("2000","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn1999">1999</a></h2><div class="accordionContent month" id="1999"><ul class="accordionlist"><li><a href="#" id="19990" onclick='GetYearMonth("1999","0")'>All Months</a></li><li><a href="#" id="19991" onclick='GetYearMonth("1999","1")'>January</a></li><li><a href="#" id="19992" onclick='GetYearMonth("1999","2")'>February</a></li><li><a href="#" id="19993" onclick='GetYearMonth("1999","3")'>March</a></li><li><a href="#" id="19994" onclick='GetYearMonth("1999","4")'>April</a></li><li><a href="#" id="19995" onclick='GetYearMonth("1999","5")'>May</a></li><li><a href="#" id="19996" onclick='GetYearMonth("1999","6")'>June</a></li><li><a href="#" id="19997" onclick='GetYearMonth("1999","7")'>July</a></li><li><a href="#" id="19998" onclick='GetYearMonth("1999","8")'>August</a></li><li><a href="#" id="19999" onclick='GetYearMonth("1999","9")'>September</a></li><li><a href="#" id="199910" onclick='GetYearMonth("1999","10")'>October</a></li><li><a href="#" id="199911" onclick='GetYearMonth("1999","11")'>November</a></li><li><a href="#" id="199912" onclick='GetYearMonth("1999","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn1998">1998</a></h2><div class="accordionContent month" id="1998"><ul class="accordionlist"><li><a href="#" id="19980" onclick='GetYearMonth("1998","0")'>All Months</a></li><li><a href="#" id="19981" onclick='GetYearMonth("1998","1")'>January</a></li><li><a href="#" id="19982" onclick='GetYearMonth("1998","2")'>February</a></li><li><a href="#" id="19983" onclick='GetYearMonth("1998","3")'>March</a></li><li><a href="#" id="19984" onclick='GetYearMonth("1998","4")'>April</a></li><li><a href="#" id="19985" onclick='GetYearMonth("1998","5")'>May</a></li><li><a href="#" id="19986" onclick='GetYearMonth("1998","6")'>June</a></li><li><a href="#" id="19987" onclick='GetYearMonth("1998","7")'>July</a></li><li><a href="#" id="19988" onclick='GetYearMonth("1998","8")'>August</a></li><li><a href="#" id="19989" onclick='GetYearMonth("1998","9")'>September</a></li><li><a href="#" id="199810" onclick='GetYearMonth("1998","10")'>October</a></li><li><a href="#" id="199811" onclick='GetYearMonth("1998","11")'>November</a></li><li><a href="#" id="199812" onclick='GetYearMonth("1998","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn1997">1997</a></h2><div class="accordionContent month" id="1997"><ul class="accordionlist"><li><a href="#" id="19970" onclick='GetYearMonth("1997","0")'>All Months</a></li><li><a href="#" id="19971" onclick='GetYearMonth("1997","1")'>January</a></li><li><a href="#" id="19972" onclick='GetYearMonth("1997","2")'>February</a></li><li><a href="#" id="19973" onclick='GetYearMonth("1997","3")'>March</a></li><li><a href="#" id="19974" onclick='GetYearMonth("1997","4")'>April</a></li><li><a href="#" id="19975" onclick='GetYearMonth("1997","5")'>May</a></li><li><a href="#" id="19976" onclick='GetYearMonth("1997","6")'>June</a></li><li><a href="#" id="19977" onclick='GetYearMonth("1997","7")'>July</a></li><li><a href="#" id="19978" onclick='GetYearMonth("1997","8")'>August</a></li><li><a href="#" id="19979" onclick='GetYearMonth("1997","9")'>September</a></li><li><a href="#" id="199710" onclick='GetYearMonth("1997","10")'>October</a></li><li><a href="#" id="199711" onclick='GetYearMonth("1997","11")'>November</a></li><li><a href="#" id="199712" onclick='GetYearMonth("1997","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn1996">1996</a></h2><div class="accordionContent month" id="1996"><ul class="accordionlist"><li><a href="#" id="19960" onclick='GetYearMonth("1996","0")'>All Months</a></li><li><a href="#" id="19961" onclick='GetYearMonth("1996","1")'>January</a></li><li><a href="#" id="19962" onclick='GetYearMonth("1996","2")'>February</a></li><li><a href="#" id="19963" onclick='GetYearMonth("1996","3")'>March</a></li><li><a href="#" id="19964" onclick='GetYearMonth("1996","4")'>April</a></li><li><a href="#" id="19965" onclick='GetYearMonth("1996","5")'>May</a></li><li><a href="#" id="19966" onclick='GetYearMonth("1996","6")'>June</a></li><li><a href="#" id="19967" onclick='GetYearMonth("1996","7")'>July</a></li><li><a href="#" id="19968" onclick='GetYearMonth("1996","8")'>August</a></li><li><a href="#" id="19969" onclick='GetYearMonth("1996","9")'>September</a></li><li><a href="#" id="199610" onclick='GetYearMonth("1996","10")'>October</a></li><li><a href="#" id="199611" onclick='GetYearMonth("1996","11")'>November</a></li><li><a href="#" id="199612" onclick='GetYearMonth("1996","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn1995">1995</a></h2><div class="accordionContent month" id="1995"><ul class="accordionlist"><li><a href="#" id="19950" onclick='GetYearMonth("1995","0")'>All Months</a></li><li><a href="#" id="19951" onclick='GetYearMonth("1995","1")'>January</a></li><li><a href="#" id="19952" onclick='GetYearMonth("1995","2")'>February</a></li><li><a href="#" id="19953" onclick='GetYearMonth("1995","3")'>March</a></li><li><a href="#" id="19954" onclick='GetYearMonth("1995","4")'>April</a></li><li><a href="#" id="19955" onclick='GetYearMonth("1995","5")'>May</a></li><li><a href="#" id="19956" onclick='GetYearMonth("1995","6")'>June</a></li><li><a href="#" id="19957" onclick='GetYearMonth("1995","7")'>July</a></li><li><a href="#" id="19958" onclick='GetYearMonth("1995","8")'>August</a></li><li><a href="#" id="19959" onclick='GetYearMonth("1995","9")'>September</a></li><li><a href="#" id="199510" onclick='GetYearMonth("1995","10")'>October</a></li><li><a href="#" id="199511" onclick='GetYearMonth("1995","11")'>November</a></li><li><a href="#" id="199512" onclick='GetYearMonth("1995","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn1994">1994</a></h2><div class="accordionContent month" id="1994"><ul class="accordionlist"><li><a href="#" id="19940" onclick='GetYearMonth("1994","0")'>All Months</a></li><li><a href="#" id="19941" onclick='GetYearMonth("1994","1")'>January</a></li><li><a href="#" id="19942" onclick='GetYearMonth("1994","2")'>February</a></li><li><a href="#" id="19943" onclick='GetYearMonth("1994","3")'>March</a></li><li><a href="#" id="19944" onclick='GetYearMonth("1994","4")'>April</a></li><li><a href="#" id="19945" onclick='GetYearMonth("1994","5")'>May</a></li><li><a href="#" id="19946" onclick='GetYearMonth("1994","6")'>June</a></li><li><a href="#" id="19947" onclick='GetYearMonth("1994","7")'>July</a></li><li><a href="#" id="19948" onclick='GetYearMonth("1994","8")'>August</a></li><li><a href="#" id="19949" onclick='GetYearMonth("1994","9")'>September</a></li><li><a href="#" id="199410" onclick='GetYearMonth("1994","10")'>October</a></li><li><a href="#" id="199411" onclick='GetYearMonth("1994","11")'>November</a></li><li><a href="#" id="199412" onclick='GetYearMonth("1994","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn1993">1993</a></h2><div class="accordionContent month" id="1993"><ul class="accordionlist"><li><a href="#" id="19930" onclick='GetYearMonth("1993","0")'>All Months</a></li><li><a href="#" id="19931" onclick='GetYearMonth("1993","1")'>January</a></li><li><a href="#" id="19932" onclick='GetYearMonth("1993","2")'>February</a></li><li><a href="#" id="19933" onclick='GetYearMonth("1993","3")'>March</a></li><li><a href="#" id="19934" onclick='GetYearMonth("1993","4")'>April</a></li><li><a href="#" id="19935" onclick='GetYearMonth("1993","5")'>May</a></li><li><a href="#" id="19936" onclick='GetYearMonth("1993","6")'>June</a></li><li><a href="#" id="19937" onclick='GetYearMonth("1993","7")'>July</a></li><li><a href="#" id="19938" onclick='GetYearMonth("1993","8")'>August</a></li><li><a href="#" id="19939" onclick='GetYearMonth("1993","9")'>September</a></li><li><a href="#" id="199310" onclick='GetYearMonth("1993","10")'>October</a></li><li><a href="#" id="199311" onclick='GetYearMonth("1993","11")'>November</a></li><li><a href="#" id="199312" onclick='GetYearMonth("1993","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn1992">1992</a></h2><div class="accordionContent month" id="1992"><ul class="accordionlist"><li><a href="#" id="19920" onclick='GetYearMonth("1992","0")'>All Months</a></li><li><a href="#" id="19921" onclick='GetYearMonth("1992","1")'>January</a></li><li><a href="#" id="19922" onclick='GetYearMonth("1992","2")'>February</a></li><li><a href="#" id="19923" onclick='GetYearMonth("1992","3")'>March</a></li><li><a href="#" id="19924" onclick='GetYearMonth("1992","4")'>April</a></li><li><a href="#" id="19925" onclick='GetYearMonth("1992","5")'>May</a></li><li><a href="#" id="19926" onclick='GetYearMonth("1992","6")'>June</a></li><li><a href="#" id="19927" onclick='GetYearMonth("1992","7")'>July</a></li><li><a href="#" id="19928" onclick='GetYearMonth("1992","8")'>August</a></li><li><a href="#" id="19929" onclick='GetYearMonth("1992","9")'>September</a></li><li><a href="#" id="199210" onclick='GetYearMonth("1992","10")'>October</a></li><li><a href="#" id="199211" onclick='GetYearMonth("1992","11")'>November</a></li><li><a href="#" id="199212" onclick='GetYearMonth("1992","12")'>December</a></li></ul></div><h2 class="accordionButton year" ><a href="#" onclick="event.preventDefault()" style="text-decoration:none;" aria-expanded="false"  id="btn1991">1991</a></h2><div class="accordionContent month" id="1991"><ul class="accordionlist"><li><a href="#" id="19910" onclick='GetYearMonth("1991","0")'>All Months</a></li><li><a href="#" id="19911" onclick='GetYearMonth("1991","1")'>January</a></li><li><a href="#" id="19912" onclick='GetYearMonth("1991","2")'>February</a></li><li><a href="#" id="19913" onclick='GetYearMonth("1991","3")'>March</a></li><li><a href="#" id="19914" onclick='GetYearMonth("1991","4")'>April</a></li><li><a href="#" id="19915" onclick='GetYearMonth("1991","5")'>May</a></li><li><a href="#" id="19916" onclick='GetYearMonth("1991","6")'>June</a></li><li><a href="#" id="19917" onclick='GetYearMonth("1991","7")'>July</a></li><li><a href="#" id="19918" onclick='GetYearMonth("1991","8")'>August</a></li><li><a href="#" id="19919" onclick='GetYearMonth("1991","9")'>September</a></li><li><a href="#" id="199110" onclick='GetYearMonth("1991","10")'>October</a></li><li><a href="#" id="199111" onclick='GetYearMonth("1991","11")'>November</a></li><li><a href="#" id="199112" onclick='GetYearMonth("1991","12")'>December</a></li></ul></div></div></div></span>
+<style type="text/css"> /*added by ni*/
+.year a
+{
+    text-transform:none;
+    margin:0px;
+    /*color:Black;*/
+    font-size:12px;
+    text-decoration:none;
+    padding: 3px 4px 5px 2px;
+    }
+#DateSettree_lbltree h2
+{
+    margin-top:0px;
+}
+.month ul li a {
+    padding: 3px 4px 7px 2px;
+}
+
+.accordionContent ul.accordionlist li {
+    
+    min-height: 24px;
+}
+</style>
+
+
+
+            </div>
+        </div>
+    </div>
+    <div class="clearfix">
+    </div>
+    <div>
+        <a href="#top" class="scrollToTop" id="backToTop">Top</a>
+<div id="backDiv" style=" text-align:center;" >
+<a href="javascript:history.back()" class="paraheader">Back to previous page</a>
+</div>
+<footer class="footer">
+
+<div class="footer">
+  <div class="container_12">
+
+
+    <!--<div class="grid_9" style="width: 833px !important; ">
+      <h4><span class="blue">More</span> Links :</h4>
+      <div class="grid_2 alpha" style="width:150px !important">
+        <ul class="footerlist">
+          
+          <li><a target="_blank" href="https://www.rbi.org.in/FinancialEducation/">Financial Education</a></li>https://www.rbi.org.in/commonperson/English/Scripts/Home.aspx
+	      <li><a target="_blank" href="https://ncfe.org.in/e-lms">E-LMS</a></li>
+	      <li><a target="_blank" href="https://rbikehtahai.rbi.org.in/">RBI Kehta Hai</a></li>
+          <li><a href="/Scripts/FAQDisplay.aspx">FAQs</a></li>
+         
+          <li><a href="/Scripts/IFSCMICRDetails.aspx">IFSC/MICR Codes</a></li>
+        </ul>
+      </div>
+      <div class="grid_2 omega" style="width:150px !important;">
+        <ul class="footerlist">
+          <li><a href="/Scripts/BS_ViewTenders.aspx">Tenders</a></li>
+          <li><a target="_blank" href="https://opportunities.rbi.org.in/scripts/index.aspx">Opportunities<font>@</font>RBI</a></li>
+          <li><a href="/Scripts/HolidayMatrixDisplay.aspx">Bank Holidays</a></li>
+          <li><a href="/Scripts/BS_ViewForms.aspx">Forms</a></li>
+          <li><a href="https://www.rbi.org.in/scripts/bs_viewcontent.aspx?Id=3894">COVID-19 Measures</a></li>
+            
+        </ul>
+      </div>
+      <div class="grid_2 alpha omega" style="width:254px !important;">
+        <ul class="footerlist">
+          <li><a href="/Scripts/EventsDisplay.aspx">Events</a></li>
+         
+          <li><a href="/Scripts/rbi_clarification.aspx">RBI Clarifications</a></li>
+	  <li><a href="/Scripts/Righttoinfoact.aspx">Right to Information Act</a></li>
+            <li><a href="/Scripts/OtherLinks.aspx">Important Websites</a></li>
+	  <li><a href="https://rbidocs.rbi.org.in/rdocs/content/pdfs/Utkarsh30122022.pdf">RBI's Core Purpose, Values and Vision <img src="../Images/pdf.gif" width="12" height="12" alt="PDF document" border="0" align="absmiddle" style="padding-bottom: 4px;"> 1257 kb</a></li>
+        </ul>
+      </div>
+      <div class="grid_2" style="width:215px !important;">
+        <ul class="footerlist">
+          
+          <li><a href="/Scripts/CitiChart.aspx">Citizen's Charter</a></li>
+          <li><a href="/Scripts/Timlines.aspx">Timelines for Regulatory Approvals</a></li>
+          <li><a href="/Scripts/Complaints.aspx">Complaints</a></li>
+	  <li><a href="https://shabdavali.rbi.org.in/">Banking Glossary</a></li>
+          <li><a href="/Scripts/helpdesk.aspx">Contact Us</a></li>
+	  
+        </ul>
+      </div>
+    </div>-->
+      <div class="grid_9" style="width: 833px !important; ">
+          <!--<h4><span class="blue">More</span> Links :</h4>-->
+          <h2><span class="blue">More</span> Links </h2>
+          <!--<div class="grid_2 alpha" style="width:170px !important">
+              <ul class="footerlist">
+                  <li><a href="/Scripts/HolidayMatrixDisplay.aspx">Bank Holidays</a></li>
+                  <li><a href="https://shabdavali.rbi.org.in/">Banking Glossary</a></li>
+                  <li><a href="/Scripts/CitiChart.aspx">Citizen's Charter</a></li>
+                  <li><a href="/Scripts/Complaints.aspx">Complaints</a></li>
+                  <li><a href="/Scripts/helpdesk.aspx">Contact Us</a></li>
+              </ul>
+          </div>
+          <div class="grid_2 omega" style="width:180px !important;">
+              <ul class="footerlist">
+                  <li><a href="https://www.rbi.org.in/scripts/bs_viewcontent.aspx?Id=3894">COVID-19 Measures</a></li>
+                  <li><a target="_blank" href="https://ncfe.org.in/e-lms">E-LMS</a></li>
+                  <li><a href="/Scripts/EventsDisplay.aspx">Events</a></li>
+                  <li><a href="/Scripts/FAQDisplay.aspx">FAQs</a></li>
+                  <li><a target="_blank" href="https://www.rbi.org.in/FinancialEducation/">Financial Education</a></li>
+          </div>
+          <div class="grid_2 alpha omega" style="width:180px !important;">
+              <ul class="footerlist">
+                  <li><a href="/Scripts/BS_ViewForms.aspx">Forms</a></li>
+                  <li><a href="/Scripts/IFSCMICRDetails.aspx">IFSC/MICR Codes</a></li>
+                  <li><a href="/Scripts/OtherLinks.aspx">Important Websites</a></li>
+                  <li><a target="_blank" href="https://opportunities.rbi.org.in/scripts/index.aspx">Opportunities<span>@</span>RBI</a></li>
+                  <li><a href="/Scripts/rbi_clarification.aspx">RBI Clarifications</a></li>
+              </ul>
+          </div>
+          <div class="grid_2" style="width:254px !important;">
+              <ul class="footerlist">
+
+                  <li><a target="_blank" href="https://rbikehtahai.rbi.org.in/">RBI Kehta Hai</a></li>
+                  <li><a href="https://rbidocs.rbi.org.in/rdocs/content/pdfs/Utkarsh30122022.pdf">RBI's Core Purpose, Values and Vision <img src="../Images/pdf.gif" width="12" height="12" alt="PDF document" border="0" align="absmiddle" style="padding-bottom: 4px;"> 1257 kb</a></li>
+                  <li><a href="/Scripts/Righttoinfoact.aspx">Right to Information Act</a></li>
+                  <li><a href="/Scripts/BS_ViewTenders.aspx">Tenders</a></li>
+                  <li><a href="/Scripts/Timlines.aspx">Timelines for Regulatory Approvals</a></li>
+              </ul>
+          </div>-->
+		<ul class="footerlist" style="column-count:4">
+                  <li ><a href="/Scripts/HolidayMatrixDisplay.aspx">Bank Holidays</a></li>
+                  <li ><a href="https://shabdavali.rbi.org.in/">Banking Glossary</a></li>
+                  <li ><a href="/Scripts/CitiChart.aspx">Citizen's Charter</a></li>
+                  <li ><a href="/Scripts/Complaints.aspx">Complaints</a></li>
+                  <li ><a href="/Scripts/helpdesk.aspx">Contact Us</a></li>
+  		<li ><a href="https://www.rbi.org.in/scripts/bs_viewcontent.aspx?Id=3894">COVID-19 Measures</a></li>
+                  <li ><a target="_blank" href="https://ncfe.org.in/e-lms">E-LMS</a></li>
+                  <li ><a href="/Scripts/EventsDisplay.aspx">Events</a></li>
+                  <li ><a href="/Scripts/FAQDisplay.aspx">FAQs</a></li>
+                  <li ><a target="_blank" href="https://www.rbi.org.in/FinancialEducation/">Financial Education</a></li>
+		<li ><a href="/Scripts/BS_ViewForms.aspx">Forms</a></li>
+                  <li ><a href="/Scripts/IFSCMICRDetails.aspx">IFSC/MICR Codes</a></li>
+                  <li><a href="/Scripts/OtherLinks.aspx">Important Websites</a></li>
+                  <li><a target="_blank" href="https://opportunities.rbi.org.in/scripts/index.aspx">Opportunities<span>@</span>RBI</a></li>
+                  <li><a href="/Scripts/rbi_clarification.aspx">RBI Clarifications</a></li>
+ 		<li><a target="_blank" href="https://rbikehtahai.rbi.org.in/">RBI Kehta Hai</a></li>
+                  <li><a href="https://rbidocs.rbi.org.in/rdocs/content/pdfs/Utkarsh202910042026.pdf">RBI’s Vision and Values <!--<img src="../Images/pdf.gif" width="12" height="12" alt="PDF document" border="0" align="absmiddle" style="padding-bottom: 4px;"> (1257 kb)--></a></li>
+                  <li><a href="/Scripts/Righttoinfoact.aspx">Right to Information Act</a></li>
+                  <li><a href="/Scripts/BS_ViewTenders.aspx">Tenders</a></li>
+                  <!--<li><a href="/Scripts/Timlines.aspx">Timelines for Regulatory Approvals</a></li>--><!--https://www.rbi.org.in/commonperson/English/Scripts/Home.aspx-->
+              </ul>
+      </div>
+
+    <div class="grid_3" style="width:197px !important">
+      <!--<h4><span class="blue">Follow</span> RBI </h4>-->
+        <h2><span class="blue">Follow</span> RBI</h2>
+      <ul class="footerlist">
+        <!--<li><a href="/Scripts/rss.aspx"><img src="/images/rss-icon.png" alt="Subscribe to RSS" class="rss"/>RSS</a></li>-->
+
+          <li style="float: left;background: url(/images/footer_list_arrow.gif) left 8px no-repeat;"><a href="/Scripts/rss.aspx"><img src="/images/rss-icon.png" alt="RSS Icon" class="rss">RSS</a></li>
+
+        <!--<li><a href="https://twitter.com/RBI" target="_blank" class="twitter"><img src="/images/Twitter_New.png" width="14px" height="14px" alt="Follow RBI on Twitter" class="videos" />Twitter</a></li>-->
+          <li>
+              <a href="https://twitter.com/RBI" target="_blank" class="twitter">
+                  <img src="/images/Twitter_New.png" width="14px" height="14px" alt="Twitter Icon" class="videos" style="padding-left: 18%;">Twitter
+              </a>
+          </li>
+
+        <!--<li><a href="https://www.youtube.com/channel/UCIfCOl43tunZVNYafeC4RQA" class="videos" target="_blank"><img src="/images/videos-icon.png" alt="Check RBI Videos" class="videos"/>Videos</a></li>-->
+
+          <li style="float: left;"><a href="https://www.youtube.com/channel/UCIfCOl43tunZVNYafeC4RQA" class="videos" target="_blank"><img src="/images/youtube.png" alt="YouTube Icon" class="videos">YouTube</a></li>
+
+          <li>
+              <a href="https://instagram.com/reservebankofindia" class="videos" target="_blank">
+                  <img src="/images/Instagram.jpg" width="14px" height="14px" alt="Instagram Icon" class="videos" style="padding-left: 5%;">Instagram
+              </a>
+          </li>
+          <li style="float: left;"><a href="https://www.facebook.com/RBIsays" class="videos" target="_blank"><img src="/images/Facebook.jpg" width="14px" height="14px" alt="Facebook Icon" class="videos">Facebook</a></li>
+          <li>
+              <a href="https://www.linkedin.com/company/reservebankofindia" class="videos" target="_blank">
+                  <img src="/images/LinkedinIcon1.png" alt="LinkedIn Icon" class="" style="padding-left: 4%;width: 17px;background: bottom no-repeat;display: block;float: left;margin: 2px 3px 0 1px;">LinkedIn
+              </a>
+          </li>
+	<li>
+   	 Download Mobile App<br> 
+   	 <a href="https://play.google.com/store/apps/details?id=com.reservebankofindia&pli=1" target="_blank"><img src="/images/Android.png" alt="Android Play Store Icon" class="rss" style="width:17px">Play Store</a><br>
+	<a href="https://apps.apple.com/us/app/reserve-bank-of-india/id1154394549?ls=1" target="_blank"><img src="/images/IOS.png" alt="App Store Icon" class="rss" style="width:18px;height:17px">App Store</a>
+	</li>
+
+      </ul>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+  <div class="copyright">
+    <div class="container_12">
+     <div class="grid_6 pull_left">&copy; Reserve Bank of India. All Rights Reserved. </div>
+        <div class="grid_5 pull_right"><a href="/Scripts/sitemap.aspx">Sitemap</a> <span aria-hidden="true">|</span> <a href="/Scripts/Disclaimer.aspx">Disclaimer</a></div>
+        <div class="clearfix"></div>
+
+        <div class="grid_6 pull_left">Website owned and managed by Reserve Bank of India. Contact us on helpdoc[at]rbi[dot]org[dot]in</div>
+        <div class="grid_5 pull_right">Website last updated date: May 18, 2026</div>
+        <div class="clearfix"></div>
+        <div class="grid_6 pull_left">Supports: Google Chrome 125+ | Firefox 126+ | Microsoft Edge Version 125+ | Safari 17+</div>
+        <div class="grid_5 pull_right"><a href="https://rbidocs.rbi.org.in/rdocs/content/pdfs/Accessibility20012026.pdf">Accessibility Statement</a><span aria-hidden="true"> |</span><a href="/scripts/ScreenReader.aspx" title="Information related to screen reader">Screen Reader</a></div>
+        <div class="clearfix"></div>
+    </div>
+  </div>
+  
+
+<!--Welcome note-->
+
+ <!-- <div id="boxesWN">
+  <div id="dialogWN" class="window" style="top:100px;">
+  <div> <img width="60" height="60" src="/images/Rbinote.jpeg" alt="Rbi note" /> </div>
+   <table class="WelcomeNote" >
+   <tr>
+   <td style="float:right;">
+
+   April 14, 2015
+   </td>
+   </tr>
+    <tr>
+  
+    <td >
+    
+   Dear All
+    </td>
+    </tr>
+     <tr>
+     <td >
+     
+  Welcome to the refurbished site of the Reserve Bank of India. 
+    </td>
+   
+    </tr>
+    <tr>
+    <td >
+    
+  The two most important features of the site are: One, in addition to the default site, the refurbished site also has all the information bifurcated functionwise; two, a much improved search – well, at least we think so but you be the judge. 
+    </td>
+   
+    </tr>
+
+      <tr>
+    <td>
+   With this makeover, we also take a small step into social media. We will now use Twitter (albeit one way) to send out alerts on the announcements we make and YouTube to place in public domain our press conferences, interviews of our top management, events, such as, town halls and of course, some films aimed at consumer literacy.  
+    </td>
+   
+    </tr>
+    <tr>
+    <td>
+    The site can be accessed through most browsers and devices; it also meets accessibility standards. 
+    </td>
+    </tr>
+    <tr>
+    <td>
+    Please save the url of the refurbished site in your favourites as we will give up the existing site shortly and register or re-register yourselves for receiving RSS feeds for uninterrupted alerts from the Reserve Bank. 
+    </td>
+    </tr>
+    <tr>
+    <td>
+    Do feel free to give us your feedback by clicking on the feedback button on the right hand corner of the refurbished site. 
+    </td>
+    </tr>
+    <tr>
+    <td>
+    Thank you for your continued support.<br /><br />
+    </td>
+    </tr>
+    <tr>
+    <td>
+    <strong>
+    Department of Communication <br />
+Reserve Bank of India</strong>
+
+    </td>
+    </tr>
+	<tr><td id="popupfootWN"><a href="#" class="close agree" style="float:right" >Next</a></td></tr>
+    </table>-->
+   <!-- <div id="popupfootWN"> <a href="#" class="close agree" style="float:right" >Next</a>    </div>--><!--<img src="../images/button_close.gif" alt="Close" class="close agree" />-->
+ <!-- </div>
+  <div id="maskWN" style="width:100% !important"></div>-->
+
+<!--<div id="feedbackbtn"><a href="#"><div align="center" class="feedbacktext">Feedback</div></a></div>-->
+
+</div>
+</div>
+</footer>
+<!--<script type="text/javascript" src="/js/URLchange.js"></script>-->
+<!-- For live comment out below line.-->
+
+<script src="/js/ReplaceURL.js" type="text/javascript"></script>
+<script src="/js/jquery.cookie.js" type="text/javascript"></script>
+<script type="text/javascript" language="javascript">
+
+
+    //this is for floating TOP link
+    
+    $(document).ready(function () {
+
+        var offset = 230;
+        var duration = 500;
+
+
+        jQuery(window).scroll(function () {
+            if (jQuery(this).scrollTop() > offset) {
+                jQuery('.scrollToTop').fadeIn(duration);
+                // $('#backToTop').css('right', (diffWidth / 2) - 6);
+            } else {
+                jQuery('.scrollToTop').fadeOut(duration);
+                //  $('#backToTop').css('right', (diffWidth / 2) - 6);
+            }
+        });
+
+        //        $('a[href*=#]:not([href=#])').click(function () {
+
+        //            if (location.pathname.replace(/^\//, '') == window.location.pathname.replace(/^\//, '') && location.hostname == window.location.hostname) {
+
+        //                var target = $(this.hash);
+        //                target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+        //                if (target.length) {
+        //                    $('html,body').animate({
+        //                        scrollTop: target.offset().top
+        //                    }, 800);
+        //                    return false;
+        //                }
+        //            }
+        //        });
+	$('.page_title').attr('tabindex','-1');//for IAAP point 5 by ni
+        $('.scrollToTop').click(function () {
+            $('html, body').animate({ scrollTop: 0 }, 800);
+		$('.page_title').focus(); //for IAAP point 5 by ni
+            return false;
+        });
+	
+//Added by ni
+
+	if(!window.location.href.includes("Home.aspx") && !window.location.href.includes("home.aspx"))
+{ 
+if( window.location.href.includes(".aspx")){
+var div= document.getElementById('backDiv');
+	div.removeAttribute("hidden");}
+else{
+var div1= document.getElementById('backDiv');
+	div1.setAttribute("hidden","true");}
+}
+else{
+
+
+	var div1= document.getElementById('backDiv');
+	div1.setAttribute("hidden","true");}
+    });
+
+
+    //Below code is for floating left panel and floating tree structure
+    //first if condition is for functionwise pages and 2nd one for rest all
+    $(window).scroll(function () {
+
+        if ($('div.banner2').length) {
+
+            if ($(window).scrollTop() >= 265) {
+                $('#menubar').css("position", "fixed");
+                $('#menubar').css("width", "240px");
+                $('#menubar').css("margin-top", "-281px");
+                $('.content_area').css("margin-left", "252px");
+
+                $('.sidebar_nav').css("position", "fixed");
+                $('.sidebar_nav').css("margin-top", "-200px");
+                $('.sidebar_nav').css("width", "236px");
+
+
+              //  $('#DateSettree_lbltree').css('position', 'fixed');
+              //  $('#DateSettree_lbltree').css('margin-top', '-281px');
+
+            }
+
+            else {
+                $('#menubar').css("position", "");
+                $('#menubar').css("width", "");
+                $('#menubar').css("margin-top", "");
+                $('.content_area').css("margin-left", "");
+
+                $('.sidebar_nav').css("position", "");
+                $('.sidebar_nav').css("margin-top", "");
+                $('.sidebar_nav').css("width", "");
+
+
+
+          //      $('#DateSettree_lbltree').css('position', '');
+          //      $('#DateSettree_lbltree').css('margin-top', '');
+            }
+
+        }
+
+        else if ($(window).scrollTop() >= 185) {
+            $('#menubar').css("position", "fixed");
+            $('#menubar').css("width", "240px");
+            $('#menubar').css("margin-top", "-200px");
+            $('.content_area').css("margin-left", "252px");
+
+            $('.sidebar_nav').css("position", "fixed");
+            $('.sidebar_nav').css("margin-top", "-200px");
+            $('.sidebar_nav').css("width", "236px");
+
+
+          //  $('#DateSettree_lbltree').css('position', 'fixed');
+          //  $('#DateSettree_lbltree').css('margin-top', '-200px');
+		//For issue no 11
+		var treeheight=0;
+		if($('#treeYear').height()>0){treeheight=$('#treeYear').height();}
+	    	if($(window).scrollTop() >= $('#example-min').height()-treeheight)//$('.footer').offset().top-500)
+		{		//alert( $('#menubar').offset().top);	 
+			$('#menubar').css("position", "absolute");
+            		//$('#menubar').css("top", $('body').offset().top- $('.footer').height() -100 +"px");	//$('.footer').offset().top - $('.footer').height() -150+
+			$('#menubar').css("margin-top", "");
+			$('#menubar').css("top", $('#example-min').height()+100-treeheight +"px");
+		}
+		else{$('#menubar').css("position", "fixed"); $('#menubar').css("top", "");}
+		//Issue 11 end
+        }
+
+        else {
+            $('#menubar').css("position", "");
+            $('#menubar').css("width", "");
+            $('#menubar').css("margin-top", "");
+            $('.content_area').css("margin-left", "");
+
+            $('.sidebar_nav').css("position", "");
+            $('.sidebar_nav').css("margin-top", "");
+            $('.sidebar_nav').css("width", "");
+
+
+        //    $('#DateSettree_lbltree').css('position', '');
+        //    $('#DateSettree_lbltree').css('margin-top', '');
+        }
+//        if ($(window).scrollTop() >= 235) {
+
+//            $('#DateSettree_lbltree').css('height', '183px');
+//            $('#DateSettree_lbltree').css('overflow-y', 'scroll');
+//            $('#DateSettree_lbltree').css('width', '100px');
+
+//        }
+//        else {
+//            $('#DateSettree_lbltree').css('height', '');
+//            $('#DateSettree_lbltree').css('overflow-y', '');
+//            $('#DateSettree_lbltree').css('width', '');
+
+//        }
+
+       
+    });
+	
+       // $(window).unload(function () {
+       //     $.cookies.del('feedback_Cookie'); 
+       // });
+    $(document).ready(function () {
+	
+	
+		  $('.window .close').click(function (e) {
+            //Cancel the link behavior
+            e.preventDefault();
+            $.cookie('feedback_Cookie', 'Yes', { expires: 365, path: '/' });
+            $('#maskWN').hide();
+            $('.window').hide();
+            var scroll = $(window).scrollTop();
+            $("html").scrollTop(scroll);
+        });
+		
+		 $('#maskWN').click(function () {
+            $(this).hide();
+            $.cookie('feedback_Cookie', 'Yes', { expires: 365, path: '/' });
+            $('.window').hide();
+
+        });
+
+        //        if ($.cookie('feedback_Cookie') == null) {
+        //            var id = '#dialog';
+
+        //            //Get the screen height and width
+        //            var maskHeight = $(document).height();
+        //            var maskWidth = $(window).width();
+        //           
+
+        //            //Set heigth and width to mask to fill up the whole screen
+        //            $('#mask').css({ 'width': '100%', 'height': '100%','position':'fixed' });
+
+        //            //transition effect
+        //            $('#mask').fadeIn(500);
+        //            $('#mask').fadeTo("slow", 0.9);
+
+        //            //Get the window height and width
+        //            var winH = $(window).height();
+        //            var winW = $(window).width();
+
+        //            //Set the popup window to center
+        //            $(id).css('top', winH / 2 - $(id).height() / 2);
+        //            $(id).css('left', winW / 2 - $(id).width() / 2);
+
+        //            //transition effect
+        //            $(id).fadeIn(2000);
+
+
+
+        //        }
+//        $('blockquote p').css('margin','auto');
+//        $('blockquote blockquote blockquote p').contents().contents().unwrap();
+//        $('blockquote blockquote blockquote').contents().unwrap();
+//        $('blockquote blockquote').contents().unwrap();
+//        $('blockquote').contents().unwrap();
+        
+
+        //if close button is clicked
+        $('.window .close').click(function (e) {
+            //Cancel the link behavior
+            e.preventDefault();
+            $.cookie('feedback_Cookie', 'Yes', { expires: 365, path: '/' });
+            $('#mask').hide();
+            $('.window').hide();
+            var scroll = $(window).scrollTop();
+            $("html").scrollTop(scroll);
+        });
+
+        //if mask is clicked
+        $('#mask').click(function () {
+            $(this).hide();
+            $('.window').hide();
+        });
+        $('#feedbackbtn').click(function () {
+            var id = '#dialog';
+
+            //Get the screen height and width
+            var maskHeight = $(document).height();
+            var maskWidth = $(window).width();
+
+            //Set heigth and width to mask to fill up the whole screen
+            //$('#mask').css({ 'width': maskWidth, 'height': maskHeight });
+            $('#mask').css({ 'width': '100%', 'height': '100%', 'position': 'fixed' });
+
+            //transition effect
+            $('#mask').fadeIn(500);
+            $('#mask').fadeTo("slow", 0.9);
+
+            //Get the window height and width
+            var winH = $(window).height();
+            var winW = $(window).width();
+
+            //Set the popup window to center
+            $(id).css('top', winH / 2 - $(id).height() / 2);
+            $(id).css('left', winW / 2 - $(id).width() / 2);
+
+            //transition effect
+            $(id).fadeIn(2000);
+        });
+
+        $('.submit').click(function () {
+            var Name = $("[id*=txtFeedbackName]").val();
+            var Email = $("[id*=txtFeedbackEmail]").val();
+            var Comments = $("[id*=txtFeedbackComments]").val();
+            if (Name == "") {
+
+                alert("Please enter your name");
+                $("[id*=txtFeedbackName]").focus();
+                return false;
+            }
+            else if (Email == "") {
+                alert("Please enter your email");
+                $("[id*=txtFeedbackEmail]").focus();
+                return false;
+            }
+            else if (Email != "" && !ValidateEmail(Email)) {
+                alert("Please enter a valid email address");
+                $("[id*=txtFeedbackEmail]").focus();
+                return false;
+            }
+
+            else if (Comments == "") {
+
+                alert("Please enter some comments");
+                $("[id*=txtFeedbackComments]").focus();
+                return false;
+            }
+
+            else {
+                $('[id*=Button1]').attr('disabled', 'disabled');
+
+                var param = { Name: Name, EmailID: Email, Comments: Comments };
+                $.ajax({
+                    type: "POST",
+                    url: "../Home.aspx/SaveFeedback",
+                    data: JSON.stringify(param),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+
+                    success: function (response) {
+
+                        if (response.d == "0") {
+                            alert("Thank you for your feedback");
+                            $.cookie('feedback_Cookie', 'Yes', { expires: 365, path: '/' });
+                            $('#mask').hide();
+                            $('.window').hide();
+                            $('[id*=Button1]').removeAttr('disabled');
+                            $("[id*=txtFeedbackName]").val("");
+                            $("[id*=txtFeedbackEmail]").val("");
+                            $("[id*=txtFeedbackComments]").val("");
+                        }
+                        else {
+                            alert("Please try again");
+                            $('[id*=Button1]').removeAttr('disabled');
+
+
+                        }
+
+                    }
+                });
+            }
+
+        });
+
+        function ValidateEmail(email) {
+            var expr = /^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+            return expr.test(email);
+        };
+
+        //        $('#divArchiveMain').click(function () {
+        //            
+        //            if ($(window).scrollTop() >= 235) {
+
+        //                $('#DateSettree_lbltree').css('height', '181px');
+        //                $('#DateSettree_lbltree').css('overflow-y', 'scroll');
+        //                $('#DateSettree_lbltree').css('width', '100px');
+
+        //            }
+        //            else {
+        //                $('#DateSettree_lbltree').css('height', '');
+        //                $('#DateSettree_lbltree').css('overflow-y', '');
+        //                $('#DateSettree_lbltree').css('width', '');
+
+        //            }
+        //        });
+
+        $('a.style1').each(function () {
+
+            var $this = $(this);
+            var aHref = $this.attr('class');
+            $this.attr('class', aHref.replace('style1', 'links'));
+        });
+
+		
+   });
+
+//added by ni
+  function isExternal(url) {
+       if(url=='#' || url=='javascript:void(0);' || url.includes('javascript')||url=='' )
+	{ return false;} 
+	else
+    	return (url.indexOf("rbi.org.in")==-1)
+    }
+    document.addEventListener("click", function () {
+	
+        if (event.target.tagName.toLowerCase() === "a") {
+            if (isExternal(event.target.href)) {
+
+                if (confirm("You are being redirected to an external website that opens in a new tab. Please note that Reserve Bank of India will not be held responsible for external websites content in any manner.")) {
+
+                    return;
+                }
+
+                else {
+                   
+                    event.preventDefault();
+                    return;
+                }
+            }
+        }
+	else if (event.target.tagName.toLowerCase() === "img") {
+		$(event.target).preventDefault;		
+		if($(event.target).parent('a').length){
+			 if (isExternal($(event.target).parent('a').prop('href'))) {
+                		if (confirm("You are being redirected to an external website that opens in a new tab. Please note that Reserve Bank of India will not be held responsible for external websites content in any manner.")) {
+                    		return;
+               		 }
+
+                	else {                   
+                    		event.preventDefault();
+                    		return;
+                	}
+		}
+	}}
+    });
+
+
+</script>
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-61369961-1', 'auto');
+  ga('send', 'pageview');
+
+//$('.tablebg').attr('role','presentation');
+document.querySelectorAll('table.tablebg').forEach(table => {
+    const anchors = table.querySelectorAll('a[href^="#"]:not([href="#"])');
+
+    const hasInPageAnchorsInThisTableOnly = Array.from(anchors).some(a => {
+        // Find the closest table ancestor of this anchor
+        const closestTable = a.closest('table');
+    
+        // Only count it if it belongs to the current table (not a nested one)
+        return closestTable === table;
+    });
+
+    if (!hasInPageAnchorsInThisTableOnly) {
+        table.setAttribute('role', 'presentation');
+    } else {
+        table.removeAttribute('role'); // optional
+    }
+});
+$('.brd-ptable1').attr('role','presentation');
+$('html').attr('lang', 'en');
+document.querySelectorAll('br').forEach(br => {br.setAttribute('aria-hidden','true');});
+
+$('#doublescroll').children('table').filter(':first').attr("role", "presentation");
+$('.page_title').nextAll('table').first().attr("role", "presentation");
+
+//document.getElementsByClassName('tableheader');
+//$(window).on('load',function(){
+document.addEventListener('DOMContentLoaded', function(){
+$('.tableheader b').each(function () {
+		var curEle= $(this);
+           $(curEle).replaceWith("<h2 class='dop_header'>"+$(curEle).html()+"</h2>")
+        });
+ });
+
+// Global tooltip controller 
+var TooltipManager = {
+    _tip: null, // Create the tooltip element once 
+init: function() {
+    if (!this._tip) {
+    
+        this._tip = $('<div id="js-custom-tooltip"></div>').css({
+            "position": "absolute", "background": '#ffffca', "color":"#000", "padding": "2px 5px", "border-radius": "0px", "font-size": "11px","font-family":"Sans-serif", "z-index": "10000", "pointer-events": "none","border":"1px solid #767676", "box-shadow":"2px 2px 3px rgba(0,0,0,0.2)","white-space":"nowrap"
+        }).appendTo('body');
+        
+    }
+}, 
+show: function(element, text) {
+    this.init(); 
+var $el = $(element); // Update text and position 
+    
+this._tip.text(text).show();
+var pos = $el.offset(); 
+this._tip.css({
+    top: pos.top + this._tip.outerHeight()  + "px", // Show above 
+    left: pos.left + ($el.outerWidth() / 2) - (this._tip.outerWidth() / 2) + "px"
+});
+    }, hide: function() { if (this._tip) this._tip.hide(); }
+}; // Apply to all elements that have a ToolTip (standard ASP.NET ToolTip renders as 'title') 
+$(document).ready(function() {
+   
+    $('body').on('focusin', 'input, button, a, select, textarea, img', function() {
+        var title = $(this).attr('title'); if (title) {
+    
+            // Temporarily hide title so browser doesn't show default tooltip
+            //$(this).data('temp-title', title).removeAttr('title'); 
+      
+            TooltipManager.show(this, title);
+        }
+    }).on('focusout', 'input, button, a, select, textarea, img', function() { 
+       
+            TooltipManager.hide();
+       
+    }); // Dismiss on Escape key
+    $(document).keyup(function(e) { if (e.key === "Escape") TooltipManager.hide(); });
+});
+
+//for STQC breadcrumb current page announce
+const breadcrumbList = document.querySelector('.breadcrumbs');
+
+    if (breadcrumbList) {
+        const listItems = breadcrumbList.querySelectorAll('li');
+    
+        if (listItems.length > 0) {
+            // Target the last <li> element
+           // const lastItem = listItems[listItems.length - 1];
+            const lastItem = $('.breadcrumbs li').filter(function(){ return $.trim($(this).text())!=="";}).last().attr('aria-current', 'page');
+            $('.breadcrumbs li').filter(function(){ return $.trim($(this).text())==="";}).attr('role','presentation');
+        //alert(lastItem);
+            // Apply aria-current="page" to the <li>
+        //    lastItem.setAttribute('aria-current', 'page');
+
+            // Optional: Apply it to an <a> tag inside the last <li> if it exists
+            //const lastLink = lastItem.querySelector('a');
+            const lastLink =lastItem.find('a');
+            if (lastLink) {
+                lastLink.attr('aria-current', 'page');
+                // Best practice: make the current page non-clickable
+                lastItem.find('a').removeAttr('href');
+            }
+        }
+    }
+</script>
+    </div>
+<style type="text/css">
+.tablebg table, .tablebg table table {
+    background-color: transparent !important;
+    border-color: rgb(239, 209, 170)!important;
+    border-collapse: collapse;
+}
+table table table td{
+background-color: transparent !important;
+
+}
+
+.table 
+{
+   background-color: transparent !important;
+    }
+
+
+
+</style>
+    
+
+<script type="text/javascript">
+//<![CDATA[
+setLetterSpace(false);//]]>
+</script>
+</form>
+</body>
+</html>
+<script type="text/javascript" src="/js/plugins.js"></script>
+<script type="text/javascript" src="/js/script.js"></script>
+<script type="text/javascript" src="/js/Scroll.js"></script>
+<script type="text/javascript" language="javascript">
+    DoubleScrollWithTree(document.getElementById('doublescroll'));
+
+    function GetYearMonth(year, month) {
+        document.getElementById("hdnYear").value = year;
+        document.getElementById("hdnMonth").value = month;
+        document.getElementById("btn").click();
+    }
+    //Implemented onlick for 'archives' link in tree structure
+    function hideshow(divArchive) {
+        if (!document.getElementById(divArchive))
+            return
+        if (document.getElementById(divArchive).style.display == "block")
+            document.getElementById(divArchive).style.display = "none"
+        else
+            document.getElementById(divArchive).style.display = "block"
+    }
+    function SetTreeStyles() {
+        var strYear = document.getElementById("hdnYear").value;
+        var strMonth = document.getElementById("hdnMonth").value
+        if (strYear != "") {
+            var toDay = new Date();
+            document.getElementById("btn" + strYear).setAttribute("class", "accordionButton year active_year");
+            document.getElementById(strYear).style.display = "block"
+            if (strMonth) document.getElementById(strYear + strMonth).setAttribute("class", "active");
+            if (toDay.getFullYear() - 9 > parseInt(strYear)) { document.getElementById("divArchiveSub").style.display = "block" }
+        }
+    }
+
+    $(document).ready(function () {
+        document.getElementById("2769").style.visibility = "hidden";
+    });
+       
+</script>
+

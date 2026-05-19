@@ -140,14 +140,22 @@ function formatLogs(lines: CapturedLog[]): string {
     .join('\n')
 }
 
-/** Find a demo container by its <h3> heading text — gives us a stable scope
- *  for inner `select` and result-card queries that doesn't depend on DOM
- *  ordering between demos. */
+/** Find the demo container that DIRECTLY contains a heading matching `heading`.
+ *
+ * The heading h3 sits inside `<header> → <div.space-y-4>` (the demo root).
+ * LiveHSMProvider's root is also `div.space-y-4` and transitively contains
+ * all three demo headings — a descendant filter would match it first, giving
+ * the wrong scope (all selects, not just the target demo's).
+ *
+ * Fix: start from the heading element itself and walk up two levels via xpath:
+ *   h3 → header.space-y-1 → div.space-y-4 (demo root)
+ */
 function demoByHeading(page: Page, heading: RegExp): Locator {
   return page
-    .locator('div.space-y-4')
-    .filter({ has: page.getByRole('heading', { name: heading }) })
+    .getByRole('heading', { name: heading })
     .first()
+    .locator('xpath=..') // h3 → <header>
+    .locator('xpath=..') // <header> → demo root div.space-y-4
 }
 
 async function waitForProviderInit(page: Page): Promise<string> {

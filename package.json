@@ -37,6 +37,9 @@
     "audit:matrix-refs": "tsx scripts/audit-matrix-refs.ts",
     "audit:timeline-aliases": "tsx scripts/audit-timeline-aliases.ts",
     "audit:compliance-countries": "tsx scripts/audit-compliance-countries.ts",
+    "audit:compliance": "tsx scripts/audit-compliance-coverage.ts",
+    "audit:compliance:offline": "tsx scripts/audit-compliance-coverage.ts --skip-external",
+    "audit:compliance:dry": "tsx scripts/audit-compliance-coverage.ts --dry-run --skip-external",
     "enrich:protocol-matrix": "python3 scripts/enrich-protocol-matrix.py",
     "enrich:protocol-matrix:xref": "python3 scripts/enrich-protocol-matrix.py --xref-only",
     "apply:protocol-matrix": "tsx scripts/apply-protocol-matrix-updates.ts",
@@ -67,7 +70,10 @@
     "merge-xwalk": "tsx scripts/merge-xwalk-candidates.ts",
     "merge-xwalk:dry": "tsx scripts/merge-xwalk-candidates.ts --dry-run",
     "extract-library-stubs": "tsx scripts/extract-library-stubs.ts",
-    "extract-library-stubs:dry": "tsx scripts/extract-library-stubs.ts --dry-run"
+    "extract-library-stubs:dry": "tsx scripts/extract-library-stubs.ts --dry-run",
+    "enrich:compliance-gap": "python3 scripts/enrich-compliance-gap.py",
+    "attest:compliance-gap": "tsx scripts/attestation/attest-compliance-gap.ts",
+    "apply:compliance-gaps": "tsx scripts/apply-compliance-gaps.ts"
   },
   "overrides": {
     "serialize-javascript": ">=7.0.3",
@@ -80,6 +86,7 @@
     "@noble/hashes": "^2.0.1",
     "@noble/post-quantum": "^0.6.1",
     "@oqs/liboqs-js": "^0.15.1",
+    "@peculiar/asn1-cms": "^2.7.0",
     "@peculiar/asn1-schema": "^2.6.0",
     "@peculiar/asn1-x509": "^2.6.1",
     "@peculiar/asn1-x509-post-quantum": "^2.6.1",

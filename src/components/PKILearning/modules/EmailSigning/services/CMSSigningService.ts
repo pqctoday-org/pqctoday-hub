@@ -1,4 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import {
+  buildCompositeCmsSignedData,
+  compositeProfileByOid,
+  ecdsaRawRsToDer,
+  verifyCompositeCmsSignedData,
+} from './compositeCms'
+
 /**
  * CMSSigningService — TypeScript wrapper around the CMS Web Worker.
  *
@@ -21,6 +28,8 @@ export type CmsAlg =
   | 'ML-DSA-65'
   | 'ML-DSA-87'
   | 'SLH-DSA-SHA2-128s'
+  | 'SLH-DSA-SHA2-192s'
+  | 'SLH-DSA-SHA2-256s'
   | 'RSA-PSS'
   | 'EC'
   // KEM / encryption algorithms (used as recipient keys for cms -encrypt)
@@ -138,6 +147,32 @@ type WorkerOutbound =
       stderr: string
       requestId?: string
     }
+  | { type: 'READ_VFS_FILE_RESULT'; data: Uint8Array; requestId?: string }
+  | { type: 'COMPOSITE_PRIMITIVE_SIGN_RESULT'; signature: Uint8Array; requestId?: string }
+
+/** Composite OID → softhsm subkey label suffixes. Mirrors the worker's
+ *  compositeSubkeyIds() naming. */
+function compositeSubkeyLabels(parentKeyId: string): { pq: string; classical: string } {
+  return { pq: `${parentKeyId}__pq`, classical: `${parentKeyId}__cl` }
+}
+
+/** Decode a PEM-encoded blob into raw DER. Accepts any header label. */
+function pemToDer(pem: string): Uint8Array {
+  const stripped = pem
+    .replace(/-----BEGIN [^-]+-----/g, '')
+    .replace(/-----END [^-]+-----/g, '')
+    .replace(/[\s\r\n]/g, '')
+  const bin = atob(stripped)
+  const out = new Uint8Array(bin.length)
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i)
+  return out
+}
+
+const COMPOSITE_OIDS: Record<string, string> = {
+  'id-MLDSA44-RSA2048-PSS-SHA256': '1.3.6.1.5.5.7.6.37',
+  'id-MLDSA65-ECDSA-P256-SHA512': '1.3.6.1.5.5.7.6.45',
+  'id-MLDSA87-ECDSA-P384-SHA512': '1.3.6.1.5.5.7.6.49',
+}
 
 /**
  * One service instance per workshop mount. Caller is responsible for
@@ -231,6 +266,9 @@ export class CMSSigningService {
     alg?: CmsAlg
   }): Promise<SignResult> {
     await this.readyPromise
+    if (opts.alg && isCompositeAlg(opts.alg)) {
+      return this.signComposite(opts.alg, opts.keyId, opts.certId, opts.payload)
+    }
     return this.request('CMS_SIGN_RESULT', { type: 'CMS_SIGN', ...opts }, (msg) => ({
       signedP7m: msg.signedP7m,
     }))
@@ -246,11 +284,117 @@ export class CMSSigningService {
     alg?: CmsAlg
   }): Promise<VerifyResult> {
     await this.readyPromise
+    if (opts.alg && isCompositeAlg(opts.alg)) {
+      return this.verifyComposite(opts.alg, opts.certId, opts.signedP7m)
+    }
     return this.request('CMS_VERIFY_RESULT', { type: 'CMS_VERIFY', ...opts }, (msg) => ({
       ok: msg.ok,
       payload: msg.payload,
       stderrTail: msg.stderrTail,
     }))
+  }
+
+  // ── LAMPS draft-19 composite path (orchestrated in the main thread) ──
+  //
+  // The worker is `type: 'classic'` (Vite dev mode can't bundle ES imports
+  // for classic workers; we hit "Cannot use import statement outside a
+  // module" with mixed importScripts + import). To keep the worker
+  // dependency-free, the composite-CMS protocol assembly lives here and
+  // uses the worker only for softhsmv3 PKCS#11 primitives. The worker's
+  // mkcert (C shim → X509_sign) still runs in-worker because it doesn't
+  // need ASN.1 / @noble code.
+
+  private async signComposite(
+    alg: CmsAlg,
+    keyId: string,
+    certId: string,
+    payload: Uint8Array
+  ): Promise<SignResult> {
+    const compositeOid = COMPOSITE_OIDS[alg]
+    if (!compositeOid) {
+      throw new Error(`unknown composite alg: ${alg}`)
+    }
+    const profile = compositeProfileByOid(compositeOid)
+    if (!profile) {
+      throw new Error(`composite profile not registered for OID ${compositeOid}`)
+    }
+
+    // Pull the cert DER from the worker's vfs (cert was just minted by the
+    // C-shim mkcert path; it lives at /ssl/${certId}.crt as PEM).
+    const certPem = new TextDecoder().decode(await this.readVfs(`/ssl/${certId}.crt`))
+    const certDer = pemToDer(certPem)
+
+    const { pq: pqLabel, classical: classicalLabel } = compositeSubkeyLabels(keyId)
+
+    // Signer adapters: each invocation sends a COMPOSITE_PRIMITIVE_SIGN
+    // message to the worker. The worker spins a fresh openssl module,
+    // locates the softhsm private key by label, calls the appropriate
+    // PKCS#11 primitive (CKM_ML_DSA / CKM_ECDSA / CKM_SHA256_RSA_PKCS_PSS),
+    // and returns the raw signature bytes.
+    const mldsaSign = async (mprime: Uint8Array, ctx: Uint8Array): Promise<Uint8Array> =>
+      this.primitiveSign(pqLabel, 'ml-dsa', mprime, ctx)
+    const classicalSign = async (mprime: Uint8Array): Promise<Uint8Array> => {
+      if (compositeOid === '1.3.6.1.5.5.7.6.37') {
+        // MLDSA44+RSA2048-PSS-SHA256
+        return this.primitiveSign(classicalLabel, 'rsa-pss-sha256', mprime)
+      }
+      // ECDSA-SHA512 (P-256 / P-384): hash externally then CKM_ECDSA → raw
+      // r||s → DER per draft-19 §4.3 traditional-sig wire format.
+      const digest = new Uint8Array(await crypto.subtle.digest('SHA-512', mprime as BufferSource))
+      const rawRs = await this.primitiveSign(classicalLabel, 'ecdsa-digest', digest)
+      return ecdsaRawRsToDer(rawRs)
+    }
+
+    const signedP7m = await buildCompositeCmsSignedData(
+      profile,
+      certDer,
+      payload,
+      mldsaSign,
+      classicalSign
+    )
+    return { signedP7m }
+  }
+
+  private async verifyComposite(
+    alg: CmsAlg,
+    certId: string,
+    signedP7m: Uint8Array
+  ): Promise<VerifyResult> {
+    const compositeOid = COMPOSITE_OIDS[alg]
+    if (!compositeOid) {
+      throw new Error(`unknown composite alg: ${alg}`)
+    }
+    const profile = compositeProfileByOid(compositeOid)
+    if (!profile) {
+      throw new Error(`composite profile not registered for OID ${compositeOid}`)
+    }
+    const certPem = new TextDecoder().decode(await this.readVfs(`/ssl/${certId}.crt`))
+    const certDer = pemToDer(certPem)
+    const result = await verifyCompositeCmsSignedData(profile, signedP7m, certDer)
+    return {
+      ok: result.ok,
+      payload: result.payload,
+      stderrTail: result.ok
+        ? 'composite verify ok (both ML-DSA + classical halves passed)'
+        : `composite verify failed: ${result.detail ?? 'unknown'}`,
+    }
+  }
+
+  private async readVfs(path: string): Promise<Uint8Array> {
+    return this.request('READ_VFS_FILE_RESULT', { type: 'READ_VFS_FILE', path }, (msg) => msg.data)
+  }
+
+  private async primitiveSign(
+    keyId: string,
+    primitive: 'ml-dsa' | 'ecdsa-digest' | 'rsa-pss-sha256',
+    data: Uint8Array,
+    ctx?: Uint8Array
+  ): Promise<Uint8Array> {
+    return this.request(
+      'COMPOSITE_PRIMITIVE_SIGN_RESULT',
+      { type: 'COMPOSITE_PRIMITIVE_SIGN', keyId, primitive, data, ctx },
+      (msg) => msg.signature
+    )
   }
 
   async encrypt(opts: {

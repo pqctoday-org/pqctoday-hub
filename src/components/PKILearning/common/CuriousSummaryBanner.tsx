@@ -101,6 +101,10 @@ const DIR_TO_MODULE_ID: Record<string, string> = {
   IAMPQC: 'iam-pqc',
   SecureBootPQC: 'secure-boot-pqc',
   OSPQC: 'os-pqc',
+  SLHDSAModule: 'slh-dsa',
+  CryptoMgmtModernization: 'crypto-mgmt-modernization',
+  PKIEnrollmentProtocols: 'pki-enrollment-protocols',
+  MLSGroupMessaging: 'mls-group-messaging',
 }
 
 /** Build a moduleId → markdown content lookup from the glob results */
