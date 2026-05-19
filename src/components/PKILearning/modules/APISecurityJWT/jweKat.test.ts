@@ -98,11 +98,11 @@ describe('ML-KEM-768 JWE — self-pinned KAT (draft-ietf-jose-pqc-kem-05)', () =
     const tag = base64urlDecode(tagB64)
     const aad = base64urlDecode(protectedB64)
 
-    // jsdom's crypto.subtle does AES-GCM; reconstruct full ciphertext for WebCrypto
-    const cekBuf = cek.buffer.slice(cek.byteOffset, cek.byteOffset + cek.byteLength)
+    // jsdom's crypto.subtle does AES-GCM; pass Uint8Array directly (ArrayBufferView)
+    // to avoid cross-realm ArrayBuffer issues on Node 20 vs Node 24.
     const aesKey = await crypto.subtle.importKey(
       'raw',
-      cekBuf as ArrayBuffer,
+      new Uint8Array(cek),
       { name: 'AES-GCM', length: 256 },
       false,
       ['decrypt']
@@ -110,14 +110,11 @@ describe('ML-KEM-768 JWE — self-pinned KAT (draft-ietf-jose-pqc-kem-05)', () =
     const combined = new Uint8Array(ciphertext.length + tag.length)
     combined.set(ciphertext, 0)
     combined.set(tag, ciphertext.length)
-    const ivBuf = iv.buffer.slice(iv.byteOffset, iv.byteOffset + iv.byteLength)
-    const aadBuf = aad.buffer.slice(aad.byteOffset, aad.byteOffset + aad.byteLength)
-    const combinedBuf = combined.buffer.slice(0, combined.byteLength)
     const plaintextBytes = new Uint8Array(
       await crypto.subtle.decrypt(
-        { name: 'AES-GCM', iv: ivBuf as ArrayBuffer, additionalData: aadBuf as ArrayBuffer },
+        { name: 'AES-GCM', iv: new Uint8Array(iv), additionalData: new Uint8Array(aad) },
         aesKey,
-        combinedBuf as ArrayBuffer
+        new Uint8Array(combined)
       )
     )
     expect(JSON.parse(new TextDecoder().decode(plaintextBytes))).toEqual(v.payload)
@@ -157,10 +154,9 @@ describe('ML-KEM-768 JWE — self-pinned KAT (draft-ietf-jose-pqc-kem-05)', () =
 
     const sharedSecret = ml_kem768.decapsulate(encryptedKey, kp.secretKey)
     const cek = deriveCek(sharedSecret, 'A256GCM', 32)
-    const cekBuf = cek.buffer.slice(cek.byteOffset, cek.byteOffset + cek.byteLength)
     const aesKey = await crypto.subtle.importKey(
       'raw',
-      cekBuf as ArrayBuffer,
+      new Uint8Array(cek),
       { name: 'AES-GCM', length: 256 },
       false,
       ['decrypt']
@@ -173,14 +169,11 @@ describe('ML-KEM-768 JWE — self-pinned KAT (draft-ietf-jose-pqc-kem-05)', () =
       crypto.subtle.decrypt(
         {
           name: 'AES-GCM',
-          iv: iv.buffer.slice(iv.byteOffset, iv.byteOffset + iv.byteLength) as ArrayBuffer,
-          additionalData: aad.buffer.slice(
-            aad.byteOffset,
-            aad.byteOffset + aad.byteLength
-          ) as ArrayBuffer,
+          iv: new Uint8Array(iv),
+          additionalData: new Uint8Array(aad),
         },
         aesKey,
-        combined.buffer.slice(0, combined.byteLength) as ArrayBuffer
+        new Uint8Array(combined)
       )
     ).rejects.toThrow()
   })
