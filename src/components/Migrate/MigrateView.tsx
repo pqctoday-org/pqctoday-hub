@@ -1720,6 +1720,50 @@ export const MigrateView: React.FC = () => {
                 ) : undefined
               }
             />
+
+            {/* Search results flat list — shown when searching without a selected layer */}
+            {filterText && isStackAllView && (
+              <div className="mt-4">
+                {allFilteredProducts.length > 0 ? (
+                  <>
+                    <div className="hidden md:block">
+                      <SoftwareTable
+                        key={`stack-search-${filterText}`}
+                        data={allFilteredProducts}
+                        defaultSort={{ key: 'softwareName', direction: 'asc' }}
+                        hiddenProducts={undefined}
+                        selectedProducts={myProductsSet}
+                        onToggleProduct={toggleMyProduct}
+                        compareProducts={compareSet}
+                        onToggleCompare={handleToggleCompare}
+                        maxCompareReached={maxCompareReached}
+                        expandedIds={tableExpandedIds}
+                        onToggleExpand={handleToggleTableExpand}
+                        roadmapByVendorId={roadmapByVendorId}
+                      />
+                    </div>
+                    <div className="block md:hidden">
+                      <SoftwareCardGrid
+                        items={allFilteredProducts}
+                        hiddenProducts={undefined}
+                        selectedProducts={myProductsSet}
+                        onToggleProduct={toggleMyProduct}
+                        compareProducts={compareSet}
+                        onToggleCompare={handleToggleCompare}
+                        maxCompareReached={maxCompareReached}
+                        onSelectDetail={setDetailProduct}
+                        roadmapByVendorId={roadmapByVendorId}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <EmptyState
+                    icon={<PackageSearch size={32} />}
+                    title="No products match the current filters."
+                  />
+                )}
+              </div>
+            )}
           </div>
         )}
 
