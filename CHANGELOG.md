@@ -49,6 +49,27 @@ Files touched this session:
 - `pqctoday-hsm`: [composite.c](../../antigravity/pqctoday-hsm/src/vendor/pkcs11-provider/src/composite.c), [composite.h](../../antigravity/pqctoday-hsm/src/vendor/pkcs11-provider/src/composite.h), [provider.c](../../antigravity/pqctoday-hsm/src/vendor/pkcs11-provider/src/provider.c), [provider.h](../../antigravity/pqctoday-hsm/src/vendor/pkcs11-provider/src/provider.h), [objects.c](../../antigravity/pqctoday-hsm/src/vendor/pkcs11-provider/src/objects.c), [store.c](../../antigravity/pqctoday-hsm/src/vendor/pkcs11-provider/src/store.c)
 - `pqctoday-hub`: [src/wasm/cms_provider_init.c](src/wasm/cms_provider_init.c) (composite mkcert / cms_sign / cms_verify shims), [worker](src/components/PKILearning/modules/EmailSigning/worker/cms.worker.ts) (composite routing + softhsm probes + console mirror), [e2e](e2e/cms-workshop-crypto.spec.ts) (composite test cases)
 
+### Fix — Migrate: cross-layer search results in stack-all view (2026-05-18)
+
+When a filter term is active and no specific infrastructure layer is selected (`isStackAllView`), [MigrateView.tsx](src/components/Migrate/MigrateView.tsx) now renders a flat product list below the layer cards — `SoftwareTable` on desktop and `SoftwareCardGrid` on mobile — so users can see all matching products across all layers without having to drill into each layer individually. Empty state shown when no products match.
+
+### Data — Product catalog pass5-batch5 + force-pass proof audit (2026-05-18)
+
+Completed the final wave of pass5 proof resolution against [pqc_product_catalog_05182026.csv](src/data/pqc_product_catalog_05182026.csv): ~47 vendors resolved in this batch (batch5 + force-pass tier), bringing the overall pass5 run to ~160 vendors audited across all batches. Validation outcomes for the full pass5 run: **VALIDATED** (majority), **CORRECTED** (80 rows — upstream catalog errors fixed with authoritative evidence), **PARTIALLY_VALIDATED** (8), **FIPS_ISSUE** (5 — premature FIPS claims flagged), **FIPS_VERIFIED** (3).
+
+Notable batch5 / force-pass resolutions: BTQ Bitcoin Quantum (ML-DSA testnet), Hitachi DoMobile Ver.5 (ML-KEM/IronCAP, Japan first), Project Eleven Solana PQC testnet, SEALSQ QS7001 hardware anchor, Forward Edge-AI Isidore Quantum (CNSA 2.0, SpaceX-deployed), QuSecure QuProtect R3, SandboxAQ AQtive Guard (DoD CIO agreement), 01 Quantum IronCAP, Bouncy Castle Java / C# .NET / Java LTS, OpenSSL 3.6.1, Google Tink, Botan 3.11, SafeLogic CryptoComply Go v4.0, SAP Cryptographic Library 8.6 (FIPS #5093 verified), PQShield PQSDK (FIPS 140-3 CAVP verified), Go stdlib crypto/mlkem (1.24–1.26), and the pqctoday-tpm / libtpms / swtpm trio.
+
+### Data — Compliance provenance: GSMA PQ.01/02/03 + 3GPP R19/R20 manifest + revision trail (2026-05-18)
+
+Companion provenance records for the GSMA/3GPP compliance rows shipped in the prior commit:
+
+- [public/compliance-docs/manifest.json](public/compliance-docs/manifest.json) — 5 new SHA-256 hash entries (GSMA PQ.01/02/03 PDFs + 3GPP R19/R20 HTML pages) registering the locally cached source documents.
+- [public/data/revisions.jsonl](public/data/revisions.jsonl) — 5 audit-trail entries recording each gap fill (ML-DSA-65-attested, kid `11b723084d047b4c`, reviewer `eramusa`).
+
+### WASM — openssl.wasm rebuild (2026-05-18)
+
+`public/wasm/openssl.wasm` updated following the composite pkcs11-provider work (8 root-cause fixes landed in `pqctoday-hsm`). Bundle is ~3 KB smaller (5,470,814 bytes, down from 5,474,135).
+
 ### Fix — Compliance page audit: regional coverage, display bugs, educational framing (2026-05-17)
 
 Three bugs, two educational gaps, and 14 new jurisdictions on `/compliance`. Driven by an end-to-end audit of accuracy / completeness / educational value / regional coverage.

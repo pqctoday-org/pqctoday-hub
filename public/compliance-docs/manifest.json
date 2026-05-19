@@ -1,5 +1,5 @@
 {
-  "generated": "2026-05-19T01:01:09.421660+00:00",
+  "generated": "2026-05-19T02:55:20.981173+00:00",
   "description": "Hash registry for locally-cached source documents backing compliance CSV rows. Each entry records the gap-id, source URL, local filename, and SHA-256 so the apply script can verify provenance before merging.",
   "entries": [
     {
@@ -148,6 +148,41 @@
       "filename": "GAP-SA-NCA-ECC.html",
       "sha256": "6c098c22e7839807399de79186d83f71df17f749a18279b47db6865158054ac2",
       "fetchedAt": "2026-05-19T01:01:09.421480+00:00"
+    },
+    {
+      "gapId": "gsma-pq-01",
+      "sourceUrl": "https://www.gsma.com/newsroom/wp-content/uploads/PQ.1-Post-Quantum-Telco-Network-Impact-Assessment-Whitepaper-Version1.0.pdf",
+      "filename": "gsma-pq-01.pdf",
+      "sha256": "f9465918d7877e26e8d4934a895430cb33a4c784e8931c570901eb76b46f142a",
+      "fetchedAt": "2026-05-19T02:50:07.475429+00:00"
+    },
+    {
+      "gapId": "gsma-pq-02",
+      "sourceUrl": "https://www.gsma.com/get-involved/working-groups/wp-content/uploads/2023/09/Guidelines-for-Quantum-Risk-Management-for-Telco-v1.0.pdf",
+      "filename": "gsma-pq-02.pdf",
+      "sha256": "7751a7462e35a40d3741265fd6bb8b77a92c87029e8a41a7956b65ab3d778eea",
+      "fetchedAt": "2026-05-19T02:51:52.182344+00:00"
+    },
+    {
+      "gapId": "gsma-pq-03",
+      "sourceUrl": "https://www.gsma.com/newsroom/wp-content/uploads/PQ.03-Post-Quantum-Cryptography-Guidelines-for-Telecom-Use-Cases-v2.0-2.pdf",
+      "filename": "gsma-pq-03.pdf",
+      "sha256": "952f1e5a782102211d97e986bd33011dd96bf50a4eb6b00e11bd1d2343cde4ea",
+      "fetchedAt": "2026-05-19T02:51:52.904528+00:00"
+    },
+    {
+      "gapId": "3gpp-rel19-pqc-study",
+      "sourceUrl": "https://www.3gpp.org/specifications-technologies/releases/release-19",
+      "filename": "3gpp-rel19-pqc-study.html",
+      "sha256": "c29e6cf13f65a6b3546f1e8b39e7422a0e5a3e50714490abaa7f004b5e96dfac",
+      "fetchedAt": "2026-05-19T02:55:20.140611+00:00"
+    },
+    {
+      "gapId": "3gpp-rel20-pqc",
+      "sourceUrl": "https://www.3gpp.org/specifications-technologies/releases/release-20",
+      "filename": "3gpp-rel20-pqc.html",
+      "sha256": "4a8c8783e79a2cadecf377a58a00df9388675dd34506490d065cfd0b4733a007",
+      "fetchedAt": "2026-05-19T02:55:20.981160+00:00"
     }
   ]
 }
