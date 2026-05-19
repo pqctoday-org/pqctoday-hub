@@ -82,7 +82,10 @@ async function verifyWithWasm(fixture: KATFixture): Promise<{
   ])
 }
 
-describe('ML-DSA / SLH-DSA cross-impl KAT — Node sign → WASM verify', () => {
+const nodeMajor = parseInt(process.versions.node.split('.')[0], 10)
+const describeIfNode24 = nodeMajor >= 24 ? describe : describe.skip
+
+describeIfNode24('ML-DSA / SLH-DSA cross-impl KAT — Node sign → WASM verify', () => {
   const cases: Array<{ alg: KATFixture['alg']; sigLen: number }> = [
     { alg: 'ml-dsa-44', sigLen: 2420 },
     { alg: 'ml-dsa-65', sigLen: 3309 },
