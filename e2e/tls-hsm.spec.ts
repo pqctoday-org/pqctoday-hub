@@ -37,36 +37,31 @@ test.describe('TLS 1.3 Simulator — Phase 3 HSM Integration', () => {
 
   // ── Quick visibility checks (no WASM execution) ──────────────────────────
 
-  test('HSM mode toggle is visible and changes label to HSM ON when clicked', async ({ page }) => {
-    await page.goto('/learn/tls-basics?tab=workshop')
-    await expect(page.getByRole('heading', { name: /tls 1\.3 basics/i })).toBeVisible({
-      timeout: 15000,
-    })
-    const hsmToggle = page.getByRole('button', { name: /HSM OFF/i }).first()
-    await expect(hsmToggle).toBeVisible()
-    await hsmToggle.click()
-    await expect(page.getByRole('button', { name: /HSM ON/i }).first()).toBeVisible({
-      timeout: 5000,
-    })
+  test.skip('HSM mode toggle is visible and changes label to HSM ON when clicked', async ({
+    // The TLS simulator HSM ON/OFF toggle was removed — the wiring never produced a
+    // successful handshake and was misleading. Skipped pending deliberate revival.
+    // See TLSBasicsModule.tsx "⚠ HSM-backed signing — removed" callout.
+    page: _page,
+  }) => {
+    void _page
   })
 
-  test('Playground TLS simulator HSM toggle is visible', async ({ page }) => {
-    await page.goto('/playground/tls-simulator')
-    await expect(page.getByRole('button', { name: /HSM OFF/i }).first()).toBeVisible({
-      timeout: 15000,
-    })
+  test.skip('Playground TLS simulator HSM toggle is visible', async ({
+    // Toggle removed — see above.
+    page: _page,
+  }) => {
+    void _page
   })
 
   // ── Simulation runs ──────────────────────────────────────────────────────
 
-  test('HSM OFF run completes and returns a successful negotiation', async ({ page }) => {
+  test('simulation run completes and returns a successful negotiation', async ({ page }) => {
     test.setTimeout(120_000)
 
     await page.goto('/learn/tls-basics?tab=workshop')
     await expect(page.getByRole('heading', { name: /tls 1\.3 basics/i })).toBeVisible({
       timeout: 15000,
     })
-    await expect(page.getByRole('button', { name: /HSM OFF/i }).first()).toBeVisible()
 
     await page
       .getByRole('button', { name: /Start Full Interaction/i })
@@ -80,101 +75,12 @@ test.describe('TLS 1.3 Simulator — Phase 3 HSM Integration', () => {
     await expect(page.getByText(/Negotiation Successful/i).first()).toBeVisible()
   })
 
-  test('HSM ON run enters the HSM code path (trace proves WASM execution)', async ({ page }) => {
-    test.setTimeout(120_000)
-
-    await page.goto('/learn/tls-basics?tab=workshop')
-    await expect(page.getByRole('heading', { name: /tls 1\.3 basics/i })).toBeVisible({
-      timeout: 15000,
-    })
-
-    // Toggle HSM ON
-    await page
-      .getByRole('button', { name: /HSM OFF/i })
-      .first()
-      .click()
-    await expect(page.getByRole('button', { name: /HSM ON/i }).first()).toBeVisible()
-
-    // Run
-    await page
-      .getByRole('button', { name: /Start Full Interaction/i })
-      .first()
-      .click()
-
-    // Wait for WASM to finish — "Run Again" replaces "Start Full Interaction"
-    await expect(page.getByRole('button', { name: /Run Again/i }).first()).toBeVisible({
-      timeout: 90_000,
-    })
-
-    // Capture the full rendered page text after simulation is complete
-    const bodyText = await page.evaluate(() => document.body.innerText)
-
-    // Strings that can ONLY appear as trace event details from tls_simulation_hsm.c.
-    // Ordered by depth: "Live HSM enabled" fires first (entry), "C_GenerateKeyPair"
-    // fires only on keygen success, "HSM setup failed" fires on any failure.
-    const hsmTraceTexts = [
-      'Live HSM enabled', // hsm_mode event — confirms HSM code entered
-      'C_Initialize', // pkcs11_call event — confirms softhsmv3 init succeeded
-      'C_GetSlotList', // pkcs11_call event
-      'C_OpenSession', // pkcs11_call event
-      'C_GenerateKeyPair', // pkcs11_call event — confirms ML-DSA-65 keygen in HSM
-      'C_GetAttributeValue', // pkcs11_call event — confirms SPKI extracted
-      'hsm_cert_minted', // cert created and loaded into SSL_CTX
-      'HSM setup failed', // fallback warning — HSM path entered but failed
-      'C_GetFunctionList unavailable', // shim failure
-    ]
-
-    const matched = hsmTraceTexts.filter((t) => bodyText.includes(t))
-
-    if (matched.length === 0) {
-      throw new Error(
-        `HSM code path was NOT reached in the trace.\n` +
-          `None of ${JSON.stringify(hsmTraceTexts)} found.\n` +
-          `Body snippet (first 3000 chars):\n${bodyText.slice(0, 3000)}`
-      )
-    }
-
-    console.log(`[tls-hsm] HSM trace evidence found: ${JSON.stringify(matched)}`)
-
-    // The entry sentinel must always be present
-    expect(matched).toContain('Live HSM enabled')
-
-    // Ideal success path — keygen happened
-    const keygenSucceeded = bodyText.includes('C_GenerateKeyPair(CKM_ML_DSA')
-    const keygenFailed = bodyText.includes('C_GenerateKeyPair rv=')
-    const initSucceeded = bodyText.includes('C_Initialize')
-    const handshakeSucceeded = bodyText.includes('Negotiation Successful')
-
-    // Extract the rv error code if keygen failed (for diagnostics)
-    const keygenRvMatch = bodyText.match(/C_GenerateKeyPair rv=(0x[0-9a-fA-F]+)/)
-    const keygenRv = keygenRvMatch?.[1] ?? 'none'
-
-    console.log(
-      `[tls-hsm] C_Initialize=${initSucceeded} ` +
-        `C_GenerateKeyPair_success=${keygenSucceeded} ` +
-        `C_GenerateKeyPair_failed_rv=${keygenFailed ? keygenRv : 'no'} ` +
-        `Negotiation=${handshakeSucceeded}`
-    )
-
-    // Dump HSM-related lines for deeper diagnosis
-    const hsmLines = bodyText
-      .split('\n')
-      .filter(
-        (l) =>
-          l.includes('hsm') ||
-          l.includes('HSM') ||
-          l.includes('C_') ||
-          l.includes('pkcs11') ||
-          l.includes('PKCS11') ||
-          l.includes('softhsm') ||
-          l.includes('provider')
-      )
-      .slice(0, 40)
-    console.log(`[tls-hsm] Relevant trace lines:\n${hsmLines.join('\n')}`)
-
-    // If the handshake succeeded, keygen must have succeeded too
-    if (handshakeSucceeded) {
-      expect(keygenSucceeded).toBe(true)
-    }
+  test.skip('HSM ON run enters the HSM code path (trace proves WASM execution)', async ({
+    // The TLS simulator HSM ON/OFF toggle was removed — JS plumbing to
+    // tls_simulation_set_hsm_mode was never wired. Skipped pending deliberate revival.
+    // See TLSBasicsModule.tsx "⚠ HSM-backed signing — removed" callout.
+    page: _page,
+  }) => {
+    void _page
   })
 })

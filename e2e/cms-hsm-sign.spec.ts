@@ -290,8 +290,14 @@ test.describe('S/MIME Workshop — CMS sign+verify and encrypt+decrypt (P0 KAT)'
     await expect(encryptBtn).toBeVisible({ timeout: 10_000 })
     await encryptBtn.click()
 
-    // Wait for terminal success: "Plaintext recovered via software key"
-    await expect(page.getByText(/Plaintext recovered via software key/i).first()).toBeVisible({
+    // Wait for terminal success — accepts both software and HSM modes.
+    // The component defaults useHsmIntent=true; when pkcs11-provider is ready it
+    // routes through softhsmv3, showing "HSM key". When provider is still loading
+    // or the checkbox is unchecked, it shows "software key". The KAT discriminator
+    // is the exact recovered plaintext below, not the backend label.
+    await expect(
+      page.getByText(/Plaintext recovered via (?:software|HSM) key/i).first()
+    ).toBeVisible({
       timeout: PIPELINE_TIMEOUT,
     })
 
@@ -307,9 +313,8 @@ test.describe('S/MIME Workshop — CMS sign+verify and encrypt+decrypt (P0 KAT)'
     )
     console.log(`[cms-hsm] T4 recovered plaintext (first 80): ${decryptedText.slice(0, 80)}`)
 
-    // Software mode: no HSM phrases
     const bodyText = await page.evaluate(() => document.body.innerText)
-    expect(bodyText).toContain('Plaintext recovered via software key')
+    expect(bodyText).toMatch(/Plaintext recovered via (?:software|HSM) key/i)
 
     console.log('[cms-hsm] T4 PASS — ML-KEM-768 software encrypt+decrypt KAT succeeded')
   })
