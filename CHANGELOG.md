@@ -21,6 +21,31 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Data — RAG corpus regenerated: 10,003 chunks (2026-05-19)
+
+[rag-corpus.json](public/data/rag-corpus.json) regenerated incorporating all May 2026 enrichment outputs:
+
+- **Document enrichments**: 1,933 chunks from library (770), threats (194), catalog (716) MDs
+- **Total**: 10,003 chunks (14.9 MB)
+
+### Data — Catalog enrichment: 716 entries via qwen3.6:27b (2026-05-19)
+
+[catalog_doc_enrichments_05192026.md](src/data/doc-enrichments/catalog_doc_enrichments_05192026.md) expanded from 686 → **716 entries** (30 new products enriched):
+
+Output written to `/tmp` first then copied + committed atomically to prevent parallel git branch switches from resetting the file mid-run — a pattern now available via [`/tmp/catalog-safe-enrich.sh`](/tmp/catalog-safe-enrich.sh) for future long-running enrichment passes.
+
+### Data — Threats enrichment: full 194-row coverage (2026-05-19)
+
+[threats_doc_enrichments_05192026.md](src/data/doc-enrichments/threats_doc_enrichments_05192026.md) expanded from 91 → **194 entries**, covering all rows in the current threats CSV:
+
+- **91 file-backed entries** (unchanged) — full qwen3.6:27b extraction from downloaded HTML/PDF source documents; 20–25/53 dimensions filled on average
+- **103 metadata-only entries** (new) — records with no downloadable source (forbidden/404/portal URLs); enriched from CSV `industry` + `threat_description` fields only; 10–20/53 dimensions filled; useful for RAG corpus keyword search but lack structured evidence fields
+
+Two enrichment-script bugs fixed to enable this run:
+
+1. **`cached` status not accepted** — manifest entries written by `download-threats.js` use `status: 'cached'` for files already on disk, but the enrichment filter only accepted `'downloaded'`. Changed to `status in ('downloaded', 'cached')` across all collections.
+2. **No threats CSV sweep** — unlike `timeline`, the threats collection had no fallback to sweep all CSV rows not in the manifest. Added a `if collection == 'threats'` block mirroring the timeline sweep, so all 194 `threat_id` values are guaranteed to be processed regardless of manifest state.
+
 ### Fix — E2E test suite: 7 pre-existing failures resolved (2026-05-19)
 
 Seven pre-existing E2E test failures squashed across four spec files:

@@ -1,9 +1,9 @@
 {
-  "generated": "2026-05-19T05:07:39.988Z",
+  "generated": "2026-05-19T07:04:39.904Z",
   "source": "src/data/quantum_threats_hsm_industries_05072026.csv",
   "summary": {
-    "downloaded": 1,
-    "skipped": 104,
+    "downloaded": 0,
+    "skipped": 105,
     "failed": 7,
     "persisted_skip": 14
   },
@@ -40,11 +40,8 @@
       "threatId": "AUTO-002",
       "title": "SAE J3061 / ISO/SAE 21434 Vehicle Cybersecurity",
       "url": "https://www.sae.org/standards/content/j3061_202112/",
-      "status": "downloaded",
-      "file": "public/threats/AUTO-002.html",
-      "sizeBytes": 15025,
-      "contentType": "text/html",
-      "sha256": "455934feeb47d9ce7e7e6a069b005ae679492a24f1e8e2fd69bb529317391287"
+      "status": "cached",
+      "file": "public/threats/AUTO-002.html"
     },
     {
       "threatId": "AUTO-003",
