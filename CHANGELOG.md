@@ -51,6 +51,30 @@ explanatory notes; the fourth ("HSM OFF run completes…") had its stale
 `getByRole('button', { name: /HSM OFF/i })` visibility assertion dropped and was
 renamed to "simulation run completes…".
 
+### Data — Library CSV r2: 13 URL corrections (2026-05-19)
+
+New revision [library_05192026_r2.csv](src/data/library_05192026_r2.csv) — 13 `download_url` corrections replacing dead or incorrect links with authoritative direct URLs:
+
+- `ENISA-EUDI-Wallet-Security` — corrected to PQC integration study URL
+- `draft-ietf-jose-pqc-algorithms` — updated to KEM-specific datatracker slug (`draft-ietf-jose-pqc-kem`)
+- `NIST-SP-800-56A`, `NIST-SP-800-56B` — switched to direct nvlpubs PDF links
+- `draft-ietf-tls-authkem` — corrected slug to `draft-celi-wiggers-tls-authkem`
+- `NIST-SP-1800-38B`, `NIST-SP-800-140Cr1`, `NIST-SP-800-140Dr1` — direct nvlpubs PDF links
+- `Czech-NUKIB-Crypto-Rec-2023` — corrected to direct PDF download
+- `BIKE-Round4-Spec-2022` — corrected to v5.0 spec (was v5.1 path)
+- `draft-ietf-ipsecme-ikev2-mldsa` — corrected to `draft-ietf-ipsecme-ikev2-pqc-auth`
+- `CSA-PQC-Guide-2025` — corrected to `/artifacts/` deep link
+- `GSMA-PQ02` — corrected to PQ documents landing page
+
+### Data — Catalog enrichments: 4 additional records (2026-05-19)
+
+4 additional catalog entries processed by qwen3.6:27b and appended to [catalog_doc_enrichments_05192026.md](src/data/doc-enrichments/catalog_doc_enrichments_05192026.md):
+
+- **AWS Certificate Manager** — ML-DSA support in ACM Private CA for X.509 PKI
+- **SOPS (Secrets OPerationS)** — CNCF secrets encryption with hybrid X25519+Kyber768
+- **Certicom Code Signing and Key Management Server** — Dilithium-based vehicle code signing (BlackBerry × NXP)
+- **BlackBerry QNX Hypervisor 8.0 for Safety** — safety-certified embedded hypervisor (ISO 26262 ASIL D / IEC 61508 SIL 4)
+
 ### Data — Library CSV refresh + enrichment outputs (2026-05-19)
 
 New date-versioned dataset [library_05192026.csv](src/data/library_05192026.csv) (829 rows, same schema as predecessor). Changes from [library_05182026.csv](src/data/library_05182026.csv):
