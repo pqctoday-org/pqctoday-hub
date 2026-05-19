@@ -21,6 +21,20 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Data — Library CSV refresh + enrichment outputs (2026-05-19)
+
+New date-versioned dataset [library_05192026.csv](src/data/library_05192026.csv) (829 rows, same schema as predecessor). Changes from [library_05182026.csv](src/data/library_05182026.csv):
+
+- **32 rows updated** — no additions or removals
+- `downloadable` field corrected/normalised across 31 rows: 21 `true` → `yes`, 2 `no-network-error` → `yes`, 1 `no-paywall` → `yes`; 4 TCG and 1 GSMA entries downgraded to `no-forbidden` (server now returns 403); BSI TR-02102 corrected to `no-html-error-page-as-pdf`; China YD/T 3834.1-2021 corrected to `no-captcha-blocked`
+- `local_file` field: 25 entries gained the `public/library/` path prefix (bare filenames → full relative paths)
+
+New enrichment outputs from qwen3.6:27b run (2026-05-19):
+
+- [src/data/doc-enrichments/library_doc_enrichments_05192026.md](src/data/doc-enrichments/library_doc_enrichments_05192026.md) — 2 library documents processed
+- [src/data/doc-enrichments/catalog_doc_enrichments_05192026.md](src/data/doc-enrichments/catalog_doc_enrichments_05192026.md) — 48 catalog entries processed
+- [src/data/doc-enrichments/library_skipped_05192026.json](src/data/doc-enrichments/library_skipped_05192026.json) — 0 skipped
+
 ### Data — Threats accuracy audit: 5-pass knowledge verification of 112 threats (2026-05-19)
 
 Five-pass accuracy audit of [quantum_threats_05182026.csv](src/data/quantum_threats_05182026.csv) against published standards, RFCs, and NIST documents. 21 threats explicitly corrected across passes 2–5 (each correction appended to `data_quality_notes` with the specific error and fix); descriptions across the remaining rows were also reviewed.
