@@ -239,6 +239,10 @@ scripts/*
 # liveDeployment text fields. Pure read-only against public data.
 !scripts/audit-matrix-refs.ts
 
+# Timeline country-alias audit — CI gate that validates countryAliases.ts
+# against the latest Timeline CSV. Pure read-only against public data.
+!scripts/audit-timeline-aliases.ts
+
 # Compliance country-token audit — runs in CI. Validates every country/region
 # token in the latest compliance CSV resolves through COUNTRY_CODE_TO_NAME and
 # COUNTRY_TO_REGION in src/data/complianceData.ts. Pure read-only.
