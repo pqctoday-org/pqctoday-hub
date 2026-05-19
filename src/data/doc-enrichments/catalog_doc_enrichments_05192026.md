@@ -390,3 +390,279 @@ enrichment_method: ollama-qwen3.6:27b
 - **Extraction Timestamp**: 2026-05-19T00:31:26
 
 ---
+
+## AWS Certificate Manager
+
+- **Reference ID**: AWS Certificate Manager
+- **Title**: AWS Certificate Manager
+- **Authors**: Public Key Infrastructure (PKI) Software
+- **Publication Date**: 2016-01-01
+- **Last Updated**: 2026-05-18
+- **Document Status**: Verified
+- **Main Topic**: Overview of AWS Certificate Manager for provisioning and managing SSL/TLS certificates for AWS, hybrid, and multicloud workloads.
+- **PQC Algorithms Covered**: ML-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: AWS Certificate Manager
+- **Protocols Covered**: SSL/TLS
+- **Infrastructure Layers**: PKI; Key Management
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: FIPS 204
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: ACM Private CA supports ML-DSA certificate issuance for private PKI; Public certificates currently use classical algorithms pending CA/Browser Forum adoption; ACM provides managed renewal and key management for SSL/TLS certificates; The service supports workloads on EC2, containers, on-premises hosts, and AWS services.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: ACM Private CA supports ML-DSA certificate issuance
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: X.509
+- **PQC Heatmap Protocols Evidence**: X.509: ACM Private CA supports ML-DSA certificate issuance
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Operations; Developer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: pki-workshop; Algorithms; Migrate
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Source Document**: AWS_Certificate_Manager.html (228,432 bytes, 3,280 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T00:33:14
+
+---
+
+## SOPS (Secrets OPerationS)
+
+- **Reference ID**: SOPS (Secrets OPerationS)
+- **Title**: SOPS (Secrets OPerationS)
+- **Authors**: Secrets Management
+- **Publication Date**: 2025-01-01
+- **Last Updated**: 2026-04-16
+- **Document Status**: Pending Verification
+- **Main Topic**: SOPS is a CNCF Sandbox project for encrypted file-based secrets management in GitOps workflows, offering PQC capability via the age -pq backend.
+- **PQC Algorithms Covered**: Kyber768
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: SOPS; age
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Key Management
+- **Standardization Bodies**: CNCF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: X25519
+- **Key Takeaways**: SOPS provides encrypted file-based secrets management for GitOps workflows; It supports PQC via the age -pq backend using hybrid X25519+Kyber768; It encrypts YAML, JSON, ENV, INI, and binary files; It is positioned as deployable open-source PQC secret encryption for Kubernetes and CI/CD pipelines
+- **Security Levels & Parameters**: Kyber768
+- **Hybrid & Transition Approaches**: hybrid X25519+Kyber768
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: hybrid X25519+Kyber768
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Operations
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: hybrid-crypto; kms-pqc; migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Extraction Note**: No source text available
+- **Source Document**: SOPS\__Secrets_OPerationS_.md (2,251 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-05-19T00:35:04
+
+---
+
+## Certicom Code Signing and Key Management Server
+
+- **Reference ID**: Certicom Code Signing and Key Management Server
+- **Title**: Certicom Code Signing and Key Management Server
+- **Authors**: Code Signing and Software Integrity
+- **Publication Date**: Not specified
+- **Last Updated**: 2026-05-18
+- **Document Status**: Partially Verified
+- **Main Topic**: BlackBerry and NXP demonstrate quantum-resistant code signing for vehicle networking processors using CRYSTALS Dilithium to mitigate Y2Q risks.
+- **PQC Algorithms Covered**: CRYSTALS Dilithium
+- **Quantum Threats Addressed**: Y2Q; Harvest Now Decrypt Later (implied by "render today’s public key cryptography useless" and "quantum computers will be able to easily break traditional code signing schemes")
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Bodies: NIST, NATO, White House
+- **Leaders Contributions Mentioned**: Joppe Bos, Senior Principal Cryptographer at NXP Semiconductors; Jim Alfred, VP, BlackBerry Technology Solutions
+- **PQC Products Mentioned**: Code Signing and Key Management Server from Certicom by BlackBerry
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Key Management; Secure Boot
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Organizations should adopt quantum-resistant signature schemes like Dilithium for long-lifecycle assets; Code signing infrastructure must be hardened against future quantum attacks; Collaboration between chipmakers and security vendors is critical for crypto-agile hardware solutions; Y2Q poses a significant threat to industries with updatable software requiring immediate mitigation planning
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Crypto-agile
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Yes
+- **Pure PQC Signature Evidence**: "digitally signed using the National Institute of Standards and Technology’s (NIST) recently endorsed CRYSTALS Dilithium digital signature scheme"
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; CISO; Developer
+- **Implementation Prerequisites**: NXP S32G vehicle networking processors; Certicom Code Signing and Key Management Server
+- **Relevant PQC Today Features**: code-signing; crypto-agility; threats; iot-ot-pqc
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Embedded viability (vehicle networking processors)
+- **Supply Chain & Vendor Risk**: SBOMs; long lifecycle assets
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Source Document**: Certicom_Code_Signing_and_Key_Management_Server.html (396,891 bytes, 11,368 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T00:36:50
+
+---
+
+## BlackBerry QNX Hypervisor 8.0 for Safety
+
+- **Reference ID**: BlackBerry QNX Hypervisor 8.0 for Safety
+- **Title**: BlackBerry QNX Hypervisor 8.0 for Safety
+- **Authors**: Hardware Security and Embedded
+- **Publication Date**: Not specified
+- **Last Updated**: 2026-05-18
+- **Document Status**: Partially Verified
+- **Main Topic**: Announcement of the General Availability of QNX Hypervisor 8.0 for Safety, a safety-certified embedded virtualization platform for critical systems.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Grant Courville, SVP of Products and Strategy at QNX
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: ISO 26262 ASIL D; IEC 61508 SIL 4; IEC 62304 Class C
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: QNX Hypervisor 8.0 for Safety is now generally available for safety-critical systems; The platform supports ISO 26262 ASIL D, IEC 61508 SIL 4, and IEC 62304 Class C certifications; It enables isolation of critical workloads in mixed-criticality designs for Physical AI; Leading automotive and healthcare customers have committed to deploying the platform
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect; Compliance Officer
+- **Implementation Prerequisites**: QNX Software Development Platform (SDP) 8.0
+- **Relevant PQC Today Features**: compliance-strategy; iot-ot-pqc; vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: embedded viability; RTOS compatibility
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: BlackBerry_QNX_Hypervisor_8.0_for_Safety.html (46,674 bytes, 6,435 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T00:39:16
+
+---
+
+## Hex Trust Institutional Custody
+
+- **Reference ID**: Hex Trust Institutional Custody
+- **Title**: Hex Trust Institutional Custody
+- **Authors**: Digital Asset Custody
+- **Publication Date**: Not specified
+- **Last Updated**: 2026-04-26
+- **Document Status**: Cited
+- **Main Topic**: Hex Trust provides institutional-grade regulated digital asset custody, staking, and markets services for Web3 clients.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Singapore; Dubai; Hong Kong
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: HSM; Key Management
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: FIPS 140-3 Level 3; SOC 1; SOC 2
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Hex Trust uses FIPS 140-3 Level 3 HSMs for secure key storage; Client assets are legally and technologically segregated in distinct wallets; The platform is regulated in Singapore, Dubai, and Hong Kong; Insurance coverage of up to $50M+ protects against theft or loss; Private keys are never exposed to the internet and signing occurs in isolated environments
+- **Security Levels & Parameters**: FIPS 140-3 Level 3
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Not Applicable
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: Not Applicable
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: Not Applicable
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CISO; Compliance Officer; Security Architect
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: digital-assets; hsm-pqc; compliance-strategy; vendor-risk
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: Insurance coverage up to $50M+
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
+- **PQC Round**: Not Applicable
+- **Source Document**: Hex_Trust_Institutional_Custody.html (101,858 bytes, 10,656 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T00:41:25
+
+---
