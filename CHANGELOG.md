@@ -21,6 +21,42 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Data — Threats accuracy audit: 5-pass knowledge verification of 112 threats (2026-05-19)
+
+Five-pass accuracy audit of [quantum_threats_05182026.csv](src/data/quantum_threats_05182026.csv) against published standards, RFCs, and NIST documents. 21 threats explicitly corrected across passes 2–5 (each correction appended to `data_quality_notes` with the specific error and fix); descriptions across the remaining rows were also reviewed.
+
+**Pass 2 (7 corrections)** — errors introduced in pass 1 + two missed in originally-accurate rows:
+
+- **CROSS-005** FIPS 206 was not finalized August 2024 — only FIPS 203/204/205; FIPS 206 remains IPD
+- **CROSS-008** SP 800-227 was IPD January 2025, not final (subsequently updated in pass 5)
+- **RAIL-001** ETCS Baseline 3 euroradio uses 3DES-MAC (ISO 9797-1 MAC algorithm 3), not AES-CMAC
+- **CI-002** IEC 62351-6 originally specified RSA for GOOSE/SV; HMAC-SHA-256 added later — both options exist
+- **TELCO-003** 3GPP TS 33.310 permits both RSA and ECDSA for NF/gNB certs; SUCI is ECIES key agreement (not signing)
+- **CROSS-018** / **HSM-002** stale `crypto_at_risk` fields refreshed
+
+**Pass 3 (4 corrections)** — unverifiable specific claims in originally-accurate rows:
+
+- **AERO-002** satellite categorised as CNSA 2.0 "niche equipment" (not a satellite-specific 2033 deadline)
+- **AUS-FIN-001** / **AUS-GOV-002** removed ISM-1490 control number — ASD ISM renumbers quarterly
+- **IOT-003** removed unverified RFC 9644 manifest wire-format claim
+
+**Pass 4 (7 corrections)** — RFC and NIST document citation errors:
+
+- **CROSS-009** RFC 5702 defines RSASHA256 (not RFC 6944, which is the applicability statement)
+- **CROSS-010** RPKI allows ECDSA P-256 per RFC 8208; "exclusively RSA-2048" is wrong
+- **CROSS-015** SP 800-57 Part 1 Rev 5 (Rev 6 does not exist); IR 8105 cited instead of IR 8545 for hash quantum guidance; SHA3-256 has the same quantum resistance as SHA-256 (output-size determined)
+- **CRYPTO-003** / **FIN-002** removed unverifiable "Federal Reserve FEDS Paper September 2025" citation; replaced with BIS Papers No. 149 and IOSCO / crypto-research literature
+- **IT-006** softened AI-assisted cryptanalysis to research-stage framing — no published security reduction against standardised parameter sets as of 2025
+- **CROSS-013** softened "first software QRNG" to "among the first" — absolute-first claim unverifiable
+
+**Pass 5 (3 corrections)** — stale pass-2 entry and overstatements surfaced by final review:
+
+- **CROSS-008** SP 800-227 published as final standard September 18, 2025 — pass-2 "final pending" note now stale
+- **CROSS-012** removed "exclusively ECDSA-P256" — cosign also supports ED25519 and RSA key types
+- **CROSS-014** fixed `main_source` "SP 800-57 Part 1 Rev 6" → Rev 5 (Rev 6 is an IPD from December 2025, not a final standard)
+
+New scripts: [scripts/fix-threats-accuracy-pass2.ts](scripts/fix-threats-accuracy-pass2.ts), [-pass3](scripts/fix-threats-accuracy-pass3.ts), [-pass4](scripts/fix-threats-accuracy-pass4.ts), [-pass5](scripts/fix-threats-accuracy-pass5.ts).
+
 ### Data — Threats source URL refresh + 113-file evidence archive (2026-05-18)
 
 New date-versioned dataset [quantum_threats_05182026.csv](src/data/quantum_threats_05182026.csv) (112 rows, all 110 threat IDs preserved) with corrected source URLs for the three confirmed wrong-document entries surfaced during provenance audit:

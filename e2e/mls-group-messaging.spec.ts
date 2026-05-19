@@ -107,7 +107,9 @@ test.describe('MLS — Playground tool', () => {
       .click()
     await expect(page.getByText(/TreeKEM ratchet tree/i)).toBeVisible({ timeout: 15_000 })
     await expect(page.getByRole('heading', { name: /openmls_pqctoday_crypto/i })).toBeVisible()
-    expect(page.url()).toContain('/playground/mls-group-messaging')
+    // The matrix link resolves via moduleLink = '/learn/mls-group-messaging?tab=workshop'.
+    // Accept either /learn or /playground — both render the same playground component.
+    expect(page.url()).toMatch(/\/(learn|playground)\/mls-group-messaging/)
   })
 
   test('HSM path — Step 1 (ML-DSA-65) produces [HSM]-prefixed output via softhsmv3', async ({
