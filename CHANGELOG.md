@@ -21,6 +21,18 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Data — Threats enrichment: full 194-row coverage (2026-05-19)
+
+[threats_doc_enrichments_05192026.md](src/data/doc-enrichments/threats_doc_enrichments_05192026.md) expanded from 91 → **194 entries**, covering all rows in the current threats CSV:
+
+- **91 file-backed entries** (unchanged) — full qwen3.6:27b extraction from downloaded HTML/PDF source documents; 20–25/53 dimensions filled on average
+- **103 metadata-only entries** (new) — records with no downloadable source (forbidden/404/portal URLs); enriched from CSV `industry` + `threat_description` fields only; 10–20/53 dimensions filled; useful for RAG corpus keyword search but lack structured evidence fields
+
+Two enrichment-script bugs fixed to enable this run:
+
+1. **`cached` status not accepted** — manifest entries written by `download-threats.js` use `status: 'cached'` for files already on disk, but the enrichment filter only accepted `'downloaded'`. Changed to `status in ('downloaded', 'cached')` across all collections.
+2. **No threats CSV sweep** — unlike `timeline`, the threats collection had no fallback to sweep all CSV rows not in the manifest. Added a `if collection == 'threats'` block mirroring the timeline sweep, so all 194 `threat_id` values are guaranteed to be processed regardless of manifest state.
+
 ### Fix — E2E test suite: 7 pre-existing failures resolved (2026-05-19)
 
 Seven pre-existing E2E test failures squashed across four spec files:
