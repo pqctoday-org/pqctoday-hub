@@ -15,6 +15,7 @@ import { maturityByRefId } from '../../data/maturityGovernanceData'
 import { CSWP39_TIERS } from '../Compliance/cswp39Data'
 import { CSWP39_ZONE_DETAILS, CSWP39_ZONE_STYLES, PILLAR_TO_ZONE } from '../../data/cswp39ZoneData'
 import { DocumentAnalysis } from './DocumentAnalysis'
+import { PillarDisclaimer } from '../BusinessCenter/widgets/PillarDisclaimer'
 import { leadersData } from '../../data/leadersData'
 import clsx from 'clsx'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
@@ -399,6 +400,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                               )
                             })}
                           </div>
+                          <PillarDisclaimer className="mt-3" />
                         </div>
                       )}
                     </div>

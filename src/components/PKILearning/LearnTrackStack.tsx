@@ -49,6 +49,7 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
     'vpn-ssh-pqc',
     'email-signing',
     'api-security-jwt',
+    'pki-enrollment-protocols',
     'protocol-integration',
     'web-gateway-pqc',
     'network-security-pqc',
@@ -133,7 +134,8 @@ const TRACK_META: {
   {
     track: 'Foundations',
     icon: BookOpen,
-    description: 'Quantum threats, PQC fundamentals, entropy & randomness',
+    description:
+      'Quantum threats, PQC fundamentals, entropy & randomness, PQC candidates & worldwide standardization',
     colorClass: 'border',
     activeClass:
       'bg-card border-primary/60 shadow-[0_0_12px_rgba(var(--primary-rgb,99,102,241),0.3)]',

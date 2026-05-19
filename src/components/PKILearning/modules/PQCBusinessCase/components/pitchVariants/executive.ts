@@ -49,7 +49,7 @@ export function buildExecutiveVariant(data: ExecutiveModuleData): PitchVariant {
     },
     {
       id: 'quantum-urgency',
-      title: 'Quantum Urgency — HNDL / HNFL',
+      title: 'Quantum Urgency - HNDL / HNFL',
       description:
         'Time-bound risks: long-retention data (HNDL) and long-lived signing credentials (HNFL).',
       fields: [
@@ -63,7 +63,7 @@ export function buildExecutiveVariant(data: ExecutiveModuleData): PitchVariant {
     },
     {
       id: 'crypto-inventory',
-      title: 'Crypto Inventory — Summary',
+      title: 'Crypto Inventory - Summary',
       description: 'High-level view of what classical crypto is in scope.',
       fields: [
         {
@@ -103,7 +103,7 @@ export function buildExecutiveVariant(data: ExecutiveModuleData): PitchVariant {
     {
       id: 'budget',
       title: 'Requested Budget',
-      description: 'Total investment requested. Ranges are illustrative — scope with Finance.',
+      description: 'Total investment requested. Ranges are illustrative - scope with Finance.',
       fields: [
         {
           id: 'amount',
@@ -148,7 +148,7 @@ export function buildExecutiveVariant(data: ExecutiveModuleData): PitchVariant {
     {
       id: 'actions',
       title: 'Recommended Actions',
-      description: 'Top prioritized next steps — tailored for executive framing.',
+      description: 'Top prioritized next steps - tailored for executive framing.',
       fields: [
         {
           id: 'recommendations',
@@ -173,15 +173,17 @@ export function buildExecutiveVariant(data: ExecutiveModuleData): PitchVariant {
     if (d.industry) md += `**Industry:** ${d.industry}\n`
     if (d.country) md += `**Country:** ${d.country}\n`
     md += '**Audience:** Board / Executive Committee\n'
-    md += '**Classification:** Confidential — Board Use Only\n\n---\n\n'
+    md += '**Classification:** Confidential - Board Use Only\n\n---\n\n'
 
     md += '## 1. Executive Summary\n\n'
     md += `${get('executive-summary', 'summary')}\n\n`
+    md +=
+      '*This is the current instance of an ongoing crypto-agility discipline - per NIST CSWP 39, transitions will recur as algorithms age.*\n\n'
 
     md += '## 2. Risk Overview\n\n'
     md += `${get('risk-overview', 'risks')}\n\n`
 
-    md += '## 3. Quantum Urgency — HNDL / HNFL\n\n'
+    md += '## 3. Quantum Urgency - HNDL / HNFL\n\n'
     md += `${get('quantum-urgency', 'urgency')}\n\n`
 
     md += '## 4. Crypto Inventory\n\n'
@@ -207,6 +209,8 @@ export function buildExecutiveVariant(data: ExecutiveModuleData): PitchVariant {
     md += '## 10. Recommended Actions\n\n'
     md += `${get('actions', 'recommendations')}\n\n---\n\n`
 
+    md +=
+      '*Aligned to NIST CSWP 39 §5 - Crypto Agility Strategic Plan. https://doi.org/10.6028/NIST.CSWP.39*\n'
     md += '*Customized for the Executive / Board role via PQC Today Command Center.*\n'
     return md
   }

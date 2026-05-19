@@ -1,0 +1,70 @@
+{
+  "_description": "Compliance-framework website URLs that return HTTP 403 to scrapers but render correctly in browsers. Used by check-compliance-freshness.ts to suppress false-positive dead-link alerts. Generated from the 2026-05-15 /compliance audit (see ~/antigravity/pqctoday-priv/docs/platform/compliance/audit-2026-05-15.md §2.2).",
+  "_lastReviewed": "2026-05-16",
+  "_reviewCadence": "every 6 months — confirm in a browser that these URLs still load",
+  "frameworks": [
+    {
+      "id": "CNSA-2",
+      "url": "https://www.nsa.gov/Cybersecurity/CNSA-2-0/",
+      "reason": "nsa.gov bot block"
+    },
+    {
+      "id": "NSA",
+      "url": "https://www.nsa.gov/Cybersecurity/CNSA-2-0/",
+      "reason": "nsa.gov bot block"
+    },
+    { "id": "HIPAA", "url": "https://www.hhs.gov/hipaa", "reason": "hhs.gov bot block" },
+    {
+      "id": "HITECH",
+      "url": "https://www.hhs.gov/hipaa/for-professionals/special-topics/hitech-act-enforcement-interim-final-rule/index.html",
+      "reason": "hhs.gov bot block"
+    },
+    {
+      "id": "GSMA-NG116",
+      "url": "https://www.gsma.com/solutions-and-impact/technologies/networks/ng116/",
+      "reason": "gsma.com bot block"
+    },
+    {
+      "id": "UN-ECE-WP29",
+      "url": "https://unece.org/transport/vehicle-regulations",
+      "reason": "unece.org bot block"
+    },
+    { "id": "IEC-62443", "url": "https://www.iec.ch/iecnorex/", "reason": "iec.ch bot block" },
+    {
+      "id": "NIS2",
+      "url": "https://www.enisa.europa.eu/topics/cybersecurity-policy/nis2-directive",
+      "reason": "enisa.europa.eu bot block"
+    },
+    {
+      "id": "INCD-PQC",
+      "url": "https://www.gov.il/en/departments/incd",
+      "reason": "gov.il bot block / region filter"
+    },
+    {
+      "id": "CMMC",
+      "url": "https://dodcio.defense.gov/CMMC/",
+      "reason": "dodcio.defense.gov bot block"
+    },
+    {
+      "id": "TCG-TPM-PQC",
+      "url": "https://trustedcomputinggroup.org/",
+      "reason": "Cloudflare challenge"
+    },
+    {
+      "id": "SPAIN-CCN-PQC",
+      "url": "https://www.ccn-cert.cni.es/",
+      "reason": "ccn-cert.cni.es bot block"
+    },
+    {
+      "id": "UK-CMORG-PQC",
+      "url": "https://www.cmorg.org.uk/",
+      "reason": "cmorg.org.uk bot block"
+    },
+    { "id": "NG-NDPR", "url": "https://ndpc.gov.ng/", "reason": "ndpc.gov.ng bot block" },
+    {
+      "id": "CISA-PQC-PROCUREMENT",
+      "url": "https://www.cisa.gov/quantum",
+      "reason": "cisa.gov bot block"
+    }
+  ]
+}

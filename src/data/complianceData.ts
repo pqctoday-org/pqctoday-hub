@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { IndustryComplianceConfig } from './industryAssessConfig'
 import { loadLatestCSV, splitSemicolon, parseBoolYesNo } from './csvUtils'
+import { filterActive } from './loaderUtils'
 
 // ── Types ────────────────────────────────────────────────────────────────
 
@@ -10,8 +11,22 @@ export type BodyType =
   | 'certification_body'
   | 'compliance_framework'
   | 'industry_alliance'
+  | 'regulatory_body'
 
 export type DeadlinePhase = 'active' | 'imminent' | 'near' | 'mid' | 'long' | 'ongoing'
+
+/**
+ * Five-valued PQC-requirement enum (canonical surface). Existing consumers
+ * keep using the legacy `requiresPQC` boolean (= `pqcRequirement === 'yes'`);
+ * new code should branch on the enum to surface the full spectrum.
+ *
+ * - `yes`      explicit mandate (e.g. CNSA 2.0, ANSSI PQC qualification)
+ * - `no`       framework does not mandate / address PQC
+ * - `partial`  PQC mandated for some scope but not whole framework
+ * - `guidance` framework publishes PQC guidance but does not mandate adoption
+ * - `expected` PQC mandate anticipated but not yet codified (e.g. CRA, FedRAMP)
+ */
+export type PQCRequirement = 'yes' | 'no' | 'partial' | 'guidance' | 'expected'
 
 export interface ComplianceFramework {
   id: string
@@ -19,7 +34,10 @@ export interface ComplianceFramework {
   description: string
   industries: string[]
   countries: string[]
+  /** Legacy boolean — equivalent to `pqcRequirement === 'yes'`. Prefer `pqcRequirement` in new code. */
   requiresPQC: boolean
+  /** Canonical 5-valued PQC-requirement enum — surfaces nuance the boolean drops. */
+  pqcRequirement: PQCRequirement
   deadline: string
   deadlineYear?: number
   deadlinePhase: DeadlinePhase
@@ -37,6 +55,12 @@ export interface ComplianceFramework {
   cswp39Tags?: string[]
   /** NAICS 2-digit sector codes — machine-readable counterpart to industries */
   naicsCodes?: string[]
+  /** DS-series status — `active` rows are surfaced; `deprecated`/`obsolete` filtered out at load. */
+  status?: 'active' | 'deprecated' | 'obsolete'
+  deprecatedAt?: string
+  deprecatedReason?: string
+  /** Sister-standards / cross-walk tokens (free text; not yet resolved). */
+  relatedStandards?: string[]
 }
 
 // ── CSV loading (versioned filename pattern) ────────────────────────────
@@ -62,6 +86,10 @@ interface RawComplianceRow {
   confidence_score?: string
   cswp39_tags?: string
   naics_codes?: string
+  status?: string
+  deprecated_at?: string
+  deprecated_reason?: string
+  related_standards?: string
 }
 
 const modules = import.meta.glob('./compliance_*.csv', {
@@ -76,6 +104,7 @@ const validBodyTypes: BodyType[] = [
   'certification_body',
   'compliance_framework',
   'industry_alliance',
+  'regulatory_body',
 ]
 
 // ISO alpha-2 + PQC-REGION-* overlays used in the normalized compliance CSV
@@ -84,18 +113,29 @@ const validBodyTypes: BodyType[] = [
 // keys off. Identity entries keep older / legacy rows working.
 const COUNTRY_CODE_TO_NAME: Record<string, string> = {
   AE: 'United Arab Emirates',
+  AR: 'Argentina',
+  AT: 'Austria',
   AU: 'Australia',
+  BE: 'Belgium',
   BH: 'Bahrain',
   BR: 'Brazil',
   CA: 'Canada',
   CH: 'Switzerland',
+  CL: 'Chile',
   CN: 'China',
+  CO: 'Colombia',
+  CZ: 'Czech Republic',
   DE: 'Germany',
   DK: 'Denmark',
+  EE: 'Estonia',
+  EG: 'Egypt',
   ES: 'Spain',
+  FI: 'Finland',
   FR: 'France',
   GB: 'United Kingdom',
   HK: 'Hong Kong',
+  ID: 'Indonesia',
+  IE: 'Ireland',
   IL: 'Israel',
   IN: 'India',
   IT: 'Italy',
@@ -103,14 +143,28 @@ const COUNTRY_CODE_TO_NAME: Record<string, string> = {
   JP: 'Japan',
   KE: 'Kenya',
   KR: 'South Korea',
+  MX: 'Mexico',
   MY: 'Malaysia',
+  NG: 'Nigeria',
   NL: 'Netherlands',
+  NO: 'Norway',
   NZ: 'New Zealand',
+  PE: 'Peru',
+  PH: 'Philippines',
+  PL: 'Poland',
+  RU: 'Russia',
   SA: 'Saudi Arabia',
+  SE: 'Sweden',
   SG: 'Singapore',
+  TH: 'Thailand',
+  TR: 'Turkey',
   TW: 'Taiwan',
   US: 'United States',
+  UY: 'Uruguay',
+  VN: 'Vietnam',
   ZA: 'South Africa',
+  EU: 'European Union',
+  'PQC-REGION-AU-AFRICA': 'African Union',
   'PQC-REGION-EU': 'European Union',
   'PQC-REGION-GLOBAL': 'Global',
 }
@@ -187,6 +241,13 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     industries: splitSemicolon(row.industries),
     countries: splitSemicolon(row.countries).map(expandCountryToken),
     requiresPQC: parseBoolYesNo(row.requires_pqc),
+    pqcRequirement: ((): PQCRequirement => {
+      const v = (row.requires_pqc || '').trim().toLowerCase()
+      if (v === 'yes' || v === 'no' || v === 'partial' || v === 'guidance' || v === 'expected') {
+        return v
+      }
+      return 'no'
+    })(),
     deadline,
     deadlineYear,
     deadlinePhase,
@@ -201,14 +262,37 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
       (row.peer_reviewed?.toLowerCase() as ComplianceFramework['peerReviewed']) || undefined,
     vettingBody: row.vetting_body ? splitSemicolon(row.vetting_body) : undefined,
     websiteUrlQuality: row.website_url_quality || undefined,
-    confidenceScore: row.confidence_score ? Number(row.confidence_score) : undefined,
+    confidenceScore: ((): number | undefined => {
+      const raw = (row.confidence_score || '').trim()
+      if (!raw) return undefined
+      const n = Number(raw)
+      return Number.isFinite(n) ? n : undefined
+    })(),
     cswp39Tags: row.cswp39_tags ? splitSemicolon(row.cswp39_tags) : undefined,
     naicsCodes: row.naics_codes ? splitSemicolon(row.naics_codes) : undefined,
+    status: ((): ComplianceFramework['status'] => {
+      const s = (row.status || '').trim().toLowerCase()
+      if (s === 'deprecated' || s === 'obsolete') return s
+      return 'active'
+    })(),
+    deprecatedAt: row.deprecated_at?.trim() || undefined,
+    deprecatedReason: row.deprecated_reason?.trim() || undefined,
+    relatedStandards: row.related_standards ? splitSemicolon(row.related_standards) : undefined,
   }
 })
 
-/** All compliance frameworks from the latest compliance CSV. */
-export const complianceFrameworks: ComplianceFramework[] = frameworks
+/**
+ * All ACTIVE compliance frameworks from the latest compliance CSV. Deprecated /
+ * obsolete rows are filtered out at load (DS-series self-containment rule). Use
+ * `allComplianceFrameworks` if you need the unfiltered set for cross-reference
+ * resolution or audit views.
+ */
+export const complianceFrameworks: ComplianceFramework[] = filterActive(
+  frameworks as Array<ComplianceFramework & { status?: string }>
+) as ComplianceFramework[]
+
+/** Unfiltered set including deprecated/obsolete rows — for audits + cross-refs. */
+export const allComplianceFrameworks: ComplianceFramework[] = frameworks
 
 /** CSV file metadata (filename and date). */
 export const complianceMetadata = parsedMetadata
@@ -238,6 +322,8 @@ const COUNTRY_TO_REGION: Record<string, RegionBloc> = {
   Argentina: 'Latin America',
   Chile: 'Latin America',
   Colombia: 'Latin America',
+  Peru: 'Latin America',
+  Uruguay: 'Latin America',
   // EU / EEA
   'European Union': 'European Union',
   France: 'European Union',
@@ -256,12 +342,14 @@ const COUNTRY_TO_REGION: Record<string, RegionBloc> = {
   Portugal: 'European Union',
   'Czech Republic': 'European Union',
   Czechia: 'European Union',
+  Estonia: 'European Union',
   // Europe non-EU
   Switzerland: 'Europe (non-EU)',
   Norway: 'Europe (non-EU)',
   Iceland: 'Europe (non-EU)',
   Turkey: 'Europe (non-EU)',
   Ukraine: 'Europe (non-EU)',
+  Russia: 'Europe (non-EU)',
   // UK
   'United Kingdom': 'United Kingdom',
   // APAC

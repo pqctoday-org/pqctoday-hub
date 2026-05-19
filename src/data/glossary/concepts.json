@@ -2330,5 +2330,33 @@
     "definition": "A random cryptographic value (typically 32 bytes) sent by the Initiator (Ni) or Responder (Nr) to prevent replay attacks and contribute to key derivation.",
     "complexity": "beginner",
     "category": "concept"
+  },
+  {
+    "term": "HSS",
+    "acronym": "Hierarchical Signature System",
+    "definition": "RFC 8554 stateful hash-based signature scheme that composes multiple LMS trees into a single signing capability with extended lifetime. PQC-relevant for firmware / software signing where the key state can be tracked.",
+    "complexity": "advanced",
+    "category": "concept"
+  },
+  {
+    "term": "KEM",
+    "acronym": "Key Encapsulation Mechanism",
+    "definition": "Cryptographic primitive that produces a ciphertext encapsulating a fresh shared secret under the recipient's public key. ML-KEM (FIPS 203) is the NIST-standardised PQC KEM; classical examples include RSA-KEM and DHKEM.",
+    "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "term": "KDF",
+    "acronym": "Key Derivation Function",
+    "definition": "Cryptographic function that derives one or more secret keys from a shared secret, password, or master key. PQC handshakes use HKDF (RFC 5869) to expand the KEM-output shared secret into traffic keys and resumption keys.",
+    "complexity": "intermediate",
+    "category": "concept"
+  },
+  {
+    "term": "PKI",
+    "acronym": "Public Key Infrastructure",
+    "definition": "Framework of policies, processes, and components that issues, distributes, validates, and revokes digital certificates. PQC migration of PKI requires new certificate, CRL/OCSP, and timestamp signature algorithms (e.g. ML-DSA).",
+    "complexity": "beginner",
+    "category": "concept"
   }
 ]

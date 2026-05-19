@@ -34,6 +34,7 @@ pure_errors.json
 pqc-references/**
 public/vendor-roadmaps/**
 public/library/**
+public/compliance-docs/**
 
 # RAG corpus + embedding metadata are generator-emitted artefacts whose
 # byte content is signed and content-hashed by the trust-engine pipeline.

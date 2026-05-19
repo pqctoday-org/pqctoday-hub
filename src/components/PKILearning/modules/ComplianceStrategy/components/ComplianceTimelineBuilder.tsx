@@ -523,6 +523,10 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
       }
     }
 
+    md += '\n---\n\n'
+    md +=
+      '*Aligned to NIST CSWP 39 §5.1 — Cryptographic Standards, Regulations, and Mandates. https://doi.org/10.6028/NIST.CSWP.39*\n'
+
     return md
   }, [ganttRows, milestones, gapAnalysis])
 

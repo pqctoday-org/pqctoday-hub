@@ -250,12 +250,15 @@ export const VendorScorecardBuilder: React.FC = () => {
       md += `| ${d.label} | ${score}/100 | ${Math.round(d.weight * 100)}% | ${method} |\n`
     }
 
-    // CSWP.39 §5.3 — Observability Tooling Notes
+    // CSWP.39 §5.3 - Observability Tooling Notes
     md += '\n## Observability Tooling Notes (CSWP.39 §5.3)\n\n'
     md += `**Crypto scanner:** ${scannerNotes.trim() || '_Not specified_'}\n\n`
     md += `**CVE / vuln-mgmt feed:** ${cveNotes.trim() || '_Not specified_'}\n\n`
     md += `**SIEM crypto-drift rules:** ${siemNotes.trim() || '_Not specified_'}\n\n`
     md += `**Zero-Trust enforcement:** ${ztNotes.trim() || '_Not specified_'}\n\n`
+
+    // N5: sanitise non-ASCII punctuation in the exported markdown string only.
+    md = md.replace(/—/g, '-').replace(/–/g, '-').replace(/[‘’]/g, "'").replace(/[“”]/g, '"')
 
     return md
   }, [

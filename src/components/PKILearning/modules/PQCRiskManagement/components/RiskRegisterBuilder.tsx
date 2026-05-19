@@ -166,6 +166,10 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
     md += `- **Low:** ${low}\n`
     md += `- **Total Entries:** ${riskEntries.length}\n`
 
+    md += '\n---\n\n'
+    md +=
+      '*Aligned to NIST CSWP 39 §5 (Strategic Plan) and §6.5 (Governance, Risk, and Compliance). https://doi.org/10.6028/NIST.CSWP.39*\n'
+
     return md
   }, [riskEntries])
 

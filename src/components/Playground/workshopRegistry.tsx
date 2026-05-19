@@ -20,6 +20,8 @@ import {
   Globe,
   BarChart2,
   Gauge,
+  Mail,
+  KeySquare,
 } from 'lucide-react'
 import { lazyWithRetry } from '@/utils/lazyWithRetry'
 import type { PersonaId } from '@/data/learningPersonas'
@@ -210,14 +212,14 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'vpn-sim',
     pt_id: 'PT-009',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'PQC VPN Simulator',
     description:
       'Full IKEv2 handshake in WASM with PKCS#11 crypto routed through softhsmv3. Inspect live C_* calls, ECDH key exchange, and PSK authentication between initiator and responder.',
     category: 'HSM / PKCS#11',
     algorithms: ['IKEv2', 'ECDH', 'AES-256-CBC', 'HMAC-SHA2-256', 'PKCS#11'],
     icon: Shield,
-    moduleLink: '/learn/network-security-pqc',
+    moduleLink: '/learn/vpn-ssh-pqc',
     keywords: [
       'vpn',
       'ipsec',
@@ -242,14 +244,14 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'pqc-ssh-sim',
     pt_id: 'PT-SSH-PQC',
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'PQC SSH Simulator',
     description:
       'Full OpenSSH 10.x handshake in WASM: mlkem768x25519-sha256 KEX + ssh-mldsa-65 host auth + publickey userauth backed by softhsmv3 PKCS#11. Compare classical vs PQC byte sizes and latency.',
     category: 'HSM / PKCS#11',
     algorithms: ['ML-KEM-768', 'X25519', 'ML-DSA-65', 'ssh-mldsa-65', 'PKCS#11'],
     icon: Terminal,
-    moduleLink: '/learn/network-security-pqc',
+    moduleLink: '/learn/vpn-ssh-pqc',
     keywords: [
       'ssh',
       'openssh',
@@ -546,13 +548,13 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'suci-flow',
     pt_id: 'PT-018',
-    version: '1.0.0',
+    version: '1.0.1',
     name: '5G SUCI Construction',
     description: 'ECDH + ANSI X9.63-KDF + AES subscriber concealment for 5G networks',
     category: 'Protocol Simulations',
     algorithms: ['ECDH', 'ANSI X9.63-KDF', 'AES-128/256'],
     icon: Radio,
-    moduleLink: '/learn/network-security-pqc',
+    moduleLink: '/learn/5g-security',
     keywords: ['5g', 'suci', 'supi', 'subscriber', 'concealment', 'ecdh', 'hkdf', 'aes'],
     difficulty: 'advanced',
     recommendedPersonas: ['developer', 'architect', 'researcher'],
@@ -728,6 +730,164 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'advanced',
     recommendedPersonas: ['developer', 'architect', 'researcher'],
   },
+  {
+    id: 'pki-enrollment',
+    pt_id: 'PT-029',
+    version: '0.1.0',
+    name: 'PKI Enrollment (EST + CMP)',
+    description:
+      'RFC 7030 EST + RFC 4210/9810 CMP — generate an ML-DSA-65 key, run CMP IR against an in-WASM mock CA, verify the issued cert.',
+    category: 'OpenSSL Studio',
+    algorithms: ['ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87', 'ML-KEM-768', 'X.509', 'CMP', 'EST'],
+    icon: Workflow,
+    moduleLink: '/learn/pki-enrollment-protocols?tab=workshop',
+    keywords: [
+      'est',
+      'cmp',
+      'rfc 7030',
+      'rfc 4210',
+      'rfc 9810',
+      'enrollment',
+      'csr',
+      'pkcs10',
+      'x509',
+      'ml-dsa',
+      'ml-kem',
+      'mock ca',
+      'certificate',
+      'issuance',
+    ],
+    difficulty: 'advanced',
+    recommendedPersonas: ['developer', 'architect', 'ops', 'researcher'],
+    hasOutput: true,
+    outputSpec:
+      'Issued X.509 cert (PEM) chained to the workshop mock CA root, signed with ML-DSA-65. Chain verification must succeed (openssl verify -CAfile root.crt ee.crt → OK).',
+    opensourceTool: {
+      name: 'OpenSSL 3.6 cmp',
+      url: 'https://www.openssl.org/docs/man3.6/man1/openssl-cmp.html',
+    },
+  },
+  {
+    id: 'email-signing',
+    pt_id: 'PT-031',
+    version: '1.0.0',
+    name: 'S/MIME & CMS Workshop',
+    description:
+      'Real OpenSSL 3.6 WASM CMS SignedData sign+verify (ML-DSA-44/65/87, SLH-DSA, RSA-PSS) and ML-KEM-768 AuthEnvelopedData encrypt+decrypt. Toggle routes signing key through softhsmv3 PKCS#11.',
+    category: 'OpenSSL Studio',
+    algorithms: [
+      'ML-DSA-44',
+      'ML-DSA-65',
+      'ML-DSA-87',
+      'SLH-DSA-SHA2-128s',
+      'ML-KEM-768',
+      'RSA-PSS',
+      'ECDSA',
+      'CMS',
+    ],
+    icon: Mail,
+    moduleLink: '/learn/email-signing?tab=workshop',
+    keywords: [
+      's/mime',
+      'cms',
+      'pkcs7',
+      'email signing',
+      'signed data',
+      'enveloped data',
+      'ml-dsa',
+      'slh-dsa',
+      'ml-kem',
+      'rfc 8551',
+      'rfc 5652',
+      'rfc 9629',
+      'openssl',
+      'wasm',
+      'softhsmv3',
+      'pkcs11',
+    ],
+    difficulty: 'advanced',
+    recommendedPersonas: ['developer', 'architect', 'researcher'],
+    hasOutput: true,
+    outputSpec:
+      'CMS SignedData DER blob: outer ASN.1 SEQUENCE header (30 82 …), recovered plaintext matches input byte-for-byte. KEM path: decrypted plaintext matches DEFAULT_PAYLOAD.',
+    opensourceTool: {
+      name: 'OpenSSL 3.6 cms',
+      url: 'https://www.openssl.org/docs/man3.6/man1/openssl-cms.html',
+    },
+  },
+  {
+    id: 'api-security-jwt',
+    pt_id: 'PT-032',
+    version: '1.0.0',
+    name: 'API Security & JWT Workshop',
+    description:
+      'Sign JWTs with ML-DSA-44/65/87, SLH-DSA, and composite ML-DSA-65+Ed25519 using real @noble/post-quantum or softhsmv3 PKCS#11. JWE encryption via ML-KEM-768 per draft-ietf-jose-pqc-kem.',
+    category: 'OpenSSL Studio',
+    algorithms: [
+      'ML-DSA-44',
+      'ML-DSA-65',
+      'ML-DSA-87',
+      'SLH-DSA-SHA2-128s',
+      'ML-KEM-768',
+      'JWS',
+      'JWE',
+      'JOSE',
+    ],
+    icon: KeySquare,
+    moduleLink: '/learn/api-security-jwt?tab=workshop',
+    keywords: [
+      'jwt',
+      'jws',
+      'jwe',
+      'jose',
+      'api security',
+      'bearer token',
+      'ml-dsa',
+      'slh-dsa',
+      'ml-kem',
+      'composite',
+      'ml-dsa-65-ed25519',
+      'rfc 7519',
+      'draft-ietf-jose-pqc-kem',
+      'noble',
+      'softhsmv3',
+      'pkcs11',
+    ],
+    difficulty: 'intermediate',
+    recommendedPersonas: ['developer', 'architect', 'researcher'],
+    hasOutput: true,
+    outputSpec:
+      'Signed JWT with ML-DSA header; verifyJWS() must return true with the matching public key. JWE path: plaintext round-trips through ML-KEM-768 encap/decap.',
+  },
+  {
+    id: 'mls-group-messaging',
+    pt_id: 'PT-030',
+    version: '0.1.0',
+    name: 'MLS Group Messaging',
+    description:
+      'RFC 9420 TreeKEM visualizer + PKCS#11 provider architecture. Add/remove members, trace re-keyed nodes on each Commit, and see how openmls_pqctoday_crypto routes every crypto op through softhsmv3.',
+    category: 'Protocol Simulations',
+    algorithms: ['ML-KEM-768', 'ML-DSA-65', 'X25519', 'Ed25519', 'AES-128-GCM'],
+    icon: Network,
+    moduleLink: '/learn/mls-group-messaging?tab=workshop',
+    keywords: [
+      'mls',
+      'rfc 9420',
+      'treekem',
+      'group messaging',
+      'forward secrecy',
+      'post-compromise security',
+      'key ratchet',
+      'ml-kem',
+      'ml-dsa',
+    ],
+    difficulty: 'intermediate',
+    recommendedPersonas: ['developer', 'architect', 'researcher'],
+    opensourceTool: {
+      name: 'openmls',
+      url: 'https://github.com/openmls/openmls',
+    },
+  },
 ]
 
 export const CATEGORIES = [
@@ -804,6 +964,11 @@ export const TOOL_COMPONENTS: Record<string, LazyComp> = {
   'slh-dsa': lazyWithRetry(() =>
     import('@/components/PKILearning/modules/StatefulSignatures/workshop/SLHDSALiveDemo').then(
       (m) => ({ default: m.SLHDSALiveDemo })
+    )
+  ),
+  'pki-enrollment': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/PKIEnrollmentProtocols/PKIEnrollmentPlayground').then(
+      (m) => ({ default: m.PKIEnrollmentPlayground })
     )
   ),
   'lms-hss': lazyWithRetry(() =>
@@ -928,6 +1093,21 @@ export const TOOL_COMPONENTS: Record<string, LazyComp> = {
     import('@/components/Playground/TpmPlayground/TpmPlayground').then((m) => ({
       default: m.default,
     }))
+  ),
+  'mls-group-messaging': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/MLSGroupMessaging/workshop/MLSGroupMessagingPlayground').then(
+      (m) => ({ default: m.MLSGroupMessagingPlayground })
+    )
+  ),
+  'email-signing': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/EmailSigning/EmailSigningPlayground').then((m) => ({
+      default: m.EmailSigningPlayground,
+    }))
+  ),
+  'api-security-jwt': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/APISecurityJWT/APISecurityJWTPlayground').then(
+      (m) => ({ default: m.APISecurityJWTPlayground })
+    )
   ),
 }
 

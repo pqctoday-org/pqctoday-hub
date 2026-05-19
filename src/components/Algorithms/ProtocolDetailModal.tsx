@@ -14,7 +14,10 @@ import {
 } from 'lucide-react'
 import {
   PROTOCOL_MATRIX,
+  DRAFT_STAGE_LEVEL,
+  DRAFT_STAGE_SHORT,
   type DeploymentPosture,
+  type DimensionRef,
   type DimensionStatus,
   type DimensionStatusValue,
   type LiveDeployment,
@@ -64,6 +67,31 @@ function dimensionTone(value: DimensionStatusValue): string {
   }
 }
 
+function dimensionStageTone(status: DimensionStatus): string {
+  if (!status.stage) return dimensionTone(status.value)
+  const level = DRAFT_STAGE_LEVEL[status.stage]
+  switch (level) {
+    case 0:
+      return 'bg-muted text-muted-foreground border-border'
+    case 1:
+      return 'bg-status-error/15 text-status-error border-status-error/30'
+    case 2:
+      return 'bg-status-warning/10 text-status-warning border-status-warning/30'
+    case 3:
+      return 'bg-status-warning/20 text-status-warning border-status-warning/40'
+    case 4:
+      return 'bg-primary/10 text-primary border-primary/30'
+    case 5:
+      return 'bg-primary/20 text-primary border-primary/40'
+    case 6:
+      return 'bg-status-success/15 text-status-success border-status-success/30'
+    case 7:
+      return 'bg-status-success/30 text-status-success border-status-success/50'
+    default:
+      return dimensionTone(status.value)
+  }
+}
+
 function deploymentPostureClass(posture: DeploymentPosture): string {
   switch (posture) {
     case 'production':
@@ -106,7 +134,56 @@ interface DimensionPanelProps {
   status: DimensionStatus
 }
 
+function DimensionRefRow({ cellRef }: { cellRef: DimensionRef }) {
+  const tone =
+    cellRef.kind === 'rfc'
+      ? 'border-status-success/30 hover:bg-status-success/10'
+      : cellRef.kind === 'spec'
+        ? 'border-accent/30 hover:bg-accent/10'
+        : 'border-primary/30 hover:bg-primary/10'
+  const body = (
+    <>
+      <FileText size={12} className="mt-0.5 shrink-0 text-primary" />
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-1 text-xs font-medium text-foreground">
+          <span className="truncate">{cellRef.id}</span>
+          {cellRef.url && <ExternalLink size={10} className="shrink-0 opacity-60" />}
+        </div>
+        {cellRef.title && (
+          <div className="text-[10px] leading-tight text-muted-foreground line-clamp-2">
+            {cellRef.title}
+          </div>
+        )}
+        {cellRef.publishedOn && (
+          <div className="text-[10px] leading-tight text-muted-foreground mt-0.5">
+            {cellRef.publishedOn}
+          </div>
+        )}
+      </div>
+    </>
+  )
+  if (cellRef.url) {
+    return (
+      <a
+        href={cellRef.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`group flex items-start gap-2 rounded-md border bg-card/50 p-2 transition-colors ${tone}`}
+      >
+        {body}
+      </a>
+    )
+  }
+  return (
+    <div className={`flex items-start gap-2 rounded-md border bg-card/50 p-2 ${tone}`}>{body}</div>
+  )
+}
+
 function DimensionPanel({ label, status }: DimensionPanelProps) {
+  const useStage = Boolean(status.stage)
+  const toneClass = useStage ? dimensionStageTone(status) : dimensionTone(status.value)
+  const stageLevel = status.stage ? DRAFT_STAGE_LEVEL[status.stage] : null
+  const stageLabel = status.stage ? DRAFT_STAGE_SHORT[status.stage] : null
   return (
     <div className="rounded-md border border-border bg-card/50 p-3">
       <div className="mb-2 flex items-center justify-between gap-2">
@@ -114,15 +191,34 @@ function DimensionPanel({ label, status }: DimensionPanelProps) {
           {label}
         </span>
         <span
-          className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium ${dimensionTone(
-            status.value
-          )}`}
+          className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium ${toneClass}`}
+          title={status.stageNote ?? status.note}
         >
-          {dimensionLabel(status.value)}
+          {stageLabel ? (
+            <>
+              <span className="font-semibold tabular-nums">{stageLevel}</span>
+              <span>·</span>
+              <span>{stageLabel}</span>
+            </>
+          ) : (
+            dimensionLabel(status.value)
+          )}
         </span>
       </div>
+      {status.stageNote && useStage && (
+        <p className="mb-2 text-[11px] leading-relaxed text-muted-foreground italic">
+          {status.stageNote}
+        </p>
+      )}
       {status.note && (
         <p className="text-xs text-muted-foreground leading-relaxed">{status.note}</p>
+      )}
+      {status.refs && status.refs.length > 0 && (
+        <div className="mt-2 flex flex-col gap-1.5">
+          {status.refs.map((r) => (
+            <DimensionRefRow key={r.id} cellRef={r} />
+          ))}
+        </div>
       )}
       {status.deploymentPosture && (
         <div className="mt-2 flex items-start gap-1.5 rounded-md border border-border bg-muted/30 px-2 py-1.5">
@@ -232,7 +328,7 @@ function DeploymentRow({ deployment }: { deployment: LiveDeployment }) {
 function PlaygroundCard({ tool }: { tool: PlaygroundTool }) {
   return (
     <Link
-      to={`/playground/${tool.toolId}`}
+      to={tool.url ?? `/playground/${tool.toolId}`}
       className="block rounded-md border border-primary/30 bg-primary/10 p-3 transition-colors hover:border-primary/50 hover:bg-primary/20"
     >
       <div className="mb-1.5 flex items-center gap-2">

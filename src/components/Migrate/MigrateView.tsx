@@ -244,10 +244,10 @@ export const MigrateView: React.FC = () => {
     // target row. Persisted activeLayer / category / vendor / license filters
     // in localStorage otherwise outlive the user's intent and a /migrate?software=foo
     // link can return 0 results because a stale "Cloud" layer is still active.
-    const isDeepLinkEntry =
-      searchParams.get('from_search') === '1' ||
-      searchParams.has('software') ||
-      searchParams.has('product')
+    // NOTE: ?product= is intentionally excluded — it is written by the component
+    // itself when a user expands a row (useEffect@148) and must not trigger filter
+    // resets on every row expansion, which would cause a render loop.
+    const isDeepLinkEntry = searchParams.get('from_search') === '1' || searchParams.has('software')
     if (isDeepLinkEntry) {
       setActiveLayer('All')
       setFlatCategoryFilter('All')
@@ -1720,6 +1720,50 @@ export const MigrateView: React.FC = () => {
                 ) : undefined
               }
             />
+
+            {/* Search results flat list — shown when searching without a selected layer */}
+            {filterText && isStackAllView && (
+              <div className="mt-4">
+                {allFilteredProducts.length > 0 ? (
+                  <>
+                    <div className="hidden md:block">
+                      <SoftwareTable
+                        key={`stack-search-${filterText}`}
+                        data={allFilteredProducts}
+                        defaultSort={{ key: 'softwareName', direction: 'asc' }}
+                        hiddenProducts={undefined}
+                        selectedProducts={myProductsSet}
+                        onToggleProduct={toggleMyProduct}
+                        compareProducts={compareSet}
+                        onToggleCompare={handleToggleCompare}
+                        maxCompareReached={maxCompareReached}
+                        expandedIds={tableExpandedIds}
+                        onToggleExpand={handleToggleTableExpand}
+                        roadmapByVendorId={roadmapByVendorId}
+                      />
+                    </div>
+                    <div className="block md:hidden">
+                      <SoftwareCardGrid
+                        items={allFilteredProducts}
+                        hiddenProducts={undefined}
+                        selectedProducts={myProductsSet}
+                        onToggleProduct={toggleMyProduct}
+                        compareProducts={compareSet}
+                        onToggleCompare={handleToggleCompare}
+                        maxCompareReached={maxCompareReached}
+                        onSelectDetail={setDetailProduct}
+                        roadmapByVendorId={roadmapByVendorId}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <EmptyState
+                    icon={<PackageSearch size={32} />}
+                    title="No products match the current filters."
+                  />
+                )}
+              </div>
+            )}
           </div>
         )}
 

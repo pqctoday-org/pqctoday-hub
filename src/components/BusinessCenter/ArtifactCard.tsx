@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { FileText, Eye, Pencil, Trash2, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 import { TOOL_LABELS_BY_ARTIFACT_TYPE, getCswp39RefForArtifactType } from './businessToolsRegistry'
 import { Cswp39SectionBadge } from './widgets/Cswp39SectionBadge'
@@ -30,6 +31,10 @@ export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'management-tools-audit': 'Management Tools Audit',
   'crypto-cbom': 'Crypto BOM (CBOM)',
   'crypto-vulnerability-watch': 'Crypto Vulnerability Watch',
+  'hybrid-transition': 'Hybrid Transition Plan',
+  'mti-negotiator': 'MTI Recommendation',
+  'crypto-api-refactor': 'Crypto API Refactor Audit',
+  'cloud-responsibility-matrix': 'Cloud Responsibility Matrix',
 }
 
 const PILLAR_COLORS: Record<string, string> = {
@@ -101,9 +106,9 @@ export function ArtifactCard({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
           {isRenaming ? (
-            <input
+            <Input
               ref={inputRef}
-              className="text-sm font-medium text-foreground bg-muted border border-input rounded px-1.5 py-0.5 w-full outline-none focus:ring-2 focus:ring-primary"
+              className="h-7 text-sm py-0.5 w-full"
               value={renameValue}
               onChange={(e) => setRenameValue(e.target.value)}
               onBlur={commitRename}

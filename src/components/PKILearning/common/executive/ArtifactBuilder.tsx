@@ -34,6 +34,8 @@ interface ArtifactBuilderProps {
    *  Artifacts with rich narrative structure (e.g., Board Pitch) can opt-in to
    *  `'pptx'` for a slide deck, or `'json'` for raw structured data. */
   exportFormats?: ('markdown' | 'json' | 'csv' | 'pptx' | 'docx' | 'pdf')[]
+  /** Forward to ExportableArtifact — render PDF in A4 landscape for wide tables. Audit M4. */
+  wideTable?: boolean
 }
 
 export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
@@ -44,6 +46,7 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
   exportFilename = 'artifact',
   renderPreview,
   exportFormats = ['markdown'],
+  wideTable = false,
 }) => {
   const [mode, setMode] = useState<'edit' | 'preview'>('edit')
   const [savedFlash, setSavedFlash] = useState(false)
@@ -264,6 +267,7 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
           filename={exportFilename}
           formats={exportFormats}
           onExport={handleExport}
+          wideTable={wideTable}
         >
           <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap font-mono text-sm text-foreground bg-muted/50 rounded-lg p-4 max-h-[600px] overflow-y-auto">
             {exportMarkdown}

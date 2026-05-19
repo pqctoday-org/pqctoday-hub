@@ -57,6 +57,10 @@ export type ExecutiveDocumentType =
   | 'management-tools-audit'
   | 'crypto-cbom'
   | 'crypto-vulnerability-watch'
+  | 'hybrid-transition'
+  | 'mti-negotiator'
+  | 'crypto-api-refactor'
+  | 'cloud-responsibility-matrix'
 
 export interface ExecutiveDocumentRevision {
   /** Unix ms when this revision was recorded. */

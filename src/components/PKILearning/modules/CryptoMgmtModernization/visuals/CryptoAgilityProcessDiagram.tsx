@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { ArrowRight, ArrowLeft, ArrowDown, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CSWP39_ZONE_DETAILS, CSWP39_ZONE_STYLES, type ZoneId } from '@/data/cswp39ZoneData'
+import { PillarDisclaimer } from '@/components/BusinessCenter/widgets/PillarDisclaimer'
 
 // This learn-module visual previously inlined `ZONE_DETAILS` and `ZONE_STYLES`.
 // Both moved to `src/data/cswp39ZoneData.ts` so the Command Center primary nav
@@ -240,6 +241,8 @@ export const CryptoAgilityProcessDiagram: React.FC = () => {
           </div>
         </div>
       )}
+
+      <PillarDisclaimer />
     </div>
   )
 }

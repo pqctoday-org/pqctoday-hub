@@ -678,11 +678,12 @@ export const SupplyChainRiskMatrix: React.FC = () => {
 
       {/* Export */}
       <ExportableArtifact
-        title="Supply Chain Risk Matrix — Export"
+        title="Supply Chain Risk Matrix - Export"
         exportData={exportMarkdown}
         filename="supply-chain-risk-matrix"
         formats={['markdown', 'pdf']}
         onExport={handleExport}
+        wideTable
       >
         <p className="text-sm text-muted-foreground">
           Export the supply chain risk analysis as a shareable document. Includes CBOM by asset

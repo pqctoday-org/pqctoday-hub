@@ -157,9 +157,15 @@ export const CSWP39ZonePanel: React.FC<CSWP39ZonePanelProps> = ({
             <h3 className={`text-base font-bold ${style.text}`}>{detail.title}</h3>
             {showAdvancedZoneMetadata(density) && (
               <>
-                <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide px-2 py-0.5 rounded bg-muted/60">
+                <a
+                  href="https://doi.org/10.6028/NIST.CSWP.39"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide px-2 py-0.5 rounded bg-muted/60 hover:bg-muted hover:text-primary transition-colors"
+                  title="Open NIST CSWP 39 (DOI)"
+                >
                   {detail.cswpRef}
-                </span>
+                </a>
                 <TierBadge result={tier} />
               </>
             )}

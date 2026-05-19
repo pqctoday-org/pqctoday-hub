@@ -72,6 +72,7 @@ const REGION_CONFIG: Record<Region, { flag: string | null; label: string }> = {
   global: { flag: null, label: 'Global' },
   americas: { flag: '/flags/us.svg', label: 'Americas' },
   eu: { flag: '/flags/eu.svg', label: 'Europe' },
+  mena: { flag: '/flags/il.svg', label: 'MENA' },
   apac: { flag: '/flags/au.svg', label: 'APAC' },
 }
 
