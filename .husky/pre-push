@@ -5,6 +5,9 @@
 # the new signatures haven't landed in CI yet.
 set -e
 
+# attestation scripts are local-only (private repo) — skip in CI
+[ -n "$CI" ] && exit 0
+
 if [ -f public/data/revisions.jsonl.sig ]; then
   npx tsx scripts/attestation/verify-revisions.ts
 fi
