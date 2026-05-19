@@ -1,0 +1,153 @@
+{
+  "generated": "2026-05-19T01:01:09.421660+00:00",
+  "description": "Hash registry for locally-cached source documents backing compliance CSV rows. Each entry records the gap-id, source URL, local filename, and SHA-256 so the apply script can verify provenance before merging.",
+  "entries": [
+    {
+      "gapId": "GAP-AUTO-ETSI-ITS",
+      "sourceUrl": "https://www.etsi.org/deliver/etsi_tr/103900_103999/103949/01.01.01_60/tr_103949v010101p.pdf",
+      "filename": "GAP-AUTO-ETSI-ITS.pdf",
+      "sha256": "c0eb015a5294afe10252ff35775a88fd127bd9d0cc1d2a9bf3fa1099f8f9ad8a",
+      "fetchedAt": "2026-05-19T00:04:54.940098+00:00"
+    },
+    {
+      "gapId": "GAP-AUTO-UNECE-R155",
+      "sourceUrl": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:42021X0387",
+      "filename": "GAP-AUTO-UNECE-R155.html",
+      "sha256": "e78d7c1c9465870bd28300a1424b8bc8bc46b5120fb8eb51d7dbdaa99e54f16f",
+      "fetchedAt": "2026-05-19T00:06:30.333647+00:00"
+    },
+    {
+      "gapId": "GAP-RETAIL-EU-CRA",
+      "sourceUrl": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32024R2847",
+      "filename": "GAP-RETAIL-EU-CRA.html",
+      "sha256": "e3ecaabddf6e321fa04097d15dfcccc7309d0fe5896240ab7625a27d74ab1b0a",
+      "fetchedAt": "2026-05-19T00:09:51.171438+00:00"
+    },
+    {
+      "gapId": "GAP-IND-CERTIN",
+      "sourceUrl": "https://www.cert-in.org.in/PDF/CERT-In_Directions_70B_28.04.2022.pdf",
+      "filename": "GAP-IND-CERTIN.pdf",
+      "sha256": "202c2f3953d792dcfb3ecb3634fc82ab75437ee596de89b8d59a211e8e42431f",
+      "fetchedAt": "2026-05-19T00:11:41.908461+00:00"
+    },
+    {
+      "gapId": "GAP-JP-JISEC",
+      "sourceUrl": "https://www.ipa.go.jp/security/jisec/jisec_e/index.html",
+      "filename": "GAP-JP-JISEC.html",
+      "sha256": "2df752a7b69a3c258bef9ac6d91e572194e2b79da1dd39cb9a5cf4e317d0736d",
+      "fetchedAt": "2026-05-19T00:13:20.106599+00:00"
+    },
+    {
+      "gapId": "GAP-DE-BSI-CC",
+      "sourceUrl": "https://www.bsi.bund.de/EN/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Zertifizierung-und-Anerkennung/Zertifizierung-von-Produkten/Zertifizierung-nach-CC/zertifizierung-nach-cc_node.html",
+      "filename": "GAP-DE-BSI-CC.html",
+      "sha256": "e160a72f0124a1be6f3048e6f7689b15bbc35cb58b4ded45e5425ba89638c631",
+      "fetchedAt": "2026-05-19T00:14:34.254443+00:00"
+    },
+    {
+      "gapId": "GAP-CN-OSCCA",
+      "sourceUrl": "http://www.oscca.gov.cn/",
+      "filename": "GAP-CN-OSCCA.html",
+      "sha256": "7fbf79626f13488cd8173c9190e86918dd3948a1007a47cca8badba5f15c511a",
+      "fetchedAt": "2026-05-19T00:16:32.164374+00:00"
+    },
+    {
+      "gapId": "GAP-ZA-SABS",
+      "sourceUrl": "https://popia.co.za/",
+      "filename": "GAP-ZA-SABS.html",
+      "sha256": "aa24ff1188f9b8f7f7b1ba422d8af0d662980a0453ca6f55b5bc994f66efeb4c",
+      "fetchedAt": "2026-05-19T00:17:38.664460+00:00"
+    },
+    {
+      "gapId": "GAP-FCA-CYBER",
+      "sourceUrl": "https://www.fca.org.uk/firms/operational-resilience",
+      "filename": "GAP-FCA-CYBER.html",
+      "sha256": "e783a559517c5c94ab9f421821c9f61c48c38fd165ae501d43bfcbe89b02fa70",
+      "fetchedAt": "2026-05-19T00:18:41.668462+00:00"
+    },
+    {
+      "gapId": "GAP-MAS-TRM",
+      "sourceUrl": "https://www.mas.gov.sg/regulation/guidelines/technology-risk-management-guidelines",
+      "filename": "GAP-MAS-TRM.html",
+      "sha256": "76a5bb9a0f8b482908a61013b6ade0706bef4f5b32373c12b735e42446514298",
+      "fetchedAt": "2026-05-19T00:19:50.436492+00:00"
+    },
+    {
+      "gapId": "GAP-OCC-2024",
+      "sourceUrl": "https://www.occ.gov/news-issuances/bulletins/2024/bulletin-2024-23.html",
+      "filename": "GAP-OCC-2024.html",
+      "sha256": "e1ffa22163812e3da2b40a11c4151fc8b493292d7a5bf641d4cabde8c373cb4b",
+      "fetchedAt": "2026-05-19T00:20:59.827883+00:00"
+    },
+    {
+      "gapId": "GAP-RBI-CYBER",
+      "sourceUrl": "https://www.rbi.org.in/scripts/NotificationUser.aspx?Id=10435",
+      "filename": "GAP-RBI-CYBER.html",
+      "sha256": "2f06d7433b0fd35696f57a9c776f9d1c1060434a2c274a17c89d7172b775a892",
+      "fetchedAt": "2026-05-19T00:22:06.936857+00:00"
+    },
+    {
+      "gapId": "GAP-CISA-PQC",
+      "sourceUrl": "https://www.cisa.gov/quantum",
+      "filename": "GAP-CISA-PQC.html",
+      "sha256": "a40678f691466aa3b9b43e16ec9babcd23f45bdc41f66578f4400a6f51f0ee91",
+      "fetchedAt": "2026-05-19T00:23:17.216580+00:00"
+    },
+    {
+      "gapId": "GAP-CCRA-PORTAL",
+      "sourceUrl": "https://www.commoncriteriaportal.org/files/ccfiles/CCPART1V3.1R5.pdf",
+      "filename": "GAP-CCRA-PORTAL.pdf",
+      "sha256": "82312911be320fa10df4a487a1a94882c660606448761a5c0c104ea2abb6e326",
+      "fetchedAt": "2026-05-19T00:24:35.005255+00:00"
+    },
+    {
+      "gapId": "GAP-ETSI-104015",
+      "sourceUrl": "https://www.etsi.org/deliver/etsi_ts/104000_104099/104015/01.01.01_60/ts_104015v010101p.pdf",
+      "filename": "GAP-ETSI-104015.pdf",
+      "sha256": "7abc27e6ce7c9db3bf3595db2d9aae42655b0eef2193e7c5956d955fd8467288",
+      "fetchedAt": "2026-05-19T00:25:58.002732+00:00"
+    },
+    {
+      "gapId": "GAP-EU-NIS2",
+      "sourceUrl": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32022L2555",
+      "filename": "GAP-EU-NIS2.html",
+      "sha256": "20d29e9c5300ae1095530996f04731311bf82bb7d4d6a7a0102cd0f075755cf3",
+      "fetchedAt": "2026-05-19T00:27:10.421959+00:00"
+    },
+    {
+      "gapId": "GAP-EU-DORA",
+      "sourceUrl": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX:32022R2554",
+      "filename": "GAP-EU-DORA.html",
+      "sha256": "85307f9e2a0409826dd0f54489645935816d16e929f0db4db3ef15badd11d38c",
+      "fetchedAt": "2026-05-19T00:29:32.718615+00:00"
+    },
+    {
+      "gapId": "GAP-US-NERC-CIP",
+      "sourceUrl": "https://www.nerc.com/pa/Stand/Reliability%20Standards/CIP-005-7.pdf",
+      "filename": "GAP-US-NERC-CIP.pdf",
+      "sha256": "7c2ff0092259d76717bf720b64f0cd38f123e55967ffa0e0560bf033f1452425",
+      "fetchedAt": "2026-05-19T00:31:49.990797+00:00"
+    },
+    {
+      "gapId": "GAP-US-FDA-CYBER",
+      "sourceUrl": "https://www.fda.gov/media/119933/download",
+      "filename": "GAP-US-FDA-CYBER.html",
+      "sha256": "d046fa836048933e1a8795bcf2f8224bcfa08789c2f3ef6f46ae53c2eb096c54",
+      "fetchedAt": "2026-05-19T00:33:09.850541+00:00"
+    },
+    {
+      "gapId": "GAP-AERO-FAA-DO326A",
+      "sourceUrl": "https://www.faa.gov/documentLibrary/media/Advisory_Circular/AC_119-1.pdf",
+      "filename": "GAP-AERO-FAA-DO326A.pdf",
+      "sha256": "c6ce3251354759af954b9074f07e42d88c8bcdcda348c5f718142c21fd14fa14",
+      "fetchedAt": "2026-05-19T00:59:58.156545+00:00"
+    },
+    {
+      "gapId": "GAP-SA-NCA-ECC",
+      "sourceUrl": "https://nca.gov.sa/en/regulations",
+      "filename": "GAP-SA-NCA-ECC.html",
+      "sha256": "6c098c22e7839807399de79186d83f71df17f749a18279b47db6865158054ac2",
+      "fetchedAt": "2026-05-19T01:01:09.421480+00:00"
+    }
+  ]
+}

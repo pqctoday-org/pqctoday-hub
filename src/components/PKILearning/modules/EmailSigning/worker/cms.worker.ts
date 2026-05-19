@@ -1,4 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-only
+//
+// IMPORTANT: this worker is `type: 'classic'` (Web Worker constructor option
+// in CMSSigningService). In Vite dev mode, classic workers cannot consume
+// static ES module imports — Vite serves the file with `importScripts(...)`
+// for HMR while leaving any `import` statements intact, which crashes the
+// browser with "Cannot use import statement outside a module". Keep this
+// file dependency-free.
+//
+// The composite-CMS pivot (LAMPS draft-19 sign/verify via @peculiar/asn1-cms
+// + @noble/post-quantum) runs in the MAIN THREAD inside CMSSigningService,
+// which talks to this worker via the new COMPOSITE_PRIMITIVE_SIGN_* message
+// types defined below. The worker exposes only the softhsmv3 PKCS#11
+// primitives; protocol assembly lives in services/compositeCms.ts.
+
 /**
  * cms.worker.ts — Web Worker that hosts the OpenSSL WASM module with the
  * pkcs11-provider statically linked, registers the provider at boot via
@@ -37,6 +51,10 @@ interface OpenSSLModule {
     readdir: (path: string) => string[]
   }
   ENV?: Record<string, string>
+  /** Emscripten's stderr handler. Mutable from JS so callers can wrap it to
+   *  capture diagnostic output during a sensitive C call (e.g. softhsmv3
+   *  ERROR_MSG during C_Initialize). */
+  printErr: (text: string) => void
   // PKCS#11 C functions statically linked from softhsmv3 (present when the
   // WASM bundle was built with those symbols in EXPORTED_FUNCTIONS).
   _C_Initialize?: (pInitArgs: number) => number
@@ -87,6 +105,8 @@ type CmsAlg =
   | 'ML-DSA-65'
   | 'ML-DSA-87'
   | 'SLH-DSA-SHA2-128s'
+  | 'SLH-DSA-SHA2-192s'
+  | 'SLH-DSA-SHA2-256s'
   | 'RSA-PSS'
   | 'EC'
   // KEM / encryption algorithms (used as recipient keys for cms -encrypt)
@@ -196,6 +216,27 @@ type WorkerInbound =
       useHsm?: boolean
       requestId?: string
     }
+  /** Read an arbitrary file from the worker's persistent /ssl vfs. Used by
+   *  CMSSigningService for the composite path so the main thread can fetch
+   *  cert DER without re-running an openssl module just to convert PEM. */
+  | {
+      type: 'READ_VFS_FILE'
+      path: string
+      requestId?: string
+    }
+  /** Sign `data` with the softhsmv3-resident private key labelled `keyId`
+   *  via the named PKCS#11 primitive. For composite CMS the main thread
+   *  sends one of these per half (ML-DSA + classical). */
+  | {
+      type: 'COMPOSITE_PRIMITIVE_SIGN'
+      keyId: string
+      primitive: 'ml-dsa' | 'ecdsa-digest' | 'rsa-pss-sha256'
+      data: Uint8Array
+      /** ML-DSA only — FIPS 204 ctx parameter. Required for the ML-DSA
+       *  primitive; ignored otherwise. */
+      ctx?: Uint8Array
+      requestId?: string
+    }
 
 type WorkerOutbound =
   | { type: 'READY'; requestId?: string }
@@ -228,6 +269,8 @@ type WorkerOutbound =
       requestId?: string
     }
   | { type: 'CMS_DUAL_SIGN_RESULT'; signedP7m: Uint8Array; requestId?: string }
+  | { type: 'READ_VFS_FILE_RESULT'; data: Uint8Array; requestId?: string }
+  | { type: 'COMPOSITE_PRIMITIVE_SIGN_RESULT'; signature: Uint8Array; requestId?: string }
   | {
       type: 'CMS_DUAL_VERIFY_RESULT'
       /** True when `openssl cms -verify -noverify` succeeded — meaning every
@@ -1087,71 +1130,369 @@ function compositeMkCert(
   }
 }
 
-/** cwrap binding for _pqctoday_composite_cms_sign. */
-function compositeCmsSign(
-  M: OpenSSLModule,
-  compositeOid: string,
-  pqUri: string,
-  classicalUri: string,
-  certPath: string,
-  payloadPath: string,
-  outP7mPath: string
-): number {
-  let fn:
-    | ((oid: string, pq: string, cl: string, cert: string, payload: string, out: string) => number)
-    | null = null
-  try {
-    fn = M.cwrap('pqctoday_composite_cms_sign', 'number', [
-      'string',
-      'string',
-      'string',
-      'string',
-      'string',
-      'string',
-    ]) as (
-      oid: string,
-      pq: string,
-      cl: string,
-      cert: string,
-      payload: string,
-      out: string
-    ) => number
-  } catch {
-    return -100
+// NOTE: pqctoday_composite_cms_sign + pqctoday_composite_cms_verify cwrap
+// bindings were removed when the composite CMS path pivoted to TS-driven
+// assembly via @peculiar/asn1-cms (see ../services/compositeCms.ts). The C
+// exports still ship in openssl.wasm for backward-compat with any external
+// consumers; nothing in this worker calls them. The composite mkcert path
+// keeps its C cwrap because X509_sign bypasses the broken
+// X509_check_private_key code in pkcs11-provider.
+
+/* ---------------------------------------------------------------------------
+ * Direct PKCS#11 signers for the composite CMS TS path.
+ *
+ * The C-shim composite CMS path was blocked by X509_check_private_key —
+ * pkcs11-provider has no SPKI decoder for composite keys (registering one
+ * causes d2i_X509_PUBKEY infinite recursion). Instead we sign each half
+ * directly via the softhsmv3 C_* API and assemble the CMS SignedData with
+ * @peculiar/asn1-cms (see ../services/compositeCms.ts). Mkcert still uses
+ * the C shim because X509_sign happens to bypass the broken check.
+ *
+ * Mech codes (PKCS#11 v3.2):
+ *   CKM_ML_DSA              0x0000001d  pure ML-DSA, ctx via CK_SIGN_ADDITIONAL_CONTEXT
+ *   CKM_ECDSA               0x00001041  raw r||s on caller-supplied digest
+ *   CKM_SHA256_RSA_PKCS_PSS 0x00000043  PSS-padding via CK_RSA_PKCS_PSS_PARAMS
+ * ------------------------------------------------------------------------- */
+const CKM_ML_DSA_PURE_VAL = 0x0000001d
+const CKM_ECDSA_VAL = 0x00001041
+const CKM_SHA256_RSA_PKCS_PSS_VAL = 0x00000043
+const CKM_SHA256_VAL = 0x00000250
+const CKG_MGF1_SHA256_VAL = 0x00000002
+const CKH_HEDGE_PREFERRED_VAL = 0x00000000
+
+interface P11Session {
+  hSession: number
+  slot: number
+  pinP: number
+  pinLen: number
+}
+
+/** Open + login a fresh PKCS#11 session on the first initialized softhsmv3
+ *  slot. Caller MUST call closeP11Session() when finished. Returns null on
+ *  any setup failure (with stderr-style detail in the second tuple slot). */
+function openP11Session(M: OpenSSLModule): { session: P11Session | null; detail: string } {
+  const ext = M as OpenSSLModule & Record<string, unknown>
+  const fn_Initialize = ext._C_Initialize as ((p: number) => number) | undefined
+  const fn_GetSlotList = ext._C_GetSlotList as
+    | ((tp: number, p: number, pc: number) => number)
+    | undefined
+  const fn_OpenSession = ext._C_OpenSession as
+    | ((slot: number, flags: number, app: number, notify: number, ph: number) => number)
+    | undefined
+  const fn_Login = ext._C_Login as
+    | ((s: number, ut: number, pp: number, pl: number) => number)
+    | undefined
+  const fn_malloc = ext._malloc as ((n: number) => number) | undefined
+  const fn_setValue = ext.setValue as ((p: number, v: number, t: string) => void) | undefined
+  const fn_getValue = ext.getValue as ((p: number, t: string) => number) | undefined
+  const fn_stringToUTF8 = ext.stringToUTF8 as
+    | ((s: string, p: number, n: number) => void)
+    | undefined
+  if (
+    !fn_Initialize ||
+    !fn_GetSlotList ||
+    !fn_OpenSession ||
+    !fn_Login ||
+    !fn_malloc ||
+    !fn_setValue ||
+    !fn_getValue ||
+    !fn_stringToUTF8
+  ) {
+    return { session: null, detail: 'missing PKCS#11 exports in openssl.wasm' }
   }
-  if (!fn) return -100
+
+  const initRv = fn_Initialize(0)
+  if (initRv !== 0 && initRv !== CKR_CRYPTOKI_ALREADY_INITIALIZED) {
+    return { session: null, detail: `C_Initialize rv=0x${initRv.toString(16)}` }
+  }
+  const cntP = fn_malloc(4)
+  fn_setValue(cntP, 0, 'i32')
+  if (fn_GetSlotList(1, 0, cntP) !== 0) {
+    return { session: null, detail: 'C_GetSlotList(count) failed' }
+  }
+  const cnt = fn_getValue(cntP, 'i32')
+  if (cnt === 0) {
+    return { session: null, detail: 'no initialized slots' }
+  }
+  const listP = fn_malloc(cnt * 4)
+  fn_setValue(cntP, cnt, 'i32')
+  if (fn_GetSlotList(1, listP, cntP) !== 0) {
+    return { session: null, detail: 'C_GetSlotList(fill) failed' }
+  }
+  const slot = fn_getValue(listP, 'i32')
+
+  const hSP = fn_malloc(4)
+  fn_setValue(hSP, 0, 'i32')
+  const openRv = fn_OpenSession(slot, CKF_RW_SESSION_VAL | CKF_SERIAL_SESSION_VAL, 0, 0, hSP)
+  if (openRv !== 0) {
+    return { session: null, detail: `C_OpenSession rv=0x${openRv.toString(16)}` }
+  }
+  const hSession = fn_getValue(hSP, 'i32')
+
+  const pin = SOFTHSM_USER_PIN
+  const pinP = fn_malloc(pin.length + 1)
+  fn_stringToUTF8(pin, pinP, pin.length + 1)
+  const loginRv = fn_Login(hSession, CKU_USER_VAL, pinP, pin.length)
+  if (loginRv !== 0 && loginRv !== 0x100 /* CKR_USER_ALREADY_LOGGED_IN */) {
+    return { session: null, detail: `C_Login rv=0x${loginRv.toString(16)}` }
+  }
+  return { session: { hSession, slot, pinP, pinLen: pin.length }, detail: '' }
+}
+
+function closeP11Session(M: OpenSSLModule, sess: P11Session): void {
+  const ext = M as OpenSSLModule & Record<string, unknown>
+  const fn_Logout = ext._C_Logout as ((s: number) => number) | undefined
+  const fn_CloseSession = ext._C_CloseSession as ((s: number) => number) | undefined
+  const fn_free = ext._free as ((p: number) => void) | undefined
+  if (fn_Logout) fn_Logout(sess.hSession)
+  if (fn_CloseSession) fn_CloseSession(sess.hSession)
+  if (fn_free) fn_free(sess.pinP)
+}
+
+/** Locate a private-key handle by CKA_LABEL. Returns 0 if no matching object
+ *  is found, -1 on internal failure. */
+function findPrivKeyHandle(M: OpenSSLModule, hSession: number, label: string): number {
+  const ext = M as OpenSSLModule & Record<string, unknown>
+  const fn_FindInit = ext._C_FindObjectsInit as
+    | ((s: number, tpl: number, n: number) => number)
+    | undefined
+  const fn_Find = ext._C_FindObjects as
+    | ((s: number, hOut: number, ulMax: number, pCount: number) => number)
+    | undefined
+  const fn_FindFinal = ext._C_FindObjectsFinal as ((s: number) => number) | undefined
+  const fn_malloc = ext._malloc as ((n: number) => number) | undefined
+  const fn_free = ext._free as ((p: number) => void) | undefined
+  const fn_setValue = ext.setValue as ((p: number, v: number, t: string) => void) | undefined
+  const fn_getValue = ext.getValue as ((p: number, t: string) => number) | undefined
+  const heap = ext.HEAPU8 as Uint8Array | undefined
+  if (
+    !fn_FindInit ||
+    !fn_Find ||
+    !fn_FindFinal ||
+    !fn_malloc ||
+    !fn_free ||
+    !fn_setValue ||
+    !fn_getValue ||
+    !heap
+  ) {
+    return -1
+  }
+
+  const labelBytes = new TextEncoder().encode(label)
+  const labelP = fn_malloc(labelBytes.length)
+  heap.set(labelBytes, labelP)
+  const classBuf = fn_malloc(4)
+  fn_setValue(classBuf, CKO_PRIVATE_KEY_VAL, 'i32')
+
+  // Template: { CKA_CLASS = CKO_PRIVATE_KEY, CKA_LABEL = label }
+  const tplP = fn_malloc(24)
+  fn_setValue(tplP + 0, CKA_CLASS_ATTR, 'i32')
+  fn_setValue(tplP + 4, classBuf, 'i32')
+  fn_setValue(tplP + 8, 4, 'i32')
+  fn_setValue(tplP + 12, CKA_LABEL_ATTR, 'i32')
+  fn_setValue(tplP + 16, labelP, 'i32')
+  fn_setValue(tplP + 20, labelBytes.length, 'i32')
+
+  let handle = 0
+  if (fn_FindInit(hSession, tplP, 2) === 0) {
+    const hBufP = fn_malloc(4)
+    const countP = fn_malloc(4)
+    fn_setValue(countP, 0, 'i32')
+    if (fn_Find(hSession, hBufP, 1, countP) === 0) {
+      const count = fn_getValue(countP, 'i32')
+      if (count > 0) handle = fn_getValue(hBufP, 'i32')
+    }
+    fn_free(hBufP)
+    fn_free(countP)
+    fn_FindFinal(hSession)
+  }
+  fn_free(tplP)
+  fn_free(classBuf)
+  fn_free(labelP)
+  return handle
+}
+
+/** ML-DSA sign of `data` with the FIPS 204 `ctx` parameter. Uses
+ *  C_MessageSignInit + C_SignMessage per PKCS#11 v3.2. Returns Uint8Array
+ *  signature or throws with the failing rv. */
+function p11SignMldsaWithCtx(
+  M: OpenSSLModule,
+  hSession: number,
+  privHandle: number,
+  data: Uint8Array,
+  ctx: Uint8Array
+): Uint8Array {
+  const ext = M as OpenSSLModule & Record<string, unknown>
+  const fn_MsgSignInit = ext._C_MessageSignInit as
+    | ((s: number, m: number, k: number) => number)
+    | undefined
+  const fn_SignMessage = ext._C_SignMessage as
+    | ((
+        s: number,
+        pParam: number,
+        ulParamLen: number,
+        msg: number,
+        msgLen: number,
+        sig: number,
+        sigLenP: number
+      ) => number)
+    | undefined
+  // PKCS#11 v3.2: C_MessageSignFinal(CK_SESSION_HANDLE hSession) — single
+  // argument. Calling with the older multi-message C_SignFinal-style
+  // signature traps the Emscripten arg-count assertion.
+  const fn_MsgSignFinal = ext._C_MessageSignFinal as ((s: number) => number) | undefined
+  const fn_malloc = ext._malloc as ((n: number) => number) | undefined
+  const fn_free = ext._free as ((p: number) => void) | undefined
+  const fn_setValue = ext.setValue as ((p: number, v: number, t: string) => void) | undefined
+  const fn_getValue = ext.getValue as ((p: number, t: string) => number) | undefined
+  const heap = ext.HEAPU8 as Uint8Array | undefined
+  if (
+    !fn_MsgSignInit ||
+    !fn_SignMessage ||
+    !fn_MsgSignFinal ||
+    !fn_malloc ||
+    !fn_free ||
+    !fn_setValue ||
+    !fn_getValue ||
+    !heap
+  ) {
+    throw new Error('PKCS#11 ML-DSA sign exports missing')
+  }
+
+  // CK_SIGN_ADDITIONAL_CONTEXT: { CK_HEDGE_TYPE, CK_BYTE_PTR ctx, CK_ULONG ctxLen }
+  const ctxBufP = ctx.length > 0 ? fn_malloc(ctx.length) : 0
+  if (ctxBufP) heap.set(ctx, ctxBufP)
+  const paramP = fn_malloc(12)
+  fn_setValue(paramP, CKH_HEDGE_PREFERRED_VAL, 'i32')
+  fn_setValue(paramP + 4, ctxBufP, 'i32')
+  fn_setValue(paramP + 8, ctx.length, 'i32')
+
+  const mechP = fn_malloc(12)
+  fn_setValue(mechP, CKM_ML_DSA_PURE_VAL, 'i32')
+  fn_setValue(mechP + 4, paramP, 'i32')
+  fn_setValue(mechP + 8, 12, 'i32')
+
+  const msgP = fn_malloc(data.length)
+  heap.set(data, msgP)
+  const sigLenP = fn_malloc(4)
+  fn_setValue(sigLenP, 0, 'i32')
+  let sigP = 0
   try {
-    return Number(fn(compositeOid, pqUri, classicalUri, certPath, payloadPath, outP7mPath))
-  } catch {
-    return -101
+    const initRv = fn_MsgSignInit(hSession, mechP, privHandle)
+    if (initRv !== 0) throw new Error(`C_MessageSignInit(ML-DSA) rv=0x${initRv.toString(16)}`)
+    let rv = fn_SignMessage(hSession, 0, 0, msgP, data.length, 0, sigLenP)
+    if (rv !== 0) throw new Error(`C_SignMessage(ML-DSA,len) rv=0x${rv.toString(16)}`)
+    const sigLen = fn_getValue(sigLenP, 'i32')
+    sigP = fn_malloc(sigLen)
+    fn_setValue(sigLenP, sigLen, 'i32')
+    rv = fn_SignMessage(hSession, 0, 0, msgP, data.length, sigP, sigLenP)
+    if (rv !== 0) throw new Error(`C_SignMessage(ML-DSA) rv=0x${rv.toString(16)}`)
+    const finalLen = fn_getValue(sigLenP, 'i32')
+    return heap.slice(sigP, sigP + finalLen)
+  } finally {
+    fn_MsgSignFinal(hSession)
+    fn_free(mechP)
+    fn_free(paramP)
+    if (ctxBufP) fn_free(ctxBufP)
+    fn_free(msgP)
+    fn_free(sigLenP)
+    if (sigP) fn_free(sigP)
   }
 }
 
-/** cwrap binding for _pqctoday_composite_cms_verify. Returns 0 on
- *  success (both halves verified), negative otherwise. */
-function compositeCmsVerify(
+/** Single-shot C_SignInit + C_Sign. `mechParamP`/`mechParamLen` may be 0/0
+ *  for mechanisms that take no parameter (CKM_ECDSA). */
+function p11SignSingleShot(
   M: OpenSSLModule,
-  compositeOid: string,
-  certPath: string,
-  signedP7mPath: string,
-  outPayloadPath: string
-): number {
-  let fn: ((oid: string, cert: string, p7m: string, out: string) => number) | null = null
-  try {
-    fn = M.cwrap('pqctoday_composite_cms_verify', 'number', [
-      'string',
-      'string',
-      'string',
-      'string',
-    ]) as (oid: string, cert: string, p7m: string, out: string) => number
-  } catch {
-    return -100
+  hSession: number,
+  privHandle: number,
+  mechType: number,
+  mechParamP: number,
+  mechParamLen: number,
+  data: Uint8Array
+): Uint8Array {
+  const ext = M as OpenSSLModule & Record<string, unknown>
+  const fn_SignInit = ext._C_SignInit as ((s: number, m: number, k: number) => number) | undefined
+  const fn_Sign = ext._C_Sign as
+    | ((s: number, msg: number, msgLen: number, sig: number, sigLenP: number) => number)
+    | undefined
+  const fn_malloc = ext._malloc as ((n: number) => number) | undefined
+  const fn_free = ext._free as ((p: number) => void) | undefined
+  const fn_setValue = ext.setValue as ((p: number, v: number, t: string) => void) | undefined
+  const fn_getValue = ext.getValue as ((p: number, t: string) => number) | undefined
+  const heap = ext.HEAPU8 as Uint8Array | undefined
+  if (!fn_SignInit || !fn_Sign || !fn_malloc || !fn_free || !fn_setValue || !fn_getValue || !heap) {
+    throw new Error('PKCS#11 single-shot sign exports missing')
   }
-  if (!fn) return -100
+
+  const mechP = fn_malloc(12)
+  fn_setValue(mechP, mechType, 'i32')
+  fn_setValue(mechP + 4, mechParamP, 'i32')
+  fn_setValue(mechP + 8, mechParamLen, 'i32')
+
+  const msgP = fn_malloc(data.length)
+  heap.set(data, msgP)
+  const sigLenP = fn_malloc(4)
+  fn_setValue(sigLenP, 0, 'i32')
+  let sigP = 0
   try {
-    return Number(fn(compositeOid, certPath, signedP7mPath, outPayloadPath))
-  } catch {
-    return -101
+    const initRv = fn_SignInit(hSession, mechP, privHandle)
+    if (initRv !== 0)
+      throw new Error(`C_SignInit(0x${mechType.toString(16)}) rv=0x${initRv.toString(16)}`)
+    let rv = fn_Sign(hSession, msgP, data.length, 0, sigLenP)
+    if (rv !== 0) throw new Error(`C_Sign(0x${mechType.toString(16)},len) rv=0x${rv.toString(16)}`)
+    const sigLen = fn_getValue(sigLenP, 'i32')
+    sigP = fn_malloc(sigLen)
+    fn_setValue(sigLenP, sigLen, 'i32')
+    rv = fn_Sign(hSession, msgP, data.length, sigP, sigLenP)
+    if (rv !== 0) throw new Error(`C_Sign(0x${mechType.toString(16)}) rv=0x${rv.toString(16)}`)
+    const finalLen = fn_getValue(sigLenP, 'i32')
+    return heap.slice(sigP, sigP + finalLen)
+  } finally {
+    fn_free(mechP)
+    fn_free(msgP)
+    fn_free(sigLenP)
+    if (sigP) fn_free(sigP)
+  }
+}
+
+/** ECDSA sign of an externally-computed digest via CKM_ECDSA. Returns raw
+ *  r||s (component-length × 2). Caller is responsible for DER-encoding if
+ *  the surrounding format requires it. */
+function p11SignEcdsaDigest(
+  M: OpenSSLModule,
+  hSession: number,
+  privHandle: number,
+  digest: Uint8Array
+): Uint8Array {
+  return p11SignSingleShot(M, hSession, privHandle, CKM_ECDSA_VAL, 0, 0, digest)
+}
+
+/** RSA-PSS-SHA256 sign of an arbitrary message via CKM_SHA256_RSA_PKCS_PSS
+ *  with CK_RSA_PKCS_PSS_PARAMS (SHA-256 / MGF1-SHA-256 / sLen=32). Returns
+ *  the modulus-length signature octets. */
+function p11SignRsaPssSha256(
+  M: OpenSSLModule,
+  hSession: number,
+  privHandle: number,
+  data: Uint8Array
+): Uint8Array {
+  const ext = M as OpenSSLModule & Record<string, unknown>
+  const fn_malloc = ext._malloc as ((n: number) => number) | undefined
+  const fn_setValue = ext.setValue as ((p: number, v: number, t: string) => void) | undefined
+  const fn_free = ext._free as ((p: number) => void) | undefined
+  if (!fn_malloc || !fn_setValue || !fn_free) {
+    throw new Error('PKCS#11 PSS-param exports missing')
+  }
+  // CK_RSA_PKCS_PSS_PARAMS = { hashAlg, mgf, sLen } — 3 × 4 bytes in WASM32
+  const paramP = fn_malloc(12)
+  fn_setValue(paramP + 0, CKM_SHA256_VAL, 'i32')
+  fn_setValue(paramP + 4, CKG_MGF1_SHA256_VAL, 'i32')
+  fn_setValue(paramP + 8, 32, 'i32') // SHA-256 digest length (rRFC 8017 PSS sLen recommendation)
+  try {
+    return p11SignSingleShot(M, hSession, privHandle, CKM_SHA256_RSA_PKCS_PSS_VAL, paramP, 12, data)
+  } finally {
+    fn_free(paramP)
   }
 }
 
@@ -2715,8 +3056,8 @@ async function cmsGenKey(
   const argv =
     alg === 'EC'
       ? ['genpkey', '-algorithm', 'EC', '-pkeyopt', 'ec_paramgen_curve:P-256', '-out', keyPath]
-      : alg === 'RSA-PSS' || alg === 'RSA'
-        ? ['genpkey', '-algorithm', alg, '-pkeyopt', 'rsa_keygen_bits:3072', '-out', keyPath]
+      : alg === 'RSA' || alg === 'RSA-PSS'
+        ? ['genpkey', '-algorithm', 'RSA', '-pkeyopt', 'rsa_keygen_bits:3072', '-out', keyPath]
         : ['genpkey', '-algorithm', alg, '-out', keyPath]
   const { rc, stderr } = runOpenssl(M, argv)
   if (rc !== 0 || !fileExists(M, keyPath)) {
@@ -2996,41 +3337,16 @@ async function cmsSign(
     return
   }
 
-  // Composite path — bypass openssl CLI because cms -sign -inkey takes a
-  // single key, not a composite. The C shim builds the composite EVP_PKEY
-  // from two pkcs11 URIs via pkcs11-provider's IMPORT param, then runs
-  // CMS_sign() directly with that key.
-  if (isCompositeAlg(alg) && useHsm) {
-    const compositeOid = compositeOidFor(alg as CmsAlg)
-    if (!compositeOid) {
-      post({ type: 'ERROR', error: `unknown composite alg: ${alg}`, requestId })
-      return
-    }
-    const { pqKeyId, classicalKeyId } = compositeSubkeyIds(keyId)
-    writeBin(M, payloadPath, payload)
-    vfs.set(payloadPath, payload)
-    vfs.delete(outPath)
-    safeUnlink(M, outPath)
-    const rc = compositeCmsSign(
-      M,
-      compositeOid,
-      pkcs11Uri(pqKeyId),
-      pkcs11Uri(classicalKeyId),
-      certPath,
-      payloadPath,
-      outPath
-    )
-    if (rc !== 0 || !fileExists(M, outPath)) {
-      post({
-        type: 'ERROR',
-        error: `composite CMS sign (${alg}) failed (rc=${rc})`,
-        requestId,
-      })
-      return
-    }
-    const signedP7m = readBin(M, outPath)
-    persistVfs(M, [outPath])
-    post({ type: 'CMS_SIGN_RESULT', signedP7m, requestId })
+  // Composite path — the high-level CMS SignedData assembly + verify lives in
+  // the MAIN THREAD inside CMSSigningService (services/compositeCms.ts).
+  // The service intercepts before this worker call, so reaching here means
+  // the caller bypassed the service or hit a coding error. Bail loudly.
+  if (isCompositeAlg(alg)) {
+    post({
+      type: 'ERROR',
+      error: `composite alg ${alg} must be orchestrated by CMSSigningService; the worker only exposes COMPOSITE_PRIMITIVE_SIGN_* primitives for composite signing`,
+      requestId,
+    })
     return
   }
 
@@ -3052,6 +3368,21 @@ async function cmsSign(
   // never enters the openssl process address space.
   const inkeyArg = useHsm ? pkcs11Uri(keyId) : keyPath
   const providerArgs = useHsm ? HSM_PROVIDER_FLAGS : []
+  // For RSA-PSS, force PSS padding via -keyopt so the SignerInfo carries
+  // id-RSASSA-PSS (not sha256WithRSAEncryption). Without this, OpenSSL CMS
+  // puts PKCS1v1.5 in the SignerInfo but the verify path rejects it when it
+  // encounters a PSS-mode key.
+  const rsaPssKeyopts: string[] =
+    alg === 'RSA-PSS'
+      ? [
+          '-keyopt',
+          'rsa_padding_mode:pss',
+          '-keyopt',
+          'rsa_pss_saltlen:32',
+          '-keyopt',
+          'rsa_mgf1_md:sha256',
+        ]
+      : []
   const { rc, stderr } = runOpenssl(M, [
     'cms',
     ...providerArgs,
@@ -3070,6 +3401,7 @@ async function cmsSign(
     outPath,
     '-md',
     'sha256',
+    ...rsaPssKeyopts,
   ])
   if (rc !== 0 || !fileExists(M, outPath)) {
     post({
@@ -3103,25 +3435,13 @@ async function cmsVerify(
   writeBin(M, inPath, signedP7m)
   safeUnlink(M, outPath)
 
-  // Composite verify — pkcs11-provider has no SPKI decoder for composite
-  // keys, so CMS_verify() can't reconstruct the EVP_PKEY from the cert.
-  // The C shim does the two-half manual verify per draft-19 §5.
+  // Composite verify lives in the MAIN THREAD (see CMSSigningService +
+  // services/compositeCms.ts). Hitting this branch means the service didn't
+  // intercept — bail loudly so the regression is obvious.
   if (isCompositeAlg(alg)) {
-    const compositeOid = compositeOidFor(alg as CmsAlg)
-    if (!compositeOid) {
-      post({ type: 'ERROR', error: `unknown composite alg: ${alg}`, requestId })
-      return
-    }
-    const rc = compositeCmsVerify(M, compositeOid, certPath, inPath, outPath)
-    const ok = rc === 0 && fileExists(M, outPath)
-    const payload = ok ? readBin(M, outPath) : undefined
     post({
-      type: 'CMS_VERIFY_RESULT',
-      ok,
-      payload,
-      stderrTail: ok
-        ? 'composite verify ok (both ML-DSA + classical halves passed)'
-        : `composite verify failed (rc=${rc})`,
+      type: 'ERROR',
+      error: `composite alg ${alg} verify must be orchestrated by CMSSigningService; the worker does not parse composite CMS SignedData`,
       requestId,
     })
     return
@@ -3237,7 +3557,12 @@ async function cmsDecrypt(
   writeBin(M, inPath, enveloped)
   vfs.delete(outPath)
   safeUnlink(M, outPath)
-  const inkeyArg = useHsm ? pkcs11Uri(recipientKeyId) : keyPath
+  // With HSM mode, append ;type=private so the PKCS#11 store only returns
+  // the private key object (CKO_PRIVATE_KEY). Without this, the store returns
+  // both public and private ML-KEM objects; OpenSSL then tries to extract
+  // the public key from the private key object to match against the cert,
+  // but the export_fn has no public bytes on a CKO_PRIVATE_KEY → match fails.
+  const inkeyArg = useHsm ? `${pkcs11Uri(recipientKeyId)};type=private` : keyPath
   const providerArgs = useHsm ? HSM_PROVIDER_FLAGS : []
   const { rc, stderr } = runOpenssl(M, [
     'cms',
@@ -3429,6 +3754,73 @@ async function cmsDualVerify(
   })
 }
 
+/** Return the bytes of a `/ssl/...` file from the persistent vfs. Used by
+ *  CMSSigningService to fetch the composite cert DER without spinning up an
+ *  openssl module. We avoid round-tripping through openssl `x509 -outform`
+ *  for what is essentially a base64 decode. */
+function readVfsFile(path: string, requestId?: string): void {
+  // PEM-to-DER conversion lives in the service. Worker just returns raw bytes
+  // (will be PEM text for .crt / .key files written by the openssl CLI).
+  const data = vfs.get(path)
+  if (!data) {
+    post({ type: 'ERROR', error: `READ_VFS_FILE: not in vfs: ${path}`, requestId })
+    return
+  }
+  // Clone so the caller can't mutate vfs state.
+  post({ type: 'READ_VFS_FILE_RESULT', data: data.slice(), requestId })
+}
+
+/** Run one PKCS#11 primitive sign in a fresh openssl WASM module instance.
+ *  EXIT_RUNTIME=1 means each callMain destroys the module; we instantiate a
+ *  new one, hydrate the softhsm token from vfs, locate the private key by
+ *  label, sign once, persist any state, and return the signature bytes. */
+async function compositePrimitiveSign(
+  keyId: string,
+  primitive: 'ml-dsa' | 'ecdsa-digest' | 'rsa-pss-sha256',
+  data: Uint8Array,
+  ctx: Uint8Array | undefined,
+  requestId?: string
+): Promise<void> {
+  const M = await newModuleSafe(true, requestId)
+  if (!M) return
+  const { session, detail } = openP11Session(M)
+  if (!session) {
+    post({ type: 'ERROR', error: `compositePrimitiveSign: openP11Session: ${detail}`, requestId })
+    return
+  }
+  const handle = findPrivKeyHandle(M, session.hSession, keyId)
+  if (handle <= 0) {
+    closeP11Session(M, session)
+    post({
+      type: 'ERROR',
+      error: `compositePrimitiveSign: no private key handle for label "${keyId}" (rc=${handle})`,
+      requestId,
+    })
+    return
+  }
+  try {
+    let signature: Uint8Array
+    if (primitive === 'ml-dsa') {
+      signature = p11SignMldsaWithCtx(M, session.hSession, handle, data, ctx ?? new Uint8Array(0))
+    } else if (primitive === 'ecdsa-digest') {
+      // Caller supplies the digest; CKM_ECDSA returns raw r||s. DER encoding
+      // is the service's job (it knows the spec wire format).
+      signature = p11SignEcdsaDigest(M, session.hSession, handle, data)
+    } else {
+      signature = p11SignRsaPssSha256(M, session.hSession, handle, data)
+    }
+    closeP11Session(M, session)
+    post({ type: 'COMPOSITE_PRIMITIVE_SIGN_RESULT', signature, requestId })
+  } catch (err) {
+    closeP11Session(M, session)
+    post({
+      type: 'ERROR',
+      error: `compositePrimitiveSign(${primitive}): ${err instanceof Error ? err.message : String(err)}`,
+      requestId,
+    })
+  }
+}
+
 self.addEventListener('message', (e: MessageEvent<WorkerInbound>) => {
   const msg = e.data
   switch (msg.type) {
@@ -3490,6 +3882,12 @@ self.addEventListener('message', (e: MessageEvent<WorkerInbound>) => {
         msg.useHsm,
         msg.requestId
       )
+      break
+    case 'READ_VFS_FILE':
+      readVfsFile(msg.path, msg.requestId)
+      break
+    case 'COMPOSITE_PRIMITIVE_SIGN':
+      void compositePrimitiveSign(msg.keyId, msg.primitive, msg.data, msg.ctx, msg.requestId)
       break
     default:
       post({

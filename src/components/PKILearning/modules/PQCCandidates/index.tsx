@@ -6,6 +6,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
+import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
@@ -161,6 +162,7 @@ export const PQCCandidatesModule: React.FC = () => {
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
+          <TabsTrigger value="tools">Tools &amp; Products</TabsTrigger>
         </TabsList>
 
         <TabsContent value="learn">
@@ -292,6 +294,10 @@ export const PQCCandidatesModule: React.FC = () => {
 
         <TabsContent value="references">
           <ModuleReferencesTab moduleId={MODULE_ID} />
+        </TabsContent>
+
+        <TabsContent value="tools">
+          <ModuleMigrateTab moduleId={MODULE_ID} />
         </TabsContent>
       </Tabs>
     </div>
