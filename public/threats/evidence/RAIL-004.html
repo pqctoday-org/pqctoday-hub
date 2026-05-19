@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" prefix="og: https://ogp.me/ns#" class="is-ultimenu is-ultimobile">
+  <head>
+    <meta charset="utf-8" />
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-18660041-1"></script>
+<script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments)};gtag("js", new Date());gtag("set", "developer_id.dMDhkMT", true);gtag("config", "UA-18660041-1", {"groups":"default","anonymize_ip":true,"page_placeholder":"PLACEHOLDER_page_path"});gtag("config", "G-L4FPNR8TZC", {"groups":"default","page_placeholder":"PLACEHOLDER_page_location"});gtag("config", "G-0623JYSC1Q", {"groups":"default","page_placeholder":"PLACEHOLDER_page_location"});//gtag('config', 'UA-33523145-1');</script>
+<meta name="description" content="Researchers sought to determine how to improve the confidentiality of information passing through the Positive Train Control network without significantly affecting network performance." />
+<link rel="canonical" href="https://railroads.dot.gov/elibrary/ptc-communications-cybersecurity-technology-review-and-concept-operations" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:description" content="Researchers sought to determine how to improve the confidentiality of information passing through the Positive Train Control network without significantly affecting network performance." />
+<meta name="twitter:title" content="PTC Communications: Cybersecurity Technology Review and Concept of Operations" />
+<meta name="twitter:site" content="@USDOT" />
+<meta name="twitter:creator" content="@USDOT" />
+<meta name="twitter:image" content="https://railroads.dot.gov/themes/custom/dot_cms/images/seal_dot.png" />
+<meta name="Generator" content="Drupal 10 (https://www.drupal.org)" />
+<meta name="MobileOptimized" content="width" />
+<meta name="HandheldFriendly" content="true" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta http-equiv="x-ua-compatible" content="ie=edge" />
+<link rel="icon" href="/themes/custom/dot_cms/favicon_dot.png" type="image/png" />
+
+    <title>PTC Communications: Cybersecurity Technology Review and Concept of Operations | FRA</title>
+    <link rel="stylesheet" media="all" href="/sites/fra.dot.gov/files/css/css_P8kBFCAhwzwDqF_hu0nBYabHuJS0ZjuMSdGOTc6E9Do.css?delta=0&amp;language=en&amp;theme=fra&amp;include=eJx1kEFuAzEIRS_kjjdVr2Nhm5miMGABTprbN03aJoraDeI_EPCpquFhMEoFM9JcDaE3m3tN9bkm2jG1A3YKtULSUaKytkN-yFNTZhhOt0pTw9Q1Sts9ryoBJ3Tdsbwl_AgmOeRucwAv3_ILG5SVkHvp6M1oBKnkf3hp7mk1yBtrBX7xOF_GbGnXDvy08cb-bNSBUhzES-uSBhhsF-fv_nPdnSxTxqxM_o79obFsRj0_6eX3h6_Jzx645wqOaXLQjjJzA8NYwghk4wd-Net3revaQI7gizdgJElHwpPna1wuFibjJ6lMtTI" />
+<link rel="stylesheet" media="all" href="/sites/fra.dot.gov/files/css/css_f1e6s5rI9MkVJcceL4iIvB5pj_f128gCEYFVUSOq3XY.css?delta=1&amp;language=en&amp;theme=fra&amp;include=eJx1kEFuAzEIRS_kjjdVr2Nhm5miMGABTprbN03aJoraDeI_EPCpquFhMEoFM9JcDaE3m3tN9bkm2jG1A3YKtULSUaKytkN-yFNTZhhOt0pTw9Q1Sts9ryoBJ3Tdsbwl_AgmOeRucwAv3_ILG5SVkHvp6M1oBKnkf3hp7mk1yBtrBX7xOF_GbGnXDvy08cb-bNSBUhzES-uSBhhsF-fv_nPdnSxTxqxM_o79obFsRj0_6eX3h6_Jzx645wqOaXLQjjJzA8NYwghk4wd-Net3revaQI7gizdgJElHwpPna1wuFibjJ6lMtTI" />
+<link rel="stylesheet" media="all" href="https://use.fontawesome.com/releases/v6.5.1/css/all.css" crossorigin="anonymous" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" />
+<link rel="stylesheet" media="all" href="/sites/fra.dot.gov/files/css/css_ih8gkDvFWJSjCBUqecVa3HzHieq_Ohz6Wg7JIfg-Z0s.css?delta=3&amp;language=en&amp;theme=fra&amp;include=eJx1kEFuAzEIRS_kjjdVr2Nhm5miMGABTprbN03aJoraDeI_EPCpquFhMEoFM9JcDaE3m3tN9bkm2jG1A3YKtULSUaKytkN-yFNTZhhOt0pTw9Q1Sts9ryoBJ3Tdsbwl_AgmOeRucwAv3_ILG5SVkHvp6M1oBKnkf3hp7mk1yBtrBX7xOF_GbGnXDvy08cb-bNSBUhzES-uSBhhsF-fv_nPdnSxTxqxM_o79obFsRj0_6eX3h6_Jzx645wqOaXLQjjJzA8NYwghk4wd-Net3revaQI7gizdgJElHwpPna1wuFibjJ6lMtTI" />
+<link rel="stylesheet" media="all" href="//fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&amp;display=swap" />
+<link rel="stylesheet" media="all" href="//fonts.googleapis.com/css2?family=Raleway:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&amp;display=swap" />
+<link rel="stylesheet" media="all" href="//fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&amp;display=swap" />
+<link rel="stylesheet" media="all" href="//fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&amp;display=swap" />
+
+    <script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","pathPrefix":"","currentPath":"node\/103376","currentPathIsAdmin":false,"isFront":false,"currentLanguage":"en"},"pluralDelimiter":"\u0003","suppressDeprecationErrors":true,"google_analytics":{"account":"UA-18660041-1","trackOutbound":true,"trackMailto":true,"trackDownload":true,"trackDownloadExtensions":"7z|aac|arc|arj|asf|asx|avi|bin|csv|doc(x|m)?|dot(x|m)?|exe|flv|gif|gz|gzip|hqx|jar|jpe?g|js|mp(2|3|4|e?g)|mov(ie)?|msi|msp|pdf|phps|png|ppt(x|m)?|pot(x|m)?|pps(x|m)?|ppam|sld(x|m)?|thmx|qtm?|ra(m|r)?|sea|sit|tar|tgz|torrent|txt|wav|wma|wmv|wpd|xls(x|m|b)?|xlt(x|m)|xlam|xml|z|zip"},"data":{"extlink":{"extTarget":true,"extTargetAppendNewWindowDisplay":true,"extTargetAppendNewWindowLabel":"(opens in a new window)","extTargetNoOverride":false,"extNofollow":false,"extTitleNoOverride":false,"extNoreferrer":false,"extFollowNoOverride":false,"extClass":"ext","extLabel":"(link is external)","extImgClass":false,"extSubdomains":true,"extExclude":"(.\\gov)|(.\\mil)|(addthis.com)|(usmma.edu)|(medium.com)|(facebook.com)|(twitter.com)|(flickr.com)|(linkedin.com)|(youtube.com)|(instagram.com)|(medium.com)|(greatlakes-seaway.com)|(afloatjobs.vet)","extInclude":"","extCssExclude":"","extCssInclude":"","extCssExplicit":"","extAlert":false,"extAlertText":"This link will take you to an external web site. We are not responsible for their content.","extHideIcons":false,"mailtoClass":"mailto","telClass":"","mailtoLabel":"(link sends email)","telLabel":"(link is a phone number)","extUseFontAwesome":false,"extIconPlacement":"append","extPreventOrphan":false,"extFaLinkClasses":"fa fa-external-link","extFaMailtoClasses":"fa fa-envelope-o","extAdditionalLinkClasses":"","extAdditionalMailtoClasses":"","extAdditionalTelClasses":"","extFaTelClasses":"fa fa-phone","allowedDomains":[],"extExcludeNoreferrer":""}},"collapsiblock":{"active_pages":false,"slide_speed":200,"cookie_lifetime":null,"switcher_enabled":null,"switcher_class":null},"user":{"uid":0,"permissionsHash":"cdc09dff8851a251a28c5eea8e80a4b3beb678d1e39405d4591350d00239270d"}}</script>
+<script src="/sites/fra.dot.gov/files/js/js_t93kQP2c6wtHK4Vh5Hlrk6OAbWYyig8Ee6K-rf2AMys.js?scope=header&amp;delta=0&amp;language=en&amp;theme=fra&amp;include=eJxdjlEOwzAIQy-UjiNFNGFRVhoiIFJ7-0Xr-tM__GwjJ2HGbnVlSRskUQp0dGw5psuhiMxwseVmM-Nc2wZZR0d-_WV4K0JhWZEX83OiEopI4fmkIZ9ek8EThF0y8rPWh5YZ-uARu0oiM1FwraWQxp8ZzOckZGkUnfbO6GSwSj6XxGgWBnvdqQ24jy8R3114"></script>
+
+    <!-- DAP Implementation -->
+    <script async type="text/javascript" id="_fed_an_ua_tag" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=DOT"></script>
+  <script >bazadebezolkohpepadr="1144088198"</script><script type="text/javascript" src="https://railroads.dot.gov/akam/13/44316457"  defer></script></head>
+  <body class="layout-no-sidebars page-node-103376 path-elibrary-ptc-communications-cybersecurity-technology-review-and-concept-operations path-node node--type-document">
+  <noscript>Please enable JavaScript to use this site.</noscript>
+    <a href="#main" class="visually-hidden focusable skip-link">
+      Skip to main content
+    </a>
+    
+      <div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
+    <div id="page-wrapper" class="page-wrapper">
+  <div id="page" class="page">
+
+    <section class="usa-banner">
+  <h1 class="sr-only">USA Banner</h1>
+  <div class="usa-banner-inner container">
+    <div class="row">
+      <div class="usa-accordion col" id="accordion">
+        <header class="usa-banner-header" id="headingOne">
+          <div aria-controls="collapseOne" aria-expanded="false" class="collapsed small row" data-target="#collapseOne" data-toggle="collapse" role="complementary">
+            <div class="usa-banner-guidance-gov usa-width-one-full col-sm d-flex">
+              <div class="usa-media_block-icon">
+                <img class="usa-banner-flag" src="/themes/custom/dot_cms/images/assets/us_flag_small.svg" alt="U.S. flag">
+              </div>
+              <div class="usa-media_block-body">
+                <p>An official website of the United States government <button class="usa-accordion-button usa-banner-button"><span class="usa-banner-button-text">Here's how you know</span></button></p>
+              </div>
+            </div>
+          </div>
+        </header>
+        <div class="usa-banner-content container">
+          <div aria-labelledby="headingOne" class="collapse row" data-parent="#accordion" id="collapseOne">
+            <div class="usa-banner-guidance-gov usa-width-one-half col-sm d-flex">
+              <div class="usa-media_block-icon">
+                <img class="usa-banner-icon" src="/themes/custom/dot_cms/images/assets/icon-dot-gov.svg" alt="Official US Government Icon">
+              </div>
+              <div class="usa-media_block-body">
+                <p><small><strong>Official websites use .gov</strong><br>A <strong>.gov</strong> website belongs to an official government organization in the United States.</small></p>
+              </div>
+            </div>
+            <div class="usa-banner-guidance-ssl usa-width-one-half col-sm d-flex">
+              <div class="usa-media_block-icon">
+                <img class="usa-banner-icon" src="/themes/custom/dot_cms/images/assets/icon-https.svg" alt="Secure Site Icon">
+              </div>
+              <div class="usa-media_block-body">
+                <p><small><strong>Secure .gov websites use HTTPS</strong><br>
+                  A <strong>lock</strong> ( <span class="icon-lock"><svg xmlns="http://www.w3.org/2000/svg" width="52" height="64" viewBox="0 0 52 64" class="usa-banner__lock-image" role="img" aria-labelledby="banner-lock-title banner-lock-description"><title id="banner-lock-title">Lock</title><desc id="banner-lock-description">A locked padlock</desc><path fill="#000000" fill-rule="evenodd" d="M26 0c10.493 0 19 8.507 19 19v9h3a4 4 0 0 1 4 4v28a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V32a4 4 0 0 1 4-4h3v-9C7 8.507 15.507 0 26 0zm0 8c-5.979 0-10.843 4.77-10.996 10.712L15 19v9h22v-9c0-6.075-4.925-11-11-11z"></path></svg></span> ) or <strong>https://</strong> means you’ve safely connected to the .gov website. Share sensitive information only on official, secure websites.
+                </small></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+    <div class="row region region-site-notification">
+    
+    <div class="block block--site-notification block--emergency block-views block-views-blocksite-notification-block-notification-emergency w-100 clearfix">
+    
+
+
+  </div>
+
+  </div>
+
+<style>
+.dot-ribbon {
+	background: #15396c;
+	color: white;
+	height: 1.75rem;
+	display: flex;
+	align-items: center;
+	font-size: .8rem;
+	position: relative;
+	z-index: 100;
+}
+.dot-ribbon svg {
+	width: 17px;
+	opacity: .5;
+	margin-right: 6px;
+}
+.dot-ribbon a:link,
+.dot-ribbon a:hover,
+.dot-ribbon a:visited,
+.dot-ribbon a:active {
+	color: white;
+}
+</style>
+<div class="dot-ribbon">
+	<div class="container">
+		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35.82 37.1" role="img" >
+			<title>U.S. Department of Transportation</title>
+			<desc>U.S. Department of Transportation Icon</desc>
+			<defs><style>.cls-1{fill:#FFFFFF !important;}</style></defs><title>United States Department of Transportation</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path class="cls-1" d="M4.46,6.35a8.38,8.38,0,0,1,8.15-2.94c2.71.55,4.26,2.77,4.78,5.43a6.31,6.31,0,0,1-2.75,6.79c-3.68,2.1-8,3.74-8.86,8.5A13.42,13.42,0,0,0,8.47,34.4C3.81,31.8,1.13,26.6.25,21.23A18,18,0,0,1,4.46,6.35"/><path class="cls-1" d="M14.41,36.71A8.65,8.65,0,0,1,7.85,30.9a6.51,6.51,0,0,1,2.13-7,5.85,5.85,0,0,1,7.05-1c3.61,2.23,7.17,5.31,11.56,3.64A12.82,12.82,0,0,0,35.81,19C36,24.49,33,29.5,29,33a16.57,16.57,0,0,1-14.55,3.72"/><path class="cls-1" d="M34.73,12.39a9.12,9.12,0,0,1-1.53,8.8c-1.79,2.17-4.42,2.47-6.91,1.63A6.18,6.18,0,0,1,21.92,17c0-4.35.81-9.1-2.8-12.17A12.51,12.51,0,0,0,9.05,2.33c4.47-2.92,10.27-2.89,15.22-1A17.36,17.36,0,0,1,34.73,12.39"/></g></g>
+		</svg>
+		<a href="https://www.transportation.gov">United States Department of Transportation</a>
+</div>
+</div>
+
+ <header id="header" class="header site-header site-masthead bg-primary" role="banner" aria-label="Site header">
+  <div class="container">
+    <div class="row">
+              <nav class="navbar navbar-dark navbar-expand-lg" id="navbar-main">
+                  <a href="/" title="Home" rel="home" class="navbar-brand">
+              <img src="/themes/custom/fra/fra-logo%402x.png" alt="Home" class="img-fluid d-inline-block align-top" />
+            
+    </a>
+    
+
+                      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#CollapsingNavbar" aria-controls="CollapsingNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                          <div class="form-inline navbar-form">
+                  <section class="region region-header-form">
+    <div id="block-customfraheadersearch" class="block block-fixed-block-content block-fixed-block-contentcustom-fra-header-search">
+  
+    
+      <div class="content">
+      
+            <div class="clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item"><div class="usasearch-search-block-form block block-usasearch block-usasearch-search-form-block" data-drupal-selector="usasearch-search-block-form" id="block-fra-usasearchform">
+   <div class="search__wrapper">
+      <form block="block-fra-usasearchform" action="https://search.usa.gov/search" method="GET" id="usasearch-search-block-form" accept-charset="UTF-8">
+         <fieldset class="js-form-item js-form-type-search form-type-search js-form-item-query form-item-query form-no-label form-group" aria-labelledby="headerquery">
+            <legend class="d-none">Search DOT</legend>
+            <label for="query" class="sr-only">Search</label>
+            <input id="query" title="Enter the terms you wish to search for." placeholder="Search" class="usagov-search-autocomplete form-search form-control ui-autocomplete-input" autocomplete="off" aria-autocomplete="list" aria-haspopup data-drupal-selector="edit-query" type="search" name="query" value size="60" maxlength="128">
+         </fieldset>
+         <input data-drupal-selector="edit-affiliate" type="hidden" name="affiliate" value="dot-fra" class="form-control">
+         <input data-drupal-selector="edit-submit" type="submit" id="edit-submit" value="Search" class="button js-form-submit form-submit btn btn-primary form-control">
+      </form>
+   </div>
+</div></div>
+      
+    </div>
+  </div>
+
+  </section>
+
+              </div>
+                        <div class="collapse navbar-collapse" id="CollapsingNavbar">
+                <section class="region region-primary-menu">
+    <div id="block-ultimenu-main-navigation" class="block block-ultimenu block-ultimenu-blockultimenu-main">
+  
+    
+      <div class="content">
+      <ul id="ultimenu-main" data-ultimenu="main" class="ultimenu ultimenu--offcanvas is-ultihover is-ulticaret--triangle ultimenu--main ultimenu--htb ultimenu--horizontal"><li class="ultimenu__item uitem has-ultimenu"><a href="/about-fra/about-fra" data-drupal-link-system-path="node/701" class="ultimenu__link">About FRA<span class="ultimenu__caret caret" aria-hidden="true"><i></i></span></a><section class="ultimenu__flyout is-htb d-lg-flex p-0">
+              <section class="ultimenu__region region region--count-2 row region-ultimenu-main-about-fra">
+      <nav aria-labelledby="block-mainabout1-2-menu" id="block-mainabout1-2" class="block block-menu navigation menu--main---about-1">
+      
+  <h2  id="block-mainabout1-2-menu">About FRA</h2>
+  
+
+        
+              <ul block="block-mainabout1-2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/about-fra/about-fra" class="nav-link nav-link--about-fra-about-fra" data-drupal-link-system-path="node/701">Overview</a>
+              </li>
+                <li class="nav-item">
+                <a href="/about-fra/organization/organization-chart" class="nav-link nav-link--about-fra-organization-organization-chart" data-drupal-link-system-path="node/1441">Organization</a>
+              </li>
+                <li class="nav-item">
+                <a href="/about-fra/program-offices/program-offices-overview" class="nav-link nav-link--about-fra-program-offices-program-offices-overview" data-drupal-link-system-path="node/741">Program Offices</a>
+              </li>
+                <li class="nav-item">
+                <a href="/resource-center" class="nav-link nav-link--resource-center" data-drupal-link-system-path="node/841">Resource Center</a>
+              </li>
+                <li class="nav-item">
+                <a href="https://www.transportation.gov/web-policies" class="nav-link nav-link-https--wwwtransportationgov-web-policies">Web Policies and Notices</a>
+              </li>
+                <li class="nav-item">
+                <a href="/about-fra/contact-us" class="nav-link nav-link--about-fra-contact-us" data-drupal-link-system-path="node/1031">Contact Us</a>
+              </li>
+                <li class="nav-item">
+                <a href="/about-fra/communications/communications" class="nav-link nav-link--about-fra-communications-communications" data-drupal-link-system-path="node/1036">Communications</a>
+              </li>
+                <li class="nav-item">
+                <a href="/about-fra/government-affairs/government-affairs" class="nav-link nav-link--about-fra-government-affairs-government-affairs" data-drupal-link-system-path="node/1041">Governmental Affairs</a>
+              </li>
+                <li class="nav-item">
+                <a href="/about-fra/communications/newsroom/fra-faqs" class="nav-link nav-link--about-fra-communications-newsroom-fra-faqs" data-drupal-link-system-path="node/104486">FRA FAQs</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+  <nav aria-labelledby="block-mainabout2-2-menu" id="block-mainabout2-2" class="block block-menu navigation menu--main---about-2">
+      
+  <h2  id="block-mainabout2-2-menu">Featured</h2>
+  
+
+        
+              <ul block="block-mainabout2-2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/IIJA" class="nav-link nav-link--iija" data-drupal-link-system-path="node/97431">Infrastructure Investment and Jobs Act Information from FRA</a>
+              </li>
+                <li class="nav-item">
+                <a href="/about-fra/resource-center/jobs/job-vacancies" class="nav-link nav-link--about-fra-resource-center-jobs-job-vacancies" data-drupal-link-system-path="node/871">Careers</a>
+              </li>
+                <li class="nav-item">
+                <a href="/about-fra/organization/david-armstrong-fink-administrator" class="nav-link nav-link--about-fra-organization-david-armstrong-fink-administrator" data-drupal-link-system-path="node/706">Leadership Profiles</a>
+              </li>
+                <li class="nav-item">
+                <a href="/about-fra/organization/organization-chart" class="nav-link nav-link--about-fra-organization-organization-chart" data-drupal-link-system-path="node/1441">Organizational Chart</a>
+              </li>
+                <li class="nav-item">
+                <a href="/newsroom" class="nav-link nav-link--newsroom" data-drupal-link-system-path="node/90836">Newsroom</a>
+              </li>
+                <li class="nav-item">
+                <a href="/newsroom/press-releases" class="nav-link nav-link--newsroom-press-releases" data-drupal-link-system-path="newsroom/press-releases">Press Releases</a>
+              </li>
+                <li class="nav-item">
+                <a href="/newsroom/speeches" class="nav-link nav-link--newsroom-speeches" data-drupal-link-system-path="newsroom/speeches">Speeches</a>
+              </li>
+                <li class="nav-item">
+                <a href="/newsroom/fact-sheets" class="nav-link nav-link--newsroom-fact-sheets" data-drupal-link-system-path="newsroom/fact-sheets">Fact Sheets</a>
+              </li>
+                <li class="nav-item">
+                <a href="/newsroom/testimony" class="nav-link nav-link--newsroom-testimony" data-drupal-link-system-path="newsroom/testimony">Testimony</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+
+  </section>
+
+          </section></li><li class="ultimenu__item uitem has-ultimenu"><a href="/railroad-safety" data-drupal-link-system-path="node/101776" class="ultimenu__link">Railroad Safety<span class="ultimenu__caret caret" aria-hidden="true"><i></i></span></a><section class="ultimenu__flyout is-htb d-lg-flex p-0">
+              <section class="ultimenu__region region region--count-2 row region-ultimenu-main-railroad-safety">
+      <nav aria-labelledby="block-mainrailroadsafety2-2-menu" id="block-mainrailroadsafety2-2" class="block block-menu navigation menu--main---railroad-safety-2">
+      
+  <h2  id="block-mainrailroadsafety2-2-menu">Featured</h2>
+  
+
+        
+              <ul block="block-mainrailroadsafety2-2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/railroad-safety/divisions/crossing-safety-and-trespass-prevention/train-horn-rulequiet-zones" class="nav-link nav-link--railroad-safety-divisions-crossing-safety-and-trespass-prevention-train-horn-rulequiet-zones" data-drupal-link-system-path="node/2116">Train Horn Rule/Quiet Zones</a>
+              </li>
+                <li class="nav-item">
+                <a href="https://www.fra.dot.gov/blockedcrossings/" class="nav-link nav-link-https--wwwfradotgov-blockedcrossings-">Public Blocked Crossings Incident Reporter</a>
+              </li>
+                <li class="nav-item">
+                <a href="/railroad-safety/divisions/drug-and-alcohol/drug-and-alcohol" class="nav-link nav-link--railroad-safety-divisions-drug-and-alcohol-drug-and-alcohol" data-drupal-link-system-path="node/100346">Drug &amp; Alcohol</a>
+              </li>
+                <li class="nav-item">
+                <a href="/safety-data" class="nav-link nav-link--safety-data" data-drupal-link-system-path="node/21">Safety Data</a>
+              </li>
+                <li class="nav-item">
+                <a href="/railroad-safety/partnerships-programs/confidential-close-call-reporting-system-c3rs" class="nav-link nav-link--railroad-safety-partnerships-programs-confidential-close-call-reporting-system-c3rs" data-drupal-link-system-path="node/2151">C3RS</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+  <nav aria-labelledby="block-mainrailroadsafety1-2-menu" id="block-mainrailroadsafety1-2" class="block block-menu navigation menu--main---railroad-safety-1">
+      
+  <h2  id="block-mainrailroadsafety1-2-menu">Railroad Safety</h2>
+  
+
+        
+              <ul block="block-mainrailroadsafety1-2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/railroad-safety" class="nav-link nav-link--railroad-safety" data-drupal-link-system-path="node/101776">Overview</a>
+              </li>
+                <li class="nav-item">
+                <a href="/crossing-safety-trespass-prevention/crossing-safety-trespass-prevention" class="nav-link nav-link--crossing-safety-trespass-prevention-crossing-safety-trespass-prevention" data-drupal-link-system-path="node/2011">Grade Crossing Safety &amp; Trespass Prevention</a>
+              </li>
+                <li class="nav-item">
+                <a href="/railroad-safety/accident-data-reporting-and-investigations-0" class="nav-link nav-link--railroad-safety-accident-data-reporting-and-investigations-0" data-drupal-link-system-path="node/108216">Accident Data &amp; Reporting, Investigations</a>
+              </li>
+                <li class="nav-item">
+                <a href="/railroad-safety/divisions/divisions-overview" class="nav-link nav-link--railroad-safety-divisions-divisions-overview" data-drupal-link-system-path="node/1871">Divisions</a>
+              </li>
+                <li class="nav-item">
+                <a href="/railroad-safety/partnerships-programs/partnerships-programs" class="nav-link nav-link--railroad-safety-partnerships-programs-partnerships-programs" data-drupal-link-system-path="node/2551">Partnerships &amp; Programs</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+
+  </section>
+
+          </section></li><li class="ultimenu__item uitem has-ultimenu"><a href="/rail-network-development" data-drupal-link-system-path="node/1326" class="ultimenu__link">Rail Network Development<span class="ultimenu__caret caret" aria-hidden="true"><i></i></span></a><section class="ultimenu__flyout is-htb d-lg-flex p-0">
+              <section class="ultimenu__region region region--count-2 row region-ultimenu-main-rail-network-development">
+      <nav aria-labelledby="block-mainrailnetwork2-menu" id="block-mainrailnetwork2" class="block block-menu navigation menu--main---rail-network-2">
+      
+  <h2  id="block-mainrailnetwork2-menu">Featured</h2>
+  
+
+        
+              <ul block="block-mainrailnetwork2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/passenger-rail/amtrak/amtrak" class="nav-link nav-link--passenger-rail-amtrak-amtrak" data-drupal-link-system-path="node/1451">Amtrak</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/environment/environmental-reviews" class="nav-link nav-link--rail-network-development-environment-environmental-reviews" data-drupal-link-system-path="node/91201">Environmental Reviews</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/maps-and-data/maps-geographic-information-system/maps-geographic" class="nav-link nav-link--rail-network-development-maps-and-data-maps-geographic-information-system-maps-geographic" data-drupal-link-system-path="node/3986">GIS Maps</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rural" class="nav-link nav-link--rural" data-drupal-link-system-path="node/97861">Rural</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+  <nav aria-labelledby="block-mainrailnetwork1-menu" id="block-mainrailnetwork1" class="block block-menu navigation menu--main---rail-network-1">
+      
+  <h2  id="block-mainrailnetwork1-menu">Rail Network Development</h2>
+  
+
+        
+              <ul block="block-mainrailnetwork1" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/rail-network-development" class="nav-link nav-link--rail-network-development" data-drupal-link-system-path="node/1326">Overview</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/passenger-rail/passenger-rail" class="nav-link nav-link--rail-network-development-passenger-rail-passenger-rail" data-drupal-link-system-path="node/1351">Passenger Rail</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/freight-rail-overview" class="nav-link nav-link--rail-network-development-freight-rail-overview" data-drupal-link-system-path="node/91921">Freight Rail</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/environment/environment" class="nav-link nav-link--rail-network-development-environment-environment" data-drupal-link-system-path="node/1521">Environment</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/planning/project-planning/project-planning" class="nav-link nav-link--rail-network-development-planning-project-planning-project-planning" data-drupal-link-system-path="node/103036">Planning</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/international-programs" class="nav-link nav-link--rail-network-development-international-programs" data-drupal-link-system-path="node/99316">International</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/maps-and-data/maps-geographic-information-system/maps-geographic" class="nav-link nav-link--rail-network-development-maps-and-data-maps-geographic-information-system-maps-geographic" data-drupal-link-system-path="node/3986">Maps &amp; Data</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/training-guidance" class="nav-link nav-link--rail-network-development-training-guidance" data-drupal-link-system-path="node/3991">Training &amp; Guidance</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+
+  </section>
+
+          </section></li><li class="ultimenu__item uitem has-ultimenu"><a href="/research-development/research-development-and-technology-rdt" data-drupal-link-system-path="node/3646" class="ultimenu__link">Research &amp; Development<span class="ultimenu__caret caret" aria-hidden="true"><i></i></span></a><section class="ultimenu__flyout is-htb d-lg-flex p-0">
+              <section class="ultimenu__region region region--count-2 row region-ultimenu-main-research-development">
+      <nav aria-labelledby="block-mainrd2-2-menu" id="block-mainrd2-2" class="block block-menu navigation menu--main---r-d-2">
+      
+  <h2  id="block-mainrd2-2-menu">Featured</h2>
+  
+
+        
+              <ul block="block-mainrd2-2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/elibrary/fra-office-research-development-and-technology-current-projects-2025" class="nav-link nav-link--elibrary-fra-office-research-development-and-technology-current-projects-2025">R&amp;D Current Projects</a>
+              </li>
+                <li class="nav-item">
+                <a href="/train-control/ptc/positive-train-control-ptc-information-rd" class="nav-link nav-link--train-control-ptc-positive-train-control-ptc-information-rd" data-drupal-link-system-path="node/4521">Positive Train Control</a>
+              </li>
+                <li class="nav-item">
+                <a href="/research-development/program-areas/hazmat-transportation/hazardous-materials-transportation" class="nav-link nav-link--research-development-program-areas-hazmat-transportation-hazardous-materials-transportation" data-drupal-link-system-path="node/3886">Hazardous Materials</a>
+              </li>
+                <li class="nav-item">
+                <a href="/research-development/program-areas/highway-rail-grade-crossing/highway-rail-grade-crossing-and" class="nav-link nav-link--research-development-program-areas-highway-rail-grade-crossing-highway-rail-grade-crossing-and" data-drupal-link-system-path="node/91266">Highway-Rail Grade Crossing</a>
+              </li>
+                <li class="nav-item">
+                <a href="/program-areas/human-factors/close-call-reporting" class="nav-link nav-link--program-areas-human-factors-close-call-reporting" data-drupal-link-system-path="node/3921">Close Call Reporting</a>
+              </li>
+                <li class="nav-item">
+                <a href="/program-areas/research-and-development-funding/broad-agency-announcement" class="nav-link nav-link--program-areas-research-and-development-funding-broad-agency-announcement">Broad Agency Announcement</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+  <nav aria-labelledby="block-mainrd1-2-menu" id="block-mainrd1-2" class="block block-menu navigation menu--main---r-d-1">
+      
+  <h2  id="block-mainrd1-2-menu">Research &amp; Development</h2>
+  
+
+        
+              <ul block="block-mainrd1-2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/research-development/research-development-and-technology-rdt" class="nav-link nav-link--research-development-research-development-and-technology-rdt" data-drupal-link-system-path="node/3646">Overview</a>
+              </li>
+                <li class="nav-item">
+                <a href="/research-development/program-areas/rdt-program-areas" class="nav-link nav-link--research-development-program-areas-rdt-program-areas" data-drupal-link-system-path="node/3661">Program Areas</a>
+              </li>
+                <li class="nav-item">
+                <a href="/research-development/rdt-report-templates-and-guidelines" class="nav-link nav-link--research-development-rdt-report-templates-and-guidelines" data-drupal-link-system-path="node/3656">R&amp;D Reports</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+
+  </section>
+
+          </section></li><li class="ultimenu__item uitem has-ultimenu"><a href="/legislation-regulations/legislation-regulations" data-drupal-link-system-path="node/2686" class="ultimenu__link">Legislation &amp; Regulations<span class="ultimenu__caret caret" aria-hidden="true"><i></i></span></a><section class="ultimenu__flyout is-htb d-lg-flex p-0">
+              <section class="ultimenu__region region region--count-2 row region-ultimenu-main-legislation-regulations">
+      <nav aria-labelledby="block-mainlegislation2-2-menu" id="block-mainlegislation2-2" class="block block-menu navigation menu--main---legislation-2">
+      
+  <h2  id="block-mainlegislation2-2-menu">Featured</h2>
+  
+
+        
+              <ul block="block-mainlegislation2-2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/legislation/fast-act/fast-act" class="nav-link nav-link--legislation-fast-act-fast-act" data-drupal-link-system-path="node/2696">FAST Act</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/planning/systems-planning/national-rail-plan" class="nav-link nav-link--rail-network-development-planning-systems-planning-national-rail-plan" data-drupal-link-system-path="node/3881">National Rail Plan</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/planning/systems-planning/state-rail-plan-guidance" class="nav-link nav-link--rail-network-development-planning-systems-planning-state-rail-plan-guidance" data-drupal-link-system-path="node/3961">Proposed State Rail Plan</a>
+              </li>
+                <li class="nav-item">
+                <a href="/legislation-regulations/civil-penalties-schedules-guidelines" class="nav-link nav-link--legislation-regulations-civil-penalties-schedules-guidelines" data-drupal-link-system-path="node/2726">Civil Penalties</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+  <nav aria-labelledby="block-mainlegislation1-2-menu" id="block-mainlegislation1-2" class="block block-menu navigation menu--main---legislation-1">
+      
+  <h2  id="block-mainlegislation1-2-menu">Legislation &amp; Regulations</h2>
+  
+
+        
+              <ul block="block-mainlegislation1-2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/legislation-regulations/legislation-regulations" class="nav-link nav-link--legislation-regulations-legislation-regulations" data-drupal-link-system-path="node/2686">Overview</a>
+              </li>
+                <li class="nav-item">
+                <a href="/legislation-regulations/legislation/rail-safety-improvement-act-2008-rsia" class="nav-link nav-link--legislation-regulations-legislation-rail-safety-improvement-act-2008-rsia" data-drupal-link-system-path="node/2691">Legislation</a>
+              </li>
+                <li class="nav-item">
+                <a href="/legislation-regulations/regulations-rulemaking/regulations-rulemaking" class="nav-link nav-link--legislation-regulations-regulations-rulemaking-regulations-rulemaking" data-drupal-link-system-path="node/2711">Regulations &amp; Rulemaking</a>
+              </li>
+                <li class="nav-item">
+                <a href="/legislation-regulations/paperwork-rection-act-pra" class="nav-link nav-link--legislation-regulations-paperwork-rection-act-pra">Paperwork Reduction Act (PRA)</a>
+              </li>
+                <li class="nav-item">
+                <a href="/legislation-regulations/buy-america/buy-america" class="nav-link nav-link--legislation-regulations-buy-america-buy-america" data-drupal-link-system-path="node/2731">Buy America</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+
+  </section>
+
+          </section></li><li class="ultimenu__item uitem has-ultimenu"><a href="/grants-loans/grants-loans" data-drupal-link-system-path="node/2766" class="ultimenu__link">Grants &amp; Loans<span class="ultimenu__caret caret" aria-hidden="true"><i></i></span></a><section class="ultimenu__flyout is-htb d-lg-flex p-0">
+              <section class="ultimenu__region region region--count-2 row region-ultimenu-main-grants-loans">
+      <nav aria-labelledby="block-maingrants2-2-menu" id="block-maingrants2-2" class="block block-menu navigation menu--main---grants-2">
+      
+  <h2  id="block-maingrants2-2-menu">Featured</h2>
+  
+
+        
+              <ul block="block-maingrants2-2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/grants-loans/fra-discretionary-grant-program-tool" class="nav-link nav-link--grants-loans-fra-discretionary-grant-program-tool" data-drupal-link-system-path="node/99161">FRA Discretionary Grant Program Tool</a>
+              </li>
+                <li class="nav-item">
+                <a href="/elibrary/fra-guidance-development-and-implementation-railroad-capital-projects" class="nav-link nav-link--elibrary-fra-guidance-development-and-implementation-railroad-capital-projects" data-drupal-link-system-path="node/100676">Railroad Capital Project Guidance</a>
+              </li>
+                <li class="nav-item">
+                <a href="/webinars" class="nav-link nav-link--webinars" data-drupal-link-system-path="node/93396">FRA Webinars</a>
+              </li>
+                <li class="nav-item">
+                <a href="https://www.transportation.gov/dot-navigator" class="nav-link nav-link-https--wwwtransportationgov-dot-navigator">DOT Grants</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+  <nav aria-labelledby="block-maingrants1-2-menu" id="block-maingrants1-2" class="block block-menu navigation menu--main---grants-1">
+      
+  <h2  id="block-maingrants1-2-menu">Grants &amp; Loans</h2>
+  
+
+        
+              <ul block="block-maingrants1-2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/grants-loans/grants-loans" class="nav-link nav-link--grants-loans-grants-loans" data-drupal-link-system-path="node/2766">Overview</a>
+              </li>
+                <li class="nav-item">
+                <a href="/grants" class="nav-link nav-link--grants" data-drupal-link-system-path="node/2771">Grant Programs</a>
+              </li>
+                <li class="nav-item">
+                <a href="/grants-loans/discretionary-grants-application-process" class="nav-link nav-link--grants-loans-discretionary-grants-application-process" data-drupal-link-system-path="node/3581">Applying for Grants</a>
+              </li>
+                <li class="nav-item">
+                <a href="/grants-loans/fra-reports" class="nav-link nav-link--grants-loans-fra-reports" data-drupal-link-system-path="node/3596">Resources for Grant Recipients </a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/training-guidance/training-guidance" class="nav-link nav-link--rail-network-development-training-guidance-training-guidance">Training &amp; Guidance</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+
+  </section>
+
+          </section></li><li class="ultimenu__item uitem has-ultimenu"><a href="/elibrary-search" data-drupal-link-system-path="elibrary-search" class="ultimenu__link">FRA eLibrary<span class="ultimenu__caret caret" aria-hidden="true"><i></i></span></a><section class="ultimenu__flyout is-htb d-lg-flex p-0">
+              <section class="ultimenu__region region region--count-1 row region-ultimenu-main-fra-elibrary">
+      <nav aria-labelledby="block-mainelibrary1-2-menu" id="block-mainelibrary1-2" class="block block-menu navigation menu--main-elibrary-1">
+      
+  <h2  id="block-mainelibrary1-2-menu">eLibrary</h2>
+  
+
+        
+              <ul block="block-mainelibrary1-2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/elibrary-search?f%5B0%5D=document_series%3A14726" class="nav-link nav-link--elibrary-searchf5b05ddocument-series3a14726" data-drupal-link-query="{&quot;f&quot;:[&quot;document_series:14726&quot;]}" data-drupal-link-system-path="elibrary-search">Accidents &amp; Fatalities</a>
+              </li>
+                <li class="nav-item">
+                <a href="/elibrary-search?f%5B0%5D=document_series%3A14736" class="nav-link nav-link--elibrary-searchf5b05ddocument-series3a14736" data-drupal-link-query="{&quot;f&quot;:[&quot;document_series:14736&quot;]}" data-drupal-link-system-path="elibrary-search">Compliance</a>
+              </li>
+                <li class="nav-item">
+                <a href="/elibrary-search?f%5B0%5D=document_series%3A14751" class="nav-link nav-link--elibrary-searchf5b05ddocument-series3a14751" data-drupal-link-query="{&quot;f&quot;:[&quot;document_series:14751&quot;]}" data-drupal-link-system-path="elibrary-search">Conferences &amp; Presentations</a>
+              </li>
+                <li class="nav-item">
+                <a href="/elibrary-search?f%5B0%5D=document_series%3A14776" class="nav-link nav-link--elibrary-searchf5b05ddocument-series3a14776" data-drupal-link-query="{&quot;f&quot;:[&quot;document_series:14776&quot;]}" data-drupal-link-system-path="elibrary-search">Emergency &amp; Safety</a>
+              </li>
+                <li class="nav-item">
+                <a href="/elibrary-search?f%5B0%5D=document_series%3A14746" class="nav-link nav-link--elibrary-searchf5b05ddocument-series3a14746" data-drupal-link-query="{&quot;f&quot;:[&quot;document_series:14746&quot;]}" data-drupal-link-system-path="elibrary-search">Enforcement &amp; Litigation</a>
+              </li>
+                <li class="nav-item">
+                <a href="/elibrary-search?f%5B0%5D=document_series%3A14771" class="nav-link nav-link--elibrary-searchf5b05ddocument-series3a14771" data-drupal-link-query="{&quot;f&quot;:[&quot;document_series:14771&quot;]}" data-drupal-link-system-path="elibrary-search">Publications &amp; Policy</a>
+              </li>
+                <li class="nav-item">
+                <a href="/elibrary-search?f%5B0%5D=document_series%3A14741" class="nav-link nav-link--elibrary-searchf5b05ddocument-series3a14741" data-drupal-link-query="{&quot;f&quot;:[&quot;document_series:14741&quot;]}" data-drupal-link-system-path="elibrary-search">Reports</a>
+              </li>
+                <li class="nav-item">
+                <a href="/elibrary-search?f%5B0%5D=document_series%3A14766" class="nav-link nav-link--elibrary-searchf5b05ddocument-series3a14766" data-drupal-link-query="{&quot;f&quot;:[&quot;document_series:14766&quot;]}" data-drupal-link-system-path="elibrary-search">Other</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+
+  </section>
+
+          </section></li></ul><button data-ultimenu-button="#ultimenu-main" class="button button--ultimenu button--ultiburger" aria-label="Menu Main navigation (Desktop)"><span class="bars">Menu Main navigation (Desktop)</span></button>
+    </div>
+  </div>
+<div id="block-ultimenu-mobile-navigation" class="block block-ultimenu block-ultimenu-blockultimenu-main">
+  
+    
+      <div class="content">
+      <ul id="ultimenu-main" data-ultimenu="main" class="ultimenu ultimenu--offcanvas is-ulticaret--triangle ultimenu--main ultimenu--htb ultimenu--horizontal"><li class="ultimenu__item uitem has-ultimenu"><a href="/about-fra/about-fra" data-drupal-link-system-path="node/701" class="ultimenu__link">About FRA<span class="ultimenu__caret caret" aria-hidden="true"><i></i></span></a><section class="ultimenu__flyout is-htb d-lg-flex p-0">
+              <section class="ultimenu__region region region--count-2 row region-ultimenu-main-about-fra">
+      <nav aria-labelledby="block-mainabout1-2-menu" id="block-mainabout1-2" class="block block-menu navigation menu--main---about-1">
+      
+  <h2  id="block-mainabout1-2-menu">About FRA</h2>
+  
+
+        
+              <ul block="block-mainabout1-2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/about-fra/about-fra" class="nav-link nav-link--about-fra-about-fra" data-drupal-link-system-path="node/701">Overview</a>
+              </li>
+                <li class="nav-item">
+                <a href="/about-fra/organization/organization-chart" class="nav-link nav-link--about-fra-organization-organization-chart" data-drupal-link-system-path="node/1441">Organization</a>
+              </li>
+                <li class="nav-item">
+                <a href="/about-fra/program-offices/program-offices-overview" class="nav-link nav-link--about-fra-program-offices-program-offices-overview" data-drupal-link-system-path="node/741">Program Offices</a>
+              </li>
+                <li class="nav-item">
+                <a href="/resource-center" class="nav-link nav-link--resource-center" data-drupal-link-system-path="node/841">Resource Center</a>
+              </li>
+                <li class="nav-item">
+                <a href="https://www.transportation.gov/web-policies" class="nav-link nav-link-https--wwwtransportationgov-web-policies">Web Policies and Notices</a>
+              </li>
+                <li class="nav-item">
+                <a href="/about-fra/contact-us" class="nav-link nav-link--about-fra-contact-us" data-drupal-link-system-path="node/1031">Contact Us</a>
+              </li>
+                <li class="nav-item">
+                <a href="/about-fra/communications/communications" class="nav-link nav-link--about-fra-communications-communications" data-drupal-link-system-path="node/1036">Communications</a>
+              </li>
+                <li class="nav-item">
+                <a href="/about-fra/government-affairs/government-affairs" class="nav-link nav-link--about-fra-government-affairs-government-affairs" data-drupal-link-system-path="node/1041">Governmental Affairs</a>
+              </li>
+                <li class="nav-item">
+                <a href="/about-fra/communications/newsroom/fra-faqs" class="nav-link nav-link--about-fra-communications-newsroom-fra-faqs" data-drupal-link-system-path="node/104486">FRA FAQs</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+  <nav aria-labelledby="block-mainabout2-2-menu" id="block-mainabout2-2" class="block block-menu navigation menu--main---about-2">
+      
+  <h2  id="block-mainabout2-2-menu">Featured</h2>
+  
+
+        
+              <ul block="block-mainabout2-2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/IIJA" class="nav-link nav-link--iija" data-drupal-link-system-path="node/97431">Infrastructure Investment and Jobs Act Information from FRA</a>
+              </li>
+                <li class="nav-item">
+                <a href="/about-fra/resource-center/jobs/job-vacancies" class="nav-link nav-link--about-fra-resource-center-jobs-job-vacancies" data-drupal-link-system-path="node/871">Careers</a>
+              </li>
+                <li class="nav-item">
+                <a href="/about-fra/organization/david-armstrong-fink-administrator" class="nav-link nav-link--about-fra-organization-david-armstrong-fink-administrator" data-drupal-link-system-path="node/706">Leadership Profiles</a>
+              </li>
+                <li class="nav-item">
+                <a href="/about-fra/organization/organization-chart" class="nav-link nav-link--about-fra-organization-organization-chart" data-drupal-link-system-path="node/1441">Organizational Chart</a>
+              </li>
+                <li class="nav-item">
+                <a href="/newsroom" class="nav-link nav-link--newsroom" data-drupal-link-system-path="node/90836">Newsroom</a>
+              </li>
+                <li class="nav-item">
+                <a href="/newsroom/press-releases" class="nav-link nav-link--newsroom-press-releases" data-drupal-link-system-path="newsroom/press-releases">Press Releases</a>
+              </li>
+                <li class="nav-item">
+                <a href="/newsroom/speeches" class="nav-link nav-link--newsroom-speeches" data-drupal-link-system-path="newsroom/speeches">Speeches</a>
+              </li>
+                <li class="nav-item">
+                <a href="/newsroom/fact-sheets" class="nav-link nav-link--newsroom-fact-sheets" data-drupal-link-system-path="newsroom/fact-sheets">Fact Sheets</a>
+              </li>
+                <li class="nav-item">
+                <a href="/newsroom/testimony" class="nav-link nav-link--newsroom-testimony" data-drupal-link-system-path="newsroom/testimony">Testimony</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+
+  </section>
+
+          </section></li><li class="ultimenu__item uitem has-ultimenu"><a href="/railroad-safety" data-drupal-link-system-path="node/101776" class="ultimenu__link">Railroad Safety<span class="ultimenu__caret caret" aria-hidden="true"><i></i></span></a><section class="ultimenu__flyout is-htb d-lg-flex p-0">
+              <section class="ultimenu__region region region--count-2 row region-ultimenu-main-railroad-safety">
+      <nav aria-labelledby="block-mainrailroadsafety2-2-menu" id="block-mainrailroadsafety2-2" class="block block-menu navigation menu--main---railroad-safety-2">
+      
+  <h2  id="block-mainrailroadsafety2-2-menu">Featured</h2>
+  
+
+        
+              <ul block="block-mainrailroadsafety2-2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/railroad-safety/divisions/crossing-safety-and-trespass-prevention/train-horn-rulequiet-zones" class="nav-link nav-link--railroad-safety-divisions-crossing-safety-and-trespass-prevention-train-horn-rulequiet-zones" data-drupal-link-system-path="node/2116">Train Horn Rule/Quiet Zones</a>
+              </li>
+                <li class="nav-item">
+                <a href="https://www.fra.dot.gov/blockedcrossings/" class="nav-link nav-link-https--wwwfradotgov-blockedcrossings-">Public Blocked Crossings Incident Reporter</a>
+              </li>
+                <li class="nav-item">
+                <a href="/railroad-safety/divisions/drug-and-alcohol/drug-and-alcohol" class="nav-link nav-link--railroad-safety-divisions-drug-and-alcohol-drug-and-alcohol" data-drupal-link-system-path="node/100346">Drug &amp; Alcohol</a>
+              </li>
+                <li class="nav-item">
+                <a href="/safety-data" class="nav-link nav-link--safety-data" data-drupal-link-system-path="node/21">Safety Data</a>
+              </li>
+                <li class="nav-item">
+                <a href="/railroad-safety/partnerships-programs/confidential-close-call-reporting-system-c3rs" class="nav-link nav-link--railroad-safety-partnerships-programs-confidential-close-call-reporting-system-c3rs" data-drupal-link-system-path="node/2151">C3RS</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+  <nav aria-labelledby="block-mainrailroadsafety1-2-menu" id="block-mainrailroadsafety1-2" class="block block-menu navigation menu--main---railroad-safety-1">
+      
+  <h2  id="block-mainrailroadsafety1-2-menu">Railroad Safety</h2>
+  
+
+        
+              <ul block="block-mainrailroadsafety1-2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/railroad-safety" class="nav-link nav-link--railroad-safety" data-drupal-link-system-path="node/101776">Overview</a>
+              </li>
+                <li class="nav-item">
+                <a href="/crossing-safety-trespass-prevention/crossing-safety-trespass-prevention" class="nav-link nav-link--crossing-safety-trespass-prevention-crossing-safety-trespass-prevention" data-drupal-link-system-path="node/2011">Grade Crossing Safety &amp; Trespass Prevention</a>
+              </li>
+                <li class="nav-item">
+                <a href="/railroad-safety/accident-data-reporting-and-investigations-0" class="nav-link nav-link--railroad-safety-accident-data-reporting-and-investigations-0" data-drupal-link-system-path="node/108216">Accident Data &amp; Reporting, Investigations</a>
+              </li>
+                <li class="nav-item">
+                <a href="/railroad-safety/divisions/divisions-overview" class="nav-link nav-link--railroad-safety-divisions-divisions-overview" data-drupal-link-system-path="node/1871">Divisions</a>
+              </li>
+                <li class="nav-item">
+                <a href="/railroad-safety/partnerships-programs/partnerships-programs" class="nav-link nav-link--railroad-safety-partnerships-programs-partnerships-programs" data-drupal-link-system-path="node/2551">Partnerships &amp; Programs</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+
+  </section>
+
+          </section></li><li class="ultimenu__item uitem has-ultimenu"><a href="/rail-network-development" data-drupal-link-system-path="node/1326" class="ultimenu__link">Rail Network Development<span class="ultimenu__caret caret" aria-hidden="true"><i></i></span></a><section class="ultimenu__flyout is-htb d-lg-flex p-0">
+              <section class="ultimenu__region region region--count-2 row region-ultimenu-main-rail-network-development">
+      <nav aria-labelledby="block-mainrailnetwork2-menu" id="block-mainrailnetwork2" class="block block-menu navigation menu--main---rail-network-2">
+      
+  <h2  id="block-mainrailnetwork2-menu">Featured</h2>
+  
+
+        
+              <ul block="block-mainrailnetwork2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/passenger-rail/amtrak/amtrak" class="nav-link nav-link--passenger-rail-amtrak-amtrak" data-drupal-link-system-path="node/1451">Amtrak</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/environment/environmental-reviews" class="nav-link nav-link--rail-network-development-environment-environmental-reviews" data-drupal-link-system-path="node/91201">Environmental Reviews</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/maps-and-data/maps-geographic-information-system/maps-geographic" class="nav-link nav-link--rail-network-development-maps-and-data-maps-geographic-information-system-maps-geographic" data-drupal-link-system-path="node/3986">GIS Maps</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rural" class="nav-link nav-link--rural" data-drupal-link-system-path="node/97861">Rural</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+  <nav aria-labelledby="block-mainrailnetwork1-menu" id="block-mainrailnetwork1" class="block block-menu navigation menu--main---rail-network-1">
+      
+  <h2  id="block-mainrailnetwork1-menu">Rail Network Development</h2>
+  
+
+        
+              <ul block="block-mainrailnetwork1" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/rail-network-development" class="nav-link nav-link--rail-network-development" data-drupal-link-system-path="node/1326">Overview</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/passenger-rail/passenger-rail" class="nav-link nav-link--rail-network-development-passenger-rail-passenger-rail" data-drupal-link-system-path="node/1351">Passenger Rail</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/freight-rail-overview" class="nav-link nav-link--rail-network-development-freight-rail-overview" data-drupal-link-system-path="node/91921">Freight Rail</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/environment/environment" class="nav-link nav-link--rail-network-development-environment-environment" data-drupal-link-system-path="node/1521">Environment</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/planning/project-planning/project-planning" class="nav-link nav-link--rail-network-development-planning-project-planning-project-planning" data-drupal-link-system-path="node/103036">Planning</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/international-programs" class="nav-link nav-link--rail-network-development-international-programs" data-drupal-link-system-path="node/99316">International</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/maps-and-data/maps-geographic-information-system/maps-geographic" class="nav-link nav-link--rail-network-development-maps-and-data-maps-geographic-information-system-maps-geographic" data-drupal-link-system-path="node/3986">Maps &amp; Data</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/training-guidance" class="nav-link nav-link--rail-network-development-training-guidance" data-drupal-link-system-path="node/3991">Training &amp; Guidance</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+
+  </section>
+
+          </section></li><li class="ultimenu__item uitem has-ultimenu"><a href="/research-development/research-development-and-technology-rdt" data-drupal-link-system-path="node/3646" class="ultimenu__link">Research &amp; Development<span class="ultimenu__caret caret" aria-hidden="true"><i></i></span></a><section class="ultimenu__flyout is-htb d-lg-flex p-0">
+              <section class="ultimenu__region region region--count-2 row region-ultimenu-main-research-development">
+      <nav aria-labelledby="block-mainrd2-2-menu" id="block-mainrd2-2" class="block block-menu navigation menu--main---r-d-2">
+      
+  <h2  id="block-mainrd2-2-menu">Featured</h2>
+  
+
+        
+              <ul block="block-mainrd2-2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/elibrary/fra-office-research-development-and-technology-current-projects-2025" class="nav-link nav-link--elibrary-fra-office-research-development-and-technology-current-projects-2025">R&amp;D Current Projects</a>
+              </li>
+                <li class="nav-item">
+                <a href="/train-control/ptc/positive-train-control-ptc-information-rd" class="nav-link nav-link--train-control-ptc-positive-train-control-ptc-information-rd" data-drupal-link-system-path="node/4521">Positive Train Control</a>
+              </li>
+                <li class="nav-item">
+                <a href="/research-development/program-areas/hazmat-transportation/hazardous-materials-transportation" class="nav-link nav-link--research-development-program-areas-hazmat-transportation-hazardous-materials-transportation" data-drupal-link-system-path="node/3886">Hazardous Materials</a>
+              </li>
+                <li class="nav-item">
+                <a href="/research-development/program-areas/highway-rail-grade-crossing/highway-rail-grade-crossing-and" class="nav-link nav-link--research-development-program-areas-highway-rail-grade-crossing-highway-rail-grade-crossing-and" data-drupal-link-system-path="node/91266">Highway-Rail Grade Crossing</a>
+              </li>
+                <li class="nav-item">
+                <a href="/program-areas/human-factors/close-call-reporting" class="nav-link nav-link--program-areas-human-factors-close-call-reporting" data-drupal-link-system-path="node/3921">Close Call Reporting</a>
+              </li>
+                <li class="nav-item">
+                <a href="/program-areas/research-and-development-funding/broad-agency-announcement" class="nav-link nav-link--program-areas-research-and-development-funding-broad-agency-announcement">Broad Agency Announcement</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+  <nav aria-labelledby="block-mainrd1-2-menu" id="block-mainrd1-2" class="block block-menu navigation menu--main---r-d-1">
+      
+  <h2  id="block-mainrd1-2-menu">Research &amp; Development</h2>
+  
+
+        
+              <ul block="block-mainrd1-2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/research-development/research-development-and-technology-rdt" class="nav-link nav-link--research-development-research-development-and-technology-rdt" data-drupal-link-system-path="node/3646">Overview</a>
+              </li>
+                <li class="nav-item">
+                <a href="/research-development/program-areas/rdt-program-areas" class="nav-link nav-link--research-development-program-areas-rdt-program-areas" data-drupal-link-system-path="node/3661">Program Areas</a>
+              </li>
+                <li class="nav-item">
+                <a href="/research-development/rdt-report-templates-and-guidelines" class="nav-link nav-link--research-development-rdt-report-templates-and-guidelines" data-drupal-link-system-path="node/3656">R&amp;D Reports</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+
+  </section>
+
+          </section></li><li class="ultimenu__item uitem has-ultimenu"><a href="/legislation-regulations/legislation-regulations" data-drupal-link-system-path="node/2686" class="ultimenu__link">Legislation &amp; Regulations<span class="ultimenu__caret caret" aria-hidden="true"><i></i></span></a><section class="ultimenu__flyout is-htb d-lg-flex p-0">
+              <section class="ultimenu__region region region--count-2 row region-ultimenu-main-legislation-regulations">
+      <nav aria-labelledby="block-mainlegislation2-2-menu" id="block-mainlegislation2-2" class="block block-menu navigation menu--main---legislation-2">
+      
+  <h2  id="block-mainlegislation2-2-menu">Featured</h2>
+  
+
+        
+              <ul block="block-mainlegislation2-2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/legislation/fast-act/fast-act" class="nav-link nav-link--legislation-fast-act-fast-act" data-drupal-link-system-path="node/2696">FAST Act</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/planning/systems-planning/national-rail-plan" class="nav-link nav-link--rail-network-development-planning-systems-planning-national-rail-plan" data-drupal-link-system-path="node/3881">National Rail Plan</a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/planning/systems-planning/state-rail-plan-guidance" class="nav-link nav-link--rail-network-development-planning-systems-planning-state-rail-plan-guidance" data-drupal-link-system-path="node/3961">Proposed State Rail Plan</a>
+              </li>
+                <li class="nav-item">
+                <a href="/legislation-regulations/civil-penalties-schedules-guidelines" class="nav-link nav-link--legislation-regulations-civil-penalties-schedules-guidelines" data-drupal-link-system-path="node/2726">Civil Penalties</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+  <nav aria-labelledby="block-mainlegislation1-2-menu" id="block-mainlegislation1-2" class="block block-menu navigation menu--main---legislation-1">
+      
+  <h2  id="block-mainlegislation1-2-menu">Legislation &amp; Regulations</h2>
+  
+
+        
+              <ul block="block-mainlegislation1-2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/legislation-regulations/legislation-regulations" class="nav-link nav-link--legislation-regulations-legislation-regulations" data-drupal-link-system-path="node/2686">Overview</a>
+              </li>
+                <li class="nav-item">
+                <a href="/legislation-regulations/legislation/rail-safety-improvement-act-2008-rsia" class="nav-link nav-link--legislation-regulations-legislation-rail-safety-improvement-act-2008-rsia" data-drupal-link-system-path="node/2691">Legislation</a>
+              </li>
+                <li class="nav-item">
+                <a href="/legislation-regulations/regulations-rulemaking/regulations-rulemaking" class="nav-link nav-link--legislation-regulations-regulations-rulemaking-regulations-rulemaking" data-drupal-link-system-path="node/2711">Regulations &amp; Rulemaking</a>
+              </li>
+                <li class="nav-item">
+                <a href="/legislation-regulations/paperwork-rection-act-pra" class="nav-link nav-link--legislation-regulations-paperwork-rection-act-pra">Paperwork Reduction Act (PRA)</a>
+              </li>
+                <li class="nav-item">
+                <a href="/legislation-regulations/buy-america/buy-america" class="nav-link nav-link--legislation-regulations-buy-america-buy-america" data-drupal-link-system-path="node/2731">Buy America</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+
+  </section>
+
+          </section></li><li class="ultimenu__item uitem has-ultimenu"><a href="/grants-loans/grants-loans" data-drupal-link-system-path="node/2766" class="ultimenu__link">Grants &amp; Loans<span class="ultimenu__caret caret" aria-hidden="true"><i></i></span></a><section class="ultimenu__flyout is-htb d-lg-flex p-0">
+              <section class="ultimenu__region region region--count-2 row region-ultimenu-main-grants-loans">
+      <nav aria-labelledby="block-maingrants2-2-menu" id="block-maingrants2-2" class="block block-menu navigation menu--main---grants-2">
+      
+  <h2  id="block-maingrants2-2-menu">Featured</h2>
+  
+
+        
+              <ul block="block-maingrants2-2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/grants-loans/fra-discretionary-grant-program-tool" class="nav-link nav-link--grants-loans-fra-discretionary-grant-program-tool" data-drupal-link-system-path="node/99161">FRA Discretionary Grant Program Tool</a>
+              </li>
+                <li class="nav-item">
+                <a href="/elibrary/fra-guidance-development-and-implementation-railroad-capital-projects" class="nav-link nav-link--elibrary-fra-guidance-development-and-implementation-railroad-capital-projects" data-drupal-link-system-path="node/100676">Railroad Capital Project Guidance</a>
+              </li>
+                <li class="nav-item">
+                <a href="/webinars" class="nav-link nav-link--webinars" data-drupal-link-system-path="node/93396">FRA Webinars</a>
+              </li>
+                <li class="nav-item">
+                <a href="https://www.transportation.gov/dot-navigator" class="nav-link nav-link-https--wwwtransportationgov-dot-navigator">DOT Grants</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+  <nav aria-labelledby="block-maingrants1-2-menu" id="block-maingrants1-2" class="block block-menu navigation menu--main---grants-1">
+      
+  <h2  id="block-maingrants1-2-menu">Grants &amp; Loans</h2>
+  
+
+        
+              <ul block="block-maingrants1-2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/grants-loans/grants-loans" class="nav-link nav-link--grants-loans-grants-loans" data-drupal-link-system-path="node/2766">Overview</a>
+              </li>
+                <li class="nav-item">
+                <a href="/grants" class="nav-link nav-link--grants" data-drupal-link-system-path="node/2771">Grant Programs</a>
+              </li>
+                <li class="nav-item">
+                <a href="/grants-loans/discretionary-grants-application-process" class="nav-link nav-link--grants-loans-discretionary-grants-application-process" data-drupal-link-system-path="node/3581">Applying for Grants</a>
+              </li>
+                <li class="nav-item">
+                <a href="/grants-loans/fra-reports" class="nav-link nav-link--grants-loans-fra-reports" data-drupal-link-system-path="node/3596">Resources for Grant Recipients </a>
+              </li>
+                <li class="nav-item">
+                <a href="/rail-network-development/training-guidance/training-guidance" class="nav-link nav-link--rail-network-development-training-guidance-training-guidance">Training &amp; Guidance</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+
+  </section>
+
+          </section></li><li class="ultimenu__item uitem has-ultimenu"><a href="/elibrary-search" data-drupal-link-system-path="elibrary-search" class="ultimenu__link">FRA eLibrary<span class="ultimenu__caret caret" aria-hidden="true"><i></i></span></a><section class="ultimenu__flyout is-htb d-lg-flex p-0">
+              <section class="ultimenu__region region region--count-1 row region-ultimenu-main-fra-elibrary">
+      <nav aria-labelledby="block-mainelibrary1-2-menu" id="block-mainelibrary1-2" class="block block-menu navigation menu--main-elibrary-1">
+      
+  <h2  id="block-mainelibrary1-2-menu">eLibrary</h2>
+  
+
+        
+              <ul block="block-mainelibrary1-2" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/elibrary-search?f%5B0%5D=document_series%3A14726" class="nav-link nav-link--elibrary-searchf5b05ddocument-series3a14726" data-drupal-link-query="{&quot;f&quot;:[&quot;document_series:14726&quot;]}" data-drupal-link-system-path="elibrary-search">Accidents &amp; Fatalities</a>
+              </li>
+                <li class="nav-item">
+                <a href="/elibrary-search?f%5B0%5D=document_series%3A14736" class="nav-link nav-link--elibrary-searchf5b05ddocument-series3a14736" data-drupal-link-query="{&quot;f&quot;:[&quot;document_series:14736&quot;]}" data-drupal-link-system-path="elibrary-search">Compliance</a>
+              </li>
+                <li class="nav-item">
+                <a href="/elibrary-search?f%5B0%5D=document_series%3A14751" class="nav-link nav-link--elibrary-searchf5b05ddocument-series3a14751" data-drupal-link-query="{&quot;f&quot;:[&quot;document_series:14751&quot;]}" data-drupal-link-system-path="elibrary-search">Conferences &amp; Presentations</a>
+              </li>
+                <li class="nav-item">
+                <a href="/elibrary-search?f%5B0%5D=document_series%3A14776" class="nav-link nav-link--elibrary-searchf5b05ddocument-series3a14776" data-drupal-link-query="{&quot;f&quot;:[&quot;document_series:14776&quot;]}" data-drupal-link-system-path="elibrary-search">Emergency &amp; Safety</a>
+              </li>
+                <li class="nav-item">
+                <a href="/elibrary-search?f%5B0%5D=document_series%3A14746" class="nav-link nav-link--elibrary-searchf5b05ddocument-series3a14746" data-drupal-link-query="{&quot;f&quot;:[&quot;document_series:14746&quot;]}" data-drupal-link-system-path="elibrary-search">Enforcement &amp; Litigation</a>
+              </li>
+                <li class="nav-item">
+                <a href="/elibrary-search?f%5B0%5D=document_series%3A14771" class="nav-link nav-link--elibrary-searchf5b05ddocument-series3a14771" data-drupal-link-query="{&quot;f&quot;:[&quot;document_series:14771&quot;]}" data-drupal-link-system-path="elibrary-search">Publications &amp; Policy</a>
+              </li>
+                <li class="nav-item">
+                <a href="/elibrary-search?f%5B0%5D=document_series%3A14741" class="nav-link nav-link--elibrary-searchf5b05ddocument-series3a14741" data-drupal-link-query="{&quot;f&quot;:[&quot;document_series:14741&quot;]}" data-drupal-link-system-path="elibrary-search">Reports</a>
+              </li>
+                <li class="nav-item">
+                <a href="/elibrary-search?f%5B0%5D=document_series%3A14766" class="nav-link nav-link--elibrary-searchf5b05ddocument-series3a14766" data-drupal-link-query="{&quot;f&quot;:[&quot;document_series:14766&quot;]}" data-drupal-link-system-path="elibrary-search">Other</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+
+  </section>
+
+          </section></li></ul><button data-ultimenu-button="#ultimenu-main" class="button button--ultimenu button--ultiburger" aria-label="Menu Main navigation (Mobile)"><span class="bars">Menu Main navigation (Mobile)</span></button>
+    </div>
+  </div>
+
+  </section>
+
+            </div>
+                            </nav>
+          </div><!-- row -->
+  </div><!-- container -->
+
+  <!--BEGIN QUALTRICS WEBSITE FEEDBACK SNIPPET-->
+  <script type='text/javascript'>
+  (function(){var g=function(e,h,f,g){
+  this.get=function(a){for(var a=a+"=",c=document.cookie.split(";"),b=0,e=c.length;b<e;b++){for(var d=c[b];" "==d.charAt(0);)d=d.substring(1,d.length);if(0==d.indexOf(a))return d.substring(a.length,d.length)}return null};
+  this.set=function(a,c){var b="",b=new Date;b.setTime(b.getTime()+6048E5);b="; expires="+b.toGMTString();document.cookie=a+"="+c+b+"; path=/; "};
+  this.check=function(){var a=this.get(f);if(a)a=a.split(":");else if(100!=e)"v"==h&&(e=Math.random()>=e/100?0:100),a=[h,e,0],this.set(f,a.join(":"));else return!0;var c=a[1];if(100==c)return!0;switch(a[0]){case "v":return!1;case "r":return c=a[2]%Math.floor(100/c),a[2]++,this.set(f,a.join(":")),!c}return!0};
+  this.go=function(){if(this.check()){var a=document.createElement("script");a.type="text/javascript";a.src=g;document.body&&document.body.appendChild(a)}};
+  this.start=function(){var t=this;"complete"!==document.readyState?window.addEventListener?window.addEventListener("load",function(){t.go()},!1):window.attachEvent&&window.attachEvent("onload",function(){t.go()}):t.go()};};
+  try{(new g(100,"r","QSI_S_ZN_6s1nJVF16lbn8I6","https://zn6s1njvf16lbn8i6-dotocio.gov1.siteintercept.qualtrics.com/SIE/?Q_ZID=ZN_6s1nJVF16lbn8I6")).start()}catch(i){}})();
+  </script><div id='ZN_6s1nJVF16lbn8I6'><!--DO NOT REMOVE-CONTENTS PLACED HERE--></div>
+  <!--END WEBSITE FEEDBACK SNIPPET-->
+
+</header>
+
+    
+    <main id="main" class="main" role="main" aria-label="Site main">
+
+      
+              <div class="highlighted">
+          <aside class="container section clearfix" role="complementary">
+              <div data-drupal-messages-fallback class="hidden"></div>
+
+
+          </aside>
+        </div>
+      
+      
+      
+      <div id="main-wrapper" class="layout-main-wrapper clearfix">
+                  <div id="main-content" class="container">
+
+                            <div id="block-fra-breadcrumbs" class="block block-system block-system-breadcrumb-block">
+  
+    
+      <div class="content">
+      
+
+  <nav role="navigation" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+                  <li class="breadcrumb-item">
+          <a href="/">Home</a>
+        </li>
+                        <li class="breadcrumb-item">
+          <a href="/elibrary-search">eLibrary</a>
+        </li>
+              </ol>
+  </nav>
+
+    </div>
+  </div>
+
+
+            
+            <div class="row row-offcanvas row-offcanvas-left clearfix">
+
+                              <!-- Main Content Region -->
+                <div class="main-content col order-last" id="content" role="main">
+                  <section class="section">
+                    <a id="main-content" tabindex="-1"></a>
+                      <div id="block-fra-content" class="block block-system block-system-main-block">
+  
+    
+      <div class="content">
+      
+
+<article data-history-node-id="103376" class="node node--type-document node--view-mode-full content__core clearfix document">
+  <div class="node__content clearfix">
+    
+
+    
+      
+      <h1 class="page__title node__title"><span class="field field--name-title field--type-string field--label-hidden">PTC Communications: Cybersecurity Technology Review and Concept of Operations</span>
+</h1>
+      
+
+              <div class="row mb-1">
+          <div class="col-auto pr-0"><strong>Document Series:</strong></div>
+          <div class="col-auto">Technical Reports</div>
+        </div>
+      
+              <div class="row mb-1">
+          <div class="col-auto pr-0"><strong>Author:</strong></div>
+          <div class="col-auto">
+            <ul class="list-unstyled m-0">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <li class="mb-1">Federal Railroad Administration</li>
+                                                                                                      </ul>
+                      </div>
+        </div>
+      
+      
+              <div class="row mb-1">
+                    <div class="col-auto">  <div class="paragraph paragraph--type--technical-reports paragraph--view-mode--default">
+          
+  <div class="field field--name-field-report-number field--type-string field--label-inline">
+    <div class="field__label">Report Number</div>
+              <div class="field__item">DOT/FRA/ORD-23/39</div>
+          </div>
+
+  <div class="field field--name-field-office field--type-entity-reference field--label-inline">
+    <div class="field__label">Office</div>
+              <div class="field__item">RDI-23</div>
+          </div>
+
+      </div>
+</div>
+        </div>
+      
+              <div class="row mb-1">
+          <div class="col-auto pr-0"><strong>Subject:</strong></div>
+          <div class="col-auto">Positive Train Control, Security</div>
+        </div>
+      
+              <div class="row mb-1">
+          <div class="col-auto pr-0"><strong>Keywords:</strong></div>
+          <div class="col-auto">Positive Train Control, PTC, railroad, shared network, Interoperable Train Control Messaging, ITCM, cybersecurity, encryption, National Institute of Standards and Technology, NIST, ELLI</div>
+        </div>
+              
+      
+      
+              <!-- <div class="my-4"> -->
+                  <!-- </div> -->
+      
+      
+<div class="field field--name-field-document-type field--type-entity-reference-revisions field--label-hidden">
+
+
+  <div>
+          <div class="field__item">  <div class="paragraph paragraph--type--technical-reports paragraph--view-mode--default">
+          
+  <div class="field field--name-field-report-number field--type-string field--label-inline">
+    <div class="field__label">Report Number</div>
+              <div class="field__item">DOT/FRA/ORD-23/39</div>
+          </div>
+
+  <div class="field field--name-field-office field--type-entity-reference field--label-inline">
+    <div class="field__label">Office</div>
+              <div class="field__item">RDI-23</div>
+          </div>
+
+      </div>
+</div>
+      </div>
+
+</div>
+
+
+       
+
+              
+  <div class="document--set file--attachment field field--name-field-document field--type-file field--label-above clearfix">
+    <div class="field__label">Document</div>
+              <div class="field__item">
+<span class="file file--mime-application-pdf file--application-pdf"> <a href="/sites/fra.dot.gov/files/2023-12/PTC%20Comms%20ConOps.pdf" type="application/pdf">PTC Comms ConOps.pdf</a> (2.37 MB)</span>
+</div>
+          </div>
+
+      
+              <div class="my-4">
+          <p style="margin-left:24px"><span style="font-size:12.0pt">Researchers sought to determine how to improve the confidentiality of information passing through the Positive Train Control network without significantly affecting network performance. Phase 1 of the project reviewed requirements and assessed existing technologies. Phase 2 focused on implementation, migration, and deployment challenges. A recommendation to consider widely available algorithms covered by recognized open standards resulted in a project decision to focus on the National Institute of Standards and Technology Lightweight Encryption Algorithms and the ELLI algorithm covered by ISO/IEC 29192-4. Phase 3 identified technology gaps and areas for further research outside the scope of the project. Phase 4, the focus of this report, pulls together the work from Phases 1-3 to propose solutions to improve confidentiality, including a concept of operations for each solution.</span></p>
+
+<p style="margin-left:24px">&nbsp;</p>
+
+        </div>
+      
+            <br>
+
+              <iframe src="//docs.google.com/viewer?url=https://railroads.dot.gov/sites/fra.dot.gov/files/2023-12/PTC%20Comms%20ConOps.pdf&embedded=true" width="100%" height="650px" scrolling="yes" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
+      
+        		<div class="mb-4">
+  			<small>
+  				<em>DOT is committed to ensuring that information is available in appropriate alternative formats to meet the requirements of persons who have a disability. If you require an alternative version of files provided on this page, please contact
+  					<a href="mailto:FRADevops@dot.gov?subject=Accessible Document Version Requested&body=Page: PTC Communications: Cybersecurity Technology Review and Concept of Operations %0d%0a URL: https://railroads.dot.gov/elibrary/ptc-communications-cybersecurity-technology-review-and-concept-operations">FRADevops@dot.gov</a>.</em>
+  			</small>
+  		</div>
+  		
+              <div class='mb-4 py-4'>Last updated: Monday, August 18, 2025</div>
+      
+      <aside class="subcontent section" role="complementary">
+        <!-- This block where the sidecontent is located @media (max-width:800px) -->
+      </aside>
+
+  </div>
+</article>
+
+    </div>
+  </div>
+
+
+                  </section>
+                </div>
+              
+              <!-- Sub Content Region -->
+                          </div>
+          </div>
+              </div>
+
+      
+          </main>
+
+     <footer class="site-footer">
+      <div class="container">
+              <div class="site-footer__top">
+            <section class="region region-footer-left">
+    <div id="block-footercontactinfo" class="block block-fixed-block-content block-fixed-block-contentfooter-contact-info">
+  
+    
+      <div class="content">
+      
+            <div class="clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item"><p>U.S. DEPARTMENT OF TRANSPORTATION</p>
+
+<p><strong>Federal Railroad Administration</strong></p>
+
+<p>1200 NEW JERSEY AVENUE, SE</p>
+
+<p>WASHINGTON, DC 20590</p>
+
+<p>202-366-4000</p>
+</div>
+      
+    </div>
+  </div>
+
+  </section>
+
+            <section class="region region-footer-right">
+    <div id="block-fra-footer-social" class="block block-fixed-block-content block-fixed-block-contentfra-footer-social">
+  
+    
+      <div class="content">
+      
+            <div class="clearfix text-formatted field field--name-body field--type-text-with-summary field--label-hidden field__item"><p><a class="subscribe-button" href="https://public.govdelivery.com/accounts/usdotfra/subscribers/new">Subscribe to email updates</a></p>
+<ul class="footer-social">
+	<li><a href="https://www.facebook.com/USDOTFRA"><span class="fontawesome-icon-inline"><i class="fa-brands fa-facebook-f"></i></span></a></li>
+	<li><a href="https://twitter.com/USDOTFRA"><span class="fontawesome-icon-inline"><i class="fa-brands fa-x-twitter"></i></span></a></li>
+	<li><a href="https://www.linkedin.com/company/federal-railroad-administration"><span class="fontawesome-icon-inline"><i class="fa-brands fa-linkedin-in"></i></span></a></li>
+	<li><a href="http://www.youtube.com/user/usdotfra"><span class="fontawesome-icon-inline"><i class="fa-brands fa-youtube"></i></span></a></li>
+</ul></div>
+      
+    </div>
+  </div>
+
+  </section>
+
+        </div>
+                    <div class="site-footer__bottom">
+            <section class="region region-footer-first">
+      <nav aria-labelledby="block-footeraboutus-menu" id="block-footeraboutus" class="block block-menu navigation menu--footer---about-us">
+      
+  <h2  id="block-footeraboutus-menu">About Us</h2>
+  
+
+        
+              <ul block="block-footeraboutus" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/about-fra/about-fra" class="nav-link nav-link--about-fra-about-fra" data-drupal-link-system-path="node/701">About FRA</a>
+              </li>
+                <li class="nav-item">
+                <a href="/about-fra/resource-center/jobs/job-vacancies" class="nav-link nav-link--about-fra-resource-center-jobs-job-vacancies" data-drupal-link-system-path="node/871">Careers</a>
+              </li>
+                <li class="nav-item">
+                <a href="/about-fra/contact-us" class="nav-link nav-link--about-fra-contact-us" data-drupal-link-system-path="node/1031">Contact Us</a>
+              </li>
+                <li class="nav-item">
+                <a href="/office-administrator/office-civil-rights/office-civil-rights" class="nav-link nav-link--office-administrator-office-civil-rights-office-civil-rights">FRA Civil Rights</a>
+              </li>
+                <li class="nav-item">
+                <a href="/resource-center/how-do-business-fra/how-do-business-fra" class="nav-link nav-link--resource-center-how-do-business-fra-how-do-business-fra" data-drupal-link-system-path="node/851">Doing Business with FRA</a>
+              </li>
+                <li class="nav-item">
+                <a href="/grants-loans/grants-loans" class="nav-link nav-link--grants-loans-grants-loans" data-drupal-link-system-path="node/2766">Grants and Financial Assistance</a>
+              </li>
+                <li class="nav-item">
+                <a href="/railroad-safety/divisions/regional-offices/safety-management-teams" class="nav-link nav-link--railroad-safety-divisions-regional-offices-safety-management-teams" data-drupal-link-system-path="node/2601">Safety Management Teams</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+
+  </section>
+
+            <section class="region region-footer-second">
+      <nav aria-labelledby="block-footerareasofinterest-menu" id="block-footerareasofinterest" class="block block-menu navigation menu--footer---areas-of-interest">
+      
+  <h2  id="block-footerareasofinterest-menu">Areas of Interest</h2>
+  
+
+        
+              <ul block="block-footerareasofinterest" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="/IIJA" class="nav-link nav-link--iija" data-drupal-link-system-path="node/97431">Infrastructure Investment and Jobs Act Information from FRA</a>
+              </li>
+                <li class="nav-item">
+                <a href="/safety-data" class="nav-link nav-link--safety-data" data-drupal-link-system-path="node/21">Safety Data</a>
+              </li>
+                <li class="nav-item">
+                <a href="/legislation-regulations/buy-america/buy-america" class="nav-link nav-link--legislation-regulations-buy-america-buy-america" data-drupal-link-system-path="node/2731">Buy America</a>
+              </li>
+                <li class="nav-item">
+                <a href="http://oli.org/" class="nav-link nav-link-http--oliorg-">Operation Lifesaver</a>
+              </li>
+                <li class="nav-item">
+                <a href="http://rsac.fra.dot.gov/" class="nav-link nav-link-http--rsacfradotgov-">Railroad Safety Advisory Committee</a>
+              </li>
+                <li class="nav-item">
+                <a href="/railroad-safety/partnerships-programs/fra-secure-area" class="nav-link nav-link--railroad-safety-partnerships-programs-fra-secure-area" data-drupal-link-system-path="node/2506">FRA Secure Area</a>
+              </li>
+                <li class="nav-item">
+                <a href="/legislation-regulations/legislation/proactive-disclosure" class="nav-link nav-link--legislation-regulations-legislation-proactive-disclosure" data-drupal-link-system-path="node/4571">Proactive Disclosure</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+
+  </section>
+
+            <section class="region region-footer-third">
+      <nav aria-labelledby="block-footeriama-menu" id="block-footeriama" class="block block-menu navigation menu--footer---i-am-a-">
+      
+  <h2  id="block-footeriama-menu">I Am A...</h2>
+  
+
+        
+              <ul block="block-footeriama" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="http://www.amtrak.com/home" class="nav-link nav-link-http--wwwamtrakcom-home">Railroad Traveler</a>
+              </li>
+                <li class="nav-item">
+                <a href="/about-fra/communications/communications" class="nav-link nav-link--about-fra-communications-communications" data-drupal-link-system-path="node/1036">Reporter</a>
+              </li>
+                <li class="nav-item">
+                <a href="http://oli.org/index.php" class="nav-link nav-link-http--oliorg-indexphp">Educator/Student</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+
+  </section>
+
+            <section class="region region-footer-fourth">
+      <nav aria-labelledby="block-footerpoliciesrightslegal-menu" id="block-footerpoliciesrightslegal" class="block block-menu navigation menu--footer---policies-rights-le">
+      
+  <h2  id="block-footerpoliciesrightslegal-menu">Policies, Rights, Legal</h2>
+  
+
+        
+              <ul block="block-footerpoliciesrightslegal" class="clearfix nav">
+                    <li class="nav-item">
+                <a href="https://www.transportation.gov/about" class="nav-link nav-link-https--wwwtransportationgov-about">About DOT</a>
+              </li>
+                <li class="nav-item">
+                <a href="https://www.transportation.gov/budget/dot-budget-and-performance" class="nav-link nav-link-https--wwwtransportationgov-budget-dot-budget-and-performance">Budget and Performance</a>
+              </li>
+                <li class="nav-item">
+                <a href="https://www.transportation.gov/civil-rights" class="nav-link nav-link-https--wwwtransportationgov-civil-rights">Civil Rights</a>
+              </li>
+                <li class="nav-item">
+                <a href="/freedom-information-act-foia" class="nav-link nav-link--freedom-information-act-foia" data-drupal-link-system-path="node/991">FOIA</a>
+              </li>
+                <li class="nav-item">
+                <a href="https://www.transportation.gov/dot-information-dissemination-quality-guidelines" class="nav-link nav-link-https--wwwtransportationgov-dot-information-dissemination-quality-guidelines">Information Quality</a>
+              </li>
+                <li class="nav-item">
+                <a href="https://www.transportation.gov/civil-rights/civil-rights-awareness-enforcement/no-fear-act" class="nav-link nav-link-https--wwwtransportationgov-civil-rights-civil-rights-awareness-enforcement-no-fear-act">No FEAR Act</a>
+              </li>
+                <li class="nav-item">
+                <a href="https://www.oig.dot.gov/" class="nav-link nav-link-https--wwwoigdotgov-">Office of Inspector General</a>
+              </li>
+                <li class="nav-item">
+                <a href="https://www.transportation.gov/dot-website-privacy-policy" class="nav-link nav-link-https--wwwtransportationgov-dot-website-privacy-policy">Privacy Policy</a>
+              </li>
+                <li class="nav-item">
+                <a href="https://www.usa.gov/" class="nav-link nav-link-https--wwwusagov-">USA.gov</a>
+              </li>
+                <li class="nav-item">
+                <a href="https://www.transportation.gov/vulnerability-disclosure-policy" class="nav-link nav-link-https--wwwtransportationgov-vulnerability-disclosure-policy">Vulnerability Disclosure Policy</a>
+              </li>
+                <li class="nav-item">
+                <a href="https://www.transportation.gov/web-policies" class="nav-link nav-link-https--wwwtransportationgov-web-policies">Web Policies and Notices</a>
+              </li>
+                <li class="nav-item">
+                <a href="https://www.transportation.gov/web-standards" class="nav-link nav-link-https--wwwtransportationgov-web-standards">Web Standards</a>
+              </li>
+        </ul>
+  
+
+
+  </nav>
+
+  </section>
+
+          
+        </div>
+          </div>
+  </footer>
+
+  </div>
+</div>
+
+  </div>
+
+    
+    <script src="/sites/fra.dot.gov/files/js/js_6dBvw8RsBX2GF4KT5zBi0pwPOBTQnrdV5X-xqMAtb5Y.js?scope=footer&amp;delta=0&amp;language=en&amp;theme=fra&amp;include=eJxdjlEOwzAIQy-UjiNFNGFRVhoiIFJ7-0Xr-tM__GwjJ2HGbnVlSRskUQp0dGw5psuhiMxwseVmM-Nc2wZZR0d-_WV4K0JhWZEX83OiEopI4fmkIZ9ek8EThF0y8rPWh5YZ-uARu0oiM1FwraWQxp8ZzOckZGkUnfbO6GSwSj6XxGgWBnvdqQ24jy8R3114"></script>
+<script src="/modules/contrib/collapsiblock/theme/dist/collapsiblock.js?tf1puv" type="module"></script>
+<script src="/sites/fra.dot.gov/files/js/js_klg23l-dy-nejt7R3o409VQNM7ED-OLapMlcGg7FPfc.js?scope=footer&amp;delta=2&amp;language=en&amp;theme=fra&amp;include=eJxdjlEOwzAIQy-UjiNFNGFRVhoiIFJ7-0Xr-tM__GwjJ2HGbnVlSRskUQp0dGw5psuhiMxwseVmM-Nc2wZZR0d-_WV4K0JhWZEX83OiEopI4fmkIZ9ek8EThF0y8rPWh5YZ-uARu0oiM1FwraWQxp8ZzOckZGkUnfbO6GSwSj6XxGgWBnvdqQ24jy8R3114"></script>
+<script src="/modules/contrib/purge_ajax_processor/js/trigger_purge.js?tf1puv" defer async></script>
+<script src="/sites/fra.dot.gov/files/js/js_hApV7douVzMQ-1gpxBNyIR_SQYvukkCqJRQwAqv89AE.js?scope=footer&amp;delta=4&amp;language=en&amp;theme=fra&amp;include=eJxdjlEOwzAIQy-UjiNFNGFRVhoiIFJ7-0Xr-tM__GwjJ2HGbnVlSRskUQp0dGw5psuhiMxwseVmM-Nc2wZZR0d-_WV4K0JhWZEX83OiEopI4fmkIZ9ek8EThF0y8rPWh5YZ-uARu0oiM1FwraWQxp8ZzOckZGkUnfbO6GSwSj6XxGgWBnvdqQ24jy8R3114"></script>
+
+  <noscript><img src="https://railroads.dot.gov/akam/13/pixel_44316457?a=dD1jODI3Y2U3NmU0ZjNkY2E4ZThkOWQ3ZWJhNDY3YWQ0NjEwNjUyODU5JmpzPW9mZg==" style="visibility: hidden; position: absolute; left: -999px; top: -999px;" /></noscript></body>
+</html>
