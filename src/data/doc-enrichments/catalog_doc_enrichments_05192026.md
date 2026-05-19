@@ -224,3 +224,169 @@ enrichment_method: ollama-qwen3.6:27b
 - **Extraction Timestamp**: 2026-05-19T00:25:00
 
 ---
+
+ ## Mozilla NSS
+
+- **Reference ID**: Mozilla NSS
+- **Title**: Mozilla NSS
+- **Authors**: Cryptographic Software/Libraries
+- **Publication Date**: 2024-01-01
+- **Last Updated**: 2026-05-18
+- **Document Status**: Verified
+- **Main Topic**: Overview of Mozilla Network Security Services (NSS) library capabilities and development resources.
+- **PQC Algorithms Covered**: ML-KEM
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: Mozilla NSS; Firefox
+- **Protocols Covered**: TLS; S/MIME; X.509
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Mozilla NSS supports cross-platform security-enabled applications; X25519MLKEM768 hybrid PQC TLS is available in Firefox 128; NSS supports multiple security standards including PKCS and X.509; Developers can contribute to NSS via provided documentation
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid PQC TLS
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: X25519MLKEM768 hybrid PQC TLS shipped in Firefox 128
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.3
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: X25519MLKEM768 hybrid PQC TLS shipped in Firefox 128
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: hybrid-crypto; tls-basics
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Source Document**: Mozilla_NSS.html (18,974 bytes, 2,788 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T00:27:25
+
+---
+
+## CIRCL
+
+- **Reference ID**: CIRCL
+- **Title**: CIRCL
+- **Authors**: Post-Quantum Cryptography Libraries
+- **Publication Date**: 2024-01-01
+- **Last Updated**: 2026-05-18
+- **Document Status**: Verified
+- **Main Topic**: CIRCL is a Go library providing production-ready post-quantum cryptographic algorithms and hybrid TLS groups.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; FrodoKEM; CSIDH
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: CIRCL
+- **Protocols Covered**: TLS
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: X25519; SecP256r1
+- **Key Takeaways**: CIRCL provides production-ready ML-KEM and ML-DSA implementations in Go; The library supports hybrid PQC TLS groups including X25519MLKEM768 and SecP256r1MLKEM768; It includes additional PQC schemes like FrodoKEM and CSIDH; The library is actively used in Cloudflare's TLS deployments
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: hybrid PQC TLS groups
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: Yes
+- **Hybrid PQC KEM Evidence**: hybrid PQC TLS groups (X25519MLKEM768, SecP256r1MLKEM768)
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: TLS-1.3
+- **PQC Heatmap Protocols Evidence**: TLS-1.3: hybrid PQC TLS groups (X25519MLKEM768, SecP256r1MLKEM768)
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer
+- **Implementation Prerequisites**: Go
+- **Relevant PQC Today Features**: Algorithms; hybrid-crypto; tls-basics
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice; Isogeny
+- **PQC Round**: Standardised
+- **Extraction Note**: No source text available
+- **Source Document**: CIRCL.md (8,707 bytes, no text extracted)
+- **Extraction Timestamp**: 2026-05-19T00:29:24
+
+---
+
+## IBM z16 Crypto Express 8S
+
+- **Reference ID**: IBM z16 Crypto Express 8S
+- **Title**: IBM z16 Crypto Express 8S
+- **Authors**: Hardware Security Module (HSM) Software
+- **Publication Date**: 2022-05-31
+- **Last Updated**: 2026-05-18
+- **Document Status**: Verified
+- **Main Topic**: IBM CEX8S is a high-assurance HSM for IBM Z mainframes providing quantum-safe key operations via EP11 firmware with ML-KEM and ML-DSA support.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: IBM CEX8S; EP11 firmware
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: HSM
+- **Standardization Bodies**: None detected
+- **Compliance Frameworks Referenced**: FIPS 140-3
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: IBM CEX8S provides FIPS 140-3 Level 4 assurance for IBM Z mainframes; The hardware supports quantum-safe key operations via EP11 firmware; ML-KEM and ML-DSA algorithms are supported for post-quantum security; This is a hardware-based solution for enterprise mainframe environments
+- **Security Levels & Parameters**: FIPS 140-3 Level 4
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; CISO; Operations
+- **Implementation Prerequisites**: IBM Z mainframe; EP11 firmware
+- **Relevant PQC Today Features**: hsm-pqc; Algorithms; Compliance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Math Family**: Lattice
+- **PQC Round**: Standardised
+- **Source Document**: IBM_z16_Crypto_Express_8S.html (136,765 bytes, 876 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T00:31:26
+
+---
