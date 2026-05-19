@@ -244,10 +244,10 @@ export const MigrateView: React.FC = () => {
     // target row. Persisted activeLayer / category / vendor / license filters
     // in localStorage otherwise outlive the user's intent and a /migrate?software=foo
     // link can return 0 results because a stale "Cloud" layer is still active.
-    const isDeepLinkEntry =
-      searchParams.get('from_search') === '1' ||
-      searchParams.has('software') ||
-      searchParams.has('product')
+    // NOTE: ?product= is intentionally excluded — it is written by the component
+    // itself when a user expands a row (useEffect@148) and must not trigger filter
+    // resets on every row expansion, which would cause a render loop.
+    const isDeepLinkEntry = searchParams.get('from_search') === '1' || searchParams.has('software')
     if (isDeepLinkEntry) {
       setActiveLayer('All')
       setFlatCategoryFilter('All')
