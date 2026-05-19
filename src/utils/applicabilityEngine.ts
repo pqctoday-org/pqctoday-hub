@@ -185,7 +185,7 @@ const NAICS_2DIGIT_TO_FREEFORM: Record<string, string[]> = {
   '52': ['Finance & Banking', 'Finance & Insurance', 'Banking', 'financial'],
   '92': ['Government & Defense', 'Government', 'Defense', 'Public Administration'],
   '54': ['Technology', 'Professional Services'],
-  '51': ['Technology', 'Information Technology', 'Software'],
+  '51': ['Technology', 'Information Technology', 'Software', 'Telecommunications', 'Telecom'],
   '62': ['Healthcare', 'Life Sciences', 'Medical'],
   '22': ['Energy & Utilities', 'Energy', 'Utilities'],
   '48': ['Transportation', 'Logistics'],
