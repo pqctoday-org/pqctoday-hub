@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
-import { ChevronDown, BookOpen, Award, Workflow } from 'lucide-react'
+import { ChevronDown, BookOpen, Award } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-type SecondaryTab = 'standards' | 'certification' | 'cswp39'
+type SecondaryTab = 'standards' | 'certification'
 
 interface TabMeta {
   value: SecondaryTab
@@ -15,7 +15,6 @@ interface TabMeta {
 const SECONDARY_TAB_META: TabMeta[] = [
   { value: 'standards', label: 'Standardization Bodies', icon: <BookOpen size={14} /> },
   { value: 'certification', label: 'Certification Schemes', icon: <Award size={14} /> },
-  { value: 'cswp39', label: 'CSWP.39 Framework', icon: <Workflow size={14} /> },
 ]
 
 interface MoreTabsMenuProps {

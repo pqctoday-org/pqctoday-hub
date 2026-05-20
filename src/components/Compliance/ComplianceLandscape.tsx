@@ -21,6 +21,8 @@ import {
   Bookmark,
   Award,
   Globe,
+  SlidersHorizontal,
+  Info,
 } from 'lucide-react'
 import {
   complianceFrameworks,
@@ -43,6 +45,7 @@ import { FrameworkConceptGraphModal } from './FrameworkConceptGraphModal'
 import { resolveTimelineRef } from '@/utils/timelineResolver'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
 import { SemanticSearchHint } from '@/components/common/SemanticSearchHint'
+import { useTrustTierFilter } from '@/components/common/TrustTierFilter'
 
 // ── Deadline helpers ────────────────────────────────────────────────────
 
@@ -382,6 +385,7 @@ function FrameworkCard({
 }) {
   const [expanded, setExpanded] = useState(false)
   const [graphOpen, setGraphOpen] = useState(false)
+  const [maturityOpen, setMaturityOpen] = useState(false)
   const urgency = deadlineUrgency(fw.deadline)
   const hasRefs = fw.libraryRefs.length > 0 || fw.timelineRefs.length > 0
   const isSelected = useComplianceSelectionStore((s) => s.myFrameworks.includes(fw.id))
@@ -389,11 +393,13 @@ function FrameworkCard({
   const graphConceptId = conceptIdForFramework(fw)
   const showGraphIcon = graphConceptId !== undefined && hasGraphEdges(graphConceptId)
 
-  // Count maturity requirements reachable via this framework's library refs
-  const maturityCount = useMemo(() => {
-    if (!maturityByRefId) return 0
-    return fw.libraryRefs.reduce((sum, ref) => sum + (maturityByRefId.get(ref)?.length ?? 0), 0)
+  // All maturity requirements reachable via this framework's library refs
+  const maturityItems = useMemo(() => {
+    if (!maturityByRefId) return []
+    return fw.libraryRefs.flatMap((ref) => maturityByRefId.get(ref) ?? [])
   }, [fw.libraryRefs, maturityByRefId])
+
+  const maturityCount = maturityItems.length
 
   const maturityRefId = useMemo(() => {
     if (!maturityByRefId) return null
@@ -602,19 +608,21 @@ function FrameworkCard({
               Site
             </a>
           )}
-          {maturityCount > 0 && maturityRefId && onNavigateToCswp39 && (
+          {maturityCount > 0 && onNavigateToCswp39 && (
             <Button
               type="button"
               variant="ghost"
               size="sm"
               onClick={(e) => {
                 e.stopPropagation()
-                onNavigateToCswp39(maturityRefId)
+                setMaturityOpen((p) => !p)
               }}
-              className="h-auto inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors border border-primary/20"
+              aria-expanded={maturityOpen}
+              className={`h-auto inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded font-medium transition-colors border ${maturityOpen ? 'bg-primary/20 text-primary border-primary/40' : 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20'}`}
               title="View CSWP.39 governance requirements extracted from this framework"
             >
-              {maturityCount} CSWP.39 req{maturityCount !== 1 ? 's' : ''} →
+              {maturityCount} CSWP.39 req{maturityCount !== 1 ? 's' : ''}
+              {maturityOpen ? <ChevronUp size={8} /> : <ChevronDown size={8} />}
             </Button>
           )}
           {fw.libraryRefs.length > 0 && (
@@ -674,6 +682,55 @@ function FrameworkCard({
             >
               {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
               {expanded ? 'Hide' : 'Notes'}
+            </Button>
+          )}
+        </div>
+      )}
+
+      {/* Inline CSWP.39 requirements panel */}
+      {maturityOpen && maturityItems.length > 0 && (
+        // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+        <div
+          className="border-t border-border pt-2 space-y-1.5"
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+          aria-label="CSWP.39 governance requirements"
+        >
+          {maturityItems.slice(0, 6).map((req, i) => (
+            <div key={i} className="flex items-start gap-2 text-[11px]">
+              <span
+                className={`shrink-0 mt-0.5 px-1.5 py-0 rounded text-[9px] font-semibold leading-5 ${
+                  req.maturityLevel === 1
+                    ? 'bg-status-error/15 text-status-error'
+                    : req.maturityLevel === 2
+                      ? 'bg-status-warning/15 text-status-warning'
+                      : req.maturityLevel === 3
+                        ? 'bg-status-info/15 text-status-info'
+                        : 'bg-status-success/15 text-status-success'
+                }`}
+              >
+                L{req.maturityLevel}
+              </span>
+              <span className="shrink-0 mt-0.5 text-[9px] uppercase tracking-wide text-muted-foreground font-medium leading-5 min-w-[56px]">
+                {req.pillar}
+              </span>
+              <span className="text-foreground/80 leading-relaxed line-clamp-2">
+                {req.requirement}
+              </span>
+            </div>
+          ))}
+          {maturityRefId && onNavigateToCswp39 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation()
+                onNavigateToCswp39(maturityRefId)
+              }}
+              className="h-auto text-[10px] px-0 py-0.5 text-primary hover:text-primary/80 font-medium"
+            >
+              {maturityItems.length > 6 ? `+${maturityItems.length - 6} more · ` : ''}Open in
+              CSWP.39 explorer →
             </Button>
           )}
         </div>
@@ -998,6 +1055,15 @@ export function ComplianceLandscape({
   const [localSearch, setLocalSearch] = useState<string>('')
   const [localSort, setLocalSort] = useState<FrameworkSortOption>('deadline')
   const [localView, setLocalView] = useState<ViewMode>('cards')
+  const [showMoreFilters, setShowMoreFilters] = useState(
+    () =>
+      (orgFilterProp ?? 'All') !== 'All' ||
+      (industryFilterProp ?? 'All') !== 'All' ||
+      (countryFilterProp ?? 'All') !== 'All'
+  )
+  const [pqcRequiredOnly, setPqcRequiredOnly] = useState(false)
+  const [hasDeadlineOnly, setHasDeadlineOnly] = useState(false)
+  const tierFilter = useTrustTierFilter()
 
   const orgFilter = orgFilterProp ?? localOrg
   const industryFilter = industryFilterProp ?? localIndustry
@@ -1008,6 +1074,10 @@ export function ComplianceLandscape({
   const searchFilterText = searchTextProp ?? localSearch
   const sortBy = sortByProp ?? localSort
   const viewMode = viewModeProp ?? localView
+  const secondaryFilterCount =
+    (orgFilter !== 'All' ? 1 : 0) +
+    (industryFilter !== 'All' ? 1 : 0) +
+    (countryFilter !== 'All' ? 1 : 0)
 
   // Phase 3 — semantic supplement. Queries like "banking sector
   // cryptographic resilience" surface DORA, PCI-DSS, MAS without
@@ -1119,8 +1189,8 @@ export function ComplianceLandscape({
   // Deadline phase options
   const deadlineItems = DEADLINE_FILTER_OPTIONS.map((o) => ({ id: o.id, label: o.label }))
 
-  // Apply filters + sort
-  const displayedFrameworks = useMemo(() => {
+  // Apply user filters + sort (quick-filter toggles applied separately below)
+  const baseFrameworks = useMemo(() => {
     let result = [...sourceFrameworks]
 
     if (orgFilter !== 'All') {
@@ -1171,7 +1241,14 @@ export function ComplianceLandscape({
     myFrameworks,
   ])
 
-  // Stats
+  // Quick-filter toggles applied on top of base result
+  const displayedFrameworks = useMemo(() => {
+    if (pqcRequiredOnly) return baseFrameworks.filter((f) => f.requiresPQC)
+    if (hasDeadlineOnly) return baseFrameworks.filter((f) => extractYear(f.deadline) !== null)
+    return baseFrameworks
+  }, [baseFrameworks, pqcRequiredOnly, hasDeadlineOnly])
+
+  // Stats — always reflect what's currently visible in the grid
   const pqcCount = displayedFrameworks.filter((f) => f.requiresPQC).length
   const deadlineCount = displayedFrameworks.filter((f) => extractYear(f.deadline) !== null).length
 
@@ -1186,22 +1263,60 @@ export function ComplianceLandscape({
 
   return (
     <div className="space-y-4">
-      {/* Summary stats */}
-      <div className="flex flex-wrap gap-4 text-sm">
-        <div className="glass-panel px-4 py-2 flex items-center gap-2">
+      {/* Summary stats — PQC and Deadlines panels are clickable filter toggles */}
+      <div className="flex flex-wrap items-center gap-3 text-sm">
+        <div className="glass-panel px-4 py-2 flex items-center gap-2 select-none">
           <span className="text-2xl font-bold text-foreground">{displayedFrameworks.length}</span>
-          <span className="text-muted-foreground">Entries</span>
+          <span className="text-muted-foreground">
+            {pqcRequiredOnly || hasDeadlineOnly ? 'Shown' : 'Entries'}
+          </span>
         </div>
-        <div className="glass-panel px-4 py-2 flex items-center gap-2">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => {
+            setPqcRequiredOnly((v) => !v)
+            setHasDeadlineOnly(false)
+          }}
+          className={`glass-panel px-4 py-2 flex items-center gap-2 h-auto text-sm rounded-lg transition-all ${
+            pqcRequiredOnly
+              ? 'ring-2 ring-status-success/40 bg-status-success/5'
+              : 'hover:bg-status-success/5'
+          }`}
+          title={pqcRequiredOnly ? 'Clear PQC filter' : 'Show only PQC-required entries'}
+          aria-pressed={pqcRequiredOnly}
+        >
           <ShieldCheck size={16} className="text-status-success" />
           <span className="text-2xl font-bold text-foreground">{pqcCount}</span>
           <span className="text-muted-foreground">Require PQC</span>
-        </div>
-        <div className="glass-panel px-4 py-2 flex items-center gap-2">
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => {
+            setHasDeadlineOnly((v) => !v)
+            setPqcRequiredOnly(false)
+          }}
+          className={`glass-panel px-4 py-2 flex items-center gap-2 h-auto text-sm rounded-lg transition-all ${
+            hasDeadlineOnly
+              ? 'ring-2 ring-status-warning/40 bg-status-warning/5'
+              : 'hover:bg-status-warning/5'
+          }`}
+          title={
+            hasDeadlineOnly ? 'Clear deadline filter' : 'Show only entries with explicit deadlines'
+          }
+          aria-pressed={hasDeadlineOnly}
+        >
           <Clock size={16} className="text-status-warning" />
           <span className="text-2xl font-bold text-foreground">{deadlineCount}</span>
           <span className="text-muted-foreground">Explicit Deadlines</span>
-        </div>
+        </Button>
+        {tierFilter.length > 0 && (
+          <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Info size={11} className="text-status-info shrink-0" />
+            Trust tier filter active — some entries are hidden.
+          </p>
+        )}
       </div>
 
       {/* Timeline visualization (desktop only) — only when showDeadlineTimeline=true */}
@@ -1211,48 +1326,29 @@ export function ComplianceLandscape({
         </div>
       )}
 
-      {/* Library-style filter band */}
-      <div className="bg-card border border-border rounded-lg shadow-sm p-2 flex items-center gap-2 flex-wrap">
-        {/* Organization dropdown */}
-        <div className="flex-1 basis-[calc(50%-0.25rem)] min-w-0 md:flex-none md:basis-auto md:min-w-[140px]">
-          <FilterDropdown
-            items={orgItems}
-            selectedId={orgFilter}
-            onSelect={setOrgFilter}
-            defaultLabel="Organization"
-            noContainer
-            opaque
-          />
-        </div>
-
-        {/* Industry dropdown + clear */}
-        <div className="flex items-center gap-1 flex-1 basis-[calc(50%-0.25rem)] min-w-0 md:flex-none md:basis-auto">
-          <div className="flex-1 min-w-0 md:flex-none md:min-w-[140px]">
-            <FilterDropdown
-              items={industryItems}
-              selectedId={industryFilter}
-              onSelect={setIndustryFilter}
-              defaultLabel="Industry"
-              noContainer
-              opaque
+      {/* Filter band — primary controls always visible; org · industry · country behind "More" */}
+      <div className="bg-card border border-border rounded-lg shadow-sm p-2 space-y-2">
+        {/* Primary row */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Search */}
+          <div className="relative flex-1 min-w-[160px]">
+            <Search
+              size={14}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+              aria-hidden="true"
+            />
+            <input
+              type="text"
+              placeholder="Search standards..."
+              aria-label="Search compliance entries"
+              value={searchInputVal}
+              onChange={(e) => setSearchText(e.target.value)}
+              className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-8 pr-4 py-1.5 text-xs focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
             />
           </div>
-          {industryFilter !== 'All' && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIndustryFilter('All')}
-              className="h-auto py-1 px-2 text-xs bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20"
-              aria-label="Clear industry filter"
-            >
-              All
-            </Button>
-          )}
-        </div>
 
-        {/* Region dropdown + clear */}
-        <div className="flex items-center gap-1 flex-1 basis-[calc(50%-0.25rem)] min-w-0 md:flex-none md:basis-auto">
-          <div className="flex-1 min-w-0 md:flex-none md:min-w-[150px]">
+          {/* Region */}
+          <div className="flex items-center gap-1 flex-none">
             <FilterDropdown
               items={regionItems}
               selectedId={regionFilter}
@@ -1261,48 +1357,21 @@ export function ComplianceLandscape({
               noContainer
               opaque
             />
+            {regionFilter !== 'All' && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setRegionFilter('All')}
+                className="h-auto py-1 px-2 text-xs bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20"
+                aria-label="Clear region filter"
+              >
+                All
+              </Button>
+            )}
           </div>
-          {regionFilter !== 'All' && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setRegionFilter('All')}
-              className="h-auto py-1 px-2 text-xs bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20"
-              aria-label="Clear region filter"
-            >
-              All
-            </Button>
-          )}
-        </div>
 
-        {/* Country dropdown + clear */}
-        <div className="flex items-center gap-1 flex-1 basis-[calc(50%-0.25rem)] min-w-0 md:flex-none md:basis-auto">
-          <div className="flex-1 min-w-0 md:flex-none md:min-w-[150px]">
-            <FilterDropdown
-              items={countryItems}
-              selectedId={countryFilter}
-              onSelect={setCountryFilter}
-              defaultLabel="Country"
-              noContainer
-              opaque
-            />
-          </div>
-          {countryFilter !== 'All' && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setCountryFilter('All')}
-              className="h-auto py-1 px-2 text-xs bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20"
-              aria-label="Clear country filter"
-            >
-              All
-            </Button>
-          )}
-        </div>
-
-        {/* Deadline dropdown + clear */}
-        <div className="flex items-center gap-1 flex-1 basis-[calc(50%-0.25rem)] min-w-0 md:flex-none md:basis-auto">
-          <div className="flex-1 min-w-0 md:flex-none md:min-w-[150px]">
+          {/* Deadline */}
+          <div className="flex items-center gap-1 flex-none">
             <FilterDropdown
               items={deadlineItems}
               selectedId={deadlineFilter}
@@ -1311,69 +1380,145 @@ export function ComplianceLandscape({
               noContainer
               opaque
             />
+            {deadlineFilter !== 'All' && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setDeadlineFilter('All')}
+                className="h-auto py-1 px-2 text-xs bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20"
+                aria-label="Clear deadline filter"
+              >
+                All
+              </Button>
+            )}
           </div>
-          {deadlineFilter !== 'All' && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setDeadlineFilter('All')}
-              className="h-auto py-1 px-2 text-xs bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20"
-              aria-label="Clear deadline filter"
-            >
-              All
-            </Button>
-          )}
-        </div>
 
-        {/* Search input */}
-        <div className="relative flex-1 min-w-[160px]">
-          <Search
-            size={14}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-            aria-hidden="true"
-          />
-          <input
-            type="text"
-            placeholder="Search standards..."
-            aria-label="Search compliance entries"
-            value={searchInputVal}
-            onChange={(e) => setSearchText(e.target.value)}
-            className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-8 pr-4 py-1.5 text-xs focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
-          />
-        </div>
-
-        {/* Sort (cards only) */}
-        {viewMode === 'cards' && (
-          <FilterDropdown
-            items={sortItems}
-            selectedId={sortBy}
-            onSelect={(id) => setSortBy(id as FrameworkSortOption)}
-            defaultLabel="Sort"
-            noContainer
-            opaque
-          />
-        )}
-
-        {/* View toggle */}
-        <ViewToggle mode={viewMode} onChange={setViewMode} />
-
-        {/* "Show mine" toggle — visible when user has selections */}
-        {myFrameworks.length > 0 && (
+          {/* More Filters toggle */}
           <Button
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => setShowOnlyMine(!showOnlyMine)}
+            onClick={() => setShowMoreFilters((v) => !v)}
             className={`h-auto text-xs px-3 py-1.5 border font-medium whitespace-nowrap ${
-              showOnlyMine
-                ? 'border-primary bg-primary/10 text-primary'
+              showMoreFilters || secondaryFilterCount > 0
+                ? 'border-primary/30 bg-primary/10 text-primary'
                 : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
             }`}
-            aria-pressed={showOnlyMine}
+            aria-expanded={showMoreFilters}
           >
-            <BookmarkCheck size={12} />
-            My ({myFrameworks.length})
+            <SlidersHorizontal size={12} />
+            {secondaryFilterCount > 0 ? `Filters (${secondaryFilterCount})` : 'More'}
           </Button>
+
+          {/* Right-side controls */}
+          <div className="flex items-center gap-2 ml-auto">
+            {viewMode === 'cards' && (
+              <FilterDropdown
+                items={sortItems}
+                selectedId={sortBy}
+                onSelect={(id) => setSortBy(id as FrameworkSortOption)}
+                defaultLabel="Sort"
+                noContainer
+                opaque
+              />
+            )}
+            <ViewToggle mode={viewMode} onChange={setViewMode} />
+            {myFrameworks.length > 0 && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowOnlyMine(!showOnlyMine)}
+                className={`h-auto text-xs px-3 py-1.5 border font-medium whitespace-nowrap ${
+                  showOnlyMine
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+                }`}
+                aria-pressed={showOnlyMine}
+              >
+                <BookmarkCheck size={12} />
+                My ({myFrameworks.length})
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Secondary row — org · industry · country (collapsed by default;
+            always shown when any secondary filter is active so users can see
+            what's applied even if the toggle is closed). */}
+        {(showMoreFilters || secondaryFilterCount > 0) && (
+          <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-border/50 animate-in fade-in slide-in-from-top-1 duration-150">
+            <div className="flex-1 basis-[calc(33%-0.5rem)] min-w-[130px]">
+              <FilterDropdown
+                items={orgItems}
+                selectedId={orgFilter}
+                onSelect={setOrgFilter}
+                defaultLabel="Organization"
+                noContainer
+                opaque
+              />
+            </div>
+            <div className="flex items-center gap-1 flex-1 basis-[calc(33%-0.5rem)] min-w-0">
+              <div className="flex-1 min-w-[130px]">
+                <FilterDropdown
+                  items={industryItems}
+                  selectedId={industryFilter}
+                  onSelect={setIndustryFilter}
+                  defaultLabel="Industry"
+                  noContainer
+                  opaque
+                />
+              </div>
+              {industryFilter !== 'All' && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIndustryFilter('All')}
+                  className="h-auto py-1 px-2 text-xs bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20"
+                  aria-label="Clear industry filter"
+                >
+                  All
+                </Button>
+              )}
+            </div>
+            <div className="flex items-center gap-1 flex-1 basis-[calc(33%-0.5rem)] min-w-0">
+              <div className="flex-1 min-w-[130px]">
+                <FilterDropdown
+                  items={countryItems}
+                  selectedId={countryFilter}
+                  onSelect={setCountryFilter}
+                  defaultLabel="Country"
+                  noContainer
+                  opaque
+                />
+              </div>
+              {countryFilter !== 'All' && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setCountryFilter('All')}
+                  className="h-auto py-1 px-2 text-xs bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20"
+                  aria-label="Clear country filter"
+                >
+                  All
+                </Button>
+              )}
+            </div>
+            {secondaryFilterCount > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setOrgFilter('All')
+                  setIndustryFilter('All')
+                  setCountryFilter('All')
+                }}
+                className="ml-auto h-auto py-1 px-2 text-xs text-muted-foreground hover:text-foreground whitespace-nowrap"
+              >
+                Clear secondary
+              </Button>
+            )}
+          </div>
         )}
       </div>
 
@@ -1395,25 +1540,31 @@ export function ComplianceLandscape({
       {/* Content */}
       {viewMode === 'cards' ? (
         displayedFrameworks.length === 0 ? (
-          <div className="glass-panel p-8 text-center text-muted-foreground space-y-1">
-            <p>No entries match the selected filters.</p>
+          <div className="glass-panel p-8 text-center text-muted-foreground space-y-2">
+            <p>No entries match your current selection.</p>
             {searchFilterText.trim() && semantic.loading && (
-              <p className="text-xs text-muted-foreground/80">
-                Semantic search is still loading — results may refine in a moment.
+              <p className="text-xs text-muted-foreground/70">
+                Semantic search is still loading — results may update in a moment.
               </p>
             )}
             {searchFilterText.trim() && !semantic.loading && semantic.mode === 'semantic' && (
-              <p className="text-xs text-muted-foreground/80">
-                No direct or semantically related framework found. Try broadening your filters or
-                rephrasing the query.
+              <p className="text-xs text-muted-foreground/70">
+                Neither keyword nor semantic matching found a framework for &ldquo;
+                {searchFilterText.trim()}&rdquo;. Try rephrasing, or clear a Region or Deadline
+                filter to widen the scope.
               </p>
             )}
-            {searchFilterText.trim() && semantic.mode === 'lexical' && (
-              <p className="text-xs text-muted-foreground/80">
-                Try broadening your filters or different keywords.
+            {searchFilterText.trim() && !semantic.loading && semantic.mode === 'lexical' && (
+              <p className="text-xs text-muted-foreground/70">
+                No keyword match for &ldquo;{searchFilterText.trim()}&rdquo;. Semantic search is not
+                yet available — try different terms, or clear a filter.
               </p>
             )}
-            {!searchFilterText.trim() && <p className="text-xs">Try broadening your selection.</p>}
+            {!searchFilterText.trim() && (
+              <p className="text-xs">
+                Try clearing a Region, Deadline, or type filter to widen the results.
+              </p>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">

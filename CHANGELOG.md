@@ -21,6 +21,38 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### UX — Compliance page SWOT improvements (2026-05-19)
+
+Eight targeted improvements from a SWOT analysis of the `/compliance` page, spanning maintainability, discoverability, and mobile UX.
+
+**T3 — Persona hint data extracted**
+
+`INDUSTRY_COMPLIANCE_HINT` and `REGION_COMPLIANCE_HINT` moved from inline constants inside `ComplianceView` to `src/data/compliancePersonaHints.ts`. Carries a maintenance comment listing the three triggers that require a review (new industry in the Assessment wizard, new certification scheme in CSV, NIST/EU guidance change). Single maintenance surface instead of hunting through 1,600-line view.
+
+**W4 / T6 — CSWP.39 tab + contextual banner**
+
+CSWP.39 promoted from a hidden "More" dropdown to a permanent desktop tab trigger. When a user jumps to a framework from the CSWP.39 cross-walk, the context banner now displays `"Cross-walk result for '[query]'"` so the origin of the pre-filtered view is always clear. Dismiss and Return buttons both clear the query string.
+
+**O5 — Inline CSWP.39 requirements on framework cards**
+
+Framework cards in the Landscape view now carry an expandable CSWP.39 requirements panel. Clicking the CSWP.39 chip on a card toggles up to 6 requirement rows inline — each tagged with a maturity level badge (L1–L4, colour-coded `error/warning/info/success`) and a pillar label. An "Open in CSWP.39 explorer →" link at the bottom navigates to the full cross-walk for that reference ID.
+
+**T8 / W11 — URL state hook extracted**
+
+All URL-synced filter state (30+ values) and their mechanical handlers extracted from the 1,630-line `ComplianceView` into `src/components/Compliance/useComplianceUrlState.ts`. `ComplianceView` now calls the hook and retains only higher-level tab handlers (CSWP.39 jump, tab change, CSV export).
+
+**T5 — Mobile virtualization replaces pagination**
+
+`ComplianceTable` mobile card list now uses `useVirtualizer` against the same `tableContainerRef` scroll container as the desktop table — rendering all records on demand instead of paginating at 50 items. The Previous/Next/Page-X-of-Y pagination nav is replaced by a plain record count strip ("N records" / "N records (filtered from M)") that is accurate for both desktop and mobile. Filter changes scroll the container to top instead of resetting a page number.
+
+**W3 — Progressive filter disclosure improvements**
+
+The secondary filter row (Org / Industry / Country) in `ComplianceLandscape` now auto-reveals when any secondary filter is active via URL param or persona seeding — no longer requires the user to click "More" to discover an active filter. The row animates in (`fade-in slide-in-from-top-1`). A "Clear secondary" button appears at the right edge of the secondary row when any of the three filters is set, clearing all three in one tap.
+
+**W1 / W2 — Compact mobile nav card with inline type facet**
+
+The mobile section strip is now wrapped in a unified `bg-card border rounded-xl` container. Primary tab buttons reduced to `py-1.5` (touch target `min-h-[44px]` preserved). When the Explore section is active, `LandscapeTypeFacet` (Regulations / Standards / Certifications / Bodies chips) appears as a second row inside the nav card with an animated reveal — the type facet is no longer a separate element below the fold. Content area starts immediately after the nav card.
+
 ### UX — Learn page improvements (2026-05-19)
 
 A comprehensive accessibility, consistency, and usability pass across the `/learn` section.

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
-import { useSearchParams, Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
-import { ComplianceTable, type SortColumn, type SortDirection } from './ComplianceTable'
+import { ComplianceTable } from './ComplianceTable'
 import {
   ComplianceLandscape,
   DeadlineTimeline,
@@ -33,7 +33,7 @@ import { ApplicabilityPanel } from '../applicability/ApplicabilityPanel'
 import { LearningFrameBanner } from './LearningFrameBanner'
 import { GlossaryStrip } from './GlossaryStrip'
 import { LandscapeTab as LandscapeTabBody } from './LandscapeTab'
-import type { LandscapeType } from './LandscapeTypeFacet'
+import { LandscapeTypeFacet, type LandscapeType } from './LandscapeTypeFacet'
 import { ExecutiveTimelineView } from './views/ExecutiveTimelineView'
 import { ArchitectStandardsView } from './views/ArchitectStandardsView'
 import { ResearcherEvidenceView } from './views/ResearcherEvidenceView'
@@ -47,7 +47,7 @@ import { FrameworkDetailPopover } from '@/components/Compliance/FrameworkDetailP
 import type { LibraryItem } from '@/data/libraryData'
 import type { ThreatData } from '@/data/threatsData'
 import type { TimelineEvent } from '@/types/timeline'
-import type { ComplianceFramework } from '@/data/complianceData'
+import type { ComplianceFramework, RegionBloc, DeadlinePhase } from '@/data/complianceData'
 import { useApplicability } from '@/hooks/useApplicability'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { logComplianceFilter } from '../../utils/analytics'
@@ -57,94 +57,15 @@ import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { COMPLIANCE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
-import {
-  complianceFrameworks,
-  complianceMetadata,
-  type RegionBloc,
-  type DeadlinePhase,
-} from '@/data/complianceData'
+import { complianceFrameworks, complianceMetadata } from '@/data/complianceData'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { useHistoryStore } from '@/store/useHistoryStore'
-import { type ViewMode } from '@/components/Library/ViewToggle'
-import debounce from 'lodash/debounce'
-import { resolveToNaics } from '../common/SectorFilter'
 import { RoleFilter } from '../common/RoleFilter'
 import { normalizeCountry } from '@/utils/applicabilityEngine'
 import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
-
-// Maps industry → recommended top-level section + sub-hint
-const INDUSTRY_COMPLIANCE_HINT: Record<
-  string,
-  { section: string; sectionLabel: string; rationale: string }
-> = {
-  'Finance & Banking': {
-    section: 'certification',
-    sectionLabel: 'Certification Schemes → FIPS 140-3',
-    rationale:
-      'FIPS 140-3 validated modules are mandatory for US federal financial systems and broadly adopted in banking for encryption compliance.',
-  },
-  'Government & Defense': {
-    section: 'certification',
-    sectionLabel: 'Certification Schemes → FIPS 140-3',
-    rationale:
-      'FIPS 140-3 is required for federal information systems. Common Criteria EAL4+ applies to high-assurance defense products.',
-  },
-  Healthcare: {
-    section: 'certification',
-    sectionLabel: 'Certification Schemes → FIPS 140-3',
-    rationale:
-      'HIPAA requires FIPS-validated encryption for ePHI. FIPS 140-3 validated modules satisfy this requirement.',
-  },
-  Telecommunications: {
-    section: 'certification',
-    sectionLabel: 'Certification Schemes → ACVP',
-    rationale:
-      'Algorithm-level ACVP validation is key for telecom protocol stacks. Common Criteria applies to network infrastructure products.',
-  },
-  Technology: {
-    section: 'certification',
-    sectionLabel: 'Certification Schemes → ACVP',
-    rationale:
-      'ACVP validates algorithm implementations directly. FIPS 140-3 applies if building products for federal customers.',
-  },
-  'Energy & Utilities': {
-    section: 'certification',
-    sectionLabel: 'Certification Schemes → FIPS 140-3',
-    rationale:
-      'NERC-CIP and federal energy regulations increasingly require FIPS-validated cryptographic modules for critical infrastructure.',
-  },
-  Automotive: {
-    section: 'certification',
-    sectionLabel: 'Certification Schemes → Common Criteria',
-    rationale:
-      'Common Criteria (ISO/IEC 15408) is used for automotive V2X and ECU security evaluations under UN R155.',
-  },
-  Aerospace: {
-    section: 'certification',
-    sectionLabel: 'Certification Schemes → FIPS 140-3',
-    rationale:
-      'DO-326A and federal programs require FIPS-validated modules. Common Criteria applies to avionics security products.',
-  },
-  'Retail & E-Commerce': {
-    section: 'certification',
-    sectionLabel: 'Certification Schemes → FIPS 140-3',
-    rationale:
-      'PCI-DSS aligns with FIPS 140-3 for payment cryptography. FIPS validation is the baseline for payment processors.',
-  },
-}
-
-// EU region pushes Common Criteria/EUCC tab
-const REGION_COMPLIANCE_HINT: Record<
-  string,
-  { section: string; sectionLabel: string; rationale: string } | undefined
-> = {
-  eu: {
-    section: 'certification',
-    sectionLabel: 'Certification Schemes → Common Criteria',
-    rationale:
-      'EU Cybersecurity Act (EUCC scheme) mandates Common Criteria evaluations for products sold in the EU market.',
-  },
-}
+import { useComplianceUrlState, type MobileSection } from './useComplianceUrlState'
+import type { ViewMode } from '@/components/Library/ViewToggle'
+import { INDUSTRY_COMPLIANCE_HINT, REGION_COMPLIANCE_HINT } from '@/data/compliancePersonaHints'
 
 // ── Section header strip ───────────────────────────────────────────────
 
@@ -223,15 +144,6 @@ function SectionHeader({
 }
 
 // ── Mobile toggle ──────────────────────────────────────────────────────
-
-type MobileSection =
-  | 'foryou'
-  | 'standards'
-  | 'technical'
-  | 'certification'
-  | 'compliance'
-  | 'records'
-  | 'cswp39'
 
 function timelineEventToRow(ev: TimelineEvent): TimelineDocumentRow {
   return {
@@ -347,6 +259,28 @@ function ForYouSection() {
   )
 }
 
+// ── Explore section helpers ────────────────────────────────────────────
+
+function isExploreSection(
+  s: MobileSection
+): s is 'standards' | 'technical' | 'certification' | 'compliance' {
+  return s === 'standards' || s === 'technical' || s === 'certification' || s === 'compliance'
+}
+
+function mobileSectionToLandscapeType(s: MobileSection): LandscapeType {
+  if (s === 'technical') return 'standards'
+  if (s === 'certification') return 'certifications'
+  if (s === 'compliance') return 'regulations'
+  return 'bodies'
+}
+
+function landscapeTypeToMobileSection(t: LandscapeType): MobileSection {
+  if (t === 'standards') return 'technical'
+  if (t === 'certifications') return 'certification'
+  if (t === 'regulations') return 'compliance'
+  return 'standards'
+}
+
 function MobileViewToggle({
   activeSection,
   onSectionChange,
@@ -432,84 +366,80 @@ function MobileViewToggle({
     [standardsFrameworks, technicalStandards, certificationFrameworks, complianceOnlyFrameworks]
   )
 
+  const typeCounts = useMemo(
+    () => ({
+      regulations: complianceOnlyFrameworks.length,
+      standards: technicalStandards.length,
+      certifications: certificationFrameworks.length,
+      bodies: standardsFrameworks.length,
+    }),
+    [complianceOnlyFrameworks, technicalStandards, certificationFrameworks, standardsFrameworks]
+  )
+
   const switchLandscapeTab = useCallback(
     (tab: LandscapeTab) => setSection(tab as MobileSection),
     [setSection]
   )
 
   const btnClass = (active: boolean) =>
-    `flex-none px-3 py-2 min-h-[44px] rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
+    `flex-none px-3 py-1.5 min-h-[44px] rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
       active ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
     }`
 
   return (
     <div className="space-y-4" id="compliance-tabs-mobile">
-      <div className="relative">
-        <div className="flex gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
-          <Button
-            variant="ghost"
-            data-workshop-target="compliance-tab-foryou"
-            className={btnClass(section === 'foryou')}
-            onClick={() => setSection('foryou')}
-          >
-            For You
-          </Button>
-          <Button
-            variant="ghost"
-            className={btnClass(section === 'standards')}
-            onClick={() => setSection('standards')}
-          >
-            Bodies
-          </Button>
-          <Button
-            variant="ghost"
-            className={btnClass(section === 'technical')}
-            onClick={() => setSection('technical')}
-          >
-            Tech Stds
-          </Button>
-          <Button
-            variant="ghost"
-            className={btnClass(section === 'certification')}
-            onClick={() => setSection('certification')}
-          >
-            Cert Schemes
-          </Button>
-          <Button
-            variant="ghost"
-            className={btnClass(section === 'compliance')}
-            onClick={() => setSection('compliance')}
-          >
-            Frameworks
-          </Button>
-          <Button
-            variant="ghost"
-            className={btnClass(section === 'records')}
-            onClick={() => setSection('records')}
-          >
-            Records
-          </Button>
-          <Button
-            variant="ghost"
-            className={btnClass(section === 'cswp39')}
-            onClick={() => setSection('cswp39')}
-          >
-            CSWP.39
-          </Button>
+      {/* Navigation strip — primary tabs + explore sub-type row */}
+      <div className="bg-card border border-border rounded-xl p-1.5 space-y-1.5">
+        <div className="relative">
+          <div className="flex gap-1.5 overflow-x-auto scrollbar-none">
+            <Button
+              variant="ghost"
+              data-workshop-target="compliance-tab-foryou"
+              className={btnClass(section === 'foryou')}
+              onClick={() => setSection('foryou')}
+            >
+              For You
+            </Button>
+            <Button
+              variant="ghost"
+              className={btnClass(isExploreSection(section))}
+              onClick={() => {
+                if (!isExploreSection(section)) setSection('standards')
+              }}
+            >
+              Explore
+            </Button>
+            <Button
+              variant="ghost"
+              className={btnClass(section === 'records')}
+              onClick={() => setSection('records')}
+            >
+              Records
+            </Button>
+            <Button
+              variant="ghost"
+              className={btnClass(section === 'cswp39')}
+              onClick={() => setSection('cswp39')}
+            >
+              CSWP.39
+            </Button>
+          </div>
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-card to-transparent"
+          />
         </div>
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-background to-transparent"
-        />
+        {/* Type facet sub-row — only when Explore is active */}
+        {isExploreSection(section) && (
+          <div className="border-t border-border/50 pt-1 animate-in fade-in slide-in-from-top-1 duration-150">
+            <LandscapeTypeFacet
+              value={mobileSectionToLandscapeType(section)}
+              counts={typeCounts}
+              onChange={(type) => setSection(landscapeTypeToMobileSection(type))}
+            />
+          </div>
+        )}
       </div>
-      {section !== 'records' && section !== 'cswp39' && section !== 'foryou' && (
-        <CrossTabSearchHint
-          searchText={landscapeProps.searchText}
-          currentTab={section as LandscapeTab}
-          tabFrameworks={landscapeTabFrameworks}
-          onSwitchTab={switchLandscapeTab}
-        />
-      )}
       {section === 'foryou' && (
         <div className="space-y-4">
           <div className="flex flex-wrap gap-2">
@@ -518,35 +448,30 @@ function MobileViewToggle({
           <ForYouSection />
         </div>
       )}
-      {section === 'standards' && (
-        <ComplianceLandscape
-          frameworks={standardsFrameworks}
-          showDeadlineTimeline={false}
-          {...landscapeProps}
-        />
-      )}
-      {section === 'technical' && (
-        <ComplianceLandscape
-          frameworks={technicalStandards}
-          showDeadlineTimeline={false}
-          {...landscapeProps}
-        />
-      )}
-      {section === 'certification' && (
-        <ComplianceLandscape
-          frameworks={certificationFrameworks}
-          showDeadlineTimeline={false}
-          {...landscapeProps}
-        />
-      )}
-      {section === 'compliance' && (
-        <ComplianceLandscape
-          frameworks={complianceOnlyFrameworks}
-          showDeadlineTimeline={false}
-          maturityByRefId={maturityByRefId}
-          onNavigateToCswp39={onNavigateToCswp39}
-          {...landscapeProps}
-        />
+      {isExploreSection(section) && (
+        <div className="space-y-3">
+          <CrossTabSearchHint
+            searchText={landscapeProps.searchText}
+            currentTab={section as LandscapeTab}
+            tabFrameworks={landscapeTabFrameworks}
+            onSwitchTab={switchLandscapeTab}
+          />
+          <ComplianceLandscape
+            frameworks={
+              section === 'technical'
+                ? technicalStandards
+                : section === 'certification'
+                  ? certificationFrameworks
+                  : section === 'compliance'
+                    ? complianceOnlyFrameworks
+                    : standardsFrameworks
+            }
+            showDeadlineTimeline={false}
+            maturityByRefId={section === 'compliance' ? maturityByRefId : undefined}
+            onNavigateToCswp39={section === 'compliance' ? onNavigateToCswp39 : undefined}
+            {...landscapeProps}
+          />
+        </div>
       )}
       {section === 'records' && (
         <div className="mt-2">
@@ -569,14 +494,11 @@ function MobileViewToggle({
 export const ComplianceView = () => {
   useWorkflowPhaseTracker('comply')
   const [selectedFramework, setSelectedFramework] = useState<ComplianceFramework | null>(null)
-  const [searchParams, setSearchParams] = useSearchParams()
   // Trust-tier filter (URL ?tier=) — feeds both the Landscape memos via
   // MobileViewToggle props AND the Records ComplianceTable directly.
   const tierFilter = useTrustTierFilter()
-  const certParam = searchParams.get('cert') ?? undefined
-  const evref = searchParams.get('evref') ?? undefined
   const { data, loading, refresh, lastUpdated, enrichRecord } = useComplianceRefresh()
-  const { selectedIndustries, selectedRegion, selectedPersona } = usePersonaStore()
+  const { selectedIndustries, selectedRegion } = usePersonaStore()
   const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
   const addHistoryEvent = useHistoryStore((s) => s.addEvent)
 
@@ -645,102 +567,62 @@ export const ComplianceView = () => {
     }
   }, [data])
 
-  // ── URL-synced filter state ──────────────────────────────────────────
+  // ── URL-synced filter state (owned by useComplianceUrlState) ──────────
 
-  const isLandscapeTab = (tab: MobileSection) =>
-    tab === 'standards' || tab === 'technical' || tab === 'certification' || tab === 'compliance'
+  const {
+    setSearchParams,
+    certParam,
+    evref,
+    activeTab,
+    setActiveTab,
+    landscapeType,
+    setLandscapeType,
+    highlightFrameworkId,
+    lsOrg,
+    lsIndustry,
+    lsRegion,
+    lsCountry,
+    lsDeadline,
+    lsSearch,
+    setLsSearch,
+    lsSearchInput,
+    setLsSearchInput,
+    lsSort,
+    lsView,
+    rtab,
+    recSearchInput,
+    recPqc,
+    recCat,
+    recSrc,
+    recVendor,
+    recMcat,
+    recSortCol,
+    recSortDir,
+    recPage,
+    syncFiltersToUrl,
+    handleLsOrgChange,
+    handleLsIndustryChange,
+    handleLsRegionChange,
+    handleLsCountryChange,
+    handleLsDeadlineChange,
+    handleLsSearchChange,
+    handleLsSortChange,
+    handleLsViewChange,
+    handleRtabChange,
+    handleRecSearchChange,
+    handleRecPqcChange,
+    handleRecCatChange,
+    handleRecSrcChange,
+    handleRecVendorChange,
+    handleRecMcatChange,
+    handleRecSortColChange,
+    handleRecSortDirChange,
+    handleRecPageChange,
+  } = useComplianceUrlState()
 
-  /**
-   * Fragment-anchor support: `/compliance#records` (or `#standards` / `#technical` /
-   * `#certification` / `#compliance`) selects the corresponding sub-tab. Query
-   * param `?tab=` still wins when present so existing deep-link behaviour is
-   * preserved; the hash is only consulted as a fallback.
-   */
-  const parseTabFromHash = (hash: string): MobileSection | null => {
-    const clean = hash.replace(/^#/, '').trim() as MobileSection
-    if (
-      clean === 'foryou' ||
-      clean === 'standards' ||
-      clean === 'technical' ||
-      clean === 'certification' ||
-      clean === 'compliance' ||
-      clean === 'records' ||
-      clean === 'cswp39'
-    ) {
-      return clean
-    }
-    return null
-  }
-
-  // CSWP.39 jump-back marker: set when user clicks a chip from the CSWP.39 tab;
-  // clears when user changes tabs themselves. Drives the "Return to CSWP.39" banner.
+  // CSWP.39 jump-back marker + query (ephemeral UI state, not URL-bound).
   const [cswp39JumpActive, setCswp39JumpActive] = useState(false)
-
-  // Active tab
-  const [activeTab, setActiveTab] = useState<MobileSection>(() => {
-    const tab = searchParams.get('tab') as MobileSection | null
-    if (tab) return tab
-    const hashTab = typeof window !== 'undefined' ? parseTabFromHash(window.location.hash) : null
-    if (hashTab) return hashTab
-    // Developer persona defaults to certification records (FIPS/ACVP/CC) tab
-    if (!certParam && !complianceHint && selectedPersona === 'developer') return 'records'
-    return (certParam ? 'records' : (complianceHint?.section ?? 'standards')) as MobileSection
-  })
-
-  // Landscape type facet — derived from the legacy ?tab= value so deep links
-  // into the old tab names (standards / technical / certification / compliance)
-  // still land on the right facet selection. CSWP.39 cross-walk jumps also
-  // route through this — `handleCswp39Jump` calls `setLandscapeType` instead
-  // of `setActiveTab` for landscape destinations.
-  const [landscapeType, setLandscapeType] = useState<LandscapeType>(() => {
-    const tab = searchParams.get('tab')
-    if (tab === 'standards') return 'bodies'
-    if (tab === 'technical') return 'standards'
-    if (tab === 'certification') return 'certifications'
-    if (tab === 'compliance') return 'regulations'
-    return 'regulations'
-  })
-
-  // Framework deep-link highlight — ?framework=<id> scrolls to and rings the card for 3 s
-  const [highlightFrameworkId, setHighlightFrameworkId] = useState<string | null>(
-    () => searchParams.get('framework') ?? null
-  )
-  useEffect(() => {
-    if (!highlightFrameworkId) return
-    const timer = setTimeout(() => setHighlightFrameworkId(null), 3000)
-    return () => clearTimeout(timer)
-  }, [highlightFrameworkId])
-
-  // Landscape filter state
-  const [lsOrg, setLsOrg] = useState(() => searchParams.get('org') ?? 'All')
-  const [lsIndustry, setLsIndustry] = useState(
-    // ?industry= is the canonical alias; ?ind= is the legacy param kept for back-compat
-    // Only pre-select an industry when exactly one is active (cert restricts to single industry).
-    // Compliance data stores industries as NAICS 2-digit codes, while cross-page sources (URL,
-    // persona store) may carry freeform names like "Finance & Banking". Resolve to a NAICS code
-    // when possible so the filter actually matches CSV rows.
-    () =>
-      resolveToNaics(
-        searchParams.get('industry') ??
-          searchParams.get('ind') ??
-          (selectedIndustries.length === 1 ? selectedIndustries[0] : 'All')
-      )
-  )
-  const [lsRegion, setLsRegion] = useState<RegionBloc | 'All'>(
-    () => (searchParams.get('region') as RegionBloc | null) ?? 'All'
-  )
-  const [lsCountry, setLsCountry] = useState<string>(() => searchParams.get('country') ?? 'All')
-  const [lsDeadline, setLsDeadline] = useState<'All' | DeadlinePhase>(
-    () => (searchParams.get('phase') as DeadlinePhase | null) ?? 'All'
-  )
-  const [lsSearch, setLsSearch] = useState(() => searchParams.get('q') ?? '')
-  const [lsSearchInput, setLsSearchInput] = useState(() => searchParams.get('q') ?? '')
-  const [lsSort, setLsSort] = useState<FrameworkSortOption>(
-    () => (searchParams.get('sort') as FrameworkSortOption | null) ?? 'deadline'
-  )
-  const [lsView, setLsView] = useState<ViewMode>(
-    () => (searchParams.get('view') as ViewMode | null) ?? 'cards'
-  )
+  const [cswp39JumpQuery, setCswp39JumpQuery] = useState('')
 
   // Resolve effective For-You profile for the country-specific DeadlineTimeline.
   const forYouProfileOverride = useMemo(
@@ -765,396 +647,6 @@ export const ComplianceView = () => {
       ? `${forYouProfile.country} deadlines`
       : undefined
 
-  // Records filter state
-  const [rtab, setRtab] = useState(() => searchParams.get('rtab') ?? 'all')
-  const [recSearch, setRecSearch] = useState(() => {
-    const tab = searchParams.get('tab') as MobileSection | null
-    return tab === 'records' ? (searchParams.get('q') ?? '') : ''
-  })
-  const [recSearchInput, setRecSearchInput] = useState(() => {
-    const tab = searchParams.get('tab') as MobileSection | null
-    return tab === 'records' ? (searchParams.get('q') ?? '') : ''
-  })
-  const [recPqc, setRecPqc] = useState<string[]>(
-    () => searchParams.get('pqc')?.split(',').filter(Boolean) ?? []
-  )
-  const [recCat, setRecCat] = useState<string[]>(
-    () => searchParams.get('cat')?.split(',').filter(Boolean) ?? []
-  )
-  const [recSrc, setRecSrc] = useState<string[]>(
-    () => searchParams.get('src')?.split(',').filter(Boolean) ?? []
-  )
-  const [recVendor, setRecVendor] = useState<string[]>(
-    () => searchParams.get('vendor')?.split(',').filter(Boolean) ?? []
-  )
-  const [recMcat, setRecMcat] = useState<string[]>(
-    () => searchParams.get('mcat')?.split(',').filter(Boolean) ?? []
-  )
-  const [recSortCol, setRecSortCol] = useState<SortColumn>(
-    () => (searchParams.get('sort') as SortColumn | null) ?? 'date'
-  )
-  const [recSortDir, setRecSortDir] = useState<SortDirection>(
-    () => (searchParams.get('dir') as SortDirection | null) ?? 'desc'
-  )
-  const [recPage, setRecPage] = useState(() => parseInt(searchParams.get('page') ?? '1', 10) || 1)
-  const [recCertId, setRecCertId] = useState<string | undefined>(
-    () => searchParams.get('cert') ?? undefined
-  )
-
-  // ── syncFiltersToUrl — write current state to URL ────────────────────
-
-  const syncFiltersToUrl = useCallback(
-    (overrides: {
-      tab?: MobileSection
-      org?: string
-      ind?: string
-      region?: RegionBloc | 'All'
-      country?: string
-      phase?: 'All' | DeadlinePhase
-      q?: string
-      sort?: string
-      view?: ViewMode
-      rtab?: string
-      rq?: string
-      pqc?: string[]
-      cat?: string[]
-      src?: string[]
-      vendor?: string[]
-      mcat?: string[]
-      rsort?: string
-      dir?: SortDirection
-      page?: number
-      cert?: string
-    }) => {
-      setSearchParams(
-        (prev) => {
-          const next = new URLSearchParams(prev)
-          const tab = overrides.tab ?? activeTab
-
-          // Tab param
-          if (tab !== 'standards') next.set('tab', tab)
-          else next.delete('tab')
-
-          // Clear all filter params then set contextual ones
-          for (const key of [
-            'org',
-            'ind',
-            'region',
-            'country',
-            'phase',
-            'q',
-            'sort',
-            'view',
-            'rtab',
-            'pqc',
-            'cat',
-            'src',
-            'vendor',
-            'mcat',
-            'dir',
-            'page',
-            'cert',
-          ]) {
-            next.delete(key)
-          }
-
-          if (isLandscapeTab(tab) || tab === 'foryou') {
-            const org = overrides.org ?? lsOrg
-            const ind = overrides.ind ?? lsIndustry
-            const region = overrides.region ?? lsRegion
-            const country = overrides.country ?? lsCountry
-            const phase = overrides.phase ?? lsDeadline
-            const q = overrides.q ?? lsSearch
-            const sort = overrides.sort ?? lsSort
-            const view = overrides.view ?? lsView
-
-            if (org !== 'All') next.set('org', org)
-            if (ind !== 'All') next.set('ind', ind)
-            if (region !== 'All') next.set('region', region)
-            if (country !== 'All') next.set('country', country)
-            if (phase !== 'All') next.set('phase', phase)
-            if (q) next.set('q', q)
-            if (sort !== 'deadline') next.set('sort', sort)
-            if (view !== 'cards') next.set('view', view)
-          } else {
-            const rt = overrides.rtab ?? rtab
-            const q = overrides.rq ?? recSearch
-            const pqc = overrides.pqc ?? recPqc
-            const cat = overrides.cat ?? recCat
-            const src = overrides.src ?? recSrc
-            const vendor = overrides.vendor ?? recVendor
-            const mcat = overrides.mcat ?? recMcat
-            const sort = overrides.rsort ?? recSortCol
-            const dir = overrides.dir ?? recSortDir
-            const page = overrides.page ?? recPage
-            const cert = overrides.cert ?? recCertId
-
-            if (rt !== 'all') next.set('rtab', rt)
-            if (q) next.set('q', q)
-            if (pqc.length > 0) next.set('pqc', pqc.join(','))
-            if (cat.length > 0) next.set('cat', cat.join(','))
-            if (src.length > 0) next.set('src', src.join(','))
-            if (vendor.length > 0) next.set('vendor', vendor.join(','))
-            if (mcat.length > 0) next.set('mcat', mcat.join(','))
-            if (sort !== 'date') next.set('sort', sort)
-            if (dir !== 'desc') next.set('dir', dir)
-            if (page > 1) next.set('page', String(page))
-            if (cert) next.set('cert', cert)
-          }
-
-          return next
-        },
-        { replace: true }
-      )
-    },
-    [
-      activeTab,
-      lsOrg,
-      lsIndustry,
-      lsRegion,
-      lsCountry,
-      lsDeadline,
-      lsSearch,
-      lsSort,
-      lsView,
-      rtab,
-      recSearch,
-      recPqc,
-      recCat,
-      recSrc,
-      recVendor,
-      recMcat,
-      recSortCol,
-      recSortDir,
-      recPage,
-      recCertId,
-      setSearchParams,
-    ]
-  )
-
-  // ── URL → state sync (back/forward navigation) ──────────────────────
-
-  useEffect(() => {
-    const tab = (searchParams.get('tab') as MobileSection | null) ?? 'standards'
-    setActiveTab((prev) => (prev !== tab ? tab : prev))
-
-    if (isLandscapeTab(tab) || tab === 'foryou') {
-      const nextOrg = searchParams.get('org') ?? 'All'
-      const nextInd = resolveToNaics(
-        searchParams.get('ind') ?? (selectedIndustries.length === 1 ? selectedIndustries[0] : 'All')
-      )
-      const nextRegion = (searchParams.get('region') as RegionBloc | null) ?? 'All'
-      const nextCountry = searchParams.get('country') ?? 'All'
-      const nextPhase = (searchParams.get('phase') as DeadlinePhase | null) ?? 'All'
-      const nextQ = searchParams.get('q') ?? ''
-      const nextSort = (searchParams.get('sort') as FrameworkSortOption) ?? 'deadline'
-      const nextView = (searchParams.get('view') as ViewMode) ?? 'cards'
-
-      setLsOrg((prev) => (prev !== nextOrg ? nextOrg : prev))
-      setLsIndustry((prev) => (prev !== nextInd ? nextInd : prev))
-      setLsRegion((prev) => (prev !== nextRegion ? nextRegion : prev))
-      setLsCountry((prev) => (prev !== nextCountry ? nextCountry : prev))
-      setLsDeadline((prev) => (prev !== nextPhase ? nextPhase : prev))
-      setLsSearch((prev) => (prev !== nextQ ? nextQ : prev))
-      setLsSearchInput((prev) => (prev !== nextQ ? nextQ : prev))
-      setLsSort((prev) => (prev !== nextSort ? nextSort : prev))
-      setLsView((prev) => (prev !== nextView ? nextView : prev))
-    } else {
-      const nextRtab = searchParams.get('rtab') ?? 'all'
-      const nextQ = searchParams.get('q') ?? ''
-      const nextPqc = searchParams.get('pqc')?.split(',').filter(Boolean) ?? []
-      const nextCat = searchParams.get('cat')?.split(',').filter(Boolean) ?? []
-      const nextSrc = searchParams.get('src')?.split(',').filter(Boolean) ?? []
-      const nextVendor = searchParams.get('vendor')?.split(',').filter(Boolean) ?? []
-      const nextMcat = searchParams.get('mcat')?.split(',').filter(Boolean) ?? []
-      const nextSort = (searchParams.get('sort') as SortColumn) ?? 'date'
-      const nextDir = (searchParams.get('dir') as SortDirection) ?? 'desc'
-      const nextPage = parseInt(searchParams.get('page') ?? '1', 10) || 1
-
-      setRtab((prev) => (prev !== nextRtab ? nextRtab : prev))
-      setRecSearch((prev) => (prev !== nextQ ? nextQ : prev))
-      setRecSearchInput((prev) => (prev !== nextQ ? nextQ : prev))
-      setRecPqc((prev) => (JSON.stringify(prev) !== JSON.stringify(nextPqc) ? nextPqc : prev))
-      setRecCat((prev) => (JSON.stringify(prev) !== JSON.stringify(nextCat) ? nextCat : prev))
-      setRecSrc((prev) => (JSON.stringify(prev) !== JSON.stringify(nextSrc) ? nextSrc : prev))
-      setRecVendor((prev) =>
-        JSON.stringify(prev) !== JSON.stringify(nextVendor) ? nextVendor : prev
-      )
-      setRecMcat((prev) => (JSON.stringify(prev) !== JSON.stringify(nextMcat) ? nextMcat : prev))
-      setRecSortCol((prev) => (prev !== nextSort ? nextSort : prev))
-      setRecSortDir((prev) => (prev !== nextDir ? nextDir : prev))
-      setRecPage((prev) => (prev !== nextPage ? nextPage : prev))
-      const nextCert = searchParams.get('cert') ?? undefined
-      setRecCertId((prev) => (prev !== nextCert ? nextCert : prev))
-    }
-  }, [searchParams, selectedIndustries])
-
-  // ── Debounced search ─────────────────────────────────────────────────
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedLsSearch = useCallback(
-    debounce((value: string) => {
-      setLsSearch(value)
-      syncFiltersToUrl({ q: value })
-    }, 200),
-    [syncFiltersToUrl]
-  )
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const debouncedRecSearch = useCallback(
-    debounce((value: string) => {
-      setRecSearch(value)
-      setRecPage(1)
-      syncFiltersToUrl({ rq: value, page: 1 })
-    }, 200),
-    [syncFiltersToUrl]
-  )
-
-  // ── Landscape handlers ───────────────────────────────────────────────
-
-  const handleLsOrgChange = useCallback(
-    (org: string) => {
-      setLsOrg(org)
-      syncFiltersToUrl({ org })
-    },
-    [syncFiltersToUrl]
-  )
-
-  const handleLsIndustryChange = useCallback(
-    (ind: string) => {
-      setLsIndustry(ind)
-      syncFiltersToUrl({ ind })
-    },
-    [syncFiltersToUrl]
-  )
-
-  const handleLsRegionChange = useCallback(
-    (region: RegionBloc | 'All') => {
-      setLsRegion(region)
-      syncFiltersToUrl({ region })
-    },
-    [syncFiltersToUrl]
-  )
-
-  const handleLsCountryChange = useCallback(
-    (country: string) => {
-      setLsCountry(country)
-      syncFiltersToUrl({ country })
-    },
-    [syncFiltersToUrl]
-  )
-
-  const handleLsDeadlineChange = useCallback(
-    (phase: 'All' | DeadlinePhase) => {
-      setLsDeadline(phase)
-      syncFiltersToUrl({ phase })
-    },
-    [syncFiltersToUrl]
-  )
-
-  const handleLsSearchChange = useCallback(
-    (text: string) => {
-      setLsSearchInput(text)
-      debouncedLsSearch(text)
-    },
-    [debouncedLsSearch]
-  )
-
-  const handleLsSortChange = useCallback(
-    (sort: FrameworkSortOption) => {
-      setLsSort(sort)
-      syncFiltersToUrl({ sort })
-    },
-    [syncFiltersToUrl]
-  )
-
-  const handleLsViewChange = useCallback(
-    (mode: ViewMode) => {
-      setLsView(mode)
-      syncFiltersToUrl({ view: mode })
-    },
-    [syncFiltersToUrl]
-  )
-
-  // ── Records handlers ─────────────────────────────────────────────────
-
-  const handleRecSearchChange = useCallback(
-    (text: string) => {
-      setRecSearchInput(text)
-      debouncedRecSearch(text)
-    },
-    [debouncedRecSearch]
-  )
-
-  const handleRecPqcChange = useCallback(
-    (filters: string[]) => {
-      setRecPqc(filters)
-      setRecPage(1)
-      syncFiltersToUrl({ pqc: filters, page: 1 })
-    },
-    [syncFiltersToUrl]
-  )
-
-  const handleRecCatChange = useCallback(
-    (filters: string[]) => {
-      setRecCat(filters)
-      setRecPage(1)
-      syncFiltersToUrl({ cat: filters, page: 1 })
-    },
-    [syncFiltersToUrl]
-  )
-
-  const handleRecSrcChange = useCallback(
-    (filters: string[]) => {
-      setRecSrc(filters)
-      setRecPage(1)
-      syncFiltersToUrl({ src: filters, page: 1 })
-    },
-    [syncFiltersToUrl]
-  )
-
-  const handleRecVendorChange = useCallback(
-    (filters: string[]) => {
-      setRecVendor(filters)
-      setRecPage(1)
-      syncFiltersToUrl({ vendor: filters, page: 1 })
-    },
-    [syncFiltersToUrl]
-  )
-
-  const handleRecMcatChange = useCallback(
-    (filters: string[]) => {
-      setRecMcat(filters)
-      setRecPage(1)
-      syncFiltersToUrl({ mcat: filters, page: 1 })
-    },
-    [syncFiltersToUrl]
-  )
-
-  const handleRecSortColChange = useCallback(
-    (col: SortColumn) => {
-      setRecSortCol(col)
-      syncFiltersToUrl({ rsort: col })
-    },
-    [syncFiltersToUrl]
-  )
-
-  const handleRecSortDirChange = useCallback(
-    (dir: SortDirection) => {
-      setRecSortDir(dir)
-      syncFiltersToUrl({ dir })
-    },
-    [syncFiltersToUrl]
-  )
-
-  const handleRecPageChange = useCallback(
-    (page: number) => {
-      setRecPage(page)
-      syncFiltersToUrl({ page })
-    },
-    [syncFiltersToUrl]
-  )
-
   // ── Tab handlers ─────────────────────────────────────────────────────
 
   const handleTabChange = useCallback(
@@ -1164,7 +656,7 @@ export const ComplianceView = () => {
       logComplianceFilter('Tab', tab)
       setCswp39JumpActive(false)
     },
-    [syncFiltersToUrl]
+    [setActiveTab, syncFiltersToUrl]
   )
 
   const handleCswp39Jump = useCallback(
@@ -1178,6 +670,7 @@ export const ComplianceView = () => {
       syncFiltersToUrl({ tab: targetTab, q: searchQuery })
       logComplianceFilter('Tab', targetTab)
       setCswp39JumpActive(true)
+      setCswp39JumpQuery(searchQuery)
       requestAnimationFrame(() => {
         document
           .getElementById('compliance-tabs')
@@ -1187,7 +680,7 @@ export const ComplianceView = () => {
           ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       })
     },
-    [syncFiltersToUrl]
+    [setActiveTab, setLsSearch, setLsSearchInput, syncFiltersToUrl]
   )
 
   const handleReturnToCswp39 = useCallback(() => {
@@ -1195,12 +688,13 @@ export const ComplianceView = () => {
     syncFiltersToUrl({ tab: 'cswp39' })
     logComplianceFilter('Tab', 'cswp39')
     setCswp39JumpActive(false)
+    setCswp39JumpQuery('')
     requestAnimationFrame(() => {
       document
         .getElementById('cswp39-cross-walk')
         ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     })
-  }, [syncFiltersToUrl])
+  }, [setActiveTab, syncFiltersToUrl])
 
   const handleNavigateToCswp39 = useCallback(
     (refId: string) => {
@@ -1216,7 +710,7 @@ export const ComplianceView = () => {
         { replace: false }
       )
     },
-    [setSearchParams]
+    [setActiveTab, setSearchParams]
   )
 
   const handleClearEvref = useCallback(() => {
@@ -1229,14 +723,6 @@ export const ComplianceView = () => {
       { replace: true }
     )
   }, [setSearchParams])
-
-  const handleRtabChange = useCallback(
-    (value: string) => {
-      setRtab(value)
-      syncFiltersToUrl({ rtab: value })
-    },
-    [syncFiltersToUrl]
-  )
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -1285,35 +771,94 @@ export const ComplianceView = () => {
         </div>
       )}
 
-      {/* New-to-compliance intro — shown to everyone until dismissed.
-          Curious / first-time-experience visitors get the same framing as
-          executives or architects who land here without persona context. */}
+      {/* New-to-compliance intro — 3-column structured brief with direct CTAs. */}
       {!introDismissed && (
-        <div className="flex items-start gap-3 p-3 rounded-lg border border-secondary/20 bg-secondary/5 text-sm">
-          <Info size={16} className="text-secondary mt-0.5 shrink-0" />
-          <div className="flex-1 space-y-0.5">
-            <span className="font-semibold text-foreground">New to compliance?</span>
-            <p className="text-muted-foreground text-xs">
-              This page tracks who sets the rules for quantum-safe cryptography.{' '}
-              <span className="font-medium text-foreground">Standardization bodies</span> (NIST,
-              ENISA, ISO) define the algorithms,{' '}
-              <span className="font-medium text-foreground">certification schemes</span> (FIPS
-              140-3, Common Criteria, EUCC) test that products implement them correctly, and{' '}
-              <span className="font-medium text-foreground">compliance frameworks</span> are the
-              laws and regulations that require organizations to adopt them (CNSA 2.0, NIS2, DORA,
-              and national PQC mandates). Start with the Landscape tab for the big picture, or jump
-              to Records for live product certifications.
-            </p>
+        <div className="rounded-lg border border-secondary/20 bg-secondary/5 p-4 space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Info size={15} className="text-secondary shrink-0" />
+              <span className="text-sm font-semibold text-foreground">New to PQC compliance?</span>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={dismissIntro}
+              className="h-auto text-xs px-2 py-1 text-muted-foreground hover:text-foreground shrink-0"
+              aria-label="Dismiss compliance intro"
+            >
+              <X size={14} />
+            </Button>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={dismissIntro}
-            className="h-auto text-xs px-2 py-1 text-muted-foreground hover:text-foreground shrink-0"
-            aria-label="Dismiss compliance intro"
-          >
-            Dismiss
-          </Button>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <div className="space-y-1">
+              <span className="font-medium text-foreground">Standardization Bodies</span>
+              <p className="text-muted-foreground">
+                NIST, ENISA, ISO, BSI — define the algorithms and publish the technical standards
+                that everything else references.
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  dismissIntro()
+                  handleTabChange('standards')
+                }}
+                className="h-auto text-xs px-0 py-0 text-primary hover:text-primary/80 font-medium"
+              >
+                Browse bodies →
+              </Button>
+            </div>
+            <div className="space-y-1">
+              <span className="font-medium text-foreground">Certification Schemes</span>
+              <p className="text-muted-foreground">
+                FIPS 140-3, Common Criteria, EUCC — independently test that products implement the
+                algorithms correctly. Required for procurement.
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  dismissIntro()
+                  handleTabChange('certification')
+                }}
+                className="h-auto text-xs px-0 py-0 text-primary hover:text-primary/80 font-medium"
+              >
+                Browse schemes →
+              </Button>
+            </div>
+            <div className="space-y-1">
+              <span className="font-medium text-foreground">Compliance Frameworks</span>
+              <p className="text-muted-foreground">
+                CNSA 2.0, NIS2, DORA, national PQC mandates — the laws and regulations that require
+                organizations to adopt PQC by specific deadlines.
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  dismissIntro()
+                  handleTabChange('compliance')
+                }}
+                className="h-auto text-xs px-0 py-0 text-primary hover:text-primary/80 font-medium"
+              >
+                Browse frameworks →
+              </Button>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 pt-1 border-t border-secondary/20 text-xs text-muted-foreground">
+            <span>Or jump straight to</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                dismissIntro()
+                handleTabChange('records')
+              }}
+              className="h-auto text-xs px-0 py-0 text-primary hover:text-primary/80 font-medium"
+            >
+              live product certifications →
+            </Button>
+          </div>
         </div>
       )}
 
@@ -1331,32 +876,39 @@ export const ComplianceView = () => {
         </div>
       )}
 
-      {/* PQC deadline timeline — desktop only. Shows all frameworks normally; when the
-          For You tab is active with a resolved country, filters to that country's deadlines. */}
-      <div className="hidden md:block">
-        <DeadlineTimeline frameworks={deadlineTimelineFrameworks} label={deadlineTimelineLabel} />
-      </div>
+      {/* PQC deadline timeline — horizontally scrollable on mobile, full stacked view on desktop. */}
+      <DeadlineTimeline frameworks={deadlineTimelineFrameworks} label={deadlineTimelineLabel} />
 
-      {/* Jump-back banner — visible after clicking a CSWP.39 chip that landed on another tab */}
+      {/* Jump-back banner — visible after CSWP.39 cross-walk navigation */}
       {cswp39JumpActive && activeTab !== 'cswp39' && (
         <div className="flex items-center gap-2 p-2.5 rounded-lg border border-primary/30 bg-primary/5 text-sm">
           <Workflow size={16} className="text-primary shrink-0" />
-          <span className="text-foreground/80 text-xs flex-1 min-w-0">
-            Arrived here from the CSWP.39 cross-walk.
+          <span className="text-foreground/80 text-xs flex-1 min-w-0 truncate">
+            {cswp39JumpQuery ? (
+              <>
+                Cross-walk result for{' '}
+                <span className="font-medium text-foreground">&ldquo;{cswp39JumpQuery}&rdquo;</span>
+              </>
+            ) : (
+              'Arrived from the CSWP.39 cross-walk.'
+            )}
           </span>
           <Button
             variant="ghost"
             onClick={handleReturnToCswp39}
-            className="h-auto px-2 py-1 text-xs text-primary hover:text-primary hover:bg-primary/10 flex items-center gap-1"
+            className="h-auto px-2 py-1 text-xs text-primary hover:text-primary hover:bg-primary/10 flex items-center gap-1 shrink-0"
           >
             <ArrowLeft size={14} />
-            Return to CSWP.39
+            Back to CSWP.39
           </Button>
           <Button
             variant="ghost"
-            onClick={() => setCswp39JumpActive(false)}
-            className="h-auto px-1.5 py-1 text-muted-foreground hover:text-foreground"
-            aria-label="Dismiss return-to-CSWP.39 banner"
+            onClick={() => {
+              setCswp39JumpActive(false)
+              setCswp39JumpQuery('')
+            }}
+            className="h-auto px-1.5 py-1 text-muted-foreground hover:text-foreground shrink-0"
+            aria-label="Dismiss cross-walk banner"
           >
             <X size={14} />
           </Button>
@@ -1475,17 +1027,13 @@ export const ComplianceView = () => {
               <GlobeLock size={14} />
               Records
             </TabsTrigger>
-            {/* CSWP.39 only — promoted into strip when active.
-                Deletion is Phase 2 of the refactor. */}
-            {activeTab === 'cswp39' && (
-              <TabsTrigger value="cswp39" className="flex items-center gap-1.5">
-                <Workflow size={14} />
-                CSWP.39 Framework
-              </TabsTrigger>
-            )}
-            {/* More menu — kept only for CSWP.39 entry. The other secondary
-                tabs (Standardization Bodies / Certification Schemes) collapsed
-                into the Landscape facet. */}
+            {/* CSWP.39 — always visible; was previously hidden in MoreMenu */}
+            <TabsTrigger value="cswp39" className="flex items-center gap-1.5">
+              <Workflow size={14} />
+              CSWP.39
+            </TabsTrigger>
+            {/* More menu — Standardization Bodies + Certification Schemes shortcuts
+                that deep-link into the Landscape facet. */}
             <MoreTabsMenu activeTab={activeTab} onSelect={(tab) => handleTabChange(tab)} />
             <div className="ml-auto pr-2">
               <TrustTierFilter />
