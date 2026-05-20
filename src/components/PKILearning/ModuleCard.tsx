@@ -2,16 +2,37 @@
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
-import { BookOpen, CheckCircle, Circle, Clock, Wrench, CheckSquare, Square } from 'lucide-react'
+import {
+  BookOpen,
+  CheckCircle,
+  Circle,
+  Clock,
+  Wrench,
+  CheckSquare,
+  Square,
+  ArrowRight,
+} from 'lucide-react'
 import { useModuleStore } from '../../store/useModuleStore'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
-import { LEARN_SECTIONS, WORKSHOP_STEPS } from './moduleData'
+import { LEARN_SECTIONS, WORKSHOP_STEPS, MODULE_TO_TRACK, TRACK_COLORS } from './moduleData'
 import { Button } from '@/components/ui/button'
 import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
+import { getNiceMapping } from '@/data/niceModuleMapping'
+
+const CA_CHIP_COLORS: Record<string, string> = {
+  'CA-CRYPTO': 'bg-primary/10 text-primary',
+  'CA-RISK': 'bg-warning/10 text-warning',
+  'CA-GOVCOMP': 'bg-destructive/10 text-destructive',
+  'CA-NETDEF': 'bg-success/10 text-success',
+  'CA-IDENT': 'bg-primary/15 text-primary',
+  'CA-DATASEC': 'bg-warning/15 text-warning',
+  'CA-SYSARCH': 'bg-muted-foreground/15 text-muted-foreground',
+  'CA-SECPROG': 'bg-success/15 text-success',
+}
 
 export interface ModuleItem {
   id: string
@@ -63,6 +84,12 @@ export const ModuleCard = ({
     status === 'not-started' || timeSpentFloored < 1
       ? module.duration
       : `${module.duration} / ${timeSpentFloored} min`
+
+  const niceMapping = getNiceMapping(module.id)
+  const primaryCA = niceMapping?.competencyAreas[0]
+
+  const trackName = MODULE_TO_TRACK[module.id]
+  const trackColor = trackName ? (TRACK_COLORS[trackName] ?? 'bg-muted text-muted-foreground') : ''
 
   return (
     <motion.article
@@ -223,6 +250,22 @@ export const ModuleCard = ({
               {module.difficulty}
             </span>
           )}
+          {primaryCA && (
+            <span
+              className={`font-mono text-[9px] px-1.5 py-0.5 rounded shrink-0 ${CA_CHIP_COLORS[primaryCA] ?? 'bg-muted text-muted-foreground'}`}
+              title="NICE Competency Area"
+            >
+              {primaryCA}
+            </span>
+          )}
+          {trackName && (
+            <span
+              className={`text-[9px] px-1.5 py-0.5 rounded shrink-0 font-medium ${trackColor}`}
+              title="Module track"
+            >
+              {trackName}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-2 shrink-0">
           <div className="hidden lg:flex items-center gap-2">
@@ -270,6 +313,20 @@ export const ModuleCard = ({
           </div>
           {status === 'completed' ? (
             <CheckCircle className="text-status-success" size={20} aria-hidden="true" />
+          ) : status === 'in-progress' ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-xs text-primary hover:text-primary/80 gap-1"
+              onClick={(e) => {
+                e.stopPropagation()
+                onSelectModule(module.id)
+              }}
+              aria-label={`Resume ${module.title}`}
+            >
+              Resume
+              <ArrowRight size={12} />
+            </Button>
           ) : (
             <Circle className="text-muted-foreground" size={20} aria-hidden="true" />
           )}

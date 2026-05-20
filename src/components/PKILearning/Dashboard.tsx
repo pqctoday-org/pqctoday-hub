@@ -5,11 +5,14 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import {
+  ArrowRight,
   ArrowUpDown,
   BookOpen,
+  GraduationCap,
   Home,
   PlayCircle,
   Search,
+  Users,
   X,
   CheckSquare,
   SlidersHorizontal,
@@ -17,6 +20,8 @@ import {
 import clsx from 'clsx'
 import { useModuleStore } from '../../store/useModuleStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import type { NiceProficiencyTier } from '../../data/niceFramework'
+import { getNiceMapping } from '../../data/niceModuleMapping'
 import { MODULE_INDUSTRY_RELEVANCE } from '../../data/personaConfig'
 import { PERSONAS, type PersonaId } from '../../data/learningPersonas'
 import { Button } from '../ui/button'
@@ -29,7 +34,14 @@ import { ModuleCard } from './ModuleCard'
 import { LearnViewToggle, type LearnViewMode } from './LearnViewToggle'
 import { LearnTrackStack } from './LearnTrackStack'
 import { ModuleTable, type ModuleTableItem } from './ModuleTable'
-import { MODULE_CATALOG, MODULE_TRACKS, MODULE_STEP_COUNTS, MODULE_TO_TRACK } from './moduleData'
+import {
+  MODULE_CATALOG,
+  MODULE_TRACKS,
+  MODULE_STEP_COUNTS,
+  MODULE_TO_TRACK,
+  LEARN_SECTIONS,
+  WORKSHOP_STEPS,
+} from './moduleData'
 import { MobileLearnFilterDrawer } from './MobileLearnFilterDrawer'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
@@ -42,10 +54,39 @@ import { ContentUpdatesFeed } from '@/components/ui/ContentUpdatesFeed'
 // Types
 // ---------------------------------------------------------------------------
 
-type LearnSortMode = 'default' | 'alpha' | 'difficulty' | 'duration' | 'recently' | 'status'
+type LearnSortMode =
+  | 'default'
+  | 'alpha'
+  | 'difficulty'
+  | 'duration'
+  | 'recently'
+  | 'status'
+  | 'completion'
 
 const DIFFICULTY_ORDER: Record<string, number> = { beginner: 0, intermediate: 1, advanced: 2 }
 const STATUS_ORDER: Record<string, number> = { 'in-progress': 0, 'not-started': 1, completed: 2 }
+
+function moduleCompletionPct(
+  moduleId: string,
+  moduleState:
+    | { learnSectionChecks?: Record<string, boolean>; completedSteps?: string[] }
+    | undefined
+): number {
+  const checks = moduleState?.learnSectionChecks ?? {}
+  const learnSections = LEARN_SECTIONS[moduleId] ?? []
+  const learnPct =
+    learnSections.length > 0
+      ? (learnSections.filter((s) => checks[s.id]).length / learnSections.length) * 100
+      : 0
+  const workshopSteps = WORKSHOP_STEPS[moduleId] ?? []
+  const completedSteps = moduleState?.completedSteps ?? []
+  const workshopPct =
+    workshopSteps.length > 0
+      ? (workshopSteps.filter((s) => completedSteps.includes(s.id)).length / workshopSteps.length) *
+        100
+      : 0
+  return workshopSteps.length > 0 ? (learnPct + workshopPct) / 2 : learnPct
+}
 
 const SORT_OPTIONS: { id: LearnSortMode; label: string }[] = [
   { id: 'default', label: 'Default order' },
@@ -54,6 +95,7 @@ const SORT_OPTIONS: { id: LearnSortMode; label: string }[] = [
   { id: 'duration', label: 'Duration (shortest first)' },
   { id: 'recently', label: 'Recently visited' },
   { id: 'status', label: 'Status (in progress first)' },
+  { id: 'completion', label: 'Most progress first' },
 ]
 
 const PROFESSIONAL_PERSONA_FILTER_ITEMS = [
@@ -79,6 +121,24 @@ const STATUS_LABELS: Record<string, string> = {
   'not-started': 'Not Started',
   'in-progress': 'In Progress',
   completed: 'Completed',
+}
+
+// NICE proficiency tier filter
+const NICE_TIERS: { id: NiceProficiencyTier; label: string }[] = [
+  { id: 'awareness', label: 'Awareness' },
+  { id: 'practitioner', label: 'Practitioner' },
+  { id: 'expert', label: 'Expert' },
+]
+const TIER_LEVELS: Record<NiceProficiencyTier, number> = {
+  awareness: 0,
+  practitioner: 1,
+  expert: 2,
+}
+
+function modulePassesTierFilter(moduleId: string, maxTier: NiceProficiencyTier): boolean {
+  const mapping = getNiceMapping(moduleId)
+  if (!mapping) return true
+  return TIER_LEVELS[mapping.tier] <= TIER_LEVELS[maxTier]
 }
 
 // ---------------------------------------------------------------------------
@@ -194,12 +254,14 @@ interface DesktopLearnFilterPopoverProps {
   selectedTrack: string
   selectedDifficulty: string
   selectedStatus: string
+  selectedNiceTier: NiceProficiencyTier | 'All'
   sortBy: LearnSortMode
   personaFilterItems: { id: string; label: string }[]
   selectedPersonaFilter: string
   onTrackChange: (v: string) => void
   onDifficultyChange: (v: string) => void
   onStatusChange: (v: string) => void
+  onNiceTierChange: (v: NiceProficiencyTier | 'All') => void
   onSortChange: (v: LearnSortMode) => void
   onPersonaChange: (v: string) => void
   onClear: () => void
@@ -212,12 +274,14 @@ const DesktopLearnFilterPopover: React.FC<DesktopLearnFilterPopoverProps> = ({
   selectedTrack,
   selectedDifficulty,
   selectedStatus,
+  selectedNiceTier,
   sortBy,
   personaFilterItems,
   selectedPersonaFilter,
   onTrackChange,
   onDifficultyChange,
   onStatusChange,
+  onNiceTierChange,
   onSortChange,
   onPersonaChange,
   onClear,
@@ -322,6 +386,42 @@ const DesktopLearnFilterPopover: React.FC<DesktopLearnFilterPopoverProps> = ({
               defaultLabel="All Statuses"
               noContainer
             />
+          </div>
+
+          <div className="space-y-1.5 pt-3 border-t border-border/50">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+              <GraduationCap size={11} aria-hidden="true" />
+              NICE Proficiency
+            </span>
+            <div className="flex rounded-md overflow-hidden border border-border">
+              <Button
+                variant="ghost"
+                onClick={() => onNiceTierChange('All')}
+                className={clsx(
+                  'flex-1 h-7 text-[11px] rounded-none border-r border-border',
+                  selectedNiceTier === 'All'
+                    ? 'bg-muted/60 text-foreground font-medium'
+                    : 'text-muted-foreground hover:text-foreground'
+                )}
+              >
+                All
+              </Button>
+              {NICE_TIERS.map((tier) => (
+                <Button
+                  key={tier.id}
+                  variant="ghost"
+                  onClick={() => onNiceTierChange(tier.id)}
+                  className={clsx(
+                    'flex-1 h-7 text-[11px] rounded-none border-r border-border last:border-r-0',
+                    selectedNiceTier === tier.id
+                      ? 'bg-primary/10 text-primary font-medium'
+                      : 'text-muted-foreground hover:text-foreground'
+                  )}
+                >
+                  {tier.label}
+                </Button>
+              ))}
+            </div>
           </div>
 
           <div className="space-y-1.5 pt-3 border-t border-border/50">
@@ -449,6 +549,48 @@ export const Dashboard: React.FC = () => {
         />
       )}
 
+      {/* Common Ground callout — for executive, curious, or no-persona users */}
+      {!isEmbedded &&
+        (selectedPersona === null ||
+          selectedPersona === undefined ||
+          selectedPersona === 'executive' ||
+          selectedPersona === 'curious') && (
+          <motion.div
+            initial={{ opacity: 0, y: reduced ? 0 : -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: reduced ? 0 : 0.25 }}
+            className="glass-panel px-4 py-3 border-primary/20"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <Users className="text-primary shrink-0 mt-0.5" size={16} />
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                    <span className="text-sm font-semibold text-foreground">
+                      PQC for Your Organization
+                    </span>
+                    <span className="text-[9px] font-mono uppercase tracking-wide px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
+                      NICE IR 8355
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Five focused modules for executives, procurement, and legal — no code required.
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('common-ground')}
+                className="shrink-0 text-xs gap-1.5"
+              >
+                Start path
+                <ArrowRight size={12} />
+              </Button>
+            </div>
+          </motion.div>
+        )}
+
       {/* Module Tracks Grid — always visible */}
       <ModuleTracksGrid
         navigate={navigate}
@@ -472,7 +614,14 @@ const ModuleTracksGrid = ({
   const isEmbedded = useIsEmbedded()
   const reduced = usePrefersReducedMotion()
   const { modules } = useModuleStore()
-  const { selectedIndustry, experienceLevel, selectedPersona, setPersona } = usePersonaStore()
+  const {
+    selectedIndustry,
+    experienceLevel,
+    selectedPersona,
+    setPersona,
+    niceTier: storeNiceTier,
+    niceTierOverridden,
+  } = usePersonaStore()
   const { myLearnModules, showOnlyLearnModules, setShowOnlyLearnModules } = useBookmarkStore()
   const [searchParams] = useSearchParams()
   const gridScrollRef = useRef<HTMLDivElement>(null)
@@ -513,6 +662,10 @@ const ModuleTracksGrid = ({
   )
   const [sortBy, setSortBy] = useState<LearnSortMode>('default')
   const [viewMode, setViewMode] = useState<LearnViewMode>('stack')
+  // Pre-populate from store only when user has explicitly overridden the tier
+  const [selectedNiceTier, setSelectedNiceTier] = useState<NiceProficiencyTier | 'All'>(
+    niceTierOverridden ? storeNiceTier : 'All'
+  )
 
   // Show Curious Explorer path in curious mode (persona or experience level); professionals see professional roles
   const isCuriousMode = selectedPersona === 'curious' || experienceLevel === 'curious'
@@ -563,11 +716,14 @@ const ModuleTracksGrid = ({
 
   const personaFilterActive = selectedPersonaFilter !== 'All'
 
+  const niceTierFilterActive = selectedNiceTier !== 'All'
+
   const filtersActive =
     debouncedSearch !== '' ||
     selectedTrack !== 'All' ||
     selectedDifficulty !== 'All' ||
     selectedStatus !== 'All' ||
+    niceTierFilterActive ||
     personaFilterActive ||
     sortBy !== 'default'
 
@@ -576,6 +732,7 @@ const ModuleTracksGrid = ({
     setSelectedTrack('All')
     setSelectedDifficulty('All')
     setSelectedStatus('All')
+    setSelectedNiceTier('All')
     setSelectedPersonaFilter('All')
     setPersona(null)
     setSortBy('default')
@@ -633,6 +790,11 @@ const ModuleTracksGrid = ({
         const s = modules[module.id]?.status ?? 'not-started'
         if (s !== selectedStatus) return false
       }
+      if (
+        niceTierFilterActive &&
+        !modulePassesTierFilter(module.id, selectedNiceTier as NiceProficiencyTier)
+      )
+        return false
       return true
     })
 
@@ -661,6 +823,11 @@ const ModuleTracksGrid = ({
             const sb = modules[b.module.id]?.status ?? 'not-started'
             return (STATUS_ORDER[sa] ?? 99) - (STATUS_ORDER[sb] ?? 99)
           }
+          case 'completion':
+            return (
+              moduleCompletionPct(b.module.id, modules[b.module.id]) -
+              moduleCompletionPct(a.module.id, modules[a.module.id])
+            )
           default:
             return 0
         }
@@ -675,6 +842,8 @@ const ModuleTracksGrid = ({
     selectedTrack,
     selectedDifficulty,
     selectedStatus,
+    niceTierFilterActive,
+    selectedNiceTier,
     sortBy,
     personaFilterActive,
     modules,
@@ -707,6 +876,11 @@ const ModuleTracksGrid = ({
             const persona = PERSONAS[selectedPersonaFilter as PersonaId]
             if (persona && !persona.recommendedPath.includes(m.id)) return false
           }
+          if (
+            niceTierFilterActive &&
+            !modulePassesTierFilter(m.id, selectedNiceTier as NiceProficiencyTier)
+          )
+            return false
           return true
         })
         .map((m) => m.id)
@@ -715,6 +889,8 @@ const ModuleTracksGrid = ({
     debouncedSearch,
     selectedDifficulty,
     selectedStatus,
+    niceTierFilterActive,
+    selectedNiceTier,
     personaFilterActive,
     selectedPersonaFilter,
     allModules,
@@ -743,6 +919,7 @@ const ModuleTracksGrid = ({
   if (selectedTrack !== 'All') activeFilterCount++
   if (selectedDifficulty !== 'All') activeFilterCount++
   if (selectedStatus !== 'All') activeFilterCount++
+  if (niceTierFilterActive) activeFilterCount++
   if (personaFilterActive) activeFilterCount++
 
   return (
@@ -827,29 +1004,80 @@ const ModuleTracksGrid = ({
                 )}
                 <div className="space-y-2 flex flex-col">
                   <span className="text-sm font-semibold text-foreground">Difficulty</span>
-                  <FilterDropdown
-                    items={DIFFICULTY_FILTER_ITEMS.map((d) => ({
-                      id: d,
-                      label: d === 'All' ? 'All Levels' : d.charAt(0).toUpperCase() + d.slice(1),
-                    }))}
-                    selectedId={selectedDifficulty}
-                    onSelect={setSelectedDifficulty}
-                    defaultLabel="All Levels"
-                    noContainer
-                  />
+                  <div className="flex rounded-md overflow-hidden border border-border">
+                    {DIFFICULTY_FILTER_ITEMS.map((d, i) => (
+                      <Button
+                        key={d}
+                        variant="ghost"
+                        onClick={() => setSelectedDifficulty(d)}
+                        className={clsx(
+                          'flex-1 h-8 text-xs rounded-none',
+                          i < DIFFICULTY_FILTER_ITEMS.length - 1 && 'border-r border-border',
+                          selectedDifficulty === d
+                            ? 'bg-primary/10 text-primary font-medium'
+                            : 'text-muted-foreground hover:text-foreground'
+                        )}
+                      >
+                        {d === 'All' ? 'All' : d.charAt(0).toUpperCase() + d.slice(1)}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
                 <div className="space-y-2 flex flex-col">
                   <span className="text-sm font-semibold text-foreground">Status</span>
-                  <FilterDropdown
-                    items={STATUS_FILTER_ITEMS.map((s) => ({
-                      id: s,
-                      label: s === 'All' ? 'All Statuses' : (STATUS_LABELS[s] ?? s),
-                    }))}
-                    selectedId={selectedStatus}
-                    onSelect={setSelectedStatus}
-                    defaultLabel="All Statuses"
-                    noContainer
-                  />
+                  <div className="flex rounded-md overflow-hidden border border-border">
+                    {STATUS_FILTER_ITEMS.map((s, i) => (
+                      <Button
+                        key={s}
+                        variant="ghost"
+                        onClick={() => setSelectedStatus(s)}
+                        className={clsx(
+                          'flex-1 h-8 text-xs rounded-none',
+                          i < STATUS_FILTER_ITEMS.length - 1 && 'border-r border-border',
+                          selectedStatus === s
+                            ? 'bg-primary/10 text-primary font-medium'
+                            : 'text-muted-foreground hover:text-foreground'
+                        )}
+                      >
+                        {s === 'All' ? 'All' : (STATUS_LABELS[s] ?? s).replace(' ', ' ')}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+                <div className="space-y-2 flex flex-col pt-4 border-t border-border/50">
+                  <span className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                    <GraduationCap size={14} aria-hidden="true" />
+                    NICE Proficiency
+                  </span>
+                  <div className="flex rounded-md overflow-hidden border border-border">
+                    <Button
+                      variant="ghost"
+                      onClick={() => setSelectedNiceTier('All')}
+                      className={clsx(
+                        'flex-1 h-8 text-xs rounded-none border-r border-border',
+                        selectedNiceTier === 'All'
+                          ? 'bg-muted/60 text-foreground font-medium'
+                          : 'text-muted-foreground hover:text-foreground'
+                      )}
+                    >
+                      All
+                    </Button>
+                    {NICE_TIERS.map((tier) => (
+                      <Button
+                        key={tier.id}
+                        variant="ghost"
+                        onClick={() => setSelectedNiceTier(tier.id)}
+                        className={clsx(
+                          'flex-1 h-8 text-xs rounded-none border-r border-border last:border-r-0',
+                          selectedNiceTier === tier.id
+                            ? 'bg-primary/10 text-primary font-medium'
+                            : 'text-muted-foreground hover:text-foreground'
+                        )}
+                      >
+                        {tier.label}
+                      </Button>
+                    ))}
+                  </div>
                 </div>
                 <div className="space-y-2 flex flex-col pt-4 border-t border-border/50">
                   <span className="text-sm font-semibold text-foreground">Sort By</span>
@@ -892,12 +1120,14 @@ const ModuleTracksGrid = ({
           selectedTrack={selectedTrack}
           selectedDifficulty={selectedDifficulty}
           selectedStatus={selectedStatus}
+          selectedNiceTier={selectedNiceTier}
           sortBy={sortBy}
           personaFilterItems={personaFilterItems}
           selectedPersonaFilter={selectedPersonaFilter}
           onTrackChange={setSelectedTrack}
           onDifficultyChange={setSelectedDifficulty}
           onStatusChange={setSelectedStatus}
+          onNiceTierChange={setSelectedNiceTier}
           onSortChange={setSortBy}
           onPersonaChange={handlePersonaFilterChange}
           onClear={clearFilters}
