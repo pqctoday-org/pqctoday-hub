@@ -63,6 +63,13 @@ jobs:
       - name: Audit compliance country tokens
         run: npm run audit:compliance-countries
 
+      - name: Audit semantic tokens (no hardcoded colours)
+        # continue-on-error until the 49 baseline violations (A1/A2/A6 reopened May 2026)
+        # are resolved. Remove continue-on-error once audit:tokens exits 0.
+        # Tracked in ux-gap-analysis.md A1-reopen / A2-reopen / A6-reopen.
+        run: npm run audit:tokens
+        continue-on-error: true
+
       - name: Install Playwright Browsers
         run: npx playwright install chromium --with-deps
 

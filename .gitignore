@@ -248,6 +248,10 @@ scripts/*
 # COUNTRY_TO_REGION in src/data/complianceData.ts. Pure read-only.
 !scripts/audit-compliance-countries.ts
 
+# Semantic-token audit — CI gate that scans src/ for hardcoded Tailwind palette
+# classes that violate ux-standard.md §S1.2. Pure read-only against public src.
+!scripts/audit-semantic-tokens.ts
+
 # Private CI workflows (compliance scraper runs locally, not in public CI)
 .github/workflows/update-compliance.yml
 

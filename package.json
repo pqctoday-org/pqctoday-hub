@@ -37,6 +37,7 @@
     "audit:matrix-refs": "tsx scripts/audit-matrix-refs.ts",
     "audit:timeline-aliases": "tsx scripts/audit-timeline-aliases.ts",
     "audit:compliance-countries": "tsx scripts/audit-compliance-countries.ts",
+    "audit:tokens": "tsx scripts/audit-semantic-tokens.ts",
     "audit:compliance": "tsx scripts/audit-compliance-coverage.ts",
     "audit:compliance:offline": "tsx scripts/audit-compliance-coverage.ts --skip-external",
     "audit:compliance:dry": "tsx scripts/audit-compliance-coverage.ts --dry-run --skip-external",
