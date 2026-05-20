@@ -21,6 +21,50 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### UX — Learn page improvements (2026-05-19)
+
+A comprehensive accessibility, consistency, and usability pass across the `/learn` section.
+
+**Accessibility — prefers-reduced-motion (A8)**
+
+All Framer Motion animations in PKILearning now respect the OS `prefers-reduced-motion` setting via the `usePrefersReducedMotion()` hook. SVG-heavy visualisation sub-components (lattice, hash, code-based, MPC-ITC, multivariate, isogeny) use `MotionConfig reducedMotion="user"` so every child element is covered without per-element changes. Covers 20+ components across Quiz, TLS Basics, LearnTrackStack, LearningPath, AlgorithmFamilyWorkshop, and FamilyMathExplainer.
+
+**Accessibility — semantic token CI gate**
+
+`npm run audit:tokens` now runs as a required CI step between Lint and Build. 49 raw-palette violations (`text-blue-400`, `bg-gray-900`, etc.) cleared across Algorithms, Compliance, and PKILearning components. Any new violation blocks the build.
+
+**Module cards (Phase 3)**
+
+- **Track badge** — each card now shows its module track (`Foundations`, `Protocols`, `Applications`, etc.) as a colour-coded chip in the footer.
+- **Resume CTA** — in-progress modules show a `Resume →` button instead of a plain circle, making the action explicit.
+- **Learn + Workshop progress bars** — two stacked mini-bars (`Learn` / `Workshop`) in the card header show exact percentage completion; bars turn green at 100%.
+
+**Dashboard filter improvements (Phase 5)**
+
+- Status and Difficulty filters in the mobile filter drawer are now pill-toggle rows (matching the existing NICE Proficiency tier pattern) — easier to tap on small screens.
+- New **Most progress first** sort option ranks modules by combined learn + workshop completion percentage.
+
+**Progress sidebar (Phase 4)**
+
+- Linear `h-1.5` progress bar added below the pie chart for learn-section progress.
+- **Nudge copy** updates dynamically: "Start reading below" → "Good start — keep going!" → "{n} sections left" → "Almost there — {n} to go" → "All sections complete".
+- **Next-section arrow** pill shows the first unchecked section label once progress has started (hidden at 0% and 100%).
+
+**Shared workshop components (Phase 2 / A7 / A9)**
+
+- `WorkshopStepper` (`src/components/PKILearning/common/WorkshopStepper.tsx`) — standardised step navigator with numbered indicators, completion state, and navigation arrows.
+- `WorkshopOperationLog` (`src/components/PKILearning/common/WorkshopOperationLog.tsx`) — accessible `role="log"` panel with per-entry status icons (pending spinner, success check, error X), duration display, and auto-scroll. Wired into:
+  - **Email Signing Step 4** (`LiveHSMProvider`) — worker stderr → `error` entries, stdout → `success`
+  - **KMS PQC Envelope Encryption Demo** — all operation lines routed through the shared component
+
+**Responsive tab bar (Phase 6)**
+
+`ModuleTabBar` (`src/components/PKILearning/common/ModuleTabBar.tsx`) — responsive tab bar for module pages. First 3 tabs show inline on mobile; remaining tabs collapse into a `···` overflow popover. All tabs visible at `sm:` breakpoint. Supports a `hasDot` prop that renders a `bg-primary` dot on the trigger to signal in-progress workshop content. Piloted on the **KMS & PQC Key Management** module (6 tabs: Learn, Visual, Workshop, Exercises, References, Tools & Products).
+
+**Native `<select>` removed (A5)**
+
+All native `<select>` elements in PKILearning replaced with `<FilterDropdown>` for consistent keyboard navigation, theme integration, and ARIA labelling.
+
 ### Feat — NICE Framework workforce gap integration (2026-05-19)
 
 Mapped the entire pqctoday learning catalogue to **NIST IR 8355 / SP 800-181 Rev 1** (NICE Framework) and surfaced the mapping across the assessment report, the `/learn` page, and a new non-technical learning track.
