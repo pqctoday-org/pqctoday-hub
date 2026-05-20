@@ -1226,7 +1226,7 @@ export function ComplianceRunner() {
   const statusIcon = (s: CheckStatus) => {
     switch (s) {
       case 'pass':
-        return <CheckCircle className="h-4 w-4 text-green-500 shrink-0" />
+        return <CheckCircle className="h-4 w-4 text-status-success shrink-0" />
       case 'fail':
       case 'error':
         return <XCircle className="h-4 w-4 text-destructive shrink-0" />
@@ -1294,7 +1294,7 @@ export function ComplianceRunner() {
         <div
           className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium ${
             summary.fail === 0
-              ? 'bg-green-500/10 border border-green-500/30 text-green-500'
+              ? 'bg-status-success/10 border border-status-success/30 text-status-success'
               : 'bg-destructive/10 border border-destructive/30 text-destructive'
           }`}
         >

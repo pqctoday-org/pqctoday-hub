@@ -137,13 +137,13 @@ export const VRAMSizingCalculator: React.FC = () => {
             <div className="space-y-4 mb-6">
               <div className="flex justify-between text-sm">
                 <span className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded bg-blue-500" /> Model Weights
+                  <div className="w-3 h-3 rounded bg-primary" /> Model Weights
                 </span>
                 <span className="font-mono">{modelVramGB.toFixed(2)} GB</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded bg-purple-500" /> KV Cache
+                  <div className="w-3 h-3 rounded bg-secondary" /> KV Cache
                 </span>
                 <span className="font-mono">{kvCacheVramGB.toFixed(2)} GB</span>
               </div>
@@ -164,11 +164,11 @@ export const VRAMSizingCalculator: React.FC = () => {
             {/* Stack Bar */}
             <div className="w-full h-8 bg-muted rounded-lg overflow-hidden flex shadow-inner">
               <div
-                className="h-full bg-blue-500"
+                className="h-full bg-primary"
                 style={{ width: `${Math.min((modelVramGB / gpu.capacityGB) * 100, 100)}%` }}
               />
               <div
-                className="h-full bg-purple-500"
+                className="h-full bg-secondary"
                 style={{ width: `${Math.min((kvCacheVramGB / gpu.capacityGB) * 100, 100)}%` }}
               />
               <div

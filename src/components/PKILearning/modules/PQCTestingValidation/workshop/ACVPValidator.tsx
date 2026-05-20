@@ -313,7 +313,7 @@ export const ACVPValidator: React.FC = () => {
         {/* Console / Status Terminal */}
         <div
           ref={consoleRef}
-          className="bg-black/95 border border-border/50 p-4 rounded-md font-mono text-[10px] sm:text-xs text-status-success/90 h-64 overflow-y-auto space-y-1 relative shadow-inner"
+          className="bg-card border border-border/50 p-4 rounded-md font-mono text-[10px] sm:text-xs text-status-success/90 h-64 overflow-y-auto space-y-1 relative shadow-inner"
         >
           {status === 'idle' && (
             <div className="text-muted-foreground">

@@ -21,14 +21,14 @@ function getCellColor(value: number, scale: 'risk' | 'priority' | 'readiness'): 
   const clamped = Math.max(0, Math.min(100, value))
 
   if (scale === 'risk') {
-    if (clamped >= 75) return 'bg-status-error/80 text-white'
+    if (clamped >= 75) return 'bg-status-error/80 text-primary-foreground'
     if (clamped >= 50) return 'bg-status-warning/80 text-foreground'
     if (clamped >= 25) return 'bg-status-warning/40 text-foreground'
     return 'bg-status-success/30 text-foreground'
   }
 
   if (scale === 'readiness') {
-    if (clamped >= 75) return 'bg-status-success/80 text-white'
+    if (clamped >= 75) return 'bg-status-success/80 text-primary-foreground'
     if (clamped >= 50) return 'bg-status-success/40 text-foreground'
     if (clamped >= 25) return 'bg-status-warning/40 text-foreground'
     return 'bg-status-error/30 text-foreground'

@@ -878,7 +878,7 @@ export const TEEHSMTrustedChannel: React.FC = () => {
                   <div
                     className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
                       completedSteps.has(idx)
-                        ? 'bg-status-success text-white'
+                        ? 'bg-status-success text-primary-foreground'
                         : idx === currentStep
                           ? 'bg-primary text-primary-foreground ring-2 ring-primary/50'
                           : 'bg-muted text-muted-foreground'

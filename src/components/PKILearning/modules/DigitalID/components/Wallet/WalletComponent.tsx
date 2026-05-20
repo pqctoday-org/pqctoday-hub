@@ -140,7 +140,7 @@ export const WalletComponent: React.FC<WalletComponentProps> = ({ wallet, onAddC
                               ? 'BASE64 CBOR COSE_Sign1'
                               : 'SD-JWT VC (~ DELIMITED)'}
                           </p>
-                          <div className="p-3 bg-black/90 text-green-400 font-mono text-[10px] rounded overflow-x-auto break-all max-h-48 border border-green-500/20 shadow-inner">
+                          <div className="p-3 bg-card border border-status-success/20 text-status-success font-mono text-[10px] rounded overflow-x-auto break-all max-h-48 shadow-inner">
                             {cred.raw}
                           </div>
                         </div>
