@@ -48,6 +48,7 @@ The biggest three-day release window of the year. What you'll actually notice:
 - **Compliance data refresh**: `compliance_05192026.csv` — 175 framework rows updated.
 - **Library refresh**: `library_05192026_r4.csv` — updated entries.
 - **OSCAL / CBOM regenerated** to v3.16.0.
+- **Migrate catalog**: `pqc_product_catalog_05192026.csv` — Microsoft AD CS corrected from No → Yes (with details): ML-DSA certificate issuance now supported in Windows Server 2025; ML-KEM and composite certificates planned for 2026. Sources: Microsoft TechCommunity Future-Proofing PKI event + independent blog verification.
 
 ## [3.16.0] - 2026-05-19
 
