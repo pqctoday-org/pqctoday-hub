@@ -27,6 +27,7 @@ import {
 import {
   complianceFrameworks,
   type ComplianceFramework,
+  type PQCRequirement,
   type RegionBloc,
   type DeadlinePhase,
   regionForCountry,
@@ -156,11 +157,25 @@ const DEADLINE_FILTER_OPTIONS: { id: 'All' | DeadlinePhase; label: string }[] = 
   { id: 'ongoing', label: 'Ongoing / no year' },
 ]
 
+/** Priority: yes/partial/expected (real mandate) → guidance → no */
+function pqcSortPriority(r: PQCRequirement): number {
+  if (r === 'yes' || r === 'partial' || r === 'expected') return 0
+  if (r === 'guidance') return 1
+  return 2
+}
+
+/** True when the framework has any form of PQC mandate (including partial/expected). */
+function hasPQCMandate(r: PQCRequirement): boolean {
+  return r === 'yes' || r === 'partial' || r === 'expected'
+}
+
 function sortFrameworks(items: ComplianceFramework[], sort: FrameworkSortOption) {
   return [...items].sort((a, b) => {
     if (sort === 'name') return a.label.localeCompare(b.label)
-    // deadline: requiresPQC first, then by year ascending, then alphabetical
-    if (a.requiresPQC !== b.requiresPQC) return a.requiresPQC ? -1 : 1
+    // deadline: mandate tier first, then guidance, then no-mandate; within tier by year
+    const pa = pqcSortPriority(a.pqcRequirement)
+    const pb = pqcSortPriority(b.pqcRequirement)
+    if (pa !== pb) return pa - pb
     const aYear = extractYear(a.deadline) ?? 9999
     const bYear = extractYear(b.deadline) ?? 9999
     if (aYear !== bYear) return aYear - bYear
@@ -849,8 +864,12 @@ function FrameworkTableRow({ fw }: { fw: ComplianceFramework }) {
       </td>
       <td className="py-2.5 px-3">
         <div className="flex items-center gap-2">
-          {fw.requiresPQC ? (
+          {fw.pqcRequirement === 'yes' ? (
             <ShieldCheck size={14} className="text-status-success shrink-0" />
+          ) : fw.pqcRequirement === 'partial' || fw.pqcRequirement === 'expected' ? (
+            <ShieldCheck size={14} className="text-status-warning shrink-0" />
+          ) : fw.pqcRequirement === 'guidance' ? (
+            <ShieldCheck size={14} className="text-status-info shrink-0" />
           ) : (
             <ShieldAlert size={14} className="text-muted-foreground shrink-0" />
           )}
@@ -1243,13 +1262,13 @@ export function ComplianceLandscape({
 
   // Quick-filter toggles applied on top of base result
   const displayedFrameworks = useMemo(() => {
-    if (pqcRequiredOnly) return baseFrameworks.filter((f) => f.requiresPQC)
+    if (pqcRequiredOnly) return baseFrameworks.filter((f) => hasPQCMandate(f.pqcRequirement))
     if (hasDeadlineOnly) return baseFrameworks.filter((f) => extractYear(f.deadline) !== null)
     return baseFrameworks
   }, [baseFrameworks, pqcRequiredOnly, hasDeadlineOnly])
 
   // Stats — always reflect what's currently visible in the grid
-  const pqcCount = displayedFrameworks.filter((f) => f.requiresPQC).length
+  const pqcCount = displayedFrameworks.filter((f) => hasPQCMandate(f.pqcRequirement)).length
   const deadlineCount = displayedFrameworks.filter((f) => extractYear(f.deadline) !== null).length
 
   // Scroll to and briefly highlight a framework when deep-linked via ?framework=<id>
@@ -1283,12 +1302,16 @@ export function ComplianceLandscape({
               ? 'ring-2 ring-status-success/40 bg-status-success/5'
               : 'hover:bg-status-success/5'
           }`}
-          title={pqcRequiredOnly ? 'Clear PQC filter' : 'Show only PQC-required entries'}
+          title={
+            pqcRequiredOnly
+              ? 'Clear PQC filter'
+              : 'Show only frameworks with a PQC mandate (yes / partial / expected)'
+          }
           aria-pressed={pqcRequiredOnly}
         >
           <ShieldCheck size={16} className="text-status-success" />
           <span className="text-2xl font-bold text-foreground">{pqcCount}</span>
-          <span className="text-muted-foreground">Require PQC</span>
+          <span className="text-muted-foreground">Mandate PQC</span>
         </Button>
         <Button
           type="button"
