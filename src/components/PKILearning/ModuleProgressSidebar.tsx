@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import { useState } from 'react'
-import { CheckCircle, ChevronDown, ChevronUp, Trophy, Wrench } from 'lucide-react'
+import { ArrowRight, CheckCircle, ChevronDown, ChevronUp, Trophy, Wrench } from 'lucide-react'
 import { useModuleStore } from '../../store/useModuleStore'
 import { LEARN_SECTIONS, WORKSHOP_STEPS } from './moduleData'
 import { LearnSectionChecklist } from './LearnSectionChecklist'
@@ -40,6 +40,19 @@ export const ModuleProgressSidebar = ({ moduleId }: ModuleProgressSidebarProps) 
     workshopSteps.length > 0 ? Math.round((workshopDone / workshopSteps.length) * 100) : 0
   const hasWorkshop = workshopSteps.length > 0
 
+  // Next unchecked section
+  const nextSection = sections.find((s) => !checks[s.id])
+
+  // Dynamic nudge copy
+  const nudgeCopy = (() => {
+    if (learnPct === 100) return 'All sections complete'
+    const remaining = sections.length - checkedCount
+    if (learnPct === 0) return 'Start reading below'
+    if (learnPct < 40) return 'Good start — keep going!'
+    if (learnPct < 75) return `${remaining} section${remaining !== 1 ? 's' : ''} left`
+    return `Almost there — ${remaining} to go`
+  })()
+
   const content = (
     <div className="space-y-5">
       {/* Completion banner */}
@@ -53,15 +66,38 @@ export const ModuleProgressSidebar = ({ moduleId }: ModuleProgressSidebarProps) 
       {/* Overall pie + label */}
       <div className="flex items-center gap-3">
         <ModuleProgressPie pct={learnPct} size={48} strokeWidth={5} />
-        <div>
+        <div className="flex-1 min-w-0">
           <p className="text-xs font-semibold text-foreground">
             {checkedCount}/{sections.length} sections read
           </p>
-          <p className="text-[10px] text-muted-foreground mt-0.5">
-            {learnPct === 100 ? 'All sections complete' : 'Check each section after reading'}
+          <p
+            className={`text-[10px] mt-0.5 ${learnPct === 100 ? 'text-status-success font-medium' : 'text-muted-foreground'}`}
+          >
+            {nudgeCopy}
           </p>
         </div>
       </div>
+
+      {/* Linear learn progress bar */}
+      <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+        <div
+          className={`h-full rounded-full transition-all duration-300 ${learnPct === 100 ? 'bg-status-success' : 'bg-primary'}`}
+          style={{ width: `${learnPct}%` }}
+          role="progressbar"
+          aria-label="Learn progress"
+          aria-valuenow={learnPct}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        />
+      </div>
+
+      {/* Next-section arrow */}
+      {nextSection && learnPct > 0 && learnPct < 100 && (
+        <div className="flex items-center gap-1.5 text-[10px] text-primary bg-primary/8 rounded px-2 py-1">
+          <ArrowRight size={10} className="shrink-0" />
+          <span className="truncate font-medium">{nextSection.label}</span>
+        </div>
+      )}
 
       {/* Learn section checklist */}
       <LearnSectionChecklist moduleId={moduleId} />
