@@ -329,7 +329,7 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
     return workshopContent
   }
 
-  const workshopSteps = WORKSHOP_STEPS[MODULE_ID] ?? []
+  const workshopSteps = WORKSHOP_STEPS
   const completedSteps = modules[MODULE_ID]?.completedSteps ?? []
   const workshopDone = workshopSteps.filter((s) => completedSteps.includes(s.id)).length
   const workshopDot = workshopDone > 0 && workshopDone < workshopSteps.length

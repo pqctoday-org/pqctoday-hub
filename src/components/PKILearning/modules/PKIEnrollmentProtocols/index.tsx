@@ -94,7 +94,7 @@ export const PKIEnrollmentProtocolsModule: React.FC = () => {
     setEeKeyPem(keyPem)
   }, [])
 
-  const workshopSteps = WORKSHOP_STEPS[MODULE_ID] ?? []
+  const workshopSteps = WORKSHOP_STEPS
   const completedSteps = modules[MODULE_ID]?.completedSteps ?? []
   const workshopDone = workshopSteps.filter((s) => completedSteps.includes(s.id)).length
   const workshopDot = workshopDone > 0 && workshopDone < workshopSteps.length
