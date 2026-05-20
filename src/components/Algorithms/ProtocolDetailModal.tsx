@@ -11,6 +11,7 @@ import {
   Rocket,
   AlertTriangle,
   Globe2,
+  Star,
 } from 'lucide-react'
 import {
   PROTOCOL_MATRIX,
@@ -440,6 +441,17 @@ export function ProtocolDetailModal({ isOpen, onClose, protocol }: ProtocolDetai
                   )}
                 </div>
                 <p className="mt-1 text-sm text-muted-foreground">{protocol.description}</p>
+                {protocol.recommended && protocol.recommendedReason && (
+                  <div className="mt-2 flex items-start gap-1.5 rounded-md border border-status-warning/30 bg-status-warning/8 px-2.5 py-2">
+                    <Star size={12} className="mt-0.5 shrink-0 text-status-warning" />
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      <span className="font-medium text-status-warning">
+                        Recommended for production —{' '}
+                      </span>
+                      {protocol.recommendedReason}
+                    </p>
+                  </div>
+                )}
               </div>
               <Button
                 variant="ghost"

@@ -9,7 +9,7 @@ import { AlgorithmFilters } from './AlgorithmFilters'
 import { AlgorithmCompareBar } from './AlgorithmCompareBar'
 import { AlgorithmComparisonPanel } from './AlgorithmComparisonPanel'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
-import { ArrowRight, BarChart3, Shield, Monitor, Lightbulb, Network, Info } from 'lucide-react'
+import { ArrowRight, BarChart3, Shield, Lightbulb, Network, Info } from 'lucide-react'
 import {
   loadPQCAlgorithmsData,
   loadedFileMetadata,
@@ -29,6 +29,7 @@ import { PageHeader } from '../common/PageHeader'
 import { generateCsv, downloadCsv, csvFilename } from '../../utils/csvExport'
 import { ALGORITHM_CSV_COLUMNS } from '../../utils/csvExportConfigs'
 import { AlgorithmInfoModal } from './AlgorithmInfoModal'
+import { AlgorithmEntryStrip } from './AlgorithmEntryStrip'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { Button } from '../ui/button'
 import { useSemanticSearch } from '@/services/search/useSemanticSearch'
@@ -75,6 +76,24 @@ export function AlgorithmsView() {
   const [searchParams, setSearchParams] = useSearchParams()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const comparisonPanelRef = useRef<HTMLDivElement>(null)
+
+  // Strip is hidden when the page has any pre-set filter/tab/search state
+  const hasActiveParams = useMemo(() => {
+    const watched = [
+      'tab',
+      'highlight',
+      'family',
+      'fn',
+      'level',
+      'region',
+      'status',
+      'q',
+      'compare',
+      'section',
+      'subtab',
+    ]
+    return watched.some((key) => searchParams.has(key))
+  }, [searchParams])
 
   // --- Highlight from URL ---
   const highlightAlgorithms = useMemo(() => {
@@ -503,13 +522,11 @@ export function AlgorithmsView() {
         </div>
       )}
 
-      {/* Desktop recommended notice — shown on small screens only */}
-      <div className="lg:hidden glass-panel p-3 mb-4 flex items-center gap-2 text-sm text-muted-foreground">
-        <Monitor size={16} className="shrink-0 text-primary" aria-hidden="true" />
-        <span>
-          Best experienced on desktop — the Detailed Comparison tab works best on larger screens.
-        </span>
-      </div>
+      <AlgorithmEntryStrip
+        persona={selectedPersona}
+        hasActiveParams={hasActiveParams}
+        onApply={updateSearchParams}
+      />
 
       {/* Loading skeleton */}
       {isLoading && (
@@ -619,17 +636,15 @@ export function AlgorithmsView() {
                   compareType={compareType}
                   maxCompareReached={compareKeys.length >= MAX_COMPARE}
                   onToggleCompare={handleToggleCompare}
-                  activeSubTab={
-                    (searchParams.get('subtab') as
+                  initialSection={
+                    (searchParams.get('section') ?? searchParams.get('subtab') ?? undefined) as
                       | 'performance'
                       | 'security'
                       | 'sizes'
                       | 'usecases'
                       | 'attacks'
-                      | 'kat') || 'performance'
-                  }
-                  onSubTabChange={(v) =>
-                    updateSearchParams({ subtab: v === 'performance' ? null : v })
+                      | 'kat'
+                      | undefined
                   }
                 />
               </motion.div>

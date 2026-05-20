@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
+import React from 'react'
 import {
   type AlgorithmDetail,
   getPerformanceCategory,
@@ -10,7 +11,6 @@ import {
   RESEARCH_NEEDED,
   isResearchNeeded,
 } from '../../data/pqcAlgorithmsData'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import {
   Shield,
   Zap,
@@ -24,6 +24,7 @@ import {
   Scale,
   ShieldAlert,
   FlaskConical,
+  ChevronDown,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
@@ -52,9 +53,11 @@ interface AlgorithmDetailedComparisonProps {
   compareType: 'KEM' | 'Signature' | null
   maxCompareReached: boolean
   onToggleCompare: (name: string) => void
-  activeSubTab?: SubTab
-  onSubTabChange?: (tab: SubTab) => void
+  /** Section to scroll to and expand on mount (driven by ?section= URL param). */
+  initialSection?: SubTab
 }
+
+const DEFAULT_OPEN_SECTIONS: SubTab[] = ['performance', 'security', 'sizes']
 
 export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonProps> = ({
   highlightAlgorithms,
@@ -64,160 +67,146 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
   compareType,
   maxCompareReached,
   onToggleCompare,
-  activeSubTab = 'performance',
-  onSubTabChange,
+  initialSection,
 }) => {
+  const [openSections, setOpenSections] = useState<Set<SubTab>>(() => {
+    const defaults = new Set<SubTab>(DEFAULT_OPEN_SECTIONS)
+    if (initialSection) defaults.add(initialSection)
+    return defaults
+  })
+
+  const sectionRefs = useRef<Partial<Record<SubTab, HTMLElement | null>>>({})
+
+  useEffect(() => {
+    if (!initialSection) return
+    // Defer scroll until the section has rendered (already open via useState initializer)
+    const frame = requestAnimationFrame(() => {
+      sectionRefs.current[initialSection]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+    return () => cancelAnimationFrame(frame)
+  }, [initialSection])
+
+  const toggleSection = (id: SubTab) => {
+    setOpenSections((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+      return next
+    })
+  }
+
+  const sharedViewProps = {
+    algorithms: filteredAlgorithms,
+    highlightAlgorithms,
+    compareSet,
+    compareType,
+    maxCompareReached,
+    onToggleCompare,
+  }
+
+  const sections: Array<{
+    id: SubTab
+    icon: React.ReactNode
+    label: string
+    content: React.ReactNode
+  }> = [
+    {
+      id: 'performance',
+      icon: <Zap size={16} />,
+      label: 'Performance',
+      content: <PerformanceView {...sharedViewProps} />,
+    },
+    {
+      id: 'security',
+      icon: <Shield size={16} />,
+      label: 'Security Levels',
+      content: <SecurityView {...sharedViewProps} />,
+    },
+    {
+      id: 'sizes',
+      icon: <HardDrive size={16} />,
+      label: 'Size Comparison',
+      content: <SizesView {...sharedViewProps} />,
+    },
+    {
+      id: 'usecases',
+      icon: <TrendingUp size={16} />,
+      label: 'Use Cases',
+      content: <UseCasesView {...sharedViewProps} />,
+    },
+    {
+      id: 'attacks',
+      icon: <ShieldAlert size={16} />,
+      label: 'Implementation Attacks',
+      content: <ImplementationAttacksView />,
+    },
+    { id: 'kat', icon: <FlaskConical size={16} />, label: 'KAT Validation', content: <KATView /> },
+  ]
+
   return (
-    <div className="space-y-6">
-      {/* Tabs */}
-      <Tabs value={activeSubTab} onValueChange={(v) => onSubTabChange?.(v as SubTab)}>
-        <div className="flex items-center gap-2 mb-4">
-          <TabsList className="bg-muted/50 border border-border flex w-full overflow-x-auto hide-scrollbar justify-start sm:justify-center p-1 rounded-lg">
-            <TabsTrigger
-              value="performance"
-              className="flex items-center gap-2 shrink-0 data-[state=active]:bg-background shadow-sm"
-            >
-              <Zap size={16} />
-              <span>Performance</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="security"
-              className="flex items-center gap-2 shrink-0 data-[state=active]:bg-background shadow-sm"
-            >
-              <Shield size={16} />
-              <span>Security Levels</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="sizes"
-              className="flex items-center gap-2 shrink-0 data-[state=active]:bg-background shadow-sm"
-            >
-              <HardDrive size={16} />
-              <span>Size Comparison</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="usecases"
-              className="flex items-center gap-2 shrink-0 data-[state=active]:bg-background shadow-sm"
-            >
-              <TrendingUp size={16} />
-              <span>Use Cases</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="attacks"
-              className="flex items-center gap-2 shrink-0 data-[state=active]:bg-background shadow-sm"
-            >
-              <ShieldAlert size={16} />
-              <span>Impl. Attacks</span>
-            </TabsTrigger>
-            <TabsTrigger
-              value="kat"
-              className="flex items-center gap-2 shrink-0 data-[state=active]:bg-background shadow-sm"
-            >
-              <FlaskConical size={16} />
-              <span>KAT Validation</span>
-            </TabsTrigger>
-          </TabsList>
-          {onInfoOpen && (
+    <div className="space-y-3">
+      {onInfoOpen && (
+        <div className="flex justify-end">
+          <Button
+            variant="ghost"
+            onClick={onInfoOpen}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-muted/50 border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors text-xs"
+            aria-label="Performance data methodology"
+            title="About performance data"
+          >
+            <Info size={14} />
+            <span className="hidden sm:inline">About</span>
+          </Button>
+        </div>
+      )}
+
+      {sections.map(({ id, icon, label, content }) => {
+        const isOpen = openSections.has(id)
+        return (
+          <section
+            key={id}
+            id={`section-${id}`}
+            ref={(el) => {
+              sectionRefs.current[id] = el
+            }}
+            className="glass-panel overflow-hidden"
+          >
             <Button
               variant="ghost"
-              onClick={onInfoOpen}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-muted/50 border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors text-xs"
-              aria-label="Performance data methodology"
-              title="About performance data"
+              onClick={() => toggleSection(id)}
+              className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-muted/30 transition-colors h-auto rounded-none"
+              aria-expanded={isOpen}
+              aria-controls={`section-body-${id}`}
             >
-              <Info size={14} />
-              <span className="hidden sm:inline">About</span>
+              <span className="flex items-center gap-2 font-semibold text-foreground text-sm">
+                <span className="text-primary">{icon}</span>
+                {label}
+              </span>
+              <ChevronDown
+                size={16}
+                className={clsx(
+                  'text-muted-foreground transition-transform duration-200',
+                  isOpen && 'rotate-180'
+                )}
+              />
             </Button>
-          )}
-        </div>
-
-        <TabsContent value="performance">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <PerformanceView
-              algorithms={filteredAlgorithms}
-              highlightAlgorithms={highlightAlgorithms}
-              compareSet={compareSet}
-              compareType={compareType}
-              maxCompareReached={maxCompareReached}
-              onToggleCompare={onToggleCompare}
-            />
-          </motion.div>
-        </TabsContent>
-
-        <TabsContent value="security">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <SecurityView
-              algorithms={filteredAlgorithms}
-              highlightAlgorithms={highlightAlgorithms}
-              compareSet={compareSet}
-              compareType={compareType}
-              maxCompareReached={maxCompareReached}
-              onToggleCompare={onToggleCompare}
-            />
-          </motion.div>
-        </TabsContent>
-
-        <TabsContent value="sizes">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <SizesView
-              algorithms={filteredAlgorithms}
-              highlightAlgorithms={highlightAlgorithms}
-              compareSet={compareSet}
-              compareType={compareType}
-              maxCompareReached={maxCompareReached}
-              onToggleCompare={onToggleCompare}
-            />
-          </motion.div>
-        </TabsContent>
-
-        <TabsContent value="usecases">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <UseCasesView
-              algorithms={filteredAlgorithms}
-              highlightAlgorithms={highlightAlgorithms}
-              compareSet={compareSet}
-              compareType={compareType}
-              maxCompareReached={maxCompareReached}
-              onToggleCompare={onToggleCompare}
-            />
-          </motion.div>
-        </TabsContent>
-
-        <TabsContent value="attacks">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <ImplementationAttacksView />
-          </motion.div>
-        </TabsContent>
-
-        <TabsContent value="kat">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <KATView />
-          </motion.div>
-        </TabsContent>
-      </Tabs>
+            {isOpen && (
+              <motion.div
+                id={`section-body-${id}`}
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.15 }}
+                className="border-t border-border/40 px-4 pb-4 pt-4"
+              >
+                {content}
+              </motion.div>
+            )}
+          </section>
+        )
+      })}
     </div>
   )
 }
