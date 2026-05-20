@@ -237,6 +237,15 @@ export interface ProtocolMatrixRow {
    * and reuse the parent's dimension badges at render time.
    */
   inheritsFromProtocolId?: string
+  /**
+   * Editorial flag: this protocol is ready for production PQC deployment today.
+   * Criteria: at least one dimension at RFC or RFC-editor-queue stage with known
+   * production deployments. Drives the star chip in heatmap view, the
+   * recommendations panel in detailed view, and the ?highlight=recommended param.
+   */
+  recommended?: boolean
+  /** One-sentence rationale for `recommended: true`, shown in the panel and modal. */
+  recommendedReason?: string
 }
 
 /** Transport-layer blockers tracked by PQCC heatmap (April 2026). */
@@ -460,6 +469,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
           'https://aws.amazon.com/blogs/security/post-quantum-hybrid-sftp-file-transfers-using-aws-transfer-family/',
       },
     ],
+    recommended: true,
+    recommendedReason:
+      'RFC 9941 published (April 2026), mlkem768x25519 shipped by default in OpenSSH 9.9, GitHub SSH, and AWS Transfer Family — the most deployment-ready PQC protocol today.',
   },
   {
     id: 'tls-1-2',
@@ -735,6 +747,9 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
     ],
     inheritedBy: ['DTLS 1.3', 'FIDO 2', 'MACsec'],
+    recommended: true,
+    recommendedReason:
+      'X25519MLKEM768 hybrid group already in production at Cloudflare, Google, and AWS; spec is in the RFC Editor queue (EDIT) — the de-facto standard for TLS PQC migration today.',
   },
   {
     id: 'x509',

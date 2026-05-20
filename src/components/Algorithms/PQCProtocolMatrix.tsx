@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import {
   PROTOCOL_MATRIX,
   PROTOCOL_MATRIX_LAST_UPDATED,
@@ -33,6 +33,7 @@ import {
   ArrowUp,
   ArrowDown,
   Globe2,
+  Star,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -137,6 +138,8 @@ interface DimensionBadgeProps {
   status: DimensionStatus
   /** When true, drop the per-cell ref chips + stage caption — chip tooltip + modal carry them. */
   compact?: boolean
+  /** Transport-layer blocker names to surface in the compact tooltip (heatmap mode only). */
+  blockerNames?: string[]
 }
 
 /** Short display label for a draft slug: drop the boilerplate prefix so the
@@ -291,18 +294,21 @@ function DimensionRefChip({ cellRef }: { cellRef: DimensionRef }) {
   )
 }
 
-function DimensionBadge({ status, compact = false }: DimensionBadgeProps) {
+function DimensionBadge({ status, compact = false, blockerNames }: DimensionBadgeProps) {
   const useStage = Boolean(status.stage)
   const toneClass = useStage ? dimensionStageTone(status) : dimensionTone(status.value)
   const stageLabel = status.stage ? DRAFT_STAGE_SHORT[status.stage] : null
   const stageLevel = status.stage ? DRAFT_STAGE_LEVEL[status.stage] : null
   // Build a comprehensive tooltip so compact mode loses nothing — hover gives
-  // the stageNote, plain note, and ref IDs at a glance.
+  // the stageNote, plain note, ref IDs, and any transport-layer blockers at a glance.
   const tooltipParts = [
     status.stageNote,
     status.note,
     status.refs && status.refs.length > 0
       ? `Refs: ${status.refs.map((r) => r.id).join(', ')}`
+      : null,
+    blockerNames && blockerNames.length > 0
+      ? `⚠ Blockers: ${blockerNames.slice(0, 2).join(', ')}`
       : null,
   ].filter(Boolean) as string[]
   const tooltip = tooltipParts.length > 0 ? tooltipParts.join(' · ') : undefined
@@ -603,7 +609,16 @@ function AvailabilityBadge({ count, tone }: { count: number; tone: 'oss' | 'comm
   )
 }
 
+function getRowBlockerNames(protocolId: string): string[] {
+  return TRANSPORT_ISSUES.filter((issue) => issue.affectedProtocolIds.includes(protocolId)).map(
+    (issue) => issue.name
+  )
+}
+
+const RECOMMENDED_ROWS = PROTOCOL_MATRIX.filter((r) => r.recommended)
+
 export function PQCProtocolMatrix() {
+  const [searchParams] = useSearchParams()
   const [viewMode, setViewMode] = useState<ViewMode>('heatmap')
   const [searchText, setSearchText] = useState('')
   const [statusFilter, setStatusFilter] = useState<DimensionStatusValue[]>([])
@@ -611,7 +626,18 @@ export function PQCProtocolMatrix() {
   const [sortKey, setSortKey] = useState<SortKey>('matrix')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
   const [selectedProtocol, setSelectedProtocol] = useState<ProtocolMatrixRow | null>(null)
+  const firstRecommendedRef = useRef<HTMLTableRowElement | null>(null)
   const isHeatmap = viewMode === 'heatmap'
+
+  // ?highlight=recommended — scroll to first recommended row on mount
+  const highlightRecommended = searchParams.get('highlight') === 'recommended'
+  useEffect(() => {
+    if (!highlightRecommended) return
+    const frame = requestAnimationFrame(() => {
+      firstRecommendedRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    })
+    return () => cancelAnimationFrame(frame)
+  }, [highlightRecommended])
 
   const filteredRows = useMemo(() => {
     const search = searchText.trim().toLowerCase()
@@ -677,6 +703,46 @@ export function PQCProtocolMatrix() {
 
   return (
     <div className="space-y-6">
+      {/* Recommended for production — detailed view only */}
+      {!isHeatmap && RECOMMENDED_ROWS.length > 0 && (
+        <div className="glass-panel p-4 space-y-3">
+          <div className="flex items-center gap-2">
+            <Star size={15} className="text-status-warning shrink-0" />
+            <h3 className="text-sm font-semibold text-foreground">
+              Recommended for production use today
+            </h3>
+          </div>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {RECOMMENDED_ROWS.map((row) => (
+              <div
+                key={row.id}
+                className="rounded-md border border-status-warning/25 bg-status-warning/5 p-3"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedProtocol(row)}
+                    className="text-sm font-semibold text-foreground hover:underline text-left p-0 h-auto"
+                  >
+                    {row.name}
+                  </Button>
+                  <span className="inline-flex items-center gap-1 rounded border border-status-warning/30 bg-status-warning/10 px-1.5 py-0.5 text-[10px] font-medium text-status-warning shrink-0">
+                    <Star size={9} />
+                    Recommended
+                  </span>
+                </div>
+                {row.recommendedReason && (
+                  <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                    {row.recommendedReason}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* WIP banner */}
       <div className="flex items-start gap-3 rounded-lg border border-status-warning/40 bg-status-warning/10 p-3">
         <AlertTriangle size={18} className="mt-0.5 shrink-0 text-status-warning" />
@@ -982,11 +1048,20 @@ export function PQCProtocolMatrix() {
                 ? PROTOCOL_MATRIX.find((r) => r.id === p.inheritsFromProtocolId)
                 : undefined
               const isInheritance = Boolean(parent)
+              const rowBlockerNames = isHeatmap ? getRowBlockerNames(p.id) : []
+              const isRecommended = Boolean(p.recommended)
+              const isFirstRecommended =
+                isRecommended && RECOMMENDED_ROWS.findIndex((r) => r.id === p.id) === 0
               return (
                 <tr
                   key={p.id}
+                  ref={isFirstRecommended ? firstRecommendedRef : undefined}
                   className={`border-b border-border/50 align-top transition-colors ${
-                    isInheritance ? 'bg-muted/10 hover:bg-muted/30' : 'hover:bg-muted/20'
+                    isRecommended && highlightRecommended
+                      ? 'bg-status-warning/5 ring-1 ring-inset ring-status-warning/20'
+                      : isInheritance
+                        ? 'bg-muted/10 hover:bg-muted/30'
+                        : 'hover:bg-muted/20'
                   }`}
                 >
                   <td className="sticky left-0 z-10 bg-card px-3 py-3">
@@ -1007,6 +1082,15 @@ export function PQCProtocolMatrix() {
                         >
                           {p.name}
                         </Button>
+                        {isRecommended && (
+                          <span
+                            className="inline-flex items-center gap-0.5 rounded border border-status-warning/30 bg-status-warning/10 px-1 py-0 text-[9px] font-medium text-status-warning shrink-0"
+                            title={p.recommendedReason ?? 'Recommended for production use'}
+                          >
+                            <Star size={8} />
+                            Rec
+                          </span>
+                        )}
                       </div>
                       {isInheritance && parent && (
                         <span className="text-[10px] leading-tight text-muted-foreground">
@@ -1049,16 +1133,32 @@ export function PQCProtocolMatrix() {
                     </>
                   )}
                   <td className="px-3 py-3">
-                    <DimensionBadge status={p.dimensions.pureKem} compact={isHeatmap} />
+                    <DimensionBadge
+                      status={p.dimensions.pureKem}
+                      compact={isHeatmap}
+                      blockerNames={rowBlockerNames}
+                    />
                   </td>
                   <td className="px-3 py-3">
-                    <DimensionBadge status={p.dimensions.hybridKem} compact={isHeatmap} />
+                    <DimensionBadge
+                      status={p.dimensions.hybridKem}
+                      compact={isHeatmap}
+                      blockerNames={rowBlockerNames}
+                    />
                   </td>
                   <td className="px-3 py-3">
-                    <DimensionBadge status={p.dimensions.pureSig} compact={isHeatmap} />
+                    <DimensionBadge
+                      status={p.dimensions.pureSig}
+                      compact={isHeatmap}
+                      blockerNames={rowBlockerNames}
+                    />
                   </td>
                   <td className="px-3 py-3">
-                    <DimensionBadge status={p.dimensions.hybridSig} compact={isHeatmap} />
+                    <DimensionBadge
+                      status={p.dimensions.hybridSig}
+                      compact={isHeatmap}
+                      blockerNames={rowBlockerNames}
+                    />
                   </td>
                   <td className="px-3 py-3">
                     {isHeatmap ? (

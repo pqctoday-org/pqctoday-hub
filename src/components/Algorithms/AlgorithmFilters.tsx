@@ -147,7 +147,10 @@ export function AlgorithmFilters({
           <FilterDropdown
             items={CRYPTO_FAMILY_ITEMS}
             selectedId={cryptoFamily}
-            onSelect={onCryptoFamilyChange}
+            onSelect={(id) => {
+              onCryptoFamilyChange(id)
+              setIsMobileOpen(false)
+            }}
             label="Family"
             defaultLabel="All Families"
             noContainer
@@ -156,7 +159,10 @@ export function AlgorithmFilters({
           <FilterDropdown
             items={FUNCTION_ITEMS}
             selectedId={functionGroup}
-            onSelect={onFunctionGroupChange}
+            onSelect={(id) => {
+              onFunctionGroupChange(id)
+              setIsMobileOpen(false)
+            }}
             label="Function"
             defaultLabel="All Functions"
             noContainer
@@ -165,7 +171,10 @@ export function AlgorithmFilters({
           <FilterDropdown
             items={levelItems}
             selectedId={securityLevel}
-            onSelect={onSecurityLevelChange}
+            onSelect={(id) => {
+              onSecurityLevelChange(id)
+              setIsMobileOpen(false)
+            }}
             label="Security"
             defaultLabel="All Levels"
             defaultIcon={<Shield size={16} className="text-primary" />}
@@ -175,7 +184,10 @@ export function AlgorithmFilters({
           <FilterDropdown
             items={REGION_ITEMS}
             selectedId={region}
-            onSelect={onRegionChange}
+            onSelect={(id) => {
+              onRegionChange(id)
+              setIsMobileOpen(false)
+            }}
             label="Region"
             defaultLabel="All Regions"
             defaultIcon={<Globe size={16} className="text-primary" />}
@@ -185,7 +197,10 @@ export function AlgorithmFilters({
           <FilterDropdown
             items={STATUS_ITEMS}
             selectedId={status}
-            onSelect={onStatusChange}
+            onSelect={(id) => {
+              onStatusChange(id)
+              setIsMobileOpen(false)
+            }}
             label="Status"
             defaultLabel="All Statuses"
             defaultIcon={<CheckCircle size={16} className="text-primary" />}
@@ -205,9 +220,16 @@ export function AlgorithmFilters({
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-9 pr-3 py-2 text-sm"
           />
+          <p className="text-[10px] text-muted-foreground mt-1 ml-1 hidden md:block">
+            Try "lattice KEM", "FIPS certified", or "replaces RSA"
+          </p>
         </div>
 
-        <div className="text-sm text-muted-foreground md:ml-auto whitespace-nowrap">
+        <div
+          className="text-sm text-muted-foreground md:ml-auto whitespace-nowrap"
+          aria-live="polite"
+          aria-atomic="true"
+        >
           Showing {filteredCount} of {totalCount} algorithms
         </div>
       </div>
