@@ -1267,7 +1267,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                               </div>
                             ))}
                             <Link
-                              to="/compliance"
+                              to={`/compliance?tab=compliance${industry ? `&industry=${encodeURIComponent(industry)}` : ''}${country ? `&country=${encodeURIComponent(country)}` : ''}`}
                               className="flex items-center gap-1.5 text-xs text-primary hover:underline mt-3 print:hidden"
                             >
                               <ArrowRight size={12} />

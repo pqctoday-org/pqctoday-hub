@@ -38,6 +38,13 @@ const CRITICALITY_STYLE: Record<ThreatData['criticality'], string> = {
   Low: 'bg-muted text-muted-foreground border-border',
 }
 
+function complianceUrl(industry?: string, country?: string): string {
+  const params = new URLSearchParams({ tab: 'compliance' })
+  if (industry) params.set('industry', industry)
+  if (country) params.set('country', country)
+  return `/compliance?${params.toString()}`
+}
+
 function FrameworksBlock({ metrics }: { metrics: BusinessMetrics }) {
   const navigate = useNavigate()
   const { visible, hiddenCount, hasContext, hidden } = useMemo(
@@ -59,7 +66,7 @@ function FrameworksBlock({ metrics }: { metrics: BusinessMetrics }) {
         <Button
           variant="link"
           size="sm"
-          onClick={() => navigate('/compliance')}
+          onClick={() => navigate(complianceUrl(metrics.industry, metrics.country))}
           className="h-auto p-0 text-xs"
         >
           Manage on Compliance <ArrowRight size={12} className="ml-0.5" />
@@ -82,7 +89,7 @@ function FrameworksBlock({ metrics }: { metrics: BusinessMetrics }) {
           <Button
             variant="link"
             size="sm"
-            onClick={() => navigate('/compliance')}
+            onClick={() => navigate(complianceUrl(metrics.industry, metrics.country))}
             className="h-auto p-0 text-[11px] self-start"
           >
             Review on Compliance

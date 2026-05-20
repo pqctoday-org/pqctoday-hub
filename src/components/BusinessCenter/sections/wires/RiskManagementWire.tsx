@@ -183,6 +183,13 @@ function HealthTile({ metrics }: { metrics: BusinessMetrics }) {
   )
 }
 
+function complianceUrl(industry?: string, country?: string): string {
+  const params = new URLSearchParams({ tab: 'compliance' })
+  if (industry) params.set('industry', industry)
+  if (country) params.set('country', country)
+  return `/compliance?${params.toString()}`
+}
+
 function FrameworkBlock({ metrics }: { metrics: BusinessMetrics }) {
   const navigate = useNavigate()
   const { visible, hiddenCount, hasContext, hidden } = useMemo(
@@ -224,7 +231,7 @@ function FrameworkBlock({ metrics }: { metrics: BusinessMetrics }) {
         <Button
           variant="link"
           size="sm"
-          onClick={() => navigate('/compliance')}
+          onClick={() => navigate(complianceUrl(metrics.industry, metrics.country))}
           className="h-auto p-0 text-xs"
         >
           Open Compliance <ArrowRight size={12} className="ml-0.5" />
@@ -247,7 +254,7 @@ function FrameworkBlock({ metrics }: { metrics: BusinessMetrics }) {
           <Button
             variant="link"
             size="sm"
-            onClick={() => navigate('/compliance')}
+            onClick={() => navigate(complianceUrl(metrics.industry, metrics.country))}
             className="h-auto p-0 text-[11px] self-start"
           >
             Review on Compliance
