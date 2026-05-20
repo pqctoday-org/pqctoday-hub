@@ -102,7 +102,7 @@ function LegCard({
         bar2: 'bg-primary/80',
       }
     : {
-        bar: 'from-destructive to-orange-500',
+        bar: 'from-destructive to-status-warning',
         text: 'text-destructive',
         ring: 'border-destructive/20',
         bar2: 'bg-destructive/60',
@@ -127,7 +127,7 @@ function LegCard({
   if (result.error && !result.connection_ok) {
     return (
       <div className="glass-panel p-5 relative overflow-hidden border-status-error/20">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-status-error to-orange-500" />
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-status-error to-status-warning" />
         <div className="flex items-center gap-2 mb-3">
           <XCircle className="w-4 h-4 text-status-error" />
           <h4 className="text-sm font-bold text-status-error">{title}</h4>

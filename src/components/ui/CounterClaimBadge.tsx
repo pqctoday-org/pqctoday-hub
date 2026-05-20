@@ -50,7 +50,7 @@ export function CounterClaimBadge({
           aria-label="Counter-claim details"
         >
           <div
-            className="absolute inset-0 bg-black/40"
+            className="absolute inset-0 bg-black/60"
             onClick={() => setOpen(false)}
             aria-hidden
           />

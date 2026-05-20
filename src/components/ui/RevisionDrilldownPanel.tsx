@@ -212,7 +212,7 @@ export function RevisionDrilldownPanel({
       aria-label={`Revision history for ${entityLabel}`}
     >
       {/* backdrop */}
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} aria-hidden="true" />
+      <div className="absolute inset-0 bg-black/60" onClick={onClose} aria-hidden="true" />
       {/* panel */}
       <div
         ref={panelRef}

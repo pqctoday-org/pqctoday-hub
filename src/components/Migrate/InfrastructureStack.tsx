@@ -189,55 +189,55 @@ export const CISA_LAYERS = CISA_CATEGORIES.map((cat) => {
   } else if (cat.includes('Collaboration')) {
     icon = Users
     tintColor = '#8b5cf6'
-    iconColor = 'text-violet-500'
+    iconColor = 'text-primary'
   } else if (cat.includes('Web')) {
     icon = Globe
     tintColor = '#3b82f6'
-    iconColor = 'text-blue-500'
+    iconColor = 'text-status-info'
   } else if (cat.includes('Endpoint')) {
     icon = Monitor
     tintColor = '#f43f5e'
-    iconColor = 'text-rose-500'
+    iconColor = 'text-status-error'
   } else if (cat.includes('Networking Hardware')) {
     icon = Share2
     tintColor = '#10b981'
-    iconColor = 'text-emerald-500'
+    iconColor = 'text-status-success'
   } else if (cat.includes('Networking Software')) {
     icon = Activity
     tintColor = '#10b981'
-    iconColor = 'text-emerald-500'
+    iconColor = 'text-status-success'
   } else if (cat.includes('Telecom')) {
     icon = Phone
     tintColor = '#6366f1'
-    iconColor = 'text-indigo-500'
+    iconColor = 'text-secondary'
   } else if (cat.includes('Computers')) {
     icon = Server
     tintColor = '#64748b'
-    iconColor = 'text-slate-500'
+    iconColor = 'text-muted-foreground'
   } else if (cat.includes('Peripheral')) {
     icon = Keyboard
     tintColor = '#64748b'
-    iconColor = 'text-slate-500'
+    iconColor = 'text-muted-foreground'
   } else if (cat.includes('Storage')) {
     icon = Database
     tintColor = '#f59e0b'
-    iconColor = 'text-amber-500'
+    iconColor = 'text-status-warning'
   } else if (cat.includes('Software') && cat.includes('Access')) {
     icon = Key
     tintColor = '#eab308'
-    iconColor = 'text-yellow-500'
+    iconColor = 'text-status-warning'
   } else if (cat.includes('Hardware') && cat.includes('Access')) {
     icon = Shield
     tintColor = '#eab308'
-    iconColor = 'text-yellow-500'
+    iconColor = 'text-status-warning'
   } else if (cat.includes('Data')) {
     icon = Database
     tintColor = '#f59e0b'
-    iconColor = 'text-amber-500'
+    iconColor = 'text-status-warning'
   } else if (cat.includes('Enterprise')) {
     icon = ShieldAlert
     tintColor = '#f43f5e'
-    iconColor = 'text-rose-500'
+    iconColor = 'text-status-error'
   }
 
   return {

@@ -58,7 +58,7 @@ export function AlgorithmCompareBar({
                   type="button"
                   onClick={() => onRemove(name)}
                   aria-label={`Remove ${name} from comparison`}
-                  className="text-muted-foreground hover:text-foreground shrink-0 p-0.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10"
+                  className="text-muted-foreground hover:text-foreground shrink-0 p-0.5 rounded-full hover:bg-muted"
                 >
                   <X size={12} />
                 </Button>

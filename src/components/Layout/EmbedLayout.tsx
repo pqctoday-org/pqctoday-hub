@@ -233,12 +233,12 @@ export const EmbedLayout = () => {
                   ? isNarrowSidebar
                     ? isActive
                       ? navActiveBg
-                        ? 'w-full flex-col justify-center items-center text-white h-auto py-2 px-1 rounded-md gap-0.5'
+                        ? 'w-full flex-col justify-center items-center text-primary-foreground h-auto py-2 px-1 rounded-md gap-0.5'
                         : 'w-full flex-col justify-center items-center bg-primary/10 text-foreground border border-primary/20 h-auto py-2 px-1 gap-0.5'
                       : 'w-full flex-col justify-center items-center text-muted-foreground hover:text-foreground h-auto py-2 px-1 gap-0.5'
                     : isActive
                       ? navActiveBg
-                        ? 'w-full justify-start text-white h-auto py-2 px-3 rounded-md'
+                        ? 'w-full justify-start text-primary-foreground h-auto py-2 px-3 rounded-md'
                         : 'w-full justify-start bg-primary/10 text-foreground border border-primary/20 h-auto py-2 px-3'
                       : 'w-full justify-start text-muted-foreground hover:text-foreground h-auto py-2 px-3'
                   : isActive

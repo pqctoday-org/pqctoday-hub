@@ -308,7 +308,7 @@ export const CuriousSummaryBanner = ({
 
       {lightboxOpen && (
         <div
-          className="fixed inset-0 embed-backdrop z-50 bg-black/90 flex items-center justify-center p-4"
+          className="fixed inset-0 embed-backdrop z-50 bg-card/95 backdrop-blur-sm flex items-center justify-center p-4"
           role="dialog"
           aria-modal="true"
           aria-label="Infographic full view"
@@ -330,13 +330,13 @@ export const CuriousSummaryBanner = ({
           />
           <Button
             variant="ghost"
-            className="absolute top-4 right-4 z-10 text-white hover:text-white/70 hover:bg-white/10"
+            className="absolute top-4 right-4 z-10 text-foreground hover:text-foreground/70 hover:bg-muted/30"
             onClick={() => setLightboxOpen(false)}
             aria-label="Close infographic"
           >
             <X size={24} />
           </Button>
-          <p className="absolute bottom-4 left-0 right-0 z-10 text-center text-xs text-white/50 pointer-events-none">
+          <p className="absolute bottom-4 left-0 right-0 z-10 text-center text-xs text-muted-foreground/70 pointer-events-none">
             Pinch to zoom · Tap outside to close
           </p>
         </div>

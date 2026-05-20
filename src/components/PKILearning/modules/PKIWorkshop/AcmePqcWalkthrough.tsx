@@ -153,7 +153,7 @@ ${Array.from({ length: 8 }, () =>
                   st === 'done'
                     ? 'bg-primary/20 text-primary border-primary/40'
                     : st === 'active'
-                      ? 'bg-primary text-white border-primary'
+                      ? 'bg-primary text-primary-foreground border-primary'
                       : 'bg-muted/30 text-muted-foreground border-border'
                 }`}
               >
