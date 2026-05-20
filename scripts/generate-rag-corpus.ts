@@ -13,6 +13,21 @@ import path from 'path'
 import { createHash } from 'crypto'
 import Papa from 'papaparse'
 import { validateCorpusDeepLinks } from '../src/services/search/deepLinkGrammar'
+import {
+  NICE_COMPETENCY_AREAS,
+  NICE_WORK_ROLES,
+} from '../src/data/niceFramework'
+import { NICE_MODULE_MAP } from '../src/data/niceModuleMapping'
+import { PROTOCOL_MATRIX } from '../src/data/pqcProtocolMatrix'
+import {
+  CNSA_2_0,
+  NIST_DEPRECATION,
+  FIPS_STANDARDS,
+  ANSSI_TIMELINE,
+  BSI_TIMELINE,
+  CRQC_ESTIMATES,
+} from '../src/data/regulatoryTimelines'
+import { FRAMEWORK_MAX_FINE_USD_MILLIONS } from '../src/data/frameworkFines'
 
 /**
  * Provenance chain for a RAG chunk — enables tracing any answer back to its source.
@@ -3991,6 +4006,736 @@ function processModuleQA(): RAGChunk[] {
   return chunks
 }
 
+/**
+ * NICE Framework (NIST SP 800-181 Rev 1) — Competency Areas, Work Roles, and
+ * per-module mappings. Enables the PQC Assistant to answer questions like
+ * "which NICE competencies does the TLS module cover?" and "what work role
+ * needs CA-CRYPTO proficiency?".
+ */
+function processNiceFramework(): RAGChunk[] {
+  const chunks: RAGChunk[] = []
+
+  // --- Competency Areas (8 chunks) ---
+  for (const ca of Object.values(NICE_COMPETENCY_AREAS)) {
+    const tksLines = ca.tksSample
+      .map((t) => `  ${t.type}${t.id}: ${t.label}`)
+      .join('\n')
+    const content = [
+      `NICE Competency Area: ${ca.title} (${ca.id})`,
+      ca.description,
+      `Primary Work Roles: ${ca.primaryWorkRoles.join(', ')}`,
+      `Target Personas: ${ca.targetPersonas.join(', ')}`,
+      `Sample TKS Statements:\n${tksLines}`,
+      'Source: NIST SP 800-181 Rev 1 / NICE Framework Resource Center',
+    ].join('\n')
+
+    chunks.push({
+      id: `nice-ca-${ca.id.toLowerCase()}`,
+      source: 'nice',
+      title: `NICE Competency Area: ${ca.title}`,
+      content,
+      category: 'nice-competency',
+      metadata: {
+        competencyAreaId: ca.id,
+        workRoles: ca.primaryWorkRoles.join(';'),
+        personas: ca.targetPersonas.join(';'),
+      },
+      deepLink: `/learn`,
+      prov: buildChunkProv({ attributedTo: 'human' }),
+    })
+  }
+
+  // --- Work Roles (8 chunks) ---
+  for (const role of Object.values(NICE_WORK_ROLES)) {
+    const content = [
+      `NICE Work Role: ${role.title} (${role.niceCode})`,
+      role.description,
+      `Competency Areas: ${role.competencyAreas.join(', ')}`,
+      'Source: NIST SP 800-181 Rev 1 / NICE Framework Resource Center',
+    ].join('\n')
+
+    chunks.push({
+      id: `nice-role-${role.id}`,
+      source: 'nice',
+      title: `NICE Work Role: ${role.title}`,
+      content,
+      category: 'nice-work-role',
+      metadata: {
+        workRoleId: role.id,
+        niceCode: role.niceCode,
+        competencyAreas: role.competencyAreas.join(';'),
+      },
+      deepLink: `/learn`,
+      prov: buildChunkProv({ attributedTo: 'human' }),
+    })
+  }
+
+  // --- Module-to-NICE mappings (one chunk per module entry) ---
+  for (const mapping of NICE_MODULE_MAP) {
+    const caNames = mapping.competencyAreas
+      .map((id) => NICE_COMPETENCY_AREAS[id]?.title ?? id)
+      .join(', ')
+    const roleNames = mapping.workRoles
+      .map((id) => NICE_WORK_ROLES[id]?.title ?? id)
+      .join(', ')
+    const content = [
+      `Module "${mapping.moduleId}" maps to NICE Framework:`,
+      `Competency Areas: ${caNames} (${mapping.competencyAreas.join(', ')})`,
+      `Proficiency Tier: ${mapping.tier}`,
+      `Relevant Work Roles: ${roleNames}`,
+      mapping.isCommonGround ? 'Suitable for Common Ground path (executive/legal/procurement).' : '',
+    ]
+      .filter(Boolean)
+      .join('\n')
+
+    chunks.push({
+      id: `nice-map-${mapping.moduleId}`,
+      source: 'nice',
+      title: `NICE mapping for module: ${mapping.moduleId}`,
+      content,
+      category: 'nice-module-mapping',
+      metadata: {
+        moduleId: mapping.moduleId,
+        competencyAreas: mapping.competencyAreas.join(';'),
+        tier: mapping.tier,
+        workRoles: mapping.workRoles.join(';'),
+        isCommonGround: String(mapping.isCommonGround),
+      },
+      deepLink: `/learn/${mapping.moduleId}`,
+      prov: buildChunkProv({ attributedTo: 'human' }),
+    })
+  }
+
+  return chunks
+}
+
+/**
+ * PQC Protocol Support Matrix (pqcProtocolMatrix.ts) — one chunk per protocol
+ * row covering all 4 PQC dimensions, IETF stage, OSS libraries, and live
+ * deployments. Enables the assistant to answer "does TLS support ML-KEM?".
+ */
+function processProtocolMatrix(): RAGChunk[] {
+  const chunks: RAGChunk[] = []
+
+  for (const row of PROTOCOL_MATRIX) {
+    const dims = row.dimensions
+    const fmtDim = (label: string, d: { value: string; stage?: string; stageNote?: string; note?: string }) =>
+      [
+        `${label}: ${d.value}${d.stage ? ` (${d.stage})` : ''}`,
+        d.stageNote ? `  Stage note: ${d.stageNote}` : '',
+        d.note ? `  Note: ${d.note}` : '',
+      ]
+        .filter(Boolean)
+        .join('\n')
+
+    const allDocs = [
+      ...row.latestRelease.map((d) => d.id),
+      ...row.latestDraft.map((d) => d.id),
+    ].join(', ')
+
+    const ossLibs = row.ossLibraries.map((l) => l.name).join(', ')
+
+    const deployLines =
+      row.liveDeployments?.map(
+        (d) => `  • ${d.provider}: ${d.what}${d.since ? ` (since ${d.since})` : ''}`,
+      ) ?? []
+
+    const content = [
+      `Protocol: ${row.name}`,
+      row.description,
+      '',
+      'PQC Standardization Status:',
+      fmtDim('Pure KEM', dims.pureKem),
+      fmtDim('Hybrid KEM', dims.hybridKem),
+      fmtDim('Pure Signature', dims.pureSig),
+      fmtDim('Hybrid Signature', dims.hybridSig),
+      allDocs ? `\nDocuments: ${allDocs}` : '',
+      ossLibs ? `OSS Libraries: ${ossLibs}` : '',
+      deployLines.length
+        ? `Live Deployments:\n${deployLines.join('\n')}`
+        : row.noDeploymentReason
+          ? `No live deployments: ${row.noDeploymentReason}`
+          : '',
+      row.recommended ? `Recommended for production PQC today. ${row.recommendedReason ?? ''}` : '',
+      row.inheritedBy?.length ? `Inherited by: ${row.inheritedBy.join(', ')}` : '',
+    ]
+      .filter(Boolean)
+      .join('\n')
+
+    chunks.push({
+      id: `protocol-matrix-${row.id}`,
+      source: 'protocol-matrix',
+      title: `Protocol Support Matrix: ${row.name}`,
+      content,
+      category: 'protocol-support',
+      metadata: {
+        protocolId: row.id,
+        pureKem: dims.pureKem.value,
+        hybridKem: dims.hybridKem.value,
+        pureSig: dims.pureSig.value,
+        hybridSig: dims.hybridSig.value,
+        recommended: String(row.recommended ?? false),
+      },
+      deepLink: `/algorithms?tab=protocol&highlight=${encodeParam(row.id)}`,
+      prov: buildChunkProv({ attributedTo: 'human' }),
+    })
+  }
+
+  return chunks
+}
+
+/**
+ * Concept crosswalks (concept_xwalks_*.csv) — structured relationships between
+ * PQC concepts (e.g. "CSWP 39 intersects_with FIPS 203"). Enables multi-hop
+ * reasoning between standards, algorithms, and frameworks.
+ */
+function processConceptXwalks(): RAGChunk[] {
+  const file = findLatestCSV('concept_xwalks_')
+  if (!file) return []
+
+  const records = readCSVWithHeaders(file)
+  const csvFileName = path.basename(file)
+  const chunks: RAGChunk[] = []
+  let rowIdx = 1
+
+  for (const r of records) {
+    rowIdx++
+    const xwalkId = sanitize(r.xwalk_id)
+    const fromConcept = sanitize(r.from_concept)
+    const fromConceptId = sanitize(r.from_concept_id)
+    const toConcept = sanitize(r.to_concept)
+    const toConceptId = sanitize(r.to_concept_id)
+    const relationshipType = sanitize(r.relationship_type)
+    const rationaleType = sanitize(r.rationale_type)
+    const evidence = sanitize(r.evidence)
+    const confidence = sanitize(r.confidence)
+
+    if (!xwalkId || !fromConcept || !toConcept) continue
+
+    const relLabel = relationshipType.replace(/_/g, ' ')
+    const content = [
+      `Concept Relationship: "${fromConcept}" ${relLabel} "${toConcept}"`,
+      `From: ${fromConcept} (${fromConceptId})`,
+      `To: ${toConcept} (${toConceptId})`,
+      `Relationship: ${relLabel}`,
+      rationaleType ? `Rationale: ${rationaleType.replace(/_/g, ' ')}` : '',
+      evidence ? `Evidence: ${evidence}` : '',
+      confidence ? `Confidence: ${confidence}` : '',
+    ]
+      .filter(Boolean)
+      .join('\n')
+
+    const isFramework =
+      fromConceptId.startsWith('framework:') || toConceptId.startsWith('framework:')
+    const isStandard =
+      fromConceptId.startsWith('standard:') || toConceptId.startsWith('standard:')
+    const deepLink = isFramework ? '/compliance' : isStandard ? '/library' : '/algorithms'
+
+    chunks.push({
+      id: `xwalk-${xwalkId}`,
+      source: 'concept-xwalk',
+      title: `${fromConcept} ${relLabel} ${toConcept}`,
+      content,
+      category: 'concept-relationship',
+      metadata: { xwalkId, fromConceptId, toConceptId, relationshipType, confidence },
+      deepLink,
+      prov: buildChunkProv({ csvFile: csvFileName, csvRow: rowIdx }),
+    })
+  }
+
+  return chunks
+}
+
+/**
+ * Algorithm → product implementation cross-reference (algo_product_xref_*.csv).
+ * Grouped by algorithm so the assistant can answer "which products implement ML-KEM-768?".
+ */
+function processAlgoProductXref(): RAGChunk[] {
+  const file = findLatestCSV('algo_product_xref_')
+  if (!file) return []
+
+  const records = readCSVWithHeaders(file)
+  const csvFileName = path.basename(file)
+
+  const byAlgo = new Map<string, Array<Record<string, string>>>()
+  for (const r of records) {
+    const algoName = sanitize(r.algorithm_name)
+    if (!algoName) continue
+    if (!byAlgo.has(algoName)) byAlgo.set(algoName, [])
+    byAlgo.get(algoName)!.push(r)
+  }
+
+  const chunks: RAGChunk[] = []
+  let chunkIdx = 0
+
+  for (const [algoName, rows] of byAlgo) {
+    chunkIdx++
+    const lines = rows.map((r) => {
+      const name =
+        sanitize(r.implementation_name) || sanitize(r.software_name) || sanitize(r.product_id)
+      const type = sanitize(r.implementation_type)
+      const status = sanitize(r.verification_status)
+      const url = sanitize(r.implementation_url)
+      return `  • ${name}${type ? ` [${type}]` : ''}${status ? ` (${status})` : ''}${url ? ` — ${url}` : ''}`
+    })
+
+    const verifiedCount = rows.filter((r) => sanitize(r.verification_status) === 'Verified').length
+
+    chunks.push({
+      id: `algo-product-xref-${encodeParam(algoName)}`,
+      source: 'algo-product-xref',
+      title: `Implementations of ${algoName}`,
+      content: [
+        `Algorithm implementations for: ${algoName}`,
+        `Total: ${rows.length} implementations (${verifiedCount} verified)`,
+        lines.join('\n'),
+      ].join('\n'),
+      category: 'algorithm-implementation',
+      metadata: { algorithmName: algoName, count: String(rows.length), verified: String(verifiedCount) },
+      deepLink: `/algorithms?highlight=${encodeParam(algoName.split(' ')[0])}`,
+      prov: buildChunkProv({ csvFile: csvFileName, csvRow: chunkIdx }),
+    })
+  }
+
+  return chunks
+}
+
+/**
+ * Vendor PQC roadmaps (migrate_vendor_roadmap_*.csv) — per-vendor coverage notes
+ * and roadmap URLs. Answers "has AWS published a PQC roadmap?" and "what does
+ * Apple's PQC coverage include?".
+ */
+function processVendorRoadmap(): RAGChunk[] {
+  const file = findLatestCSV('migrate_vendor_roadmap_')
+  if (!file) return []
+
+  const records = readCSVWithHeaders(file)
+  const csvFileName = path.basename(file)
+  const chunks: RAGChunk[] = []
+  let rowIdx = 1
+
+  for (const r of records) {
+    rowIdx++
+    const vendorId = sanitize(r.vendor_id)
+    const vendorName = sanitize(r.vendor_name)
+    const roadmapUrl = sanitize(r.roadmap_url)
+    const roadmapTitle = sanitize(r.roadmap_title)
+    const roadmapType = sanitize(r.roadmap_type)
+    const publishDate = sanitize(r.publish_date)
+    const lastVerified = sanitize(r.last_verified_date)
+    const coverageNotes = sanitize(r.coverage_notes)
+
+    if (!vendorId || !vendorName) continue
+    if (!roadmapUrl) continue // skip vendors with no roadmap
+
+    chunks.push({
+      id: `vendor-roadmap-${vendorId}`,
+      source: 'vendor-roadmap',
+      title: `${vendorName} PQC Roadmap`,
+      content: [
+        `Vendor PQC Roadmap: ${vendorName}`,
+        roadmapTitle ? `Document: ${roadmapTitle}` : '',
+        roadmapType ? `Type: ${roadmapType}` : '',
+        publishDate ? `Published: ${publishDate}` : '',
+        lastVerified ? `Last verified: ${lastVerified}` : '',
+        coverageNotes ? `PQC Coverage: ${coverageNotes}` : '',
+        `URL: ${roadmapUrl}`,
+      ]
+        .filter(Boolean)
+        .join('\n'),
+      category: 'vendor-roadmap',
+      metadata: { vendorId, vendorName, roadmapType, publishDate, lastVerified },
+      deepLink: `/migrate?vendor=${encodeParam(vendorId)}`,
+      prov: buildChunkProv({ csvFile: csvFileName, csvRow: rowIdx }),
+    })
+  }
+
+  return chunks
+}
+
+/**
+ * PQC implementation attack surface (pqc_implementation_attacks_*.csv) —
+ * per-algorithm side-channel, fault injection, API misuse vectors with mitigations.
+ */
+function processImplementationAttacks(): RAGChunk[] {
+  const file = findLatestCSV('pqc_implementation_attacks_')
+  if (!file) return []
+
+  const records = readCSVWithHeaders(file)
+  const csvFileName = path.basename(file)
+  const chunks: RAGChunk[] = []
+  let rowIdx = 1
+
+  for (const r of records) {
+    rowIdx++
+    const algorithm = sanitize(r.Algorithm)
+    if (!algorithm) continue
+
+    const sca = sanitize(r.SideChannelAttacks)
+    const fia = sanitize(r.FaultInjectionAttacks)
+    const rng = sanitize(r.RNGFailures)
+    const shf = sanitize(r.SecretHandlingFailures)
+    const api = sanitize(r.APIMisuse)
+    const iacrRef = sanitize(r.iacr_reference)
+    const mitigations = sanitize(r.mitigation_notes)
+
+    const vectors = [
+      sca === 'Yes' ? 'side-channel attacks' : '',
+      fia === 'Yes' ? 'fault injection' : '',
+      rng === 'Yes' ? 'RNG failures' : '',
+      shf === 'Yes' ? 'secret handling failures' : '',
+      api === 'Yes' ? 'API misuse' : '',
+    ]
+      .filter(Boolean)
+      .join(', ')
+
+    chunks.push({
+      id: `impl-attacks-${encodeParam(algorithm)}`,
+      source: 'implementation-attacks',
+      title: `Implementation attack surface: ${algorithm}`,
+      content: [
+        `Implementation security for: ${algorithm}`,
+        vectors ? `Known attack vectors: ${vectors}` : '',
+        `Side-channel attacks: ${sca} | Fault injection: ${fia} | RNG failure risk: ${rng}`,
+        `Secret handling failures: ${shf} | API misuse risk: ${api}`,
+        mitigations ? `Mitigations: ${mitigations}` : '',
+        iacrRef ? `IACR reference: ${iacrRef}` : '',
+      ]
+        .filter(Boolean)
+        .join('\n'),
+      category: 'implementation-security',
+      metadata: { algorithm, sideChannel: sca, faultInjection: fia, rngFailure: rng, apiMisuse: api },
+      deepLink: `/algorithms?highlight=${encodeParam(algorithm.split(' ')[0])}`,
+      prov: buildChunkProv({ csvFile: csvFileName, csvRow: rowIdx }),
+    })
+  }
+
+  return chunks
+}
+
+/**
+ * Concept registry (concept_registry_*.csv) — canonical concept IDs for
+ * disambiguation. Chunked by source_table; skips deprecated entries.
+ */
+function processConceptRegistry(): RAGChunk[] {
+  const file = findLatestCSV('concept_registry_')
+  if (!file) return []
+
+  const records = readCSVWithHeaders(file)
+  const csvFileName = path.basename(file)
+
+  const byTable = new Map<string, Array<Record<string, string>>>()
+  for (const r of records) {
+    if (sanitize(r.status) === 'deprecated') continue
+    const table = sanitize(r.source_table) || 'other'
+    if (!byTable.has(table)) byTable.set(table, [])
+    byTable.get(table)!.push(r)
+  }
+
+  const chunks: RAGChunk[] = []
+  const BATCH = 60
+  let chunkIdx = 0
+
+  for (const [table, rows] of byTable) {
+    for (let i = 0; i < rows.length; i += BATCH) {
+      chunkIdx++
+      const batch = rows.slice(i, i + BATCH)
+      const lines = batch.map((r) => {
+        const conceptId = sanitize(r.concept_id)
+        const label = sanitize(r.display_label)
+        const aliases = sanitize(r.aliases)
+        return `  ${conceptId}: ${label}${aliases ? ` (aliases: ${aliases})` : ''}`
+      })
+
+      const deepLink =
+        table === 'library'
+          ? '/library'
+          : table.includes('compliance')
+            ? '/compliance'
+            : '/algorithms'
+
+      chunks.push({
+        id: `concept-registry-${table}-${chunkIdx}`,
+        source: 'concept-registry',
+        title: `Concept registry: ${table}`,
+        content: [
+          `Canonical concept IDs — ${table} (${i + 1}–${Math.min(i + BATCH, rows.length)} of ${rows.length} active)`,
+          lines.join('\n'),
+        ].join('\n'),
+        category: 'concept-registry',
+        metadata: { sourceTable: table, batchStart: String(i + 1) },
+        deepLink,
+        prov: buildChunkProv({ csvFile: csvFileName, csvRow: i + 2 }),
+      })
+    }
+  }
+
+  return chunks
+}
+
+/**
+ * Regulatory timelines (regulatoryTimelines.ts) — government PQC migration
+ * deadlines: CNSA 2.0, NIST IR 8547, FIPS, ANSSI, BSI, CRQC estimates.
+ */
+function processRegulatoryTimelines(): RAGChunk[] {
+  const chunks: RAGChunk[] = []
+
+  chunks.push({
+    id: 'reg-timeline-cnsa-2-0',
+    source: 'regulatory-timeline',
+    title: 'CNSA 2.0 Migration Milestones (NSA)',
+    content: [
+      'CNSA 2.0 — NSA Post-Quantum Cryptography Requirements for National Security Systems',
+      `Published: ${CNSA_2_0.publishedDate}`,
+      `${CNSA_2_0.softwarePreferred}: New software/firmware should prefer CNSA 2.0 algorithms`,
+      `${CNSA_2_0.networkingRequired}: New networking equipment must support CNSA 2.0`,
+      `${CNSA_2_0.softwareExclusive}: All deployed NSS software must use CNSA 2.0 signatures exclusively`,
+      `${CNSA_2_0.networkingExclusive}: Legacy networking equipment must be replaced`,
+      `${CNSA_2_0.fullEnforcement}: Full enforcement — all remaining NSS systems (web, cloud, servers)`,
+      'Scope: National Security Systems (NSS) operated by US government and contractors',
+      'Algorithms required: ML-KEM-1024 (KEM), ML-DSA-87 (signatures), SLH-DSA (backup signatures)',
+    ].join('\n'),
+    category: 'regulatory-deadline',
+    metadata: { framework: 'CNSA-2.0', authority: 'NSA', country: 'USA' },
+    deepLink: '/compliance?tab=frameworks',
+    prov: buildChunkProv({ attributedTo: 'human' }),
+  })
+
+  chunks.push({
+    id: 'reg-timeline-nist-deprecation',
+    source: 'regulatory-timeline',
+    title: 'NIST Classical Algorithm Deprecation Timeline (IR 8547)',
+    content: [
+      'NIST IR 8547 — Transition to Post-Quantum Cryptography Standards',
+      `FIPS 203/204/205 finalized: ${NIST_DEPRECATION.fipsFinalized}`,
+      `${NIST_DEPRECATION.deprecateClassical}: Deprecation target for RSA-2048 and 112-bit ECC (NIST SP 800-131A Rev 3)`,
+      `${NIST_DEPRECATION.disallowClassical}: Full disallowance of classical public-key cryptography`,
+      'Source: NIST IR 8547 (November 2024)',
+    ].join('\n'),
+    category: 'regulatory-deadline',
+    metadata: { framework: 'NIST-IR-8547', authority: 'NIST' },
+    deepLink: '/compliance',
+    prov: buildChunkProv({ attributedTo: 'human' }),
+  })
+
+  const fipsLines = (
+    Object.entries(FIPS_STANDARDS) as Array<[string, { algorithm: string; name: string; status?: string }]>
+  ).map(
+    ([num, s]) =>
+      `  FIPS ${num}: ${s.algorithm} — ${s.name}${s.status ? ` (${s.status})` : ' (final)'}`,
+  )
+  chunks.push({
+    id: 'reg-timeline-fips-standards',
+    source: 'regulatory-timeline',
+    title: 'NIST FIPS Post-Quantum Standards',
+    content: [
+      `NIST FIPS Post-Quantum Cryptography Standards (finalized ${NIST_DEPRECATION.fipsFinalized}):`,
+      ...fipsLines,
+    ].join('\n'),
+    category: 'regulatory-deadline',
+    metadata: { framework: 'FIPS', authority: 'NIST' },
+    deepLink: '/algorithms',
+    prov: buildChunkProv({ attributedTo: 'human' }),
+  })
+
+  chunks.push({
+    id: 'reg-timeline-anssi',
+    source: 'regulatory-timeline',
+    title: 'ANSSI PQC Migration Guidance (France)',
+    content: [
+      'ANSSI — French National Cybersecurity Agency PQC Guidance',
+      `Hybrid mode mandatory: ${ANSSI_TIMELINE.hybridMandatory} — PQC + classical required during transition (except standalone hash-based signatures)`,
+      `Hash-based signatures standalone allowed: ${ANSSI_TIMELINE.hashBasedStandaloneAllowed} (SLH-DSA, LMS, XMSS)`,
+      `Target year for migration plans: ${ANSSI_TIMELINE.migrationPlanTarget}`,
+      'Important: ANSSI and NSA CNSA 2.0 diverge — ANSSI mandates hybrid mode; CNSA 2.0 allows pure PQC for NSS at GA.',
+      'Source: ANSSI "Avis relatif à la migration vers la cryptographie post-quantique" (2024 / r3 2025)',
+    ].join('\n'),
+    category: 'regulatory-deadline',
+    metadata: { framework: 'ANSSI', authority: 'ANSSI', country: 'France' },
+    deepLink: '/compliance',
+    prov: buildChunkProv({ attributedTo: 'human' }),
+  })
+
+  chunks.push({
+    id: 'reg-timeline-bsi',
+    source: 'regulatory-timeline',
+    title: 'BSI PQC Recommendations (Germany)',
+    content: [
+      'BSI TR-02102 — German Federal Office for Information Security',
+      `Hybrid PQC + classical recommended during transition: ${BSI_TIMELINE.hybridRecommended}`,
+      `Target for quantum-safe by default: ${BSI_TIMELINE.quantumSafeDefault}`,
+      'Source: BSI TR-02102 Cryptographic Mechanisms: Recommendations and Key Lengths (2024)',
+    ].join('\n'),
+    category: 'regulatory-deadline',
+    metadata: { framework: 'BSI-TR-02102', authority: 'BSI', country: 'Germany' },
+    deepLink: '/compliance',
+    prov: buildChunkProv({ attributedTo: 'human' }),
+  })
+
+  chunks.push({
+    id: 'reg-timeline-crqc',
+    source: 'regulatory-timeline',
+    title: 'CRQC Arrival Estimates (Research Consensus)',
+    content: [
+      'CRQC (Cryptographically Relevant Quantum Computer) Arrival — Research Consensus Estimates',
+      `Conservative lower bound: ${CRQC_ESTIMATES.lowerBound}`,
+      `Moderate estimate: ${CRQC_ESTIMATES.moderate}`,
+      `Upper bound: ${CRQC_ESTIMATES.upperBound}`,
+      '"Harvest now, decrypt later" attacks mean data encrypted today with classical crypto is at risk even before CRQC arrival.',
+      'Implication: PQC migration urgency is independent of exact CRQC timeline — long-lived sensitive data needs protection now.',
+    ].join('\n'),
+    category: 'quantum-timeline',
+    metadata: { type: 'crqc-estimate' },
+    deepLink: '/timeline',
+    prov: buildChunkProv({ attributedTo: 'human' }),
+  })
+
+  return chunks
+}
+
+/**
+ * Standard → algorithm parameter set cross-reference (standard_implements_algo_xref_*.csv).
+ * Answers "which parameter sets does FIPS 203 define and which is the recommended default?".
+ */
+function processStandardAlgoXref(): RAGChunk[] {
+  const file = findLatestCSV('standard_implements_algo_xref_')
+  if (!file) return []
+
+  const records = readCSVWithHeaders(file)
+  const csvFileName = path.basename(file)
+
+  const byStandard = new Map<string, Array<Record<string, string>>>()
+  for (const r of records) {
+    if (sanitize(r.status) === 'deprecated') continue
+    const standardId = sanitize(r.standard_id)
+    if (!standardId) continue
+    if (!byStandard.has(standardId)) byStandard.set(standardId, [])
+    byStandard.get(standardId)!.push(r)
+  }
+
+  const chunks: RAGChunk[] = []
+  let chunkIdx = 0
+
+  for (const [standardId, rows] of byStandard) {
+    chunkIdx++
+    const paramLines = rows.map((r) => {
+      const paramSet = sanitize(r.param_set)
+      const family = sanitize(r.family)
+      const isDefault = sanitize(r.is_default) === 'yes'
+      return `  ${paramSet} (${family})${isDefault ? ' — recommended default' : ''}`
+    })
+
+    const defaultParam = rows.find((r) => sanitize(r.is_default) === 'yes')
+    const family = sanitize(rows[0]?.family ?? '')
+
+    chunks.push({
+      id: `standard-algo-xref-${encodeParam(standardId)}`,
+      source: 'standard-algo-xref',
+      title: `${standardId} parameter sets`,
+      content: [`${standardId} defines the following parameter sets:`, paramLines.join('\n')].join(
+        '\n',
+      ),
+      category: 'standard-algorithm-mapping',
+      metadata: {
+        standardId,
+        family,
+        defaultParamSet: defaultParam ? sanitize(defaultParam.param_set) : '',
+        paramSetCount: String(rows.length),
+      },
+      deepLink: `/algorithms?highlight=${encodeParam(defaultParam ? sanitize(defaultParam.param_set) : sanitize(rows[0]?.param_set ?? ''))}`,
+      prov: buildChunkProv({ csvFile: csvFileName, csvRow: chunkIdx }),
+    })
+  }
+
+  return chunks
+}
+
+/**
+ * Cross-agency counter-claims (counter_claims_*.csv) — documented disagreements
+ * between authoritative sources (e.g. NSA CNSA 2.0 vs ANSSI on hybrid KEM).
+ */
+function processCounterClaims(): RAGChunk[] {
+  const file = findLatestCSV('counter_claims_')
+  if (!file) return []
+
+  const records = readCSVWithHeaders(file)
+  const csvFileName = path.basename(file)
+  const chunks: RAGChunk[] = []
+  let rowIdx = 1
+
+  for (const r of records) {
+    rowIdx++
+    const claimId = sanitize(r.claim_id)
+    const recordType = sanitize(r.record_type)
+    const recordId = sanitize(r.record_id)
+    const competingSourceId = sanitize(r.competing_source_id)
+    const competingValue = sanitize(r.competing_value)
+    const disagreementSummary = sanitize(r.disagreement_summary)
+    const verifiedBy = sanitize(r.verified_by)
+    const verifiedDate = sanitize(r.verified_date)
+
+    if (!claimId || !disagreementSummary) continue
+
+    const deepLink =
+      recordType === 'compliance'
+        ? `/compliance?cert=${encodeParam(recordId)}`
+        : '/compliance'
+
+    chunks.push({
+      id: `counter-claim-${claimId}`,
+      source: 'counter-claims',
+      title: `Cross-agency disagreement: ${competingValue?.slice(0, 60) ?? claimId}`,
+      content: [
+        `Counter-claim / Cross-agency disagreement (${claimId})`,
+        `Record: ${recordId} (${recordType})`,
+        `Competing source: ${competingSourceId}`,
+        competingValue ? `Position in dispute: "${competingValue}"` : '',
+        `Disagreement: ${disagreementSummary}`,
+        verifiedBy ? `Verified by: ${verifiedBy} on ${verifiedDate}` : '',
+      ]
+        .filter(Boolean)
+        .join('\n'),
+      category: 'regulatory-disagreement',
+      metadata: { claimId, recordType, recordId, competingSourceId },
+      deepLink,
+      prov: buildChunkProv({ csvFile: csvFileName, csvRow: rowIdx }),
+    })
+  }
+
+  return chunks
+}
+
+/**
+ * Regulatory framework maximum fines (frameworkFines.ts) — USD penalty caps
+ * per compliance framework. Enables the executive KPI exposure-index context.
+ */
+function processFrameworkFines(): RAGChunk[] {
+  const entries = Object.entries(FRAMEWORK_MAX_FINE_USD_MILLIONS)
+  const lines = entries
+    .filter(([, v]) => v > 0)
+    .sort((a, b) => b[1] - a[1])
+    .map(([framework, maxFineM]) => `  ${framework}: up to $${maxFineM}M`)
+
+  return [
+    {
+      id: 'framework-fines-summary',
+      source: 'compliance',
+      title: 'Regulatory Framework Maximum Fines for Cryptography Non-Compliance',
+      content: [
+        'Regulatory framework maximum fines (USD millions) for PQC / cryptography non-compliance:',
+        'Note: Revenue-percentage regimes (GDPR, NIS2) shown as representative cap for mid-sized enterprise.',
+        ...lines,
+        '',
+        'Frameworks with no direct fine: NIST (standards body), SOC2 (attestation loss), ISO27001.',
+      ].join('\n'),
+      category: 'compliance-fines',
+      metadata: { type: 'framework-fines' },
+      deepLink: '/compliance',
+      prov: buildChunkProv({ attributedTo: 'human' }),
+    },
+  ]
+}
+
 // ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
@@ -4045,6 +4790,17 @@ async function main() {
     { name: 'NotebookLM App Guides', fn: processNotebookLM },
     { name: 'Changelog', fn: processChangelog },
     { name: 'Module Q&A', fn: processModuleQA },
+    { name: 'NICE Framework', fn: processNiceFramework },
+    { name: 'Protocol Matrix', fn: processProtocolMatrix },
+    { name: 'Concept Xwalks', fn: processConceptXwalks },
+    { name: 'Algo Product Xref', fn: processAlgoProductXref },
+    { name: 'Vendor Roadmaps', fn: processVendorRoadmap },
+    { name: 'Implementation Attacks', fn: processImplementationAttacks },
+    { name: 'Concept Registry', fn: processConceptRegistry },
+    { name: 'Regulatory Timelines', fn: processRegulatoryTimelines },
+    { name: 'Standard Algo Xref', fn: processStandardAlgoXref },
+    { name: 'Counter Claims', fn: processCounterClaims },
+    { name: 'Framework Fines', fn: processFrameworkFines },
   ]
 
   const corpus: RAGChunk[] = []
@@ -4093,6 +4849,16 @@ async function main() {
     'user-manual': 1.0,
     changelog: 0.6,
     'module-qa': 1.1,
+    nice: 1.05,
+    'protocol-matrix': 1.1,
+    'concept-xwalk': 1.05,
+    'algo-product-xref': 1.0,
+    'vendor-roadmap': 1.0,
+    'implementation-attacks': 1.05,
+    'concept-registry': 0.9,
+    'regulatory-timeline': 1.1,
+    'standard-algo-xref': 1.0,
+    'counter-claims': 1.1,
   }
   for (const chunk of corpus) {
     // Respect per-chunk authority priority set by processLibrary() / processDocumentEnrichments();

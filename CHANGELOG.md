@@ -51,6 +51,18 @@ The biggest three-day release window of the year. What you'll actually notice:
 - **OSCAL / CBOM regenerated** to v3.16.0.
 - **Migrate catalog**: `pqc_product_catalog_05192026.csv` — Microsoft AD CS corrected from No → Yes (with details): ML-DSA certificate issuance now supported in Windows Server 2025; ML-KEM and composite certificates planned for 2026. Sources: Microsoft TechCommunity Future-Proofing PKI event + independent blog verification.
 - **Embeddings regenerated**: `public/data/embeddings.bin` + `embeddings-meta.json` rebuilt against the 10005-chunk corpus (149 chunks added by the 2026-05-19 enrichment run); `bge-small-en-v1.5` int8, 14.7 MB. Corpus trust invariant tests restored to passing.
+- **RAG corpus gap fix — 11 new processors, +1,230 chunks**: `generate-rag-corpus.ts` was missing processors for 11 data sources that exist in the app but were invisible to the PQC Assistant and mini-search. All gaps fixed:
+  - **NICE Framework** (70 chunks): 8 Competency Areas + 8 Work Roles + 54 module-to-NICE mappings from `niceFramework.ts` / `niceModuleMapping.ts`. Assistant can now answer "which NICE competencies does the TLS module cover?".
+  - **Protocol Support Matrix** (20 chunks): All 10 protocol rows from `pqcProtocolMatrix.ts` covering TLS, SSH, IKEv2, JOSE, CMS, S/MIME, PKIX, OpenPGP, DNSSEC, and more — with per-dimension IETF stage, notes, OSS libraries, and live deployments. Assistant can now answer "does TLS support pure ML-KEM?".
+  - **Concept Crosswalks** (960 chunks): Structured cross-concept relationships from `concept_xwalks_*.csv` (e.g. "CSWP 39 intersects_with FIPS 203"). Enables multi-hop reasoning between standards, algorithms, and frameworks.
+  - **Algorithm Implementations** (56 chunks): Algorithm → product implementation cross-reference from `algo_product_xref_*.csv`, grouped by algorithm. Answers "which products implement ML-KEM-768?".
+  - **Vendor PQC Roadmaps** (38 chunks): Per-vendor coverage notes and roadmap URLs from `migrate_vendor_roadmap_*.csv` (AWS, Apple, Cisco, Microsoft, …).
+  - **Implementation Attacks** (53 chunks): Side-channel, fault injection, RNG failure, and API misuse vectors with mitigations per algorithm from `pqc_implementation_attacks_*.csv`.
+  - **Concept Registry** (22 chunks): Canonical concept IDs for disambiguation from `concept_registry_*.csv`, grouped by source table.
+  - **Regulatory Timelines** (6 chunks): CNSA 2.0 milestones, NIST IR 8547 deprecation dates, FIPS 203/204/205/206 finalization, ANSSI guidance, BSI TR-02102, and CRQC arrival estimates from `regulatoryTimelines.ts`.
+  - **Standard → Algorithm Xref** (3 chunks): Which parameter sets each FIPS standard defines and which is the recommended default, from `standard_implements_algo_xref_*.csv`.
+  - **Counter Claims** (1 chunk): Documented cross-agency stance disagreements (e.g. NSA vs ANSSI on hybrid KEM) from `counter_claims_*.csv`.
+  - **Framework Fines** (1 chunk): Maximum USD penalty caps per compliance framework from `frameworkFines.ts`.
 
 ## [3.16.0] - 2026-05-19
 
