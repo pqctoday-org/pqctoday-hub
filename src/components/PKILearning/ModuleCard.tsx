@@ -80,9 +80,12 @@ export const ModuleCard = ({
     workshopSteps.length > 0 ? Math.round((workshopDone / workshopSteps.length) * 100) : 0
   const hasWorkshop = workshopSteps.length > 0
 
+  const stepCount = workshopSteps.length
   const durationDisplay =
     status === 'not-started' || timeSpentFloored < 1
-      ? module.duration
+      ? stepCount > 0
+        ? `${stepCount} steps · ${module.duration}`
+        : module.duration
       : `${module.duration} / ${timeSpentFloored} min`
 
   const niceMapping = getNiceMapping(module.id)

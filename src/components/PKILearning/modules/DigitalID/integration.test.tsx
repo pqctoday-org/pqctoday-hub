@@ -116,13 +116,13 @@ describe('EUDI Digital ID Integration', () => {
     })
 
     // Navigate to PID Issuer step (step 2 nav button)
-    fireEvent.click(screen.getByText('Step 2'))
+    fireEvent.click(screen.getAllByText('Step 2')[0])
     await waitFor(() => {
       expect(screen.getByText(/National Identity Authority/i)).toBeDefined()
     })
 
     // Navigate to Bank (RP) step
-    fireEvent.click(screen.getByText('Step 4'))
+    fireEvent.click(screen.getAllByText('Step 4')[0])
     await waitFor(() => {
       expect(screen.getByText(/Bank \(Relying Party\)/i)).toBeDefined()
     })
@@ -136,9 +136,9 @@ describe('EUDI Digital ID Integration', () => {
 
     // 1. Navigate to PID Issuer step (nav label shows "Step 2")
     await waitFor(() => {
-      expect(screen.getByText('Step 2')).toBeDefined()
+      expect(screen.getAllByText('Step 2').length).toBeGreaterThan(0)
     })
-    fireEvent.click(screen.getByText('Step 2'))
+    fireEvent.click(screen.getAllByText('Step 2')[0])
     await waitFor(() => {
       expect(screen.getByText(/National Identity Authority/i)).toBeDefined()
     })
@@ -161,7 +161,7 @@ describe('EUDI Digital ID Integration', () => {
     )
 
     // 5. Navigate to Bank (RP) step (nav label shows "Step 4")
-    fireEvent.click(screen.getByText('Step 4'))
+    fireEvent.click(screen.getAllByText('Step 4')[0])
     await waitFor(() => {
       expect(screen.getByText(/Bank \(Relying Party\)/i)).toBeDefined()
     })

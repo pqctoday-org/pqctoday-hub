@@ -5,6 +5,7 @@ import { FileSignature, Lock, Hash, Key, ArrowRight } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
 import { AlgorithmCheckButton } from './AlgorithmCheckButton'
+import { AlgoCtaStrip } from './AlgoCtaStrip'
 
 interface MobileAlgorithmListProps {
   data: AlgorithmTransition[]
@@ -106,7 +107,7 @@ export const MobileAlgorithmList = ({
               </div>
             </div>
 
-            {/* Deprecation badge + optional live test */}
+            {/* Deprecation badge + optional live test + CTA links */}
             <div className="flex flex-col items-end gap-2 shrink-0">
               <span
                 className={clsx(
@@ -121,6 +122,7 @@ export const MobileAlgorithmList = ({
                 {algo.deprecationDate.split(' ')[0]} {/* simplified date */}
               </span>
               {pqcDetail && <AlgorithmCheckButton algorithm={pqcDetail} />}
+              <AlgoCtaStrip algoName={pqcName} className="justify-end" />
             </div>
           </div>
         )

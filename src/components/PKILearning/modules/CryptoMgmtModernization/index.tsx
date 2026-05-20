@@ -35,6 +35,7 @@ import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
+import { InPageToc } from '@/components/PKILearning/common/InPageToc'
 import { CryptoAgilityProcessDiagram } from './visuals/CryptoAgilityProcessDiagram'
 import { WORKSHOP_STEPS } from '@/components/PKILearning/moduleData'
 
@@ -122,6 +123,7 @@ export const CryptoMgmtModernizationModule: React.FC = () => {
   const [cbomAssets, setCbomAssets] = useState<CbomExportItem[]>([])
   useSyncDeepLink(activeTab, currentPart)
   const startTimeRef = useRef(0)
+  const learnContentRef = useRef<HTMLDivElement>(null)
   const { updateModuleProgress, markStepComplete, modules } = useModuleStore()
 
   useEffect(() => {
@@ -222,9 +224,19 @@ export const CryptoMgmtModernizationModule: React.FC = () => {
         />
 
         <TabsContent value="learn">
-          <GlossaryAutoWrap>
-            <Introduction onNavigateToWorkshop={navigateToWorkshop} />
-          </GlossaryAutoWrap>
+          <InPageToc containerRef={learnContentRef} mode="mobile" className="xl:hidden mb-3" />
+          <div className="flex gap-6">
+            <div ref={learnContentRef} className="flex-1 min-w-0">
+              <GlossaryAutoWrap>
+                <Introduction onNavigateToWorkshop={navigateToWorkshop} />
+              </GlossaryAutoWrap>
+            </div>
+            <InPageToc
+              containerRef={learnContentRef}
+              mode="desktop"
+              className="hidden xl:block w-48 shrink-0"
+            />
+          </div>
         </TabsContent>
 
         <TabsContent value="visual">
