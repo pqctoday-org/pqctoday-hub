@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import {
   ArrowUpDown,
   BookOpen,
@@ -356,6 +357,7 @@ const DesktopLearnFilterPopover: React.FC<DesktopLearnFilterPopoverProps> = ({
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate()
   const isEmbedded = useIsEmbedded()
+  const reduced = usePrefersReducedMotion()
   const { modules } = useModuleStore()
 
   const activeModules = MODULE_TRACKS.flatMap((t) => t.modules)
@@ -391,9 +393,9 @@ export const Dashboard: React.FC = () => {
       {/* Continue Learning — single most-recent in-progress module */}
       {resumeModule && !isEmbedded && (
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: reduced ? 0 : -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: reduced ? 0 : 0.3 }}
           className="glass-panel px-4 py-3 border-primary/30"
         >
           <div className="flex items-center justify-between gap-4">
@@ -468,6 +470,7 @@ const ModuleTracksGrid = ({
   onGoHome?: () => void
 }) => {
   const isEmbedded = useIsEmbedded()
+  const reduced = usePrefersReducedMotion()
   const { modules } = useModuleStore()
   const { selectedIndustry, experienceLevel, selectedPersona, setPersona } = usePersonaStore()
   const { myLearnModules, showOnlyLearnModules, setShowOnlyLearnModules } = useBookmarkStore()
@@ -973,12 +976,13 @@ const ModuleTracksGrid = ({
 
       {/* ── Cards mode ── */}
       {viewMode === 'cards' && moduleItemCount > 0 && (
-        <AnimatePresence mode="popLayout">
+        <AnimatePresence mode={reduced ? 'sync' : 'popLayout'}>
           <motion.div
             key="cards"
-            initial={{ opacity: 0 }}
+            initial={{ opacity: reduced ? 1 : 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            exit={{ opacity: reduced ? 1 : 0 }}
+            transition={{ duration: reduced ? 0 : 0.2 }}
           >
             {personaFilterActive ? (
               /* Persona path with interleaved checkpoints */
@@ -1039,12 +1043,13 @@ const ModuleTracksGrid = ({
 
       {/* ── Table mode ── */}
       {viewMode === 'table' && moduleItemCount > 0 && (
-        <AnimatePresence mode="popLayout">
+        <AnimatePresence mode={reduced ? 'sync' : 'popLayout'}>
           <motion.div
             key="table"
-            initial={{ opacity: 0 }}
+            initial={{ opacity: reduced ? 1 : 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            exit={{ opacity: reduced ? 1 : 0 }}
+            transition={{ duration: reduced ? 0 : 0.2 }}
           >
             <ModuleTable
               items={filteredItems}

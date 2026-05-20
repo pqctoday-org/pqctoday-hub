@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { FlaskConical } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
   CRYPTO_LIBRARIES,
   type EsvStatus,
@@ -373,27 +374,16 @@ export const LibraryCBOMBuilder: React.FC<LibraryCBOMBuilderProps> = ({ onCbomEx
       {mode === 'sbom' && (
         <div className="space-y-4">
           <div className="bg-muted/40 rounded-lg p-3 border border-border">
-            <label
-              htmlFor="cmm-sample-sbom"
-              className="text-xs font-bold text-foreground block mb-2"
-            >
-              Sample SBOM
-            </label>
-            <select
-              id="cmm-sample-sbom"
-              value={selectedSbom}
-              onChange={(e) => {
-                setSelectedSbom(e.target.value)
+            <div className="text-xs font-bold text-foreground block mb-2">Sample SBOM</div>
+            <FilterDropdown
+              items={SAMPLE_SBOMS.map((s) => ({ id: s.id, label: s.filename }))}
+              selectedId={selectedSbom}
+              onSelect={(id) => {
+                setSelectedSbom(id)
                 setUserSbom('')
               }}
-              className="bg-background border border-input rounded px-2 py-1 text-xs text-foreground w-full sm:w-auto"
-            >
-              {SAMPLE_SBOMS.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.filename}
-                </option>
-              ))}
-            </select>
+              size="sm"
+            />
             <p className="text-[11px] text-muted-foreground mt-2">
               {SAMPLE_SBOMS.find((s) => s.id === selectedSbom)?.description}
             </p>

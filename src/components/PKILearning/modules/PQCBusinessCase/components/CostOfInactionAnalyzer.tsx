@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useMemo, useState } from 'react'
 import { TrendingDown, AlertTriangle, DollarSign, Calendar } from 'lucide-react'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
   DELAY_COST_PROFILES,
   annualBreachRisk,
@@ -93,21 +94,12 @@ export const CostOfInactionAnalyzer: React.FC = () => {
       {/* Controls */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <label htmlFor="industry-select" className="text-sm font-medium text-foreground">
-            Industry
-          </label>
-          <select
-            id="industry-select"
-            value={selectedIndustry}
-            onChange={(e) => setSelectedIndustry(e.target.value)}
-            className="w-full rounded-lg border border-border bg-background text-foreground text-sm px-3 py-2"
-          >
-            {DELAY_COST_PROFILES.map((p) => (
-              <option key={p.industry} value={p.industry}>
-                {p.industry}
-              </option>
-            ))}
-          </select>
+          <div className="text-sm font-medium text-foreground">Industry</div>
+          <FilterDropdown
+            items={DELAY_COST_PROFILES.map((p) => ({ id: p.industry, label: p.industry }))}
+            selectedId={selectedIndustry}
+            onSelect={setSelectedIndustry}
+          />
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground">

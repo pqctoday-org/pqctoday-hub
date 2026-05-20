@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import { BookOpen, CheckCircle, Circle, Clock, Wrench, CheckSquare, Square } from 'lucide-react'
 import { useModuleStore } from '../../store/useModuleStore'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
@@ -34,6 +35,7 @@ export const ModuleCard = ({
   isAboveLevel?: boolean
 }) => {
   const navigate = useNavigate()
+  const reduced = usePrefersReducedMotion()
   const { modules } = useModuleStore()
   const isBookmarked = useBookmarkStore((s) => s.myLearnModules.includes(module.id))
   const toggleMyLearnModule = useBookmarkStore((s) => s.toggleMyLearnModule)
@@ -64,12 +66,12 @@ export const ModuleCard = ({
 
   return (
     <motion.article
-      layout
+      layout={!reduced}
       data-workshop-target={`learn-module-${module.id}`}
-      initial={{ opacity: 0, scale: 0.9 }}
+      initial={{ opacity: 0, scale: reduced ? 1 : 0.9 }}
       animate={{ opacity: isAboveLevel && status !== 'completed' ? 0.4 : 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      transition={{ duration: 0.2 }}
+      exit={{ opacity: 0, scale: reduced ? 1 : 0.9 }}
+      transition={{ duration: reduced ? 0 : 0.2 }}
       className="glass-panel p-6 flex flex-col h-full transition-colors hover:border-secondary/50 cursor-pointer scroll-mt-20"
       onClick={() => onSelectModule(module.id)}
     >

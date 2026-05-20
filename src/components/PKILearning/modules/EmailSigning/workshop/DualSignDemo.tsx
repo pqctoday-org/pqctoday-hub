@@ -32,6 +32,7 @@ import {
   ExternalLink,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { CMSSigningService, type CmsAlg } from '../services/CMSSigningService'
 import { smimeEnvelopeSigned } from '../services/smimeMultipart'
 
@@ -212,36 +213,28 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
 
       <div className="glass-panel space-y-3 p-4">
         <div className="flex flex-wrap items-center gap-3">
-          <label className="text-xs font-medium text-muted-foreground">
-            PQ alg
-            <select
-              value={pqAlg}
-              onChange={(e) => setPqAlg(e.target.value as CmsAlg)}
-              disabled={busy}
-              className="ml-2 rounded border border-input bg-background px-2 py-1 text-xs"
-            >
-              {PQ_ALG_CHOICES.map((a) => (
-                <option key={a} value={a}>
-                  {a}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="text-xs font-medium text-muted-foreground">
-            Classical alg
-            <select
-              value={clAlg}
-              onChange={(e) => setClAlg(e.target.value as CmsAlg)}
-              disabled={busy}
-              className="ml-2 rounded border border-input bg-background px-2 py-1 text-xs"
-            >
-              {CL_ALG_CHOICES.map((a) => (
-                <option key={a} value={a}>
-                  {a}
-                </option>
-              ))}
-            </select>
-          </label>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-muted-foreground">PQ alg</span>
+            <div className={busy ? 'pointer-events-none opacity-50' : ''}>
+              <FilterDropdown
+                items={PQ_ALG_CHOICES}
+                selectedId={pqAlg}
+                onSelect={(id) => setPqAlg(id as CmsAlg)}
+                size="sm"
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-muted-foreground">Classical alg</span>
+            <div className={busy ? 'pointer-events-none opacity-50' : ''}>
+              <FilterDropdown
+                items={CL_ALG_CHOICES}
+                selectedId={clAlg}
+                onSelect={(id) => setClAlg(id as CmsAlg)}
+                size="sm"
+              />
+            </div>
+          </div>
           <label
             className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium transition-colors ${
               providerReady

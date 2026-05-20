@@ -2,6 +2,7 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
   SAMPLE_INVENTORY,
   LOOP_STAGES,
@@ -107,18 +108,18 @@ export const InventoryLifecycleSimulator: React.FC = () => {
           </span>
         </div>
         <div className="flex-1" />
-        <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value as AssetClass | 'all')}
-          className="bg-background border border-input rounded px-2 py-1 text-xs text-foreground"
-        >
-          <option value="all">All asset classes</option>
-          {(Object.keys(ASSET_CLASS_LABELS) as AssetClass[]).map((k) => (
-            <option key={k} value={k}>
-              {ASSET_CLASS_LABELS[k]}
-            </option>
-          ))}
-        </select>
+        <FilterDropdown
+          items={[
+            { id: 'all', label: 'All asset classes' },
+            ...(Object.keys(ASSET_CLASS_LABELS) as AssetClass[]).map((k) => ({
+              id: k,
+              label: ASSET_CLASS_LABELS[k],
+            })),
+          ]}
+          selectedId={filter}
+          onSelect={(id) => setFilter(id as AssetClass | 'all')}
+          size="sm"
+        />
         <Button variant="outline" onClick={advanceAll} className="text-xs">
           Advance all →
         </Button>

@@ -27,6 +27,7 @@ import {
   RefreshCw,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
   CMSSigningService,
   isKemOnlyAlg,
@@ -219,36 +220,28 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
 
       <div className="glass-panel space-y-3 p-4">
         <div className="flex flex-wrap items-center gap-3">
-          <label className="text-xs font-medium text-muted-foreground">
-            KEM algorithm
-            <select
-              value={alg}
-              onChange={(e) => setAlg(e.target.value as CmsAlg)}
-              disabled={busy}
-              className="ml-2 rounded border border-input bg-background px-2 py-1 text-xs"
-            >
-              {KEM_ALG_CHOICES.map((a) => (
-                <option key={a} value={a}>
-                  {a}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="text-xs font-medium text-muted-foreground">
-            CEK cipher
-            <select
-              value={cipher}
-              onChange={(e) => setCipher(e.target.value as CmsCipher)}
-              disabled={busy}
-              className="ml-2 rounded border border-input bg-background px-2 py-1 text-xs"
-            >
-              {CIPHER_CHOICES.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </label>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-muted-foreground">KEM algorithm</span>
+            <div className={busy ? 'pointer-events-none opacity-50' : ''}>
+              <FilterDropdown
+                items={KEM_ALG_CHOICES}
+                selectedId={alg}
+                onSelect={(id) => setAlg(id as CmsAlg)}
+                size="sm"
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-muted-foreground">CEK cipher</span>
+            <div className={busy ? 'pointer-events-none opacity-50' : ''}>
+              <FilterDropdown
+                items={CIPHER_CHOICES}
+                selectedId={cipher}
+                onSelect={(id) => setCipher(id as CmsCipher)}
+                size="sm"
+              />
+            </div>
+          </div>
           <label
             className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium transition-colors ${
               providerReady
