@@ -42,6 +42,7 @@ The biggest three-day release window of the year. What you'll actually notice:
 - **Mobile algorithm list: Try / Spec / Why links** [view:/algorithms]: `AlgoCtaStrip` (playground, spec, why-it-matters links) added to every row in the mobile transition list alongside the existing live-benchmark button.
 - **Compliance links carry pre-filter context** [view:/business][view:/report]: All navigation calls to `/compliance` from the Command Center (Governance + Risk Management zones) and Report now include `?tab=compliance&industry=&country=` so users land with their profile's filters already applied.
 - **pqcRequirement enum migration** [view:/compliance]: `ComplianceLandscape` sort and icon logic upgraded to the full 5-tier enum (`yes / no / partial / guidance / expected`), replacing the old boolean-style sort.
+- **Protocol Matrix IETF stage refresh (2026-05-20)** [view:/algorithms]: Three protocol rows updated against IETF datatracker: (1) SSH hybridKem — `draft-ietf-sshm-mlkem-hybrid-kex` entered RFC Editor Queue (EDIT); (2) TLS 1.3 pureSig — `draft-ietf-tls-mldsa-03` promoted to `ietf-last-call` (LC ends 2026-06-01); (3) OpenPGP pureSig/hybridSig — RFC 9980 number assigned, AUTH48 in progress; `RFC 9980` added to structured `latestDraft[]`.
 
 ### Data
 
@@ -49,6 +50,7 @@ The biggest three-day release window of the year. What you'll actually notice:
 - **Library refresh**: `library_05192026_r4.csv` — updated entries.
 - **OSCAL / CBOM regenerated** to v3.16.0.
 - **Migrate catalog**: `pqc_product_catalog_05192026.csv` — Microsoft AD CS corrected from No → Yes (with details): ML-DSA certificate issuance now supported in Windows Server 2025; ML-KEM and composite certificates planned for 2026. Sources: Microsoft TechCommunity Future-Proofing PKI event + independent blog verification.
+- **Embeddings regenerated**: `public/data/embeddings.bin` + `embeddings-meta.json` rebuilt against the 10005-chunk corpus (149 chunks added by the 2026-05-19 enrichment run); `bge-small-en-v1.5` int8, 14.7 MB. Corpus trust invariant tests restored to passing.
 
 ## [3.16.0] - 2026-05-19
 

@@ -1,7 +1,7 @@
 /**
  * PQC Protocol Support Matrix — 10 standard families × release / draft / 4 PQC dimensions / OSS libs / playground.
  *
- * Snapshot date: 2026-05-16.
+ * Snapshot date: 2026-05-20.
  *
  * The 4 dimensions reflect the published external PQC-readiness heatmap:
  *  - pureKem   = pure post-quantum KEM (e.g. ML-KEM-only, no classical fallback)
@@ -42,7 +42,7 @@
  */
 
 /** ISO date of the last manual update to PROTOCOL_MATRIX below. */
-export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-05-17'
+export const PROTOCOL_MATRIX_LAST_UPDATED = '2026-05-20'
 
 export type DimensionStatusValue = 'rfc' | 'draft' | 'experimental' | 'none' | 'na'
 
@@ -366,7 +366,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         value: 'rfc',
         stage: 'rfc-published',
         stageNote:
-          'RFC 9941 published 2026-04; IETF Last Call (Dec 2025) on follow-on ML-KEM hybrid draft',
+          'RFC 9941 published 2026-04; follow-on ML-KEM hybrid draft (draft-ietf-sshm-mlkem-hybrid-kex) now in RFC Editor Queue (EDIT)',
         refs: [
           {
             kind: 'rfc',
@@ -622,8 +622,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       },
       pureSig: {
         value: 'draft',
-        stage: 'iesg-submitted',
-        stageNote: 'Submitted to IESG (May 2026) — Last Call Requested',
+        stage: 'ietf-last-call',
+        stageNote: 'IETF Last Call (ends 2026-06-01) — draft-ietf-tls-mldsa-03',
         refs: [
           {
             kind: 'draft',
@@ -1611,6 +1611,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         localFile: '/library/draft-ietf-openpgp-pqc-17.html',
       },
       {
+        id: 'RFC 9980',
+        title: 'RFC 9980 (AUTH48 in progress) — Post-Quantum Cryptography in OpenPGP',
+        url: 'https://datatracker.ietf.org/doc/draft-ietf-openpgp-pqc/',
+        date: '2026-05',
+      },
+      {
         id: 'draft-ietf-openpgp-nist-bp-comp-03',
         title: 'draft-ietf-openpgp-nist-bp-comp-03 — NIST + Brainpool composites',
         url: 'https://datatracker.ietf.org/doc/draft-ietf-openpgp-nist-bp-comp/',
@@ -1628,7 +1634,8 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       hybridKem: {
         value: 'draft',
         stage: 'rfc-editor-queue',
-        stageNote: 'RFC Ed Queue (AUTH48) — draft-ietf-openpgp-pqc-17 covers Pure/Hybrid Sig too',
+        stageNote:
+          'RFC Ed Queue (AUTH48 — RFC 9980 assigned) — draft-ietf-openpgp-pqc-17 covers Pure/Hybrid Sig too',
         note: 'Composite mode pairs ML-KEM-768/1024 with ECDH P-256 / P-384 / X25519 / X448. Same draft draft-ietf-openpgp-pqc covers Pure Sig and Hybrid Sig.',
         refs: [
           {
@@ -1643,7 +1650,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       pureSig: {
         value: 'draft',
         stage: 'rfc-editor-queue',
-        stageNote: 'RFC Ed Queue (AUTH48) — same draft as Hybrid KEM',
+        stageNote: 'RFC Ed Queue (AUTH48 — RFC 9980 assigned) — same draft as Hybrid KEM',
         refs: [
           {
             kind: 'draft',
@@ -1657,7 +1664,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
       hybridSig: {
         value: 'draft',
         stage: 'rfc-editor-queue',
-        stageNote: 'RFC Ed Queue (AUTH48) — same draft as Hybrid KEM',
+        stageNote: 'RFC Ed Queue (AUTH48 — RFC 9980 assigned) — same draft as Hybrid KEM',
         note: 'Composite mode pairs ML-DSA with ECDSA / EdDSA classical signatures.',
         refs: [
           {
