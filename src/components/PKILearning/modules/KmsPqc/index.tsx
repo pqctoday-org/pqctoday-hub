@@ -13,7 +13,9 @@ import { KmsMigrationRunbook } from './workshop/KmsMigrationRunbook'
 import { AwsKmsPolicyLab } from './workshop/AwsKmsPolicyLab'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { Tabs, TabsContent } from '@/components/ui/tabs'
+import { WORKSHOP_STEPS } from '@/components/PKILearning/moduleData'
+import { ModuleTabBar } from '@/components/PKILearning/common/ModuleTabBar'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import { ModuleVisualTab } from '../../common/ModuleVisualTab'
@@ -72,7 +74,12 @@ export const KmsPqcModule: React.FC = () => {
   useSyncDeepLink(activeTab, currentPart)
   const [configKey, setConfigKey] = useState(0)
   const startTimeRef = useRef(0)
-  const { updateModuleProgress, markStepComplete } = useModuleStore()
+  const { updateModuleProgress, markStepComplete, modules } = useModuleStore()
+
+  const workshopSteps = WORKSHOP_STEPS[MODULE_ID] ?? []
+  const completedSteps = modules[MODULE_ID]?.completedSteps ?? []
+  const workshopDone = workshopSteps.filter((s) => completedSteps.includes(s.id)).length
+  const workshopDot = workshopDone > 0 && workshopDone < workshopSteps.length
 
   useEffect(() => {
     startTimeRef.current = Date.now()
@@ -146,14 +153,18 @@ export const KmsPqcModule: React.FC = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList className="w-full sm:w-auto">
-          <TabsTrigger value="learn">Learn</TabsTrigger>
-          <TabsTrigger value="visual">Visual</TabsTrigger>
-          <TabsTrigger value="workshop">Workshop</TabsTrigger>
-          <TabsTrigger value="exercises">Exercises</TabsTrigger>
-          <TabsTrigger value="references">References</TabsTrigger>
-          <TabsTrigger value="tools">Tools & Products</TabsTrigger>
-        </TabsList>
+        <ModuleTabBar
+          tabs={[
+            { value: 'learn', label: 'Learn' },
+            { value: 'visual', label: 'Visual' },
+            { value: 'workshop', label: 'Workshop', hasDot: workshopDot },
+            { value: 'exercises', label: 'Exercises' },
+            { value: 'references', label: 'References' },
+            { value: 'tools', label: 'Tools & Products' },
+          ]}
+          value={activeTab}
+          onValueChange={handleTabChange}
+        />
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
