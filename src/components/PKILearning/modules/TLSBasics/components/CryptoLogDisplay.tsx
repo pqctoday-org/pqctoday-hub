@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { clsx } from 'clsx'
 import { motion, AnimatePresence } from 'framer-motion'
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
@@ -100,6 +101,7 @@ const HexDumpViewer: React.FC<{
 export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [copied, setCopied] = useState(false)
+  const reduced = usePrefersReducedMotion()
 
   // Filter events
   const filteredEvents = events.filter((evt) => {
@@ -403,10 +405,10 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
         <AnimatePresence>
           {filteredEvents.map((evt: TraceEvent, idx: number) => (
             <motion.div
-              initial={{ opacity: 0, x: -10 }}
+              initial={{ opacity: reduced ? 1 : 0, x: reduced ? 0 : -10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-              transition={{ delay: idx * 0.02 }}
+              transition={{ delay: reduced ? 0 : idx * 0.02 }}
               key={idx}
               className="flex gap-3 text-sm group"
             >

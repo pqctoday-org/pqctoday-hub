@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import {
   Trophy,
   RotateCcw,
@@ -61,6 +62,7 @@ export const QuizResults: React.FC<QuizResultsProps> = ({
 }) => {
   const [showReview, setShowReview] = useState(false)
   const tier = getTierMessage(summary.overall.percentage)
+  const reduced = usePrefersReducedMotion()
 
   const scoreColor =
     summary.overall.percentage >= 80
@@ -73,9 +75,9 @@ export const QuizResults: React.FC<QuizResultsProps> = ({
     <div className="space-y-8">
       {/* Overall score */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: reduced ? 1 : 0, scale: reduced ? 1 : 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: reduced ? 0 : 0.3 }}
         className="glass-panel p-6 md:p-8 text-center"
       >
         <div className="inline-flex items-center justify-center p-4 rounded-full bg-primary/10 mb-4">
@@ -111,9 +113,9 @@ export const QuizResults: React.FC<QuizResultsProps> = ({
 
       {/* Category breakdown */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: reduced ? 1 : 0, y: reduced ? 0 : 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
+        transition={{ duration: reduced ? 0 : 0.3, delay: reduced ? 0 : 0.1 }}
         className="glass-panel p-6"
       >
         <ScoreBreakdown scores={summary.byCategory} />
@@ -122,9 +124,9 @@ export const QuizResults: React.FC<QuizResultsProps> = ({
       {/* Difficulty breakdown */}
       {Object.keys(summary.byDifficulty).length > 0 && (
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: reduced ? 1 : 0, y: reduced ? 0 : 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.2 }}
+          transition={{ duration: reduced ? 0 : 0.3, delay: reduced ? 0 : 0.2 }}
           className="glass-panel p-6"
         >
           <ScoreBreakdown
@@ -136,9 +138,9 @@ export const QuizResults: React.FC<QuizResultsProps> = ({
 
       {/* Review toggle */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: reduced ? 1 : 0, y: reduced ? 0 : 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.3 }}
+        transition={{ duration: reduced ? 0 : 0.3, delay: reduced ? 0 : 0.3 }}
       >
         <Button
           variant="ghost"

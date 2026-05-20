@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useEffect, useMemo, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, MotionConfig } from 'framer-motion'
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import {
   ChevronDown,
   ChevronUp,
@@ -39,53 +40,56 @@ const FamilySection: React.FC<FamilySectionProps> = ({
   onToggle,
   isCompleted,
   children,
-}) => (
-  <div className={`glass-panel border-l-4 ${borderColor} overflow-hidden`}>
-    <Button
-      variant="ghost"
-      onClick={onToggle}
-      className="w-full flex items-center justify-between p-5 text-left hover:bg-muted/30 transition-colors"
-      aria-expanded={isExpanded}
-      aria-controls={`family-${title.replace(/\s+/g, '-').toLowerCase()}`}
-    >
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full border-2 border-border flex items-center justify-center bg-background">
-          <Icon size={18} className="text-foreground" />
+}) => {
+  const reduced = usePrefersReducedMotion()
+  return (
+    <div className={`glass-panel border-l-4 ${borderColor} overflow-hidden`}>
+      <Button
+        variant="ghost"
+        onClick={onToggle}
+        className="w-full flex items-center justify-between p-5 text-left hover:bg-muted/30 transition-colors"
+        aria-expanded={isExpanded}
+        aria-controls={`family-${title.replace(/\s+/g, '-').toLowerCase()}`}
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full border-2 border-border flex items-center justify-center bg-background">
+            <Icon size={18} className="text-foreground" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+              {title}
+              {isCompleted && (
+                <motion.span initial={{ scale: reduced ? 1 : 0 }} animate={{ scale: 1 }}>
+                  <CheckCircle2 size={18} className="text-success" />
+                </motion.span>
+              )}
+            </h3>
+            <p className="text-sm text-muted-foreground">{subtitle}</p>
+          </div>
         </div>
-        <div>
-          <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
-            {title}
-            {isCompleted && (
-              <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}>
-                <CheckCircle2 size={18} className="text-success" />
-              </motion.span>
-            )}
-          </h3>
-          <p className="text-sm text-muted-foreground">{subtitle}</p>
-        </div>
-      </div>
-      {isExpanded ? (
-        <ChevronUp size={20} className="text-muted-foreground" />
-      ) : (
-        <ChevronDown size={20} className="text-muted-foreground" />
-      )}
-    </Button>
-    <AnimatePresence>
-      {isExpanded && (
-        <motion.div
-          id={`family-${title.replace(/\s+/g, '-').toLowerCase()}`}
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: 'auto', opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="overflow-hidden"
-        >
-          <div className="px-5 pb-5 space-y-5">{children}</div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  </div>
-)
+        {isExpanded ? (
+          <ChevronUp size={20} className="text-muted-foreground" />
+        ) : (
+          <ChevronDown size={20} className="text-muted-foreground" />
+        )}
+      </Button>
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            id={`family-${title.replace(/\s+/g, '-').toLowerCase()}`}
+            initial={{ height: reduced ? 'auto' : 0, opacity: reduced ? 1 : 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: reduced ? 'auto' : 0, opacity: 0 }}
+            transition={{ duration: reduced ? 0 : 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="px-5 pb-5 space-y-5">{children}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
 
 interface QuantumContrastCalloutProps {
   classicalProblem: string
@@ -130,6 +134,7 @@ interface ComplexityBarProps {
 }
 
 const ComplexityBar: React.FC<ComplexityBarProps> = ({ label, exponent, maxExponent, status }) => {
+  const reduced = usePrefersReducedMotion()
   const pct = Math.min((exponent / maxExponent) * 100, 100)
   const barColor =
     status === 'broken' ? 'bg-destructive' : status === 'weakened' ? 'bg-warning' : 'bg-success'
@@ -151,9 +156,9 @@ const ComplexityBar: React.FC<ComplexityBarProps> = ({ label, exponent, maxExpon
       <div className="h-6 rounded-full bg-muted overflow-hidden">
         <motion.div
           className={`h-full rounded-full ${barColor}`}
-          initial={{ width: 0 }}
+          initial={{ width: reduced ? `${pct}%` : 0 }}
           animate={{ width: `${pct}%` }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: reduced ? 0 : 0.5 }}
         />
       </div>
     </div>
@@ -214,160 +219,165 @@ const LatticeVisualization: React.FC<{ onInteract: () => void }> = ({ onInteract
     dimensions === 2 ? 3 : dimensions === 10 ? 30 : dimensions === 100 ? 300 : 768
 
   return (
-    <div className="space-y-4">
-      <p className="text-sm text-muted-foreground leading-relaxed">
-        Imagine a grid of evenly-spaced dots &mdash; a <strong>lattice</strong>. Someone drops a
-        point near the grid with random noise. Your task: find the{' '}
-        <strong>closest lattice point</strong>. In 2D this is trivial. In 256 dimensions, it becomes
-        exponentially hard &mdash; even for a quantum computer.
-      </p>
+    <MotionConfig reducedMotion="user">
+      <div className="space-y-4">
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Imagine a grid of evenly-spaced dots &mdash; a <strong>lattice</strong>. Someone drops a
+          point near the grid with random noise. Your task: find the{' '}
+          <strong>closest lattice point</strong>. In 2D this is trivial. In 256 dimensions, it
+          becomes exponentially hard &mdash; even for a quantum computer.
+        </p>
 
-      {/* Grid or high-dimension overlay */}
-      <div className="relative bg-muted/30 rounded-lg overflow-hidden aspect-square max-w-xs mx-auto border border-border">
-        {dimensions === 2 ? (
-          <svg viewBox="0 0 100 100" className="w-full h-full" aria-label="2D lattice grid">
-            {/* Lattice points */}
-            {Array.from({ length: gridSize }, (_, row) =>
-              Array.from({ length: gridSize }, (_, col) => (
-                <circle
-                  key={`${row}-${col}`}
-                  cx={col * cellSize + cellSize / 2}
-                  cy={row * cellSize + cellSize / 2}
-                  r={1.2}
-                  className="fill-muted-foreground/40"
-                />
-              ))
-            )}
-            {/* Target (noisy) point */}
-            <motion.circle
-              cx={targetPoint.x}
-              cy={targetPoint.y}
-              r={2.5}
-              className="fill-destructive"
-              animate={{ r: [2.5, 3.2, 2.5] }}
-              transition={{ repeat: Infinity, duration: 2 }}
-            />
-            {/* Label */}
-            <text
-              x={targetPoint.x + 4}
-              y={targetPoint.y - 3}
-              className="fill-destructive text-[3px]"
-            >
-              target
-            </text>
-          </svg>
-        ) : (
-          /* High-dimensional: overlapping projections */
-          <div className="w-full h-full flex items-center justify-center p-4">
-            <div className="relative w-full h-full">
-              {/* Multiple overlapping faded grids to suggest high dimensions */}
-              {Array.from({ length: Math.min(dimensions / 2, 8) }, (_, layer) => (
-                <div
-                  key={layer}
-                  className="absolute inset-0 grid grid-cols-8 grid-rows-8 gap-px"
-                  style={{
-                    opacity: 0.15 - layer * 0.015,
-                    transform: `translate(${seededRandom(layer * 10 + 500) * 12 - 6}px, ${seededRandom(layer * 10 + 600) * 12 - 6}px) rotate(${seededRandom(layer * 10 + 700) * 20 - 10}deg)`,
-                  }}
-                >
-                  {Array.from({ length: 64 }, (_, i) => (
-                    <div key={i} className="w-1.5 h-1.5 rounded-full bg-muted-foreground mx-auto" />
-                  ))}
-                </div>
-              ))}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <p className="text-2xl font-mono font-bold text-destructive">?</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Too many overlapping dimensions to visualize
-                  </p>
+        {/* Grid or high-dimension overlay */}
+        <div className="relative bg-muted/30 rounded-lg overflow-hidden aspect-square max-w-xs mx-auto border border-border">
+          {dimensions === 2 ? (
+            <svg viewBox="0 0 100 100" className="w-full h-full" aria-label="2D lattice grid">
+              {/* Lattice points */}
+              {Array.from({ length: gridSize }, (_, row) =>
+                Array.from({ length: gridSize }, (_, col) => (
+                  <circle
+                    key={`${row}-${col}`}
+                    cx={col * cellSize + cellSize / 2}
+                    cy={row * cellSize + cellSize / 2}
+                    r={1.2}
+                    className="fill-muted-foreground/40"
+                  />
+                ))
+              )}
+              {/* Target (noisy) point */}
+              <motion.circle
+                cx={targetPoint.x}
+                cy={targetPoint.y}
+                r={2.5}
+                className="fill-destructive"
+                animate={{ r: [2.5, 3.2, 2.5] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+              />
+              {/* Label */}
+              <text
+                x={targetPoint.x + 4}
+                y={targetPoint.y - 3}
+                className="fill-destructive text-[3px]"
+              >
+                target
+              </text>
+            </svg>
+          ) : (
+            /* High-dimensional: overlapping projections */
+            <div className="w-full h-full flex items-center justify-center p-4">
+              <div className="relative w-full h-full">
+                {/* Multiple overlapping faded grids to suggest high dimensions */}
+                {Array.from({ length: Math.min(dimensions / 2, 8) }, (_, layer) => (
+                  <div
+                    key={layer}
+                    className="absolute inset-0 grid grid-cols-8 grid-rows-8 gap-px"
+                    style={{
+                      opacity: 0.15 - layer * 0.015,
+                      transform: `translate(${seededRandom(layer * 10 + 500) * 12 - 6}px, ${seededRandom(layer * 10 + 600) * 12 - 6}px) rotate(${seededRandom(layer * 10 + 700) * 20 - 10}deg)`,
+                    }}
+                  >
+                    {Array.from({ length: 64 }, (_, i) => (
+                      <div
+                        key={i}
+                        className="w-1.5 h-1.5 rounded-full bg-muted-foreground mx-auto"
+                      />
+                    ))}
+                  </div>
+                ))}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center">
+                    <p className="text-2xl font-mono font-bold text-destructive">?</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Too many overlapping dimensions to visualize
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
 
-      {/* Controls */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex-1 space-y-2">
-          <span className="text-xs font-medium text-muted-foreground">Dimensions</span>
-          <div className="flex gap-2 flex-wrap" role="group" aria-label="Dimension selector">
-            {DIMENSION_OPTIONS.map((opt) => (
-              <Button
-                variant="ghost"
-                key={opt.value}
-                onClick={() => handleDimensionChange(opt.value)}
-                className={`px-3 py-1.5 min-h-[36px] rounded text-sm font-medium transition-colors border ${
-                  dimensions === opt.value
-                    ? 'bg-primary text-primary-foreground border-primary'
-                    : 'border-border text-muted-foreground hover:bg-muted'
-                }`}
-              >
-                {opt.label}
-              </Button>
-            ))}
+        {/* Controls */}
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex-1 space-y-2">
+            <span className="text-xs font-medium text-muted-foreground">Dimensions</span>
+            <div className="flex gap-2 flex-wrap" role="group" aria-label="Dimension selector">
+              {DIMENSION_OPTIONS.map((opt) => (
+                <Button
+                  variant="ghost"
+                  key={opt.value}
+                  onClick={() => handleDimensionChange(opt.value)}
+                  className={`px-3 py-1.5 min-h-[36px] rounded text-sm font-medium transition-colors border ${
+                    dimensions === opt.value
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'border-border text-muted-foreground hover:bg-muted'
+                  }`}
+                >
+                  {opt.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+          <div className="flex-1 space-y-2">
+            <label className="text-xs font-medium text-muted-foreground">
+              Noise level: {Math.round(noiseLevel * 100)}%
+            </label>
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.05}
+              value={noiseLevel}
+              onChange={(e) => {
+                setNoiseLevel(Number(e.target.value))
+                onInteract()
+              }}
+              className="w-full accent-primary"
+              aria-label="Noise level"
+              aria-valuemin={0}
+              aria-valuemax={1}
+              aria-valuenow={noiseLevel}
+            />
           </div>
         </div>
-        <div className="flex-1 space-y-2">
-          <label className="text-xs font-medium text-muted-foreground">
-            Noise level: {Math.round(noiseLevel * 100)}%
-          </label>
-          <input
-            type="range"
-            min={0}
-            max={1}
-            step={0.05}
-            value={noiseLevel}
-            onChange={(e) => {
-              setNoiseLevel(Number(e.target.value))
-              onInteract()
-            }}
-            className="w-full accent-primary"
-            aria-label="Noise level"
-            aria-valuemin={0}
-            aria-valuemax={1}
-            aria-valuenow={noiseLevel}
+
+        <Button
+          variant="ghost"
+          onClick={handleAddNoise}
+          className="flex items-center gap-2 px-4 py-2 min-h-[44px] rounded-lg border border-border hover:bg-muted transition-colors text-sm text-foreground"
+        >
+          <RefreshCw size={14} />
+          Randomize Target
+        </Button>
+
+        {/* Complexity indicator */}
+        <div className="glass-panel p-4 space-y-3">
+          <h4 className="text-sm font-semibold text-foreground">Search Complexity</h4>
+          <ComplexityBar
+            label={`${dimensions}D Lattice (Closest Vector Problem)`}
+            exponent={complexityLog2}
+            maxExponent={768}
+            status={dimensions <= 2 ? 'broken' : dimensions <= 10 ? 'weakened' : 'safe'}
           />
+          <p className="text-xs text-muted-foreground">
+            {dimensions === 2
+              ? 'Trivial — you can solve this by eye!'
+              : dimensions === 10
+                ? '~1 billion candidates. A computer could brute-force this, but scaling is exponential.'
+                : dimensions === 100
+                  ? '2^300 candidates — far beyond any classical or quantum computer.'
+                  : '2^768 candidates — ML-KEM-768 operates in this regime. Completely intractable.'}
+          </p>
         </div>
-      </div>
 
-      <Button
-        variant="ghost"
-        onClick={handleAddNoise}
-        className="flex items-center gap-2 px-4 py-2 min-h-[44px] rounded-lg border border-border hover:bg-muted transition-colors text-sm text-foreground"
-      >
-        <RefreshCw size={14} />
-        Randomize Target
-      </Button>
-
-      {/* Complexity indicator */}
-      <div className="glass-panel p-4 space-y-3">
-        <h4 className="text-sm font-semibold text-foreground">Search Complexity</h4>
-        <ComplexityBar
-          label={`${dimensions}D Lattice (Closest Vector Problem)`}
-          exponent={complexityLog2}
-          maxExponent={768}
-          status={dimensions <= 2 ? 'broken' : dimensions <= 10 ? 'weakened' : 'safe'}
+        <QuantumContrastCallout
+          classicalProblem="RSA: Factor N = p × q"
+          classicalResult="Shor's Algorithm finds factors in polynomial time — BROKEN"
+          pqcProblem="Lattice: Find closest vector in noisy high-dimensional space"
+          pqcResult="No known quantum algorithm provides speedup — SAFE"
         />
-        <p className="text-xs text-muted-foreground">
-          {dimensions === 2
-            ? 'Trivial — you can solve this by eye!'
-            : dimensions === 10
-              ? '~1 billion candidates. A computer could brute-force this, but scaling is exponential.'
-              : dimensions === 100
-                ? '2^300 candidates — far beyond any classical or quantum computer.'
-                : '2^768 candidates — ML-KEM-768 operates in this regime. Completely intractable.'}
-        </p>
       </div>
-
-      <QuantumContrastCallout
-        classicalProblem="RSA: Factor N = p × q"
-        classicalResult="Shor's Algorithm finds factors in polynomial time — BROKEN"
-        pqcProblem="Lattice: Find closest vector in noisy high-dimensional space"
-        pqcResult="No known quantum algorithm provides speedup — SAFE"
-      />
-    </div>
+    </MotionConfig>
   )
 }
 
@@ -445,154 +455,156 @@ const HashBasedVisualization: React.FC<{ onInteract: () => void }> = ({ onIntera
   }
 
   return (
-    <div className="space-y-4">
-      <p className="text-sm text-muted-foreground leading-relaxed">
-        A hash function is a <strong>one-way blender</strong>: any input produces a fixed-size
-        output, but you cannot reverse-engineer the input from the output. Grover&apos;s Algorithm
-        only provides a <strong>quadratic</strong> speedup (halving the exponent) &mdash; not the{' '}
-        <strong>exponential</strong> collapse that Shor&apos;s gives against RSA.
-      </p>
-
-      {/* Live hasher */}
-      <div className="glass-panel p-4 space-y-3">
-        <h4 className="text-sm font-semibold text-foreground">Avalanche Effect Demo</h4>
-        <p className="text-xs text-muted-foreground">
-          Change even one character and the entire hash transforms:
+    <MotionConfig reducedMotion="user">
+      <div className="space-y-4">
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          A hash function is a <strong>one-way blender</strong>: any input produces a fixed-size
+          output, but you cannot reverse-engineer the input from the output. Grover&apos;s Algorithm
+          only provides a <strong>quadratic</strong> speedup (halving the exponent) &mdash; not the{' '}
+          <strong>exponential</strong> collapse that Shor&apos;s gives against RSA.
         </p>
-        <Input
-          type="text"
-          value={hashInput}
-          onChange={(e) => {
-            setHashInput(e.target.value)
-            onInteract()
-          }}
-          className="w-full text-sm font-mono"
-          placeholder="Type anything..."
-        />
-        <motion.div
-          key={hashOutput}
-          animate={isHashing ? { rotate: [0, -2, 2, -2, 0] } : {}}
-          transition={{ duration: 0.3 }}
-          className="p-3 rounded bg-muted/50 border border-border"
-        >
-          <span className="text-xs text-muted-foreground block mb-1">SHA-256 output:</span>
-          <p className="font-mono text-xs text-foreground break-all leading-relaxed">
-            {hashOutput}
+
+        {/* Live hasher */}
+        <div className="glass-panel p-4 space-y-3">
+          <h4 className="text-sm font-semibold text-foreground">Avalanche Effect Demo</h4>
+          <p className="text-xs text-muted-foreground">
+            Change even one character and the entire hash transforms:
           </p>
-        </motion.div>
-      </div>
-
-      {/* Classical vs Quantum comparison */}
-      <div className="glass-panel p-4 space-y-3">
-        <h4 className="text-sm font-semibold text-foreground">
-          Quantum Speedup: Quadratic vs Exponential
-        </h4>
-        <ComplexityBar
-          label="Classical brute force on SHA-256"
-          exponent={256}
-          maxExponent={256}
-          status="safe"
-        />
-        <ComplexityBar
-          label="Quantum (Grover's) on SHA-256"
-          exponent={128}
-          maxExponent={256}
-          status="safe"
-        />
-        <ComplexityBar
-          label="Quantum (Shor's) on RSA-2048"
-          exponent={0}
-          maxExponent={256}
-          status="broken"
-        />
-        <p className="text-xs text-muted-foreground">
-          Grover&apos;s halves the exponent: 2<sup>256</sup> → 2<sup>128</sup>. Still astronomically
-          hard. Shor&apos;s <em>collapses</em> RSA to polynomial time &mdash; that&apos;s the
-          difference.
-        </p>
-      </div>
-
-      {/* Merkle tree */}
-      <div className="glass-panel p-4 space-y-3">
-        <h4 className="text-sm font-semibold text-foreground">Merkle Tree Signatures</h4>
-        <p className="text-xs text-muted-foreground">
-          SLH-DSA uses a tree of hashes: one root can verify many signatures. Click a leaf to see
-          its authentication path.
-        </p>
-
-        <div className="flex flex-col items-center gap-3 py-2 overflow-x-auto">
-          {/* Root */}
-          <div
-            className={`w-10 h-10 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-colors ${getNodeClass(selectedLeaf !== null ? 'root' : '')}`}
+          <Input
+            type="text"
+            value={hashInput}
+            onChange={(e) => {
+              setHashInput(e.target.value)
+              onInteract()
+            }}
+            className="w-full text-sm font-mono"
+            placeholder="Type anything..."
+          />
+          <motion.div
+            key={hashOutput}
+            animate={isHashing ? { rotate: [0, -2, 2, -2, 0] } : {}}
+            transition={{ duration: 0.3 }}
+            className="p-3 rounded bg-muted/50 border border-border"
           >
-            Root
-          </div>
-
-          {/* Level 2: 2 nodes */}
-          <div className="flex gap-8 sm:gap-16">
-            {[0, 1].map((i) => (
-              <div
-                key={`l2-${i}`}
-                className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-[10px] font-medium transition-colors ${getNodeClass(isOnPath(`node-2-${i}`) ? `node-2-${i}` : isOnPath(`sibling-node-2-${i}`) ? `sibling-node-2-${i}` : '')}`}
-              >
-                H
-              </div>
-            ))}
-          </div>
-
-          {/* Level 1: 4 nodes */}
-          <div className="flex gap-4 sm:gap-8">
-            {[0, 1, 2, 3].map((i) => (
-              <div
-                key={`l1-${i}`}
-                className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-[10px] font-medium transition-colors ${getNodeClass(isOnPath(`node-1-${i}`) ? `node-1-${i}` : isOnPath(`sibling-node-1-${i}`) ? `sibling-node-1-${i}` : '')}`}
-              >
-                H
-              </div>
-            ))}
-          </div>
-
-          {/* Leaves */}
-          <div className="flex gap-1.5 sm:gap-3">
-            {merkleLeaves.map((label, i) => (
-              <Button
-                variant="ghost"
-                key={i}
-                onClick={() => {
-                  setSelectedLeaf(selectedLeaf === i ? null : i)
-                  onInteract()
-                }}
-                className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 flex items-center justify-center text-[9px] sm:text-[10px] font-medium transition-colors cursor-pointer hover:bg-muted/50 ${getNodeClass(isOnPath(`leaf-${i}`) ? `leaf-${i}` : isOnPath(`sibling-${i}`) ? `sibling-${i}` : '')}`}
-                aria-label={`Signature leaf ${i + 1}`}
-                aria-pressed={selectedLeaf === i}
-              >
-                {label}
-              </Button>
-            ))}
-          </div>
+            <span className="text-xs text-muted-foreground block mb-1">SHA-256 output:</span>
+            <p className="font-mono text-xs text-foreground break-all leading-relaxed">
+              {hashOutput}
+            </p>
+          </motion.div>
         </div>
 
-        {selectedLeaf !== null && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-xs text-muted-foreground"
-          >
-            <span className="inline-block w-3 h-3 rounded-full border-2 border-primary bg-primary/20 mr-1 align-middle" />{' '}
-            = verification path &nbsp;
-            <span className="inline-block w-3 h-3 rounded-full border-2 border-warning bg-warning/20 mr-1 align-middle" />{' '}
-            = sibling hashes (provided as proof)
-          </motion.div>
-        )}
-      </div>
+        {/* Classical vs Quantum comparison */}
+        <div className="glass-panel p-4 space-y-3">
+          <h4 className="text-sm font-semibold text-foreground">
+            Quantum Speedup: Quadratic vs Exponential
+          </h4>
+          <ComplexityBar
+            label="Classical brute force on SHA-256"
+            exponent={256}
+            maxExponent={256}
+            status="safe"
+          />
+          <ComplexityBar
+            label="Quantum (Grover's) on SHA-256"
+            exponent={128}
+            maxExponent={256}
+            status="safe"
+          />
+          <ComplexityBar
+            label="Quantum (Shor's) on RSA-2048"
+            exponent={0}
+            maxExponent={256}
+            status="broken"
+          />
+          <p className="text-xs text-muted-foreground">
+            Grover&apos;s halves the exponent: 2<sup>256</sup> → 2<sup>128</sup>. Still
+            astronomically hard. Shor&apos;s <em>collapses</em> RSA to polynomial time &mdash;
+            that&apos;s the difference.
+          </p>
+        </div>
 
-      <QuantumContrastCallout
-        classicalProblem="RSA: Exploit algebraic structure of modular exponentiation"
-        classicalResult="Shor's provides exponential speedup — BROKEN"
-        pqcProblem="Hash: Reverse a one-way function (find preimage)"
-        pqcResult="Grover's provides only quadratic speedup — doubling hash size is a complete fix"
-      />
-    </div>
+        {/* Merkle tree */}
+        <div className="glass-panel p-4 space-y-3">
+          <h4 className="text-sm font-semibold text-foreground">Merkle Tree Signatures</h4>
+          <p className="text-xs text-muted-foreground">
+            SLH-DSA uses a tree of hashes: one root can verify many signatures. Click a leaf to see
+            its authentication path.
+          </p>
+
+          <div className="flex flex-col items-center gap-3 py-2 overflow-x-auto">
+            {/* Root */}
+            <div
+              className={`w-10 h-10 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-colors ${getNodeClass(selectedLeaf !== null ? 'root' : '')}`}
+            >
+              Root
+            </div>
+
+            {/* Level 2: 2 nodes */}
+            <div className="flex gap-8 sm:gap-16">
+              {[0, 1].map((i) => (
+                <div
+                  key={`l2-${i}`}
+                  className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-[10px] font-medium transition-colors ${getNodeClass(isOnPath(`node-2-${i}`) ? `node-2-${i}` : isOnPath(`sibling-node-2-${i}`) ? `sibling-node-2-${i}` : '')}`}
+                >
+                  H
+                </div>
+              ))}
+            </div>
+
+            {/* Level 1: 4 nodes */}
+            <div className="flex gap-4 sm:gap-8">
+              {[0, 1, 2, 3].map((i) => (
+                <div
+                  key={`l1-${i}`}
+                  className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-[10px] font-medium transition-colors ${getNodeClass(isOnPath(`node-1-${i}`) ? `node-1-${i}` : isOnPath(`sibling-node-1-${i}`) ? `sibling-node-1-${i}` : '')}`}
+                >
+                  H
+                </div>
+              ))}
+            </div>
+
+            {/* Leaves */}
+            <div className="flex gap-1.5 sm:gap-3">
+              {merkleLeaves.map((label, i) => (
+                <Button
+                  variant="ghost"
+                  key={i}
+                  onClick={() => {
+                    setSelectedLeaf(selectedLeaf === i ? null : i)
+                    onInteract()
+                  }}
+                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 flex items-center justify-center text-[9px] sm:text-[10px] font-medium transition-colors cursor-pointer hover:bg-muted/50 ${getNodeClass(isOnPath(`leaf-${i}`) ? `leaf-${i}` : isOnPath(`sibling-${i}`) ? `sibling-${i}` : '')}`}
+                  aria-label={`Signature leaf ${i + 1}`}
+                  aria-pressed={selectedLeaf === i}
+                >
+                  {label}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          {selectedLeaf !== null && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-xs text-muted-foreground"
+            >
+              <span className="inline-block w-3 h-3 rounded-full border-2 border-primary bg-primary/20 mr-1 align-middle" />{' '}
+              = verification path &nbsp;
+              <span className="inline-block w-3 h-3 rounded-full border-2 border-warning bg-warning/20 mr-1 align-middle" />{' '}
+              = sibling hashes (provided as proof)
+            </motion.div>
+          )}
+        </div>
+
+        <QuantumContrastCallout
+          classicalProblem="RSA: Exploit algebraic structure of modular exponentiation"
+          classicalResult="Shor's provides exponential speedup — BROKEN"
+          pqcProblem="Hash: Reverse a one-way function (find preimage)"
+          pqcResult="Grover's provides only quadratic speedup — doubling hash size is a complete fix"
+        />
+      </div>
+    </MotionConfig>
   )
 }
 
@@ -694,148 +706,152 @@ const CodeBasedVisualization: React.FC<{ onInteract: () => void }> = ({ onIntera
   }, [isEncoded, encodedBits.length, errorCount])
 
   return (
-    <div className="space-y-4">
-      <p className="text-sm text-muted-foreground leading-relaxed">
-        Encode a message with redundancy, then <strong>intentionally add errors</strong>. The
-        legitimate receiver has the decoder and strips away errors. An attacker sees only garbled
-        data and must search through exponentially many error patterns.
-      </p>
+    <MotionConfig reducedMotion="user">
+      <div className="space-y-4">
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Encode a message with redundancy, then <strong>intentionally add errors</strong>. The
+          legitimate receiver has the decoder and strips away errors. An attacker sees only garbled
+          data and must search through exponentially many error patterns.
+        </p>
 
-      {/* Original message */}
-      <div className="glass-panel p-4 space-y-3">
-        <h4 className="text-sm font-semibold text-foreground">Original Message (8 bits)</h4>
-        <div className="flex gap-1.5 sm:gap-2 flex-wrap">
-          {originalMessage.map((bit, i) => (
-            <div
-              key={`orig-${i}`}
-              className="w-8 h-8 sm:w-10 sm:h-10 rounded border-2 border-border bg-background flex items-center justify-center text-sm font-mono font-bold text-foreground"
-              aria-label={`bit ${i}: ${bit}`}
+        {/* Original message */}
+        <div className="glass-panel p-4 space-y-3">
+          <h4 className="text-sm font-semibold text-foreground">Original Message (8 bits)</h4>
+          <div className="flex gap-1.5 sm:gap-2 flex-wrap">
+            {originalMessage.map((bit, i) => (
+              <div
+                key={`orig-${i}`}
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded border-2 border-border bg-background flex items-center justify-center text-sm font-mono font-bold text-foreground"
+                aria-label={`bit ${i}: ${bit}`}
+              >
+                {bit}
+              </div>
+            ))}
+          </div>
+
+          {!isEncoded && (
+            <Button
+              variant="gradient"
+              onClick={handleEncode}
+              className="px-4 py-2 min-h-[44px] font-bold rounded-lg transition-colors text-sm"
             >
-              {bit}
-            </div>
-          ))}
+              Encode with Redundancy
+            </Button>
+          )}
         </div>
 
-        {!isEncoded && (
-          <Button
-            variant="gradient"
-            onClick={handleEncode}
-            className="px-4 py-2 min-h-[44px] font-bold rounded-lg transition-colors text-sm"
-          >
-            Encode with Redundancy
-          </Button>
-        )}
-      </div>
-
-      {/* Encoded message */}
-      <AnimatePresence>
-        {isEncoded && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="glass-panel p-4 space-y-3"
-          >
-            <h4 className="text-sm font-semibold text-foreground">
-              Encoded Message ({encodedBits.length} bits)
-            </h4>
-            <p className="text-xs text-muted-foreground">
-              Each data bit repeated 3× (majority-vote code). Parity bits shown in lighter color.
-            </p>
-            <div className="flex gap-1 sm:gap-1.5 flex-wrap">
-              {displayBits.map((bit, i) => {
-                const isParity = parityIndices.has(i)
-                const hasError = errorPositionsMemo.has(i)
-                return (
-                  <motion.div
-                    key={`enc-${i}`}
-                    initial={isParity ? { opacity: 0, scale: 0 } : {}}
-                    animate={{
-                      opacity: 1,
-                      scale: 1,
-                      backgroundColor: hasError ? 'hsl(var(--destructive) / 0.2)' : undefined,
-                    }}
-                    transition={{ duration: 0.3, delay: isParity ? i * 0.02 : 0 }}
-                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded border-2 flex items-center justify-center text-xs font-mono font-bold transition-colors ${
-                      hasError
-                        ? 'border-destructive text-destructive'
-                        : isParity
-                          ? 'border-secondary/50 text-secondary'
-                          : 'border-border text-foreground'
-                    }`}
-                    aria-label={`encoded bit ${i}: ${bit}${hasError ? ' (error)' : ''}`}
-                  >
-                    {bit}
-                  </motion.div>
-                )
-              })}
-            </div>
-
-            {/* Error controls */}
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-muted-foreground">
-                Inject errors: {errorCount}
-              </label>
-              <div className="flex items-center gap-3">
-                <input
-                  type="range"
-                  min={0}
-                  max={Math.min(8, encodedBits.length)}
-                  step={1}
-                  value={errorCount}
-                  onChange={(e) => {
-                    setErrorCount(Number(e.target.value))
-                    setErrorSeed((s) => s + 1)
-                    onInteract()
-                  }}
-                  className="flex-1 accent-primary"
-                  aria-label="Error injection count"
-                  aria-valuenow={errorCount}
-                />
-                <span
-                  className={`text-sm font-bold ${canDecode ? 'text-success' : 'text-destructive'}`}
-                >
-                  {errorCount === 0
-                    ? 'No errors'
-                    : canDecode
-                      ? 'Decoder recovers'
-                      : 'Decoding fails!'}
-                </span>
-              </div>
-            </div>
-
-            {/* Combinatorial complexity */}
-            {combinatorialDisplay && errorCount > 0 && (
-              <div className="glass-panel p-3 space-y-1">
-                <p className="text-xs text-muted-foreground">
-                  Attacker must search{' '}
-                  <span className="font-mono font-bold text-foreground">
-                    C({encodedBits.length}, {errorCount}) = {combinatorialDisplay.value}
-                  </span>{' '}
-                  possible error patterns
-                </p>
-                <p className="text-xs text-muted-foreground italic">{combinatorialDisplay.label}</p>
-              </div>
-            )}
-
-            <div className="glass-panel p-3 bg-muted/30">
+        {/* Encoded message */}
+        <AnimatePresence>
+          {isEncoded && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="glass-panel p-4 space-y-3"
+            >
+              <h4 className="text-sm font-semibold text-foreground">
+                Encoded Message ({encodedBits.length} bits)
+              </h4>
               <p className="text-xs text-muted-foreground">
-                <strong>Real systems:</strong> Classic McEliece uses n=3,488 and t=64 errors. The
-                attacker faces C(3488, 64) &gt; 2<sup>400</sup> combinations. No quantum algorithm
-                provides meaningful speedup &mdash; this problem has resisted cryptanalysis since
-                1978.
+                Each data bit repeated 3× (majority-vote code). Parity bits shown in lighter color.
               </p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <div className="flex gap-1 sm:gap-1.5 flex-wrap">
+                {displayBits.map((bit, i) => {
+                  const isParity = parityIndices.has(i)
+                  const hasError = errorPositionsMemo.has(i)
+                  return (
+                    <motion.div
+                      key={`enc-${i}`}
+                      initial={isParity ? { opacity: 0, scale: 0 } : {}}
+                      animate={{
+                        opacity: 1,
+                        scale: 1,
+                        backgroundColor: hasError ? 'hsl(var(--destructive) / 0.2)' : undefined,
+                      }}
+                      transition={{ duration: 0.3, delay: isParity ? i * 0.02 : 0 }}
+                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded border-2 flex items-center justify-center text-xs font-mono font-bold transition-colors ${
+                        hasError
+                          ? 'border-destructive text-destructive'
+                          : isParity
+                            ? 'border-secondary/50 text-secondary'
+                            : 'border-border text-foreground'
+                      }`}
+                      aria-label={`encoded bit ${i}: ${bit}${hasError ? ' (error)' : ''}`}
+                    >
+                      {bit}
+                    </motion.div>
+                  )
+                })}
+              </div>
 
-      <QuantumContrastCallout
-        classicalProblem="RSA: Find hidden period in modular exponentiation"
-        classicalResult="Shor's exploits algebraic structure — BROKEN in polynomial time"
-        pqcProblem="Codes: Decode random linear code with unknown error pattern"
-        pqcResult="No exploitable structure — resisted all attacks since 1978"
-      />
-    </div>
+              {/* Error controls */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground">
+                  Inject errors: {errorCount}
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="range"
+                    min={0}
+                    max={Math.min(8, encodedBits.length)}
+                    step={1}
+                    value={errorCount}
+                    onChange={(e) => {
+                      setErrorCount(Number(e.target.value))
+                      setErrorSeed((s) => s + 1)
+                      onInteract()
+                    }}
+                    className="flex-1 accent-primary"
+                    aria-label="Error injection count"
+                    aria-valuenow={errorCount}
+                  />
+                  <span
+                    className={`text-sm font-bold ${canDecode ? 'text-success' : 'text-destructive'}`}
+                  >
+                    {errorCount === 0
+                      ? 'No errors'
+                      : canDecode
+                        ? 'Decoder recovers'
+                        : 'Decoding fails!'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Combinatorial complexity */}
+              {combinatorialDisplay && errorCount > 0 && (
+                <div className="glass-panel p-3 space-y-1">
+                  <p className="text-xs text-muted-foreground">
+                    Attacker must search{' '}
+                    <span className="font-mono font-bold text-foreground">
+                      C({encodedBits.length}, {errorCount}) = {combinatorialDisplay.value}
+                    </span>{' '}
+                    possible error patterns
+                  </p>
+                  <p className="text-xs text-muted-foreground italic">
+                    {combinatorialDisplay.label}
+                  </p>
+                </div>
+              )}
+
+              <div className="glass-panel p-3 bg-muted/30">
+                <p className="text-xs text-muted-foreground">
+                  <strong>Real systems:</strong> Classic McEliece uses n=3,488 and t=64 errors. The
+                  attacker faces C(3488, 64) &gt; 2<sup>400</sup> combinations. No quantum algorithm
+                  provides meaningful speedup &mdash; this problem has resisted cryptanalysis since
+                  1978.
+                </p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <QuantumContrastCallout
+          classicalProblem="RSA: Find hidden period in modular exponentiation"
+          classicalResult="Shor's exploits algebraic structure — BROKEN in polynomial time"
+          pqcProblem="Codes: Decode random linear code with unknown error pattern"
+          pqcResult="No exploitable structure — resisted all attacks since 1978"
+        />
+      </div>
+    </MotionConfig>
   )
 }
 

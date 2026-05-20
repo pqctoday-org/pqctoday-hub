@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { clsx } from 'clsx'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Lock, FileText, Check, Copy, Activity } from 'lucide-react'
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import { useTLSStore } from '@/store/tls-learning.store'
 import { CryptoLogDisplay } from './CryptoLogDisplay'
 import type { TraceEvent } from './CryptoLogDisplay'
@@ -395,6 +396,7 @@ const LogColumn = ({
   theme: 'blue' | 'purple'
 }) => {
   const [view, setView] = useState<'protocol' | 'wire' | 'crypto'>('protocol')
+  const reduced = usePrefersReducedMotion()
 
   // Filter events for this side (include shared connection/system events)
   const myEvents = events.filter(
@@ -524,9 +526,9 @@ const LogColumn = ({
               {protocolEvents.map((e, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 5 }}
+                  initial={{ opacity: reduced ? 1 : 0, y: reduced ? 0 : 5 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05 }}
+                  transition={{ delay: reduced ? 0 : i * 0.05 }}
                   className="text-xs font-mono"
                 >
                   <span className="text-muted-foreground opacity-50 mr-2">
