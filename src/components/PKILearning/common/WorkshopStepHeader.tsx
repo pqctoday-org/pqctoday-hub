@@ -4,6 +4,7 @@ import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { MODULE_CATALOG } from '../moduleData'
+import { WorkshopStepper, type WorkshopStep } from './WorkshopStepper'
 
 interface WorkshopStepHeaderProps {
   moduleId: string
@@ -13,6 +14,13 @@ interface WorkshopStepHeaderProps {
   stepIndex: number
   totalSteps: number
   cswp39Step?: string
+  /** Full step definitions — enables labeled WorkshopStepper. When omitted, an
+   *  anonymous dot indicator is rendered using stepIndex / totalSteps. */
+  steps?: WorkshopStep[]
+  /** IDs of already-completed steps (passed through to WorkshopStepper). */
+  completedSteps?: string[]
+  /** Allows clicking a previous step to navigate back. */
+  onStepClick?: (index: number) => void
 }
 
 export const WorkshopStepHeader: React.FC<WorkshopStepHeaderProps> = ({
@@ -23,6 +31,9 @@ export const WorkshopStepHeader: React.FC<WorkshopStepHeaderProps> = ({
   stepIndex,
   totalSteps,
   cswp39Step,
+  steps,
+  completedSteps,
+  onStepClick,
 }) => {
   const moduleMeta = MODULE_CATALOG[moduleId] // eslint-disable-line security/detect-object-injection
   const moduleTitle = moduleMeta?.title ?? moduleId
@@ -54,6 +65,19 @@ export const WorkshopStepHeader: React.FC<WorkshopStepHeaderProps> = ({
 
   const resourceLabel = `${moduleTitle} — ${stepTitle}`
 
+  // Build anonymous steps from totalSteps when named steps aren't provided
+  const resolvedSteps: WorkshopStep[] =
+    steps ??
+    Array.from({ length: totalSteps }, (_, i) => ({
+      id: String(i),
+      label: `Step ${i + 1}`,
+    }))
+
+  const resolvedCompleted =
+    completedSteps ??
+    // Treat all steps before current as implicitly completed
+    Array.from({ length: stepIndex }, (_, i) => String(i))
+
   return (
     <div className="mb-6 border-b border-border pb-4">
       <div className="flex items-start justify-between gap-2">
@@ -78,6 +102,15 @@ export const WorkshopStepHeader: React.FC<WorkshopStepHeaderProps> = ({
             CSWP.39 Process: {cswp39Step}
           </span>
         </div>
+      )}
+      {totalSteps > 1 && (
+        <WorkshopStepper
+          steps={resolvedSteps}
+          currentStep={stepIndex}
+          completedSteps={resolvedCompleted}
+          onStepClick={onStepClick}
+          className="mt-3"
+        />
       )}
     </div>
   )
