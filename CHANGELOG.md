@@ -21,6 +21,49 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Feat — NICE Framework workforce gap integration (2026-05-19)
+
+Mapped the entire pqctoday learning catalogue to **NIST IR 8355 / SP 800-181 Rev 1** (NICE Framework) and surfaced the mapping across the assessment report, the `/learn` page, and a new non-technical learning track.
+
+**Data layer** (`src/data/niceFramework.ts`, `src/data/niceModuleMapping.ts`):
+
+- 8 NICE Competency Areas (CA-CRYPTO, CA-RISK, CA-SECPROG, CA-NETDEF, CA-IDENT, CA-DATASEC, CA-SYSARCH, CA-GOVCOMP) with standard descriptions, representative TKS statements (K/S/T IDs from SP 800-181 Rev 1), and persona mappings.
+- 8 NICE Work Roles (SP-ARC-001 through OV-MGT-001) with competency area profiles.
+- ~55 module mappings: every learn module tagged with its primary competency areas, proficiency tier (awareness / practitioner / expert), relevant work roles, and a `isCommonGround` flag for non-technical content.
+- Helper functions: `getNiceMapping()`, `getModulesForCompetencyArea()`, `getCommonGroundModules()`, `getCompetencyAreaCoverage()`.
+
+**Assessment workforce gap report** (`src/utils/niceGapReport.ts`, `src/components/Report/NiceGapReportSection.tsx`):
+
+- `generateNiceGapReport(input, result)` — pure function; computes weighted CA signals from assessment inputs (persona, risk score, compliance requirements, infrastructure, crypto use cases) and produces a gap list, work-role ranking, and ordered learning sequence.
+- Three-section collapsible added to the assessment report (after threat landscape): **Competency Areas to Develop** (CA badge + tier badge + rationale + module links + TKS sample IDs), **Work Roles to Hire or Upskill** (NICE code + rationale + onboarding modules), **Recommended Learning Sequence** (ordered list, max 8 shown + overflow link).
+- JSON export button downloads the full gap report as `pqctoday-nice-gap-report-YYYY-MM-DD.json`.
+
+**Persona store** (`src/store/usePersonaStore.ts`, v5 → v6):
+
+- `niceTier: NiceProficiencyTier` — auto-derived from active persona (executive/curious → awareness; ops/developer/architect → practitioner; researcher → expert).
+- `setNiceTier()` / `resetNiceTier()` / `niceTierOverridden` — user can override without breaking the persona default.
+- `defaultTierForPersona()` exported for use by other components.
+- Full migration + `onRehydrateStorage` crash guard per store conventions.
+
+**NICE Proficiency tier filter on `/learn`** (`src/components/PKILearning/Dashboard.tsx`):
+
+- New **NICE Proficiency** section inside the existing filter popover (desktop) and mobile drawer: `All | Awareness | Practitioner | Expert`.
+- Selecting a tier hides modules whose NICE mapping tier exceeds the selection; unmapped modules always show.
+- Counts toward the active-filter badge; clears with "Clear all filters".
+
+**CA badge on module cards** (`src/components/PKILearning/ModuleCard.tsx`):
+
+- Each card now shows its primary NICE Competency Area (`CA-CRYPTO`, `CA-RISK`, etc.) as a small colour-coded monospace chip in the footer, alongside the difficulty badge. Modules without a NICE mapping show nothing.
+
+**Common Ground learning track** (`src/components/PKILearning/CommonGroundPath.tsx`, `PKILearningView.tsx`):
+
+- New route `/learn/common-ground` — a read-only, no-code track for executives, procurement, legal, and HR. Five curated modules drawn from the NICE IR 8355 Common Ground pattern with audience labels, time estimates, and a NIST IR 8355 attribution callout.
+- Dashboard shows an entry-point callout (with `NICE IR 8355` badge) for users with no persona, the executive persona, or the curious persona.
+
+**Proposal document** (private repo — `pqctoday-priv/docs/platform/nice-pqc-transition-proposal.md`):
+
+- Draft submission for a new NICE Competency Area: **CA-PQC-TRANS — Post-Quantum Cryptography Transition**. Includes 10 K-statements, 7 S-statements, 8 T-statements across awareness/practitioner/expert tiers; mapping to 8 existing SP 800-181 Rev 1 work roles; Common Ground subset per IR 8355 §4; condensed TKS table in NICE Resource Center submission format; and a proposed PQC Migration Specialist work role (SP-PQC-001).
+
 ### Data — NIST IR 8477 data correction + SP 800-175B addition (2026-05-19)
 
 Full audit and correction of the NIST IR 8477 library record, which had been populated with completely wrong metadata (title, date, description, dependencies, algorithm family — all from a non-existent "PQC standards to SP 800-175B" document, likely confused with NIST CSWP 39).

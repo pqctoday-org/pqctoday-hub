@@ -22,6 +22,7 @@ import {
   Terminal,
   Layers,
   Compass,
+  GraduationCap,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
@@ -70,6 +71,7 @@ import type {
 import { SIGNING_ALGORITHMS } from '../../hooks/assessmentData'
 import { encodeShareToken } from '@/utils/reportShareToken'
 import { FilteredChip } from './FilteredChip'
+import { NiceGapReportSection } from './NiceGapReportSection'
 
 declare const __APP_VERSION__: string
 const APP_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0'
@@ -459,7 +461,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
 }) => {
   const navigate = useNavigate()
   const { data: threatsData } = useThreatsData()
-  const { reset, editFromStep } = useAssessmentStore()
+  const { reset, editFromStep, getInput } = useAssessmentStore()
   const assessmentStatus = useAssessmentStore((s) => s.assessmentStatus)
   const { workflowActive, startWorkflow } = useMigrationWorkflowStore()
   const previousRiskScore = useAssessmentStore((s) => s.previousRiskScore)
@@ -1472,6 +1474,19 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                             hiddenThreatIds={hiddenThreats}
                             onHideThreat={hideThreat}
                           />
+                        </CollapsibleSection>
+                      </div>
+                    )}
+
+                    {/* NICE Framework Workforce Gap Report */}
+                    {getInput() && (
+                      <div id="report-section-niceGap" className="print:break-before-page">
+                        <CollapsibleSection
+                          title="NICE Framework Workforce Gap Report"
+                          icon={<GraduationCap className="text-primary" size={20} />}
+                          defaultOpen={false}
+                        >
+                          <NiceGapReportSection result={result} input={getInput()!} />
                         </CollapsibleSection>
                       </div>
                     )}

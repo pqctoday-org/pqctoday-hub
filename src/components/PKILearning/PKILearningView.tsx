@@ -21,6 +21,10 @@ import { WipModuleBadge } from './common/WipModuleBadge'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { Button } from '@/components/ui/button'
 
+const CommonGroundPath = lazyWithRetry(() =>
+  import('./CommonGroundPath').then((module) => ({ default: module.CommonGroundPath }))
+)
+
 const PKIWorkshop = lazyWithRetry(() =>
   import('./modules/PKIWorkshop').then((module) => ({ default: module.PKIWorkshop }))
 )
@@ -448,6 +452,7 @@ export const PKILearningView: React.FC = () => {
                 <Route path="iam-pqc" element={<IAMPQCModule />} />
                 <Route path="secure-boot-pqc" element={<SecureBootPQCModule />} />
                 <Route path="os-pqc" element={<OSPQCModule />} />
+                <Route path="common-ground" element={<CommonGroundPath />} />
               </Routes>
             </Suspense>
           )}
