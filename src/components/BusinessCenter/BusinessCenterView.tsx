@@ -65,7 +65,7 @@ function WelcomeState() {
           <ClipboardCheck size={16} className="mr-2" />
           Run Risk Assessment
         </Button>
-        <Button variant="outline" onClick={() => navigate('/compliance')}>
+        <Button variant="outline" onClick={() => navigate('/compliance?tab=compliance')}>
           <ShieldCheck size={16} className="mr-2" />
           Explore Compliance
         </Button>
