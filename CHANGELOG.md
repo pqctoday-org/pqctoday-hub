@@ -21,6 +21,46 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### UX — Algorithms page Phase 1–3 improvements (2026-05-19)
+
+Five opportunities from a SWOT analysis of the `/algorithms` page, delivered across three phases.
+
+**O3 — Live benchmark button on every Transition row**
+
+`AlgorithmCheckButton` now appears below the CTA strip on every row in the desktop Transition table and every card in the mobile list. Clicking it runs a live WASM benchmark for that algorithm inline — no tab switch required.
+
+**O2a — Transport-layer blocker names in heatmap tooltips**
+
+Hovering any heatmap cell in the Protocol Support tab now appends `⚠ Blockers: <name>, <name>` to the native tooltip for protocols with known transport issues (TLS 1.2, TLS 1.3, QUIC). Source data comes from `TRANSPORT_ISSUES` in the matrix — no new data required.
+
+**O5 — Detailed tab: 6 collapsible sections replace sub-tabs**
+
+The three-level nav hierarchy (page → tab → sub-tab) is gone. `AlgorithmDetailedComparison` now renders a single scrollable page with six collapsible sections: Performance, Security Levels, Size Comparison (open by default), and Use Cases, Implementation Attacks, KAT Validation (collapsed by default). `?section=kat` deep-link scrolls to and expands the target section on mount. Old `?subtab=` params redirect transparently.
+
+**O1 — Persona-aware `AlgorithmEntryStrip`**
+
+A contextual onboarding strip (`AlgorithmEntryStrip`) appears above the filter bar on first visit. Unknown persona: shows three intent buttons (Replace algorithm / Understand protocols / Run live test). Known persona: single focused CTA (executive → compliance picks, developer → drop-in table, architect → protocol readiness, researcher → KAT). Dismissed to `sessionStorage` so it reappears on the next session but not mid-session. Hidden when URL already carries filter/tab params (deep-link users).
+
+**O2b — Protocol matrix recommendation layer**
+
+`ProtocolMatrixRow` gains `recommended` and `recommendedReason` fields. SSH (RFC 9941, OpenSSH 9.9 default) and TLS 1.3 (X25519MLKEM768 in production at Cloudflare/Google/AWS) are flagged. Surfaces as: ⭐ Rec chip in heatmap row headers, "Recommended for production use today" callout panel in detailed view, highlighted banner in `ProtocolDetailModal`, and `?highlight=recommended` URL param that scrolls to and pulses the first recommended row.
+
+**O4 — Mobile Transition Wizard**
+
+On viewports below `md`, the Transition tab now shows a guided 3-step wizard (what are you replacing? → what matters most? → top 1–2 recommendations with benchmark button and CTA strip) instead of the raw card list. "Show full table →" escape hatch expands to the full `MobileAlgorithmList`; "← Back to wizard" returns. Desktop is unaffected.
+
+**Cross-cutting fixes**
+
+- `aria-live="polite"` on the filter result count ("Showing N of M algorithms") — announced to screen readers on each filter change
+- Mobile filter panel auto-closes after any dropdown selection
+- RAG search hint below the search input ("Try 'lattice KEM', 'FIPS certified', or 'replaces RSA'")
+- Visible `focus-visible:ring-2` on the compare toggle (Scale icon) button
+- "Best experienced on desktop" banner removed — the mobile wizard makes it obsolete
+
+### UX — ModuleTabBar rolled out to all 54 module indexes (2026-05-19)
+
+`ModuleTabBar` (introduced in Phase 6 on KMS PQC) deployed to the remaining 54 `/learn` module `index.tsx` files. Every module now uses the responsive tab bar: first 3 tabs inline on mobile, overflow into a `···` popover, all tabs visible at `sm:`. Removes the last instances of native `<select>` tab switchers and plain div-based tab rows from PKILearning modules.
+
 ### UX — Compliance page SWOT improvements (2026-05-19)
 
 Eight targeted improvements from a SWOT analysis of the `/compliance` page, spanning maintainability, discoverability, and mobile UX.
@@ -226,6 +266,10 @@ removed in a prior session ("⚠ HSM-backed signing — removed" callout in
 explanatory notes; the fourth ("HSM OFF run completes…") had its stale
 `getByRole('button', { name: /HSM OFF/i })` visibility assertion dropped and was
 renamed to "simulation run completes…".
+
+### Housekeeping — CSV archive: 15 superseded versions removed (2026-05-19)
+
+15 intermediate compliance and library CSV revisions deleted from `src/data/` as part of the standard keep-2-versions policy. Two canonical files remain: `compliance_05182026_r3.csv` and `library_05192026_r3.csv`. Removed revisions span `compliance_05162026_r1` through `compliance_05182026_r2` (5 files) and `library_05152026` through `library_05192026` (10 files). No data loss — all rows carried forward into the current `_r3` files per DS05p2 self-containment rules.
 
 ### Data — Library CSV r2: 13 URL corrections (2026-05-19)
 
