@@ -130,9 +130,15 @@ const TIER_RESOLUTION_GAPS: Record<string, number> = {
   //     new APAC/EU/LatAm/RU/TR jurisdictions) re-emitted one more unscored
   //     doc-enrichment chunk: draft-reddy-cose-jose-pqc-hybrid-hpke remains
   //     the persistent gap with no refId normalization upstream yet.
+  //     2026-05-20: bumped 25 → 107 — 2026-05-19 enrichment run (threats
+  //     194-row + catalog 716-entry) added 82 new doc-enrichment chunks for
+  //     sector threat docs (AERO, AUTO, ENERGY, etc.) and GSMA/NIST/IKEv2
+  //     library docs that lack trust-score wiring. Same underlying gap:
+  //     chunkToResource routing for these new resourceIds needs extending in
+  //     trustScoreData.ts. Drive back down as wiring is added.
   timeline: 0,
   algorithms: 0,
-  'document-enrichment': 25,
+  'document-enrichment': 107,
 }
 
 /**
