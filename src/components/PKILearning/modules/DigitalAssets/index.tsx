@@ -4,7 +4,8 @@ import { Trash2, Bitcoin, Hexagon, Zap, GitBranch, ShieldAlert, Landmark } from 
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { Tabs, TabsContent } from '@/components/ui/tabs'
+import { ModuleTabBar } from '@/components/PKILearning/common/ModuleTabBar'
 import { BlockchainCryptoIntroduction } from './components/BlockchainCryptoIntroduction'
 import { BlockchainExercises } from './components/BlockchainExercises'
 import { BitcoinFlow } from './flows/BitcoinFlow'
@@ -18,6 +19,7 @@ import { PQCMigrationFlow } from './flows/PQCMigrationFlow'
 import { CustodyArchitectureFlow } from './flows/CustodyArchitectureFlow'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 import { Button } from '@/components/ui/button'
+import { WORKSHOP_STEPS } from '@/components/PKILearning/moduleData'
 
 const MODULE_ID = 'digital-assets'
 
@@ -75,7 +77,7 @@ export const DigitalAssetsModule: React.FC = () => {
   const [hasExploredAnyChain, setHasExploredAnyChain] = useState(false)
   const [configKey, setConfigKey] = useState(0)
   const startTimeRef = useRef(0)
-  const { updateModuleProgress, markStepComplete, resetModuleProgress } = useModuleStore()
+  const { updateModuleProgress, markStepComplete, resetModuleProgress, modules } = useModuleStore()
   const { resetStore } = useOpenSSLStore()
 
   // Module progress tracking
@@ -138,6 +140,11 @@ export const DigitalAssetsModule: React.FC = () => {
     }
   }
 
+  const workshopSteps = WORKSHOP_STEPS[MODULE_ID] ?? []
+  const completedSteps = modules[MODULE_ID]?.completedSteps ?? []
+  const workshopDone = workshopSteps.filter((s) => completedSteps.includes(s.id)).length
+  const workshopDot = workshopDone > 0 && workshopDone < workshopSteps.length
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -150,14 +157,18 @@ export const DigitalAssetsModule: React.FC = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList className="w-full sm:w-auto">
-          <TabsTrigger value="learn">Learn</TabsTrigger>
-          <TabsTrigger value="visual">Visual</TabsTrigger>
-          <TabsTrigger value="workshop">Workshop</TabsTrigger>
-          <TabsTrigger value="exercises">Exercises</TabsTrigger>
-          <TabsTrigger value="references">References</TabsTrigger>
-          <TabsTrigger value="tools">Tools & Products</TabsTrigger>
-        </TabsList>
+        <ModuleTabBar
+          tabs={[
+            { value: 'learn', label: 'Learn' },
+            { value: 'visual', label: 'Visual' },
+            { value: 'workshop', label: 'Workshop', hasDot: workshopDot },
+            { value: 'exercises', label: 'Exercises' },
+            { value: 'references', label: 'References' },
+            { value: 'tools', label: 'Tools & Products' },
+          ]}
+          value={activeTab}
+          onValueChange={handleTabChange}
+        />
 
         {/* Learn Tab */}
         <TabsContent value="learn">

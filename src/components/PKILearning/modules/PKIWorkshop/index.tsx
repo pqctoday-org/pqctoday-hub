@@ -19,7 +19,8 @@ import {
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { Tabs, TabsContent } from '@/components/ui/tabs'
+import { ModuleTabBar } from '@/components/PKILearning/common/ModuleTabBar'
 import { PKIIntroduction } from './components/PKIIntroduction'
 import { PKIExercises } from './components/PKIExercises'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
@@ -36,6 +37,7 @@ import { AcmePqcWalkthrough } from './AcmePqcWalkthrough'
 import { CertCapacityCalculator } from './CertCapacityCalculator'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 import { Button } from '@/components/ui/button'
+import { WORKSHOP_STEPS } from '@/components/PKILearning/moduleData'
 
 const ARTIFACT_GROUPS = [
   {
@@ -224,7 +226,7 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({ playgroundMode = false
   const [currentStep, setCurrentStep] = useState(deepLink.initialStep)
   useSyncDeepLink(activeTab, currentStep)
   const startTimeRef = useRef(0)
-  const { updateModuleProgress, markStepComplete, resetModuleProgress } = useModuleStore()
+  const { updateModuleProgress, markStepComplete, resetModuleProgress, modules } = useModuleStore()
   const { resetStore } = useOpenSSLStore()
 
   // --- Module Progress Tracking ---
@@ -412,6 +414,11 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({ playgroundMode = false
     return workshopPanel
   }
 
+  const workshopSteps = WORKSHOP_STEPS[MODULE_ID] ?? []
+  const completedSteps = modules[MODULE_ID]?.completedSteps ?? []
+  const workshopDone = workshopSteps.filter((s) => completedSteps.includes(s.id)).length
+  const workshopDot = workshopDone > 0 && workshopDone < workshopSteps.length
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -428,14 +435,18 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({ playgroundMode = false
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList className="w-full sm:w-auto">
-          <TabsTrigger value="learn">Learn</TabsTrigger>
-          <TabsTrigger value="visual">Visual</TabsTrigger>
-          <TabsTrigger value="workshop">Workshop</TabsTrigger>
-          <TabsTrigger value="exercises">Exercises</TabsTrigger>
-          <TabsTrigger value="references">References</TabsTrigger>
-          <TabsTrigger value="tools">Tools & Products</TabsTrigger>
-        </TabsList>
+        <ModuleTabBar
+          tabs={[
+            { value: 'learn', label: 'Learn' },
+            { value: 'visual', label: 'Visual' },
+            { value: 'workshop', label: 'Workshop', hasDot: workshopDot },
+            { value: 'exercises', label: 'Exercises' },
+            { value: 'references', label: 'References' },
+            { value: 'tools', label: 'Tools & Products' },
+          ]}
+          value={activeTab}
+          onValueChange={handleTabChange}
+        />
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
