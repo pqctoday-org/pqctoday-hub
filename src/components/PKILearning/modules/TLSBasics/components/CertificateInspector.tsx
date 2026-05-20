@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { X, Search, Loader2, ChevronDown, ChevronRight, AlertTriangle, Info } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { Button } from '@/components/ui/button'
 
@@ -22,6 +23,7 @@ export const CertificateInspector: React.FC<CertificateInspectorProps> = ({
   const [parsedOutput, setParsedOutput] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const reduced = usePrefersReducedMotion()
 
   useEffect(() => {
     if (isOpen && pem) {
@@ -274,9 +276,9 @@ export const CertificateInspector: React.FC<CertificateInspectorProps> = ({
       {isOpen && (
         <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: reduced ? 1 : 0, scale: reduced ? 1 : 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
+            exit={{ opacity: 0, scale: reduced ? 1 : 0.95 }}
             className="bg-card w-full max-w-3xl h-[80vh] flex flex-col rounded-xl border border-border shadow-2xl overflow-hidden"
           >
             {/* Header */}

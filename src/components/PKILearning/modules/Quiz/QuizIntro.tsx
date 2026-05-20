@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import { Brain, Zap, Clock, Sparkles, Building2, X } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
@@ -57,6 +58,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
     initialCategories ?? []
   )
   const [timeMinutes, setTimeMinutes] = useState(15)
+  const reduced = usePrefersReducedMotion()
 
   const questionCount = Math.round((timeMinutes * 60) / SECONDS_PER_QUESTION)
   const isQuickPool = timeMinutes <= QUICK_POOL_THRESHOLD_MIN
@@ -83,9 +85,9 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
   return (
     <div className="space-y-8">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: reduced ? 1 : 0, y: reduced ? 0 : 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: reduced ? 0 : 0.3 }}
       >
         <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gradient">PQC Knowledge Quiz</h2>
         <p className="text-muted-foreground">
@@ -105,7 +107,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
       {/* Industry filter banner */}
       {industryFilter && (
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: reduced ? 1 : 0, y: reduced ? 0 : -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="glass-panel p-3 flex items-center justify-between bg-primary/5 border-primary/30"
         >
@@ -130,9 +132,9 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
           All Topics
         </h3>
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: reduced ? 1 : 0, scale: reduced ? 1 : 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.2 }}
+          transition={{ duration: reduced ? 0 : 0.2 }}
           className="glass-panel p-5"
         >
           <div className="flex items-center gap-3 mb-5">
@@ -249,7 +251,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
 
         {selectedCategories.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: reduced ? 1 : 0, y: reduced ? 0 : 10 }}
             animate={{ opacity: 1, y: 0 }}
             className="mt-4 flex items-center justify-between"
           >

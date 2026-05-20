@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { motion } from 'framer-motion'
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import {
   Shield,
   Layers,
@@ -50,6 +51,7 @@ export const TopicSelector: React.FC<TopicSelectorProps> = ({
   onToggleCategory,
   previousScores,
 }) => {
+  const reduced = usePrefersReducedMotion()
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
       {categories.map((category, index) => {
@@ -60,9 +62,9 @@ export const TopicSelector: React.FC<TopicSelectorProps> = ({
         return (
           <motion.button
             key={category.id}
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: reduced ? 1 : 0, scale: reduced ? 1 : 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.2, delay: index * 0.03 }}
+            transition={{ duration: reduced ? 0 : 0.2, delay: reduced ? 0 : index * 0.03 }}
             onClick={() => onToggleCategory(category.id)}
             data-workshop-target={`quiz-category-${category.id}`}
             className={clsx(

@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Button } from '../ui/button'
+import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 import { ModuleCard } from './ModuleCard'
 import { CuriousStackCarousel } from './common/CuriousStackCarousel'
 import { usePersonaStore } from '../../store/usePersonaStore'
@@ -238,6 +239,7 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
 }) => {
   const [activeTrack, setActiveTrack] = useState<string | null>(null)
   const trackRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const reduced = usePrefersReducedMotion()
 
   const advanceToTrack = (track: string) => {
     setActiveTrack(track)
@@ -482,10 +484,10 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                 <AnimatePresence>
                   {isActive && (
                     <motion.div
-                      initial={{ opacity: 0, height: 0 }}
+                      initial={{ opacity: reduced ? 1 : 0, height: reduced ? 'auto' : 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.2 }}
+                      exit={{ opacity: 0, height: reduced ? 'auto' : 0 }}
+                      transition={{ duration: reduced ? 0 : 0.2 }}
                       className="overflow-hidden"
                     >
                       <div

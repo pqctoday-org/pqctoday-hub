@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { QuizProgress } from './components/QuizProgress'
@@ -23,6 +24,7 @@ interface QuizWizardProps {
 }
 
 export const QuizWizard: React.FC<QuizWizardProps> = ({ questions, onComplete, onExit }) => {
+  const reduced = usePrefersReducedMotion()
   const {
     state,
     currentQuestion,
@@ -118,13 +120,13 @@ export const QuizWizard: React.FC<QuizWizardProps> = ({ questions, onComplete, o
         questionIds={questionIds}
       />
 
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode={reduced ? 'sync' : 'wait'}>
         <motion.div
           key={currentQuestion.id}
-          initial={{ opacity: 0, x: 20 }}
+          initial={{ opacity: reduced ? 1 : 0, x: reduced ? 0 : 20 }}
           animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.2 }}
+          exit={{ opacity: 0, x: reduced ? 0 : -20 }}
+          transition={{ duration: reduced ? 0 : 0.2 }}
           className="glass-panel p-6 md:p-8"
         >
           <QuestionCard

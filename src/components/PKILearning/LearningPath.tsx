@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion'
 import {
   ChevronDown,
   ChevronRight,
@@ -108,6 +109,7 @@ export const LearningPath = () => {
   const { modules } = useModuleStore()
   const assessmentComplete = useAssessmentStore((s) => s.assessmentStatus === 'complete')
   const [showAllExpanded, setShowAllExpanded] = useState(false)
+  const reduced = usePrefersReducedMotion()
 
   if (!selectedPersona) return null
 
@@ -148,9 +150,9 @@ export const LearningPath = () => {
     <div className="space-y-6">
       {/* Path Header */}
       <motion.div
-        initial={{ opacity: 0, y: -10 }}
+        initial={{ opacity: reduced ? 1 : 0, y: reduced ? 0 : -10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: reduced ? 0 : 0.3 }}
         className="flex flex-col sm:flex-row sm:items-center justify-between gap-3"
       >
         <div className="flex items-center gap-3">
@@ -174,9 +176,11 @@ export const LearningPath = () => {
       <div className="w-full h-2 rounded-full bg-muted/10 overflow-hidden">
         <motion.div
           className="h-full rounded-full bg-primary"
-          initial={{ width: 0 }}
+          initial={{
+            width: reduced ? `${totalInPath > 0 ? (completedCount / totalInPath) * 100 : 0}%` : 0,
+          }}
           animate={{ width: `${totalInPath > 0 ? (completedCount / totalInPath) * 100 : 0}%` }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
+          transition={{ duration: reduced ? 0 : 0.5, ease: 'easeOut' }}
         />
       </div>
 
@@ -201,9 +205,9 @@ export const LearningPath = () => {
               return (
                 <motion.div
                   key={item.moduleId}
-                  initial={{ opacity: 0, x: -10 }}
+                  initial={{ opacity: reduced ? 1 : 0, x: reduced ? 0 : -10 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.2, delay: index * 0.03 }}
+                  transition={{ duration: reduced ? 0 : 0.2, delay: reduced ? 0 : index * 0.03 }}
                   className="relative flex items-start gap-3"
                 >
                   {/* Marker on the line */}
@@ -228,9 +232,9 @@ export const LearningPath = () => {
             return (
               <motion.div
                 key={item.id}
-                initial={{ opacity: 0, x: -10 }}
+                initial={{ opacity: reduced ? 1 : 0, x: reduced ? 0 : -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.2, delay: index * 0.03 }}
+                transition={{ duration: reduced ? 0 : 0.2, delay: reduced ? 0 : index * 0.03 }}
                 className="relative flex items-center gap-3"
               >
                 <div className="shrink-0 relative z-10">
@@ -270,10 +274,10 @@ export const LearningPath = () => {
           <AnimatePresence>
             {showAllExpanded && (
               <motion.div
-                initial={{ opacity: 0, height: 0 }}
+                initial={{ opacity: reduced ? 1 : 0, height: reduced ? 'auto' : 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.25 }}
+                exit={{ opacity: 0, height: reduced ? 'auto' : 0 }}
+                transition={{ duration: reduced ? 0 : 0.25 }}
                 className="overflow-hidden"
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3">

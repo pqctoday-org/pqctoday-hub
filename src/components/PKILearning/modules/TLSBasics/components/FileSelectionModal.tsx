@@ -6,6 +6,7 @@ import type { VirtualFile } from '@/components/OpenSSLStudio/store'
 import { motion } from 'framer-motion'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 
 interface Props {
   isOpen: boolean
@@ -24,6 +25,7 @@ export const FileSelectionModal: React.FC<Props> = ({
 }) => {
   const { files } = useOpenSSLStore()
   const [searchTerm, setSearchTerm] = useState('')
+  const reduced = usePrefersReducedMotion()
 
   const filteredFiles = useMemo(() => {
     let res = files
@@ -51,7 +53,7 @@ export const FileSelectionModal: React.FC<Props> = ({
   return (
     <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: reduced ? 1 : 0, scale: reduced ? 1 : 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="bg-card border border-border rounded-xl shadow-2xl w-full max-w-md flex flex-col max-h-[80vh]"
       >

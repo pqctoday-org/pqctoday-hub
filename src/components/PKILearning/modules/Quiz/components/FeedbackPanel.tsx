@@ -4,6 +4,7 @@ import { CheckCircle, AlertTriangle, ExternalLink } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 
 interface FeedbackPanelProps {
   isCorrect: boolean
@@ -16,11 +17,12 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({
   explanation,
   learnMorePath,
 }) => {
+  const reduced = usePrefersReducedMotion()
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: reduced ? 1 : 0, y: reduced ? 0 : 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2 }}
+      transition={{ duration: reduced ? 0 : 0.2 }}
       className={clsx(
         'glass-panel p-4 border-l-4 mt-4',
         isCorrect ? 'border-l-success' : 'border-l-destructive'
