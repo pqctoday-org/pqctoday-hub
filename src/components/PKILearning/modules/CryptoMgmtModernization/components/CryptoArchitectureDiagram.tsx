@@ -15,6 +15,7 @@ import React, { useCallback, useMemo, useState } from 'react'
 import { Plus, Trash2, Save, Copy, Check, Network, FileType2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { useModuleStore } from '@/store/useModuleStore'
 import { markdownToPdf } from '@/services/export/pdfExport'
 import { useAssessmentSnapshot } from '@/hooks/assessment/useAssessmentSnapshot'
@@ -323,17 +324,15 @@ export const CryptoArchitectureDiagram: React.FC = () => {
               {components.map((c) => (
                 <tr key={c.id}>
                   <td className="px-3 py-2 align-top text-foreground/85">
-                    <select
-                      value={c.kind}
-                      onChange={(e) => updateRow(c.id, { kind: e.target.value as ComponentKind })}
-                      className="text-xs bg-background border border-input rounded px-1.5 py-1 text-foreground"
-                    >
-                      {(Object.keys(KIND_LABELS) as ComponentKind[]).map((k) => (
-                        <option key={k} value={k}>
-                          {KIND_LABELS[k]}
-                        </option>
-                      ))}
-                    </select>
+                    <FilterDropdown
+                      items={(Object.keys(KIND_LABELS) as ComponentKind[]).map((k) => ({
+                        id: k,
+                        label: KIND_LABELS[k],
+                      }))}
+                      selectedId={c.kind}
+                      onSelect={(id) => updateRow(c.id, { kind: id as ComponentKind })}
+                      size="sm"
+                    />
                     <div className="text-[10px] font-mono text-muted-foreground mt-1">
                       id: {c.id}
                     </div>

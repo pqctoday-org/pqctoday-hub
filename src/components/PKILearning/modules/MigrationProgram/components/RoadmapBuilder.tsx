@@ -6,6 +6,7 @@ import { useAlgorithmTransitionsForAssessment } from '@/hooks/useAlgorithmTransi
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { softwareData } from '@/data/migrateData'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { TimelinePlanner, ExportableArtifact } from '../../../common/executive'
 import type { ExternalDeadline, Milestone } from '../../../common/executive'
 import { PreFilledBanner } from '@/components/BusinessCenter/widgets/PreFilledBanner'
@@ -293,20 +294,18 @@ export const RoadmapBuilder: React.FC = () => {
                   aria-label="Asset"
                 />
                 <div className="flex items-center gap-1">
-                  <select
-                    className="text-sm rounded-md border border-input bg-background p-2 flex-1"
-                    value={row.gatewayProductId}
-                    onChange={(e) => updateMitigation(idx, { gatewayProductId: e.target.value })}
-                    aria-label="Gateway product"
-                  >
-                    <option value="">— Select gateway —</option>
-                    {candidateGateways.map((g) => (
-                      <option key={g.productId} value={g.productId}>
-                        {g.selected ? '★ ' : ''}
-                        {g.label}
-                      </option>
-                    ))}
-                  </select>
+                  <FilterDropdown
+                    items={[
+                      { id: '', label: '— Select gateway —' },
+                      ...candidateGateways.map((g) => ({
+                        id: g.productId,
+                        label: `${g.selected ? '★ ' : ''}${g.label}`,
+                      })),
+                    ]}
+                    selectedId={row.gatewayProductId}
+                    onSelect={(id) => updateMitigation(idx, { gatewayProductId: id })}
+                    size="sm"
+                  />
                   {row.gatewayProductId && (
                     <Button
                       type="button"
