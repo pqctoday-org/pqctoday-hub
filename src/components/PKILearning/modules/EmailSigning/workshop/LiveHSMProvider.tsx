@@ -14,6 +14,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { CheckCircle2, AlertTriangle, RefreshCw, FlaskConical, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
 import { MLDSASignDemo } from './MLDSASignDemo'
 import { MLKEMEncryptDemo } from './MLKEMEncryptDemo'
 import { DualSignDemo } from './DualSignDemo'
@@ -32,7 +36,7 @@ const REQUEST_ID = 'cms-init'
 export function LiveHSMProvider() {
   const workerRef = useRef<Worker | null>(null)
   const [status, setStatus] = useState<InitStatus>({ kind: 'loading' })
-  const [logs, setLogs] = useState<string[]>([])
+  const [logs, setLogs] = useState<LogEntry[]>([])
 
   const spawnWorker = useCallback((): Worker => {
     if (workerRef.current) {
@@ -68,7 +72,15 @@ export function LiveHSMProvider() {
                 : { kind: 'provider_error', code: msg.code, detail: msg.detail ?? 'unknown' }
         )
       } else if (msg.type === 'LOG') {
-        setLogs((prev) => [...prev, `[${msg.stream}] ${msg.message}`].slice(-50))
+        setLogs((prev) =>
+          [
+            ...prev,
+            {
+              status: msg.stream === 'stderr' ? 'error' : 'success',
+              message: msg.message,
+            } satisfies LogEntry,
+          ].slice(-50)
+        )
       } else if (msg.type === 'ERROR') {
         setStatus({ kind: 'error', detail: msg.error })
       }
@@ -139,9 +151,9 @@ export function LiveHSMProvider() {
           <summary className="cursor-pointer text-sm font-medium text-foreground">
             Worker logs ({logs.length})
           </summary>
-          <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap rounded border border-border bg-muted/30 p-2 text-[11px] leading-snug text-muted-foreground">
-            {logs.join('\n')}
-          </pre>
+          <div className="mt-2">
+            <WorkshopOperationLog entries={logs} className="max-h-64" />
+          </div>
         </details>
       )}
 

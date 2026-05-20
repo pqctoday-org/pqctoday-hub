@@ -52,6 +52,10 @@ import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { translateCryptoError } from '@/utils/cryptoErrorHint'
 import type { KatTestSpec } from '@/utils/katRunner'
+import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -229,7 +233,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
 
   // Live HSM mode
   const hsm = useHSM()
-  const [liveLines, setLiveLines] = useState<string[]>([])
+  const [liveLines, setLiveLines] = useState<LogEntry[]>([])
   const [liveRunning, setLiveRunning] = useState(false)
   const [liveError, setLiveError] = useState<string | null>(null)
   const [progressLabel, setProgressLabel] = useState<string | null>(null)
@@ -258,7 +262,8 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
     hsm.clearLog()
     hsm.clearKeys()
 
-    const addLine = (line: string) => setLiveLines((prev) => [...prev, line])
+    const addLine = (msg: string) =>
+      setLiveLines((prev) => [...prev, { status: 'success' as const, message: msg }])
 
     try {
       const M = hsm.moduleRef.current
@@ -910,13 +915,9 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
 
           {/* ── Summary lines ──────────────────────────────────────────────────── */}
           {liveLines.length > 0 && (
-            <div className="bg-status-success/5 border border-status-success/20 rounded-lg p-3 space-y-1">
-              {liveLines.map((line, i) => (
-                <p key={i} className="text-xs font-mono text-muted-foreground break-all">
-                  {line}
-                </p>
-              ))}
-              <p className="text-[10px] text-muted-foreground pt-1 border-t border-border/30">
+            <div className="space-y-1">
+              <WorkshopOperationLog entries={liveLines} />
+              <p className="text-[10px] text-muted-foreground pl-1">
                 Real output from SoftHSM3 WASM · PKCS#11 v3.2
               </p>
             </div>
