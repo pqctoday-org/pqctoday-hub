@@ -4,6 +4,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## What's new — May 20, 2026
+
+Four UX polish items across Algorithms, Learn, and Compliance:
+
+- **Step count on module cards.** Not-started cards now show "N steps · M min" instead of just the duration — you know how long a workshop is before you click in.
+- **Mobile algorithm list gets Try / Spec / Why links.** Every row in the mobile transition table now carries the same quick-action strip (playground, spec, why-it-matters) as the desktop table.
+- **"On this page" TOC for long learn modules.** The Crypto Management Modernization module now shows a sticky table-of-contents rail on wide screens and a collapsible accordion on mobile — jump directly to any section without scrolling.
+- **Compliance links pre-filtered by context.** Navigating to `/compliance` from the Command Center, Report, or any deep-link now lands you on your industry + country pre-applied, not a blank filter state.
+
+---
+
 ## What's new — May 10–12, 2026
 
 The biggest three-day release window of the year. What you'll actually notice:
@@ -18,6 +29,25 @@ The biggest three-day release window of the year. What you'll actually notice:
 - **Cleaner data.** Trust-tier orphans dropped from 1,316 to 13; CSV rows are deprecated instead of silently deleted; the xwalk pipeline stopped wasting compute on docs that always return zero results.
 
 ---
+
+## [Unreleased]
+
+### Added
+
+- **InPageToc component** [view:/learn]: Sticky "On this page" table-of-contents for long learn modules. Scans `section[id]` and `h2[id]/h3[id]` headings, tracks the active section via `IntersectionObserver`, and renders a collapsible accordion on mobile and a sticky right rail at the `xl:` breakpoint. Wired to the Crypto Management Modernization module as the first integration.
+
+### Changed
+
+- **Module cards show step count** [view:/learn]: Not-started module cards now display "N steps · M min" instead of duration alone, so users know the workshop length before entering.
+- **Mobile algorithm list: Try / Spec / Why links** [view:/algorithms]: `AlgoCtaStrip` (playground, spec, why-it-matters links) added to every row in the mobile transition list alongside the existing live-benchmark button.
+- **Compliance links carry pre-filter context** [view:/business][view:/report]: All navigation calls to `/compliance` from the Command Center (Governance + Risk Management zones) and Report now include `?tab=compliance&industry=&country=` so users land with their profile's filters already applied.
+- **pqcRequirement enum migration** [view:/compliance]: `ComplianceLandscape` sort and icon logic upgraded to the full 5-tier enum (`yes / no / partial / guidance / expected`), replacing the old boolean-style sort.
+
+### Data
+
+- **Compliance data refresh**: `compliance_05192026.csv` — 175 framework rows updated.
+- **Library refresh**: `library_05192026_r4.csv` — updated entries.
+- **OSCAL / CBOM regenerated** to v3.16.0.
 
 ## [3.16.0] - 2026-05-19
 
