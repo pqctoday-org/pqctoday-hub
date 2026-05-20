@@ -312,7 +312,6 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   migrateCatFilters: migrateCatFiltersProp,
   sortColumn: sortColumnProp,
   sortDirection: sortDirectionProp,
-  currentPage: currentPageProp,
   selectedRecordId,
   onFilterTextChange,
   onPqcFiltersChange,
@@ -322,7 +321,6 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   onMigrateCatFiltersChange,
   onSortColumnChange,
   onSortDirectionChange,
-  onCurrentPageChange,
   certType = 'all',
   onCertTypeChange,
 }) => {
@@ -335,8 +333,6 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   const [localMigrateCatFilters, setLocalMigrateCatFilters] = useState<string[]>([])
   const [localSortColumn, setLocalSortColumn] = useState<SortColumn>('date')
   const [localSortDirection, setLocalSortDirection] = useState<SortDirection>('desc')
-  const [localCurrentPage, setLocalCurrentPage] = useState(1)
-
   // Resolve controlled vs local
   const filterText = filterTextProp ?? localFilterText
   const pqcFilters = pqcFiltersProp ?? localPqcFilters
@@ -346,7 +342,6 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   const migrateCatFilters = migrateCatFiltersProp ?? localMigrateCatFilters
   const sortColumn = sortColumnProp ?? localSortColumn
   const sortDirection = sortDirectionProp ?? localSortDirection
-  const currentPage = currentPageProp ?? localCurrentPage
   const autoOpenId = selectedRecordId ?? initialSelectedId
 
   const setFilterText = onFilterTextChange ?? setLocalFilterText
@@ -359,7 +354,6 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
     onMigrateCatFiltersChange ?? ((f: string[]) => setLocalMigrateCatFilters(f))
   const setSortColumn = onSortColumnChange ?? setLocalSortColumn
   const setSortDirection = onSortDirectionChange ?? setLocalSortDirection
-  const setCurrentPage = onCurrentPageChange ?? setLocalCurrentPage
 
   const [showFilterMenu, setShowFilterMenu] = useState(false)
   const [showCategoryMenu, setShowCategoryMenu] = useState(false)
@@ -367,7 +361,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   const [showVendorMenu, setShowVendorMenu] = useState(false)
   const [showMigrateCatMenu, setShowMigrateCatMenu] = useState(false)
   const [vendorSearch, setVendorSearch] = useState('')
-  const ITEMS_PER_PAGE = 50
+  const tableContainerRef = useRef<HTMLDivElement>(null)
 
   const totalActiveFilters =
     pqcFilters.length +
@@ -418,7 +412,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
         migrateCat: migrateCatFilters,
         vendorSearch: vendorSearch,
       })
-      if (!onCurrentPageChange) setLocalCurrentPage(1)
+      tableContainerRef.current?.scrollTo({ top: 0 })
       setIsFiltering(false)
     }, 400)
     return () => clearTimeout(timer)
@@ -430,7 +424,6 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
     vendorFilters,
     migrateCatFilters,
     vendorSearch,
-    onCurrentPageChange,
   ])
 
   const handleTogglePqcFilter = (filter: string) => {
@@ -438,7 +431,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
       ? pqcFilters.filter((f) => f !== filter)
       : [...pqcFilters, filter]
     setPqcFilters(next)
-    setCurrentPage(1)
+    tableContainerRef.current?.scrollTo({ top: 0 })
   }
 
   const handleToggleCategoryFilter = (category: string) => {
@@ -446,7 +439,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
       ? categoryFilters.filter((c) => c !== category)
       : [...categoryFilters, category]
     setCategoryFilters(next)
-    setCurrentPage(1)
+    tableContainerRef.current?.scrollTo({ top: 0 })
   }
 
   const handleToggleSourceFilter = (src: string) => {
@@ -454,7 +447,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
       ? sourceFilters.filter((s) => s !== src)
       : [...sourceFilters, src]
     setSourceFilters(next)
-    setCurrentPage(1)
+    tableContainerRef.current?.scrollTo({ top: 0 })
   }
 
   const handleToggleVendorFilter = (vendor: string) => {
@@ -462,7 +455,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
       ? vendorFilters.filter((v) => v !== vendor)
       : [...vendorFilters, vendor]
     setVendorFilters(next)
-    setCurrentPage(1)
+    tableContainerRef.current?.scrollTo({ top: 0 })
   }
 
   const handleToggleMigrateCatFilter = (categoryId: string) => {
@@ -470,7 +463,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
       ? migrateCatFilters.filter((c) => c !== categoryId)
       : [...migrateCatFilters, categoryId]
     setMigrateCatFilters(next)
-    setCurrentPage(1)
+    tableContainerRef.current?.scrollTo({ top: 0 })
   }
 
   const uniqueCategories = useMemo(() => {
@@ -613,19 +606,17 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
     return processed
   }, [data, activeFilters, sortColumn, sortDirection, certType, tierFiltersProp])
 
-  const paginatedData = useMemo(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
-    return filteredAndSortedData.slice(startIndex, startIndex + ITEMS_PER_PAGE)
-  }, [filteredAndSortedData, currentPage])
-
-  const totalPages = Math.ceil(filteredAndSortedData.length / ITEMS_PER_PAGE)
-
-  const tableContainerRef = useRef<HTMLDivElement>(null)
   const rowVirtualizer = useVirtualizer({
     count: filteredAndSortedData.length,
     getScrollElement: () => tableContainerRef.current,
     estimateSize: () => 48,
     overscan: 10,
+  })
+  const mobileRowVirtualizer = useVirtualizer({
+    count: filteredAndSortedData.length,
+    getScrollElement: () => tableContainerRef.current,
+    estimateSize: () => 108,
+    overscan: 5,
   })
   const virtualRows = rowVirtualizer.getVirtualItems()
   const virtualPaddingTop = virtualRows.length > 0 ? (virtualRows[0]?.start ?? 0) : 0
@@ -633,6 +624,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
     virtualRows.length > 0
       ? rowVirtualizer.getTotalSize() - (virtualRows[virtualRows.length - 1]?.end ?? 0)
       : 0
+  const mobileVirtualRows = mobileRowVirtualizer.getVirtualItems()
 
   const handleExport = () => {
     if (filteredAndSortedData.length === 0) return
@@ -1473,112 +1465,98 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
             </tbody>
           </table>
 
-          {/* Mobile View */}
-          <div className="md:hidden flex flex-col divide-y divide-border/50">
-            {paginatedData.map((record) => (
-              <div
-                key={`${record.id}-${record.source}`}
-                className="p-4 bg-card hover:bg-muted/50 transition-colors"
-              >
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="flex items-center gap-1 text-xs font-mono text-muted-foreground">
-                      <Database size={10} className="shrink-0" />
-                      {record.source}
-                    </span>
-                    <span
-                      className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border ${
-                        record.status === 'Active'
-                          ? 'bg-status-success/10 text-status-success border-status-success/30'
-                          : record.status === 'Revoked'
-                            ? 'bg-status-error/10 text-status-error border-status-error/30'
-                            : 'bg-status-warning/10 text-status-warning border-status-warning/30'
-                      }`}
-                    >
-                      {record.status}
-                    </span>
+          {/* Mobile View — virtualized against same tableContainerRef scroll container */}
+          <div
+            className="md:hidden relative"
+            style={{ height: `${mobileRowVirtualizer.getTotalSize()}px` }}
+          >
+            {mobileVirtualRows.map((virtualRow) => {
+              const record = filteredAndSortedData[virtualRow.index]
+              return (
+                <div
+                  key={`${record.id}-${record.source}`}
+                  ref={mobileRowVirtualizer.measureElement}
+                  data-index={virtualRow.index}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    transform: `translateY(${virtualRow.start}px)`,
+                  }}
+                  className="border-b border-border/50 p-4 bg-card hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="flex items-center gap-1 text-xs font-mono text-muted-foreground">
+                        <Database size={10} className="shrink-0" />
+                        {record.source}
+                      </span>
+                      <span
+                        className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border ${
+                          record.status === 'Active'
+                            ? 'bg-status-success/10 text-status-success border-status-success/30'
+                            : record.status === 'Revoked'
+                              ? 'bg-status-error/10 text-status-error border-status-error/30'
+                              : 'bg-status-warning/10 text-status-warning border-status-warning/30'
+                        }`}
+                      >
+                        {record.status}
+                      </span>
+                    </div>
+                    {record.pqcCoverage &&
+                      record.pqcCoverage !== 'No PQC Mechanisms Detected' &&
+                      record.pqcCoverage !== 'Pending Check...' && (
+                        <ShieldCheck size={16} className="text-tertiary shrink-0 mt-0.5" />
+                      )}
                   </div>
-                  {record.pqcCoverage &&
-                    record.pqcCoverage !== 'No PQC Mechanisms Detected' &&
-                    record.pqcCoverage !== 'Pending Check...' && (
-                      <ShieldCheck size={16} className="text-tertiary shrink-0 mt-0.5" />
-                    )}
-                </div>
 
-                <p className="text-sm font-semibold text-foreground leading-snug mb-1 line-clamp-2">
-                  {record.productName}
-                </p>
-                <div className="text-xs text-muted-foreground flex items-center gap-1 truncate mb-3">
-                  <span className="font-medium truncate max-w-[50%]">{record.vendor}</span>
-                  <span className="opacity-50">&bull;</span>
-                  <span className="truncate">{record.productCategory}</span>
-                </div>
-
-                <div className="flex items-center justify-between mt-2 pt-3 border-t border-border/50">
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-[10px] text-muted-foreground uppercase opacity-70">
-                      Cert ID
-                    </span>
-                    <span className="text-xs font-mono text-muted-foreground/80 truncate max-w-[150px]">
-                      {record.id}
-                    </span>
+                  <p className="text-sm font-semibold text-foreground leading-snug mb-1 line-clamp-2">
+                    {record.productName}
+                  </p>
+                  <div className="text-xs text-muted-foreground flex items-center gap-1 truncate mb-3">
+                    <span className="font-medium truncate max-w-[50%]">{record.vendor}</span>
+                    <span className="opacity-50">&bull;</span>
+                    <span className="truncate">{record.productCategory}</span>
                   </div>
-                  <div className="flex flex-col gap-0.5 items-end">
-                    <span className="text-[10px] text-muted-foreground uppercase opacity-70">
-                      Date
-                    </span>
-                    <span className="text-xs font-mono text-muted-foreground/80">
-                      {record.date}
-                    </span>
+
+                  <div className="flex items-center justify-between mt-2 pt-3 border-t border-border/50">
+                    <div className="flex flex-col gap-0.5">
+                      <span className="text-[10px] text-muted-foreground uppercase opacity-70">
+                        Cert ID
+                      </span>
+                      <span className="text-xs font-mono text-muted-foreground/80 truncate max-w-[150px]">
+                        {record.id}
+                      </span>
+                    </div>
+                    <div className="flex flex-col gap-0.5 items-end">
+                      <span className="text-[10px] text-muted-foreground uppercase opacity-70">
+                        Date
+                      </span>
+                      <span className="text-xs font-mono text-muted-foreground/80">
+                        {record.date}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-
-            {filteredAndSortedData.length === 0 && (
-              <div className="px-4 py-12 text-center text-muted-foreground text-sm">
-                No compliance records found matching your filters.
-              </div>
-            )}
+              )
+            })}
           </div>
+          {filteredAndSortedData.length === 0 && (
+            <div className="md:hidden px-4 py-12 text-center text-muted-foreground text-sm">
+              No compliance records found matching your filters.
+            </div>
+          )}
         </div>
       </div>
-      {/* Pagination Controls */}
-      {filteredAndSortedData.length > 0 && (
-        <nav aria-label="Table pagination" className="flex items-center justify-between px-2">
-          <div className="text-xs text-muted-foreground">
-            Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{' '}
-            {Math.min(currentPage * ITEMS_PER_PAGE, filteredAndSortedData.length)} of{' '}
-            {filteredAndSortedData.length} records
-            {filteredAndSortedData.length !== data.length && (
-              <span className="ml-1 text-muted-foreground">(filtered from {data.length})</span>
-            )}
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-              disabled={currentPage === 1}
-              className="bg-card/50 border-input"
-            >
-              Previous
-            </Button>
-            <div className="flex items-center gap-1 text-xs font-mono bg-card/50 px-3 rounded border border-border">
-              Page {currentPage} of {totalPages}
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-              disabled={currentPage === totalPages}
-              className="bg-card/50 border-input"
-            >
-              Next
-            </Button>
-          </div>
-        </nav>
-      )}
+      {/* Record count strip — both desktop and mobile see all records via virtualizer */}
+      <div className="flex items-center px-2 text-xs text-muted-foreground">
+        {filteredAndSortedData.length.toLocaleString()} record
+        {filteredAndSortedData.length !== 1 ? 's' : ''}
+        {filteredAndSortedData.length !== data.length && (
+          <span className="ml-1">(filtered from {data.length.toLocaleString()})</span>
+        )}
+      </div>
     </div>
   )
 }
