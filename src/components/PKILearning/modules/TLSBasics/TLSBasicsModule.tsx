@@ -5,7 +5,8 @@ import { Play, Loader2 } from 'lucide-react'
 import { useTLSStore } from '@/store/tls-learning.store'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { Tabs, TabsContent } from '@/components/ui/tabs'
+import { ModuleTabBar } from '@/components/PKILearning/common/ModuleTabBar'
 import { TLSClientPanel } from './TLSClientPanel'
 import { TLSServerPanel } from './TLSServerPanel'
 import { TLSNegotiationResults } from './components/TLSNegotiationResults'
@@ -47,6 +48,7 @@ import {
   DEFAULT_MLDSA87_SERVER_CERT,
   DEFAULT_MLDSA87_CLIENT_CERT,
 } from './utils/defaultCertificates'
+import { WORKSHOP_STEPS } from '@/components/PKILearning/moduleData'
 
 const MODULE_ID = 'tls-basics'
 
@@ -61,7 +63,7 @@ export const TLSBasicsModule: React.FC = () => {
   })
   useSyncDeepLink(activeTab, 0)
   const startTimeRef = useRef(Date.now())
-  const { updateModuleProgress, markStepComplete } = useModuleStore()
+  const { updateModuleProgress, markStepComplete, modules } = useModuleStore()
 
   /* The TLS simulator's HSM mode (live softhsm keygen + cert-mint at session
    * start, with CertificateVerify signing through pkcs11-provider) was
@@ -382,6 +384,11 @@ export const TLSBasicsModule: React.FC = () => {
     }
   }, [hsm])
 
+  const workshopSteps = WORKSHOP_STEPS[MODULE_ID] ?? []
+  const completedSteps = modules[MODULE_ID]?.completedSteps ?? []
+  const workshopDone = workshopSteps.filter((s) => completedSteps.includes(s.id)).length
+  const workshopDot = workshopDone > 0 && workshopDone < workshopSteps.length
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -395,13 +402,17 @@ export const TLSBasicsModule: React.FC = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList className="w-full sm:w-auto">
-          <TabsTrigger value="learn">Learn</TabsTrigger>
-          <TabsTrigger value="workshop">Workshop</TabsTrigger>
-          <TabsTrigger value="exercises">Exercises</TabsTrigger>
-          <TabsTrigger value="references">References</TabsTrigger>
-          <TabsTrigger value="tools">Tools & Products</TabsTrigger>
-        </TabsList>
+        <ModuleTabBar
+          tabs={[
+            { value: 'learn', label: 'Learn' },
+            { value: 'workshop', label: 'Workshop', hasDot: workshopDot },
+            { value: 'exercises', label: 'Exercises' },
+            { value: 'references', label: 'References' },
+            { value: 'tools', label: 'Tools & Products' },
+          ]}
+          value={activeTab}
+          onValueChange={handleTabChange}
+        />
 
         {/* Learn Tab */}
         <TabsContent value="learn">

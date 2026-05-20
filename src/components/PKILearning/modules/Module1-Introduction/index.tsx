@@ -4,7 +4,8 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { Trash2, BarChart3, KeyRound, PenLine, Shapes } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { Tabs, TabsContent } from '@/components/ui/tabs'
+import { ModuleTabBar } from '@/components/PKILearning/common/ModuleTabBar'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PQC101Module } from './PQC101Module'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
@@ -18,6 +19,7 @@ import { SignatureDemo } from './SignatureDemo'
 import { PQC101Exercises, type WorkshopConfig } from './PQC101Exercises'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 import { Button } from '@/components/ui/button'
+import { WORKSHOP_STEPS } from '@/components/PKILearning/moduleData'
 
 const MODULE_ID = 'pqc-101'
 
@@ -54,7 +56,7 @@ const PARTS = [
 ]
 
 export const Module1: React.FC = () => {
-  const { markStepComplete, updateModuleProgress } = useModuleStore()
+  const { markStepComplete, updateModuleProgress, modules } = useModuleStore()
 
   const experienceLevel = usePersonaStore((s) => s.experienceLevel)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
@@ -133,6 +135,11 @@ export const Module1: React.FC = () => {
     }
   }
 
+  const workshopSteps = WORKSHOP_STEPS[MODULE_ID] ?? []
+  const completedSteps = modules[MODULE_ID]?.completedSteps ?? []
+  const workshopDone = workshopSteps.filter((s) => completedSteps.includes(s.id)).length
+  const workshopDot = workshopDone > 0 && workshopDone < workshopSteps.length
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -146,14 +153,22 @@ export const Module1: React.FC = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList className="w-full sm:w-auto">
-          {!isCuriousMode && <TabsTrigger value="learn">Learn</TabsTrigger>}
-          <TabsTrigger value="visual">Visual</TabsTrigger>
-          <TabsTrigger value="workshop">Workshop</TabsTrigger>
-          {!isCuriousMode && <TabsTrigger value="exercises">Exercises</TabsTrigger>}
-          {!isCuriousMode && <TabsTrigger value="references">References</TabsTrigger>}
-          {!isCuriousMode && <TabsTrigger value="tools">Tools & Products</TabsTrigger>}
-        </TabsList>
+        <ModuleTabBar
+          tabs={[
+            ...(!isCuriousMode ? [{ value: 'learn', label: 'Learn' }] : []),
+            { value: 'visual', label: 'Visual' },
+            { value: 'workshop', label: 'Workshop', hasDot: workshopDot },
+            ...(!isCuriousMode
+              ? [
+                  { value: 'exercises', label: 'Exercises' },
+                  { value: 'references', label: 'References' },
+                  { value: 'tools', label: 'Tools & Products' },
+                ]
+              : []),
+          ]}
+          value={activeTab}
+          onValueChange={handleTabChange}
+        />
 
         {/* Learn Tab (Hidden in Curious Mode) */}
         {!isCuriousMode && (

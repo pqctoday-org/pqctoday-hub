@@ -2,7 +2,8 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Trash2 } from 'lucide-react'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { Tabs, TabsContent } from '@/components/ui/tabs'
+import { ModuleTabBar } from '@/components/PKILearning/common/ModuleTabBar'
 import { Button } from '@/components/ui/button'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
@@ -13,6 +14,7 @@ import { MLSIntroduction } from './components/MLSIntroduction'
 import { TreeKEMVisualizer } from './workshop/TreeKEMVisualizer'
 import { ProviderArchitecture } from './workshop/ProviderArchitecture'
 import { MLSCryptoOperations } from './workshop/MLSCryptoOperations'
+import { WORKSHOP_STEPS } from '@/components/PKILearning/moduleData'
 
 const MODULE_ID = 'mls-group-messaging'
 
@@ -21,7 +23,7 @@ export const MLSGroupMessagingModule: React.FC = () => {
   const [activeTab, setActiveTab] = useState(deepLink.initialTab)
   useSyncDeepLink(activeTab, 0)
   const startTimeRef = useRef(0)
-  const { updateModuleProgress, markStepComplete } = useModuleStore()
+  const { updateModuleProgress, markStepComplete, modules } = useModuleStore()
 
   useEffect(() => {
     startTimeRef.current = Date.now()
@@ -63,6 +65,11 @@ export const MLSGroupMessagingModule: React.FC = () => {
     }
   }
 
+  const workshopSteps = WORKSHOP_STEPS[MODULE_ID] ?? []
+  const completedSteps = modules[MODULE_ID]?.completedSteps ?? []
+  const workshopDone = workshopSteps.filter((s) => completedSteps.includes(s.id)).length
+  const workshopDot = workshopDone > 0 && workshopDone < workshopSteps.length
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -77,12 +84,16 @@ export const MLSGroupMessagingModule: React.FC = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList className="w-full sm:w-auto">
-          <TabsTrigger value="learn">Learn</TabsTrigger>
-          <TabsTrigger value="workshop">Workshop</TabsTrigger>
-          <TabsTrigger value="references">References</TabsTrigger>
-          <TabsTrigger value="tools">Tools &amp; Products</TabsTrigger>
-        </TabsList>
+        <ModuleTabBar
+          tabs={[
+            { value: 'learn', label: 'Learn' },
+            { value: 'workshop', label: 'Workshop', hasDot: workshopDot },
+            { value: 'references', label: 'References' },
+            { value: 'tools', label: 'Tools & Products' },
+          ]}
+          value={activeTab}
+          onValueChange={handleTabChange}
+        />
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>

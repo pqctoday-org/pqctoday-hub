@@ -10,7 +10,8 @@ import { AttestationIssuerComponent } from './components/AttestationIssuer/Attes
 import { QESProviderComponent } from './components/QESProvider/QESProviderComponent'
 import { RelyingPartyComponent } from './components/RelyingParty/RelyingPartyComponent'
 import { OverviewComponent } from './components/Overview/OverviewComponent'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { Tabs, TabsContent } from '@/components/ui/tabs'
+import { ModuleTabBar } from '@/components/PKILearning/common/ModuleTabBar'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import { ModuleVisualTab } from '../../common/ModuleVisualTab'
@@ -327,6 +328,11 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
     return workshopContent
   }
 
+  const workshopSteps = WORKSHOP_STEPS[MODULE_ID] ?? []
+  const completedSteps = modules[MODULE_ID]?.completedSteps ?? []
+  const workshopDone = workshopSteps.filter((s) => completedSteps.includes(s.id)).length
+  const workshopDot = workshopDone > 0 && workshopDone < workshopSteps.length
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -349,14 +355,18 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
-        <TabsList className="w-full sm:w-auto">
-          <TabsTrigger value="learn">Learn</TabsTrigger>
-          <TabsTrigger value="visual">Visual</TabsTrigger>
-          <TabsTrigger value="workshop">Workshop</TabsTrigger>
-          <TabsTrigger value="exercises">Exercises</TabsTrigger>
-          <TabsTrigger value="references">References</TabsTrigger>
-          <TabsTrigger value="tools">Tools & Products</TabsTrigger>
-        </TabsList>
+        <ModuleTabBar
+          tabs={[
+            { value: 'learn', label: 'Learn' },
+            { value: 'visual', label: 'Visual' },
+            { value: 'workshop', label: 'Workshop', hasDot: workshopDot },
+            { value: 'exercises', label: 'Exercises' },
+            { value: 'references', label: 'References' },
+            { value: 'tools', label: 'Tools & Products' },
+          ]}
+          value={activeTab}
+          onValueChange={handleTabChange}
+        />
 
         {/* Learn Tab */}
         <TabsContent value="learn">
