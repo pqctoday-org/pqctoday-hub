@@ -1,62 +1,62 @@
 ---
 generated: 2026-05-19
 collection: library
-documents_processed: 2
+documents_processed: 1
 enrichment_method: ollama-qwen3.6:27b
 ---
 
-## GSMA-PQ01
+## NIST-SP-800-175B
 
-- **Reference ID**: GSMA-PQ01
-- **Title**: GSMA PQ.01: Post-Quantum Telco Network Impact Assessment
-- **Authors**: GSMA Post Quantum Telco Network Task Force
-- **Publication Date**: 2023-02
-- **Last Updated**: 2023-02
-- **Document Status**: Active
-- **Main Topic**: GSMA whitepaper assessing the impact of post-quantum cryptography on telecom networks, including market drivers, government initiatives, and technology dependencies.
+- **Reference ID**: NIST-SP-800-175B
+- **Title**: Guideline for Using Cryptographic Standards in the Federal Government: Cryptographic Mechanisms
+- **Authors**: NIST
+- **Publication Date**: 2020-03-01
+- **Last Updated**: 2020-03-01
+- **Document Status**: Final
+- **Main Topic**: NIST SP 800-175B Rev 1 provides guidance for the U.S. Federal Government on using cryptographic standards and mechanisms to protect sensitive but unclassified information.
 - **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: Cryptographically Relevant Quantum Computers; Store Now, Decrypt Later
+- **Quantum Threats Addressed**: None detected
 - **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: Australia; Canada; China; European Commission; Japan; New Zealand; Singapore; South Korea; France; Germany; UK; USA; Bodies: NIST; ISO/IEC; IETF; ETSI; ITU
-- **Leaders Contributions Mentioned**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: NIST, NSA, Office of Management and Budget (OMB), Department of Commerce
+- **Leaders Contributions Mentioned**: Elaine Barker (Author); Annabelle Lee and William C. Barker (Authors of SP 800-21); Lily Chen, Kerry McKay, Lydia Zieglar (NSA reviewers/contributors)
 - **PQC Products Mentioned**: None detected
 - **Protocols Covered**: None detected
-- **Infrastructure Layers**: PKI; Key Management Systems
-- **Standardization Bodies**: NIST; ISO/IEC; IETF; ETSI; ITU
-- **Compliance Frameworks Referenced**: None detected
+- **Infrastructure Layers**: Key Management; Public Key Infrastructure
+- **Standardization Bodies**: NIST, American National Standards Institute (ANSI), Institute of Electrical and Electronics Engineers (IEEE), Internet Engineering Task Force (IETF), International Organization for Standardization (ISO), Trusted Computing Group (TCG)
+- **Compliance Frameworks Referenced**: Federal Information Security Modernization Act (FISMA); OMB Circular A-130; FIPS; NIST Special Publications
 - **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Overhaul existing PKI architectures to address Store Now, Decrypt Later attacks; Establish a cryptographic inventory of algorithms and key lengths; Perform risk assessments of cryptography used in network systems; Develop in-house PQC expertise and support standardization efforts
+- **Key Takeaways**: Federal agencies must use NIST cryptographic standards to protect sensitive but unclassified information; Guidelines apply to federal information systems but not national security systems without approval; Organizations should follow NIST publications for planning and transition to new cryptographic algorithms; Use of validated algorithms and cryptographic modules is required; Key management practices include generation, derivation, agreement, transport, and wrapping.
 - **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: Hybrid approaches for PQC; Crypto agility
-- **Pure PQC KEM Support**: No
+- **Hybrid & Transition Approaches**: None detected
+- **Pure PQC KEM Support**: Not Applicable
 - **Pure PQC KEM Evidence**: None detected
-- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Support**: Not Applicable
 - **Hybrid PQC KEM Evidence**: None detected
-- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Support**: Not Applicable
 - **Pure PQC Signature Evidence**: None detected
-- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Support**: Not Applicable
 - **Hybrid PQC Signature Evidence**: None detected
 - **PQC Heatmap Protocols Covered**: None applicable
 - **PQC Heatmap Protocols Evidence**: None detected
 - **Lifecycle State**: Released
 - **Performance & Size Considerations**: None detected
-- **Target Audience**: CTO; CIO; CISO; Security Researchers; Policy Maker
-- **Implementation Prerequisites**: Cryptographic inventory; Risk assessment of cryptography; Key management system adaptation
-- **Relevant PQC Today Features**: Threats; Assess; Migration-program; pqc-governance; 5g-security
+- **Target Audience**: Compliance Officer; Security Architect; Policy Maker
+- **Implementation Prerequisites**: Use validated algorithms and cryptographic modules; Follow NIST standards and guidelines; Obtain approval for national security systems
+- **Relevant PQC Today Features**: Compliance; Migrate; Assess; pqc-governance; compliance-strategy
 - **Implementation Attack Surface**: None detected
-- **Cryptographic Discovery & Inventory**: Cryptographic inventory; Identify systems dependent on cryptography
+- **Cryptographic Discovery & Inventory**: None detected
 - **Testing & Validation Methods**: None detected
 - **QKD Protocols & Quantum Networking**: None detected
-- **QRNG & Entropy Sources**: None detected
+- **QRNG & Entropy Sources**: Random bit generation
 - **Constrained Device & IoT Suitability**: None detected
-- **Supply Chain & Vendor Risk**: Telecom supply chain and ecosystem impact; Vendor product dependencies
-- **Deployment & Migration Complexity**: Overhauling PKI architectures; Handling legacy systems; Crypto agility
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
 - **Financial & Business Impact**: None detected
-- **Organizational Readiness**: Develop in-house expertise; Board-level relevance; Planning process initiation
-- **Math Family**: Lattice; Code-based; Hash-based; Multivariate; Isogeny; Hybrid
+- **Organizational Readiness**: None detected
+- **Math Family**: None detected
 - **PQC Round**: Not Applicable
-- **Source Document**: GSMA-PQ01.pdf (1,193,461 bytes, 9,665 extracted chars)
-- **Extraction Timestamp**: 2026-05-19T00:14:25
+- **Source Document**: NIST-SP-800-175B.pdf (1,379,086 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-05-19T21:37:08
 
 ---
 
@@ -10914,6 +10914,60 @@ enrichment_method: ollama-qwen3.6:27b
 
 ---
 
+## GSMA-PQ01
+
+- **Reference ID**: GSMA-PQ01
+- **Title**: GSMA PQ.01: Post-Quantum Telco Network Impact Assessment
+- **Authors**: GSMA Post Quantum Telco Network Task Force
+- **Publication Date**: 2023-02
+- **Last Updated**: 2023-02
+- **Document Status**: Active
+- **Main Topic**: GSMA whitepaper assessing the impact of post-quantum cryptography on telecom networks, including market drivers, government initiatives, and technology dependencies.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Cryptographically Relevant Quantum Computers; Store Now, Decrypt Later
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: Australia; Canada; China; European Commission; Japan; New Zealand; Singapore; South Korea; France; Germany; UK; USA; Bodies: NIST; ISO/IEC; IETF; ETSI; ITU
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: PKI; Key Management Systems
+- **Standardization Bodies**: NIST; ISO/IEC; IETF; ETSI; ITU
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Overhaul existing PKI architectures to address Store Now, Decrypt Later attacks; Establish a cryptographic inventory of algorithms and key lengths; Perform risk assessments of cryptography used in network systems; Develop in-house PQC expertise and support standardization efforts
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid approaches for PQC; Crypto agility
+- **Pure PQC KEM Support**: No
+- **Pure PQC KEM Evidence**: None detected
+- **Hybrid PQC KEM Support**: No
+- **Hybrid PQC KEM Evidence**: None detected
+- **Pure PQC Signature Support**: No
+- **Pure PQC Signature Evidence**: None detected
+- **Hybrid PQC Signature Support**: No
+- **Hybrid PQC Signature Evidence**: None detected
+- **PQC Heatmap Protocols Covered**: None applicable
+- **PQC Heatmap Protocols Evidence**: None detected
+- **Lifecycle State**: Released
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: CTO; CIO; CISO; Security Researchers; Policy Maker
+- **Implementation Prerequisites**: Cryptographic inventory; Risk assessment of cryptography; Key management system adaptation
+- **Relevant PQC Today Features**: Threats; Assess; Migration-program; pqc-governance; 5g-security
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: Cryptographic inventory; Identify systems dependent on cryptography
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Telecom supply chain and ecosystem impact; Vendor product dependencies
+- **Deployment & Migration Complexity**: Overhauling PKI architectures; Handling legacy systems; Crypto agility
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Develop in-house expertise; Board-level relevance; Planning process initiation
+- **Math Family**: Lattice; Code-based; Hash-based; Multivariate; Isogeny; Hybrid
+- **PQC Round**: Not Applicable
+- **Extraction Note**: carry-forward (DS05p2): record not iterated this run; preserved from prior enrichment
+
+---
+
 ## GSMA-PQ03-v2-2024
 
 - **Reference ID**: GSMA-PQ03-v2-2024
@@ -17343,10 +17397,10 @@ enrichment_method: ollama-qwen3.6:27b
 ## NIST IR 8477
 
 - **Reference ID**: NIST IR 8477
-- **Title**: Mapping Post-Quantum Cryptography Standards to NIST SP 800-175B Cryptographic Guidance
+- **Title**: Mapping Relationships Between Documentary Standards, Regulations, Frameworks, and Guidelines
 - **Authors**: NIST
-- **Publication Date**: 2024-11-01
-- **Last Updated**: 2024-11-01
+- **Publication Date**: 2024-02-23
+- **Last Updated**: 2024-02-23
 - **Document Status**: Final
 - **Main Topic**: This document describes NIST’s approach to mapping elements of documentary standards, regulations, frameworks, and guidelines to NIST publications like the Cybersecurity Framework or SP 800-53.
 - **PQC Algorithms Covered**: None detected

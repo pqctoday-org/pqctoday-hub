@@ -21,6 +21,38 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ## [Unreleased]
 
+### Data — NIST IR 8477 data correction + SP 800-175B addition (2026-05-19)
+
+Full audit and correction of the NIST IR 8477 library record, which had been populated with completely wrong metadata (title, date, description, dependencies, algorithm family — all from a non-existent "PQC standards to SP 800-175B" document, likely confused with NIST CSWP 39).
+
+**Root cause**: the IR 8477 stub was written with fabricated PQC-specific content. The actual document is a general NIST methodology for creating typed concept mappings between any cybersecurity/privacy standards via the OLIR process — it contains zero PQC content.
+
+**Library CSV** ([library_05192026_r3.csv](src/data/library_05192026_r3.csv)):
+
+- IR 8477: corrected title, date (Feb 2024), description, dependencies (`NIST SP 800-218` only), removed `AlgorithmFamily`/`SecurityLevels`, URL updated to `/pubs/ir/8477/final`
+- SP 800-175B Rev 1 (March 2020): new entry — the foundational NIST cryptographic mechanism guidance document that IR 8477 maps to; PDF downloaded
+
+**Concept xwalk graph** ([concept_xwalks_05192026.csv](src/data/concept_xwalks_05192026.csv)):
+
+- xw-023 evidence rewritten — was falsely citing PKCS#11 PQC mechanisms; now correctly describes IR 8477 as vocabulary source
+- xw-024 evidence tightened — separated IR 8477's role (relationship grammar) from CSWP 39's role (PQC content)
+- xw-953 added: IR 8477 → SP 800-53 (mapping target per abstract)
+- xw-954 added: IR 8477 → CSF 2.0 (mapping target per abstract)
+- xw-955 added: IR 8477 → SP 800-175B (foundational cryptographic guidance target)
+
+**Concept registry** ([concept_registry_05192026.csv](src/data/concept_registry_05192026.csv)):
+
+- IR 8477 URL corrected to `/pubs/` path
+- CSF 2.0 (`framework:nist-csf-2`) added
+- SP 800-175B (`standard:nist-sp-800-175b`) added
+
+**Enrichments** ([library_doc_enrichments_05192026.md](src/data/doc-enrichments/library_doc_enrichments_05192026.md)):
+
+- IR 8477 re-enriched from PDF — carry-forward stub replaced with proper qwen3.6:27b extraction; correctly reports zero PQC content, OLIR/CPRT/SSDF methodology
+- SP 800-175B enriched fresh from PDF
+
+**RAG corpus**: regenerated at 10,005 chunks; all four IR 8477 / SP 800-175B chunks now carry correct titles and content, no false PQC claims.
+
 ### Data — RAG corpus regenerated: 10,003 chunks (2026-05-19)
 
 [rag-corpus.json](public/data/rag-corpus.json) regenerated incorporating all May 2026 enrichment outputs:
