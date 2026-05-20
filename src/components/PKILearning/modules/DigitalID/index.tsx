@@ -75,6 +75,7 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
   const resetModuleProgress = useModuleStore((state) => state.resetModuleProgress)
   const updateModuleProgress = useModuleStore((state) => state.updateModuleProgress)
   const markStepComplete = useModuleStore((state) => state.markStepComplete)
+  const modules = useModuleStore((state) => state.modules)
 
   const deepLink = getModuleDeepLink({ maxStep: WORKSHOP_STEPS.length - 1 })
   const [activeTab, setActiveTab] = useState(deepLink.initialTab)
