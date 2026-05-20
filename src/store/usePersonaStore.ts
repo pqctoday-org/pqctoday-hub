@@ -1,10 +1,26 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import type { PersonaId } from '../data/learningPersonas'
+import type { NiceProficiencyTier } from '../data/niceFramework'
 
 export type Region = 'americas' | 'eu' | 'mena' | 'apac' | 'global'
 export type ExperienceLevel = 'curious' | 'basics' | 'expert'
 export type ViewAccess = 'gated' | 'preview' | 'unlocked'
+
+/** Default NICE proficiency tier per persona */
+const PERSONA_DEFAULT_TIER: Record<string, NiceProficiencyTier> = {
+  executive: 'awareness',
+  curious: 'awareness',
+  ops: 'practitioner',
+  developer: 'practitioner',
+  architect: 'practitioner',
+  researcher: 'expert',
+}
+
+export function defaultTierForPersona(personaId: PersonaId | null): NiceProficiencyTier {
+  if (!personaId) return 'awareness'
+  return PERSONA_DEFAULT_TIER[personaId] ?? 'awareness'
+}
 
 interface PersonaState {
   selectedPersona: PersonaId | null
@@ -15,6 +31,10 @@ interface PersonaState {
   suppressSuggestion: boolean
   experienceLevel: ExperienceLevel | null
   viewAccess: ViewAccess
+  /** NICE proficiency tier — overrides persona default when user manually selects */
+  niceTier: NiceProficiencyTier
+  /** Whether niceTier was manually overridden (false = derived from persona default) */
+  niceTierOverridden: boolean
   setPersona: (persona: PersonaId | null) => void
   clearPersona: () => void
   markPickerSeen: () => void
@@ -23,6 +43,8 @@ interface PersonaState {
   setIndustries: (industries: string[]) => void
   setExperienceLevel: (level: ExperienceLevel | null) => void
   setViewAccess: (access: ViewAccess) => void
+  setNiceTier: (tier: NiceProficiencyTier) => void
+  resetNiceTier: () => void
   /** Backwards-compat alias: true → 'unlocked', false → 'gated' */
   setAdvancedViewsUnlocked: (unlocked: boolean) => void
   clearPreferences: () => void
@@ -39,17 +61,23 @@ export const usePersonaStore = create<PersonaState>()(
       suppressSuggestion: false,
       experienceLevel: null,
       viewAccess: 'unlocked',
+      niceTier: 'awareness',
+      niceTierOverridden: false,
 
       setPersona: (persona) =>
-        set({
+        set((state) => ({
           selectedPersona: persona,
           hasSeenPersonaPicker: persona !== null,
           suppressSuggestion: true,
           // Curious starts in preview; all others are fully unlocked
           viewAccess: persona === 'curious' ? 'preview' : 'unlocked',
-        }),
+          // Reset tier to persona default unless user already overrode it
+          niceTier: state.niceTierOverridden ? state.niceTier : defaultTierForPersona(persona),
+          niceTierOverridden: state.niceTierOverridden,
+        })),
 
-      clearPersona: () => set({ selectedPersona: null, hasSeenPersonaPicker: false }),
+      clearPersona: () =>
+        set({ selectedPersona: null, hasSeenPersonaPicker: false, niceTierOverridden: false }),
 
       markPickerSeen: () => set({ hasSeenPersonaPicker: true }),
 
@@ -64,6 +92,14 @@ export const usePersonaStore = create<PersonaState>()(
 
       setViewAccess: (access) => set({ viewAccess: access }),
 
+      setNiceTier: (tier) => set({ niceTier: tier, niceTierOverridden: true }),
+
+      resetNiceTier: () =>
+        set((state) => ({
+          niceTier: defaultTierForPersona(state.selectedPersona),
+          niceTierOverridden: false,
+        })),
+
       setAdvancedViewsUnlocked: (unlocked) => set({ viewAccess: unlocked ? 'unlocked' : 'gated' }),
 
       clearPreferences: () =>
@@ -75,12 +111,14 @@ export const usePersonaStore = create<PersonaState>()(
           suppressSuggestion: true,
           experienceLevel: null,
           viewAccess: 'unlocked',
+          niceTier: 'awareness',
+          niceTierOverridden: false,
         }),
     }),
     {
       name: 'pqc-learning-persona',
       storage: createJSONStorage(() => localStorage),
-      version: 5,
+      version: 6,
       migrate: (persisted: unknown, fromVersion: number) => {
         const s = (persisted ?? {}) as Record<string, unknown>
         if (fromVersion < 1) {
@@ -105,6 +143,12 @@ export const usePersonaStore = create<PersonaState>()(
           // Persona store only persists selectedRegion (not country), so existing
           // 'eu' values remain valid. The companion assessment store carries the
           // country and reassigns on next region change via handleRegion().
+        }
+        if (fromVersion < 6) {
+          // Add NICE proficiency tier fields — default from persona if known.
+          const persona = (s.selectedPersona as string | null) ?? null
+          s.niceTier = PERSONA_DEFAULT_TIER[persona ?? ''] ?? 'awareness'
+          s.niceTierOverridden = false
         }
         return s
       },
