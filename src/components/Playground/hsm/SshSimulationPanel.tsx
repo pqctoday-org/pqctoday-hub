@@ -194,7 +194,7 @@ export function SshSimulationPanel() {
             container required.
           </p>
         </div>
-        <Link to="/learn/network-security-pqc">
+        <Link to="/learn/vpn-ssh-pqc">
           <Button variant="ghost" size="sm" className="shrink-0">
             <BookOpen className="w-4 h-4 mr-1" />
             Learn

@@ -471,7 +471,7 @@ export const RandomGenerationDemo: React.FC = () => {
               variant="outline"
               size="sm"
               onClick={handleCompareAll}
-              title="Run NIST SP 800-22 statistical tests across all active sources and display a side-by-side comparison"
+              title="Run an educational subset of NIST SP 800-22 statistical tests (5 of 15) across all active sources and display a side-by-side comparison"
             >
               Compare All Tests
             </Button>

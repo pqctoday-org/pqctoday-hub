@@ -82,7 +82,7 @@ const PRESET_GROUPS: { group: string; presets: Preset[] }[] = [
     presets: [
       {
         label: 'ML-KEM-768 encapsulate',
-        cmd: 'openssl pkeyutl -encap -inkey ml-kem-768.key -secret secret.bin -out ciphertext.bin',
+        cmd: 'openssl pkeyutl -encap -inkey ml-kem-768.pub -pubin -out ciphertext.bin -secret secret.bin',
         category: 'kem',
       },
       {

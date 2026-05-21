@@ -330,7 +330,7 @@ export const HSMKeyDerivationDemo: React.FC = () => {
                 idx + 1 === currentStep
                   ? 'bg-primary/10 border-primary/30 text-primary font-bold'
                   : stepCompleted(idx)
-                    ? 'bg-success/10 border-success/30 text-success'
+                    ? 'bg-status-success/10 border-status-success/30 text-status-success'
                     : 'bg-muted border-border text-muted-foreground'
               }`}
             >
@@ -503,17 +503,17 @@ export const HSMKeyDerivationDemo: React.FC = () => {
                     {state.sessionId}
                   </code>
                 </div>
-                <div className="bg-success/10 rounded p-2 border border-success/30">
+                <div className="bg-status-success/10 rounded p-2 border border-status-success/30">
                   <div className="text-xs text-muted-foreground mb-1">Derived session key</div>
-                  <code className="text-xs font-mono text-success break-all">
+                  <code className="text-xs font-mono text-status-success break-all">
                     {state.sessionKey}
                   </code>
                 </div>
               </div>
             </div>
             {/* Bob side */}
-            <div className="border-2 border-dashed border-success/40 rounded-lg p-4 relative">
-              <div className="absolute -top-3 left-4 bg-background px-2 text-xs font-bold text-success">
+            <div className="border-2 border-dashed border-status-success/40 rounded-lg p-4 relative">
+              <div className="absolute -top-3 left-4 bg-background px-2 text-xs font-bold text-status-success">
                 Bob's HSM
               </div>
               <div className="space-y-2">
@@ -525,16 +525,16 @@ export const HSMKeyDerivationDemo: React.FC = () => {
                     {state.sessionId}
                   </code>
                 </div>
-                <div className="bg-success/10 rounded p-2 border border-success/30">
+                <div className="bg-status-success/10 rounded p-2 border border-status-success/30">
                   <div className="text-xs text-muted-foreground mb-1">Derived session key</div>
-                  <code className="text-xs font-mono text-success break-all">
+                  <code className="text-xs font-mono text-status-success break-all">
                     {state.sessionKey}
                   </code>
                 </div>
               </div>
             </div>
           </div>
-          <div className="bg-success/5 rounded p-3 border border-success/20 text-xs text-muted-foreground">
+          <div className="bg-status-success/5 rounded p-3 border border-status-success/20 text-xs text-muted-foreground">
             Both HSMs derive the <strong>identical key</strong> independently. The session key is
             never transmitted over any network. The shared secret was established exclusively via
             the quantum channel.
@@ -619,8 +619,8 @@ export const HSMKeyDerivationDemo: React.FC = () => {
 
       {/* Completed summary */}
       {currentStep === 5 && (
-        <div className="bg-success/5 rounded-lg p-4 border border-success/20 space-y-3">
-          <h3 className="text-sm font-bold text-success flex items-center gap-2">
+        <div className="bg-status-success/5 rounded-lg p-4 border border-status-success/20 space-y-3">
+          <h3 className="text-sm font-bold text-status-success flex items-center gap-2">
             <CheckCircle2 size={16} /> HSM Key Derivation Complete
           </h3>
           <div className="grid grid-cols-1 gap-2">
@@ -632,11 +632,11 @@ export const HSMKeyDerivationDemo: React.FC = () => {
               <div className="text-muted-foreground mb-1">Session ID (KDF context)</div>
               <code className="font-mono text-foreground break-all">{state.sessionId}</code>
             </div>
-            <div className="bg-success/10 rounded p-3 border border-success/30 text-xs">
+            <div className="bg-status-success/10 rounded p-3 border border-status-success/30 text-xs">
               <div className="text-muted-foreground mb-1">
                 Session key (256 bits, never transmitted)
               </div>
-              <code className="font-mono text-success break-all">{state.sessionKey}</code>
+              <code className="font-mono text-status-success break-all">{state.sessionKey}</code>
             </div>
           </div>
           <p className="text-xs text-muted-foreground">
@@ -657,7 +657,7 @@ export const HSMKeyDerivationDemo: React.FC = () => {
               RFC 9258 (TLS 1.3 PSK Import)
             </a>
           </p>
-          <div className="text-xs font-bold text-success">
+          <div className="text-xs font-bold text-status-success">
             Simulated — for educational purposes only
           </div>
           <div className="flex justify-end pt-2">

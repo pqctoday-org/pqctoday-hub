@@ -209,7 +209,7 @@ export const QRNGDemo: React.FC = () => {
             </>
           ) : (
             <div className="h-24 flex items-center justify-center text-muted-foreground text-sm">
-              No data yet — click Generate TRNG
+              No data yet — click Generate CSPRNG
             </div>
           )}
         </div>

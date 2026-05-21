@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input'
 import { getRandomBytes } from '@/utils/webCrypto'
 import { formatHex } from '../utils/outputFormatters'
 
-// SP 800-90A §10.1.2.3 Table 2: HMAC_DRBG-SHA-256 reseed_interval = 2^48.
+// SP 800-90A §10.1.2.3 Table 3: HMAC_DRBG-SHA-256 reseed_interval = 2^48.
 // For this educational demo we use a much smaller cap so the limit is reachable.
 const MAX_REQUESTS_PER_SEED = 10
 
@@ -362,7 +362,8 @@ export const DrbgArchitectureDemo: React.FC = () => {
                   <AlertTriangle size={14} className="text-status-warning mt-0.5 shrink-0" />
                   <p className="text-[10px] text-status-warning leading-relaxed">
                     <strong>Reseed required.</strong> Limit of {MAX_REQUESTS_PER_SEED} requests
-                    reached (production: 2<sup>48</sup>, §10.2.1). Click Reseed to continue.
+                    reached (production: 2<sup>48</sup>, §10.1.2.3 Table 3). Click Reseed to
+                    continue.
                   </p>
                 </div>
               )}
