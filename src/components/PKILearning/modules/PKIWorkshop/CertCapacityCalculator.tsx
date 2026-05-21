@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { HardDrive, Zap, Network, Download, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { PlaygroundNextStep } from '@/components/Playground/components/PlaygroundNextStep'
 import { CERT_CAPACITY_DEFAULTS } from '@/data/certCapacityDefaults'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 
@@ -538,6 +539,11 @@ export function CertCapacityCalculator() {
           Export CSV
         </Button>
       </div>
+      <PlaygroundNextStep
+        toolId="hsm-capacity"
+        name="HSM Capacity Calculator"
+        description="Translate cert-volume estimates into HSM signing TPS. Size your fleet across 10 enterprise use cases — classical vs. PQC throughput side by side."
+      />
     </div>
   )
 }

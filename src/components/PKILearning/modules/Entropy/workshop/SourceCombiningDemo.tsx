@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { Combine, Play, ArrowRight, Shield, Loader2, ExternalLink, BookOpen } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CopyButton } from '@/components/ui/CopyButton'
+import { PlaygroundNextStep } from '@/components/Playground/components/PlaygroundNextStep'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { getRandomBytes } from '@/utils/webCrypto'
 import { hkdfExpand } from '@/utils/webCrypto'
@@ -672,6 +673,11 @@ export const SourceCombiningDemo: React.FC = () => {
           )}
         </div>
       )}
+      <PlaygroundNextStep
+        toolId="drbg-demo"
+        name="SP 800-90A DRBG"
+        description="Feed conditioned entropy into an HMAC_DRBG and visualise the Instantiate → Generate → Reseed state machine."
+      />
     </div>
   )
 }

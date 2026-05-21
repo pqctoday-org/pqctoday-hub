@@ -14,6 +14,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { CopyableOutput } from '@/components/ui/CopyableOutput'
+import { PlaygroundNextStep } from '@/components/Playground/components/PlaygroundNextStep'
 import { getRandomBytes } from '@/utils/webCrypto'
 import { formatHex } from '../utils/outputFormatters'
 
@@ -491,6 +492,11 @@ export const DrbgArchitectureDemo: React.FC = () => {
           </div>
         </div>
       </div>
+      <PlaygroundNextStep
+        toolId="qrng-demo"
+        name="QRNG Demo"
+        description="See how quantum random number generator output compares statistically to CSPRNG — and why the statistical profile alone doesn't prove quantum origin."
+      />
     </div>
   )
 }
