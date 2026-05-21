@@ -37,6 +37,7 @@ import { LandscapeTypeFacet, type LandscapeType } from './LandscapeTypeFacet'
 import { ExecutiveTimelineView } from './views/ExecutiveTimelineView'
 import { ArchitectStandardsView } from './views/ArchitectStandardsView'
 import { ResearcherEvidenceView } from './views/ResearcherEvidenceView'
+import { DeveloperImplementationView } from './views/DeveloperImplementationView'
 import { LibraryDetailPopover } from '@/components/Library/LibraryDetailPopover'
 import { ThreatDetailDialog } from '@/components/Threats/ThreatDetailDialog'
 import {
@@ -166,7 +167,7 @@ function timelineEventToRow(ev: TimelineEvent): TimelineDocumentRow {
  *   executive  → ExecutiveTimelineView (regulatory clock + framework cards + milestones)
  *   architect  → ArchitectStandardsView (standards landscape + crypto-agility focus)
  *   researcher → ResearcherEvidenceView (full evidence browser + citation depth)
- *   developer  → ApplicabilityPanel (defaults to records tab via useComplianceUrlState)
+ *   developer  → DeveloperImplementationView (algorithm coverage + tool jumps + standards→impl)
  *   ops / curious / no persona → ApplicabilityPanel (generic recommendation surface)
  *
  * All branches consume the same `useApplicability` engine output; only the rendering
@@ -227,6 +228,8 @@ function ForYouSection() {
         <ArchitectStandardsView {...callbacks} />
       ) : persona === 'researcher' ? (
         <ResearcherEvidenceView {...callbacks} />
+      ) : persona === 'developer' ? (
+        <DeveloperImplementationView {...callbacks} />
       ) : (
         <ApplicabilityPanel variant="tab" {...callbacks} />
       )}

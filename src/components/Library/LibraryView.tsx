@@ -771,7 +771,11 @@ export const LibraryView: React.FC = () => {
       />
 
       {/* Zone 1: Activity Feed */}
-      <ActivityFeed items={activityItems} onSelect={openDetail} />
+      <ActivityFeed
+        items={activityItems}
+        onSelect={openDetail}
+        datasetUpdated={libraryMetadata?.lastUpdate}
+      />
 
       <ContentUpdatesFeed domain="library" limit={5} title="Recent Library Revisions" />
 
