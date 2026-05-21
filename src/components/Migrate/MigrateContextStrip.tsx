@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
-import { ChevronDown, ChevronRight, Wrench, X, Factory, ListChecks } from 'lucide-react'
+import { ChevronDown, ChevronRight, Users, X, Factory, ListChecks } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { MigrationWorkflow } from './MigrationWorkflow'
 import type { MigrationStep } from '../../types/MigrateTypes'
@@ -51,7 +51,7 @@ export const MigrateContextStrip: React.FC<MigrateContextStripProps> = ({
   const summaryParts: string[] = []
   if (industryFilter) summaryParts.push(industryFilter)
   if (stepFilter) summaryParts.push(`Step ${stepFilter.stepNumber}`)
-  summaryParts.push('WIP data')
+  summaryParts.push('Community-curated')
 
   return (
     <div className="glass-panel border border-border rounded-lg overflow-hidden mb-4">
@@ -81,18 +81,18 @@ export const MigrateContextStrip: React.FC<MigrateContextStripProps> = ({
       {/* Expandable body */}
       {open && (
         <div className="border-t border-border divide-y divide-border/50">
-          {/* WIP disclaimer */}
+          {/* Community-curated disclaimer */}
           <div className="flex items-start gap-3 px-4 py-3 text-sm">
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border border-status-warning/40 bg-status-warning/15 text-status-warning shrink-0 mt-0.5">
-              <Wrench size={11} />
-              WIP
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border border-primary/40 bg-primary/10 text-primary shrink-0 mt-0.5">
+              <Users size={11} />
+              Community
             </span>
             <p className="hidden md:block text-muted-foreground">
-              PQC product data is being actively reviewed and validated. Help by submitting product
-              updates via the <em>Update PQC Info</em> link in each product card.
+              PQC product data is community-curated and updated continuously. Help keep it sharp by
+              submitting changes via the <em>Update PQC Info</em> link in each product card.
             </p>
             <p className="md:hidden text-xs text-muted-foreground">
-              Data under review. Submit updates via <em>Update PQC Info</em> in each card.
+              Community-curated. Submit updates via <em>Update PQC Info</em> in each card.
             </p>
           </div>
 

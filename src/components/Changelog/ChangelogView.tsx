@@ -18,10 +18,12 @@ import {
   Network,
   FlaskConical,
   Calendar,
+  UserCheck,
 } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import clsx from 'clsx'
 import { getCurrentVersion } from '../../store/useVersionStore'
+import { usePersonaStore } from '../../store/usePersonaStore'
 import {
   ALL_CHANGELOG_VERSIONS,
   HAS_DATA_SECTIONS,
@@ -218,9 +220,27 @@ function mergeSections(versions: ChangelogVersion[]): ChangelogSection[] {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+// Per-persona keyword sets — used by the "For me" filter to surface entries
+// that aren't explicitly tagged via `[persona:X]` but mention work in that
+// persona's wheelhouse. Explicit tags always take precedence.
+const PERSONA_KEYWORDS: Record<string, RegExp> = {
+  executive:
+    /\b(compliance|regulatory|governance|board|roadmap|policy|NIST|ANSSI|BSI|CNSA|FIPS 140|deadline|business case)\b/i,
+  developer:
+    /\b(API|SDK|library|code|playground|openssl|WASM|JOSE|COSE|JWT|workshop|tool|algorithm|implementation|TLS|liboqs)\b/i,
+  architect:
+    /\b(PKI|certificate|hybrid|agility|architecture|design|HSM|TPM|protocol|hierarchy|enrollment|composite)\b/i,
+  researcher:
+    /\b(spec|RFC|draft|KAT|ACVP|FIPS 203|FIPS 204|FIPS 205|test vector|cryptanalysis|attack|paper)\b/i,
+  ops: /\b(deploy|deployment|runtime|infrastructure|operations|rotate|monitoring|telemetry|incident|migration)\b/i,
+  curious:
+    /\b(landing|explore|intro|overview|basics|simplified|story|getting started|learn|persona)\b/i,
+}
+
 export const ChangelogView = () => {
   const version = getCurrentVersion()
   const location = useLocation()
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const [highlightedVersion, setHighlightedVersion] = useState<string | null>(null)
 
   const [filters, setFilters] = useState<FilterState>({
@@ -230,26 +250,44 @@ export const ChangelogView = () => {
     data: true,
     security: true,
   })
+  const [personaOnly, setPersonaOnly] = useState(false)
   const [showDetails, setShowDetails] = useState(false)
 
   const toggleFilter = (type: FilterType) => {
     setFilters((prev) => ({ ...prev, [type]: !prev[type] }))
   }
 
+  const personaKeyword =
+    personaOnly && selectedPersona
+      ? // eslint-disable-next-line security/detect-object-injection
+        (PERSONA_KEYWORDS[selectedPersona] ?? null)
+      : null
+
   const filteredVersions = useMemo(() => {
     return ALL_CHANGELOG_VERSIONS.map((v) => ({
       ...v,
-      sections: v.sections.filter((s) => {
-        if (s.type === 'other') return true
-        if (s.type === 'added') return filters.added
-        if (s.type === 'changed') return filters.changed
-        if (s.type === 'fixed') return filters.fixed
-        if (s.type === 'data') return filters.data
-        if (s.type === 'security') return filters.security
-        return true
-      }),
+      sections: v.sections
+        .filter((s) => {
+          if (s.type === 'other') return true
+          if (s.type === 'added') return filters.added
+          if (s.type === 'changed') return filters.changed
+          if (s.type === 'fixed') return filters.fixed
+          if (s.type === 'data') return filters.data
+          if (s.type === 'security') return filters.security
+          return true
+        })
+        .map((s) => {
+          if (!personaOnly || !selectedPersona) return s
+          const filteredEntries = s.entries.filter((e) => {
+            if (e.meta.personas.includes(selectedPersona)) return true
+            if (personaKeyword && personaKeyword.test(`${e.title} ${e.body}`)) return true
+            return false
+          })
+          return { ...s, entries: filteredEntries }
+        })
+        .filter((s) => s.entries.length > 0),
     })).filter((v) => v.sections.length > 0)
-  }, [filters])
+  }, [filters, personaOnly, selectedPersona, personaKeyword])
 
   const groupedByDate = useMemo(() => groupVersionsByDate(filteredVersions), [filteredVersions])
 
@@ -361,6 +399,22 @@ export const ChangelogView = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-muted-foreground">Filter:</span>
+            {selectedPersona && (
+              <Button
+                variant="ghost"
+                onClick={() => setPersonaOnly((v) => !v)}
+                className={clsx(
+                  'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
+                  personaOnly
+                    ? 'bg-primary/20 border-primary/50 text-primary'
+                    : 'bg-muted/20 border-border text-muted-foreground hover:text-foreground'
+                )}
+                title="Show only entries tagged or relevant to the selected persona"
+              >
+                <UserCheck size={14} />
+                <span>For me</span>
+              </Button>
+            )}
             <Button
               variant="ghost"
               onClick={() => toggleFilter('added')}
