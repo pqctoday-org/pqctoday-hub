@@ -23,6 +23,8 @@ import { PersonalizationSection } from './PersonalizationSection'
 import { OnboardingCTAs } from './OnboardingCTAs'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { TransparencyBanner } from './TransparencyBanner'
+import { PersonaChip } from '@/components/Persona/PersonaChip'
+import { logEvent, personaLabel } from '@/utils/analytics'
 import { useGoogleAuth } from '@/contexts/GoogleAuthContext'
 
 const MODULE_COUNT = Object.keys(MODULE_CATALOG).filter((k) => k !== 'quiz').length
@@ -151,6 +153,12 @@ export const LandingView = () => {
     <div className="w-full space-y-16 md:space-y-24">
       {/* Hero Section */}
       <section className="text-center pt-8 md:pt-16">
+        {selectedPersona && (
+          <div className="flex justify-end mb-4 -mt-2">
+            <PersonaChip />
+          </div>
+        )}
+
         <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
           <p className="text-sm font-mono uppercase tracking-widest text-primary mb-4">
             Prepare for the Quantum Era
@@ -252,7 +260,13 @@ export const LandingView = () => {
           custom={3}
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
-          <Link to={heroCta.primary.path} className="block sm:inline-block">
+          <Link
+            to={heroCta.primary.path}
+            onClick={() =>
+              logEvent('Landing', 'Hero CTA Primary', personaLabel(heroCta.primary.path))
+            }
+            className="block sm:inline-block"
+          >
             <Button
               variant="gradient"
               size="lg"
@@ -263,7 +277,13 @@ export const LandingView = () => {
               <ArrowRight className="ml-2" size={18} />
             </Button>
           </Link>
-          <Link to={heroCta.secondary.path} className="block sm:inline-block">
+          <Link
+            to={heroCta.secondary.path}
+            onClick={() =>
+              logEvent('Landing', 'Hero CTA Secondary', personaLabel(heroCta.secondary.path))
+            }
+            className="block sm:inline-block"
+          >
             <Button
               variant="outline"
               size="lg"
