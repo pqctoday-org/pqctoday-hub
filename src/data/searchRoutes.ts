@@ -135,6 +135,28 @@ export function chunkToRoute(chunk: SearchChunk): string {
       return `/migrate?vendor=${encodeURIComponent(vendor)}`
     }
 
+    case 'nice':
+      return '/learn'
+
+    case 'protocol-matrix':
+      return '/algorithms?tab=protocol'
+
+    case 'concept-registry':
+      return '/library'
+
+    case 'concept-xwalk':
+    case 'counter-claims':
+    case 'regulatory-timeline':
+      return '/compliance'
+
+    case 'algo-product-xref':
+    case 'implementation-attacks':
+    case 'standard-algo-xref':
+      return '/algorithms'
+
+    case 'vendor-roadmap':
+      return '/migrate'
+
     default:
       return '/'
   }
@@ -179,6 +201,16 @@ export const SOURCE_LABELS: Record<string, string> = {
   tracks: 'Learning Tracks',
   'trusted-sources': 'Authoritative Sources',
   vendors: 'Vendors',
+  'algo-product-xref': 'Algorithm Implementations',
+  'concept-registry': 'Concept Registry',
+  'concept-xwalk': 'Concept Relationships',
+  'counter-claims': 'Policy Disagreements',
+  'implementation-attacks': 'Implementation Attacks',
+  nice: 'NICE Framework',
+  'protocol-matrix': 'Protocol Matrix',
+  'regulatory-timeline': 'Regulatory Timeline',
+  'standard-algo-xref': 'Standards Map',
+  'vendor-roadmap': 'Vendor Roadmaps',
 }
 
 /** Sources hidden from curious persona when advancedViewsUnlocked is false */

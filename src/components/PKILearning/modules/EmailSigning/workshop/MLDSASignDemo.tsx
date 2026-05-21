@@ -28,6 +28,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { CopyableOutput } from '@/components/ui/CopyableOutput'
+import { CopyButton } from '@/components/ui/CopyButton'
 import { CMSSigningService, isCompositeAlg, type CmsAlg } from '../services/CMSSigningService'
 import { smimeEnvelopeSigned } from '../services/smimeMultipart'
 
@@ -393,15 +395,46 @@ export function MLDSASignDemo({ providerReady }: MLDSASignDemoProps) {
               </details>
             )}
             {result.signedP7m && (
+              <div className="mt-2 flex gap-2">
+                <CopyButton
+                  text={btoa(String.fromCharCode(...result.signedP7m))}
+                  label="Copy (base64)"
+                />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    const blob = new Blob([result.signedP7m!], {
+                      type: 'application/pkcs7-mime',
+                    })
+                    const url = URL.createObjectURL(blob)
+                    const a = document.createElement('a')
+                    a.href = url
+                    a.download = 'signed.p7m'
+                    a.click()
+                    URL.revokeObjectURL(url)
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[44px] rounded-lg border border-border bg-muted/20 hover:bg-muted/40 transition-colors"
+                  aria-label="Download signed.p7m"
+                >
+                  <Lock size={13} className="text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground font-medium">Download .p7m</span>
+                </Button>
+              </div>
+            )}
+            {result.signedP7m && (
               <details className="mt-2">
                 <summary className="cursor-pointer text-[11px] text-primary">
                   Show S/MIME envelope (.eml)
                 </summary>
-                <pre className="mt-1 max-h-48 max-w-full overflow-auto whitespace-pre-wrap break-all rounded bg-muted/30 p-1.5 font-mono text-[10px] leading-tight">
-                  {smimeEnvelopeSigned(result.signedP7m, {
+                <CopyableOutput
+                  value={smimeEnvelopeSigned(result.signedP7m, {
                     subject: 'PQC workshop signed message',
                   })}
-                </pre>
+                  rows={6}
+                  downloadFilename="signed-message.eml"
+                  className="mt-1"
+                />
               </details>
             )}
           </StageCard>
