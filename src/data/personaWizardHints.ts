@@ -805,9 +805,69 @@ export const PERSONA_INDUSTRY_STEP_HINTS: Record<
       },
     },
   },
-  developer: {},
-  architect: {},
+  developer: {
+    financebanking: {
+      compliance: {
+        hint: 'PCI-DSS v4 and FedRAMP often translate to library + crypto-module obligations — pin a FIPS 140-3 validated provider and gate token-format changes behind feature flags.',
+      },
+      'use-cases': {
+        hint: 'In finance code, cryptography typically backs TLS termination, mTLS to upstreams, JWT/JOSE token signing, and database column encryption. List the libraries each path uses today.',
+      },
+      retention: {
+        hint: 'Long retention windows mean ciphertext minted today must still resist a quantum attacker decades out — favor crypto-agile envelopes (KEM ciphertext + AEAD payload) over fixed RSA-OAEP.',
+      },
+    },
+    healthcare: {
+      compliance: {
+        hint: 'HIPAA + FDA Cybersecurity for connected devices push you toward signed firmware + verifiable key provenance. Hash-based signatures (SLH-DSA / LMS) survive the longest.',
+      },
+      'use-cases': {
+        hint: 'In healthcare code, cryptography backs EHR APIs (FHIR over TLS), DICOM transport, medical-device firmware signing, and HL7 envelope signing. Flag the device-firmware path — it has the longest replacement cycle.',
+      },
+    },
+  },
+  architect: {
+    financebanking: {
+      compliance: {
+        hint: 'CNSA 2.0 (2027 mandate for federal contracts), DORA (EU operational resilience), and PCI-DSS v4 shape the architecture. Plan hybrid + dual-cert PKI now; mandate-only pure-PQC later.',
+      },
+      sensitivity: {
+        hint: 'Architect view: customer PII, payment-card vaults, and settlement-system keys are your highest-blast-radius assets. Map each to its HSM partition + rotation cadence.',
+      },
+      'use-cases': {
+        hint: 'In finance architecture, cryptography backs SWIFT, card-network HSMs, intra-bank mTLS, and database envelope encryption. The SWIFT + card-HSM paths are the slowest to migrate — start there.',
+      },
+    },
+    healthcare: {
+      compliance: {
+        hint: 'HIPAA + FDA premarket cybersecurity guidance + EU MDR drive the architecture. Cryptographic agility in implantable / wearable devices is the hardest constraint.',
+      },
+      'use-cases': {
+        hint: 'In healthcare architecture, cryptography backs EHR ↔ HIE messaging, DICOM imaging, device-fleet PKI, and research-data exchange. Device PKI rotation is your bottleneck.',
+      },
+    },
+  },
   researcher: {},
-  ops: {},
+  ops: {
+    financebanking: {
+      compliance: {
+        hint: 'PCI-DSS + SOX + DORA all impose audited operational controls (key rotation cadence, HSM access logs, change windows). PQC migration extends every existing rotation runbook.',
+      },
+      'use-cases': {
+        hint: 'Ops view: certificate fleet (TLS, mTLS, card-network), HSM partition rotation, and S/MIME signing keys. Each has its own renewal window — map the soonest expiry first.',
+      },
+      retention: {
+        hint: 'Long-retention encrypted backups are the HNDL hot spot for ops — plan a re-encrypt pass under PQC envelopes before the harvest window closes.',
+      },
+    },
+    healthcare: {
+      'use-cases': {
+        hint: 'Ops view in healthcare: EHR TLS certs, device PKI fleets, VPN concentrator certs, and physical-access PKI. Device PKI is the slowest rotation cycle.',
+      },
+      retention: {
+        hint: 'HIPAA-driven 6–25 year retention means encrypted backups linger in HNDL range for decades — schedule periodic re-encrypt passes as PQC adoption matures.',
+      },
+    },
+  },
   curious: {},
 }
