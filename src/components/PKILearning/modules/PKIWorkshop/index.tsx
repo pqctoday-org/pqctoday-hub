@@ -37,6 +37,7 @@ import { AcmePqcWalkthrough } from './AcmePqcWalkthrough'
 import { CertCapacityCalculator } from './CertCapacityCalculator'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 import { Button } from '@/components/ui/button'
+import { PlaygroundNextStep } from '@/components/Playground/components/PlaygroundNextStep'
 import { WORKSHOP_STEPS } from '@/components/PKILearning/moduleData'
 
 const ARTIFACT_GROUPS = [
@@ -411,7 +412,16 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({ playgroundMode = false
   )
 
   if (playgroundMode) {
-    return workshopPanel
+    return (
+      <div>
+        {workshopPanel}
+        <PlaygroundNextStep
+          toolId="cert-capacity"
+          name="Cert Capacity Calculator"
+          description="Model the storage, bandwidth, and CPU impact of migrating your PKI to ML-DSA at scale."
+        />
+      </div>
+    )
   }
 
   const workshopSteps = WORKSHOP_STEPS[MODULE_ID] ?? []

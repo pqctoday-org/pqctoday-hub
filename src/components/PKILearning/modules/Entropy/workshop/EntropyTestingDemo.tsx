@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CopyButton } from '@/components/ui/CopyButton'
+import { PlaygroundNextStep } from '@/components/Playground/components/PlaygroundNextStep'
 import { Input } from '@/components/ui/input'
 import { getRandomBytes } from '@/utils/webCrypto'
 import { runAllTests, type TestResult } from '../utils/entropyTests'
@@ -504,6 +505,11 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
         specs={ENTROPY_KAT_SPECS}
         label="Entropy Testing Known Answer Tests"
         authorityNote="SP 800-90B · FIPS 180-4 · FIPS 198-1"
+      />
+      <PlaygroundNextStep
+        toolId="source-combining"
+        name="Source Combining"
+        description="XOR, hash, and HMAC-combine multiple entropy sources, then apply SP 800-90C conditioning and HKDF expansion."
       />
     </div>
   )

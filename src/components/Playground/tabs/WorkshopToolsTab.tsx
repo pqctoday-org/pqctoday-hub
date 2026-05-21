@@ -22,6 +22,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
 import { useAchievementStore } from '@/store/useAchievementStore'
 import { lazyWithRetry } from '@/utils/lazyWithRetry'
+import { WorkshopNavigationContext } from '../contexts/WorkshopNavigationContext'
 
 // ---------------------------------------------------------------------------
 // Tool registry — each entry describes a crypto-executing workshop component
@@ -513,28 +514,30 @@ export const WorkshopToolsTab: React.FC = () => {
     const Comp = isOnBack ? ONBACK_COMPONENTS[selectedTool.id] : TOOL_COMPONENTS[selectedTool.id]
 
     return (
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={handleBack}>
-            <ArrowLeft className="w-4 h-4 mr-1" />
-            All Tools
-          </Button>
-          <span className="text-sm text-muted-foreground">
-            {selectedTool.category} / {selectedTool.name}
-          </span>
+      <WorkshopNavigationContext.Provider value={{ selectTool: setSelectedToolId }}>
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="sm" onClick={handleBack}>
+              <ArrowLeft className="w-4 h-4 mr-1" />
+              All Tools
+            </Button>
+            <span className="text-sm text-muted-foreground">
+              {selectedTool.category} / {selectedTool.name}
+            </span>
+          </div>
+          <Suspense
+            fallback={
+              <div className="space-y-4 p-4">
+                <Skeleton className="h-8 w-64" />
+                <Skeleton className="h-48 w-full" />
+                <Skeleton className="h-32 w-full" />
+              </div>
+            }
+          >
+            {Comp && (isOnBack ? <Comp onBack={handleBack} /> : <Comp />)}
+          </Suspense>
         </div>
-        <Suspense
-          fallback={
-            <div className="space-y-4 p-4">
-              <Skeleton className="h-8 w-64" />
-              <Skeleton className="h-48 w-full" />
-              <Skeleton className="h-32 w-full" />
-            </div>
-          }
-        >
-          {Comp && (isOnBack ? <Comp onBack={handleBack} /> : <Comp />)}
-        </Suspense>
-      </div>
+      </WorkshopNavigationContext.Provider>
     )
   }
 
