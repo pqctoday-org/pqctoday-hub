@@ -226,6 +226,8 @@ export const MerkleTreeCertsModule: React.FC = () => {
                 stepDescription={PARTS[currentPart].description}
                 stepIndex={currentPart}
                 totalSteps={PARTS.length}
+                steps={PARTS.map((p) => ({ id: p.id, label: p.title }))}
+                onStepClick={handlePartChange}
               />
               {currentPart === 0 && <MerkleTreeBuilder key={`build-${configKey}`} />}
               {currentPart === 1 && <InclusionProofGenerator key={`proof-${configKey}`} />}

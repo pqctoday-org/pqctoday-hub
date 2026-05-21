@@ -252,6 +252,8 @@ export const Module1: React.FC = () => {
                 stepDescription={visibleParts[currentPart]?.description ?? ''}
                 stepIndex={currentPart}
                 totalSteps={visibleParts.length}
+                steps={visibleParts.map((p) => ({ id: p.id, label: p.title }))}
+                onStepClick={handlePartChange}
               />
               {visibleParts[currentPart]?.id === 'algorithm-families' && (
                 <AlgorithmFamilyWorkshop

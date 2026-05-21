@@ -223,6 +223,8 @@ export const HsmPqcModule: React.FC = () => {
                 stepDescription={PARTS[currentPart].description}
                 stepIndex={currentPart}
                 totalSteps={PARTS.length}
+                steps={PARTS.map((p) => ({ id: p.id, label: p.title }))}
+                onStepClick={handlePartChange}
               />
               {currentPart === 0 && <Pkcs11Simulator key={`pkcs11-sim-${configKey}`} />}
               {currentPart === 1 && <VendorComparison key={`vendor-cmp-${configKey}`} />}
