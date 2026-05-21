@@ -881,6 +881,35 @@ export function getComplianceOverflowTabs(persona: PersonaId | null): readonly C
 }
 
 /**
+ * Compliance frameworks each persona benefits from emphasizing in the
+ * landscape grid (P11-P1-02). Used to add a soft visual treatment to the
+ * FrameworkCard ring/badge — does NOT filter the list, so other frameworks
+ * remain reachable.
+ *
+ * Empty array means "no emphasis" (default rendering for every framework).
+ * Framework IDs come from `complianceData.ts` (case-sensitive).
+ */
+export const PERSONA_COMPLIANCE_FRAMEWORK_EMPHASIS: Partial<Record<PersonaId, readonly string[]>> =
+  {
+    executive: ['CNSA-2', 'DORA', 'NIS2', 'SOX', 'GDPR', 'PCI-DSS'],
+    developer: ['FIPS', 'FedRAMP', 'CMMC', 'CC', 'NIST', 'CNSA-2'],
+    architect: ['NIST', 'BSI', 'ANSSI', 'ENISA', 'CNSA-2', 'FIPS'],
+    ops: ['CNSA-2', 'FedRAMP', 'NIS2', 'PCI-DSS', 'DORA'],
+    researcher: ['NIST', 'ENISA', 'BSI', 'ANSSI', '3GPP-PQC', 'BIS-158-PQC'],
+    curious: ['NIST', 'ENISA', 'CNSA-2', 'GDPR', 'HIPAA'],
+  }
+
+export function isComplianceFrameworkEmphasized(
+  persona: PersonaId | null,
+  frameworkId: string
+): boolean {
+  if (!persona) return false
+  const set = PERSONA_COMPLIANCE_FRAMEWORK_EMPHASIS[persona]
+  if (!set) return false
+  return set.includes(frameworkId)
+}
+
+/**
  * Persona-flavored maturity tier overlay for the awareness-score belt ladder.
  *
  * The 7 generic belts (White → Black) still drive scoring math, but Executive

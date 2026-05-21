@@ -6,6 +6,8 @@ import {
   getComplianceTabOrder,
   getComplianceOverflowTabs,
   PERSONA_COMPLIANCE_TABS,
+  isComplianceFrameworkEmphasized,
+  PERSONA_COMPLIANCE_FRAMEWORK_EMPHASIS,
 } from './personaConfig'
 
 describe('getBeltTierLabel', () => {
@@ -87,6 +89,31 @@ describe('getComplianceTabOrder / getComplianceOverflowTabs', () => {
         'records',
         'standards',
       ])
+    }
+  })
+})
+
+describe('isComplianceFrameworkEmphasized', () => {
+  it('returns false when no persona is selected', () => {
+    expect(isComplianceFrameworkEmphasized(null, 'NIST')).toBe(false)
+  })
+
+  it('emphasizes developer-relevant frameworks for developer', () => {
+    expect(isComplianceFrameworkEmphasized('developer', 'FIPS')).toBe(true)
+    expect(isComplianceFrameworkEmphasized('developer', 'CMMC')).toBe(true)
+    expect(isComplianceFrameworkEmphasized('developer', 'CC')).toBe(true)
+    expect(isComplianceFrameworkEmphasized('developer', 'FedRAMP')).toBe(true)
+  })
+
+  it('does not emphasize unrelated frameworks', () => {
+    expect(isComplianceFrameworkEmphasized('developer', 'HIPAA')).toBe(false)
+    expect(isComplianceFrameworkEmphasized('executive', 'FIPS')).toBe(false)
+  })
+
+  it('exposes a non-empty emphasis set for every persona', () => {
+    for (const [persona, set] of Object.entries(PERSONA_COMPLIANCE_FRAMEWORK_EMPHASIS)) {
+      expect(set, `${persona} has no emphasis`).toBeDefined()
+      expect((set ?? []).length).toBeGreaterThan(0)
     }
   })
 })
