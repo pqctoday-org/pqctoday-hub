@@ -68,6 +68,25 @@ import { normalizeCountry } from '@/utils/applicabilityEngine'
 import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
 import { useComplianceUrlState, type MobileSection } from './useComplianceUrlState'
 import { PreviewBanner } from '../common/PreviewBanner'
+import {
+  getComplianceTabOrder,
+  getComplianceOverflowTabs,
+  type ComplianceTabId,
+} from '@/data/personaConfig'
+import { BookOpen, Award } from 'lucide-react'
+
+/** Tab metadata for the persona-aware TabsList in ComplianceView. */
+const TAB_META: Record<
+  ComplianceTabId,
+  { label: string; icon: React.ComponentType<{ size?: number; className?: string }> }
+> = {
+  foryou: { label: 'For You', icon: Sparkles },
+  landscape: { label: 'Landscape', icon: Layers },
+  records: { label: 'Records', icon: GlobeLock },
+  cswp39: { label: 'CSWP.39', icon: Workflow },
+  standards: { label: 'Standardization Bodies', icon: BookOpen },
+  certification: { label: 'Certification Schemes', icon: Award },
+}
 import type { ViewMode } from '@/components/Library/ViewToggle'
 import { INDUSTRY_COMPLIANCE_HINT, REGION_COMPLIANCE_HINT } from '@/data/compliancePersonaHints'
 
@@ -661,6 +680,16 @@ export const ComplianceView = () => {
       ? `${forYouProfile.country} deadlines`
       : undefined
 
+  // ── Persona-aware tab order (P11-P1-01) ──────────────────────────────
+  const primaryTabs = useMemo(
+    () => getComplianceTabOrder(selectedPersona) as ComplianceTabId[],
+    [selectedPersona]
+  )
+  const overflowTabs = useMemo(
+    () => getComplianceOverflowTabs(selectedPersona) as ComplianceTabId[],
+    [selectedPersona]
+  )
+
   // ── Tab handlers ─────────────────────────────────────────────────────
 
   const handleTabChange = useCallback(
@@ -1024,33 +1053,29 @@ export const ComplianceView = () => {
           }}
         >
           <TabsList className="mb-4 bg-muted/50 border border-border h-auto flex items-center gap-1">
-            {/* For You */}
-            <TabsTrigger
-              value="foryou"
-              data-workshop-target="compliance-tab-foryou"
-              className="flex items-center gap-1.5"
-            >
-              <Sparkles size={14} />
-              For You
-            </TabsTrigger>
-            {/* Landscape — combined surface (was 4 tabs) with a type facet inside */}
-            <TabsTrigger value="landscape" className="flex items-center gap-1.5">
-              <Layers size={14} />
-              Landscape
-            </TabsTrigger>
-            {/* Records */}
-            <TabsTrigger value="records" className="flex items-center gap-1.5">
-              <GlobeLock size={14} />
-              Records
-            </TabsTrigger>
-            {/* CSWP.39 — always visible; was previously hidden in MoreMenu */}
-            <TabsTrigger value="cswp39" className="flex items-center gap-1.5">
-              <Workflow size={14} />
-              CSWP.39
-            </TabsTrigger>
-            {/* More menu — Standardization Bodies + Certification Schemes shortcuts
-                that deep-link into the Landscape facet. */}
-            <MoreTabsMenu activeTab={activeTab} onSelect={(tab) => handleTabChange(tab)} />
+            {primaryTabs.map((id) => {
+              const meta = TAB_META[id]
+              if (!meta) return null
+              const Icon = meta.icon
+              return (
+                <TabsTrigger
+                  key={id}
+                  value={id}
+                  data-workshop-target={id === 'foryou' ? 'compliance-tab-foryou' : undefined}
+                  className="flex items-center gap-1.5"
+                >
+                  <Icon size={14} />
+                  {meta.label}
+                </TabsTrigger>
+              )
+            })}
+            {overflowTabs.length > 0 && (
+              <MoreTabsMenu
+                activeTab={activeTab}
+                onSelect={(tab) => handleTabChange(tab)}
+                tabs={overflowTabs}
+              />
+            )}
             <div className="ml-auto pr-2">
               <TrustTierFilter />
             </div>

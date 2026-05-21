@@ -1,32 +1,59 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
-import { ChevronDown, BookOpen, Award } from 'lucide-react'
+import { ChevronDown, BookOpen, Award, Sparkles, Layers, GlobeLock, Workflow } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-
-type SecondaryTab = 'standards' | 'certification'
+import type { ComplianceTabId } from '@/data/personaConfig'
 
 interface TabMeta {
-  value: SecondaryTab
+  value: ComplianceTabId
   label: string
   icon: React.ReactNode
 }
 
-const SECONDARY_TAB_META: TabMeta[] = [
-  { value: 'standards', label: 'Standardization Bodies', icon: <BookOpen size={14} /> },
-  { value: 'certification', label: 'Certification Schemes', icon: <Award size={14} /> },
-]
+/**
+ * Full per-tab metadata. The set of tabs actually surfaced in the dropdown is
+ * driven by the persona-aware overflow list passed via the `tabs` prop;
+ * unknown values are silently filtered.
+ */
+const TAB_META: Record<ComplianceTabId, TabMeta> = {
+  foryou: { value: 'foryou', label: 'For You', icon: <Sparkles size={14} /> },
+  landscape: { value: 'landscape', label: 'Landscape', icon: <Layers size={14} /> },
+  records: { value: 'records', label: 'Records', icon: <GlobeLock size={14} /> },
+  cswp39: { value: 'cswp39', label: 'CSWP.39', icon: <Workflow size={14} /> },
+  standards: {
+    value: 'standards',
+    label: 'Standardization Bodies',
+    icon: <BookOpen size={14} />,
+  },
+  certification: {
+    value: 'certification',
+    label: 'Certification Schemes',
+    icon: <Award size={14} />,
+  },
+}
+
+const DEFAULT_TABS: ComplianceTabId[] = ['standards', 'certification']
 
 interface MoreTabsMenuProps {
   activeTab: string
-  onSelect: (tab: SecondaryTab) => void
+  onSelect: (tab: ComplianceTabId) => void
+  /**
+   * The set of tabs to surface in the dropdown. Defaults to the historical
+   * Standardization Bodies + Certification Schemes pair so existing callers
+   * stay working without changes.
+   */
+  tabs?: readonly ComplianceTabId[]
 }
 
-export function MoreTabsMenu({ activeTab, onSelect }: MoreTabsMenuProps) {
+export function MoreTabsMenu({ activeTab, onSelect, tabs = DEFAULT_TABS }: MoreTabsMenuProps) {
   const [open, setOpen] = useState(false)
   const [pos, setPos] = useState<{ top: number; left: number } | null>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
+
+  // eslint-disable-next-line security/detect-object-injection
+  const items: TabMeta[] = tabs.map((id) => TAB_META[id]).filter(Boolean)
 
   // Portal-positioned dropdown escapes the TabsList overflow-x-auto clipping context.
   const updatePosition = useCallback(() => {
@@ -57,7 +84,9 @@ export function MoreTabsMenu({ activeTab, onSelect }: MoreTabsMenuProps) {
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
-  const hasActiveSecondary = SECONDARY_TAB_META.some((t) => t.value === activeTab)
+  if (items.length === 0) return null
+
+  const hasActiveSecondary = items.some((t) => t.value === activeTab)
 
   return (
     <>
@@ -89,7 +118,7 @@ export function MoreTabsMenu({ activeTab, onSelect }: MoreTabsMenuProps) {
             style={{ position: 'fixed', top: pos.top, left: pos.left }}
             className="z-50 min-w-[200px] bg-card border border-border rounded-lg shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150"
           >
-            {SECONDARY_TAB_META.map((tab) => (
+            {items.map((tab) => (
               <Button
                 key={tab.value}
                 variant="ghost"

@@ -817,6 +817,70 @@ export const PERSONA_EXCLUDED_ACHIEVEMENTS: Record<PersonaId, string[]> = {
 }
 
 /**
+ * Persona-aware primary-tab order for /compliance (P11-P1-01).
+ *
+ * Compliance has 6 logical tabs — `foryou`, `landscape`, `records`, `cswp39`,
+ * `standards`, `certification`. Researcher sees all six inline. Every other
+ * persona collapses to 3 primary tabs + a "More" overflow dropdown carrying
+ * the rest. Primary tabs render in the listed order.
+ *
+ * `foryou` is always first so the persona-tailored body is the default entry.
+ *
+ * Resolution: when no persona is selected, the default order `['foryou',
+ * 'landscape', 'records']` ships and the three remaining tabs collapse into
+ * "More" (matching the executive surface, which is the highest-traffic case).
+ */
+export type ComplianceTabId =
+  | 'foryou'
+  | 'landscape'
+  | 'records'
+  | 'cswp39'
+  | 'standards'
+  | 'certification'
+
+const ALL_COMPLIANCE_TABS: readonly ComplianceTabId[] = [
+  'foryou',
+  'landscape',
+  'records',
+  'cswp39',
+  'standards',
+  'certification',
+]
+
+export const PERSONA_COMPLIANCE_TABS: Record<PersonaId, readonly ComplianceTabId[]> = {
+  executive: ['foryou', 'landscape', 'records'],
+  architect: ['foryou', 'cswp39', 'landscape'],
+  developer: ['foryou', 'landscape', 'cswp39'],
+  ops: ['foryou', 'records', 'cswp39'],
+  researcher: ALL_COMPLIANCE_TABS,
+  curious: ['foryou', 'records', 'landscape'],
+}
+
+const DEFAULT_PRIMARY_COMPLIANCE_TABS: readonly ComplianceTabId[] = [
+  'foryou',
+  'landscape',
+  'records',
+]
+
+/**
+ * Returns the primary tab order for the active persona, falling back to a
+ * sensible 3-tab default for the no-persona case.
+ */
+export function getComplianceTabOrder(persona: PersonaId | null): readonly ComplianceTabId[] {
+  if (!persona) return DEFAULT_PRIMARY_COMPLIANCE_TABS
+  return PERSONA_COMPLIANCE_TABS[persona]
+}
+
+/**
+ * Returns the tabs that should be hidden behind the "More" menu for the
+ * active persona — i.e. every tab NOT in the persona's primary order.
+ */
+export function getComplianceOverflowTabs(persona: PersonaId | null): readonly ComplianceTabId[] {
+  const primary = new Set(getComplianceTabOrder(persona))
+  return ALL_COMPLIANCE_TABS.filter((t) => !primary.has(t))
+}
+
+/**
  * Persona-flavored maturity tier overlay for the awareness-score belt ladder.
  *
  * The 7 generic belts (White → Black) still drive scoring math, but Executive
