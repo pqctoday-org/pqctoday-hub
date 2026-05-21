@@ -77,6 +77,7 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 ### Data
 
+- **RAG corpus + embeddings + trust-engine signatures regenerated for RFC 9964** (2026-05-20): `public/data/rag-corpus.json` regenerated (2 new chunks for `RFC-9964`: library row + qwen3.6:27b doc enrichment) and the NICE/Protocol-Matrix/regulatory-timeline/framework-fines PROV-DM `was_derived_from` backfill (97 chunks). `embeddings.bin` (16.5 MB) + `embeddings-meta.json` (398 KB) rebuilt; `corpusHash` test passes. All 8 trust-engine artifacts (`revisions.jsonl`, `rag-corpus.json`, 4 OSCAL files, `pqctoday-cbom.json`, `community-signals.json`) re-signed under maintainer kid `11b723084d047b4c` and verified clean against the new P4 CI gate.
 - **Compliance data refresh**: `compliance_05192026.csv` — 175 framework rows updated.
 - **Library refresh**: `library_05192026_r4.csv` — updated entries.
 - **OSCAL / CBOM regenerated** to v3.16.0.
