@@ -54,6 +54,7 @@ import type { ROISummary } from '../shared/ROICalculatorSection'
 import { KPITrendingSection } from './KPITrendingSection'
 import { BoardBriefSection } from './BoardBriefSection'
 import { BoardPackExport } from './BoardPackExport'
+import { REPORT_SECTION_LABELS } from '../../data/reportSectionToCswp39'
 import { formatDriver } from '../../data/driverLabels'
 import { RiskGauge, riskConfig } from '../shared/widgets/RiskGauge'
 import { Button } from '../ui/button'
@@ -503,10 +504,8 @@ export const ReportContent: React.FC<AssessReportProps> = ({
   const cfg = (sectionId: ReportSectionId) =>
     getReportSectionConfig(selectedPersona, sectionId, showFullReport)
 
-  /** Whether the current persona has any hidden sections (enables summary/full toggle). */
-  const hasSummaryMode = useMemo(() => {
-    if (!selectedPersona) return false
-    const sectionIds: ReportSectionId[] = [
+  const REPORT_SECTION_ORDER: ReportSectionId[] = useMemo(
+    () => [
       'countryTimeline',
       'riskScore',
       'keyFindings',
@@ -520,9 +519,17 @@ export const ReportContent: React.FC<AssessReportProps> = ({
       'migrationRoadmap',
       'migrationToolkit',
       'threatLandscape',
-    ]
-    return sectionIds.some((id) => getReportSectionConfig(selectedPersona, id).state === 'hidden')
-  }, [selectedPersona])
+    ],
+    []
+  )
+
+  /** Whether the current persona has any hidden sections (enables summary/full toggle). */
+  const hasSummaryMode = useMemo(() => {
+    if (!selectedPersona) return false
+    return REPORT_SECTION_ORDER.some(
+      (id) => getReportSectionConfig(selectedPersona, id).state === 'hidden'
+    )
+  }, [selectedPersona, REPORT_SECTION_ORDER])
 
   /** Top migrate catalog products relevant to this assessment's industry + infrastructure. */
   const relevantSoftware = useMemo(() => {
@@ -1561,6 +1568,39 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         </p>
                       </div>
                     )}
+
+                    {/* Hidden-by-role footer (P15-P1-05) — surfaces sections this
+                        persona is currently hiding, with a click-to-show toggle. */}
+                    {selectedPersona &&
+                      hasSummaryMode &&
+                      !showFullReport &&
+                      (() => {
+                        const hidden = REPORT_SECTION_ORDER.filter(
+                          (id) => getReportSectionConfig(selectedPersona, id).state === 'hidden'
+                        )
+                        if (hidden.length === 0) return null
+                        return (
+                          <div className="glass-panel p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 print:hidden border-l-4 border-l-muted-foreground/30">
+                            <div className="text-xs text-muted-foreground leading-relaxed">
+                              <span className="font-medium text-foreground">
+                                {hidden.length} section{hidden.length !== 1 ? 's' : ''} hidden
+                              </span>{' '}
+                              for your {PERSONAS[selectedPersona].label} view:{' '}
+                              <span className="italic">
+                                {hidden.map((id) => REPORT_SECTION_LABELS[id] ?? id).join(' · ')}
+                              </span>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setShowFullReport(true)}
+                              className="text-xs h-7 px-3 border border-border whitespace-nowrap"
+                            >
+                              Show full report
+                            </Button>
+                          </div>
+                        )
+                      })()}
 
                     {/* Migration Workflow activation CTA */}
                     {!workflowActive && assessmentStatus === 'complete' && (
