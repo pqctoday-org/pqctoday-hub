@@ -36,6 +36,10 @@ The biggest three-day release window of the year. What you'll actually notice:
 
 - **InPageToc component** [view:/learn]: Sticky "On this page" table-of-contents for long learn modules. Scans `section[id]` and `h2[id]/h3[id]` headings, tracks the active section via `IntersectionObserver`, and renders a collapsible accordion on mobile and a sticky right rail at the `xl:` breakpoint. Wired to the Crypto Management Modernization module as the first integration.
 
+### Fixed
+
+- **VPN simulation classical mode: `CKR_USER_NOT_LOGGED_IN` (0x101) on EC key generation** [view:/playground]: `C_GenerateKeyPair` in the IKEv2 Diffie-Hellman path (`pkcs11_dh.c`) returned 0x101 because softhsmv3 defaults `CKA_PRIVATE=TRUE` on private keys, requiring an authenticated session. Two complementary guards were added under `#ifdef __EMSCRIPTEN__`: (1) `C_Login(CKU_USER, "1234")` immediately after `C_OpenSession` in `find_token` so the session is authenticated before any key operation; (2) a belt-and-suspenders `C_Login` call at the top of `traced_C_GenerateKeyPair` in `pkcs11_wasm_rpc.c`. The fix was also applied to the WASM v2 build (`strongswan-v2.js`) in the same session. Rebuilt `strongswan.js` / `strongswan.wasm` (v1, used by VPN simulator) and deployed to `public/wasm/`.
+
 ### Changed
 
 - **Module cards show step count** [view:/learn]: Not-started module cards now display "N steps · M min" instead of duration alone, so users know the workshop length before entering.
