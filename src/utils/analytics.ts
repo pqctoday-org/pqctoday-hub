@@ -138,7 +138,7 @@ export const logArtifactGenerated = (moduleId: string, artifactType: string) => 
 }
 
 export const logAlgorithmView = (algorithmName: string) => {
-  logEvent('Algorithms', 'View Detail', algorithmName)
+  logEvent('Algorithms', 'View Detail', personaLabel(algorithmName))
 }
 
 export const logComplianceSearch = (query: string) => {
