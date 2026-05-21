@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Calendar, ExternalLink, Flag, Info, Sparkles } from 'lucide-react'
 import { StatusBadge } from '../common/StatusBadge'
@@ -16,6 +17,8 @@ import type { TimelineDocumentRow } from './TimelineDocumentDetailPopover'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { TimelineEvidenceBadge } from './TimelineEvidenceBadge'
 import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
+import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
+import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { Button } from '@/components/ui/button'
 
 interface TimelineDocumentCardProps {
@@ -34,6 +37,8 @@ export const TimelineDocumentCard = ({
     end: 'hsl(var(--muted))',
     glow: 'hsl(var(--ring))',
   }
+  const { revisions } = useRevisions()
+  const [drilldownOpen, setDrilldownOpen] = useState(false)
 
   const enrichmentKey = getTimelineEnrichmentKey(row.countryName, row.org, row.title)
   const enrichment = timelineEnrichments[enrichmentKey]
@@ -105,7 +110,15 @@ export const TimelineDocumentCard = ({
             Enriched
           </span>
         )}
-        <ReviewedBadge domain="timeline" entityId={row.title} showUnreviewed={false} />
+        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+        <span onClick={(e) => e.stopPropagation()}>
+          <ReviewedBadge
+            domain="timeline"
+            entityId={row.title}
+            showUnreviewed={false}
+            onOpenDrilldown={() => setDrilldownOpen(true)}
+          />
+        </span>
       </div>
 
       {/* Evidence badge row — FR-T-03 + C9 freshness */}
@@ -209,6 +222,18 @@ export const TimelineDocumentCard = ({
           />
         </div>
       </div>
+      {drilldownOpen && (
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+        <div onClick={(e) => e.stopPropagation()}>
+          <RevisionDrilldownPanel
+            domain="timeline"
+            entityId={row.title}
+            entityLabel={row.title}
+            revisions={byRecord(revisions, 'timeline', row.title)}
+            onClose={() => setDrilldownOpen(false)}
+          />
+        </div>
+      )}
     </motion.article>
   )
 }

@@ -1,10 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { getIndustryIcon } from './threatsHelper'
 import type { ThreatItem } from '../../data/threatsData'
 import { StatusBadge } from '../common/StatusBadge'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
+import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
+import { SourcePassagesDrawer } from '@/components/ui/SourcePassagesDrawer'
+import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
@@ -23,6 +27,8 @@ interface ThreatCardProps {
 export const ThreatCard = ({ item, index = 0, onClick, dimmed = false }: ThreatCardProps) => {
   const isBookmarked = useBookmarkStore((s) => s.myThreats.includes(item.threatId))
   const toggleMyThreat = useBookmarkStore((s) => s.toggleMyThreat)
+  const { revisions } = useRevisions()
+  const [drilldownOpen, setDrilldownOpen] = useState(false)
 
   return (
     <motion.article
@@ -89,7 +95,15 @@ export const ThreatCard = ({ item, index = 0, onClick, dimmed = false }: ThreatC
           {item.threatId}
         </h3>
         <TrustScoreBadge resourceType="threats" resourceId={item.threatId} size="sm" />
-        <ReviewedBadge domain="threats" entityId={item.threatId} showUnreviewed={false} />
+        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+        <span onClick={(e) => e.stopPropagation()}>
+          <ReviewedBadge
+            domain="threats"
+            entityId={item.threatId}
+            showUnreviewed={false}
+            onOpenDrilldown={() => setDrilldownOpen(true)}
+          />
+        </span>
       </div>
 
       <p className="text-xs text-muted-foreground mb-4 line-clamp-3 leading-relaxed min-h-[4.5em]">
@@ -125,6 +139,8 @@ export const ThreatCard = ({ item, index = 0, onClick, dimmed = false }: ThreatC
           ))}
         </div>
       </div>
+
+      <SourcePassagesDrawer chunkId={`threat-${item.threatId}`} className="mb-3" />
 
       {/* Action Bar */}
       <div className="flex items-center justify-between mt-4 pt-3 border-t border-border">
@@ -168,6 +184,18 @@ export const ThreatCard = ({ item, index = 0, onClick, dimmed = false }: ThreatC
           />
         </div>
       </div>
+      {drilldownOpen && (
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+        <div onClick={(e) => e.stopPropagation()}>
+          <RevisionDrilldownPanel
+            domain="threats"
+            entityId={item.threatId}
+            entityLabel={item.threatId}
+            revisions={byRecord(revisions, 'threats', item.threatId)}
+            onClose={() => setDrilldownOpen(false)}
+          />
+        </div>
+      )}
     </motion.article>
   )
 }
