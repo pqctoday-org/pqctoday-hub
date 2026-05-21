@@ -162,15 +162,16 @@ function timelineEventToRow(ev: TimelineEvent): TimelineDocumentRow {
 }
 
 /**
- * Resolves the For-You tab content per persona — executives get the
- * dramatized ExecutiveTimelineView with a regulatory clock + framework cards
- * with embedded milestones; everyone else gets the generic 4-section
- * ApplicabilityPanel until their persona-specific view ships (Phase 5).
+ * Resolves the For-You tab content per persona:
+ *   executive  → ExecutiveTimelineView (regulatory clock + framework cards + milestones)
+ *   architect  → ArchitectStandardsView (standards landscape + crypto-agility focus)
+ *   researcher → ResearcherEvidenceView (full evidence browser + citation depth)
+ *   developer  → ApplicabilityPanel (defaults to records tab via useComplianceUrlState)
+ *   ops / curious / no persona → ApplicabilityPanel (generic recommendation surface)
  *
- * Both branches consume the same `useApplicability` engine output; only the
- * rendering differs. Profile override is plumbed identically so the workshop
- * deep-link `?country=Australia&ind=Government & Defense` works regardless
- * of persona.
+ * All branches consume the same `useApplicability` engine output; only the rendering
+ * differs. Profile override is plumbed identically so the workshop deep-link
+ * `?country=Australia&ind=Government & Defense` works regardless of persona.
  */
 function ForYouSection() {
   const persona = usePersonaStore((s) => s.selectedPersona)
