@@ -1,13 +1,63 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Lock } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { Lock, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PersonaSwitchModal } from '@/components/Persona/PersonaSwitchModal'
+import { logPreviewBannerShown, logPreviewBannerDismissed } from '@/utils/analytics'
 
-export const PreviewBanner: React.FC = () => {
-  const [switchOpen, setSwitchOpen] = useState(false)
+interface Props {
+  /** Short description of who this page is "most useful for" — e.g. "Architect, Developer". */
+  pageContext?: string
+  /**
+   * Stable key for session-dismiss persistence. Defaults to the current route pathname.
+   * Override when multiple banners share a route (rare).
+   */
+  dismissKey?: string
+}
+
+const STORAGE_PREFIX = 'preview-banner-dismissed:'
+
+function dismissed(key: string): boolean {
+  if (typeof window === 'undefined') return false
+  try {
+    return window.sessionStorage.getItem(STORAGE_PREFIX + key) === '1'
+  } catch {
+    return false
+  }
+}
+
+function markDismissed(key: string) {
+  if (typeof window === 'undefined') return
+  try {
+    window.sessionStorage.setItem(STORAGE_PREFIX + key, '1')
+  } catch {
+    /* sessionStorage unavailable — ignore */
+  }
+}
+
+export const PreviewBanner: React.FC<Props> = ({ pageContext, dismissKey }) => {
+  const location = useLocation()
   const navigate = useNavigate()
+  const key = dismissKey ?? location.pathname
+  const [switchOpen, setSwitchOpen] = useState(false)
+  const [isDismissed, setIsDismissed] = useState<boolean>(() => dismissed(key))
+
+  // Fire telemetry once per mount when the banner is actually rendered
+  useEffect(() => {
+    if (!isDismissed) {
+      logPreviewBannerShown(key)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key])
+
+  if (isDismissed) return null
+
+  const handleDismiss = () => {
+    markDismissed(key)
+    logPreviewBannerDismissed(key)
+    setIsDismissed(true)
+  }
 
   return (
     <>
@@ -21,11 +71,20 @@ export const PreviewBanner: React.FC = () => {
             Preview locked — switch to a technical role for the full feature.
           </p>
           <p className="text-xs text-muted-foreground mt-0.5">
-            New to PQC? Start with <span className="text-foreground">PQC 101</span> first to build
-            the foundation, then come back here.
+            {pageContext ? (
+              <>
+                Most useful for <span className="text-foreground">{pageContext}</span>. New to PQC?
+                Start with <span className="text-foreground">PQC 101</span> first.
+              </>
+            ) : (
+              <>
+                New to PQC? Start with <span className="text-foreground">PQC 101</span> first to
+                build the foundation, then come back here.
+              </>
+            )}
           </p>
         </div>
-        <div className="flex gap-2 shrink-0 w-full sm:w-auto">
+        <div className="flex gap-2 shrink-0 w-full sm:w-auto items-center">
           <Button
             variant="ghost"
             size="sm"
@@ -41,6 +100,15 @@ export const PreviewBanner: React.FC = () => {
             className="h-7 text-xs flex-1 sm:flex-none"
           >
             Switch role
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleDismiss}
+            aria-label="Dismiss preview banner"
+            className="h-7 w-7 p-0 shrink-0"
+          >
+            <X size={14} aria-hidden="true" />
           </Button>
         </div>
       </div>

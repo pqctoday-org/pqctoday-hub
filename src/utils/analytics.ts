@@ -369,6 +369,14 @@ export const logPersonaSwitchClicked = (source: 'nav' | 'landing-hero' | 'banner
   logEvent('Persona', 'Switch Clicked', personaLabel(source))
 }
 
+export const logPreviewBannerShown = (route: string) => {
+  logEvent('Preview Banner', 'Shown', personaLabel(route))
+}
+
+export const logPreviewBannerDismissed = (route: string) => {
+  logEvent('Preview Banner', 'Dismissed', personaLabel(route))
+}
+
 export const logRegionSelected = (region: string) => {
   logEvent('Persona', 'Region', region)
 }
