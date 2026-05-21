@@ -26,6 +26,7 @@ import { WORKSHOP_TOOLS, CATEGORIES, type ToolDifficulty } from './workshopRegis
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { logEvent, personaLabel } from '@/utils/analytics'
+import { getCuriousToolDescription } from '@/data/playgroundCuriousDescriptions'
 import type { PersonaId } from '@/data/learningPersonas'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 
@@ -656,7 +657,9 @@ export const PlaygroundWorkshop = () => {
                                 {tool.wip && <WipBadge />}
                               </div>
                               <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                                {tool.description}
+                                {(selectedPersona === 'curious' &&
+                                  getCuriousToolDescription(tool.id)) ||
+                                  tool.description}
                               </p>
                               <div className="flex flex-wrap gap-1 mt-2">
                                 {tool.algorithms.map((algo) => (
