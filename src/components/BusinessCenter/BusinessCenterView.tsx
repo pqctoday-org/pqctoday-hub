@@ -212,6 +212,19 @@ export function BusinessCenterView() {
   // Filter state
   const [typeFilter, setTypeFilter] = useState('all')
 
+  // Focus mode (P14-P1-03) — when true, the right pane renders ONLY the active
+  // zone; closed zones are hidden so the active one gets full vertical space.
+  // The left rail stays visible (intermediate+ density) so users can switch
+  // zones without losing context.
+  const [focusMode, setFocusMode] = useState(false)
+  const handleFocusToggle = useCallback(() => {
+    setFocusMode((prev) => {
+      const next = !prev
+      logEvent('Business Center', next ? 'Zone Focus On' : 'Zone Focus Off', personaLabel())
+      return next
+    })
+  }, [])
+
   // Drawer state. Create mode uses `drawerCreateType` with a null document; view/edit
   // use `drawerDoc` with createType cleared. The drawer itself handles the transition
   // from create → view once a new document of the given type is persisted.
@@ -434,8 +447,25 @@ export function BusinessCenterView() {
                    density the Fig 3 diagram is the single source of zone nav. */}
               {density !== 'basic' && (
                 <aside className="hidden md:flex flex-col gap-1 w-72 shrink-0 sticky top-6 self-start">
-                  <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest px-3 mb-1">
-                    Zones
+                  <div className="flex items-center justify-between px-3 mb-1">
+                    <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">
+                      Zones
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleFocusToggle}
+                      aria-pressed={focusMode}
+                      aria-label={
+                        focusMode
+                          ? 'Show all zones in the right pane'
+                          : 'Focus on the active zone only'
+                      }
+                      className="h-6 px-2 text-[10px] font-medium gap-1 text-muted-foreground hover:text-foreground"
+                    >
+                      {focusMode ? 'Show all' : 'Focus'}
+                    </Button>
                   </div>
                   {CSWP39_ZONE_ORDER.map((zone) => {
                     // eslint-disable-next-line security/detect-object-injection
@@ -478,20 +508,23 @@ export function BusinessCenterView() {
                 </aside>
               )}
 
-              {/* Zone panels */}
+              {/* Zone panels — focusMode hides closed zones so the active
+                   one gets the full vertical space (P14-P1-03). */}
               <div className="flex-1 min-w-0 space-y-3">
-                {CSWP39_ZONE_ORDER.map((zone) => (
-                  <CSWP39ZonePanel
-                    key={zone}
-                    zone={zone}
-                    metrics={metrics}
-                    open={zone === effectiveOpenZone}
-                    onToggle={() => handleZoneToggle(zone)}
-                    featuredArtifacts={allFeaturedArtifacts}
-                    density={density}
-                    {...zoneCallbacks}
-                  />
-                ))}
+                {CSWP39_ZONE_ORDER.filter((zone) => !focusMode || zone === effectiveOpenZone).map(
+                  (zone) => (
+                    <CSWP39ZonePanel
+                      key={zone}
+                      zone={zone}
+                      metrics={metrics}
+                      open={zone === effectiveOpenZone}
+                      onToggle={() => handleZoneToggle(zone)}
+                      featuredArtifacts={allFeaturedArtifacts}
+                      density={density}
+                      {...zoneCallbacks}
+                    />
+                  )
+                )}
                 <PillarDisclaimer className="px-1 pt-2" />
               </div>
             </div>
