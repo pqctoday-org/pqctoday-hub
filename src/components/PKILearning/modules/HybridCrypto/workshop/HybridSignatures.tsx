@@ -42,6 +42,7 @@ import {
 } from '@/wasm/softhsm/session'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { Button } from '@/components/ui/button'
+import { CopyButton } from '@/components/ui/CopyButton'
 import { ErrorAlert } from '@/components/ui/error-alert'
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -741,13 +742,27 @@ export const HybridSignatures: React.FC = () => {
           {/* Component hex display */}
           <div className="space-y-2 text-xs font-mono">
             <div>
-              <span className="text-muted-foreground">EC component (R‖s): </span>
+              <div className="flex items-center justify-between gap-2 mb-0.5">
+                <span className="text-muted-foreground">EC component (R‖s):</span>
+                <CopyButton
+                  text={current.sigResult.components.ecPart}
+                  label="Copy"
+                  className="h-6 min-h-[24px] px-2 py-0 text-[10px]"
+                />
+              </div>
               <span className="text-foreground break-all">
                 {hexPreview(current.sigResult.components.ecPart, 64)}
               </span>
             </div>
             <div>
-              <span className="text-muted-foreground">ML-DSA component: </span>
+              <div className="flex items-center justify-between gap-2 mb-0.5">
+                <span className="text-muted-foreground">ML-DSA component:</span>
+                <CopyButton
+                  text={current.sigResult.components.mlPart}
+                  label="Copy"
+                  className="h-6 min-h-[24px] px-2 py-0 text-[10px]"
+                />
+              </div>
               <span className="text-foreground break-all">
                 {current.sigResult.components.mlPart}
               </span>

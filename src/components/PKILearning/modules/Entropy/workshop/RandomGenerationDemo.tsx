@@ -13,6 +13,7 @@ import {
   BookOpen,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { CopyButton } from '@/components/ui/CopyButton'
 import { getRandomBytes } from '@/utils/webCrypto'
 import { arrayBufferToHex } from '@/utils/webCrypto'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
@@ -225,6 +226,13 @@ const SourceCard: React.FC<{
       </div>
     ) : result ? (
       <>
+        <div className="flex justify-end mb-1">
+          <CopyButton
+            text={formatHex(result.data)}
+            label="Copy hex"
+            className="h-6 min-h-[24px] px-2 py-0 text-[10px]"
+          />
+        </div>
         <pre className="font-mono text-[11px] text-foreground bg-muted/30 rounded-lg p-2 overflow-x-auto whitespace-pre-wrap break-all leading-relaxed max-h-20 overflow-y-auto">
           {formatHex(result.data)}
         </pre>

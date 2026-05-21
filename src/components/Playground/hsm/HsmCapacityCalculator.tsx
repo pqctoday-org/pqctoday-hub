@@ -30,6 +30,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
+import { Switch } from '@/components/ui/switch'
 import { CollapsibleSection } from '@/components/ui/CollapsibleSection'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
@@ -1779,13 +1780,12 @@ export function HsmCapacityCalculator() {
                           s.enabled ? 'border-primary/40 bg-primary/5' : 'border-border bg-muted/10'
                         )}
                       >
-                        <label className="flex items-start gap-2 cursor-pointer">
-                          <input
-                            type="checkbox"
+                        <div className="flex items-start gap-2 cursor-pointer">
+                          <Switch
                             checked={s.enabled}
-                            onChange={(e) => setUseCaseEnabled(uc.id, e.target.checked)}
-                            className="mt-0.5 accent-primary"
+                            onCheckedChange={(checked) => setUseCaseEnabled(uc.id, checked)}
                             aria-label={`Enable ${uc.name}`}
+                            className="mt-0.5 shrink-0"
                           />
                           <div className="flex-1">
                             <p className="text-sm font-medium text-foreground">{uc.name}</p>
@@ -1794,7 +1794,7 @@ export function HsmCapacityCalculator() {
                               Post-PQC ops: {pqcAlgos.map((a) => ALGO_LABELS[a]).join(' + ')}
                             </p>
                           </div>
-                        </label>
+                        </div>
                         <SliderRow
                           label="Transactions / sec"
                           value={s.tps}
