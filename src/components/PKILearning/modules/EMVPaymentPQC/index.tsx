@@ -243,6 +243,8 @@ export const EMVPaymentPQCModule: React.FC = () => {
                 stepDescription={PARTS[currentPart].description}
                 stepIndex={currentPart}
                 totalSteps={PARTS.length}
+                steps={PARTS.map((p) => ({ id: p.id, label: p.title }))}
+                onStepClick={handlePartChange}
               />
               {currentPart === 0 && <NetworkComparator key={`net-comp-${configKey}`} />}
               {currentPart === 1 && <TransactionSimulator key={`txn-sim-${configKey}`} />}

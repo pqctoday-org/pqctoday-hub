@@ -226,6 +226,8 @@ export const SecretsManagementPQCModule: React.FC = () => {
                 stepDescription={PARTS[currentPart].description}
                 stepIndex={currentPart}
                 totalSteps={PARTS.length}
+                steps={PARTS.map((p) => ({ id: p.id, label: p.title }))}
+                onStepClick={handlePartChange}
               />
               {currentPart === 0 && <SecretsArchitectureMapper key={`mapper-${configKey}`} />}
               {currentPart === 1 && <VaultPQCSimulator key={`vault-${configKey}`} />}

@@ -217,6 +217,8 @@ export const WebGatewayPQCModule: React.FC = () => {
                 stepDescription={PARTS[currentPart].description}
                 stepIndex={currentPart}
                 totalSteps={PARTS.length}
+                steps={PARTS.map((p) => ({ id: p.id, label: p.title }))}
+                onStepClick={handlePartChange}
               />
               {currentPart === 0 && <TopologyBuilder key={`topology-${configKey}`} />}
               {currentPart === 1 && <TLSTerminationPatterns key={`termination-${configKey}`} />}

@@ -299,6 +299,8 @@ export const CryptoMgmtModernizationModule: React.FC = () => {
                 stepIndex={currentPart}
                 totalSteps={PARTS.length}
                 cswp39Step={PARTS[currentPart].cswp39Step}
+                steps={PARTS.map((p) => ({ id: p.id, label: p.title }))}
+                onStepClick={handlePartChange}
               />
               {currentPart === 0 && <MaturityAssessment />}
               {currentPart === 1 && <InventoryLifecycleSimulator />}

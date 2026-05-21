@@ -257,6 +257,8 @@ export const VendorRiskModule: React.FC = () => {
                 stepDescription={PARTS[currentPart].description}
                 stepIndex={currentPart}
                 totalSteps={PARTS.length}
+                steps={PARTS.map((p) => ({ id: p.id, label: p.title }))}
+                onStepClick={handlePartChange}
               />
               {currentPart === 0 && <InfrastructureSelector key={`selector-${configKey}`} />}
               {currentPart === 1 && <VendorScorecardBuilder key={`scorecard-${configKey}`} />}
