@@ -1,8 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
-import { FileSearch, Loader2, AlertTriangle } from 'lucide-react'
+import { FileSearch, Loader2 } from 'lucide-react'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { Button } from '@/components/ui/button'
+import { ErrorAlert } from '@/components/ui/error-alert'
+import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
 import { EE_CERT_PATH, CA_ROOT_CERT_PATH } from '../constants'
 import { ensureMockCA, caInputFiles } from '../mock-ca/mockCA'
 
@@ -16,6 +21,7 @@ export const CertViewer: React.FC<CertViewerProps> = ({ eeCertPem }) => {
   const [verifyOut, setVerifyOut] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([])
 
   const handleDecode = async () => {
     if (!eeCertPem) {
@@ -24,6 +30,8 @@ export const CertViewer: React.FC<CertViewerProps> = ({ eeCertPem }) => {
     }
     setBusy(true)
     setError(null)
+    const startedAt = performance.now()
+    setLogEntries([{ status: 'pending', message: 'Decoding + verifying issued certificate…' }])
     try {
       const fileName = EE_CERT_PATH.replace(/^\//, '')
       const out = await openSSLService.execute(`openssl x509 -in ${EE_CERT_PATH} -text -noout`, [
@@ -40,8 +48,23 @@ export const CertViewer: React.FC<CertViewerProps> = ({ eeCertPem }) => {
         (verify.stdout || '') + (verify.stderr ? '\n' + verify.stderr : '') ||
           '(no verifier output)'
       )
+      setLogEntries([
+        {
+          status: 'success',
+          message: 'Decoded and verified against the mock CA root.',
+          durationMs: Math.round(performance.now() - startedAt),
+        },
+      ])
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      const msg = e instanceof Error ? e.message : String(e)
+      setError(msg)
+      setLogEntries([
+        {
+          status: 'error',
+          message: `Decode/verify failed — ${msg}`,
+          durationMs: Math.round(performance.now() - startedAt),
+        },
+      ])
     } finally {
       setBusy(false)
     }
@@ -59,12 +82,9 @@ export const CertViewer: React.FC<CertViewerProps> = ({ eeCertPem }) => {
         {busy ? 'Decoding…' : 'Decode + verify issued certificate'}
       </Button>
 
-      {error && (
-        <div className="rounded border border-status-error/30 bg-status-error/10 p-3 text-sm text-status-error flex items-start gap-2">
-          <AlertTriangle size={16} className="mt-0.5 shrink-0" />
-          <span>{error}</span>
-        </div>
-      )}
+      {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} />}
+
+      {error && <ErrorAlert message={error} onRetry={handleDecode} />}
 
       {decoded && (
         <details open className="rounded border border-border bg-muted/30 p-3">

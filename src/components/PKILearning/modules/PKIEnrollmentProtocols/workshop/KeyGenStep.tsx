@@ -1,10 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
-import { Loader2, KeyRound, CheckCircle2, AlertTriangle } from 'lucide-react'
+import { Loader2, KeyRound, CheckCircle2 } from 'lucide-react'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { Button } from '@/components/ui/button'
+import { ErrorAlert } from '@/components/ui/error-alert'
 import { CopyableOutput } from '@/components/ui/CopyableOutput'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
 import { ML_DSA_ALG, EE_KEY_PATH } from '../constants'
 
 interface KeyGenStepProps {
@@ -25,11 +30,14 @@ export const KeyGenStep: React.FC<KeyGenStepProps> = ({ onKeyReady }) => {
   const [busy, setBusy] = useState(false)
   const [keyPem, setKeyPem] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([])
 
   const handleGenerate = async () => {
     setBusy(true)
     setError(null)
     setKeyPem(null)
+    const startedAt = performance.now()
+    setLogEntries([{ status: 'pending', message: `Generating ${algorithm} key pair…` }])
     try {
       const result = await openSSLService.execute(
         `openssl genpkey -algorithm ${algorithm} -out ${EE_KEY_PATH}`
@@ -45,9 +53,23 @@ export const KeyGenStep: React.FC<KeyGenStepProps> = ({ onKeyReady }) => {
       const pem = new TextDecoder().decode(keyFile.data)
       setKeyPem(pem)
       onKeyReady(algorithm, keyFile.data)
+      setLogEntries([
+        {
+          status: 'success',
+          message: `Generated ${algorithm} key (${keyFile.data.length} bytes PEM)`,
+          durationMs: Math.round(performance.now() - startedAt),
+        },
+      ])
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e)
       setError(msg)
+      setLogEntries([
+        {
+          status: 'error',
+          message: `Key generation failed — ${msg}`,
+          durationMs: Math.round(performance.now() - startedAt),
+        },
+      ])
     } finally {
       setBusy(false)
     }
@@ -76,12 +98,9 @@ export const KeyGenStep: React.FC<KeyGenStepProps> = ({ onKeyReady }) => {
         </Button>
       </div>
 
-      {error && (
-        <div className="rounded border border-status-error/30 bg-status-error/10 p-3 text-sm text-status-error flex items-start gap-2">
-          <AlertTriangle size={16} className="mt-0.5 shrink-0" />
-          <pre className="whitespace-pre-wrap font-mono text-xs">{error}</pre>
-        </div>
-      )}
+      {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} />}
+
+      {error && <ErrorAlert message={error} onRetry={handleGenerate} />}
 
       {keyPem && (
         <div className="space-y-2">

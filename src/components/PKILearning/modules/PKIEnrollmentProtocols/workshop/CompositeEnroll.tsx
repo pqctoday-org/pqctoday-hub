@@ -11,6 +11,11 @@ import {
 } from 'lucide-react'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { Button } from '@/components/ui/button'
+import { ErrorAlert } from '@/components/ui/error-alert'
+import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
 import { ensureMockCA } from '../mock-ca/mockCA'
 import { CA_ROOT_CERT_PATH, CA_ROOT_KEY_PATH } from '../constants'
 
@@ -48,11 +53,16 @@ export const CompositeEnroll: React.FC<CompositeEnrollProps> = ({ eeMlDsaCertPem
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<ParallelResult | null>(null)
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([])
 
   const handleRun = async () => {
     setBusy(true)
     setError(null)
     setResult(null)
+    const startedAt = performance.now()
+    setLogEntries([
+      { status: 'pending', message: 'Building parallel ECDSA + ML-DSA hybrid PKI chain…' },
+    ])
     try {
       const ca = await ensureMockCA()
 
@@ -137,8 +147,23 @@ export const CompositeEnroll: React.FC<CompositeEnrollProps> = ({ eeMlDsaCertPem
         mlDsaCertText,
         mlDsaVerifyOut,
       })
+      setLogEntries([
+        {
+          status: 'success',
+          message: 'Hybrid chain ready — ECDSA + ML-DSA EE certs both anchored at the mock CA.',
+          durationMs: Math.round(performance.now() - startedAt),
+        },
+      ])
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      const msg = e instanceof Error ? e.message : String(e)
+      setError(msg)
+      setLogEntries([
+        {
+          status: 'error',
+          message: `Hybrid enroll failed — ${msg}`,
+          durationMs: Math.round(performance.now() - startedAt),
+        },
+      ])
     } finally {
       setBusy(false)
     }
@@ -192,12 +217,9 @@ export const CompositeEnroll: React.FC<CompositeEnrollProps> = ({ eeMlDsaCertPem
         </div>
       )}
 
-      {error && (
-        <div className="rounded border border-status-error/30 bg-status-error/10 p-3 text-sm text-status-error flex items-start gap-2">
-          <AlertTriangle size={16} className="mt-0.5 shrink-0" />
-          <pre className="whitespace-pre-wrap font-mono text-xs">{error}</pre>
-        </div>
-      )}
+      {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} />}
+
+      {error && <ErrorAlert message={error} onRetry={handleRun} />}
 
       {result && (
         <div className="space-y-4">
