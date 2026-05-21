@@ -54,6 +54,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/assess',
     '/report',
     '/library',
+    '/leaders',
     '/playground',
     '/openssl',
     '/revisions',
