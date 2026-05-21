@@ -24,6 +24,7 @@ import { PageHeader } from '../common/PageHeader'
 import { WorkflowBreadcrumb } from '../shared/WorkflowBreadcrumb'
 import { logReportViewed, logReportShareLinkOpened, logReportCta } from '@/utils/analytics'
 import { EXAMPLE_REPORT_URL } from '@/data/exampleReport'
+import { PersonaSuggestionCard } from '@/components/Assess/PersonaSuggestionCard'
 import { getBeltTierLabel } from '@/data/personaConfig'
 import { useAwarenessScore } from '@/hooks/useAwarenessScore'
 import { decodeShareToken } from '@/utils/reportShareToken'
@@ -378,6 +379,8 @@ export const ReportView: React.FC = () => {
       />
 
       <MaturityTierChip />
+
+      <PersonaSuggestionCard />
 
       {/* Banner when viewing a shared report */}
       {searchParams.get('share') && (
