@@ -153,6 +153,12 @@ export const CRYPTO_BUFF_SITES = [
     url: 'https://openquantumsafe.org',
   },
   {
+    label: 'PostQuantum.com',
+    description:
+      'Industry news, vendor landscape, and explainers covering the post-quantum transition',
+    url: 'https://postquantum.com/',
+  },
+  {
     label: 'IACR ePrint Archive',
     description: 'Preprint server for cryptography research — where PQC papers appear first',
     url: 'https://eprint.iacr.org',
