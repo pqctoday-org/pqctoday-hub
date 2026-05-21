@@ -142,11 +142,11 @@ export const logAlgorithmView = (algorithmName: string) => {
 }
 
 export const logComplianceSearch = (query: string) => {
-  logEvent('Compliance', 'Search', query)
+  logEvent('Compliance', 'Search', personaLabel(query))
 }
 
 export const logComplianceFilter = (filterType: string, value: string) => {
-  logEvent('Compliance', 'Filter', `${filterType}:${value}`)
+  logEvent('Compliance', 'Filter', personaLabel(`${filterType}:${value}`))
 }
 
 export const logMigrateAction = (action: string, label?: string) => {

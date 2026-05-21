@@ -67,6 +67,7 @@ import { RoleFilter } from '../common/RoleFilter'
 import { normalizeCountry } from '@/utils/applicabilityEngine'
 import { useAssessmentFormStore } from '@/store/useAssessmentFormStore'
 import { useComplianceUrlState, type MobileSection } from './useComplianceUrlState'
+import { PreviewBanner } from '../common/PreviewBanner'
 import type { ViewMode } from '@/components/Library/ViewToggle'
 import { INDUSTRY_COMPLIANCE_HINT, REGION_COMPLIANCE_HINT } from '@/data/compliancePersonaHints'
 
@@ -511,6 +512,7 @@ export const ComplianceView = () => {
   const tierFilter = useTrustTierFilter()
   const { data, loading, refresh, lastUpdated, enrichRecord } = useComplianceRefresh()
   const { selectedIndustries, selectedRegion } = usePersonaStore()
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
   const addHistoryEvent = useHistoryStore((s) => s.addEvent)
 
@@ -754,6 +756,8 @@ export const ComplianceView = () => {
         shareText="Explore PQC compliance: standardization bodies, certification programs (FIPS 140-3, ACVP, Common Criteria), and regulatory frameworks."
         onExport={handleExportCsv}
       />
+
+      {selectedPersona === 'curious' && <PreviewBanner pageContext="GRC, Executive, Architect" />}
 
       <LearningFrameBanner />
       <GlossaryStrip />
