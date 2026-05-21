@@ -17,6 +17,8 @@ import {
   Code2,
   Network,
   FlaskConical,
+  Wrench,
+  Compass,
   Calendar,
   UserCheck,
 } from 'lucide-react'
@@ -99,6 +101,8 @@ const PERSONA_CONFIG: Record<string, { label: string; Icon: IconComponent }> = {
   developer: { label: 'Developer', Icon: Code2 },
   architect: { label: 'Architect', Icon: Network },
   researcher: { label: 'Researcher', Icon: FlaskConical },
+  ops: { label: 'Ops', Icon: Wrench },
+  curious: { label: 'Curious', Icon: Compass },
 }
 
 const VIEW_LABELS: Record<string, string> = {
