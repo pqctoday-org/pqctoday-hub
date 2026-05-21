@@ -70,7 +70,7 @@ const PERSONA_HERO_CTA: Record<
 // each role's natural worry: deadlines for execs, library choices for devs,
 // hierarchy redesign for architects, evidence for researchers, fleet rotation
 // for ops, and "what is this" for the curious.
-const PERSONA_HERO_TAGLINE: Record<string, string> = {
+export const PERSONA_HERO_TAGLINE: Record<string, string> = {
   executive:
     'Boards are asking now. CNSA 2.0 deadlines start landing in 2027 — get a defensible answer before the next audit cycle.',
   developer:

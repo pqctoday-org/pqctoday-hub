@@ -61,7 +61,7 @@ function resolveCountryParam(param: string | null, knownCountries: string[]): Re
   return { resolved: 'All', wasUnknown: param.toLowerCase() !== 'all' }
 }
 
-const TIMELINE_PERSONA_HINTS: Record<string, string> = {
+export const TIMELINE_PERSONA_HINTS: Record<string, string> = {
   executive:
     'Focus on regulatory deadlines — countries approaching 2025–2026 milestones need immediate procurement action.',
   developer:
