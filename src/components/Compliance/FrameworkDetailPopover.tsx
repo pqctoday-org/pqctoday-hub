@@ -13,6 +13,7 @@ import {
   Globe,
   ListChecks,
   Tag,
+  Sparkles,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { ComplianceFramework } from '@/data/complianceData'
@@ -24,6 +25,8 @@ import { timelineData } from '@/data/timelineData'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { hasGraphEdges } from '@/utils/conceptXwalkGraph'
 import { FrameworkConceptGraphModal } from './FrameworkConceptGraphModal'
+import { getComplianceCuriousPreface } from '@/data/complianceCuriousPrefaces'
+import { usePersonaStore } from '@/store/usePersonaStore'
 
 interface FrameworkDetailPopoverProps {
   isOpen: boolean
@@ -41,6 +44,11 @@ export const FrameworkDetailPopover = ({
   onSelectLibrary,
   onSelectTimeline,
 }: FrameworkDetailPopoverProps) => {
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const curiousPreface =
+    framework && selectedPersona === 'curious'
+      ? getComplianceCuriousPreface(framework.id)
+      : undefined
   const popoverRef = useRef<HTMLDivElement>(null)
   const [graphOpen, setGraphOpen] = useState(false)
   const graphConceptId = framework ? conceptIdForFramework(framework) : undefined
@@ -173,6 +181,22 @@ export const FrameworkDetailPopover = ({
             </div>
 
             <div className="overflow-y-auto p-4 space-y-4">
+              {curiousPreface && (
+                <section
+                  className="glass-panel border border-primary/30 bg-primary/5 rounded-lg p-3"
+                  aria-label="Plain-English explainer"
+                >
+                  <div className="flex items-start gap-2">
+                    <Sparkles
+                      size={14}
+                      className="text-primary shrink-0 mt-0.5"
+                      aria-hidden="true"
+                    />
+                    <p className="text-sm text-foreground leading-relaxed">{curiousPreface}</p>
+                  </div>
+                </section>
+              )}
+
               <section>
                 <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
                   Description
