@@ -24,6 +24,7 @@ import {
   DEFAULT_MLDSA87_CLIENT_CERT,
 } from '../PKILearning/modules/TLSBasics/utils/defaultCertificates'
 import { Button } from '@/components/ui/button'
+import { WhyThisMatters } from '@/components/ui/WhyThisMatters'
 
 export const TLSSimulatorTab: React.FC = () => {
   const {
@@ -289,6 +290,28 @@ export const TLSSimulatorTab: React.FC = () => {
           </li>
         </ul>
       </div>
+
+      <WhyThisMatters title="TLS 1.3 Security Model & Where PQC Applies" variant="info">
+        <p>
+          TLS 1.3 provides two independent security properties: <strong>authentication</strong>{' '}
+          (server identity is bound to a certificate verified by the CA chain) and{' '}
+          <strong>key exchange</strong> (the session key is established via an ephemeral ECDH/KEM —
+          never exposed in the record). These are separate and both must be migrated independently.
+        </p>
+        <p>
+          <strong>Replacing only the KEX group</strong> (e.g. switching from X25519 to
+          X25519MLKEM768) protects against harvest-now-decrypt-later attacks on the session content.
+          But if the server certificate is still signed by a classical RSA/ECDSA CA, a future
+          quantum adversary can forge that certificate and impersonate the server — defeating
+          authentication entirely.
+        </p>
+        <p>
+          A complete migration requires both: a <strong>hybrid or pure-PQC certificate</strong>{' '}
+          (ML-DSA in the cert chain) <em>and</em> a <strong>hybrid KEM group</strong> in the key
+          share. The &quot;Hybrid (composite) certs&quot; capability above is on the roadmap
+          precisely because half-migration is not sufficient for long-term security.
+        </p>
+      </WhyThisMatters>
 
       <div className="flex justify-end gap-3">
         {results && (

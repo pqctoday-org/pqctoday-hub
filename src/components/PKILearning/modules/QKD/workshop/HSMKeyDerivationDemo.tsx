@@ -10,6 +10,8 @@ import { WasmModeIndicator } from '@/components/shared/WasmModeIndicator'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { Button } from '@/components/ui/button'
+import { WhyThisMatters } from '@/components/ui/WhyThisMatters'
+import { ScopeTransparencyBanner } from '@/components/ui/ScopeTransparencyBanner'
 
 const QKD_KAT_SPECS: KatTestSpec[] = [
   {
@@ -95,6 +97,8 @@ interface DemoState {
   qkdResponseJson: string
   sessionId: string
   sessionKey: string
+  importedHandle?: number // real PKCS#11 handle from C_CreateObject (step 2)
+  importWasLive?: boolean // true when step 2 used the real HSM
 }
 
 export const HSMKeyDerivationDemo: React.FC = () => {
@@ -134,13 +138,34 @@ export const HSMKeyDerivationDemo: React.FC = () => {
     setProcessing(false)
   }, [])
 
-  // Step 2: Import into HSM (conceptual — no actual PKCS#11)
+  // Step 2: Import into HSM — real C_CreateObject when HSM is ready, illustrative otherwise
   const handleImport = useCallback(async () => {
     setProcessing(true)
-    await new Promise((r) => setTimeout(r, 400))
+    await new Promise((r) => setTimeout(r, 300))
+    if (hsm.isReady && hsm.moduleRef.current && state.qkdSecret) {
+      try {
+        const M = hsm.moduleRef.current as unknown as SoftHSMModule
+        const ikm = new Uint8Array(32)
+        for (let i = 0; i < 32; i++)
+          ikm[i] = parseInt((state.qkdSecret ?? '').slice(i * 2, i * 2 + 2), 16)
+        const handle = hsm_importGenericSecret(M, hsm.hSessionRef.current, ikm)
+        hsm.addKey({
+          handle,
+          label: 'QKD Imported Master Secret',
+          family: 'ml-kem',
+          role: 'private',
+          generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        })
+        setState((s) => ({ ...s, importedHandle: handle, importWasLive: true }))
+      } catch {
+        setState((s) => ({ ...s, importWasLive: false }))
+      }
+    } else {
+      setState((s) => ({ ...s, importWasLive: false }))
+    }
     setCurrentStep(2)
     setProcessing(false)
-  }, [])
+  }, [hsm, state.qkdSecret])
 
   const handleKDF = useCallback(async () => {
     if (!state.qkdSecret) return
@@ -149,32 +174,47 @@ export const HSMKeyDerivationDemo: React.FC = () => {
     let sessionKey = ''
     if (hsm.isReady && hsm.moduleRef.current) {
       const M = hsm.moduleRef.current as unknown as SoftHSMModule
-      const { derivedKeyHex, baseKeyHandle } = sp800108CounterKDF(
-        M,
-        hsm.hSessionRef.current,
-        state.qkdSecret,
-        'session-key-v1',
-        sessionId,
-        32
-      )
-      sessionKey = derivedKeyHex
-      // Note: we don't C_DestroyObject so it stays in the HSMKeyInspector for viewing
-      hsm.addKey({
-        handle: baseKeyHandle,
-        label: 'QKD Imported Master Secret',
-        family: 'ml-kem', // conceptual mapping for QKD
-        role: 'private',
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
-      })
+      if (state.importedHandle !== undefined) {
+        // Reuse the handle already imported in step 2 — run derive-only
+        const fixedInput = new TextEncoder().encode(`session-key-v1\x00${sessionId}`)
+        const derived = hsm_kbkdf(
+          M,
+          hsm.hSessionRef.current,
+          state.importedHandle,
+          0x00000251,
+          fixedInput,
+          32
+        )
+        sessionKey = Array.from(derived)
+          .map((b) => b.toString(16).padStart(2, '0'))
+          .join('')
+      } else {
+        // Step 2 was illustrative — do combined import+derive now
+        const { derivedKeyHex, baseKeyHandle } = sp800108CounterKDF(
+          M,
+          hsm.hSessionRef.current,
+          state.qkdSecret,
+          'session-key-v1',
+          sessionId,
+          32
+        )
+        sessionKey = derivedKeyHex
+        hsm.addKey({
+          handle: baseKeyHandle,
+          label: 'QKD Imported Master Secret',
+          family: 'ml-kem',
+          role: 'private',
+          generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        })
+      }
     } else {
-      // Mock if HSM is disabled
       sessionKey = getRandomHex(32)
     }
-    await new Promise((r) => setTimeout(r, 400)) // delay for UI effect
+    await new Promise((r) => setTimeout(r, 400))
     setState((s) => ({ ...s, sessionId, sessionKey }))
     setCurrentStep(3)
     setProcessing(false)
-  }, [state.qkdSecret, hsm])
+  }, [state.qkdSecret, state.importedHandle, hsm])
 
   // Step 4: Show output (no async needed)
   const handleShowKey = useCallback(() => {
@@ -192,6 +232,18 @@ export const HSMKeyDerivationDemo: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <ScopeTransparencyBanner
+        realOps={[
+          'HMAC-SHA-256 PRF via softhsmv3 C_DeriveKey (CKM_SP800_108_COUNTER_KDF)',
+          'C_CreateObject — QKD secret imported as non-extractable CKO_SECRET_KEY',
+          'KAT validation: HMAC-SHA-256 and HKDF against FIPS 198-1 / RFC 5869 vectors',
+        ]}
+        simulatedOps={[
+          'ETSI QKD 014 REST key retrieval (network call replaced by local random)',
+          'Step 2 illustration when HSM is in software mode',
+        ]}
+      />
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <LiveHSMToggle hsm={hsm} operations={['C_CreateObject', 'C_DeriveKey']} />
         <WasmModeIndicator
@@ -416,6 +468,17 @@ export const HSMKeyDerivationDemo: React.FC = () => {
               leaves the HSM. Only derived keys can be exported.
             </div>
           </div>
+          {state.importWasLive === true && (
+            <div className="flex items-center gap-2 text-xs text-status-success font-semibold">
+              <CheckCircle2 size={13} />
+              Live HSM — C_CreateObject returned CKR_OK · handle stored in HSMKeyInspector
+            </div>
+          )}
+          {state.importWasLive === false && (
+            <div className="text-xs text-muted-foreground">
+              Illustrative mode — enable Live HSM above to run real C_CreateObject.
+            </div>
+          )}
           <Button
             variant="gradient"
             onClick={stepHandlers[1]}
@@ -473,6 +536,27 @@ export const HSMKeyDerivationDemo: React.FC = () => {
               PKCS#11 v3.0 Mechanisms <ExternalLink size={11} />
             </a>
           </div>
+          <WhyThisMatters title="Why KDF After Key Exchange?" variant="info">
+            <p>
+              The shared secret from a KEM or QKD channel has zero domain separation — if used
+              directly as a key, the same 32 bytes would be reused for encryption, MAC, and IV
+              across every session, allowing cross-protocol correlation.
+            </p>
+            <p>
+              Counter-Mode KDF (SP 800-108 §5.1) solves this:{' '}
+              <code>K(i) = PRF(KI, [i] ‖ Label ‖ 0x00 ‖ Context ‖ [L])</code>. Different{' '}
+              <strong>Label</strong> values (&quot;session-key-v1&quot;, &quot;mac-key-v1&quot;)
+              produce cryptographically independent sub-keys from the same master secret. The{' '}
+              <strong>Context</strong> field (session ID below) ensures per-session uniqueness. This
+              satisfies SP 800-56C Rev 2 §5.2 for KEM-based key establishment.
+            </p>
+            <p>
+              <strong>Choosing L:</strong> L = 32 → 256-bit AES key. L = 48 → 384-bit key for
+              HMAC-SHA-384. L = 64 → 512-bit material for HMAC-SHA-512. The label &amp; context bind
+              purpose and session so all three can be derived from the same QKD secret without
+              leaking information between them.
+            </p>
+          </WhyThisMatters>
           <Button
             variant="gradient"
             onClick={stepHandlers[2]}
