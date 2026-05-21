@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * threats-proof-rule.ts — TP-1 + TP-2
+ * threats-proof-rule.ts — TP-1 + TP-2 + TP-3
  *
  * TP-1  Every active row in the latest quantum_threats_hsm_industries_*.csv
  *       MUST carry a downloadable, on-disk proof file (`local_file`) whose
@@ -10,6 +10,12 @@
  *
  * TP-2  Every active row's `local_file` MUST point at a path under
  *       public/threats/. (No cross-source contamination.)
+ *
+ * TP-3  Every non-empty `trusted_source_id` on an active row MUST resolve
+ *       to an `id` in the latest pqc_authoritative_sources_reference_*.csv
+ *       catalog. Closes the floating-reference gap identified in the
+ *       2026-05-21 audit: the catalog now keys on a kebab-case `id`
+ *       column (Phase 9), so a programmatic join is finally possible.
  *
  * Severity: ERROR. The cost of letting an unproved threat ship is reader
  * trust — there is no "warning" tier that captures that. Any row that fails
@@ -57,6 +63,40 @@ function findLatestThreatsCsv(): string | null {
   return path.join(DATA_DIR, files[0])
 }
 
+function findLatestSourcesCsv(): string | null {
+  if (!fs.existsSync(DATA_DIR)) return null
+  const files = fs
+    .readdirSync(DATA_DIR)
+    .filter((f) => /^pqc_authoritative_sources_reference_\d{8}(?:_r\d+)?\.csv$/.test(f))
+  if (files.length === 0) return null
+  files.sort((a, b) => {
+    const parse = (name: string): number => {
+      const m = name.match(
+        /pqc_authoritative_sources_reference_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+      )
+      if (!m) return 0
+      const [, mm, dd, yyyy, r] = m
+      return Number(`${yyyy}${mm}${dd}${(r || '0').padStart(2, '0')}`)
+    }
+    return parse(b) - parse(a)
+  })
+  return path.join(DATA_DIR, files[0])
+}
+
+function loadCatalogIds(): Set<string> | null {
+  const p = findLatestSourcesCsv()
+  if (!p) return null
+  const rows = Papa.parse<{ id?: string }>(fs.readFileSync(p, 'utf-8'), {
+    header: true,
+    skipEmptyLines: true,
+  }).data
+  // Tolerant: if the latest catalog hasn't had `id` backfilled yet, return
+  // null and TP-3 will skip (rather than fail the build during the
+  // migration window).
+  if (!rows.length || !('id' in rows[0]) || !rows[0].id) return null
+  return new Set(rows.map((r) => (r.id || '').trim()).filter(Boolean))
+}
+
 export function runThreatsProofRule(): CheckResult[] {
   const csvPath = findLatestThreatsCsv()
   if (!csvPath) {
@@ -85,9 +125,13 @@ export function runThreatsProofRule(): CheckResult[] {
   const raw = fs.readFileSync(csvPath, 'utf-8')
   const rows = Papa.parse<ThreatRow>(raw, { header: true, skipEmptyLines: true }).data
   const csvName = path.basename(csvPath)
+  const catalogIds = loadCatalogIds()
+  const catalogPath = findLatestSourcesCsv()
+  const catalogName = catalogPath ? path.basename(catalogPath) : ''
 
   const tp1Findings: Finding[] = []
   const tp2Findings: Finding[] = []
+  const tp3Findings: Finding[] = []
 
   rows.forEach((r, idx) => {
     const status = (r.status || '').trim().toLowerCase()
@@ -136,9 +180,24 @@ export function runThreatsProofRule(): CheckResult[] {
         message: `Active threat ${id} local_file is outside public/threats/`,
       })
     }
+
+    // TP-3: trusted_source_id must resolve to the catalog (when catalog
+    // is keyed on `id`; otherwise the check is skipped, see below).
+    if (catalogIds) {
+      const tsid = (r.trusted_source_id || '').trim()
+      if (tsid && !catalogIds.has(tsid)) {
+        tp3Findings.push({
+          csv: csvName,
+          row: idx + 2,
+          field: 'trusted_source_id',
+          value: tsid,
+          message: `Active threat ${id} trusted_source_id="${tsid}" does not resolve to any id in ${catalogName}`,
+        })
+      }
+    }
   })
 
-  return [
+  const results: CheckResult[] = [
     {
       id: 'TP-1',
       category: 'local-resource',
@@ -160,4 +219,43 @@ export function runThreatsProofRule(): CheckResult[] {
       findings: tp2Findings,
     },
   ]
+
+  // TP-3 only runs when the catalog has been migrated to the `id`
+  // primary key (Phase 9, 2026-05-21). During the migration window the
+  // check skips with status SKIP so it neither falsely passes nor
+  // blocks the build before the schema fix lands in other CSVs.
+  if (catalogIds) {
+    results.push({
+      id: 'TP-3',
+      category: 'cross-reference',
+      description: 'Every active threat trusted_source_id resolves to the authoritative-sources catalog id',
+      sourceA: csvName,
+      sourceB: catalogName,
+      severity: 'ERROR',
+      status: tp3Findings.length === 0 ? 'PASS' : 'FAIL',
+      findings: tp3Findings,
+    })
+  } else {
+    results.push({
+      id: 'TP-3',
+      category: 'cross-reference',
+      description: 'Every active threat trusted_source_id resolves to the authoritative-sources catalog id',
+      sourceA: csvName,
+      sourceB: 'pqc_authoritative_sources_reference_*.csv',
+      severity: 'ERROR',
+      status: 'SKIP',
+      findings: [
+        {
+          csv: catalogName || '',
+          row: null,
+          field: '',
+          value: '',
+          message:
+            'Catalog has not yet been migrated to the `id` primary key (Phase 9); TP-3 will fail closed once it is.',
+        },
+      ],
+    })
+  }
+
+  return results
 }

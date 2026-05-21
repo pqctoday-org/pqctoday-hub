@@ -96,10 +96,13 @@ jobs:
         run: DS_SEVERITY=ERROR npx tsx scripts/validate-data-integrity.ts
         continue-on-error: true
 
-      - name: Validate threats proof rule (TP-1 + TP-2, BLOCKING)
+      - name: Validate threats proof rule (TP-1 + TP-2 + TP-3, BLOCKING)
         # Enforces the 2026-05-21 rule: every active threat row in
         # quantum_threats_hsm_industries_*.csv must have a downloadable,
-        # ≥ 5 KB on-disk proof under public/threats/. See
+        # ≥ 5 KB on-disk proof under public/threats/ (TP-1/TP-2), AND
+        # every non-empty `trusted_source_id` must resolve to the
+        # authoritative-sources catalog's `id` column (TP-3, added 2026-
+        # 05-21 once the catalog gained an `id` primary key). See
         # reports/threats-gap-fixes-05212026.md for the audit that led to
         # the rule. Strictly blocking — exits non-zero on any TP-1/TP-2
         # finding. Re-source or mark status='deprecated' to clear.
