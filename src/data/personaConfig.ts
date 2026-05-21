@@ -59,7 +59,16 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/openssl',
     '/revisions',
   ],
-  curious: ['/explore', '/compliance', '/assess', '/report', '/library', '/leaders', '/revisions'],
+  curious: [
+    '/explore',
+    '/compliance',
+    '/assess',
+    '/report',
+    '/library',
+    '/leaders',
+    '/migrate',
+    '/revisions',
+  ],
 }
 
 /**

@@ -150,7 +150,7 @@ export const logComplianceFilter = (filterType: string, value: string) => {
 }
 
 export const logMigrateAction = (action: string, label?: string) => {
-  logEvent('Migrate', action, label)
+  logEvent('Migrate', action, personaLabel(label))
 }
 
 export const logLibrarySearch = (query: string) => {
