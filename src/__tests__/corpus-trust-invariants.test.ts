@@ -91,6 +91,21 @@ const TIER_NOT_APPLICABLE: ReadonlySet<string> = new Set([
   'certifications',
   'user-manual',
   'changelog',
+  // 2026-05-19 RAG corpus gap-fix (+11 processors, +1,230 chunks): aggregate /
+  // derived sources that summarise multiple underlying records and do not
+  // represent a single scoreable resource. Each is a cross-walk, registry,
+  // matrix, or per-vendor/per-protocol summary — trust ranking flows through
+  // the underlying records they reference, not the aggregate chunk itself.
+  'nice',
+  'protocol-matrix',
+  'concept-xwalk',
+  'algo-product-xref',
+  'vendor-roadmap',
+  'implementation-attacks',
+  'concept-registry',
+  'regulatory-timeline',
+  'standard-algo-xref',
+  'counter-claims',
 ])
 
 /**
