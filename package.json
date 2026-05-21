@@ -97,7 +97,7 @@
     "@scure/base": "^2.0.0",
     "@scure/bip32": "^2.0.1",
     "@scure/bip39": "^2.0.1",
-    "@tailwindcss/vite": "^4.2.2",
+    "@tailwindcss/vite": "^4.3.0",
     "@tanstack/react-virtual": "^3.13.24",
     "@types/dagre": "^0.7.54",
     "@types/file-saver": "^2.0.7",
@@ -130,7 +130,7 @@
     "recharts": "^3.7.0",
     "reflect-metadata": "^0.2.2",
     "remark-gfm": "^4.0.1",
-    "tailwind-merge": "^3.5.0",
+    "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.1.17",
     "zustand": "^5.0.10"
   },
