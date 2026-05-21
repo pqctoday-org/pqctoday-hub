@@ -2,6 +2,7 @@
 import React, { useState, useCallback } from 'react'
 import { Atom, Cpu, Play, CheckCircle, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { WhyThisMatters } from '@/components/ui/WhyThisMatters'
 import { getRandomBytes } from '@/utils/webCrypto'
 import { runAllTests, type TestResult } from '../utils/entropyTests'
 import { formatHex, binnedFrequency } from '../utils/outputFormatters'
@@ -143,6 +144,32 @@ export const QRNGDemo: React.FC = () => {
           source.
         </p>
       </div>
+
+      <WhyThisMatters title="Statistical Equivalence vs. Quantum Origin" variant="info">
+        <p>
+          A classical CSPRNG (ChaCha20-DRBG, AES-CTR-DRBG, or the OS entropy pool) and a true
+          quantum random number generator <strong>produce indistinguishable output</strong> under
+          every standard statistical test — monobit, frequency, min-entropy, autocorrelation. The
+          bit patterns you see in the hex and histogram displays above will be equally uniform for
+          both sources. This is by design: statistical quality is the floor, not the differentiator.
+        </p>
+        <p>
+          The practical difference is the <strong>physical entropy source</strong>. CSPRNG output
+          depends on OS entropy events (hardware interrupts, disk I/O timing) which, on a
+          deterministic machine, are bounded in unpredictability. A photon-detection or vacuum-state
+          QRNG draws on quantum-mechanical randomness that is fundamentally unpredictable by any
+          physical process — no adversary with unlimited classical compute can predict it.
+        </p>
+        <p>
+          For most cryptographic uses (session key generation, nonces, IVs) a well-seeded CSPRNG is
+          fully sufficient — NIST FIPS 140-3 approved DRBGs are the standard. QRNG matters in two
+          specific scenarios: (1) long-lived key material in high-assurance HSMs where
+          <strong>seed unpredictability</strong> must be provable to evaluators, and (2)
+          quantum-resistant long-term keys where you want the key bits themselves to have quantum
+          entropy. NIST SP 800-90B certifies entropy source quality for both cases — statistical
+          tests alone are not sufficient certification evidence.
+        </p>
+      </WhyThisMatters>
 
       {/* Sample Size Selector */}
       <div className="flex items-center gap-3">
