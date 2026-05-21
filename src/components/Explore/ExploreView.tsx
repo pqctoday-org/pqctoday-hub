@@ -90,7 +90,7 @@ export function ExploreView() {
   const navigate = useNavigate()
   const { selectedPersona, experienceLevel, viewAccess, setViewAccess } = usePersonaStore()
   const isCurious = selectedPersona === 'curious' || experienceLevel === 'curious'
-  const isGated = isCurious && viewAccess === 'gated'
+  const isGated = isCurious && viewAccess !== 'unlocked'
   const showUnlockPrompt = isGated
 
   return (

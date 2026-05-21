@@ -1037,6 +1037,8 @@ export function inferPersonaFromAssessment(assessment: {
     return 'developer'
   }
 
-  // Not enough signal to suggest a persona
+  // 'curious' is intentionally never inferred — it is a self-selected entry point for
+  // users who want to explore without a declared role. Any user who completed the
+  // assessment has expressed enough intent to map to a functional persona instead.
   return null
 }

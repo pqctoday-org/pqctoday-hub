@@ -22,6 +22,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
   ],
   developer: [
     '/migrate',
+    '/compliance',
     '/business',
     '/assess',
     '/report',
