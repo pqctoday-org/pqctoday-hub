@@ -33,7 +33,12 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { ErrorAlert } from '@/components/ui/error-alert'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
 import { CMSSigningService, type CmsAlg } from '../services/CMSSigningService'
 import { smimeEnvelopeSigned } from '../services/smimeMultipart'
 
@@ -88,6 +93,36 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
   const [stage, setStage] = useState<Stage>('idle')
   const [error, setError] = useState<string>('')
   const [result, setResult] = useState<StageResult>({})
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([])
+
+  const beginOp = (message: string) => {
+    const startedAt = performance.now()
+    setLogEntries((prev) => [...prev, { status: 'pending', message }])
+    return {
+      done: (label?: string) =>
+        setLogEntries((prev) => {
+          const next = [...prev]
+          const idx = next.length - 1
+          next[idx] = {
+            status: 'success',
+            message: label ?? message,
+            durationMs: Math.round(performance.now() - startedAt),
+          }
+          return next
+        }),
+      fail: (err: unknown) =>
+        setLogEntries((prev) => {
+          const next = [...prev]
+          const idx = next.length - 1
+          next[idx] = {
+            status: 'error',
+            message: `${message} — ${err instanceof Error ? err.message : String(err)}`,
+            durationMs: Math.round(performance.now() - startedAt),
+          }
+          return next
+        }),
+    }
+  }
 
   useEffect(() => {
     const svc = new CMSSigningService()
@@ -102,6 +137,7 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
     setStage('idle')
     setError('')
     setResult({})
+    setLogEntries([])
   }
 
   const run = async () => {
@@ -109,15 +145,21 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
     if (!svc) return
     setError('')
     setResult({})
+    setLogEntries([])
+    let op = beginOp(`Generating ${pqAlg} key…`)
     try {
       setStage('pq-key')
       const pq = await svc.genKey(pqAlg, PQ_KEY, useHsm)
       setResult((prev) => ({ ...prev, pqKeyPem: pq.keyPem }))
+      op.done()
 
+      op = beginOp(`Generating ${clAlg} key…`)
       setStage('cl-key')
       const cl = await svc.genKey(clAlg, CL_KEY, useHsm)
       setResult((prev) => ({ ...prev, classicalKeyPem: cl.keyPem }))
+      op.done()
 
+      op = beginOp('Issuing PQ certificate…')
       setStage('pq-cert')
       const pqCert = await svc.mkCert({
         keyId: PQ_KEY,
@@ -127,7 +169,9 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
         useHsm,
       })
       setResult((prev) => ({ ...prev, pqCertPem: pqCert.certPem }))
+      op.done()
 
+      op = beginOp('Issuing classical certificate…')
       setStage('cl-cert')
       const clCert = await svc.mkCert({
         keyId: CL_KEY,
@@ -137,7 +181,9 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
         useHsm,
       })
       setResult((prev) => ({ ...prev, classicalCertPem: clCert.certPem }))
+      op.done()
 
+      op = beginOp('Dual-signing CMS (PQ + classical SignerInfos)…')
       setStage('sign')
       const s = await svc.dualSign({
         payload: new TextEncoder().encode(payload),
@@ -148,7 +194,9 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
         useHsm,
       })
       setResult((prev) => ({ ...prev, signedP7m: s.signedP7m }))
+      op.done(`Signed — ${s.signedP7m.length} bytes (.p7m)`)
 
+      op = beginOp('Verifying both SignerInfos…')
       setStage('verify')
       const v = await svc.dualVerify({
         signedP7m: s.signedP7m,
@@ -163,9 +211,11 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
         stderr: v.stderr,
         payload: v.payload,
       }))
+      op.done(v.ok ? `Both signers verified (${v.signerCount})` : 'Verify completed (see result)')
 
       setStage('done')
     } catch (err) {
+      op.fail(err)
       setError(err instanceof Error ? err.message : String(err))
       setStage('error')
     }
@@ -292,12 +342,9 @@ export function DualSignDemo({ providerReady }: DualSignDemoProps) {
           />
         </label>
 
-        {error && (
-          <div className="flex items-start gap-2 rounded-md border border-status-error/30 bg-status-error/10 p-3 text-xs text-status-error">
-            <AlertTriangle size={14} className="mt-0.5 shrink-0" />
-            <pre className="flex-1 whitespace-pre-wrap font-mono">{error}</pre>
-          </div>
-        )}
+        {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} />}
+
+        {error && <ErrorAlert message={error} onRetry={run} />}
       </div>
 
       {(stage !== 'idle' || result.pqKeyPem) && (
