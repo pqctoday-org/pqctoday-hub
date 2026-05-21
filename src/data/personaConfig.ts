@@ -783,3 +783,48 @@ export const PERSONA_EXCLUDED_ACHIEVEMENTS: Record<PersonaId, string[]> = {
     'business-complete',
   ],
 }
+
+/**
+ * Persona-flavored maturity tier overlay for the awareness-score belt ladder.
+ *
+ * The 7 generic belts (White → Black) still drive scoring math, but Executive
+ * and Curious see role-relevant tier names alongside the belt — "Briefed →
+ * Aligned → Sponsoring → Board-Ready" for execs, "Aware → Informed → Confident
+ * → Quantum-Native" for curious. Other personas inherit the belt names as-is.
+ *
+ * Mapping: 7 belts collapse into 4 tiers
+ *   White / Yellow         → tier[0]
+ *   Orange / Green         → tier[1]
+ *   Blue / Brown           → tier[2]
+ *   Black                  → tier[3]
+ */
+export const PERSONA_BELT_TIER_LABELS: Partial<
+  Record<PersonaId, [string, string, string, string]>
+> = {
+  executive: ['Briefed', 'Aligned', 'Sponsoring', 'Board-Ready'],
+  curious: ['Aware', 'Informed', 'Confident', 'Quantum-Native'],
+}
+
+const BELT_TIER_INDEX: Record<string, 0 | 1 | 2 | 3> = {
+  'White Belt': 0,
+  'Yellow Belt': 0,
+  'Orange Belt': 1,
+  'Green Belt': 1,
+  'Blue Belt': 2,
+  'Brown Belt': 2,
+  'Black Belt': 3,
+}
+
+/**
+ * Returns a persona-flavored tier label for the active belt, or null when the
+ * persona doesn't have an override (developer / architect / ops / researcher
+ * keep the generic belt name). Returns null for unknown belt names too.
+ */
+export function getBeltTierLabel(persona: PersonaId | null, beltName: string): string | null {
+  if (!persona) return null
+  const tiers = PERSONA_BELT_TIER_LABELS[persona]
+  if (!tiers) return null
+  const idx = BELT_TIER_INDEX[beltName]
+  if (idx === undefined) return null
+  return tiers[idx]
+}

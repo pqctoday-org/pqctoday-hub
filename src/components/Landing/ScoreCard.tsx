@@ -6,6 +6,7 @@ import { ArrowRight, Flame, GraduationCap, Info, Sparkles } from 'lucide-react'
 import { Button } from '../ui/button'
 import { ScoringModal } from './ScoringModal'
 import { useAwarenessScore, BELT_RANKS, type BeltRank } from '@/hooks/useAwarenessScore'
+import { getBeltTierLabel } from '@/data/personaConfig'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 import { AchievementBadgeGrid } from './AchievementBadgeGrid'
@@ -297,6 +298,14 @@ export function ScoreCard({ embedded = false }: { embedded?: boolean }) {
               <span className="text-sm text-muted-foreground">/ 100</span>
               <span className="text-sm font-semibold text-foreground" id="scorecard-heading">
                 {belt.name}
+                {(() => {
+                  const tier = getBeltTierLabel(selectedPersona, belt.name)
+                  return tier ? (
+                    <span className="ml-1.5 text-xs font-normal text-muted-foreground">
+                      · {tier}
+                    </span>
+                  ) : null
+                })()}
               </span>
               <span className="-m-2 p-2 block">
                 <Button
