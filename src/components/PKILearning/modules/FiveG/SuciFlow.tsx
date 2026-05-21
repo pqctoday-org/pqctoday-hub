@@ -26,6 +26,7 @@ const SCENARIO_VIEW_SS_KEY = 'suci.scenarioView'
 
 import type { KatTestSpec } from '@/utils/katRunner'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 const FIVEG_KAT_SPECS: KatTestSpec[] = [
   {
@@ -1446,10 +1447,10 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             <span className="text-xs text-muted-foreground">
               Adjust the 15-digit IMSI below to verify dynamic cryptography execution.
             </span>
-            <input
+            <Input
               type="text"
               value={customSupi}
-              className={`bg-background border rounded p-2 text-sm font-mono mt-1 focus:outline-none focus:border-primary max-w-sm ${supiError ? 'border-destructive focus:border-destructive' : 'border-border'}`}
+              className={`text-sm font-mono mt-1 max-w-sm ${supiError ? 'border-destructive focus-visible:ring-destructive' : ''}`}
               aria-invalid={supiError ? 'true' : undefined}
               aria-describedby={supiError ? 'supi-error' : undefined}
               placeholder="310260123456789"

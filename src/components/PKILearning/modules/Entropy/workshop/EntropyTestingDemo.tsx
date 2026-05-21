@@ -10,6 +10,7 @@ import {
   Activity,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { CopyButton } from '@/components/ui/CopyButton'
 import { Input } from '@/components/ui/input'
 import { getRandomBytes } from '@/utils/webCrypto'
 import { runAllTests, type TestResult } from '../utils/entropyTests'
@@ -270,7 +271,14 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
                 <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                   Sample Data
                 </div>
-                <span className="text-xs text-primary font-medium">{sampleLabel}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-primary font-medium">{sampleLabel}</span>
+                  <CopyButton
+                    text={formatHex(sampleData, 4)}
+                    label="Copy"
+                    className="h-6 min-h-[24px] px-2 py-0 text-[10px]"
+                  />
+                </div>
               </div>
               <div className="bg-muted rounded-lg p-3 border border-border overflow-x-auto">
                 <pre className="text-xs font-mono text-foreground whitespace-pre-wrap break-all leading-relaxed">

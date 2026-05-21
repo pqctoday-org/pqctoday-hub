@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { CopyableOutput } from '@/components/ui/CopyableOutput'
 import { getRandomBytes } from '@/utils/webCrypto'
 import { formatHex } from '../utils/outputFormatters'
 
@@ -449,9 +450,12 @@ export const DrbgArchitectureDemo: React.FC = () => {
                   <span className="text-[10px] uppercase font-bold text-foreground flex items-center gap-1">
                     <ArrowRight size={12} /> Last Generated Output ({lastGenerated.length} bytes)
                   </span>
-                  <pre className="font-mono text-[11px] bg-muted/40 rounded p-3 break-all max-h-[100px] overflow-y-auto w-full whitespace-pre-wrap">
-                    {formatHex(lastGenerated)}
-                  </pre>
+                  <CopyableOutput
+                    value={formatHex(lastGenerated)}
+                    rows={3}
+                    downloadFilename="drbg-output.txt"
+                    className="text-[11px]"
+                  />
                 </div>
               )}
             </div>

@@ -3,6 +3,7 @@ import React, { useState, useCallback, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Combine, Play, ArrowRight, Shield, Loader2, ExternalLink, BookOpen } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { CopyButton } from '@/components/ui/CopyButton'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { getRandomBytes } from '@/utils/webCrypto'
 import { hkdfExpand } from '@/utils/webCrypto'
@@ -31,7 +32,14 @@ import { translateCryptoError } from '@/utils/cryptoErrorHint'
 /** Hex display for a labelled byte array */
 const HexDisplay: React.FC<{ label: string; data: Uint8Array }> = ({ label, data }) => (
   <div className="space-y-1">
-    <p className="text-xs font-medium text-muted-foreground">{label}</p>
+    <div className="flex items-center justify-between">
+      <p className="text-xs font-medium text-muted-foreground">{label}</p>
+      <CopyButton
+        text={formatHex(data)}
+        label="Copy"
+        className="h-6 min-h-[24px] px-2 py-0 text-[10px]"
+      />
+    </div>
     <pre className="font-mono text-sm text-foreground bg-muted/30 rounded-lg p-3 overflow-x-auto whitespace-pre-wrap break-all leading-relaxed">
       {formatHex(data)}
     </pre>
