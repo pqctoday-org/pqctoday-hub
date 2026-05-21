@@ -321,6 +321,8 @@ export const DevQuantumImpactModule: React.FC = () => {
                 stepDescription={PARTS[currentPart].description}
                 stepIndex={currentPart}
                 totalSteps={PARTS.length}
+                steps={PARTS.map((p) => ({ id: p.id, label: p.title }))}
+                onStepClick={handlePartChange}
               />
               {currentPart === 0 && (
                 <RoleWhyItMatters key={`why-${configKey}`} data={DEV_GUIDE_DATA} />
