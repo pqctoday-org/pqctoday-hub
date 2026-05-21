@@ -38,6 +38,8 @@ import { ExecutiveTimelineView } from './views/ExecutiveTimelineView'
 import { ArchitectStandardsView } from './views/ArchitectStandardsView'
 import { ResearcherEvidenceView } from './views/ResearcherEvidenceView'
 import { DeveloperImplementationView } from './views/DeveloperImplementationView'
+import { OpsRotationView } from './views/OpsRotationView'
+import { CuriousOrientationView } from './views/CuriousOrientationView'
 import { LibraryDetailPopover } from '@/components/Library/LibraryDetailPopover'
 import { ThreatDetailDialog } from '@/components/Threats/ThreatDetailDialog'
 import {
@@ -168,7 +170,9 @@ function timelineEventToRow(ev: TimelineEvent): TimelineDocumentRow {
  *   architect  → ArchitectStandardsView (standards landscape + crypto-agility focus)
  *   researcher → ResearcherEvidenceView (full evidence browser + citation depth)
  *   developer  → DeveloperImplementationView (algorithm coverage + tool jumps + standards→impl)
- *   ops / curious / no persona → ApplicabilityPanel (generic recommendation surface)
+ *   ops        → OpsRotationView (deadline phases + toolchain jumps + framework timing table)
+ *   curious    → CuriousOrientationView (plain-language orientation + 1-2-3 framing)
+ *   no persona → ApplicabilityPanel (generic recommendation surface)
  *
  * All branches consume the same `useApplicability` engine output; only the rendering
  * differs. Profile override is plumbed identically so the workshop deep-link
@@ -230,6 +234,10 @@ function ForYouSection() {
         <ResearcherEvidenceView {...callbacks} />
       ) : persona === 'developer' ? (
         <DeveloperImplementationView {...callbacks} />
+      ) : persona === 'ops' ? (
+        <OpsRotationView {...callbacks} />
+      ) : persona === 'curious' ? (
+        <CuriousOrientationView {...callbacks} />
       ) : (
         <ApplicabilityPanel variant="tab" {...callbacks} />
       )}
