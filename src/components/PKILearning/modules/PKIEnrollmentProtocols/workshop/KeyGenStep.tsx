@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { Loader2, KeyRound, CheckCircle2, AlertTriangle } from 'lucide-react'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { Button } from '@/components/ui/button'
+import { CopyableOutput } from '@/components/ui/CopyableOutput'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { ML_DSA_ALG, EE_KEY_PATH } from '../constants'
 
@@ -95,9 +96,15 @@ export const KeyGenStep: React.FC<KeyGenStepProps> = ({ onKeyReady }) => {
             <summary className="cursor-pointer text-sm font-medium text-foreground">
               Inspect PEM
             </summary>
-            <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap break-all font-mono text-[10px] text-muted-foreground">
-              {keyPem}
-            </pre>
+            <div className="mt-2">
+              <CopyableOutput
+                value={keyPem}
+                label="Private Key PEM"
+                rows={5}
+                downloadFilename="ee-key.pem"
+                className="text-[10px]"
+              />
+            </div>
           </details>
         </div>
       )}

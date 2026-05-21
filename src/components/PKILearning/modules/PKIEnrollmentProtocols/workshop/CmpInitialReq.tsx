@@ -12,6 +12,7 @@ import {
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { CopyableOutput } from '@/components/ui/CopyableOutput'
 import { ensureMockCA, resetMockCA } from '../mock-ca/mockCA'
 import { CA_ROOT_CERT_PATH, CA_ROOT_KEY_PATH, EE_CERT_PATH, EE_KEY_PATH } from '../constants'
 
@@ -258,9 +259,9 @@ export const CmpInitialReq: React.FC<CmpInitialReqProps> = ({
             <summary className="cursor-pointer text-sm font-medium text-foreground flex items-center gap-2">
               <FileText size={14} /> Decoded certificate (openssl x509 -text)
             </summary>
-            <pre className="mt-2 max-h-96 overflow-auto whitespace-pre-wrap break-all font-mono text-[10px] text-muted-foreground">
-              {result.certText}
-            </pre>
+            <div className="mt-2">
+              <CopyableOutput value={result.certText} rows={8} className="text-[10px]" />
+            </div>
           </details>
 
           <details open className="rounded border border-border bg-muted/30 p-3">
@@ -284,9 +285,15 @@ export const CmpInitialReq: React.FC<CmpInitialReqProps> = ({
             <summary className="cursor-pointer text-sm font-medium text-foreground">
               Issued cert (PEM)
             </summary>
-            <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap break-all font-mono text-[10px] text-muted-foreground">
-              {result.certPem}
-            </pre>
+            <div className="mt-2">
+              <CopyableOutput
+                value={result.certPem}
+                label="Issued Certificate PEM"
+                rows={5}
+                downloadFilename="issued-cert.pem"
+                className="text-[10px]"
+              />
+            </div>
           </details>
         </div>
       )}
