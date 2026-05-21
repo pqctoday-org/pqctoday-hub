@@ -179,12 +179,18 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            The <InlineTooltip term="IETF">IETF</InlineTooltip> JOSE working group is developing{' '}
-            <strong>draft-ietf-jose-pqc</strong> (active draft, pending ratification), which defines
-            new <code className="text-foreground/70">alg</code> values for post-quantum algorithms
-            in JWS and JWE. <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> (
-            <InlineTooltip term="FIPS 204">FIPS 204</InlineTooltip>) replaces ECDSA and RSA for JWT
-            signing.
+            <strong>RFC 9964</strong> (published May 2026 by the{' '}
+            <InlineTooltip term="IETF">IETF</InlineTooltip> COSE working group) registers JOSE/COSE{' '}
+            <code className="text-foreground/70">alg</code> values for{' '}
+            <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip>-44/65/87 (
+            <InlineTooltip term="FIPS 204">FIPS 204</InlineTooltip>), along with a new{' '}
+            <code className="text-foreground/70">kty="AKP"</code> (Algorithm Key Pair) key type that
+            carries a 32-byte FIPS 204 seed as the private key. ML-DSA replaces ECDSA and RSA for
+            JWT signing; ML-KEM JWE (
+            <code className="text-foreground/70">draft-ietf-jose-pqc-kem</code>) and PQ/T composite
+            signatures (
+            <code className="text-foreground/70">draft-ietf-jose-pq-composite-sigs</code>) round out
+            the JOSE PQC stack.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="bg-muted/50 rounded-lg p-3 border border-border">

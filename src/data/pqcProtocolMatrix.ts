@@ -1107,15 +1107,14 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2022-08',
         localFile: '/library/RFC_9053.html',
       },
+      {
+        id: 'RFC-9964',
+        title: 'RFC 9964 — ML-DSA for JOSE and COSE',
+        url: 'https://www.rfc-editor.org/rfc/rfc9964.html',
+        date: '2026-05',
+      },
     ],
     latestDraft: [
-      {
-        id: 'draft-ietf-cose-dilithium-11',
-        title: 'draft-ietf-cose-dilithium-11 — ML-DSA for JOSE and COSE (AUTH48-DONE)',
-        url: 'https://datatracker.ietf.org/doc/draft-ietf-cose-dilithium/',
-        date: '2025-11-15',
-        localFile: '/library/draft-ietf-cose-dilithium.html',
-      },
       {
         id: 'draft-ietf-cose-falcon-04',
         title: 'draft-ietf-cose-falcon-04 — FN-DSA for JOSE and COSE',
@@ -1159,16 +1158,17 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         ],
       },
       pureSig: {
-        value: 'draft',
-        stage: 'rfc-editor-queue',
-        stageNote: 'RFC Ed Queue (AUTH48-DONE) — draft-ietf-cose-dilithium-11; FN-DSA still WG-doc',
+        value: 'rfc',
+        stage: 'rfc-published',
+        stageNote:
+          'RFC 9964 published May 2026 — ML-DSA-44/65/87; FN-DSA (draft-ietf-cose-falcon) still WG-doc',
         refs: [
           {
-            kind: 'draft',
-            id: 'draft-ietf-cose-dilithium',
+            kind: 'rfc',
+            id: 'RFC 9964',
             title: 'ML-DSA for JOSE and COSE',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-cose-dilithium/',
-            publishedOn: '2025-11-15',
+            url: 'https://www.rfc-editor.org/rfc/rfc9964.html',
+            publishedOn: '2026-05',
           },
           {
             kind: 'draft',
@@ -1228,6 +1228,12 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         date: '2015-05',
         localFile: '/library/RFC_7519.html',
       },
+      {
+        id: 'RFC-9964',
+        title: 'RFC 9964 — ML-DSA for JOSE and COSE',
+        url: 'https://www.rfc-editor.org/rfc/rfc9964.html',
+        date: '2026-05',
+      },
     ],
     latestDraft: [
       {
@@ -1279,16 +1285,16 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         ],
       },
       pureSig: {
-        value: 'draft',
-        stage: 'rfc-editor-queue',
-        stageNote: 'RFC Ed Queue (AUTH48-DONE) — draft-ietf-cose-dilithium-11',
+        value: 'rfc',
+        stage: 'rfc-published',
+        stageNote: 'RFC 9964 published May 2026 — ML-DSA-44/65/87 for JWS',
         refs: [
           {
-            kind: 'draft',
-            id: 'draft-ietf-cose-dilithium',
-            title: 'ML-DSA for JOSE and COSE (shared with COSE)',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-cose-dilithium/',
-            publishedOn: '2025-11-15',
+            kind: 'rfc',
+            id: 'RFC 9964',
+            title: 'ML-DSA for JOSE and COSE',
+            url: 'https://www.rfc-editor.org/rfc/rfc9964.html',
+            publishedOn: '2026-05',
           },
         ],
       },
@@ -1334,7 +1340,7 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         testability: { pureKem: 'full', hybridKem: 'na', pureSig: 'full', hybridSig: 'full' },
         hybridKemNote: 'No HPKE tool yet — only direct ML-KEM-768 JWE encap/decap is covered.',
         pureSigNote:
-          'ML-DSA-44/65/87 and SLH-DSA-SHA2-128s/192s/256s; IETF cose-dilithium-11 KAT vectors verified in-browser.',
+          'ML-DSA-44/65/87 and SLH-DSA-SHA2-128s/192s/256s; RFC 9964 KAT vectors verified in-browser.',
         hybridSigNote:
           'MLDSA65-Ed25519 composite per draft-ietf-jose-pq-composite-sigs-01 §4; pinned KAT snapshot verified.',
       },
@@ -2457,11 +2463,11 @@ export const PROTOCOL_MATRIX: ProtocolMatrixRow[] = [
         note: 'Algorithm IDs sourced from the COSE row. Constraint: authenticator-side ML-DSA private key (~5–7 KB) strains secure-element storage budgets.',
         refs: [
           {
-            kind: 'draft',
-            id: 'draft-ietf-cose-dilithium',
-            title: 'ML-DSA for COSE (inherited via WebAuthn COSE alg IDs)',
-            url: 'https://datatracker.ietf.org/doc/draft-ietf-cose-dilithium/',
-            publishedOn: '2026-04-28',
+            kind: 'rfc',
+            id: 'RFC 9964',
+            title: 'ML-DSA for JOSE and COSE (inherited via WebAuthn COSE alg IDs)',
+            url: 'https://www.rfc-editor.org/rfc/rfc9964.html',
+            publishedOn: '2026-05',
           },
         ],
       },

@@ -46,7 +46,7 @@ function hexToBytes(hex: string): Uint8Array {
   return out
 }
 
-describe('draft-ietf-cose-dilithium-11 Appendix A.1 — official IETF JOSE KAT vectors', () => {
+describe('RFC 9964 Appendix A.1 — official IETF JOSE KAT vectors', () => {
   for (const v of (katVectors as { vectors: JoseKat[] }).vectors) {
     it(`${v.alg}: verifyJWS accepts the draft's compact JWS under the AKP-derived public key`, async () => {
       const seed = hexToBytes(v.priv_seed_hex)
