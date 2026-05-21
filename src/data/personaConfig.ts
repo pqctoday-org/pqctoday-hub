@@ -764,11 +764,41 @@ export const PERSONA_EXCLUDED_ACHIEVEMENTS: Record<PersonaId, string[]> = {
     'first-cert',
     'first-key',
     'five-keys',
+    // Curious-only (CC-15)
+    'first-jargon-decoded',
+    'first-standard-read',
+    'met-the-quantum-threat',
   ],
-  developer: ['first-exec-doc', 'business-first', 'business-strategist', 'business-complete'],
-  architect: ['first-exec-doc'],
-  researcher: [], // all paths available
-  ops: ['first-exec-doc'],
+  developer: [
+    'first-exec-doc',
+    'business-first',
+    'business-strategist',
+    'business-complete',
+    // Curious-only (CC-15)
+    'first-jargon-decoded',
+    'first-standard-read',
+    'met-the-quantum-threat',
+  ],
+  architect: [
+    'first-exec-doc',
+    // Curious-only (CC-15)
+    'first-jargon-decoded',
+    'first-standard-read',
+    'met-the-quantum-threat',
+  ],
+  researcher: [
+    // Curious-only (CC-15)
+    'first-jargon-decoded',
+    'first-standard-read',
+    'met-the-quantum-threat',
+  ],
+  ops: [
+    'first-exec-doc',
+    // Curious-only (CC-15)
+    'first-jargon-decoded',
+    'first-standard-read',
+    'met-the-quantum-threat',
+  ],
   curious: [
     'playground-first',
     'playground-breadth-3',

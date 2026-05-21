@@ -24,6 +24,7 @@ import { ContentUpdatesFeed } from '@/components/ui/ContentUpdatesFeed'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { LIBRARY_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import debounce from 'lodash/debounce'
+import { useAchievementStore } from '@/store/useAchievementStore'
 import { logLibrarySearch, logEvent } from '../../utils/analytics'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
@@ -702,6 +703,8 @@ export const LibraryView: React.FC = () => {
 
   const openDetail = (item: LibraryItem) => {
     setSelectedItem(item)
+    // CC-15: drive the first-standard-read achievement for curious users.
+    useAchievementStore.getState().recordSectionVisit('curious:library-read')
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev)
