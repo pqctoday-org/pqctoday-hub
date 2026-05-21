@@ -147,6 +147,28 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
     return null
   }
 
+  // Per-flight educational annotations (RFC 8446 §4)
+  const FLIGHT_NOTES: Record<string, string> = {
+    ClientHello:
+      'Client advertises supported cipher suites, key_share groups (e.g. ML-KEM-768 encapsulation key), and extensions. §4.1.2',
+    ServerHello:
+      'Server selects cipher suite and responds with its own key_share (e.g. ML-KEM-768 ciphertext). After this, all records are encrypted. §4.1.3',
+    EncryptedExtensions:
+      'First encrypted message — server sends negotiated extensions (ALPN, SNI response, etc.) under the handshake_key. §4.3.1',
+    Certificate:
+      "Server's X.509 certificate chain. The end-entity cert carries the authentication key (ML-DSA or ECDSA). §4.4.2",
+    CertificateVerify:
+      'Server signs the entire handshake transcript so far with its private key, proving it owns the cert. §4.4.3',
+    Finished:
+      'HMAC over the transcript using the finished_key — both sides verify before sending application data. §4.4.4',
+    NewSessionTicket:
+      'Post-handshake session ticket for 0-RTT resumption in a future connection. Not used for initial quantum resistance assessment. §4.6.1',
+    CertificateRequest:
+      'Server requests a certificate from the client (mutual TLS). Client must respond with Certificate + CertificateVerify. §4.3.2',
+    KeyUpdate:
+      'Either side may request a new traffic key mid-connection without a full re-handshake. §4.6.3',
+  }
+
   // TLS 1.3 Handshake Message Type detection for App/Decrypted Logs
   const getTLSMessageType = (
     hexData: string
@@ -204,18 +226,26 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
     // crypto_trace_state with hex dumps — detect TLS message type
     if (type === 'crypto_trace_state' && details.includes('0000 -')) {
       const msgType = getTLSMessageType(details)
+      const flightNote = msgType ? FLIGHT_NOTES[msgType.type] : undefined
       return (
         <div>
           {msgType && (
-            <span
-              className={`text-[9px] px-1.5 py-0.5 rounded border mb-1 inline-block font-bold ${
-                msgType.isEncrypted
-                  ? 'bg-success/20 border-success/50 text-success'
-                  : `bg-muted border-border ${msgType.color}`
-              }`}
-            >
-              {msgType.type}
-            </span>
+            <div className="mb-1.5">
+              <span
+                className={`text-[9px] px-1.5 py-0.5 rounded border inline-block font-bold ${
+                  msgType.isEncrypted
+                    ? 'bg-success/20 border-success/50 text-success'
+                    : `bg-muted border-border ${msgType.color}`
+                }`}
+              >
+                {msgType.type}
+              </span>
+              {flightNote && (
+                <p className="mt-0.5 text-[10px] text-muted-foreground leading-snug">
+                  {flightNote}
+                </p>
+              )}
+            </div>
           )}
           <pre className="font-mono text-[10px] whitespace-pre-wrap break-all text-muted-foreground bg-muted/50 p-2 rounded">
             {details}

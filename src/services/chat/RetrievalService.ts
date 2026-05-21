@@ -43,14 +43,27 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     'module-content': 1.5,
     leaders: 1.5,
     'document-enrichment': 1.2,
+    'concept-registry': 1.5,
+    nice: 1.2,
   },
-  comparison: { algorithms: 2, transitions: 3, glossary: 1.5 },
+  comparison: {
+    algorithms: 2,
+    transitions: 3,
+    glossary: 1.5,
+    'protocol-matrix': 1.5,
+    'concept-xwalk': 1.5,
+    'algo-product-xref': 1.2,
+    'standard-algo-xref': 1.3,
+    'counter-claims': 1.2,
+  },
   catalog_lookup: {
     migrate: 3,
     certifications: 2,
     'priority-matrix': 1.5,
     'business-center': 1.5,
     vendors: 2,
+    'algo-product-xref': 1.5,
+    'vendor-roadmap': 2,
   },
   recommendation: {
     assessment: 2,
@@ -63,6 +76,8 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     'governance-maturity': 2,
     cswp39: 1.5,
     vendors: 1.5,
+    'vendor-roadmap': 1.5,
+    'regulatory-timeline': 1.5,
   },
   country_query: {
     timeline: 3,
@@ -70,6 +85,8 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     leaders: 1.5,
     library: 1.2,
     'document-enrichment': 1.5,
+    'regulatory-timeline': 2,
+    'counter-claims': 1.5,
   },
   standard_query: {
     library: 3,
@@ -79,6 +96,9 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     'authoritative-sources': 1.5,
     'trusted-sources': 2,
     patents: 1.3,
+    'protocol-matrix': 1.5,
+    'standard-algo-xref': 1.5,
+    'counter-claims': 1.3,
   },
   whats_new: { changelog: 10, 'app-guide': 1.5 },
   general: {
@@ -100,6 +120,8 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     'user-manual': 1.1,
     'right-panel': 1.1,
     'guided-tour': 1.1,
+    'implementation-attacks': 1.3,
+    nice: 1.1,
   },
 }
 
@@ -114,6 +136,9 @@ const PERSONA_BOOSTS: Record<string, Record<string, number>> = {
     migrate: 1.2,
     'module-qa': 1.3,
     patents: 1.2,
+    'algo-product-xref': 1.3,
+    'implementation-attacks': 1.4,
+    'protocol-matrix': 1.2,
   },
   executive: {
     assessment: 1.5,
@@ -126,6 +151,8 @@ const PERSONA_BOOSTS: Record<string, Record<string, number>> = {
     'governance-maturity': 1.5,
     cswp39: 1.4,
     vendors: 1.3,
+    'vendor-roadmap': 1.3,
+    'regulatory-timeline': 1.5,
   },
   architect: {
     'module-content': 1.3,
@@ -135,6 +162,9 @@ const PERSONA_BOOSTS: Record<string, Record<string, number>> = {
     'business-center': 1.5,
     'governance-maturity': 1.3,
     patents: 1.2,
+    'protocol-matrix': 1.3,
+    'standard-algo-xref': 1.2,
+    'regulatory-timeline': 1.2,
   },
   researcher: {
     library: 1.5,
@@ -145,6 +175,10 @@ const PERSONA_BOOSTS: Record<string, Record<string, number>> = {
     'trusted-sources': 1.5,
     patents: 1.5,
     'module-qa': 1.2,
+    'concept-xwalk': 1.3,
+    'counter-claims': 1.4,
+    'standard-algo-xref': 1.3,
+    'concept-registry': 1.2,
   },
   ops: {
     migrate: 1.5,
@@ -153,6 +187,8 @@ const PERSONA_BOOSTS: Record<string, Record<string, number>> = {
     compliance: 1.2,
     vendors: 1.5,
     'governance-maturity': 1.2,
+    'vendor-roadmap': 1.5,
+    'regulatory-timeline': 1.3,
   },
   curious: {
     glossary: 1.3,
