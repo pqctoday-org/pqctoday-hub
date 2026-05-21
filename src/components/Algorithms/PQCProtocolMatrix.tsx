@@ -51,49 +51,6 @@ const WORKSHOP_TOOL_LINKS: Record<string, string> = Object.fromEntries(
 function resolveToolLink(tool: PlaygroundTool): string {
   return tool.url ?? WORKSHOP_TOOL_LINKS[tool.toolId] ?? `/playground/${tool.toolId}`
 }
-import { libraryData } from '../../data/libraryData'
-
-/* Build a Set of library reference_ids once at module load. Used to decide
- * whether a matrix doc reference should route to /library?ref=<id> (opens
- * the LibraryDetailPopover overview) or fall back to its direct source URL.
- *
- * Walks nested `children` so docs under a parent (e.g. RFC versions, draft
- * iterations) are reachable too. */
-const LIBRARY_REF_IDS: Set<string> = (() => {
-  const ids = new Set<string>()
-  const walk = (items: typeof libraryData) => {
-    for (const item of items) {
-      ids.add(item.referenceId)
-      if (item.children) walk(item.children)
-    }
-  }
-  walk(libraryData)
-  return ids
-})()
-
-/* Normalize a matrix doc id (e.g. `RFC-4253`, `draft-ietf-tls-mlkem-07`)
- * to the library's `reference_id` convention (e.g. `RFC 4253`, drafts
- * pass through unchanged). Only RFCs need the dash→space swap; other
- * identifier families already match. */
-const toLibraryRefId = (matrixId: string): string =>
-  matrixId.startsWith('RFC-') ? `RFC ${matrixId.slice(4)}` : matrixId
-
-/* Decide the click target for a matrix doc reference. Always routes to the
- * library detail pane (`/library?ref=<refId>`) so the user sees a doc
- * overview before clicking through to the source URL inside the pane. If
- * a matrix ref's library entry is missing, this is a data gap — fix by
- * adding the doc to library CSV rather than silently leaking the source
- * URL into a new tab. Dev-only console warning surfaces the gap. */
-const resolveDocHref = (matrixId: string): string => {
-  const libRefId = toLibraryRefId(matrixId)
-  if (!LIBRARY_REF_IDS.has(libRefId) && import.meta.env.DEV) {
-    console.warn(
-      `[PQCProtocolMatrix] doc ref "${matrixId}" (normalized "${libRefId}") not in library — add it to the library CSV`
-    )
-  }
-  return `/library?ref=${encodeURIComponent(libRefId)}`
-}
-
 type SortKey = 'matrix' | 'name' | 'maturity' | 'oss' | 'commercial' | 'deployments'
 type SortDirection = 'asc' | 'desc'
 type AvailabilityFilter =
@@ -313,7 +270,7 @@ function DimensionBadge({ status, compact = false, blockerNames }: DimensionBadg
   ].filter(Boolean) as string[]
   const tooltip = tooltipParts.length > 0 ? tooltipParts.join(' · ') : undefined
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex w-full min-w-0 flex-col gap-1">
       <div className="flex flex-wrap items-center gap-1">
         <span
           className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium ${toneClass}`}
@@ -471,65 +428,6 @@ function PlaygroundCell({
             </Link>
           ))}
         </div>
-      )}
-    </div>
-  )
-}
-
-/** Horizontal compact chip flow for the row-level Latest Release / Latest Draft
- *  columns in the detailed view. Strips draft prefix in the visible label, full
- *  ID + title + date in tooltip. Caps at 3 visible chips with a "+N more"
- *  affordance that links into the row's detail modal. */
-function DocList({
-  docs,
-  label,
-  onMore,
-}: {
-  docs: ProtocolMatrixRow['latestRelease']
-  label: string
-  onMore?: () => void
-}) {
-  if (docs.length === 0) {
-    return (
-      <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-        <AlertTriangle size={12} /> None
-      </span>
-    )
-  }
-  const visible = docs.slice(0, 3)
-  const hiddenCount = docs.length - visible.length
-  return (
-    <div className="flex flex-wrap gap-1">
-      {visible.map((d) => {
-        const display = shortRefLabel(d.id)
-        const tooltip = [d.id !== display ? d.id : null, d.title, d.date]
-          .filter(Boolean)
-          .join(' — ')
-        return (
-          <a
-            key={d.id}
-            href={resolveDocHref(d.id)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex max-w-full items-center gap-1 truncate rounded border border-primary/30 bg-primary/10 px-1.5 py-0 text-[10px] font-medium text-primary transition-colors hover:bg-primary/20"
-            title={`${label}: ${tooltip}`}
-          >
-            <FileText size={9} className="shrink-0" />
-            <span className="truncate">{display}</span>
-          </a>
-        )
-      })}
-      {hiddenCount > 0 && (
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={onMore}
-          className="h-auto rounded border border-border bg-muted/30 px-1.5 py-0 text-[10px] font-medium text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-          title={`${hiddenCount} more — click to open details`}
-        >
-          +{hiddenCount} more
-        </Button>
       )}
     </div>
   )
@@ -987,16 +885,6 @@ export function PQCProtocolMatrix() {
               <th className="sticky left-0 z-10 bg-muted/60 px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Protocol
               </th>
-              {!isHeatmap && (
-                <>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    Latest Release
-                  </th>
-                  <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    Latest Draft
-                  </th>
-                </>
-              )}
               <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Pure KEM
               </th>
@@ -1009,11 +897,11 @@ export function PQCProtocolMatrix() {
               <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Hybrid Sig
               </th>
-              <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Open Source
-              </th>
-              <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                Commercial
+              <th
+                className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+                title="Libraries — open-source (blue) and commercial (accent)"
+              >
+                Libraries
               </th>
               <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Live Deployments
@@ -1026,10 +914,7 @@ export function PQCProtocolMatrix() {
           <tbody>
             {filteredRows.length === 0 && (
               <tr>
-                <td
-                  colSpan={isHeatmap ? 9 : 11}
-                  className="px-3 py-8 text-center text-sm text-muted-foreground"
-                >
+                <td colSpan={8} className="px-3 py-8 text-center text-sm text-muted-foreground">
                   No protocols match the current filters.{' '}
                   <Button
                     type="button"
@@ -1114,46 +999,28 @@ export function PQCProtocolMatrix() {
                       )}
                     </div>
                   </td>
-                  {!isHeatmap && (
-                    <>
-                      <td className="px-3 py-3">
-                        <DocList
-                          docs={p.latestRelease}
-                          label="Release"
-                          onMore={() => setSelectedProtocol(p)}
-                        />
-                      </td>
-                      <td className="px-3 py-3">
-                        <DocList
-                          docs={p.latestDraft}
-                          label="Draft"
-                          onMore={() => setSelectedProtocol(p)}
-                        />
-                      </td>
-                    </>
-                  )}
-                  <td className="px-3 py-3">
+                  <td className="px-2 py-3 align-top w-[180px] max-w-[180px]">
                     <DimensionBadge
                       status={p.dimensions.pureKem}
                       compact={isHeatmap}
                       blockerNames={rowBlockerNames}
                     />
                   </td>
-                  <td className="px-3 py-3">
+                  <td className="px-2 py-3 align-top w-[180px] max-w-[180px]">
                     <DimensionBadge
                       status={p.dimensions.hybridKem}
                       compact={isHeatmap}
                       blockerNames={rowBlockerNames}
                     />
                   </td>
-                  <td className="px-3 py-3">
+                  <td className="px-2 py-3 align-top w-[180px] max-w-[180px]">
                     <DimensionBadge
                       status={p.dimensions.pureSig}
                       compact={isHeatmap}
                       blockerNames={rowBlockerNames}
                     />
                   </td>
-                  <td className="px-3 py-3">
+                  <td className="px-2 py-3 align-top w-[180px] max-w-[180px]">
                     <DimensionBadge
                       status={p.dimensions.hybridSig}
                       compact={isHeatmap}
@@ -1162,26 +1029,19 @@ export function PQCProtocolMatrix() {
                   </td>
                   <td className="px-3 py-3">
                     {isHeatmap ? (
-                      <AvailabilityBadge count={p.ossLibraries.length} tone="oss" />
-                    ) : p.ossLibraries.length === 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        <AvailabilityBadge count={p.ossLibraries.length} tone="oss" />
+                        <AvailabilityBadge count={p.commercialLibraries.length} tone="commercial" />
+                      </div>
+                    ) : p.ossLibraries.length === 0 && p.commercialLibraries.length === 0 ? (
                       <span className="text-xs text-muted-foreground">—</span>
                     ) : (
                       <div className="flex flex-wrap gap-1">
                         {p.ossLibraries.map((lib) => (
-                          <LibraryChip key={lib.productId} lib={lib} tone="oss" />
+                          <LibraryChip key={`oss-${lib.productId}`} lib={lib} tone="oss" />
                         ))}
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-3 py-3">
-                    {isHeatmap ? (
-                      <AvailabilityBadge count={p.commercialLibraries.length} tone="commercial" />
-                    ) : p.commercialLibraries.length === 0 ? (
-                      <span className="text-xs text-muted-foreground">—</span>
-                    ) : (
-                      <div className="flex flex-wrap gap-1">
                         {p.commercialLibraries.map((lib) => (
-                          <LibraryChip key={lib.productId} lib={lib} tone="commercial" />
+                          <LibraryChip key={`com-${lib.productId}`} lib={lib} tone="commercial" />
                         ))}
                       </div>
                     )}
