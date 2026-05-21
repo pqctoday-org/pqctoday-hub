@@ -172,7 +172,7 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
   onComplete,
   mode = 'comprehensive',
 }) => {
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const store = useAssessmentStore()
   const { currentStep, setStep, markComplete, reset } = store
 
@@ -191,6 +191,15 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
       }
     }
   }, [searchParams, setStep, mode])
+
+  // Mirror currentStep back into ?step= so refresh / share preserves position
+  useEffect(() => {
+    const current = searchParams.get('step')
+    if (current === String(currentStep)) return
+    const next = new URLSearchParams(searchParams)
+    next.set('step', String(currentStep))
+    setSearchParams(next, { replace: true })
+  }, [currentStep, searchParams, setSearchParams])
 
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
 

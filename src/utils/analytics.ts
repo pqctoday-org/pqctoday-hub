@@ -343,19 +343,19 @@ export const logEmbedPolicyApplied = (
 // --- Assessment wizard tracking ---
 
 export const logAssessStart = () => {
-  logEvent('Assessment', 'Start')
+  logEvent('Assessment', 'Start', personaLabel())
 }
 
 export const logAssessStep = (step: number, label: string) => {
-  logEvent('Assessment', 'Step', `${step}:${label}`)
+  logEvent('Assessment', 'Step', personaLabel(`${step}:${label}`))
 }
 
 export const logAssessComplete = (personaResult: string) => {
-  logEvent('Assessment', 'Complete', personaResult)
+  logEvent('Assessment', 'Complete', personaLabel(personaResult))
 }
 
 export const logAssessReset = () => {
-  logEvent('Assessment', 'Reset')
+  logEvent('Assessment', 'Reset', personaLabel())
 }
 
 // --- Persona / personalization tracking ---
