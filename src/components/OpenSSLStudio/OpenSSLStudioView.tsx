@@ -23,6 +23,7 @@ import {
 import clsx from 'clsx'
 import { LogsTab } from './LogsTab'
 import { PageHeader } from '../common/PageHeader'
+import { PreviewBanner } from '../common/PreviewBanner'
 import { Button } from '../ui/button'
 import { CopyButton } from '@/components/ui/CopyButton'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -157,6 +158,10 @@ export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }
           shareTitle="OpenSSL Studio — Interactive OpenSSL v3.6.1 in Your Browser"
           shareText="Run real OpenSSL 3.6.1 commands — key generation, certificates, KEM, PQC — entirely in your browser via WebAssembly."
         />
+      )}
+
+      {!embedded && selectedPersona === 'curious' && (
+        <PreviewBanner pageContext="Developer, Architect, Ops" />
       )}
 
       {/* Desktop recommended banner — visible below lg, hidden when embedded */}
