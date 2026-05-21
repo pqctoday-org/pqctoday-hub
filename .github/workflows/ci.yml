@@ -96,6 +96,32 @@ jobs:
         run: DS_SEVERITY=ERROR npx tsx scripts/validate-data-integrity.ts
         continue-on-error: true
 
+      - name: Validate threats proof rule (TP-1 + TP-2, BLOCKING)
+        # Enforces the 2026-05-21 rule: every active threat row in
+        # quantum_threats_hsm_industries_*.csv must have a downloadable,
+        # ≥ 5 KB on-disk proof under public/threats/. See
+        # reports/threats-gap-fixes-05212026.md for the audit that led to
+        # the rule. Strictly blocking — exits non-zero on any TP-1/TP-2
+        # finding. Re-source or mark status='deprecated' to clear.
+        run: |
+          npx tsx -e "
+            import { runThreatsProofRule } from './scripts/validators/threats-proof-rule.ts'
+            const results = runThreatsProofRule()
+            let failed = false
+            for (const r of results) {
+              const ok = r.status === 'PASS'
+              console.log((ok ? '✓ ' : '✗ ') + '[' + r.id + '] ' + r.description)
+              if (!ok) {
+                failed = true
+                for (const f of r.findings.slice(0, 20)) {
+                  console.log('    row ' + f.row + ' ' + f.field + '=' + JSON.stringify(f.value) + ' — ' + f.message)
+                }
+                if (r.findings.length > 20) console.log('    … +' + (r.findings.length - 20) + ' more')
+              }
+            }
+            if (failed) process.exit(1)
+          "
+
       - name: Audit workshop flows
         # Static audit: every cue in public/workshop/*.json must resolve to a
         # real route / data-workshop-target slug / fixture key / artifact slug
