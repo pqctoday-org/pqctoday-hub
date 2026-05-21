@@ -28,7 +28,13 @@ export function chunkToResource(chunk: RAGChunk): ResourceRef | null {
       return { resourceType: 'library', resourceId: id }
     }
     case 'compliance': {
-      const id = metaString(chunk, 'id') ?? chunk.title
+      // Aggregate / summary compliance chunks (e.g. framework-fines-summary
+      // from frameworkFines.ts) lack a per-framework metadata.id; they don't
+      // represent a single scoreable framework, so route them to "unknown
+      // trust" rather than falling back to the human title (which never
+      // resolves in trustScoreData).
+      const id = metaString(chunk, 'id')
+      if (!id) return null
       return { resourceType: 'compliance', resourceId: id }
     }
     case 'timeline':

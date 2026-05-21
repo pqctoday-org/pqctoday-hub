@@ -42,6 +42,7 @@ import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
 import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
+import { SourcePassagesDrawer } from '@/components/ui/SourcePassagesDrawer'
 import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { conceptIdForFramework } from '@/data/complianceData'
 import { hasGraphEdges } from '@/utils/conceptXwalkGraph'
@@ -621,6 +622,8 @@ function FrameworkCard({
           ))}
         </div>
       )}
+
+      <SourcePassagesDrawer chunkId={`compliance-${fw.id}`} />
 
       {(hasRefs || fw.notes || fw.website) && (
         <div className="flex items-center gap-2 mt-auto pt-1">
