@@ -12,6 +12,11 @@ import {
 } from 'lucide-react'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { Button } from '@/components/ui/button'
+import { ErrorAlert } from '@/components/ui/error-alert'
+import {
+  WorkshopOperationLog,
+  type LogEntry,
+} from '@/components/PKILearning/common/WorkshopOperationLog'
 import { ensureMockCA } from '../mock-ca/mockCA'
 import { CA_ROOT_CERT_PATH, CA_ROOT_KEY_PATH, ML_KEM_ALG } from '../constants'
 
@@ -49,12 +54,20 @@ export const CmpKemKeyUpdate: React.FC = () => {
   const [phase, setPhase] = useState<string>('idle')
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<KurResult | null>(null)
+  const [logEntries, setLogEntries] = useState<LogEntry[]>([])
 
   const handleRun = async () => {
     setBusy(true)
     setError(null)
     setResult(null)
     setPhase('Generating ML-KEM-768 keypair')
+    const startedAt = performance.now()
+    setLogEntries([
+      {
+        status: 'pending',
+        message: 'Running RFC 9810 KUR pipeline (keygen → IR → encap → decap)…',
+      },
+    ])
     try {
       const ca = await ensureMockCA()
       const caFiles = [
@@ -154,8 +167,23 @@ export const CmpKemKeyUpdate: React.FC = () => {
         match,
       })
       setPhase('done')
+      setLogEntries([
+        {
+          status: 'success',
+          message: `KUR complete — shared secrets ${match ? 'match' : 'DIFFER'}`,
+          durationMs: Math.round(performance.now() - startedAt),
+        },
+      ])
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      const msg = e instanceof Error ? e.message : String(e)
+      setError(msg)
+      setLogEntries([
+        {
+          status: 'error',
+          message: `KUR pipeline failed — ${msg}`,
+          durationMs: Math.round(performance.now() - startedAt),
+        },
+      ])
     } finally {
       setBusy(false)
     }
@@ -297,12 +325,9 @@ export const CmpKemKeyUpdate: React.FC = () => {
         {busy ? `Working: ${phase}` : 'Run ML-KEM-768 KUR (CMP IR + encrCert POP)'}
       </Button>
 
-      {error && (
-        <div className="rounded border border-status-error/30 bg-status-error/10 p-3 text-sm text-status-error flex items-start gap-2">
-          <AlertTriangle size={16} className="mt-0.5 shrink-0" />
-          <pre className="whitespace-pre-wrap font-mono text-xs">{error}</pre>
-        </div>
-      )}
+      {logEntries.length > 0 && <WorkshopOperationLog entries={logEntries} />}
+
+      {error && <ErrorAlert message={error} onRetry={handleRun} />}
 
       {result && (
         <div className="space-y-3">
