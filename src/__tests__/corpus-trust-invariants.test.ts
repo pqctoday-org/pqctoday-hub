@@ -1,20 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * Corpus trust invariants — LOCAL maintainer suite.
+ * Corpus trust invariants.
  *
- * This file is intentionally skipped in CI (any environment where the `CI`
- * env var is truthy). The invariants here gate the trust-engine on the
- * maintainer's laptop where the full reference-doc cache
- * (public/{library,timeline,threats,products,vendor-roadmaps}/) is present
- * and the corpus + embeddings have been regenerated in lockstep. None of
- * those preconditions hold on a clean CI checkout: the reference-doc cache
- * is gitignored by design (file sizes + licensing — see .gitignore lines
- * 64-66, 264-268), and any CSV-driven corpus shift requires running the
- * embeddings pipeline before commit to keep `embeddings-meta.corpusHash`
- * aligned with `rag-corpus.json` sha256. Running these checks in CI would
- * fail on every PR that touches a library/timeline/threat CSV row.
+ * Most checks run unconditionally in CI; the T16 corpusHash invariant
+ * stays maintainer-only because it requires the embeddings pipeline to
+ * have been re-run in lockstep with any CSV change — a manual step that
+ * isn't gated by build. The other invariants (C3 tier coverage, C4 PROV
+ * chain, C5 freshness) are pure checks against the committed corpus and
+ * are safe to enforce on every PR.
  *
- * Three invariants (see C3, C4, C5 in the trust-engine acceptance plan):
+ * Note on the gitignored reference-doc cache
+ * (public/{library,timeline,threats,products,vendor-roadmaps}/): the C4
+ * `source_doc local paths resolve on disk` test exempts those sources
+ * via LOCAL_CACHE_SOURCES, so the cache's absence on CI is not a
+ * failure mode here.
+ *
+ * Four invariants (see C3, C4, C5, T16 in the trust-engine acceptance plan):
  *   1. Tier coverage: every chunk whose `source` is a scored resource type
  *      resolves through `chunkToResource` to a non-null tier, OR the chunk's
  *      source appears in TIER_NOT_APPLICABLE.
@@ -23,6 +24,9 @@
  *      disk; `source_doc` (when not a gitignored local-cache pointer)
  *      resolves on disk; `source_passages` is populated.
  *   3. Freshness: no chunk's `prov.was_generated_by` date is in the future.
+ *   4. Embedding coverage (T16): byteOffsets present for every chunk; bin
+ *      length matches dims × chunkCount; corpusHash matches the corpus
+ *      sha256 — the last one is maintainer-local.
  *
  * Run locally: `npx vitest run src/__tests__/corpus-trust-invariants.test.ts`
  */
@@ -36,7 +40,13 @@ import { getTrustScore } from '@/data/trustScore'
 import type { RAGChunk } from '@/types/ChatTypes'
 
 const IS_CI = !!process.env.CI
-const describeLocal = IS_CI ? describe.skip : describe
+/**
+ * Gate for maintainer-only tests that depend on the embeddings pipeline
+ * having been re-run in lockstep with the latest corpus (T16 corpusHash).
+ * CSV / corpus regenerations on a PR will mismatch the embeddings hash
+ * until the pipeline catches up, which is a manual maintainer step.
+ */
+const describeMaintainerLocal = IS_CI ? describe.skip : describe
 
 const REPO_ROOT = process.cwd()
 const CORPUS_PATH = path.join(REPO_ROOT, 'public', 'data', 'rag-corpus.json')
@@ -176,7 +186,7 @@ const MAX_MISSING_CSVS = 0
 /** Pinned count of local source_doc paths missing on disk. */
 const MAX_MISSING_SOURCE_DOCS = 0
 
-describeLocal('corpus trust invariants — tier coverage (C3)', () => {
+describe('corpus trust invariants — tier coverage (C3)', () => {
   const corpus = loadCorpus()
 
   it('every chunk source is either scored or on TIER_NOT_APPLICABLE', () => {
@@ -221,7 +231,7 @@ describeLocal('corpus trust invariants — tier coverage (C3)', () => {
   })
 })
 
-describeLocal('corpus trust invariants — PROV chain (C4)', () => {
+describe('corpus trust invariants — PROV chain (C4)', () => {
   const corpus = loadCorpus()
 
   it('every chunk has prov with the 4 always-required PROV-DM fields', () => {
@@ -329,7 +339,7 @@ describeLocal('corpus trust invariants — PROV chain (C4)', () => {
   })
 })
 
-describeLocal('corpus trust invariants — embedding coverage (T16)', () => {
+describeMaintainerLocal('corpus trust invariants — embedding coverage (T16)', () => {
   // Local-only build per embedding-optimization.md §6.1: this test runs in
   // CI but reads the committed artifact rather than regenerating it. If the
   // artifact doesn't exist yet (e.g. on a feature branch before the first
@@ -386,7 +396,7 @@ describeLocal('corpus trust invariants — embedding coverage (T16)', () => {
   })
 })
 
-describeLocal('corpus trust invariants — freshness (C5)', () => {
+describe('corpus trust invariants — freshness (C5)', () => {
   const corpus = loadCorpus()
 
   it('was_generated_by date is never in the future', () => {
