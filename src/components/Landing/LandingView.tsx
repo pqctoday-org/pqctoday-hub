@@ -16,6 +16,7 @@ import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { TransparencyBanner } from './TransparencyBanner'
 import { PersonaChip } from '@/components/Persona/PersonaChip'
 import { ResumeBanner } from '@/components/common/ResumeBanner'
+import { CuriousGuide } from '@/components/common/CuriousGuide'
 import { logEvent, personaLabel } from '@/utils/analytics'
 import { useGoogleAuth } from '@/contexts/GoogleAuthContext'
 
@@ -324,6 +325,10 @@ export const LandingView = () => {
 
       {/* Transparency Banner */}
       <TransparencyBanner />
+
+      {/* Curious-persona floating tour — auto-mounts on first Landing visit when
+          persona is curious. Dismiss persists via usePersonaStore v7 migration. */}
+      <CuriousGuide />
 
       {/* Progress Management */}
       <section className="pt-4">
