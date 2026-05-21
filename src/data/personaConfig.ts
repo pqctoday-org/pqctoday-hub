@@ -70,6 +70,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
     '/leaders',
     '/migrate',
     '/playground',
+    '/patents',
     '/revisions',
   ],
 }

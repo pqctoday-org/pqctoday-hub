@@ -25,7 +25,7 @@ import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { LIBRARY_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import debounce from 'lodash/debounce'
 import { useAchievementStore } from '@/store/useAchievementStore'
-import { logLibrarySearch, logEvent } from '../../utils/analytics'
+import { logLibrarySearch, logEvent, personaLabel } from '../../utils/analytics'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
 import { maturityByRefId } from '../../data/maturityGovernanceData'
@@ -703,6 +703,8 @@ export const LibraryView: React.FC = () => {
 
   const openDetail = (item: LibraryItem) => {
     setSelectedItem(item)
+    // P04-P1-01: persona-attributed library item open
+    logEvent('Library', 'Item Open', personaLabel(item.referenceId))
     // CC-15: drive the first-standard-read achievement for curious users.
     useAchievementStore.getState().recordSectionVisit('curious:library-read')
     setSearchParams(
