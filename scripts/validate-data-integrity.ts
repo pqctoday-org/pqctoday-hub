@@ -42,6 +42,7 @@ import {
   runVocabTagChecks,
   runOrphanCheck,
 } from './validators/self-containment-checks.js'
+import { runThreatsProofRule } from './validators/threats-proof-rule.js'
 import { buildReport, printReport } from './validators/report-builder.js'
 import type { CheckResult } from './validators/types.js'
 import fs from 'fs'
@@ -149,6 +150,11 @@ try {
   allResults.push(...runVocabTagChecks())
   // 7f. Trust-path orphan check on restored/deprecated rows (DS20)
   allResults.push(...runOrphanCheck())
+  // 7g. Threats validated-proof rule (TP-1 + TP-2) — added 2026-05-21 to
+  // block any future re-introduction of an active threat without a
+  // downloadable, ≥5 KB on-disk proof. See:
+  // reports/threats-gap-fixes-05212026.md
+  allResults.push(...runThreatsProofRule())
 
   // 8. Graph consistency checks (GC-1..GC-12)
   const { results: graphResults, markdownReport: graphMarkdown } = runGraphConsistencyChecks()
