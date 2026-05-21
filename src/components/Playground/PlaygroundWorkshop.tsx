@@ -138,8 +138,23 @@ const CuriousStartHere = () => {
     {
       n: 1,
       id: 'qrng-demo',
-      title: 'QRNG Demo',
-      caption: 'Visualise how randomness underpins all cryptographic security.',
+      title: 'See where randomness comes from',
+      caption:
+        'Quantum random numbers — the raw material every encryption key depends on. Watch one being made.',
+    },
+    {
+      n: 2,
+      id: 'tls-simulator',
+      title: 'Watch a website handshake',
+      caption:
+        'Every padlock icon hides a 50-millisecond conversation between browser and server. Step through it.',
+    },
+    {
+      n: 3,
+      id: 'hybrid-encrypt',
+      title: 'Try hybrid (old + new) encryption',
+      caption:
+        "How the world is migrating: keep today's algorithms running side-by-side with the new quantum-safe ones.",
     },
   ]
   return (
