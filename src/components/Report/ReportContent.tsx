@@ -53,6 +53,7 @@ import { ROICalculatorSection } from '../shared/ROICalculatorSection'
 import type { ROISummary } from '../shared/ROICalculatorSection'
 import { KPITrendingSection } from './KPITrendingSection'
 import { BoardBriefSection } from './BoardBriefSection'
+import { BoardPackExport } from './BoardPackExport'
 import { formatDriver } from '../../data/driverLabels'
 import { RiskGauge, riskConfig } from '../shared/widgets/RiskGauge'
 import { Button } from '../ui/button'
@@ -1602,6 +1603,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                           <Briefcase size={16} />
                           Print Executive Brief
                         </Button>
+                        <BoardPackExport result={result} variant="outline" />
                         <Button
                           variant="ghost"
                           onClick={handleCSVExport}
