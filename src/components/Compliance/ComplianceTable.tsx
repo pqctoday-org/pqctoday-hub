@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useMemo, useRef } from 'react'
+import React, { useState, useMemo, useRef, useEffect } from 'react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import {
   X,
@@ -362,6 +362,25 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   const [showMigrateCatMenu, setShowMigrateCatMenu] = useState(false)
   const [vendorSearch, setVendorSearch] = useState('')
   const tableContainerRef = useRef<HTMLDivElement>(null)
+
+  // Tailwind `md` breakpoint is 768px. The mobile card list uses
+  // `mobileRowVirtualizer.measureElement` for variable-height rows; mounting
+  // those refs while the cards are `display:none` causes react-virtual to
+  // loop on 0-height measurements (max update depth exceeded). Render the
+  // mobile branch only when the viewport actually matches.
+  const [isMobile, setIsMobile] = useState(
+    () =>
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(max-width: 767px)').matches
+  )
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return
+    const mq = window.matchMedia('(max-width: 767px)')
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
 
   const totalActiveFilters =
     pqcFilters.length +
@@ -1465,84 +1484,88 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
             </tbody>
           </table>
 
-          {/* Mobile View — virtualized against same tableContainerRef scroll container */}
-          <div
-            className="md:hidden relative"
-            style={{ height: `${mobileRowVirtualizer.getTotalSize()}px` }}
-          >
-            {mobileVirtualRows.map((virtualRow) => {
-              const record = filteredAndSortedData[virtualRow.index]
-              return (
-                <div
-                  key={`${record.id}-${record.source}`}
-                  ref={mobileRowVirtualizer.measureElement}
-                  data-index={virtualRow.index}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    transform: `translateY(${virtualRow.start}px)`,
-                  }}
-                  className="border-b border-border/50 p-4 bg-card hover:bg-muted/50 transition-colors"
-                >
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="flex items-center gap-1 text-xs font-mono text-muted-foreground">
-                        <Database size={10} className="shrink-0" />
-                        {record.source}
-                      </span>
-                      <span
-                        className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border ${
-                          record.status === 'Active'
-                            ? 'bg-status-success/10 text-status-success border-status-success/30'
-                            : record.status === 'Revoked'
-                              ? 'bg-status-error/10 text-status-error border-status-error/30'
-                              : 'bg-status-warning/10 text-status-warning border-status-warning/30'
-                        }`}
-                      >
-                        {record.status}
-                      </span>
+          {/* Mobile View — virtualized against same tableContainerRef scroll container.
+              Gated on `isMobile` so the measureElement refs don't attach while
+              the cards are display:none (caused a react-virtual resize loop). */}
+          {isMobile && (
+            <div
+              className="md:hidden relative"
+              style={{ height: `${mobileRowVirtualizer.getTotalSize()}px` }}
+            >
+              {mobileVirtualRows.map((virtualRow) => {
+                const record = filteredAndSortedData[virtualRow.index]
+                return (
+                  <div
+                    key={`${record.id}-${record.source}`}
+                    ref={mobileRowVirtualizer.measureElement}
+                    data-index={virtualRow.index}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      transform: `translateY(${virtualRow.start}px)`,
+                    }}
+                    className="border-b border-border/50 p-4 bg-card hover:bg-muted/50 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="flex items-center gap-1 text-xs font-mono text-muted-foreground">
+                          <Database size={10} className="shrink-0" />
+                          {record.source}
+                        </span>
+                        <span
+                          className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border ${
+                            record.status === 'Active'
+                              ? 'bg-status-success/10 text-status-success border-status-success/30'
+                              : record.status === 'Revoked'
+                                ? 'bg-status-error/10 text-status-error border-status-error/30'
+                                : 'bg-status-warning/10 text-status-warning border-status-warning/30'
+                          }`}
+                        >
+                          {record.status}
+                        </span>
+                      </div>
+                      {record.pqcCoverage &&
+                        record.pqcCoverage !== 'No PQC Mechanisms Detected' &&
+                        record.pqcCoverage !== 'Pending Check...' && (
+                          <ShieldCheck size={16} className="text-tertiary shrink-0 mt-0.5" />
+                        )}
                     </div>
-                    {record.pqcCoverage &&
-                      record.pqcCoverage !== 'No PQC Mechanisms Detected' &&
-                      record.pqcCoverage !== 'Pending Check...' && (
-                        <ShieldCheck size={16} className="text-tertiary shrink-0 mt-0.5" />
-                      )}
-                  </div>
 
-                  <p className="text-sm font-semibold text-foreground leading-snug mb-1 line-clamp-2">
-                    {record.productName}
-                  </p>
-                  <div className="text-xs text-muted-foreground flex items-center gap-1 truncate mb-3">
-                    <span className="font-medium truncate max-w-[50%]">{record.vendor}</span>
-                    <span className="opacity-50">&bull;</span>
-                    <span className="truncate">{record.productCategory}</span>
-                  </div>
+                    <p className="text-sm font-semibold text-foreground leading-snug mb-1 line-clamp-2">
+                      {record.productName}
+                    </p>
+                    <div className="text-xs text-muted-foreground flex items-center gap-1 truncate mb-3">
+                      <span className="font-medium truncate max-w-[50%]">{record.vendor}</span>
+                      <span className="opacity-50">&bull;</span>
+                      <span className="truncate">{record.productCategory}</span>
+                    </div>
 
-                  <div className="flex items-center justify-between mt-2 pt-3 border-t border-border/50">
-                    <div className="flex flex-col gap-0.5">
-                      <span className="text-[10px] text-muted-foreground uppercase opacity-70">
-                        Cert ID
-                      </span>
-                      <span className="text-xs font-mono text-muted-foreground/80 truncate max-w-[150px]">
-                        {record.id}
-                      </span>
-                    </div>
-                    <div className="flex flex-col gap-0.5 items-end">
-                      <span className="text-[10px] text-muted-foreground uppercase opacity-70">
-                        Date
-                      </span>
-                      <span className="text-xs font-mono text-muted-foreground/80">
-                        {record.date}
-                      </span>
+                    <div className="flex items-center justify-between mt-2 pt-3 border-t border-border/50">
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-[10px] text-muted-foreground uppercase opacity-70">
+                          Cert ID
+                        </span>
+                        <span className="text-xs font-mono text-muted-foreground/80 truncate max-w-[150px]">
+                          {record.id}
+                        </span>
+                      </div>
+                      <div className="flex flex-col gap-0.5 items-end">
+                        <span className="text-[10px] text-muted-foreground uppercase opacity-70">
+                          Date
+                        </span>
+                        <span className="text-xs font-mono text-muted-foreground/80">
+                          {record.date}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )
-            })}
-          </div>
-          {filteredAndSortedData.length === 0 && (
+                )
+              })}
+            </div>
+          )}
+          {isMobile && filteredAndSortedData.length === 0 && (
             <div className="md:hidden px-4 py-12 text-center text-muted-foreground text-sm">
               No compliance records found matching your filters.
             </div>
