@@ -7,9 +7,12 @@ import { StatusBadge } from '../common/StatusBadge'
 interface ActivityFeedProps {
   items: LibraryItem[]
   onSelect: (item: LibraryItem) => void
+  /** Timestamp of the underlying CSV dataset — surfaces dataset freshness when
+   *  individual document publication dates are naturally older. */
+  datasetUpdated?: Date
 }
 
-export const ActivityFeed = ({ items, onSelect }: ActivityFeedProps) => {
+export const ActivityFeed = ({ items, onSelect, datasetUpdated }: ActivityFeedProps) => {
   if (items.length === 0) return null
 
   return (
@@ -18,6 +21,14 @@ export const ActivityFeed = ({ items, onSelect }: ActivityFeedProps) => {
         <Clock size={16} className="text-primary" aria-hidden="true" />
         <h3 className="text-sm font-semibold text-foreground">Recent Updates</h3>
         <span className="text-xs text-muted-foreground">({items.length})</span>
+        {datasetUpdated && (
+          <span
+            className="ml-auto text-[10px] text-muted-foreground"
+            title="Date our dataset was last refreshed. Individual document dates below show each standard's own publication or revision date."
+          >
+            Dataset refreshed {datasetUpdated.toLocaleDateString()}
+          </span>
+        )}
       </div>
 
       {/* Desktop: horizontal scroll */}
@@ -40,7 +51,9 @@ export const ActivityFeed = ({ items, onSelect }: ActivityFeedProps) => {
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
                   <Calendar size={10} aria-hidden="true" />
-                  <span>{item.lastUpdateDate}</span>
+                  <span title="Document publication or revision date">
+                    Pub. {item.lastUpdateDate}
+                  </span>
                 </div>
                 <StatusBadge status={item.status} size="sm" />
               </div>

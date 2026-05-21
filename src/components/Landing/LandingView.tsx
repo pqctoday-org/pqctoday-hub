@@ -66,6 +66,24 @@ const PERSONA_HERO_CTA: Record<
   },
 }
 
+// Persona-specific second-line urgency framing under the hero copy. Speaks to
+// each role's natural worry: deadlines for execs, library choices for devs,
+// hierarchy redesign for architects, evidence for researchers, fleet rotation
+// for ops, and "what is this" for the curious.
+const PERSONA_HERO_TAGLINE: Record<string, string> = {
+  executive:
+    'Boards are asking now. CNSA 2.0 deadlines start landing in 2027 — get a defensible answer before the next audit cycle.',
+  developer:
+    'OpenSSL 3.x, BoringSSL, and JOSE are already shipping PQC. See the algorithms, test the libraries, and find the one that fits your stack.',
+  architect:
+    'Hybrid certs, composite signatures, and a 30 % key-size jump reshape every PKI. Map the redesign before it maps you.',
+  researcher:
+    'FIPS 203/204/205 are out, RFC 9964 just landed, and ACVP vectors are live. Trace the citations and KATs end-to-end.',
+  ops: 'Cert rotations get longer, keys get bigger, HSMs get pickier. Plan the cutover before the next renewal window.',
+  curious:
+    "Nothing breaks today. But what runs the padlock icon will look very different in five years — here's the short version.",
+}
+
 const DEFAULT_HERO_CTA = {
   primary: { label: 'Start the Journey', path: '/learn' },
   secondary: { label: 'Explore the Timeline', path: '/timeline' },
@@ -158,11 +176,24 @@ export const LandingView = () => {
           animate="visible"
           variants={fadeUp}
           custom={2}
-          className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8"
+          className="text-lg text-muted-foreground max-w-2xl mx-auto mb-3"
         >
           Quantum computers will break today's encryption. This free platform walks you from
           understanding the threat to deploying quantum-resistant cryptography — step by step.
         </motion.p>
+
+        {selectedPersona && PERSONA_HERO_TAGLINE[selectedPersona] && (
+          <motion.p
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            custom={2.2}
+            className="text-base text-foreground/85 max-w-2xl mx-auto mb-8 font-medium"
+          >
+            {PERSONA_HERO_TAGLINE[selectedPersona]}
+          </motion.p>
+        )}
+        {!selectedPersona && <div className="mb-5" />}
 
         {/* Resume banner — shown when a module is in-progress/completed */}
         {lastVisitedModule && (
