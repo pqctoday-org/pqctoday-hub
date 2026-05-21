@@ -227,18 +227,29 @@ function mergeSections(versions: ChangelogVersion[]): ChangelogSection[] {
 // Per-persona keyword sets — used by the "For me" filter to surface entries
 // that aren't explicitly tagged via `[persona:X]` but mention work in that
 // persona's wheelhouse. Explicit tags always take precedence.
-const PERSONA_KEYWORDS: Record<string, RegExp> = {
+//
+// Coverage rationale (post-2026-05-21 audit pass):
+// - Existing CHANGELOG is ~1,150 entries; only ~25 have explicit persona tags.
+//   The keyword regex bridges the gap so a persona-filtered view still
+//   surfaces relevant historic work.
+// - Terms chosen from the actual corpus, not abstract role descriptions.
+//   Examples: "PROV-DM" + "corpus" + "embeddings" + "trust-engine" are
+//   researcher concerns because researchers use those for citation chains;
+//   "CI" / "vitest" / "lint" / "tsconfig" are developer concerns because
+//   they touch the build pipeline; "CSV" / "scrape" / "catalog refresh" are
+//   ops concerns because they're the data plumbing that feeds dashboards.
+export const PERSONA_KEYWORDS: Record<string, RegExp> = {
   executive:
-    /\b(compliance|regulatory|governance|board|roadmap|policy|NIST|ANSSI|BSI|CNSA|FIPS 140|deadline|business case)\b/i,
+    /\b(compliance|regulatory|governance|board|roadmap|policy|NIST|ANSSI|BSI|CNSA|FIPS 140|deadline|business case|audit|framework|enforcement|stakeholder)\b/i,
   developer:
-    /\b(API|SDK|library|code|playground|openssl|WASM|JOSE|COSE|JWT|workshop|tool|algorithm|implementation|TLS|liboqs)\b/i,
+    /\b(API|SDK|library|code|playground|openssl|WASM|JOSE|COSE|JWT|workshop|tool|algorithm|implementation|TLS|liboqs|vitest|Playwright|TypeScript|test|lint|tsconfig|webpack|vite|CI|GitHub Action|workflow)\b/i,
   architect:
-    /\b(PKI|certificate|hybrid|agility|architecture|design|HSM|TPM|protocol|hierarchy|enrollment|composite)\b/i,
+    /\b(PKI|certificate|hybrid|agility|architecture|design|HSM|TPM|protocol|hierarchy|enrollment|composite|X\.509|PKCS#?11|module structure|provider|crypto-agility|key management|KMS|root of trust)\b/i,
   researcher:
-    /\b(spec|RFC|draft|KAT|ACVP|FIPS 203|FIPS 204|FIPS 205|test vector|cryptanalysis|attack|paper)\b/i,
-  ops: /\b(deploy|deployment|runtime|infrastructure|operations|rotate|monitoring|telemetry|incident|migration)\b/i,
+    /\b(spec|RFC|draft|KAT|ACVP|FIPS 203|FIPS 204|FIPS 205|test vector|cryptanalysis|attack|paper|PROV-DM|provenance|corpus|RAG|embeddings|attestation|trust score|trust engine|trust-engine|trust tier|OSCAL|CBOM|enrichment|xwalk|crosswalk|concept registry)\b/i,
+  ops: /\b(deploy|deployment|runtime|infrastructure|operations|rotate|monitoring|telemetry|incident|migration|CSV|scrape|catalog refresh|data refresh|fleet|cert rotation|HSM firmware|ETL)\b/i,
   curious:
-    /\b(landing|explore|intro|overview|basics|simplified|story|getting started|learn|persona)\b/i,
+    /\b(landing|explore|intro|overview|basics|simplified|story|getting started|learn|persona|plain.language|three[- ]?step|teaser|orientation|on.ramp)\b/i,
 }
 
 export const ChangelogView = () => {
