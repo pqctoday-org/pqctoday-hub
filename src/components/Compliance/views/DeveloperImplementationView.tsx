@@ -31,6 +31,8 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { logEvent, personaLabel } from '@/utils/analytics'
+import { useComplianceRefresh } from '../services'
+import { ModuleCertificationStatus } from './parts/ModuleCertificationStatus'
 import { useApplicabilityWithPaths } from '../../../hooks/useApplicabilityWithPaths'
 import { groupByTier, type UserProfile } from '../../../utils/applicabilityEngine'
 import { ProfileEditor } from '../../applicability/parts/ProfileEditor'
@@ -85,6 +87,11 @@ jobs:
             && (echo "::error::Classical-only algorithm found without hybrid/PQC pair" && exit 1) \\
             || echo "PQC compliance gate passed"
 `
+
+function DevModuleCertSummary() {
+  const { data } = useComplianceRefresh()
+  return <ModuleCertificationStatus records={data ?? []} />
+}
 
 function CIGateSnippet() {
   const [copied, setCopied] = useState(false)
@@ -333,6 +340,9 @@ export function DeveloperImplementationView({
           ))}
         </div>
       </section>
+
+      {/* ── Module-level certification status (P11-P1-05) ────────── */}
+      <DevModuleCertSummary />
 
       {/* ── CI gate wire-up CTA (P11-P1-06) ──────────────────────── */}
       <CIGateSnippet />
