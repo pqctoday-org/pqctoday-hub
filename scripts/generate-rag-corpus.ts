@@ -4041,7 +4041,10 @@ function processNiceFramework(): RAGChunk[] {
         personas: ca.targetPersonas.join(';'),
       },
       deepLink: `/learn`,
-      prov: buildChunkProv({ attributedTo: 'human' }),
+      prov: buildChunkProv({
+        attributedTo: 'human',
+        enrichmentFile: `src/data/niceFramework.ts:NICE_COMPETENCY_AREAS.${ca.id}`,
+      }),
     })
   }
 
@@ -4066,7 +4069,10 @@ function processNiceFramework(): RAGChunk[] {
         competencyAreas: role.competencyAreas.join(';'),
       },
       deepLink: `/learn`,
-      prov: buildChunkProv({ attributedTo: 'human' }),
+      prov: buildChunkProv({
+        attributedTo: 'human',
+        enrichmentFile: `src/data/niceFramework.ts:NICE_WORK_ROLES.${role.id}`,
+      }),
     })
   }
 
@@ -4102,7 +4108,10 @@ function processNiceFramework(): RAGChunk[] {
         isCommonGround: String(mapping.isCommonGround),
       },
       deepLink: `/learn/${mapping.moduleId}`,
-      prov: buildChunkProv({ attributedTo: 'human' }),
+      prov: buildChunkProv({
+        attributedTo: 'human',
+        enrichmentFile: `src/data/niceModuleMapping.ts:NICE_MODULE_MAP[moduleId=${mapping.moduleId}]`,
+      }),
     })
   }
 
@@ -4177,7 +4186,10 @@ function processProtocolMatrix(): RAGChunk[] {
         recommended: String(row.recommended ?? false),
       },
       deepLink: `/algorithms?tab=protocol&highlight=${encodeParam(row.id)}`,
-      prov: buildChunkProv({ attributedTo: 'human' }),
+      prov: buildChunkProv({
+        attributedTo: 'human',
+        enrichmentFile: `src/data/pqcProtocolMatrix.ts:PROTOCOL_MATRIX[id=${row.id}]`,
+      }),
     })
   }
 
@@ -4498,7 +4510,10 @@ function processRegulatoryTimelines(): RAGChunk[] {
     category: 'regulatory-deadline',
     metadata: { framework: 'CNSA-2.0', authority: 'NSA', country: 'USA' },
     deepLink: '/compliance?tab=frameworks',
-    prov: buildChunkProv({ attributedTo: 'human' }),
+    prov: buildChunkProv({
+      attributedTo: 'human',
+      enrichmentFile: 'src/data/regulatoryTimelines.ts:CNSA_2_0',
+    }),
   })
 
   chunks.push({
@@ -4515,7 +4530,10 @@ function processRegulatoryTimelines(): RAGChunk[] {
     category: 'regulatory-deadline',
     metadata: { framework: 'NIST-IR-8547', authority: 'NIST' },
     deepLink: '/compliance',
-    prov: buildChunkProv({ attributedTo: 'human' }),
+    prov: buildChunkProv({
+      attributedTo: 'human',
+      enrichmentFile: 'src/data/regulatoryTimelines.ts:NIST_DEPRECATION',
+    }),
   })
 
   const fipsLines = (
@@ -4535,7 +4553,10 @@ function processRegulatoryTimelines(): RAGChunk[] {
     category: 'regulatory-deadline',
     metadata: { framework: 'FIPS', authority: 'NIST' },
     deepLink: '/algorithms',
-    prov: buildChunkProv({ attributedTo: 'human' }),
+    prov: buildChunkProv({
+      attributedTo: 'human',
+      enrichmentFile: 'src/data/regulatoryTimelines.ts:FIPS_STANDARDS',
+    }),
   })
 
   chunks.push({
@@ -4553,7 +4574,10 @@ function processRegulatoryTimelines(): RAGChunk[] {
     category: 'regulatory-deadline',
     metadata: { framework: 'ANSSI', authority: 'ANSSI', country: 'France' },
     deepLink: '/compliance',
-    prov: buildChunkProv({ attributedTo: 'human' }),
+    prov: buildChunkProv({
+      attributedTo: 'human',
+      enrichmentFile: 'src/data/regulatoryTimelines.ts:ANSSI_TIMELINE',
+    }),
   })
 
   chunks.push({
@@ -4569,7 +4593,10 @@ function processRegulatoryTimelines(): RAGChunk[] {
     category: 'regulatory-deadline',
     metadata: { framework: 'BSI-TR-02102', authority: 'BSI', country: 'Germany' },
     deepLink: '/compliance',
-    prov: buildChunkProv({ attributedTo: 'human' }),
+    prov: buildChunkProv({
+      attributedTo: 'human',
+      enrichmentFile: 'src/data/regulatoryTimelines.ts:BSI_TIMELINE',
+    }),
   })
 
   chunks.push({
@@ -4587,7 +4614,10 @@ function processRegulatoryTimelines(): RAGChunk[] {
     category: 'quantum-timeline',
     metadata: { type: 'crqc-estimate' },
     deepLink: '/timeline',
-    prov: buildChunkProv({ attributedTo: 'human' }),
+    prov: buildChunkProv({
+      attributedTo: 'human',
+      enrichmentFile: 'src/data/regulatoryTimelines.ts:CRQC_ESTIMATES',
+    }),
   })
 
   return chunks
@@ -4731,7 +4761,10 @@ function processFrameworkFines(): RAGChunk[] {
       category: 'compliance-fines',
       metadata: { type: 'framework-fines' },
       deepLink: '/compliance',
-      prov: buildChunkProv({ attributedTo: 'human' }),
+      prov: buildChunkProv({
+        attributedTo: 'human',
+        enrichmentFile: 'src/data/frameworkFines.ts:FRAMEWORK_MAX_FINE_USD_MILLIONS',
+      }),
     },
   ]
 }

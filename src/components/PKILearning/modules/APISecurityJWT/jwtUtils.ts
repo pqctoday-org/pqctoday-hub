@@ -62,7 +62,7 @@ export function base64urlDecode(str: string): Uint8Array {
  * Returns null if the token shape or the header is malformed. The payload
  * is parsed as JSON when possible but falls back to `{ raw: <text> }` for
  * RFC 7515 JWS payloads that aren't JSON (e.g. plain UTF-8 text — the
- * pattern used by draft-ietf-cose-dilithium-11 Appendix A.1 examples).
+ * pattern used by RFC 9964 Appendix A.1 examples).
  */
 export function decodeJWT(
   token: string
@@ -133,8 +133,8 @@ export function calculateJWTSize(
 //
 // Real sign/verify for the API Security & JWT workshop.
 //
-// Algorithms follow draft-ietf-cose-dilithium-11 (JOSE inherits the alg codes
-// from COSE) and draft-ietf-jose-pq-composite-sigs-01 for the hybrid family.
+// Algorithms follow RFC 9964 (ML-DSA for JOSE and COSE, published May 2026)
+// and draft-ietf-jose-pq-composite-sigs-01 for the hybrid family.
 //
 // Two backends are supported:
 //   - 'noble'    — @noble/post-quantum + @noble/curves (pure JS)
@@ -184,6 +184,14 @@ export interface JwsKeyPair {
    */
   secretKey: Uint8Array
   hsmHandles?: { pubHandle: number; privHandle: number }
+  /**
+   * 32-byte FIPS 204 KeyGen seed (ξ) for ML-DSA — the canonical private-key
+   * representation per RFC 9964 §3 (AKP `priv` parameter). Only populated for
+   * pure ML-DSA noble keys (we generate the seed ourselves so we can expose it).
+   * Undefined for HSM-backed keys (seed is sealed), composite keys, and SLH-DSA
+   * (RFC 9964 is signature-only and limited to ML-DSA).
+   */
+  mldsaSeed?: Uint8Array
 }
 
 export interface SignedJwsResult {
@@ -523,8 +531,13 @@ export async function generateJwsKeyPair(opts: {
   }
 
   if (isMlDsa(alg)) {
-    const { publicKey, secretKey } = ML_DSA_SUITES[alg].keygen()
-    return { alg, publicKey, secretKey }
+    // Generate the 32-byte FIPS 204 seed ourselves so we can expose it as the
+    // RFC 9964 §3 AKP `priv` parameter. Without this, noble produces a random
+    // seed internally and discards it.
+    const seed = new Uint8Array(32)
+    crypto.getRandomValues(seed)
+    const { publicKey, secretKey } = ML_DSA_SUITES[alg].keygen(seed)
+    return { alg, publicKey, secretKey, mldsaSeed: seed }
   }
 
   if (isSlhDsa(alg)) {
@@ -644,7 +657,7 @@ export async function verifyJWS(opts: {
   // Decode the JOSE header (must be JSON per RFC 7515 §4). The payload is
   // opaque to verifyJWS — RFC 7515 makes no claim about its format, so we
   // try to parse it as JSON but fall back to {} for non-JWT payloads (the
-  // draft-ietf-cose-dilithium-11 JOSE examples sign plain UTF-8 text).
+  // RFC 9964 Appendix A.1 JOSE examples sign plain UTF-8 text).
   let header: Record<string, unknown>
   let payload: Record<string, unknown> = {}
   try {
@@ -762,4 +775,43 @@ export function bytesToHex(bytes: Uint8Array): string {
     hex += bytes[i].toString(16).padStart(2, '0')
   }
   return hex
+}
+
+/**
+ * AKP JWK shape per RFC 9964 §3 — Algorithm Key Pair (kty="AKP") for ML-DSA.
+ * `priv` is the 32-byte FIPS 204 KeyGen seed (NOT the expanded private key),
+ * `pub` is the encoded public key. The `alg` field carries the JOSE name
+ * inherited from the COSE registrations (ML-DSA-44/65/87).
+ */
+export interface AkpJwk {
+  kty: 'AKP'
+  alg: 'ML-DSA-44' | 'ML-DSA-65' | 'ML-DSA-87'
+  pub: string
+  priv?: string
+  kid?: string
+}
+
+/**
+ * Render a JwsKeyPair as an RFC 9964 §3 AKP JWK. Only meaningful for pure
+ * ML-DSA; returns null for SLH-DSA (not in RFC 9964 scope), composite
+ * (separate draft), or HSM-backed keys when the seed is sealed.
+ *
+ * When `includePrivate` is true and the seed is known, emits the full keypair
+ * with `priv` (base64url 32-byte seed). Otherwise emits the public-only JWK.
+ */
+export function toAkpJwk(
+  keyPair: JwsKeyPair,
+  opts: { includePrivate?: boolean; kid?: string } = {}
+): AkpJwk | null {
+  if (!isMlDsa(keyPair.alg)) return null
+  const out: AkpJwk = {
+    kty: 'AKP',
+    alg: keyPair.alg,
+    pub: base64urlEncode(keyPair.publicKey),
+  }
+  if (opts.includePrivate && keyPair.mldsaSeed) {
+    out.priv = base64urlEncode(keyPair.mldsaSeed)
+  }
+  if (opts.kid) out.kid = opts.kid
+  return out
 }

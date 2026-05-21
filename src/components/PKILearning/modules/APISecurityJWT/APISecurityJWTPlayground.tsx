@@ -43,7 +43,7 @@ const SECTIONS = [
     id: 'matrix-audit',
     title: 'Step 6 — JOSE Protocol Matrix Audit',
     description:
-      'Live KAT suite validating IETF cose-dilithium-11 vectors and composite pinned snapshots',
+      'Live KAT suite validating RFC 9964 Appendix A.1 vectors and composite pinned snapshots',
   },
 ]
 

@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // ── JOSE Algorithm Data ─────────────────────────────────────────────────────
 //
-// PQC `alg` codes follow draft-ietf-cose-dilithium-11 (JOSE inherits the
-// COSE registrations). The composite family uses draft-ietf-jose-pq-
-// composite-sigs-01. Sizes for PQC variants come from @noble/post-quantum
-// 0.6.1 measurements and match FIPS 203/204/205.
+// PQC `alg` codes follow RFC 9964 (ML-DSA for JOSE and COSE, May 2026).
+// The composite family uses draft-ietf-jose-pq-composite-sigs-01. Sizes
+// for PQC variants come from @noble/post-quantum 0.6.1 and match FIPS 203/204/205.
 
 export interface JOSEAlgorithm {
   name: string
@@ -56,7 +55,7 @@ export const JOSE_SIGNING_ALGORITHMS: JOSEAlgorithm[] = [
     sigBytes: 2420,
     broken: false,
     nistLevel: 2,
-    spec: 'draft-ietf-cose-dilithium-11',
+    spec: 'RFC 9964',
   },
   {
     name: 'ML-DSA-65',
@@ -67,7 +66,7 @@ export const JOSE_SIGNING_ALGORITHMS: JOSEAlgorithm[] = [
     sigBytes: 3309,
     broken: false,
     nistLevel: 3,
-    spec: 'draft-ietf-cose-dilithium-11',
+    spec: 'RFC 9964',
   },
   {
     name: 'ML-DSA-87',
@@ -78,7 +77,7 @@ export const JOSE_SIGNING_ALGORITHMS: JOSEAlgorithm[] = [
     sigBytes: 4627,
     broken: false,
     nistLevel: 5,
-    spec: 'draft-ietf-cose-dilithium-11',
+    spec: 'RFC 9964',
   },
   {
     name: 'SLH-DSA-SHA2-128s',
@@ -89,7 +88,7 @@ export const JOSE_SIGNING_ALGORITHMS: JOSEAlgorithm[] = [
     sigBytes: 7856,
     broken: false,
     nistLevel: 1,
-    spec: 'draft-ietf-cose-dilithium-11 (AKP key type)',
+    spec: 'RFC 9964 (AKP key type)',
   },
   {
     name: 'ML-DSA-44 + ECDSA P-256 (composite)',
@@ -206,10 +205,10 @@ export const SAMPLE_JWT_PAYLOAD: Record<string, unknown> = {
 // ── Sample JWTs ─────────────────────────────────────────────────────────────
 //
 // The three ML-DSA samples are the byte-exact JWS compact serializations
-// from draft-ietf-cose-dilithium-11 Appendix A.1 ("JOSE" examples). They are
-// generated from the all-zeros AKP seed and verify against the public key
-// derived via FIPS 204 KeyGen(seed) — see acvp/cose-dilithium-11-jose-kat.json
-// for the verifying public key bytes. The ES256 sample remains a synthetic
+// from RFC 9964 Appendix A.1 ("JOSE" examples). They are generated from
+// the all-zeros AKP seed and verify against the public key derived via
+// FIPS 204 KeyGen(seed) — see acvp/cose-dilithium-11-jose-kat.json for
+// the verifying public key bytes. The ES256 sample remains a synthetic
 // example (no IETF PQC JWS classical baseline is published).
 
 import joseKat from '@/data/acvp/cose-dilithium-11-jose-kat.json'

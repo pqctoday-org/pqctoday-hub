@@ -87,7 +87,7 @@ interface CoseDilithiumVec {
 async function runJoseKatSuite(): Promise<JoseKatResult[]> {
   const out: JoseKatResult[] = []
 
-  // ── draft-ietf-cose-dilithium-11 Appendix A.1 — JOSE worked examples ────
+  // ── RFC 9964 Appendix A.1 — JOSE worked examples ────
   const coseVectors = (coseDilithiumKat as { vectors: CoseDilithiumVec[] }).vectors
   for (const v of coseVectors) {
     const start = performance.now()
@@ -110,8 +110,8 @@ async function runJoseKatSuite(): Promise<JoseKatResult[]> {
     }
     out.push({
       id: `cose-dilithium-${v.alg}`,
-      spec: 'draft-ietf-cose-dilithium-11 Appendix A.1',
-      reference: 'https://datatracker.ietf.org/doc/draft-ietf-cose-dilithium/',
+      spec: 'RFC 9964 Appendix A.1',
+      reference: 'https://www.rfc-editor.org/rfc/rfc9964.html',
       vector: v.alg,
       description: `Verify byte-exact IETF JWS for ${v.alg} under AKP-seed-derived public key`,
       passed,
@@ -352,14 +352,14 @@ async function runJwsFramingCompliance(): Promise<ComplianceCheck[]> {
     evidence: `Lengths: header=${parts[0]?.length} payload=${parts[1]?.length} sig=${parts[2]?.length}`,
   })
 
-  // ── 5. draft-ietf-cose-dilithium-11 §2.1 — alg code strings ─────────────
+  // ── 5. RFC 9964 §2.1 — alg code strings ─────────────
   const decoded = decodeJWT(signed.token)
   const alg = decoded?.header?.['alg']
   const expectedAlgs = new Set(['ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87'])
   checks.push({
     id: 'cose-dilithium-11-alg-code',
-    spec: 'draft-ietf-cose-dilithium-11 §2.1',
-    reference: 'https://datatracker.ietf.org/doc/draft-ietf-cose-dilithium/',
+    spec: 'RFC 9964 §2.1',
+    reference: 'https://www.rfc-editor.org/rfc/rfc9964.html',
     description: 'JOSE header carries the canonical alg code (JOSE inherits from COSE)',
     passed: typeof alg === 'string' && expectedAlgs.has(alg),
     evidence: `Observed alg="${String(alg)}"`,
@@ -694,7 +694,6 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
       //     and `stageNote`, never refs/libraries/deployments, so this stays
       //     safe to auto-apply.
       const today = new Date().toISOString().slice(0, 10)
-      const pureSigDraft = draftSnapshot.drafts['draft-ietf-cose-dilithium']
       const hybridSigDraft = draftSnapshot.drafts['draft-ietf-jose-pq-composite-sigs']
       const proposedPatch: AuditReport['proposedPatch'] = {
         generated_at: today,
@@ -702,14 +701,14 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
           {
             row_id: 'jose',
             dimension: 'pureSig',
-            ref_id: 'draft-ietf-cose-dilithium',
+            ref_id: 'RFC 9964',
             encoded_stage: joseRow.dimensions.pureSig.value,
-            current_stage: 'draft',
-            current_state_slug: pureSigDraft?.status ?? 'draft',
-            last_updated: pureSigDraft?.current_date ?? today,
+            current_stage: 'rfc',
+            current_state_slug: 'rfc-published',
+            last_updated: '2026-05',
             notes: [
               `In-browser ML-DSA-65 sign+verify roundtrip ${v.valid ? 'passed' : 'FAILED'} in ${durationMs.toFixed(0)}ms via @noble/post-quantum 0.6.1`,
-              `Spec: draft-ietf-cose-dilithium-${pureSigDraft?.current_version ?? '?'} (${pureSigDraft?.current_date ?? '?'})`,
+              'Spec: RFC 9964 — ML-DSA for JOSE and COSE (published May 2026)',
             ],
           },
           {
@@ -910,12 +909,12 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
           </a>
           ,{' '}
           <a
-            href="https://datatracker.ietf.org/doc/draft-ietf-cose-dilithium/"
+            href="https://www.rfc-editor.org/rfc/rfc9964.html"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary underline"
           >
-            draft-ietf-cose-dilithium-11
+            RFC 9964
           </a>
           , and{' '}
           <a
@@ -1011,12 +1010,12 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
           <code className="text-foreground/80">verifyJWS</code> /{' '}
           <code className="text-foreground/80">signJWS</code> adapter:{' '}
           <a
-            href="https://datatracker.ietf.org/doc/draft-ietf-cose-dilithium/"
+            href="https://www.rfc-editor.org/rfc/rfc9964.html"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary underline"
           >
-            draft-ietf-cose-dilithium-11
+            RFC 9964
           </a>{' '}
           Appendix A.1 (3 official IETF JWS vectors for ML-DSA-44/65/87) plus a self-pinned
           composite ML-DSA-65+Ed25519 snapshot for{' '}
@@ -1221,9 +1220,9 @@ export const JOSEProtocolMatrixAudit: React.FC = () => {
               {JSON.stringify(report.proposedPatch, null, 2)}
             </pre>
             <p className="text-[11px] text-muted-foreground mt-2">
-              Covers <code className="text-foreground/80">pureSig</code> (via
-              draft-ietf-cose-dilithium) and <code className="text-foreground/80">hybridSig</code>{' '}
-              (via draft-ietf-jose-pq-composite-sigs). Drop this file at{' '}
+              Covers <code className="text-foreground/80">pureSig</code> (via RFC 9964) and{' '}
+              <code className="text-foreground/80">hybridSig</code> (via
+              draft-ietf-jose-pq-composite-sigs). Drop this file at{' '}
               <code className="text-foreground/80">reports/protocol-matrix-updates.json</code> and
               run{' '}
               <code className="text-foreground/80">
