@@ -123,7 +123,7 @@ describe('SshSimulationPanel', () => {
   it('links to the learn module', () => {
     renderPanel()
     const learnLink = screen.getByRole('link', { name: /learn/i })
-    expect(learnLink).toHaveAttribute('href', '/learn/network-security-pqc')
+    expect(learnLink).toHaveAttribute('href', '/learn/vpn-ssh-pqc')
   })
 
   it('shows the PKCS#11 calls tab', () => {

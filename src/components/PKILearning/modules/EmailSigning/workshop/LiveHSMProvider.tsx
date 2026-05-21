@@ -137,10 +137,8 @@ export function LiveHSMProvider() {
           </Button>
           {status.kind === 'provider_missing' && (
             <span className="text-xs text-muted-foreground">
-              Rebuild with{' '}
-              <code className="rounded bg-muted px-1 py-0.5">npm run build:openssl-wasm</code> (or
-              run <code className="rounded bg-muted px-1 py-0.5">bash build-wasm.sh</code>) so the
-              new symbol lands in <code className="text-xs">public/wasm/openssl.wasm</code>.
+              The HSM signing path requires a WASM bundle that includes the PKCS#11 provider. This
+              feature is not available in the current environment — use Software mode instead.
             </span>
           )}
         </div>

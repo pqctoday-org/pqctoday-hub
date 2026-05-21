@@ -318,7 +318,7 @@ export const HybridSignatures: React.FC = () => {
       setSignPhase('Computing EC-Schnorr component (64B)…')
       intervalRef.current = setInterval(() => {
         setSignPhase((prev) =>
-          prev?.includes('EC-Schnorr') ? 'Computing ML-DSA-65 component (3,287B)…' : prev
+          prev?.includes('EC-Schnorr') ? 'Computing ML-DSA-65 component (3,293B)…' : prev
         )
       }, 80)
       try {
