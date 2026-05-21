@@ -7,6 +7,7 @@ import {
   generateJwsKeyPair,
   isSoftHsmSupported,
   signJWS,
+  toAkpJwk,
   verifyJWS,
   type JwsBackend,
   type JwsKeyPair,
@@ -15,6 +16,7 @@ import {
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 
@@ -96,6 +98,7 @@ export const PQCJWTSigning: React.FC = () => {
   const [isVerifying, setIsVerifying] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
+  const [showJwk, setShowJwk] = useState(false)
 
   const hsm = useHSM('rust')
 
@@ -228,14 +231,14 @@ export const PQCJWTSigning: React.FC = () => {
           <code className="text-foreground/80">b64u(header).b64u(payload)</code>, and verify the
           compact JWS — all in your browser. Algorithm codes follow{' '}
           <a
-            href="https://datatracker.ietf.org/doc/draft-ietf-cose-dilithium/"
+            href="https://www.rfc-editor.org/rfc/rfc9964.html"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary underline"
           >
-            draft-ietf-cose-dilithium-11
+            RFC 9964
           </a>{' '}
-          (JOSE inherits from COSE).
+          (ML-DSA for JOSE and COSE, published May 2026).
         </p>
       </div>
 
@@ -349,27 +352,64 @@ export const PQCJWTSigning: React.FC = () => {
                 </code>
               )}
             </div>
+            {toAkpJwk(keypair) !== null && (
+              <div className="bg-muted/50 rounded-lg p-3 border border-border">
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <div className="text-[10px] font-bold text-accent">
+                    AKP JWK (RFC 9964 §3 — kty=&quot;AKP&quot;)
+                  </div>
+                  <Button
+                    variant="ghost"
+                    onClick={() => setShowJwk((s) => !s)}
+                    className="px-2 py-0.5 text-[10px] rounded border border-border hover:border-primary/30"
+                  >
+                    {showJwk ? 'Hide JWK' : 'View as JWK'}
+                  </Button>
+                </div>
+                {showJwk && (
+                  <>
+                    <pre className="text-[10px] font-mono text-foreground/80 bg-background rounded p-2 border border-border overflow-x-auto whitespace-pre-wrap break-all">
+                      {JSON.stringify(
+                        toAkpJwk(keypair, {
+                          includePrivate: !keypair.hsmHandles,
+                          kid: `${keypair.alg}-key`,
+                        }),
+                        null,
+                        2
+                      )}
+                    </pre>
+                    <p className="text-[10px] text-muted-foreground mt-1">
+                      Per RFC 9964 §3, ML-DSA private keys are encoded as the 32-byte FIPS 204
+                      KeyGen seed (not the expanded secret key).
+                      {keypair.hsmHandles && ' Seed sealed in SoftHSM3 — omitted from JWK above.'}
+                    </p>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         )}
+        <p className="mt-3 text-[10px] text-muted-foreground">
+          <strong>Scope note:</strong> RFC 9964 §7.2 explicitly excludes HashML-DSA (FIPS 204 §5.4)
+          from JOSE/COSE — this workshop only exposes the pure-mode variants accordingly.
+        </p>
       </div>
 
       {/* Payload Editor */}
       <div className="glass-panel p-4">
         <h4 className="text-sm font-bold text-foreground mb-3">JWT Payload (Editable)</h4>
-        <textarea
+        <Textarea
           value={payloadJson}
           onChange={(e) => {
             setPayloadJson(e.target.value)
             setSignedJwt(null)
             setVerifyResult(null)
           }}
-          className={`w-full h-48 p-3 rounded-lg bg-background border text-xs font-mono text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-            isPayloadValid ? 'border-border' : 'border-destructive'
-          }`}
+          className={`h-48 text-xs font-mono ${isPayloadValid ? '' : 'border-status-error'}`}
           spellCheck={false}
         />
         {!isPayloadValid && (
-          <p className="text-[10px] text-destructive mt-1">
+          <p className="text-[10px] text-status-error mt-1">
             Invalid JSON. Fix the payload to sign.
           </p>
         )}
@@ -561,8 +601,8 @@ export const PQCJWTSigning: React.FC = () => {
           <strong>Educational use only.</strong> The signing input is{' '}
           <code className="text-foreground/80">b64u(JOSE header).b64u(payload)</code> per RFC 7515
           §5.1. Both noble and SoftHSM3 produce byte-identical signatures over the same input — a
-          token signed via one backend verifies under the other, demonstrating that
-          draft-ietf-cose-dilithium-11 interoperates across implementations.
+          token signed via one backend verifies under the other, demonstrating that RFC 9964
+          interoperates across implementations.
         </p>
       </div>
 

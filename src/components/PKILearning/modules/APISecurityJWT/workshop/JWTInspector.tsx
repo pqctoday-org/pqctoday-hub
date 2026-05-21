@@ -7,6 +7,7 @@ import { SAMPLE_JWTS, JOSE_SIGNING_ALGORITHMS } from '../constants'
 import { decodeJWT, verifyJWS } from '../jwtUtils'
 import joseKat from '@/data/acvp/cose-dilithium-11-jose-kat.json'
 import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
 
 // Map alg → IETF KAT seed → derived public key (for the "Verify against IETF KAT" button)
 const ML_DSA_SUITES = {
@@ -145,14 +146,14 @@ export const JWTInspector: React.FC = () => {
             {copied ? 'Copied' : 'Copy'}
           </Button>
         </div>
-        <textarea
+        <Textarea
           id="jwt-token-input"
           value={jwtInput}
           onChange={(e) => {
             setJwtInput(e.target.value)
             setSelectedSample('' as SampleKey)
           }}
-          className="w-full h-32 p-3 rounded-lg bg-background border border-border text-xs font-mono text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"
+          className="h-32 text-xs font-mono"
           placeholder="Paste a JWT here..."
           spellCheck={false}
         />
@@ -320,8 +321,7 @@ export const JWTInspector: React.FC = () => {
               )}
               {katError && <span className="text-xs text-destructive">{katError}</span>}
               <span className="text-[10px] text-muted-foreground">
-                Public key derived from the all-zeros AKP seed in draft-ietf-cose-dilithium-11
-                Appendix A.1
+                Public key derived from the all-zeros AKP seed in RFC 9964 Appendix A.1
               </span>
             </div>
           )}

@@ -3846,7 +3846,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                         {idx === currentStep &&
                           allowFragmentation &&
                           step.message.payloads.reduce((a, p) => a + p.sizeBytes, 0) > mtu && (
-                            <span className="px-1.5 py-0.5 bg-warning/20 text-warning text-[9px] rounded uppercase font-bold border border-warning/30">
+                            <span className="px-1.5 py-0.5 bg-status-warning/20 text-status-warning text-[9px] rounded uppercase font-bold border border-status-warning/30">
                               Fragmented
                             </span>
                           )}
@@ -3941,7 +3941,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                         {idx === currentStep &&
                           allowFragmentation &&
                           step.message.payloads.reduce((a, p) => a + p.sizeBytes, 0) > mtu && (
-                            <span className="px-1.5 py-0.5 bg-warning/20 text-warning text-[9px] rounded uppercase font-bold border border-warning/30">
+                            <span className="px-1.5 py-0.5 bg-status-warning/20 text-status-warning text-[9px] rounded uppercase font-bold border border-status-warning/30">
                               Assembled
                             </span>
                           )}
@@ -4793,9 +4793,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                         </span>
                       </div>
                       {clientAlg === 'ML-DSA' && (
-                        <div className="mt-2 p-2 bg-warning/10 border border-warning/30 rounded flex items-start gap-2 max-w-[500px]">
-                          <FlaskConical className="text-warning shrink-0 mt-0.5" size={14} />
-                          <div className="text-[10px] text-warning font-medium leading-tight">
+                        <div className="mt-2 p-2 bg-warning/10 border border-status-warning/30 rounded flex items-start gap-2 max-w-[500px]">
+                          <FlaskConical className="text-status-warning shrink-0 mt-0.5" size={14} />
+                          <div className="text-[10px] text-status-warning font-medium leading-tight">
                             ML-DSA requires an IANA AUTH assignment not yet standardized. This
                             simulation relies on preliminary draft constructs matching{' '}
                             <em>draft-ietf-ipsecme-ikev2-auth-pqc</em>.
@@ -4898,9 +4898,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                         </span>
                       </div>
                       {serverAlg === 'ML-DSA' && (
-                        <div className="mt-2 p-2 bg-warning/10 border border-warning/30 rounded flex items-start gap-2 max-w-[500px]">
-                          <FlaskConical className="text-warning shrink-0 mt-0.5" size={14} />
-                          <div className="text-[10px] text-warning font-medium leading-tight">
+                        <div className="mt-2 p-2 bg-warning/10 border border-status-warning/30 rounded flex items-start gap-2 max-w-[500px]">
+                          <FlaskConical className="text-status-warning shrink-0 mt-0.5" size={14} />
+                          <div className="text-[10px] text-status-warning font-medium leading-tight">
                             ML-DSA requires an IANA AUTH assignment not yet standardized. This
                             simulation relies on preliminary draft constructs matching{' '}
                             <em>draft-ietf-ipsecme-ikev2-auth-pqc</em>.
