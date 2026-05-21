@@ -228,15 +228,17 @@ export const logExploreUnlock = () => {
 // --- Report tracking ---
 
 export const logReportViewed = (industry: string, riskLevel: string) => {
-  logEvent('Report', 'Viewed', `${industry || 'unknown'}:${riskLevel}`)
+  logEvent('Report', 'Viewed', personaLabel(`${industry || 'unknown'}:${riskLevel}`))
 }
 
 export const logReportShareLinkOpened = () => {
-  logEvent('Report', 'Share Link Opened')
+  logEvent('Report', 'Share Link Opened', personaLabel())
 }
 
-export const logReportCta = (target: 'start-assessment' | 'complete-assessment') => {
-  logEvent('Report', 'CTA Click', target)
+export const logReportCta = (
+  target: 'start-assessment' | 'complete-assessment' | 'view-example'
+) => {
+  logEvent('Report', 'CTA Click', personaLabel(target))
 }
 
 // Scrub PII (emails, URLs) before sending query strings to GA4
