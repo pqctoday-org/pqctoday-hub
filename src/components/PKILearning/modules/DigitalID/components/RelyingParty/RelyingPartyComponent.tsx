@@ -17,6 +17,8 @@ import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import type { CryptoKey } from '../../types'
 import type { SdJwtVc } from '../../utils/sdjwt-utils'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
+import { WhyThisMatters } from '@/components/ui/WhyThisMatters'
+import { CopyableOutput } from '@/components/ui/CopyableOutput'
 
 interface RelyingPartyComponentProps {
   wallet: WalletInstance
@@ -239,6 +241,19 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
             <div className="mt-6 border-t pt-6">
               {step === 'START' && (
                 <div className="space-y-4">
+                  <WhyThisMatters title="Selective Disclosure & VP Proof" variant="info">
+                    <p>
+                      OpenID4VP lets the wallet prove only minimum required attributes — not the
+                      full credential. A <strong>Key Binding proof</strong> is produced: the holder
+                      signs the RP&apos;s challenge with their private key. The RP never sees raw
+                      credential data, only the SD-JWT disclosure and the cryptographic proof.
+                    </p>
+                    <p>
+                      The signature is produced by a real crypto call (OpenSSL WASM, or softhsmv3
+                      PKCS#11 when HSM mode is on). The raw token is shown in the COMPLETE step so
+                      you can inspect what was actually signed.
+                    </p>
+                  </WhyThisMatters>
                   <div className="bg-tertiary/5 p-3 rounded-lg border border-tertiary/20 text-sm text-muted-foreground">
                     <p className="font-medium text-foreground mb-1">
                       Note:{' '}
@@ -300,15 +315,35 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
               )}
 
               {step === 'COMPLETE' && (
-                <div className="bg-success/5 p-4 rounded border border-success/30 text-center">
-                  <CheckCircle className="w-12 h-12 text-success mx-auto mb-2" />
-                  <h3 className="font-bold text-success">Account Opened!</h3>
-                  <p className="text-sm text-success mb-4">
-                    Your identity has been verified successfully.
-                  </p>
-                  <Button onClick={onBack} variant="outline" size="sm">
-                    Return to Wallet
-                  </Button>
+                <div className="space-y-4">
+                  <div className="bg-success/5 p-4 rounded border border-success/30 text-center">
+                    <CheckCircle className="w-12 h-12 text-success mx-auto mb-2" />
+                    <h3 className="font-bold text-success">Account Opened!</h3>
+                    <p className="text-sm text-success mb-4">
+                      Your identity has been verified successfully.
+                    </p>
+                    <Button onClick={onBack} variant="outline" size="sm">
+                      Return to Wallet
+                    </Button>
+                  </div>
+                  {presentationData && (
+                    <div className="space-y-3">
+                      <CopyableOutput
+                        label="VP Presentation Token (what was signed)"
+                        value={presentationData.payload}
+                        rows={4}
+                        downloadFilename="vp-presentation.txt"
+                      />
+                      {presentationData.signature !== presentationData.payload && (
+                        <CopyableOutput
+                          label="Signature / Key Binding Proof"
+                          value={presentationData.signature}
+                          rows={3}
+                          downloadFilename="vp-signature.txt"
+                        />
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

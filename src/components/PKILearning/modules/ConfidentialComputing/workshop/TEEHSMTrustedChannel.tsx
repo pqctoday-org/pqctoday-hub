@@ -23,6 +23,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { ErrorAlert } from '@/components/ui/error-alert'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { ScopeTransparencyBanner } from '@/components/ui/ScopeTransparencyBanner'
 import {
   TEE_HSM_INTEGRATIONS,
   QUANTUM_THREAT_VECTORS,
@@ -636,6 +637,20 @@ export const TEEHSMTrustedChannel: React.FC = () => {
 
       {/* Live HSM TEE-HSM Key Provisioning Demo */}
       <LiveHSMToggle hsm={hsm} operations={TEE_LIVE_OPERATIONS} />
+
+      <ScopeTransparencyBanner
+        realOps={[
+          'ML-DSA-65 attestation signing via softhsmv3 C_Sign (PKCS#11 v3.2)',
+          'ML-KEM-768 encapsulation via softhsmv3 C_EncapsulateKey',
+          'AES-256 key wrap / unwrap via softhsmv3 CKM_AES_KEY_WRAP',
+          'Mutual attestation challenge-response with real signature verification',
+        ]}
+        simulatedOps={[
+          'TEE measurement digest generation (simulated enclave boundary)',
+          'Remote attestation quote format (illustrative, not DCAP/TDX wire format)',
+          'HSM provisioning channel framing (topology diagram only)',
+        ]}
+      />
 
       {/* ── Scenario Selector ─────────────────────────────────────── */}
       <div className="glass-panel p-4">

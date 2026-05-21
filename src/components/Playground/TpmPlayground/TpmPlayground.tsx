@@ -9,6 +9,7 @@ import { ComplianceRunner } from './ComplianceRunner'
 import { V2p7EkExplorer } from './V2p7EkExplorer'
 import { V2p7EkCertReader } from './V2p7EkCertReader'
 import { AttestationPanel } from './AttestationPanel'
+import { WhyThisMatters } from '@/components/ui/WhyThisMatters'
 
 export interface TpmLogEntry {
   commandType: string
@@ -66,6 +67,27 @@ export default function TpmPlayground() {
           </div>
         </div>
       </div>
+
+      <WhyThisMatters title="TPM Hierarchy & Hardware-Bound PQC Keys" variant="info">
+        <p>
+          A TPM 2.0 chip organises keys into three <strong>hierarchies</strong>: <em>Owner</em>{' '}
+          (user-controlled persistent storage), <em>Endorsement</em> (manufacturer-provisioned EK
+          for attestation), and <em>Platform</em> (firmware-controlled). Keys created under the
+          Owner or Endorsement hierarchy inherit that hierarchy&apos;s seed — they cannot be
+          extracted without the hierarchy&apos;s authorization value.
+        </p>
+        <p>
+          PQC keys (ML-DSA-65, ML-KEM-768) provisioned via{' '}
+          <strong>TPM2_Create + CKA_EXTRACTABLE=FALSE</strong> are hardware-bound: the private key
+          material never leaves the TPM boundary, even in the TCG V1.85 post-quantum profile (RC4).
+          This gives <em>physical non-exportability</em> — a property that software-only PQC
+          libraries cannot provide.
+        </p>
+        <p>
+          The V2.7 EK tab below lets you explore the manufacturer-provisioned Endorsement Keys and
+          their X.509 certificates, which form the root of the TPM remote attestation chain.
+        </p>
+      </WhyThisMatters>
 
       <Tabs defaultValue="builder" className="w-full">
         <TabsList className="mb-6">
