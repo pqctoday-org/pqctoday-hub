@@ -500,6 +500,20 @@ export function BusinessCenterView() {
           {/* Bottom cross-cut: learning bar */}
           <CompactLearningBar modules={metrics.execModuleProgress} />
 
+          {/* Hidden-by-lens transparency footer (P14-P1-04) — names the zones
+               this persona emphasizes so the user knows other lenses exist.
+               Renders only when a persona is selected. Acts as a soft invite
+               to switch role via the chip in the page header. */}
+          {selectedPersona && Object.keys(zoneEmphasis.featuredArtifacts).length > 0 && (
+            <div className="px-1 text-xs text-muted-foreground leading-relaxed border-t border-border/40 pt-3">
+              <span className="font-medium text-foreground">Your {selectedPersona} lens</span>{' '}
+              emphasizes the <span className="text-primary">{zoneEmphasis.defaultActiveZone}</span>{' '}
+              zone and a curated artifact set ({Object.keys(zoneEmphasis.featuredArtifacts).length}{' '}
+              of {CSWP39_ZONE_ORDER.length} zones featured). Switch persona via the chip in the page
+              header to see other lenses — every zone and artifact stays reachable.
+            </div>
+          )}
+
           {/* Glossary surface — primary NIST CSWP 39 definition + alternative
                framework definitions from Appendix B (FS-ISAC, ATIS, ETSI,
                CARAF, 2016 NIST workshop). Low-prominence accordion at the
