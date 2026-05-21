@@ -11,13 +11,17 @@
  * `<CrossTabSearchHint>` is omitted — the type facet IS the cross-tab
  * affordance now.
  */
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
+import { Focus, LayoutGrid } from 'lucide-react'
 import { complianceFrameworks, type DeadlinePhase, type RegionBloc } from '@/data/complianceData'
 import { ComplianceLandscape, type FrameworkSortOption } from './ComplianceLandscape'
 import { LandscapeTypeFacet, type LandscapeType } from './LandscapeTypeFacet'
+import { FrameworkFocusView } from './FrameworkFocusView'
 import { maturityByRefId } from '@/data/maturityGovernanceData'
 import { type ViewMode } from '@/components/Library/ViewToggle'
 import { useTrustTierFilter, matchesTrustTierFilter } from '@/components/common/TrustTierFilter'
+import { Button } from '@/components/ui/button'
+import { logEvent, personaLabel } from '@/utils/analytics'
 
 interface Props {
   type: LandscapeType
@@ -81,6 +85,16 @@ export function LandscapeTab({ type, onTypeChange, onNavigateToCswp39, ...landsc
   // eslint-disable-next-line security/detect-object-injection
   const frameworks = slices[type]
 
+  // Focus mode toggle (P11-P1-03) — only meaningful on the regulations facet
+  // where the per-regulator detail justifies a master-detail layout.
+  const [focusMode, setFocusMode] = useState(false)
+  const focusEligible = type === 'regulations'
+
+  const handleFocusToggle = (next: boolean) => {
+    setFocusMode(next)
+    logEvent('Compliance', next ? 'Focus Mode On' : 'Focus Mode Off', personaLabel(type))
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-3">
@@ -90,14 +104,39 @@ export function LandscapeTab({ type, onTypeChange, onNavigateToCswp39, ...landsc
           {counts[type]} {type}
           {counts[type] === 1 ? '' : ''}
         </span>
+        {focusEligible && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => handleFocusToggle(!focusMode)}
+            className="ml-auto h-7 text-xs gap-1.5"
+            aria-pressed={focusMode}
+            aria-label={
+              focusMode ? 'Switch to grid view' : 'Switch to focus view (one regulator at a time)'
+            }
+          >
+            {focusMode ? <LayoutGrid size={12} /> : <Focus size={12} />}
+            {focusMode ? 'Grid view' : 'Focus view'}
+          </Button>
+        )}
       </div>
-      <ComplianceLandscape
-        frameworks={frameworks}
-        showDeadlineTimeline={false}
-        maturityByRefId={maturityByRefId}
-        onNavigateToCswp39={onNavigateToCswp39}
-        {...landscape}
-      />
+      {focusEligible && focusMode ? (
+        <FrameworkFocusView
+          frameworks={frameworks}
+          initialFrameworkId={landscape.highlightFrameworkId ?? undefined}
+          onSelectFramework={landscape.onSelectFramework}
+          onExit={() => handleFocusToggle(false)}
+        />
+      ) : (
+        <ComplianceLandscape
+          frameworks={frameworks}
+          showDeadlineTimeline={false}
+          maturityByRefId={maturityByRefId}
+          onNavigateToCswp39={onNavigateToCswp39}
+          {...landscape}
+        />
+      )}
     </div>
   )
 }
