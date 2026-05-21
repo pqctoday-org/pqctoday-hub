@@ -24,6 +24,8 @@ import { PageHeader } from '../common/PageHeader'
 import { WorkflowBreadcrumb } from '../shared/WorkflowBreadcrumb'
 import { logReportViewed, logReportShareLinkOpened, logReportCta } from '@/utils/analytics'
 import { EXAMPLE_REPORT_URL } from '@/data/exampleReport'
+import { getBeltTierLabel } from '@/data/personaConfig'
+import { useAwarenessScore } from '@/hooks/useAwarenessScore'
 import { decodeShareToken } from '@/utils/reportShareToken'
 import { usePersonaStore } from '@/store/usePersonaStore'
 
@@ -63,6 +65,32 @@ const REPORT_SECTION_ORDER: ReportSectionId[] = [
   'migrationToolkit',
   'threatLandscape',
 ]
+
+/**
+ * Persona-flavored maturity tier chip rendered just under the page header
+ * (P15-P1-04). Only renders for personas with a tier-label override
+ * (executive, curious) per CC-13.
+ */
+function MaturityTierChip() {
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const { hasStarted, belt } = useAwarenessScore()
+  if (!hasStarted) return null
+  const tier = getBeltTierLabel(selectedPersona, belt.name)
+  if (!tier) return null
+  return (
+    <div className="mb-4 -mt-2 flex justify-center sm:justify-start">
+      <span className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border border-border bg-muted/30 text-muted-foreground">
+        <span
+          aria-hidden="true"
+          className="inline-block w-2 h-2 rounded-full"
+          style={{ backgroundColor: belt.color === '#F5F5F5' ? '#9CA3AF' : belt.color }}
+        />
+        <span className="text-foreground font-medium">{tier}</span>
+        <span className="text-muted-foreground">· {belt.name}</span>
+      </span>
+    </div>
+  )
+}
 
 export const ReportView: React.FC = () => {
   const { assessmentStatus, getInput, setResult, lastResult } = useAssessmentStore()
@@ -348,6 +376,9 @@ export const ReportView: React.FC = () => {
         shareTitle="PQC Assessment Report — Post-Quantum Cryptography Risk Analysis"
         shareText="View your personalized PQC risk score, migration priorities, and actionable recommendations."
       />
+
+      <MaturityTierChip />
+
       {/* Banner when viewing a shared report */}
       {searchParams.get('share') && (
         <motion.div

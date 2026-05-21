@@ -39,6 +39,7 @@ import type { ReportSectionId, ReportCTA } from '../../data/personaConfig'
 import { PERSONAS } from '../../data/learningPersonas'
 import { complianceFrameworks } from '../../data/complianceData'
 import { ApplicabilityPanel } from '../applicability/ApplicabilityPanel'
+import { TopThreeActions } from '../common/TopThreeActions'
 import { softwareData } from '../../data/migrateData'
 import { ReportTimelineStrip } from './ReportTimelineStrip'
 import { ReportThreatsAppendix, ASSESS_TO_THREATS_INDUSTRY } from './ReportThreatsAppendix'
@@ -721,6 +722,30 @@ export const ReportContent: React.FC<AssessReportProps> = ({
                         {result.categoryScores ? 'Comprehensive Assessment' : 'Quick Assessment'}
                       </span>
                     </div>
+
+                    {/* Top-3 actions hero (P15-P1-02) — teases the highest-priority
+                      recommended actions before the full report scroll. Hidden in print. */}
+                    {result.recommendedActions.length > 0 && (
+                      <div className="print:hidden">
+                        <TopThreeActions
+                          source="report"
+                          heading="Do this first"
+                          actions={result.recommendedActions.slice(0, 3).map((a) => ({
+                            id: `action-${a.priority}`,
+                            label: a.action,
+                            description:
+                              a.category === 'immediate'
+                                ? 'Immediate · do now'
+                                : a.category === 'short-term'
+                                  ? 'Short-term · this quarter'
+                                  : 'Long-term · plan it',
+                            href: a.relatedModule
+                              ? `/learn/${a.relatedModule}`
+                              : '#report-section-recommendedActions',
+                          }))}
+                        />
+                      </div>
+                    )}
 
                     {/* CSWP.39 navigation legend — re-groups report sections under the 5-step
                       narrative shared with /business and /assess. Hidden in print. */}
