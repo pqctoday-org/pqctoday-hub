@@ -1,6 +1,25 @@
 // SPDX-License-Identifier: GPL-3.0-only
 export type ChatProvider = 'gemini' | 'local'
 
+/**
+ * W3C PROV-DM block attached to every chunk by `scripts/generate-rag-corpus.ts`.
+ * Carries the evidence chain back to the originating CSV row and the cached
+ * source document. See trust-engine-explainability §13 for the full schema.
+ *
+ * All fields are optional in the type so consumers can safely narrow against
+ * partial / historical corpus shapes. The current pipeline emits every field
+ * on every chunk, but `source_doc` is `""` for chunks without a cached doc
+ * and `source_passages` is `[]` when no passages were extracted yet.
+ */
+export interface ChunkProv {
+  entity_id?: string
+  was_generated_by?: string
+  was_attributed_to?: string
+  was_derived_from?: string
+  source_doc?: string
+  source_passages?: string[]
+}
+
 export interface RAGChunk {
   id: string
   source: string
@@ -10,6 +29,7 @@ export interface RAGChunk {
   metadata: Record<string, string>
   deepLink?: string
   priority?: number
+  prov?: ChunkProv
 }
 
 export interface ChatSourceRef {

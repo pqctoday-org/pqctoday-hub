@@ -27,6 +27,9 @@ import { AlgorithmImplementationsModal } from './AlgorithmImplementationsModal'
 import { AlgoCtaStrip } from './AlgoCtaStrip'
 import { AlgorithmCheckButton } from './AlgorithmCheckButton'
 import { ReviewedBadge } from '../ui/ReviewedBadge'
+import { TrustScoreBadge } from '../ui/TrustScoreBadge'
+import { RevisionDrilldownPanel } from '../ui/RevisionDrilldownPanel'
+import { useRevisions, byRecord } from '@/hooks/useRevisions'
 
 type SortColumn = 'function' | 'classical' | 'pqc' | 'deprecation' | 'region' | 'status'
 type SortDirection = 'asc' | 'desc' | null
@@ -52,6 +55,8 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
   const [isLoading, setIsLoading] = useState(true)
   const [implModalAlgo, setImplModalAlgo] = useState<string | null>(null)
   const [showFullTable, setShowFullTable] = useState(false)
+  const [drilldownAlgo, setDrilldownAlgo] = useState<string | null>(null)
+  const { revisions } = useRevisions()
 
   useEffect(() => {
     loadPQCAlgorithmsData()
@@ -584,11 +589,19 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                             </div>
                             <AlgoCtaStrip algoName={pqcName} />
                             {pqcDetail && <AlgorithmCheckButton algorithm={pqcDetail} />}
-                            <ReviewedBadge
-                              domain="algorithms"
-                              entityId={pqcName}
-                              showUnreviewed={false}
-                            />
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <TrustScoreBadge
+                                resourceType="algorithm"
+                                resourceId={pqcName}
+                                size="sm"
+                              />
+                              <ReviewedBadge
+                                domain="algorithms"
+                                entityId={pqcName}
+                                showUnreviewed={false}
+                                onOpenDrilldown={() => setDrilldownAlgo(pqcName)}
+                              />
+                            </div>
                           </div>
                         </td>
                         <td className="px-4 py-3" style={{ width: `${columnWidths.region}px` }}>
@@ -663,6 +676,15 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
           algorithmName={implModalAlgo}
           isOpen={true}
           onClose={() => setImplModalAlgo(null)}
+        />
+      )}
+      {drilldownAlgo && (
+        <RevisionDrilldownPanel
+          domain="algorithms"
+          entityId={drilldownAlgo}
+          entityLabel={drilldownAlgo}
+          revisions={byRecord(revisions, 'algorithms', drilldownAlgo)}
+          onClose={() => setDrilldownAlgo(null)}
         />
       )}
     </div>

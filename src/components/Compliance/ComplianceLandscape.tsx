@@ -40,6 +40,9 @@ import { CountryFlag } from '@/components/common/CountryFlag'
 import { ViewToggle, type ViewMode } from '@/components/Library/ViewToggle'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
+import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
+import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
+import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { conceptIdForFramework } from '@/data/complianceData'
 import { hasGraphEdges } from '@/utils/conceptXwalkGraph'
 import { FrameworkConceptGraphModal } from './FrameworkConceptGraphModal'
@@ -401,6 +404,8 @@ function FrameworkCard({
   const [expanded, setExpanded] = useState(false)
   const [graphOpen, setGraphOpen] = useState(false)
   const [maturityOpen, setMaturityOpen] = useState(false)
+  const [drilldownOpen, setDrilldownOpen] = useState(false)
+  const { revisions } = useRevisions()
   const urgency = deadlineUrgency(fw.deadline)
   const hasRefs = fw.libraryRefs.length > 0 || fw.timelineRefs.length > 0
   const isSelected = useComplianceSelectionStore((s) => s.myFrameworks.includes(fw.id))
@@ -455,6 +460,15 @@ function FrameworkCard({
           <h4 className="font-semibold text-foreground text-sm leading-tight">{fw.label}</h4>
           <div className="flex items-center gap-2 flex-wrap">
             <TrustScoreBadge resourceType="compliance" resourceId={fw.id} size="sm" />
+            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+            <span onClick={(e) => e.stopPropagation()}>
+              <ReviewedBadge
+                domain="compliance"
+                entityId={fw.id}
+                showUnreviewed={false}
+                onOpenDrilldown={() => setDrilldownOpen(true)}
+              />
+            </span>
             {fw.confidenceScore !== undefined && (
               <span
                 className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${
@@ -829,6 +843,18 @@ function FrameworkCard({
               </ul>
             </div>
           )}
+        </div>
+      )}
+      {drilldownOpen && (
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+        <div onClick={(e) => e.stopPropagation()}>
+          <RevisionDrilldownPanel
+            domain="compliance"
+            entityId={fw.id}
+            entityLabel={fw.label}
+            revisions={byRecord(revisions, 'compliance', fw.id)}
+            onClose={() => setDrilldownOpen(false)}
+          />
         </div>
       )}
     </div>

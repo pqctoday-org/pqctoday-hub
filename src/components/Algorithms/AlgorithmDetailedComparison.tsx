@@ -28,6 +28,9 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
+import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
+import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
+import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { Button } from '@/components/ui/button'
 import { ImplementationAttacksView } from './ImplementationAttacksView'
 import { KATView } from './KATView'
@@ -361,6 +364,8 @@ const PerformanceView = ({
 }: DetailViewProps) => {
   const [sortField, setSortField] = useState<SortField>('name')
   const [sortDir, setSortDir] = useState<SortDir>('asc')
+  const [drilldownAlgo, setDrilldownAlgo] = useState<string | null>(null)
+  const { revisions } = useRevisions()
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -504,6 +509,12 @@ const PerformanceView = ({
                             resourceType="algorithm"
                             resourceId={algo.name}
                             size="sm"
+                          />
+                          <ReviewedBadge
+                            domain="algorithms"
+                            entityId={algo.name}
+                            showUnreviewed={false}
+                            onOpenDrilldown={() => setDrilldownAlgo(algo.name)}
                           />
                           <DraftBadge algo={algo} />
                           <ResearchNeededBadge algo={algo} />
@@ -695,6 +706,15 @@ const PerformanceView = ({
           )
         })}
       </div>
+      {drilldownAlgo && (
+        <RevisionDrilldownPanel
+          domain="algorithms"
+          entityId={drilldownAlgo}
+          entityLabel={drilldownAlgo}
+          revisions={byRecord(revisions, 'algorithms', drilldownAlgo)}
+          onClose={() => setDrilldownAlgo(null)}
+        />
+      )}
     </div>
   )
 }

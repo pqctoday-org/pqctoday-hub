@@ -22,6 +22,10 @@ import { buildProductUpdateUrl } from '@/utils/endorsement'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
+import { EvidenceBadge } from '@/components/ui/EvidenceBadge'
+import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
+import { SourcePassagesDrawer } from '@/components/ui/SourcePassagesDrawer'
+import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { Button } from '@/components/ui/button'
 
 interface SoftwareCardProps {
@@ -60,6 +64,8 @@ export const SoftwareCard = ({
   const isBookmarked = migrateBookmarks.includes(item.softwareName)
   const key = item.productId
   const [isExpandedMobile, setIsExpandedMobile] = useState(false)
+  const { revisions } = useRevisions()
+  const [drilldownOpen, setDrilldownOpen] = useState(false)
 
   // Find the primary layer (first in comma-separated list)
   const layerIds = item.infrastructureLayer.split(',').map((l) => l.trim())
@@ -161,7 +167,16 @@ export const SoftwareCard = ({
         <div className="flex flex-wrap items-center gap-2">
           {/* Always visible on mobile and desktop */}
           <TrustScoreBadge resourceType="migrate" resourceId={item.softwareName} size="sm" />
-          <ReviewedBadge domain="migrate" entityId={item.softwareName} showUnreviewed={false} />
+          {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+          <span onClick={(e) => e.stopPropagation()}>
+            <ReviewedBadge
+              domain="migrate"
+              entityId={item.softwareName}
+              showUnreviewed={false}
+              onOpenDrilldown={() => setDrilldownOpen(true)}
+            />
+          </span>
+          <EvidenceBadge lastVerifiedDate={item.lastVerifiedDate} compact />
           {renderPqcSupport(item.pqcSupport)}
 
           {/* Progressively Disclosed on Mobile */}
@@ -230,6 +245,15 @@ export const SoftwareCard = ({
           )}
         </div>
       </div>
+
+      <SourcePassagesDrawer
+        chunkId={
+          item.productId
+            ? `software-${item.productId}`
+            : `software-${item.softwareName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+        }
+        className="mb-3"
+      />
 
       {/* Footer: links + select */}
       <div className="flex items-center gap-2 mt-auto pt-3 border-t border-border">
@@ -320,6 +344,18 @@ export const SoftwareCard = ({
           </Button>
         )}
       </div>
+      {drilldownOpen && (
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+        <div onClick={(e) => e.stopPropagation()}>
+          <RevisionDrilldownPanel
+            domain="migrate"
+            entityId={item.softwareName}
+            entityLabel={item.softwareName}
+            revisions={byRecord(revisions, 'migrate', item.softwareName)}
+            onClose={() => setDrilldownOpen(false)}
+          />
+        </div>
+      )}
     </motion.article>
   )
 }

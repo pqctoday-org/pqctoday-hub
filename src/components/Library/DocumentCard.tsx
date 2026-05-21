@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect, useRef, useMemo } from 'react'
+import { useEffect, useRef, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import {
@@ -25,6 +25,10 @@ import { buildLibraryEndorsementUrl, buildLibraryFlagUrl } from './libraryEndors
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { ReviewedBadge } from '@/components/ui/ReviewedBadge'
+import { EvidenceBadge } from '@/components/ui/EvidenceBadge'
+import { RevisionDrilldownPanel } from '@/components/ui/RevisionDrilldownPanel'
+import { SourcePassagesDrawer } from '@/components/ui/SourcePassagesDrawer'
+import { useRevisions, byRecord } from '@/hooks/useRevisions'
 import { DocumentAnalysis } from './DocumentAnalysis'
 import clsx from 'clsx'
 import { Button } from '@/components/ui/button'
@@ -72,6 +76,8 @@ export const DocumentCard = ({
   const { libraryBookmarks, toggleLibraryBookmark } = useBookmarkStore()
   const isBookmarked = libraryBookmarks.includes(item.referenceId)
   const cardRef = useRef<HTMLElement>(null)
+  const { revisions } = useRevisions()
+  const [drilldownOpen, setDrilldownOpen] = useState(false)
 
   useEffect(() => {
     if (highlighted && cardRef.current) {
@@ -146,7 +152,15 @@ export const DocumentCard = ({
 
       <div className="flex items-center gap-2 mb-3 flex-wrap">
         <TrustScoreBadge resourceType="library" resourceId={item.referenceId} size="sm" />
-        <ReviewedBadge domain="library" entityId={item.referenceId} showUnreviewed={false} />
+        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+        <span onClick={(e) => e.stopPropagation()}>
+          <ReviewedBadge
+            domain="library"
+            entityId={item.referenceId}
+            showUnreviewed={false}
+            onOpenDrilldown={() => setDrilldownOpen(true)}
+          />
+        </span>
         <span
           className={clsx(
             'inline-flex self-start items-center px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider',
@@ -173,6 +187,12 @@ export const DocumentCard = ({
             Preview
           </span>
         ) : null}
+        <EvidenceBadge
+          lastVerifiedDate={item.lastUpdateDate}
+          localFile={item.localFile}
+          sourceUrl={item.downloadUrl}
+          compact
+        />
       </div>
 
       {cswp39 && (
@@ -290,6 +310,8 @@ export const DocumentCard = ({
         </div>
       )}
 
+      <SourcePassagesDrawer chunkId={`library-${item.referenceId}`} className="mb-3" />
+
       <div className="flex items-center gap-2 mt-auto pt-3 border-t border-border">
         {item.downloadUrl && (
           <a
@@ -336,6 +358,18 @@ export const DocumentCard = ({
           />
         </div>
       </div>
+      {drilldownOpen && (
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+        <div onClick={(e) => e.stopPropagation()}>
+          <RevisionDrilldownPanel
+            domain="library"
+            entityId={item.referenceId}
+            entityLabel={item.documentTitle}
+            revisions={byRecord(revisions, 'library', item.referenceId)}
+            onClose={() => setDrilldownOpen(false)}
+          />
+        </div>
+      )}
     </motion.article>
   )
 }
