@@ -642,10 +642,10 @@ export function AlgorithmsView() {
                 <Network size={18} />
                 Protocol Support
                 <span
-                  className="rounded-sm bg-status-warning/20 text-status-warning px-1 py-0 text-[9px] font-bold uppercase tracking-wider"
-                  title="Work in progress — schema + data are evolving"
+                  className="rounded-sm bg-primary/15 text-primary px-1 py-0 text-[9px] font-bold uppercase tracking-wider"
+                  title="Tracks 14 IETF protocols across pure-KEM, hybrid-KEM, pure-Sig, hybrid-Sig dimensions. Updated weekly from datatracker."
                 >
-                  WIP
+                  Beta
                 </span>
               </TabsTrigger>
             </TabsList>
