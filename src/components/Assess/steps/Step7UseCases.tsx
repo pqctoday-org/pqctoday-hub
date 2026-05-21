@@ -14,6 +14,7 @@ import { Button } from '../../ui/button'
 import clsx from 'clsx'
 
 import { PersonaHint } from './PersonaHint'
+import { WhyWeAskHint } from './WhyWeAskHint'
 
 const Step7UseCases = () => {
   const { cryptoUseCases, toggleCryptoUseCase, useCasesUnknown, setUseCasesUnknown, industry } =
@@ -55,6 +56,7 @@ const Step7UseCases = () => {
       </p>
 
       <PersonaHint stepKey="use-cases" />
+      <WhyWeAskHint stepKey="use-cases" />
 
       {/* I don't know — Step 3 model */}
       <Button

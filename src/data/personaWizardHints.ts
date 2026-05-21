@@ -118,6 +118,48 @@ export interface StepContextInfo {
   proficiencyEffect?: string
 }
 
+/**
+ * Plain-English explanation of *why* each wizard step asks what it does (P13-P1-02).
+ *
+ * Surfaced inline for curious explorers and behind an info tooltip for every
+ * other persona, so first-time users understand how their answer shapes the
+ * report instead of clicking through 13 anonymous questions.
+ */
+export const WIZARD_STEP_RATIONALE: Record<string, string> = {
+  industry:
+    'Industry determines which compliance frameworks apply, which threats are most relevant, and which cryptographic use-cases dominate.',
+  country:
+    'Country drives the regulatory deadline clock — CNSA 2.0 for the US, BSI for Germany, ANSSI for France, ENISA / DORA for the EU bloc.',
+  crypto:
+    'Which algorithms you use today maps directly to which PQC replacements you need (RSA → ML-KEM / ML-DSA; ECDSA → ML-DSA; SHA-2 stays).',
+  sensitivity:
+    'Data sensitivity drives the "harvest now, decrypt later" risk window — the more sensitive and the longer it must stay secret, the sooner you must migrate.',
+  compliance:
+    'Compliance obligations set the hard deadlines and audit scope. Each framework has its own PQC mandate timeline.',
+  migration:
+    'Migration status sets your baseline — already started, planning, or unaware. The report tailors recommendations to where you are.',
+  'use-cases':
+    'Use cases tell us which protocols and surfaces will need PQC: TLS, S/MIME, signing, key escrow, HSM rotation. Each has its own migration playbook.',
+  retention:
+    "How long encrypted data must remain secret is the dominant HNDL-risk input. 10+ year retention means today's ciphertext is already at risk.",
+  credential:
+    'Credential lifetime determines how soon your existing PKI hits a forced cutover — long-lived certs delay decisions; short-lived credentials let you migrate piecewise.',
+  scale:
+    'Scale (system count + team size) shapes the cost + coordination dimensions of the migration roadmap, not the urgency.',
+  agility:
+    'Crypto agility — whether your code abstracts algorithms behind an interface — is the single biggest predictor of how fast you can migrate.',
+  infra:
+    'Infrastructure layers (cloud, hardware, libraries, HSMs) decide which PQC implementations you can actually pick from today.',
+  vendors:
+    'Vendor mix tells us how much of your migration depends on third-party roadmaps vs. in-house code.',
+  timeline:
+    'Timeline pressure (within 1y / 2-3y / no deadline) bands the report into "act now" vs. "plan it" vs. "monitor it" recommendations.',
+}
+
+export function getWizardStepRationale(stepKey: string): string | undefined {
+  return WIZARD_STEP_RATIONALE[resolveHintKey(stepKey)]
+}
+
 export const STEP_CONTEXT_INFO: Record<string, StepContextInfo> = {
   industry: {
     industryEffect:
