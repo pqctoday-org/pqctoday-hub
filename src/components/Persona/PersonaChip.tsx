@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { PERSONAS } from '@/data/learningPersonas'
 import type { PersonaId } from '@/data/learningPersonas'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { logPersonaSwitchClicked } from '@/utils/analytics'
 import { PersonaSwitchModal } from './PersonaSwitchModal'
 
 const PERSONA_ICONS: Record<string, React.ElementType> = {
@@ -47,7 +48,10 @@ export const PersonaChip: React.FC = () => {
     <>
       <Button
         variant="outline"
-        onClick={() => setModalOpen(true)}
+        onClick={() => {
+          logPersonaSwitchClicked('nav')
+          setModalOpen(true)
+        }}
         aria-haspopup="dialog"
         aria-label={`Current role: ${persona.label}. Click to switch role.`}
         className="hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 h-auto rounded-lg border-border bg-primary/5 hover:border-primary/30 hover:bg-primary/10 text-sm text-foreground transition-colors"

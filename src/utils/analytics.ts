@@ -365,6 +365,10 @@ export const logPersonaSelected = (
   logEvent('Persona', 'Selected', `${persona}:${source}`)
 }
 
+export const logPersonaSwitchClicked = (source: 'nav' | 'landing-hero' | 'banner') => {
+  logEvent('Persona', 'Switch Clicked', personaLabel(source))
+}
+
 export const logRegionSelected = (region: string) => {
   logEvent('Persona', 'Region', region)
 }
