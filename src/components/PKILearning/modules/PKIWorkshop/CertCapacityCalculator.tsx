@@ -13,9 +13,17 @@ const ALGO_ABBREV: Record<string, string> = {
   'ML-DSA-44': 'ML-44',
   'ML-DSA-65': 'ML-65',
   'ML-DSA-87': 'ML-87',
+  'SLH-DSA-128s': 'SLH-128s',
 }
 
-const DISPLAYED_ALGOS = ['RSA-2048', 'ECDSA P-256', 'ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87']
+const DISPLAYED_ALGOS = [
+  'RSA-2048',
+  'ECDSA P-256',
+  'ML-DSA-44',
+  'ML-DSA-65',
+  'ML-DSA-87',
+  'SLH-DSA-128s',
+]
 
 interface CalcInputs {
   certCount: number

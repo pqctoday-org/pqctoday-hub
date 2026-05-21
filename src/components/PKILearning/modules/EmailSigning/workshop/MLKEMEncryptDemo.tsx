@@ -27,6 +27,7 @@ import {
   RefreshCw,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
   CMSSigningService,
@@ -286,14 +287,15 @@ export function MLKEMEncryptDemo({ providerReady }: MLKEMEncryptDemoProps) {
           )}
         </div>
 
-        <label className="flex flex-col gap-1">
+        <label htmlFor="mlkem-encrypt-payload" className="flex flex-col gap-1">
           <span className="text-xs font-medium text-muted-foreground">Payload</span>
-          <textarea
+          <Textarea
+            id="mlkem-encrypt-payload"
             value={payload}
             onChange={(e) => setPayload(e.target.value)}
             disabled={busy}
             rows={4}
-            className="rounded border border-input bg-background p-2 font-mono text-xs"
+            className="font-mono text-xs"
           />
         </label>
 

@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button'
 import { Info, CheckCircle2, XCircle, ShieldCheck, ShieldAlert } from 'lucide-react'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { ErrorAlert } from '@/components/ui/error-alert'
 import { useHSM } from '@/hooks/useHSM'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
@@ -576,14 +577,14 @@ export function StatefulSignaturesDemo() {
                       placeholder="Message that was signed"
                       className="font-mono text-xs"
                     />
-                    <textarea
+                    <Textarea
                       value={verifySignatureHex}
                       onChange={(e) => {
                         setVerifySignatureHex(e.target.value.trim())
                         setVerifyResult(null)
                       }}
                       placeholder="Paste signature hex here (copy from signature log above)"
-                      className="w-full font-mono text-[10px] bg-muted/30 rounded p-2 h-20 resize-none border border-input text-foreground"
+                      className="font-mono text-[10px] h-20"
                     />
                     {verifySignatureHex && (
                       <p className="text-[10px] text-muted-foreground">
@@ -832,14 +833,14 @@ export function StatefulSignaturesDemo() {
                       placeholder="Message that was signed"
                       className="font-mono text-xs"
                     />
-                    <textarea
+                    <Textarea
                       value={verifySignatureHex}
                       onChange={(e) => {
                         setVerifySignatureHex(e.target.value.trim())
                         setVerifyResult(null)
                       }}
                       placeholder="Paste signature hex here (copy from signature log above)"
-                      className="w-full font-mono text-[10px] bg-muted/30 rounded p-2 h-20 resize-none border border-input text-foreground"
+                      className="font-mono text-[10px] h-20"
                     />
                     {verifySignatureHex && (
                       <p className="text-[10px] text-muted-foreground">

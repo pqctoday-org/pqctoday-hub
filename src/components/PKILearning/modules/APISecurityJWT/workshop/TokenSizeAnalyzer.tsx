@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useEffect, useMemo, useState } from 'react'
 import { BarChart3, AlertTriangle, Loader2 } from 'lucide-react'
+import { Textarea } from '@/components/ui/textarea'
 import { JOSE_SIGNING_ALGORITHMS, SAMPLE_JWT_PAYLOAD } from '../constants'
 import {
   createJWTHeader,
@@ -167,16 +168,14 @@ export const TokenSizeAnalyzer: React.FC = () => {
       {/* Payload Editor */}
       <div className="glass-panel p-4">
         <h4 className="text-sm font-bold text-foreground mb-3">JWT Payload (Editable)</h4>
-        <textarea
+        <Textarea
           value={payloadJson}
           onChange={(e) => setPayloadJson(e.target.value)}
-          className={`w-full h-36 p-3 rounded-lg bg-background border text-xs font-mono text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/50 ${
-            isPayloadValid ? 'border-border' : 'border-destructive'
-          }`}
+          className={`h-36 text-xs font-mono ${isPayloadValid ? '' : 'border-status-error'}`}
           spellCheck={false}
         />
         {!isPayloadValid && (
-          <p className="text-[10px] text-destructive mt-1">
+          <p className="text-[10px] text-status-error mt-1">
             Invalid JSON. Fix the payload to see size calculations.
           </p>
         )}
