@@ -66,6 +66,14 @@ jobs:
       - name: Audit semantic tokens (no hardcoded colours)
         run: npm run audit:tokens
 
+      - name: Verify trust-engine attestations
+        # Verify ML-DSA-65 signatures on committed trust artifacts
+        # (revisions.jsonl, rag-corpus.json, OSCAL exports, CBOM,
+        # community-signals). Hard-fails on any signature mismatch, missing
+        # .sig file, or unknown kid. Closes audit gap P4. See
+        # docs/attestation/key-management.md for the operational policy.
+        run: npm run trust-engine:verify
+
       - name: Install Playwright Browsers
         run: npx playwright install chromium --with-deps
 
