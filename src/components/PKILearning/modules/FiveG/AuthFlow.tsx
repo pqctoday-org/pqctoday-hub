@@ -3,6 +3,7 @@ import React from 'react'
 import type { Step } from '../DigitalAssets/components/StepWizard'
 import { StepWizard } from '../DigitalAssets/components/StepWizard'
 import { useStepWizard } from '../DigitalAssets/hooks/useStepWizard'
+import { WorkshopOperationLog } from '@/components/PKILearning/common/WorkshopOperationLog'
 import { FIVE_G_CONSTANTS } from './constants'
 import { AuthDiagram } from './components/AuthDiagram'
 import { fiveGService } from './services/FiveGService'
@@ -101,6 +102,9 @@ No dedicated PKCS#11 v3.2 mechanism exists for 5G-AKA.
         onBack={wizard.handleBack}
         onComplete={onBack}
       />
+      {wizard.logEntries.length > 0 && (
+        <WorkshopOperationLog entries={wizard.logEntries} className="mt-4 max-h-40" />
+      )}
     </div>
   )
 }
