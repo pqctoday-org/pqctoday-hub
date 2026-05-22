@@ -4,7 +4,6 @@ import { Input } from '@/components/ui/input'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { HardDrive, Zap, Network, Download, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { PlaygroundNextStep } from '@/components/Playground/components/PlaygroundNextStep'
 import { CERT_CAPACITY_DEFAULTS } from '@/data/certCapacityDefaults'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 
@@ -14,17 +13,9 @@ const ALGO_ABBREV: Record<string, string> = {
   'ML-DSA-44': 'ML-44',
   'ML-DSA-65': 'ML-65',
   'ML-DSA-87': 'ML-87',
-  'SLH-DSA-128s': 'SLH-128s',
 }
 
-const DISPLAYED_ALGOS = [
-  'RSA-2048',
-  'ECDSA P-256',
-  'ML-DSA-44',
-  'ML-DSA-65',
-  'ML-DSA-87',
-  'SLH-DSA-128s',
-]
+const DISPLAYED_ALGOS = ['RSA-2048', 'ECDSA P-256', 'ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87']
 
 interface CalcInputs {
   certCount: number
@@ -187,8 +178,15 @@ export function CertCapacityCalculator() {
   }))
 
   const formatYAxis = (v: number) => (relativeMode ? `${v}%` : v.toLocaleString())
-  const tooltipFormatter = (value: number | undefined) =>
-    value === undefined ? '' : relativeMode ? `${value}%` : value.toLocaleString()
+  const tooltipFormatter = (
+    value: number | string | ReadonlyArray<number | string> | undefined
+  ) => {
+    if (value === undefined) return ''
+    if (Array.isArray(value)) return value.join(', ')
+    const n = typeof value === 'number' ? value : Number(value)
+    if (Number.isNaN(n)) return String(value)
+    return relativeMode ? `${n}%` : n.toLocaleString()
+  }
 
   const handleExport = useCallback(() => {
     downloadCsv(
@@ -539,11 +537,6 @@ export function CertCapacityCalculator() {
           Export CSV
         </Button>
       </div>
-      <PlaygroundNextStep
-        toolId="hsm-capacity"
-        name="HSM Capacity Calculator"
-        description="Translate cert-volume estimates into HSM signing TPS. Size your fleet across 10 enterprise use cases — classical vs. PQC throughput side by side."
-      />
     </div>
   )
 }
