@@ -261,6 +261,7 @@ scripts/*
 !scripts/sync-timeline-csv-from-manifest.ts
 !scripts/wayback-snapshot-timeline.ts
 !scripts/snapshot-timeline-via-playwright.ts
+!scripts/audit-timeline-enrichment-freshness.ts
 
 # Private CI workflows (compliance scraper runs locally, not in public CI)
 .github/workflows/update-compliance.yml
