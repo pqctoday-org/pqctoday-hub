@@ -11,6 +11,7 @@ import { ProfileEditor } from '../../applicability/parts/ProfileEditor'
 import { ProfileSummary } from '../../applicability/parts/ProfileSummary'
 import { ThreatItem, LibraryDocItem, TimelineItem } from '../../applicability/parts/items'
 import { RegulatoryClock } from './parts/RegulatoryClock'
+import { ValidationGantt } from '../ValidationGantt'
 import { FrameworkDeadlineCard } from './parts/FrameworkDeadlineCard'
 import { NextDecisionCard } from './parts/NextDecisionCard'
 import { TrustPathPopover } from '../TrustPathPopover'
@@ -88,6 +89,11 @@ export function ExecutiveTimelineView({
       <div data-section-id="regulatory-clock" className="scroll-mt-20">
         <RegulatoryClock mandatoryFrameworks={mandatory} recognizedFrameworks={recognized} />
       </div>
+
+      <ValidationGantt
+        frameworks={frameworks.map((f) => f.item)}
+        onSelectFramework={onSelectFramework}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Left column — framework cards by tier */}

@@ -11,6 +11,7 @@ import { Button } from '../../ui/button'
 import clsx from 'clsx'
 
 import { PersonaHint } from './PersonaHint'
+import { WhyWeAskHint } from './WhyWeAskHint'
 
 const StepCredentialLifetime = () => {
   const {
@@ -66,6 +67,7 @@ const StepCredentialLifetime = () => {
       </p>
 
       <PersonaHint stepKey="credential" />
+      <WhyWeAskHint stepKey="credential" />
 
       <div className="glass-panel p-4 border-l-4 border-l-destructive mb-4">
         <div className="flex items-start gap-2">

@@ -18,13 +18,23 @@ import type { ViewMode } from './ViewToggle'
 import { SortControl } from './SortControl'
 import type { SortOption } from './SortControl'
 import { FilterDropdown } from '../common/FilterDropdown'
-import { Search, FileSearch, BookOpen, SlidersHorizontal, X, BookmarkCheck } from 'lucide-react'
+import {
+  Search,
+  FileSearch,
+  BookOpen,
+  SlidersHorizontal,
+  X,
+  BookmarkCheck,
+  Sparkles,
+} from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
 import { ContentUpdatesFeed } from '@/components/ui/ContentUpdatesFeed'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { LIBRARY_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import debounce from 'lodash/debounce'
-import { logLibrarySearch, logEvent } from '../../utils/analytics'
+import { useAchievementStore } from '@/store/useAchievementStore'
+import { LIBRARY_CURIOUS_PICKS } from '@/data/libraryCuriousPicks'
+import { logLibrarySearch, logEvent, personaLabel } from '../../utils/analytics'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
 import { maturityByRefId } from '../../data/maturityGovernanceData'
@@ -702,6 +712,10 @@ export const LibraryView: React.FC = () => {
 
   const openDetail = (item: LibraryItem) => {
     setSelectedItem(item)
+    // P04-P1-01: persona-attributed library item open
+    logEvent('Library', 'Item Open', personaLabel(item.referenceId))
+    // CC-15: drive the first-standard-read achievement for curious users.
+    useAchievementStore.getState().recordSectionVisit('curious:library-read')
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev)
@@ -769,6 +783,42 @@ export const LibraryView: React.FC = () => {
         shareText="Explore post-quantum cryptography standards, drafts, and key documents from NIST, IETF, ETSI, and other organizations."
         onExport={handleExportCsv}
       />
+
+      {/* Curious "start here" picks (P04-P1-02) — curated entry list above the
+          activity feed so a first-time visitor doesn't bounce off the 400+ row
+          dataset. Renders only when persona is curious. */}
+      {selectedPersona === 'curious' && (
+        <section className="glass-panel p-4 border border-primary/30 bg-primary/5 rounded-lg">
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles size={14} className="text-primary" aria-hidden="true" />
+            <h3 className="text-sm font-semibold text-foreground">Start here</h3>
+            <span className="text-xs text-muted-foreground">
+              5 canonical PQC docs picked for first-time readers
+            </span>
+          </div>
+          <ul className="space-y-2">
+            {LIBRARY_CURIOUS_PICKS.map((pick) => {
+              const item = libraryData.find((d) => d.referenceId === pick.referenceId)
+              return (
+                <li key={pick.referenceId}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => {
+                      if (item) openDetail(item)
+                    }}
+                    disabled={!item}
+                    className="w-full h-auto text-left rounded-md border border-border bg-card/40 px-3 py-2 hover:border-primary/40 hover:bg-card transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex flex-col items-start gap-0.5 whitespace-normal"
+                  >
+                    <span className="text-sm font-semibold text-foreground">{pick.label}</span>
+                    <span className="text-xs text-muted-foreground leading-snug">{pick.blurb}</span>
+                  </Button>
+                </li>
+              )
+            })}
+          </ul>
+        </section>
+      )}
 
       {/* Zone 1: Activity Feed */}
       <ActivityFeed

@@ -168,6 +168,12 @@ const QUICK_STEP_KEYS = new Set([
   'timeline',
 ])
 
+// Curious variant (P13-P1-06) — the five highest-signal questions that still
+// produce a useful report for someone new to PQC. Trimmed from the 8-step
+// quick path by dropping technical-detail questions (crypto / infra) and
+// the timeline question (curious users rarely have a deadline mental model).
+const CURIOUS_STEP_KEYS = new Set(['industry', 'country', 'sensitivity', 'compliance', 'migration'])
+
 export const AssessWizard: React.FC<AssessWizardProps> = ({
   onComplete,
   mode = 'comprehensive',
@@ -179,18 +185,28 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
   const [isGenerating, setIsGenerating] = useState(false)
   const [infoModalStep, setInfoModalStep] = useState<string | null>(null)
 
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const experienceLevel = usePersonaStore((s) => s.experienceLevel)
+  // The 5-Q wizard variant is keyed off the persona selection only, not the
+  // proficiency level — a developer with `experienceLevel = 'curious'` still
+  // gets the comprehensive flow with proficiency-based auto-suggest hints.
+  const isCurious = selectedPersona === 'curious'
+
   // Deep link: ?step=<n> jumps to a specific wizard step (0-based index)
   useEffect(() => {
     const stepParam = searchParams.get('step')
     if (stepParam !== null) {
-      const steps =
-        mode === 'quick' ? ALL_STEPS.filter((s) => QUICK_STEP_KEYS.has(s.key)) : ALL_STEPS
+      const steps = isCurious
+        ? ALL_STEPS.filter((s) => CURIOUS_STEP_KEYS.has(s.key))
+        : mode === 'quick'
+          ? ALL_STEPS.filter((s) => QUICK_STEP_KEYS.has(s.key))
+          : ALL_STEPS
       const parsed = parseInt(stepParam, 10)
       if (!isNaN(parsed) && parsed >= 0 && parsed < steps.length) {
         setStep(parsed)
       }
     }
-  }, [searchParams, setStep, mode])
+  }, [searchParams, setStep, mode, isCurious])
 
   // Mirror currentStep back into ?step= so refresh / share preserves position
   useEffect(() => {
@@ -201,19 +217,29 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
     setSearchParams(next, { replace: true })
   }, [currentStep, searchParams, setSearchParams])
 
-  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-
-  const steps = useMemo(
-    () => (mode === 'quick' ? ALL_STEPS.filter((s) => QUICK_STEP_KEYS.has(s.key)) : [...ALL_STEPS]),
-    [mode]
-  )
-  const stepTitles = mode === 'quick' ? STEP_TITLES_QUICK : STEP_TITLES_FULL
+  const steps = useMemo(() => {
+    if (isCurious) return ALL_STEPS.filter((s) => CURIOUS_STEP_KEYS.has(s.key))
+    if (mode === 'quick') return ALL_STEPS.filter((s) => QUICK_STEP_KEYS.has(s.key))
+    return [...ALL_STEPS]
+  }, [mode, isCurious])
+  // Step labels — pull from STEP_TITLES_FULL by each step's position in
+  // ALL_STEPS so the Curious 5-Q variant gets correctly-titled dots in the
+  // StepIndicator. Falls back to the canonical full / quick lookups otherwise.
+  const stepTitles = useMemo(() => {
+    if (isCurious) {
+      return steps.map((s) => {
+        const idx = ALL_STEPS.findIndex((a) => a.key === s.key)
+        // eslint-disable-next-line security/detect-object-injection
+        return idx >= 0 ? (STEP_TITLES_FULL[idx] ?? s.key) : s.key
+      })
+    }
+    return mode === 'quick' ? STEP_TITLES_QUICK : STEP_TITLES_FULL
+  }, [isCurious, mode, steps])
 
   // Auto-suggest "I don't know" based on persona role + proficiency level.
   // Executive persona always suggests on crypto/agility/infra (backward compat).
   // Proficiency 'new' suggests on ALL steps with unknown support.
   // Proficiency 'basics' suggests only on technical steps.
-  const experienceLevel = usePersonaStore((s) => s.experienceLevel)
   useEffect(() => {
     const s = useAssessmentStore.getState()
     // eslint-disable-next-line security/detect-object-injection

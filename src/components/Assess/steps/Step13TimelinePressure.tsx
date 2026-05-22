@@ -11,6 +11,7 @@ import { Button } from '../../ui/button'
 import clsx from 'clsx'
 
 import { PersonaHint } from './PersonaHint'
+import { WhyWeAskHint } from './WhyWeAskHint'
 
 const Step13TimelinePressure = () => {
   const { country, timelinePressure, setTimelinePressure, timelineUnknown, setTimelineUnknown } =
@@ -83,6 +84,7 @@ const Step13TimelinePressure = () => {
       </p>
 
       <PersonaHint stepKey="timeline" />
+      <WhyWeAskHint stepKey="timeline" />
 
       {hasCountryDeadlines ? (
         <>

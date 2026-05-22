@@ -19,7 +19,7 @@ import {
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { leadersData, leadersMetadata } from '../../data/leadersData'
 import type { Leader } from '../../data/leadersData'
-import { logEvent } from '../../utils/analytics'
+import { logEvent, personaLabel } from '../../utils/analytics'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { EmptyState } from '../ui/empty-state'
 import { CountryFlag } from '../common/CountryFlag'
@@ -414,7 +414,11 @@ export const LeadersGrid = () => {
   }
 
   const toggleDetail = (leader: Leader) =>
-    setExpandedLeaderId((prev) => (prev === leader.id ? null : leader.id))
+    setExpandedLeaderId((prev) => {
+      const next = prev === leader.id ? null : leader.id
+      logEvent('Leaders', next ? 'Card Open' : 'Card Close', personaLabel(leader.id))
+      return next
+    })
   const closeDetail = () => setExpandedLeaderId(null)
 
   return (

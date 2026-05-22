@@ -6,6 +6,7 @@ import { ArrowRight, Flame, GraduationCap, Info, Sparkles } from 'lucide-react'
 import { Button } from '../ui/button'
 import { ScoringModal } from './ScoringModal'
 import { useAwarenessScore, BELT_RANKS, type BeltRank } from '@/hooks/useAwarenessScore'
+import { getBeltTierLabel } from '@/data/personaConfig'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 import { AchievementBadgeGrid } from './AchievementBadgeGrid'
@@ -295,9 +296,29 @@ export function ScoreCard({ embedded = false }: { embedded?: boolean }) {
                 {score}
               </span>
               <span className="text-sm text-muted-foreground">/ 100</span>
-              <span className="text-sm font-semibold text-foreground" id="scorecard-heading">
-                {belt.name}
-              </span>
+              {(() => {
+                const tier = getBeltTierLabel(selectedPersona, belt.name)
+                if (tier) {
+                  // Persona-flavored maturity tier as primary label for exec/curious;
+                  // belt name + color swatch become the secondary annotation. (P01-P1-02)
+                  return (
+                    <span
+                      className="text-sm font-semibold text-foreground inline-flex items-center gap-1.5"
+                      id="scorecard-heading"
+                    >
+                      <span aria-label={`Maturity tier: ${tier}`}>{tier}</span>
+                      <span className="text-xs font-normal text-muted-foreground">
+                        · {belt.name}
+                      </span>
+                    </span>
+                  )
+                }
+                return (
+                  <span className="text-sm font-semibold text-foreground" id="scorecard-heading">
+                    {belt.name}
+                  </span>
+                )
+              })()}
               <span className="-m-2 p-2 block">
                 <Button
                   variant="ghost"

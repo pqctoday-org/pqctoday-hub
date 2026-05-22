@@ -19,7 +19,20 @@
  */
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { Code2, Beaker, ArrowRight, ExternalLink, FlaskConical } from 'lucide-react'
+import {
+  Code2,
+  Beaker,
+  ArrowRight,
+  ExternalLink,
+  FlaskConical,
+  Terminal,
+  Check,
+  Copy,
+} from 'lucide-react'
+import { useState } from 'react'
+import { logEvent, personaLabel } from '@/utils/analytics'
+import { useComplianceRefresh } from '../services'
+import { ModuleCertificationStatus } from './parts/ModuleCertificationStatus'
 import { useApplicabilityWithPaths } from '../../../hooks/useApplicabilityWithPaths'
 import { groupByTier, type UserProfile } from '../../../utils/applicabilityEngine'
 import { ProfileEditor } from '../../applicability/parts/ProfileEditor'
@@ -42,6 +55,96 @@ interface DeveloperImplementationViewProps {
 
 // Algorithm family → /algorithms deep-link highlight token. Reuses the same
 // highlight schema as the executive "View Top 5" button in AlgorithmsView.
+const CI_GATE_YAML = `# .github/workflows/pqc-compliance.yml
+# Fail the build if any classical-only algorithm appears in your CBOM.
+# Drop this into a new repo or extend an existing CI workflow.
+name: PQC Compliance Gate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  pqc-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate CBOM with cyclonedx-cli
+        run: |
+          npx -y @cyclonedx/cdxgen -t cryptography \\
+            --required-only \\
+            -o cbom.json .
+
+      - name: Fail if classical-only algorithms detected
+        run: |
+          jq -e '.components[]
+            | select(.cryptoProperties.algorithmProperties.executionEnvironment == "software")
+            | select(.cryptoProperties.algorithmProperties.implementationPlatform | test("rsa|ecdsa|ecdh"; "i"))
+            | select((.cryptoProperties.algorithmProperties.cryptoFunctions // [])
+              | map(test("ml-kem|ml-dsa|slh-dsa|hybrid"; "i")) | any | not)' cbom.json \\
+            && (echo "::error::Classical-only algorithm found without hybrid/PQC pair" && exit 1) \\
+            || echo "PQC compliance gate passed"
+`
+
+function DevModuleCertSummary() {
+  const { data } = useComplianceRefresh()
+  return <ModuleCertificationStatus records={data ?? []} />
+}
+
+function CIGateSnippet() {
+  const [copied, setCopied] = useState(false)
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(CI_GATE_YAML)
+      setCopied(true)
+      logEvent('Compliance', 'CI Gate Copied', personaLabel('developer'))
+      setTimeout(() => setCopied(false), 1500)
+    } catch {
+      /* clipboard unavailable */
+    }
+  }
+
+  return (
+    <section data-section-id="developer-ci-gate" className="glass-panel p-4 space-y-3 scroll-mt-20">
+      <header className="flex items-center gap-2 flex-wrap">
+        <Terminal size={16} className="text-primary" />
+        <h3 className="text-base font-semibold text-foreground">Wire a PQC gate into CI</h3>
+        <span className="text-xs text-muted-foreground">
+          Drop this GitHub Actions snippet into your repo to fail builds that ship classical-only
+          crypto
+        </span>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleCopy}
+          className="ml-auto h-7 text-xs gap-1.5"
+          aria-label="Copy CI gate YAML"
+        >
+          {copied ? <Check size={12} /> : <Copy size={12} />}
+          {copied ? 'Copied' : 'Copy YAML'}
+        </Button>
+      </header>
+      <pre className="text-xs font-mono bg-muted/30 border border-border rounded-md p-3 overflow-x-auto leading-relaxed text-foreground/90">
+        <code>{CI_GATE_YAML}</code>
+      </pre>
+      <p className="text-xs text-muted-foreground">
+        Pairs with the algorithm coverage strip above — anything missing here is a blocker. Uses{' '}
+        <a
+          href="https://github.com/CycloneDX/cdxgen"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary hover:underline"
+        >
+          @cyclonedx/cdxgen
+        </a>{' '}
+        for the CBOM scan.
+      </p>
+    </section>
+  )
+}
+
 const ALG_HIGHLIGHT: Record<string, string> = {
   'ML-KEM': 'ML-KEM-768',
   'ML-DSA': 'ML-DSA-65',
@@ -237,6 +340,12 @@ export function DeveloperImplementationView({
           ))}
         </div>
       </section>
+
+      {/* ── Module-level certification status (P11-P1-05) ────────── */}
+      <DevModuleCertSummary />
+
+      {/* ── CI gate wire-up CTA (P11-P1-06) ──────────────────────── */}
+      <CIGateSnippet />
 
       {/* ── Standards → library cross-links ─────────────────────── */}
       <section

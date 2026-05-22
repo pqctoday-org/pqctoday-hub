@@ -11,6 +11,7 @@ import { Button } from '../../ui/button'
 import clsx from 'clsx'
 
 import { PersonaHint } from './PersonaHint'
+import { WhyWeAskHint } from './WhyWeAskHint'
 import {
   getPersonaStepContent,
   getPersonaOptionDescriptions,
@@ -61,6 +62,7 @@ const Step6Migration = () => {
       </p>
 
       <PersonaHint stepKey="migration" />
+      <WhyWeAskHint stepKey="migration" />
 
       {/* Smart defaults escape hatch */}
       <Button
