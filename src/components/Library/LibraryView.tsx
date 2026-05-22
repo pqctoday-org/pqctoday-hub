@@ -280,6 +280,9 @@ export const LibraryView: React.FC = () => {
     return defaultSortForPersona(selectedPersona)
   })
   const [cswp39Only, setCswp39Only] = useState<boolean>(() => searchParams.get('cswp39') === '1')
+  const [certRelevantOnly, setCertRelevantOnly] = useState<boolean>(
+    () => searchParams.get('cert') === '1'
+  )
   const [lifecycleBucket, setLifecycleBucket] = useState<string>(
     () => searchParams.get('lifecycle') ?? 'All'
   )
@@ -287,6 +290,11 @@ export const LibraryView: React.FC = () => {
   const sectorFilter = useSectorFilter()
   const tierFilter = useTrustTierFilter()
   const [showFilters, setShowFilters] = useState(false)
+  const [showAdvancedDrawer, setShowAdvancedDrawer] = useState(false)
+  // Personas with a tight default drawer (3 axes: Organization, Country/Region,
+  // Doc Status).  Sector + Trust Tier sit behind an "Advanced" expander.
+  // Researcher and architect see all 5 expanded — they explicitly want depth.
+  const drawerIsTrimmed = selectedPersona === 'executive' || selectedPersona === 'curious'
   const [highlightedDocId, setHighlightedDocId] = useState<string | null>(
     () => searchParams.get('doc') ?? null
   )
@@ -295,6 +303,42 @@ export const LibraryView: React.FC = () => {
     const ref = searchParams.get('ref')
     return ref ? findByRef(libraryData, ref) : null
   })
+
+  // Region / Industry single-select → multi-select migration shim
+  // (P04 audit, PR 3 — one-release window). Chatbot deep links and bookmarked
+  // URLs from before the consolidation use `?region=X` / `?ind=X` against the
+  // single-select dropdowns. The drawer now only exposes the multi-select
+  // GeoFilter (`geo[]`) and SectorFilter (`sector[]`). At mount, migrate any
+  // legacy single-select value into the multi-select array and drop the old
+  // param so the URL converges on the new shape.
+  useEffect(() => {
+    const legacyRegion = searchParams.get('region')
+    const legacyInd = searchParams.get('ind')
+    if (!legacyRegion && !legacyInd) return
+    if (import.meta.env.DEV) {
+      console.warn(
+        '[Library] Migrating legacy single-select filter URL params (region/ind) ' +
+          'into multi-select equivalents (geo[]/sector[]). Update any bookmarks/links.'
+      )
+    }
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        if (legacyRegion && legacyRegion !== 'All' && next.getAll('geo').length === 0) {
+          next.append('geo', legacyRegion)
+        }
+        if (legacyInd && legacyInd !== 'All' && next.getAll('sector').length === 0) {
+          next.append('sector', legacyInd)
+        }
+        next.delete('region')
+        next.delete('ind')
+        return next
+      },
+      { replace: true }
+    )
+    // Only runs once at mount; no dependency drift expected.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // ?doc=<refId> — scroll-to-card + 3 s highlight, then clear
   useEffect(() => {
@@ -352,6 +396,10 @@ export const LibraryView: React.FC = () => {
       const next = searchParams.get('cswp39') === '1'
       return prev !== next ? next : prev
     })
+    setCertRelevantOnly((prev) => {
+      const next = searchParams.get('cert') === '1'
+      return prev !== next ? next : prev
+    })
     setLifecycleBucket((prev) => {
       const next = searchParams.get('lifecycle') ?? 'All'
       return prev !== next ? next : prev
@@ -372,6 +420,7 @@ export const LibraryView: React.FC = () => {
       view?: ViewMode
       sort?: SortOption
       cswp39?: boolean
+      cert?: boolean
       lifecycle?: string
     }) => {
       setSearchParams(
@@ -385,6 +434,7 @@ export const LibraryView: React.FC = () => {
           const view = overrides.view ?? viewMode
           const sort = overrides.sort ?? sortBy
           const cswp39Flag = overrides.cswp39 ?? cswp39Only
+          const certFlag = overrides.cert ?? certRelevantOnly
           const lifecycle = overrides.lifecycle ?? lifecycleBucket
 
           if (cat !== 'All') next.set('cat', cat)
@@ -406,6 +456,8 @@ export const LibraryView: React.FC = () => {
           else next.delete('sort')
           if (cswp39Flag) next.set('cswp39', '1')
           else next.delete('cswp39')
+          if (certFlag) next.set('cert', '1')
+          else next.delete('cert')
           if (lifecycle !== 'All') next.set('lifecycle', lifecycle)
           else next.delete('lifecycle')
           return next
@@ -422,6 +474,7 @@ export const LibraryView: React.FC = () => {
       viewMode,
       sortBy,
       cswp39Only,
+      certRelevantOnly,
       lifecycleBucket,
       setSearchParams,
       selectedPersona,
@@ -453,6 +506,14 @@ export const LibraryView: React.FC = () => {
   // maturityByRefId is built once at module load, so this resolves once per render.
   const cswp39EnrichedCount = useMemo(
     () => libraryData.filter((item) => maturityByRefId.has(item.referenceId)).length,
+    []
+  )
+
+  // Cert-relevant allowlist — LIBRARY_OPS_PICKS referenceIds.  Used by the
+  // primary-row "Cert-relevant" chip (P04 audit, PR 3.e) to narrow the corpus
+  // to the curated cert-anchored set without forcing the ops persona.
+  const certRelevantIdSet = useMemo<Set<string>>(
+    () => new Set(LIBRARY_OPS_PICKS.map((p) => p.referenceId)),
     []
   )
 
@@ -583,22 +644,6 @@ export const LibraryView: React.FC = () => {
         if (!hit) return false
       }
 
-      // Industry filter — match via canonical map to normalize CSV aliases.
-      // Items with no industry tags, or tagged "All industries"/"Global", are universally
-      // applicable and pass through regardless of the selected industry.
-      if (activeIndustry !== 'All') {
-        const itemCanonicals =
-          item.applicableIndustries
-            ?.map((ind) => INDUSTRY_CANONICAL_MAP[ind?.trim()])
-            .filter(Boolean) ?? []
-        if (
-          itemCanonicals.length > 0 &&
-          !itemCanonicals.includes('All') &&
-          !itemCanonicals.includes(activeIndustry)
-        )
-          return false
-      }
-
       // Organization filter — match against canonical names
       if (activeOrg !== 'All') {
         const itemCanonicalOrgs = item.authorsOrOrganization
@@ -610,21 +655,11 @@ export const LibraryView: React.FC = () => {
         if (!itemCanonicalOrgs.includes(activeOrg)) return false
       }
 
-      // Region/country filter — items tagged 'Global' always pass through
-      if (activeRegion !== 'All') {
-        const itemRegions = item.regionScope
-          ? item.regionScope
-              .split(';')
-              .map((s) => s.trim())
-              .filter(Boolean)
-          : []
-        if (
-          itemRegions.length > 0 &&
-          !itemRegions.includes('Global') &&
-          !itemRegions.includes(activeRegion)
-        )
-          return false
-      }
+      // Region + Industry single-select filters were removed in the PR 3
+      // drawer-consolidation pass (P04 audit). Use the multi-select
+      // GeoFilter (`geo[]`) and SectorFilter (`sector[]`) instead — both
+      // are evaluated below. Legacy `?region=X` / `?ind=X` URLs are
+      // migrated into those arrays by the shim at mount.
 
       // Geo filter (multi-select, URL param: geo[])
       if (geoFilter.length > 0) {
@@ -652,6 +687,9 @@ export const LibraryView: React.FC = () => {
       // CSWP 39 enriched-only filter
       if (cswp39Only && !maturityByRefId.has(item.referenceId)) return false
 
+      // Cert-relevant allowlist filter (P04 audit, PR 3.e)
+      if (certRelevantOnly && !certRelevantIdSet.has(item.referenceId)) return false
+
       // Lifecycle status bucket filter
       if (lifecycleBucket !== 'All' && item.documentStatusBucket !== lifecycleBucket) return false
 
@@ -674,8 +712,6 @@ export const LibraryView: React.FC = () => {
   }, [
     activeCategory,
     activeOrg,
-    activeIndustry,
-    activeRegion,
     geoFilter,
     sectorFilter,
     filterText,
@@ -683,6 +719,8 @@ export const LibraryView: React.FC = () => {
     showOnlyLibraryBookmarks,
     libraryBookmarks,
     cswp39Only,
+    certRelevantOnly,
+    certRelevantIdSet,
     lifecycleBucket,
     tierFilter,
     personaPreferredActive,
@@ -936,8 +974,6 @@ export const LibraryView: React.FC = () => {
               showFilters ||
               activeCategory !== 'All' ||
               activeOrg !== 'All' ||
-              activeIndustry !== 'All' ||
-              activeRegion !== 'All' ||
               lifecycleBucket !== 'All'
                 ? 'bg-primary/10 border-primary/30 text-primary'
                 : 'bg-muted/30 border-border text-foreground hover:bg-muted/50'
@@ -949,8 +985,6 @@ export const LibraryView: React.FC = () => {
             {/* Show badge if filters are active */}
             {(activeCategory !== 'All' ||
               activeOrg !== 'All' ||
-              activeIndustry !== 'All' ||
-              activeRegion !== 'All' ||
               lifecycleBucket !== 'All') && <span className="w-2 h-2 rounded-full bg-primary" />}
           </Button>
 
@@ -988,6 +1022,65 @@ export const LibraryView: React.FC = () => {
           >
             CSWP 39 ({cswp39EnrichedCount})
           </Button>
+
+          {/* Cert-relevant chip (P04 audit, PR 3.e) — filters to the curated
+              LIBRARY_OPS_PICKS allowlist (FIPS 203/204/205, SP 800-208, etc.) */}
+          <Button
+            variant="ghost"
+            onClick={() => {
+              const next = !certRelevantOnly
+              setCertRelevantOnly(next)
+              syncFiltersToUrl({ cert: next })
+              logEvent('Library', 'Filter CertRelevant', next ? 'on' : 'off')
+            }}
+            className={`inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border transition-colors font-medium whitespace-nowrap min-h-[44px] ${
+              certRelevantOnly
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+            }`}
+            aria-pressed={certRelevantOnly}
+            title="Show only the curated cert-relevant document set (FIPS / CMVP anchors)"
+          >
+            Cert-relevant ({certRelevantIdSet.size})
+          </Button>
+
+          {/* Lifecycle pill row (P04 audit, PR 3.e) — one-click access to the
+              Final / Draft / Expired / Withdrawn buckets without opening the
+              drawer.  Bound to the existing `lifecycleBucket` state, so the
+              drawer dropdown and these pills stay in sync. */}
+          <div className="flex items-center gap-1" role="radiogroup" aria-label="Lifecycle">
+            {(
+              [
+                { id: 'Published', label: 'Final' },
+                { id: 'Draft', label: 'Draft' },
+                { id: 'Expired', label: 'Expired' },
+                { id: 'Superseded', label: 'Withdrawn' },
+              ] as const
+            ).map((opt) => {
+              const active = lifecycleBucket === opt.id
+              return (
+                <Button
+                  key={opt.id}
+                  variant="ghost"
+                  role="radio"
+                  aria-checked={active}
+                  onClick={() => {
+                    const next = active ? 'All' : opt.id
+                    setLifecycleBucket(next)
+                    syncFiltersToUrl({ lifecycle: next })
+                    logEvent('Library', 'Filter Lifecycle', next)
+                  }}
+                  className={`inline-flex items-center text-xs px-2.5 py-1.5 rounded-md border transition-colors font-medium whitespace-nowrap min-h-[36px] ${
+                    active
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+                  }`}
+                >
+                  {opt.label}
+                </Button>
+              )
+            })}
+          </div>
 
           {viewMode === 'cards' && (
             <div className="hidden sm:block">
@@ -1035,23 +1128,6 @@ export const LibraryView: React.FC = () => {
             </div>
 
             <div className="flex-1 min-w-[160px]">
-              <span className="text-xs font-medium text-muted-foreground mb-1 block">Industry</span>
-              <FilterDropdown
-                items={industries}
-                selectedId={activeIndustry}
-                onSelect={(ind) => {
-                  setActiveIndustry(ind)
-                  syncFiltersToUrl({ ind })
-                  logEvent('Library', 'Filter Industry', ind)
-                }}
-                defaultLabel="Industry"
-                noContainer
-                opaque
-                className="mb-0 w-full"
-              />
-            </div>
-
-            <div className="flex-1 min-w-[160px]">
               <span className="text-xs font-medium text-muted-foreground mb-1 block">
                 Doc Status
               </span>
@@ -1074,39 +1150,39 @@ export const LibraryView: React.FC = () => {
               <span className="text-xs font-medium text-muted-foreground mb-1 block">
                 Country / Region
               </span>
-              <FilterDropdown
-                items={regions}
-                selectedId={activeRegion}
-                onSelect={(region) => {
-                  setActiveRegion(region)
-                  syncFiltersToUrl({ region })
-                  logEvent('Library', 'Filter Region', region)
-                }}
-                defaultLabel="Country / Region"
-                noContainer
-                opaque
-                className="mb-0 w-full"
-              />
-            </div>
-
-            <div className="flex-1 min-w-[160px]">
-              <span className="text-xs font-medium text-muted-foreground mb-1 block">
-                Geography
-              </span>
               <GeoFilter options={[]} className="w-full" />
             </div>
 
-            <div className="flex-1 min-w-[160px]">
-              <span className="text-xs font-medium text-muted-foreground mb-1 block">Sector</span>
-              <SectorFilter className="w-full" />
-            </div>
+            {(!drawerIsTrimmed || showAdvancedDrawer) && (
+              <>
+                <div className="flex-1 min-w-[160px]">
+                  <span className="text-xs font-medium text-muted-foreground mb-1 block">
+                    Sector
+                  </span>
+                  <SectorFilter className="w-full" />
+                </div>
 
-            <div className="flex-1 min-w-[160px]">
-              <span className="text-xs font-medium text-muted-foreground mb-1 block">
-                Trust tier
-              </span>
-              <TrustTierFilter className="w-full" />
-            </div>
+                <div className="flex-1 min-w-[160px]">
+                  <span className="text-xs font-medium text-muted-foreground mb-1 block">
+                    Trust tier
+                  </span>
+                  <TrustTierFilter className="w-full" />
+                </div>
+              </>
+            )}
+
+            {drawerIsTrimmed && (
+              <div className="w-full flex justify-start">
+                <Button
+                  variant="link"
+                  onClick={() => setShowAdvancedDrawer((v) => !v)}
+                  className="text-xs h-auto p-0"
+                  aria-expanded={showAdvancedDrawer}
+                >
+                  {showAdvancedDrawer ? 'Hide advanced' : 'Advanced (Sector, Trust tier)'}
+                </Button>
+              </div>
+            )}
 
             {/* Sort Dropdown for Mobile (Inside filters drawer) */}
             {viewMode === 'cards' && (
@@ -1130,10 +1206,7 @@ export const LibraryView: React.FC = () => {
       </div>
 
       {/* Active Filter Chips */}
-      {(activeOrg !== 'All' ||
-        activeIndustry !== 'All' ||
-        activeRegion !== 'All' ||
-        filterText !== '') && (
+      {(activeOrg !== 'All' || filterText !== '') && (
         <div className="flex flex-wrap items-center gap-2 text-xs">
           {filterText && (
             <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
@@ -1168,47 +1241,13 @@ export const LibraryView: React.FC = () => {
               </Button>
             </span>
           )}
-          {activeIndustry !== 'All' && (
-            <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
-              <span className="text-muted-foreground">Industry:</span> {activeIndustry}
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  setActiveIndustry('All')
-                  syncFiltersToUrl({ ind: 'All' })
-                }}
-                className="text-muted-foreground hover:text-foreground"
-                aria-label="Clear industry filter"
-              >
-                <X size={12} aria-hidden="true" />
-              </Button>
-            </span>
-          )}
-          {activeRegion !== 'All' && (
-            <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
-              <span className="text-muted-foreground">Region:</span> {activeRegion}
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  setActiveRegion('All')
-                  syncFiltersToUrl({ region: 'All' })
-                }}
-                className="text-muted-foreground hover:text-foreground"
-                aria-label="Clear region filter"
-              >
-                <X size={12} aria-hidden="true" />
-              </Button>
-            </span>
-          )}
           <Button
             variant="ghost"
             onClick={() => {
               setActiveOrg('All')
-              setActiveIndustry('All')
-              setActiveRegion('All')
               setFilterText('')
               setInputValue('')
-              syncFiltersToUrl({ org: 'All', ind: 'All', region: 'All', q: '' })
+              syncFiltersToUrl({ org: 'All', q: '' })
             }}
             className="text-muted-foreground hover:text-foreground underline decoration-muted-foreground/30 hover:decoration-muted-foreground transition-all ml-1"
           >
