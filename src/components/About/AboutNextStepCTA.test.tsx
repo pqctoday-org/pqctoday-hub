@@ -77,14 +77,9 @@ describe('AboutNextStepCTA', () => {
   })
 
   it('renders a CTA for every persona id', () => {
-    const personas: Array<'executive' | 'developer' | 'architect' | 'ops' | 'researcher' | 'curious'> = [
-      'executive',
-      'developer',
-      'architect',
-      'ops',
-      'researcher',
-      'curious',
-    ]
+    const personas: Array<
+      'executive' | 'developer' | 'architect' | 'ops' | 'researcher' | 'curious'
+    > = ['executive', 'developer', 'architect', 'ops', 'researcher', 'curious']
     for (const p of personas) {
       usePersonaStore.setState({ selectedPersona: p })
       const { unmount } = renderWithRoute()
